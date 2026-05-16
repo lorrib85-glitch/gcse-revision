@@ -25,6 +25,7 @@ export function saveSessionResult({ topicId, score, total }) {
   if (data.lastSessionDate === yesterday) data.streak = (data.streak || 0) + 1
   else if (data.lastSessionDate !== today) data.streak = 1
   data.lastSessionDate = today
+  if ((data.streak || 0) > (data.bestStreak || 0)) data.bestStreak = data.streak
 
   // Spaced repetition interval
   const prev        = data.topicProgress[topicId] || { completedSessions: 0 }

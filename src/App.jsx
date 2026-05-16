@@ -114,46 +114,103 @@ export default function App() {
 
 // ─── Home ────────────────────────────────────────────────────────────────────
 
+const GREETINGS = [
+  "Right then, Elliot. Let's get some of this locked in.",
+  "Back again. Good. Consistency beats cramming every time.",
+  "Small session, big difference. Let's go.",
+  "The exam won't study for itself. Fortunately, you're here.",
+  "One topic at a time. That's all this is.",
+  "You showed up. That's already the hard part done.",
+  "No pressure. Just progress.",
+  "Medicine in Britain isn't going to remember itself.",
+]
+
+function daysUntilExam() {
+  const exam = new Date('2027-05-01')
+  const today = new Date()
+  today.setHours(0,0,0,0)
+  exam.setHours(0,0,0,0)
+  return Math.max(0, Math.round((exam - today) / 86400000))
+}
+
 function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule }) {
-  const nextId    = getNextTopicId(TOPIC_IDS)
-  const nextTopic = TOPICS.find(t => t.id === nextId)
+  const nextId     = getNextTopicId(TOPIC_IDS)
+  const nextTopic  = TOPICS.find(t => t.id === nextId)
   const draftTopic = draft ? TOPICS.find(t => t.id === draft.topicId) : null
   const PHASE_NAMES = ['', 'Warm-up', 'Key Facts', 'Mini Quiz', 'Progress']
+  const greeting   = GREETINGS[Math.floor(Date.now() / 86400000) % GREETINGS.length]
+  const streak     = progress.streak || 0
+  const bestStreak = progress.bestStreak || streak
+  const examDays   = daysUntilExam()
+  const totalSessions = Object.values(progress.topicProgress || {}).reduce((s, t) => s + (t.completedSessions || 0), 0)
 
   return (
-    <div className="page">
-      <div className="hero">
+    <div className="page" style={{ background: '#f7f3ee', minHeight: '100vh' }}>
+
+      {/* ── Top nav bar ── */}
+      <div style={{ background: '#f7f3ee', borderBottom: '1px solid #e8e0d4', padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: '1.1rem', color: '#17120d' }}>
+          Medicine in Britain
+        </div>
+        {streak > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#fff8f0', border: '1px solid #f0d8b8', borderRadius: 99, padding: '5px 12px' }}>
+            <span style={{ fontSize: '1rem' }}>🔥</span>
+            <span style={{ fontWeight: 800, fontSize: '.88rem', color: '#b45309' }}>{streak}</span>
+          </div>
+        )}
+      </div>
+
+      {/* ── Hero greeting ── */}
+      <div style={{ padding: '28px 20px 0' }}>
         <div className="container">
-          <div className="fade-up"><span className="label" style={{ color: 'var(--gold2)' }}>AQA GCSE History</span></div>
-          <h1 className="fade-up" style={{ marginTop: 10, marginBottom: 14 }}>Medicine in Britain</h1>
-          <p className="fade-up">30 minutes a day. Four eras. Spaced repetition that actually sticks.</p>
-          {progress.streak > 0 && (
-            <div className="fade-up" style={{ marginBottom: 20, display: 'flex', justifyContent: 'center' }}>
-              <span className="streak">🔥 {progress.streak}-day streak — keep it going!</span>
+          <div className="fade-up">
+            <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#9a8370', marginBottom: 8 }}>
+              Your progress
             </div>
-          )}
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(1.8rem, 6vw, 2.4rem)', color: '#17120d', marginBottom: 10, lineHeight: 1.15 }}>
+              {greeting}
+            </h1>
+          </div>
+
+          {/* ── Stats row ── */}
+          <div className="fade-up" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, margin: '20px 0 24px' }}>
+            <div style={{ background: '#fff', border: '1px solid #e8e0d4', borderRadius: 16, padding: '14px 12px', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.6rem', marginBottom: 2 }}>🔥</div>
+              <div style={{ fontWeight: 900, fontSize: '1.3rem', color: '#17120d' }}>{streak}</div>
+              <div style={{ fontSize: '.68rem', fontWeight: 600, color: '#9a8370', textTransform: 'uppercase', letterSpacing: '.08em' }}>Day streak</div>
+              {bestStreak > 1 && <div style={{ fontSize: '.65rem', color: '#b45309', marginTop: 3 }}>Best: {bestStreak}</div>}
+            </div>
+            <div style={{ background: '#fff', border: '1px solid #e8e0d4', borderRadius: 16, padding: '14px 12px', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.6rem', marginBottom: 2 }}>📚</div>
+              <div style={{ fontWeight: 900, fontSize: '1.3rem', color: '#17120d' }}>{totalSessions}</div>
+              <div style={{ fontSize: '.68rem', fontWeight: 600, color: '#9a8370', textTransform: 'uppercase', letterSpacing: '.08em' }}>Sessions</div>
+            </div>
+            <div style={{ background: '#fff', border: '1px solid #e8e0d4', borderRadius: 16, padding: '14px 12px', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.6rem', marginBottom: 2 }}>📅</div>
+              <div style={{ fontWeight: 900, fontSize: '1.3rem', color: '#17120d' }}>{examDays}</div>
+              <div style={{ fontSize: '.68rem', fontWeight: 600, color: '#9a8370', textTransform: 'uppercase', letterSpacing: '.08em' }}>Days to go</div>
+              <div style={{ fontSize: '.65rem', color: '#9a8370', marginTop: 3 }}>1 May 2027</div>
+            </div>
+          </div>
 
           {/* ── Continue banner ── */}
           {draft && draftTopic && (
-            <div className="fade-up" style={{ marginBottom: 20 }}>
-              <div style={{
-                background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
-                borderRadius: 14, padding: '16px 18px', textAlign: 'left',
-              }}>
-                <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--gold2)', marginBottom: 8 }}>
-                  ↩ Unfinished session
+            <div className="fade-up" style={{ marginBottom: 16 }}>
+              <div style={{ background: '#17120d', borderRadius: 18, padding: '16px 18px' }}>
+                <div style={{ fontSize: '.7rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#f8d783', marginBottom: 6 }}>
+                  ↩ You were partway through
                 </div>
-                <div style={{ color: '#fff', fontWeight: 700, marginBottom: 4 }}>
+                <div style={{ color: '#fff', fontWeight: 700, marginBottom: 3 }}>
                   {draftTopic.icon} {draftTopic.title}
                 </div>
-                <div style={{ color: '#a0a0c0', fontSize: '.82rem', marginBottom: 14 }}>
-                  Left off at: <strong style={{ color: '#fff' }}>{PHASE_NAMES[draft.phase] || 'Key Facts'}</strong>
+                <div style={{ color: '#888', fontSize: '.8rem', marginBottom: 14 }}>
+                  Left off at: <strong style={{ color: '#ccc' }}>{PHASE_NAMES[draft.phase] || 'Key Facts'}</strong>
                 </div>
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <button className="btn btn-green" style={{ flex: 2, padding: '11px 16px', fontSize: '.9rem' }} onClick={onResume}>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button onClick={onResume} style={{ flex: 2, background: '#f8d783', color: '#17120d', border: 'none', borderRadius: 12, padding: '12px', fontWeight: 900, cursor: 'pointer', fontSize: '.9rem' }}>
                     Continue →
                   </button>
-                  <button className="btn btn-ghost" style={{ flex: 1, padding: '11px 16px', fontSize: '.85rem', borderColor: 'rgba(255,255,255,0.2)', color: '#888' }} onClick={onDiscardDraft}>
+                  <button onClick={onDiscardDraft} style={{ flex: 1, background: 'transparent', color: '#666', border: '1px solid #333', borderRadius: 12, padding: '12px', fontWeight: 700, cursor: 'pointer', fontSize: '.85rem' }}>
                     Discard
                   </button>
                 </div>
@@ -161,57 +218,103 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
             </div>
           )}
 
+          {/* ── Daily CTA ── */}
           {nextTopic && (
-            <div className="fade-up">
-              <button className="btn btn-red btn-lg" onClick={() => onStart(nextId)}>
-                {draft ? "Start fresh session →" : "Start today's session →"}
-              </button>
-              <p style={{ color: '#666688', fontSize: '.83rem', marginTop: 10 }}>
-                Today: <strong style={{ color: '#fff' }}>{nextTopic.title}</strong>
-              </p>
+            <div className="fade-up" style={{ marginBottom: 28 }}>
+              <div style={{ background: '#fff', border: '1px solid #e8e0d4', borderRadius: 18, padding: '18px' }}>
+                <div style={{ fontSize: '.7rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#9a8370', marginBottom: 10 }}>
+                  DAILY · Today's session
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: nextTopic.colorLight, color: nextTopic.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>
+                    {nextTopic.icon}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '1rem', color: '#17120d' }}>{nextTopic.title}</div>
+                    <div style={{ fontSize: '.78rem', color: '#9a8370' }}>{nextTopic.era} · ~30 min</div>
+                  </div>
+                </div>
+                <button onClick={() => onStart(nextId)} style={{ width: '100%', background: '#17120d', color: '#fff', border: 'none', borderRadius: 14, padding: '15px', fontWeight: 900, cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit' }}>
+                  {draft ? 'Start fresh session →' : "Start today's session →"}
+                </button>
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* ── Modules Library ── */}
-      <div style={{ background: '#111128', padding: '32px 18px' }}>
+      {/* ── Topic progress ── */}
+      <div style={{ padding: '0 20px 24px' }}>
         <div className="container">
-          <p className="label" style={{ color: 'var(--gold2)', marginBottom: 6 }}>Study Modules</p>
-          <p style={{ color: '#666688', fontSize: '.82rem', marginBottom: 16 }}>In-depth lessons — read, tap and quiz your way through each topic.</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+            <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#9a8370' }}>Where you are</div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {TOPICS.map(topic => {
+              const tp    = progress.topicProgress?.[topic.id]
+              const done  = tp?.completedSessions || 0
+              const score = tp?.lastScore != null ? Math.round(tp.lastScore * 100) : null
+              const days  = tp?.nextReviewDate ? daysUntil(tp.nextReviewDate) : null
+              return (
+                <div key={topic.id} onClick={() => onStart(topic.id)} role="button" tabIndex={0}
+                  onKeyDown={e => e.key === 'Enter' && onStart(topic.id)}
+                  style={{ background: '#fff', border: '1px solid #e8e0d4', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
+                  <div style={{ width: 38, height: 38, borderRadius: 10, background: topic.colorLight, color: topic.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', flexShrink: 0 }}>
+                    {topic.icon}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: '.93rem', color: '#17120d' }}>{topic.title}</div>
+                    <div style={{ fontSize: '.73rem', color: '#9a8370' }}>{topic.era}</div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    {done > 0 ? (
+                      <>
+                        <div style={{ fontSize: '.73rem', fontWeight: 700, color: '#16a34a' }}>{done} session{done !== 1 ? 's' : ''}</div>
+                        {score !== null && <div style={{ fontSize: '.68rem', color: '#9a8370' }}>{score}% last</div>}
+                        {days === 0 && <div style={{ fontSize: '.68rem', color: '#dc2626', fontWeight: 700 }}>Review today</div>}
+                        {days > 0 && <div style={{ fontSize: '.68rem', color: '#9a8370' }}>in {days}d</div>}
+                      </>
+                    ) : (
+                      <div style={{ fontSize: '.72rem', color: '#ccc' }}>Not started</div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Study Modules ── */}
+      <div style={{ background: '#17120d', padding: '28px 20px' }}>
+        <div className="container">
+          <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#f8d783', marginBottom: 6 }}>Study Modules</div>
+          <div style={{ color: '#6d5d4d', fontSize: '.82rem', marginBottom: 16 }}>In-depth lessons — read, tap and quiz your way through.</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {MODULES.map(mod => {
-              const savedMod = safeGetModuleState(mod.id)
+              const savedMod    = safeGetModuleState(mod.id)
               const savedScreen = savedMod.screen || 0
-              const pct = Math.round(((savedScreen + 1) / mod.screens.length) * 100)
-              const started = savedScreen > 0
+              const pct         = Math.round(((savedScreen + 1) / mod.screens.length) * 100)
+              const started     = savedScreen > 0
               return (
                 <button key={mod.id} onClick={() => onOpenModule(mod)}
-                  style={{
-                    background: '#1a1a35', border: '1px solid #2d2d55', borderRadius: 12,
-                    padding: '14px 16px', cursor: 'pointer', textAlign: 'left',
-                    display: 'flex', alignItems: 'center', gap: 12, transition: 'all .15s'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = mod.color}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = '#2d2d55'}>
-                  <div style={{
-                    width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-                    background: mod.colorLight, color: mod.color,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem'
-                  }}>{mod.icon}</div>
+                  style={{ background: '#1f1812', border: '1px solid #2d2318', borderRadius: 14, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: 10, flexShrink: 0, background: mod.colorLight, color: mod.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>
+                    {mod.icon}
+                  </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ color: '#fff', fontWeight: 700, fontSize: '.93rem' }}>{mod.title}</div>
-                    <div style={{ color: '#666688', fontSize: '.76rem' }}>{mod.subtitle} · {mod.era}</div>
+                    <div style={{ color: '#fff9ec', fontWeight: 700, fontSize: '.92rem' }}>{mod.title}</div>
+                    <div style={{ color: '#6d5d4d', fontSize: '.74rem', marginTop: 2 }}>{mod.subtitle}</div>
                     {started && (
-                      <div style={{ marginTop: 6, height: 4, background: '#2d2d55', borderRadius: 99, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: pct + '%', background: mod.color, borderRadius: 99, transition: 'width .3s' }} />
+                      <div style={{ marginTop: 7, height: 3, background: '#2d2318', borderRadius: 99, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: pct + '%', background: mod.color, borderRadius: 99 }} />
                       </div>
                     )}
                   </div>
-                  <div style={{ flexShrink: 0, textAlign: 'right' }}>
+                  <div style={{ flexShrink: 0 }}>
                     {started
-                      ? <div style={{ fontSize: '.72rem', color: mod.color === '#065f46' ? '#4ade80' : '#a0c8ff', fontWeight: 700 }}>{pct}%</div>
-                      : <div style={{ fontSize: '.72rem', color: '#444' }}>Start →</div>}
+                      ? <span style={{ fontSize: '.72rem', color: '#f8d783', fontWeight: 700 }}>{pct}%</span>
+                      : <span style={{ fontSize: '.8rem', color: '#444' }}>→</span>}
                   </div>
                 </button>
               )
@@ -220,65 +323,11 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
         </div>
       </div>
 
-      <div className="how-strip">
-        <div className="container">
-          <p className="label" style={{ color: 'var(--gold2)', marginBottom: 16 }}>How it works</p>
-          <div className="how-grid">
-            {[
-              { icon: '⚡', t: 'Warm-up',  d: '3 quick questions to activate memory' },
-              { icon: '📖', t: 'Key Facts', d: 'Interactive cards — one idea at a time' },
-              { icon: '✏️', t: 'Mini Quiz', d: '5–7 questions across all topics' },
-              { icon: '📊', t: 'Snapshot',  d: 'Score + next review date' },
-            ].map(s => (
-              <div className="how-card" key={s.t}>
-                <div style={{ fontSize: '1.4rem', marginBottom: 7 }}>{s.icon}</div>
-                <div style={{ color: '#fff', fontWeight: 600, fontSize: '.88rem', marginBottom: 3 }}>{s.t}</div>
-                <div style={{ color: '#666688', fontSize: '.78rem' }}>{s.d}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* ── Footer ── */}
+      <div style={{ padding: '20px', textAlign: 'center', background: '#f7f3ee' }}>
+        <p style={{ fontSize: '.75rem', color: '#9a8370' }}>AQA GCSE History · Medicine in Britain c1250–present</p>
       </div>
 
-      <div className="section" style={{ flexGrow: 1 }}>
-        <div className="container">
-          <p className="label" style={{ marginBottom: 16 }}>All four eras</p>
-          <div className="grid-stack">
-            {TOPICS.map(topic => {
-              const tp    = progress.topicProgress?.[topic.id]
-              const done  = tp?.completedSessions || 0
-              const score = tp?.lastScore != null ? Math.round(tp.lastScore * 100) : null
-              const days  = tp?.nextReviewDate ? daysUntil(tp.nextReviewDate) : null
-              return (
-                <div key={topic.id} className="topic-card fade-up" onClick={() => onStart(topic.id)} role="button" tabIndex={0}
-                  onKeyDown={e => e.key === 'Enter' && onStart(topic.id)}>
-                  <div className="topic-icon" style={{ background: topic.colorLight, color: topic.color }}>{topic.icon}</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div className="flex gap-8" style={{ flexWrap: 'wrap', alignItems: 'baseline' }}>
-                      <span style={{ fontWeight: 700, fontSize: '.96rem' }}>{topic.title}</span>
-                      <span style={{ fontSize: '.73rem', color: 'var(--muted)' }}>{topic.era}</span>
-                    </div>
-                    <div style={{ fontSize: '.79rem', color: 'var(--muted)', marginTop: 2 }}>{topic.subtitle}</div>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    {done > 0 ? (
-                      <>
-                        <div style={{ fontSize: '.74rem', color: 'var(--green)', fontWeight: 700 }}>{done} session{done !== 1 ? 's' : ''}</div>
-                        {score !== null && <div style={{ fontSize: '.71rem', color: 'var(--muted)' }}>Last: {score}%</div>}
-                        {days === 0
-                          ? <div style={{ fontSize: '.71rem', color: 'var(--red)', fontWeight: 600 }}>Due today</div>
-                          : days > 0 && <div style={{ fontSize: '.71rem', color: 'var(--muted)' }}>Review in {days}d</div>}
-                      </>
-                    ) : (
-                      <div style={{ fontSize: '.74rem', color: 'var(--muted)' }}>Not started</div>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
