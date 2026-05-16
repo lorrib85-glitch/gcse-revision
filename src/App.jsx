@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft } from './progress.js'
+import { MODULES } from './modules.js'
+import ModulePlayer from './ModulePlayer.jsx'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
