@@ -422,19 +422,19 @@ const PAST_PAPER_QS = {
     { q: '"The main reason medieval medicine made little progress was the influence of the Church." How far do you agree? Explain your answer. [16 marks]', type: 'written', marks: 16 },
   ],
   th2: [
-    { q: 'Describe two features of Vesalius's contribution to medicine. [4 marks]', type: 'written', marks: 4 },
-    { q: 'Explain why Harvey's discovery of blood circulation did not immediately lead to better treatments. [12 marks]', type: 'written', marks: 12 },
+    { q: 'Describe two features of Vesalius\'s contribution to medicine. [4 marks]', type: 'written', marks: 4 },
+    { q: 'Explain why Harvey\'s discovery of blood circulation did not immediately lead to better treatments. [12 marks]', type: 'written', marks: 12 },
     { q: 'How far did the Renaissance change medicine? Explain your answer. [16 marks]', type: 'written', marks: 16 },
   ],
   th3: [
     { q: 'Describe two problems with surgery before the 1840s. [4 marks]', type: 'written', marks: 4 },
     { q: 'Explain why anaesthetics both helped and created new problems for surgery. [12 marks]', type: 'written', marks: 12 },
-    { q: 'How important was Lister's use of antiseptics in improving surgery? [16 marks]', type: 'written', marks: 16 },
+    { q: 'How important was Lister\'s use of antiseptics in improving surgery? [16 marks]', type: 'written', marks: 16 },
   ],
   th4: [
-    { q: 'Describe two features of Pasteur's germ theory. [4 marks]', type: 'written', marks: 4 },
-    { q: 'Explain why Koch's work was important for the development of medicine. [12 marks]', type: 'written', marks: 12 },
-    { q: '"Pasteur's germ theory was the most important development in medicine in the 19th century." How far do you agree? [16 marks]', type: 'written', marks: 16 },
+    { q: 'Describe two features of Pasteur\'s germ theory. [4 marks]', type: 'written', marks: 4 },
+    { q: 'Explain why Koch\'s work was important for the development of medicine. [12 marks]', type: 'written', marks: 12 },
+    { q: '"Pasteur\'s germ theory was the most important development in medicine in the 19th century." How far do you agree? [16 marks]', type: 'written', marks: 16 },
   ],
   th5: [
     { q: 'Describe two features of the 1875 Public Health Act. [4 marks]', type: 'written', marks: 4 },
