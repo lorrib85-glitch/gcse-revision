@@ -1302,7 +1302,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
     6: 'Level of response: link your points together with evidence. Do not just list facts.',
     8: 'Use quotes, name techniques, explain effects. Aim for Level 3: "clear and relevant".',
     12: 'Analyse language choices in depth. Quote precisely, name the technique, explain the effect on the reader.',
-    16: 'Compare BOTH texts throughout. Link quotes to writer's methods and intentions.',
+    16: "Compare BOTH texts throughout. Link quotes to writer's methods and intentions.",
     20: 'Give your view first, then prove it. Engage critically with the statement — agree, disagree, or both.',
     40: 'Plan before you write. Strong opening, clear structure, ambitious vocabulary, accurate punctuation throughout.',
   }
