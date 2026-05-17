@@ -1356,13 +1356,19 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
         {/* Diagram */}
         {q.diagramKey && <MathsDiagram diagramKey={q.diagramKey} />}
 
-        {/* Source extract */}
-        {q.extract && (
-          <div style={{ background:'#0D1424', borderLeft:`3px solid ${topicColor}`, borderRadius:'0 12px 12px 0', padding:'14px 16px', marginBottom:14 }}>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor, marginBottom:8 }}>📄 Source extract</div>
-            <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.85rem', lineHeight:1.7, margin:0, color:'#9CA8C7', whiteSpace:'pre-wrap' }}>{q.extract}</p>
-          </div>
-        )}
+
+        {/* Source extract or reference */}
+        {q.extract && (() => {
+          const isRealExtract = q.extract.startsWith('Lines') || q.extract.startsWith('"')
+          return (
+            <div style={{ background:'#0D1424', borderLeft:`3px solid ${topicColor}`, borderRadius:'0 12px 12px 0', padding:'14px 16px', marginBottom:14 }}>
+              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor, marginBottom:8 }}>
+                {isRealExtract ? '📄 Source extract' : '📎 Where to find your source'}
+              </div>
+              <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.88rem', lineHeight:1.7, margin:0, color: isRealExtract ? '#C8D0E8' : '#9CA8C7', whiteSpace:'pre-wrap' }}>{q.extract}</p>
+            </div>
+          )
+        })()}
 
         {/* Question */}
         <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, padding:'18px 18px', marginBottom:14 }}>
