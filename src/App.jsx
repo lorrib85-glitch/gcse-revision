@@ -56,35 +56,61 @@ function safeGetDraft() {
 
 // ─── Bottom nav ──────────────────────────────────────────────────────────────
 
+// SVG icons matching the reference design
+const NAV_ICONS = {
+  home: (active) => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#F5B700' : '#5A6480'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  ),
+  modules: (active) => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#F5B700' : '#5A6480'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="3" width="7" height="7"/><rect x="15" y="3" width="7" height="7"/><rect x="2" y="14" width="7" height="7"/><rect x="15" y="14" width="7" height="7"/>
+    </svg>
+  ),
+  test: (active) => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#F5B700' : '#5A6480'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+    </svg>
+  ),
+}
+
 function BottomNav({ tab, setTab }) {
   const tabs = [
-    { id: 'home',    icon: '🏠', label: 'Home'    },
-    { id: 'modules', icon: '📚', label: 'Modules' },
-    { id: 'test',    icon: '✏️', label: 'Test'    },
+    { id: 'home',    label: 'Home'    },
+    { id: 'modules', label: 'Modules' },
+    { id: 'test',    label: 'Test'    },
   ]
   return (
     <div style={{
       position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
-      background: '#fdfaf5', borderTop: '1px solid #e5ddd0',
+      background: 'rgba(16,24,43,.97)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      borderTop: '1px solid #2A3552',
       display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)',
     }}>
-      {tabs.map(t => (
-        <button key={t.id} onClick={() => setTab(t.id)}
-          style={{
-            flex: 1, border: 'none', background: 'none', cursor: 'pointer',
-            padding: '10px 0 8px', display: 'flex', flexDirection: 'column',
-            alignItems: `center`, gap: 3, transition: 'opacity .15s',
-          }}>
-          <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{t.icon}</span>
-          <span style={{
-            fontSize: '.67rem', fontWeight: 700, letterSpacing: '.04em',
-            color: tab === t.id ? '#3d2e1e' : '#9e8f7e',
-          }}>{t.label}</span>
-          {tab === t.id && (
-            <div style={{ width: 20, height: 2, background: '#c8922a', borderRadius: 99, marginTop: 2 }} />
-          )}
-        </button>
-      ))}
+      {tabs.map(t => {
+        const active = tab === t.id
+        return (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            style={{
+              flex: 1, border: 'none', background: 'none', cursor: 'pointer',
+              padding: '10px 0 8px', display: 'flex', flexDirection: 'column',
+              alignItems: 'center', gap: 4,
+            }}>
+            {NAV_ICONS[t.id](active)}
+            <span style={{
+              fontSize: '.6rem', fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase',
+              color: active ? '#F5B700' : '#5A6480',
+              transition: 'color .15s',
+            }}>{t.label}</span>
+            {active && (
+              <div style={{ width: 18, height: 2, background: '#F5B700', borderRadius: 99, marginTop: 1, boxShadow: '0 0 6px rgba(245,183,0,.6)' }} />
+            )}
+          </button>
+        )
+      })}
     </div>
   )
 }
@@ -156,7 +182,7 @@ export default function App() {
 
   // Tab shell
   return (
-    <div style={{ background: '#f5f0e8', minHeight: '100vh' }}>
+    <div style={{ background: '#070B1A', minHeight: '100vh' }}>
       {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} />}
       {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
       {tab === 'test'    && <TestTab />}
@@ -168,17 +194,17 @@ export default function App() {
 // ─── Shared palette ──────────────────────────────────────────────────────────
 
 const W = {
-  bg:         '#f5f0e8',
-  bgCard:     '#fdfaf5',
-  border:     '#e5ddd0',
-  text:       '#2c2016',
-  textMid:    '#6b5c4a',
-  textMuted:  '#9e8f7e',
-  textLight:  '#c4b8a8',
-  gold:       '#c8922a',
-  goldLight:  '#f5e4b8',
-  green:      '#3a7d44',
-  btnPrimary: '#3d2e1e',
+  bg:         '#070B1A',
+  bgCard:     '#10182B',
+  border:     '#2A3552',
+  text:       '#F5F7FB',
+  textMid:    '#C8D0E8',
+  textMuted:  '#9CA8C7',
+  textLight:  '#5A6480',
+  gold:       '#F5B700',
+  goldLight:  'rgba(245,183,0,.12)',
+  green:      '#4DFF88',
+  btnPrimary: 'linear-gradient(135deg, #F5B700, #C98719)',
 }
 
 // ─── Home tab ─────────────────────────────────────────────────────────────────
@@ -223,11 +249,11 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
 
       {/* Top bar */}
       <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px', display: 'flex', alignItems: `center`, justifyContent: 'space-between' }}>
-        <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>
           Revision
         </div>
         {streak > 0 && (
-          <div style={{ display: 'flex', alignItems: `center`, gap: 5, background: W.goldLight, border: '1px solid #e8cfa0', borderRadius: 99, padding: '5px 12px' }}>
+          <div style={{ display: 'flex', alignItems: `center`, gap: 5, background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.25)', borderRadius: 99, padding: '5px 12px' }}>
             <span style={{ fontSize: '.9rem' }}>🔥</span>
             <span style={{ fontWeight: 800, fontSize: '.85rem', color: W.gold }}>{streak} day{streak !== 1 ? 's' : ''}</span>
           </div>
@@ -239,7 +265,7 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
         {/* Greeting */}
         <div style={{ marginBottom: 22 }}>
           <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: W.textMuted, marginBottom: 8 }}>Your progress</div>
-          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(1.5rem, 5vw, 1.9rem)', color: W.text, lineHeight: 1.2, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 'clamp(1.5rem, 5vw, 1.9rem)', color: W.text, lineHeight: 1.2, margin: 0 }}>
             {greeting}
           </h1>
         </div>
@@ -262,10 +288,10 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
 
         {/* Continue banner */}
         {draft && draftTopic && (
-          <div style={{ background: W.btnPrimary, borderRadius: 18, padding: '16px 18px', marginBottom: 16 }}>
+          <div style={{ background: 'linear-gradient(135deg,#F5B700,#C98719)', borderRadius: 18, padding: '16px 18px', marginBottom: 16 }}>
             <div style={{ fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: W.gold, marginBottom: 6 }}>↩ Unfinished session</div>
-            <div style={{ color: '#f0e8da', fontWeight: 700, marginBottom: 2 }}>{draftTopic.icon} {draftTopic.title}</div>
-            <div style={{ color: W.textMuted, fontSize: '.78rem', marginBottom: 14 }}>Left off at: <strong style={{ color: '#d4c4b0' }}>{PHASE_NAMES[draft.phase] || 'Key Facts'}</strong></div>
+            <div style={{ color: '#070500', fontWeight: 700, marginBottom: 2 }}>{draftTopic.icon} {draftTopic.title}</div>
+            <div style={{ color: W.textMuted, fontSize: '.78rem', marginBottom: 14 }}>Left off at: <strong style={{ color: '#F5F7FB' }}>{PHASE_NAMES[draft.phase] || 'Key Facts'}</strong></div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={onResume} style={{ flex: 2, background: W.gold, color: '#fff', border: 'none', borderRadius: 12, padding: '12px', fontWeight: 800, cursor: 'pointer', fontSize: '.9rem', fontFamily: 'inherit' }}>Continue →</button>
               <button onClick={onDiscardDraft} style={{ flex: 1, background: 'transparent', color: W.textMuted, border: '1px solid #4a3828', borderRadius: 12, padding: '12px', fontWeight: 600, cursor: 'pointer', fontSize: '.82rem', fontFamily: 'inherit' }}>Discard</button>
@@ -287,7 +313,7 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
                 <div style={{ fontSize: '.75rem', color: W.textMuted }}>{nextModule.subtitle}</div>
               </div>
             </div>
-            <button onClick={() => onOpenModule(nextModule)} style={{ width: '100%', background: W.btnPrimary, color: '#f0e8da', border: 'none', borderRadius: 13, padding: '14px', fontWeight: 800, cursor: 'pointer', fontSize: '.97rem', fontFamily: 'inherit' }}>
+            <button onClick={() => onOpenModule(nextModule)} style={{ width: '100%', background: 'linear-gradient(135deg,#F5B700,#C98719)', color: '#070500', border: 'none', borderRadius: 13, padding: '14px', fontWeight: 800, cursor: 'pointer', fontSize: '.97rem', fontFamily: 'inherit' }}>
               Start today's module →
             </button>
           </div>
@@ -337,7 +363,7 @@ function ModulesTab({ onOpenModule }) {
   return (
     <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
       <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px' }}>
-        <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>Modules</div>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>Modules</div>
         <div style={{ fontSize: '.78rem', color: W.textMuted, marginTop: 3 }}>Work through these daily — one module at a time.</div>
       </div>
 
@@ -356,7 +382,7 @@ function ModulesTab({ onOpenModule }) {
                   const started = screen > 0
                   return (
                     <button key={mod.id} onClick={() => onOpenModule(mod)}
-                      style={{ background: W.bgCard, border: `1px solid ${done ? '#b8d8be' : W.border}`, borderRadius: 14, padding: '13px 15px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: `center`, gap: 12 }}>
+                      style={{ background: W.bgCard, border: `1px solid ${done ? 'rgba(77,255,136,.35)' : W.border}`, borderRadius: 14, padding: '13px 15px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: `center`, gap: 12 }}>
                       <div style={{ width: 40, height: 40, borderRadius: 11, flexShrink: 0, background: mod.colorLight, color: mod.color, display: 'flex', alignItems: `center`, justifyContent: 'center', fontSize: '1.15rem', position: 'relative' }}>
                         {mod.icon}
                         {done && <div style={{ position: 'absolute', top: -4, right: -4, background: W.green, color: '#fff', borderRadius: 99, width: 16, height: 16, fontSize: '.6rem', display: 'flex', alignItems: `center`, justifyContent: 'center', fontWeight: 900 }}>✓</div>}
@@ -373,7 +399,7 @@ function ModulesTab({ onOpenModule }) {
                       </div>
                       <div style={{ flexShrink: 0, textAlign: 'right' }}>
                         {done
-                          ? <span style={{ fontSize: '.72rem', color: W.green, fontWeight: 700 }}>Done ✓</span>
+                          ? <span style={{ fontSize: '.72rem', color: 'var(--success)', fontWeight: 700 }}>Done ✓</span>
                           : started
                             ? <span style={{ fontSize: '.72rem', color: W.gold, fontWeight: 700 }}>{pct}%</span>
                             : <span style={{ fontSize: '.8rem', color: W.textLight }}>→</span>}
@@ -953,10 +979,10 @@ function TestTab() {
 
   // ── Grade colours ──────────────────────────────────────────────
   const GRADE_STYLE = {
-    'Excellent':    { bg: '#e6f4e8', border: '#b8d8be', text: '#2a5c34', badge: '#3a7d44' },
-    'Good':         { bg: '#f0f9f1', border: '#c8e6cc', text: '#2a5c34', badge: '#5a9e64' },
-    'Developing':   { bg: '#fef9e7', border: '#f0d080', text: '#7a5c00', badge: '#c8922a' },
-    'Needs Work':   { bg: '#fdf0ee', border: '#f0b8b0', text: '#7a2a2a', badge: '#b84040' },
+    'Excellent':    { bg: 'rgba(77,255,136,.08)', border: 'rgba(77,255,136,.3)', text: '#4DFF88', badge: '#38D27A' },
+    'Good':         { bg: 'rgba(77,255,136,.06)', border: 'rgba(77,255,136,.2)', text: '#6BFFB0', badge: '#38D27A' },
+    'Developing':   { bg: 'rgba(255,200,87,.08)', border: 'rgba(255,200,87,.3)', text: '#FFC857', badge: '#F5B700' },
+    'Needs Work':   { bg: 'rgba(255,93,115,.08)', border: 'rgba(255,93,115,.3)', text: '#FF5D73', badge: '#FF5D73' },
   }
 
   // ── Question view ──────────────────────────────────────────────
@@ -987,7 +1013,7 @@ function TestTab() {
           {q && (
             <>
               {/* Marks badge */}
-              <div style={{ display: 'inline-flex', alignItems: `center`, gap: 6, background: W.goldLight, border: '1px solid #e8cfa0', borderRadius: 99, padding: '4px 12px', marginBottom: 14 }}>
+              <div style={{ display: 'inline-flex', alignItems: `center`, gap: 6, background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.25)', borderRadius: 99, padding: '4px 12px', marginBottom: 14 }}>
                 <span style={{ fontSize: '.72rem', fontWeight: 700, color: W.gold }}>{q.marks} marks</span>
               </div>
 
@@ -1001,7 +1027,7 @@ function TestTab() {
 
               {/* Question */}
               <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '18px', marginBottom: 14 }}>
-                <p style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', lineHeight: 1.6, color: W.text, margin: 0 }}>{q.q}</p>
+                <p style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem', lineHeight: 1.6, color: W.text, margin: 0 }}>{q.q}</p>
               </div>
 
               {/* Mark scheme tip */}
@@ -1012,8 +1038,8 @@ function TestTab() {
                 </button>
               ) : tip && (
                 <div style={{ background: '#f0f9f1', border: '1px solid #b8d8be', borderRadius: 12, padding: '12px 16px', marginBottom: 14 }}>
-                  <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.green, marginBottom: 5 }}>{tip.label}</div>
-                  <p style={{ fontSize: '.86rem', color: '#2a5c34', margin: 0 }}>{tip.tip}</p>
+                  <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: 'var(--success)', marginBottom: 5 }}>{tip.label}</div>
+                  <p style={{ fontSize: '.86rem', color: '#4DFF88', margin: 0 }}>{tip.tip}</p>
                 </div>
               )}
 
@@ -1026,8 +1052,8 @@ function TestTab() {
                       {q.options.map((opt, i) => (
                         <button key={i} onClick={() => setAnswer(opt)}
                           style={{
-                            background: answer === opt ? W.btnPrimary : W.bgCard,
-                            border: `2px solid ${answer === opt ? W.btnPrimary : W.border}`,
+                            background: answer === opt ? '#1A2338' : W.bgCard,
+                            border: `2px solid ${answer === opt ? '#F5B700' : W.border}`,
                             borderRadius: 12, padding: '12px 16px', cursor: 'pointer',
                             textAlign: 'left', fontFamily: 'inherit', fontSize: '.92rem',
                             color: answer === opt ? '#f0e8da' : W.text,
@@ -1054,8 +1080,8 @@ function TestTab() {
 
               {/* Error */}
               {error && (
-                <div style={{ background: '#fdf0ee', border: '1px solid #f0b8b0', borderRadius: 12, padding: '12px 16px', marginBottom: 14 }}>
-                  <p style={{ margin: 0, fontSize: '.86rem', color: '#7a2a2a' }}>{error}</p>
+                <div style={{ background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.3)', borderRadius: 12, padding: '12px 16px', marginBottom: 14 }}>
+                  <p style={{ margin: 0, fontSize: '.86rem', color: '#FF5D73' }}>{error}</p>
                 </div>
               )}
 
@@ -1066,7 +1092,7 @@ function TestTab() {
                   <div style={{ background: gs.bg, border: `2px solid ${gs.border}`, borderRadius: 18, padding: '20px', marginBottom: 14 }}>
                     <div style={{ display: 'flex', alignItems: `center`, justifyContent: 'space-between', marginBottom: 14 }}>
                       <div>
-                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '2rem', fontWeight: 900, color: gs.text, lineHeight: 1 }}>
+                        <div style={{ fontFamily: "'Syne', sans-serif", fontSize: '2rem', fontWeight: 900, color: gs.text, lineHeight: 1 }}>
                           {feedback.marksAwarded}<span style={{ fontSize: '1rem', fontWeight: 600, color: gs.text, opacity: .6 }}>/{feedback.marksAvailable}</span>
                         </div>
                         <div style={{ fontSize: '.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: gs.text, opacity: .7, marginTop: 4 }}>marks</div>
@@ -1081,10 +1107,10 @@ function TestTab() {
                   {/* What you got right */}
                   {feedback.achieved?.length > 0 && (
                     <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 14, padding: '14px 16px', marginBottom: 10 }}>
-                      <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.green, marginBottom: 10 }}>✓ What you got right</div>
+                      <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: 'var(--success)', marginBottom: 10 }}>✓ What you got right</div>
                       {feedback.achieved.map((a, i) => (
                         <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i < feedback.achieved.length - 1 ? 8 : 0 }}>
-                          <span style={{ color: W.green, fontSize: '.9rem', flexShrink: 0, marginTop: 1 }}>✓</span>
+                          <span style={{ color: 'var(--success)', fontSize: '.9rem', flexShrink: 0, marginTop: 1 }}>✓</span>
                           <p style={{ margin: 0, fontSize: '.88rem', color: W.textMid }}>{a}</p>
                         </div>
                       ))}
@@ -1106,9 +1132,9 @@ function TestTab() {
 
                   {/* Examiner tip */}
                   {feedback.examinerTip && (
-                    <div style={{ background: '#fffaf0', border: '1px solid #f0d080', borderRadius: 14, padding: '14px 16px', marginBottom: 16 }}>
+                    <div style={{ background: 'rgba(255,200,87,.07)', border: '1px solid rgba(255,200,87,.28)', borderRadius: 14, padding: '14px 16px', marginBottom: 16 }}>
                       <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.gold, marginBottom: 8 }}>🗡️ Examiner tip</div>
-                      <p style={{ margin: 0, fontSize: '.88rem', color: '#7a5c00' }}>{feedback.examinerTip}</p>
+                      <p style={{ margin: 0, fontSize: '.88rem', color: '#FFC857' }}>{feedback.examinerTip}</p>
                     </div>
                   )}
 
@@ -1119,7 +1145,7 @@ function TestTab() {
                       ↩ Try again
                     </button>
                     <button onClick={() => nextQuestion(questions.length)}
-                      style={{ background: W.btnPrimary, border: 'none', borderRadius: 13, padding: '13px', fontWeight: 800, cursor: 'pointer', color: '#f0e8da', fontFamily: 'inherit', fontSize: '.88rem' }}>
+                      style={{ background: 'linear-gradient(135deg,#F5B700,#C98719)', border: 'none', borderRadius: 13, padding: '13px', fontWeight: 800, cursor: 'pointer', color: '#070500', fontFamily: 'inherit', fontSize: '.88rem' }}>
                       {qIdx < questions.length - 1 ? 'Next →' : 'Finish ✓'}
                     </button>
                   </div>
@@ -1129,7 +1155,7 @@ function TestTab() {
               {/* Submit button — only shown before feedback */}
               {!feedback && (
                 <button onClick={() => gradeAnswer(q)} disabled={grading}
-                  style={{ width: '100%', background: grading ? W.textMuted : W.btnPrimary, color: '#f0e8da', border: 'none', borderRadius: 13, padding: '15px', fontWeight: 800, cursor: grading ? 'default' : 'pointer', fontSize: '.97rem', fontFamily: 'inherit', marginTop: 4, transition: 'background .2s' }}>
+                  style={{ width: '100%', background: grading ? W.textMuted : W.btnPrimary, color: '#070500', border: 'none', borderRadius: 13, padding: '15px', fontWeight: 800, cursor: grading ? 'default' : 'pointer', fontSize: '.97rem', fontFamily: 'inherit', marginTop: 4, transition: 'background .2s' }}>
                   {grading ? 'Marking your answer...' : 'Check my answer →'}
                 </button>
               )}
@@ -1144,7 +1170,7 @@ function TestTab() {
   return (
     <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
       <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px' }}>
-        <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>Test Your Learning</div>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>Test Your Learning</div>
         <div style={{ fontSize: '.78rem', color: W.textMuted, marginTop: 3 }}>Real AQA past paper questions — write your answer and get it marked by AI.</div>
       </div>
 
@@ -1160,7 +1186,7 @@ function TestTab() {
                 <button key={t.id}
                   onClick={() => t.available && setSelected({ topicId: t.id, label: t.label, subject })}
                   style={{
-                    background: t.available ? W.bgCard : '#f5f2ed',
+                    background: t.available ? W.bgCard : 'rgba(255,255,255,.03)',
                     border: `1px solid ${W.border}`, borderRadius: 13,
                     padding: '13px 16px', cursor: t.available ? 'pointer' : 'default',
                     textAlign: 'left', display: 'flex', alignItems: `center`, justifyContent: 'space-between',
@@ -1403,10 +1429,10 @@ function MedievalFacts({ interactiveFacts, onComplete }) {
 // ─── Humours Card ─────────────────────────────────────────────────────────────
 
 const HUMOUR_DATA = [
-  { name: 'Blood',       emoji: '🩸', color: '#c0392b', bg: '#fdf0ee', element: 'Air',   season: 'Spring', trait: 'Cheerful & optimistic', fact: 'Too much? Doctor cuts a vein or applies leeches.' },
-  { name: 'Phlegm',      emoji: '💧', color: '#2980b9', bg: '#e8f4fd', element: 'Water', season: 'Winter', trait: 'Calm & unemotional',    fact: "Too much? You'd be sluggish, pale and cold." },
-  { name: 'Yellow Bile', emoji: '⚡', color: '#b7860b', bg: '#fef9e7', element: 'Fire',  season: 'Summer', trait: 'Easily angered',         fact: 'Too much? Causes fever, vomiting, bad temper.' },
-  { name: 'Black Bile',  emoji: '🌑', color: '#4a4a5a', bg: '#f0eef5', element: 'Earth', season: 'Autumn', trait: 'Sad & withdrawn',        fact: 'Too much? Causes depression and serious illness.' },
+  { name: 'Blood',       emoji: '🩸', color: '#FF5D73', bg: 'rgba(255,93,115,.1)', element: 'Air',   season: 'Spring', trait: 'Cheerful & optimistic', fact: 'Too much? Doctor cuts a vein or applies leeches.' },
+  { name: 'Phlegm',      emoji: '💧', color: '#70B8FF', bg: 'rgba(59,130,255,.1)', element: 'Water', season: 'Winter', trait: 'Calm & unemotional',    fact: "Too much? You'd be sluggish, pale and cold." },
+  { name: 'Yellow Bile', emoji: '⚡', color: '#FFC857', bg: 'rgba(255,200,87,.1)', element: 'Fire',  season: 'Summer', trait: 'Easily angered',         fact: 'Too much? Causes fever, vomiting, bad temper.' },
+  { name: 'Black Bile',  emoji: '🌑', color: '#9CA8C7', bg: 'rgba(157,92,255,.1)', element: 'Earth', season: 'Autumn', trait: 'Sad & withdrawn',        fact: 'Too much? Causes depression and serious illness.' },
 ]
 
 function HumoursCard({ card, onNext, isLast }) {
@@ -1443,7 +1469,7 @@ function HumoursCard({ card, onNext, isLast }) {
           return (
             <button key={h.name} onClick={() => flip(i)}
               style={{
-                background: isFlipped ? h.bg : 'var(--parchment2)',
+                background: isFlipped ? h.bg : 'var(--bg3)',
                 border: `2px solid ${isFlipped ? h.color : 'var(--border)'}`,
                 borderRadius: 14, padding: '14px 12px', cursor: 'pointer',
                 transition: 'all .25s', textAlign: 'left',
@@ -1545,8 +1571,8 @@ function GalenCard({ card, onNext, isLast }) {
           return (
             <button key={i} onClick={() => reveal(i)}
               style={{
-                background: isRevealed ? (c.wasRight ? '#eafbf0' : '#fdf0ee') : 'var(--parchment2)',
-                border: `2px solid ${isRevealed ? (c.wasRight ? 'var(--green)' : 'var(--red)') : 'var(--border)'}`,
+                background: isRevealed ? (c.wasRight ? 'rgba(77,255,136,.08)' : 'rgba(255,93,115,.08)') : 'var(--bg3)',
+                border: `2px solid ${isRevealed ? (c.wasRight ? '#4DFF88' : '#FF5D73') : 'var(--border)'}`,
                 borderRadius: 12, padding: '14px 16px',
                 cursor: isRevealed ? 'default' : 'pointer',
                 textAlign: 'left', transition: 'all .2s',
@@ -1663,16 +1689,16 @@ function ChurchCard({ card, onNext, isLast }) {
       {allSorted && (
         <div className="fade-up">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
-            <div style={{ background: '#eafbf0', border: '2px solid var(--green)', borderRadius: 12, padding: '12px 14px' }}>
-              <div style={{ fontWeight: 700, color: 'var(--green)', fontSize: '.75rem', marginBottom: 8 }}>👍 HELPED</div>
+            <div style={{ background: 'rgba(77,255,136,.08)', border: '2px solid rgba(77,255,136,.3)', borderRadius: 12, padding: '12px 14px' }}>
+              <div style={{ fontWeight: 700, color: '#4DFF88', fontSize: '.75rem', marginBottom: 8 }}>👍 HELPED</div>
               {sorted.helped.map(s => (
                 <div key={s.text} style={{ fontSize: '.78rem', marginBottom: 5 }}>
                   {s.correct === 'helped' ? <span>✅ {s.text}</span> : <span style={{ color: 'var(--red)' }}>⚠️ {s.text}</span>}
                 </div>
               ))}
             </div>
-            <div style={{ background: '#fdf0ee', border: '2px solid var(--red)', borderRadius: 12, padding: '12px 14px' }}>
-              <div style={{ fontWeight: 700, color: 'var(--red)', fontSize: '.75rem', marginBottom: 8 }}>👎 HINDERED</div>
+            <div style={{ background: 'rgba(255,93,115,.08)', border: '2px solid rgba(255,93,115,.3)', borderRadius: 12, padding: '12px 14px' }}>
+              <div style={{ fontWeight: 700, color: '#FF5D73', fontSize: '.75rem', marginBottom: 8 }}>👎 HINDERED</div>
               {sorted.hindered.map(s => (
                 <div key={s.text} style={{ fontSize: '.78rem', marginBottom: 5 }}>
                   {s.correct === 'hindered' ? <span>✅ {s.text}</span> : <span style={{ color: 'var(--red)' }}>⚠️ {s.text}</span>}
@@ -1748,7 +1774,7 @@ function BlackDeathCard({ card, onNext, isLast }) {
           return (
             <button key={i} onClick={() => tapBelief(i)}
               style={{
-                background: isActive ? '#1a1a2e' : 'var(--parchment2)',
+                background: isActive ? '#1a1a2e' : 'var(--bg3)',
                 border: `2px solid ${isActive ? '#4a4a8a' : 'var(--border)'}`,
                 borderRadius: 12, padding: '14px 16px', cursor: 'pointer',
                 textAlign: 'left', transition: 'all .2s',
@@ -1924,7 +1950,7 @@ function PhaseProgress({ results, topicId, topic, onComplete }) {
     <div className="section">
       <div className="container anim-pop" style={{ textAlign: 'center' }}>
         <div className={`result-ring ${ringClass}`} style={{ marginBottom: 22 }}>
-          <span style={{ fontSize: '1.7rem', fontWeight: 900, fontFamily: 'Playfair Display, serif' }}>{totalRight}/{totalQ}</span>
+          <span style={{ fontSize: '1.7rem', fontWeight: 900, fontFamily: "'Syne', sans-serif" }}>{totalRight}/{totalQ}</span>
           <span style={{ fontSize: '.73rem', color: 'var(--muted)' }}>correct</span>
         </div>
         <h2 style={{ marginBottom: 8 }}>{pct >= 80 ? 'Excellent work! 🏆' : pct >= 60 ? 'Solid session 👍' : 'Keep at it 💪'}</h2>
@@ -1937,7 +1963,7 @@ function PhaseProgress({ results, topicId, topic, onComplete }) {
             <span className="streak">🔥 {progress.streak}-day streak!</span>
           </div>
         )}
-        <div style={{ background: 'var(--parchment2)', borderRadius: 12, padding: '14px 18px', marginBottom: 22, textAlign: 'left' }}>
+        <div style={{ background: 'var(--bg3)', borderRadius: 12, padding: '14px 18px', marginBottom: 22, textAlign: 'left' }}>
           <div className="label mb-8">Session breakdown</div>
           <div style={{ fontSize: '.9rem', display: 'flex', flexDirection: 'column', gap: 6 }}>
             <div className="flex justify-between"><span>⚡ Warm-up</span><strong>{warmupScore}/3</strong></div>
