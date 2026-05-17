@@ -1893,7 +1893,28 @@ function TestTab() {
           </button>
         </div>
 
-        <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.67rem', fontWeight:700, letterSpacing:'.14em', textTransform:'uppercase', color:'#5A6480', marginBottom:12 }}>PRACTICE BY SUBJECT</div>
+        {/* English — prominent card */}
+        <div style={{ marginBottom:20 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
+            <div style={{ width:30, height:30, borderRadius:9, background:'rgba(157,92,255,.13)', border:'1px solid rgba(157,92,255,.28)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem' }}>📖</div>
+            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, letterSpacing:'.14em', textTransform:'uppercase', color:'#9D5CFF' }}>ENGLISH LANGUAGE</span>
+          </div>
+          <button onClick={()=>setEnglishOpen(true)} style={{ width:'100%', background:'linear-gradient(145deg,#10182B,#0D1424)', border:'1px solid rgba(157,92,255,.2)', borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14 }}>
+            <div style={{ width:46, height:46, borderRadius:13, background:'rgba(157,92,255,.12)', border:'1px solid rgba(157,92,255,.25)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem', flexShrink:0 }}>✍️</div>
+            <div style={{ flex:1 }}>
+              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB' }}>AQA Past Papers — P1 & P2</div>
+              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:3 }}>Language analysis · Structure · Evaluation · Comparison · Writing</div>
+              <div style={{ display:'flex', gap:6, marginTop:8 }}>
+                {['Q1–Q5','Paper 1','Paper 2','AI marked'].map(tag=>(
+                  <span key={tag} style={{ background:'rgba(157,92,255,.1)', border:'1px solid rgba(157,92,255,.2)', borderRadius:99, padding:'2px 8px', fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:600, color:'#C18CFF' }}>{tag}</span>
+                ))}
+              </div>
+            </div>
+            <span style={{ color:'#9D5CFF', fontSize:'1.1rem' }}>›</span>
+          </button>
+        </div>
+
+        <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.67rem', fontWeight:700, letterSpacing:'.14em', textTransform:'uppercase', color:'#5A6480', marginBottom:12 }}>OTHER SUBJECTS</div>
         {TEST_TOPICS.map(({ subject, topics }) => {
           const sc = TEST_SUBJECT_COLOURS[subject] || TEST_SUBJECT_COLOURS['History']
           const available = topics.filter(t=>t.available)
