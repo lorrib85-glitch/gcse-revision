@@ -450,91 +450,208 @@ const MARK_TIPS = {
 }
 
 function TestTab() {
-  const [selected, setSelected] = useState(null)   // { subject, topicId }
+  const [selected, setSelected] = useState(null)
   const [qIdx, setQIdx]         = useState(0)
+  const [answer, setAnswer]     = useState('')
   const [showTip, setShowTip]   = useState(false)
-  const [showAnswer, setShowAnswer] = useState(false)
+  const [grading, setGrading]   = useState(false)
+  const [feedback, setFeedback] = useState(null)
+  const [error, setError]       = useState(null)
 
+  function resetQuestion() {
+    setAnswer('')
+    setShowTip(false)
+    setFeedback(null)
+    setError(null)
+    setGrading(false)
+  }
+
+  async function gradeAnswer(q) {
+    if (answer.trim().length < 10) {
+      setError('Write a bit more before submitting — even a rough attempt helps.')
+      return
+    }
+    setGrading(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/grade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q.q, answer: answer.trim(), marks: q.marks }),
+      })
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
+      setFeedback(data)
+    } catch (e) {
+      setError('Could not grade your answer right now. Check your connection and try again.')
+    } finally {
+      setGrading(false)
+    }
+  }
+
+  function nextQuestion(total) {
+    if (qIdx < total - 1) {
+      setQIdx(qIdx + 1)
+      resetQuestion()
+    } else {
+      setSelected(null)
+      setQIdx(0)
+      resetQuestion()
+    }
+  }
+
+  // ── Grade colours ──────────────────────────────────────────────
+  const GRADE_STYLE = {
+    'Excellent':    { bg: '#e6f4e8', border: '#b8d8be', text: '#2a5c34', badge: '#3a7d44' },
+    'Good':         { bg: '#f0f9f1', border: '#c8e6cc', text: '#2a5c34', badge: '#5a9e64' },
+    'Developing':   { bg: '#fef9e7', border: '#f0d080', text: '#7a5c00', badge: '#c8922a' },
+    'Needs Work':   { bg: '#fdf0ee', border: '#f0b8b0', text: '#7a2a2a', badge: '#b84040' },
+  }
+
+  // ── Question view ──────────────────────────────────────────────
   if (selected) {
     const questions = PAST_PAPER_QS[selected.topicId] || []
     const q = questions[qIdx]
     const tip = q ? MARK_TIPS[q.marks] : null
+    const gs = feedback ? (GRADE_STYLE[feedback.grade] || GRADE_STYLE['Developing']) : null
 
     return (
       <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
         {/* Header */}
         <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={() => { setSelected(null); setQIdx(0); setShowTip(false); setShowAnswer(false) }}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: W.textMuted, fontSize: '1rem', padding: 0 }}>←</button>
-          <div>
-            <div style={{ fontWeight: 800, fontSize: '.95rem', color: W.text }}>{selected.label}</div>
-            <div style={{ fontSize: '.72rem', color: W.textMuted }}>Question {qIdx + 1} of {questions.length}</div>
+          <button onClick={() => { setSelected(null); setQIdx(0); resetQuestion() }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: W.textMuted, fontSize: '1.1rem', padding: 0, lineHeight: 1 }}>←</button>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 800, fontSize: '.9rem', color: W.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{selected.label}</div>
+            <div style={{ fontSize: '.7rem', color: W.textMuted }}>Question {qIdx + 1} of {questions.length}</div>
           </div>
         </div>
 
-        {/* Progress bar */}
+        {/* Progress */}
         <div style={{ height: 4, background: W.border }}>
           <div style={{ height: '100%', width: `${((qIdx + 1) / questions.length) * 100}%`, background: W.gold, transition: 'width .3s' }} />
         </div>
 
-        <div style={{ maxWidth: 660, margin: '0 auto', padding: '24px 18px' }}>
+        <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 18px' }}>
           {q && (
             <>
               {/* Marks badge */}
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: W.goldLight, border: '1px solid #e8cfa0', borderRadius: 99, padding: '4px 12px', marginBottom: 16 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: W.goldLight, border: '1px solid #e8cfa0', borderRadius: 99, padding: '4px 12px', marginBottom: 14 }}>
                 <span style={{ fontSize: '.72rem', fontWeight: 700, color: W.gold }}>{q.marks} marks</span>
               </div>
 
               {/* Question */}
-              <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '20px 18px', marginBottom: 16 }}>
-                <p style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.05rem', lineHeight: 1.55, color: W.text, margin: 0 }}>{q.q}</p>
+              <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '18px', marginBottom: 14 }}>
+                <p style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', lineHeight: 1.6, color: W.text, margin: 0 }}>{q.q}</p>
               </div>
 
               {/* Mark scheme tip */}
-              {tip && (
-                <div style={{ marginBottom: 16 }}>
-                  {!showTip ? (
-                    <button onClick={() => setShowTip(true)}
-                      style={{ background: 'none', border: `1px dashed ${W.border}`, borderRadius: 12, padding: '10px 16px', cursor: 'pointer', color: W.textMuted, fontSize: '.85rem', width: '100%', fontFamily: 'inherit' }}>
-                      💡 Show mark scheme guidance
-                    </button>
-                  ) : (
-                    <div style={{ background: '#f0f9f1', border: '1px solid #b8d8be', borderRadius: 12, padding: '14px 16px' }}>
-                      <div style={{ fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.green, marginBottom: 6 }}>{tip.label}</div>
-                      <p style={{ fontSize: '.88rem', color: '#2a5c34', margin: 0 }}>{tip.tip}</p>
-                    </div>
-                  )}
+              {!showTip ? (
+                <button onClick={() => setShowTip(true)}
+                  style={{ background: 'none', border: `1px dashed ${W.border}`, borderRadius: 12, padding: '10px 16px', cursor: 'pointer', color: W.textMuted, fontSize: '.83rem', width: '100%', fontFamily: 'inherit', marginBottom: 14 }}>
+                  💡 Show mark scheme guidance
+                </button>
+              ) : tip && (
+                <div style={{ background: '#f0f9f1', border: '1px solid #b8d8be', borderRadius: 12, padding: '12px 16px', marginBottom: 14 }}>
+                  <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.green, marginBottom: 5 }}>{tip.label}</div>
+                  <p style={{ fontSize: '.86rem', color: '#2a5c34', margin: 0 }}>{tip.tip}</p>
                 </div>
               )}
 
-              {/* Answer space */}
-              <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '16px 18px', marginBottom: 20, minHeight: 180 }}>
-                <div style={{ fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.textMuted, marginBottom: 10 }}>Your answer</div>
-                <textarea
-                  placeholder="Write your answer here..."
-                  style={{ width: '100%', border: 'none', background: 'transparent', resize: 'none', fontSize: '.92rem', color: W.text, lineHeight: 1.6, outline: 'none', minHeight: 140, fontFamily: 'inherit' }}
-                />
-              </div>
+              {/* Answer area — hidden after feedback */}
+              {!feedback && (
+                <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '16px', marginBottom: 14 }}>
+                  <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.textMuted, marginBottom: 10 }}>Your answer</div>
+                  <textarea
+                    value={answer}
+                    onChange={e => setAnswer(e.target.value)}
+                    placeholder="Write your answer here..."
+                    style={{ width: '100%', border: 'none', background: 'transparent', resize: 'none', fontSize: '.92rem', color: W.text, lineHeight: 1.65, outline: 'none', minHeight: q.marks >= 12 ? 200 : 120, fontFamily: 'inherit' }}
+                  />
+                </div>
+              )}
 
-              {/* Navigation */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                <button onClick={() => { setQIdx(Math.max(0, qIdx - 1)); setShowTip(false); setShowAnswer(false) }}
-                  disabled={qIdx === 0}
-                  style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 13, padding: '13px', fontWeight: 700, cursor: qIdx === 0 ? 'default' : 'pointer', color: qIdx === 0 ? W.textLight : W.text, fontFamily: 'inherit', fontSize: '.9rem', opacity: qIdx === 0 ? .5 : 1 }}>
-                  ← Previous
+              {/* Error */}
+              {error && (
+                <div style={{ background: '#fdf0ee', border: '1px solid #f0b8b0', borderRadius: 12, padding: '12px 16px', marginBottom: 14 }}>
+                  <p style={{ margin: 0, fontSize: '.86rem', color: '#7a2a2a' }}>{error}</p>
+                </div>
+              )}
+
+              {/* Feedback */}
+              {feedback && gs && (
+                <div className="fade-up">
+                  {/* Score card */}
+                  <div style={{ background: gs.bg, border: `2px solid ${gs.border}`, borderRadius: 18, padding: '20px', marginBottom: 14 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                      <div>
+                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '2rem', fontWeight: 900, color: gs.text, lineHeight: 1 }}>
+                          {feedback.marksAwarded}<span style={{ fontSize: '1rem', fontWeight: 600, color: gs.text, opacity: .6 }}>/{feedback.marksAvailable}</span>
+                        </div>
+                        <div style={{ fontSize: '.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: gs.text, opacity: .7, marginTop: 4 }}>marks</div>
+                      </div>
+                      <div style={{ background: gs.badge, color: '#fff', borderRadius: 99, padding: '6px 14px', fontWeight: 800, fontSize: '.82rem' }}>
+                        {feedback.grade}
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '.92rem', color: gs.text, margin: 0, fontStyle: 'italic' }}>{feedback.summary}</p>
+                  </div>
+
+                  {/* What you got right */}
+                  {feedback.achieved?.length > 0 && (
+                    <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 14, padding: '14px 16px', marginBottom: 10 }}>
+                      <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.green, marginBottom: 10 }}>✓ What you got right</div>
+                      {feedback.achieved.map((a, i) => (
+                        <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i < feedback.achieved.length - 1 ? 8 : 0 }}>
+                          <span style={{ color: W.green, fontSize: '.9rem', flexShrink: 0, marginTop: 1 }}>✓</span>
+                          <p style={{ margin: 0, fontSize: '.88rem', color: W.textMid }}>{a}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* What you missed */}
+                  {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && (
+                    <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 14, padding: '14px 16px', marginBottom: 10 }}>
+                      <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#b84040', marginBottom: 10 }}>✗ Points to add next time</div>
+                      {feedback.missed.map((m, i) => (
+                        <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i < feedback.missed.length - 1 ? 8 : 0 }}>
+                          <span style={{ color: '#b84040', fontSize: '.9rem', flexShrink: 0, marginTop: 1 }}>→</span>
+                          <p style={{ margin: 0, fontSize: '.88rem', color: W.textMid }}>{m}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Examiner tip */}
+                  {feedback.examinerTip && (
+                    <div style={{ background: '#fffaf0', border: '1px solid #f0d080', borderRadius: 14, padding: '14px 16px', marginBottom: 16 }}>
+                      <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.gold, marginBottom: 8 }}>🗡️ Examiner tip</div>
+                      <p style={{ margin: 0, fontSize: '.88rem', color: '#7a5c00' }}>{feedback.examinerTip}</p>
+                    </div>
+                  )}
+
+                  {/* Try again / Next */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                    <button onClick={resetQuestion}
+                      style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 13, padding: '13px', fontWeight: 700, cursor: 'pointer', color: W.text, fontFamily: 'inherit', fontSize: '.88rem' }}>
+                      ↩ Try again
+                    </button>
+                    <button onClick={() => nextQuestion(questions.length)}
+                      style={{ background: W.btnPrimary, border: 'none', borderRadius: 13, padding: '13px', fontWeight: 800, cursor: 'pointer', color: '#f0e8da', fontFamily: 'inherit', fontSize: '.88rem' }}>
+                      {qIdx < questions.length - 1 ? 'Next →' : 'Finish ✓'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Submit button — only shown before feedback */}
+              {!feedback && (
+                <button onClick={() => gradeAnswer(q)} disabled={grading}
+                  style={{ width: '100%', background: grading ? W.textMuted : W.btnPrimary, color: '#f0e8da', border: 'none', borderRadius: 13, padding: '15px', fontWeight: 800, cursor: grading ? 'default' : 'pointer', fontSize: '.97rem', fontFamily: 'inherit', marginTop: 4, transition: 'background .2s' }}>
+                  {grading ? 'Marking your answer...' : 'Check my answer →'}
                 </button>
-                {qIdx < questions.length - 1 ? (
-                  <button onClick={() => { setQIdx(qIdx + 1); setShowTip(false); setShowAnswer(false) }}
-                    style={{ background: W.btnPrimary, border: 'none', borderRadius: 13, padding: '13px', fontWeight: 800, cursor: 'pointer', color: '#f0e8da', fontFamily: 'inherit', fontSize: '.9rem' }}>
-                    Next →
-                  </button>
-                ) : (
-                  <button onClick={() => { setSelected(null); setQIdx(0); setShowTip(false) }}
-                    style={{ background: W.green, border: 'none', borderRadius: 13, padding: '13px', fontWeight: 800, cursor: 'pointer', color: '#fff', fontFamily: 'inherit', fontSize: '.9rem' }}>
-                    Finish ✓
-                  </button>
-                )}
-              </div>
+              )}
             </>
           )}
         </div>
@@ -542,12 +659,12 @@ function TestTab() {
     )
   }
 
-  // Topic picker
+  // ── Topic picker ───────────────────────────────────────────────
   return (
     <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
       <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px' }}>
         <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>Test Your Learning</div>
-        <div style={{ fontSize: '.78rem', color: W.textMuted, marginTop: 3 }}>Past paper style questions — pick a topic to practise.</div>
+        <div style={{ fontSize: '.78rem', color: W.textMuted, marginTop: 3 }}>Past paper questions — write your answer and get it marked by AI.</div>
       </div>
 
       <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 18px' }}>
@@ -559,19 +676,19 @@ function TestTab() {
                 <button key={t.id}
                   onClick={() => t.available && setSelected({ topicId: t.id, label: t.label, subject })}
                   style={{
-                    background: t.available ? W.bgCard : '#f0ede8',
-                    border: `1px solid ${W.border}`,
-                    borderRadius: 13, padding: '13px 16px', cursor: t.available ? 'pointer' : 'default',
+                    background: t.available ? W.bgCard : '#f5f2ed',
+                    border: `1px solid ${W.border}`, borderRadius: 13,
+                    padding: '13px 16px', cursor: t.available ? 'pointer' : 'default',
                     textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    opacity: t.available ? 1 : 0.55,
+                    opacity: t.available ? 1 : 0.5,
                   }}>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: '.9rem', color: W.text }}>{t.label}</div>
-                    {t.available
-                      ? <div style={{ fontSize: '.72rem', color: W.textMuted, marginTop: 2 }}>{t.questions} question{t.questions !== 1 ? 's' : ''}</div>
-                      : <div style={{ fontSize: '.72rem', color: W.textLight, marginTop: 2 }}>Coming soon</div>}
+                    <div style={{ fontSize: '.72rem', color: W.textMuted, marginTop: 2 }}>
+                      {t.available ? `${t.questions} question${t.questions !== 1 ? 's' : ''} · AI marked` : 'Coming soon'}
+                    </div>
                   </div>
-                  {t.available && <span style={{ color: W.gold, fontWeight: 700, fontSize: '.9rem' }}>→</span>}
+                  {t.available && <span style={{ color: W.gold, fontWeight: 700 }}>→</span>}
                 </button>
               ))}
             </div>
@@ -581,6 +698,7 @@ function TestTab() {
     </div>
   )
 }
+
 
 // ─── Session orchestrator ────────────────────────────────────────────────────
 
