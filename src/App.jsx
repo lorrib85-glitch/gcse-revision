@@ -1838,166 +1838,149 @@ function TestTab() {
     )
   }
 
-  const TEST_SUBJECT_COLOURS = {
-    'History':           { color:'#F5B700', bg:'rgba(245,183,0,.13)',  border:'rgba(245,183,0,.28)',  icon:'🏰' },
-    'Biology':           { color:'#38D27A', bg:'rgba(56,210,122,.13)', border:'rgba(56,210,122,.28)', icon:'🧬' },
-    'Maths':             { color:'#3B82FF', bg:'rgba(59,130,255,.13)', border:'rgba(59,130,255,.28)', icon:'✕²' },
-    'Chemistry':         { color:'#38D27A', bg:'rgba(56,210,122,.13)', border:'rgba(56,210,122,.28)', icon:'⚗️' },
-    'Physics':           { color:'#3B82FF', bg:'rgba(59,130,255,.13)', border:'rgba(59,130,255,.28)', icon:'⚡' },
-    'Music':             { color:'#34D5FF', bg:'rgba(52,213,255,.13)', border:'rgba(52,213,255,.28)', icon:'🎵' },
-    'Sociology':         { color:'#FF5C7A', bg:'rgba(255,92,122,.13)', border:'rgba(255,92,122,.28)', icon:'👥' },
-    'English Literature':{ color:'#9D5CFF', bg:'rgba(157,92,255,.13)', border:'rgba(157,92,255,.28)', icon:'📖' },
-    'English Language':  { color:'#9D5CFF', bg:'rgba(157,92,255,.13)', border:'rgba(157,92,255,.28)', icon:'✍️' },
-  }
+
+  // Subject definitions for the clean grid
+  const SUBJECTS = [
+    { id: 'maths',   label: 'Maths',   icon: '✕²', color: '#3B82FF', bg: 'rgba(59,130,255,.1)',  action: () => setMathsOpen(true) },
+    { id: 'history', label: 'History', icon: '🏰', color: '#F5B700', bg: 'rgba(245,183,0,.1)',   action: () => setSelected({ topicId: 'medieval', label: 'Medieval Medicine', subject: 'History' }) },
+    { id: 'english', label: 'English', icon: '📖', color: '#9D5CFF', bg: 'rgba(157,92,255,.1)', action: () => setEnglishOpen(true) },
+    { id: 'science', label: 'Science', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => setSelected({ topicId: 'tb_cells', label: 'Cells & Microscopy', subject: 'Biology' }) },
+    { id: 'sociology', label: 'Sociology', icon: '👥', color: '#FF5C7A', bg: 'rgba(255,92,122,.1)', action: () => {} },
+    { id: 'drama',  label: 'Drama',   icon: '🎭', color: '#FF4FC3', bg: 'rgba(255,79,195,.1)', action: () => {} },
+  ]
+
+  // Mock "most improved" — in future this could be computed from real attempt history
+  const IMPROVED = [
+    { icon: '🧬', label: 'Science', pct: 12, color: '#38D27A' },
+    { icon: '🏰', label: 'History', pct: 9,  color: '#F5B700' },
+    { icon: '✕²', label: 'Maths',   pct: 7,  color: '#3B82FF' },
+  ]
 
   return (
-    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
-      <div style={{ padding:'18px 18px 14px' }}>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', maxWidth:660, margin:'0 auto' }}>
+    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
+
+      {/* ── Header ── */}
+      <div style={{ padding: '22px 22px 0' }}>
+        <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <div>
-            <h1 style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'1.5rem', color:'#F5F7FB', margin:0 }}>Test <span style={{ color:'#9D5CFF' }}>Yourself</span></h1>
-            <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.82rem', color:'#5A6480', marginTop:4 }}>Real exam questions. Real progress.</p>
+            <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.6rem,6vw,2rem)', color: '#F5F7FB', margin: 0, lineHeight: 1.1 }}>
+              Test <span style={{ color: '#9D5CFF' }}>Yourself</span>
+            </h1>
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#4A5578', marginTop: 6, margin: '6px 0 0' }}>
+              Real exam questions. Real progress.
+            </p>
+          </div>
+          {/* Streak pill */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(255,138,31,.1)', border: '1px solid rgba(255,138,31,.2)', borderRadius: 99, padding: '5px 12px', flexShrink: 0, marginTop: 4 }}>
+            <span style={{ fontSize: '.85rem' }}>🔥</span>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', fontWeight: 700, color: '#FF8A1F' }}>4 day streak</span>
           </div>
         </div>
       </div>
 
-      <div style={{ maxWidth:660, margin:'0 auto', padding:'0 16px' }}>
-        <div style={{ background:'linear-gradient(135deg,#1A1038,#0D0A22)', border:'1px solid rgba(157,92,255,.3)', borderRadius:18, padding:'18px', marginBottom:12, display:'flex', alignItems:'center', gap:16 }}>
-          <div style={{ width:60, height:60, borderRadius:16, flexShrink:0, background:'linear-gradient(135deg,#7C3AED,#5B21B6)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.8rem', boxShadow:'0 0 20px rgba(157,92,255,.35)' }}>🎲</div>
-          <div style={{ flex:1 }}>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.62rem', fontWeight:700, letterSpacing:'.12em', color:'#9D5CFF', textTransform:'uppercase', marginBottom:4 }}>WILDCARD MODE</div>
-            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'1.05rem', color:'#F5F7FB', lineHeight:1.2 }}>Give me <span style={{ color:'#9D5CFF' }}>any</span> question</div>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.78rem', color:'#5A6480', marginTop:4 }}>Random past exam question from any topic.</div>
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '28px 22px 0' }}>
+
+        {/* ── Most improved this week ── */}
+        <div style={{ marginBottom: 36 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
+            <span style={{ fontSize: '.8rem' }}>📈</span>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.67rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#4A5578' }}>Most improved this week</span>
+          </div>
+          <div style={{ display: 'flex', gap: 20 }}>
+            {IMPROVED.map(s => (
+              <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 9, background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.95rem' }}>{s.icon}</div>
+                <div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.85rem', color: '#E0E6F0' }}>{s.label}</div>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: s.color, fontWeight: 600 }}>↑{s.pct}%</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-        <button onClick={()=>{ const allT=TEST_TOPICS.filter(s=>s.topics.some(t=>t.available)); const rs=allT[Math.floor(Math.random()*allT.length)]; const av=rs.topics.filter(t=>t.available); const rt=av[Math.floor(Math.random()*av.length)]; setSelected({topicId:rt.id,label:rt.label,subject:rs.subject}) }} style={{ width:'100%', background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', color:'#fff', border:'none', borderRadius:14, padding:'15px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, cursor:'pointer', fontSize:'.95rem', letterSpacing:'.04em', textTransform:'uppercase', boxShadow:'0 4px 20px rgba(157,92,255,.3)', marginBottom:24, display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>GET A QUESTION →</button>
 
-        {/* Maths — prominent card */}
-        <div style={{ marginBottom:24 }}>
-          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
-            <div style={{ width:30, height:30, borderRadius:9, background:'rgba(59,130,255,.13)', border:'1px solid rgba(59,130,255,.28)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem' }}>✕²</div>
-            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, letterSpacing:'.14em', textTransform:'uppercase', color:'#3B82FF' }}>MATHS</span>
+        {/* ── Random question — lightweight card ── */}
+        <button
+          onClick={() => {
+            const allT = TEST_TOPICS.filter(s => s.topics.some(t => t.available))
+            const rs = allT[Math.floor(Math.random() * allT.length)]
+            const av = rs.topics.filter(t => t.available)
+            const rt = av[Math.floor(Math.random() * av.length)]
+            setSelected({ topicId: rt.id, label: rt.label, subject: rs.subject })
+          }}
+          style={{
+            width: '100%', background: '#10182B',
+            border: '1px solid #1E2A40',
+            borderRadius: 16, padding: '16px 20px',
+            cursor: 'pointer', textAlign: 'left',
+            display: 'flex', alignItems: 'center', gap: 16,
+            marginBottom: 36,
+            transition: 'border-color .2s',
+          }}
+        >
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(157,92,255,.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.15rem', flexShrink: 0 }}>🎲</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.95rem', color: '#F5F7FB' }}>Random Question</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.78rem', color: '#4A5578', marginTop: 2 }}>Tap and go</div>
           </div>
-          <button onClick={()=>setMathsOpen(true)} style={{ width:'100%', background:'linear-gradient(145deg,#10182B,#0D1424)', border:'1px solid rgba(59,130,255,.2)', borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14 }}>
-            <div style={{ width:46, height:46, borderRadius:13, background:'rgba(59,130,255,.12)', border:'1px solid rgba(59,130,255,.25)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem', flexShrink:0 }}>📐</div>
-            <div style={{ flex:1 }}>
-              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB' }}>AQA Foundation Past Papers</div>
-              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:3 }}>15 topics · AI marked · Formula sheet · Diagrams included</div>
-              <div style={{ display:'flex', gap:6, marginTop:8 }}>
-                {['Non-Calc','Calculator','Formulae','Diagrams'].map(tag=>(
-                  <span key={tag} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.2)', borderRadius:99, padding:'2px 8px', fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:600, color:'#70B8FF' }}>{tag}</span>
-                ))}
-              </div>
-            </div>
-            <span style={{ color:'#3B82FF', fontSize:'1.1rem' }}>›</span>
-          </button>
+          <span style={{ color: '#9D5CFF', fontSize: '1rem' }}>→</span>
+        </button>
+
+        {/* ── Subjects grid ── */}
+        <div style={{ marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
+            <span style={{ fontSize: '.8rem' }}>📚</span>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.67rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#4A5578' }}>Subjects</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            {SUBJECTS.map(s => (
+              <button key={s.id} onClick={s.action} style={{
+                background: '#10182B',
+                border: '1px solid #1A2338',
+                borderRadius: 18,
+                padding: '24px 16px',
+                cursor: 'pointer',
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', gap: 10,
+                transition: 'background .15s, border-color .15s',
+                minHeight: 110,
+              }}>
+                {/* Icon tile */}
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>
+                  {s.icon}
+                </div>
+                <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '.9rem', color: '#E0E6F0' }}>{s.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* English — prominent card */}
-        <div style={{ marginBottom:20 }}>
-          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
-            <div style={{ width:30, height:30, borderRadius:9, background:'rgba(157,92,255,.13)', border:'1px solid rgba(157,92,255,.28)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem' }}>📖</div>
-            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, letterSpacing:'.14em', textTransform:'uppercase', color:'#9D5CFF' }}>ENGLISH LANGUAGE</span>
+        {/* ── Continue last session ── */}
+        <div style={{ marginTop: 32 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
+            <span style={{ fontSize: '.8rem' }}>🕐</span>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.67rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#4A5578' }}>Continue last session</span>
           </div>
-          <button onClick={()=>setEnglishOpen(true)} style={{ width:'100%', background:'linear-gradient(145deg,#10182B,#0D1424)', border:'1px solid rgba(157,92,255,.2)', borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14 }}>
-            <div style={{ width:46, height:46, borderRadius:13, background:'rgba(157,92,255,.12)', border:'1px solid rgba(157,92,255,.25)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem', flexShrink:0 }}>✍️</div>
-            <div style={{ flex:1 }}>
-              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB' }}>AQA Past Papers — P1 & P2</div>
-              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:3 }}>Language analysis · Structure · Evaluation · Comparison · Writing</div>
-              <div style={{ display:'flex', gap:6, marginTop:8 }}>
-                {['Q1–Q5','Paper 1','Paper 2','AI marked'].map(tag=>(
-                  <span key={tag} style={{ background:'rgba(157,92,255,.1)', border:'1px solid rgba(157,92,255,.2)', borderRadius:99, padding:'2px 8px', fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:600, color:'#C18CFF' }}>{tag}</span>
-                ))}
+          <div style={{ background: '#10182B', border: '1px solid #1A2338', borderRadius: 18, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 13, background: 'rgba(59,130,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>📐</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.95rem', color: '#F5F7FB', marginBottom: 3 }}>Maths Foundation</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#4A5578', marginBottom: 8 }}>Question 12 of 25 · ~9 mins left</div>
+              <div style={{ height: 3, background: '#1A2338', borderRadius: 99, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: '48%', background: '#3B82FF', borderRadius: 99 }} />
               </div>
             </div>
-            <span style={{ color:'#9D5CFF', fontSize:'1.1rem' }}>›</span>
-          </button>
+            <button onClick={() => setMathsOpen(true)} style={{ background: 'linear-gradient(135deg, #7C3AED, #9D5CFF)', border: 'none', borderRadius: 12, padding: '10px 16px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.82rem', color: '#fff', cursor: 'pointer', flexShrink: 0, letterSpacing: '.02em' }}>
+              CONTINUE →
+            </button>
+          </div>
         </div>
 
-        <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.67rem', fontWeight:700, letterSpacing:'.14em', textTransform:'uppercase', color:'#5A6480', marginBottom:12 }}>OTHER SUBJECTS</div>
-        {TEST_TOPICS.map(({ subject, topics }) => {
-          const sc = TEST_SUBJECT_COLOURS[subject] || TEST_SUBJECT_COLOURS['History']
-          const available = topics.filter(t=>t.available)
-          if (!available.length && topics.length===1 && !topics[0].available) return null
-          return (
-            <div key={subject} style={{ marginBottom:18 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
-                <div style={{ width:30, height:30, borderRadius:9, background:sc.bg, border:`1px solid ${sc.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem' }}>{sc.icon}</div>
-                <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, letterSpacing:'.14em', textTransform:'uppercase', color:sc.color }}>{subject}</span>
-              </div>
-              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, overflow:'hidden' }}>
-                {topics.map((t,i) => (
-                  <button key={t.id} onClick={()=>t.available&&setSelected({topicId:t.id,label:t.label,subject})} disabled={!t.available} style={{ width:'100%', background:'transparent', border:'none', borderBottom:i<topics.length-1?'1px solid #1A2338':'none', padding:'13px 16px', cursor:t.available?'pointer':'default', textAlign:'left', display:'flex', alignItems:'center', gap:14, opacity:t.available?1:0.38 }}>
-                    <div style={{ width:38, height:38, borderRadius:10, flexShrink:0, background:sc.bg, border:`1px solid ${sc.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.95rem' }}>{sc.icon}</div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontFamily:"'Inter',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#E0E6F0' }}>{t.label}</div>
-                      <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480', marginTop:2 }}>{t.available?`${t.questions} question${t.questions!==1?'s':''} answered`:'Coming soon'}</div>
-                      {t.available && <div style={{ marginTop:5, height:3, background:'#2A3552', borderRadius:99, overflow:'hidden' }}><div style={{ height:'100%', width:Math.min(t.questions*4,85)+'%', background:sc.color, borderRadius:99 }} /></div>}
-                    </div>
-                    {t.available && <span style={{ color:'#2A3552', fontSize:'1rem', flexShrink:0 }}>›</span>}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )
-        })}
       </div>
     </div>
   )
 }
 
-
-// ─── Session orchestrator ────────────────────────────────────────────────────
-
-function Session({ session, topicId, startPhase = 1, initialResults = {}, onFinish, onHome }) {
-  const [phase, setPhase]     = useState(startPhase)
-  const [results, setResults] = useState(initialResults)
-  const topic = TOPICS.find(t => t.id === topicId)
-  const pct   = Math.round((phase / 4) * 100)
-  const PHASE_LABELS = ['', 'Warm-up', 'Key Facts', 'Mini Quiz', 'Progress']
-  const PHASE_ICONS  = ['', '⚡', '📖', '✏️', '📊']
-
-  function advance(partial) {
-    const merged   = { ...results, ...partial }
-    const nextPhase = phase + 1
-    setResults(merged)
-    if (phase < 4) {
-      setPhase(nextPhase)
-      // Save draft so returning users can pick up here
-      saveSessionDraft({ topicId, phase: nextPhase, results: merged })
-    } else {
-      onFinish(merged)
-    }
-  }
-
-  function exitToHome() {
-    // Save current position before leaving
-    saveSessionDraft({ topicId, phase, results })
-    onHome()
-  }
-
-  return (
-    <div className="page">
-      <div className="sticky-header">
-        <div className="container">
-          <div className="flex items-center justify-between mb-8">
-            <span className="phase-badge">{PHASE_ICONS[phase]} {PHASE_LABELS[phase]}</span>
-            <div className="flex items-center gap-12">
-              <span className="text-sm text-muted font-bold">{topic?.title}</span>
-              <button onClick={exitToHome} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '.82rem' }}>✕ exit</button>
-            </div>
-          </div>
-          <div className="prog-wrap"><div className="prog-fill" style={{ width: `${pct}%` }} /></div>
-        </div>
-      </div>
-
-      {phase === 1 && <PhaseWarmup   questions={session.warmupQ} onComplete={r => advance(r)} />}
-      {phase === 2 && <PhaseFacts    session={session} topic={topic} onComplete={r => advance(r)} />}
-      {phase === 3 && <PhaseMiniQuiz questions={session.miniQuizQ} onComplete={r => advance(r)} />}
-      {phase === 4 && <PhaseProgress results={results} topicId={topicId} topic={topic} onComplete={() => advance({})} />}
-    </div>
-  )
-}
 
 // ─── Phase 1: Warm-up ────────────────────────────────────────────────────────
 
