@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
 import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
+import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft } from './progress.js'
@@ -1242,12 +1243,18 @@ function cleanQuestionText(q) {
     .split('\n')
     .filter(line => {
       const t = line.trim()
+      // Strip marks label — shown in badge already: [8 marks], [20 marks] etc
+      if (/^\[\d+ marks?\]$/.test(t)) return false
+      // Strip inline source attribution — shown in extract card instead
+      if (/^\(Source:/i.test(t)) return false
+      // Strip "You could include the writer's choice of:" — instruction noise
+      if (/^You could include/i.test(t)) return false
       if (!isMC) return true
       // Strip embedded MC option lines: [ ] ... or [x] ...
       if (/^\[.{0,2}\]/.test(t)) return false
       // Strip lettered option lines: A. / B. / A) etc
       if (/^[A-D][.)]\s/.test(t)) return false
-      // Strip instruction lines that are redundant with button UI
+      // Strip MC instruction lines redundant with button UI
       if (/^tick one box/i.test(t)) return false
       if (/^circle the (answer|correct)/i.test(t)) return false
       return true
@@ -1383,7 +1390,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
                 ))}
               </div>
             : <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:16 }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>Your working & answer</div>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>{isMathsQ ? 'Your working & answer' : 'Your answer'}</div>
                 <textarea
                   value={answer}
                   onChange={e => setAnswer(e.target.value)}
@@ -1635,11 +1642,107 @@ function EnglishBrowser({ onBack }) {
   )
 }
 
+// ─── Sociology topic view ─────────────────────────────────────────────────────
+function SociologyTopicView({ group, onBack }) {
+  const [qIdx, setQIdx] = useState(0)
+  const qs = group.questions
+  return (
+    <MathsQuestion
+      q={qs[qIdx]}
+      qIdx={qIdx} total={qs.length}
+      topicLabel={group.label} topicColor={group.color} isCalc={false}
+      onBack={onBack}
+      onNext={() => { if (qIdx < qs.length - 1) setQIdx(qIdx + 1); else onBack() }}
+    />
+  )
+}
+
+// ─── Sociology browser ────────────────────────────────────────────────────────
+function SociologyBrowser({ onBack }) {
+  const [activeGroup, setGroup] = useState(null)
+  const [filter, setFilter]     = useState('all')
+
+  if (activeGroup) return <SociologyTopicView group={activeGroup} onBack={() => setGroup(null)} />
+
+  const totalQs = SOCIOLOGY_TOPIC_GROUPS.reduce((s, g) => s + g.questions.length, 0)
+  const filters = [
+    { id: 'all', label: `All (${totalQs})` },
+    { id: 'p1',  label: 'Paper 1' },
+    { id: 'p2',  label: 'Paper 2' },
+  ]
+  const filtered = filter === 'all' ? SOCIOLOGY_TOPIC_GROUPS
+    : filter === 'p1' ? SOCIOLOGY_TOPIC_GROUPS.filter(g => g.paper === 'Paper 1')
+    : SOCIOLOGY_TOPIC_GROUPS.filter(g => g.paper === 'Paper 2')
+
+  const SC = { color: '#FF5C7A', border: 'rgba(255,92,122,.28)' }
+
+  return (
+    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
+      <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
+        <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Sociology</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: '#5A6480' }}>
+              Papers 1 & 2 · {SOCIOLOGY_TOPIC_GROUPS.length} topic areas · {totalQs} questions · AI marked
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '16px 16px' }}>
+        {/* Filter pills */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          {filters.map(f => (
+            <button key={f.id} onClick={() => setFilter(f.id)} style={{
+              flex: 1, background: filter === f.id ? 'rgba(255,92,122,.15)' : '#10182B',
+              border: `1px solid ${filter === f.id ? '#FF5C7A' : '#1E2A40'}`,
+              borderRadius: 10, padding: '9px 6px',
+              fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 600,
+              color: filter === f.id ? '#FF8DA1' : '#5A6480', cursor: 'pointer',
+            }}>{f.label}</button>
+          ))}
+        </div>
+
+        {/* Topic cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {filtered.map(group => (
+            <button key={group.id} onClick={() => setGroup(group)} style={{
+              background: '#10182B', border: '1px solid #1E2A40',
+              borderRadius: 16, padding: '16px', cursor: 'pointer',
+              textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14, width: '100%',
+            }}>
+              <div style={{
+                width: 46, height: 46, borderRadius: 13, flexShrink: 0,
+                background: group.bg, border: `1px solid ${group.border}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem',
+              }}>{group.icon}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 7, alignItems: 'center' }}>
+                  <div style={{ flex: 1, height: 3, background: '#1E2A40', borderRadius: 99 }} />
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.68rem', fontWeight: 600, color: group.color, flexShrink: 0 }}>{group.questions.length} Q{group.questions.length !== 1 ? 's' : ''}</span>
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.65rem', color: '#4A5578', flexShrink: 0 }}>{group.marks}m</span>
+                </div>
+              </div>
+              <span style={{ color: '#2A3552', fontSize: '1.1rem', flexShrink: 0 }}>›</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
+
 
 
 function TestTab() {
   const [mathsOpen, setMathsOpen]   = useState(false)
-  const [englishOpen, setEnglishOpen] = useState(false)
+  const [englishOpen, setEnglishOpen]     = useState(false)
+  const [sociologyOpen, setSociologyOpen] = useState(false)
   const [selected, setSelected]   = useState(null)
   const [qIdx, setQIdx]           = useState(0)
   const [answer, setAnswer]       = useState('')
@@ -1651,7 +1754,8 @@ function TestTab() {
   function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
 
   if (mathsOpen)   return <MathsBrowser   onBack={() => setMathsOpen(false)} />
-  if (englishOpen) return <EnglishBrowser onBack={() => setEnglishOpen(false)} />
+  if (englishOpen)   return <EnglishBrowser   onBack={() => setEnglishOpen(false)} />
+  if (sociologyOpen) return <SociologyBrowser onBack={() => setSociologyOpen(false)} />
 
   const GRADE_STYLE = {
     'Excellent':  { bg:'rgba(77,255,136,.08)',  border:'rgba(77,255,136,.3)',  text:'#4DFF88', badge:'#38D27A' },
@@ -1770,7 +1874,7 @@ function TestTab() {
     { id: 'history', label: 'History', icon: '🏰', color: '#F5B700', bg: 'rgba(245,183,0,.1)',   action: () => setSelected({ topicId: 'medieval', label: 'Medieval Medicine', subject: 'History' }) },
     { id: 'english', label: 'English', icon: '📖', color: '#9D5CFF', bg: 'rgba(157,92,255,.1)', action: () => setEnglishOpen(true) },
     { id: 'science', label: 'Science', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => setSelected({ topicId: 'tb_cells', label: 'Cells & Microscopy', subject: 'Biology' }) },
-    { id: 'sociology', label: 'Sociology', icon: '👥', color: '#FF5C7A', bg: 'rgba(255,92,122,.1)', action: () => {} },
+    { id: 'sociology', label: 'Sociology', icon: '👥', color: '#FF5C7A', bg: 'rgba(255,92,122,.1)', action: () => setSociologyOpen(true) },
     { id: 'drama',  label: 'Drama',   icon: '🎭', color: '#FF4FC3', bg: 'rgba(255,79,195,.1)', action: () => {} },
   ]
 
