@@ -53,8 +53,46 @@ function safeGetDraft() {
 
 // ─── Top-level router ────────────────────────────────────────────────────────
 
+// ─── Bottom nav ──────────────────────────────────────────────────────────────
+
+function BottomNav({ tab, setTab }) {
+  const tabs = [
+    { id: 'home',    icon: '🏠', label: 'Home'    },
+    { id: 'modules', icon: '📚', label: 'Modules' },
+    { id: 'test',    icon: '✏️', label: 'Test'    },
+  ]
+  return (
+    <div style={{
+      position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
+      background: '#fdfaf5', borderTop: '1px solid #e5ddd0',
+      display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)',
+    }}>
+      {tabs.map(t => (
+        <button key={t.id} onClick={() => setTab(t.id)}
+          style={{
+            flex: 1, border: 'none', background: 'none', cursor: 'pointer',
+            padding: '10px 0 8px', display: 'flex', flexDirection: 'column',
+            alignItems: 'center', gap: 3, transition: 'opacity .15s',
+          }}>
+          <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{t.icon}</span>
+          <span style={{
+            fontSize: '.67rem', fontWeight: 700, letterSpacing: '.04em',
+            color: tab === t.id ? '#3d2e1e' : '#9e8f7e',
+          }}>{t.label}</span>
+          {tab === t.id && (
+            <div style={{ width: 20, height: 2, background: '#c8922a', borderRadius: 99, marginTop: 2 }} />
+          )}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// ─── App ─────────────────────────────────────────────────────────────────────
+
 export default function App() {
-  const [view, setView]           = useState('home')
+  const [tab, setTab]             = useState('home')
+  const [view, setView]           = useState(null)   // 'module' | 'session' | 'end' — overlays
   const [topicId, setTopicId]     = useState(null)
   const [session, setSession]     = useState(null)
   const [startPhase, setStartPhase] = useState(1)
@@ -63,6 +101,11 @@ export default function App() {
   const [progress, setProgress]   = useState(() => safeGetProgress())
   const [draft, setDraft]         = useState(() => safeGetDraft())
   const [activeModule, setActiveModule] = useState(null)
+
+  function openModule(mod) {
+    setActiveModule(mod)
+    setView('module')
+  }
 
   function startSession(id, resumePhase = 1, resumeResults = {}) {
     const built = buildSession(id)
@@ -99,20 +142,45 @@ export default function App() {
     setView('end')
   }
 
-  function goHome() {
-    setProgress(getProgress())
-    setDraft(getSessionDraft())
-    setView('home')
+  function closeOverlay() {
+    setProgress(safeGetProgress())
+    setDraft(safeGetDraft())
+    setView(null)
   }
 
-  if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} onBack={() => setView('home')} />
-  if (view === 'home') return <Home progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={m => { setActiveModule(m); setView('module') }} />
-  if (view === 'session' && session) return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={goHome} />
-  if (view === 'end') return <EndScreen topicId={topicId} results={results} savedData={savedData} onHome={goHome} onStart={startSession} />
-  return null
+  // Full-screen overlays take priority
+  if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} onBack={closeOverlay} />
+  if (view === 'session' && session)     return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={closeOverlay} />
+  if (view === 'end')                    return <EndScreen topicId={topicId} results={results} savedData={savedData} onHome={closeOverlay} onStart={startSession} />
+
+  // Tab shell
+  return (
+    <div style={{ background: '#f5f0e8', minHeight: '100vh' }}>
+      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} />}
+      {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
+      {tab === 'test'    && <TestTab />}
+      <BottomNav tab={tab} setTab={setTab} />
+    </div>
+  )
 }
 
-// ─── Home ────────────────────────────────────────────────────────────────────
+// ─── Shared palette ──────────────────────────────────────────────────────────
+
+const W = {
+  bg:         '#f5f0e8',
+  bgCard:     '#fdfaf5',
+  border:     '#e5ddd0',
+  text:       '#2c2016',
+  textMid:    '#6b5c4a',
+  textMuted:  '#9e8f7e',
+  textLight:  '#c4b8a8',
+  gold:       '#c8922a',
+  goldLight:  '#f5e4b8',
+  green:      '#3a7d44',
+  btnPrimary: '#3d2e1e',
+}
+
+// ─── Home tab ─────────────────────────────────────────────────────────────────
 
 const GREETINGS = [
   "Right then, Elliot. Let's get some of this locked in.",
@@ -128,8 +196,7 @@ const GREETINGS = [
 function daysUntilExam() {
   const exam = new Date('2027-05-01')
   const today = new Date()
-  today.setHours(0,0,0,0)
-  exam.setHours(0,0,0,0)
+  today.setHours(0,0,0,0); exam.setHours(0,0,0,0)
   return Math.max(0, Math.round((exam - today) / 86400000))
 }
 
@@ -144,191 +211,373 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
   const examDays   = daysUntilExam()
   const totalSessions = Object.values(progress.topicProgress || {}).reduce((s, t) => s + (t.completedSessions || 0), 0)
 
-  return (
-    <div className="page" style={{ background: '#f7f3ee', minHeight: '100vh' }}>
+  // Next module to do — first one not completed
+  const nextModule = MODULES.find(m => {
+    const s = safeGetModuleState(m.id)
+    return !s.screen || s.screen < m.screens.length - 1
+  }) || MODULES[0]
 
-      {/* ── Top nav bar ── */}
-      <div style={{ background: '#f7f3ee', borderBottom: '1px solid #e8e0d4', padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: '1.1rem', color: '#17120d' }}>
-          Medicine in Britain
+  return (
+    <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
+
+      {/* Top bar */}
+      <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>
+          Revision
         </div>
         {streak > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#fff8f0', border: '1px solid #f0d8b8', borderRadius: 99, padding: '5px 12px' }}>
-            <span style={{ fontSize: '1rem' }}>🔥</span>
-            <span style={{ fontWeight: 800, fontSize: '.88rem', color: '#b45309' }}>{streak}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: W.goldLight, border: '1px solid #e8cfa0', borderRadius: 99, padding: '5px 12px' }}>
+            <span style={{ fontSize: '.9rem' }}>🔥</span>
+            <span style={{ fontWeight: 800, fontSize: '.85rem', color: W.gold }}>{streak} day{streak !== 1 ? 's' : ''}</span>
           </div>
         )}
       </div>
 
-      {/* ── Hero greeting ── */}
-      <div style={{ padding: '28px 20px 0' }}>
-        <div className="container">
-          <div className="fade-up">
-            <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#9a8370', marginBottom: 8 }}>
-              Your progress
-            </div>
-            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(1.8rem, 6vw, 2.4rem)', color: '#17120d', marginBottom: 10, lineHeight: 1.15 }}>
-              {greeting}
-            </h1>
-          </div>
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '24px 18px 0' }}>
 
-          {/* ── Stats row ── */}
-          <div className="fade-up" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, margin: '20px 0 24px' }}>
-            <div style={{ background: '#fff', border: '1px solid #e8e0d4', borderRadius: 16, padding: '14px 12px', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.6rem', marginBottom: 2 }}>🔥</div>
-              <div style={{ fontWeight: 900, fontSize: '1.3rem', color: '#17120d' }}>{streak}</div>
-              <div style={{ fontSize: '.68rem', fontWeight: 600, color: '#9a8370', textTransform: 'uppercase', letterSpacing: '.08em' }}>Day streak</div>
-              {bestStreak > 1 && <div style={{ fontSize: '.65rem', color: '#b45309', marginTop: 3 }}>Best: {bestStreak}</div>}
+        {/* Greeting */}
+        <div style={{ marginBottom: 22 }}>
+          <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: W.textMuted, marginBottom: 8 }}>Your progress</div>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(1.5rem, 5vw, 1.9rem)', color: W.text, lineHeight: 1.2, margin: 0 }}>
+            {greeting}
+          </h1>
+        </div>
+
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 20 }}>
+          {[
+            { emoji: '🔥', value: streak, label: 'Day streak', sub: bestStreak > 1 ? `Best: ${bestStreak}` : null, subColor: W.gold },
+            { emoji: '📚', value: totalSessions, label: 'Sessions' },
+            { emoji: '📅', value: examDays, label: 'Days to go', sub: '1 May 2027', subColor: W.textMuted },
+          ].map((s, i) => (
+            <div key={i} style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '14px 10px', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.4rem', marginBottom: 4 }}>{s.emoji}</div>
+              <div style={{ fontWeight: 900, fontSize: '1.2rem', color: W.text, lineHeight: 1 }}>{s.value}</div>
+              <div style={{ fontSize: '.61rem', fontWeight: 600, color: W.textMuted, textTransform: 'uppercase', letterSpacing: '.07em', marginTop: 4 }}>{s.label}</div>
+              {s.sub && <div style={{ fontSize: '.61rem', color: s.subColor || W.textMuted, marginTop: 3 }}>{s.sub}</div>}
             </div>
-            <div style={{ background: '#fff', border: '1px solid #e8e0d4', borderRadius: 16, padding: '14px 12px', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.6rem', marginBottom: 2 }}>📚</div>
-              <div style={{ fontWeight: 900, fontSize: '1.3rem', color: '#17120d' }}>{totalSessions}</div>
-              <div style={{ fontSize: '.68rem', fontWeight: 600, color: '#9a8370', textTransform: 'uppercase', letterSpacing: '.08em' }}>Sessions</div>
-            </div>
-            <div style={{ background: '#fff', border: '1px solid #e8e0d4', borderRadius: 16, padding: '14px 12px', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.6rem', marginBottom: 2 }}>📅</div>
-              <div style={{ fontWeight: 900, fontSize: '1.3rem', color: '#17120d' }}>{examDays}</div>
-              <div style={{ fontSize: '.68rem', fontWeight: 600, color: '#9a8370', textTransform: 'uppercase', letterSpacing: '.08em' }}>Days to go</div>
-              <div style={{ fontSize: '.65rem', color: '#9a8370', marginTop: 3 }}>1 May 2027</div>
+          ))}
+        </div>
+
+        {/* Continue banner */}
+        {draft && draftTopic && (
+          <div style={{ background: W.btnPrimary, borderRadius: 18, padding: '16px 18px', marginBottom: 16 }}>
+            <div style={{ fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: W.gold, marginBottom: 6 }}>↩ Unfinished session</div>
+            <div style={{ color: '#f0e8da', fontWeight: 700, marginBottom: 2 }}>{draftTopic.icon} {draftTopic.title}</div>
+            <div style={{ color: W.textMuted, fontSize: '.78rem', marginBottom: 14 }}>Left off at: <strong style={{ color: '#d4c4b0' }}>{PHASE_NAMES[draft.phase] || 'Key Facts'}</strong></div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={onResume} style={{ flex: 2, background: W.gold, color: '#fff', border: 'none', borderRadius: 12, padding: '12px', fontWeight: 800, cursor: 'pointer', fontSize: '.9rem', fontFamily: 'inherit' }}>Continue →</button>
+              <button onClick={onDiscardDraft} style={{ flex: 1, background: 'transparent', color: W.textMuted, border: '1px solid #4a3828', borderRadius: 12, padding: '12px', fontWeight: 600, cursor: 'pointer', fontSize: '.82rem', fontFamily: 'inherit' }}>Discard</button>
             </div>
           </div>
+        )}
 
-          {/* ── Continue banner ── */}
-          {draft && draftTopic && (
-            <div className="fade-up" style={{ marginBottom: 16 }}>
-              <div style={{ background: '#17120d', borderRadius: 18, padding: '16px 18px' }}>
-                <div style={{ fontSize: '.7rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#f8d783', marginBottom: 6 }}>
-                  ↩ You were partway through
-                </div>
-                <div style={{ color: '#fff', fontWeight: 700, marginBottom: 3 }}>
-                  {draftTopic.icon} {draftTopic.title}
-                </div>
-                <div style={{ color: '#888', fontSize: '.8rem', marginBottom: 14 }}>
-                  Left off at: <strong style={{ color: '#ccc' }}>{PHASE_NAMES[draft.phase] || 'Key Facts'}</strong>
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={onResume} style={{ flex: 2, background: '#f8d783', color: '#17120d', border: 'none', borderRadius: 12, padding: '12px', fontWeight: 900, cursor: 'pointer', fontSize: '.9rem' }}>
-                    Continue →
-                  </button>
-                  <button onClick={onDiscardDraft} style={{ flex: 1, background: 'transparent', color: '#666', border: '1px solid #333', borderRadius: 12, padding: '12px', fontWeight: 700, cursor: 'pointer', fontSize: '.85rem' }}>
-                    Discard
-                  </button>
-                </div>
+        {/* Today's module */}
+        {nextModule && (
+          <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 18, padding: '18px', marginBottom: 20 }}>
+            <div style={{ fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: W.textMuted, marginBottom: 12 }}>Daily · Today's module</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: nextModule.colorLight, color: nextModule.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>
+                {nextModule.icon}
+              </div>
+              <div>
+                <div style={{ fontSize: '.63rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: W.gold, marginBottom: 2 }}>{nextModule.subject} · Module {nextModule.number}</div>
+                <div style={{ fontWeight: 800, fontSize: '.97rem', color: W.text }}>{nextModule.title}</div>
+                <div style={{ fontSize: '.75rem', color: W.textMuted }}>{nextModule.subtitle}</div>
               </div>
             </div>
-          )}
-
-          {/* ── Daily CTA ── */}
-          {nextTopic && (
-            <div className="fade-up" style={{ marginBottom: 28 }}>
-              <div style={{ background: '#fff', border: '1px solid #e8e0d4', borderRadius: 18, padding: '18px' }}>
-                <div style={{ fontSize: '.7rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#9a8370', marginBottom: 10 }}>
-                  DAILY · Today's session
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 12, background: nextTopic.colorLight, color: nextTopic.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>
-                    {nextTopic.icon}
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: 800, fontSize: '1rem', color: '#17120d' }}>{nextTopic.title}</div>
-                    <div style={{ fontSize: '.78rem', color: '#9a8370' }}>{nextTopic.era} · ~30 min</div>
-                  </div>
-                </div>
-                <button onClick={() => onStart(nextId)} style={{ width: '100%', background: '#17120d', color: '#fff', border: 'none', borderRadius: 14, padding: '15px', fontWeight: 900, cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit' }}>
-                  {draft ? 'Start fresh session →' : "Start today's session →"}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── Topic progress ── */}
-      <div style={{ padding: '0 20px 24px' }}>
-        <div className="container">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-            <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#9a8370' }}>Where you are</div>
+            <button onClick={() => onOpenModule(nextModule)} style={{ width: '100%', background: W.btnPrimary, color: '#f0e8da', border: 'none', borderRadius: 13, padding: '14px', fontWeight: 800, cursor: 'pointer', fontSize: '.97rem', fontFamily: 'inherit' }}>
+              Start today's module →
+            </button>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {TOPICS.map(topic => {
-              const tp    = progress.topicProgress?.[topic.id]
-              const done  = tp?.completedSessions || 0
-              const score = tp?.lastScore != null ? Math.round(tp.lastScore * 100) : null
-              const days  = tp?.nextReviewDate ? daysUntil(tp.nextReviewDate) : null
-              return (
-                <div key={topic.id} onClick={() => onStart(topic.id)} role="button" tabIndex={0}
-                  onKeyDown={e => e.key === 'Enter' && onStart(topic.id)}
-                  style={{ background: '#fff', border: '1px solid #e8e0d4', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
-                  <div style={{ width: 38, height: 38, borderRadius: 10, background: topic.colorLight, color: topic.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', flexShrink: 0 }}>
-                    {topic.icon}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 700, fontSize: '.93rem', color: '#17120d' }}>{topic.title}</div>
-                    <div style={{ fontSize: '.73rem', color: '#9a8370' }}>{topic.era}</div>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    {done > 0 ? (
-                      <>
-                        <div style={{ fontSize: '.73rem', fontWeight: 700, color: '#16a34a' }}>{done} session{done !== 1 ? 's' : ''}</div>
-                        {score !== null && <div style={{ fontSize: '.68rem', color: '#9a8370' }}>{score}% last</div>}
-                        {days === 0 && <div style={{ fontSize: '.68rem', color: '#dc2626', fontWeight: 700 }}>Review today</div>}
-                        {days > 0 && <div style={{ fontSize: '.68rem', color: '#9a8370' }}>in {days}d</div>}
-                      </>
-                    ) : (
-                      <div style={{ fontSize: '.72rem', color: '#ccc' }}>Not started</div>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
+        )}
 
-      {/* ── Study Modules ── */}
-      <div style={{ background: '#17120d', padding: '28px 20px' }}>
-        <div className="container">
-          <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#f8d783', marginBottom: 6 }}>Study Modules</div>
-          <div style={{ color: '#6d5d4d', fontSize: '.82rem', marginBottom: 16 }}>In-depth lessons — read, tap and quiz your way through.</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {MODULES.map(mod => {
-              const savedMod    = safeGetModuleState(mod.id)
-              const savedScreen = savedMod.screen || 0
-              const pct         = Math.round(((savedScreen + 1) / mod.screens.length) * 100)
-              const started     = savedScreen > 0
-              return (
-                <button key={mod.id} onClick={() => onOpenModule(mod)}
-                  style={{ background: '#1f1812', border: '1px solid #2d2318', borderRadius: 14, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ width: 38, height: 38, borderRadius: 10, flexShrink: 0, background: mod.colorLight, color: mod.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>
-                    {mod.icon}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ color: '#a08060', fontSize: '.68rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 2 }}>{mod.subject} · Module {mod.number}</div>
-                    <div style={{ color: '#fff9ec', fontWeight: 700, fontSize: '.92rem' }}>{mod.title}</div>
-                    <div style={{ color: '#6d5d4d', fontSize: '.74rem', marginTop: 1 }}>{mod.subtitle}</div>
-                    {started && (
-                      <div style={{ marginTop: 7, height: 3, background: '#2d2318', borderRadius: 99, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: pct + '%', background: mod.color, borderRadius: 99 }} />
+        {/* Recent modules — last 2 touched */}
+        {(() => {
+          const recent = MODULES.filter(m => safeGetModuleState(m.id).screen > 0).slice(0, 2)
+          if (!recent.length) return null
+          return (
+            <div>
+              <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: W.textMuted, marginBottom: 12 }}>Continue where you left off</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {recent.map(mod => {
+                  const s = safeGetModuleState(mod.id)
+                  const pct = Math.round(((s.screen + 1) / mod.screens.length) * 100)
+                  return (
+                    <button key={mod.id} onClick={() => onOpenModule(mod)}
+                      style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 14, padding: '13px 15px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ width: 38, height: 38, borderRadius: 10, flexShrink: 0, background: mod.colorLight, color: mod.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>{mod.icon}</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ color: W.gold, fontSize: '.62rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 2 }}>{mod.subject} · Module {mod.number}</div>
+                        <div style={{ color: W.text, fontWeight: 700, fontSize: '.9rem' }}>{mod.title}</div>
+                        <div style={{ marginTop: 6, height: 3, background: W.border, borderRadius: 99, overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: pct + '%', background: mod.color, borderRadius: 99 }} />
+                        </div>
                       </div>
-                    )}
-                  </div>
-                  <div style={{ flexShrink: 0 }}>
-                    {started
-                      ? <span style={{ fontSize: '.72rem', color: '#f8d783', fontWeight: 700 }}>{pct}%</span>
-                      : <span style={{ fontSize: '.8rem', color: '#444' }}>→</span>}
-                  </div>
-                </button>
-              )
-            })}
+                      <div style={{ color: W.gold, fontWeight: 700, fontSize: '.75rem', flexShrink: 0 }}>{pct}%</div>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })()}
+
+      </div>
+    </div>
+  )
+}
+
+// ─── Modules tab ──────────────────────────────────────────────────────────────
+
+function ModulesTab({ onOpenModule }) {
+  const subjects = [...new Set(MODULES.map(m => m.subject))]
+
+  return (
+    <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
+      <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px' }}>
+        <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>Modules</div>
+        <div style={{ fontSize: '.78rem', color: W.textMuted, marginTop: 3 }}>Work through these daily — one module at a time.</div>
+      </div>
+
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 18px' }}>
+        {subjects.map(subject => {
+          const mods = MODULES.filter(m => m.subject === subject)
+          return (
+            <div key={subject} style={{ marginBottom: 28 }}>
+              <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: W.textMuted, marginBottom: 12 }}>{subject}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {mods.map(mod => {
+                  const s       = safeGetModuleState(mod.id)
+                  const screen  = s.screen || 0
+                  const pct     = Math.round(((screen + 1) / mod.screens.length) * 100)
+                  const done    = screen >= mod.screens.length - 1
+                  const started = screen > 0
+                  return (
+                    <button key={mod.id} onClick={() => onOpenModule(mod)}
+                      style={{ background: W.bgCard, border: `1px solid ${done ? '#b8d8be' : W.border}`, borderRadius: 14, padding: '13px 15px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ width: 40, height: 40, borderRadius: 11, flexShrink: 0, background: mod.colorLight, color: mod.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.15rem', position: 'relative' }}>
+                        {mod.icon}
+                        {done && <div style={{ position: 'absolute', top: -4, right: -4, background: W.green, color: '#fff', borderRadius: 99, width: 16, height: 16, fontSize: '.6rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900 }}>✓</div>}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ color: W.gold, fontSize: '.62rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 2 }}>{mod.subject} · Module {mod.number}</div>
+                        <div style={{ color: W.text, fontWeight: 700, fontSize: '.92rem' }}>{mod.title}</div>
+                        <div style={{ color: W.textMuted, fontSize: '.73rem', marginTop: 1 }}>{mod.subtitle}</div>
+                        {started && !done && (
+                          <div style={{ marginTop: 7, height: 3, background: W.border, borderRadius: 99, overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: pct + '%', background: mod.color, borderRadius: 99 }} />
+                          </div>
+                        )}
+                      </div>
+                      <div style={{ flexShrink: 0, textAlign: 'right' }}>
+                        {done
+                          ? <span style={{ fontSize: '.72rem', color: W.green, fontWeight: 700 }}>Done ✓</span>
+                          : started
+                            ? <span style={{ fontSize: '.72rem', color: W.gold, fontWeight: 700 }}>{pct}%</span>
+                            : <span style={{ fontSize: '.8rem', color: W.textLight }}>→</span>}
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ─── Test tab ─────────────────────────────────────────────────────────────────
+
+const TEST_TOPICS = [
+  {
+    subject: 'History',
+    topics: [
+      { id: 'th1', label: 'Medieval Medicine c1250–c1500', questions: 12, available: true },
+      { id: 'th2', label: 'Renaissance & the Plague c1500–c1700', questions: 10, available: true },
+      { id: 'th3', label: 'Surgery & Anatomy c1700–c1900', questions: 8, available: true },
+      { id: 'th4', label: 'Germ Theory c1850–c1900', questions: 9, available: true },
+      { id: 'th5', label: 'Public Health c1800–c1900', questions: 11, available: true },
+      { id: 'th6', label: 'Modern Medicine c1900–present', questions: 0, available: false },
+    ]
+  },
+  { subject: 'Maths',              topics: [{ id: 'tm1', label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'Biology',            topics: [{ id: 'tb1', label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'Chemistry',          topics: [{ id: 'tc1', label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'Physics',            topics: [{ id: 'tp1', label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'Music',              topics: [{ id: 'tmu1', label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'Sociology',          topics: [{ id: 'ts1', label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'English Literature', topics: [{ id: 'tel1', label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'English Language',   topics: [{ id: 'tela1', label: 'Coming soon', questions: 0, available: false }] },
+]
+
+// Placeholder past-paper style questions for History topics
+const PAST_PAPER_QS = {
+  th1: [
+    { q: 'Describe two features of medieval hospitals. [4 marks]', type: 'written', marks: 4 },
+    { q: 'Explain why the Church both helped and hindered medicine in the Middle Ages. [12 marks]', type: 'written', marks: 12 },
+    { q: 'How far was the Black Death a turning point in the history of medicine? Explain your answer. [16 marks]', type: 'written', marks: 16 },
+    { q: '"The main reason medieval medicine made little progress was the influence of the Church." How far do you agree? Explain your answer. [16 marks]', type: 'written', marks: 16 },
+  ],
+  th2: [
+    { q: 'Describe two features of Vesalius's contribution to medicine. [4 marks]', type: 'written', marks: 4 },
+    { q: 'Explain why Harvey's discovery of blood circulation did not immediately lead to better treatments. [12 marks]', type: 'written', marks: 12 },
+    { q: 'How far did the Renaissance change medicine? Explain your answer. [16 marks]', type: 'written', marks: 16 },
+  ],
+  th3: [
+    { q: 'Describe two problems with surgery before the 1840s. [4 marks]', type: 'written', marks: 4 },
+    { q: 'Explain why anaesthetics both helped and created new problems for surgery. [12 marks]', type: 'written', marks: 12 },
+    { q: 'How important was Lister's use of antiseptics in improving surgery? [16 marks]', type: 'written', marks: 16 },
+  ],
+  th4: [
+    { q: 'Describe two features of Pasteur's germ theory. [4 marks]', type: 'written', marks: 4 },
+    { q: 'Explain why Koch's work was important for the development of medicine. [12 marks]', type: 'written', marks: 12 },
+    { q: '"Pasteur's germ theory was the most important development in medicine in the 19th century." How far do you agree? [16 marks]', type: 'written', marks: 16 },
+  ],
+  th5: [
+    { q: 'Describe two features of the 1875 Public Health Act. [4 marks]', type: 'written', marks: 4 },
+    { q: 'Explain why the government was slow to improve public health in the early 19th century. [12 marks]', type: 'written', marks: 12 },
+    { q: 'How far was the Great Stink of 1858 a turning point in the history of public health? [16 marks]', type: 'written', marks: 16 },
+  ],
+}
+
+const MARK_TIPS = {
+  4:  { label: '4-mark question', tip: 'Two developed points. Each point needs a supporting detail. Aim for 2–3 sentences per point.' },
+  12: { label: '12-mark question', tip: 'Three or four paragraphs. Each needs a clear point, specific evidence, and explanation of how it answers the question.' },
+  16: { label: '16-mark question', tip: 'Argue both sides then reach a clear judgement. Specific evidence required. Avoid vague generalisations.' },
+}
+
+function TestTab() {
+  const [selected, setSelected] = useState(null)   // { subject, topicId }
+  const [qIdx, setQIdx]         = useState(0)
+  const [showTip, setShowTip]   = useState(false)
+  const [showAnswer, setShowAnswer] = useState(false)
+
+  if (selected) {
+    const questions = PAST_PAPER_QS[selected.topicId] || []
+    const q = questions[qIdx]
+    const tip = q ? MARK_TIPS[q.marks] : null
+
+    return (
+      <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
+        {/* Header */}
+        <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button onClick={() => { setSelected(null); setQIdx(0); setShowTip(false); setShowAnswer(false) }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: W.textMuted, fontSize: '1rem', padding: 0 }}>←</button>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: '.95rem', color: W.text }}>{selected.label}</div>
+            <div style={{ fontSize: '.72rem', color: W.textMuted }}>Question {qIdx + 1} of {questions.length}</div>
           </div>
         </div>
+
+        {/* Progress bar */}
+        <div style={{ height: 4, background: W.border }}>
+          <div style={{ height: '100%', width: `${((qIdx + 1) / questions.length) * 100}%`, background: W.gold, transition: 'width .3s' }} />
+        </div>
+
+        <div style={{ maxWidth: 660, margin: '0 auto', padding: '24px 18px' }}>
+          {q && (
+            <>
+              {/* Marks badge */}
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: W.goldLight, border: '1px solid #e8cfa0', borderRadius: 99, padding: '4px 12px', marginBottom: 16 }}>
+                <span style={{ fontSize: '.72rem', fontWeight: 700, color: W.gold }}>{q.marks} marks</span>
+              </div>
+
+              {/* Question */}
+              <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '20px 18px', marginBottom: 16 }}>
+                <p style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.05rem', lineHeight: 1.55, color: W.text, margin: 0 }}>{q.q}</p>
+              </div>
+
+              {/* Mark scheme tip */}
+              {tip && (
+                <div style={{ marginBottom: 16 }}>
+                  {!showTip ? (
+                    <button onClick={() => setShowTip(true)}
+                      style={{ background: 'none', border: `1px dashed ${W.border}`, borderRadius: 12, padding: '10px 16px', cursor: 'pointer', color: W.textMuted, fontSize: '.85rem', width: '100%', fontFamily: 'inherit' }}>
+                      💡 Show mark scheme guidance
+                    </button>
+                  ) : (
+                    <div style={{ background: '#f0f9f1', border: '1px solid #b8d8be', borderRadius: 12, padding: '14px 16px' }}>
+                      <div style={{ fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.green, marginBottom: 6 }}>{tip.label}</div>
+                      <p style={{ fontSize: '.88rem', color: '#2a5c34', margin: 0 }}>{tip.tip}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Answer space */}
+              <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '16px 18px', marginBottom: 20, minHeight: 180 }}>
+                <div style={{ fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.textMuted, marginBottom: 10 }}>Your answer</div>
+                <textarea
+                  placeholder="Write your answer here..."
+                  style={{ width: '100%', border: 'none', background: 'transparent', resize: 'none', fontSize: '.92rem', color: W.text, lineHeight: 1.6, outline: 'none', minHeight: 140, fontFamily: 'inherit' }}
+                />
+              </div>
+
+              {/* Navigation */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <button onClick={() => { setQIdx(Math.max(0, qIdx - 1)); setShowTip(false); setShowAnswer(false) }}
+                  disabled={qIdx === 0}
+                  style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 13, padding: '13px', fontWeight: 700, cursor: qIdx === 0 ? 'default' : 'pointer', color: qIdx === 0 ? W.textLight : W.text, fontFamily: 'inherit', fontSize: '.9rem', opacity: qIdx === 0 ? .5 : 1 }}>
+                  ← Previous
+                </button>
+                {qIdx < questions.length - 1 ? (
+                  <button onClick={() => { setQIdx(qIdx + 1); setShowTip(false); setShowAnswer(false) }}
+                    style={{ background: W.btnPrimary, border: 'none', borderRadius: 13, padding: '13px', fontWeight: 800, cursor: 'pointer', color: '#f0e8da', fontFamily: 'inherit', fontSize: '.9rem' }}>
+                    Next →
+                  </button>
+                ) : (
+                  <button onClick={() => { setSelected(null); setQIdx(0); setShowTip(false) }}
+                    style={{ background: W.green, border: 'none', borderRadius: 13, padding: '13px', fontWeight: 800, cursor: 'pointer', color: '#fff', fontFamily: 'inherit', fontSize: '.9rem' }}>
+                    Finish ✓
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // Topic picker
+  return (
+    <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
+      <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px' }}>
+        <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>Test Your Learning</div>
+        <div style={{ fontSize: '.78rem', color: W.textMuted, marginTop: 3 }}>Past paper style questions — pick a topic to practise.</div>
       </div>
 
-      {/* ── Footer ── */}
-      <div style={{ padding: '20px', textAlign: 'center', background: '#f7f3ee' }}>
-        <p style={{ fontSize: '.75rem', color: '#9a8370' }}>AQA GCSE History · Medicine in Britain c1250–present</p>
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 18px' }}>
+        {TEST_TOPICS.map(({ subject, topics }) => (
+          <div key={subject} style={{ marginBottom: 24 }}>
+            <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: W.textMuted, marginBottom: 10 }}>{subject}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {topics.map(t => (
+                <button key={t.id}
+                  onClick={() => t.available && setSelected({ topicId: t.id, label: t.label, subject })}
+                  style={{
+                    background: t.available ? W.bgCard : '#f0ede8',
+                    border: `1px solid ${W.border}`,
+                    borderRadius: 13, padding: '13px 16px', cursor: t.available ? 'pointer' : 'default',
+                    textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    opacity: t.available ? 1 : 0.55,
+                  }}>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '.9rem', color: W.text }}>{t.label}</div>
+                    {t.available
+                      ? <div style={{ fontSize: '.72rem', color: W.textMuted, marginTop: 2 }}>{t.questions} question{t.questions !== 1 ? 's' : ''}</div>
+                      : <div style={{ fontSize: '.72rem', color: W.textLight, marginTop: 2 }}>Coming soon</div>}
+                  </div>
+                  {t.available && <span style={{ color: W.gold, fontWeight: 700, fontSize: '.9rem' }}>→</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
-
     </div>
   )
 }
