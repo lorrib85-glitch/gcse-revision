@@ -1284,6 +1284,8 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
   }
 
   const gs = feedback ? (GRADE_COLOURS[feedback.grade] || GRADE_COLOURS['Developing']) : null
+  // Detect if this is a maths question (has M1/A1/B1 mark scheme) vs English/History (level-based)
+  const isMathsQ = q.ms ? /\[M1|\[A1|\[B1|\[B2|\[B3/.test(q.ms) : false
   const MARK_TIPS = {
     1: 'One specific correct point. No working needed.',
     2: 'Two separate points, OR method + correct answer.',
@@ -1310,13 +1312,12 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
                 Q{q.qNum} · {q.source}
               </div>
             </div>
-            <div style={{ display:'flex', gap:6, flexShrink:0 }}>
-              {isCalc
+            {isMathsQ && (<div style={{ display:'flex', gap:6, flexShrink:0 }}>{isCalc
                 ? <div style={{ background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 9px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}>🖩 Calc</div>
                 : <div style={{ background:'rgba(255,200,87,.08)', border:'1px solid rgba(255,200,87,.2)', borderRadius:8, padding:'4px 9px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}>✗ No Calc</div>
               }
               <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#70B8FF', cursor:'pointer' }}>📐 Formulae</button>
-            </div>
+            </div>)}
           </div>
           {/* Progress */}
           <div style={{ height:3, background:'#1E2A40', borderRadius:99, overflow:'hidden' }}>
@@ -1334,6 +1335,14 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
 
         {/* Diagram */}
         {q.diagramKey && <MathsDiagram diagramKey={q.diagramKey} />}
+
+        {/* Source extract */}
+        {q.extract && (
+          <div style={{ background:'#0D1424', borderLeft:`3px solid ${topicColor}`, borderRadius:'0 12px 12px 0', padding:'14px 16px', marginBottom:14 }}>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor, marginBottom:8 }}>📄 Source extract</div>
+            <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.85rem', lineHeight:1.7, margin:0, color:'#9CA8C7', whiteSpace:'pre-wrap' }}>{q.extract}</p>
+          </div>
+        )}
 
         {/* Question */}
         <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, padding:'18px 18px', marginBottom:14 }}>
