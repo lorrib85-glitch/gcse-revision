@@ -238,110 +238,251 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
   const examDays   = daysUntilExam()
   const totalSessions = Object.values(progress.topicProgress || {}).reduce((s, t) => s + (t.completedSessions || 0), 0)
 
-  // Next module to do — first one not completed
   const nextModule = MODULES.find(m => {
     const s = safeGetModuleState(m.id)
     return !s.screen || s.screen < m.screens.length - 1
   }) || MODULES[0]
 
-  return (
-    <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
+  const STATS = [
+    {
+      icon: '🔥',
+      value: streak,
+      label: 'DAY STREAK',
+      sub: bestStreak > 1 ? `Best: ${bestStreak}` : null,
+      subColor: '#FF8A1F',
+    },
+    {
+      icon: '📚',
+      value: totalSessions,
+      label: 'SESSIONS',
+      sub: null,
+    },
+    {
+      icon: null,
+      calIcon: true,
+      value: examDays,
+      label: 'DAYS TO GO',
+      sub: '1 May 2027',
+      subColor: '#9CA8C7',
+    },
+  ]
 
-      {/* Top bar */}
-      <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px', display: 'flex', alignItems: `center`, justifyContent: 'space-between' }}>
-        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>
+  return (
+    <div style={{ background: '#070B1A', minHeight: '100vh', paddingBottom: 90 }}>
+
+      {/* ── Top bar ── */}
+      <div style={{
+        background: '#10182B',
+        borderBottom: '1px solid #2A3552',
+        padding: '16px 20px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        position: 'sticky', top: 0, zIndex: 20,
+        backdropFilter: 'blur(12px)',
+      }}>
+        <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '1.1rem', color: '#F5F7FB', letterSpacing: '-.01em' }}>
           Revision
-        </div>
-        {streak > 0 && (
-          <div style={{ display: 'flex', alignItems: `center`, gap: 5, background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.25)', borderRadius: 99, padding: '5px 12px' }}>
-            <span style={{ fontSize: '.9rem' }}>🔥</span>
-            <span style={{ fontWeight: 800, fontSize: '.85rem', color: W.gold }}>{streak} day{streak !== 1 ? 's' : ''}</span>
+        </span>
+        {streak > 0 ? (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'rgba(255,138,31,.15)',
+            border: '1px solid rgba(255,138,31,.35)',
+            borderRadius: 99, padding: '6px 14px',
+            boxShadow: '0 0 12px rgba(255,138,31,.12)',
+          }}>
+            <span style={{ fontSize: '1rem' }}>🔥</span>
+            <span style={{ fontWeight: 800, fontSize: '.84rem', color: '#FF8A1F', letterSpacing: '.02em' }}>
+              {streak} DAY STREAK
+            </span>
+          </div>
+        ) : (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'rgba(255,138,31,.08)',
+            border: '1px solid rgba(255,138,31,.18)',
+            borderRadius: 99, padding: '6px 14px',
+          }}>
+            <span style={{ fontSize: '1rem' }}>🔥</span>
+            <span style={{ fontWeight: 700, fontSize: '.84rem', color: 'rgba(255,138,31,.5)', letterSpacing: '.02em' }}>
+              START STREAK
+            </span>
           </div>
         )}
       </div>
 
-      <div style={{ maxWidth: 660, margin: '0 auto', padding: '24px 18px 0' }}>
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '22px 16px 0' }}>
 
-        {/* Greeting */}
-        <div style={{ marginBottom: 22 }}>
-          <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: W.textMuted, marginBottom: 8 }}>Your progress</div>
-          <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 'clamp(1.5rem, 5vw, 1.9rem)', color: W.text, lineHeight: 1.2, margin: 0 }}>
+        {/* ── Greeting ── */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{
+            fontSize: '.67rem', fontWeight: 700, letterSpacing: '.14em',
+            textTransform: 'uppercase', color: '#9CA8C7', marginBottom: 10,
+          }}>
+            YOUR PROGRESS
+          </div>
+          <h1 style={{
+            fontFamily: "'Syne', sans-serif",
+            fontSize: 'clamp(1.65rem, 6vw, 2.1rem)',
+            color: '#F5F7FB', lineHeight: 1.15, margin: 0, fontWeight: 800,
+          }}>
             {greeting}
           </h1>
         </div>
 
-        {/* Stats */}
+        {/* ── Stats grid ── */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 20 }}>
-          {[
-            { emoji: '🔥', value: streak, label: 'Day streak', sub: bestStreak > 1 ? `Best: ${bestStreak}` : null, subColor: W.gold },
-            { emoji: '📚', value: totalSessions, label: 'Sessions' },
-            { emoji: '📅', value: examDays, label: 'Days to go', sub: '1 May 2027', subColor: W.textMuted },
-          ].map((s, i) => (
-            <div key={i} style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '14px 10px', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.4rem', marginBottom: 4 }}>{s.emoji}</div>
-              <div style={{ fontWeight: 900, fontSize: '1.2rem', color: W.text, lineHeight: 1 }}>{s.value}</div>
-              <div style={{ fontSize: '.61rem', fontWeight: 600, color: W.textMuted, textTransform: 'uppercase', letterSpacing: '.07em', marginTop: 4 }}>{s.label}</div>
-              {s.sub && <div style={{ fontSize: '.61rem', color: s.subColor || W.textMuted, marginTop: 3 }}>{s.sub}</div>}
+          {STATS.map((s, i) => (
+            <div key={i} style={{
+              background: '#10182B',
+              border: '1px solid #2A3552',
+              borderRadius: 16, padding: '16px 8px 14px',
+              textAlign: 'center',
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+            }}>
+              {s.calIcon ? (
+                <div style={{
+                  width: 32, height: 32, borderRadius: 8,
+                  background: 'linear-gradient(135deg,#FF5D73,#cc2040)',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center',
+                  justifyContent: 'center', marginBottom: 8, overflow: 'hidden',
+                  fontSize: '.5rem', fontWeight: 900, color: '#fff', lineHeight: 1,
+                }}>
+                  <div style={{ background: '#fff', color: '#FF5D73', width: '100%', textAlign: 'center', fontSize: '.45rem', fontWeight: 900, letterSpacing: '.05em', padding: '1px 0' }}>JULY</div>
+                  <div style={{ fontSize: '.95rem', fontWeight: 900, lineHeight: 1.3 }}>17</div>
+                </div>
+              ) : (
+                <div style={{ fontSize: '1.5rem', marginBottom: 8, lineHeight: 1 }}>{s.icon}</div>
+              )}
+              <div style={{ fontWeight: 900, fontSize: '1.3rem', color: '#F5F7FB', lineHeight: 1, fontFamily: "'Syne', sans-serif" }}>{s.value}</div>
+              <div style={{ fontSize: '.58rem', fontWeight: 700, color: '#9CA8C7', textTransform: 'uppercase', letterSpacing: '.1em', marginTop: 5 }}>{s.label}</div>
+              {s.sub && <div style={{ fontSize: '.62rem', color: s.subColor || '#9CA8C7', marginTop: 4, fontWeight: 600 }}>{s.sub}</div>}
             </div>
           ))}
         </div>
 
-        {/* Continue banner */}
+        {/* ── Unfinished session banner ── */}
         {draft && draftTopic && (
-          <div style={{ background: 'linear-gradient(135deg,#F5B700,#C98719)', borderRadius: 18, padding: '16px 18px', marginBottom: 16 }}>
-            <div style={{ fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: W.gold, marginBottom: 6 }}>↩ Unfinished session</div>
-            <div style={{ color: '#070500', fontWeight: 700, marginBottom: 2 }}>{draftTopic.icon} {draftTopic.title}</div>
-            <div style={{ color: W.textMuted, fontSize: '.78rem', marginBottom: 14 }}>Left off at: <strong style={{ color: '#F5F7FB' }}>{PHASE_NAMES[draft.phase] || 'Key Facts'}</strong></div>
+          <div style={{
+            background: '#10182B',
+            border: '1px solid rgba(245,183,0,.4)',
+            borderRadius: 18, padding: '16px 18px', marginBottom: 16,
+            boxShadow: '0 0 20px rgba(245,183,0,.08)',
+          }}>
+            <div style={{ fontSize: '.62rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#F5B700', marginBottom: 6 }}>
+              ↩ UNFINISHED SESSION
+            </div>
+            <div style={{ color: '#F5F7FB', fontWeight: 700, marginBottom: 2 }}>{draftTopic.icon} {draftTopic.title}</div>
+            <div style={{ color: '#9CA8C7', fontSize: '.78rem', marginBottom: 14 }}>
+              Left off at: <strong style={{ color: '#F5F7FB' }}>{PHASE_NAMES[draft.phase] || 'Key Facts'}</strong>
+            </div>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={onResume} style={{ flex: 2, background: W.gold, color: '#fff', border: 'none', borderRadius: 12, padding: '12px', fontWeight: 800, cursor: 'pointer', fontSize: '.9rem', fontFamily: 'inherit' }}>Continue →</button>
-              <button onClick={onDiscardDraft} style={{ flex: 1, background: 'transparent', color: W.textMuted, border: '1px solid #4a3828', borderRadius: 12, padding: '12px', fontWeight: 600, cursor: 'pointer', fontSize: '.82rem', fontFamily: 'inherit' }}>Discard</button>
+              <button onClick={onResume} style={{
+                flex: 2, background: 'linear-gradient(135deg,#F5B700,#C98719)',
+                color: '#070500', border: 'none', borderRadius: 12, padding: '12px',
+                fontWeight: 800, cursor: 'pointer', fontSize: '.92rem', fontFamily: 'inherit',
+              }}>Continue →</button>
+              <button onClick={onDiscardDraft} style={{
+                flex: 1, background: 'transparent', color: '#9CA8C7',
+                border: '1px solid #2A3552', borderRadius: 12, padding: '12px',
+                fontWeight: 600, cursor: 'pointer', fontSize: '.82rem', fontFamily: 'inherit',
+              }}>Discard</button>
             </div>
           </div>
         )}
 
-        {/* Today's module */}
+        {/* ── Today's module ── */}
         {nextModule && (
-          <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 18, padding: '18px', marginBottom: 20 }}>
-            <div style={{ fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: W.textMuted, marginBottom: 12 }}>Daily · Today's module</div>
-            <div style={{ display: 'flex', alignItems: `center`, gap: 12, marginBottom: 16 }}>
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: nextModule.colorLight, color: nextModule.color, display: 'flex', alignItems: `center`, justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>
+          <div style={{
+            background: '#10182B',
+            border: '1px solid #2A3552',
+            borderRadius: 18, padding: '18px 18px 18px',
+            marginBottom: 20,
+          }}>
+            <div style={{
+              fontSize: '.62rem', fontWeight: 700, letterSpacing: '.12em',
+              textTransform: 'uppercase', color: '#9CA8C7', marginBottom: 14,
+            }}>
+              DAILY · TODAY'S MODULE
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 13, marginBottom: 18 }}>
+              {/* Subject icon tile */}
+              <div style={{
+                width: 52, height: 52, borderRadius: 14,
+                background: nextModule.colorLight || 'rgba(245,183,0,.15)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '1.5rem', flexShrink: 0,
+                border: '1px solid rgba(245,183,0,.2)',
+              }}>
                 {nextModule.icon}
               </div>
-              <div>
-                <div style={{ fontSize: '.63rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: W.gold, marginBottom: 2 }}>{nextModule.subject} · Module {nextModule.number}</div>
-                <div style={{ fontWeight: 800, fontSize: '.97rem', color: W.text }}>{nextModule.title}</div>
-                <div style={{ fontSize: '.75rem', color: W.textMuted }}>{nextModule.subtitle}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  fontSize: '.62rem', fontWeight: 700, letterSpacing: '.1em',
+                  textTransform: 'uppercase', color: '#F5B700', marginBottom: 4,
+                }}>
+                  {nextModule.subject} · MODULE {nextModule.number}
+                </div>
+                <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#F5F7FB', fontFamily: "'Syne', sans-serif" }}>
+                  {nextModule.title}
+                </div>
+                <div style={{ fontSize: '.78rem', color: '#9CA8C7', marginTop: 2 }}>
+                  {nextModule.subtitle}
+                </div>
               </div>
             </div>
-            <button onClick={() => onOpenModule(nextModule)} style={{ width: '100%', background: 'linear-gradient(135deg,#F5B700,#C98719)', color: '#070500', border: 'none', borderRadius: 13, padding: '14px', fontWeight: 800, cursor: 'pointer', fontSize: '.97rem', fontFamily: 'inherit' }}>
+            <button onClick={() => onOpenModule(nextModule)} style={{
+              width: '100%',
+              background: 'linear-gradient(135deg, #F5B700, #C98719)',
+              color: '#070500', border: 'none', borderRadius: 14,
+              padding: '16px', fontWeight: 800, cursor: 'pointer',
+              fontSize: '1rem', fontFamily: "'Syne', sans-serif",
+              letterSpacing: '-.01em',
+              boxShadow: '0 0 24px rgba(245,183,0,.25)',
+              transition: 'transform .15s, box-shadow .15s',
+            }}>
               Start today's module →
             </button>
           </div>
         )}
 
-        {/* Recent modules — last 2 touched */}
+        {/* ── Continue where you left off ── */}
         {(() => {
           const recent = MODULES.filter(m => safeGetModuleState(m.id).screen > 0).slice(0, 2)
           if (!recent.length) return null
           return (
-            <div>
-              <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: W.textMuted, marginBottom: 12 }}>Continue where you left off</div>
+            <div style={{ marginBottom: 20 }}>
+              <div style={{
+                fontSize: '.67rem', fontWeight: 700, letterSpacing: '.12em',
+                textTransform: 'uppercase', color: '#9CA8C7', marginBottom: 12,
+              }}>CONTINUE WHERE YOU LEFT OFF</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {recent.map(mod => {
                   const s = safeGetModuleState(mod.id)
                   const pct = Math.round(((s.screen + 1) / mod.screens.length) * 100)
                   return (
-                    <button key={mod.id} onClick={() => onOpenModule(mod)}
-                      style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 14, padding: '13px 15px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: `center`, gap: 12 }}>
-                      <div style={{ width: 38, height: 38, borderRadius: 10, flexShrink: 0, background: mod.colorLight, color: mod.color, display: 'flex', alignItems: `center`, justifyContent: 'center', fontSize: '1.1rem' }}>{mod.icon}</div>
+                    <button key={mod.id} onClick={() => onOpenModule(mod)} style={{
+                      background: '#10182B', border: '1px solid #2A3552',
+                      borderRadius: 14, padding: '13px 15px',
+                      cursor: 'pointer', textAlign: 'left',
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      width: '100%', transition: 'border-color .15s',
+                    }}>
+                      <div style={{
+                        width: 40, height: 40, borderRadius: 11, flexShrink: 0,
+                        background: mod.colorLight || 'rgba(245,183,0,.15)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '1.15rem',
+                      }}>{mod.icon}</div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ color: W.gold, fontSize: '.62rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 2 }}>{mod.subject} · Module {mod.number}</div>
-                        <div style={{ color: W.text, fontWeight: 700, fontSize: '.9rem' }}>{mod.title}</div>
-                        <div style={{ marginTop: 6, height: 3, background: W.border, borderRadius: 99, overflow: 'hidden' }}>
-                          <div style={{ height: '100%', width: pct + '%', background: mod.color, borderRadius: 99 }} />
+                        <div style={{ color: '#F5B700', fontSize: '.62rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 2 }}>
+                          {mod.subject} · Module {mod.number}
+                        </div>
+                        <div style={{ color: '#F5F7FB', fontWeight: 700, fontSize: '.92rem' }}>{mod.title}</div>
+                        <div style={{ marginTop: 7, height: 3, background: '#2A3552', borderRadius: 99, overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: pct + '%', background: mod.color || '#F5B700', borderRadius: 99, boxShadow: '0 0 6px rgba(245,183,0,.4)' }} />
                         </div>
                       </div>
-                      <div style={{ color: W.gold, fontWeight: 700, fontSize: '.75rem', flexShrink: 0 }}>{pct}%</div>
+                      <div style={{ color: '#F5B700', fontWeight: 800, fontSize: '.8rem', flexShrink: 0 }}>{pct}%</div>
                     </button>
                   )
                 })}
@@ -355,54 +496,98 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
   )
 }
 
+
 // ─── Modules tab ──────────────────────────────────────────────────────────────
 
 function ModulesTab({ onOpenModule }) {
   const subjects = [...new Set(MODULES.map(m => m.subject))]
 
+  const SUBJECT_COLOURS = {
+    'History':  { color: '#F5B700', bg: 'rgba(245,183,0,.12)',  border: 'rgba(245,183,0,.25)'  },
+    'Biology':  { color: '#38D27A', bg: 'rgba(56,210,122,.12)', border: 'rgba(56,210,122,.25)' },
+    'Science':  { color: '#38D27A', bg: 'rgba(56,210,122,.12)', border: 'rgba(56,210,122,.25)' },
+    'Maths':    { color: '#3B82FF', bg: 'rgba(59,130,255,.12)', border: 'rgba(59,130,255,.25)' },
+    'English':  { color: '#9D5CFF', bg: 'rgba(157,92,255,.12)', border: 'rgba(157,92,255,.25)' },
+    'Sociology':{ color: '#FF5C7A', bg: 'rgba(255,92,122,.12)', border: 'rgba(255,92,122,.25)' },
+    'Drama':    { color: '#FF4FC3', bg: 'rgba(255,79,195,.12)', border: 'rgba(255,79,195,.25)' },
+    'Music':    { color: '#34D5FF', bg: 'rgba(52,213,255,.12)', border: 'rgba(52,213,255,.25)' },
+  }
+
   return (
-    <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
-      <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px' }}>
-        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>Modules</div>
-        <div style={{ fontSize: '.78rem', color: W.textMuted, marginTop: 3 }}>Work through these daily — one module at a time.</div>
+    <div style={{ background: '#070B1A', minHeight: '100vh', paddingBottom: 90 }}>
+      <div style={{ background: '#10182B', borderBottom: '1px solid #2A3552', padding: '16px 20px', position: 'sticky', top: 0, zIndex: 20 }}>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '1.1rem', color: '#F5F7FB' }}>Modules</div>
+        <div style={{ fontSize: '.78rem', color: '#9CA8C7', marginTop: 3 }}>Work through these daily — one module at a time.</div>
       </div>
 
-      <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 18px' }}>
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 16px' }}>
         {subjects.map(subject => {
           const mods = MODULES.filter(m => m.subject === subject)
+          const sc = SUBJECT_COLOURS[subject] || SUBJECT_COLOURS['History']
           return (
             <div key={subject} style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: W.textMuted, marginBottom: 12 }}>{subject}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                <div style={{ width: 28, height: 28, borderRadius: 8, background: sc.bg, border: `1px solid ${sc.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.85rem' }}>
+                  {subject === 'History' ? '🏰' : subject === 'Biology' || subject === 'Science' ? '🧬' : subject === 'Maths' ? '✕' : subject === 'English' ? '📖' : subject === 'Sociology' ? '👥' : subject === 'Drama' ? '🎭' : '🎵'}
+                </div>
+                <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: sc.color }}>
+                  {subject}
+                </div>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {mods.map(mod => {
-                  const s       = safeGetModuleState(mod.id)
-                  const screen  = s.screen || 0
-                  const pct     = Math.round(((screen + 1) / mod.screens.length) * 100)
-                  const done    = screen >= mod.screens.length - 1
+                  const s      = safeGetModuleState(mod.id)
+                  const screen = s.screen || 0
+                  const pct    = Math.round(((screen + 1) / mod.screens.length) * 100)
+                  const done   = screen >= mod.screens.length - 1
                   const started = screen > 0
+                  const mc     = SUBJECT_COLOURS[mod.subject] || sc
                   return (
-                    <button key={mod.id} onClick={() => onOpenModule(mod)}
-                      style={{ background: W.bgCard, border: `1px solid ${done ? 'rgba(77,255,136,.35)' : W.border}`, borderRadius: 14, padding: '13px 15px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: `center`, gap: 12 }}>
-                      <div style={{ width: 40, height: 40, borderRadius: 11, flexShrink: 0, background: mod.colorLight, color: mod.color, display: 'flex', alignItems: `center`, justifyContent: 'center', fontSize: '1.15rem', position: 'relative' }}>
+                    <button key={mod.id} onClick={() => onOpenModule(mod)} style={{
+                      background: '#10182B',
+                      border: `1px solid ${done ? 'rgba(77,255,136,.35)' : '#2A3552'}`,
+                      borderRadius: 14, padding: '14px 15px',
+                      cursor: 'pointer', textAlign: 'left',
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      width: '100%', transition: 'border-color .2s, transform .15s',
+                    }}>
+                      <div style={{
+                        width: 42, height: 42, borderRadius: 12, flexShrink: 0,
+                        background: mod.colorLight || mc.bg,
+                        border: `1px solid ${mc.border}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '1.15rem', position: 'relative',
+                      }}>
                         {mod.icon}
-                        {done && <div style={{ position: 'absolute', top: -4, right: -4, background: W.green, color: '#fff', borderRadius: 99, width: 16, height: 16, fontSize: '.6rem', display: 'flex', alignItems: `center`, justifyContent: 'center', fontWeight: 900 }}>✓</div>}
+                        {done && (
+                          <div style={{
+                            position: 'absolute', top: -5, right: -5,
+                            background: '#4DFF88', color: '#00140a',
+                            borderRadius: 99, width: 17, height: 17,
+                            fontSize: '.58rem', display: 'flex', alignItems: 'center',
+                            justifyContent: 'center', fontWeight: 900,
+                            boxShadow: '0 0 8px rgba(77,255,136,.5)',
+                          }}>✓</div>
+                        )}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ color: W.gold, fontSize: '.62rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 2 }}>{mod.subject} · Module {mod.number}</div>
-                        <div style={{ color: W.text, fontWeight: 700, fontSize: '.92rem' }}>{mod.title}</div>
-                        <div style={{ color: W.textMuted, fontSize: '.73rem', marginTop: 1 }}>{mod.subtitle}</div>
+                        <div style={{ color: mc.color, fontSize: '.62rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 3 }}>
+                          {mod.subject} · Module {mod.number}
+                        </div>
+                        <div style={{ color: '#F5F7FB', fontWeight: 700, fontSize: '.93rem' }}>{mod.title}</div>
+                        <div style={{ color: '#9CA8C7', fontSize: '.73rem', marginTop: 2 }}>{mod.subtitle}</div>
                         {started && !done && (
-                          <div style={{ marginTop: 7, height: 3, background: W.border, borderRadius: 99, overflow: 'hidden' }}>
-                            <div style={{ height: '100%', width: pct + '%', background: mod.color, borderRadius: 99 }} />
+                          <div style={{ marginTop: 8, height: 3, background: '#2A3552', borderRadius: 99, overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: pct + '%', background: mod.color || mc.color, borderRadius: 99, boxShadow: `0 0 6px ${mc.color}55` }} />
                           </div>
                         )}
                       </div>
                       <div style={{ flexShrink: 0, textAlign: 'right' }}>
                         {done
-                          ? <span style={{ fontSize: '.72rem', color: 'var(--success)', fontWeight: 700 }}>Done ✓</span>
+                          ? <span style={{ fontSize: '.72rem', color: '#4DFF88', fontWeight: 700 }}>Done ✓</span>
                           : started
-                            ? <span style={{ fontSize: '.72rem', color: W.gold, fontWeight: 700 }}>{pct}%</span>
-                            : <span style={{ fontSize: '.8rem', color: W.textLight }}>→</span>}
+                            ? <span style={{ fontSize: '.75rem', color: '#F5B700', fontWeight: 800 }}>{pct}%</span>
+                            : <span style={{ fontSize: '.85rem', color: '#5A6480', fontWeight: 700 }}>→</span>}
                       </div>
                     </button>
                   )
@@ -995,7 +1180,7 @@ function TestTab() {
     return (
       <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
         {/* Header */}
-        <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px', display: 'flex', alignItems: `center`, gap: 12 }}>
+        <div style={{ background: '#10182B', borderBottom: '1px solid #2A3552', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={() => { setSelected(null); setQIdx(0); resetQuestion() }}
             style={{ background: 'none', border: 'none', cursor: 'pointer', color: W.textMuted, fontSize: '1.1rem', padding: 0, lineHeight: 1 }}>←</button>
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -1019,7 +1204,7 @@ function TestTab() {
 
               {/* Diagram if present */}
               {q.fig && FIGURES[q.fig] && (
-                <div style={{ background: '#fff', border: `1px solid ${W.border}`, borderRadius: 14, padding: '12px', marginBottom: 14, textAlign: 'center' }}>
+                <div style={{ background: '#10182B', border: '1px solid #2A3552', borderRadius: 14, padding: '12px', marginBottom: 14, textAlign: 'center' }}>
                   <div style={{ fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.textMuted, marginBottom: 8 }}>Figure — from AQA past paper</div>
                   <img src={FIGURES[q.fig]} alt="AQA exam figure" style={{ maxWidth: '100%', height: 'auto', borderRadius: 8 }} />
                 </div>
@@ -1167,46 +1352,80 @@ function TestTab() {
   }
 
   // ── Topic picker ───────────────────────────────────────────────
+  const TEST_SUBJECT_COLOURS = {
+    'History':          { color: '#F5B700', bg: 'rgba(245,183,0,.12)',  border: 'rgba(245,183,0,.25)',  icon: '🏰' },
+    'Biology':          { color: '#38D27A', bg: 'rgba(56,210,122,.12)', border: 'rgba(56,210,122,.25)', icon: '🧬' },
+    'Chemistry':        { color: '#38D27A', bg: 'rgba(56,210,122,.12)', border: 'rgba(56,210,122,.25)', icon: '⚗️' },
+    'Physics':          { color: '#3B82FF', bg: 'rgba(59,130,255,.12)', border: 'rgba(59,130,255,.25)', icon: '⚡' },
+    'Maths':            { color: '#3B82FF', bg: 'rgba(59,130,255,.12)', border: 'rgba(59,130,255,.25)', icon: '✕²' },
+    'Music':            { color: '#34D5FF', bg: 'rgba(52,213,255,.12)', border: 'rgba(52,213,255,.25)', icon: '🎵' },
+    'Sociology':        { color: '#FF5C7A', bg: 'rgba(255,92,122,.12)', border: 'rgba(255,92,122,.25)', icon: '👥' },
+    'English Literature':{ color: '#9D5CFF', bg: 'rgba(157,92,255,.12)', border: 'rgba(157,92,255,.25)', icon: '📖' },
+    'English Language': { color: '#9D5CFF', bg: 'rgba(157,92,255,.12)', border: 'rgba(157,92,255,.25)', icon: '✍️' },
+  }
+
   return (
-    <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
-      <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px' }}>
-        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>Test Your Learning</div>
-        <div style={{ fontSize: '.78rem', color: W.textMuted, marginTop: 3 }}>Real AQA past paper questions — write your answer and get it marked by AI.</div>
+    <div style={{ background: '#070B1A', minHeight: '100vh', paddingBottom: 90 }}>
+      {/* Header */}
+      <div style={{ background: '#10182B', borderBottom: '1px solid #2A3552', padding: '16px 20px', position: 'sticky', top: 0, zIndex: 20 }}>
+        <div style={{ fontFamily: "\'Syne\', sans-serif", fontWeight: 800, fontSize: '1.1rem', color: '#F5F7FB' }}>Test Your Learning</div>
+        <div style={{ fontSize: '.78rem', color: '#9CA8C7', marginTop: 3 }}>Real AQA past paper questions — write your answer and get it marked by AI.</div>
       </div>
 
-      <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 18px' }}>
-        {TEST_TOPICS.map(({ subject, icon, topics }) => (
-          <div key={subject} style={{ marginBottom: 24 }}>
-            <div style={{ display: 'flex', alignItems: `center`, gap: 8, marginBottom: 10 }}>
-              <span>{icon}</span>
-              <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: W.textMuted }}>{subject}</div>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {topics.map(t => (
-                <button key={t.id}
-                  onClick={() => t.available && setSelected({ topicId: t.id, label: t.label, subject })}
-                  style={{
-                    background: t.available ? W.bgCard : 'rgba(255,255,255,.03)',
-                    border: `1px solid ${W.border}`, borderRadius: 13,
-                    padding: '13px 16px', cursor: t.available ? 'pointer' : 'default',
-                    textAlign: 'left', display: 'flex', alignItems: `center`, justifyContent: 'space-between',
-                    opacity: t.available ? 1 : 0.5,
-                  }}>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: '.9rem', color: W.text }}>{t.label}</div>
-                    <div style={{ fontSize: '.72rem', color: W.textMuted, marginTop: 2 }}>
-                      {t.available ? `${t.questions} question${t.questions !== 1 ? 's' : ''} · AI marked` : 'Coming soon'}
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 16px' }}>
+        {TEST_TOPICS.map(({ subject, icon, topics }) => {
+          const sc = TEST_SUBJECT_COLOURS[subject] || TEST_SUBJECT_COLOURS['History']
+          return (
+            <div key={subject} style={{ marginBottom: 26 }}>
+              {/* Subject header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                <div style={{
+                  width: 28, height: 28, borderRadius: 8,
+                  background: sc.bg, border: `1px solid ${sc.border}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '.85rem',
+                }}>{sc.icon}</div>
+                <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: sc.color }}>
+                  {subject}
+                </div>
+              </div>
+              {/* Topic rows */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {topics.map(t => (
+                  <button key={t.id}
+                    onClick={() => t.available && setSelected({ topicId: t.id, label: t.label, subject })}
+                    disabled={!t.available}
+                    style={{
+                      background: '#10182B',
+                      border: `1px solid ${t.available ? '#2A3552' : '#1A2338'}`,
+                      borderRadius: 14,
+                      padding: '14px 16px',
+                      cursor: t.available ? 'pointer' : 'default',
+                      textAlign: 'left',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      opacity: t.available ? 1 : 0.45,
+                      width: '100%',
+                      transition: 'border-color .15s, background .15s',
+                    }}>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{t.label}</div>
+                      <div style={{ fontSize: '.72rem', color: '#9CA8C7' }}>
+                        {t.available ? `${t.questions} question${t.questions !== 1 ? 's' : ''} · AI marked` : 'Coming soon'}
+                      </div>
                     </div>
-                  </div>
-                  {t.available && <span style={{ color: W.gold, fontWeight: 700 }}>→</span>}
-                </button>
-              ))}
+                    {t.available && (
+                      <span style={{ color: '#F5B700', fontWeight: 800, fontSize: '1rem', flexShrink: 0, marginLeft: 12 }}>→</span>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
+}
 }
 
 

@@ -14,11 +14,11 @@ function saveModuleState(moduleId, state) {
 function ReadBlock({ block }) {
   return (
     <div style={{
-      borderLeft: '4px solid #1e3a5f', background: '#f0f4ff',
+      borderLeft: '4px solid #3B82FF', background: 'rgba(59,130,255,.08)',
       borderRadius: '0 12px 12px 0', padding: '16px 18px', margin: '12px 0'
     }}>
       {block.label && (
-        <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#1e3a5f', marginBottom: 8 }}>
+        <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#70B8FF', marginBottom: 8 }}>
           {block.label}
         </div>
       )}
@@ -30,10 +30,10 @@ function ReadBlock({ block }) {
 function KeypointBlock({ block }) {
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #17120d, #3b2410)',
-      color: '#fff9ec', borderRadius: 16, padding: '18px 20px', margin: '14px 0',
+      background: 'linear-gradient(135deg, #1A2338, #0F1A30)',
+      color: '#F5F7FB', borderRadius: 16, padding: '18px 20px', margin: '14px 0',
     }}>
-      <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#f8d783', marginBottom: 8 }}>
+      <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#F5B700', marginBottom: 8 }}>
         ⭐ Key Point
       </div>
       <p style={{ fontSize: '.93rem', lineHeight: 1.6, margin: 0 }} dangerouslySetInnerHTML={{ __html: block.text }} />
@@ -44,10 +44,10 @@ function KeypointBlock({ block }) {
 function FunFactBlock({ block }) {
   return (
     <div style={{
-      background: '#fffaf0', borderLeft: '4px solid #b45309',
+      background: 'rgba(255,200,87,.07)', borderLeft: '4px solid #FFC857',
       borderRadius: '0 12px 12px 0', padding: '14px 18px', margin: '12px 0'
     }}>
-      <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#b45309', marginBottom: 6 }}>
+      <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#FFC857', marginBottom: 6 }}>
         {block.label || '🤯 Fun Fact'}
       </div>
       <p style={{ fontSize: '.92rem', margin: 0 }}>{block.text}</p>
@@ -58,11 +58,11 @@ function FunFactBlock({ block }) {
 function ExamTipBlock({ block }) {
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #0f3f3a, #07352f)',
-      color: '#eafff9', border: '2px dashed rgba(248,215,131,.5)',
+      background: 'linear-gradient(135deg, #0D2A22, #071A15)',
+      color: '#F5F7FB', border: '2px dashed rgba(245,183,0,.4)',
       borderRadius: 16, padding: '16px 18px', margin: '14px 0'
     }}>
-      <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#f8d783', marginBottom: 8 }}>
+      <div style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#F5B700', marginBottom: 8 }}>
         {block.label || '🗡️ Exam Assassin'}
       </div>
       {block.text && <p style={{ fontSize: '.9rem', margin: 0 }} dangerouslySetInnerHTML={{ __html: block.text }} />}
@@ -71,8 +71,8 @@ function ExamTipBlock({ block }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
           {block.phrases.map(p => (
             <span key={p} style={{
-              background: 'rgba(248,215,131,.15)', border: '1px solid rgba(248,215,131,.45)',
-              color: '#f8d783', borderRadius: 8, padding: '4px 10px', fontSize: '.8rem', fontWeight: 700
+              background: 'rgba(245,183,0,.14)', border: '1px solid rgba(248,215,131,.45)',
+              color: '#F5B700', borderRadius: 8, padding: '4px 10px', fontSize: '.8rem', fontWeight: 700
             }}>{p}</span>
           ))}
         </div>
@@ -93,7 +93,7 @@ function TimelineBlock({ block }) {
               gap: 10, border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left', padding: 0
             }}>
             <div style={{
-              background: open === i ? '#d29b2f' : '#17120d', color: open === i ? '#17120d' : '#f8d783',
+              background: open === i ? '#F5B700' : '#1A2338', color: open === i ? '#070500' : '#F5B700',
               borderRadius: 12, display: 'grid', placeItems: 'center', fontWeight: 900,
               fontSize: '.82rem', padding: '10px 6px', minHeight: 60, transition: 'all .2s'
             }}>{e.year}</div>
@@ -117,7 +117,7 @@ function RevealBlock({ block }) {
   return (
     <div style={{ margin: '12px 0' }}>
       <div style={{ background: '#f0ece0', borderRadius: 12, padding: '14px 16px', marginBottom: 10 }}>
-        <div style={{ fontSize: '.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--muted)', marginBottom: 6 }}>
+        <div style={{ fontSize: '.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#9CA8C7', marginBottom: 6 }}>
           {block.label || '⚡ Quick Sort'}
         </div>
         <p style={{ fontWeight: 600, margin: 0 }}>{block.prompt}</p>
@@ -149,7 +149,7 @@ function QuizBlock({ block, onAnswered }) {
 
   return (
     <div style={{ margin: '14px 0' }}>
-      <div style={{ background: '#1a1a2e', borderRadius: 12, padding: '16px 18px', marginBottom: 12 }}>
+      <div style={{ background: '#10182B', borderRadius: 12, padding: '16px 18px', marginBottom: 12 }}>
         <p style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', margin: 0 }}>{block.question}</p>
       </div>
       <div className="grid-stack">
@@ -222,7 +222,7 @@ function Screen({ screen }) {
           fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 10
         }}>{screen.kicker}</div>
         <h2 style={{ fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 6 }}>{screen.heading}</h2>
-        {screen.sub && <p style={{ fontSize: '.9rem', color: 'var(--muted)' }}>{screen.sub}</p>}
+        {screen.sub && <p style={{ fontSize: '.9rem', color: '#9CA8C7' }}>{screen.sub}</p>}
       </div>
 
       {screen.blocks.map((block, i) => (
@@ -266,7 +266,7 @@ export default function ModulePlayer({ module, onBack }) {
   const cur = module.screens[screen]
 
   return (
-    <div className="page" style={{ background: 'var(--parchment)' }}>
+    <div className="page" style={{ background: '#1A2338' }}>
       {/* Sticky header */}
       <div className="sticky-header">
         <div className="container">
@@ -279,10 +279,10 @@ export default function ModulePlayer({ module, onBack }) {
               }}>{module.icon} {module.subject} · Module {module.number} — {module.title}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontSize: '.75rem', color: 'var(--muted)', fontWeight: 700 }}>
+              <span style={{ fontSize: '.75rem', color: '#9CA8C7', fontWeight: 700 }}>
                 {screen + 1} / {total}
               </span>
-              <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '.82rem' }}>
+              <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA8C7', fontSize: '.82rem' }}>
                 ✕ exit
               </button>
             </div>
@@ -296,9 +296,9 @@ export default function ModulePlayer({ module, onBack }) {
             {module.screens.map((s, i) => (
               <button key={i} onClick={() => { setScreen(i); setAnimKey(k => k + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
                 style={{
-                  border: `1px solid ${i === screen ? module.color : 'var(--border)'}`,
+                  border: `1px solid ${i === screen ? module.color : '#2A3552'}`,
                   background: i === screen ? module.color : 'rgba(255,253,248,.9)',
-                  color: i === screen ? '#fff' : i < screen ? 'var(--green)' : 'var(--muted)',
+                  color: i === screen ? '#fff' : i < screen ? '#4DFF88' : '#9CA8C7',
                   borderRadius: 999, padding: '5px 10px', fontSize: '.72rem',
                   fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0
                 }}>
@@ -333,7 +333,7 @@ export default function ModulePlayer({ module, onBack }) {
             <button onClick={onBack} style={{ background: '#fff9ec', color: '#17120d', border: 'none', borderRadius: 12, padding: '11px 16px', fontWeight: 900, cursor: 'pointer', fontSize: '.85rem' }}>
               Save + Exit
             </button>
-            <button className="btn btn-primary" style={{ background: isLast ? 'var(--green)' : '#17120d' }}
+            <button className="btn btn-primary" style={{ background: isLast ? '#4DFF88' : '#17120d' }}
               onClick={() => isLast ? onBack() : go(1)}>
               {isLast ? 'Finish ✓' : 'Next →'}
             </button>
