@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MATHS_QUESTIONS, MATHS_FORMULA_SHEET, MATHS_DIAGRAMS } from './data/mathsQuestions.js'
+import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft } from './progress.js'
@@ -1216,124 +1216,252 @@ const MARK_TIPS_M = {
   5:'Full method — show every step clearly.',
 }
 
-function MathsQuestionView({ q, qIdx, total, bankLabel, isCalc, onBack, onNext }) {
+// ─── Formula sheet modal ──────────────────────────────────────────────────────
+function FormulaSheet({ onClose }) {
+  return (
+    <div onClick={onClose} style={{ position:'fixed', inset:0, zIndex:300, background:'rgba(0,0,0,.8)', backdropFilter:'blur(8px)', display:'flex', alignItems:'flex-end', justifyContent:'center' }}>
+      <div onClick={e=>e.stopPropagation()} style={{ background:'#0E1330', border:'1px solid rgba(59,130,255,.3)', borderRadius:'20px 20px 0 0', padding:'20px 18px 40px', width:'100%', maxWidth:660, maxHeight:'82vh', overflowY:'auto' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18 }}>
+          <div>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1.1rem', color:'#F5F7FB' }}>📐 AQA Formula Sheet</div>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:2 }}>These are given in the exam — but worth knowing them cold</div>
+          </div>
+          <button onClick={onClose} style={{ background:'rgba(255,255,255,.08)', border:'1px solid #2A3552', borderRadius:8, padding:'6px 14px', color:'#9CA8C7', cursor:'pointer', fontFamily:'inherit', fontSize:'.82rem' }}>✕</button>
+        </div>
+        {FORMULA_SHEET.map(cat => (
+          <div key={cat.section} style={{ marginBottom:18 }}>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:'#3B82FF', marginBottom:10 }}>{cat.section}</div>
+            <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+              {cat.formulae.map(item => (
+                <div key={item.name} style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'12px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', gap:12 }}>
+                  <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.82rem', color:'#9CA8C7' }}>{item.name}</div>
+                  <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', flexShrink:0 }}>{item.f}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Inline diagram renderer ──────────────────────────────────────────────────
+function MathsDiagram({ diagramKey }) {
+  const svg = DIAGRAMS[diagramKey]
+  if (!svg) return null
+  return (
+    <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'14px', marginBottom:14 }}>
+      <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#3B82FF', marginBottom:8 }}>📐 Diagram — from AQA past paper</div>
+      <div dangerouslySetInnerHTML={{ __html: svg }} />
+    </div>
+  )
+}
+
+// ─── Grade colours ────────────────────────────────────────────────────────────
+const GRADE_COLOURS = {
+  'Excellent':  { bg:'rgba(77,255,136,.08)', border:'rgba(77,255,136,.35)', text:'#4DFF88', badge:'#38D27A' },
+  'Good':       { bg:'rgba(77,255,136,.05)', border:'rgba(77,255,136,.2)',  text:'#6BFFB0', badge:'#38D27A' },
+  'Developing': { bg:'rgba(255,200,87,.08)', border:'rgba(255,200,87,.3)',  text:'#FFC857', badge:'#F5B700' },
+  'Needs Work': { bg:'rgba(255,93,115,.08)', border:'rgba(255,93,115,.3)',  text:'#FF5D73', badge:'#FF5D73' },
+}
+
+// ─── API grading call ─────────────────────────────────────────────────────────
+async function gradeWithAI(question, answer, marks, markScheme) {
+  const res = await fetch('/api/grade', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      question,
+      answer: answer.trim(),
+      marks,
+      markScheme,
+    }),
+  })
+  if (!res.ok) throw new Error(`Server error ${res.status}`)
+  const data = await res.json()
+  if (data.error) throw new Error(data.error)
+  return data
+}
+
+// ─── Single question view ─────────────────────────────────────────────────────
+function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack, onNext }) {
   const [answer, setAnswer]   = useState('')
   const [showTip, setTip]     = useState(false)
   const [grading, setGrading] = useState(false)
   const [feedback, setFB]     = useState(null)
   const [error, setError]     = useState(null)
-  const [formulaOpen, setFm]  = useState(false)
+  const [fmOpen, setFm]       = useState(false)
 
   function reset() { setAnswer(''); setTip(false); setFB(null); setError(null); setGrading(false) }
 
   async function grade() {
-    if (answer.trim().length < 2) { setError('Write something first.'); return }
+    if (q.type === 'mc' && !answer) { setError('Pick an option first.'); return }
+    if (q.type !== 'mc' && answer.trim().length < 1) { setError('Write something — even a rough attempt gets method marks!'); return }
     setGrading(true); setError(null)
     try {
-      const res = await fetch('/api/grade', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ question:q.q, answer:answer.trim(), marks:q.marks, markScheme:q.ms }) })
-      const d = await res.json()
-      if (d.error) throw new Error(d.error)
-      setFB(d)
-    } catch { setError('Could not grade right now.') }
-    finally { setGrading(false) }
+      const result = await gradeWithAI(q.q, answer, q.marks, q.ms)
+      setFB(result)
+    } catch (e) {
+      setError('Could not reach the grading server. Check your connection and try again.')
+    } finally {
+      setGrading(false)
+    }
   }
 
-  const gs = feedback ? (GRADE_STYLE_M[feedback.grade] || GRADE_STYLE_M['Developing']) : null
+  const gs = feedback ? (GRADE_COLOURS[feedback.grade] || GRADE_COLOURS['Developing']) : null
+  const MARK_TIPS = {
+    1: 'One specific correct point. No working needed.',
+    2: 'Two separate points, OR method + correct answer.',
+    3: 'Show every step — each line of working can earn a mark.',
+    4: 'Full method with all steps. Check your arithmetic at the end.',
+    5: 'Five marks means five things to show — method + sub-steps + answer.',
+  }
 
   return (
     <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
-      {formulaOpen && <FormulaSheet onClose={() => setFm(false)} />}
-      <div style={{ background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', padding:'12px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
-          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
-          <div style={{ flex:1, minWidth:0 }}>
-            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{bankLabel} — Q{q.qNum}</div>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480' }}>Q{qIdx+1}/{total} · {q.marks} mark{q.marks!==1?'s':''} · {q.topic}</div>
+      {fmOpen && <FormulaSheet onClose={() => setFm(false)} />}
+
+      {/* Sticky header */}
+      <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'12px 16px' }}>
+        <div style={{ maxWidth:660, margin:'0 auto' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:8 }}>
+            <button onClick={() => { reset(); onBack() }} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0, lineHeight:1 }}>←</button>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:2 }}>
+                <div style={{ width:8, height:8, borderRadius:'50%', background:topicColor, flexShrink:0, boxShadow:`0 0 6px ${topicColor}` }} />
+                <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor }}>{topicLabel}</span>
+              </div>
+              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB' }}>
+                Q{q.qNum} · {q.source}
+              </div>
+            </div>
+            <div style={{ display:'flex', gap:6, flexShrink:0 }}>
+              {isCalc
+                ? <div style={{ background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 9px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}>🖩 Calc</div>
+                : <div style={{ background:'rgba(255,200,87,.08)', border:'1px solid rgba(255,200,87,.2)', borderRadius:8, padding:'4px 9px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}>✗ No Calc</div>
+              }
+              <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#70B8FF', cursor:'pointer' }}>📐 Formulae</button>
+            </div>
           </div>
-          {isCalc
-            ? <div style={{ background:'rgba(56,210,122,.12)', border:'1px solid rgba(56,210,122,.3)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, color:'#38D27A', flexShrink:0 }}>🖩 Calc</div>
-            : <div style={{ background:'rgba(255,200,87,.1)', border:'1px solid rgba(255,200,87,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, color:'#FFC857', flexShrink:0 }}>✗ No Calc</div>
-          }
-          <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.12)', border:'1px solid rgba(59,130,255,.25)', borderRadius:8, padding:'5px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.7rem', fontWeight:700, color:'#70B8FF', cursor:'pointer', flexShrink:0 }}>📐</button>
-        </div>
-        <div style={{ height:3, background:'#1E2A40', borderRadius:99, overflow:'hidden', marginTop:10, maxWidth:660, margin:'10px auto 0' }}>
-          <div style={{ height:'100%', width:`${((qIdx+1)/total)*100}%`, background:'linear-gradient(90deg,#3B82FF,#70B8FF)', borderRadius:99, transition:'width .3s' }} />
+          {/* Progress */}
+          <div style={{ height:3, background:'#1E2A40', borderRadius:99, overflow:'hidden' }}>
+            <div style={{ height:'100%', width:`${((qIdx+1)/total)*100}%`, background:`linear-gradient(90deg,${topicColor}88,${topicColor})`, borderRadius:99, transition:'width .4s ease' }} />
+          </div>
+          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.62rem', color:'#4A5578', marginTop:5, textAlign:'right' }}>{qIdx+1} / {total}</div>
         </div>
       </div>
 
       <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px 20px' }}>
-        <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.25)', borderRadius:99, padding:'4px 12px', marginBottom:14 }}>
-          <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'.75rem', fontWeight:700, color:'#70B8FF' }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
+        {/* Marks badge */}
+        <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:`${topicColor}18`, border:`1px solid ${topicColor}44`, borderRadius:99, padding:'4px 13px', marginBottom:14 }}>
+          <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'.78rem', fontWeight:700, color:topicColor }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
         </div>
 
+        {/* Diagram */}
         {q.diagramKey && <MathsDiagram diagramKey={q.diagramKey} />}
 
-        <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, padding:'18px', marginBottom:14 }}>
-          <pre style={{ fontFamily:"'Inter',sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{q.q}</pre>
+        {/* Question */}
+        <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, padding:'18px 18px', marginBottom:14 }}>
+          <pre style={{ fontFamily:"'Inter',sans-serif", fontSize:'1rem', lineHeight:1.7, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{q.q}</pre>
         </div>
 
+        {/* Mark tip */}
         {!showTip
-          ? <button onClick={() => setTip(true)} style={{ background:'none', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Inter',sans-serif", width:'100%', marginBottom:14 }}>💡 Show mark tip</button>
-          : <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}>
-              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:5 }}>{q.marks}-mark question</div>
-              <p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.85rem', color:'#C8D0E8' }}>{MARK_TIPS_M[q.marks] || MARK_TIPS_M[3]}</p>
+          ? <button onClick={() => setTip(true)} style={{ background:'transparent', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Inter',sans-serif", width:'100%', marginBottom:14 }}>💡 How many things do I need to write?</button>
+          : <div style={{ background:'rgba(255,200,87,.05)', border:'1px solid rgba(255,200,87,.18)', borderRadius:10, padding:'12px 14px', marginBottom:14 }}>
+              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FFC857', marginBottom:5 }}>{q.marks}-mark question</div>
+              <p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.86rem', color:'#C8D0E8', lineHeight:1.55 }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
             </div>
         }
 
+        {/* Answer area — only shown before feedback */}
         {!feedback && (
           q.type === 'mc'
-            ? <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:14 }}>
-                {q.options.map((opt,i) => (
-                  <button key={i} onClick={() => setAnswer(opt)} style={{ background:answer===opt?'rgba(59,130,255,.15)':'#10182B', border:`1.5px solid ${answer===opt?'#3B82FF':'#1E2A40'}`, borderRadius:12, padding:'13px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:answer===opt?'#70B8FF':'#C8D0E8', transition:'all .15s' }}>
-                    <span style={{ opacity:.45, marginRight:8 }}>{String.fromCharCode(65+i)}.</span>{opt}
+            ? <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:16 }}>
+                {q.options.map((opt, i) => (
+                  <button key={i} onClick={() => setAnswer(opt)} style={{ background:answer===opt?`${topicColor}18`:'#10182B', border:`1.5px solid ${answer===opt?topicColor:'#1E2A40'}`, borderRadius:12, padding:'14px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:answer===opt?topicColor:'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
+                    <span style={{ width:24, height:24, borderRadius:'50%', border:`1.5px solid ${answer===opt?topicColor:'#2A3552'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.72rem', fontWeight:700, color:answer===opt?topicColor:'#4A5578', background:answer===opt?`${topicColor}18`:'transparent' }}>{String.fromCharCode(65+i)}</span>
+                    {opt}
                   </button>
                 ))}
               </div>
-            : <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:14 }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>Your working & answer</div>
-                <textarea value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Show your working here…" style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:'#E0E6F0', lineHeight:1.65, outline:'none', minHeight:q.marks>=4?160:q.marks>=2?110:70 }} />
+            : <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:16 }}>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>Your working & answer</div>
+                <textarea
+                  value={answer}
+                  onChange={e => setAnswer(e.target.value)}
+                  placeholder={q.marks >= 3 ? 'Show all your working here…' : 'Write your answer…'}
+                  style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Inter',sans-serif", fontSize:'.95rem', color:'#E0E6F0', lineHeight:1.7, outline:'none', minHeight: q.marks >= 4 ? 170 : q.marks >= 2 ? 110 : 65 }}
+                />
               </div>
         )}
 
-        {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73' }}>{error}</p></div>}
+        {/* Error */}
+        {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'12px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73', lineHeight:1.5 }}>{error}</p></div>}
 
+        {/* Feedback */}
         {feedback && gs && (
           <div className="fade-up">
-            <div style={{ background:gs.bg, border:`2px solid ${gs.border}`, borderRadius:16, padding:'18px', marginBottom:12 }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
-                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'1.8rem', fontWeight:800, color:gs.text, lineHeight:1 }}>{feedback.marksAwarded}<span style={{ fontSize:'1rem', opacity:.6 }}>/{feedback.marksAvailable}</span></div>
-                <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.82rem' }}>{feedback.grade}</div>
+            {/* Score card */}
+            <div style={{ background:gs.bg, border:`2px solid ${gs.border}`, borderRadius:18, padding:'20px', marginBottom:12 }}>
+              <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:12 }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2rem', fontWeight:800, color:gs.text, lineHeight:1 }}>
+                  {feedback.marksAwarded}<span style={{ fontSize:'1.1rem', opacity:.5 }}>/{feedback.marksAvailable}</span>
+                </div>
+                <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.8rem' }}>{feedback.grade}</div>
               </div>
-              <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.9rem', color:gs.text, margin:0, opacity:.85 }}>{feedback.summary}</p>
+              <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.9rem', color:gs.text, margin:0, lineHeight:1.55, opacity:.9 }}>{feedback.summary}</p>
             </div>
+
+            {/* What they got right */}
             {feedback.achieved?.length > 0 && (
-              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:8 }}>✓ What you got right</div>
-                {feedback.achieved.map((a,i) => <div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#4DFF88', flexShrink:0 }}>✓</span><p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{a}</p></div>)}
+              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:10 }}>✓ What you got right</div>
+                {feedback.achieved.map((a,i) => (
+                  <div key={i} style={{ display:'flex', gap:8, marginBottom: i<feedback.achieved.length-1?8:0 }}>
+                    <span style={{ color:'#4DFF88', flexShrink:0, fontSize:'.9rem' }}>✓</span>
+                    <p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{a}</p>
+                  </div>
+                ))}
               </div>
             )}
+
+            {/* What they missed */}
             {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && (
-              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FF5D73', marginBottom:8 }}>→ Points to add next time</div>
-                {feedback.missed.map((m,i) => <div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#FF5D73', flexShrink:0 }}>→</span><p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{m}</p></div>)}
+              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FF5D73', marginBottom:10 }}>→ Next time, also include</div>
+                {feedback.missed.map((m,i) => (
+                  <div key={i} style={{ display:'flex', gap:8, marginBottom: i<feedback.missed.length-1?8:0 }}>
+                    <span style={{ color:'#FF5D73', flexShrink:0, fontSize:'.9rem' }}>→</span>
+                    <p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{m}</p>
+                  </div>
+                ))}
               </div>
             )}
+
+            {/* Examiner tip */}
             {feedback.examinerTip && (
-              <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:12, padding:'13px 14px', marginBottom:14 }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div>
-                <p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{feedback.examinerTip}</p>
+              <div style={{ background:'rgba(245,183,0,.05)', border:'1px solid rgba(245,183,0,.18)', borderRadius:13, padding:'14px', marginBottom:16 }}>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div>
+                <p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{feedback.examinerTip}</p>
               </div>
             )}
+
+            {/* Actions */}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-              <button onClick={reset} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:12, padding:'13px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
-              <button onClick={onNext} style={{ background:'linear-gradient(135deg,#3B82FF,#70B8FF)', border:'none', borderRadius:12, padding:'13px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#fff', fontSize:'.88rem' }}>{qIdx < total-1 ? 'Next →' : 'Finish ✓'}</button>
+              <button onClick={reset} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:13, padding:'14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
+              <button onClick={onNext} style={{ background:`linear-gradient(135deg,${topicColor}cc,${topicColor})`, border:'none', borderRadius:13, padding:'14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#fff', fontSize:'.88rem', boxShadow:`0 4px 16px ${topicColor}44` }}>
+                {qIdx < total-1 ? 'Next →' : 'Finish ✓'}
+              </button>
             </div>
           </div>
         )}
 
+        {/* Submit button */}
         {!feedback && (
-          <button onClick={grade} disabled={grading} style={{ width:'100%', background:grading?'#1E2A40':'linear-gradient(135deg,#3B82FF,#70B8FF)', color:grading?'#5A6480':'#fff', border:'none', borderRadius:12, padding:'15px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:grading?'default':'pointer', fontSize:'.97rem', marginTop:4 }}>
-            {grading ? 'Marking…' : 'Check my answer →'}
+          <button onClick={grade} disabled={grading} style={{ width:'100%', background:grading?'#1E2A40':`linear-gradient(135deg,${topicColor}cc,${topicColor})`, color:grading?'#4A5578':'#fff', border:'none', borderRadius:13, padding:'16px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:grading?'default':'pointer', fontSize:'1rem', letterSpacing:'.01em', marginTop:4, boxShadow:grading?'none':`0 4px 20px ${topicColor}44`, transition:'all .2s' }}>
+            {grading ? '⏳ Marking your answer…' : 'Check my answer →'}
           </button>
         )}
       </div>
@@ -1341,93 +1469,154 @@ function MathsQuestionView({ q, qIdx, total, bankLabel, isCalc, onBack, onNext }
   )
 }
 
-function MathsPaperView({ onBack }) {
-  const [activePaper, setPaper] = useState(null)
-  const [activeQ, setActiveQ]   = useState(null)
-  const [qIdx, setQIdx]         = useState(0)
-  const [filterCat, setFilter]  = useState('All')
-  const [formulaOpen, setFm]    = useState(false)
+// ─── Topic question list ──────────────────────────────────────────────────────
+function MathsTopicView({ group, onBack }) {
+  const [qIdx, setQIdx]   = useState(null)   // null = list, number = in question
+  const qs = group.questions
 
-  const paperKeys = Object.keys(MATHS_QUESTIONS)
-  const CAT_FILTERS = ['All','Number','Algebra','Percentages','Fractions','Geometry','Statistics','Probability','Sequences']
-
-  function getQs(key) {
-    const bank = MATHS_QUESTIONS[key]
-    if (!bank) return []
-    if (filterCat === 'All') return bank.questions
-    return bank.questions.filter(q => q.topic.toLowerCase().includes(filterCat.toLowerCase()))
-  }
-
-  if (activeQ && activePaper) {
-    const qs = getQs(activePaper)
-    const bank = MATHS_QUESTIONS[activePaper]
-    return <MathsQuestionView q={activeQ} qIdx={qIdx} total={qs.length} bankLabel={bank.label} isCalc={bank.calculator}
-      onBack={() => { setActiveQ(null) }}
-      onNext={() => {
-        const next = qIdx + 1
-        if (next < qs.length) { setActiveQ(qs[next]); setQIdx(next) }
-        else { setActiveQ(null) }
-      }}
-    />
+  if (qIdx !== null) {
+    return (
+      <MathsQuestion
+        q={qs[qIdx]} qIdx={qIdx} total={qs.length}
+        topicLabel={group.label} topicColor={group.color} isCalc={group.calculator}
+        onBack={() => setQIdx(null)}
+        onNext={() => { if (qIdx < qs.length-1) setQIdx(qIdx+1); else setQIdx(null) }}
+      />
+    )
   }
 
   return (
     <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
-      {formulaOpen && <FormulaSheet onClose={() => setFm(false)} />}
-      <div style={{ background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', padding:'14px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
-          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0 }}>←</button>
-          <div style={{ flex:1 }}>
-            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>Maths Past Papers</div>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.73rem', color:'#5A6480' }}>AQA Foundation · AI marked</div>
+      {/* Header */}
+      <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
+        <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
+          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
+          <div style={{ width:32, height:32, borderRadius:10, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem', flexShrink:0 }}>{group.icon}</div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>{group.label}</div>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>{qs.length} question{qs.length!==1?'s':''} · {group.calculator?'Calculator allowed':'Non-calculator'}</div>
           </div>
-          <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.12)', border:'1px solid rgba(59,130,255,.25)', borderRadius:10, padding:'7px 12px', fontFamily:"'Inter',sans-serif", fontSize:'.75rem', fontWeight:700, color:'#70B8FF', cursor:'pointer' }}>📐 Formulae</button>
         </div>
       </div>
 
       <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
-        <div style={{ marginBottom:18 }}>
-          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.67rem', fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:'#5A6480', marginBottom:8 }}>FILTER BY TOPIC</div>
-          <div style={{ display:'flex', gap:6, overflowX:'auto', paddingBottom:4, scrollbarWidth:'none' }}>
-            {CAT_FILTERS.map(t => {
-              const active = filterCat === t
-              return <button key={t} onClick={() => setFilter(t)} style={{ flexShrink:0, background:active?'rgba(59,130,255,.15)':'#10182B', border:`1px solid ${active?'#3B82FF':'#1E2A40'}`, borderRadius:99, padding:'6px 13px', fontFamily:"'Inter',sans-serif", fontSize:'.75rem', fontWeight:600, color:active?'#70B8FF':'#5A6480', cursor:'pointer', whiteSpace:'nowrap' }}>{t}</button>
-            })}
-          </div>
+        {/* Topic description */}
+        <div style={{ background:'#10182B', border:`1px solid ${group.border}`, borderRadius:14, padding:'14px 16px', marginBottom:20 }}>
+          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.85rem', color:'#C8D0E8', lineHeight:1.6 }}>{group.description}</div>
+          {group.calculator
+            ? <div style={{ marginTop:10, display:'inline-flex', alignItems:'center', gap:5, background:'rgba(56,210,122,.08)', border:'1px solid rgba(56,210,122,.2)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.7rem', fontWeight:600, color:'#38D27A' }}>🖩 Calculator allowed for this topic</div>
+            : <div style={{ marginTop:10, display:'inline-flex', alignItems:'center', gap:5, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.2)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.7rem', fontWeight:600, color:'#FFC857' }}>✗ No calculator — show all working</div>
+          }
         </div>
 
-        {paperKeys.map(key => {
-          const bank = MATHS_QUESTIONS[key]
-          const qs = getQs(key)
-          if (!qs.length) return null
-          return (
-            <div key={key} style={{ marginBottom:20 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
-                <div style={{ width:30, height:30, borderRadius:9, background:bank.calculator?'rgba(56,210,122,.12)':'rgba(255,200,87,.1)', border:`1px solid ${bank.calculator?'rgba(56,210,122,.3)':'rgba(255,200,87,.25)'}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.85rem' }}>{bank.calculator?'🖩':'✎'}</div>
-                <div>
-                  <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.88rem', color:'#F5F7FB' }}>{bank.label}</div>
-                  <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480' }}>{qs.length} question{qs.length!==1?'s':''} · {bank.calculator?'Calculator allowed':'No calculator'}</div>
+        {/* Start all button */}
+        <button onClick={() => setQIdx(0)} style={{ width:'100%', background:`linear-gradient(135deg,${group.color}cc,${group.color})`, color:'#fff', border:'none', borderRadius:14, padding:'15px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', fontSize:'.97rem', marginBottom:16, boxShadow:`0 4px 20px ${group.color}44`, display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
+          Start all {qs.length} questions →
+        </button>
+
+        {/* Individual question list */}
+        <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, overflow:'hidden' }}>
+          {qs.map((q,i) => (
+            <button key={q.id} onClick={() => setQIdx(i)} style={{ width:'100%', background:'transparent', border:'none', borderBottom:i<qs.length-1?'1px solid #161F30':'none', padding:'14px 16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:12, transition:'background .15s' }}>
+              {/* Question number badge */}
+              <div style={{ width:36, height:36, borderRadius:10, flexShrink:0, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.72rem', color:group.color }}>Q{q.qNum}</div>
+              <div style={{ flex:1, minWidth:0 }}>
+                {/* First line of question */}
+                <div style={{ fontFamily:"'Inter',sans-serif", fontWeight:600, fontSize:'.9rem', color:'#E0E6F0', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
+                  {q.q.split('\n')[0].substring(0,58)}{q.q.split('\n')[0].length>58?'…':''}
+                </div>
+                <div style={{ display:'flex', gap:6, marginTop:4, flexWrap:'wrap' }}>
+                  <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', color:'#4A5578' }}>{q.source}</span>
+                  <span style={{ color:'#2A3552' }}>·</span>
+                  <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', color:group.color, fontWeight:600 }}>{q.marks} mark{q.marks!==1?'s':''}</span>
+                  {q.diagramKey && <><span style={{ color:'#2A3552' }}>·</span><span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', color:'#3B82FF' }}>📐 diagram</span></>}
+                  {q.type === 'mc' && <><span style={{ color:'#2A3552' }}>·</span><span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', color:'#9D5CFF' }}>multiple choice</span></>}
                 </div>
               </div>
-              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, overflow:'hidden' }}>
-                {qs.map((q,i) => (
-                  <button key={q.id} onClick={() => { setActiveQ(q); setPaper(key); setQIdx(i) }} style={{ width:'100%', background:'transparent', border:'none', borderBottom:i<qs.length-1?'1px solid #1A2338':'none', padding:'13px 16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:12 }}>
-                    <div style={{ width:34, height:34, borderRadius:9, flexShrink:0, background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.2)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.72rem', color:'#3B82FF' }}>Q{q.qNum}</div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontFamily:"'Inter',sans-serif", fontWeight:600, fontSize:'.88rem', color:'#E0E6F0', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{q.q.split('\n')[0].substring(0,60)}{q.q.split('\n')[0].length>60?'…':''}</div>
-                      <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480', marginTop:2 }}>{q.topic} · {q.marks} mark{q.marks!==1?'s':''}{q.diagramKey?' · 📐 diagram':''}</div>
-                    </div>
-                    <span style={{ color:'#2A3552', fontSize:'.9rem', flexShrink:0 }}>›</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )
-        })}
+              <span style={{ color:'#2A3552', fontSize:'1rem', flexShrink:0 }}>›</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   )
 }
+
+// ─── Maths topic browser ──────────────────────────────────────────────────────
+function MathsBrowser({ onBack }) {
+  const [activeGroup, setGroup] = useState(null)
+  const [fmOpen, setFm]         = useState(false)
+  const [filter, setFilter]     = useState('all')   // 'all' | 'calc' | 'noncalc'
+
+  if (activeGroup) return <MathsTopicView group={activeGroup} onBack={() => setGroup(null)} />
+
+  const totalQs = MATHS_TOPIC_GROUPS.reduce((s,g) => s + g.questions.length, 0)
+  const filtered = filter === 'all' ? MATHS_TOPIC_GROUPS
+    : filter === 'calc' ? MATHS_TOPIC_GROUPS.filter(g => g.calculator)
+    : MATHS_TOPIC_GROUPS.filter(g => !g.calculator)
+
+  return (
+    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
+      {fmOpen && <FormulaSheet onClose={() => setFm(false)} />}
+
+      {/* Header */}
+      <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
+        <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
+          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
+          <div style={{ flex:1 }}>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA Maths — Topics</div>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>{MATHS_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked</div>
+          </div>
+          <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:10, padding:'7px 12px', fontFamily:"'Inter',sans-serif", fontSize:'.73rem', fontWeight:700, color:'#70B8FF', cursor:'pointer', flexShrink:0 }}>📐 Formulae</button>
+        </div>
+      </div>
+
+      <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
+        {/* Filter pills */}
+        <div style={{ display:'flex', gap:8, marginBottom:20 }}>
+          {[
+            { id:'all',      label:`All (${totalQs})` },
+            { id:'noncalc',  label:'✗ No Calculator' },
+            { id:'calc',     label:'🖩 Calculator' },
+          ].map(f => (
+            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(59,130,255,.15)':'#10182B', border:`1px solid ${filter===f.id?'#3B82FF':'#1E2A40'}`, borderRadius:10, padding:'9px 6px', fontFamily:"'Inter',sans-serif", fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#70B8FF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
+          ))}
+        </div>
+
+        {/* Topic grid */}
+        <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+          {filtered.map(group => (
+            <button key={group.id} onClick={() => setGroup(group)} style={{ background:'#10182B', border:`1px solid #1E2A40`, borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14, transition:'border-color .15s, transform .12s', width:'100%' }}>
+              {/* Icon */}
+              <div style={{ width:46, height:46, borderRadius:13, flexShrink:0, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'1rem', color:group.color }}>
+                {group.icon}
+              </div>
+
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{group.description}</div>
+                <div style={{ display:'flex', gap:8, marginTop:7, alignItems:'center' }}>
+                  {/* Mini progress-style pill */}
+                  <div style={{ flex:1, height:3, background:'#1E2A40', borderRadius:99, overflow:'hidden' }}>
+                    <div style={{ height:'100%', width:'0%', background:group.color, borderRadius:99 }} />
+                  </div>
+                  <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:600, color:group.color, flexShrink:0 }}>{group.questions.length} Q{group.questions.length!==1?'s':''}</span>
+                  {group.calculator
+                    ? <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', color:'#38D27A', flexShrink:0 }}>🖩</span>
+                    : <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', color:'#FFC857', flexShrink:0 }}>✗</span>
+                  }
+                </div>
+              </div>
+
+              <span style={{ color:'#2A3552', fontSize:'1.1rem', flexShrink:0 }}>›</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 
 function TestTab() {
   const [mathsOpen, setMathsOpen] = useState(false)
@@ -1441,7 +1630,7 @@ function TestTab() {
 
   function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
 
-  if (mathsOpen) return <MathsPaperView onBack={() => setMathsOpen(false)} />
+  if (mathsOpen) return <MathsBrowser onBack={() => setMathsOpen(false)} />
 
   const GRADE_STYLE = {
     'Excellent':  { bg:'rgba(77,255,136,.08)',  border:'rgba(77,255,136,.3)',  text:'#4DFF88', badge:'#38D27A' },
@@ -1599,7 +1788,7 @@ function TestTab() {
             <div style={{ width:46, height:46, borderRadius:13, background:'rgba(59,130,255,.12)', border:'1px solid rgba(59,130,255,.25)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem', flexShrink:0 }}>📐</div>
             <div style={{ flex:1 }}>
               <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB' }}>AQA Foundation Past Papers</div>
-              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:3 }}>Papers 1, 2 & 3 · Formula sheet · AI marked · Diagrams included</div>
+              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:3 }}>15 topics · AI marked · Formula sheet · Diagrams included</div>
               <div style={{ display:'flex', gap:6, marginTop:8 }}>
                 {['Non-Calc','Calculator','Formulae','Diagrams'].map(tag=>(
                   <span key={tag} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.2)', borderRadius:99, padding:'2px 8px', fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:600, color:'#70B8FF' }}>{tag}</span>
