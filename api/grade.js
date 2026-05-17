@@ -15,6 +15,24 @@ Respond ONLY in this exact JSON format with no other text:
   "grade": "<Excellent|Good|Developing|Needs Work>"
 }
 
+ENGLISH LANGUAGE MARKING (when Level 1-4 descriptors appear in the mark scheme):
+- This is level of response marking — there are no M1/A1 marks
+- Level 4 (Perceptive, detailed): analyses effects of language/structure; judicious quotes; sophisticated terminology → top of mark range
+- Level 3 (Clear, relevant): explains effects clearly; range of relevant quotes; clear accurate terminology → middle of range
+- Level 2 (Some, attempts): comments on effect; some quotes; some terminology → lower middle
+- Level 1 (Simple, limited): simple comment; simple quote; basic terminology → bottom
+- For Q1 (list questions, 4 marks): award 1 mark per correct distinct point that answers the question
+- For Q1 P2 (true/false, 4 marks): award 1 mark per correct statement identified
+- For Q2/Q3 language and structure (8 marks): use 4-level descriptor
+- For Q2 P2 summary (8 marks): use 4-level descriptor focused on synthesis from both texts
+- For Q3 P2 language (12 marks): use 4-level descriptor with wider mark range
+- For Q4 P1 evaluation (20 marks): use 4-level descriptor; look for engagement with the student statement, analysis of writer's methods
+- For Q4 P2 comparison (16 marks): use 4-level descriptor; must use BOTH texts for level 3+
+- For Q5 writing (40 marks): judge content/organisation (24) + technical accuracy (16) separately; combine for total
+- Be generous with Level 3 if the student shows clear understanding with relevant quotes and terminology
+- Do NOT penalise imperfect terminology if understanding is shown
+- For writing tasks: assess communication, vocabulary range, structural choices, and accuracy
+
 MATHS MARKING (when M1/A1/B1/M1dep notation appears in the mark scheme):
 - M1 = Method mark: award if they show the correct method or approach, even with arithmetic errors
 - A1 = Accuracy mark: only award if the method was correct AND the answer is right
@@ -92,8 +110,8 @@ ${answer}`
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5',
-        max_tokens: 700,
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1200,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userMessage }],
       }),
