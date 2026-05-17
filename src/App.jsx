@@ -1286,12 +1286,25 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
   const gs = feedback ? (GRADE_COLOURS[feedback.grade] || GRADE_COLOURS['Developing']) : null
   // Detect if this is a maths question (has M1/A1/B1 mark scheme) vs English/History (level-based)
   const isMathsQ = q.ms ? /\[M1|\[A1|\[B1|\[B2|\[B3/.test(q.ms) : false
-  const MARK_TIPS = {
-    1: 'One specific correct point. No working needed.',
-    2: 'Two separate points, OR method + correct answer.',
-    3: 'Show every step — each line of working can earn a mark.',
-    4: 'Full method with all steps. Check your arithmetic at the end.',
-    5: 'Five marks means five things to show — method + sub-steps + answer.',
+  // Tips adapt based on whether this is maths or English/humanities
+  const MARK_TIPS = isMathsQ ? {
+    1: 'One specific correct answer. No working needed for 1 mark.',
+    2: 'Show your method AND give the correct answer — both earn marks.',
+    3: 'Show every step. Each line of working can earn a mark even if the final answer is wrong.',
+    4: 'Full method with all steps shown clearly. Check your arithmetic at the end.',
+    5: 'Five marks = five things to demonstrate. Show all working from start to finish.',
+    6: 'Full method with sub-steps. Show all stages — do not skip steps.',
+  } : {
+    1: 'One clear, accurate point that directly answers the question.',
+    2: 'Two separate, distinct points. Each must be a new idea — not the same point rephrased.',
+    3: 'Three points OR one point with a well-developed explanation. Quote from the text.',
+    4: 'Four separate points, OR two points each with a clear explanation and evidence.',
+    6: 'Level of response: link your points together with evidence. Do not just list facts.',
+    8: 'Use quotes, name techniques, explain effects. Aim for Level 3: "clear and relevant".',
+    12: 'Analyse language choices in depth. Quote precisely, name the technique, explain the effect on the reader.',
+    16: 'Compare BOTH texts throughout. Link quotes to writer's methods and intentions.',
+    20: 'Give your view first, then prove it. Engage critically with the statement — agree, disagree, or both.',
+    40: 'Plan before you write. Strong opening, clear structure, ambitious vocabulary, accurate punctuation throughout.',
   }
 
   return (
@@ -1351,9 +1364,9 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
 
         {/* Mark tip */}
         {!showTip
-          ? <button onClick={() => setTip(true)} style={{ background:'transparent', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Inter',sans-serif", width:'100%', marginBottom:14 }}>💡 How many things do I need to write?</button>
+          ? <button onClick={() => setTip(true)} style={{ background:'transparent', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Inter',sans-serif", width:'100%', marginBottom:14 }}>💡 {isMathsQ ? 'How many steps do I need to show?' : 'What does this question need from me?'}</button>
           : <div style={{ background:'rgba(255,200,87,.05)', border:'1px solid rgba(255,200,87,.18)', borderRadius:10, padding:'12px 14px', marginBottom:14 }}>
-              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FFC857', marginBottom:5 }}>{q.marks}-mark question</div>
+              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FFC857', marginBottom:5 }}>{isMathsQ ? `${q.marks}-mark question` : `${q.marks} marks — what to write`}</div>
               <p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.86rem', color:'#C8D0E8', lineHeight:1.55 }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
             </div>
         }
@@ -1374,7 +1387,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
                 <textarea
                   value={answer}
                   onChange={e => setAnswer(e.target.value)}
-                  placeholder={q.marks >= 3 ? 'Show all your working here…' : 'Write your answer…'}
+                  placeholder={isMathsQ ? (q.marks >= 3 ? 'Show all your working here…' : 'Write your answer…') : 'Write your answer here. Use quotes from the extract where relevant…'}
                   style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Inter',sans-serif", fontSize:'.95rem', color:'#E0E6F0', lineHeight:1.7, outline:'none', minHeight: q.marks >= 4 ? 170 : q.marks >= 2 ? 110 : 65 }}
                 />
               </div>
