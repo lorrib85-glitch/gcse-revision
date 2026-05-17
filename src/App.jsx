@@ -1232,6 +1232,32 @@ async function gradeWithAI(question, answer, marks, markScheme) {
   return data
 }
 
+// ─── Strip bracketed MC options from question text ────────────────────────────
+// MC questions store options in q.options[] but some also embed them as
+// "[ ] Option text" lines in q.q — this removes those duplicate lines.
+function cleanQuestionText(q) {
+  if (!q.q) return q.q
+  const isMC = q.type === 'mc' || q.type === 'mc_multi'
+  return q.q
+    .split('\n')
+    .filter(line => {
+      const t = line.trim()
+      if (!isMC) return true
+      // Strip embedded MC option lines: [ ] ... or [x] ...
+      if (/^\[.{0,2}\]/.test(t)) return false
+      // Strip lettered option lines: A. / B. / A) etc
+      if (/^[A-D][.)]\s/.test(t)) return false
+      // Strip instruction lines that are redundant with button UI
+      if (/^tick one box/i.test(t)) return false
+      if (/^circle the (answer|correct)/i.test(t)) return false
+      return true
+    })
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
+
 // ─── Single question view ─────────────────────────────────────────────────────
 function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack, onNext }) {
   const [answer, setAnswer]   = useState('')
@@ -1311,7 +1337,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
 
         {/* Question */}
         <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, padding:'18px 18px', marginBottom:14 }}>
-          <pre style={{ fontFamily:"'Inter',sans-serif", fontSize:'1rem', lineHeight:1.7, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{q.q}</pre>
+          <pre style={{ fontFamily:"'Inter',sans-serif", fontSize:'1rem', lineHeight:1.7, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
         </div>
 
         {/* Mark tip */}
@@ -1789,7 +1815,7 @@ function TestTab() {
               </div>
             )}
             <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'16px', marginBottom:14 }}>
-              <pre style={{ fontFamily:"'Inter',sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{q.q}</pre>
+              <pre style={{ fontFamily:"'Inter',sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
             </div>
             {!showTip
               ? <button onClick={() => setTip(true)} style={{ background:'none', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Inter',sans-serif", width:'100%', marginBottom:14 }}>💡 Show mark tip</button>
