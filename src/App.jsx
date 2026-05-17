@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft } from './progress.js'
 import { MODULES } from './modules.js'
@@ -394,58 +395,636 @@ function ModulesTab({ onOpenModule }) {
 const TEST_TOPICS = [
   {
     subject: 'History',
+    icon: '📜',
     topics: [
-      { id: 'th1', label: 'Medieval Medicine c1250–c1500', questions: 12, available: true },
-      { id: 'th2', label: 'Renaissance & the Plague c1500–c1700', questions: 10, available: true },
-      { id: 'th3', label: 'Surgery & Anatomy c1700–c1900', questions: 8, available: true },
-      { id: 'th4', label: 'Germ Theory c1850–c1900', questions: 9, available: true },
-      { id: 'th5', label: 'Public Health c1800–c1900', questions: 11, available: true },
-      { id: 'th6', label: 'Modern Medicine c1900–present', questions: 0, available: false },
+      { id: 'th1', label: 'Medieval Medicine c1250–c1500',        questions: 4,  available: true },
+      { id: 'th2', label: 'Renaissance & the Plague c1500–c1700', questions: 3,  available: true },
+      { id: 'th3', label: 'Surgery & Anatomy c1700–c1900',        questions: 3,  available: true },
+      { id: 'th4', label: 'Germ Theory c1850–c1900',              questions: 3,  available: true },
+      { id: 'th5', label: 'Public Health c1800–c1900',            questions: 3,  available: true },
     ]
   },
-  { subject: 'Maths',              topics: [{ id: 'tm1', label: 'Coming soon', questions: 0, available: false }] },
-  { subject: 'Biology',            topics: [{ id: 'tb1', label: 'Coming soon', questions: 0, available: false }] },
-  { subject: 'Chemistry',          topics: [{ id: 'tc1', label: 'Coming soon', questions: 0, available: false }] },
-  { subject: 'Physics',            topics: [{ id: 'tp1', label: 'Coming soon', questions: 0, available: false }] },
-  { subject: 'Music',              topics: [{ id: 'tmu1', label: 'Coming soon', questions: 0, available: false }] },
-  { subject: 'Sociology',          topics: [{ id: 'ts1', label: 'Coming soon', questions: 0, available: false }] },
-  { subject: 'English Literature', topics: [{ id: 'tel1', label: 'Coming soon', questions: 0, available: false }] },
-  { subject: 'English Language',   topics: [{ id: 'tela1', label: 'Coming soon', questions: 0, available: false }] },
+  {
+    subject: 'Biology',
+    icon: '🧬',
+    topics: [
+      { id: 'tb_cells',    label: 'Cells, microscopy & size calculations', questions: 6,  available: true },
+      { id: 'tb_digest',   label: 'Digestion, enzymes & absorption',       questions: 9,  available: true },
+      { id: 'tb_transp',   label: 'Transpiration, stomata & water loss',   questions: 8,  available: true },
+      { id: 'tb_resp',     label: 'Respiration — aerobic & anaerobic',     questions: 6,  available: true },
+      { id: 'tb_blood',    label: 'Blood, heart & circulatory system',     questions: 8,  available: true },
+      { id: 'tb_immune',   label: 'Disease, immunity & drug testing',      questions: 11, available: true },
+      { id: 'tb_osmosis',  label: 'Osmosis & water movement',              questions: 6,  available: true },
+      { id: 'tb_photo',    label: 'Photosynthesis',                        questions: 6,  available: true },
+      { id: 'tb_cells_div','label': 'Cell division, growth & mitosis',     questions: 4,  available: true },
+    ]
+  },
+  { subject: 'Chemistry',          icon: '⚗️',  topics: [{ id: 'tc1',   label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'Physics',            icon: '⚡',  topics: [{ id: 'tp1',   label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'Maths',              icon: '📐',  topics: [{ id: 'tm1',   label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'Music',              icon: '🎵',  topics: [{ id: 'tmu1',  label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'Sociology',          icon: '👥',  topics: [{ id: 'ts1',   label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'English Literature', icon: '📚',  topics: [{ id: 'tel1',  label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'English Language',   icon: '✍️',  topics: [{ id: 'tela1', label: 'Coming soon', questions: 0, available: false }] },
 ]
 
-// Placeholder past-paper style questions for History topics
+
+// ── Real AQA past paper questions with real mark schemes ──────────────────────
+// Source: AQA 8464/B/1F June 2020 + Nov 2020
+
 const PAST_PAPER_QS = {
+
+  // ── HISTORY ──────────────────────────────────────────────────────────────────
+
   th1: [
-    { q: 'Describe two features of medieval hospitals. [4 marks]', type: 'written', marks: 4 },
-    { q: 'Explain why the Church both helped and hindered medicine in the Middle Ages. [12 marks]', type: 'written', marks: 12 },
-    { q: 'How far was the Black Death a turning point in the history of medicine? Explain your answer. [16 marks]', type: 'written', marks: 16 },
-    { q: '"The main reason medieval medicine made little progress was the influence of the Church." How far do you agree? Explain your answer. [16 marks]', type: 'written', marks: 16 },
+    { q: 'Describe two features of medieval hospitals. [4 marks]', type: 'written', marks: 4, ms: 'Award up to 2 marks per feature (1 for identifying, 1 for supporting detail). Features include: run by the Church/monks/nuns; focused on care and prayer rather than curing disease; St Bartholomew's Hospital founded 1123; patients prayed and received basic care; hospitals were places of rest not medical treatment; staffed by religious orders.' },
+    { q: 'Explain why the Church both helped and hindered medicine in the Middle Ages. [12 marks]', type: 'written', marks: 12, ms: 'Helped: preserved Galen's texts in universities; ran hospitals like St Bartholomew's (1123); provided care for sick; trained physicians. Hindered: discouraged dissection (body needed to be whole for resurrection); treated Galen's work as unquestionable; linked illness to sin/God's punishment; discouraged new thinking. Strong answers explain the mechanism, not just list.' },
+    { q: 'How far was the Black Death a turning point in the history of medicine? Explain your answer. [16 marks]', type: 'written', marks: 16, ms: 'Was a turning point: exposed limits of medieval medicine; prompted some public health action. Counter: beliefs and treatments barely changed; humours still dominant after 1349; no new understanding of disease. Strong answers need specific evidence (1348 arrival, 1/3 died, miasma/God's punishment blamed), explain why change/continuity happened, reach clear supported judgement.' },
+    { q: '"The main reason medieval medicine made little progress was the influence of the Church." How far do you agree? Explain your answer. [16 marks]', type: 'written', marks: 16, ms: 'Agree: Church backed Galen, discouraged dissection, linked illness to God, trained physicians in outdated ideas. Disagree: other factors — lack of technology, four humours theory itself, tradition and conservatism, limited scientific method, Galen's own authority. Strong answers argue both sides with specific evidence, reach a clear judgement about which factor was most important and why.' },
   ],
   th2: [
-    { q: 'Describe two features of Vesalius\'s contribution to medicine. [4 marks]', type: 'written', marks: 4 },
-    { q: 'Explain why Harvey\'s discovery of blood circulation did not immediately lead to better treatments. [12 marks]', type: 'written', marks: 12 },
-    { q: 'How far did the Renaissance change medicine? Explain your answer. [16 marks]', type: 'written', marks: 16 },
+    { q: "Describe two features of Vesalius's contribution to medicine. [4 marks]", type: 'written', marks: 4, ms: 'Award up to 2 marks per feature. Features: corrected over 300 of Galen's errors; used human dissection himself; published De Fabrica (1543); proved jaw is one bone; showed septum of heart had no holes; encouraged observation over ancient authority.' },
+    { q: "Explain why Harvey's discovery of blood circulation did not immediately lead to better treatments. [12 marks]", type: 'written', marks: 12, ms: 'Key points: Harvey proved blood circulates but could not explain what blood does; doctors still used bloodletting because they did not know what else to do; understanding does not automatically change treatment; conservative medical profession; lack of technology. Strong answers explain the mechanism — why understanding and treatment are separate things.' },
+    { q: 'How far did the Renaissance change medicine? Explain your answer. [16 marks]', type: 'written', marks: 16, ms: 'Changed: Vesalius corrected anatomy, Harvey proved circulation, Paré improved surgery, printing press spread ideas. Continuity: treatments barely changed, humours still used, bleeding/purging continued, Great Plague 1665 shows disease understanding remained poor. Strong answers: balanced argument with specific evidence, clear judgement on extent of change.' },
   ],
   th3: [
-    { q: 'Describe two problems with surgery before the 1840s. [4 marks]', type: 'written', marks: 4 },
-    { q: 'Explain why anaesthetics both helped and created new problems for surgery. [12 marks]', type: 'written', marks: 12 },
-    { q: 'How important was Lister\'s use of antiseptics in improving surgery? [16 marks]', type: 'written', marks: 16 },
+    { q: 'Describe two problems with surgery before the 1840s. [4 marks]', type: 'written', marks: 4, ms: 'Award up to 2 marks per problem. Problems: no anaesthetic so patients conscious and in pain; no antiseptics so infection was common; no blood transfusions so blood loss often fatal; dirty instruments spread infection; surgeons judged on speed not care.' },
+    { q: 'Explain why anaesthetics both helped and created new problems for surgery. [12 marks]', type: 'written', marks: 12, ms: 'Helped: removed pain, patients could stay still, surgeons could work more carefully, longer operations possible. Problems: longer operations increased infection risk; overconfidence led to more ambitious surgery before antiseptics; chloroform could be fatal if overdosed (Hannah Greener, 1848). Strong answers explain both effects with specific evidence.' },
+    { q: "How important was Lister's use of antiseptics in improving surgery? [16 marks]", type: 'written', marks: 16, ms: 'Important: carbolic acid dramatically reduced infection deaths; applied Pasteur's germ theory practically; changed surgical practice; aseptic surgery followed. Limits: other factors also improved surgery — anaesthetics (Simpson 1847), blood groups, aseptic methods went further; initial resistance from surgeons. Strong answers: weigh against other factors, reach supported judgement.' },
   ],
   th4: [
-    { q: 'Describe two features of Pasteur\'s germ theory. [4 marks]', type: 'written', marks: 4 },
-    { q: 'Explain why Koch\'s work was important for the development of medicine. [12 marks]', type: 'written', marks: 12 },
-    { q: '"Pasteur\'s germ theory was the most important development in medicine in the 19th century." How far do you agree? [16 marks]', type: 'written', marks: 16 },
+    { q: "Describe two features of Pasteur's germ theory. [4 marks]", type: 'written', marks: 4, ms: 'Award up to 2 marks per feature. Features: proved micro-organisms cause disease/decay; swan-neck flask experiment (1861); overturned spontaneous generation; showed microbes come from air; led to pasteurisation; opened door to vaccines and antiseptics.' },
+    { q: "Explain why Koch's work was important for the development of medicine. [12 marks]", type: 'written', marks: 12, ms: 'Key points: identified specific bacteria causing specific diseases (anthrax 1876, TB 1882, cholera 1883); developed staining techniques; made germ theory more convincing; enabled development of targeted treatments; built on Pasteur's general germ theory. Strong answers explain why specificity mattered.' },
+    { q: '"Pasteur's germ theory was the most important development in medicine in the 19th century." How far do you agree? [16 marks]', type: 'written', marks: 16, ms: 'Agree: germ theory underpinned antiseptic surgery, vaccines, public health reform; changed direction of all medicine; Pasteur's swan-neck flask 1861 was pivotal. Disagree: other developments also important — anaesthetics (Simpson 1847), public health acts (1848, 1875), Koch's specific discoveries, Lister's antiseptics, Snow's waterborne cholera proof. Strong answers: weigh with specific evidence, clear supported judgement.' },
   ],
   th5: [
-    { q: 'Describe two features of the 1875 Public Health Act. [4 marks]', type: 'written', marks: 4 },
-    { q: 'Explain why the government was slow to improve public health in the early 19th century. [12 marks]', type: 'written', marks: 12 },
-    { q: 'How far was the Great Stink of 1858 a turning point in the history of public health? [16 marks]', type: 'written', marks: 16 },
+    { q: 'Describe two features of the 1875 Public Health Act. [4 marks]', type: 'written', marks: 4, ms: 'Award up to 2 marks per feature. Features: compulsory clean water supply; compulsory sewage systems; local authorities had to appoint medical officers of health; made sanitation improvements mandatory; shift away from laissez-faire; built on the weaker 1848 Act.' },
+    { q: 'Explain why the government was slow to improve public health in the early 19th century. [12 marks]', type: 'written', marks: 12, ms: 'Key reasons: laissez-faire attitude (government should not interfere); cost — ratepayers did not want to pay; miasma theory meant people did not fully understand disease; vested interests (landlords, water companies); local not national responsibility; 1848 Act was optional not compulsory. Strong answers explain mechanism with evidence.' },
+    { q: 'How far was the Great Stink of 1858 a turning point in the history of public health? [16 marks]', type: 'written', marks: 16, ms: 'Was a turning point: Parliament directly affected so reform became urgent; led to Bazalgette's sewer system; reduced cholera outbreaks in London; showed engineering could solve public health. Not/other factors: Chadwick's 1842 report laid groundwork; Snow's 1854 pump handle removal proved waterborne spread; 1875 Act was arguably more significant nationally. Strong answers: balanced argument, specific evidence, clear judgement.' },
   ],
+
+  // ── BIOLOGY — Cells & microscopy ─────────────────────────────────────────────
+  // Sources: Jun22 Q2, Jun23 Q7, Jun24 B1 Q1
+
+  tb_cells: [
+    {
+      q: 'What is the function of the nucleus in a cell? Tick ONE box.
+
+[ ] To contain a solution called cell sap
+[ ] To control the activities of the whole cell
+[ ] To control the movement of substances into the cell',
+      type: 'mc', marks: 1,
+      options: ['To contain a solution called cell sap', 'To control the activities of the whole cell', 'To control the movement of substances into the cell'],
+      correct: 1,
+      ms: 'To control the activities of the whole cell. [1 mark]'
+    },
+    {
+      q: 'What is the function of the mitochondria in a cell? Tick ONE box.
+
+[ ] To produce glucose during photosynthesis
+[ ] To produce proteins for the cell
+[ ] To release energy in respiration',
+      type: 'mc', marks: 1,
+      options: ['To produce glucose during photosynthesis', 'To produce proteins for the cell', 'To release energy in respiration'],
+      correct: 2,
+      ms: 'To release energy in respiration. [1 mark]'
+    },
+    {
+      q: 'A palisade cell image measured 28 mm in length when viewed at a magnification of ×400. Calculate the real length of the palisade cell in mm. Then convert to micrometres (µm). 1 mm = 1000 µm. [3 marks]
+
+Use: real length = image length ÷ magnification',
+      type: 'written', marks: 3,
+      ms: 'Real length = 28 ÷ 400 = 0.07 mm [2 marks for correct working and answer]. Conversion: 0.07 × 1000 = 70 µm [1 mark]. Allow ecf from incorrect real length calculation.'
+    },
+    {
+      q: 'Give ONE advantage of using an electron microscope compared with a light microscope. [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'Any one from: greater magnification; higher resolving power; can see (smaller) subcellular structures/parts; can see more detail inside cells; reference to 3-D images.'
+    },
+    {
+      q: 'Give ONE way you can tell that an animal cell is NOT a plant cell. [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'Any one from: does not have a cell wall; does not have a (large) vacuole; does not have chloroplasts. Ignore chlorophyll.'
+    },
+    {
+      q: 'Which part of a cell controls the movement of substances into and out of the cell? Tick ONE box.
+
+[ ] Cell membrane
+[ ] Cytoplasm
+[ ] Nucleus',
+      type: 'mc', marks: 1,
+      options: ['Cell membrane', 'Cytoplasm', 'Nucleus'],
+      correct: 0,
+      ms: 'Cell membrane. [1 mark]'
+    },
+  ],
+
+  // ── BIOLOGY — Digestion & enzymes ─────────────────────────────────────────────
+  // Sources: Jun20 Q6, Jun22 Q1, Jun23 Q2, Jun24 B1 Q6
+
+  tb_digest: [
+    {
+      q: 'What type of enzyme is produced in the stomach? Tick ONE box.
+
+[ ] Carbohydrase
+[ ] Lipase
+[ ] Protease',
+      type: 'mc', marks: 1,
+      options: ['Carbohydrase', 'Lipase', 'Protease'],
+      correct: 2,
+      ms: 'Protease. [1 mark]'
+    },
+    {
+      q: 'Which term describes the pH in the stomach? And give ONE reason why the stomach is this pH. [2 marks]
+
+[ ] Acidic  [ ] Alkaline  [ ] Neutral',
+      type: 'written', marks: 2,
+      ms: 'Acidic [1 mark]. Reason: any one from — produces (hydrochloric) acid; optimum/best condition for protease/enzyme to act; to kill microorganisms/bacteria/pathogens. [1 mark]'
+    },
+    {
+      q: 'Which organ produces bile? Tick ONE box.
+
+[ ] Large intestine
+[ ] Liver
+[ ] Mouth
+[ ] Pancreas',
+      type: 'mc', marks: 1,
+      options: ['Large intestine', 'Liver', 'Mouth', 'Pancreas'],
+      correct: 1,
+      ms: 'Liver. [1 mark]'
+    },
+    {
+      q: 'How does bile help in the digestion of foods? Tick ONE box.
+
+[ ] It increases the surface area of fats
+[ ] It is an enzyme that digests protein
+[ ] It makes the pH in the small intestine acidic',
+      type: 'mc', marks: 1,
+      options: ['It increases the surface area of fats', 'It is an enzyme that digests protein', 'It makes the pH in the small intestine acidic'],
+      correct: 0,
+      ms: 'It increases the surface area of fats. [1 mark] — bile emulsifies fats, breaking them into smaller droplets to increase surface area for lipase to act on.'
+    },
+    {
+      q: 'What molecules are produced when starch is digested? Tick ONE box.
+
+[ ] Amino acids
+[ ] Fatty acids
+[ ] Sugars',
+      type: 'mc', marks: 1,
+      options: ['Amino acids', 'Fatty acids', 'Sugars'],
+      correct: 2,
+      ms: 'Sugars. [1 mark] — amylase breaks starch down into maltose/glucose (sugars).'
+    },
+    {
+      q: 'What is the name of the enzyme that digests starch? [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'Amylase. Allow phonetic spelling. Allow carbohydrase. Do NOT accept amylose.'
+    },
+    {
+      q: 'Where are most food molecules absorbed? Tick ONE box.
+
+[ ] Large intestine
+[ ] Liver
+[ ] Small intestine
+[ ] Stomach',
+      type: 'mc', marks: 1,
+      options: ['Large intestine', 'Liver', 'Small intestine', 'Stomach'],
+      correct: 2,
+      ms: 'Small intestine. [1 mark]'
+    },
+    {
+      fig: 'nov20_villi',
+      q: 'Explain how villi are adapted for efficient absorption of sugar molecules. [4 marks]',
+      type: 'written', marks: 4,
+      ms: 'Level 2 (3–4): points identified in detail and logically linked. Level 1 (1–2): points stated simply, no linking.
+
+Indicative content: have (many) microvilli to increase surface area; wall of villus only one cell thick/thin so short diffusion pathway; capillaries close to surface; good blood supply to transport food molecules away and maintain diffusion gradient; cells have many mitochondria providing energy for active transport of sugar molecules. For Level 2 must link structure to function.'
+    },
+    {
+      q: 'Describe how protein and fat are digested. Include the enzymes involved and where they are produced. [6 marks]',
+      type: 'written', marks: 6,
+      ms: 'Level 2 (4–6): accurate detail forming a clear account. Level 1 (1–3): facts stated simply.
+
+Protein: protease enzyme; broken down into amino acids; produced in the stomach; produced in the pancreas; produced in the small intestine; hydrochloric acid provides correct pH for protease in stomach.
+
+Fat: lipase enzyme; broken down into fatty acids and glycerol; produced by the pancreas; produced by the small intestine; bile produced by the liver, released from gall bladder; bile emulsifies fats (increases surface area for lipase); bile neutralises acid to provide correct pH.
+
+For Level 2 must describe digestion of BOTH fat and protein linked to correct enzyme type for both.'
+    },
+  ],
+
+  // ── BIOLOGY — Transpiration & stomata ─────────────────────────────────────────
+  // Sources: Jun20 Q3, Jun23 Q3, Jun24 B1 Q2
+
+  tb_transp: [
+    {
+      q: 'What is the loss of water from a leaf called? Tick ONE box.
+
+[ ] Osmosis
+[ ] Respiration
+[ ] Transpiration',
+      type: 'mc', marks: 1,
+      options: ['Osmosis', 'Respiration', 'Transpiration'],
+      correct: 2,
+      ms: 'Transpiration. [1 mark]'
+    },
+    {
+      q: 'Which cells control the size of stomata? Tick ONE box.
+
+[ ] Guard cells
+[ ] Phloem cells
+[ ] Xylem cells',
+      type: 'mc', marks: 1,
+      options: ['Guard cells', 'Phloem cells', 'Xylem cells'],
+      correct: 0,
+      ms: 'Guard cells. [1 mark]'
+    },
+    {
+      fig: 'nov20_leaf_experiment',
+      q: 'A leaf grease experiment showed: Leaf B (upper surface covered) lost 0.13 g of mass; Leaf C (lower surface covered) lost 0.05 g. What evidence does this give about where most water is lost from? [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'Leaf B (upper surface covered) lost more mass/water than Leaf C (lower surface covered), so more water is lost from the lower surface. Allow: "lower surface lost 0.13 g and upper surface lost 0.05 g" with conclusion.'
+    },
+    {
+      q: 'Based on the leaf grease experiment, what do the results show about the number of stomata on leaf surfaces? Tick ONE box.
+
+[ ] There are more stomata on the lower surface
+[ ] There are more stomata on the upper surface
+[ ] There are the same number of stomata on both surfaces',
+      type: 'mc', marks: 1,
+      options: ['There are more stomata on the lower surface', 'There are more stomata on the upper surface', 'There are the same number of stomata on both surfaces'],
+      correct: 0,
+      ms: 'There are more stomata on the lower surface. [1 mark] — because more water was lost when the lower surface was uncovered (Leaf B vs Leaf C).'
+    },
+    {
+      q: 'A leaf investigation was done at 20°C. How would the mass of water lost be different at 25°C? Give a reason for your answer. [2 marks]',
+      type: 'written', marks: 2,
+      ms: 'More (mass/water) lost [1 mark] because evaporation/transpiration would be faster at higher temperature [1 mark].'
+    },
+    {
+      q: 'A student investigated loss of mass from leaves in different wind speeds. Results: fan off = 0.06 g, low = 0.15 g, medium = 0.23 g, high = 0.31 g.
+
+How does increasing fan speed affect the loss of mass from the leaves? Use the results. [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'Loss of mass increases (as fan speed increases). Allow: more mass/water is lost; mass of leaves decreases more.'
+    },
+    {
+      q: 'Explain why the mass of leaves decreased at all fan speeds (including with the fan off). [3 marks]',
+      type: 'written', marks: 3,
+      ms: 'Loss of water [1 mark] because water evaporated [1 mark] from stomata/stoma [1 mark]. Allow: by transpiration; by diffusion. Ignore: from guard cells.'
+    },
+    {
+      q: 'What rate of water loss from a plant losing 9.0 g over 5 hours? Tick ONE box.
+
+[ ] 0.9 grams/hour
+[ ] 1.8 grams/hour
+[ ] 9.0 grams/hour',
+      type: 'mc', marks: 1,
+      options: ['0.9 grams/hour', '1.8 grams/hour', '9.0 grams/hour'],
+      correct: 1,
+      ms: '1.8 grams/hour. [1 mark] — 9.0 ÷ 5 = 1.8 g/hour.'
+    },
+  ],
+
+  // ── BIOLOGY — Respiration ─────────────────────────────────────────────────────
+  // Sources: Jun20 Q1, Jun23 Q5
+
+  tb_resp: [
+    {
+      q: 'What is the equation for aerobic respiration? Tick ONE box.
+
+[ ] carbon dioxide + water → glucose + oxygen
+[ ] glucose + oxygen → carbon dioxide + water
+[ ] oxygen + water → glucose + carbon dioxide',
+      type: 'mc', marks: 1,
+      options: ['carbon dioxide + water → glucose + oxygen', 'glucose + oxygen → carbon dioxide + water', 'oxygen + water → glucose + carbon dioxide'],
+      correct: 1,
+      ms: 'glucose + oxygen → carbon dioxide + water. [1 mark]'
+    },
+    {
+      q: 'Give two health benefits of regular exercise. Do NOT refer to losing body mass. [2 marks]',
+      type: 'written', marks: 2,
+      ms: 'Any two from: strengthens muscles; strengthens heart muscle; reduces risk of coronary heart disease; reduces blood pressure; reduces risk of Type 2 diabetes; improves mental health/mood; improves mobility; improves stamina; reduces blood cholesterol; strengthens bones; boosts immunity. Ignore: references to losing weight; immediate effects of exercise (e.g. increases heart rate); "makes you healthier" unqualified.'
+    },
+    {
+      q: 'Give two changes that happen in the body during aerobic exercise. Do NOT refer to increased breathing rate. [2 marks]',
+      type: 'written', marks: 2,
+      ms: 'Any two from: deeper/heavier breathing; increased heart rate; increased body temperature; increased sweating; increased blood flow to skin/muscles; blood flows faster. Do NOT accept: lactic acid is produced (that is anaerobic).'
+    },
+    {
+      q: 'Muscles respire anaerobically during vigorous exercise. Complete the sentences.
+
+Muscles respire anaerobically if they do not have enough _______.
+
+Anaerobic respiration of glucose produces _______. [2 marks]',
+      type: 'written', marks: 2,
+      ms: 'First blank: oxygen (allow O₂). Second blank: lactic acid. [1 mark each] Word takes precedence over symbol.'
+    },
+    {
+      q: 'Explain the differences in the air breathed into the lungs and the air breathed out. (Oxygen in: 21%, out: 16%; Carbon dioxide in: 0.04%, out: 4%; Nitrogen: 78% both.) [4 marks]',
+      type: 'written', marks: 4,
+      ms: 'Level 2 (3–4): relevant points with logical linking. Level 1 (1–2): points stated simply, no linking.
+
+Indicative content: less oxygen in exhaled air because body has used some for respiration; more carbon dioxide in exhaled air because carbon dioxide is produced in respiration; no difference in nitrogen because nitrogen is not used by the body; more water vapour in air breathed out because water is produced in respiration; exhaled air is warmer because energy is transferred during respiration.
+
+For Level 2: explanation(s) AND differences must be given.'
+    },
+    {
+      q: 'Give two ways the lungs are adapted for efficient gas exchange. [2 marks]',
+      type: 'written', marks: 2,
+      ms: 'Any two from: many alveoli; large surface area; short diffusion distance; wall of alveolus only one cell thick/thin; wall of blood capillaries only one cell thick; good blood supply; well ventilated. Allow: short distance for gas to travel. Ignore: moist.'
+    },
+  ],
+
+  // ── BIOLOGY — Blood & circulatory system ──────────────────────────────────────
+  // Sources: Jun23 Q4, Jun24 B1 Q3
+
+  tb_blood: [
+    {
+      q: 'Which chamber of the heart pumps blood to the body? Tick ONE box.
+
+[ ] Left atrium
+[ ] Left ventricle
+[ ] Right atrium
+[ ] Right ventricle',
+      type: 'mc', marks: 1,
+      options: ['Left atrium', 'Left ventricle', 'Right atrium', 'Right ventricle'],
+      correct: 1,
+      ms: 'Left ventricle. [1 mark]'
+    },
+    {
+      q: 'What is the name of the blood vessel that carries blood to the heart muscle? Tick ONE box.
+
+[ ] Aorta
+[ ] Coronary artery
+[ ] Pulmonary artery',
+      type: 'mc', marks: 1,
+      options: ['Aorta', 'Coronary artery', 'Pulmonary artery'],
+      correct: 1,
+      ms: 'Coronary artery. [1 mark]'
+    },
+    {
+      q: 'Which type of blood vessel has valves? Tick ONE box.
+
+[ ] Artery
+[ ] Capillary
+[ ] Vein',
+      type: 'mc', marks: 1,
+      options: ['Artery', 'Capillary', 'Vein'],
+      correct: 2,
+      ms: 'Vein. [1 mark]'
+    },
+    {
+      q: 'What is the function of valves in the heart and veins? [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'To stop blood flowing in the wrong direction. Allow: to stop blood flowing backwards; to stop backflow of blood; to keep blood flowing in the correct direction.'
+    },
+    {
+      q: 'Explain ONE way a capillary is adapted for its function. [2 marks]',
+      type: 'written', marks: 2,
+      ms: 'Walls that are one cell thick [1 mark] so there is a short diffusion distance / substances can move quickly between blood and cells [1 mark]. OR large surface area to volume ratio [1 mark] for exchange of substances [1 mark]. Allow: thin walls / very narrow (so) close to cells.'
+    },
+    {
+      q: 'Explain why having more red blood cells will improve an athlete's performance. [3 marks]',
+      type: 'written', marks: 3,
+      ms: 'More oxygen can be transported/carried [1 mark]. Oxygen is needed for aerobic respiration [1 mark]. So more energy can be transferred/released (for muscle contraction) [1 mark]. Allow: so less anaerobic respiration. Do NOT accept: energy is made/produced/created.'
+    },
+    {
+      q: 'Which part of the blood causes blood to clot? Tick ONE box.
+
+[ ] Plasma
+[ ] Platelets
+[ ] Red blood cells',
+      type: 'mc', marks: 1,
+      options: ['Plasma', 'Platelets', 'Red blood cells'],
+      correct: 1,
+      ms: 'Platelets. [1 mark]'
+    },
+    {
+      q: 'A heart attack happens when plaques block a coronary artery. Explain how the blockage can lead to the death of muscle cells in the heart. [3 marks]',
+      type: 'written', marks: 3,
+      ms: 'Less/no blood flow [1 mark] so less/no oxygen to heart muscle/cells [1 mark] so less/no respiration (so less energy available) [1 mark]. Ignore reference to lactic acid.'
+    },
+  ],
+
+  // ── BIOLOGY — Disease, immunity & drugs ───────────────────────────────────────
+  // Sources: Jun20 Q2 & Q4, Jun22 Q3 & Q5, Jun23 Q6, Jun24 B1 Q4
+
+  tb_immune: [
+    {
+      q: 'Give two ways that the body prevents pathogens entering the body. [2 marks]',
+      type: 'written', marks: 2,
+      ms: 'Any two from: skin (acts as a barrier); mucus in trachea/bronchi/nose; cilia in respiratory tract; hydrochloric acid in stomach; scab forms over wounds; tears. Allow: mucus in airways. Ignore: references to hairs; immune response.'
+    },
+    {
+      q: 'Describe how the immune system defends the body against disease. [6 marks]',
+      type: 'written', marks: 6,
+      ms: 'Level 2 (4–6): scientifically accurate detail with clear logical linking. Level 1 (1–3): facts listed without linking.
+
+Indicative content: white blood cells detect/identify foreign antigens; phagocytes engulf and digest/kill invading cells; lymphocytes produce antibodies which attach to and destroy/agglutinate pathogens; produce antitoxins to destroy toxins; produce memory cells so immune response to later exposure is faster.
+
+For Level 2: must describe HOW white blood cells act, not just name them.'
+    },
+    {
+      q: 'Give ONE reason why antibiotics cannot be used to treat HIV infections. [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'Any one from: HIV is a virus; antibiotics do not kill viruses; antibiotics are used to kill bacteria. Allow: HIV is not a bacterium.'
+    },
+    {
+      q: 'Give two ways to prevent the spread of HIV. [2 marks]',
+      type: 'written', marks: 2,
+      ms: 'Any two from: avoid sexual intercourse; use a condom; do not share needles; use antiretroviral drugs; screen blood for transfusions; have regular tests. Ignore: handwashing; social distancing; "use protection" unqualified.'
+    },
+    {
+      q: 'What type of pathogen causes rose black spot disease? Tick ONE box.
+
+[ ] Bacterium
+[ ] Fungus
+[ ] Protist
+[ ] Virus',
+      type: 'mc', marks: 1,
+      options: ['Bacterium', 'Fungus', 'Protist', 'Virus'],
+      correct: 1,
+      ms: 'Fungus. [1 mark]'
+    },
+    {
+      q: 'How is the malaria pathogen transferred to humans? [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'By the bite of a mosquito/insect vector. Allow: through a mosquito bite.'
+    },
+    {
+      q: 'What is the name of the first antibiotic developed? [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'Penicillin. [1 mark]'
+    },
+    {
+      q: 'Suggest why doctors do not give antibiotics to patients with minor infections. [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'Any one from: to prevent/reduce antibiotic resistance; overuse of antibiotics leads to resistant strains; minor infections are often caused by viruses (which antibiotics cannot treat); the immune system can deal with minor infections on its own.'
+    },
+    {
+      q: 'During Phase 1 clinical trials, a drug is tested on healthy volunteers using low doses. What is the main purpose of Phase 1 testing? Tick ONE box.
+
+[ ] To find the best dose to use
+[ ] To see if the drug is safe to use
+[ ] To see if the drug works',
+      type: 'mc', marks: 1,
+      options: ['To find the best dose to use', 'To see if the drug is safe to use', 'To see if the drug works'],
+      correct: 1,
+      ms: 'To see if the drug is safe to use. [1 mark]'
+    },
+    {
+      q: 'What is a placebo? [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'A tablet/treatment that does not contain the drug/active ingredient. Allow: a sugar pill; a fake drug.'
+    },
+    {
+      q: 'Who knows which patients are given the placebo and which are given the drug in a double blind trial? Tick ONE box.
+
+[ ] Not the patients or the doctors
+[ ] The patients and the doctors
+[ ] The patients but not the doctors',
+      type: 'mc', marks: 1,
+      options: ['Not the patients or the doctors', 'The patients and the doctors', 'The patients but not the doctors'],
+      correct: 0,
+      ms: 'Not the patients or the doctors. [1 mark]'
+    },
+  ],
+
+  // ── BIOLOGY — Osmosis & water movement ───────────────────────────────────────
+  // Sources: Jun20 Q5, Jun24 B1 Q7
+
+  tb_osmosis: [
+    {
+      q: 'What is the independent variable in a potato osmosis investigation? Tick ONE box.
+
+[ ] Change in mass of the pieces of potato
+[ ] Concentration of the sugar solution
+[ ] Length of time the pieces of potato are in the solution
+[ ] Starting mass of the pieces of potato',
+      type: 'mc', marks: 1,
+      options: ['Change in mass of the pieces of potato', 'Concentration of the sugar solution', 'Length of time the pieces of potato are in the solution', 'Starting mass of the pieces of potato'],
+      correct: 1,
+      ms: 'Concentration of the sugar solution. [1 mark]'
+    },
+    {
+      q: 'A potato piece in 0.0 mol/dm³ sugar solution increased in mass. Explain why. [2 marks]',
+      type: 'written', marks: 2,
+      ms: 'Gained water [1 mark] by osmosis [1 mark] because the concentration of water outside the potato is greater than inside the cells (allow: concentration of sugar solution inside the potato is greater than outside). Allow converse statements.'
+    },
+    {
+      q: 'A potato piece started at 7.96 g and ended at 8.21 g after being in 0.2 mol/dm³ sugar solution. Calculate the percentage change in mass to 3 significant figures.
+
+Use: percentage change = (change in mass ÷ mass at start) × 100 [3 marks]',
+      type: 'written', marks: 3,
+      ms: 'Change in mass = 8.21 − 7.96 = 0.25 g [1 mark]. Percentage change = (0.25 ÷ 7.96) × 100 [1 mark]. = 3.14% (to 3 significant figures) [1 mark]. Allow ecf from incorrect working.'
+    },
+    {
+      fig: 'jun24_osmosis_tube',
+      q: 'In an osmosis investigation using sealed tubing in salt solutions, a student dried the outside of each tube before recording mass. Why was it important to dry the tubes? [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'Water/solution on the tube would affect/increase the mass (making results invalid). Allow: the results would not be valid.'
+    },
+    {
+      q: 'In a sealed-tube osmosis experiment, the concentration of salt solution where the tube does not change mass is approximately 0.64–0.66 mol/dm³. What does this tell us? [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'The concentration of solution Z (inside the tubes) is approximately 0.64–0.66 mol/dm³ — because at this concentration the solution inside equals the solution outside, so no net movement of water by osmosis.'
+    },
+    {
+      q: 'Calculate the percentage change in mass for a tube that started at 15.54 g and ended at 16.50 g after being in 0.0 mol/dm³ salt solution. Give your answer to 1 decimal place. [3 marks]
+
+Use: percentage change = (change in mass ÷ mass at start) × 100',
+      type: 'written', marks: 3,
+      ms: 'Change in mass = 16.50 − 15.54 = 0.96 g [1 mark]. Percentage change = (0.96 ÷ 15.54) × 100 [1 mark]. = 6.2% (to 1 decimal place) [1 mark]. Allow ecf from incorrect calculation.'
+    },
+  ],
+
+  // ── BIOLOGY — Photosynthesis ───────────────────────────────────────────────────
+  // Sources: Jun22 Q2, Jun24 B1 Q5
+
+  tb_photo: [
+    {
+      q: 'Complete the equation for photosynthesis. Choose from: nitrogen, oxygen, ethanol, water.
+
+carbon dioxide + _______ → glucose + _______ [2 marks]',
+      type: 'written', marks: 2,
+      ms: 'First blank: water [1 mark]. Second blank: oxygen [1 mark]. Allow H₂O and O₂.'
+    },
+    {
+      q: 'What is the chemical formula for glucose? Tick ONE box.
+
+[ ] CO₂
+[ ] C₆H₁₂O₆
+[ ] H₂O
+[ ] O₂',
+      type: 'mc', marks: 1,
+      options: ['CO₂', 'C₆H₁₂O₆', 'H₂O', 'O₂'],
+      correct: 1,
+      ms: 'C₆H₁₂O₆. [1 mark]'
+    },
+    {
+      q: 'Give two ways plants use the glucose produced by photosynthesis. [2 marks]',
+      type: 'written', marks: 2,
+      ms: 'Any two from: respiration (for energy); to convert to starch (store); to produce fat/oil (store); to produce cellulose (cell walls); to produce amino acids/protein. Allow: energy source. Do NOT accept: energy produced/made/created; used for growth (too vague). Ignore: used for growth of the plant.'
+    },
+    {
+      q: 'Give ONE way that the palisade layer of a leaf is adapted for photosynthesis. [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'Any one from: contains many chloroplasts/chlorophyll to absorb light; cells are long and packed tightly to maximise light absorption; positioned near the top of the leaf to receive most light; large surface area for CO₂ absorption.'
+    },
+    {
+      q: 'A student investigated the effect of different colours of light on the rate of photosynthesis. Results: blue = 9 arbitrary units, green = 1, red = 8. What colour of light should be used to grow plants in a greenhouse? Tick ONE box.
+
+[ ] Blue  [ ] Green  [ ] Red',
+      type: 'mc', marks: 1,
+      options: ['Blue', 'Green', 'Red'],
+      correct: 0,
+      ms: 'Blue. [1 mark] — blue light gave the highest rate of photosynthesis (9 arbitrary units) so would produce the most growth.'
+    },
+    {
+      fig: 'jun24_greenhouses',
+      q: 'Greenhouse B has a wood burner burning logs, while Greenhouse A does not. Both greenhouses have the same light intensity, water volume, and soil. Explain why plants in Greenhouse B grow faster. [4 marks]',
+      type: 'written', marks: 4,
+      ms: 'Higher/increased temperature [1 mark] OR more carbon dioxide (combustion/burning releases CO₂) [1 mark]. So more photosynthesis/faster photosynthesis [1 mark]. So more glucose/sugar made [1 mark]. So more protein/cellulose made [1 mark]. Award max 4 marks.'
+    },
+  ],
+
+  // ── BIOLOGY — Cell division & growth ──────────────────────────────────────────
+  // Sources: Jun22 Q6
+
+  tb_cells_div: [
+    {
+      q: 'Write these biological structures in correct order of size. Smallest to largest: cell, chromosome, gene, nucleus. [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'gene → chromosome → nucleus → cell. Must be in this order for the mark.'
+    },
+    {
+      q: 'In humans a fertilised egg cell contains 23 pairs of chromosomes. How many chromosomes will there be in each of the embryo cells? [1 mark]',
+      type: 'written', marks: 1,
+      ms: '46. Allow: 23 pairs (of chromosomes).'
+    },
+    {
+      q: 'How many cell divisions are needed to form a 16-cell embryo from the original fertilised egg cell? [1 mark]',
+      type: 'written', marks: 1,
+      ms: '4 cell divisions. Allow 15 (if student has counted total cells including the original). The sequence is 1→2→4→8→16, which is 4 divisions.'
+    },
+    {
+      q: 'Give ONE way that cell division by mitosis is important in fully grown animals. [1 mark]',
+      type: 'written', marks: 1,
+      ms: 'Repair of tissues / replacement of cells. Allow: repair of organs; replacement of tissues. Ignore: growth; repair of cells; replacement of organs.'
+    },
+  ],
+
 }
 
+
 const MARK_TIPS = {
-  4:  { label: '4-mark question', tip: 'Two developed points. Each point needs a supporting detail. Aim for 2–3 sentences per point.' },
-  12: { label: '12-mark question', tip: 'Three or four paragraphs. Each needs a clear point, specific evidence, and explanation of how it answers the question.' },
+  1:  { label: '1-mark question', tip: 'One clear, accurate point. No development needed. Be specific — vague answers score zero.' },
+  2:  { label: '2-mark question', tip: 'Two separate, accurate points. If asked to "explain", you need the point AND the reason. If asked to "give two", each point must be distinct.' },
+  3:  { label: '3-mark question', tip: 'Show your working clearly. Each step can earn a mark. Even if you get the final answer wrong, correct working gets credit.' },
+  4:  { label: '4-mark question', tip: 'Two developed points, each with supporting detail. OR four separate points if listing. For "explain" questions: point → reason → link back.' },
+  6:  { label: '6-mark question', tip: 'Level of response: Level 2 (4–6 marks) needs scientifically accurate detail with clear logical linking. Level 1 (1–3 marks) is just listing facts. Name the process, explain how it works, link to the function.' },
+  12: { label: '12-mark question', tip: 'Three or four developed paragraphs. Each needs a clear point, specific evidence, and explanation of how it answers the question.' },
   16: { label: '16-mark question', tip: 'Argue both sides then reach a clear judgement. Specific evidence required. Avoid vague generalisations.' },
 }
 
@@ -467,7 +1046,7 @@ function TestTab() {
   }
 
   async function gradeAnswer(q) {
-    if (answer.trim().length < 10) {
+    if (answer.trim().length < 3) {
       setError('Write a bit more before submitting — even a rough attempt helps.')
       return
     }
@@ -477,7 +1056,7 @@ function TestTab() {
       const res = await fetch('/api/grade', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: q.q, answer: answer.trim(), marks: q.marks }),
+        body: JSON.stringify({ question: q.q, answer: answer.trim(), marks: q.marks, markScheme: q.ms }),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
@@ -540,6 +1119,14 @@ function TestTab() {
                 <span style={{ fontSize: '.72rem', fontWeight: 700, color: W.gold }}>{q.marks} marks</span>
               </div>
 
+              {/* Diagram if present */}
+              {q.fig && FIGURES[q.fig] && (
+                <div style={{ background: '#fff', border: `1px solid ${W.border}`, borderRadius: 14, padding: '12px', marginBottom: 14, textAlign: 'center' }}>
+                  <div style={{ fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.textMuted, marginBottom: 8 }}>Figure — from AQA past paper</div>
+                  <img src={FIGURES[q.fig]} alt="AQA exam figure" style={{ maxWidth: '100%', height: 'auto', borderRadius: 8 }} />
+                </div>
+              )}
+
               {/* Question */}
               <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '18px', marginBottom: 14 }}>
                 <p style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', lineHeight: 1.6, color: W.text, margin: 0 }}>{q.q}</p>
@@ -560,15 +1147,37 @@ function TestTab() {
 
               {/* Answer area — hidden after feedback */}
               {!feedback && (
-                <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '16px', marginBottom: 14 }}>
-                  <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.textMuted, marginBottom: 10 }}>Your answer</div>
-                  <textarea
-                    value={answer}
-                    onChange={e => setAnswer(e.target.value)}
-                    placeholder="Write your answer here..."
-                    style={{ width: '100%', border: 'none', background: 'transparent', resize: 'none', fontSize: '.92rem', color: W.text, lineHeight: 1.65, outline: 'none', minHeight: q.marks >= 12 ? 200 : 120, fontFamily: 'inherit' }}
-                  />
-                </div>
+                <>
+                  {q.type === 'mc' ? (
+                    /* Multiple choice */
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+                      {q.options.map((opt, i) => (
+                        <button key={i} onClick={() => setAnswer(opt)}
+                          style={{
+                            background: answer === opt ? W.btnPrimary : W.bgCard,
+                            border: `2px solid ${answer === opt ? W.btnPrimary : W.border}`,
+                            borderRadius: 12, padding: '12px 16px', cursor: 'pointer',
+                            textAlign: 'left', fontFamily: 'inherit', fontSize: '.92rem',
+                            color: answer === opt ? '#f0e8da' : W.text,
+                            transition: 'all .15s',
+                          }}>
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    /* Written answer */
+                    <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '16px', marginBottom: 14 }}>
+                      <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.textMuted, marginBottom: 10 }}>Your answer</div>
+                      <textarea
+                        value={answer}
+                        onChange={e => setAnswer(e.target.value)}
+                        placeholder="Write your answer here..."
+                        style={{ width: '100%', border: 'none', background: 'transparent', resize: 'none', fontSize: '.92rem', color: W.text, lineHeight: 1.65, outline: 'none', minHeight: q.marks >= 6 ? 180 : q.marks >= 3 ? 120 : 80, fontFamily: 'inherit' }}
+                      />
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Error */}
@@ -664,13 +1273,16 @@ function TestTab() {
     <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
       <div style={{ background: W.bgCard, borderBottom: `1px solid ${W.border}`, padding: '14px 20px' }}>
         <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: '1.05rem', color: W.text }}>Test Your Learning</div>
-        <div style={{ fontSize: '.78rem', color: W.textMuted, marginTop: 3 }}>Past paper questions — write your answer and get it marked by AI.</div>
+        <div style={{ fontSize: '.78rem', color: W.textMuted, marginTop: 3 }}>Real AQA past paper questions — write your answer and get it marked by AI.</div>
       </div>
 
       <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 18px' }}>
-        {TEST_TOPICS.map(({ subject, topics }) => (
+        {TEST_TOPICS.map(({ subject, icon, topics }) => (
           <div key={subject} style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: W.textMuted, marginBottom: 10 }}>{subject}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <span>{icon}</span>
+              <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: W.textMuted }}>{subject}</div>
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {topics.map(t => (
                 <button key={t.id}
