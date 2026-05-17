@@ -437,30 +437,30 @@ const PAST_PAPER_QS = {
   // ── HISTORY ──────────────────────────────────────────────────────────────────
 
   th1: [
-    { q: 'Describe two features of medieval hospitals. [4 marks]', type: 'written', marks: 4, ms: 'Award up to 2 marks per feature (1 for identifying, 1 for supporting detail). Features include: run by the Church/monks/nuns; focused on care and prayer rather than curing disease; St Bartholomew\'s Hospital founded 1123; patients prayed and received basic care; hospitals were places of rest not medical treatment; staffed by religious orders.' },
-    { q: 'Explain why the Church both helped and hindered medicine in the Middle Ages. [12 marks]', type: 'written', marks: 12, ms: 'Helped: preserved Galen\'s texts in universities; ran hospitals like St Bartholomew\'s (1123); provided care for sick; trained physicians. Hindered: discouraged dissection (body needed to be whole for resurrection); treated Galen\'s work as unquestionable; linked illness to sin/God\'s punishment; discouraged new thinking. Strong answers explain the mechanism, not just list.' },
-    { q: 'How far was the Black Death a turning point in the history of medicine? Explain your answer. [16 marks]', type: 'written', marks: 16, ms: 'Was a turning point: exposed limits of medieval medicine; prompted some public health action. Counter: beliefs and treatments barely changed; humours still dominant after 1349; no new understanding of disease. Strong answers need specific evidence (1348 arrival, 1/3 died, miasma/God\'s punishment blamed), explain why change/continuity happened, reach clear supported judgement.' },
-    { q: '"The main reason medieval medicine made little progress was the influence of the Church." How far do you agree? Explain your answer. [16 marks]', type: 'written', marks: 16, ms: 'Agree: Church backed Galen, discouraged dissection, linked illness to God, trained physicians in outdated ideas. Disagree: other factors — lack of technology, four humours theory itself, tradition and conservatism, limited scientific method, Galen\'s own authority. Strong answers argue both sides with specific evidence, reach a clear judgement about which factor was most important and why.' },
+    { q: 'Describe two features of medieval hospitals. [4 marks]', type: 'written', marks: 4, ms: 'Award up to 2 marks per feature (1 for identifying, 1 for supporting detail). Features include: run by the Church/monks/nuns; focused on care and prayer rather than curing disease; St Bartholomew\\'s Hospital founded 1123; patients prayed and received basic care; hospitals were places of rest not medical treatment; staffed by religious orders.' },
+    { q: 'Explain why the Church both helped and hindered medicine in the Middle Ages. [12 marks]', type: 'written', marks: 12, ms: 'Helped: preserved Galen\\'s texts in universities; ran hospitals like St Bartholomew\\'s (1123); provided care for sick; trained physicians. Hindered: discouraged dissection (body needed to be whole for resurrection); treated Galen\\'s work as unquestionable; linked illness to sin/God\\'s punishment; discouraged new thinking. Strong answers explain the mechanism, not just list.' },
+    { q: 'How far was the Black Death a turning point in the history of medicine? Explain your answer. [16 marks]', type: 'written', marks: 16, ms: 'Was a turning point: exposed limits of medieval medicine; prompted some public health action. Counter: beliefs and treatments barely changed; humours still dominant after 1349; no new understanding of disease. Strong answers need specific evidence (1348 arrival, 1/3 died, miasma/God\\'s punishment blamed), explain why change/continuity happened, reach clear supported judgement.' },
+    { q: '"The main reason medieval medicine made little progress was the influence of the Church." How far do you agree? Explain your answer. [16 marks]', type: 'written', marks: 16, ms: 'Agree: Church backed Galen, discouraged dissection, linked illness to God, trained physicians in outdated ideas. Disagree: other factors — lack of technology, four humours theory itself, tradition and conservatism, limited scientific method, Galen\\'s own authority. Strong answers argue both sides with specific evidence, reach a clear judgement about which factor was most important and why.' },
   ],
   th2: [
-    { q: "Describe two features of Vesalius's contribution to medicine. [4 marks]", type: 'written', marks: 4, ms: 'Award up to 2 marks per feature. Features: corrected over 300 of Galen\'s errors; used human dissection himself; published De Fabrica (1543); proved jaw is one bone; showed septum of heart had no holes; encouraged observation over ancient authority.' },
+    { q: "Describe two features of Vesalius's contribution to medicine. [4 marks]", type: 'written', marks: 4, ms: 'Award up to 2 marks per feature. Features: corrected over 300 of Galen\\'s errors; used human dissection himself; published De Fabrica (1543); proved jaw is one bone; showed septum of heart had no holes; encouraged observation over ancient authority.' },
     { q: "Explain why Harvey's discovery of blood circulation did not immediately lead to better treatments. [12 marks]", type: 'written', marks: 12, ms: 'Key points: Harvey proved blood circulates but could not explain what blood does; doctors still used bloodletting because they did not know what else to do; understanding does not automatically change treatment; conservative medical profession; lack of technology. Strong answers explain the mechanism — why understanding and treatment are separate things.' },
     { q: 'How far did the Renaissance change medicine? Explain your answer. [16 marks]', type: 'written', marks: 16, ms: 'Changed: Vesalius corrected anatomy, Harvey proved circulation, Paré improved surgery, printing press spread ideas. Continuity: treatments barely changed, humours still used, bleeding/purging continued, Great Plague 1665 shows disease understanding remained poor. Strong answers: balanced argument with specific evidence, clear judgement on extent of change.' },
   ],
   th3: [
     { q: 'Describe two problems with surgery before the 1840s. [4 marks]', type: 'written', marks: 4, ms: 'Award up to 2 marks per problem. Problems: no anaesthetic so patients conscious and in pain; no antiseptics so infection was common; no blood transfusions so blood loss often fatal; dirty instruments spread infection; surgeons judged on speed not care.' },
     { q: 'Explain why anaesthetics both helped and created new problems for surgery. [12 marks]', type: 'written', marks: 12, ms: 'Helped: removed pain, patients could stay still, surgeons could work more carefully, longer operations possible. Problems: longer operations increased infection risk; overconfidence led to more ambitious surgery before antiseptics; chloroform could be fatal if overdosed (Hannah Greener, 1848). Strong answers explain both effects with specific evidence.' },
-    { q: "How important was Lister's use of antiseptics in improving surgery? [16 marks]", type: 'written', marks: 16, ms: 'Important: carbolic acid dramatically reduced infection deaths; applied Pasteur\'s germ theory practically; changed surgical practice; aseptic surgery followed. Limits: other factors also improved surgery — anaesthetics (Simpson 1847), blood groups, aseptic methods went further; initial resistance from surgeons. Strong answers: weigh against other factors, reach supported judgement.' },
+    { q: "How important was Lister's use of antiseptics in improving surgery? [16 marks]", type: 'written', marks: 16, ms: 'Important: carbolic acid dramatically reduced infection deaths; applied Pasteur\\'s germ theory practically; changed surgical practice; aseptic surgery followed. Limits: other factors also improved surgery — anaesthetics (Simpson 1847), blood groups, aseptic methods went further; initial resistance from surgeons. Strong answers: weigh against other factors, reach supported judgement.' },
   ],
   th4: [
     { q: "Describe two features of Pasteur's germ theory. [4 marks]", type: 'written', marks: 4, ms: 'Award up to 2 marks per feature. Features: proved micro-organisms cause disease/decay; swan-neck flask experiment (1861); overturned spontaneous generation; showed microbes come from air; led to pasteurisation; opened door to vaccines and antiseptics.' },
-    { q: "Explain why Koch's work was important for the development of medicine. [12 marks]", type: 'written', marks: 12, ms: 'Key points: identified specific bacteria causing specific diseases (anthrax 1876, TB 1882, cholera 1883); developed staining techniques; made germ theory more convincing; enabled development of targeted treatments; built on Pasteur\'s general germ theory. Strong answers explain why specificity mattered.' },
-    { q: '"Pasteur\'s germ theory was the most important development in medicine in the 19th century." How far do you agree? [16 marks]', type: 'written', marks: 16, ms: 'Agree: germ theory underpinned antiseptic surgery, vaccines, public health reform; changed direction of all medicine; Pasteur\'s swan-neck flask 1861 was pivotal. Disagree: other developments also important — anaesthetics (Simpson 1847), public health acts (1848, 1875), Koch\'s specific discoveries, Lister\'s antiseptics, Snow\'s waterborne cholera proof. Strong answers: weigh with specific evidence, clear supported judgement.' },
+    { q: "Explain why Koch's work was important for the development of medicine. [12 marks]", type: 'written', marks: 12, ms: 'Key points: identified specific bacteria causing specific diseases (anthrax 1876, TB 1882, cholera 1883); developed staining techniques; made germ theory more convincing; enabled development of targeted treatments; built on Pasteur\\'s general germ theory. Strong answers explain why specificity mattered.' },
+    { q: '"Pasteur\\'s germ theory was the most important development in medicine in the 19th century." How far do you agree? [16 marks]', type: 'written', marks: 16, ms: 'Agree: germ theory underpinned antiseptic surgery, vaccines, public health reform; changed direction of all medicine; Pasteur\\'s swan-neck flask 1861 was pivotal. Disagree: other developments also important — anaesthetics (Simpson 1847), public health acts (1848, 1875), Koch\\'s specific discoveries, Lister\\'s antiseptics, Snow\\'s waterborne cholera proof. Strong answers: weigh with specific evidence, clear supported judgement.' },
   ],
   th5: [
     { q: 'Describe two features of the 1875 Public Health Act. [4 marks]', type: 'written', marks: 4, ms: 'Award up to 2 marks per feature. Features: compulsory clean water supply; compulsory sewage systems; local authorities had to appoint medical officers of health; made sanitation improvements mandatory; shift away from laissez-faire; built on the weaker 1848 Act.' },
     { q: 'Explain why the government was slow to improve public health in the early 19th century. [12 marks]', type: 'written', marks: 12, ms: 'Key reasons: laissez-faire attitude (government should not interfere); cost — ratepayers did not want to pay; miasma theory meant people did not fully understand disease; vested interests (landlords, water companies); local not national responsibility; 1848 Act was optional not compulsory. Strong answers explain mechanism with evidence.' },
-    { q: 'How far was the Great Stink of 1858 a turning point in the history of public health? [16 marks]', type: 'written', marks: 16, ms: 'Was a turning point: Parliament directly affected so reform became urgent; led to Bazalgette\'s sewer system; reduced cholera outbreaks in London; showed engineering could solve public health. Not/other factors: Chadwick\'s 1842 report laid groundwork; Snow\'s 1854 pump handle removal proved waterborne spread; 1875 Act was arguably more significant nationally. Strong answers: balanced argument, specific evidence, clear judgement.' },
+    { q: 'How far was the Great Stink of 1858 a turning point in the history of public health? [16 marks]', type: 'written', marks: 16, ms: 'Was a turning point: Parliament directly affected so reform became urgent; led to Bazalgette\\'s sewer system; reduced cholera outbreaks in London; showed engineering could solve public health. Not/other factors: Chadwick\\'s 1842 report laid groundwork; Snow\\'s 1854 pump handle removal proved waterborne spread; 1875 Act was arguably more significant nationally. Strong answers: balanced argument, specific evidence, clear judgement.' },
   ],
 
   // ── BIOLOGY — Cells & microscopy ─────────────────────────────────────────────
@@ -468,31 +468,21 @@ const PAST_PAPER_QS = {
 
   tb_cells: [
     {
-      q: 'What is the function of the nucleus in a cell? Tick ONE box.
-
-[ ] To contain a solution called cell sap
-[ ] To control the activities of the whole cell
-[ ] To control the movement of substances into the cell',
+      q: 'What is the function of the nucleus in a cell? Tick ONE box.\n\n[ ] To contain a solution called cell sap\n[ ] To control the activities of the whole cell\n[ ] To control the movement of substances into the cell',
       type: 'mc', marks: 1,
       options: ['To contain a solution called cell sap', 'To control the activities of the whole cell', 'To control the movement of substances into the cell'],
       correct: 1,
       ms: 'To control the activities of the whole cell. [1 mark]'
     },
     {
-      q: 'What is the function of the mitochondria in a cell? Tick ONE box.
-
-[ ] To produce glucose during photosynthesis
-[ ] To produce proteins for the cell
-[ ] To release energy in respiration',
+      q: 'What is the function of the mitochondria in a cell? Tick ONE box.\n\n[ ] To produce glucose during photosynthesis\n[ ] To produce proteins for the cell\n[ ] To release energy in respiration',
       type: 'mc', marks: 1,
       options: ['To produce glucose during photosynthesis', 'To produce proteins for the cell', 'To release energy in respiration'],
       correct: 2,
       ms: 'To release energy in respiration. [1 mark]'
     },
     {
-      q: 'A palisade cell image measured 28 mm in length when viewed at a magnification of ×400. Calculate the real length of the palisade cell in mm. Then convert to micrometres (µm). 1 mm = 1000 µm. [3 marks]
-
-Use: real length = image length ÷ magnification',
+      q: 'A palisade cell image measured 28 mm in length when viewed at a magnification of ×400. Calculate the real length of the palisade cell in mm. Then convert to micrometres (µm). 1 mm = 1000 µm. [3 marks]\n\nUse: real length = image length ÷ magnification',
       type: 'written', marks: 3,
       ms: 'Real length = 28 ÷ 400 = 0.07 mm [2 marks for correct working and answer]. Conversion: 0.07 × 1000 = 70 µm [1 mark]. Allow ecf from incorrect real length calculation.'
     },
@@ -507,11 +497,7 @@ Use: real length = image length ÷ magnification',
       ms: 'Any one from: does not have a cell wall; does not have a (large) vacuole; does not have chloroplasts. Ignore chlorophyll.'
     },
     {
-      q: 'Which part of a cell controls the movement of substances into and out of the cell? Tick ONE box.
-
-[ ] Cell membrane
-[ ] Cytoplasm
-[ ] Nucleus',
+      q: 'Which part of a cell controls the movement of substances into and out of the cell? Tick ONE box.\n\n[ ] Cell membrane\n[ ] Cytoplasm\n[ ] Nucleus',
       type: 'mc', marks: 1,
       options: ['Cell membrane', 'Cytoplasm', 'Nucleus'],
       correct: 0,
@@ -524,52 +510,33 @@ Use: real length = image length ÷ magnification',
 
   tb_digest: [
     {
-      q: 'What type of enzyme is produced in the stomach? Tick ONE box.
-
-[ ] Carbohydrase
-[ ] Lipase
-[ ] Protease',
+      q: 'What type of enzyme is produced in the stomach? Tick ONE box.\n\n[ ] Carbohydrase\n[ ] Lipase\n[ ] Protease',
       type: 'mc', marks: 1,
       options: ['Carbohydrase', 'Lipase', 'Protease'],
       correct: 2,
       ms: 'Protease. [1 mark]'
     },
     {
-      q: 'Which term describes the pH in the stomach? And give ONE reason why the stomach is this pH. [2 marks]
-
-[ ] Acidic  [ ] Alkaline  [ ] Neutral',
+      q: 'Which term describes the pH in the stomach? And give ONE reason why the stomach is this pH. [2 marks]\n\n[ ] Acidic  [ ] Alkaline  [ ] Neutral',
       type: 'written', marks: 2,
       ms: 'Acidic [1 mark]. Reason: any one from — produces (hydrochloric) acid; optimum/best condition for protease/enzyme to act; to kill microorganisms/bacteria/pathogens. [1 mark]'
     },
     {
-      q: 'Which organ produces bile? Tick ONE box.
-
-[ ] Large intestine
-[ ] Liver
-[ ] Mouth
-[ ] Pancreas',
+      q: 'Which organ produces bile? Tick ONE box.\n\n[ ] Large intestine\n[ ] Liver\n[ ] Mouth\n[ ] Pancreas',
       type: 'mc', marks: 1,
       options: ['Large intestine', 'Liver', 'Mouth', 'Pancreas'],
       correct: 1,
       ms: 'Liver. [1 mark]'
     },
     {
-      q: 'How does bile help in the digestion of foods? Tick ONE box.
-
-[ ] It increases the surface area of fats
-[ ] It is an enzyme that digests protein
-[ ] It makes the pH in the small intestine acidic',
+      q: 'How does bile help in the digestion of foods? Tick ONE box.\n\n[ ] It increases the surface area of fats\n[ ] It is an enzyme that digests protein\n[ ] It makes the pH in the small intestine acidic',
       type: 'mc', marks: 1,
       options: ['It increases the surface area of fats', 'It is an enzyme that digests protein', 'It makes the pH in the small intestine acidic'],
       correct: 0,
       ms: 'It increases the surface area of fats. [1 mark] — bile emulsifies fats, breaking them into smaller droplets to increase surface area for lipase to act on.'
     },
     {
-      q: 'What molecules are produced when starch is digested? Tick ONE box.
-
-[ ] Amino acids
-[ ] Fatty acids
-[ ] Sugars',
+      q: 'What molecules are produced when starch is digested? Tick ONE box.\n\n[ ] Amino acids\n[ ] Fatty acids\n[ ] Sugars',
       type: 'mc', marks: 1,
       options: ['Amino acids', 'Fatty acids', 'Sugars'],
       correct: 2,
@@ -581,12 +548,7 @@ Use: real length = image length ÷ magnification',
       ms: 'Amylase. Allow phonetic spelling. Allow carbohydrase. Do NOT accept amylose.'
     },
     {
-      q: 'Where are most food molecules absorbed? Tick ONE box.
-
-[ ] Large intestine
-[ ] Liver
-[ ] Small intestine
-[ ] Stomach',
+      q: 'Where are most food molecules absorbed? Tick ONE box.\n\n[ ] Large intestine\n[ ] Liver\n[ ] Small intestine\n[ ] Stomach',
       type: 'mc', marks: 1,
       options: ['Large intestine', 'Liver', 'Small intestine', 'Stomach'],
       correct: 2,
@@ -596,20 +558,12 @@ Use: real length = image length ÷ magnification',
       fig: 'nov20_villi',
       q: 'Explain how villi are adapted for efficient absorption of sugar molecules. [4 marks]',
       type: 'written', marks: 4,
-      ms: 'Level 2 (3–4): points identified in detail and logically linked. Level 1 (1–2): points stated simply, no linking.
-
-Indicative content: have (many) microvilli to increase surface area; wall of villus only one cell thick/thin so short diffusion pathway; capillaries close to surface; good blood supply to transport food molecules away and maintain diffusion gradient; cells have many mitochondria providing energy for active transport of sugar molecules. For Level 2 must link structure to function.'
+      ms: 'Level 2 (3–4): points identified in detail and logically linked. Level 1 (1–2): points stated simply, no linking.\n\nIndicative content: have (many) microvilli to increase surface area; wall of villus only one cell thick/thin so short diffusion pathway; capillaries close to surface; good blood supply to transport food molecules away and maintain diffusion gradient; cells have many mitochondria providing energy for active transport of sugar molecules. For Level 2 must link structure to function.'
     },
     {
       q: 'Describe how protein and fat are digested. Include the enzymes involved and where they are produced. [6 marks]',
       type: 'written', marks: 6,
-      ms: 'Level 2 (4–6): accurate detail forming a clear account. Level 1 (1–3): facts stated simply.
-
-Protein: protease enzyme; broken down into amino acids; produced in the stomach; produced in the pancreas; produced in the small intestine; hydrochloric acid provides correct pH for protease in stomach.
-
-Fat: lipase enzyme; broken down into fatty acids and glycerol; produced by the pancreas; produced by the small intestine; bile produced by the liver, released from gall bladder; bile emulsifies fats (increases surface area for lipase); bile neutralises acid to provide correct pH.
-
-For Level 2 must describe digestion of BOTH fat and protein linked to correct enzyme type for both.'
+      ms: 'Level 2 (4–6): accurate detail forming a clear account. Level 1 (1–3): facts stated simply.\n\nProtein: protease enzyme; broken down into amino acids; produced in the stomach; produced in the pancreas; produced in the small intestine; hydrochloric acid provides correct pH for protease in stomach.\n\nFat: lipase enzyme; broken down into fatty acids and glycerol; produced by the pancreas; produced by the small intestine; bile produced by the liver, released from gall bladder; bile emulsifies fats (increases surface area for lipase); bile neutralises acid to provide correct pH.\n\nFor Level 2 must describe digestion of BOTH fat and protein linked to correct enzyme type for both.'
     },
   ],
 
@@ -618,22 +572,14 @@ For Level 2 must describe digestion of BOTH fat and protein linked to correct en
 
   tb_transp: [
     {
-      q: 'What is the loss of water from a leaf called? Tick ONE box.
-
-[ ] Osmosis
-[ ] Respiration
-[ ] Transpiration',
+      q: 'What is the loss of water from a leaf called? Tick ONE box.\n\n[ ] Osmosis\n[ ] Respiration\n[ ] Transpiration',
       type: 'mc', marks: 1,
       options: ['Osmosis', 'Respiration', 'Transpiration'],
       correct: 2,
       ms: 'Transpiration. [1 mark]'
     },
     {
-      q: 'Which cells control the size of stomata? Tick ONE box.
-
-[ ] Guard cells
-[ ] Phloem cells
-[ ] Xylem cells',
+      q: 'Which cells control the size of stomata? Tick ONE box.\n\n[ ] Guard cells\n[ ] Phloem cells\n[ ] Xylem cells',
       type: 'mc', marks: 1,
       options: ['Guard cells', 'Phloem cells', 'Xylem cells'],
       correct: 0,
@@ -646,11 +592,7 @@ For Level 2 must describe digestion of BOTH fat and protein linked to correct en
       ms: 'Leaf B (upper surface covered) lost more mass/water than Leaf C (lower surface covered), so more water is lost from the lower surface. Allow: "lower surface lost 0.13 g and upper surface lost 0.05 g" with conclusion.'
     },
     {
-      q: 'Based on the leaf grease experiment, what do the results show about the number of stomata on leaf surfaces? Tick ONE box.
-
-[ ] There are more stomata on the lower surface
-[ ] There are more stomata on the upper surface
-[ ] There are the same number of stomata on both surfaces',
+      q: 'Based on the leaf grease experiment, what do the results show about the number of stomata on leaf surfaces? Tick ONE box.\n\n[ ] There are more stomata on the lower surface\n[ ] There are more stomata on the upper surface\n[ ] There are the same number of stomata on both surfaces',
       type: 'mc', marks: 1,
       options: ['There are more stomata on the lower surface', 'There are more stomata on the upper surface', 'There are the same number of stomata on both surfaces'],
       correct: 0,
@@ -662,9 +604,7 @@ For Level 2 must describe digestion of BOTH fat and protein linked to correct en
       ms: 'More (mass/water) lost [1 mark] because evaporation/transpiration would be faster at higher temperature [1 mark].'
     },
     {
-      q: 'A student investigated loss of mass from leaves in different wind speeds. Results: fan off = 0.06 g, low = 0.15 g, medium = 0.23 g, high = 0.31 g.
-
-How does increasing fan speed affect the loss of mass from the leaves? Use the results. [1 mark]',
+      q: 'A student investigated loss of mass from leaves in different wind speeds. Results: fan off = 0.06 g, low = 0.15 g, medium = 0.23 g, high = 0.31 g.\n\nHow does increasing fan speed affect the loss of mass from the leaves? Use the results. [1 mark]',
       type: 'written', marks: 1,
       ms: 'Loss of mass increases (as fan speed increases). Allow: more mass/water is lost; mass of leaves decreases more.'
     },
@@ -674,11 +614,7 @@ How does increasing fan speed affect the loss of mass from the leaves? Use the r
       ms: 'Loss of water [1 mark] because water evaporated [1 mark] from stomata/stoma [1 mark]. Allow: by transpiration; by diffusion. Ignore: from guard cells.'
     },
     {
-      q: 'What rate of water loss from a plant losing 9.0 g over 5 hours? Tick ONE box.
-
-[ ] 0.9 grams/hour
-[ ] 1.8 grams/hour
-[ ] 9.0 grams/hour',
+      q: 'What rate of water loss from a plant losing 9.0 g over 5 hours? Tick ONE box.\n\n[ ] 0.9 grams/hour\n[ ] 1.8 grams/hour\n[ ] 9.0 grams/hour',
       type: 'mc', marks: 1,
       options: ['0.9 grams/hour', '1.8 grams/hour', '9.0 grams/hour'],
       correct: 1,
@@ -691,11 +627,7 @@ How does increasing fan speed affect the loss of mass from the leaves? Use the r
 
   tb_resp: [
     {
-      q: 'What is the equation for aerobic respiration? Tick ONE box.
-
-[ ] carbon dioxide + water → glucose + oxygen
-[ ] glucose + oxygen → carbon dioxide + water
-[ ] oxygen + water → glucose + carbon dioxide',
+      q: 'What is the equation for aerobic respiration? Tick ONE box.\n\n[ ] carbon dioxide + water → glucose + oxygen\n[ ] glucose + oxygen → carbon dioxide + water\n[ ] oxygen + water → glucose + carbon dioxide',
       type: 'mc', marks: 1,
       options: ['carbon dioxide + water → glucose + oxygen', 'glucose + oxygen → carbon dioxide + water', 'oxygen + water → glucose + carbon dioxide'],
       correct: 1,
@@ -712,22 +644,14 @@ How does increasing fan speed affect the loss of mass from the leaves? Use the r
       ms: 'Any two from: deeper/heavier breathing; increased heart rate; increased body temperature; increased sweating; increased blood flow to skin/muscles; blood flows faster. Do NOT accept: lactic acid is produced (that is anaerobic).'
     },
     {
-      q: 'Muscles respire anaerobically during vigorous exercise. Complete the sentences.
-
-Muscles respire anaerobically if they do not have enough _______.
-
-Anaerobic respiration of glucose produces _______. [2 marks]',
+      q: 'Muscles respire anaerobically during vigorous exercise. Complete the sentences.\n\nMuscles respire anaerobically if they do not have enough _______.\n\nAnaerobic respiration of glucose produces _______. [2 marks]',
       type: 'written', marks: 2,
       ms: 'First blank: oxygen (allow O₂). Second blank: lactic acid. [1 mark each] Word takes precedence over symbol.'
     },
     {
       q: 'Explain the differences in the air breathed into the lungs and the air breathed out. (Oxygen in: 21%, out: 16%; Carbon dioxide in: 0.04%, out: 4%; Nitrogen: 78% both.) [4 marks]',
       type: 'written', marks: 4,
-      ms: 'Level 2 (3–4): relevant points with logical linking. Level 1 (1–2): points stated simply, no linking.
-
-Indicative content: less oxygen in exhaled air because body has used some for respiration; more carbon dioxide in exhaled air because carbon dioxide is produced in respiration; no difference in nitrogen because nitrogen is not used by the body; more water vapour in air breathed out because water is produced in respiration; exhaled air is warmer because energy is transferred during respiration.
-
-For Level 2: explanation(s) AND differences must be given.'
+      ms: 'Level 2 (3–4): relevant points with logical linking. Level 1 (1–2): points stated simply, no linking.\n\nIndicative content: less oxygen in exhaled air because body has used some for respiration; more carbon dioxide in exhaled air because carbon dioxide is produced in respiration; no difference in nitrogen because nitrogen is not used by the body; more water vapour in air breathed out because water is produced in respiration; exhaled air is warmer because energy is transferred during respiration.\n\nFor Level 2: explanation(s) AND differences must be given.'
     },
     {
       q: 'Give two ways the lungs are adapted for efficient gas exchange. [2 marks]',
@@ -741,34 +665,21 @@ For Level 2: explanation(s) AND differences must be given.'
 
   tb_blood: [
     {
-      q: 'Which chamber of the heart pumps blood to the body? Tick ONE box.
-
-[ ] Left atrium
-[ ] Left ventricle
-[ ] Right atrium
-[ ] Right ventricle',
+      q: 'Which chamber of the heart pumps blood to the body? Tick ONE box.\n\n[ ] Left atrium\n[ ] Left ventricle\n[ ] Right atrium\n[ ] Right ventricle',
       type: 'mc', marks: 1,
       options: ['Left atrium', 'Left ventricle', 'Right atrium', 'Right ventricle'],
       correct: 1,
       ms: 'Left ventricle. [1 mark]'
     },
     {
-      q: 'What is the name of the blood vessel that carries blood to the heart muscle? Tick ONE box.
-
-[ ] Aorta
-[ ] Coronary artery
-[ ] Pulmonary artery',
+      q: 'What is the name of the blood vessel that carries blood to the heart muscle? Tick ONE box.\n\n[ ] Aorta\n[ ] Coronary artery\n[ ] Pulmonary artery',
       type: 'mc', marks: 1,
       options: ['Aorta', 'Coronary artery', 'Pulmonary artery'],
       correct: 1,
       ms: 'Coronary artery. [1 mark]'
     },
     {
-      q: 'Which type of blood vessel has valves? Tick ONE box.
-
-[ ] Artery
-[ ] Capillary
-[ ] Vein',
+      q: 'Which type of blood vessel has valves? Tick ONE box.\n\n[ ] Artery\n[ ] Capillary\n[ ] Vein',
       type: 'mc', marks: 1,
       options: ['Artery', 'Capillary', 'Vein'],
       correct: 2,
@@ -785,16 +696,12 @@ For Level 2: explanation(s) AND differences must be given.'
       ms: 'Walls that are one cell thick [1 mark] so there is a short diffusion distance / substances can move quickly between blood and cells [1 mark]. OR large surface area to volume ratio [1 mark] for exchange of substances [1 mark]. Allow: thin walls / very narrow (so) close to cells.'
     },
     {
-      q: 'Explain why having more red blood cells will improve an athlete\'s performance. [3 marks]',
+      q: 'Explain why having more red blood cells will improve an athlete\\'s performance. [3 marks]',
       type: 'written', marks: 3,
       ms: 'More oxygen can be transported/carried [1 mark]. Oxygen is needed for aerobic respiration [1 mark]. So more energy can be transferred/released (for muscle contraction) [1 mark]. Allow: so less anaerobic respiration. Do NOT accept: energy is made/produced/created.'
     },
     {
-      q: 'Which part of the blood causes blood to clot? Tick ONE box.
-
-[ ] Plasma
-[ ] Platelets
-[ ] Red blood cells',
+      q: 'Which part of the blood causes blood to clot? Tick ONE box.\n\n[ ] Plasma\n[ ] Platelets\n[ ] Red blood cells',
       type: 'mc', marks: 1,
       options: ['Plasma', 'Platelets', 'Red blood cells'],
       correct: 1,
@@ -819,11 +726,7 @@ For Level 2: explanation(s) AND differences must be given.'
     {
       q: 'Describe how the immune system defends the body against disease. [6 marks]',
       type: 'written', marks: 6,
-      ms: 'Level 2 (4–6): scientifically accurate detail with clear logical linking. Level 1 (1–3): facts listed without linking.
-
-Indicative content: white blood cells detect/identify foreign antigens; phagocytes engulf and digest/kill invading cells; lymphocytes produce antibodies which attach to and destroy/agglutinate pathogens; produce antitoxins to destroy toxins; produce memory cells so immune response to later exposure is faster.
-
-For Level 2: must describe HOW white blood cells act, not just name them.'
+      ms: 'Level 2 (4–6): scientifically accurate detail with clear logical linking. Level 1 (1–3): facts listed without linking.\n\nIndicative content: white blood cells detect/identify foreign antigens; phagocytes engulf and digest/kill invading cells; lymphocytes produce antibodies which attach to and destroy/agglutinate pathogens; produce antitoxins to destroy toxins; produce memory cells so immune response to later exposure is faster.\n\nFor Level 2: must describe HOW white blood cells act, not just name them.'
     },
     {
       q: 'Give ONE reason why antibiotics cannot be used to treat HIV infections. [1 mark]',
@@ -836,12 +739,7 @@ For Level 2: must describe HOW white blood cells act, not just name them.'
       ms: 'Any two from: avoid sexual intercourse; use a condom; do not share needles; use antiretroviral drugs; screen blood for transfusions; have regular tests. Ignore: handwashing; social distancing; "use protection" unqualified.'
     },
     {
-      q: 'What type of pathogen causes rose black spot disease? Tick ONE box.
-
-[ ] Bacterium
-[ ] Fungus
-[ ] Protist
-[ ] Virus',
+      q: 'What type of pathogen causes rose black spot disease? Tick ONE box.\n\n[ ] Bacterium\n[ ] Fungus\n[ ] Protist\n[ ] Virus',
       type: 'mc', marks: 1,
       options: ['Bacterium', 'Fungus', 'Protist', 'Virus'],
       correct: 1,
@@ -863,11 +761,7 @@ For Level 2: must describe HOW white blood cells act, not just name them.'
       ms: 'Any one from: to prevent/reduce antibiotic resistance; overuse of antibiotics leads to resistant strains; minor infections are often caused by viruses (which antibiotics cannot treat); the immune system can deal with minor infections on its own.'
     },
     {
-      q: 'During Phase 1 clinical trials, a drug is tested on healthy volunteers using low doses. What is the main purpose of Phase 1 testing? Tick ONE box.
-
-[ ] To find the best dose to use
-[ ] To see if the drug is safe to use
-[ ] To see if the drug works',
+      q: 'During Phase 1 clinical trials, a drug is tested on healthy volunteers using low doses. What is the main purpose of Phase 1 testing? Tick ONE box.\n\n[ ] To find the best dose to use\n[ ] To see if the drug is safe to use\n[ ] To see if the drug works',
       type: 'mc', marks: 1,
       options: ['To find the best dose to use', 'To see if the drug is safe to use', 'To see if the drug works'],
       correct: 1,
@@ -879,11 +773,7 @@ For Level 2: must describe HOW white blood cells act, not just name them.'
       ms: 'A tablet/treatment that does not contain the drug/active ingredient. Allow: a sugar pill; a fake drug.'
     },
     {
-      q: 'Who knows which patients are given the placebo and which are given the drug in a double blind trial? Tick ONE box.
-
-[ ] Not the patients or the doctors
-[ ] The patients and the doctors
-[ ] The patients but not the doctors',
+      q: 'Who knows which patients are given the placebo and which are given the drug in a double blind trial? Tick ONE box.\n\n[ ] Not the patients or the doctors\n[ ] The patients and the doctors\n[ ] The patients but not the doctors',
       type: 'mc', marks: 1,
       options: ['Not the patients or the doctors', 'The patients and the doctors', 'The patients but not the doctors'],
       correct: 0,
@@ -896,12 +786,7 @@ For Level 2: must describe HOW white blood cells act, not just name them.'
 
   tb_osmosis: [
     {
-      q: 'What is the independent variable in a potato osmosis investigation? Tick ONE box.
-
-[ ] Change in mass of the pieces of potato
-[ ] Concentration of the sugar solution
-[ ] Length of time the pieces of potato are in the solution
-[ ] Starting mass of the pieces of potato',
+      q: 'What is the independent variable in a potato osmosis investigation? Tick ONE box.\n\n[ ] Change in mass of the pieces of potato\n[ ] Concentration of the sugar solution\n[ ] Length of time the pieces of potato are in the solution\n[ ] Starting mass of the pieces of potato',
       type: 'mc', marks: 1,
       options: ['Change in mass of the pieces of potato', 'Concentration of the sugar solution', 'Length of time the pieces of potato are in the solution', 'Starting mass of the pieces of potato'],
       correct: 1,
@@ -913,9 +798,7 @@ For Level 2: must describe HOW white blood cells act, not just name them.'
       ms: 'Gained water [1 mark] by osmosis [1 mark] because the concentration of water outside the potato is greater than inside the cells (allow: concentration of sugar solution inside the potato is greater than outside). Allow converse statements.'
     },
     {
-      q: 'A potato piece started at 7.96 g and ended at 8.21 g after being in 0.2 mol/dm³ sugar solution. Calculate the percentage change in mass to 3 significant figures.
-
-Use: percentage change = (change in mass ÷ mass at start) × 100 [3 marks]',
+      q: 'A potato piece started at 7.96 g and ended at 8.21 g after being in 0.2 mol/dm³ sugar solution. Calculate the percentage change in mass to 3 significant figures.\n\nUse: percentage change = (change in mass ÷ mass at start) × 100 [3 marks]',
       type: 'written', marks: 3,
       ms: 'Change in mass = 8.21 − 7.96 = 0.25 g [1 mark]. Percentage change = (0.25 ÷ 7.96) × 100 [1 mark]. = 3.14% (to 3 significant figures) [1 mark]. Allow ecf from incorrect working.'
     },
@@ -931,9 +814,7 @@ Use: percentage change = (change in mass ÷ mass at start) × 100 [3 marks]',
       ms: 'The concentration of solution Z (inside the tubes) is approximately 0.64–0.66 mol/dm³ — because at this concentration the solution inside equals the solution outside, so no net movement of water by osmosis.'
     },
     {
-      q: 'Calculate the percentage change in mass for a tube that started at 15.54 g and ended at 16.50 g after being in 0.0 mol/dm³ salt solution. Give your answer to 1 decimal place. [3 marks]
-
-Use: percentage change = (change in mass ÷ mass at start) × 100',
+      q: 'Calculate the percentage change in mass for a tube that started at 15.54 g and ended at 16.50 g after being in 0.0 mol/dm³ salt solution. Give your answer to 1 decimal place. [3 marks]\n\nUse: percentage change = (change in mass ÷ mass at start) × 100',
       type: 'written', marks: 3,
       ms: 'Change in mass = 16.50 − 15.54 = 0.96 g [1 mark]. Percentage change = (0.96 ÷ 15.54) × 100 [1 mark]. = 6.2% (to 1 decimal place) [1 mark]. Allow ecf from incorrect calculation.'
     },
@@ -944,19 +825,12 @@ Use: percentage change = (change in mass ÷ mass at start) × 100',
 
   tb_photo: [
     {
-      q: 'Complete the equation for photosynthesis. Choose from: nitrogen, oxygen, ethanol, water.
-
-carbon dioxide + _______ → glucose + _______ [2 marks]',
+      q: 'Complete the equation for photosynthesis. Choose from: nitrogen, oxygen, ethanol, water.\n\ncarbon dioxide + _______ → glucose + _______ [2 marks]',
       type: 'written', marks: 2,
       ms: 'First blank: water [1 mark]. Second blank: oxygen [1 mark]. Allow H₂O and O₂.'
     },
     {
-      q: 'What is the chemical formula for glucose? Tick ONE box.
-
-[ ] CO₂
-[ ] C₆H₁₂O₆
-[ ] H₂O
-[ ] O₂',
+      q: 'What is the chemical formula for glucose? Tick ONE box.\n\n[ ] CO₂\n[ ] C₆H₁₂O₆\n[ ] H₂O\n[ ] O₂',
       type: 'mc', marks: 1,
       options: ['CO₂', 'C₆H₁₂O₆', 'H₂O', 'O₂'],
       correct: 1,
@@ -973,9 +847,7 @@ carbon dioxide + _______ → glucose + _______ [2 marks]',
       ms: 'Any one from: contains many chloroplasts/chlorophyll to absorb light; cells are long and packed tightly to maximise light absorption; positioned near the top of the leaf to receive most light; large surface area for CO₂ absorption.'
     },
     {
-      q: 'A student investigated the effect of different colours of light on the rate of photosynthesis. Results: blue = 9 arbitrary units, green = 1, red = 8. What colour of light should be used to grow plants in a greenhouse? Tick ONE box.
-
-[ ] Blue  [ ] Green  [ ] Red',
+      q: 'A student investigated the effect of different colours of light on the rate of photosynthesis. Results: blue = 9 arbitrary units, green = 1, red = 8. What colour of light should be used to grow plants in a greenhouse? Tick ONE box.\n\n[ ] Blue  [ ] Green  [ ] Red',
       type: 'mc', marks: 1,
       options: ['Blue', 'Green', 'Red'],
       correct: 0,
