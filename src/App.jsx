@@ -1163,59 +1163,6 @@ const MARK_TIPS = {
   16: { label: '16-mark question', tip: 'Argue both sides then reach a clear judgement. Specific evidence required. Avoid vague generalisations.' },
 }
 
-
-function FormulaSheet({ onClose }) {
-  return (
-    <div onClick={onClose} style={{ position:'fixed', inset:0, zIndex:200, background:'rgba(0,0,0,.75)', backdropFilter:'blur(8px)', display:'flex', alignItems:'flex-end', justifyContent:'center' }}>
-      <div onClick={e=>e.stopPropagation()} style={{ background:'#0E1330', border:'1px solid rgba(59,130,255,.3)', borderRadius:'20px 20px 0 0', padding:'20px 18px 36px', width:'100%', maxWidth:660, maxHeight:'80vh', overflowY:'auto' }}>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
-          <div>
-            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1.1rem', color:'#F5F7FB' }}>📐 AQA Formula Sheet</div>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:2 }}>Given in the exam — know what's here</div>
-          </div>
-          <button onClick={onClose} style={{ background:'rgba(255,255,255,.08)', border:'1px solid #2A3552', borderRadius:8, padding:'6px 12px', color:'#9CA8C7', cursor:'pointer', fontFamily:'inherit', fontSize:'.82rem' }}>✕ Close</button>
-        </div>
-        {MATHS_FORMULA_SHEET.map(cat => (
-          <div key={cat.category} style={{ marginBottom:16 }}>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:'#3B82FF', marginBottom:8 }}>{cat.category}</div>
-            {cat.items.map(item => (
-              <div key={item.name} style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:10, padding:'10px 14px', marginBottom:6 }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.78rem', color:'#5A6480', marginBottom:4 }}>{item.name}</div>
-                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>{item.formula}</div>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function MathsDiagram({ diagramKey }) {
-  const svg = MATHS_DIAGRAMS[diagramKey]
-  if (!svg) return null
-  return (
-    <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'12px', marginBottom:14 }}>
-      <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#3B82FF', marginBottom:8 }}>📐 Diagram — from AQA past paper</div>
-      <div dangerouslySetInnerHTML={{ __html: svg }} />
-    </div>
-  )
-}
-
-const GRADE_STYLE_M = {
-  'Excellent':  { bg:'rgba(77,255,136,.08)',  border:'rgba(77,255,136,.3)',  text:'#4DFF88', badge:'#38D27A' },
-  'Good':       { bg:'rgba(77,255,136,.06)',  border:'rgba(77,255,136,.2)',  text:'#6BFFB0', badge:'#38D27A' },
-  'Developing': { bg:'rgba(255,200,87,.08)',  border:'rgba(255,200,87,.3)',  text:'#FFC857', badge:'#F5B700' },
-  'Needs Work': { bg:'rgba(255,93,115,.08)',  border:'rgba(255,93,115,.3)',  text:'#FF5D73', badge:'#FF5D73' },
-}
-const MARK_TIPS_M = {
-  1:'One clear specific point. No development needed.',
-  2:'Two separate points, OR one point + one reason.',
-  3:'Show all working — each step can earn a mark.',
-  4:'Two developed points with explanation, OR 4 separate points.',
-  5:'Full method — show every step clearly.',
-}
-
 // ─── Formula sheet modal ──────────────────────────────────────────────────────
 function FormulaSheet({ onClose }) {
   return (
