@@ -1445,78 +1445,19 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
 
 // ─── Topic question list ──────────────────────────────────────────────────────
 function MathsTopicView({ group, onBack }) {
-  const [qIdx, setQIdx]   = useState(null)   // null = list, number = in question
+  const [qIdx, setQIdx] = useState(0)
   const qs = group.questions
-
-  if (qIdx !== null) {
-    return (
-      <MathsQuestion
-        q={qs[qIdx]} qIdx={qIdx} total={qs.length}
-        topicLabel={group.label} topicColor={group.color} isCalc={group.calculator}
-        onBack={() => setQIdx(null)}
-        onNext={() => { if (qIdx < qs.length-1) setQIdx(qIdx+1); else setQIdx(null) }}
-      />
-    )
-  }
-
+  // Go straight into the question — no intermediate list screen
   return (
-    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
-      {/* Header */}
-      <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
-        <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
-          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
-          <div style={{ width:32, height:32, borderRadius:10, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem', flexShrink:0 }}>{group.icon}</div>
-          <div style={{ flex:1, minWidth:0 }}>
-            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>{group.label}</div>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>{qs.length} question{qs.length!==1?'s':''} · {group.calculator?'Calculator allowed':'Non-calculator'}</div>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
-        {/* Topic description */}
-        <div style={{ background:'#10182B', border:`1px solid ${group.border}`, borderRadius:14, padding:'14px 16px', marginBottom:20 }}>
-          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.85rem', color:'#C8D0E8', lineHeight:1.6 }}>{group.description}</div>
-          {group.calculator
-            ? <div style={{ marginTop:10, display:'inline-flex', alignItems:'center', gap:5, background:'rgba(56,210,122,.08)', border:'1px solid rgba(56,210,122,.2)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.7rem', fontWeight:600, color:'#38D27A' }}>🖩 Calculator allowed for this topic</div>
-            : <div style={{ marginTop:10, display:'inline-flex', alignItems:'center', gap:5, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.2)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.7rem', fontWeight:600, color:'#FFC857' }}>✗ No calculator — show all working</div>
-          }
-        </div>
-
-        {/* Start all button */}
-        <button onClick={() => setQIdx(0)} style={{ width:'100%', background:`linear-gradient(135deg,${group.color}cc,${group.color})`, color:'#fff', border:'none', borderRadius:14, padding:'15px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', fontSize:'.97rem', marginBottom:16, boxShadow:`0 4px 20px ${group.color}44`, display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
-          Start all {qs.length} questions →
-        </button>
-
-        {/* Individual question list */}
-        <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, overflow:'hidden' }}>
-          {qs.map((q,i) => (
-            <button key={q.id} onClick={() => setQIdx(i)} style={{ width:'100%', background:'transparent', border:'none', borderBottom:i<qs.length-1?'1px solid #161F30':'none', padding:'14px 16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:12, transition:'background .15s' }}>
-              {/* Question number badge */}
-              <div style={{ width:36, height:36, borderRadius:10, flexShrink:0, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.72rem', color:group.color }}>Q{q.qNum}</div>
-              <div style={{ flex:1, minWidth:0 }}>
-                {/* First line of question */}
-                <div style={{ fontFamily:"'Inter',sans-serif", fontWeight:600, fontSize:'.9rem', color:'#E0E6F0', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
-                  {q.q.split('\n')[0].substring(0,58)}{q.q.split('\n')[0].length>58?'…':''}
-                </div>
-                <div style={{ display:'flex', gap:6, marginTop:4, flexWrap:'wrap' }}>
-                  <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', color:'#4A5578' }}>{q.source}</span>
-                  <span style={{ color:'#2A3552' }}>·</span>
-                  <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', color:group.color, fontWeight:600 }}>{q.marks} mark{q.marks!==1?'s':''}</span>
-                  {q.diagramKey && <><span style={{ color:'#2A3552' }}>·</span><span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', color:'#3B82FF' }}>📐 diagram</span></>}
-                  {q.type === 'mc' && <><span style={{ color:'#2A3552' }}>·</span><span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', color:'#9D5CFF' }}>multiple choice</span></>}
-                </div>
-              </div>
-              <span style={{ color:'#2A3552', fontSize:'1rem', flexShrink:0 }}>›</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+    <MathsQuestion
+      q={qs[qIdx]} qIdx={qIdx} total={qs.length}
+      topicLabel={group.label} topicColor={group.color} isCalc={group.calculator}
+      onBack={onBack}
+      onNext={() => { if (qIdx < qs.length-1) setQIdx(qIdx+1); else onBack() }}
+    />
   )
 }
 
-// ─── Maths topic browser ──────────────────────────────────────────────────────
 function MathsBrowser({ onBack }) {
   const [activeGroup, setGroup] = useState(null)
   const [fmOpen, setFm]         = useState(false)
@@ -1593,81 +1534,17 @@ function MathsBrowser({ onBack }) {
 
 // ─── English topic view ───────────────────────────────────────────────────────
 function EnglishTopicView({ group, onBack }) {
-  const [qIdx, setQIdx] = useState(null)
+  const [qIdx, setQIdx] = useState(0)
   const qs = group.questions
-
-  if (qIdx !== null) {
-    return (
-      <MathsQuestion
-        q={{...qs[qIdx], ms: qs[qIdx].ms}}
-        qIdx={qIdx} total={qs.length}
-        topicLabel={group.label} topicColor={group.color} isCalc={false}
-        onBack={() => setQIdx(null)}
-        onNext={() => { if (qIdx < qs.length-1) setQIdx(qIdx+1); else setQIdx(null) }}
-      />
-    )
-  }
-
+  // Go straight into the question — no list, no picker
   return (
-    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
-      <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
-        <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
-          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
-          <div style={{ width:32, height:32, borderRadius:10, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem', flexShrink:0 }}>{group.icon}</div>
-          <div style={{ flex:1, minWidth:0 }}>
-            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{group.label}</div>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>{group.paper} · {qs.length} question{qs.length!==1?'s':''}</div>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
-        {/* Description + skill tip */}
-        <div style={{ background:'#10182B', border:`1px solid ${group.border}`, borderRadius:14, padding:'16px', marginBottom:16 }}>
-          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.6, marginBottom:group.skillTip?12:0 }}>{group.description}</div>
-          {group.skillTip && (
-            <div style={{ background:'rgba(255,200,87,.06)', border:'1px solid rgba(255,200,87,.18)', borderRadius:10, padding:'10px 14px' }}>
-              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FFC857', marginBottom:5 }}>🗡️ Exam Tip</div>
-              <p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.83rem', color:'#C8D0E8', lineHeight:1.55 }}>{group.skillTip}</p>
-            </div>
-          )}
-        </div>
-
-        {/* Level descriptors if present */}
-        {group.levelDescriptors && (
-          <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:16 }}>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:group.color, marginBottom:10 }}>LEVEL DESCRIPTORS</div>
-            {Object.entries(group.levelDescriptors).map(([marks, desc]) => (
-              <div key={marks} style={{ display:'flex', gap:10, marginBottom:8, alignItems:'flex-start' }}>
-                <div style={{ background:group.bg, border:`1px solid ${group.border}`, borderRadius:8, padding:'3px 9px', fontFamily:"'Space Grotesk',sans-serif", fontSize:'.7rem', fontWeight:700, color:group.color, flexShrink:0, whiteSpace:'nowrap' }}>{marks}</div>
-                <p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.82rem', color:'#9CA8C7', lineHeight:1.5 }}>{desc}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <button onClick={() => setQIdx(0)} style={{ width:'100%', background:`linear-gradient(135deg,${group.color}cc,${group.color})`, color:'#fff', border:'none', borderRadius:14, padding:'15px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', fontSize:'.97rem', marginBottom:16, boxShadow:`0 4px 20px ${group.color}44` }}>
-          Practice all {qs.length} question{qs.length!==1?'s':''} →
-        </button>
-
-        <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, overflow:'hidden' }}>
-          {qs.map((q,i) => (
-            <button key={q.id} onClick={() => setQIdx(i)} style={{ width:'100%', background:'transparent', border:'none', borderBottom:i<qs.length-1?'1px solid #161F30':'none', padding:'14px 16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:12 }}>
-              <div style={{ width:38, height:38, borderRadius:10, flexShrink:0, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.7rem', color:group.color, textAlign:'center', lineHeight:1.2 }}>
-                {q.marks}m
-              </div>
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontWeight:600, fontSize:'.9rem', color:'#E0E6F0', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
-                  {q.q.split('\n')[0].substring(0,60)}{q.q.split('\n')[0].length>60?'…':''}
-                </div>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#4A5578', marginTop:2 }}>{q.source} · {q.marks} mark{q.marks!==1?'s':''}</div>
-              </div>
-              <span style={{ color:'#2A3552', fontSize:'1rem', flexShrink:0 }}>›</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+    <MathsQuestion
+      q={qs[qIdx]}
+      qIdx={qIdx} total={qs.length}
+      topicLabel={group.label} topicColor={group.color} isCalc={false}
+      onBack={onBack}
+      onNext={() => { if (qIdx < qs.length-1) setQIdx(qIdx+1); else onBack() }}
+    />
   )
 }
 
