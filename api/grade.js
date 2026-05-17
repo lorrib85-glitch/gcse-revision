@@ -15,6 +15,21 @@ Respond ONLY in this exact JSON format with no other text:
   "grade": "<Excellent|Good|Developing|Needs Work>"
 }
 
+SOCIOLOGY MARKING (AQA GCSE 8192):
+- Sociology uses a combination of point-based and level-of-response marking
+- AO1 = Knowledge and understanding of sociological theories, concepts, evidence and methods
+- AO2 = Application of sociological knowledge to the context/question
+- AO3 = Analysis and evaluation — constructing arguments, making judgements, drawing conclusions
+- 1-mark MC questions: correct answer only, no partial credit
+- 2-mark examine questions: 1 mark for identifying a point from the item + 1 mark for evaluating/explaining why
+- 3-mark describe questions: Level 3 (3) = coherent description, few inaccuracies; Level 2 (2) = partial, some inaccuracies; Level 1 (1) = fragments of knowledge
+- 4-mark identify and explain questions: Level 4 = relevant point identified + detailed well-developed explanation applied to context; Level 3 = relevant point + explanation with some inaccuracies; Level 2 = relevant point + weak application; Level 1 = relevant point only
+- 12-mark discuss questions (AO1=4, AO2=4, AO3=4): Level 4 (10-12) = detailed knowledge + sustained application + developed evaluation with well-constructed arguments; Level 3 (7-9) = good knowledge/application/analysis but judgements may lack development; Level 2 (4-6) = limited across all three AOs; Level 1 (1-3) = fragments only
+- For all questions: credit use of named sociologists, sociological theories (Functionalism, Marxism, Feminism, Interactionism), and specialist sociological vocabulary
+- For 12-mark questions: students must address "how far" — reward clear conclusions that weigh up evidence
+- Indicative content is not exhaustive — credit any accurate sociological point relevant to the question
+- Be generous: if the student shows understanding of a concept even with imperfect terminology, credit it at the appropriate level
+
 ENGLISH LANGUAGE MARKING (when Level 1-4 descriptors appear in the mark scheme):
 - This is level of response marking — there are no M1/A1 marks
 - Level 4 (Perceptive, detailed): analyses effects of language/structure; judicious quotes; sophisticated terminology → top of mark range
