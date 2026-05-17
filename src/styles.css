@@ -39,7 +39,7 @@
 
 html { font-size: 16px; }
 body {
-  font-family: 'Syne', 'DM Sans', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -47,7 +47,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3 { font-family: 'Syne', 'DM Sans', sans-serif; line-height: 1.2; color: var(--text); }
+h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; line-height: 1.2; color: var(--text); }
 h1 { font-size: clamp(1.7rem, 5vw, 2.4rem); font-weight: 800; }
 h2 { font-size: clamp(1.2rem, 3vw, 1.55rem); font-weight: 700; }
 h3 { font-size: 1.05rem; font-weight: 700; }
@@ -68,11 +68,11 @@ p  { color: var(--text-mid); }
 }
 .btn:active { transform: scale(.97); }
 .btn-primary {
-  background: linear-gradient(135deg, var(--history), var(--history2));
-  color: #070500;
-  box-shadow: 0 0 20px rgba(245,183,0,.20);
+  background: linear-gradient(135deg, #7C3AED, #9D5CFF);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(124,58,237,.4);
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 32px rgba(245,183,0,.32); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 28px rgba(124,58,237,.55); }
 .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
 .btn-ghost:hover { border-color: var(--border-glow); color: var(--text); background: var(--bg3); }
 .btn-success { background: linear-gradient(135deg, var(--success), #38c070); color: #00140a; box-shadow: 0 0 20px rgba(77,255,136,.18); }
@@ -95,9 +95,9 @@ p  { color: var(--text-mid); }
 .prog-wrap { background: var(--bg3); border-radius: 99px; height: 6px; overflow: hidden; }
 .prog-fill {
   height: 100%; border-radius: 99px;
-  background: linear-gradient(90deg, var(--history), var(--history2));
+  background: linear-gradient(90deg, #7C3AED, #9D5CFF);
   transition: width .5s cubic-bezier(.4,0,.2,1);
-  box-shadow: 0 0 8px rgba(245,183,0,.45);
+  box-shadow: 0 0 8px rgba(157,92,255,.55);
 }
 
 .phase-badge {
