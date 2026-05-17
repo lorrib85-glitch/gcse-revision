@@ -276,7 +276,7 @@ export default function ModulePlayer({ module, onBack }) {
                 background: module.color, color: '#fff',
                 borderRadius: 999, padding: '4px 12px',
                 fontSize: '.72rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase'
-              }}>{module.icon} {module.title}</span>
+              }}>{module.icon} {module.subject} · Module {module.number} — {module.title}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <span style={{ fontSize: '.75rem', color: 'var(--muted)', fontWeight: 700 }}>

@@ -6,6 +6,8 @@
 export const MODULES = [
   {
     id: 'mod1',
+    subject: 'History',
+    number: 1,
     title: 'Medieval Medicine',
     subtitle: 'Foundations',
     era: 'c1250–c1500',
@@ -119,6 +121,8 @@ export const MODULES = [
 
   {
     id: 'mod2',
+    subject: 'History',
+    number: 2,
     title: 'Renaissance & the Plague',
     subtitle: 'Challenge & Continuity',
     era: 'c1500–c1700',
@@ -218,6 +222,8 @@ export const MODULES = [
 
   {
     id: 'mod3',
+    subject: 'History',
+    number: 3,
     title: 'Surgery & Anatomy',
     subtitle: 'Hold Him Down and Hope',
     era: 'c1700–c1900',
@@ -315,6 +321,8 @@ export const MODULES = [
 
   {
     id: 'mod4',
+    subject: 'History',
+    number: 4,
     title: 'Germ Theory',
     subtitle: 'Pasteur, Koch & the Invisible Enemy',
     era: 'c1850–c1900',
@@ -432,6 +440,8 @@ export const MODULES = [
 
   {
     id: 'mod5',
+    subject: 'History',
+    number: 5,
     title: 'Public Health',
     subtitle: 'Cities, Sewers & Slow Progress',
     era: 'c1800–c1900',

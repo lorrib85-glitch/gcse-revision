@@ -303,8 +303,9 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
                     {mod.icon}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ color: '#a08060', fontSize: '.68rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 2 }}>{mod.subject} · Module {mod.number}</div>
                     <div style={{ color: '#fff9ec', fontWeight: 700, fontSize: '.92rem' }}>{mod.title}</div>
-                    <div style={{ color: '#6d5d4d', fontSize: '.74rem', marginTop: 2 }}>{mod.subtitle}</div>
+                    <div style={{ color: '#6d5d4d', fontSize: '.74rem', marginTop: 1 }}>{mod.subtitle}</div>
                     {started && (
                       <div style={{ marginTop: 7, height: 3, background: '#2d2318', borderRadius: 99, overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: pct + '%', background: mod.color, borderRadius: 99 }} />
