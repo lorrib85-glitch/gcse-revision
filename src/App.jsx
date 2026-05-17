@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
+import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft } from './progress.js'
@@ -1564,9 +1565,156 @@ function MathsBrowser({ onBack }) {
   )
 }
 
+// ─── English topic view ───────────────────────────────────────────────────────
+function EnglishTopicView({ group, onBack }) {
+  const [qIdx, setQIdx] = useState(null)
+  const qs = group.questions
+
+  if (qIdx !== null) {
+    return (
+      <MathsQuestion
+        q={{...qs[qIdx], ms: qs[qIdx].ms}}
+        qIdx={qIdx} total={qs.length}
+        topicLabel={group.label} topicColor={group.color} isCalc={false}
+        onBack={() => setQIdx(null)}
+        onNext={() => { if (qIdx < qs.length-1) setQIdx(qIdx+1); else setQIdx(null) }}
+      />
+    )
+  }
+
+  return (
+    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
+      <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
+        <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
+          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
+          <div style={{ width:32, height:32, borderRadius:10, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem', flexShrink:0 }}>{group.icon}</div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{group.label}</div>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>{group.paper} · {qs.length} question{qs.length!==1?'s':''}</div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
+        {/* Description + skill tip */}
+        <div style={{ background:'#10182B', border:`1px solid ${group.border}`, borderRadius:14, padding:'16px', marginBottom:16 }}>
+          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.6, marginBottom:group.skillTip?12:0 }}>{group.description}</div>
+          {group.skillTip && (
+            <div style={{ background:'rgba(255,200,87,.06)', border:'1px solid rgba(255,200,87,.18)', borderRadius:10, padding:'10px 14px' }}>
+              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FFC857', marginBottom:5 }}>🗡️ Exam Tip</div>
+              <p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.83rem', color:'#C8D0E8', lineHeight:1.55 }}>{group.skillTip}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Level descriptors if present */}
+        {group.levelDescriptors && (
+          <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:16 }}>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:group.color, marginBottom:10 }}>LEVEL DESCRIPTORS</div>
+            {Object.entries(group.levelDescriptors).map(([marks, desc]) => (
+              <div key={marks} style={{ display:'flex', gap:10, marginBottom:8, alignItems:'flex-start' }}>
+                <div style={{ background:group.bg, border:`1px solid ${group.border}`, borderRadius:8, padding:'3px 9px', fontFamily:"'Space Grotesk',sans-serif", fontSize:'.7rem', fontWeight:700, color:group.color, flexShrink:0, whiteSpace:'nowrap' }}>{marks}</div>
+                <p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.82rem', color:'#9CA8C7', lineHeight:1.5 }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <button onClick={() => setQIdx(0)} style={{ width:'100%', background:`linear-gradient(135deg,${group.color}cc,${group.color})`, color:'#fff', border:'none', borderRadius:14, padding:'15px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', fontSize:'.97rem', marginBottom:16, boxShadow:`0 4px 20px ${group.color}44` }}>
+          Practice all {qs.length} question{qs.length!==1?'s':''} →
+        </button>
+
+        <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, overflow:'hidden' }}>
+          {qs.map((q,i) => (
+            <button key={q.id} onClick={() => setQIdx(i)} style={{ width:'100%', background:'transparent', border:'none', borderBottom:i<qs.length-1?'1px solid #161F30':'none', padding:'14px 16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:12 }}>
+              <div style={{ width:38, height:38, borderRadius:10, flexShrink:0, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.7rem', color:group.color, textAlign:'center', lineHeight:1.2 }}>
+                {q.marks}m
+              </div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontWeight:600, fontSize:'.9rem', color:'#E0E6F0', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
+                  {q.q.split('\n')[0].substring(0,60)}{q.q.split('\n')[0].length>60?'…':''}
+                </div>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#4A5578', marginTop:2 }}>{q.source} · {q.marks} mark{q.marks!==1?'s':''}</div>
+              </div>
+              <span style={{ color:'#2A3552', fontSize:'1rem', flexShrink:0 }}>›</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── English browser ──────────────────────────────────────────────────────────
+function EnglishBrowser({ onBack }) {
+  const [activeGroup, setGroup] = useState(null)
+  const [filter, setFilter]     = useState('all')
+
+  if (activeGroup) return <EnglishTopicView group={activeGroup} onBack={() => setGroup(null)} />
+
+  const totalQs = ENGLISH_TOPIC_GROUPS.reduce((s,g) => s + g.questions.length, 0)
+  const filters = [
+    { id:'all',    label:`All (${totalQs})` },
+    { id:'p1',     label:'Paper 1' },
+    { id:'p2',     label:'Paper 2' },
+    { id:'skills', label:'Skills' },
+  ]
+
+  const filtered = filter === 'all'    ? ENGLISH_TOPIC_GROUPS
+    : filter === 'p1'     ? ENGLISH_TOPIC_GROUPS.filter(g => g.paper.includes('1') || g.paper.includes('Both'))
+    : filter === 'p2'     ? ENGLISH_TOPIC_GROUPS.filter(g => g.paper.includes('2') || g.paper.includes('Both'))
+    : ENGLISH_TOPIC_GROUPS.filter(g => g.paper === 'Skills practice')
+
+  return (
+    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
+      <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
+        <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
+          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
+          <div style={{ flex:1 }}>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA English Language</div>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>Papers 1 & 2 · {ENGLISH_TOPIC_GROUPS.length} skill areas · {totalQs} questions · AI marked</div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
+        {/* Filter pills */}
+        <div style={{ display:'flex', gap:8, marginBottom:20 }}>
+          {filters.map(f => (
+            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(157,92,255,.15)':'#10182B', border:`1px solid ${filter===f.id?'#9D5CFF':'#1E2A40'}`, borderRadius:10, padding:'9px 6px', fontFamily:"'Inter',sans-serif", fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#C18CFF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
+          ))}
+        </div>
+
+        {/* Topic cards */}
+        <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+          {filtered.map(group => (
+            <button key={group.id} onClick={() => setGroup(group)} style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14, width:'100%' }}>
+              <div style={{ width:46, height:46, borderRadius:13, flexShrink:0, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.2rem', color:group.color, fontWeight:800 }}>
+                {group.icon}
+              </div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.93rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{group.description}</div>
+                <div style={{ display:'flex', gap:8, marginTop:7, alignItems:'center' }}>
+                  <div style={{ flex:1, height:3, background:'#1E2A40', borderRadius:99 }} />
+                  <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:600, color:group.color, flexShrink:0 }}>{group.questions.length} Q{group.questions.length!==1?'s':''}</span>
+                  <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', color:'#4A5578', flexShrink:0 }}>{group.marks}m</span>
+                </div>
+              </div>
+              <span style={{ color:'#2A3552', fontSize:'1.1rem', flexShrink:0 }}>›</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
 
 function TestTab() {
-  const [mathsOpen, setMathsOpen] = useState(false)
+  const [mathsOpen, setMathsOpen]   = useState(false)
+  const [englishOpen, setEnglishOpen] = useState(false)
   const [selected, setSelected]   = useState(null)
   const [qIdx, setQIdx]           = useState(0)
   const [answer, setAnswer]       = useState('')
@@ -1577,7 +1725,8 @@ function TestTab() {
 
   function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
 
-  if (mathsOpen) return <MathsBrowser onBack={() => setMathsOpen(false)} />
+  if (mathsOpen)   return <MathsBrowser   onBack={() => setMathsOpen(false)} />
+  if (englishOpen) return <EnglishBrowser onBack={() => setEnglishOpen(false)} />
 
   const GRADE_STYLE = {
     'Excellent':  { bg:'rgba(77,255,136,.08)',  border:'rgba(77,255,136,.3)',  text:'#4DFF88', badge:'#38D27A' },
@@ -1599,9 +1748,7 @@ function TestTab() {
     if (answer.trim().length < 3) { setError('Write a bit more before submitting.'); return }
     setGrading(true); setError(null)
     try {
-      const res = await fetch('/api/grade', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ question:q.q, answer:answer.trim(), marks:q.marks, markScheme:q.ms }) })
-      const d = await res.json()
-      if (d.error) throw new Error(d.error)
+      const d = await gradeWithAI(q.q, answer2, q.marks, q.ms)
       setFeedback(d)
     } catch { setError('Could not grade right now. Check your connection.') }
     finally { setGrading(false) }
