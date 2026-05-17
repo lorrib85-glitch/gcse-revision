@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { MATHS_QUESTIONS, MATHS_FORMULA_SHEET, MATHS_DIAGRAMS } from './data/mathsQuestions.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft } from './progress.js'
@@ -1162,398 +1163,474 @@ const MARK_TIPS = {
   16: { label: '16-mark question', tip: 'Argue both sides then reach a clear judgement. Specific evidence required. Avoid vague generalisations.' },
 }
 
-function TestTab() {
-  const [selected, setSelected] = useState(null)
-  const [qIdx, setQIdx]         = useState(0)
-  const [answer, setAnswer]     = useState('')
-  const [showTip, setShowTip]   = useState(false)
-  const [grading, setGrading]   = useState(false)
-  const [feedback, setFeedback] = useState(null)
-  const [error, setError]       = useState(null)
 
-  function resetQuestion() {
-    setAnswer('')
-    setShowTip(false)
-    setFeedback(null)
-    setError(null)
-    setGrading(false)
-  }
+function FormulaSheet({ onClose }) {
+  return (
+    <div onClick={onClose} style={{ position:'fixed', inset:0, zIndex:200, background:'rgba(0,0,0,.75)', backdropFilter:'blur(8px)', display:'flex', alignItems:'flex-end', justifyContent:'center' }}>
+      <div onClick={e=>e.stopPropagation()} style={{ background:'#0E1330', border:'1px solid rgba(59,130,255,.3)', borderRadius:'20px 20px 0 0', padding:'20px 18px 36px', width:'100%', maxWidth:660, maxHeight:'80vh', overflowY:'auto' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
+          <div>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1.1rem', color:'#F5F7FB' }}>📐 AQA Formula Sheet</div>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:2 }}>Given in the exam — know what's here</div>
+          </div>
+          <button onClick={onClose} style={{ background:'rgba(255,255,255,.08)', border:'1px solid #2A3552', borderRadius:8, padding:'6px 12px', color:'#9CA8C7', cursor:'pointer', fontFamily:'inherit', fontSize:'.82rem' }}>✕ Close</button>
+        </div>
+        {MATHS_FORMULA_SHEET.map(cat => (
+          <div key={cat.category} style={{ marginBottom:16 }}>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:'#3B82FF', marginBottom:8 }}>{cat.category}</div>
+            {cat.items.map(item => (
+              <div key={item.name} style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:10, padding:'10px 14px', marginBottom:6 }}>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.78rem', color:'#5A6480', marginBottom:4 }}>{item.name}</div>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>{item.formula}</div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
-  async function gradeAnswer(q) {
-    if (answer.trim().length < 3) {
-      setError('Write a bit more before submitting — even a rough attempt helps.')
-      return
-    }
-    setGrading(true)
-    setError(null)
+function MathsDiagram({ diagramKey }) {
+  const svg = MATHS_DIAGRAMS[diagramKey]
+  if (!svg) return null
+  return (
+    <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'12px', marginBottom:14 }}>
+      <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#3B82FF', marginBottom:8 }}>📐 Diagram — from AQA past paper</div>
+      <div dangerouslySetInnerHTML={{ __html: svg }} />
+    </div>
+  )
+}
+
+const GRADE_STYLE_M = {
+  'Excellent':  { bg:'rgba(77,255,136,.08)',  border:'rgba(77,255,136,.3)',  text:'#4DFF88', badge:'#38D27A' },
+  'Good':       { bg:'rgba(77,255,136,.06)',  border:'rgba(77,255,136,.2)',  text:'#6BFFB0', badge:'#38D27A' },
+  'Developing': { bg:'rgba(255,200,87,.08)',  border:'rgba(255,200,87,.3)',  text:'#FFC857', badge:'#F5B700' },
+  'Needs Work': { bg:'rgba(255,93,115,.08)',  border:'rgba(255,93,115,.3)',  text:'#FF5D73', badge:'#FF5D73' },
+}
+const MARK_TIPS_M = {
+  1:'One clear specific point. No development needed.',
+  2:'Two separate points, OR one point + one reason.',
+  3:'Show all working — each step can earn a mark.',
+  4:'Two developed points with explanation, OR 4 separate points.',
+  5:'Full method — show every step clearly.',
+}
+
+function MathsQuestionView({ q, qIdx, total, bankLabel, isCalc, onBack, onNext }) {
+  const [answer, setAnswer]   = useState('')
+  const [showTip, setTip]     = useState(false)
+  const [grading, setGrading] = useState(false)
+  const [feedback, setFB]     = useState(null)
+  const [error, setError]     = useState(null)
+  const [formulaOpen, setFm]  = useState(false)
+
+  function reset() { setAnswer(''); setTip(false); setFB(null); setError(null); setGrading(false) }
+
+  async function grade() {
+    if (answer.trim().length < 2) { setError('Write something first.'); return }
+    setGrading(true); setError(null)
     try {
-      const res = await fetch('/api/grade', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: q.q, answer: answer.trim(), marks: q.marks, markScheme: q.ms }),
-      })
-      const data = await res.json()
-      if (data.error) throw new Error(data.error)
-      setFeedback(data)
-    } catch (e) {
-      setError('Could not grade your answer right now. Check your connection and try again.')
-    } finally {
-      setGrading(false)
-    }
+      const res = await fetch('/api/grade', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ question:q.q, answer:answer.trim(), marks:q.marks, markScheme:q.ms }) })
+      const d = await res.json()
+      if (d.error) throw new Error(d.error)
+      setFB(d)
+    } catch { setError('Could not grade right now.') }
+    finally { setGrading(false) }
   }
 
-  function nextQuestion(total) {
-    if (qIdx < total - 1) {
-      setQIdx(qIdx + 1)
-      resetQuestion()
-    } else {
-      setSelected(null)
-      setQIdx(0)
-      resetQuestion()
-    }
+  const gs = feedback ? (GRADE_STYLE_M[feedback.grade] || GRADE_STYLE_M['Developing']) : null
+
+  return (
+    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
+      {formulaOpen && <FormulaSheet onClose={() => setFm(false)} />}
+      <div style={{ background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', padding:'12px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
+          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{bankLabel} — Q{q.qNum}</div>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480' }}>Q{qIdx+1}/{total} · {q.marks} mark{q.marks!==1?'s':''} · {q.topic}</div>
+          </div>
+          {isCalc
+            ? <div style={{ background:'rgba(56,210,122,.12)', border:'1px solid rgba(56,210,122,.3)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, color:'#38D27A', flexShrink:0 }}>🖩 Calc</div>
+            : <div style={{ background:'rgba(255,200,87,.1)', border:'1px solid rgba(255,200,87,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, color:'#FFC857', flexShrink:0 }}>✗ No Calc</div>
+          }
+          <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.12)', border:'1px solid rgba(59,130,255,.25)', borderRadius:8, padding:'5px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.7rem', fontWeight:700, color:'#70B8FF', cursor:'pointer', flexShrink:0 }}>📐</button>
+        </div>
+        <div style={{ height:3, background:'#1E2A40', borderRadius:99, overflow:'hidden', marginTop:10, maxWidth:660, margin:'10px auto 0' }}>
+          <div style={{ height:'100%', width:`${((qIdx+1)/total)*100}%`, background:'linear-gradient(90deg,#3B82FF,#70B8FF)', borderRadius:99, transition:'width .3s' }} />
+        </div>
+      </div>
+
+      <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px 20px' }}>
+        <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.25)', borderRadius:99, padding:'4px 12px', marginBottom:14 }}>
+          <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'.75rem', fontWeight:700, color:'#70B8FF' }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
+        </div>
+
+        {q.diagramKey && <MathsDiagram diagramKey={q.diagramKey} />}
+
+        <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, padding:'18px', marginBottom:14 }}>
+          <pre style={{ fontFamily:"'Inter',sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{q.q}</pre>
+        </div>
+
+        {!showTip
+          ? <button onClick={() => setTip(true)} style={{ background:'none', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Inter',sans-serif", width:'100%', marginBottom:14 }}>💡 Show mark tip</button>
+          : <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}>
+              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:5 }}>{q.marks}-mark question</div>
+              <p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.85rem', color:'#C8D0E8' }}>{MARK_TIPS_M[q.marks] || MARK_TIPS_M[3]}</p>
+            </div>
+        }
+
+        {!feedback && (
+          q.type === 'mc'
+            ? <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:14 }}>
+                {q.options.map((opt,i) => (
+                  <button key={i} onClick={() => setAnswer(opt)} style={{ background:answer===opt?'rgba(59,130,255,.15)':'#10182B', border:`1.5px solid ${answer===opt?'#3B82FF':'#1E2A40'}`, borderRadius:12, padding:'13px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:answer===opt?'#70B8FF':'#C8D0E8', transition:'all .15s' }}>
+                    <span style={{ opacity:.45, marginRight:8 }}>{String.fromCharCode(65+i)}.</span>{opt}
+                  </button>
+                ))}
+              </div>
+            : <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:14 }}>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>Your working & answer</div>
+                <textarea value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Show your working here…" style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:'#E0E6F0', lineHeight:1.65, outline:'none', minHeight:q.marks>=4?160:q.marks>=2?110:70 }} />
+              </div>
+        )}
+
+        {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73' }}>{error}</p></div>}
+
+        {feedback && gs && (
+          <div className="fade-up">
+            <div style={{ background:gs.bg, border:`2px solid ${gs.border}`, borderRadius:16, padding:'18px', marginBottom:12 }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'1.8rem', fontWeight:800, color:gs.text, lineHeight:1 }}>{feedback.marksAwarded}<span style={{ fontSize:'1rem', opacity:.6 }}>/{feedback.marksAvailable}</span></div>
+                <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.82rem' }}>{feedback.grade}</div>
+              </div>
+              <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.9rem', color:gs.text, margin:0, opacity:.85 }}>{feedback.summary}</p>
+            </div>
+            {feedback.achieved?.length > 0 && (
+              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:8 }}>✓ What you got right</div>
+                {feedback.achieved.map((a,i) => <div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#4DFF88', flexShrink:0 }}>✓</span><p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{a}</p></div>)}
+              </div>
+            )}
+            {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && (
+              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FF5D73', marginBottom:8 }}>→ Points to add next time</div>
+                {feedback.missed.map((m,i) => <div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#FF5D73', flexShrink:0 }}>→</span><p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{m}</p></div>)}
+              </div>
+            )}
+            {feedback.examinerTip && (
+              <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:12, padding:'13px 14px', marginBottom:14 }}>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div>
+                <p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{feedback.examinerTip}</p>
+              </div>
+            )}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+              <button onClick={reset} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:12, padding:'13px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
+              <button onClick={onNext} style={{ background:'linear-gradient(135deg,#3B82FF,#70B8FF)', border:'none', borderRadius:12, padding:'13px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#fff', fontSize:'.88rem' }}>{qIdx < total-1 ? 'Next →' : 'Finish ✓'}</button>
+            </div>
+          </div>
+        )}
+
+        {!feedback && (
+          <button onClick={grade} disabled={grading} style={{ width:'100%', background:grading?'#1E2A40':'linear-gradient(135deg,#3B82FF,#70B8FF)', color:grading?'#5A6480':'#fff', border:'none', borderRadius:12, padding:'15px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:grading?'default':'pointer', fontSize:'.97rem', marginTop:4 }}>
+            {grading ? 'Marking…' : 'Check my answer →'}
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function MathsPaperView({ onBack }) {
+  const [activePaper, setPaper] = useState(null)
+  const [activeQ, setActiveQ]   = useState(null)
+  const [qIdx, setQIdx]         = useState(0)
+  const [filterCat, setFilter]  = useState('All')
+  const [formulaOpen, setFm]    = useState(false)
+
+  const paperKeys = Object.keys(MATHS_QUESTIONS)
+  const CAT_FILTERS = ['All','Number','Algebra','Percentages','Fractions','Geometry','Statistics','Probability','Sequences']
+
+  function getQs(key) {
+    const bank = MATHS_QUESTIONS[key]
+    if (!bank) return []
+    if (filterCat === 'All') return bank.questions
+    return bank.questions.filter(q => q.topic.toLowerCase().includes(filterCat.toLowerCase()))
   }
 
-  // ── Grade colours ──────────────────────────────────────────────
-  const GRADE_STYLE = {
-    'Excellent':    { bg: 'rgba(77,255,136,.08)', border: 'rgba(77,255,136,.3)', text: '#4DFF88', badge: '#38D27A' },
-    'Good':         { bg: 'rgba(77,255,136,.06)', border: 'rgba(77,255,136,.2)', text: '#6BFFB0', badge: '#38D27A' },
-    'Developing':   { bg: 'rgba(255,200,87,.08)', border: 'rgba(255,200,87,.3)', text: '#FFC857', badge: '#F5B700' },
-    'Needs Work':   { bg: 'rgba(255,93,115,.08)', border: 'rgba(255,93,115,.3)', text: '#FF5D73', badge: '#FF5D73' },
+  if (activeQ && activePaper) {
+    const qs = getQs(activePaper)
+    const bank = MATHS_QUESTIONS[activePaper]
+    return <MathsQuestionView q={activeQ} qIdx={qIdx} total={qs.length} bankLabel={bank.label} isCalc={bank.calculator}
+      onBack={() => { setActiveQ(null) }}
+      onNext={() => {
+        const next = qIdx + 1
+        if (next < qs.length) { setActiveQ(qs[next]); setQIdx(next) }
+        else { setActiveQ(null) }
+      }}
+    />
   }
 
-  // ── Question view ──────────────────────────────────────────────
-  if (selected) {
-    const questions = PAST_PAPER_QS[selected.topicId] || []
-    const q = questions[qIdx]
-    const tip = q ? MARK_TIPS[q.marks] : null
-    const gs = feedback ? (GRADE_STYLE[feedback.grade] || GRADE_STYLE['Developing']) : null
+  return (
+    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
+      {formulaOpen && <FormulaSheet onClose={() => setFm(false)} />}
+      <div style={{ background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', padding:'14px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
+          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0 }}>←</button>
+          <div style={{ flex:1 }}>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>Maths Past Papers</div>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.73rem', color:'#5A6480' }}>AQA Foundation · AI marked</div>
+          </div>
+          <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.12)', border:'1px solid rgba(59,130,255,.25)', borderRadius:10, padding:'7px 12px', fontFamily:"'Inter',sans-serif", fontSize:'.75rem', fontWeight:700, color:'#70B8FF', cursor:'pointer' }}>📐 Formulae</button>
+        </div>
+      </div>
 
-    return (
-      <div style={{ background: W.bg, minHeight: '100vh', paddingBottom: 80 }}>
-        {/* Header */}
-        <div style={{ background: '#10182B', borderBottom: '1px solid #2A3552', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={() => { setSelected(null); setQIdx(0); resetQuestion() }}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: W.textMuted, fontSize: '1.1rem', padding: 0, lineHeight: 1 }}>←</button>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontWeight: 800, fontSize: '.9rem', color: W.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{selected.label}</div>
-            <div style={{ fontSize: '.7rem', color: W.textMuted }}>Question {qIdx + 1} of {questions.length}</div>
+      <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
+        <div style={{ marginBottom:18 }}>
+          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.67rem', fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:'#5A6480', marginBottom:8 }}>FILTER BY TOPIC</div>
+          <div style={{ display:'flex', gap:6, overflowX:'auto', paddingBottom:4, scrollbarWidth:'none' }}>
+            {CAT_FILTERS.map(t => {
+              const active = filterCat === t
+              return <button key={t} onClick={() => setFilter(t)} style={{ flexShrink:0, background:active?'rgba(59,130,255,.15)':'#10182B', border:`1px solid ${active?'#3B82FF':'#1E2A40'}`, borderRadius:99, padding:'6px 13px', fontFamily:"'Inter',sans-serif", fontSize:'.75rem', fontWeight:600, color:active?'#70B8FF':'#5A6480', cursor:'pointer', whiteSpace:'nowrap' }}>{t}</button>
+            })}
           </div>
         </div>
 
-        {/* Progress */}
-        <div style={{ height: 4, background: W.border }}>
-          <div style={{ height: '100%', width: `${((qIdx + 1) / questions.length) * 100}%`, background: W.gold, transition: 'width .3s' }} />
+        {paperKeys.map(key => {
+          const bank = MATHS_QUESTIONS[key]
+          const qs = getQs(key)
+          if (!qs.length) return null
+          return (
+            <div key={key} style={{ marginBottom:20 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
+                <div style={{ width:30, height:30, borderRadius:9, background:bank.calculator?'rgba(56,210,122,.12)':'rgba(255,200,87,.1)', border:`1px solid ${bank.calculator?'rgba(56,210,122,.3)':'rgba(255,200,87,.25)'}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.85rem' }}>{bank.calculator?'🖩':'✎'}</div>
+                <div>
+                  <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.88rem', color:'#F5F7FB' }}>{bank.label}</div>
+                  <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480' }}>{qs.length} question{qs.length!==1?'s':''} · {bank.calculator?'Calculator allowed':'No calculator'}</div>
+                </div>
+              </div>
+              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, overflow:'hidden' }}>
+                {qs.map((q,i) => (
+                  <button key={q.id} onClick={() => { setActiveQ(q); setPaper(key); setQIdx(i) }} style={{ width:'100%', background:'transparent', border:'none', borderBottom:i<qs.length-1?'1px solid #1A2338':'none', padding:'13px 16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:12 }}>
+                    <div style={{ width:34, height:34, borderRadius:9, flexShrink:0, background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.2)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.72rem', color:'#3B82FF' }}>Q{q.qNum}</div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontFamily:"'Inter',sans-serif", fontWeight:600, fontSize:'.88rem', color:'#E0E6F0', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{q.q.split('\n')[0].substring(0,60)}{q.q.split('\n')[0].length>60?'…':''}</div>
+                      <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480', marginTop:2 }}>{q.topic} · {q.marks} mark{q.marks!==1?'s':''}{q.diagramKey?' · 📐 diagram':''}</div>
+                    </div>
+                    <span style={{ color:'#2A3552', fontSize:'.9rem', flexShrink:0 }}>›</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function TestTab() {
+  const [mathsOpen, setMathsOpen] = useState(false)
+  const [selected, setSelected]   = useState(null)
+  const [qIdx, setQIdx]           = useState(0)
+  const [answer, setAnswer]       = useState('')
+  const [showTip, setTip]         = useState(false)
+  const [grading, setGrading]     = useState(false)
+  const [feedback, setFeedback]   = useState(null)
+  const [error, setError]         = useState(null)
+
+  function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
+
+  if (mathsOpen) return <MathsPaperView onBack={() => setMathsOpen(false)} />
+
+  const GRADE_STYLE = {
+    'Excellent':  { bg:'rgba(77,255,136,.08)',  border:'rgba(77,255,136,.3)',  text:'#4DFF88', badge:'#38D27A' },
+    'Good':       { bg:'rgba(77,255,136,.06)',  border:'rgba(77,255,136,.2)',  text:'#6BFFB0', badge:'#38D27A' },
+    'Developing': { bg:'rgba(255,200,87,.08)',  border:'rgba(255,200,87,.3)',  text:'#FFC857', badge:'#F5B700' },
+    'Needs Work': { bg:'rgba(255,93,115,.08)',  border:'rgba(255,93,115,.3)',  text:'#FF5D73', badge:'#FF5D73' },
+  }
+  const MARK_TIPS = {
+    1:'One clear specific point.',
+    2:'Two separate points, or one point plus a reason.',
+    3:'Show all working — each step can earn a mark.',
+    4:'Two developed points with explanation.',
+    6:'Level of response — link facts, not just list them.',
+    12:'Three or four developed paragraphs with specific evidence.',
+    16:'Argue both sides then reach a clear judgement with evidence.',
+  }
+
+  async function gradeAnswer(q) {
+    if (answer.trim().length < 3) { setError('Write a bit more before submitting.'); return }
+    setGrading(true); setError(null)
+    try {
+      const res = await fetch('/api/grade', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ question:q.q, answer:answer.trim(), marks:q.marks, markScheme:q.ms }) })
+      const d = await res.json()
+      if (d.error) throw new Error(d.error)
+      setFeedback(d)
+    } catch { setError('Could not grade right now. Check your connection.') }
+    finally { setGrading(false) }
+  }
+
+  function nextQuestion(total) {
+    if (qIdx < total - 1) { setQIdx(qIdx+1); resetQ() }
+    else { setSelected(null); setQIdx(0); resetQ() }
+  }
+
+  if (selected) {
+    const questions = PAST_PAPER_QS[selected.topicId] || []
+    const q = questions[qIdx]
+    const gs = feedback ? (GRADE_STYLE[feedback.grade] || GRADE_STYLE['Developing']) : null
+    return (
+      <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
+        <div style={{ background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', padding:'12px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
+            <button onClick={() => { setSelected(null); setQIdx(0); resetQ() }} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0 }}>←</button>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
+              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480' }}>Question {qIdx+1} of {questions.length}</div>
+            </div>
+          </div>
+          <div style={{ height:3, background:'#1E2A40', borderRadius:99, overflow:'hidden', marginTop:10, maxWidth:660, margin:'10px auto 0' }}>
+            <div style={{ height:'100%', width:`${((qIdx+1)/questions.length)*100}%`, background:'linear-gradient(90deg,#F5B700,#C98719)', borderRadius:99, transition:'width .3s' }} />
+          </div>
         </div>
-
-        <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 18px' }}>
-          {q && (
-            <>
-              {/* Marks badge */}
-              <div style={{ display: 'inline-flex', alignItems: `center`, gap: 6, background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.25)', borderRadius: 99, padding: '4px 12px', marginBottom: 14 }}>
-                <span style={{ fontSize: '.72rem', fontWeight: 700, color: W.gold }}>{q.marks} marks</span>
+        <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
+          {q && <>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(245,183,0,.1)', border:'1px solid rgba(245,183,0,.25)', borderRadius:99, padding:'4px 12px', marginBottom:14 }}>
+              <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'.75rem', fontWeight:700, color:'#F5B700' }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
+            </div>
+            {q.fig && FIGURES[q.fig] && (
+              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'12px', marginBottom:14, textAlign:'center' }}>
+                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em', color:'#5A6480', marginBottom:8 }}>Figure — from AQA past paper</div>
+                <img src={FIGURES[q.fig]} alt="AQA exam figure" style={{ maxWidth:'100%', height:'auto', borderRadius:8 }} />
               </div>
-
-              {/* Diagram if present */}
-              {q.fig && FIGURES[q.fig] && (
-                <div style={{ background: '#10182B', border: '1px solid #2A3552', borderRadius: 14, padding: '12px', marginBottom: 14, textAlign: 'center' }}>
-                  <div style={{ fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.textMuted, marginBottom: 8 }}>Figure — from AQA past paper</div>
-                  <img src={FIGURES[q.fig]} alt="AQA exam figure" style={{ maxWidth: '100%', height: 'auto', borderRadius: 8 }} />
+            )}
+            <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'16px', marginBottom:14 }}>
+              <pre style={{ fontFamily:"'Inter',sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{q.q}</pre>
+            </div>
+            {!showTip
+              ? <button onClick={() => setTip(true)} style={{ background:'none', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Inter',sans-serif", width:'100%', marginBottom:14 }}>💡 Show mark tip</button>
+              : <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}>
+                  <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:5 }}>{q.marks}-mark question</div>
+                  <p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.85rem', color:'#C8D0E8' }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
                 </div>
-              )}
-
-              {/* Question */}
-              <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '18px', marginBottom: 14 }}>
-                <p style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem', lineHeight: 1.6, color: W.text, margin: 0 }}>{q.q}</p>
+            }
+            {!feedback && (
+              q.type === 'mc'
+                ? <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:14 }}>
+                    {q.options.map((opt,i) => (
+                      <button key={i} onClick={() => setAnswer(opt)} style={{ background:answer===opt?'rgba(245,183,0,.1)':'#10182B', border:`1.5px solid ${answer===opt?'#F5B700':'#1E2A40'}`, borderRadius:12, padding:'13px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:answer===opt?'#F5B700':'#C8D0E8', transition:'all .15s' }}>
+                        <span style={{ opacity:.45, marginRight:8 }}>{String.fromCharCode(65+i)}.</span>{opt}
+                      </button>
+                    ))}
+                  </div>
+                : <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:14 }}>
+                    <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>Your answer</div>
+                    <textarea value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Write your answer here…" style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Inter',sans-serif", fontSize:'.92rem', color:'#E0E6F0', lineHeight:1.65, outline:'none', minHeight:q.marks>=6?180:q.marks>=3?120:80 }} />
+                  </div>
+            )}
+            {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73' }}>{error}</p></div>}
+            {feedback && gs && (
+              <div className="fade-up">
+                <div style={{ background:gs.bg, border:`2px solid ${gs.border}`, borderRadius:16, padding:'18px', marginBottom:12 }}>
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+                    <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'1.8rem', fontWeight:800, color:gs.text, lineHeight:1 }}>{feedback.marksAwarded}<span style={{ fontSize:'1rem', opacity:.6 }}>/{feedback.marksAvailable}</span></div>
+                    <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.82rem' }}>{feedback.grade}</div>
+                  </div>
+                  <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.9rem', color:gs.text, margin:0, opacity:.85 }}>{feedback.summary}</p>
+                </div>
+                {feedback.achieved?.length > 0 && <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:8 }}>✓ What you got right</div>{feedback.achieved.map((a,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#4DFF88', flexShrink:0 }}>✓</span><p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{a}</p></div>)}</div>}
+                {feedback.missed?.length > 0 && feedback.missed[0]!=='No answer provided' && <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FF5D73', marginBottom:8 }}>→ Points to add next time</div>{feedback.missed.map((m,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#FF5D73', flexShrink:0 }}>→</span><p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{m}</p></div>)}</div>}
+                {feedback.examinerTip && <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:12, padding:'13px 14px', marginBottom:14 }}><div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div><p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{feedback.examinerTip}</p></div>}
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                  <button onClick={resetQ} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:12, padding:'13px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
+                  <button onClick={()=>nextQuestion(questions.length)} style={{ background:'linear-gradient(135deg,#F5B700,#C98719)', border:'none', borderRadius:12, padding:'13px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#070500', fontSize:'.88rem' }}>{qIdx<questions.length-1?'Next →':'Finish ✓'}</button>
+                </div>
               </div>
-
-              {/* Mark scheme tip */}
-              {!showTip ? (
-                <button onClick={() => setShowTip(true)}
-                  style={{ background: 'none', border: `1px dashed ${W.border}`, borderRadius: 12, padding: '10px 16px', cursor: 'pointer', color: W.textMuted, fontSize: '.83rem', width: '100%', fontFamily: 'inherit', marginBottom: 14 }}>
-                  💡 Show mark scheme guidance
-                </button>
-              ) : tip && (
-                <div style={{ background: '#f0f9f1', border: '1px solid #b8d8be', borderRadius: 12, padding: '12px 16px', marginBottom: 14 }}>
-                  <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: 'var(--success)', marginBottom: 5 }}>{tip.label}</div>
-                  <p style={{ fontSize: '.86rem', color: '#4DFF88', margin: 0 }}>{tip.tip}</p>
-                </div>
-              )}
-
-              {/* Answer area — hidden after feedback */}
-              {!feedback && (
-                <>
-                  {q.type === 'mc' ? (
-                    /* Multiple choice */
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
-                      {q.options.map((opt, i) => (
-                        <button key={i} onClick={() => setAnswer(opt)}
-                          style={{
-                            background: answer === opt ? '#1A2338' : W.bgCard,
-                            border: `2px solid ${answer === opt ? '#F5B700' : W.border}`,
-                            borderRadius: 12, padding: '12px 16px', cursor: 'pointer',
-                            textAlign: 'left', fontFamily: 'inherit', fontSize: '.92rem',
-                            color: answer === opt ? '#f0e8da' : W.text,
-                            transition: 'all .15s',
-                          }}>
-                          {opt}
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    /* Written answer */
-                    <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 16, padding: '16px', marginBottom: 14 }}>
-                      <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.textMuted, marginBottom: 10 }}>Your answer</div>
-                      <textarea
-                        value={answer}
-                        onChange={e => setAnswer(e.target.value)}
-                        placeholder="Write your answer here..."
-                        style={{ width: '100%', border: 'none', background: 'transparent', resize: 'none', fontSize: '.92rem', color: W.text, lineHeight: 1.65, outline: 'none', minHeight: q.marks >= 6 ? 180 : q.marks >= 3 ? 120 : 80, fontFamily: 'inherit' }}
-                      />
-                    </div>
-                  )}
-                </>
-              )}
-
-              {/* Error */}
-              {error && (
-                <div style={{ background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.3)', borderRadius: 12, padding: '12px 16px', marginBottom: 14 }}>
-                  <p style={{ margin: 0, fontSize: '.86rem', color: '#FF5D73' }}>{error}</p>
-                </div>
-              )}
-
-              {/* Feedback */}
-              {feedback && gs && (
-                <div className="fade-up">
-                  {/* Score card */}
-                  <div style={{ background: gs.bg, border: `2px solid ${gs.border}`, borderRadius: 18, padding: '20px', marginBottom: 14 }}>
-                    <div style={{ display: 'flex', alignItems: `center`, justifyContent: 'space-between', marginBottom: 14 }}>
-                      <div>
-                        <div style={{ fontFamily: "'Syne', sans-serif", fontSize: '2rem', fontWeight: 900, color: gs.text, lineHeight: 1 }}>
-                          {feedback.marksAwarded}<span style={{ fontSize: '1rem', fontWeight: 600, color: gs.text, opacity: .6 }}>/{feedback.marksAvailable}</span>
-                        </div>
-                        <div style={{ fontSize: '.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: gs.text, opacity: .7, marginTop: 4 }}>marks</div>
-                      </div>
-                      <div style={{ background: gs.badge, color: '#fff', borderRadius: 99, padding: '6px 14px', fontWeight: 800, fontSize: '.82rem' }}>
-                        {feedback.grade}
-                      </div>
-                    </div>
-                    <p style={{ fontSize: '.92rem', color: gs.text, margin: 0, fontStyle: 'italic' }}>{feedback.summary}</p>
-                  </div>
-
-                  {/* What you got right */}
-                  {feedback.achieved?.length > 0 && (
-                    <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 14, padding: '14px 16px', marginBottom: 10 }}>
-                      <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: 'var(--success)', marginBottom: 10 }}>✓ What you got right</div>
-                      {feedback.achieved.map((a, i) => (
-                        <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i < feedback.achieved.length - 1 ? 8 : 0 }}>
-                          <span style={{ color: 'var(--success)', fontSize: '.9rem', flexShrink: 0, marginTop: 1 }}>✓</span>
-                          <p style={{ margin: 0, fontSize: '.88rem', color: W.textMid }}>{a}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* What you missed */}
-                  {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && (
-                    <div style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 14, padding: '14px 16px', marginBottom: 10 }}>
-                      <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#b84040', marginBottom: 10 }}>✗ Points to add next time</div>
-                      {feedback.missed.map((m, i) => (
-                        <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i < feedback.missed.length - 1 ? 8 : 0 }}>
-                          <span style={{ color: '#b84040', fontSize: '.9rem', flexShrink: 0, marginTop: 1 }}>→</span>
-                          <p style={{ margin: 0, fontSize: '.88rem', color: W.textMid }}>{m}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Examiner tip */}
-                  {feedback.examinerTip && (
-                    <div style={{ background: 'rgba(255,200,87,.07)', border: '1px solid rgba(255,200,87,.28)', borderRadius: 14, padding: '14px 16px', marginBottom: 16 }}>
-                      <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: W.gold, marginBottom: 8 }}>🗡️ Examiner tip</div>
-                      <p style={{ margin: 0, fontSize: '.88rem', color: '#FFC857' }}>{feedback.examinerTip}</p>
-                    </div>
-                  )}
-
-                  {/* Try again / Next */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                    <button onClick={resetQuestion}
-                      style={{ background: W.bgCard, border: `1px solid ${W.border}`, borderRadius: 13, padding: '13px', fontWeight: 700, cursor: 'pointer', color: W.text, fontFamily: 'inherit', fontSize: '.88rem' }}>
-                      ↩ Try again
-                    </button>
-                    <button onClick={() => nextQuestion(questions.length)}
-                      style={{ background: 'linear-gradient(135deg,#F5B700,#C98719)', border: 'none', borderRadius: 13, padding: '13px', fontWeight: 800, cursor: 'pointer', color: '#070500', fontFamily: 'inherit', fontSize: '.88rem' }}>
-                      {qIdx < questions.length - 1 ? 'Next →' : 'Finish ✓'}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Submit button — only shown before feedback */}
-              {!feedback && (
-                <button onClick={() => gradeAnswer(q)} disabled={grading}
-                  style={{ width: '100%', background: grading ? W.textMuted : W.btnPrimary, color: '#070500', border: 'none', borderRadius: 13, padding: '15px', fontWeight: 800, cursor: grading ? 'default' : 'pointer', fontSize: '.97rem', fontFamily: 'inherit', marginTop: 4, transition: 'background .2s' }}>
-                  {grading ? 'Marking your answer...' : 'Check my answer →'}
-                </button>
-              )}
-            </>
-          )}
+            )}
+            {!feedback && <button onClick={()=>gradeAnswer(q)} disabled={grading} style={{ width:'100%', background:grading?'#1E2A40':'linear-gradient(135deg,#F5B700,#C98719)', color:grading?'#5A6480':'#070500', border:'none', borderRadius:12, padding:'15px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:grading?'default':'pointer', fontSize:'.97rem', marginTop:4 }}>{grading?'Marking…':'Check my answer →'}</button>}
+          </>}
         </div>
       </div>
     )
   }
 
-  // ── Topic picker ───────────────────────────────────────────────
   const TEST_SUBJECT_COLOURS = {
-    'History':           { color: '#F5B700', bg: 'rgba(245,183,0,.13)',  border: 'rgba(245,183,0,.28)',  icon: '🏰' },
-    'Biology':           { color: '#38D27A', bg: 'rgba(56,210,122,.13)', border: 'rgba(56,210,122,.28)', icon: '🧬' },
-    'Chemistry':         { color: '#38D27A', bg: 'rgba(56,210,122,.13)', border: 'rgba(56,210,122,.28)', icon: '⚗️' },
-    'Physics':           { color: '#3B82FF', bg: 'rgba(59,130,255,.13)', border: 'rgba(59,130,255,.28)', icon: '⚡' },
-    'Maths':             { color: '#3B82FF', bg: 'rgba(59,130,255,.13)', border: 'rgba(59,130,255,.28)', icon: 'x²' },
-    'Music':             { color: '#34D5FF', bg: 'rgba(52,213,255,.13)', border: 'rgba(52,213,255,.28)', icon: '🎵' },
-    'Sociology':         { color: '#FF5C7A', bg: 'rgba(255,92,122,.13)', border: 'rgba(255,92,122,.28)', icon: '👥' },
-    'English Literature':{ color: '#9D5CFF', bg: 'rgba(157,92,255,.13)', border: 'rgba(157,92,255,.28)', icon: '📖' },
-    'English Language':  { color: '#9D5CFF', bg: 'rgba(157,92,255,.13)', border: 'rgba(157,92,255,.28)', icon: '✍️' },
+    'History':           { color:'#F5B700', bg:'rgba(245,183,0,.13)',  border:'rgba(245,183,0,.28)',  icon:'🏰' },
+    'Biology':           { color:'#38D27A', bg:'rgba(56,210,122,.13)', border:'rgba(56,210,122,.28)', icon:'🧬' },
+    'Maths':             { color:'#3B82FF', bg:'rgba(59,130,255,.13)', border:'rgba(59,130,255,.28)', icon:'✕²' },
+    'Chemistry':         { color:'#38D27A', bg:'rgba(56,210,122,.13)', border:'rgba(56,210,122,.28)', icon:'⚗️' },
+    'Physics':           { color:'#3B82FF', bg:'rgba(59,130,255,.13)', border:'rgba(59,130,255,.28)', icon:'⚡' },
+    'Music':             { color:'#34D5FF', bg:'rgba(52,213,255,.13)', border:'rgba(52,213,255,.28)', icon:'🎵' },
+    'Sociology':         { color:'#FF5C7A', bg:'rgba(255,92,122,.13)', border:'rgba(255,92,122,.28)', icon:'👥' },
+    'English Literature':{ color:'#9D5CFF', bg:'rgba(157,92,255,.13)', border:'rgba(157,92,255,.28)', icon:'📖' },
+    'English Language':  { color:'#9D5CFF', bg:'rgba(157,92,255,.13)', border:'rgba(157,92,255,.28)', icon:'✍️' },
   }
 
   return (
-    <div style={{ background: '#070B1A', minHeight: '100vh', paddingBottom: 90 }}>
-
-      {/* ── Header ── */}
-      <div style={{ padding: '18px 18px 14px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
+      <div style={{ padding:'18px 18px 14px' }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', maxWidth:660, margin:'0 auto' }}>
           <div>
-            <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '1.5rem', color: '#F5F7FB', margin: 0 }}>
-              Test <span style={{ color: '#9D5CFF' }}>Yourself</span>
-            </h1>
-            <p style={{ fontSize: '.82rem', color: '#9CA8C7', marginTop: 4 }}>
-              Real exam questions. Real progress.
-            </p>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,138,31,.12)', border: '1px solid rgba(255,138,31,.28)', borderRadius: 99, padding: '6px 12px' }}>
-            <span>🔥</span>
-            <span style={{ fontSize: '.78rem', fontWeight: 800, color: '#FF8A1F' }}>4 DAY STREAK</span>
+            <h1 style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'1.5rem', color:'#F5F7FB', margin:0 }}>Test <span style={{ color:'#9D5CFF' }}>Yourself</span></h1>
+            <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.82rem', color:'#5A6480', marginTop:4 }}>Real exam questions. Real progress.</p>
           </div>
         </div>
       </div>
 
-      <div style={{ maxWidth: 660, margin: '0 auto', padding: '0 16px' }}>
-
-        {/* ── Wildcard Mode banner ── */}
-        <div style={{
-          background: 'linear-gradient(135deg, #1A1038, #0D0A22)',
-          border: '1px solid rgba(157,92,255,.3)',
-          borderRadius: 18, padding: '18px',
-          marginBottom: 24,
-          display: 'flex', alignItems: 'center', gap: 16,
-          boxShadow: '0 0 32px rgba(157,92,255,.1)',
-        }}>
-          {/* Dice icon */}
-          <div style={{
-            width: 64, height: 64, borderRadius: 16, flexShrink: 0,
-            background: 'linear-gradient(135deg, #7C3AED, #5B21B6)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1.8rem',
-            boxShadow: '0 0 20px rgba(157,92,255,.35)',
-          }}>🎲</div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: '.62rem', fontWeight: 700, letterSpacing: '.12em', color: '#9D5CFF', textTransform: 'uppercase', marginBottom: 5 }}>
-              WILDCARD MODE
-            </div>
-            <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#F5F7FB', fontFamily: "'Syne', sans-serif", lineHeight: 1.2 }}>
-              Give me <span style={{ color: '#9D5CFF' }}>any</span> question
-            </div>
-            <div style={{ fontSize: '.78rem', color: '#9CA8C7', marginTop: 4 }}>
-              Random past exam question from any topic.
-            </div>
+      <div style={{ maxWidth:660, margin:'0 auto', padding:'0 16px' }}>
+        <div style={{ background:'linear-gradient(135deg,#1A1038,#0D0A22)', border:'1px solid rgba(157,92,255,.3)', borderRadius:18, padding:'18px', marginBottom:12, display:'flex', alignItems:'center', gap:16 }}>
+          <div style={{ width:60, height:60, borderRadius:16, flexShrink:0, background:'linear-gradient(135deg,#7C3AED,#5B21B6)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.8rem', boxShadow:'0 0 20px rgba(157,92,255,.35)' }}>🎲</div>
+          <div style={{ flex:1 }}>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.62rem', fontWeight:700, letterSpacing:'.12em', color:'#9D5CFF', textTransform:'uppercase', marginBottom:4 }}>WILDCARD MODE</div>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'1.05rem', color:'#F5F7FB', lineHeight:1.2 }}>Give me <span style={{ color:'#9D5CFF' }}>any</span> question</div>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.78rem', color:'#5A6480', marginTop:4 }}>Random past exam question from any topic.</div>
           </div>
         </div>
-        <button
-          onClick={() => {
-            const allTopics = TEST_TOPICS.filter(s => s.topics.some(t => t.available))
-            const randSubject = allTopics[Math.floor(Math.random() * allTopics.length)]
-            const available = randSubject.topics.filter(t => t.available)
-            const randTopic = available[Math.floor(Math.random() * available.length)]
-            setSelected({ topicId: randTopic.id, label: randTopic.label, subject: randSubject.subject })
-          }}
-          style={{
-            width: '100%',
-            background: 'linear-gradient(135deg, #7C3AED, #5B21B6)',
-            color: '#fff', border: 'none', borderRadius: 14,
-            padding: '15px', fontWeight: 800, cursor: 'pointer',
-            fontSize: '.95rem', fontFamily: "'Syne', sans-serif",
-            letterSpacing: '.04em', textTransform: 'uppercase',
-            boxShadow: '0 4px 20px rgba(157,92,255,.3)',
-            marginBottom: 28,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          }}
-        >
-          GET A QUESTION →
-        </button>
+        <button onClick={()=>{ const allT=TEST_TOPICS.filter(s=>s.topics.some(t=>t.available)); const rs=allT[Math.floor(Math.random()*allT.length)]; const av=rs.topics.filter(t=>t.available); const rt=av[Math.floor(Math.random()*av.length)]; setSelected({topicId:rt.id,label:rt.label,subject:rs.subject}) }} style={{ width:'100%', background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', color:'#fff', border:'none', borderRadius:14, padding:'15px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, cursor:'pointer', fontSize:'.95rem', letterSpacing:'.04em', textTransform:'uppercase', boxShadow:'0 4px 20px rgba(157,92,255,.3)', marginBottom:24, display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>GET A QUESTION →</button>
 
-        {/* ── Practice by Subject ── */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-          <div style={{ fontSize: '.67rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#9CA8C7' }}>
-            PRACTICE BY SUBJECT
+        {/* Maths — prominent card */}
+        <div style={{ marginBottom:24 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
+            <div style={{ width:30, height:30, borderRadius:9, background:'rgba(59,130,255,.13)', border:'1px solid rgba(59,130,255,.28)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem' }}>✕²</div>
+            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, letterSpacing:'.14em', textTransform:'uppercase', color:'#3B82FF' }}>MATHS</span>
           </div>
+          <button onClick={()=>setMathsOpen(true)} style={{ width:'100%', background:'linear-gradient(145deg,#10182B,#0D1424)', border:'1px solid rgba(59,130,255,.2)', borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14 }}>
+            <div style={{ width:46, height:46, borderRadius:13, background:'rgba(59,130,255,.12)', border:'1px solid rgba(59,130,255,.25)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem', flexShrink:0 }}>📐</div>
+            <div style={{ flex:1 }}>
+              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB' }}>AQA Foundation Past Papers</div>
+              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:3 }}>Papers 1, 2 & 3 · Formula sheet · AI marked · Diagrams included</div>
+              <div style={{ display:'flex', gap:6, marginTop:8 }}>
+                {['Non-Calc','Calculator','Formulae','Diagrams'].map(tag=>(
+                  <span key={tag} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.2)', borderRadius:99, padding:'2px 8px', fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:600, color:'#70B8FF' }}>{tag}</span>
+                ))}
+              </div>
+            </div>
+            <span style={{ color:'#3B82FF', fontSize:'1.1rem' }}>›</span>
+          </button>
         </div>
 
+        <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.67rem', fontWeight:700, letterSpacing:'.14em', textTransform:'uppercase', color:'#5A6480', marginBottom:12 }}>PRACTICE BY SUBJECT</div>
         {TEST_TOPICS.map(({ subject, topics }) => {
           const sc = TEST_SUBJECT_COLOURS[subject] || TEST_SUBJECT_COLOURS['History']
-          const available = topics.filter(t => t.available)
-          if (!available.length && topics[0]?.available === false && topics.length === 1) return null
+          const available = topics.filter(t=>t.available)
+          if (!available.length && topics.length===1 && !topics[0].available) return null
           return (
-            <div key={subject} style={{ marginBottom: 22 }}>
-              {/* Subject header row */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                <div style={{
-                  width: 30, height: 30, borderRadius: 9,
-                  background: sc.bg, border: `1px solid ${sc.border}`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '.9rem',
-                }}>{sc.icon}</div>
-                <span style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: sc.color }}>
-                  {subject}
-                </span>
+            <div key={subject} style={{ marginBottom:18 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
+                <div style={{ width:30, height:30, borderRadius:9, background:sc.bg, border:`1px solid ${sc.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem' }}>{sc.icon}</div>
+                <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, letterSpacing:'.14em', textTransform:'uppercase', color:sc.color }}>{subject}</span>
               </div>
-
-              {/* Topic rows — styled like the reference subject rows */}
-              <div style={{ background: '#10182B', border: '1px solid #2A3552', borderRadius: 16, overflow: 'hidden' }}>
-                {topics.map((t, i) => (
-                  <button key={t.id}
-                    onClick={() => t.available && setSelected({ topicId: t.id, label: t.label, subject })}
-                    disabled={!t.available}
-                    style={{
-                      width: '100%', background: 'transparent',
-                      border: 'none',
-                      borderBottom: i < topics.length - 1 ? '1px solid #1A2338' : 'none',
-                      padding: '14px 16px',
-                      cursor: t.available ? 'pointer' : 'default',
-                      textAlign: 'left',
-                      display: 'flex', alignItems: 'center', gap: 14,
-                      opacity: t.available ? 1 : 0.38,
-                    }}>
-                    {/* Subject icon */}
-                    <div style={{
-                      width: 40, height: 40, borderRadius: 11, flexShrink: 0,
-                      background: sc.bg, border: `1px solid ${sc.border}`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '1rem',
-                    }}>{sc.icon}</div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: '.92rem', color: '#F5F7FB' }}>{t.label}</div>
-                      <div style={{ fontSize: '.72rem', color: '#9CA8C7', marginTop: 2 }}>
-                        {t.available ? `${t.questions} question${t.questions !== 1 ? 's' : ''} answered` : 'Coming soon'}
-                      </div>
-                      {/* Thin subject-coloured progress bar */}
-                      {t.available && (
-                        <div style={{ marginTop: 6, height: 3, background: '#2A3552', borderRadius: 99, overflow: 'hidden' }}>
-                          <div style={{ height: '100%', width: Math.min(t.questions * 4, 85) + '%', background: sc.color, borderRadius: 99 }} />
-                        </div>
-                      )}
+              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, overflow:'hidden' }}>
+                {topics.map((t,i) => (
+                  <button key={t.id} onClick={()=>t.available&&setSelected({topicId:t.id,label:t.label,subject})} disabled={!t.available} style={{ width:'100%', background:'transparent', border:'none', borderBottom:i<topics.length-1?'1px solid #1A2338':'none', padding:'13px 16px', cursor:t.available?'pointer':'default', textAlign:'left', display:'flex', alignItems:'center', gap:14, opacity:t.available?1:0.38 }}>
+                    <div style={{ width:38, height:38, borderRadius:10, flexShrink:0, background:sc.bg, border:`1px solid ${sc.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.95rem' }}>{sc.icon}</div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontFamily:"'Inter',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#E0E6F0' }}>{t.label}</div>
+                      <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480', marginTop:2 }}>{t.available?`${t.questions} question${t.questions!==1?'s':''} answered`:'Coming soon'}</div>
+                      {t.available && <div style={{ marginTop:5, height:3, background:'#2A3552', borderRadius:99, overflow:'hidden' }}><div style={{ height:'100%', width:Math.min(t.questions*4,85)+'%', background:sc.color, borderRadius:99 }} /></div>}
                     </div>
-                    {t.available && (
-                      <span style={{ color: '#5A6480', fontSize: '1rem', flexShrink: 0 }}>›</span>
-                    )}
+                    {t.available && <span style={{ color:'#2A3552', fontSize:'1rem', flexShrink:0 }}>›</span>}
                   </button>
                 ))}
               </div>
