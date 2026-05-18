@@ -891,35 +891,49 @@ export const MODULES = [
         label: 'Boss Battle',
         kicker: 'Challenge',
         heading: '⚔️ Boss Battle: Apply Everything',
-        sub: 'These questions need more than memory — they need thinking.',
+        sub: 'Three questions. Free text. Marked by AI. No skipping.',
         blocks: [
           {
             type: 'read',
-            label: '🔥 No hints. No looking back.',
-            text: 'Answer these three questions in your head or on paper. Then check. If you can do all three, you genuinely understand this week\'s biology.',
+            label: '🔥 Real answers only.',
+            text: 'Write your answer in the box — then submit it. The AI examiner will mark it against the actual mark scheme, tell you what you got right, what you missed, and show you a model answer. <strong>You have to try before you can see the model answer.</strong>',
           },
           {
-            type: 'reveal',
-            label: '🟢 Warm Up',
-            prompt: 'A student says: "Plants get food from the soil." Write a better explanation in one sentence.',
-            answer: 'Plants make glucose through photosynthesis, using light energy, carbon dioxide and water — the soil only provides minerals like nitrates.',
+            type: 'boss',
+            tier: '🟢',
+            label: 'Warm Up',
+            question: 'A student says: "Plants get food from the soil." Explain why this is incorrect and give a better explanation.',
+            markPoints: `- Plants do NOT get food/energy from the soil
+- Plants make glucose through photosynthesis
+- Photosynthesis uses carbon dioxide, water and light energy
+- The soil only provides minerals/nitrates (not food/energy)
+- Plants are producers/autotrophs — they make their own food`,
           },
           {
-            type: 'reveal',
-            label: '🟡 Challenge',
-            prompt: 'Why would a plant with damaged chloroplasts grow slowly even if it had plenty of water and CO₂?',
-            answer: 'Damaged chloroplasts can\'t absorb light energy properly, so photosynthesis slows down, less glucose is produced, and the plant has less energy for growth and fewer building materials for new cells.',
+            type: 'boss',
+            tier: '🟡',
+            label: 'Challenge',
+            question: 'A plant has damaged chloroplasts. Explain why this would affect the plant\'s growth, even if it has plenty of water and carbon dioxide.',
+            markPoints: `- Damaged chloroplasts cannot absorb light energy properly
+- Less/no photosynthesis can occur
+- Less glucose is produced
+- Less glucose means less energy available for growth (via respiration)
+- Less glucose means fewer building materials: less cellulose for cell walls, fewer amino acids for proteins
+- Plant grows more slowly or stops growing`,
           },
           {
-            type: 'reveal',
-            label: '🔴 Boss Mode',
-            prompt: 'A gardener removes all the leaves from a healthy plant. Predict and explain what will happen over the next two weeks.',
-            answer: 'The plant will stop photosynthesising because leaves contain the chloroplasts needed to absorb light. With no glucose being produced: the plant can\'t respire efficiently, growth stops, stores of starch are used up, the plant weakens and may die.',
-          },
-          {
-            type: 'funfact',
-            label: '🏆 If You Got All Three',
-            text: 'You understand plant biology better than most Year 11 students. The boss battle questions are the same style as AQA explain and predict questions — worth 3–6 marks each.',
+            type: 'boss',
+            tier: '🔴',
+            label: 'Boss Mode',
+            question: 'A gardener removes all the leaves from a healthy plant. Predict and explain what will happen to the plant over the following two weeks.',
+            markPoints: `- Leaves contain chloroplasts — removing them stops photosynthesis
+- No photosynthesis means no glucose being produced
+- Plant cannot respire efficiently — less energy available
+- Growth stops — no glucose for cellulose or protein synthesis
+- Plant uses up stored starch reserves
+- Plant weakens and may wilt or die
+- Cannot replace damaged or dead cells
+- Cannot produce new leaves without stored energy`,
           },
         ]
       },
