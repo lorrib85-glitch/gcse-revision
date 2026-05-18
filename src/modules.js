@@ -26,7 +26,7 @@ export const MODULES = [
       ],
       wrongFeedback: "They absolutely believed they could. But roughly 1 in 3 people died anyway.",
       correctFeedback: "Right. Nothing worked. And that tells us everything about medieval medicine.",
-      bigQuestion: 'Why couldn't the best doctors in the world stop it?',
+      bigQuestion: "Why couldn't the best doctors in the world stop it?",
       revealItems: [
         {
           emoji: '🩸',
@@ -63,13 +63,13 @@ export const MODULES = [
           'Hot, cold, wet and dry',
         ],
         correctIndex: 1,
-        explanation: 'The Four Humours (blood, phlegm, yellow bile, black bile) came from ancient Greek medicine. Illness meant imbalance — doctors tried to restore it by bleeding, purging or changing diet.',
+        explanation: "The Four Humours (blood, phlegm, yellow bile, black bile) came from ancient Greek medicine. Illness meant imbalance — doctors tried to restore it by bleeding, purging or changing diet.",
       },
       learningGoals: [
         'Explain the four main causes medieval people gave for illness',
-        'Describe at least three medieval treatments and why doctors used them',
+        "Describe at least three medieval treatments and why doctors used them",
         'Distinguish between rational and supernatural explanations',
-        'Explain how and why Galen's ideas dominated medicine for 1,000 years',
+        "Explain how and why Galen's ideas dominated medicine for 1,000 years",
         'Describe the Black Death and why nobody could stop it',
       ],
     },
@@ -678,7 +678,7 @@ export const MODULES = [
           bg: 'rgba(255,200,87,.08)',
         },
       ],
-      punchline: 'Plants build themselves from thin air. Literally. This week you find out exactly how.',
+      punchline: "Plants build themselves from thin air. Literally. This week you find out exactly how.",
     },
 
     // ── Universal Intro ─────────────────────────────────────────────────────
