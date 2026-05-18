@@ -2086,7 +2086,7 @@ function TestTab() {
     if (answer.trim().length < 3) { setError('Write a bit more before submitting.'); return }
     setGrading(true); setError(null)
     try {
-      const d = await gradeWithAI(q.q, answer2, q.marks, q.ms)
+      const d = await gradeWithAI(q.q, answer, q.marks, q.ms)
       setFeedback(d)
     } catch { setError('Could not grade right now. Check your connection.') }
     finally { setGrading(false) }
