@@ -12,8 +12,68 @@ export const MODULES = [
     subtitle: 'Foundations',
     era: 'c1250–c1500',
     icon: '⚕️',
-    color: '#7b3f00',
+    color: '#F5B700',
     colorLight: '#f5e6d3',
+
+    hook: {
+      statement: 'Medieval doctors could cure the Black Death with garlic and prayer.',
+      isTrue: false,
+      storyLines: [
+        'England, 1348. A ship docks at a southern port.',
+        'Within weeks, people are dying in the streets.',
+        'One third of the entire population will be dead within a year.',
+        'The best doctors in England had a plan...',
+      ],
+      wrongFeedback: "They absolutely believed they could. But roughly 1 in 3 people died anyway.",
+      correctFeedback: "Right. Nothing worked. And that tells us everything about medieval medicine.",
+      bigQuestion: 'Why couldn't the best doctors in the world stop it?',
+      revealItems: [
+        {
+          emoji: '🩸',
+          label: 'They thought blood caused it',
+          detail: 'The Four Humours theory said illness was an imbalance in blood, phlegm, yellow bile or black bile. So they bled patients to remove "excess blood".',
+          color: '#FF5D73',
+          bg: 'rgba(255,93,115,.08)',
+        },
+        {
+          emoji: '💨',
+          label: 'They blamed the smell',
+          detail: 'Miasma theory said bad air from rotting matter caused disease. Doctors carried posies of flowers to block the smell. It did nothing.',
+          color: '#FFC857',
+          bg: 'rgba(255,200,87,.08)',
+        },
+        {
+          emoji: '🙏',
+          label: 'They prayed for God to stop it',
+          detail: "The Church taught illness was God's punishment for sin. People whipped themselves in public to show repentance. The plague kept spreading.",
+          color: '#F5B700',
+          bg: 'rgba(245,183,0,.08)',
+        },
+      ],
+      punchline: 'Nobody knew about bacteria. Nobody knew about fleas on rats. This module explains why — and how medicine slowly changed.',
+    },
+
+    intro: {
+      retrieval: {
+        question: 'What were the Four Humours that medieval doctors believed controlled health?',
+        options: [
+          'Fire, water, earth and air',
+          'Blood, phlegm, yellow bile and black bile',
+          'Heart, liver, brain and lungs',
+          'Hot, cold, wet and dry',
+        ],
+        correctIndex: 1,
+        explanation: 'The Four Humours (blood, phlegm, yellow bile, black bile) came from ancient Greek medicine. Illness meant imbalance — doctors tried to restore it by bleeding, purging or changing diet.',
+      },
+      learningGoals: [
+        'Explain the four main causes medieval people gave for illness',
+        'Describe at least three medieval treatments and why doctors used them',
+        'Distinguish between rational and supernatural explanations',
+        'Explain how and why Galen's ideas dominated medicine for 1,000 years',
+        'Describe the Black Death and why nobody could stop it',
+      ],
+    },
+
     screens: [
       {
         label: 'Causes',
@@ -581,43 +641,70 @@ export const MODULES = [
     icon: '🌿',
     color: '#38D27A',
     colorLight: 'rgba(56,210,122,.15)',
-    screens: [
-      // ── SCREEN 0: Hook ──────────────────────────────────────────────────────
-      {
-        label: 'Hook',
-        kicker: 'Did You Know?',
-        heading: 'Plants Don\'t Eat Soil',
-        sub: 'Most people think plants "eat" through their roots. They are wrong.',
-        blocks: [
-          {
-            type: 'funfact',
-            label: '🌍 This Sounds Fake But Is Real',
-            text: 'In the 1600s, a scientist called Jan Baptist van Helmont grew a willow tree in a pot for 5 years. The tree gained 74 kg. The soil lost less than 60 grams. He concluded: the tree didn\'t come from the soil. He was right. Plants make themselves from air and water.',
-          },
-          {
-            type: 'keypoint',
-            text: 'Plants build almost all their body mass from <strong>carbon dioxide</strong> and <strong>water</strong>, using light energy. The soil provides minerals — not food.',
-          },
-          {
-            type: 'quiz',
-            question: 'Where does most of a plant\'s mass actually come from?',
-            options: [
-              { text: 'Carbon dioxide absorbed from the air', correct: true },
-              { text: 'Nutrients absorbed from the soil', correct: false },
-              { text: 'Water absorbed by the roots', correct: false },
-              { text: 'Sunlight absorbed by the leaves', correct: false },
-            ],
-            explanation: 'Most of a plant\'s dry mass comes from carbon dioxide — absorbed through tiny pores in leaves called stomata and turned into glucose by photosynthesis.',
-          },
-          {
-            type: 'read',
-            label: '🎯 This Week You\'ll Learn',
-            text: '<strong>Plant cell structure</strong> — every organelle and its job. <strong>Photosynthesis</strong> — the equation, inputs and outputs. <strong>Glucose uses</strong> — what plants do with the glucose they make. <strong>Exam wording</strong> — the exact phrases that score marks.',
-          },
-        ]
-      },
 
-      // ── SCREEN 1: Plant Cell Hotspot ────────────────────────────────────────
+    // ── Universal Hook ──────────────────────────────────────────────────────
+    hook: {
+      statement: 'The plant ate the soil.',
+      isTrue: false,
+      storyLines: [
+        'Belgium, 1648. A scientist plants a tiny willow tree.',
+        'He weighs everything — the tree, the soil, the pot.',
+        'Five years later, the tree has gained 74 kg.',
+        'The soil? Lost less than 60 grams.',
+      ],
+      wrongFeedback: "That's actually what most people think. But the numbers don't add up...",
+      correctFeedback: "Right. So where on earth did 74 kg of tree come from?",
+      bigQuestion: 'So where did 74 kg of tree come from?',
+      revealItems: [
+        {
+          emoji: '💨',
+          label: 'Carbon dioxide',
+          detail: 'Absorbed from the air through tiny pores in leaves. This is the main building block.',
+          color: '#38D27A',
+          bg: 'rgba(56,210,122,.08)',
+        },
+        {
+          emoji: '💧',
+          label: 'Water',
+          detail: 'Pulled up from the soil through the roots. Used in the chemical reaction.',
+          color: '#34D5FF',
+          bg: 'rgba(52,213,255,.08)',
+        },
+        {
+          emoji: '☀️',
+          label: 'Light energy',
+          detail: "Absorbed by chlorophyll in the leaves. Powers the whole reaction. Without it — nothing.",
+          color: '#FFC857',
+          bg: 'rgba(255,200,87,.08)',
+        },
+      ],
+      punchline: 'Plants build themselves from thin air. Literally. This week you find out exactly how.',
+    },
+
+    // ── Universal Intro ─────────────────────────────────────────────────────
+    intro: {
+      retrieval: {
+        question: 'Before we start — what do you think photosynthesis actually produces?',
+        options: [
+          'Oxygen and water',
+          'Glucose and oxygen',
+          'Carbon dioxide and glucose',
+          'Energy and starch',
+        ],
+        correctIndex: 1,
+        explanation: 'Photosynthesis produces glucose (stored chemical energy) and oxygen (released as a by-product). The glucose is what the plant uses to grow, respire and build everything else.',
+      },
+      learningGoals: [
+        'Name every organelle in a plant cell and explain its job',
+        'Write the photosynthesis equation correctly using exam language',
+        'Describe five different things plants do with glucose (SCARF)',
+        'Spot and correct the wording mistakes that lose marks in the exam',
+        'Explain why plants build mass from air, not soil',
+      ],
+    },
+
+    screens: [
+      // ── SCREEN 0: Plant Cell Hotspot ───────────────────────────────────────
       {
         label: 'Cell Explorer',
         kicker: 'Plant Cell Structure',
