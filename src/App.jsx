@@ -6,7 +6,7 @@ import { CHEMISTRY_TOPIC_GROUPS, ALL_CHEMISTRY_QUESTIONS } from './data/chemistr
 import { CHEM_IMAGES } from './data/chemImages.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
-import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft } from './progress.js'
+import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getImprovements } from './progress.js'
 import { MODULES } from './modules.js'
 import ModulePlayer from './ModulePlayer.jsx'
 
@@ -1300,9 +1300,9 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
       setMcAttempts(newAttempts)
       if (isCorrect) {
         setMcLocked(true)
-        // Build a minimal feedback object so the existing feedback UI works
         setFB({ marksAwarded: q.marks, marksAvailable: q.marks, grade: 'Excellent',
           summary: 'Correct.', achieved: ['Right answer selected'], missed: [], examinerTip: q.ms || '' })
+        recordScore({ subject: topicLabel.split(' ·')[0].split(' —')[0].trim(), earned: q.marks, possible: q.marks, source: 'test' })
       } else if (newAttempts === 1) {
         // First wrong — show hint, don't lock yet
         setMcHint(true)
@@ -1315,6 +1315,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
           summary: 'The correct answer was: ' + correctText,
           achieved: [], missed: [q.ms || 'See mark scheme above'],
           examinerTip: 'Re-read the question carefully and look for key scientific terms.' })
+        recordScore({ subject: topicLabel.split(' ·')[0].split(' —')[0].trim(), earned: 0, possible: q.marks, source: 'test' })
       }
       return
     }
@@ -1323,6 +1324,15 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
     try {
       const result = await gradeWithAI(q.q, answer, q.marks, q.ms)
       setFB(result)
+      // Record score for streak + improvement tracking
+      if (result && result.marksAwarded !== undefined) {
+        recordScore({
+          subject: topicLabel.split(' ·')[0].split(' —')[0].trim(),
+          earned: result.marksAwarded,
+          possible: result.marksAvailable || q.marks,
+          source: 'test',
+        })
+      }
     } catch (e) {
       setError('Could not reach the grading server. Check your connection and try again.')
     } finally {
@@ -1851,6 +1861,9 @@ function ChemistryTopicView({ group, onBack, qIdx: initialQIdx = 0, onQChange })
     try {
       const result = await gradeWithAI(q.q, answer, q.marks, q.ms)
       setFB(result)
+      if (result?.marksAwarded !== undefined) {
+        recordScore({ subject: 'Chemistry', earned: result.marksAwarded, possible: result.marksAvailable || q.marks, source: 'test' })
+      }
     } catch { setError('Could not reach the grading server. Check your connection.') }
     finally { setGrading(false) }
   }
@@ -2043,6 +2056,8 @@ function TestTab() {
   const [grading, setGrading]     = useState(false)
   const [feedback, setFeedback]   = useState(null)
   const [error, setError]         = useState(null)
+  const [testProgress, setTestProgress] = useState(() => { try { return getProgress() } catch { return { streak: 0 } } })
+  const testStreak = testProgress.streak || 0
 
   function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
 
@@ -2173,12 +2188,27 @@ function TestTab() {
     { id: 'drama',  label: 'Drama',   icon: '🎭', color: '#FF4FC3', bg: 'rgba(255,79,195,.1)', action: () => {} },
   ]
 
-  // Mock "most improved" — in future this could be computed from real attempt history
-  const IMPROVED = [
-    { icon: '🧬', label: 'Biology', pct: 12, color: '#38D27A' },
-    { icon: '🏰', label: 'History', pct: 9,  color: '#F5B700' },
-    { icon: '✕²', label: 'Maths',   pct: 7,  color: '#3B82FF' },
-  ]
+
+  const SUBJECT_ICON_MAP = {
+    'Biology': '🧬', 'History': '🏰', 'Maths': '📐', 'English': '📖',
+    'Sociology': '👥', 'Chemistry': '⚗️', 'Physics': '⚡', 'Drama': '🎭', 'Music': '🎵',
+  }
+  const SUBJECT_COLOR_MAP = {
+    'Biology': '#38D27A', 'History': '#F5B700', 'Maths': '#3B82FF', 'English': '#9D5CFF',
+    'Sociology': '#FF5C7A', 'Chemistry': '#38D27A', 'Physics': '#3B82FF', 'Drama': '#FF4FC3', 'Music': '#34D5FF',
+  }
+  // Real improvement data from recorded scores
+  const rawImprovements = getImprovements()
+  const IMPROVED = rawImprovements.length > 0
+    ? rawImprovements.map(s => ({
+        icon:  SUBJECT_ICON_MAP[s.subject]  || '📚',
+        label: s.subject,
+        pct:   Math.max(0, s.improvement),
+        color: SUBJECT_COLOR_MAP[s.subject] || '#9CA8C7',
+        recentAvg: s.recentAvg,
+        hasData: true,
+      }))
+    : []  // empty — show placeholder instead
 
   return (
     <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
@@ -2197,7 +2227,7 @@ function TestTab() {
           {/* Streak pill */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(255,138,31,.1)', border: '1px solid rgba(255,138,31,.2)', borderRadius: 99, padding: '5px 12px', flexShrink: 0, marginTop: 4 }}>
             <span style={{ fontSize: '.85rem' }}>🔥</span>
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', fontWeight: 700, color: '#FF8A1F' }}>4 day streak</span>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', fontWeight: 700, color: '#FF8A1F' }}>{testStreak > 0 ? `${testStreak} day streak` : 'Start streak'}</span>
           </div>
         </div>
       </div>
@@ -2210,17 +2240,25 @@ function TestTab() {
             <span style={{ fontSize: '.8rem' }}>📈</span>
             <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.67rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#4A5578' }}>Most improved this week</span>
           </div>
-          <div style={{ display: 'flex', gap: 20 }}>
-            {IMPROVED.map(s => (
-              <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 9, background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.95rem' }}>{s.icon}</div>
-                <div>
-                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.85rem', color: '#E0E6F0' }}>{s.label}</div>
-                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: s.color, fontWeight: 600 }}>↑{s.pct}%</div>
+          {IMPROVED.length > 0 ? (
+            <div style={{ display: 'flex', gap: 20 }}>
+              {IMPROVED.map(s => (
+                <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 9, background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.95rem' }}>{s.icon}</div>
+                  <div>
+                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.85rem', color: '#E0E6F0' }}>{s.label}</div>
+                    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: s.color, fontWeight: 600 }}>
+                      {s.pct > 0 ? `↑${s.pct}%` : `${s.recentAvg}% avg`}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#2A3552', margin: 0 }}>
+              Answer some questions to see your improvement stats here.
+            </p>
+          )}
         </div>
 
         {/* ── Random question — lightweight card ── */}

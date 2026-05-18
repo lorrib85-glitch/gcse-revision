@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { recordActivity, recordScore } from './progress.js'
 
 // ─── localStorage helpers ─────────────────────────────────────────────────────
 function getModuleState(moduleId) {
@@ -514,12 +515,12 @@ function RevealBlock({ block }) {
   )
 }
 
-function QuizBlock({ block, onAnswered }) {
-  const [selected, setSelected]   = useState(null)   // index of tapped option
+function QuizBlock({ block, onAnswered, subject }) {
+  const [selected, setSelected]   = useState(null)
   const [shakeIdx, setShakeIdx]   = useState(null)
-  const [attempts, setAttempts]   = useState(0)       // how many wrong tries
-  const [showHint, setShowHint]   = useState(false)   // hint visible after 1st wrong
-  const [locked, setLocked]       = useState(false)   // locked after correct OR 2nd wrong
+  const [attempts, setAttempts]   = useState(0)
+  const [showHint, setShowHint]   = useState(false)
+  const [locked, setLocked]       = useState(false)
 
   function choose(i) {
     if (locked) return
@@ -529,12 +530,17 @@ function QuizBlock({ block, onAnswered }) {
 
     if (correct) {
       setLocked(true)
+      // Record a correct answer (1 mark per quiz question)
+      if (subject) recordScore({ subject, earned: 1, possible: 1, source: 'module' })
       if (onAnswered) setTimeout(() => onAnswered(), 700)
     } else {
       setShakeIdx(i)
       setShowHint(true)
       // Lock after second wrong attempt — show full explanation
-      if (attempts >= 1) setLocked(true)
+      if (attempts >= 1) {
+        setLocked(true)
+        if (subject) recordScore({ subject, earned: 0, possible: 1, source: 'module' })
+      }
       // Reset shake after animation
       setTimeout(() => setShakeIdx(null), 500)
     }
@@ -1196,7 +1202,7 @@ function ScenarioBlock({ block }) {
 
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
-function Screen({ screen }) {
+function Screen({ screen, subject }) {
   return (
     <div>
       <div style={{ marginBottom: 20 }}>
@@ -1232,7 +1238,7 @@ function Screen({ screen }) {
           {block.type === 'examtip'       && <ExamTipBlock block={block} />}
           {block.type === 'timeline'      && <TimelineBlock block={block} />}
           {block.type === 'reveal'        && <RevealBlock block={block} />}
-          {block.type === 'quiz'          && <QuizBlock block={block} />}
+          {block.type === 'quiz'          && <QuizBlock block={block} subject={subject} />}
           {block.type === 'flashcards'    && <FlashcardsBlock block={block} />}
           {block.type === 'hotspot'       && <HotspotBlock block={block} />}
           {block.type === 'misconception' && <MisconceptionBlock block={block} />}
@@ -1779,6 +1785,8 @@ export default function ModulePlayer({ module, onBack }) {
     setScreen(next)
     setAnimKey(k => k + 1)
     window.scrollTo({ top: 0, behavior: 'smooth' })
+    // Any navigation in a module counts as activity for the streak
+    recordActivity()
   }
 
   function handleFinish() {
@@ -1789,6 +1797,8 @@ export default function ModulePlayer({ module, onBack }) {
   function handleConfidencePick(level) {
     setChosenConfidence(level)
     saveConfidenceRating(module.id, module.subject, module.title, level)
+    // Module completion always counts as activity
+    recordActivity()
     setTimeout(() => onBack(), 650)
   }
 
@@ -2067,7 +2077,7 @@ export default function ModulePlayer({ module, onBack }) {
             ? <IntroScreen module={module} onDone={() => { setIntroDone(true); window.scrollTo({top:0,behavior:'smooth'}) }} />
             : (
               <div key={animKey} className="anim-pop">
-                <Screen screen={cur} />
+                <Screen screen={cur} subject={module.subject} />
               </div>
             )
         }
