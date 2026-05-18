@@ -568,4 +568,390 @@ export const MODULES = [
       },
     ]
   },
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // SCIENCE — Biology Week 1: Plant Cells & Photosynthesis
+  // ─────────────────────────────────────────────────────────────────────────────
+  {
+    id: 'sci_bio_w1',
+    subject: 'Biology',
+    number: 1,
+    title: 'Plant Cells & Photosynthesis',
+    subtitle: 'Tiny factories, big chemistry',
+    icon: '🌿',
+    color: '#38D27A',
+    colorLight: 'rgba(56,210,122,.15)',
+    screens: [
+      // ── SCREEN 0: Hook ──────────────────────────────────────────────────────
+      {
+        label: 'Hook',
+        kicker: 'Did You Know?',
+        heading: 'Plants Don\'t Eat Soil',
+        sub: 'Most people think plants "eat" through their roots. They are wrong.',
+        blocks: [
+          {
+            type: 'funfact',
+            label: '🌍 This Sounds Fake But Is Real',
+            text: 'In the 1600s, a scientist called Jan Baptist van Helmont grew a willow tree in a pot for 5 years. The tree gained 74 kg. The soil lost less than 60 grams. He concluded: the tree didn\'t come from the soil. He was right. Plants make themselves from air and water.',
+          },
+          {
+            type: 'keypoint',
+            text: 'Plants build almost all their body mass from <strong>carbon dioxide</strong> and <strong>water</strong>, using light energy. The soil provides minerals — not food.',
+          },
+          {
+            type: 'quiz',
+            question: 'Where does most of a plant\'s mass actually come from?',
+            options: [
+              { text: 'Carbon dioxide absorbed from the air', correct: true },
+              { text: 'Nutrients absorbed from the soil', correct: false },
+              { text: 'Water absorbed by the roots', correct: false },
+              { text: 'Sunlight absorbed by the leaves', correct: false },
+            ],
+            explanation: 'Most of a plant\'s dry mass comes from carbon dioxide — absorbed through tiny pores in leaves called stomata and turned into glucose by photosynthesis.',
+          },
+          {
+            type: 'read',
+            label: '🎯 This Week You\'ll Learn',
+            text: '<strong>Plant cell structure</strong> — every organelle and its job. <strong>Photosynthesis</strong> — the equation, inputs and outputs. <strong>Glucose uses</strong> — what plants do with the glucose they make. <strong>Exam wording</strong> — the exact phrases that score marks.',
+          },
+        ]
+      },
+
+      // ── SCREEN 1: Plant Cell Hotspot ────────────────────────────────────────
+      {
+        label: 'Cell Explorer',
+        kicker: 'Plant Cell Structure',
+        heading: 'Every Part Has A Job',
+        sub: 'Tap every + to discover what each organelle actually does.',
+        blocks: [
+          {
+            type: 'read',
+            label: '🏭 The Factory Analogy',
+            text: 'Think of a plant cell as a factory. It has <strong>managers</strong>, <strong>power generators</strong>, <strong>assembly lines</strong>, <strong>solar panels</strong>, a <strong>water tank</strong>, <strong>security</strong>, and <strong>outer walls</strong>. Every part has a specific job — and if one fails, the factory breaks down.',
+          },
+          {
+            type: 'hotspot',
+            label: 'Plant Cell — tap to explore each part',
+            parts: ['cell_wall', 'cell_membrane', 'nucleus', 'chloroplast', 'vacuole', 'mitochondria', 'cytoplasm', 'ribosomes'],
+          },
+          {
+            type: 'examtip',
+            label: '🗡️ Exam Assassin — Animal vs Plant',
+            text: 'Three things plant cells have that animal cells <strong>do NOT</strong>:',
+            phrases: ['Cell wall', 'Chloroplasts', 'Large permanent vacuole'],
+          },
+        ]
+      },
+
+      // ── SCREEN 2: Quick Recall ──────────────────────────────────────────────
+      {
+        label: 'Quick Check',
+        kicker: 'Retrieval',
+        heading: 'What Did You Just Learn?',
+        sub: 'No notes. No hints. Just you and what stuck.',
+        blocks: [
+          {
+            type: 'quiz',
+            question: 'Which organelle absorbs light energy for photosynthesis?',
+            options: [
+              { text: 'Nucleus', correct: false },
+              { text: 'Mitochondria', correct: false },
+              { text: 'Chloroplast', correct: true },
+              { text: 'Vacuole', correct: false },
+            ],
+            explanation: 'Chloroplasts contain chlorophyll, which absorbs light energy. They\'re only in plant cells — and only in cells that are green (like leaf cells, not root cells).',
+          },
+          {
+            type: 'quiz',
+            question: 'Which organelle releases energy from glucose?',
+            options: [
+              { text: 'Chloroplast', correct: false },
+              { text: 'Mitochondria', correct: true },
+              { text: 'Ribosomes', correct: false },
+              { text: 'Cell wall', correct: false },
+            ],
+            explanation: 'Mitochondria are the site of aerobic respiration. They release energy from glucose so the cell can do work — moving, growing, making proteins.',
+          },
+          {
+            type: 'quiz',
+            question: 'What gives a plant cell its rigid, fixed shape?',
+            options: [
+              { text: 'Cell membrane', correct: false },
+              { text: 'Vacuole', correct: false },
+              { text: 'Cytoplasm', correct: false },
+              { text: 'Cell wall', correct: true },
+            ],
+            explanation: 'The cell wall is made of cellulose and gives the plant cell a strong, fixed shape. The cell membrane is present too but is flexible, not rigid.',
+          },
+          {
+            type: 'quiz',
+            question: 'A plant cell is wilting. Which organelle has likely shrunk?',
+            options: [
+              { text: 'Nucleus', correct: false },
+              { text: 'Mitochondria', correct: false },
+              { text: 'Large vacuole', correct: true },
+              { text: 'Ribosomes', correct: false },
+            ],
+            explanation: 'The large vacuole is filled with cell sap and keeps the cell turgid (firm). When a plant loses water, the vacuole shrinks, the cell loses pressure and the plant wilts.',
+          },
+        ]
+      },
+
+      // ── SCREEN 3: Misconceptions ────────────────────────────────────────────
+      {
+        label: 'Mistake Lab',
+        kicker: 'Common Mistakes',
+        heading: 'Sounds Right. Loses Marks.',
+        sub: 'These are the phrases examiners see every year — and penalise every year.',
+        blocks: [
+          {
+            type: 'misconception',
+            label: 'Tap to see why each one fails',
+            mistakes: [
+              {
+                wrong: 'Plants get food from the soil.',
+                right: 'Plants make glucose by photosynthesis.',
+                reason: 'Soil provides minerals (like nitrates), not food. Plants manufacture their own glucose using light energy — they are autotrophs.',
+              },
+              {
+                wrong: 'Chloroplasts make sunlight.',
+                right: 'Chloroplasts absorb light energy.',
+                reason: '"Make" sunlight is physically impossible. The correct word is "absorb" — chlorophyll inside the chloroplast captures light energy from the sun.',
+              },
+              {
+                wrong: 'Plants create energy during photosynthesis.',
+                right: 'Plants transfer light energy into chemical energy (glucose).',
+                reason: 'Energy cannot be created or destroyed — it is transferred. Examiners specifically penalise "create" and "make" energy. Always say "transfer" or "store".',
+              },
+              {
+                wrong: 'Only leaves have chloroplasts.',
+                right: 'Only green parts of the plant contain chloroplasts.',
+                reason: 'Any green part of a plant (stems, unripe fruit, green petals) has chloroplasts. Non-green parts (roots, white flowers) do not — they can\'t photosynthesise.',
+              },
+            ],
+          },
+        ]
+      },
+
+      // ── SCREEN 4: Photosynthesis Equation Builder ───────────────────────────
+      {
+        label: 'The Equation',
+        kicker: 'Photosynthesis',
+        heading: 'Build The Recipe',
+        sub: 'Photosynthesis is just cooking — light is the heat, glucose is the meal.',
+        blocks: [
+          {
+            type: 'read',
+            label: '📖 The Big Idea',
+            text: 'Photosynthesis converts <strong>light energy</strong> into <strong>chemical energy</strong> stored in glucose. The plant takes two raw materials (carbon dioxide and water) and uses light to combine them into glucose and oxygen.',
+          },
+          {
+            type: 'builder',
+            label: 'Build the photosynthesis equation',
+            slots: [null, null, null, null],
+            operators: ['+', '→', '+'],
+            pieces: ['carbon dioxide', 'water', 'glucose', 'oxygen', 'nitrogen', 'starch'],
+            answer: ['carbon dioxide', 'water', 'glucose', 'oxygen'],
+            hint: 'Two things go IN (reactants), two things come OUT (products). Light energy drives the reaction.',
+            successText: 'Carbon dioxide + water → glucose + oxygen. Light energy drives the reaction. This is the foundation of almost all life on Earth.',
+          },
+          {
+            type: 'keypoint',
+            text: 'The word equation: <strong>carbon dioxide + water → glucose + oxygen</strong>. Light energy is needed. Chlorophyll absorbs it. This happens in the chloroplasts.',
+          },
+          {
+            type: 'examtip',
+            label: '🗡️ Exam Trap',
+            tip: 'Students often say water is produced in photosynthesis. It is NOT. Water is a <strong>reactant</strong> (goes in). Oxygen is the gas that comes out.',
+            phrases: ['carbon dioxide + water → glucose + oxygen', 'light energy required', 'in the chloroplasts'],
+          },
+        ]
+      },
+
+      // ── SCREEN 5: Glucose Uses (SCARF) ─────────────────────────────────────
+      {
+        label: 'Glucose Uses',
+        kicker: 'What Plants Do With Glucose',
+        heading: 'SCARF: Five Things Plants Do With Glucose',
+        sub: 'Students think glucose just gives energy. It does five different things.',
+        blocks: [
+          {
+            type: 'funfact',
+            label: '🤯 Actually Interesting',
+            text: 'Wood is made from glucose. The tree trunk, every branch, every leaf — almost all of it built from sugar that the tree made from thin air using sunlight. You\'re basically looking at crystallised light.',
+          },
+          {
+            type: 'scarf',
+            label: 'SCARF — tap each letter to reveal',
+            items: [
+              { letter: 'S', word: 'Starch', detail: 'Glucose is converted to starch for storage. Starch is insoluble so it doesn\'t affect osmosis. Stored in chloroplasts and other parts of the plant.' },
+              { letter: 'C', word: 'Cellulose', detail: 'Used to make cellulose for cell walls. This gives the plant structural support. Wood is mostly cellulose.' },
+              { letter: 'A', word: 'Amino acids', detail: 'Combined with nitrates from the soil to make amino acids, which are then used to build proteins. No nitrates = no proteins = stunted growth.' },
+              { letter: 'R', word: 'Respiration', detail: 'Used in aerobic respiration to release energy for growth, reproduction, active transport and other cell processes.' },
+              { letter: 'F', word: 'Fats and oils', detail: 'Some glucose is converted into lipids (fats and oils) for storage — especially in seeds. Seeds are often very high in fats.' },
+            ],
+          },
+          {
+            type: 'reveal',
+            label: '⚡ Exam Recall Check',
+            prompt: 'Without looking up — what does SCARF stand for in terms of glucose uses?',
+            answer: 'S = Starch (storage). C = Cellulose (cell walls). A = Amino acids (proteins). R = Respiration (energy). F = Fats and oils (seed storage).',
+          },
+        ]
+      },
+
+      // ── SCREEN 6: Glucose Decision Game ────────────────────────────────────
+      {
+        label: 'Decision Game',
+        kicker: 'Apply Your Knowledge',
+        heading: 'Where Should The Glucose Go?',
+        sub: 'Six scenarios. One right answer each time. No hints.',
+        blocks: [
+          {
+            type: 'scenario',
+            label: 'Glucose Decision',
+            completionText: 'You can now link glucose uses to plant needs — a favourite AQA exam style question.',
+            scenarios: [
+              {
+                situation: 'The plant needs stronger cell walls to support a new branch.',
+                options: ['Starch', 'Cellulose', 'Respiration', 'Fats'],
+                correctIndex: 1,
+                explanation: 'Cellulose is used to build cell walls. It gives structural strength.',
+              },
+              {
+                situation: 'The plant needs to store energy underground for winter.',
+                options: ['Amino acids', 'Cellulose', 'Starch', 'Respiration'],
+                correctIndex: 2,
+                explanation: 'Starch is insoluble and used for long-term storage — in potatoes, for example.',
+              },
+              {
+                situation: 'The plant is growing rapidly and needs to make new proteins.',
+                options: ['Amino acids', 'Starch', 'Fats', 'Cellulose'],
+                correctIndex: 0,
+                explanation: 'Glucose combines with nitrates to form amino acids, which are linked together to make proteins.',
+              },
+              {
+                situation: 'The plant needs energy for active transport of minerals.',
+                options: ['Cellulose', 'Starch', 'Respiration', 'Fats'],
+                correctIndex: 2,
+                explanation: 'Respiration releases energy from glucose. Active transport needs this energy to move minerals against the concentration gradient.',
+              },
+              {
+                situation: 'A seed needs to store lots of energy in a compact, dense form.',
+                options: ['Starch', 'Fats and oils', 'Amino acids', 'Cellulose'],
+                correctIndex: 1,
+                explanation: 'Fats contain more energy per gram than starch. Seeds (like sunflower seeds) store fats for the germinating seedling to use.',
+              },
+            ],
+          },
+        ]
+      },
+
+      // ── SCREEN 7: Exam Assassin ─────────────────────────────────────────────
+      {
+        label: 'Exam Assassin',
+        kicker: 'Exam Technique',
+        heading: 'How To Actually Score Marks',
+        sub: 'These aren\'t tips. These are the specific phrases that win and lose marks.',
+        blocks: [
+          {
+            type: 'examtip',
+            label: '🗡️ Tip 1 — Absorb, Not Collect',
+            tip: 'Say <strong>"absorbs light energy"</strong> — not "collects sunlight" or "uses light". Examiners want the word ABSORB.',
+            phrases: ['absorbs light energy', 'chlorophyll', 'chloroplast'],
+          },
+          {
+            type: 'examtip',
+            label: '🗡️ Tip 2 — Glucose, Not Food',
+            tip: 'Photosynthesis produces <strong>glucose</strong>. Never "food" or "sugar" — use the specific term.',
+            phrases: ['glucose', 'not food', 'not sugar'],
+          },
+          {
+            type: 'examtip',
+            label: '🗡️ Tip 3 — Transfer, Not Create',
+            tip: 'Light energy is <strong>transferred</strong> into chemical energy. Never say plants "make", "create" or "produce" energy. Energy is conserved, not created.',
+            phrases: ['energy is transferred', 'light energy → chemical energy', 'stored in glucose'],
+          },
+          {
+            type: 'quiz',
+            question: 'Which answer would score the mark?',
+            options: [
+              { text: 'Chloroplasts collect sunlight to make food for the plant.', correct: false },
+              { text: 'Chloroplasts absorb light energy to produce glucose by photosynthesis.', correct: true },
+              { text: 'Chloroplasts create energy from sunlight.', correct: false },
+              { text: 'Chloroplasts make sugar using the sun.', correct: false },
+            ],
+            explanation: 'Option B uses the correct command words: "absorb", "light energy", "glucose", "photosynthesis". Every other option uses vague or incorrect language.',
+          },
+        ]
+      },
+
+      // ── SCREEN 8: Boss Battle ───────────────────────────────────────────────
+      {
+        label: 'Boss Battle',
+        kicker: 'Challenge',
+        heading: '⚔️ Boss Battle: Apply Everything',
+        sub: 'These questions need more than memory — they need thinking.',
+        blocks: [
+          {
+            type: 'read',
+            label: '🔥 No hints. No looking back.',
+            text: 'Answer these three questions in your head or on paper. Then check. If you can do all three, you genuinely understand this week\'s biology.',
+          },
+          {
+            type: 'reveal',
+            label: '🟢 Warm Up',
+            prompt: 'A student says: "Plants get food from the soil." Write a better explanation in one sentence.',
+            answer: 'Plants make glucose through photosynthesis, using light energy, carbon dioxide and water — the soil only provides minerals like nitrates.',
+          },
+          {
+            type: 'reveal',
+            label: '🟡 Challenge',
+            prompt: 'Why would a plant with damaged chloroplasts grow slowly even if it had plenty of water and CO₂?',
+            answer: 'Damaged chloroplasts can\'t absorb light energy properly, so photosynthesis slows down, less glucose is produced, and the plant has less energy for growth and fewer building materials for new cells.',
+          },
+          {
+            type: 'reveal',
+            label: '🔴 Boss Mode',
+            prompt: 'A gardener removes all the leaves from a healthy plant. Predict and explain what will happen over the next two weeks.',
+            answer: 'The plant will stop photosynthesising because leaves contain the chloroplasts needed to absorb light. With no glucose being produced: the plant can\'t respire efficiently, growth stops, stores of starch are used up, the plant weakens and may die.',
+          },
+          {
+            type: 'funfact',
+            label: '🏆 If You Got All Three',
+            text: 'You understand plant biology better than most Year 11 students. The boss battle questions are the same style as AQA explain and predict questions — worth 3–6 marks each.',
+          },
+        ]
+      },
+
+      // ── SCREEN 9: Fast Recap ────────────────────────────────────────────────
+      {
+        label: 'Fast Recap',
+        kicker: 'Final Retrieval',
+        heading: 'Lock It In',
+        sub: 'Tap every card. This is the stuff that will come up in Paper 1.',
+        blocks: [
+          {
+            type: 'flashcards',
+            cards: [
+              { front: 'Chloroplast', back: 'Contains chlorophyll. Absorbs light energy for photosynthesis. Only in plant and algae cells.' },
+              { front: 'Nucleus', back: 'Controls cell activities. Contains DNA (genetic instructions).' },
+              { front: 'Mitochondria', back: 'Site of aerobic respiration. Releases energy from glucose.' },
+              { front: 'Cell wall', back: 'Made of cellulose. Gives plant cells strength and a fixed shape.' },
+              { front: 'Large vacuole', back: 'Filled with cell sap. Keeps cell turgid (firm). Not in animal cells.' },
+              { front: 'Photosynthesis equation', back: 'carbon dioxide + water → glucose + oxygen. Light energy required. In chloroplasts.' },
+              { front: 'SCARF', back: 'Starch · Cellulose · Amino acids · Respiration · Fats and oils. Five uses of glucose.' },
+              { front: 'Ribosomes', back: 'Where proteins are made. Present in all cells. Too small for a light microscope.' },
+              { front: 'Three things plant cells have that animal cells lack', back: 'Cell wall · Chloroplasts · Large permanent vacuole.' },
+              { front: 'Energy in photosynthesis', back: 'Light energy is TRANSFERRED into chemical energy stored in glucose. Never "created".' },
+            ]
+          },
+          {
+            type: 'keypoint',
+            text: '✅ <strong>You can now:</strong> name all plant cell organelles and their jobs, write the photosynthesis equation correctly, describe five uses of glucose using SCARF, and use the exact phrases that score marks in the exam.',
+          },
+        ]
+      },
+    ]
+  },
 ]

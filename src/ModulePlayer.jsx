@@ -306,6 +306,529 @@ function FlashcardsBlock({ block }) {
   )
 }
 
+// ─── HotspotBlock — interactive labelled diagram ──────────────────────────────
+const ORGANELLE_INFO = {
+  nucleus:      { icon: '🧬', color: '#9D5CFF', title: 'Nucleus',        job: 'Controls all cell activities. Contains DNA — the instructions for everything the cell does.', analogy: 'The manager\'s office.' },
+  chloroplast:  { icon: '☀️', color: '#38D27A', title: 'Chloroplast',    job: 'Contains chlorophyll. Absorbs light energy for photosynthesis. This is where glucose is made.', analogy: 'Solar panels on a factory roof.' },
+  cell_wall:    { icon: '🧱', color: '#F5B700', title: 'Cell Wall',      job: 'Made of cellulose. Gives the plant cell strength and a fixed shape. Animal cells don\'t have one.', analogy: 'The factory\'s outer brick walls.' },
+  cell_membrane:{ icon: '🚪', color: '#3B82FF', title: 'Cell Membrane',  job: 'Controls what enters and leaves the cell. Every cell has one — plant and animal.', analogy: 'Security at the factory entrance.' },
+  vacuole:      { icon: '💧', color: '#34D5FF', title: 'Large Vacuole',  job: 'Filled with cell sap. Keeps the cell firm (turgid). If it shrinks, the plant wilts.', analogy: 'The factory\'s water tank.' },
+  mitochondria: { icon: '⚡', color: '#FF8A1F', title: 'Mitochondria',   job: 'Site of aerobic respiration. Releases energy from glucose for the cell to use.', analogy: 'The factory\'s power generators.' },
+  cytoplasm:    { icon: '🌊', color: '#6BFFB0', title: 'Cytoplasm',      job: 'Jelly-like fluid where most chemical reactions happen. Holds organelles in place.', analogy: 'The factory floor.' },
+  ribosomes:    { icon: '🔬', color: '#FF4FC3', title: 'Ribosomes',      job: 'Where proteins are made. Too small to see on a light microscope — need an electron microscope.', analogy: 'The factory\'s assembly lines.' },
+}
+
+function HotspotBlock({ block }) {
+  const [active, setActive] = useState(null)
+  const [discovered, setDiscovered] = useState(new Set())
+
+  function tap(key) {
+    setActive(active === key ? null : key)
+    setDiscovered(s => { const n = new Set(s); n.add(key); return n })
+  }
+
+  const parts = block.parts || Object.keys(ORGANELLE_INFO)
+  const info = active ? ORGANELLE_INFO[active] : null
+  const allFound = parts.every(p => discovered.has(p))
+
+  // SVG layout: approximate positions as percentages
+  const POSITIONS = {
+    cell_wall:    { x: 50, y: 7  },
+    nucleus:      { x: 35, y: 38 },
+    chloroplast:  { x: 65, y: 28 },
+    cell_membrane:{ x: 18, y: 50 },
+    vacuole:      { x: 52, y: 55 },
+    mitochondria: { x: 30, y: 65 },
+    cytoplasm:    { x: 75, y: 65 },
+    ribosomes:    { x: 72, y: 42 },
+  }
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #081A0F, #0B1F12)',
+        border: '1px solid rgba(56,210,122,.2)',
+        borderRadius: 18, padding: '16px', marginBottom: 10,
+        boxShadow: '0 0 32px rgba(56,210,122,.06)',
+      }}>
+        <div style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+          textTransform: 'uppercase', color: '#38D27A', marginBottom: 10,
+          display: 'flex', alignItems: 'center', gap: 6,
+        }}>
+          🔬 {block.label || 'Plant Cell — tap to explore'}
+          <span style={{ marginLeft: 'auto', color: '#4A5578', fontWeight: 500 }}>
+            {discovered.size}/{parts.length} found
+          </span>
+        </div>
+
+        {/* SVG diagram */}
+        <div style={{ position: 'relative', width: '100%', paddingBottom: '72%' }}>
+          <svg viewBox="0 0 100 72" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+            {/* Cell wall outline */}
+            <rect x="6" y="3" width="88" height="66" rx="8" ry="8"
+              fill="rgba(245,183,0,.06)" stroke="rgba(245,183,0,.35)" strokeWidth="1.2" />
+            {/* Cell membrane */}
+            <rect x="8.5" y="5.5" width="83" height="61" rx="6" ry="6"
+              fill="rgba(59,130,255,.04)" stroke="rgba(59,130,255,.3)" strokeWidth=".8" strokeDasharray="2 1" />
+            {/* Vacuole */}
+            <ellipse cx="54" cy="52" rx="22" ry="14"
+              fill="rgba(52,213,255,.08)" stroke="rgba(52,213,255,.3)" strokeWidth=".8" />
+            {/* Nucleus */}
+            <circle cx="35" cy="36" r="10"
+              fill="rgba(157,92,255,.1)" stroke="rgba(157,92,255,.4)" strokeWidth=".8" />
+            {/* Chloroplasts */}
+            <ellipse cx="66" cy="22" rx="7" ry="4"
+              fill="rgba(56,210,122,.18)" stroke="rgba(56,210,122,.5)" strokeWidth=".8" />
+            <ellipse cx="72" cy="34" rx="6" ry="3.5"
+              fill="rgba(56,210,122,.18)" stroke="rgba(56,210,122,.5)" strokeWidth=".8" />
+            {/* Mitochondria */}
+            <ellipse cx="28" cy="60" rx="8" ry="4"
+              fill="rgba(255,138,31,.1)" stroke="rgba(255,138,31,.4)" strokeWidth=".7" />
+            {/* Ribosomes dots */}
+            {[[70,40],[73,45],[68,47]].map(([cx,cy],i) => (
+              <circle key={i} cx={cx} cy={cy} r="1.2"
+                fill="rgba(255,79,195,.5)" stroke="none" />
+            ))}
+          </svg>
+
+          {/* Tap hotspots */}
+          {parts.map(key => {
+            const pos = POSITIONS[key]
+            if (!pos) return null
+            const info = ORGANELLE_INFO[key]
+            const isActive = active === key
+            const isDone = discovered.has(key)
+            return (
+              <button key={key}
+                onClick={() => tap(key)}
+                style={{
+                  position: 'absolute',
+                  left: `${pos.x}%`, top: `${pos.y}%`,
+                  transform: 'translate(-50%, -50%)',
+                  width: 28, height: 28,
+                  borderRadius: '50%',
+                  background: isActive ? info.color : isDone ? `${info.color}22` : 'rgba(255,255,255,.1)',
+                  border: `2px solid ${isActive ? info.color : isDone ? `${info.color}66` : 'rgba(255,255,255,.25)'}`,
+                  cursor: 'pointer',
+                  fontSize: '.7rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  transition: 'all .2s',
+                  boxShadow: isActive ? `0 0 12px ${info.color}66` : 'none',
+                  zIndex: 2,
+                }}>
+                {isDone ? info.icon : '+'}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Info panel */}
+        {info ? (
+          <div className="fade-up" style={{
+            background: `${info.color}10`,
+            border: `1px solid ${info.color}33`,
+            borderRadius: 14, padding: '14px 16px', marginTop: 10,
+          }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '1rem',
+              color: info.color, marginBottom: 6,
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}>
+              {info.icon} {info.title}
+            </div>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.88rem', color: '#C8D0E8',
+              margin: '0 0 6px', lineHeight: 1.55,
+            }}>{info.job}</p>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.75rem', color: info.color,
+              margin: 0, opacity: .8,
+            }}>🏭 {info.analogy}</p>
+          </div>
+        ) : (
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.78rem', color: '#4A5578',
+            textAlign: 'center', margin: '10px 0 0',
+          }}>
+            {allFound ? '✓ All parts explored!' : 'Tap the + buttons to explore each part'}
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── MisconceptionBlock ────────────────────────────────────────────────────────
+function MisconceptionBlock({ block }) {
+  const [revealed, setRevealed] = useState(new Set())
+  function reveal(i) { setRevealed(s => { const n = new Set(s); n.add(i); return n }) }
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        fontFamily: "'Inter', sans-serif",
+        fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+        textTransform: 'uppercase', color: '#FF5D73', marginBottom: 10,
+      }}>⚠️ {block.label || 'Common Mistakes — tap to reveal why'}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {block.mistakes.map((m, i) => (
+          <div key={i} style={{
+            background: '#10182B',
+            border: `1px solid ${revealed.has(i) ? 'rgba(77,255,136,.25)' : 'rgba(255,93,115,.2)'}`,
+            borderRadius: 14, padding: '14px 16px',
+            transition: 'border-color .2s',
+          }}>
+            <div style={{ display: 'flex', gap: 10, marginBottom: revealed.has(i) ? 10 : 0 }}>
+              <span style={{ color: '#FF5D73', fontSize: '1rem', flexShrink: 0 }}>✗</span>
+              <div style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.88rem', color: '#C8D0E8',
+                textDecoration: revealed.has(i) ? 'line-through' : 'none',
+                opacity: revealed.has(i) ? .5 : 1,
+              }}>{m.wrong}</div>
+            </div>
+            {!revealed.has(i) ? (
+              <button onClick={() => reveal(i)} style={{
+                marginLeft: 22,
+                background: 'rgba(255,93,115,.1)', border: '1px solid rgba(255,93,115,.25)',
+                borderRadius: 8, padding: '5px 12px',
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.75rem', fontWeight: 600, color: '#FF5D73',
+                cursor: 'pointer',
+              }}>Why does this lose marks?</button>
+            ) : (
+              <div className="fade-up" style={{ marginLeft: 22 }}>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+                  <span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span>
+                  <div style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: '.88rem', color: '#4DFF88', fontWeight: 600,
+                  }}>{m.right}</div>
+                </div>
+                <div style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.78rem', color: '#9CA8C7', lineHeight: 1.5,
+                }}>{m.reason}</div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── ScarfBlock — SCARF memory acronym ────────────────────────────────────────
+function ScarfBlock({ block }) {
+  const [open, setOpen] = useState(null)
+  const items = block.items || []
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0E1A0E, #0A1508)',
+        border: '1px solid rgba(56,210,122,.2)',
+        borderRadius: 18, padding: '16px',
+        boxShadow: '0 0 24px rgba(56,210,122,.05)',
+      }}>
+        <div style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+          textTransform: 'uppercase', color: '#38D27A', marginBottom: 12,
+        }}>🧣 {block.label || 'SCARF — uses of glucose'}</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {items.map((item, i) => (
+            <button key={i} onClick={() => setOpen(open === i ? null : i)}
+              style={{
+                background: open === i ? 'rgba(56,210,122,.08)' : 'rgba(255,255,255,.02)',
+                border: `1px solid ${open === i ? 'rgba(56,210,122,.3)' : '#2A3552'}`,
+                borderRadius: 12, padding: '12px 14px',
+                cursor: 'pointer', textAlign: 'left',
+                display: 'flex', alignItems: 'center', gap: 12,
+                transition: 'all .2s',
+              }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                background: 'rgba(56,210,122,.12)',
+                border: '1px solid rgba(56,210,122,.25)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 900, fontSize: '1.2rem', color: '#38D27A',
+              }}>{item.letter}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700, fontSize: '.9rem', color: '#F5F7FB',
+                }}>{item.word}</div>
+                {open === i && (
+                  <div className="fade-up" style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: '.82rem', color: '#9CA8C7',
+                    marginTop: 4, lineHeight: 1.5,
+                  }}>{item.detail}</div>
+                )}
+              </div>
+              <span style={{ color: open === i ? '#38D27A' : '#2A3552', fontSize: '1rem' }}>
+                {open === i ? '▲' : '▼'}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── BuilderBlock — equation/concept builder ──────────────────────────────────
+function BuilderBlock({ block }) {
+  const [slots, setSlots] = useState(block.slots.map(() => null))
+  const [submitted, setSubmitted] = useState(false)
+  const [available, setAvailable] = useState([...block.pieces])
+
+  function place(slotIdx, piece) {
+    const current = slots[slotIdx]
+    const newSlots = [...slots]
+    newSlots[slotIdx] = piece
+    setSlots(newSlots)
+    const newAvail = available.filter(p => p !== piece)
+    if (current) newAvail.push(current)
+    setAvailable(newAvail)
+  }
+  function remove(slotIdx) {
+    const piece = slots[slotIdx]
+    if (!piece) return
+    const newSlots = [...slots]
+    newSlots[slotIdx] = null
+    setSlots(newSlots)
+    setAvailable([...available, piece])
+  }
+
+  const isCorrect = slots.every((s, i) => s === block.answer[i])
+  const allFilled = slots.every(s => s !== null)
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0A1520, #0D1A28)',
+        border: '1px solid rgba(56,210,122,.2)',
+        borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+          textTransform: 'uppercase', color: '#38D27A', marginBottom: 12,
+        }}>🧪 {block.label || 'Build the equation'}</div>
+
+        {/* Equation row */}
+        <div style={{
+          display: 'flex', flexWrap: 'wrap', alignItems: 'center',
+          gap: 8, marginBottom: 16, justifyContent: 'center',
+        }}>
+          {slots.map((s, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div
+                onClick={() => s && remove(i)}
+                style={{
+                  minWidth: 80, height: 44,
+                  background: s
+                    ? (submitted && !isCorrect ? 'rgba(255,93,115,.12)' : submitted && isCorrect ? 'rgba(77,255,136,.12)' : 'rgba(56,210,122,.1)')
+                    : 'rgba(255,255,255,.03)',
+                  border: `1.5px dashed ${s
+                    ? (submitted && !isCorrect ? '#FF5D73' : submitted && isCorrect ? '#4DFF88' : '#38D27A')
+                    : '#2A3552'}`,
+                  borderRadius: 10,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: s ? 'pointer' : 'default',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700, fontSize: '.85rem',
+                  color: s ? '#F5F7FB' : '#4A5578',
+                  transition: 'all .2s', padding: '0 8px',
+                }}>
+                {s || '?'}
+              </div>
+              {i < slots.length - 1 && (
+                <span style={{ color: '#38D27A', fontWeight: 700, fontSize: '1rem' }}>
+                  {block.operators?.[i] || '+'}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Available pieces */}
+        {!submitted && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginBottom: 14 }}>
+            {available.map(piece => (
+              <button key={piece}
+                onClick={() => {
+                  const emptyIdx = slots.findIndex(s => s === null)
+                  if (emptyIdx >= 0) place(emptyIdx, piece)
+                }}
+                style={{
+                  background: 'rgba(56,210,122,.1)',
+                  border: '1px solid rgba(56,210,122,.3)',
+                  borderRadius: 10, padding: '8px 14px',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600, fontSize: '.85rem', color: '#6BFFB0',
+                  cursor: 'pointer', transition: 'all .15s',
+                }}>
+                {piece}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {allFilled && !submitted && (
+          <button onClick={() => setSubmitted(true)} style={{
+            width: '100%',
+            background: 'linear-gradient(135deg, #38D27A, #6BFFB0)',
+            border: 'none', borderRadius: 12, padding: '12px',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700, fontSize: '.9rem', color: '#000',
+            cursor: 'pointer',
+          }}>Check →</button>
+        )}
+
+        {submitted && (
+          <div className="fade-up">
+            {isCorrect ? (
+              <div style={{
+                background: 'rgba(77,255,136,.08)', border: '1px solid rgba(77,255,136,.3)',
+                borderRadius: 12, padding: '14px', textAlign: 'center',
+              }}>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, color: '#4DFF88', marginBottom: 4 }}>✓ Correct!</div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#C8D0E8', margin: 0 }}>{block.successText}</p>
+              </div>
+            ) : (
+              <div style={{
+                background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.3)',
+                borderRadius: 12, padding: '14px',
+              }}>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, color: '#FF5D73', marginBottom: 6 }}>Not quite — try again</div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.83rem', color: '#C8D0E8', margin: '0 0 10px' }}>
+                  Hint: {block.hint}
+                </p>
+                <button onClick={() => { setSubmitted(false); setSlots(block.slots.map(() => null)); setAvailable([...block.pieces]) }} style={{
+                  background: 'rgba(255,93,115,.12)', border: '1px solid rgba(255,93,115,.3)',
+                  borderRadius: 9, padding: '8px 16px',
+                  fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: '.82rem',
+                  color: '#FF5D73', cursor: 'pointer',
+                }}>Try again</button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── ScenarioBlock — decision game ────────────────────────────────────────────
+function ScenarioBlock({ block }) {
+  const [current, setCurrent] = useState(0)
+  const [answered, setAnswered] = useState([])
+  const [score, setScore] = useState(0)
+  const [done, setDone] = useState(false)
+
+  const scenario = block.scenarios[current]
+
+  function choose(optIdx) {
+    const correct = optIdx === scenario.correctIndex
+    if (correct) setScore(s => s + 1)
+    setAnswered([...answered, { correct, chosen: optIdx }])
+    setTimeout(() => {
+      if (current + 1 < block.scenarios.length) setCurrent(c => c + 1)
+      else setDone(true)
+    }, 1000)
+  }
+
+  if (done) return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'rgba(77,255,136,.07)', border: '1px solid rgba(77,255,136,.25)',
+        borderRadius: 16, padding: '16px', textAlign: 'center',
+      }}>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1.1rem', color: '#4DFF88', marginBottom: 6 }}>
+          {score}/{block.scenarios.length} — {score === block.scenarios.length ? 'Perfect! 🎉' : 'Good effort!'}
+        </div>
+        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#9CA8C7', margin: 0 }}>
+          {block.completionText || 'Scenarios complete.'}
+        </p>
+      </div>
+    </div>
+  )
+
+  const lastAnswer = answered[answered.length - 1]
+  const justAnswered = lastAnswer && answered.length === current
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0A1520, #0D1A28)',
+        border: '1px solid rgba(56,210,122,.2)',
+        borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#38D27A' }}>
+            🌱 {block.label || 'Glucose Decision'}
+          </div>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: '#4A5578' }}>
+            {current + 1}/{block.scenarios.length}
+          </div>
+        </div>
+
+        <div style={{
+          background: '#10182B', border: '1px solid #2A3552',
+          borderRadius: 12, padding: '14px', marginBottom: 12,
+        }}>
+          <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '.95rem', color: '#F5F7FB', margin: 0 }}>
+            {scenario.situation}
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          {scenario.options.map((opt, i) => (
+            <button key={i}
+              onClick={() => !justAnswered && choose(i)}
+              style={{
+                background: justAnswered
+                  ? i === scenario.correctIndex ? 'rgba(77,255,136,.12)' : answered[answered.length-1]?.chosen === i ? 'rgba(255,93,115,.1)' : '#10182B'
+                  : '#10182B',
+                border: `1.5px solid ${justAnswered
+                  ? i === scenario.correctIndex ? 'rgba(77,255,136,.4)' : answered[answered.length-1]?.chosen === i ? 'rgba(255,93,115,.35)' : '#2A3552'
+                  : '#2A3552'}`,
+                borderRadius: 12, padding: '12px 10px',
+                cursor: justAnswered ? 'default' : 'pointer',
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 600, fontSize: '.82rem',
+                color: justAnswered
+                  ? i === scenario.correctIndex ? '#4DFF88' : answered[answered.length-1]?.chosen === i ? '#FF5D73' : '#5A6480'
+                  : '#C8D0E8',
+                textAlign: 'center', transition: 'all .2s',
+              }}>
+              {opt}
+            </button>
+          ))}
+        </div>
+
+        {justAnswered && (
+          <div className="fade-up" style={{
+            marginTop: 10,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.8rem', color: '#9CA8C7', lineHeight: 1.5,
+          }}>
+            {lastAnswer.correct ? `✓ Correct — ${scenario.explanation}` : `✗ ${scenario.explanation}`}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
 function Screen({ screen }) {
@@ -338,14 +861,19 @@ function Screen({ screen }) {
 
       {screen.blocks.map((block, i) => (
         <div key={i}>
-          {block.type === 'read'       && <ReadBlock block={block} />}
-          {block.type === 'keypoint'   && <KeypointBlock block={block} />}
-          {block.type === 'funfact'    && <FunFactBlock block={block} />}
-          {block.type === 'examtip'    && <ExamTipBlock block={block} />}
-          {block.type === 'timeline'   && <TimelineBlock block={block} />}
-          {block.type === 'reveal'     && <RevealBlock block={block} />}
-          {block.type === 'quiz'       && <QuizBlock block={block} />}
-          {block.type === 'flashcards' && <FlashcardsBlock block={block} />}
+          {block.type === 'read'          && <ReadBlock block={block} />}
+          {block.type === 'keypoint'      && <KeypointBlock block={block} />}
+          {block.type === 'funfact'       && <FunFactBlock block={block} />}
+          {block.type === 'examtip'       && <ExamTipBlock block={block} />}
+          {block.type === 'timeline'      && <TimelineBlock block={block} />}
+          {block.type === 'reveal'        && <RevealBlock block={block} />}
+          {block.type === 'quiz'          && <QuizBlock block={block} />}
+          {block.type === 'flashcards'    && <FlashcardsBlock block={block} />}
+          {block.type === 'hotspot'       && <HotspotBlock block={block} />}
+          {block.type === 'misconception' && <MisconceptionBlock block={block} />}
+          {block.type === 'scarf'         && <ScarfBlock block={block} />}
+          {block.type === 'builder'       && <BuilderBlock block={block} />}
+          {block.type === 'scenario'      && <ScenarioBlock block={block} />}
         </div>
       ))}
     </div>
