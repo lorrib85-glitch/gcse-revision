@@ -576,7 +576,7 @@ function QuizBlock({ block, onAnswered }) {
       {answered && (
         <div className={`feedback ${correct ? 'correct' : 'wrong'} fade-up`} style={{ marginTop: 12 }}>
           <p style={{ margin: 0, fontSize: '.9rem', fontFamily: "'Inter', sans-serif" }}>
-            <strong>{correct ? '✓ Correct! ' : '✗ Not quite. '}</strong>{block.explanation}
+            <strong>{correct ? '✓ Correct! ' : '✗ Nope. '}</strong>{block.explanation}
           </p>
         </div>
       )}
@@ -1199,145 +1199,118 @@ function Screen({ screen }) {
 }
 
 
-// ─── HookScreen ───────────────────────────────────────────────────────────────
-// Full-screen immersive opener: true/false → crack → animation → reveal
-// Reads from module.hook: { statement, isTrue, storyLines[], revealItems[], animation }
+// ─── HookScreen ──────────────────────────────────────────────────────────────
+// Renders inside the normal ModulePlayer nav shell.
+// Phases: question → feedback → grow → reveal
+// The grow and reveal phases stay put until the user taps the bottom-nav Next button.
 
-function HookScreen({ module, onDone }) {
-  const hook = module.hook
-  const subjectColor = module.color || '#38D27A'
-
-  // phases: 'question' | 'wrong' | 'correct' | 'grow' | 'reveal'
-  const [phase, setPhase] = useState('question')
-  const [chosenTrue, setChosenTrue] = useState(null)   // true = tapped TRUE, false = tapped FALSE
-  const [growStep, setGrowStep]   = useState(0)         // 0-3 animation steps
-  const [revealIdx, setRevealIdx] = useState(-1)        // which reveal items shown
-
-  const wasCorrect = chosenTrue === hook.isTrue
+function useHookPhase(hook) {
+  // phases: 'question' | 'feedback' | 'grow' | 'reveal'
+  const [phase, setPhase]         = useState('question')
+  const [chosenTrue, setChosenTrue] = useState(null)
+  const [growStep, setGrowStep]   = useState(0)
+  const [revealIdx, setRevealIdx] = useState(-1)
 
   function choose(tappedTrue) {
     setChosenTrue(tappedTrue)
-    setPhase(tappedTrue === hook.isTrue ? 'correct' : 'wrong')
-    setTimeout(() => startGrow(), tappedTrue === hook.isTrue ? 900 : 1100)
+    setPhase('feedback')
+    // After 1.4s flash, auto-advance to grow and begin stepping
+    setTimeout(() => {
+      setPhase('grow')
+      let step = 0
+      // Step every 900ms so each stage is clearly visible
+      const iv = setInterval(() => {
+        step++
+        setGrowStep(step)
+        if (step >= 3) clearInterval(iv)
+        // No auto-advance to reveal — user controls that via Next button
+      }, 900)
+    }, 1400)
   }
 
-  function startGrow() {
-    setPhase('grow')
-    // Step through animation frames
-    let step = 0
-    const iv = setInterval(() => {
-      step++
-      setGrowStep(step)
-      if (step >= 3) { clearInterval(iv); setTimeout(() => setPhase('reveal'), 600) }
-    }, 700)
-  }
+  function nextFromGrow()   { setPhase('reveal') }
+  function nextRevealItem() { setRevealIdx(i => i + 1) }
 
-  function showRevealItem() {
-    setRevealIdx(i => {
-      const next = i + 1
-      return next
-    })
-  }
+  const wasCorrect   = chosenTrue === hook?.isTrue
+  const allRevealed  = revealIdx >= (hook?.revealItems?.length || 0) - 1
+  const canAdvance   = phase === 'grow'    // Next button advances grow → reveal
+  const revealDone   = phase === 'reveal' && allRevealed
 
-  const allRevealed = revealIdx >= (hook.revealItems?.length || 0) - 1
+  return { phase, chosenTrue, wasCorrect, growStep, revealIdx, allRevealed,
+           canAdvance, revealDone, choose, nextFromGrow, nextRevealItem }
+}
+
+function HookContent({ module, hook, hookState, subjectColor }) {
+  const { phase, wasCorrect, growStep, revealIdx, allRevealed, choose, nextRevealItem } = hookState
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#080C1A',
-      display: 'flex', flexDirection: 'column',
-      position: 'relative', overflow: 'hidden',
-    }}>
+    <div style={{ paddingBottom: 20 }}>
 
       {/* ── Phase: QUESTION ── */}
       {phase === 'question' && (
-        <div style={{
-          flex: 1, display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          padding: '32px 24px',
-          animation: 'fadeIn .4s ease',
-        }}>
-          {/* Subject chip */}
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            background: subjectColor + '18',
-            border: '1px solid ' + subjectColor + '44',
-            borderRadius: 99, padding: '5px 14px', marginBottom: 28,
-          }}>
-            <span style={{ fontSize: '.85rem' }}>{module.icon}</span>
-            <span style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.65rem', fontWeight: 700, letterSpacing: '.14em',
-              textTransform: 'uppercase', color: subjectColor,
-            }}>True or False?</span>
+        <div style={{ animation: 'hFadeIn .4s ease' }}>
+          {/* Story context */}
+          <div style={{ marginBottom: 20 }}>
+            {hook.storyLines?.map((line, i) => (
+              <p key={i} style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.88rem', color: i === hook.storyLines.length - 1 ? '#C8D0E8' : '#5A6480',
+                margin: '0 0 5px', lineHeight: 1.65,
+                fontWeight: i === hook.storyLines.length - 1 ? 500 : 400,
+              }}>{line}</p>
+            ))}
           </div>
 
-          {/* Story context */}
-          {hook.storyLines?.map((line, i) => (
-            <p key={i} style={{
-              fontFamily: i === 0 ? "'Inter', sans-serif" : "'Inter', sans-serif",
-              fontSize: i === 0 ? '.85rem' : '.85rem',
-              color: i === 0 ? '#5A6480' : '#5A6480',
-              textAlign: 'center', maxWidth: 340,
-              margin: '0 0 6px', lineHeight: 1.6,
-              fontStyle: i === 0 ? 'normal' : 'normal',
-            }}>{line}</p>
-          ))}
-
-          {/* The statement */}
+          {/* Statement card */}
           <div style={{
             background: 'linear-gradient(145deg, #10182B, #0D1424)',
             border: '1px solid #2A3552',
-            borderRadius: 20, padding: '24px 28px',
-            margin: '24px 0 32px', textAlign: 'center',
-            maxWidth: 380, width: '100%',
+            borderRadius: 18, padding: '22px 22px',
+            marginBottom: 24, textAlign: 'center',
             boxShadow: '0 8px 40px rgba(0,0,0,.4)',
           }}>
+            <div style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.6rem', fontWeight: 700, letterSpacing: '.14em',
+              textTransform: 'uppercase', color: '#4A5578', marginBottom: 12,
+            }}>True or False?</div>
             <p style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(1.1rem, 4vw, 1.4rem)',
+              fontSize: 'clamp(1.05rem, 3.5vw, 1.3rem)',
               fontWeight: 700, color: '#F5F7FB',
-              margin: 0, lineHeight: 1.35,
-              letterSpacing: '-.01em',
+              margin: 0, lineHeight: 1.35, letterSpacing: '-.01em',
             }}>{hook.statement}</p>
           </div>
 
           {/* Big TRUE / FALSE buttons */}
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr',
-            gap: 12, width: '100%', maxWidth: 380,
-          }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <button onClick={() => choose(true)} style={{
               background: 'linear-gradient(145deg, #0D2B1A, #0A2015)',
-              border: '2px solid rgba(77,255,136,.35)',
-              borderRadius: 18, padding: '22px 10px',
-              cursor: 'pointer',
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center', gap: 8,
-              transition: 'all .15s',
+              border: '2px solid rgba(77,255,136,.4)',
+              borderRadius: 18, padding: '20px 10px',
+              cursor: 'pointer', display: 'flex', flexDirection: 'column',
+              alignItems: 'center', gap: 8, transition: 'transform .12s',
               boxShadow: '0 4px 24px rgba(77,255,136,.1)',
             }}>
               <span style={{ fontSize: '2rem' }}>✅</span>
               <span style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 900, fontSize: '1.3rem',
+                fontWeight: 900, fontSize: '1.25rem',
                 color: '#4DFF88', letterSpacing: '.04em',
               }}>TRUE</span>
             </button>
             <button onClick={() => choose(false)} style={{
               background: 'linear-gradient(145deg, #2B0D0D, #200A0A)',
-              border: '2px solid rgba(255,93,115,.35)',
-              borderRadius: 18, padding: '22px 10px',
-              cursor: 'pointer',
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center', gap: 8,
-              transition: 'all .15s',
+              border: '2px solid rgba(255,93,115,.4)',
+              borderRadius: 18, padding: '20px 10px',
+              cursor: 'pointer', display: 'flex', flexDirection: 'column',
+              alignItems: 'center', gap: 8, transition: 'transform .12s',
               boxShadow: '0 4px 24px rgba(255,93,115,.1)',
             }}>
               <span style={{ fontSize: '2rem' }}>❌</span>
               <span style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 900, fontSize: '1.3rem',
+                fontWeight: 900, fontSize: '1.25rem',
                 color: '#FF5D73', letterSpacing: '.04em',
               }}>FALSE</span>
             </button>
@@ -1345,233 +1318,172 @@ function HookScreen({ module, onDone }) {
         </div>
       )}
 
-      {/* ── Phase: WRONG ── */}
-      {phase === 'wrong' && (
+      {/* ── Phase: FEEDBACK flash ── */}
+      {phase === 'feedback' && (
         <div style={{
-          flex: 1, display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          padding: '32px 24px',
-          background: 'linear-gradient(180deg, #1A0509 0%, #080C1A 60%)',
-          animation: 'crackFlash .15s ease',
+          textAlign: 'center', padding: '24px 0',
+          animation: 'hFadeIn .2s ease',
         }}>
-          {/* Crack overlay */}
-          <div style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'radial-gradient(ellipse at 50% 40%, rgba(255,30,60,.18) 0%, transparent 70%)',
-          }} />
-          <div style={{ fontSize: '3rem', marginBottom: 16, animation: 'shake .4s ease' }}>💥</div>
+          <div style={{ fontSize: '3rem', marginBottom: 14 }}>
+            {wasCorrect ? '🎯' : '💥'}
+          </div>
           <div style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 900, fontSize: '2rem',
-            color: '#FF5D73', marginBottom: 12,
-            textShadow: '0 0 40px rgba(255,93,115,.6)',
-          }}>WRONG</div>
+            fontWeight: 900, fontSize: '2rem', marginBottom: 14,
+            color: wasCorrect ? '#4DFF88' : '#FF5D73',
+            textShadow: wasCorrect ? '0 0 40px rgba(77,255,136,.5)' : '0 0 40px rgba(255,93,115,.6)',
+          }}>
+            {wasCorrect ? 'CORRECT' : 'NOPE'}
+          </div>
           <p style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: '.95rem', color: '#FF8DA1',
-            textAlign: 'center', maxWidth: 300, margin: 0, lineHeight: 1.6,
+            fontSize: '.95rem', lineHeight: 1.6,
+            color: wasCorrect ? '#6BFFB0' : '#FF8DA1',
+            maxWidth: 300, margin: '0 auto',
           }}>
-            {hook.wrongFeedback || "Not quite — but that's what makes it interesting."}
+            {wasCorrect
+              ? (hook.correctFeedback || "Right. Now find out why...")
+              : (hook.wrongFeedback   || "That's what most people think. The numbers tell a different story...")}
           </p>
+          <div style={{ marginTop: 20, color: '#4A5578', fontSize: '.78rem', fontFamily: "'Inter', sans-serif" }}>
+            Loading the experiment...
+          </div>
         </div>
       )}
 
-      {/* ── Phase: CORRECT ── */}
-      {phase === 'correct' && (
-        <div style={{
-          flex: 1, display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          padding: '32px 24px',
-          background: 'linear-gradient(180deg, #011A0A 0%, #080C1A 60%)',
-          animation: 'fadeIn .3s ease',
-        }}>
-          <div style={{ fontSize: '3rem', marginBottom: 16 }}>🎯</div>
-          <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 900, fontSize: '2rem',
-            color: '#4DFF88', marginBottom: 12,
-            textShadow: '0 0 40px rgba(77,255,136,.5)',
-          }}>CORRECT</div>
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.95rem', color: '#6BFFB0',
-            textAlign: 'center', maxWidth: 300, margin: 0, lineHeight: 1.6,
-          }}>
-            {hook.correctFeedback || "You got it. Now find out why..."}
-          </p>
-        </div>
-      )}
-
-      {/* ── Phase: GROW (animation) ── */}
+      {/* ── Phase: GROW ── */}
       {phase === 'grow' && (
-        <div style={{
-          flex: 1, display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          padding: '24px 24px 32px',
-          animation: 'fadeIn .4s ease',
-        }}>
+        <div style={{ animation: 'hFadeIn .4s ease' }}>
           <div style={{
             fontFamily: "'Inter', sans-serif",
             fontSize: '.65rem', fontWeight: 700, letterSpacing: '.14em',
-            textTransform: 'uppercase', color: '#5A6480', marginBottom: 24,
+            textTransform: 'uppercase', color: '#5A6480', marginBottom: 16, textAlign: 'center',
           }}>1648 — Somewhere in Belgium</div>
 
-          {/* Animation canvas */}
+          {/* Willow container */}
           <div style={{
-            width: '100%', maxWidth: 320,
             background: 'linear-gradient(180deg, #0A1F12 0%, #061008 100%)',
-            border: '1px solid rgba(56,210,122,.15)',
-            borderRadius: 20, padding: '24px 20px 0',
-            position: 'relative', overflow: 'hidden',
-            boxShadow: '0 8px 40px rgba(0,0,0,.5), 0 0 60px rgba(56,210,122,.04)',
+            border: '1px solid rgba(56,210,122,.2)',
+            borderRadius: 20, padding: '20px 16px 0',
+            position: 'relative', overflow: 'hidden', marginBottom: 16,
+            boxShadow: '0 8px 40px rgba(0,0,0,.5), 0 0 60px rgba(56,210,122,.05)',
           }}>
-            {/* Sky gradient */}
             <div style={{
               position: 'absolute', top: 0, left: 0, right: 0, height: 60,
               background: 'linear-gradient(180deg, rgba(56,210,122,.06) 0%, transparent 100%)',
+              pointerEvents: 'none',
             }} />
-
-            {/* Willow SVG — grows with steps */}
             <svg viewBox="0 0 200 160" style={{ width: '100%', display: 'block' }}>
-              {/* Soil */}
               <rect x="0" y="130" width="200" height="30" fill="#1A0E05" />
-              {/* Soil level marker — barely changes */}
               <line x1="10" y1="130" x2="190" y2="130" stroke="rgba(139,90,43,.4)" strokeWidth="1" strokeDasharray="4 3" />
-
-              {/* Pot */}
               <path d="M60 130 L55 160 L145 160 L140 130 Z" fill="#2A1A0A" stroke="rgba(139,90,43,.3)" strokeWidth="1" />
 
-              {/* Trunk — grows */}
               {growStep >= 1 && (
-                <rect x="97" y={130 - (growStep >= 2 ? 60 : growStep >= 1 ? 30 : 0)}
-                  width="6"
-                  height={growStep >= 2 ? 60 : 30}
-                  fill="#5C3D1A" rx="2"
-                  style={{ transition: 'all .6s ease' }}
+                <rect x="97" y={130 - (growStep >= 2 ? 60 : 30)}
+                  width="6" height={growStep >= 2 ? 60 : 30}
+                  fill="#5C3D1A" rx="2" style={{ transition: 'all .7s ease' }}
                 />
               )}
-
-              {/* Branches — appear at step 2 */}
+              {growStep >= 2 && (<>
+                <line x1="100" y1="90" x2="70" y2="70" stroke="#5C3D1A" strokeWidth="3" strokeLinecap="round" />
+                <line x1="100" y1="90" x2="130" y2="70" stroke="#5C3D1A" strokeWidth="3" strokeLinecap="round" />
+                <line x1="100" y1="100" x2="75" y2="85" stroke="#5C3D1A" strokeWidth="2" strokeLinecap="round" />
+                <line x1="100" y1="100" x2="125" y2="85" stroke="#5C3D1A" strokeWidth="2" strokeLinecap="round" />
+              </>)}
+              {growStep >= 3 && (<>
+                {[[70,68],[130,68],[75,83],[125,83],[85,55],[115,55],[100,48]].map(([cx,cy],i) => (
+                  <ellipse key={i} cx={cx} cy={cy} rx="10" ry="6"
+                    fill="rgba(56,210,122,.75)"
+                    transform={"rotate(" + (i*25-50) + " " + cx + " " + cy + ")"}
+                    style={{ opacity:0, animation:"hLeafPop .35s ease " + (i*0.07) + "s forwards" }}
+                  />
+                ))}
+                {[72,80,88,96,104,112,120,128].map((x, i) => (
+                  <path key={i}
+                    d={"M" + x + " " + (65+(i%3)*4) + " Q" + (x-4+i%3*2) + " " + (80+i%2*6) + " " + (x-6+i%4) + " " + (95+i%3*5)}
+                    fill="none" stroke="rgba(107,255,176,.55)" strokeWidth="1.3" strokeLinecap="round"
+                    style={{ opacity:0, animation:"hLeafPop .4s ease " + (0.3+i*0.06) + "s forwards" }}
+                  />
+                ))}
+                <text x="100" y="44" textAnchor="middle" fill="#4DFF88" fontSize="9" fontWeight="bold"
+                  style={{ opacity:0, animation:'hLeafPop .4s ease .85s forwards' }}>+74 kg</text>
+              </>)}
               {growStep >= 2 && (
-                <>
-                  <line x1="100" y1="90" x2="70" y2="70" stroke="#5C3D1A" strokeWidth="3" strokeLinecap="round" />
-                  <line x1="100" y1="90" x2="130" y2="70" stroke="#5C3D1A" strokeWidth="3" strokeLinecap="round" />
-                  <line x1="100" y1="100" x2="75" y2="85" stroke="#5C3D1A" strokeWidth="2" strokeLinecap="round" />
-                  <line x1="100" y1="100" x2="125" y2="85" stroke="#5C3D1A" strokeWidth="2" strokeLinecap="round" />
-                </>
-              )}
-
-              {/* Leaves — appear at step 3 */}
-              {growStep >= 3 && (
-                <>
-                  {[[70,68],[130,68],[75,83],[125,83],[85,55],[115,55],[100,48]].map(([cx,cy],i) => (
-                    <ellipse key={i} cx={cx} cy={cy} rx="10" ry="6"
-                      fill="rgba(56,210,122,.7)"
-                      transform={"rotate(" + (i*25-50) + " " + cx + " " + cy + ")"}
-                      style={{ opacity: 0, animation: "leafPop .3s ease " + (i*0.08) + "s forwards" }}
-                    />
-                  ))}
-                </>
-              )}
-
-              {/* Willow draping leaves */}
-              {growStep >= 3 && (
-                <>
-                  {[72,80,88,96,104,112,120,128].map((x, i) => (
-                    <path key={i}
-                      d={"M" + x + " " + (65 + (i%3)*4) + " Q" + (x - 4 + i%3*2) + " " + (80 + i%2*6) + " " + (x-6+i%4) + " " + (95 + i%3*5)}
-                      fill="none" stroke="rgba(107,255,176,.5)" strokeWidth="1.2" strokeLinecap="round"
-                      style={{ opacity: 0, animation: "leafPop .4s ease " + (0.4 + i*0.06) + "s forwards" }}
-                    />
-                  ))}
-                </>
-              )}
-
-              {/* Weight label on tree */}
-              {growStep >= 3 && (
-                <text x="100" y="44" textAnchor="middle"
-                  fill="#4DFF88" fontSize="9" fontWeight="bold"
-                  style={{ opacity: 0, animation: 'leafPop .4s ease .9s forwards' }}>
-                  +74 kg
-                </text>
-              )}
-
-              {/* Soil change label — barely anything */}
-              {growStep >= 2 && (
-                <text x="100" y="148" textAnchor="middle"
-                  fill="rgba(139,90,43,.7)" fontSize="7">
-                  soil: −57g
-                </text>
+                <text x="100" y="148" textAnchor="middle" fill="rgba(139,90,43,.7)" fontSize="7">soil: −57g</text>
               )}
             </svg>
 
-            {/* Year counter */}
+            {/* Year label inside card */}
             <div style={{
-              textAlign: 'center', padding: '12px 0 16px',
+              textAlign: 'center', padding: '10px 0 14px',
               fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '.85rem',
-              color: '#5A6480',
+              fontWeight: 700, fontSize: '.82rem', color: '#5A6480',
             }}>
-              {growStep === 0 && 'Year 0 — tiny sapling'}
-              {growStep === 1 && 'Year 2 — getting taller...'}
+              {growStep === 0 && 'Planting the sapling...'}
+              {growStep === 1 && 'Year 2 — it's growing'}
               {growStep === 2 && 'Year 4 — branches forming...'}
-              {growStep === 3 && 'Year 5 — 74 kg of tree. From WHERE?'}
+              {growStep === 3 && <span style={{ color: '#4DFF88' }}>Year 5 — 74 kg of tree. Soil lost 57g. 🤯</span>}
             </div>
+          </div>
+
+          {/* The question */}
+          <div style={{
+            background: '#10182B', border: '1px solid #2A3552',
+            borderRadius: 14, padding: '14px 16px', textAlign: 'center',
+          }}>
+            <p style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '1rem', color: '#F5F7FB', margin: 0,
+            }}>{hook.bigQuestion || 'So where did 74 kg of tree come from?'}</p>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.78rem', color: '#5A6480', margin: '6px 0 0',
+            }}>Tap Next to find out →</p>
           </div>
         </div>
       )}
 
       {/* ── Phase: REVEAL ── */}
       {phase === 'reveal' && (
-        <div style={{
-          flex: 1, display: 'flex', flexDirection: 'column',
-          padding: '32px 24px',
-          animation: 'fadeIn .5s ease',
-          overflowY: 'auto',
-        }}>
-          {/* The big question */}
-          <div style={{ textAlign: 'center', marginBottom: 28 }}>
+        <div style={{ animation: 'hFadeIn .4s ease' }}>
+          <div style={{ marginBottom: 18, textAlign: 'center' }}>
             <p style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: '.78rem', color: '#5A6480',
-              margin: '0 0 12px', letterSpacing: '.06em', textTransform: 'uppercase',
-            }}>If not the soil... then where?</p>
+              fontSize: '.7rem', color: '#5A6480', margin: '0 0 8px',
+              letterSpacing: '.08em', textTransform: 'uppercase',
+            }}>If not the soil... then:</p>
             <h2 style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 800,
-              fontSize: 'clamp(1.3rem, 5vw, 1.7rem)',
-              color: '#F5F7FB', margin: 0, lineHeight: 1.2,
-              letterSpacing: '-.02em',
-            }}>{hook.bigQuestion || 'So where did 74 kg come from?'}</h2>
+              fontWeight: 800, fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
+              color: '#F5F7FB', margin: 0, letterSpacing: '-.01em',
+            }}>{hook.bigQuestion || 'Where did 74 kg come from?'}</h2>
           </div>
 
-          {/* Reveal items — tap to show next */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
             {hook.revealItems?.map((item, i) => {
               const visible = i <= revealIdx
               return (
                 <div key={i} style={{
                   background: visible ? (item.bg || 'rgba(56,210,122,.08)') : 'rgba(255,255,255,.02)',
                   border: '1.5px solid ' + (visible ? (item.color || 'rgba(56,210,122,.35)') : '#1E2A40'),
-                  borderRadius: 16, padding: '16px 20px',
+                  borderRadius: 16, padding: '14px 18px',
                   transition: 'all .35s ease',
-                  transform: visible ? 'translateY(0)' : 'translateY(10px)',
-                  opacity: visible ? 1 : 0.15,
-                  display: 'flex', alignItems: 'center', gap: 14,
+                  transform: visible ? 'translateY(0)' : 'translateY(8px)',
+                  opacity: visible ? 1 : 0.12,
+                  display: 'flex', alignItems: 'center', gap: 12,
                 }}>
-                  <span style={{ fontSize: '1.6rem', flexShrink: 0 }}>{item.emoji}</span>
+                  <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>{item.emoji}</span>
                   <div>
                     <div style={{
                       fontFamily: "'Space Grotesk', sans-serif",
-                      fontWeight: 700, fontSize: '1rem',
+                      fontWeight: 700, fontSize: '.95rem',
                       color: visible ? (item.color || '#4DFF88') : '#2A3552',
                     }}>{item.label}</div>
                     {visible && item.detail && (
                       <div style={{
                         fontFamily: "'Inter', sans-serif",
-                        fontSize: '.8rem', color: '#9CA8C7',
-                        marginTop: 3, lineHeight: 1.5,
-                        animation: 'fadeIn .3s ease',
+                        fontSize: '.78rem', color: '#9CA8C7',
+                        marginTop: 3, lineHeight: 1.5, animation: 'hFadeIn .3s ease',
                       }}>{item.detail}</div>
                     )}
                   </div>
@@ -1580,62 +1492,50 @@ function HookScreen({ module, onDone }) {
             })}
           </div>
 
-          {/* Tap to reveal or continue */}
           {!allRevealed ? (
-            <button onClick={showRevealItem} style={{
-              width: '100%', maxWidth: 380, margin: '0 auto',
+            <button onClick={nextRevealItem} style={{
+              width: '100%',
               background: 'rgba(56,210,122,.08)',
               border: '1.5px solid rgba(56,210,122,.3)',
-              borderRadius: 16, padding: '16px',
+              borderRadius: 14, padding: '14px',
               fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '.95rem', color: '#6BFFB0',
+              fontWeight: 700, fontSize: '.92rem', color: '#6BFFB0',
               cursor: 'pointer', display: 'flex',
               alignItems: 'center', justifyContent: 'center', gap: 8,
             }}>
-              Tap to reveal → ({revealIdx + 2}/{hook.revealItems?.length})
+              Reveal next → ({revealIdx + 2}/{hook.revealItems?.length})
             </button>
-          ) : (
-            <div style={{ animation: 'fadeIn .4s ease' }}>
-              {hook.punchline && (
-                <div style={{
-                  background: 'linear-gradient(145deg, #0A1F12, #061008)',
-                  border: '1px solid rgba(56,210,122,.3)',
-                  borderRadius: 16, padding: '18px 20px',
-                  marginBottom: 16, textAlign: 'center',
-                  boxShadow: '0 0 40px rgba(56,210,122,.08)',
-                }}>
-                  <p style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontWeight: 700, fontSize: '1rem',
-                    color: '#4DFF88', margin: 0, lineHeight: 1.5,
-                  }}>{hook.punchline}</p>
-                </div>
-              )}
-              <button onClick={onDone} style={{
-                width: '100%',
-                background: 'linear-gradient(135deg, #38D27Acc, #38D27A)',
-                border: 'none', borderRadius: 16, padding: '17px',
+          ) : hook.punchline ? (
+            <div style={{
+              background: 'linear-gradient(145deg, #0A1F12, #061008)',
+              border: '1px solid rgba(56,210,122,.3)',
+              borderRadius: 14, padding: '16px 18px', textAlign: 'center',
+              boxShadow: '0 0 32px rgba(56,210,122,.07)',
+            }}>
+              <p style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 800, fontSize: '1rem', color: '#001A0A',
-                cursor: 'pointer', letterSpacing: '.02em',
-                boxShadow: '0 6px 24px rgba(56,210,122,.4)',
-              }}>
-                Let's learn this →
-              </button>
+                fontWeight: 700, fontSize: '.95rem',
+                color: '#4DFF88', margin: 0, lineHeight: 1.5,
+              }}>{hook.punchline}</p>
+              <p style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.75rem', color: '#5A6480',
+                margin: '8px 0 0',
+              }}>Tap Next to start learning →</p>
             </div>
-          )}
+          ) : null}
         </div>
       )}
 
-      {/* ── CSS keyframes injected once ── */}
-      <style>{
-        `@keyframes crackFlash { 0%{background:#3A0008} 100%{background:transparent} }
-        @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
-        @keyframes leafPop { from{opacity:0;transform:scale(.5)} to{opacity:1;transform:scale(1)} }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }`
-      }</style>
+      <style>{`
+        @keyframes hFadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes hLeafPop { from{opacity:0;transform:scale(.4)} to{opacity:1;transform:scale(1)} }
+      `}</style>
     </div>
   )
+}
+
+// ─── IntroScreen ──────────────────────────────────────────────────────────────  )
 }
 
 // ─── IntroScreen ──────────────────────────────────────────────────────────────
@@ -1746,7 +1646,7 @@ function IntroScreen({ module, onDone }) {
                 fontSize: '.88rem', color: correct ? '#4DFF88' : '#FF8DA1',
                 margin: 0, lineHeight: 1.55,
               }}>
-                <strong>{correct ? '✓ Correct. ' : '✗ Not quite — '}</strong>
+                <strong>{correct ? '✓ Correct. ' : '✗ Nope — '}</strong>
                 {intro.retrieval.explanation}
               </p>
             </div>
@@ -1847,13 +1747,38 @@ export default function ModulePlayer({ module, onBack }) {
     setTimeout(() => onBack(), 650)
   }
 
-  // ── Universal openers take priority ──────────────────────────────────────
-  if (!hookDone && module.hook) {
-    return <HookScreen module={module} onDone={() => { setHookDone(true); window.scrollTo({top:0,behavior:'smooth'}) }} />
+  // Hook state — always called (hook is undefined when module has no hook)
+  const hookState = useHookPhase(module.hook || {})
+  const { phase: hookPhase, canAdvance: hookCanAdvance, revealDone: hookRevealDone } = hookState
+
+  // Determine what the "Next" button does at each stage
+  function handleNext() {
+    if (!hookDone && module.hook) {
+      if (hookPhase === 'grow')   { hookState.nextFromGrow(); return }
+      if (hookPhase === 'reveal') { if (hookRevealDone) { setHookDone(true); window.scrollTo({top:0,behavior:'smooth'}) } else { hookState.nextRevealItem(); } return }
+      return // question / feedback: Next does nothing — user must tap TRUE/FALSE
+    }
+    if (!introDone && module.intro) {
+      // IntroScreen handles its own done button — nothing to do from nav
+      return
+    }
+    isLast ? handleFinish() : go(1)
   }
-  if (!introDone && module.intro) {
-    return <IntroScreen module={module} onDone={() => { setIntroDone(true); window.scrollTo({top:0,behavior:'smooth'}) }} />
+
+  // Label + disabled state for the Next/Finish button
+  function nextLabel() {
+    if (!hookDone && module.hook) {
+      if (hookPhase === 'question' || hookPhase === 'feedback') return null // hidden
+      if (hookPhase === 'grow')   return 'Next →'
+      if (hookPhase === 'reveal') return hookRevealDone ? 'Start module →' : null // hidden until all revealed
+    }
+    if (!introDone && module.intro) return null // IntroScreen has its own button
+    return isLast ? 'Finish ✓' : 'Next →'
   }
+
+  const showNextBtn  = nextLabel() !== null
+  const nextBtnLabel = nextLabel()
+  const isFinishBtn  = !(!hookDone && module.hook) && !(!introDone && module.intro) && isLast
 
   const cur = module.screens[screen]
   const subjectColor = module.color || '#9D5CFF'
@@ -2108,11 +2033,18 @@ export default function ModulePlayer({ module, onBack }) {
         </div>
       </div>
 
-      {/* ── Screen content ── */}
+      {/* ── Screen content — hook, intro, or normal screen ── */}
       <div style={{ flex: 1, padding: '20px 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
-        <div key={animKey} className="anim-pop">
-          <Screen screen={cur} />
-        </div>
+        {!hookDone && module.hook
+          ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
+          : !introDone && module.intro
+            ? <IntroScreen module={module} onDone={() => { setIntroDone(true); window.scrollTo({top:0,behavior:'smooth'}) }} />
+            : (
+              <div key={animKey} className="anim-pop">
+                <Screen screen={cur} />
+              </div>
+            )
+        }
       </div>
 
       {/* ── Bottom navigation ── */}
@@ -2129,17 +2061,20 @@ export default function ModulePlayer({ module, onBack }) {
           maxWidth: 660, margin: '0 auto',
           display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, alignItems: 'center',
         }}>
-          {/* Back */}
-          <button onClick={() => go(-1)} disabled={screen === 0} style={{
-            background: '#10182B',
-            border: '1px solid #2A3552',
-            borderRadius: 14, padding: '13px 10px',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700, fontSize: '.9rem',
-            color: screen === 0 ? '#2A3552' : '#9CA8C7',
-            cursor: screen === 0 ? 'default' : 'pointer',
-            transition: 'all .15s',
-          }}>← Back</button>
+          {/* Back — hidden during hook/intro */}
+          <button
+            onClick={() => go(-1)}
+            disabled={screen === 0 || !hookDone || !introDone}
+            style={{
+              background: '#10182B',
+              border: '1px solid #2A3552',
+              borderRadius: 14, padding: '13px 10px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '.9rem',
+              color: (!hookDone || !introDone || screen === 0) ? '#2A3552' : '#9CA8C7',
+              cursor: (!hookDone || !introDone || screen === 0) ? 'default' : 'pointer',
+              transition: 'all .15s',
+            }}>← Back</button>
 
           {/* Save + Exit */}
           <button onClick={onBack} style={{
@@ -2152,23 +2087,26 @@ export default function ModulePlayer({ module, onBack }) {
             lineHeight: 1.3, textAlign: 'center',
           }}>Save +{'\n'}Exit</button>
 
-          {/* Next / Finish */}
-          <button onClick={() => isLast ? handleFinish() : go(1)} style={{
-            background: isLast
-              ? 'linear-gradient(135deg, #1A4D2E, #38D27A)'
-              : `linear-gradient(135deg, ${subjectColor}cc, ${subjectColor})`,
-            border: 'none',
-            borderRadius: 14, padding: '13px 10px',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700, fontSize: '.9rem',
-            color: '#fff', cursor: 'pointer',
-            boxShadow: isLast
-              ? '0 4px 16px rgba(56,210,122,.35)'
-              : `0 4px 16px ${subjectColor}44`,
-            transition: 'all .15s',
-          }}>
-            {isLast ? 'Finish ✓' : 'Next →'}
-          </button>
+          {/* Next / Finish — dynamic based on hook/intro phase */}
+          {showNextBtn ? (
+            <button onClick={handleNext} style={{
+              background: isFinishBtn
+                ? 'linear-gradient(135deg, #1A4D2E, #38D27A)'
+                : `linear-gradient(135deg, ${subjectColor}cc, ${subjectColor})`,
+              border: 'none',
+              borderRadius: 14, padding: '13px 10px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '.9rem',
+              color: isFinishBtn ? '#fff' : '#fff',
+              cursor: 'pointer',
+              boxShadow: isFinishBtn
+                ? '0 4px 16px rgba(56,210,122,.35)'
+                : `0 4px 16px ${subjectColor}44`,
+              transition: 'all .15s',
+            }}>{nextBtnLabel}</button>
+          ) : (
+            <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 14, padding: '13px 10px' }} />
+          )}
         </div>
       </div>
     </div>
