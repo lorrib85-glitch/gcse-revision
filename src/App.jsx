@@ -561,7 +561,6 @@ function ModulesTab({ onOpenModule }) {
   const SUBJECT_COLOURS = {
     'History':  { color: '#F5B700', bg: 'rgba(245,183,0,.12)',  border: 'rgba(245,183,0,.25)'  },
     'Biology':  { color: '#38D27A', bg: 'rgba(56,210,122,.12)', border: 'rgba(56,210,122,.25)' },
-    'Biology':  { color: '#38D27A', bg: 'rgba(56,210,122,.12)', border: 'rgba(56,210,122,.25)' },
     'Maths':    { color: '#3B82FF', bg: 'rgba(59,130,255,.12)', border: 'rgba(59,130,255,.25)' },
     'English':  { color: '#9D5CFF', bg: 'rgba(157,92,255,.12)', border: 'rgba(157,92,255,.25)' },
     'Sociology':{ color: '#FF5C7A', bg: 'rgba(255,92,122,.12)', border: 'rgba(255,92,122,.25)' },
