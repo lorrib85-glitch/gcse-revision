@@ -8,7 +8,19 @@ function saveModuleState(moduleId, state) {
   try { localStorage.setItem(`gcse_module_${moduleId}`, JSON.stringify(state)) } catch {}
 }
 
-// ─── Block renderers ──────────────────────────────────────────────────────────
+// Confidence ratings — keyed by moduleId, stored in a shared array
+// Shape: [{ moduleId, subject, title, confidence, timestamp }, ...]
+export function getAllConfidenceRatings() {
+  try { return JSON.parse(localStorage.getItem('gcse_confidence') || '[]') } catch { return [] }
+}
+function saveConfidenceRating(moduleId, subject, title, confidence) {
+  try {
+    const all = getAllConfidenceRatings()
+    const filtered = all.filter(r => r.moduleId !== moduleId)
+    filtered.push({ moduleId, subject, title, confidence, timestamp: Date.now() })
+    localStorage.setItem('gcse_confidence', JSON.stringify(filtered))
+  } catch {}
+}
 
 function ReadBlock({ block }) {
   return (
@@ -150,6 +162,311 @@ function TimelineBlock({ block }) {
           </button>
         </div>
       ))}
+    </div>
+  )
+}
+
+// ─── BossBlock — free text answer graded by Claude API ───────────────────────
+const GRADE_COLOURS_BOSS = {
+  strong:     { bg: 'rgba(77,255,136,.08)',  border: 'rgba(77,255,136,.35)',  text: '#4DFF88',  badge: '#38D27A',  label: 'Strong answer' },
+  partial:    { bg: 'rgba(255,200,87,.07)',  border: 'rgba(255,200,87,.3)',   text: '#FFC857',  badge: '#F5B700',  label: 'Partial — keep going' },
+  weak:       { bg: 'rgba(255,93,115,.08)',  border: 'rgba(255,93,115,.3)',   text: '#FF5D73',  badge: '#FF5D73',  label: 'Needs more' },
+}
+
+async function gradeBossAnswer(question, markPoints, studentAnswer) {
+  const systemPrompt = `You are an AQA GCSE Biology examiner. Grade a student's free-text answer. 
+Return ONLY valid JSON with this exact shape:
+{
+  "grade": "strong" | "partial" | "weak",
+  "score": number (0-3, where 3 = full marks equivalent),
+  "summary": "one sentence verdict",
+  "achieved": ["point they got right", ...],
+  "missed": ["key point they missed", ...],
+  "modelAnswer": "a concise model answer they can compare to",
+  "examinerTip": "one specific tip for improving this type of answer"
+}
+
+Grade honestly. "strong" = hits most mark points with correct science language. "partial" = some correct ideas but missing key points or using vague language. "weak" = very little correct content or just restating the question. Never give "strong" for vague answers even if the general idea is right. Insist on scientific precision.`
+
+  const userPrompt = `Question: ${question}
+
+Mark scheme points to check for:
+${markPoints}
+
+Student's answer: ${studentAnswer}
+
+Grade this answer.`
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
+    }),
+  })
+
+  if (!response.ok) throw new Error(`API error ${response.status}`)
+  const data = await response.json()
+  const text = data.content.find(b => b.type === 'text')?.text || ''
+  const clean = text.replace(/```json|```/g, '').trim()
+  return JSON.parse(clean)
+}
+
+function BossBlock({ block }) {
+  const [answer, setAnswer] = useState('')
+  const [grading, setGrading] = useState(false)
+  const [feedback, setFeedback] = useState(null)
+  const [error, setError] = useState(null)
+  const [showModel, setShowModel] = useState(false)
+
+  const TIER_COLOURS = {
+    '🟢': 'rgba(77,255,136,.15)',
+    '🟡': 'rgba(255,200,87,.12)',
+    '🔴': 'rgba(255,93,115,.12)',
+  }
+  const tierEmoji = block.tier || '🟢'
+  const tierBg = TIER_COLOURS[tierEmoji] || TIER_COLOURS['🟢']
+
+  async function submit() {
+    if (answer.trim().length < 10) {
+      setError('Write at least a sentence — even a rough attempt is fine.')
+      return
+    }
+    setError(null)
+    setGrading(true)
+    try {
+      const result = await gradeBossAnswer(block.question, block.markPoints, answer)
+      setFeedback(result)
+    } catch (e) {
+      setError('Could not reach the grading server. Check your connection and try again.')
+    } finally {
+      setGrading(false)
+    }
+  }
+
+  function retry() {
+    setAnswer('')
+    setFeedback(null)
+    setError(null)
+    setShowModel(false)
+  }
+
+  const gs = feedback ? (GRADE_COLOURS_BOSS[feedback.grade] || GRADE_COLOURS_BOSS.partial) : null
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      {/* Question card */}
+      <div style={{
+        background: `linear-gradient(145deg, #0E1A28, #0A1320)`,
+        border: `1px solid ${tierBg.replace('.15', '.4').replace('.12', '.4')}`,
+        borderRadius: 16, padding: '16px 18px', marginBottom: 12,
+        boxShadow: `0 0 20px ${tierBg}`,
+      }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10,
+        }}>
+          <span style={{ fontSize: '1rem' }}>{tierEmoji}</span>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+            textTransform: 'uppercase', color: '#38D27A',
+          }}>{block.label || 'Boss Challenge'}</div>
+        </div>
+        <p style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600, fontSize: '1rem',
+          color: '#F5F7FB', margin: 0, lineHeight: 1.45,
+        }}>{block.question}</p>
+      </div>
+
+      {/* Answer area — hidden once feedback received */}
+      {!feedback && (
+        <>
+          <div style={{
+            background: '#10182B',
+            border: `1.5px solid ${grading ? 'rgba(56,210,122,.35)' : '#2A3552'}`,
+            borderRadius: 14, padding: '14px 16px', marginBottom: 10,
+            transition: 'border-color .2s',
+          }}>
+            <div style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
+              letterSpacing: '.1em', color: '#4A5578', marginBottom: 8,
+            }}>Your answer</div>
+            <textarea
+              value={answer}
+              onChange={e => { setAnswer(e.target.value); setError(null) }}
+              placeholder="Write your answer here. Use correct scientific terms. Minimum one full sentence."
+              disabled={grading}
+              style={{
+                width: '100%', border: 'none', background: 'transparent',
+                resize: 'none', outline: 'none',
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.93rem', color: '#E0E6F0',
+                lineHeight: 1.7, minHeight: 100,
+                opacity: grading ? .5 : 1,
+              }}
+            />
+          </div>
+
+          {error && (
+            <div style={{
+              background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.28)',
+              borderRadius: 10, padding: '10px 14px', marginBottom: 10,
+            }}>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.83rem', color: '#FF5D73', margin: 0 }}>{error}</p>
+            </div>
+          )}
+
+          <button onClick={submit} disabled={grading} style={{
+            width: '100%',
+            background: grading
+              ? '#10182B'
+              : 'linear-gradient(135deg, #38D27A, #6BFFB0)',
+            border: grading ? '1px solid #2A3552' : 'none',
+            borderRadius: 13, padding: '14px',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700, fontSize: '.95rem',
+            color: grading ? '#4A5578' : '#001A0A',
+            cursor: grading ? 'default' : 'pointer',
+            boxShadow: grading ? 'none' : '0 4px 20px rgba(56,210,122,.35)',
+            transition: 'all .2s',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          }}>
+            {grading ? (
+              <>
+                <span style={{ display: 'inline-block', animation: 'spin 1s linear infinite' }}>⏳</span>
+                Marking your answer…
+              </>
+            ) : 'Submit for marking →'}
+          </button>
+        </>
+      )}
+
+      {/* Feedback */}
+      {feedback && gs && (
+        <div className="fade-up">
+          {/* Score card */}
+          <div style={{
+            background: gs.bg,
+            border: `2px solid ${gs.border}`,
+            borderRadius: 18, padding: '18px 20px', marginBottom: 10,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+              <div style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 800, fontSize: '1.4rem', color: gs.text,
+              }}>
+                {feedback.score}/3
+              </div>
+              <div style={{
+                background: gs.badge, color: '#000',
+                borderRadius: 99, padding: '4px 12px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.75rem',
+              }}>{gs.label}</div>
+            </div>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.9rem', color: gs.text,
+              margin: 0, lineHeight: 1.55, opacity: .9,
+            }}>{feedback.summary}</p>
+          </div>
+
+          {/* What they got right */}
+          {feedback.achieved?.length > 0 && (
+            <div style={{
+              background: '#10182B', border: '1px solid #1E2A40',
+              borderRadius: 13, padding: '14px', marginBottom: 8,
+            }}>
+              <div style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
+                letterSpacing: '.1em', color: '#4DFF88', marginBottom: 8,
+              }}>✓ What you got right</div>
+              {feedback.achieved.map((a, i) => (
+                <div key={i} style={{ display: 'flex', gap: 8, marginBottom: i < feedback.achieved.length - 1 ? 7 : 0 }}>
+                  <span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{a}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* What they missed */}
+          {feedback.missed?.length > 0 && (
+            <div style={{
+              background: '#10182B', border: '1px solid #1E2A40',
+              borderRadius: 13, padding: '14px', marginBottom: 8,
+            }}>
+              <div style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
+                letterSpacing: '.1em', color: '#FF5D73', marginBottom: 8,
+              }}>→ Key points you missed</div>
+              {feedback.missed.map((m, i) => (
+                <div key={i} style={{ display: 'flex', gap: 8, marginBottom: i < feedback.missed.length - 1 ? 7 : 0 }}>
+                  <span style={{ color: '#FF5D73', flexShrink: 0 }}>→</span>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{m}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Examiner tip */}
+          {feedback.examinerTip && (
+            <div style={{
+              background: 'rgba(245,183,0,.05)', border: '1px solid rgba(245,183,0,.18)',
+              borderRadius: 13, padding: '14px', marginBottom: 10,
+            }}>
+              <div style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
+                letterSpacing: '.1em', color: '#F5B700', marginBottom: 6,
+              }}>🗡️ Examiner tip</div>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{feedback.examinerTip}</p>
+            </div>
+          )}
+
+          {/* Model answer toggle */}
+          {!showModel ? (
+            <button onClick={() => setShowModel(true)} style={{
+              width: '100%', background: 'transparent',
+              border: '1px dashed #2A3552', borderRadius: 11, padding: '10px',
+              fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: '.82rem',
+              color: '#4A5578', cursor: 'pointer', marginBottom: 10,
+            }}>
+              Show model answer
+            </button>
+          ) : (
+            <div className="fade-up" style={{
+              background: 'rgba(56,210,122,.06)', border: '1px solid rgba(56,210,122,.2)',
+              borderRadius: 13, padding: '14px', marginBottom: 10,
+            }}>
+              <div style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
+                letterSpacing: '.1em', color: '#38D27A', marginBottom: 8,
+              }}>📋 Model answer</div>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.6 }}>{feedback.modelAnswer}</p>
+            </div>
+          )}
+
+          {/* Retry */}
+          <button onClick={retry} style={{
+            width: '100%',
+            background: 'linear-gradient(135deg, #38D27Acc, #38D27A)',
+            border: 'none', borderRadius: 13, padding: '13px',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700, fontSize: '.9rem', color: '#001A0A',
+            cursor: 'pointer',
+            boxShadow: '0 4px 16px rgba(56,210,122,.3)',
+          }}>↩ Try again with improvements</button>
+        </div>
+      )}
     </div>
   )
 }
@@ -874,6 +1191,7 @@ function Screen({ screen }) {
           {block.type === 'scarf'         && <ScarfBlock block={block} />}
           {block.type === 'builder'       && <BuilderBlock block={block} />}
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
+          {block.type === 'boss'          && <BossBlock block={block} />}
         </div>
       ))}
     </div>
@@ -885,6 +1203,8 @@ function Screen({ screen }) {
 export default function ModulePlayer({ module, onBack }) {
   const saved   = getModuleState(module.id)
   const [screen, setScreen] = useState(saved.screen || 0)
+  const [showConfidence, setShowConfidence] = useState(false)
+  const [chosenConfidence, setChosenConfidence] = useState(null)
   const total   = module.screens.length
   const pct     = Math.round(((screen + 1) / total) * 100)
   const isLast  = screen === total - 1
@@ -901,9 +1221,160 @@ export default function ModulePlayer({ module, onBack }) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  function handleFinish() {
+    setShowConfidence(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  function handleConfidencePick(level) {
+    setChosenConfidence(level)
+    saveConfidenceRating(module.id, module.subject, module.title, level)
+    setTimeout(() => onBack(), 650)
+  }
+
   const cur = module.screens[screen]
-  // Subject colour — fallback to purple
   const subjectColor = module.color || '#9D5CFF'
+
+  // ── Confidence overlay ────────────────────────────────────────────────────
+  const CONFIDENCE_LEVELS = [
+    {
+      id: 'confused',
+      emoji: '😵',
+      label: 'Still confused',
+      sub: "It's not clicking yet — needs another pass",
+      color: '#FF5D73',
+      bg: 'rgba(255,93,115,.08)',
+      border: 'rgba(255,93,115,.3)',
+    },
+    {
+      id: 'clicking',
+      emoji: '🧠',
+      label: 'Starting to click',
+      sub: 'Getting there — could use more practice',
+      color: '#FFC857',
+      bg: 'rgba(255,200,87,.08)',
+      border: 'rgba(255,200,87,.3)',
+    },
+    {
+      id: 'confident',
+      emoji: '⚡',
+      label: 'Could explain it',
+      sub: 'Solid — ready to move on',
+      color: '#4DFF88',
+      bg: 'rgba(77,255,136,.08)',
+      border: 'rgba(77,255,136,.3)',
+    },
+  ]
+
+  if (showConfidence) {
+    return (
+      <div style={{
+        background: '#080C1A', minHeight: '100vh',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        padding: '32px 20px',
+      }}>
+        <div style={{ maxWidth: 400, width: '100%' }}>
+          {/* Module completed banner */}
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <div style={{
+              width: 64, height: 64, borderRadius: 18, margin: '0 auto 16px',
+              background: subjectColor + '22',
+              border: '1px solid ' + subjectColor + '44',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.8rem',
+              boxShadow: '0 0 32px ' + subjectColor + '22',
+            }}>{module.icon}</div>
+            <div style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.65rem', fontWeight: 700, letterSpacing: '.14em',
+              textTransform: 'uppercase', color: subjectColor, marginBottom: 8,
+            }}>{module.subject} · Module {module.number} complete</div>
+            <h2 style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 800, fontSize: '1.5rem',
+              color: '#F5F7FB', margin: '0 0 8px',
+              letterSpacing: '-.02em',
+            }}>How do you feel about this?</h2>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.88rem', color: '#5A6480',
+              margin: 0, lineHeight: 1.5,
+            }}>
+              Be honest — this shapes what you see next.
+            </p>
+          </div>
+
+          {/* Confidence buttons */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {CONFIDENCE_LEVELS.map(level => {
+              const picked = chosenConfidence === level.id
+              return (
+                <button
+                  key={level.id}
+                  onClick={() => handleConfidencePick(level.id)}
+                  disabled={chosenConfidence !== null}
+                  style={{
+                    background: picked ? level.bg : 'rgba(255,255,255,.02)',
+                    border: '1.5px solid ' + (picked ? level.color : '#2A3552'),
+                    borderRadius: 16, padding: '18px 20px',
+                    cursor: chosenConfidence ? 'default' : 'pointer',
+                    textAlign: 'left',
+                    display: 'flex', alignItems: 'center', gap: 14,
+                    transition: 'all .2s',
+                    boxShadow: picked ? ('0 0 20px ' + level.color + '22') : 'none',
+                    transform: picked ? 'scale(1.02)' : 'scale(1)',
+                    width: '100%',
+                  }}
+                >
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                    background: picked ? level.bg : '#10182B',
+                    border: '1px solid ' + (picked ? level.color : '#2A3552'),
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1.3rem',
+                    transition: 'all .2s',
+                  }}>{level.emoji}</div>
+                  <div style={{ flex: 1, textAlign: 'left' }}>
+                    <div style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 700, fontSize: '1rem',
+                      color: picked ? level.color : '#E0E6F0',
+                      marginBottom: 3, transition: 'color .2s',
+                    }}>{level.label}</div>
+                    <div style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '.78rem',
+                      color: picked ? level.color : '#4A5578',
+                      opacity: picked ? .85 : 1,
+                      transition: 'color .2s',
+                    }}>{level.sub}</div>
+                  </div>
+                  {picked && (
+                    <div style={{
+                      width: 22, height: 22, borderRadius: '50%',
+                      background: level.color,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '.75rem', color: '#000', fontWeight: 900,
+                      flexShrink: 0,
+                    }}>✓</div>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.73rem', color: '#2A3552',
+            textAlign: 'center', marginTop: 20, margin: '20px 0 0',
+          }}>
+            Saved — used to prioritise what you revise next
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div style={{ background: '#080C1A', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -1059,7 +1530,7 @@ export default function ModulePlayer({ module, onBack }) {
           }}>Save +{'\n'}Exit</button>
 
           {/* Next / Finish */}
-          <button onClick={() => isLast ? onBack() : go(1)} style={{
+          <button onClick={() => isLast ? handleFinish() : go(1)} style={{
             background: isLast
               ? 'linear-gradient(135deg, #1A4D2E, #38D27A)'
               : `linear-gradient(135deg, ${subjectColor}cc, ${subjectColor})`,
