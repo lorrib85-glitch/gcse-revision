@@ -1420,7 +1420,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
               fontWeight: 700, fontSize: '.82rem', color: '#5A6480',
             }}>
               {growStep === 0 && 'Planting the sapling...'}
-              {growStep === 1 && 'Year 2 — it's growing'}
+              {growStep === 1 && "Year 2 — it's growing"}
               {growStep === 2 && 'Year 4 — branches forming...'}
               {growStep === 3 && <span style={{ color: '#4DFF88' }}>Year 5 — 74 kg of tree. Soil lost 57g. 🤯</span>}
             </div>
