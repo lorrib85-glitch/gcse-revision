@@ -1,5 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { recordActivity, recordScore } from './progress.js'
+
+// iOS Safari ignores window.scrollTo on fixed-position shells.
+// scrollToTop() tries window first, then falls back to the document element.
+function scrollToTop() {
+  try {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+    // Also scroll the module content container for iOS Safari
+    const el = document.getElementById('module-scroll-container')
+    if (el) el.scrollTop = 0
+  } catch {}
+}
 
 // ─── localStorage helpers ─────────────────────────────────────────────────────
 function getModuleState(moduleId) {
@@ -1784,14 +1797,14 @@ export default function ModulePlayer({ module, onBack }) {
     const next = Math.max(0, Math.min(total - 1, screen + delta))
     setScreen(next)
     setAnimKey(k => k + 1)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    scrollToTop()
     // Any navigation in a module counts as activity for the streak
     recordActivity()
   }
 
   function handleFinish() {
     setShowConfidence(true)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    scrollToTop()
   }
 
   function handleConfidencePick(level) {
@@ -1810,7 +1823,7 @@ export default function ModulePlayer({ module, onBack }) {
   function handleNext() {
     if (!hookDone && module.hook) {
       if (hookPhase === 'grow')   { hookState.nextFromGrow(); return }
-      if (hookPhase === 'reveal') { if (hookRevealDone) { setHookDone(true); window.scrollTo({top:0,behavior:'smooth'}) } else { hookState.nextRevealItem(); } return }
+      if (hookPhase === 'reveal') { if (hookRevealDone) { setHookDone(true); scrollToTop() } else { hookState.nextRevealItem(); } return }
       return // question / feedback: Next does nothing — user must tap TRUE/FALSE
     }
     if (!introDone && module.intro) {
@@ -2042,7 +2055,7 @@ export default function ModulePlayer({ module, onBack }) {
             const isDone   = i < screen
             return (
               <button key={i}
-                onClick={() => { setScreen(i); setAnimKey(k => k + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+                onClick={() => { setScreen(i); setAnimKey(k => k + 1); scrollToTop() }}
                 style={{
                   flexShrink: 0,
                   background: isActive
@@ -2070,11 +2083,11 @@ export default function ModulePlayer({ module, onBack }) {
       </div>
 
       {/* ── Screen content — hook, intro, or normal screen ── */}
-      <div style={{ flex: 1, padding: '20px 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
+      <div id="module-scroll-container" style={{ flex: 1, padding: '20px 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
         {!hookDone && module.hook
           ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
           : !introDone && module.intro
-            ? <IntroScreen module={module} onDone={() => { setIntroDone(true); window.scrollTo({top:0,behavior:'smooth'}) }} />
+            ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
             : (
               <div key={animKey} className="anim-pop">
                 <Screen screen={cur} subject={module.subject} />
