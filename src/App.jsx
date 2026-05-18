@@ -1274,21 +1274,54 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
   const [feedback, setFB]     = useState(null)
   const [error, setError]     = useState(null)
   const [fmOpen, setFm]       = useState(false)
+  // MC hint+retry state
+  const [mcAttempts, setMcAttempts] = useState(0)
+  const [mcHint, setMcHint]         = useState(false)   // show hint after 1st wrong MC
+  const [mcLocked, setMcLocked]     = useState(false)   // lock after 2nd attempt or correct
 
-  function reset() { setAnswer(''); setTip(false); setFB(null); setError(null); setGrading(false) }
+  function reset() {
+    setAnswer(''); setTip(false); setFB(null); setError(null); setGrading(false)
+    setMcAttempts(0); setMcHint(false); setMcLocked(false)
+  }
 
   async function grade() {
-    const isMCMulti = q.type === 'mc_multi'
-    const isMCSingle = q.type === 'mc'
-    const isMCMulti2 = q.type === 'mc_multi'
-    if (isMCSingle && !answer) { setError('Pick an option first.'); return }
-    if (isMCMulti2 && (!answer || (Array.isArray(answer) && answer.length === 0))) { setError('Select at least one option.'); return }
-    if (isMCMulti && (!answer || (Array.isArray(answer) && answer.length === 0))) { setError('Select at least one option.'); return }
-    if (q.type !== 'mc' && answer.trim().length < 1) { setError('Write something — even a rough attempt gets method marks!'); return }
+    const isMC = q.type === 'mc' || q.type === 'mc_multi'
+    if (q.type === 'mc' && !answer) { setError('Pick an option first.'); return }
+    if (q.type === 'mc_multi' && (!answer || (Array.isArray(answer) && answer.length === 0))) { setError('Select at least one option.'); return }
+    if (!isMC && answer.trim().length < 1) { setError('Write something — even a rough attempt gets method marks!'); return }
+
+    // MC: check inline without hitting the API
+    if (isMC) {
+      const isCorrect = q.type === 'mc'
+        ? answer === q.options[q.correct]
+        : Array.isArray(answer) && answer.length === q.marks &&
+          answer.every(a => q.options.indexOf(a) !== -1 && q.correctIndices?.includes(q.options.indexOf(a)))
+      const newAttempts = mcAttempts + 1
+      setMcAttempts(newAttempts)
+      if (isCorrect) {
+        setMcLocked(true)
+        // Build a minimal feedback object so the existing feedback UI works
+        setFB({ marksAwarded: q.marks, marksAvailable: q.marks, grade: 'Excellent',
+          summary: 'Correct.', achieved: ['Right answer selected'], missed: [], examinerTip: q.ms || '' })
+      } else if (newAttempts === 1) {
+        // First wrong — show hint, don't lock yet
+        setMcHint(true)
+        setAnswer('')  // clear selection so they can try again
+      } else {
+        // Second wrong — lock and show full explanation
+        setMcLocked(true)
+        const correctText = q.options[q.correct] || ''
+        setFB({ marksAwarded: 0, marksAvailable: q.marks, grade: 'Needs Work',
+          summary: 'The correct answer was: ' + correctText,
+          achieved: [], missed: [q.ms || 'See mark scheme above'],
+          examinerTip: 'Re-read the question carefully and look for key scientific terms.' })
+      }
+      return
+    }
+
     setGrading(true); setError(null)
     try {
-      const answerText = Array.isArray(answer) ? answer.join(', ') : answer
-      const result = await gradeWithAI(q.q, answerText, q.marks, q.ms)
+      const result = await gradeWithAI(q.q, answer, q.marks, q.ms)
       setFB(result)
     } catch (e) {
       setError('Could not reach the grading server. Check your connection and try again.')
@@ -1394,23 +1427,35 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
         {/* Answer area — only shown before feedback */}
         {!feedback && (
           q.type === 'mc' || q.type === 'mc_multi'
-            ? <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:16 }}>
-                {q.type === 'mc_multi' && <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginBottom:2 }}>Select all that apply ({q.marks} correct answers)</div>}
+            ? <div style={{ marginBottom:16 }}>
+                {q.type === 'mc_multi' && <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginBottom:8 }}>Select all that apply ({q.marks} correct answers)</div>}
+                {/* Hint card after first wrong MC attempt */}
+                {mcHint && !mcLocked && (
+                  <div style={{ background:'rgba(255,200,87,.06)', border:'1px solid rgba(255,200,87,.25)', borderRadius:12, padding:'12px 14px', marginBottom:12 }}>
+                    <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857', marginBottom:6 }}>💡 Hint — think about this</div>
+                    <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8', margin:0, lineHeight:1.55 }}>
+                      {q.hint || (q.ms ? q.ms.split('.')[0] + '.' : 'Look at the question again carefully — what does it specifically ask for?')}
+                    </p>
+                  </div>
+                )}
+                <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
                 {q.options.map((opt, i) => {
                   const isMulti = q.type === 'mc_multi'
                   const sel = isMulti ? (Array.isArray(answer) && answer.includes(opt)) : answer === opt
                   const toggle = () => {
+                    if (mcLocked) return
                     if (!isMulti) { setAnswer(opt); return }
                     const cur = Array.isArray(answer) ? answer : []
                     setAnswer(sel ? cur.filter(a => a !== opt) : [...cur, opt])
                   }
                   return (
-                    <button key={i} onClick={toggle} style={{ background:sel?`${topicColor}18`:'#10182B', border:`1.5px solid ${sel?topicColor:'#1E2A40'}`, borderRadius:12, padding:'14px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:sel?topicColor:'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
+                    <button key={i} onClick={toggle} disabled={mcLocked} style={{ background:sel?`${topicColor}18`:'#10182B', border:`1.5px solid ${sel?topicColor:'#1E2A40'}`, borderRadius:12, padding:'14px 16px', cursor:mcLocked?'default':'pointer', textAlign:'left', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:sel?topicColor:'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
                       <span style={{ width:24, height:24, borderRadius:isMulti?'4px':'50%', border:`1.5px solid ${sel?topicColor:'#2A3552'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.75rem', fontWeight:700, color:sel?topicColor:'#4A5578', background:sel?`${topicColor}18`:'transparent' }}>{isMulti ? (sel ? '✓' : '') : String.fromCharCode(65+i)}</span>
                       {opt}
                     </button>
                   )
                 })}
+                </div>
               </div>
             : <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:16 }}>
                 <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>{isMathsQ ? 'Your working & answer' : 'Your answer'}</div>
@@ -1484,10 +1529,12 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
           </div>
         )}
 
-        {/* Submit button */}
-        {!feedback && (
-          <button onClick={grade} disabled={grading} style={{ width:'100%', background:grading?'#1E2A40':`linear-gradient(135deg,${topicColor}cc,${topicColor})`, color:grading?'#4A5578':'#fff', border:'none', borderRadius:13, padding:'16px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:grading?'default':'pointer', fontSize:'1rem', letterSpacing:'.01em', marginTop:4, boxShadow:grading?'none':`0 4px 20px ${topicColor}44`, transition:'all .2s' }}>
-            {grading ? '⏳ Marking your answer…' : 'Check my answer →'}
+        {/* Submit button — hidden for locked MC (feedback already shown inline) */}
+        {!feedback && !(mcLocked) && (
+          <button onClick={grade} disabled={grading || (q.type === 'mc' && !answer) || (q.type === 'mc_multi' && (!answer || answer.length === 0))}
+            style={{ width:'100%', background:grading?'#1E2A40':`linear-gradient(135deg,${topicColor}cc,${topicColor})`, color:grading?'#4A5578':'#fff', border:'none', borderRadius:13, padding:'16px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:(grading||(q.type==='mc'&&!answer))?'default':'pointer', fontSize:'1rem', letterSpacing:'.01em', marginTop:4, boxShadow:grading?'none':`0 4px 20px ${topicColor}44`, transition:'all .2s',
+              opacity: (q.type === 'mc' && !answer) ? 0.4 : 1 }}>
+            {grading ? '⏳ Marking your answer…' : mcHint ? 'Check again →' : 'Check my answer →'}
           </button>
         )}
       </div>
