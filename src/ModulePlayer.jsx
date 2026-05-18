@@ -173,46 +173,35 @@ const GRADE_COLOURS_BOSS = {
   weak:       { bg: 'rgba(255,93,115,.08)',  border: 'rgba(255,93,115,.3)',   text: '#FF5D73',  badge: '#FF5D73',  label: 'Needs more' },
 }
 
+// Boss answers are graded via the same /api/grade endpoint used by test questions.
+// This keeps the API key server-side and shares the full examiner prompt.
+// The mark scheme is passed as the markScheme field; we use 3 as a proxy mark count
+// so the response shape (marksAwarded/marksAvailable/grade/etc.) matches what we render.
 async function gradeBossAnswer(question, markPoints, studentAnswer) {
-  const systemPrompt = `You are an AQA GCSE Biology examiner. Grade a student's free-text answer. 
-Return ONLY valid JSON with this exact shape:
-{
-  "grade": "strong" | "partial" | "weak",
-  "score": number (0-3, where 3 = full marks equivalent),
-  "summary": "one sentence verdict",
-  "achieved": ["point they got right", ...],
-  "missed": ["key point they missed", ...],
-  "modelAnswer": "a concise model answer they can compare to",
-  "examinerTip": "one specific tip for improving this type of answer"
-}
-
-Grade honestly. "strong" = hits most mark points with correct science language. "partial" = some correct ideas but missing key points or using vague language. "weak" = very little correct content or just restating the question. Never give "strong" for vague answers even if the general idea is right. Insist on scientific precision.`
-
-  const userPrompt = `Question: ${question}
-
-Mark scheme points to check for:
-${markPoints}
-
-Student's answer: ${studentAnswer}
-
-Grade this answer.`
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const response = await fetch('/api/grade', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
+      question,
+      answer: studentAnswer,
+      marks: 3,
+      markScheme: markPoints,
     }),
   })
-
-  if (!response.ok) throw new Error(`API error ${response.status}`)
+  if (!response.ok) throw new Error(`Server error ${response.status}`)
   const data = await response.json()
-  const text = data.content.find(b => b.type === 'text')?.text || ''
-  const clean = text.replace(/```json|```/g, '').trim()
-  return JSON.parse(clean)
+  if (data.error) throw new Error(data.error)
+  // Normalise /api/grade shape → BossBlock shape
+  return {
+    grade:       data.grade === 'Excellent' || data.grade === 'Good' ? 'strong'
+               : data.grade === 'Developing' ? 'partial' : 'weak',
+    score:       data.marksAwarded ?? 0,
+    summary:     data.summary,
+    achieved:    data.achieved || [],
+    missed:      data.missed   || [],
+    modelAnswer: null,   // not returned by /api/grade — shown via examinerTip instead
+    examinerTip: data.examinerTip,
+  }
 }
 
 function BossBlock({ block }) {
@@ -220,7 +209,6 @@ function BossBlock({ block }) {
   const [grading, setGrading] = useState(false)
   const [feedback, setFeedback] = useState(null)
   const [error, setError] = useState(null)
-  const [showModel, setShowModel] = useState(false)
 
   const TIER_COLOURS = {
     '🟢': 'rgba(77,255,136,.15)',
@@ -251,7 +239,6 @@ function BossBlock({ block }) {
     setAnswer('')
     setFeedback(null)
     setError(null)
-    setShowModel(false)
   }
 
   const gs = feedback ? (GRADE_COLOURS_BOSS[feedback.grade] || GRADE_COLOURS_BOSS.partial) : null
@@ -431,27 +418,23 @@ function BossBlock({ block }) {
             </div>
           )}
 
-          {/* Model answer toggle */}
-          {!showModel ? (
-            <button onClick={() => setShowModel(true)} style={{
-              width: '100%', background: 'transparent',
-              border: '1px dashed #2A3552', borderRadius: 11, padding: '10px',
-              fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: '.82rem',
-              color: '#4A5578', cursor: 'pointer', marginBottom: 10,
-            }}>
-              Show model answer
-            </button>
-          ) : (
-            <div className="fade-up" style={{
-              background: 'rgba(56,210,122,.06)', border: '1px solid rgba(56,210,122,.2)',
+          {/* Model answer — generated inline from what was missed */}
+          {feedback.missed?.length > 0 && (
+            <div style={{
+              background: 'rgba(56,210,122,.05)', border: '1px solid rgba(56,210,122,.18)',
               borderRadius: 13, padding: '14px', marginBottom: 10,
             }}>
               <div style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
                 letterSpacing: '.1em', color: '#38D27A', marginBottom: 8,
-              }}>📋 Model answer</div>
-              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.6 }}>{feedback.modelAnswer}</p>
+              }}>📋 To score higher, your answer needs</div>
+              {feedback.missed.map((m, i) => (
+                <div key={i} style={{ display: 'flex', gap: 8, marginBottom: i < feedback.missed.length - 1 ? 6 : 0 }}>
+                  <span style={{ color: '#38D27A', flexShrink: 0, fontSize: '.85rem' }}>+</span>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{m}</p>
+                </div>
+              ))}
             </div>
           )}
 
@@ -532,21 +515,45 @@ function RevealBlock({ block }) {
 }
 
 function QuizBlock({ block, onAnswered }) {
-  const [selected, setSelected] = useState(null)
-  const [shakeIdx, setShakeIdx] = useState(null)
+  const [selected, setSelected]   = useState(null)   // index of tapped option
+  const [shakeIdx, setShakeIdx]   = useState(null)
+  const [attempts, setAttempts]   = useState(0)       // how many wrong tries
+  const [showHint, setShowHint]   = useState(false)   // hint visible after 1st wrong
+  const [locked, setLocked]       = useState(false)   // locked after correct OR 2nd wrong
 
   function choose(i) {
-    if (selected !== null) return
+    if (locked) return
+    const correct = block.options[i].correct
     setSelected(i)
-    if (!block.options[i].correct) setShakeIdx(i)
-    else if (onAnswered) setTimeout(() => onAnswered(), 600)
+    setAttempts(a => a + 1)
+
+    if (correct) {
+      setLocked(true)
+      if (onAnswered) setTimeout(() => onAnswered(), 700)
+    } else {
+      setShakeIdx(i)
+      setShowHint(true)
+      // Lock after second wrong attempt — show full explanation
+      if (attempts >= 1) setLocked(true)
+      // Reset shake after animation
+      setTimeout(() => setShakeIdx(null), 500)
+    }
   }
 
-  const answered = selected !== null
-  const correct  = answered && block.options[selected].correct
+  function retry() {
+    setSelected(null)
+    setShakeIdx(null)
+    // Keep showHint visible and attempts count
+  }
+
+  const answered    = selected !== null
+  const wasCorrect  = answered && block.options[selected]?.correct
+  const wasWrong    = answered && !wasCorrect
+  const showFull    = wasCorrect || locked  // show full explanation
 
   return (
     <div style={{ margin: '14px 0' }}>
+      {/* Question */}
       <div style={{
         background: 'linear-gradient(135deg, #12183A, #0E1330)',
         border: '1px solid rgba(157,92,255,.2)',
@@ -557,26 +564,67 @@ function QuizBlock({ block, onAnswered }) {
           color: '#F5F7FB', fontWeight: 600, fontSize: '1rem', margin: 0, lineHeight: 1.45,
         }}>{block.question}</p>
       </div>
+
+      {/* Options */}
       <div className="grid-stack">
         {block.options.map((opt, i) => {
           let cls = 'opt'
-          if (answered) {
-            if (opt.correct) cls += ' correct'
-            else if (i === selected) cls += ' wrong'
+          if (answered || locked) {
+            if (opt.correct && (showFull || wasCorrect)) cls += ' correct'
+            else if (i === selected && wasWrong)         cls += ' wrong'
           }
+          // After retry (selected cleared), show nothing highlighted yet
           return (
             <button key={i} className={`${cls}${shakeIdx === i ? ' shake' : ''}`}
-              onClick={() => choose(i)} disabled={answered}>
+              onClick={() => choose(i)}
+              disabled={locked || (wasCorrect)}>
               <span style={{ marginRight: 8, opacity: .45 }}>{String.fromCharCode(65 + i)}.</span>
               {opt.text}
             </button>
           )
         })}
       </div>
-      {answered && (
-        <div className={`feedback ${correct ? 'correct' : 'wrong'} fade-up`} style={{ marginTop: 12 }}>
+
+      {/* Hint after first wrong attempt — before locking */}
+      {showHint && !locked && wasWrong && (
+        <div className="fade-up" style={{
+          background: 'rgba(255,200,87,.06)',
+          border: '1px solid rgba(255,200,87,.25)',
+          borderRadius: 12, padding: '12px 14px', marginTop: 10,
+        }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em',
+            textTransform: 'uppercase', color: '#FFC857', marginBottom: 6,
+          }}>💡 Hint — think about this</div>
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.87rem', color: '#C8D0E8', margin: '0 0 10px', lineHeight: 1.55,
+          }}>{block.hint || block.explanation}</p>
+          <button onClick={retry} style={{
+            background: 'rgba(255,200,87,.1)',
+            border: '1px solid rgba(255,200,87,.3)',
+            borderRadius: 9, padding: '8px 16px',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700, fontSize: '.82rem', color: '#FFC857',
+            cursor: 'pointer',
+          }}>Try again →</button>
+        </div>
+      )}
+
+      {/* Full feedback after correct or locked */}
+      {showFull && (
+        <div className={`feedback ${wasCorrect ? 'correct' : 'wrong'} fade-up`} style={{ marginTop: 10 }}>
           <p style={{ margin: 0, fontSize: '.9rem', fontFamily: "'Inter', sans-serif" }}>
-            <strong>{correct ? '✓ Correct! ' : '✗ Nope. '}</strong>{block.explanation}
+            <strong>{wasCorrect ? '✓ Correct! ' : '✗ Nope — the answer was: '}</strong>
+            {wasCorrect ? block.explanation : (
+              <>
+                <strong style={{ color: '#4DFF88' }}>
+                  {block.options.find(o => o.correct)?.text}
+                </strong>
+                {block.explanation ? <><br />{block.explanation}</> : null}
+              </>
+            )}
           </p>
         </div>
       )}
@@ -1780,34 +1828,25 @@ export default function ModulePlayer({ module, onBack }) {
   const cur = module.screens[screen]
   const subjectColor = module.color || '#9D5CFF'
 
-  // ── Confidence overlay ────────────────────────────────────────────────────
+  // ── Confidence overlay — neutral, no colour judgement ──────────────────
   const CONFIDENCE_LEVELS = [
     {
       id: 'confused',
-      emoji: '😵',
-      label: 'Still confused',
-      sub: "It's not clicking yet — needs another pass",
-      color: '#FF5D73',
-      bg: 'rgba(255,93,115,.08)',
-      border: 'rgba(255,93,115,.3)',
+      emoji: '🤔',
+      label: "Still figuring it out",
+      sub: "That's fine — it takes more than one pass",
     },
     {
       id: 'clicking',
-      emoji: '🧠',
-      label: 'Starting to click',
-      sub: 'Getting there — could use more practice',
-      color: '#FFC857',
-      bg: 'rgba(255,200,87,.08)',
-      border: 'rgba(255,200,87,.3)',
+      emoji: '💭',
+      label: "Starting to get it",
+      sub: "Some bits are landing, some aren't yet",
     },
     {
       id: 'confident',
-      emoji: '⚡',
-      label: 'Could explain it',
-      sub: 'Solid — ready to move on',
-      color: '#4DFF88',
-      bg: 'rgba(77,255,136,.08)',
-      border: 'rgba(77,255,136,.3)',
+      emoji: '💡',
+      label: "Got it — could explain it",
+      sub: "Feels solid for now",
     },
   ]
 
@@ -1850,60 +1889,50 @@ export default function ModulePlayer({ module, onBack }) {
             </p>
           </div>
 
-          {/* Confidence buttons */}
+          {/* Confidence buttons — neutral, no colour hierarchy */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {CONFIDENCE_LEVELS.map(level => {
               const picked = chosenConfidence === level.id
+              const dimmed = chosenConfidence !== null && !picked
               return (
                 <button
                   key={level.id}
                   onClick={() => handleConfidencePick(level.id)}
                   disabled={chosenConfidence !== null}
                   style={{
-                    background: picked ? level.bg : 'rgba(255,255,255,.02)',
-                    border: '1.5px solid ' + (picked ? level.color : '#2A3552'),
+                    background: picked
+                      ? 'rgba(255,255,255,.07)'
+                      : 'rgba(255,255,255,.02)',
+                    border: '1.5px solid ' + (picked ? 'rgba(255,255,255,.25)' : '#2A3552'),
                     borderRadius: 16, padding: '18px 20px',
                     cursor: chosenConfidence ? 'default' : 'pointer',
                     textAlign: 'left',
                     display: 'flex', alignItems: 'center', gap: 14,
                     transition: 'all .2s',
-                    boxShadow: picked ? ('0 0 20px ' + level.color + '22') : 'none',
+                    opacity: dimmed ? 0.35 : 1,
                     transform: picked ? 'scale(1.02)' : 'scale(1)',
                     width: '100%',
                   }}
                 >
                   <div style={{
                     width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                    background: picked ? level.bg : '#10182B',
-                    border: '1px solid ' + (picked ? level.color : '#2A3552'),
+                    background: '#10182B',
+                    border: '1px solid #2A3552',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '1.3rem',
-                    transition: 'all .2s',
                   }}>{level.emoji}</div>
                   <div style={{ flex: 1, textAlign: 'left' }}>
                     <div style={{
                       fontFamily: "'Space Grotesk', sans-serif",
                       fontWeight: 700, fontSize: '1rem',
-                      color: picked ? level.color : '#E0E6F0',
-                      marginBottom: 3, transition: 'color .2s',
+                      color: '#E0E6F0',
+                      marginBottom: 3,
                     }}>{level.label}</div>
                     <div style={{
                       fontFamily: "'Inter', sans-serif",
-                      fontSize: '.78rem',
-                      color: picked ? level.color : '#4A5578',
-                      opacity: picked ? .85 : 1,
-                      transition: 'color .2s',
+                      fontSize: '.78rem', color: '#4A5578',
                     }}>{level.sub}</div>
                   </div>
-                  {picked && (
-                    <div style={{
-                      width: 22, height: 22, borderRadius: '50%',
-                      background: level.color,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '.75rem', color: '#000', fontWeight: 900,
-                      flexShrink: 0,
-                    }}>✓</div>
-                  )}
                 </button>
               )
             })}
