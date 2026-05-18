@@ -1,5 +1,5 @@
-// ─── AQA GCSE Maths Foundation — Questions organised by topic ─────────────────
-// All questions drawn verbatim from AQA past papers (JUN22, JUN23, NOV21–23)
+// ─── AQA GCSE Maths Foundation -- Questions organised by topic ─────────────────
+// All questions drawn verbatim from AQA past papers (JUN22, JUN23, NOV21-23)
 // Diagrams rendered as inline SVG. API grading via /api/grade.
 
 // ─── Formula sheet ────────────────────────────────────────────────────────────
@@ -145,7 +145,7 @@ export const DIAGRAMS = {
     <text x="104" y="96" fill="#F5F7FB" font-size="14" font-family="Inter,sans-serif" font-weight="bold">25</text>
     <text x="152" y="96" fill="#F5F7FB" font-size="14" font-family="Inter,sans-serif" font-weight="bold">16</text>
     <text x="192" y="145" fill="#9CA8C7" font-size="13" font-family="Inter,sans-serif" font-weight="bold">48</text>
-    <text x="10" y="158" fill="#5A6480" font-size="9" font-family="Inter,sans-serif">A=Art  F=French  (Joel's diagram — find 2 errors)</text>
+    <text x="10" y="158" fill="#5A6480" font-size="9" font-family="Inter,sans-serif">A=Art  F=French  (Joel's diagram -- find 2 errors)</text>
   </svg>`,
 
   translation_grid: `<svg viewBox="0 0 230 210" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;display:block;margin:10px auto">
@@ -241,7 +241,7 @@ export const MATHS_TOPIC_GROUPS = [
       {
         id: 'neg3', qNum: '3(c)', source: 'JUN23 P1', marks: 1,
         q: 'Work out:  (−8)²',
-        ms: '64 (or +64)\n[B1 — note: squaring a negative gives a positive]',
+        ms: '64 (or +64)\n[B1 -- note: squaring a negative gives a positive]',
       },
       {
         id: 'neg4', qNum: '3(d)', source: 'JUN23 P1', marks: 1,
@@ -286,22 +286,22 @@ export const MATHS_TOPIC_GROUPS = [
       {
         id: 'fr2', qNum: '6(a)', source: 'JUN23 P1', marks: 1,
         q: 'Write 3²⁄₅ as an improper fraction.',
-        ms: '17/5\n[B1 — accept any correct improper fraction, ignore attempts to simplify]',
+        ms: '17/5\n[B1 -- accept any correct improper fraction, ignore attempts to simplify]',
       },
       {
         id: 'fr3', qNum: '6(b)', source: 'JUN23 P1', marks: 1,
         q: 'Write 0.19 as a fraction.',
-        ms: '19/100\n[B1 — accept any equivalent fraction, ignore incorrect simplification after correct answer]',
+        ms: '19/100\n[B1 -- accept any equivalent fraction, ignore incorrect simplification after correct answer]',
       },
       {
         id: 'fr4', qNum: '12', source: 'JUN22 P1', marks: 2,
         q: 'Work out:  11/18 − 1/3',
-        ms: '5/18\n[M1: correct common denominator (18ths) → 11/18 − 6/18\nA1: 5/18]',
+        ms: '5/18\n[M1: correct common denominator (18ths) -> 11/18 − 6/18\nA1: 5/18]',
       },
       {
         id: 'fr5', qNum: '25', source: 'JUN23 P1', marks: 4,
         q: 'Work out:  2⅓ ÷ 4/5\n\nGive your answer as a mixed number.',
-        ms: '2 11/12\n[M1: convert 2⅓ to improper fraction → 7/3\nM1: multiply by reciprocal → 7/3 × 5/4\nA1: 35/12\nA1ft: 2 11/12 as mixed number]',
+        ms: '2 11/12\n[M1: convert 2⅓ to improper fraction -> 7/3\nM1: multiply by reciprocal -> 7/3 × 5/4\nA1: 35/12\nA1ft: 2 11/12 as mixed number]',
       },
       {
         id: 'fr6', qNum: '10(a)', source: 'JUN23 P2', marks: 2,
@@ -311,7 +311,7 @@ export const MATHS_TOPIC_GROUPS = [
       {
         id: 'fr7', qNum: '10(b)', source: 'JUN23 P2', marks: 1,
         q: 'There are green pens and red pens in a box.\nThe ratio of green : red = 4 : 3\n\nWhat fraction of the pens are green?',
-        ms: '4/7\n[B1 — do not accept decimal or percentage]',
+        ms: '4/7\n[B1 -- do not accept decimal or percentage]',
       },
       {
         id: 'fr8', qNum: '10(a)', source: 'JUN22 P1', marks: 2,
@@ -333,12 +333,12 @@ export const MATHS_TOPIC_GROUPS = [
     questions: [
       {
         id: 'pc1', qNum: '12', source: 'JUN23 P1', marks: 1,
-        q: 'Monthly electricity bills:\n• October: £120\n• November: £240\n\nWrite down the percentage increase from October to November.',
+        q: 'Monthly electricity bills:\n* October: £120\n* November: £240\n\nWrite down the percentage increase from October to November.',
         ms: '100%\n[B1]',
       },
       {
         id: 'pc2', qNum: '15', source: 'JUN23 P1', marks: 3, diagramKey: 'rect_with_hole',
-        q: 'A large rectangle (20 cm × 15 cm) has a rectangular hole (10 cm × 6 cm) cut out.\n[See diagram — the shaded area is the large rectangle minus the hole]\n\nWork out the percentage of the large rectangle that is shaded.',
+        q: 'A large rectangle (20 cm × 15 cm) has a rectangular hole (10 cm × 6 cm) cut out.\n[See diagram -- the shaded area is the large rectangle minus the hole]\n\nWork out the percentage of the large rectangle that is shaded.',
         ms: '70%\n[M1: large area = 20×15=300 or small area = 10×6=60\nM1dep: (300−60)÷300 or 240÷300\nA1: 70%\nSC2: 44.4% (used perimeter method)]',
       },
       {
@@ -353,12 +353,12 @@ export const MATHS_TOPIC_GROUPS = [
       },
       {
         id: 'pc5', qNum: '10(c)', source: 'JUN23 P2', marks: 2,
-        q: 'There are some calculators in a box.\n• 220 are scientific.\n• 30 are not scientific.\n\nWhat percentage of the calculators are scientific?',
+        q: 'There are some calculators in a box.\n* 220 are scientific.\n* 30 are not scientific.\n\nWhat percentage of the calculators are scientific?',
         ms: '88%\n[M1: 220÷250 (×100) or 0.88\nA1: 88]',
       },
       {
         id: 'pc6', qNum: '5(b)', source: 'JUN23 P2', marks: 4,
-        q: 'Two shops sell bottles of apple juice:\n• Shop X: pack of 4 bottles, was £2.50, now 10% off\n• Shop Z: pack of 12 bottles for £7\n\nAt which shop is it cheaper to buy 24 bottles? Show your working.',
+        q: 'Two shops sell bottles of apple juice:\n* Shop X: pack of 4 bottles, was £2.50, now 10% off\n* Shop Z: pack of 12 bottles for £7\n\nAt which shop is it cheaper to buy 24 bottles? Show your working.',
         ms: 'Shop X is cheaper (£13.50 vs £14.00)\n[M1: 2.50×0.1=0.25 or 0.9 multiplier for Shop X\nM1dep: (2.50−0.25)×6=13.50 or 2.25×6 for Shop X total for 24\nM1: 7×2=14 for Shop Z total for 24\nA1: X with 13.5(0) and 14 both seen]',
       },
     ],
@@ -393,7 +393,7 @@ export const MATHS_TOPIC_GROUPS = [
       },
       {
         id: 'r4', qNum: '17', source: 'JUN23 P2', marks: 4,
-        q: 'Jess saves 2p, 5p and 10p coins.\nShe has:\n• 45 ten-pence coins\n• 8 times as many 2p coins as 10p coins\n• £17.70 in total\n\nWork out:  total value of 2p coins : total value of 5p coins\n\nGive your answer in its simplest form.',
+        q: 'Jess saves 2p, 5p and 10p coins.\nShe has:\n* 45 ten-pence coins\n* 8 times as many 2p coins as 10p coins\n* £17.70 in total\n\nWork out:  total value of 2p coins : total value of 5p coins\n\nGive your answer in its simplest form.',
         ms: '6 : 5\n[M1: 45×8=360 (number of 2p coins)\nM1dep: 360×2=720p = £7.20 (value of 2p coins)\nM1dep: £17.70−£7.20−£4.50=£6.00 (value of 5p coins)\nA1: 6:5]',
       },
     ],
@@ -427,7 +427,7 @@ export const MATHS_TOPIC_GROUPS = [
       {
         id: 'al4', qNum: '14', source: 'JUN23 P2', marks: 1,
         q: 'Factorise:  12a + 15b',
-        ms: '3(4a + 5b)\n[B1 — condone missing final bracket]',
+        ms: '3(4a + 5b)\n[B1 -- condone missing final bracket]',
       },
       {
         id: 'al5', qNum: '24', source: 'JUN23 P1', marks: 5,
@@ -447,7 +447,7 @@ export const MATHS_TOPIC_GROUPS = [
   {
     id: 'sequences',
     label: 'Sequences',
-    icon: '…',
+    icon: '...',
     color: '#C18CFF',
     bg: 'rgba(193,140,255,.12)',
     border: 'rgba(193,140,255,.28)',
@@ -456,7 +456,7 @@ export const MATHS_TOPIC_GROUPS = [
     questions: [
       {
         id: 'seq1', qNum: '16', source: 'JUN23 P2', marks: 2,
-        q: 'A linear sequence starts:\n\n  7  10  13  16  …\n\nWork out an expression for the nth term of the sequence.',
+        q: 'A linear sequence starts:\n\n  7  10  13  16  ...\n\nWork out an expression for the nth term of the sequence.',
         ms: '3n + 4\n[B2: correct answer (accept 4 + 3n)\nB1: 3n seen (with any constant)]',
       },
       {
@@ -512,7 +512,7 @@ export const MATHS_TOPIC_GROUPS = [
       },
       {
         id: 'ang3', qNum: '10(b)', source: 'JUN22 P1', marks: 3, diagramKey: 'triangle_3y',
-        q: 'In a triangle, x = 3y.\n[See diagram — x is the top angle, y is each base angle]\n\nWork out the size of angle y.',
+        q: 'In a triangle, x = 3y.\n[See diagram -- x is the top angle, y is each base angle]\n\nWork out the size of angle y.',
         ms: 'y = 17°\n[M1: 180−112=68 or 3y+y+112=180 (angles in triangle)\nM1dep: 68÷4\nA1: 17]',
       },
       {
@@ -530,7 +530,7 @@ export const MATHS_TOPIC_GROUPS = [
           'It could be any of the above',
         ],
         correctIndex: 2,
-        ms: 'It is less than 45°\n[B1 — more sides → larger interior angles → smaller exterior angle x]',
+        ms: 'It is less than 45°\n[B1 -- more sides -> larger interior angles -> smaller exterior angle x]',
       },
     ],
   },
@@ -553,7 +553,7 @@ export const MATHS_TOPIC_GROUPS = [
       {
         id: 'av2', qNum: '21', source: 'JUN23 P2', marks: 4, diagramKey: 'hemisphere_bowl',
         q: 'A bowl is a hemisphere with radius 12 cm.\nWater is poured in at 325 cm³ per second for 8 seconds.\n\nVolume of a sphere = 4/3 πr³\n\nDoes the water fill more than 70% of the bowl?\nYou must show your working.',
-        ms: 'Yes — approximately 71.8%\nVolume of hemisphere = ½ × 4/3 × π × 12³ ≈ 3619 cm³\nVolume of water = 325 × 8 = 2600 cm³\n2600 ÷ 3619 ≈ 71.8% > 70% ✓\n[M1: 4/3 × π × 12³ or 2304π seen\nM1dep: ÷2 for hemisphere → 1152π\nM1: 325×8=2600\nA1: Yes with correct working showing >70%]',
+        ms: 'Yes -- approximately 71.8%\nVolume of hemisphere = ½ × 4/3 × π × 12³ ≈ 3619 cm³\nVolume of water = 325 × 8 = 2600 cm³\n2600 ÷ 3619 ≈ 71.8% > 70% ✓\n[M1: 4/3 × π × 12³ or 2304π seen\nM1dep: ÷2 for hemisphere -> 1152π\nM1: 325×8=2600\nA1: Yes with correct working showing >70%]',
       },
     ],
   },
@@ -571,7 +571,7 @@ export const MATHS_TOPIC_GROUPS = [
       {
         id: 'sim1', qNum: '22', source: 'JUN23 P2', marks: 2, diagramKey: 'similar_rects',
         q: 'Show that these two rectangles are similar.\n[See diagram: 8 cm × 5 cm and 19.2 cm × 12 cm]',
-        ms: '8÷5 = 1.6 and 19.2÷12 = 1.6, so the sides are in the same ratio → similar.\n[M1: correct ratio of a valid pair of corresponding sides, e.g. 8÷5 or 19.2÷12\nA1: both ratios evaluated and shown equal (1.6)]',
+        ms: '8÷5 = 1.6 and 19.2÷12 = 1.6, so the sides are in the same ratio -> similar.\n[M1: correct ratio of a valid pair of corresponding sides, e.g. 8÷5 or 19.2÷12\nA1: both ratios evaluated and shown equal (1.6)]',
       },
     ],
   },
@@ -589,12 +589,12 @@ export const MATHS_TOPIC_GROUPS = [
       {
         id: 'tr1', qNum: '14', source: 'JUN22 P1', marks: 2,
         q: 'Work out the translation vector that maps shape A to shape B on the grid.\n\nShape A is at approximately (1,2). Shape B is at approximately (4,1) after moving 7 right and 2 down.\n\nWrite your answer as a column vector.',
-        ms: '(7 on top, −2 below) — 7 right and 2 down\n[B2: correct column vector\nB1: one component correct\nSC1: (−7, 2)]',
+        ms: '(7 on top, −2 below) -- 7 right and 2 down\n[B2: correct column vector\nB1: one component correct\nSC1: (−7, 2)]',
       },
       {
         id: 'tr2', qNum: '20', source: 'JUN23 P2', marks: 2, diagramKey: 'translation_grid',
         q: 'Write down the translation vector that maps shape A onto shape B.\n[See diagram]',
-        ms: '(4 on top, −3 below) — 4 right and 3 down\n[B2: correct column vector\nB1: one component correct\nSC1: (−4, 3)]',
+        ms: '(4 on top, −3 below) -- 4 right and 3 down\n[B2: correct column vector\nB1: one component correct\nSC1: (−4, 3)]',
       },
     ],
   },
@@ -611,7 +611,7 @@ export const MATHS_TOPIC_GROUPS = [
     questions: [
       {
         id: 'st1', qNum: '8(a)', source: 'JUN22 P1', marks: 2,
-        q: 'For a set of five numbers:\n• the mode is 8\n• the median is 12\n\nWrite down ONE possible set of five numbers.',
+        q: 'For a set of five numbers:\n* the mode is 8\n* the median is 12\n\nWrite down ONE possible set of five numbers.',
         ms: 'Any valid set, e.g. 8, 8, 12, 15, 20\n[B2: both mode=8 AND median=12 conditions met\nB1: one condition met]',
       },
       {
@@ -622,7 +622,7 @@ export const MATHS_TOPIC_GROUPS = [
       {
         id: 'st3', qNum: '14', source: 'JUN23 P1', marks: 3,
         q: 'Here is data about people visiting a gym one week:\n\n              % of visitors  Mean hours  Range of hours\nMembers:           64             4              6\nGuests:            36            2.5             8\n\nMake THREE comparisons between members and guests.',
-        ms: 'Any three from:\n1. PROPORTION: There were more members than guests (64% vs 36%)\n2. AVERAGE: Members visited for longer on average (mean 4h vs 2.5h)\n3. SPREAD: Guest visiting times were more spread out (range 8h vs 6h)\n[B1 each — must reference the correct statistic and direction of comparison]',
+        ms: 'Any three from:\n1. PROPORTION: There were more members than guests (64% vs 36%)\n2. AVERAGE: Members visited for longer on average (mean 4h vs 2.5h)\n3. SPREAD: Guest visiting times were more spread out (range 8h vs 6h)\n[B1 each -- must reference the correct statistic and direction of comparison]',
       },
     ],
   },
@@ -639,18 +639,18 @@ export const MATHS_TOPIC_GROUPS = [
     questions: [
       {
         id: 'prob1', qNum: '15', source: 'JUN22 P1', marks: 4,
-        q: 'In a bag there are only red, blue and green discs.\nThere are 10 red discs.\n\nWhen one disc is picked at random:\n• P(red) = 1/8\n• P(blue) = 2/5\n\nHow many green discs are in the bag?',
+        q: 'In a bag there are only red, blue and green discs.\nThere are 10 red discs.\n\nWhen one disc is picked at random:\n* P(red) = 1/8\n* P(blue) = 2/5\n\nHow many green discs are in the bag?',
         ms: '38 green discs\n[M1: 10×8=80 (total discs)\nM1dep: 2/5×80=32 (blue discs)\nM1dep: 80−32−10=38\nA1: 38]',
       },
       {
         id: 'prob2', qNum: '20', source: 'JUN22 P1', marks: 2, diagramKey: 'venn_af',
-        q: 'In a group of 98 students:\n• 25 study both Art and French\n• 10 study Art but not French\n• 41 study French\n\n[See diagram — Joel\'s Venn diagram has errors]\n\nMake TWO criticisms of Joel\'s diagram.',
-        ms: 'Criticism 1: The circles are not labelled (A for Art, F for French missing)\nCriticism 2: The numbers do not add up to 98 — the value 48 outside both circles should be 47 (since 10+25+16=51, meaning 98−51=47 are in neither)\n[B1 each]',
+        q: 'In a group of 98 students:\n* 25 study both Art and French\n* 10 study Art but not French\n* 41 study French\n\n[See diagram -- Joel\'s Venn diagram has errors]\n\nMake TWO criticisms of Joel\'s diagram.',
+        ms: 'Criticism 1: The circles are not labelled (A for Art, F for French missing)\nCriticism 2: The numbers do not add up to 98 -- the value 48 outside both circles should be 47 (since 10+25+16=51, meaning 98−51=47 are in neither)\n[B1 each]',
       },
       {
         id: 'prob3', qNum: '18(b)', source: 'JUN23 P2', marks: 1,
-        q: 'A game uses a dice (1–6) and a spinner with expressions 2x, 3x, and x².\nThe score is the dice number substituted into the spinner expression.\n\nThe possible scores are:\n  2x:  2, 4, 6, 8, 10, 12\n  3x:  3, 6, 9, 12, 15, 18\n  x²:  1, 4, 9, 16, 25, 36\n\nA player wins if their score is 10 or more.\n\nWork out the probability that they win.',
-        ms: '8/18 = 4/9\nScores ≥10: from 2x: 10,12 (2); from 3x: 12,15,18 (3); from x²: 16,25,36 (3) = 8 winning scores out of 18 total\n[B1 — accept 8/18, 4/9, 0.44(4...) or 44.4%]',
+        q: 'A game uses a dice (1-6) and a spinner with expressions 2x, 3x, and x².\nThe score is the dice number substituted into the spinner expression.\n\nThe possible scores are:\n  2x:  2, 4, 6, 8, 10, 12\n  3x:  3, 6, 9, 12, 15, 18\n  x²:  1, 4, 9, 16, 25, 36\n\nA player wins if their score is 10 or more.\n\nWork out the probability that they win.',
+        ms: '8/18 = 4/9\nScores ≥10: from 2x: 10,12 (2); from 3x: 12,15,18 (3); from x²: 16,25,36 (3) = 8 winning scores out of 18 total\n[B1 -- accept 8/18, 4/9, 0.44(4...) or 44.4%]',
       },
     ],
   },
@@ -672,7 +672,7 @@ export const MATHS_TOPIC_GROUPS = [
       },
       {
         id: 'spd2', qNum: '9(b)', source: 'JUN23 P2', marks: 3,
-        q: 'A TV series has ten episodes:\n• Nine episodes are each 50 minutes long\n• One episode is 1 hour 42 minutes long\n\nWork out the total length of the series.\nGive your answer in hours and minutes.',
+        q: 'A TV series has ten episodes:\n* Nine episodes are each 50 minutes long\n* One episode is 1 hour 42 minutes long\n\nWork out the total length of the series.\nGive your answer in hours and minutes.',
         ms: '9 hours 12 minutes\n[M1: 9×50=450 min (or 7h 30min)\nM1dep: 450+102=552 min (add the long episode)\nA1: 9h 12min\nSC2: 9h 32min (added 7h 50min + 1h 42min)]',
       },
     ],
@@ -690,22 +690,22 @@ export const MATHS_TOPIC_GROUPS = [
     questions: [
       {
         id: 'mw1', qNum: '5', source: 'JUN23 P1', marks: 4,
-        q: 'At a shop:\n• Normal price of one pen = 24p\n• Normal price of one calculator = £7\n\nSpecial offers:\n• Pens: half the normal price\n• Calculators: £1.50 less than normal price\n\nWork out the total price of 5 pens and 1 calculator using the special offers.',
+        q: 'At a shop:\n* Normal price of one pen = 24p\n* Normal price of one calculator = £7\n\nSpecial offers:\n* Pens: half the normal price\n* Calculators: £1.50 less than normal price\n\nWork out the total price of 5 pens and 1 calculator using the special offers.',
         ms: '£6.10\n[M1: 24÷2=12p or 7−1.50=£5.50\nM1dep: 5×12p=60p=£0.60 (total pens)\nM1dep: 0.60+5.50 full method for total\nA1: 6.10\nSC3: £65.50 (worked in mixed units)]',
       },
       {
         id: 'mw2', qNum: '7', source: 'JUN22 P1', marks: 4,
-        q: 'Cost per 100 grams:\n• Cereal: 49p\n• Pasta: 14p\n\nLeah buys 400 g of cereal and 250 g of pasta.\n\nWork out the total cost in £.',
+        q: 'Cost per 100 grams:\n* Cereal: 49p\n* Pasta: 14p\n\nLeah buys 400 g of cereal and 250 g of pasta.\n\nWork out the total cost in £.',
         ms: '£2.31\n[M1: 0.49×4=1.96 or 49×4=196\nA1: £1.96 or 196p\nM1: 0.14×2.5=0.35 or 14×2.5=35\nA1: £2.31]',
       },
       {
         id: 'mw3', qNum: '5(a)', source: 'JUN23 P2', marks: 2,
         q: 'A shop sells bottles of orange juice. Each bottle costs 75p.\n\nWork out the greatest number of bottles that can be bought with £5.',
-        ms: '6 bottles\n[M1: 5÷0.75 or 500÷75 or 6.6… or building up 75×6=450\nA1: 6]',
+        ms: '6 bottles\n[M1: 5÷0.75 or 500÷75 or 6.6... or building up 75×6=450\nA1: 6]',
       },
       {
         id: 'mw4', qNum: '9(a)', source: 'JUN23 P2', marks: 2,
-        q: 'The cost of a TV streaming service is:\n• £6 per month for the first 4 months\n• £11 per month for the remaining 8 months\n\nWork out the total cost for the year.',
+        q: 'The cost of a TV streaming service is:\n* £6 per month for the first 4 months\n* £11 per month for the remaining 8 months\n\nWork out the total cost for the year.',
         ms: '£112\n[M1: 6×4=24 or 11×8=88\nA1: 112]',
       },
       {
@@ -715,7 +715,7 @@ export const MATHS_TOPIC_GROUPS = [
       },
       {
         id: 'mw6', qNum: '11(b)', source: 'JUN22 P1', marks: 3,
-        q: 'Mobile phone insurance — Damage cover with Company B costs £7.25/month.\n\nHow much in total will Ben pay for one full year?',
+        q: 'Mobile phone insurance -- Damage cover with Company B costs £7.25/month.\n\nHow much in total will Ben pay for one full year?',
         ms: '£87.00\n[M1: 7.25×12 (correct method)\nM1dep: correct multiplication attempt\nA1: 87]',
       },
     ],
@@ -733,13 +733,13 @@ export const MATHS_TOPIC_GROUPS = [
     questions: [
       {
         id: 'bid1', qNum: '10', source: 'JUN23 P1', marks: 3,
-        q: 'Here are two calculations:\n• A:  8 × 3 + 2\n• B:  21 − (15 − 4)\n\nWork out:  answer to A  ×  answer to B',
+        q: 'Here are two calculations:\n* A:  8 × 3 + 2\n* B:  21 − (15 − 4)\n\nWork out:  answer to A  ×  answer to B',
         ms: '260\n[B1: A=26 (8×3+2, applying BIDMAS: multiply first)\nB1: B=10 (21−11, brackets first)\nB1ft: 260 (their A × their B)]',
       },
       {
         id: 'bid2', qNum: '11(c)', source: 'JUN23 P2', marks: 1,
         q: 'Marek wants to buy a headset costing £35. He has £19 and plans to save the rest in two equal weekly amounts.\n\nHe writes:  35 − 19 ÷ 2\n\nWhat is wrong with his method?',
-        ms: 'He needs brackets around (35 − 19). Without brackets, BIDMAS means 19÷2 is done first, giving 35−9.5=25.5 instead of the correct (35−19)÷2=8.\n[B1 — must reference order of operations or brackets; "it gives the wrong answer" alone is B0]',
+        ms: 'He needs brackets around (35 − 19). Without brackets, BIDMAS means 19÷2 is done first, giving 35−9.5=25.5 instead of the correct (35−19)÷2=8.\n[B1 -- must reference order of operations or brackets; "it gives the wrong answer" alone is B0]',
       },
       {
         id: 'bid3', qNum: '6(b)', source: 'JUN22 P1', marks: 2,
