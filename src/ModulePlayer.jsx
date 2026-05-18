@@ -1535,9 +1535,6 @@ function HookContent({ module, hook, hookState, subjectColor }) {
   )
 }
 
-// ─── IntroScreen ──────────────────────────────────────────────────────────────  )
-}
-
 // ─── IntroScreen ──────────────────────────────────────────────────────────────
 // Universal second screen: retrieval starter + "this module you'll learn" list
 // Reads from module.intro: { retrieval: { question, options[], correctIndex, explanation }, learningGoals[] }
