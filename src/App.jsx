@@ -268,7 +268,7 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
   const QUICK_SUBJECTS = [
     { label: 'Random', icon: '🎲', color: '#9D5CFF', bg: 'rgba(157,92,255,.14)', id: nextId },
     { label: 'History', icon: '🏰', color: '#F5B700', bg: 'rgba(245,183,0,.12)',  id: 'medieval' },
-    { label: 'Science', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.12)', id: 'tb_cells' },
+    { label: 'Biology', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.12)', id: 'tb_cells' },
     { label: 'Mixed',   icon: '⚡', color: '#3B82FF', bg: 'rgba(59,130,255,.12)', id: nextId },
   ]
 
@@ -561,7 +561,7 @@ function ModulesTab({ onOpenModule }) {
   const SUBJECT_COLOURS = {
     'History':  { color: '#F5B700', bg: 'rgba(245,183,0,.12)',  border: 'rgba(245,183,0,.25)'  },
     'Biology':  { color: '#38D27A', bg: 'rgba(56,210,122,.12)', border: 'rgba(56,210,122,.25)' },
-    'Science':  { color: '#38D27A', bg: 'rgba(56,210,122,.12)', border: 'rgba(56,210,122,.25)' },
+    'Biology':  { color: '#38D27A', bg: 'rgba(56,210,122,.12)', border: 'rgba(56,210,122,.25)' },
     'Maths':    { color: '#3B82FF', bg: 'rgba(59,130,255,.12)', border: 'rgba(59,130,255,.25)' },
     'English':  { color: '#9D5CFF', bg: 'rgba(157,92,255,.12)', border: 'rgba(157,92,255,.25)' },
     'Sociology':{ color: '#FF5C7A', bg: 'rgba(255,92,122,.12)', border: 'rgba(255,92,122,.25)' },
@@ -1335,8 +1335,8 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
               </div>
             </div>
             {isMathsQ && (<div style={{ display:'flex', gap:6, flexShrink:0 }}>{isCalc
-                ? <div style={{ background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 9px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}>🖩 Calc</div>
-                : <div style={{ background:'rgba(255,200,87,.08)', border:'1px solid rgba(255,200,87,.2)', borderRadius:8, padding:'4px 9px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}>✗ No Calc</div>
+                      ? <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}>🖩 Calculator OK</div>
+                      : <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.18)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}>✏️ No Calculator</div>
               }
               <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#70B8FF', cursor:'pointer' }}>📐 Formulae</button>
             </div>)}
@@ -1487,10 +1487,11 @@ function MathsTopicView({ group, onBack }) {
   // Go straight into the question — no intermediate list screen
   return (
     <MathsQuestion
+      key={qIdx}
       q={qs[qIdx]} qIdx={qIdx} total={qs.length}
       topicLabel={group.label} topicColor={group.color} isCalc={group.calculator}
       onBack={onBack}
-      onNext={() => { if (qIdx < qs.length-1) setQIdx(qIdx+1); else onBack() }}
+      onNext={() => { const n=qIdx+1; if(n<qs.length){setQIdx(n);window.scrollTo({top:0,behavior:'smooth'})}else onBack() }}
     />
   )
 }
@@ -1528,8 +1529,8 @@ function MathsBrowser({ onBack }) {
         <div style={{ display:'flex', gap:8, marginBottom:20 }}>
           {[
             { id:'all',      label:`All (${totalQs})` },
-            { id:'noncalc',  label:'✗ No Calculator' },
-            { id:'calc',     label:'🖩 Calculator' },
+            { id:'noncalc',  label:'✏️ No Calculator' },
+            { id:'calc',     label:'🖩 Calculator allowed' },
           ].map(f => (
             <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(59,130,255,.15)':'#10182B', border:`1px solid ${filter===f.id?'#3B82FF':'#1E2A40'}`, borderRadius:10, padding:'9px 6px', fontFamily:"'Inter',sans-serif", fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#70B8FF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
           ))}
@@ -1576,11 +1577,12 @@ function EnglishTopicView({ group, onBack }) {
   // Go straight into the question — no list, no picker
   return (
     <MathsQuestion
+      key={qIdx}
       q={qs[qIdx]}
       qIdx={qIdx} total={qs.length}
       topicLabel={group.label} topicColor={group.color} isCalc={false}
       onBack={onBack}
-      onNext={() => { if (qIdx < qs.length-1) setQIdx(qIdx+1); else onBack() }}
+      onNext={() => { const n=qIdx+1; if(n<qs.length){setQIdx(n);window.scrollTo({top:0,behavior:'smooth'})}else onBack() }}
     />
   )
 }
@@ -1656,11 +1658,12 @@ function SociologyTopicView({ group, onBack }) {
   const qs = group.questions
   return (
     <MathsQuestion
+      key={qIdx}
       q={qs[qIdx]}
       qIdx={qIdx} total={qs.length}
       topicLabel={group.label} topicColor={group.color} isCalc={false}
       onBack={onBack}
-      onNext={() => { if (qIdx < qs.length - 1) setQIdx(qIdx + 1); else onBack() }}
+      onNext={() => { const n=qIdx+1; if(n<qs.length){setQIdx(n);window.scrollTo({top:0,behavior:'smooth'})}else onBack() }}
     />
   )
 }
@@ -1762,8 +1765,8 @@ function ChemImage({ imageKey, caption }) {
 }
 
 // ─── Chemistry topic view ─────────────────────────────────────────────────────
-function ChemistryTopicView({ group, onBack }) {
-  const [qIdx, setQIdx] = useState(0)
+function ChemistryTopicView({ group, onBack, qIdx: initialQIdx = 0, onQChange }) {
+  const [qIdx, setQIdx] = useState(initialQIdx)
   const qs = group.questions
 
   // Wrap MathsQuestion but inject image rendering
@@ -1777,7 +1780,7 @@ function ChemistryTopicView({ group, onBack }) {
   const [error, setError]     = useState(null)
 
   function reset() { setAnswer(''); setTip(false); setFB(null); setError(null); setGrading(false) }
-  function next()  { if (qIdx < qs.length-1) { setQIdx(qIdx+1); reset() } else { reset(); onBack() } }
+  function next()  { const n=qIdx+1; if(n<qs.length){ setQIdx(n); if(onQChange) onQChange(n); reset(); window.scrollTo({top:0,behavior:'smooth'}) } else { reset(); onBack() } }
 
   async function grade() {
     if (q.type === 'mc' && !answer) { setError('Select an option first.'); return }
@@ -1817,8 +1820,8 @@ function ChemistryTopicView({ group, onBack }) {
             </div>
             <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
               {group.calculator
-                ? <div style={{ background: 'rgba(56,210,122,.1)', border: '1px solid rgba(56,210,122,.25)', borderRadius: 8, padding: '4px 9px', fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, color: '#38D27A' }}>🖩 Calc</div>
-                : <div style={{ background: 'rgba(255,200,87,.08)', border: '1px solid rgba(255,200,87,.2)', borderRadius: 8, padding: '4px 9px', fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, color: '#FFC857' }}>✗ No Calc</div>
+                ? <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}><span style={{fontSize:'.8rem'}}>🖩</span>Calculator OK</div>
+                : <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.18)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}><span style={{fontSize:'.8rem'}}>✏️</span>No Calculator</div>
               }
             </div>
           </div>
@@ -1907,8 +1910,9 @@ function ChemistryTopicView({ group, onBack }) {
 function ChemistryBrowser({ onBack }) {
   const [activeGroup, setGroup] = useState(null)
   const [filter, setFilter]     = useState('all')
+  const [chemQIdx, setChemQIdx] = useState(0)
 
-  if (activeGroup) return <ChemistryTopicView group={activeGroup} onBack={() => setGroup(null)} />
+  if (activeGroup) return <ChemistryTopicView key={chemQIdx} group={activeGroup} qIdx={chemQIdx} onQChange={setChemQIdx} onBack={() => { setGroup(null); setChemQIdx(0) }} />
 
   const totalQs = CHEMISTRY_TOPIC_GROUPS.reduce((s, g) => s + g.questions.length, 0)
   const filters = [
@@ -1951,7 +1955,7 @@ function ChemistryBrowser({ onBack }) {
                 <div style={{ display: 'flex', gap: 8, marginTop: 7, alignItems: 'center' }}>
                   <div style={{ flex: 1, height: 3, background: '#1E2A40', borderRadius: 99 }} />
                   <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.68rem', fontWeight: 600, color: group.color, flexShrink: 0 }}>{group.questions.length} Q{group.questions.length !== 1 ? 's' : ''}</span>
-                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.65rem', color: group.calculator ? '#38D27A' : '#FFC857', flexShrink: 0 }}>{group.calculator ? '🖩' : '✗'}</span>
+                  <span style={{ background: group.calculator ? 'rgba(56,210,122,.12)' : 'rgba(255,200,87,.08)', border: group.calculator ? '1px solid rgba(56,210,122,.25)' : '1px solid rgba(255,200,87,.2)', borderRadius:6, padding:'2px 8px', fontFamily:"'Inter',sans-serif", fontSize:'.6rem', fontWeight:700, color: group.calculator ? '#38D27A' : '#FFC857', flexShrink:0 }}>{group.calculator ? '🖩 Calc OK' : '✏️ No Calc'}</span>
                 </div>
               </div>
               <span style={{ color: '#2A3552', fontSize: '1.1rem', flexShrink: 0 }}>›</span>
@@ -2101,7 +2105,7 @@ function TestTab() {
     { id: 'maths',   label: 'Maths',   icon: '✕²', color: '#3B82FF', bg: 'rgba(59,130,255,.1)',  action: () => setMathsOpen(true) },
     { id: 'history', label: 'History', icon: '🏰', color: '#F5B700', bg: 'rgba(245,183,0,.1)',   action: () => setSelected({ topicId: 'medieval', label: 'Medieval Medicine', subject: 'History' }) },
     { id: 'english', label: 'English', icon: '📖', color: '#9D5CFF', bg: 'rgba(157,92,255,.1)', action: () => setEnglishOpen(true) },
-    { id: 'science', label: 'Science', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => setSelected({ topicId: 'tb_cells', label: 'Cells & Microscopy', subject: 'Biology' }) },
+    { id: 'biology', label: 'Biology', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => setSelected({ topicId: 'tb_cells', label: 'Cells & Microscopy', subject: 'Biology' }) },
     { id: 'sociology', label: 'Sociology', icon: '👥', color: '#FF5C7A', bg: 'rgba(255,92,122,.1)', action: () => setSociologyOpen(true) },
     { id: 'chemistry', label: 'Chemistry', icon: '⚗️', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => setChemistryOpen(true) },
     { id: 'drama',  label: 'Drama',   icon: '🎭', color: '#FF4FC3', bg: 'rgba(255,79,195,.1)', action: () => {} },
@@ -2109,7 +2113,7 @@ function TestTab() {
 
   // Mock "most improved" — in future this could be computed from real attempt history
   const IMPROVED = [
-    { icon: '🧬', label: 'Science', pct: 12, color: '#38D27A' },
+    { icon: '🧬', label: 'Biology', pct: 12, color: '#38D27A' },
     { icon: '🏰', label: 'History', pct: 9,  color: '#F5B700' },
     { icon: '✕²', label: 'Maths',   pct: 7,  color: '#3B82FF' },
   ]
