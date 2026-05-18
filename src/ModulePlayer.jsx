@@ -1198,10 +1198,625 @@ function Screen({ screen }) {
   )
 }
 
+
+// ─── HookScreen ───────────────────────────────────────────────────────────────
+// Full-screen immersive opener: true/false → crack → animation → reveal
+// Reads from module.hook: { statement, isTrue, storyLines[], revealItems[], animation }
+
+function HookScreen({ module, onDone }) {
+  const hook = module.hook
+  const subjectColor = module.color || '#38D27A'
+
+  // phases: 'question' | 'wrong' | 'correct' | 'grow' | 'reveal'
+  const [phase, setPhase] = useState('question')
+  const [chosenTrue, setChosenTrue] = useState(null)   // true = tapped TRUE, false = tapped FALSE
+  const [growStep, setGrowStep]   = useState(0)         // 0-3 animation steps
+  const [revealIdx, setRevealIdx] = useState(-1)        // which reveal items shown
+
+  const wasCorrect = chosenTrue === hook.isTrue
+
+  function choose(tappedTrue) {
+    setChosenTrue(tappedTrue)
+    setPhase(tappedTrue === hook.isTrue ? 'correct' : 'wrong')
+    setTimeout(() => startGrow(), tappedTrue === hook.isTrue ? 900 : 1100)
+  }
+
+  function startGrow() {
+    setPhase('grow')
+    // Step through animation frames
+    let step = 0
+    const iv = setInterval(() => {
+      step++
+      setGrowStep(step)
+      if (step >= 3) { clearInterval(iv); setTimeout(() => setPhase('reveal'), 600) }
+    }, 700)
+  }
+
+  function showRevealItem() {
+    setRevealIdx(i => {
+      const next = i + 1
+      return next
+    })
+  }
+
+  const allRevealed = revealIdx >= (hook.revealItems?.length || 0) - 1
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: '#080C1A',
+      display: 'flex', flexDirection: 'column',
+      position: 'relative', overflow: 'hidden',
+    }}>
+
+      {/* ── Phase: QUESTION ── */}
+      {phase === 'question' && (
+        <div style={{
+          flex: 1, display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          padding: '32px 24px',
+          animation: 'fadeIn .4s ease',
+        }}>
+          {/* Subject chip */}
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            background: subjectColor + '18',
+            border: '1px solid ' + subjectColor + '44',
+            borderRadius: 99, padding: '5px 14px', marginBottom: 28,
+          }}>
+            <span style={{ fontSize: '.85rem' }}>{module.icon}</span>
+            <span style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.65rem', fontWeight: 700, letterSpacing: '.14em',
+              textTransform: 'uppercase', color: subjectColor,
+            }}>True or False?</span>
+          </div>
+
+          {/* Story context */}
+          {hook.storyLines?.map((line, i) => (
+            <p key={i} style={{
+              fontFamily: i === 0 ? "'Inter', sans-serif" : "'Inter', sans-serif",
+              fontSize: i === 0 ? '.85rem' : '.85rem',
+              color: i === 0 ? '#5A6480' : '#5A6480',
+              textAlign: 'center', maxWidth: 340,
+              margin: '0 0 6px', lineHeight: 1.6,
+              fontStyle: i === 0 ? 'normal' : 'normal',
+            }}>{line}</p>
+          ))}
+
+          {/* The statement */}
+          <div style={{
+            background: 'linear-gradient(145deg, #10182B, #0D1424)',
+            border: '1px solid #2A3552',
+            borderRadius: 20, padding: '24px 28px',
+            margin: '24px 0 32px', textAlign: 'center',
+            maxWidth: 380, width: '100%',
+            boxShadow: '0 8px 40px rgba(0,0,0,.4)',
+          }}>
+            <p style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 'clamp(1.1rem, 4vw, 1.4rem)',
+              fontWeight: 700, color: '#F5F7FB',
+              margin: 0, lineHeight: 1.35,
+              letterSpacing: '-.01em',
+            }}>{hook.statement}</p>
+          </div>
+
+          {/* Big TRUE / FALSE buttons */}
+          <div style={{
+            display: 'grid', gridTemplateColumns: '1fr 1fr',
+            gap: 12, width: '100%', maxWidth: 380,
+          }}>
+            <button onClick={() => choose(true)} style={{
+              background: 'linear-gradient(145deg, #0D2B1A, #0A2015)',
+              border: '2px solid rgba(77,255,136,.35)',
+              borderRadius: 18, padding: '22px 10px',
+              cursor: 'pointer',
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', gap: 8,
+              transition: 'all .15s',
+              boxShadow: '0 4px 24px rgba(77,255,136,.1)',
+            }}>
+              <span style={{ fontSize: '2rem' }}>✅</span>
+              <span style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 900, fontSize: '1.3rem',
+                color: '#4DFF88', letterSpacing: '.04em',
+              }}>TRUE</span>
+            </button>
+            <button onClick={() => choose(false)} style={{
+              background: 'linear-gradient(145deg, #2B0D0D, #200A0A)',
+              border: '2px solid rgba(255,93,115,.35)',
+              borderRadius: 18, padding: '22px 10px',
+              cursor: 'pointer',
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', gap: 8,
+              transition: 'all .15s',
+              boxShadow: '0 4px 24px rgba(255,93,115,.1)',
+            }}>
+              <span style={{ fontSize: '2rem' }}>❌</span>
+              <span style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 900, fontSize: '1.3rem',
+                color: '#FF5D73', letterSpacing: '.04em',
+              }}>FALSE</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Phase: WRONG ── */}
+      {phase === 'wrong' && (
+        <div style={{
+          flex: 1, display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          padding: '32px 24px',
+          background: 'linear-gradient(180deg, #1A0509 0%, #080C1A 60%)',
+          animation: 'crackFlash .15s ease',
+        }}>
+          {/* Crack overlay */}
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: 'radial-gradient(ellipse at 50% 40%, rgba(255,30,60,.18) 0%, transparent 70%)',
+          }} />
+          <div style={{ fontSize: '3rem', marginBottom: 16, animation: 'shake .4s ease' }}>💥</div>
+          <div style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 900, fontSize: '2rem',
+            color: '#FF5D73', marginBottom: 12,
+            textShadow: '0 0 40px rgba(255,93,115,.6)',
+          }}>WRONG</div>
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.95rem', color: '#FF8DA1',
+            textAlign: 'center', maxWidth: 300, margin: 0, lineHeight: 1.6,
+          }}>
+            {hook.wrongFeedback || "Not quite — but that's what makes it interesting."}
+          </p>
+        </div>
+      )}
+
+      {/* ── Phase: CORRECT ── */}
+      {phase === 'correct' && (
+        <div style={{
+          flex: 1, display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          padding: '32px 24px',
+          background: 'linear-gradient(180deg, #011A0A 0%, #080C1A 60%)',
+          animation: 'fadeIn .3s ease',
+        }}>
+          <div style={{ fontSize: '3rem', marginBottom: 16 }}>🎯</div>
+          <div style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 900, fontSize: '2rem',
+            color: '#4DFF88', marginBottom: 12,
+            textShadow: '0 0 40px rgba(77,255,136,.5)',
+          }}>CORRECT</div>
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.95rem', color: '#6BFFB0',
+            textAlign: 'center', maxWidth: 300, margin: 0, lineHeight: 1.6,
+          }}>
+            {hook.correctFeedback || "You got it. Now find out why..."}
+          </p>
+        </div>
+      )}
+
+      {/* ── Phase: GROW (animation) ── */}
+      {phase === 'grow' && (
+        <div style={{
+          flex: 1, display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          padding: '24px 24px 32px',
+          animation: 'fadeIn .4s ease',
+        }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.65rem', fontWeight: 700, letterSpacing: '.14em',
+            textTransform: 'uppercase', color: '#5A6480', marginBottom: 24,
+          }}>1648 — Somewhere in Belgium</div>
+
+          {/* Animation canvas */}
+          <div style={{
+            width: '100%', maxWidth: 320,
+            background: 'linear-gradient(180deg, #0A1F12 0%, #061008 100%)',
+            border: '1px solid rgba(56,210,122,.15)',
+            borderRadius: 20, padding: '24px 20px 0',
+            position: 'relative', overflow: 'hidden',
+            boxShadow: '0 8px 40px rgba(0,0,0,.5), 0 0 60px rgba(56,210,122,.04)',
+          }}>
+            {/* Sky gradient */}
+            <div style={{
+              position: 'absolute', top: 0, left: 0, right: 0, height: 60,
+              background: 'linear-gradient(180deg, rgba(56,210,122,.06) 0%, transparent 100%)',
+            }} />
+
+            {/* Willow SVG — grows with steps */}
+            <svg viewBox="0 0 200 160" style={{ width: '100%', display: 'block' }}>
+              {/* Soil */}
+              <rect x="0" y="130" width="200" height="30" fill="#1A0E05" />
+              {/* Soil level marker — barely changes */}
+              <line x1="10" y1="130" x2="190" y2="130" stroke="rgba(139,90,43,.4)" strokeWidth="1" strokeDasharray="4 3" />
+
+              {/* Pot */}
+              <path d="M60 130 L55 160 L145 160 L140 130 Z" fill="#2A1A0A" stroke="rgba(139,90,43,.3)" strokeWidth="1" />
+
+              {/* Trunk — grows */}
+              {growStep >= 1 && (
+                <rect x="97" y={130 - (growStep >= 2 ? 60 : growStep >= 1 ? 30 : 0)}
+                  width="6"
+                  height={growStep >= 2 ? 60 : 30}
+                  fill="#5C3D1A" rx="2"
+                  style={{ transition: 'all .6s ease' }}
+                />
+              )}
+
+              {/* Branches — appear at step 2 */}
+              {growStep >= 2 && (
+                <>
+                  <line x1="100" y1="90" x2="70" y2="70" stroke="#5C3D1A" strokeWidth="3" strokeLinecap="round" />
+                  <line x1="100" y1="90" x2="130" y2="70" stroke="#5C3D1A" strokeWidth="3" strokeLinecap="round" />
+                  <line x1="100" y1="100" x2="75" y2="85" stroke="#5C3D1A" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="100" y1="100" x2="125" y2="85" stroke="#5C3D1A" strokeWidth="2" strokeLinecap="round" />
+                </>
+              )}
+
+              {/* Leaves — appear at step 3 */}
+              {growStep >= 3 && (
+                <>
+                  {[[70,68],[130,68],[75,83],[125,83],[85,55],[115,55],[100,48]].map(([cx,cy],i) => (
+                    <ellipse key={i} cx={cx} cy={cy} rx="10" ry="6"
+                      fill="rgba(56,210,122,.7)"
+                      transform={"rotate(" + (i*25-50) + " " + cx + " " + cy + ")"}
+                      style={{ opacity: 0, animation: "leafPop .3s ease " + (i*0.08) + "s forwards" }}
+                    />
+                  ))}
+                </>
+              )}
+
+              {/* Willow draping leaves */}
+              {growStep >= 3 && (
+                <>
+                  {[72,80,88,96,104,112,120,128].map((x, i) => (
+                    <path key={i}
+                      d={"M" + x + " " + (65 + (i%3)*4) + " Q" + (x - 4 + i%3*2) + " " + (80 + i%2*6) + " " + (x-6+i%4) + " " + (95 + i%3*5)}
+                      fill="none" stroke="rgba(107,255,176,.5)" strokeWidth="1.2" strokeLinecap="round"
+                      style={{ opacity: 0, animation: "leafPop .4s ease " + (0.4 + i*0.06) + "s forwards" }}
+                    />
+                  ))}
+                </>
+              )}
+
+              {/* Weight label on tree */}
+              {growStep >= 3 && (
+                <text x="100" y="44" textAnchor="middle"
+                  fill="#4DFF88" fontSize="9" fontWeight="bold"
+                  style={{ opacity: 0, animation: 'leafPop .4s ease .9s forwards' }}>
+                  +74 kg
+                </text>
+              )}
+
+              {/* Soil change label — barely anything */}
+              {growStep >= 2 && (
+                <text x="100" y="148" textAnchor="middle"
+                  fill="rgba(139,90,43,.7)" fontSize="7">
+                  soil: −57g
+                </text>
+              )}
+            </svg>
+
+            {/* Year counter */}
+            <div style={{
+              textAlign: 'center', padding: '12px 0 16px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '.85rem',
+              color: '#5A6480',
+            }}>
+              {growStep === 0 && 'Year 0 — tiny sapling'}
+              {growStep === 1 && 'Year 2 — getting taller...'}
+              {growStep === 2 && 'Year 4 — branches forming...'}
+              {growStep === 3 && 'Year 5 — 74 kg of tree. From WHERE?'}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Phase: REVEAL ── */}
+      {phase === 'reveal' && (
+        <div style={{
+          flex: 1, display: 'flex', flexDirection: 'column',
+          padding: '32px 24px',
+          animation: 'fadeIn .5s ease',
+          overflowY: 'auto',
+        }}>
+          {/* The big question */}
+          <div style={{ textAlign: 'center', marginBottom: 28 }}>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.78rem', color: '#5A6480',
+              margin: '0 0 12px', letterSpacing: '.06em', textTransform: 'uppercase',
+            }}>If not the soil... then where?</p>
+            <h2 style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 800,
+              fontSize: 'clamp(1.3rem, 5vw, 1.7rem)',
+              color: '#F5F7FB', margin: 0, lineHeight: 1.2,
+              letterSpacing: '-.02em',
+            }}>{hook.bigQuestion || 'So where did 74 kg come from?'}</h2>
+          </div>
+
+          {/* Reveal items — tap to show next */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
+            {hook.revealItems?.map((item, i) => {
+              const visible = i <= revealIdx
+              return (
+                <div key={i} style={{
+                  background: visible ? (item.bg || 'rgba(56,210,122,.08)') : 'rgba(255,255,255,.02)',
+                  border: '1.5px solid ' + (visible ? (item.color || 'rgba(56,210,122,.35)') : '#1E2A40'),
+                  borderRadius: 16, padding: '16px 20px',
+                  transition: 'all .35s ease',
+                  transform: visible ? 'translateY(0)' : 'translateY(10px)',
+                  opacity: visible ? 1 : 0.15,
+                  display: 'flex', alignItems: 'center', gap: 14,
+                }}>
+                  <span style={{ fontSize: '1.6rem', flexShrink: 0 }}>{item.emoji}</span>
+                  <div>
+                    <div style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 700, fontSize: '1rem',
+                      color: visible ? (item.color || '#4DFF88') : '#2A3552',
+                    }}>{item.label}</div>
+                    {visible && item.detail && (
+                      <div style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: '.8rem', color: '#9CA8C7',
+                        marginTop: 3, lineHeight: 1.5,
+                        animation: 'fadeIn .3s ease',
+                      }}>{item.detail}</div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Tap to reveal or continue */}
+          {!allRevealed ? (
+            <button onClick={showRevealItem} style={{
+              width: '100%', maxWidth: 380, margin: '0 auto',
+              background: 'rgba(56,210,122,.08)',
+              border: '1.5px solid rgba(56,210,122,.3)',
+              borderRadius: 16, padding: '16px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '.95rem', color: '#6BFFB0',
+              cursor: 'pointer', display: 'flex',
+              alignItems: 'center', justifyContent: 'center', gap: 8,
+            }}>
+              Tap to reveal → ({revealIdx + 2}/{hook.revealItems?.length})
+            </button>
+          ) : (
+            <div style={{ animation: 'fadeIn .4s ease' }}>
+              {hook.punchline && (
+                <div style={{
+                  background: 'linear-gradient(145deg, #0A1F12, #061008)',
+                  border: '1px solid rgba(56,210,122,.3)',
+                  borderRadius: 16, padding: '18px 20px',
+                  marginBottom: 16, textAlign: 'center',
+                  boxShadow: '0 0 40px rgba(56,210,122,.08)',
+                }}>
+                  <p style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 700, fontSize: '1rem',
+                    color: '#4DFF88', margin: 0, lineHeight: 1.5,
+                  }}>{hook.punchline}</p>
+                </div>
+              )}
+              <button onClick={onDone} style={{
+                width: '100%',
+                background: 'linear-gradient(135deg, #38D27Acc, #38D27A)',
+                border: 'none', borderRadius: 16, padding: '17px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 800, fontSize: '1rem', color: '#001A0A',
+                cursor: 'pointer', letterSpacing: '.02em',
+                boxShadow: '0 6px 24px rgba(56,210,122,.4)',
+              }}>
+                Let's learn this →
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── CSS keyframes injected once ── */}
+      <style>{
+        `@keyframes crackFlash { 0%{background:#3A0008} 100%{background:transparent} }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+        @keyframes leafPop { from{opacity:0;transform:scale(.5)} to{opacity:1;transform:scale(1)} }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }`
+      }</style>
+    </div>
+  )
+}
+
+// ─── IntroScreen ──────────────────────────────────────────────────────────────
+// Universal second screen: retrieval starter + "this module you'll learn" list
+// Reads from module.intro: { retrieval: { question, options[], correctIndex, explanation }, learningGoals[] }
+
+function IntroScreen({ module, onDone }) {
+  const intro = module.intro
+  const subjectColor = module.color || '#38D27A'
+  const [answered, setAnswered] = useState(null)
+  const [shakeIdx, setShakeIdx] = useState(null)
+
+  function choose(i) {
+    if (answered !== null) return
+    setAnswered(i)
+    if (i !== intro.retrieval.correctIndex) setShakeIdx(i)
+  }
+
+  const correct = answered === intro.retrieval.correctIndex
+
+  return (
+    <div style={{
+      minHeight: '100vh', background: '#080C1A',
+      padding: '28px 22px 120px',
+      animation: 'fadeIn .4s ease',
+    }}>
+      <div style={{ maxWidth: 500, margin: '0 auto' }}>
+
+        {/* Header */}
+        <div style={{ marginBottom: 28 }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            background: subjectColor + '15',
+            border: '1px solid ' + subjectColor + '30',
+            borderRadius: 99, padding: '4px 12px', marginBottom: 14,
+          }}>
+            <span style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.63rem', fontWeight: 700,
+              letterSpacing: '.12em', textTransform: 'uppercase',
+              color: subjectColor,
+            }}>⚡ Retrieval Starter</span>
+          </div>
+          <h2 style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 800, fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
+            color: '#F5F7FB', margin: '0 0 6px', letterSpacing: '-.01em',
+          }}>What do you already know?</h2>
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.85rem', color: '#5A6480', margin: 0,
+          }}>No notes. No pressure. Just activate your brain.</p>
+        </div>
+
+        {/* Retrieval question */}
+        <div style={{
+          background: 'linear-gradient(145deg, #10182B, #0D1424)',
+          border: '1px solid #1E2A40',
+          borderRadius: 16, padding: '18px', marginBottom: 12,
+          boxShadow: '0 4px 24px rgba(0,0,0,.3)',
+        }}>
+          <p style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600, fontSize: '1rem',
+            color: '#F5F7FB', margin: 0, lineHeight: 1.45,
+          }}>{intro.retrieval.question}</p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+          {intro.retrieval.options.map((opt, i) => {
+            let bg = '#10182B', border = '#1E2A40', color = '#C8D0E8'
+            if (answered !== null) {
+              if (i === intro.retrieval.correctIndex) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
+              else if (i === answered) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
+            }
+            return (
+              <button key={i} onClick={() => choose(i)}
+                disabled={answered !== null}
+                style={{
+                  background: bg, border: '1.5px solid ' + border,
+                  borderRadius: 13, padding: '14px 16px',
+                  cursor: answered !== null ? 'default' : 'pointer',
+                  textAlign: 'left', fontFamily: "'Inter', sans-serif",
+                  fontWeight: 500, fontSize: '.93rem', color,
+                  transition: 'all .2s',
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  animation: shakeIdx === i ? 'shake .35s ease' : 'none',
+                }}>
+                <span style={{ opacity: .4, flexShrink: 0, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.8rem' }}>
+                  {String.fromCharCode(65 + i)}
+                </span>
+                {opt}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Feedback */}
+        {answered !== null && (
+          <div style={{ animation: 'fadeIn .3s ease', marginBottom: 24 }}>
+            <div style={{
+              background: correct ? 'rgba(77,255,136,.07)' : 'rgba(255,93,115,.07)',
+              border: '1px solid ' + (correct ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.3)'),
+              borderRadius: 13, padding: '14px 16px', marginBottom: 20,
+            }}>
+              <p style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.88rem', color: correct ? '#4DFF88' : '#FF8DA1',
+                margin: 0, lineHeight: 1.55,
+              }}>
+                <strong>{correct ? '✓ Correct. ' : '✗ Not quite — '}</strong>
+                {intro.retrieval.explanation}
+              </p>
+            </div>
+
+            {/* Learning goals */}
+            <div style={{
+              background: 'linear-gradient(145deg, #10182B, #0D1424)',
+              border: '1px solid #1E2A40',
+              borderRadius: 18, padding: '18px 20px', marginBottom: 20,
+            }}>
+              <div style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.63rem', fontWeight: 700,
+                letterSpacing: '.12em', textTransform: 'uppercase',
+                color: subjectColor, marginBottom: 14,
+                display: 'flex', alignItems: 'center', gap: 6,
+              }}>🎯 This module — you'll be able to</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {intro.learningGoals?.map((goal, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 10,
+                    animation: 'fadeIn .3s ease ' + (i * 0.1) + 's both',
+                  }}>
+                    <div style={{
+                      width: 22, height: 22, borderRadius: 6, flexShrink: 0,
+                      background: subjectColor + '20',
+                      border: '1px solid ' + subjectColor + '40',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '.7rem', color: subjectColor, fontWeight: 700,
+                      marginTop: 1,
+                    }}>{i + 1}</div>
+                    <p style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '.88rem', color: '#C8D0E8',
+                      margin: 0, lineHeight: 1.5,
+                    }}>{goal}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button onClick={onDone} style={{
+              width: '100%',
+              background: 'linear-gradient(135deg, ' + subjectColor + 'cc, ' + subjectColor + ')',
+              border: 'none', borderRadius: 16, padding: '16px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 800, fontSize: '1rem', color: '#001A0A',
+              cursor: 'pointer',
+              boxShadow: '0 6px 24px ' + subjectColor + '44',
+            }}>Start learning →</button>
+          </div>
+        )}
+      </div>
+      <style>{`
+        @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+      `}</style>
+    </div>
+  )
+}
+
 // ─── Main ModulePlayer ────────────────────────────────────────────────────────
 
 export default function ModulePlayer({ module, onBack }) {
   const saved   = getModuleState(module.id)
+
+  // hookDone / introDone track whether the universal openers have been seen
+  // We persist these inside the module state so resuming skips them correctly
+  const [hookDone,  setHookDone]  = useState(() => saved.hookDone  || !module.hook)
+  const [introDone, setIntroDone] = useState(() => saved.introDone || !module.intro)
   const [screen, setScreen] = useState(saved.screen || 0)
   const [showConfidence, setShowConfidence] = useState(false)
   const [chosenConfidence, setChosenConfidence] = useState(null)
@@ -1211,8 +1826,8 @@ export default function ModulePlayer({ module, onBack }) {
   const [animKey, setAnimKey] = useState(0)
 
   useEffect(() => {
-    saveModuleState(module.id, { screen })
-  }, [screen, module.id])
+    saveModuleState(module.id, { screen, hookDone, introDone })
+  }, [screen, module.id, hookDone, introDone])
 
   function go(delta) {
     const next = Math.max(0, Math.min(total - 1, screen + delta))
@@ -1230,6 +1845,14 @@ export default function ModulePlayer({ module, onBack }) {
     setChosenConfidence(level)
     saveConfidenceRating(module.id, module.subject, module.title, level)
     setTimeout(() => onBack(), 650)
+  }
+
+  // ── Universal openers take priority ──────────────────────────────────────
+  if (!hookDone && module.hook) {
+    return <HookScreen module={module} onDone={() => { setHookDone(true); window.scrollTo({top:0,behavior:'smooth'}) }} />
+  }
+  if (!introDone && module.intro) {
+    return <IntroScreen module={module} onDone={() => { setIntroDone(true); window.scrollTo({top:0,behavior:'smooth'}) }} />
   }
 
   const cur = module.screens[screen]
