@@ -1279,11 +1279,17 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
   function reset() { setAnswer(''); setTip(false); setFB(null); setError(null); setGrading(false) }
 
   async function grade() {
-    if (q.type === 'mc' && !answer) { setError('Pick an option first.'); return }
+    const isMCMulti = q.type === 'mc_multi'
+    const isMCSingle = q.type === 'mc'
+    const isMCMulti2 = q.type === 'mc_multi'
+    if (isMCSingle && !answer) { setError('Pick an option first.'); return }
+    if (isMCMulti2 && (!answer || (Array.isArray(answer) && answer.length === 0))) { setError('Select at least one option.'); return }
+    if (isMCMulti && (!answer || (Array.isArray(answer) && answer.length === 0))) { setError('Select at least one option.'); return }
     if (q.type !== 'mc' && answer.trim().length < 1) { setError('Write something — even a rough attempt gets method marks!'); return }
     setGrading(true); setError(null)
     try {
-      const result = await gradeWithAI(q.q, answer, q.marks, q.ms)
+      const answerText = Array.isArray(answer) ? answer.join(', ') : answer
+      const result = await gradeWithAI(q.q, answerText, q.marks, q.ms)
       setFB(result)
     } catch (e) {
       setError('Could not reach the grading server. Check your connection and try again.')
@@ -1388,16 +1394,25 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
 
         {/* Answer area — only shown before feedback */}
         {!feedback && (
-          q.type === 'mc'
+          q.type === 'mc' || q.type === 'mc_multi'
             ? <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:16 }}>
-                {q.options.map((opt, i) => (
-                  <button key={i} onClick={() => setAnswer(opt)} style={{ background:answer===opt?`${topicColor}18`:'#10182B', border:`1.5px solid ${answer===opt?topicColor:'#1E2A40'}`, borderRadius:12, padding:'14px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:answer===opt?topicColor:'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
-                    <span style={{ width:24, height:24, borderRadius:'50%', border:`1.5px solid ${answer===opt?topicColor:'#2A3552'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.72rem', fontWeight:700, color:answer===opt?topicColor:'#4A5578', background:answer===opt?`${topicColor}18`:'transparent' }}>{String.fromCharCode(65+i)}</span>
-                    {opt}
-                  </button>
-                ))}
+                {q.type === 'mc_multi' && <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginBottom:2 }}>Select all that apply ({q.marks} correct answers)</div>}
+                {q.options.map((opt, i) => {
+                  const isMulti = q.type === 'mc_multi'
+                  const sel = isMulti ? (Array.isArray(answer) && answer.includes(opt)) : answer === opt
+                  const toggle = () => {
+                    if (!isMulti) { setAnswer(opt); return }
+                    const cur = Array.isArray(answer) ? answer : []
+                    setAnswer(sel ? cur.filter(a => a !== opt) : [...cur, opt])
+                  }
+                  return (
+                    <button key={i} onClick={toggle} style={{ background:sel?`${topicColor}18`:'#10182B', border:`1.5px solid ${sel?topicColor:'#1E2A40'}`, borderRadius:12, padding:'14px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:sel?topicColor:'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
+                      <span style={{ width:24, height:24, borderRadius:isMulti?'4px':'50%', border:`1.5px solid ${sel?topicColor:'#2A3552'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.75rem', fontWeight:700, color:sel?topicColor:'#4A5578', background:sel?`${topicColor}18`:'transparent' }}>{isMulti ? (sel ? '✓' : '') : String.fromCharCode(65+i)}</span>
+                      {opt}
+                    </button>
+                  )
+                })}
               </div>
-            : <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:16 }}>
                 <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>{isMathsQ ? 'Your working & answer' : 'Your answer'}</div>
                 <textarea
                   value={answer}
