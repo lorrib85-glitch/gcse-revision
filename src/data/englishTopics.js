@@ -45,25 +45,65 @@ Refer to your source insert for this question. Read lines 1 to 6 carefully befor
       },
       {
         id: 'el_p2j23_q1', source: 'P2 JUN23', marks: 4, type: 'mc_multi',
-        extract: `Source A — 1920s travel writing (your insert booklet, lines 1–7)
+        extract: `Source A — 1920s travel writing (your insert booklet, lines 1–7)\n\nRefer to Source A in your insert booklet and read lines 1 to 7 before choosing your four true statements below.`,
+        q: `Read again the first part of Source A from lines 1 to 7.\n\nChoose FOUR statements which are TRUE.`,
+        options: [
+          'A — The writer is at the start of his train journey.',
+          'B — The writer is looking forward to leaving the train.',
+          'C — The writer will be on the train for three more days.',
+          'D — The train has a carriage where meals are served.',
+          'E — The writer thinks the bread has been delicious.',
+          'F — The writer feels that he has been cut off from society while on the train.',
+          'G — The writer has had many activities to keep him busy on the train.',
+          'H — The writer does not have any plans for when he leaves the train.',
+        ],        correctIndices: [1, 3, 5, 7],
+        ms: `TRUE statements: B, D, F, H
 
-Refer to Source A in your insert booklet and read lines 1 to 7 before choosing your four true statements below.`,
-        q: `Read again the first part of Source A from lines 1 to 7.\n\nChoose FOUR statements below which are TRUE. (Source A is a travel writing extract about a long train journey.)\n\nA — The writer is at the start of his train journey.\nB — The writer is looking forward to leaving the train.\nC — The writer will be on the train for three more days.\nD — The train has a carriage where meals are served.\nE — The writer thinks the bread has been delicious.\nF — The writer feels that he has been cut off from society while on the train.\nG — The writer has had many activities to keep him busy on the train.\nH — The writer does not have any plans for when he leaves the train.\n\nWrite the four correct letters:`,
-        ms: `TRUE statements: B, D, F, H\n\nA = FALSE (he is near the END of his journey)\nB = TRUE (he is looking forward to leaving)\nC = FALSE (not three more days)\nD = TRUE (the train has a dining car)\nE = FALSE (the bread has NOT been delicious)\nF = TRUE (he feels cut off from society)\nG = FALSE (he has had little to do)\nH = TRUE (he has no plans for after the journey)\n\nAward 1 mark per correct letter identified, up to 4. Penalise extra wrong answers.`,
+A = FALSE (he is near the END of his journey)
+B = TRUE (looking forward to leaving)
+C = FALSE (not three more days)
+D = TRUE (the train has a dining car)
+E = FALSE (the bread has NOT been delicious)
+F = TRUE (he feels cut off from society)
+G = FALSE (he has had little to do)
+H = TRUE (he has no plans for after the journey)
+
+Award 1 mark per correct letter, up to 4.`,
+
+        correctIndices: [1, 3, 5, 7],
+        ms: `TRUE statements: B, D, F, H\n\nA = FALSE (he is near the END of his journey)\nB = TRUE (looking forward to leaving)\nC = FALSE (not three more days)\nD = TRUE (the train has a dining car)\nE = FALSE (the bread has NOT been delicious)\nF = TRUE (he feels cut off from society)\nG = FALSE (he has had little to do)\nH = TRUE (he has no plans for after the journey)\n\nAward 1 mark per correct letter identified, up to 4.`,
       },
-      {
+
         id: 'el_p2j22_q1', source: 'P2 JUN22', marks: 4, type: 'mc_multi',
-        extract: `Source A — Family camping holiday writing (your insert booklet, lines 1–9)
+        extract: `Source A — Family camping holiday writing (your insert booklet, lines 1–9)\n\nRefer to Source A in your insert booklet and read lines 1 to 9 before choosing your four true statements below.`,
+        q: `Read again the first part of Source A from lines 1 to 9.\n\nChoose FOUR statements which are TRUE.`,
+        options: [
+          "A — The writer's mother was happy to be going on holiday.",
+          'B — This is the first time the writer has been to France.',
+          'C — The writer thinks evil powers ruin holidays.',
+          'D — The writer thinks holidays are mental and physical challenges.',
+          'E — The writer is a teenager at the time of the holiday.',
+          'F — The family are travelling through a city.',
+          'G — The fields on either side of the road are full of wheat.',
+          'H — The writer admits that holidays can look attractive but she thinks this is a trick.',
+        ],        correctIndices: [0, 3, 4, 7],
+        ms: `TRUE statements: A, D, E, H
 
-Refer to Source A in your insert booklet and read lines 1 to 9 before choosing your four true statements below.`,
-        q: `Read again the first part of Source A from lines 1 to 9.\n\nChoose FOUR statements below which are TRUE. (Source A is about a family camping holiday to France.)\n\nA — The writer's mother was happy to be going on holiday.\nB — This is the first time the writer has been to France.\nC — The writer thinks evil powers ruin holidays.\nD — The writer thinks holidays are mental and physical challenges.\nE — The writer is a teenager at the time of the holiday.\nF — The family are travelling through a city.\nG — The fields on either side of the road are full of wheat.\nH — The writer admits that holidays can look attractive but she thinks this is a trick.\n\nWrite the four correct letters:`,
-        ms: `TRUE statements: A, D, E, H\n\nA = TRUE (the writer's mother was happy to go)\nB = FALSE ('again' implies she has been before)\nC = FALSE (she does not say evil powers cause it)\nD = TRUE (she calls holidays 'mental and physical challenges')\nE = TRUE (she is a teenager)\nF = FALSE (they travel through countryside, not a city)\nG = FALSE (the fields have sunflowers, not wheat)\nH = TRUE (she admits holidays look attractive but calls it a trick)\n\nAward 1 mark per correct letter, up to 4.`,
+A = TRUE (the writer's mother was happy)
+B = FALSE ('again' implies she has been before)
+C = FALSE (she does not say evil powers cause it)
+D = TRUE (she calls holidays mental and physical challenges)
+E = TRUE (she is a teenager)
+F = FALSE (they travel through countryside)
+G = FALSE (the fields have sunflowers not wheat)
+H = TRUE (she admits holidays look attractive but calls it a trick)
+
+Award 1 mark per correct letter, up to 4.`,
+
+        correctIndices: [0, 3, 4, 7],
+        ms: `TRUE statements: A, D, E, H\n\nA = TRUE (the writer's mother was happy)\nB = FALSE ('again' implies she has been before)\nC = FALSE (she does not say evil powers cause it)\nD = TRUE (she calls holidays mental and physical challenges)\nE = TRUE (she is a teenager)\nF = FALSE (they travel through countryside)\nG = FALSE (the fields have sunflowers not wheat)\nH = TRUE (she admits holidays look attractive but calls it a trick)\n\nAward 1 mark per correct letter, up to 4.`,
       },
-    ],
-  },
 
-  // ── Q2 type: Language analysis ────────────────────────────────────────────
-  {
     id: 'q2_language',
     label: 'Q2 — Language Analysis (P1) / Summary (P2)',
     icon: '✍️',
