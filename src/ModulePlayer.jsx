@@ -4716,90 +4716,123 @@ function IntroScreen({ module, onDone }) {
 }
 
 // ─── GoalsScreen — "In this module you'll be able to…" ───────────────────────
+const GOAL_ICONS = ['✏️', '💡', '🔍', '📊', '🧠', '📝', '⚡', '🎯']
+
 function GoalsScreen({ module }) {
   const subjectColor = module.color || '#9D5CFF'
   const goals = module.intro?.learningGoals || module.learningGoals || []
   const isWarm = module.subject === 'History'
-  const cardBg = isWarm ? 'linear-gradient(145deg, #1C1005, #130D03)' : 'linear-gradient(145deg, #10182B, #0D1424)'
-  const cardBorder = isWarm ? `1px solid ${subjectColor}22` : '1px solid #1E2A40'
-  const pillBg = isWarm ? '#1A0E03' : '#10182B'
-  const pillBorder = isWarm ? `1px solid ${subjectColor}20` : '1px solid #1E2A40'
-  const pillText = isWarm ? `${subjectColor}99` : '#5A6480'
-  return (
-    <div style={{ maxWidth: 500, margin: '0 auto', padding: '28px 4px 40px', animation: 'fadeIn .4s ease' }}>
+  const isSocGs = module.subject === 'Sociology'
 
-      {/* Header badge */}
-      <div style={{ marginBottom: 24 }}>
+  // Derive dark page/card palette from subject
+  const pageBgGs   = isWarm ? '#0C0905' : isSocGs ? '#0C0804' : '#080C1A'
+  const cardBgGs   = isWarm ? '#1A1208' : isSocGs ? '#180E06' : '#0E1628'
+  const cardBorder = `1px solid ${subjectColor}22`
+  const mutedText  = isWarm ? `${subjectColor}80` : isSocGs ? `${subjectColor}80` : '#4A5470'
+
+  // Progressive reveal: one goal every 3 s
+  const [visibleCount, setVisibleCount] = useState(0)
+  useEffect(() => {
+    if (visibleCount >= goals.length) return
+    const delay = visibleCount === 0 ? 400 : 3000
+    const t = setTimeout(() => setVisibleCount(c => c + 1), delay)
+    return () => clearTimeout(t)
+  }, [visibleCount, goals.length])
+
+  return (
+    <div style={{
+      minHeight: '100vh', background: pageBgGs,
+      padding: '32px 22px 120px',
+      animation: 'fadeIn .4s ease',
+    }}>
+      <div style={{ maxWidth: 500, margin: '0 auto' }}>
+
+        {/* Header chip */}
         <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          background: subjectColor + '15', border: '1px solid ' + subjectColor + '30',
-          borderRadius: 99, padding: '4px 14px', marginBottom: 14,
+          display: 'inline-flex', alignItems: 'center', gap: 7,
+          background: subjectColor + '18', border: '1px solid ' + subjectColor + '35',
+          borderRadius: 99, padding: '5px 14px', marginBottom: 18,
         }}>
-          <span style={{ fontSize: '.8rem' }}>🎯</span>
+          <span style={{ fontSize: '.78rem' }}>{module.icon || '🎯'}</span>
           <span style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: '.63rem', fontWeight: 700,
-            letterSpacing: '.12em', textTransform: 'uppercase',
+            fontSize: '.62rem', fontWeight: 700,
+            letterSpacing: '.13em', textTransform: 'uppercase',
             color: subjectColor,
-          }}>By the end of this module</span>
+          }}>Module Objectives</span>
         </div>
+
+        {/* Heading */}
         <h2 style={{
           fontFamily: "'Space Grotesk', sans-serif",
-          fontWeight: 800, fontSize: 'clamp(1.25rem, 4vw, 1.55rem)',
-          color: '#F5F7FB', margin: '0 0 8px', letterSpacing: '-.01em', lineHeight: 1.2,
+          fontWeight: 800, fontSize: 'clamp(1.35rem, 4.5vw, 1.65rem)',
+          color: '#F5F7FB', margin: '0 0 8px', letterSpacing: '-.02em', lineHeight: 1.15,
         }}>You'll be able to:</h2>
         <p style={{
           fontFamily: "'Inter', sans-serif",
-          fontSize: '.85rem', color: isWarm ? `${subjectColor}70` : '#5A6480',
-          margin: 0, lineHeight: 1.55,
-        }}>
-          Keep these in mind as you work through each section.
-        </p>
-      </div>
+          fontSize: '.84rem', color: mutedText,
+          margin: '0 0 28px', lineHeight: 1.5,
+        }}>Keep these in mind as you work through each section.</p>
 
-      {/* Goals list */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
-        {goals.map((goal, i) => (
-          <div key={i} style={{
-            display: 'flex', alignItems: 'flex-start', gap: 14,
-            background: cardBg,
-            border: cardBorder,
-            borderRadius: 14, padding: '14px 16px',
-            animation: 'fadeIn .35s ease ' + (i * 0.07) + 's both',
-          }}>
-            <div style={{
-              width: 26, height: 26, borderRadius: 8, flexShrink: 0,
-              background: subjectColor + '20', border: '1px solid ' + subjectColor + '40',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: '.72rem', fontWeight: 800, color: subjectColor,
-              marginTop: 1,
-            }}>{i + 1}</div>
-            <p style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.9rem', color: isWarm ? '#C8B090' : '#C8D0E8',
-              margin: 0, lineHeight: 1.55,
-            }}>{goal}</p>
-          </div>
-        ))}
-      </div>
+        {/* Goals list — revealed one by one */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
+          {goals.map((goal, i) => {
+            const visible = i < visibleCount
+            return (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                background: cardBgGs,
+                border: cardBorder,
+                borderRadius: 16, padding: '14px 16px',
+                opacity: visible ? 1 : 0,
+                transform: visible ? 'translateY(0)' : 'translateY(14px)',
+                transition: 'opacity .45s ease, transform .45s ease',
+                pointerEvents: visible ? 'auto' : 'none',
+              }}>
+                {/* Numbered circle */}
+                <div style={{
+                  width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                  background: subjectColor,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: '.8rem', fontWeight: 800, color: '#000',
+                  boxShadow: `0 2px 10px ${subjectColor}55`,
+                }}>{i + 1}</div>
 
-      {/* Module metadata pills */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <div style={{
-          background: pillBg, border: pillBorder,
-          borderRadius: 99, padding: '5px 14px',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: '.72rem', fontWeight: 600, color: pillText,
-        }}>📚 {module.screens.length} section{module.screens.length !== 1 ? 's' : ''}</div>
-        <div style={{
-          background: pillBg, border: pillBorder,
-          borderRadius: 99, padding: '5px 14px',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: '.72rem', fontWeight: 600, color: pillText,
-        }}>⏱ ~{module.screens.length * 5} min</div>
-      </div>
+                {/* Goal text */}
+                <p style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.9rem', color: isWarm ? '#D4C4A0' : isSocGs ? '#D4B898' : '#C8D0E8',
+                  margin: 0, lineHeight: 1.5, flex: 1,
+                }}>{goal}</p>
 
+                {/* Icon */}
+                <span style={{
+                  fontSize: '1.1rem', flexShrink: 0, opacity: .75,
+                  filter: 'saturate(0) brightness(1.4)',
+                }}>{GOAL_ICONS[i % GOAL_ICONS.length]}</span>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Module metadata pills */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{
+            background: subjectColor + '12', border: '1px solid ' + subjectColor + '20',
+            borderRadius: 99, padding: '5px 14px',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.72rem', fontWeight: 600, color: subjectColor + 'AA',
+          }}>📚 {module.screens.length} section{module.screens.length !== 1 ? 's' : ''}</div>
+          <div style={{
+            background: subjectColor + '12', border: '1px solid ' + subjectColor + '20',
+            borderRadius: 99, padding: '5px 14px',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.72rem', fontWeight: 600, color: subjectColor + 'AA',
+          }}>⏱ ~{module.screens.length * 5} min</div>
+        </div>
+
+      </div>
       <style>{`@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }`}</style>
     </div>
   )
