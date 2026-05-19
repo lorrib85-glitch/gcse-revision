@@ -4816,22 +4816,6 @@ function GoalsScreen({ module }) {
           })}
         </div>
 
-        {/* Module metadata pills */}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <div style={{
-            background: subjectColor + '12', border: '1px solid ' + subjectColor + '20',
-            borderRadius: 99, padding: '5px 14px',
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.72rem', fontWeight: 600, color: subjectColor + 'AA',
-          }}>📚 {module.screens.length} section{module.screens.length !== 1 ? 's' : ''}</div>
-          <div style={{
-            background: subjectColor + '12', border: '1px solid ' + subjectColor + '20',
-            borderRadius: 99, padding: '5px 14px',
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.72rem', fontWeight: 600, color: subjectColor + 'AA',
-          }}>⏱ ~{module.screens.length * 5} min</div>
-        </div>
-
       </div>
       <style>{`@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }`}</style>
     </div>

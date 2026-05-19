@@ -5382,7 +5382,7 @@ export const MODULES = [
     subtitle: 'Who has power — and who gets left behind?',
     era: 'AQA GCSE',
     icon: '⚖️',
-    color: '#7B3F8C',
+    color: '#D96030',
     colorLight: 'rgba(123,63,140,.12)',
     hook: {
       atmosphericOpener: {
