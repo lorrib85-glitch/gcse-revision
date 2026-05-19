@@ -1216,11 +1216,1084 @@ function ScenarioBlock({ block }) {
   )
 }
 
+// ─── NumberLineBlock ──────────────────────────────────────────────────────────
+function NumberLineBlock({ block }) {
+  const [position, setPosition] = useState(block.startAt ?? 0)
+  const [result, setResult] = useState(null)
+  const [hintIdx, setHintIdx] = useState(-1)
+  const [quizAnswered, setQuizAnswered] = useState(false)
+  const [quizChoice, setQuizChoice] = useState(null)
+  const [quizShake, setQuizShake] = useState(null)
+  const [showQuiz, setShowQuiz] = useState(false)
+
+  const MIN = -10, MAX = 10
+  const pct = (pos) => ((pos - MIN) / (MAX - MIN)) * 100
+
+  function applyOp(op) {
+    const newPos = Math.max(MIN, Math.min(MAX, position + op.delta))
+    const label = op.delta >= 0
+      ? `${position} + ${op.delta} = ${newPos}`
+      : `${position} − ${Math.abs(op.delta)} = ${newPos}`
+    setPosition(newPos)
+    setResult(label)
+    setTimeout(() => setShowQuiz(true), 600)
+  }
+
+  function reset() {
+    setPosition(block.startAt ?? 0)
+    setResult(null)
+    setShowQuiz(false)
+    setQuizAnswered(false)
+    setQuizChoice(null)
+    setHintIdx(-1)
+  }
+
+  function pickQuiz(i) {
+    if (quizAnswered) return
+    setQuizChoice(i)
+    if (i === block.quiz?.correct) {
+      setQuizAnswered(true)
+    } else {
+      setQuizShake(i)
+      setTimeout(() => setQuizShake(null), 500)
+    }
+  }
+
+  const ticks = []
+  for (let t = MIN; t <= MAX; t++) ticks.push(t)
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0A1020, #0D1428)',
+        border: '1px solid rgba(75,144,255,.2)',
+        borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+          textTransform: 'uppercase', color: '#4B90FF', marginBottom: 14,
+        }}>📏 Number Line</div>
+
+        {/* SVG Number Line */}
+        <div style={{ position: 'relative', width: '100%', margin: '0 0 12px' }}>
+          <svg viewBox="0 0 320 60" style={{ width: '100%', display: 'block', overflow: 'visible' }}>
+            {/* Line */}
+            <line x1="16" y1="38" x2="304" y2="38" stroke="#2A3A5A" strokeWidth="2" strokeLinecap="round" />
+            {/* Ticks + labels */}
+            {ticks.map(t => {
+              const x = 16 + ((t - MIN) / (MAX - MIN)) * 288
+              const isMajor = t % 5 === 0
+              return (
+                <g key={t}>
+                  <line x1={x} y1={isMajor ? 28 : 32} x2={x} y2={44} stroke={isMajor ? '#4A6090' : '#2A3A5A'} strokeWidth={isMajor ? 1.5 : 1} />
+                  {isMajor && (
+                    <text x={x} y={54} textAnchor="middle" fill="#4A6090" fontSize="8" fontFamily="monospace">{t}</text>
+                  )}
+                </g>
+              )
+            })}
+            {/* Animated marker */}
+            <circle
+              cx={16 + ((position - MIN) / (MAX - MIN)) * 288}
+              cy={38}
+              r={8}
+              fill="#F5B700"
+              stroke="#FFD940"
+              strokeWidth="2"
+              style={{ transition: 'cx .5s ease', filter: 'drop-shadow(0 0 6px #F5B70088)' }}
+            />
+            <text
+              x={16 + ((position - MIN) / (MAX - MIN)) * 288}
+              y={42}
+              textAnchor="middle"
+              fill="#0A0A0A"
+              fontSize="7"
+              fontWeight="bold"
+              style={{ transition: 'x .5s ease', pointerEvents: 'none' }}
+            >{position}</text>
+          </svg>
+        </div>
+
+        {/* Result card */}
+        {result && (
+          <div className="fade-up" style={{
+            background: 'rgba(245,183,0,.08)', border: '1px solid rgba(245,183,0,.3)',
+            borderRadius: 12, padding: '10px 14px', marginBottom: 12, textAlign: 'center',
+          }}>
+            <span style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '1rem', color: '#F5B700',
+            }}>{result}</span>
+          </div>
+        )}
+
+        {/* Operation buttons */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+          {block.operations?.map((op, i) => (
+            <button key={i} onClick={() => applyOp(op)} style={{
+              background: 'rgba(75,144,255,.12)', border: '1px solid rgba(75,144,255,.3)',
+              borderRadius: 10, padding: '8px 14px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600, fontSize: '.85rem', color: '#70A8FF',
+              cursor: 'pointer',
+            }}>{op.label}</button>
+          ))}
+          <button onClick={reset} style={{
+            background: 'rgba(255,255,255,.04)', border: '1px solid #2A3A5A',
+            borderRadius: 10, padding: '8px 14px',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600, fontSize: '.85rem', color: '#5A6480',
+            cursor: 'pointer',
+          }}>Reset</button>
+        </div>
+
+        {/* Hint toggle */}
+        {block.hints?.length > 0 && (
+          <div style={{ marginBottom: 10 }}>
+            <button onClick={() => setHintIdx(h => Math.min(h + 1, block.hints.length - 1))}
+              style={{
+                background: 'rgba(255,200,87,.06)', border: '1px solid rgba(255,200,87,.2)',
+                borderRadius: 8, padding: '6px 12px',
+                fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 600,
+                color: '#FFC857', cursor: 'pointer',
+              }}>💡 Need a Hint? ›</button>
+            {hintIdx >= 0 && (
+              <div className="fade-up" style={{
+                marginTop: 6, padding: '8px 12px',
+                background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.15)',
+                borderRadius: 8,
+              }}>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.82rem', color: '#C8B870', margin: 0 }}>
+                  {block.hints[hintIdx]}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Quiz */}
+        {showQuiz && block.quiz && (
+          <div className="fade-up" style={{
+            background: '#0A1020', border: '1px solid rgba(75,144,255,.2)',
+            borderRadius: 14, padding: '14px',
+          }}>
+            <p style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600, fontSize: '.93rem', color: '#E0E6F0', margin: '0 0 10px',
+            }}>{block.quiz.q}</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+              {block.quiz.options?.map((opt, i) => {
+                const isCorrect = i === block.quiz.correct
+                const isPicked = quizChoice === i
+                let bg = '#10182B', border = '#2A3A5A', color = '#C8D0E8'
+                if (quizAnswered) {
+                  if (isCorrect) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
+                  else if (isPicked) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
+                }
+                return (
+                  <button key={i} onClick={() => pickQuiz(i)} disabled={quizAnswered}
+                    style={{
+                      background: bg, border: '1.5px solid ' + border,
+                      borderRadius: 10, padding: '10px 14px',
+                      fontFamily: "'Inter', sans-serif", fontSize: '.87rem', color,
+                      cursor: quizAnswered ? 'default' : 'pointer',
+                      textAlign: 'left', transition: 'all .2s',
+                      animation: quizShake === i ? 'shake .35s ease' : 'none',
+                    }}>{opt}</button>
+                )
+              })}
+            </div>
+            {quizAnswered && (
+              <div className="fade-up" style={{
+                marginTop: 10, padding: '10px 12px',
+                background: 'rgba(77,255,136,.06)', border: '1px solid rgba(77,255,136,.25)',
+                borderRadius: 10,
+              }}>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.84rem', color: '#6BFFB0', margin: 0 }}>
+                  ✓ {block.quiz.explanation}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── FillBlanksBlock ──────────────────────────────────────────────────────────
+function FillBlanksBlock({ block }) {
+  const n = block.sentences?.length || 0
+  const [answers, setAnswers] = useState(Array(n).fill(''))
+  const [statuses, setStatuses] = useState(Array(n).fill('idle')) // 'idle'|'correct'|'wrong'
+  const [hintIdx, setHintIdx] = useState(Array(n).fill(-1))
+  const [done, setDone] = useState(false)
+  const [shakeIdx, setShakeIdx] = useState(null)
+
+  const firstActive = statuses.findIndex(s => s !== 'correct')
+
+  function submit(i) {
+    const val = answers[i].trim().toLowerCase()
+    const correct = block.sentences[i].answer.toLowerCase()
+    if (val === correct) {
+      const newSt = [...statuses]; newSt[i] = 'correct'; setStatuses(newSt)
+      const newAns = [...answers]; newAns[i] = block.sentences[i].answer; setAnswers(newAns)
+      if (newSt.every(s => s === 'correct')) setDone(true)
+    } else {
+      const newSt = [...statuses]; newSt[i] = 'wrong'; setStatuses(newSt)
+      setShakeIdx(i)
+      setTimeout(() => {
+        setShakeIdx(null)
+        const reset = [...statuses]; reset[i] = 'idle'; setStatuses(reset)
+        const clr = [...answers]; clr[i] = ''; setAnswers(clr)
+      }, 500)
+    }
+  }
+
+  function showHint(i) {
+    const hints = block.sentences[i].hints || []
+    setHintIdx(h => { const n = [...h]; n[i] = Math.min(n[i] + 1, hints.length - 1); return n })
+  }
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0A1020, #0D1428)',
+        border: '1px solid rgba(75,144,255,.2)',
+        borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+          textTransform: 'uppercase', color: '#4B90FF', marginBottom: 14,
+        }}>✏️ Fill in the Blanks</div>
+
+        {block.sentences?.map((s, i) => {
+          const isActive = i === firstActive
+          const isCorrect = statuses[i] === 'correct'
+          const hints = s.hints || []
+          const currentHint = hintIdx[i]
+
+          return (
+            <div key={i} style={{
+              marginBottom: 14, opacity: (!isActive && !isCorrect) ? 0.4 : 1,
+              transition: 'opacity .3s',
+            }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 6 }}>
+                <span style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.93rem', color: '#C8D0E8',
+                }}>{s.before}</span>
+
+                {isCorrect ? (
+                  <span className="fade-up" style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 700, fontSize: '.93rem', color: '#4DFF88',
+                    background: 'rgba(77,255,136,.1)', borderRadius: 6,
+                    padding: '2px 8px',
+                  }}>✓ {answers[i]}</span>
+                ) : isActive ? (
+                  <input
+                    value={answers[i]}
+                    onChange={e => { const a = [...answers]; a[i] = e.target.value; setAnswers(a) }}
+                    onKeyDown={e => e.key === 'Enter' && submit(i)}
+                    style={{
+                      background: '#10182B',
+                      border: `1.5px solid ${statuses[i] === 'wrong' ? 'rgba(255,93,115,.5)' : 'rgba(75,144,255,.4)'}`,
+                      borderRadius: 8, padding: '4px 10px',
+                      fontFamily: "'Inter', sans-serif", fontSize: '.93rem', color: '#E0E6F0',
+                      outline: 'none', width: 120,
+                      animation: shakeIdx === i ? 'shake .35s ease' : 'none',
+                    }}
+                    placeholder="..."
+                    autoFocus
+                  />
+                ) : (
+                  <span style={{
+                    display: 'inline-block', width: 80, height: 22,
+                    background: '#10182B', borderRadius: 6,
+                    border: '1px dashed #2A3A5A',
+                  }} />
+                )}
+
+                <span style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.93rem', color: '#C8D0E8',
+                }}>{s.after}</span>
+              </div>
+
+              {isActive && (
+                <div style={{ marginTop: 8, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <button onClick={() => submit(i)} style={{
+                    background: 'rgba(75,144,255,.15)', border: '1px solid rgba(75,144,255,.35)',
+                    borderRadius: 8, padding: '5px 12px',
+                    fontFamily: "'Inter', sans-serif", fontSize: '.78rem', fontWeight: 600,
+                    color: '#70A8FF', cursor: 'pointer',
+                  }}>Check ›</button>
+                  {hints.length > 0 && (
+                    <button onClick={() => showHint(i)} style={{
+                      background: 'rgba(255,200,87,.06)', border: '1px solid rgba(255,200,87,.2)',
+                      borderRadius: 8, padding: '5px 12px',
+                      fontFamily: "'Inter', sans-serif", fontSize: '.78rem', fontWeight: 600,
+                      color: '#FFC857', cursor: 'pointer',
+                    }}>Need a Hint? ›</button>
+                  )}
+                </div>
+              )}
+
+              {isActive && currentHint >= 0 && (
+                <div className="fade-up" style={{
+                  marginTop: 6, padding: '7px 11px',
+                  background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.15)',
+                  borderRadius: 8,
+                }}>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#C8B870', margin: 0 }}>
+                    {hints[currentHint]}
+                  </p>
+                </div>
+              )}
+
+              {isActive && statuses[i] === 'wrong' && (
+                <div className="fade-up" style={{
+                  marginTop: 6, padding: '7px 11px',
+                  background: 'rgba(255,93,115,.06)', border: '1px solid rgba(255,93,115,.2)',
+                  borderRadius: 8,
+                }}>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#FF8DA1', margin: 0 }}>
+                    {block.wrongMsg || 'Not quite — try again.'}
+                  </p>
+                </div>
+              )}
+            </div>
+          )
+        })}
+
+        {done && (
+          <div className="fade-up" style={{
+            background: 'rgba(77,255,136,.08)', border: '1px solid rgba(77,255,136,.3)',
+            borderRadius: 12, padding: '14px', textAlign: 'center',
+          }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '1rem', color: '#4DFF88',
+            }}>All rules locked in. ✓</div>
+            {block.correctMsg && (
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#9CA8C7', margin: '6px 0 0' }}>
+                {block.correctMsg}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── BidmasBlock ──────────────────────────────────────────────────────────────
+function BidmasBlock({ block }) {
+  const [selected, setSelected] = useState(null)
+  const [stepIdx, setStepIdx] = useState(0)
+  const [done, setDone] = useState(false)
+  const [shakeIdx, setShakeIdx] = useState(null)
+  const [currentExpr, setCurrentExpr] = useState(block.expression)
+  const [stepping, setStepping] = useState(false)
+
+  function choose(i) {
+    if (selected !== null) return
+    setSelected(i)
+    if (i === block.correct) {
+      setStepping(true)
+      // Step through with delays
+      let s = 0
+      const steps = block.steps || []
+      function nextStep() {
+        if (s < steps.length) {
+          setStepIdx(s)
+          setCurrentExpr(steps[s].newExpr)
+          s++
+          if (s < steps.length) {
+            setTimeout(nextStep, 1100)
+          } else {
+            setTimeout(() => setDone(true), 1100)
+          }
+        }
+      }
+      setTimeout(nextStep, 600)
+    } else {
+      setShakeIdx(i)
+      setTimeout(() => setShakeIdx(null), 500)
+    }
+  }
+
+  const steps = block.steps || []
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0A1020, #0D1428)',
+        border: '1px solid rgba(75,144,255,.2)',
+        borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+          textTransform: 'uppercase', color: '#4B90FF', marginBottom: 14,
+        }}>🔢 BIDMAS</div>
+
+        {/* Expression display */}
+        <div style={{
+          background: '#070E1C', border: '1px solid #1E2A40',
+          borderRadius: 14, padding: '18px', textAlign: 'center', marginBottom: 14,
+        }}>
+          <div style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 800, fontSize: 'clamp(1.4rem, 5vw, 2rem)',
+            color: '#F5F7FB', letterSpacing: '.03em',
+            transition: 'all .4s ease',
+          }}>{currentExpr}</div>
+        </div>
+
+        {/* Question + options — shown until correct selection */}
+        {selected === null && (
+          <>
+            <p style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600, fontSize: '.95rem', color: '#E0E6F0',
+              margin: '0 0 12px',
+            }}>{block.question}</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {block.options?.map((opt, i) => (
+                <button key={i} onClick={() => choose(i)}
+                  style={{
+                    background: '#10182B', border: '1.5px solid #2A3A5A',
+                    borderRadius: 12, padding: '12px 16px',
+                    fontFamily: "'Inter', sans-serif", fontSize: '.9rem', color: '#C8D0E8',
+                    cursor: 'pointer', textAlign: 'left', transition: 'all .2s',
+                    animation: shakeIdx === i ? 'shake .35s ease' : 'none',
+                  }}>{opt}</button>
+              ))}
+            </div>
+            {shakeIdx !== null && (
+              <div className="fade-up" style={{
+                marginTop: 10, padding: '9px 12px',
+                background: 'rgba(255,93,115,.07)', border: '1px solid rgba(255,93,115,.25)',
+                borderRadius: 10,
+              }}>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.84rem', color: '#FF8DA1', margin: 0 }}>
+                  Try again — which operation has priority?
+                </p>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Step-through */}
+        {stepping && steps.length > 0 && (
+          <div className="fade-up" style={{ marginTop: 14 }}>
+            {steps.slice(0, stepIdx + 1).map((step, i) => (
+              <div key={i} className="fade-up" style={{
+                background: 'rgba(75,144,255,.07)', border: '1px solid rgba(75,144,255,.2)',
+                borderRadius: 10, padding: '10px 14px', marginBottom: 8,
+                display: 'flex', alignItems: 'center', gap: 10,
+              }}>
+                <span style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700, color: '#70A8FF', fontSize: '.9rem',
+                }}>{step.highlight}</span>
+                <span style={{ color: '#5A6480' }}>→</span>
+                <span style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700, color: '#4DFF88', fontSize: '.9rem',
+                }}>{step.becomes}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Done: side-by-side paths + exam tip */}
+        {done && (
+          <div className="fade-up">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
+              <div style={{
+                background: 'rgba(255,93,115,.07)', border: '1px solid rgba(255,93,115,.25)',
+                borderRadius: 12, padding: '12px',
+              }}>
+                <div style={{
+                  fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700,
+                  color: '#FF5D73', marginBottom: 8, letterSpacing: '.1em', textTransform: 'uppercase',
+                }}>Wrong Path</div>
+                {block.wrongPath?.map((line, i) => (
+                  <p key={i} style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#C8D0E8', margin: '0 0 4px' }}>{line}</p>
+                ))}
+              </div>
+              <div style={{
+                background: 'rgba(77,255,136,.07)', border: '1px solid rgba(77,255,136,.25)',
+                borderRadius: 12, padding: '12px',
+              }}>
+                <div style={{
+                  fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700,
+                  color: '#4DFF88', marginBottom: 8, letterSpacing: '.1em', textTransform: 'uppercase',
+                }}>Correct Path</div>
+                {block.correctPath?.map((line, i) => (
+                  <p key={i} style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#C8D0E8', margin: '0 0 4px' }}>{line}</p>
+                ))}
+              </div>
+            </div>
+            {block.examTip && (
+              <div style={{
+                background: 'rgba(245,183,0,.06)', border: '1px dashed rgba(245,183,0,.3)',
+                borderRadius: 12, padding: '12px 14px',
+              }}>
+                <div style={{
+                  fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700,
+                  color: '#F5B700', marginBottom: 6, letterSpacing: '.1em', textTransform: 'uppercase',
+                }}>🗡️ Exam Tip</div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.86rem', color: '#C8D0E8', margin: 0 }}>{block.examTip}</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── TieredQuizBlock ──────────────────────────────────────────────────────────
+function TieredQuizBlock({ block }) {
+  const tiers = block.tiers || []
+  const [activeTier, setActiveTier] = useState(0)
+  const [qIdx, setQIdx] = useState(Array(tiers.length).fill(0))
+  const [answers, setAnswers] = useState(tiers.map(t => Array(t.questions.length).fill(null)))
+  const [hintShown, setHintShown] = useState(tiers.map(t => Array(t.questions.length).fill(false)))
+  const [shakeOpt, setShakeOpt] = useState(null)
+
+  const tier = tiers[activeTier]
+  const curQ = tier?.questions[qIdx[activeTier]]
+  const curAnswer = answers[activeTier][qIdx[activeTier]]
+  const isAnswered = curAnswer !== null
+  const wasCorrect = isAnswered && curAnswer === curQ?.correct
+
+  function pickAnswer(i) {
+    if (isAnswered) return
+    const newAnswers = answers.map(r => [...r])
+    newAnswers[activeTier][qIdx[activeTier]] = i
+    setAnswers(newAnswers)
+    if (i !== curQ?.correct) {
+      setShakeOpt(i)
+      setTimeout(() => setShakeOpt(null), 500)
+    }
+  }
+
+  function nextQ() {
+    const max = tier.questions.length - 1
+    if (qIdx[activeTier] < max) {
+      const nq = [...qIdx]; nq[activeTier]++; setQIdx(nq)
+    }
+  }
+
+  function toggleHint() {
+    const nh = hintShown.map(r => [...r])
+    nh[activeTier][qIdx[activeTier]] = true
+    setHintShown(nh)
+  }
+
+  const isBoss = activeTier === tiers.length - 1
+  const tierDone = qIdx[activeTier] >= (tier?.questions.length || 1) - 1 && isAnswered
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      {/* Tier tabs */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+        {tiers.map((t, i) => (
+          <button key={i} onClick={() => setActiveTier(i)} style={{
+            flex: 1,
+            background: activeTier === i
+              ? (i === 2 ? 'rgba(255,93,115,.18)' : i === 1 ? 'rgba(255,200,87,.15)' : 'rgba(77,255,136,.15)')
+              : '#10182B',
+            border: `1.5px solid ${activeTier === i
+              ? (i === 2 ? 'rgba(255,93,115,.5)' : i === 1 ? 'rgba(255,200,87,.45)' : 'rgba(77,255,136,.45)')
+              : '#2A3552'}`,
+            borderRadius: 12, padding: '9px 8px',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700, fontSize: '.78rem',
+            color: activeTier === i
+              ? (i === 2 ? '#FF5D73' : i === 1 ? '#FFC857' : '#4DFF88')
+              : '#4A5578',
+            cursor: 'pointer', transition: 'all .2s',
+            boxShadow: activeTier === i && i === 2 ? '0 0 16px rgba(255,93,115,.25)' : 'none',
+          }}>{t.emoji} {t.label}</button>
+        ))}
+      </div>
+
+      {/* Boss mode header */}
+      {isBoss && (
+        <div style={{
+          background: 'rgba(255,93,115,.06)', border: '1px solid rgba(255,93,115,.25)',
+          borderRadius: 12, padding: '10px 14px', marginBottom: 12,
+          boxShadow: '0 0 20px rgba(255,93,115,.08)',
+        }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700,
+            letterSpacing: '.14em', textTransform: 'uppercase', color: '#FF5D73',
+          }}>🔴 Exam Assassin — Boss Mode</div>
+        </div>
+      )}
+
+      {/* Question card */}
+      {curQ && (
+        <div style={{
+          background: isBoss
+            ? 'linear-gradient(145deg, #1A0808, #120505)'
+            : 'linear-gradient(145deg, #0E1428, #0A1020)',
+          border: `1.5px solid ${isBoss ? 'rgba(255,93,115,.4)' : 'rgba(75,144,255,.2)'}`,
+          borderRadius: 16, padding: '16px',
+          boxShadow: isBoss ? '0 0 24px rgba(255,93,115,.1)' : 'none',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+            <div style={{
+              fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700,
+              color: isBoss ? '#FF5D73' : '#4B90FF',
+              letterSpacing: '.1em', textTransform: 'uppercase',
+            }}>{tier.emoji} {tier.label} · Q{qIdx[activeTier] + 1}/{tier.questions.length}</div>
+          </div>
+
+          <p style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600, fontSize: '.95rem', color: '#F5F7FB',
+            margin: '0 0 12px', lineHeight: 1.45,
+          }}>{curQ.q}</p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {curQ.options?.map((opt, i) => {
+              const isCorrectOpt = i === curQ.correct
+              const isPicked = curAnswer === i
+              let bg = '#10182B', border = '#2A3A5A', color = '#C8D0E8'
+              if (isAnswered) {
+                if (isCorrectOpt) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
+                else if (isPicked) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
+              }
+              return (
+                <button key={i} onClick={() => pickAnswer(i)} disabled={isAnswered}
+                  style={{
+                    background: bg, border: '1.5px solid ' + border,
+                    borderRadius: 11, padding: '11px 14px',
+                    fontFamily: "'Inter', sans-serif", fontSize: '.88rem', color,
+                    cursor: isAnswered ? 'default' : 'pointer',
+                    textAlign: 'left', transition: 'all .2s',
+                    animation: shakeOpt === i ? 'shake .35s ease' : 'none',
+                    display: 'flex', alignItems: 'center', gap: 8,
+                  }}>
+                  <span style={{ opacity: .45, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.78rem' }}>
+                    {String.fromCharCode(65 + i)}.
+                  </span>
+                  {opt}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Hint */}
+          {!isAnswered && curQ.hint && (
+            <div style={{ marginTop: 10 }}>
+              <button onClick={toggleHint} style={{
+                background: 'rgba(255,200,87,.06)', border: '1px solid rgba(255,200,87,.2)',
+                borderRadius: 8, padding: '5px 12px',
+                fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 600,
+                color: '#FFC857', cursor: 'pointer',
+              }}>💡 Need a Hint? ›</button>
+              {hintShown[activeTier][qIdx[activeTier]] && (
+                <div className="fade-up" style={{
+                  marginTop: 6, padding: '8px 11px',
+                  background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.15)',
+                  borderRadius: 8,
+                }}>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#C8B870', margin: 0 }}>{curQ.hint}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Feedback */}
+          {isAnswered && (
+            <div className="fade-up" style={{
+              marginTop: 10,
+              background: wasCorrect ? 'rgba(77,255,136,.07)' : 'rgba(255,93,115,.07)',
+              border: '1px solid ' + (wasCorrect ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.3)'),
+              borderRadius: 11, padding: '10px 14px',
+            }}>
+              <p style={{
+                fontFamily: "'Inter', sans-serif", fontSize: '.87rem',
+                color: wasCorrect ? '#4DFF88' : '#FF8DA1', margin: 0, lineHeight: 1.5,
+              }}>
+                <strong>{wasCorrect ? '✓ ' : '✗ '}</strong>
+                {curQ.feedback}
+              </p>
+            </div>
+          )}
+
+          {isAnswered && !tierDone && (
+            <button onClick={nextQ} style={{
+              marginTop: 12, width: '100%',
+              background: 'rgba(75,144,255,.12)', border: '1px solid rgba(75,144,255,.3)',
+              borderRadius: 12, padding: '11px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '.9rem', color: '#70A8FF',
+              cursor: 'pointer',
+            }}>Next question →</button>
+          )}
+
+          {tierDone && (
+            <div className="fade-up" style={{
+              marginTop: 12,
+              background: 'rgba(75,144,255,.07)', border: '1px solid rgba(75,144,255,.2)',
+              borderRadius: 12, padding: '12px', textAlign: 'center',
+            }}>
+              <div style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.92rem', color: '#70A8FF',
+              }}>
+                {tier.label} complete ✓
+              </div>
+              {activeTier < tiers.length - 1 && (
+                <button onClick={() => setActiveTier(a => a + 1)} style={{
+                  marginTop: 8,
+                  background: 'rgba(75,144,255,.15)', border: '1px solid rgba(75,144,255,.35)',
+                  borderRadius: 10, padding: '8px 16px',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700, fontSize: '.85rem', color: '#70A8FF',
+                  cursor: 'pointer',
+                }}>Try {tiers[activeTier + 1]?.label} →</button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── TFCheckpointBlock ────────────────────────────────────────────────────────
+function TFCheckpointBlock({ block }) {
+  const [answered, setAnswered] = useState(false)
+  const [wasCorrect, setWasCorrect] = useState(false)
+
+  function answer(choseTrue) {
+    setAnswered(true)
+    setWasCorrect(choseTrue === block.isTrue)
+  }
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0A1020, #0D1428)',
+        border: '1px solid rgba(75,144,255,.2)',
+        borderRadius: 18, padding: '18px',
+      }}>
+        {/* Label */}
+        <div style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.6rem', fontWeight: 700, letterSpacing: '.22em',
+          textTransform: 'uppercase', color: '#4B90FF', marginBottom: 12, textAlign: 'center',
+        }}>TRUE OR FALSE?</div>
+
+        {/* Statement */}
+        <p style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 700, fontSize: 'clamp(1rem, 3.5vw, 1.15rem)',
+          color: '#F5F7FB', margin: '0 0 18px', lineHeight: 1.4, textAlign: 'center',
+        }}>{block.statement}</p>
+
+        {/* Buttons */}
+        {!answered && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <button onClick={() => answer(true)} style={{
+              background: 'linear-gradient(160deg, #1C2E1E, #141E16)',
+              border: '1.5px solid rgba(56,180,100,.32)',
+              borderRadius: 14, padding: '14px 18px',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12,
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 800, fontSize: '1rem', letterSpacing: '.07em', color: '#72BE88',
+              transition: 'all .15s',
+            }}>
+              <span style={{ fontSize: '.9rem' }}>✓</span> TRUE
+            </button>
+            <button onClick={() => answer(false)} style={{
+              background: 'linear-gradient(160deg, #2E1C1C, #1E1414)',
+              border: '1.5px solid rgba(200,80,80,.32)',
+              borderRadius: 14, padding: '14px 18px',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12,
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 800, fontSize: '1rem', letterSpacing: '.07em', color: '#BE7272',
+              transition: 'all .15s',
+            }}>
+              <span style={{ fontSize: '.9rem' }}>✗</span> FALSE
+            </button>
+          </div>
+        )}
+
+        {/* Reveal */}
+        {answered && (
+          <div className="fade-up">
+            <div style={{ textAlign: 'center', marginBottom: 14 }}>
+              <div style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 900, fontSize: '1.5rem',
+                color: block.isTrue ? '#4DFF88' : '#FF5D73',
+                textShadow: block.isTrue ? '0 0 30px rgba(77,255,136,.4)' : '0 0 30px rgba(255,93,115,.5)',
+                marginBottom: 6,
+              }}>{block.revealHeader}</div>
+              <p style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.9rem', color: '#C8D0E8', margin: '0 0 12px', lineHeight: 1.5,
+              }}>{block.revealSub}</p>
+              <div style={{
+                display: 'inline-block',
+                background: wasCorrect ? 'rgba(77,255,136,.08)' : 'rgba(255,93,115,.08)',
+                border: '1px solid ' + (wasCorrect ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.3)'),
+                borderRadius: 99, padding: '4px 14px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.8rem',
+                color: wasCorrect ? '#4DFF88' : '#FF5D73',
+              }}>{wasCorrect ? '✓ Correct' : '✗ Wrong'}</div>
+            </div>
+
+            {/* Breakdown */}
+            {block.breakdown?.length > 0 && (
+              <div style={{
+                background: '#0A1020', border: '1px solid #1E2A40',
+                borderRadius: 12, padding: '12px 14px', marginBottom: 12,
+              }}>
+                {block.breakdown.map((line, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 8, marginBottom: i < block.breakdown.length - 1 ? 7 : 0 }}>
+                    <span style={{ color: '#4B90FF', flexShrink: 0, fontSize: '.8rem' }}>→</span>
+                    <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.86rem', color: '#C8D0E8', margin: 0 }}>{line}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Calculator visual */}
+            {block.wrongDisplay && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div style={{
+                  background: '#070E1C', border: '2px solid rgba(255,93,115,.4)',
+                  borderRadius: 12, padding: '14px', textAlign: 'center',
+                  position: 'relative', overflow: 'hidden',
+                }}>
+                  <div style={{
+                    fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700,
+                    letterSpacing: '.1em', color: '#FF5D73', marginBottom: 8, textTransform: 'uppercase',
+                  }}>Calculator says</div>
+                  <div style={{
+                    fontFamily: 'monospace', fontSize: '1.4rem', fontWeight: 700, color: '#FF5D73',
+                  }}>{block.wrongDisplay}</div>
+                  <div style={{
+                    position: 'absolute', top: 8, right: 8,
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontSize: '.65rem', fontWeight: 700, color: '#FF5D73',
+                    background: 'rgba(255,93,115,.12)', borderRadius: 6, padding: '2px 6px',
+                  }}>IMPOSSIBLE ✗</div>
+                </div>
+                <div style={{
+                  background: '#070E1C', border: '2px solid rgba(77,255,136,.4)',
+                  borderRadius: 12, padding: '14px', textAlign: 'center',
+                }}>
+                  <div style={{
+                    fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700,
+                    letterSpacing: '.1em', color: '#4DFF88', marginBottom: 8, textTransform: 'uppercase',
+                  }}>Correct</div>
+                  <div style={{
+                    fontFamily: 'monospace', fontSize: '1.4rem', fontWeight: 700, color: '#4DFF88',
+                  }}>{block.rightDisplay}</div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── SimulatorBlock ───────────────────────────────────────────────────────────
+function SimulatorBlock({ block }) {
+  const scenarios = block.scenarios || []
+  const n = scenarios.length
+  const [idx, setIdx] = useState(0)
+  const [answered, setAnswered] = useState(Array(n).fill(false))
+  const [choice, setChoice] = useState(Array(n).fill(null))
+  const [hintIdx, setHintIdx] = useState(Array(n).fill(-1))
+
+  const scenario = scenarios[idx]
+  const isAnswered = answered[idx]
+  const myChoice = choice[idx]
+  const isPossible = scenario?.answer === 'possible'
+
+  function answer(chosePossible) {
+    if (isAnswered) return
+    const na = [...answered]; na[idx] = true; setAnswered(na)
+    const nc = [...choice]; nc[idx] = chosePossible ? 'possible' : 'impossible'; setChoice(nc)
+  }
+
+  function showHint() {
+    const nh = [...hintIdx]
+    const hints = scenario?.hints || []
+    nh[idx] = Math.min(nh[idx] + 1, hints.length - 1)
+    setHintIdx(nh)
+  }
+
+  function next() {
+    if (idx < n - 1) setIdx(i => i + 1)
+  }
+
+  const wasCorrect = isAnswered && myChoice === scenario?.answer
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0A1020, #0D1428)',
+        border: '1px solid rgba(75,144,255,.2)',
+        borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+            textTransform: 'uppercase', color: '#4B90FF',
+          }}>🖩 Calculator Sense</div>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.72rem', color: '#4A5578',
+          }}>{idx + 1}/{n}</div>
+        </div>
+
+        {/* Scenario text */}
+        <div style={{
+          background: '#0A1020', border: '1px solid #1E2A40',
+          borderRadius: 12, padding: '14px', marginBottom: 12,
+        }}>
+          <p style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600, fontSize: '.93rem', color: '#F5F7FB', margin: 0, lineHeight: 1.45,
+          }}>{scenario?.scenario}</p>
+        </div>
+
+        {/* Calculator display */}
+        <div style={{
+          background: '#050A10', border: '2px solid #1A2840',
+          borderRadius: 10, padding: '16px 20px', textAlign: 'center',
+          marginBottom: 14,
+          boxShadow: 'inset 0 2px 8px rgba(0,0,0,.5)',
+        }}>
+          <div style={{
+            fontFamily: 'monospace', fontSize: '2rem', fontWeight: 700,
+            color: isAnswered
+              ? (wasCorrect ? '#4DFF88' : isPossible ? '#4DFF88' : '#FF5D73')
+              : '#00FF88',
+            textShadow: '0 0 12px currentColor',
+            letterSpacing: '.05em',
+          }}>{scenario?.display}</div>
+        </div>
+
+        {/* Answer buttons */}
+        {!isAnswered && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+            <button onClick={() => answer(true)} style={{
+              background: 'rgba(77,255,136,.08)', border: '1.5px solid rgba(77,255,136,.3)',
+              borderRadius: 12, padding: '12px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '.9rem', color: '#4DFF88',
+              cursor: 'pointer',
+            }}>Possible ✓</button>
+            <button onClick={() => answer(false)} style={{
+              background: 'rgba(255,93,115,.08)', border: '1.5px solid rgba(255,93,115,.3)',
+              borderRadius: 12, padding: '12px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '.9rem', color: '#FF5D73',
+              cursor: 'pointer',
+            }}>Impossible ✗</button>
+          </div>
+        )}
+
+        {/* Hint button */}
+        {!isAnswered && scenario?.hints?.length > 0 && (
+          <div style={{ marginBottom: 10 }}>
+            <button onClick={showHint} style={{
+              background: 'rgba(255,200,87,.06)', border: '1px solid rgba(255,200,87,.2)',
+              borderRadius: 8, padding: '6px 12px',
+              fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 600,
+              color: '#FFC857', cursor: 'pointer',
+            }}>💡 Need a Hint? ›</button>
+            {hintIdx[idx] >= 0 && (
+              <div className="fade-up" style={{
+                marginTop: 6, padding: '8px 11px',
+                background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.15)',
+                borderRadius: 8,
+              }}>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.82rem', color: '#C8B870', margin: 0 }}>
+                  {scenario.hints[hintIdx[idx]]}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Feedback */}
+        {isAnswered && (
+          <div className="fade-up">
+            <div style={{
+              background: wasCorrect ? 'rgba(77,255,136,.07)' : 'rgba(255,93,115,.07)',
+              border: '1px solid ' + (wasCorrect ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.3)'),
+              borderRadius: 12, padding: '12px 14px', marginBottom: 10,
+              boxShadow: wasCorrect ? '0 0 20px rgba(77,255,136,.08)' : '0 0 20px rgba(255,93,115,.1)',
+            }}>
+              <div style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.85rem',
+                color: wasCorrect ? '#4DFF88' : '#FF5D73', marginBottom: 8,
+              }}>{wasCorrect ? '✓ Correct!' : '✗ Not quite.'}</div>
+              {scenario?.breakdown?.map((line, i) => (
+                <div key={i} style={{ display: 'flex', gap: 8, marginBottom: i < scenario.breakdown.length - 1 ? 5 : 0 }}>
+                  <span style={{ color: '#4B90FF', flexShrink: 0, fontSize: '.8rem' }}>→</span>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.84rem', color: '#C8D0E8', margin: 0 }}>{line}</p>
+                </div>
+              ))}
+            </div>
+            {idx < n - 1 && (
+              <button onClick={next} style={{
+                width: '100%',
+                background: 'rgba(75,144,255,.12)', border: '1px solid rgba(75,144,255,.3)',
+                borderRadius: 12, padding: '11px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.9rem', color: '#70A8FF',
+                cursor: 'pointer',
+              }}>Next scenario →</button>
+            )}
+            {idx >= n - 1 && (
+              <div style={{
+                background: 'rgba(75,144,255,.07)', border: '1px solid rgba(75,144,255,.2)',
+                borderRadius: 12, padding: '12px', textAlign: 'center',
+              }}>
+                <div style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700, fontSize: '.9rem', color: '#70A8FF',
+                }}>All scenarios complete ✓</div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
 function Screen({ screen, subject }) {
-  const isWarm = subject === 'History'
-  const isBio  = subject === 'Biology'
+  const isWarm  = subject === 'History'
+  const isBio   = subject === 'Biology'
+  const isMaths = subject === 'Maths'
   return (
     <div>
       {screen.headerImage && (
@@ -1245,9 +2318,9 @@ function Screen({ screen, subject }) {
         {!screen.headerImage && (
           <div style={{
             display: 'inline-flex',
-            background: isWarm ? 'rgba(196,120,40,.12)' : isBio ? 'rgba(56,210,122,.12)' : 'rgba(157,92,255,.12)',
-            border: `1px solid ${isWarm ? 'rgba(196,120,40,.25)' : isBio ? 'rgba(56,210,122,.25)' : 'rgba(157,92,255,.25)'}`,
-            color: isWarm ? '#C8901A' : isBio ? '#38D27A' : '#C18CFF',
+            background: isWarm ? 'rgba(196,120,40,.12)' : isBio ? 'rgba(56,210,122,.12)' : isMaths ? 'rgba(75,144,255,.12)' : 'rgba(157,92,255,.12)',
+            border: `1px solid ${isWarm ? 'rgba(196,120,40,.25)' : isBio ? 'rgba(56,210,122,.25)' : isMaths ? 'rgba(75,144,255,.25)' : 'rgba(157,92,255,.25)'}`,
+            color: isWarm ? '#C8901A' : isBio ? '#38D27A' : isMaths ? '#4B90FF' : '#C18CFF',
             borderRadius: 99, padding: '4px 12px',
             fontFamily: "'Inter', sans-serif",
             fontSize: '.68rem', fontWeight: 700,
@@ -1257,24 +2330,24 @@ function Screen({ screen, subject }) {
         <h2 style={{
           fontFamily: "'Space Grotesk', sans-serif",
           fontSize: 'clamp(1.3rem, 4vw, 1.75rem)',
-          marginBottom: 8, color: isWarm ? '#F0E8D8' : isBio ? '#E8F5EE' : '#F5F7FB',
+          marginBottom: 8, color: isWarm ? '#F0E8D8' : isBio ? '#E8F5EE' : isMaths ? '#EEF2FF' : '#F5F7FB',
           fontWeight: 700, letterSpacing: '-.01em', lineHeight: 1.2,
         }}>{screen.heading}</h2>
         {screen.sub && (
           <p style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: '.9rem', color: isWarm ? '#8A7055' : isBio ? '#5A8A6A' : '#5A6480', lineHeight: 1.6, margin: 0,
+            fontSize: '.9rem', color: isWarm ? '#8A7055' : isBio ? '#5A8A6A' : isMaths ? '#5A6A90' : '#5A6480', lineHeight: 1.6, margin: 0,
           }}>{screen.sub}</p>
         )}
       </div>
 
       {screen.blocks.map((block, i) => (
         <div key={i}>
-          {block.type === 'read'          && <ReadBlock block={block} isWarm={isWarm} isBio={isBio} />}
-          {block.type === 'keypoint'      && <KeypointBlock block={block} isWarm={isWarm} isBio={isBio} />}
-          {block.type === 'funfact'       && <FunFactBlock block={block} isWarm={isWarm} isBio={isBio} />}
+          {block.type === 'read'          && <ReadBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} />}
+          {block.type === 'keypoint'      && <KeypointBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} />}
+          {block.type === 'funfact'       && <FunFactBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} />}
           {block.type === 'examtip'       && <ExamTipBlock block={block} isWarm={isWarm} />}
-          {block.type === 'timeline'      && <TimelineBlock block={block} isWarm={isWarm} isBio={isBio} />}
+          {block.type === 'timeline'      && <TimelineBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} />}
           {block.type === 'reveal'        && <RevealBlock block={block} />}
           {block.type === 'quiz'          && <QuizBlock block={block} subject={subject} />}
           {block.type === 'flashcards'    && <FlashcardsBlock block={block} />}
@@ -1284,6 +2357,12 @@ function Screen({ screen, subject }) {
           {block.type === 'builder'       && <BuilderBlock block={block} />}
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
           {block.type === 'boss'          && <BossBlock block={block} />}
+          {block.type === 'numberline'    && <NumberLineBlock block={block} />}
+          {block.type === 'fillblanks'    && <FillBlanksBlock block={block} />}
+          {block.type === 'bidmas'        && <BidmasBlock block={block} />}
+          {block.type === 'tieredquiz'    && <TieredQuizBlock block={block} />}
+          {block.type === 'tfcheckpoint'  && <TFCheckpointBlock block={block} />}
+          {block.type === 'simulator'     && <SimulatorBlock block={block} />}
         </div>
       ))}
     </div>
@@ -2145,10 +3224,11 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
   const subjectColor = module.color || '#9D5CFF'
   const isWarm     = module.subject === 'History'
   const isBio      = module.subject === 'Biology'
-  const pageBg     = isWarm ? '#0C0905'           : isBio ? '#04090A'           : '#080C1A'
-  const hdrBg      = isWarm ? 'rgba(12,9,5,.97)'  : isBio ? 'rgba(4,9,10,.97)' : 'rgba(8,12,26,.96)'
-  const cardBg     = isWarm ? '#1C1408'            : isBio ? '#081410'          : '#10182B'
-  const borderBase = (isWarm || isBio) ? `${subjectColor}28` : '#1E2A40'
+  const isMaths    = module.subject === 'Maths'
+  const pageBg     = isWarm ? '#0C0905' : isBio ? '#04090A' : isMaths ? '#03060E' : '#080C1A'
+  const hdrBg      = isWarm ? 'rgba(12,9,5,.97)' : isBio ? 'rgba(4,9,10,.97)' : isMaths ? 'rgba(3,6,14,.97)' : 'rgba(8,12,26,.96)'
+  const cardBg     = isWarm ? '#1C1408' : isBio ? '#081410' : isMaths ? '#07101E' : '#10182B'
+  const borderBase = (isWarm || isBio || isMaths) ? `${subjectColor}28` : '#1E2A40'
 
   // ── Confidence overlay — neutral, no colour judgement ──────────────────
   const CONFIDENCE_LEVELS = [
@@ -2366,14 +3446,14 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
                   background: isActive
                     ? subjectColor
                     : isDone
-                    ? (isWarm ? 'rgba(196,120,40,.15)' : isBio ? `${subjectColor}18` : 'rgba(77,255,136,.1)')
-                    : (isWarm ? '#1C1205' : isBio ? '#081410' : '#10182B'),
-                  border: `1px solid ${isActive ? subjectColor : isDone ? (isWarm ? 'rgba(196,120,40,.35)' : isBio ? `${subjectColor}35` : 'rgba(77,255,136,.3)') : (isWarm ? 'rgba(196,120,40,.15)' : isBio ? `${subjectColor}18` : '#2A3552')}`,
+                    ? (isWarm ? 'rgba(196,120,40,.15)' : isBio ? `${subjectColor}18` : isMaths ? `${subjectColor}18` : 'rgba(77,255,136,.1)')
+                    : (isWarm ? '#1C1205' : isBio ? '#081410' : isMaths ? '#07101E' : '#10182B'),
+                  border: `1px solid ${isActive ? subjectColor : isDone ? (isWarm ? 'rgba(196,120,40,.35)' : isBio ? `${subjectColor}35` : isMaths ? `${subjectColor}35` : 'rgba(77,255,136,.3)') : (isWarm ? 'rgba(196,120,40,.15)' : isBio ? `${subjectColor}18` : isMaths ? `${subjectColor}18` : '#2A3552')}`,
                   borderRadius: 99,
                   padding: '5px 12px',
                   fontFamily: "'Inter', sans-serif",
                   fontSize: '.7rem', fontWeight: 600,
-                  color: isActive ? '#fff' : isDone ? (isWarm ? `${subjectColor}CC` : isBio ? `${subjectColor}CC` : '#4DFF88') : '#4A5578',
+                  color: isActive ? '#fff' : isDone ? (isWarm ? `${subjectColor}CC` : isBio ? `${subjectColor}CC` : isMaths ? `${subjectColor}CC` : '#4DFF88') : '#4A5578',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
                   letterSpacing: '.01em',
@@ -2405,10 +3485,10 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
       {/* ── Bottom navigation ── */}
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 20,
-        background: isWarm ? 'rgba(12,9,5,.97)' : isBio ? 'rgba(4,9,10,.97)' : 'rgba(8,12,26,.97)',
+        background: isWarm ? 'rgba(12,9,5,.97)' : isBio ? 'rgba(4,9,10,.97)' : isMaths ? 'rgba(3,6,14,.97)' : 'rgba(8,12,26,.97)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderTop: isWarm ? '1px solid rgba(196,120,40,.2)' : isBio ? '1px solid rgba(56,210,122,.2)' : '1px solid #1E2A40',
+        borderTop: isWarm ? '1px solid rgba(196,120,40,.2)' : isBio ? '1px solid rgba(56,210,122,.2)' : isMaths ? '1px solid rgba(75,144,255,.2)' : '1px solid #1E2A40',
         padding: '10px 16px calc(10px + env(safe-area-inset-bottom))',
         boxShadow: '0 -8px 32px rgba(0,0,0,.4)',
       }}>
@@ -2424,12 +3504,12 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
                 onClick={() => go(-1)}
                 disabled={backDisabled}
                 style={{
-                  background: isWarm ? 'rgba(255,255,255,.03)' : isBio ? 'rgba(255,255,255,.03)' : '#10182B',
-                  border: isWarm ? '1px solid rgba(196,120,40,.18)' : isBio ? '1px solid rgba(56,210,122,.18)' : '1px solid #2A3552',
+                  background: isWarm ? 'rgba(255,255,255,.03)' : isBio ? 'rgba(255,255,255,.03)' : isMaths ? 'rgba(255,255,255,.03)' : '#10182B',
+                  border: isWarm ? '1px solid rgba(196,120,40,.18)' : isBio ? '1px solid rgba(56,210,122,.18)' : isMaths ? '1px solid rgba(75,144,255,.18)' : '1px solid #2A3552',
                   borderRadius: 14, padding: '13px 10px',
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontWeight: 700, fontSize: '.9rem',
-                  color: isWarm ? (backDisabled ? '#3A2810' : '#8A7055') : isBio ? (backDisabled ? '#1A3825' : '#4A7A58') : (backDisabled ? '#2A3552' : '#9CA8C7'),
+                  color: isWarm ? (backDisabled ? '#3A2810' : '#8A7055') : isBio ? (backDisabled ? '#1A3825' : '#4A7A58') : isMaths ? (backDisabled ? '#0D1A38' : '#4A78A8') : (backDisabled ? '#2A3552' : '#9CA8C7'),
                   cursor: backDisabled ? 'default' : 'pointer',
                   transition: 'all .15s',
                 }}>← Back</button>
@@ -2438,12 +3518,12 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
 
           {/* Save + Exit */}
           <button onClick={onBack} style={{
-            background: isBio ? 'transparent' : isWarm ? 'transparent' : '#10182B',
-            border: isBio ? '1px solid rgba(56,210,122,.15)' : isWarm ? '1px solid rgba(196,120,40,.15)' : '1px solid #2A3552',
+            background: isBio ? 'transparent' : isWarm ? 'transparent' : isMaths ? 'transparent' : '#10182B',
+            border: isBio ? '1px solid rgba(56,210,122,.15)' : isWarm ? '1px solid rgba(196,120,40,.15)' : isMaths ? '1px solid rgba(75,144,255,.15)' : '1px solid #2A3552',
             borderRadius: 14, padding: '13px 10px',
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 700, fontSize: '.82rem',
-            color: isBio ? '#2A5A38' : isWarm ? '#5A4020' : '#5A6480', cursor: 'pointer',
+            color: isBio ? '#2A5A38' : isWarm ? '#5A4020' : isMaths ? '#1A3A6A' : '#5A6480', cursor: 'pointer',
             lineHeight: 1.3, textAlign: 'center',
           }}>Save +{'\n'}Exit</button>
 
@@ -2473,7 +3553,7 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
                 transition: 'all .15s',
               }}>{nextBtnLabel}</button>
           ) : (
-            <div style={{ background: isBio ? 'transparent' : isWarm ? 'transparent' : '#10182B', border: isBio ? '1px solid rgba(56,210,122,.1)' : isWarm ? '1px solid rgba(196,120,40,.1)' : '1px solid #1E2A40', borderRadius: 14, padding: '13px 10px' }} />
+            <div style={{ background: isBio ? 'transparent' : isWarm ? 'transparent' : isMaths ? 'transparent' : '#10182B', border: isBio ? '1px solid rgba(56,210,122,.1)' : isWarm ? '1px solid rgba(196,120,40,.1)' : isMaths ? '1px solid rgba(75,144,255,.1)' : '1px solid #1E2A40', borderRadius: 14, padding: '13px 10px' }} />
           )}
         </div>
       </div>
