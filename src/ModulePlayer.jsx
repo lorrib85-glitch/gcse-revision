@@ -1323,13 +1323,14 @@ function HookContent({ module, hook, hookState, subjectColor }) {
           {hook.scenario ? (
             <div style={{
               background: 'linear-gradient(145deg, #0E1624, #0A1018)',
-              border: '1px solid rgba(255,200,87,.18)',
+              border: `1px solid ${subjectColor}28`,
               borderRadius: 18, padding: '18px 20px', marginBottom: 22,
               boxShadow: '0 0 40px rgba(0,0,0,.4)',
             }}>
+              {/* Location badge */}
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6,
-                background: 'rgba(255,200,87,.08)', border: '1px solid rgba(255,200,87,.2)',
+                background: subjectColor + '12', border: `1px solid ${subjectColor}30`,
                 borderRadius: 99, padding: '4px 12px', marginBottom: 14,
               }}>
                 <span style={{ fontSize: '.75rem' }}>📍</span>
@@ -1337,30 +1338,70 @@ function HookContent({ module, hook, hookState, subjectColor }) {
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontSize: '.72rem', fontWeight: 700,
                   letterSpacing: '.1em', textTransform: 'uppercase',
-                  color: '#FFC857',
+                  color: subjectColor,
                 }}>{hook.scenario.location}</span>
               </div>
-              <p style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '.9rem', color: '#9CA8C7',
-                margin: '0 0 12px', lineHeight: 1.6,
-              }}>{hook.scenario.intro}</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {hook.scenario.items.map((item, i) => (
-                  <div key={i} style={{
-                    display: 'flex', alignItems: 'flex-start', gap: 10,
-                    background: 'rgba(255,255,255,.03)',
-                    border: '1px solid rgba(255,255,255,.06)',
-                    borderRadius: 12, padding: '10px 14px',
-                  }}>
-                    <span style={{ color: '#F5B700', fontSize: '.9rem', flexShrink: 0, marginTop: 1 }}>·</span>
-                    <span style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55,
-                    }}>{item}</span>
-                  </div>
-                ))}
-              </div>
+
+              {/* Intro text */}
+              {hook.scenario.intro && (
+                <p style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.9rem', color: '#9CA8C7',
+                  margin: '0 0 14px', lineHeight: 1.6,
+                }}>{hook.scenario.intro}</p>
+              )}
+
+              {/* Dialogue quotes (optional) */}
+              {hook.scenario.quotes && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+                  {hook.scenario.quotes.map((q, i) => (
+                    <div key={i} style={{
+                      background: 'rgba(255,255,255,.04)',
+                      border: `1px solid ${subjectColor}20`,
+                      borderRadius: 12, padding: '10px 14px',
+                    }}>
+                      <div style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: '.62rem', fontWeight: 700, letterSpacing: '.1em',
+                        textTransform: 'uppercase', color: subjectColor, marginBottom: 4,
+                      }}>{q.role}</div>
+                      <p style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: '.9rem', fontWeight: 600,
+                        color: '#E0E6F0', margin: 0, lineHeight: 1.45,
+                        fontStyle: 'italic',
+                      }}>{q.text}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Bullet heading + items */}
+              {hook.scenario.bulletHeading && (
+                <div style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.72rem', fontWeight: 700, letterSpacing: '.08em',
+                  textTransform: 'uppercase', color: '#5A6480', marginBottom: 8,
+                }}>{hook.scenario.bulletHeading}</div>
+              )}
+              {hook.scenario.items && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {hook.scenario.items.map((item, i) => (
+                    <div key={i} style={{
+                      display: 'flex', alignItems: 'flex-start', gap: 10,
+                      background: 'rgba(255,255,255,.03)',
+                      border: '1px solid rgba(255,255,255,.05)',
+                      borderRadius: 10, padding: '8px 12px',
+                    }}>
+                      <span style={{ color: subjectColor, fontSize: '.85rem', flexShrink: 0, marginTop: 1 }}>·</span>
+                      <span style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: '.87rem', color: '#C8D0E8', lineHeight: 1.55,
+                      }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <div style={{ marginBottom: 20 }}>
@@ -1921,12 +1962,10 @@ function GoalsScreen({ module }) {
 
 // ─── Main ModulePlayer ────────────────────────────────────────────────────────
 
-export default function ModulePlayer({ module, onBack }) {
+export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
   const saved = getModuleState(module.id)
 
   // Build unified virtual screen list: [hook?] [goals?] [content...].
-  // Using a stable array created once — reference changes don't matter since
-  // we only derive indices from it.
   const allVirtual = []
   if (module.hook) allVirtual.push({ kind: 'hook' })
   const goals = module.intro?.learningGoals || module.learningGoals || []
@@ -1935,7 +1974,8 @@ export default function ModulePlayer({ module, onBack }) {
   const totalVirtual = allVirtual.length
 
   const [virtualIdx, setVirtualIdx] = useState(() => {
-    // Migrate old save format (hookDone/introDone/screen) to new virtualIdx
+    // External deep-link takes priority; otherwise restore saved position
+    if (initialVirtualIdx !== undefined && initialVirtualIdx > 0) return Math.min(initialVirtualIdx, totalVirtual - 1)
     if (saved.virtualIdx !== undefined) return saved.virtualIdx
     const preCount = (module.hook ? 1 : 0) + (goals.length > 0 ? 1 : 0)
     return preCount + (saved.screen || 0)

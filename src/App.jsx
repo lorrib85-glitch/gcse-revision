@@ -150,8 +150,10 @@ export default function App() {
   const [activeModule, setActiveModule] = useState(null)
   const [quizMode, setQuizMode]         = useState('random')
 
-  function openModule(mod) {
+  const [moduleInitialIdx, setModuleInitialIdx] = useState(0)
+  function openModule(mod, initialIdx = 0) {
     setActiveModule(mod)
+    setModuleInitialIdx(initialIdx)
     setView('module')
   }
 
@@ -200,7 +202,7 @@ export default function App() {
 
   // Full-screen overlays take priority
   if (view === 'quickquiz')              return <QuickQuiz mode={quizMode} onClose={closeOverlay} />
-  if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} onBack={closeOverlay} />
+  if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} initialVirtualIdx={moduleInitialIdx} onBack={closeOverlay} />
   if (view === 'session' && session)     return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={closeOverlay} />
   if (view === 'end')                    return <EndScreen topicId={topicId} results={results} savedData={savedData} onHome={closeOverlay} onStart={startSession} />
 
@@ -209,7 +211,7 @@ export default function App() {
     <div style={{ background: '#070B1A', minHeight: '100vh' }}>
       {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onStartQuickQuiz={startQuickQuiz} />}
       {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
-      {tab === 'quiz'    && <QuizTab onStartQuiz={startQuickQuiz} />}
+      {tab === 'quiz'    && <QuizTab onStartQuiz={startQuickQuiz} onOpenModule={openModule} />}
       {tab === 'test'    && <TestTab />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
@@ -587,7 +589,7 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
 
 // ─── Quiz tab ─────────────────────────────────────────────────────────────────
 
-function QuizTab({ onStartQuiz }) {
+function QuizTab({ onStartQuiz, onOpenModule }) {
   const weakAreas = getWeakAreas(4)
   const hasWeakData = weakAreas.some(w => w.total >= 2)
 
@@ -716,25 +718,49 @@ function QuizTab({ onStartQuiz }) {
                   History: '#F5B700', Biology: '#38D27A', Chemistry: '#38D27A',
                   Maths: '#3B82FF', English: '#9D5CFF', Sociology: '#FF5C7A',
                 }[subject] || '#9CA8C7'
+                // Find linked module if any topic has moduleId
+                const allTopics = TEST_TOPICS.flatMap(s => s.topics)
+                const linkedTopic = allTopics.find(t => t.label && topic && (topic.includes(t.label.split(' ')[0]) || t.id === w.key.split('/')[1]))
+                const linkedModule = linkedTopic?.moduleId
+                  ? MODULES.find(m => m.id === linkedTopic.moduleId)
+                  : null
                 return (
-                  <div key={w.key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '.75rem', fontWeight: 600, color: sc, marginBottom: 3 }}>{subject}</div>
-                      <div style={{ fontSize: '.78rem', color: '#C8D0E8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{topic}</div>
+                  <div key={w.key} style={{ padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '.75rem', fontWeight: 600, color: sc, marginBottom: 3 }}>{subject}</div>
+                        <div style={{ fontSize: '.78rem', color: '#C8D0E8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{topic}</div>
+                      </div>
+                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                        <div style={{ fontSize: '.85rem', fontWeight: 800, color: pct > 60 ? '#FF5D73' : '#FFC857' }}>{pct}%</div>
+                        <div style={{ fontSize: '.62rem', color: '#5A6480' }}>wrong</div>
+                      </div>
+                      <div style={{ width: 44, height: 44, borderRadius: '50%', flexShrink: 0, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="44" height="44" viewBox="0 0 44 44" style={{ position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
+                          <circle cx="22" cy="22" r="18" fill="none" stroke="#1E2A40" strokeWidth="3"/>
+                          <circle cx="22" cy="22" r="18" fill="none" stroke={pct > 60 ? '#FF5D73' : '#FFC857'} strokeWidth="3"
+                            strokeDasharray={`${2 * Math.PI * 18}`}
+                            strokeDashoffset={`${2 * Math.PI * 18 * (1 - pct / 100)}`}
+                            strokeLinecap="round"/>
+                        </svg>
+                      </div>
                     </div>
-                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <div style={{ fontSize: '.85rem', fontWeight: 800, color: pct > 60 ? '#FF5D73' : '#FFC857' }}>{pct}%</div>
-                      <div style={{ fontSize: '.62rem', color: '#5A6480' }}>wrong</div>
-                    </div>
-                    <div style={{ width: 44, height: 44, borderRadius: '50%', flexShrink: 0, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <svg width="44" height="44" viewBox="0 0 44 44" style={{ position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
-                        <circle cx="22" cy="22" r="18" fill="none" stroke="#1E2A40" strokeWidth="3"/>
-                        <circle cx="22" cy="22" r="18" fill="none" stroke={pct > 60 ? '#FF5D73' : '#FFC857'} strokeWidth="3"
-                          strokeDasharray={`${2 * Math.PI * 18}`}
-                          strokeDashoffset={`${2 * Math.PI * 18 * (1 - pct / 100)}`}
-                          strokeLinecap="round"/>
-                      </svg>
-                    </div>
+                    {linkedModule && onOpenModule && (
+                      <button
+                        onClick={() => onOpenModule(linkedModule)}
+                        style={{
+                          marginTop: 8, width: '100%',
+                          background: sc + '10', border: `1px solid ${sc}30`,
+                          borderRadius: 8, padding: '7px 12px',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                          fontFamily: "'Space Grotesk', sans-serif",
+                          fontSize: '.72rem', fontWeight: 700, color: sc,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        📖 Study in module — {linkedModule.title} →
+                      </button>
+                    )}
                   </div>
                 )
               })}
@@ -891,11 +917,11 @@ const TEST_TOPICS = [
     subject: 'History',
     icon: '📜',
     topics: [
-      { id: 'th1', label: 'Medieval Medicine c1250–c1500',        questions: 4,  available: true },
-      { id: 'th2', label: 'Renaissance & the Plague c1500–c1700', questions: 3,  available: true },
-      { id: 'th3', label: 'Surgery & Anatomy c1700–c1900',        questions: 3,  available: true },
-      { id: 'th4', label: 'Germ Theory c1850–c1900',              questions: 3,  available: true },
-      { id: 'th5', label: 'Public Health c1800–c1900',            questions: 3,  available: true },
+      { id: 'th1', label: 'Medieval Medicine c1250–c1500',        questions: 4,  available: true, moduleId: 'mod1' },
+      { id: 'th2', label: 'Renaissance & the Plague c1500–c1700', questions: 3,  available: true, moduleId: 'mod2' },
+      { id: 'th3', label: 'Surgery & Anatomy c1700–c1900',        questions: 3,  available: true, moduleId: 'mod3' },
+      { id: 'th4', label: 'Germ Theory c1850–c1900',              questions: 3,  available: true, moduleId: 'mod4' },
+      { id: 'th5', label: 'Public Health c1800–c1900',            questions: 3,  available: true, moduleId: 'mod5' },
     ]
   },
   {

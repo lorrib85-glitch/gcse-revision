@@ -194,8 +194,56 @@ export const MODULES = [
     subtitle: 'Challenge & Continuity',
     era: 'c1500–c1700',
     icon: '🔬',
-    color: '#1a3a5c',
-    colorLight: '#ddeeff',
+    color: '#D4950A',
+    colorLight: 'rgba(212,149,10,.12)',
+    hook: {
+      scenario: {
+        location: 'Italy, 1543',
+        intro: 'A patient is seriously ill. Two doctors disagree.',
+        quotes: [
+          { role: 'One doctor says:', text: '"Balance the Four Humours."' },
+          { role: 'Another says:', text: '"We should dissect the body properly and study anatomy."' },
+        ],
+        bulletHeading: 'Meanwhile:',
+        items: [
+          'plague spreads through crowded streets',
+          'people still carry flowers against bad air',
+          "Galen's textbooks still control universities",
+          'Medicine is beginning to change...',
+        ],
+      },
+      statement: 'By the Renaissance, doctors had completely abandoned medieval medical ideas.',
+      isTrue: false,
+      wrongFeedback: "It feels like that — Vesalius was correcting Galen! But at universities, it was business as usual.",
+      correctFeedback: "Exactly. Change happened at the edges. The core stayed medieval for much longer.",
+      loadingText: 'The history is more complicated than it looks…',
+      bigQuestion: 'So what actually changed — and what stayed the same?',
+      revealHeader: 'Change was slow. Very slow.',
+      revealItems: [
+        {
+          emoji: '🔬',
+          label: 'Anatomy improved — but treatments didn\'t',
+          detail: 'Vesalius corrected 300+ of Galen\'s errors (1543). Harvey proved blood circulates (1628). But doctors still bled patients and used purging. New knowledge, same old cures.',
+          color: '#D4950A',
+          bg: 'rgba(212,149,10,.08)',
+        },
+        {
+          emoji: '📚',
+          label: 'Galen still dominated universities',
+          detail: "Medieval ideas weren't swept away overnight. Most physicians still swore by Galen. The printing press spread new ideas — but also spread old ones further.",
+          color: '#C47828',
+          bg: 'rgba(196,120,40,.08)',
+        },
+        {
+          emoji: '💀',
+          label: 'The Great Plague (1665) proved the limits',
+          detail: "London lost 100,000 people in one outbreak. Despite all the Renaissance progress, nobody could explain or stop the plague. The tools weren't there yet.",
+          color: '#FF5D73',
+          bg: 'rgba(255,93,115,.08)',
+        },
+      ],
+      punchline: 'Renaissance medicine changed knowledge, not treatment. This module explains why that gap mattered.',
+    },
     intro: {
       learningGoals: [
         'Describe what changed in medicine during the Renaissance',
@@ -303,8 +351,8 @@ export const MODULES = [
     subtitle: 'Hold Him Down and Hope',
     era: 'c1700–c1900',
     icon: '🩺',
-    color: '#5b1a1a',
-    colorLight: '#fce8e8',
+    color: '#C47828',
+    colorLight: 'rgba(196,120,40,.12)',
     intro: {
       learningGoals: [
         'Explain why surgery before the 1840s was so dangerous',
@@ -410,8 +458,8 @@ export const MODULES = [
     subtitle: 'Pasteur, Koch & the Invisible Enemy',
     era: 'c1850–c1900',
     icon: '🦠',
-    color: '#065f46',
-    colorLight: '#d1fae5',
+    color: '#B06520',
+    colorLight: 'rgba(176,101,32,.12)',
     intro: {
       learningGoals: [
         'Explain Pasteur\'s germ theory and the evidence behind it',
@@ -537,8 +585,8 @@ export const MODULES = [
     subtitle: 'Cities, Sewers & Slow Progress',
     era: 'c1800–c1900',
     icon: '🏭',
-    color: '#4a3000',
-    colorLight: '#fff8e1',
+    color: '#9A5A18',
+    colorLight: 'rgba(154,90,24,.12)',
     intro: {
       learningGoals: [
         'Explain why public health was so poor in industrial towns',
