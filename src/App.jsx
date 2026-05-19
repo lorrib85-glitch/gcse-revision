@@ -4,6 +4,7 @@ import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from
 import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
 import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
 import { CHEMISTRY_TOPIC_GROUPS, ALL_CHEMISTRY_QUESTIONS } from './data/chemistryTopics.js'
+import { PHYSICS_TOPIC_GROUPS } from './data/physicsTopics.js'
 import { CHEM_IMAGES } from './data/chemImages.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
@@ -913,7 +914,15 @@ const TEST_TOPICS = [
     ]
   },
   { subject: 'Chemistry',          icon: '⚗️',  topics: [{ id: 'tc1',   label: 'Coming soon', questions: 0, available: false }] },
-  { subject: 'Physics',            icon: '⚡',  topics: [{ id: 'tp1',   label: 'Coming soon', questions: 0, available: false }] },
+  { subject: 'Physics', icon: '⚡', topics: [
+    { id: 'tp_electricity', label: 'Electricity & Circuits',      questions: 11, available: true },
+    { id: 'tp_energy',      label: 'Energy Transfers & Stores',   questions: 11, available: true },
+    { id: 'tp_radiation',   label: 'Radioactivity & Nuclear',     questions: 11, available: true },
+    { id: 'tp_particles',   label: 'Particle Model & Density',    questions: 8,  available: true },
+    { id: 'tp_forces',      label: 'Forces & Newton\'s Laws',     questions: 20, available: true },
+    { id: 'tp_waves',       label: 'Waves & EM Spectrum',         questions: 13, available: true },
+    { id: 'tp_magnetism',   label: 'Magnetism & Electromagnetism',questions: 12, available: true },
+  ]},
   { subject: 'Maths',              icon: '📐',  topics: [{ id: 'tm1',   label: 'Coming soon', questions: 0, available: false }] },
   { subject: 'Music',              icon: '🎵',  topics: [{ id: 'tmu1',  label: 'Coming soon', questions: 0, available: false }] },
   { subject: 'Sociology',          icon: '👥',  topics: [{ id: 'ts1',   label: 'Coming soon', questions: 0, available: false }] },
@@ -2271,11 +2280,210 @@ function ChemistryBrowser({ onBack }) {
 
 
 
+// ─── Physics topic view ───────────────────────────────────────────────────────
+function PhysicsTopicView({ group, onBack }) {
+  const [qIdx, setQIdx] = useState(0)
+  const qs = group.questions
+  const q = qs[qIdx]
+  const [answer, setAnswer]   = useState('')
+  const [showTip, setTip]     = useState(false)
+  const [grading, setGrading] = useState(false)
+  const [feedback, setFB]     = useState(null)
+  const [error, setError]     = useState(null)
+
+  function reset() { setAnswer(''); setTip(false); setFB(null); setError(null); setGrading(false) }
+  function next()  { const n=qIdx+1; if(n<qs.length){ setQIdx(n); reset(); window.scrollTo({top:0,behavior:'smooth'}) } else { reset(); onBack() } }
+
+  async function grade() {
+    if (q.type === 'mc' && !answer) { setError('Select an option first.'); return }
+    if (q.type !== 'mc' && !answer.trim()) { setError('Write something — even a rough attempt earns method marks.'); return }
+    setGrading(true); setError(null)
+    try {
+      const result = await gradeWithAI(q.q, answer, q.marks, q.ms)
+      setFB(result)
+      if (result?.marksAwarded !== undefined) {
+        recordScore({ subject: 'Physics', earned: result.marksAwarded, possible: result.marksAvailable || q.marks, source: 'test' })
+      }
+    } catch { setError('Could not reach the grading server. Check your connection.') }
+    finally { setGrading(false) }
+  }
+
+  const gs = feedback ? (GRADE_COLOURS[feedback.grade] || GRADE_COLOURS['Developing']) : null
+  const color = group.color
+  const PHYS_TIPS = {
+    1: 'One specific correct answer. Show your working for calculations.',
+    2: 'Two marks — usually method + answer. For calculations: write the equation first, substitute, then solve.',
+    3: 'Three separate mark points. Show all steps clearly.',
+    4: 'Four marks — each step earns a mark. Show full working and state units.',
+  }
+
+  return (
+    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
+      <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '12px 16px' }}>
+        <div style={{ maxWidth: 660, margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+            <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0, lineHeight: 1 }}>←</button>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color }}>Physics · {group.label}</span>
+              </div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.88rem', color: '#F5F7FB' }}>
+                {q.source} · {q.marks} mark{q.marks !== 1 ? 's' : ''}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+              {group.calculator
+                ? <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#70B8FF' }}><span style={{fontSize:'.8rem'}}>🖩</span>Calculator OK</div>
+                : <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.18)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}><span style={{fontSize:'.8rem'}}>✏️</span>No Calculator</div>
+              }
+            </div>
+          </div>
+          <div style={{ height: 3, background: '#1E2A40', borderRadius: 99, overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${((qIdx+1)/qs.length)*100}%`, background: `linear-gradient(90deg, ${color}88, ${color})`, borderRadius: 99, transition: 'width .4s' }} />
+          </div>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.62rem', color: '#4A5578', marginTop: 5, textAlign: 'right' }}>{qIdx+1} / {qs.length}</div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '16px 16px 20px' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', background: `${color}18`, border: `1px solid ${color}44`, borderRadius: 99, padding: '4px 13px', marginBottom: 14 }}>
+          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '.78rem', fontWeight: 700, color }}>[{q.marks} mark{q.marks !== 1 ? 's' : ''}]</span>
+        </div>
+
+        <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 16, padding: '18px', marginBottom: 14 }}>
+          <pre style={{ fontFamily: "'Inter', sans-serif", fontSize: '1rem', lineHeight: 1.7, margin: 0, color: '#E0E6F0', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{q.q}</pre>
+        </div>
+
+        {!showTip
+          ? <button onClick={() => setTip(true)} style={{ background: 'transparent', border: '1px dashed #2A3552', borderRadius: 10, padding: '9px 14px', cursor: 'pointer', color: '#4A5578', fontSize: '.82rem', fontFamily: "'Inter', sans-serif", width: '100%', marginBottom: 14 }}>💡 How many marks do I need to earn?</button>
+          : <div style={{ background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.18)', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#FFC857', marginBottom: 5 }}>{q.marks}-mark question</div>
+              <p style={{ fontFamily: "'Inter', sans-serif", margin: 0, fontSize: '.86rem', color: '#C8D0E8', lineHeight: 1.55 }}>{PHYS_TIPS[q.marks] || PHYS_TIPS[4]}</p>
+            </div>
+        }
+
+        {group.skillTip && !showTip && (
+          <div style={{ background: `${color}0A`, border: `1px solid ${color}22`, borderRadius: 10, padding: '10px 14px', marginBottom: 14 }}>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color, marginBottom: 4 }}>📐 Key formula / tip</div>
+            <p style={{ fontFamily: "'Inter', sans-serif", margin: 0, fontSize: '.82rem', color: '#C8D0E8', lineHeight: 1.5 }}>{group.skillTip}</p>
+          </div>
+        )}
+
+        {!feedback && (
+          q.type === 'mc'
+            ? <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+                {q.options.map((opt, i) => (
+                  <button key={i} onClick={() => setAnswer(opt)} style={{ background: answer === opt ? `${color}18` : '#10182B', border: `1.5px solid ${answer === opt ? color : '#1E2A40'}`, borderRadius: 12, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', fontFamily: "'Inter', sans-serif", fontSize: '.93rem', color: answer === opt ? color : '#C8D0E8', transition: 'all .15s', display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ width: 24, height: 24, borderRadius: '50%', border: `1.5px solid ${answer === opt ? color : '#2A3552'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '.72rem', fontWeight: 700, color: answer === opt ? color : '#4A5578', background: answer === opt ? `${color}18` : 'transparent' }}>{String.fromCharCode(65+i)}</span>
+                    {opt}
+                  </button>
+                ))}
+              </div>
+            : <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 14, padding: '14px', marginBottom: 16 }}>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A5578', marginBottom: 8 }}>Your answer</div>
+                <textarea value={answer} onChange={e => setAnswer(e.target.value)} placeholder="Write your answer here. Show any working…" style={{ width: '100%', border: 'none', background: 'transparent', resize: 'none', fontFamily: "'Inter', sans-serif", fontSize: '.95rem', color: '#E0E6F0', lineHeight: 1.7, outline: 'none', minHeight: q.marks >= 4 ? 160 : q.marks >= 2 ? 100 : 65 }} />
+              </div>
+        )}
+
+        {error && <div style={{ background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.3)', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}><p style={{ fontFamily: "'Inter', sans-serif", margin: 0, fontSize: '.86rem', color: '#FF5D73' }}>{error}</p></div>}
+
+        {feedback && gs && (
+          <div className="fade-up">
+            <div style={{ background: gs.bg, border: `2px solid ${gs.border}`, borderRadius: 18, padding: '20px', marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '2rem', fontWeight: 800, color: gs.text, lineHeight: 1 }}>{feedback.marksAwarded}<span style={{ fontSize: '1.1rem', opacity: .5 }}>/{feedback.marksAvailable}</span></div>
+                <div style={{ background: gs.badge, color: '#000', borderRadius: 99, padding: '5px 14px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.8rem' }}>{feedback.grade}</div>
+              </div>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.9rem', color: gs.text, margin: 0, lineHeight: 1.55, opacity: .9 }}>{feedback.summary}</p>
+            </div>
+            {feedback.achieved?.length > 0 && <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 13, padding: '14px', marginBottom: 8 }}><div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4DFF88', marginBottom: 10 }}>✓ What you got right</div>{feedback.achieved.map((a,i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}><span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span><p style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{a}</p></div>)}</div>}
+            {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 13, padding: '14px', marginBottom: 8 }}><div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#FF5D73', marginBottom: 10 }}>→ Next time, also include</div>{feedback.missed.map((m,i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}><span style={{ color: '#FF5D73', flexShrink: 0 }}>→</span><p style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{m}</p></div>)}</div>}
+            {feedback.examinerTip && <div style={{ background: 'rgba(245,183,0,.05)', border: '1px solid rgba(245,183,0,.18)', borderRadius: 13, padding: '14px', marginBottom: 16 }}><div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#F5B700', marginBottom: 6 }}>🗡️ Examiner tip</div><p style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{feedback.examinerTip}</p></div>}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <button onClick={reset} style={{ background: '#10182B', border: '1px solid #2A3552', borderRadius: 13, padding: '14px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#9CA8C7', fontSize: '.88rem' }}>↩ Try again</button>
+              <button onClick={next} style={{ background: `linear-gradient(135deg, ${color}cc, ${color})`, border: 'none', borderRadius: 13, padding: '14px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#fff', fontSize: '.88rem', boxShadow: `0 4px 16px ${color}44` }}>{qIdx < qs.length-1 ? 'Next →' : 'Finish ✓'}</button>
+            </div>
+          </div>
+        )}
+
+        {!feedback && (
+          <button onClick={grade} disabled={grading} style={{ width: '100%', background: grading ? '#1E2A40' : `linear-gradient(135deg, ${color}cc, ${color})`, color: grading ? '#4A5578' : '#fff', border: 'none', borderRadius: 13, padding: '16px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, cursor: grading ? 'default' : 'pointer', fontSize: '1rem', marginTop: 4, boxShadow: grading ? 'none' : `0 4px 20px ${color}44`, transition: 'all .2s' }}>
+            {grading ? '⏳ Marking your answer…' : 'Check my answer →'}
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Physics browser ──────────────────────────────────────────────────────────
+function PhysicsBrowser({ onBack }) {
+  const [activeGroup, setGroup] = useState(null)
+  const [filter, setFilter]     = useState('all')
+
+  if (activeGroup) return <PhysicsTopicView group={activeGroup} onBack={() => setGroup(null)} />
+
+  const totalQs = PHYSICS_TOPIC_GROUPS.reduce((s, g) => s + g.questions.length, 0)
+  const filters = [
+    { id: 'all',  label: `All (${totalQs})` },
+    { id: 'p1',   label: 'Paper 1' },
+    { id: 'p2',   label: 'Paper 2' },
+    { id: 'calc', label: '🖩 Calculator' },
+  ]
+  const filtered = filter === 'all'  ? PHYSICS_TOPIC_GROUPS
+    : filter === 'p1'   ? PHYSICS_TOPIC_GROUPS.filter(g => g.paper === 'Paper 1')
+    : filter === 'p2'   ? PHYSICS_TOPIC_GROUPS.filter(g => g.paper === 'Paper 2')
+    : PHYSICS_TOPIC_GROUPS.filter(g => g.calculator)
+
+  return (
+    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
+      <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
+        <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Physics Foundation</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: '#5A6480' }}>Papers 1 & 2 · {PHYSICS_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked</div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '16px 16px' }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          {filters.map(f => (
+            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex: 1, background: filter === f.id ? 'rgba(59,130,255,.15)' : '#10182B', border: `1px solid ${filter === f.id ? '#3B82FF' : '#1E2A40'}`, borderRadius: 10, padding: '9px 6px', fontFamily: "'Inter', sans-serif", fontSize: '.73rem', fontWeight: 600, color: filter === f.id ? '#70B8FF' : '#5A6480', cursor: 'pointer' }}>{f.label}</button>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {filtered.map(group => (
+            <button key={group.id} onClick={() => setGroup(group)} style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 16, padding: '16px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14, width: '100%' }}>
+              <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: group.bg, border: `1px solid ${group.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>{group.icon}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 7, alignItems: 'center' }}>
+                  <div style={{ flex: 1, height: 3, background: '#1E2A40', borderRadius: 99 }} />
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.68rem', fontWeight: 600, color: group.color, flexShrink: 0 }}>{group.questions.length} Q{group.questions.length !== 1 ? 's' : ''}</span>
+                  <span style={{ background: group.calculator ? 'rgba(59,130,255,.12)' : 'rgba(255,200,87,.08)', border: group.calculator ? '1px solid rgba(59,130,255,.25)' : '1px solid rgba(255,200,87,.2)', borderRadius: 6, padding: '2px 8px', fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, color: group.calculator ? '#70B8FF' : '#FFC857', flexShrink: 0 }}>{group.calculator ? '🖩 Calc OK' : '✏️ No Calc'}</span>
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', color: '#4A5578', flexShrink: 0 }}>{group.paper}</span>
+                </div>
+              </div>
+              <span style={{ color: '#2A3552', fontSize: '1.1rem', flexShrink: 0 }}>›</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function TestTab() {
   const [mathsOpen, setMathsOpen]   = useState(false)
   const [englishOpen, setEnglishOpen]     = useState(false)
   const [sociologyOpen, setSociologyOpen]     = useState(false)
   const [chemistryOpen, setChemistryOpen]     = useState(false)
+  const [physicsOpen, setPhysicsOpen]         = useState(false)
   const [selected, setSelected]   = useState(null)
   const [qIdx, setQIdx]           = useState(0)
   const [answer, setAnswer]       = useState('')
@@ -2292,6 +2500,7 @@ function TestTab() {
   if (englishOpen)   return <EnglishBrowser   onBack={() => setEnglishOpen(false)} />
   if (sociologyOpen)  return <SociologyBrowser  onBack={() => setSociologyOpen(false)} />
   if (chemistryOpen) return <ChemistryBrowser onBack={() => setChemistryOpen(false)} />
+  if (physicsOpen)   return <PhysicsBrowser   onBack={() => setPhysicsOpen(false)} />
 
   const GRADE_STYLE = {
     'Excellent':  { bg:'rgba(77,255,136,.08)',  border:'rgba(77,255,136,.3)',  text:'#4DFF88', badge:'#38D27A' },
@@ -2476,6 +2685,7 @@ function TestTab() {
     { id: 'biology', label: 'Biology', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => setSelected({ topicId: 'tb_cells', label: 'Cells & Microscopy', subject: 'Biology' }) },
     { id: 'sociology', label: 'Sociology', icon: '👥', color: '#FF5C7A', bg: 'rgba(255,92,122,.1)', action: () => setSociologyOpen(true) },
     { id: 'chemistry', label: 'Chemistry', icon: '⚗️', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => setChemistryOpen(true) },
+    { id: 'physics', label: 'Physics', icon: '⚡', color: '#3B82FF', bg: 'rgba(59,130,255,.1)',  action: () => setPhysicsOpen(true) },
     { id: 'drama',  label: 'Drama',   icon: '🎭', color: '#FF4FC3', bg: 'rgba(255,79,195,.1)', action: () => {} },
   ]
 
