@@ -2492,6 +2492,9 @@ function TestTab() {
   const [feedback, setFeedback]   = useState(null)
   const [error, setError]         = useState(null)
   const [testProgress, setTestProgress] = useState(() => { try { return getProgress() } catch { return { streak: 0 } } })
+  const [tqMcAttempts, setTqMcAttempts] = useState(0)
+  const [tqMcHint, setTqMcHint]         = useState(false)
+  const [tqMcLocked, setTqMcLocked]     = useState(false)
   const testStreak = testProgress.streak || 0
 
   function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
@@ -2532,11 +2535,6 @@ function TestTab() {
     if (qIdx < total - 1) { setQIdx(qIdx+1); resetQ() }
     else { setSelected(null); setQIdx(0); resetQ() }
   }
-
-  // ── TestTab inline question state for MC hint+retry ──────────────────────────
-  const [tqMcAttempts, setTqMcAttempts] = useState(0)
-  const [tqMcHint, setTqMcHint]         = useState(false)
-  const [tqMcLocked, setTqMcLocked]     = useState(false)
 
   function fullResetQ() {
     resetQ()
