@@ -36,11 +36,11 @@ function saveConfidenceRating(moduleId, subject, title, confidence) {
   } catch {}
 }
 
-function ReadBlock({ block }) {
+function ReadBlock({ block, isWarm = false }) {
   return (
     <div style={{
-      borderLeft: '3px solid #3B82FF',
-      background: 'rgba(59,130,255,.07)',
+      borderLeft: `3px solid ${isWarm ? '#C47828' : '#3B82FF'}`,
+      background: isWarm ? 'rgba(196,120,40,.07)' : 'rgba(59,130,255,.07)',
       borderRadius: '0 14px 14px 0',
       padding: '16px 18px', margin: '12px 0',
     }}>
@@ -48,90 +48,92 @@ function ReadBlock({ block }) {
         <div style={{
           fontFamily: "'Inter', sans-serif",
           fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-          textTransform: 'uppercase', color: '#70B8FF', marginBottom: 8,
+          textTransform: 'uppercase', color: isWarm ? '#C8901A' : '#70B8FF', marginBottom: 8,
         }}>{block.label}</div>
       )}
       <p style={{
         fontFamily: "'Inter', sans-serif",
-        fontSize: '.95rem', lineHeight: 1.7, margin: 0, color: '#C8D0E8',
+        fontSize: '.95rem', lineHeight: 1.7, margin: 0, color: isWarm ? '#C8B090' : '#C8D0E8',
       }} dangerouslySetInnerHTML={{ __html: block.text }} />
     </div>
   )
 }
 
-function KeypointBlock({ block }) {
+function KeypointBlock({ block, isWarm = false }) {
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #1A2338 0%, #111828 100%)',
-      border: '1px solid rgba(157,92,255,.25)',
+      background: isWarm ? 'linear-gradient(135deg, #1C1205 0%, #120C03 100%)' : 'linear-gradient(135deg, #1A2338 0%, #111828 100%)',
+      border: `1px solid ${isWarm ? 'rgba(196,120,40,.3)' : 'rgba(157,92,255,.25)'}`,
       borderRadius: 16, padding: '18px 20px', margin: '14px 0',
-      boxShadow: '0 0 24px rgba(157,92,255,.08)',
+      boxShadow: isWarm ? '0 0 24px rgba(196,120,40,.08)' : '0 0 24px rgba(157,92,255,.08)',
     }}>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 10,
+        textTransform: 'uppercase', color: isWarm ? '#C8901A' : '#9D5CFF', marginBottom: 10,
       }}>⭐ Key Point</div>
       <p style={{
         fontFamily: "'Inter', sans-serif",
-        fontSize: '.95rem', lineHeight: 1.65, margin: 0, color: '#E0E6F0',
+        fontSize: '.95rem', lineHeight: 1.65, margin: 0, color: isWarm ? '#D4C4A0' : '#E0E6F0',
       }} dangerouslySetInnerHTML={{ __html: block.text }} />
     </div>
   )
 }
 
-function FunFactBlock({ block }) {
+function FunFactBlock({ block, isWarm = false }) {
   return (
     <div style={{
-      background: 'rgba(255,200,87,.06)',
-      borderLeft: '3px solid #FFC857',
+      background: isWarm ? 'rgba(196,120,40,.07)' : 'rgba(255,200,87,.06)',
+      borderLeft: `3px solid ${isWarm ? '#C47828' : '#FFC857'}`,
       borderRadius: '0 14px 14px 0',
       padding: '14px 18px', margin: '12px 0',
     }}>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: '#FFC857', marginBottom: 6,
+        textTransform: 'uppercase', color: isWarm ? '#C8901A' : '#FFC857', marginBottom: 6,
       }}>{block.label || '🤯 Fun Fact'}</div>
       <p style={{
         fontFamily: "'Inter', sans-serif",
-        fontSize: '.92rem', margin: 0, color: '#C8D0E8', lineHeight: 1.65,
+        fontSize: '.92rem', margin: 0, color: isWarm ? '#C8B090' : '#C8D0E8', lineHeight: 1.65,
       }}>{block.text}</p>
     </div>
   )
 }
 
-function ExamTipBlock({ block }) {
+function ExamTipBlock({ block, isWarm = false }) {
+  const accent = isWarm ? '#C47828' : '#F5B700'
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #0C2218 0%, #071610 100%)',
-      border: '1.5px dashed rgba(245,183,0,.35)',
+      background: isWarm ? 'linear-gradient(135deg, #130A02 0%, #0C0702 100%)' : 'linear-gradient(135deg, #0C2218 0%, #071610 100%)',
+      border: `1.5px dashed ${isWarm ? 'rgba(196,120,40,.35)' : 'rgba(245,183,0,.35)'}`,
       borderRadius: 16, padding: '16px 18px', margin: '14px 0',
-      boxShadow: '0 0 20px rgba(245,183,0,.05)',
+      boxShadow: isWarm ? '0 0 20px rgba(196,120,40,.05)' : '0 0 20px rgba(245,183,0,.05)',
     }}>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: '#F5B700', marginBottom: 10,
+        textTransform: 'uppercase', color: accent, marginBottom: 10,
       }}>{block.label || '🗡️ Exam Assassin'}</div>
       {block.text && (
         <p style={{
           fontFamily: "'Inter', sans-serif",
-          fontSize: '.9rem', margin: 0, color: '#C8D0E8', lineHeight: 1.65,
+          fontSize: '.9rem', margin: 0, color: isWarm ? '#C8B090' : '#C8D0E8', lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.text }} />
       )}
       {block.tip && (
         <p style={{
           fontFamily: "'Inter', sans-serif",
-          fontSize: '.9rem', marginBottom: block.phrases ? 10 : 0, color: '#C8D0E8', lineHeight: 1.65,
+          fontSize: '.9rem', marginBottom: block.phrases ? 10 : 0, color: isWarm ? '#C8B090' : '#C8D0E8', lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.tip }} />
       )}
       {block.phrases && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
           {block.phrases.map(p => (
             <span key={p} style={{
-              background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.3)',
-              color: '#F5B700', borderRadius: 8, padding: '5px 11px',
+              background: isWarm ? 'rgba(196,120,40,.12)' : 'rgba(245,183,0,.12)',
+              border: `1px solid ${isWarm ? 'rgba(196,120,40,.3)' : 'rgba(245,183,0,.3)'}`,
+              color: accent, borderRadius: 8, padding: '5px 11px',
               fontFamily: "'Inter', sans-serif",
               fontSize: '.78rem', fontWeight: 600,
             }}>{p}</span>
@@ -142,35 +144,36 @@ function ExamTipBlock({ block }) {
   )
 }
 
-function TimelineBlock({ block }) {
+function TimelineBlock({ block, isWarm = false }) {
   const [open, setOpen] = useState(null)
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '14px 0' }}>
       {block.events.map((e, i) => (
         <div key={i}>
           <button onClick={() => setOpen(open === i ? null : i)}
+            className="lift-tap"
             style={{
               width: '100%', display: 'grid', gridTemplateColumns: '72px 1fr',
               gap: 10, border: 'none', background: 'transparent', cursor: 'pointer',
               textAlign: 'left', padding: 0,
             }}>
             <div style={{
-              background: open === i ? '#F5B700' : '#1A2338',
-              color: open === i ? '#070500' : '#F5B700',
-              border: `1px solid ${open === i ? '#F5B700' : '#2A3552'}`,
+              background: open === i ? (isWarm ? '#C47828' : '#F5B700') : (isWarm ? '#1C1205' : '#1A2338'),
+              color: open === i ? (isWarm ? '#0C0500' : '#070500') : (isWarm ? '#C47828' : '#F5B700'),
+              border: `1px solid ${open === i ? (isWarm ? '#C47828' : '#F5B700') : (isWarm ? 'rgba(196,120,40,.4)' : '#2A3552')}`,
               borderRadius: 12, display: 'grid', placeItems: 'center',
               fontWeight: 800, fontFamily: "'Space Grotesk', sans-serif",
               fontSize: '.8rem', padding: '10px 6px', minHeight: 56, transition: 'all .2s',
             }}>{e.year}</div>
             <div style={{
-              background: open === i ? 'rgba(245,183,0,.06)' : '#10182B',
-              border: `1px solid ${open === i ? 'rgba(245,183,0,.3)' : '#2A3552'}`,
+              background: open === i ? (isWarm ? 'rgba(196,120,40,.06)' : 'rgba(245,183,0,.06)') : (isWarm ? '#1C1205' : '#10182B'),
+              border: `1px solid ${open === i ? (isWarm ? 'rgba(196,120,40,.3)' : 'rgba(245,183,0,.3)') : (isWarm ? 'rgba(196,120,40,.2)' : '#2A3552')}`,
               borderRadius: 12, padding: '12px 14px', transition: 'all .2s',
               display: 'flex', alignItems: 'center',
             }}>
               <span style={{
                 fontFamily: "'Inter', sans-serif",
-                fontSize: '.9rem', fontWeight: 500, color: '#C8D0E8',
+                fontSize: '.9rem', fontWeight: 500, color: isWarm ? '#C8B090' : '#C8D0E8',
               }} dangerouslySetInnerHTML={{ __html: e.text }} />
             </div>
           </button>
@@ -1216,6 +1219,7 @@ function ScenarioBlock({ block }) {
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
 function Screen({ screen, subject }) {
+  const isWarm = subject === 'History'
   return (
     <div>
       {screen.headerImage && (
@@ -1240,9 +1244,9 @@ function Screen({ screen, subject }) {
         {!screen.headerImage && (
           <div style={{
             display: 'inline-flex',
-            background: 'rgba(157,92,255,.12)',
-            border: '1px solid rgba(157,92,255,.25)',
-            color: '#C18CFF',
+            background: isWarm ? 'rgba(196,120,40,.12)' : 'rgba(157,92,255,.12)',
+            border: `1px solid ${isWarm ? 'rgba(196,120,40,.25)' : 'rgba(157,92,255,.25)'}`,
+            color: isWarm ? '#C8901A' : '#C18CFF',
             borderRadius: 99, padding: '4px 12px',
             fontFamily: "'Inter', sans-serif",
             fontSize: '.68rem', fontWeight: 700,
@@ -1252,24 +1256,24 @@ function Screen({ screen, subject }) {
         <h2 style={{
           fontFamily: "'Space Grotesk', sans-serif",
           fontSize: 'clamp(1.3rem, 4vw, 1.75rem)',
-          marginBottom: 8, color: '#F5F7FB',
+          marginBottom: 8, color: isWarm ? '#F0E8D8' : '#F5F7FB',
           fontWeight: 700, letterSpacing: '-.01em', lineHeight: 1.2,
         }}>{screen.heading}</h2>
         {screen.sub && (
           <p style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: '.9rem', color: '#5A6480', lineHeight: 1.6, margin: 0,
+            fontSize: '.9rem', color: isWarm ? '#8A7055' : '#5A6480', lineHeight: 1.6, margin: 0,
           }}>{screen.sub}</p>
         )}
       </div>
 
       {screen.blocks.map((block, i) => (
         <div key={i}>
-          {block.type === 'read'          && <ReadBlock block={block} />}
-          {block.type === 'keypoint'      && <KeypointBlock block={block} />}
-          {block.type === 'funfact'       && <FunFactBlock block={block} />}
-          {block.type === 'examtip'       && <ExamTipBlock block={block} />}
-          {block.type === 'timeline'      && <TimelineBlock block={block} />}
+          {block.type === 'read'          && <ReadBlock block={block} isWarm={isWarm} />}
+          {block.type === 'keypoint'      && <KeypointBlock block={block} isWarm={isWarm} />}
+          {block.type === 'funfact'       && <FunFactBlock block={block} isWarm={isWarm} />}
+          {block.type === 'examtip'       && <ExamTipBlock block={block} isWarm={isWarm} />}
+          {block.type === 'timeline'      && <TimelineBlock block={block} isWarm={isWarm} />}
           {block.type === 'reveal'        && <RevealBlock block={block} />}
           {block.type === 'quiz'          && <QuizBlock block={block} subject={subject} />}
           {block.type === 'flashcards'    && <FlashcardsBlock block={block} />}
@@ -2331,6 +2335,7 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
             const label    = v.kind === 'hook' ? 'T/F' : v.kind === 'goals' ? 'Goals' : v.data.label
             return (
               <button key={vi}
+                className={isActive ? 'chip-active' : ''}
                 onClick={() => {
                   setVirtualIdx(vi)
                   setAnimKey(k => k + 1)
@@ -2341,18 +2346,18 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
                   background: isActive
                     ? subjectColor
                     : isDone
-                    ? 'rgba(77,255,136,.1)'
-                    : '#10182B',
-                  border: `1px solid ${isActive ? subjectColor : isDone ? 'rgba(77,255,136,.3)' : '#2A3552'}`,
+                    ? (isWarm ? 'rgba(196,120,40,.15)' : 'rgba(77,255,136,.1)')
+                    : (isWarm ? '#1C1205' : '#10182B'),
+                  border: `1px solid ${isActive ? subjectColor : isDone ? (isWarm ? 'rgba(196,120,40,.35)' : 'rgba(77,255,136,.3)') : (isWarm ? 'rgba(196,120,40,.15)' : '#2A3552')}`,
                   borderRadius: 99,
                   padding: '5px 12px',
                   fontFamily: "'Inter', sans-serif",
                   fontSize: '.7rem', fontWeight: 600,
-                  color: isActive ? '#fff' : isDone ? '#4DFF88' : '#4A5578',
+                  color: isActive ? '#fff' : isDone ? (isWarm ? `${subjectColor}CC` : '#4DFF88') : '#4A5578',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
                   letterSpacing: '.01em',
-                  boxShadow: isActive ? `0 0 10px ${subjectColor}55` : 'none',
+                  boxShadow: isActive ? `0 0 14px ${subjectColor}70` : 'none',
                   transition: 'all .2s',
                 }}>
                 {isDone ? '✓ ' : ''}{label}
