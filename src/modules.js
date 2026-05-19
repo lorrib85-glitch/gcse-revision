@@ -196,6 +196,14 @@ export const MODULES = [
     icon: '🔬',
     color: '#1a3a5c',
     colorLight: '#ddeeff',
+    intro: {
+      learningGoals: [
+        'Describe what changed in medicine during the Renaissance',
+        'Explain the contributions of Vesalius, Harvey and Paré',
+        'Explain why the Great Plague showed the limits of Renaissance medicine',
+        'Assess how far the Renaissance was a turning point in the history of medicine',
+      ],
+    },
     screens: [
       {
         label: 'Renaissance',
@@ -297,6 +305,14 @@ export const MODULES = [
     icon: '🩺',
     color: '#5b1a1a',
     colorLight: '#fce8e8',
+    intro: {
+      learningGoals: [
+        'Explain why surgery before the 1840s was so dangerous',
+        'Describe how anaesthetics changed surgery — and why they also created new problems',
+        'Explain Lister\'s use of antiseptics and why surgeons resisted it at first',
+        'Assess the relative importance of Simpson, Lister and Nightingale',
+      ],
+    },
     screens: [
       {
         label: 'The Problem',
@@ -396,6 +412,14 @@ export const MODULES = [
     icon: '🦠',
     color: '#065f46',
     colorLight: '#d1fae5',
+    intro: {
+      learningGoals: [
+        'Explain Pasteur\'s germ theory and the evidence behind it',
+        'Describe Koch\'s specific contributions and why identifying bacteria mattered',
+        'Explain how germ theory led to vaccines and targeted treatments',
+        'Assess why Pasteur and Koch were rivals — and why it helped science',
+      ],
+    },
     screens: [
       {
         label: 'Old Ideas',
@@ -515,6 +539,14 @@ export const MODULES = [
     icon: '🏭',
     color: '#4a3000',
     colorLight: '#fff8e1',
+    intro: {
+      learningGoals: [
+        'Explain why public health was so poor in industrial towns',
+        'Describe Chadwick\'s 1842 report and why the government was slow to act',
+        'Explain John Snow\'s role in proving cholera was waterborne',
+        'Describe the 1875 Public Health Act and why it was a genuine turning point',
+      ],
+    },
     screens: [
       {
         label: 'Cities Explode',

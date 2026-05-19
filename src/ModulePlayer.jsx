@@ -1834,33 +1834,130 @@ function IntroScreen({ module, onDone }) {
   )
 }
 
+// ─── GoalsScreen — "In this module you'll be able to…" ───────────────────────
+function GoalsScreen({ module }) {
+  const subjectColor = module.color || '#9D5CFF'
+  const goals = module.intro?.learningGoals || module.learningGoals || []
+  return (
+    <div style={{ maxWidth: 500, margin: '0 auto', padding: '28px 4px 40px', animation: 'fadeIn .4s ease' }}>
+
+      {/* Header badge */}
+      <div style={{ marginBottom: 24 }}>
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          background: subjectColor + '15', border: '1px solid ' + subjectColor + '30',
+          borderRadius: 99, padding: '4px 14px', marginBottom: 14,
+        }}>
+          <span style={{ fontSize: '.8rem' }}>🎯</span>
+          <span style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.63rem', fontWeight: 700,
+            letterSpacing: '.12em', textTransform: 'uppercase',
+            color: subjectColor,
+          }}>By the end of this module</span>
+        </div>
+        <h2 style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 800, fontSize: 'clamp(1.25rem, 4vw, 1.55rem)',
+          color: '#F5F7FB', margin: '0 0 8px', letterSpacing: '-.01em', lineHeight: 1.2,
+        }}>You'll be able to:</h2>
+        <p style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.85rem', color: '#5A6480', margin: 0, lineHeight: 1.55,
+        }}>
+          Keep these in mind as you work through each section.
+        </p>
+      </div>
+
+      {/* Goals list */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
+        {goals.map((goal, i) => (
+          <div key={i} style={{
+            display: 'flex', alignItems: 'flex-start', gap: 14,
+            background: 'linear-gradient(145deg, #10182B, #0D1424)',
+            border: '1px solid #1E2A40',
+            borderRadius: 14, padding: '14px 16px',
+            animation: 'fadeIn .35s ease ' + (i * 0.07) + 's both',
+          }}>
+            <div style={{
+              width: 26, height: 26, borderRadius: 8, flexShrink: 0,
+              background: subjectColor + '20', border: '1px solid ' + subjectColor + '40',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: '.72rem', fontWeight: 800, color: subjectColor,
+              marginTop: 1,
+            }}>{i + 1}</div>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.9rem', color: '#C8D0E8',
+              margin: 0, lineHeight: 1.55,
+            }}>{goal}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Module metadata pill */}
+      <div style={{
+        display: 'flex', gap: 8, flexWrap: 'wrap',
+      }}>
+        <div style={{
+          background: '#10182B', border: '1px solid #1E2A40',
+          borderRadius: 99, padding: '5px 14px',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.72rem', fontWeight: 600, color: '#5A6480',
+        }}>📚 {module.screens.length} section{module.screens.length !== 1 ? 's' : ''}</div>
+        <div style={{
+          background: '#10182B', border: '1px solid #1E2A40',
+          borderRadius: 99, padding: '5px 14px',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.72rem', fontWeight: 600, color: '#5A6480',
+        }}>⏱ ~{module.screens.length * 5} min</div>
+      </div>
+
+      <style>{`@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }`}</style>
+    </div>
+  )
+}
+
 // ─── Main ModulePlayer ────────────────────────────────────────────────────────
 
 export default function ModulePlayer({ module, onBack }) {
-  const saved   = getModuleState(module.id)
+  const saved = getModuleState(module.id)
 
-  // hookDone / introDone track whether the universal openers have been seen
-  // We persist these inside the module state so resuming skips them correctly
-  const [hookDone,  setHookDone]  = useState(() => saved.hookDone  || !module.hook)
-  const [introDone, setIntroDone] = useState(() => saved.introDone || !module.intro)
-  const [screen, setScreen] = useState(saved.screen || 0)
+  // Build unified virtual screen list: [hook?] [goals?] [content...].
+  // Using a stable array created once — reference changes don't matter since
+  // we only derive indices from it.
+  const allVirtual = []
+  if (module.hook) allVirtual.push({ kind: 'hook' })
+  const goals = module.intro?.learningGoals || module.learningGoals || []
+  if (goals.length > 0) allVirtual.push({ kind: 'goals' })
+  module.screens.forEach((s, i) => allVirtual.push({ kind: 'content', idx: i, data: s }))
+  const totalVirtual = allVirtual.length
+
+  const [virtualIdx, setVirtualIdx] = useState(() => {
+    // Migrate old save format (hookDone/introDone/screen) to new virtualIdx
+    if (saved.virtualIdx !== undefined) return saved.virtualIdx
+    const preCount = (module.hook ? 1 : 0) + (goals.length > 0 ? 1 : 0)
+    return preCount + (saved.screen || 0)
+  })
   const [showConfidence, setShowConfidence] = useState(false)
   const [chosenConfidence, setChosenConfidence] = useState(null)
-  const total   = module.screens.length
-  const pct     = Math.round(((screen + 1) / total) * 100)
-  const isLast  = screen === total - 1
   const [animKey, setAnimKey] = useState(0)
 
+  const currentVirtual = allVirtual[Math.min(virtualIdx, totalVirtual - 1)] || allVirtual[0]
+  const pct = Math.round(((virtualIdx + 1) / totalVirtual) * 100)
+  const isLastContent = currentVirtual.kind === 'content' && currentVirtual.idx === module.screens.length - 1
+
   useEffect(() => {
-    saveModuleState(module.id, { screen, hookDone, introDone })
-  }, [screen, module.id, hookDone, introDone])
+    saveModuleState(module.id, { virtualIdx })
+  }, [virtualIdx, module.id])
 
   function go(delta) {
-    const next = Math.max(0, Math.min(total - 1, screen + delta))
-    setScreen(next)
+    const next = Math.max(0, Math.min(totalVirtual - 1, virtualIdx + delta))
+    if (next === virtualIdx) return
+    setVirtualIdx(next)
     setAnimKey(k => k + 1)
     scrollToTop()
-    // Any navigation in a module counts as activity for the streak
     recordActivity()
   }
 
@@ -1872,45 +1969,39 @@ export default function ModulePlayer({ module, onBack }) {
   function handleConfidencePick(level) {
     setChosenConfidence(level)
     saveConfidenceRating(module.id, module.subject, module.title, level)
-    // Module completion always counts as activity
     recordActivity()
     setTimeout(() => onBack(), 650)
   }
 
-  // Hook state — always called (hook is undefined when module has no hook)
+  // Hook state — always called at top level regardless of current screen
   const hookState = useHookPhase(module.hook || {})
-  const { phase: hookPhase, canAdvance: hookCanAdvance, revealDone: hookRevealDone } = hookState
+  const { phase: hookPhase, revealDone: hookRevealDone } = hookState
 
-  // Determine what the "Next" button does at each stage
   function handleNext() {
-    if (!hookDone && module.hook) {
+    if (currentVirtual.kind === 'hook') {
       if (hookPhase === 'grow')   { hookState.nextFromGrow(); return }
-      if (hookPhase === 'reveal') { if (hookRevealDone) { setHookDone(true); scrollToTop() } else { hookState.nextRevealItem(); } return }
-      return // question / feedback: Next does nothing — user must tap TRUE/FALSE
+      if (hookPhase === 'reveal') { hookRevealDone ? go(1) : hookState.nextRevealItem(); return }
+      return // question/feedback: button hidden
     }
-    if (!introDone && module.intro) {
-      // IntroScreen handles its own done button — nothing to do from nav
-      return
-    }
-    isLast ? handleFinish() : go(1)
+    if (currentVirtual.kind === 'goals') { go(1); return }
+    isLastContent ? handleFinish() : go(1)
   }
 
-  // Label + disabled state for the Next/Finish button
   function nextLabel() {
-    if (!hookDone && module.hook) {
-      if (hookPhase === 'question' || hookPhase === 'feedback') return null // hidden
+    if (currentVirtual.kind === 'hook') {
+      if (hookPhase === 'question' || hookPhase === 'feedback') return null
       if (hookPhase === 'grow')   return 'Next →'
-      if (hookPhase === 'reveal') return hookRevealDone ? 'Start module →' : null // hidden until all revealed
+      if (hookPhase === 'reveal') return hookRevealDone ? 'Next →' : null
     }
-    if (!introDone && module.intro) return null // IntroScreen has its own button
-    return isLast ? 'Finish ✓' : 'Next →'
+    if (currentVirtual.kind === 'goals') return "Let's go →"
+    return isLastContent ? 'Finish ✓' : 'Next →'
   }
 
   const showNextBtn  = nextLabel() !== null
   const nextBtnLabel = nextLabel()
-  const isFinishBtn  = !(!hookDone && module.hook) && !(!introDone && module.intro) && isLast
+  const isFinishBtn  = isLastContent
 
-  const cur = module.screens[screen]
+  const cur = currentVirtual.kind === 'content' ? currentVirtual.data : null
   const subjectColor = module.color || '#9D5CFF'
 
   // ── Confidence overlay — neutral, no colour judgement ──────────────────
@@ -2078,7 +2169,7 @@ export default function ModulePlayer({ module, onBack }) {
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: '.78rem', fontWeight: 700,
             color: '#4A5578', flexShrink: 0,
-          }}>{screen + 1}<span style={{ color: '#2A3552' }}>/{total}</span></div>
+          }}>{virtualIdx + 1}<span style={{ color: '#2A3552' }}>/{totalVirtual}</span></div>
 
           {/* Exit button */}
           <button onClick={onBack} style={{
@@ -2107,17 +2198,22 @@ export default function ModulePlayer({ module, onBack }) {
           }} />
         </div>
 
-        {/* Section chips — scrollable, dark-themed */}
+        {/* Section chips — hook/goals + content sections */}
         <div style={{
           display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 10,
           scrollbarWidth: 'none', msOverflowStyle: 'none',
         }}>
-          {module.screens.map((s, i) => {
-            const isActive = i === screen
-            const isDone   = i < screen
+          {allVirtual.map((v, vi) => {
+            const isActive = vi === virtualIdx
+            const isDone   = vi < virtualIdx
+            const label    = v.kind === 'hook' ? 'T/F' : v.kind === 'goals' ? 'Goals' : v.data.label
             return (
-              <button key={i}
-                onClick={() => { setScreen(i); setAnimKey(k => k + 1); scrollToTop() }}
+              <button key={vi}
+                onClick={() => {
+                  setVirtualIdx(vi)
+                  setAnimKey(k => k + 1)
+                  scrollToTop()
+                }}
                 style={{
                   flexShrink: 0,
                   background: isActive
@@ -2137,25 +2233,26 @@ export default function ModulePlayer({ module, onBack }) {
                   boxShadow: isActive ? `0 0 10px ${subjectColor}55` : 'none',
                   transition: 'all .2s',
                 }}>
-                {isDone ? '✓ ' : ''}{s.label}
+                {isDone ? '✓ ' : ''}{label}
               </button>
             )
           })}
         </div>
       </div>
 
-      {/* ── Screen content — hook, intro, or normal screen ── */}
+      {/* ── Screen content ── */}
       <div id="module-scroll-container" style={{ flex: 1, padding: '20px 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
-        {!hookDone && module.hook
-          ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
-          : !introDone && module.intro
-            ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
-            : (
-              <div key={animKey} className="anim-pop">
-                <Screen screen={cur} subject={module.subject} />
-              </div>
-            )
-        }
+        {currentVirtual.kind === 'hook' && (
+          <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
+        )}
+        {currentVirtual.kind === 'goals' && (
+          <GoalsScreen module={module} />
+        )}
+        {currentVirtual.kind === 'content' && (
+          <div key={animKey} className="anim-pop">
+            <Screen screen={cur} subject={module.subject} />
+          </div>
+        )}
       </div>
 
       {/* ── Bottom navigation ── */}
@@ -2172,18 +2269,18 @@ export default function ModulePlayer({ module, onBack }) {
           maxWidth: 660, margin: '0 auto',
           display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, alignItems: 'center',
         }}>
-          {/* Back — hidden during hook/intro */}
+          {/* Back — disabled on first screen and during hook question/feedback */}
           <button
             onClick={() => go(-1)}
-            disabled={screen === 0 || !hookDone || !introDone}
+            disabled={virtualIdx === 0 || (currentVirtual.kind === 'hook' && (hookPhase === 'question' || hookPhase === 'feedback'))}
             style={{
               background: '#10182B',
               border: '1px solid #2A3552',
               borderRadius: 14, padding: '13px 10px',
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 700, fontSize: '.9rem',
-              color: (!hookDone || !introDone || screen === 0) ? '#2A3552' : '#9CA8C7',
-              cursor: (!hookDone || !introDone || screen === 0) ? 'default' : 'pointer',
+              color: (virtualIdx === 0 || (currentVirtual.kind === 'hook' && (hookPhase === 'question' || hookPhase === 'feedback'))) ? '#2A3552' : '#9CA8C7',
+              cursor: (virtualIdx === 0 || (currentVirtual.kind === 'hook' && (hookPhase === 'question' || hookPhase === 'feedback'))) ? 'default' : 'pointer',
               transition: 'all .15s',
             }}>← Back</button>
 
