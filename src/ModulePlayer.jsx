@@ -95,7 +95,7 @@ function FunFactBlock({ block, isWarm = false, isBio = false }) {
       }}>{block.label || '🤯 Fun Fact'}</div>
       <p style={{
         fontFamily: "'Inter', sans-serif",
-        fontSize: '.92rem', margin: 0, color: isWarm ? '#C8B090' : '#C8D0E8', lineHeight: 1.65,
+        fontSize: '.92rem', margin: 0, color: isWarm ? '#C8B090' : isBio ? '#A8D4B8' : '#C8D0E8', lineHeight: 1.65,
       }}>{block.text}</p>
     </div>
   )
@@ -1220,6 +1220,7 @@ function ScenarioBlock({ block }) {
 
 function Screen({ screen, subject }) {
   const isWarm = subject === 'History'
+  const isBio  = subject === 'Biology'
   return (
     <div>
       {screen.headerImage && (
@@ -1244,9 +1245,9 @@ function Screen({ screen, subject }) {
         {!screen.headerImage && (
           <div style={{
             display: 'inline-flex',
-            background: isWarm ? 'rgba(196,120,40,.12)' : 'rgba(157,92,255,.12)',
-            border: `1px solid ${isWarm ? 'rgba(196,120,40,.25)' : 'rgba(157,92,255,.25)'}`,
-            color: isWarm ? '#C8901A' : '#C18CFF',
+            background: isWarm ? 'rgba(196,120,40,.12)' : isBio ? 'rgba(56,210,122,.12)' : 'rgba(157,92,255,.12)',
+            border: `1px solid ${isWarm ? 'rgba(196,120,40,.25)' : isBio ? 'rgba(56,210,122,.25)' : 'rgba(157,92,255,.25)'}`,
+            color: isWarm ? '#C8901A' : isBio ? '#38D27A' : '#C18CFF',
             borderRadius: 99, padding: '4px 12px',
             fontFamily: "'Inter', sans-serif",
             fontSize: '.68rem', fontWeight: 700,
@@ -1256,24 +1257,24 @@ function Screen({ screen, subject }) {
         <h2 style={{
           fontFamily: "'Space Grotesk', sans-serif",
           fontSize: 'clamp(1.3rem, 4vw, 1.75rem)',
-          marginBottom: 8, color: isWarm ? '#F0E8D8' : '#F5F7FB',
+          marginBottom: 8, color: isWarm ? '#F0E8D8' : isBio ? '#E8F5EE' : '#F5F7FB',
           fontWeight: 700, letterSpacing: '-.01em', lineHeight: 1.2,
         }}>{screen.heading}</h2>
         {screen.sub && (
           <p style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: '.9rem', color: isWarm ? '#8A7055' : '#5A6480', lineHeight: 1.6, margin: 0,
+            fontSize: '.9rem', color: isWarm ? '#8A7055' : isBio ? '#5A8A6A' : '#5A6480', lineHeight: 1.6, margin: 0,
           }}>{screen.sub}</p>
         )}
       </div>
 
       {screen.blocks.map((block, i) => (
         <div key={i}>
-          {block.type === 'read'          && <ReadBlock block={block} isWarm={isWarm} />}
-          {block.type === 'keypoint'      && <KeypointBlock block={block} isWarm={isWarm} />}
-          {block.type === 'funfact'       && <FunFactBlock block={block} isWarm={isWarm} />}
+          {block.type === 'read'          && <ReadBlock block={block} isWarm={isWarm} isBio={isBio} />}
+          {block.type === 'keypoint'      && <KeypointBlock block={block} isWarm={isWarm} isBio={isBio} />}
+          {block.type === 'funfact'       && <FunFactBlock block={block} isWarm={isWarm} isBio={isBio} />}
           {block.type === 'examtip'       && <ExamTipBlock block={block} isWarm={isWarm} />}
-          {block.type === 'timeline'      && <TimelineBlock block={block} isWarm={isWarm} />}
+          {block.type === 'timeline'      && <TimelineBlock block={block} isWarm={isWarm} isBio={isBio} />}
           {block.type === 'reveal'        && <RevealBlock block={block} />}
           {block.type === 'quiz'          && <QuizBlock block={block} subject={subject} />}
           {block.type === 'flashcards'    && <FlashcardsBlock block={block} />}
@@ -1338,10 +1339,11 @@ function HookContent({ module, hook, hookState, subjectColor }) {
   const { phase, wasCorrect, growStep, revealIdx, allRevealed, choose, nextRevealItem } = hookState
   const [pending, setPending] = useState(null) // null | true | false — pre-submit selection
 
-  const isWarm   = module.subject === 'History'
-  const hookBg   = isWarm ? '#0C0905'          : '#080C1A'
-  const hookCard = isWarm ? '#191208'          : '#10182B'
-  const hookBorder = isWarm ? `${subjectColor}28` : '#2A3552'
+  const isWarm     = module.subject === 'History'
+  const isBio      = module.subject === 'Biology'
+  const hookBg     = isWarm ? '#0C0905' : isBio ? '#04090A' : '#080C1A'
+  const hookCard   = isWarm ? '#191208' : isBio ? '#071410' : '#10182B'
+  const hookBorder = isWarm || isBio ? `${subjectColor}28` : '#2A3552'
 
   return (
     <div style={{ paddingBottom: 20 }}>
@@ -2142,10 +2144,11 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
   const cur = currentVirtual.kind === 'content' ? currentVirtual.data : null
   const subjectColor = module.color || '#9D5CFF'
   const isWarm     = module.subject === 'History'
-  const pageBg     = isWarm ? '#0C0905'            : '#080C1A'
-  const hdrBg      = isWarm ? 'rgba(12,9,5,.97)'   : 'rgba(8,12,26,.96)'
-  const cardBg     = isWarm ? '#1C1408'             : '#10182B'
-  const borderBase = isWarm ? `${subjectColor}28`   : '#1E2A40'
+  const isBio      = module.subject === 'Biology'
+  const pageBg     = isWarm ? '#0C0905'           : isBio ? '#04090A'           : '#080C1A'
+  const hdrBg      = isWarm ? 'rgba(12,9,5,.97)'  : isBio ? 'rgba(4,9,10,.97)' : 'rgba(8,12,26,.96)'
+  const cardBg     = isWarm ? '#1C1408'            : isBio ? '#081410'          : '#10182B'
+  const borderBase = (isWarm || isBio) ? `${subjectColor}28` : '#1E2A40'
 
   // ── Confidence overlay — neutral, no colour judgement ──────────────────
   const CONFIDENCE_LEVELS = [
@@ -2363,14 +2366,14 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
                   background: isActive
                     ? subjectColor
                     : isDone
-                    ? (isWarm ? 'rgba(196,120,40,.15)' : 'rgba(77,255,136,.1)')
-                    : (isWarm ? '#1C1205' : '#10182B'),
-                  border: `1px solid ${isActive ? subjectColor : isDone ? (isWarm ? 'rgba(196,120,40,.35)' : 'rgba(77,255,136,.3)') : (isWarm ? 'rgba(196,120,40,.15)' : '#2A3552')}`,
+                    ? (isWarm ? 'rgba(196,120,40,.15)' : isBio ? `${subjectColor}18` : 'rgba(77,255,136,.1)')
+                    : (isWarm ? '#1C1205' : isBio ? '#081410' : '#10182B'),
+                  border: `1px solid ${isActive ? subjectColor : isDone ? (isWarm ? 'rgba(196,120,40,.35)' : isBio ? `${subjectColor}35` : 'rgba(77,255,136,.3)') : (isWarm ? 'rgba(196,120,40,.15)' : isBio ? `${subjectColor}18` : '#2A3552')}`,
                   borderRadius: 99,
                   padding: '5px 12px',
                   fontFamily: "'Inter', sans-serif",
                   fontSize: '.7rem', fontWeight: 600,
-                  color: isActive ? '#fff' : isDone ? (isWarm ? `${subjectColor}CC` : '#4DFF88') : '#4A5578',
+                  color: isActive ? '#fff' : isDone ? (isWarm ? `${subjectColor}CC` : isBio ? `${subjectColor}CC` : '#4DFF88') : '#4A5578',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
                   letterSpacing: '.01em',
@@ -2402,10 +2405,10 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
       {/* ── Bottom navigation ── */}
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 20,
-        background: isWarm ? 'rgba(12,9,5,.97)' : 'rgba(8,12,26,.97)',
+        background: isWarm ? 'rgba(12,9,5,.97)' : isBio ? 'rgba(4,9,10,.97)' : 'rgba(8,12,26,.97)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderTop: isWarm ? '1px solid rgba(196,120,40,.2)' : '1px solid #1E2A40',
+        borderTop: isWarm ? '1px solid rgba(196,120,40,.2)' : isBio ? '1px solid rgba(56,210,122,.2)' : '1px solid #1E2A40',
         padding: '10px 16px calc(10px + env(safe-area-inset-bottom))',
         boxShadow: '0 -8px 32px rgba(0,0,0,.4)',
       }}>
@@ -2421,12 +2424,12 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
                 onClick={() => go(-1)}
                 disabled={backDisabled}
                 style={{
-                  background: isWarm ? 'rgba(255,255,255,.03)' : '#10182B',
-                  border: isWarm ? '1px solid rgba(196,120,40,.18)' : '1px solid #2A3552',
+                  background: isWarm ? 'rgba(255,255,255,.03)' : isBio ? 'rgba(255,255,255,.03)' : '#10182B',
+                  border: isWarm ? '1px solid rgba(196,120,40,.18)' : isBio ? '1px solid rgba(56,210,122,.18)' : '1px solid #2A3552',
                   borderRadius: 14, padding: '13px 10px',
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontWeight: 700, fontSize: '.9rem',
-                  color: isWarm ? (backDisabled ? '#3A2810' : '#8A7055') : (backDisabled ? '#2A3552' : '#9CA8C7'),
+                  color: isWarm ? (backDisabled ? '#3A2810' : '#8A7055') : isBio ? (backDisabled ? '#1A3825' : '#4A7A58') : (backDisabled ? '#2A3552' : '#9CA8C7'),
                   cursor: backDisabled ? 'default' : 'pointer',
                   transition: 'all .15s',
                 }}>← Back</button>
@@ -2435,12 +2438,12 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
 
           {/* Save + Exit */}
           <button onClick={onBack} style={{
-            background: isWarm ? 'transparent' : '#10182B',
-            border: isWarm ? '1px solid rgba(196,120,40,.15)' : '1px solid #2A3552',
+            background: isBio ? 'transparent' : isWarm ? 'transparent' : '#10182B',
+            border: isBio ? '1px solid rgba(56,210,122,.15)' : isWarm ? '1px solid rgba(196,120,40,.15)' : '1px solid #2A3552',
             borderRadius: 14, padding: '13px 10px',
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 700, fontSize: '.82rem',
-            color: isWarm ? '#5A4020' : '#5A6480', cursor: 'pointer',
+            color: isBio ? '#2A5A38' : isWarm ? '#5A4020' : '#5A6480', cursor: 'pointer',
             lineHeight: 1.3, textAlign: 'center',
           }}>Save +{'\n'}Exit</button>
 
@@ -2470,7 +2473,7 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
                 transition: 'all .15s',
               }}>{nextBtnLabel}</button>
           ) : (
-            <div style={{ background: isWarm ? 'transparent' : '#10182B', border: isWarm ? '1px solid rgba(196,120,40,.1)' : '1px solid #1E2A40', borderRadius: 14, padding: '13px 10px' }} />
+            <div style={{ background: isBio ? 'transparent' : isWarm ? 'transparent' : '#10182B', border: isBio ? '1px solid rgba(56,210,122,.1)' : isWarm ? '1px solid rgba(196,120,40,.1)' : '1px solid #1E2A40', borderRadius: 14, padding: '13px 10px' }} />
           )}
         </div>
       </div>
