@@ -16,41 +16,48 @@ export const MODULES = [
     colorLight: '#f5e6d3',
 
     hook: {
-      statement: 'Medieval doctors could cure the Black Death with garlic and prayer.',
+      scenario: {
+        location: 'England, 1348',
+        intro: 'You wake up with:',
+        items: [
+          'a fever',
+          'painful swollen lumps under your arms',
+          'your neighbour died yesterday',
+          'the local doctor says the planets may be misaligned',
+          'someone nearby is burning herbs to "clean the air"',
+        ],
+      },
+      statement: 'Medieval doctors understood that germs caused disease.',
       isTrue: false,
-      storyLines: [
-        'England, 1348. A ship docks at a southern port.',
-        'Within weeks, people are dying in the streets.',
-        'One third of the entire population will be dead within a year.',
-        'The best doctors in England had a plan...',
-      ],
-      wrongFeedback: "They absolutely believed they could. But roughly 1 in 3 people died anyway.",
-      correctFeedback: "Right. Nothing worked. And that tells us everything about medieval medicine.",
-      bigQuestion: "Why couldn't the best doctors in the world stop it?",
+      wrongFeedback: "Almost everyone thinks that — but it took another 500 years to figure out germs existed.",
+      correctFeedback: "Exactly. Nobody knew. That's what makes this era so fascinating.",
+      loadingText: 'The real story goes deeper…',
+      bigQuestion: 'So what DID they think was causing it?',
+      revealHeader: 'Nobody knew germs existed yet.',
       revealItems: [
         {
-          emoji: '🩸',
-          label: 'They thought blood caused it',
-          detail: 'The Four Humours theory said illness was an imbalance in blood, phlegm, yellow bile or black bile. So they bled patients to remove "excess blood".',
-          color: '#FF5D73',
-          bg: 'rgba(255,93,115,.08)',
-        },
-        {
-          emoji: '💨',
-          label: 'They blamed the smell',
-          detail: 'Miasma theory said bad air from rotting matter caused disease. Doctors carried posies of flowers to block the smell. It did nothing.',
+          emoji: '🌬️',
+          label: 'Rational ideas — miasma and observation',
+          detail: 'Doctors observed patterns: illness spread near rotting smells and dirty water. They were thinking logically — just working with the wrong theory.',
           color: '#FFC857',
           bg: 'rgba(255,200,87,.08)',
         },
         {
-          emoji: '🙏',
-          label: 'They prayed for God to stop it',
-          detail: "The Church taught illness was God's punishment for sin. People whipped themselves in public to show repentance. The plague kept spreading.",
-          color: '#F5B700',
-          bg: 'rgba(245,183,0,.08)',
+          emoji: '⛪',
+          label: 'Supernatural ideas — God and astrology',
+          detail: "The Church taught illness was God's punishment for sin. Astrologers blamed planetary alignment. These weren't stupid — they were the best available explanations at the time.",
+          color: '#9D5CFF',
+          bg: 'rgba(157,92,255,.08)',
+        },
+        {
+          emoji: '🧠',
+          label: 'People were trying to explain disease logically…',
+          detail: 'Medieval medicine was a genuine attempt to make sense of a terrifying world — without microscopes, without germ theory, without any of the tools we take for granted.',
+          color: '#38D27A',
+          bg: 'rgba(56,210,122,.08)',
         },
       ],
-      punchline: 'Nobody knew about bacteria. Nobody knew about fleas on rats. This module explains why — and how medicine slowly changed.',
+      punchline: 'They just didn\'t have the right tools yet. This module explains how medicine slowly — very slowly — got better.',
     },
 
     intro: {
@@ -644,6 +651,7 @@ export const MODULES = [
 
     // ── Universal Hook ──────────────────────────────────────────────────────
     hook: {
+      showGrow: true,
       statement: 'The plant ate the soil.',
       isTrue: false,
       storyLines: [

@@ -1281,18 +1281,21 @@ function useHookPhase(hook) {
   function choose(tappedTrue) {
     setChosenTrue(tappedTrue)
     setPhase('feedback')
-    // After 1.4s flash, auto-advance to grow and begin stepping
-    setTimeout(() => {
-      setPhase('grow')
-      let step = 0
-      // Step every 900ms so each stage is clearly visible
-      const iv = setInterval(() => {
-        step++
-        setGrowStep(step)
-        if (step >= 3) clearInterval(iv)
-        // No auto-advance to reveal — user controls that via Next button
-      }, 900)
-    }, 1400)
+    if (hook?.showGrow) {
+      // After 1.4s flash, auto-advance to grow and begin stepping
+      setTimeout(() => {
+        setPhase('grow')
+        let step = 0
+        const iv = setInterval(() => {
+          step++
+          setGrowStep(step)
+          if (step >= 3) clearInterval(iv)
+        }, 900)
+      }, 1400)
+    } else {
+      // No grow phase — go straight to reveal after the flash
+      setTimeout(() => setPhase('reveal'), 1400)
+    }
   }
 
   function nextFromGrow()   { setPhase('reveal') }
@@ -1300,7 +1303,7 @@ function useHookPhase(hook) {
 
   const wasCorrect   = chosenTrue === hook?.isTrue
   const allRevealed  = revealIdx >= (hook?.revealItems?.length || 0) - 1
-  const canAdvance   = phase === 'grow'    // Next button advances grow → reveal
+  const canAdvance   = phase === 'grow'
   const revealDone   = phase === 'reveal' && allRevealed
 
   return { phase, chosenTrue, wasCorrect, growStep, revealIdx, allRevealed,
@@ -1316,17 +1319,61 @@ function HookContent({ module, hook, hookState, subjectColor }) {
       {/* ── Phase: QUESTION ── */}
       {phase === 'question' && (
         <div style={{ animation: 'hFadeIn .4s ease' }}>
-          {/* Story context */}
-          <div style={{ marginBottom: 20 }}>
-            {hook.storyLines?.map((line, i) => (
-              <p key={i} style={{
+          {/* Story context — structured scenario or flat story lines */}
+          {hook.scenario ? (
+            <div style={{
+              background: 'linear-gradient(145deg, #0E1624, #0A1018)',
+              border: '1px solid rgba(255,200,87,.18)',
+              borderRadius: 18, padding: '18px 20px', marginBottom: 22,
+              boxShadow: '0 0 40px rgba(0,0,0,.4)',
+            }}>
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                background: 'rgba(255,200,87,.08)', border: '1px solid rgba(255,200,87,.2)',
+                borderRadius: 99, padding: '4px 12px', marginBottom: 14,
+              }}>
+                <span style={{ fontSize: '.75rem' }}>📍</span>
+                <span style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: '.72rem', fontWeight: 700,
+                  letterSpacing: '.1em', textTransform: 'uppercase',
+                  color: '#FFC857',
+                }}>{hook.scenario.location}</span>
+              </div>
+              <p style={{
                 fontFamily: "'Inter', sans-serif",
-                fontSize: '.88rem', color: i === hook.storyLines.length - 1 ? '#C8D0E8' : '#5A6480',
-                margin: '0 0 5px', lineHeight: 1.65,
-                fontWeight: i === hook.storyLines.length - 1 ? 500 : 400,
-              }}>{line}</p>
-            ))}
-          </div>
+                fontSize: '.9rem', color: '#9CA8C7',
+                margin: '0 0 12px', lineHeight: 1.6,
+              }}>{hook.scenario.intro}</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {hook.scenario.items.map((item, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 10,
+                    background: 'rgba(255,255,255,.03)',
+                    border: '1px solid rgba(255,255,255,.06)',
+                    borderRadius: 12, padding: '10px 14px',
+                  }}>
+                    <span style={{ color: '#F5B700', fontSize: '.9rem', flexShrink: 0, marginTop: 1 }}>·</span>
+                    <span style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55,
+                    }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div style={{ marginBottom: 20 }}>
+              {hook.storyLines?.map((line, i) => (
+                <p key={i} style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.88rem', color: i === hook.storyLines.length - 1 ? '#C8D0E8' : '#5A6480',
+                  margin: '0 0 5px', lineHeight: 1.65,
+                  fontWeight: i === hook.storyLines.length - 1 ? 500 : 400,
+                }}>{line}</p>
+              ))}
+            </div>
+          )}
 
           {/* Statement card */}
           <div style={{
@@ -1413,13 +1460,13 @@ function HookContent({ module, hook, hookState, subjectColor }) {
               : (hook.wrongFeedback   || "That's what most people think. The numbers tell a different story...")}
           </p>
           <div style={{ marginTop: 20, color: '#4A5578', fontSize: '.78rem', fontFamily: "'Inter', sans-serif" }}>
-            Loading the experiment...
+            {hook.loadingText || 'Loading the experiment...'}
           </div>
         </div>
       )}
 
-      {/* ── Phase: GROW ── */}
-      {phase === 'grow' && (
+      {/* ── Phase: GROW (Biology willow experiment only) ── */}
+      {hook.showGrow && phase === 'grow' && (
         <div style={{ animation: 'hFadeIn .4s ease' }}>
           <div style={{
             fontFamily: "'Inter', sans-serif",
@@ -1514,15 +1561,30 @@ function HookContent({ module, hook, hookState, subjectColor }) {
       {phase === 'reveal' && (
         <div style={{ animation: 'hFadeIn .4s ease' }}>
           <div style={{ marginBottom: 18, textAlign: 'center' }}>
-            <p style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.7rem', color: '#5A6480', margin: '0 0 8px',
-              letterSpacing: '.08em', textTransform: 'uppercase',
-            }}>If not the soil... then:</p>
+            {hook.revealHeader && (
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.25)',
+                borderRadius: 99, padding: '5px 14px', marginBottom: 12,
+              }}>
+                <span style={{ fontSize: '.85rem' }}>❌</span>
+                <span style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: '.82rem', fontWeight: 700, color: '#FF8DA1',
+                }}>{hook.revealHeader}</span>
+              </div>
+            )}
+            {!hook.revealHeader && (
+              <p style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.7rem', color: '#5A6480', margin: '0 0 8px',
+                letterSpacing: '.08em', textTransform: 'uppercase',
+              }}>If not the soil... then:</p>
+            )}
             <h2 style={{
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 800, fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
-              color: '#F5F7FB', margin: 0, letterSpacing: '-.01em',
+              color: '#F5F7FB', margin: hook.revealHeader ? '8px 0 0' : 0, letterSpacing: '-.01em',
             }}>{hook.bigQuestion || 'Where did 74 kg come from?'}</h2>
           </div>
 
