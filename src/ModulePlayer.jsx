@@ -1218,6 +1218,24 @@ function ScenarioBlock({ block }) {
 function Screen({ screen, subject }) {
   return (
     <div>
+      {screen.headerImage && (
+        <div style={{
+          margin: '0 -4px 20px',
+          borderRadius: 16, overflow: 'hidden',
+          boxShadow: '0 8px 32px rgba(0,0,0,.5)',
+          maxHeight: 200,
+        }}>
+          <img
+            src={screen.headerImage}
+            alt=""
+            style={{
+              width: '100%', height: 200,
+              objectFit: 'cover', objectPosition: 'center 30%',
+              display: 'block',
+            }}
+          />
+        </div>
+      )}
       <div style={{ marginBottom: 20 }}>
         <div style={{
           display: 'inline-flex',

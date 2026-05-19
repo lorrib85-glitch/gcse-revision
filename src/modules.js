@@ -154,6 +154,7 @@ export const MODULES = [
         label: 'Black Death',
         kicker: '1348',
         heading: 'The Black Death',
+        headerImage: '/images/black-death-1348.png',
         sub: 'Roughly 1 in 3 people in England died. And nobody knew why.',
         blocks: [
           { type: 'read', label: '☠️ What Happened', text: 'The Black Death (bubonic plague) arrived in England in <strong>1348</strong> and killed roughly <strong>one third</strong> of the population by 1349. It returned in waves throughout the century. People blamed miasma, God\'s punishment and planetary alignment — none were correct.' },
