@@ -2203,6 +2203,7 @@ export const MODULES = [
         kicker: '1953',
         heading: 'The code inside every cell.',
         sub: 'Watson, Crick and Franklin unlocked the instruction manual for life itself.',
+        headerImage: '/images/watson-crick-1953.png',
         blocks: [
           {
             type: 'read',
@@ -3824,6 +3825,7 @@ export const MODULES = [
     colorLight: 'rgba(217,96,48,.12)',
     hook: {
       atmosphericOpener: {
+        bgImage: '/images/soc1-rules.png',
         heading: 'YOU ARE SURROUNDED BY RULES.',
         sub: 'Most of them are invisible.',
         cta: 'START INVESTIGATING',

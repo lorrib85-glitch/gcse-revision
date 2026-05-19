@@ -3991,61 +3991,100 @@ function HookContent({ module, hook, hookState, subjectColor }) {
 
       {/* ── Phase: ATMOSPHERIC ── */}
       {phase === 'atmospheric' && hook.atmosphericOpener && (
-        <div style={{ animation: 'hFadeIn .5s ease', textAlign: 'center', padding: '20px 0 10px' }}>
-          {/* Silhouette crowd scene */}
-          <div style={{
-            position: 'relative', height: 160, borderRadius: 18, overflow: 'hidden',
-            background: 'linear-gradient(180deg, #1A0E06 0%, #0A0502 60%, #050200 100%)',
-            border: `1px solid ${subjectColor}20`,
-            marginBottom: 24, display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-          }}>
-            {/* Crowd silhouette via CSS shapes */}
-            <svg viewBox="0 0 320 120" style={{ width: '100%', position: 'absolute', bottom: 0 }}>
-              {/* Ambient glow */}
-              <ellipse cx="160" cy="80" rx="140" ry="60" fill={subjectColor} opacity="0.06" />
-              {/* Walking silhouettes - simple person shapes */}
-              {[20,45,65,88,108,132,155,178,200,222,248,272,295].map((x, i) => {
-                const h = 35 + (i % 4) * 8
-                const w = 8 + (i % 3) * 2
-                return (
-                  <g key={i} opacity={0.4 + (i % 3) * 0.15}>
-                    {/* Head */}
-                    <circle cx={x} cy={120 - h - 6} r={w * 0.6} fill="#2A1A10" />
-                    {/* Body */}
-                    <rect x={x - w/2} y={120 - h} width={w} height={h * 0.5} rx={2} fill="#1E1208" />
-                  </g>
-                )
-              })}
-              {/* Ground line */}
-              <rect x="0" y="118" width="320" height="2" fill="#2A1A10" />
-            </svg>
-            {/* Title overlay */}
+        hook.atmosphericOpener.bgImage ? (
+          /* ── Full-bleed photo atmospheric opener ── */
+          <div
+            onClick={hookState.startInvestigating}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 10,
+              backgroundImage: `url(${hook.atmosphericOpener.bgImage})`,
+              backgroundSize: 'cover', backgroundPosition: 'center top',
+              display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+              cursor: 'pointer',
+              animation: 'hFadeIn .6s ease',
+            }}
+          >
+            {/* Dark gradient scrim from bottom */}
             <div style={{
-              position: 'relative', zIndex: 2, paddingBottom: 18,
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 900, fontSize: 'clamp(1.3rem, 5vw, 1.7rem)',
-              color: '#F5F0EB', letterSpacing: '-.01em', lineHeight: 1.2,
-              textShadow: `0 0 40px ${subjectColor}60`,
-            }}>
-              {hook.atmosphericOpener.heading}
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to bottom, rgba(0,0,0,.15) 0%, rgba(0,0,0,.55) 55%, rgba(0,0,0,.82) 100%)',
+            }} />
+
+            {/* Text block */}
+            <div style={{ position: 'relative', zIndex: 2, padding: '0 28px 44px' }}>
+              <h1 style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 900, fontSize: 'clamp(2rem, 8vw, 2.8rem)',
+                color: '#FFFFFF', letterSpacing: '-.02em', lineHeight: 1.05,
+                margin: '0 0 10px',
+                textShadow: '0 2px 20px rgba(0,0,0,.6)',
+              }}>{hook.atmosphericOpener.heading}</h1>
+              <p style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '1rem', fontWeight: 400,
+                color: 'rgba(255,255,255,.75)',
+                margin: '0 0 32px', letterSpacing: '.01em',
+              }}>{hook.atmosphericOpener.sub}</p>
+
+              <button onClick={e => { e.stopPropagation(); hookState.startInvestigating() }} style={{
+                background: subjectColor,
+                border: 'none', borderRadius: 14, padding: '16px 0',
+                width: '100%', maxWidth: 400,
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 800, fontSize: '1rem', letterSpacing: '.07em',
+                color: '#FFF', cursor: 'pointer',
+                boxShadow: `0 8px 32px rgba(0,0,0,.4)`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+              }}>
+                {hook.atmosphericOpener.cta || 'START INVESTIGATING'} →
+              </button>
             </div>
           </div>
-
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.95rem', color: '#8A7A70',
-            margin: '0 0 28px', letterSpacing: '.02em',
-          }}>{hook.atmosphericOpener.sub}</p>
-
-          <button onClick={hookState.startInvestigating} style={{
-            background: `linear-gradient(135deg, ${subjectColor} 0%, #B84A1A 100%)`,
-            border: 'none', borderRadius: 14, padding: '15px 32px',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 800, fontSize: '1rem', letterSpacing: '.08em',
-            color: '#FFF8F5', cursor: 'pointer',
-            boxShadow: `0 8px 32px ${subjectColor}40`,
-          }}>{hook.atmosphericOpener.cta || 'START INVESTIGATING'}</button>
-        </div>
+        ) : (
+          /* ── Fallback card atmospheric opener ── */
+          <div style={{ animation: 'hFadeIn .5s ease', textAlign: 'center', padding: '20px 0 10px' }}>
+            <div style={{
+              position: 'relative', height: 160, borderRadius: 18, overflow: 'hidden',
+              background: 'linear-gradient(180deg, #1A0E06 0%, #0A0502 60%, #050200 100%)',
+              border: `1px solid ${subjectColor}20`,
+              marginBottom: 24, display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+            }}>
+              <svg viewBox="0 0 320 120" style={{ width: '100%', position: 'absolute', bottom: 0 }}>
+                <ellipse cx="160" cy="80" rx="140" ry="60" fill={subjectColor} opacity="0.06" />
+                {[20,45,65,88,108,132,155,178,200,222,248,272,295].map((x, i) => {
+                  const h = 35 + (i % 4) * 8; const w = 8 + (i % 3) * 2
+                  return (
+                    <g key={i} opacity={0.4 + (i % 3) * 0.15}>
+                      <circle cx={x} cy={120 - h - 6} r={w * 0.6} fill="#2A1A10" />
+                      <rect x={x - w/2} y={120 - h} width={w} height={h * 0.5} rx={2} fill="#1E1208" />
+                    </g>
+                  )
+                })}
+                <rect x="0" y="118" width="320" height="2" fill="#2A1A10" />
+              </svg>
+              <div style={{
+                position: 'relative', zIndex: 2, paddingBottom: 18,
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 900, fontSize: 'clamp(1.3rem, 5vw, 1.7rem)',
+                color: '#F5F0EB', letterSpacing: '-.01em', lineHeight: 1.2,
+                textShadow: `0 0 40px ${subjectColor}60`,
+              }}>{hook.atmosphericOpener.heading}</div>
+            </div>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.95rem', color: '#8A7A70',
+              margin: '0 0 28px', letterSpacing: '.02em',
+            }}>{hook.atmosphericOpener.sub}</p>
+            <button onClick={hookState.startInvestigating} style={{
+              background: `linear-gradient(135deg, ${subjectColor} 0%, #B84A1A 100%)`,
+              border: 'none', borderRadius: 14, padding: '15px 32px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 800, fontSize: '1rem', letterSpacing: '.08em',
+              color: '#FFF8F5', cursor: 'pointer',
+              boxShadow: `0 8px 32px ${subjectColor}40`,
+            }}>{hook.atmosphericOpener.cta || 'START INVESTIGATING'}</button>
+          </div>
+        )
       )}
 
       {/* ── Phase: QUESTION ── */}
