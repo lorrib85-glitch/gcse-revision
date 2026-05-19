@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import QuickQuiz, { getWeakAreas } from './QuickQuiz.jsx'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
 import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
 import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
@@ -187,7 +188,10 @@ export default function App() {
     setView(null)
   }
 
+  function startQuickQuiz() { setView('quickquiz') }
+
   // Full-screen overlays take priority
+  if (view === 'quickquiz')              return <QuickQuiz onClose={closeOverlay} />
   if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} onBack={closeOverlay} />
   if (view === 'session' && session)     return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={closeOverlay} />
   if (view === 'end')                    return <EndScreen topicId={topicId} results={results} savedData={savedData} onHome={closeOverlay} onStart={startSession} />
@@ -195,7 +199,7 @@ export default function App() {
   // Tab shell
   return (
     <div style={{ background: '#070B1A', minHeight: '100vh' }}>
-      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} />}
+      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onStartQuickQuiz={startQuickQuiz} />}
       {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
       {tab === 'test'    && <TestTab />}
       <BottomNav tab={tab} setTab={setTab} />
@@ -239,7 +243,7 @@ function daysUntilExam() {
   return Math.max(0, Math.round((exam - today) / 86400000))
 }
 
-function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule }) {
+function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule, onStartQuickQuiz }) {
   const nextId        = getNextTopicId(TOPIC_IDS)
   const draftTopic    = draft ? TOPICS.find(t => t.id === draft.topicId) : null
   const PHASE_NAMES   = ['', 'Warm-up', 'Key Facts', 'Mini Quiz', 'Progress']
@@ -472,44 +476,63 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
         </div>
 
         {/* ── Quick Quiz section ── */}
-        <div style={{
-          background: 'linear-gradient(145deg, #10182B, #0D1424)',
-          border: '1px solid #1E2A40',
-          borderRadius: 18, padding: '16px 16px 14px',
-          marginBottom: 14,
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.03)',
-        }}>
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
-              <span style={{ fontSize: '1rem' }}>⚡</span>
-              <span style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700, fontSize: '1rem', color: '#F5F7FB',
-              }}>Quick Quiz</span>
-            </div>
-            <p style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.78rem', color: '#5A6480', margin: 0,
-            }}>5 questions. No pressure. Just keep your brain warm.</p>
-          </div>
+        {(() => {
+          const weakAreas = getWeakAreas(2)
+          return (
+            <div style={{
+              background: 'linear-gradient(145deg, #0F1830, #0B1225)',
+              border: '1px solid rgba(157,92,255,.2)',
+              borderRadius: 18, padding: '16px 16px 14px',
+              marginBottom: 14, position: 'relative', overflow: 'hidden',
+              boxShadow: '0 0 0 1px rgba(157,92,255,.05), inset 0 1px 0 rgba(255,255,255,.03)',
+            }}>
+              {/* ambient glow */}
+              <div style={{ position: 'absolute', top: -30, right: -20, width: 120, height: 120, borderRadius: '50%', background: 'radial-gradient(circle, rgba(157,92,255,.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-          <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
-            {QUICK_SUBJECTS.map((s, i) => (
-              <button key={i} onClick={() => onStart(s.id)} style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                background: s.bg, border: `1px solid ${s.color}28`,
-                borderRadius: 99, padding: '8px 13px',
-                cursor: 'pointer', fontFamily: "'Inter', sans-serif",
-                fontWeight: 600, fontSize: '.8rem', color: s.color,
-                transition: 'transform .12s, box-shadow .12s',
-                boxShadow: `0 0 0 0 ${s.color}`,
-              }}>
-                <span>{s.icon}</span>
-                {s.label}
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 99, background: 'rgba(157,92,255,.18)', border: '1px solid rgba(157,92,255,.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.9rem' }}>⚡</div>
+                  <div>
+                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB', lineHeight: 1 }}>Quick Quiz</div>
+                    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.7rem', color: '#5A6480', marginTop: 2 }}>5 mins · all subjects · adapts to you</div>
+                  </div>
+                  <div style={{ marginLeft: 'auto', display: 'flex', gap: 5 }}>
+                    {['easy','med','hard'].map((d,i) => (
+                      <div key={d} style={{ width: 8, height: 8, borderRadius: 2, background: ['#4DFF88','#FFC857','#FF8A1F'][i], opacity: 0.7 }} />
+                    ))}
+                  </div>
+                </div>
+
+                {weakAreas.length > 0 && (
+                  <div style={{ marginTop: 10, padding: '8px 11px', background: 'rgba(255,93,115,.06)', border: '1px solid rgba(255,93,115,.18)', borderRadius: 9 }}>
+                    <div style={{ fontSize: '.62rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#FF5D73', marginBottom: 4 }}>🎯 Focus areas</div>
+                    {weakAreas.map(w => (
+                      <div key={w.key} style={{ fontSize: '.75rem', color: '#C8D0E8', display: 'flex', justifyContent: 'space-between' }}>
+                        <span>{w.key.replace('/', ' · ')}</span>
+                        <span style={{ color: '#FF5D73', fontWeight: 700 }}>{Math.round(w.rate * 100)}% wrong</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <button onClick={onStartQuickQuiz} style={{
+                width: '100%', padding: '15px',
+                background: 'linear-gradient(135deg, #7C3AED 0%, #9D5CFF 100%)',
+                color: '#fff', border: 'none', borderRadius: 13, cursor: 'pointer',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.95rem', letterSpacing: '.03em', textTransform: 'uppercase',
+                boxShadow: '0 4px 20px rgba(124,58,237,.45), inset 0 1px 0 rgba(255,255,255,.12)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                transition: 'transform .15s, box-shadow .15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 28px rgba(124,58,237,.55)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 4px 20px rgba(124,58,237,.45)' }}>
+                ⚡ Start Quick Quiz
               </button>
-            ))}
-          </div>
-        </div>
+            </div>
+          )
+        })()}
 
         {/* ── Next steps ── */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
