@@ -1312,6 +1312,12 @@ function useHookPhase(hook) {
 
 function HookContent({ module, hook, hookState, subjectColor }) {
   const { phase, wasCorrect, growStep, revealIdx, allRevealed, choose, nextRevealItem } = hookState
+  const [pending, setPending] = useState(null) // null | true | false — pre-submit selection
+
+  const isWarm   = module.subject === 'History'
+  const hookBg   = isWarm ? '#0C0905'          : '#080C1A'
+  const hookCard = isWarm ? '#191208'          : '#10182B'
+  const hookBorder = isWarm ? `${subjectColor}28` : '#2A3552'
 
   return (
     <div style={{ paddingBottom: 20 }}>
@@ -1319,18 +1325,21 @@ function HookContent({ module, hook, hookState, subjectColor }) {
       {/* ── Phase: QUESTION ── */}
       {phase === 'question' && (
         <div style={{ animation: 'hFadeIn .4s ease' }}>
-          {/* Story context — structured scenario or flat story lines */}
+
+          {/* ── Scenario context card ── */}
           {hook.scenario ? (
             <div style={{
-              background: 'linear-gradient(145deg, #0E1624, #0A1018)',
+              background: isWarm
+                ? 'linear-gradient(145deg, #1A1005, #120C03)'
+                : 'linear-gradient(145deg, #0E1624, #0A1018)',
               border: `1px solid ${subjectColor}28`,
-              borderRadius: 18, padding: '18px 20px', marginBottom: 22,
-              boxShadow: '0 0 40px rgba(0,0,0,.4)',
+              borderRadius: 18, padding: '18px 20px', marginBottom: 20,
+              boxShadow: '0 0 40px rgba(0,0,0,.5)',
             }}>
               {/* Location badge */}
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6,
-                background: subjectColor + '12', border: `1px solid ${subjectColor}30`,
+                background: subjectColor + '15', border: `1px solid ${subjectColor}35`,
                 borderRadius: 99, padding: '4px 12px', marginBottom: 14,
               }}>
                 <span style={{ fontSize: '.75rem' }}>📍</span>
@@ -1346,17 +1355,17 @@ function HookContent({ module, hook, hookState, subjectColor }) {
               {hook.scenario.intro && (
                 <p style={{
                   fontFamily: "'Inter', sans-serif",
-                  fontSize: '.9rem', color: '#9CA8C7',
+                  fontSize: '.9rem', color: isWarm ? '#B89870' : '#9CA8C7',
                   margin: '0 0 14px', lineHeight: 1.6,
                 }}>{hook.scenario.intro}</p>
               )}
 
-              {/* Dialogue quotes (optional) */}
+              {/* Dialogue quotes */}
               {hook.scenario.quotes && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
                   {hook.scenario.quotes.map((q, i) => (
                     <div key={i} style={{
-                      background: 'rgba(255,255,255,.04)',
+                      background: isWarm ? 'rgba(245,183,0,.05)' : 'rgba(255,255,255,.04)',
                       border: `1px solid ${subjectColor}20`,
                       borderRadius: 12, padding: '10px 14px',
                     }}>
@@ -1381,7 +1390,9 @@ function HookContent({ module, hook, hookState, subjectColor }) {
                 <div style={{
                   fontFamily: "'Inter', sans-serif",
                   fontSize: '.72rem', fontWeight: 700, letterSpacing: '.08em',
-                  textTransform: 'uppercase', color: '#5A6480', marginBottom: 8,
+                  textTransform: 'uppercase',
+                  color: isWarm ? `${subjectColor}99` : '#5A6480',
+                  marginBottom: 8,
                 }}>{hook.scenario.bulletHeading}</div>
               )}
               {hook.scenario.items && (
@@ -1389,14 +1400,14 @@ function HookContent({ module, hook, hookState, subjectColor }) {
                   {hook.scenario.items.map((item, i) => (
                     <div key={i} style={{
                       display: 'flex', alignItems: 'flex-start', gap: 10,
-                      background: 'rgba(255,255,255,.03)',
-                      border: '1px solid rgba(255,255,255,.05)',
+                      background: isWarm ? 'rgba(245,183,0,.04)' : 'rgba(255,255,255,.03)',
+                      border: isWarm ? `1px solid ${subjectColor}15` : '1px solid rgba(255,255,255,.05)',
                       borderRadius: 10, padding: '8px 12px',
                     }}>
                       <span style={{ color: subjectColor, fontSize: '.85rem', flexShrink: 0, marginTop: 1 }}>·</span>
                       <span style={{
                         fontFamily: "'Inter', sans-serif",
-                        fontSize: '.87rem', color: '#C8D0E8', lineHeight: 1.55,
+                        fontSize: '.87rem', color: isWarm ? '#C8B090' : '#C8D0E8', lineHeight: 1.55,
                       }}>{item}</span>
                     </div>
                   ))}
@@ -1416,60 +1427,198 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             </div>
           )}
 
-          {/* Statement card */}
+          {/* ── Ornamental TF badge + statement card ── */}
           <div style={{
-            background: 'linear-gradient(145deg, #10182B, #0D1424)',
-            border: '1px solid #2A3552',
-            borderRadius: 18, padding: '22px 22px',
-            marginBottom: 24, textAlign: 'center',
-            boxShadow: '0 8px 40px rgba(0,0,0,.4)',
+            background: isWarm
+              ? 'linear-gradient(160deg, #1C1005 0%, #120C03 100%)'
+              : 'linear-gradient(145deg, #10182B, #0D1424)',
+            border: `1px solid ${isWarm ? subjectColor + '30' : '#2A3552'}`,
+            borderRadius: 22, padding: '28px 22px 24px',
+            marginBottom: 16, textAlign: 'center',
+            boxShadow: isWarm
+              ? `0 8px 48px rgba(0,0,0,.6), 0 0 60px ${subjectColor}08`
+              : '0 8px 40px rgba(0,0,0,.4)',
           }}>
+            {/* Ornamental double-ring TF emblem */}
+            <div style={{
+              width: 72, height: 72, borderRadius: '50%',
+              border: `2px solid ${subjectColor}`,
+              boxShadow: `0 0 0 5px ${subjectColor}18, 0 0 0 9px ${subjectColor}08`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 18px',
+              background: isWarm ? `${subjectColor}12` : 'rgba(255,255,255,.03)',
+            }}>
+              <div style={{
+                width: 54, height: 54, borderRadius: '50%',
+                border: `1.5px solid ${subjectColor}55`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <span style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 900, fontSize: '1.1rem',
+                  color: subjectColor, letterSpacing: '.02em',
+                }}>TF</span>
+              </div>
+            </div>
+
+            {/* Label */}
             <div style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: '.6rem', fontWeight: 700, letterSpacing: '.14em',
-              textTransform: 'uppercase', color: '#4A5578', marginBottom: 12,
+              fontSize: '.62rem', fontWeight: 700, letterSpacing: '.2em',
+              textTransform: 'uppercase',
+              color: isWarm ? `${subjectColor}CC` : '#4A5578',
+              marginBottom: 16,
             }}>True or False?</div>
+
+            {/* Statement */}
             <p style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(1.05rem, 3.5vw, 1.3rem)',
+              fontSize: 'clamp(1.05rem, 3.5vw, 1.25rem)',
               fontWeight: 700, color: '#F5F7FB',
-              margin: 0, lineHeight: 1.35, letterSpacing: '-.01em',
+              margin: 0, lineHeight: 1.4, letterSpacing: '-.01em',
             }}>{hook.statement}</p>
           </div>
 
-          {/* Big TRUE / FALSE buttons */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <button onClick={() => choose(true)} style={{
-              background: 'linear-gradient(145deg, #0D2B1A, #0A2015)',
-              border: '2px solid rgba(77,255,136,.4)',
-              borderRadius: 18, padding: '20px 10px',
-              cursor: 'pointer', display: 'flex', flexDirection: 'column',
-              alignItems: 'center', gap: 8, transition: 'transform .12s',
-              boxShadow: '0 4px 24px rgba(77,255,136,.1)',
+          {/* ── CHOOSE AN ANSWER divider ── */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14,
+          }}>
+            <div style={{ flex: 1, height: 1, background: isWarm ? `${subjectColor}20` : '#1E2A40' }} />
+            <span style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.58rem', fontWeight: 700, letterSpacing: '.18em',
+              textTransform: 'uppercase',
+              color: isWarm ? `${subjectColor}80` : '#3A4460',
+              whiteSpace: 'nowrap',
+            }}>Choose an answer</span>
+            <div style={{ flex: 1, height: 1, background: isWarm ? `${subjectColor}20` : '#1E2A40' }} />
+          </div>
+
+          {/* ── Stacked TRUE / FALSE buttons ── */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 14 }}>
+            {/* TRUE */}
+            <button onClick={() => setPending(true)} style={{
+              width: '100%',
+              background: pending === true
+                ? 'linear-gradient(135deg, #0D3020, #0A2418)'
+                : isWarm ? '#1C1005' : '#10182B',
+              border: pending === true
+                ? '2px solid rgba(77,255,136,.6)'
+                : `2px solid ${isWarm ? subjectColor + '22' : '#1E2A40'}`,
+              borderRadius: 16, padding: '16px 20px',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16,
+              transition: 'all .15s ease',
+              boxShadow: pending === true ? '0 0 24px rgba(77,255,136,.15)' : 'none',
             }}>
-              <span style={{ fontSize: '2rem' }}>✅</span>
+              <div style={{
+                width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
+                background: pending === true ? 'rgba(77,255,136,.2)' : 'rgba(77,255,136,.08)',
+                border: `2px solid ${pending === true ? 'rgba(77,255,136,.7)' : 'rgba(77,255,136,.25)'}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'all .15s ease',
+              }}>
+                <span style={{
+                  fontSize: '1rem', color: '#4DFF88', fontWeight: 700,
+                  lineHeight: 1, fontFamily: "'Inter', sans-serif",
+                }}>✓</span>
+              </div>
               <span style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 900, fontSize: '1.25rem',
-                color: '#4DFF88', letterSpacing: '.04em',
+                fontWeight: 800, fontSize: '1.1rem',
+                color: pending === true ? '#4DFF88' : '#6B7FA0',
+                letterSpacing: '.06em', transition: 'color .15s ease',
               }}>TRUE</span>
+              {pending === true && (
+                <div style={{
+                  marginLeft: 'auto',
+                  width: 10, height: 10, borderRadius: '50%',
+                  background: '#4DFF88',
+                  boxShadow: '0 0 8px #4DFF88',
+                }} />
+              )}
             </button>
-            <button onClick={() => choose(false)} style={{
-              background: 'linear-gradient(145deg, #2B0D0D, #200A0A)',
-              border: '2px solid rgba(255,93,115,.4)',
-              borderRadius: 18, padding: '20px 10px',
-              cursor: 'pointer', display: 'flex', flexDirection: 'column',
-              alignItems: 'center', gap: 8, transition: 'transform .12s',
-              boxShadow: '0 4px 24px rgba(255,93,115,.1)',
+
+            {/* FALSE */}
+            <button onClick={() => setPending(false)} style={{
+              width: '100%',
+              background: pending === false
+                ? 'linear-gradient(135deg, #2B0D10, #1E080B)'
+                : isWarm ? '#1C1005' : '#10182B',
+              border: pending === false
+                ? '2px solid rgba(255,93,115,.6)'
+                : `2px solid ${isWarm ? subjectColor + '22' : '#1E2A40'}`,
+              borderRadius: 16, padding: '16px 20px',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16,
+              transition: 'all .15s ease',
+              boxShadow: pending === false ? '0 0 24px rgba(255,93,115,.15)' : 'none',
             }}>
-              <span style={{ fontSize: '2rem' }}>❌</span>
+              <div style={{
+                width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
+                background: pending === false ? 'rgba(255,93,115,.2)' : 'rgba(255,93,115,.08)',
+                border: `2px solid ${pending === false ? 'rgba(255,93,115,.7)' : 'rgba(255,93,115,.25)'}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'all .15s ease',
+              }}>
+                <span style={{
+                  fontSize: '1rem', color: '#FF5D73', fontWeight: 700,
+                  lineHeight: 1, fontFamily: "'Inter', sans-serif",
+                }}>✗</span>
+              </div>
               <span style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 900, fontSize: '1.25rem',
-                color: '#FF5D73', letterSpacing: '.04em',
+                fontWeight: 800, fontSize: '1.1rem',
+                color: pending === false ? '#FF5D73' : '#6B7FA0',
+                letterSpacing: '.06em', transition: 'color .15s ease',
               }}>FALSE</span>
+              {pending === false && (
+                <div style={{
+                  marginLeft: 'auto',
+                  width: 10, height: 10, borderRadius: '50%',
+                  background: '#FF5D73',
+                  boxShadow: '0 0 8px #FF5D73',
+                }} />
+              )}
             </button>
           </div>
+
+          {/* ── Not sure row ── */}
+          <div style={{
+            textAlign: 'center', marginBottom: 18,
+          }}>
+            <span style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.75rem', color: isWarm ? `${subjectColor}60` : '#3A4460',
+            }}>Not sure? Review the lesson before answering. &rsaquo;</span>
+          </div>
+
+          {/* ── CHECK ANSWER button ── */}
+          <button
+            disabled={pending === null}
+            onClick={() => choose(pending)}
+            style={{
+              width: '100%',
+              background: pending !== null
+                ? (isWarm
+                    ? `linear-gradient(135deg, ${subjectColor}, #C47828)`
+                    : 'linear-gradient(135deg, #3B82FF, #1E5FE8)')
+                : isWarm ? '#221608' : '#0D1424',
+              border: pending !== null
+                ? 'none'
+                : `1px solid ${isWarm ? subjectColor + '25' : '#1E2A40'}`,
+              borderRadius: 16, padding: '18px',
+              cursor: pending !== null ? 'pointer' : 'default',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 900, fontSize: '1rem', letterSpacing: '.1em',
+              textTransform: 'uppercase',
+              color: pending !== null ? '#050300' : (isWarm ? `${subjectColor}40` : '#2A3552'),
+              transition: 'all .2s ease',
+              boxShadow: pending !== null
+                ? `0 4px 28px ${isWarm ? subjectColor + '40' : 'rgba(59,130,255,.35)'}`
+                : 'none',
+            }}
+          >
+            Check Answer
+          </button>
         </div>
       )}
 
@@ -1879,6 +2028,12 @@ function IntroScreen({ module, onDone }) {
 function GoalsScreen({ module }) {
   const subjectColor = module.color || '#9D5CFF'
   const goals = module.intro?.learningGoals || module.learningGoals || []
+  const isWarm = module.subject === 'History'
+  const cardBg = isWarm ? 'linear-gradient(145deg, #1C1005, #130D03)' : 'linear-gradient(145deg, #10182B, #0D1424)'
+  const cardBorder = isWarm ? `1px solid ${subjectColor}22` : '1px solid #1E2A40'
+  const pillBg = isWarm ? '#1A0E03' : '#10182B'
+  const pillBorder = isWarm ? `1px solid ${subjectColor}20` : '1px solid #1E2A40'
+  const pillText = isWarm ? `${subjectColor}99` : '#5A6480'
   return (
     <div style={{ maxWidth: 500, margin: '0 auto', padding: '28px 4px 40px', animation: 'fadeIn .4s ease' }}>
 
@@ -1904,7 +2059,8 @@ function GoalsScreen({ module }) {
         }}>You'll be able to:</h2>
         <p style={{
           fontFamily: "'Inter', sans-serif",
-          fontSize: '.85rem', color: '#5A6480', margin: 0, lineHeight: 1.55,
+          fontSize: '.85rem', color: isWarm ? `${subjectColor}70` : '#5A6480',
+          margin: 0, lineHeight: 1.55,
         }}>
           Keep these in mind as you work through each section.
         </p>
@@ -1915,8 +2071,8 @@ function GoalsScreen({ module }) {
         {goals.map((goal, i) => (
           <div key={i} style={{
             display: 'flex', alignItems: 'flex-start', gap: 14,
-            background: 'linear-gradient(145deg, #10182B, #0D1424)',
-            border: '1px solid #1E2A40',
+            background: cardBg,
+            border: cardBorder,
             borderRadius: 14, padding: '14px 16px',
             animation: 'fadeIn .35s ease ' + (i * 0.07) + 's both',
           }}>
@@ -1930,28 +2086,26 @@ function GoalsScreen({ module }) {
             }}>{i + 1}</div>
             <p style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: '.9rem', color: '#C8D0E8',
+              fontSize: '.9rem', color: isWarm ? '#C8B090' : '#C8D0E8',
               margin: 0, lineHeight: 1.55,
             }}>{goal}</p>
           </div>
         ))}
       </div>
 
-      {/* Module metadata pill */}
-      <div style={{
-        display: 'flex', gap: 8, flexWrap: 'wrap',
-      }}>
+      {/* Module metadata pills */}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <div style={{
-          background: '#10182B', border: '1px solid #1E2A40',
+          background: pillBg, border: pillBorder,
           borderRadius: 99, padding: '5px 14px',
           fontFamily: "'Inter', sans-serif",
-          fontSize: '.72rem', fontWeight: 600, color: '#5A6480',
+          fontSize: '.72rem', fontWeight: 600, color: pillText,
         }}>📚 {module.screens.length} section{module.screens.length !== 1 ? 's' : ''}</div>
         <div style={{
-          background: '#10182B', border: '1px solid #1E2A40',
+          background: pillBg, border: pillBorder,
           borderRadius: 99, padding: '5px 14px',
           fontFamily: "'Inter', sans-serif",
-          fontSize: '.72rem', fontWeight: 600, color: '#5A6480',
+          fontSize: '.72rem', fontWeight: 600, color: pillText,
         }}>⏱ ~{module.screens.length * 5} min</div>
       </div>
 
@@ -2043,6 +2197,11 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
 
   const cur = currentVirtual.kind === 'content' ? currentVirtual.data : null
   const subjectColor = module.color || '#9D5CFF'
+  const isWarm     = module.subject === 'History'
+  const pageBg     = isWarm ? '#0C0905'            : '#080C1A'
+  const hdrBg      = isWarm ? 'rgba(12,9,5,.97)'   : 'rgba(8,12,26,.96)'
+  const cardBg     = isWarm ? '#1C1408'             : '#10182B'
+  const borderBase = isWarm ? `${subjectColor}28`   : '#1E2A40'
 
   // ── Confidence overlay — neutral, no colour judgement ──────────────────
   const CONFIDENCE_LEVELS = [
@@ -2167,15 +2326,15 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
   }
 
   return (
-    <div style={{ background: '#080C1A', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ background: pageBg, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
       {/* ── Sticky top header ── */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 20,
-        background: 'rgba(8,12,26,.96)',
+        background: hdrBg,
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid #1E2A40',
+        borderBottom: `1px solid ${borderBase}`,
         padding: '12px 16px 0',
       }}>
         {/* Row 1: subject label + counter + exit */}
