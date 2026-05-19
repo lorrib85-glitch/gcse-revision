@@ -662,7 +662,7 @@ function FlashcardsBlock({ block }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, margin: '14px 0' }}>
       {block.cards.map((c, i) => (
-        <button key={i} onClick={() => toggle(i)}
+        <button key={i} onClick={() => toggle(i)} className="lift-tap"
           style={{
             background: flipped.has(i)
               ? 'linear-gradient(145deg, #1A1038, #120C2C)'
@@ -1446,7 +1446,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 10 }}>
 
             {/* TRUE */}
-            <button onClick={() => setPending(true)} style={{
+            <button onClick={() => setPending(true)} className="lift-tap" style={{
               width: '100%',
               background: pending === true
                 ? 'linear-gradient(135deg, #1B4028, #123020)'
@@ -1475,7 +1475,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             </button>
 
             {/* FALSE */}
-            <button onClick={() => setPending(false)} style={{
+            <button onClick={() => setPending(false)} className="lift-tap" style={{
               width: '100%',
               background: pending === false
                 ? 'linear-gradient(135deg, #3A1A1A, #281212)'
@@ -1776,6 +1776,23 @@ function HookContent({ module, hook, hookState, subjectColor }) {
       <style>{`
         @keyframes hFadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
         @keyframes hLeafPop { from{opacity:0;transform:scale(.4)} to{opacity:1;transform:scale(1)} }
+
+        /* Card lift on tap */
+        .lift-tap:active { transform: translateY(-2px) scale(.995); transition: transform .1s ease; }
+
+        /* Next button ready pulse — only when class is present */
+        @keyframes nextReady {
+          0%, 100% { box-shadow: 0 4px 16px var(--btn-glow, rgba(196,120,40,.4)); }
+          50%       { box-shadow: 0 4px 24px var(--btn-glow, rgba(196,120,40,.6)); }
+        }
+        .next-ready { animation: nextReady 2s ease-in-out infinite; }
+
+        /* Active chip soft glow pulse */
+        @keyframes chipGlow {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: .88; }
+        }
+        .chip-active { animation: chipGlow 3s ease-in-out infinite; }
       `}</style>
     </div>
   )
@@ -2385,10 +2402,10 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
       {/* ── Bottom navigation ── */}
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 20,
-        background: 'rgba(8,12,26,.97)',
+        background: isWarm ? 'rgba(12,9,5,.97)' : 'rgba(8,12,26,.97)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderTop: '1px solid #1E2A40',
+        borderTop: isWarm ? '1px solid rgba(196,120,40,.2)' : '1px solid #1E2A40',
         padding: '10px 16px calc(10px + env(safe-area-inset-bottom))',
         boxShadow: '0 -8px 32px rgba(0,0,0,.4)',
       }}>
@@ -2397,50 +2414,63 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
           display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, alignItems: 'center',
         }}>
           {/* Back — disabled on first screen and during hook question/feedback */}
-          <button
-            onClick={() => go(-1)}
-            disabled={virtualIdx === 0 || (currentVirtual.kind === 'hook' && (hookPhase === 'question' || hookPhase === 'feedback'))}
-            style={{
-              background: '#10182B',
-              border: '1px solid #2A3552',
-              borderRadius: 14, padding: '13px 10px',
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '.9rem',
-              color: (virtualIdx === 0 || (currentVirtual.kind === 'hook' && (hookPhase === 'question' || hookPhase === 'feedback'))) ? '#2A3552' : '#9CA8C7',
-              cursor: (virtualIdx === 0 || (currentVirtual.kind === 'hook' && (hookPhase === 'question' || hookPhase === 'feedback'))) ? 'default' : 'pointer',
-              transition: 'all .15s',
-            }}>← Back</button>
+          {(() => {
+            const backDisabled = virtualIdx === 0 || (currentVirtual.kind === 'hook' && (hookPhase === 'question' || hookPhase === 'feedback'))
+            return (
+              <button
+                onClick={() => go(-1)}
+                disabled={backDisabled}
+                style={{
+                  background: isWarm ? 'rgba(255,255,255,.03)' : '#10182B',
+                  border: isWarm ? '1px solid rgba(196,120,40,.18)' : '1px solid #2A3552',
+                  borderRadius: 14, padding: '13px 10px',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700, fontSize: '.9rem',
+                  color: isWarm ? (backDisabled ? '#3A2810' : '#8A7055') : (backDisabled ? '#2A3552' : '#9CA8C7'),
+                  cursor: backDisabled ? 'default' : 'pointer',
+                  transition: 'all .15s',
+                }}>← Back</button>
+            )
+          })()}
 
           {/* Save + Exit */}
           <button onClick={onBack} style={{
-            background: '#10182B',
-            border: '1px solid #2A3552',
+            background: isWarm ? 'transparent' : '#10182B',
+            border: isWarm ? '1px solid rgba(196,120,40,.15)' : '1px solid #2A3552',
             borderRadius: 14, padding: '13px 10px',
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 700, fontSize: '.82rem',
-            color: '#5A6480', cursor: 'pointer',
+            color: isWarm ? '#5A4020' : '#5A6480', cursor: 'pointer',
             lineHeight: 1.3, textAlign: 'center',
           }}>Save +{'\n'}Exit</button>
 
           {/* Next / Finish — dynamic based on hook/intro phase */}
           {showNextBtn ? (
-            <button onClick={handleNext} style={{
-              background: isFinishBtn
-                ? 'linear-gradient(135deg, #1A4D2E, #38D27A)'
-                : `linear-gradient(135deg, ${subjectColor}cc, ${subjectColor})`,
-              border: 'none',
-              borderRadius: 14, padding: '13px 10px',
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '.9rem',
-              color: isFinishBtn ? '#fff' : '#fff',
-              cursor: 'pointer',
-              boxShadow: isFinishBtn
-                ? '0 4px 16px rgba(56,210,122,.35)'
-                : `0 4px 16px ${subjectColor}44`,
-              transition: 'all .15s',
-            }}>{nextBtnLabel}</button>
+            <button
+              onClick={handleNext}
+              className={!isFinishBtn && showNextBtn && virtualIdx > 0 ? 'next-ready' : ''}
+              style={{
+                '--btn-glow': isWarm ? 'rgba(196,120,40,.4)' : `${subjectColor}66`,
+                background: isFinishBtn
+                  ? 'linear-gradient(135deg, #1A4D2E, #38D27A)'
+                  : isWarm
+                  ? 'linear-gradient(135deg, #C47828, #9A6010)'
+                  : `linear-gradient(135deg, ${subjectColor}cc, ${subjectColor})`,
+                border: 'none',
+                borderRadius: 14, padding: '13px 10px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.9rem',
+                color: '#fff',
+                cursor: 'pointer',
+                boxShadow: isFinishBtn
+                  ? '0 4px 16px rgba(56,210,122,.35)'
+                  : isWarm
+                  ? '0 4px 16px rgba(196,120,40,.4)'
+                  : `0 4px 16px ${subjectColor}44`,
+                transition: 'all .15s',
+              }}>{nextBtnLabel}</button>
           ) : (
-            <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 14, padding: '13px 10px' }} />
+            <div style={{ background: isWarm ? 'transparent' : '#10182B', border: isWarm ? '1px solid rgba(196,120,40,.1)' : '1px solid #1E2A40', borderRadius: 14, padding: '13px 10px' }} />
           )}
         </div>
       </div>
