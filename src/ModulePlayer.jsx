@@ -5017,14 +5017,14 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
                   background: isActive
                     ? subjectColor
                     : isDone
-                    ? (isWarm ? 'rgba(196,120,40,.15)' : isBio ? `${subjectColor}18` : isMaths ? `${subjectColor}18` : 'rgba(77,255,136,.1)')
-                    : (isWarm ? '#1C1205' : isBio ? '#081410' : isMaths ? '#07101E' : '#10182B'),
-                  border: `1px solid ${isActive ? subjectColor : isDone ? (isWarm ? 'rgba(196,120,40,.35)' : isBio ? `${subjectColor}35` : isMaths ? `${subjectColor}35` : 'rgba(77,255,136,.3)') : (isWarm ? 'rgba(196,120,40,.15)' : isBio ? `${subjectColor}18` : isMaths ? `${subjectColor}18` : '#2A3552')}`,
+                    ? (isWarm ? 'rgba(196,120,40,.15)' : isBio ? `${subjectColor}18` : isMaths ? `${subjectColor}18` : isSoc ? `${subjectColor}18` : 'rgba(77,255,136,.1)')
+                    : (isWarm ? '#1C1205' : isBio ? '#081410' : isMaths ? '#07101E' : isSoc ? '#1A0E07' : '#10182B'),
+                  border: `1px solid ${isActive ? subjectColor : isDone ? (isWarm ? 'rgba(196,120,40,.35)' : isBio ? `${subjectColor}35` : isMaths ? `${subjectColor}35` : isSoc ? `${subjectColor}35` : 'rgba(77,255,136,.3)') : (isWarm ? 'rgba(196,120,40,.15)' : isBio ? `${subjectColor}18` : isMaths ? `${subjectColor}18` : isSoc ? `${subjectColor}18` : '#2A3552')}`,
                   borderRadius: 99,
                   padding: '5px 12px',
                   fontFamily: "'Inter', sans-serif",
                   fontSize: '.7rem', fontWeight: 600,
-                  color: isActive ? '#fff' : isDone ? (isWarm ? `${subjectColor}CC` : isBio ? `${subjectColor}CC` : isMaths ? `${subjectColor}CC` : '#4DFF88') : '#4A5578',
+                  color: isActive ? '#fff' : isDone ? (isWarm ? `${subjectColor}CC` : isBio ? `${subjectColor}CC` : isMaths ? `${subjectColor}CC` : isSoc ? `${subjectColor}CC` : '#4DFF88') : '#4A5578',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
                   letterSpacing: '.01em',
@@ -5056,10 +5056,10 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
       {/* ── Bottom navigation ── */}
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 20,
-        background: isWarm ? 'rgba(12,9,5,.97)' : isBio ? 'rgba(4,9,10,.97)' : isMaths ? 'rgba(3,6,14,.97)' : 'rgba(8,12,26,.97)',
+        background: isWarm ? 'rgba(12,9,5,.97)' : isBio ? 'rgba(4,9,10,.97)' : isMaths ? 'rgba(3,6,14,.97)' : isSoc ? 'rgba(12,8,4,.97)' : 'rgba(8,12,26,.97)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderTop: isWarm ? '1px solid rgba(196,120,40,.2)' : isBio ? '1px solid rgba(56,210,122,.2)' : isMaths ? '1px solid rgba(75,144,255,.2)' : '1px solid #1E2A40',
+        borderTop: isWarm ? '1px solid rgba(196,120,40,.2)' : isBio ? '1px solid rgba(56,210,122,.2)' : isMaths ? '1px solid rgba(75,144,255,.2)' : isSoc ? '1px solid rgba(217,96,48,.2)' : '1px solid #1E2A40',
         padding: '10px 16px calc(10px + env(safe-area-inset-bottom))',
         boxShadow: '0 -8px 32px rgba(0,0,0,.4)',
       }}>

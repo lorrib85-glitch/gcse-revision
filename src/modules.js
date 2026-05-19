@@ -274,8 +274,9 @@ export const MODULES = [
       },
       {
         label: 'Key Figures',
-        kicker: 'The Challengers',
+        kicker: '1543',
         heading: 'Vesalius, Harvey & Paré',
+        headerImage: '/images/vesalius-1543.png',
         sub: 'Three people who dared to challenge 1,000 years of received wisdom.',
         blocks: [
           { type: 'read', label: '🔬 Vesalius (1543)', text: '<strong>Andreas Vesalius</strong> dissected human bodies himself and published <em>De Humani Corporis Fabrica</em> (1543). It corrected over 300 of Galen\'s errors — including the claim that the jaw is two bones and that the septum of the heart has holes. He proved the value of direct observation over trusting ancient authority.' },
@@ -288,6 +289,22 @@ export const MODULES = [
             { text: 'Bloodletting was made compulsory by law', correct: false },
           ], explanation: 'Key AQA exam point: improved understanding does not automatically lead to better treatment.' },
         ]
+      },
+      {
+        label: 'Royal Society',
+        kicker: '1660',
+        heading: 'The Royal Society',
+        headerImage: '/images/royal-society-1660.png',
+        sub: 'Science became organised — and started demanding evidence.',
+        blocks: [
+          { type: 'read', label: '🔬 What Happened', text: 'The <strong>Royal Society</strong> was founded in 1660 — a formal scientific institution where experiments were shared, tested and debated. Its motto: <em>Nullius in Verba</em> ("take nobody\'s word for it"). It represented the shift from trusting ancient authority to demanding <strong>observable, repeatable evidence</strong>.' },
+          { type: 'keypoint', text: '<strong>Why it matters for the exam:</strong> The Royal Society created a culture of scientific investigation. This directly enabled later breakthroughs — Harvey\'s ideas were published through such networks, and it set the stage for Jenner, Pasteur and Koch.' },
+          { type: 'quiz', question: 'What was the significance of the Royal Society\'s motto "Nullius in Verba"?', options: [
+            { text: 'It rejected ancient authority and demanded evidence from observation and experiment', correct: true },
+            { text: 'It said that only noblemen could join', correct: false },
+            { text: 'It meant that all medical cures needed royal approval', correct: false },
+          ], explanation: '"Take nobody\'s word for it" — the motto symbolised the rejection of Galen and ancient texts in favour of direct observation and experiment.' },
+        ],
       },
       {
         label: 'Great Plague',
@@ -579,6 +596,23 @@ export const MODULES = [
             { text: 'Germs came from bad surgery', correct: false },
           ], explanation: 'Spontaneous generation said germs appeared from decay — they were a symptom of illness, not its cause. Pasteur proved the opposite.' },
         ]
+      },
+      {
+        label: 'Jenner',
+        kicker: '1796',
+        heading: 'Jenner develops the smallpox vaccine.',
+        headerImage: '/images/jenner-1796.png',
+        sub: 'The first vaccine — discovered by observation, not by understanding germs.',
+        blocks: [
+          { type: 'read', label: '💉 What Happened', text: '<strong>Edward Jenner</strong> noticed that milkmaids who caught <strong>cowpox</strong> rarely got <strong>smallpox</strong>. In 1796 he deliberately infected James Phipps — a boy — with cowpox, then exposed him to smallpox. The boy did not get ill. The <strong>smallpox vaccine</strong> was born.' },
+          { type: 'keypoint', text: '<strong>Critical exam point:</strong> Jenner did not know about germs or the immune system. He worked by observation and experiment — not by understanding why it worked. Pasteur later explained the mechanism. This shows how <strong>chance observation + scientific method</strong> can lead to breakthroughs.' },
+          { type: 'funfact', label: '😨 Controversy', text: 'Many people were horrified. Cartoons showed patients growing cow heads after vaccination. The Church opposed it. Parliament eventually made smallpox vaccination compulsory in 1853 — the first compulsory vaccination law in England.' },
+          { type: 'quiz', question: 'Why is Jenner\'s smallpox vaccine significant for understanding medical progress?', options: [
+            { text: 'It proved that observation and experiment could produce breakthroughs even without understanding the cause', correct: true },
+            { text: 'It proved that germ theory was correct', correct: false },
+            { text: 'It showed that the Church supported scientific progress', correct: false },
+          ], explanation: 'Jenner had no knowledge of germs or immunity — he used observation and careful experiment. His work paved the way for Pasteur, who later explained WHY vaccines work.' },
+        ],
       },
       {
         label: 'Pasteur',
