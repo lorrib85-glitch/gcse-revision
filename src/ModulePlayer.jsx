@@ -3737,6 +3737,105 @@ function ExamScoredBlock({ block }) {
   )
 }
 
+// ─── ComicBlock (History only) ────────────────────────────────────────────────
+function ComicBlock({ block }) {
+  const panels = block.panels || []
+  const [idx, setIdx] = useState(0)
+  const startXRef = useRef(0)
+  const panel = panels[idx] || {}
+
+  function goTo(i) { if (i >= 0 && i < panels.length) setIdx(i) }
+
+  function onTouchStart(e) { startXRef.current = e.touches[0].clientX }
+  function onTouchEnd(e) {
+    const dx = e.changedTouches[0].clientX - startXRef.current
+    if (dx < -44) goTo(idx + 1)
+    else if (dx > 44) goTo(idx - 1)
+  }
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      {/* Panel image — swipeable */}
+      <div
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', userSelect: 'none', cursor: panels.length > 1 ? 'grab' : 'default' }}
+      >
+        <img
+          src={panel.image}
+          alt={`Panel ${idx + 1}`}
+          draggable={false}
+          style={{ width: '100%', display: 'block', borderRadius: 14 }}
+        />
+        {/* prev / next tap zones on wider screens */}
+        {idx > 0 && (
+          <button onClick={() => goTo(idx - 1)} style={{
+            position: 'absolute', left: 0, top: 0, bottom: 0, width: '22%',
+            background: 'transparent', border: 'none', cursor: 'pointer',
+          }} aria-label="Previous panel" />
+        )}
+        {idx < panels.length - 1 && (
+          <button onClick={() => goTo(idx + 1)} style={{
+            position: 'absolute', right: 0, top: 0, bottom: 0, width: '22%',
+            background: 'transparent', border: 'none', cursor: 'pointer',
+          }} aria-label="Next panel" />
+        )}
+      </div>
+
+      {/* Dot navigation */}
+      {panels.length > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 7, margin: '12px 0 4px' }}>
+          {panels.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              style={{
+                width: i === idx ? 22 : 8, height: 8,
+                borderRadius: 4, border: 'none', padding: 0, cursor: 'pointer',
+                background: i === idx ? '#C47828' : 'rgba(196,120,40,.28)',
+                transition: 'width .18s, background .18s',
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Swipe hint */}
+      {idx < panels.length - 1 && (
+        <p style={{
+          textAlign: 'center', fontSize: '.72rem', fontFamily: "'Inter', sans-serif",
+          color: 'rgba(200,176,144,.45)', margin: '4px 0 10px', letterSpacing: '.04em',
+        }}>
+          📖 Swipe to see more
+        </p>
+      )}
+
+      {/* GCSE Takeaway */}
+      {panel.takeaway && (
+        <div style={{
+          background: 'rgba(196,120,40,.07)',
+          border: '1px solid rgba(196,120,40,.22)',
+          borderRadius: 12, padding: '14px 16px', marginTop: 10,
+        }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.64rem', fontWeight: 700, letterSpacing: '.12em',
+            textTransform: 'uppercase', color: '#C47828', marginBottom: 7,
+          }}>
+            📚 GCSE Takeaway
+          </div>
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.9rem', lineHeight: 1.65, margin: 0, color: '#C8B090',
+          }}>
+            {panel.takeaway}
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
 function Screen({ screen, subject }) {
@@ -3822,6 +3921,7 @@ function Screen({ screen, subject }) {
           {block.type === 'colsort'          && <ColSortBlock block={block} />}
           {block.type === 'agencywheel'      && <AgencyWheelBlock block={block} />}
           {block.type === 'appliedscenario'  && <AppliedScenarioBlock block={block} />}
+          {block.type === 'comic'            && <ComicBlock block={block} />}
         </div>
       ))}
     </div>

@@ -98,6 +98,27 @@ export const MODULES = [
             { text: 'Yes — it proved blood caused every illness', correct: false },
             { text: 'No — but medieval doctors already understood bacteria', correct: false },
           ], explanation: 'The Four Humours were wrong, but they felt logical because doctors believed health meant balance inside the body.' },
+          {
+            type: 'comic',
+            panels: [
+              {
+                image: '/images/comic-medieval-1-astrology.png',
+                takeaway: 'Doctors believed the planets could affect your health. Saturn being "cold and dry" explained melancholy. Jupiter explained cholera. This is why astrology appeared in medical training until the 17th century.',
+              },
+              {
+                image: '/images/comic-medieval-2-urine-charts.png',
+                takeaway: 'Doctors used observation and experience to diagnose illness — examining urine colour, smell and taste. This was a rational attempt at evidence, even if the theory behind it was wrong.',
+              },
+              {
+                image: '/images/comic-medieval-3-mix-of-ideas.png',
+                takeaway: 'Medieval medicine mixed rational methods (observation, herbal remedies) with supernatural beliefs (astrology, prayer). Doctors used whichever approach seemed relevant. This is why treatments were so inconsistent.',
+              },
+              {
+                image: '/images/comic-medieval-4-church-copy.png',
+                takeaway: 'Monasteries preserved and copied Ancient Greek and Roman medical texts for centuries. This kept ideas alive — but it also meant old, unchallenged ideas dominated medicine for over 1,000 years.',
+              },
+            ],
+          },
         ]
       },
       {
@@ -4219,20 +4240,6 @@ export const MODULES = [
   - Weakness: predicts revolution that has not happened in developed countries; ignores gender and ethnicity
 - Balanced conclusion: Functionalism is limited in explaining inequality but valuable for understanding stability and consensus. Marxism is stronger on inequality but weaker on social cohesion. Neither theory alone is sufficient.
 - Award marks for: AO1 knowledge, AO2 application to inequality, AO3 evaluation with evidence and counter-argument`,
-          },
-        ],
-      },
-
-      // Screen 18 — Confidence Check
-      {
-        label: 'Confidence Check',
-        kicker: 'Module Complete',
-        heading: 'Module 2 Complete.',
-        sub: 'How confident are you with each concept?',
-        blocks: [
-          {
-            type: 'keypoint',
-            text: '🎓 <strong>Module complete.</strong> You can now explain Marxism and Functionalism, define capitalism, bourgeoisie, proletariat, social order and social cohesion, compare how each theory explains inequality and social institutions, and apply both theories to real-world scenarios. That\'s Module 2 of GCSE Sociology done.',
           },
         ],
       },
