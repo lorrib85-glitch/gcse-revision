@@ -357,6 +357,25 @@ export const MODULES = [
     icon: '🩺',
     color: '#C47828',
     colorLight: 'rgba(196,120,40,.12)',
+    hook: {
+      scenario: {
+        location: 'London, 1840',
+        hint: 'A surgeon is about to operate. He hasn\'t washed his hands once today.',
+      },
+      statement: 'Before the 1840s, surgeons washed their hands and wore clean coats to prevent infection.',
+      isTrue: false,
+      wrongFeedback: 'Actually, blood-stained coats were a badge of honour — experience, not hygiene.',
+      correctFeedback: 'Right. Germs weren\'t even discovered yet. Nobody knew dirty hands were dangerous.',
+      loadingText: 'The real operating theatre was horrifying…',
+      bigQuestion: 'So what actually made surgery so deadly?',
+      revealHeader: 'Three killers: pain, infection, blood loss.',
+      revealItems: [
+        { emoji: '😱', label: 'Pain — patients were fully conscious', detail: 'No anaesthetic meant patients screamed through every cut. Surgeons were judged on speed — Robert Liston could amputate a leg in 40 seconds.', color: '#C47828', bg: 'rgba(196,120,40,.08)' },
+        { emoji: '🦠', label: 'Infection — nobody knew why wounds went bad', detail: 'Blood-stained coats, unwashed hands, unsterilised instruments. Surgeons carried bacteria from patient to patient without knowing it. Most patients died of post-op infection.', color: '#D4950A', bg: 'rgba(212,149,10,.08)' },
+        { emoji: '🩸', label: 'Blood loss — no transfusions existed', detail: 'Major operations killed through blood loss alone. There were no blood groups, no transfusion techniques, no way to replace what was lost on the table.', color: '#B06520', bg: 'rgba(176,101,32,.08)' },
+      ],
+      punchline: 'Surgery improved because three separate problems were solved — pain, infection, bleeding — each by a different person.',
+    },
     intro: {
       learningGoals: [
         'Explain why surgery before the 1840s was so dangerous',
@@ -516,6 +535,25 @@ export const MODULES = [
     icon: '🦠',
     color: '#B06520',
     colorLight: 'rgba(176,101,32,.12)',
+    hook: {
+      scenario: {
+        location: 'Paris, 1857',
+        hint: 'Pasteur is in his lab — staring at a bottle of wine that\'s gone bad.',
+      },
+      statement: 'Louis Pasteur discovered germ theory by studying sick patients in hospitals.',
+      isTrue: false,
+      wrongFeedback: 'He was a chemist, not a doctor. His breakthrough came from spoiled wine, not sick people.',
+      correctFeedback: 'Exactly — it started with wine. The biggest medical revolution came from a drinks problem.',
+      loadingText: 'Following the evidence…',
+      bigQuestion: 'So how did wine lead to one of the biggest ideas in medical history?',
+      revealHeader: 'It started with why wine went bad.',
+      revealItems: [
+        { emoji: '🍷', label: 'Wine → bacteria → disease', detail: 'Pasteur saw bacteria spoiling wine under a microscope. He realised microorganisms caused decay — and if they caused decay, maybe they caused disease too. He was right.', color: '#B06520', bg: 'rgba(176,101,32,.08)' },
+        { emoji: '🧪', label: 'The swan-neck flask (1861)', detail: 'Pasteur boiled broth in a flask with a curved neck. Air got in — but dust and microbes didn\'t. The broth stayed fresh. This proved microbes came from outside, not from thin air.', color: '#C47828', bg: 'rgba(196,120,40,.08)' },
+        { emoji: '🔬', label: 'Koch made it specific', detail: 'Pasteur proved microbes caused disease generally. Robert Koch went further — identifying the exact bacteria behind anthrax, TB and cholera. Suddenly medicine could target specific enemies.', color: '#D4950A', bg: 'rgba(212,149,10,.08)' },
+      ],
+      punchline: 'Germ theory changed everything — vaccines, antiseptics, antibiotics all follow from one chemist asking why his wine was off.',
+    },
     intro: {
       learningGoals: [
         'Explain Pasteur\'s germ theory and the evidence behind it',
@@ -669,6 +707,25 @@ export const MODULES = [
     icon: '🏭',
     color: '#9A5A18',
     colorLight: 'rgba(154,90,24,.12)',
+    hook: {
+      scenario: {
+        location: 'London, 1854',
+        hint: 'People are drawing water from a pump on Broad Street. Several neighbours have died this week.',
+      },
+      statement: 'Victorian Londoners knew that drinking from the Thames could spread cholera.',
+      isTrue: false,
+      wrongFeedback: 'Most people still blamed miasma — bad air from the river. The water itself seemed fine.',
+      correctFeedback: 'Right — even as people died, most blamed smell, not water. It took one doctor to prove otherwise.',
+      loadingText: 'Tracing the outbreak…',
+      bigQuestion: 'So how did anyone figure out the water was the problem?',
+      revealHeader: 'John Snow mapped every death.',
+      revealItems: [
+        { emoji: '🗺️', label: 'Snow\'s map changed medicine', detail: 'Dr John Snow plotted every cholera death on a street map of Soho. They clustered around one water pump on Broad Street. He removed the handle — the outbreak stopped. Data beat dogma.', color: '#9A5A18', bg: 'rgba(154,90,24,.08)' },
+        { emoji: '🏙️', label: 'Cities were death traps', detail: 'Industrial towns packed thousands into slums with no sewage, shared privies and water drawn from rivers full of waste. Life expectancy in Manchester in 1840 was 28 years for labourers.', color: '#B06520', bg: 'rgba(176,101,32,.08)' },
+        { emoji: '🚧', label: 'Government had to act — but didn\'t want to', detail: 'Laissez-faire politics meant the government resisted spending on sewers. It took the Great Stink of 1858 — when Parliament itself smelled the Thames — to force Bazalgette\'s sewer system through.', color: '#C47828', bg: 'rgba(196,120,40,.08)' },
+      ],
+      punchline: 'Public health improved not because government wanted to act — but because the smell reached Parliament.',
+    },
     intro: {
       learningGoals: [
         'Explain why public health was so poor in industrial towns',
