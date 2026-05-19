@@ -384,14 +384,6 @@ export const MODULES = [
         heading: 'Anaesthetics: Finally, Less Screaming',
         sub: 'Anaesthetics reduced pain so surgeons could operate more carefully and attempt longer, more complex procedures.',
         blocks: [
-          { type: 'timeline', events: [
-            { year: '1799', text: '<strong>Humphry Davy</strong> discovers nitrous oxide could reduce pain — but it wasn\'t widely used at the time.' },
-            { year: '1846', text: '<strong>William Morton</strong> successfully uses ether as an anaesthetic. It spread quickly to Britain, but was flammable.' },
-            { year: '1847', text: '<strong>James Simpson</strong> discovers chloroform — a more effective general anaesthetic, allowing longer operations.' },
-            { year: '1848', text: '<strong>Hannah Greener</strong>, aged 15, dies from too much chloroform — showing anaesthetics could be dangerous.' },
-            { year: '1850s', text: '<strong>John Snow</strong> develops a chloroform inhaler to control dosage, making it much safer.' },
-            { year: '1853', text: '<strong>Queen Victoria</strong> uses chloroform in childbirth — her endorsement reduced public and religious opposition.' },
-          ]},
           { type: 'examtip', label: '🗡️ Exam Trap', text: '<strong>Anaesthetics did not fix surgery by themselves.</strong> They reduced pain, but longer operations could increase infection risk if surgeons still had dirty hands, tools and theatres.' },
           { type: 'quiz', question: 'Which detail best explains why chloroform became safer?', options: [
             { text: "John Snow's inhaler helped control how much chloroform patients received", correct: true },
@@ -399,6 +391,66 @@ export const MODULES = [
             { text: 'Ether was flammable', correct: false },
             { text: 'Robert Liston operated faster', correct: false },
           ], explanation: "Snow's inhaler is a strong technology factor: safer dosage increased trust." },
+        ]
+      },
+      {
+        label: 'Davy',
+        kicker: '1799',
+        heading: 'Humphry Davy: Laughing Gas',
+        sub: 'The first hint that pain in surgery could one day be solved.',
+        blocks: [
+          { type: 'read', label: '🔬 The Discovery', text: '<strong>Humphry Davy</strong> discovered that inhaling <strong>nitrous oxide</strong> (laughing gas) reduced the sensation of pain. He even suggested it could be used during surgery. But surgeons ignored him — partly because it made people giggle, and partly because no one believed patients needed to be unconscious.' },
+          { type: 'funfact', label: '😂 Why It Was Ignored', text: 'Nitrous oxide was seen as a party trick. It was used at "laughing gas shows" for entertainment. Serious surgeons didn\'t want to be associated with circus antics — so a potential breakthrough sat unused for 47 years.' },
+        ]
+      },
+      {
+        label: 'Morton',
+        kicker: '1846',
+        heading: 'William Morton: Ether',
+        sub: 'The first successful public demonstration of surgical anaesthesia.',
+        blocks: [
+          { type: 'read', label: '🔬 The Discovery', text: '<strong>William Morton</strong>, an American dentist, publicly demonstrated that <strong>ether</strong> could render a patient unconscious during surgery in 1846. The news spread to Britain rapidly. For the first time, surgeons could operate without a patient screaming — but ether was flammable and caused nausea.' },
+          { type: 'keypoint', text: 'Morton\'s demonstration was the turning point that made pain-free surgery a reality. But ether had serious limitations — the search for something better began immediately.' },
+        ]
+      },
+      {
+        label: 'Simpson',
+        kicker: '1847',
+        heading: 'James Simpson: Chloroform',
+        sub: 'Better than ether — and discovered over a dinner party.',
+        blocks: [
+          { type: 'read', label: '🔬 The Discovery', text: '<strong>James Simpson</strong>, a Scottish obstetrician, was searching for something better than ether. In 1847, he and two colleagues inhaled various chemicals at a dinner party. They woke up under the table having discovered <strong>chloroform</strong> — more powerful, faster acting, and less flammable than ether. It allowed much longer operations.' },
+          { type: 'funfact', label: '🍽️ The Dinner Party Method', text: 'Simpson\'s approach to drug discovery: invite friends over, try inhaling random chemicals, see who passes out. Pioneering science or a Victorian dare? Both, probably.' },
+        ]
+      },
+      {
+        label: 'Greener',
+        kicker: '1848',
+        heading: 'Hannah Greener: A Warning',
+        sub: 'The new wonder drug had a dangerous side.',
+        blocks: [
+          { type: 'read', label: '⚠️ What Happened', text: '<strong>Hannah Greener</strong>, aged 15, died from an overdose of chloroform in 1848 — one year after its discovery. She had been given too much. Her death showed that anaesthetics were not automatically safe. The problem was dosage: there was no precise way to control how much a patient received.' },
+          { type: 'examtip', label: '🗡️ Exam Insight', text: 'Hannah Greener\'s death is useful evidence that <strong>new medical advances create new problems</strong>. Examiners love this nuance — progress isn\'t simply positive.' },
+        ]
+      },
+      {
+        label: 'Snow',
+        kicker: '1850s',
+        heading: 'John Snow: Safer Dosage',
+        sub: 'The man who solved cholera also made chloroform much safer.',
+        blocks: [
+          { type: 'read', label: '🔬 The Improvement', text: '<strong>John Snow</strong> — best known for tracing the 1854 cholera outbreak to a water pump — developed an <strong>inhaler</strong> that allowed surgeons to control exactly how much chloroform a patient received. Controlled dosage dramatically reduced the risk of overdose and death. Chloroform became far more trusted as a result.' },
+          { type: 'keypoint', text: 'Snow\'s inhaler is a classic example of <strong>technology improving a previous advance</strong>. The discovery (chloroform) only became safe when the method of administering it was controlled.' },
+        ]
+      },
+      {
+        label: 'Victoria',
+        kicker: '1853',
+        heading: 'Queen Victoria: Royal Seal of Approval',
+        sub: 'When the Queen used it in childbirth, public resistance collapsed.',
+        blocks: [
+          { type: 'read', label: '👑 The Endorsement', text: '<strong>Queen Victoria</strong> used chloroform during the birth of her eighth child in 1853 — and praised it publicly. Until this point, many religious figures argued that pain in childbirth was God\'s will and should not be numbed. The Queen\'s endorsement silenced most opposition overnight. Chloroform use spread rapidly.' },
+          { type: 'examtip', label: '🗡️ Exam Factor', text: 'Victoria\'s endorsement is evidence of <strong>government/authority as a factor</strong> in medical change. Not a scientific discovery — but it removed the social and religious barrier to adoption.' },
         ]
       },
       {
@@ -492,8 +544,9 @@ export const MODULES = [
       },
       {
         label: 'Pasteur',
-        kicker: 'Key Person 1',
+        kicker: '1861',
         heading: 'Louis Pasteur: The Wine Detective',
+        headerImage: '/images/pasteur-1861.png',
         sub: 'Global breakthrough begins with someone\'s drink being ruined.',
         blocks: [
           { type: 'read', label: '📖 Core Knowledge', text: '<strong>Louis Pasteur</strong> was a French chemist. In the 1850s, he investigated why wine went bad. Using a microscope, he saw bacteria in the wine and believed they were causing it to spoil. He heated the wine to kill the bacteria — a process later called <strong>pasteurisation</strong>.' },
@@ -513,12 +566,7 @@ export const MODULES = [
         heading: 'Robert Koch: "Cool, But WHICH Germ?"',
         sub: 'Pasteur showed microbes caused disease. Koch proved specific germs caused specific diseases.',
         blocks: [
-          { type: 'read', label: '📖 Core Knowledge', text: '<strong>Robert Koch</strong> was a German doctor. He used <strong>industrial dyes</strong> to stain bacteria so they were easier to see under microscopes. In <strong>1876</strong>, he identified the bacteria that caused <strong>anthrax</strong> — the first time a specific bacterium had been linked to a specific disease.' },
-          { type: 'timeline', events: [
-            { year: '1876', text: 'Koch identifies the bacteria causing <strong>anthrax</strong>.' },
-            { year: '1882', text: 'Koch identifies the bacteria causing <strong>tuberculosis (TB)</strong>.' },
-            { year: '1883', text: 'Koch identifies the bacteria causing <strong>cholera</strong>.' },
-          ]},
+          { type: 'read', label: '📖 Core Knowledge', text: '<strong>Robert Koch</strong> was a German doctor. He used <strong>industrial dyes</strong> to stain bacteria so they were easier to see under microscopes. He identified the bacteria behind three major killers — and each time, it made germ theory harder to ignore.' },
           { type: 'keypoint', text: 'Koch made germ theory more convincing because he linked <strong>specific bacteria</strong> to <strong>specific diseases</strong>. This was crucial for developing vaccines and treatments.' },
           { type: 'quiz', question: 'Why was Koch\'s work important?', options: [
             { text: 'He identified specific bacteria causing specific diseases, making germ theory more convincing', correct: true },
@@ -526,6 +574,36 @@ export const MODULES = [
             { text: 'He invented the printing press', correct: false },
             { text: 'He performed the first operation under anaesthetic', correct: false },
           ], explanation: 'Pasteur proved microbes caused disease generally. Koch proved which specific microbe caused which specific disease — crucial for developing targeted treatments.' },
+        ]
+      },
+      {
+        label: 'Anthrax',
+        kicker: '1876',
+        heading: 'Koch Identifies Anthrax',
+        sub: 'The first time a specific bacterium was definitively linked to a specific disease.',
+        blocks: [
+          { type: 'read', label: '🔬 The Discovery', text: '<strong>Robert Koch</strong> identified <em>Bacillus anthracis</em> — the bacterium causing anthrax — in 1876. He used industrial dyes to stain bacteria so they were visible under a microscope. This was the first time a specific microbe had been definitively linked to a specific disease, turning germ theory from an idea into a proven tool.' },
+          { type: 'keypoint', text: 'Before Koch, germ theory was plausible. After 1876, it was <strong>proven</strong> — at least for anthrax. The method he used became the template for future discoveries.' },
+        ]
+      },
+      {
+        label: 'Tuberculosis',
+        kicker: '1882',
+        heading: 'Koch Identifies TB',
+        sub: 'TB killed one in seven people in Europe. Now they knew what caused it.',
+        blocks: [
+          { type: 'read', label: '🔬 The Discovery', text: 'In <strong>1882</strong>, Koch identified the bacterium causing <strong>tuberculosis (TB)</strong> — one of the biggest killers in Europe. This single discovery made germ theory widely accepted because TB was so visible and deadly. Doctors could no longer dismiss the idea that invisible microbes caused disease.' },
+          { type: 'examtip', label: '🗡️ Exam Link', text: 'TB identification mattered for the <strong>development of later treatments</strong>. You cannot treat a specific disease if you do not know its specific cause.' },
+        ]
+      },
+      {
+        label: 'Cholera',
+        kicker: '1883',
+        heading: 'Koch Identifies Cholera',
+        sub: 'Cholera had swept across Europe in waves. Koch found out why.',
+        blocks: [
+          { type: 'read', label: '🔬 The Discovery', text: 'In <strong>1883</strong>, Koch identified the bacterium causing <strong>cholera</strong>. This built on John Snow\'s earlier work — Snow had proved cholera spread through contaminated water (1854) without knowing why. Koch found the actual cause. Together their work transformed public health and disease prevention.' },
+          { type: 'keypoint', text: 'By 1883, Koch had linked three major diseases to specific bacteria. The age of targeted medicine had begun.' },
         ]
       },
       {
