@@ -1293,25 +1293,18 @@ function NumberLineBlock({ block }) {
                 </g>
               )
             })}
-            {/* Animated marker */}
-            <circle
-              cx={16 + ((position - MIN) / (MAX - MIN)) * 288}
-              cy={38}
-              r={8}
-              fill="#F5B700"
-              stroke="#FFD940"
-              strokeWidth="2"
-              style={{ transition: 'cx .5s ease', filter: 'drop-shadow(0 0 6px #F5B70088)' }}
-            />
-            <text
-              x={16 + ((position - MIN) / (MAX - MIN)) * 288}
-              y={42}
-              textAnchor="middle"
-              fill="#0A0A0A"
-              fontSize="7"
-              fontWeight="bold"
-              style={{ transition: 'x .5s ease', pointerEvents: 'none' }}
-            >{position}</text>
+            {/* Animated marker — uses transform so CSS transition works */}
+            <g style={{ transition: 'transform .5s ease' }}
+               transform={`translate(${16 + ((position - MIN) / (MAX - MIN)) * 288}, 0)`}>
+              <circle cx={0} cy={38} r={8}
+                fill="#F5B700" stroke="#FFD940" strokeWidth="2"
+                style={{ filter: 'drop-shadow(0 0 6px #F5B70088)' }}
+              />
+              <text x={0} y={42} textAnchor="middle"
+                fill="#0A0A0A" fontSize="7" fontWeight="bold"
+                style={{ pointerEvents: 'none' }}
+              >{position}</text>
+            </g>
           </svg>
         </div>
 
@@ -1622,7 +1615,10 @@ function BidmasBlock({ block }) {
       setTimeout(nextStep, 600)
     } else {
       setShakeIdx(i)
-      setTimeout(() => setShakeIdx(null), 500)
+      setTimeout(() => {
+        setShakeIdx(null)
+        setSelected(null)
+      }, 500)
     }
   }
 
@@ -3156,8 +3152,12 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
     // External deep-link takes priority; otherwise restore saved position
     if (initialVirtualIdx !== undefined && initialVirtualIdx > 0) return Math.min(initialVirtualIdx, totalVirtual - 1)
     if (saved.virtualIdx !== undefined) return saved.virtualIdx
-    const preCount = (module.hook ? 1 : 0) + (goals.length > 0 ? 1 : 0)
-    return preCount + (saved.screen || 0)
+    // Old-style screen save (pre-virtualIdx era) — only migrate if explicitly saved
+    if (saved.screen !== undefined) {
+      const preCount = (module.hook ? 1 : 0) + (goals.length > 0 ? 1 : 0)
+      return preCount + saved.screen
+    }
+    return 0
   })
   const [showConfidence, setShowConfidence] = useState(false)
   const [chosenConfidence, setChosenConfidence] = useState(null)
