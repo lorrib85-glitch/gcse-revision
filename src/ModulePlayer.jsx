@@ -36,11 +36,11 @@ function saveConfidenceRating(moduleId, subject, title, confidence) {
   } catch {}
 }
 
-function ReadBlock({ block, isWarm = false }) {
+function ReadBlock({ block, isWarm = false, isBio = false }) {
   return (
     <div style={{
-      borderLeft: `3px solid ${isWarm ? '#C47828' : '#3B82FF'}`,
-      background: isWarm ? 'rgba(196,120,40,.07)' : 'rgba(59,130,255,.07)',
+      borderLeft: `3px solid ${isWarm ? '#C47828' : isBio ? '#38D27A' : '#3B82FF'}`,
+      background: isWarm ? 'rgba(196,120,40,.07)' : isBio ? 'rgba(56,210,122,.07)' : 'rgba(59,130,255,.07)',
       borderRadius: '0 14px 14px 0',
       padding: '16px 18px', margin: '12px 0',
     }}>
@@ -48,50 +48,50 @@ function ReadBlock({ block, isWarm = false }) {
         <div style={{
           fontFamily: "'Inter', sans-serif",
           fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-          textTransform: 'uppercase', color: isWarm ? '#C8901A' : '#70B8FF', marginBottom: 8,
+          textTransform: 'uppercase', color: isWarm ? '#C8901A' : isBio ? '#38D27A' : '#70B8FF', marginBottom: 8,
         }}>{block.label}</div>
       )}
       <p style={{
         fontFamily: "'Inter', sans-serif",
-        fontSize: '.95rem', lineHeight: 1.7, margin: 0, color: isWarm ? '#C8B090' : '#C8D0E8',
+        fontSize: '.95rem', lineHeight: 1.7, margin: 0, color: isWarm ? '#C8B090' : isBio ? '#A8D4B8' : '#C8D0E8',
       }} dangerouslySetInnerHTML={{ __html: block.text }} />
     </div>
   )
 }
 
-function KeypointBlock({ block, isWarm = false }) {
+function KeypointBlock({ block, isWarm = false, isBio = false }) {
   return (
     <div style={{
-      background: isWarm ? 'linear-gradient(135deg, #1C1205 0%, #120C03 100%)' : 'linear-gradient(135deg, #1A2338 0%, #111828 100%)',
-      border: `1px solid ${isWarm ? 'rgba(196,120,40,.3)' : 'rgba(157,92,255,.25)'}`,
+      background: isWarm ? 'linear-gradient(135deg, #1C1205 0%, #120C03 100%)' : isBio ? 'linear-gradient(135deg, #071410 0%, #040C08 100%)' : 'linear-gradient(135deg, #1A2338 0%, #111828 100%)',
+      border: `1px solid ${isWarm ? 'rgba(196,120,40,.3)' : isBio ? 'rgba(56,210,122,.25)' : 'rgba(157,92,255,.25)'}`,
       borderRadius: 16, padding: '18px 20px', margin: '14px 0',
-      boxShadow: isWarm ? '0 0 24px rgba(196,120,40,.08)' : '0 0 24px rgba(157,92,255,.08)',
+      boxShadow: isWarm ? '0 0 24px rgba(196,120,40,.08)' : isBio ? '0 0 24px rgba(56,210,122,.08)' : '0 0 24px rgba(157,92,255,.08)',
     }}>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: isWarm ? '#C8901A' : '#9D5CFF', marginBottom: 10,
+        textTransform: 'uppercase', color: isWarm ? '#C8901A' : isBio ? '#38D27A' : '#9D5CFF', marginBottom: 10,
       }}>⭐ Key Point</div>
       <p style={{
         fontFamily: "'Inter', sans-serif",
-        fontSize: '.95rem', lineHeight: 1.65, margin: 0, color: isWarm ? '#D4C4A0' : '#E0E6F0',
+        fontSize: '.95rem', lineHeight: 1.65, margin: 0, color: isWarm ? '#D4C4A0' : isBio ? '#A8D4B8' : '#E0E6F0',
       }} dangerouslySetInnerHTML={{ __html: block.text }} />
     </div>
   )
 }
 
-function FunFactBlock({ block, isWarm = false }) {
+function FunFactBlock({ block, isWarm = false, isBio = false }) {
   return (
     <div style={{
-      background: isWarm ? 'rgba(196,120,40,.07)' : 'rgba(255,200,87,.06)',
-      borderLeft: `3px solid ${isWarm ? '#C47828' : '#FFC857'}`,
+      background: isWarm ? 'rgba(196,120,40,.07)' : isBio ? 'rgba(56,210,122,.07)' : 'rgba(255,200,87,.06)',
+      borderLeft: `3px solid ${isWarm ? '#C47828' : isBio ? '#38D27A' : '#FFC857'}`,
       borderRadius: '0 14px 14px 0',
       padding: '14px 18px', margin: '12px 0',
     }}>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: isWarm ? '#C8901A' : '#FFC857', marginBottom: 6,
+        textTransform: 'uppercase', color: isWarm ? '#C8901A' : isBio ? '#38D27A' : '#FFC857', marginBottom: 6,
       }}>{block.label || '🤯 Fun Fact'}</div>
       <p style={{
         fontFamily: "'Inter', sans-serif",
@@ -144,7 +144,7 @@ function ExamTipBlock({ block, isWarm = false }) {
   )
 }
 
-function TimelineBlock({ block, isWarm = false }) {
+function TimelineBlock({ block, isWarm = false, isBio = false }) {
   const [open, setOpen] = useState(null)
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '14px 0' }}>
@@ -158,22 +158,22 @@ function TimelineBlock({ block, isWarm = false }) {
               textAlign: 'left', padding: 0,
             }}>
             <div style={{
-              background: open === i ? (isWarm ? '#C47828' : '#F5B700') : (isWarm ? '#1C1205' : '#1A2338'),
-              color: open === i ? (isWarm ? '#0C0500' : '#070500') : (isWarm ? '#C47828' : '#F5B700'),
-              border: `1px solid ${open === i ? (isWarm ? '#C47828' : '#F5B700') : (isWarm ? 'rgba(196,120,40,.4)' : '#2A3552')}`,
+              background: open === i ? (isWarm ? '#C47828' : isBio ? '#38D27A' : '#F5B700') : (isWarm ? '#1C1205' : isBio ? '#071410' : '#1A2338'),
+              color: open === i ? (isWarm ? '#0C0500' : isBio ? '#021A0A' : '#070500') : (isWarm ? '#C47828' : isBio ? '#38D27A' : '#F5B700'),
+              border: `1px solid ${open === i ? (isWarm ? '#C47828' : isBio ? '#38D27A' : '#F5B700') : (isWarm ? 'rgba(196,120,40,.4)' : isBio ? 'rgba(56,210,122,.4)' : '#2A3552')}`,
               borderRadius: 12, display: 'grid', placeItems: 'center',
               fontWeight: 800, fontFamily: "'Space Grotesk', sans-serif",
               fontSize: '.8rem', padding: '10px 6px', minHeight: 56, transition: 'all .2s',
             }}>{e.year}</div>
             <div style={{
-              background: open === i ? (isWarm ? 'rgba(196,120,40,.06)' : 'rgba(245,183,0,.06)') : (isWarm ? '#1C1205' : '#10182B'),
-              border: `1px solid ${open === i ? (isWarm ? 'rgba(196,120,40,.3)' : 'rgba(245,183,0,.3)') : (isWarm ? 'rgba(196,120,40,.2)' : '#2A3552')}`,
+              background: open === i ? (isWarm ? 'rgba(196,120,40,.06)' : isBio ? 'rgba(56,210,122,.06)' : 'rgba(245,183,0,.06)') : (isWarm ? '#1C1205' : isBio ? '#071410' : '#10182B'),
+              border: `1px solid ${open === i ? (isWarm ? 'rgba(196,120,40,.3)' : isBio ? 'rgba(56,210,122,.3)' : 'rgba(245,183,0,.3)') : (isWarm ? 'rgba(196,120,40,.2)' : isBio ? 'rgba(56,210,122,.2)' : '#2A3552')}`,
               borderRadius: 12, padding: '12px 14px', transition: 'all .2s',
               display: 'flex', alignItems: 'center',
             }}>
               <span style={{
                 fontFamily: "'Inter', sans-serif",
-                fontSize: '.9rem', fontWeight: 500, color: isWarm ? '#C8B090' : '#C8D0E8',
+                fontSize: '.9rem', fontWeight: 500, color: isWarm ? '#C8B090' : isBio ? '#A8D4B8' : '#C8D0E8',
               }} dangerouslySetInnerHTML={{ __html: e.text }} />
             </div>
           </button>
