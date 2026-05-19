@@ -1416,169 +1416,277 @@ function NumberLineBlock({ block }) {
 }
 
 // ─── FillBlanksBlock ──────────────────────────────────────────────────────────
-function FillBlanksBlock({ block }) {
-  const n = block.sentences?.length || 0
-  const [answers, setAnswers] = useState(Array(n).fill(''))
-  const [statuses, setStatuses] = useState(Array(n).fill('idle')) // 'idle'|'correct'|'wrong'
-  const [hintIdx, setHintIdx] = useState(Array(n).fill(-1))
-  const [done, setDone] = useState(false)
-  const [shakeIdx, setShakeIdx] = useState(null)
+// Tap a chip to select it, tap a slot to place it. Check answer button validates all.
+// Supports both word blanks { before, answer, after } and equation parts arrays.
+function FillBlanksBlock({ block, isWarm, isBio, isMaths, isSoc }) {
+  const accent = isWarm ? '#C47828' : isBio ? '#38D27A' : isMaths ? '#4B90FF' : isSoc ? '#D96030' : '#9D5CFF'
+  const cardBg  = isWarm ? '#130C04' : isBio ? '#071410' : isMaths ? '#07101E' : isSoc ? '#180E06' : '#0D1424'
+  const pageBg  = isWarm ? '#1A1007' : isBio ? '#0A1A12' : isMaths ? '#0A1428' : isSoc ? '#1E1008' : '#111828'
+  const textCol = isWarm ? '#D4C4A0' : isBio ? '#A8D8B8' : isSoc ? '#D4B898' : '#C8D0E8'
 
-  const firstActive = statuses.findIndex(s => s !== 'correct')
+  const sentences = block.sentences || []
+  const wordBank  = block.wordBank  || []
 
-  function submit(i) {
-    const val = answers[i].trim().toLowerCase()
-    const correct = block.sentences[i].answer.toLowerCase()
-    if (val === correct) {
-      const newSt = [...statuses]; newSt[i] = 'correct'; setStatuses(newSt)
-      const newAns = [...answers]; newAns[i] = block.sentences[i].answer; setAnswers(newAns)
-      if (newSt.every(s => s === 'correct')) setDone(true)
-    } else {
-      const newSt = [...statuses]; newSt[i] = 'wrong'; setStatuses(newSt)
-      setShakeIdx(i)
-      setTimeout(() => {
-        setShakeIdx(null)
-        const reset = [...statuses]; reset[i] = 'idle'; setStatuses(reset)
-        const clr = [...answers]; clr[i] = ''; setAnswers(clr)
-      }, 500)
+  // slots[i] = word string placed in sentence i, or null
+  const [slots,    setSlots]    = useState(Array(sentences.length).fill(null))
+  const [selected, setSelected] = useState(null) // word string currently held
+  const [statuses, setStatuses] = useState(Array(sentences.length).fill('idle')) // idle|correct|wrong
+  const [checked,  setChecked]  = useState(false)
+  const [done,     setDone]     = useState(false)
+  const [shakeSet, setShakeSet] = useState(new Set())
+
+  // Chips still in the bank = wordBank minus those placed in a slot
+  const bankVisible = wordBank.filter(w => !slots.includes(w))
+
+  function tapChip(w) {
+    if (selected === w) { setSelected(null); return }
+    setSelected(w)
+  }
+
+  function tapSlot(i) {
+    if (statuses[i] === 'correct') return
+    if (selected !== null) {
+      const next = [...slots]
+      // If this word already sits in another slot, vacate it first
+      const prev = next.indexOf(selected)
+      if (prev !== -1) next[prev] = null
+      // If slot already has a word, it goes back to bank (just null it)
+      next[i] = selected
+      setSlots(next)
+      setSelected(null)
+      const st = [...statuses]; st[i] = 'idle'; setStatuses(st)
+    } else if (slots[i] !== null) {
+      // Pick up word from a filled slot
+      setSelected(slots[i])
+      const next = [...slots]; next[i] = null; setSlots(next)
+      const st = [...statuses]; st[i] = 'idle'; setStatuses(st)
     }
   }
 
-  function showHint(i) {
-    const hints = block.sentences[i].hints || []
-    setHintIdx(h => { const n = [...h]; n[i] = Math.min(n[i] + 1, hints.length - 1); return n })
+  function checkAnswers() {
+    const newSt = slots.map((w, i) =>
+      w === null ? 'idle' : w.toLowerCase() === sentences[i].answer.toLowerCase() ? 'correct' : 'wrong'
+    )
+    setStatuses(newSt)
+    setChecked(true)
+    const wrong = new Set(newSt.map((s, i) => s === 'wrong' ? i : -1).filter(x => x >= 0))
+    if (wrong.size > 0) {
+      setShakeSet(wrong)
+      setTimeout(() => {
+        setShakeSet(new Set())
+        setSlots(prev => prev.map((w, i) => newSt[i] === 'wrong' ? null : w))
+        setStatuses(prev => prev.map(s => s === 'wrong' ? 'idle' : s))
+      }, 700)
+    }
+    if (newSt.every(s => s === 'correct')) setDone(true)
   }
+
+  const allFilled = slots.every(s => s !== null)
 
   return (
     <div style={{ margin: '14px 0' }}>
+      {/* Outer card */}
       <div style={{
-        background: 'linear-gradient(145deg, #0A1020, #0D1428)',
-        border: '1px solid rgba(75,144,255,.2)',
-        borderRadius: 18, padding: '16px',
+        background: cardBg,
+        border: `1px solid ${accent}28`,
+        borderRadius: 20, overflow: 'hidden',
       }}>
+
+        {/* Header row */}
         <div style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
-          textTransform: 'uppercase', color: '#4B90FF', marginBottom: 14,
-        }}>✏️ Fill in the Blanks</div>
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '14px 16px 10px',
+          borderBottom: `1px solid ${accent}18`,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: '1rem' }}>✏️</span>
+            <span style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: '.7rem', fontWeight: 800, letterSpacing: '.1em',
+              textTransform: 'uppercase', color: accent,
+            }}>Fill the Gaps</span>
+          </div>
+          {selected && (
+            <span style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.72rem', color: accent + 'BB',
+            }}>tap a gap to place "{selected}"</span>
+          )}
+        </div>
 
-        {block.sentences?.map((s, i) => {
-          const isActive = i === firstActive
-          const isCorrect = statuses[i] === 'correct'
-          const hints = s.hints || []
-          const currentHint = hintIdx[i]
+        {/* Sentences area */}
+        <div style={{ padding: '16px 16px 8px' }}>
+          {sentences.map((s, i) => {
+            const isCorrect = statuses[i] === 'correct'
+            const isWrong   = statuses[i] === 'wrong'
+            const hasWord   = slots[i] !== null
+            const isShaking = shakeSet.has(i)
 
-          return (
-            <div key={i} style={{
-              marginBottom: 14, opacity: (!isActive && !isCorrect) ? 0.4 : 1,
-              transition: 'opacity .3s',
-            }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 6 }}>
-                <span style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.93rem', color: '#C8D0E8',
-                }}>{s.before}</span>
+            let slotBorder = `1.5px dashed ${accent}35`
+            if (isCorrect) slotBorder = `1.5px solid rgba(77,255,136,.6)`
+            else if (selected && !isCorrect) slotBorder = `1.5px solid ${accent}80`
+            else if (hasWord) slotBorder = `1.5px solid ${accent}50`
 
-                {isCorrect ? (
-                  <span className="fade-up" style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontWeight: 700, fontSize: '.93rem', color: '#4DFF88',
-                    background: 'rgba(77,255,136,.1)', borderRadius: 6,
-                    padding: '2px 8px',
-                  }}>✓ {answers[i]}</span>
-                ) : isActive ? (
-                  <input
-                    value={answers[i]}
-                    onChange={e => { const a = [...answers]; a[i] = e.target.value; setAnswers(a) }}
-                    onKeyDown={e => e.key === 'Enter' && submit(i)}
+            let slotBg = `${accent}0A`
+            if (isCorrect) slotBg = 'rgba(77,255,136,.1)'
+            else if (hasWord) slotBg = `${accent}18`
+
+            return (
+              <div key={i} style={{ marginBottom: 12 }}>
+                <div style={{
+                  display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 6,
+                  lineHeight: 1.8,
+                }}>
+                  {s.before && (
+                    <span style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '.95rem', color: textCol,
+                    }}>{s.before}</span>
+                  )}
+
+                  {/* The blank slot */}
+                  <div
+                    onClick={() => tapSlot(i)}
                     style={{
-                      background: '#10182B',
-                      border: `1.5px solid ${statuses[i] === 'wrong' ? 'rgba(255,93,115,.5)' : 'rgba(75,144,255,.4)'}`,
-                      borderRadius: 8, padding: '4px 10px',
-                      fontFamily: "'Inter', sans-serif", fontSize: '.93rem', color: '#E0E6F0',
-                      outline: 'none', width: 120,
-                      animation: shakeIdx === i ? 'shake .35s ease' : 'none',
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      minWidth: 72, height: 36, borderRadius: 10,
+                      border: slotBorder, background: slotBg,
+                      cursor: isCorrect ? 'default' : 'pointer',
+                      padding: '0 10px',
+                      transition: 'all .2s',
+                      animation: isShaking ? 'shake .5s ease' : 'none',
                     }}
-                    placeholder="..."
-                    autoFocus
-                  />
-                ) : (
-                  <span style={{
-                    display: 'inline-block', width: 80, height: 22,
-                    background: '#10182B', borderRadius: 6,
-                    border: '1px dashed #2A3A5A',
-                  }} />
-                )}
+                  >
+                    {isCorrect ? (
+                      <span style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 700, fontSize: '.9rem',
+                        color: '#4DFF88',
+                      }}>✓ {slots[i]}</span>
+                    ) : hasWord ? (
+                      <span style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 700, fontSize: '.9rem',
+                        color: accent,
+                      }}>{slots[i]}</span>
+                    ) : (
+                      <span style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 700, fontSize: '1rem',
+                        color: `${accent}50`,
+                      }}>?</span>
+                    )}
+                  </div>
 
-                <span style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.93rem', color: '#C8D0E8',
-                }}>{s.after}</span>
-              </div>
-
-              {isActive && (
-                <div style={{ marginTop: 8, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <button onClick={() => submit(i)} style={{
-                    background: 'rgba(75,144,255,.15)', border: '1px solid rgba(75,144,255,.35)',
-                    borderRadius: 8, padding: '5px 12px',
-                    fontFamily: "'Inter', sans-serif", fontSize: '.78rem', fontWeight: 600,
-                    color: '#70A8FF', cursor: 'pointer',
-                  }}>Check ›</button>
-                  {hints.length > 0 && (
-                    <button onClick={() => showHint(i)} style={{
-                      background: 'rgba(255,200,87,.06)', border: '1px solid rgba(255,200,87,.2)',
-                      borderRadius: 8, padding: '5px 12px',
-                      fontFamily: "'Inter', sans-serif", fontSize: '.78rem', fontWeight: 600,
-                      color: '#FFC857', cursor: 'pointer',
-                    }}>Need a Hint? ›</button>
+                  {s.after && (
+                    <span style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '.95rem', color: textCol,
+                    }}>{s.after}</span>
                   )}
                 </div>
-              )}
+              </div>
+            )
+          })}
+        </div>
 
-              {isActive && currentHint >= 0 && (
-                <div className="fade-up" style={{
-                  marginTop: 6, padding: '7px 11px',
-                  background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.15)',
-                  borderRadius: 8,
-                }}>
-                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#C8B870', margin: 0 }}>
-                    {hints[currentHint]}
-                  </p>
-                </div>
-              )}
+        {/* Word bank */}
+        <div style={{
+          margin: '4px 16px 16px',
+          background: pageBg,
+          border: `1px solid ${accent}18`,
+          borderRadius: 14, padding: '12px',
+        }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.62rem', fontWeight: 700, letterSpacing: '.1em',
+            textTransform: 'uppercase', color: `${accent}80`,
+            marginBottom: 10,
+          }}>Word Bank</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {wordBank.map(w => {
+              const placed   = slots.includes(w)
+              const isSelected = selected === w
+              return (
+                <button
+                  key={w}
+                  onClick={() => !placed && tapChip(w)}
+                  disabled={placed}
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 700, fontSize: '.88rem',
+                    padding: '8px 14px', borderRadius: 10,
+                    border: isSelected
+                      ? `2px solid ${accent}`
+                      : placed
+                        ? `1.5px solid ${accent}15`
+                        : `1.5px solid ${accent}35`,
+                    background: isSelected
+                      ? `${accent}25`
+                      : placed
+                        ? `${accent}06`
+                        : `${accent}10`,
+                    color: placed ? `${accent}30` : isSelected ? accent : `${accent}CC`,
+                    cursor: placed ? 'default' : 'pointer',
+                    transition: 'all .15s',
+                    transform: isSelected ? 'scale(1.06)' : 'scale(1)',
+                    boxShadow: isSelected ? `0 2px 12px ${accent}40` : 'none',
+                    textDecoration: placed ? 'line-through' : 'none',
+                  }}
+                >{w}</button>
+              )
+            })}
+          </div>
+        </div>
 
-              {isActive && statuses[i] === 'wrong' && (
-                <div className="fade-up" style={{
-                  marginTop: 6, padding: '7px 11px',
-                  background: 'rgba(255,93,115,.06)', border: '1px solid rgba(255,93,115,.2)',
-                  borderRadius: 8,
-                }}>
-                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#FF8DA1', margin: 0 }}>
-                    {block.wrongMsg || 'Not quite — try again.'}
-                  </p>
-                </div>
-              )}
-            </div>
-          )
-        })}
-
-        {done && (
-          <div className="fade-up" style={{
+        {/* Check answer / done state */}
+        {done ? (
+          <div style={{
+            margin: '0 16px 16px',
             background: 'rgba(77,255,136,.08)', border: '1px solid rgba(77,255,136,.3)',
-            borderRadius: 12, padding: '14px', textAlign: 'center',
+            borderRadius: 14, padding: '14px 16px', textAlign: 'center',
           }}>
             <div style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '1rem', color: '#4DFF88',
-            }}>All rules locked in. ✓</div>
+              fontWeight: 800, fontSize: '1rem', color: '#4DFF88', marginBottom: 4,
+            }}>All answers correct ✓</div>
             {block.correctMsg && (
-              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#9CA8C7', margin: '6px 0 0' }}>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#9CA8C7', margin: 0 }}>
                 {block.correctMsg}
               </p>
             )}
           </div>
+        ) : (
+          <div style={{ padding: '0 16px 16px' }}>
+            <button
+              onClick={checkAnswers}
+              disabled={!allFilled}
+              style={{
+                width: '100%', padding: '14px',
+                background: allFilled ? accent : `${accent}30`,
+                border: 'none', borderRadius: 14,
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 800, fontSize: '.95rem',
+                color: allFilled ? '#000' : `${accent}60`,
+                cursor: allFilled ? 'pointer' : 'default',
+                transition: 'all .2s',
+                boxShadow: allFilled ? `0 4px 20px ${accent}50` : 'none',
+              }}
+            >Check answer ✓</button>
+            {checked && !done && (
+              <p style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.8rem', color: '#FF8DA1',
+                textAlign: 'center', margin: '10px 0 0',
+              }}>Wrong answers returned — try again.</p>
+            )}
+          </div>
         )}
       </div>
+
+      <style>{`
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+      `}</style>
     </div>
   )
 }
@@ -3907,7 +4015,7 @@ function Screen({ screen, subject }) {
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
           {block.type === 'boss'          && <BossBlock block={block} />}
           {block.type === 'numberline'       && <NumberLineBlock block={block} />}
-          {block.type === 'fillblanks'       && <FillBlanksBlock block={block} />}
+          {block.type === 'fillblanks'       && <FillBlanksBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} isSoc={isSoc} />}
           {block.type === 'bidmas'           && <BidmasBlock block={block} />}
           {block.type === 'tieredquiz'       && <TieredQuizBlock block={block} />}
           {block.type === 'tfcheckpoint'     && <TFCheckpointBlock block={block} />}
