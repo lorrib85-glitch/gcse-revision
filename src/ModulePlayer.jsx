@@ -2284,6 +2284,537 @@ function SimulatorBlock({ block }) {
   )
 }
 
+// ─── TopicPickerBlock ─────────────────────────────────────────────────────────
+function TopicPickerBlock({ block }) {
+  const [selected, setSelected] = useState([])
+  const [submitted, setSubmitted] = useState(false)
+
+  const items = block.items || []
+  const correctCount = items.filter(it => it.correct).length
+
+  function toggle(i) {
+    if (submitted) return
+    setSelected(s => s.includes(i) ? s.filter(x => x !== i) : [...s, i])
+  }
+
+  function submit() {
+    if (selected.length === 0) return
+    setSubmitted(true)
+  }
+
+  const correctSelected = submitted && selected.filter(i => items[i]?.correct).length
+  const allCorrectGot   = submitted && correctSelected === correctCount && selected.length === correctCount
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #140A05, #0E0703)',
+        border: '1px solid rgba(217,96,48,.2)', borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{
+          fontFamily: "'Inter', sans-serif", fontSize: '.65rem', fontWeight: 700,
+          letterSpacing: '.12em', textTransform: 'uppercase',
+          color: '#D96030', marginBottom: 12,
+        }}>🔍 Topic Picker</div>
+        <p style={{
+          fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600,
+          fontSize: '.93rem', color: '#E0D8D0', margin: '0 0 14px',
+        }}>{block.question}</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+          {items.map((it, i) => {
+            const isSel = selected.includes(i)
+            let bg = '#1A1008', border = 'rgba(217,96,48,.2)', color = '#9A8A7A'
+            if (submitted) {
+              if (it.correct) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
+              else if (isSel) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.4)'; color = '#FF5D73' }
+            } else if (isSel) {
+              bg = 'rgba(217,96,48,.15)'; border = 'rgba(217,96,48,.5)'; color = '#E87040'
+            }
+            return (
+              <button key={i} onClick={() => toggle(i)} disabled={submitted}
+                style={{
+                  background: bg, border: '1.5px solid ' + border, borderRadius: 10,
+                  padding: '9px 14px', fontFamily: "'Inter', sans-serif",
+                  fontSize: '.87rem', color, cursor: submitted ? 'default' : 'pointer',
+                  transition: 'all .2s',
+                }}>
+                {submitted && it.correct && '✓ '}{submitted && isSel && !it.correct && '✗ '}{it.label}
+              </button>
+            )
+          })}
+        </div>
+        {!submitted && (
+          <button onClick={submit} disabled={selected.length === 0}
+            style={{
+              width: '100%',
+              background: selected.length > 0 ? 'rgba(217,96,48,.15)' : '#100800',
+              border: `1.5px solid ${selected.length > 0 ? 'rgba(217,96,48,.4)' : '#2A1A08'}`,
+              borderRadius: 12, padding: '11px',
+              fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700,
+              fontSize: '.9rem', color: selected.length > 0 ? '#D96030' : '#4A3020',
+              cursor: selected.length > 0 ? 'pointer' : 'default', transition: 'all .2s',
+            }}>Check my picks →</button>
+        )}
+        {submitted && (
+          <div className="fade-up" style={{
+            background: allCorrectGot ? 'rgba(77,255,136,.07)' : 'rgba(217,96,48,.07)',
+            border: '1px solid ' + (allCorrectGot ? 'rgba(77,255,136,.3)' : 'rgba(217,96,48,.3)'),
+            borderRadius: 12, padding: '12px 14px',
+          }}>
+            <p style={{
+              fontFamily: "'Inter', sans-serif", fontSize: '.87rem',
+              color: allCorrectGot ? '#4DFF88' : '#D9A080', margin: 0, lineHeight: 1.5,
+            }}>{block.explanation}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── ColSortBlock ─────────────────────────────────────────────────────────────
+function ColSortBlock({ block }) {
+  // columns: [{ label, color, bg }]
+  // items: [{ label, col }]  — col is index into columns
+  const cols = block.columns || []
+  const items = block.items || []
+  const [placements, setPlacements] = useState({}) // itemIdx → colIdx
+  const [checked, setChecked] = useState(false)
+  const [results, setResults] = useState({})
+
+  function place(itemIdx, colIdx) {
+    if (checked) return
+    setPlacements(p => ({ ...p, [itemIdx]: colIdx }))
+  }
+
+  function checkAnswers() {
+    if (Object.keys(placements).length === 0) return
+    const res = {}
+    items.forEach((it, i) => {
+      res[i] = placements[i] === it.col
+    })
+    setResults(res)
+    setChecked(true)
+  }
+
+  const allPlaced = items.every((_, i) => placements[i] !== undefined)
+  const pending = items.filter((_, i) => placements[i] === undefined)
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #140A05, #0E0703)',
+        border: '1px solid rgba(217,96,48,.2)', borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{
+          fontFamily: "'Inter', sans-serif", fontSize: '.65rem', fontWeight: 700,
+          letterSpacing: '.12em', textTransform: 'uppercase',
+          color: '#D96030', marginBottom: 12,
+        }}>🗂 Sort It Out</div>
+        {block.question && (
+          <p style={{
+            fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600,
+            fontSize: '.9rem', color: '#E0D8D0', margin: '0 0 14px',
+          }}>{block.question}</p>
+        )}
+
+        {/* Unplaced items */}
+        {pending.length > 0 && !checked && (
+          <div style={{
+            background: '#1A1008', border: '1px dashed rgba(217,96,48,.2)',
+            borderRadius: 12, padding: '12px', marginBottom: 14,
+          }}>
+            <div style={{
+              fontFamily: "'Inter', sans-serif", fontSize: '.63rem', color: '#7A6050',
+              fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 8,
+            }}>Tap an item, then a column</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+              {items.map((it, i) => {
+                if (placements[i] !== undefined) return null
+                return (
+                  <button key={i} style={{
+                    background: '#251508', border: '1px solid rgba(217,96,48,.3)',
+                    borderRadius: 8, padding: '7px 12px',
+                    fontFamily: "'Inter', sans-serif", fontSize: '.85rem',
+                    color: '#C09070', cursor: 'default',
+                  }}>{it.label}</button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Columns */}
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols.length}, 1fr)`, gap: 10, marginBottom: 14 }}>
+          {cols.map((col, ci) => (
+            <div key={ci} style={{
+              background: col.bg || 'rgba(217,96,48,.06)',
+              border: `1.5px solid ${col.color || 'rgba(217,96,48,.3)'}`,
+              borderRadius: 14, padding: '12px 10px', minHeight: 90,
+            }}>
+              <div style={{
+                fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700,
+                fontSize: '.78rem', color: col.color || '#D96030',
+                marginBottom: 10, textAlign: 'center',
+              }}>{col.label}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                {items.map((it, ii) => {
+                  if (placements[ii] !== ci) return null
+                  const res = checked ? results[ii] : null
+                  return (
+                    <div key={ii} style={{
+                      background: res === true ? 'rgba(77,255,136,.1)' : res === false ? 'rgba(255,93,115,.08)' : '#1E1208',
+                      border: '1px solid ' + (res === true ? 'rgba(77,255,136,.4)' : res === false ? 'rgba(255,93,115,.3)' : 'rgba(217,96,48,.2)'),
+                      borderRadius: 7, padding: '6px 9px',
+                      fontFamily: "'Inter', sans-serif", fontSize: '.82rem',
+                      color: res === true ? '#4DFF88' : res === false ? '#FF8DA1' : '#C09070',
+                      cursor: checked ? 'default' : 'pointer',
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    }} onClick={() => !checked && setPlacements(p => { const n={...p}; delete n[ii]; return n })}>
+                      <span>{it.label}</span>
+                      {res !== null && <span style={{ fontSize: '.75rem' }}>{res ? '✓' : '✗'}</span>}
+                    </div>
+                  )
+                })}
+              </div>
+              {/* Drop zone buttons */}
+              {!checked && pending.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 4 }}>
+                  {items.map((it, ii) => {
+                    if (placements[ii] !== undefined) return null
+                    return (
+                      <button key={ii} onClick={() => place(ii, ci)} style={{
+                        background: 'rgba(217,96,48,.06)', border: '1px dashed rgba(217,96,48,.2)',
+                        borderRadius: 6, padding: '5px 8px',
+                        fontFamily: "'Inter', sans-serif", fontSize: '.78rem',
+                        color: '#7A5040', cursor: 'pointer', textAlign: 'left',
+                        transition: 'all .15s',
+                      }}>+ {it.label}</button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Feedback for wrong items */}
+        {checked && items.some((_, i) => results[i] === false) && (
+          <div className="fade-up" style={{ marginBottom: 10 }}>
+            {items.map((it, i) => {
+              if (!checked || results[i] !== false) return null
+              const correctCol = cols[it.col]
+              return (
+                <div key={i} style={{
+                  background: 'rgba(255,93,115,.06)', border: '1px solid rgba(255,93,115,.2)',
+                  borderRadius: 9, padding: '8px 11px', marginBottom: 6,
+                  fontFamily: "'Inter', sans-serif", fontSize: '.82rem', color: '#FF8DA1',
+                }}>
+                  "{it.label}" → {it.explanation || `belongs in ${correctCol?.label}`}
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        {!checked && (
+          <button onClick={checkAnswers} disabled={!allPlaced}
+            style={{
+              width: '100%',
+              background: allPlaced ? 'rgba(217,96,48,.15)' : '#100800',
+              border: `1.5px solid ${allPlaced ? 'rgba(217,96,48,.4)' : '#2A1A08'}`,
+              borderRadius: 12, padding: '11px',
+              fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700,
+              fontSize: '.9rem', color: allPlaced ? '#D96030' : '#4A3020',
+              cursor: allPlaced ? 'pointer' : 'default', transition: 'all .2s',
+            }}>Check answers →</button>
+        )}
+        {checked && (
+          <div className="fade-up" style={{
+            background: 'rgba(217,96,48,.07)', border: '1px solid rgba(217,96,48,.25)',
+            borderRadius: 12, padding: '11px 14px',
+          }}>
+            <p style={{
+              fontFamily: "'Inter', sans-serif", fontSize: '.86rem',
+              color: '#D9A080', margin: 0,
+            }}>{block.explanation || 'Sort complete.'}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── AgencyWheelBlock ─────────────────────────────────────────────────────────
+function AgencyWheelBlock({ block }) {
+  const agencies = block.agencies || []
+  const [active, setActive] = useState(null)
+
+  const agency = active !== null ? agencies[active] : null
+
+  const angleStep = 360 / agencies.length
+  const radius = 36 // % from center, for CSS positioning
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #140A05, #0E0703)',
+        border: '1px solid rgba(217,96,48,.2)', borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{
+          fontFamily: "'Inter', sans-serif", fontSize: '.65rem', fontWeight: 700,
+          letterSpacing: '.12em', textTransform: 'uppercase',
+          color: '#D96030', marginBottom: 14,
+        }}>👥 Agencies of Socialisation</div>
+
+        {/* Wheel */}
+        <div style={{ position: 'relative', width: '100%', paddingBottom: '100%', maxWidth: 280, margin: '0 auto 14px' }}>
+          <div style={{ position: 'absolute', inset: 0 }}>
+            {/* Center */}
+            <div style={{
+              position: 'absolute', top: '50%', left: '50%',
+              transform: 'translate(-50%,-50%)',
+              width: 60, height: 60, borderRadius: '50%',
+              background: 'linear-gradient(135deg, #D96030, #B84A1A)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800,
+              fontSize: '.75rem', color: '#FFF8F5',
+              zIndex: 2, boxShadow: '0 0 20px rgba(217,96,48,.4)',
+            }}>YOU</div>
+
+            {/* Connecting lines */}
+            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+              {agencies.map((_, i) => {
+                const angle = (angleStep * i - 90) * (Math.PI / 180)
+                const cx = 50, cy = 50
+                const px = cx + radius * Math.cos(angle)
+                const py = cy + radius * Math.sin(angle)
+                return (
+                  <line key={i}
+                    x1="50%" y1="50%"
+                    x2={`${px}%`} y2={`${py}%`}
+                    stroke={active === i ? 'rgba(217,96,48,.6)' : 'rgba(217,96,48,.15)'}
+                    strokeWidth={active === i ? 2 : 1}
+                    strokeDasharray={active === i ? 'none' : '4 3'}
+                  />
+                )
+              })}
+            </svg>
+
+            {/* Agency nodes */}
+            {agencies.map((ag, i) => {
+              const angle = (angleStep * i - 90) * (Math.PI / 180)
+              const cx = 50 + radius * Math.cos(angle)
+              const cy = 50 + radius * Math.sin(angle)
+              const isAct = active === i
+              return (
+                <button key={i} onClick={() => setActive(isAct ? null : i)} style={{
+                  position: 'absolute',
+                  left: `${cx}%`, top: `${cy}%`,
+                  transform: 'translate(-50%,-50%)',
+                  width: 56, height: 56, borderRadius: '50%',
+                  background: isAct
+                    ? 'linear-gradient(135deg, rgba(217,96,48,.3), rgba(217,96,48,.15))'
+                    : '#1A1008',
+                  border: `2px solid ${isAct ? '#D96030' : 'rgba(217,96,48,.3)'}`,
+                  cursor: 'pointer', transition: 'all .2s',
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', gap: 2,
+                  boxShadow: isAct ? '0 0 16px rgba(217,96,48,.3)' : 'none',
+                  zIndex: 1,
+                }}>
+                  <span style={{ fontSize: '1.2rem' }}>{ag.icon}</span>
+                  <span style={{
+                    fontFamily: "'Inter', sans-serif", fontSize: '.52rem',
+                    fontWeight: 700, color: isAct ? '#D96030' : '#7A5040',
+                    textAlign: 'center', lineHeight: 1.1,
+                  }}>{ag.label}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Reveal panel */}
+        {agency && (
+          <div className="fade-up" style={{
+            background: 'rgba(217,96,48,.08)', border: '1px solid rgba(217,96,48,.3)',
+            borderRadius: 14, padding: '14px',
+          }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700,
+              fontSize: '.95rem', color: '#E87040', marginBottom: 10,
+            }}>{agency.icon} {agency.label}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {agency.reveals?.map((r, i) => (
+                <div key={i} style={{ display: 'flex', gap: 8 }}>
+                  <span style={{ color: '#D96030', flexShrink: 0, fontSize: '.8rem' }}>→</span>
+                  <p style={{
+                    fontFamily: "'Inter', sans-serif", fontSize: '.85rem',
+                    color: '#C0A890', margin: 0, lineHeight: 1.5,
+                  }}>{r}</p>
+                </div>
+              ))}
+            </div>
+            {agency.examNote && (
+              <div style={{
+                marginTop: 10, padding: '8px 10px',
+                background: 'rgba(217,96,48,.06)', border: '1px dashed rgba(217,96,48,.25)',
+                borderRadius: 8,
+              }}>
+                <p style={{
+                  fontFamily: "'Inter', sans-serif", fontSize: '.78rem',
+                  color: '#A07050', margin: 0, fontStyle: 'italic',
+                }}>📌 {agency.examNote}</p>
+              </div>
+            )}
+          </div>
+        )}
+        {!agency && (
+          <p style={{
+            fontFamily: "'Inter', sans-serif", fontSize: '.82rem',
+            color: '#5A4030', textAlign: 'center', margin: 0,
+          }}>Tap any agency to see how it shapes behaviour →</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── AppliedScenarioBlock ─────────────────────────────────────────────────────
+function AppliedScenarioBlock({ block }) {
+  const scenarios = block.scenarios || []
+  const [idx, setIdx] = useState(0)
+  const [choice, setChoice] = useState(Array(scenarios.length).fill(null))
+  const [answered, setAnswered] = useState(Array(scenarios.length).fill(false))
+  const [showFollow, setShowFollow] = useState(Array(scenarios.length).fill(false))
+
+  const sc = scenarios[idx]
+  const myChoice = choice[idx]
+  const isAnswered = answered[idx]
+
+  function pick(i) {
+    if (isAnswered) return
+    const nc = [...choice]; nc[idx] = i; setChoice(nc)
+    const na = [...answered]; na[idx] = true; setAnswered(na)
+  }
+
+  const wasCorrect = isAnswered && myChoice === sc?.correct
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #140A05, #0E0703)',
+        border: '1px solid rgba(217,96,48,.2)', borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14 }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif", fontSize: '.65rem', fontWeight: 700,
+            letterSpacing: '.12em', textTransform: 'uppercase', color: '#D96030',
+          }}>🔬 Applied Sociology</div>
+          <div style={{
+            fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: '#5A4030',
+          }}>{idx + 1}/{scenarios.length}</div>
+        </div>
+
+        {/* Scenario */}
+        <div style={{
+          background: '#1A1008', border: '1px solid rgba(217,96,48,.2)',
+          borderRadius: 12, padding: '14px', marginBottom: 14,
+        }}>
+          <p style={{
+            fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600,
+            fontSize: '.93rem', color: '#E8D8C8', margin: 0, lineHeight: 1.55,
+          }}>{sc?.scenario}</p>
+        </div>
+
+        {/* Question */}
+        <p style={{
+          fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600,
+          fontSize: '.9rem', color: '#D9B090', margin: '0 0 12px',
+        }}>{sc?.question}</p>
+
+        {/* Options */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
+          {sc?.options?.map((opt, i) => {
+            const isCorrectOpt = i === sc.correct
+            const isPicked = myChoice === i
+            let bg = '#1A1008', border = 'rgba(217,96,48,.2)', color = '#C09070'
+            if (isAnswered) {
+              if (isCorrectOpt) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
+              else if (isPicked) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
+            }
+            return (
+              <button key={i} onClick={() => pick(i)} disabled={isAnswered}
+                style={{
+                  background: bg, border: '1.5px solid ' + border, borderRadius: 11,
+                  padding: '11px 14px',
+                  fontFamily: "'Inter', sans-serif", fontSize: '.88rem', color,
+                  cursor: isAnswered ? 'default' : 'pointer', textAlign: 'left',
+                  transition: 'all .2s',
+                }}>{opt}</button>
+            )
+          })}
+        </div>
+
+        {/* Feedback */}
+        {isAnswered && (
+          <div className="fade-up">
+            <div style={{
+              background: wasCorrect ? 'rgba(77,255,136,.07)' : 'rgba(255,93,115,.07)',
+              border: '1px solid ' + (wasCorrect ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.3)'),
+              borderRadius: 12, padding: '12px 14px', marginBottom: 10,
+            }}>
+              <p style={{
+                fontFamily: "'Inter', sans-serif", fontSize: '.87rem',
+                color: wasCorrect ? '#4DFF88' : '#FF8DA1', margin: 0, lineHeight: 1.5,
+              }}>{sc.feedback}</p>
+            </div>
+
+            {/* Follow-up */}
+            {sc.followUp && (
+              <div style={{ marginBottom: 10 }}>
+                {!showFollow[idx] ? (
+                  <button onClick={() => { const n=[...showFollow]; n[idx]=true; setShowFollow(n) }} style={{
+                    background: 'rgba(217,96,48,.08)', border: '1px solid rgba(217,96,48,.25)',
+                    borderRadius: 8, padding: '7px 14px',
+                    fontFamily: "'Inter', sans-serif", fontSize: '.78rem', fontWeight: 600,
+                    color: '#D96030', cursor: 'pointer',
+                  }}>Dig deeper: {sc.followUp.q}</button>
+                ) : (
+                  <div className="fade-up" style={{
+                    background: 'rgba(217,96,48,.06)', border: '1px solid rgba(217,96,48,.2)',
+                    borderRadius: 10, padding: '11px 13px',
+                  }}>
+                    <div style={{
+                      fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600,
+                      fontSize: '.84rem', color: '#D97040', marginBottom: 6,
+                    }}>{sc.followUp.q}</div>
+                    <p style={{
+                      fontFamily: "'Inter', sans-serif", fontSize: '.84rem',
+                      color: '#C0A880', margin: 0, lineHeight: 1.5,
+                    }}>{sc.followUp.answer}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {idx < scenarios.length - 1 && (
+              <button onClick={() => setIdx(i => i + 1)} style={{
+                width: '100%',
+                background: 'rgba(217,96,48,.12)', border: '1px solid rgba(217,96,48,.3)',
+                borderRadius: 12, padding: '11px',
+                fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700,
+                fontSize: '.9rem', color: '#D96030', cursor: 'pointer',
+              }}>Next scenario →</button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── FlipCardsBlock ───────────────────────────────────────────────────────────
 function FlipCardsBlock({ block }) {
   const [open, setOpen] = useState(Array(block.cards?.length || 0).fill(false))
@@ -3287,6 +3818,10 @@ function Screen({ screen, subject }) {
           {block.type === 'fractionsplitter' && <FractionSplitterBlock block={block} />}
           {block.type === 'fractionlab'      && <FractionLabBlock block={block} />}
           {block.type === 'examscored'       && <ExamScoredBlock block={block} />}
+          {block.type === 'topicpicker'      && <TopicPickerBlock block={block} />}
+          {block.type === 'colsort'          && <ColSortBlock block={block} />}
+          {block.type === 'agencywheel'      && <AgencyWheelBlock block={block} />}
+          {block.type === 'appliedscenario'  && <AppliedScenarioBlock block={block} />}
         </div>
       ))}
     </div>
