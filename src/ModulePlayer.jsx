@@ -1346,37 +1346,32 @@ function HookContent({ module, hook, hookState, subjectColor }) {
       {phase === 'question' && (
         <div style={{ animation: 'hFadeIn .4s ease' }}>
 
-          {/* ══ Main TF card — badge + statement + hint row ══ */}
+          {/* ══ Main TF card ══ */}
           <div style={{
-            background: isWarm
-              ? 'linear-gradient(160deg, #201508 0%, #140E04 100%)'
-              : 'linear-gradient(145deg, #10182B, #0D1424)',
-            border: `1px solid ${isWarm ? subjectColor + '35' : '#2A3552'}`,
-            borderRadius: 20, padding: '28px 20px 0',
-            marginBottom: 14,
-            boxShadow: isWarm
-              ? `0 12px 60px rgba(0,0,0,.7), 0 0 80px ${subjectColor}06`
-              : '0 8px 40px rgba(0,0,0,.4)',
+            background: 'linear-gradient(160deg, #1E1409 0%, #130E05 100%)',
+            border: `1px solid ${subjectColor}30`,
+            borderRadius: 18, padding: '28px 20px 0',
+            marginBottom: 16,
+            boxShadow: `0 16px 64px rgba(0,0,0,.75), 0 0 80px ${subjectColor}06`,
           }}>
-
             {/* Ornamental double-ring TF badge */}
-            <div style={{ textAlign: 'center', marginBottom: 16 }}>
+            <div style={{ textAlign: 'center', marginBottom: 14 }}>
               <div style={{
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                width: 68, height: 68, borderRadius: '50%',
+                width: 66, height: 66, borderRadius: '50%',
                 border: `2px solid ${subjectColor}`,
-                boxShadow: `0 0 0 5px ${subjectColor}18, 0 0 0 10px ${subjectColor}08`,
-                background: isWarm ? `${subjectColor}10` : 'rgba(255,255,255,.03)',
+                boxShadow: `0 0 0 6px ${subjectColor}15, 0 0 0 11px ${subjectColor}07`,
+                background: `${subjectColor}0E`,
               }}>
                 <div style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  width: 50, height: 50, borderRadius: '50%',
-                  border: `1.5px solid ${subjectColor}50`,
+                  width: 48, height: 48, borderRadius: '50%',
+                  border: `1.5px solid ${subjectColor}45`,
                 }}>
                   <span style={{
                     fontFamily: "'Space Grotesk', sans-serif",
-                    fontWeight: 900, fontSize: '1rem',
-                    color: subjectColor, letterSpacing: '.03em',
+                    fontWeight: 900, fontSize: '.95rem',
+                    color: subjectColor, letterSpacing: '.04em',
                   }}>TF</span>
                 </div>
               </div>
@@ -1386,40 +1381,43 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             <div style={{
               textAlign: 'center',
               fontFamily: "'Inter', sans-serif",
-              fontSize: '.6rem', fontWeight: 700, letterSpacing: '.22em',
-              textTransform: 'uppercase',
-              color: isWarm ? subjectColor : '#4A5578',
+              fontSize: '.6rem', fontWeight: 700, letterSpacing: '.24em',
+              textTransform: 'uppercase', color: subjectColor,
               marginBottom: 14,
             }}>True or False?</div>
 
             {/* Statement */}
             <p style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(1.05rem, 3.8vw, 1.3rem)',
-              fontWeight: 700, color: '#F5F7FB',
-              margin: '0 0 22px', lineHeight: 1.35,
+              fontSize: 'clamp(1.05rem, 3.8vw, 1.25rem)',
+              fontWeight: 700, color: '#F0EAE0',
+              margin: '0 0 20px', lineHeight: 1.4,
               letterSpacing: '-.01em', textAlign: 'center',
             }}>{hook.statement}</p>
 
-            {/* Thin separator inside card */}
+            {/* Thin separator */}
             <div style={{
               height: 1,
-              background: isWarm
-                ? `linear-gradient(90deg, transparent, ${subjectColor}30, transparent)`
-                : 'linear-gradient(90deg, transparent, #1E2A40, transparent)',
+              background: `linear-gradient(90deg, transparent, ${subjectColor}28, transparent)`,
               marginBottom: 14,
             }} />
 
-            {/* Context hint row — icon + italic hint text */}
+            {/* Context hint row */}
             <div style={{
               display: 'flex', alignItems: 'center', gap: 10,
-              padding: '0 2px 18px',
+              padding: '0 0 18px',
             }}>
-              <span style={{ fontSize: '1.1rem', flexShrink: 0, lineHeight: 1 }}>{module.icon}</span>
+              <div style={{
+                width: 30, height: 30, borderRadius: 8, flexShrink: 0,
+                background: `${subjectColor}12`,
+                border: `1px solid ${subjectColor}28`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '.85rem',
+              }}>{module.icon}</div>
               <span style={{
                 fontFamily: "'Inter', sans-serif",
-                fontSize: '.8rem', fontStyle: 'italic', lineHeight: 1.45,
-                color: isWarm ? '#9A7A50' : '#4A5578',
+                fontSize: '.78rem', fontStyle: 'italic', lineHeight: 1.45,
+                color: '#8A7055',
               }}>
                 {hook.scenario?.hint || hook.scenario?.location || hook.contextHint || ''}
               </span>
@@ -1430,45 +1428,44 @@ function HookContent({ module, hook, hookState, subjectColor }) {
           <div style={{
             display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12,
           }}>
-            <div style={{ flex: 1, height: 1, background: isWarm ? `${subjectColor}18` : '#1A2238' }} />
+            <div style={{ flex: 1, height: 1, background: `${subjectColor}18` }} />
             <span style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: '.55rem', fontWeight: 700, letterSpacing: '.2em',
-              textTransform: 'uppercase',
-              color: isWarm ? `${subjectColor}70` : '#2E3A54',
+              fontSize: '.55rem', fontWeight: 700, letterSpacing: '.22em',
+              textTransform: 'uppercase', color: `${subjectColor}65`,
               whiteSpace: 'nowrap',
             }}>Choose an answer</span>
-            <div style={{ flex: 1, height: 1, background: isWarm ? `${subjectColor}18` : '#1A2238' }} />
+            <div style={{ flex: 1, height: 1, background: `${subjectColor}18` }} />
           </div>
 
           {/* ── Stacked TRUE / FALSE buttons ── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 10 }}>
 
             {/* TRUE */}
             <button onClick={() => setPending(true)} style={{
               width: '100%',
               background: pending === true
-                ? 'rgba(56,210,122,.1)'
-                : isWarm ? 'rgba(255,255,255,.03)' : 'rgba(255,255,255,.02)',
-              border: `1.5px solid ${pending === true ? 'rgba(56,210,122,.55)' : isWarm ? subjectColor + '20' : '#1E2A40'}`,
+                ? 'linear-gradient(135deg, #1B4028, #123020)'
+                : 'linear-gradient(160deg, #1C2E1E, #141E16)',
+              border: `1.5px solid ${pending === true ? 'rgba(56,210,122,.6)' : 'rgba(56,180,100,.32)'}`,
               borderRadius: 14, padding: '15px 18px',
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14,
               transition: 'all .15s ease',
-              boxShadow: pending === true ? '0 0 20px rgba(56,210,122,.12)' : 'none',
+              boxShadow: pending === true ? '0 0 24px rgba(56,210,122,.15)' : 'none',
             }}>
               <div style={{
                 width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-                background: pending === true ? 'rgba(56,210,122,.18)' : 'rgba(56,210,122,.07)',
-                border: `1.5px solid ${pending === true ? 'rgba(56,210,122,.65)' : 'rgba(56,210,122,.28)'}`,
+                background: pending === true ? 'rgba(56,210,122,.22)' : 'rgba(56,180,100,.12)',
+                border: `1.5px solid ${pending === true ? 'rgba(56,210,122,.7)' : 'rgba(56,180,100,.5)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all .15s ease',
               }}>
-                <span style={{ fontSize: '.95rem', color: '#38D27A', lineHeight: 1 }}>✓</span>
+                <span style={{ fontSize: '.9rem', color: pending === true ? '#4DFF88' : '#56C87A', lineHeight: 1 }}>✓</span>
               </div>
               <span style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 800, fontSize: '1rem', letterSpacing: '.06em',
-                color: pending === true ? '#4DFF88' : '#5A6A80',
+                fontWeight: 800, fontSize: '1rem', letterSpacing: '.07em',
+                color: pending === true ? '#4DFF88' : '#72BE88',
                 transition: 'color .15s',
               }}>TRUE</span>
             </button>
@@ -1477,27 +1474,27 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             <button onClick={() => setPending(false)} style={{
               width: '100%',
               background: pending === false
-                ? 'rgba(255,93,115,.1)'
-                : isWarm ? 'rgba(255,255,255,.03)' : 'rgba(255,255,255,.02)',
-              border: `1.5px solid ${pending === false ? 'rgba(255,93,115,.55)' : isWarm ? subjectColor + '20' : '#1E2A40'}`,
+                ? 'linear-gradient(135deg, #3A1A1A, #281212)'
+                : 'linear-gradient(160deg, #2E1C1C, #1E1414)',
+              border: `1.5px solid ${pending === false ? 'rgba(255,93,115,.6)' : 'rgba(200,80,80,.32)'}`,
               borderRadius: 14, padding: '15px 18px',
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14,
               transition: 'all .15s ease',
-              boxShadow: pending === false ? '0 0 20px rgba(255,93,115,.12)' : 'none',
+              boxShadow: pending === false ? '0 0 24px rgba(255,93,115,.15)' : 'none',
             }}>
               <div style={{
                 width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-                background: pending === false ? 'rgba(255,93,115,.18)' : 'rgba(255,93,115,.07)',
-                border: `1.5px solid ${pending === false ? 'rgba(255,93,115,.65)' : 'rgba(255,93,115,.28)'}`,
+                background: pending === false ? 'rgba(255,93,115,.22)' : 'rgba(200,80,80,.12)',
+                border: `1.5px solid ${pending === false ? 'rgba(255,93,115,.7)' : 'rgba(200,80,80,.5)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all .15s ease',
               }}>
-                <span style={{ fontSize: '.95rem', color: '#FF5D73', lineHeight: 1 }}>✗</span>
+                <span style={{ fontSize: '.9rem', color: pending === false ? '#FF5D73' : '#C85060', lineHeight: 1 }}>✗</span>
               </div>
               <span style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 800, fontSize: '1rem', letterSpacing: '.06em',
-                color: pending === false ? '#FF5D73' : '#5A6A80',
+                fontWeight: 800, fontSize: '1rem', letterSpacing: '.07em',
+                color: pending === false ? '#FF5D73' : '#BE7272',
                 transition: 'color .15s',
               }}>FALSE</span>
             </button>
@@ -1506,21 +1503,21 @@ function HookContent({ module, hook, hookState, subjectColor }) {
           {/* ── Not sure? row ── */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 10,
-            padding: '10px 4px', marginBottom: 14, cursor: 'default',
+            padding: '8px 4px 14px', cursor: 'default',
           }}>
             <div style={{
-              width: 32, height: 32, borderRadius: 8, flexShrink: 0,
-              background: isWarm ? `${subjectColor}12` : 'rgba(255,255,255,.04)',
-              border: `1px solid ${isWarm ? subjectColor + '25' : '#1E2A40'}`,
+              width: 30, height: 30, borderRadius: 8, flexShrink: 0,
+              background: `${subjectColor}10`,
+              border: `1px solid ${subjectColor}22`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '.85rem',
+              fontSize: '.8rem',
             }}>🛡️</div>
             <span style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: '.78rem', color: isWarm ? '#7A6040' : '#3A4460',
+              fontSize: '.76rem', color: '#6A5535',
               flex: 1, lineHeight: 1.4,
             }}>Not sure? Review the lesson before answering.</span>
-            <span style={{ color: isWarm ? '#7A6040' : '#2E3A54', fontSize: '.8rem' }}>›</span>
+            <span style={{ color: '#5A4828', fontSize: '.85rem' }}>›</span>
           </div>
 
           {/* ── CHECK ANSWER button ── */}
@@ -1530,21 +1527,17 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             style={{
               width: '100%',
               background: pending !== null
-                ? (isWarm
-                    ? `linear-gradient(135deg, #C89020 0%, #A06510 100%)`
-                    : 'linear-gradient(135deg, #3B82FF, #1E5FE8)')
-                : isWarm ? '#1A1005' : '#0A1020',
-              border: pending !== null ? 'none' : `1px solid ${isWarm ? subjectColor + '20' : '#1A2238'}`,
+                ? 'linear-gradient(135deg, #C8900A 0%, #9A6508 100%)'
+                : '#1A1005',
+              border: pending !== null ? 'none' : `1px solid ${subjectColor}18`,
               borderRadius: 14, padding: '18px',
               cursor: pending !== null ? 'pointer' : 'default',
               fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 900, fontSize: '1rem', letterSpacing: '.14em',
+              fontWeight: 900, fontSize: '1rem', letterSpacing: '.16em',
               textTransform: 'uppercase',
-              color: pending !== null ? '#1A0E00' : (isWarm ? `${subjectColor}30` : '#1E2A40'),
+              color: pending !== null ? '#1A0A00' : `${subjectColor}28`,
               transition: 'all .2s ease',
-              boxShadow: pending !== null
-                ? `0 6px 32px ${isWarm ? 'rgba(180,130,20,.45)' : 'rgba(59,130,255,.35)'}`
-                : 'none',
+              boxShadow: pending !== null ? '0 6px 32px rgba(180,130,10,.5)' : 'none',
             }}
           >
             Check Answer
