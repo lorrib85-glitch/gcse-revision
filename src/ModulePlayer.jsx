@@ -1326,269 +1326,181 @@ function HookContent({ module, hook, hookState, subjectColor }) {
       {phase === 'question' && (
         <div style={{ animation: 'hFadeIn .4s ease' }}>
 
-          {/* ── Scenario context card ── */}
-          {hook.scenario ? (
-            <div style={{
-              background: isWarm
-                ? 'linear-gradient(145deg, #1A1005, #120C03)'
-                : 'linear-gradient(145deg, #0E1624, #0A1018)',
-              border: `1px solid ${subjectColor}28`,
-              borderRadius: 18, padding: '18px 20px', marginBottom: 20,
-              boxShadow: '0 0 40px rgba(0,0,0,.5)',
-            }}>
-              {/* Location badge */}
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                background: subjectColor + '15', border: `1px solid ${subjectColor}35`,
-                borderRadius: 99, padding: '4px 12px', marginBottom: 14,
-              }}>
-                <span style={{ fontSize: '.75rem' }}>📍</span>
-                <span style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: '.72rem', fontWeight: 700,
-                  letterSpacing: '.1em', textTransform: 'uppercase',
-                  color: subjectColor,
-                }}>{hook.scenario.location}</span>
-              </div>
-
-              {/* Intro text */}
-              {hook.scenario.intro && (
-                <p style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.9rem', color: isWarm ? '#B89870' : '#9CA8C7',
-                  margin: '0 0 14px', lineHeight: 1.6,
-                }}>{hook.scenario.intro}</p>
-              )}
-
-              {/* Dialogue quotes */}
-              {hook.scenario.quotes && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
-                  {hook.scenario.quotes.map((q, i) => (
-                    <div key={i} style={{
-                      background: isWarm ? 'rgba(245,183,0,.05)' : 'rgba(255,255,255,.04)',
-                      border: `1px solid ${subjectColor}20`,
-                      borderRadius: 12, padding: '10px 14px',
-                    }}>
-                      <div style={{
-                        fontFamily: "'Inter', sans-serif",
-                        fontSize: '.62rem', fontWeight: 700, letterSpacing: '.1em',
-                        textTransform: 'uppercase', color: subjectColor, marginBottom: 4,
-                      }}>{q.role}</div>
-                      <p style={{
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: '.9rem', fontWeight: 600,
-                        color: '#E0E6F0', margin: 0, lineHeight: 1.45,
-                        fontStyle: 'italic',
-                      }}>{q.text}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Bullet heading + items */}
-              {hook.scenario.bulletHeading && (
-                <div style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.72rem', fontWeight: 700, letterSpacing: '.08em',
-                  textTransform: 'uppercase',
-                  color: isWarm ? `${subjectColor}99` : '#5A6480',
-                  marginBottom: 8,
-                }}>{hook.scenario.bulletHeading}</div>
-              )}
-              {hook.scenario.items && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {hook.scenario.items.map((item, i) => (
-                    <div key={i} style={{
-                      display: 'flex', alignItems: 'flex-start', gap: 10,
-                      background: isWarm ? 'rgba(245,183,0,.04)' : 'rgba(255,255,255,.03)',
-                      border: isWarm ? `1px solid ${subjectColor}15` : '1px solid rgba(255,255,255,.05)',
-                      borderRadius: 10, padding: '8px 12px',
-                    }}>
-                      <span style={{ color: subjectColor, fontSize: '.85rem', flexShrink: 0, marginTop: 1 }}>·</span>
-                      <span style={{
-                        fontFamily: "'Inter', sans-serif",
-                        fontSize: '.87rem', color: isWarm ? '#C8B090' : '#C8D0E8', lineHeight: 1.55,
-                      }}>{item}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div style={{ marginBottom: 20 }}>
-              {hook.storyLines?.map((line, i) => (
-                <p key={i} style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.88rem', color: i === hook.storyLines.length - 1 ? '#C8D0E8' : '#5A6480',
-                  margin: '0 0 5px', lineHeight: 1.65,
-                  fontWeight: i === hook.storyLines.length - 1 ? 500 : 400,
-                }}>{line}</p>
-              ))}
-            </div>
-          )}
-
-          {/* ── Ornamental TF badge + statement card ── */}
+          {/* ══ Main TF card — badge + statement + hint row ══ */}
           <div style={{
             background: isWarm
-              ? 'linear-gradient(160deg, #1C1005 0%, #120C03 100%)'
+              ? 'linear-gradient(160deg, #201508 0%, #140E04 100%)'
               : 'linear-gradient(145deg, #10182B, #0D1424)',
-            border: `1px solid ${isWarm ? subjectColor + '30' : '#2A3552'}`,
-            borderRadius: 22, padding: '28px 22px 24px',
-            marginBottom: 16, textAlign: 'center',
+            border: `1px solid ${isWarm ? subjectColor + '35' : '#2A3552'}`,
+            borderRadius: 20, padding: '28px 20px 0',
+            marginBottom: 14,
             boxShadow: isWarm
-              ? `0 8px 48px rgba(0,0,0,.6), 0 0 60px ${subjectColor}08`
+              ? `0 12px 60px rgba(0,0,0,.7), 0 0 80px ${subjectColor}06`
               : '0 8px 40px rgba(0,0,0,.4)',
           }}>
-            {/* Ornamental double-ring TF emblem */}
-            <div style={{
-              width: 72, height: 72, borderRadius: '50%',
-              border: `2px solid ${subjectColor}`,
-              boxShadow: `0 0 0 5px ${subjectColor}18, 0 0 0 9px ${subjectColor}08`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 18px',
-              background: isWarm ? `${subjectColor}12` : 'rgba(255,255,255,.03)',
-            }}>
+
+            {/* Ornamental double-ring TF badge */}
+            <div style={{ textAlign: 'center', marginBottom: 16 }}>
               <div style={{
-                width: 54, height: 54, borderRadius: '50%',
-                border: `1.5px solid ${subjectColor}55`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                width: 68, height: 68, borderRadius: '50%',
+                border: `2px solid ${subjectColor}`,
+                boxShadow: `0 0 0 5px ${subjectColor}18, 0 0 0 10px ${subjectColor}08`,
+                background: isWarm ? `${subjectColor}10` : 'rgba(255,255,255,.03)',
               }}>
-                <span style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 900, fontSize: '1.1rem',
-                  color: subjectColor, letterSpacing: '.02em',
-                }}>TF</span>
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: 50, height: 50, borderRadius: '50%',
+                  border: `1.5px solid ${subjectColor}50`,
+                }}>
+                  <span style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 900, fontSize: '1rem',
+                    color: subjectColor, letterSpacing: '.03em',
+                  }}>TF</span>
+                </div>
               </div>
             </div>
 
-            {/* Label */}
+            {/* TRUE OR FALSE? label */}
             <div style={{
+              textAlign: 'center',
               fontFamily: "'Inter', sans-serif",
-              fontSize: '.62rem', fontWeight: 700, letterSpacing: '.2em',
+              fontSize: '.6rem', fontWeight: 700, letterSpacing: '.22em',
               textTransform: 'uppercase',
-              color: isWarm ? `${subjectColor}CC` : '#4A5578',
-              marginBottom: 16,
+              color: isWarm ? subjectColor : '#4A5578',
+              marginBottom: 14,
             }}>True or False?</div>
 
             {/* Statement */}
             <p style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(1.05rem, 3.5vw, 1.25rem)',
+              fontSize: 'clamp(1.05rem, 3.8vw, 1.3rem)',
               fontWeight: 700, color: '#F5F7FB',
-              margin: 0, lineHeight: 1.4, letterSpacing: '-.01em',
+              margin: '0 0 22px', lineHeight: 1.35,
+              letterSpacing: '-.01em', textAlign: 'center',
             }}>{hook.statement}</p>
+
+            {/* Thin separator inside card */}
+            <div style={{
+              height: 1,
+              background: isWarm
+                ? `linear-gradient(90deg, transparent, ${subjectColor}30, transparent)`
+                : 'linear-gradient(90deg, transparent, #1E2A40, transparent)',
+              marginBottom: 14,
+            }} />
+
+            {/* Context hint row — icon + italic hint text */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              padding: '0 2px 18px',
+            }}>
+              <span style={{ fontSize: '1.1rem', flexShrink: 0, lineHeight: 1 }}>{module.icon}</span>
+              <span style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.8rem', fontStyle: 'italic', lineHeight: 1.45,
+                color: isWarm ? '#9A7A50' : '#4A5578',
+              }}>
+                {hook.scenario?.hint || hook.scenario?.location || hook.contextHint || ''}
+              </span>
+            </div>
           </div>
 
           {/* ── CHOOSE AN ANSWER divider ── */}
           <div style={{
-            display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14,
+            display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12,
           }}>
-            <div style={{ flex: 1, height: 1, background: isWarm ? `${subjectColor}20` : '#1E2A40' }} />
+            <div style={{ flex: 1, height: 1, background: isWarm ? `${subjectColor}18` : '#1A2238' }} />
             <span style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: '.58rem', fontWeight: 700, letterSpacing: '.18em',
+              fontSize: '.55rem', fontWeight: 700, letterSpacing: '.2em',
               textTransform: 'uppercase',
-              color: isWarm ? `${subjectColor}80` : '#3A4460',
+              color: isWarm ? `${subjectColor}70` : '#2E3A54',
               whiteSpace: 'nowrap',
             }}>Choose an answer</span>
-            <div style={{ flex: 1, height: 1, background: isWarm ? `${subjectColor}20` : '#1E2A40' }} />
+            <div style={{ flex: 1, height: 1, background: isWarm ? `${subjectColor}18` : '#1A2238' }} />
           </div>
 
           {/* ── Stacked TRUE / FALSE buttons ── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 14 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+
             {/* TRUE */}
             <button onClick={() => setPending(true)} style={{
               width: '100%',
               background: pending === true
-                ? 'linear-gradient(135deg, #0D3020, #0A2418)'
-                : isWarm ? '#1C1005' : '#10182B',
-              border: pending === true
-                ? '2px solid rgba(77,255,136,.6)'
-                : `2px solid ${isWarm ? subjectColor + '22' : '#1E2A40'}`,
-              borderRadius: 16, padding: '16px 20px',
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16,
+                ? 'rgba(56,210,122,.1)'
+                : isWarm ? 'rgba(255,255,255,.03)' : 'rgba(255,255,255,.02)',
+              border: `1.5px solid ${pending === true ? 'rgba(56,210,122,.55)' : isWarm ? subjectColor + '20' : '#1E2A40'}`,
+              borderRadius: 14, padding: '15px 18px',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14,
               transition: 'all .15s ease',
-              boxShadow: pending === true ? '0 0 24px rgba(77,255,136,.15)' : 'none',
+              boxShadow: pending === true ? '0 0 20px rgba(56,210,122,.12)' : 'none',
             }}>
               <div style={{
-                width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
-                background: pending === true ? 'rgba(77,255,136,.2)' : 'rgba(77,255,136,.08)',
-                border: `2px solid ${pending === true ? 'rgba(77,255,136,.7)' : 'rgba(77,255,136,.25)'}`,
+                width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
+                background: pending === true ? 'rgba(56,210,122,.18)' : 'rgba(56,210,122,.07)',
+                border: `1.5px solid ${pending === true ? 'rgba(56,210,122,.65)' : 'rgba(56,210,122,.28)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all .15s ease',
               }}>
-                <span style={{
-                  fontSize: '1rem', color: '#4DFF88', fontWeight: 700,
-                  lineHeight: 1, fontFamily: "'Inter', sans-serif",
-                }}>✓</span>
+                <span style={{ fontSize: '.95rem', color: '#38D27A', lineHeight: 1 }}>✓</span>
               </div>
               <span style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 800, fontSize: '1.1rem',
-                color: pending === true ? '#4DFF88' : '#6B7FA0',
-                letterSpacing: '.06em', transition: 'color .15s ease',
+                fontWeight: 800, fontSize: '1rem', letterSpacing: '.06em',
+                color: pending === true ? '#4DFF88' : '#5A6A80',
+                transition: 'color .15s',
               }}>TRUE</span>
-              {pending === true && (
-                <div style={{
-                  marginLeft: 'auto',
-                  width: 10, height: 10, borderRadius: '50%',
-                  background: '#4DFF88',
-                  boxShadow: '0 0 8px #4DFF88',
-                }} />
-              )}
             </button>
 
             {/* FALSE */}
             <button onClick={() => setPending(false)} style={{
               width: '100%',
               background: pending === false
-                ? 'linear-gradient(135deg, #2B0D10, #1E080B)'
-                : isWarm ? '#1C1005' : '#10182B',
-              border: pending === false
-                ? '2px solid rgba(255,93,115,.6)'
-                : `2px solid ${isWarm ? subjectColor + '22' : '#1E2A40'}`,
-              borderRadius: 16, padding: '16px 20px',
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16,
+                ? 'rgba(255,93,115,.1)'
+                : isWarm ? 'rgba(255,255,255,.03)' : 'rgba(255,255,255,.02)',
+              border: `1.5px solid ${pending === false ? 'rgba(255,93,115,.55)' : isWarm ? subjectColor + '20' : '#1E2A40'}`,
+              borderRadius: 14, padding: '15px 18px',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14,
               transition: 'all .15s ease',
-              boxShadow: pending === false ? '0 0 24px rgba(255,93,115,.15)' : 'none',
+              boxShadow: pending === false ? '0 0 20px rgba(255,93,115,.12)' : 'none',
             }}>
               <div style={{
-                width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
-                background: pending === false ? 'rgba(255,93,115,.2)' : 'rgba(255,93,115,.08)',
-                border: `2px solid ${pending === false ? 'rgba(255,93,115,.7)' : 'rgba(255,93,115,.25)'}`,
+                width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
+                background: pending === false ? 'rgba(255,93,115,.18)' : 'rgba(255,93,115,.07)',
+                border: `1.5px solid ${pending === false ? 'rgba(255,93,115,.65)' : 'rgba(255,93,115,.28)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all .15s ease',
               }}>
-                <span style={{
-                  fontSize: '1rem', color: '#FF5D73', fontWeight: 700,
-                  lineHeight: 1, fontFamily: "'Inter', sans-serif",
-                }}>✗</span>
+                <span style={{ fontSize: '.95rem', color: '#FF5D73', lineHeight: 1 }}>✗</span>
               </div>
               <span style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 800, fontSize: '1.1rem',
-                color: pending === false ? '#FF5D73' : '#6B7FA0',
-                letterSpacing: '.06em', transition: 'color .15s ease',
+                fontWeight: 800, fontSize: '1rem', letterSpacing: '.06em',
+                color: pending === false ? '#FF5D73' : '#5A6A80',
+                transition: 'color .15s',
               }}>FALSE</span>
-              {pending === false && (
-                <div style={{
-                  marginLeft: 'auto',
-                  width: 10, height: 10, borderRadius: '50%',
-                  background: '#FF5D73',
-                  boxShadow: '0 0 8px #FF5D73',
-                }} />
-              )}
             </button>
           </div>
 
-          {/* ── Not sure row ── */}
+          {/* ── Not sure? row ── */}
           <div style={{
-            textAlign: 'center', marginBottom: 18,
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: '10px 4px', marginBottom: 14, cursor: 'default',
           }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+              background: isWarm ? `${subjectColor}12` : 'rgba(255,255,255,.04)',
+              border: `1px solid ${isWarm ? subjectColor + '25' : '#1E2A40'}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '.85rem',
+            }}>🛡️</div>
             <span style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: '.75rem', color: isWarm ? `${subjectColor}60` : '#3A4460',
-            }}>Not sure? Review the lesson before answering. &rsaquo;</span>
+              fontSize: '.78rem', color: isWarm ? '#7A6040' : '#3A4460',
+              flex: 1, lineHeight: 1.4,
+            }}>Not sure? Review the lesson before answering.</span>
+            <span style={{ color: isWarm ? '#7A6040' : '#2E3A54', fontSize: '.8rem' }}>›</span>
           </div>
 
           {/* ── CHECK ANSWER button ── */}
@@ -1599,21 +1511,19 @@ function HookContent({ module, hook, hookState, subjectColor }) {
               width: '100%',
               background: pending !== null
                 ? (isWarm
-                    ? `linear-gradient(135deg, ${subjectColor}, #C47828)`
+                    ? `linear-gradient(135deg, #C89020 0%, #A06510 100%)`
                     : 'linear-gradient(135deg, #3B82FF, #1E5FE8)')
-                : isWarm ? '#221608' : '#0D1424',
-              border: pending !== null
-                ? 'none'
-                : `1px solid ${isWarm ? subjectColor + '25' : '#1E2A40'}`,
-              borderRadius: 16, padding: '18px',
+                : isWarm ? '#1A1005' : '#0A1020',
+              border: pending !== null ? 'none' : `1px solid ${isWarm ? subjectColor + '20' : '#1A2238'}`,
+              borderRadius: 14, padding: '18px',
               cursor: pending !== null ? 'pointer' : 'default',
               fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 900, fontSize: '1rem', letterSpacing: '.1em',
+              fontWeight: 900, fontSize: '1rem', letterSpacing: '.14em',
               textTransform: 'uppercase',
-              color: pending !== null ? '#050300' : (isWarm ? `${subjectColor}40` : '#2A3552'),
+              color: pending !== null ? '#1A0E00' : (isWarm ? `${subjectColor}30` : '#1E2A40'),
               transition: 'all .2s ease',
               boxShadow: pending !== null
-                ? `0 4px 28px ${isWarm ? subjectColor + '40' : 'rgba(59,130,255,.35)'}`
+                ? `0 6px 32px ${isWarm ? 'rgba(180,130,20,.45)' : 'rgba(59,130,255,.35)'}`
                 : 'none',
             }}
           >

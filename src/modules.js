@@ -18,6 +18,7 @@ export const MODULES = [
     hook: {
       scenario: {
         location: 'England, 1348',
+        hint: 'You wake up with a fever. Your neighbour died yesterday.',
         intro: 'You wake up with:',
         items: [
           'a fever',
@@ -199,6 +200,7 @@ export const MODULES = [
     hook: {
       scenario: {
         location: 'Italy, 1543',
+        hint: 'A patient is dying. Two doctors can\'t agree on how to treat him.',
         intro: 'A patient is seriously ill. Two doctors disagree.',
         quotes: [
           { role: 'One doctor says:', text: '"Balance the Four Humours."' },
