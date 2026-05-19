@@ -1583,6 +1583,7 @@ export const MODULES = [
         label: 'Fleming\'s Discovery',
         kicker: '1928',
         heading: 'The mould nobody cleaned up.',
+        headerImage: '/images/fleming-1928.png',
         sub: 'The most important contaminated experiment in history.',
         blocks: [
           {
@@ -1653,6 +1654,7 @@ export const MODULES = [
         label: 'Florey & Chain',
         kicker: '1940–1941',
         heading: 'The team that actually saved millions.',
+        headerImage: '/images/florey-chain-1941.png',
         sub: 'In Oxford, two scientists picked up where Fleming left off — and changed everything.',
         blocks: [
           {
@@ -1762,7 +1764,43 @@ export const MODULES = [
         ],
       },
 
-      // Screen 8 — Source Detective
+      // Screen 8 — The NHS
+      {
+        label: 'The NHS',
+        kicker: '1948',
+        heading: 'Free healthcare for everyone.',
+        headerImage: '/images/nhs-1948.png',
+        sub: 'The National Health Service opened on 5 July 1948. It was built on the same belief as penicillin: that medicine should reach everyone.',
+        blocks: [
+          {
+            type: 'read',
+            label: '🏥 What Was the NHS?',
+            text: 'The National Health Service was created by Aneurin Bevan under the Labour government in 1948. For the first time in British history, healthcare was <strong>free at the point of use</strong> — paid for through taxation, available to everyone regardless of income.<br/><br/>Before the NHS: if you couldn\'t afford a doctor, you didn\'t see one. Medicines cost money. Surgery could bankrupt a family. The war had demonstrated what organised, state-funded medicine could achieve. The NHS was built on that lesson.',
+          },
+          {
+            type: 'quiz',
+            question: 'Why was the creation of the NHS in 1948 significant for medicine in Britain?',
+            options: [
+              { text: 'It made healthcare free and universally accessible for the first time, removing cost as a barrier to treatment', correct: true },
+              { text: 'It gave doctors the power to prescribe penicillin without government approval', correct: false },
+              { text: 'It replaced all existing hospitals with new purpose-built NHS buildings', correct: false },
+              { text: 'It ended the need for private medical insurance in Britain permanently', correct: false },
+            ],
+            explanation: 'The NHS removed cost as a barrier to healthcare. Before 1948, many working-class people avoided doctors because they couldn\'t afford fees. Universal free access meant medical breakthroughs like penicillin could reach everyone, not just those who could pay.',
+          },
+          {
+            type: 'keypoint',
+            text: '🧠 <strong>The NHS as a turning point:</strong> Medical breakthroughs like penicillin only save lives if people can <em>access</em> them. The NHS solved the access problem. It is why the antibiotic revolution benefited the whole population, not just the wealthy.',
+          },
+          {
+            type: 'examtip',
+            label: '⚔️ Exam Assassin',
+            tip: 'If asked about factors in improving public health in the 20th century — always include the NHS (1948). It connects every medical breakthrough to universal access. Link it: "Penicillin was discovered in 1928 and mass-produced by the 1940s — but the NHS (1948) ensured everyone could access it, not just those who could afford private treatment."',
+          },
+        ],
+      },
+
+      // Screen 9 — Source Detective
       {
         label: 'Source Detective',
         kicker: 'Exam Skill',
