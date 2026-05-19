@@ -36,11 +36,11 @@ function saveConfidenceRating(moduleId, subject, title, confidence) {
   } catch {}
 }
 
-function ReadBlock({ block, isWarm = false, isBio = false }) {
+function ReadBlock({ block, isWarm = false, isBio = false, isMaths = false, isSoc = false }) {
   return (
     <div style={{
-      borderLeft: `3px solid ${isWarm ? '#C47828' : isBio ? '#38D27A' : '#3B82FF'}`,
-      background: isWarm ? 'rgba(196,120,40,.07)' : isBio ? 'rgba(56,210,122,.07)' : 'rgba(59,130,255,.07)',
+      borderLeft: `3px solid ${isWarm ? '#C47828' : isBio ? '#38D27A' : isMaths ? '#4B90FF' : isSoc ? '#D96030' : '#3B82FF'}`,
+      background: isWarm ? 'rgba(196,120,40,.07)' : isBio ? 'rgba(56,210,122,.07)' : isMaths ? 'rgba(75,144,255,.07)' : isSoc ? 'rgba(217,96,48,.07)' : 'rgba(59,130,255,.07)',
       borderRadius: '0 14px 14px 0',
       padding: '16px 18px', margin: '12px 0',
     }}>
@@ -48,39 +48,39 @@ function ReadBlock({ block, isWarm = false, isBio = false }) {
         <div style={{
           fontFamily: "'Inter', sans-serif",
           fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-          textTransform: 'uppercase', color: isWarm ? '#C8901A' : isBio ? '#38D27A' : '#70B8FF', marginBottom: 8,
+          textTransform: 'uppercase', color: isWarm ? '#C8901A' : isBio ? '#38D27A' : isMaths ? '#4B90FF' : isSoc ? '#D96030' : '#70B8FF', marginBottom: 8,
         }}>{block.label}</div>
       )}
       <p style={{
         fontFamily: "'Inter', sans-serif",
-        fontSize: '.95rem', lineHeight: 1.7, margin: 0, color: isWarm ? '#C8B090' : isBio ? '#A8D4B8' : '#C8D0E8',
+        fontSize: '.95rem', lineHeight: 1.7, margin: 0, color: isWarm ? '#C8B090' : isBio ? '#A8D4B8' : isSoc ? '#D4B8A8' : '#C8D0E8',
       }} dangerouslySetInnerHTML={{ __html: block.text }} />
     </div>
   )
 }
 
-function KeypointBlock({ block, isWarm = false, isBio = false }) {
+function KeypointBlock({ block, isWarm = false, isBio = false, isMaths = false, isSoc = false }) {
   return (
     <div style={{
-      background: isWarm ? 'linear-gradient(135deg, #1C1205 0%, #120C03 100%)' : isBio ? 'linear-gradient(135deg, #071410 0%, #040C08 100%)' : 'linear-gradient(135deg, #1A2338 0%, #111828 100%)',
-      border: `1px solid ${isWarm ? 'rgba(196,120,40,.3)' : isBio ? 'rgba(56,210,122,.25)' : 'rgba(157,92,255,.25)'}`,
+      background: isWarm ? 'linear-gradient(135deg, #1C1205 0%, #120C03 100%)' : isBio ? 'linear-gradient(135deg, #071410 0%, #040C08 100%)' : isSoc ? 'linear-gradient(135deg, #1C0D07 0%, #120805 100%)' : 'linear-gradient(135deg, #1A2338 0%, #111828 100%)',
+      border: `1px solid ${isWarm ? 'rgba(196,120,40,.3)' : isBio ? 'rgba(56,210,122,.25)' : isSoc ? 'rgba(217,96,48,.3)' : 'rgba(157,92,255,.25)'}`,
       borderRadius: 16, padding: '18px 20px', margin: '14px 0',
       boxShadow: isWarm ? '0 0 24px rgba(196,120,40,.08)' : isBio ? '0 0 24px rgba(56,210,122,.08)' : '0 0 24px rgba(157,92,255,.08)',
     }}>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: isWarm ? '#C8901A' : isBio ? '#38D27A' : '#9D5CFF', marginBottom: 10,
+        textTransform: 'uppercase', color: isWarm ? '#C8901A' : isBio ? '#38D27A' : isSoc ? '#D96030' : '#9D5CFF', marginBottom: 10,
       }}>⭐ Key Point</div>
       <p style={{
         fontFamily: "'Inter', sans-serif",
-        fontSize: '.95rem', lineHeight: 1.65, margin: 0, color: isWarm ? '#D4C4A0' : isBio ? '#A8D4B8' : '#E0E6F0',
+        fontSize: '.95rem', lineHeight: 1.65, margin: 0, color: isWarm ? '#D4C4A0' : isBio ? '#A8D4B8' : isSoc ? '#D4B8A8' : '#E0E6F0',
       }} dangerouslySetInnerHTML={{ __html: block.text }} />
     </div>
   )
 }
 
-function FunFactBlock({ block, isWarm = false, isBio = false }) {
+function FunFactBlock({ block, isWarm = false, isBio = false, isMaths = false, isSoc = false }) {
   return (
     <div style={{
       background: isWarm ? 'rgba(196,120,40,.07)' : isBio ? 'rgba(56,210,122,.07)' : 'rgba(255,200,87,.06)',
@@ -3212,6 +3212,7 @@ function Screen({ screen, subject }) {
   const isWarm  = subject === 'History'
   const isBio   = subject === 'Biology'
   const isMaths = subject === 'Maths'
+  const isSoc   = subject === 'Sociology'
   return (
     <div>
       {screen.headerImage && (
@@ -3236,9 +3237,9 @@ function Screen({ screen, subject }) {
         {!screen.headerImage && (
           <div style={{
             display: 'inline-flex',
-            background: isWarm ? 'rgba(196,120,40,.12)' : isBio ? 'rgba(56,210,122,.12)' : isMaths ? 'rgba(75,144,255,.12)' : 'rgba(157,92,255,.12)',
-            border: `1px solid ${isWarm ? 'rgba(196,120,40,.25)' : isBio ? 'rgba(56,210,122,.25)' : isMaths ? 'rgba(75,144,255,.25)' : 'rgba(157,92,255,.25)'}`,
-            color: isWarm ? '#C8901A' : isBio ? '#38D27A' : isMaths ? '#4B90FF' : '#C18CFF',
+            background: isWarm ? 'rgba(196,120,40,.12)' : isBio ? 'rgba(56,210,122,.12)' : isMaths ? 'rgba(75,144,255,.12)' : isSoc ? 'rgba(217,96,48,.12)' : 'rgba(157,92,255,.12)',
+            border: `1px solid ${isWarm ? 'rgba(196,120,40,.25)' : isBio ? 'rgba(56,210,122,.25)' : isMaths ? 'rgba(75,144,255,.25)' : isSoc ? 'rgba(217,96,48,.25)' : 'rgba(157,92,255,.25)'}`,
+            color: isWarm ? '#C8901A' : isBio ? '#38D27A' : isMaths ? '#4B90FF' : isSoc ? '#D96030' : '#C18CFF',
             borderRadius: 99, padding: '4px 12px',
             fontFamily: "'Inter', sans-serif",
             fontSize: '.68rem', fontWeight: 700,
@@ -3261,9 +3262,9 @@ function Screen({ screen, subject }) {
 
       {screen.blocks.map((block, i) => (
         <div key={i}>
-          {block.type === 'read'          && <ReadBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} />}
-          {block.type === 'keypoint'      && <KeypointBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} />}
-          {block.type === 'funfact'       && <FunFactBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} />}
+          {block.type === 'read'          && <ReadBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} isSoc={isSoc} />}
+          {block.type === 'keypoint'      && <KeypointBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} isSoc={isSoc} />}
+          {block.type === 'funfact'       && <FunFactBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} isSoc={isSoc} />}
           {block.type === 'examtip'       && <ExamTipBlock block={block} isWarm={isWarm} />}
           {block.type === 'timeline'      && <TimelineBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} />}
           {block.type === 'reveal'        && <RevealBlock block={block} />}
@@ -3299,11 +3300,13 @@ function Screen({ screen, subject }) {
 // The grow and reveal phases stay put until the user taps the bottom-nav Next button.
 
 function useHookPhase(hook) {
-  // phases: 'question' | 'feedback' | 'grow' | 'reveal'
-  const [phase, setPhase]         = useState('question')
+  // phases: 'atmospheric' (optional) | 'question' | 'feedback' | 'grow' | 'reveal'
+  const [phase, setPhase]         = useState(hook?.atmosphericOpener ? 'atmospheric' : 'question')
   const [chosenTrue, setChosenTrue] = useState(null)
   const [growStep, setGrowStep]   = useState(0)
   const [revealIdx, setRevealIdx] = useState(-1)
+
+  function startInvestigating() { setPhase('question') }
 
   function choose(tappedTrue) {
     setChosenTrue(tappedTrue)
@@ -3334,7 +3337,7 @@ function useHookPhase(hook) {
   const revealDone   = phase === 'reveal' && allRevealed
 
   return { phase, chosenTrue, wasCorrect, growStep, revealIdx, allRevealed,
-           canAdvance, revealDone, choose, nextFromGrow, nextRevealItem }
+           canAdvance, revealDone, choose, nextFromGrow, nextRevealItem, startInvestigating }
 }
 
 function HookContent({ module, hook, hookState, subjectColor }) {
@@ -3343,12 +3346,72 @@ function HookContent({ module, hook, hookState, subjectColor }) {
 
   const isWarm     = module.subject === 'History'
   const isBio      = module.subject === 'Biology'
-  const hookBg     = isWarm ? '#0C0905' : isBio ? '#04090A' : '#080C1A'
-  const hookCard   = isWarm ? '#191208' : isBio ? '#071410' : '#10182B'
-  const hookBorder = isWarm || isBio ? `${subjectColor}28` : '#2A3552'
+  const isSoc      = module.subject === 'Sociology'
+  const hookBg     = isWarm ? '#0C0905' : isBio ? '#04090A' : isSoc ? '#0C0804' : '#080C1A'
+  const hookCard   = isWarm ? '#191208' : isBio ? '#071410' : isSoc ? '#1A0E07' : '#10182B'
+  const hookBorder = (isWarm || isBio || isSoc) ? `${subjectColor}28` : '#2A3552'
 
   return (
     <div style={{ paddingBottom: 20 }}>
+
+      {/* ── Phase: ATMOSPHERIC ── */}
+      {phase === 'atmospheric' && hook.atmosphericOpener && (
+        <div style={{ animation: 'hFadeIn .5s ease', textAlign: 'center', padding: '20px 0 10px' }}>
+          {/* Silhouette crowd scene */}
+          <div style={{
+            position: 'relative', height: 160, borderRadius: 18, overflow: 'hidden',
+            background: 'linear-gradient(180deg, #1A0E06 0%, #0A0502 60%, #050200 100%)',
+            border: `1px solid ${subjectColor}20`,
+            marginBottom: 24, display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+          }}>
+            {/* Crowd silhouette via CSS shapes */}
+            <svg viewBox="0 0 320 120" style={{ width: '100%', position: 'absolute', bottom: 0 }}>
+              {/* Ambient glow */}
+              <ellipse cx="160" cy="80" rx="140" ry="60" fill={subjectColor} opacity="0.06" />
+              {/* Walking silhouettes - simple person shapes */}
+              {[20,45,65,88,108,132,155,178,200,222,248,272,295].map((x, i) => {
+                const h = 35 + (i % 4) * 8
+                const w = 8 + (i % 3) * 2
+                return (
+                  <g key={i} opacity={0.4 + (i % 3) * 0.15}>
+                    {/* Head */}
+                    <circle cx={x} cy={120 - h - 6} r={w * 0.6} fill="#2A1A10" />
+                    {/* Body */}
+                    <rect x={x - w/2} y={120 - h} width={w} height={h * 0.5} rx={2} fill="#1E1208" />
+                  </g>
+                )
+              })}
+              {/* Ground line */}
+              <rect x="0" y="118" width="320" height="2" fill="#2A1A10" />
+            </svg>
+            {/* Title overlay */}
+            <div style={{
+              position: 'relative', zIndex: 2, paddingBottom: 18,
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 900, fontSize: 'clamp(1.3rem, 5vw, 1.7rem)',
+              color: '#F5F0EB', letterSpacing: '-.01em', lineHeight: 1.2,
+              textShadow: `0 0 40px ${subjectColor}60`,
+            }}>
+              {hook.atmosphericOpener.heading}
+            </div>
+          </div>
+
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.95rem', color: '#8A7A70',
+            margin: '0 0 28px', letterSpacing: '.02em',
+          }}>{hook.atmosphericOpener.sub}</p>
+
+          <button onClick={hookState.startInvestigating} style={{
+            background: `linear-gradient(135deg, ${subjectColor} 0%, #B84A1A 100%)`,
+            border: 'none', borderRadius: 14, padding: '15px 32px',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 800, fontSize: '1rem', letterSpacing: '.08em',
+            color: '#FFF8F5', cursor: 'pointer',
+            boxShadow: `0 8px 32px ${subjectColor}40`,
+          }}>{hook.atmosphericOpener.cta || 'START INVESTIGATING'}</button>
+        </div>
+      )}
 
       {/* ── Phase: QUESTION ── */}
       {phase === 'question' && (
@@ -4197,10 +4260,11 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
   const isWarm     = module.subject === 'History'
   const isBio      = module.subject === 'Biology'
   const isMaths    = module.subject === 'Maths'
-  const pageBg     = isWarm ? '#0C0905' : isBio ? '#04090A' : isMaths ? '#03060E' : '#080C1A'
-  const hdrBg      = isWarm ? 'rgba(12,9,5,.97)' : isBio ? 'rgba(4,9,10,.97)' : isMaths ? 'rgba(3,6,14,.97)' : 'rgba(8,12,26,.96)'
-  const cardBg     = isWarm ? '#1C1408' : isBio ? '#081410' : isMaths ? '#07101E' : '#10182B'
-  const borderBase = (isWarm || isBio || isMaths) ? `${subjectColor}28` : '#1E2A40'
+  const isSoc      = module.subject === 'Sociology'
+  const pageBg     = isWarm ? '#0C0905' : isBio ? '#04090A' : isMaths ? '#03060E' : isSoc ? '#0C0804' : '#080C1A'
+  const hdrBg      = isWarm ? 'rgba(12,9,5,.97)' : isBio ? 'rgba(4,9,10,.97)' : isMaths ? 'rgba(3,6,14,.97)' : isSoc ? 'rgba(12,8,4,.97)' : 'rgba(8,12,26,.96)'
+  const cardBg     = isWarm ? '#1C1408' : isBio ? '#081410' : isMaths ? '#07101E' : isSoc ? '#1A0E07' : '#10182B'
+  const borderBase = (isWarm || isBio || isMaths || isSoc) ? `${subjectColor}28` : '#1E2A40'
 
   // ── Confidence overlay — neutral, no colour judgement ──────────────────
   const CONFIDENCE_LEVELS = [
@@ -4470,7 +4534,7 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
         }}>
           {/* Back — disabled on first screen and during hook question/feedback */}
           {(() => {
-            const backDisabled = virtualIdx === 0 || (currentVirtual.kind === 'hook' && (hookPhase === 'question' || hookPhase === 'feedback'))
+            const backDisabled = virtualIdx === 0 || (currentVirtual.kind === 'hook' && (hookPhase === 'question' || hookPhase === 'feedback' || hookPhase === 'atmospheric'))
             return (
               <button
                 onClick={() => go(-1)}
