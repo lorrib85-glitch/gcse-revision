@@ -2284,6 +2284,928 @@ function SimulatorBlock({ block }) {
   )
 }
 
+// ─── FlipCardsBlock ───────────────────────────────────────────────────────────
+function FlipCardsBlock({ block }) {
+  const [open, setOpen] = useState(Array(block.cards?.length || 0).fill(false))
+  const [allDone, setAllDone] = useState(false)
+
+  function toggle(i) {
+    const next = [...open]
+    next[i] = !next[i]
+    setOpen(next)
+    if (next.every(Boolean)) setAllDone(true)
+  }
+
+  const colorMap = ['#4B90FF', '#38D27A', '#F5B700', '#FF6B6B']
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {block.cards?.map((card, i) => {
+          const col = card.color || colorMap[i % colorMap.length]
+          const isOpen = open[i]
+          return (
+            <button key={i} onClick={() => toggle(i)} className="lift-tap" style={{
+              background: isOpen
+                ? `linear-gradient(145deg, ${col}12, ${col}08)`
+                : 'linear-gradient(145deg, #0A1020, #0D1428)',
+              border: `1.5px solid ${isOpen ? col + '55' : 'rgba(75,144,255,.18)'}`,
+              borderRadius: 16, padding: '14px 18px',
+              textAlign: 'left', cursor: 'pointer',
+              transition: 'all .25s ease', outline: 'none', width: '100%',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{
+                  fontSize: '1.5rem', flexShrink: 0,
+                  filter: isOpen ? 'none' : 'grayscale(.6)',
+                  transition: 'filter .2s',
+                }}>{card.icon}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 700, fontSize: '.93rem',
+                    color: isOpen ? '#F5F7FB' : '#8A94B0',
+                    transition: 'color .2s',
+                  }}>{card.front}</div>
+                  {isOpen && (
+                    <div className="fade-up" style={{
+                      marginTop: 7,
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '.87rem', color: col, lineHeight: 1.55,
+                      borderTop: `1px solid ${col}30`, paddingTop: 8,
+                    }}>{card.back}</div>
+                  )}
+                </div>
+                <span style={{
+                  fontSize: '.9rem', color: isOpen ? col : '#3A4560',
+                  transition: 'transform .2s, color .2s',
+                  transform: isOpen ? 'rotate(90deg)' : 'none',
+                  display: 'inline-block', flexShrink: 0,
+                }}>›</span>
+              </div>
+            </button>
+          )
+        })}
+      </div>
+      {allDone && (
+        <div className="fade-up" style={{
+          marginTop: 12,
+          background: 'rgba(75,144,255,.06)', border: '1px solid rgba(75,144,255,.25)',
+          borderRadius: 12, padding: '11px 14px', textAlign: 'center',
+        }}>
+          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.87rem', color: '#70A8FF' }}>
+            All unlocked. Tap Next when you're ready. →
+          </span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── FracBarBlock ─────────────────────────────────────────────────────────────
+function FracBarBlock({ block }) {
+  const { num, den } = block.fraction || { num: 3, den: 5 }
+  const quiz = block.quiz
+  const [step, setStep] = useState(0) // 0=idle, 1=whole, 2=split, 3=denGlow, 4=numGlow, 5=quiz
+  const [running, setRunning] = useState(false)
+  const [hintIdx, setHintIdx] = useState(-1)
+  const [quizChoice, setQuizChoice] = useState(null)
+  const [quizAnswered, setQuizAnswered] = useState(false)
+  const [shakeIdx, setShakeIdx] = useState(null)
+
+  function startAnim() {
+    if (running) return
+    setRunning(true)
+    setStep(1)
+    setTimeout(() => setStep(2), 700)
+    setTimeout(() => setStep(3), 1500)
+    setTimeout(() => setStep(4), 2400)
+    setTimeout(() => setStep(5), 3500)
+  }
+
+  function pickQuiz(i) {
+    if (quizAnswered) return
+    setQuizChoice(i)
+    if (i === quiz?.correct) {
+      setQuizAnswered(true)
+    } else {
+      setShakeIdx(i)
+      setTimeout(() => { setShakeIdx(null); setQuizChoice(null) }, 500)
+    }
+  }
+
+  const pieces = Array.from({ length: den }, (_, i) => i)
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0A1020, #0D1428)',
+        border: '1px solid rgba(75,144,255,.2)',
+        borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+          textTransform: 'uppercase', color: '#4B90FF', marginBottom: 14,
+        }}>🍫 Fraction Bar</div>
+
+        {/* Fraction label */}
+        {step >= 2 && (
+          <div className="fade-up" style={{ textAlign: 'center', marginBottom: 10 }}>
+            <span style={{
+              fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900,
+              fontSize: 'clamp(1.6rem, 6vw, 2.2rem)',
+              color: '#F5F7FB', letterSpacing: '.02em',
+            }}>
+              <span style={{
+                color: step >= 4 ? '#4DFF88' : '#F5F7FB',
+                transition: 'color .4s',
+                textShadow: step >= 4 ? '0 0 20px rgba(77,255,136,.5)' : 'none',
+              }}>{num}</span>
+              <span style={{ color: '#3A4560', margin: '0 2px' }}>/</span>
+              <span style={{
+                color: step >= 3 ? '#4B90FF' : '#F5F7FB',
+                transition: 'color .4s',
+                textShadow: step >= 3 ? '0 0 20px rgba(75,144,255,.5)' : 'none',
+              }}>{den}</span>
+            </span>
+          </div>
+        )}
+
+        {/* The bar */}
+        <div style={{
+          position: 'relative', height: 52, borderRadius: 12,
+          overflow: 'hidden', marginBottom: 12,
+          background: step >= 1 ? '#1A2540' : 'transparent',
+          border: step >= 1 ? '2px solid #2A3A5A' : '2px dashed #1E2A40',
+          transition: 'background .4s, border .4s',
+        }}>
+          {step >= 2 && pieces.map(i => {
+            const isSelected = i < num
+            const pct = (1 / den) * 100
+            return (
+              <div key={i} style={{
+                position: 'absolute', top: 0, bottom: 0,
+                left: `${pct * i}%`, width: `${pct}%`,
+                background: isSelected
+                  ? (step >= 4 ? 'rgba(77,255,136,.55)' : 'rgba(77,255,136,.22)')
+                  : 'transparent',
+                borderRight: i < den - 1 ? '2px solid #2A3A5A' : 'none',
+                transition: 'background .4s ease',
+                boxShadow: (isSelected && step >= 4) ? 'inset 0 0 12px rgba(77,255,136,.3)' : 'none',
+              }} />
+            )
+          })}
+          {step === 1 && (
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(90deg, rgba(75,144,255,.15), rgba(75,144,255,.08))',
+              borderRadius: 10,
+            }} />
+          )}
+        </div>
+
+        {/* Step labels */}
+        {step >= 3 && step < 5 && (
+          <div className="fade-up" style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
+            {step >= 3 && (
+              <div style={{
+                background: 'rgba(75,144,255,.08)', border: '1px solid rgba(75,144,255,.3)',
+                borderRadius: 10, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8,
+              }}>
+                <span style={{ fontFamily: 'monospace', fontWeight: 900, fontSize: '1.1rem', color: '#4B90FF' }}>{den}</span>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.84rem', color: '#8090B0' }}>equal parts (denominator)</span>
+              </div>
+            )}
+            {step >= 4 && (
+              <div className="fade-up" style={{
+                background: 'rgba(77,255,136,.08)', border: '1px solid rgba(77,255,136,.3)',
+                borderRadius: 10, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8,
+              }}>
+                <span style={{ fontFamily: 'monospace', fontWeight: 900, fontSize: '1.1rem', color: '#4DFF88' }}>{num}</span>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.84rem', color: '#8090B0' }}>selected parts (numerator)</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Start button */}
+        {step === 0 && (
+          <button onClick={startAnim} className="lift-tap" style={{
+            width: '100%',
+            background: 'rgba(75,144,255,.12)', border: '1.5px solid rgba(75,144,255,.35)',
+            borderRadius: 12, padding: '12px',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700, fontSize: '.9rem', color: '#70A8FF',
+            cursor: 'pointer',
+          }}>▶ Watch the animation</button>
+        )}
+
+        {/* Quiz */}
+        {step >= 5 && quiz && (
+          <div className="fade-up" style={{
+            background: '#070E1C', border: '1px solid rgba(75,144,255,.2)',
+            borderRadius: 14, padding: '14px', marginTop: 4,
+          }}>
+            <p style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600, fontSize: '.93rem', color: '#E0E6F0', margin: '0 0 12px',
+            }}>{quiz.q}</p>
+
+            {/* Hints */}
+            {quiz.hints?.length > 0 && !quizAnswered && (
+              <div style={{ marginBottom: 10 }}>
+                <button onClick={() => setHintIdx(h => Math.min(h + 1, quiz.hints.length - 1))}
+                  style={{
+                    background: 'rgba(255,200,87,.06)', border: '1px solid rgba(255,200,87,.2)',
+                    borderRadius: 8, padding: '5px 12px',
+                    fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 600,
+                    color: '#FFC857', cursor: 'pointer',
+                  }}>💡 Need a Hint? ›</button>
+                {hintIdx >= 0 && (
+                  <div className="fade-up" style={{
+                    marginTop: 6, padding: '7px 10px',
+                    background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.15)',
+                    borderRadius: 8,
+                  }}>
+                    <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#C8B870', margin: 0 }}>
+                      {quiz.hints[hintIdx]}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+              {quiz.options?.map((opt, i) => {
+                const isCorrect = i === quiz.correct
+                const isPicked = quizChoice === i
+                let bg = '#10182B', border = '#2A3A5A', color = '#C8D0E8'
+                if (quizAnswered) {
+                  if (isCorrect) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
+                  else if (isPicked) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
+                }
+                return (
+                  <button key={i} onClick={() => pickQuiz(i)} disabled={quizAnswered}
+                    style={{
+                      background: bg, border: '1.5px solid ' + border,
+                      borderRadius: 10, padding: '10px 14px',
+                      fontFamily: "'Inter', sans-serif", fontSize: '.87rem', color,
+                      cursor: quizAnswered ? 'default' : 'pointer',
+                      textAlign: 'left', transition: 'all .2s',
+                      animation: shakeIdx === i ? 'shake .35s ease' : 'none',
+                    }}>{opt}</button>
+                )
+              })}
+            </div>
+            {quizAnswered && (
+              <div className="fade-up" style={{
+                marginTop: 10, padding: '10px 12px',
+                background: 'rgba(77,255,136,.06)', border: '1px solid rgba(77,255,136,.25)',
+                borderRadius: 10,
+              }}>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.84rem', color: '#6BFFB0', margin: 0 }}>
+                  ✓ {quiz.explanation}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── FractionSplitterBlock ────────────────────────────────────────────────────
+function FractionSplitterBlock({ block }) {
+  const levels = block.levels || [
+    { num: 1, den: 2 },
+    { num: 2, den: 4 },
+    { num: 4, den: 8 },
+  ]
+  const [levelIdx, setLevelIdx] = useState(0)
+  const [predicted, setPredicted] = useState(false)
+  const [showReveal, setShowReveal] = useState(false)
+
+  const current = levels[levelIdx]
+  const isMax = levelIdx >= levels.length - 1
+
+  function split() {
+    if (isMax) return
+    setLevelIdx(l => l + 1)
+    setShowReveal(true)
+  }
+
+  function FractionBar({ num, den, highlight = false }) {
+    const pieces = Array.from({ length: den }, (_, i) => i)
+    return (
+      <div style={{
+        position: 'relative', height: 44, borderRadius: 10,
+        overflow: 'hidden',
+        background: '#1A2540',
+        border: `2px solid ${highlight ? 'rgba(75,144,255,.5)' : '#2A3A5A'}`,
+        boxShadow: highlight ? '0 0 16px rgba(75,144,255,.15)' : 'none',
+        transition: 'all .3s',
+      }}>
+        {pieces.map(i => (
+          <div key={i} style={{
+            position: 'absolute', top: 0, bottom: 0,
+            left: `${(100 / den) * i}%`,
+            width: `${100 / den}%`,
+            background: i < num ? 'rgba(77,255,136,.45)' : 'transparent',
+            borderRight: i < den - 1 ? '2px solid #2A3A5A' : 'none',
+            transition: 'width .5s ease, left .5s ease, background .4s',
+          }} />
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0A1020, #0D1428)',
+        border: '1px solid rgba(75,144,255,.2)',
+        borderRadius: 18, padding: '16px',
+      }}>
+        <div style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+          textTransform: 'uppercase', color: '#4B90FF', marginBottom: 14,
+        }}>🔄 Equivalent Fractions</div>
+
+        {/* Prediction prompt */}
+        {!predicted && levelIdx === 0 && (
+          <div style={{
+            background: 'rgba(245,183,0,.06)', border: '1px dashed rgba(245,183,0,.3)',
+            borderRadius: 12, padding: '12px 14px', marginBottom: 14,
+          }}>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.88rem', color: '#C8B870', margin: '0 0 10px', lineHeight: 1.5,
+            }}>{block.predictionPrompt || 'What do you think will happen if we split every piece again?'}</p>
+            <button onClick={() => setPredicted(true)} style={{
+              background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.3)',
+              borderRadius: 8, padding: '7px 14px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '.82rem', color: '#F5B700',
+              cursor: 'pointer',
+            }}>Find out →</button>
+          </div>
+        )}
+
+        {/* Current bar with label */}
+        {predicted && (
+          <div className="fade-up">
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              marginBottom: 8,
+            }}>
+              <span style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 800, fontSize: '1.5rem', color: '#F5F7FB', letterSpacing: '.02em',
+              }}>
+                {current.num}<span style={{ color: '#3A4560', margin: '0 1px' }}>/</span>{current.den}
+              </span>
+              <div style={{
+                background: 'rgba(77,255,136,.08)', border: '1px solid rgba(77,255,136,.25)',
+                borderRadius: 8, padding: '4px 10px',
+                fontFamily: "'Inter', sans-serif", fontSize: '.72rem', fontWeight: 700,
+                color: '#4DFF88',
+              }}>
+                {Math.round((current.num / current.den) * 100)}% shaded
+              </div>
+            </div>
+
+            <FractionBar num={current.num} den={current.den} highlight={showReveal} />
+
+            {/* History of splits */}
+            {levelIdx > 0 && (
+              <div className="fade-up" style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {levels.slice(0, levelIdx).map((lv, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    opacity: .55,
+                  }}>
+                    <span style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 700, fontSize: '.9rem', color: '#4A5578',
+                      minWidth: 40,
+                    }}>{lv.num}/{lv.den}</span>
+                    <div style={{ flex: 1 }}>
+                      <FractionBar num={lv.num} den={lv.den} />
+                    </div>
+                    <span style={{ fontSize: '.72rem', color: '#3A4560' }}>= {Math.round((lv.num / lv.den) * 100)}%</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Reveal text */}
+            {showReveal && levelIdx > 0 && (
+              <div className="fade-up" style={{
+                marginTop: 12,
+                background: 'rgba(75,144,255,.07)', border: '1px solid rgba(75,144,255,.25)',
+                borderRadius: 12, padding: '12px 14px',
+              }}>
+                <p style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.88rem', color: '#A0B0D0', margin: 0, lineHeight: 1.55,
+                }}>
+                  The pieces changed size. <strong style={{ color: '#4DFF88' }}>The amount stayed the same.</strong>
+                </p>
+              </div>
+            )}
+
+            {/* Split button or exam tip */}
+            {!isMax ? (
+              <button onClick={split} className="lift-tap" style={{
+                marginTop: 12, width: '100%',
+                background: 'rgba(75,144,255,.12)', border: '1.5px solid rgba(75,144,255,.35)',
+                borderRadius: 12, padding: '11px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.9rem', color: '#70A8FF',
+                cursor: 'pointer',
+              }}>✂ Split every piece again →</button>
+            ) : block.examTip && (
+              <div className="fade-up" style={{
+                marginTop: 12,
+                background: 'rgba(245,183,0,.06)', border: '1px dashed rgba(245,183,0,.3)',
+                borderRadius: 12, padding: '12px 14px',
+              }}>
+                <div style={{
+                  fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700,
+                  color: '#F5B700', marginBottom: 5, letterSpacing: '.1em', textTransform: 'uppercase',
+                }}>🧠 Exam Master</div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.86rem', color: '#C8D0E8', margin: 0 }}>
+                  {block.examTip}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── FractionLabBlock ─────────────────────────────────────────────────────────
+function FractionLabBlock({ block }) {
+  const tasks = block.tasks || []
+  const [taskIdx, setTaskIdx] = useState(0)
+  const [multiplier, setMultiplier] = useState(null)
+  const [confirmed, setConfirmed] = useState(false)
+  const [correct, setCorrect] = useState(false)
+  const [shake, setShake] = useState(false)
+  const [hintIdx, setHintIdx] = useState(-1)
+  const [tasksDone, setTasksDone] = useState([])
+
+  const task = tasks[taskIdx]
+  const multipliers = [2, 3, 4]
+
+  function check() {
+    if (multiplier === null) return
+    const { from, to } = task
+    const isCorrect = to
+      ? (from.num * multiplier === to.num && from.den * multiplier === to.den)
+      : (from.num * multiplier === task.equivalents?.[0]?.num && from.den * multiplier === task.equivalents?.[0]?.den)
+
+    if (isCorrect || (task.equivalents && task.equivalents.some(eq => from.num * multiplier === eq.num && from.den * multiplier === eq.den))) {
+      setCorrect(true)
+      setConfirmed(true)
+    } else {
+      setShake(true)
+      setTimeout(() => setShake(false), 400)
+    }
+  }
+
+  function nextTask() {
+    setTasksDone(d => [...d, taskIdx])
+    setTaskIdx(t => Math.min(t + 1, tasks.length - 1))
+    setMultiplier(null)
+    setConfirmed(false)
+    setCorrect(false)
+    setHintIdx(-1)
+  }
+
+  function FractionBar({ num, den, glow = false }) {
+    const pieces = Array.from({ length: den }, (_, i) => i)
+    return (
+      <div style={{
+        height: 38, borderRadius: 8, overflow: 'hidden',
+        background: '#1A2540', border: `2px solid ${glow ? 'rgba(77,255,136,.5)' : '#2A3A5A'}`,
+        display: 'flex',
+        boxShadow: glow ? '0 0 16px rgba(77,255,136,.2)' : 'none',
+        transition: 'box-shadow .3s',
+      }}>
+        {pieces.map(i => (
+          <div key={i} style={{
+            flex: 1,
+            background: i < num ? 'rgba(77,255,136,.5)' : 'transparent',
+            borderRight: i < den - 1 ? '2px solid #2A3A5A' : 'none',
+          }} />
+        ))}
+      </div>
+    )
+  }
+
+  const allDone = tasksDone.length >= tasks.length
+
+  if (allDone) {
+    return (
+      <div style={{ margin: '14px 0' }}>
+        <div style={{
+          background: 'rgba(77,255,136,.08)', border: '1.5px solid rgba(77,255,136,.3)',
+          borderRadius: 18, padding: '20px', textAlign: 'center',
+          boxShadow: '0 0 32px rgba(77,255,136,.08)',
+        }}>
+          <div style={{ fontSize: '2rem', marginBottom: 8 }}>✓</div>
+          <div style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700, fontSize: '1rem', color: '#4DFF88',
+          }}>Fraction Lab complete.</div>
+          <p style={{
+            fontFamily: "'Inter', sans-serif", fontSize: '.85rem',
+            color: '#5A8A6A', margin: '6px 0 0',
+          }}>You can build equivalent fractions. That skill powers simplifying, adding fractions, and percentages.</p>
+        </div>
+      </div>
+    )
+  }
+
+  const builtNum = task?.from?.num ? task.from.num * (multiplier || 1) : null
+  const builtDen = task?.from?.den ? task.from.den * (multiplier || 1) : null
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0A1020, #0D1428)',
+        border: '1px solid rgba(75,144,255,.2)',
+        borderRadius: 18, padding: '16px',
+      }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+            textTransform: 'uppercase', color: '#4B90FF',
+          }}>🧩 Fraction Lab</div>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.72rem', color: '#4A5578',
+          }}>Task {taskIdx + 1}/{tasks.length}</div>
+        </div>
+
+        {/* Task label */}
+        <p style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600, fontSize: '.93rem', color: '#E0E6F0', margin: '0 0 14px',
+        }}>{task?.label}</p>
+
+        {/* From fraction */}
+        <div style={{ marginBottom: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#5A6480' }}>Start</span>
+            <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.9rem', color: '#C8D0E8' }}>
+              {task?.from?.num}/{task?.from?.den}
+            </span>
+          </div>
+          <FractionBar num={task?.from?.num} den={task?.from?.den} />
+        </div>
+
+        {/* Built fraction */}
+        {multiplier !== null && (
+          <div className="fade-up" style={{ marginBottom: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#5A6480' }}>Your answer</span>
+              <span style={{
+                fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.9rem',
+                color: correct ? '#4DFF88' : '#C8D0E8',
+                animation: shake ? 'shake .35s ease' : 'none',
+              }}>
+                {builtNum}/{builtDen}
+              </span>
+            </div>
+            <FractionBar num={builtNum} den={builtDen} glow={correct} />
+          </div>
+        )}
+
+        {/* Multiplier buttons */}
+        {!confirmed && (
+          <>
+            <p style={{
+              fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#6A7490',
+              margin: '12px 0 8px',
+            }}>Multiply top and bottom by:</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 10 }}>
+              {multipliers.map(m => (
+                <button key={m} onClick={() => setMultiplier(m)} style={{
+                  background: multiplier === m ? 'rgba(75,144,255,.2)' : '#10182B',
+                  border: `1.5px solid ${multiplier === m ? 'rgba(75,144,255,.6)' : '#2A3A5A'}`,
+                  borderRadius: 10, padding: '10px',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700, fontSize: '.9rem',
+                  color: multiplier === m ? '#70A8FF' : '#4A5578',
+                  cursor: 'pointer', transition: 'all .15s',
+                }}>×{m}</button>
+              ))}
+            </div>
+            <button onClick={check} disabled={multiplier === null} style={{
+              width: '100%',
+              background: multiplier !== null ? 'rgba(75,144,255,.15)' : '#0A1020',
+              border: `1.5px solid ${multiplier !== null ? 'rgba(75,144,255,.4)' : '#1E2A40'}`,
+              borderRadius: 12, padding: '11px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '.9rem',
+              color: multiplier !== null ? '#70A8FF' : '#3A4560',
+              cursor: multiplier !== null ? 'pointer' : 'default',
+              transition: 'all .2s',
+            }}>Check →</button>
+          </>
+        )}
+
+        {/* Hint */}
+        {!confirmed && block.hints?.length > 0 && (
+          <div style={{ marginTop: 10 }}>
+            <button onClick={() => setHintIdx(h => Math.min(h + 1, block.hints.length - 1))}
+              style={{
+                background: 'rgba(255,200,87,.06)', border: '1px solid rgba(255,200,87,.2)',
+                borderRadius: 8, padding: '6px 12px',
+                fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 600,
+                color: '#FFC857', cursor: 'pointer',
+              }}>💡 Need a Hint? ›</button>
+            {hintIdx >= 0 && (
+              <div className="fade-up" style={{
+                marginTop: 6, padding: '7px 10px',
+                background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.15)',
+                borderRadius: 8,
+              }}>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#C8B870', margin: 0 }}>
+                  {block.hints[hintIdx]}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Correct state */}
+        {confirmed && (
+          <div className="fade-up" style={{ marginTop: 12 }}>
+            <div style={{
+              background: 'rgba(77,255,136,.08)', border: '1px solid rgba(77,255,136,.3)',
+              borderRadius: 12, padding: '12px 14px', marginBottom: 10,
+              boxShadow: '0 0 16px rgba(77,255,136,.1)',
+            }}>
+              <p style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.9rem', color: '#4DFF88', margin: 0,
+              }}>✓ Same amount confirmed</p>
+            </div>
+            {taskIdx < tasks.length - 1 ? (
+              <button onClick={nextTask} style={{
+                width: '100%',
+                background: 'rgba(75,144,255,.12)', border: '1px solid rgba(75,144,255,.3)',
+                borderRadius: 12, padding: '11px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.9rem', color: '#70A8FF',
+                cursor: 'pointer',
+              }}>Next task →</button>
+            ) : (
+              <button onClick={() => setTasksDone(d => [...d, taskIdx])} style={{
+                width: '100%',
+                background: 'rgba(77,255,136,.12)', border: '1px solid rgba(77,255,136,.3)',
+                borderRadius: 12, padding: '11px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.9rem', color: '#4DFF88',
+                cursor: 'pointer',
+              }}>Complete Lab ✓</button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── ExamScoredBlock ──────────────────────────────────────────────────────────
+function ExamScoredBlock({ block }) {
+  const questions = block.questions || []
+  const [qIdx, setQIdx] = useState(0)
+  const [choices, setChoices] = useState(Array(questions.length).fill(null))
+  const [revealed, setRevealed] = useState(Array(questions.length).fill(false))
+  const [showModel, setShowModel] = useState(Array(questions.length).fill(false))
+  const [shakeIdx, setShakeIdx] = useState(null)
+  const [allDone, setAllDone] = useState(false)
+
+  const q = questions[qIdx]
+  const myChoice = choices[qIdx]
+  const isAnswered = revealed[qIdx]
+
+  function pick(i) {
+    if (isAnswered) return
+    const nc = [...choices]; nc[qIdx] = i; setChoices(nc)
+    const nr = [...revealed]; nr[qIdx] = true; setRevealed(nr)
+    if (qIdx >= questions.length - 1) {
+      setTimeout(() => setAllDone(true), 1200)
+    }
+  }
+
+  function nextQ() {
+    if (qIdx < questions.length - 1) setQIdx(q => q + 1)
+  }
+
+  function toggleModel(i) {
+    const ns = [...showModel]; ns[i] = !ns[i]; setShowModel(ns)
+  }
+
+  const wasCorrect = isAnswered && myChoice === q?.correct
+  const totalMarks = questions.reduce((acc, q) => acc + (q.marks || 1), 0)
+  const earnedMarks = revealed.reduce((acc, done, i) => {
+    if (!done) return acc
+    return acc + (choices[i] === questions[i]?.correct ? (questions[i]?.marks || 1) : 0)
+  }, 0)
+
+  return (
+    <div style={{ margin: '14px 0' }}>
+      <div style={{
+        background: 'linear-gradient(145deg, #0A1020, #0D1428)',
+        border: '1px solid rgba(75,144,255,.2)',
+        borderRadius: 18, padding: '16px',
+      }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+            textTransform: 'uppercase', color: '#4B90FF',
+          }}>📝 Exam Questions</div>
+          <div style={{
+            background: 'rgba(75,144,255,.08)', border: '1px solid rgba(75,144,255,.2)',
+            borderRadius: 99, padding: '3px 10px',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: '.75rem', fontWeight: 700, color: '#4B90FF',
+          }}>{earnedMarks}/{totalMarks} marks</div>
+        </div>
+
+        {/* Progress dots */}
+        <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
+          {questions.map((_, i) => (
+            <div key={i} style={{
+              height: 4, flex: 1, borderRadius: 99,
+              background: revealed[i]
+                ? (choices[i] === questions[i].correct ? 'rgba(77,255,136,.6)' : 'rgba(255,93,115,.5)')
+                : (i === qIdx ? 'rgba(75,144,255,.5)' : '#1E2A40'),
+              transition: 'background .3s',
+            }} />
+          ))}
+        </div>
+
+        {/* Question */}
+        {!allDone && q && (
+          <div>
+            <div style={{
+              display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 12,
+            }}>
+              <div style={{
+                background: 'rgba(75,144,255,.12)', border: '1px solid rgba(75,144,255,.25)',
+                borderRadius: 99, padding: '2px 8px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: '.7rem', fontWeight: 700, color: '#4B90FF', flexShrink: 0,
+              }}>Q{qIdx + 1} · {q.marks || 1} mark{(q.marks || 1) > 1 ? 's' : ''}</div>
+            </div>
+            <p style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600, fontSize: '.95rem', color: '#F5F7FB',
+              margin: '0 0 14px', lineHeight: 1.45,
+            }}>{q.q}</p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {q.options?.map((opt, i) => {
+                const isCorrectOpt = i === q.correct
+                const isPicked = myChoice === i
+                let bg = '#10182B', border = '#2A3A5A', color = '#C8D0E8'
+                if (isAnswered) {
+                  if (isCorrectOpt) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
+                  else if (isPicked) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
+                }
+                return (
+                  <button key={i} onClick={() => pick(i)} disabled={isAnswered}
+                    style={{
+                      background: bg, border: '1.5px solid ' + border,
+                      borderRadius: 11, padding: '11px 14px',
+                      fontFamily: "'Inter', sans-serif", fontSize: '.88rem', color,
+                      cursor: isAnswered ? 'default' : 'pointer',
+                      textAlign: 'left', transition: 'all .2s',
+                      display: 'flex', alignItems: 'center', gap: 10,
+                    }}>
+                    <span style={{ opacity: .4, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.75rem' }}>
+                      {String.fromCharCode(65 + i)}.
+                    </span>
+                    {opt}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Per-question feedback */}
+            {isAnswered && q.feedback?.[myChoice] && (
+              <div className="fade-up" style={{
+                marginTop: 10,
+                background: wasCorrect ? 'rgba(77,255,136,.07)' : 'rgba(255,93,115,.07)',
+                border: '1px solid ' + (wasCorrect ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.3)'),
+                borderRadius: 12, padding: '12px 14px',
+              }}>
+                <p style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.86rem', color: wasCorrect ? '#4DFF88' : '#FF8DA1',
+                  margin: 0, lineHeight: 1.5,
+                }}>{q.feedback[myChoice]}</p>
+              </div>
+            )}
+
+            {/* Model answer toggle */}
+            {isAnswered && q.modelAnswer && (
+              <div style={{ marginTop: 8 }}>
+                <button onClick={() => toggleModel(qIdx)} style={{
+                  background: 'rgba(245,183,0,.06)', border: '1px solid rgba(245,183,0,.2)',
+                  borderRadius: 8, padding: '5px 12px',
+                  fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 600,
+                  color: '#FFC857', cursor: 'pointer',
+                }}>📋 {showModel[qIdx] ? 'Hide' : 'Show'} model answer</button>
+                {showModel[qIdx] && (
+                  <div className="fade-up" style={{
+                    marginTop: 6, padding: '10px 12px',
+                    background: 'rgba(245,183,0,.05)', border: '1px solid rgba(245,183,0,.18)',
+                    borderRadius: 10,
+                  }}>
+                    <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.84rem', color: '#C8B870', margin: 0, lineHeight: 1.5 }}>
+                      {q.modelAnswer}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {isAnswered && qIdx < questions.length - 1 && (
+              <button onClick={nextQ} style={{
+                marginTop: 12, width: '100%',
+                background: 'rgba(75,144,255,.12)', border: '1px solid rgba(75,144,255,.3)',
+                borderRadius: 12, padding: '11px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '.9rem', color: '#70A8FF',
+                cursor: 'pointer',
+              }}>Next question →</button>
+            )}
+          </div>
+        )}
+
+        {/* All done summary */}
+        {allDone && (
+          <div className="fade-up">
+            <div style={{
+              background: earnedMarks >= Math.floor(totalMarks * .67)
+                ? 'rgba(77,255,136,.07)' : 'rgba(245,183,0,.07)',
+              border: '1px solid ' + (earnedMarks >= Math.floor(totalMarks * .67)
+                ? 'rgba(77,255,136,.3)' : 'rgba(245,183,0,.3)'),
+              borderRadius: 14, padding: '16px', textAlign: 'center', marginBottom: 12,
+            }}>
+              <div style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 900, fontSize: '2rem',
+                color: earnedMarks >= Math.floor(totalMarks * .67) ? '#4DFF88' : '#F5B700',
+              }}>{earnedMarks}/{totalMarks}</div>
+              <p style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.88rem', color: '#9CA8C7', margin: '4px 0 0',
+              }}>
+                {earnedMarks === totalMarks
+                  ? 'Full marks. Solid understanding.'
+                  : earnedMarks >= Math.floor(totalMarks * .67)
+                    ? 'Good. Review any red feedback above.'
+                    : 'Review the fraction bar pages before moving on.'}
+              </p>
+            </div>
+            {block.examTip && (
+              <div style={{
+                background: 'rgba(245,183,0,.06)', border: '1px dashed rgba(245,183,0,.3)',
+                borderRadius: 12, padding: '12px 14px',
+              }}>
+                <div style={{
+                  fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700,
+                  color: '#F5B700', marginBottom: 5, letterSpacing: '.1em', textTransform: 'uppercase',
+                }}>🎯 Exam Master</div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.86rem', color: '#C8D0E8', margin: 0 }}>
+                  {block.examTip}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
 function Screen({ screen, subject }) {
@@ -2353,12 +3275,17 @@ function Screen({ screen, subject }) {
           {block.type === 'builder'       && <BuilderBlock block={block} />}
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
           {block.type === 'boss'          && <BossBlock block={block} />}
-          {block.type === 'numberline'    && <NumberLineBlock block={block} />}
-          {block.type === 'fillblanks'    && <FillBlanksBlock block={block} />}
-          {block.type === 'bidmas'        && <BidmasBlock block={block} />}
-          {block.type === 'tieredquiz'    && <TieredQuizBlock block={block} />}
-          {block.type === 'tfcheckpoint'  && <TFCheckpointBlock block={block} />}
-          {block.type === 'simulator'     && <SimulatorBlock block={block} />}
+          {block.type === 'numberline'       && <NumberLineBlock block={block} />}
+          {block.type === 'fillblanks'       && <FillBlanksBlock block={block} />}
+          {block.type === 'bidmas'           && <BidmasBlock block={block} />}
+          {block.type === 'tieredquiz'       && <TieredQuizBlock block={block} />}
+          {block.type === 'tfcheckpoint'     && <TFCheckpointBlock block={block} />}
+          {block.type === 'simulator'        && <SimulatorBlock block={block} />}
+          {block.type === 'flipcards'        && <FlipCardsBlock block={block} />}
+          {block.type === 'fracbar'          && <FracBarBlock block={block} />}
+          {block.type === 'fractionsplitter' && <FractionSplitterBlock block={block} />}
+          {block.type === 'fractionlab'      && <FractionLabBlock block={block} />}
+          {block.type === 'examscored'       && <ExamScoredBlock block={block} />}
         </div>
       ))}
     </div>
@@ -2829,22 +3756,67 @@ function HookContent({ module, hook, hookState, subjectColor }) {
               Reveal next → ({revealIdx + 2}/{hook.revealItems?.length})
             </button>
           ) : hook.punchline ? (
-            <div style={{
-              background: 'linear-gradient(145deg, #0A1F12, #061008)',
-              border: '1px solid rgba(56,210,122,.3)',
-              borderRadius: 14, padding: '16px 18px', textAlign: 'center',
-              boxShadow: '0 0 32px rgba(56,210,122,.07)',
-            }}>
-              <p style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700, fontSize: '.95rem',
-                color: '#4DFF88', margin: 0, lineHeight: 1.5,
-              }}>{hook.punchline}</p>
-              <p style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '.75rem', color: '#5A6480',
-                margin: '8px 0 0',
-              }}>Tap Next to start learning →</p>
+            <div>
+              <div style={{
+                background: 'linear-gradient(145deg, #0A1F12, #061008)',
+                border: '1px solid rgba(56,210,122,.3)',
+                borderRadius: 14, padding: '16px 18px', textAlign: 'center',
+                boxShadow: '0 0 32px rgba(56,210,122,.07)',
+                marginBottom: hook.revealVisual ? 14 : 0,
+              }}>
+                <p style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700, fontSize: '.95rem',
+                  color: '#4DFF88', margin: 0, lineHeight: 1.5,
+                }}>{hook.punchline}</p>
+                <p style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.75rem', color: '#5A6480',
+                  margin: '8px 0 0',
+                }}>Tap Next to start learning →</p>
+              </div>
+              {hook.revealVisual === 'denominatorBars' && (
+                <div className="fade-up" style={{
+                  background: 'linear-gradient(145deg, #070E1C, #050A14)',
+                  border: '1px solid rgba(75,144,255,.2)',
+                  borderRadius: 14, padding: '14px',
+                }}>
+                  <div style={{
+                    fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700,
+                    letterSpacing: '.12em', textTransform: 'uppercase', color: '#4B90FF',
+                    marginBottom: 12, textAlign: 'center',
+                  }}>Bigger denominator = smaller pieces</div>
+                  {[
+                    { label: '1/2', num: 1, den: 2, color: '#4DFF88' },
+                    { label: '1/4', num: 1, den: 4, color: '#70A8FF' },
+                    { label: '1/10', num: 1, den: 10, color: '#FF8DA1' },
+                  ].map(({ label, num, den, color }) => (
+                    <div key={den} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                      <span style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 700, fontSize: '.85rem', color, minWidth: 32, flexShrink: 0,
+                      }}>{label}</span>
+                      <div style={{
+                        flex: 1, height: 28, borderRadius: 7,
+                        background: '#1A2540', border: '1.5px solid #2A3A5A',
+                        overflow: 'hidden', display: 'flex',
+                      }}>
+                        {Array.from({ length: den }, (_, i) => (
+                          <div key={i} style={{
+                            flex: 1,
+                            background: i < num ? color + '70' : 'transparent',
+                            borderRight: i < den - 1 ? '1.5px solid #2A3A5A' : 'none',
+                          }} />
+                        ))}
+                      </div>
+                      <span style={{
+                        fontFamily: "'Inter', sans-serif", fontSize: '.72rem',
+                        color: '#5A6480', minWidth: 50, flexShrink: 0, textAlign: 'right',
+                      }}>{Math.round((num / den) * 100)}% of bar</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ) : null}
         </div>
