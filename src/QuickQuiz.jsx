@@ -58,7 +58,7 @@ function shuffle(arr) {
   return a
 }
 
-function selectSessionQuestions() {
+function selectSessionQuestions(mode = 'random') {
   const weaknesses = getWeaknesses()
   const all = QUICK_QUIZ_QUESTIONS.map(q => {
     const k = `${q.subject}/${q.topic}`
@@ -68,20 +68,30 @@ function selectSessionQuestions() {
     return { ...q, _priority: errorRate }
   })
 
-  // Separate by difficulty, sort weak areas first within each tier
-  const byDiff = {}
-  DIFF_ORDER.forEach(d => {
-    byDiff[d] = shuffle(all.filter(q => q.difficulty === d)
-      .sort((a, b) => b._priority - a._priority))
-  })
+  let session
 
-  // Build session: start easy, mix in progressively harder
-  const session = [
-    ...byDiff.easy.slice(0, 6),
-    ...byDiff.medium.slice(0, 8),
-    ...byDiff.hard.slice(0, 7),
-    ...byDiff.exam.slice(0, 5),
-  ]
+  if (mode === 'weak') {
+    // Find the weakest topics (error rate > 0, sorted worst first)
+    const topicScores = {}
+    all.forEach(q => {
+      const k = `${q.subject}/${q.topic}`
+      if (!topicScores[k]) topicScores[k] = q._priority
+    })
+    const weakTopics = new Set(
+      Object.entries(topicScores)
+        .filter(([, r]) => r > 0.3)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(([k]) => k)
+    )
+    const weakQ  = shuffle(all.filter(q => weakTopics.has(`${q.subject}/${q.topic}`)))
+    const otherQ = shuffle(all.filter(q => !weakTopics.has(`${q.subject}/${q.topic}`)))
+    // Weak areas first, padded with general questions, across all difficulties
+    session = [...weakQ, ...otherQ].slice(0, 26)
+  } else {
+    // Random: true shuffle, no weighting
+    session = shuffle(all).slice(0, 26)
+  }
 
   // Shuffle match/sequence/dragdrop items within each question
   return session.map(q => {
@@ -488,8 +498,8 @@ function ResultsScreen({ score, total, streak, bestStreak, answeredQ, onClose })
 
 const TOTAL_SECONDS = 300
 
-export default function QuickQuiz({ onClose }) {
-  const [questions]  = useState(() => selectSessionQuestions())
+export default function QuickQuiz({ mode = 'random', onClose }) {
+  const [questions]  = useState(() => selectSessionQuestions(mode))
   const [idx, setIdx]         = useState(0)
   const [answered, setAnswered]   = useState(false)
   const [isCorrect, setIsCorrect] = useState(null)

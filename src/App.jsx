@@ -73,6 +73,11 @@ const NAV_ICONS = {
       <rect x="2" y="3" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/><rect x="15" y="3" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/><rect x="2" y="14" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/><rect x="15" y="14" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/>
     </svg>
   ),
+  quiz: (active) => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill={active ? '#9D5CFF' : 'none'} stroke={active ? '#9D5CFF' : '#4A5578'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill={active ? 'rgba(157,92,255,.25)' : 'none'}/>
+    </svg>
+  ),
   test: (active) => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active ? '#9D5CFF' : '#4A5578'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
@@ -84,6 +89,7 @@ function BottomNav({ tab, setTab }) {
   const tabs = [
     { id: 'home',    label: 'Home'    },
     { id: 'modules', label: 'Modules' },
+    { id: 'quiz',    label: 'Quiz'    },
     { id: 'test',    label: 'Test'    },
   ]
   return (
@@ -141,6 +147,7 @@ export default function App() {
   const [progress, setProgress]   = useState(() => safeGetProgress())
   const [draft, setDraft]         = useState(() => safeGetDraft())
   const [activeModule, setActiveModule] = useState(null)
+  const [quizMode, setQuizMode]         = useState('random')
 
   function openModule(mod) {
     setActiveModule(mod)
@@ -188,10 +195,10 @@ export default function App() {
     setView(null)
   }
 
-  function startQuickQuiz() { setView('quickquiz') }
+  function startQuickQuiz(mode = 'random') { setQuizMode(mode); setView('quickquiz') }
 
   // Full-screen overlays take priority
-  if (view === 'quickquiz')              return <QuickQuiz onClose={closeOverlay} />
+  if (view === 'quickquiz')              return <QuickQuiz mode={quizMode} onClose={closeOverlay} />
   if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} onBack={closeOverlay} />
   if (view === 'session' && session)     return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={closeOverlay} />
   if (view === 'end')                    return <EndScreen topicId={topicId} results={results} savedData={savedData} onHome={closeOverlay} onStart={startSession} />
@@ -201,6 +208,7 @@ export default function App() {
     <div style={{ background: '#070B1A', minHeight: '100vh' }}>
       {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onStartQuickQuiz={startQuickQuiz} />}
       {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
+      {tab === 'quiz'    && <QuizTab onStartQuiz={startQuickQuiz} />}
       {tab === 'test'    && <TestTab />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
@@ -575,6 +583,202 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
 }
 
 
+
+// ─── Quiz tab ─────────────────────────────────────────────────────────────────
+
+function QuizTab({ onStartQuiz }) {
+  const weakAreas = getWeakAreas(4)
+  const hasWeakData = weakAreas.some(w => w.total >= 2)
+
+  const SUBJECT_CHIPS = [
+    { label: 'History', color: '#F5B700' },
+    { label: 'Biology', color: '#38D27A' },
+    { label: 'Chemistry', color: '#38D27A' },
+    { label: 'Maths', color: '#3B82FF' },
+    { label: 'Sociology', color: '#FF5C7A' },
+    { label: 'English', color: '#9D5CFF' },
+  ]
+
+  return (
+    <div style={{ background: '#070B1A', minHeight: '100vh', paddingBottom: 90 }}>
+
+      {/* sticky header */}
+      <div style={{ background: '#0C1220', borderBottom: '1px solid #1E2A40', padding: '16px 20px', position: 'sticky', top: 0, zIndex: 20 }}>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.1rem', color: '#F5F7FB' }}>⚡ Quick Quiz</div>
+        <div style={{ fontSize: '.76rem', color: '#5A6480', marginTop: 3 }}>5 minutes · adaptive difficulty · instant feedback</div>
+      </div>
+
+      <div style={{ maxWidth: 520, margin: '0 auto', padding: '20px 16px' }}>
+
+        {/* ── Random Mix card ── */}
+        <button onClick={() => onStartQuiz('random')} style={{
+          width: '100%', display: 'block', textAlign: 'left', cursor: 'pointer',
+          background: 'linear-gradient(145deg, #111A35, #0D1428)',
+          border: '1.5px solid rgba(157,92,255,.28)',
+          borderRadius: 20, padding: '20px 20px 18px',
+          marginBottom: 14, position: 'relative', overflow: 'hidden',
+          boxShadow: '0 4px 24px rgba(0,0,0,.4), 0 0 0 1px rgba(157,92,255,.06)',
+          transition: 'transform .15s, box-shadow .15s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,.5), 0 0 20px rgba(157,92,255,.12)' }}
+        onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 4px 24px rgba(0,0,0,.4), 0 0 0 1px rgba(157,92,255,.06)' }}>
+
+          {/* ambient glow */}
+          <div style={{ position: 'absolute', top: -40, right: -40, width: 160, height: 160, borderRadius: '50%', background: 'radial-gradient(circle, rgba(157,92,255,.14) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 16 }}>
+            <div style={{
+              width: 52, height: 52, borderRadius: 14, flexShrink: 0,
+              background: 'linear-gradient(145deg, rgba(157,92,255,.22), rgba(124,58,237,.12))',
+              border: '1px solid rgba(157,92,255,.3)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.5rem',
+              boxShadow: '0 0 20px rgba(157,92,255,.12)',
+            }}>🎲</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.15rem', color: '#F5F7FB', lineHeight: 1.1, marginBottom: 5 }}>
+                Random Mix
+              </div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#7A86A8', lineHeight: 1.45 }}>
+                Questions from all subjects, shuffled randomly. Great for keeping everything ticking over.
+              </div>
+            </div>
+          </div>
+
+          {/* Subject chips */}
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 18 }}>
+            {SUBJECT_CHIPS.map(s => (
+              <div key={s.label} style={{
+                padding: '4px 10px', borderRadius: 99,
+                background: `${s.color}14`, border: `1px solid ${s.color}30`,
+                fontSize: '.65rem', fontWeight: 700, color: s.color,
+                letterSpacing: '.06em', textTransform: 'uppercase',
+              }}>{s.label}</div>
+            ))}
+          </div>
+
+          <div style={{
+            background: 'linear-gradient(135deg, #7C3AED, #9D5CFF)',
+            borderRadius: 12, padding: '14px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700, fontSize: '.95rem', color: '#fff',
+            letterSpacing: '.04em',
+            boxShadow: '0 4px 18px rgba(124,58,237,.4), inset 0 1px 0 rgba(255,255,255,.12)',
+          }}>
+            ⚡ Start Random Mix
+          </div>
+        </button>
+
+        {/* ── Weak Areas card ── */}
+        <button onClick={() => onStartQuiz('weak')} style={{
+          width: '100%', display: 'block', textAlign: 'left', cursor: 'pointer',
+          background: 'linear-gradient(145deg, #1A0F14, #120C10)',
+          border: `1.5px solid ${hasWeakData ? 'rgba(255,93,115,.3)' : '#1E2A40'}`,
+          borderRadius: 20, padding: '20px 20px 18px',
+          marginBottom: 24, position: 'relative', overflow: 'hidden',
+          boxShadow: '0 4px 24px rgba(0,0,0,.4)',
+          transition: 'transform .15s, box-shadow .15s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,.5), 0 0 20px rgba(255,93,115,.1)' }}
+        onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 4px 24px rgba(0,0,0,.4)' }}>
+
+          <div style={{ position: 'absolute', top: -40, right: -40, width: 160, height: 160, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,93,115,.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 16 }}>
+            <div style={{
+              width: 52, height: 52, borderRadius: 14, flexShrink: 0,
+              background: 'linear-gradient(145deg, rgba(255,93,115,.2), rgba(255,93,115,.08))',
+              border: '1px solid rgba(255,93,115,.28)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.5rem',
+            }}>🎯</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.15rem', color: '#F5F7FB', lineHeight: 1.1, marginBottom: 5 }}>
+                Weak Areas
+              </div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#7A86A8', lineHeight: 1.45 }}>
+                {hasWeakData
+                  ? 'Focused on topics where you\'re losing marks. Best use of your time.'
+                  : 'Complete some questions first — this mode targets your specific gaps.'}
+              </div>
+            </div>
+          </div>
+
+          {/* Weak areas list OR placeholder */}
+          {hasWeakData ? (
+            <div style={{ marginBottom: 18 }}>
+              {weakAreas.filter(w => w.total >= 2).map(w => {
+                const pct = Math.round(w.rate * 100)
+                const [subject, topic] = w.key.split('/')
+                const sc = {
+                  History: '#F5B700', Biology: '#38D27A', Chemistry: '#38D27A',
+                  Maths: '#3B82FF', English: '#9D5CFF', Sociology: '#FF5C7A',
+                }[subject] || '#9CA8C7'
+                return (
+                  <div key={w.key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '.75rem', fontWeight: 600, color: sc, marginBottom: 3 }}>{subject}</div>
+                      <div style={{ fontSize: '.78rem', color: '#C8D0E8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{topic}</div>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontSize: '.85rem', fontWeight: 800, color: pct > 60 ? '#FF5D73' : '#FFC857' }}>{pct}%</div>
+                      <div style={{ fontSize: '.62rem', color: '#5A6480' }}>wrong</div>
+                    </div>
+                    <div style={{ width: 44, height: 44, borderRadius: '50%', flexShrink: 0, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="44" height="44" viewBox="0 0 44 44" style={{ position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
+                        <circle cx="22" cy="22" r="18" fill="none" stroke="#1E2A40" strokeWidth="3"/>
+                        <circle cx="22" cy="22" r="18" fill="none" stroke={pct > 60 ? '#FF5D73' : '#FFC857'} strokeWidth="3"
+                          strokeDasharray={`${2 * Math.PI * 18}`}
+                          strokeDashoffset={`${2 * Math.PI * 18 * (1 - pct / 100)}`}
+                          strokeLinecap="round"/>
+                      </svg>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div style={{ marginBottom: 18, padding: '12px 14px', background: 'rgba(255,255,255,.03)', border: '1px solid #1E2A40', borderRadius: 10, fontSize: '.8rem', color: '#5A6480', textAlign: 'center' }}>
+              Play Random Mix first to unlock this mode
+            </div>
+          )}
+
+          <div style={{
+            background: hasWeakData
+              ? 'linear-gradient(135deg, #c42040, #FF5D73)'
+              : '#1A2338',
+            borderRadius: 12, padding: '14px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700, fontSize: '.95rem',
+            color: hasWeakData ? '#fff' : '#4A5578',
+            letterSpacing: '.04em',
+            boxShadow: hasWeakData ? '0 4px 18px rgba(196,32,64,.35), inset 0 1px 0 rgba(255,255,255,.1)' : 'none',
+          }}>
+            🎯 {hasWeakData ? 'Target Weak Areas' : 'No data yet'}
+          </div>
+        </button>
+
+        {/* Info strip */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+          {[
+            { icon: '⏱', label: '5 minutes', sub: 'per session' },
+            { icon: '📈', label: 'Adaptive', sub: 'difficulty' },
+            { icon: '💬', label: 'Feedback', sub: 'every question' },
+          ].map((item, i) => (
+            <div key={i} style={{ background: '#0C1220', border: '1px solid #1E2A40', borderRadius: 12, padding: '12px 10px', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.1rem', marginBottom: 4 }}>{item.icon}</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '.78rem', fontWeight: 700, color: '#C8D0E8' }}>{item.label}</div>
+              <div style={{ fontSize: '.65rem', color: '#5A6480', marginTop: 2 }}>{item.sub}</div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  )
+}
 
 // ─── Modules tab ──────────────────────────────────────────────────────────────
 
