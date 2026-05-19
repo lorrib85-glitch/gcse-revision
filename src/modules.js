@@ -3961,6 +3961,15 @@ export const MODULES = [
         sub: 'Students often confuse these. The difference is critical for AQA questions.',
         blocks: [
           {
+            type: 'comic',
+            panels: [
+              {
+                image: '/images/comic-soc1-norms.png',
+                takeaway: 'Norms are unwritten rules — invisible, yet powerful. Break one and people notice immediately.',
+              },
+            ],
+          },
+          {
             type: 'read',
             label: '🎯 Why This Matters',
             text: '<strong>Norms</strong> and <strong>values</strong> appear in nearly every sociology question. Mix them up and you lose marks.',

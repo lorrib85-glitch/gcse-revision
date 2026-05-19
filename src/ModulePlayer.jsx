@@ -4010,22 +4010,8 @@ function HookContent({ module, hook, hookState, subjectColor }) {
               background: 'linear-gradient(to bottom, rgba(0,0,0,.15) 0%, rgba(0,0,0,.55) 55%, rgba(0,0,0,.82) 100%)',
             }} />
 
-            {/* Text block */}
+            {/* Button block */}
             <div style={{ position: 'relative', zIndex: 2, padding: '0 28px 44px' }}>
-              <h1 style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 900, fontSize: 'clamp(2rem, 8vw, 2.8rem)',
-                color: '#FFFFFF', letterSpacing: '-.02em', lineHeight: 1.05,
-                margin: '0 0 10px',
-                textShadow: '0 2px 20px rgba(0,0,0,.6)',
-              }}>{hook.atmosphericOpener.heading}</h1>
-              <p style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '1rem', fontWeight: 400,
-                color: 'rgba(255,255,255,.75)',
-                margin: '0 0 32px', letterSpacing: '.01em',
-              }}>{hook.atmosphericOpener.sub}</p>
-
               <button onClick={e => { e.stopPropagation(); hookState.startInvestigating() }} style={{
                 background: subjectColor,
                 border: 'none', borderRadius: 14, padding: '16px 0',
