@@ -1237,16 +1237,18 @@ function Screen({ screen, subject }) {
         </div>
       )}
       <div style={{ marginBottom: 20 }}>
-        <div style={{
-          display: 'inline-flex',
-          background: 'rgba(157,92,255,.12)',
-          border: '1px solid rgba(157,92,255,.25)',
-          color: '#C18CFF',
-          borderRadius: 99, padding: '4px 12px',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: '.68rem', fontWeight: 700,
-          letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 12,
-        }}>{screen.kicker}</div>
+        {!screen.headerImage && (
+          <div style={{
+            display: 'inline-flex',
+            background: 'rgba(157,92,255,.12)',
+            border: '1px solid rgba(157,92,255,.25)',
+            color: '#C18CFF',
+            borderRadius: 99, padding: '4px 12px',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.68rem', fontWeight: 700,
+            letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 12,
+          }}>{screen.kicker}</div>
+        )}
         <h2 style={{
           fontFamily: "'Space Grotesk', sans-serif",
           fontSize: 'clamp(1.3rem, 4vw, 1.75rem)',

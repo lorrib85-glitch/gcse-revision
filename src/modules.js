@@ -293,6 +293,7 @@ export const MODULES = [
         label: 'Great Plague',
         kicker: '1665',
         heading: 'The Great Plague of London',
+        headerImage: '/images/great-plague-1665.png',
         sub: 'Even after the Renaissance, people still had no idea what actually caused disease.',
         blocks: [
           { type: 'read', label: '☠️ What Happened', text: 'The Great Plague of 1665 killed around 100,000 people in London. Despite Renaissance advances in anatomy, people still blamed <strong>miasma</strong>, <strong>humours</strong> and <strong>God\'s punishment</strong>. The government\'s response was more organised than in 1348, but medical understanding was still badly limited.' },
