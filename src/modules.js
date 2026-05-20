@@ -6863,6 +6863,7 @@ export const MODULES = [
         kicker: 'Talcott Parsons · Functionalism',
         heading: '"Families stop society falling apart."',
         sub: 'Parsons believed the family was doing essential work — quietly, constantly, invisibly.',
+        headerImage: '/images/talcott-parsons.png',
         blocks: [
           {
             type: 'read',
@@ -6942,6 +6943,7 @@ export const MODULES = [
         kicker: 'Young & Willmott · 1973',
         heading: '"Families are changing. Finally."',
         sub: 'Young & Willmott thought Parsons\' world was already becoming history.',
+        headerImage: '/images/young-willmott.png',
         blocks: [
           {
             type: 'read',
@@ -7027,6 +7029,7 @@ export const MODULES = [
         kicker: 'Ann Oakley · Feminism',
         heading: '"Equal? Not exactly."',
         sub: 'Oakley looked at the same evidence and drew very different conclusions.',
+        headerImage: '/images/ann-oakley.png',
         blocks: [
           {
             type: 'read',
