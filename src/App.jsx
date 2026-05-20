@@ -62,35 +62,31 @@ function isModuleComplete(m) {
 // modules are excluded from rotation and shown in a separate section.
 
 function getPriorityModuleForToday() {
-  const weakAreas = getWeakAreas(50)  // grab all recorded weaknesses
-
-  // Aggregate error rate per subject
-  const subjectRates = {}
-  weakAreas.forEach(w => {
-    const subject = w.key.split('/')[0]
-    if (!subjectRates[subject]) subjectRates[subject] = { c: 0, i: 0, total: 0 }
-    subjectRates[subject].total += w.total
-    subjectRates[subject].i    += Math.round(w.errorRate * w.total)
-    subjectRates[subject].c    += Math.round((1 - w.errorRate) * w.total)
-  })
-
-  const incomplete = MODULES.filter(m => !isModuleComplete(m))
-  if (incomplete.length === 0) return MODULES[0]  // all done — cycle from start
-
-  // Score each module: error rate for its subject (unknown subjects score 0.5 as neutral)
-  const scored = incomplete.map(m => {
-    const sr = subjectRates[m.subject]
-    const rate = sr && sr.total > 0 ? sr.i / (sr.c + sr.i) : 0.5
-    return { m, rate }
-  })
-  // Sort: highest error rate first
-  scored.sort((a, b) => b.rate - a.rate)
-
-  // Rotate daily within a top-priority band (within 10% of the top score)
-  const topRate = scored[0].rate
-  const topGroup = scored.filter(s => s.rate >= topRate - 0.1)
-  const dayIndex = Math.floor(Date.now() / 86400000)  // days since epoch
-  return topGroup[dayIndex % topGroup.length].m
+  try {
+    const weakAreas = getWeakAreas(50)
+    const subjectRates = {}
+    weakAreas.forEach(w => {
+      const subject = w.key.split('/')[0]
+      if (!subjectRates[subject]) subjectRates[subject] = { c: 0, i: 0, total: 0 }
+      subjectRates[subject].total += w.total
+      subjectRates[subject].i    += Math.round(w.errorRate * w.total)
+      subjectRates[subject].c    += Math.round((1 - w.errorRate) * w.total)
+    })
+    const incomplete = MODULES.filter(m => !isModuleComplete(m))
+    if (incomplete.length === 0) return MODULES[0] || null
+    const scored = incomplete.map(m => {
+      const sr = subjectRates[m.subject]
+      const rate = sr && sr.total > 0 ? sr.i / (sr.c + sr.i) : 0.5
+      return { m, rate }
+    })
+    scored.sort((a, b) => b.rate - a.rate)
+    const topRate = scored[0].rate
+    const topGroup = scored.filter(x => x.rate >= topRate - 0.1)
+    const dayIndex = Math.floor(Date.now() / 86400000)
+    return topGroup[dayIndex % topGroup.length].m
+  } catch {
+    return MODULES.find(m => !isModuleComplete(m)) || MODULES[0] || null
+  }
 }
 
 function safeGetProgress() {
@@ -315,29 +311,26 @@ function daysUntilExam() {
 }
 
 function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule, onStartQuickQuiz }) {
-  const nextId        = getNextTopicId(TOPIC_IDS)
-  const draftTopic    = draft ? TOPICS.find(t => t.id === draft.topicId) : null
-  const PHASE_NAMES   = ['', 'Warm-up', 'Key Facts', 'Mini Quiz', 'Progress']
-  const streak        = progress.streak || 0
-  const examDays      = daysUntilExam()
-  const totalSessions = Object.values(progress.topicProgress || {}).reduce((s, t) => s + (t.completedSessions || 0), 0)
-  const completedModules  = MODULES.filter(m => isModuleComplete(m))
-  const modulesCompleted  = completedModules.length
+  // ── hooks first (React rules) ──────────────────────────────────────────────
+  const [completedOpen, setCompletedOpen] = useState(false)
 
-  const todayModule       = getPriorityModuleForToday()
-  const todayModuleState  = todayModule ? safeGetModuleState(todayModule.id) : {}
-  const todayModulePct    = todayModule
+  // ── derived values ─────────────────────────────────────────────────────────
+  const nextId             = getNextTopicId(TOPIC_IDS)
+  const draftTopic         = draft ? TOPICS.find(t => t.id === draft.topicId) : null
+  const streak             = progress.streak || 0
+  const examDays           = daysUntilExam()
+  const completedModules   = MODULES.filter(m => isModuleComplete(m))
+  const modulesCompleted   = completedModules.length
+
+  const todayModule        = getPriorityModuleForToday()
+  const todayModuleState   = todayModule ? safeGetModuleState(todayModule.id) : {}
+  const todayModulePct     = todayModule
     ? Math.round(((todayModuleState.screen || 0) / (todayModule.screens?.length || 1)) * 100)
     : 0
   const todayModuleStarted = (todayModuleState.screen || 0) > 0
 
-  // Weak subject to surface as reason for today's pick
-  const weakAreas0        = getWeakAreas(1)
-  const weakSubjectReason = weakAreas0.length > 0
-    ? weakAreas0[0].key.split('/')[0]
-    : null
-
-  const [completedOpen, setCompletedOpen] = useState(false)
+  const weakAreas0         = getWeakAreas(1)
+  const weakSubjectReason  = weakAreas0.length > 0 ? weakAreas0[0].key.split('/')[0] : null
 
   const hour = new Date().getHours()
   const timeGreeting = hour < 12 ? 'Morning,' : hour < 17 ? 'Afternoon,' : 'Evening,'
