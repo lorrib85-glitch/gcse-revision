@@ -5368,6 +5368,7 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx, onNavi
   const [bossAttempted, setBossAttempted] = useState(false)
 
   const currentVirtual = allVirtual[Math.min(virtualIdx, totalVirtual - 1)] || allVirtual[0]
+  const cur = currentVirtual.kind === 'content' ? currentVirtual.data : null
   const pct = Math.round(((virtualIdx + 1) / totalVirtual) * 100)
   const isLastContent = currentVirtual.kind === 'content' && currentVirtual.idx === module.screens.length - 1
 
@@ -5446,7 +5447,6 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx, onNavi
   const nextBtnLabel = nextLabel()
   const isFinishBtn  = isLastContent && !finishLocked
 
-  const cur = currentVirtual.kind === 'content' ? currentVirtual.data : null
   const subjectColor = module.color || '#9D5CFF'
   const isWarm     = module.subject === 'History'
   const isBio      = module.subject === 'Biology'
