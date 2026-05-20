@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo, createContext, useCo
 import { recordActivity, recordScore } from './progress.js'
 import { CONTENT_INDEX, findSectionByKeywords } from './contentIndex.js'
 import { logWrongAnswer, isWeakArea, getTagCount } from './weaknessTracker.js'
+import { SOC_KEY_TERMS } from './sociologyKeyTerms.js'
 
 // ─── Module navigation context ────────────────────────────────────────────────
 // Lets deep components (QuizBlock etc.) navigate to a module section.
@@ -189,6 +190,110 @@ function TimelineBlock({ block, isWarm = false, isBio = false }) {
   )
 }
 
+// ─── KeywordHighlighterTextarea ────────────────────────────────────────────────
+// Wraps a textarea with a backdrop div that highlights AQA Sociology key terms
+// in the module's accent colour as the student types. Uses the "transparent text
+// over highlight backdrop" technique: backdrop text is invisible, only the coloured
+// mark backgrounds show through the transparent-text textarea above.
+function KeywordHighlighterTextarea({ value, onChange, placeholder, disabled, accent, minHeight = 100, style = {} }) {
+  const backdropRef = useRef(null)
+  const textareaRef = useRef(null)
+
+  // Build highlighted HTML — runs only when value changes
+  const highlighted = useMemo(() => {
+    if (!value) return ''
+    // Escape HTML entities
+    let escaped = value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+    // Apply keyword highlights (longest terms first, case-insensitive)
+    SOC_KEY_TERMS.forEach(term => {
+      const safe = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const rx = new RegExp(`(?<![\\w-])(${safe})(?![\\w-])`, 'gi')
+      escaped = escaped.replace(rx, `<mark data-kw>$1</mark>`)
+    })
+    // Preserve newlines for the backdrop div
+    return escaped.replace(/\n/g, '<br>')
+  }, [value])
+
+  // Sync textarea scroll position → backdrop
+  function syncScroll() {
+    if (backdropRef.current && textareaRef.current) {
+      backdropRef.current.scrollTop = textareaRef.current.scrollTop
+    }
+  }
+
+  const sharedFont = {
+    fontFamily: "'Inter', sans-serif",
+    fontSize: '.93rem',
+    lineHeight: '1.7',
+    letterSpacing: 'normal',
+    padding: 0,
+    margin: 0,
+    width: '100%',
+    boxSizing: 'border-box',
+  }
+
+  const markStyle = `
+    [data-kw] {
+      background: ${accent}28;
+      color: ${accent};
+      border-radius: 3px;
+      padding: 0 1px;
+      font-style: normal;
+      font-weight: 600;
+    }
+  `
+
+  return (
+    <div style={{ position: 'relative', minHeight, ...style }}>
+      <style>{markStyle}</style>
+      {/* Backdrop — shows keyword highlights, text itself is invisible */}
+      <div
+        ref={backdropRef}
+        aria-hidden="true"
+        dangerouslySetInnerHTML={{ __html: highlighted }}
+        style={{
+          ...sharedFont,
+          position: 'absolute', inset: 0,
+          color: 'transparent',         // text invisible — only mark backgrounds show
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+          overflow: 'hidden',
+          pointerEvents: 'none',
+          userSelect: 'none',
+          zIndex: 0,
+        }}
+      />
+      {/* Textarea — transparent background, text visible on top of highlights */}
+      <textarea
+        ref={textareaRef}
+        value={value}
+        onChange={onChange}
+        onScroll={syncScroll}
+        placeholder={placeholder}
+        disabled={disabled}
+        style={{
+          ...sharedFont,
+          position: 'relative',
+          zIndex: 1,
+          background: 'transparent',
+          color: '#E0E6F0',
+          caretColor: '#E0E6F0',
+          border: 'none',
+          resize: 'none',
+          outline: 'none',
+          minHeight,
+          display: 'block',
+          opacity: disabled ? 0.5 : 1,
+        }}
+      />
+    </div>
+  )
+}
+
 // ─── BossBlock — free text answer graded by Claude API ───────────────────────
 const GRADE_COLOURS_BOSS = {
   strong:     { bg: 'rgba(77,255,136,.08)',  border: 'rgba(77,255,136,.35)',  text: '#4DFF88',  badge: '#38D27A',  label: 'Strong answer' },
@@ -227,7 +332,8 @@ async function gradeBossAnswer(question, markPoints, studentAnswer) {
   }
 }
 
-function BossBlock({ block }) {
+function BossBlock({ block, isWarm, isBio, isMaths, isSoc }) {
+  const accent = isWarm ? '#C47828' : isBio ? '#38D27A' : isMaths ? '#4B90FF' : isSoc ? '#D96030' : '#9D5CFF'
   const [answer, setAnswer] = useState('')
   const [grading, setGrading] = useState(false)
   const [feedback, setFeedback] = useState(null)
@@ -306,19 +412,13 @@ function BossBlock({ block }) {
               fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
               letterSpacing: '.1em', color: '#4A5578', marginBottom: 8,
             }}>Your answer</div>
-            <textarea
+            <KeywordHighlighterTextarea
               value={answer}
               onChange={e => { setAnswer(e.target.value); setError(null) }}
-              placeholder="Write your answer here. Use correct scientific terms. Minimum one full sentence."
+              placeholder="Write your answer here. Use sociology key terms where relevant."
               disabled={grading}
-              style={{
-                width: '100%', border: 'none', background: 'transparent',
-                resize: 'none', outline: 'none',
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '.93rem', color: '#E0E6F0',
-                lineHeight: 1.7, minHeight: 100,
-                opacity: grading ? .5 : 1,
-              }}
+              accent={accent}
+              minHeight={100}
             />
           </div>
 
@@ -4294,7 +4394,7 @@ function Screen({ screen, subject }) {
           {block.type === 'scarf'         && <ScarfBlock block={block} />}
           {block.type === 'builder'       && <BuilderBlock block={block} />}
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
-          {block.type === 'boss'          && <BossBlock block={block} />}
+          {block.type === 'boss'          && <BossBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} isSoc={isSoc} />}
           {block.type === 'numberline'       && <NumberLineBlock block={block} />}
           {block.type === 'fillblanks'       && <FillBlanksBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} isSoc={isSoc} />}
           {block.type === 'bidmas'           && <BidmasBlock block={block} />}
