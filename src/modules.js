@@ -6414,7 +6414,66 @@ export const MODULES = [
         ],
       },
 
-      // Screen 5 — Changing Families
+      // Screen 5 — New Right
+      {
+        label: 'New Right',
+        kicker: 'Sociological Perspectives',
+        heading: 'The New Right: family breakdown and the welfare state.',
+        sub: 'Charles Murray argued welfare dependency was creating a damaging underclass. A controversial but exam-essential perspective.',
+        headerImage: '/images/charles-murray.png',
+        blocks: [
+          {
+            type: 'read',
+            label: '🏛️ The New Right Perspective',
+            text: 'The <strong>New Right</strong> is a conservative sociological perspective that emerged in the 1970s–80s. Thinkers like <strong>Charles Murray</strong> and <strong>David Marsland</strong> argue that the traditional nuclear family — with a married male breadwinner and female carer — is the ideal structure for a stable society. They believe state welfare has undermined this ideal by removing the need for two-parent families.',
+          },
+          {
+            type: 'keypoint',
+            heading: 'Key New Right Ideas',
+            points: [
+              { emoji: '👤', label: 'Charles Murray', detail: 'Murray (1984) argued welfare benefits created a growing "underclass" — a group dependent on state support with weakened work ethic and family structure. He saw rising lone-parent families as evidence of moral and social decline.' },
+              { emoji: '🏛️', label: 'David Marsland', detail: 'Marsland argued universal welfare was too generous and created a "dependency culture" — removing individual and family responsibility. He called for targeted, not universal, welfare provision.' },
+              { emoji: '💍', label: 'The nuclear family ideal', detail: 'New Right thinkers see the traditional nuclear family as the best environment for raising children and maintaining social stability. Other family forms are seen as less effective.' },
+              { emoji: '⚠️', label: 'The underclass', detail: 'Murray\'s concept: a section of society characterised by welfare dependency, absent fathers, high crime rates and rejection of mainstream values. He blamed welfare, not structural inequality.' },
+            ],
+          },
+          {
+            type: 'misconception',
+            items: [
+              {
+                myth: 'The New Right simply hates poor people.',
+                reality: 'New Right thinkers frame their argument as concern for social stability. They argue welfare harms the people it claims to help by creating long-term dependency. Whether or not you agree, this is the logic you need to be able to explain in an exam.',
+              },
+              {
+                myth: 'The New Right is the same as Functionalism.',
+                reality: 'Both favour the nuclear family, but for different reasons. Functionalists focus on socialisation and stability. The New Right focuses on welfare dependency and moral responsibility. They are distinct perspectives in AQA Sociology.',
+              },
+            ],
+          },
+          {
+            type: 'colsort',
+            question: 'Is this a New Right or Feminist argument?',
+            columns: [
+              { label: 'NEW RIGHT\nConservative — traditional family ideal', color: '#3B82FF', bg: 'rgba(59,130,255,.07)' },
+              { label: 'FEMINIST\nCritique of family inequality', color: '#D96030', bg: 'rgba(217,96,48,.07)' },
+            ],
+            items: [
+              { label: 'Welfare creates dependency and weakens family structure', col: 0, explanation: 'New Right — Murray\'s core argument about welfare undermining the traditional family.' },
+              { label: 'The family reinforces patriarchy and unpaid female labour', col: 1, explanation: 'Feminist — Oakley and others argue the family benefits men at women\'s expense.' },
+              { label: 'The nuclear family is the ideal structure for raising children', col: 0, explanation: 'New Right — they see the two-parent married family as best for stability and socialisation.' },
+              { label: 'Women face a dual burden of paid and unpaid work', col: 1, explanation: 'Feminist — the dual burden is a feminist concept about inequality within families.' },
+              { label: 'Lone-parent families contribute to social problems', col: 0, explanation: 'New Right — Murray linked single parenthood to the underclass and welfare dependency.' },
+            ],
+            explanation: 'New Right = traditional values, anti-welfare. Feminist = equality critique, domestic labour. Both evaluate the family but from opposite political standpoints.',
+          },
+          {
+            type: 'examtip',
+            tip: 'AQA regularly asks you to compare perspectives on the family. New Right vs Feminist is a classic pairing: both evaluate the family critically, but reach opposite conclusions. New Right: family breakdown is caused by welfare. Feminist: family inequality is caused by patriarchy.',
+          },
+        ],
+      },
+
+      // Screen 6 — Changing Families
       {
         label: 'Changing Families',
         kicker: 'Social Change',
