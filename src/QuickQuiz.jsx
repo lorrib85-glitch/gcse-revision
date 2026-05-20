@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { QUICK_QUIZ_QUESTIONS } from './data/quickQuizData.js'
+import { MODULES } from './modules.js'
 
 // ─── Weakness tracking ────────────────────────────────────────────────────────
 
@@ -380,33 +381,57 @@ function Categorise({ q, answered, onAnswer }) {
   )
 }
 
+// ─── Subject → placeholder data for subjects with no module yet ──────────────
+
+const SUBJECT_PLACEHOLDERS = {
+  Chemistry: { icon: '⚗️', title: 'Chemistry', subtitle: 'Module coming soon — check back soon!', placeholder: true },
+  English:   { icon: '📖', title: 'English Literature', subtitle: 'Module coming soon — check back soon!', placeholder: true },
+  Physics:   { icon: '⚡', title: 'Physics', subtitle: 'Module coming soon — check back soon!', placeholder: true },
+}
+
 // ─── Results screen ────────────────────────────────────────────────────────────
 
-function ResultsScreen({ score, total, streak, bestStreak, answeredQ, onClose }) {
+function ResultsScreen({ score, total, streak, bestStreak, answeredQ, onRetry, onClose, onOpenModule }) {
   const pct = total > 0 ? Math.round((score / total) * 100) : 0
-  const weaknesses = getWeaknesses()
-  const weakAreas = Object.entries(weaknesses)
-    .map(([key, v]) => {
-      const t = v.c + v.i
-      return { key, total: t, rate: t > 0 ? v.i / t : 0 }
-    })
-    .filter(x => x.total >= 2 && x.rate > 0.4)
-    .sort((a, b) => b.rate - a.rate)
-    .slice(0, 3)
-
   const ringColor = pct >= 70 ? '#4DFF88' : pct >= 40 ? '#FFC857' : '#FF5D73'
 
-  // Subject breakdown
+  // Subject breakdown from this session
   const bySubject = {}
   answeredQ.forEach(({ q, correct }) => {
     if (!bySubject[q.subject]) bySubject[q.subject] = { c: 0, i: 0 }
     correct ? bySubject[q.subject].c++ : bySubject[q.subject].i++
   })
 
+  // Subjects ranked by error rate (only those with at least 1 miss)
+  const weakSubjects = Object.entries(bySubject)
+    .map(([subject, v]) => ({ subject, c: v.c, i: v.i, total: v.c + v.i, rate: v.i / (v.c + v.i) }))
+    .filter(x => x.i > 0)
+    .sort((a, b) => b.rate - a.rate)
+
+  // Build recommended module cards (up to 2 subjects)
+  const recommendedCards = weakSubjects.slice(0, 2).map(({ subject, rate }) => {
+    const mod = MODULES.find(m => m.subject === subject)
+    if (mod) return { mod, subject, rate, placeholder: false }
+    const ph = SUBJECT_PLACEHOLDERS[subject]
+    if (ph) return { mod: ph, subject, rate, placeholder: true }
+    return null
+  }).filter(Boolean)
+
+  // Label for try-again button footer
+  const tryAgainSubjects = weakSubjects.slice(0, 2).map(w => w.subject).join(' & ')
+
+  // All-time weak areas from localStorage
+  const allTimeWeak = Object.entries(getWeaknesses())
+    .map(([key, v]) => { const t = v.c + v.i; return { key, total: t, rate: t > 0 ? v.i / t : 0 } })
+    .filter(x => x.total >= 2 && x.rate > 0.4)
+    .sort((a, b) => b.rate - a.rate)
+    .slice(0, 3)
+
   return (
     <div style={{ background: '#070B1A', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ flex: 1, overflowY: 'auto', padding: '32px 20px 100px', maxWidth: 520, margin: '0 auto', width: '100%' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '32px 20px 120px', maxWidth: 520, margin: '0 auto', width: '100%' }}>
 
+        {/* Score ring */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{
             width: 130, height: 130, borderRadius: '50%',
@@ -420,14 +445,14 @@ function ResultsScreen({ score, total, streak, bestStreak, answeredQ, onClose })
             <span style={{ fontSize: '.7rem', color: '#5A6480', fontWeight: 600, marginTop: 2 }}>{score}/{total}</span>
           </div>
           <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.5rem', color: '#F5F7FB', marginBottom: 6 }}>
-            {pct >= 80 ? 'Excellent work! 🔥' : pct >= 60 ? 'Good effort!' : pct >= 40 ? 'Keep going!' : 'Room to grow!'}
+            {pct >= 80 ? 'Excellent work! 🔥' : pct >= 60 ? 'Great effort! ⭐' : pct >= 40 ? "You're making progress! 💪" : 'Keep building — you\'ve got this! 🌱'}
           </h2>
           <p style={{ color: '#9CA8C7', fontSize: '.9rem' }}>
-            {score} correct out of {total} questions
+            {score} correct out of {total} question{total !== 1 ? 's' : ''}
           </p>
         </div>
 
-        {/* Streak */}
+        {/* Stats strip */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 22 }}>
           {[
             { label: 'Best streak', value: bestStreak, icon: '🔥', color: '#FF8A1F' },
@@ -440,19 +465,19 @@ function ResultsScreen({ score, total, streak, bestStreak, answeredQ, onClose })
           ))}
         </div>
 
-        {/* Subject breakdown */}
+        {/* Performance by subject */}
         {Object.keys(bySubject).length > 0 && (
           <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 16, padding: '16px', marginBottom: 18 }}>
-            <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#5A6480', marginBottom: 14 }}>Subject breakdown</div>
+            <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#5A6480', marginBottom: 14 }}>Performance by subject</div>
             {Object.entries(bySubject).map(([subject, v]) => {
               const sc = SUBJECT_COLOUR[subject] || SUBJECT_COLOUR.History
               const t = v.c + v.i
               const p = Math.round((v.c / t) * 100)
               return (
                 <div key={subject} style={{ marginBottom: 12 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
                     <span style={{ fontSize: '.82rem', fontWeight: 600, color: sc.color }}>{subject}</span>
-                    <span style={{ fontSize: '.78rem', color: '#9CA8C7' }}>{v.c}/{t} ({p}%)</span>
+                    <span style={{ fontSize: '.78rem', color: p === 100 ? '#4DFF88' : p >= 60 ? '#9CA8C7' : '#FFC857', fontWeight: 700 }}>{v.c}/{t} {p === 100 ? '✓ Perfect' : `(${p}%)`}</span>
                   </div>
                   <div style={{ height: 5, background: '#1A2338', borderRadius: 99, overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: p + '%', background: sc.color, borderRadius: 99, transition: 'width .5s ease', boxShadow: `0 0 6px ${sc.color}55` }} />
@@ -463,29 +488,105 @@ function ResultsScreen({ score, total, streak, bestStreak, answeredQ, onClose })
           </div>
         )}
 
-        {/* Weak areas */}
-        {weakAreas.length > 0 && (
-          <div style={{ background: 'rgba(255,93,115,.06)', border: '1px solid rgba(255,93,115,.2)', borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
+        {/* Recommended next — based on weakest subjects this session */}
+        {recommendedCards.length > 0 && (
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 11 }}>
+              <span style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#5A6480' }}>Recommended next</span>
+              <span style={{ marginLeft: 'auto', fontSize: '.68rem', fontWeight: 700, color: '#FF5D73', background: 'rgba(255,93,115,.1)', border: '1px solid rgba(255,93,115,.2)', borderRadius: 99, padding: '2px 9px' }}>Priority</span>
+            </div>
+            {recommendedCards.map(({ mod, subject, rate, placeholder }) => {
+              const sc = SUBJECT_COLOUR[subject] || SUBJECT_COLOUR.History
+              const pctMissed = Math.round(rate * 100)
+              const desc = pctMissed >= 70
+                ? `You found this topic challenging — this module will help build confidence.`
+                : `You had some difficulty here — a quick review will lock in the gaps.`
+              return (
+                <button
+                  key={subject}
+                  disabled={placeholder}
+                  onClick={() => !placeholder && onOpenModule?.(mod)}
+                  style={{
+                    width: '100%', textAlign: 'left', marginBottom: 10,
+                    background: '#10182B', border: `1px solid ${placeholder ? '#1E2A40' : sc.border}`,
+                    borderRadius: 14, padding: '14px 16px',
+                    display: 'flex', alignItems: 'center', gap: 13,
+                    cursor: placeholder ? 'default' : 'pointer',
+                    opacity: placeholder ? 0.6 : 1,
+                    transition: 'all .15s',
+                  }}
+                  onMouseEnter={e => { if (!placeholder) e.currentTarget.style.background = '#141E32' }}
+                  onMouseLeave={e => { if (!placeholder) e.currentTarget.style.background = '#10182B' }}
+                >
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                    background: sc.bg, border: `1px solid ${sc.border}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1.3rem',
+                  }}>{mod.icon || '📚'}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '.87rem', fontWeight: 700, color: '#F5F7FB', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {mod.title}
+                    </div>
+                    <div style={{ fontSize: '.75rem', color: '#9CA8C7', lineHeight: 1.35 }}>{placeholder ? mod.subtitle : desc}</div>
+                  </div>
+                  {!placeholder && <span style={{ color: '#5A6480', fontSize: '1rem', flexShrink: 0 }}>›</span>}
+                  {placeholder && <span style={{ fontSize: '.65rem', color: '#5A6480', flexShrink: 0, whiteSpace: 'nowrap' }}>Soon</span>}
+                </button>
+              )
+            })}
+          </div>
+        )}
+
+        {/* All-time focus areas */}
+        {allTimeWeak.length > 0 && (
+          <div style={{ background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.15)', borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
               <span>🎯</span>
-              <span style={{ fontSize: '.75rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#FF5D73' }}>Focus areas</span>
+              <span style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#FFC857' }}>Topics to revisit</span>
             </div>
-            {weakAreas.map(w => (
+            {allTimeWeak.map(w => (
               <div key={w.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
                 <span style={{ fontSize: '.82rem', color: '#E0E6F0' }}>{w.key.replace('/', ' — ')}</span>
-                <span style={{ fontSize: '.75rem', color: '#FF5D73', fontWeight: 700 }}>{Math.round(w.rate * 100)}% wrong</span>
+                <span style={{ fontSize: '.72rem', color: '#FFC857', fontWeight: 700 }}>{Math.round(w.rate * 100)}% needs work</span>
               </div>
             ))}
           </div>
         )}
+      </div>
 
-        <button onClick={onClose} style={{
+      {/* ── Sticky bottom CTA ── */}
+      <div style={{
+        position: 'sticky', bottom: 0,
+        background: 'rgba(7,11,26,.97)', backdropFilter: 'blur(16px)',
+        borderTop: '1px solid #1E2A40',
+        padding: '14px 20px 24px',
+        maxWidth: 520, margin: '0 auto', width: '100%',
+      }}>
+        <button onClick={onRetry} style={{
           width: '100%', padding: '17px', borderRadius: 14,
-          background: 'linear-gradient(135deg, #7C3AED, #9D5CFF)',
+          background: 'linear-gradient(135deg, #1A8C4E, #22C069)',
           color: '#fff', border: 'none', cursor: 'pointer',
           fontFamily: "'Space Grotesk', sans-serif",
-          fontWeight: 700, fontSize: '1rem', letterSpacing: '.03em',
-          boxShadow: '0 4px 20px rgba(124,58,237,.4)',
+          fontWeight: 800, fontSize: '1rem', letterSpacing: '.04em',
+          boxShadow: '0 4px 20px rgba(34,192,105,.35)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          marginBottom: 10,
+        }}>
+          <span style={{ fontSize: '1.1rem' }}>↺</span>
+          TRY AGAIN
+          {tryAgainSubjects && (
+            <span style={{ fontSize: '.75rem', opacity: 0.75, fontWeight: 600 }}>
+              {' '}· Focus on {tryAgainSubjects}
+            </span>
+          )}
+        </button>
+        <button onClick={onClose} style={{
+          width: '100%', padding: '13px', borderRadius: 14,
+          background: 'transparent', color: '#9CA8C7',
+          border: '1px solid #2A3552', cursor: 'pointer',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600, fontSize: '.9rem',
         }}>
           Back to Home
         </button>
@@ -496,10 +597,10 @@ function ResultsScreen({ score, total, streak, bestStreak, answeredQ, onClose })
 
 // ─── Main QuickQuiz component ─────────────────────────────────────────────────
 
-const TOTAL_SECONDS = 300
+const TOTAL_SECONDS = 90
 
-export default function QuickQuiz({ mode = 'random', onClose }) {
-  const [questions]  = useState(() => selectSessionQuestions(mode))
+export default function QuickQuiz({ mode = 'random', onClose, onOpenModule }) {
+  const [questions, setQuestions] = useState(() => selectSessionQuestions(mode))
   const [idx, setIdx]         = useState(0)
   const [answered, setAnswered]   = useState(false)
   const [isCorrect, setIsCorrect] = useState(null)
@@ -557,7 +658,7 @@ export default function QuickQuiz({ mode = 'random', onClose }) {
     // Speak feedback
     if (ttsEnabled) {
       setTimeout(() => {
-        speak(correct ? `Correct. ${q.explanation}` : `Not quite. ${q.explanation}`)
+        speak(correct ? `Correct. ${q.explanation}` : `Good try. ${q.explanation}`)
       }, 300)
     }
   }
@@ -574,6 +675,20 @@ export default function QuickQuiz({ mode = 'random', onClose }) {
     }
   }
 
+  function retry() {
+    stopSpeaking()
+    setQuestions(selectSessionQuestions('weak'))
+    setIdx(0)
+    setAnswered(false)
+    setIsCorrect(null)
+    setStreak(0)
+    setBestStreak(0)
+    setScore(0)
+    setTimeLeft(TOTAL_SECONDS)
+    setPhase('playing')
+    setAnsweredQ([])
+  }
+
   if (phase === 'results') {
     return <ResultsScreen
       score={score}
@@ -581,7 +696,9 @@ export default function QuickQuiz({ mode = 'random', onClose }) {
       streak={streak}
       bestStreak={bestStreak}
       answeredQ={answeredQ}
+      onRetry={retry}
       onClose={onClose}
+      onOpenModule={onOpenModule}
     />
   }
 
@@ -592,7 +709,7 @@ export default function QuickQuiz({ mode = 'random', onClose }) {
   const mins = Math.floor(timeLeft / 60)
   const secs = timeLeft % 60
   const timerPct = (timeLeft / TOTAL_SECONDS) * 100
-  const timerColor = timeLeft > 120 ? '#9D5CFF' : timeLeft > 60 ? '#FFC857' : '#FF5D73'
+  const timerColor = timeLeft > 45 ? '#9D5CFF' : timeLeft > 20 ? '#FFC857' : '#FF5D73'
   const totalQ = questions.length
 
   return (
@@ -608,8 +725,8 @@ export default function QuickQuiz({ mode = 'random', onClose }) {
       }}>
         {/* Top row */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-          {/* Close */}
-          <button onClick={() => { stopSpeaking(); onClose() }} style={{
+          {/* Close — always goes to results, never straight out */}
+          <button onClick={() => { stopSpeaking(); setPhase('results') }} style={{
             width: 36, height: 36, borderRadius: 99, border: '1px solid #2A3552',
             background: 'transparent', color: '#9CA8C7', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -619,7 +736,7 @@ export default function QuickQuiz({ mode = 'random', onClose }) {
           {/* Timer */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
             <span style={{ fontSize: '.75rem', color: timerColor, fontWeight: 800, fontFamily: "'Space Grotesk', sans-serif", letterSpacing: '.03em' }}>
-              {timeLeft <= 60 && '⚠ '}{String(mins).padStart(2,'0')}:{String(secs).padStart(2,'0')}
+              {timeLeft <= 20 && '⏱ '}{String(mins).padStart(2,'0')}:{String(secs).padStart(2,'0')}
             </span>
           </div>
 
@@ -822,22 +939,22 @@ export default function QuickQuiz({ mode = 'random', onClose }) {
         {answered && (
           <div className="fade-up" style={{
             borderRadius: 16, overflow: 'hidden',
-            border: `1px solid ${isCorrect ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.3)'}`,
+            border: `1px solid ${isCorrect ? 'rgba(77,255,136,.3)' : 'rgba(255,200,87,.25)'}`,
             marginBottom: 14,
           }}>
             {/* Header */}
             <div style={{
               padding: '12px 18px',
-              background: isCorrect ? 'rgba(77,255,136,.1)' : 'rgba(255,93,115,.1)',
+              background: isCorrect ? 'rgba(77,255,136,.1)' : 'rgba(255,200,87,.08)',
               display: 'flex', alignItems: 'center', gap: 8,
             }}>
-              <span style={{ fontSize: '1.1rem' }}>{isCorrect ? '✅' : '❌'}</span>
+              <span style={{ fontSize: '1.1rem' }}>{isCorrect ? '✅' : '💡'}</span>
               <span style={{
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontWeight: 800, fontSize: '.92rem',
-                color: isCorrect ? '#4DFF88' : '#FF5D73',
+                color: isCorrect ? '#4DFF88' : '#FFC857',
               }}>
-                {isCorrect ? 'Correct!' : 'Not quite'}
+                {isCorrect ? 'Correct!' : 'Almost — keep going!'}
               </span>
               {streak > 1 && isCorrect && (
                 <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(255,138,31,.15)', border: '1px solid rgba(255,138,31,.3)', borderRadius: 99, padding: '3px 10px' }}>

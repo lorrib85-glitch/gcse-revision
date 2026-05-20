@@ -210,7 +210,7 @@ export default function App() {
   function startQuickQuiz(mode = 'random') { setQuizMode(mode); setView('quickquiz') }
 
   // Full-screen overlays take priority
-  if (view === 'quickquiz')              return <QuickQuiz mode={quizMode} onClose={closeOverlay} />
+  if (view === 'quickquiz')              return <QuickQuiz mode={quizMode} onClose={closeOverlay} onOpenModule={openModule} />
   if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} initialVirtualIdx={moduleInitialIdx} onBack={closeOverlay} onNavigateToSection={navigateToSection} />
   if (view === 'session' && session)     return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={closeOverlay} />
   if (view === 'end')                    return <EndScreen topicId={topicId} results={results} savedData={savedData} onHome={closeOverlay} onStart={startSession} />
