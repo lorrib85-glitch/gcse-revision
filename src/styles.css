@@ -174,9 +174,13 @@ p  { color: var(--text-mid); }
 .fact-dot-pip.active { background: var(--history); transform: scale(1.5); box-shadow: 0 0 6px rgba(245,183,0,.5); }
 .fact-dot-pip.done { background: var(--success); }
 
-@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes pop    { 0% { transform: scale(.92); opacity: 0; } 60% { transform: scale(1.03); } 100% { transform: scale(1); opacity: 1; } }
-@keyframes shake  { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+@keyframes fadeUp    { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pop       { 0% { transform: scale(.92); opacity: 0; } 60% { transform: scale(1.03); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes shake     { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+@keyframes tdPulse   { 0%,100% { box-shadow: 0 0 0 0 rgba(201,162,39,.4); } 50% { box-shadow: 0 0 0 6px rgba(201,162,39,0); } }
+@keyframes tdDzPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(157,92,255,.35); } 50% { box-shadow: 0 0 0 8px rgba(157,92,255,0); } }
+@keyframes tdGlow    { 0%,100% { box-shadow: 0 0 0 0 rgba(77,210,100,.5); } 50% { box-shadow: 0 0 24px rgba(77,210,100,.6); } }
+@keyframes tdShimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
 
 .fade-up  { animation: fadeUp .38s ease both; }
 .anim-pop { animation: pop .32s ease both; }

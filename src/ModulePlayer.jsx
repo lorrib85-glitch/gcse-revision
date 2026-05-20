@@ -2820,6 +2820,423 @@ function TopicPickerBlock({ block }) {
   )
 }
 
+// ─── TimelineDragBlock ────────────────────────────────────────────────────────
+// people: [{ id, name, portrait?, color }]
+// items:  [{ id, date, icon, achievement, keyword, answer (personId), reveal, hint }]
+function TDPersonPortrait({ person, size = 48 }) {
+  if (person.portrait) {
+    return (
+      <img src={person.portrait} alt={person.name}
+        style={{ width: size, height: size, borderRadius: size > 40 ? 10 : 6,
+          objectFit: 'cover', objectPosition: 'top', display: 'block', flexShrink: 0 }} />
+    )
+  }
+  const initials = person.name.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('')
+  return (
+    <div style={{
+      width: size, height: size, flexShrink: 0, borderRadius: size > 40 ? 10 : 6,
+      background: `linear-gradient(135deg, ${person.color || '#2A2A3A'}, #0D0B14)`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontFamily: "'Space Grotesk', sans-serif", fontSize: size * .28,
+      fontWeight: 900, color: 'rgba(255,255,255,.75)', letterSpacing: '-.01em',
+    }}>{initials}</div>
+  )
+}
+
+function TDPersonCard({ person, ghost = false, size = 52 }) {
+  return (
+    <div style={{
+      background: 'linear-gradient(180deg, #1A1525, #120E1C)',
+      border: `2px solid ${person.color || '#9D5CFF'}`,
+      borderRadius: 12, padding: '8px 6px',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
+      boxShadow: ghost
+        ? `0 12px 40px rgba(0,0,0,.9), 0 0 24px ${person.color || '#9D5CFF'}60`
+        : `0 2px 10px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.04)`,
+    }}>
+      <TDPersonPortrait person={person} size={size} />
+      <div style={{
+        fontFamily: "'Space Grotesk', sans-serif", fontSize: '.55rem', fontWeight: 800,
+        color: '#E0D8F0', textAlign: 'center', letterSpacing: '.04em', lineHeight: 1.25,
+      }}>{person.name}</div>
+    </div>
+  )
+}
+
+function TimelineDragBlock({ block }) {
+  const people = block.people || []
+  const items  = block.items  || []
+
+  const [placed,   setPlaced]   = useState({})
+  const [locked,   setLocked]   = useState(new Set())
+  const [shaking,  setShaking]  = useState(null)
+  const [hint,     setHint]     = useState(null)   // { itemId, text }
+  const [score,    setScore]    = useState(0)
+  const [dragging, setDragging] = useState(null)   // personId
+  const [dragPos,  setDragPos]  = useState({ x: 0, y: 0 })
+  const [glowing,  setGlowing]  = useState(null)   // itemId
+  const [dzHover,  setDzHover]  = useState(null)   // itemId hovered during drag
+
+  const dropZoneRefs = useRef({})
+  const total = items.length
+
+  const encouragement =
+    score === 0      ? 'Start building the story of history.'
+    : score < total * .4 ? "Good start. You're rebuilding the story of medicine."
+    : score < total  ? 'Now the breakthroughs are starting to connect…'
+    :                  'You just mapped 300 years of medical progress. 🏆'
+
+  const lockedPersonIds = new Set(
+    Object.entries(placed)
+      .filter(([id]) => locked.has(id))
+      .map(([, v]) => v)
+  )
+
+  function startDrag(e, personId) {
+    if (lockedPersonIds.has(personId)) return
+    e.preventDefault()
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+    setDragging(personId)
+    setDragPos({ x: clientX, y: clientY })
+    setHint(null)
+  }
+
+  useEffect(() => {
+    if (!dragging) return
+
+    function getDropTarget(x, y) {
+      for (const [id, el] of Object.entries(dropZoneRefs.current)) {
+        if (!el) continue
+        const r = el.getBoundingClientRect()
+        if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return id
+      }
+      return null
+    }
+
+    function onMove(e) {
+      const x = e.touches ? e.touches[0].clientX : e.clientX
+      const y = e.touches ? e.touches[0].clientY : e.clientY
+      setDragPos({ x, y })
+      setDzHover(getDropTarget(x, y))
+    }
+
+    function onUp(e) {
+      const x = e.changedTouches ? e.changedTouches[0].clientX : e.clientX
+      const y = e.changedTouches ? e.changedTouches[0].clientY : e.clientY
+      const targetId = getDropTarget(x, y)
+      setDzHover(null)
+
+      if (targetId && !locked.has(targetId)) {
+        const item = items.find(it => it.id === targetId)
+        if (item?.answer === dragging) {
+          setPlaced(p  => ({ ...p, [targetId]: dragging }))
+          setLocked(l  => { const n = new Set(l); n.add(targetId); return n })
+          setScore(s   => s + 1)
+          setGlowing(targetId)
+          setTimeout(() => setGlowing(null), 1600)
+          setHint(null)
+        } else {
+          const hintText = item?.hint || 'Not quite — try another person here.'
+          setHint({ itemId: targetId, text: hintText })
+          setShaking(targetId)
+          setTimeout(() => { setShaking(null); setHint(null) }, 1800)
+        }
+      }
+      setDragging(null)
+    }
+
+    window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('pointerup',   onUp)
+    window.addEventListener('touchmove',   onMove, { passive: true })
+    window.addEventListener('touchend',    onUp)
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup',   onUp)
+      window.removeEventListener('touchmove',   onMove)
+      window.removeEventListener('touchend',    onUp)
+    }
+  }, [dragging, locked, items])
+
+  function reset() {
+    setPlaced({})
+    setLocked(new Set())
+    setScore(0)
+    setShaking(null)
+    setHint(null)
+    setGlowing(null)
+    setDragging(null)
+    setDzHover(null)
+  }
+
+  const ghostPerson = dragging ? people.find(p => p.id === dragging) : null
+
+  return (
+    <div style={{ margin: '0 -4px', touchAction: 'none', userSelect: 'none', position: 'relative', fontFamily: "'Inter', sans-serif" }}>
+
+      {/* Floating drag ghost */}
+      {ghostPerson && (
+        <div style={{
+          position: 'fixed', zIndex: 9999, pointerEvents: 'none',
+          left: dragPos.x - 55, top: dragPos.y - 50,
+          width: 110, transform: 'scale(1.12) rotate(-2deg)',
+        }}>
+          <TDPersonCard person={ghostPerson} ghost size={52} />
+        </div>
+      )}
+
+      {/* Header */}
+      <div style={{
+        background: 'linear-gradient(170deg, #0E0B18 0%, #0A0C1A 100%)',
+        borderRadius: '18px 18px 0 0',
+        border: '1px solid rgba(201,162,39,.18)', borderBottom: 'none',
+        padding: '18px 16px 14px',
+      }}>
+        {block.topicLabel && (
+          <div style={{
+            fontSize: '.58rem', fontWeight: 700, letterSpacing: '.14em',
+            textTransform: 'uppercase', color: '#C9A227', marginBottom: 8,
+          }}>✧ {block.topicLabel}</div>
+        )}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.65rem', fontWeight: 900,
+              color: '#F5EDD8', letterSpacing: '-.02em', lineHeight: 1.05, marginBottom: 5,
+            }}>{block.heading || 'WHO DID WHAT?'}</div>
+            <div style={{ fontSize: '.78rem', color: '#7A6A50', lineHeight: 1.45 }}>
+              {block.sub || 'Drag each person to the achievement they are most famous for.'}
+            </div>
+          </div>
+          {block.examTip && (
+            <div style={{
+              flexShrink: 0, width: 100,
+              background: 'rgba(157,92,255,.09)', border: '1px solid rgba(157,92,255,.22)',
+              borderRadius: 10, padding: '8px 9px',
+            }}>
+              <div style={{
+                fontSize: '.55rem', fontWeight: 800, letterSpacing: '.1em',
+                textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 3,
+              }}>⚔️ {block.examTip.title}</div>
+              <div style={{ fontSize: '.7rem', color: '#A090C8', lineHeight: 1.4 }}>
+                {block.examTip.body}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Timeline rows */}
+      <div style={{
+        background: '#090C16',
+        border: '1px solid rgba(201,162,39,.15)', borderTop: 'none', borderBottom: 'none',
+        position: 'relative',
+      }}>
+        {/* Gold vertical line */}
+        <div style={{
+          position: 'absolute', left: 44, top: 0, bottom: 0, width: 2, zIndex: 0,
+          background: 'linear-gradient(180deg, transparent 0%, rgba(201,162,39,.6) 8%, rgba(201,162,39,.35) 92%, transparent 100%)',
+        }} />
+
+        {items.map((item, i) => {
+          const isLocked  = locked.has(item.id)
+          const isShaking = shaking === item.id
+          const isGlowing = glowing === item.id
+          const isHovered = dzHover === item.id && !isLocked
+          const hasHint   = hint?.itemId === item.id
+          const personId  = placed[item.id]
+          const lockedP   = isLocked ? people.find(p => p.id === personId) : null
+
+          return (
+            <div key={item.id} style={{
+              display: 'grid', gridTemplateColumns: '52px 1fr 78px',
+              gap: 8, alignItems: 'flex-start',
+              padding: '14px 12px 14px 0',
+              borderBottom: i < items.length - 1 ? '1px solid rgba(201,162,39,.07)' : 'none',
+              position: 'relative', zIndex: 1,
+            }}>
+              {/* Date + node */}
+              <div style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                gap: 4, paddingTop: 2, paddingLeft: 6,
+              }}>
+                <div style={{
+                  fontFamily: "'Space Grotesk', sans-serif", fontSize: '.68rem', fontWeight: 700,
+                  color: isLocked ? '#F0C040' : '#7A6030', letterSpacing: '.03em',
+                  transition: 'color .4s',
+                }}>{item.date}</div>
+                <div style={{
+                  width: 20, height: 20, borderRadius: '50%', zIndex: 2,
+                  background: isLocked ? '#C9A227' : '#0A0C18',
+                  border: `2.5px solid ${isLocked ? '#F0D060' : 'rgba(201,162,39,.35)'}`,
+                  boxShadow: isLocked ? '0 0 14px rgba(201,162,39,.7)' : 'none',
+                  animation: isLocked ? 'tdPulse 2s ease infinite' : 'none',
+                  transition: 'all .5s ease',
+                }} />
+              </div>
+
+              {/* Achievement card */}
+              <div style={{
+                background: isLocked
+                  ? 'linear-gradient(135deg, #0B1A0E, #071410)'
+                  : 'linear-gradient(135deg, #130E04, #0F0B06)',
+                border: `1.5px solid ${isLocked ? 'rgba(77,200,100,.3)' : 'rgba(201,162,39,.15)'}`,
+                borderRadius: 13, padding: '11px 12px',
+                animation: isShaking ? 'shake .32s ease' : (isGlowing ? 'tdGlow 1.4s ease' : 'none'),
+                transition: 'border-color .4s, background .4s',
+              }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 5 }}>
+                  <span style={{ fontSize: '1.15rem', lineHeight: 1, flexShrink: 0 }}>{item.icon}</span>
+                  <div style={{ fontSize: '.8rem', color: '#D5C8B0', lineHeight: 1.45, flex: 1 }}>
+                    {item.achievement}
+                  </div>
+                </div>
+                <div style={{
+                  fontFamily: "'Space Grotesk', sans-serif", fontSize: '.58rem', fontWeight: 800,
+                  letterSpacing: '.13em', textTransform: 'uppercase',
+                  color: isLocked ? '#5DE888' : '#9A7820',
+                  transition: 'color .4s',
+                }}>{item.keyword}</div>
+
+                {/* Correct reveal */}
+                {isLocked && item.reveal && (
+                  <div className="fade-up" style={{
+                    marginTop: 8,
+                    background: 'rgba(77,200,100,.07)', border: '1px solid rgba(77,200,100,.18)',
+                    borderRadius: 9, padding: '8px 10px',
+                  }}>
+                    <div style={{
+                      fontSize: '.57rem', fontWeight: 800, letterSpacing: '.1em',
+                      textTransform: 'uppercase', color: '#4DCC70', marginBottom: 3,
+                    }}>WHY THIS MATTERED</div>
+                    <div style={{ fontSize: '.77rem', color: '#7DE898', lineHeight: 1.45 }}>
+                      {item.reveal}
+                    </div>
+                  </div>
+                )}
+
+                {/* Hint on wrong */}
+                {hasHint && (
+                  <div className="fade-up" style={{
+                    marginTop: 7,
+                    background: 'rgba(255,93,115,.07)', border: '1px solid rgba(255,93,115,.2)',
+                    borderRadius: 8, padding: '7px 9px',
+                    fontSize: '.76rem', color: '#FF8DA1', lineHeight: 1.4,
+                  }}>{hint.text}</div>
+                )}
+              </div>
+
+              {/* Drop zone */}
+              <div ref={el => { dropZoneRefs.current[item.id] = el }} style={{
+                minHeight: 72, borderRadius: 12, padding: '6px 4px',
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                justifyContent: 'center', gap: 4,
+                background: isLocked
+                  ? 'rgba(77,200,100,.07)'
+                  : isHovered
+                  ? 'rgba(157,92,255,.18)'
+                  : 'rgba(157,92,255,.06)',
+                border: `1.5px dashed ${isLocked ? 'rgba(77,200,100,.35)' : isHovered ? 'rgba(157,92,255,.8)' : 'rgba(157,92,255,.3)'}`,
+                animation: (!isLocked && dragging) ? 'tdDzPulse 1.8s ease infinite' : 'none',
+                transition: 'all .2s ease',
+                boxShadow: isHovered ? '0 0 18px rgba(157,92,255,.25)' : 'none',
+              }}>
+                {isLocked && lockedP ? (
+                  <>
+                    <TDPersonPortrait person={lockedP} size={42} />
+                    <div style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontSize: '.48rem', fontWeight: 800, color: '#4DCC70',
+                      textAlign: 'center', letterSpacing: '.04em', lineHeight: 1.2,
+                    }}>{lockedP.name}</div>
+                  </>
+                ) : (
+                  <div style={{
+                    fontSize: '.55rem', fontWeight: 700,
+                    color: isHovered ? 'rgba(157,92,255,.9)' : 'rgba(157,92,255,.45)',
+                    textAlign: 'center', letterSpacing: '.07em', textTransform: 'uppercase',
+                    lineHeight: 1.6, transition: 'color .2s',
+                  }}>DROP<br/>NAME<br/>HERE</div>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Reveal banner */}
+      <div style={{
+        background: '#090C16', borderLeft: '1px solid rgba(201,162,39,.15)',
+        borderRight: '1px solid rgba(201,162,39,.15)',
+        padding: '10px 16px', textAlign: 'center',
+        fontSize: '.7rem', color: score >= total ? '#F0C040' : '#504030',
+        fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase',
+        transition: 'color .6s',
+      }}>
+        {score >= total ? '🏆 FULL STORY UNLOCKED — HISTORY CONQUERED.' : '🏆 GET THEM ALL CORRECT TO REVEAL THE FULL STORY!'}
+      </div>
+
+      {/* People tray */}
+      <div style={{
+        background: '#0D0B16',
+        border: '1px solid rgba(201,162,39,.15)', borderTop: '1px solid rgba(201,162,39,.2)',
+        borderBottom: 'none', padding: '12px 14px',
+      }}>
+        <div style={{
+          fontSize: '.6rem', fontWeight: 700, letterSpacing: '.12em',
+          textTransform: 'uppercase', color: '#4A4030',
+          textAlign: 'center', marginBottom: 10,
+        }}>↑ DRAG THE PEOPLE FROM BELOW ↑</div>
+        <div style={{
+          display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2,
+          scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch',
+        }}>
+          {people.map(person => {
+            const isDone = lockedPersonIds.has(person.id)
+            return (
+              <div key={person.id} style={{
+                flexShrink: 0, width: 84, opacity: isDone ? .3 : 1,
+                cursor: isDone ? 'default' : 'grab',
+                touchAction: 'none', transition: 'opacity .4s',
+                transform: dragging === person.id ? 'scale(.92)' : 'scale(1)',
+              }}
+                onPointerDown={isDone ? undefined : e => startDrag(e, person.id)}
+              >
+                <TDPersonCard person={person} size={54} />
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Score panel */}
+      <div style={{
+        background: '#0D0B16',
+        border: '1px solid rgba(201,162,39,.15)', borderTop: '1px solid rgba(201,162,39,.12)',
+        borderRadius: '0 0 18px 18px', padding: '14px 16px',
+        display: 'flex', alignItems: 'center', gap: 12,
+      }}>
+        <div style={{ fontSize: '1.5rem', flexShrink: 0 }}>🏆</div>
+        <div style={{ flex: 1 }}>
+          <div style={{
+            fontSize: '.6rem', fontWeight: 800, letterSpacing: '.12em',
+            textTransform: 'uppercase', color: '#C9A227', marginBottom: 2,
+          }}>SCORE — {score} / {total}</div>
+          <div style={{ fontSize: '.77rem', color: '#7A6A50', lineHeight: 1.4 }}>
+            {encouragement}
+          </div>
+        </div>
+        <button onClick={reset} style={{
+          background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.1)',
+          borderRadius: 8, padding: '7px 11px', flexShrink: 0,
+          fontFamily: "'Inter', sans-serif", fontSize: '.7rem', fontWeight: 700,
+          color: '#555570', cursor: 'pointer', letterSpacing: '.07em',
+        }}>↺ RESET</button>
+      </div>
+    </div>
+  )
+}
+
 // ─── ColSortBlock ─────────────────────────────────────────────────────────────
 function ColSortBlock({ block }) {
   // columns: [{ label, color, bg }]
@@ -4409,6 +4826,7 @@ function Screen({ screen, subject }) {
           {block.type === 'fractionlab'      && <FractionLabBlock block={block} />}
           {block.type === 'examscored'       && <ExamScoredBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} isSoc={isSoc} />}
           {block.type === 'topicpicker'      && <TopicPickerBlock block={block} />}
+          {block.type === 'timelinedrag'      && <TimelineDragBlock block={block} />}
           {block.type === 'colsort'          && <ColSortBlock block={block} />}
           {block.type === 'agencywheel'      && <AgencyWheelBlock block={block} />}
           {block.type === 'appliedscenario'  && <AppliedScenarioBlock block={block} />}

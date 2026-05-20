@@ -1259,7 +1259,76 @@ export const MODULES = [
         ],
       },
 
-      // Screen 8 — Final Boss
+      // Screen 8 — Timeline Challenge
+      {
+        label: 'Timeline Challenge',
+        kicker: 'Interactive',
+        heading: 'WHO DID WHAT?',
+        sub: 'Match the person to their breakthrough.',
+        blocks: [
+          {
+            type: 'timelinedrag',
+            topicLabel: 'Medicine Through Time',
+            heading: 'WHO DID WHAT?',
+            sub: 'Drag each person to the achievement they are most famous for.',
+            examTip: {
+              title: 'EXAM ASSASSIN',
+              body: 'Learn the individual + what changed.',
+            },
+            people: [
+              { id: 'vesalius', name: 'ANDREAS VESALIUS', color: '#8B6914' },
+              { id: 'harvey',   name: 'WILLIAM HARVEY',   color: '#6B4C9A' },
+              { id: 'jenner',   name: 'EDWARD JENNER',    color: '#2D6A4F' },
+              { id: 'simpson',  name: 'JAMES YOUNG SIMPSON', color: '#A63D2F' },
+              { id: 'lister',   name: 'JOSEPH LISTER',    color: '#1A4A6B' },
+            ],
+            items: [
+              {
+                id: 'vesalius', date: '1543', icon: '📖',
+                achievement: 'Wrote detailed anatomy books based on human dissection.',
+                keyword: 'ANATOMY',
+                answer: 'vesalius',
+                reveal: 'Doctors began trusting direct observation instead of blindly following Galen.',
+                hint: 'Think printing press + challenging Galen\'s ancient authority. 👀',
+              },
+              {
+                id: 'harvey', date: '1628', icon: '🫀',
+                achievement: 'Discovered the circulation of the blood.',
+                keyword: 'CIRCULATION',
+                answer: 'harvey',
+                reveal: 'Understanding circulation transformed anatomy — but treatments took longer to catch up.',
+                hint: 'Think heart, pump, blood moving continuously — not anatomy books.',
+              },
+              {
+                id: 'jenner', date: '1796', icon: '💉',
+                achievement: 'Developed the smallpox vaccine to prevent disease.',
+                keyword: 'VACCINATION',
+                answer: 'jenner',
+                reveal: 'Vaccination became one of the biggest breakthroughs in medical history.',
+                hint: 'Cowpox gave the clue… this person links to prevention, not surgery.',
+              },
+              {
+                id: 'simpson', date: '1847', icon: '☠️',
+                achievement: 'Pioneered the use of anaesthesia in surgery.',
+                keyword: 'ANAESTHESIA',
+                answer: 'simpson',
+                reveal: 'Surgery became less terrifying because patients could be unconscious.',
+                hint: 'This breakthrough ended the screaming — think unconscious, not antiseptic.',
+              },
+              {
+                id: 'lister', date: '1867', icon: '🧴',
+                achievement: 'Introduced antiseptic surgery to prevent infection.',
+                keyword: 'ANTISEPTIC SURGERY',
+                answer: 'lister',
+                reveal: 'Antiseptics massively reduced deadly post-surgery infections.',
+                hint: 'This breakthrough links to carbolic acid and preventing infection — not anaesthesia.',
+              },
+            ],
+          },
+        ],
+      },
+
+      // Screen 9 — Final Boss
       {
         label: 'Final Boss',
         kicker: 'Challenge',
