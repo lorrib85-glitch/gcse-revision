@@ -6,7 +6,7 @@ import { SOC_KEY_TERMS } from './sociologyKeyTerms.js'
 
 // ─── Module navigation context ────────────────────────────────────────────────
 // Lets deep components (QuizBlock etc.) navigate to a module section.
-const ModuleNavCtx = createContext({ goToScreen: null, navigateToSection: null, currentModuleId: null })
+const ModuleNavCtx = createContext({ goToScreen: null, navigateToSection: null, currentModuleId: null, onBossAttempted: null })
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -334,6 +334,7 @@ async function gradeBossAnswer(question, markPoints, studentAnswer) {
 
 function BossBlock({ block, isWarm, isBio, isMaths, isSoc }) {
   const accent = isWarm ? '#C47828' : isBio ? '#38D27A' : isMaths ? '#4B90FF' : isSoc ? '#D96030' : '#9D5CFF'
+  const { onBossAttempted } = useContext(ModuleNavCtx)
   const [answer, setAnswer] = useState('')
   const [grading, setGrading] = useState(false)
   const [feedback, setFeedback] = useState(null)
@@ -354,6 +355,7 @@ function BossBlock({ block, isWarm, isBio, isMaths, isSoc }) {
     }
     setError(null)
     setGrading(true)
+    onBossAttempted?.()   // unlock Finish button the moment they submit
     try {
       const result = await gradeBossAnswer(block.question, block.markPoints, answer)
       setFeedback(result)
@@ -5363,10 +5365,15 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx, onNavi
   const [showConfidence, setShowConfidence] = useState(false)
   const [chosenConfidence, setChosenConfidence] = useState(null)
   const [animKey, setAnimKey] = useState(0)
+  const [bossAttempted, setBossAttempted] = useState(false)
 
   const currentVirtual = allVirtual[Math.min(virtualIdx, totalVirtual - 1)] || allVirtual[0]
   const pct = Math.round(((virtualIdx + 1) / totalVirtual) * 100)
   const isLastContent = currentVirtual.kind === 'content' && currentVirtual.idx === module.screens.length - 1
+
+  // Hide Finish until the boss question on the last screen has been submitted
+  const lastScreenHasBoss = isLastContent && (cur?.blocks?.some(b => b.type === 'boss') ?? false)
+  const finishLocked = lastScreenHasBoss && !bossAttempted
 
   useEffect(() => {
     saveModuleState(module.id, { virtualIdx })
@@ -5395,6 +5402,7 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx, onNavi
     currentModuleId: module.id,
     goToScreen,
     navigateToSection: onNavigateToSection || null,
+    onBossAttempted: () => setBossAttempted(true),
   }), [module.id, goToScreen, onNavigateToSection])
 
   function handleFinish() {
@@ -5430,12 +5438,13 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx, onNavi
       if (hookPhase === 'reveal') return hookRevealDone ? 'Next →' : null
     }
     if (currentVirtual.kind === 'goals') return "Let's go →"
+    if (finishLocked) return null   // hide until boss is submitted
     return isLastContent ? 'Finish ✓' : 'Next →'
   }
 
   const showNextBtn  = nextLabel() !== null
   const nextBtnLabel = nextLabel()
-  const isFinishBtn  = isLastContent
+  const isFinishBtn  = isLastContent && !finishLocked
 
   const cur = currentVirtual.kind === 'content' ? currentVirtual.data : null
   const subjectColor = module.color || '#9D5CFF'
