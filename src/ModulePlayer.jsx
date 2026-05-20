@@ -3865,48 +3865,73 @@ function FractionLabBlock({ block }) {
 }
 
 // ─── ExamScoredBlock ──────────────────────────────────────────────────────────
-function ExamScoredBlock({ block }) {
+// Two-strike system:
+//   1st wrong → hint shown, selection cleared, student can retry
+//   2nd wrong → question locked, brush-up panel appears
+function ExamScoredBlock({ block, isWarm, isBio, isMaths, isSoc }) {
+  const accent = isWarm ? '#C47828' : isBio ? '#38D27A' : isMaths ? '#4B90FF' : isSoc ? '#D96030' : '#9D5CFF'
   const questions = block.questions || []
-  const [qIdx, setQIdx] = useState(0)
-  const [choices, setChoices] = useState(Array(questions.length).fill(null))
-  const [revealed, setRevealed] = useState(Array(questions.length).fill(false))
-  const [showModel, setShowModel] = useState(Array(questions.length).fill(false))
-  const [shakeIdx, setShakeIdx] = useState(null)
-  const [allDone, setAllDone] = useState(false)
+  const n = questions.length
 
-  const q = questions[qIdx]
-  const myChoice = choices[qIdx]
-  const isAnswered = revealed[qIdx]
+  const [qIdx,         setQIdx]         = useState(0)
+  const [selections,   setSelections]   = useState(Array(n).fill(null))   // chosen option per Q
+  const [wrongAttempts,setWrongAttempts]= useState(Array(n).fill(0))      // wrong tries per Q
+  const [lockedQ,      setLockedQ]      = useState(Array(n).fill(false))  // locked (2nd wrong or correct)
+  const [correctQ,     setCorrectQ]     = useState(Array(n).fill(false))  // answered correctly
+  const [showModel,    setShowModel]    = useState(Array(n).fill(false))
+  const [shakeOpt,     setShakeOpt]     = useState(null)
+  const [allDone,      setAllDone]      = useState(false)
 
-  function pick(i) {
-    if (isAnswered) return
-    const nc = [...choices]; nc[qIdx] = i; setChoices(nc)
-    const nr = [...revealed]; nr[qIdx] = true; setRevealed(nr)
-    if (qIdx >= questions.length - 1) {
-      setTimeout(() => setAllDone(true), 1200)
+  const q          = questions[qIdx]
+  const myChoice   = selections[qIdx]
+  const isLocked   = lockedQ[qIdx]
+  const isCorrect  = correctQ[qIdx]
+  const wrongCount = wrongAttempts[qIdx]
+  const showHintQ  = wrongCount >= 1 && !isLocked  // after 1st wrong, before 2nd lock
+  const showBrushUp = isLocked && !isCorrect
+
+  function pick(optIdx) {
+    if (isLocked) return
+    const correct = optIdx === q.correct
+
+    // Update selection
+    const newSel = [...selections]; newSel[qIdx] = optIdx; setSelections(newSel)
+
+    if (correct) {
+      const nl = [...lockedQ]; nl[qIdx] = true; setLockedQ(nl)
+      const nc = [...correctQ]; nc[qIdx] = true; setCorrectQ(nc)
+      if (qIdx >= n - 1) setTimeout(() => setAllDone(true), 1000)
+    } else {
+      // Wrong — shake
+      setShakeOpt(optIdx)
+      setTimeout(() => setShakeOpt(null), 500)
+
+      const nw = [...wrongAttempts]; nw[qIdx]++; setWrongAttempts(nw)
+
+      if (nw[qIdx] >= 2) {
+        // Second wrong → lock and show brush-up
+        const nl = [...lockedQ]; nl[qIdx] = true; setLockedQ(nl)
+      } else {
+        // First wrong → clear selection after shake so they can retry
+        setTimeout(() => {
+          setSelections(prev => { const c = [...prev]; c[qIdx] = null; return c })
+        }, 650)
+      }
     }
   }
 
   function nextQ() {
-    if (qIdx < questions.length - 1) setQIdx(q => q + 1)
+    if (qIdx < n - 1) setQIdx(i => i + 1)
   }
 
-  function toggleModel(i) {
-    const ns = [...showModel]; ns[i] = !ns[i]; setShowModel(ns)
-  }
-
-  const wasCorrect = isAnswered && myChoice === q?.correct
-  const totalMarks = questions.reduce((acc, q) => acc + (q.marks || 1), 0)
-  const earnedMarks = revealed.reduce((acc, done, i) => {
-    if (!done) return acc
-    return acc + (choices[i] === questions[i]?.correct ? (questions[i]?.marks || 1) : 0)
-  }, 0)
+  const totalMarks  = questions.reduce((a, q) => a + (q.marks || 1), 0)
+  const earnedMarks = correctQ.reduce((a, ok, i) => a + (ok ? (questions[i]?.marks || 1) : 0), 0)
 
   return (
     <div style={{ margin: '14px 0' }}>
       <div style={{
         background: 'linear-gradient(145deg, #0A1020, #0D1428)',
-        border: '1px solid rgba(75,144,255,.2)',
+        border: `1px solid ${accent}30`,
         borderRadius: 18, padding: '16px',
       }}>
         {/* Header */}
@@ -3914,13 +3939,13 @@ function ExamScoredBlock({ block }) {
           <div style={{
             fontFamily: "'Inter', sans-serif",
             fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
-            textTransform: 'uppercase', color: '#4B90FF',
+            textTransform: 'uppercase', color: accent,
           }}>📝 Exam Questions</div>
           <div style={{
-            background: 'rgba(75,144,255,.08)', border: '1px solid rgba(75,144,255,.2)',
+            background: `${accent}12`, border: `1px solid ${accent}28`,
             borderRadius: 99, padding: '3px 10px',
             fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: '.75rem', fontWeight: 700, color: '#4B90FF',
+            fontSize: '.75rem', fontWeight: 700, color: accent,
           }}>{earnedMarks}/{totalMarks} marks</div>
         </div>
 
@@ -3929,25 +3954,23 @@ function ExamScoredBlock({ block }) {
           {questions.map((_, i) => (
             <div key={i} style={{
               height: 4, flex: 1, borderRadius: 99,
-              background: revealed[i]
-                ? (choices[i] === questions[i].correct ? 'rgba(77,255,136,.6)' : 'rgba(255,93,115,.5)')
-                : (i === qIdx ? 'rgba(75,144,255,.5)' : '#1E2A40'),
+              background: lockedQ[i]
+                ? (correctQ[i] ? 'rgba(77,255,136,.6)' : 'rgba(255,93,115,.5)')
+                : (i === qIdx ? `${accent}80` : '#1E2A40'),
               transition: 'background .3s',
             }} />
           ))}
         </div>
 
-        {/* Question */}
         {!allDone && q && (
           <div>
-            <div style={{
-              display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 12,
-            }}>
+            {/* Mark badge + question */}
+            <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 12 }}>
               <div style={{
-                background: 'rgba(75,144,255,.12)', border: '1px solid rgba(75,144,255,.25)',
+                background: `${accent}18`, border: `1px solid ${accent}35`,
                 borderRadius: 99, padding: '2px 8px',
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: '.7rem', fontWeight: 700, color: '#4B90FF', flexShrink: 0,
+                fontSize: '.7rem', fontWeight: 700, color: accent, flexShrink: 0,
               }}>Q{qIdx + 1} · {q.marks || 1} mark{(q.marks || 1) > 1 ? 's' : ''}</div>
             </div>
             <p style={{
@@ -3956,24 +3979,30 @@ function ExamScoredBlock({ block }) {
               margin: '0 0 14px', lineHeight: 1.45,
             }}>{q.q}</p>
 
+            {/* Options */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {q.options?.map((opt, i) => {
-                const isCorrectOpt = i === q.correct
                 const isPicked = myChoice === i
+                const isLockedCorrect = isLocked && i === q.correct
+                const isLockedWrong  = isLocked && !isCorrect && isPicked
                 let bg = '#10182B', border = '#2A3A5A', color = '#C8D0E8'
-                if (isAnswered) {
-                  if (isCorrectOpt) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
-                  else if (isPicked) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
+                if (isLockedCorrect) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
+                else if (isLockedWrong) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
+                else if (!isLocked && isPicked && myChoice !== null) {
+                  // Transient wrong state before clear
+                  bg = 'rgba(255,93,115,.06)'; border = 'rgba(255,93,115,.3)'; color = '#FF8DA1'
                 }
                 return (
-                  <button key={i} onClick={() => pick(i)} disabled={isAnswered}
+                  <button key={i} onClick={() => pick(i)}
+                    disabled={isLocked || (myChoice !== null && !isLocked)}
                     style={{
                       background: bg, border: '1.5px solid ' + border,
                       borderRadius: 11, padding: '11px 14px',
                       fontFamily: "'Inter', sans-serif", fontSize: '.88rem', color,
-                      cursor: isAnswered ? 'default' : 'pointer',
+                      cursor: (isLocked || myChoice !== null) ? 'default' : 'pointer',
                       textAlign: 'left', transition: 'all .2s',
                       display: 'flex', alignItems: 'center', gap: 10,
+                      animation: shakeOpt === i ? 'shake .4s ease' : 'none',
                     }}>
                     <span style={{ opacity: .4, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.75rem' }}>
                       {String.fromCharCode(65 + i)}.
@@ -3984,26 +4013,52 @@ function ExamScoredBlock({ block }) {
               })}
             </div>
 
-            {/* Per-question feedback */}
-            {isAnswered && q.feedback?.[myChoice] && (
+            {/* Hint after first wrong (before lock) */}
+            {showHintQ && (
+              <div className="fade-up" style={{
+                marginTop: 12,
+                background: 'rgba(255,200,87,.07)',
+                border: '1px solid rgba(255,200,87,.25)',
+                borderRadius: 12, padding: '11px 14px',
+              }}>
+                <div style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em',
+                  textTransform: 'uppercase', color: '#FFC857', marginBottom: 5,
+                }}>💡 Hint — one more try</div>
+                <p style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.84rem', color: '#C8B870', margin: 0, lineHeight: 1.5,
+                }}>{q.tip || 'Look carefully at the options — one aligns precisely with the definition.'}</p>
+              </div>
+            )}
+
+            {/* Correct feedback */}
+            {isLocked && isCorrect && q.feedback?.[myChoice] && (
               <div className="fade-up" style={{
                 marginTop: 10,
-                background: wasCorrect ? 'rgba(77,255,136,.07)' : 'rgba(255,93,115,.07)',
-                border: '1px solid ' + (wasCorrect ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.3)'),
+                background: 'rgba(77,255,136,.07)', border: '1px solid rgba(77,255,136,.3)',
                 borderRadius: 12, padding: '12px 14px',
               }}>
                 <p style={{
                   fontFamily: "'Inter', sans-serif",
-                  fontSize: '.86rem', color: wasCorrect ? '#4DFF88' : '#FF8DA1',
-                  margin: 0, lineHeight: 1.5,
+                  fontSize: '.86rem', color: '#4DFF88', margin: 0, lineHeight: 1.5,
                 }}>{q.feedback[myChoice]}</p>
               </div>
             )}
 
-            {/* Model answer toggle */}
-            {isAnswered && q.modelAnswer && (
-              <div style={{ marginTop: 8 }}>
-                <button onClick={() => toggleModel(qIdx)} style={{
+            {/* Brush-up panel after second wrong */}
+            {showBrushUp && (
+              <TargetedBrushUpPanel
+                block={{ ...(q.topicTags ? q : block), topicTags: q.topicTags || block.topicTags || [], question: q.q }}
+                isWarm={isWarm} isBio={isBio} isMaths={isMaths} isSoc={isSoc}
+              />
+            )}
+
+            {/* Model answer toggle (when locked) */}
+            {isLocked && q.modelAnswer && (
+              <div style={{ marginTop: 10 }}>
+                <button onClick={() => { const ns = [...showModel]; ns[qIdx] = !ns[qIdx]; setShowModel(ns) }} style={{
                   background: 'rgba(245,183,0,.06)', border: '1px solid rgba(245,183,0,.2)',
                   borderRadius: 8, padding: '5px 12px',
                   fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 600,
@@ -4023,13 +4078,14 @@ function ExamScoredBlock({ block }) {
               </div>
             )}
 
-            {isAnswered && qIdx < questions.length - 1 && (
+            {/* Next question */}
+            {isLocked && qIdx < n - 1 && (
               <button onClick={nextQ} style={{
                 marginTop: 12, width: '100%',
-                background: 'rgba(75,144,255,.12)', border: '1px solid rgba(75,144,255,.3)',
+                background: `${accent}15`, border: `1px solid ${accent}30`,
                 borderRadius: 12, padding: '11px',
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700, fontSize: '.9rem', color: '#70A8FF',
+                fontWeight: 700, fontSize: '.9rem', color: accent,
                 cursor: 'pointer',
               }}>Next question →</button>
             )}
@@ -4059,26 +4115,13 @@ function ExamScoredBlock({ block }) {
                   ? 'Full marks. Solid understanding.'
                   : earnedMarks >= Math.floor(totalMarks * .67)
                     ? 'Good. Review any red feedback above.'
-                    : 'Review the fraction bar pages before moving on.'}
+                    : 'Review the flagged sections before moving on.'}
               </p>
             </div>
-            {block.examTip && (
-              <div style={{
-                background: 'rgba(245,183,0,.06)', border: '1px dashed rgba(245,183,0,.3)',
-                borderRadius: 12, padding: '12px 14px',
-              }}>
-                <div style={{
-                  fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700,
-                  color: '#F5B700', marginBottom: 5, letterSpacing: '.1em', textTransform: 'uppercase',
-                }}>🎯 Exam Master</div>
-                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.86rem', color: '#C8D0E8', margin: 0 }}>
-                  {block.examTip}
-                </p>
-              </div>
-            )}
           </div>
         )}
       </div>
+      <style>{`@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }`}</style>
     </div>
   )
 }
@@ -4262,7 +4305,7 @@ function Screen({ screen, subject }) {
           {block.type === 'fracbar'          && <FracBarBlock block={block} />}
           {block.type === 'fractionsplitter' && <FractionSplitterBlock block={block} />}
           {block.type === 'fractionlab'      && <FractionLabBlock block={block} />}
-          {block.type === 'examscored'       && <ExamScoredBlock block={block} />}
+          {block.type === 'examscored'       && <ExamScoredBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} isSoc={isSoc} />}
           {block.type === 'topicpicker'      && <TopicPickerBlock block={block} />}
           {block.type === 'colsort'          && <ColSortBlock block={block} />}
           {block.type === 'agencywheel'      && <AgencyWheelBlock block={block} />}
