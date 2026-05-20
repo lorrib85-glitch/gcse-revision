@@ -1,5 +1,11 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo, createContext, useContext } from 'react'
 import { recordActivity, recordScore } from './progress.js'
+import { CONTENT_INDEX, findSectionByKeywords } from './contentIndex.js'
+import { logWrongAnswer, isWeakArea, getTagCount } from './weaknessTracker.js'
+
+// ─── Module navigation context ────────────────────────────────────────────────
+// Lets deep components (QuizBlock etc.) navigate to a module section.
+const ModuleNavCtx = createContext({ goToScreen: null, navigateToSection: null, currentModuleId: null })
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -531,7 +537,234 @@ function RevealBlock({ block }) {
   )
 }
 
-function QuizBlock({ block, onAnswered, subject }) {
+// ─── TargetedBrushUpPanel ─────────────────────────────────────────────────────
+// Shows when a quiz answer is wrong and locked. Diagnoses the knowledge gap,
+// links back to the source material, and optionally runs a rescue question.
+function TargetedBrushUpPanel({ block, isWarm, isBio, isMaths, isSoc }) {
+  const accent  = isWarm ? '#C47828' : isBio ? '#38D27A' : isMaths ? '#4B90FF' : isSoc ? '#D96030' : '#9D5CFF'
+  const cardBg  = isWarm ? '#1A1005' : isBio ? '#081410' : isMaths ? '#07101E' : isSoc ? '#1A0C06' : '#0E1424'
+  const { goToScreen, navigateToSection, currentModuleId } = useContext(ModuleNavCtx)
+
+  // Resolve content entry from block metadata or keyword fallback
+  const topicTags = block.topicTags || []
+  const sectionId = block.sectionId
+  const entry = useMemo(() => {
+    if (sectionId && CONTENT_INDEX[sectionId]) return CONTENT_INDEX[sectionId]
+    for (const tag of topicTags) {
+      if (CONTENT_INDEX[tag]) return CONTENT_INDEX[tag]
+    }
+    // Keyword fallback against question text
+    const match = findSectionByKeywords(block.question || '')
+    return match?.entry || null
+  }, [sectionId, topicTags, block.question])
+
+  const [showRescue, setShowRescue] = useState(false)
+  const [rescueAnswer, setRescueAnswer] = useState(null)
+  const [shakeRescue, setShakeRescue] = useState(null)
+
+  // Log wrong answer for weakness tracking
+  useEffect(() => {
+    if (topicTags.length > 0) logWrongAnswer(topicTags)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!entry) return null
+
+  const weak     = isWeakArea(topicTags)
+  const topCount = topicTags.reduce((m, t) => Math.max(m, getTagCount(t)), 0)
+
+  function handleRevise() {
+    if (!entry.moduleId || !entry.screenLabel) return
+    if (entry.moduleId === currentModuleId && goToScreen) {
+      goToScreen(entry.screenLabel)
+    } else if (navigateToSection) {
+      navigateToSection(entry.moduleId, entry.screenLabel)
+    }
+  }
+
+  function pickRescue(i) {
+    if (rescueAnswer !== null) return
+    setRescueAnswer(i)
+    if (i !== entry.rescueQuestion.correct) {
+      setShakeRescue(i)
+      setTimeout(() => setShakeRescue(null), 500)
+    }
+  }
+
+  const rescueCorrect = rescueAnswer === entry.rescueQuestion?.correct
+
+  return (
+    <div style={{
+      marginTop: 12,
+      background: cardBg,
+      border: `1px solid ${accent}30`,
+      borderRadius: 16, overflow: 'hidden',
+      animation: 'fadeIn .4s ease',
+    }}>
+      {/* Heading strip */}
+      <div style={{
+        background: `${accent}18`,
+        borderBottom: `1px solid ${accent}22`,
+        padding: '10px 14px',
+        display: 'flex', alignItems: 'center', gap: 8,
+      }}>
+        <span style={{ fontSize: '1rem' }}>🔦</span>
+        <span style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontSize: '.7rem', fontWeight: 800, letterSpacing: '.1em',
+          textTransform: 'uppercase', color: accent,
+        }}>Brush this up</span>
+        {weak && (
+          <span style={{
+            marginLeft: 'auto',
+            background: 'rgba(255,93,115,.15)',
+            border: '1px solid rgba(255,93,115,.3)',
+            borderRadius: 99, padding: '2px 9px',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.62rem', fontWeight: 700, color: '#FF8DA1',
+          }}>⚠ {topCount}× missed</span>
+        )}
+      </div>
+
+      <div style={{ padding: '12px 14px' }}>
+        {/* Contextual prompt */}
+        <p style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '.85rem', color: '#9CA8C7',
+          margin: '0 0 12px', lineHeight: 1.55,
+        }}>
+          {weak
+            ? `This topic keeps tripping you up. A quick revisit now will save marks later.`
+            : `Not a disaster — this is a gap in ${entry.title.toLowerCase()}. A quick brush-up before trying again.`}
+        </p>
+
+        {/* Module + section badges */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
+          <span style={{
+            background: `${accent}15`, border: `1px solid ${accent}30`,
+            borderRadius: 99, padding: '3px 10px',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.68rem', fontWeight: 600, color: accent,
+          }}>📚 {entry.subject}</span>
+          <span style={{
+            background: `${accent}10`, border: `1px solid ${accent}20`,
+            borderRadius: 99, padding: '3px 10px',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.68rem', fontWeight: 600, color: `${accent}CC`,
+          }}>📍 {entry.title}</span>
+        </div>
+
+        {/* Key reminders */}
+        <div style={{ marginBottom: 14 }}>
+          {entry.keyReminders.map((r, i) => (
+            <div key={i} style={{
+              display: 'flex', gap: 8, alignItems: 'flex-start',
+              marginBottom: 6,
+            }}>
+              <span style={{ color: accent, fontSize: '.75rem', marginTop: 2, flexShrink: 0 }}>▸</span>
+              <span style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.84rem', color: '#C8D0E8', lineHeight: 1.5,
+              }}>{r}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Weakness radar */}
+        {weak && (
+          <div style={{
+            background: 'rgba(255,93,115,.07)',
+            border: '1px solid rgba(255,93,115,.2)',
+            borderRadius: 10, padding: '9px 12px', marginBottom: 12,
+          }}>
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.8rem', color: '#FF8DA1', margin: 0, lineHeight: 1.5,
+            }}>
+              <strong>Weakness Radar:</strong> This area has come up {topCount} times. It\'s worth revisiting the source material, not just retrying.
+            </p>
+          </div>
+        )}
+
+        {/* Action buttons */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: entry.rescueQuestion && !showRescue ? 0 : 0 }}>
+          <button onClick={handleRevise} style={{
+            flex: 1, minWidth: 140,
+            background: accent, border: 'none',
+            borderRadius: 10, padding: '10px 14px',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700, fontSize: '.82rem', color: '#000',
+            cursor: 'pointer',
+          }}>Revise this bit →</button>
+
+          {entry.rescueQuestion && !showRescue && (
+            <button onClick={() => setShowRescue(true)} style={{
+              flex: 1, minWidth: 140,
+              background: `${accent}15`,
+              border: `1px solid ${accent}30`,
+              borderRadius: 10, padding: '10px 14px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '.82rem', color: accent,
+              cursor: 'pointer',
+            }}>Try a rescue question</button>
+          )}
+        </div>
+
+        {/* Rescue question */}
+        {showRescue && entry.rescueQuestion && (
+          <div style={{ marginTop: 14, animation: 'fadeIn .3s ease' }}>
+            <p style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600, fontSize: '.9rem', color: '#F5F7FB',
+              margin: '0 0 10px',
+            }}>{entry.rescueQuestion.q}</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+              {entry.rescueQuestion.options.map((opt, i) => {
+                let bg = `${accent}0A`, border = `${accent}25`, color = '#C8D0E8'
+                if (rescueAnswer !== null) {
+                  if (i === entry.rescueQuestion.correct) { bg = 'rgba(77,255,136,.1)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
+                  else if (i === rescueAnswer)             { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.3)'; color = '#FF8DA1' }
+                }
+                return (
+                  <button key={i} onClick={() => pickRescue(i)} disabled={rescueAnswer !== null}
+                    style={{
+                      background: bg, border: `1.5px solid ${border}`,
+                      borderRadius: 9, padding: '9px 12px', textAlign: 'left',
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '.85rem', fontWeight: 500, color,
+                      cursor: rescueAnswer !== null ? 'default' : 'pointer',
+                      animation: shakeRescue === i ? 'shake .4s ease' : 'none',
+                    }}>
+                    <span style={{ opacity: .4, marginRight: 8, fontWeight: 700, fontSize: '.75rem' }}>{String.fromCharCode(65 + i)}.</span>
+                    {opt}
+                  </button>
+                )
+              })}
+            </div>
+            {rescueAnswer !== null && (
+              <div style={{
+                marginTop: 10, padding: '9px 12px',
+                background: rescueCorrect ? 'rgba(77,255,136,.07)' : 'rgba(255,93,115,.07)',
+                border: `1px solid ${rescueCorrect ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.25)'}`,
+                borderRadius: 9,
+              }}>
+                <p style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.82rem', color: rescueCorrect ? '#4DFF88' : '#FF8DA1',
+                  margin: 0, lineHeight: 1.5,
+                }}>
+                  <strong>{rescueCorrect ? '✓ ' : '✗ '}</strong>
+                  {entry.rescueQuestion.explanation}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function QuizBlock({ block, onAnswered, subject, isWarm, isBio, isMaths, isSoc }) {
   const [selected, setSelected]   = useState(null)
   const [shakeIdx, setShakeIdx]   = useState(null)
   const [attempts, setAttempts]   = useState(0)
@@ -649,6 +882,11 @@ function QuizBlock({ block, onAnswered, subject }) {
             )}
           </p>
         </div>
+      )}
+
+      {/* Targeted brush-up after wrong lock */}
+      {locked && !wasCorrect && (block.topicTags?.length || block.sectionId) && (
+        <TargetedBrushUpPanel block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} isSoc={isSoc} />
       )}
     </div>
   )
@@ -1865,7 +2103,7 @@ function BidmasBlock({ block }) {
 
 // ─── TieredQuizBlock ──────────────────────────────────────────────────────────
 function TieredQuizBlock({ block }) {
-  const tiers = block.tiers || []
+  const tiers = block.tiers || block.rounds || []
   const [activeTier, setActiveTier] = useState(0)
   const [qIdx, setQIdx] = useState(Array(tiers.length).fill(0))
   const [answers, setAnswers] = useState(tiers.map(t => Array(t.questions.length).fill(null)))
@@ -4006,7 +4244,7 @@ function Screen({ screen, subject }) {
           {block.type === 'examtip'       && <ExamTipBlock block={block} isWarm={isWarm} />}
           {block.type === 'timeline'      && <TimelineBlock block={block} isWarm={isWarm} isBio={isBio} isMaths={isMaths} />}
           {block.type === 'reveal'        && <RevealBlock block={block} />}
-          {block.type === 'quiz'          && <QuizBlock block={block} subject={subject} />}
+          {block.type === 'quiz'          && <QuizBlock block={block} subject={subject} isWarm={isWarm} isBio={isBio} isMaths={isMaths} isSoc={isSoc} />}
           {block.type === 'flashcards'    && <FlashcardsBlock block={block} />}
           {block.type === 'hotspot'       && <HotspotBlock block={block} />}
           {block.type === 'misconception' && <MisconceptionBlock block={block} />}
@@ -4957,7 +5195,7 @@ function GoalsScreen({ module }) {
 
 // ─── Main ModulePlayer ────────────────────────────────────────────────────────
 
-export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
+export default function ModulePlayer({ module, onBack, initialVirtualIdx, onNavigateToSection }) {
   const saved = getModuleState(module.id)
 
   // Build unified virtual screen list: [hook?] [goals?] [content...].
@@ -4999,6 +5237,22 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
     scrollToTop()
     recordActivity()
   }
+
+  // Navigation context for deep components (TargetedBrushUpPanel etc.)
+  const goToScreen = useCallback((screenLabel) => {
+    const idx = module.screens.findIndex(s => s.label === screenLabel)
+    if (idx === -1) return
+    const preCount = (module.hook ? 1 : 0) + (goals.length > 0 ? 1 : 0)
+    setVirtualIdx(preCount + idx)
+    setAnimKey(k => k + 1)
+    scrollToTop()
+  }, [module, goals.length]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const moduleNavCtx = useMemo(() => ({
+    currentModuleId: module.id,
+    goToScreen,
+    navigateToSection: onNavigateToSection || null,
+  }), [module.id, goToScreen, onNavigateToSection])
 
   function handleFinish() {
     setShowConfidence(true)
@@ -5174,6 +5428,7 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
   }
 
   return (
+    <ModuleNavCtx.Provider value={moduleNavCtx}>
     <div style={{ background: pageBg, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
       {/* ── Sticky top header ── */}
@@ -5379,5 +5634,6 @@ export default function ModulePlayer({ module, onBack, initialVirtualIdx }) {
         </div>
       </div>
     </div>
+    </ModuleNavCtx.Provider>
   )
 }

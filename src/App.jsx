@@ -157,6 +157,15 @@ export default function App() {
     setView('module')
   }
 
+  function navigateToSection(moduleId, screenLabel) {
+    const targetMod = MODULES.find(m => m.id === moduleId)
+    if (!targetMod) return
+    const targetGoals = targetMod.intro?.learningGoals || targetMod.learningGoals || []
+    const preCount = (targetMod.hook ? 1 : 0) + (targetGoals.length > 0 ? 1 : 0)
+    const screenIdx = targetMod.screens.findIndex(s => s.label === screenLabel)
+    openModule(targetMod, screenIdx === -1 ? 0 : preCount + screenIdx)
+  }
+
   function startSession(id, resumePhase = 1, resumeResults = {}) {
     const built = buildSession(id)
     setTopicId(id)
@@ -202,7 +211,7 @@ export default function App() {
 
   // Full-screen overlays take priority
   if (view === 'quickquiz')              return <QuickQuiz mode={quizMode} onClose={closeOverlay} />
-  if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} initialVirtualIdx={moduleInitialIdx} onBack={closeOverlay} />
+  if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} initialVirtualIdx={moduleInitialIdx} onBack={closeOverlay} onNavigateToSection={navigateToSection} />
   if (view === 'session' && session)     return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={closeOverlay} />
   if (view === 'end')                    return <EndScreen topicId={topicId} results={results} savedData={savedData} onHome={closeOverlay} onStart={startSession} />
 
