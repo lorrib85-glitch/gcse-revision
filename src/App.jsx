@@ -1947,6 +1947,30 @@ function ChemistryBrowser({ onBack }) {
 
 
 
+const QUICK_FIRE_QUESTIONS = [
+  { q: 'What theory said bad smells caused disease?', options: ['Miasma', 'Germ theory', 'Four humours', 'Natural selection'], correct: 0, subject: 'History', ms: 'Miasma was the belief that bad air or smells caused disease.' },
+  { q: 'Who proved blood circulates around the body?', options: ['William Harvey', 'Edward Jenner', 'Louis Pasteur', 'Robert Koch'], correct: 0, subject: 'History', ms: 'William Harvey published his ideas about blood circulation in 1628.' },
+  { q: 'Which scientist developed germ theory?', options: ['Louis Pasteur', 'Galen', 'Vesalius', 'Florence Nightingale'], correct: 0, subject: 'History', ms: 'Louis Pasteur showed that germs cause decay and disease.' },
+  { q: 'What did Jenner create a vaccine for?', options: ['Smallpox', 'Cholera', 'Tuberculosis', 'Typhoid'], correct: 0, subject: 'History', ms: 'Edward Jenner developed vaccination against smallpox.' },
+  { q: 'What did Lister use as an antiseptic?', options: ['Carbolic acid', 'Penicillin', 'Ether', 'Aspirin'], correct: 0, subject: 'History', ms: 'Joseph Lister used carbolic acid to reduce infection in surgery.' },
+  { q: 'Who discovered penicillin?', options: ['Alexander Fleming', 'Robert Koch', 'James Simpson', 'John Snow'], correct: 0, subject: 'History', ms: 'Alexander Fleming discovered penicillin in 1928.' },
+  { q: 'What did John Snow remove in 1854?', options: ['A pump handle', 'A hospital ward', 'A sewer pipe', 'A microscope lens'], correct: 0, subject: 'History', ms: 'John Snow removed the Broad Street pump handle during a cholera outbreak.' },
+  { q: 'Which war helped plastic surgery develop?', options: ['First World War', 'Crimean War', 'Vietnam War', 'English Civil War'], correct: 0, subject: 'History', ms: 'The First World War created a need for reconstructive plastic surgery.' },
+  { q: 'Which organ pumps blood?', options: ['Heart', 'Liver', 'Lung', 'Kidney'], correct: 0, subject: 'Biology', ms: 'The heart pumps blood around the body.' },
+  { q: 'What is the control centre of a cell?', options: ['Nucleus', 'Ribosome', 'Cell wall', 'Cytoplasm'], correct: 0, subject: 'Biology', ms: 'The nucleus contains genetic material and controls cell activities.' },
+  { q: 'What process moves water through a membrane?', options: ['Osmosis', 'Diffusion', 'Respiration', 'Transpiration'], correct: 0, subject: 'Biology', ms: 'Osmosis is the movement of water through a partially permeable membrane.' },
+  { q: 'What gas do plants take in for photosynthesis?', options: ['Carbon dioxide', 'Oxygen', 'Nitrogen', 'Hydrogen'], correct: 0, subject: 'Biology', ms: 'Plants use carbon dioxide during photosynthesis.' },
+  { q: 'What is 7 x 8?', options: ['56', '54', '64', '48'], correct: 0, subject: 'Maths', ms: '7 x 8 = 56.' },
+  { q: 'What is 15% of 200?', options: ['30', '15', '20', '35'], correct: 0, subject: 'Maths', ms: '10% is 20 and 5% is 10, so 15% is 30.' },
+  { q: 'What is the mean of 2, 4 and 9?', options: ['5', '6', '7', '15'], correct: 0, subject: 'Maths', ms: '(2 + 4 + 9) / 3 = 5.' },
+  { q: 'What word means a comparison using like or as?', options: ['Simile', 'Metaphor', 'Verb', 'Noun'], correct: 0, subject: 'English', ms: 'A simile compares using like or as.' },
+  { q: 'What is a word that describes a noun?', options: ['Adjective', 'Verb', 'Adverb', 'Pronoun'], correct: 0, subject: 'English', ms: 'An adjective describes a noun.' },
+  { q: 'Which word means repeating the same starting sound?', options: ['Alliteration', 'Oxymoron', 'Personification', 'Zoomorphism'], correct: 0, subject: 'English', ms: 'Alliteration repeats the same initial sound.' },
+  { q: 'What is the pH of a neutral solution?', options: ['7', '1', '14', '0'], correct: 0, subject: 'Chemistry', ms: 'Neutral solutions have pH 7.' },
+  { q: 'What particle has a negative charge?', options: ['Electron', 'Proton', 'Neutron', 'Nucleus'], correct: 0, subject: 'Chemistry', ms: 'Electrons have a negative charge.' },
+]
+
+
 function TestTab({ mode = 'test' } = {}) {
   const [mathsOpen, setMathsOpen]   = useState(false)
   const [englishOpen, setEnglishOpen]     = useState(false)
@@ -1967,6 +1991,8 @@ function TestTab({ mode = 'test' } = {}) {
   const [quickFireTimeLeft, setQuickFireTimeLeft] = useState(QUICK_FIRE_SECONDS)
   const [quickFireActive, setQuickFireActive] = useState(false)
   const [quickFireFinished, setQuickFireFinished] = useState(false)
+  const [quickFireStats, setQuickFireStats] = useState({ answered: 0, correct: 0 })
+  const [quickFireSummary, setQuickFireSummary] = useState(null)
 
   useEffect(() => {
     if (!isQuickFire || !selected || !quickFireActive) return undefined
@@ -1981,15 +2007,7 @@ function TestTab({ mode = 'test' } = {}) {
     setQuickFireActive(false)
     setQuickFireFinished(true)
     setError(null)
-    setFeedback({
-      marksAwarded: 0,
-      marksAvailable: 0,
-      grade: 'Needs Work',
-      summary: "Time's up — that was your 90 second quick fire round.",
-      achieved: [],
-      missed: ['The timer ran out before this question was finished.'],
-      examinerTip: 'Use the first few seconds to spot command words, then answer with the key fact first.',
-    })
+    finishQuickFireRound('time')
   }, [isQuickFire, selected, quickFireActive, quickFireTimeLeft])
 
   const quickFirePct = Math.max(0, Math.min(100, (quickFireTimeLeft / QUICK_FIRE_SECONDS) * 100))
@@ -2051,7 +2069,21 @@ function TestTab({ mode = 'test' } = {}) {
       setQuickFireTimeLeft(QUICK_FIRE_SECONDS)
       setQuickFireActive(true)
       setQuickFireFinished(false)
+      setQuickFireStats({ answered: 0, correct: 0 })
+      setQuickFireSummary(null)
     }
+  }
+
+  function finishQuickFireRound(reason = 'exit') {
+    setQuickFireActive(false)
+    setQuickFireFinished(true)
+    setQuickFireSummary({
+      reason,
+      answered: quickFireStats.answered,
+      correct: quickFireStats.correct,
+      timeUsed: QUICK_FIRE_SECONDS - quickFireTimeLeft,
+      timeLeft: quickFireTimeLeft,
+    })
   }
 
   function exitTestTopic() {
@@ -2061,9 +2093,14 @@ function TestTab({ mode = 'test' } = {}) {
     setQuickFireActive(false)
     setQuickFireFinished(false)
     setQuickFireTimeLeft(QUICK_FIRE_SECONDS)
+    setQuickFireSummary(null)
   }
 
   function startRandomQuestion() {
+    if (isQuickFire) {
+      startTopic({ topicId: 'quickfire', label: '90s Quick Fire', subject: 'Quick Fire' })
+      return
+    }
     const allT = TEST_TOPICS.filter(s => s.topics.some(t => t.available))
     const rs = allT[Math.floor(Math.random() * allT.length)]
     const av = rs.topics.filter(t => t.available)
@@ -2073,6 +2110,7 @@ function TestTab({ mode = 'test' } = {}) {
 
   function tqNextQuestion(total) {
     if (qIdx < total - 1) { setQIdx(qIdx+1); fullResetQ() }
+    else if (isQuickFire) { finishQuickFireRound('complete') }
     else { exitTestTopic() }
   }
 
@@ -2083,6 +2121,7 @@ function TestTab({ mode = 'test' } = {}) {
       const newAttempts = tqMcAttempts + 1
       setTqMcAttempts(newAttempts)
       if (isCorrect) {
+        if (isQuickFire) setQuickFireStats(stats => ({ answered: stats.answered + 1, correct: stats.correct + 1 }))
         setTqMcLocked(true)
         setFeedback({ marksAwarded: q.marks, marksAvailable: q.marks, grade: 'Excellent',
           summary: "That's the one. Well done for getting it.", achieved: ['Correct answer selected'], missed: [], examinerTip: '' })
@@ -2092,6 +2131,7 @@ function TestTab({ mode = 'test' } = {}) {
         setAnswer('')
         setError('')
       } else {
+        if (isQuickFire) setQuickFireStats(stats => ({ ...stats, answered: stats.answered + 1 }))
         setTqMcLocked(true)
         const correctText = q.options[q.correct] || ''
         setFeedback({ marksAwarded: 0, marksAvailable: q.marks, grade: 'Needs Work',
@@ -2104,16 +2144,47 @@ function TestTab({ mode = 'test' } = {}) {
     gradeAnswer(q)
   }
 
+  if (quickFireSummary) {
+    const accuracy = quickFireSummary.answered ? Math.round((quickFireSummary.correct / quickFireSummary.answered) * 100) : 0
+    const reasonText = quickFireSummary.reason === 'time' ? 'Time up' : quickFireSummary.reason === 'complete' ? 'Round complete' : 'Round exited'
+    return (
+      <div style={{ background:'#080C1A', minHeight:'100vh', padding:'26px 18px 110px' }}>
+        <div style={{ maxWidth:520, margin:'0 auto' }}>
+          <div style={{ background:'linear-gradient(145deg,#10182B,#0D1424)', border:'1px solid #2A3552', borderRadius:24, padding:'24px', boxShadow:'0 18px 46px rgba(0,0,0,.36)' }}>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(157,92,255,.12)', border:'1px solid rgba(157,92,255,.28)', color:'#C18CFF', borderRadius:999, padding:'6px 11px', fontFamily:"'Inter',sans-serif", fontWeight:900, fontSize:'.68rem', letterSpacing:'.08em', textTransform:'uppercase', marginBottom:18 }}>⚡ 90s Quick Fire</div>
+            <h1 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2rem', color:'#F5F7FB', margin:'0 0 6px', lineHeight:1.05 }}>{reasonText}</h1>
+            <p style={{ fontFamily:"'Inter',sans-serif", color:'#9CA8C7', margin:'0 0 22px', fontSize:'.9rem' }}>Short questions only. Fast recall, no exam essays.</p>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:20 }}>
+              {[{ label:'Answered', value:quickFireSummary.answered, color:'#9D5CFF' }, { label:'Correct', value:quickFireSummary.correct, color:'#4DFF88' }, { label:'Accuracy', value:accuracy + '%', color:'#F5B700' }].map(item => (
+                <div key={item.label} style={{ background:'#080C1A', border:'1px solid #1E2A40', borderRadius:14, padding:'14px 10px', textAlign:'center' }}>
+                  <div style={{ color:item.color, fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:'1.35rem' }}>{item.value}</div>
+                  <div style={{ color:'#5A6480', fontFamily:"'Inter',sans-serif", fontWeight:800, fontSize:'.62rem', textTransform:'uppercase', letterSpacing:'.08em', marginTop:4 }}>{item.label}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ background:'rgba(255,255,255,.03)', border:'1px solid #1E2A40', borderRadius:14, padding:'13px 14px', marginBottom:18, color:'#AAB4D4', fontFamily:"'Inter',sans-serif", fontSize:'.84rem' }}>
+              Time used: <strong style={{ color:'#F5F7FB' }}>{quickFireSummary.timeUsed}s</strong> · Time left: <strong style={{ color:'#F5F7FB' }}>{quickFireSummary.timeLeft}s</strong>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <button onClick={startRandomQuestion} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', color:'#fff', border:'none', borderRadius:13, padding:'14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, cursor:'pointer' }}>Play again</button>
+              <button onClick={exitTestTopic} style={{ background:'#10182B', color:'#9CA8C7', border:'1px solid #2A3552', borderRadius:13, padding:'14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, cursor:'pointer' }}>Back to quiz</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (selected) {
-    const questions = PAST_PAPER_QS[selected.topicId] || []
-    const q = questions[qIdx]
+    const questions = isQuickFire ? QUICK_FIRE_QUESTIONS : (PAST_PAPER_QS[selected.topicId] || [])
+    const q = isQuickFire && questions[qIdx] ? { type: 'mc', marks: 1, ...questions[qIdx] } : questions[qIdx]
     const gs = feedback ? (GRADE_STYLE[feedback.grade] || GRADE_STYLE['Developing']) : null
     const isMC = q?.type === 'mc'
     return (
       <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
         <div style={{ background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', padding:'12px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
-            <button onClick={exitTestTopic} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0 }}>←</button>
+            <button onClick={() => isQuickFire ? finishQuickFireRound('exit') : exitTestTopic()} style={{ background:isQuickFire?'rgba(255,93,115,.1)':'none', border:isQuickFire?'1px solid rgba(255,93,115,.24)':'none', borderRadius:isQuickFire?999:0, cursor:'pointer', color:isQuickFire?'#FF5D73':'#5A6480', fontSize:isQuickFire?'.72rem':'1.1rem', fontWeight:isQuickFire?800:400, padding:isQuickFire?'6px 10px':0 }}>{isQuickFire ? 'Exit' : '←'}</button>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
               <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480' }}>Question {qIdx+1} of {questions.length}</div>
