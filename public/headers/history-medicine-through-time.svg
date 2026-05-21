@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-label="Medicine through time header">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a123f"/>
+      <stop offset=".48" stop-color="#12365a"/>
+      <stop offset="1" stop-color="#0f8f70"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="70%" cy="33%" r="42%">
+      <stop offset="0" stop-color="#6bffb0" stop-opacity=".5"/>
+      <stop offset=".46" stop-color="#38d27a" stop-opacity=".17"/>
+      <stop offset="1" stop-color="#071126" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="900" height="520" fill="url(#bg)"/>
+  <rect width="900" height="520" fill="url(#glow)"/>
+  <g opacity=".18" stroke="#fff" stroke-width="4" fill="none">
+    <path d="M80 92 C160 42 240 142 320 92 S480 42 560 92 S720 142 820 86"/>
+    <path d="M70 160 C170 112 238 210 344 154 S500 112 604 158 S742 204 850 150"/>
+  </g>
+  <path d="M0 370 C128 316 210 352 312 302 C420 250 532 276 636 232 C752 184 822 202 900 168 L900 520 L0 520 Z" fill="#050915" opacity=".58"/>
+  <g transform="translate(330 116)">
+    <circle cx="120" cy="120" r="112" fill="#081225" opacity=".82" stroke="#6bffb0" stroke-opacity=".42" stroke-width="8"/>
+    <path d="M92 44h56v76h76v56h-76v76H92v-76H16v-56h76z" fill="#6bffb0"/>
+    <path d="M92 44h56v76h76v56h-76v76H92v-76H16v-56h76z" fill="#f5f7fb" opacity=".18"/>
+  </g>
+  <g fill="#071126" opacity=".9">
+    <rect x="88" y="302" width="96" height="154" rx="16"/>
+    <rect x="210" y="258" width="104" height="198" rx="18"/>
+    <rect x="600" y="284" width="88" height="172" rx="16"/>
+    <rect x="718" y="230" width="110" height="226" rx="18"/>
+  </g>
+  <g stroke="#6bffb0" stroke-width="7" stroke-linecap="round" opacity=".68">
+    <path d="M112 340h48M112 374h48M236 304h52M236 340h52M626 326h38M626 360h38M746 276h54M746 314h54"/>
+  </g>
+  <path d="M0 452h900v68H0z" fill="#020510" opacity=".62"/>
+</svg>

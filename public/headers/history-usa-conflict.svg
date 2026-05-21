@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-label="The USA 1954 to 1975 header">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101b4d"/>
+      <stop offset=".48" stop-color="#6b1235"/>
+      <stop offset="1" stop-color="#f05a28"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="74%" cy="24%" r="45%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".38"/>
+      <stop offset=".45" stop-color="#2f80ff" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#0a0f22" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="900" height="520" fill="url(#bg)"/>
+  <rect width="900" height="520" fill="url(#glow)"/>
+  <g opacity=".28">
+    <rect x="0" y="55" width="900" height="28" fill="#fff"/>
+    <rect x="0" y="112" width="900" height="28" fill="#fff"/>
+    <rect x="0" y="169" width="900" height="28" fill="#fff"/>
+    <rect x="0" y="226" width="900" height="28" fill="#fff"/>
+    <rect x="0" y="283" width="900" height="28" fill="#fff"/>
+  </g>
+  <rect x="0" y="0" width="370" height="260" fill="#071333" opacity=".68"/>
+  <g fill="#fff" opacity=".72">
+    <circle cx="54" cy="42" r="5"/><circle cx="116" cy="42" r="5"/><circle cx="178" cy="42" r="5"/><circle cx="240" cy="42" r="5"/><circle cx="302" cy="42" r="5"/>
+    <circle cx="86" cy="88" r="5"/><circle cx="148" cy="88" r="5"/><circle cx="210" cy="88" r="5"/><circle cx="272" cy="88" r="5"/><circle cx="334" cy="88" r="5"/>
+    <circle cx="54" cy="134" r="5"/><circle cx="116" cy="134" r="5"/><circle cx="178" cy="134" r="5"/><circle cx="240" cy="134" r="5"/><circle cx="302" cy="134" r="5"/>
+    <circle cx="86" cy="180" r="5"/><circle cx="148" cy="180" r="5"/><circle cx="210" cy="180" r="5"/><circle cx="272" cy="180" r="5"/><circle cx="334" cy="180" r="5"/>
+  </g>
+  <path d="M0 380 C120 326 214 358 308 310 C424 250 524 286 633 234 C730 188 810 210 900 170 L900 520 L0 520 Z" fill="#050915" opacity=".75"/>
+  <g fill="#050915">
+    <rect x="118" y="292" width="34" height="160" rx="17"/>
+    <circle cx="135" cy="268" r="27"/>
+    <path d="M107 352 l-62 60M162 352l70 56" stroke="#050915" stroke-width="28" stroke-linecap="round"/>
+    <rect x="420" y="256" width="38" height="194" rx="19"/>
+    <circle cx="439" cy="229" r="30"/>
+    <path d="M404 326 l-82 64M472 324l86 64" stroke="#050915" stroke-width="30" stroke-linecap="round"/>
+    <rect x="706" y="294" width="34" height="156" rx="17"/>
+    <circle cx="723" cy="270" r="27"/>
+  </g>
+  <path d="M0 452h900v68H0z" fill="#030712"/>
+  <rect width="900" height="520" fill="#020510" opacity=".13"/>
+</svg>

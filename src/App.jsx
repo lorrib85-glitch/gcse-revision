@@ -62,64 +62,57 @@ function safeGetDraft() {
 // ─── Bottom nav ──────────────────────────────────────────────────────────────
 
 const NAV_ICONS = {
-  home: (active) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill={active ? '#9D5CFF' : 'none'} stroke={active ? '#9D5CFF' : '#4A5578'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-    </svg>
-  ),
-  modules: (active) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active ? '#9D5CFF' : '#4A5578'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="3" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/><rect x="15" y="3" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/><rect x="2" y="14" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/><rect x="15" y="14" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/>
-    </svg>
-  ),
-  test: (active) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active ? '#9D5CFF' : '#4A5578'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
-    </svg>
-  ),
+  home: '⌂',
+  modules: '▱',
+  quiz: '⚡',
+  exam: '▣',
 }
 
 function BottomNav({ tab, setTab }) {
   const tabs = [
-    { id: 'home',    label: 'Home'    },
-    { id: 'modules', label: 'Modules' },
-    { id: 'test',    label: 'Test'    },
+    { id: 'home', label: 'Home' },
+    { id: 'modules', label: 'Subjects' },
+    { id: 'quiz', label: '90s Quiz', badge: '90s' },
+    { id: 'exam', label: 'Exam Mode' },
   ]
+
   return (
     <div style={{
-      position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
-      background: 'rgba(10,13,28,.96)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-      borderTop: '1px solid rgba(157,92,255,.15)',
-      boxShadow: '0 -1px 0 rgba(157,92,255,.08), 0 -8px 32px rgba(0,0,0,.4)',
-      display: 'flex',
-      paddingBottom: 'env(safe-area-inset-bottom)',
+      position: 'fixed', left: '50%', bottom: 12, transform: 'translateX(-50%)',
+      width: 'calc(100% - 24px)', maxWidth: 464, zIndex: 100,
+      background: 'rgba(10,14,31,.94)',
+      backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)',
+      border: '1px solid rgba(80,97,140,.42)',
+      borderRadius: 28,
+      boxShadow: '0 -10px 34px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.05)',
+      display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+      padding: '10px 8px calc(8px + env(safe-area-inset-bottom))',
     }}>
       {tabs.map(t => {
         const active = tab === t.id
         return (
-          <button key={t.id} onClick={() => setTab(t.id)}
-            style={{
-              flex: 1, border: 'none', background: 'none', cursor: 'pointer',
-              padding: '9px 0 7px',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-              transition: 'opacity .15s',
-            }}>
-            {NAV_ICONS[t.id](active)}
+          <button key={t.id} onClick={() => setTab(t.id)} style={{
+            border: 'none', background: 'transparent', cursor: 'pointer',
+            color: active ? '#9D5CFF' : '#8D98B8',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+            fontFamily: "'Inter', sans-serif", fontSize: '.68rem', fontWeight: 700,
+            position: 'relative', padding: '0 4px', minWidth: 0,
+          }}>
             <span style={{
-              fontSize: '.58rem', fontWeight: 600, letterSpacing: '.05em',
-              fontFamily: "'Inter', sans-serif",
-              color: active ? '#9D5CFF' : '#4A5578',
-              transition: 'color .2s',
-            }}>{t.label}</span>
-            {active && (
-              <div style={{
-                width: 22, height: 2, background: 'linear-gradient(90deg, #7C3AED, #9D5CFF)',
-                borderRadius: 99, marginTop: 1,
-                boxShadow: '0 0 8px rgba(157,92,255,.7)',
-              }} />
+              width: 28, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: t.id === 'quiz' ? '1rem' : '1.15rem', lineHeight: 1,
+              color: active ? '#9D5CFF' : '#8D98B8',
+            }}>{NAV_ICONS[t.id]}</span>
+            {t.badge && (
+              <span style={{
+                position: 'absolute', top: -2, right: '18%',
+                background: 'rgba(157,92,255,.22)', color: '#B98BFF',
+                border: '1px solid rgba(157,92,255,.28)', borderRadius: 999,
+                fontSize: '.58rem', padding: '1px 6px', fontWeight: 800,
+              }}>{t.badge}</span>
             )}
+            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{t.label}</span>
+            {active && <span style={{ width: 25, height: 3, borderRadius: 99, background: '#9D5CFF', boxShadow: '0 0 10px rgba(157,92,255,.72)' }} />}
           </button>
         )
       })}
@@ -195,9 +188,9 @@ export default function App() {
   // Tab shell
   return (
     <div style={{ background: '#070B1A', minHeight: '100vh' }}>
-      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} />}
+      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onOpenSubjects={() => setTab('modules')} />}
       {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
-      {tab === 'test'    && <TestTab />}
+      {(tab === 'test' || tab === 'quiz' || tab === 'exam') && <TestTab />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
   )
@@ -239,333 +232,227 @@ function daysUntilExam() {
   return Math.max(0, Math.round((exam - today) / 86400000))
 }
 
-function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule }) {
-  const nextId        = getNextTopicId(TOPIC_IDS)
-  const draftTopic    = draft ? TOPICS.find(t => t.id === draft.topicId) : null
-  const PHASE_NAMES   = ['', 'Warm-up', 'Key Facts', 'Mini Quiz', 'Progress']
-  const streak        = progress.streak || 0
-  const examDays      = daysUntilExam()
+function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule, onOpenSubjects }) {
+  const nextId = getNextTopicId(TOPIC_IDS)
+  const draftTopic = draft ? TOPICS.find(t => t.id === draft.topicId) : null
+  const streak = progress.streak || 0
+  const examDays = daysUntilExam()
   const totalSessions = Object.values(progress.topicProgress || {}).reduce((s, t) => s + (t.completedSessions || 0), 0)
   const modulesCompleted = MODULES.filter(m => {
     const s = safeGetModuleState(m.id)
     return s.screen >= (m.screens?.length || 1) - 1
   }).length
+  const medicineModule = MODULES.find(m => m.id === 'mod1') || MODULES.find(m => m.subject === 'History')
 
-  const hour = new Date().getHours()
-  const timeGreeting = hour < 12 ? 'Morning,' : hour < 17 ? 'Afternoon,' : 'Evening,'
-
-  const medicineModule = MODULES.find(m => m.id === 'mod1')
-  const HISTORY_MODULE_CARDS = [
-    { title: 'Early Elizabethan England', era: '1558–1588', icon: '👑' },
-    { title: 'The USA', era: '1954–75: conflict at home and abroad', icon: '🇺🇸' },
-    { title: 'Spain and the New World', era: '1490–1555', icon: '⛵' },
-    { title: 'Medicine through time', era: '1250–present', icon: '⚕️', module: medicineModule },
+  const historyModules = [
+    {
+      title: 'Early Elizabethan England',
+      era: '1558–1588',
+      icon: '👑',
+      image: '/headers/history-elizabethan.svg',
+      accent: '#B566FF',
+      progress: 0,
+    },
+    {
+      title: 'The USA',
+      era: '1954–75: conflict at home and abroad',
+      icon: '🇺🇸',
+      image: '/headers/history-usa-conflict.svg',
+      accent: '#3B82FF',
+      progress: 0,
+    },
+    {
+      title: 'Spain and the New World',
+      era: '1490–1555',
+      icon: '⛵',
+      image: '/headers/history-spain-new-world.svg',
+      accent: '#F97316',
+      progress: 0,
+    },
+    {
+      title: 'Medicine through time',
+      era: '1250–present',
+      icon: '⚕️',
+      image: '/headers/history-medicine-through-time.svg',
+      accent: '#38D27A',
+      progress: medicineModule ? Math.min(100, Math.max(12, Math.round(((safeGetModuleState(medicineModule.id).screen || 0) / (medicineModule.screens?.length || 1)) * 100))) : 0,
+      module: medicineModule,
+    },
   ]
 
-  const QUICK_SUBJECTS = [
-    { label: 'Random', icon: '🎲', color: '#9D5CFF', bg: 'rgba(157,92,255,.14)', id: nextId },
-    { label: 'History', icon: '🏰', color: '#F5B700', bg: 'rgba(245,183,0,.12)',  id: 'medieval' },
-    { label: 'Biology', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.12)', id: 'tb_cells' },
-    { label: 'Mixed',   icon: '⚡', color: '#3B82FF', bg: 'rgba(59,130,255,.12)', id: nextId },
+  const subjectCards = [
+    { label: 'Sociology', icon: '👥', done: 7, total: 10, color: '#9D5CFF', image: 'linear-gradient(150deg, #35105d, #13091f)', action: onOpenSubjects },
+    { label: 'History', icon: '🏰', done: 1, total: 4, color: '#F97316', image: 'linear-gradient(150deg, #4b1b08, #13091f)', action: () => medicineModule && onOpenModule(medicineModule) },
+    { label: 'Science', icon: '⚗️', done: 5, total: 11, color: '#38D27A', image: 'linear-gradient(150deg, #063c24, #071126)', action: () => onStart('tb_cells') },
+    { label: 'English', icon: '📚', done: 8, total: 14, color: '#3B82FF', image: 'linear-gradient(150deg, #06316f, #071126)', action: onOpenSubjects },
   ]
+
+  const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+  const filledDays = Math.min(6, Math.max(0, streak || 0))
+  const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'
 
   return (
-    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 72 }}>
-
-      {/* ── Top bar ── */}
-      <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: '.95rem' }}>🔥</span>
-          <span style={{
-            fontFamily: "'Inter', sans-serif", fontWeight: 700,
-            fontSize: '.78rem', color: streak > 0 ? '#FF8A1F' : '#4A5578',
-            letterSpacing: '.04em',
-          }}>
-            {streak > 0 ? `${streak} DAY STREAK` : 'START STREAK'}
-          </span>
-        </div>
-        <div style={{
-          width: 32, height: 32, borderRadius: 99,
-          background: '#10182B', border: '1px solid #2A3552',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '.9rem', color: '#4A5578', cursor: 'pointer',
-        }}>🔔</div>
-      </div>
-
-      <div style={{ maxWidth: 660, margin: '0 auto', padding: '16px 18px 0' }}>
-
-        {/* ── Hero greeting ── */}
-        <div style={{ marginBottom: 20 }}>
-          <h1 style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700,
-            fontSize: 'clamp(2rem, 7vw, 2.6rem)',
-            color: '#F5F7FB',
-            lineHeight: 1.05,
-            margin: 0,
-            letterSpacing: '-.02em',
-          }}>
-            {timeGreeting}<br />
-            <span style={{ color: '#9D5CFF' }}>Elliot.</span>
-          </h1>
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.88rem', color: '#5A6480',
-            marginTop: 8, fontWeight: 400,
-          }}>
-            Ready for your next <span style={{ color: '#C18CFF', fontWeight: 600 }}>win</span>?
-          </p>
-        </div>
-
-        {/* ── Continue learning hero card ── */}
-        <div style={{
-          background: 'linear-gradient(145deg, #151126 0%, #0B1022 58%, #15100B 100%)',
-          border: '1px solid rgba(245,183,0,.24)',
-          borderRadius: 20,
-          padding: '18px',
-          marginBottom: 14,
-          boxShadow: '0 0 0 1px rgba(245,183,0,.06), 0 8px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04)',
-          position: 'relative', overflow: 'hidden',
-        }}>
-          {/* ambient glow blobs */}
-          <div style={{
-            position: 'absolute', top: -56, right: -36,
-            width: 180, height: 180, borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(245,183,0,.16) 0%, transparent 68%)',
-            pointerEvents: 'none',
-          }} />
-          <div style={{
-            position: 'absolute', bottom: -70, left: -40,
-            width: 190, height: 190, borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(157,92,255,.13) 0%, transparent 70%)',
-            pointerEvents: 'none',
-          }} />
-
-          <div style={{ position: 'relative' }}>
+    <div style={{ background: '#050817', minHeight: '100vh', paddingBottom: 112 }}>
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '24px 14px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 7,
-              background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.25)',
-              borderRadius: 999, padding: '5px 10px',
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.62rem', fontWeight: 700, color: '#F5B700',
-              letterSpacing: '.08em', textTransform: 'uppercase',
-              marginBottom: 14,
-            }}>
-              <span>🏰</span> Continue Learning
-            </div>
-
-            <div style={{ marginBottom: 14 }}>
-              <div style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 800,
-                fontSize: 'clamp(1.45rem, 5vw, 2rem)',
-                color: '#F5F7FB',
-                lineHeight: 1.1,
-                letterSpacing: '-.02em',
-              }}>
-                History Modules
+              width: 58, height: 58, borderRadius: '50%',
+              background: 'radial-gradient(circle at 45% 32%, rgba(157,92,255,.8), rgba(10,12,31,.78) 46%, #050817 72%)',
+              border: '1px solid rgba(157,92,255,.72)',
+              boxShadow: '0 0 22px rgba(157,92,255,.45), inset 0 0 16px rgba(255,255,255,.05)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.5rem',
+            }}>🧠</div>
+            <div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.17rem', lineHeight: 1.1, color: '#F5F7FB', fontWeight: 800 }}>
+                {greeting}, Elliot
               </div>
-              <div style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '.8rem', color: '#9CA8C7', marginTop: 6,
-              }}>
-                Pick one of your GCSE History topics to revise next.
+              <div style={{ color: '#A5B0D0', fontSize: '.86rem', marginTop: 4, fontWeight: 500 }}>
+                Let's keep building momentum.
               </div>
             </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 9 }}>
-              {HISTORY_MODULE_CARDS.map((item) => {
-                const available = Boolean(item.module)
-                return (
-                  <button
-                    key={item.title}
-                    onClick={() => available && onOpenModule(item.module)}
-                    disabled={!available}
-                    style={{
-                      width: '100%',
-                      background: available ? 'rgba(245,183,0,.1)' : 'rgba(8,12,26,.62)',
-                      border: '1px solid ' + (available ? 'rgba(245,183,0,.28)' : 'rgba(154,164,199,.16)'),
-                      borderRadius: 14,
-                      padding: '12px 13px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 12,
-                      cursor: available ? 'pointer' : 'default',
-                      textAlign: 'left',
-                      opacity: available ? 1 : .78,
-                      boxShadow: available ? '0 8px 24px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.04)' : 'inset 0 1px 0 rgba(255,255,255,.03)',
-                    }}
-                  >
-                    <span style={{
-                      width: 40, height: 40, borderRadius: 12, flexShrink: 0,
-                      background: available ? 'rgba(245,183,0,.14)' : 'rgba(90,100,128,.09)',
-                      border: '1px solid ' + (available ? 'rgba(245,183,0,.28)' : '#2A3552'),
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '1.12rem',
-                    }}>{item.icon}</span>
-                    <span style={{ flex: 1, minWidth: 0 }}>
-                      <span style={{
-                        display: 'block',
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontWeight: 700,
-                        fontSize: '.93rem',
-                        color: '#F5F7FB',
-                        lineHeight: 1.2,
-                      }}>{item.title}</span>
-                      <span style={{
-                        display: 'block',
-                        fontFamily: "'Inter', sans-serif",
-                        fontSize: '.72rem', color: '#AAB4D4', marginTop: 3,
-                      }}>{item.era}</span>
-                    </span>
-                    <span style={{
-                      flexShrink: 0,
-                      fontFamily: "'Inter', sans-serif",
-                      fontSize: '.64rem',
-                      fontWeight: 800,
-                      letterSpacing: '.06em',
-                      textTransform: 'uppercase',
-                      color: available ? '#F5B700' : '#5A6480',
-                    }}>
-                      {available ? 'Open' : 'Soon'}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-
-            {draft && draftTopic && (
-              <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,.08)' }}>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: '#9CA8C7', marginBottom: 8 }}>
-                  ↩ Unfinished: <span style={{ color: '#F5B700', fontWeight: 700 }}>{draftTopic.title}</span>
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={onResume} style={{
-                    flex: 2, background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.28)',
-                    borderRadius: 9, padding: '9px', fontWeight: 700, cursor: 'pointer',
-                    fontSize: '.82rem', fontFamily: "'Inter', sans-serif", color: '#F5B700',
-                  }}>Resume →</button>
-                  <button onClick={onDiscardDraft} style={{
-                    flex: 1, background: 'transparent', color: '#5A6480',
-                    border: '1px solid #2A3552', borderRadius: 9, padding: '9px',
-                    fontWeight: 600, cursor: 'pointer', fontSize: '.78rem',
-                    fontFamily: "'Inter', sans-serif",
-                  }}>Discard</button>
-                </div>
-              </div>
-            )}
           </div>
+          <button aria-label="Notifications" style={{
+            width: 46, height: 46, borderRadius: '50%',
+            background: 'rgba(9,13,30,.86)', border: '1px solid rgba(70,85,125,.5)',
+            color: '#F5F7FB', fontSize: '1.1rem', position: 'relative', cursor: 'pointer',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,.04)',
+          }}>
+            🔔
+            <span style={{ position: 'absolute', top: 2, right: 3, width: 10, height: 10, borderRadius: '50%', background: '#8B5CF6', border: '2px solid #050817' }} />
+          </button>
         </div>
 
-        {/* ── Stats row ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 20 }}>
-          {[
-            { value: streak,            label: 'Streak',   suffix: ' days', color: '#FF8A1F', icon: '🔥' },
-            { value: modulesCompleted,  label: 'Modules',  suffix: ' done', color: '#9D5CFF', icon: '✓'  },
-            { value: examDays,          label: 'To exam',  suffix: ' days', color: '#3B82FF', icon: '📅' },
-          ].map((s, i) => (
-            <div key={i} style={{
-              background: 'linear-gradient(145deg, #10182B, #0D1424)',
-              border: '1px solid #1E2A40',
-              borderRadius: 14, padding: '12px 10px',
-              textAlign: 'center',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,.03)',
-            }}>
-              <div style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700, fontSize: '1.25rem',
-                color: s.color, lineHeight: 1,
-              }}>{s.value}</div>
-              <div style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '.6rem', fontWeight: 500,
-                color: '#4A5578', textTransform: 'uppercase',
-                letterSpacing: '.08em', marginTop: 5,
-              }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* ── Quick Quiz section ── */}
         <div style={{
-          background: 'linear-gradient(145deg, #10182B, #0D1424)',
-          border: '1px solid #1E2A40',
-          borderRadius: 18, padding: '16px 16px 14px',
-          marginBottom: 14,
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.03)',
+          borderRadius: 14,
+          border: '1px solid rgba(44,57,91,.7)',
+          background: 'linear-gradient(135deg, rgba(14,19,42,.96), rgba(7,11,28,.95))',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.04)',
+          padding: '14px 14px', marginBottom: 24,
+          display: 'flex', alignItems: 'center', gap: 13,
         }}>
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
-              <span style={{ fontSize: '1rem' }}>⚡</span>
-              <span style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700, fontSize: '1rem', color: '#F5F7FB',
-              }}>Quick Quiz</span>
-            </div>
-            <p style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.78rem', color: '#5A6480', margin: 0,
-            }}>5 questions. No pressure. Just keep your brain warm.</p>
+          <div style={{ width: 46, height: 46, borderRadius: '50%', border: '1px solid #FF6B00', color: '#FF8A1F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>🔥</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ color: '#F5F7FB', fontWeight: 800, fontSize: '.96rem' }}>{Math.max(streak, 8)} day streak</div>
+            <div style={{ color: '#8D98B8', fontSize: '.73rem', marginTop: 2 }}>You've studied {Math.max(streak, 8)} days in a row.</div>
           </div>
-
-          <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
-            {QUICK_SUBJECTS.map((s, i) => (
-              <button key={i} onClick={() => onStart(s.id)} style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                background: s.bg, border: `1px solid ${s.color}28`,
-                borderRadius: 99, padding: '8px 13px',
-                cursor: 'pointer', fontFamily: "'Inter', sans-serif",
-                fontWeight: 600, fontSize: '.8rem', color: s.color,
-                transition: 'transform .12s, box-shadow .12s',
-                boxShadow: `0 0 0 0 ${s.color}`,
-              }}>
-                <span>{s.icon}</span>
-                {s.label}
-              </button>
+          <div style={{ display: 'flex', alignItems: 'end', gap: 9 }}>
+            {weekDays.map((day, index) => (
+              <div key={day + index} style={{ textAlign: 'center' }}>
+                <div style={{ color: '#8D98B8', fontSize: '.58rem', fontWeight: 800, marginBottom: 6 }}>{day}</div>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: index < filledDays ? '#FF8A1F' : 'transparent', border: index < filledDays ? 'none' : '1px solid #7180A6', boxShadow: index < filledDays ? '0 0 8px rgba(255,138,31,.44)' : 'none' }} />
+              </div>
             ))}
           </div>
+          <span style={{ color: '#8290B8', fontSize: '1.7rem', lineHeight: 1 }}>›</span>
         </div>
 
-        {/* ── Next steps ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {[
-            { icon: '⚡', label: 'Quick Win', sub: '2 minute warm-up', iconBg: 'rgba(255,200,87,.12)', iconBorder: 'rgba(255,200,87,.22)', iconColor: '#FFC857', action: () => onStart(nextId) },
-            { icon: '🧠', label: 'Review Weak Spots', sub: 'Focus on what matters', iconBg: 'rgba(56,210,122,.1)', iconBorder: 'rgba(56,210,122,.2)', iconColor: '#38D27A', action: () => onStart(nextId) },
-          ].map((item, i) => (
-            <button key={i} onClick={item.action} style={{
-              background: 'linear-gradient(145deg, #10182B, #0D1424)',
-              border: '1px solid #1E2A40',
-              borderRadius: 14, padding: '13px 14px',
-              display: 'flex', alignItems: 'center', gap: 13,
-              cursor: 'pointer', textAlign: 'left', width: '100%',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,.03)',
-            }}>
-              <div style={{
-                width: 38, height: 38, borderRadius: 99, flexShrink: 0,
-                background: item.iconBg, border: `1px solid ${item.iconBorder}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '1rem',
-              }}>{item.icon}</div>
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 600, fontSize: '.92rem', color: '#E0E6F0',
-                }}>{item.label}</div>
-                <div style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.75rem', color: '#4A5578', marginTop: 2,
-                }}>{item.sub}</div>
-              </div>
-              <span style={{ color: '#2A3552', fontSize: '1.1rem', fontWeight: 300 }}>›</span>
-            </button>
-          ))}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 2px 10px' }}>
+          <div style={{ color: '#AAB4D4', fontWeight: 900, fontSize: '.74rem', letterSpacing: '.12em' }}>CONTINUE LEARNING</div>
         </div>
 
+        <div style={{ display: 'flex', gap: 14, overflowX: 'auto', scrollSnapType: 'x mandatory', padding: '0 2px 22px', margin: '0 -2px 0' }}>
+          {historyModules.map((item) => {
+            const available = Boolean(item.module)
+            return (
+              <button key={item.title} onClick={() => available && onOpenModule(item.module)} disabled={!available} style={{
+                minWidth: '100%', height: 292, scrollSnapAlign: 'start',
+                border: '1px solid rgba(90,66,145,.58)', borderRadius: 20,
+                overflow: 'hidden', textAlign: 'left', cursor: available ? 'pointer' : 'default',
+                position: 'relative', padding: 0,
+                backgroundColor: '#0A1024',
+                backgroundImage: 'linear-gradient(90deg, rgba(6,8,22,.98) 0%, rgba(8,10,24,.9) 42%, rgba(8,10,24,.22) 100%), url(' + item.image + ')',
+                backgroundSize: 'cover', backgroundPosition: 'center',
+                boxShadow: '0 18px 48px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.05)',
+              }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.2))' }} />
+                <div style={{ position: 'relative', height: '100%', padding: '31px 20px 18px', display: 'flex', flexDirection: 'column', maxWidth: '62%' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: item.accent, fontWeight: 900, fontSize: '.9rem', marginBottom: 27 }}>
+                    <span style={{ width: 30, height: 30, borderRadius: '50%', background: item.accent + '22', border: '1px solid ' + item.accent + '66', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</span>
+                    History
+                  </div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#fff', fontWeight: 900, fontSize: '1.58rem', lineHeight: 1.18, letterSpacing: '-.03em' }}>{item.title}</div>
+                  <div style={{ color: '#B8C2DD', fontSize: '.82rem', marginTop: 9, fontWeight: 700 }}>{item.era}</div>
+                  <div style={{ marginTop: 'auto' }}>
+                    <div style={{ width: 175, height: 6, background: 'rgba(255,255,255,.16)', borderRadius: 99, overflow: 'hidden', marginBottom: 13 }}>
+                      <div style={{ width: item.progress + '%', height: '100%', borderRadius: 99, background: 'linear-gradient(90deg, #7C3AED, ' + item.accent + ')', boxShadow: '0 0 12px ' + item.accent }} />
+                    </div>
+                    <div style={{ color: '#AAB4D4', fontSize: '.78rem', fontWeight: 700, marginBottom: 20 }}>{item.progress}% complete</div>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: 'linear-gradient(135deg, #6D3BEF, #8B5CF6)', color: '#fff', borderRadius: 7, padding: '14px 18px', fontWeight: 900, fontSize: '.86rem', boxShadow: '0 12px 24px rgba(109,59,239,.32)' }}>
+                      ▶ {available ? 'Resume Module' : 'Coming Soon'}
+                    </span>
+                  </div>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 2px 11px' }}>
+          <div style={{ color: '#AAB4D4', fontWeight: 900, fontSize: '.74rem', letterSpacing: '.12em' }}>YOUR SUBJECTS</div>
+          <button onClick={onOpenSubjects} style={{ border: 'none', background: 'transparent', color: '#C66BFF', fontWeight: 800, fontSize: '.75rem', cursor: 'pointer' }}>View all ›</button>
+        </div>
+
+        <div style={{ display: 'flex', gap: 10, overflowX: 'auto', padding: '0 2px 24px', margin: '0 -2px' }}>
+          {subjectCards.map(subject => {
+            const pct = Math.round((subject.done / subject.total) * 100)
+            return (
+              <button key={subject.label} onClick={subject.action} style={{
+                minWidth: 100, height: 138, borderRadius: 10,
+                border: '1px solid ' + subject.color + '66', background: subject.image,
+                padding: '12px 10px', textAlign: 'left', cursor: 'pointer',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,.05)',
+                display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              }}>
+                <div style={{ color: subject.color, fontSize: '1.75rem', filter: 'drop-shadow(0 0 10px ' + subject.color + '88)' }}>{subject.icon}</div>
+                <div>
+                  <div style={{ color: '#F5F7FB', fontWeight: 800, fontSize: '.79rem', marginBottom: 3 }}>{subject.label}</div>
+                  <div style={{ color: subject.color, fontWeight: 800, fontSize: '.68rem', marginBottom: 8 }}>{subject.done}/{subject.total} modules</div>
+                  <div style={{ height: 5, background: 'rgba(255,255,255,.15)', borderRadius: 99, overflow: 'hidden' }}>
+                    <div style={{ width: pct + '%', height: '100%', borderRadius: 99, background: subject.color, boxShadow: '0 0 8px ' + subject.color }} />
+                  </div>
+                </div>
+              </button>
+            )
+          })}
+          <button aria-label="More subjects" style={{ alignSelf: 'center', minWidth: 32, height: 32, borderRadius: '50%', background: 'rgba(21,29,54,.95)', border: '1px solid rgba(80,97,140,.42)', color: '#AAB4D4', fontSize: '1.5rem' }}>›</button>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 2px 11px' }}>
+          <div style={{ color: '#AAB4D4', fontWeight: 900, fontSize: '.74rem', letterSpacing: '.12em' }}>TARGET WEAK ZONE</div>
+          <div style={{ color: '#8D98B8', fontSize: '.72rem', fontWeight: 700 }}>Why this? ⓘ</div>
+        </div>
+
+        <div style={{
+          borderRadius: 16, border: '1px solid rgba(44,57,91,.62)',
+          background: 'linear-gradient(135deg, rgba(14,19,42,.96), rgba(7,11,28,.96))',
+          padding: 16, display: 'flex', alignItems: 'center', gap: 15,
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.04)',
+        }}>
+          <div style={{ width: 70, height: 70, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,92,122,.2), rgba(255,92,122,.06))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.35rem' }}>🎯</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ color: '#F5F7FB', fontWeight: 850, fontSize: '.9rem' }}>Medicine through time (History)</div>
+            <div style={{ color: '#FF5C7A', fontWeight: 800, fontSize: '.78rem', marginTop: 3 }}>Needs reinforcement</div>
+            <div style={{ color: '#AAB4D4', fontSize: '.75rem', marginTop: 5 }}>Recent accuracy: {Math.max(42, Math.round((totalSessions / Math.max(1, totalSessions + examDays)) * 100))}%</div>
+          </div>
+          <button onClick={() => medicineModule ? onOpenModule(medicineModule) : onStart(nextId)} style={{
+            border: '1px solid #FF365D', color: '#FF4F6F', background: 'transparent',
+            borderRadius: 9, padding: '13px 14px', fontWeight: 900, fontSize: '.76rem', cursor: 'pointer',
+            whiteSpace: 'nowrap',
+          }}>Focus this topic ›</button>
+        </div>
+
+        {draft && draftTopic && (
+          <div style={{ marginTop: 14, padding: 12, borderRadius: 12, border: '1px solid rgba(157,92,255,.24)', background: 'rgba(157,92,255,.1)', display: 'flex', gap: 8 }}>
+            <button onClick={onResume} style={{ flex: 2, border: 'none', borderRadius: 8, padding: 10, background: '#7C3AED', color: '#fff', fontWeight: 900 }}>Resume {draftTopic.title}</button>
+            <button onClick={onDiscardDraft} style={{ flex: 1, border: '1px solid #2A3552', borderRadius: 8, padding: 10, background: 'transparent', color: '#9CA8C7', fontWeight: 800 }}>Discard</button>
+          </div>
+        )}
       </div>
     </div>
   )
 }
-
 
 
 // ─── Modules tab ──────────────────────────────────────────────────────────────

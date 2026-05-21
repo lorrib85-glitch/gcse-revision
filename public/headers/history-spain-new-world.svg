@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-label="Spain and the New World header">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b164d"/>
+      <stop offset=".42" stop-color="#c2412e"/>
+      <stop offset=".58" stop-color="#f5b700"/>
+      <stop offset=".59" stop-color="#163b5f"/>
+      <stop offset="1" stop-color="#071126"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="66%" cy="43%" r="23%">
+      <stop offset="0" stop-color="#ffe9a3"/>
+      <stop offset=".6" stop-color="#f97316" stop-opacity=".65"/>
+      <stop offset="1" stop-color="#f97316" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="900" height="520" fill="url(#sea)"/>
+  <rect width="900" height="520" fill="url(#sun)"/>
+  <path d="M0 304 C110 288 205 322 316 300 C450 274 548 320 674 292 C780 268 836 284 900 270 V520H0Z" fill="#09142b" opacity=".48"/>
+  <g stroke="#f5b700" stroke-opacity=".26" stroke-width="3" fill="none">
+    <path d="M0 360 C140 338 220 382 360 360 S620 338 900 365"/>
+    <path d="M0 410 C120 390 260 432 382 410 S642 388 900 414"/>
+    <path d="M0 462 C160 438 250 486 398 464 S660 442 900 468"/>
+  </g>
+  <g transform="translate(134 118)">
+    <path d="M106 310 h390 l-46 50H158z" fill="#090d1c"/>
+    <path d="M204 42 v268M326 18v292M430 88v222" stroke="#090d1c" stroke-width="12" stroke-linecap="round"/>
+    <path d="M214 72 C294 92 314 146 214 172Z" fill="#f9fafb" opacity=".9"/>
+    <path d="M338 48 C438 82 458 172 338 210Z" fill="#f9fafb" opacity=".88"/>
+    <path d="M442 112 C510 138 528 206 442 234Z" fill="#f9fafb" opacity=".84"/>
+    <path d="M202 72 C154 120 154 148 202 172M326 48 C264 116 268 158 326 210M430 112 C386 158 390 198 430 234" fill="#d97706" opacity=".3"/>
+    <path d="M170 310 C280 282 396 282 508 310" fill="none" stroke="#f5b700" stroke-width="8" stroke-opacity=".65"/>
+  </g>
+  <path d="M0 344 C110 340 220 352 332 344 C498 332 596 352 714 342 C804 334 858 338 900 342 V520H0Z" fill="#020510" opacity=".24"/>
+</svg>
