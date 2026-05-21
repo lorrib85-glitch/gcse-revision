@@ -655,6 +655,7 @@ export const MODULES = [
       wrongFeedback: 'That is the official version. Sociologists would disagree.',
       correctFeedback: 'Exactly. The timetable is only part of what school teaches.',
       bigQuestion: 'What else is school teaching you?',
+      revealKicker: 'The lessons nobody writes on the board:',
       loadingText: 'The corridor is getting quieter...',
       growLabel: 'School as a system',
       growSteps: [
@@ -668,6 +669,28 @@ export const MODULES = [
         { emoji: '🤫', label: 'Behaviour', detail: 'Silence, uniform, queues and permission become normal without appearing on the timetable.', color: '#B8A088', bg: 'rgba(184,160,136,.1)' },
       ],
       punchline: 'Schools teach maths and science. They also quietly teach behaviour, rules and expectations.',
+    },
+
+    intro: {
+      retrieval: {
+        question: 'Which of these is an example of the hidden curriculum?',
+        options: [
+          'Learning algebra',
+          'Learning to ask permission before leaving the room',
+          'Learning chemical symbols',
+          'Learning essay structure',
+        ],
+        correctIndex: 1,
+        explanation: 'The hidden curriculum is about unofficial lessons: behaviour, rules and expectations. Asking permission is not on the timetable, but students learn it quickly.',
+      },
+      learningGoals: [
+        'Define the formal curriculum',
+        'Explain the hidden curriculum',
+        'Describe schools as agents of socialisation',
+        'Use norms and values accurately',
+        'Explain the Functionalist view of education',
+        'Understand meritocracy as an introductory idea',
+      ],
     },
 
     screens: [

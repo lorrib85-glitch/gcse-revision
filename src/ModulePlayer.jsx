@@ -1413,7 +1413,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
               : (hook.wrongFeedback   || "That's what most people think. The numbers tell a different story...")}
           </p>
           <div style={{ marginTop: 20, color: '#4A5578', fontSize: '.78rem', fontFamily: "'Inter', sans-serif" }}>
-            {hook.loadingText || 'Loading the next layer...'}
+            Loading the experiment...
           </div>
         </div>
       )}
@@ -1425,108 +1425,75 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             fontFamily: "'Inter', sans-serif",
             fontSize: '.65rem', fontWeight: 700, letterSpacing: '.14em',
             textTransform: 'uppercase', color: '#5A6480', marginBottom: 16, textAlign: 'center',
-          }}>{hook.growLabel || '1648 — Somewhere in Belgium'}</div>
+          }}>1648 — Somewhere in Belgium</div>
 
-          {hook.growSteps ? (
+          {/* Willow container */}
+          <div style={{
+            background: 'linear-gradient(180deg, #0A1F12 0%, #061008 100%)',
+            border: '1px solid rgba(56,210,122,.2)',
+            borderRadius: 20, padding: '20px 16px 0',
+            position: 'relative', overflow: 'hidden', marginBottom: 16,
+            boxShadow: '0 8px 40px rgba(0,0,0,.5), 0 0 60px rgba(56,210,122,.05)',
+          }}>
             <div style={{
-              background: 'linear-gradient(180deg, #15120E 0%, #080C1A 100%)',
-              border: '1px solid rgba(196,122,50,.24)',
-              borderRadius: 20, padding: '16px', marginBottom: 16,
-              boxShadow: '0 8px 40px rgba(0,0,0,.5), 0 0 60px rgba(196,122,50,.06)',
-            }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {hook.growSteps.map((step, i) => {
-                  const visible = growStep >= i + 1
-                  return (
-                    <div key={i} style={{
-                      background: visible ? 'rgba(196,122,50,.11)' : 'rgba(255,255,255,.025)',
-                      border: '1px solid ' + (visible ? 'rgba(196,122,50,.32)' : '#2A3552'),
-                      borderRadius: 14, padding: '13px 14px',
-                      opacity: visible ? 1 : .42,
-                      transform: visible ? 'translateY(0)' : 'translateY(6px)',
-                      transition: 'all .35s ease',
-                    }}>
-                      <div style={{
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontWeight: 800, color: visible ? (step.color || '#C47A32') : '#5A6480',
-                        marginBottom: 4,
-                      }}>{step.label}</div>
-                      <div style={{
-                        fontFamily: "'Inter', sans-serif",
-                        fontSize: '.84rem', color: visible ? '#C8D0E8' : '#5A6480',
-                        lineHeight: 1.5,
-                      }}>{step.detail}</div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          ) : (
-            <div style={{
-              background: 'linear-gradient(180deg, #0A1F12 0%, #061008 100%)',
-              border: '1px solid rgba(56,210,122,.2)',
-              borderRadius: 20, padding: '20px 16px 0',
-              position: 'relative', overflow: 'hidden', marginBottom: 16,
-              boxShadow: '0 8px 40px rgba(0,0,0,.5), 0 0 60px rgba(56,210,122,.05)',
-            }}>
-              <div style={{
-                position: 'absolute', top: 0, left: 0, right: 0, height: 60,
-                background: 'linear-gradient(180deg, rgba(56,210,122,.06) 0%, transparent 100%)',
-                pointerEvents: 'none',
-              }} />
-              <svg viewBox="0 0 200 160" style={{ width: '100%', display: 'block' }}>
-                <rect x="0" y="130" width="200" height="30" fill="#1A0E05" />
-                <line x1="10" y1="130" x2="190" y2="130" stroke="rgba(139,90,43,.4)" strokeWidth="1" strokeDasharray="4 3" />
-                <path d="M60 130 L55 160 L145 160 L140 130 Z" fill="#2A1A0A" stroke="rgba(139,90,43,.3)" strokeWidth="1" />
+              position: 'absolute', top: 0, left: 0, right: 0, height: 60,
+              background: 'linear-gradient(180deg, rgba(56,210,122,.06) 0%, transparent 100%)',
+              pointerEvents: 'none',
+            }} />
+            <svg viewBox="0 0 200 160" style={{ width: '100%', display: 'block' }}>
+              <rect x="0" y="130" width="200" height="30" fill="#1A0E05" />
+              <line x1="10" y1="130" x2="190" y2="130" stroke="rgba(139,90,43,.4)" strokeWidth="1" strokeDasharray="4 3" />
+              <path d="M60 130 L55 160 L145 160 L140 130 Z" fill="#2A1A0A" stroke="rgba(139,90,43,.3)" strokeWidth="1" />
 
-                {growStep >= 1 && (
-                  <rect x="97" y={130 - (growStep >= 2 ? 60 : 30)}
-                    width="6" height={growStep >= 2 ? 60 : 30}
-                    fill="#5C3D1A" rx="2" style={{ transition: 'all .7s ease' }}
+              {growStep >= 1 && (
+                <rect x="97" y={130 - (growStep >= 2 ? 60 : 30)}
+                  width="6" height={growStep >= 2 ? 60 : 30}
+                  fill="#5C3D1A" rx="2" style={{ transition: 'all .7s ease' }}
+                />
+              )}
+              {growStep >= 2 && (<>
+                <line x1="100" y1="90" x2="70" y2="70" stroke="#5C3D1A" strokeWidth="3" strokeLinecap="round" />
+                <line x1="100" y1="90" x2="130" y2="70" stroke="#5C3D1A" strokeWidth="3" strokeLinecap="round" />
+                <line x1="100" y1="100" x2="75" y2="85" stroke="#5C3D1A" strokeWidth="2" strokeLinecap="round" />
+                <line x1="100" y1="100" x2="125" y2="85" stroke="#5C3D1A" strokeWidth="2" strokeLinecap="round" />
+              </>)}
+              {growStep >= 3 && (<>
+                {[[70,68],[130,68],[75,83],[125,83],[85,55],[115,55],[100,48]].map(([cx,cy],i) => (
+                  <ellipse key={i} cx={cx} cy={cy} rx="10" ry="6"
+                    fill="rgba(56,210,122,.75)"
+                    transform={"rotate(" + (i*25-50) + " " + cx + " " + cy + ")"}
+                    style={{ opacity:0, animation:"hLeafPop .35s ease " + (i*0.07) + "s forwards" }}
                   />
-                )}
-                {growStep >= 2 && (<>
-                  <line x1="100" y1="90" x2="70" y2="70" stroke="#5C3D1A" strokeWidth="3" strokeLinecap="round" />
-                  <line x1="100" y1="90" x2="130" y2="70" stroke="#5C3D1A" strokeWidth="3" strokeLinecap="round" />
-                  <line x1="100" y1="100" x2="75" y2="85" stroke="#5C3D1A" strokeWidth="2" strokeLinecap="round" />
-                  <line x1="100" y1="100" x2="125" y2="85" stroke="#5C3D1A" strokeWidth="2" strokeLinecap="round" />
-                </>)}
-                {growStep >= 3 && (<>
-                  {[[70,68],[130,68],[75,83],[125,83],[85,55],[115,55],[100,48]].map(([cx,cy],i) => (
-                    <ellipse key={i} cx={cx} cy={cy} rx="10" ry="6"
-                      fill="rgba(56,210,122,.75)"
-                      transform={"rotate(" + (i*25-50) + " " + cx + " " + cy + ")"}
-                      style={{ opacity:0, animation:"hLeafPop .35s ease " + (i*0.07) + "s forwards" }}
-                    />
-                  ))}
-                  {[72,80,88,96,104,112,120,128].map((x, i) => (
-                    <path key={i}
-                      d={"M" + x + " " + (65+(i%3)*4) + " Q" + (x-4+i%3*2) + " " + (80+i%2*6) + " " + (x-6+i%4) + " " + (95+i%3*5)}
-                      fill="none" stroke="rgba(107,255,176,.55)" strokeWidth="1.3" strokeLinecap="round"
-                      style={{ opacity:0, animation:"hLeafPop .4s ease " + (0.3+i*0.06) + "s forwards" }}
-                    />
-                  ))}
-                  <text x="100" y="44" textAnchor="middle" fill="#4DFF88" fontSize="9" fontWeight="bold"
-                    style={{ opacity:0, animation:'hLeafPop .4s ease .85s forwards' }}>+74 kg</text>
-                </>)}
-                {growStep >= 2 && (
-                  <text x="100" y="148" textAnchor="middle" fill="rgba(139,90,43,.7)" fontSize="7">soil: −57g</text>
-                )}
-              </svg>
+                ))}
+                {[72,80,88,96,104,112,120,128].map((x, i) => (
+                  <path key={i}
+                    d={"M" + x + " " + (65+(i%3)*4) + " Q" + (x-4+i%3*2) + " " + (80+i%2*6) + " " + (x-6+i%4) + " " + (95+i%3*5)}
+                    fill="none" stroke="rgba(107,255,176,.55)" strokeWidth="1.3" strokeLinecap="round"
+                    style={{ opacity:0, animation:"hLeafPop .4s ease " + (0.3+i*0.06) + "s forwards" }}
+                  />
+                ))}
+                <text x="100" y="44" textAnchor="middle" fill="#4DFF88" fontSize="9" fontWeight="bold"
+                  style={{ opacity:0, animation:'hLeafPop .4s ease .85s forwards' }}>+74 kg</text>
+              </>)}
+              {growStep >= 2 && (
+                <text x="100" y="148" textAnchor="middle" fill="rgba(139,90,43,.7)" fontSize="7">soil: −57g</text>
+              )}
+            </svg>
 
-              <div style={{
-                textAlign: 'center', padding: '10px 0 14px',
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700, fontSize: '.82rem', color: '#5A6480',
-              }}>
-                {growStep === 0 && 'Planting the sapling...'}
-                {growStep === 1 && "Year 2 — it's growing"}
-                {growStep === 2 && 'Year 4 — branches forming...'}
-                {growStep === 3 && <span style={{ color: '#4DFF88' }}>Year 5 — 74 kg of tree. Soil lost 57g. 🤯</span>}
-              </div>
+            {/* Year label inside card */}
+            <div style={{
+              textAlign: 'center', padding: '10px 0 14px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700, fontSize: '.82rem', color: '#5A6480',
+            }}>
+              {growStep === 0 && 'Planting the sapling...'}
+              {growStep === 1 && "Year 2 — it's growing"}
+              {growStep === 2 && 'Year 4 — branches forming...'}
+              {growStep === 3 && <span style={{ color: '#4DFF88' }}>Year 5 — 74 kg of tree. Soil lost 57g. 🤯</span>}
             </div>
-          )}
+          </div>
 
+          {/* The question */}
           <div style={{
             background: '#10182B', border: '1px solid #2A3552',
             borderRadius: 14, padding: '14px 16px', textAlign: 'center',
@@ -1543,9 +1510,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
         </div>
       )}
 
-
-
-{/* ── Phase: REVEAL ── */}
+      {/* ── Phase: REVEAL ── */}
       {phase === 'reveal' && (
         <div style={{ animation: 'hFadeIn .4s ease' }}>
           <div style={{ marginBottom: 18, textAlign: 'center' }}>
@@ -1553,7 +1518,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
               fontFamily: "'Inter', sans-serif",
               fontSize: '.7rem', color: '#5A6480', margin: '0 0 8px',
               letterSpacing: '.08em', textTransform: 'uppercase',
-            }}>If not the soil... then:</p>
+            }}>{hook.revealKicker || 'If not the soil... then:'}</p>
             <h2 style={{
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 800, fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
@@ -1641,8 +1606,41 @@ function HookContent({ module, hook, hookState, subjectColor }) {
 // Universal second screen: retrieval starter + "this module you'll learn" list
 // Reads from module.intro: { retrieval: { question, options[], correctIndex, explanation }, learningGoals[] }
 
+function stripHtml(value = '') {
+  return String(value).replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
+}
+
+function getModuleIntro(module) {
+  if (module.intro) return module.intro
+
+  const screenGoals = (module.screens || [])
+    .map(screen => stripHtml(screen.heading || screen.label || ''))
+    .filter(Boolean)
+    .slice(0, 6)
+    .map(goal => goal.replace(/[.!?]+$/, ''))
+
+  const learningGoals = screenGoals.length
+    ? screenGoals.map(goal => `Understand ${goal.charAt(0).toLowerCase()}${goal.slice(1)}`)
+    : [`Understand the key ideas in ${module.title}`]
+
+  return {
+    retrieval: {
+      question: `Before we start — what is this module mainly about?`,
+      options: [
+        module.title,
+        'A random mixed quiz',
+        'A past paper only',
+        'A confidence check only',
+      ],
+      correctIndex: 0,
+      explanation: `This module focuses on ${module.title}. Next, you’ll see what you should be able to do by the end.`,
+    },
+    learningGoals,
+  }
+}
+
 function IntroScreen({ module, onDone }) {
-  const intro = module.intro
+  const intro = getModuleIntro(module)
   const subjectColor = module.color || '#38D27A'
   const [answered, setAnswered] = useState(null)
   const [shakeIdx, setShakeIdx] = useState(null)
@@ -1767,7 +1765,7 @@ function IntroScreen({ module, onDone }) {
                 {intro.learningGoals?.map((goal, i) => (
                   <div key={i} style={{
                     display: 'flex', alignItems: 'flex-start', gap: 10,
-                    animation: 'fadeIn .3s ease ' + (i * 0.1) + 's both',
+                    animation: 'fadeIn .45s ease ' + (i * 0.18) + 's both',
                   }}>
                     <div style={{
                       width: 22, height: 22, borderRadius: 6, flexShrink: 0,
@@ -1811,11 +1809,12 @@ function IntroScreen({ module, onDone }) {
 
 export default function ModulePlayer({ module, onBack }) {
   const saved   = getModuleState(module.id)
+  const moduleIntro = getModuleIntro(module)
 
   // hookDone / introDone track whether the universal openers have been seen
   // We persist these inside the module state so resuming skips them correctly
   const [hookDone,  setHookDone]  = useState(() => saved.hookDone  || !module.hook)
-  const [introDone, setIntroDone] = useState(() => saved.introDone || !module.intro)
+  const [introDone, setIntroDone] = useState(() => saved.introDone || !moduleIntro)
   const [screen, setScreen] = useState(saved.screen || 0)
   const [showConfidence, setShowConfidence] = useState(false)
   const [chosenConfidence, setChosenConfidence] = useState(null)
@@ -1861,7 +1860,7 @@ export default function ModulePlayer({ module, onBack }) {
       if (hookPhase === 'reveal') { if (hookRevealDone) { setHookDone(true); scrollToTop() } else { hookState.nextRevealItem(); } return }
       return // question / feedback: Next does nothing — user must tap TRUE/FALSE
     }
-    if (!introDone && module.intro) {
+    if (!introDone && moduleIntro) {
       // IntroScreen handles its own done button — nothing to do from nav
       return
     }
@@ -1875,13 +1874,13 @@ export default function ModulePlayer({ module, onBack }) {
       if (hookPhase === 'grow')   return 'Next →'
       if (hookPhase === 'reveal') return hookRevealDone ? 'Start module →' : null // hidden until all revealed
     }
-    if (!introDone && module.intro) return null // IntroScreen has its own button
+    if (!introDone && moduleIntro) return null // IntroScreen has its own button
     return isLast ? 'Finish ✓' : 'Next →'
   }
 
   const showNextBtn  = nextLabel() !== null
   const nextBtnLabel = nextLabel()
-  const isFinishBtn  = !(!hookDone && module.hook) && !(!introDone && module.intro) && isLast
+  const isFinishBtn  = !(!hookDone && module.hook) && !(!introDone && moduleIntro) && isLast
 
   const cur = module.screens[screen]
   const subjectColor = module.color || '#9D5CFF'
@@ -2121,7 +2120,7 @@ export default function ModulePlayer({ module, onBack }) {
       <div id="module-scroll-container" style={{ flex: 1, padding: '20px 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
         {!hookDone && module.hook
           ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
-          : !introDone && module.intro
+          : !introDone && moduleIntro
             ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
             : (
               <div key={animKey} className="anim-pop">
