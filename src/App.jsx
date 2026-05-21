@@ -106,6 +106,43 @@ const SUBJECT_COLOUR_HOME = {
   Sociology: { color: '#9D5CFF', bg: 'rgba(157,92,255,.14)',  border: 'rgba(157,92,255,.28)'  },
 }
 
+// Card background images keyed by module id.
+// Add a new entry here whenever a custom card artwork is supplied.
+const CARD_IMAGES = {
+  mod1: '/images/history-med-card.png',
+  mod2: '/images/history-med-card.png',
+  mod3: '/images/history-med-card.png',
+  mod4: '/images/history-med-card.png',
+  mod5: '/images/history-med-card.png',
+  mod6: '/images/history-med-card.png',
+  mod7: '/images/history-med-card.png',
+  mod8: '/images/history-med-card.png',
+  mod9: '/images/history-med-card.png',
+  soc4: '/images/soc-family-card.png',  // Family & Households
+  soc6: '/images/soc-family-card.png',  // Family Researchers & Theory Battles
+  // soc_crime: '/images/soc-crime-card.png',       // Crime & Deviance (module TBD)
+  // soc_education: '/images/soc-education-card.png', // Education (module TBD)
+}
+
+// Accent colours for the card CTA button (warm amber for History,
+// otherwise falls back to the subject's primary colour).
+const CARD_BTN_GRADIENT = {
+  History:   'linear-gradient(135deg, #A83C00, #E06820)',
+  Biology:   'linear-gradient(135deg, #1A8040, #38D27A)',
+  Chemistry: 'linear-gradient(135deg, #1A8040, #38D27A)',
+  Maths:     'linear-gradient(135deg, #1C4ED8, #3B82FF)',
+  Sociology: 'linear-gradient(135deg, #5B21B6, #9D5CFF)',
+  English:   'linear-gradient(135deg, #1D5FAD, #4B9FFF)',
+}
+const CARD_BTN_GLOW = {
+  History:   'rgba(180,80,10,.50)',
+  Biology:   'rgba(56,210,122,.35)',
+  Chemistry: 'rgba(56,210,122,.35)',
+  Maths:     'rgba(59,130,255,.40)',
+  Sociology: 'rgba(157,92,255,.45)',
+  English:   'rgba(75,159,255,.40)',
+}
+
 // ─── Top-level router ────────────────────────────────────────────────────────
 
 // ─── Bottom nav ──────────────────────────────────────────────────────────────
@@ -464,8 +501,11 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
     return { ...meta, done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 }
   }).filter(t => t && t.total > 0)
 
-  const sc     = todayModule ? (SUBJECT_COLOUR_HOME[todayModule.subject] || SUBJECT_COLOUR_HOME.History) : SUBJECT_COLOUR_HOME.History
-  const modNum = todayModule?.number || 1
+  const sc        = todayModule ? (SUBJECT_COLOUR_HOME[todayModule.subject] || SUBJECT_COLOUR_HOME.History) : SUBJECT_COLOUR_HOME.History
+  const modNum    = todayModule?.number || 1
+  const cardImage = todayModule ? (CARD_IMAGES[todayModule.id] || null) : null
+  const btnGrad   = todayModule ? (CARD_BTN_GRADIENT[todayModule.subject] || `linear-gradient(135deg, ${sc.color}bb, ${sc.color})`) : 'linear-gradient(135deg, #A83C00, #E06820)'
+  const btnGlow   = todayModule ? (CARD_BTN_GLOW[todayModule.subject] || `${sc.color}50`) : 'rgba(180,80,10,.50)'
 
   return (
     <div style={{ background: '#070B18', minHeight: '100vh', paddingBottom: 88 }}>
@@ -540,107 +580,176 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
       {/* ── CONTINUE LEARNING hero ─────────────────────────────────────── */}
       {todayModule && (
         <div style={{ padding: '0 18px', marginBottom: 24 }}>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.13em', textTransform: 'uppercase', color: '#2A3450', marginBottom: 8 }}>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.58rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#2A3450', marginBottom: 10 }}>
             Continue Learning
           </div>
+
+          {/* ── Cinematic card ── */}
           <div
             onClick={() => onOpenModule(todayModule)}
             style={{
-              position: 'relative', borderRadius: 18, overflow: 'hidden', cursor: 'pointer',
-              minHeight: 250,
-              boxShadow: '0 16px 50px rgba(0,0,0,.65)',
+              position: 'relative', borderRadius: 28, overflow: 'hidden', cursor: 'pointer',
+              minHeight: 280,
+              boxShadow: '0 20px 60px rgba(0,0,0,.72), inset 0 0 0 1px rgba(255,255,255,.06), inset 0 0 40px rgba(0,0,0,.35)',
             }}
           >
-            {/* City background */}
-            <CityNightSkyline />
+            {/* ── Background: artwork or city SVG ── */}
+            {cardImage ? (
+              <img
+                src={cardImage}
+                alt=""
+                style={{
+                  position: 'absolute', inset: 0, width: '100%', height: '100%',
+                  objectFit: 'cover', objectPosition: 'center 30%',
+                  display: 'block',
+                }}
+              />
+            ) : (
+              <CityNightSkyline />
+            )}
 
-            {/* Dark gradient overlay — thin at top, heavier at bottom for text readability */}
+            {/* ── Left-side gradient overlay (38–42% width → transparent) ── */}
             <div style={{
               position: 'absolute', inset: 0,
-              background: 'linear-gradient(to bottom, rgba(3,1,12,.04) 0%, rgba(3,1,12,.08) 30%, rgba(3,1,12,.50) 50%, rgba(3,1,12,.82) 65%, rgba(3,1,12,.96) 100%)',
-            }} />
-
-            {/* Warm city glow — sits ABOVE overlay so it punches through */}
-            <div style={{
-              position: 'absolute', inset: 0, pointerEvents: 'none',
               background: [
-                'radial-gradient(ellipse 110% 55% at 50% 125%, rgba(210,75,8,.70) 0%, rgba(140,35,0,.30) 45%, transparent 72%)',
-                'radial-gradient(ellipse 55% 40% at 85% 118%, rgba(200,90,15,.55) 0%, transparent 65%)',
-                'radial-gradient(ellipse 40% 30% at 18% 115%, rgba(170,50,5,.45) 0%, transparent 65%)',
+                /* Left: opaque → transparent rightwards */
+                'linear-gradient(to right, rgba(5,2,12,.97) 0%, rgba(5,2,12,.92) 28%, rgba(5,2,12,.72) 42%, rgba(5,2,12,.38) 58%, rgba(5,2,12,.12) 74%, transparent 88%)',
+                /* Bottom: opaque → transparent upwards (for text area) */
+                'linear-gradient(to top, rgba(5,2,12,.98) 0%, rgba(5,2,12,.88) 24%, rgba(5,2,12,.58) 42%, rgba(5,2,12,.22) 58%, transparent 72%)',
               ].join(', '),
             }} />
 
-            {/* Content */}
-            <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px 20px', display: 'flex', flexDirection: 'column', minHeight: 250 }}>
-              {/* Subject chip */}
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 5,
-                background: `${sc.color}28`, border: `1px solid ${sc.color}50`,
-                borderRadius: 8, padding: '5px 11px', alignSelf: 'flex-start', marginBottom: 'auto',
-                backdropFilter: 'blur(6px)',
-              }}>
-                <span style={{ fontSize: '.8rem', lineHeight: 1 }}>{todayModule.icon}</span>
-                <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '.62rem', color: sc.color, letterSpacing: '.1em', textTransform: 'uppercase' }}>
+            {/* ── Soft inner vignette around all edges ── */}
+            <div style={{
+              position: 'absolute', inset: 0, borderRadius: 28, pointerEvents: 'none',
+              boxShadow: 'inset 0 0 50px rgba(0,0,0,.45)',
+            }} />
+
+            {/* ── Content ── */}
+            <div style={{
+              position: 'relative', zIndex: 1,
+              padding: '20px 20px 22px',
+              display: 'flex', flexDirection: 'column',
+              minHeight: 280,
+            }}>
+
+              {/* TOP: icon badge + subject label */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                <div style={{
+                  width: 34, height: 34, borderRadius: 99, flexShrink: 0,
+                  background: 'rgba(10,5,2,.72)',
+                  border: `1px solid ${sc.color}55`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1rem',
+                  boxShadow: `0 0 14px ${btnGlow}`,
+                  backdropFilter: 'blur(8px)',
+                }}>
+                  {todayModule.icon}
+                </div>
+                <span style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontWeight: 600, fontSize: '.65rem',
+                  color: sc.color, letterSpacing: '.14em',
+                  textTransform: 'uppercase', opacity: 0.9,
+                }}>
                   {todayModule.subject}
                 </span>
               </div>
 
-              {/* Spacer */}
+              {/* SPACER — art breathes here */}
               <div style={{ flex: 1 }} />
 
-              {/* Big title */}
+              {/* MAIN TITLE — very large, tight */}
               <div style={{
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontWeight: 800,
-                fontSize: 'clamp(1.65rem, 7vw, 2.2rem)',
-                color: '#FFFFFF', lineHeight: 1.06,
-                letterSpacing: '-.025em',
-                marginBottom: 14,
+                fontSize: 'clamp(1.9rem, 8vw, 2.6rem)',
+                color: '#FFFFFF', lineHeight: 1.0,
+                letterSpacing: '-.03em',
+                marginBottom: 6,
+                textShadow: '0 2px 20px rgba(0,0,0,.7)',
               }}>
                 {todayModule.title}
               </div>
 
-              {/* Progress */}
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.7rem', color: 'rgba(255,255,255,.45)', marginBottom: 6 }}>
-                  {todayStarted ? `${todayPct}% complete` : 'Ready to start'}
+              {/* ERA / DATE RANGE */}
+              {todayModule.era && (
+                <div style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontWeight: 500, fontSize: '.8rem',
+                  color: '#C8A880', opacity: 0.85,
+                  marginBottom: 8, letterSpacing: '.02em',
+                }}>
+                  {todayModule.era}
                 </div>
-                <div style={{ height: 3, background: 'rgba(255,255,255,.12)', borderRadius: 99, overflow: 'hidden' }}>
+              )}
+
+              {/* DESCRIPTION (module subtitle, 2-line clamp) */}
+              {todayModule.subtitle && (
+                <div style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.76rem', color: '#9BAABB',
+                  lineHeight: 1.55, marginBottom: 16,
+                  display: '-webkit-box', WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                }}>
+                  {todayModule.subtitle}
+                </div>
+              )}
+
+              {/* PROGRESS BAR */}
+              <div style={{ marginBottom: 18 }}>
+                <div style={{
+                  height: 3.5, background: 'rgba(255,255,255,.10)',
+                  borderRadius: 99, overflow: 'hidden', marginBottom: 6,
+                }}>
                   <div style={{
                     height: '100%', width: `${todayStarted ? todayPct : 0}%`,
-                    background: sc.color, borderRadius: 99,
-                    boxShadow: `0 0 8px ${sc.color}90`,
-                    transition: 'width .8s ease',
+                    background: btnGrad,
+                    borderRadius: 99,
+                    boxShadow: `0 0 10px ${btnGlow}`,
+                    transition: 'width .8s cubic-bezier(.4,0,.2,1)',
                   }} />
                 </div>
+                <span style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.67rem', color: 'rgba(200,210,220,.5)',
+                }}>
+                  {todayStarted ? `${todayPct}% complete` : 'Ready to start'}
+                </span>
               </div>
 
-              {/* CTA */}
+              {/* CTA BUTTON — large, warm orange, full-width */}
               <button
                 onClick={e => { e.stopPropagation(); onOpenModule(todayModule) }}
                 style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 7,
-                  padding: '13px 20px', alignSelf: 'flex-start',
-                  background: sc.color,
-                  color: todayModule.subject === 'History' ? '#1A0E00' : '#fff',
-                  border: 'none', borderRadius: 50, cursor: 'pointer',
-                  fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.88rem',
+                  width: '100%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9,
+                  padding: '17px 24px',
+                  background: btnGrad,
+                  color: '#fff',
+                  border: 'none', borderRadius: 18, cursor: 'pointer',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700, fontSize: '1.02rem',
                   letterSpacing: '.01em',
-                  boxShadow: `0 4px 20px ${sc.color}55`,
+                  boxShadow: `0 6px 28px ${btnGlow}, inset 0 1px 0 rgba(255,255,255,.20)`,
+                  transition: 'transform .15s, box-shadow .15s',
                 }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = `0 10px 36px ${btnGlow}, inset 0 1px 0 rgba(255,255,255,.22)` }}
+                onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = `0 6px 28px ${btnGlow}, inset 0 1px 0 rgba(255,255,255,.20)` }}
               >
-                <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M2 1.5l8 4.5-8 4.5V1.5z"/></svg>
+                <svg width="13" height="13" viewBox="0 0 12 12" fill="currentColor"><path d="M2 1.5l8 4.5-8 4.5V1.5z"/></svg>
                 {todayStarted ? `Resume Module ${modNum}` : `Start Module ${modNum}`}
               </button>
 
               {/* Draft banner */}
               {draft && draftTopic && (
                 <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.7rem', color: 'rgba(255,255,255,.35)', flex: 1 }}>
-                    ↩ Unfinished: <span style={{ color: 'rgba(193,140,255,.8)', fontWeight: 600 }}>{draftTopic.title}</span>
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.7rem', color: 'rgba(255,255,255,.32)', flex: 1 }}>
+                    ↩ Unfinished: <span style={{ color: 'rgba(193,140,255,.75)', fontWeight: 600 }}>{draftTopic.title}</span>
                   </span>
-                  <button onClick={e => { e.stopPropagation(); onResume() }} style={{ padding: '5px 10px', background: 'rgba(157,92,255,.18)', border: '1px solid rgba(157,92,255,.3)', borderRadius: 7, color: '#C18CFF', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: '.7rem' }}>Resume</button>
-                  <button onClick={e => { e.stopPropagation(); onDiscardDraft() }} style={{ padding: '5px 10px', background: 'transparent', border: '1px solid rgba(255,255,255,.12)', borderRadius: 7, color: 'rgba(255,255,255,.3)', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontSize: '.7rem' }}>×</button>
+                  <button onClick={e => { e.stopPropagation(); onResume() }} style={{ padding: '5px 10px', background: 'rgba(157,92,255,.16)', border: '1px solid rgba(157,92,255,.28)', borderRadius: 7, color: '#C18CFF', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: '.7rem' }}>Resume</button>
+                  <button onClick={e => { e.stopPropagation(); onDiscardDraft() }} style={{ padding: '5px 10px', background: 'transparent', border: '1px solid rgba(255,255,255,.1)', borderRadius: 7, color: 'rgba(255,255,255,.28)', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontSize: '.7rem' }}>×</button>
                 </div>
               )}
             </div>
