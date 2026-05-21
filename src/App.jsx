@@ -293,105 +293,111 @@ const W = {
 // ─── City Night Skyline SVG (Continue Learning hero background) ───────────────
 
 function CityNightSkyline() {
-  // Precomputed London Eye spoke endpoints: center (285,105), radius 70
+  // London Eye: center (285,108), radius 70. Spoke endpoints (diameter lines).
   const spokes = [
-    [355,105,215,105],[349.7,131.8,220.3,78.2],[334.5,154.5,235.5,55.5],
-    [311.8,169.7,258.2,40.3],[285,175,285,35],[258.2,169.7,311.8,40.3],
-    [235.5,154.5,334.5,55.5],[220.3,131.8,349.7,78.2],
+    [355,108,215,108],[349.7,134.8,220.3,81.2],[334.5,157.5,235.5,58.5],
+    [311.8,172.7,258.2,43.3],[285,178,285,38],
   ]
-  // Gondola positions at every 45°
   const gondolas = [
-    [351,102],[330.5,151],[282,172],[232.5,151],[212,102],[232.5,59],[282,38],[330.5,59],
+    [351,105],[330.5,154],[282,175],[232.5,154],[212,105],[232.5,62],[282,41],[330.5,62],
   ]
   return (
     <svg viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice"
       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
       <defs>
+        {/* Sky: clear deep navy-indigo at top, warming to dark amber at horizon */}
         <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#020009"/>
-          <stop offset="35%" stopColor="#06031A"/>
-          <stop offset="70%" stopColor="#0A0620"/>
-          <stop offset="100%" stopColor="#0D0820"/>
+          <stop offset="0%"   stopColor="#0D1848"/>
+          <stop offset="40%"  stopColor="#0F1238"/>
+          <stop offset="72%"  stopColor="#180C28"/>
+          <stop offset="100%" stopColor="#1C0A10"/>
         </linearGradient>
-        <radialGradient id="glow1" cx="42%" cy="105%" r="75%">
-          <stop offset="0%" stopColor="#B03800" stopOpacity="0.6"/>
-          <stop offset="45%" stopColor="#701C00" stopOpacity="0.25"/>
-          <stop offset="100%" stopColor="#000" stopOpacity="0"/>
+        {/* Main amber city glow — large, centred, very prominent */}
+        {/* Subtle horizon warm tint within SVG — main glow is in CSS layer above overlay */}
+        <radialGradient id="glow1" cx="50%" cy="115%" r="65%">
+          <stop offset="0%"   stopColor="#C04000" stopOpacity="0.55"/>
+          <stop offset="55%"  stopColor="#601800" stopOpacity="0.15"/>
+          <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
         </radialGradient>
-        <radialGradient id="glow2" cx="80%" cy="100%" r="45%">
-          <stop offset="0%" stopColor="#C04A00" stopOpacity="0.45"/>
-          <stop offset="100%" stopColor="#000" stopOpacity="0"/>
-        </radialGradient>
-        <radialGradient id="glow3" cx="30%" cy="100%" r="35%">
-          <stop offset="0%" stopColor="#902800" stopOpacity="0.3"/>
-          <stop offset="100%" stopColor="#000" stopOpacity="0"/>
+        {/* Purple atmospheric haze in upper sky */}
+        <radialGradient id="haze" cx="60%" cy="10%" r="55%">
+          <stop offset="0%"   stopColor="#3015A0" stopOpacity="0.30"/>
+          <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
         </radialGradient>
       </defs>
 
-      {/* Sky */}
+      {/* Sky base */}
       <rect width="400" height="220" fill="url(#skyG)"/>
-      {/* City warm glows */}
+      {/* Atmospheric haze */}
+      <rect width="400" height="220" fill="url(#haze)"/>
+      {/* Subtle horizon warmth */}
       <rect width="400" height="220" fill="url(#glow1)"/>
-      <rect width="400" height="220" fill="url(#glow2)"/>
-      <rect width="400" height="220" fill="url(#glow3)"/>
 
-      {/* Left building silhouettes */}
-      <rect x="0"   y="155" width="22" height="65" fill="#030110"/>
-      <rect x="18"  y="138" width="15" height="82" fill="#030110"/>
-      <rect x="30"  y="158" width="25" height="62" fill="#030110"/>
-      <rect x="52"  y="145" width="18" height="75" fill="#030110"/>
-      <rect x="67"  y="160" width="20" height="60" fill="#030110"/>
-      <rect x="84"  y="148" width="28" height="72" fill="#030110"/>
-      <rect x="109" y="154" width="18" height="66" fill="#030110"/>
-      <rect x="124" y="142" width="22" height="78" fill="#030110"/>
-      <rect x="143" y="156" width="18" height="64" fill="#030110"/>
-      <rect x="158" y="149" width="15" height="71" fill="#030110"/>
-      <rect x="170" y="160" width="20" height="60" fill="#030110"/>
-      <rect x="187" y="152" width="16" height="68" fill="#030110"/>
-      <rect x="200" y="158" width="22" height="62" fill="#030110"/>
+      {/* Left city silhouettes — true black against the blue sky */}
+      <rect x="0"   y="158" width="22" height="62" fill="#060310"/>
+      <rect x="18"  y="140" width="15" height="80" fill="#050210"/>
+      <rect x="30"  y="160" width="25" height="60" fill="#060310"/>
+      <rect x="52"  y="148" width="18" height="72" fill="#050210"/>
+      <rect x="67"  y="162" width="20" height="58" fill="#060310"/>
+      <rect x="84"  y="150" width="26" height="70" fill="#050210"/>
+      <rect x="107" y="156" width="18" height="64" fill="#060310"/>
+      <rect x="122" y="144" width="22" height="76" fill="#050210"/>
+      <rect x="141" y="158" width="18" height="62" fill="#060310"/>
+      <rect x="156" y="151" width="15" height="69" fill="#050210"/>
+      <rect x="168" y="162" width="20" height="58" fill="#060310"/>
+      <rect x="185" y="154" width="16" height="66" fill="#050210"/>
+      <rect x="198" y="160" width="22" height="60" fill="#060310"/>
+      <rect x="218" y="152" width="14" height="68" fill="#050210"/>
 
-      {/* London Eye - support legs */}
-      <line x1="252" y1="195" x2="285" y2="172" stroke="#040118" strokeWidth="4.5"/>
-      <line x1="318" y1="195" x2="285" y2="172" strokeWidth="4.5" stroke="#040118"/>
-      <line x1="240" y1="195" x2="335" y2="195" stroke="#040118" strokeWidth="3"/>
+      {/* London Eye — support structure */}
+      <line x1="252" y1="195" x2="285" y2="175" stroke="#0C0525" strokeWidth="5"/>
+      <line x1="318" y1="195" x2="285" y2="175" stroke="#0C0525" strokeWidth="5"/>
+      <line x1="238" y1="195" x2="335" y2="195" stroke="#0C0525" strokeWidth="3"/>
 
-      {/* Outer rim */}
-      <circle cx="285" cy="105" r="72" fill="none" stroke="#06021C" strokeWidth="5.5"/>
-      <circle cx="285" cy="105" r="68" fill="none" stroke="#08041E" strokeWidth="1.5"/>
+      {/* Outer rim — bright enough to read against the sky */}
+      <circle cx="285" cy="108" r="72" fill="rgba(8,3,22,.45)" stroke="#3A1265" strokeWidth="5"/>
+      <circle cx="285" cy="108" r="67" fill="none"              stroke="#2A0C50" strokeWidth="1.5"/>
 
       {/* Spokes */}
       {spokes.map(([x1,y1,x2,y2],i) => (
-        <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#06021A" strokeWidth={i%2===0?2.2:1.2}/>
+        <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#28104A" strokeWidth={i===0?2.5:1.8}/>
+      ))}
+      {/* Mirror diagonal spokes */}
+      {spokes.slice(1).map(([x1,y1,x2,y2],i) => (
+        <line key={`m${i}`} x1={x2} y1={y1} x2={x1} y2={y2} stroke="#28104A" strokeWidth="1.8"/>
       ))}
 
       {/* Hub */}
-      <circle cx="285" cy="105" r="9" fill="#0A0430"/>
-      <circle cx="285" cy="105" r="4" fill="#0D0535"/>
+      <circle cx="285" cy="108" r="10" fill="#1A0840"/>
+      <circle cx="285" cy="108" r="5"  fill="#2A1060"/>
 
       {/* Gondolas */}
       {gondolas.map(([x,y],i) => (
-        <rect key={i} x={x-5} y={y-3} width="10" height="6" rx="2" fill="#060220"/>
+        <rect key={i} x={x-6} y={y-4} width="12" height="7" rx="2.5" fill="#140638"/>
       ))}
 
-      {/* Gap buildings between Eye and Ben */}
-      <rect x="360" y="148" width="16" height="72" fill="#030110"/>
-      <rect x="373" y="140" width="13" height="80" fill="#030110"/>
+      {/* Right buildings (Eye → Ben) */}
+      <rect x="358" y="150" width="16" height="70" fill="#050210"/>
+      <rect x="371" y="142" width="13" height="78" fill="#060310"/>
 
       {/* Big Ben */}
-      <rect x="383" y="112" width="17" height="108" fill="#030110"/>
-      <rect x="380" y="97"  width="23" height="20"  fill="#030110"/>
-      <polygon points="381,97 402,97 391.5,72" fill="#030110"/>
-      <circle cx="391" cy="108" r="7" fill="none" stroke="#0A0430" strokeWidth="1.2"/>
-      <line x1="391" y1="108" x2="391" y2="102" stroke="#0C0535" strokeWidth="1.2"/>
-      <line x1="391" y1="108" x2="396" y2="108" stroke="#0C0535" strokeWidth="1.2"/>
+      <rect x="385" y="105" width="15" height="115" fill="#050210"/>
+      <rect x="382" y="91"  width="21" height="18"  fill="#050210"/>
+      <polygon points="382,91 403,91 392.5,68" fill="#050210"/>
+      {/* Clock face — faintly lighter circle */}
+      <circle cx="392" cy="102" r="7" fill="#08031A" stroke="#14062A" strokeWidth="1.5"/>
 
-      {/* City light dots */}
-      {[[32,167,.7],[48,158,.55],[65,163,.7],[88,155,.6],[115,160,.7],[140,153,.6],[162,162,.7],[178,155,.55],[203,165,.6],[220,158,.7],[362,155,.65],[375,148,.7],[392,162,.55]].map(([x,y,o],i)=>(
-        <circle key={i} cx={x} cy={y} r="1.6" fill="#FF9830" opacity={o}/>
+      {/* City light dots — orange warm points */}
+      {[
+        [25,168,.9],[42,160,.7],[60,165,.9],[82,157,.8],[108,162,.9],
+        [128,155,.7],[150,164,.9],[170,158,.75],[196,167,.85],[215,159,.7],
+        [362,158,.8],[376,150,.9],[395,163,.7],
+      ].map(([x,y,o],i)=>(
+        <circle key={i} cx={x} cy={y} r="2" fill="#FFA040" opacity={o}/>
       ))}
 
-      {/* Thames reflection strip */}
-      <rect x="0" y="208" width="400" height="12" fill="#020008" opacity="0.9"/>
+      {/* Thames dark water at very bottom */}
+      <rect x="0" y="210" width="400" height="10" fill="#04010C" opacity="0.95"/>
     </svg>
   )
 }
@@ -439,21 +445,24 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
     if (diff >= 0 && diff <= 6) activeDays.add(diff)
   }
 
-  // Subject carousel
+  // Subject carousel — ordered so first 4 match the mockup (Sociology, History, Science, English)
+  const SUBJ_ORDER = ['Sociology','History','Biology','English','Maths','Chemistry']
   const SUBJ_META = {
     Sociology: { label: 'Sociology', icon: '👥', color: '#9D5CFF', bg: 'rgba(157,92,255,.18)' },
     History:   { label: 'History',   icon: '🏰', color: '#F5B700', bg: 'rgba(245,183,0,.15)'  },
     Biology:   { label: 'Science',   icon: '🔬', color: '#38D27A', bg: 'rgba(56,210,122,.15)' },
     Chemistry: { label: 'Chemistry', icon: '⚗️',  color: '#38D27A', bg: 'rgba(56,210,122,.15)' },
-    Maths:     { label: 'Maths',     icon: '✕',  color: '#3B82FF', bg: 'rgba(59,130,255,.15)' },
+    Maths:     { label: 'Maths',     icon: '📐', color: '#3B82FF', bg: 'rgba(59,130,255,.15)' },
     English:   { label: 'English',   icon: '📖', color: '#4B9FFF', bg: 'rgba(75,159,255,.15)' },
   }
-  const subjectTiles = Object.entries(SUBJ_META).map(([subj, meta]) => {
+  const subjectTiles = SUBJ_ORDER.map(subj => {
+    const meta = SUBJ_META[subj]
+    if (!meta) return null
     const mods  = MODULES.filter(m => m.subject === subj)
     const done  = mods.filter(m => isModuleComplete(m)).length
     const total = mods.length
     return { ...meta, done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 }
-  }).filter(t => t.total > 0)
+  }).filter(t => t && t.total > 0)
 
   const sc     = todayModule ? (SUBJECT_COLOUR_HOME[todayModule.subject] || SUBJECT_COLOUR_HOME.History) : SUBJECT_COLOUR_HOME.History
   const modNum = todayModule?.number || 1
@@ -538,32 +547,39 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
             onClick={() => onOpenModule(todayModule)}
             style={{
               position: 'relative', borderRadius: 18, overflow: 'hidden', cursor: 'pointer',
-              minHeight: 230,
+              minHeight: 250,
               boxShadow: '0 16px 50px rgba(0,0,0,.65)',
             }}
           >
             {/* City background */}
             <CityNightSkyline />
 
-            {/* Dark gradient overlay — transparent top, very dark bottom */}
+            {/* Dark gradient overlay — thin at top, heavier at bottom for text readability */}
             <div style={{
               position: 'absolute', inset: 0,
-              background: 'linear-gradient(175deg, rgba(4,1,16,.18) 0%, rgba(4,1,16,.42) 35%, rgba(4,1,16,.80) 62%, rgba(4,1,16,.97) 100%)',
+              background: 'linear-gradient(to bottom, rgba(3,1,12,.04) 0%, rgba(3,1,12,.08) 30%, rgba(3,1,12,.50) 50%, rgba(3,1,12,.82) 65%, rgba(3,1,12,.96) 100%)',
+            }} />
+
+            {/* Warm city glow — sits ABOVE overlay so it punches through */}
+            <div style={{
+              position: 'absolute', inset: 0, pointerEvents: 'none',
+              background: [
+                'radial-gradient(ellipse 110% 55% at 50% 125%, rgba(210,75,8,.70) 0%, rgba(140,35,0,.30) 45%, transparent 72%)',
+                'radial-gradient(ellipse 55% 40% at 85% 118%, rgba(200,90,15,.55) 0%, transparent 65%)',
+                'radial-gradient(ellipse 40% 30% at 18% 115%, rgba(170,50,5,.45) 0%, transparent 65%)',
+              ].join(', '),
             }} />
 
             {/* Content */}
-            <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px 20px', display: 'flex', flexDirection: 'column', minHeight: 230 }}>
+            <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px 20px', display: 'flex', flexDirection: 'column', minHeight: 250 }}>
               {/* Subject chip */}
               <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                background: `${sc.color}22`, border: `1px solid ${sc.color}40`,
-                borderRadius: 8, padding: '4px 10px', alignSelf: 'flex-start', marginBottom: 'auto',
+                display: 'inline-flex', alignItems: 'center', gap: 5,
+                background: `${sc.color}28`, border: `1px solid ${sc.color}50`,
+                borderRadius: 8, padding: '5px 11px', alignSelf: 'flex-start', marginBottom: 'auto',
+                backdropFilter: 'blur(6px)',
               }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={sc.color} strokeWidth="2.2" strokeLinecap="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                  <circle cx="9" cy="7" r="4"/>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75"/>
-                </svg>
+                <span style={{ fontSize: '.8rem', lineHeight: 1 }}>{todayModule.icon}</span>
                 <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '.62rem', color: sc.color, letterSpacing: '.1em', textTransform: 'uppercase' }}>
                   {todayModule.subject}
                 </span>
