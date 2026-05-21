@@ -643,33 +643,34 @@ export const MODULES = [
     icon: '🏫',
     color: '#C47A32',
     colorLight: 'rgba(196,122,50,.15)',
+    hook: {
+      statement: 'Schools only exist to teach subjects.',
+      isTrue: false,
+      storyLines: [
+        'Bell ringing. Students lining up.',
+        '“Shirts tucked in please.”',
+        'Exam desks. Corridor silence. Behaviour warning flashing briefly.',
+        'A student whispers: “Can I go toilet?”',
+      ],
+      wrongFeedback: 'That is the official version. Sociologists would disagree.',
+      correctFeedback: 'Exactly. The timetable is only part of what school teaches.',
+      bigQuestion: 'What else is school teaching you?',
+      loadingText: 'The corridor is getting quieter...',
+      growLabel: 'School as a system',
+      growSteps: [
+        { label: 'Formal lessons', detail: 'The timetable says maths, science, English and history.', color: '#C47A32' },
+        { label: 'Behaviour lessons', detail: 'The building teaches silence, punctuality, uniform and permission.', color: '#D29A5A' },
+        { label: 'Sociological question', detail: 'If everyone learns the same rules, who benefits from that?', color: '#B8A088' },
+      ],
+      revealItems: [
+        { emoji: '⏱️', label: 'Punctuality', detail: 'School repeatedly teaches that being on time matters.', color: '#C47A32', bg: 'rgba(196,122,50,.1)' },
+        { emoji: '👔', label: 'Authority', detail: 'Students learn who gives instructions and who is expected to follow them.', color: '#D29A5A', bg: 'rgba(210,154,90,.1)' },
+        { emoji: '🤫', label: 'Behaviour', detail: 'Silence, uniform, queues and permission become normal without appearing on the timetable.', color: '#B8A088', bg: 'rgba(184,160,136,.1)' },
+      ],
+      punchline: 'Schools teach maths and science. They also quietly teach behaviour, rules and expectations.',
+    },
+
     screens: [
-      {
-        label: 'Enter School',
-        kicker: 'Opening Screen',
-        heading: 'School teaches you things.',
-        sub: 'Some of them are not on the timetable.',
-        blocks: [
-          { type: 'read', label: 'Fluorescent corridor', text: 'Bell ringing. Students lining up. <strong>“Shirts tucked in please.”</strong><br /><br />Exam desks. Corridor silence. Behaviour warning flashing briefly.<br /><br />A student whispers: <strong>“Can I go toilet?”</strong>' },
-          { type: 'keypoint', text: 'Sociology is very interested in that.' },
-          { type: 'reveal', label: 'Enter school', prompt: 'Tap when the corridor has gone quiet.', answer: 'The timetable is only one part of what school teaches.' },
-        ]
-      },
-      {
-        label: 'True or False?',
-        kicker: 'Opening Question',
-        heading: 'True or false?',
-        sub: 'Schools only exist to teach subjects.',
-        blocks: [
-          { type: 'quiz', question: 'Schools only exist to teach subjects.', options: [
-            { text: 'TRUE', correct: false },
-            { text: 'FALSE', correct: true },
-            { text: '…SORT OF?', correct: false },
-          ], explanation: 'Sociologists would disagree. Schools teach maths and science. They also quietly teach behaviour, rules and expectations.' },
-          { type: 'examtip', label: 'Floating lessons', phrases: ['obedience', 'punctuality', 'authority', 'behaviour', 'socialisation'], tip: 'Most students do not notice this happening. Sociologists absolutely do.' },
-          { type: 'read', label: 'Somewhere', text: 'Somewhere right now somebody is being told to take their coat off indoors.' },
-        ]
-      },
       {
         label: 'This Module',
         kicker: 'What You Will Learn',
@@ -861,6 +862,160 @@ export const MODULES = [
           ]},
           { type: 'keypoint', text: 'Schools teach much more than subjects. Sociology asks us to notice the lessons nobody writes on the board.' },
           { type: 'read', label: 'Somewhere', text: 'Somewhere right now a teacher is saying: <strong>“You should know better by Year 10.”</strong>' },
+        ]
+      },
+    ]
+  },
+
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // SOCIOLOGY — Families Modules
+  // ─────────────────────────────────────────────────────────────────────────────
+  {
+    id: 'soc_fam_1',
+    subject: 'Sociology',
+    number: 2,
+    title: 'Families: Key Terms & Diversity',
+    subtitle: 'The family is not one simple thing',
+    era: 'Families',
+    icon: '👨‍👩‍👧',
+    color: '#FF5C7A',
+    colorLight: 'rgba(255,92,122,.15)',
+    screens: [
+      {
+        label: 'Key Terms',
+        kicker: 'Families',
+        heading: 'The family has its own vocabulary',
+        sub: 'The exam rewards precision.',
+        blocks: [
+          { type: 'flashcards', cards: [
+            { front: 'Double shift', back: 'Women doing paid work and most domestic labour.' },
+            { front: 'Canalization', back: 'Parents channel children towards gender-appropriate toys, games and activities.' },
+            { front: 'Cohabitation', back: 'Partners living together without being married or in a civil partnership.' },
+            { front: 'Matriarchal family', back: 'A family in which a woman holds power and authority.' },
+            { front: 'Kinship', back: 'Social relationships based on blood ties, marriage, adoption or civil partnerships.' },
+          ]},
+          { type: 'quiz', question: 'What term describes women who have paid work and still do most housework?', options: [
+            { text: 'Double shift', correct: true },
+            { text: 'Dual career', correct: false },
+            { text: 'Cohabitation', correct: false },
+            { text: 'Canalization', correct: false },
+          ], explanation: 'Double shift is the precise sociological term.' },
+          { type: 'quiz', question: 'What term describes partners living together without being married?', options: [
+            { text: 'Cohabitation', correct: true },
+            { text: 'Commune', correct: false },
+            { text: 'Conjugal roles', correct: false },
+            { text: 'Kinship', correct: false },
+          ], explanation: 'Cohabitation means living together as partners without marriage or civil partnership.' },
+        ]
+      },
+      {
+        label: 'Family Diversity',
+        kicker: 'Describe Questions',
+        heading: 'Not every family looks the same',
+        sub: 'GCSE Sociology expects examples, not vague labels.',
+        blocks: [
+          { type: 'read', label: 'Commune', text: 'A commune is a group of people who share ownership of property and the division of labour. Examples include an Israeli kibbutz, Christiania in Copenhagen, the Bruderhof community, or Findhorn ecovillage.' },
+          { type: 'read', label: 'Divorce consequences', text: 'Consequences can be financial, emotional, linked to co-parenting, or involve adjusting to step-families and new relationships.' },
+          { type: 'read', label: 'Grandparents', text: 'Grandparents may provide childcare, economic support, emotional support, moral support, and pass on cultural traditions.' },
+          { type: 'boss', tier: '🟡', question: 'Describe what sociologists mean by kinship. [3 marks]', markPoints: 'Reward coherent description. Kinship means social relationships derived from blood ties and marriage, including husbands, wives, siblings, aunts, uncles and cousins. Also accept adoption or civil partnerships.' },
+        ]
+      },
+    ]
+  },
+
+  {
+    id: 'soc_fam_2',
+    subject: 'Sociology',
+    number: 3,
+    title: 'Families: Roles, Power & Inequality',
+    subtitle: 'Who does what, and who benefits?',
+    era: 'Families',
+    icon: '🏠',
+    color: '#FF5C7A',
+    colorLight: 'rgba(255,92,122,.15)',
+    screens: [
+      {
+        label: 'Oakley',
+        kicker: 'Item Skills',
+        heading: 'Oakley makes family life less cosy',
+        sub: 'The numbers do not sound very symmetrical.',
+        blocks: [
+          { type: 'read', label: 'Oakley 1974', text: 'Ann Oakley studied 40 married women with young children. Half were working class and half middle class. She found little evidence of husbands sharing housework. Only 15% had a husband who shared domestic work to a significant level.' },
+          { type: 'keypoint', text: 'A weakness: the sample was small, London-based, dated, and focused only on married couples with young children.' },
+          { type: 'quiz', question: 'Which is a weakness of Oakley’s research?', options: [
+            { text: 'The sample was only 40 women', correct: true },
+            { text: 'It studied every family in Britain', correct: false },
+            { text: 'It used no family data at all', correct: false },
+            { text: 'It proved gender roles are equal', correct: false },
+          ], explanation: 'A small sample is less representative, so findings cannot be generalised easily.' },
+        ]
+      },
+      {
+        label: 'Patriarchy',
+        kicker: 'Conventional Family',
+        heading: 'The conventional family had a power structure',
+        sub: 'Oakley called attention to the inequality inside the “normal” image.',
+        blocks: [
+          { type: 'read', label: 'Oakley 1982', text: 'Oakley defined the conventional family as a nuclear family: a married couple and their children living together. Women were expected to do unpaid work inside the home. Men were expected to do paid work outside the home.' },
+          { type: 'keypoint', text: 'The man’s economic power was linked to paid work. The woman’s dependence on the man’s wages was an aspect of inequality.' },
+          { type: 'boss', tier: '🟡', question: 'From a feminist perspective, describe one way the conventional family can be patriarchal. [4 marks]', markPoints: 'Reward application to Oakley. Women expected to do unpaid domestic work; men linked to paid work and economic power; women’s dependence on men’s wages creates inequality.' },
+        ]
+      },
+      {
+        label: 'Capitalism',
+        kicker: 'Zaretsky',
+        heading: 'Families also buy things',
+        sub: 'Marxists notice who benefits.',
+        blocks: [
+          { type: 'read', label: 'Zaretsky 1976', text: 'Zaretsky argued the nuclear family had an economic function that served capitalism. Families act as a key unit of consumption: they buy and consume products from the capitalist economy.' },
+          { type: 'read', label: 'Reproduction of class', text: 'Zaretsky also argued the family reproduces social class. Bourgeois families pass down private property. Proletarian families reproduce the labour force.' },
+          { type: 'quiz', question: 'Which perspective is Zaretsky linked to?', options: [
+            { text: 'Marxist', correct: true },
+            { text: 'Functionalist', correct: false },
+            { text: 'New Right', correct: false },
+            { text: 'Interactionist', correct: false },
+          ], explanation: 'Zaretsky is used as a Marxist view of the family.' },
+        ]
+      },
+    ]
+  },
+
+  {
+    id: 'soc_fam_3',
+    subject: 'Sociology',
+    number: 4,
+    title: 'Families: Methods & 12-Mark Arguments',
+    subtitle: 'Evidence, evaluation and judgement',
+    era: 'Families',
+    icon: '⚖️',
+    color: '#FF5C7A',
+    colorLight: 'rgba(255,92,122,.15)',
+    screens: [
+      {
+        label: 'Methods',
+        kicker: 'Family Research',
+        heading: 'Researching families is awkward',
+        sub: 'Private life is not easy data.',
+        blocks: [
+          { type: 'flashcards', cards: [
+            { front: 'Unstructured interviews', back: 'Rich detail, but hard to compare and time-consuming.' },
+            { front: 'Postal questionnaires', back: 'Cheaper for large samples, but risk low response rates.' },
+            { front: 'Mixed methods', back: 'Combines quantitative and qualitative data for a fuller picture.' },
+            { front: 'Ethics', back: 'Consent, confidentiality, anonymity and avoidance of harm matter in family research.' },
+          ]},
+          { type: 'boss', tier: '🟡', question: 'Identify one ethical issue when investigating relationships within families and explain how you would deal with it. [4 marks]', markPoints: 'Reward ethical issue plus practical handling. Accept informed consent, confidentiality, anonymity or avoidance of harm. Apply to family relationships.' },
+        ]
+      },
+      {
+        label: '12-Mark Arguments',
+        kicker: 'Discuss How Far',
+        heading: '12-mark answers need balance',
+        sub: 'Knowledge, application, evaluation. Then judgement.',
+        blocks: [
+          { type: 'examtip', label: 'Structure', phrases: ['Agree', 'Disagree', 'Evaluate', 'Judgement'], tip: 'For “Discuss how far”, give a balanced argument and then decide. Do not just list theories.' },
+          { type: 'boss', tier: '🔴', question: 'Discuss how far sociologists would agree that gender roles are equal in families in Britain today. [12 marks]', markPoints: 'Reward Feminist perspectives such as Oakley, double shift/triple shift, domestic division of labour, plus challenge from symmetrical family/Young and Willmott. Reward evaluation and a clear judgement.' },
+          { type: 'boss', tier: '🔴', question: 'Discuss how far sociologists would agree that the nuclear family is still considered the norm in Britain today. [12 marks]', markPoints: 'Reward Functionalism/New Right, family diversity, Rapoports, lone parent, same-sex and reconstituted families. Evaluate statistical norm versus cultural ideal. Clear conclusion required.' },
         ]
       },
     ]

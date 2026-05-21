@@ -8,7 +8,7 @@ import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getImprovements } from './progress.js'
 import { MODULES } from './modules.js'
-import ModulePlayer from './ModulePlayer.jsx'
+import ModulePlayer, { getAllConfidenceRatings } from './ModulePlayer.jsx'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -2068,6 +2068,31 @@ function rankedQuickFireSubjects(memory, roundStats) {
     .sort((a, b) => b.answered - a.answered)
 }
 
+
+function confidencePriorityForModule(moduleId) {
+  if (!moduleId) return 0
+  const rating = getAllConfidenceRatings().find(item => item.moduleId === moduleId)
+  if (!rating) return 0
+  if (rating.confidence === 'confused') return 4
+  if (rating.confidence === 'clicking') return 2
+  return 0
+}
+
+function prioritizedQuickFireQuestions() {
+  const memory = readQuickFireMemory()
+  return QUICK_FIRE_QUESTIONS
+    .map((question, index) => {
+      const subjectBucket = memory.subjects?.[question.subject]
+      const topicBucket = memory.topics?.[question.subject + '::' + question.topic]
+      const subjectWeakness = subjectBucket?.answered ? Math.max(0, 70 - bucketAccuracy(subjectBucket)) / 10 : 0
+      const topicWeakness = topicBucket?.answered ? Math.max(0, 75 - bucketAccuracy(topicBucket)) / 8 : 0
+      const confidenceBoost = confidencePriorityForModule(question.moduleId)
+      return { question, index, score: subjectWeakness + topicWeakness + confidenceBoost }
+    })
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .map(item => item.question)
+}
+
 function pickQuickFireRecommendation(memory, roundStats) {
   const topics = mergeQuickFireBuckets(memory.topics, roundStats.topics)
   const weakTopic = Object.values(topics)
@@ -2114,6 +2139,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
   const [quickFireActive, setQuickFireActive] = useState(false)
   const [quickFireFinished, setQuickFireFinished] = useState(false)
   const [quickFireStats, setQuickFireStats] = useState(() => emptyQuickFireStats())
+  const [quickFireQuestionSet, setQuickFireQuestionSet] = useState(QUICK_FIRE_QUESTIONS)
   const [quickFireSummary, setQuickFireSummary] = useState(null)
 
   useEffect(() => {
@@ -2192,6 +2218,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
       setQuickFireActive(true)
       setQuickFireFinished(false)
       setQuickFireStats(emptyQuickFireStats())
+      setQuickFireQuestionSet(prioritizedQuickFireQuestions())
       setQuickFireSummary(null)
     }
   }
@@ -2355,7 +2382,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
   }
 
   if (selected) {
-    const questions = isQuickFire ? QUICK_FIRE_QUESTIONS : (PAST_PAPER_QS[selected.topicId] || [])
+    const questions = isQuickFire ? quickFireQuestionSet : (PAST_PAPER_QS[selected.topicId] || [])
     const q = isQuickFire && questions[qIdx] ? { type: 'mc', marks: 1, ...questions[qIdx] } : questions[qIdx]
     const gs = feedback ? (GRADE_STYLE[feedback.grade] || GRADE_STYLE['Developing']) : null
     const isMC = q?.type === 'mc'
