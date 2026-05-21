@@ -1,0 +1,72 @@
+name: Website Update Agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      request:
+        description: Natural-language website update request
+        required: true
+        type: string
+      base_branch:
+        description: Branch to base the update on
+        required: true
+        default: main
+        type: string
+      branch_name:
+        description: Optional branch name for the generated update
+        required: false
+        type: string
+      open_pr:
+        description: Open or update a pull request
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-site:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.base_branch }}
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --no-package-lock
+
+      - name: Run website update agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+          REQUEST: ${{ inputs.request }}
+          BASE_BRANCH: ${{ inputs.base_branch }}
+          INPUT_BRANCH_NAME: ${{ inputs.branch_name }}
+          OPEN_PR: ${{ inputs.open_pr }}
+        run: |
+          BRANCH_NAME="$INPUT_BRANCH_NAME"
+          if [ -z "$BRANCH_NAME" ]; then
+            BRANCH_NAME="website-agent/${GITHUB_RUN_ID}"
+          fi
+
+          PR_FLAG=""
+          if [ "$OPEN_PR" != "true" ]; then
+            PR_FLAG="--no-pr"
+          fi
+
+          npm run agent:update-site -- \
+            --request "$REQUEST" \
+            --apply \
+            --base "$BASE_BRANCH" \
+            --branch "$BRANCH_NAME" \
+            $PR_FLAG
