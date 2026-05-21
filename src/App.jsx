@@ -190,7 +190,7 @@ export default function App() {
     <div style={{ background: '#070B1A', minHeight: '100vh' }}>
       {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onOpenSubjects={() => setTab('modules')} />}
       {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
-      {(tab === 'test' || tab === 'quiz' || tab === 'exam') && <TestTab mode={tab === 'quiz' ? 'quickfire' : tab === 'exam' ? 'exam' : 'test'} />}
+      {(tab === 'test' || tab === 'quiz' || tab === 'exam') && <TestTab mode={tab === 'quiz' ? 'quickfire' : tab === 'exam' ? 'exam' : 'test'} onOpenModule={openModule} />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
   )
@@ -1948,30 +1948,152 @@ function ChemistryBrowser({ onBack }) {
 
 
 const QUICK_FIRE_QUESTIONS = [
-  { q: 'What theory said bad smells caused disease?', options: ['Miasma', 'Germ theory', 'Four humours', 'Natural selection'], correct: 0, subject: 'History', ms: 'Miasma was the belief that bad air or smells caused disease.' },
-  { q: 'Who proved blood circulates around the body?', options: ['William Harvey', 'Edward Jenner', 'Louis Pasteur', 'Robert Koch'], correct: 0, subject: 'History', ms: 'William Harvey published his ideas about blood circulation in 1628.' },
-  { q: 'Which scientist developed germ theory?', options: ['Louis Pasteur', 'Galen', 'Vesalius', 'Florence Nightingale'], correct: 0, subject: 'History', ms: 'Louis Pasteur showed that germs cause decay and disease.' },
-  { q: 'What did Jenner create a vaccine for?', options: ['Smallpox', 'Cholera', 'Tuberculosis', 'Typhoid'], correct: 0, subject: 'History', ms: 'Edward Jenner developed vaccination against smallpox.' },
-  { q: 'What did Lister use as an antiseptic?', options: ['Carbolic acid', 'Penicillin', 'Ether', 'Aspirin'], correct: 0, subject: 'History', ms: 'Joseph Lister used carbolic acid to reduce infection in surgery.' },
-  { q: 'Who discovered penicillin?', options: ['Alexander Fleming', 'Robert Koch', 'James Simpson', 'John Snow'], correct: 0, subject: 'History', ms: 'Alexander Fleming discovered penicillin in 1928.' },
-  { q: 'What did John Snow remove in 1854?', options: ['A pump handle', 'A hospital ward', 'A sewer pipe', 'A microscope lens'], correct: 0, subject: 'History', ms: 'John Snow removed the Broad Street pump handle during a cholera outbreak.' },
-  { q: 'Which war helped plastic surgery develop?', options: ['First World War', 'Crimean War', 'Vietnam War', 'English Civil War'], correct: 0, subject: 'History', ms: 'The First World War created a need for reconstructive plastic surgery.' },
-  { q: 'Which organ pumps blood?', options: ['Heart', 'Liver', 'Lung', 'Kidney'], correct: 0, subject: 'Biology', ms: 'The heart pumps blood around the body.' },
-  { q: 'What is the control centre of a cell?', options: ['Nucleus', 'Ribosome', 'Cell wall', 'Cytoplasm'], correct: 0, subject: 'Biology', ms: 'The nucleus contains genetic material and controls cell activities.' },
-  { q: 'What process moves water through a membrane?', options: ['Osmosis', 'Diffusion', 'Respiration', 'Transpiration'], correct: 0, subject: 'Biology', ms: 'Osmosis is the movement of water through a partially permeable membrane.' },
-  { q: 'What gas do plants take in for photosynthesis?', options: ['Carbon dioxide', 'Oxygen', 'Nitrogen', 'Hydrogen'], correct: 0, subject: 'Biology', ms: 'Plants use carbon dioxide during photosynthesis.' },
-  { q: 'What is 7 x 8?', options: ['56', '54', '64', '48'], correct: 0, subject: 'Maths', ms: '7 x 8 = 56.' },
-  { q: 'What is 15% of 200?', options: ['30', '15', '20', '35'], correct: 0, subject: 'Maths', ms: '10% is 20 and 5% is 10, so 15% is 30.' },
-  { q: 'What is the mean of 2, 4 and 9?', options: ['5', '6', '7', '15'], correct: 0, subject: 'Maths', ms: '(2 + 4 + 9) / 3 = 5.' },
-  { q: 'What word means a comparison using like or as?', options: ['Simile', 'Metaphor', 'Verb', 'Noun'], correct: 0, subject: 'English', ms: 'A simile compares using like or as.' },
-  { q: 'What is a word that describes a noun?', options: ['Adjective', 'Verb', 'Adverb', 'Pronoun'], correct: 0, subject: 'English', ms: 'An adjective describes a noun.' },
-  { q: 'Which word means repeating the same starting sound?', options: ['Alliteration', 'Oxymoron', 'Personification', 'Zoomorphism'], correct: 0, subject: 'English', ms: 'Alliteration repeats the same initial sound.' },
-  { q: 'What is the pH of a neutral solution?', options: ['7', '1', '14', '0'], correct: 0, subject: 'Chemistry', ms: 'Neutral solutions have pH 7.' },
-  { q: 'What particle has a negative charge?', options: ['Electron', 'Proton', 'Neutron', 'Nucleus'], correct: 0, subject: 'Chemistry', ms: 'Electrons have a negative charge.' },
+  { q: 'What theory said bad smells caused disease?', options: ['Miasma', 'Germ theory', 'Four humours', 'Natural selection'], correct: 0, subject: 'History', topic: 'Medieval Medicine', moduleId: 'mod1', ms: 'Miasma was the belief that bad air or smells caused disease.' },
+  { q: 'Who proved blood circulates around the body?', options: ['William Harvey', 'Edward Jenner', 'Louis Pasteur', 'Robert Koch'], correct: 0, subject: 'History', topic: 'Renaissance Medicine', moduleId: 'mod2', ms: 'William Harvey published his ideas about blood circulation in 1628.' },
+  { q: 'Which scientist developed germ theory?', options: ['Louis Pasteur', 'Galen', 'Vesalius', 'Florence Nightingale'], correct: 0, subject: 'History', topic: 'Germ Theory', moduleId: 'mod4', ms: 'Louis Pasteur showed that germs cause decay and disease.' },
+  { q: 'What did Jenner create a vaccine for?', options: ['Smallpox', 'Cholera', 'Tuberculosis', 'Typhoid'], correct: 0, subject: 'History', topic: 'Vaccination', moduleId: 'mod4', ms: 'Edward Jenner developed vaccination against smallpox.' },
+  { q: 'What did Lister use as an antiseptic?', options: ['Carbolic acid', 'Penicillin', 'Ether', 'Aspirin'], correct: 0, subject: 'History', topic: 'Surgery & Anatomy', moduleId: 'mod3', ms: 'Joseph Lister used carbolic acid to reduce infection in surgery.' },
+  { q: 'Who discovered penicillin?', options: ['Alexander Fleming', 'Robert Koch', 'James Simpson', 'John Snow'], correct: 0, subject: 'History', topic: 'Modern Medicine', moduleId: 'mod4', ms: 'Alexander Fleming discovered penicillin in 1928.' },
+  { q: 'What did John Snow remove in 1854?', options: ['A pump handle', 'A hospital ward', 'A sewer pipe', 'A microscope lens'], correct: 0, subject: 'History', topic: 'Public Health', moduleId: 'mod5', ms: 'John Snow removed the Broad Street pump handle during a cholera outbreak.' },
+  { q: 'Which war helped plastic surgery develop?', options: ['First World War', 'Crimean War', 'Vietnam War', 'English Civil War'], correct: 0, subject: 'History', topic: 'Modern Surgery', moduleId: 'mod3', ms: 'The First World War created a need for reconstructive plastic surgery.' },
+  { q: 'Which organ pumps blood?', options: ['Heart', 'Liver', 'Lung', 'Kidney'], correct: 0, subject: 'Biology', topic: 'Circulation', moduleId: null, ms: 'The heart pumps blood around the body.' },
+  { q: 'What is the control centre of a cell?', options: ['Nucleus', 'Ribosome', 'Cell wall', 'Cytoplasm'], correct: 0, subject: 'Biology', topic: 'Cells', moduleId: 'sci_bio_w1', ms: 'The nucleus contains genetic material and controls cell activities.' },
+  { q: 'What process moves water through a membrane?', options: ['Osmosis', 'Diffusion', 'Respiration', 'Transpiration'], correct: 0, subject: 'Biology', topic: 'Osmosis', moduleId: 'sci_bio_w1', ms: 'Osmosis is the movement of water through a partially permeable membrane.' },
+  { q: 'What gas do plants take in for photosynthesis?', options: ['Carbon dioxide', 'Oxygen', 'Nitrogen', 'Hydrogen'], correct: 0, subject: 'Biology', topic: 'Photosynthesis', moduleId: 'sci_bio_w1', ms: 'Plants use carbon dioxide during photosynthesis.' },
+  { q: 'What is 7 x 8?', options: ['56', '54', '64', '48'], correct: 0, subject: 'Maths', topic: 'Times Tables', moduleId: null, ms: '7 x 8 = 56.' },
+  { q: 'What is 15% of 200?', options: ['30', '15', '20', '35'], correct: 0, subject: 'Maths', topic: 'Percentages', moduleId: null, ms: '10% is 20 and 5% is 10, so 15% is 30.' },
+  { q: 'What is the mean of 2, 4 and 9?', options: ['5', '6', '7', '15'], correct: 0, subject: 'Maths', topic: 'Averages', moduleId: null, ms: '(2 + 4 + 9) / 3 = 5.' },
+  { q: 'What word means a comparison using like or as?', options: ['Simile', 'Metaphor', 'Verb', 'Noun'], correct: 0, subject: 'English', topic: 'Language Devices', moduleId: null, ms: 'A simile compares using like or as.' },
+  { q: 'What is a word that describes a noun?', options: ['Adjective', 'Verb', 'Adverb', 'Pronoun'], correct: 0, subject: 'English', topic: 'Grammar', moduleId: null, ms: 'An adjective describes a noun.' },
+  { q: 'Which word means repeating the same starting sound?', options: ['Alliteration', 'Oxymoron', 'Personification', 'Zoomorphism'], correct: 0, subject: 'English', topic: 'Language Devices', moduleId: null, ms: 'Alliteration repeats the same initial sound.' },
+  { q: 'What is the pH of a neutral solution?', options: ['7', '1', '14', '0'], correct: 0, subject: 'Chemistry', topic: 'Acids and Alkalis', moduleId: null, ms: 'Neutral solutions have pH 7.' },
+  { q: 'What particle has a negative charge?', options: ['Electron', 'Proton', 'Neutron', 'Nucleus'], correct: 0, subject: 'Chemistry', topic: 'Atomic Structure', moduleId: null, ms: 'Electrons have a negative charge.' },
 ]
 
+const QUICK_FIRE_MEMORY_KEY = 'gcse_quickfire_memory_v1'
 
-function TestTab({ mode = 'test' } = {}) {
+const QUICK_FIRE_SUBJECT_META = {
+  History: { icon: '🏛️', color: '#F5B700', moduleId: 'mod1' },
+  Maths: { icon: '✖️', color: '#3B82FF', moduleId: null },
+  Sociology: { icon: '👥', color: '#FF5C7A', moduleId: null },
+  Chemistry: { icon: '⚗️', color: '#38D27A', moduleId: null },
+  Biology: { icon: '🌿', color: '#38D27A', moduleId: 'sci_bio_w1' },
+  English: { icon: '📘', color: '#3B82FF', moduleId: null },
+  'Quick Fire': { icon: '⚡', color: '#9D5CFF', moduleId: null },
+}
+
+function emptyQuickFireStats() {
+  return { answered: 0, correct: 0, subjects: {}, topics: {} }
+}
+
+function bumpQuickFireBucket(buckets, key, isCorrect, extra = {}) {
+  const next = { ...buckets }
+  const current = next[key] || { answered: 0, correct: 0, ...extra }
+  next[key] = {
+    ...current,
+    ...extra,
+    answered: (current.answered || 0) + 1,
+    correct: (current.correct || 0) + (isCorrect ? 1 : 0),
+  }
+  return next
+}
+
+function addQuickFireAnswer(stats, question, isCorrect) {
+  const subject = question.subject || 'Quick Fire'
+  const topic = question.topic || subject
+  const topicKey = subject + '::' + topic
+  return {
+    answered: stats.answered + 1,
+    correct: stats.correct + (isCorrect ? 1 : 0),
+    subjects: bumpQuickFireBucket(stats.subjects || {}, subject, isCorrect, { subject }),
+    topics: bumpQuickFireBucket(stats.topics || {}, topicKey, isCorrect, {
+      key: topicKey,
+      subject,
+      topic,
+      moduleId: question.moduleId || null,
+    }),
+  }
+}
+
+function readQuickFireMemory() {
+  try {
+    return JSON.parse(localStorage.getItem(QUICK_FIRE_MEMORY_KEY) || '{"subjects":{},"topics":{}}')
+  } catch {
+    return { subjects: {}, topics: {} }
+  }
+}
+
+function mergeQuickFireBuckets(memoryBuckets = {}, roundBuckets = {}) {
+  const merged = { ...memoryBuckets }
+  Object.entries(roundBuckets).forEach(([key, value]) => {
+    const current = merged[key] || { ...value, answered: 0, correct: 0 }
+    merged[key] = {
+      ...current,
+      ...value,
+      answered: (current.answered || 0) + (value.answered || 0),
+      correct: (current.correct || 0) + (value.correct || 0),
+    }
+  })
+  return merged
+}
+
+function saveQuickFireMemory(roundStats) {
+  const memory = readQuickFireMemory()
+  const next = {
+    subjects: mergeQuickFireBuckets(memory.subjects, roundStats.subjects),
+    topics: mergeQuickFireBuckets(memory.topics, roundStats.topics),
+    updatedAt: new Date().toISOString(),
+  }
+  try { localStorage.setItem(QUICK_FIRE_MEMORY_KEY, JSON.stringify(next)) } catch {}
+  return next
+}
+
+function bucketAccuracy(bucket) {
+  return bucket?.answered ? Math.round((bucket.correct / bucket.answered) * 100) : 0
+}
+
+function rankedQuickFireSubjects(memory, roundStats) {
+  const subjects = mergeQuickFireBuckets(memory.subjects, roundStats.subjects)
+  return Object.entries(subjects)
+    .map(([subject, bucket]) => ({
+      subject,
+      icon: QUICK_FIRE_SUBJECT_META[subject]?.icon || '📚',
+      color: QUICK_FIRE_SUBJECT_META[subject]?.color || '#9CA8C7',
+      moduleId: QUICK_FIRE_SUBJECT_META[subject]?.moduleId || null,
+      answered: bucket.answered || 0,
+      correct: bucket.correct || 0,
+      accuracy: bucketAccuracy(bucket),
+    }))
+    .filter(item => item.answered > 0)
+    .sort((a, b) => b.answered - a.answered)
+}
+
+function pickQuickFireRecommendation(memory, roundStats) {
+  const topics = mergeQuickFireBuckets(memory.topics, roundStats.topics)
+  const weakTopic = Object.values(topics)
+    .filter(topic => (topic.answered || 0) > 0)
+    .sort((a, b) => {
+      const accuracyGap = bucketAccuracy(a) - bucketAccuracy(b)
+      if (accuracyGap !== 0) return accuracyGap
+      return (b.answered || 0) - (a.answered || 0)
+    })[0]
+
+  if (weakTopic) {
+    return {
+      subject: weakTopic.subject,
+      topic: weakTopic.topic,
+      moduleId: weakTopic.moduleId || QUICK_FIRE_SUBJECT_META[weakTopic.subject]?.moduleId || null,
+      accuracy: bucketAccuracy(weakTopic),
+      answered: weakTopic.answered || 0,
+    }
+  }
+
+  return { subject: 'Biology', topic: 'Photosynthesis', moduleId: 'sci_bio_w1', accuracy: 0, answered: 0 }
+}
+
+
+
+function TestTab({ mode = 'test', onOpenModule } = {}) {
   const [mathsOpen, setMathsOpen]   = useState(false)
   const [englishOpen, setEnglishOpen]     = useState(false)
   const [sociologyOpen, setSociologyOpen]     = useState(false)
@@ -1991,7 +2113,7 @@ function TestTab({ mode = 'test' } = {}) {
   const [quickFireTimeLeft, setQuickFireTimeLeft] = useState(QUICK_FIRE_SECONDS)
   const [quickFireActive, setQuickFireActive] = useState(false)
   const [quickFireFinished, setQuickFireFinished] = useState(false)
-  const [quickFireStats, setQuickFireStats] = useState({ answered: 0, correct: 0 })
+  const [quickFireStats, setQuickFireStats] = useState(() => emptyQuickFireStats())
   const [quickFireSummary, setQuickFireSummary] = useState(null)
 
   useEffect(() => {
@@ -2069,7 +2191,7 @@ function TestTab({ mode = 'test' } = {}) {
       setQuickFireTimeLeft(QUICK_FIRE_SECONDS)
       setQuickFireActive(true)
       setQuickFireFinished(false)
-      setQuickFireStats({ answered: 0, correct: 0 })
+      setQuickFireStats(emptyQuickFireStats())
       setQuickFireSummary(null)
     }
   }
@@ -2077,12 +2199,15 @@ function TestTab({ mode = 'test' } = {}) {
   function finishQuickFireRound(reason = 'exit') {
     setQuickFireActive(false)
     setQuickFireFinished(true)
+    const memory = saveQuickFireMemory(quickFireStats)
     setQuickFireSummary({
       reason,
       answered: quickFireStats.answered,
       correct: quickFireStats.correct,
       timeUsed: QUICK_FIRE_SECONDS - quickFireTimeLeft,
       timeLeft: quickFireTimeLeft,
+      subjects: rankedQuickFireSubjects(memory, quickFireStats),
+      recommendation: pickQuickFireRecommendation(memory, quickFireStats),
     })
   }
 
@@ -2121,7 +2246,7 @@ function TestTab({ mode = 'test' } = {}) {
       const newAttempts = tqMcAttempts + 1
       setTqMcAttempts(newAttempts)
       if (isCorrect) {
-        if (isQuickFire) setQuickFireStats(stats => ({ answered: stats.answered + 1, correct: stats.correct + 1 }))
+        if (isQuickFire) setQuickFireStats(stats => addQuickFireAnswer(stats, q, true))
         setTqMcLocked(true)
         setFeedback({ marksAwarded: q.marks, marksAvailable: q.marks, grade: 'Excellent',
           summary: "That's the one. Well done for getting it.", achieved: ['Correct answer selected'], missed: [], examinerTip: '' })
@@ -2131,7 +2256,7 @@ function TestTab({ mode = 'test' } = {}) {
         setAnswer('')
         setError('')
       } else {
-        if (isQuickFire) setQuickFireStats(stats => ({ ...stats, answered: stats.answered + 1 }))
+        if (isQuickFire) setQuickFireStats(stats => addQuickFireAnswer(stats, q, false))
         setTqMcLocked(true)
         const correctText = q.options[q.correct] || ''
         setFeedback({ marksAwarded: 0, marksAvailable: q.marks, grade: 'Needs Work',
@@ -2146,30 +2271,84 @@ function TestTab({ mode = 'test' } = {}) {
 
   if (quickFireSummary) {
     const accuracy = quickFireSummary.answered ? Math.round((quickFireSummary.correct / quickFireSummary.answered) * 100) : 0
-    const reasonText = quickFireSummary.reason === 'time' ? 'Time up' : quickFireSummary.reason === 'complete' ? 'Round complete' : 'Round exited'
+    const summarySubjects = quickFireSummary.subjects?.length
+      ? quickFireSummary.subjects
+      : rankedQuickFireSubjects(readQuickFireMemory(), emptyQuickFireStats())
+    const recommendation = quickFireSummary.recommendation || pickQuickFireRecommendation(readQuickFireMemory(), emptyQuickFireStats())
+    const recommendedModule = recommendation?.moduleId ? MODULES.find(m => m.id === recommendation.moduleId) : null
+    const recommendationMeta = QUICK_FIRE_SUBJECT_META[recommendation?.subject] || QUICK_FIRE_SUBJECT_META.Biology
+    const encouragement = accuracy >= 80 ? 'Excellent recall.' : accuracy >= 60 ? 'You’re making strong progress.' : 'Good start — now sharpen the weak spots.'
+    const actionLine = accuracy >= 80 ? 'Keep it up!' : 'Focus on improvement.'
+
     return (
-      <div style={{ background:'#080C1A', minHeight:'100vh', padding:'26px 18px 110px' }}>
-        <div style={{ maxWidth:520, margin:'0 auto' }}>
-          <div style={{ background:'linear-gradient(145deg,#10182B,#0D1424)', border:'1px solid #2A3552', borderRadius:24, padding:'24px', boxShadow:'0 18px 46px rgba(0,0,0,.36)' }}>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(157,92,255,.12)', border:'1px solid rgba(157,92,255,.28)', color:'#C18CFF', borderRadius:999, padding:'6px 11px', fontFamily:"'Inter',sans-serif", fontWeight:900, fontSize:'.68rem', letterSpacing:'.08em', textTransform:'uppercase', marginBottom:18 }}>⚡ 90s Quick Fire</div>
-            <h1 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2rem', color:'#F5F7FB', margin:'0 0 6px', lineHeight:1.05 }}>{reasonText}</h1>
-            <p style={{ fontFamily:"'Inter',sans-serif", color:'#9CA8C7', margin:'0 0 22px', fontSize:'.9rem' }}>Short questions only. Fast recall, no exam essays.</p>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:20 }}>
-              {[{ label:'Answered', value:quickFireSummary.answered, color:'#9D5CFF' }, { label:'Correct', value:quickFireSummary.correct, color:'#4DFF88' }, { label:'Accuracy', value:accuracy + '%', color:'#F5B700' }].map(item => (
-                <div key={item.label} style={{ background:'#080C1A', border:'1px solid #1E2A40', borderRadius:14, padding:'14px 10px', textAlign:'center' }}>
-                  <div style={{ color:item.color, fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:'1.35rem' }}>{item.value}</div>
-                  <div style={{ color:'#5A6480', fontFamily:"'Inter',sans-serif", fontWeight:800, fontSize:'.62rem', textTransform:'uppercase', letterSpacing:'.08em', marginTop:4 }}>{item.label}</div>
+      <div style={{ background:'radial-gradient(circle at 50% -10%, rgba(56,210,122,.12), transparent 38%), #050817', minHeight:'100vh', padding:'18px 20px 36px', color:'#F5F7FB' }}>
+        <div style={{ maxWidth:480, margin:'0 auto' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
+            <button onClick={exitTestTopic} aria-label="Back" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(20,31,54,.78)', color:'#F5F7FB', fontSize:'1.45rem', cursor:'pointer' }}>‹</button>
+            <button aria-label="Share" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(20,31,54,.78)', color:'#F5F7FB', fontSize:'1rem', cursor:'pointer' }}>⇧</button>
+          </div>
+
+          <div style={{ textAlign:'center', marginBottom:28 }}>
+            <div style={{
+              width:168, height:168, borderRadius:'50%', margin:'0 auto 18px',
+              background:'conic-gradient(#38F27B ' + accuracy + '%, rgba(23,40,69,.9) 0)',
+              display:'grid', placeItems:'center', boxShadow:'0 0 34px rgba(56,242,123,.18)',
+            }}>
+              <div style={{ width:142, height:142, borderRadius:'50%', background:'#071126', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', boxShadow:'inset 0 0 24px rgba(0,0,0,.45)' }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.65rem', fontWeight:900, lineHeight:1 }}>{accuracy}%</div>
+                <div style={{ color:'#AAB4D4', fontSize:'.9rem', fontWeight:700, marginTop:5 }}>{quickFireSummary.correct} / {quickFireSummary.answered || 0}</div>
+                <div style={{ color:'#38F27B', fontSize:'.86rem', fontWeight:900, marginTop:4 }}>Correct</div>
+              </div>
+            </div>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:9 }}>
+              <h1 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.1rem', lineHeight:1.05, margin:0, color:'#F5F7FB' }}>{accuracy >= 60 ? 'Great work!' : 'Keep going!'}</h1>
+              <span style={{ color:'#F5B700', fontSize:'1.45rem' }}>✩</span>
+            </div>
+            <p style={{ color:'#AAB4D4', fontSize:'.96rem', margin:'10px 0 0', lineHeight:1.45 }}>{encouragement}<br /><span style={{ color:'#38F27B', fontWeight:900 }}>{actionLine}</span></p>
+          </div>
+
+          <div style={{ background:'linear-gradient(145deg, rgba(16,24,43,.96), rgba(9,15,31,.96))', border:'1px solid rgba(62,78,118,.55)', borderRadius:18, padding:'18px 18px 14px', marginBottom:16, boxShadow:'0 14px 36px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.04)' }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16 }}>
+              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'1rem' }}>Performance by subject</div>
+              <button onClick={exitTestTopic} style={{ border:'none', background:'transparent', color:'#AAB4D4', fontSize:'.8rem', cursor:'pointer' }}>View all ›</button>
+            </div>
+            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+              {summarySubjects.slice(0, 5).map(item => (
+                <div key={item.subject} style={{ display:'grid', gridTemplateColumns:'40px 1fr 54px 48px', alignItems:'center', gap:10 }}>
+                  <div style={{ width:38, height:38, borderRadius:'50%', background:item.color + '22', color:item.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.12rem' }}>{item.icon}</div>
+                  <div>
+                    <div style={{ color:item.color, fontWeight:850, fontSize:'.86rem', marginBottom:7 }}>{item.subject}</div>
+                    <div style={{ height:5, background:'rgba(58,75,111,.52)', borderRadius:99, overflow:'hidden' }}>
+                      <div style={{ width:item.accuracy + '%', height:'100%', borderRadius:99, background:item.color, boxShadow:'0 0 10px ' + item.color }} />
+                    </div>
+                  </div>
+                  <div style={{ color:'#DCE5FA', fontWeight:800, fontSize:'.86rem', textAlign:'right' }}>{item.correct} / {item.answered}</div>
+                  <div style={{ justifySelf:'end', color:item.color, background:item.color + '18', border:'1px solid ' + item.color + '30', borderRadius:8, padding:'4px 7px', fontWeight:900, fontSize:'.76rem' }}>{item.accuracy}%</div>
                 </div>
               ))}
             </div>
-            <div style={{ background:'rgba(255,255,255,.03)', border:'1px solid #1E2A40', borderRadius:14, padding:'13px 14px', marginBottom:18, color:'#AAB4D4', fontFamily:"'Inter',sans-serif", fontSize:'.84rem' }}>
-              Time used: <strong style={{ color:'#F5F7FB' }}>{quickFireSummary.timeUsed}s</strong> · Time left: <strong style={{ color:'#F5F7FB' }}>{quickFireSummary.timeLeft}s</strong>
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-              <button onClick={startRandomQuestion} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', color:'#fff', border:'none', borderRadius:13, padding:'14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, cursor:'pointer' }}>Play again</button>
-              <button onClick={exitTestTopic} style={{ background:'#10182B', color:'#9CA8C7', border:'1px solid #2A3552', borderRadius:13, padding:'14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, cursor:'pointer' }}>Back to quiz</button>
-            </div>
           </div>
+
+          <button onClick={() => recommendedModule && onOpenModule ? onOpenModule(recommendedModule) : exitTestTopic()} style={{ width:'100%', background:'linear-gradient(145deg, rgba(16,24,43,.96), rgba(9,15,31,.96))', border:'1px solid rgba(62,78,118,.55)', borderRadius:18, padding:'18px', marginBottom:20, display:'flex', alignItems:'center', gap:16, textAlign:'left', cursor:'pointer', boxShadow:'0 14px 36px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.04)' }}>
+            <div style={{ width:54, height:54, borderRadius:'50%', background:recommendationMeta.color + '20', color:recommendationMeta.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.6rem', flexShrink:0 }}>{recommendationMeta.icon}</div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", color:'#F5F7FB', fontWeight:850, fontSize:'1rem' }}>Recommended next</div>
+                <span style={{ background:'rgba(255,92,122,.18)', color:'#FF5C7A', borderRadius:999, padding:'5px 10px', fontSize:'.7rem', fontWeight:900 }}>🎯 Priority</span>
+              </div>
+              <div style={{ color:'#EAF0FF', fontWeight:850, fontSize:'.95rem' }}>{recommendation.subject} – {recommendation.topic}</div>
+              <div style={{ color:'#AAB4D4', fontSize:'.84rem', marginTop:4, lineHeight:1.35 }}>You struggled with questions and keywords here. {recommendedModule ? 'Open the module to strengthen it.' : 'Focus your next quick practice here.'}</div>
+            </div>
+            <span style={{ color:'#AAB4D4', fontSize:'1.6rem' }}>›</span>
+          </button>
+
+          <button onClick={startRandomQuestion} style={{ width:'100%', border:'none', borderRadius:17, background:'linear-gradient(135deg,#38F27B,#2DD4A3)', color:'#03140B', padding:'20px 22px', display:'flex', alignItems:'center', gap:18, cursor:'pointer', boxShadow:'0 18px 36px rgba(45,212,163,.24)' }}>
+            <span style={{ fontSize:'2rem', lineHeight:1 }}>↻</span>
+            <span style={{ textAlign:'left' }}>
+              <span style={{ display:'block', fontFamily:"'Space Grotesk',sans-serif", fontSize:'1.25rem', fontWeight:950, letterSpacing:'.02em' }}>TRY AGAIN</span>
+              <span style={{ display:'block', fontSize:'.86rem', fontWeight:750, marginTop:3 }}>Focus on {recommendation.subject} & {recommendation.topic} · ~3 mins</span>
+            </span>
+          </button>
         </div>
       </div>
     )
