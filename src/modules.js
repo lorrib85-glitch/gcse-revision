@@ -6508,14 +6508,16 @@ export const MODULES = [
           },
           {
             type: 'misconception',
-            items: [
+            mistakes: [
               {
-                myth: 'The New Right simply hates poor people.',
-                reality: 'New Right thinkers frame their argument as concern for social stability. They argue welfare harms the people it claims to help by creating long-term dependency. Whether or not you agree, this is the logic you need to be able to explain in an exam.',
+                wrong: 'The New Right simply hates poor people.',
+                right: 'The New Right frames its argument as concern for social stability.',
+                reason: 'Murray and Marsland argue welfare harms the people it claims to help by creating long-term dependency. Whether or not you agree, this is the logic you need to explain in an exam — not a personal attack.',
               },
               {
-                myth: 'The New Right is the same as Functionalism.',
-                reality: 'Both favour the nuclear family, but for different reasons. Functionalists focus on socialisation and stability. The New Right focuses on welfare dependency and moral responsibility. They are distinct perspectives in AQA Sociology.',
+                wrong: 'The New Right is the same as Functionalism.',
+                right: 'Both favour the nuclear family, but for different reasons.',
+                reason: 'Functionalists focus on socialisation and stability. The New Right focuses on welfare dependency and moral responsibility. They are distinct perspectives in AQA Sociology.',
               },
             ],
           },
