@@ -1289,7 +1289,7 @@ export const MODULES = [
                 keyword: 'ANATOMY',
                 answer: 'vesalius',
                 reveal: 'Doctors began trusting direct observation instead of blindly following Galen.',
-                hint: 'Think printing press + challenging Galen\'s ancient authority. 👀',
+                hint: "Not them. 1543, anatomy books, proved Galen wrong. Think printing press + a man with a scalpel. 💀",
               },
               {
                 id: 'harvey', date: '1628', icon: '🫀',
@@ -1297,7 +1297,7 @@ export const MODULES = [
                 keyword: 'CIRCULATION',
                 answer: 'harvey',
                 reveal: 'Understanding circulation transformed anatomy — but treatments took longer to catch up.',
-                hint: 'Think heart, pump, blood moving continuously — not anatomy books.',
+                hint: "Wrong person. This slot is heart, pump, blood going round and round. 1628. Not anatomy books. 👀",
               },
               {
                 id: 'jenner', date: '1796', icon: '💉',
@@ -1305,7 +1305,7 @@ export const MODULES = [
                 keyword: 'VACCINATION',
                 answer: 'jenner',
                 reveal: 'Vaccination became one of the biggest breakthroughs in medical history.',
-                hint: 'Cowpox gave the clue… this person links to prevention, not surgery.',
+                hint: "Nope. Milkmaids got cowpox, didn't get smallpox — someone noticed. Vaccines. Prevention. Not surgery. 💉",
               },
               {
                 id: 'simpson', date: '1847', icon: '☠️',
@@ -1313,7 +1313,7 @@ export const MODULES = [
                 keyword: 'ANAESTHESIA',
                 answer: 'simpson',
                 reveal: 'Surgery became less terrifying because patients could be unconscious.',
-                hint: 'This breakthrough ended the screaming — think unconscious, not antiseptic.',
+                hint: "Not that one. This slot ended the screaming — patients out cold. Chloroform, 1847. Don't mix it up with the infection guy. 😴",
               },
               {
                 id: 'lister', date: '1867', icon: '🧴',
@@ -1321,7 +1321,7 @@ export const MODULES = [
                 keyword: 'ANTISEPTIC SURGERY',
                 answer: 'lister',
                 reveal: 'Antiseptics massively reduced deadly post-surgery infections.',
-                hint: 'This breakthrough links to carbolic acid and preventing infection — not anaesthesia.',
+                hint: "Wrong end. Carbolic acid. Sprayed it on wounds, on instruments, on surgeons. Last breakthrough on the timeline. 🧴",
               },
             ],
           },

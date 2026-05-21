@@ -2866,42 +2866,94 @@ function TDPersonCard({ person, ghost = false, size = 52 }) {
 function TimelineDragBlock({ block }) {
   const people = block.people || []
   const items  = block.items  || []
+  const total  = items.length
 
   const [placed,   setPlaced]   = useState({})
   const [locked,   setLocked]   = useState(new Set())
   const [shaking,  setShaking]  = useState(null)
-  const [hint,     setHint]     = useState(null)   // { itemId, text }
+  const [hint,     setHint]     = useState(null)
   const [score,    setScore]    = useState(0)
-  const [dragging, setDragging] = useState(null)   // personId
+  const [dragging, setDragging] = useState(null)
   const [dragPos,  setDragPos]  = useState({ x: 0, y: 0 })
-  const [glowing,  setGlowing]  = useState(null)   // itemId
-  const [dzHover,  setDzHover]  = useState(null)   // itemId hovered during drag
+  const [glowing,  setGlowing]  = useState(null)
+  const [dzHover,  setDzHover]  = useState(null)
+
+  // Timer
+  const [timerStarted, setTimerStarted] = useState(false)
+  const [timerActive,  setTimerActive]  = useState(false)
+  const [elapsed,      setElapsed]      = useState(0)
+  const [finalTime,    setFinalTime]    = useState(null)
+
+  // Victory
+  const [cascading,   setCascading]   = useState(false)
+  const [cascadeStep, setCascadeStep] = useState(0)
+  const [showResult,  setShowResult]  = useState(false)
+  const [isNewPB,     setIsNewPB]     = useState(false)
+
+  // Personal best
+  const pbKey = `td-pb-${(block.heading || 'timeline').replace(/\s+/g, '-').toLowerCase()}`
+  const [personalBest, setPersonalBest] = useState(() => {
+    try { return parseInt(localStorage.getItem(pbKey)) || null } catch { return null }
+  })
 
   const dropZoneRefs = useRef({})
-  const total = items.length
+  const timerRef     = useRef(null)
+
+  // Refs so drag handler always sees latest values without recreating on timer ticks
+  const lockedRef      = useRef(locked)
+  const scoreRef       = useRef(score)
+  const elapsedRef     = useRef(elapsed)
+  const personalBestRef = useRef(personalBest)
+  useEffect(() => { lockedRef.current = locked },      [locked])
+  useEffect(() => { scoreRef.current  = score },       [score])
+  useEffect(() => { elapsedRef.current = elapsed },    [elapsed])
+  useEffect(() => { personalBestRef.current = personalBest }, [personalBest])
+
+  // Timer tick
+  useEffect(() => {
+    if (timerActive) {
+      timerRef.current = setInterval(() => setElapsed(e => e + 1), 1000)
+    } else {
+      clearInterval(timerRef.current)
+    }
+    return () => clearInterval(timerRef.current)
+  }, [timerActive])
+
+  // Victory cascade — lights up each node in sequence then shows result card
+  useEffect(() => {
+    if (!cascading) return
+    if (cascadeStep < total) {
+      const t = setTimeout(() => setCascadeStep(s => s + 1), 200)
+      return () => clearTimeout(t)
+    } else {
+      const t = setTimeout(() => setShowResult(true), 250)
+      return () => clearTimeout(t)
+    }
+  }, [cascading, cascadeStep, total])
 
   const encouragement =
-    score === 0      ? 'Start building the story of history.'
-    : score < total * .4 ? "Good start. You're rebuilding the story of medicine."
-    : score < total  ? 'Now the breakthroughs are starting to connect…'
-    :                  'You just mapped 300 years of medical progress. 🏆'
+    score === 0          ? 'Five people. Five breakthroughs. Go.'
+    : score < total * .4 ? "One down. History's starting to make sense."
+    : score < total      ? "You're on a run. Don't overthink it."
+    :                      'Done. You just mapped 300 years of medicine. 🏆'
 
   const lockedPersonIds = new Set(
-    Object.entries(placed)
-      .filter(([id]) => locked.has(id))
-      .map(([, v]) => v)
+    Object.entries(placed).filter(([id]) => locked.has(id)).map(([, v]) => v)
   )
+
+  function startTimer() { setTimerStarted(true); setTimerActive(true) }
 
   function startDrag(e, personId) {
     if (lockedPersonIds.has(personId)) return
     e.preventDefault()
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+    const x = e.touches ? e.touches[0].clientX : e.clientX
+    const y = e.touches ? e.touches[0].clientY : e.clientY
     setDragging(personId)
-    setDragPos({ x: clientX, y: clientY })
+    setDragPos({ x, y })
     setHint(null)
   }
 
+  // Drag handlers — depend only on [dragging] thanks to refs
   useEffect(() => {
     if (!dragging) return
 
@@ -2927,20 +2979,37 @@ function TimelineDragBlock({ block }) {
       const targetId = getDropTarget(x, y)
       setDzHover(null)
 
-      if (targetId && !locked.has(targetId)) {
+      if (targetId && !lockedRef.current.has(targetId)) {
         const item = items.find(it => it.id === targetId)
         if (item?.answer === dragging) {
-          setPlaced(p  => ({ ...p, [targetId]: dragging }))
-          setLocked(l  => { const n = new Set(l); n.add(targetId); return n })
-          setScore(s   => s + 1)
+          // ── Correct ──────────────────────────────────────────────────────
+          const newLocked = new Set(lockedRef.current)
+          newLocked.add(targetId)
+          setPlaced(p => ({ ...p, [targetId]: dragging }))
+          setLocked(newLocked)
+          const newScore = scoreRef.current + 1
+          setScore(newScore)
           setGlowing(targetId)
-          setTimeout(() => setGlowing(null), 1600)
+          setTimeout(() => setGlowing(null), 1200)
           setHint(null)
+
+          if (newScore >= total) {
+            setTimerActive(false)
+            const t = elapsedRef.current
+            setFinalTime(t)
+            const pb = personalBestRef.current
+            if (pb === null || t < pb) {
+              setPersonalBest(t)
+              try { localStorage.setItem(pbKey, String(t)) } catch {}
+              setIsNewPB(true)
+            }
+            setTimeout(() => setCascading(true), 450)
+          }
         } else {
-          const hintText = item?.hint || 'Not quite — try another person here.'
-          setHint({ itemId: targetId, text: hintText })
+          // ── Wrong ─────────────────────────────────────────────────────────
+          setHint({ itemId: targetId, text: item?.hint || 'Not quite — try another.' })
           setShaking(targetId)
-          setTimeout(() => { setShaking(null); setHint(null) }, 1800)
+          setTimeout(() => { setShaking(null); setHint(null) }, 1900)
         }
       }
       setDragging(null)
@@ -2956,18 +3025,24 @@ function TimelineDragBlock({ block }) {
       window.removeEventListener('touchmove',   onMove)
       window.removeEventListener('touchend',    onUp)
     }
-  }, [dragging, locked, items])
+  }, [dragging]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function reset() {
-    setPlaced({})
-    setLocked(new Set())
-    setScore(0)
-    setShaking(null)
-    setHint(null)
-    setGlowing(null)
-    setDragging(null)
-    setDzHover(null)
+    setPlaced({}); setLocked(new Set()); setScore(0)
+    setShaking(null); setHint(null); setGlowing(null)
+    setDragging(null); setDzHover(null)
+    setTimerStarted(false); setTimerActive(false); setElapsed(0); setFinalTime(null)
+    setCascading(false); setCascadeStep(0); setShowResult(false); setIsNewPB(false)
   }
+
+  function copyResult() {
+    const line = finalTime !== null
+      ? `Matched all ${total} in ${fmtTime(finalTime)} on GCSE History 📚`
+      : `Matched all ${total} on GCSE History 📚`
+    try { navigator.clipboard.writeText(line) } catch {}
+  }
+
+  function fmtTime(s) { return s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${s % 60}s` }
 
   const ghostPerson = dragging ? people.find(p => p.id === dragging) : null
 
@@ -2985,7 +3060,7 @@ function TimelineDragBlock({ block }) {
         </div>
       )}
 
-      {/* Header */}
+      {/* ── Header ─────────────────────────────────────────────────────── */}
       <div style={{
         background: 'linear-gradient(170deg, #0E0B18 0%, #0A0C1A 100%)',
         borderRadius: '18px 18px 0 0',
@@ -2998,6 +3073,7 @@ function TimelineDragBlock({ block }) {
             textTransform: 'uppercase', color: '#C9A227', marginBottom: 8,
           }}>✧ {block.topicLabel}</div>
         )}
+
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
           <div style={{ flex: 1 }}>
             <div style={{
@@ -3008,44 +3084,77 @@ function TimelineDragBlock({ block }) {
               {block.sub || 'Drag each person to the achievement they are most famous for.'}
             </div>
           </div>
-          {block.examTip && (
-            <div style={{
-              flexShrink: 0, width: 100,
-              background: 'rgba(157,92,255,.09)', border: '1px solid rgba(157,92,255,.22)',
-              borderRadius: 10, padding: '8px 9px',
-            }}>
+
+          {/* Timer */}
+          <div style={{ flexShrink: 0, textAlign: 'right' }}>
+            {!timerStarted ? (
+              <button onClick={startTimer} style={{
+                background: 'rgba(201,162,39,.1)', border: '1px solid rgba(201,162,39,.3)',
+                borderRadius: 9, padding: '7px 10px', cursor: 'pointer',
+                fontFamily: "'Space Grotesk', sans-serif", fontSize: '.65rem',
+                fontWeight: 800, color: '#C9A227', letterSpacing: '.06em',
+                display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap',
+              }}>⏱ START CLOCK</button>
+            ) : (
+              <div style={{
+                fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.2rem', fontWeight: 900,
+                color: finalTime !== null ? '#F0C040' : '#C9A227', letterSpacing: '.02em',
+                transition: 'color .4s',
+              }}>{finalTime !== null ? fmtTime(finalTime) : fmtTime(elapsed)}</div>
+            )}
+            {personalBest && !showResult && (
+              <div style={{ fontSize: '.58rem', color: '#5A5040', marginTop: 2, fontWeight: 700 }}>
+                PB: {fmtTime(personalBest)}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {block.examTip && (
+          <div style={{
+            marginTop: 12,
+            background: 'rgba(157,92,255,.09)', border: '1px solid rgba(157,92,255,.22)',
+            borderRadius: 10, padding: '8px 10px',
+            display: 'flex', gap: 8, alignItems: 'flex-start',
+          }}>
+            <span style={{ fontSize: '.9rem', flexShrink: 0 }}>⚔️</span>
+            <div>
               <div style={{
                 fontSize: '.55rem', fontWeight: 800, letterSpacing: '.1em',
-                textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 3,
-              }}>⚔️ {block.examTip.title}</div>
-              <div style={{ fontSize: '.7rem', color: '#A090C8', lineHeight: 1.4 }}>
+                textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 2,
+              }}>{block.examTip.title}</div>
+              <div style={{ fontSize: '.75rem', color: '#A090C8', lineHeight: 1.4 }}>
                 {block.examTip.body}
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Timeline rows */}
+      {/* ── Timeline rows ──────────────────────────────────────────────── */}
       <div style={{
         background: '#090C16',
         border: '1px solid rgba(201,162,39,.15)', borderTop: 'none', borderBottom: 'none',
         position: 'relative',
       }}>
-        {/* Gold vertical line */}
+        {/* Gold vertical spine */}
         <div style={{
           position: 'absolute', left: 44, top: 0, bottom: 0, width: 2, zIndex: 0,
-          background: 'linear-gradient(180deg, transparent 0%, rgba(201,162,39,.6) 8%, rgba(201,162,39,.35) 92%, transparent 100%)',
+          background: cascading
+            ? 'linear-gradient(180deg, rgba(240,192,64,.9) 0%, rgba(201,162,39,.7) 100%)'
+            : 'linear-gradient(180deg, transparent 0%, rgba(201,162,39,.55) 8%, rgba(201,162,39,.3) 92%, transparent 100%)',
+          boxShadow: cascading ? '0 0 16px rgba(201,162,39,.6)' : 'none',
+          transition: 'all .9s ease',
         }} />
 
         {items.map((item, i) => {
-          const isLocked  = locked.has(item.id)
-          const isShaking = shaking === item.id
-          const isGlowing = glowing === item.id
-          const isHovered = dzHover === item.id && !isLocked
-          const hasHint   = hint?.itemId === item.id
-          const personId  = placed[item.id]
-          const lockedP   = isLocked ? people.find(p => p.id === personId) : null
+          const isLocked     = locked.has(item.id)
+          const isShaking    = shaking === item.id
+          const isGlowing    = glowing === item.id
+          const isCascadeLit = cascading && i < cascadeStep
+          const isHovered    = dzHover === item.id && !isLocked
+          const hasHint      = hint?.itemId === item.id
+          const lockedP      = isLocked ? people.find(p => p.id === placed[item.id]) : null
 
           return (
             <div key={item.id} style={{
@@ -3062,16 +3171,18 @@ function TimelineDragBlock({ block }) {
               }}>
                 <div style={{
                   fontFamily: "'Space Grotesk', sans-serif", fontSize: '.68rem', fontWeight: 700,
-                  color: isLocked ? '#F0C040' : '#7A6030', letterSpacing: '.03em',
-                  transition: 'color .4s',
+                  color: (isLocked || isCascadeLit) ? '#F0C040' : '#6A5025',
+                  letterSpacing: '.03em', transition: 'color .4s',
                 }}>{item.date}</div>
                 <div style={{
                   width: 20, height: 20, borderRadius: '50%', zIndex: 2,
-                  background: isLocked ? '#C9A227' : '#0A0C18',
-                  border: `2.5px solid ${isLocked ? '#F0D060' : 'rgba(201,162,39,.35)'}`,
-                  boxShadow: isLocked ? '0 0 14px rgba(201,162,39,.7)' : 'none',
-                  animation: isLocked ? 'tdPulse 2s ease infinite' : 'none',
-                  transition: 'all .5s ease',
+                  background: (isLocked || isCascadeLit) ? '#C9A227' : '#090C16',
+                  border: `2.5px solid ${(isLocked || isCascadeLit) ? '#F0D060' : 'rgba(201,162,39,.35)'}`,
+                  boxShadow: isCascadeLit
+                    ? '0 0 22px rgba(240,192,64,.95), 0 0 50px rgba(201,162,39,.4)'
+                    : isLocked ? '0 0 14px rgba(201,162,39,.7)' : 'none',
+                  animation: (isLocked || isCascadeLit) ? 'tdPulse 2s ease infinite' : 'none',
+                  transition: 'all .4s ease',
                 }} />
               </div>
 
@@ -3082,8 +3193,9 @@ function TimelineDragBlock({ block }) {
                   : 'linear-gradient(135deg, #130E04, #0F0B06)',
                 border: `1.5px solid ${isLocked ? 'rgba(77,200,100,.3)' : 'rgba(201,162,39,.15)'}`,
                 borderRadius: 13, padding: '11px 12px',
-                animation: isShaking ? 'shake .32s ease' : (isGlowing ? 'tdGlow 1.4s ease' : 'none'),
-                transition: 'border-color .4s, background .4s',
+                animation: isShaking ? 'shake .32s ease' : (isGlowing ? 'tdGlow 1.2s ease' : 'none'),
+                transform: isGlowing ? 'scale(1.02)' : 'scale(1)',
+                transition: 'border-color .4s, background .4s, transform .2s',
               }}>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 5 }}>
                   <span style={{ fontSize: '1.15rem', lineHeight: 1, flexShrink: 0 }}>{item.icon}</span>
@@ -3094,11 +3206,9 @@ function TimelineDragBlock({ block }) {
                 <div style={{
                   fontFamily: "'Space Grotesk', sans-serif", fontSize: '.58rem', fontWeight: 800,
                   letterSpacing: '.13em', textTransform: 'uppercase',
-                  color: isLocked ? '#5DE888' : '#9A7820',
-                  transition: 'color .4s',
+                  color: isLocked ? '#5DE888' : '#9A7820', transition: 'color .4s',
                 }}>{item.keyword}</div>
 
-                {/* Correct reveal */}
                 {isLocked && item.reveal && (
                   <div className="fade-up" style={{
                     marginTop: 8,
@@ -3115,7 +3225,6 @@ function TimelineDragBlock({ block }) {
                   </div>
                 )}
 
-                {/* Hint on wrong */}
                 {hasHint && (
                   <div className="fade-up" style={{
                     marginTop: 7,
@@ -3133,28 +3242,27 @@ function TimelineDragBlock({ block }) {
                 justifyContent: 'center', gap: 4,
                 background: isLocked
                   ? 'rgba(77,200,100,.07)'
-                  : isHovered
-                  ? 'rgba(157,92,255,.18)'
-                  : 'rgba(157,92,255,.06)',
+                  : isHovered ? 'rgba(157,92,255,.18)' : 'rgba(157,92,255,.06)',
                 border: `1.5px dashed ${isLocked ? 'rgba(77,200,100,.35)' : isHovered ? 'rgba(157,92,255,.8)' : 'rgba(157,92,255,.3)'}`,
                 animation: (!isLocked && dragging) ? 'tdDzPulse 1.8s ease infinite' : 'none',
+                boxShadow: isHovered ? '0 0 18px rgba(157,92,255,.3)' : 'none',
+                transform: isGlowing ? 'scale(1.07)' : 'scale(1)',
                 transition: 'all .2s ease',
-                boxShadow: isHovered ? '0 0 18px rgba(157,92,255,.25)' : 'none',
               }}>
                 {isLocked && lockedP ? (
                   <>
                     <TDPersonPortrait person={lockedP} size={42} />
                     <div style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: '.48rem', fontWeight: 800, color: '#4DCC70',
-                      textAlign: 'center', letterSpacing: '.04em', lineHeight: 1.2,
+                      fontFamily: "'Space Grotesk', sans-serif", fontSize: '.48rem',
+                      fontWeight: 800, color: '#4DCC70', textAlign: 'center',
+                      letterSpacing: '.04em', lineHeight: 1.2,
                     }}>{lockedP.name}</div>
                   </>
                 ) : (
                   <div style={{
-                    fontSize: '.55rem', fontWeight: 700,
+                    fontSize: '.55rem', fontWeight: 700, textAlign: 'center',
                     color: isHovered ? 'rgba(157,92,255,.9)' : 'rgba(157,92,255,.45)',
-                    textAlign: 'center', letterSpacing: '.07em', textTransform: 'uppercase',
+                    letterSpacing: '.07em', textTransform: 'uppercase',
                     lineHeight: 1.6, transition: 'color .2s',
                   }}>DROP<br/>NAME<br/>HERE</div>
                 )}
@@ -3164,19 +3272,69 @@ function TimelineDragBlock({ block }) {
         })}
       </div>
 
-      {/* Reveal banner */}
-      <div style={{
-        background: '#090C16', borderLeft: '1px solid rgba(201,162,39,.15)',
-        borderRight: '1px solid rgba(201,162,39,.15)',
-        padding: '10px 16px', textAlign: 'center',
-        fontSize: '.7rem', color: score >= total ? '#F0C040' : '#504030',
-        fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase',
-        transition: 'color .6s',
-      }}>
-        {score >= total ? '🏆 FULL STORY UNLOCKED — HISTORY CONQUERED.' : '🏆 GET THEM ALL CORRECT TO REVEAL THE FULL STORY!'}
-      </div>
+      {/* ── Victory result card ────────────────────────────────────────── */}
+      {showResult ? (
+        <div className="fade-up" style={{
+          background: 'linear-gradient(135deg, #181000, #0D1000)',
+          border: '2px solid rgba(201,162,39,.55)',
+          padding: '24px 20px', textAlign: 'center',
+          boxShadow: '0 0 50px rgba(201,162,39,.18)',
+        }}>
+          <div style={{ fontSize: '2.2rem', marginBottom: 8 }}>🏆</div>
+          <div style={{
+            fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.25rem',
+            fontWeight: 900, color: '#F5EDD8', marginBottom: 6, letterSpacing: '-.01em',
+          }}>All {total} matched.</div>
+          {finalTime !== null && (
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif", fontSize: '2.2rem',
+              fontWeight: 900, color: '#F0C040', marginBottom: 6, letterSpacing: '-.03em',
+            }}>{fmtTime(finalTime)}</div>
+          )}
+          {isNewPB ? (
+            <div className="anim-pop" style={{
+              display: 'inline-block',
+              background: 'rgba(201,162,39,.15)', border: '1px solid rgba(201,162,39,.45)',
+              borderRadius: 20, padding: '4px 14px', marginBottom: 12,
+              fontSize: '.68rem', fontWeight: 800, color: '#F0C040', letterSpacing: '.1em',
+              textTransform: 'uppercase',
+            }}>⚡ NEW PERSONAL BEST</div>
+          ) : personalBest ? (
+            <div style={{ fontSize: '.74rem', color: '#6A5A30', marginBottom: 12 }}>
+              Your best: {fmtTime(personalBest)} — can you beat it?
+            </div>
+          ) : null}
+          <div style={{
+            fontSize: '.82rem', color: '#9A8860', marginBottom: 18, lineHeight: 1.5,
+          }}>
+            You just mapped 300 years of medical progress.
+          </div>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button onClick={copyResult} style={{
+              background: 'rgba(201,162,39,.12)', border: '1px solid rgba(201,162,39,.3)',
+              borderRadius: 9, padding: '9px 16px', cursor: 'pointer',
+              fontFamily: "'Inter', sans-serif", fontSize: '.72rem',
+              fontWeight: 700, color: '#C9A227', letterSpacing: '.07em',
+            }}>📋 COPY RESULT</button>
+            <button onClick={reset} style={{
+              background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)',
+              borderRadius: 9, padding: '9px 16px', cursor: 'pointer',
+              fontFamily: "'Inter', sans-serif", fontSize: '.72rem',
+              fontWeight: 700, color: '#7A7A9A', letterSpacing: '.07em',
+            }}>↺ BEAT IT</button>
+          </div>
+        </div>
+      ) : (
+        <div style={{
+          background: '#090C16',
+          borderLeft: '1px solid rgba(201,162,39,.15)', borderRight: '1px solid rgba(201,162,39,.15)',
+          padding: '10px 16px', textAlign: 'center',
+          fontSize: '.68rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase',
+          color: '#4A4030',
+        }}>🏆 GET THEM ALL CORRECT TO REVEAL THE FULL STORY!</div>
+      )}
 
-      {/* People tray */}
+      {/* ── People tray ────────────────────────────────────────────────── */}
       <div style={{
         background: '#0D0B16',
         border: '1px solid rgba(201,162,39,.15)', borderTop: '1px solid rgba(201,162,39,.2)',
@@ -3184,8 +3342,7 @@ function TimelineDragBlock({ block }) {
       }}>
         <div style={{
           fontSize: '.6rem', fontWeight: 700, letterSpacing: '.12em',
-          textTransform: 'uppercase', color: '#4A4030',
-          textAlign: 'center', marginBottom: 10,
+          textTransform: 'uppercase', color: '#3A3025', textAlign: 'center', marginBottom: 10,
         }}>↑ DRAG THE PEOPLE FROM BELOW ↑</div>
         <div style={{
           display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2,
@@ -3194,14 +3351,14 @@ function TimelineDragBlock({ block }) {
           {people.map(person => {
             const isDone = lockedPersonIds.has(person.id)
             return (
-              <div key={person.id} style={{
-                flexShrink: 0, width: 84, opacity: isDone ? .3 : 1,
-                cursor: isDone ? 'default' : 'grab',
-                touchAction: 'none', transition: 'opacity .4s',
-                transform: dragging === person.id ? 'scale(.92)' : 'scale(1)',
-              }}
+              <div key={person.id}
                 onPointerDown={isDone ? undefined : e => startDrag(e, person.id)}
-              >
+                style={{
+                  flexShrink: 0, width: 84, cursor: isDone ? 'default' : 'grab',
+                  touchAction: 'none', opacity: isDone ? .25 : 1,
+                  transition: 'opacity .4s, transform .15s',
+                  transform: dragging === person.id ? 'scale(.88)' : 'scale(1)',
+                }}>
                 <TDPersonCard person={person} size={54} />
               </div>
             )
@@ -3209,10 +3366,10 @@ function TimelineDragBlock({ block }) {
         </div>
       </div>
 
-      {/* Score panel */}
+      {/* ── Score panel ────────────────────────────────────────────────── */}
       <div style={{
         background: '#0D0B16',
-        border: '1px solid rgba(201,162,39,.15)', borderTop: '1px solid rgba(201,162,39,.12)',
+        border: '1px solid rgba(201,162,39,.15)', borderTop: '1px solid rgba(201,162,39,.1)',
         borderRadius: '0 0 18px 18px', padding: '14px 16px',
         display: 'flex', alignItems: 'center', gap: 12,
       }}>
@@ -3226,12 +3383,14 @@ function TimelineDragBlock({ block }) {
             {encouragement}
           </div>
         </div>
-        <button onClick={reset} style={{
-          background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.1)',
-          borderRadius: 8, padding: '7px 11px', flexShrink: 0,
-          fontFamily: "'Inter', sans-serif", fontSize: '.7rem', fontWeight: 700,
-          color: '#555570', cursor: 'pointer', letterSpacing: '.07em',
-        }}>↺ RESET</button>
+        {!showResult && (
+          <button onClick={reset} style={{
+            background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.1)',
+            borderRadius: 8, padding: '7px 11px', flexShrink: 0,
+            fontFamily: "'Inter', sans-serif", fontSize: '.7rem',
+            fontWeight: 700, color: '#555570', cursor: 'pointer', letterSpacing: '.07em',
+          }}>↺ RESET</button>
+        )}
       </div>
     </div>
   )
