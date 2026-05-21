@@ -251,17 +251,6 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
     return s.screen >= (m.screens?.length || 1) - 1
   }).length
 
-  const nextModule = MODULES.find(m => {
-    const s = safeGetModuleState(m.id)
-    return !s.screen || s.screen < (m.screens?.length || 1) - 1
-  }) || MODULES[0]
-
-  const nextModuleState   = nextModule ? safeGetModuleState(nextModule.id) : {}
-  const nextModulePct     = nextModule
-    ? Math.round(((nextModuleState.screen || 0) / (nextModule.screens?.length || 1)) * 100)
-    : 0
-  const nextModuleStarted = (nextModuleState.screen || 0) > 0
-
   const hour = new Date().getHours()
   const timeGreeting = hour < 12 ? 'Morning,' : hour < 17 ? 'Afternoon,' : 'Evening,'
 
@@ -328,209 +317,143 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
           </p>
         </div>
 
-        {/* ── Focus session hero card ── */}
-        {nextModule && (
+        {/* ── Continue learning hero card ── */}
+        <div style={{
+          background: 'linear-gradient(145deg, #151126 0%, #0B1022 58%, #15100B 100%)',
+          border: '1px solid rgba(245,183,0,.24)',
+          borderRadius: 20,
+          padding: '18px',
+          marginBottom: 14,
+          boxShadow: '0 0 0 1px rgba(245,183,0,.06), 0 8px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04)',
+          position: 'relative', overflow: 'hidden',
+        }}>
+          {/* ambient glow blobs */}
           <div style={{
-            background: 'linear-gradient(145deg, #12183A 0%, #0E1330 100%)',
-            border: '1px solid rgba(157,92,255,.22)',
-            borderRadius: 20,
-            padding: '18px',
-            marginBottom: 14,
-            boxShadow: '0 0 0 1px rgba(157,92,255,.06), 0 8px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04)',
-            position: 'relative', overflow: 'hidden',
-          }}>
-            {/* ambient glow blob */}
-            <div style={{
-              position: 'absolute', top: -40, right: -40,
-              width: 140, height: 140, borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(157,92,255,.12) 0%, transparent 70%)',
-              pointerEvents: 'none',
-            }} />
+            position: 'absolute', top: -56, right: -36,
+            width: 180, height: 180, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(245,183,0,.16) 0%, transparent 68%)',
+            pointerEvents: 'none',
+          }} />
+          <div style={{
+            position: 'absolute', bottom: -70, left: -40,
+            width: 190, height: 190, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(157,92,255,.13) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }} />
 
-            {/* TODAY chip */}
+          <div style={{ position: 'relative' }}>
             <div style={{
-              display: 'inline-flex', alignItems: 'center',
-              background: 'rgba(157,92,255,.12)', border: '1px solid rgba(157,92,255,.25)',
-              borderRadius: 6, padding: '3px 9px',
+              display: 'inline-flex', alignItems: 'center', gap: 7,
+              background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.25)',
+              borderRadius: 999, padding: '5px 10px',
               fontFamily: "'Inter', sans-serif",
-              fontSize: '.62rem', fontWeight: 600, color: '#C18CFF',
+              fontSize: '.62rem', fontWeight: 700, color: '#F5B700',
               letterSpacing: '.08em', textTransform: 'uppercase',
               marginBottom: 14,
-            }}>TODAY</div>
+            }}>
+              <span>🏰</span> Continue Learning
+            </div>
 
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 14 }}>
-              {/* Icon tile */}
+            <div style={{ marginBottom: 14 }}>
               <div style={{
-                width: 60, height: 60, borderRadius: 15, flexShrink: 0,
-                background: 'linear-gradient(145deg, rgba(245,183,0,.18), rgba(245,183,0,.08))',
-                border: '1px solid rgba(245,183,0,.22)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '1.7rem',
-                boxShadow: '0 0 20px rgba(245,183,0,.1)',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 800,
+                fontSize: 'clamp(1.45rem, 5vw, 2rem)',
+                color: '#F5F7FB',
+                lineHeight: 1.1,
+                letterSpacing: '-.02em',
               }}>
-                {nextModule.icon}
+                History Modules
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 700, fontSize: '1.1rem',
-                  color: '#F5F7FB', lineHeight: 1.2,
-                  letterSpacing: '-.01em',
-                }}>
-                  {nextModule.title}
-                </div>
-                <div style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.78rem', color: '#5A6480', marginTop: 4,
-                }}>
-                  {nextModuleStarted ? 'Continue where you left off' : nextModule.subtitle}
-                </div>
-
-                {/* Progress bar */}
-                {nextModuleStarted && (
-                  <div style={{ marginTop: 10 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div style={{ flex: 1, height: 5, background: '#1A2338', borderRadius: 99, overflow: 'hidden' }}>
-                        <div style={{
-                          height: '100%', width: nextModulePct + '%',
-                          background: 'linear-gradient(90deg, #7C3AED, #9D5CFF)',
-                          borderRadius: 99,
-                          boxShadow: '0 0 8px rgba(157,92,255,.6)',
-                          transition: 'width .6s ease',
-                        }} />
-                      </div>
-                      <span style={{
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: '.75rem', fontWeight: 700, color: '#9D5CFF', flexShrink: 0,
-                      }}>{nextModulePct}%</span>
-                    </div>
-                  </div>
-                )}
+              <div style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '.8rem', color: '#9CA8C7', marginTop: 6,
+              }}>
+                Pick one of your GCSE History topics to revise next.
               </div>
             </div>
 
-            {/* CTA */}
-            <button onClick={() => onOpenModule(nextModule)} style={{
-              width: '100%',
-              background: 'linear-gradient(135deg, #7C3AED 0%, #9D5CFF 100%)',
-              color: '#fff', border: 'none', borderRadius: 13,
-              padding: '15px',
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '.95rem',
-              letterSpacing: '.03em', textTransform: 'uppercase',
-              cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(124,58,237,.45), inset 0 1px 0 rgba(255,255,255,.12)',
-              transition: 'transform .15s, box-shadow .15s',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            }}>
-              {nextModuleStarted ? 'Continue Session' : 'Start Focus Session'} →
-            </button>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 9 }}>
+              {HISTORY_MODULE_CARDS.map((item) => {
+                const available = Boolean(item.module)
+                return (
+                  <button
+                    key={item.title}
+                    onClick={() => available && onOpenModule(item.module)}
+                    disabled={!available}
+                    style={{
+                      width: '100%',
+                      background: available ? 'rgba(245,183,0,.1)' : 'rgba(8,12,26,.62)',
+                      border: '1px solid ' + (available ? 'rgba(245,183,0,.28)' : 'rgba(154,164,199,.16)'),
+                      borderRadius: 14,
+                      padding: '12px 13px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                      cursor: available ? 'pointer' : 'default',
+                      textAlign: 'left',
+                      opacity: available ? 1 : .78,
+                      boxShadow: available ? '0 8px 24px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.04)' : 'inset 0 1px 0 rgba(255,255,255,.03)',
+                    }}
+                  >
+                    <span style={{
+                      width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+                      background: available ? 'rgba(245,183,0,.14)' : 'rgba(90,100,128,.09)',
+                      border: '1px solid ' + (available ? 'rgba(245,183,0,.28)' : '#2A3552'),
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '1.12rem',
+                    }}>{item.icon}</span>
+                    <span style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{
+                        display: 'block',
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 700,
+                        fontSize: '.93rem',
+                        color: '#F5F7FB',
+                        lineHeight: 1.2,
+                      }}>{item.title}</span>
+                      <span style={{
+                        display: 'block',
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: '.72rem', color: '#AAB4D4', marginTop: 3,
+                      }}>{item.era}</span>
+                    </span>
+                    <span style={{
+                      flexShrink: 0,
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '.64rem',
+                      fontWeight: 800,
+                      letterSpacing: '.06em',
+                      textTransform: 'uppercase',
+                      color: available ? '#F5B700' : '#5A6480',
+                    }}>
+                      {available ? 'Open' : 'Soon'}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
 
-            {/* Draft banner if relevant */}
             {draft && draftTopic && (
-              <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,.06)' }}>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: '#5A6480', marginBottom: 8 }}>
-                  ↩ Unfinished: <span style={{ color: '#C18CFF', fontWeight: 600 }}>{draftTopic.title}</span>
+              <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,.08)' }}>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: '#9CA8C7', marginBottom: 8 }}>
+                  ↩ Unfinished: <span style={{ color: '#F5B700', fontWeight: 700 }}>{draftTopic.title}</span>
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button onClick={onResume} style={{
-                    flex: 2, background: 'rgba(157,92,255,.12)', border: '1px solid rgba(157,92,255,.28)',
-                    borderRadius: 9, padding: '9px', fontWeight: 600, cursor: 'pointer',
-                    fontSize: '.82rem', fontFamily: "'Inter', sans-serif", color: '#C18CFF',
+                    flex: 2, background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.28)',
+                    borderRadius: 9, padding: '9px', fontWeight: 700, cursor: 'pointer',
+                    fontSize: '.82rem', fontFamily: "'Inter', sans-serif", color: '#F5B700',
                   }}>Resume →</button>
                   <button onClick={onDiscardDraft} style={{
-                    flex: 1, background: 'transparent', color: '#4A5578',
+                    flex: 1, background: 'transparent', color: '#5A6480',
                     border: '1px solid #2A3552', borderRadius: 9, padding: '9px',
-                    fontWeight: 500, cursor: 'pointer', fontSize: '.78rem',
+                    fontWeight: 600, cursor: 'pointer', fontSize: '.78rem',
                     fontFamily: "'Inter', sans-serif",
                   }}>Discard</button>
                 </div>
               </div>
             )}
-          </div>
-        )}
-
-        {/* ── History module pathways ── */}
-        <div style={{
-          background: 'linear-gradient(145deg, #10182B, #0D1424)',
-          border: '1px solid rgba(245,183,0,.22)',
-          borderRadius: 18, padding: '16px',
-          marginBottom: 14,
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.03)',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 12 }}>
-            <div style={{
-              width: 34, height: 34, borderRadius: 11,
-              background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.24)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1rem',
-            }}>🏰</div>
-            <div>
-              <div style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700, fontSize: '1rem', color: '#F5F7FB',
-              }}>History Modules</div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.74rem', color: '#5A6480', marginTop: 2 }}>
-                Choose the exam topic you want to build up next.
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 8 }}>
-            {HISTORY_MODULE_CARDS.map((item) => {
-              const available = Boolean(item.module)
-              return (
-                <button
-                  key={item.title}
-                  onClick={() => available && onOpenModule(item.module)}
-                  disabled={!available}
-                  style={{
-                    width: '100%',
-                    background: available ? 'rgba(245,183,0,.08)' : 'rgba(255,255,255,.025)',
-                    border: `1px solid ${available ? 'rgba(245,183,0,.22)' : '#1E2A40'}`,
-                    borderRadius: 13,
-                    padding: '12px 13px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 11,
-                    cursor: available ? 'pointer' : 'default',
-                    textAlign: 'left',
-                    opacity: available ? 1 : .72,
-                  }}
-                >
-                  <span style={{
-                    width: 35, height: 35, borderRadius: 10, flexShrink: 0,
-                    background: available ? 'rgba(245,183,0,.13)' : 'rgba(90,100,128,.08)',
-                    border: `1px solid ${available ? 'rgba(245,183,0,.22)' : '#2A3552'}`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '1rem',
-                  }}>{item.icon}</span>
-                  <span style={{ flex: 1, minWidth: 0 }}>
-                    <span style={{
-                      display: 'block',
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontWeight: 700, fontSize: '.9rem', color: '#F5F7FB',
-                    }}>{item.title}</span>
-                    <span style={{
-                      display: 'block',
-                      fontFamily: "'Inter', sans-serif",
-                      fontSize: '.72rem', color: '#9CA8C7', marginTop: 2,
-                    }}>{item.era}</span>
-                  </span>
-                  <span style={{
-                    flexShrink: 0,
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: '.62rem',
-                    fontWeight: 800,
-                    letterSpacing: '.06em',
-                    textTransform: 'uppercase',
-                    color: available ? '#F5B700' : '#5A6480',
-                  }}>
-                    {available ? 'Open' : 'Soon'}
-                  </span>
-                </button>
-              )
-            })}
           </div>
         </div>
 
