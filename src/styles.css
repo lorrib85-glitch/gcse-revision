@@ -223,6 +223,9 @@ textarea { background: transparent; border: none; resize: none; font-family: inh
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-glow); }
 
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
 @media(max-width: 600px) {
   .card { padding: 18px 14px; }
   .btn-lg { padding: 15px 28px; }
