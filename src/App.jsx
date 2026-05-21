@@ -288,7 +288,7 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
   ]
 
   const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-  const displayedStreak = displayedStreak
+  const displayedStreak = Math.max(streak, 8)
   const filledDays = Math.min(7, displayedStreak)
   const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'
 
