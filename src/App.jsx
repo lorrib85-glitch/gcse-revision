@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
 import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
 import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
@@ -190,7 +190,7 @@ export default function App() {
     <div style={{ background: '#070B1A', minHeight: '100vh' }}>
       {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onOpenSubjects={() => setTab('modules')} />}
       {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
-      {(tab === 'test' || tab === 'quiz' || tab === 'exam') && <TestTab />}
+      {(tab === 'test' || tab === 'quiz' || tab === 'exam') && <TestTab mode={tab === 'quiz' ? 'quickfire' : tab === 'exam' ? 'exam' : 'test'} />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
   )
@@ -288,7 +288,8 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
   ]
 
   const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-  const filledDays = Math.min(6, Math.max(0, streak || 0))
+  const displayedStreak = displayedStreak
+  const filledDays = Math.min(7, displayedStreak)
   const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'
 
   return (
@@ -334,8 +335,8 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
         }}>
           <div style={{ width: 46, height: 46, borderRadius: '50%', border: '1px solid #FF6B00', color: '#FF8A1F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>🔥</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ color: '#F5F7FB', fontWeight: 800, fontSize: '.96rem' }}>{Math.max(streak, 8)} day streak</div>
-            <div style={{ color: '#8D98B8', fontSize: '.73rem', marginTop: 2 }}>You've studied {Math.max(streak, 8)} days in a row.</div>
+            <div style={{ color: '#F5F7FB', fontWeight: 800, fontSize: '.96rem' }}>{displayedStreak} day streak</div>
+            <div style={{ color: '#8D98B8', fontSize: '.73rem', marginTop: 2 }}>You've studied {displayedStreak} days in a row.</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'end', gap: 9 }}>
             {weekDays.map((day, index) => (
@@ -1946,7 +1947,7 @@ function ChemistryBrowser({ onBack }) {
 
 
 
-function TestTab() {
+function TestTab({ mode = 'test' } = {}) {
   const [mathsOpen, setMathsOpen]   = useState(false)
   const [englishOpen, setEnglishOpen]     = useState(false)
   const [sociologyOpen, setSociologyOpen]     = useState(false)
@@ -1960,6 +1961,39 @@ function TestTab() {
   const [error, setError]         = useState(null)
   const [testProgress, setTestProgress] = useState(() => { try { return getProgress() } catch { return { streak: 0 } } })
   const testStreak = testProgress.streak || 0
+  const testStreakDots = Array.from({ length: 7 }, (_, i) => i < Math.min(7, testStreak))
+  const isQuickFire = mode === 'quickfire'
+  const QUICK_FIRE_SECONDS = 90
+  const [quickFireTimeLeft, setQuickFireTimeLeft] = useState(QUICK_FIRE_SECONDS)
+  const [quickFireActive, setQuickFireActive] = useState(false)
+  const [quickFireFinished, setQuickFireFinished] = useState(false)
+
+  useEffect(() => {
+    if (!isQuickFire || !selected || !quickFireActive) return undefined
+    const timer = setInterval(() => {
+      setQuickFireTimeLeft(seconds => Math.max(0, seconds - 1))
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [isQuickFire, selected, quickFireActive])
+
+  useEffect(() => {
+    if (!isQuickFire || !selected || !quickFireActive || quickFireTimeLeft > 0) return
+    setQuickFireActive(false)
+    setQuickFireFinished(true)
+    setError(null)
+    setFeedback({
+      marksAwarded: 0,
+      marksAvailable: 0,
+      grade: 'Needs Work',
+      summary: "Time's up — that was your 90 second quick fire round.",
+      achieved: [],
+      missed: ['The timer ran out before this question was finished.'],
+      examinerTip: 'Use the first few seconds to spot command words, then answer with the key fact first.',
+    })
+  }, [isQuickFire, selected, quickFireActive, quickFireTimeLeft])
+
+  const quickFirePct = Math.max(0, Math.min(100, (quickFireTimeLeft / QUICK_FIRE_SECONDS) * 100))
+  const quickFireTime = Math.floor(quickFireTimeLeft / 60) + ':' + String(quickFireTimeLeft % 60).padStart(2, '0')
 
   function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
 
@@ -2009,9 +2043,37 @@ function TestTab() {
     setTqMcAttempts(0); setTqMcHint(false); setTqMcLocked(false)
   }
 
+  function startTopic(selection) {
+    setSelected(selection)
+    setQIdx(0)
+    fullResetQ()
+    if (isQuickFire) {
+      setQuickFireTimeLeft(QUICK_FIRE_SECONDS)
+      setQuickFireActive(true)
+      setQuickFireFinished(false)
+    }
+  }
+
+  function exitTestTopic() {
+    setSelected(null)
+    setQIdx(0)
+    fullResetQ()
+    setQuickFireActive(false)
+    setQuickFireFinished(false)
+    setQuickFireTimeLeft(QUICK_FIRE_SECONDS)
+  }
+
+  function startRandomQuestion() {
+    const allT = TEST_TOPICS.filter(s => s.topics.some(t => t.available))
+    const rs = allT[Math.floor(Math.random() * allT.length)]
+    const av = rs.topics.filter(t => t.available)
+    const rt = av[Math.floor(Math.random() * av.length)]
+    startTopic({ topicId: rt.id, label: rt.label, subject: rs.subject })
+  }
+
   function tqNextQuestion(total) {
     if (qIdx < total - 1) { setQIdx(qIdx+1); fullResetQ() }
-    else { setSelected(null); setQIdx(0); fullResetQ() }
+    else { exitTestTopic() }
   }
 
   function handleTqCheck(q) {
@@ -2051,15 +2113,25 @@ function TestTab() {
       <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
         <div style={{ background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', padding:'12px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
-            <button onClick={() => { setSelected(null); setQIdx(0); fullResetQ() }} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0 }}>←</button>
+            <button onClick={exitTestTopic} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0 }}>←</button>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
               <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480' }}>Question {qIdx+1} of {questions.length}</div>
             </div>
+            {isQuickFire && (
+              <div style={{ background: quickFireTimeLeft <= 10 ? 'rgba(255,93,115,.12)' : 'rgba(157,92,255,.12)', border: quickFireTimeLeft <= 10 ? '1px solid rgba(255,93,115,.36)' : '1px solid rgba(157,92,255,.3)', borderRadius: 999, padding: '6px 10px', color: quickFireTimeLeft <= 10 ? '#FF5D73' : '#C18CFF', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 900, fontSize: '.86rem', minWidth: 58, textAlign: 'center' }}>
+                {quickFireTime}
+              </div>
+            )}
           </div>
           <div style={{ height:3, background:'#1E2A40', borderRadius:99, overflow:'hidden', marginTop:10, maxWidth:660, margin:'10px auto 0' }}>
             <div style={{ height:'100%', width:`${((qIdx+1)/questions.length)*100}%`, background:'linear-gradient(90deg,#F5B700,#C98719)', borderRadius:99, transition:'width .3s' }} />
           </div>
+          {isQuickFire && (
+            <div style={{ height:4, background:'rgba(157,92,255,.12)', borderRadius:99, overflow:'hidden', maxWidth:660, margin:'7px auto 0' }}>
+              <div style={{ height:'100%', width: quickFirePct + '%', background: quickFireTimeLeft <= 10 ? 'linear-gradient(90deg,#FF5D73,#FF8A1F)' : 'linear-gradient(90deg,#7C3AED,#9D5CFF)', borderRadius:99, transition:'width 1s linear' }} />
+            </div>
+          )}
         </div>
         <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
           {q && <>
@@ -2146,9 +2218,9 @@ function TestTab() {
   // Subject definitions for the clean grid
   const SUBJECTS = [
     { id: 'maths',   label: 'Maths',   icon: '✕²', color: '#3B82FF', bg: 'rgba(59,130,255,.1)',  action: () => setMathsOpen(true) },
-    { id: 'history', label: 'History', icon: '🏰', color: '#F5B700', bg: 'rgba(245,183,0,.1)',   action: () => setSelected({ topicId: 'medieval', label: 'Medieval Medicine', subject: 'History' }) },
+    { id: 'history', label: 'History', icon: '🏰', color: '#F5B700', bg: 'rgba(245,183,0,.1)',   action: () => startTopic({ topicId: 'medieval', label: 'Medieval Medicine', subject: 'History' }) },
     { id: 'english', label: 'English', icon: '📖', color: '#9D5CFF', bg: 'rgba(157,92,255,.1)', action: () => setEnglishOpen(true) },
-    { id: 'biology', label: 'Biology', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => setSelected({ topicId: 'tb_cells', label: 'Cells & Microscopy', subject: 'Biology' }) },
+    { id: 'biology', label: 'Biology', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => startTopic({ topicId: 'tb_cells', label: 'Cells & Microscopy', subject: 'Biology' }) },
     { id: 'sociology', label: 'Sociology', icon: '👥', color: '#FF5C7A', bg: 'rgba(255,92,122,.1)', action: () => setSociologyOpen(true) },
     { id: 'chemistry', label: 'Chemistry', icon: '⚗️', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => setChemistryOpen(true) },
     { id: 'drama',  label: 'Drama',   icon: '🎭', color: '#FF4FC3', bg: 'rgba(255,79,195,.1)', action: () => {} },
@@ -2184,16 +2256,21 @@ function TestTab() {
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <div>
             <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.6rem,6vw,2rem)', color: '#F5F7FB', margin: 0, lineHeight: 1.1 }}>
-              Test <span style={{ color: '#9D5CFF' }}>Yourself</span>
+              {isQuickFire ? '90s' : 'Test'} <span style={{ color: '#9D5CFF' }}>{isQuickFire ? 'Quick Fire' : 'Yourself'}</span>
             </h1>
             <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#4A5578', marginTop: 6, margin: '6px 0 0' }}>
-              Real exam questions. Real progress.
+              {isQuickFire ? '90 seconds. Answer fast. Keep the streak alive.' : 'Real exam questions. Real progress.'}
             </p>
           </div>
           {/* Streak pill */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(255,138,31,.1)', border: '1px solid rgba(255,138,31,.2)', borderRadius: 99, padding: '5px 12px', flexShrink: 0, marginTop: 4 }}>
             <span style={{ fontSize: '.85rem' }}>🔥</span>
             <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', fontWeight: 700, color: '#FF8A1F' }}>{testStreak > 0 ? `${testStreak} day streak` : 'Start streak'}</span>
+            <span style={{ display: 'flex', gap: 3, marginLeft: 3 }}>
+              {testStreakDots.map((filled, i) => (
+                <span key={i} style={{ width: 5, height: 5, borderRadius: '50%', background: filled ? '#FF8A1F' : 'transparent', border: filled ? 'none' : '1px solid rgba(255,138,31,.38)', boxShadow: filled ? '0 0 6px rgba(255,138,31,.5)' : 'none' }} />
+              ))}
+            </span>
           </div>
         </div>
       </div>
@@ -2229,13 +2306,7 @@ function TestTab() {
 
         {/* ── Random question — lightweight card ── */}
         <button
-          onClick={() => {
-            const allT = TEST_TOPICS.filter(s => s.topics.some(t => t.available))
-            const rs = allT[Math.floor(Math.random() * allT.length)]
-            const av = rs.topics.filter(t => t.available)
-            const rt = av[Math.floor(Math.random() * av.length)]
-            setSelected({ topicId: rt.id, label: rt.label, subject: rs.subject })
-          }}
+          onClick={startRandomQuestion}
           style={{
             width: '100%', background: '#10182B',
             border: '1px solid #1E2A40',
@@ -2248,8 +2319,8 @@ function TestTab() {
         >
           <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(157,92,255,.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.15rem', flexShrink: 0 }}>🎲</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.95rem', color: '#F5F7FB' }}>Random Question</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.78rem', color: '#4A5578', marginTop: 2 }}>Tap and go</div>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.95rem', color: '#F5F7FB' }}>{isQuickFire ? 'Start 90s Quick Fire' : 'Random Question'}</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.78rem', color: '#4A5578', marginTop: 2 }}>{isQuickFire ? 'A countdown starts as soon as the first question opens' : 'Tap and go'}</div>
           </div>
           <span style={{ color: '#9D5CFF', fontSize: '1rem' }}>→</span>
         </button>

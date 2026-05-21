@@ -1,36 +1,125 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-label="Medicine through time header">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#1a123f"/>
-      <stop offset=".48" stop-color="#12365a"/>
-      <stop offset="1" stop-color="#0f8f70"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="70%" cy="33%" r="42%">
-      <stop offset="0" stop-color="#6bffb0" stop-opacity=".5"/>
-      <stop offset=".46" stop-color="#38d27a" stop-opacity=".17"/>
-      <stop offset="1" stop-color="#071126" stop-opacity="0"/>
+    <radialGradient id="lampGlow" cx="82%" cy="16%" r="32%">
+      <stop offset="0" stop-color="#d7f7ff" stop-opacity=".8"/>
+      <stop offset=".44" stop-color="#6aa6b9" stop-opacity=".24"/>
+      <stop offset="1" stop-color="#02050b" stop-opacity="0"/>
     </radialGradient>
+    <radialGradient id="candleGlow" cx="40%" cy="48%" r="45%">
+      <stop offset="0" stop-color="#b47433" stop-opacity=".68"/>
+      <stop offset=".55" stop-color="#5a3213" stop-opacity=".36"/>
+      <stop offset="1" stop-color="#02050b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="room" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#05070d"/>
+      <stop offset=".38" stop-color="#281609"/>
+      <stop offset=".68" stop-color="#20313a"/>
+      <stop offset="1" stop-color="#02050b"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#79501f" stop-opacity=".55"/>
+      <stop offset=".58" stop-color="#c0914a" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#2a190a" stop-opacity=".65"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .16"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000" flood-opacity=".7"/>
+    </filter>
   </defs>
-  <rect width="900" height="520" fill="url(#bg)"/>
-  <rect width="900" height="520" fill="url(#glow)"/>
-  <g opacity=".18" stroke="#fff" stroke-width="4" fill="none">
-    <path d="M80 92 C160 42 240 142 320 92 S480 42 560 92 S720 142 820 86"/>
-    <path d="M70 160 C170 112 238 210 344 154 S500 112 604 158 S742 204 850 150"/>
+
+  <rect width="900" height="520" fill="url(#room)"/>
+  <rect width="900" height="520" fill="url(#candleGlow)"/>
+  <rect width="900" height="520" fill="url(#lampGlow)"/>
+
+  <!-- anatomy wall and old ward -->
+  <rect x="366" y="34" width="250" height="204" rx="6" fill="url(#paper)" opacity=".45"/>
+  <g stroke="#221207" stroke-width="3" fill="none" opacity=".46">
+    <path d="M480 60 c-28 16-34 54-26 88 c6 28-10 54-30 78"/>
+    <circle cx="493" cy="70" r="18"/>
+    <path d="M493 88 v106M462 118 h62M468 144 h50M474 168 h42"/>
+    <path d="M454 204 c36 18 74 18 112 0"/>
+    <path d="M395 80 c46-26 74-10 122-2M390 114 h164M390 148 h142"/>
   </g>
-  <path d="M0 370 C128 316 210 352 312 302 C420 250 532 276 636 232 C752 184 822 202 900 168 L900 520 L0 520 Z" fill="#050915" opacity=".58"/>
-  <g transform="translate(330 116)">
-    <circle cx="120" cy="120" r="112" fill="#081225" opacity=".82" stroke="#6bffb0" stroke-opacity=".42" stroke-width="8"/>
-    <path d="M92 44h56v76h76v56h-76v76H92v-76H16v-56h76z" fill="#6bffb0"/>
-    <path d="M92 44h56v76h76v56h-76v76H92v-76H16v-56h76z" fill="#f5f7fb" opacity=".18"/>
+  <g transform="translate(552 88)" opacity=".52">
+    <rect x="0" y="0" width="210" height="150" rx="6" fill="#d9c4a1" opacity=".16"/>
+    <path d="M20 28 h172M20 66 h172M20 104h172" stroke="#d9c4a1" stroke-width="7" opacity=".18"/>
+    <g fill="#d9c4a1" opacity=".38">
+      <circle cx="38" cy="40" r="9"/><rect x="28" y="50" width="72" height="18" rx="9"/>
+      <circle cx="130" cy="40" r="9"/><rect x="120" y="50" width="72" height="18" rx="9"/>
+      <circle cx="72" cy="78" r="9"/><rect x="62" y="88" width="72" height="18" rx="9"/>
+      <circle cx="158" cy="78" r="9"/><rect x="148" y="88" width="52" height="18" rx="9"/>
+    </g>
   </g>
-  <g fill="#071126" opacity=".9">
-    <rect x="88" y="302" width="96" height="154" rx="16"/>
-    <rect x="210" y="258" width="104" height="198" rx="18"/>
-    <rect x="600" y="284" width="88" height="172" rx="16"/>
-    <rect x="718" y="230" width="110" height="226" rx="18"/>
+
+  <!-- apothecary shelves and medieval scribe -->
+  <g transform="translate(54 92)" opacity=".72">
+    <path d="M0 0 h146 v260 H0z" fill="#090706"/>
+    <path d="M18 28 h112M18 84h112M18 140h112" stroke="#80521f" stroke-width="5" opacity=".38"/>
+    <g fill="#8a5d2b">
+      <rect x="32" y="36" width="18" height="38" rx="6"/><rect x="60" y="28" width="20" height="46" rx="7"/><rect x="94" y="40" width="16" height="34" rx="6"/>
+      <rect x="28" y="94" width="20" height="36" rx="6"/><rect x="72" y="88" width="18" height="42" rx="6"/><rect x="102" y="98" width="18" height="32" rx="6"/>
+    </g>
   </g>
-  <g stroke="#6bffb0" stroke-width="7" stroke-linecap="round" opacity=".68">
-    <path d="M112 340h48M112 374h48M236 304h52M236 340h52M626 326h38M626 360h38M746 276h54M746 314h54"/>
+  <g transform="translate(40 205)" filter="url(#shadow)">
+    <path d="M36 42 c8-38 68-48 88-10 c18 34-2 76-42 78 c-36 2-54-30-46-68Z" fill="#201006"/>
+    <path d="M12 116 c46-34 108-34 154 0 v156 H12z" fill="#160d08"/>
+    <path d="M58 28 c30-24 78-6 82 36 c-24-28-66-30-104-8 c2-12 8-21 22-28Z" fill="#4b2c13"/>
+    <path d="M36 178 h118 v54 H36z" fill="#9b743e" opacity=".46"/>
+    <path d="M52 190 h78M50 208h88" stroke="#1c1008" stroke-width="3" opacity=".45"/>
   </g>
-  <path d="M0 452h900v68H0z" fill="#020510" opacity=".62"/>
+
+  <!-- Renaissance dissection and microscope -->
+  <g transform="translate(226 206)" filter="url(#shadow)">
+    <path d="M38 178 c70-30 178-28 250 0 l-38 52 H72z" fill="#201006"/>
+    <ellipse cx="132" cy="162" rx="104" ry="34" fill="#b4894c" opacity=".5"/>
+    <path d="M86 132 c38-40 126-36 166 4 c-46 38-126 38-166-4Z" fill="#b9844b"/>
+    <path d="M96 114 c28 22 98 28 148 4" stroke="#3a1f0d" stroke-width="7" opacity=".55"/>
+    <path d="M44 60 c22-44 90-48 120-8 c20 28 8 72-30 88 c-48 20-112-16-90-80Z" fill="#231207"/>
+    <circle cx="104" cy="42" r="32" fill="#9c6128"/>
+    <path d="M74 26 c28-34 74-20 82 16 c-32-20-56-18-86 0Z" fill="#1b0d05"/>
+    <path d="M54 112 c48 38 112 38 162 0 v128 H54z" fill="#2a1508"/>
+    <path d="M182 62 c20-38 76-38 96-2 c18 32 0 66-34 74 c-46 10-82-30-62-72Z" fill="#170c06"/>
+    <circle cx="228" cy="44" r="26" fill="#a36a32"/>
+    <path d="M202 112 c48 32 86 28 128-2 v130 H202z" fill="#1d1008"/>
+    <path d="M266 96 l52 54M292 76 l54 56" stroke="#ba8c4b" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="352" cy="140" r="16" fill="none" stroke="#ba8c4b" stroke-width="7"/>
+    <path d="M330 186 h72M354 156 v50M338 206 h48" stroke="#ba8c4b" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <!-- modern surgery area -->
+  <g transform="translate(666 108)" filter="url(#shadow)">
+    <ellipse cx="120" cy="24" rx="94" ry="34" fill="#afc9d1" opacity=".35"/>
+    <ellipse cx="120" cy="24" rx="72" ry="24" fill="#d9f5ff" opacity=".3"/>
+    <g fill="#e9fbff" opacity=".72">
+      <circle cx="66" cy="16" r="7"/><circle cx="92" cy="11" r="7"/><circle cx="120" cy="10" r="7"/><circle cx="148" cy="11" r="7"/><circle cx="174" cy="16" r="7"/>
+      <circle cx="80" cy="34" r="6"/><circle cx="108" cy="38" r="6"/><circle cx="136" cy="38" r="6"/><circle cx="162" cy="34" r="6"/>
+    </g>
+    <path d="M72 150 c4-56 48-86 94-66 c38 16 52 64 34 112 c-40 34-92 34-128-46Z" fill="#0f2732"/>
+    <circle cx="138" cy="86" r="34" fill="#a66f4a"/>
+    <path d="M92 82 c38-34 84-34 120 0 l-10 38 c-32-18-76-20-118-2Z" fill="#244f66"/>
+    <path d="M96 154 c48 42 110 42 158 0 v206 H96z" fill="#11364c"/>
+    <path d="M24 258 c96 34 178 34 270 0 v96 H24z" fill="#122f3e"/>
+    <path d="M178 140 l76 70M206 132 l76 70" stroke="#c7f3ff" stroke-width="7" stroke-linecap="round" opacity=".55"/>
+    <rect x="244" y="82" width="82" height="102" rx="6" fill="#092032" stroke="#7fb0c6" stroke-opacity=".35"/>
+    <path d="M262 140 c24-70 44-70 50 0M262 140 c24 30 48 30 50 0" stroke="#9ed4e8" stroke-width="5" fill="none" opacity=".7"/>
+  </g>
+
+  <!-- lower parchment and herbs -->
+  <rect x="258" y="374" width="432" height="118" rx="8" fill="url(#paper)" opacity=".38"/>
+  <g opacity=".34" stroke="#2a1608" stroke-width="3" fill="none">
+    <path d="M394 420 c64-22 114-18 168 0M410 446 h168M420 466 h112"/>
+    <path d="M702 468 c-14-44-10-84 18-118 c30 48 22 86-18 118Z"/>
+    <path d="M736 474 c-8-56 8-92 48-122 c12 60-10 96-48 122Z"/>
+    <path d="M706 424 c-20-8-36-24-48-48M720 410 c22-8 44-24 66-48"/>
+  </g>
+
+  <rect width="900" height="520" filter="url(#grain)"/>
+  <rect width="900" height="520" fill="#000" opacity=".12"/>
+  <rect x="-72" y="-50" width="1044" height="640" fill="none" stroke="#000" stroke-width="125" opacity=".72"/>
 </svg>
