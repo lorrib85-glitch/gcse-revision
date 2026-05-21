@@ -79,7 +79,7 @@ function BottomNav({ tab, setTab }) {
   return (
     <div style={{
       position: 'fixed', left: '50%', bottom: 12, transform: 'translateX(-50%)',
-      width: 'calc(100% - 24px)', maxWidth: 464, zIndex: 100,
+      width: 'calc(100% - 24px)', maxWidth: 464, zIndex: 1000, pointerEvents: 'auto',
       background: 'rgba(10,14,31,.94)',
       backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)',
       border: '1px solid rgba(80,97,140,.42)',
@@ -2281,7 +2281,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     const actionLine = accuracy >= 80 ? 'Keep it up!' : 'Focus on improvement.'
 
     return (
-      <div style={{ background:'radial-gradient(circle at 50% -10%, rgba(56,210,122,.12), transparent 38%), #050817', minHeight:'100vh', padding:'18px 20px 36px', color:'#F5F7FB' }}>
+      <div style={{ background:'radial-gradient(circle at 50% -10%, rgba(56,210,122,.12), transparent 38%), #050817', minHeight:'100vh', padding:'18px 20px calc(150px + env(safe-area-inset-bottom))', color:'#F5F7FB' }}>
         <div style={{ maxWidth:480, margin:'0 auto' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
             <button onClick={exitTestTopic} aria-label="Back" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(20,31,54,.78)', color:'#F5F7FB', fontSize:'1.45rem', cursor:'pointer' }}>‹</button>
@@ -2342,7 +2342,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
             <span style={{ color:'#AAB4D4', fontSize:'1.6rem' }}>›</span>
           </button>
 
-          <button onClick={startRandomQuestion} style={{ width:'100%', border:'none', borderRadius:17, background:'linear-gradient(135deg,#38F27B,#2DD4A3)', color:'#03140B', padding:'20px 22px', display:'flex', alignItems:'center', gap:18, cursor:'pointer', boxShadow:'0 18px 36px rgba(45,212,163,.24)' }}>
+          <button onClick={startRandomQuestion} style={{ width:'100%', border:'none', borderRadius:17, background:'linear-gradient(135deg,#38F27B,#2DD4A3)', color:'#03140B', padding:'20px 22px', display:'flex', alignItems:'center', gap:18, cursor:'pointer', boxShadow:'0 18px 36px rgba(45,212,163,.24)', marginBottom:18 }}>
             <span style={{ fontSize:'2rem', lineHeight:1 }}>↻</span>
             <span style={{ textAlign:'left' }}>
               <span style={{ display:'block', fontFamily:"'Space Grotesk',sans-serif", fontSize:'1.25rem', fontWeight:950, letterSpacing:'.02em' }}>TRY AGAIN</span>
