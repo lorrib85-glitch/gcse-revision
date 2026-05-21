@@ -265,6 +265,14 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
   const hour = new Date().getHours()
   const timeGreeting = hour < 12 ? 'Morning,' : hour < 17 ? 'Afternoon,' : 'Evening,'
 
+  const medicineModule = MODULES.find(m => m.id === 'mod1')
+  const HISTORY_MODULE_CARDS = [
+    { title: 'Early Elizabethan England', era: '1558–1588', icon: '👑' },
+    { title: 'The USA', era: '1954–75: conflict at home and abroad', icon: '🇺🇸' },
+    { title: 'Spain and the New World', era: '1490–1555', icon: '⛵' },
+    { title: 'Medicine through time', era: '1250–present', icon: '⚕️', module: medicineModule },
+  ]
+
   const QUICK_SUBJECTS = [
     { label: 'Random', icon: '🎲', color: '#9D5CFF', bg: 'rgba(157,92,255,.14)', id: nextId },
     { label: 'History', icon: '🏰', color: '#F5B700', bg: 'rgba(245,183,0,.12)',  id: 'medieval' },
@@ -441,6 +449,90 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
             )}
           </div>
         )}
+
+        {/* ── History module pathways ── */}
+        <div style={{
+          background: 'linear-gradient(145deg, #10182B, #0D1424)',
+          border: '1px solid rgba(245,183,0,.22)',
+          borderRadius: 18, padding: '16px',
+          marginBottom: 14,
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.03)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 12 }}>
+            <div style={{
+              width: 34, height: 34, borderRadius: 11,
+              background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.24)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1rem',
+            }}>🏰</div>
+            <div>
+              <div style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700, fontSize: '1rem', color: '#F5F7FB',
+              }}>History Modules</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.74rem', color: '#5A6480', marginTop: 2 }}>
+                Choose the exam topic you want to build up next.
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 8 }}>
+            {HISTORY_MODULE_CARDS.map((item) => {
+              const available = Boolean(item.module)
+              return (
+                <button
+                  key={item.title}
+                  onClick={() => available && onOpenModule(item.module)}
+                  disabled={!available}
+                  style={{
+                    width: '100%',
+                    background: available ? 'rgba(245,183,0,.08)' : 'rgba(255,255,255,.025)',
+                    border: `1px solid ${available ? 'rgba(245,183,0,.22)' : '#1E2A40'}`,
+                    borderRadius: 13,
+                    padding: '12px 13px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 11,
+                    cursor: available ? 'pointer' : 'default',
+                    textAlign: 'left',
+                    opacity: available ? 1 : .72,
+                  }}
+                >
+                  <span style={{
+                    width: 35, height: 35, borderRadius: 10, flexShrink: 0,
+                    background: available ? 'rgba(245,183,0,.13)' : 'rgba(90,100,128,.08)',
+                    border: `1px solid ${available ? 'rgba(245,183,0,.22)' : '#2A3552'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1rem',
+                  }}>{item.icon}</span>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{
+                      display: 'block',
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 700, fontSize: '.9rem', color: '#F5F7FB',
+                    }}>{item.title}</span>
+                    <span style={{
+                      display: 'block',
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '.72rem', color: '#9CA8C7', marginTop: 2,
+                    }}>{item.era}</span>
+                  </span>
+                  <span style={{
+                    flexShrink: 0,
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: '.62rem',
+                    fontWeight: 800,
+                    letterSpacing: '.06em',
+                    textTransform: 'uppercase',
+                    color: available ? '#F5B700' : '#5A6480',
+                  }}>
+                    {available ? 'Open' : 'Soon'}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
 
         {/* ── Stats row ── */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 20 }}>
