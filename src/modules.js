@@ -629,6 +629,243 @@ export const MODULES = [
     ]
   },
 
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // SOCIOLOGY — Education Module 1: Hidden Curriculum & Socialisation
+  // ─────────────────────────────────────────────────────────────────────────────
+  {
+    id: 'soc_edu_1',
+    subject: 'Sociology',
+    number: 1,
+    title: 'Hidden Curriculum & Socialisation',
+    subtitle: 'School teaches way more than maths',
+    era: 'Education',
+    icon: '🏫',
+    color: '#C47A32',
+    colorLight: 'rgba(196,122,50,.15)',
+    screens: [
+      {
+        label: 'Enter School',
+        kicker: 'Opening Screen',
+        heading: 'School teaches you things.',
+        sub: 'Some of them are not on the timetable.',
+        blocks: [
+          { type: 'read', label: 'Fluorescent corridor', text: 'Bell ringing. Students lining up. <strong>“Shirts tucked in please.”</strong><br /><br />Exam desks. Corridor silence. Behaviour warning flashing briefly.<br /><br />A student whispers: <strong>“Can I go toilet?”</strong>' },
+          { type: 'keypoint', text: 'Sociology is very interested in that.' },
+          { type: 'reveal', label: 'Enter school', prompt: 'Tap when the corridor has gone quiet.', answer: 'The timetable is only one part of what school teaches.' },
+        ]
+      },
+      {
+        label: 'True or False?',
+        kicker: 'Opening Question',
+        heading: 'True or false?',
+        sub: 'Schools only exist to teach subjects.',
+        blocks: [
+          { type: 'quiz', question: 'Schools only exist to teach subjects.', options: [
+            { text: 'TRUE', correct: false },
+            { text: 'FALSE', correct: true },
+            { text: '…SORT OF?', correct: false },
+          ], explanation: 'Sociologists would disagree. Schools teach maths and science. They also quietly teach behaviour, rules and expectations.' },
+          { type: 'examtip', label: 'Floating lessons', phrases: ['obedience', 'punctuality', 'authority', 'behaviour', 'socialisation'], tip: 'Most students do not notice this happening. Sociologists absolutely do.' },
+          { type: 'read', label: 'Somewhere', text: 'Somewhere right now somebody is being told to take their coat off indoors.' },
+        ]
+      },
+      {
+        label: 'This Module',
+        kicker: 'What You Will Learn',
+        heading: 'This module',
+        sub: 'By the end of this module you will start noticing school differently.',
+        blocks: [
+          { type: 'flashcards', cards: [
+            { front: 'hidden curriculum', back: 'Unofficial lessons hidden inside everyday school life.' },
+            { front: 'socialisation', back: 'The process of learning norms and values.' },
+            { front: 'norms', back: 'Expected ways to behave.' },
+            { front: 'values', back: 'Ideas society thinks are important.' },
+            { front: 'Functionalism', back: 'A view that schools help society run smoothly.' },
+            { front: 'meritocracy', back: 'The idea that success comes from hard work, effort and ability.' },
+          ]},
+        ]
+      },
+      {
+        label: 'Formal Curriculum',
+        kicker: 'Official Lessons',
+        heading: 'The formal curriculum',
+        sub: 'Teacher writing equations. Exercise books open. Soft classroom lighting.',
+        blocks: [
+          { type: 'read', label: 'Definition', text: 'The formal curriculum is:<br /><strong>the official subjects schools teach.</strong><br /><br />Simple.' },
+          { type: 'examtip', label: 'It includes', phrases: ['maths', 'science', 'English', 'history'], tip: 'These are the subjects schools openly say they teach.' },
+          { type: 'quiz', question: 'Which of these belongs in the formal curriculum?', options: [
+            { text: 'algebra', correct: true },
+            { text: 'asking permission', correct: false },
+            { text: 'silence in corridors', correct: false },
+            { text: 'uniform rules', correct: false },
+          ], explanation: 'Formal curriculum = official subjects. The other answers teach behaviour rather than academic knowledge.' },
+        ]
+      },
+      {
+        label: 'Hidden Curriculum',
+        kicker: 'Unofficial Lessons',
+        heading: 'The hidden curriculum',
+        sub: 'Students walking silently through corridor. Teacher supervising.',
+        blocks: [
+          { type: 'read', label: 'Schools also teach', text: 'Schools also teach:<br /><strong>punctuality</strong><br /><strong>obedience</strong><br /><strong>discipline</strong><br /><strong>respect for authority</strong>' },
+          { type: 'keypoint', text: 'Nobody officially teaches: <strong>“How to ask permission to go toilet.”</strong><br /><br />And yet somehow… every student learns.' },
+          { type: 'read', label: 'Sociologists call this', text: 'Sociologists call these unofficial lessons:<br /><strong>the hidden curriculum.</strong><br /><br />Because the lessons are hidden inside everyday school life.' },
+          { type: 'examtip', label: 'Hidden curriculum', phrases: ['sit still', 'ask permission', 'identical uniforms', 'silence'], tip: 'School: “Be creative!” Also school: sit still, ask permission, identical uniforms, silence.' },
+        ]
+      },
+      {
+        label: 'Formal or Hidden?',
+        kicker: 'Sorting Check',
+        heading: 'Formal or hidden?',
+        sub: 'Is this teaching knowledge… or behaviour?',
+        blocks: [
+          { type: 'builder', label: 'Build the formal curriculum set', slots: [null, null, null, null], operators: ['+', '+', '+'], pieces: ['algebra', 'chemistry', 'essay writing', 'science experiments', 'punctuality', 'homework deadlines', 'silence', 'respecting authority', 'uniform rules'], answer: ['algebra', 'chemistry', 'essay writing', 'science experiments'], hint: 'Formal curriculum = official knowledge and subjects.', successText: 'Exactly. Algebra, chemistry, essay writing and science experiments teach official knowledge.' },
+          { type: 'builder', label: 'Build the hidden curriculum set', slots: [null, null, null, null, null], operators: ['+', '+', '+', '+'], pieces: ['punctuality', 'homework deadlines', 'silence', 'respecting authority', 'uniform rules', 'algebra', 'chemistry', 'essay writing', 'science experiments'], answer: ['punctuality', 'homework deadlines', 'silence', 'respecting authority', 'uniform rules'], hint: 'Hidden curriculum = behaviour, rules and expectations.', successText: 'Exactly. Those are unofficial lessons about behaviour and authority.' },
+        ]
+      },
+      {
+        label: 'Socialisation',
+        kicker: 'Assembly Hall',
+        heading: 'Schools shape people',
+        sub: 'Assembly hall. Rows of silent students.',
+        blocks: [
+          { type: 'read', label: 'Agents of socialisation', text: 'Sociologists describe schools as:<br /><strong>agents of socialisation.</strong><br /><br />That means schools help teach:<br /><strong>norms</strong><br /><strong>values</strong><br /><strong>expected behaviour</strong>' },
+          { type: 'keypoint', text: 'You probably do not remember anyone formally teaching: <strong>“Don’t interrupt adults.”</strong><br /><br />But most students learn VERY quickly what happens if they do.' },
+          { type: 'flashcards', cards: [
+            { front: 'SOCIALISATION', back: 'The process of learning norms and values.' },
+            { front: 'NORMS', back: 'Expected ways to behave.' },
+            { front: 'VALUES', back: 'Ideas society thinks are important.' },
+            { front: 'queueing', back: 'An example of a norm.' },
+            { front: 'punctuality', back: 'A behaviour schools repeatedly reward.' },
+            { front: 'respecting teachers', back: 'An authority expectation learned through school.' },
+            { front: 'wearing uniform correctly', back: 'A visible rule about conformity.' },
+          ]},
+        ]
+      },
+      {
+        label: 'Functionalists',
+        kicker: 'Social Order',
+        heading: 'Functionalists: “Schools help society run smoothly.”',
+        sub: 'Assembly hall. School crest. Students in orderly rows.',
+        blocks: [
+          { type: 'read', label: 'Functionalist view', text: 'Functionalists believe schools help create:<br /><strong>social order</strong><br /><strong>cooperation</strong><br /><strong>shared values</strong><br /><br />They believe schools prepare students for adult life.' },
+          { type: 'keypoint', text: 'Functionalists would probably look at school and think:<br /><strong>“Messy… but necessary.”</strong>' },
+          { type: 'scenario', scenarios: [
+            { situation: 'Assembly', options: ['shared values', 'revolution', 'segregation', 'deviance'], correctIndex: 0, explanation: 'Assembly can promote shared values.' },
+            { situation: 'Deadlines', options: ['preparation for work', 'gender roles', 'deviance', 'labelling'], correctIndex: 0, explanation: 'Deadlines can prepare students for adult work routines.' },
+            { situation: 'Behaviour systems', options: ['social order', 'segregation', 'revolution', 'deprivation'], correctIndex: 0, explanation: 'Behaviour systems are linked to social order.' },
+          ]},
+        ]
+      },
+      {
+        label: 'Meritocracy',
+        kicker: 'Exam Hall',
+        heading: 'Is school fair?',
+        sub: 'Rows of desks. Clock ticking.',
+        blocks: [
+          { type: 'read', label: 'Meritocracy', text: 'Many people believe schools are:<br /><strong>meritocratic.</strong><br /><br />That means success comes from:<br /><strong>hard work</strong><br /><strong>effort</strong><br /><strong>ability</strong>' },
+          { type: 'keypoint', text: 'Sounds fair.<br /><br />Sociologists are not completely convinced.<br /><br />(We will come back to that later.)' },
+          { type: 'reveal', label: 'Rank it', prompt: 'What affects success most: hard work, natural ability, confidence, money, family support, or school quality?', answer: 'There is no single correct answer here. The point is reflection: sociologists ask what “fair” really means.' },
+        ]
+      },
+      {
+        label: 'Quick Fire',
+        kicker: 'Retrieval',
+        heading: 'Quick fire',
+        sub: 'Fast pace. Five checks.',
+        blocks: [
+          { type: 'quiz', question: '“The hidden curriculum teaches behaviour.”', options: [{ text: 'TRUE', correct: true }, { text: 'FALSE', correct: false }], explanation: 'True. The hidden curriculum teaches behaviour, rules and expectations.' },
+          { type: 'quiz', question: 'Which belongs in the formal curriculum?', options: [{ text: 'algebra', correct: true }, { text: 'obedience', correct: false }, { text: 'punctuality', correct: false }, { text: 'silence', correct: false }], explanation: 'Algebra is an official subject.' },
+          { type: 'quiz', question: 'Schools are agents of __________.', options: [{ text: 'socialisation', correct: true }, { text: 'capitalism', correct: false }, { text: 'deprivation', correct: false }, { text: 'segregation', correct: false }], explanation: 'Schools are agents of socialisation.' },
+          { type: 'quiz', question: '“Norms are expected behaviours.”', options: [{ text: 'TRUE', correct: true }, { text: 'FALSE', correct: false }], explanation: 'True. Norms are expected ways to behave.' },
+          { type: 'quiz', question: 'Which idea is linked to Functionalism?', options: [{ text: 'social order', correct: true }, { text: 'revolution', correct: false }, { text: 'deviance', correct: false }, { text: 'segregation', correct: false }], explanation: 'Functionalists focus on social order and shared values.' },
+        ]
+      },
+      {
+        label: 'Fill Gaps',
+        kicker: 'Required Feature',
+        heading: 'Fill in the gaps',
+        sub: 'Correct answers glow and snap into place. Wrong answers return.',
+        blocks: [
+          { type: 'builder', label: 'Six key terms', slots: [null, null, null, null, null, null], operators: ['·', '·', '·', '·', '·'], pieces: ['hidden', 'subjects', 'socialisation', 'norms', 'order', 'meritocracy', 'formal', 'capitalist', 'patriarchal', 'streamed', 'deviant', 'sanctions', 'conformity', 'labelling', 'segregation', 'values', 'hierarchy', 'roles', 'inequality', 'deprivation'], answer: ['hidden', 'subjects', 'socialisation', 'norms', 'order', 'meritocracy'], hint: 'Use the exact terms from the module: hidden, subjects, socialisation, norms, order, meritocracy.', successText: 'The hidden curriculum teaches behaviour and rules. The formal curriculum teaches official subjects. Schools are agents of socialisation. Expected ways to behave are norms. Functionalists believe schools create social order. Success through hard work and ability is meritocracy.' },
+        ]
+      },
+      {
+        label: 'Who Agrees?',
+        kicker: 'Perspectives',
+        heading: 'Who would agree?',
+        sub: 'Functionalist, Marxist or Feminist?',
+        blocks: [
+          { type: 'quiz', question: '“Schools help society run smoothly.”', options: [{ text: 'Functionalist', correct: true }, { text: 'Marxist', correct: false }, { text: 'Feminist', correct: false }], explanation: 'Functionalists believe schools help society run smoothly.' },
+          { type: 'quiz', question: '“Schools teach shared values.”', options: [{ text: 'Functionalist', correct: true }, { text: 'Marxist', correct: false }, { text: 'Feminist', correct: false }], explanation: 'Functionalists focus on shared values.' },
+          { type: 'quiz', question: '“Schools reinforce inequality.”', options: [{ text: 'Marxist', correct: true }, { text: 'Functionalist', correct: false }, { text: 'Feminist', correct: false }], explanation: 'Marxists focus on class inequality and who benefits.' },
+          { type: 'quiz', question: '“Schools may reinforce gender expectations.”', options: [{ text: 'Feminist', correct: true }, { text: 'Functionalist', correct: false }, { text: 'Marxist', correct: false }], explanation: 'Feminists focus on gender expectations and inequality.' },
+        ]
+      },
+      {
+        label: 'Exam Skills',
+        kicker: 'Better Answers',
+        heading: 'How to sound smarter in exams',
+        sub: 'Tiny bit of terminology. Massive mark difference.',
+        blocks: [
+          { type: 'read', label: 'Basic answer', text: '“Schools teach behaviour.”' },
+          { type: 'keypoint', text: '<strong>Better answer:</strong><br />Sociologists argue schools are agents of socialisation.' },
+          { type: 'examtip', label: 'Even better answer', text: 'Functionalists believe schools teach shared norms and values through the hidden curriculum.' },
+        ]
+      },
+      {
+        label: 'GCSE Practice',
+        kicker: 'Practice Questions',
+        heading: 'GCSE practice',
+        sub: 'Use terminology, examples, explanation and application.',
+        blocks: [
+          { type: 'boss', tier: '🟢', question: 'Identify one feature of the hidden curriculum. [1 mark]', markPoints: 'Reward one valid feature of the hidden curriculum, such as obedience, punctuality, uniform rules, respect for authority, behaviour, rules or expectations. Do not reward vague opinions or unsupported claims.' },
+          { type: 'boss', tier: '🟡', question: 'Describe two things taught through socialisation. [2 marks]', markPoints: 'Reward two things taught through socialisation, such as norms, values, expected behaviour, punctuality, respect for teachers, queueing, uniform expectations or not interrupting adults. Reward sociology terminology and examples.' },
+          { type: 'boss', tier: '🟡', question: 'Explain one way schools prepare students for adult life. [4 marks]', markPoints: 'Reward explanation and application. Possible points: deadlines prepare students for work; behaviour systems encourage social order; authority structures prepare students for workplace hierarchy; punctuality prepares students for adult responsibilities.' },
+          { type: 'boss', tier: '🔴', question: 'Describe one Functionalist view of education. [6 marks]', markPoints: 'Reward Functionalist terminology: social order, cooperation, shared values, socialisation, preparation for adult life, meritocracy as an introductory idea. Do not reward vague opinions or copied wording without explanation.' },
+        ]
+      },
+      {
+        label: 'Final Boss',
+        kicker: 'Corridor Silence',
+        heading: 'Final boss: What are schools really teaching?',
+        sub: 'Bell echoing faintly. Rows of desks fading into darkness.',
+        blocks: [
+          { type: 'flashcards', cards: [
+            { front: 'hidden curriculum', back: 'Unofficial lessons about behaviour and expectations.' },
+            { front: 'formal curriculum', back: 'Official subjects schools teach.' },
+            { front: 'socialisation', back: 'Learning norms and values.' },
+            { front: 'norms', back: 'Expected ways to behave.' },
+            { front: 'values', back: 'Ideas society thinks are important.' },
+            { front: 'meritocracy', back: 'Success through hard work, effort and ability.' },
+          ]},
+          { type: 'boss', tier: '🟡', question: 'Fix the error: “The formal curriculum teaches punctuality and obedience.”', markPoints: 'Correct answer should explain that the formal curriculum teaches official subjects. Punctuality and obedience are examples of the hidden curriculum.' },
+          { type: 'boss', tier: '🟡', question: 'A student repeatedly receives detentions for speaking without permission. Which sociological idea links to this, and what behaviour is the school encouraging?', markPoints: 'Reward hidden curriculum and/or socialisation. The school is encouraging obedience, respect for authority, self-control, silence or following rules.' },
+          { type: 'boss', tier: '🔴', question: 'Are schools only about education? Justify your answer using sociology terminology.', markPoints: 'No single correct answer. Reward reasoning, examples, sociology vocabulary and explanation. Strong answers use hidden curriculum, formal curriculum, socialisation, norms, values, Functionalist view and/or meritocracy.' },
+        ]
+      },
+      {
+        label: 'Complete',
+        kicker: 'Confidence Tracker',
+        heading: 'Module complete',
+        sub: 'Schools teach much more than subjects.',
+        blocks: [
+          { type: 'flashcards', cards: [
+            { front: 'hidden curriculum', back: 'Rate your confidence before leaving the module.' },
+            { front: 'formal curriculum', back: 'Rate your confidence before leaving the module.' },
+            { front: 'norms & values', back: 'Rate your confidence before leaving the module.' },
+            { front: 'socialisation', back: 'Rate your confidence before leaving the module.' },
+            { front: 'Functionalism', back: 'Rate your confidence before leaving the module.' },
+            { front: 'meritocracy', back: 'Rate your confidence before leaving the module.' },
+          ]},
+          { type: 'keypoint', text: 'Schools teach much more than subjects. Sociology asks us to notice the lessons nobody writes on the board.' },
+          { type: 'read', label: 'Somewhere', text: 'Somewhere right now a teacher is saying: <strong>“You should know better by Year 10.”</strong>' },
+        ]
+      },
+    ]
+  },
+
   // ─────────────────────────────────────────────────────────────────────────────
   // SCIENCE — Biology Week 1: Plant Cells & Photosynthesis
   // ─────────────────────────────────────────────────────────────────────────────
