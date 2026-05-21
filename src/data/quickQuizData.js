@@ -647,6 +647,11 @@ export const QUICK_QUIZ_QUESTIONS = [
     explanation: '25% of 80 = 80 ÷ 4 = 20.',
     reasoning: '25% = one quarter. Dividing by 4 is the quickest method.',
     misconception: 'Students sometimes calculate 25% of 80 as 25 × 80 ÷ 100 = 20 (correct) but get confused with 80% of 25.',
+    steps: [
+      'Convert 25% to a fraction: 25% = 25/100 = 1/4',
+      'Divide 80 by 4: 80 ÷ 4 = 20',
+      'Answer: 20',
+    ],
   },
 
   {
@@ -658,6 +663,12 @@ export const QUICK_QUIZ_QUESTIONS = [
     explanation: '12/16 = 3/4 (divide both by 4, the highest common factor).',
     reasoning: 'HCF of 12 and 16 is 4. 12÷4 = 3; 16÷4 = 4.',
     misconception: '6/8 is also a simplification but NOT in its simplest form. Always find the HCF.',
+    steps: [
+      'Find a common factor of 12 and 16 — both divide by 2: 6/8',
+      'Check if 6 and 8 share another factor — both divide by 2 again: 3/4',
+      'Check 3 and 4 share no common factor — 3/4 is fully simplified',
+      'Shortcut: find the HCF of 12 and 16 (which is 4), then divide both by 4 in one step',
+    ],
   },
 
   {
@@ -669,6 +680,12 @@ export const QUICK_QUIZ_QUESTIONS = [
     explanation: '3x + 7 = 22 → 3x = 15 → x = 5.',
     reasoning: 'Subtract 7 from both sides first, then divide by 3.',
     misconception: 'Students sometimes subtract before dividing incorrectly — always isolate the variable step by step.',
+    steps: [
+      'Start: 3x + 7 = 22',
+      'Subtract 7 from both sides: 3x = 22 − 7 = 15',
+      'Divide both sides by 3: x = 15 ÷ 3 = 5',
+      'Check: 3(5) + 7 = 15 + 7 = 22 ✓',
+    ],
   },
 
   {
@@ -680,6 +697,12 @@ export const QUICK_QUIZ_QUESTIONS = [
     explanation: 'Area = length × width = 9 × 4 = 36 cm².',
     reasoning: 'Area of a rectangle is simply length multiplied by width.',
     misconception: 'Students sometimes confuse area with perimeter. Perimeter = 2(l + w) = 26 cm.',
+    steps: [
+      'Formula: Area = length × width',
+      'Substitute: Area = 9 × 4',
+      'Calculate: 9 × 4 = 36',
+      'Units: area is always in square units → 36 cm²',
+    ],
   },
 
   {
@@ -691,6 +714,13 @@ export const QUICK_QUIZ_QUESTIONS = [
     explanation: '2:3 means 5 parts total. Each part = £120 ÷ 5 = £24. So: 2×£24 = £48 and 3×£24 = £72.',
     reasoning: 'First find the total number of parts, then find one part\'s value, then multiply for each share.',
     misconception: 'Students often just divide by 2 and 3 separately — but you must find the total number of shares first.',
+    steps: [
+      'Add the parts of the ratio: 2 + 3 = 5 parts in total',
+      'Find the value of one part: £120 ÷ 5 = £24',
+      'Work out the first share: 2 × £24 = £48',
+      'Work out the second share: 3 × £24 = £72',
+      'Check: £48 + £72 = £120 ✓',
+    ],
   },
 
   {
@@ -712,6 +742,13 @@ export const QUICK_QUIZ_QUESTIONS = [
     explanation: '(x + 3)(x − 2) = x² − 2x + 3x − 6 = x² + x − 6.',
     reasoning: 'Use FOIL: First (x·x), Outer (x·−2), Inner (3·x), Last (3·−2). Collect like terms.',
     misconception: 'Students often forget the "Last" (3 × −2 = −6) or get the middle term wrong — always do all four parts of FOIL.',
+    steps: [
+      'FOIL — First: x × x = x²',
+      'FOIL — Outer: x × (−2) = −2x',
+      'FOIL — Inner: 3 × x = +3x',
+      'FOIL — Last: 3 × (−2) = −6',
+      'Collect like terms: x² + (−2x + 3x) − 6 = x² + x − 6',
+    ],
   },
 
   {
@@ -723,6 +760,12 @@ export const QUICK_QUIZ_QUESTIONS = [
     explanation: 'Ordered: 14, 14, 15, 16, 16. The middle value (3rd of 5) is 15.',
     reasoning: 'Median = middle value when data is in order. For 5 values, the 3rd value is the median.',
     misconception: 'Students often forget to ORDER the data first before finding the median.',
+    steps: [
+      'Write the values in order from smallest to largest: 14, 14, 15, 16, 16',
+      'Count the values: there are 5',
+      'Find the middle position: (5 + 1) ÷ 2 = 3rd value',
+      'The 3rd value in the ordered list is 15',
+    ],
   },
 
   {
@@ -734,6 +777,12 @@ export const QUICK_QUIZ_QUESTIONS = [
     explanation: 'Angles in a triangle sum to 180°. Third angle = 180 − 47 − 65 = 68°.',
     reasoning: 'This is a fundamental property of triangles — always starts with "angles in a triangle sum to 180°".',
     misconception: 'Students sometimes add the two given angles but forget to subtract from 180, getting 112° instead.',
+    steps: [
+      'Rule: angles in a triangle always add up to 180°',
+      'Add the two known angles: 47 + 65 = 112°',
+      'Subtract from 180: 180 − 112 = 68°',
+      'The third angle is 68°',
+    ],
   },
 
   {
@@ -745,6 +794,12 @@ export const QUICK_QUIZ_QUESTIONS = [
     explanation: 'Find two numbers that multiply to 6 and add to 5: these are 2 and 3. So: (x + 2)(x + 3).',
     reasoning: 'Factorising reverses expanding. Think: what two numbers multiply to give the constant (6) and add to give the middle coefficient (5)?',
     misconception: 'Students try 1×6 first — but 1+6 = 7 ≠ 5. Always check both conditions (product AND sum).',
+    steps: [
+      'Look at the constant (6) — find two numbers that multiply to make 6: options are 1×6 or 2×3',
+      'Check which pair also adds to the middle coefficient (5): 1+6 = 7 ✗, 2+3 = 5 ✓',
+      'Write the factorised form: (x + 2)(x + 3)',
+      'Check by expanding: x² + 3x + 2x + 6 = x² + 5x + 6 ✓',
+    ],
   },
 
   // ════════════════════════════════════════════════════════

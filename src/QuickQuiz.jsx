@@ -611,6 +611,7 @@ export default function QuickQuiz({ mode = 'random', onClose, onOpenModule }) {
   const [phase, setPhase]         = useState('playing') // playing | results
   const [answeredQ, setAnsweredQ] = useState([])
   const [ttsEnabled, setTtsEnabled] = useState(true)
+  const [hoveredOi, setHoveredOi] = useState(null)
 
   const timerRef = useRef(null)
 
@@ -672,6 +673,7 @@ export default function QuickQuiz({ mode = 'random', onClose, onOpenModule }) {
       setIdx(next)
       setAnswered(false)
       setIsCorrect(null)
+      setHoveredOi(null)
     }
   }
 
@@ -854,22 +856,19 @@ export default function QuickQuiz({ mode = 'random', onClose, onOpenModule }) {
                 return (
                   <button key={oi}
                     disabled={answered}
-                    onClick={() => {
-                      const correct = oi === q.correctIndex
-                      handleAnswer(correct)
-                    }}
+                    onClick={() => { setHoveredOi(null); handleAnswer(oi === q.correctIndex) }}
+                    onMouseEnter={() => { if (!answered) setHoveredOi(oi) }}
+                    onMouseLeave={() => setHoveredOi(null)}
                     style={{
                       display: 'block', width: '100%', textAlign: 'left',
                       padding: '15px 18px', borderRadius: 12, minHeight: 56,
                       fontFamily: 'inherit', fontSize: '.92rem', fontWeight: 500, lineHeight: 1.4,
                       cursor: answered ? 'default' : 'pointer',
-                      border: `2px solid ${answered && oi === q.correctIndex ? '#4DFF88' : '#2A3552'}`,
-                      background: answered && oi === q.correctIndex ? 'rgba(77,255,136,.09)' : '#0F1828',
+                      border: `2px solid ${answered && oi === q.correctIndex ? '#4DFF88' : hoveredOi === oi ? '#3A4870' : '#2A3552'}`,
+                      background: answered && oi === q.correctIndex ? 'rgba(77,255,136,.09)' : hoveredOi === oi ? '#1E2840' : '#0F1828',
                       color: answered && oi === q.correctIndex ? '#4DFF88' : '#E0E6F0',
                       transition: 'all .15s',
                     }}
-                    onMouseEnter={e => { if (!answered) { e.currentTarget.style.borderColor = '#3A4870'; e.currentTarget.style.background = '#1E2840' } }}
-                    onMouseLeave={e => { if (!answered) { e.currentTarget.style.borderColor = '#2A3552'; e.currentTarget.style.background = '#0F1828' } }}
                   >
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
                       <span style={{
@@ -975,6 +974,17 @@ export default function QuickQuiz({ mode = 'random', onClose, onOpenModule }) {
                 <div style={{ fontSize: '.65rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#5A6480', marginBottom: 5 }}>Why</div>
                 <p style={{ fontSize: '.85rem', color: '#9CA8C7', margin: 0, lineHeight: 1.55 }}>{q.reasoning}</p>
               </div>
+
+              {!isCorrect && q.steps && q.steps.length > 0 && (
+                <div style={{ marginTop: 10, padding: '12px 13px', background: 'rgba(59,130,255,.06)', border: '1px solid rgba(59,130,255,.22)', borderRadius: 10 }}>
+                  <div style={{ fontSize: '.65rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#3B82FF', marginBottom: 8 }}>HOW TO WORK IT OUT</div>
+                  <ol style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {q.steps.map((step, si) => (
+                      <li key={si} style={{ fontSize: '.84rem', color: '#90B8F0', lineHeight: 1.5 }}>{step}</li>
+                    ))}
+                  </ol>
+                </div>
+              )}
 
               {!isCorrect && q.misconception && (
                 <div style={{ marginTop: 10, padding: '10px 13px', background: 'rgba(255,200,87,.06)', border: '1px solid rgba(255,200,87,.2)', borderRadius: 10 }}>
