@@ -1215,9 +1215,67 @@ function ScenarioBlock({ block }) {
 
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
+function HeaderVisual({ scene, tone = 'school' }) {
+  if (!scene) return null
+  const palette = tone === 'school'
+    ? { glow: 'rgba(196,122,50,.26)', line: 'rgba(196,122,50,.22)', chip: '#C47A32' }
+    : { glow: 'rgba(157,92,255,.22)', line: 'rgba(157,92,255,.22)', chip: '#9D5CFF' }
+
+  return (
+    <div style={{
+      position: 'relative',
+      minHeight: 132,
+      borderRadius: 20,
+      overflow: 'hidden',
+      marginBottom: 18,
+      border: '1px solid rgba(255,255,255,.08)',
+      background: 'linear-gradient(135deg, #161616 0%, #0B0F1A 54%, #21160D 100%)',
+      boxShadow: '0 18px 44px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.04)',
+    }}>
+      <div style={{
+        position: 'absolute', inset: 0,
+        background:
+          'radial-gradient(circle at 78% 18%, ' + palette.glow + ', transparent 32%), ' +
+          'linear-gradient(90deg, rgba(0,0,0,.74), rgba(0,0,0,.24))',
+      }} />
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage:
+          'linear-gradient(' + palette.line + ' 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px)',
+        backgroundSize: '100% 34px, 44px 100%',
+        opacity: .32,
+      }} />
+      <div style={{
+        position: 'absolute', left: 18, right: 18, bottom: 16,
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16,
+      }}>
+        <p style={{
+          fontFamily: "'Inter', sans-serif",
+          color: '#D8D0C4',
+          fontSize: '.82rem',
+          lineHeight: 1.55,
+          margin: 0,
+          maxWidth: 390,
+          textShadow: '0 2px 12px rgba(0,0,0,.65)',
+        }}>{scene}</p>
+        <span style={{
+          width: 36, height: 36, borderRadius: 12,
+          display: 'grid', placeItems: 'center',
+          flexShrink: 0,
+          color: palette.chip,
+          background: palette.chip + '18',
+          border: '1px solid ' + palette.chip + '44',
+          fontSize: '1rem',
+        }}>▦</span>
+      </div>
+    </div>
+  )
+}
+
 function Screen({ screen, subject }) {
   return (
     <div>
+      <HeaderVisual scene={screen.headerImage} tone={screen.visualTone} />
       <div style={{ marginBottom: 20 }}>
         <div style={{
           display: 'inline-flex',
@@ -1644,14 +1702,118 @@ function IntroScreen({ module, onDone }) {
   const subjectColor = module.color || '#38D27A'
   const [answered, setAnswered] = useState(null)
   const [shakeIdx, setShakeIdx] = useState(null)
+  const [phase, setPhase] = useState('retrieval')
+  const [visibleGoals, setVisibleGoals] = useState(0)
 
   function choose(i) {
     if (answered !== null) return
     setAnswered(i)
     if (i !== intro.retrieval.correctIndex) setShakeIdx(i)
+    setTimeout(() => setPhase('goals'), 900)
   }
 
+  useEffect(() => {
+    if (phase !== 'goals') return undefined
+    setVisibleGoals(0)
+    const goals = intro.learningGoals || []
+    let shown = 0
+    const first = setTimeout(() => {
+      shown = 1
+      setVisibleGoals(Math.min(shown, goals.length))
+    }, 250)
+    const interval = setInterval(() => {
+      shown += 1
+      setVisibleGoals(Math.min(shown, goals.length))
+      if (shown >= goals.length) clearInterval(interval)
+    }, 2000)
+    return () => {
+      clearTimeout(first)
+      clearInterval(interval)
+    }
+  }, [phase, intro.learningGoals])
+
   const correct = answered === intro.retrieval.correctIndex
+  const goals = intro.learningGoals || []
+  const allGoalsVisible = visibleGoals >= goals.length
+
+  if (phase === 'goals') {
+    return (
+      <div style={{
+        minHeight: '100vh', background: '#080C1A',
+        padding: '30px 22px 120px', animation: 'fadeIn .45s ease',
+      }}>
+        <div style={{ maxWidth: 500, margin: '0 auto' }}>
+          <div style={{ marginBottom: 26 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 7,
+              background: subjectColor + '15', border: '1px solid ' + subjectColor + '30',
+              borderRadius: 99, padding: '5px 12px', marginBottom: 16,
+            }}>
+              <span style={{
+                fontFamily: "'Inter', sans-serif", fontSize: '.64rem', fontWeight: 800,
+                letterSpacing: '.14em', textTransform: 'uppercase', color: subjectColor,
+              }}>THIS MODULE</span>
+            </div>
+            <h2 style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 850, fontSize: 'clamp(1.65rem, 6vw, 2.15rem)',
+              color: '#F5F7FB', margin: '0 0 8px', letterSpacing: '-.03em', lineHeight: 1.05,
+            }}>What you'll learn</h2>
+            <p style={{
+              fontFamily: "'Inter', sans-serif", fontSize: '.9rem', color: '#7C8DB0',
+              margin: 0, lineHeight: 1.55,
+            }}>One idea at a time. Let it land.</p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
+            {goals.map((goal, i) => {
+              const visible = i < visibleGoals
+              return (
+                <div key={i} style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 12,
+                  opacity: visible ? 1 : 0,
+                  transform: visible ? 'translateY(0)' : 'translateY(10px)',
+                  transition: 'opacity .5s ease, transform .5s ease',
+                  background: visible ? 'rgba(255,255,255,.035)' : 'transparent',
+                  border: '1px solid ' + (visible ? 'rgba(255,255,255,.08)' : 'transparent'),
+                  borderRadius: 16, padding: visible ? '13px 14px' : '0 14px',
+                  minHeight: visible ? 52 : 0,
+                }}>
+                  <div style={{
+                    width: 24, height: 24, borderRadius: 7, flexShrink: 0,
+                    background: subjectColor + '20', border: '1px solid ' + subjectColor + '45',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '.72rem', color: subjectColor, fontWeight: 900, marginTop: 1,
+                  }}>{i + 1}</div>
+                  <p style={{
+                    fontFamily: "'Inter', sans-serif", fontSize: '.92rem', color: '#DCE5FA',
+                    margin: 0, lineHeight: 1.5, fontWeight: 560,
+                  }}>{goal}</p>
+                </div>
+              )
+            })}
+          </div>
+
+          {allGoalsVisible ? (
+            <button onClick={onDone} style={{
+              width: '100%', background: 'linear-gradient(135deg, ' + subjectColor + ', #F5B700)',
+              border: 'none', borderRadius: 15, padding: '16px',
+              fontFamily: "'Space Grotesk', sans-serif", fontWeight: 850, fontSize: '.98rem',
+              color: '#070500', cursor: 'pointer', boxShadow: '0 10px 30px ' + subjectColor + '33',
+            }}>Start learning →</button>
+          ) : (
+            <div style={{ height: 4, background: '#1E2A40', borderRadius: 99, overflow: 'hidden' }}>
+              <div style={{
+                height: '100%', width: ((visibleGoals / Math.max(1, goals.length)) * 100) + '%',
+                background: subjectColor, borderRadius: 99,
+                transition: 'width .45s ease', boxShadow: '0 0 10px ' + subjectColor,
+              }} />
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div style={{
@@ -1660,8 +1822,6 @@ function IntroScreen({ module, onDone }) {
       animation: 'fadeIn .4s ease',
     }}>
       <div style={{ maxWidth: 500, margin: '0 auto' }}>
-
-        {/* Header */}
         <div style={{ marginBottom: 28 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
@@ -1681,22 +1841,16 @@ function IntroScreen({ module, onDone }) {
             fontWeight: 800, fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
             color: '#F5F7FB', margin: '0 0 6px', letterSpacing: '-.01em',
           }}>What do you already know?</h2>
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.85rem', color: '#5A6480', margin: 0,
-          }}>No notes. No pressure. Just activate your brain.</p>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#5A6480', margin: 0 }}>No notes. No pressure. Just activate your brain.</p>
         </div>
 
-        {/* Retrieval question */}
         <div style={{
           background: 'linear-gradient(145deg, #10182B, #0D1424)',
-          border: '1px solid #1E2A40',
-          borderRadius: 16, padding: '18px', marginBottom: 12,
+          border: '1px solid #1E2A40', borderRadius: 16, padding: '18px', marginBottom: 12,
           boxShadow: '0 4px 24px rgba(0,0,0,.3)',
         }}>
           <p style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 600, fontSize: '1rem',
+            fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '1rem',
             color: '#F5F7FB', margin: 0, lineHeight: 1.45,
           }}>{intro.retrieval.question}</p>
         </div>
@@ -1709,28 +1863,20 @@ function IntroScreen({ module, onDone }) {
               else if (i === answered) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
             }
             return (
-              <button key={i} onClick={() => choose(i)}
-                disabled={answered !== null}
-                style={{
-                  background: bg, border: '1.5px solid ' + border,
-                  borderRadius: 13, padding: '14px 16px',
-                  cursor: answered !== null ? 'default' : 'pointer',
-                  textAlign: 'left', fontFamily: "'Inter', sans-serif",
-                  fontWeight: 500, fontSize: '.93rem', color,
-                  transition: 'all .2s',
-                  display: 'flex', alignItems: 'center', gap: 10,
-                  animation: shakeIdx === i ? 'shake .35s ease' : 'none',
-                }}>
-                <span style={{ opacity: .4, flexShrink: 0, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.8rem' }}>
-                  {String.fromCharCode(65 + i)}
-                </span>
+              <button key={i} onClick={() => choose(i)} disabled={answered !== null} style={{
+                background: bg, border: '1.5px solid ' + border, borderRadius: 13, padding: '14px 16px',
+                cursor: answered !== null ? 'default' : 'pointer', textAlign: 'left', fontFamily: "'Inter', sans-serif",
+                fontWeight: 500, fontSize: '.93rem', color, transition: 'all .2s',
+                display: 'flex', alignItems: 'center', gap: 10,
+                animation: shakeIdx === i ? 'shake .35s ease' : 'none',
+              }}>
+                <span style={{ opacity: .4, flexShrink: 0, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.8rem' }}>{String.fromCharCode(65 + i)}</span>
                 {opt}
               </button>
             )
           })}
         </div>
 
-        {/* Feedback */}
         {answered !== null && (
           <div style={{ animation: 'fadeIn .3s ease', marginBottom: 24 }}>
             <div style={{
@@ -1739,68 +1885,15 @@ function IntroScreen({ module, onDone }) {
               borderRadius: 13, padding: '14px 16px', marginBottom: 20,
             }}>
               <p style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '.88rem', color: correct ? '#4DFF88' : '#FF8DA1',
-                margin: 0, lineHeight: 1.55,
-              }}>
-                <strong>{correct ? '✓ Correct. ' : '✗ Nope — '}</strong>
-                {intro.retrieval.explanation}
-              </p>
+                fontFamily: "'Inter', sans-serif", fontSize: '.88rem',
+                color: correct ? '#4DFF88' : '#FF8DA1', margin: 0, lineHeight: 1.55,
+              }}><strong>{correct ? '✓ Correct. ' : '✗ Nope — '}</strong>{intro.retrieval.explanation}</p>
             </div>
-
-            {/* Learning goals */}
-            <div style={{
-              background: 'linear-gradient(145deg, #10182B, #0D1424)',
-              border: '1px solid #1E2A40',
-              borderRadius: 18, padding: '18px 20px', marginBottom: 20,
-            }}>
-              <div style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '.63rem', fontWeight: 700,
-                letterSpacing: '.12em', textTransform: 'uppercase',
-                color: subjectColor, marginBottom: 14,
-                display: 'flex', alignItems: 'center', gap: 6,
-              }}>🎯 This module — you'll be able to</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {intro.learningGoals?.map((goal, i) => (
-                  <div key={i} style={{
-                    display: 'flex', alignItems: 'flex-start', gap: 10,
-                    animation: 'fadeIn .45s ease ' + (i * 0.18) + 's both',
-                  }}>
-                    <div style={{
-                      width: 22, height: 22, borderRadius: 6, flexShrink: 0,
-                      background: subjectColor + '20',
-                      border: '1px solid ' + subjectColor + '40',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '.7rem', color: subjectColor, fontWeight: 700,
-                      marginTop: 1,
-                    }}>{i + 1}</div>
-                    <p style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontSize: '.88rem', color: '#C8D0E8',
-                      margin: 0, lineHeight: 1.5,
-                    }}>{goal}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <button onClick={onDone} style={{
-              width: '100%',
-              background: 'linear-gradient(135deg, ' + subjectColor + 'cc, ' + subjectColor + ')',
-              border: 'none', borderRadius: 16, padding: '16px',
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 800, fontSize: '1rem', color: '#001A0A',
-              cursor: 'pointer',
-              boxShadow: '0 6px 24px ' + subjectColor + '44',
-            }}>Start learning →</button>
           </div>
         )}
+
+        <style>{'@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} } @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }'}</style>
       </div>
-      <style>{`
-        @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
-      `}</style>
     </div>
   )
 }

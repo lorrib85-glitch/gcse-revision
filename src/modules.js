@@ -713,6 +713,8 @@ export const MODULES = [
       {
         label: 'Formal Curriculum',
         kicker: 'Official Lessons',
+        headerImage: 'Teacher writing equations. Exercise books open. Soft classroom lighting.',
+        visualTone: 'school',
         heading: 'The formal curriculum',
         sub: 'Teacher writing equations. Exercise books open. Soft classroom lighting.',
         blocks: [
@@ -729,6 +731,8 @@ export const MODULES = [
       {
         label: 'Hidden Curriculum',
         kicker: 'Unofficial Lessons',
+        headerImage: 'Students walking silently through a corridor. Teacher supervising. Low warm institutional lighting.',
+        visualTone: 'school',
         heading: 'The hidden curriculum',
         sub: 'Students walking silently through corridor. Teacher supervising.',
         blocks: [
@@ -751,6 +755,8 @@ export const MODULES = [
       {
         label: 'Socialisation',
         kicker: 'Assembly Hall',
+        headerImage: 'Assembly hall. Rows of silent students under fluorescent light.',
+        visualTone: 'school',
         heading: 'Schools shape people',
         sub: 'Assembly hall. Rows of silent students.',
         blocks: [
@@ -770,6 +776,8 @@ export const MODULES = [
       {
         label: 'Functionalists',
         kicker: 'Social Order',
+        headerImage: 'Assembly hall. School crest. Students in orderly rows. Warm gold lighting.',
+        visualTone: 'school',
         heading: 'Functionalists: “Schools help society run smoothly.”',
         sub: 'Assembly hall. School crest. Students in orderly rows.',
         blocks: [
@@ -785,6 +793,8 @@ export const MODULES = [
       {
         label: 'Meritocracy',
         kicker: 'Exam Hall',
+        headerImage: 'Exam hall. Rows of desks. Clock ticking.',
+        visualTone: 'school',
         heading: 'Is school fair?',
         sub: 'Rows of desks. Clock ticking.',
         blocks: [
@@ -853,6 +863,8 @@ export const MODULES = [
       {
         label: 'Final Boss',
         kicker: 'Corridor Silence',
+        headerImage: 'Dark cinematic corridor. Bell echoing faintly. Rows of desks fading into darkness.',
+        visualTone: 'school',
         heading: 'Final boss: What are schools really teaching?',
         sub: 'Bell echoing faintly. Rows of desks fading into darkness.',
         blocks: [
