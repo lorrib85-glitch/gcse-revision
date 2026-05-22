@@ -2140,6 +2140,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
   const testStreak = testProgress.streak || 0
   const testStreakDots = Array.from({ length: 7 }, (_, i) => i < Math.min(7, testStreak))
   const isQuickFire = mode === 'quickfire'
+  const isExamMode = mode === 'exam'
   const QUICK_FIRE_SECONDS = 90
   const [quickFireTimeLeft, setQuickFireTimeLeft] = useState(QUICK_FIRE_SECONDS)
   const [quickFireActive, setQuickFireActive] = useState(false)
@@ -2147,6 +2148,17 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
   const [quickFireStats, setQuickFireStats] = useState(() => emptyQuickFireStats())
   const [quickFireQuestionSet, setQuickFireQuestionSet] = useState(QUICK_FIRE_QUESTIONS)
   const [quickFireSummary, setQuickFireSummary] = useState(null)
+  const EXAM_SECONDS = 10 * 60
+  const [examPhase, setExamPhase] = useState('landing')
+  const [examCountdown, setExamCountdown] = useState(3)
+  const [examConfig, setExamConfig] = useState(null)
+  const [examQuestions, setExamQuestions] = useState([])
+  const [examIdx, setExamIdx] = useState(0)
+  const [examTimeLeft, setExamTimeLeft] = useState(EXAM_SECONDS)
+  const [examAnswer, setExamAnswer] = useState('')
+  const [examFeedback, setExamFeedback] = useState(null)
+  const [examGrading, setExamGrading] = useState(false)
+  const [examStats, setExamStats] = useState({ correct: 0, answered: 0, bySubject: {} })
 
   useEffect(() => {
     if (!isQuickFire || !selected || !quickFireActive) return undefined
@@ -2164,10 +2176,327 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     finishQuickFireRound('time')
   }, [isQuickFire, selected, quickFireActive, quickFireTimeLeft])
 
+  useEffect(() => {
+    if (!isExamMode || examPhase !== 'countdown') return undefined
+    const timer = setInterval(() => {
+      setExamCountdown(value => {
+        if (value === 'GO') {
+          clearInterval(timer)
+          setExamPhase('round')
+          return 'GO'
+        }
+        if (value === 1) return 'GO'
+        return value - 1
+      })
+    }, 900)
+    return () => clearInterval(timer)
+  }, [isExamMode, examPhase])
+
+  useEffect(() => {
+    if (!isExamMode || examPhase !== 'round') return undefined
+    const timer = setInterval(() => {
+      setExamTimeLeft(value => {
+        if (value <= 1) {
+          clearInterval(timer)
+          setExamPhase('summary')
+          return 0
+        }
+        return value - 1
+      })
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [isExamMode, examPhase])
+
   const quickFirePct = Math.max(0, Math.min(100, (quickFireTimeLeft / QUICK_FIRE_SECONDS) * 100))
   const quickFireTime = Math.floor(quickFireTimeLeft / 60) + ':' + String(quickFireTimeLeft % 60).padStart(2, '0')
+  const examTime = Math.floor(examTimeLeft / 60) + ':' + String(examTimeLeft % 60).padStart(2, '0')
+
+
+  function getExamScoreMemory() {
+    let scores = []
+    try { scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]') } catch {}
+    const subjects = {}
+    scores.forEach(score => {
+      if (!subjects[score.subject]) subjects[score.subject] = []
+      subjects[score.subject].push(score.pct)
+    })
+    return Object.fromEntries(Object.entries(subjects).map(([subject, vals]) => [
+      subject,
+      Math.round(vals.slice(0, 12).reduce((sum, value) => sum + value, 0) / Math.max(1, vals.slice(0, 12).length)),
+    ]))
+  }
+
+  function normaliseExamQuestion(question, subject, topicLabel, topicId) {
+    const options = question.options || null
+    return {
+      id: question.id || question.q || Math.random().toString(36),
+      subject,
+      topicLabel: question.topicLabel || topicLabel || subject,
+      topicId: question.topicId || topicId || subject.toLowerCase(),
+      q: question.q,
+      extract: question.extract,
+      marks: question.marks || 1,
+      ms: question.ms || 'Award marks fairly for a correct answer.',
+      type: question.type || (options ? 'mc' : 'written'),
+      options,
+      correctIndex: question.correctIndex ?? question.correct,
+      fig: question.fig,
+      imageKey: question.imageKey,
+      skillTip: question.skillTip,
+    }
+  }
+
+  function allExamQuestions() {
+    const fromTestTopics = TEST_TOPICS.flatMap(group => group.topics.flatMap(topic => (
+      PAST_PAPER_QS[topic.id] || []
+    ).map(question => normaliseExamQuestion(question, group.subject, topic.label, topic.id))))
+    return [
+      ...fromTestTopics,
+      ...ALL_MATHS_QUESTIONS.map(q => normaliseExamQuestion(q, 'Maths', q.topicLabel, q.topicId)),
+      ...ALL_ENGLISH_QUESTIONS.map(q => normaliseExamQuestion(q, 'English', q.topicLabel, q.topicId)),
+      ...ALL_SOCIOLOGY_QUESTIONS.map(q => normaliseExamQuestion(q, 'Sociology', q.topicLabel, q.topicId)),
+      ...ALL_CHEMISTRY_QUESTIONS.map(q => normaliseExamQuestion(q, 'Chemistry', q.topicLabel, q.topicId)),
+    ].filter(question => question.q)
+  }
+
+  function adaptiveExamQuestions(subject = 'Random') {
+    const memory = getExamScoreMemory()
+    const base = allExamQuestions().filter(q => subject === 'Random' || q.subject === subject)
+    const shuffled = shuffle(base)
+    const scored = shuffled.map(question => {
+      const avg = memory[question.subject]
+      const weakness = avg === undefined ? 1 : Math.max(0, 75 - avg) / 10
+      const strength = avg === undefined ? 1 : Math.max(0, avg - 70) / 10
+      return { question, avg, weakness, strength }
+    })
+    const weak = scored.filter(item => item.avg === undefined || item.avg < 70).sort((a, b) => b.weakness - a.weakness).map(item => item.question)
+    const strong = scored.filter(item => item.avg >= 70).sort((a, b) => b.strength - a.strength).map(item => item.question)
+    const mixed = [...weak.slice(0, 6), ...strong.slice(0, 4)]
+    const used = new Set(mixed.map(q => q.id))
+    const fill = shuffled.filter(q => !used.has(q.id)).slice(0, 10 - mixed.length)
+    return shuffle([...mixed, ...fill]).slice(0, 10)
+  }
+
+  function resetExamQuestion() {
+    setExamAnswer('')
+    setExamFeedback(null)
+    setExamGrading(false)
+    setError(null)
+  }
+
+  function startExamRound(subject = 'Random') {
+    const questions = adaptiveExamQuestions(subject)
+    setExamConfig({ subject, title: subject === 'Random' ? 'Random Exam Challenge' : subject + ' Exam Sprint' })
+    setExamQuestions(questions)
+    setExamIdx(0)
+    setExamTimeLeft(EXAM_SECONDS)
+    setExamCountdown(3)
+    setExamStats({ correct: 0, answered: 0, bySubject: {} })
+    resetExamQuestion()
+    setExamPhase('countdown')
+  }
+
+  function addExamResult(question, earned, possible) {
+    const correct = earned >= possible
+    setExamStats(stats => {
+      const current = stats.bySubject[question.subject] || { answered: 0, correct: 0 }
+      return {
+        answered: stats.answered + 1,
+        correct: stats.correct + (correct ? 1 : 0),
+        bySubject: {
+          ...stats.bySubject,
+          [question.subject]: {
+            answered: current.answered + 1,
+            correct: current.correct + (correct ? 1 : 0),
+          },
+        },
+      }
+    })
+    recordScore({ subject: question.subject, earned, possible, source: 'exam' })
+  }
+
+  async function checkExamAnswer(question) {
+    if (!question) return
+    if (question.type === 'mc') {
+      if (examAnswer === '') { setError('Pick an answer first.'); return }
+      const picked = Number(examAnswer)
+      const isCorrect = picked === question.correctIndex
+      addExamResult(question, isCorrect ? question.marks : 0, question.marks)
+      setExamFeedback({
+        grade: isCorrect ? 'Excellent' : 'Needs Work',
+        summary: isCorrect ? 'Correct.' : 'Not this time.',
+        examinerTip: question.ms,
+      })
+      return
+    }
+    if (examAnswer.trim().length < 3) { setError('Write a little before submitting.'); return }
+    setExamGrading(true)
+    setError(null)
+    try {
+      const result = await gradeWithAI(question.q, examAnswer, question.marks, question.ms)
+      const earned = result.marksAwarded ?? 0
+      addExamResult(question, earned, result.marksAvailable || question.marks)
+      setExamFeedback(result)
+    } catch {
+      setError('Could not mark right now. Try again in a moment.')
+    } finally {
+      setExamGrading(false)
+    }
+  }
+
+  function nextExamQuestion() {
+    if (examIdx < examQuestions.length - 1) {
+      setExamIdx(i => i + 1)
+      resetExamQuestion()
+    } else {
+      setExamPhase('summary')
+    }
+  }
+
 
   function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
+
+
+  if (isExamMode) {
+    const examSubjects = [
+      { label: 'Sociology', icon: '👥', color: '#9D5CFF', done: 7, total: 10, subject: 'Sociology' },
+      { label: 'History', icon: '🏰', color: '#F97316', done: 6, total: 12, subject: 'History' },
+      { label: 'Science', icon: '⚗️', color: '#38D27A', done: 5, total: 11, subject: 'Biology' },
+      { label: 'Maths', icon: '✕²', color: '#3B82FF', done: 4, total: 10, subject: 'Maths' },
+      { label: 'English', icon: '📖', color: '#9D5CFF', done: 8, total: 14, subject: 'English' },
+      { label: 'Chemistry', icon: '⚗️', color: '#38D27A', done: 3, total: 9, subject: 'Chemistry' },
+    ]
+    const currentExamQuestion = examQuestions[examIdx]
+    const examAccuracy = examStats.answered ? Math.round((examStats.correct / examStats.answered) * 100) : 0
+
+    if (examPhase === 'countdown') {
+      return (
+        <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 20%, rgba(157,92,255,.2), transparent 38%), #050817', display:'flex', alignItems:'center', justifyContent:'center', color:'#F5F7FB', padding:24 }}>
+          <div style={{ textAlign:'center' }}>
+            <div style={{ fontFamily:"'Inter',sans-serif", color:'#AAB4D4', fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:20 }}>{examConfig?.title || 'Exam Mode'}</div>
+            <div key={examCountdown} style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize: examCountdown === 'GO' ? '5rem' : '7rem', fontWeight:950, color: examCountdown === 'GO' ? '#38F27B' : '#C18CFF', textShadow:'0 0 42px rgba(157,92,255,.72)', animation:'examPop .85s ease both' }}>{examCountdown}</div>
+            <div style={{ color:'#7C8DB0', marginTop:18, fontFamily:"'Inter',sans-serif" }}>Breathe. Read the command word first.</div>
+            <style>{'@keyframes examPop { 0%{opacity:0;transform:scale(.72)} 45%{opacity:1;transform:scale(1.08)} 100%{opacity:1;transform:scale(1)} }'}</style>
+          </div>
+        </div>
+      )
+    }
+
+    if (examPhase === 'round' && currentExamQuestion) {
+      const isMC = currentExamQuestion.type === 'mc'
+      return (
+        <div style={{ minHeight:'100vh', background:'#050817', color:'#F5F7FB', padding:'16px 16px 110px' }}>
+          <div style={{ maxWidth:660, margin:'0 auto' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:14 }}>
+              <button onClick={() => setExamPhase('summary')} style={{ width:40, height:40, borderRadius:'50%', border:'1px solid rgba(80,97,140,.45)', background:'rgba(12,18,38,.9)', color:'#DCE5FA', fontSize:'1.2rem', cursor:'pointer' }}>‹</button>
+              <div style={{ flex:1 }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:850, fontSize:'1.05rem' }}>{examConfig?.title}</div>
+                <div style={{ color:'#7C8DB0', fontSize:'.76rem' }}>Question {examIdx + 1} / {examQuestions.length} · {currentExamQuestion.subject} · {currentExamQuestion.topicLabel}</div>
+              </div>
+              <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.14)' : 'rgba(157,92,255,.14)', border:'1px solid ' + (examTimeLeft < 60 ? 'rgba(255,93,115,.4)' : 'rgba(157,92,255,.35)'), borderRadius:999, color:examTimeLeft < 60 ? '#FF5D73' : '#C18CFF', fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, padding:'7px 11px', minWidth:64, textAlign:'center' }}>{examTime}</div>
+            </div>
+            <div style={{ height:5, background:'#151D33', borderRadius:99, overflow:'hidden', marginBottom:18 }}>
+              <div style={{ width: ((examIdx + 1) / Math.max(1, examQuestions.length)) * 100 + '%', height:'100%', background:'linear-gradient(90deg,#7C3AED,#9D5CFF)', borderRadius:99 }} />
+            </div>
+
+            {currentExamQuestion.extract && <div style={{ whiteSpace:'pre-wrap', background:'#0D1424', border:'1px solid #1E2A40', borderRadius:14, padding:14, color:'#AAB4D4', fontSize:'.82rem', lineHeight:1.55, marginBottom:14 }}>{currentExamQuestion.extract}</div>}
+            {currentExamQuestion.fig && FIGURES[currentExamQuestion.fig] && <div style={{ background:'#0D1424', border:'1px solid #1E2A40', borderRadius:14, padding:12, marginBottom:14, textAlign:'center' }}><img src={FIGURES[currentExamQuestion.fig]} alt="Exam figure" style={{ maxWidth:'100%', borderRadius:10 }} /></div>}
+            {currentExamQuestion.imageKey && <ChemImage imageKey={currentExamQuestion.imageKey} />}
+
+            <div style={{ background:'linear-gradient(145deg,#10182B,#0D1424)', border:'1px solid #2A3552', borderRadius:18, padding:18, marginBottom:14 }}>
+              <div style={{ display:'inline-flex', background:'rgba(245,183,0,.1)', border:'1px solid rgba(245,183,0,.24)', borderRadius:999, color:'#F5B700', fontWeight:850, fontSize:'.7rem', padding:'4px 10px', marginBottom:12 }}>[{currentExamQuestion.marks} mark{currentExamQuestion.marks !== 1 ? 's' : ''}]</div>
+              <div style={{ whiteSpace:'pre-wrap', fontFamily:"'Space Grotesk',sans-serif", fontWeight:750, fontSize:'1.05rem', lineHeight:1.45 }}>{currentExamQuestion.q}</div>
+            </div>
+
+            {isMC ? (
+              <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:14 }}>
+                {currentExamQuestion.options.map((option, index) => {
+                  const selectedOption = String(index) === examAnswer
+                  const marked = Boolean(examFeedback)
+                  const correct = index === currentExamQuestion.correctIndex
+                  return <button key={index} onClick={() => !marked && setExamAnswer(String(index))} style={{ background: marked ? (correct ? 'rgba(77,255,136,.1)' : selectedOption ? 'rgba(255,93,115,.1)' : '#10182B') : selectedOption ? 'rgba(157,92,255,.14)' : '#10182B', border:'1.5px solid ' + (marked ? (correct ? 'rgba(77,255,136,.45)' : selectedOption ? 'rgba(255,93,115,.4)' : '#2A3552') : selectedOption ? 'rgba(157,92,255,.45)' : '#2A3552'), borderRadius:13, padding:'13px 14px', color:'#DCE5FA', textAlign:'left', cursor:marked?'default':'pointer', fontWeight:650 }}>{option}</button>
+                })}
+              </div>
+            ) : (
+              <textarea value={examAnswer} onChange={e => setExamAnswer(e.target.value)} disabled={Boolean(examFeedback)} placeholder="Write your answer..." style={{ width:'100%', minHeight:150, background:'#10182B', border:'1px solid #2A3552', borderRadius:14, padding:14, color:'#F5F7FB', marginBottom:14 }} />
+            )}
+
+            {error && <div style={{ color:'#FF5D73', marginBottom:12, fontWeight:700 }}>{error}</div>}
+            {examFeedback && <div style={{ background: examFeedback.grade === 'Needs Work' ? 'rgba(255,93,115,.08)' : 'rgba(77,255,136,.08)', border:'1px solid ' + (examFeedback.grade === 'Needs Work' ? 'rgba(255,93,115,.3)' : 'rgba(77,255,136,.3)'), borderRadius:14, padding:14, marginBottom:14 }}><div style={{ fontWeight:850, color: examFeedback.grade === 'Needs Work' ? '#FF5D73' : '#4DFF88', marginBottom:5 }}>{examFeedback.grade || 'Marked'}</div><div style={{ color:'#C8D0E8', lineHeight:1.5 }}>{examFeedback.summary || examFeedback.examinerTip}</div>{examFeedback.examinerTip && <div style={{ color:'#AAB4D4', fontSize:'.84rem', marginTop:8 }}>{examFeedback.examinerTip}</div>}</div>}
+
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <button onClick={() => setExamPhase('summary')} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:13, padding:14, color:'#9CA8C7', fontWeight:800, cursor:'pointer' }}>End exam</button>
+              {examFeedback ? <button onClick={nextExamQuestion} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:13, padding:14, color:'#fff', fontWeight:900, cursor:'pointer' }}>{examIdx < examQuestions.length - 1 ? 'Next →' : 'Finish ✓'}</button> : <button onClick={() => checkExamAnswer(currentExamQuestion)} disabled={examGrading} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:13, padding:14, color:'#fff', fontWeight:900, cursor:examGrading?'default':'pointer', opacity:examGrading?.7:1 }}>{examGrading ? 'Marking…' : 'Submit answer'}</button>}
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    if (examPhase === 'summary') {
+      return (
+        <div style={{ minHeight:'100vh', background:'#050817', color:'#F5F7FB', padding:'28px 20px 120px' }}>
+          <div style={{ maxWidth:520, margin:'0 auto', textAlign:'center' }}>
+            <div style={{ width:150, height:150, borderRadius:'50%', margin:'0 auto 22px', background:'conic-gradient(#38F27B ' + examAccuracy + '%, #172845 0)', display:'grid', placeItems:'center' }}><div style={{ width:122, height:122, borderRadius:'50%', background:'#071126', display:'grid', placeItems:'center' }}><div><div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.4rem', fontWeight:950 }}>{examAccuracy}%</div><div style={{ color:'#AAB4D4', fontWeight:800 }}>{examStats.correct}/{examStats.answered || 0}</div></div></div></div>
+            <h1 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2rem', margin:'0 0 8px' }}>Exam round complete</h1>
+            <p style={{ color:'#AAB4D4', margin:'0 0 22px' }}>Adaptive questions mixed stronger areas with weak zones.</p>
+            <div style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:18, padding:18, marginBottom:20, textAlign:'left' }}>
+              {Object.entries(examStats.bySubject).map(([subject, stats]) => <div key={subject} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'9px 0', borderBottom:'1px solid rgba(255,255,255,.06)' }}><span>{subject}</span><strong>{stats.correct}/{stats.answered}</strong></div>)}
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <button onClick={() => setExamPhase('landing')} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:13, padding:14, color:'#9CA8C7', fontWeight:800, cursor:'pointer' }}>Back</button>
+              <button onClick={() => startExamRound(examConfig?.subject || 'Random')} style={{ background:'linear-gradient(135deg,#38F27B,#2DD4A3)', border:'none', borderRadius:13, padding:14, color:'#03140B', fontWeight:950, cursor:'pointer' }}>Try again</button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div style={{ background:'#050817', minHeight:'100vh', color:'#F5F7FB', padding:'28px 16px 118px' }}>
+        <div style={{ maxWidth:660, margin:'0 auto' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:28 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+              <div style={{ width:74, height:74, borderRadius:'50%', background:'radial-gradient(circle at 45% 32%, rgba(157,92,255,.8), rgba(10,12,31,.78) 46%, #050817 72%)', border:'1px solid rgba(157,92,255,.72)', boxShadow:'0 0 22px rgba(157,92,255,.45)', display:'grid', placeItems:'center', fontSize:'1.8rem' }}>🎯</div>
+              <div><h1 style={{ margin:0, fontFamily:"'Space Grotesk',sans-serif", fontSize:'2rem', lineHeight:1 }}>Exam Mode</h1><div style={{ color:'#AAB4D4', fontSize:'1rem', marginTop:4 }}>Ready? 🎯</div></div>
+            </div>
+            <div style={{ display:'flex', alignItems:'center', gap:8, background:'rgba(10,14,31,.94)', border:'1px solid rgba(80,97,140,.45)', borderRadius:999, padding:'11px 17px', color:'#F5F7FB' }}><span>🔥</span><span>{testStreak || 8} day streak</span></div>
+          </div>
+
+          <div style={{ border:'1px solid rgba(80,97,140,.45)', borderRadius:22, padding:22, marginBottom:24, background:'radial-gradient(circle at 76% 34%, rgba(157,92,255,.36), transparent 28%), linear-gradient(145deg,#0C1224,#070B18)', boxShadow:'0 18px 46px rgba(0,0,0,.36)' }}>
+            <div style={{ display:'inline-flex', gap:7, alignItems:'center', background:'rgba(157,92,255,.18)', borderRadius:999, padding:'6px 12px', color:'#C18CFF', fontWeight:900, fontSize:'.72rem', letterSpacing:'.08em', marginBottom:18 }}>★ RECOMMENDED</div>
+            <h2 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'1.8rem', margin:'0 0 12px' }}>Random Exam Challenge ⚡</h2>
+            <div style={{ display:'flex', gap:16, flexWrap:'wrap', color:'#DCE5FA', marginBottom:18 }}><span>❔ 10 questions</span><span>⤨ Mixed topics</span><span>▥ Adaptive</span></div>
+            <p style={{ color:'#AAB4D4', lineHeight:1.5, maxWidth:360 }}>Maths. Then Macbeth. Then biology.<br /><span style={{ color:'#C94DFF' }}>You never know what’s coming.</span></p>
+            <div style={{ display:'grid', gridTemplateColumns:'1.2fr 1fr', gap:14, marginTop:22 }}>
+              <button onClick={() => startExamRound('Random')} style={{ background:'linear-gradient(135deg,#6D28D9,#8B5CF6)', border:'none', borderRadius:14, padding:'18px', color:'#fff', fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:'1rem', cursor:'pointer' }}>⤨ Start Random</button>
+              <button style={{ background:'rgba(8,12,26,.72)', border:'1px solid rgba(80,97,140,.4)', borderRadius:14, padding:'18px', color:'#F5F7FB', fontWeight:800 }}>🔥 2x streak ›</button>
+            </div>
+          </div>
+
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}><div style={{ color:'#AAB4D4', fontWeight:900, letterSpacing:'.12em' }}>QUICK FOCUS</div><button style={{ background:'transparent', border:'none', color:'#C94DFF', fontWeight:900 }}>See all ›</button></div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginBottom:22 }}>
+            {[['🎯','Weak Zones'],['⊗','Last Mistakes'],['🔮','Predicted Paper']].map(([icon,label]) => <button key={label} onClick={() => startExamRound('Random')} style={{ background:'#0D1424', border:'1px solid #2A3552', borderRadius:999, color:'#F5F7FB', padding:'14px 10px', fontWeight:800, cursor:'pointer' }}>{icon} {label}</button>)}
+          </div>
+
+          <div style={{ color:'#AAB4D4', fontWeight:900, letterSpacing:'.12em', marginBottom:12 }}>CHOOSE A SUBJECT</div>
+          <div style={{ border:'1px solid #2A3552', borderRadius:18, overflow:'hidden', marginBottom:22 }}>
+            {examSubjects.slice(0,3).map(subject => {
+              const pct = Math.round((subject.done / subject.total) * 100)
+              return <button key={subject.label} onClick={() => startExamRound(subject.subject)} style={{ width:'100%', background:'#0D1424', border:'none', borderBottom:'1px solid rgba(255,255,255,.06)', padding:'13px 16px', display:'grid', gridTemplateColumns:'56px 1fr 28px', alignItems:'center', gap:10, textAlign:'left', cursor:'pointer' }}>
+                <div style={{ color:subject.color, fontSize:'2rem' }}>{subject.icon}</div>
+                <div><div style={{ color:'#F5F7FB', fontWeight:850 }}>{subject.label}</div><div style={{ color:subject.color, fontSize:'.82rem', fontWeight:800 }}>{subject.done}/{subject.total} modules</div><div style={{ height:7, background:'rgba(255,255,255,.12)', borderRadius:99, overflow:'hidden', marginTop:7 }}><div style={{ width:pct+'%', background:subject.color, height:'100%', borderRadius:99 }} /></div></div>
+                <div style={{ color:'#AAB4D4', fontSize:'1.7rem' }}>›</div>
+              </button>
+            })}
+          </div>
+
+          <div style={{ color:'#AAB4D4', fontWeight:900, letterSpacing:'.12em', marginBottom:12 }}>REAL EXAM PAPERS</div>
+          <button onClick={() => startExamRound('Random')} style={{ width:'100%', background:'#0D1424', border:'1px solid #2A3552', borderRadius:16, padding:'17px 18px', display:'flex', alignItems:'center', gap:16, color:'#F5F7FB', textAlign:'left', cursor:'pointer' }}><span style={{ color:'#C94DFF', fontSize:'2rem' }}>▤</span><span style={{ flex:1 }}><strong>Real Exam Papers</strong><br /><span style={{ color:'#AAB4D4' }}>AQA & Edexcel timed papers</span></span><span style={{ fontSize:'1.6rem', color:'#AAB4D4' }}>›</span></button>
+        </div>
+      </div>
+    )
+  }
 
   if (mathsOpen)   return <MathsBrowser   onBack={() => setMathsOpen(false)} />
   if (englishOpen)   return <EnglishBrowser   onBack={() => setEnglishOpen(false)} />
