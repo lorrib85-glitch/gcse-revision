@@ -911,6 +911,7 @@ export const MODULES = [
         heading: 'The family has its own vocabulary',
         sub: 'The exam rewards precision.',
         blocks: [
+          { type: 'read', label: 'Core idea', text: 'Families is not just “mum, dad and kids”. Sociology looks at family types, roles, power, socialisation and inequality inside private life.' },
           { type: 'flashcards', cards: [
             { front: 'Double shift', back: 'Women doing paid work and most domestic labour.' },
             { front: 'Canalization', back: 'Parents channel children towards gender-appropriate toys, games and activities.' },
@@ -924,24 +925,71 @@ export const MODULES = [
             { text: 'Cohabitation', correct: false },
             { text: 'Canalization', correct: false },
           ], explanation: 'Double shift is the precise sociological term.' },
-          { type: 'quiz', question: 'What term describes partners living together without being married?', options: [
-            { text: 'Cohabitation', correct: true },
-            { text: 'Commune', correct: false },
-            { text: 'Conjugal roles', correct: false },
-            { text: 'Kinship', correct: false },
-          ], explanation: 'Cohabitation means living together as partners without marriage or civil partnership.' },
+          { type: 'quiz', question: 'What term describes parents steering children towards gender-appropriate toys and activities?', options: [
+            { text: 'Canalization', correct: true },
+            { text: 'Discrimination', correct: false },
+            { text: 'Idealisation', correct: false },
+            { text: 'Intergenerational', correct: false },
+          ], explanation: 'Canalization is gender socialisation through toys, games and activities.' },
         ]
       },
       {
-        label: 'Family Diversity',
-        kicker: 'Describe Questions',
+        label: 'Family Types',
+        kicker: 'Diversity',
         heading: 'Not every family looks the same',
         sub: 'GCSE Sociology expects examples, not vague labels.',
         blocks: [
           { type: 'read', label: 'Commune', text: 'A commune is a group of people who share ownership of property and the division of labour. Examples include an Israeli kibbutz, Christiania in Copenhagen, the Bruderhof community, or Findhorn ecovillage.' },
-          { type: 'read', label: 'Divorce consequences', text: 'Consequences can be financial, emotional, linked to co-parenting, or involve adjusting to step-families and new relationships.' },
-          { type: 'read', label: 'Grandparents', text: 'Grandparents may provide childcare, economic support, emotional support, moral support, and pass on cultural traditions.' },
+          { type: 'read', label: 'Cohabitation', text: 'Cohabitation means partners living together without being married or in a civil partnership. It is one example of changing family patterns.' },
+          { type: 'read', label: 'Kinship', text: 'Kinship means social relationships derived from blood ties, marriage, adoption or civil partnerships. It includes wider family bonds beyond the nuclear family.' },
+          { type: 'quiz', question: 'Which is the best description of kinship?', options: [
+            { text: 'Social relationships based on family ties', correct: true },
+            { text: 'A paid job in the family', correct: false },
+            { text: 'A type of school curriculum', correct: false },
+            { text: 'A legal divorce process', correct: false },
+          ], explanation: 'Kinship refers to family-related social ties.' },
+        ]
+      },
+      {
+        label: 'Divorce',
+        kicker: 'Consequences',
+        heading: 'Divorce changes more than a surname',
+        sub: 'Examiners want consequences, not moral judgement.',
+        blocks: [
+          { type: 'read', label: 'Financial', text: 'Divorce can mean dividing property and possessions, or managing with less money coming into the home.' },
+          { type: 'read', label: 'Emotional', text: 'Divorce can be stressful, especially for children, although it may also be a change for the better in some families.' },
+          { type: 'read', label: 'Co-parenting', text: 'Children may live with one parent while keeping regular contact with the other. That can create practical and emotional adjustment.' },
+          { type: 'read', label: 'Re-partnering', text: 'Family members may adjust to step-families, step-parents and step-siblings.' },
+          { type: 'boss', tier: '🟡', question: 'Identify and describe one consequence of divorce for family members. [3 marks]', markPoints: 'Reward coherent description. Accept financial, emotional, co-parenting or re-partnering consequences. Strong answers name the consequence and describe the effect on family members.' },
+        ]
+      },
+      {
+        label: 'Grandparents',
+        kicker: 'Family Contributions',
+        heading: 'Grandparents are part of the structure',
+        sub: 'Sociology notices unpaid support.',
+        blocks: [
+          { type: 'read', label: 'Childcare', text: 'A grandparent may look after young grandchildren so parents can work and avoid private childcare costs.' },
+          { type: 'read', label: 'Economic support', text: 'Grandparents may give or lend money, provide gifts, or help with household costs.' },
+          { type: 'read', label: 'Emotional support', text: 'They may listen, talk and offer advice to family members.' },
+          { type: 'read', label: 'Culture', text: 'They may pass on cultural traditions, values and family history.' },
+          { type: 'quiz', question: 'Which is a valid example of how grandparents contribute to family life?', options: [
+            { text: 'Providing childcare', correct: true },
+            { text: 'Setting school league tables', correct: false },
+            { text: 'Creating the formal curriculum', correct: false },
+            { text: 'Replacing all family roles', correct: false },
+          ], explanation: 'Childcare is a clear example of grandparents contributing to family life.' },
+        ]
+      },
+      {
+        label: 'Exam Practice',
+        kicker: 'Families',
+        heading: 'Say it like a sociologist',
+        sub: 'Short answers need exact terms.',
+        blocks: [
+          { type: 'boss', tier: '🟢', question: 'What is meant by cohabitation? [1 mark]', markPoints: 'Reward: partners living together without being married or in a civil partnership.' },
           { type: 'boss', tier: '🟡', question: 'Describe what sociologists mean by kinship. [3 marks]', markPoints: 'Reward coherent description. Kinship means social relationships derived from blood ties and marriage, including husbands, wives, siblings, aunts, uncles and cousins. Also accept adoption or civil partnerships.' },
+          { type: 'boss', tier: '🟡', question: 'Describe one example of a commune. [3 marks]', markPoints: 'Reward shared ownership/property, shared division of labour, equality/cooperation, and valid examples such as kibbutz, Christiania, Bruderhof or Findhorn.' },
         ]
       },
     ]
@@ -960,12 +1008,13 @@ export const MODULES = [
     screens: [
       {
         label: 'Oakley',
-        kicker: 'Item Skills',
+        kicker: 'Research',
         heading: 'Oakley makes family life less cosy',
         sub: 'The numbers do not sound very symmetrical.',
         blocks: [
-          { type: 'read', label: 'Oakley 1974', text: 'Ann Oakley studied 40 married women with young children. Half were working class and half middle class. She found little evidence of husbands sharing housework. Only 15% had a husband who shared domestic work to a significant level.' },
-          { type: 'keypoint', text: 'A weakness: the sample was small, London-based, dated, and focused only on married couples with young children.' },
+          { type: 'read', label: 'Oakley 1974', text: 'Ann Oakley studied 40 married women with young children. Half were working class and half middle class. All lived in the London area.' },
+          { type: 'read', label: 'Finding', text: 'Oakley found greater equality in domestic tasks among middle-class couples than working-class couples. However, in both social classes, she found little evidence of husbands sharing housework.' },
+          { type: 'keypoint', text: 'Only <strong>15%</strong> had a husband who shared domestic work to a significant level.' },
           { type: 'quiz', question: 'Which is a weakness of Oakley’s research?', options: [
             { text: 'The sample was only 40 women', correct: true },
             { text: 'It studied every family in Britain', correct: false },
@@ -975,30 +1024,75 @@ export const MODULES = [
         ]
       },
       {
-        label: 'Patriarchy',
-        kicker: 'Conventional Family',
+        label: 'Domestic Tasks',
+        kicker: 'Gender Roles',
+        heading: 'Housework is not just housework',
+        sub: 'It can reveal power, norms and patriarchy.',
+        blocks: [
+          { type: 'read', label: 'Possible factors', text: 'Differences in domestic task allocation may be linked to gender socialisation, traditional norms and values, patriarchy, and media stereotypes.' },
+          { type: 'keypoint', text: 'Women may perform more domestic labour because socialisation leads females to assume responsibility for domestic tasks.' },
+          { type: 'examtip', label: 'Application', phrases: ['gender socialisation', 'traditional norms', 'patriarchy', 'domestic labour'], tip: 'For item questions, link the factor directly to the item: Oakley found husbands rarely shared housework significantly.' },
+          { type: 'boss', tier: '🟡', question: 'Identify and explain one factor that may account for differences in the allocation of domestic tasks. [4 marks]', markPoints: 'Reward a relevant factor such as gender socialisation, traditional norms and values, patriarchy or media stereotypes. Strong answers explain how it affects domestic labour and apply it to Oakley’s findings.' },
+        ]
+      },
+      {
+        label: 'Conventional Family',
+        kicker: 'Patriarchy',
         heading: 'The conventional family had a power structure',
         sub: 'Oakley called attention to the inequality inside the “normal” image.',
         blocks: [
-          { type: 'read', label: 'Oakley 1982', text: 'Oakley defined the conventional family as a nuclear family: a married couple and their children living together. Women were expected to do unpaid work inside the home. Men were expected to do paid work outside the home.' },
+          { type: 'read', label: 'Oakley 1982', text: 'Oakley defined the conventional family as a nuclear family: a married couple and their children living together.' },
+          { type: 'read', label: 'Gender roles', text: 'Women were expected to do unpaid work inside the home. Men were expected to do paid work outside the home.' },
           { type: 'keypoint', text: 'The man’s economic power was linked to paid work. The woman’s dependence on the man’s wages was an aspect of inequality.' },
           { type: 'boss', tier: '🟡', question: 'From a feminist perspective, describe one way the conventional family can be patriarchal. [4 marks]', markPoints: 'Reward application to Oakley. Women expected to do unpaid domestic work; men linked to paid work and economic power; women’s dependence on men’s wages creates inequality.' },
         ]
       },
       {
-        label: 'Capitalism',
-        kicker: 'Zaretsky',
+        label: 'Zaretsky',
+        kicker: 'Capitalism',
         heading: 'Families also buy things',
         sub: 'Marxists notice who benefits.',
         blocks: [
           { type: 'read', label: 'Zaretsky 1976', text: 'Zaretsky argued the nuclear family had an economic function that served capitalism. Families act as a key unit of consumption: they buy and consume products from the capitalist economy.' },
           { type: 'read', label: 'Reproduction of class', text: 'Zaretsky also argued the family reproduces social class. Bourgeois families pass down private property. Proletarian families reproduce the labour force.' },
+          { type: 'read', label: 'Unpaid labour', text: 'Women’s unpaid domestic work can benefit capitalism by keeping workers fed, clothed and ready to work without direct cost to employers.' },
           { type: 'quiz', question: 'Which perspective is Zaretsky linked to?', options: [
             { text: 'Marxist', correct: true },
             { text: 'Functionalist', correct: false },
             { text: 'New Right', correct: false },
             { text: 'Interactionist', correct: false },
           ], explanation: 'Zaretsky is used as a Marxist view of the family.' },
+        ]
+      },
+      {
+        label: 'Theory Check',
+        kicker: 'Who Would Agree?',
+        heading: 'Same family. Different theories.',
+        sub: 'The perspective changes what you notice.',
+        blocks: [
+          { type: 'quiz', question: 'Which perspective focuses on patriarchy in the family?', options: [
+            { text: 'Feminism', correct: true },
+            { text: 'Functionalism', correct: false },
+            { text: 'New Right', correct: false },
+            { text: 'Postmodernism only', correct: false },
+          ], explanation: 'Feminists focus on patriarchy and gender inequality.' },
+          { type: 'quiz', question: 'Which perspective argues families can serve capitalism?', options: [
+            { text: 'Marxism', correct: true },
+            { text: 'Functionalism', correct: false },
+            { text: 'Interactionism only', correct: false },
+            { text: 'Ethnomethodology', correct: false },
+          ], explanation: 'Marxists such as Zaretsky argue families can benefit capitalism.' },
+          { type: 'examtip', label: 'Evaluation', phrases: ['who benefits?', 'evidence', 'counter-view', 'judgement'], tip: 'Theory answers improve when you explain who benefits and then compare perspectives.' },
+        ]
+      },
+      {
+        label: 'Practice',
+        kicker: 'Families',
+        heading: 'Apply the evidence',
+        sub: 'Use Oakley and Zaretsky accurately.',
+        blocks: [
+          { type: 'boss', tier: '🟡', question: 'From Item A, examine one weakness of Oakley’s research. [2 marks]', markPoints: 'Reward a weakness and evaluation: small sample of 40, London-based, dated research, married couples only, or subjective measure of significant sharing.' },
+          { type: 'boss', tier: '🟡', question: 'From Item B, identify and describe one way Zaretsky saw the family as benefiting capitalist society. [4 marks]', markPoints: 'Reward key unit of consumption, reproduction of labour force, inheritance/private property, unpaid domestic labour and application to Marxist perspective.' },
         ]
       },
     ]
@@ -1027,16 +1121,78 @@ export const MODULES = [
             { front: 'Mixed methods', back: 'Combines quantitative and qualitative data for a fuller picture.' },
             { front: 'Ethics', back: 'Consent, confidentiality, anonymity and avoidance of harm matter in family research.' },
           ]},
+          { type: 'keypoint', text: 'Researching families means dealing with privacy, trust, sensitive relationships and possible conflict inside the household.' },
+        ]
+      },
+      {
+        label: 'Interviews',
+        kicker: 'Unstructured Interviews',
+        heading: 'Good detail. Messy comparison.',
+        sub: 'A method can be useful and limited at the same time.',
+        blocks: [
+          { type: 'read', label: 'Disadvantage', text: 'Unstructured interviews can produce complex qualitative data, but answers are difficult to compare. Each interview may go in a different direction.' },
+          { type: 'read', label: 'Representativeness', text: 'Because unstructured interviews take time, samples are often small. That can make findings less representative of all one-person households or all families nationally.' },
+          { type: 'boss', tier: '🟡', question: 'Identify and explain one disadvantage of using unstructured interviews to investigate one-person households. [4 marks]', markPoints: 'Reward disadvantages such as comparability, reliability, representativeness, interviewer skills, time or complex data. Apply to one-person households.' },
+        ]
+      },
+      {
+        label: 'Questionnaires',
+        kicker: 'Postal Questionnaires',
+        heading: 'Cheap data has its own problems',
+        sub: 'The envelope might never come back.',
+        blocks: [
+          { type: 'read', label: 'Practical issues', text: 'Postal questionnaires may raise issues of time, cost, accessibility, sample size and response rate.' },
+          { type: 'keypoint', text: 'Low response rate matters because the sample may become too small or biased to represent family role relationships accurately.' },
+          { type: 'boss', tier: '🟡', question: 'Identify one practical issue when using postal questionnaires to investigate role relationships within the family and explain how you would deal with it. [4 marks]', markPoints: 'Reward time, cost, accessibility, sample size or response rate plus a practical solution such as online questionnaires, incentives, pre-paid envelopes or using existing data.' },
+        ]
+      },
+      {
+        label: 'Mixed Methods',
+        kicker: 'Triangulation',
+        heading: 'Numbers plus stories',
+        sub: 'Sometimes one method is not enough.',
+        blocks: [
+          { type: 'read', label: 'Mixed methods', text: 'A mixed methods approach combines quantitative and qualitative data. That can give a fuller picture of conjugal role relationships.' },
+          { type: 'read', label: 'Triangulation', text: 'Triangulation means cross-checking findings from different methods. It can increase confidence in conclusions.' },
+          { type: 'quiz', question: 'What is triangulation?', options: [
+            { text: 'Cross-checking findings using different methods', correct: true },
+            { text: 'Only using one questionnaire', correct: false },
+            { text: 'Ignoring qualitative data', correct: false },
+            { text: 'Studying only one family', correct: false },
+          ], explanation: 'Triangulation means checking findings using more than one method or source.' },
+        ]
+      },
+      {
+        label: 'Ethics',
+        kicker: 'Sensitive Research',
+        heading: 'Families are private',
+        sub: 'Ethics are not an optional extra.',
+        blocks: [
+          { type: 'read', label: 'Informed consent', text: 'Family members should know the purpose of the research and agree to participate.' },
+          { type: 'read', label: 'Confidentiality', text: 'Participants need confidence that personal details and sensitive answers will not be shared in harmful ways.' },
+          { type: 'read', label: 'Anonymity', text: 'Researchers should not reveal participants’ names in published findings.' },
+          { type: 'read', label: 'Avoidance of harm', text: 'Researchers must be sensitive to topics such as conflict, domestic inequality or distress.' },
           { type: 'boss', tier: '🟡', question: 'Identify one ethical issue when investigating relationships within families and explain how you would deal with it. [4 marks]', markPoints: 'Reward ethical issue plus practical handling. Accept informed consent, confidentiality, anonymity or avoidance of harm. Apply to family relationships.' },
         ]
       },
       {
-        label: '12-Mark Arguments',
+        label: '12-Mark Toolkit',
         kicker: 'Discuss How Far',
         heading: '12-mark answers need balance',
         sub: 'Knowledge, application, evaluation. Then judgement.',
         blocks: [
           { type: 'examtip', label: 'Structure', phrases: ['Agree', 'Disagree', 'Evaluate', 'Judgement'], tip: 'For “Discuss how far”, give a balanced argument and then decide. Do not just list theories.' },
+          { type: 'read', label: 'Capitalism question', text: 'Use Marxism and Zaretsky to argue families serve capitalism. Then challenge with Functionalism or Feminism. Finish with a judgement.' },
+          { type: 'read', label: 'Gender roles question', text: 'Use Feminism, Oakley, double shift or triple shift to challenge equality. Then consider the symmetrical family argument and evaluate.' },
+          { type: 'read', label: 'Divorce question', text: 'Law matters, but changing status of women, secularisation and changing attitudes also explain divorce patterns.' },
+        ]
+      },
+      {
+        label: 'Practice',
+        kicker: 'Extended Writing',
+        heading: 'Now build an argument',
+        sub: 'No list answers. Make a judgement.',
+        blocks: [
           { type: 'boss', tier: '🔴', question: 'Discuss how far sociologists would agree that gender roles are equal in families in Britain today. [12 marks]', markPoints: 'Reward Feminist perspectives such as Oakley, double shift/triple shift, domestic division of labour, plus challenge from symmetrical family/Young and Willmott. Reward evaluation and a clear judgement.' },
           { type: 'boss', tier: '🔴', question: 'Discuss how far sociologists would agree that the nuclear family is still considered the norm in Britain today. [12 marks]', markPoints: 'Reward Functionalism/New Right, family diversity, Rapoports, lone parent, same-sex and reconstituted families. Evaluate statistical norm versus cultural ideal. Clear conclusion required.' },
         ]
