@@ -630,6 +630,356 @@ export const MODULES = [
   },
 
 
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // HISTORY — Wider GCSE Modules
+  // ─────────────────────────────────────────────────────────────────────────────
+  {
+    id: 'hist_elizabethan',
+    subject: 'History',
+    number: 6,
+    title: 'Early Elizabethan England',
+    subtitle: 'Power, religion and survival',
+    era: '1558–1588',
+    icon: '👑',
+    color: '#B566FF',
+    colorLight: 'rgba(181,102,255,.15)',
+    hook: {
+      statement: 'Elizabeth inherited a calm and united country in 1558.',
+      isTrue: false,
+      storyLines: [
+        '1558. A young queen takes the throne.',
+        'The country is divided by religion.',
+        'Foreign powers are watching.',
+        'Plenty of people think a woman should not rule at all.',
+      ],
+      wrongFeedback: 'That is the tidy version. The reality was much more unstable.',
+      correctFeedback: 'Exactly. Elizabeth inherited a country full of pressure points.',
+      bigQuestion: 'How did Elizabeth survive the first thirty years?',
+      revealKicker: 'The pressure points:',
+      growLabel: 'England, 1558',
+      growSteps: [
+        { label: 'Religious division', detail: 'Catholics and Protestants wanted different futures for England.', color: '#B566FF' },
+        { label: 'Foreign threat', detail: 'France, Spain and Scotland all mattered to Elizabeth’s security.', color: '#D6A3FF' },
+        { label: 'Question of legitimacy', detail: 'Elizabeth had to prove she could govern and survive.', color: '#F5B700' },
+      ],
+      revealItems: [
+        { emoji: '⛪', label: 'Religion', detail: 'The Religious Settlement tried to create a workable Protestant Church without pushing everyone into rebellion.', color: '#B566FF', bg: 'rgba(181,102,255,.1)' },
+        { emoji: '🕯️', label: 'Plots', detail: 'Catholic plots used Mary, Queen of Scots as a focus for replacing Elizabeth.', color: '#F5B700', bg: 'rgba(245,183,0,.1)' },
+        { emoji: '⚓', label: 'Spain', detail: 'Relations with Spain worsened until the Armada of 1588 became a direct invasion threat.', color: '#FF8A1F', bg: 'rgba(255,138,31,.1)' },
+      ],
+      punchline: 'Elizabethan England was not cosy Tudor nostalgia. It was survival politics.',
+    },
+    intro: {
+      retrieval: {
+        question: 'Which problem did Elizabeth face when she became queen in 1558?',
+        options: ['Religious division', 'A completed welfare state', 'A peaceful empire', 'No foreign threats'],
+        correctIndex: 0,
+        explanation: 'Elizabeth inherited major religious division between Catholics and Protestants, alongside foreign and political threats.',
+      },
+      learningGoals: [
+        'Explain Elizabeth’s problems in 1558',
+        'Describe the Religious Settlement',
+        'Explain why Mary, Queen of Scots was a threat',
+        'Describe key Catholic plots against Elizabeth',
+        'Explain why relations with Spain worsened',
+        'Assess why the Spanish Armada failed',
+      ],
+    },
+    screens: [
+      {
+        label: '1558 Problems',
+        kicker: 'Queen in a Crisis',
+        heading: 'Elizabeth did not inherit calm',
+        sub: 'A throne can look powerful and still feel fragile.',
+        headerImage: 'A young queen in a shadowed council chamber. Maps, candles, anxious advisers, and a country split by religion.',
+        visualTone: 'school',
+        blocks: [
+          { type: 'read', label: 'Core problem', text: 'When Elizabeth became queen in <strong>1558</strong>, England faced serious problems: religious division, foreign threats, financial weakness, questions over legitimacy and doubts about female rule.' },
+          { type: 'keypoint', text: 'Elizabeth needed to look strong without provoking rebellion, invasion or a succession crisis.' },
+          { type: 'quiz', question: 'Which was a major problem for Elizabeth in 1558?', options: [
+            { text: 'Religious division between Catholics and Protestants', correct: true },
+            { text: 'England already controlled Spain', correct: false },
+            { text: 'There were no doubts about female rule', correct: false },
+            { text: 'Parliament had no role at all', correct: false },
+          ], explanation: 'Religion was one of Elizabeth’s biggest problems because it affected loyalty, foreign policy and rebellion.' },
+        ]
+      },
+      {
+        label: 'Settlement',
+        kicker: 'Religion',
+        heading: 'The Religious Settlement was a compromise with teeth',
+        sub: 'It tried to calm the country without pleasing everyone.',
+        headerImage: 'A dim Tudor church interior. Prayer books, plain communion table, stained glass partly stripped away.',
+        visualTone: 'school',
+        blocks: [
+          { type: 'read', label: '1559 Settlement', text: 'Elizabeth’s Religious Settlement made England Protestant, but kept some traditional features to reduce opposition. The <strong>Act of Supremacy</strong> made Elizabeth Supreme Governor of the Church. The <strong>Act of Uniformity</strong> set rules for worship.' },
+          { type: 'examtip', label: 'Key terms', phrases: ['Act of Supremacy', 'Act of Uniformity', 'Middle way', 'Supreme Governor'], tip: 'Use the names of the Acts. It makes answers sound precise immediately.' },
+          { type: 'quiz', question: 'What did the Act of Supremacy do?', options: [
+            { text: 'Made Elizabeth Supreme Governor of the Church', correct: true },
+            { text: 'Made England Catholic again', correct: false },
+            { text: 'Banned Parliament', correct: false },
+            { text: 'Started the Spanish Armada', correct: false },
+          ], explanation: 'The Act of Supremacy established Elizabeth’s authority over the Church in England.' },
+        ]
+      },
+      {
+        label: 'Mary',
+        kicker: 'Succession Threat',
+        heading: 'Mary, Queen of Scots was a living alternative',
+        sub: 'The threat was not just who Mary was. It was what others could use her for.',
+        headerImage: 'A sealed letter on a wooden table. A distant castle window. A crown suggested but not worn.',
+        visualTone: 'school',
+        blocks: [
+          { type: 'read', label: 'Why Mary mattered', text: 'Mary, Queen of Scots had a strong claim to the English throne and was Catholic. For Catholics who rejected Elizabeth, Mary could be presented as the rightful queen.' },
+          { type: 'keypoint', text: 'Mary’s existence made plots more dangerous because rebels had a possible replacement for Elizabeth.' },
+          { type: 'quiz', question: 'Why was Mary, Queen of Scots a threat to Elizabeth?', options: [
+            { text: 'She was Catholic and had a claim to the throne', correct: true },
+            { text: 'She commanded the Spanish Armada herself', correct: false },
+            { text: 'She was Elizabeth’s Prime Minister', correct: false },
+            { text: 'She banned Protestant worship in London', correct: false },
+          ], explanation: 'Mary’s Catholic identity and claim to the throne made her a focus for opposition.' },
+        ]
+      },
+      {
+        label: 'Plots',
+        kicker: 'Conspiracy',
+        heading: 'Plots turned private disloyalty into public danger',
+        sub: 'A rumour is annoying. A plot with a replacement queen is something else.',
+        headerImage: 'Cipher letters, wax seals, a candle burning low, and a corridor outside a locked room.',
+        visualTone: 'school',
+        blocks: [
+          { type: 'timeline', events: [
+            { year: '1569', text: 'Northern Rebellion: Catholic nobles tried to restore Catholicism and support Mary.' },
+            { year: '1571', text: 'Ridolfi Plot: plan to replace Elizabeth with Mary, backed by foreign Catholic support.' },
+            { year: '1583', text: 'Throckmorton Plot: another plan involving Mary, Catholic invasion and foreign support.' },
+            { year: '1586', text: 'Babington Plot: evidence linked Mary to a plan to assassinate Elizabeth.' },
+            { year: '1587', text: 'Mary was executed, removing the most obvious Catholic claimant.' },
+          ]},
+          { type: 'quiz', question: 'Which plot helped lead directly to Mary’s execution?', options: [
+            { text: 'Babington Plot', correct: true },
+            { text: 'Gunpowder Plot', correct: false },
+            { text: 'Amicable Grant', correct: false },
+            { text: 'Pilgrimage of Grace', correct: false },
+          ], explanation: 'The Babington Plot provided evidence used against Mary.' },
+        ]
+      },
+      {
+        label: 'Spain',
+        kicker: 'Foreign Policy',
+        heading: 'Spain went from uneasy ally to invasion threat',
+        sub: 'Religion, trade, piracy and the Netherlands all made things worse.',
+        headerImage: 'Spanish ships on dark water. Storm clouds gathering. English beacons on the coast.',
+        visualTone: 'school',
+        blocks: [
+          { type: 'read', label: 'Why relations worsened', text: 'Relations with Spain worsened because of religion, English privateers attacking Spanish treasure, Elizabeth’s support for Dutch rebels, and the execution of Mary, Queen of Scots.' },
+          { type: 'keypoint', text: 'The Armada was not random. It came after years of worsening tension.' },
+          { type: 'quiz', question: 'Which helped worsen relations between Elizabeth and Spain?', options: [
+            { text: 'English support for Dutch rebels', correct: true },
+            { text: 'Elizabeth becoming Queen of Spain', correct: false },
+            { text: 'Spain becoming Protestant', correct: false },
+            { text: 'Mary Tudor defeating the Armada', correct: false },
+          ], explanation: 'Elizabeth’s support for Dutch rebels challenged Spanish power in the Netherlands.' },
+        ]
+      },
+      {
+        label: 'Armada',
+        kicker: '1588',
+        heading: 'The Armada failed for more than one reason',
+        sub: 'Good English tactics mattered. So did Spanish mistakes. So did weather.',
+        headerImage: 'Warships in smoke and storm. Fire ships drifting toward a tightly packed fleet.',
+        visualTone: 'school',
+        blocks: [
+          { type: 'read', label: 'Reasons for failure', text: 'The Spanish Armada failed because English ships were faster and more manoeuvrable, English fire ships broke the Spanish formation, Spanish coordination was poor, and storms damaged the fleet on the journey home.' },
+          { type: 'examtip', label: 'Do not just say weather', phrases: ['English tactics', 'Spanish mistakes', 'weather', 'ship design'], tip: 'Strong answers weigh several reasons rather than pretending the storm did everything.' },
+          { type: 'boss', tier: '🟡', question: 'Explain one reason why the Spanish Armada failed. [4 marks]', markPoints: 'Reward explanation of English tactics, fire ships, faster ships, Spanish planning/coordination problems, or weather. Strong answers explain how the reason contributed to failure.' },
+        ]
+      },
+      {
+        label: 'Recap',
+        kicker: 'Lock It In',
+        heading: 'Elizabeth survived by managing pressure',
+        sub: 'Religion, plots and foreign threats kept returning.',
+        blocks: [
+          { type: 'flashcards', cards: [
+            { front: '1558 problems', back: 'Religion, foreign threat, finance, legitimacy and doubts about female rule.' },
+            { front: 'Religious Settlement', back: '1559 compromise Protestant settlement: Supremacy and Uniformity.' },
+            { front: 'Mary, Queen of Scots', back: 'Catholic claimant who became a focus for plots.' },
+            { front: 'Babington Plot', back: 'Plot linked to Mary; helped lead to her execution in 1587.' },
+            { front: 'Armada 1588', back: 'Failed due to English tactics, Spanish weaknesses and weather.' },
+          ]},
+        ]
+      },
+    ]
+  },
+
+  {
+    id: 'hist_usa_conflict',
+    subject: 'History',
+    number: 7,
+    title: 'The USA: Conflict at Home and Abroad',
+    subtitle: 'Civil rights, protest and Vietnam',
+    era: '1954–1975',
+    icon: '🇺🇸',
+    color: '#3B82FF',
+    colorLight: 'rgba(59,130,255,.15)',
+    hook: {
+      statement: 'By 1954, all Americans had equal rights in practice.',
+      isTrue: false,
+      storyLines: ['1954. The Cold War is on television.', 'America talks about freedom.', 'At home, segregation still shapes daily life.', 'Abroad, Vietnam is becoming harder to ignore.'],
+      wrongFeedback: 'That is the national myth. The evidence says otherwise.',
+      correctFeedback: 'Exactly. Legal ideals and lived reality were not the same thing.',
+      bigQuestion: 'How did conflict at home and abroad reshape the USA?',
+      revealKicker: 'Two fronts of conflict:',
+      growLabel: 'USA, 1954–75',
+      growSteps: [
+        { label: 'Civil rights', detail: 'Black Americans challenged segregation, discrimination and racist violence.', color: '#3B82FF' },
+        { label: 'Protest movements', detail: 'Students, women, Native Americans and anti-war protesters challenged authority.', color: '#70B8FF' },
+        { label: 'Vietnam', detail: 'A foreign war became a domestic crisis.', color: '#F5B700' },
+      ],
+      revealItems: [
+        { emoji: '🚌', label: 'Civil rights', detail: 'Boycotts, sit-ins, marches and legal challenges pushed against segregation.', color: '#3B82FF', bg: 'rgba(59,130,255,.1)' },
+        { emoji: '✊', label: 'Protest', detail: 'Different groups demanded rights, recognition and change.', color: '#FF5C7A', bg: 'rgba(255,92,122,.1)' },
+        { emoji: '🎖️', label: 'Vietnam', detail: 'Escalation, media coverage and casualties changed public opinion.', color: '#F5B700', bg: 'rgba(245,183,0,.1)' },
+      ],
+      punchline: 'The USA was fighting over what freedom actually meant.',
+    },
+    intro: {
+      retrieval: { question: 'Which event is linked to the start of major civil rights change in 1954?', options: ['Brown v Board of Education', 'Watergate', 'Pearl Harbor', 'The Berlin Wall falling'], correctIndex: 0, explanation: 'Brown v Board of Education ruled segregated schools unconstitutional.' },
+      learningGoals: ['Explain segregation and civil rights campaigns', 'Describe key civil rights events', 'Explain why protest movements grew', 'Describe why the USA escalated in Vietnam', 'Explain why opposition to Vietnam increased', 'Assess the impact of conflict at home and abroad'],
+    },
+    screens: [
+      { label: 'Segregation', kicker: 'Civil Rights', heading: 'Freedom had conditions attached', sub: 'The law and everyday life did not match.', headerImage: 'A segregated bus stop at night. Neon signs, rain on pavement, police watching from a distance.', visualTone: 'school', blocks: [
+        { type: 'read', label: 'Segregation', text: 'In many southern states, segregation separated Black and white Americans in schools, transport, housing and public spaces. Discrimination also affected voting, jobs and justice.' },
+        { type: 'keypoint', text: '<strong>Brown v Board of Education (1954)</strong> ruled segregated schools unconstitutional, but change was slow and resisted.' },
+        { type: 'quiz', question: 'What did Brown v Board of Education challenge?', options: [{ text: 'Segregated schools', correct: true }, { text: 'The Vietnam draft', correct: false }, { text: 'The Watergate scandal', correct: false }, { text: 'The New Deal', correct: false }], explanation: 'Brown challenged segregation in education.' },
+      ]},
+      { label: 'Direct Action', kicker: 'Campaigns', heading: 'Civil rights activists made injustice visible', sub: 'Boycotts and sit-ins forced the country to look.', headerImage: 'Lunch counter seats, protest placards, camera flash, and a bus reflected in glass.', visualTone: 'school', blocks: [
+        { type: 'timeline', events: [
+          { year: '1955–56', text: 'Montgomery Bus Boycott challenged bus segregation after Rosa Parks’ arrest.' },
+          { year: '1957', text: 'Little Rock Nine tested school desegregation under federal protection.' },
+          { year: '1960', text: 'Greensboro sit-ins challenged segregated lunch counters.' },
+          { year: '1963', text: 'Birmingham campaign exposed violent resistance to civil rights.' },
+          { year: '1965', text: 'Selma marches helped build support for voting rights.' },
+        ]},
+        { type: 'quiz', question: 'Which tactic challenged bus segregation?', options: [{ text: 'Montgomery Bus Boycott', correct: true }, { text: 'Tet Offensive', correct: false }, { text: 'Watergate hearings', correct: false }, { text: 'Moon landing', correct: false }], explanation: 'The Montgomery Bus Boycott challenged segregated buses.' },
+      ]},
+      { label: 'Laws', kicker: 'Change', heading: 'Legislation mattered, but it did not end racism', sub: 'Legal change is not the same as instant equality.', headerImage: 'A government document under a desk lamp. Protest crowds blurred behind the glass.', visualTone: 'school', blocks: [
+        { type: 'read', label: 'Civil Rights Act 1964', text: 'The Civil Rights Act banned segregation in public places and employment discrimination.' },
+        { type: 'read', label: 'Voting Rights Act 1965', text: 'The Voting Rights Act tackled barriers that prevented Black Americans from voting, especially in southern states.' },
+        { type: 'keypoint', text: 'Civil rights laws were major achievements, but social and economic inequality continued.' },
+      ]},
+      { label: 'Other Protest', kicker: 'Home Front', heading: 'Civil rights was not the only protest movement', sub: 'The 1960s widened the argument.', headerImage: 'Campus steps, handmade placards, a line of police helmets, and a loudspeaker.', visualTone: 'school', blocks: [
+        { type: 'read', label: 'Wider protest', text: 'Students, women, Native Americans, Chicano activists and anti-war protesters all challenged different forms of inequality and authority.' },
+        { type: 'examtip', label: 'Exam phrase', phrases: ['protest movement', 'federal government', 'media coverage', 'public opinion'], tip: 'Link protest to pressure: movements mattered when they changed public debate or forced government response.' },
+        { type: 'quiz', question: 'What did protest movements often try to change?', options: [{ text: 'Inequality and government policy', correct: true }, { text: 'Only school uniform', correct: false }, { text: 'Only European monarchy', correct: false }, { text: 'The Tudor succession', correct: false }], explanation: 'Protest movements challenged inequality, authority and policy.' },
+      ]},
+      { label: 'Vietnam Escalates', kicker: 'Abroad', heading: 'Vietnam turned into America’s war', sub: 'Containment sounded simple. War was not.', headerImage: 'Jungle silhouettes, helicopters, a television glow, and a map of Vietnam.', visualTone: 'school', blocks: [
+        { type: 'read', label: 'Containment', text: 'The USA wanted to contain communism. Presidents increased support for South Vietnam, especially after the Gulf of Tonkin incident in 1964.' },
+        { type: 'keypoint', text: 'Escalation meant the USA became more deeply involved: more troops, more bombing, more costs.' },
+        { type: 'quiz', question: 'Which policy was used to justify US involvement in Vietnam?', options: [{ text: 'Containment of communism', correct: true }, { text: 'Elizabethan settlement', correct: false }, { text: 'Laissez-faire', correct: false }, { text: 'Appeasement of Spain', correct: false }], explanation: 'Containment was central to US Cold War thinking.' },
+      ]},
+      { label: 'Opposition', kicker: 'Anti-War', heading: 'Vietnam came home through the television', sub: 'The war was fought abroad and argued over at home.', headerImage: 'A living room television showing war footage. Draft cards, newspaper headlines, and a silent family.', visualTone: 'school', blocks: [
+        { type: 'read', label: 'Why opposition grew', text: 'Opposition grew because of casualties, the draft, media coverage, the cost of war, and doubts about whether the USA could win or should be there.' },
+        { type: 'read', label: 'Tet Offensive 1968', text: 'The Tet Offensive shocked Americans. The USA claimed military success, but many people saw that victory was not close.' },
+        { type: 'boss', tier: '🟡', question: 'Explain one reason why opposition to the Vietnam War increased. [4 marks]', markPoints: 'Reward explanation of casualties, draft, media coverage, cost, Tet Offensive, or doubts about US aims. Strong answers explain how this changed public opinion.' },
+      ]},
+      { label: 'Recap', kicker: 'Lock It In', heading: 'The USA was changed by pressure', sub: 'At home and abroad, conflict exposed contradictions.', blocks: [
+        { type: 'flashcards', cards: [
+          { front: 'Brown v Board 1954', back: 'Ruled segregated schools unconstitutional.' },
+          { front: 'Montgomery Bus Boycott', back: 'Direct action against bus segregation, 1955–56.' },
+          { front: 'Civil Rights Act 1964', back: 'Banned segregation in public places and employment discrimination.' },
+          { front: 'Voting Rights Act 1965', back: 'Tackled barriers to Black voting rights.' },
+          { front: 'Containment', back: 'US policy of stopping the spread of communism.' },
+          { front: 'Tet Offensive', back: '1968 attack that damaged confidence in US progress in Vietnam.' },
+        ]},
+      ]},
+    ]
+  },
+
+  {
+    id: 'hist_spain_new_world',
+    subject: 'History',
+    number: 8,
+    title: 'Spain and the New World',
+    subtitle: 'Conquest, empire and consequences',
+    era: '1490–1555',
+    icon: '⛵',
+    color: '#F97316',
+    colorLight: 'rgba(249,115,22,.15)',
+    hook: {
+      statement: 'Spain’s conquest of the New World was only about exploration.',
+      isTrue: false,
+      storyLines: ['1490s. Atlantic maps are being redrawn.', 'Ships leave Spain with crosses, contracts and ambition.', 'Gold stories travel faster than truth.', 'The New World is not empty. It is already home.'],
+      wrongFeedback: 'Exploration is only the polite word. Power and profit were there from the start.',
+      correctFeedback: 'Exactly. Exploration, religion, wealth and conquest were tangled together.',
+      bigQuestion: 'What did Spanish expansion do to the New World?',
+      revealKicker: 'The forces behind expansion:',
+      growLabel: 'Atlantic world, 1490–1555',
+      growSteps: [
+        { label: 'Exploration', detail: 'Voyages connected Spain to lands and peoples across the Atlantic.', color: '#F97316' },
+        { label: 'Conquest', detail: 'Military violence, alliances and disease transformed empires.', color: '#F5B700' },
+        { label: 'Empire', detail: 'Spain built systems to extract wealth and control labour.', color: '#D29A5A' },
+      ],
+      revealItems: [
+        { emoji: '⛵', label: 'Voyages', detail: 'Columbus and others opened routes that Spain turned into imperial claims.', color: '#F97316', bg: 'rgba(249,115,22,.1)' },
+        { emoji: '🏹', label: 'Conquest', detail: 'Cortes defeated the Aztec Empire through alliances, weapons, tactics and disease.', color: '#F5B700', bg: 'rgba(245,183,0,.1)' },
+        { emoji: '⛓️', label: 'Control', detail: 'Systems such as encomienda gave Spaniards power over Indigenous labour.', color: '#FF5C7A', bg: 'rgba(255,92,122,.1)' },
+      ],
+      punchline: 'The New World was not discovered. It was encountered, exploited and transformed.',
+    },
+    intro: {
+      retrieval: { question: 'Which empire did Hernan Cortes conquer?', options: ['Aztec Empire', 'Roman Empire', 'Mughal Empire', 'British Empire'], correctIndex: 0, explanation: 'Cortes conquered the Aztec Empire in the early 1500s.' },
+      learningGoals: ['Explain why Spain expanded across the Atlantic', 'Describe Columbus and Spanish exploration', 'Explain how Cortes conquered the Aztecs', 'Describe the impact of disease and alliances', 'Explain encomienda and control of labour', 'Assess the consequences of Spanish conquest'],
+    },
+    screens: [
+      { label: 'Motives', kicker: 'Why Expand?', heading: 'Spain crossed the Atlantic for more than curiosity', sub: 'God, gold and glory is too neat, but it helps.', headerImage: 'A royal court with maps, contracts, candles and ships painted at the edge of the parchment.', visualTone: 'school', blocks: [
+        { type: 'read', label: 'Motives', text: 'Spanish expansion was driven by religion, wealth, status, rivalry and the search for routes and land. Explorers wanted reward. Monarchs wanted power. Missionaries wanted conversion.' },
+        { type: 'examtip', label: 'Useful phrase', phrases: ['religion', 'wealth', 'status', 'rivalry', 'conversion'], tip: 'Avoid saying “they just explored”. Explain motives.' },
+        { type: 'quiz', question: 'Which was a motive for Spanish expansion?', options: [{ text: 'Wealth and status', correct: true }, { text: 'Ending all trade', correct: false }, { text: 'Avoiding religion completely', correct: false }, { text: 'Helping the Aztec Empire expand', correct: false }], explanation: 'Wealth, status, religion and rivalry all mattered.' },
+      ]},
+      { label: 'Columbus', kicker: '1492', heading: 'Columbus changed the map Europeans imagined', sub: 'The voyage mattered. The consequences mattered more.', headerImage: 'Ships under dark sails crossing a parchment ocean. A coastline appears through mist.', visualTone: 'school', blocks: [
+        { type: 'read', label: '1492', text: 'Columbus sailed west in 1492 under Spanish sponsorship. Europeans began claiming lands across the Atlantic, although the Americas were already inhabited by complex societies.' },
+        { type: 'keypoint', text: 'Use careful language: Europeans did not find an empty world. They encountered societies that already existed.' },
+        { type: 'quiz', question: 'Why should “discovery” be used carefully?', options: [{ text: 'The Americas were already inhabited', correct: true }, { text: 'No Europeans crossed the Atlantic', correct: false }, { text: 'Spain never claimed land', correct: false }, { text: 'Maps did not exist', correct: false }], explanation: 'The Americas were already home to Indigenous peoples and societies.' },
+      ]},
+      { label: 'Aztecs', kicker: 'Empire', heading: 'The Aztec Empire was powerful before Cortes arrived', sub: 'Conquest did not happen because the Aztecs were weak.', headerImage: 'A city of temples and causeways at dusk, with Spanish figures watching from the edge.', visualTone: 'school', blocks: [
+        { type: 'read', label: 'Tenochtitlan', text: 'The Aztec capital, Tenochtitlan, was a huge and sophisticated city. The empire controlled tribute from other peoples, which also created enemies.' },
+        { type: 'keypoint', text: 'Spanish success depended partly on Indigenous alliances with groups who opposed Aztec rule.' },
+        { type: 'quiz', question: 'Which helped Cortes against the Aztecs?', options: [{ text: 'Indigenous alliances', correct: true }, { text: 'Aztecs having no city', correct: false }, { text: 'Spain having no weapons', correct: false }, { text: 'No disease in the Americas', correct: false }], explanation: 'Alliances with enemies of the Aztecs helped Cortes.' },
+      ]},
+      { label: 'Conquest', kicker: 'Cortes', heading: 'Conquest was a chain reaction', sub: 'Weapons mattered. So did alliances, disease and timing.', headerImage: 'Steel helmets, obsidian blades, smoke, and a city reflected in water.', visualTone: 'school', blocks: [
+        { type: 'read', label: 'Factors', text: 'Cortes’ conquest of the Aztecs was helped by Spanish weapons and horses, Indigenous allies, divisions inside the empire, and smallpox weakening the population.' },
+        { type: 'timeline', events: [
+          { year: '1519', text: 'Cortes arrived in Mexico.' },
+          { year: '1520', text: 'Conflict intensified; smallpox spread with devastating effects.' },
+          { year: '1521', text: 'Tenochtitlan fell to Cortes and his allies.' },
+        ]},
+        { type: 'boss', tier: '🟡', question: 'Explain one reason Cortes was able to conquer the Aztec Empire. [4 marks]', markPoints: 'Reward explanation of Indigenous alliances, Spanish weapons/horses, smallpox, divisions in the Aztec Empire, or tactics. Strong answers explain how the factor helped conquest.' },
+      ]},
+      { label: 'Control', kicker: 'Empire', heading: 'Empire needed systems, not just soldiers', sub: 'Conquest was followed by control.', headerImage: 'A ledger, a cross, mining tools and Indigenous workers in the background.', visualTone: 'school', blocks: [
+        { type: 'read', label: 'Encomienda', text: 'The encomienda system gave Spanish settlers control over Indigenous labour and tribute. In theory, Spaniards were meant to protect and Christianise Indigenous people. In practice, exploitation was common.' },
+        { type: 'keypoint', text: 'Spanish rule combined religion, labour control, wealth extraction and political authority.' },
+        { type: 'quiz', question: 'What did encomienda give Spanish settlers?', options: [{ text: 'Control over Indigenous labour and tribute', correct: true }, { text: 'A democratic parliament', correct: false }, { text: 'Independence from Spain', correct: false }, { text: 'A ban on mining', correct: false }], explanation: 'Encomienda was about labour, tribute and control.' },
+      ]},
+      { label: 'Impact', kicker: 'Consequences', heading: 'The consequences were enormous', sub: 'For Spain, wealth. For Indigenous peoples, catastrophe and survival under pressure.', headerImage: 'A split image: Spanish treasure ships on one side, abandoned homes and mission bells on the other.', visualTone: 'school', blocks: [
+        { type: 'read', label: 'Impact', text: 'Spanish conquest brought disease, death, forced labour, cultural disruption and conversion pressure for Indigenous peoples. Spain gained wealth, territory and imperial power.' },
+        { type: 'read', label: 'Debate', text: 'Some Spaniards criticised the treatment of Indigenous peoples. Bartolome de las Casas argued against exploitation and brutality.' },
+        { type: 'boss', tier: '🔴', question: 'How significant was Spanish conquest for Indigenous peoples in the New World? Explain your answer. [8 marks]', markPoints: 'Reward balanced explanation of disease, forced labour, religious conversion, cultural change, population decline, resistance/survival, and Spanish imperial control. Strong answers make a judgement about significance.' },
+      ]},
+      { label: 'Recap', kicker: 'Lock It In', heading: 'Spain built empire through encounter and control', sub: 'Voyages opened the route. Conquest and systems made it empire.', blocks: [
+        { type: 'flashcards', cards: [
+          { front: '1492', back: 'Columbus sailed west under Spanish sponsorship.' },
+          { front: 'Cortes', back: 'Conquered the Aztec Empire with allies and advantages.' },
+          { front: 'Tenochtitlan', back: 'Major Aztec capital; fell in 1521.' },
+          { front: 'Smallpox', back: 'Devastated Indigenous populations and weakened resistance.' },
+          { front: 'Encomienda', back: 'Spanish system controlling Indigenous labour and tribute.' },
+          { front: 'Las Casas', back: 'Criticised exploitation and brutality against Indigenous peoples.' },
+        ]},
+      ]},
+    ]
+  },
+
   // ─────────────────────────────────────────────────────────────────────────────
   // SOCIOLOGY — Education Module 1: Hidden Curriculum & Socialisation
   // ─────────────────────────────────────────────────────────────────────────────

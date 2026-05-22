@@ -242,6 +242,9 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
     const s = safeGetModuleState(m.id)
     return s.screen >= (m.screens?.length || 1) - 1
   }).length
+  const elizabethanModule = MODULES.find(m => m.id === 'hist_elizabethan')
+  const usaModule = MODULES.find(m => m.id === 'hist_usa_conflict')
+  const spainModule = MODULES.find(m => m.id === 'hist_spain_new_world')
   const medicineModule = MODULES.find(m => m.id === 'mod1') || MODULES.find(m => m.subject === 'History')
 
   const historyModules = [
@@ -251,7 +254,8 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
       icon: '👑',
       image: '/headers/history-elizabethan.svg',
       accent: '#B566FF',
-      progress: 0,
+      progress: elizabethanModule ? Math.round(((safeGetModuleState(elizabethanModule.id).screen || 0) / (elizabethanModule.screens?.length || 1)) * 100) : 0,
+      module: elizabethanModule,
     },
     {
       title: 'The USA',
@@ -259,7 +263,8 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
       icon: '🇺🇸',
       image: '/headers/history-usa-conflict.svg',
       accent: '#3B82FF',
-      progress: 0,
+      progress: usaModule ? Math.round(((safeGetModuleState(usaModule.id).screen || 0) / (usaModule.screens?.length || 1)) * 100) : 0,
+      module: usaModule,
     },
     {
       title: 'Spain and the New World',
@@ -267,7 +272,8 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
       icon: '⛵',
       image: '/headers/history-spain-new-world.svg',
       accent: '#F97316',
-      progress: 0,
+      progress: spainModule ? Math.round(((safeGetModuleState(spainModule.id).screen || 0) / (spainModule.screens?.length || 1)) * 100) : 0,
+      module: spainModule,
     },
     {
       title: 'Medicine through time',
@@ -282,7 +288,7 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
 
   const subjectCards = [
     { label: 'Sociology', icon: '👥', done: 7, total: 10, color: '#9D5CFF', image: 'linear-gradient(150deg, #35105d, #13091f)', action: onOpenSubjects },
-    { label: 'History', icon: '🏰', done: 1, total: 4, color: '#F97316', image: 'linear-gradient(150deg, #4b1b08, #13091f)', action: () => medicineModule && onOpenModule(medicineModule) },
+    { label: 'History', icon: '🏰', done: [elizabethanModule, usaModule, spainModule, medicineModule].filter(Boolean).length, total: 4, color: '#F97316', image: 'linear-gradient(150deg, #4b1b08, #13091f)', action: () => medicineModule && onOpenModule(medicineModule) },
     { label: 'Science', icon: '⚗️', done: 5, total: 11, color: '#38D27A', image: 'linear-gradient(150deg, #063c24, #071126)', action: () => onStart('tb_cells') },
     { label: 'English', icon: '📚', done: 8, total: 14, color: '#3B82FF', image: 'linear-gradient(150deg, #06316f, #071126)', action: onOpenSubjects },
   ]
