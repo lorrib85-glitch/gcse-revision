@@ -78,6 +78,9 @@ export const MODULES = [
       {
         label: 'Causes',
         kicker: 'Core Knowledge',
+        headerImage: 'A candlelit medieval street. Church bells, apothecary shelves, a physician with a urine flask, and unseen sickness in the air.',
+        visualTone: 'history',
+        dateCard: { date: 'c1250', label: 'Medieval beliefs' },
         heading: 'Why Did People Get Ill?',
         sub: 'Medieval medicine blamed four things. None of them were germs.',
         blocks: [
@@ -95,6 +98,9 @@ export const MODULES = [
       {
         label: 'Treatments',
         kicker: 'What Did They Actually Do?',
+        headerImage: 'A barber surgeon table, herbs, prayer beads, bloodletting bowl and a dark hospital ward.',
+        visualTone: 'history',
+        dateCard: { date: 'c1250–1500', label: 'Wrong cause, wrong cure' },
         heading: 'Treatments: Would This Actually Help?',
         sub: 'Medieval treatments matched medieval beliefs. Wrong cause = wrong cure.',
         blocks: [
@@ -113,6 +119,9 @@ export const MODULES = [
       {
         label: 'Rational vs Supernatural',
         kicker: 'Exam Thinking',
+        headerImage: 'Two sides of a dim classroom wall: miasma and humours on one side, prayer and astrology on the other.',
+        visualTone: 'history',
+        dateCard: { date: 'Medieval', label: 'Belief systems' },
         heading: 'Rational or Supernatural?',
         sub: 'A key distinction examiners love. Rational does NOT mean correct.',
         blocks: [
@@ -129,6 +138,9 @@ export const MODULES = [
       {
         label: 'Galen & Church',
         kicker: 'Authority & Influence',
+        headerImage: 'Old medical manuscripts locked beneath a church window, Galen’s notes lit by a narrow beam of light.',
+        visualTone: 'history',
+        dateCard: { date: '129', label: 'Ancient authority' },
         heading: 'Hippocrates, Galen & the Church',
         sub: 'Why did wrong ideas last for 1,000 years? Authority, tradition and religion.',
         blocks: [
@@ -145,6 +157,9 @@ export const MODULES = [
       {
         label: 'Black Death',
         kicker: '1348',
+        headerImage: 'A deserted medieval street, plague cart tracks, boarded doors and a church cross in the fog.',
+        visualTone: 'history',
+        dateCard: { date: '1348', label: 'Plague arrives' },
         heading: 'The Black Death',
         sub: 'Roughly 1 in 3 people in England died. And nobody knew why.',
         blocks: [
@@ -161,6 +176,9 @@ export const MODULES = [
       {
         label: 'Flashcards',
         kicker: 'Final Recap',
+        headerImage: 'A desk of revision cards, black ink, a small candle and a faded plague map.',
+        visualTone: 'history',
+        dateCard: { date: 'Recap', label: 'Medieval medicine' },
         heading: 'Flashcards',
         sub: 'Tap to flip. Lock in the key facts.',
         blocks: [
@@ -193,6 +211,9 @@ export const MODULES = [
       {
         label: 'Renaissance',
         kicker: 'New Thinking',
+        headerImage: 'Anatomy sketches, printing press type, open books and a scholar questioning the old authorities.',
+        visualTone: 'history',
+        dateCard: { date: 'c1500', label: 'New thinking' },
         heading: 'Renaissance Medicine: Challenging the Ancients',
         sub: 'The Renaissance encouraged people to question authority and look at evidence. Medicine slowly changed.',
         blocks: [
@@ -209,6 +230,9 @@ export const MODULES = [
       {
         label: 'Key Figures',
         kicker: 'The Challengers',
+        headerImage: 'A dissection theatre, anatomical drawings, a heart diagram and printed pages spreading across Europe.',
+        visualTone: 'history',
+        dateCard: { date: '1543 / 1628', label: 'Vesalius and Harvey' },
         heading: 'Vesalius, Harvey & Paré',
         sub: 'Three people who dared to challenge 1,000 years of received wisdom.',
         blocks: [
@@ -226,6 +250,9 @@ export const MODULES = [
       {
         label: 'Great Plague',
         kicker: '1665',
+        headerImage: 'A dark London alley, red crosses on doors, plague orders posted on timber walls and smoke in the distance.',
+        visualTone: 'history',
+        dateCard: { date: '1665', label: 'London plague' },
         heading: 'The Great Plague of London',
         sub: 'Even after the Renaissance, people still had no idea what actually caused disease.',
         blocks: [
@@ -243,6 +270,9 @@ export const MODULES = [
       {
         label: 'Change vs Continuity',
         kicker: 'The Big Picture',
+        headerImage: 'A split scene: Renaissance books and instruments on one side, plague masks and old remedies on the other.',
+        visualTone: 'history',
+        dateCard: { date: '1500–1700', label: 'Change or continuity?' },
         heading: 'Did Everything Suddenly Improve?',
         sub: 'No. History is annoying like that.',
         blocks: [
@@ -264,6 +294,9 @@ export const MODULES = [
       {
         label: 'Flashcards',
         kicker: 'Final Recap',
+        headerImage: 'Printed flashcards beside a quill, anatomy notes and a small plague bill.',
+        visualTone: 'history',
+        dateCard: { date: 'Recap', label: 'Renaissance medicine' },
         heading: 'Flashcards',
         sub: 'Tap to flip. Lock in the key facts.',
         blocks: [
@@ -294,6 +327,9 @@ export const MODULES = [
       {
         label: 'The Problem',
         kicker: 'Core Problem',
+        headerImage: 'A bare operating table, leather straps, dirty instruments and a waiting crowd in shadow.',
+        visualTone: 'history',
+        dateCard: { date: 'pre-1840s', label: 'Surgery before safety' },
         heading: 'Why Was Surgery Terrifying?',
         sub: 'Before modern surgery, the method was basically: "hold him down and hope."',
         blocks: [
@@ -306,6 +342,9 @@ export const MODULES = [
       {
         label: 'Pain',
         kicker: 'Problem 1 · Pain',
+        headerImage: 'An ether inhaler, chloroform bottle and a patient under gaslight in an early operating room.',
+        visualTone: 'history',
+        dateCard: { date: '1846–1847', label: 'Anaesthetics' },
         heading: 'Anaesthetics: Finally, Less Screaming',
         sub: 'Anaesthetics reduced pain so surgeons could operate more carefully and attempt longer, more complex procedures.',
         blocks: [
@@ -329,6 +368,9 @@ export const MODULES = [
       {
         label: 'Infection',
         kicker: 'Problem 2 · Infection',
+        headerImage: 'Carbolic spray mist, surgical instruments and a ward where infection is the real enemy.',
+        visualTone: 'history',
+        dateCard: { date: '1860s', label: 'Antiseptics' },
         heading: 'Antiseptics: The Acid Febreze Era',
         sub: 'Anaesthetics helped pain, but created a new problem: longer operations meant more chance for infection.',
         blocks: [
@@ -346,6 +388,9 @@ export const MODULES = [
       {
         label: 'Aseptic',
         kicker: 'Infection Gets Smarter',
+        headerImage: 'White gowns, sterilised instruments, tiled walls and a cleaner operating theatre.',
+        visualTone: 'history',
+        dateCard: { date: '1890s', label: 'Aseptic surgery' },
         heading: 'Aseptic Surgery: Stop Germs Getting In',
         sub: 'Antiseptics killed germs afterwards. Aseptic surgery aimed to stop germs entering in the first place.',
         blocks: [
@@ -362,6 +407,9 @@ export const MODULES = [
       {
         label: 'Flashcards',
         kicker: 'Final Recap',
+        headerImage: 'Revision cards labelled pain, infection and blood loss beside a surgical tray.',
+        visualTone: 'history',
+        dateCard: { date: 'Recap', label: 'Surgery' },
         heading: 'Flashcards',
         sub: 'Tap to flip. Lock in the key facts.',
         blocks: [
@@ -393,6 +441,9 @@ export const MODULES = [
       {
         label: 'Old Ideas',
         kicker: 'Before Germ Theory',
+        headerImage: 'Rotting matter under glass, old miasma notes and a microscope waiting unused.',
+        visualTone: 'history',
+        dateCard: { date: 'Before 1861', label: 'Spontaneous generation' },
         heading: 'Old Ideas Refused To Die',
         sub: 'Doctors did not just wake up one day and say "germs, obviously." Medicine had centuries of bad habits to unlearn.',
         blocks: [
@@ -410,6 +461,9 @@ export const MODULES = [
       {
         label: 'Pasteur',
         kicker: 'Key Person 1',
+        headerImage: 'Pasteur’s laboratory, swan-neck flasks, cloudy broth and careful experimental notes.',
+        visualTone: 'history',
+        dateCard: { date: '1861', label: 'Swan-neck flask' },
         heading: 'Louis Pasteur: The Wine Detective',
         sub: 'Global breakthrough begins with someone\'s drink being ruined.',
         blocks: [
@@ -427,6 +481,9 @@ export const MODULES = [
       {
         label: 'Koch',
         kicker: 'Key Person 2',
+        headerImage: 'Petri dishes, stained bacteria slides and a precise laboratory bench.',
+        visualTone: 'history',
+        dateCard: { date: '1876–1883', label: 'Specific germs' },
         heading: 'Robert Koch: "Cool, But WHICH Germ?"',
         sub: 'Pasteur showed microbes caused disease. Koch proved specific germs caused specific diseases.',
         blocks: [
@@ -448,6 +505,9 @@ export const MODULES = [
       {
         label: 'Vaccines',
         kicker: 'Chance + Science',
+        headerImage: 'Chicken cholera cultures, vaccine notes and a lab mistake becoming a breakthrough.',
+        visualTone: 'history',
+        dateCard: { date: '1880s', label: 'Weakened germs' },
         heading: 'Chicken Cholera: The Holiday Mistake',
         sub: 'Chance plays a role in science — but only when someone\'s there to recognise it.',
         blocks: [
@@ -464,6 +524,9 @@ export const MODULES = [
       {
         label: 'Impact',
         kicker: 'Why It Mattered',
+        headerImage: 'Germ theory spreading from laboratory to surgery, vaccines and public health.',
+        visualTone: 'history',
+        dateCard: { date: '1860s onward', label: 'Understanding changes' },
         heading: 'Why Germ Theory Was Such A Big Deal',
         sub: 'It did not immediately cure everything. But it changed the direction of medicine permanently.',
         blocks: [
@@ -482,6 +545,9 @@ export const MODULES = [
       {
         label: 'Flashcards',
         kicker: 'Final Recap',
+        headerImage: 'Lab flashcards, microscope lens, flask sketches and bacteria diagrams.',
+        visualTone: 'history',
+        dateCard: { date: 'Recap', label: 'Germ theory' },
         heading: 'Flashcards',
         sub: 'Tap to flip. Lock in the key facts.',
         blocks: [
@@ -512,6 +578,9 @@ export const MODULES = [
       {
         label: 'Cities Explode',
         kicker: 'Cause of the Problem',
+        headerImage: 'Overcrowded streets, smoke, cramped housing and waste channels under a grey city sky.',
+        visualTone: 'history',
+        dateCard: { date: '1750 onward', label: 'Industrial towns' },
         heading: 'Industrialisation: Cities Exploded',
         sub: 'From 1750, people moved from rural areas into towns and cities. The cities were not ready. Not even slightly.',
         blocks: [
@@ -529,6 +598,9 @@ export const MODULES = [
       {
         label: 'Cholera',
         kicker: 'Disease',
+        headerImage: 'A street pump, polluted water, cholera notices and anxious faces in a narrow street.',
+        visualTone: 'history',
+        dateCard: { date: '1831–1866', label: 'Waterborne killer' },
         heading: 'Cholera: The Killer Nobody Understood',
         sub: 'Cholera spread fast and killed through severe dehydration. People still blamed bad air.',
         blocks: [
@@ -544,6 +616,9 @@ export const MODULES = [
       {
         label: 'Chadwick',
         kicker: 'Key Person 1',
+        headerImage: 'A reformer’s report, mortality tables, dirty streets and evidence piled on a desk.',
+        visualTone: 'history',
+        dateCard: { date: '1842', label: 'Sanitary report' },
         heading: 'Edwin Chadwick: "Please Clean Literally Anything"',
         sub: 'Chadwick investigated living conditions and used evidence to push for public health reform.',
         blocks: [
@@ -560,6 +635,9 @@ export const MODULES = [
       {
         label: 'John Snow',
         kicker: 'Key Person 2',
+        headerImage: 'John Snow’s cholera map, clustered deaths and the Broad Street pump handle.',
+        visualTone: 'history',
+        dateCard: { date: '1854', label: 'Broad Street pump' },
         heading: 'John Snow: The Soho Water Mystery',
         sub: 'Snow worked like a detective. He mapped deaths, followed the evidence and challenged miasma.',
         blocks: [
@@ -577,6 +655,9 @@ export const MODULES = [
       {
         label: 'Government Acts',
         kicker: 'Government Action',
+        headerImage: 'Parliament papers, local authority plans, water pipes and sewer diagrams.',
+        visualTone: 'history',
+        dateCard: { date: '1848 / 1875', label: 'Public Health Acts' },
         heading: 'Public Health Acts: 1848 and 1875',
         sub: 'From optional and underfunded to compulsory. Progress was slow.',
         blocks: [
@@ -594,6 +675,9 @@ export const MODULES = [
       {
         label: 'Great Stink & Sewers',
         kicker: 'Turning Point',
+        headerImage: 'The Thames in summer heat, Parliament windows shut, and huge brick sewers under construction.',
+        visualTone: 'history',
+        dateCard: { date: '1858–1875', label: 'Bazalgette’s sewers' },
         heading: 'The Great Stink & Bazalgette\'s Sewers',
         sub: 'In 1858, the Thames smelled so bad that Parliament shut down. Reform suddenly became urgent.',
         blocks: [
@@ -611,6 +695,9 @@ export const MODULES = [
       {
         label: 'Flashcards',
         kicker: 'Final Recap',
+        headerImage: 'Public health revision cards beside a sewer map, pump sketch and Act of Parliament.',
+        visualTone: 'history',
+        dateCard: { date: 'Recap', label: 'Public health' },
         heading: 'Flashcards',
         sub: 'Tap to flip. Lock in the key facts.',
         blocks: [

@@ -1215,8 +1215,8 @@ function ScenarioBlock({ block }) {
 
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
-function HeaderVisual({ scene, tone = 'school' }) {
-  if (!scene) return null
+function HeaderVisual({ scene, tone = 'school', dateCard }) {
+  if (!scene && !dateCard) return null
   const palette = tone === 'school'
     ? { glow: 'rgba(196,122,50,.26)', line: 'rgba(196,122,50,.22)', chip: '#C47A32' }
     : { glow: 'rgba(157,92,255,.22)', line: 'rgba(157,92,255,.22)', chip: '#9D5CFF' }
@@ -1245,6 +1245,29 @@ function HeaderVisual({ scene, tone = 'school' }) {
         backgroundSize: '100% 34px, 44px 100%',
         opacity: .32,
       }} />
+      {dateCard && (
+        <div style={{
+          position: 'absolute', top: 14, left: 16,
+          background: 'rgba(5,8,17,.78)',
+          border: '1px solid ' + palette.chip + '55',
+          borderRadius: 14, padding: '10px 13px',
+          boxShadow: '0 10px 28px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06)',
+          backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+        }}>
+          <div style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 900, fontSize: '1.22rem', color: palette.chip,
+            lineHeight: 1, letterSpacing: '-.02em',
+          }}>{dateCard.date || dateCard}</div>
+          {dateCard.label && (
+            <div style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.58rem', color: '#AAB4D4',
+              fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', marginTop: 5,
+            }}>{dateCard.label}</div>
+          )}
+        </div>
+      )}
       <div style={{
         position: 'absolute', left: 18, right: 18, bottom: 16,
         display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16,
@@ -1275,7 +1298,7 @@ function HeaderVisual({ scene, tone = 'school' }) {
 function Screen({ screen, subject }) {
   return (
     <div>
-      <HeaderVisual scene={screen.headerImage} tone={screen.visualTone} />
+      <HeaderVisual scene={screen.headerImage} tone={screen.visualTone} dateCard={screen.dateCard} />
       <div style={{ marginBottom: 20 }}>
         <div style={{
           display: 'inline-flex',
