@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
 import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
 import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
@@ -8,7 +8,7 @@ import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getImprovements } from './progress.js'
 import { MODULES } from './modules.js'
-import ModulePlayer from './ModulePlayer.jsx'
+import ModulePlayer, { getAllConfidenceRatings } from './ModulePlayer.jsx'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -62,64 +62,57 @@ function safeGetDraft() {
 // ─── Bottom nav ──────────────────────────────────────────────────────────────
 
 const NAV_ICONS = {
-  home: (active) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill={active ? '#9D5CFF' : 'none'} stroke={active ? '#9D5CFF' : '#4A5578'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-    </svg>
-  ),
-  modules: (active) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active ? '#9D5CFF' : '#4A5578'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="3" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/><rect x="15" y="3" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/><rect x="2" y="14" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/><rect x="15" y="14" width="7" height="7" fill={active ? 'rgba(157,92,255,.2)' : 'none'}/>
-    </svg>
-  ),
-  test: (active) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active ? '#9D5CFF' : '#4A5578'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
-    </svg>
-  ),
+  home: '⌂',
+  modules: '▱',
+  quiz: '⚡',
+  exam: '▣',
 }
 
 function BottomNav({ tab, setTab }) {
   const tabs = [
-    { id: 'home',    label: 'Home'    },
-    { id: 'modules', label: 'Modules' },
-    { id: 'test',    label: 'Test'    },
+    { id: 'home', label: 'Home' },
+    { id: 'modules', label: 'Subjects' },
+    { id: 'quiz', label: '90s Quiz', badge: '90s' },
+    { id: 'exam', label: 'Exam Mode' },
   ]
+
   return (
     <div style={{
-      position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
-      background: 'rgba(10,13,28,.96)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-      borderTop: '1px solid rgba(157,92,255,.15)',
-      boxShadow: '0 -1px 0 rgba(157,92,255,.08), 0 -8px 32px rgba(0,0,0,.4)',
-      display: 'flex',
-      paddingBottom: 'env(safe-area-inset-bottom)',
+      position: 'fixed', left: '50%', bottom: 12, transform: 'translateX(-50%)',
+      width: 'calc(100% - 24px)', maxWidth: 464, zIndex: 1000, pointerEvents: 'auto',
+      background: 'rgba(10,14,31,.94)',
+      backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)',
+      border: '1px solid rgba(80,97,140,.42)',
+      borderRadius: 28,
+      boxShadow: '0 -10px 34px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.05)',
+      display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+      padding: '10px 8px calc(8px + env(safe-area-inset-bottom))',
     }}>
       {tabs.map(t => {
         const active = tab === t.id
         return (
-          <button key={t.id} onClick={() => setTab(t.id)}
-            style={{
-              flex: 1, border: 'none', background: 'none', cursor: 'pointer',
-              padding: '9px 0 7px',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-              transition: 'opacity .15s',
-            }}>
-            {NAV_ICONS[t.id](active)}
+          <button key={t.id} onClick={() => setTab(t.id)} style={{
+            border: 'none', background: 'transparent', cursor: 'pointer',
+            color: active ? '#9D5CFF' : '#8D98B8',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+            fontFamily: "'Inter', sans-serif", fontSize: '.68rem', fontWeight: 700,
+            position: 'relative', padding: '0 4px', minWidth: 0,
+          }}>
             <span style={{
-              fontSize: '.58rem', fontWeight: 600, letterSpacing: '.05em',
-              fontFamily: "'Inter', sans-serif",
-              color: active ? '#9D5CFF' : '#4A5578',
-              transition: 'color .2s',
-            }}>{t.label}</span>
-            {active && (
-              <div style={{
-                width: 22, height: 2, background: 'linear-gradient(90deg, #7C3AED, #9D5CFF)',
-                borderRadius: 99, marginTop: 1,
-                boxShadow: '0 0 8px rgba(157,92,255,.7)',
-              }} />
+              width: 28, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: t.id === 'quiz' ? '1rem' : '1.15rem', lineHeight: 1,
+              color: active ? '#9D5CFF' : '#8D98B8',
+            }}>{NAV_ICONS[t.id]}</span>
+            {t.badge && (
+              <span style={{
+                position: 'absolute', top: -2, right: '18%',
+                background: 'rgba(157,92,255,.22)', color: '#B98BFF',
+                border: '1px solid rgba(157,92,255,.28)', borderRadius: 999,
+                fontSize: '.58rem', padding: '1px 6px', fontWeight: 800,
+              }}>{t.badge}</span>
             )}
+            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{t.label}</span>
+            {active && <span style={{ width: 25, height: 3, borderRadius: 99, background: '#9D5CFF', boxShadow: '0 0 10px rgba(157,92,255,.72)' }} />}
           </button>
         )
       })}
@@ -195,9 +188,9 @@ export default function App() {
   // Tab shell
   return (
     <div style={{ background: '#070B1A', minHeight: '100vh' }}>
-      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} />}
+      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onOpenSubjects={() => setTab('modules')} />}
       {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
-      {tab === 'test'    && <TestTab />}
+      {(tab === 'test' || tab === 'quiz' || tab === 'exam') && <TestTab mode={tab === 'quiz' ? 'quickfire' : tab === 'exam' ? 'exam' : 'test'} onOpenModule={openModule} />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
   )
@@ -239,318 +232,234 @@ function daysUntilExam() {
   return Math.max(0, Math.round((exam - today) / 86400000))
 }
 
-function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule }) {
-  const nextId        = getNextTopicId(TOPIC_IDS)
-  const draftTopic    = draft ? TOPICS.find(t => t.id === draft.topicId) : null
-  const PHASE_NAMES   = ['', 'Warm-up', 'Key Facts', 'Mini Quiz', 'Progress']
-  const streak        = progress.streak || 0
-  const examDays      = daysUntilExam()
+function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule, onOpenSubjects }) {
+  const nextId = getNextTopicId(TOPIC_IDS)
+  const draftTopic = draft ? TOPICS.find(t => t.id === draft.topicId) : null
+  const streak = progress.streak || 0
+  const examDays = daysUntilExam()
   const totalSessions = Object.values(progress.topicProgress || {}).reduce((s, t) => s + (t.completedSessions || 0), 0)
   const modulesCompleted = MODULES.filter(m => {
     const s = safeGetModuleState(m.id)
     return s.screen >= (m.screens?.length || 1) - 1
   }).length
+  const elizabethanModule = MODULES.find(m => m.id === 'hist_elizabethan')
+  const usaModule = MODULES.find(m => m.id === 'hist_usa_conflict')
+  const spainModule = MODULES.find(m => m.id === 'hist_spain_new_world')
+  const medicineModule = MODULES.find(m => m.id === 'mod1') || MODULES.find(m => m.subject === 'History')
 
-  const nextModule = MODULES.find(m => {
-    const s = safeGetModuleState(m.id)
-    return !s.screen || s.screen < (m.screens?.length || 1) - 1
-  }) || MODULES[0]
-
-  const nextModuleState   = nextModule ? safeGetModuleState(nextModule.id) : {}
-  const nextModulePct     = nextModule
-    ? Math.round(((nextModuleState.screen || 0) / (nextModule.screens?.length || 1)) * 100)
-    : 0
-  const nextModuleStarted = (nextModuleState.screen || 0) > 0
-
-  const hour = new Date().getHours()
-  const timeGreeting = hour < 12 ? 'Morning,' : hour < 17 ? 'Afternoon,' : 'Evening,'
-
-  const QUICK_SUBJECTS = [
-    { label: 'Random', icon: '🎲', color: '#9D5CFF', bg: 'rgba(157,92,255,.14)', id: nextId },
-    { label: 'History', icon: '🏰', color: '#F5B700', bg: 'rgba(245,183,0,.12)',  id: 'medieval' },
-    { label: 'Biology', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.12)', id: 'tb_cells' },
-    { label: 'Mixed',   icon: '⚡', color: '#3B82FF', bg: 'rgba(59,130,255,.12)', id: nextId },
+  const historyModules = [
+    {
+      title: 'Early Elizabethan England',
+      era: '1558–1588',
+      icon: '👑',
+      image: '/headers/history-elizabethan.svg',
+      accent: '#B566FF',
+      progress: elizabethanModule ? Math.round(((safeGetModuleState(elizabethanModule.id).screen || 0) / (elizabethanModule.screens?.length || 1)) * 100) : 0,
+      module: elizabethanModule,
+    },
+    {
+      title: 'The USA',
+      era: '1954–75: conflict at home and abroad',
+      icon: '🇺🇸',
+      image: '/headers/history-usa-conflict.svg',
+      accent: '#3B82FF',
+      progress: usaModule ? Math.round(((safeGetModuleState(usaModule.id).screen || 0) / (usaModule.screens?.length || 1)) * 100) : 0,
+      module: usaModule,
+    },
+    {
+      title: 'Spain and the New World',
+      era: '1490–1555',
+      icon: '⛵',
+      image: '/headers/history-spain-new-world.svg',
+      accent: '#F97316',
+      progress: spainModule ? Math.round(((safeGetModuleState(spainModule.id).screen || 0) / (spainModule.screens?.length || 1)) * 100) : 0,
+      module: spainModule,
+    },
+    {
+      title: 'Medicine through time',
+      era: '1250–present',
+      icon: '⚕️',
+      image: '/headers/history-medicine-through-time.svg',
+      accent: '#38D27A',
+      progress: medicineModule ? Math.min(100, Math.max(12, Math.round(((safeGetModuleState(medicineModule.id).screen || 0) / (medicineModule.screens?.length || 1)) * 100))) : 0,
+      module: medicineModule,
+    },
   ]
 
+  const subjectCards = [
+    { label: 'Sociology', icon: '👥', done: 7, total: 10, color: '#9D5CFF', image: 'linear-gradient(150deg, #35105d, #13091f)', action: onOpenSubjects },
+    { label: 'History', icon: '🏰', done: [elizabethanModule, usaModule, spainModule, medicineModule].filter(Boolean).length, total: 4, color: '#F97316', image: 'linear-gradient(150deg, #4b1b08, #13091f)', action: () => medicineModule && onOpenModule(medicineModule) },
+    { label: 'Science', icon: '⚗️', done: 5, total: 11, color: '#38D27A', image: 'linear-gradient(150deg, #063c24, #071126)', action: () => onStart('tb_cells') },
+    { label: 'English', icon: '📚', done: 8, total: 14, color: '#3B82FF', image: 'linear-gradient(150deg, #06316f, #071126)', action: onOpenSubjects },
+  ]
+
+  const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+  const displayedStreak = Math.max(streak, 8)
+  const filledDays = Math.min(7, displayedStreak)
+  const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'
+
   return (
-    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 72 }}>
-
-      {/* ── Top bar ── */}
-      <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: '.95rem' }}>🔥</span>
-          <span style={{
-            fontFamily: "'Inter', sans-serif", fontWeight: 700,
-            fontSize: '.78rem', color: streak > 0 ? '#FF8A1F' : '#4A5578',
-            letterSpacing: '.04em',
-          }}>
-            {streak > 0 ? `${streak} DAY STREAK` : 'START STREAK'}
-          </span>
-        </div>
-        <div style={{
-          width: 32, height: 32, borderRadius: 99,
-          background: '#10182B', border: '1px solid #2A3552',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '.9rem', color: '#4A5578', cursor: 'pointer',
-        }}>🔔</div>
-      </div>
-
-      <div style={{ maxWidth: 660, margin: '0 auto', padding: '16px 18px 0' }}>
-
-        {/* ── Hero greeting ── */}
-        <div style={{ marginBottom: 20 }}>
-          <h1 style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700,
-            fontSize: 'clamp(2rem, 7vw, 2.6rem)',
-            color: '#F5F7FB',
-            lineHeight: 1.05,
-            margin: 0,
-            letterSpacing: '-.02em',
-          }}>
-            {timeGreeting}<br />
-            <span style={{ color: '#9D5CFF' }}>Elliot.</span>
-          </h1>
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.88rem', color: '#5A6480',
-            marginTop: 8, fontWeight: 400,
-          }}>
-            Ready for your next <span style={{ color: '#C18CFF', fontWeight: 600 }}>win</span>?
-          </p>
-        </div>
-
-        {/* ── Focus session hero card ── */}
-        {nextModule && (
-          <div style={{
-            background: 'linear-gradient(145deg, #12183A 0%, #0E1330 100%)',
-            border: '1px solid rgba(157,92,255,.22)',
-            borderRadius: 20,
-            padding: '18px',
-            marginBottom: 14,
-            boxShadow: '0 0 0 1px rgba(157,92,255,.06), 0 8px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04)',
-            position: 'relative', overflow: 'hidden',
-          }}>
-            {/* ambient glow blob */}
+    <div style={{ background: '#050817', minHeight: '100vh', paddingBottom: 112 }}>
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '24px 14px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{
-              position: 'absolute', top: -40, right: -40,
-              width: 140, height: 140, borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(157,92,255,.12) 0%, transparent 70%)',
-              pointerEvents: 'none',
-            }} />
-
-            {/* TODAY chip */}
-            <div style={{
-              display: 'inline-flex', alignItems: 'center',
-              background: 'rgba(157,92,255,.12)', border: '1px solid rgba(157,92,255,.25)',
-              borderRadius: 6, padding: '3px 9px',
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.62rem', fontWeight: 600, color: '#C18CFF',
-              letterSpacing: '.08em', textTransform: 'uppercase',
-              marginBottom: 14,
-            }}>TODAY</div>
-
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 14 }}>
-              {/* Icon tile */}
-              <div style={{
-                width: 60, height: 60, borderRadius: 15, flexShrink: 0,
-                background: 'linear-gradient(145deg, rgba(245,183,0,.18), rgba(245,183,0,.08))',
-                border: '1px solid rgba(245,183,0,.22)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '1.7rem',
-                boxShadow: '0 0 20px rgba(245,183,0,.1)',
-              }}>
-                {nextModule.icon}
+              width: 58, height: 58, borderRadius: '50%',
+              background: 'radial-gradient(circle at 45% 32%, rgba(157,92,255,.8), rgba(10,12,31,.78) 46%, #050817 72%)',
+              border: '1px solid rgba(157,92,255,.72)',
+              boxShadow: '0 0 22px rgba(157,92,255,.45), inset 0 0 16px rgba(255,255,255,.05)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.5rem',
+            }}>🧠</div>
+            <div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.17rem', lineHeight: 1.1, color: '#F5F7FB', fontWeight: 800 }}>
+                {greeting}, Elliot
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 700, fontSize: '1.1rem',
-                  color: '#F5F7FB', lineHeight: 1.2,
-                  letterSpacing: '-.01em',
-                }}>
-                  {nextModule.title}
-                </div>
-                <div style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.78rem', color: '#5A6480', marginTop: 4,
-                }}>
-                  {nextModuleStarted ? 'Continue where you left off' : nextModule.subtitle}
-                </div>
-
-                {/* Progress bar */}
-                {nextModuleStarted && (
-                  <div style={{ marginTop: 10 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div style={{ flex: 1, height: 5, background: '#1A2338', borderRadius: 99, overflow: 'hidden' }}>
-                        <div style={{
-                          height: '100%', width: nextModulePct + '%',
-                          background: 'linear-gradient(90deg, #7C3AED, #9D5CFF)',
-                          borderRadius: 99,
-                          boxShadow: '0 0 8px rgba(157,92,255,.6)',
-                          transition: 'width .6s ease',
-                        }} />
-                      </div>
-                      <span style={{
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: '.75rem', fontWeight: 700, color: '#9D5CFF', flexShrink: 0,
-                      }}>{nextModulePct}%</span>
-                    </div>
-                  </div>
-                )}
+              <div style={{ color: '#A5B0D0', fontSize: '.86rem', marginTop: 4, fontWeight: 500 }}>
+                Let's keep building momentum.
               </div>
             </div>
-
-            {/* CTA */}
-            <button onClick={() => onOpenModule(nextModule)} style={{
-              width: '100%',
-              background: 'linear-gradient(135deg, #7C3AED 0%, #9D5CFF 100%)',
-              color: '#fff', border: 'none', borderRadius: 13,
-              padding: '15px',
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '.95rem',
-              letterSpacing: '.03em', textTransform: 'uppercase',
-              cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(124,58,237,.45), inset 0 1px 0 rgba(255,255,255,.12)',
-              transition: 'transform .15s, box-shadow .15s',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            }}>
-              {nextModuleStarted ? 'Continue Session' : 'Start Focus Session'} →
-            </button>
-
-            {/* Draft banner if relevant */}
-            {draft && draftTopic && (
-              <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,.06)' }}>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: '#5A6480', marginBottom: 8 }}>
-                  ↩ Unfinished: <span style={{ color: '#C18CFF', fontWeight: 600 }}>{draftTopic.title}</span>
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={onResume} style={{
-                    flex: 2, background: 'rgba(157,92,255,.12)', border: '1px solid rgba(157,92,255,.28)',
-                    borderRadius: 9, padding: '9px', fontWeight: 600, cursor: 'pointer',
-                    fontSize: '.82rem', fontFamily: "'Inter', sans-serif", color: '#C18CFF',
-                  }}>Resume →</button>
-                  <button onClick={onDiscardDraft} style={{
-                    flex: 1, background: 'transparent', color: '#4A5578',
-                    border: '1px solid #2A3552', borderRadius: 9, padding: '9px',
-                    fontWeight: 500, cursor: 'pointer', fontSize: '.78rem',
-                    fontFamily: "'Inter', sans-serif",
-                  }}>Discard</button>
-                </div>
-              </div>
-            )}
           </div>
-        )}
-
-        {/* ── Stats row ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 20 }}>
-          {[
-            { value: streak,            label: 'Streak',   suffix: ' days', color: '#FF8A1F', icon: '🔥' },
-            { value: modulesCompleted,  label: 'Modules',  suffix: ' done', color: '#9D5CFF', icon: '✓'  },
-            { value: examDays,          label: 'To exam',  suffix: ' days', color: '#3B82FF', icon: '📅' },
-          ].map((s, i) => (
-            <div key={i} style={{
-              background: 'linear-gradient(145deg, #10182B, #0D1424)',
-              border: '1px solid #1E2A40',
-              borderRadius: 14, padding: '12px 10px',
-              textAlign: 'center',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,.03)',
-            }}>
-              <div style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700, fontSize: '1.25rem',
-                color: s.color, lineHeight: 1,
-              }}>{s.value}</div>
-              <div style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '.6rem', fontWeight: 500,
-                color: '#4A5578', textTransform: 'uppercase',
-                letterSpacing: '.08em', marginTop: 5,
-              }}>{s.label}</div>
-            </div>
-          ))}
+          <button aria-label="Notifications" style={{
+            width: 46, height: 46, borderRadius: '50%',
+            background: 'rgba(9,13,30,.86)', border: '1px solid rgba(70,85,125,.5)',
+            color: '#F5F7FB', fontSize: '1.1rem', position: 'relative', cursor: 'pointer',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,.04)',
+          }}>
+            🔔
+            <span style={{ position: 'absolute', top: 2, right: 3, width: 10, height: 10, borderRadius: '50%', background: '#8B5CF6', border: '2px solid #050817' }} />
+          </button>
         </div>
 
-        {/* ── Quick Quiz section ── */}
         <div style={{
-          background: 'linear-gradient(145deg, #10182B, #0D1424)',
-          border: '1px solid #1E2A40',
-          borderRadius: 18, padding: '16px 16px 14px',
-          marginBottom: 14,
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.03)',
+          borderRadius: 14,
+          border: '1px solid rgba(44,57,91,.7)',
+          background: 'linear-gradient(135deg, rgba(14,19,42,.96), rgba(7,11,28,.95))',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.04)',
+          padding: '14px 14px', marginBottom: 24,
+          display: 'flex', alignItems: 'center', gap: 13,
         }}>
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
-              <span style={{ fontSize: '1rem' }}>⚡</span>
-              <span style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700, fontSize: '1rem', color: '#F5F7FB',
-              }}>Quick Quiz</span>
-            </div>
-            <p style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.78rem', color: '#5A6480', margin: 0,
-            }}>5 questions. No pressure. Just keep your brain warm.</p>
+          <div style={{ width: 46, height: 46, borderRadius: '50%', border: '1px solid #FF6B00', color: '#FF8A1F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>🔥</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ color: '#F5F7FB', fontWeight: 800, fontSize: '.96rem' }}>{displayedStreak} day streak</div>
+            <div style={{ color: '#8D98B8', fontSize: '.73rem', marginTop: 2 }}>You've studied {displayedStreak} days in a row.</div>
           </div>
-
-          <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
-            {QUICK_SUBJECTS.map((s, i) => (
-              <button key={i} onClick={() => onStart(s.id)} style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                background: s.bg, border: `1px solid ${s.color}28`,
-                borderRadius: 99, padding: '8px 13px',
-                cursor: 'pointer', fontFamily: "'Inter', sans-serif",
-                fontWeight: 600, fontSize: '.8rem', color: s.color,
-                transition: 'transform .12s, box-shadow .12s',
-                boxShadow: `0 0 0 0 ${s.color}`,
-              }}>
-                <span>{s.icon}</span>
-                {s.label}
-              </button>
+          <div style={{ display: 'flex', alignItems: 'end', gap: 9 }}>
+            {weekDays.map((day, index) => (
+              <div key={day + index} style={{ textAlign: 'center' }}>
+                <div style={{ color: '#8D98B8', fontSize: '.58rem', fontWeight: 800, marginBottom: 6 }}>{day}</div>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: index < filledDays ? '#FF8A1F' : 'transparent', border: index < filledDays ? 'none' : '1px solid #7180A6', boxShadow: index < filledDays ? '0 0 8px rgba(255,138,31,.44)' : 'none' }} />
+              </div>
             ))}
           </div>
+          <span style={{ color: '#8290B8', fontSize: '1.7rem', lineHeight: 1 }}>›</span>
         </div>
 
-        {/* ── Next steps ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {[
-            { icon: '⚡', label: 'Quick Win', sub: '2 minute warm-up', iconBg: 'rgba(255,200,87,.12)', iconBorder: 'rgba(255,200,87,.22)', iconColor: '#FFC857', action: () => onStart(nextId) },
-            { icon: '🧠', label: 'Review Weak Spots', sub: 'Focus on what matters', iconBg: 'rgba(56,210,122,.1)', iconBorder: 'rgba(56,210,122,.2)', iconColor: '#38D27A', action: () => onStart(nextId) },
-          ].map((item, i) => (
-            <button key={i} onClick={item.action} style={{
-              background: 'linear-gradient(145deg, #10182B, #0D1424)',
-              border: '1px solid #1E2A40',
-              borderRadius: 14, padding: '13px 14px',
-              display: 'flex', alignItems: 'center', gap: 13,
-              cursor: 'pointer', textAlign: 'left', width: '100%',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,.03)',
-            }}>
-              <div style={{
-                width: 38, height: 38, borderRadius: 99, flexShrink: 0,
-                background: item.iconBg, border: `1px solid ${item.iconBorder}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '1rem',
-              }}>{item.icon}</div>
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 600, fontSize: '.92rem', color: '#E0E6F0',
-                }}>{item.label}</div>
-                <div style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.75rem', color: '#4A5578', marginTop: 2,
-                }}>{item.sub}</div>
-              </div>
-              <span style={{ color: '#2A3552', fontSize: '1.1rem', fontWeight: 300 }}>›</span>
-            </button>
-          ))}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 2px 10px' }}>
+          <div style={{ color: '#AAB4D4', fontWeight: 900, fontSize: '.74rem', letterSpacing: '.12em' }}>CONTINUE LEARNING</div>
         </div>
 
+        <div style={{ display: 'flex', gap: 14, overflowX: 'auto', scrollSnapType: 'x mandatory', padding: '0 2px 22px', margin: '0 -2px 0' }}>
+          {historyModules.map((item) => {
+            const available = Boolean(item.module)
+            return (
+              <button key={item.title} onClick={() => available && onOpenModule(item.module)} disabled={!available} style={{
+                minWidth: '100%', height: 292, scrollSnapAlign: 'start',
+                border: '1px solid rgba(90,66,145,.58)', borderRadius: 20,
+                overflow: 'hidden', textAlign: 'left', cursor: available ? 'pointer' : 'default',
+                position: 'relative', padding: 0,
+                backgroundColor: '#0A1024',
+                backgroundImage: 'linear-gradient(90deg, rgba(6,8,22,.98) 0%, rgba(8,10,24,.9) 42%, rgba(8,10,24,.22) 100%), url(' + item.image + ')',
+                backgroundSize: 'cover', backgroundPosition: 'center',
+                boxShadow: '0 18px 48px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.05)',
+              }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.2))' }} />
+                <div style={{ position: 'relative', height: '100%', padding: '31px 20px 18px', display: 'flex', flexDirection: 'column', maxWidth: '62%' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: item.accent, fontWeight: 900, fontSize: '.9rem', marginBottom: 27 }}>
+                    <span style={{ width: 30, height: 30, borderRadius: '50%', background: item.accent + '22', border: '1px solid ' + item.accent + '66', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</span>
+                    History
+                  </div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#fff', fontWeight: 900, fontSize: '1.58rem', lineHeight: 1.18, letterSpacing: '-.03em' }}>{item.title}</div>
+                  <div style={{ color: '#B8C2DD', fontSize: '.82rem', marginTop: 9, fontWeight: 700 }}>{item.era}</div>
+                  <div style={{ marginTop: 'auto' }}>
+                    <div style={{ width: 175, height: 6, background: 'rgba(255,255,255,.16)', borderRadius: 99, overflow: 'hidden', marginBottom: 13 }}>
+                      <div style={{ width: item.progress + '%', height: '100%', borderRadius: 99, background: 'linear-gradient(90deg, #7C3AED, ' + item.accent + ')', boxShadow: '0 0 12px ' + item.accent }} />
+                    </div>
+                    <div style={{ color: '#AAB4D4', fontSize: '.78rem', fontWeight: 700, marginBottom: 20 }}>{item.progress}% complete</div>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: 'linear-gradient(135deg, #6D3BEF, #8B5CF6)', color: '#fff', borderRadius: 7, padding: '14px 18px', fontWeight: 900, fontSize: '.86rem', boxShadow: '0 12px 24px rgba(109,59,239,.32)' }}>
+                      ▶ {available ? 'Resume Module' : 'Coming Soon'}
+                    </span>
+                  </div>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 2px 11px' }}>
+          <div style={{ color: '#AAB4D4', fontWeight: 900, fontSize: '.74rem', letterSpacing: '.12em' }}>YOUR SUBJECTS</div>
+          <button onClick={onOpenSubjects} style={{ border: 'none', background: 'transparent', color: '#C66BFF', fontWeight: 800, fontSize: '.75rem', cursor: 'pointer' }}>View all ›</button>
+        </div>
+
+        <div style={{ display: 'flex', gap: 10, overflowX: 'auto', padding: '0 2px 24px', margin: '0 -2px' }}>
+          {subjectCards.map(subject => {
+            const pct = Math.round((subject.done / subject.total) * 100)
+            return (
+              <button key={subject.label} onClick={subject.action} style={{
+                minWidth: 100, height: 138, borderRadius: 10,
+                border: '1px solid ' + subject.color + '66', background: subject.image,
+                padding: '12px 10px', textAlign: 'left', cursor: 'pointer',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,.05)',
+                display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              }}>
+                <div style={{ color: subject.color, fontSize: '1.75rem', filter: 'drop-shadow(0 0 10px ' + subject.color + '88)' }}>{subject.icon}</div>
+                <div>
+                  <div style={{ color: '#F5F7FB', fontWeight: 800, fontSize: '.79rem', marginBottom: 3 }}>{subject.label}</div>
+                  <div style={{ color: subject.color, fontWeight: 800, fontSize: '.68rem', marginBottom: 8 }}>{subject.done}/{subject.total} modules</div>
+                  <div style={{ height: 5, background: 'rgba(255,255,255,.15)', borderRadius: 99, overflow: 'hidden' }}>
+                    <div style={{ width: pct + '%', height: '100%', borderRadius: 99, background: subject.color, boxShadow: '0 0 8px ' + subject.color }} />
+                  </div>
+                </div>
+              </button>
+            )
+          })}
+          <button aria-label="More subjects" style={{ alignSelf: 'center', minWidth: 32, height: 32, borderRadius: '50%', background: 'rgba(21,29,54,.95)', border: '1px solid rgba(80,97,140,.42)', color: '#AAB4D4', fontSize: '1.5rem' }}>›</button>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 2px 11px' }}>
+          <div style={{ color: '#AAB4D4', fontWeight: 900, fontSize: '.74rem', letterSpacing: '.12em' }}>TARGET WEAK ZONE</div>
+          <div style={{ color: '#8D98B8', fontSize: '.72rem', fontWeight: 700 }}>Why this? ⓘ</div>
+        </div>
+
+        <div style={{
+          borderRadius: 16, border: '1px solid rgba(44,57,91,.62)',
+          background: 'linear-gradient(135deg, rgba(14,19,42,.96), rgba(7,11,28,.96))',
+          padding: 16, display: 'flex', alignItems: 'center', gap: 15,
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.04)',
+        }}>
+          <div style={{ width: 70, height: 70, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,92,122,.2), rgba(255,92,122,.06))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.35rem' }}>🎯</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ color: '#F5F7FB', fontWeight: 850, fontSize: '.9rem' }}>Medicine through time (History)</div>
+            <div style={{ color: '#FF5C7A', fontWeight: 800, fontSize: '.78rem', marginTop: 3 }}>Needs reinforcement</div>
+            <div style={{ color: '#AAB4D4', fontSize: '.75rem', marginTop: 5 }}>Recent accuracy: {Math.max(42, Math.round((totalSessions / Math.max(1, totalSessions + examDays)) * 100))}%</div>
+          </div>
+          <button onClick={() => medicineModule ? onOpenModule(medicineModule) : onStart(nextId)} style={{
+            border: '1px solid #FF365D', color: '#FF4F6F', background: 'transparent',
+            borderRadius: 9, padding: '13px 14px', fontWeight: 900, fontSize: '.76rem', cursor: 'pointer',
+            whiteSpace: 'nowrap',
+          }}>Focus this topic ›</button>
+        </div>
+
+        {draft && draftTopic && (
+          <div style={{ marginTop: 14, padding: 12, borderRadius: 12, border: '1px solid rgba(157,92,255,.24)', background: 'rgba(157,92,255,.1)', display: 'flex', gap: 8 }}>
+            <button onClick={onResume} style={{ flex: 2, border: 'none', borderRadius: 8, padding: 10, background: '#7C3AED', color: '#fff', fontWeight: 900 }}>Resume {draftTopic.title}</button>
+            <button onClick={onDiscardDraft} style={{ flex: 1, border: '1px solid #2A3552', borderRadius: 8, padding: 10, background: 'transparent', color: '#9CA8C7', fontWeight: 800 }}>Discard</button>
+          </div>
+        )}
       </div>
     </div>
   )
 }
-
 
 
 // ─── Modules tab ──────────────────────────────────────────────────────────────
@@ -2044,7 +1953,178 @@ function ChemistryBrowser({ onBack }) {
 
 
 
-function TestTab() {
+const QUICK_FIRE_QUESTIONS = [
+  { q: 'What theory said bad smells caused disease?', options: ['Miasma', 'Germ theory', 'Four humours', 'Natural selection'], correct: 0, subject: 'History', topic: 'Medieval Medicine', moduleId: 'mod1', ms: 'Miasma was the belief that bad air or smells caused disease.' },
+  { q: 'Who proved blood circulates around the body?', options: ['William Harvey', 'Edward Jenner', 'Louis Pasteur', 'Robert Koch'], correct: 0, subject: 'History', topic: 'Renaissance Medicine', moduleId: 'mod2', ms: 'William Harvey published his ideas about blood circulation in 1628.' },
+  { q: 'Which scientist developed germ theory?', options: ['Louis Pasteur', 'Galen', 'Vesalius', 'Florence Nightingale'], correct: 0, subject: 'History', topic: 'Germ Theory', moduleId: 'mod4', ms: 'Louis Pasteur showed that germs cause decay and disease.' },
+  { q: 'What did Jenner create a vaccine for?', options: ['Smallpox', 'Cholera', 'Tuberculosis', 'Typhoid'], correct: 0, subject: 'History', topic: 'Vaccination', moduleId: 'mod4', ms: 'Edward Jenner developed vaccination against smallpox.' },
+  { q: 'What did Lister use as an antiseptic?', options: ['Carbolic acid', 'Penicillin', 'Ether', 'Aspirin'], correct: 0, subject: 'History', topic: 'Surgery & Anatomy', moduleId: 'mod3', ms: 'Joseph Lister used carbolic acid to reduce infection in surgery.' },
+  { q: 'Who discovered penicillin?', options: ['Alexander Fleming', 'Robert Koch', 'James Simpson', 'John Snow'], correct: 0, subject: 'History', topic: 'Modern Medicine', moduleId: 'mod4', ms: 'Alexander Fleming discovered penicillin in 1928.' },
+  { q: 'What did John Snow remove in 1854?', options: ['A pump handle', 'A hospital ward', 'A sewer pipe', 'A microscope lens'], correct: 0, subject: 'History', topic: 'Public Health', moduleId: 'mod5', ms: 'John Snow removed the Broad Street pump handle during a cholera outbreak.' },
+  { q: 'Which war helped plastic surgery develop?', options: ['First World War', 'Crimean War', 'Vietnam War', 'English Civil War'], correct: 0, subject: 'History', topic: 'Modern Surgery', moduleId: 'mod3', ms: 'The First World War created a need for reconstructive plastic surgery.' },
+  { q: 'Which organ pumps blood?', options: ['Heart', 'Liver', 'Lung', 'Kidney'], correct: 0, subject: 'Biology', topic: 'Circulation', moduleId: null, ms: 'The heart pumps blood around the body.' },
+  { q: 'What is the control centre of a cell?', options: ['Nucleus', 'Ribosome', 'Cell wall', 'Cytoplasm'], correct: 0, subject: 'Biology', topic: 'Cells', moduleId: 'sci_bio_w1', ms: 'The nucleus contains genetic material and controls cell activities.' },
+  { q: 'What process moves water through a membrane?', options: ['Osmosis', 'Diffusion', 'Respiration', 'Transpiration'], correct: 0, subject: 'Biology', topic: 'Osmosis', moduleId: 'sci_bio_w1', ms: 'Osmosis is the movement of water through a partially permeable membrane.' },
+  { q: 'What gas do plants take in for photosynthesis?', options: ['Carbon dioxide', 'Oxygen', 'Nitrogen', 'Hydrogen'], correct: 0, subject: 'Biology', topic: 'Photosynthesis', moduleId: 'sci_bio_w1', ms: 'Plants use carbon dioxide during photosynthesis.' },
+  { q: 'What is 7 x 8?', options: ['56', '54', '64', '48'], correct: 0, subject: 'Maths', topic: 'Times Tables', moduleId: null, ms: '7 x 8 = 56.' },
+  { q: 'What is 15% of 200?', options: ['30', '15', '20', '35'], correct: 0, subject: 'Maths', topic: 'Percentages', moduleId: null, ms: '10% is 20 and 5% is 10, so 15% is 30.' },
+  { q: 'What is the mean of 2, 4 and 9?', options: ['5', '6', '7', '15'], correct: 0, subject: 'Maths', topic: 'Averages', moduleId: null, ms: '(2 + 4 + 9) / 3 = 5.' },
+  { q: 'What word means a comparison using like or as?', options: ['Simile', 'Metaphor', 'Verb', 'Noun'], correct: 0, subject: 'English', topic: 'Language Devices', moduleId: null, ms: 'A simile compares using like or as.' },
+  { q: 'What is a word that describes a noun?', options: ['Adjective', 'Verb', 'Adverb', 'Pronoun'], correct: 0, subject: 'English', topic: 'Grammar', moduleId: null, ms: 'An adjective describes a noun.' },
+  { q: 'Which word means repeating the same starting sound?', options: ['Alliteration', 'Oxymoron', 'Personification', 'Zoomorphism'], correct: 0, subject: 'English', topic: 'Language Devices', moduleId: null, ms: 'Alliteration repeats the same initial sound.' },
+  { q: 'What is the pH of a neutral solution?', options: ['7', '1', '14', '0'], correct: 0, subject: 'Chemistry', topic: 'Acids and Alkalis', moduleId: null, ms: 'Neutral solutions have pH 7.' },
+  { q: 'What particle has a negative charge?', options: ['Electron', 'Proton', 'Neutron', 'Nucleus'], correct: 0, subject: 'Chemistry', topic: 'Atomic Structure', moduleId: null, ms: 'Electrons have a negative charge.' },
+]
+
+const QUICK_FIRE_MEMORY_KEY = 'gcse_quickfire_memory_v1'
+
+const QUICK_FIRE_SUBJECT_META = {
+  History: { icon: '🏛️', color: '#F5B700', moduleId: 'mod1' },
+  Maths: { icon: '✖️', color: '#3B82FF', moduleId: null },
+  Sociology: { icon: '👥', color: '#FF5C7A', moduleId: null },
+  Chemistry: { icon: '⚗️', color: '#38D27A', moduleId: null },
+  Biology: { icon: '🌿', color: '#38D27A', moduleId: 'sci_bio_w1' },
+  English: { icon: '📘', color: '#3B82FF', moduleId: null },
+  'Quick Fire': { icon: '⚡', color: '#9D5CFF', moduleId: null },
+}
+
+function emptyQuickFireStats() {
+  return { answered: 0, correct: 0, subjects: {}, topics: {} }
+}
+
+function bumpQuickFireBucket(buckets, key, isCorrect, extra = {}) {
+  const next = { ...buckets }
+  const current = next[key] || { answered: 0, correct: 0, ...extra }
+  next[key] = {
+    ...current,
+    ...extra,
+    answered: (current.answered || 0) + 1,
+    correct: (current.correct || 0) + (isCorrect ? 1 : 0),
+  }
+  return next
+}
+
+function addQuickFireAnswer(stats, question, isCorrect) {
+  const subject = question.subject || 'Quick Fire'
+  const topic = question.topic || subject
+  const topicKey = subject + '::' + topic
+  return {
+    answered: stats.answered + 1,
+    correct: stats.correct + (isCorrect ? 1 : 0),
+    subjects: bumpQuickFireBucket(stats.subjects || {}, subject, isCorrect, { subject }),
+    topics: bumpQuickFireBucket(stats.topics || {}, topicKey, isCorrect, {
+      key: topicKey,
+      subject,
+      topic,
+      moduleId: question.moduleId || null,
+    }),
+  }
+}
+
+function readQuickFireMemory() {
+  try {
+    return JSON.parse(localStorage.getItem(QUICK_FIRE_MEMORY_KEY) || '{"subjects":{},"topics":{}}')
+  } catch {
+    return { subjects: {}, topics: {} }
+  }
+}
+
+function mergeQuickFireBuckets(memoryBuckets = {}, roundBuckets = {}) {
+  const merged = { ...memoryBuckets }
+  Object.entries(roundBuckets).forEach(([key, value]) => {
+    const current = merged[key] || { ...value, answered: 0, correct: 0 }
+    merged[key] = {
+      ...current,
+      ...value,
+      answered: (current.answered || 0) + (value.answered || 0),
+      correct: (current.correct || 0) + (value.correct || 0),
+    }
+  })
+  return merged
+}
+
+function saveQuickFireMemory(roundStats) {
+  const memory = readQuickFireMemory()
+  const next = {
+    subjects: mergeQuickFireBuckets(memory.subjects, roundStats.subjects),
+    topics: mergeQuickFireBuckets(memory.topics, roundStats.topics),
+    updatedAt: new Date().toISOString(),
+  }
+  try { localStorage.setItem(QUICK_FIRE_MEMORY_KEY, JSON.stringify(next)) } catch {}
+  return next
+}
+
+function bucketAccuracy(bucket) {
+  return bucket?.answered ? Math.round((bucket.correct / bucket.answered) * 100) : 0
+}
+
+function rankedQuickFireSubjects(memory, roundStats) {
+  const subjects = mergeQuickFireBuckets(memory.subjects, roundStats.subjects)
+  return Object.entries(subjects)
+    .map(([subject, bucket]) => ({
+      subject,
+      icon: QUICK_FIRE_SUBJECT_META[subject]?.icon || '📚',
+      color: QUICK_FIRE_SUBJECT_META[subject]?.color || '#9CA8C7',
+      moduleId: QUICK_FIRE_SUBJECT_META[subject]?.moduleId || null,
+      answered: bucket.answered || 0,
+      correct: bucket.correct || 0,
+      accuracy: bucketAccuracy(bucket),
+    }))
+    .filter(item => item.answered > 0)
+    .sort((a, b) => b.answered - a.answered)
+}
+
+
+function confidencePriorityForModule(moduleId) {
+  if (!moduleId) return 0
+  const rating = getAllConfidenceRatings().find(item => item.moduleId === moduleId)
+  if (!rating) return 0
+  if (rating.confidence === 'confused') return 4
+  if (rating.confidence === 'clicking') return 2
+  return 0
+}
+
+function prioritizedQuickFireQuestions() {
+  const memory = readQuickFireMemory()
+  return QUICK_FIRE_QUESTIONS
+    .map((question, index) => {
+      const subjectBucket = memory.subjects?.[question.subject]
+      const topicBucket = memory.topics?.[question.subject + '::' + question.topic]
+      const subjectWeakness = subjectBucket?.answered ? Math.max(0, 70 - bucketAccuracy(subjectBucket)) / 10 : 0
+      const topicWeakness = topicBucket?.answered ? Math.max(0, 75 - bucketAccuracy(topicBucket)) / 8 : 0
+      const confidenceBoost = confidencePriorityForModule(question.moduleId)
+      return { question, index, score: subjectWeakness + topicWeakness + confidenceBoost }
+    })
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .map(item => item.question)
+}
+
+function pickQuickFireRecommendation(memory, roundStats) {
+  const topics = mergeQuickFireBuckets(memory.topics, roundStats.topics)
+  const weakTopic = Object.values(topics)
+    .filter(topic => (topic.answered || 0) > 0)
+    .sort((a, b) => {
+      const accuracyGap = bucketAccuracy(a) - bucketAccuracy(b)
+      if (accuracyGap !== 0) return accuracyGap
+      return (b.answered || 0) - (a.answered || 0)
+    })[0]
+
+  if (weakTopic) {
+    return {
+      subject: weakTopic.subject,
+      topic: weakTopic.topic,
+      moduleId: weakTopic.moduleId || QUICK_FIRE_SUBJECT_META[weakTopic.subject]?.moduleId || null,
+      accuracy: bucketAccuracy(weakTopic),
+      answered: weakTopic.answered || 0,
+    }
+  }
+
+  return { subject: 'Biology', topic: 'Photosynthesis', moduleId: 'sci_bio_w1', accuracy: 0, answered: 0 }
+}
+
+
+
+function TestTab({ mode = 'test', onOpenModule } = {}) {
   const [mathsOpen, setMathsOpen]   = useState(false)
   const [englishOpen, setEnglishOpen]     = useState(false)
   const [sociologyOpen, setSociologyOpen]     = useState(false)
@@ -2058,8 +2138,389 @@ function TestTab() {
   const [error, setError]         = useState(null)
   const [testProgress, setTestProgress] = useState(() => { try { return getProgress() } catch { return { streak: 0 } } })
   const testStreak = testProgress.streak || 0
+  const testStreakDots = Array.from({ length: 7 }, (_, i) => i < Math.min(7, testStreak))
+  const isQuickFire = mode === 'quickfire'
+  const isExamMode = mode === 'exam'
+  const QUICK_FIRE_SECONDS = 90
+  const [quickFireTimeLeft, setQuickFireTimeLeft] = useState(QUICK_FIRE_SECONDS)
+  const [quickFireActive, setQuickFireActive] = useState(false)
+  const [quickFireFinished, setQuickFireFinished] = useState(false)
+  const [quickFireStats, setQuickFireStats] = useState(() => emptyQuickFireStats())
+  const [quickFireQuestionSet, setQuickFireQuestionSet] = useState(QUICK_FIRE_QUESTIONS)
+  const [quickFireSummary, setQuickFireSummary] = useState(null)
+  const EXAM_SECONDS = 10 * 60
+  const [examPhase, setExamPhase] = useState('landing')
+  const [examCountdown, setExamCountdown] = useState(3)
+  const [examConfig, setExamConfig] = useState(null)
+  const [examQuestions, setExamQuestions] = useState([])
+  const [examIdx, setExamIdx] = useState(0)
+  const [examTimeLeft, setExamTimeLeft] = useState(EXAM_SECONDS)
+  const [examAnswer, setExamAnswer] = useState('')
+  const [examFeedback, setExamFeedback] = useState(null)
+  const [examGrading, setExamGrading] = useState(false)
+  const [examStats, setExamStats] = useState({ correct: 0, answered: 0, bySubject: {} })
+
+  useEffect(() => {
+    if (!isQuickFire || !selected || !quickFireActive) return undefined
+    const timer = setInterval(() => {
+      setQuickFireTimeLeft(seconds => Math.max(0, seconds - 1))
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [isQuickFire, selected, quickFireActive])
+
+  useEffect(() => {
+    if (!isQuickFire || !selected || !quickFireActive || quickFireTimeLeft > 0) return
+    setQuickFireActive(false)
+    setQuickFireFinished(true)
+    setError(null)
+    finishQuickFireRound('time')
+  }, [isQuickFire, selected, quickFireActive, quickFireTimeLeft])
+
+  useEffect(() => {
+    if (!isExamMode || examPhase !== 'countdown') return undefined
+    const timer = setInterval(() => {
+      setExamCountdown(value => {
+        if (value === 'GO') {
+          clearInterval(timer)
+          setExamPhase('round')
+          return 'GO'
+        }
+        if (value === 1) return 'GO'
+        return value - 1
+      })
+    }, 900)
+    return () => clearInterval(timer)
+  }, [isExamMode, examPhase])
+
+  useEffect(() => {
+    if (!isExamMode || examPhase !== 'round') return undefined
+    const timer = setInterval(() => {
+      setExamTimeLeft(value => {
+        if (value <= 1) {
+          clearInterval(timer)
+          setExamPhase('summary')
+          return 0
+        }
+        return value - 1
+      })
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [isExamMode, examPhase])
+
+  const quickFirePct = Math.max(0, Math.min(100, (quickFireTimeLeft / QUICK_FIRE_SECONDS) * 100))
+  const quickFireTime = Math.floor(quickFireTimeLeft / 60) + ':' + String(quickFireTimeLeft % 60).padStart(2, '0')
+  const examTime = Math.floor(examTimeLeft / 60) + ':' + String(examTimeLeft % 60).padStart(2, '0')
+
+
+  function getExamScoreMemory() {
+    let scores = []
+    try { scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]') } catch {}
+    const subjects = {}
+    scores.forEach(score => {
+      if (!subjects[score.subject]) subjects[score.subject] = []
+      subjects[score.subject].push(score.pct)
+    })
+    return Object.fromEntries(Object.entries(subjects).map(([subject, vals]) => [
+      subject,
+      Math.round(vals.slice(0, 12).reduce((sum, value) => sum + value, 0) / Math.max(1, vals.slice(0, 12).length)),
+    ]))
+  }
+
+  function normaliseExamQuestion(question, subject, topicLabel, topicId) {
+    const options = question.options || null
+    return {
+      id: question.id || question.q || Math.random().toString(36),
+      subject,
+      topicLabel: question.topicLabel || topicLabel || subject,
+      topicId: question.topicId || topicId || subject.toLowerCase(),
+      q: question.q,
+      extract: question.extract,
+      marks: question.marks || 1,
+      ms: question.ms || 'Award marks fairly for a correct answer.',
+      type: question.type || (options ? 'mc' : 'written'),
+      options,
+      correctIndex: question.correctIndex ?? question.correct,
+      fig: question.fig,
+      imageKey: question.imageKey,
+      skillTip: question.skillTip,
+    }
+  }
+
+  function allExamQuestions() {
+    const fromTestTopics = TEST_TOPICS.flatMap(group => group.topics.flatMap(topic => (
+      PAST_PAPER_QS[topic.id] || []
+    ).map(question => normaliseExamQuestion(question, group.subject, topic.label, topic.id))))
+    return [
+      ...fromTestTopics,
+      ...ALL_MATHS_QUESTIONS.map(q => normaliseExamQuestion(q, 'Maths', q.topicLabel, q.topicId)),
+      ...ALL_ENGLISH_QUESTIONS.map(q => normaliseExamQuestion(q, 'English', q.topicLabel, q.topicId)),
+      ...ALL_SOCIOLOGY_QUESTIONS.map(q => normaliseExamQuestion(q, 'Sociology', q.topicLabel, q.topicId)),
+      ...ALL_CHEMISTRY_QUESTIONS.map(q => normaliseExamQuestion(q, 'Chemistry', q.topicLabel, q.topicId)),
+    ].filter(question => question.q)
+  }
+
+  function adaptiveExamQuestions(subject = 'Random') {
+    const memory = getExamScoreMemory()
+    const base = allExamQuestions().filter(q => subject === 'Random' || q.subject === subject)
+    const shuffled = shuffle(base)
+    const scored = shuffled.map(question => {
+      const avg = memory[question.subject]
+      const weakness = avg === undefined ? 1 : Math.max(0, 75 - avg) / 10
+      const strength = avg === undefined ? 1 : Math.max(0, avg - 70) / 10
+      return { question, avg, weakness, strength }
+    })
+    const weak = scored.filter(item => item.avg === undefined || item.avg < 70).sort((a, b) => b.weakness - a.weakness).map(item => item.question)
+    const strong = scored.filter(item => item.avg >= 70).sort((a, b) => b.strength - a.strength).map(item => item.question)
+    const mixed = [...weak.slice(0, 6), ...strong.slice(0, 4)]
+    const used = new Set(mixed.map(q => q.id))
+    const fill = shuffled.filter(q => !used.has(q.id)).slice(0, 10 - mixed.length)
+    return shuffle([...mixed, ...fill]).slice(0, 10)
+  }
+
+  function resetExamQuestion() {
+    setExamAnswer('')
+    setExamFeedback(null)
+    setExamGrading(false)
+    setError(null)
+  }
+
+  function startExamRound(subject = 'Random') {
+    const questions = adaptiveExamQuestions(subject)
+    setExamConfig({ subject, title: subject === 'Random' ? 'Random Exam Challenge' : subject + ' Exam Sprint' })
+    setExamQuestions(questions)
+    setExamIdx(0)
+    setExamTimeLeft(EXAM_SECONDS)
+    setExamCountdown(3)
+    setExamStats({ correct: 0, answered: 0, bySubject: {} })
+    resetExamQuestion()
+    setExamPhase('countdown')
+  }
+
+  function addExamResult(question, earned, possible) {
+    const correct = earned >= possible
+    setExamStats(stats => {
+      const current = stats.bySubject[question.subject] || { answered: 0, correct: 0 }
+      return {
+        answered: stats.answered + 1,
+        correct: stats.correct + (correct ? 1 : 0),
+        bySubject: {
+          ...stats.bySubject,
+          [question.subject]: {
+            answered: current.answered + 1,
+            correct: current.correct + (correct ? 1 : 0),
+          },
+        },
+      }
+    })
+    recordScore({ subject: question.subject, earned, possible, source: 'exam' })
+  }
+
+  async function checkExamAnswer(question) {
+    if (!question) return
+    if (question.type === 'mc') {
+      if (examAnswer === '') { setError('Pick an answer first.'); return }
+      const picked = Number(examAnswer)
+      const isCorrect = picked === question.correctIndex
+      addExamResult(question, isCorrect ? question.marks : 0, question.marks)
+      setExamFeedback({
+        grade: isCorrect ? 'Excellent' : 'Needs Work',
+        summary: isCorrect ? 'Correct.' : 'Not this time.',
+        examinerTip: question.ms,
+      })
+      return
+    }
+    if (examAnswer.trim().length < 3) { setError('Write a little before submitting.'); return }
+    setExamGrading(true)
+    setError(null)
+    try {
+      const result = await gradeWithAI(question.q, examAnswer, question.marks, question.ms)
+      const earned = result.marksAwarded ?? 0
+      addExamResult(question, earned, result.marksAvailable || question.marks)
+      setExamFeedback(result)
+    } catch {
+      setError('Could not mark right now. Try again in a moment.')
+    } finally {
+      setExamGrading(false)
+    }
+  }
+
+  function nextExamQuestion() {
+    if (examIdx < examQuestions.length - 1) {
+      setExamIdx(i => i + 1)
+      resetExamQuestion()
+    } else {
+      setExamPhase('summary')
+    }
+  }
+
 
   function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
+
+
+  if (isExamMode) {
+    const examSubjects = [
+      { label: 'Sociology', icon: '👥', color: '#9D5CFF', done: 7, total: 10, subject: 'Sociology' },
+      { label: 'History', icon: '🏰', color: '#F97316', done: 6, total: 12, subject: 'History' },
+      { label: 'Science', icon: '⚗️', color: '#38D27A', done: 5, total: 11, subject: 'Biology' },
+      { label: 'Maths', icon: '✕²', color: '#3B82FF', done: 4, total: 10, subject: 'Maths' },
+      { label: 'English', icon: '📖', color: '#9D5CFF', done: 8, total: 14, subject: 'English' },
+      { label: 'Chemistry', icon: '⚗️', color: '#38D27A', done: 3, total: 9, subject: 'Chemistry' },
+    ]
+    const currentExamQuestion = examQuestions[examIdx]
+    const examAccuracy = examStats.answered ? Math.round((examStats.correct / examStats.answered) * 100) : 0
+
+    if (examPhase === 'countdown') {
+      return (
+        <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 20%, rgba(157,92,255,.2), transparent 38%), #050817', display:'flex', alignItems:'center', justifyContent:'center', color:'#F5F7FB', padding:24 }}>
+          <div style={{ textAlign:'center' }}>
+            <div style={{ fontFamily:"'Inter',sans-serif", color:'#AAB4D4', fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:20 }}>{examConfig?.title || 'Exam Mode'}</div>
+            <div key={examCountdown} style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize: examCountdown === 'GO' ? '5rem' : '7rem', fontWeight:950, color: examCountdown === 'GO' ? '#38F27B' : '#C18CFF', textShadow:'0 0 42px rgba(157,92,255,.72)', animation:'examPop .85s ease both' }}>{examCountdown}</div>
+            <div style={{ color:'#7C8DB0', marginTop:18, fontFamily:"'Inter',sans-serif" }}>Breathe. Read the command word first.</div>
+            <style>{'@keyframes examPop { 0%{opacity:0;transform:scale(.72)} 45%{opacity:1;transform:scale(1.08)} 100%{opacity:1;transform:scale(1)} }'}</style>
+          </div>
+        </div>
+      )
+    }
+
+    if (examPhase === 'round' && currentExamQuestion) {
+      const isMC = currentExamQuestion.type === 'mc'
+      return (
+        <div style={{ minHeight:'100vh', background:'#050817', color:'#F5F7FB', padding:'16px 16px 110px' }}>
+          <div style={{ maxWidth:660, margin:'0 auto' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:14 }}>
+              <button onClick={() => setExamPhase('summary')} style={{ width:40, height:40, borderRadius:'50%', border:'1px solid rgba(80,97,140,.45)', background:'rgba(12,18,38,.9)', color:'#DCE5FA', fontSize:'1.2rem', cursor:'pointer' }}>‹</button>
+              <div style={{ flex:1 }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:850, fontSize:'1.05rem' }}>{examConfig?.title}</div>
+                <div style={{ color:'#7C8DB0', fontSize:'.76rem' }}>Question {examIdx + 1} / {examQuestions.length} · {currentExamQuestion.subject} · {currentExamQuestion.topicLabel}</div>
+              </div>
+              <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.14)' : 'rgba(157,92,255,.14)', border:'1px solid ' + (examTimeLeft < 60 ? 'rgba(255,93,115,.4)' : 'rgba(157,92,255,.35)'), borderRadius:999, color:examTimeLeft < 60 ? '#FF5D73' : '#C18CFF', fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, padding:'7px 11px', minWidth:64, textAlign:'center' }}>{examTime}</div>
+            </div>
+            <div style={{ height:5, background:'#151D33', borderRadius:99, overflow:'hidden', marginBottom:18 }}>
+              <div style={{ width: ((examIdx + 1) / Math.max(1, examQuestions.length)) * 100 + '%', height:'100%', background:'linear-gradient(90deg,#7C3AED,#9D5CFF)', borderRadius:99 }} />
+            </div>
+
+            {currentExamQuestion.extract && <div style={{ whiteSpace:'pre-wrap', background:'#0D1424', border:'1px solid #1E2A40', borderRadius:14, padding:14, color:'#AAB4D4', fontSize:'.82rem', lineHeight:1.55, marginBottom:14 }}>{currentExamQuestion.extract}</div>}
+            {currentExamQuestion.fig && FIGURES[currentExamQuestion.fig] && <div style={{ background:'#0D1424', border:'1px solid #1E2A40', borderRadius:14, padding:12, marginBottom:14, textAlign:'center' }}><img src={FIGURES[currentExamQuestion.fig]} alt="Exam figure" style={{ maxWidth:'100%', borderRadius:10 }} /></div>}
+            {currentExamQuestion.imageKey && <ChemImage imageKey={currentExamQuestion.imageKey} />}
+
+            <div style={{ background:'linear-gradient(145deg,#10182B,#0D1424)', border:'1px solid #2A3552', borderRadius:18, padding:18, marginBottom:14 }}>
+              <div style={{ display:'inline-flex', background:'rgba(245,183,0,.1)', border:'1px solid rgba(245,183,0,.24)', borderRadius:999, color:'#F5B700', fontWeight:850, fontSize:'.7rem', padding:'4px 10px', marginBottom:12 }}>[{currentExamQuestion.marks} mark{currentExamQuestion.marks !== 1 ? 's' : ''}]</div>
+              <div style={{ whiteSpace:'pre-wrap', fontFamily:"'Space Grotesk',sans-serif", fontWeight:750, fontSize:'1.05rem', lineHeight:1.45 }}>{currentExamQuestion.q}</div>
+            </div>
+
+            {isMC ? (
+              <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:14 }}>
+                {currentExamQuestion.options.map((option, index) => {
+                  const selectedOption = String(index) === examAnswer
+                  const marked = Boolean(examFeedback)
+                  const correct = index === currentExamQuestion.correctIndex
+                  return <button key={index} onClick={() => !marked && setExamAnswer(String(index))} style={{ background: marked ? (correct ? 'rgba(77,255,136,.1)' : selectedOption ? 'rgba(255,93,115,.1)' : '#10182B') : selectedOption ? 'rgba(157,92,255,.14)' : '#10182B', border:'1.5px solid ' + (marked ? (correct ? 'rgba(77,255,136,.45)' : selectedOption ? 'rgba(255,93,115,.4)' : '#2A3552') : selectedOption ? 'rgba(157,92,255,.45)' : '#2A3552'), borderRadius:13, padding:'13px 14px', color:'#DCE5FA', textAlign:'left', cursor:marked?'default':'pointer', fontWeight:650 }}>{option}</button>
+                })}
+              </div>
+            ) : (
+              <textarea value={examAnswer} onChange={e => setExamAnswer(e.target.value)} disabled={Boolean(examFeedback)} placeholder="Write your answer..." style={{ width:'100%', minHeight:150, background:'#10182B', border:'1px solid #2A3552', borderRadius:14, padding:14, color:'#F5F7FB', marginBottom:14 }} />
+            )}
+
+            {error && <div style={{ color:'#FF5D73', marginBottom:12, fontWeight:700 }}>{error}</div>}
+            {examFeedback && <div style={{ background: examFeedback.grade === 'Needs Work' ? 'rgba(255,93,115,.08)' : 'rgba(77,255,136,.08)', border:'1px solid ' + (examFeedback.grade === 'Needs Work' ? 'rgba(255,93,115,.3)' : 'rgba(77,255,136,.3)'), borderRadius:14, padding:14, marginBottom:14 }}><div style={{ fontWeight:850, color: examFeedback.grade === 'Needs Work' ? '#FF5D73' : '#4DFF88', marginBottom:5 }}>{examFeedback.grade || 'Marked'}</div><div style={{ color:'#C8D0E8', lineHeight:1.5 }}>{examFeedback.summary || examFeedback.examinerTip}</div>{examFeedback.examinerTip && <div style={{ color:'#AAB4D4', fontSize:'.84rem', marginTop:8 }}>{examFeedback.examinerTip}</div>}</div>}
+
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <button onClick={() => setExamPhase('summary')} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:13, padding:14, color:'#9CA8C7', fontWeight:800, cursor:'pointer' }}>End exam</button>
+              {examFeedback ? <button onClick={nextExamQuestion} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:13, padding:14, color:'#fff', fontWeight:900, cursor:'pointer' }}>{examIdx < examQuestions.length - 1 ? 'Next →' : 'Finish ✓'}</button> : <button onClick={() => checkExamAnswer(currentExamQuestion)} disabled={examGrading} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:13, padding:14, color:'#fff', fontWeight:900, cursor:examGrading?'default':'pointer', opacity:examGrading?.7:1 }}>{examGrading ? 'Marking…' : 'Submit answer'}</button>}
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    if (examPhase === 'summary') {
+      return (
+        <div style={{ minHeight:'100vh', background:'#050817', color:'#F5F7FB', padding:'28px 20px 120px' }}>
+          <div style={{ maxWidth:520, margin:'0 auto', textAlign:'center' }}>
+            <div style={{ width:150, height:150, borderRadius:'50%', margin:'0 auto 22px', background:'conic-gradient(#38F27B ' + examAccuracy + '%, #172845 0)', display:'grid', placeItems:'center' }}><div style={{ width:122, height:122, borderRadius:'50%', background:'#071126', display:'grid', placeItems:'center' }}><div><div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.4rem', fontWeight:950 }}>{examAccuracy}%</div><div style={{ color:'#AAB4D4', fontWeight:800 }}>{examStats.correct}/{examStats.answered || 0}</div></div></div></div>
+            <h1 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2rem', margin:'0 0 8px' }}>Exam round complete</h1>
+            <p style={{ color:'#AAB4D4', margin:'0 0 22px' }}>Adaptive questions mixed stronger areas with weak zones.</p>
+            <div style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:18, padding:18, marginBottom:20, textAlign:'left' }}>
+              {Object.entries(examStats.bySubject).map(([subject, stats]) => <div key={subject} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'9px 0', borderBottom:'1px solid rgba(255,255,255,.06)' }}><span>{subject}</span><strong>{stats.correct}/{stats.answered}</strong></div>)}
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <button onClick={() => setExamPhase('landing')} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:13, padding:14, color:'#9CA8C7', fontWeight:800, cursor:'pointer' }}>Back</button>
+              <button onClick={() => startExamRound(examConfig?.subject || 'Random')} style={{ background:'linear-gradient(135deg,#38F27B,#2DD4A3)', border:'none', borderRadius:13, padding:14, color:'#03140B', fontWeight:950, cursor:'pointer' }}>Try again</button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div style={{ background:'#030712', minHeight:'100vh', color:'#F5F7FB', padding:'28px 31px 118px' }}>
+        <div style={{ maxWidth:960, margin:'0 auto' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:34 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:24 }}>
+              <div style={{ width:96, height:96, borderRadius:'50%', background:'radial-gradient(circle at 50% 36%, rgba(177,83,255,.92), rgba(77,25,128,.72) 38%, rgba(7,10,28,.96) 68%)', border:'1px solid rgba(177,83,255,.75)', boxShadow:'0 0 32px rgba(157,92,255,.58), inset 0 0 22px rgba(255,255,255,.08)', display:'grid', placeItems:'center', fontSize:'2.35rem' }}>🔮</div>
+              <div><h1 style={{ margin:0, fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.45rem', lineHeight:1, fontWeight:850, letterSpacing:'-.035em' }}>Exam Mode</h1><div style={{ color:'#AAB4D4', fontSize:'1.45rem', marginTop:10, fontWeight:600 }}>Ready? 🎯</div></div>
+            </div>
+            <div style={{ display:'flex', alignItems:'center', gap:12, background:'rgba(9,13,31,.9)', border:'1px solid rgba(110,124,166,.42)', borderRadius:999, padding:'16px 24px', color:'#F5F7FB', fontSize:'1.24rem', boxShadow:'inset 0 1px 0 rgba(255,255,255,.05)' }}><span>🔥</span><span>{testStreak || 8} day streak</span></div>
+          </div>
+
+          <div style={{ position:'relative', overflow:'hidden', border:'1px solid rgba(79,91,134,.58)', borderRadius:22, padding:'24px 32px 18px', marginBottom:24, minHeight:358, background:'radial-gradient(circle at 75% 38%, rgba(111,35,206,.42), transparent 34%), linear-gradient(145deg,#090D1D 0%,#060914 100%)', boxShadow:'0 18px 54px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.04)' }}>
+            <div style={{ display:'grid', gridTemplateColumns:'1.1fr .9fr', gap:22, minHeight:310 }}>
+              <div style={{ position:'relative', zIndex:2, display:'flex', flexDirection:'column', alignItems:'flex-start' }}>
+                <div style={{ display:'inline-flex', gap:9, alignItems:'center', background:'rgba(157,92,255,.2)', border:'1px solid rgba(157,92,255,.18)', borderRadius:10, padding:'7px 12px', color:'#D8C1FF', fontWeight:900, fontSize:'.9rem', letterSpacing:'.05em', marginBottom:24 }}>★ RECOMMENDED</div>
+                <h2 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.25rem', lineHeight:1.05, margin:'0 0 24px', fontWeight:900, letterSpacing:'-.035em' }}>Random Exam Challenge <span style={{ color:'#A855F7' }}>⚡</span></h2>
+                <div style={{ display:'flex', alignItems:'center', gap:20, flexWrap:'wrap', color:'#E4E9F8', marginBottom:28, fontSize:'1rem' }}><span>❔&nbsp; 10 questions</span><span style={{ color:'#52607F' }}>•</span><span>⤨&nbsp; Mixed topics</span><span style={{ color:'#52607F' }}>•</span><span>▥&nbsp; Adaptive</span></div>
+                <p style={{ color:'#AAB4D4', lineHeight:1.45, maxWidth:420, margin:'0 0 28px', fontSize:'1.12rem' }}>Maths. Then Macbeth. Then biology.<br /><span style={{ color:'#C94DFF' }}>You never know what’s coming.</span></p>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr .95fr', gap:34, width:'100%', marginTop:'auto' }}>
+                  <button onClick={() => startExamRound('Random')} style={{ background:'linear-gradient(180deg,#7C2DF2 0%,#6416D1 100%)', border:'1px solid rgba(203,170,255,.18)', borderRadius:14, padding:'19px 24px', color:'#fff', fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:'1.3rem', cursor:'pointer', boxShadow:'0 16px 36px rgba(103,36,214,.38), inset 0 1px 0 rgba(255,255,255,.18)' }}>⤨&nbsp; Start Random</button>
+                  <button onClick={() => startExamRound('Random')} style={{ background:'rgba(8,12,26,.72)', border:'1px solid rgba(80,97,140,.44)', borderRadius:14, padding:'19px 24px', color:'#F5F7FB', fontWeight:800, fontSize:'1.15rem', cursor:'pointer', display:'flex', justifyContent:'space-between', alignItems:'center' }}><span>🔥&nbsp; 2x streak</span><span style={{ color:'#AAB4D4', fontSize:'1.8rem' }}>›</span></button>
+                </div>
+              </div>
+
+              <div style={{ position:'relative', minHeight:286 }}>
+                <div style={{ position:'absolute', inset:'-22px -20px -10px -20px', background:'radial-gradient(circle at 50% 52%, rgba(157,92,255,.34), transparent 45%)', filter:'blur(4px)' }} />
+                <svg viewBox="0 0 430 310" style={{ position:'absolute', inset:0, width:'100%', height:'100%', filter:'drop-shadow(0 0 26px rgba(168,85,247,.72))' }}>
+                  <defs>
+                    <linearGradient id="cubeTop" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stopColor="#21103f"/><stop offset="1" stopColor="#A855F7"/></linearGradient>
+                    <linearGradient id="cubeLeft" x1="0" x2="1"><stop offset="0" stopColor="#090817"/><stop offset="1" stopColor="#6D28D9"/></linearGradient>
+                    <linearGradient id="cubeRight" x1="0" x2="1"><stop offset="0" stopColor="#140724"/><stop offset="1" stopColor="#8B5CF6"/></linearGradient>
+                    <filter id="examCubeGlow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  </defs>
+                  <path d="M214 30 L330 88 L214 148 L98 88 Z" fill="url(#cubeTop)" stroke="#D8B4FE" strokeWidth="3" filter="url(#examCubeGlow)"/>
+                  <path d="M98 88 L214 148 L214 278 L98 210 Z" fill="url(#cubeLeft)" stroke="#A855F7" strokeWidth="3"/>
+                  <path d="M330 88 L214 148 L214 278 L330 210 Z" fill="url(#cubeRight)" stroke="#C084FC" strokeWidth="3"/>
+                  <text x="214" y="107" textAnchor="middle" fill="#F5E8FF" fontSize="74" fontWeight="900" fontFamily="Arial">?</text>
+                  <text x="156" y="216" textAnchor="middle" fill="#E9D5FF" fontSize="70" fontWeight="900" fontFamily="Arial">?</text>
+                  <text x="276" y="216" textAnchor="middle" fill="#F3E8FF" fontSize="70" fontWeight="900" fontFamily="Arial">?</text>
+                  <circle cx="92" cy="60" r="3" fill="#A855F7" opacity=".8"/><circle cx="352" cy="58" r="4" fill="#C084FC" opacity=".75"/><circle cx="375" cy="222" r="3" fill="#A855F7" opacity=".7"/><circle cx="62" cy="215" r="3" fill="#C084FC" opacity=".65"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', margin:'0 2px 12px' }}><div style={{ color:'#AAB4D4', fontWeight:900, letterSpacing:'.12em', fontSize:'1rem' }}>QUICK FOCUS</div><button style={{ background:'transparent', border:'none', color:'#C94DFF', fontWeight:900, fontSize:'1.05rem', cursor:'pointer' }}>See all&nbsp; ›</button></div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:24, marginBottom:22 }}>
+            {[['◎','Weak Zones'],['⊗','Last Mistakes'],['◉','Predicted Paper']].map(([icon,label]) => <button key={label} onClick={() => startExamRound('Random')} style={{ background:'rgba(13,20,36,.88)', border:'1px solid rgba(80,97,140,.44)', borderRadius:999, color:'#F5F7FB', padding:'19px 20px', fontWeight:800, fontSize:'1.12rem', cursor:'pointer', boxShadow:'inset 0 1px 0 rgba(255,255,255,.04)' }}><span style={{ color:'#A7B5E7', marginRight:12 }}>{icon}</span>{label}</button>)}
+          </div>
+
+          <div style={{ color:'#AAB4D4', fontWeight:900, letterSpacing:'.12em', margin:'0 2px 12px', fontSize:'1rem' }}>CHOOSE A SUBJECT</div>
+          <div style={{ border:'1px solid rgba(80,97,140,.42)', borderRadius:16, overflow:'hidden', marginBottom:18, background:'rgba(8,12,26,.58)' }}>
+            {examSubjects.slice(0,3).map(subject => {
+              const pct = Math.round((subject.done / subject.total) * 100)
+              return <button key={subject.label} onClick={() => startExamRound(subject.subject)} style={{ width:'100%', background:'transparent', border:'none', borderBottom:'1px solid rgba(255,255,255,.07)', padding:'11px 20px', display:'grid', gridTemplateColumns:'76px 190px 1fr 28px', alignItems:'center', gap:10, textAlign:'left', cursor:'pointer' }}>
+                <div style={{ color:subject.color, fontSize:'2.25rem', textAlign:'center' }}>{subject.icon}</div>
+                <div><div style={{ color:'#F5F7FB', fontWeight:850, fontSize:'1.16rem', lineHeight:1.05 }}>{subject.label}</div><div style={{ color:subject.color, fontSize:'.92rem', fontWeight:800, marginTop:4 }}>{subject.done}/{subject.total} modules</div></div>
+                <div style={{ height:10, background:'rgba(255,255,255,.1)', borderRadius:99, overflow:'hidden', maxWidth:330 }}><div style={{ width:pct+'%', background:subject.color, height:'100%', borderRadius:99, boxShadow:'0 0 12px '+subject.color }} /></div>
+                <div style={{ color:'#AAB4D4', fontSize:'2rem' }}>›</div>
+              </button>
+            })}
+          </div>
+
+          <div style={{ color:'#AAB4D4', fontWeight:900, letterSpacing:'.12em', margin:'0 2px 12px', fontSize:'1rem' }}>REAL EXAM PAPERS</div>
+          <button onClick={() => startExamRound('Random')} style={{ width:'100%', background:'rgba(13,20,36,.88)', border:'1px solid rgba(80,97,140,.44)', borderRadius:16, padding:'17px 22px', display:'flex', alignItems:'center', gap:22, color:'#F5F7FB', textAlign:'left', cursor:'pointer', boxShadow:'inset 0 1px 0 rgba(255,255,255,.04)' }}><span style={{ color:'#C94DFF', fontSize:'2.25rem' }}>▤</span><span style={{ flex:1 }}><strong style={{ fontSize:'1.2rem' }}>Real Exam Papers</strong><br /><span style={{ color:'#AAB4D4', fontSize:'1rem' }}>AQA & Edexcel timed papers</span></span><span style={{ fontSize:'2rem', color:'#AAB4D4' }}>›</span></button>
+        </div>
+      </div>
+    )
+  }
 
   if (mathsOpen)   return <MathsBrowser   onBack={() => setMathsOpen(false)} />
   if (englishOpen)   return <EnglishBrowser   onBack={() => setEnglishOpen(false)} />
@@ -2107,9 +2568,61 @@ function TestTab() {
     setTqMcAttempts(0); setTqMcHint(false); setTqMcLocked(false)
   }
 
+  function startTopic(selection) {
+    setSelected(selection)
+    setQIdx(0)
+    fullResetQ()
+    if (isQuickFire) {
+      setQuickFireTimeLeft(QUICK_FIRE_SECONDS)
+      setQuickFireActive(true)
+      setQuickFireFinished(false)
+      setQuickFireStats(emptyQuickFireStats())
+      setQuickFireQuestionSet(prioritizedQuickFireQuestions())
+      setQuickFireSummary(null)
+    }
+  }
+
+  function finishQuickFireRound(reason = 'exit') {
+    setQuickFireActive(false)
+    setQuickFireFinished(true)
+    const memory = saveQuickFireMemory(quickFireStats)
+    setQuickFireSummary({
+      reason,
+      answered: quickFireStats.answered,
+      correct: quickFireStats.correct,
+      timeUsed: QUICK_FIRE_SECONDS - quickFireTimeLeft,
+      timeLeft: quickFireTimeLeft,
+      subjects: rankedQuickFireSubjects(memory, quickFireStats),
+      recommendation: pickQuickFireRecommendation(memory, quickFireStats),
+    })
+  }
+
+  function exitTestTopic() {
+    setSelected(null)
+    setQIdx(0)
+    fullResetQ()
+    setQuickFireActive(false)
+    setQuickFireFinished(false)
+    setQuickFireTimeLeft(QUICK_FIRE_SECONDS)
+    setQuickFireSummary(null)
+  }
+
+  function startRandomQuestion() {
+    if (isQuickFire) {
+      startTopic({ topicId: 'quickfire', label: '90s Quick Fire', subject: 'Quick Fire' })
+      return
+    }
+    const allT = TEST_TOPICS.filter(s => s.topics.some(t => t.available))
+    const rs = allT[Math.floor(Math.random() * allT.length)]
+    const av = rs.topics.filter(t => t.available)
+    const rt = av[Math.floor(Math.random() * av.length)]
+    startTopic({ topicId: rt.id, label: rt.label, subject: rs.subject })
+  }
+
   function tqNextQuestion(total) {
     if (qIdx < total - 1) { setQIdx(qIdx+1); fullResetQ() }
-    else { setSelected(null); setQIdx(0); fullResetQ() }
+    else if (isQuickFire) { finishQuickFireRound('complete') }
+    else { exitTestTopic() }
   }
 
   function handleTqCheck(q) {
@@ -2119,6 +2632,7 @@ function TestTab() {
       const newAttempts = tqMcAttempts + 1
       setTqMcAttempts(newAttempts)
       if (isCorrect) {
+        if (isQuickFire) setQuickFireStats(stats => addQuickFireAnswer(stats, q, true))
         setTqMcLocked(true)
         setFeedback({ marksAwarded: q.marks, marksAvailable: q.marks, grade: 'Excellent',
           summary: "That's the one. Well done for getting it.", achieved: ['Correct answer selected'], missed: [], examinerTip: '' })
@@ -2128,6 +2642,7 @@ function TestTab() {
         setAnswer('')
         setError('')
       } else {
+        if (isQuickFire) setQuickFireStats(stats => addQuickFireAnswer(stats, q, false))
         setTqMcLocked(true)
         const correctText = q.options[q.correct] || ''
         setFeedback({ marksAwarded: 0, marksAvailable: q.marks, grade: 'Needs Work',
@@ -2140,24 +2655,119 @@ function TestTab() {
     gradeAnswer(q)
   }
 
+  if (quickFireSummary) {
+    const accuracy = quickFireSummary.answered ? Math.round((quickFireSummary.correct / quickFireSummary.answered) * 100) : 0
+    const summarySubjects = quickFireSummary.subjects?.length
+      ? quickFireSummary.subjects
+      : rankedQuickFireSubjects(readQuickFireMemory(), emptyQuickFireStats())
+    const recommendation = quickFireSummary.recommendation || pickQuickFireRecommendation(readQuickFireMemory(), emptyQuickFireStats())
+    const recommendedModule = recommendation?.moduleId ? MODULES.find(m => m.id === recommendation.moduleId) : null
+    const recommendationMeta = QUICK_FIRE_SUBJECT_META[recommendation?.subject] || QUICK_FIRE_SUBJECT_META.Biology
+    const encouragement = accuracy >= 80 ? 'Excellent recall.' : accuracy >= 60 ? 'You’re making strong progress.' : 'Good start — now sharpen the weak spots.'
+    const actionLine = accuracy >= 80 ? 'Keep it up!' : 'Focus on improvement.'
+
+    return (
+      <div style={{ background:'radial-gradient(circle at 50% -10%, rgba(56,210,122,.12), transparent 38%), #050817', minHeight:'100vh', padding:'18px 20px calc(150px + env(safe-area-inset-bottom))', color:'#F5F7FB' }}>
+        <div style={{ maxWidth:480, margin:'0 auto' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
+            <button onClick={exitTestTopic} aria-label="Back" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(20,31,54,.78)', color:'#F5F7FB', fontSize:'1.45rem', cursor:'pointer' }}>‹</button>
+            <button aria-label="Share" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(20,31,54,.78)', color:'#F5F7FB', fontSize:'1rem', cursor:'pointer' }}>⇧</button>
+          </div>
+
+          <div style={{ textAlign:'center', marginBottom:28 }}>
+            <div style={{
+              width:168, height:168, borderRadius:'50%', margin:'0 auto 18px',
+              background:'conic-gradient(#38F27B ' + accuracy + '%, rgba(23,40,69,.9) 0)',
+              display:'grid', placeItems:'center', boxShadow:'0 0 34px rgba(56,242,123,.18)',
+            }}>
+              <div style={{ width:142, height:142, borderRadius:'50%', background:'#071126', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', boxShadow:'inset 0 0 24px rgba(0,0,0,.45)' }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.65rem', fontWeight:900, lineHeight:1 }}>{accuracy}%</div>
+                <div style={{ color:'#AAB4D4', fontSize:'.9rem', fontWeight:700, marginTop:5 }}>{quickFireSummary.correct} / {quickFireSummary.answered || 0}</div>
+                <div style={{ color:'#38F27B', fontSize:'.86rem', fontWeight:900, marginTop:4 }}>Correct</div>
+              </div>
+            </div>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:9 }}>
+              <h1 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.1rem', lineHeight:1.05, margin:0, color:'#F5F7FB' }}>{accuracy >= 60 ? 'Great work!' : 'Keep going!'}</h1>
+              <span style={{ color:'#F5B700', fontSize:'1.45rem' }}>✩</span>
+            </div>
+            <p style={{ color:'#AAB4D4', fontSize:'.96rem', margin:'10px 0 0', lineHeight:1.45 }}>{encouragement}<br /><span style={{ color:'#38F27B', fontWeight:900 }}>{actionLine}</span></p>
+          </div>
+
+          <div style={{ background:'linear-gradient(145deg, rgba(16,24,43,.96), rgba(9,15,31,.96))', border:'1px solid rgba(62,78,118,.55)', borderRadius:18, padding:'18px 18px 14px', marginBottom:16, boxShadow:'0 14px 36px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.04)' }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16 }}>
+              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'1rem' }}>Performance by subject</div>
+              <button onClick={exitTestTopic} style={{ border:'none', background:'transparent', color:'#AAB4D4', fontSize:'.8rem', cursor:'pointer' }}>View all ›</button>
+            </div>
+            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+              {summarySubjects.slice(0, 5).map(item => (
+                <div key={item.subject} style={{ display:'grid', gridTemplateColumns:'40px 1fr 54px 48px', alignItems:'center', gap:10 }}>
+                  <div style={{ width:38, height:38, borderRadius:'50%', background:item.color + '22', color:item.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.12rem' }}>{item.icon}</div>
+                  <div>
+                    <div style={{ color:item.color, fontWeight:850, fontSize:'.86rem', marginBottom:7 }}>{item.subject}</div>
+                    <div style={{ height:5, background:'rgba(58,75,111,.52)', borderRadius:99, overflow:'hidden' }}>
+                      <div style={{ width:item.accuracy + '%', height:'100%', borderRadius:99, background:item.color, boxShadow:'0 0 10px ' + item.color }} />
+                    </div>
+                  </div>
+                  <div style={{ color:'#DCE5FA', fontWeight:800, fontSize:'.86rem', textAlign:'right' }}>{item.correct} / {item.answered}</div>
+                  <div style={{ justifySelf:'end', color:item.color, background:item.color + '18', border:'1px solid ' + item.color + '30', borderRadius:8, padding:'4px 7px', fontWeight:900, fontSize:'.76rem' }}>{item.accuracy}%</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button onClick={() => recommendedModule && onOpenModule ? onOpenModule(recommendedModule) : exitTestTopic()} style={{ width:'100%', background:'linear-gradient(145deg, rgba(16,24,43,.96), rgba(9,15,31,.96))', border:'1px solid rgba(62,78,118,.55)', borderRadius:18, padding:'18px', marginBottom:20, display:'flex', alignItems:'center', gap:16, textAlign:'left', cursor:'pointer', boxShadow:'0 14px 36px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.04)' }}>
+            <div style={{ width:54, height:54, borderRadius:'50%', background:recommendationMeta.color + '20', color:recommendationMeta.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.6rem', flexShrink:0 }}>{recommendationMeta.icon}</div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", color:'#F5F7FB', fontWeight:850, fontSize:'1rem' }}>Recommended next</div>
+                <span style={{ background:'rgba(255,92,122,.18)', color:'#FF5C7A', borderRadius:999, padding:'5px 10px', fontSize:'.7rem', fontWeight:900 }}>🎯 Priority</span>
+              </div>
+              <div style={{ color:'#EAF0FF', fontWeight:850, fontSize:'.95rem' }}>{recommendation.subject} – {recommendation.topic}</div>
+              <div style={{ color:'#AAB4D4', fontSize:'.84rem', marginTop:4, lineHeight:1.35 }}>You struggled with questions and keywords here. {recommendedModule ? 'Open the module to strengthen it.' : 'Focus your next quick practice here.'}</div>
+            </div>
+            <span style={{ color:'#AAB4D4', fontSize:'1.6rem' }}>›</span>
+          </button>
+
+          <button onClick={startRandomQuestion} style={{ width:'100%', border:'none', borderRadius:17, background:'linear-gradient(135deg,#38F27B,#2DD4A3)', color:'#03140B', padding:'20px 22px', display:'flex', alignItems:'center', gap:18, cursor:'pointer', boxShadow:'0 18px 36px rgba(45,212,163,.24)', marginBottom:18 }}>
+            <span style={{ fontSize:'2rem', lineHeight:1 }}>↻</span>
+            <span style={{ textAlign:'left' }}>
+              <span style={{ display:'block', fontFamily:"'Space Grotesk',sans-serif", fontSize:'1.25rem', fontWeight:950, letterSpacing:'.02em' }}>TRY AGAIN</span>
+              <span style={{ display:'block', fontSize:'.86rem', fontWeight:750, marginTop:3 }}>Focus on {recommendation.subject} & {recommendation.topic} · ~3 mins</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   if (selected) {
-    const questions = PAST_PAPER_QS[selected.topicId] || []
-    const q = questions[qIdx]
+    const questions = isQuickFire ? quickFireQuestionSet : (PAST_PAPER_QS[selected.topicId] || [])
+    const q = isQuickFire && questions[qIdx] ? { type: 'mc', marks: 1, ...questions[qIdx] } : questions[qIdx]
     const gs = feedback ? (GRADE_STYLE[feedback.grade] || GRADE_STYLE['Developing']) : null
     const isMC = q?.type === 'mc'
     return (
       <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
         <div style={{ background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', padding:'12px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
-            <button onClick={() => { setSelected(null); setQIdx(0); fullResetQ() }} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0 }}>←</button>
+            <button onClick={() => isQuickFire ? finishQuickFireRound('exit') : exitTestTopic()} style={{ background:isQuickFire?'rgba(255,93,115,.1)':'none', border:isQuickFire?'1px solid rgba(255,93,115,.24)':'none', borderRadius:isQuickFire?999:0, cursor:'pointer', color:isQuickFire?'#FF5D73':'#5A6480', fontSize:isQuickFire?'.72rem':'1.1rem', fontWeight:isQuickFire?800:400, padding:isQuickFire?'6px 10px':0 }}>{isQuickFire ? 'Exit' : '←'}</button>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
               <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480' }}>Question {qIdx+1} of {questions.length}</div>
             </div>
+            {isQuickFire && (
+              <div style={{ background: quickFireTimeLeft <= 10 ? 'rgba(255,93,115,.12)' : 'rgba(157,92,255,.12)', border: quickFireTimeLeft <= 10 ? '1px solid rgba(255,93,115,.36)' : '1px solid rgba(157,92,255,.3)', borderRadius: 999, padding: '6px 10px', color: quickFireTimeLeft <= 10 ? '#FF5D73' : '#C18CFF', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 900, fontSize: '.86rem', minWidth: 58, textAlign: 'center' }}>
+                {quickFireTime}
+              </div>
+            )}
           </div>
           <div style={{ height:3, background:'#1E2A40', borderRadius:99, overflow:'hidden', marginTop:10, maxWidth:660, margin:'10px auto 0' }}>
             <div style={{ height:'100%', width:`${((qIdx+1)/questions.length)*100}%`, background:'linear-gradient(90deg,#F5B700,#C98719)', borderRadius:99, transition:'width .3s' }} />
           </div>
+          {isQuickFire && (
+            <div style={{ height:4, background:'rgba(157,92,255,.12)', borderRadius:99, overflow:'hidden', maxWidth:660, margin:'7px auto 0' }}>
+              <div style={{ height:'100%', width: quickFirePct + '%', background: quickFireTimeLeft <= 10 ? 'linear-gradient(90deg,#FF5D73,#FF8A1F)' : 'linear-gradient(90deg,#7C3AED,#9D5CFF)', borderRadius:99, transition:'width 1s linear' }} />
+            </div>
+          )}
         </div>
         <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
           {q && <>
@@ -2243,20 +2853,12 @@ function TestTab() {
 
   const EXAM_SUBJECTS = [
     { icon: '👥', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: () => setSociologyOpen(true) },
-    { icon: '🏰', label: 'History',   color: '#F5B700', completed: 6,  total: 12, action: () => setSelected({ topicId: 'medieval', label: 'History', subject: 'History' }) },
-    { icon: '🔬', label: 'Science',   color: '#38D27A', completed: 5,  total: 11, action: () => setSelected({ topicId: 'tb_cells', label: 'Science', subject: 'Biology' }) },
+    { icon: '🏰', label: 'History',   color: '#F5B700', completed: 6,  total: 12, action: () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
+    { icon: '🔬', label: 'Science',   color: '#38D27A', completed: 5,  total: 11, action: () => startTopic({ topicId: 'tb_cells', label: 'Science', subject: 'Biology' }) },
     { icon: '📐', label: 'Maths',     color: '#3B82FF', completed: 0,  total: 20, action: () => setMathsOpen(true) },
     { icon: '📖', label: 'English',   color: '#9D5CFF', completed: 0,  total: 15, action: () => setEnglishOpen(true) },
     { icon: '⚗️', label: 'Chemistry', color: '#4ED8A0', completed: 0,  total: 12, action: () => setChemistryOpen(true) },
   ]
-
-  function startRandomExam() {
-    const allT = TEST_TOPICS.filter(s => s.topics.some(t => t.available))
-    const rs = allT[Math.floor(Math.random() * allT.length)]
-    const av = rs.topics.filter(t => t.available)
-    const rt = av[Math.floor(Math.random() * av.length)]
-    setSelected({ topicId: rt.id, label: rt.label, subject: rs.subject })
-  }
 
   return (
     <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
@@ -2272,14 +2874,23 @@ function TestTab() {
             </svg>
           </div>
           <div>
-            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.05rem', color: '#F5F7FB', lineHeight: 1.15 }}>Exam Mode</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.73rem', color: '#6B7AA0', marginTop: 2 }}>Ready? ❤️</div>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.05rem', color: '#F5F7FB', lineHeight: 1.15 }}>
+              {isQuickFire ? '90s Quick Fire' : 'Exam Mode'}
+            </div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.73rem', color: '#6B7AA0', marginTop: 2 }}>
+              {isQuickFire ? '90 seconds. Answer fast.' : 'Ready? ❤️'}
+            </div>
           </div>
         </div>
-        {/* Streak pill — 40px tall, 16px horizontal padding */}
+        {/* Streak pill — 40px tall, 16px h-padding */}
         <div style={{ height: 40, paddingLeft: 16, paddingRight: 16, display: 'flex', alignItems: 'center', gap: 7, background: 'rgba(255,138,31,.11)', border: '1px solid rgba(255,138,31,.24)', borderRadius: 99, flexShrink: 0 }}>
           <span style={{ fontSize: '.85rem', lineHeight: 1 }}>🔥</span>
           <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 700, color: '#FF8A1F' }}>{testStreak > 0 ? `${testStreak} day streak` : '8 day streak'}</span>
+          <span style={{ display: 'flex', gap: 3, marginLeft: 2 }}>
+            {testStreakDots.map((filled, i) => (
+              <span key={i} style={{ width: 5, height: 5, borderRadius: '50%', background: filled ? '#FF8A1F' : 'transparent', border: filled ? 'none' : '1px solid rgba(255,138,31,.38)', boxShadow: filled ? '0 0 6px rgba(255,138,31,.5)' : 'none' }} />
+            ))}
+          </span>
         </div>
       </div>
 
@@ -2291,17 +2902,17 @@ function TestTab() {
           <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#F5B700' }}>Recommended</span>
         </div>
 
-        {/* ── Hero card — 232px, horizontal split ── */}
+        {/* ── Hero card — 232px, 62/38 horizontal split ── */}
         <div style={{ height: 232, background: 'linear-gradient(140deg, #2D0C70 0%, #1A0848 52%, #110630 100%)', borderRadius: 24, overflow: 'hidden', display: 'flex', marginBottom: 28, boxShadow: '0 8px 40px rgba(90,20,200,.28)' }}>
-          {/* Left text block — 62% */}
+          {/* Left — text block */}
           <div style={{ flex: '0 0 62%', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxSizing: 'border-box' }}>
             <div>
               <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.08rem', color: '#F5F7FB', lineHeight: 1.2, marginBottom: 8 }}>
-                Random Exam Challenge ⚡
+                {isQuickFire ? '90s Challenge ⚡' : 'Random Exam Challenge ⚡'}
               </div>
               <div style={{ display: 'flex', gap: 10, marginBottom: 9, overflow: 'hidden' }}>
                 {[
-                  { dot: '#4DFF88', text: '10 questions' },
+                  { dot: '#4DFF88', text: isQuickFire ? '90 seconds' : '10 questions' },
                   { dot: '#9D5CFF', text: 'Mixed' },
                   { dot: '#3B82FF', text: 'Adaptive' },
                 ].map((s, i) => (
@@ -2312,13 +2923,13 @@ function TestTab() {
                 ))}
               </div>
               <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.7rem', color: 'rgba(193,140,255,.58)', margin: 0, fontStyle: 'italic', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                Maths. Then Macbeth. Then biology. You never know what's coming.
+                {isQuickFire ? 'A countdown starts the moment you open the first question.' : 'Maths. Then Macbeth. Then biology. You never know what\'s coming.'}
               </p>
             </div>
             {/* CTA row */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <button onClick={startRandomExam} style={{ height: 54, width: '65%', background: 'linear-gradient(135deg, #6D28D9, #8B3DFF)', border: 'none', borderRadius: 18, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.86rem', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, boxShadow: '0 0 28px rgba(109,40,217,.65)', flexShrink: 0, boxSizing: 'border-box' }}>
-                ▶ Start Random
+              <button onClick={startRandomQuestion} style={{ height: 54, width: '65%', background: 'linear-gradient(135deg, #6D28D9, #8B3DFF)', border: 'none', borderRadius: 18, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.86rem', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, boxShadow: '0 0 28px rgba(109,40,217,.65)', flexShrink: 0, boxSizing: 'border-box' }}>
+                {isQuickFire ? '⚡ Start 90s' : '▶ Start Random'}
               </button>
               <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <span style={{ fontSize: '.78rem', lineHeight: 1 }}>🔥</span>
@@ -2327,13 +2938,13 @@ function TestTab() {
               </div>
             </div>
           </div>
-          {/* Right image block — 38% */}
+          {/* Right — image */}
           <div style={{ flex: '0 0 38%', position: 'relative', overflow: 'hidden' }}>
             <img src="/mystery-cube.png" alt="" style={{ position: 'absolute', top: -4, right: -8, width: '115%', height: '115%', objectFit: 'cover', objectPosition: 'center', opacity: .9 }} />
           </div>
         </div>
 
-        {/* ── QUICK FOCUS — horizontal scroll, 58px pills ── */}
+        {/* ── QUICK FOCUS — 58px horizontal scroll pills ── */}
         <div style={{ marginBottom: 28 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#4A5578' }}>Quick Focus</span>
@@ -2353,19 +2964,17 @@ function TestTab() {
           </div>
         </div>
 
-        {/* ── CHOOSE A SUBJECT — compact 88px rows, 4px bars ── */}
+        {/* ── CHOOSE A SUBJECT — 88px compact rows, 4px bars ── */}
         <div style={{ marginBottom: 28 }}>
           <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 2 }}>Choose a Subject</div>
           {EXAM_SUBJECTS.map((subj, i) => (
             <button key={i} onClick={subj.action} style={{ width: '100%', boxSizing: 'border-box', background: 'none', border: 'none', borderBottom: '1px solid rgba(35,46,69,.9)', height: 88, padding: '0 2px 0 0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left' }}>
-              {/* 54×54 icon */}
               <div style={{ width: 54, height: 54, borderRadius: 15, background: `${subj.color}13`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>
                 {subj.icon}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.9rem', color: '#F0F3FA', marginBottom: 3 }}>{subj.label}</div>
                 <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.68rem', color: subj.color, fontWeight: 600, marginBottom: 7 }}>{subj.completed}/{subj.total} modules</div>
-                {/* 4px progress bar */}
                 <div style={{ height: 4, background: '#1A2338', borderRadius: 99, overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${(subj.completed / subj.total) * 100}%`, background: subj.color, borderRadius: 99 }} />
                 </div>
@@ -2392,6 +3001,7 @@ function TestTab() {
     </div>
   )
 }
+
 
 
 // ─── Phase 1: Warm-up ────────────────────────────────────────────────────────
