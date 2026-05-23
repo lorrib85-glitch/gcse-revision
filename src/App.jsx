@@ -342,7 +342,7 @@ function BottomNav({ tab, setTab }) {
       gap: 4,
     }}>
       {tabs.map(t => {
-        const active = tab === t.id
+        const active = tab === t.id || (t.id === 'pulse' && tab === 'quickfire')
         return (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
             border: 'none', background: active ? 'rgba(139,92,246,0.18)' : 'transparent',
@@ -453,7 +453,8 @@ export default function App() {
     <div style={{ background: '#08090D', minHeight: '100vh' }}>
       {tab === 'home'     && <Home progress={progress} onStart={startSession} onOpenModule={openModule} onOpenSubjects={() => setTab('subjects')} />}
       {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
-      {tab === 'pulse'    && <TestTab mode="quickfire" onOpenModule={openModule} />}
+      {tab === 'pulse'    && <PulseTab onStartQuickFire={() => setTab('quickfire')} />}
+      {tab === 'quickfire' && <TestTab mode="quickfire" onOpenModule={openModule} onExit={() => setTab('pulse')} />}
       {tab === 'exams'    && <TestTab mode="exam" onOpenModule={openModule} />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
@@ -838,6 +839,342 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
     </div>
   )
 }
+
+// ─── Pulse tab ─────────────────────────────────────────────────────────────────
+
+const PULSE_QUICK_START = [
+  { id: 'Sociology', label: 'Sociology', logo: '/headers/sociology-main.png', color: '#FF5C7A', glow: 'rgba(255,92,122,', status: 'Slipping',  statusColor: '#E05A52', progress: 38 },
+  { id: 'History',   label: 'History',   logo: '/headers/history-main.png',   color: '#C89B6D', glow: 'rgba(200,155,109,', status: 'Stable',   statusColor: '#F59E0B', progress: 62 },
+  { id: 'Biology',   label: 'Biology',   logo: '/headers/bio-main.png',        color: '#4CAF7D', glow: 'rgba(76,175,125,',  status: 'Strong',   statusColor: '#4CAF7D', progress: 81 },
+  { id: 'Chemistry', label: 'Chemistry', logo: '/headers/chem-logo.png',       color: '#9B59E8', glow: 'rgba(155,89,232,',  status: 'Slipping', statusColor: '#E05A52', progress: 29 },
+  { id: 'Maths',     label: 'Maths',     logo: '/headers/maths-main.png',      color: '#2DD4BF', glow: 'rgba(45,212,191,',  status: 'Improving',statusColor: '#2DD4BF', progress: 55 },
+  { id: 'English',   label: 'English',   logo: '/headers/english-main.png',    color: '#B66DFF', glow: 'rgba(182,109,255,', status: 'Stable',   statusColor: '#F59E0B', progress: 67 },
+  { id: 'Physics',   label: 'Physics',   logo: '/headers/physics-main.png',    color: '#3B82F6', glow: 'rgba(59,130,246,',  status: 'Improving',statusColor: '#2DD4BF', progress: 44 },
+]
+
+function PulseTab({ onStartQuickFire }) {
+  const { user, signOut } = useAuth()
+  const userName = user?.name || 'you'
+
+  // Pull real accuracy data per subject for progress bars
+  const subjectAccuracy = (() => {
+    try {
+      const scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]')
+      const buckets = {}
+      scores.slice(0, 60).forEach(s => {
+        if (!buckets[s.subject]) buckets[s.subject] = []
+        buckets[s.subject].push(s.pct)
+      })
+      const avg = arr => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : null
+      return Object.fromEntries(Object.entries(buckets).map(([sub, vals]) => [sub, avg(vals)]))
+    } catch { return {} }
+  })()
+
+  // Weakest subject
+  const weakestSubject = (() => {
+    const entries = Object.entries(subjectAccuracy).filter(([, v]) => v !== null)
+    if (!entries.length) return { label: 'Medicine Through Time', sub: 'History', note: 'Accuracy dropped this week.' }
+    const sorted = entries.sort((a, b) => a[1] - b[1])
+    const [sub] = sorted[0]
+    const meta = PULSE_QUICK_START.find(s => s.id === sub)
+    return { label: sub, sub, note: 'Accuracy dropped this week.', color: meta?.color || '#FF5C7A' }
+  })()
+
+  const cards = PULSE_QUICK_START.map(c => ({
+    ...c,
+    progress: subjectAccuracy[c.id] ?? c.progress,
+    status: subjectAccuracy[c.id] === null || subjectAccuracy[c.id] === undefined
+      ? c.status
+      : subjectAccuracy[c.id] >= 75 ? 'Strong'
+      : subjectAccuracy[c.id] >= 55 ? 'Stable'
+      : 'Slipping',
+    statusColor: subjectAccuracy[c.id] >= 75 ? '#4CAF7D'
+      : subjectAccuracy[c.id] >= 55 ? '#F59E0B'
+      : '#E05A52',
+  }))
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: '#08090D',
+      paddingBottom: 120,
+      overflowX: 'hidden',
+      position: 'relative',
+    }}>
+      {/* Ambient purple glow behind hero */}
+      <div style={{
+        position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)',
+        width: 420, height: 380, borderRadius: '50%',
+        background: 'radial-gradient(ellipse at 50% 30%, rgba(123,63,242,0.18) 0%, rgba(139,92,246,0.06) 50%, transparent 75%)',
+        pointerEvents: 'none', zIndex: 0,
+      }} />
+
+      <style>{`
+        @keyframes pulseGlow { 0%,100%{opacity:.7} 50%{opacity:1} }
+        @keyframes heroPulse { 0%,100%{box-shadow:0 0 0 0 rgba(123,63,242,0)} 60%{box-shadow:0 0 28px 4px rgba(123,63,242,0.22)} }
+      `}</style>
+
+      <div style={{ maxWidth: 430, margin: '0 auto', padding: '14px 24px 0', position: 'relative', zIndex: 1 }}>
+
+        {/* ── Top row ── */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <StreakChip />
+          <button
+            onClick={signOut}
+            title="Sign out"
+            style={{
+              width: 32, height: 32, borderRadius: '50%',
+              border: '1.5px solid rgba(139,92,246,0.3)',
+              background: 'rgba(139,92,246,0.1)', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 700, color: '#C4B5FD',
+            }}
+          >
+            {userName.charAt(0).toUpperCase()}
+          </button>
+        </div>
+
+        {/* ── Heading ── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 22 }}>
+          <h1 style={{
+            fontFamily: "'Sora', sans-serif",
+            fontSize: 42, fontWeight: 800, lineHeight: '44px',
+            letterSpacing: '-0.02em', color: '#F5F7FF',
+            margin: 0,
+          }}>Pulse</h1>
+          <svg width={24} height={24} viewBox="0 0 22 22" fill="none"
+            style={{ filter: 'drop-shadow(0 0 7px rgba(155,92,255,0.8))', animation: 'pulseGlow 2s ease-in-out infinite', flexShrink: 0, marginBottom: 2 }}>
+            <polyline points="2,13 6,13 8,6 11,18 14,10 16,13 20,13"
+              stroke="#9B5CFF" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+        </div>
+
+        {/* ── Hero card ── */}
+        <button
+          onClick={onStartQuickFire}
+          style={{
+            width: '100%', height: 240, border: 'none', padding: 0, cursor: 'pointer',
+            borderRadius: 28, overflow: 'hidden', position: 'relative', display: 'block',
+            background: 'linear-gradient(120deg, #0D0820 0%, #130C28 40%, #1A0F35 100%)',
+            boxShadow: '0 0 0 1px rgba(123,63,242,0.35), 0 16px 48px rgba(0,0,0,0.7), 0 0 32px rgba(123,63,242,0.12)',
+            animation: 'heroPulse 3.5s ease-in-out infinite',
+            marginBottom: 28,
+          }}
+        >
+          {/* Mystery cube artwork — right side */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'url(/headers/pulse-hero.png)',
+            backgroundSize: 'cover', backgroundPosition: 'right center',
+            opacity: 0.82,
+          }} />
+          {/* Dark gradient overlay left side for readability */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(90deg, rgba(10,5,25,0.97) 0%, rgba(10,5,25,0.88) 38%, rgba(10,5,25,0.4) 62%, transparent 100%)',
+          }} />
+
+          {/* Text content — left side */}
+          <div style={{
+            position: 'absolute', left: 24, top: 0, bottom: 0,
+            display: 'flex', flexDirection: 'column', justifyContent: 'center',
+            maxWidth: '60%',
+          }}>
+            <div style={{
+              fontFamily: "'Sora', sans-serif",
+              fontSize: 30, fontWeight: 700, lineHeight: '32px',
+              color: '#F5F7FF', marginBottom: 8,
+              letterSpacing: '-0.01em',
+            }}>90s Quick Fire</div>
+            <div style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 17, fontWeight: 500,
+              color: 'rgba(255,255,255,0.72)', marginBottom: 24,
+            }}>Mixed topics · Adaptive</div>
+
+            {/* CTA button */}
+            <div style={{
+              display: 'inline-flex', alignItems: 'center',
+              height: 50, paddingLeft: 22, paddingRight: 22,
+              borderRadius: 18,
+              background: 'linear-gradient(135deg, #7B3FF2 0%, #9B5CFF 100%)',
+              boxShadow: '0 6px 24px rgba(123,63,242,0.45), 0 0 0 1px rgba(155,92,255,0.3)',
+              fontFamily: "'Sora', sans-serif", fontWeight: 700,
+              fontSize: 16, color: '#FFFFFF', letterSpacing: '-0.01em',
+              whiteSpace: 'nowrap',
+            }}>
+              Start 90s Challenge →
+            </div>
+          </div>
+        </button>
+
+        {/* ── Quick Start section ── */}
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+            <span style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)',
+            }}>Quick Start</span>
+            <span style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.38)', cursor: 'pointer',
+            }}>See all ›</span>
+          </div>
+
+          {/* Horizontally scrollable cards — padding-right creates the cut-off effect */}
+          <div style={{
+            display: 'flex', gap: 14,
+            overflowX: 'auto', overflowY: 'visible',
+            paddingBottom: 6, paddingRight: 24,
+            scrollbarWidth: 'none', msOverflowStyle: 'none',
+            marginLeft: -24, paddingLeft: 24,
+            marginRight: -24,
+          }}>
+            <style>{'.pulse-scroll::-webkit-scrollbar{display:none}'}</style>
+            {cards.map(card => (
+              <button
+                key={card.id}
+                onClick={onStartQuickFire}
+                style={{
+                  flexShrink: 0,
+                  width: 145, height: 220,
+                  borderRadius: 24,
+                  background: 'linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+                  border: '1px solid ' + card.glow + '0.2)',
+                  cursor: 'pointer', padding: '18px 16px 16px',
+                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
+                  position: 'relative', overflow: 'hidden',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04), 0 0 16px ' + card.glow + '0.08)',
+                  transition: 'transform 180ms ease, box-shadow 180ms ease',
+                }}
+              >
+                {/* Subtle corner glow */}
+                <div style={{
+                  position: 'absolute', bottom: -30, right: -30, width: 100, height: 100,
+                  borderRadius: '50%',
+                  background: card.glow + '0.12)',
+                  filter: 'blur(20px)', pointerEvents: 'none',
+                }} />
+
+                {/* Subject logo */}
+                <div style={{
+                  width: 48, height: 48, borderRadius: 14, overflow: 'hidden', marginBottom: 12,
+                  boxShadow: '0 4px 12px ' + card.glow + '0.3)',
+                  flexShrink: 0,
+                }}>
+                  <img src={card.logo} alt={card.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+
+                {/* Subject name */}
+                <div style={{
+                  fontFamily: "'Sora', sans-serif",
+                  fontSize: 17, fontWeight: 700, color: '#F5F7FF',
+                  lineHeight: '20px', marginBottom: 6,
+                }}>
+                  {card.label}
+                </div>
+
+                {/* Status */}
+                <div style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 14, fontWeight: 500,
+                  color: card.statusColor,
+                  marginBottom: 'auto',
+                }}>
+                  {card.status}
+                </div>
+
+                {/* Progress bar */}
+                <div style={{ width: '100%', marginTop: 14 }}>
+                  <div style={{
+                    height: 6, borderRadius: 999,
+                    background: 'rgba(255,255,255,0.07)',
+                    overflow: 'hidden',
+                  }}>
+                    <div style={{
+                      width: card.progress + '%', height: '100%',
+                      borderRadius: 999,
+                      background: card.color,
+                      boxShadow: '0 0 8px ' + card.glow + '0.7)',
+                      transition: 'width 600ms ease',
+                    }} />
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Weakest Right Now card ── */}
+        <div style={{
+          width: '100%', minHeight: 126, borderRadius: 28,
+          background: 'linear-gradient(145deg, rgba(22,14,42,0.95) 0%, rgba(14,8,28,0.95) 100%)',
+          border: '1px solid rgba(182,109,255,0.18)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 24px rgba(182,109,255,0.07), inset 0 1px 0 rgba(255,255,255,0.04)',
+          padding: '20px 20px',
+          display: 'flex', alignItems: 'center', gap: 16,
+        }}>
+          {/* Brain icon */}
+          <div style={{
+            width: 52, height: 52, borderRadius: 16, flexShrink: 0,
+            background: 'rgba(182,109,255,0.1)',
+            border: '1px solid rgba(182,109,255,0.2)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 0 16px rgba(182,109,255,0.15)',
+          }}>
+            <svg width={26} height={26} viewBox="0 0 24 24" fill="none" style={{ filter: 'drop-shadow(0 0 6px rgba(182,109,255,0.7))' }}>
+              <path d="M12 3C9.2 3 7 5.2 7 8c0 1.1.4 2.1 1 2.9C6.4 11.5 6 12.7 6 14c0 2.8 2.2 5 5 5h2c2.8 0 5-2.2 5-5 0-1.3-.4-2.5-1-3.1.6-.8 1-1.8 1-2.9C18 5.2 15.8 3 13 3h-1z" stroke="#B66DFF" strokeWidth={1.6} />
+              <path d="M12 3v16M9 7.5c0 0 1.5 1 3 0M15 7.5c0 0-1.5 1-3 0M9 11c0 0 1.5 1.5 3 0M15 11c0 0-1.5 1.5-3 0" stroke="#B66DFF" strokeWidth={1.4} strokeLinecap="round" />
+            </svg>
+          </div>
+
+          {/* Text */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 11, fontWeight: 600, letterSpacing: '0.14em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
+              marginBottom: 5,
+            }}>Weakest Right Now</div>
+            <div style={{
+              fontFamily: "'Sora', sans-serif",
+              fontSize: 19, fontWeight: 700, color: '#F5F7FF',
+              lineHeight: '22px', marginBottom: 4,
+              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+            }}>{weakestSubject.label}</div>
+            <div style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 14, fontWeight: 500,
+              color: 'rgba(255,255,255,0.55)',
+            }}>Accuracy dropped this week.</div>
+          </div>
+
+          {/* Recover button */}
+          <button
+            onClick={onStartQuickFire}
+            style={{
+              flexShrink: 0,
+              height: 52, paddingLeft: 16, paddingRight: 16,
+              borderRadius: 16,
+              background: 'transparent',
+              border: '1px solid rgba(182,109,255,0.38)',
+              color: '#C4B5FD',
+              fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 13,
+              cursor: 'pointer', whiteSpace: 'nowrap',
+              boxShadow: '0 0 14px rgba(182,109,255,0.1)',
+              transition: 'border-color 180ms ease, box-shadow 180ms ease',
+            }}
+          >
+            Recover now →
+          </button>
+        </div>
+
+      </div>
+    </div>
+  )
+}
+
 // ─── Modules tab ──────────────────────────────────────────────────────────────
 
 function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, headerImage, icon, locked, isSelected, onClick }) {
