@@ -2244,7 +2244,10 @@ function TestTab() {
   const EXAM_SUBJECTS = [
     { icon: '👥', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: () => setSociologyOpen(true) },
     { icon: '🏰', label: 'History',   color: '#F5B700', completed: 6,  total: 12, action: () => setSelected({ topicId: 'medieval', label: 'History', subject: 'History' }) },
-    { icon: '🔬', label: 'Science',   color: '#38D27A', completed: 5,  total: 11, action: () => setSelected({ topicId: 'tb_cells', label: 'Cells', subject: 'Biology' }) },
+    { icon: '🔬', label: 'Science',   color: '#38D27A', completed: 5,  total: 11, action: () => setSelected({ topicId: 'tb_cells', label: 'Science', subject: 'Biology' }) },
+    { icon: '📐', label: 'Maths',     color: '#3B82FF', completed: 0,  total: 20, action: () => setMathsOpen(true) },
+    { icon: '📖', label: 'English',   color: '#9D5CFF', completed: 0,  total: 15, action: () => setEnglishOpen(true) },
+    { icon: '⚗️', label: 'Chemistry', color: '#4ED8A0', completed: 0,  total: 12, action: () => setChemistryOpen(true) },
   ]
 
   function startRandomExam() {
@@ -2256,131 +2259,132 @@ function TestTab() {
   }
 
   return (
-    <div style={{ background: '#070B1A', minHeight: '100vh', paddingBottom: 90 }}>
+    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
 
-      {/* ── Header ── */}
-      <div style={{ background: 'linear-gradient(180deg, #100722 0%, #070B1A 100%)', padding: '52px 20px 22px' }}>
-        <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg, #5B21B6, #7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', flexShrink: 0, boxShadow: '0 0 0 2px rgba(157,92,255,.3)' }}>
-              🎓
-            </div>
-            <div>
-              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.15rem', color: '#F5F7FB', lineHeight: 1.1 }}>Exam Mode</div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.78rem', color: '#9CA8C7', marginTop: 2 }}>Ready? ❤️</div>
-            </div>
+      {/* ── Header — 72px ── */}
+      <div style={{ height: 72, padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* 52×52 avatar */}
+          <div style={{ width: 52, height: 52, borderRadius: '50%', flexShrink: 0, background: 'linear-gradient(145deg, #2D0A5E, #5B21B6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 22px rgba(109,40,217,.4)' }}>
+            <svg width="25" height="25" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="8" r="4" fill="rgba(255,255,255,.85)" />
+              <path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" stroke="rgba(255,255,255,.85)" strokeWidth="2" strokeLinecap="round" />
+            </svg>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,138,31,.14)', border: '1px solid rgba(255,138,31,.28)', borderRadius: 99, padding: '6px 14px', flexShrink: 0 }}>
-            <span style={{ fontSize: '.9rem' }}>🔥</span>
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 700, color: '#FF8A1F' }}>{testStreak > 0 ? `${testStreak} day streak` : '8 day streak'}</span>
+          <div>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.05rem', color: '#F5F7FB', lineHeight: 1.15 }}>Exam Mode</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.73rem', color: '#6B7AA0', marginTop: 2 }}>Ready? ❤️</div>
           </div>
+        </div>
+        {/* Streak pill — 40px tall, 16px horizontal padding */}
+        <div style={{ height: 40, paddingLeft: 16, paddingRight: 16, display: 'flex', alignItems: 'center', gap: 7, background: 'rgba(255,138,31,.11)', border: '1px solid rgba(255,138,31,.24)', borderRadius: 99, flexShrink: 0 }}>
+          <span style={{ fontSize: '.85rem', lineHeight: 1 }}>🔥</span>
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 700, color: '#FF8A1F' }}>{testStreak > 0 ? `${testStreak} day streak` : '8 day streak'}</span>
         </div>
       </div>
 
-      <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 16px 0' }}>
+      <div style={{ padding: '8px 20px 0' }}>
 
-        {/* ── Recommended ── */}
-        <div style={{ marginBottom: 26 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-            <span style={{ color: '#F5B700', fontSize: '.9rem', lineHeight: 1 }}>★</span>
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#F5B700' }}>Recommended</span>
-          </div>
+        {/* RECOMMENDED label */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+          <span style={{ color: '#F5B700', fontSize: '.78rem', lineHeight: 1 }}>★</span>
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#F5B700' }}>Recommended</span>
+        </div>
 
-          {/* Challenge card */}
-          <div style={{ background: 'linear-gradient(140deg, #2A0C6E 0%, #1A0845 55%, #120831 100%)', borderRadius: 22, padding: '22px 20px 18px', position: 'relative', overflow: 'hidden' }}>
-            {/* Cube */}
-            <img src="/mystery-cube.png" alt="" style={{ position: 'absolute', right: -8, top: -8, width: 148, height: 148, objectFit: 'contain', opacity: .92, pointerEvents: 'none' }} />
-
-            {/* Title */}
-            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.18rem', color: '#F5F7FB', lineHeight: 1.2, maxWidth: '58%', marginBottom: 10 }}>
-              Random Exam Challenge ⚡
+        {/* ── Hero card — 232px, horizontal split ── */}
+        <div style={{ height: 232, background: 'linear-gradient(140deg, #2D0C70 0%, #1A0848 52%, #110630 100%)', borderRadius: 24, overflow: 'hidden', display: 'flex', marginBottom: 28, boxShadow: '0 8px 40px rgba(90,20,200,.28)' }}>
+          {/* Left text block — 62% */}
+          <div style={{ flex: '0 0 62%', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxSizing: 'border-box' }}>
+            <div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.08rem', color: '#F5F7FB', lineHeight: 1.2, marginBottom: 8 }}>
+                Random Exam Challenge ⚡
+              </div>
+              <div style={{ display: 'flex', gap: 10, marginBottom: 9, overflow: 'hidden' }}>
+                {[
+                  { dot: '#4DFF88', text: '10 questions' },
+                  { dot: '#9D5CFF', text: 'Mixed' },
+                  { dot: '#3B82FF', text: 'Adaptive' },
+                ].map((s, i) => (
+                  <span key={i} style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', color: 'rgba(193,140,255,.82)', display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}>
+                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: s.dot, flexShrink: 0, display: 'inline-block' }} />
+                    {s.text}
+                  </span>
+                ))}
+              </div>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.7rem', color: 'rgba(193,140,255,.58)', margin: 0, fontStyle: 'italic', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                Maths. Then Macbeth. Then biology. You never know what's coming.
+              </p>
             </div>
-
-            {/* Stats row */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 14px', marginBottom: 10 }}>
-              {[
-                { dot: '#4DFF88', text: '10 questions' },
-                { dot: '#9D5CFF', text: 'Mixed Topics' },
-                { dot: '#3B82FF', text: 'Adaptive' },
-              ].map((s, i) => (
-                <span key={i} style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: 'rgba(193,140,255,.85)', display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.dot, display: 'inline-block', flexShrink: 0 }} />
-                  {s.text}
-                </span>
-              ))}
-            </div>
-
-            {/* Description */}
-            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.78rem', color: 'rgba(193,140,255,.65)', margin: '0 0 16px', maxWidth: '62%', fontStyle: 'italic', lineHeight: 1.55 }}>
-              Maths. Then Macbeth. Then biology. You never know what's coming.
-            </p>
-
-            {/* Actions row */}
+            {/* CTA row */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <button onClick={startRandomExam} style={{ background: 'linear-gradient(135deg, #6D28D9, #7C3AED, #9D5CFF)', border: 'none', borderRadius: 12, padding: '12px 22px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.88rem', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7, boxShadow: '0 4px 18px rgba(109,40,217,.45)' }}>
-                <span>⚡</span> Start Random
+              <button onClick={startRandomExam} style={{ height: 54, width: '65%', background: 'linear-gradient(135deg, #6D28D9, #8B3DFF)', border: 'none', borderRadius: 18, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.86rem', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, boxShadow: '0 0 28px rgba(109,40,217,.65)', flexShrink: 0, boxSizing: 'border-box' }}>
+                ▶ Start Random
               </button>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <span style={{ fontSize: '.85rem' }}>🔥</span>
-                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#FF8A1F', fontWeight: 700 }}>2x streak</span>
-                <span style={{ color: 'rgba(193,140,255,.4)', fontSize: '1rem' }}>›</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ fontSize: '.78rem', lineHeight: 1 }}>🔥</span>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.7rem', color: '#FF8A1F', fontWeight: 600 }}>2x streak</span>
+                <span style={{ color: 'rgba(193,140,255,.32)', fontSize: '.9rem' }}>›</span>
               </div>
             </div>
           </div>
+          {/* Right image block — 38% */}
+          <div style={{ flex: '0 0 38%', position: 'relative', overflow: 'hidden' }}>
+            <img src="/mystery-cube.png" alt="" style={{ position: 'absolute', top: -4, right: -8, width: '115%', height: '115%', objectFit: 'cover', objectPosition: 'center', opacity: .9 }} />
+          </div>
         </div>
 
-        {/* ── Quick Focus ── */}
-        <div style={{ marginBottom: 26 }}>
+        {/* ── QUICK FOCUS — horizontal scroll, 58px pills ── */}
+        <div style={{ marginBottom: 28 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#4A5578' }}>Quick Focus</span>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontSize: '.78rem', color: '#9D5CFF', fontWeight: 600, padding: 0 }}>See all</button>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#4A5578' }}>Quick Focus</span>
+            <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontSize: '.76rem', color: '#9D5CFF', fontWeight: 600, padding: 0 }}>See all</button>
           </div>
-          <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 2 }}>
+          <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 2, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
               { icon: '🎯', label: 'Weak Zones' },
               { icon: '✕', label: 'Last Mistakes' },
               { icon: '📊', label: 'Predicted Paper' },
             ].map((item, i) => (
-              <button key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#10182B', border: '1px solid #2A3552', borderRadius: 99, padding: '10px 17px', cursor: 'pointer', flexShrink: 0, fontFamily: "'Inter', sans-serif", fontSize: '.82rem', fontWeight: 600, color: '#C8D0E8', whiteSpace: 'nowrap' }}>
-                <span style={{ fontSize: '.9rem' }}>{item.icon}</span>
+              <button key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, background: '#10182B', border: '1px solid #232E45', borderRadius: 18, height: 58, paddingLeft: 19, paddingRight: 19, cursor: 'pointer', flexShrink: 0, fontFamily: "'Inter', sans-serif", fontSize: '.8rem', fontWeight: 600, color: '#C8D0E8', whiteSpace: 'nowrap', boxSizing: 'border-box' }}>
+                <span style={{ fontSize: '.88rem', lineHeight: 1 }}>{item.icon}</span>
                 {item.label}
               </button>
             ))}
           </div>
         </div>
 
-        {/* ── Choose a Subject ── */}
-        <div style={{ marginBottom: 26 }}>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 4 }}>Choose a Subject</div>
-          <div>
-            {EXAM_SUBJECTS.map((subj, i) => (
-              <button key={i} onClick={subj.action} style={{ background: 'none', border: 'none', borderBottom: '1px solid rgba(42,53,82,.55)', padding: '14px 0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', width: '100%' }}>
-                <div style={{ width: 42, height: 42, borderRadius: 13, background: `${subj.color}1A`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
-                  {subj.icon}
+        {/* ── CHOOSE A SUBJECT — compact 88px rows, 4px bars ── */}
+        <div style={{ marginBottom: 28 }}>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 2 }}>Choose a Subject</div>
+          {EXAM_SUBJECTS.map((subj, i) => (
+            <button key={i} onClick={subj.action} style={{ width: '100%', boxSizing: 'border-box', background: 'none', border: 'none', borderBottom: '1px solid rgba(35,46,69,.9)', height: 88, padding: '0 2px 0 0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left' }}>
+              {/* 54×54 icon */}
+              <div style={{ width: 54, height: 54, borderRadius: 15, background: `${subj.color}13`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>
+                {subj.icon}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.9rem', color: '#F0F3FA', marginBottom: 3 }}>{subj.label}</div>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.68rem', color: subj.color, fontWeight: 600, marginBottom: 7 }}>{subj.completed}/{subj.total} modules</div>
+                {/* 4px progress bar */}
+                <div style={{ height: 4, background: '#1A2338', borderRadius: 99, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${(subj.completed / subj.total) * 100}%`, background: subj.color, borderRadius: 99 }} />
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.95rem', color: '#F5F7FB', marginBottom: 2 }}>{subj.label}</div>
-                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.7rem', color: '#5A6480', marginBottom: 7 }}>{subj.completed}/{subj.total} modules</div>
-                  <div style={{ height: 3, background: '#1A2338', borderRadius: 99, overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${(subj.completed / subj.total) * 100}%`, background: subj.color, borderRadius: 99 }} />
-                  </div>
-                </div>
-                <span style={{ color: '#2A3552', fontSize: '1.15rem', fontWeight: 300, flexShrink: 0 }}>›</span>
-              </button>
-            ))}
-          </div>
+              </div>
+              <span style={{ color: '#2A3552', fontSize: '1.05rem', flexShrink: 0 }}>›</span>
+            </button>
+          ))}
         </div>
 
-        {/* ── Real Exam Papers ── */}
-        <div style={{ marginBottom: 24 }}>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 12 }}>Real Exam Papers</div>
-          <button style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 16, padding: '16px', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer', textAlign: 'left', width: '100%' }}>
-            <div style={{ width: 44, height: 44, borderRadius: 13, background: 'rgba(59,130,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>📋</div>
+        {/* ── REAL EXAM PAPERS ── */}
+        <div style={{ marginBottom: 28 }}>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 12 }}>Real Exam Papers</div>
+          <button style={{ width: '100%', boxSizing: 'border-box', background: '#0E1628', border: '1px solid #1E2A40', borderRadius: 24, padding: 20, display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer', textAlign: 'left' }}>
+            <div style={{ width: 54, height: 54, borderRadius: 15, background: 'rgba(59,130,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>📋</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.95rem', color: '#F5F7FB' }}>Real Exam Papers</div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#5A6480', marginTop: 2 }}>AQA & Edexcel timed papers</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.92rem', color: '#F0F3FA' }}>Real Exam Papers</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.73rem', color: '#4A5578', marginTop: 3 }}>AQA & Edexcel timed papers</div>
             </div>
-            <span style={{ color: '#2A3552', fontSize: '1.15rem', fontWeight: 300 }}>›</span>
+            <span style={{ color: '#2A3552', fontSize: '1.05rem', flexShrink: 0 }}>›</span>
           </button>
         </div>
 
