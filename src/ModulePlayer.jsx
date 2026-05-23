@@ -1310,6 +1310,17 @@ function useHookPhase(hook) {
 function HookContent({ module, hook, hookState, subjectColor }) {
   const { phase, wasCorrect, growStep, revealIdx, allRevealed, choose, nextRevealItem } = hookState
 
+  // Support both storyLines (new format) and scenario (legacy format)
+  const storyLines = hook.storyLines || (() => {
+    if (!hook.scenario) return []
+    const s = hook.scenario
+    const lines = []
+    if (s.location) lines.push(s.location + '.')
+    if (s.hint) lines.push(s.hint)
+    if (s.items) s.items.forEach(item => lines.push('— ' + item))
+    return lines
+  })()
+
   return (
     <div style={{ paddingBottom: 20 }}>
 
@@ -1318,12 +1329,12 @@ function HookContent({ module, hook, hookState, subjectColor }) {
         <div style={{ animation: 'hFadeIn .4s ease' }}>
           {/* Story context */}
           <div style={{ marginBottom: 20 }}>
-            {hook.storyLines?.map((line, i) => (
+            {storyLines.map((line, i) => (
               <p key={i} style={{
                 fontFamily: "'Inter', sans-serif",
-                fontSize: '.88rem', color: i === hook.storyLines.length - 1 ? '#C8D0E8' : '#5A6480',
+                fontSize: '.88rem', color: i === storyLines.length - 1 ? '#C8D0E8' : '#5A6480',
                 margin: '0 0 5px', lineHeight: 1.65,
-                fontWeight: i === hook.storyLines.length - 1 ? 500 : 400,
+                fontWeight: i === storyLines.length - 1 ? 500 : 400,
               }}>{line}</p>
             ))}
           </div>
