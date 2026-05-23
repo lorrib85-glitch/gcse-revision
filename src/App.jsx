@@ -59,6 +59,153 @@ function safeGetDraft() {
   try { return getSessionDraft() } catch { return null }
 }
 
+// ─── Google logo SVG ─────────────────────────────────────────────────────────
+
+function GoogleLogo({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={{ display: 'block', flexShrink: 0 }}>
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+      <path fill="#FBBC04" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+    </svg>
+  )
+}
+
+// ─── Login screen ─────────────────────────────────────────────────────────────
+
+function LoginScreen({ onLoginClick }) {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999,
+      background: 'linear-gradient(180deg, #0D0F14 0%, #08090D 100%)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      padding: '40px 32px',
+    }}>
+      <img
+        src="/logo.png" alt="RISE"
+        style={{ width: 88, height: 88, objectFit: 'contain', marginBottom: 32,
+          filter: 'drop-shadow(0 0 24px rgba(101,230,198,0.35))' }}
+      />
+      <div style={{
+        fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+        fontSize: 38, fontWeight: 700, color: '#F4EFE6',
+        textAlign: 'center', lineHeight: 1.1, marginBottom: 14, letterSpacing: '-0.01em',
+      }}>
+        Your GCSE.<br />Your way.
+      </div>
+      <div style={{
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        fontSize: 15, color: '#7A7670', textAlign: 'center',
+        marginBottom: 52, maxWidth: 280, lineHeight: 1.55,
+      }}>
+        Study smarter. Track your progress.<br />Crush your exams.
+      </div>
+
+      {/* TODO: replace placeholder with real GSI — set YOUR_GOOGLE_CLIENT_ID_HERE in env */}
+      <button
+        onClick={onLoginClick}
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+          background: '#FFFFFF', border: 'none', borderRadius: 14, cursor: 'pointer',
+          padding: '15px 28px', width: '100%', maxWidth: 320,
+          fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 600, color: '#1A1A1A',
+          boxShadow: '0 2px 16px rgba(0,0,0,0.4)',
+          transition: 'opacity 150ms ease',
+        }}
+        onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
+        onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+      >
+        <GoogleLogo size={20} />
+        Sign in with Google
+      </button>
+
+      <div style={{
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        fontSize: 11, color: '#3D3A35', marginTop: 24,
+        textAlign: 'center', maxWidth: 240, lineHeight: 1.5,
+      }}>
+        By signing in you agree to our Terms &amp; Privacy Policy
+      </div>
+    </div>
+  )
+}
+
+// ─── Onboarding screen ───────────────────────────────────────────────────────
+
+function OnboardingScreen({ onComplete }) {
+  const [name, setName] = useState('')
+
+  function handleSubmit() {
+    const trimmed = name.trim()
+    if (!trimmed) return
+    onComplete(trimmed)
+  }
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999,
+      background: 'linear-gradient(180deg, #0D0F14 0%, #08090D 100%)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      padding: '40px 32px',
+    }}>
+      <img
+        src="/logo.png" alt="RISE"
+        style={{ width: 68, height: 68, objectFit: 'contain', marginBottom: 36,
+          filter: 'drop-shadow(0 0 18px rgba(101,230,198,0.3))' }}
+      />
+      <div style={{
+        fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+        fontSize: 30, fontWeight: 700, color: '#F4EFE6',
+        textAlign: 'center', lineHeight: 1.15, marginBottom: 10, letterSpacing: '-0.01em',
+      }}>
+        What should we call you?
+      </div>
+      <div style={{
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        fontSize: 14, color: '#7A7670', textAlign: 'center',
+        marginBottom: 40, lineHeight: 1.5,
+      }}>
+        Just your first name is fine.
+      </div>
+
+      <input
+        type="text"
+        value={name}
+        onChange={e => setName(e.target.value)}
+        onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+        placeholder="Your name"
+        autoFocus
+        style={{
+          width: '100%', maxWidth: 320, height: 56,
+          background: '#151720', border: '1.5px solid rgba(255,255,255,0.1)',
+          borderRadius: 14, padding: '0 20px',
+          fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 17, fontWeight: 500, color: '#F4EFE6',
+          outline: 'none', boxSizing: 'border-box', marginBottom: 16,
+          caretColor: '#65E6C6',
+        }}
+        onFocus={e => e.target.style.borderColor = 'rgba(101,230,198,0.4)'}
+        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+      />
+
+      <button
+        onClick={handleSubmit}
+        style={{
+          width: '100%', maxWidth: 320, height: 52,
+          background: name.trim() ? 'linear-gradient(135deg, #3D7A5E, #65E6C6)' : 'rgba(255,255,255,0.06)',
+          border: 'none', borderRadius: 14, cursor: name.trim() ? 'pointer' : 'default',
+          fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700,
+          color: name.trim() ? '#08090D' : '#4A4540',
+          transition: 'background 200ms ease, color 200ms ease',
+          letterSpacing: '0.02em',
+        }}
+      >
+        Let's go →
+      </button>
+    </div>
+  )
+}
+
 // ─── Top-level router ────────────────────────────────────────────────────────
 
 // ─── Bottom nav ──────────────────────────────────────────────────────────────
@@ -149,6 +296,8 @@ export default function App() {
   const [progress, setProgress]   = useState(() => safeGetProgress())
   const [draft, setDraft]         = useState(() => safeGetDraft())
   const [activeModule, setActiveModule] = useState(null)
+  const [user, setUser]           = useState(() => { try { return JSON.parse(localStorage.getItem('rise_user') || 'null') } catch { return null } })
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   function openModule(mod) {
     setActiveModule(mod)
@@ -196,6 +345,25 @@ export default function App() {
     setView(null)
   }
 
+  function handleLoginClick() { setShowOnboarding(true) }
+
+  function handleOnboardingComplete(name) {
+    const u = { name, createdAt: new Date().toISOString() }
+    localStorage.setItem('rise_user', JSON.stringify(u))
+    setUser(u)
+    setShowOnboarding(false)
+  }
+
+  function signOut() {
+    localStorage.removeItem('rise_user')
+    setUser(null)
+    setShowOnboarding(false)
+  }
+
+  // Auth screens take priority over everything
+  if (!user) return <LoginScreen onLoginClick={handleLoginClick} />
+  if (showOnboarding) return <OnboardingScreen onComplete={handleOnboardingComplete} />
+
   // Full-screen overlays take priority
   if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} onBack={closeOverlay} />
   if (view === 'session' && session)     return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={closeOverlay} />
@@ -204,7 +372,7 @@ export default function App() {
   // Tab shell
   return (
     <div style={{ background: '#08090D', minHeight: '100vh' }}>
-      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onOpenSubjects={() => setTab('modules')} />}
+      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onOpenSubjects={() => setTab('modules')} user={user} onSignOut={signOut} />}
       {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
       {(tab === 'test' || tab === 'quiz' || tab === 'exam') && <TestTab mode={tab === 'quiz' ? 'quickfire' : tab === 'exam' ? 'exam' : 'test'} onOpenModule={openModule} />}
       {tab === 'progress' && <ProgressTab />}
@@ -231,16 +399,18 @@ const W = {
 
 // ─── Home tab ─────────────────────────────────────────────────────────────────
 
-const GREETINGS = [
-  "Right then, Elliot. Let's get some of this locked in.",
-  "Back again. Good. Consistency beats cramming every time.",
-  "Small session, big difference. Let's go.",
-  "The exam won't study for itself. Fortunately, you're here.",
-  "One topic at a time. That's all this is.",
-  "You showed up. That's already the hard part done.",
-  "No pressure. Just progress.",
-  "Medicine in Britain isn't going to remember itself.",
-]
+function getGreetings(name) {
+  return [
+    `Right then, ${name}. Let's get some of this locked in.`,
+    "Back again. Good. Consistency beats cramming every time.",
+    "Small session, big difference. Let's go.",
+    "The exam won't study for itself. Fortunately, you're here.",
+    "One topic at a time. That's all this is.",
+    "You showed up. That's already the hard part done.",
+    "No pressure. Just progress.",
+    "Medicine in Britain isn't going to remember itself.",
+  ]
+}
 
 function daysUntilExam() {
   const exam = new Date('2027-05-01')
@@ -249,7 +419,7 @@ function daysUntilExam() {
   return Math.max(0, Math.round((exam - today) / 86400000))
 }
 
-function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule, onOpenSubjects }) {
+function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule, onOpenSubjects, user, onSignOut }) {
   const nextId = getNextTopicId(TOPIC_IDS)
   const draftTopic = draft ? TOPICS.find(t => t.id === draft.topicId) : null
   const streak = progress.streak || 0
@@ -300,7 +470,9 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
     { label: 'English',   icon: '📖',  done: 8,  total: 14, color: '#9E3D52', action: onOpenSubjects },
   ]
 
-  const heroText = GREETINGS[new Date().getDay() % GREETINGS.length]
+  const userName = user?.name || 'you'
+  const greetings = getGreetings(userName)
+  const heroText = greetings[new Date().getDay() % greetings.length]
 
   return (
     <div style={{
@@ -310,13 +482,30 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
     }}>
       <div style={{ maxWidth: 420, margin: '0 auto', padding: '52px 20px 0' }}>
 
-        {/* Greeting */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: '0.11em', color: '#7A7670', textTransform: 'uppercase', marginBottom: 8 }}>
+        {/* Top row: greeting label + user avatar */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+          <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: '0.11em', color: '#7A7670', textTransform: 'uppercase' }}>
             Today's session
           </div>
+          <button
+            onClick={onSignOut}
+            title="Sign out"
+            style={{
+              width: 34, height: 34, borderRadius: '50%', border: '1.5px solid rgba(101,230,198,0.25)',
+              background: 'rgba(101,230,198,0.1)', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 700,
+              color: '#65E6C6', letterSpacing: '0.02em', flexShrink: 0,
+            }}
+          >
+            {userName.charAt(0).toUpperCase()}
+          </button>
+        </div>
+
+        {/* Greeting */}
+        <div style={{ marginBottom: 32 }}>
           <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontSize: 34, fontWeight: 600, color: '#F4EFE6', lineHeight: 1.08, marginBottom: 14 }}>
-            Keep going.
+            Hey, {userName}.
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <div style={{
