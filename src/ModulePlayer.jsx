@@ -2099,11 +2099,18 @@ export default function ModulePlayer({ module, onBack }) {
           scrollbarWidth: 'none', msOverflowStyle: 'none',
         }}>
           {module.screens.map((s, i) => {
-            const isActive = i === screen
-            const isDone   = i < screen
+            const isActive = i === screen && hookDone && wylDone && (!module.intro || introDone)
+            const isDone   = hookDone && wylDone && (!module.intro || introDone) && i < screen
             return (
               <button key={i}
-                onClick={() => { setScreen(i); setAnimKey(k => k + 1); scrollToTop() }}
+                onClick={() => {
+                  setHookDone(true)
+                  setWylDone(true)
+                  setIntroDone(true)
+                  setScreen(i)
+                  setAnimKey(k => k + 1)
+                  scrollToTop()
+                }}
                 style={{
                   flexShrink: 0,
                   background: isActive

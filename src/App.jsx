@@ -1012,16 +1012,12 @@ function PulseTab({ onStartQuickFire }) {
 
         {/* ── Quick Start section ── */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <div style={{ marginBottom: 14 }}>
             <span style={{
               fontFamily: "'Outfit', sans-serif",
               fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
               textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)',
             }}>Quick Start</span>
-            <span style={{
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.38)', cursor: 'pointer',
-            }}>See all ›</span>
           </div>
 
           {/* Horizontally scrollable cards — padding-right creates the cut-off effect */}
@@ -1075,14 +1071,14 @@ function PulseTab({ onStartQuickFire }) {
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 12px 14px' }}>
                   <div style={{
                     fontFamily: "'Outfit', sans-serif",
-                    fontSize: 10, fontWeight: 700, letterSpacing: '0.13em',
-                    textTransform: 'uppercase', color: card.color,
-                    marginBottom: 4,
-                  }}>{card.subject || card.label}</div>
+                    fontSize: 11, fontWeight: 700, letterSpacing: '0.12em',
+                    textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
+                    marginBottom: 3,
+                  }}>QUICK START</div>
                   <div style={{
                     fontFamily: "'Sora', sans-serif",
-                    fontSize: 14, fontWeight: 700, color: '#F5F7FF',
-                    lineHeight: '17px', marginBottom: 7, letterSpacing: '-0.01em',
+                    fontSize: 15, fontWeight: 700, color: '#F5F7FF',
+                    lineHeight: '18px', marginBottom: 8, letterSpacing: '-0.01em',
                   }}>{card.label}</div>
                   <div style={{ height: 3, background: 'rgba(255,255,255,0.12)', borderRadius: 999, overflow: 'hidden' }}>
                     <div style={{ width: (card.progress || 0) + '%', height: '100%', background: card.color, borderRadius: 999 }} />
@@ -1208,13 +1204,9 @@ function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, heade
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 12px 12px', zIndex: 2 }}>
         <div style={{
           fontWeight: 700, fontSize: 18, color: '#F5F7FF',
-          lineHeight: '22px', marginBottom: 2, fontFamily: "'Sora', sans-serif",
+          lineHeight: '22px', marginBottom: 8, fontFamily: "'Sora', sans-serif",
           letterSpacing: '-0.01em',
         }}>{title}</div>
-        <div style={{
-          fontSize: '.63rem', color: '#B8B4C2', lineHeight: 1.3,
-          marginBottom: 8, fontFamily: "'Outfit', sans-serif",
-        }}>{subtitle}</div>
         <div style={{ marginBottom: 4 }}>
           <span style={{ fontSize: '.6rem', fontWeight: 800, color: accentColour, fontFamily: "'Outfit', sans-serif" }}>
             {progress}%
@@ -1491,8 +1483,8 @@ function ModulesTab({ onOpenModule }) {
   return (
     <div style={{ background: '#05070B', minHeight: '100vh', paddingBottom: 108, overflowX: 'hidden' }}>
 
-      {/* ── HERO 260px ── */}
-      <div style={{ height: 260, width: '100%', position: 'relative', background: heroBg, overflow: 'hidden' }}>
+      {/* ── HERO — header only ── */}
+      <div style={{ width: '100%', position: 'relative', background: heroBg, overflow: 'hidden', paddingBottom: 14 }}>
         {/* Warm column-silhouette suggestion layer */}
         <div style={{
           position: 'absolute', right: 0, top: 0, width: '55%', height: '100%', pointerEvents: 'none',
@@ -1511,20 +1503,20 @@ function ModulesTab({ onOpenModule }) {
           <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 13, color: 'rgba(255,255,255,0.32)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Subjects</div>
           <StreakChip />
         </div>
-
-        {/* Hero text */}
-        <div style={{ padding: '14px 18px 0', position: 'relative', zIndex: 5 }}>
-          <div style={{
-            color: '#F5F7FF', fontWeight: 800, fontSize: 36,
-            lineHeight: 1.05, marginBottom: 0,
-            fontFamily: "'Sora', sans-serif",
-            letterSpacing: '-0.02em',
-          }}>Keep going.</div>
-        </div>
       </div>
 
-      {/* ── CONTINUE LEARNING CARD (overlaps hero -48px) ── */}
-      <div style={{ padding: '0 18px', marginTop: -48, position: 'relative', zIndex: 10 }}>
+      {/* ── KEEP GOING heading ── */}
+      <div style={{ padding: '14px 18px 0' }}>
+        <div style={{
+          color: '#F5F7FF', fontWeight: 800, fontSize: 36,
+          lineHeight: 1.05, marginBottom: 0,
+          fontFamily: "'Sora', sans-serif",
+          letterSpacing: '-0.02em',
+        }}>Keep going.</div>
+      </div>
+
+      {/* ── CONTINUE LEARNING CARD ── */}
+      <div style={{ padding: '14px 18px 0', position: 'relative', zIndex: 10 }}>
         <div style={{
           borderRadius: 22,
           border: `1px solid ${continueAccent}4D`,
