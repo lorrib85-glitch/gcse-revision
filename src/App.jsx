@@ -2163,6 +2163,17 @@ function MathsTopicView({ group, onBack }) {
   )
 }
 
+function mathsTopicImg(id) {
+  const n = id || ''
+  if (['number','negatives','fractions','percentages','decimals','indices','surds','primes','bidmas','powers'].some(k => n.includes(k))) return '/headers/maths-numbers.png'
+  if (['algebra','equations','inequalities','sequences','quadratic','expression','formula'].some(k => n.includes(k))) return '/headers/maths-algebra.png'
+  if (['graph','gradient','coordinate','straight','linear_graph'].some(k => n.includes(k))) return '/headers/maths-algebra.png'
+  if (['angles','area','volume','similarity','transforms','pythagoras','trig','geometry','polygon','shape','circle','perimeter'].some(k => n.includes(k))) return '/headers/maths-geometry.png'
+  if (['statistics','probability','data','averages','mean','sampling','charts'].some(k => n.includes(k))) return '/headers/maths-data.png'
+  if (['ratio','proportion','speed','density','money','finance','units'].some(k => n.includes(k))) return '/headers/maths-realworld.png'
+  return '/headers/maths-main.png'
+}
+
 function MathsBrowser({ onBack }) {
   const [activeGroup, setGroup] = useState(null)
   const [fmOpen, setFm]         = useState(false)
@@ -2183,6 +2194,7 @@ function MathsBrowser({ onBack }) {
       <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
         <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
           <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
+          <img src="/headers/maths-main.png" alt="Maths" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
           <div style={{ flex:1 }}>
             <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA Maths — Topics</div>
             <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>{MATHS_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked</div>
@@ -2207,9 +2219,8 @@ function MathsBrowser({ onBack }) {
         <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
           {filtered.map(group => (
             <button key={group.id} onClick={() => setGroup(group)} style={{ background:'#151720', border:`1px solid #1E2A40`, borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14, transition:'border-color .15s, transform .12s', width:'100%' }}>
-              {/* Icon */}
-              <div style={{ width:46, height:46, borderRadius:13, flexShrink:0, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:800, fontSize:'1rem', color:group.color }}>
-                {group.icon}
+              <div style={{ width:46, height:46, borderRadius:13, flexShrink:0, overflow:'hidden', border:'1px solid rgba(255,255,255,0.08)' }}>
+                <img src={mathsTopicImg(group.id)} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
               </div>
 
               <div style={{ flex:1, minWidth:0 }}>
@@ -2279,6 +2290,7 @@ function EnglishBrowser({ onBack }) {
       <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
         <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
           <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
+          <img src="/headers/english-main.png" alt="English" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
           <div style={{ flex:1 }}>
             <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA English Language</div>
             <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>Papers 1 & 2 · {ENGLISH_TOPIC_GROUPS.length} skill areas · {totalQs} questions · AI marked</div>
@@ -2298,8 +2310,8 @@ function EnglishBrowser({ onBack }) {
         <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
           {filtered.map(group => (
             <button key={group.id} onClick={() => setGroup(group)} style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14, width:'100%' }}>
-              <div style={{ width:46, height:46, borderRadius:13, flexShrink:0, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.2rem', color:group.color, fontWeight:800 }}>
-                {group.icon}
+              <div style={{ width:46, height:46, borderRadius:13, flexShrink:0, overflow:'hidden', border:'1px solid rgba(255,255,255,0.08)' }}>
+                <img src="/headers/english-main.png" alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
               </div>
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.93rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
@@ -2364,6 +2376,7 @@ function SociologyBrowser({ onBack, filterPrefix = null }) {
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
+          <img src={socGroup?.headerImage || '/headers/sociology-main.png'} alt="Sociology" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>{headerTitle}</div>
             <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.72rem', color: '#5A6480' }}>
@@ -2395,11 +2408,16 @@ function SociologyBrowser({ onBack, filterPrefix = null }) {
               borderRadius: 16, padding: '16px', cursor: 'pointer',
               textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14, width: '100%',
             }}>
-              <div style={{
-                width: 46, height: 46, borderRadius: 13, flexShrink: 0,
-                background: group.bg, border: `1px solid ${group.border}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem',
-              }}>{group.icon}</div>
+              <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <img src={(() => {
+                  const id = group.id
+                  if (id.startsWith('soc_families'))     return '/headers/sociology-family.png'
+                  if (id.startsWith('soc_education'))    return '/headers/sociology-education.png'
+                  if (id.startsWith('soc_crime'))        return '/headers/sociology-crime.png'
+                  if (id.startsWith('soc_stratification')) return '/headers/sociology-stratification.png'
+                  return '/headers/sociology-main.png'
+                })()} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
                 <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
@@ -2606,6 +2624,7 @@ function ChemistryBrowser({ onBack }) {
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
+          <img src="/headers/chem-logo.png" alt="Chemistry" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Chemistry Foundation</div>
             <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.72rem', color: '#5A6480' }}>Papers 1 & 2 · {CHEMISTRY_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked · Diagrams included</div>
@@ -2623,7 +2642,16 @@ function ChemistryBrowser({ onBack }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {filtered.map(group => (
             <button key={group.id} onClick={() => setGroup(group)} style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 16, padding: '16px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14, width: '100%' }}>
-              <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: group.bg, border: `1px solid ${group.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>{group.icon}</div>
+              <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <img src={(() => {
+                  const id = group.id || ''
+                  if (['chem_atom','chem_periodic','chem_bonding','chem_giant','chem_matter','chem_ions'].some(k => id.startsWith(k))) return '/headers/chem-matteratoms.png'
+                  if (['chem_react','chem_acid','chem_electro','chem_energy','chem_calcul'].some(k => id.startsWith(k))) return '/headers/chem-reactions.png'
+                  if (['chem_rates','chem_revers','chem_hydro','chem_crack','chem_organic','chem_polymer'].some(k => id.startsWith(k))) return '/headers/chem-rates.png'
+                  if (['chem_earth','chem_atmos','chem_pollu','chem_resource'].some(k => id.startsWith(k))) return '/headers/chem-earth.png'
+                  return '/headers/chem-logo.png'
+                })()} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
                 <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
@@ -2670,13 +2698,14 @@ const QUICK_FIRE_QUESTIONS = [
 const QUICK_FIRE_MEMORY_KEY = 'gcse_quickfire_memory_v1'
 
 const QUICK_FIRE_SUBJECT_META = {
-  History: { icon: '🏛️', color: '#F5B700', moduleId: 'mod1' },
-  Maths: { icon: '✖️', color: '#3B82FF', moduleId: null },
-  Sociology: { icon: '👥', color: '#FF5C7A', moduleId: null },
-  Chemistry: { icon: '⚗️', color: '#38D27A', moduleId: null },
-  Biology: { icon: '🌿', color: '#38D27A', moduleId: 'sci_bio_w1' },
-  English: { icon: '📘', color: '#3B82FF', moduleId: null },
-  'Quick Fire': { icon: '⚡', color: '#9D5CFF', moduleId: null },
+  History:    { icon: '🏛️', logo: '/headers/history-main.png',    color: '#C89B6D', moduleId: 'mod1' },
+  Maths:      { icon: '✖️', logo: '/headers/maths-main.png',      color: '#2DD4BF', moduleId: null },
+  Sociology:  { icon: '👥', logo: '/headers/sociology-main.png',  color: '#FF5C7A', moduleId: null },
+  Chemistry:  { icon: '⚗️', logo: '/headers/chem-logo.png',       color: '#9B59E8', moduleId: null },
+  Biology:    { icon: '🌿', logo: '/headers/bio-main.png',         color: '#4F8A5B', moduleId: 'sci_bio_w1' },
+  English:    { icon: '📘', logo: '/headers/english-main.png',    color: '#B66DFF', moduleId: null },
+  Physics:    { icon: '⚡', logo: '/headers/physics-main.png',    color: '#3B82F6', moduleId: null },
+  'Quick Fire': { icon: '⚡', logo: null,                          color: '#9D5CFF', moduleId: null },
 }
 
 function emptyQuickFireStats() {
@@ -3392,7 +3421,12 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
             <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
               {summarySubjects.slice(0, 5).map(item => (
                 <div key={item.subject} style={{ display:'grid', gridTemplateColumns:'40px 1fr 54px 48px', alignItems:'center', gap:10 }}>
-                  <div style={{ width:38, height:38, borderRadius:'50%', background:item.color + '22', color:item.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.12rem' }}>{item.icon}</div>
+                  <div style={{ width:38, height:38, borderRadius:'50%', overflow:'hidden', flexShrink:0 }}>
+                    {item.logo
+                      ? <img src={item.logo} alt={item.subject} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                      : <div style={{ width:'100%', height:'100%', background:item.color+'22', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.12rem', color:item.color }}>{item.icon}</div>
+                    }
+                  </div>
                   <div>
                     <div style={{ color:item.color, fontWeight:850, fontSize:'.86rem', marginBottom:7 }}>{item.subject}</div>
                     <div style={{ height:5, background:'rgba(58,75,111,.52)', borderRadius:99, overflow:'hidden' }}>
@@ -3407,7 +3441,12 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
           </div>
 
           <button onClick={() => recommendedModule && onOpenModule ? onOpenModule(recommendedModule) : exitTestTopic()} style={{ width:'100%', background:'linear-gradient(145deg, rgba(16,24,43,.96), rgba(9,15,31,.96))', border:'1px solid rgba(62,78,118,.55)', borderRadius:18, padding:'18px', marginBottom:20, display:'flex', alignItems:'center', gap:16, textAlign:'left', cursor:'pointer', boxShadow:'0 14px 36px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.04)' }}>
-            <div style={{ width:54, height:54, borderRadius:'50%', background:recommendationMeta.color + '20', color:recommendationMeta.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.6rem', flexShrink:0 }}>{recommendationMeta.icon}</div>
+            <div style={{ width:54, height:54, borderRadius:'50%', overflow:'hidden', flexShrink:0 }}>
+              {recommendationMeta.logo
+                ? <img src={recommendationMeta.logo} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                : <div style={{ width:'100%', height:'100%', background:recommendationMeta.color+'20', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.6rem', color:recommendationMeta.color }}>{recommendationMeta.icon}</div>
+              }
+            </div>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
                 <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", color:'#F5F7FB', fontWeight:850, fontSize:'1rem' }}>Recommended next</div>
@@ -3543,12 +3582,13 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
 
   const EXAM_SUBJECTS = [
-    { icon: '👥', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: isExamMode ? () => startExamRound('Sociology') : () => setSociologyOpen(true) },
-    { icon: '🏛',  label: 'History',  color: '#C89B6D', completed: 6,  total: 12, action: isExamMode ? () => startExamRound('History') : () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
-    { logo: '/headers/bio-main.png',  label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: isExamMode ? () => startExamRound('Biology')    : () => startTopic({ topicId: 'tb_cells', label: 'Biology', subject: 'Biology' }) },
-    { logo: '/headers/chem-logo.png', label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Chemistry')  : () => setChemistryOpen(true) },
-    { icon: '📐', label: 'Maths',     color: '#3B82FF', completed: 0,  total: 20, action: isExamMode ? () => startExamRound('Maths') : () => setMathsOpen(true) },
-    { icon: '📖', label: 'English',   color: '#9E3D52', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('English') : () => setEnglishOpen(true) },
+    { logo: '/headers/sociology-main.png', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: isExamMode ? () => startExamRound('Sociology') : () => setSociologyOpen(true) },
+    { logo: '/headers/history-main.png',   label: 'History',   color: '#C89B6D', completed: 6,  total: 12, action: isExamMode ? () => startExamRound('History') : () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
+    { logo: '/headers/bio-main.png',        label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: isExamMode ? () => startExamRound('Biology')    : () => startTopic({ topicId: 'tb_cells', label: 'Biology', subject: 'Biology' }) },
+    { logo: '/headers/chem-logo.png',       label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Chemistry')  : () => setChemistryOpen(true) },
+    { logo: '/headers/maths-main.png',      label: 'Maths',     color: '#2DD4BF', completed: 0,  total: 20, action: isExamMode ? () => startExamRound('Maths') : () => setMathsOpen(true) },
+    { logo: '/headers/english-main.png',    label: 'English',   color: '#B66DFF', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('English') : () => setEnglishOpen(true) },
+    { logo: '/headers/physics-main.png',    label: 'Physics',   color: '#3B82F6', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Physics')  : () => {} },
   ]
 
   return (
