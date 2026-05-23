@@ -11,7 +11,8 @@ React + Vite GCSE revision app. Mobile-first, dark cinematic theme. Designed to 
 ## Key Components in App.jsx
 
 - `App` — top-level router, manages tab state and session flow
-- `BottomNav` — fixed 4-tab nav (Home / Subjects / 90s Quiz / Exam Mode)
+- `BottomNav` — fixed 5-tab nav (Home / Subjects / 90s Quiz / Progress / Exam) with SVG line icons
+- `BiologySection` — biology-specific horizontal scroll section with topic group image cards
 - `Home` — home screen: greeting, resume card, weak zone, subjects grid, quiz CTA
 - `ModulesTab` — subjects/modules browser
 - `SubjectSection` — renders a subject heading + its module cards
@@ -31,14 +32,15 @@ React + Vite GCSE revision app. Mobile-first, dark cinematic theme. Designed to 
 | `src/data/englishTopics.js` | English topic groups and questions |
 | `src/data/sociologyTopics.js` | Sociology topic groups and questions |
 | `src/data/chemistryTopics.js` | Chemistry topic groups and questions |
+| `src/data/biologyGroups.js` | `BIOLOGY_GROUPS` — 7 Biology topic group definitions with module lists and header images |
 
 ## Public Assets
 
+- `/public/logo.png` — RISE logo (teal glow, dark background) — used in ModulesTab header and as favicon
 - `/public/headers/` — cinematic header images for subject/module hero cards
-  - `history-medicine-through-time.png`
-  - `history-elizabethan.png`
-  - `history-usa-conflict.png`
-  - `history-spain-new-world.png`
+  - History: `history-medicine-through-time.png`, `history-elizabethan.png`, `history-usa-conflict.png`, `history-spain-new-world.png`
+  - Biology overview: `bio-main.png`
+  - Biology topic groups: `bio-buildinglife.png`, `bio-humanmachine.png`, `bio-diseasewars.png`, `bio-energyforlife.png`, `bio-controlsystems.png`, `bio-genetics.png`, `bio-ecosystems.png`
 - `/public/mystery-cube.png` — used on locked/mystery module cards
 - `/public/figures/` — biology/chemistry diagram images used in question content
 

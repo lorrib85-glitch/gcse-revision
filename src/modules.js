@@ -1055,4 +1055,108 @@ export const MODULES = [
       },
     ]
   },
+
+  // ─── Biology — Placeholder topic group modules ───────────────────────────────
+
+  {
+    id: 'bio_building_life', subject: 'Biology', number: 2,
+    title: 'Building Life', subtitle: 'Cells, Microscopes & Division',
+    icon: '🔬', color: '#65E6C6', colorLight: 'rgba(101,230,198,.15)',
+    screens: [
+      {
+        id: 's1', label: 'Overview', kicker: 'Topic Group 1',
+        heading: 'Building Life',
+        content: [
+          { type: 'keypoint', text: 'All living things are made of <strong>cells</strong> — the basic unit of life. Understanding how cells are built, how we see them, and how they divide is the foundation of all biology.' },
+          { type: 'read', label: 'Modules in this group', text: '<strong>Cells: The Tiny Factories</strong> — structure, organelles and their functions.<br><strong>Microscopes & Magnification</strong> — how scientists see cells and calculate scale.<br><strong>Cell Division & Stem Cells</strong> — mitosis, meiosis and the ethics of stem cell research.<br><strong>Moving Stuff In & Out</strong> — diffusion, osmosis and active transport.' },
+          { type: 'keypoint', text: '🚧 Individual module content is being built. This topic group launches soon.' },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'bio_human_machine', subject: 'Biology', number: 3,
+    title: 'The Human Machine', subtitle: 'Organs, Digestion & Circulation',
+    icon: '🫀', color: '#E87B5F', colorLight: 'rgba(232,123,95,.15)',
+    screens: [
+      {
+        id: 's1', label: 'Overview', kicker: 'Topic Group 2',
+        heading: 'The Human Machine',
+        content: [
+          { type: 'keypoint', text: 'Cells don\'t work alone — they group into <strong>tissues, organs and organ systems</strong> to power everything your body does.' },
+          { type: 'read', label: 'Modules in this group', text: '<strong>Cells → Tissues → Organs</strong> — levels of organisation.<br><strong>Digestion & Enzymes</strong> — gut biology, catalysts and absorption.<br><strong>Blood, Heart & Circulation</strong> — the body\'s delivery system.<br><strong>Plant Transport Systems</strong> — xylem, phloem and stomata.' },
+          { type: 'keypoint', text: '🚧 Individual module content is being built. This topic group launches soon.' },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'bio_disease_wars', subject: 'Biology', number: 4,
+    title: 'Disease Wars', subtitle: 'Pathogens, Immunity & Treatment',
+    icon: '🦠', color: '#E84F6B', colorLight: 'rgba(232,79,107,.15)',
+    screens: [
+      {
+        id: 's1', label: 'Overview', kicker: 'Topic Group 3',
+        heading: 'Disease Wars',
+        content: [
+          { type: 'keypoint', text: 'Your body is under constant attack from <strong>pathogens</strong> — bacteria, viruses, fungi and protists. Understanding how disease spreads and how we fight it is critical for the exam.' },
+          { type: 'read', label: 'Modules in this group', text: '<strong>Pathogens & Disease</strong> — types of pathogen and how disease spreads.<br><strong>The Immune System</strong> — phagocytes, lymphocytes and antibodies.<br><strong>Treating Disease & Antibiotics</strong> — drugs, vaccines and clinical trials.<br><strong>Non-Communicable Diseases</strong> — cancer, cardiovascular disease and lifestyle factors.' },
+          { type: 'keypoint', text: '🚧 Individual module content is being built. This topic group launches soon.' },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'bio_control_systems', subject: 'Biology', number: 5,
+    title: 'Control Systems', subtitle: 'Nerves, Hormones & Reproduction',
+    icon: '🧠', color: '#9B8BE8', colorLight: 'rgba(155,139,232,.15)',
+    screens: [
+      {
+        id: 's1', label: 'Overview', kicker: 'Topic Group 5',
+        heading: 'Control Systems',
+        content: [
+          { type: 'keypoint', text: 'Your body uses two communication systems — the <strong>nervous system</strong> (electrical, fast) and the <strong>endocrine system</strong> (chemical, slower) — to coordinate everything.' },
+          { type: 'read', label: 'Modules in this group', text: '<strong>The Nervous System</strong> — neurons, synapses, reflex arcs and the brain.<br><strong>Hormones & Blood Glucose</strong> — insulin, glucagon, diabetes and the menstrual cycle.<br><strong>Reproduction & Fertility</strong> — sexual vs asexual reproduction, IVF and FSH.' },
+          { type: 'keypoint', text: '🚧 Individual module content is being built. This topic group launches soon.' },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'bio_genetics_evolution', subject: 'Biology', number: 6,
+    title: 'Genetics & Evolution', subtitle: 'DNA, Inheritance & Natural Selection',
+    icon: '🧬', color: '#7EC8E3', colorLight: 'rgba(126,200,227,.15)',
+    screens: [
+      {
+        id: 's1', label: 'Overview', kicker: 'Topic Group 6',
+        heading: 'Genetics & Evolution',
+        content: [
+          { type: 'keypoint', text: '<strong>DNA</strong> carries the instructions for building every living thing. Understanding how traits are inherited — and how species change over time — is some of the most fascinating science at GCSE.' },
+          { type: 'read', label: 'Modules in this group', text: '<strong>DNA & The Genome</strong> — structure, genes, alleles and protein synthesis.<br><strong>Inheritance & Genetic Crosses</strong> — Punnett squares, probability and genetic disorders.<br><strong>Evolution & Natural Selection</strong> — Darwin, evidence and speciation.<br><strong>Genetic Engineering</strong> — CRISPR, GM crops and the ethics of gene editing.' },
+          { type: 'keypoint', text: '🚧 Individual module content is being built. This topic group launches soon.' },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'bio_ecosystems_group', subject: 'Biology', number: 7,
+    title: 'Ecosystems', subtitle: 'Food Chains, Biodiversity & Conservation',
+    icon: '🌿', color: '#68C18A', colorLight: 'rgba(104,193,138,.15)',
+    screens: [
+      {
+        id: 's1', label: 'Overview', kicker: 'Topic Group 7',
+        heading: 'Ecosystems',
+        content: [
+          { type: 'keypoint', text: 'Every organism exists within an <strong>ecosystem</strong> — a web of interdependent relationships. This topic group covers how energy flows, how species adapt, and what happens when humans interfere.' },
+          { type: 'read', label: 'Modules in this group', text: '<strong>Ecosystems & Food Chains</strong> — producers, consumers, energy transfer and pyramids.<br><strong>Adaptations & Biodiversity</strong> — how species are shaped by their environment.<br><strong>Human Impact & Conservation</strong> — deforestation, pollution, rewilding and the IUCN.' },
+          { type: 'keypoint', text: '🚧 Individual module content is being built. This topic group launches soon.' },
+        ],
+      },
+    ],
+  },
 ]

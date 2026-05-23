@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
+import { BIOLOGY_GROUPS } from './data/biologyGroups.js'
 import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
 import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
 import { CHEMISTRY_TOPIC_GROUPS, ALL_CHEMISTRY_QUESTIONS } from './data/chemistryTopics.js'
@@ -293,8 +294,8 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
 
   const subjectCards = [
     { label: 'History',   icon: '🏛', done: [elizabethanModule, usaModule, spainModule, medicineModule].filter(Boolean).length, total: 4,  color: '#C89B6D', action: onOpenSubjects },
+    { label: 'Biology',   icon: '🧬', done: 1,  total: 7,  color: '#4F8A5B', action: onOpenSubjects },
     { label: 'English',   icon: '📖', done: 8,  total: 14, color: '#9E3D52', action: onOpenSubjects },
-    { label: 'Science',   icon: '🔬', done: 5,  total: 11, color: '#4F8A5B', action: () => onStart('tb_cells') },
     { label: 'Sociology', icon: '👥', done: 7,  total: 10, color: '#6B7FCC', action: onOpenSubjects },
   ]
 
@@ -570,7 +571,7 @@ function ProgressTab() {
 
 // ─── Modules tab ──────────────────────────────────────────────────────────────
 
-function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, icon, locked, isSelected, onClick }) {
+function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, headerImage, icon, locked, isSelected, onClick }) {
   const w = isSelected ? 174 : 154
   const h = isSelected ? 235 : 215
   return (
@@ -581,7 +582,7 @@ function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, icon,
         borderRadius: 18, overflow: 'hidden',
         cursor: locked ? 'default' : 'pointer',
         border: isSelected ? `1.5px solid ${accentColour}` : '1px solid rgba(255,255,255,0.12)',
-        background: bgGradient,
+        background: bgGradient || '#0D0E10',
         padding: 0, textAlign: 'left',
         boxShadow: isSelected
           ? `0 0 30px ${accentColour}36, 0 12px 32px rgba(0,0,0,0.68), inset 0 1px 0 rgba(255,255,255,0.06)`
@@ -589,10 +590,21 @@ function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, icon,
         opacity: locked ? 0.52 : 1,
       }}
     >
+      {/* cinematic header image */}
+      {headerImage && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: `url(${headerImage})`,
+          backgroundSize: 'cover', backgroundPosition: 'center top',
+          filter: 'saturate(0.88) contrast(0.92)',
+        }} />
+      )}
       {/* bottom dark overlay */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: 'linear-gradient(180deg, rgba(5,7,11,0.04) 0%, rgba(5,7,11,0.44) 38%, rgba(5,7,11,0.90) 100%)',
+        background: headerImage
+          ? 'linear-gradient(180deg, rgba(5,7,11,0.15) 0%, rgba(5,7,11,0.52) 45%, rgba(5,7,11,0.96) 100%)'
+          : 'linear-gradient(180deg, rgba(5,7,11,0.04) 0%, rgba(5,7,11,0.44) 38%, rgba(5,7,11,0.90) 100%)',
       }} />
       {/* top-left icon circle */}
       <div style={{
@@ -617,16 +629,16 @@ function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, icon,
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 12px 12px', zIndex: 2 }}>
         <div style={{
           fontWeight: 700, fontSize: '.87rem', color: '#F5F2EA',
-          lineHeight: 1.2, marginBottom: 2, fontFamily: "'Inter', sans-serif",
+          lineHeight: 1.2, marginBottom: 2, fontFamily: "'Plus Jakarta Sans', sans-serif",
         }}>{title}</div>
         <div style={{
           fontSize: '.63rem', color: '#B8B4C2', lineHeight: 1.3,
-          marginBottom: locked ? 0 : 8, fontFamily: "'Inter', sans-serif",
+          marginBottom: locked ? 0 : 8, fontFamily: "'Plus Jakarta Sans', sans-serif",
         }}>{subtitle}</div>
         {!locked && (
           <>
             <div style={{ marginBottom: 4 }}>
-              <span style={{ fontSize: '.6rem', fontWeight: 800, color: accentColour, fontFamily: "'Inter', sans-serif" }}>
+              <span style={{ fontSize: '.6rem', fontWeight: 800, color: accentColour, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 {progress}%
               </span>
             </div>
@@ -655,14 +667,14 @@ function SubjectSection({ heading, accent, modules, onModuleClick }) {
           <span style={{
             fontSize: '.62rem', fontWeight: 800, letterSpacing: '.18em',
             textTransform: 'uppercase', color: '#F5F2EA',
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
           }}>{heading}</span>
           <span style={{ color: accent, fontSize: '.82rem', lineHeight: 1 }}>›</span>
         </div>
         <button style={{
           background: 'none', border: 'none', cursor: 'pointer',
           fontSize: '.72rem', fontWeight: 600, color: accent, padding: 0,
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
         }}>View all</button>
       </div>
       <div style={{
@@ -683,6 +695,57 @@ function SubjectSection({ heading, accent, modules, onModuleClick }) {
             locked={mod.locked}
             isSelected={mod.isSelected}
             onClick={() => onModuleClick && onModuleClick(mod)}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function BiologySection({ groups, onGroupClick }) {
+  return (
+    <div>
+      {/* Section header */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        paddingLeft: 18, paddingRight: 18, marginBottom: 14,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <img src="/headers/bio-main.png" alt="" style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover' }} />
+          <span style={{
+            fontSize: '.62rem', fontWeight: 800, letterSpacing: '.18em',
+            textTransform: 'uppercase', color: '#F5F2EA',
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+          }}>Biology</span>
+          <span style={{ color: '#4F8A5B', fontSize: '.82rem', lineHeight: 1 }}>›</span>
+        </div>
+        <button style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          fontSize: '.72rem', fontWeight: 600, color: '#4F8A5B', padding: 0,
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+        }}>View all</button>
+      </div>
+
+      {/* Horizontal scroll of topic group cards */}
+      <div style={{
+        display: 'flex', gap: 10, overflowX: 'auto',
+        paddingLeft: 18, paddingRight: 18, paddingBottom: 4,
+        scrollbarWidth: 'none', msOverflowStyle: 'none',
+        alignItems: 'flex-end',
+      }}>
+        {groups.map(group => (
+          <ModuleCard
+            key={group.id}
+            title={group.title}
+            subtitle={group.subtitle}
+            progress={group.progress}
+            accentColour={group.accent}
+            headerImage={group.headerImage}
+            bgGradient={group.bg}
+            icon={group.icon}
+            locked={group.locked}
+            isSelected={group.isSelected}
+            onClick={() => onGroupClick && onGroupClick(group)}
           />
         ))}
       </div>
@@ -745,6 +808,26 @@ function ModulesTab({ onOpenModule }) {
     if (realMod && onOpenModule) onOpenModule(realMod)
   }
 
+  // Build biology topic group cards from BIOLOGY_GROUPS data
+  const biologyGroupCards = BIOLOGY_GROUPS.map(group => {
+    const realMod = MODULES.find(m => m.id === group.id)
+    const pct = realMod ? modPct(realMod) : 0
+    // first unlocked sub-module that has a real entry, or the group itself
+    const primaryId = group.id
+    return {
+      id: primaryId,
+      title: group.title,
+      subtitle: group.subtitle,
+      icon: group.icon,
+      accent: group.accent,
+      headerImage: group.headerImage,
+      progress: pct,
+      locked: false,
+      isSelected: false,
+      bg: '#0D0E10',
+    }
+  })
+
   const heroBg = [
     'linear-gradient(90deg, #05070B 0%, rgba(5,7,11,0.92) 28%, rgba(5,7,11,0.40) 62%, rgba(5,7,11,0.08) 100%)',
     'radial-gradient(ellipse at 84% 62%, rgba(185,115,30,0.56) 0%, rgba(95,52,14,0.34) 30%, transparent 62%)',
@@ -773,22 +856,12 @@ function ModulesTab({ onOpenModule }) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           position: 'relative', zIndex: 5,
         }}>
-          {/* RISE REVISION logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <div style={{
-              width: 34, height: 34, borderRadius: 9,
-              background: 'rgba(101,230,198,0.12)',
-              border: '1.5px solid rgba(101,230,198,0.42)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 12px rgba(101,230,198,0.20)',
-            }}>
-              <span style={{ color: '#65E6C6', fontWeight: 900, fontSize: '1.05rem', fontFamily: "'Inter', sans-serif", lineHeight: 1 }}>R</span>
-            </div>
-            <div>
-              <div style={{ color: '#F5F2EA', fontWeight: 900, fontSize: '1rem', letterSpacing: '.20em', lineHeight: 1, fontFamily: "'Inter', sans-serif" }}>RISE</div>
-              <div style={{ color: '#7D7988', fontSize: '.50rem', letterSpacing: '.22em', fontWeight: 700, lineHeight: 1.3, fontFamily: "'Inter', sans-serif" }}>REVISION</div>
-            </div>
-          </div>
+          {/* RISE logo */}
+          <img
+            src="/logo.png"
+            alt="RISE"
+            style={{ height: 36, width: 'auto', objectFit: 'contain' }}
+          />
           {/* Right controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
             <div style={{
@@ -924,6 +997,7 @@ function ModulesTab({ onOpenModule }) {
         <SubjectSection heading="History" accent="#C89B6D" modules={historyModules} onModuleClick={handleModuleClick} />
         <SubjectSection heading="English" accent="#B66DFF" modules={englishModules} onModuleClick={handleModuleClick} />
         <SubjectSection heading="Science" accent="#65E6C6" modules={scienceModules} onModuleClick={handleModuleClick} />
+        <BiologySection groups={biologyGroupCards} onGroupClick={handleModuleClick} />
       </div>
     </div>
   )
