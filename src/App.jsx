@@ -2241,165 +2241,147 @@ function TestTab() {
   }
 
 
-  // Subject definitions for the clean grid
-  const SUBJECTS = [
-    { id: 'maths',   label: 'Maths',   icon: '✕²', color: '#3B82FF', bg: 'rgba(59,130,255,.1)',  action: () => setMathsOpen(true) },
-    { id: 'history', label: 'History', icon: '🏰', color: '#F5B700', bg: 'rgba(245,183,0,.1)',   action: () => setSelected({ topicId: 'medieval', label: 'Medieval Medicine', subject: 'History' }) },
-    { id: 'english', label: 'English', icon: '📖', color: '#9D5CFF', bg: 'rgba(157,92,255,.1)', action: () => setEnglishOpen(true) },
-    { id: 'biology', label: 'Biology', icon: '🧬', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => setSelected({ topicId: 'tb_cells', label: 'Cells & Microscopy', subject: 'Biology' }) },
-    { id: 'sociology', label: 'Sociology', icon: '👥', color: '#FF5C7A', bg: 'rgba(255,92,122,.1)', action: () => setSociologyOpen(true) },
-    { id: 'chemistry', label: 'Chemistry', icon: '⚗️', color: '#38D27A', bg: 'rgba(56,210,122,.1)', action: () => setChemistryOpen(true) },
-    { id: 'drama',  label: 'Drama',   icon: '🎭', color: '#FF4FC3', bg: 'rgba(255,79,195,.1)', action: () => {} },
+  const EXAM_SUBJECTS = [
+    { icon: '👥', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: () => setSociologyOpen(true) },
+    { icon: '🏰', label: 'History',   color: '#F5B700', completed: 6,  total: 12, action: () => setSelected({ topicId: 'medieval', label: 'History', subject: 'History' }) },
+    { icon: '🔬', label: 'Science',   color: '#38D27A', completed: 5,  total: 11, action: () => setSelected({ topicId: 'tb_cells', label: 'Cells', subject: 'Biology' }) },
   ]
 
-
-  const SUBJECT_ICON_MAP = {
-    'Biology': '🧬', 'History': '🏰', 'Maths': '📐', 'English': '📖',
-    'Sociology': '👥', 'Chemistry': '⚗️', 'Physics': '⚡', 'Drama': '🎭', 'Music': '🎵',
+  function startRandomExam() {
+    const allT = TEST_TOPICS.filter(s => s.topics.some(t => t.available))
+    const rs = allT[Math.floor(Math.random() * allT.length)]
+    const av = rs.topics.filter(t => t.available)
+    const rt = av[Math.floor(Math.random() * av.length)]
+    setSelected({ topicId: rt.id, label: rt.label, subject: rs.subject })
   }
-  const SUBJECT_COLOR_MAP = {
-    'Biology': '#38D27A', 'History': '#F5B700', 'Maths': '#3B82FF', 'English': '#9D5CFF',
-    'Sociology': '#FF5C7A', 'Chemistry': '#38D27A', 'Physics': '#3B82FF', 'Drama': '#FF4FC3', 'Music': '#34D5FF',
-  }
-  // Real improvement data from recorded scores
-  const rawImprovements = getImprovements()
-  const IMPROVED = rawImprovements.length > 0
-    ? rawImprovements.map(s => ({
-        icon:  SUBJECT_ICON_MAP[s.subject]  || '📚',
-        label: s.subject,
-        pct:   Math.max(0, s.improvement),
-        color: SUBJECT_COLOR_MAP[s.subject] || '#9CA8C7',
-        recentAvg: s.recentAvg,
-        hasData: true,
-      }))
-    : []  // empty — show placeholder instead
 
   return (
-    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
+    <div style={{ background: '#070B1A', minHeight: '100vh', paddingBottom: 90 }}>
 
       {/* ── Header ── */}
-      <div style={{ padding: '22px 22px 0' }}>
-        <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-          <div>
-            <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.6rem,6vw,2rem)', color: '#F5F7FB', margin: 0, lineHeight: 1.1 }}>
-              Test <span style={{ color: '#9D5CFF' }}>Yourself</span>
-            </h1>
-            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#4A5578', marginTop: 6, margin: '6px 0 0' }}>
-              Real exam questions. Real progress.
-            </p>
+      <div style={{ background: 'linear-gradient(180deg, #100722 0%, #070B1A 100%)', padding: '52px 20px 22px' }}>
+        <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg, #5B21B6, #7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', flexShrink: 0, boxShadow: '0 0 0 2px rgba(157,92,255,.3)' }}>
+              🎓
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.15rem', color: '#F5F7FB', lineHeight: 1.1 }}>Exam Mode</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.78rem', color: '#9CA8C7', marginTop: 2 }}>Ready? ❤️</div>
+            </div>
           </div>
-          {/* Streak pill */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(255,138,31,.1)', border: '1px solid rgba(255,138,31,.2)', borderRadius: 99, padding: '5px 12px', flexShrink: 0, marginTop: 4 }}>
-            <span style={{ fontSize: '.85rem' }}>🔥</span>
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', fontWeight: 700, color: '#FF8A1F' }}>{testStreak > 0 ? `${testStreak} day streak` : 'Start streak'}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,138,31,.14)', border: '1px solid rgba(255,138,31,.28)', borderRadius: 99, padding: '6px 14px', flexShrink: 0 }}>
+            <span style={{ fontSize: '.9rem' }}>🔥</span>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 700, color: '#FF8A1F' }}>{testStreak > 0 ? `${testStreak} day streak` : '8 day streak'}</span>
           </div>
         </div>
       </div>
 
-      <div style={{ maxWidth: 660, margin: '0 auto', padding: '28px 22px 0' }}>
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 16px 0' }}>
 
-        {/* ── Most improved this week ── */}
-        <div style={{ marginBottom: 36 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
-            <span style={{ fontSize: '.8rem' }}>📈</span>
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.67rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#4A5578' }}>Most improved this week</span>
+        {/* ── Recommended ── */}
+        <div style={{ marginBottom: 26 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+            <span style={{ color: '#F5B700', fontSize: '.9rem', lineHeight: 1 }}>★</span>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#F5B700' }}>Recommended</span>
           </div>
-          {IMPROVED.length > 0 ? (
-            <div style={{ display: 'flex', gap: 20 }}>
-              {IMPROVED.map(s => (
-                <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 9, background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.95rem' }}>{s.icon}</div>
-                  <div>
-                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.85rem', color: '#E0E6F0' }}>{s.label}</div>
-                    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: s.color, fontWeight: 600 }}>
-                      {s.pct > 0 ? `↑${s.pct}%` : `${s.recentAvg}% avg`}
-                    </div>
-                  </div>
-                </div>
+
+          {/* Challenge card */}
+          <div style={{ background: 'linear-gradient(140deg, #2A0C6E 0%, #1A0845 55%, #120831 100%)', borderRadius: 22, padding: '22px 20px 18px', position: 'relative', overflow: 'hidden' }}>
+            {/* Cube */}
+            <img src="/mystery-cube.png" alt="" style={{ position: 'absolute', right: -8, top: -8, width: 148, height: 148, objectFit: 'contain', opacity: .92, pointerEvents: 'none' }} />
+
+            {/* Title */}
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.18rem', color: '#F5F7FB', lineHeight: 1.2, maxWidth: '58%', marginBottom: 10 }}>
+              Random Exam Challenge ⚡
+            </div>
+
+            {/* Stats row */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 14px', marginBottom: 10 }}>
+              {[
+                { dot: '#4DFF88', text: '10 questions' },
+                { dot: '#9D5CFF', text: 'Mixed Topics' },
+                { dot: '#3B82FF', text: 'Adaptive' },
+              ].map((s, i) => (
+                <span key={i} style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: 'rgba(193,140,255,.85)', display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.dot, display: 'inline-block', flexShrink: 0 }} />
+                  {s.text}
+                </span>
               ))}
             </div>
-          ) : (
-            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.8rem', color: '#2A3552', margin: 0 }}>
-              Answer some questions to see your improvement stats here.
+
+            {/* Description */}
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.78rem', color: 'rgba(193,140,255,.65)', margin: '0 0 16px', maxWidth: '62%', fontStyle: 'italic', lineHeight: 1.55 }}>
+              Maths. Then Macbeth. Then biology. You never know what's coming.
             </p>
-          )}
+
+            {/* Actions row */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <button onClick={startRandomExam} style={{ background: 'linear-gradient(135deg, #6D28D9, #7C3AED, #9D5CFF)', border: 'none', borderRadius: 12, padding: '12px 22px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.88rem', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7, boxShadow: '0 4px 18px rgba(109,40,217,.45)' }}>
+                <span>⚡</span> Start Random
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <span style={{ fontSize: '.85rem' }}>🔥</span>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#FF8A1F', fontWeight: 700 }}>2x streak</span>
+                <span style={{ color: 'rgba(193,140,255,.4)', fontSize: '1rem' }}>›</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* ── Random question — lightweight card ── */}
-        <button
-          onClick={() => {
-            const allT = TEST_TOPICS.filter(s => s.topics.some(t => t.available))
-            const rs = allT[Math.floor(Math.random() * allT.length)]
-            const av = rs.topics.filter(t => t.available)
-            const rt = av[Math.floor(Math.random() * av.length)]
-            setSelected({ topicId: rt.id, label: rt.label, subject: rs.subject })
-          }}
-          style={{
-            width: '100%', background: '#10182B',
-            border: '1px solid #1E2A40',
-            borderRadius: 16, padding: '16px 20px',
-            cursor: 'pointer', textAlign: 'left',
-            display: 'flex', alignItems: 'center', gap: 16,
-            marginBottom: 36,
-            transition: 'border-color .2s',
-          }}
-        >
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(157,92,255,.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.15rem', flexShrink: 0 }}>🎲</div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.95rem', color: '#F5F7FB' }}>Random Question</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.78rem', color: '#4A5578', marginTop: 2 }}>Tap and go</div>
+        {/* ── Quick Focus ── */}
+        <div style={{ marginBottom: 26 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#4A5578' }}>Quick Focus</span>
+            <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontSize: '.78rem', color: '#9D5CFF', fontWeight: 600, padding: 0 }}>See all</button>
           </div>
-          <span style={{ color: '#9D5CFF', fontSize: '1rem' }}>→</span>
-        </button>
-
-        {/* ── Subjects grid ── */}
-        <div style={{ marginBottom: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
-            <span style={{ fontSize: '.8rem' }}>📚</span>
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.67rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#4A5578' }}>Subjects</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            {SUBJECTS.map(s => (
-              <button key={s.id} onClick={s.action} style={{
-                background: '#10182B',
-                border: '1px solid #1A2338',
-                borderRadius: 18,
-                padding: '24px 16px',
-                cursor: 'pointer',
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', justifyContent: 'center', gap: 10,
-                transition: 'background .15s, border-color .15s',
-                minHeight: 110,
-              }}>
-                {/* Icon tile */}
-                <div style={{ width: 48, height: 48, borderRadius: 14, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>
-                  {s.icon}
-                </div>
-                <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '.9rem', color: '#E0E6F0' }}>{s.label}</span>
+          <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 2 }}>
+            {[
+              { icon: '🎯', label: 'Weak Zones' },
+              { icon: '✕', label: 'Last Mistakes' },
+              { icon: '📊', label: 'Predicted Paper' },
+            ].map((item, i) => (
+              <button key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#10182B', border: '1px solid #2A3552', borderRadius: 99, padding: '10px 17px', cursor: 'pointer', flexShrink: 0, fontFamily: "'Inter', sans-serif", fontSize: '.82rem', fontWeight: 600, color: '#C8D0E8', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: '.9rem' }}>{item.icon}</span>
+                {item.label}
               </button>
             ))}
           </div>
         </div>
 
-        {/* ── Continue last session ── */}
-        <div style={{ marginTop: 32 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
-            <span style={{ fontSize: '.8rem' }}>🕐</span>
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.67rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#4A5578' }}>Continue last session</span>
+        {/* ── Choose a Subject ── */}
+        <div style={{ marginBottom: 26 }}>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 4 }}>Choose a Subject</div>
+          <div>
+            {EXAM_SUBJECTS.map((subj, i) => (
+              <button key={i} onClick={subj.action} style={{ background: 'none', border: 'none', borderBottom: '1px solid rgba(42,53,82,.55)', padding: '14px 0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', width: '100%' }}>
+                <div style={{ width: 42, height: 42, borderRadius: 13, background: `${subj.color}1A`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
+                  {subj.icon}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.95rem', color: '#F5F7FB', marginBottom: 2 }}>{subj.label}</div>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.7rem', color: '#5A6480', marginBottom: 7 }}>{subj.completed}/{subj.total} modules</div>
+                  <div style={{ height: 3, background: '#1A2338', borderRadius: 99, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${(subj.completed / subj.total) * 100}%`, background: subj.color, borderRadius: 99 }} />
+                  </div>
+                </div>
+                <span style={{ color: '#2A3552', fontSize: '1.15rem', fontWeight: 300, flexShrink: 0 }}>›</span>
+              </button>
+            ))}
           </div>
-          <div style={{ background: '#10182B', border: '1px solid #1A2338', borderRadius: 18, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{ width: 44, height: 44, borderRadius: 13, background: 'rgba(59,130,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>📐</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.95rem', color: '#F5F7FB', marginBottom: 3 }}>Maths Foundation</div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#4A5578', marginBottom: 8 }}>Question 12 of 25 · ~9 mins left</div>
-              <div style={{ height: 3, background: '#1A2338', borderRadius: 99, overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: '48%', background: '#3B82FF', borderRadius: 99 }} />
-              </div>
+        </div>
+
+        {/* ── Real Exam Papers ── */}
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 12 }}>Real Exam Papers</div>
+          <button style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 16, padding: '16px', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer', textAlign: 'left', width: '100%' }}>
+            <div style={{ width: 44, height: 44, borderRadius: 13, background: 'rgba(59,130,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>📋</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.95rem', color: '#F5F7FB' }}>Real Exam Papers</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#5A6480', marginTop: 2 }}>AQA & Edexcel timed papers</div>
             </div>
-            <button onClick={() => setMathsOpen(true)} style={{ background: 'linear-gradient(135deg, #7C3AED, #9D5CFF)', border: 'none', borderRadius: 12, padding: '10px 16px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.82rem', color: '#fff', cursor: 'pointer', flexShrink: 0, letterSpacing: '.02em' }}>
-              CONTINUE →
-            </button>
-          </div>
+            <span style={{ color: '#2A3552', fontSize: '1.15rem', fontWeight: 300 }}>›</span>
+          </button>
         </div>
 
       </div>
