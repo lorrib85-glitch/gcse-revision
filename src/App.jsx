@@ -1010,59 +1010,45 @@ function ModulesTab({ onOpenModule }) {
     return Math.min(100, Math.round(((screen + 1) / mod.screens.length) * 100))
   }
 
-  const histRaw = MODULES.filter(m => m.subject === 'History').slice(0, 4)
-  const continueRaw = histRaw.find(m => { const p = modPct(m); return p > 0 && p < 100 }) || histRaw[0]
+  const histAllMods = MODULES.filter(m => m.subject === 'History')
+  const medMods = histAllMods  // mod1-mod5 are all Medicine Through Time sub-topics
+  const continueRaw = medMods.find(m => { const p = modPct(m); return p > 0 && p < 100 }) || medMods[0]
   const continuePct = modPct(continueRaw) || 0
   const selectedId = continueRaw?.id || 'mod1'
   const MODULE_HEADER_IMAGES = {
     'mod1': '/headers/history-medicine-through-time.png',
-    'hist_elizabethan': '/headers/history-elizabethan.png',
-    'hist_usa_conflict': '/headers/history-usa-conflict.png',
-    'hist_spain_new_world': '/headers/history-spain-new-world.png',
+    'mod2': '/headers/history-medicine-through-time.png',
+    'mod3': '/headers/history-medicine-through-time.png',
+    'mod4': '/headers/history-medicine-through-time.png',
+    'mod5': '/headers/history-medicine-through-time.png',
   }
   const continueHeaderImage = MODULE_HEADER_IMAGES[selectedId] || '/headers/history-medicine-through-time.png'
 
-  const HIST_BG = [
-    'radial-gradient(ellipse at 68% 35%, #3E1F06 0%, #1F0E03 52%, #0A0401 100%), linear-gradient(148deg, #0A0401 0%, #1C0E03 100%)',
-    'radial-gradient(ellipse at 62% 42%, #081A1A 0%, #041010 52%, #020808 100%), linear-gradient(148deg, #020808 0%, #091A1A 100%)',
-    'radial-gradient(ellipse at 65% 38%, #3C1B05 0%, #1D0D02 52%, #0D0602 100%), radial-gradient(ellipse at 20% 78%, rgba(92,44,12,0.18) 0%, transparent 50%), linear-gradient(148deg, #0D0602 0%, #1E0D03 100%)',
-    'radial-gradient(ellipse at 50% 50%, #121018 0%, #0A0812 52%, #050509 100%), linear-gradient(148deg, #050509 0%, #0D0B12 100%)',
-  ]
-  const HIST_ICONS  = ['⚕️', '🦠', '🩺', '🔬']
-  const HIST_ACCS   = ['#C89B6D', '#65E6C6', '#C89B6D', '#C89B6D']
-  const HIST_DFLT   = [75, 38, 64, 0]
+  // Medicine Through Time progress = average across all 5 sub-modules
+  const medPct = Math.round(medMods.reduce((sum, m) => sum + modPct(m), 0) / Math.max(medMods.length, 1))
 
-  const historyGroupCards = histRaw.map((m, i) => {
-    const pct = modPct(m)
-    return {
-      id: m.id,
-      title: m.title,
-      subtitle: '',
-      progress: pct > 0 ? pct : HIST_DFLT[i],
-      icon: m.icon || HIST_ICONS[i],
-      locked: i === 3,
-      isSelected: false,
-      bg: '#0D0E10',
-      accent: HIST_ACCS[i],
-      headerImage: MODULE_HEADER_IMAGES[m.id],
-    }
-  })
+  const historyGroupCards = [
+    { id: 'med_through_time',    title: 'Medicine Through Time',          subtitle: '', progress: medPct, locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-medicine-through-time.png' },
+    { id: 'usa_conflict',        title: 'USA: Conflict at Home & Abroad', subtitle: '', progress: 0,      locked: true,  isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-usa-conflict.png' },
+    { id: 'early_elizabethans',  title: 'Early Elizabethans',             subtitle: '', progress: 0,      locked: true,  isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-elizabethan.png' },
+    { id: 'spain_new_world',     title: 'Spain & the New World',          subtitle: '', progress: 0,      locked: true,  isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-spain-new-world.png' },
+  ]
 
   const englishGroupCards = [
-    { id: 'eng_macbeth',   title: 'Macbeth',                    subtitle: '', progress: 60, icon: '🗡️', locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-macbeth.png' },
-    { id: 'eng_inspector', title: 'An Inspector Calls',         subtitle: '', progress: 40, icon: '🕵️', locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-inspector.png' },
-    { id: 'eng_poetry',    title: 'Poetry',                     subtitle: '', progress: 25, icon: '✍️', locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-poetry.png' },
-    { id: 'eng_lang1',     title: 'Reading Between the Lines',  subtitle: '', progress: 0,  icon: '📖', locked: true,  isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-reading.png' },
+    { id: 'eng_macbeth',   title: 'Macbeth',                    subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-macbeth.png' },
+    { id: 'eng_inspector', title: 'An Inspector Calls',         subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-inspector.png' },
+    { id: 'eng_poetry',    title: 'Poetry',                     subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-poetry.png' },
+    { id: 'eng_lang1',     title: 'Reading Between the Lines',  subtitle: '', progress: 0, locked: true,  isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-reading.png' },
   ]
 
-  const sciRealMod = MODULES.find(m => m.id === 'sci_bio_w1')
-  const sciPct = sciRealMod ? (modPct(sciRealMod) || 65) : 65
-  const scienceModules = [
-    { id: 'sci_bio_w1', title: 'Biology',        subtitle: 'Life & Living',        progress: sciPct, icon: '🧬', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 65% 35%, #041C12 0%, #020E08 52%, #010604 100%), linear-gradient(148deg, #010604 0%, #061A10 100%)', accent: '#65E6C6' },
-    { id: 'sci_chem',   title: 'Chemistry',      subtitle: 'Reactions & Energy',   progress: 50,     icon: '⚗️', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 62% 42%, #04141A 0%, #020A10 52%, #010608 100%), linear-gradient(148deg, #010608 0%, #06141A 100%)', accent: '#65E6C6' },
-    { id: 'sci_phys',   title: 'Physics',        subtitle: 'Forces & Motion',      progress: 35,     icon: '⚡', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 65% 40%, #040A24 0%, #020514 52%, #01030C 100%), linear-gradient(148deg, #01030C 0%, #060A20 100%)', accent: '#65E6C6' },
-    { id: 'sci_triple', title: 'Triple Science', subtitle: 'Coming soon',          progress: 0,      icon: '🔭', locked: true,  isSelected: false, bg: 'radial-gradient(ellipse at 50% 50%, #0B0C16 0%, #060608 52%, #030306 100%), linear-gradient(148deg, #030306 0%, #09090E 100%)', accent: '#65E6C6' },
+  const physicsGroupCards = [
+    { id: 'phys_forces',  title: 'Forces & Motion',    subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-forces.png' },
+    { id: 'phys_energy',  title: 'Energy & Power',     subtitle: '', progress: 0, locked: true,  isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-energy.png' },
+    { id: 'phys_waves',   title: 'Waves & Electricity',subtitle: '', progress: 0, locked: true,  isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-waves.png' },
+    { id: 'phys_space',   title: 'Space',               subtitle: '', progress: 0, locked: true,  isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-space.png' },
+    { id: 'phys_matter',  title: 'Matter & Particles',  subtitle: '', progress: 0, locked: true,  isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-matter.png' },
   ]
+
 
   function handleModuleClick(mod) {
     const realMod = MODULES.find(m => m.id === mod.id)
@@ -1253,12 +1239,13 @@ function ModulesTab({ onOpenModule }) {
 
       {/* ── SUBJECT SECTIONS ── */}
       <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 28 }}>
-        <SubjectLogoSection subjectLabel="History" logoSrc="/headers/history-medicine-through-time.png" accent="#C89B6D" groups={historyGroupCards} onGroupClick={handleModuleClick} />
-        <SubjectLogoSection subjectLabel="English" logoSrc="/headers/english-main.png" accent="#B66DFF" groups={englishGroupCards} onGroupClick={handleModuleClick} />
+        <SubjectLogoSection subjectLabel="History"   logoSrc="/headers/history-main.png"    accent="#C89B6D" groups={historyGroupCards}  onGroupClick={handleModuleClick} />
+        <SubjectLogoSection subjectLabel="English"   logoSrc="/headers/english-main.png"    accent="#B66DFF" groups={englishGroupCards}  onGroupClick={handleModuleClick} />
         <BiologySection groups={biologyGroupCards} onGroupClick={handleModuleClick} />
-        <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.png" accent="#9B59E8" groups={chemGroupCards} onGroupClick={handleModuleClick} />
-        <SubjectLogoSection subjectLabel="Maths" logoSrc="/headers/maths-main.png" accent="#2DD4BF" groups={mathsGroupCards} onGroupClick={handleModuleClick} />
-        <SubjectLogoSection subjectLabel="Sociology" logoSrc="/headers/sociology-main.png" accent="#FF5C7A" groups={sociologyGroupCards} onGroupClick={g => setSociologyFilter(g.filterPrefix)} />
+        <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.png"       accent="#9B59E8" groups={chemGroupCards}     onGroupClick={handleModuleClick} />
+        <SubjectLogoSection subjectLabel="Maths"     logoSrc="/headers/maths-main.png"      accent="#2DD4BF" groups={mathsGroupCards}    onGroupClick={handleModuleClick} />
+        <SubjectLogoSection subjectLabel="Physics"   logoSrc="/headers/physics-main.png"    accent="#3B82F6" groups={physicsGroupCards}  onGroupClick={handleModuleClick} />
+        <SubjectLogoSection subjectLabel="Sociology" logoSrc="/headers/sociology-main.png"  accent="#FF5C7A" groups={sociologyGroupCards} onGroupClick={g => setSociologyFilter(g.filterPrefix)} />
       </div>
     </div>
   )
