@@ -1032,14 +1032,19 @@ function ModulesTab({ onOpenModule }) {
   const HIST_ACCS   = ['#C89B6D', '#65E6C6', '#C89B6D', '#C89B6D']
   const HIST_DFLT   = [75, 38, 64, 0]
 
-  const historyModules = histRaw.map((m, i) => {
+  const historyGroupCards = histRaw.map((m, i) => {
     const pct = modPct(m)
     return {
-      id: m.id, title: m.title, subtitle: m.subtitle,
+      id: m.id,
+      title: m.title,
+      subtitle: '',
       progress: pct > 0 ? pct : HIST_DFLT[i],
       icon: m.icon || HIST_ICONS[i],
-      locked: i === 3, isSelected: m.id === selectedId,
-      bg: HIST_BG[i], accent: HIST_ACCS[i],
+      locked: i === 3,
+      isSelected: false,
+      bg: '#0D0E10',
+      accent: HIST_ACCS[i],
+      headerImage: MODULE_HEADER_IMAGES[m.id],
     }
   })
 
@@ -1248,7 +1253,7 @@ function ModulesTab({ onOpenModule }) {
 
       {/* ── SUBJECT SECTIONS ── */}
       <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 28 }}>
-        <SubjectSection heading="History" accent="#C89B6D" modules={historyModules} onModuleClick={handleModuleClick} />
+        <SubjectLogoSection subjectLabel="History" logoSrc="/headers/history-medicine-through-time.png" accent="#C89B6D" groups={historyGroupCards} onGroupClick={handleModuleClick} />
         <SubjectSection heading="English" accent="#9E3D52" modules={englishModules} onModuleClick={handleModuleClick} />
         <BiologySection groups={biologyGroupCards} onGroupClick={handleModuleClick} />
         <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.png" accent="#9B59E8" groups={chemGroupCards} onGroupClick={handleModuleClick} />
