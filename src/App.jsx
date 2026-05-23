@@ -129,7 +129,7 @@ function LoginScreen() {
 
       {/* Tagline */}
       <div style={{
-        fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+        fontFamily: "'Sora', sans-serif",
         fontSize: 42, fontWeight: 700, color: '#F4EFE6',
         textAlign: 'center', lineHeight: 1.05, marginTop: 28, letterSpacing: '-0.02em',
       }}>
@@ -148,7 +148,7 @@ function LoginScreen() {
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
           background: '#FFFFFF', border: 'none', borderRadius: 18, cursor: loading ? 'default' : 'pointer',
           height: 56, width: '100%', maxWidth: 340,
-          fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, fontWeight: 600, color: '#1A1A1A',
+          fontFamily: "'Outfit', sans-serif", fontSize: 16, fontWeight: 600, color: '#1A1A1A',
           boxShadow: '0 4px 24px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.12) inset',
           opacity: loading ? 0.7 : 1,
           transition: 'opacity 150ms ease, transform 120ms ease',
@@ -167,7 +167,7 @@ function LoginScreen() {
       </button>
 
       <div style={{
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        fontFamily: "'Outfit', sans-serif",
         fontSize: 11, color: '#3A3835', marginTop: 18, marginBottom: 'max(32px, env(safe-area-inset-bottom))',
         textAlign: 'center', lineHeight: 1.5,
       }}>
@@ -207,14 +207,14 @@ function OnboardingScreen() {
 
       <div style={{ flex: '0 0 auto', marginTop: 'max(88px, 22vh)', width: '100%', maxWidth: 340 }}>
         <div style={{
-          fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontSize: 32, fontWeight: 700, color: '#F4EFE6',
           lineHeight: 1.15, marginBottom: 12, letterSpacing: '-0.01em',
         }}>
           What should<br />we call you?
         </div>
         <div style={{
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontFamily: "'Outfit', sans-serif",
           fontSize: 15, color: '#7A7670', lineHeight: 1.55, marginBottom: 36,
         }}>
           This helps personalise your revision journey.
@@ -235,7 +235,7 @@ function OnboardingScreen() {
             backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
             border: '1.5px solid rgba(255,255,255,0.1)',
             borderRadius: 16, padding: '0 22px',
-            fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 500, color: '#F4EFE6',
+            fontFamily: "'Outfit', sans-serif", fontSize: 18, fontWeight: 500, color: '#F4EFE6',
             outline: 'none', caretColor: '#65E6C6',
             transition: 'border-color 180ms ease, box-shadow 180ms ease',
           }}
@@ -260,7 +260,7 @@ function OnboardingScreen() {
           width: '100%', maxWidth: 340, height: 54,
           background: valid ? 'linear-gradient(135deg, #3D7A5E 0%, #65E6C6 100%)' : 'rgba(255,255,255,0.07)',
           border: 'none', borderRadius: 16, cursor: valid ? 'pointer' : 'default',
-          fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, fontWeight: 700,
+          fontFamily: "'Outfit', sans-serif", fontSize: 16, fontWeight: 700,
           color: valid ? '#08090D' : '#3D3A35',
           transition: 'background 220ms ease, color 220ms ease, transform 120ms ease',
           letterSpacing: '0.02em', flexShrink: 0,
@@ -289,7 +289,7 @@ function StreakChip({ style = {} }) {
       ...style,
     }}>
       <span style={{ fontSize: 14, filter: 'drop-shadow(0 0 6px rgba(245,158,11,0.6))' }}>🔥</span>
-      <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 700, color: '#F59E0B', letterSpacing: '0.02em' }}>
+      <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 700, color: '#F59E0B', letterSpacing: '0.02em' }}>
         {streak > 0 ? `${streak} day streak` : 'Start your streak'}
       </span>
     </div>
@@ -348,7 +348,7 @@ function BottomNav({ tab, setTab }) {
             border: 'none', background: active ? 'rgba(139,92,246,0.18)' : 'transparent',
             cursor: 'pointer', borderRadius: 22,
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-            fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 10, fontWeight: active ? 700 : 500,
+            fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: active ? 600 : 500,
             color: active ? '#C4B5FD' : '#374151',
             padding: '6px 4px 5px', minWidth: 0,
             transition: 'background 220ms ease, color 220ms ease',
@@ -527,7 +527,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
               border: '1.5px solid rgba(139,92,246,0.3)',
               background: 'rgba(139,92,246,0.1)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
               fontSize: 12, fontWeight: 700, color: '#C4B5FD',
             }}
           >
@@ -537,22 +537,21 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
           {/* Streak chip */}
           <div style={{ marginBottom: 16 }}><StreakChip /></div>
 
-          {/* Greeting — Cormorant Garamond, cinematic */}
           <div style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontSize: 36, fontWeight: 600, color: '#F4EFE6',
-            lineHeight: 1.15, marginBottom: 6,
-            fontStyle: 'italic', letterSpacing: '0.01em',
+            fontFamily: "'Sora', sans-serif",
+            fontSize: 42, fontWeight: 800, color: '#F5F7FF',
+            lineHeight: 1.05, marginBottom: 8,
+            letterSpacing: '-0.02em',
           }}>
             {greeting}
           </div>
 
-          {/* Sub text */}
           <div style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: 13, color: '#4B5563', marginBottom: 22,
+            fontFamily: "'Outfit', sans-serif",
+            fontSize: 18, fontWeight: 500, color: 'rgba(255,255,255,0.68)', marginBottom: 22,
+            lineHeight: '26px',
           }}>
-            You're building momentum.
+            Keep going — you're building momentum.
           </div>
 
           {/* Day tracker */}
@@ -578,7 +577,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
                     }} />
                   </div>
                   <div style={{
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    fontFamily: "'Outfit', sans-serif",
                     fontSize: 11, fontWeight: 600, letterSpacing: '0.05em',
                     color: done ? '#2DD4BF' : isToday ? '#C4B5FD' : '#1F2937',
                   }}>
@@ -593,7 +592,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
         {/* ── Continue Learning ── */}
         <div style={{ marginBottom: 14 }}>
           <div style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontFamily: "'Outfit', sans-serif",
             fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
             color: '#374151', textTransform: 'uppercase', marginBottom: 12,
           }}>
@@ -633,19 +632,19 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
             }}>
               <div>
                 <div style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: 10, fontWeight: 700, letterSpacing: '0.14em',
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
                   color: '#D6A166', textTransform: 'uppercase', marginBottom: 10,
                 }}>
                   History
                 </div>
                 <div style={{
-                  fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+                  fontFamily: "'Sora', sans-serif",
                   fontSize: 21, fontWeight: 700, color: '#F4EFE6', lineHeight: 1.2, marginBottom: 6,
                 }}>
                   Medicine through Time
                 </div>
-                <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, color: '#6B7280' }}>
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, color: '#6B7280' }}>
                   1250–present
                 </div>
               </div>
@@ -658,7 +657,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
                     boxShadow: '0 0 8px rgba(214,161,102,0.5)',
                   }} />
                 </div>
-                <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, color: '#6B7280' }}>
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11, color: '#6B7280' }}>
                   {medProgress}% complete
                 </div>
               </div>
@@ -671,7 +670,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
               border: '1px solid rgba(214,161,102,0.28)',
               backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
               borderRadius: 12, padding: '9px 16px',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
               fontSize: 12, fontWeight: 700, color: '#D6A166',
               display: 'flex', alignItems: 'center', gap: 5,
             }}>
@@ -720,20 +719,20 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
               {/* Text */}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: 10, fontWeight: 700, letterSpacing: '0.14em',
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
                   color: '#FB7185', textTransform: 'uppercase', marginBottom: 5,
                 }}>
                   Weak Zone
                 </div>
                 <div style={{
-                  fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+                  fontFamily: "'Sora', sans-serif",
                   fontSize: 16, fontWeight: 700, color: '#F4EFE6', lineHeight: 1.2, marginBottom: 6,
                 }}>
                   Medicine through Time
                 </div>
                 <div style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontSize: 12, color: '#9CA3AF', lineHeight: 1.5,
                 }}>
                   2 quick quizzes to get this{' '}
@@ -748,7 +747,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
                 border: '1px solid rgba(139,92,246,0.28)',
                 backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
                 borderRadius: 12, padding: '10px 12px',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontFamily: "'Outfit', sans-serif",
                 fontSize: 11, fontWeight: 700, color: '#C4B5FD',
                 lineHeight: 1.3, textAlign: 'center',
                 boxShadow: '0 0 18px rgba(139,92,246,0.22)',
@@ -763,14 +762,14 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <div style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
               fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
               color: '#374151', textTransform: 'uppercase',
             }}>
               This Week
             </div>
             <div style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
               fontSize: 12, fontWeight: 600, color: '#D6A166',
               display: 'flex', alignItems: 'center', gap: 5,
             }}>
@@ -797,13 +796,13 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
               }}>
                 <div style={{ fontSize: 18, opacity: 0.75 }}>{s.icon}</div>
                 <div style={{
-                  fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+                  fontFamily: "'Sora', sans-serif",
                   fontSize: 22, fontWeight: 700, color: '#F4EFE6', lineHeight: 1,
                 }}>
                   {s.value}
                 </div>
                 <div style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontSize: 10, color: '#374151', fontWeight: 600,
                   letterSpacing: '0.07em', textTransform: 'uppercase',
                 }}>
@@ -868,17 +867,18 @@ function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, heade
       {/* bottom text */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 12px 12px', zIndex: 2 }}>
         <div style={{
-          fontWeight: 700, fontSize: '.87rem', color: '#F5F2EA',
-          lineHeight: 1.2, marginBottom: 2, fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontWeight: 700, fontSize: 18, color: '#F5F7FF',
+          lineHeight: '22px', marginBottom: 2, fontFamily: "'Sora', sans-serif",
+          letterSpacing: '-0.01em',
         }}>{title}</div>
         <div style={{
           fontSize: '.63rem', color: '#B8B4C2', lineHeight: 1.3,
-          marginBottom: locked ? 0 : 8, fontFamily: "'Plus Jakarta Sans', sans-serif",
+          marginBottom: locked ? 0 : 8, fontFamily: "'Outfit', sans-serif",
         }}>{subtitle}</div>
         {!locked && (
           <>
             <div style={{ marginBottom: 4 }}>
-              <span style={{ fontSize: '.6rem', fontWeight: 800, color: accentColour, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              <span style={{ fontSize: '.6rem', fontWeight: 800, color: accentColour, fontFamily: "'Outfit', sans-serif" }}>
                 {progress}%
               </span>
             </div>
@@ -905,16 +905,16 @@ function SubjectSection({ heading, accent, modules, onModuleClick }) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{
-            fontSize: '.62rem', fontWeight: 800, letterSpacing: '.18em',
+            fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
             textTransform: 'uppercase', color: '#F5F2EA',
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontFamily: "'Outfit', sans-serif",
           }}>{heading}</span>
           <span style={{ color: accent, fontSize: '.82rem', lineHeight: 1 }}>›</span>
         </div>
         <button style={{
           background: 'none', border: 'none', cursor: 'pointer',
           fontSize: '.72rem', fontWeight: 600, color: accent, padding: 0,
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontFamily: "'Outfit', sans-serif",
         }}>View all</button>
       </div>
       <div style={{
@@ -952,16 +952,16 @@ function SubjectLogoSection({ subjectLabel, logoSrc, accent, groups, onGroupClic
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <img src={logoSrc} alt={subjectLabel} style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover' }} />
           <span style={{
-            fontSize: '.62rem', fontWeight: 800, letterSpacing: '.18em',
-            textTransform: 'uppercase', color: '#F5F2EA',
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
+            fontFamily: "'Outfit', sans-serif", lineHeight: '18px',
           }}>{subjectLabel}</span>
           <span style={{ color: accent, fontSize: '.82rem', lineHeight: 1 }}>›</span>
         </div>
         <button style={{
           background: 'none', border: 'none', cursor: 'pointer',
           fontSize: '.72rem', fontWeight: 600, color: accent, padding: 0,
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontFamily: "'Outfit', sans-serif",
         }}>View all</button>
       </div>
       <div style={{
@@ -1127,12 +1127,12 @@ function ModulesTab({ onOpenModule }) {
 
         {/* Hero text */}
         <div style={{ padding: '20px 18px 0', position: 'relative', zIndex: 5 }}>
-          <div style={{ color: '#7D7988', fontSize: '.82rem', marginBottom: 7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{getTimeGreeting(modUserName)}</div>
+          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, fontWeight: 500, marginBottom: 6, fontFamily: "'Outfit', sans-serif", lineHeight: '18px' }}>{getTimeGreeting(modUserName)}</div>
           <div style={{
-            color: '#F5F2EA', fontWeight: 600, fontSize: '2.4rem',
-            lineHeight: 1.08, marginBottom: 0,
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: 'italic', letterSpacing: '0.01em',
+            color: '#F5F7FF', fontWeight: 800, fontSize: 42,
+            lineHeight: 1.05, marginBottom: 0,
+            fontFamily: "'Sora', sans-serif",
+            letterSpacing: '-0.02em',
           }}>Keep going.</div>
         </div>
       </div>
@@ -1164,21 +1164,21 @@ function ModulesTab({ onOpenModule }) {
             <div style={{
               fontSize: '.58rem', fontWeight: 800, letterSpacing: '.30em',
               textTransform: 'uppercase', color: '#C89B6D', marginBottom: 4,
-              fontFamily: "'Plus Jakarta Sans',sans-serif",
+              fontFamily: "'Outfit', sans-serif",
             }}>Continue Learning</div>
-            <div style={{ fontSize: '.72rem', color: '#7D7988', marginBottom: 5, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+            <div style={{ fontSize: '.72rem', color: '#7D7988', marginBottom: 5, fontFamily: "'Outfit', sans-serif" }}>
               {continueRaw?.subject || 'History'} · Module {continueRaw?.number || 3}
             </div>
             <div style={{
               color: '#F5F2EA', fontWeight: 700, fontSize: '1.12rem',
-              lineHeight: 1.18, marginBottom: 3, fontFamily: "'Plus Jakarta Sans',sans-serif",
+              lineHeight: 1.18, marginBottom: 3, fontFamily: "'Outfit', sans-serif",
             }}>{continueRaw?.title || 'Surgery & Anatomy'}</div>
-            <div style={{ color: '#B8B4C2', fontSize: '.75rem', marginBottom: 14, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+            <div style={{ color: '#B8B4C2', fontSize: '.75rem', marginBottom: 14, fontFamily: "'Outfit', sans-serif" }}>
               {continueRaw?.subtitle || 'Hold Him Down and Hope'}
             </div>
             {/* Progress */}
             <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: '.6rem', color: '#C89B6D', fontWeight: 700, marginBottom: 5, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{continuePct}%</div>
+              <div style={{ fontSize: '.6rem', color: '#C89B6D', fontWeight: 700, marginBottom: 5, fontFamily: "'Outfit', sans-serif" }}>{continuePct}%</div>
               <div style={{ height: 4, background: 'rgba(255,255,255,0.10)', borderRadius: 99, overflow: 'hidden' }}>
                 <div style={{ width: continuePct + '%', height: '100%', background: '#C89B6D', borderRadius: 99, boxShadow: '0 0 8px rgba(200,155,109,0.55)' }} />
               </div>
@@ -1186,11 +1186,12 @@ function ModulesTab({ onOpenModule }) {
             <button
               onClick={() => { const m = MODULES.find(x => x.id === selectedId); if (m && onOpenModule) onOpenModule(m) }}
               style={{
-                height: 46, paddingLeft: 22, paddingRight: 22,
+                height: 58, paddingLeft: 24, paddingRight: 24,
                 background: 'linear-gradient(90deg, #8C5A3C, #C89B6D)',
-                border: 'none', borderRadius: 99, cursor: 'pointer',
-                color: '#fff', fontWeight: 700, fontSize: '.86rem',
-                fontFamily: "'Plus Jakarta Sans',sans-serif",
+                border: 'none', borderRadius: 18, cursor: 'pointer',
+                color: '#fff', fontWeight: 700, fontSize: 20,
+                fontFamily: "'Sora', sans-serif",
+                letterSpacing: '-0.01em', lineHeight: '20px',
                 boxShadow: '0 4px 18px rgba(140,90,60,0.42)',
                 display: 'inline-flex', alignItems: 'center', gap: 7,
               }}>▶ Continue Module</button>
@@ -1218,10 +1219,10 @@ function ModulesTab({ onOpenModule }) {
             const weakPct   = worst?.recentAvg ?? null
             return (
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '.54rem', fontWeight: 800, letterSpacing: '.28em', textTransform: 'uppercase', color: '#FF557A', marginBottom: 3, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>Weak Area</div>
-                <div style={{ color: '#F5F2EA', fontWeight: 600, fontSize: '.82rem', marginBottom: 2, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{weakLabel}</div>
+                <div style={{ fontSize: '.54rem', fontWeight: 800, letterSpacing: '.28em', textTransform: 'uppercase', color: '#FF557A', marginBottom: 3, fontFamily: "'Outfit', sans-serif" }}>Weak Area</div>
+                <div style={{ color: '#F5F2EA', fontWeight: 600, fontSize: '.82rem', marginBottom: 2, fontFamily: "'Outfit', sans-serif" }}>{weakLabel}</div>
                 {weakPct !== null && (
-                  <div style={{ color: '#7D7988', fontSize: '.72rem', fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+                  <div style={{ color: '#7D7988', fontSize: '.72rem', fontFamily: "'Outfit', sans-serif" }}>
                     Recent score: <span style={{ color: '#FF557A', fontWeight: 700 }}>{weakPct}%</span>
                   </div>
                 )}
@@ -1232,7 +1233,7 @@ function ModulesTab({ onOpenModule }) {
             background: 'none', border: '1px solid rgba(255,85,122,0.40)',
             borderRadius: 99, padding: '7px 11px', cursor: 'pointer',
             color: '#FF6F8F', fontSize: '.7rem', fontWeight: 700,
-            fontFamily: "'Plus Jakarta Sans',sans-serif", flexShrink: 0, whiteSpace: 'nowrap',
+            fontFamily: "'Outfit', sans-serif", flexShrink: 0, whiteSpace: 'nowrap',
           }}>Review now ›</button>
         </div>
       </div>
@@ -1768,19 +1769,19 @@ function FormulaSheet({ onClose }) {
       <div onClick={e=>e.stopPropagation()} style={{ background:'#0E1330', border:'1px solid rgba(59,130,255,.3)', borderRadius:'20px 20px 0 0', padding:'20px 18px 40px', width:'100%', maxWidth:660, maxHeight:'82vh', overflowY:'auto' }}>
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18 }}>
           <div>
-            <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'1.1rem', color:'#F5F7FB' }}>📐 AQA Formula Sheet</div>
-            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:2 }}>These are given in the exam — but worth knowing them cold</div>
+            <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1.1rem', color:'#F5F7FB' }}>📐 AQA Formula Sheet</div>
+            <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:2 }}>These are given in the exam — but worth knowing them cold</div>
           </div>
           <button onClick={onClose} style={{ background:'rgba(255,255,255,.08)', border:'1px solid #2A3552', borderRadius:8, padding:'6px 14px', color:'#9CA8C7', cursor:'pointer', fontFamily:'inherit', fontSize:'.82rem' }}>✕</button>
         </div>
         {FORMULA_SHEET.map(cat => (
           <div key={cat.section} style={{ marginBottom:18 }}>
-            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:'#3B82FF', marginBottom:10 }}>{cat.section}</div>
+            <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:'#3B82FF', marginBottom:10 }}>{cat.section}</div>
             <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
               {cat.formulae.map(item => (
                 <div key={item.name} style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'12px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', gap:12 }}>
-                  <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.82rem', color:'#9CA8C7' }}>{item.name}</div>
-                  <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', flexShrink:0 }}>{item.f}</div>
+                  <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.82rem', color:'#9CA8C7' }}>{item.name}</div>
+                  <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', flexShrink:0 }}>{item.f}</div>
                 </div>
               ))}
             </div>
@@ -1797,7 +1798,7 @@ function MathsDiagram({ diagramKey }) {
   if (!svg) return null
   return (
     <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'14px', marginBottom:14 }}>
-      <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#3B82FF', marginBottom:8 }}>📐 Diagram — from AQA past paper</div>
+      <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#3B82FF', marginBottom:8 }}>📐 Diagram — from AQA past paper</div>
       <div dangerouslySetInnerHTML={{ __html: svg }} />
     </div>
   )
@@ -1971,31 +1972,31 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:2 }}>
                 <div style={{ width:8, height:8, borderRadius:'50%', background:topicColor, flexShrink:0, boxShadow:`0 0 6px ${topicColor}` }} />
-                <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor }}>{topicLabel}</span>
+                <span style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor }}>{topicLabel}</span>
               </div>
-              <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB' }}>
+              <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB' }}>
                 Q{q.qNum} · {q.source}
               </div>
             </div>
             {isMathsQ && (<div style={{ display:'flex', gap:6, flexShrink:0 }}>{isCalc
-                      ? <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}>🖩 Calculator OK</div>
-                      : <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.18)', borderRadius:8, padding:'4px 10px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}>✏️ No Calculator</div>
+                      ? <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}>🖩 Calculator OK</div>
+                      : <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.18)', borderRadius:8, padding:'4px 10px', fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}>✏️ No Calculator</div>
               }
-              <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:8, padding:'4px 10px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#70B8FF', cursor:'pointer' }}>📐 Formulae</button>
+              <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:8, padding:'4px 10px', fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, color:'#70B8FF', cursor:'pointer' }}>📐 Formulae</button>
             </div>)}
           </div>
           {/* Progress */}
           <div style={{ height:3, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden' }}>
             <div style={{ height:'100%', width:`${((qIdx+1)/total)*100}%`, background:`linear-gradient(90deg,${topicColor}88,${topicColor})`, borderRadius:99, transition:'width .4s ease' }} />
           </div>
-          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.62rem', color:'#4A5578', marginTop:5, textAlign:'right' }}>{qIdx+1} / {total}</div>
+          <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.62rem', color:'#4A5578', marginTop:5, textAlign:'right' }}>{qIdx+1} / {total}</div>
         </div>
       </div>
 
       <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px 20px' }}>
         {/* Marks badge */}
         <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:`${topicColor}18`, border:`1px solid ${topicColor}44`, borderRadius:99, padding:'4px 13px', marginBottom:14 }}>
-          <span style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'.78rem', fontWeight:700, color:topicColor }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
+          <span style={{ fontFamily:"'Sora', sans-serif", fontSize:'.78rem', fontWeight:700, color:topicColor }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
         </div>
 
         {/* Diagram */}
@@ -2007,25 +2008,25 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
           const isRealExtract = q.extract.startsWith('Lines') || q.extract.startsWith('"')
           return (
             <div style={{ background:'#0D1424', borderLeft:`3px solid ${topicColor}`, borderRadius:'0 12px 12px 0', padding:'14px 16px', marginBottom:14 }}>
-              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor, marginBottom:8 }}>
+              <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor, marginBottom:8 }}>
                 {isRealExtract ? '📄 Source extract' : '📎 Where to find your source'}
               </div>
-              <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem', lineHeight:1.7, margin:0, color: isRealExtract ? '#C8D0E8' : '#9CA8C7', whiteSpace:'pre-wrap' }}>{q.extract}</p>
+              <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.88rem', lineHeight:1.7, margin:0, color: isRealExtract ? '#C8D0E8' : '#9CA8C7', whiteSpace:'pre-wrap' }}>{q.extract}</p>
             </div>
           )
         })()}
 
         {/* Question */}
         <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:16, padding:'18px 18px', marginBottom:14 }}>
-          <pre style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'1rem', lineHeight:1.7, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
+          <pre style={{ fontFamily:"'Outfit', sans-serif", fontSize:'1rem', lineHeight:1.7, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
         </div>
 
         {/* Mark tip */}
         {!showTip
-          ? <button onClick={() => setTip(true)} style={{ background:'transparent', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Plus Jakarta Sans',sans-serif", width:'100%', marginBottom:14 }}>💡 {isMathsQ ? 'How many steps do I need to show?' : 'What does this question need from me?'}</button>
+          ? <button onClick={() => setTip(true)} style={{ background:'transparent', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Outfit', sans-serif", width:'100%', marginBottom:14 }}>💡 {isMathsQ ? 'How many steps do I need to show?' : 'What does this question need from me?'}</button>
           : <div style={{ background:'rgba(255,200,87,.05)', border:'1px solid rgba(255,200,87,.18)', borderRadius:10, padding:'12px 14px', marginBottom:14 }}>
-              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FFC857', marginBottom:5 }}>{isMathsQ ? `${q.marks}-mark question` : `${q.marks} marks — what to write`}</div>
-              <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", margin:0, fontSize:'.86rem', color:'#C8D0E8', lineHeight:1.55 }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
+              <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FFC857', marginBottom:5 }}>{isMathsQ ? `${q.marks}-mark question` : `${q.marks} marks — what to write`}</div>
+              <p style={{ fontFamily:"'Outfit', sans-serif", margin:0, fontSize:'.86rem', color:'#C8D0E8', lineHeight:1.55 }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
             </div>
         }
 
@@ -2033,12 +2034,12 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
         {!feedback && (
           q.type === 'mc' || q.type === 'mc_multi'
             ? <div style={{ marginBottom:16 }}>
-                {q.type === 'mc_multi' && <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', color:'#5A6480', marginBottom:8 }}>Select all that apply ({q.marks} correct answers)</div>}
+                {q.type === 'mc_multi' && <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.75rem', color:'#5A6480', marginBottom:8 }}>Select all that apply ({q.marks} correct answers)</div>}
                 {/* Hint card after first wrong MC attempt */}
                 {mcHint && !mcLocked && (
                   <div style={{ background:'rgba(255,200,87,.06)', border:'1px solid rgba(255,200,87,.25)', borderRadius:12, padding:'12px 14px', marginBottom:12 }}>
-                    <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857', marginBottom:6 }}>💡 Hint — think about this</div>
-                    <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.87rem', color:'#C8D0E8', margin:0, lineHeight:1.55 }}>
+                    <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857', marginBottom:6 }}>💡 Hint — think about this</div>
+                    <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.87rem', color:'#C8D0E8', margin:0, lineHeight:1.55 }}>
                       {q.hint || (q.ms ? q.ms.split('.')[0] + '.' : 'Look at the question again carefully — what does it specifically ask for?')}
                     </p>
                   </div>
@@ -2054,7 +2055,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
                     setAnswer(sel ? cur.filter(a => a !== opt) : [...cur, opt])
                   }
                   return (
-                    <button key={i} onClick={toggle} disabled={mcLocked} style={{ background:sel?`${topicColor}18`:'#151720', border:`1.5px solid ${sel?topicColor:'rgba(255,255,255,0.08)'}`, borderRadius:12, padding:'14px 16px', cursor:mcLocked?'default':'pointer', textAlign:'left', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.93rem', color:sel?topicColor:'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
+                    <button key={i} onClick={toggle} disabled={mcLocked} style={{ background:sel?`${topicColor}18`:'#151720', border:`1.5px solid ${sel?topicColor:'rgba(255,255,255,0.08)'}`, borderRadius:12, padding:'14px 16px', cursor:mcLocked?'default':'pointer', textAlign:'left', fontFamily:"'Outfit', sans-serif", fontSize:'.93rem', color:sel?topicColor:'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
                       <span style={{ width:24, height:24, borderRadius:isMulti?'4px':'50%', border:`1.5px solid ${sel?topicColor:'rgba(255,255,255,0.1)'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.75rem', fontWeight:700, color:sel?topicColor:'#4A5578', background:sel?`${topicColor}18`:'transparent' }}>{isMulti ? (sel ? '✓' : '') : String.fromCharCode(65+i)}</span>
                       {opt}
                     </button>
@@ -2063,18 +2064,18 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
                 </div>
               </div>
             : <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:16 }}>
-                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>{isMathsQ ? 'Your working & answer' : 'Your answer'}</div>
+                <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>{isMathsQ ? 'Your working & answer' : 'Your answer'}</div>
                 <textarea
                   value={answer}
                   onChange={e => setAnswer(e.target.value)}
                   placeholder={isMathsQ ? (q.marks >= 3 ? 'Show all your working here…' : 'Write your answer…') : 'Write your answer here. Use quotes from the extract where relevant…'}
-                  style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.95rem', color:'#E0E6F0', lineHeight:1.7, outline:'none', minHeight: q.marks >= 4 ? 170 : q.marks >= 2 ? 110 : 65 }}
+                  style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Outfit', sans-serif", fontSize:'.95rem', color:'#E0E6F0', lineHeight:1.7, outline:'none', minHeight: q.marks >= 4 ? 170 : q.marks >= 2 ? 110 : 65 }}
                 />
               </div>
         )}
 
         {/* Error */}
-        {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'12px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73', lineHeight:1.5 }}>{error}</p></div>}
+        {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'12px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Outfit', sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73', lineHeight:1.5 }}>{error}</p></div>}
 
         {/* Feedback */}
         {feedback && gs && (
@@ -2082,22 +2083,22 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
             {/* Score card */}
             <div style={{ background:gs.bg, border:`2px solid ${gs.border}`, borderRadius:18, padding:'20px', marginBottom:12 }}>
               <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:12 }}>
-                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'2rem', fontWeight:800, color:gs.text, lineHeight:1 }}>
+                <div style={{ fontFamily:"'Sora', sans-serif", fontSize:'2rem', fontWeight:800, color:gs.text, lineHeight:1 }}>
                   {feedback.marksAwarded}<span style={{ fontSize:'1.1rem', opacity:.5 }}>/{feedback.marksAvailable}</span>
                 </div>
-                <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.8rem' }}>{feedback.grade}</div>
+                <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.8rem' }}>{feedback.grade}</div>
               </div>
-              <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.9rem', color:gs.text, margin:0, lineHeight:1.55, opacity:.9 }}>{feedback.summary}</p>
+              <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.9rem', color:gs.text, margin:0, lineHeight:1.55, opacity:.9 }}>{feedback.summary}</p>
             </div>
 
             {/* What they got right */}
             {feedback.achieved?.length > 0 && (
               <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
-                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:10 }}>✓ What you got right</div>
+                <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:10 }}>✓ What you got right</div>
                 {feedback.achieved.map((a,i) => (
                   <div key={i} style={{ display:'flex', gap:8, marginBottom: i<feedback.achieved.length-1?8:0 }}>
                     <span style={{ color:'#4DFF88', flexShrink:0, fontSize:'.9rem' }}>✓</span>
-                    <p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{a}</p>
+                    <p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{a}</p>
                   </div>
                 ))}
               </div>
@@ -2106,11 +2107,11 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
             {/* What they missed */}
             {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && (
               <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
-                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FF5D73', marginBottom:10 }}>→ Next time, also include</div>
+                <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FF5D73', marginBottom:10 }}>→ Next time, also include</div>
                 {feedback.missed.map((m,i) => (
                   <div key={i} style={{ display:'flex', gap:8, marginBottom: i<feedback.missed.length-1?8:0 }}>
                     <span style={{ color:'#FF5D73', flexShrink:0, fontSize:'.9rem' }}>→</span>
-                    <p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{m}</p>
+                    <p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{m}</p>
                   </div>
                 ))}
               </div>
@@ -2119,15 +2120,15 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
             {/* Examiner tip */}
             {feedback.examinerTip && (
               <div style={{ background:'rgba(245,183,0,.05)', border:'1px solid rgba(245,183,0,.18)', borderRadius:13, padding:'14px', marginBottom:16 }}>
-                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div>
-                <p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{feedback.examinerTip}</p>
+                <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div>
+                <p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{feedback.examinerTip}</p>
               </div>
             )}
 
             {/* Actions */}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-              <button onClick={reset} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:13, padding:'14px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
-              <button onClick={onNext} style={{ background:`linear-gradient(135deg,${topicColor}cc,${topicColor})`, border:'none', borderRadius:13, padding:'14px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:'pointer', color:'#fff', fontSize:'.88rem', boxShadow:`0 4px 16px ${topicColor}44` }}>
+              <button onClick={reset} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:13, padding:'14px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
+              <button onClick={onNext} style={{ background:`linear-gradient(135deg,${topicColor}cc,${topicColor})`, border:'none', borderRadius:13, padding:'14px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:'#fff', fontSize:'.88rem', boxShadow:`0 4px 16px ${topicColor}44` }}>
                 {qIdx < total-1 ? 'Next →' : 'Finish ✓'}
               </button>
             </div>
@@ -2137,7 +2138,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
         {/* Submit button — hidden for locked MC (feedback already shown inline) */}
         {!feedback && !(mcLocked) && (
           <button onClick={grade} disabled={grading || (q.type === 'mc' && !answer) || (q.type === 'mc_multi' && (!answer || answer.length === 0))}
-            style={{ width:'100%', background:grading?'rgba(255,255,255,0.08)':`linear-gradient(135deg,${topicColor}cc,${topicColor})`, color:grading?'#4A5578':'#fff', border:'none', borderRadius:13, padding:'16px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:(grading||(q.type==='mc'&&!answer))?'default':'pointer', fontSize:'1rem', letterSpacing:'.01em', marginTop:4, boxShadow:grading?'none':`0 4px 20px ${topicColor}44`, transition:'all .2s',
+            style={{ width:'100%', background:grading?'rgba(255,255,255,0.08)':`linear-gradient(135deg,${topicColor}cc,${topicColor})`, color:grading?'#4A5578':'#fff', border:'none', borderRadius:13, padding:'16px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:(grading||(q.type==='mc'&&!answer))?'default':'pointer', fontSize:'1rem', letterSpacing:'.01em', marginTop:4, boxShadow:grading?'none':`0 4px 20px ${topicColor}44`, transition:'all .2s',
               opacity: (q.type === 'mc' && !answer) ? 0.4 : 1 }}>
             {grading ? '⏳ Marking your answer…' : mcHint ? 'Check again →' : 'Check my answer →'}
           </button>
@@ -2196,10 +2197,10 @@ function MathsBrowser({ onBack }) {
           <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
           <img src="/headers/maths-main.png" alt="Maths" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
           <div style={{ flex:1 }}>
-            <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA Maths — Topics</div>
-            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>{MATHS_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked</div>
+            <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA Maths — Topics</div>
+            <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.72rem', color:'#5A6480' }}>{MATHS_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked</div>
           </div>
-          <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:10, padding:'7px 12px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.73rem', fontWeight:700, color:'#70B8FF', cursor:'pointer', flexShrink:0 }}>📐 Formulae</button>
+          <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:10, padding:'7px 12px', fontFamily:"'Outfit', sans-serif", fontSize:'.73rem', fontWeight:700, color:'#70B8FF', cursor:'pointer', flexShrink:0 }}>📐 Formulae</button>
         </div>
       </div>
 
@@ -2211,7 +2212,7 @@ function MathsBrowser({ onBack }) {
             { id:'noncalc',  label:'✏️ No Calculator' },
             { id:'calc',     label:'🖩 Calculator allowed' },
           ].map(f => (
-            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(59,130,255,.15)':'#151720', border:`1px solid ${filter===f.id?'#3B82FF':'rgba(255,255,255,0.08)'}`, borderRadius:10, padding:'9px 6px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#70B8FF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
+            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(59,130,255,.15)':'#151720', border:`1px solid ${filter===f.id?'#3B82FF':'rgba(255,255,255,0.08)'}`, borderRadius:10, padding:'9px 6px', fontFamily:"'Outfit', sans-serif", fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#70B8FF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
           ))}
         </div>
 
@@ -2224,17 +2225,17 @@ function MathsBrowser({ onBack }) {
               </div>
 
               <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
-                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', color:'#5A6480', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{group.description}</div>
+                <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
+                <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.75rem', color:'#5A6480', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{group.description}</div>
                 <div style={{ display:'flex', gap:8, marginTop:7, alignItems:'center' }}>
                   {/* Mini progress-style pill */}
                   <div style={{ flex:1, height:3, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden' }}>
                     <div style={{ height:'100%', width:'0%', background:group.color, borderRadius:99 }} />
                   </div>
-                  <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.68rem', fontWeight:600, color:group.color, flexShrink:0 }}>{group.questions.length} Q{group.questions.length!==1?'s':''}</span>
+                  <span style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.68rem', fontWeight:600, color:group.color, flexShrink:0 }}>{group.questions.length} Q{group.questions.length!==1?'s':''}</span>
                   {group.calculator
-                    ? <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', color:'#38D27A', flexShrink:0 }}>🖩</span>
-                    : <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', color:'#FFC857', flexShrink:0 }}>✗</span>
+                    ? <span style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', color:'#38D27A', flexShrink:0 }}>🖩</span>
+                    : <span style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', color:'#FFC857', flexShrink:0 }}>✗</span>
                   }
                 </div>
               </div>
@@ -2292,8 +2293,8 @@ function EnglishBrowser({ onBack }) {
           <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
           <img src="/headers/english-main.png" alt="English" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
           <div style={{ flex:1 }}>
-            <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA English Language</div>
-            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>Papers 1 & 2 · {ENGLISH_TOPIC_GROUPS.length} skill areas · {totalQs} questions · AI marked</div>
+            <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA English Language</div>
+            <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.72rem', color:'#5A6480' }}>Papers 1 & 2 · {ENGLISH_TOPIC_GROUPS.length} skill areas · {totalQs} questions · AI marked</div>
           </div>
         </div>
       </div>
@@ -2302,7 +2303,7 @@ function EnglishBrowser({ onBack }) {
         {/* Filter pills */}
         <div style={{ display:'flex', gap:8, marginBottom:20 }}>
           {filters.map(f => (
-            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(157,92,255,.15)':'#151720', border:`1px solid ${filter===f.id?'#9D5CFF':'rgba(255,255,255,0.08)'}`, borderRadius:10, padding:'9px 6px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#C18CFF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
+            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(157,92,255,.15)':'#151720', border:`1px solid ${filter===f.id?'#9D5CFF':'rgba(255,255,255,0.08)'}`, borderRadius:10, padding:'9px 6px', fontFamily:"'Outfit', sans-serif", fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#C18CFF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
           ))}
         </div>
 
@@ -2314,12 +2315,12 @@ function EnglishBrowser({ onBack }) {
                 <img src="/headers/english-main.png" alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
               </div>
               <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.93rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
-                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', color:'#5A6480', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{group.description}</div>
+                <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.93rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
+                <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.75rem', color:'#5A6480', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{group.description}</div>
                 <div style={{ display:'flex', gap:8, marginTop:7, alignItems:'center' }}>
                   <div style={{ flex:1, height:3, background:'rgba(255,255,255,0.08)', borderRadius:99 }} />
-                  <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.68rem', fontWeight:600, color:group.color, flexShrink:0 }}>{group.questions.length} Q{group.questions.length!==1?'s':''}</span>
-                  <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', color:'#4A5578', flexShrink:0 }}>{group.marks}m</span>
+                  <span style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.68rem', fontWeight:600, color:group.color, flexShrink:0 }}>{group.questions.length} Q{group.questions.length!==1?'s':''}</span>
+                  <span style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', color:'#4A5578', flexShrink:0 }}>{group.marks}m</span>
                 </div>
               </div>
               <span style={{ color:'rgba(255,255,255,0.1)', fontSize:'1.1rem', flexShrink:0 }}>›</span>
@@ -2378,8 +2379,8 @@ function SociologyBrowser({ onBack, filterPrefix = null }) {
           <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
           <img src={socGroup?.headerImage || '/headers/sociology-main.png'} alt="Sociology" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>{headerTitle}</div>
-            <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.72rem', color: '#5A6480' }}>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>{headerTitle}</div>
+            <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.72rem', color: '#5A6480' }}>
               {baseGroups.length} topic area{baseGroups.length !== 1 ? 's' : ''} · {totalQs} questions · AI marked
             </div>
           </div>
@@ -2394,7 +2395,7 @@ function SociologyBrowser({ onBack, filterPrefix = null }) {
               flex: 1, background: filter === f.id ? 'rgba(255,92,122,.15)' : '#151720',
               border: `1px solid ${filter === f.id ? '#FF5C7A' : 'rgba(255,255,255,0.08)'}`,
               borderRadius: 10, padding: '9px 6px',
-              fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.75rem', fontWeight: 600,
+              fontFamily: "'Outfit', sans-serif", fontSize: '.75rem', fontWeight: 600,
               color: filter === f.id ? '#FF8DA1' : '#5A6480', cursor: 'pointer',
             }}>{f.label}</button>
           ))}
@@ -2419,12 +2420,12 @@ function SociologyBrowser({ onBack, filterPrefix = null }) {
                 })()} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
-                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
+                <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
                 <div style={{ display: 'flex', gap: 8, marginTop: 7, alignItems: 'center' }}>
                   <div style={{ flex: 1, height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 99 }} />
-                  <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.68rem', fontWeight: 600, color: group.color, flexShrink: 0 }}>{group.questions.length} Q{group.questions.length !== 1 ? 's' : ''}</span>
-                  <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.65rem', color: '#4A5578', flexShrink: 0 }}>{group.marks}m</span>
+                  <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.68rem', fontWeight: 600, color: group.color, flexShrink: 0 }}>{group.questions.length} Q{group.questions.length !== 1 ? 's' : ''}</span>
+                  <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.65rem', color: '#4A5578', flexShrink: 0 }}>{group.marks}m</span>
                 </div>
               </div>
               <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: '1.1rem', flexShrink: 0 }}>›</span>
@@ -2446,7 +2447,7 @@ function ChemImage({ imageKey, caption }) {
   if (!src) return null
   return (
     <div style={{ background: '#0D1424', border: '1px solid #1E2A40', borderRadius: 12, padding: '10px', marginBottom: 14 }}>
-      <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#38D27A', marginBottom: 8 }}>
+      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#38D27A', marginBottom: 8 }}>
         📐 Diagram — from AQA past paper
       </div>
       <img src={src} alt={caption || 'AQA Chemistry diagram'} style={{ maxWidth: '100%', height: 'auto', display: 'block', borderRadius: 8 }} />
@@ -2505,30 +2506,30 @@ function ChemistryTopicView({ group, onBack, qIdx: initialQIdx = 0, onQChange })
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
-                <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color }}>Chemistry · {group.label}</span>
+                <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color }}>Chemistry · {group.label}</span>
               </div>
-              <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.88rem', color: '#F5F7FB' }}>
+              <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.88rem', color: '#F5F7FB' }}>
                 {q.source} · {q.marks} mark{q.marks !== 1 ? 's' : ''}
               </div>
             </div>
             <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
               {group.calculator
-                ? <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}><span style={{fontSize:'.8rem'}}>🖩</span>Calculator OK</div>
-                : <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.18)', borderRadius:8, padding:'4px 10px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}><span style={{fontSize:'.8rem'}}>✏️</span>No Calculator</div>
+                ? <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}><span style={{fontSize:'.8rem'}}>🖩</span>Calculator OK</div>
+                : <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.18)', borderRadius:8, padding:'4px 10px', fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}><span style={{fontSize:'.8rem'}}>✏️</span>No Calculator</div>
               }
             </div>
           </div>
           <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
             <div style={{ height: '100%', width: `${((qIdx+1)/qs.length)*100}%`, background: `linear-gradient(90deg, ${color}88, ${color})`, borderRadius: 99, transition: 'width .4s' }} />
           </div>
-          <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.62rem', color: '#4A5578', marginTop: 5, textAlign: 'right' }}>{qIdx+1} / {qs.length}</div>
+          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.62rem', color: '#4A5578', marginTop: 5, textAlign: 'right' }}>{qIdx+1} / {qs.length}</div>
         </div>
       </div>
 
       <div style={{ maxWidth: 660, margin: '0 auto', padding: '16px 16px 20px' }}>
         {/* Marks badge */}
         <div style={{ display: 'inline-flex', alignItems: 'center', background: `${color}18`, border: `1px solid ${color}44`, borderRadius: 99, padding: '4px 13px', marginBottom: 14 }}>
-          <span style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontSize: '.78rem', fontWeight: 700, color }}>[{q.marks} mark{q.marks !== 1 ? 's' : ''}]</span>
+          <span style={{ fontFamily: "'Sora', sans-serif", fontSize: '.78rem', fontWeight: 700, color }}>[{q.marks} mark{q.marks !== 1 ? 's' : ''}]</span>
         </div>
 
         {/* Chemistry diagram image */}
@@ -2536,15 +2537,15 @@ function ChemistryTopicView({ group, onBack, qIdx: initialQIdx = 0, onQChange })
 
         {/* Question */}
         <div style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 16, padding: '18px', marginBottom: 14 }}>
-          <pre style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '1rem', lineHeight: 1.7, margin: 0, color: '#E0E6F0', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{q.q}</pre>
+          <pre style={{ fontFamily: "'Outfit', sans-serif", fontSize: '1rem', lineHeight: 1.7, margin: 0, color: '#E0E6F0', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{q.q}</pre>
         </div>
 
         {/* Skill tip */}
         {!showTip
-          ? <button onClick={() => setTip(true)} style={{ background: 'transparent', border: '1px dashed #2A3552', borderRadius: 10, padding: '9px 14px', cursor: 'pointer', color: '#4A5578', fontSize: '.82rem', fontFamily: "'Plus Jakarta Sans',sans-serif", width: '100%', marginBottom: 14 }}>💡 How many marks do I need to earn?</button>
+          ? <button onClick={() => setTip(true)} style={{ background: 'transparent', border: '1px dashed #2A3552', borderRadius: 10, padding: '9px 14px', cursor: 'pointer', color: '#4A5578', fontSize: '.82rem', fontFamily: "'Outfit', sans-serif", width: '100%', marginBottom: 14 }}>💡 How many marks do I need to earn?</button>
           : <div style={{ background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.18)', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
-              <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#FFC857', marginBottom: 5 }}>{q.marks}-mark question</div>
-              <p style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", margin: 0, fontSize: '.86rem', color: '#C8D0E8', lineHeight: 1.55 }}>{CHEM_TIPS[q.marks] || CHEM_TIPS[4]}</p>
+              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#FFC857', marginBottom: 5 }}>{q.marks}-mark question</div>
+              <p style={{ fontFamily: "'Outfit', sans-serif", margin: 0, fontSize: '.86rem', color: '#C8D0E8', lineHeight: 1.55 }}>{CHEM_TIPS[q.marks] || CHEM_TIPS[4]}</p>
             </div>
         }
 
@@ -2553,44 +2554,44 @@ function ChemistryTopicView({ group, onBack, qIdx: initialQIdx = 0, onQChange })
           (q.type === 'mc' || q.type === 'mc_multi')
             ? <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
                 {q.options.map((opt, i) => (
-                  <button key={i} onClick={() => setAnswer(opt)} style={{ background: answer === opt ? `${color}18` : '#151720', border: `1.5px solid ${answer === opt ? color : 'rgba(255,255,255,0.08)'}`, borderRadius: 12, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.93rem', color: answer === opt ? color : '#C8D0E8', transition: 'all .15s', display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <button key={i} onClick={() => setAnswer(opt)} style={{ background: answer === opt ? `${color}18` : '#151720', border: `1.5px solid ${answer === opt ? color : 'rgba(255,255,255,0.08)'}`, borderRadius: 12, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', fontFamily: "'Outfit', sans-serif", fontSize: '.93rem', color: answer === opt ? color : '#C8D0E8', transition: 'all .15s', display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span style={{ width: 24, height: 24, borderRadius: '50%', border: `1.5px solid ${answer === opt ? color : 'rgba(255,255,255,0.1)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '.72rem', fontWeight: 700, color: answer === opt ? color : '#4A5578', background: answer === opt ? `${color}18` : 'transparent' }}>{String.fromCharCode(65+i)}</span>
                     {opt}
                   </button>
                 ))}
               </div>
             : <div style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 14, padding: '14px', marginBottom: 16 }}>
-                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A5578', marginBottom: 8 }}>Your answer</div>
-                <textarea value={answer} onChange={e => setAnswer(e.target.value)} placeholder="Write your answer here. Show any working…" style={{ width: '100%', border: 'none', background: 'transparent', resize: 'none', fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.95rem', color: '#E0E6F0', lineHeight: 1.7, outline: 'none', minHeight: q.marks >= 4 ? 160 : q.marks >= 2 ? 100 : 65 }} />
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A5578', marginBottom: 8 }}>Your answer</div>
+                <textarea value={answer} onChange={e => setAnswer(e.target.value)} placeholder="Write your answer here. Show any working…" style={{ width: '100%', border: 'none', background: 'transparent', resize: 'none', fontFamily: "'Outfit', sans-serif", fontSize: '.95rem', color: '#E0E6F0', lineHeight: 1.7, outline: 'none', minHeight: q.marks >= 4 ? 160 : q.marks >= 2 ? 100 : 65 }} />
               </div>
         )}
 
         {/* Error */}
-        {error && <div style={{ background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.3)', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}><p style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", margin: 0, fontSize: '.86rem', color: '#FF5D73' }}>{error}</p></div>}
+        {error && <div style={{ background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.3)', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}><p style={{ fontFamily: "'Outfit', sans-serif", margin: 0, fontSize: '.86rem', color: '#FF5D73' }}>{error}</p></div>}
 
         {/* Feedback */}
         {feedback && gs && (
           <div className="fade-up">
             <div style={{ background: gs.bg, border: `2px solid ${gs.border}`, borderRadius: 18, padding: '20px', marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontSize: '2rem', fontWeight: 800, color: gs.text, lineHeight: 1 }}>{feedback.marksAwarded}<span style={{ fontSize: '1.1rem', opacity: .5 }}>/{feedback.marksAvailable}</span></div>
-                <div style={{ background: gs.badge, color: '#000', borderRadius: 99, padding: '5px 14px', fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.8rem' }}>{feedback.grade}</div>
+                <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '2rem', fontWeight: 800, color: gs.text, lineHeight: 1 }}>{feedback.marksAwarded}<span style={{ fontSize: '1.1rem', opacity: .5 }}>/{feedback.marksAvailable}</span></div>
+                <div style={{ background: gs.badge, color: '#000', borderRadius: 99, padding: '5px 14px', fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.8rem' }}>{feedback.grade}</div>
               </div>
-              <p style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.9rem', color: gs.text, margin: 0, lineHeight: 1.55, opacity: .9 }}>{feedback.summary}</p>
+              <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.9rem', color: gs.text, margin: 0, lineHeight: 1.55, opacity: .9 }}>{feedback.summary}</p>
             </div>
-            {feedback.achieved?.length > 0 && <div style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 13, padding: '14px', marginBottom: 8 }}><div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4DFF88', marginBottom: 10 }}>✓ What you got right</div>{feedback.achieved.map((a,i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}><span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span><p style={{ margin: 0, fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{a}</p></div>)}</div>}
-            {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && <div style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 13, padding: '14px', marginBottom: 8 }}><div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#FF5D73', marginBottom: 10 }}>→ Next time, also include</div>{feedback.missed.map((m,i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}><span style={{ color: '#FF5D73', flexShrink: 0 }}>→</span><p style={{ margin: 0, fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{m}</p></div>)}</div>}
-            {feedback.examinerTip && <div style={{ background: 'rgba(245,183,0,.05)', border: '1px solid rgba(245,183,0,.18)', borderRadius: 13, padding: '14px', marginBottom: 16 }}><div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#F5B700', marginBottom: 6 }}>🗡️ Examiner tip</div><p style={{ margin: 0, fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{feedback.examinerTip}</p></div>}
+            {feedback.achieved?.length > 0 && <div style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 13, padding: '14px', marginBottom: 8 }}><div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4DFF88', marginBottom: 10 }}>✓ What you got right</div>{feedback.achieved.map((a,i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}><span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span><p style={{ margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{a}</p></div>)}</div>}
+            {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && <div style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 13, padding: '14px', marginBottom: 8 }}><div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#FF5D73', marginBottom: 10 }}>→ Next time, also include</div>{feedback.missed.map((m,i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}><span style={{ color: '#FF5D73', flexShrink: 0 }}>→</span><p style={{ margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{m}</p></div>)}</div>}
+            {feedback.examinerTip && <div style={{ background: 'rgba(245,183,0,.05)', border: '1px solid rgba(245,183,0,.18)', borderRadius: 13, padding: '14px', marginBottom: 16 }}><div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#F5B700', marginBottom: 6 }}>🗡️ Examiner tip</div><p style={{ margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{feedback.examinerTip}</p></div>}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              <button onClick={reset} style={{ background: '#151720', border: '1px solid #2A3552', borderRadius: 13, padding: '14px', fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#9CA8C7', fontSize: '.88rem' }}>↩ Try again</button>
-              <button onClick={next} style={{ background: `linear-gradient(135deg, ${color}cc, ${color})`, border: 'none', borderRadius: 13, padding: '14px', fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#fff', fontSize: '.88rem', boxShadow: `0 4px 16px ${color}44` }}>{qIdx < qs.length-1 ? 'Next →' : 'Finish ✓'}</button>
+              <button onClick={reset} style={{ background: '#151720', border: '1px solid #2A3552', borderRadius: 13, padding: '14px', fontFamily: "'Sora', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#9CA8C7', fontSize: '.88rem' }}>↩ Try again</button>
+              <button onClick={next} style={{ background: `linear-gradient(135deg, ${color}cc, ${color})`, border: 'none', borderRadius: 13, padding: '14px', fontFamily: "'Sora', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#fff', fontSize: '.88rem', boxShadow: `0 4px 16px ${color}44` }}>{qIdx < qs.length-1 ? 'Next →' : 'Finish ✓'}</button>
             </div>
           </div>
         )}
 
         {/* Submit */}
         {!feedback && (
-          <button onClick={grade} disabled={grading} style={{ width: '100%', background: grading ? 'rgba(255,255,255,0.08)' : `linear-gradient(135deg, ${color}cc, ${color})`, color: grading ? '#4A5578' : '#fff', border: 'none', borderRadius: 13, padding: '16px', fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, cursor: grading ? 'default' : 'pointer', fontSize: '1rem', marginTop: 4, boxShadow: grading ? 'none' : `0 4px 20px ${color}44`, transition: 'all .2s' }}>
+          <button onClick={grade} disabled={grading} style={{ width: '100%', background: grading ? 'rgba(255,255,255,0.08)' : `linear-gradient(135deg, ${color}cc, ${color})`, color: grading ? '#4A5578' : '#fff', border: 'none', borderRadius: 13, padding: '16px', fontFamily: "'Sora', sans-serif", fontWeight: 700, cursor: grading ? 'default' : 'pointer', fontSize: '1rem', marginTop: 4, boxShadow: grading ? 'none' : `0 4px 20px ${color}44`, transition: 'all .2s' }}>
             {grading ? '⏳ Marking your answer…' : 'Check my answer →'}
           </button>
         )}
@@ -2626,8 +2627,8 @@ function ChemistryBrowser({ onBack }) {
           <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
           <img src="/headers/chem-logo.png" alt="Chemistry" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Chemistry Foundation</div>
-            <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.72rem', color: '#5A6480' }}>Papers 1 & 2 · {CHEMISTRY_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked · Diagrams included</div>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Chemistry Foundation</div>
+            <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.72rem', color: '#5A6480' }}>Papers 1 & 2 · {CHEMISTRY_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked · Diagrams included</div>
           </div>
         </div>
       </div>
@@ -2635,7 +2636,7 @@ function ChemistryBrowser({ onBack }) {
       <div style={{ maxWidth: 660, margin: '0 auto', padding: '16px 16px' }}>
         <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
           {filters.map(f => (
-            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex: 1, background: filter === f.id ? 'rgba(56,210,122,.15)' : '#151720', border: `1px solid ${filter === f.id ? '#38D27A' : 'rgba(255,255,255,0.08)'}`, borderRadius: 10, padding: '9px 6px', fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.73rem', fontWeight: 600, color: filter === f.id ? '#38D27A' : '#5A6480', cursor: 'pointer' }}>{f.label}</button>
+            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex: 1, background: filter === f.id ? 'rgba(56,210,122,.15)' : '#151720', border: `1px solid ${filter === f.id ? '#38D27A' : 'rgba(255,255,255,0.08)'}`, borderRadius: 10, padding: '9px 6px', fontFamily: "'Outfit', sans-serif", fontSize: '.73rem', fontWeight: 600, color: filter === f.id ? '#38D27A' : '#5A6480', cursor: 'pointer' }}>{f.label}</button>
           ))}
         </div>
 
@@ -2653,12 +2654,12 @@ function ChemistryBrowser({ onBack }) {
                 })()} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
-                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
+                <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
                 <div style={{ display: 'flex', gap: 8, marginTop: 7, alignItems: 'center' }}>
                   <div style={{ flex: 1, height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 99 }} />
-                  <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.68rem', fontWeight: 600, color: group.color, flexShrink: 0 }}>{group.questions.length} Q{group.questions.length !== 1 ? 's' : ''}</span>
-                  <span style={{ background: group.calculator ? 'rgba(56,210,122,.12)' : 'rgba(255,200,87,.08)', border: group.calculator ? '1px solid rgba(56,210,122,.25)' : '1px solid rgba(255,200,87,.2)', borderRadius:6, padding:'2px 8px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.6rem', fontWeight:700, color: group.calculator ? '#38D27A' : '#FFC857', flexShrink:0 }}>{group.calculator ? '🖩 Calc OK' : '✏️ No Calc'}</span>
+                  <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.68rem', fontWeight: 600, color: group.color, flexShrink: 0 }}>{group.questions.length} Q{group.questions.length !== 1 ? 's' : ''}</span>
+                  <span style={{ background: group.calculator ? 'rgba(56,210,122,.12)' : 'rgba(255,200,87,.08)', border: group.calculator ? '1px solid rgba(56,210,122,.25)' : '1px solid rgba(255,200,87,.2)', borderRadius:6, padding:'2px 8px', fontFamily:"'Outfit', sans-serif", fontSize:'.6rem', fontWeight:700, color: group.calculator ? '#38D27A' : '#FFC857', flexShrink:0 }}>{group.calculator ? '🖩 Calc OK' : '✏️ No Calc'}</span>
                 </div>
               </div>
               <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: '1.1rem', flexShrink: 0 }}>›</span>
@@ -3133,9 +3134,9 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     return (
       <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 25%, rgba(101,230,198,0.12), transparent 45%), #060816', display:'flex', alignItems:'center', justifyContent:'center', color:'#F5F7FB' }}>
         <div style={{ textAlign:'center' }}>
-          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", color:'#7A7670', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:24 }}>90 Second Quick Fire</div>
-          <div key={quickFireCountdown} style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize: quickFireCountdown === 'GO' ? '5rem' : '7.5rem', fontWeight:900, color: quickFireCountdown === 'GO' ? '#65E6C6' : '#F4EFE6', textShadow: quickFireCountdown === 'GO' ? '0 0 48px rgba(101,230,198,0.75)' : '0 0 32px rgba(255,255,255,0.2)', animation:'examPop .8s ease both' }}>{quickFireCountdown}</div>
-          <div style={{ color:'#4B5563', marginTop:20, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem' }}>Answer as many as you can.</div>
+          <div style={{ fontFamily:"'Outfit', sans-serif", color:'#7A7670', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:24 }}>90 Second Quick Fire</div>
+          <div key={quickFireCountdown} style={{ fontFamily:"'Sora', sans-serif", fontSize: quickFireCountdown === 'GO' ? '5rem' : '7.5rem', fontWeight:900, color: quickFireCountdown === 'GO' ? '#65E6C6' : '#F4EFE6', textShadow: quickFireCountdown === 'GO' ? '0 0 48px rgba(101,230,198,0.75)' : '0 0 32px rgba(255,255,255,0.2)', animation:'examPop .8s ease both' }}>{quickFireCountdown}</div>
+          <div style={{ color:'#4B5563', marginTop:20, fontFamily:"'Outfit', sans-serif", fontSize:'.88rem' }}>Answer as many as you can.</div>
           <style>{'@keyframes examPop { 0%{opacity:0;transform:scale(.7)} 50%{opacity:1;transform:scale(1.1)} 100%{opacity:1;transform:scale(1)} }'}</style>
         </div>
       </div>
@@ -3150,9 +3151,9 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
       return (
         <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 20%, rgba(157,92,255,.2), transparent 38%), #050817', display:'flex', alignItems:'center', justifyContent:'center', color:'#F5F7FB', padding:24 }}>
           <div style={{ textAlign:'center' }}>
-            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", color:'#AAB4D4', fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:20 }}>{examConfig?.title || 'Exam Mode'}</div>
-            <div key={examCountdown} style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize: examCountdown === 'GO' ? '5rem' : '7rem', fontWeight:950, color: examCountdown === 'GO' ? '#38F27B' : '#C18CFF', textShadow:'0 0 42px rgba(157,92,255,.72)', animation:'examPop .85s ease both' }}>{examCountdown}</div>
-            <div style={{ color:'#7C8DB0', marginTop:18, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>Breathe. Read the command word first.</div>
+            <div style={{ fontFamily:"'Outfit', sans-serif", color:'#AAB4D4', fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:20 }}>{examConfig?.title || 'Exam Mode'}</div>
+            <div key={examCountdown} style={{ fontFamily:"'Sora', sans-serif", fontSize: examCountdown === 'GO' ? '5rem' : '7rem', fontWeight:950, color: examCountdown === 'GO' ? '#38F27B' : '#C18CFF', textShadow:'0 0 42px rgba(157,92,255,.72)', animation:'examPop .85s ease both' }}>{examCountdown}</div>
+            <div style={{ color:'#7C8DB0', marginTop:18, fontFamily:"'Outfit', sans-serif" }}>Breathe. Read the command word first.</div>
             <style>{'@keyframes examPop { 0%{opacity:0;transform:scale(.72)} 45%{opacity:1;transform:scale(1.08)} 100%{opacity:1;transform:scale(1)} }'}</style>
           </div>
         </div>
@@ -3166,10 +3167,10 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
           <div style={{ position:'sticky', top:0, zIndex:50, background:'rgba(8,9,13,0.96)', backdropFilter:'blur(16px)', borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 16px', display:'flex', alignItems:'center', gap:12, boxSizing:'border-box' }}>
             <button onClick={() => setExamPhase('summary')} style={{ width:36, height:36, borderRadius:'50%', border:'1px solid rgba(80,97,140,.4)', background:'rgba(12,18,38,.9)', color:'#DCE5FA', fontSize:'1.1rem', cursor:'pointer', flexShrink:0 }}>‹</button>
             <div style={{ flex:1 }}>
-              <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F4EFE6' }}>{examConfig?.title}</div>
+              <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F4EFE6' }}>{examConfig?.title}</div>
               <div style={{ color:'#4B5563', fontSize:'.72rem' }}>{examQuestions.length} questions · scroll to answer all</div>
             </div>
-            <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.18)' : 'rgba(139,92,246,.18)', border:'1px solid '+(examTimeLeft<60?'rgba(255,93,115,.5)':'rgba(139,92,246,.4)'), borderRadius:999, color:examTimeLeft<60?'#FF5D73':'#C4B5FD', fontFamily:"'Clash Display','Plus Jakarta Sans',sans-serif", fontWeight:900, padding:'7px 14px', fontSize:'1rem', flexShrink:0 }}>{examTime}</div>
+            <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.18)' : 'rgba(139,92,246,.18)', border:'1px solid '+(examTimeLeft<60?'rgba(255,93,115,.5)':'rgba(139,92,246,.4)'), borderRadius:999, color:examTimeLeft<60?'#FF5D73':'#C4B5FD', fontFamily:"'Sora', sans-serif", fontWeight:900, padding:'7px 14px', fontSize:'1rem', flexShrink:0 }}>{examTime}</div>
           </div>
 
           {/* Scrollable paper */}
@@ -3183,7 +3184,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
                 <div key={idx} style={{ marginBottom:24, background:'rgba(17,24,39,0.6)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:20, overflow:'hidden' }}>
                   {/* Question header */}
                   <div style={{ padding:'14px 16px 0', display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:8 }}>
-                    <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.72rem', color:'#6B7280', fontWeight:600 }}>Q{idx+1} · {q.subject}</div>
+                    <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.72rem', color:'#6B7280', fontWeight:600 }}>Q{idx+1} · {q.subject}</div>
                     <div style={{ background:'rgba(245,183,0,.1)', border:'1px solid rgba(245,183,0,.22)', borderRadius:999, color:'#F5B700', fontSize:'.68rem', fontWeight:800, padding:'2px 8px', flexShrink:0 }}>{q.marks} mark{q.marks!==1?'s':''}</div>
                   </div>
                   {/* Extracts / figures */}
@@ -3191,7 +3192,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
                   {q.fig && FIGURES[q.fig] && <div style={{ margin:'10px 16px 0', textAlign:'center' }}><img src={FIGURES[q.fig]} alt="" style={{ maxWidth:'100%', borderRadius:8 }} /></div>}
                   {q.imageKey && <div style={{ margin:'8px 16px 0' }}><ChemImage imageKey={q.imageKey} /></div>}
                   {/* Question text */}
-                  <div style={{ padding:'12px 16px', fontFamily:"'Clash Display','Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'1rem', lineHeight:1.45, whiteSpace:'pre-wrap' }}>{q.q}</div>
+                  <div style={{ padding:'12px 16px', fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem', lineHeight:1.45, whiteSpace:'pre-wrap' }}>{q.q}</div>
                   {/* Answer area */}
                   <div style={{ padding:'0 16px 16px' }}>
                     {isMC ? (
@@ -3224,8 +3225,8 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
       return (
         <div style={{ minHeight:'100vh', background:'#08090D', color:'#F5F7FB', padding:'28px 20px 120px' }}>
           <div style={{ maxWidth:520, margin:'0 auto', textAlign:'center' }}>
-            <div style={{ width:150, height:150, borderRadius:'50%', margin:'0 auto 22px', background:'conic-gradient(#38F27B ' + examAccuracy + '%, #172845 0)', display:'grid', placeItems:'center' }}><div style={{ width:122, height:122, borderRadius:'50%', background:'#071126', display:'grid', placeItems:'center' }}><div><div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'2.4rem', fontWeight:950 }}>{examAccuracy}%</div><div style={{ color:'#AAB4D4', fontWeight:800 }}>{examStats.correct}/{examStats.answered || 0}</div></div></div></div>
-            <h1 style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'2rem', margin:'0 0 8px' }}>Exam round complete</h1>
+            <div style={{ width:150, height:150, borderRadius:'50%', margin:'0 auto 22px', background:'conic-gradient(#38F27B ' + examAccuracy + '%, #172845 0)', display:'grid', placeItems:'center' }}><div style={{ width:122, height:122, borderRadius:'50%', background:'#071126', display:'grid', placeItems:'center' }}><div><div style={{ fontFamily:"'Sora', sans-serif", fontSize:'2.4rem', fontWeight:950 }}>{examAccuracy}%</div><div style={{ color:'#AAB4D4', fontWeight:800 }}>{examStats.correct}/{examStats.answered || 0}</div></div></div></div>
+            <h1 style={{ fontFamily:"'Sora', sans-serif", fontSize:'2rem', margin:'0 0 8px' }}>Exam round complete</h1>
             <p style={{ color:'#AAB4D4', margin:'0 0 22px' }}>Adaptive questions mixed stronger areas with weak zones.</p>
             <div style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:18, padding:18, marginBottom:20, textAlign:'left' }}>
               {Object.entries(examStats.bySubject).map(([subject, stats]) => <div key={subject} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'9px 0', borderBottom:'1px solid rgba(255,255,255,.06)' }}><span>{subject}</span><strong>{stats.correct}/{stats.answered}</strong></div>)}
@@ -3401,13 +3402,13 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
               display:'grid', placeItems:'center', boxShadow:'0 0 34px rgba(56,242,123,.18)',
             }}>
               <div style={{ width:142, height:142, borderRadius:'50%', background:'#071126', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', boxShadow:'inset 0 0 24px rgba(0,0,0,.45)' }}>
-                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'2.65rem', fontWeight:900, lineHeight:1 }}>{accuracy}%</div>
+                <div style={{ fontFamily:"'Sora', sans-serif", fontSize:'2.65rem', fontWeight:900, lineHeight:1 }}>{accuracy}%</div>
                 <div style={{ color:'#AAB4D4', fontSize:'.9rem', fontWeight:700, marginTop:5 }}>{quickFireSummary.correct} / {quickFireSummary.answered || 0}</div>
                 <div style={{ color:'#38F27B', fontSize:'.86rem', fontWeight:900, marginTop:4 }}>Correct</div>
               </div>
             </div>
             <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:9 }}>
-              <h1 style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'2.1rem', lineHeight:1.05, margin:0, color:'#F5F7FB' }}>{accuracy >= 60 ? 'Great work!' : 'Keep going!'}</h1>
+              <h1 style={{ fontFamily:"'Sora', sans-serif", fontSize:'2.1rem', lineHeight:1.05, margin:0, color:'#F5F7FB' }}>{accuracy >= 60 ? 'Great work!' : 'Keep going!'}</h1>
               <span style={{ color:'#F5B700', fontSize:'1.45rem' }}>✩</span>
             </div>
             <p style={{ color:'#AAB4D4', fontSize:'.96rem', margin:'10px 0 0', lineHeight:1.45 }}>{encouragement}<br /><span style={{ color:'#38F27B', fontWeight:900 }}>{actionLine}</span></p>
@@ -3415,7 +3416,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
           <div style={{ background:'linear-gradient(145deg, rgba(16,24,43,.96), rgba(9,15,31,.96))', border:'1px solid rgba(62,78,118,.55)', borderRadius:18, padding:'18px 18px 14px', marginBottom:16, boxShadow:'0 14px 36px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.04)' }}>
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16 }}>
-              <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:800, fontSize:'1rem' }}>Performance by subject</div>
+              <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:800, fontSize:'1rem' }}>Performance by subject</div>
               <button onClick={exitTestTopic} style={{ border:'none', background:'transparent', color:'#AAB4D4', fontSize:'.8rem', cursor:'pointer' }}>View all ›</button>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
@@ -3449,7 +3450,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
             </div>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
-                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", color:'#F5F7FB', fontWeight:850, fontSize:'1rem' }}>Recommended next</div>
+                <div style={{ fontFamily:"'Sora', sans-serif", color:'#F5F7FB', fontWeight:850, fontSize:'1rem' }}>Recommended next</div>
                 <span style={{ background:'rgba(255,92,122,.18)', color:'#FF5C7A', borderRadius:999, padding:'5px 10px', fontSize:'.7rem', fontWeight:900 }}>🎯 Priority</span>
               </div>
               <div style={{ color:'#EAF0FF', fontWeight:850, fontSize:'.95rem' }}>{recommendation.subject} – {recommendation.topic}</div>
@@ -3461,7 +3462,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
           <button onClick={startRandomQuestion} style={{ width:'100%', border:'none', borderRadius:17, background:'linear-gradient(135deg,#38F27B,#2DD4A3)', color:'#03140B', padding:'20px 22px', display:'flex', alignItems:'center', gap:18, cursor:'pointer', boxShadow:'0 18px 36px rgba(45,212,163,.24)', marginBottom:18 }}>
             <span style={{ fontSize:'2rem', lineHeight:1 }}>↻</span>
             <span style={{ textAlign:'left' }}>
-              <span style={{ display:'block', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'1.25rem', fontWeight:950, letterSpacing:'.02em' }}>TRY AGAIN</span>
+              <span style={{ display:'block', fontFamily:"'Sora', sans-serif", fontSize:'1.25rem', fontWeight:950, letterSpacing:'.02em' }}>TRY AGAIN</span>
               <span style={{ display:'block', fontSize:'.86rem', fontWeight:750, marginTop:3 }}>Focus on {recommendation.subject} & {recommendation.topic} · ~3 mins</span>
             </span>
           </button>
@@ -3481,11 +3482,11 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
           <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
             <button onClick={() => isQuickFire ? finishQuickFireRound('exit') : exitTestTopic()} style={{ background:isQuickFire?'rgba(255,93,115,.1)':'none', border:isQuickFire?'1px solid rgba(255,93,115,.24)':'none', borderRadius:isQuickFire?999:0, cursor:'pointer', color:isQuickFire?'#FF5D73':'#5A6480', fontSize:isQuickFire?'.72rem':'1.1rem', fontWeight:isQuickFire?800:400, padding:isQuickFire?'6px 10px':0 }}>{isQuickFire ? 'Exit' : '←'}</button>
             <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
-              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.7rem', color:'#5A6480' }}>Question {qIdx+1} of {questions.length}</div>
+              <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
+              <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.7rem', color:'#5A6480' }}>Question {qIdx+1} of {questions.length}</div>
             </div>
             {isQuickFire && (
-              <div style={{ background: quickFireTimeLeft <= 10 ? 'rgba(255,93,115,.12)' : 'rgba(157,92,255,.12)', border: quickFireTimeLeft <= 10 ? '1px solid rgba(255,93,115,.36)' : '1px solid rgba(157,92,255,.3)', borderRadius: 999, padding: '6px 10px', color: quickFireTimeLeft <= 10 ? '#FF5D73' : '#C18CFF', fontFamily: "'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight: 900, fontSize: '.86rem', minWidth: 58, textAlign: 'center' }}>
+              <div style={{ background: quickFireTimeLeft <= 10 ? 'rgba(255,93,115,.12)' : 'rgba(157,92,255,.12)', border: quickFireTimeLeft <= 10 ? '1px solid rgba(255,93,115,.36)' : '1px solid rgba(157,92,255,.3)', borderRadius: 999, padding: '6px 10px', color: quickFireTimeLeft <= 10 ? '#FF5D73' : '#C18CFF', fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: '.86rem', minWidth: 58, textAlign: 'center' }}>
                 {quickFireTime}
               </div>
             )}
@@ -3502,22 +3503,22 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
         <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
           {q && <>
             <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(245,183,0,.1)', border:'1px solid rgba(245,183,0,.25)', borderRadius:99, padding:'4px 12px', marginBottom:14 }}>
-              <span style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', fontWeight:700, color:'#F5B700' }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
+              <span style={{ fontFamily:"'Sora', sans-serif", fontSize:'.75rem', fontWeight:700, color:'#F5B700' }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
             </div>
             {q.fig && FIGURES[q.fig] && (
               <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'12px', marginBottom:14, textAlign:'center' }}>
-                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em', color:'#5A6480', marginBottom:8 }}>Figure — from AQA past paper</div>
+                <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em', color:'#5A6480', marginBottom:8 }}>Figure — from AQA past paper</div>
                 <img src={FIGURES[q.fig]} alt="AQA exam figure" style={{ maxWidth:'100%', height:'auto', borderRadius:8 }} />
               </div>
             )}
             <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:14, padding:'16px', marginBottom:14 }}>
-              <pre style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
+              <pre style={{ fontFamily:"'Outfit', sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
             </div>
             {!showTip
-              ? <button onClick={() => setTip(true)} style={{ background:'none', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Plus Jakarta Sans',sans-serif", width:'100%', marginBottom:14 }}>💡 Show mark tip</button>
+              ? <button onClick={() => setTip(true)} style={{ background:'none', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Outfit', sans-serif", width:'100%', marginBottom:14 }}>💡 Show mark tip</button>
               : <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}>
-                  <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:5 }}>{q.marks}-mark question</div>
-                  <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", margin:0, fontSize:'.85rem', color:'#C8D0E8' }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
+                  <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:5 }}>{q.marks}-mark question</div>
+                  <p style={{ fontFamily:"'Outfit', sans-serif", margin:0, fontSize:'.85rem', color:'#C8D0E8' }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
                 </div>
             }
             {!feedback && !tqMcLocked && (
@@ -3526,18 +3527,18 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
                     {/* Hint card after first wrong MC */}
                     {tqMcHint && (
                       <div style={{ background:'rgba(255,200,87,.06)', border:'1px solid rgba(255,200,87,.28)', borderRadius:14, padding:'14px 16px', marginBottom:12 }}>
-                        <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857', marginBottom:8 }}>💡 Have another look</div>
-                        <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem', color:'#C8D0E8', margin:'0 0 4px', lineHeight:1.55 }}>
+                        <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857', marginBottom:8 }}>💡 Have another look</div>
+                        <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.88rem', color:'#C8D0E8', margin:'0 0 4px', lineHeight:1.55 }}>
                           {q.hint || (q.ms ? q.ms.split('.')[0] + '.' : 'Think carefully — what is the question specifically asking about?')}
                         </p>
-                        <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.78rem', color:'#FFC857', margin:0, fontStyle:'italic' }}>
+                        <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.78rem', color:'#FFC857', margin:0, fontStyle:'italic' }}>
                           You have one more try — you can get this.
                         </p>
                       </div>
                     )}
                     <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
                       {q.options.map((opt,i) => (
-                        <button key={i} onClick={() => setAnswer(opt)} style={{ background:answer===opt?'rgba(245,183,0,.1)':'#151720', border:`1.5px solid ${answer===opt?'#F5B700':'rgba(255,255,255,0.08)'}`, borderRadius:12, padding:'13px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.93rem', color:answer===opt?'#F5B700':'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
+                        <button key={i} onClick={() => setAnswer(opt)} style={{ background:answer===opt?'rgba(245,183,0,.1)':'#151720', border:`1.5px solid ${answer===opt?'#F5B700':'rgba(255,255,255,0.08)'}`, borderRadius:12, padding:'13px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Outfit', sans-serif", fontSize:'.93rem', color:answer===opt?'#F5B700':'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
                           <span style={{ width:22, height:22, borderRadius:'50%', border:`1.5px solid ${answer===opt?'#F5B700':'rgba(255,255,255,0.1)'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.72rem', fontWeight:700, color:answer===opt?'#F5B700':'#4A5578', background:answer===opt?'rgba(245,183,0,.1)':'transparent' }}>{String.fromCharCode(65+i)}</span>
                           {opt}
                         </button>
@@ -3545,32 +3546,32 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
                     </div>
                   </div>
                 : <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:14 }}>
-                    <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>Your answer</div>
-                    <textarea value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Write your answer here…" style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.92rem', color:'#E0E6F0', lineHeight:1.65, outline:'none', minHeight:q.marks>=6?180:q.marks>=3?120:80 }} />
+                    <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>Your answer</div>
+                    <textarea value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Write your answer here…" style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Outfit', sans-serif", fontSize:'.92rem', color:'#E0E6F0', lineHeight:1.65, outline:'none', minHeight:q.marks>=6?180:q.marks>=3?120:80 }} />
                   </div>
             )}
-            {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73' }}>{error}</p></div>}
+            {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Outfit', sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73' }}>{error}</p></div>}
             {feedback && gs && (
               <div className="fade-up">
                 <div style={{ background:gs.bg, border:`2px solid ${gs.border}`, borderRadius:16, padding:'18px', marginBottom:12 }}>
                   <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
-                    <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'1.8rem', fontWeight:800, color:gs.text, lineHeight:1 }}>{feedback.marksAwarded}<span style={{ fontSize:'1rem', opacity:.6 }}>/{feedback.marksAvailable}</span></div>
-                    <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.82rem' }}>{feedback.grade}</div>
+                    <div style={{ fontFamily:"'Sora', sans-serif", fontSize:'1.8rem', fontWeight:800, color:gs.text, lineHeight:1 }}>{feedback.marksAwarded}<span style={{ fontSize:'1rem', opacity:.6 }}>/{feedback.marksAvailable}</span></div>
+                    <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.82rem' }}>{feedback.grade}</div>
                   </div>
-                  <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.9rem', color:gs.text, margin:0, opacity:.85 }}>{feedback.summary}</p>
+                  <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.9rem', color:gs.text, margin:0, opacity:.85 }}>{feedback.summary}</p>
                 </div>
-                {feedback.achieved?.length > 0 && feedback.achieved[0] !== 'Correct answer selected' && <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:8 }}>✓ What you got right</div>{feedback.achieved.map((a,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#4DFF88', flexShrink:0 }}>✓</span><p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{a}</p></div>)}</div>}
-                {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && feedback.missed[0] !== '' && <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#9CA8C7', marginBottom:8 }}>→ Worth knowing</div>{feedback.missed.map((m,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#9CA8C7', flexShrink:0 }}>→</span><p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{m}</p></div>)}</div>}
-                {feedback.examinerTip && feedback.examinerTip !== '' && <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:12, padding:'13px 14px', marginBottom:14 }}><div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div><p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{feedback.examinerTip}</p></div>}
+                {feedback.achieved?.length > 0 && feedback.achieved[0] !== 'Correct answer selected' && <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:8 }}>✓ What you got right</div>{feedback.achieved.map((a,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#4DFF88', flexShrink:0 }}>✓</span><p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{a}</p></div>)}</div>}
+                {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && feedback.missed[0] !== '' && <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#9CA8C7', marginBottom:8 }}>→ Worth knowing</div>{feedback.missed.map((m,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#9CA8C7', flexShrink:0 }}>→</span><p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{m}</p></div>)}</div>}
+                {feedback.examinerTip && feedback.examinerTip !== '' && <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:12, padding:'13px 14px', marginBottom:14 }}><div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div><p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{feedback.examinerTip}</p></div>}
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                  <button onClick={fullResetQ} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:12, padding:'13px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
-                  <button onClick={()=>tqNextQuestion(questions.length)} style={{ background:'linear-gradient(135deg,#F5B700,#C98719)', border:'none', borderRadius:12, padding:'13px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:'pointer', color:'#070500', fontSize:'.88rem' }}>{qIdx<questions.length-1?'Next →':'Finish ✓'}</button>
+                  <button onClick={fullResetQ} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:12, padding:'13px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
+                  <button onClick={()=>tqNextQuestion(questions.length)} style={{ background:'linear-gradient(135deg,#F5B700,#C98719)', border:'none', borderRadius:12, padding:'13px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:'#070500', fontSize:'.88rem' }}>{qIdx<questions.length-1?'Next →':'Finish ✓'}</button>
                 </div>
               </div>
             )}
             {!feedback && !tqMcLocked && (
               <button onClick={() => handleTqCheck(q)} disabled={grading || (isMC && !answer)}
-                style={{ width:'100%', background:grading?'rgba(255,255,255,0.08)':'linear-gradient(135deg,#F5B700,#C98719)', color:grading?'#5A6480':'#070500', border:'none', borderRadius:12, padding:'15px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:(grading||(isMC&&!answer))?'default':'pointer', fontSize:'.97rem', marginTop:4, opacity:(isMC&&!answer)?0.4:1 }}>
+                style={{ width:'100%', background:grading?'rgba(255,255,255,0.08)':'linear-gradient(135deg,#F5B700,#C98719)', color:grading?'#5A6480':'#070500', border:'none', borderRadius:12, padding:'15px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:(grading||(isMC&&!answer))?'default':'pointer', fontSize:'.97rem', marginTop:4, opacity:(isMC&&!answer)?0.4:1 }}>
                 {grading ? 'Marking…' : tqMcHint ? 'Check again — you can do this →' : 'Check my answer →'}
               </button>
             )}
@@ -3601,10 +3602,10 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
           <div>
             {!isExamMode && (
               <>
-                <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: '1.05rem', color: '#F4EFE6', lineHeight: 1.15 }}>
+                <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: '1.05rem', color: '#F4EFE6', lineHeight: 1.15 }}>
                   {isQuickFire ? '90s Quick Fire' : 'Practice Test'}
                 </div>
-                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 11, color: '#7A7670', marginTop: 2 }}>
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11, color: '#7A7670', marginTop: 2 }}>
                   {isQuickFire ? '90 seconds. Answer fast.' : 'Pick a topic to start'}
                 </div>
               </>
@@ -3632,23 +3633,23 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
             fontSize: '1.6rem', boxShadow: '0 0 18px rgba(101,230,198,0.22)',
           }}>⚡</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '1.1rem', color: '#F4EFE6', lineHeight: 1.15, marginBottom: 5 }}>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1.1rem', color: '#F4EFE6', lineHeight: 1.15, marginBottom: 5 }}>
               {isQuickFire ? '90s Quick Fire' : 'Random Quick Fire'}
             </div>
-            <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.78rem', color: '#65E6C6', fontWeight: 600, marginBottom: 4 }}>
+            <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.78rem', color: '#65E6C6', fontWeight: 600, marginBottom: 4 }}>
               {isQuickFire ? '90 seconds · Answer fast' : '90 seconds · All subjects · Mixed'}
             </div>
-            <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.72rem', color: '#5A6A50', lineHeight: 1.4 }}>
+            <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.72rem', color: '#5A6A50', lineHeight: 1.4 }}>
               Random questions from across your GCSE subjects — you never know what's coming.
             </div>
           </div>
-          <div style={{ flexShrink: 0, background: 'linear-gradient(135deg, #3D7A5E, #65E6C6)', borderRadius: 12, padding: '10px 14px', fontFamily: "'Plus Jakarta Sans',sans-serif", fontWeight: 800, fontSize: '.78rem', color: '#051209' }}>
+          <div style={{ flexShrink: 0, background: 'linear-gradient(135deg, #3D7A5E, #65E6C6)', borderRadius: 18, padding: '0 20px', height: 58, display: 'flex', alignItems: 'center', fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 20, letterSpacing: '-0.01em', color: '#051209', whiteSpace: 'nowrap' }}>
             {isQuickFire ? 'Start ⚡' : 'Go →'}
           </div>
         </button>
 
         {/* ── SELECT A TOPIC label ── */}
-        <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#7A7670', marginBottom: 14 }}>
+        <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7A7670', marginBottom: 14 }}>
           Or select a topic
         </div>
 
@@ -3675,7 +3676,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
               }} />
               {/* label */}
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 10px 10px', textAlign: 'left' }}>
-                <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.78rem', color: '#F4EFE6', lineHeight: 1.2 }}>{subj.label}</div>
+                <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 14, color: '#F5F7FF', lineHeight: '18px', letterSpacing: '-0.01em' }}>{subj.label}</div>
               </div>
               {/* accent top-left dot */}
               <div style={{ position: 'absolute', top: 9, left: 9, width: 6, height: 6, borderRadius: '50%', background: subj.color, boxShadow: `0 0 8px ${subj.color}` }} />
@@ -3685,12 +3686,12 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
         {/* ── REAL EXAM PAPERS ── */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 12 }}>Real Exam Papers</div>
+          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 12 }}>Real Exam Papers</div>
           <button style={{ width: '100%', boxSizing: 'border-box', background: '#0E1628', border: '1px solid #1E2A40', borderRadius: 24, padding: 20, display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer', textAlign: 'left' }}>
             <div style={{ width: 54, height: 54, borderRadius: 15, background: 'rgba(59,130,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>📋</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.92rem', color: '#F0F3FA' }}>Real Exam Papers</div>
-              <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.73rem', color: '#4A5578', marginTop: 3 }}>AQA & Edexcel timed papers</div>
+              <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.92rem', color: '#F0F3FA' }}>Real Exam Papers</div>
+              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.73rem', color: '#4A5578', marginTop: 3 }}>AQA & Edexcel timed papers</div>
             </div>
             <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: '1.05rem', flexShrink: 0 }}>›</span>
           </button>

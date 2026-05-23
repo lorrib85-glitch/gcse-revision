@@ -12,6 +12,33 @@
 | `history-elizabethan.png` | Queen Elizabeth I era, warm amber tones, dark left side |
 | `history-usa-conflict.png` | USA 1954–75 civil rights era, dark amber tones |
 | `history-spain-new-world.png` | Spanish conquistadors, dark left side |
+| `history-main.png` | History subject logo / hero image |
+| `bio-main.png` | Biology overview hero |
+| `bio-buildinglife.png` | Biology: Cells & Building Life |
+| `bio-humanmachine.png` | Biology: The Human Machine |
+| `bio-diseasewars.png` | Biology: Disease & Immunity |
+| `bio-energyforlife.png` | Biology: Energy for Life |
+| `bio-controlsystems.png` | Biology: Control Systems |
+| `bio-genetics.png` | Biology: Genetics & Evolution |
+| `bio-ecosystems.png` | Biology: Ecosystems |
+| `maths-main.png` | Maths subject logo / hero image |
+| `english-main.png` | English subject logo / hero image |
+| `english-macbeth.png` | English: Macbeth |
+| `english-inspector.png` | English: An Inspector Calls |
+| `english-poetry.png` | English: Poetry |
+| `english-reading.png` | English: Reading Between the Lines |
+| `sociology-main.png` | Sociology subject logo / hero image |
+| `sociology-family.png` | Sociology: Family |
+| `sociology-education.png` | Sociology: Education |
+| `sociology-crime.png` | Sociology: Crime & Deviance |
+| `sociology-stratification.png` | Sociology: Social Stratification |
+| `chem-logo.png` | Chemistry subject logo / hero image |
+| `physics-main.png` | Physics subject logo / hero image |
+| `physics-forces.png` | Physics: Forces & Motion |
+| `physics-energy.png` | Physics: Energy & Power |
+| `physics-waves.png` | Physics: Waves & Electricity |
+| `physics-space.png` | Physics: Space |
+| `physics-matter.png` | Physics: Matter & Particles |
 
 Images are already cinematic with dark left sides suitable for text overlay. Always use `.png` extension — never `.svg`.
 
@@ -56,7 +83,7 @@ This is a **premium streaming-platform experience** — think Apple TV, Spotify,
 
 | Token | Hex | Usage |
 |-------|-----|-------|
-| `text-primary` | `#F0EEF8` | Headings, key copy |
+| `text-primary` | `#F5F7FF` | Headings, key copy |
 | `text-secondary` | `#A89FC2` | Subheadings, labels |
 | `text-muted` | `#5E5874` | Captions, timestamps, disabled |
 
@@ -77,22 +104,38 @@ This is a **premium streaming-platform experience** — think Apple TV, Spotify,
 
 | Family | Source | Usage |
 |--------|--------|-------|
-| **Plus Jakarta Sans** | Google Fonts | All UI text — labels, body, buttons, nav |
-| **Clash Display** | Fontshare | Hero headings, module titles, large display text |
-| **Cormorant Garamond** | Google Fonts | History subject accents, era labels, pull quotes |
+| **Sora** | Google Fonts | All headings, display text, module titles, buttons, nav labels |
+| **Outfit** | Google Fonts | All UI text — body copy, subtitles, chips, captions, input fields |
+
+Load both via Google Fonts in `index.html`:
+
+```html
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+```
 
 ### Type Scale
 
-| Name | Size | Weight | Line Height | Usage |
-|------|------|--------|-------------|-------|
-| `display-xl` | 2rem (32px) | 700 | 1.1 | Hero module titles (Clash Display) |
-| `display-lg` | 1.6rem (25.6px) | 700 | 1.15 | Screen headings (Clash Display) |
-| `heading-md` | 1.15rem (18.4px) | 700 | 1.25 | Card titles (Plus Jakarta Sans) |
-| `heading-sm` | 1rem (16px) | 600 | 1.3 | Section labels |
-| `body-lg` | 0.95rem (15.2px) | 400 | 1.55 | Reading content |
-| `body-md` | 0.875rem (14px) | 400 | 1.5 | Standard body copy |
-| `label` | 0.75rem (12px) | 600 | 1.4 | Chips, tags, nav labels |
-| `caption` | 0.65rem (10.4px) | 500 | 1.4 | Timestamps, fine print |
+| Name | Size | Weight | Font | Line Height | Letter Spacing | Usage |
+|------|------|--------|------|-------------|----------------|-------|
+| `display-xl` | 42px | 800 | Sora | 1.05 | -0.02em | Hero screen headings (Home, Subjects greeting) |
+| `display-lg` | 32px | 700 | Sora | 1.1 | -0.02em | Section headings, browser headers |
+| `heading-md` | 20px | 700 | Sora | 1.2 | -0.01em | Card titles, module names |
+| `heading-sm` | 18px | 700 | Sora | 1.25 | -0.01em | Sub-headings, list item titles |
+| `button-lg` | 20px | 700 | Sora | 1 | -0.01em | Primary CTA buttons (height 58px) |
+| `button-sm` | 16px | 600 | Sora | 1 | normal | Secondary/ghost buttons |
+| `body-lg` | 16px | 500 | Outfit | 1.55 | normal | Reading content, descriptions |
+| `body-md` | 15px | 400 | Outfit | 1.5 | normal | Standard body copy |
+| `label` | 13px | 600 | Outfit | 1.4 | 0.14em | Section labels, category tags (uppercase) |
+| `nav` | 13px | 600/500 | Outfit | 1 | normal | Bottom nav labels (600 active, 500 inactive) |
+| `caption` | 12px | 500 | Outfit | 1.4 | normal | Chips, timestamps, fine print |
+
+### Rules
+
+- **Never mix Sora and Outfit on the same line** — headings are Sora, supporting copy is Outfit.
+- **Sora** is used wherever the element is the primary focal point of a hierarchy level.
+- **Outfit** is used for everything that supports or describes, never leads.
+- No italic styling in the UI — all text is upright.
+- Section labels (`label` style) must be UPPERCASE.
 
 ---
 
@@ -171,19 +214,21 @@ background: rgba(11, 16, 24, 0.92);
 
 ### Primary Button
 
-- Height: `52px`
+- Height: `58px`
 - Border radius: `18px`
 - Background: `linear-gradient(135deg, #1F9E7F 0%, #2BBE9A 100%)`
-- Text: `#F0EEF8`, `1rem`, weight `700`, Plus Jakarta Sans
+- Text: `#F5F7FF`, `20px`, weight `700`, Sora, letter-spacing `-0.01em`
 - No text shadow, no outer glow unless active
 
 ```css
-height: 52px;
+height: 58px;
 border-radius: 18px;
 background: linear-gradient(135deg, #1F9E7F 0%, #2BBE9A 100%);
-color: #F0EEF8;
-font-size: 1rem;
+color: #F5F7FF;
+font-size: 20px;
 font-weight: 700;
+font-family: 'Sora', sans-serif;
+letter-spacing: -0.01em;
 border: none;
 padding: 0 24px;
 ```
@@ -195,8 +240,9 @@ height: 48px;
 border-radius: 18px;
 background: rgba(255, 255, 255, 0.06);
 border: 1px solid rgba(255, 255, 255, 0.1);
-color: #F0EEF8;
+color: #F5F7FF;
 font-weight: 600;
+font-family: 'Sora', sans-serif;
 ```
 
 ### Ghost Button
@@ -208,6 +254,7 @@ background: transparent;
 border: 1px solid rgba(255, 255, 255, 0.12);
 color: #A89FC2;
 font-weight: 600;
+font-family: 'Outfit', sans-serif;
 ```
 
 ### Danger Button
@@ -219,6 +266,7 @@ background: rgba(224, 90, 82, 0.14);
 border: 1px solid rgba(224, 90, 82, 0.32);
 color: #E05A52;
 font-weight: 700;
+font-family: 'Sora', sans-serif;
 ```
 
 ---
@@ -275,6 +323,8 @@ align-items: flex-start;
 gap: 12px;
 ```
 
+Module card title: `font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.01em;`
+
 ### Lesson Content Card (reading/fact block)
 
 ```css
@@ -298,8 +348,9 @@ padding: 0 12px;
 border-radius: 999px;
 background: rgba(255, 255, 255, 0.06);
 border: 1px solid rgba(255, 255, 255, 0.1);
-font-size: 0.75rem;
+font-size: 12px;
 font-weight: 600;
+font-family: 'Outfit', sans-serif;
 color: #A89FC2;
 
 /* Active/selected chip */
@@ -317,10 +368,10 @@ height: 48px;
 border-radius: 14px;
 background: #151720;
 border: 1px solid rgba(255, 255, 255, 0.08);
-color: #F0EEF8;
-font-size: 0.95rem;
+color: #F5F7FF;
+font-size: 15px;
 padding: 0 16px;
-font-family: 'Plus Jakarta Sans', sans-serif;
+font-family: 'Outfit', sans-serif;
 
 /* Focus state */
 border-color: rgba(101, 230, 198, 0.4);
@@ -334,7 +385,7 @@ Search input includes a leading search icon (`16px`, stroke `1.75px`). Placehold
 
 ## 12. Bottom Navigation
 
-4 tabs: **Home**, **Subjects**, **90s Quiz**, **Exam Mode**
+5 tabs: **Home**, **Subjects**, **Quick Fire**, **Progress**, **Exam**
 
 ```
 Container:
@@ -352,9 +403,11 @@ Tab item (active):
   color: #65E6C6
   icon: drop-shadow(0 0 6px rgba(101, 230, 198, 0.58))
   indicator: 22×3px pill, background #65E6C6, border-radius 99px
+  label: font-family 'Outfit', font-size 13px, font-weight 600
 
 Tab item (inactive):
   color: #8A8795
+  label: font-family 'Outfit', font-size 13px, font-weight 500
 ```
 
 Icons must be **SVG line icons only** — no emoji, no filled icons, no cartoon icons.
@@ -432,7 +485,7 @@ Answer option states:
 /* Default */
 background: #151720;
 border: 1px solid rgba(255, 255, 255, 0.08);
-color: #F0EEF8;
+color: #F5F7FF;
 border-radius: 16px;
 padding: 14px 16px;
 
@@ -489,13 +542,13 @@ No other section order is acceptable. Do not reorder for aesthetics.
 
 | Subject | Colour | Hex | Notes |
 |---------|--------|-----|-------|
-| Maths | Teal | `#2BBE9A` | Clean, logical |
-| English | Plum | `#9E3D52` | Rich, literary |
-| History | Bronze | `#C89B6D` | Earthy, archival; use Cormorant Garamond |
+| Maths | Teal | `#2DD4BF` | Clean, logical |
+| English | Plum | `#B66DFF` | Rich, literary |
+| History | Bronze | `#C89B6D` | Earthy, archival |
 | Biology | Sage | `#4F8A5B` | Natural, organic |
-| Chemistry | Teal-copper | `#1F6F78` | Scientific depth |
-| Physics | Blue | `#3C7DFF` | Space, precision |
-| Sociology | Amber | `#D8B36A` | Social warmth |
+| Chemistry | Purple | `#9B59E8` | Scientific depth |
+| Physics | Blue | `#3B82F6` | Space, precision |
+| Sociology | Pink-red | `#FF5C7A` | Social, bold |
 | Drama | Crimson | `#8E2638` | Theatre, emotion |
 | Music | Brass | `#C59A42` | Warm gold, acoustic |
 
@@ -541,7 +594,7 @@ Each subject colour is used for:
 
 - **Minimum tap target:** `44×44px` — no exceptions
 - **Text contrast:** All body text must meet WCAG AA (4.5:1 minimum against its background)
-- `text-primary` (`#F0EEF8`) on `bg-card` (`#151720`) — passes AAA
+- `text-primary` (`#F5F7FF`) on `bg-card` (`#151720`) — passes AAA
 - `text-secondary` (`#A89FC2`) on `bg-card` — passes AA
 - `text-muted` (`#5E5874`) on `bg-card` — use only for non-essential text (captions, placeholders)
 - Focus states must be visible — use `box-shadow: 0 0 0 3px rgba(101, 230, 198, 0.3)` on keyboard focus
@@ -552,7 +605,7 @@ Each subject colour is used for:
 ## 24. Things Claude Must Not Improvise
 
 - **No new colour palettes** — use the tokens defined in Section 3 and Section 20 only
-- **No new fonts** — Plus Jakarta Sans, Clash Display, Cormorant Garamond only
+- **No new fonts** — Sora and Outfit only; no other font families
 - **No childish or playful styling** — no rounded bubbly buttons, no pastel fills, no emoji in UI
 - **No new layout patterns** — single-column scroll only, max-width 420px
 - **No decorative gradients** — gradient use is limited to: primary button fill, progress bar fill, subject header overlays
