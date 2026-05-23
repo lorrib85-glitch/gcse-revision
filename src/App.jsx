@@ -454,7 +454,7 @@ export default function App() {
       {tab === 'home'     && <Home progress={progress} onStart={startSession} onOpenModule={openModule} onOpenSubjects={() => setTab('subjects')} />}
       {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
       {tab === 'pulse'    && <PulseTab onStartQuickFire={() => setTab('quickfire')} />}
-      {tab === 'quickfire' && <TestTab mode="quickfire" onOpenModule={openModule} onExit={() => setTab('pulse')} />}
+      {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab('pulse')} />}
       {tab === 'exams'    && <TestTab mode="exam" onOpenModule={openModule} />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
@@ -880,18 +880,13 @@ function PulseTab({ onStartQuickFire }) {
     return { label: sub, sub, note: 'Accuracy dropped this week.', color: meta?.color || '#FF5C7A' }
   })()
 
-  const cards = PULSE_QUICK_START.map(c => ({
-    ...c,
-    progress: subjectAccuracy[c.id] ?? c.progress,
-    status: subjectAccuracy[c.id] === null || subjectAccuracy[c.id] === undefined
-      ? c.status
-      : subjectAccuracy[c.id] >= 75 ? 'Strong'
-      : subjectAccuracy[c.id] >= 55 ? 'Stable'
-      : 'Slipping',
-    statusColor: subjectAccuracy[c.id] >= 75 ? '#4CAF7D'
-      : subjectAccuracy[c.id] >= 55 ? '#F59E0B'
-      : '#E05A52',
-  }))
+  const cards = PULSE_QUICK_START.map(c => {
+    const acc = subjectAccuracy[c.id]
+    if (acc == null) return { ...c, status: 'Pending', statusColor: '#6B7280' }
+    const status = acc >= 75 ? 'Strong' : acc >= 55 ? 'Stable' : 'Slipping'
+    const statusColor = acc >= 75 ? '#4CAF7D' : acc >= 55 ? '#F59E0B' : '#E05A52'
+    return { ...c, progress: acc, status, statusColor }
+  })
 
   return (
     <div style={{
@@ -1177,23 +1172,22 @@ function PulseTab({ onStartQuickFire }) {
 
 // ─── Modules tab ──────────────────────────────────────────────────────────────
 
-function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, headerImage, icon, locked, isSelected, onClick }) {
+function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, headerImage, icon, isSelected, onClick }) {
   const w = isSelected ? 174 : 154
   const h = isSelected ? 235 : 215
   return (
     <button
-      onClick={locked ? undefined : onClick}
+      onClick={onClick}
       style={{
         width: w, height: h, flexShrink: 0, position: 'relative',
         borderRadius: 18, overflow: 'hidden',
-        cursor: locked ? 'default' : 'pointer',
+        cursor: 'pointer',
         border: isSelected ? `1.5px solid ${accentColour}` : '1px solid rgba(255,255,255,0.12)',
         background: bgGradient || '#0D0E10',
         padding: 0, textAlign: 'left',
         boxShadow: isSelected
           ? `0 0 30px ${accentColour}36, 0 12px 32px rgba(0,0,0,0.68), inset 0 1px 0 rgba(255,255,255,0.06)`
           : '0 4px 18px rgba(0,0,0,0.54), inset 0 1px 0 rgba(255,255,255,0.03)',
-        opacity: locked ? 0.52 : 1,
       }}
     >
       {/* cinematic header image */}
@@ -1212,16 +1206,6 @@ function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, heade
           ? 'linear-gradient(180deg, rgba(5,7,11,0.15) 0%, rgba(5,7,11,0.52) 45%, rgba(5,7,11,0.96) 100%)'
           : 'linear-gradient(180deg, rgba(5,7,11,0.04) 0%, rgba(5,7,11,0.44) 38%, rgba(5,7,11,0.90) 100%)',
       }} />
-      {/* lock top-right */}
-      {locked && (
-        <div style={{
-          position: 'absolute', top: 12, right: 12, zIndex: 2,
-          width: 28, height: 28, borderRadius: '50%',
-          background: 'rgba(5,7,11,0.68)', border: '1px solid rgba(255,255,255,0.14)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '.75rem',
-        }}>🔒</div>
-      )}
       {/* bottom text */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 12px 12px', zIndex: 2 }}>
         <div style={{
@@ -1231,24 +1215,20 @@ function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, heade
         }}>{title}</div>
         <div style={{
           fontSize: '.63rem', color: '#B8B4C2', lineHeight: 1.3,
-          marginBottom: locked ? 0 : 8, fontFamily: "'Outfit', sans-serif",
+          marginBottom: 8, fontFamily: "'Outfit', sans-serif",
         }}>{subtitle}</div>
-        {!locked && (
-          <>
-            <div style={{ marginBottom: 4 }}>
-              <span style={{ fontSize: '.6rem', fontWeight: 800, color: accentColour, fontFamily: "'Outfit', sans-serif" }}>
-                {progress}%
-              </span>
-            </div>
-            <div style={{ height: 3, background: 'rgba(255,255,255,0.10)', borderRadius: 99, overflow: 'hidden' }}>
-              <div style={{
-                width: progress + '%', height: '100%',
-                background: accentColour, borderRadius: 99,
-                boxShadow: `0 0 7px ${accentColour}99`,
-              }} />
-            </div>
-          </>
-        )}
+        <div style={{ marginBottom: 4 }}>
+          <span style={{ fontSize: '.6rem', fontWeight: 800, color: accentColour, fontFamily: "'Outfit', sans-serif" }}>
+            {progress}%
+          </span>
+        </div>
+        <div style={{ height: 3, background: 'rgba(255,255,255,0.10)', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{
+            width: progress + '%', height: '100%',
+            background: accentColour, borderRadius: 99,
+            boxShadow: `0 0 7px ${accentColour}99`,
+          }} />
+        </div>
       </div>
     </button>
   )
@@ -1365,7 +1345,7 @@ function ModulesTab({ onOpenModule }) {
     if (!mod || !mod.screens) return 0
     const s = safeGetModuleState(mod.id)
     const screen = s.screen || 0
-    return Math.min(100, Math.round(((screen + 1) / mod.screens.length) * 100))
+    return Math.min(100, Math.round((screen / mod.screens.length) * 100))
   }
 
   const histAllMods = MODULES.filter(m => m.subject === 'History')
@@ -1373,12 +1353,25 @@ function ModulesTab({ onOpenModule }) {
   const continueRaw = medMods.find(m => { const p = modPct(m); return p > 0 && p < 100 }) || medMods[0]
   const continuePct = modPct(continueRaw) || 0
   const selectedId = continueRaw?.id || 'mod1'
+  const continueAccent = continueRaw?.color || '#C89B6D'
   const MODULE_HEADER_IMAGES = {
     'mod1': '/headers/history-medicine-through-time.png',
     'mod2': '/headers/history-medicine-through-time.png',
     'mod3': '/headers/history-medicine-through-time.png',
     'mod4': '/headers/history-medicine-through-time.png',
     'mod5': '/headers/history-medicine-through-time.png',
+    'mod6': '/headers/history-medicine-through-time.png',
+    'mod7': '/headers/history-medicine-through-time.png',
+    'mod8': '/headers/history-medicine-through-time.png',
+    'mod9': '/headers/history-medicine-through-time.png',
+    'sci_bio_w1': '/headers/bio-buildinglife.png',
+    'math1': '/headers/maths-numbers.png',
+    'math2': '/headers/maths-numbers.png',
+    'soc1': '/headers/sociology-family.png',
+    'soc2': '/headers/sociology-education.png',
+    'soc3': '/headers/sociology-crime.png',
+    'soc4': '/headers/sociology-stratification.png',
+    'soc6': '/headers/sociology-main.png',
   }
   const continueHeaderImage = MODULE_HEADER_IMAGES[selectedId] || '/headers/history-medicine-through-time.png'
 
@@ -1387,24 +1380,24 @@ function ModulesTab({ onOpenModule }) {
 
   const historyGroupCards = [
     { id: 'med_through_time',    title: 'Medicine Through Time',          subtitle: '', progress: medPct, locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-medicine-through-time.png' },
-    { id: 'usa_conflict',        title: 'USA: Conflict at Home & Abroad', subtitle: '', progress: 0,      locked: true,  isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-usa-conflict.png' },
-    { id: 'early_elizabethans',  title: 'Early Elizabethans',             subtitle: '', progress: 0,      locked: true,  isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-elizabethan.png' },
-    { id: 'spain_new_world',     title: 'Spain & the New World',          subtitle: '', progress: 0,      locked: true,  isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-spain-new-world.png' },
+    { id: 'usa_conflict',        title: 'USA: Conflict at Home & Abroad', subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#B07A4A', headerImage: '/headers/history-usa-conflict.png' },
+    { id: 'early_elizabethans',  title: 'Early Elizabethans',             subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#D4A855', headerImage: '/headers/history-elizabethan.png' },
+    { id: 'spain_new_world',     title: 'Spain & the New World',          subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#9A7240', headerImage: '/headers/history-spain-new-world.png' },
   ]
 
   const englishGroupCards = [
     { id: 'eng_macbeth',   title: 'Macbeth',                    subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-macbeth.png' },
     { id: 'eng_inspector', title: 'An Inspector Calls',         subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-inspector.png' },
     { id: 'eng_poetry',    title: 'Poetry',                     subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-poetry.png' },
-    { id: 'eng_lang1',     title: 'Reading Between the Lines',  subtitle: '', progress: 0, locked: true,  isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-reading.png' },
+    { id: 'eng_lang1',     title: 'Reading Between the Lines',  subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-reading.png' },
   ]
 
   const physicsGroupCards = [
     { id: 'phys_forces',  title: 'Forces & Motion',    subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-forces.png' },
-    { id: 'phys_energy',  title: 'Energy & Power',     subtitle: '', progress: 0, locked: true,  isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-energy.png' },
-    { id: 'phys_waves',   title: 'Waves & Electricity',subtitle: '', progress: 0, locked: true,  isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-waves.png' },
-    { id: 'phys_space',   title: 'Space',               subtitle: '', progress: 0, locked: true,  isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-space.png' },
-    { id: 'phys_matter',  title: 'Matter & Particles',  subtitle: '', progress: 0, locked: true,  isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-matter.png' },
+    { id: 'phys_energy',  title: 'Energy & Power',     subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#60A5FA', headerImage: '/headers/physics-energy.png' },
+    { id: 'phys_waves',   title: 'Waves & Electricity',subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#818CF8', headerImage: '/headers/physics-waves.png' },
+    { id: 'phys_space',   title: 'Space',               subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#38BDF8', headerImage: '/headers/physics-space.png' },
+    { id: 'phys_matter',  title: 'Matter & Particles',  subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#34D399', headerImage: '/headers/physics-matter.png' },
   ]
 
 
@@ -1499,7 +1492,7 @@ function ModulesTab({ onOpenModule }) {
       <div style={{ padding: '0 18px', marginTop: -48, position: 'relative', zIndex: 10 }}>
         <div style={{
           borderRadius: 22,
-          border: '1px solid rgba(200,155,109,0.3)',
+          border: `1px solid ${continueAccent}4D`,
           position: 'relative', overflow: 'hidden', minHeight: 190,
           background: '#0B0703',
         }}>
@@ -1521,7 +1514,7 @@ function ModulesTab({ onOpenModule }) {
           <div style={{ paddingRight: 62 }}>
             <div style={{
               fontSize: '.58rem', fontWeight: 800, letterSpacing: '.30em',
-              textTransform: 'uppercase', color: '#C89B6D', marginBottom: 4,
+              textTransform: 'uppercase', color: continueAccent, marginBottom: 4,
               fontFamily: "'Outfit', sans-serif",
             }}>Continue Learning</div>
             <div style={{ fontSize: '.72rem', color: '#7D7988', marginBottom: 5, fontFamily: "'Outfit', sans-serif" }}>
@@ -1536,21 +1529,21 @@ function ModulesTab({ onOpenModule }) {
             </div>
             {/* Progress */}
             <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: '.6rem', color: '#C89B6D', fontWeight: 700, marginBottom: 5, fontFamily: "'Outfit', sans-serif" }}>{continuePct}%</div>
+              <div style={{ fontSize: '.6rem', color: continueAccent, fontWeight: 700, marginBottom: 5, fontFamily: "'Outfit', sans-serif" }}>{continuePct}%</div>
               <div style={{ height: 4, background: 'rgba(255,255,255,0.10)', borderRadius: 99, overflow: 'hidden' }}>
-                <div style={{ width: continuePct + '%', height: '100%', background: '#C89B6D', borderRadius: 99, boxShadow: '0 0 8px rgba(200,155,109,0.55)' }} />
+                <div style={{ width: continuePct + '%', height: '100%', background: continueAccent, borderRadius: 99, boxShadow: `0 0 8px ${continueAccent}88` }} />
               </div>
             </div>
             <button
               onClick={() => { const m = MODULES.find(x => x.id === selectedId); if (m && onOpenModule) onOpenModule(m) }}
               style={{
                 height: 58, paddingLeft: 24, paddingRight: 24,
-                background: 'linear-gradient(90deg, #8C5A3C, #C89B6D)',
+                background: `linear-gradient(90deg, ${continueAccent}AA, ${continueAccent})`,
                 border: 'none', borderRadius: 18, cursor: 'pointer',
                 color: '#fff', fontWeight: 700, fontSize: 20,
                 fontFamily: "'Sora', sans-serif",
                 letterSpacing: '-0.01em', lineHeight: '20px',
-                boxShadow: '0 4px 18px rgba(140,90,60,0.42)',
+                boxShadow: `0 4px 18px ${continueAccent}44`,
                 display: 'inline-flex', alignItems: 'center', gap: 7,
               }}>▶ Continue Module</button>
           </div>
@@ -3236,7 +3229,7 @@ function pickQuickFireRecommendation(memory, roundStats) {
 
 
 
-function TestTab({ mode = 'test', onOpenModule } = {}) {
+function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}) {
   const [mathsOpen, setMathsOpen]   = useState(false)
   const [englishOpen, setEnglishOpen]     = useState(false)
   const [sociologyOpen, setSociologyOpen]     = useState(false)
@@ -3325,7 +3318,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
   }, [isExamMode, examPhase])
 
   useEffect(() => {
-    if (!isExamMode || examPhase !== 'round') return undefined
+    if (!isExamMode || examPhase !== 'round' || !examConfig?.isTimedPaper) return undefined
     const timer = setInterval(() => {
       setExamTimeLeft(value => {
         if (value <= 1) {
@@ -3337,7 +3330,16 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
       })
     }, 1000)
     return () => clearInterval(timer)
-  }, [isExamMode, examPhase])
+  }, [isExamMode, examPhase, examConfig])
+
+  // Auto-start quickfire when launched from Pulse tab
+  const autoStartedRef = useRef(false)
+  useEffect(() => {
+    if (autoStart && isQuickFire && !autoStartedRef.current) {
+      autoStartedRef.current = true
+      startRandomQuestion()
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const quickFirePct = Math.max(0, Math.min(100, (quickFireTimeLeft / QUICK_FIRE_SECONDS) * 100))
   const quickFireTime = Math.floor(quickFireTimeLeft / 60) + ':' + String(quickFireTimeLeft % 60).padStart(2, '0')
@@ -3416,9 +3418,9 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     setError(null)
   }
 
-  function startExamRound(subject = 'Random') {
+  function startExamRound(subject = 'Random', { isTimedPaper = false } = {}) {
     const questions = adaptiveExamQuestions(subject)
-    setExamConfig({ subject, title: subject === 'Random' ? 'Random Exam Challenge' : subject + ' Exam Sprint' })
+    setExamConfig({ subject, title: subject === 'Random' ? 'Random Exam Challenge' : subject + ' Exam Sprint', isTimedPaper })
     setExamQuestions(questions)
     setExamIdx(0)
     setExamTimeLeft(EXAM_SECONDS)
@@ -3562,7 +3564,9 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
               <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F4EFE6' }}>{examConfig?.title}</div>
               <div style={{ color:'#4B5563', fontSize:'.72rem' }}>{examQuestions.length} questions · scroll to answer all</div>
             </div>
-            <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.18)' : 'rgba(139,92,246,.18)', border:'1px solid '+(examTimeLeft<60?'rgba(255,93,115,.5)':'rgba(139,92,246,.4)'), borderRadius:999, color:examTimeLeft<60?'#FF5D73':'#C4B5FD', fontFamily:"'Sora', sans-serif", fontWeight:900, padding:'7px 14px', fontSize:'1rem', flexShrink:0 }}>{examTime}</div>
+            {examConfig?.isTimedPaper && (
+              <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.18)' : 'rgba(139,92,246,.18)', border:'1px solid '+(examTimeLeft<60?'rgba(255,93,115,.5)':'rgba(139,92,246,.4)'), borderRadius:999, color:examTimeLeft<60?'#FF5D73':'#C4B5FD', fontFamily:"'Sora', sans-serif", fontWeight:900, padding:'7px 14px', fontSize:'1rem', flexShrink:0 }}>{examTime}</div>
+            )}
           </div>
 
           {/* Scrollable paper */}
@@ -4124,11 +4128,11 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
         {/* ── REAL EXAM PAPERS ── */}
         <div style={{ marginBottom: 28 }}>
           <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 12 }}>Real Exam Papers</div>
-          <button style={{ width: '100%', boxSizing: 'border-box', background: '#0E1628', border: '1px solid #1E2A40', borderRadius: 24, padding: 20, display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer', textAlign: 'left' }}>
+          <button onClick={() => startExamRound('Random', { isTimedPaper: true })} style={{ width: '100%', boxSizing: 'border-box', background: '#0E1628', border: '1px solid #1E2A40', borderRadius: 24, padding: 20, display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer', textAlign: 'left' }}>
             <div style={{ width: 54, height: 54, borderRadius: 15, background: 'rgba(59,130,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>📋</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.92rem', color: '#F0F3FA' }}>Real Exam Papers</div>
-              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.73rem', color: '#4A5578', marginTop: 3 }}>AQA & Edexcel timed papers</div>
+              <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.92rem', color: '#F0F3FA' }}>Full Timed Paper</div>
+              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.73rem', color: '#4A5578', marginTop: 3 }}>10 questions · 10 min timer · All subjects</div>
             </div>
             <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: '1.05rem', flexShrink: 0 }}>›</span>
           </button>
