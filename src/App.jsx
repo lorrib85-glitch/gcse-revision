@@ -512,7 +512,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
       paddingBottom: 120,
       overflowX: 'hidden',
     }}>
-      <div style={{ maxWidth: 430, margin: '0 auto', padding: '56px 20px 0' }}>
+      <div style={{ maxWidth: 430, margin: '0 auto', padding: '14px 20px 0' }}>
 
         {/* ── Greeting + Streak ── */}
         <div style={{ marginBottom: 28, position: 'relative' }}>
@@ -555,49 +555,70 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
           </div>
 
           {/* Day tracker */}
-          <div style={{ display: 'flex', gap: 6 }}>
-            {dayLetters.map((d, i) => {
-              const done    = i < todayIdx
-              const isToday = i === todayIdx
-              return (
-                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
-                  <div style={{
-                    width: isToday ? 34 : 30, height: isToday ? 34 : 30,
-                    borderRadius: '50%',
-                    background: done ? 'rgba(45,212,191,0.12)' : isToday ? 'rgba(139,92,246,0.18)' : 'rgba(255,255,255,0.03)',
-                    border: done ? '1.5px solid rgba(45,212,191,0.35)' : isToday ? '1.5px solid rgba(139,92,246,0.45)' : '1.5px solid rgba(255,255,255,0.05)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: done ? '0 0 10px rgba(45,212,191,0.18)' : isToday ? '0 0 14px rgba(139,92,246,0.3)' : 'none',
-                  }}>
-                    <div style={{
-                      width: done ? 8 : isToday ? 9 : 5, height: done ? 8 : isToday ? 9 : 5,
-                      borderRadius: '50%',
-                      background: done ? '#2DD4BF' : isToday ? '#8B5CF6' : 'rgba(255,255,255,0.12)',
-                      boxShadow: done ? '0 0 8px rgba(45,212,191,0.8)' : isToday ? '0 0 10px rgba(139,92,246,0.9)' : 'none',
-                    }} />
-                  </div>
-                  <div style={{
-                    fontFamily: "'Outfit', sans-serif",
-                    fontSize: 11, fontWeight: 600, letterSpacing: '0.05em',
-                    color: done ? '#2DD4BF' : isToday ? '#C4B5FD' : '#1F2937',
-                  }}>
-                    {d}
-                  </div>
+          {(() => {
+            // Build a set of dates with activity this week
+            let activityDates = new Set()
+            try {
+              const scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]')
+              scores.forEach(s => s.date && activityDates.add(s.date))
+            } catch {}
+            // Date string for each column (Mon=0 … Sun=6)
+            const weekDates = dayLetters.map((_, i) => {
+              const d = new Date()
+              const jsDay = d.getDay() === 0 ? 7 : d.getDay() // 1=Mon … 7=Sun
+              const diff = (i + 1) - jsDay
+              const nd = new Date(d)
+              nd.setDate(d.getDate() + diff)
+              return nd.toISOString().slice(0, 10)
+            })
+            return (
+              <>
+                <style>{`@keyframes dayPulse { 0%,100%{box-shadow:0 0 10px rgba(139,92,246,0.25)} 50%{box-shadow:0 0 20px rgba(139,92,246,0.55)} }`}</style>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  {dayLetters.map((d, i) => {
+                    const isToday  = i === todayIdx
+                    const isPast   = i < todayIdx
+                    const studied  = activityDates.has(weekDates[i])
+                    const isGreen  = studied && (isPast || isToday)
+                    const isAmber  = isPast && !studied
+                    const dotColor = isGreen ? '#4CAF7D' : isAmber ? '#E0A84F' : isToday ? '#8B5CF6' : 'rgba(255,255,255,0.12)'
+                    const ringColor = isGreen ? 'rgba(76,175,125,' : isAmber ? 'rgba(224,168,79,' : isToday ? 'rgba(139,92,246,' : 'rgba(255,255,255,0.0'
+                    return (
+                      <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
+                        <div style={{
+                          width: isToday ? 34 : 30, height: isToday ? 34 : 30,
+                          borderRadius: '50%',
+                          background: isGreen ? 'rgba(76,175,125,0.12)' : isAmber ? 'rgba(224,168,79,0.1)' : isToday ? 'rgba(139,92,246,0.18)' : 'rgba(255,255,255,0.03)',
+                          border: isGreen ? '1.5px solid rgba(76,175,125,0.4)' : isAmber ? '1.5px solid rgba(224,168,79,0.35)' : isToday ? '1.5px solid rgba(139,92,246,0.45)' : '1.5px solid rgba(255,255,255,0.05)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          animation: isToday ? 'dayPulse 2.2s ease-in-out infinite' : 'none',
+                        }}>
+                          <div style={{
+                            width: (isGreen || isAmber) ? 8 : isToday ? 9 : 5,
+                            height: (isGreen || isAmber) ? 8 : isToday ? 9 : 5,
+                            borderRadius: '50%',
+                            background: dotColor,
+                            boxShadow: isGreen ? '0 0 8px rgba(76,175,125,0.8)' : isAmber ? '0 0 6px rgba(224,168,79,0.6)' : isToday ? '0 0 10px rgba(139,92,246,0.9)' : 'none',
+                          }} />
+                        </div>
+                        <div style={{
+                          fontFamily: "'Outfit', sans-serif",
+                          fontSize: 11, fontWeight: 600, letterSpacing: '0.05em',
+                          color: isGreen ? '#4CAF7D' : isAmber ? '#E0A84F' : isToday ? '#C4B5FD' : '#1F2937',
+                        }}>
+                          {d}
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
-              )
-            })}
-          </div>
+              </>
+            )
+          })()}
         </div>
 
-        {/* ── Continue Learning ── */}
+        {/* ── Continue card ── */}
         <div style={{ marginBottom: 14 }}>
-          <div style={{
-            fontFamily: "'Outfit', sans-serif",
-            fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
-            color: '#374151', textTransform: 'uppercase', marginBottom: 12,
-          }}>
-            Continue Learning
-          </div>
 
           <button
             onClick={() => medicineModule && onOpenModule(medicineModule)}
@@ -2697,6 +2718,32 @@ const QUICK_FIRE_QUESTIONS = [
 ]
 
 const QUICK_FIRE_MEMORY_KEY = 'gcse_quickfire_memory_v1'
+const QF_QUESTION_HISTORY_KEY = 'gcse_qf_q_history'
+const QF_PREV_SESSION_KEY = 'gcse_qf_prev_session'
+
+function qfQuestionId(q) {
+  return (q.subject || '') + '::' + (q.q || '').slice(0, 40)
+}
+function readQfQuestionHistory() {
+  try { return JSON.parse(localStorage.getItem(QF_QUESTION_HISTORY_KEY) || '{}') } catch { return {} }
+}
+function updateQfQuestionHistory(q, isCorrect) {
+  const id = qfQuestionId(q)
+  if (!id) return
+  const hist = readQfQuestionHistory()
+  const prev = hist[id] || { attempts: 0, correct: 0, lastResult: null }
+  hist[id] = { attempts: prev.attempts + 1, correct: prev.correct + (isCorrect ? 1 : 0), lastResult: isCorrect ? 'correct' : 'incorrect' }
+  try { localStorage.setItem(QF_QUESTION_HISTORY_KEY, JSON.stringify(hist)) } catch {}
+}
+function wasQfPrevWrong(q) {
+  return readQfQuestionHistory()[qfQuestionId(q)]?.lastResult === 'incorrect'
+}
+function readQfPrevSession() {
+  try { return JSON.parse(localStorage.getItem(QF_PREV_SESSION_KEY) || 'null') } catch { return null }
+}
+function saveQfPrevSession(accuracy, answered) {
+  try { localStorage.setItem(QF_PREV_SESSION_KEY, JSON.stringify({ accuracy, answered, date: new Date().toISOString() })) } catch {}
+}
 
 const QUICK_FIRE_SUBJECT_META = {
   History:    { icon: '🏛️', logo: '/headers/history-main.png',    color: '#C89B6D', moduleId: 'mod1' },
@@ -2807,16 +2854,23 @@ function confidencePriorityForModule(moduleId) {
 
 function prioritizedQuickFireQuestions() {
   const memory = readQuickFireMemory()
-  return QUICK_FIRE_QUESTIONS
-    .map((question, index) => {
+  const qHist = readQfQuestionHistory()
+  // Shuffle first so same-priority questions vary each round
+  const shuffled = [...QUICK_FIRE_QUESTIONS].sort(() => Math.random() - 0.5)
+  return shuffled
+    .map(question => {
+      const prevResult = qHist[qfQuestionId(question)]?.lastResult
       const subjectBucket = memory.subjects?.[question.subject]
       const topicBucket = memory.topics?.[question.subject + '::' + question.topic]
       const subjectWeakness = subjectBucket?.answered ? Math.max(0, 70 - bucketAccuracy(subjectBucket)) / 10 : 0
       const topicWeakness = topicBucket?.answered ? Math.max(0, 75 - bucketAccuracy(topicBucket)) / 8 : 0
       const confidenceBoost = confidencePriorityForModule(question.moduleId)
-      return { question, index, score: subjectWeakness + topicWeakness + confidenceBoost }
+      // Previously wrong → higher priority; recently correct → slightly lower
+      const wrongBoost = prevResult === 'incorrect' ? 3.5 : 0
+      const correctPenalty = prevResult === 'correct' ? -1.0 : 0
+      return { question, score: subjectWeakness + topicWeakness + confidenceBoost + wrongBoost + correctPenalty }
     })
-    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .sort((a, b) => b.score - a.score)
     .map(item => item.question)
 }
 
@@ -2884,6 +2938,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
   const [tqMcAttempts, setTqMcAttempts] = useState(0)
   const [tqMcHint, setTqMcHint]         = useState(false)
   const [tqMcLocked, setTqMcLocked]     = useState(false)
+  const [qfConsecutiveWrong, setQfConsecutiveWrong] = useState(0)
   // Full-paper exam state
   const [examPaperAnswers,   setExamPaperAnswers]   = useState({})
   const [examPaperFeedbacks, setExamPaperFeedbacks] = useState({})
@@ -3295,6 +3350,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
       setQuickFireQuestionSet(prioritizedQuickFireQuestions())
       setQuickFireSummary(null)
       setQuickFireCountdown(3)
+      setQfConsecutiveWrong(0)
     }
   }
 
@@ -3302,6 +3358,9 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     setQuickFireActive(false)
     setQuickFireFinished(true)
     const memory = saveQuickFireMemory(quickFireStats)
+    const accuracy = quickFireStats.answered ? Math.round((quickFireStats.correct / quickFireStats.answered) * 100) : 0
+    const prevSession = readQfPrevSession()
+    if (quickFireStats.answered > 0) saveQfPrevSession(accuracy, quickFireStats.answered)
     setQuickFireSummary({
       reason,
       answered: quickFireStats.answered,
@@ -3310,6 +3369,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
       timeLeft: quickFireTimeLeft,
       subjects: rankedQuickFireSubjects(memory, quickFireStats),
       recommendation: pickQuickFireRecommendation(memory, quickFireStats),
+      prevAccuracy: (prevSession?.answered >= 3) ? prevSession.accuracy : null,
     })
   }
 
@@ -3350,20 +3410,45 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     if (q.type === 'mc') {
       if (!answer) { setError('Pick an option first.'); return }
       const isCorrect = answer === q.options[q.correct]
+      const wasPrevWrong = isQuickFire && wasQfPrevWrong(q)
       const newAttempts = tqMcAttempts + 1
       setTqMcAttempts(newAttempts)
       if (isCorrect) {
-        if (isQuickFire) setQuickFireStats(stats => addQuickFireAnswer(stats, q, true))
+        if (isQuickFire) {
+          setQuickFireStats(stats => addQuickFireAnswer(stats, q, true))
+          updateQfQuestionHistory(q, true)
+          setQfConsecutiveWrong(0)
+        }
         setTqMcLocked(true)
+        const correctMsg = wasPrevWrong
+          ? "Well done — you didn't get that right last time!"
+          : "That's the one. Well done for getting it."
         setFeedback({ marksAwarded: q.marks, marksAvailable: q.marks, grade: 'Excellent',
-          summary: "That's the one. Well done for getting it.", achieved: ['Correct answer selected'], missed: [], examinerTip: '' })
+          summary: correctMsg, achieved: ['Correct answer selected'], missed: [], examinerTip: '' })
         recordScore({ subject: selected.subject, earned: q.marks, possible: q.marks, source: 'test' })
       } else if (newAttempts === 1) {
         setTqMcHint(true)
         setAnswer('')
         setError('')
       } else {
-        if (isQuickFire) setQuickFireStats(stats => addQuickFireAnswer(stats, q, false))
+        if (isQuickFire) {
+          setQuickFireStats(stats => addQuickFireAnswer(stats, q, false))
+          updateQfQuestionHistory(q, false)
+          const newConsecutive = qfConsecutiveWrong + 1
+          setQfConsecutiveWrong(newConsecutive)
+          // After 3 consecutive wrong answers, inject a revisit question from the queue
+          if (newConsecutive >= 3) {
+            setQfConsecutiveWrong(0)
+            const revisitCandidate = quickFireQuestionSet.slice(qIdx + 2).find(qItem => wasQfPrevWrong(qItem))
+            if (revisitCandidate) {
+              setQuickFireQuestionSet(prev => {
+                const next = [...prev]
+                next.splice(qIdx + 1, 0, { ...revisitCandidate, _retryPrevWrong: true })
+                return next
+              })
+            }
+          }
+        }
         setTqMcLocked(true)
         const correctText = q.options[q.correct] || ''
         setFeedback({ marksAwarded: 0, marksAvailable: q.marks, grade: 'Needs Work',
@@ -3384,8 +3469,16 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     const recommendation = quickFireSummary.recommendation || pickQuickFireRecommendation(readQuickFireMemory(), emptyQuickFireStats())
     const recommendedModule = recommendation?.moduleId ? MODULES.find(m => m.id === recommendation.moduleId) : null
     const recommendationMeta = QUICK_FIRE_SUBJECT_META[recommendation?.subject] || QUICK_FIRE_SUBJECT_META.Biology
-    const encouragement = accuracy >= 80 ? 'Excellent recall.' : accuracy >= 60 ? 'You’re making strong progress.' : 'Good start — now sharpen the weak spots.'
-    const actionLine = accuracy >= 80 ? 'Keep it up!' : 'Focus on improvement.'
+    const prevAcc = quickFireSummary.prevAccuracy
+    const improvement = (prevAcc !== null && quickFireSummary.answered >= 3) ? accuracy - prevAcc : null
+    const improvementText = improvement === null ? null
+      : improvement > 0 ? `+${improvement}% better than last time`
+      : improvement < 0 ? `${Math.abs(improvement)}% lower than last time`
+      : 'Same as last time'
+    const improvementColor = improvement > 0 ? '#4CAF7D' : improvement < 0 ? '#E05A52' : '#A89FC2'
+    const headlineText = improvement !== null && improvement > 0
+      ? `${improvement}% improvement`
+      : accuracy >= 60 ? 'Great work!' : 'Keep going!'
 
     return (
       <div style={{ background:'radial-gradient(circle at 50% -10%, rgba(101,230,198,.08), transparent 42%), #08090D', minHeight:'100vh', padding:'18px 20px calc(150px + env(safe-area-inset-bottom))', color:'#F4EFE6' }}>
@@ -3408,10 +3501,17 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
               </div>
             </div>
             <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:9 }}>
-              <h1 style={{ fontFamily:"'Sora', sans-serif", fontSize:'2.1rem', lineHeight:1.05, margin:0, color:'#F5F7FB' }}>{accuracy >= 60 ? 'Great work!' : 'Keep going!'}</h1>
-              <span style={{ color:'#F5B700', fontSize:'1.45rem' }}>✩</span>
+              <h1 style={{ fontFamily:"'Sora', sans-serif", fontSize:'2.1rem', lineHeight:1.05, margin:0, color:'#F5F7FB' }}>{headlineText}</h1>
+              {improvement > 0 && <span style={{ color:'#4CAF7D', fontSize:'1.45rem' }}>↑</span>}
             </div>
-            <p style={{ color:'#AAB4D4', fontSize:'.96rem', margin:'10px 0 0', lineHeight:1.45 }}>{encouragement}<br /><span style={{ color:'#38F27B', fontWeight:900 }}>{actionLine}</span></p>
+            {improvementText && (
+              <div style={{ display:'inline-flex', alignItems:'center', gap:6, background: improvement > 0 ? 'rgba(76,175,125,.12)' : improvement < 0 ? 'rgba(224,90,82,.1)' : 'rgba(255,255,255,.06)', border:'1px solid ' + (improvement > 0 ? 'rgba(76,175,125,.35)' : improvement < 0 ? 'rgba(224,90,82,.3)' : 'rgba(255,255,255,.1)'), borderRadius:999, padding:'6px 14px', marginTop:10 }}>
+                <span style={{ color:improvementColor, fontFamily:"'Sora', sans-serif", fontWeight:800, fontSize:'.9rem' }}>{improvementText}</span>
+              </div>
+            )}
+            {!improvementText && (
+              <p style={{ color:'#AAB4D4', fontSize:'.96rem', margin:'10px 0 0', lineHeight:1.45 }}>{accuracy >= 80 ? 'Excellent recall.' : accuracy >= 60 ? 'Strong session.' : 'Good start — now sharpen the weak spots.'}</p>
+            )}
           </div>
 
           <div style={{ background:'linear-gradient(145deg, rgba(16,24,43,.96), rgba(9,15,31,.96))', border:'1px solid rgba(62,78,118,.55)', borderRadius:18, padding:'18px 18px 14px', marginBottom:16, boxShadow:'0 14px 36px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.04)' }}>
