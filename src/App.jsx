@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useAuth } from './auth/AuthContext.jsx'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
 import { BIOLOGY_GROUPS } from './data/biologyGroups.js'
 import { CHEMISTRY_GROUPS } from './data/chemistryGroups.js'
@@ -72,135 +73,201 @@ function GoogleLogo({ size = 20 }) {
   )
 }
 
-// ─── Login screen ─────────────────────────────────────────────────────────────
+// ─── Splash screen ────────────────────────────────────────────────────────────
 
-function LoginScreen({ onLoginClick }) {
+function SplashScreen() {
   return (
     <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'linear-gradient(180deg, #0D0F14 0%, #08090D 100%)',
+      position: 'fixed', inset: 0, zIndex: 10000,
+      background: '#08090D',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      padding: '40px 32px',
+      animation: 'riseIn 0.6s ease forwards',
     }}>
+      <style>{`
+        @keyframes riseIn { from { opacity: 0; transform: scale(0.94) } to { opacity: 1; transform: scale(1) } }
+        @keyframes risePulse { 0%,100% { filter: drop-shadow(0 0 22px rgba(101,230,198,0.45)) } 50% { filter: drop-shadow(0 0 38px rgba(101,230,198,0.75)) } }
+      `}</style>
       <img
         src="/logo.png" alt="RISE"
-        style={{ width: 88, height: 88, objectFit: 'contain', marginBottom: 32,
-          filter: 'drop-shadow(0 0 24px rgba(101,230,198,0.35))' }}
+        style={{ width: 96, height: 96, objectFit: 'contain', animation: 'risePulse 1.8s ease-in-out infinite' }}
       />
-      <div style={{
-        fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
-        fontSize: 38, fontWeight: 700, color: '#F4EFE6',
-        textAlign: 'center', lineHeight: 1.1, marginBottom: 14, letterSpacing: '-0.01em',
-      }}>
-        Your GCSE.<br />Your way.
-      </div>
-      <div style={{
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-        fontSize: 15, color: '#7A7670', textAlign: 'center',
-        marginBottom: 52, maxWidth: 280, lineHeight: 1.55,
-      }}>
-        Study smarter. Track your progress.<br />Crush your exams.
-      </div>
-
-      {/* TODO: replace placeholder with real GSI — set YOUR_GOOGLE_CLIENT_ID_HERE in env */}
-      <button
-        onClick={onLoginClick}
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
-          background: '#FFFFFF', border: 'none', borderRadius: 14, cursor: 'pointer',
-          padding: '15px 28px', width: '100%', maxWidth: 320,
-          fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 600, color: '#1A1A1A',
-          boxShadow: '0 2px 16px rgba(0,0,0,0.4)',
-          transition: 'opacity 150ms ease',
-        }}
-        onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
-        onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-      >
-        <GoogleLogo size={20} />
-        Sign in with Google
-      </button>
-
-      <div style={{
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-        fontSize: 11, color: '#3D3A35', marginTop: 24,
-        textAlign: 'center', maxWidth: 240, lineHeight: 1.5,
-      }}>
-        By signing in you agree to our Terms &amp; Privacy Policy
-      </div>
     </div>
   )
 }
 
-// ─── Onboarding screen ───────────────────────────────────────────────────────
+// ─── Login screen ─────────────────────────────────────────────────────────────
 
-function OnboardingScreen({ onComplete }) {
+function LoginScreen() {
+  const { signInWithGoogle, loading } = useAuth()
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999,
+      background: '#08090D',
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      padding: '0 28px',
+      overflow: 'hidden',
+    }}>
+      {/* Ambient glow top */}
+      <div style={{
+        position: 'absolute', top: -120, left: '50%', transform: 'translateX(-50%)',
+        width: 480, height: 480, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(101,230,198,0.07) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Logo — 28% from top */}
+      <div style={{ flex: '0 0 auto', marginTop: 'max(72px, 28vh)' }}>
+        <img
+          src="/logo.png" alt="RISE"
+          style={{ width: 80, height: 80, objectFit: 'contain', display: 'block',
+            filter: 'drop-shadow(0 0 22px rgba(101,230,198,0.5))' }}
+        />
+      </div>
+
+      {/* Tagline */}
+      <div style={{
+        fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+        fontSize: 42, fontWeight: 700, color: '#F4EFE6',
+        textAlign: 'center', lineHeight: 1.05, marginTop: 28, letterSpacing: '-0.02em',
+      }}>
+        Who will<br />you be?
+      </div>
+
+      {/* Spacer */}
+      <div style={{ flex: 1 }} />
+
+      {/* Google button */}
+      {/* TODO: replace signInWithGoogle() in src/auth/authService.js with Firebase when ready */}
+      <button
+        onClick={signInWithGoogle}
+        disabled={loading}
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+          background: '#FFFFFF', border: 'none', borderRadius: 18, cursor: loading ? 'default' : 'pointer',
+          height: 56, width: '100%', maxWidth: 340,
+          fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, fontWeight: 600, color: '#1A1A1A',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.12) inset',
+          opacity: loading ? 0.7 : 1,
+          transition: 'opacity 150ms ease, transform 120ms ease',
+          flexShrink: 0,
+        }}
+        onMouseEnter={e => { if (!loading) e.currentTarget.style.transform = 'scale(1.015)' }}
+        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)' }}
+        onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.985)' }}
+        onMouseUp={e => { e.currentTarget.style.transform = 'scale(1.015)' }}
+      >
+        {loading
+          ? <span style={{ width: 20, height: 20, border: '2.5px solid #ccc', borderTopColor: '#555', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
+          : <GoogleLogo size={22} />
+        }
+        {loading ? 'Signing in…' : 'Continue with Google'}
+      </button>
+
+      <div style={{
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        fontSize: 11, color: '#3A3835', marginTop: 18, marginBottom: 'max(32px, env(safe-area-inset-bottom))',
+        textAlign: 'center', lineHeight: 1.5,
+      }}>
+        By continuing you agree to our Terms &amp; Privacy Policy
+      </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+    </div>
+  )
+}
+
+// ─── Onboarding — name entry ─────────────────────────────────────────────────
+
+function OnboardingScreen() {
+  const { completeOnboarding } = useAuth()
   const [name, setName] = useState('')
+  const valid = name.trim().length >= 2
 
   function handleSubmit() {
-    const trimmed = name.trim()
-    if (!trimmed) return
-    onComplete(trimmed)
+    if (!valid) return
+    completeOnboarding(name)
   }
 
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'linear-gradient(180deg, #0D0F14 0%, #08090D 100%)',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      padding: '40px 32px',
+      background: '#08090D',
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      padding: '0 28px',
     }}>
-      <img
-        src="/logo.png" alt="RISE"
-        style={{ width: 68, height: 68, objectFit: 'contain', marginBottom: 36,
-          filter: 'drop-shadow(0 0 18px rgba(101,230,198,0.3))' }}
-      />
+      {/* Ambient glow */}
       <div style={{
-        fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
-        fontSize: 30, fontWeight: 700, color: '#F4EFE6',
-        textAlign: 'center', lineHeight: 1.15, marginBottom: 10, letterSpacing: '-0.01em',
-      }}>
-        What should we call you?
-      </div>
-      <div style={{
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-        fontSize: 14, color: '#7A7670', textAlign: 'center',
-        marginBottom: 40, lineHeight: 1.5,
-      }}>
-        Just your first name is fine.
+        position: 'absolute', top: -80, left: '50%', transform: 'translateX(-50%)',
+        width: 400, height: 400, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(101,230,198,0.06) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      <div style={{ flex: '0 0 auto', marginTop: 'max(88px, 22vh)', width: '100%', maxWidth: 340 }}>
+        <div style={{
+          fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+          fontSize: 32, fontWeight: 700, color: '#F4EFE6',
+          lineHeight: 1.15, marginBottom: 12, letterSpacing: '-0.01em',
+        }}>
+          What should<br />we call you?
+        </div>
+        <div style={{
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontSize: 15, color: '#7A7670', lineHeight: 1.55, marginBottom: 36,
+        }}>
+          This helps personalise your revision journey.
+        </div>
+
+        {/* Glassmorphism input */}
+        <input
+          type="text"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+          placeholder="Your name"
+          autoFocus
+          maxLength={30}
+          style={{
+            width: '100%', height: 58, boxSizing: 'border-box',
+            background: 'rgba(255,255,255,0.05)',
+            backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+            border: '1.5px solid rgba(255,255,255,0.1)',
+            borderRadius: 16, padding: '0 22px',
+            fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 500, color: '#F4EFE6',
+            outline: 'none', caretColor: '#65E6C6',
+            transition: 'border-color 180ms ease, box-shadow 180ms ease',
+          }}
+          onFocus={e => {
+            e.target.style.borderColor = 'rgba(101,230,198,0.45)'
+            e.target.style.boxShadow = '0 0 0 3px rgba(101,230,198,0.08), inset 0 0 20px rgba(101,230,198,0.04)'
+          }}
+          onBlur={e => {
+            e.target.style.borderColor = 'rgba(255,255,255,0.1)'
+            e.target.style.boxShadow = 'none'
+          }}
+        />
       </div>
 
-      <input
-        type="text"
-        value={name}
-        onChange={e => setName(e.target.value)}
-        onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-        placeholder="Your name"
-        autoFocus
-        style={{
-          width: '100%', maxWidth: 320, height: 56,
-          background: '#151720', border: '1.5px solid rgba(255,255,255,0.1)',
-          borderRadius: 14, padding: '0 20px',
-          fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 17, fontWeight: 500, color: '#F4EFE6',
-          outline: 'none', boxSizing: 'border-box', marginBottom: 16,
-          caretColor: '#65E6C6',
-        }}
-        onFocus={e => e.target.style.borderColor = 'rgba(101,230,198,0.4)'}
-        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
-      />
+      <div style={{ flex: 1 }} />
 
+      {/* Fixed-bottom continue button */}
       <button
         onClick={handleSubmit}
+        disabled={!valid}
         style={{
-          width: '100%', maxWidth: 320, height: 52,
-          background: name.trim() ? 'linear-gradient(135deg, #3D7A5E, #65E6C6)' : 'rgba(255,255,255,0.06)',
-          border: 'none', borderRadius: 14, cursor: name.trim() ? 'pointer' : 'default',
-          fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700,
-          color: name.trim() ? '#08090D' : '#4A4540',
-          transition: 'background 200ms ease, color 200ms ease',
-          letterSpacing: '0.02em',
+          width: '100%', maxWidth: 340, height: 54,
+          background: valid ? 'linear-gradient(135deg, #3D7A5E 0%, #65E6C6 100%)' : 'rgba(255,255,255,0.07)',
+          border: 'none', borderRadius: 16, cursor: valid ? 'pointer' : 'default',
+          fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, fontWeight: 700,
+          color: valid ? '#08090D' : '#3D3A35',
+          transition: 'background 220ms ease, color 220ms ease, transform 120ms ease',
+          letterSpacing: '0.02em', flexShrink: 0,
+          marginBottom: 'max(36px, env(safe-area-inset-bottom))',
         }}
+        onMouseEnter={e => { if (valid) e.currentTarget.style.transform = 'scale(1.015)' }}
+        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)' }}
       >
-        Let's go →
+        Continue →
       </button>
     </div>
   )
@@ -286,18 +353,23 @@ function BottomNav({ tab, setTab }) {
 // ─── App ─────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const [tab, setTab]             = useState('home')
-  const [view, setView]           = useState(null)   // 'module' | 'session' | 'end' — overlays
-  const [topicId, setTopicId]     = useState(null)
-  const [session, setSession]     = useState(null)
-  const [startPhase, setStartPhase] = useState(1)
-  const [results, setResults]     = useState({})
-  const [savedData, setSavedData] = useState(null)
-  const [progress, setProgress]   = useState(() => safeGetProgress())
-  const [draft, setDraft]         = useState(() => safeGetDraft())
+  const { user, pendingAuth, signOut } = useAuth()
+  const [showSplash, setShowSplash]   = useState(true)
+  const [tab, setTab]                 = useState('home')
+  const [view, setView]               = useState(null)   // 'module' | 'session' | 'end' — overlays
+  const [topicId, setTopicId]         = useState(null)
+  const [session, setSession]         = useState(null)
+  const [startPhase, setStartPhase]   = useState(1)
+  const [results, setResults]         = useState({})
+  const [savedData, setSavedData]     = useState(null)
+  const [progress, setProgress]       = useState(() => safeGetProgress())
+  const [draft, setDraft]             = useState(() => safeGetDraft())
   const [activeModule, setActiveModule] = useState(null)
-  const [user, setUser]           = useState(() => { try { return JSON.parse(localStorage.getItem('rise_user') || 'null') } catch { return null } })
-  const [showOnboarding, setShowOnboarding] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowSplash(false), 1400)
+    return () => clearTimeout(t)
+  }, [])
 
   function openModule(mod) {
     setActiveModule(mod)
@@ -345,24 +417,12 @@ export default function App() {
     setView(null)
   }
 
-  function handleLoginClick() { setShowOnboarding(true) }
-
-  function handleOnboardingComplete(name) {
-    const u = { name, createdAt: new Date().toISOString() }
-    localStorage.setItem('rise_user', JSON.stringify(u))
-    setUser(u)
-    setShowOnboarding(false)
+  // Splash → auth screens → overlays → tab shell
+  if (showSplash) return <SplashScreen />
+  if (!user?.loggedIn || !user?.onboardingComplete) {
+    if (pendingAuth) return <OnboardingScreen />
+    return <LoginScreen />
   }
-
-  function signOut() {
-    localStorage.removeItem('rise_user')
-    setUser(null)
-    setShowOnboarding(false)
-  }
-
-  // Auth screens take priority over everything
-  if (!user) return <LoginScreen onLoginClick={handleLoginClick} />
-  if (showOnboarding) return <OnboardingScreen onComplete={handleOnboardingComplete} />
 
   // Full-screen overlays take priority
   if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} onBack={closeOverlay} />
@@ -372,7 +432,7 @@ export default function App() {
   // Tab shell
   return (
     <div style={{ background: '#08090D', minHeight: '100vh' }}>
-      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onOpenSubjects={() => setTab('modules')} user={user} onSignOut={signOut} />}
+      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onOpenSubjects={() => setTab('modules')} />}
       {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
       {(tab === 'test' || tab === 'quiz' || tab === 'exam') && <TestTab mode={tab === 'quiz' ? 'quickfire' : tab === 'exam' ? 'exam' : 'test'} onOpenModule={openModule} />}
       {tab === 'progress' && <ProgressTab />}
@@ -399,19 +459,6 @@ const W = {
 
 // ─── Home tab ─────────────────────────────────────────────────────────────────
 
-function getGreetings(name) {
-  return [
-    `Right then, ${name}. Let's get some of this locked in.`,
-    "Back again. Good. Consistency beats cramming every time.",
-    "Small session, big difference. Let's go.",
-    "The exam won't study for itself. Fortunately, you're here.",
-    "One topic at a time. That's all this is.",
-    "You showed up. That's already the hard part done.",
-    "No pressure. Just progress.",
-    "Medicine in Britain isn't going to remember itself.",
-  ]
-}
-
 function daysUntilExam() {
   const exam = new Date('2027-05-01')
   const today = new Date()
@@ -419,7 +466,15 @@ function daysUntilExam() {
   return Math.max(0, Math.round((exam - today) / 86400000))
 }
 
-function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule, onOpenSubjects, user, onSignOut }) {
+function getTimeGreeting(name) {
+  const h = new Date().getHours()
+  if (h < 12) return `Morning, ${name}`
+  if (h < 17) return `Afternoon, ${name}`
+  return `Evening, ${name}`
+}
+
+function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule, onOpenSubjects }) {
+  const { user, signOut } = useAuth()
   const nextId = getNextTopicId(TOPIC_IDS)
   const draftTopic = draft ? TOPICS.find(t => t.id === draft.topicId) : null
   const streak = progress.streak || 0
@@ -471,8 +526,7 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
   ]
 
   const userName = user?.name || 'you'
-  const greetings = getGreetings(userName)
-  const heroText = greetings[new Date().getDay() % greetings.length]
+  const timeGreeting = getTimeGreeting(userName)
 
   return (
     <div style={{
@@ -488,7 +542,7 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
             Today's session
           </div>
           <button
-            onClick={onSignOut}
+            onClick={signOut}
             title="Sign out"
             style={{
               width: 34, height: 34, borderRadius: '50%', border: '1.5px solid rgba(101,230,198,0.25)',
@@ -505,7 +559,7 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
         {/* Greeting */}
         <div style={{ marginBottom: 32 }}>
           <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontSize: 34, fontWeight: 600, color: '#F4EFE6', lineHeight: 1.08, marginBottom: 14 }}>
-            Hey, {userName}.
+            {timeGreeting}.
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <div style={{
