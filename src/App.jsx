@@ -278,22 +278,20 @@ function OnboardingScreen() {
 // ─── Bottom nav ──────────────────────────────────────────────────────────────
 
 function NavIcon({ id, active }) {
-  const c = active ? '#65E6C6' : '#5A5760'
+  const c = active ? '#A855F7' : '#4B5563'
   const s = { stroke: c, fill: 'none', strokeWidth: 1.75, strokeLinecap: 'round', strokeLinejoin: 'round' }
-  const props = { width: 22, height: 22, viewBox: '0 0 22 22', style: { display: 'block', filter: active ? 'drop-shadow(0 0 5px rgba(101,230,198,0.55))' : 'none', transition: 'filter 220ms ease' } }
+  const glow = active ? `drop-shadow(0 0 6px rgba(168,85,247,0.65))` : 'none'
+  const props = { width: 22, height: 22, viewBox: '0 0 22 22', style: { display: 'block', filter: glow, transition: 'filter 220ms ease' } }
   if (id === 'home') return (
     <svg {...props}><path d="M3 9.5L11 3l8 6.5V19a1.5 1.5 0 01-1.5 1.5h-4V14h-5v6.5H4.5A1.5 1.5 0 013 19V9.5z" {...s} /></svg>
   )
-  if (id === 'modules') return (
+  if (id === 'subjects') return (
     <svg {...props}><rect x="3" y="3" width="7" height="7" rx="1.5" {...s} /><rect x="12" y="3" width="7" height="7" rx="1.5" {...s} /><rect x="3" y="12" width="7" height="7" rx="1.5" {...s} /><rect x="12" y="12" width="7" height="7" rx="1.5" {...s} /></svg>
   )
-  if (id === 'quiz') return (
-    <svg {...props}><path d="M12.5 2L4 13h7l-1.5 7L18 9h-7l1.5-7z" {...s} /></svg>
+  if (id === 'pulse') return (
+    <svg {...props}><polyline points="2,13 6,13 8,6 11,18 14,10 16,13 20,13" {...s} /></svg>
   )
-  if (id === 'progress') return (
-    <svg {...props}><polyline points="2,16 6,10 10,13 14,6 18,9" {...s} /><line x1="2" y1="19" x2="20" y2="19" {...s} /></svg>
-  )
-  if (id === 'exam') return (
+  if (id === 'exams') return (
     <svg {...props}><rect x="4" y="2" width="14" height="18" rx="2" {...s} /><line x1="8" y1="7" x2="14" y2="7" {...s} /><line x1="8" y1="11" x2="14" y2="11" {...s} /><line x1="8" y1="15" x2="11" y2="15" {...s} /></svg>
   )
   return null
@@ -302,47 +300,39 @@ function NavIcon({ id, active }) {
 function BottomNav({ tab, setTab }) {
   const tabs = [
     { id: 'home',     label: 'Home' },
-    { id: 'modules',  label: 'Subjects' },
-    { id: 'quiz',     label: '90s Quiz', badge: '90s' },
-    { id: 'progress', label: 'Progress' },
-    { id: 'exam',     label: 'Exam' },
+    { id: 'subjects', label: 'Subjects' },
+    { id: 'pulse',    label: 'Pulse' },
+    { id: 'exams',    label: 'Exams' },
   ]
 
   return (
     <div style={{
-      position: 'fixed', left: '50%', bottom: 12, transform: 'translateX(-50%)',
-      width: 'calc(100% - 24px)', maxWidth: 460, zIndex: 1000,
-      background: 'rgba(13,14,18,0.94)',
-      backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
-      border: '1px solid rgba(255,255,255,0.07)',
-      borderRadius: 26,
-      boxShadow: '0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04)',
-      display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)',
-      padding: '8px 0 calc(6px + env(safe-area-inset-bottom))',
+      position: 'fixed', left: '50%', bottom: 14, transform: 'translateX(-50%)',
+      width: 'calc(100% - 32px)', maxWidth: 400, zIndex: 1000,
+      background: 'rgba(11,16,32,0.88)',
+      backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
+      border: '1px solid rgba(139,92,246,0.12)',
+      borderRadius: 32,
+      boxShadow: '0 8px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.03) inset, 0 0 32px rgba(139,92,246,0.08)',
+      display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+      padding: '10px 6px calc(10px + env(safe-area-inset-bottom))',
+      gap: 4,
     }}>
       {tabs.map(t => {
         const active = tab === t.id
         return (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
-            border: 'none', background: 'transparent', cursor: 'pointer',
+            border: 'none', background: active ? 'rgba(139,92,246,0.18)' : 'transparent',
+            cursor: 'pointer', borderRadius: 22,
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-            fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 10, fontWeight: 500,
-            color: active ? '#65E6C6' : '#5A5760',
-            position: 'relative', padding: '4px 2px 2px', minWidth: 0,
-            transition: 'color 220ms ease',
+            fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 10, fontWeight: active ? 700 : 500,
+            color: active ? '#C4B5FD' : '#374151',
+            padding: '6px 4px 5px', minWidth: 0,
+            transition: 'background 220ms ease, color 220ms ease',
+            boxShadow: active ? '0 0 16px rgba(139,92,246,0.2)' : 'none',
           }}>
             <NavIcon id={t.id} active={active} />
-            {t.badge && (
-              <span style={{
-                position: 'absolute', top: 2, right: '8%',
-                background: 'rgba(101,230,198,0.14)', color: '#65E6C6',
-                border: '1px solid rgba(101,230,198,0.25)', borderRadius: 999,
-                fontSize: 9, padding: '1px 5px', fontWeight: 700,
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-              }}>{t.badge}</span>
-            )}
             <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', letterSpacing: '0.01em' }}>{t.label}</span>
-            {active && <span style={{ position: 'absolute', bottom: 0, width: 18, height: 2, borderRadius: 99, background: '#65E6C6', boxShadow: '0 0 8px rgba(101,230,198,0.7)' }} />}
           </button>
         )
       })}
@@ -432,10 +422,10 @@ export default function App() {
   // Tab shell
   return (
     <div style={{ background: '#08090D', minHeight: '100vh' }}>
-      {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onOpenSubjects={() => setTab('modules')} />}
-      {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
-      {(tab === 'test' || tab === 'quiz' || tab === 'exam') && <TestTab mode={tab === 'quiz' ? 'quickfire' : tab === 'exam' ? 'exam' : 'test'} onOpenModule={openModule} />}
-      {tab === 'progress' && <ProgressTab />}
+      {tab === 'home'     && <Home progress={progress} onStart={startSession} onOpenModule={openModule} onOpenSubjects={() => setTab('subjects')} />}
+      {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
+      {tab === 'pulse'    && <TestTab mode="quickfire" onOpenModule={openModule} />}
+      {tab === 'exams'    && <TestTab mode="exam" onOpenModule={openModule} />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
   )
@@ -468,354 +458,346 @@ function daysUntilExam() {
 
 function getTimeGreeting(name) {
   const h = new Date().getHours()
-  if (h < 12) return `Morning, ${name}`
-  if (h < 17) return `Afternoon, ${name}`
-  return `Evening, ${name}`
+  if (h < 12) return `Good morning, ${name}.`
+  if (h < 17) return `Good afternoon, ${name}.`
+  return `Good evening, ${name}.`
 }
 
-function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule, onOpenSubjects }) {
+function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
   const { user, signOut } = useAuth()
-  const nextId = getNextTopicId(TOPIC_IDS)
-  const draftTopic = draft ? TOPICS.find(t => t.id === draft.topicId) : null
-  const streak = progress.streak || 0
-  const displayedStreak = Math.max(streak, 8)
-  const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-  const filledDays = Math.min(7, displayedStreak)
+  const userName    = user?.name || 'you'
+  const greeting    = getTimeGreeting(userName)
+  const streak      = Math.max(progress.streak || 0, 8)
+  const todayIdx    = (() => { const d = new Date().getDay(); return d === 0 ? 6 : d - 1 })()
+  const dayLetters  = ['M','T','W','T','F','S','S']
 
-  const elizabethanModule = MODULES.find(m => m.id === 'hist_elizabethan')
-  const usaModule         = MODULES.find(m => m.id === 'hist_usa_conflict')
-  const spainModule       = MODULES.find(m => m.id === 'hist_spain_new_world')
-  const medicineModule    = MODULES.find(m => m.id === 'mod1') || MODULES.find(m => m.subject === 'History')
-
-  const historyCards = [
-    {
-      title: 'Medicine through Time',
-      era: '1250–present',
-      image: '/headers/history-medicine-through-time.png',
-      progress: medicineModule ? Math.min(100, Math.max(12, Math.round(((safeGetModuleState(medicineModule.id).screen || 0) / (medicineModule.screens?.length || 1)) * 100))) : 12,
-      module: medicineModule,
-    },
-    {
-      title: 'Early Elizabethan England',
-      era: '1558–1588',
-      image: '/headers/history-elizabethan.png',
-      progress: elizabethanModule ? Math.round(((safeGetModuleState(elizabethanModule.id).screen || 0) / (elizabethanModule.screens?.length || 1)) * 100) : 0,
-      module: elizabethanModule,
-    },
-    {
-      title: 'USA 1954–75',
-      era: 'Conflict at home and abroad',
-      image: '/headers/history-usa-conflict.png',
-      progress: usaModule ? Math.round(((safeGetModuleState(usaModule.id).screen || 0) / (usaModule.screens?.length || 1)) * 100) : 0,
-      module: usaModule,
-    },
-    {
-      title: 'Spain and the New World',
-      era: '1490–1555',
-      image: '/headers/history-spain-new-world.png',
-      progress: spainModule ? Math.round(((safeGetModuleState(spainModule.id).screen || 0) / (spainModule.screens?.length || 1)) * 100) : 0,
-      module: spainModule,
-    },
-  ]
-
-  const subjectCards = [
-    { label: 'History',   icon: '🏛',  done: [elizabethanModule, usaModule, spainModule, medicineModule].filter(Boolean).length, total: 4,  color: '#C89B6D', action: onOpenSubjects },
-    { label: 'Biology',   logo: '/headers/bio-main.png',  done: 1,  total: 7,  color: '#4F8A5B', action: onOpenSubjects },
-    { label: 'Chemistry', logo: '/headers/chem-logo.png', done: 0,  total: 15, color: '#9B59E8', action: onOpenSubjects },
-    { label: 'English',   icon: '📖',  done: 8,  total: 14, color: '#9E3D52', action: onOpenSubjects },
-  ]
-
-  const userName = user?.name || 'you'
-  const timeGreeting = getTimeGreeting(userName)
+  const medicineModule  = MODULES.find(m => m.id === 'mod1') || MODULES.find(m => m.subject === 'History')
+  const medState        = medicineModule ? safeGetModuleState(medicineModule.id) : {}
+  const medProgress     = medicineModule
+    ? Math.min(100, Math.max(12, Math.round(((medState.screen || 0) / (medicineModule.screens?.length || 1)) * 100)))
+    : 12
 
   return (
     <div style={{
-      background: 'radial-gradient(ellipse at top right, rgba(255,255,255,0.04) 0%, transparent 55%), linear-gradient(180deg, #101218 0%, #08090D 100%)',
       minHeight: '100vh',
+      background: 'radial-gradient(ellipse 90% 45% at 50% -5%, rgba(139,92,246,0.14) 0%, transparent 60%), #060816',
       paddingBottom: 120,
+      overflowX: 'hidden',
     }}>
-      <div style={{ maxWidth: 420, margin: '0 auto', padding: '52px 20px 0' }}>
+      <div style={{ maxWidth: 430, margin: '0 auto', padding: '56px 20px 0' }}>
 
-        {/* Top row: greeting label + user avatar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-          <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: '0.11em', color: '#7A7670', textTransform: 'uppercase' }}>
-            Today's session
-          </div>
+        {/* ── Greeting + Streak ── */}
+        <div style={{ marginBottom: 32, position: 'relative' }}>
+
+          {/* Sign-out avatar — top right */}
           <button
             onClick={signOut}
             title="Sign out"
             style={{
-              width: 34, height: 34, borderRadius: '50%', border: '1.5px solid rgba(101,230,198,0.25)',
-              background: 'rgba(101,230,198,0.1)', cursor: 'pointer',
+              position: 'absolute', top: 0, right: 0,
+              width: 34, height: 34, borderRadius: '50%',
+              border: '1.5px solid rgba(139,92,246,0.3)',
+              background: 'rgba(139,92,246,0.1)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 700,
-              color: '#65E6C6', letterSpacing: '0.02em', flexShrink: 0,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: 13, fontWeight: 700, color: '#C4B5FD',
             }}
           >
             {userName.charAt(0).toUpperCase()}
           </button>
+
+          {/* Greeting */}
+          <div style={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: 14, fontWeight: 600, color: '#D6A166',
+            marginBottom: 8, letterSpacing: '0.01em',
+          }}>
+            {greeting}
+          </div>
+
+          {/* Streak row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 8 }}>
+            <div style={{
+              fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+              fontSize: 46, fontWeight: 700, color: '#F4EFE6', lineHeight: 1,
+              letterSpacing: '-0.025em',
+            }}>
+              {streak} day streak
+            </div>
+            <div style={{ fontSize: 34, flexShrink: 0, filter: 'drop-shadow(0 0 10px rgba(245,158,11,0.65))' }}>
+              🔥
+            </div>
+          </div>
+
+          {/* Sub text */}
+          <div style={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: 14, color: '#4B5563', marginBottom: 24,
+          }}>
+            You're building momentum.
+          </div>
+
+          {/* Day tracker */}
+          <div style={{ display: 'flex', gap: 6 }}>
+            {dayLetters.map((d, i) => {
+              const done   = i < todayIdx
+              const isToday = i === todayIdx
+              return (
+                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
+                  <div style={{
+                    width: isToday ? 34 : 30, height: isToday ? 34 : 30,
+                    borderRadius: '50%',
+                    background: done ? 'rgba(45,212,191,0.12)' : isToday ? 'rgba(139,92,246,0.18)' : 'rgba(255,255,255,0.03)',
+                    border: done ? '1.5px solid rgba(45,212,191,0.35)' : isToday ? '1.5px solid rgba(139,92,246,0.45)' : '1.5px solid rgba(255,255,255,0.05)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: done ? '0 0 10px rgba(45,212,191,0.18)' : isToday ? '0 0 14px rgba(139,92,246,0.3)' : 'none',
+                  }}>
+                    <div style={{
+                      width: done ? 8 : isToday ? 9 : 5, height: done ? 8 : isToday ? 9 : 5,
+                      borderRadius: '50%',
+                      background: done ? '#2DD4BF' : isToday ? '#8B5CF6' : 'rgba(255,255,255,0.12)',
+                      boxShadow: done ? '0 0 8px rgba(45,212,191,0.8)' : isToday ? '0 0 10px rgba(139,92,246,0.9)' : 'none',
+                    }} />
+                  </div>
+                  <div style={{
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    fontSize: 11, fontWeight: 600, letterSpacing: '0.05em',
+                    color: done ? '#2DD4BF' : isToday ? '#C4B5FD' : '#1F2937',
+                  }}>
+                    {d}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
 
-        {/* Greeting */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontSize: 34, fontWeight: 600, color: '#F4EFE6', lineHeight: 1.08, marginBottom: 14 }}>
-            {timeGreeting}.
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <div style={{
-              background: 'rgba(255,138,31,0.1)', border: '1px solid rgba(255,138,31,0.22)',
-              borderRadius: 999, padding: '5px 14px',
-              fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 600, color: '#FF8A1F',
-            }}>
-              🔥 {displayedStreak} day streak
-            </div>
-            <div style={{
-              background: 'rgba(101,230,198,0.08)', border: '1px solid rgba(101,230,198,0.18)',
-              borderRadius: 999, padding: '5px 14px',
-              fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 600, color: '#65E6C6',
-            }}>
-              {daysUntilExam()} days to exam
-            </div>
-          </div>
-        </div>
-
-        {/* Continue Learning */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: '0.11em', color: '#7A7670', textTransform: 'uppercase', marginBottom: 14 }}>
+        {/* ── Continue Learning ── */}
+        <div style={{ marginBottom: 14 }}>
+          <div style={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+            color: '#374151', textTransform: 'uppercase', marginBottom: 12,
+          }}>
             Continue Learning
           </div>
-          <div style={{
-            display: 'flex', gap: 12, overflowX: 'auto', scrollSnapType: 'x mandatory',
-            margin: '0 -20px', padding: '0 20px 4px',
-            scrollbarWidth: 'none', msOverflowStyle: 'none',
-          }}>
-            {historyCards.map((card) => {
-              const available = Boolean(card.module)
-              return (
-                <button key={card.title} onClick={() => available && onOpenModule(card.module)} style={{
-                  minWidth: 'calc(85vw)', maxWidth: 340, height: 190, scrollSnapAlign: 'start', flexShrink: 0,
-                  border: '1px solid rgba(200,155,109,0.18)', borderRadius: 28,
-                  overflow: 'hidden', cursor: available ? 'pointer' : 'default',
-                  position: 'relative', padding: 0, background: '#0D0E10',
-                }}>
-                  {/* Cinematic background image */}
-                  <div style={{
-                    position: 'absolute', inset: 0, borderRadius: 28,
-                    backgroundImage: `url(${card.image})`,
-                    backgroundSize: 'cover', backgroundPosition: 'center right',
-                    filter: 'blur(0.4px) saturate(0.92) contrast(0.95)',
-                  }} />
-                  {/* Dark left gradient overlay */}
-                  <div style={{
-                    position: 'absolute', inset: 0, borderRadius: 28,
-                    background: 'linear-gradient(90deg, rgba(8,9,13,0.93) 0%, rgba(8,9,13,0.68) 52%, rgba(8,9,13,0.08) 100%)',
-                  }} />
-                  {/* Text content */}
-                  <div style={{
-                    position: 'absolute', inset: 0, padding: '18px 20px',
-                    display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-                    maxWidth: '72%',
-                  }}>
-                    <div>
-                      <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', color: '#C89B6D', textTransform: 'uppercase', marginBottom: 7 }}>
-                        History
-                      </div>
-                      <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontSize: 17, fontWeight: 600, color: '#F4EFE6', lineHeight: 1.25 }}>
-                        {card.title}
-                      </div>
-                      <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, color: '#7A7670', marginTop: 5, lineHeight: 1.3 }}>
-                        {card.era}
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ height: 3, background: 'rgba(255,255,255,0.1)', borderRadius: 99, overflow: 'hidden', marginBottom: 7 }}>
-                        <div style={{ width: card.progress + '%', height: '100%', borderRadius: 99, background: 'linear-gradient(90deg, #C89B6D, #E0C090)' }} />
-                      </div>
-                      <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, color: '#7A7670' }}>
-                        {card.progress > 0 ? `${card.progress}% complete` : 'Not started'}
-                      </div>
-                    </div>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        </div>
 
-        {/* Weak Zone */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: '0.11em', color: '#7A7670', textTransform: 'uppercase', marginBottom: 14 }}>
-            Weak Area
-          </div>
-          <div style={{
-            borderRadius: 18,
-            background: 'rgba(224,168,79,0.07)',
-            border: '1px solid rgba(224,168,79,0.16)',
-            padding: '16px 18px',
-            display: 'flex', alignItems: 'center', gap: 14,
-          }}>
+          <button
+            onClick={() => medicineModule && onOpenModule(medicineModule)}
+            style={{
+              width: '100%', height: 240, border: 'none', padding: 0,
+              cursor: medicineModule ? 'pointer' : 'default',
+              borderRadius: 24, overflow: 'hidden', position: 'relative',
+              background: '#0B1020', display: 'block',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.55)',
+            }}
+          >
+            {/* Artwork */}
             <div style={{
-              width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-              background: 'rgba(224,168,79,0.13)',
-              border: '1px solid rgba(224,168,79,0.22)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1.25rem',
-            }}>🎯</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, fontWeight: 700, color: '#F4EFE6', marginBottom: 3 }}>
-                Medicine through Time
-              </div>
-              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, color: '#E0A84F', lineHeight: 1.3 }}>
-                Quick win — 10 mins gets this green
-              </div>
-            </div>
-            <button onClick={() => medicineModule ? onOpenModule(medicineModule) : onStart(nextId)} style={{
-              background: 'rgba(224,168,79,0.13)', border: '1px solid rgba(224,168,79,0.28)',
-              borderRadius: 999, padding: '9px 16px', flexShrink: 0,
-              fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 700,
-              color: '#E0A84F', cursor: 'pointer',
+              position: 'absolute', inset: 0,
+              backgroundImage: 'url(/headers/history-medicine-through-time.png)',
+              backgroundSize: 'cover', backgroundPosition: 'center right',
+              filter: 'saturate(0.85) contrast(0.9)',
+            }} />
+            {/* Gradient overlay */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(90deg, rgba(6,8,22,0.97) 0%, rgba(6,8,22,0.88) 38%, rgba(6,8,22,0.5) 62%, rgba(6,8,22,0.08) 100%)',
+            }} />
+            {/* Border ring */}
+            <div style={{ position: 'absolute', inset: 0, borderRadius: 24, border: '1px solid rgba(255,255,255,0.07)' }} />
+
+            {/* Text — left 50% */}
+            <div style={{
+              position: 'absolute', inset: 0, padding: '22px 20px',
+              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              maxWidth: '54%',
             }}>
-              Start ›
-            </button>
-          </div>
-        </div>
-
-        {/* Subjects grid */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-            <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: '0.11em', color: '#7A7670', textTransform: 'uppercase' }}>
-              Your Subjects
-            </div>
-            <button onClick={onOpenSubjects} style={{ border: 'none', background: 'transparent', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 600, color: '#65E6C6', cursor: 'pointer', padding: 0 }}>
-              View all
-            </button>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            {subjectCards.map(subject => {
-              const pct = Math.round((subject.done / subject.total) * 100)
-              return (
-                <button key={subject.label} onClick={subject.action} style={{
-                  background: subject.color + '12',
-                  border: '1px solid ' + subject.color + '28',
-                  borderRadius: 18, padding: '16px 16px 14px',
-                  textAlign: 'left', cursor: 'pointer',
-                  display: 'flex', flexDirection: 'column', gap: 6,
+              <div>
+                <div style={{
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: 10, fontWeight: 700, letterSpacing: '0.14em',
+                  color: '#D6A166', textTransform: 'uppercase', marginBottom: 10,
                 }}>
-                  {subject.logo
-                    ? <img src={subject.logo} alt={subject.label} style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover' }} />
-                    : <div style={{ fontSize: '1.4rem', lineHeight: 1 }}>{subject.icon}</div>
-                  }
-                  <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, fontWeight: 700, color: '#F4EFE6', marginTop: 2 }}>{subject.label}</div>
-                  <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 500, color: subject.color }}>{subject.done}/{subject.total} modules</div>
-                  <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden', marginTop: 2 }}>
-                    <div style={{ width: pct + '%', height: '100%', borderRadius: 99, background: subject.color }} />
-                  </div>
-                </button>
-              )
-            })}
-          </div>
+                  History
+                </div>
+                <div style={{
+                  fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+                  fontSize: 21, fontWeight: 700, color: '#F4EFE6', lineHeight: 1.2, marginBottom: 6,
+                }}>
+                  Medicine through Time
+                </div>
+                <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, color: '#6B7280' }}>
+                  1250–present
+                </div>
+              </div>
+
+              <div>
+                <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 99, overflow: 'hidden', marginBottom: 7 }}>
+                  <div style={{
+                    width: medProgress + '%', height: '100%', borderRadius: 99,
+                    background: 'linear-gradient(90deg, #92400E, #D6A166)',
+                    boxShadow: '0 0 8px rgba(214,161,102,0.5)',
+                  }} />
+                </div>
+                <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, color: '#6B7280' }}>
+                  {medProgress}% complete
+                </div>
+              </div>
+            </div>
+
+            {/* Continue button */}
+            <div style={{
+              position: 'absolute', bottom: 20, right: 18,
+              background: 'rgba(214,161,102,0.14)',
+              border: '1px solid rgba(214,161,102,0.28)',
+              backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+              borderRadius: 12, padding: '9px 16px',
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: 12, fontWeight: 700, color: '#D6A166',
+              display: 'flex', alignItems: 'center', gap: 5,
+            }}>
+              Continue <span style={{ fontSize: 15 }}>›</span>
+            </div>
+          </button>
         </div>
 
-        {/* 90s Quiz CTA */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{
-            borderRadius: 18,
-            background: 'rgba(101,230,198,0.05)',
-            border: '1px solid rgba(101,230,198,0.13)',
-            padding: '18px 20px',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-          }}>
-            <div>
-              <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontSize: 20, fontWeight: 600, color: '#F4EFE6', marginBottom: 5, lineHeight: 1.1 }}>
-                90 Second Quiz
+        {/* ── Weak Zone ── */}
+        <div style={{ marginBottom: 20 }}>
+          <button
+            onClick={() => onStart && medicineModule && onStart(medicineModule.id)}
+            style={{
+              width: '100%', border: 'none', padding: 0,
+              cursor: 'pointer', borderRadius: 24, position: 'relative',
+              background: 'transparent', textAlign: 'left', display: 'block',
+            }}
+          >
+            {/* Ambient glow halo */}
+            <div style={{
+              position: 'absolute', inset: -1, borderRadius: 25,
+              background: 'linear-gradient(135deg, rgba(251,113,133,0.2) 0%, rgba(139,92,246,0.15) 100%)',
+              filter: 'blur(1.5px)', zIndex: 0,
+            }} />
+
+            <div style={{
+              position: 'relative', zIndex: 1,
+              background: 'rgba(17,24,39,0.72)',
+              backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+              borderRadius: 24,
+              border: '1px solid rgba(251,113,133,0.18)',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)',
+              padding: '18px 16px 18px 16px',
+              display: 'flex', alignItems: 'center', gap: 14,
+            }}>
+              {/* Brain icon */}
+              <div style={{
+                width: 66, height: 66, borderRadius: 18, flexShrink: 0, overflow: 'hidden',
+                boxShadow: '0 0 22px rgba(45,212,191,0.35)',
+              }}>
+                <img src="/icons/brain-icon.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
-              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, color: '#7A7670', lineHeight: 1.4 }}>
-                Race the clock. Build recall fast.
+
+              {/* Text */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: 10, fontWeight: 700, letterSpacing: '0.14em',
+                  color: '#FB7185', textTransform: 'uppercase', marginBottom: 5,
+                }}>
+                  Weak Zone
+                </div>
+                <div style={{
+                  fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+                  fontSize: 16, fontWeight: 700, color: '#F4EFE6', lineHeight: 1.2, marginBottom: 6,
+                }}>
+                  Medicine through Time
+                </div>
+                <div style={{
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: 12, color: '#9CA3AF', lineHeight: 1.5,
+                }}>
+                  2 quick quizzes to get this{' '}
+                  <span style={{ color: '#2DD4BF', textShadow: '0 0 10px rgba(45,212,191,0.5)' }}>green</span> again.
+                </div>
               </div>
+
+              {/* Recover button */}
+              <div style={{
+                flexShrink: 0,
+                background: 'rgba(139,92,246,0.14)',
+                border: '1px solid rgba(139,92,246,0.28)',
+                backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+                borderRadius: 12, padding: '10px 12px',
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontSize: 11, fontWeight: 700, color: '#C4B5FD',
+                lineHeight: 1.3, textAlign: 'center',
+                boxShadow: '0 0 18px rgba(139,92,246,0.22)',
+              }}>
+                Recover<br />now <span style={{ fontSize: 13 }}>›</span>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* ── This Week ── */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <div style={{
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+              color: '#374151', textTransform: 'uppercase',
+            }}>
+              This Week
             </div>
             <div style={{
-              width: 48, height: 48, borderRadius: 14, flexShrink: 0,
-              background: 'rgba(101,230,198,0.12)',
-              border: '1px solid rgba(101,230,198,0.22)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1.4rem',
-            }}>⚡</div>
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: 12, fontWeight: 600, color: '#D6A166',
+              display: 'flex', alignItems: 'center', gap: 5,
+            }}>
+              <span>⭐</span> You're on track
+            </div>
           </div>
-        </div>
 
-        {/* Streak week */}
-        <div style={{
-          borderRadius: 18,
-          background: '#151720',
-          border: '1px solid rgba(255,255,255,0.05)',
-          padding: '16px 20px',
-          marginBottom: 16,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 700, color: '#F4EFE6' }}>This week</div>
-            <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 500, color: '#FF8A1F' }}>🔥 {displayedStreak} day streak</div>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 6 }}>
-            {weekDays.map((day, index) => (
-              <div key={day + index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, flex: 1 }}>
+          <div style={{
+            background: 'rgba(17,24,39,0.72)',
+            backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 20, padding: '18px 8px',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.35)',
+            display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
+          }}>
+            {[
+              { icon: '⏱', label: 'Study time', value: '4h 15m' },
+              { icon: '🧠', label: 'Quizzes',    value: '18' },
+              { icon: '⚡', label: 'Points',     value: '740' },
+            ].map((s, i) => (
+              <div key={s.label} style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                borderRight: i < 2 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+              }}>
+                <div style={{ fontSize: 18, opacity: 0.75 }}>{s.icon}</div>
                 <div style={{
-                  width: '100%', aspectRatio: '1', borderRadius: 10,
-                  background: index < filledDays ? 'rgba(101,230,198,0.13)' : 'rgba(255,255,255,0.03)',
-                  border: index < filledDays ? '1px solid rgba(101,230,198,0.28)' : '1px solid rgba(255,255,255,0.06)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+                  fontSize: 22, fontWeight: 700, color: '#F4EFE6', lineHeight: 1,
                 }}>
-                  {index < filledDays && (
-                    <div style={{ width: 9, height: 9, borderRadius: '50%', background: '#65E6C6', boxShadow: '0 0 8px rgba(101,230,198,0.65)' }} />
-                  )}
+                  {s.value}
                 </div>
-                <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 10, fontWeight: 500, color: index < filledDays ? '#65E6C6' : '#7A7670' }}>{day}</div>
+                <div style={{
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: 10, color: '#374151', fontWeight: 600,
+                  letterSpacing: '0.07em', textTransform: 'uppercase',
+                }}>
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Draft resume */}
-        {draft && draftTopic && (
-          <div style={{ marginTop: 12, padding: '12px 12px', borderRadius: 16, border: '1px solid rgba(101,230,198,0.18)', background: 'rgba(101,230,198,0.05)', display: 'flex', gap: 8 }}>
-            <button onClick={onResume} style={{
-              flex: 2, border: 'none', borderRadius: 12, padding: '12px 10px',
-              background: 'rgba(101,230,198,0.13)', color: '#65E6C6',
-              fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13,
-              cursor: 'pointer',
-            }}>
-              Resume {draftTopic.title}
-            </button>
-            <button onClick={onDiscardDraft} style={{
-              flex: 1, border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '12px 10px',
-              background: 'transparent', color: '#7A7670',
-              fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: 13,
-              cursor: 'pointer',
-            }}>
-              Discard
-            </button>
-          </div>
-        )}
-
       </div>
     </div>
   )
 }
-
-
-// ─── Progress tab stub ────────────────────────────────────────────────────────
-
-function ProgressTab() {
-  return (
-    <div style={{ background: '#05070B', minHeight: '100vh', paddingBottom: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ textAlign: 'center', fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
-        <div style={{ fontSize: '3rem', marginBottom: 16 }}>📊</div>
-        <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#F5F2EA', marginBottom: 8 }}>Progress</div>
-        <div style={{ fontSize: '.9rem', color: '#7D7988' }}>Your stats will appear here</div>
-      </div>
-    </div>
-  )
-}
-
 // ─── Modules tab ──────────────────────────────────────────────────────────────
 
 function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, headerImage, icon, locked, isSelected, onClick }) {
