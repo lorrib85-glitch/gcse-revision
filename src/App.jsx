@@ -2159,6 +2159,9 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
   const [examFeedback, setExamFeedback] = useState(null)
   const [examGrading, setExamGrading] = useState(false)
   const [examStats, setExamStats] = useState({ correct: 0, answered: 0, bySubject: {} })
+  const [tqMcAttempts, setTqMcAttempts] = useState(0)
+  const [tqMcHint, setTqMcHint]         = useState(false)
+  const [tqMcLocked, setTqMcLocked]     = useState(false)
 
   useEffect(() => {
     if (!isQuickFire || !selected || !quickFireActive) return undefined
@@ -2357,15 +2360,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
   function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
 
 
-  if (isExamMode) {
-    const examSubjects = [
-      { label: 'Sociology', icon: '👥', color: '#9D5CFF', done: 7, total: 10, subject: 'Sociology' },
-      { label: 'History', icon: '🏰', color: '#F97316', done: 6, total: 12, subject: 'History' },
-      { label: 'Science', icon: '⚗️', color: '#38D27A', done: 5, total: 11, subject: 'Biology' },
-      { label: 'Maths', icon: '✕²', color: '#3B82FF', done: 4, total: 10, subject: 'Maths' },
-      { label: 'English', icon: '📖', color: '#9D5CFF', done: 8, total: 14, subject: 'English' },
-      { label: 'Chemistry', icon: '⚗️', color: '#38D27A', done: 3, total: 9, subject: 'Chemistry' },
-    ]
+  if (isExamMode && examPhase !== 'landing') {
     const currentExamQuestion = examQuestions[examIdx]
     const examAccuracy = examStats.answered ? Math.round((examStats.correct / examStats.answered) * 100) : 0
 
@@ -2452,74 +2447,6 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
       )
     }
 
-    return (
-      <div style={{ background:'#030712', minHeight:'100vh', color:'#F5F7FB', padding:'28px 31px 118px' }}>
-        <div style={{ maxWidth:960, margin:'0 auto' }}>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:34 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:24 }}>
-              <div style={{ width:96, height:96, borderRadius:'50%', background:'radial-gradient(circle at 50% 36%, rgba(177,83,255,.92), rgba(77,25,128,.72) 38%, rgba(7,10,28,.96) 68%)', border:'1px solid rgba(177,83,255,.75)', boxShadow:'0 0 32px rgba(157,92,255,.58), inset 0 0 22px rgba(255,255,255,.08)', display:'grid', placeItems:'center', fontSize:'2.35rem' }}>🔮</div>
-              <div><h1 style={{ margin:0, fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.45rem', lineHeight:1, fontWeight:850, letterSpacing:'-.035em' }}>Exam Mode</h1><div style={{ color:'#AAB4D4', fontSize:'1.45rem', marginTop:10, fontWeight:600 }}>Ready? 🎯</div></div>
-            </div>
-            <div style={{ display:'flex', alignItems:'center', gap:12, background:'rgba(9,13,31,.9)', border:'1px solid rgba(110,124,166,.42)', borderRadius:999, padding:'16px 24px', color:'#F5F7FB', fontSize:'1.24rem', boxShadow:'inset 0 1px 0 rgba(255,255,255,.05)' }}><span>🔥</span><span>{testStreak || 8} day streak</span></div>
-          </div>
-
-          <div style={{ position:'relative', overflow:'hidden', border:'1px solid rgba(79,91,134,.58)', borderRadius:22, padding:'24px 32px 18px', marginBottom:24, minHeight:358, background:'radial-gradient(circle at 75% 38%, rgba(111,35,206,.42), transparent 34%), linear-gradient(145deg,#090D1D 0%,#060914 100%)', boxShadow:'0 18px 54px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.04)' }}>
-            <div style={{ display:'grid', gridTemplateColumns:'1.1fr .9fr', gap:22, minHeight:310 }}>
-              <div style={{ position:'relative', zIndex:2, display:'flex', flexDirection:'column', alignItems:'flex-start' }}>
-                <div style={{ display:'inline-flex', gap:9, alignItems:'center', background:'rgba(157,92,255,.2)', border:'1px solid rgba(157,92,255,.18)', borderRadius:10, padding:'7px 12px', color:'#D8C1FF', fontWeight:900, fontSize:'.9rem', letterSpacing:'.05em', marginBottom:24 }}>★ RECOMMENDED</div>
-                <h2 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.25rem', lineHeight:1.05, margin:'0 0 24px', fontWeight:900, letterSpacing:'-.035em' }}>Random Exam Challenge <span style={{ color:'#A855F7' }}>⚡</span></h2>
-                <div style={{ display:'flex', alignItems:'center', gap:20, flexWrap:'wrap', color:'#E4E9F8', marginBottom:28, fontSize:'1rem' }}><span>❔&nbsp; 10 questions</span><span style={{ color:'#52607F' }}>•</span><span>⤨&nbsp; Mixed topics</span><span style={{ color:'#52607F' }}>•</span><span>▥&nbsp; Adaptive</span></div>
-                <p style={{ color:'#AAB4D4', lineHeight:1.45, maxWidth:420, margin:'0 0 28px', fontSize:'1.12rem' }}>Maths. Then Macbeth. Then biology.<br /><span style={{ color:'#C94DFF' }}>You never know what’s coming.</span></p>
-                <div style={{ display:'grid', gridTemplateColumns:'1fr .95fr', gap:34, width:'100%', marginTop:'auto' }}>
-                  <button onClick={() => startExamRound('Random')} style={{ background:'linear-gradient(180deg,#7C2DF2 0%,#6416D1 100%)', border:'1px solid rgba(203,170,255,.18)', borderRadius:14, padding:'19px 24px', color:'#fff', fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:'1.3rem', cursor:'pointer', boxShadow:'0 16px 36px rgba(103,36,214,.38), inset 0 1px 0 rgba(255,255,255,.18)' }}>⤨&nbsp; Start Random</button>
-                  <button onClick={() => startExamRound('Random')} style={{ background:'rgba(8,12,26,.72)', border:'1px solid rgba(80,97,140,.44)', borderRadius:14, padding:'19px 24px', color:'#F5F7FB', fontWeight:800, fontSize:'1.15rem', cursor:'pointer', display:'flex', justifyContent:'space-between', alignItems:'center' }}><span>🔥&nbsp; 2x streak</span><span style={{ color:'#AAB4D4', fontSize:'1.8rem' }}>›</span></button>
-                </div>
-              </div>
-
-              <div style={{ position:'relative', minHeight:286 }}>
-                <div style={{ position:'absolute', inset:'-22px -20px -10px -20px', background:'radial-gradient(circle at 50% 52%, rgba(157,92,255,.34), transparent 45%)', filter:'blur(4px)' }} />
-                <svg viewBox="0 0 430 310" style={{ position:'absolute', inset:0, width:'100%', height:'100%', filter:'drop-shadow(0 0 26px rgba(168,85,247,.72))' }}>
-                  <defs>
-                    <linearGradient id="cubeTop" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stopColor="#21103f"/><stop offset="1" stopColor="#A855F7"/></linearGradient>
-                    <linearGradient id="cubeLeft" x1="0" x2="1"><stop offset="0" stopColor="#090817"/><stop offset="1" stopColor="#6D28D9"/></linearGradient>
-                    <linearGradient id="cubeRight" x1="0" x2="1"><stop offset="0" stopColor="#140724"/><stop offset="1" stopColor="#8B5CF6"/></linearGradient>
-                    <filter id="examCubeGlow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                  </defs>
-                  <path d="M214 30 L330 88 L214 148 L98 88 Z" fill="url(#cubeTop)" stroke="#D8B4FE" strokeWidth="3" filter="url(#examCubeGlow)"/>
-                  <path d="M98 88 L214 148 L214 278 L98 210 Z" fill="url(#cubeLeft)" stroke="#A855F7" strokeWidth="3"/>
-                  <path d="M330 88 L214 148 L214 278 L330 210 Z" fill="url(#cubeRight)" stroke="#C084FC" strokeWidth="3"/>
-                  <text x="214" y="107" textAnchor="middle" fill="#F5E8FF" fontSize="74" fontWeight="900" fontFamily="Arial">?</text>
-                  <text x="156" y="216" textAnchor="middle" fill="#E9D5FF" fontSize="70" fontWeight="900" fontFamily="Arial">?</text>
-                  <text x="276" y="216" textAnchor="middle" fill="#F3E8FF" fontSize="70" fontWeight="900" fontFamily="Arial">?</text>
-                  <circle cx="92" cy="60" r="3" fill="#A855F7" opacity=".8"/><circle cx="352" cy="58" r="4" fill="#C084FC" opacity=".75"/><circle cx="375" cy="222" r="3" fill="#A855F7" opacity=".7"/><circle cx="62" cy="215" r="3" fill="#C084FC" opacity=".65"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', margin:'0 2px 12px' }}><div style={{ color:'#AAB4D4', fontWeight:900, letterSpacing:'.12em', fontSize:'1rem' }}>QUICK FOCUS</div><button style={{ background:'transparent', border:'none', color:'#C94DFF', fontWeight:900, fontSize:'1.05rem', cursor:'pointer' }}>See all&nbsp; ›</button></div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:24, marginBottom:22 }}>
-            {[['◎','Weak Zones'],['⊗','Last Mistakes'],['◉','Predicted Paper']].map(([icon,label]) => <button key={label} onClick={() => startExamRound('Random')} style={{ background:'rgba(13,20,36,.88)', border:'1px solid rgba(80,97,140,.44)', borderRadius:999, color:'#F5F7FB', padding:'19px 20px', fontWeight:800, fontSize:'1.12rem', cursor:'pointer', boxShadow:'inset 0 1px 0 rgba(255,255,255,.04)' }}><span style={{ color:'#A7B5E7', marginRight:12 }}>{icon}</span>{label}</button>)}
-          </div>
-
-          <div style={{ color:'#AAB4D4', fontWeight:900, letterSpacing:'.12em', margin:'0 2px 12px', fontSize:'1rem' }}>CHOOSE A SUBJECT</div>
-          <div style={{ border:'1px solid rgba(80,97,140,.42)', borderRadius:16, overflow:'hidden', marginBottom:18, background:'rgba(8,12,26,.58)' }}>
-            {examSubjects.slice(0,3).map(subject => {
-              const pct = Math.round((subject.done / subject.total) * 100)
-              return <button key={subject.label} onClick={() => startExamRound(subject.subject)} style={{ width:'100%', background:'transparent', border:'none', borderBottom:'1px solid rgba(255,255,255,.07)', padding:'11px 20px', display:'grid', gridTemplateColumns:'76px 190px 1fr 28px', alignItems:'center', gap:10, textAlign:'left', cursor:'pointer' }}>
-                <div style={{ color:subject.color, fontSize:'2.25rem', textAlign:'center' }}>{subject.icon}</div>
-                <div><div style={{ color:'#F5F7FB', fontWeight:850, fontSize:'1.16rem', lineHeight:1.05 }}>{subject.label}</div><div style={{ color:subject.color, fontSize:'.92rem', fontWeight:800, marginTop:4 }}>{subject.done}/{subject.total} modules</div></div>
-                <div style={{ height:10, background:'rgba(255,255,255,.1)', borderRadius:99, overflow:'hidden', maxWidth:330 }}><div style={{ width:pct+'%', background:subject.color, height:'100%', borderRadius:99, boxShadow:'0 0 12px '+subject.color }} /></div>
-                <div style={{ color:'#AAB4D4', fontSize:'2rem' }}>›</div>
-              </button>
-            })}
-          </div>
-
-          <div style={{ color:'#AAB4D4', fontWeight:900, letterSpacing:'.12em', margin:'0 2px 12px', fontSize:'1rem' }}>REAL EXAM PAPERS</div>
-          <button onClick={() => startExamRound('Random')} style={{ width:'100%', background:'rgba(13,20,36,.88)', border:'1px solid rgba(80,97,140,.44)', borderRadius:16, padding:'17px 22px', display:'flex', alignItems:'center', gap:22, color:'#F5F7FB', textAlign:'left', cursor:'pointer', boxShadow:'inset 0 1px 0 rgba(255,255,255,.04)' }}><span style={{ color:'#C94DFF', fontSize:'2.25rem' }}>▤</span><span style={{ flex:1 }}><strong style={{ fontSize:'1.2rem' }}>Real Exam Papers</strong><br /><span style={{ color:'#AAB4D4', fontSize:'1rem' }}>AQA & Edexcel timed papers</span></span><span style={{ fontSize:'2rem', color:'#AAB4D4' }}>›</span></button>
-        </div>
-      </div>
-    )
   }
 
   if (mathsOpen)   return <MathsBrowser   onBack={() => setMathsOpen(false)} />
@@ -2557,11 +2484,6 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     if (qIdx < total - 1) { setQIdx(qIdx+1); resetQ() }
     else { setSelected(null); setQIdx(0); resetQ() }
   }
-
-  // ── TestTab inline question state for MC hint+retry ──────────────────────────
-  const [tqMcAttempts, setTqMcAttempts] = useState(0)
-  const [tqMcHint, setTqMcHint]         = useState(false)
-  const [tqMcLocked, setTqMcLocked]     = useState(false)
 
   function fullResetQ() {
     resetQ()
@@ -2610,6 +2532,10 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
   function startRandomQuestion() {
     if (isQuickFire) {
       startTopic({ topicId: 'quickfire', label: '90s Quick Fire', subject: 'Quick Fire' })
+      return
+    }
+    if (isExamMode) {
+      startExamRound('Random')
       return
     }
     const allT = TEST_TOPICS.filter(s => s.topics.some(t => t.available))
@@ -2852,12 +2778,12 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
 
   const EXAM_SUBJECTS = [
-    { icon: '👥', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: () => setSociologyOpen(true) },
-    { icon: '🏰', label: 'History',   color: '#F5B700', completed: 6,  total: 12, action: () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
-    { icon: '🔬', label: 'Science',   color: '#38D27A', completed: 5,  total: 11, action: () => startTopic({ topicId: 'tb_cells', label: 'Science', subject: 'Biology' }) },
-    { icon: '📐', label: 'Maths',     color: '#3B82FF', completed: 0,  total: 20, action: () => setMathsOpen(true) },
-    { icon: '📖', label: 'English',   color: '#9D5CFF', completed: 0,  total: 15, action: () => setEnglishOpen(true) },
-    { icon: '⚗️', label: 'Chemistry', color: '#4ED8A0', completed: 0,  total: 12, action: () => setChemistryOpen(true) },
+    { icon: '👥', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: isExamMode ? () => startExamRound('Sociology') : () => setSociologyOpen(true) },
+    { icon: '🏰', label: 'History',   color: '#F5B700', completed: 6,  total: 12, action: isExamMode ? () => startExamRound('History') : () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
+    { icon: '🔬', label: 'Science',   color: '#38D27A', completed: 5,  total: 11, action: isExamMode ? () => startExamRound('Biology') : () => startTopic({ topicId: 'tb_cells', label: 'Science', subject: 'Biology' }) },
+    { icon: '📐', label: 'Maths',     color: '#3B82FF', completed: 0,  total: 20, action: isExamMode ? () => startExamRound('Maths') : () => setMathsOpen(true) },
+    { icon: '📖', label: 'English',   color: '#9D5CFF', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('English') : () => setEnglishOpen(true) },
+    { icon: '⚗️', label: 'Chemistry', color: '#4ED8A0', completed: 0,  total: 12, action: isExamMode ? () => startExamRound('Chemistry') : () => setChemistryOpen(true) },
   ]
 
   return (
@@ -2875,10 +2801,10 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
           </div>
           <div>
             <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.05rem', color: '#F5F7FB', lineHeight: 1.15 }}>
-              {isQuickFire ? '90s Quick Fire' : 'Exam Mode'}
+              {isQuickFire ? '90s Quick Fire' : isExamMode ? 'Exam Mode' : 'Practice Test'}
             </div>
             <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.73rem', color: '#6B7AA0', marginTop: 2 }}>
-              {isQuickFire ? '90 seconds. Answer fast.' : 'Ready? ❤️'}
+              {isQuickFire ? '90 seconds. Answer fast.' : isExamMode ? 'Ready? ❤️' : 'Pick a topic to start'}
             </div>
           </div>
         </div>
@@ -2929,7 +2855,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
             {/* CTA row */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <button onClick={startRandomQuestion} style={{ height: 54, width: '65%', background: 'linear-gradient(135deg, #6D28D9, #8B3DFF)', border: 'none', borderRadius: 18, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.86rem', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, boxShadow: '0 0 28px rgba(109,40,217,.65)', flexShrink: 0, boxSizing: 'border-box' }}>
-                {isQuickFire ? '⚡ Start 90s' : '▶ Start Random'}
+                {isQuickFire ? '⚡ Start 90s' : isExamMode ? '⤨ Start Exam' : '▶ Start Random'}
               </button>
               <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <span style={{ fontSize: '.78rem', lineHeight: 1 }}>🔥</span>
