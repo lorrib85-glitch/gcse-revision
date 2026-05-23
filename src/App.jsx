@@ -1048,11 +1048,11 @@ function ModulesTab({ onOpenModule }) {
     }
   })
 
-  const englishModules = [
-    { id: 'eng_macbeth',   title: 'Macbeth',           subtitle: 'Ambition & Guilt',        progress: 60, icon: '🗡️', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 65% 35%, #20003C 0%, #100020 52%, #080014 100%), linear-gradient(148deg, #080014 0%, #1A0030 100%)', accent: '#B66DFF' },
-    { id: 'eng_inspector', title: 'Inspector Calls',    subtitle: 'Power & Responsibility',  progress: 40, icon: '🕵️', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 62% 42%, #0B0A2C 0%, #06041A 52%, #030214 100%), linear-gradient(148deg, #030214 0%, #0A0826 100%)', accent: '#B66DFF' },
-    { id: 'eng_poetry',    title: 'Poetry Power',       subtitle: 'Structure & Meaning',     progress: 25, icon: '✍️', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 65% 40%, #0C0C36 0%, #05051E 52%, #030216 100%), linear-gradient(148deg, #030216 0%, #0B0B2A 100%)', accent: '#B66DFF' },
-    { id: 'eng_lang1',     title: 'Language Paper 1',   subtitle: 'Reading Skills',          progress: 0,  icon: '📝', locked: true,  isSelected: false, bg: 'radial-gradient(ellipse at 50% 50%, #12121C 0%, #080810 52%, #04040A 100%), linear-gradient(148deg, #04040A 0%, #100E16 100%)', accent: '#B66DFF' },
+  const englishGroupCards = [
+    { id: 'eng_macbeth',   title: 'Macbeth',                    subtitle: '', progress: 60, icon: '🗡️', locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-macbeth.png' },
+    { id: 'eng_inspector', title: 'An Inspector Calls',         subtitle: '', progress: 40, icon: '🕵️', locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-inspector.png' },
+    { id: 'eng_poetry',    title: 'Poetry',                     subtitle: '', progress: 25, icon: '✍️', locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-poetry.png' },
+    { id: 'eng_lang1',     title: 'Reading Between the Lines',  subtitle: '', progress: 0,  icon: '📖', locked: true,  isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-reading.png' },
   ]
 
   const sciRealMod = MODULES.find(m => m.id === 'sci_bio_w1')
@@ -1254,7 +1254,7 @@ function ModulesTab({ onOpenModule }) {
       {/* ── SUBJECT SECTIONS ── */}
       <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 28 }}>
         <SubjectLogoSection subjectLabel="History" logoSrc="/headers/history-medicine-through-time.png" accent="#C89B6D" groups={historyGroupCards} onGroupClick={handleModuleClick} />
-        <SubjectSection heading="English" accent="#9E3D52" modules={englishModules} onModuleClick={handleModuleClick} />
+        <SubjectLogoSection subjectLabel="English" logoSrc="/headers/english-main.png" accent="#B66DFF" groups={englishGroupCards} onGroupClick={handleModuleClick} />
         <BiologySection groups={biologyGroupCards} onGroupClick={handleModuleClick} />
         <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.png" accent="#9B59E8" groups={chemGroupCards} onGroupClick={handleModuleClick} />
         <SubjectLogoSection subjectLabel="Maths" logoSrc="/headers/maths-main.png" accent="#2DD4BF" groups={mathsGroupCards} onGroupClick={handleModuleClick} />
