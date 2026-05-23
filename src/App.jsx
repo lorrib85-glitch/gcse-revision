@@ -4,6 +4,7 @@ import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from
 import { BIOLOGY_GROUPS } from './data/biologyGroups.js'
 import { CHEMISTRY_GROUPS } from './data/chemistryGroups.js'
 import { MATHS_GROUPS } from './data/mathsGroups.js'
+import { SOCIOLOGY_GROUPS } from './data/sociologyGroups.js'
 import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
 import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
 import { CHEMISTRY_TOPIC_GROUPS, ALL_CHEMISTRY_QUESTIONS } from './data/chemistryTopics.js'
@@ -996,6 +997,12 @@ function BiologySection({ groups, onGroupClick }) {
 function ModulesTab({ onOpenModule }) {
   const { user } = useAuth()
   const modUserName = user?.name || 'you'
+  const [sociologyFilter, setSociologyFilter] = useState(null)
+
+  if (sociologyFilter !== null) {
+    return <SociologyBrowser filterPrefix={sociologyFilter} onBack={() => setSociologyFilter(null)} />
+  }
+
   function modPct(mod) {
     if (!mod || !mod.screens) return 0
     const s = safeGetModuleState(mod.id)
@@ -1074,6 +1081,20 @@ function ModulesTab({ onOpenModule }) {
     const pct = realMod ? modPct(realMod) : 0
     return { id: group.id, title: group.title, subtitle: group.subtitle, icon: group.icon, accent: group.accent, headerImage: group.headerImage, progress: pct, locked: false, isSelected: false, bg: '#0D0E10' }
   })
+
+  const sociologyGroupCards = SOCIOLOGY_GROUPS.map(group => ({
+    id: group.id,
+    title: group.title,
+    subtitle: group.subtitle,
+    icon: group.icon,
+    accent: group.accent,
+    headerImage: group.headerImage,
+    progress: 0,
+    locked: group.locked,
+    isSelected: false,
+    bg: '#0D0E10',
+    filterPrefix: group.filterPrefix,
+  }))
 
   const heroBg = [
     'linear-gradient(90deg, #05070B 0%, rgba(5,7,11,0.92) 28%, rgba(5,7,11,0.40) 62%, rgba(5,7,11,0.08) 100%)',
@@ -1232,6 +1253,7 @@ function ModulesTab({ onOpenModule }) {
         <BiologySection groups={biologyGroupCards} onGroupClick={handleModuleClick} />
         <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.png" accent="#9B59E8" groups={chemGroupCards} onGroupClick={handleModuleClick} />
         <SubjectLogoSection subjectLabel="Maths" logoSrc="/headers/maths-main.png" accent="#2DD4BF" groups={mathsGroupCards} onGroupClick={handleModuleClick} />
+        <SubjectLogoSection subjectLabel="Sociology" logoSrc="/headers/sociology-main.png" accent="#FF5C7A" groups={sociologyGroupCards} onGroupClick={g => setSociologyFilter(g.filterPrefix)} />
       </div>
     </div>
   )
@@ -2322,23 +2344,28 @@ function SociologyTopicView({ group, onBack }) {
 }
 
 // ─── Sociology browser ────────────────────────────────────────────────────────
-function SociologyBrowser({ onBack }) {
+function SociologyBrowser({ onBack, filterPrefix = null }) {
   const [activeGroup, setGroup] = useState(null)
   const [filter, setFilter]     = useState('all')
 
   if (activeGroup) return <SociologyTopicView group={activeGroup} onBack={() => setGroup(null)} />
 
-  const totalQs = SOCIOLOGY_TOPIC_GROUPS.reduce((s, g) => s + g.questions.length, 0)
+  const baseGroups = filterPrefix
+    ? SOCIOLOGY_TOPIC_GROUPS.filter(g => g.id.startsWith(filterPrefix))
+    : SOCIOLOGY_TOPIC_GROUPS
+
+  const totalQs = baseGroups.reduce((s, g) => s + g.questions.length, 0)
   const filters = [
     { id: 'all', label: `All (${totalQs})` },
     { id: 'p1',  label: 'Paper 1' },
     { id: 'p2',  label: 'Paper 2' },
   ]
-  const filtered = filter === 'all' ? SOCIOLOGY_TOPIC_GROUPS
-    : filter === 'p1' ? SOCIOLOGY_TOPIC_GROUPS.filter(g => g.paper === 'Paper 1')
-    : SOCIOLOGY_TOPIC_GROUPS.filter(g => g.paper === 'Paper 2')
+  const filtered = filter === 'all' ? baseGroups
+    : filter === 'p1' ? baseGroups.filter(g => g.paper === 'Paper 1')
+    : baseGroups.filter(g => g.paper === 'Paper 2')
 
-  const SC = { color: '#FF5C7A', border: 'rgba(255,92,122,.28)' }
+  const socGroup = filterPrefix ? SOCIOLOGY_GROUPS.find(g => g.filterPrefix === filterPrefix) : null
+  const headerTitle = socGroup ? socGroup.title : 'AQA Sociology'
 
   return (
     <div style={{ background: '#08090D', minHeight: '100vh', paddingBottom: 90 }}>
@@ -2346,9 +2373,9 @@ function SociologyBrowser({ onBack }) {
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
           <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Sociology</div>
+            <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>{headerTitle}</div>
             <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.72rem', color: '#5A6480' }}>
-              Papers 1 & 2 · {SOCIOLOGY_TOPIC_GROUPS.length} topic areas · {totalQs} questions · AI marked
+              {baseGroups.length} topic area{baseGroups.length !== 1 ? 's' : ''} · {totalQs} questions · AI marked
             </div>
           </div>
         </div>
