@@ -274,6 +274,27 @@ function OnboardingScreen() {
   )
 }
 
+// ─── Shared streak chip ───────────────────────────────────────────────────────
+// Reads live from localStorage so it's always accurate wherever it's rendered.
+
+function StreakChip({ style = {} }) {
+  const prog   = safeGetProgress()
+  const streak = prog.streak || 0
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)',
+      borderRadius: 999, padding: '4px 12px 4px 10px',
+      ...style,
+    }}>
+      <span style={{ fontSize: 14, filter: 'drop-shadow(0 0 6px rgba(245,158,11,0.6))' }}>🔥</span>
+      <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 700, color: '#F59E0B', letterSpacing: '0.02em' }}>
+        {streak > 0 ? `${streak} day streak` : 'Start your streak'}
+      </span>
+    </div>
+  )
+}
+
 // ─── Top-level router ────────────────────────────────────────────────────────
 
 // ─── Bottom nav ──────────────────────────────────────────────────────────────
@@ -474,7 +495,6 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
   const { user, signOut } = useAuth()
   const userName    = user?.name || 'you'
   const greeting    = getTimeGreeting(userName)
-  const streak      = progress.streak || 0
   const todayIdx    = (() => { const d = new Date().getDay(); return d === 0 ? 6 : d - 1 })()
   const dayLetters  = ['M','T','W','T','F','S','S']
 
@@ -513,21 +533,8 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
             {userName.charAt(0).toUpperCase()}
           </button>
 
-          {/* Streak chip — small, top */}
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)',
-            borderRadius: 999, padding: '4px 12px 4px 10px',
-            marginBottom: 16,
-          }}>
-            <span style={{ fontSize: 14, filter: 'drop-shadow(0 0 6px rgba(245,158,11,0.6))' }}>🔥</span>
-            <span style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 12, fontWeight: 700, color: '#F59E0B', letterSpacing: '0.02em',
-            }}>
-              {streak} day streak
-            </span>
-          </div>
+          {/* Streak chip */}
+          <div style={{ marginBottom: 16 }}><StreakChip /></div>
 
           {/* Greeting — Cormorant Garamond, cinematic */}
           <div style={{
@@ -847,15 +854,6 @@ function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, heade
           ? 'linear-gradient(180deg, rgba(5,7,11,0.15) 0%, rgba(5,7,11,0.52) 45%, rgba(5,7,11,0.96) 100%)'
           : 'linear-gradient(180deg, rgba(5,7,11,0.04) 0%, rgba(5,7,11,0.44) 38%, rgba(5,7,11,0.90) 100%)',
       }} />
-      {/* top-left icon circle */}
-      <div style={{
-        position: 'absolute', top: 12, left: 12, zIndex: 2,
-        width: 48, height: 48, borderRadius: '50%',
-        border: '1px solid rgba(255,255,255,0.18)',
-        background: 'rgba(5,7,11,0.52)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '1.25rem',
-      }}>{icon}</div>
       {/* lock top-right */}
       {locked && (
         <div style={{
@@ -996,6 +994,8 @@ function BiologySection({ groups, onGroupClick }) {
 }
 
 function ModulesTab({ onOpenModule }) {
+  const { user } = useAuth()
+  const modUserName = user?.name || 'you'
   function modPct(mod) {
     if (!mod || !mod.screens) return 0
     const s = safeGetModuleState(mod.id)
@@ -1004,9 +1004,16 @@ function ModulesTab({ onOpenModule }) {
   }
 
   const histRaw = MODULES.filter(m => m.subject === 'History').slice(0, 4)
-  const continueRaw = histRaw.find(m => { const p = modPct(m); return p > 0 && p < 100 }) || histRaw[2]
-  const continuePct = modPct(continueRaw) || 64
-  const selectedId = continueRaw?.id || 'mod3'
+  const continueRaw = histRaw.find(m => { const p = modPct(m); return p > 0 && p < 100 }) || histRaw[0]
+  const continuePct = modPct(continueRaw) || 0
+  const selectedId = continueRaw?.id || 'mod1'
+  const MODULE_HEADER_IMAGES = {
+    'mod1': '/headers/history-medicine-through-time.png',
+    'hist_elizabethan': '/headers/history-elizabethan.png',
+    'hist_usa_conflict': '/headers/history-usa-conflict.png',
+    'hist_spain_new_world': '/headers/history-spain-new-world.png',
+  }
+  const continueHeaderImage = MODULE_HEADER_IMAGES[selectedId] || '/headers/history-medicine-through-time.png'
 
   const HIST_BG = [
     'radial-gradient(ellipse at 68% 35%, #3E1F06 0%, #1F0E03 52%, #0A0401 100%), linear-gradient(148deg, #0A0401 0%, #1C0E03 100%)',
@@ -1102,42 +1109,19 @@ function ModulesTab({ onOpenModule }) {
             alt="RISE"
             style={{ height: 36, width: 'auto', objectFit: 'contain' }}
           />
-          {/* Right controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 5,
-              background: 'rgba(11,16,24,0.72)', border: '1px solid rgba(255,255,255,0.10)',
-              borderRadius: 99, padding: '5px 10px',
-            }}>
-              <span style={{ fontSize: '.88rem', lineHeight: 1 }}>🔥</span>
-              <span style={{ color: '#F5F2EA', fontSize: '.78rem', fontWeight: 700, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>12</span>
-            </div>
-            <div style={{
-              width: 34, height: 34, borderRadius: '50%',
-              background: 'rgba(11,16,24,0.65)', border: '1px solid rgba(255,255,255,0.10)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.85rem',
-            }}>🔍</div>
-            <div style={{
-              width: 38, height: 38, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #4C1D95, #7C3AED)',
-              border: '2px solid rgba(255,255,255,0.18)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff', fontSize: '.88rem', fontWeight: 700, fontFamily: "'Plus Jakarta Sans',sans-serif",
-            }}>A</div>
-          </div>
+          {/* Right: streak chip */}
+          <StreakChip />
         </div>
 
         {/* Hero text */}
         <div style={{ padding: '20px 18px 0', position: 'relative', zIndex: 5 }}>
-          <div style={{ color: '#7D7988', fontSize: '.82rem', marginBottom: 7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>Good evening, Alex</div>
+          <div style={{ color: '#7D7988', fontSize: '.82rem', marginBottom: 7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{getTimeGreeting(modUserName)}</div>
           <div style={{
-            color: '#F5F2EA', fontWeight: 800, fontSize: '2.6rem',
-            letterSpacing: '-.025em', lineHeight: 1.04, marginBottom: 8,
-            fontFamily: "'Plus Jakarta Sans',sans-serif",
+            color: '#F5F2EA', fontWeight: 600, fontSize: '2.4rem',
+            lineHeight: 1.08, marginBottom: 0,
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic', letterSpacing: '0.01em',
           }}>Keep going.</div>
-          <div style={{ color: '#B8B4C2', fontSize: '.88rem', fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
-            Small steps now. Big results later.
-          </div>
         </div>
       </div>
 
@@ -1145,21 +1129,24 @@ function ModulesTab({ onOpenModule }) {
       <div style={{ padding: '0 18px', marginTop: -48, position: 'relative', zIndex: 10 }}>
         <div style={{
           borderRadius: 22,
-          border: '1px solid rgba(200,155,109,0.45)',
-          background: [
-            'linear-gradient(90deg, rgba(5,7,11,0.93) 0%, rgba(5,7,11,0.62) 55%, rgba(5,7,11,0.22) 100%)',
-            'radial-gradient(ellipse at 72% 52%, rgba(140,90,58,0.48) 0%, rgba(70,38,16,0.22) 52%, transparent 78%)',
-            'linear-gradient(148deg, #1C0E04 0%, #2C1808 55%, #110806 100%)',
-          ].join(', '),
-          padding: '20px 18px', position: 'relative', overflow: 'hidden', minHeight: 190,
+          border: '1px solid rgba(200,155,109,0.3)',
+          position: 'relative', overflow: 'hidden', minHeight: 190,
+          background: '#0B0703',
         }}>
-          {/* Medical icon top-right */}
+          {/* Cinematic header image */}
           <div style={{
-            position: 'absolute', top: 16, right: 16,
-            width: 52, height: 52, borderRadius: '50%',
-            background: 'rgba(140,90,60,0.24)', border: '1px solid rgba(200,155,109,0.30)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.45rem',
-          }}>⚕️</div>
+            position: 'absolute', inset: 0,
+            backgroundImage: `url(${continueHeaderImage})`,
+            backgroundSize: 'cover', backgroundPosition: 'center right',
+            filter: 'saturate(0.85) contrast(0.9)',
+          }} />
+          {/* Dark left overlay */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(90deg, rgba(5,7,11,0.97) 0%, rgba(5,7,11,0.88) 40%, rgba(5,7,11,0.45) 65%, rgba(5,7,11,0.08) 100%)',
+          }} />
+          {/* Content sits above overlays */}
+          <div style={{ position: 'relative', zIndex: 2, padding: '20px 18px' }}>
 
           <div style={{ paddingRight: 62 }}>
             <div style={{
@@ -1196,6 +1183,7 @@ function ModulesTab({ onOpenModule }) {
                 display: 'inline-flex', alignItems: 'center', gap: 7,
               }}>▶ Continue Module</button>
           </div>
+          </div>{/* close relative zIndex content wrapper */}
         </div>
       </div>
 
@@ -1211,18 +1199,23 @@ function ModulesTab({ onOpenModule }) {
             background: 'rgba(255,85,122,0.12)', border: '1px solid rgba(255,85,122,0.20)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem',
           }}>🎯</div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{
-              fontSize: '.54rem', fontWeight: 800, letterSpacing: '.28em',
-              textTransform: 'uppercase', color: '#FF557A', marginBottom: 3, fontFamily: "'Plus Jakarta Sans',sans-serif",
-            }}>Weak Area to Target</div>
-            <div style={{ color: '#F5F2EA', fontWeight: 600, fontSize: '.82rem', marginBottom: 2, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
-              Education needs reinforcement
-            </div>
-            <div style={{ color: '#7D7988', fontSize: '.72rem', fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
-              You scored <span style={{ color: '#FF557A', fontWeight: 700 }}>42%</span> in this area
-            </div>
-          </div>
+          {(() => {
+            const improvements = getImprovements()
+            const worst = [...improvements].sort((a,b) => (a.recentAvg||100)-(b.recentAvg||100))[0]
+            const weakLabel = worst?.subject || 'History'
+            const weakPct   = worst?.recentAvg ?? null
+            return (
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '.54rem', fontWeight: 800, letterSpacing: '.28em', textTransform: 'uppercase', color: '#FF557A', marginBottom: 3, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>Weak Area</div>
+                <div style={{ color: '#F5F2EA', fontWeight: 600, fontSize: '.82rem', marginBottom: 2, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{weakLabel}</div>
+                {weakPct !== null && (
+                  <div style={{ color: '#7D7988', fontSize: '.72rem', fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+                    Recent score: <span style={{ color: '#FF557A', fontWeight: 700 }}>{weakPct}%</span>
+                  </div>
+                )}
+              </div>
+            )
+          })()}
           <button style={{
             background: 'none', border: '1px solid rgba(255,85,122,0.40)',
             borderRadius: 99, padding: '7px 11px', cursor: 'pointer',
@@ -2827,6 +2820,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
   const [quickFireStats, setQuickFireStats] = useState(() => emptyQuickFireStats())
   const [quickFireQuestionSet, setQuickFireQuestionSet] = useState(QUICK_FIRE_QUESTIONS)
   const [quickFireSummary, setQuickFireSummary] = useState(null)
+  const [quickFireCountdown, setQuickFireCountdown] = useState(null)
   const EXAM_SECONDS = 10 * 60
   const [examPhase, setExamPhase] = useState('landing')
   const [examCountdown, setExamCountdown] = useState(3)
@@ -2841,6 +2835,21 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
   const [tqMcAttempts, setTqMcAttempts] = useState(0)
   const [tqMcHint, setTqMcHint]         = useState(false)
   const [tqMcLocked, setTqMcLocked]     = useState(false)
+  // Full-paper exam state
+  const [examPaperAnswers,   setExamPaperAnswers]   = useState({})
+  const [examPaperFeedbacks, setExamPaperFeedbacks] = useState({})
+  const [examPaperGrading,   setExamPaperGrading]   = useState({})
+
+  // Quickfire 3-2-1-GO countdown
+  useEffect(() => {
+    if (!isQuickFire || quickFireCountdown === null) return undefined
+    if (quickFireCountdown === 'GO') {
+      const t = setTimeout(() => { setQuickFireCountdown(null); setQuickFireActive(true) }, 650)
+      return () => clearTimeout(t)
+    }
+    const t = setTimeout(() => setQuickFireCountdown(v => v === 1 ? 'GO' : v - 1), 900)
+    return () => clearTimeout(t)
+  }, [isQuickFire, quickFireCountdown])
 
   useEffect(() => {
     if (!isQuickFire || !selected || !quickFireActive) return undefined
@@ -2975,6 +2984,9 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     setExamCountdown(3)
     setExamStats({ correct: 0, answered: 0, bySubject: {} })
     resetExamQuestion()
+    setExamPaperAnswers({})
+    setExamPaperFeedbacks({})
+    setExamPaperGrading({})
     setExamPhase('countdown')
   }
 
@@ -3026,6 +3038,35 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     }
   }
 
+  async function checkPaperAnswer(question, idx) {
+    const ans = (examPaperAnswers[idx] ?? '').toString()
+    if (examPaperFeedbacks[idx]) return
+    if (question.type === 'mc') {
+      if (ans === '') return
+      const picked = Number(ans)
+      const isCorrect = picked === question.correctIndex
+      addExamResult(question, isCorrect ? question.marks : 0, question.marks)
+      setExamPaperFeedbacks(prev => ({ ...prev, [idx]: {
+        grade: isCorrect ? 'Correct' : 'Needs Work',
+        summary: isCorrect ? 'Correct.' : `Correct answer: ${question.options[question.correctIndex]}`,
+        correct: isCorrect,
+      }}))
+      return
+    }
+    if (ans.trim().length < 3) return
+    setExamPaperGrading(prev => ({ ...prev, [idx]: true }))
+    try {
+      const result = await gradeWithAI(question.q, ans, question.marks, question.ms)
+      const earned = result.marksAwarded ?? 0
+      addExamResult(question, earned, result.marksAvailable || question.marks)
+      setExamPaperFeedbacks(prev => ({ ...prev, [idx]: { ...result, correct: earned >= (result.marksAvailable || question.marks) } }))
+    } catch {
+      setExamPaperFeedbacks(prev => ({ ...prev, [idx]: { grade: 'Error', summary: 'Could not mark. Try again.' } }))
+    } finally {
+      setExamPaperGrading(prev => ({ ...prev, [idx]: false }))
+    }
+  }
+
   function nextExamQuestion() {
     if (examIdx < examQuestions.length - 1) {
       setExamIdx(i => i + 1)
@@ -3038,6 +3079,20 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
   function resetQ() { setAnswer(''); setTip(false); setFeedback(null); setError(null); setGrading(false) }
 
+
+  // Quickfire 3-2-1 countdown screen
+  if (isQuickFire && quickFireCountdown !== null) {
+    return (
+      <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 25%, rgba(101,230,198,0.12), transparent 45%), #060816', display:'flex', alignItems:'center', justifyContent:'center', color:'#F5F7FB' }}>
+        <div style={{ textAlign:'center' }}>
+          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", color:'#7A7670', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:24 }}>90 Second Quick Fire</div>
+          <div key={quickFireCountdown} style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize: quickFireCountdown === 'GO' ? '5rem' : '7.5rem', fontWeight:900, color: quickFireCountdown === 'GO' ? '#65E6C6' : '#F4EFE6', textShadow: quickFireCountdown === 'GO' ? '0 0 48px rgba(101,230,198,0.75)' : '0 0 32px rgba(255,255,255,0.2)', animation:'examPop .8s ease both' }}>{quickFireCountdown}</div>
+          <div style={{ color:'#4B5563', marginTop:20, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem' }}>Answer as many as you can.</div>
+          <style>{'@keyframes examPop { 0%{opacity:0;transform:scale(.7)} 50%{opacity:1;transform:scale(1.1)} 100%{opacity:1;transform:scale(1)} }'}</style>
+        </div>
+      </div>
+    )
+  }
 
   if (isExamMode && examPhase !== 'landing') {
     const currentExamQuestion = examQuestions[examIdx]
@@ -3056,52 +3111,62 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
       )
     }
 
-    if (examPhase === 'round' && currentExamQuestion) {
-      const isMC = currentExamQuestion.type === 'mc'
+    if (examPhase === 'round') {
       return (
-        <div style={{ minHeight:'100vh', background:'#08090D', color:'#F5F7FB', padding:'16px 16px 110px' }}>
-          <div style={{ maxWidth:660, margin:'0 auto' }}>
-            <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:14 }}>
-              <button onClick={() => setExamPhase('summary')} style={{ width:40, height:40, borderRadius:'50%', border:'1px solid rgba(80,97,140,.45)', background:'rgba(12,18,38,.9)', color:'#DCE5FA', fontSize:'1.2rem', cursor:'pointer' }}>‹</button>
-              <div style={{ flex:1 }}>
-                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:850, fontSize:'1.05rem' }}>{examConfig?.title}</div>
-                <div style={{ color:'#7C8DB0', fontSize:'.76rem' }}>Question {examIdx + 1} / {examQuestions.length} · {currentExamQuestion.subject} · {currentExamQuestion.topicLabel}</div>
-              </div>
-              <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.14)' : 'rgba(157,92,255,.14)', border:'1px solid ' + (examTimeLeft < 60 ? 'rgba(255,93,115,.4)' : 'rgba(157,92,255,.35)'), borderRadius:999, color:examTimeLeft < 60 ? '#FF5D73' : '#C18CFF', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:900, padding:'7px 11px', minWidth:64, textAlign:'center' }}>{examTime}</div>
+        <div style={{ minHeight:'100vh', background:'#08090D', color:'#F5F7FB' }}>
+          {/* Sticky timer bar */}
+          <div style={{ position:'sticky', top:0, zIndex:50, background:'rgba(8,9,13,0.96)', backdropFilter:'blur(16px)', borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 16px', display:'flex', alignItems:'center', gap:12, boxSizing:'border-box' }}>
+            <button onClick={() => setExamPhase('summary')} style={{ width:36, height:36, borderRadius:'50%', border:'1px solid rgba(80,97,140,.4)', background:'rgba(12,18,38,.9)', color:'#DCE5FA', fontSize:'1.1rem', cursor:'pointer', flexShrink:0 }}>‹</button>
+            <div style={{ flex:1 }}>
+              <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F4EFE6' }}>{examConfig?.title}</div>
+              <div style={{ color:'#4B5563', fontSize:'.72rem' }}>{examQuestions.length} questions · scroll to answer all</div>
             </div>
-            <div style={{ height:5, background:'#151D33', borderRadius:99, overflow:'hidden', marginBottom:18 }}>
-              <div style={{ width: ((examIdx + 1) / Math.max(1, examQuestions.length)) * 100 + '%', height:'100%', background:'linear-gradient(90deg,#7C3AED,#9D5CFF)', borderRadius:99 }} />
-            </div>
+            <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.18)' : 'rgba(139,92,246,.18)', border:'1px solid '+(examTimeLeft<60?'rgba(255,93,115,.5)':'rgba(139,92,246,.4)'), borderRadius:999, color:examTimeLeft<60?'#FF5D73':'#C4B5FD', fontFamily:"'Clash Display','Plus Jakarta Sans',sans-serif", fontWeight:900, padding:'7px 14px', fontSize:'1rem', flexShrink:0 }}>{examTime}</div>
+          </div>
 
-            {currentExamQuestion.extract && <div style={{ whiteSpace:'pre-wrap', background:'#0D1424', border:'1px solid #1E2A40', borderRadius:14, padding:14, color:'#AAB4D4', fontSize:'.82rem', lineHeight:1.55, marginBottom:14 }}>{currentExamQuestion.extract}</div>}
-            {currentExamQuestion.fig && FIGURES[currentExamQuestion.fig] && <div style={{ background:'#0D1424', border:'1px solid #1E2A40', borderRadius:14, padding:12, marginBottom:14, textAlign:'center' }}><img src={FIGURES[currentExamQuestion.fig]} alt="Exam figure" style={{ maxWidth:'100%', borderRadius:10 }} /></div>}
-            {currentExamQuestion.imageKey && <ChemImage imageKey={currentExamQuestion.imageKey} />}
-
-            <div style={{ background:'linear-gradient(145deg,#10182B,#0D1424)', border:'1px solid #2A3552', borderRadius:18, padding:18, marginBottom:14 }}>
-              <div style={{ display:'inline-flex', background:'rgba(245,183,0,.1)', border:'1px solid rgba(245,183,0,.24)', borderRadius:999, color:'#F5B700', fontWeight:850, fontSize:'.7rem', padding:'4px 10px', marginBottom:12 }}>[{currentExamQuestion.marks} mark{currentExamQuestion.marks !== 1 ? 's' : ''}]</div>
-              <div style={{ whiteSpace:'pre-wrap', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:750, fontSize:'1.05rem', lineHeight:1.45 }}>{currentExamQuestion.q}</div>
-            </div>
-
-            {isMC ? (
-              <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:14 }}>
-                {currentExamQuestion.options.map((option, index) => {
-                  const selectedOption = String(index) === examAnswer
-                  const marked = Boolean(examFeedback)
-                  const correct = index === currentExamQuestion.correctIndex
-                  return <button key={index} onClick={() => !marked && setExamAnswer(String(index))} style={{ background: marked ? (correct ? 'rgba(77,255,136,.1)' : selectedOption ? 'rgba(255,93,115,.1)' : '#151720') : selectedOption ? 'rgba(157,92,255,.14)' : '#151720', border:'1.5px solid ' + (marked ? (correct ? 'rgba(77,255,136,.45)' : selectedOption ? 'rgba(255,93,115,.4)' : 'rgba(255,255,255,0.1)') : selectedOption ? 'rgba(157,92,255,.45)' : 'rgba(255,255,255,0.1)'), borderRadius:13, padding:'13px 14px', color:'#DCE5FA', textAlign:'left', cursor:marked?'default':'pointer', fontWeight:650 }}>{option}</button>
-                })}
-              </div>
-            ) : (
-              <textarea value={examAnswer} onChange={e => setExamAnswer(e.target.value)} disabled={Boolean(examFeedback)} placeholder="Write your answer..." style={{ width:'100%', minHeight:150, background:'#151720', border:'1px solid #2A3552', borderRadius:14, padding:14, color:'#F5F7FB', marginBottom:14 }} />
-            )}
-
-            {error && <div style={{ color:'#FF5D73', marginBottom:12, fontWeight:700 }}>{error}</div>}
-            {examFeedback && <div style={{ background: examFeedback.grade === 'Needs Work' ? 'rgba(255,93,115,.08)' : 'rgba(77,255,136,.08)', border:'1px solid ' + (examFeedback.grade === 'Needs Work' ? 'rgba(255,93,115,.3)' : 'rgba(77,255,136,.3)'), borderRadius:14, padding:14, marginBottom:14 }}><div style={{ fontWeight:850, color: examFeedback.grade === 'Needs Work' ? '#FF5D73' : '#4DFF88', marginBottom:5 }}>{examFeedback.grade || 'Marked'}</div><div style={{ color:'#C8D0E8', lineHeight:1.5 }}>{examFeedback.summary || examFeedback.examinerTip}</div>{examFeedback.examinerTip && <div style={{ color:'#AAB4D4', fontSize:'.84rem', marginTop:8 }}>{examFeedback.examinerTip}</div>}</div>}
-
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-              <button onClick={() => setExamPhase('summary')} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:13, padding:14, color:'#9CA8C7', fontWeight:800, cursor:'pointer' }}>End exam</button>
-              {examFeedback ? <button onClick={nextExamQuestion} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:13, padding:14, color:'#fff', fontWeight:900, cursor:'pointer' }}>{examIdx < examQuestions.length - 1 ? 'Next →' : 'Finish ✓'}</button> : <button onClick={() => checkExamAnswer(currentExamQuestion)} disabled={examGrading} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:13, padding:14, color:'#fff', fontWeight:900, cursor:examGrading?'default':'pointer', opacity:examGrading?.7:1 }}>{examGrading ? 'Marking…' : 'Submit answer'}</button>}
-            </div>
+          {/* Scrollable paper */}
+          <div style={{ padding:'16px 16px 130px', maxWidth:660, margin:'0 auto' }}>
+            {examQuestions.map((q, idx) => {
+              const ans      = (examPaperAnswers[idx] ?? '').toString()
+              const fb       = examPaperFeedbacks[idx]
+              const grading  = examPaperGrading[idx]
+              const isMC     = q.type === 'mc'
+              return (
+                <div key={idx} style={{ marginBottom:24, background:'rgba(17,24,39,0.6)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:20, overflow:'hidden' }}>
+                  {/* Question header */}
+                  <div style={{ padding:'14px 16px 0', display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:8 }}>
+                    <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.72rem', color:'#6B7280', fontWeight:600 }}>Q{idx+1} · {q.subject}</div>
+                    <div style={{ background:'rgba(245,183,0,.1)', border:'1px solid rgba(245,183,0,.22)', borderRadius:999, color:'#F5B700', fontSize:'.68rem', fontWeight:800, padding:'2px 8px', flexShrink:0 }}>{q.marks} mark{q.marks!==1?'s':''}</div>
+                  </div>
+                  {/* Extracts / figures */}
+                  {q.extract && <div style={{ margin:'10px 16px 0', whiteSpace:'pre-wrap', background:'rgba(13,20,36,.8)', border:'1px solid rgba(255,255,255,.06)', borderRadius:10, padding:12, color:'#9CA3AF', fontSize:'.8rem', lineHeight:1.55 }}>{q.extract}</div>}
+                  {q.fig && FIGURES[q.fig] && <div style={{ margin:'10px 16px 0', textAlign:'center' }}><img src={FIGURES[q.fig]} alt="" style={{ maxWidth:'100%', borderRadius:8 }} /></div>}
+                  {q.imageKey && <div style={{ margin:'8px 16px 0' }}><ChemImage imageKey={q.imageKey} /></div>}
+                  {/* Question text */}
+                  <div style={{ padding:'12px 16px', fontFamily:"'Clash Display','Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'1rem', lineHeight:1.45, whiteSpace:'pre-wrap' }}>{q.q}</div>
+                  {/* Answer area */}
+                  <div style={{ padding:'0 16px 16px' }}>
+                    {isMC ? (
+                      <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:10 }}>
+                        {q.options.map((opt, oi) => {
+                          const sel = ans === String(oi)
+                          const correct = oi === q.correctIndex
+                          const marked = Boolean(fb)
+                          return <button key={oi} onClick={() => !marked && setExamPaperAnswers(prev=>({...prev,[idx]:String(oi)}))} style={{ background:marked?(correct?'rgba(45,212,191,.12)':sel?'rgba(251,113,133,.1)':'rgba(255,255,255,.03)'):sel?'rgba(139,92,246,.14)':'rgba(255,255,255,.03)', border:'1.5px solid '+(marked?(correct?'rgba(45,212,191,.4)':sel?'rgba(251,113,133,.4)':'rgba(255,255,255,.08)'):sel?'rgba(139,92,246,.45)':'rgba(255,255,255,.08)'), borderRadius:12, padding:'11px 14px', color:'#DCE5FA', textAlign:'left', cursor:marked?'default':'pointer', fontSize:'.88rem' }}>{opt}</button>
+                        })}
+                      </div>
+                    ) : (
+                      <textarea value={examPaperAnswers[idx]||''} onChange={e=>setExamPaperAnswers(prev=>({...prev,[idx]:e.target.value}))} disabled={Boolean(fb)} placeholder="Write your answer here…" style={{ width:'100%', minHeight:100, background:'rgba(255,255,255,.04)', border:'1px solid rgba(255,255,255,.08)', borderRadius:12, padding:12, color:'#F5F7FB', fontSize:'.9rem', resize:'vertical', boxSizing:'border-box', marginBottom:10 }} />
+                    )}
+                    {/* Feedback */}
+                    {fb && <div style={{ background:fb.correct?'rgba(45,212,191,.08)':'rgba(251,113,133,.08)', border:'1px solid '+(fb.correct?'rgba(45,212,191,.3)':'rgba(251,113,133,.3)'), borderRadius:12, padding:'10px 14px', marginBottom:8 }}><div style={{ fontWeight:700, color:fb.correct?'#2DD4BF':'#FB7185', marginBottom:4, fontSize:'.85rem' }}>{fb.grade}</div><div style={{ color:'#9CA3AF', fontSize:'.82rem', lineHeight:1.5 }}>{fb.summary}{fb.examinerTip && fb.examinerTip !== fb.summary ? ' '+fb.examinerTip : ''}</div></div>}
+                    {/* Check button */}
+                    {!fb && <button onClick={()=>checkPaperAnswer(q,idx)} disabled={grading||(!isMC&&!(examPaperAnswers[idx]||'').trim())||(isMC&&ans==='')} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:12, padding:'9px 18px', color:'#fff', fontWeight:700, fontSize:'.85rem', cursor:'pointer', opacity:(grading||(isMC&&ans==='')||(!isMC&&!(examPaperAnswers[idx]||'').trim()))?0.5:1 }}>{grading?'Marking…':'Check answer'}</button>}
+                  </div>
+                </div>
+              )
+            })}
+            <button onClick={()=>setExamPhase('summary')} style={{ width:'100%', background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:16, padding:16, color:'#fff', fontWeight:800, fontSize:'1rem', cursor:'pointer', marginTop:8 }}>Submit Paper</button>
           </div>
         </div>
       )
@@ -3175,11 +3240,12 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     fullResetQ()
     if (isQuickFire) {
       setQuickFireTimeLeft(QUICK_FIRE_SECONDS)
-      setQuickFireActive(true)
+      setQuickFireActive(false)
       setQuickFireFinished(false)
       setQuickFireStats(emptyQuickFireStats())
       setQuickFireQuestionSet(prioritizedQuickFireQuestions())
       setQuickFireSummary(null)
+      setQuickFireCountdown(3)
     }
   }
 
@@ -3206,6 +3272,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     setQuickFireFinished(false)
     setQuickFireTimeLeft(QUICK_FIRE_SECONDS)
     setQuickFireSummary(null)
+    setQuickFireCountdown(null)
   }
 
   function startRandomQuestion() {
@@ -3473,24 +3540,19 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <img src="/logo.png" alt="RISE" style={{ height: 38, width: 'auto', objectFit: 'contain' }} />
           <div>
-            <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: '1.05rem', color: '#F4EFE6', lineHeight: 1.15 }}>
-              {isQuickFire ? '90s Quick Fire' : isExamMode ? 'Exam Mode' : 'Practice Test'}
-            </div>
-            <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 11, color: '#7A7670', marginTop: 2 }}>
-              {isQuickFire ? '90 seconds. Answer fast.' : isExamMode ? 'Pick a subject. Face the examiner.' : 'Pick a topic to start'}
-            </div>
+            {!isExamMode && (
+              <>
+                <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: '1.05rem', color: '#F4EFE6', lineHeight: 1.15 }}>
+                  {isQuickFire ? '90s Quick Fire' : 'Practice Test'}
+                </div>
+                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 11, color: '#7A7670', marginTop: 2 }}>
+                  {isQuickFire ? '90 seconds. Answer fast.' : 'Pick a topic to start'}
+                </div>
+              </>
+            )}
           </div>
         </div>
-        {/* Streak pill — 40px tall, 16px h-padding */}
-        <div style={{ height: 40, paddingLeft: 16, paddingRight: 16, display: 'flex', alignItems: 'center', gap: 7, background: 'rgba(255,138,31,.11)', border: '1px solid rgba(255,138,31,.24)', borderRadius: 99, flexShrink: 0 }}>
-          <span style={{ fontSize: '.85rem', lineHeight: 1 }}>🔥</span>
-          <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.75rem', fontWeight: 700, color: '#FF8A1F' }}>{testStreak > 0 ? `${testStreak} day streak` : '8 day streak'}</span>
-          <span style={{ display: 'flex', gap: 3, marginLeft: 2 }}>
-            {testStreakDots.map((filled, i) => (
-              <span key={i} style={{ width: 5, height: 5, borderRadius: '50%', background: filled ? '#FF8A1F' : 'transparent', border: filled ? 'none' : '1px solid rgba(255,138,31,.38)', boxShadow: filled ? '0 0 6px rgba(255,138,31,.5)' : 'none' }} />
-            ))}
-          </span>
-        </div>
+        <StreakChip />
       </div>
 
       <div style={{ padding: '8px 20px 0' }}>
