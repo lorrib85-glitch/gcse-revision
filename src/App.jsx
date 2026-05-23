@@ -65,54 +65,57 @@ const NAV_ICONS = {
   home: '⌂',
   modules: '▱',
   quiz: '⚡',
+  progress: '◎',
   exam: '▣',
 }
 
 function BottomNav({ tab, setTab }) {
   const tabs = [
-    { id: 'home', label: 'Home' },
-    { id: 'modules', label: 'Subjects' },
-    { id: 'quiz', label: '90s Quiz', badge: '90s' },
-    { id: 'exam', label: 'Exam Mode' },
+    { id: 'home',     label: 'Home' },
+    { id: 'modules',  label: 'Subjects' },
+    { id: 'quiz',     label: '90s Quiz', badge: '90s' },
+    { id: 'progress', label: 'Progress' },
+    { id: 'exam',     label: 'Exam Mode' },
   ]
 
   return (
     <div style={{
       position: 'fixed', left: '50%', bottom: 12, transform: 'translateX(-50%)',
-      width: 'calc(100% - 24px)', maxWidth: 464, zIndex: 1000, pointerEvents: 'auto',
-      background: 'rgba(10,14,31,.94)',
+      width: 'calc(100% - 24px)', maxWidth: 480, zIndex: 1000, pointerEvents: 'auto',
+      background: 'rgba(11,16,24,0.92)',
       backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)',
-      border: '1px solid rgba(80,97,140,.42)',
+      border: '1px solid rgba(255,255,255,0.08)',
       borderRadius: 28,
-      boxShadow: '0 -10px 34px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.05)',
-      display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-      padding: '10px 8px calc(8px + env(safe-area-inset-bottom))',
+      boxShadow: '0 -10px 34px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.05)',
+      display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)',
+      padding: '10px 4px calc(8px + env(safe-area-inset-bottom))',
     }}>
       {tabs.map(t => {
         const active = tab === t.id
         return (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
             border: 'none', background: 'transparent', cursor: 'pointer',
-            color: active ? '#9D5CFF' : '#8D98B8',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-            fontFamily: "'Inter', sans-serif", fontSize: '.68rem', fontWeight: 700,
-            position: 'relative', padding: '0 4px', minWidth: 0,
+            color: active ? '#65E6C6' : '#8A8795',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+            fontFamily: "'Inter', sans-serif", fontSize: '.62rem', fontWeight: 700,
+            position: 'relative', padding: '0 2px', minWidth: 0,
           }}>
             <span style={{
-              width: 28, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: t.id === 'quiz' ? '1rem' : '1.15rem', lineHeight: 1,
-              color: active ? '#9D5CFF' : '#8D98B8',
+              width: 26, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: t.id === 'quiz' ? '.95rem' : '1.08rem', lineHeight: 1,
+              color: active ? '#65E6C6' : '#8A8795',
+              filter: active ? 'drop-shadow(0 0 6px rgba(101,230,198,0.58))' : 'none',
             }}>{NAV_ICONS[t.id]}</span>
             {t.badge && (
               <span style={{
-                position: 'absolute', top: -2, right: '18%',
-                background: 'rgba(157,92,255,.22)', color: '#B98BFF',
-                border: '1px solid rgba(157,92,255,.28)', borderRadius: 999,
-                fontSize: '.58rem', padding: '1px 6px', fontWeight: 800,
+                position: 'absolute', top: -2, right: '10%',
+                background: 'rgba(101,230,198,0.16)', color: '#65E6C6',
+                border: '1px solid rgba(101,230,198,0.28)', borderRadius: 999,
+                fontSize: '.54rem', padding: '1px 5px', fontWeight: 800,
               }}>{t.badge}</span>
             )}
             <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{t.label}</span>
-            {active && <span style={{ width: 25, height: 3, borderRadius: 99, background: '#9D5CFF', boxShadow: '0 0 10px rgba(157,92,255,.72)' }} />}
+            {active && <span style={{ width: 22, height: 3, borderRadius: 99, background: '#65E6C6', boxShadow: '0 0 10px rgba(101,230,198,0.68)' }} />}
           </button>
         )
       })}
@@ -191,6 +194,7 @@ export default function App() {
       {tab === 'home'    && <Home    progress={progress} draft={draft} onStart={startSession} onResume={resumeSession} onDiscardDraft={discardDraft} onOpenModule={openModule} onOpenSubjects={() => setTab('modules')} />}
       {tab === 'modules' && <ModulesTab onOpenModule={openModule} />}
       {(tab === 'test' || tab === 'quiz' || tab === 'exam') && <TestTab mode={tab === 'quiz' ? 'quickfire' : tab === 'exam' ? 'exam' : 'test'} onOpenModule={openModule} />}
+      {tab === 'progress' && <ProgressTab />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
   )
@@ -462,104 +466,376 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
 }
 
 
+// ─── Progress tab stub ────────────────────────────────────────────────────────
+
+function ProgressTab() {
+  return (
+    <div style={{ background: '#05070B', minHeight: '100vh', paddingBottom: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ textAlign: 'center', fontFamily: "'Inter', sans-serif" }}>
+        <div style={{ fontSize: '3rem', marginBottom: 16 }}>📊</div>
+        <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#F5F2EA', marginBottom: 8 }}>Progress</div>
+        <div style={{ fontSize: '.9rem', color: '#7D7988' }}>Your stats will appear here</div>
+      </div>
+    </div>
+  )
+}
+
 // ─── Modules tab ──────────────────────────────────────────────────────────────
 
-function ModulesTab({ onOpenModule }) {
-  const subjects = [...new Set(MODULES.map(m => m.subject))]
+function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, icon, locked, isSelected, onClick }) {
+  const w = isSelected ? 174 : 154
+  const h = isSelected ? 235 : 215
+  return (
+    <button
+      onClick={locked ? undefined : onClick}
+      style={{
+        width: w, height: h, flexShrink: 0, position: 'relative',
+        borderRadius: 18, overflow: 'hidden',
+        cursor: locked ? 'default' : 'pointer',
+        border: isSelected ? `1.5px solid ${accentColour}` : '1px solid rgba(255,255,255,0.12)',
+        background: bgGradient,
+        padding: 0, textAlign: 'left',
+        boxShadow: isSelected
+          ? `0 0 30px ${accentColour}36, 0 12px 32px rgba(0,0,0,0.68), inset 0 1px 0 rgba(255,255,255,0.06)`
+          : '0 4px 18px rgba(0,0,0,0.54), inset 0 1px 0 rgba(255,255,255,0.03)',
+        opacity: locked ? 0.52 : 1,
+      }}
+    >
+      {/* bottom dark overlay */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'linear-gradient(180deg, rgba(5,7,11,0.04) 0%, rgba(5,7,11,0.44) 38%, rgba(5,7,11,0.90) 100%)',
+      }} />
+      {/* top-left icon circle */}
+      <div style={{
+        position: 'absolute', top: 12, left: 12, zIndex: 2,
+        width: 48, height: 48, borderRadius: '50%',
+        border: '1px solid rgba(255,255,255,0.18)',
+        background: 'rgba(5,7,11,0.52)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: '1.25rem',
+      }}>{icon}</div>
+      {/* lock top-right */}
+      {locked && (
+        <div style={{
+          position: 'absolute', top: 12, right: 12, zIndex: 2,
+          width: 28, height: 28, borderRadius: '50%',
+          background: 'rgba(5,7,11,0.68)', border: '1px solid rgba(255,255,255,0.14)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '.75rem',
+        }}>🔒</div>
+      )}
+      {/* bottom text */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 12px 12px', zIndex: 2 }}>
+        <div style={{
+          fontWeight: 700, fontSize: '.87rem', color: '#F5F2EA',
+          lineHeight: 1.2, marginBottom: 2, fontFamily: "'Inter', sans-serif",
+        }}>{title}</div>
+        <div style={{
+          fontSize: '.63rem', color: '#B8B4C2', lineHeight: 1.3,
+          marginBottom: locked ? 0 : 8, fontFamily: "'Inter', sans-serif",
+        }}>{subtitle}</div>
+        {!locked && (
+          <>
+            <div style={{ marginBottom: 4 }}>
+              <span style={{ fontSize: '.6rem', fontWeight: 800, color: accentColour, fontFamily: "'Inter', sans-serif" }}>
+                {progress}%
+              </span>
+            </div>
+            <div style={{ height: 3, background: 'rgba(255,255,255,0.10)', borderRadius: 99, overflow: 'hidden' }}>
+              <div style={{
+                width: progress + '%', height: '100%',
+                background: accentColour, borderRadius: 99,
+                boxShadow: `0 0 7px ${accentColour}99`,
+              }} />
+            </div>
+          </>
+        )}
+      </div>
+    </button>
+  )
+}
 
-  const SUBJECT_COLOURS = {
-    'History':  { color: '#F5B700', bg: 'rgba(245,183,0,.12)',  border: 'rgba(245,183,0,.25)'  },
-    'Biology':  { color: '#38D27A', bg: 'rgba(56,210,122,.12)', border: 'rgba(56,210,122,.25)' },
-    'Maths':    { color: '#3B82FF', bg: 'rgba(59,130,255,.12)', border: 'rgba(59,130,255,.25)' },
-    'English':  { color: '#9D5CFF', bg: 'rgba(157,92,255,.12)', border: 'rgba(157,92,255,.25)' },
-    'Sociology':{ color: '#FF5C7A', bg: 'rgba(255,92,122,.12)', border: 'rgba(255,92,122,.25)' },
-    'Drama':    { color: '#FF4FC3', bg: 'rgba(255,79,195,.12)', border: 'rgba(255,79,195,.25)' },
-    'Music':    { color: '#34D5FF', bg: 'rgba(52,213,255,.12)', border: 'rgba(52,213,255,.25)' },
+function SubjectSection({ heading, accent, modules, onModuleClick }) {
+  return (
+    <div>
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        paddingLeft: 18, paddingRight: 18, marginBottom: 14,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{
+            fontSize: '.62rem', fontWeight: 800, letterSpacing: '.18em',
+            textTransform: 'uppercase', color: '#F5F2EA',
+            fontFamily: "'Inter', sans-serif",
+          }}>{heading}</span>
+          <span style={{ color: accent, fontSize: '.82rem', lineHeight: 1 }}>›</span>
+        </div>
+        <button style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          fontSize: '.72rem', fontWeight: 600, color: accent, padding: 0,
+          fontFamily: "'Inter', sans-serif",
+        }}>View all</button>
+      </div>
+      <div style={{
+        display: 'flex', gap: 10, overflowX: 'auto',
+        paddingLeft: 18, paddingRight: 18, paddingBottom: 4,
+        scrollbarWidth: 'none', msOverflowStyle: 'none',
+        alignItems: 'flex-end',
+      }}>
+        {modules.map(mod => (
+          <ModuleCard
+            key={mod.id}
+            title={mod.title}
+            subtitle={mod.subtitle}
+            progress={mod.progress}
+            accentColour={mod.accent || accent}
+            bgGradient={mod.bg}
+            icon={mod.icon}
+            locked={mod.locked}
+            isSelected={mod.isSelected}
+            onClick={() => onModuleClick && onModuleClick(mod)}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ModulesTab({ onOpenModule }) {
+  function modPct(mod) {
+    if (!mod || !mod.screens) return 0
+    const s = safeGetModuleState(mod.id)
+    const screen = s.screen || 0
+    return Math.min(100, Math.round(((screen + 1) / mod.screens.length) * 100))
   }
 
+  const histRaw = MODULES.filter(m => m.subject === 'History').slice(0, 4)
+  const continueRaw = histRaw.find(m => { const p = modPct(m); return p > 0 && p < 100 }) || histRaw[2]
+  const continuePct = modPct(continueRaw) || 64
+  const selectedId = continueRaw?.id || 'mod3'
+
+  const HIST_BG = [
+    'radial-gradient(ellipse at 68% 35%, #3E1F06 0%, #1F0E03 52%, #0A0401 100%), linear-gradient(148deg, #0A0401 0%, #1C0E03 100%)',
+    'radial-gradient(ellipse at 62% 42%, #081A1A 0%, #041010 52%, #020808 100%), linear-gradient(148deg, #020808 0%, #091A1A 100%)',
+    'radial-gradient(ellipse at 65% 38%, #3C1B05 0%, #1D0D02 52%, #0D0602 100%), radial-gradient(ellipse at 20% 78%, rgba(92,44,12,0.18) 0%, transparent 50%), linear-gradient(148deg, #0D0602 0%, #1E0D03 100%)',
+    'radial-gradient(ellipse at 50% 50%, #121018 0%, #0A0812 52%, #050509 100%), linear-gradient(148deg, #050509 0%, #0D0B12 100%)',
+  ]
+  const HIST_ICONS  = ['⚕️', '🦠', '🩺', '🔬']
+  const HIST_ACCS   = ['#C89B6D', '#65E6C6', '#C89B6D', '#C89B6D']
+  const HIST_DFLT   = [75, 38, 64, 0]
+
+  const historyModules = histRaw.map((m, i) => {
+    const pct = modPct(m)
+    return {
+      id: m.id, title: m.title, subtitle: m.subtitle,
+      progress: pct > 0 ? pct : HIST_DFLT[i],
+      icon: m.icon || HIST_ICONS[i],
+      locked: i === 3, isSelected: m.id === selectedId,
+      bg: HIST_BG[i], accent: HIST_ACCS[i],
+    }
+  })
+
+  const englishModules = [
+    { id: 'eng_macbeth',   title: 'Macbeth',           subtitle: 'Ambition & Guilt',        progress: 60, icon: '🗡️', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 65% 35%, #20003C 0%, #100020 52%, #080014 100%), linear-gradient(148deg, #080014 0%, #1A0030 100%)', accent: '#B66DFF' },
+    { id: 'eng_inspector', title: 'Inspector Calls',    subtitle: 'Power & Responsibility',  progress: 40, icon: '🕵️', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 62% 42%, #0B0A2C 0%, #06041A 52%, #030214 100%), linear-gradient(148deg, #030214 0%, #0A0826 100%)', accent: '#B66DFF' },
+    { id: 'eng_poetry',    title: 'Poetry Power',       subtitle: 'Structure & Meaning',     progress: 25, icon: '✍️', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 65% 40%, #0C0C36 0%, #05051E 52%, #030216 100%), linear-gradient(148deg, #030216 0%, #0B0B2A 100%)', accent: '#B66DFF' },
+    { id: 'eng_lang1',     title: 'Language Paper 1',   subtitle: 'Reading Skills',          progress: 0,  icon: '📝', locked: true,  isSelected: false, bg: 'radial-gradient(ellipse at 50% 50%, #12121C 0%, #080810 52%, #04040A 100%), linear-gradient(148deg, #04040A 0%, #100E16 100%)', accent: '#B66DFF' },
+  ]
+
+  const sciRealMod = MODULES.find(m => m.id === 'sci_bio_w1')
+  const sciPct = sciRealMod ? (modPct(sciRealMod) || 65) : 65
+  const scienceModules = [
+    { id: 'sci_bio_w1', title: 'Biology',        subtitle: 'Life & Living',        progress: sciPct, icon: '🧬', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 65% 35%, #041C12 0%, #020E08 52%, #010604 100%), linear-gradient(148deg, #010604 0%, #061A10 100%)', accent: '#65E6C6' },
+    { id: 'sci_chem',   title: 'Chemistry',      subtitle: 'Reactions & Energy',   progress: 50,     icon: '⚗️', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 62% 42%, #04141A 0%, #020A10 52%, #010608 100%), linear-gradient(148deg, #010608 0%, #06141A 100%)', accent: '#65E6C6' },
+    { id: 'sci_phys',   title: 'Physics',        subtitle: 'Forces & Motion',      progress: 35,     icon: '⚡', locked: false, isSelected: false, bg: 'radial-gradient(ellipse at 65% 40%, #040A24 0%, #020514 52%, #01030C 100%), linear-gradient(148deg, #01030C 0%, #060A20 100%)', accent: '#65E6C6' },
+    { id: 'sci_triple', title: 'Triple Science', subtitle: 'Coming soon',          progress: 0,      icon: '🔭', locked: true,  isSelected: false, bg: 'radial-gradient(ellipse at 50% 50%, #0B0C16 0%, #060608 52%, #030306 100%), linear-gradient(148deg, #030306 0%, #09090E 100%)', accent: '#65E6C6' },
+  ]
+
+  function handleModuleClick(mod) {
+    const realMod = MODULES.find(m => m.id === mod.id)
+    if (realMod && onOpenModule) onOpenModule(realMod)
+  }
+
+  const heroBg = [
+    'linear-gradient(90deg, #05070B 0%, rgba(5,7,11,0.92) 28%, rgba(5,7,11,0.40) 62%, rgba(5,7,11,0.08) 100%)',
+    'radial-gradient(ellipse at 84% 62%, rgba(185,115,30,0.56) 0%, rgba(95,52,14,0.34) 30%, transparent 62%)',
+    'radial-gradient(ellipse at 76% 26%, rgba(225,158,42,0.24) 0%, transparent 44%)',
+    'radial-gradient(ellipse at 92% 48%, rgba(148,82,22,0.30) 0%, transparent 40%)',
+    'linear-gradient(175deg, #0E0B05 0%, #13110A 42%, #1C1610 70%, #0F0E07 100%)',
+  ].join(', ')
+
   return (
-    <div style={{ background: '#070B1A', minHeight: '100vh', paddingBottom: 90 }}>
-      <div style={{ background: '#10182B', borderBottom: '1px solid #2A3552', padding: '16px 20px', position: 'sticky', top: 0, zIndex: 20 }}>
-        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '1.1rem', color: '#F5F7FB' }}>Modules</div>
-        <div style={{ fontSize: '.78rem', color: '#9CA8C7', marginTop: 3 }}>Work through these daily — one module at a time.</div>
+    <div style={{ background: '#05070B', minHeight: '100vh', paddingBottom: 108, overflowX: 'hidden' }}>
+
+      {/* ── HERO 260px ── */}
+      <div style={{ height: 260, width: '100%', position: 'relative', background: heroBg, overflow: 'hidden' }}>
+        {/* Warm column-silhouette suggestion layer */}
+        <div style={{
+          position: 'absolute', right: 0, top: 0, width: '55%', height: '100%', pointerEvents: 'none',
+          background: [
+            'radial-gradient(ellipse at 80% 72%, rgba(210,148,50,0.10) 0%, transparent 42%)',
+            'linear-gradient(0deg, rgba(5,7,11,0.52) 0%, transparent 55%)',
+          ].join(', '),
+        }} />
+
+        {/* Header */}
+        <div style={{
+          padding: '18px 18px 0',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          position: 'relative', zIndex: 5,
+        }}>
+          {/* RISE REVISION logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+            <div style={{
+              width: 34, height: 34, borderRadius: 9,
+              background: 'rgba(101,230,198,0.12)',
+              border: '1.5px solid rgba(101,230,198,0.42)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 0 12px rgba(101,230,198,0.20)',
+            }}>
+              <span style={{ color: '#65E6C6', fontWeight: 900, fontSize: '1.05rem', fontFamily: "'Inter', sans-serif", lineHeight: 1 }}>R</span>
+            </div>
+            <div>
+              <div style={{ color: '#F5F2EA', fontWeight: 900, fontSize: '1rem', letterSpacing: '.20em', lineHeight: 1, fontFamily: "'Inter', sans-serif" }}>RISE</div>
+              <div style={{ color: '#7D7988', fontSize: '.50rem', letterSpacing: '.22em', fontWeight: 700, lineHeight: 1.3, fontFamily: "'Inter', sans-serif" }}>REVISION</div>
+            </div>
+          </div>
+          {/* Right controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 5,
+              background: 'rgba(11,16,24,0.72)', border: '1px solid rgba(255,255,255,0.10)',
+              borderRadius: 99, padding: '5px 10px',
+            }}>
+              <span style={{ fontSize: '.88rem', lineHeight: 1 }}>🔥</span>
+              <span style={{ color: '#F5F2EA', fontSize: '.78rem', fontWeight: 700, fontFamily: "'Inter', sans-serif" }}>12</span>
+            </div>
+            <div style={{
+              width: 34, height: 34, borderRadius: '50%',
+              background: 'rgba(11,16,24,0.65)', border: '1px solid rgba(255,255,255,0.10)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.85rem',
+            }}>🔍</div>
+            <div style={{
+              width: 38, height: 38, borderRadius: '50%',
+              background: 'linear-gradient(135deg, #4C1D95, #7C3AED)',
+              border: '2px solid rgba(255,255,255,0.18)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontSize: '.88rem', fontWeight: 700, fontFamily: "'Inter', sans-serif",
+            }}>A</div>
+          </div>
+        </div>
+
+        {/* Hero text */}
+        <div style={{ padding: '20px 18px 0', position: 'relative', zIndex: 5 }}>
+          <div style={{ color: '#7D7988', fontSize: '.82rem', marginBottom: 7, fontFamily: "'Inter', sans-serif" }}>Good evening, Alex</div>
+          <div style={{
+            color: '#F5F2EA', fontWeight: 800, fontSize: '2.6rem',
+            letterSpacing: '-.025em', lineHeight: 1.04, marginBottom: 8,
+            fontFamily: "'Inter', sans-serif",
+          }}>Keep going.</div>
+          <div style={{ color: '#B8B4C2', fontSize: '.88rem', fontFamily: "'Inter', sans-serif" }}>
+            Small steps now. Big results later.
+          </div>
+        </div>
       </div>
 
-      <div style={{ maxWidth: 660, margin: '0 auto', padding: '20px 16px' }}>
-        {subjects.map(subject => {
-          const mods = MODULES.filter(m => m.subject === subject)
-          const sc = SUBJECT_COLOURS[subject] || SUBJECT_COLOURS['History']
-          return (
-            <div key={subject} style={{ marginBottom: 28 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                <div style={{ width: 28, height: 28, borderRadius: 8, background: sc.bg, border: `1px solid ${sc.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.85rem' }}>
-                  {subject === 'History' ? '🏰' : subject === 'Biology' || subject === 'Science' ? '🧬' : subject === 'Maths' ? '✕' : subject === 'English' ? '📖' : subject === 'Sociology' ? '👥' : subject === 'Drama' ? '🎭' : '🎵'}
-                </div>
-                <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: sc.color }}>
-                  {subject}
-                </div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {mods.map(mod => {
-                  const s      = safeGetModuleState(mod.id)
-                  const screen = s.screen || 0
-                  const pct    = Math.round(((screen + 1) / mod.screens.length) * 100)
-                  const done   = screen >= mod.screens.length - 1
-                  const started = screen > 0
-                  const mc     = SUBJECT_COLOURS[mod.subject] || sc
-                  return (
-                    <button key={mod.id} onClick={() => onOpenModule(mod)} style={{
-                      background: '#10182B',
-                      border: `1px solid ${done ? 'rgba(77,255,136,.35)' : '#2A3552'}`,
-                      borderRadius: 14, padding: '14px 15px',
-                      cursor: 'pointer', textAlign: 'left',
-                      display: 'flex', alignItems: 'center', gap: 12,
-                      width: '100%', transition: 'border-color .2s, transform .15s',
-                    }}>
-                      <div style={{
-                        width: 42, height: 42, borderRadius: 12, flexShrink: 0,
-                        background: mod.colorLight || mc.bg,
-                        border: `1px solid ${mc.border}`,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '1.15rem', position: 'relative',
-                      }}>
-                        {mod.icon}
-                        {done && (
-                          <div style={{
-                            position: 'absolute', top: -5, right: -5,
-                            background: '#4DFF88', color: '#00140a',
-                            borderRadius: 99, width: 17, height: 17,
-                            fontSize: '.58rem', display: 'flex', alignItems: 'center',
-                            justifyContent: 'center', fontWeight: 900,
-                            boxShadow: '0 0 8px rgba(77,255,136,.5)',
-                          }}>✓</div>
-                        )}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ color: mc.color, fontSize: '.62rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 3 }}>
-                          {mod.subject} · Module {mod.number}
-                        </div>
-                        <div style={{ color: '#F5F7FB', fontWeight: 700, fontSize: '.93rem' }}>{mod.title}</div>
-                        <div style={{ color: '#9CA8C7', fontSize: '.73rem', marginTop: 2 }}>{mod.subtitle}</div>
-                        {started && !done && (
-                          <div style={{ marginTop: 8, height: 3, background: '#2A3552', borderRadius: 99, overflow: 'hidden' }}>
-                            <div style={{ height: '100%', width: pct + '%', background: mod.color || mc.color, borderRadius: 99, boxShadow: `0 0 6px ${mc.color}55` }} />
-                          </div>
-                        )}
-                      </div>
-                      <div style={{ flexShrink: 0, textAlign: 'right' }}>
-                        {done
-                          ? <span style={{ fontSize: '.72rem', color: '#4DFF88', fontWeight: 700 }}>Done ✓</span>
-                          : started
-                            ? <span style={{ fontSize: '.75rem', color: '#F5B700', fontWeight: 800 }}>{pct}%</span>
-                            : <span style={{ fontSize: '.85rem', color: '#5A6480', fontWeight: 700 }}>→</span>}
-                      </div>
-                    </button>
-                  )
-                })}
+      {/* ── CONTINUE LEARNING CARD (overlaps hero -48px) ── */}
+      <div style={{ padding: '0 18px', marginTop: -48, position: 'relative', zIndex: 10 }}>
+        <div style={{
+          borderRadius: 22,
+          border: '1px solid rgba(200,155,109,0.45)',
+          background: [
+            'linear-gradient(90deg, rgba(5,7,11,0.93) 0%, rgba(5,7,11,0.62) 55%, rgba(5,7,11,0.22) 100%)',
+            'radial-gradient(ellipse at 72% 52%, rgba(140,90,58,0.48) 0%, rgba(70,38,16,0.22) 52%, transparent 78%)',
+            'linear-gradient(148deg, #1C0E04 0%, #2C1808 55%, #110806 100%)',
+          ].join(', '),
+          padding: '20px 18px', position: 'relative', overflow: 'hidden', minHeight: 190,
+        }}>
+          {/* Medical icon top-right */}
+          <div style={{
+            position: 'absolute', top: 16, right: 16,
+            width: 52, height: 52, borderRadius: '50%',
+            background: 'rgba(140,90,60,0.24)', border: '1px solid rgba(200,155,109,0.30)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.45rem',
+          }}>⚕️</div>
+
+          <div style={{ paddingRight: 62 }}>
+            <div style={{
+              fontSize: '.58rem', fontWeight: 800, letterSpacing: '.30em',
+              textTransform: 'uppercase', color: '#C89B6D', marginBottom: 4,
+              fontFamily: "'Inter', sans-serif",
+            }}>Continue Learning</div>
+            <div style={{ fontSize: '.72rem', color: '#7D7988', marginBottom: 5, fontFamily: "'Inter', sans-serif" }}>
+              {continueRaw?.subject || 'History'} · Module {continueRaw?.number || 3}
+            </div>
+            <div style={{
+              color: '#F5F2EA', fontWeight: 700, fontSize: '1.12rem',
+              lineHeight: 1.18, marginBottom: 3, fontFamily: "'Inter', sans-serif",
+            }}>{continueRaw?.title || 'Surgery & Anatomy'}</div>
+            <div style={{ color: '#B8B4C2', fontSize: '.75rem', marginBottom: 14, fontFamily: "'Inter', sans-serif" }}>
+              {continueRaw?.subtitle || 'Hold Him Down and Hope'}
+            </div>
+            {/* Progress */}
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: '.6rem', color: '#C89B6D', fontWeight: 700, marginBottom: 5, fontFamily: "'Inter', sans-serif" }}>{continuePct}%</div>
+              <div style={{ height: 4, background: 'rgba(255,255,255,0.10)', borderRadius: 99, overflow: 'hidden' }}>
+                <div style={{ width: continuePct + '%', height: '100%', background: '#C89B6D', borderRadius: 99, boxShadow: '0 0 8px rgba(200,155,109,0.55)' }} />
               </div>
             </div>
-          )
-        })}
+            <button
+              onClick={() => { const m = MODULES.find(x => x.id === selectedId); if (m && onOpenModule) onOpenModule(m) }}
+              style={{
+                height: 46, paddingLeft: 22, paddingRight: 22,
+                background: 'linear-gradient(90deg, #8C5A3C, #C89B6D)',
+                border: 'none', borderRadius: 99, cursor: 'pointer',
+                color: '#fff', fontWeight: 700, fontSize: '.86rem',
+                fontFamily: "'Inter', sans-serif",
+                boxShadow: '0 4px 18px rgba(140,90,60,0.42)',
+                display: 'inline-flex', alignItems: 'center', gap: 7,
+              }}>▶ Continue Module</button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── WEAK AREA CARD ── */}
+      <div style={{ padding: '14px 18px 0' }}>
+        <div style={{
+          borderRadius: 18, border: '1px solid rgba(255,255,255,0.10)',
+          background: 'rgba(11,16,24,0.90)',
+          padding: '14px 14px', display: 'flex', alignItems: 'center', gap: 12, minHeight: 86,
+        }}>
+          <div style={{
+            width: 42, height: 42, borderRadius: '50%', flexShrink: 0,
+            background: 'rgba(255,85,122,0.12)', border: '1px solid rgba(255,85,122,0.20)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem',
+          }}>🎯</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontSize: '.54rem', fontWeight: 800, letterSpacing: '.28em',
+              textTransform: 'uppercase', color: '#FF557A', marginBottom: 3, fontFamily: "'Inter', sans-serif",
+            }}>Weak Area to Target</div>
+            <div style={{ color: '#F5F2EA', fontWeight: 600, fontSize: '.82rem', marginBottom: 2, fontFamily: "'Inter', sans-serif" }}>
+              Education needs reinforcement
+            </div>
+            <div style={{ color: '#7D7988', fontSize: '.72rem', fontFamily: "'Inter', sans-serif" }}>
+              You scored <span style={{ color: '#FF557A', fontWeight: 700 }}>42%</span> in this area
+            </div>
+          </div>
+          <button style={{
+            background: 'none', border: '1px solid rgba(255,85,122,0.40)',
+            borderRadius: 99, padding: '7px 11px', cursor: 'pointer',
+            color: '#FF6F8F', fontSize: '.7rem', fontWeight: 700,
+            fontFamily: "'Inter', sans-serif", flexShrink: 0, whiteSpace: 'nowrap',
+          }}>Review now ›</button>
+        </div>
+      </div>
+
+      {/* ── SUBJECT SECTIONS ── */}
+      <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 28 }}>
+        <SubjectSection heading="History" accent="#C89B6D" modules={historyModules} onModuleClick={handleModuleClick} />
+        <SubjectSection heading="English" accent="#B66DFF" modules={englishModules} onModuleClick={handleModuleClick} />
+        <SubjectSection heading="Science" accent="#65E6C6" modules={scienceModules} onModuleClick={handleModuleClick} />
       </div>
     </div>
   )
