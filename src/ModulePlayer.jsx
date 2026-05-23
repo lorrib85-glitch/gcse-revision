@@ -1783,14 +1783,52 @@ function IntroScreen({ module, onDone }) {
   )
 }
 
+// ─── What You Will Learn screen ──────────────────────────────────────────────
+
+function WYLScreen({ module, onDone, subjectColor }) {
+  const bullets = (module.screens || []).map(s => s.label).filter(Boolean)
+  const [visibleCount, setVisibleCount] = useState(0)
+
+  useEffect(() => {
+    if (visibleCount >= bullets.length) return
+    const t = setTimeout(() => setVisibleCount(c => c + 1), 380)
+    return () => clearTimeout(t)
+  }, [visibleCount, bullets.length])
+
+  return (
+    <div style={{ padding: '8px 4px' }}>
+      <style>{`@keyframes bulletIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }`}</style>
+      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: subjectColor, marginBottom: 10 }}>{module.subject}</div>
+      <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 26, fontWeight: 800, color: '#F5F7FF', lineHeight: '30px', marginBottom: 6, letterSpacing: '-0.01em' }}>What You&rsquo;ll Learn</div>
+      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.42)', marginBottom: 30 }}>{module.title}</div>
+      <div>
+        {bullets.map((label, i) => i < visibleCount ? (
+          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 16, animation: 'bulletIn 0.38s ease both' }}>
+            <div style={{ width: 30, height: 30, borderRadius: 10, background: `${subjectColor}18`, border: `1px solid ${subjectColor}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
+              <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 700, color: subjectColor }}>{i + 1}</span>
+            </div>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 600, color: '#E8ECF2', lineHeight: '26px', paddingTop: 3 }}>{label}</div>
+          </div>
+        ) : null)}
+      </div>
+      {visibleCount >= bullets.length && (
+        <button onClick={onDone} style={{ marginTop: 24, width: '100%', height: 52, borderRadius: 16, background: `linear-gradient(135deg, ${subjectColor}cc, ${subjectColor})`, border: 'none', cursor: 'pointer', fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: '#fff', boxShadow: `0 8px 24px ${subjectColor}44`, animation: 'bulletIn 0.38s ease both' }}>
+          Let&rsquo;s start →
+        </button>
+      )}
+    </div>
+  )
+}
+
 // ─── Main ModulePlayer ────────────────────────────────────────────────────────
 
 export default function ModulePlayer({ module, onBack }) {
   const saved   = getModuleState(module.id)
 
-  // hookDone / introDone track whether the universal openers have been seen
+  // hookDone / wylDone / introDone track whether the universal openers have been seen
   // We persist these inside the module state so resuming skips them correctly
   const [hookDone,  setHookDone]  = useState(() => saved.hookDone  || !module.hook)
+  const [wylDone,   setWylDone]   = useState(() => saved.wylDone   || false)
   const [introDone, setIntroDone] = useState(() => saved.introDone || !module.intro)
   const [screen, setScreen] = useState(saved.screen || 0)
   const [showConfidence, setShowConfidence] = useState(false)
@@ -1801,8 +1839,8 @@ export default function ModulePlayer({ module, onBack }) {
   const [animKey, setAnimKey] = useState(0)
 
   useEffect(() => {
-    saveModuleState(module.id, { screen, hookDone, introDone })
-  }, [screen, module.id, hookDone, introDone])
+    saveModuleState(module.id, { screen, hookDone, wylDone, introDone })
+  }, [screen, module.id, hookDone, wylDone, introDone])
 
   function go(delta) {
     const next = Math.max(0, Math.min(total - 1, screen + delta))
@@ -1837,10 +1875,8 @@ export default function ModulePlayer({ module, onBack }) {
       if (hookPhase === 'reveal') { if (hookRevealDone) { setHookDone(true); scrollToTop() } else { hookState.nextRevealItem(); } return }
       return // question / feedback: Next does nothing — user must tap TRUE/FALSE
     }
-    if (!introDone && module.intro) {
-      // IntroScreen handles its own done button — nothing to do from nav
-      return
-    }
+    if (!wylDone) return // WYLScreen has its own button
+    if (!introDone && module.intro) return // IntroScreen has its own button
     isLast ? handleFinish() : go(1)
   }
 
@@ -1851,13 +1887,14 @@ export default function ModulePlayer({ module, onBack }) {
       if (hookPhase === 'grow')   return 'Next →'
       if (hookPhase === 'reveal') return hookRevealDone ? 'Start module →' : null // hidden until all revealed
     }
+    if (!wylDone) return null // WYLScreen has its own button
     if (!introDone && module.intro) return null // IntroScreen has its own button
     return isLast ? 'Finish ✓' : 'Next →'
   }
 
   const showNextBtn  = nextLabel() !== null
   const nextBtnLabel = nextLabel()
-  const isFinishBtn  = !(!hookDone && module.hook) && !(!introDone && module.intro) && isLast
+  const isFinishBtn  = !(!hookDone && module.hook) && wylDone && !(!introDone && module.intro) && isLast
 
   const cur = module.screens[screen]
   const subjectColor = module.color || '#9D5CFF'
@@ -2097,13 +2134,15 @@ export default function ModulePlayer({ module, onBack }) {
       <div id="module-scroll-container" style={{ flex: 1, padding: '20px 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
         {!hookDone && module.hook
           ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
-          : !introDone && module.intro
-            ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
-            : (
-              <div key={animKey} className="anim-pop">
-                <Screen screen={cur} subject={module.subject} />
-              </div>
-            )
+          : !wylDone
+            ? <WYLScreen module={module} onDone={() => { setWylDone(true); scrollToTop() }} subjectColor={subjectColor} />
+            : !introDone && module.intro
+              ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
+              : (
+                <div key={animKey} className="anim-pop">
+                  <Screen screen={cur} subject={module.subject} />
+                </div>
+              )
         }
       </div>
 
@@ -2124,15 +2163,15 @@ export default function ModulePlayer({ module, onBack }) {
           {/* Back — hidden during hook/intro */}
           <button
             onClick={() => go(-1)}
-            disabled={screen === 0 || !hookDone || !introDone}
+            disabled={screen === 0 || !hookDone || !wylDone || !introDone}
             style={{
               background: '#10182B',
               border: '1px solid #2A3552',
               borderRadius: 14, padding: '13px 10px',
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 700, fontSize: '.9rem',
-              color: (!hookDone || !introDone || screen === 0) ? '#2A3552' : '#9CA8C7',
-              cursor: (!hookDone || !introDone || screen === 0) ? 'default' : 'pointer',
+              color: (!hookDone || !wylDone || !introDone || screen === 0) ? '#2A3552' : '#9CA8C7',
+              cursor: (!hookDone || !wylDone || !introDone || screen === 0) ? 'default' : 'pointer',
               transition: 'all .15s',
             }}>← Back</button>
 

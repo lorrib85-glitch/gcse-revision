@@ -487,10 +487,7 @@ function daysUntilExam() {
 }
 
 function getTimeGreeting(name) {
-  const h = new Date().getHours()
-  if (h < 12) return `Good morning, ${name}.`
-  if (h < 17) return `Good afternoon, ${name}.`
-  return `Good evening, ${name}.`
+  return `Hi, ${name}.`
 }
 
 function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
@@ -540,9 +537,9 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
 
           <div style={{
             fontFamily: "'Sora', sans-serif",
-            fontSize: 42, fontWeight: 800, color: '#F5F7FF',
-            lineHeight: 1.05, marginBottom: 8,
-            letterSpacing: '-0.02em',
+            fontSize: 28, fontWeight: 700, color: '#F5F7FF',
+            lineHeight: 1.1, marginBottom: 8,
+            letterSpacing: '-0.01em',
           }}>
             {greeting}
           </div>
@@ -587,7 +584,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
                     return (
                       <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
                         <div style={{
-                          width: isToday ? 34 : 30, height: isToday ? 34 : 30,
+                          width: isToday ? 24 : 20, height: isToday ? 24 : 20,
                           borderRadius: '50%',
                           background: isGreen ? 'rgba(76,175,125,0.12)' : isAmber ? 'rgba(224,168,79,0.1)' : isToday ? 'rgba(139,92,246,0.18)' : 'rgba(255,255,255,0.03)',
                           border: isGreen ? '1.5px solid rgba(76,175,125,0.4)' : isAmber ? '1.5px solid rgba(224,168,79,0.35)' : isToday ? '1.5px solid rgba(139,92,246,0.45)' : '1.5px solid rgba(255,255,255,0.05)',
@@ -595,16 +592,16 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
                           animation: isToday ? 'dayPulse 2.2s ease-in-out infinite' : 'none',
                         }}>
                           <div style={{
-                            width: (isGreen || isAmber) ? 8 : isToday ? 9 : 5,
-                            height: (isGreen || isAmber) ? 8 : isToday ? 9 : 5,
+                            width: (isGreen || isAmber) ? 6 : isToday ? 7 : 4,
+                            height: (isGreen || isAmber) ? 6 : isToday ? 7 : 4,
                             borderRadius: '50%',
                             background: dotColor,
-                            boxShadow: isGreen ? '0 0 8px rgba(76,175,125,0.8)' : isAmber ? '0 0 6px rgba(224,168,79,0.6)' : isToday ? '0 0 10px rgba(139,92,246,0.9)' : 'none',
+                            boxShadow: isGreen ? '0 0 6px rgba(76,175,125,0.8)' : isAmber ? '0 0 5px rgba(224,168,79,0.6)' : isToday ? '0 0 8px rgba(139,92,246,0.9)' : 'none',
                           }} />
                         </div>
                         <div style={{
                           fontFamily: "'Outfit', sans-serif",
-                          fontSize: 11, fontWeight: 600, letterSpacing: '0.05em',
+                          fontSize: 10, fontWeight: 600, letterSpacing: '0.04em',
                           color: isGreen ? '#4CAF7D' : isAmber ? '#E0A84F' : isToday ? '#C4B5FD' : '#1F2937',
                         }}>
                           {d}
@@ -704,7 +701,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
         {/* ── Weak Zone ── */}
         <div style={{ marginBottom: 20 }}>
           <button
-            onClick={() => onStart && medicineModule && onStart(medicineModule.id)}
+            onClick={() => onOpenSubjects && onOpenSubjects()}
             style={{
               width: '100%', border: 'none', padding: 0,
               cursor: 'pointer', borderRadius: 24, position: 'relative',
@@ -790,15 +787,23 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
             }}>
               This Week
             </div>
-            <div style={{
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: 12, fontWeight: 600, color: '#D6A166',
-              display: 'flex', alignItems: 'center', gap: 5,
-            }}>
-              <span>⭐</span> You're on track
-            </div>
+            <div />
           </div>
 
+          {(() => {
+            const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7); const cutoffStr = cutoff.toISOString().slice(0, 10)
+            let weekScores = []
+            try { weekScores = JSON.parse(localStorage.getItem('gcse_scores') || '[]').filter(s => s.date >= cutoffStr) } catch {}
+            const totalAnswered = weekScores.length
+            const totalEarned = weekScores.reduce((s, x) => s + (x.earned || 0), 0)
+            const studyMins = Math.round(totalAnswered * 2.5)
+            const studyStr = studyMins >= 60 ? `${Math.floor(studyMins/60)}h ${studyMins%60}m` : `${studyMins}m`
+            const statsItems = [
+              { icon: '⏱', label: 'Study time', value: totalAnswered > 0 ? studyStr : '—' },
+              { icon: '🧠', label: 'Questions',  value: totalAnswered > 0 ? String(totalAnswered) : '—' },
+              { icon: '⚡', label: 'Points',     value: totalEarned > 0 ? String(totalEarned) : '—' },
+            ]
+            return (
           <div style={{
             background: 'rgba(17,24,39,0.72)',
             backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
@@ -807,11 +812,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
             boxShadow: '0 10px 40px rgba(0,0,0,0.35)',
             display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
           }}>
-            {[
-              { icon: '⏱', label: 'Study time', value: '4h 15m' },
-              { icon: '🧠', label: 'Quizzes',    value: '18' },
-              { icon: '⚡', label: 'Points',     value: '740' },
-            ].map((s, i) => (
+            {statsItems.map((s, i) => (
               <div key={s.label} style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
                 borderRight: i < 2 ? '1px solid rgba(255,255,255,0.05)' : 'none',
@@ -833,6 +834,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
               </div>
             ))}
           </div>
+            )})()}
         </div>
 
       </div>
@@ -905,7 +907,7 @@ function PulseTab({ onStartQuickFire }) {
       }} />
 
       <style>{`
-        @keyframes pulseGlow { 0%,100%{opacity:.7} 50%{opacity:1} }
+        @keyframes pulseGlow { 0%,100%{opacity:.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.18)} }
         @keyframes heroPulse { 0%,100%{box-shadow:0 0 0 0 rgba(123,63,242,0)} 60%{box-shadow:0 0 28px 4px rgba(123,63,242,0.22)} }
       `}</style>
 
@@ -976,15 +978,20 @@ function PulseTab({ onStartQuickFire }) {
             maxWidth: '60%',
           }}>
             <div style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
+              color: '#9B5CFF', textTransform: 'uppercase', marginBottom: 8,
+            }}>Quick Fire</div>
+            <div style={{
               fontFamily: "'Sora', sans-serif",
-              fontSize: 30, fontWeight: 700, lineHeight: '32px',
-              color: '#F5F7FF', marginBottom: 8,
+              fontSize: 22, fontWeight: 700, lineHeight: '26px',
+              color: '#F5F7FF', marginBottom: 6,
               letterSpacing: '-0.01em',
-            }}>90s Quick Fire</div>
+            }}>90s Challenge</div>
             <div style={{
               fontFamily: "'Outfit', sans-serif",
-              fontSize: 17, fontWeight: 500,
-              color: 'rgba(255,255,255,0.72)', marginBottom: 24,
+              fontSize: 13, fontWeight: 400,
+              color: 'rgba(255,255,255,0.55)', marginBottom: 22,
             }}>Mixed topics · Adaptive</div>
 
             {/* CTA button */}
@@ -1033,67 +1040,52 @@ function PulseTab({ onStartQuickFire }) {
                 onClick={onStartQuickFire}
                 style={{
                   flexShrink: 0,
-                  width: 145, height: 220,
-                  borderRadius: 24,
-                  background: 'linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-                  border: '1px solid ' + card.glow + '0.2)',
-                  cursor: 'pointer', padding: '18px 16px 16px',
-                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
+                  width: 145, height: 210,
+                  borderRadius: 20,
+                  background: '#0D0E10',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  cursor: 'pointer', padding: 0,
                   position: 'relative', overflow: 'hidden',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04), 0 0 16px ' + card.glow + '0.08)',
-                  transition: 'transform 180ms ease, box-shadow 180ms ease',
+                  boxShadow: '0 6px 24px rgba(0,0,0,0.55)',
                 }}
               >
-                {/* Subtle corner glow */}
+                {/* Background image */}
                 <div style={{
-                  position: 'absolute', bottom: -30, right: -30, width: 100, height: 100,
-                  borderRadius: '50%',
-                  background: card.glow + '0.12)',
-                  filter: 'blur(20px)', pointerEvents: 'none',
+                  position: 'absolute', inset: 0,
+                  backgroundImage: `url(${card.logo})`,
+                  backgroundSize: 'cover', backgroundPosition: 'center',
+                  filter: 'saturate(0.85) brightness(0.72)',
                 }} />
-
-                {/* Subject logo */}
+                {/* Bottom gradient */}
                 <div style={{
-                  width: 48, height: 48, borderRadius: 14, overflow: 'hidden', marginBottom: 12,
-                  boxShadow: '0 4px 12px ' + card.glow + '0.3)',
-                  flexShrink: 0,
-                }}>
-                  <img src={card.logo} alt={card.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-
-                {/* Subject name */}
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(180deg, rgba(5,7,11,0.08) 0%, rgba(5,7,11,0.62) 50%, rgba(5,7,11,0.97) 100%)',
+                }} />
+                {/* Status pill top-right */}
                 <div style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: 17, fontWeight: 700, color: '#F5F7FF',
-                  lineHeight: '20px', marginBottom: 6,
-                }}>
-                  {card.label}
-                </div>
-
-                {/* Status */}
-                <div style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  fontSize: 14, fontWeight: 500,
-                  color: card.statusColor,
-                  marginBottom: 'auto',
+                  position: 'absolute', top: 10, right: 10,
+                  background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)',
+                  borderRadius: 999, padding: '3px 8px',
+                  fontFamily: "'Outfit', sans-serif", fontSize: 10, fontWeight: 700,
+                  color: card.statusColor, border: `1px solid ${card.statusColor}44`,
                 }}>
                   {card.status}
                 </div>
-
-                {/* Progress bar */}
-                <div style={{ width: '100%', marginTop: 14 }}>
+                {/* Bottom text */}
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 12px 14px' }}>
                   <div style={{
-                    height: 6, borderRadius: 999,
-                    background: 'rgba(255,255,255,0.07)',
-                    overflow: 'hidden',
-                  }}>
-                    <div style={{
-                      width: card.progress + '%', height: '100%',
-                      borderRadius: 999,
-                      background: card.color,
-                      boxShadow: '0 0 8px ' + card.glow + '0.7)',
-                      transition: 'width 600ms ease',
-                    }} />
+                    fontFamily: "'Outfit', sans-serif",
+                    fontSize: 10, fontWeight: 700, letterSpacing: '0.13em',
+                    textTransform: 'uppercase', color: card.color,
+                    marginBottom: 4,
+                  }}>{card.subject || card.label}</div>
+                  <div style={{
+                    fontFamily: "'Sora', sans-serif",
+                    fontSize: 14, fontWeight: 700, color: '#F5F7FF',
+                    lineHeight: '17px', marginBottom: 7, letterSpacing: '-0.01em',
+                  }}>{card.label}</div>
+                  <div style={{ height: 3, background: 'rgba(255,255,255,0.12)', borderRadius: 999, overflow: 'hidden' }}>
+                    <div style={{ width: (card.progress || 0) + '%', height: '100%', background: card.color, borderRadius: 999 }} />
                   </div>
                 </div>
               </button>
@@ -1101,67 +1093,73 @@ function PulseTab({ onStartQuickFire }) {
           </div>
         </div>
 
-        {/* ── Weakest Right Now card ── */}
-        <div style={{
-          width: '100%', minHeight: 126, borderRadius: 28,
-          background: 'linear-gradient(145deg, rgba(22,14,42,0.95) 0%, rgba(14,8,28,0.95) 100%)',
-          border: '1px solid rgba(182,109,255,0.18)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 24px rgba(182,109,255,0.07), inset 0 1px 0 rgba(255,255,255,0.04)',
-          padding: '20px 20px',
-          display: 'flex', alignItems: 'center', gap: 16,
-        }}>
-          {/* Brain icon */}
-          <div style={{
-            width: 52, height: 52, borderRadius: 16, flexShrink: 0,
-            background: 'rgba(182,109,255,0.1)',
-            border: '1px solid rgba(182,109,255,0.2)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 0 16px rgba(182,109,255,0.15)',
-          }}>
-            <svg width={26} height={26} viewBox="0 0 24 24" fill="none" style={{ filter: 'drop-shadow(0 0 6px rgba(182,109,255,0.7))' }}>
-              <path d="M12 3C9.2 3 7 5.2 7 8c0 1.1.4 2.1 1 2.9C6.4 11.5 6 12.7 6 14c0 2.8 2.2 5 5 5h2c2.8 0 5-2.2 5-5 0-1.3-.4-2.5-1-3.1.6-.8 1-1.8 1-2.9C18 5.2 15.8 3 13 3h-1z" stroke="#B66DFF" strokeWidth={1.6} />
-              <path d="M12 3v16M9 7.5c0 0 1.5 1 3 0M15 7.5c0 0-1.5 1-3 0M9 11c0 0 1.5 1.5 3 0M15 11c0 0-1.5 1.5-3 0" stroke="#B66DFF" strokeWidth={1.4} strokeLinecap="round" />
-            </svg>
-          </div>
-
-          {/* Text */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: 11, fontWeight: 600, letterSpacing: '0.14em',
-              textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
-              marginBottom: 5,
-            }}>Weakest Right Now</div>
-            <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: 19, fontWeight: 700, color: '#F5F7FF',
-              lineHeight: '22px', marginBottom: 4,
-              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-            }}>{weakestSubject.label}</div>
-            <div style={{
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: 14, fontWeight: 500,
-              color: 'rgba(255,255,255,0.55)',
-            }}>Accuracy dropped this week.</div>
-          </div>
-
-          {/* Recover button */}
+        {/* ── Weakest Right Now card ── matches home screen style ── */}
+        <div style={{ marginBottom: 4 }}>
           <button
             onClick={onStartQuickFire}
             style={{
-              flexShrink: 0,
-              height: 52, paddingLeft: 16, paddingRight: 16,
-              borderRadius: 16,
-              background: 'transparent',
-              border: '1px solid rgba(182,109,255,0.38)',
-              color: '#C4B5FD',
-              fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 13,
-              cursor: 'pointer', whiteSpace: 'nowrap',
-              boxShadow: '0 0 14px rgba(182,109,255,0.1)',
-              transition: 'border-color 180ms ease, box-shadow 180ms ease',
+              width: '100%', border: 'none', padding: 0,
+              cursor: 'pointer', borderRadius: 24, position: 'relative',
+              background: 'transparent', textAlign: 'left', display: 'block',
             }}
           >
-            Recover now →
+            {/* Ambient glow halo */}
+            <div style={{
+              position: 'absolute', inset: -1, borderRadius: 25,
+              background: 'linear-gradient(135deg, rgba(251,113,133,0.2) 0%, rgba(139,92,246,0.15) 100%)',
+              filter: 'blur(1.5px)', zIndex: 0,
+            }} />
+            <div style={{
+              position: 'relative', zIndex: 1,
+              background: 'rgba(17,24,39,0.72)',
+              backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+              borderRadius: 24,
+              border: '1px solid rgba(251,113,133,0.18)',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)',
+              padding: '18px 16px',
+              display: 'flex', alignItems: 'center', gap: 14,
+            }}>
+              {/* Brain icon */}
+              <div style={{
+                width: 72, height: 72, borderRadius: 20, flexShrink: 0, overflow: 'hidden',
+                background: '#0D1117',
+                boxShadow: '0 0 24px rgba(45,212,191,0.4), inset 0 0 0 1px rgba(45,212,191,0.12)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <img src="/icons/brain-icon.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 20 }} />
+              </div>
+              {/* Text */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
+                  color: '#FB7185', textTransform: 'uppercase', marginBottom: 5,
+                }}>Weak Zone</div>
+                <div style={{
+                  fontFamily: "'Sora', sans-serif",
+                  fontSize: 16, fontWeight: 700, color: '#F4EFE6', lineHeight: 1.2, marginBottom: 6,
+                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                }}>{weakestSubject.label}</div>
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, color: '#9CA3AF', lineHeight: 1.5 }}>
+                  2 quick quizzes to get this{' '}
+                  <span style={{ color: '#2DD4BF', textShadow: '0 0 10px rgba(45,212,191,0.5)' }}>green</span> again.
+                </div>
+              </div>
+              {/* Recover button */}
+              <div style={{
+                flexShrink: 0,
+                background: 'rgba(139,92,246,0.14)',
+                border: '1px solid rgba(139,92,246,0.28)',
+                backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+                borderRadius: 12, padding: '10px 12px',
+                fontFamily: "'Outfit', sans-serif",
+                fontSize: 11, fontWeight: 700, color: '#C4B5FD',
+                lineHeight: 1.3, textAlign: 'center',
+                boxShadow: '0 0 18px rgba(139,92,246,0.22)',
+              }}>
+                Recover<br />now <span style={{ fontSize: 13 }}>›</span>
+              </div>
+            </div>
           </button>
         </div>
 
@@ -1284,23 +1282,15 @@ function SubjectLogoSection({ subjectLabel, logoSrc, accent, groups, onGroupClic
   return (
     <div>
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        paddingLeft: 18, paddingRight: 18, marginBottom: 14,
+        display: 'flex', alignItems: 'center',
+        paddingLeft: 18, paddingRight: 18, marginBottom: 14, gap: 8,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <img src={logoSrc} alt={subjectLabel} style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover' }} />
-          <span style={{
-            fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
-            fontFamily: "'Outfit', sans-serif", lineHeight: '18px',
-          }}>{subjectLabel}</span>
-          <span style={{ color: accent, fontSize: '.82rem', lineHeight: 1 }}>›</span>
-        </div>
-        <button style={{
-          background: 'none', border: 'none', cursor: 'pointer',
-          fontSize: '.72rem', fontWeight: 600, color: accent, padding: 0,
-          fontFamily: "'Outfit', sans-serif",
-        }}>View all</button>
+        <img src={logoSrc} alt={subjectLabel} style={{ width: 22, height: 22, borderRadius: 6, objectFit: 'cover' }} />
+        <span style={{
+          fontSize: 12, fontWeight: 700, letterSpacing: '0.14em',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.38)',
+          fontFamily: "'Outfit', sans-serif", lineHeight: '18px',
+        }}>{subjectLabel}</span>
       </div>
       <div style={{
         display: 'flex', gap: 10, overflowX: 'auto',
@@ -1332,13 +1322,62 @@ function BiologySection({ groups, onGroupClick }) {
   return <SubjectLogoSection subjectLabel="Biology" logoSrc="/headers/bio-main.png" accent="#4F8A5B" groups={groups} onGroupClick={onGroupClick} />
 }
 
+function HistoryMedicineBrowser({ onBack, onOpenModule }) {
+  const histMods = MODULES.filter(m => m.subject === 'History')
+  function modPct(mod) {
+    if (!mod?.screens) return 0
+    const s = safeGetModuleState(mod.id)
+    return Math.min(100, Math.round(((s.screen || 0) / mod.screens.length) * 100))
+  }
+  return (
+    <div style={{ background: '#08090D', minHeight: '100vh', paddingBottom: 90 }}>
+      <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
+        <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
+          <img src="/headers/history-medicine-through-time.png" alt="History" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>Medicine Through Time</div>
+            <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.72rem', color: '#5A6480' }}>{histMods.length} modules · AQA History</div>
+          </div>
+        </div>
+      </div>
+      <div style={{ maxWidth: 660, margin: '0 auto', padding: '16px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {histMods.map(mod => {
+          const pct = modPct(mod)
+          return (
+            <button key={mod.id} onClick={() => onOpenModule && onOpenModule(mod)} style={{ background: '#0D1020', border: `1px solid ${mod.color}28`, borderRadius: 18, padding: 0, cursor: 'pointer', overflow: 'hidden', position: 'relative', minHeight: 88, display: 'flex', alignItems: 'stretch', textAlign: 'left' }}>
+              <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/headers/history-medicine-through-time.png)', backgroundSize: 'cover', backgroundPosition: 'center right', filter: 'saturate(0.7) brightness(0.4)' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(5,7,11,0.97) 0%, rgba(5,7,11,0.6) 60%, transparent 100%)' }} />
+              <div style={{ position: 'relative', zIndex: 2, padding: '14px 16px', flex: 1, display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0, background: mod.color + '22', border: '1px solid ' + mod.color + '44', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>{mod.icon}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.92rem', color: '#F5F7FF', marginBottom: 2 }}>{mod.title}</div>
+                  <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.7rem', color: '#6B7280', marginBottom: 6 }}>{mod.era}</div>
+                  <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+                    <div style={{ width: pct + '%', height: '100%', background: mod.color, borderRadius: 99, boxShadow: `0 0 6px ${mod.color}88`, transition: 'width .5s ease' }} />
+                  </div>
+                </div>
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '.72rem', color: mod.color, flexShrink: 0 }}>{pct}%</div>
+              </div>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 function ModulesTab({ onOpenModule }) {
   const { user } = useAuth()
   const modUserName = user?.name || 'you'
   const [sociologyFilter, setSociologyFilter] = useState(null)
+  const [historyOpen, setHistoryOpen] = useState(false)
 
   if (sociologyFilter !== null) {
     return <SociologyBrowser filterPrefix={sociologyFilter} onBack={() => setSociologyFilter(null)} />
+  }
+  if (historyOpen) {
+    return <HistoryMedicineBrowser onBack={() => setHistoryOpen(false)} onOpenModule={onOpenModule} />
   }
 
   function modPct(mod) {
@@ -1380,9 +1419,9 @@ function ModulesTab({ onOpenModule }) {
 
   const historyGroupCards = [
     { id: 'med_through_time',    title: 'Medicine Through Time',          subtitle: '', progress: medPct, locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-medicine-through-time.png' },
-    { id: 'usa_conflict',        title: 'USA: Conflict at Home & Abroad', subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#B07A4A', headerImage: '/headers/history-usa-conflict.png' },
-    { id: 'early_elizabethans',  title: 'Early Elizabethans',             subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#D4A855', headerImage: '/headers/history-elizabethan.png' },
-    { id: 'spain_new_world',     title: 'Spain & the New World',          subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#9A7240', headerImage: '/headers/history-spain-new-world.png' },
+    { id: 'usa_conflict',        title: 'USA: Conflict at Home & Abroad', subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-usa-conflict.png' },
+    { id: 'early_elizabethans',  title: 'Early Elizabethans',             subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-elizabethan.png' },
+    { id: 'spain_new_world',     title: 'Spain & the New World',          subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-spain-new-world.png' },
   ]
 
   const englishGroupCards = [
@@ -1394,14 +1433,17 @@ function ModulesTab({ onOpenModule }) {
 
   const physicsGroupCards = [
     { id: 'phys_forces',  title: 'Forces & Motion',    subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-forces.png' },
-    { id: 'phys_energy',  title: 'Energy & Power',     subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#60A5FA', headerImage: '/headers/physics-energy.png' },
-    { id: 'phys_waves',   title: 'Waves & Electricity',subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#818CF8', headerImage: '/headers/physics-waves.png' },
-    { id: 'phys_space',   title: 'Space',               subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#38BDF8', headerImage: '/headers/physics-space.png' },
-    { id: 'phys_matter',  title: 'Matter & Particles',  subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#34D399', headerImage: '/headers/physics-matter.png' },
+    { id: 'phys_energy',  title: 'Energy & Power',     subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-energy.png' },
+    { id: 'phys_waves',   title: 'Waves & Electricity',subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-waves.png' },
+    { id: 'phys_space',   title: 'Space',               subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-space.png' },
+    { id: 'phys_matter',  title: 'Matter & Particles',  subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-matter.png' },
   ]
 
 
   function handleModuleClick(mod) {
+    if (mod.id === 'med_through_time' || mod.id === 'usa_conflict' || mod.id === 'early_elizabethans' || mod.id === 'spain_new_world') {
+      setHistoryOpen(true); return
+    }
     const realMod = MODULES.find(m => m.id === mod.id)
     if (realMod && onOpenModule) onOpenModule(realMod)
   }
@@ -1466,21 +1508,14 @@ function ModulesTab({ onOpenModule }) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           position: 'relative', zIndex: 5,
         }}>
-          {/* RISE logo */}
-          <img
-            src="/logo.png"
-            alt="RISE"
-            style={{ height: 36, width: 'auto', objectFit: 'contain' }}
-          />
-          {/* Right: streak chip */}
+          <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 13, color: 'rgba(255,255,255,0.32)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Subjects</div>
           <StreakChip />
         </div>
 
         {/* Hero text */}
-        <div style={{ padding: '20px 18px 0', position: 'relative', zIndex: 5 }}>
-          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, fontWeight: 500, marginBottom: 6, fontFamily: "'Outfit', sans-serif", lineHeight: '18px' }}>{getTimeGreeting(modUserName)}</div>
+        <div style={{ padding: '14px 18px 0', position: 'relative', zIndex: 5 }}>
           <div style={{
-            color: '#F5F7FF', fontWeight: 800, fontSize: 42,
+            color: '#F5F7FF', fontWeight: 800, fontSize: 36,
             lineHeight: 1.05, marginBottom: 0,
             fontFamily: "'Sora', sans-serif",
             letterSpacing: '-0.02em',
@@ -1552,42 +1587,36 @@ function ModulesTab({ onOpenModule }) {
       </div>
 
       {/* ── WEAK AREA CARD ── */}
-      <div style={{ padding: '14px 18px 0' }}>
-        <div style={{
-          borderRadius: 18, border: '1px solid rgba(255,255,255,0.10)',
-          background: 'rgba(11,16,24,0.90)',
-          padding: '14px 14px', display: 'flex', alignItems: 'center', gap: 12, minHeight: 86,
-        }}>
-          <div style={{
-            width: 42, height: 42, borderRadius: '50%', flexShrink: 0,
-            background: 'rgba(255,85,122,0.12)', border: '1px solid rgba(255,85,122,0.20)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem',
-          }}>🎯</div>
-          {(() => {
-            const improvements = getImprovements()
-            const worst = [...improvements].sort((a,b) => (a.recentAvg||100)-(b.recentAvg||100))[0]
-            const weakLabel = worst?.subject || 'History'
-            const weakPct   = worst?.recentAvg ?? null
-            return (
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '.54rem', fontWeight: 800, letterSpacing: '.28em', textTransform: 'uppercase', color: '#FF557A', marginBottom: 3, fontFamily: "'Outfit', sans-serif" }}>Weak Area</div>
-                <div style={{ color: '#F5F2EA', fontWeight: 600, fontSize: '.82rem', marginBottom: 2, fontFamily: "'Outfit', sans-serif" }}>{weakLabel}</div>
-                {weakPct !== null && (
-                  <div style={{ color: '#7D7988', fontSize: '.72rem', fontFamily: "'Outfit', sans-serif" }}>
-                    Recent score: <span style={{ color: '#FF557A', fontWeight: 700 }}>{weakPct}%</span>
-                  </div>
-                )}
+      {(() => {
+        const improvements = getImprovements()
+        const worst = [...improvements].sort((a,b) => (a.recentAvg||100)-(b.recentAvg||100))[0]
+        const weakLabel = worst?.subject || 'History'
+        const weakPct   = worst?.recentAvg ?? null
+        return (
+          <div style={{ padding: '14px 18px 0' }}>
+            <button onClick={() => setHistoryOpen(weakLabel === 'History')} style={{ width: '100%', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', borderRadius: 24, position: 'relative', textAlign: 'left', display: 'block' }}>
+              <div style={{ position: 'absolute', inset: -1, borderRadius: 25, background: 'linear-gradient(135deg, rgba(251,113,133,0.2) 0%, rgba(139,92,246,0.15) 100%)', filter: 'blur(1.5px)', zIndex: 0 }} />
+              <div style={{ position: 'relative', zIndex: 1, background: 'rgba(17,24,39,0.72)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderRadius: 24, border: '1px solid rgba(251,113,133,0.18)', boxShadow: '0 10px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)', padding: '14px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 52, height: 52, borderRadius: 14, flexShrink: 0, overflow: 'hidden', background: '#0D1117', boxShadow: '0 0 20px rgba(45,212,191,0.35), inset 0 0 0 1px rgba(45,212,191,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img src="/icons/brain-icon.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 14 }} />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', color: '#FB7185', textTransform: 'uppercase', marginBottom: 3 }}>Weak Zone</div>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 700, color: '#F4EFE6', lineHeight: 1.2, marginBottom: 4 }}>{weakLabel}</div>
+                  {weakPct !== null && (
+                    <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11, color: '#9CA3AF' }}>
+                      Recent score: <span style={{ color: '#2DD4BF', textShadow: '0 0 10px rgba(45,212,191,0.5)', fontWeight: 700 }}>{weakPct}%</span>
+                    </div>
+                  )}
+                </div>
+                <div style={{ flexShrink: 0, background: 'rgba(139,92,246,0.14)', border: '1px solid rgba(139,92,246,0.28)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', borderRadius: 10, padding: '8px 10px', fontFamily: "'Outfit', sans-serif", fontSize: 11, fontWeight: 700, color: '#C4B5FD', lineHeight: 1.3, textAlign: 'center' }}>
+                  Review<br />now ›
+                </div>
               </div>
-            )
-          })()}
-          <button style={{
-            background: 'none', border: '1px solid rgba(255,85,122,0.40)',
-            borderRadius: 99, padding: '7px 11px', cursor: 'pointer',
-            color: '#FF6F8F', fontSize: '.7rem', fontWeight: 700,
-            fontFamily: "'Outfit', sans-serif", flexShrink: 0, whiteSpace: 'nowrap',
-          }}>Review now ›</button>
-        </div>
-      </div>
+            </button>
+          </div>
+        )
+      })()}
 
       {/* ── SUBJECT SECTIONS ── */}
       <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 28 }}>
@@ -4036,22 +4065,17 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
   return (
     <div style={{ background: '#08090D', minHeight: '100vh', paddingBottom: 90 }}>
 
-      {/* ── Header — 72px ── */}
-      <div style={{ height: 72, padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxSizing: 'border-box' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <img src="/logo.png" alt="RISE" style={{ height: 38, width: 'auto', objectFit: 'contain' }} />
-          <div>
-            {!isExamMode && (
-              <>
-                <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: '1.05rem', color: '#F4EFE6', lineHeight: 1.15 }}>
-                  {isQuickFire ? '90s Quick Fire' : 'Practice Test'}
-                </div>
-                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11, color: '#7A7670', marginTop: 2 }}>
-                  {isQuickFire ? '90 seconds. Answer fast.' : 'Pick a topic to start'}
-                </div>
-              </>
-            )}
-          </div>
+      {/* ── Header — 60px ── */}
+      <div style={{ height: 60, padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxSizing: 'border-box' }}>
+        <div>
+          {!isExamMode && (
+            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F4EFE6' }}>
+              {isQuickFire ? '90s Quick Fire' : 'Practice Test'}
+            </div>
+          )}
+          {isExamMode && (
+            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F4EFE6' }}>Exams</div>
+          )}
         </div>
         <StreakChip />
       </div>
