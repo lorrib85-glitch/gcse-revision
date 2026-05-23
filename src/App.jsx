@@ -3,6 +3,7 @@ import { useAuth } from './auth/AuthContext.jsx'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
 import { BIOLOGY_GROUPS } from './data/biologyGroups.js'
 import { CHEMISTRY_GROUPS } from './data/chemistryGroups.js'
+import { MATHS_GROUPS } from './data/mathsGroups.js'
 import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
 import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
 import { CHEMISTRY_TOPIC_GROUPS, ALL_CHEMISTRY_QUESTIONS } from './data/chemistryTopics.js'
@@ -361,6 +362,12 @@ export default function App() {
     return () => clearTimeout(t)
   }, [])
 
+  // Record daily login — updates the streak accurately
+  useEffect(() => {
+    recordActivity()
+    setProgress(safeGetProgress())
+  }, [])
+
   function openModule(mod) {
     setActiveModule(mod)
     setView('module')
@@ -467,7 +474,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
   const { user, signOut } = useAuth()
   const userName    = user?.name || 'you'
   const greeting    = getTimeGreeting(userName)
-  const streak      = Math.max(progress.streak || 0, 8)
+  const streak      = progress.streak || 0
   const todayIdx    = (() => { const d = new Date().getDay(); return d === 0 ? 6 : d - 1 })()
   const dayLetters  = ['M','T','W','T','F','S','S']
 
@@ -487,7 +494,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
       <div style={{ maxWidth: 430, margin: '0 auto', padding: '56px 20px 0' }}>
 
         {/* ── Greeting + Streak ── */}
-        <div style={{ marginBottom: 32, position: 'relative' }}>
+        <div style={{ marginBottom: 28, position: 'relative' }}>
 
           {/* Sign-out avatar — top right */}
           <button
@@ -495,44 +502,47 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
             title="Sign out"
             style={{
               position: 'absolute', top: 0, right: 0,
-              width: 34, height: 34, borderRadius: '50%',
+              width: 32, height: 32, borderRadius: '50%',
               border: '1.5px solid rgba(139,92,246,0.3)',
               background: 'rgba(139,92,246,0.1)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 13, fontWeight: 700, color: '#C4B5FD',
+              fontSize: 12, fontWeight: 700, color: '#C4B5FD',
             }}
           >
             {userName.charAt(0).toUpperCase()}
           </button>
 
-          {/* Greeting */}
+          {/* Streak chip — small, top */}
           <div style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: 14, fontWeight: 600, color: '#D6A166',
-            marginBottom: 8, letterSpacing: '0.01em',
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)',
+            borderRadius: 999, padding: '4px 12px 4px 10px',
+            marginBottom: 16,
           }}>
-            {greeting}
-          </div>
-
-          {/* Streak row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 8 }}>
-            <div style={{
-              fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
-              fontSize: 46, fontWeight: 700, color: '#F4EFE6', lineHeight: 1,
-              letterSpacing: '-0.025em',
+            <span style={{ fontSize: 14, filter: 'drop-shadow(0 0 6px rgba(245,158,11,0.6))' }}>🔥</span>
+            <span style={{
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: 12, fontWeight: 700, color: '#F59E0B', letterSpacing: '0.02em',
             }}>
               {streak} day streak
-            </div>
-            <div style={{ fontSize: 34, flexShrink: 0, filter: 'drop-shadow(0 0 10px rgba(245,158,11,0.65))' }}>
-              🔥
-            </div>
+            </span>
+          </div>
+
+          {/* Greeting — Cormorant Garamond, cinematic */}
+          <div style={{
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontSize: 36, fontWeight: 600, color: '#F4EFE6',
+            lineHeight: 1.15, marginBottom: 6,
+            fontStyle: 'italic', letterSpacing: '0.01em',
+          }}>
+            {greeting}
           </div>
 
           {/* Sub text */}
           <div style={{
             fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: 14, color: '#4B5563', marginBottom: 24,
+            fontSize: 13, color: '#4B5563', marginBottom: 22,
           }}>
             You're building momentum.
           </div>
@@ -540,7 +550,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
           {/* Day tracker */}
           <div style={{ display: 'flex', gap: 6 }}>
             {dayLetters.map((d, i) => {
-              const done   = i < todayIdx
+              const done    = i < todayIdx
               const isToday = i === todayIdx
               return (
                 <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
@@ -691,10 +701,12 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
             }}>
               {/* Brain icon */}
               <div style={{
-                width: 66, height: 66, borderRadius: 18, flexShrink: 0, overflow: 'hidden',
-                boxShadow: '0 0 22px rgba(45,212,191,0.35)',
+                width: 72, height: 72, borderRadius: 20, flexShrink: 0, overflow: 'hidden',
+                background: '#0D1117',
+                boxShadow: '0 0 24px rgba(45,212,191,0.4), inset 0 0 0 1px rgba(45,212,191,0.12)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <img src="/icons/brain-icon.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src="/icons/brain-icon.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 20 }} />
               </div>
 
               {/* Text */}
@@ -1050,6 +1062,12 @@ function ModulesTab({ onOpenModule }) {
     return { id: group.id, title: group.title, subtitle: group.subtitle, icon: group.icon, accent: group.accent, headerImage: group.headerImage, progress: pct, locked: false, isSelected: false, bg: '#0D0E10' }
   })
 
+  const mathsGroupCards = MATHS_GROUPS.map(group => {
+    const realMod = MODULES.find(m => m.id === group.id)
+    const pct = realMod ? modPct(realMod) : 0
+    return { id: group.id, title: group.title, subtitle: group.subtitle, icon: group.icon, accent: group.accent, headerImage: group.headerImage, progress: pct, locked: false, isSelected: false, bg: '#0D0E10' }
+  })
+
   const heroBg = [
     'linear-gradient(90deg, #05070B 0%, rgba(5,7,11,0.92) 28%, rgba(5,7,11,0.40) 62%, rgba(5,7,11,0.08) 100%)',
     'radial-gradient(ellipse at 84% 62%, rgba(185,115,30,0.56) 0%, rgba(95,52,14,0.34) 30%, transparent 62%)',
@@ -1220,6 +1238,7 @@ function ModulesTab({ onOpenModule }) {
         <SubjectSection heading="English" accent="#9E3D52" modules={englishModules} onModuleClick={handleModuleClick} />
         <BiologySection groups={biologyGroupCards} onGroupClick={handleModuleClick} />
         <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.png" accent="#9B59E8" groups={chemGroupCards} onGroupClick={handleModuleClick} />
+        <SubjectLogoSection subjectLabel="Maths" logoSrc="/headers/maths-main.png" accent="#2DD4BF" groups={mathsGroupCards} onGroupClick={handleModuleClick} />
       </div>
     </div>
   )
