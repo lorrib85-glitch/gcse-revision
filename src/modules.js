@@ -1159,4 +1159,74 @@ export const MODULES = [
       },
     ],
   },
+
+  // ─── Chemistry — Placeholder topic group modules ──────────────────────────────
+
+  {
+    id: 'chem_matter_atoms', subject: 'Chemistry', number: 1,
+    title: 'Matter & Atoms', subtitle: 'Elements, Bonding & Giant Structures',
+    icon: '⚛️', color: '#9B59E8', colorLight: 'rgba(155,89,232,.15)',
+    screens: [
+      {
+        id: 's1', label: 'Overview', kicker: 'Group 1',
+        heading: 'Matter & Atoms',
+        content: [
+          { type: 'keypoint', text: 'Everything is made of <strong>atoms</strong>. Understanding atomic structure, how atoms bond, and the patterns in the Periodic Table is the foundation of all chemistry.' },
+          { type: 'read', label: 'Modules in this group', text: '<strong>Atoms & Elements</strong> — protons, neutrons, electrons and atomic number.<br><strong>The Periodic Table</strong> — groups, periods, trends and key element groups.<br><strong>Bonding Basics</strong> — ionic, covalent and metallic bonding.<br><strong>Giant Structures & Materials</strong> — diamond, graphite, metals and polymers.' },
+          { type: 'keypoint', text: '🚧 Individual module content is being built. This topic group launches soon.' },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'chem_reactions', subject: 'Chemistry', number: 2,
+    title: 'Chemical Reactions', subtitle: 'Equations, Acids & Electrolysis',
+    icon: '🧪', color: '#C459E8', colorLight: 'rgba(196,89,232,.15)',
+    screens: [
+      {
+        id: 's1', label: 'Overview', kicker: 'Group 2',
+        heading: 'Chemical Reactions',
+        content: [
+          { type: 'keypoint', text: 'Chemical reactions rearrange atoms. Learning to write balanced equations, understand acid-base chemistry, and explain electrolysis are core exam skills.' },
+          { type: 'read', label: 'Modules in this group', text: '<strong>Reactions & Equations</strong> — balancing equations, types of reaction, state symbols.<br><strong>Acids, Alkalis & Salts</strong> — pH, neutralisation, making salts and titration.<br><strong>Electrolysis</strong> — electrodes, half-equations and industrial uses.<br><strong>Energy Changes</strong> — exothermic, endothermic, bond energies and Hess\'s law.' },
+          { type: 'keypoint', text: '🚧 Individual module content is being built. This topic group launches soon.' },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'chem_rates_organic', subject: 'Chemistry', number: 3,
+    title: 'Rates & Organic Chemistry', subtitle: 'Rates, Equilibria, Hydrocarbons & Fuels',
+    icon: '🛢️', color: '#8B59E8', colorLight: 'rgba(139,89,232,.15)',
+    screens: [
+      {
+        id: 's1', label: 'Overview', kicker: 'Group 3',
+        heading: 'Rates & Organic Chemistry',
+        content: [
+          { type: 'keypoint', text: '<strong>Crude oil</strong> is the basis of most fuels and plastics. Understanding how reactions speed up, reach equilibrium, and how organic compounds are separated is crucial for the exam.' },
+          { type: 'read', label: 'Modules in this group', text: '<strong>Rates of Reaction</strong> — concentration, temperature, surface area and catalysts.<br><strong>Reversible Reactions</strong> — equilibrium, Le Chatelier\'s principle and the Haber process.<br><strong>Hydrocarbons & Crude Oil</strong> — alkanes, alkenes, fractional distillation.<br><strong>Cracking & Fuels</strong> — thermal cracking, catalytic cracking and combustion.' },
+          { type: 'keypoint', text: '🚧 Individual module content is being built. This topic group launches soon.' },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'chem_earth', subject: 'Chemistry', number: 4,
+    title: 'Earth Chemistry', subtitle: 'Atmosphere, Climate & Resources',
+    icon: '🌍', color: '#5980E8', colorLight: 'rgba(89,128,232,.15)',
+    screens: [
+      {
+        id: 's1', label: 'Overview', kicker: 'Group 4',
+        heading: 'Earth Chemistry',
+        content: [
+          { type: 'keypoint', text: 'The chemistry of our planet keeps life possible — but human activity is changing it. This group covers how the atmosphere evolved, why climate is changing, and how we can use resources more sustainably.' },
+          { type: 'read', label: 'Modules in this group', text: '<strong>Earth\'s Atmosphere</strong> — evolution of the atmosphere, gases and their proportions.<br><strong>Climate Change</strong> — greenhouse gases, global warming and impacts.<br><strong>Using Resources</strong> — life cycle assessment, sustainable development and potable water.' },
+          { type: 'keypoint', text: '🚧 Individual module content is being built. This topic group launches soon.' },
+        ],
+      },
+    ],
+  },
 ]

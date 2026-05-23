@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
 import { BIOLOGY_GROUPS } from './data/biologyGroups.js'
+import { CHEMISTRY_GROUPS } from './data/chemistryGroups.js'
 import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
 import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
 import { CHEMISTRY_TOPIC_GROUPS, ALL_CHEMISTRY_QUESTIONS } from './data/chemistryTopics.js'
@@ -216,8 +217,8 @@ export default function App() {
 
 const W = {
   bg:         '#070B1A',
-  bgCard:     '#10182B',
-  border:     '#2A3552',
+  bgCard:     '#151720',
+  border:     'rgba(255,255,255,0.1)',
   text:       '#F5F7FB',
   textMid:    '#C8D0E8',
   textMuted:  '#9CA8C7',
@@ -293,10 +294,10 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
   ]
 
   const subjectCards = [
-    { label: 'History',   icon: '🏛', done: [elizabethanModule, usaModule, spainModule, medicineModule].filter(Boolean).length, total: 4,  color: '#C89B6D', action: onOpenSubjects },
-    { label: 'Biology',   icon: '🧬', done: 1,  total: 7,  color: '#4F8A5B', action: onOpenSubjects },
-    { label: 'English',   icon: '📖', done: 8,  total: 14, color: '#9E3D52', action: onOpenSubjects },
-    { label: 'Sociology', icon: '👥', done: 7,  total: 10, color: '#6B7FCC', action: onOpenSubjects },
+    { label: 'History',   icon: '🏛',  done: [elizabethanModule, usaModule, spainModule, medicineModule].filter(Boolean).length, total: 4,  color: '#C89B6D', action: onOpenSubjects },
+    { label: 'Biology',   logo: '/headers/bio-main.png',  done: 1,  total: 7,  color: '#4F8A5B', action: onOpenSubjects },
+    { label: 'Chemistry', logo: '/headers/chem-logo.png', done: 0,  total: 15, color: '#9B59E8', action: onOpenSubjects },
+    { label: 'English',   icon: '📖',  done: 8,  total: 14, color: '#9E3D52', action: onOpenSubjects },
   ]
 
   const heroText = GREETINGS[new Date().getDay() % GREETINGS.length]
@@ -457,7 +458,10 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
                   textAlign: 'left', cursor: 'pointer',
                   display: 'flex', flexDirection: 'column', gap: 6,
                 }}>
-                  <div style={{ fontSize: '1.4rem', lineHeight: 1 }}>{subject.icon}</div>
+                  {subject.logo
+                    ? <img src={subject.logo} alt={subject.label} style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover' }} />
+                    : <div style={{ fontSize: '1.4rem', lineHeight: 1 }}>{subject.icon}</div>
+                  }
                   <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, fontWeight: 700, color: '#F4EFE6', marginTop: 2 }}>{subject.label}</div>
                   <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 500, color: subject.color }}>{subject.done}/{subject.total} modules</div>
                   <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden', marginTop: 2 }}>
@@ -560,7 +564,7 @@ function Home({ progress, draft, onStart, onResume, onDiscardDraft, onOpenModule
 function ProgressTab() {
   return (
     <div style={{ background: '#05070B', minHeight: '100vh', paddingBottom: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ textAlign: 'center', fontFamily: "'Inter', sans-serif" }}>
+      <div style={{ textAlign: 'center', fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
         <div style={{ fontSize: '3rem', marginBottom: 16 }}>📊</div>
         <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#F5F2EA', marginBottom: 8 }}>Progress</div>
         <div style={{ fontSize: '.9rem', color: '#7D7988' }}>Your stats will appear here</div>
@@ -702,31 +706,28 @@ function SubjectSection({ heading, accent, modules, onModuleClick }) {
   )
 }
 
-function BiologySection({ groups, onGroupClick }) {
+function SubjectLogoSection({ subjectLabel, logoSrc, accent, groups, onGroupClick }) {
   return (
     <div>
-      {/* Section header */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         paddingLeft: 18, paddingRight: 18, marginBottom: 14,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <img src="/headers/bio-main.png" alt="" style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover' }} />
+          <img src={logoSrc} alt={subjectLabel} style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover' }} />
           <span style={{
             fontSize: '.62rem', fontWeight: 800, letterSpacing: '.18em',
             textTransform: 'uppercase', color: '#F5F2EA',
             fontFamily: "'Plus Jakarta Sans', sans-serif",
-          }}>Biology</span>
-          <span style={{ color: '#4F8A5B', fontSize: '.82rem', lineHeight: 1 }}>›</span>
+          }}>{subjectLabel}</span>
+          <span style={{ color: accent, fontSize: '.82rem', lineHeight: 1 }}>›</span>
         </div>
         <button style={{
           background: 'none', border: 'none', cursor: 'pointer',
-          fontSize: '.72rem', fontWeight: 600, color: '#4F8A5B', padding: 0,
+          fontSize: '.72rem', fontWeight: 600, color: accent, padding: 0,
           fontFamily: "'Plus Jakarta Sans', sans-serif",
         }}>View all</button>
       </div>
-
-      {/* Horizontal scroll of topic group cards */}
       <div style={{
         display: 'flex', gap: 10, overflowX: 'auto',
         paddingLeft: 18, paddingRight: 18, paddingBottom: 4,
@@ -751,6 +752,10 @@ function BiologySection({ groups, onGroupClick }) {
       </div>
     </div>
   )
+}
+
+function BiologySection({ groups, onGroupClick }) {
+  return <SubjectLogoSection subjectLabel="Biology" logoSrc="/headers/bio-main.png" accent="#4F8A5B" groups={groups} onGroupClick={onGroupClick} />
 }
 
 function ModulesTab({ onOpenModule }) {
@@ -808,24 +813,16 @@ function ModulesTab({ onOpenModule }) {
     if (realMod && onOpenModule) onOpenModule(realMod)
   }
 
-  // Build biology topic group cards from BIOLOGY_GROUPS data
   const biologyGroupCards = BIOLOGY_GROUPS.map(group => {
     const realMod = MODULES.find(m => m.id === group.id)
     const pct = realMod ? modPct(realMod) : 0
-    // first unlocked sub-module that has a real entry, or the group itself
-    const primaryId = group.id
-    return {
-      id: primaryId,
-      title: group.title,
-      subtitle: group.subtitle,
-      icon: group.icon,
-      accent: group.accent,
-      headerImage: group.headerImage,
-      progress: pct,
-      locked: false,
-      isSelected: false,
-      bg: '#0D0E10',
-    }
+    return { id: group.id, title: group.title, subtitle: group.subtitle, icon: group.icon, accent: group.accent, headerImage: group.headerImage, progress: pct, locked: false, isSelected: false, bg: '#0D0E10' }
+  })
+
+  const chemGroupCards = CHEMISTRY_GROUPS.map(group => {
+    const realMod = MODULES.find(m => m.id === group.id)
+    const pct = realMod ? modPct(realMod) : 0
+    return { id: group.id, title: group.title, subtitle: group.subtitle, icon: group.icon, accent: group.accent, headerImage: group.headerImage, progress: pct, locked: false, isSelected: false, bg: '#0D0E10' }
   })
 
   const heroBg = [
@@ -870,7 +867,7 @@ function ModulesTab({ onOpenModule }) {
               borderRadius: 99, padding: '5px 10px',
             }}>
               <span style={{ fontSize: '.88rem', lineHeight: 1 }}>🔥</span>
-              <span style={{ color: '#F5F2EA', fontSize: '.78rem', fontWeight: 700, fontFamily: "'Inter', sans-serif" }}>12</span>
+              <span style={{ color: '#F5F2EA', fontSize: '.78rem', fontWeight: 700, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>12</span>
             </div>
             <div style={{
               width: 34, height: 34, borderRadius: '50%',
@@ -882,20 +879,20 @@ function ModulesTab({ onOpenModule }) {
               background: 'linear-gradient(135deg, #4C1D95, #7C3AED)',
               border: '2px solid rgba(255,255,255,0.18)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff', fontSize: '.88rem', fontWeight: 700, fontFamily: "'Inter', sans-serif",
+              color: '#fff', fontSize: '.88rem', fontWeight: 700, fontFamily: "'Plus Jakarta Sans',sans-serif",
             }}>A</div>
           </div>
         </div>
 
         {/* Hero text */}
         <div style={{ padding: '20px 18px 0', position: 'relative', zIndex: 5 }}>
-          <div style={{ color: '#7D7988', fontSize: '.82rem', marginBottom: 7, fontFamily: "'Inter', sans-serif" }}>Good evening, Alex</div>
+          <div style={{ color: '#7D7988', fontSize: '.82rem', marginBottom: 7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>Good evening, Alex</div>
           <div style={{
             color: '#F5F2EA', fontWeight: 800, fontSize: '2.6rem',
             letterSpacing: '-.025em', lineHeight: 1.04, marginBottom: 8,
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Plus Jakarta Sans',sans-serif",
           }}>Keep going.</div>
-          <div style={{ color: '#B8B4C2', fontSize: '.88rem', fontFamily: "'Inter', sans-serif" }}>
+          <div style={{ color: '#B8B4C2', fontSize: '.88rem', fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
             Small steps now. Big results later.
           </div>
         </div>
@@ -925,21 +922,21 @@ function ModulesTab({ onOpenModule }) {
             <div style={{
               fontSize: '.58rem', fontWeight: 800, letterSpacing: '.30em',
               textTransform: 'uppercase', color: '#C89B6D', marginBottom: 4,
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Plus Jakarta Sans',sans-serif",
             }}>Continue Learning</div>
-            <div style={{ fontSize: '.72rem', color: '#7D7988', marginBottom: 5, fontFamily: "'Inter', sans-serif" }}>
+            <div style={{ fontSize: '.72rem', color: '#7D7988', marginBottom: 5, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
               {continueRaw?.subject || 'History'} · Module {continueRaw?.number || 3}
             </div>
             <div style={{
               color: '#F5F2EA', fontWeight: 700, fontSize: '1.12rem',
-              lineHeight: 1.18, marginBottom: 3, fontFamily: "'Inter', sans-serif",
+              lineHeight: 1.18, marginBottom: 3, fontFamily: "'Plus Jakarta Sans',sans-serif",
             }}>{continueRaw?.title || 'Surgery & Anatomy'}</div>
-            <div style={{ color: '#B8B4C2', fontSize: '.75rem', marginBottom: 14, fontFamily: "'Inter', sans-serif" }}>
+            <div style={{ color: '#B8B4C2', fontSize: '.75rem', marginBottom: 14, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
               {continueRaw?.subtitle || 'Hold Him Down and Hope'}
             </div>
             {/* Progress */}
             <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: '.6rem', color: '#C89B6D', fontWeight: 700, marginBottom: 5, fontFamily: "'Inter', sans-serif" }}>{continuePct}%</div>
+              <div style={{ fontSize: '.6rem', color: '#C89B6D', fontWeight: 700, marginBottom: 5, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{continuePct}%</div>
               <div style={{ height: 4, background: 'rgba(255,255,255,0.10)', borderRadius: 99, overflow: 'hidden' }}>
                 <div style={{ width: continuePct + '%', height: '100%', background: '#C89B6D', borderRadius: 99, boxShadow: '0 0 8px rgba(200,155,109,0.55)' }} />
               </div>
@@ -951,7 +948,7 @@ function ModulesTab({ onOpenModule }) {
                 background: 'linear-gradient(90deg, #8C5A3C, #C89B6D)',
                 border: 'none', borderRadius: 99, cursor: 'pointer',
                 color: '#fff', fontWeight: 700, fontSize: '.86rem',
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Plus Jakarta Sans',sans-serif",
                 boxShadow: '0 4px 18px rgba(140,90,60,0.42)',
                 display: 'inline-flex', alignItems: 'center', gap: 7,
               }}>▶ Continue Module</button>
@@ -974,12 +971,12 @@ function ModulesTab({ onOpenModule }) {
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
               fontSize: '.54rem', fontWeight: 800, letterSpacing: '.28em',
-              textTransform: 'uppercase', color: '#FF557A', marginBottom: 3, fontFamily: "'Inter', sans-serif",
+              textTransform: 'uppercase', color: '#FF557A', marginBottom: 3, fontFamily: "'Plus Jakarta Sans',sans-serif",
             }}>Weak Area to Target</div>
-            <div style={{ color: '#F5F2EA', fontWeight: 600, fontSize: '.82rem', marginBottom: 2, fontFamily: "'Inter', sans-serif" }}>
+            <div style={{ color: '#F5F2EA', fontWeight: 600, fontSize: '.82rem', marginBottom: 2, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
               Education needs reinforcement
             </div>
-            <div style={{ color: '#7D7988', fontSize: '.72rem', fontFamily: "'Inter', sans-serif" }}>
+            <div style={{ color: '#7D7988', fontSize: '.72rem', fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
               You scored <span style={{ color: '#FF557A', fontWeight: 700 }}>42%</span> in this area
             </div>
           </div>
@@ -987,7 +984,7 @@ function ModulesTab({ onOpenModule }) {
             background: 'none', border: '1px solid rgba(255,85,122,0.40)',
             borderRadius: 99, padding: '7px 11px', cursor: 'pointer',
             color: '#FF6F8F', fontSize: '.7rem', fontWeight: 700,
-            fontFamily: "'Inter', sans-serif", flexShrink: 0, whiteSpace: 'nowrap',
+            fontFamily: "'Plus Jakarta Sans',sans-serif", flexShrink: 0, whiteSpace: 'nowrap',
           }}>Review now ›</button>
         </div>
       </div>
@@ -995,9 +992,9 @@ function ModulesTab({ onOpenModule }) {
       {/* ── SUBJECT SECTIONS ── */}
       <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 28 }}>
         <SubjectSection heading="History" accent="#C89B6D" modules={historyModules} onModuleClick={handleModuleClick} />
-        <SubjectSection heading="English" accent="#B66DFF" modules={englishModules} onModuleClick={handleModuleClick} />
-        <SubjectSection heading="Science" accent="#65E6C6" modules={scienceModules} onModuleClick={handleModuleClick} />
+        <SubjectSection heading="English" accent="#9E3D52" modules={englishModules} onModuleClick={handleModuleClick} />
         <BiologySection groups={biologyGroupCards} onGroupClick={handleModuleClick} />
+        <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.png" accent="#9B59E8" groups={chemGroupCards} onGroupClick={handleModuleClick} />
       </div>
     </div>
   )
@@ -1520,19 +1517,19 @@ function FormulaSheet({ onClose }) {
       <div onClick={e=>e.stopPropagation()} style={{ background:'#0E1330', border:'1px solid rgba(59,130,255,.3)', borderRadius:'20px 20px 0 0', padding:'20px 18px 40px', width:'100%', maxWidth:660, maxHeight:'82vh', overflowY:'auto' }}>
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18 }}>
           <div>
-            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1.1rem', color:'#F5F7FB' }}>📐 AQA Formula Sheet</div>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:2 }}>These are given in the exam — but worth knowing them cold</div>
+            <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'1.1rem', color:'#F5F7FB' }}>📐 AQA Formula Sheet</div>
+            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', color:'#5A6480', marginTop:2 }}>These are given in the exam — but worth knowing them cold</div>
           </div>
           <button onClick={onClose} style={{ background:'rgba(255,255,255,.08)', border:'1px solid #2A3552', borderRadius:8, padding:'6px 14px', color:'#9CA8C7', cursor:'pointer', fontFamily:'inherit', fontSize:'.82rem' }}>✕</button>
         </div>
         {FORMULA_SHEET.map(cat => (
           <div key={cat.section} style={{ marginBottom:18 }}>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:'#3B82FF', marginBottom:10 }}>{cat.section}</div>
+            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:'#3B82FF', marginBottom:10 }}>{cat.section}</div>
             <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
               {cat.formulae.map(item => (
-                <div key={item.name} style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'12px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', gap:12 }}>
-                  <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.82rem', color:'#9CA8C7' }}>{item.name}</div>
-                  <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', flexShrink:0 }}>{item.f}</div>
+                <div key={item.name} style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'12px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', gap:12 }}>
+                  <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.82rem', color:'#9CA8C7' }}>{item.name}</div>
+                  <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', flexShrink:0 }}>{item.f}</div>
                 </div>
               ))}
             </div>
@@ -1548,8 +1545,8 @@ function MathsDiagram({ diagramKey }) {
   const svg = DIAGRAMS[diagramKey]
   if (!svg) return null
   return (
-    <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'14px', marginBottom:14 }}>
-      <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#3B82FF', marginBottom:8 }}>📐 Diagram — from AQA past paper</div>
+    <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'14px', marginBottom:14 }}>
+      <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#3B82FF', marginBottom:8 }}>📐 Diagram — from AQA past paper</div>
       <div dangerouslySetInnerHTML={{ __html: svg }} />
     </div>
   )
@@ -1712,7 +1709,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
   }
 
   return (
-    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
+    <div style={{ background:'#08090D', minHeight:'100vh', paddingBottom:90 }}>
       {fmOpen && <FormulaSheet onClose={() => setFm(false)} />}
 
       {/* Sticky header */}
@@ -1723,31 +1720,31 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:2 }}>
                 <div style={{ width:8, height:8, borderRadius:'50%', background:topicColor, flexShrink:0, boxShadow:`0 0 6px ${topicColor}` }} />
-                <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor }}>{topicLabel}</span>
+                <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor }}>{topicLabel}</span>
               </div>
-              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB' }}>
+              <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB' }}>
                 Q{q.qNum} · {q.source}
               </div>
             </div>
             {isMathsQ && (<div style={{ display:'flex', gap:6, flexShrink:0 }}>{isCalc
-                      ? <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}>🖩 Calculator OK</div>
-                      : <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.18)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}>✏️ No Calculator</div>
+                      ? <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}>🖩 Calculator OK</div>
+                      : <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.18)', borderRadius:8, padding:'4px 10px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}>✏️ No Calculator</div>
               }
-              <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#70B8FF', cursor:'pointer' }}>📐 Formulae</button>
+              <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:8, padding:'4px 10px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#70B8FF', cursor:'pointer' }}>📐 Formulae</button>
             </div>)}
           </div>
           {/* Progress */}
-          <div style={{ height:3, background:'#1E2A40', borderRadius:99, overflow:'hidden' }}>
+          <div style={{ height:3, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden' }}>
             <div style={{ height:'100%', width:`${((qIdx+1)/total)*100}%`, background:`linear-gradient(90deg,${topicColor}88,${topicColor})`, borderRadius:99, transition:'width .4s ease' }} />
           </div>
-          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.62rem', color:'#4A5578', marginTop:5, textAlign:'right' }}>{qIdx+1} / {total}</div>
+          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.62rem', color:'#4A5578', marginTop:5, textAlign:'right' }}>{qIdx+1} / {total}</div>
         </div>
       </div>
 
       <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px 20px' }}>
         {/* Marks badge */}
         <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:`${topicColor}18`, border:`1px solid ${topicColor}44`, borderRadius:99, padding:'4px 13px', marginBottom:14 }}>
-          <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'.78rem', fontWeight:700, color:topicColor }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
+          <span style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'.78rem', fontWeight:700, color:topicColor }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
         </div>
 
         {/* Diagram */}
@@ -1759,25 +1756,25 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
           const isRealExtract = q.extract.startsWith('Lines') || q.extract.startsWith('"')
           return (
             <div style={{ background:'#0D1424', borderLeft:`3px solid ${topicColor}`, borderRadius:'0 12px 12px 0', padding:'14px 16px', marginBottom:14 }}>
-              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor, marginBottom:8 }}>
+              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor, marginBottom:8 }}>
                 {isRealExtract ? '📄 Source extract' : '📎 Where to find your source'}
               </div>
-              <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.88rem', lineHeight:1.7, margin:0, color: isRealExtract ? '#C8D0E8' : '#9CA8C7', whiteSpace:'pre-wrap' }}>{q.extract}</p>
+              <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem', lineHeight:1.7, margin:0, color: isRealExtract ? '#C8D0E8' : '#9CA8C7', whiteSpace:'pre-wrap' }}>{q.extract}</p>
             </div>
           )
         })()}
 
         {/* Question */}
-        <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, padding:'18px 18px', marginBottom:14 }}>
-          <pre style={{ fontFamily:"'Inter',sans-serif", fontSize:'1rem', lineHeight:1.7, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
+        <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:16, padding:'18px 18px', marginBottom:14 }}>
+          <pre style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'1rem', lineHeight:1.7, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
         </div>
 
         {/* Mark tip */}
         {!showTip
-          ? <button onClick={() => setTip(true)} style={{ background:'transparent', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Inter',sans-serif", width:'100%', marginBottom:14 }}>💡 {isMathsQ ? 'How many steps do I need to show?' : 'What does this question need from me?'}</button>
+          ? <button onClick={() => setTip(true)} style={{ background:'transparent', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Plus Jakarta Sans',sans-serif", width:'100%', marginBottom:14 }}>💡 {isMathsQ ? 'How many steps do I need to show?' : 'What does this question need from me?'}</button>
           : <div style={{ background:'rgba(255,200,87,.05)', border:'1px solid rgba(255,200,87,.18)', borderRadius:10, padding:'12px 14px', marginBottom:14 }}>
-              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FFC857', marginBottom:5 }}>{isMathsQ ? `${q.marks}-mark question` : `${q.marks} marks — what to write`}</div>
-              <p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.86rem', color:'#C8D0E8', lineHeight:1.55 }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
+              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FFC857', marginBottom:5 }}>{isMathsQ ? `${q.marks}-mark question` : `${q.marks} marks — what to write`}</div>
+              <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", margin:0, fontSize:'.86rem', color:'#C8D0E8', lineHeight:1.55 }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
             </div>
         }
 
@@ -1785,12 +1782,12 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
         {!feedback && (
           q.type === 'mc' || q.type === 'mc_multi'
             ? <div style={{ marginBottom:16 }}>
-                {q.type === 'mc_multi' && <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', marginBottom:8 }}>Select all that apply ({q.marks} correct answers)</div>}
+                {q.type === 'mc_multi' && <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', color:'#5A6480', marginBottom:8 }}>Select all that apply ({q.marks} correct answers)</div>}
                 {/* Hint card after first wrong MC attempt */}
                 {mcHint && !mcLocked && (
                   <div style={{ background:'rgba(255,200,87,.06)', border:'1px solid rgba(255,200,87,.25)', borderRadius:12, padding:'12px 14px', marginBottom:12 }}>
-                    <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857', marginBottom:6 }}>💡 Hint — think about this</div>
-                    <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8', margin:0, lineHeight:1.55 }}>
+                    <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857', marginBottom:6 }}>💡 Hint — think about this</div>
+                    <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.87rem', color:'#C8D0E8', margin:0, lineHeight:1.55 }}>
                       {q.hint || (q.ms ? q.ms.split('.')[0] + '.' : 'Look at the question again carefully — what does it specifically ask for?')}
                     </p>
                   </div>
@@ -1806,27 +1803,27 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
                     setAnswer(sel ? cur.filter(a => a !== opt) : [...cur, opt])
                   }
                   return (
-                    <button key={i} onClick={toggle} disabled={mcLocked} style={{ background:sel?`${topicColor}18`:'#10182B', border:`1.5px solid ${sel?topicColor:'#1E2A40'}`, borderRadius:12, padding:'14px 16px', cursor:mcLocked?'default':'pointer', textAlign:'left', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:sel?topicColor:'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
-                      <span style={{ width:24, height:24, borderRadius:isMulti?'4px':'50%', border:`1.5px solid ${sel?topicColor:'#2A3552'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.75rem', fontWeight:700, color:sel?topicColor:'#4A5578', background:sel?`${topicColor}18`:'transparent' }}>{isMulti ? (sel ? '✓' : '') : String.fromCharCode(65+i)}</span>
+                    <button key={i} onClick={toggle} disabled={mcLocked} style={{ background:sel?`${topicColor}18`:'#151720', border:`1.5px solid ${sel?topicColor:'rgba(255,255,255,0.08)'}`, borderRadius:12, padding:'14px 16px', cursor:mcLocked?'default':'pointer', textAlign:'left', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.93rem', color:sel?topicColor:'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
+                      <span style={{ width:24, height:24, borderRadius:isMulti?'4px':'50%', border:`1.5px solid ${sel?topicColor:'rgba(255,255,255,0.1)'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.75rem', fontWeight:700, color:sel?topicColor:'#4A5578', background:sel?`${topicColor}18`:'transparent' }}>{isMulti ? (sel ? '✓' : '') : String.fromCharCode(65+i)}</span>
                       {opt}
                     </button>
                   )
                 })}
                 </div>
               </div>
-            : <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:16 }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>{isMathsQ ? 'Your working & answer' : 'Your answer'}</div>
+            : <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:16 }}>
+                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>{isMathsQ ? 'Your working & answer' : 'Your answer'}</div>
                 <textarea
                   value={answer}
                   onChange={e => setAnswer(e.target.value)}
                   placeholder={isMathsQ ? (q.marks >= 3 ? 'Show all your working here…' : 'Write your answer…') : 'Write your answer here. Use quotes from the extract where relevant…'}
-                  style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Inter',sans-serif", fontSize:'.95rem', color:'#E0E6F0', lineHeight:1.7, outline:'none', minHeight: q.marks >= 4 ? 170 : q.marks >= 2 ? 110 : 65 }}
+                  style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.95rem', color:'#E0E6F0', lineHeight:1.7, outline:'none', minHeight: q.marks >= 4 ? 170 : q.marks >= 2 ? 110 : 65 }}
                 />
               </div>
         )}
 
         {/* Error */}
-        {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'12px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73', lineHeight:1.5 }}>{error}</p></div>}
+        {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'12px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73', lineHeight:1.5 }}>{error}</p></div>}
 
         {/* Feedback */}
         {feedback && gs && (
@@ -1834,22 +1831,22 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
             {/* Score card */}
             <div style={{ background:gs.bg, border:`2px solid ${gs.border}`, borderRadius:18, padding:'20px', marginBottom:12 }}>
               <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:12 }}>
-                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2rem', fontWeight:800, color:gs.text, lineHeight:1 }}>
+                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'2rem', fontWeight:800, color:gs.text, lineHeight:1 }}>
                   {feedback.marksAwarded}<span style={{ fontSize:'1.1rem', opacity:.5 }}>/{feedback.marksAvailable}</span>
                 </div>
-                <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.8rem' }}>{feedback.grade}</div>
+                <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.8rem' }}>{feedback.grade}</div>
               </div>
-              <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.9rem', color:gs.text, margin:0, lineHeight:1.55, opacity:.9 }}>{feedback.summary}</p>
+              <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.9rem', color:gs.text, margin:0, lineHeight:1.55, opacity:.9 }}>{feedback.summary}</p>
             </div>
 
             {/* What they got right */}
             {feedback.achieved?.length > 0 && (
-              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:10 }}>✓ What you got right</div>
+              <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
+                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:10 }}>✓ What you got right</div>
                 {feedback.achieved.map((a,i) => (
                   <div key={i} style={{ display:'flex', gap:8, marginBottom: i<feedback.achieved.length-1?8:0 }}>
                     <span style={{ color:'#4DFF88', flexShrink:0, fontSize:'.9rem' }}>✓</span>
-                    <p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{a}</p>
+                    <p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{a}</p>
                   </div>
                 ))}
               </div>
@@ -1857,12 +1854,12 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
 
             {/* What they missed */}
             {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && (
-              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FF5D73', marginBottom:10 }}>→ Next time, also include</div>
+              <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
+                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#FF5D73', marginBottom:10 }}>→ Next time, also include</div>
                 {feedback.missed.map((m,i) => (
                   <div key={i} style={{ display:'flex', gap:8, marginBottom: i<feedback.missed.length-1?8:0 }}>
                     <span style={{ color:'#FF5D73', flexShrink:0, fontSize:'.9rem' }}>→</span>
-                    <p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{m}</p>
+                    <p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{m}</p>
                   </div>
                 ))}
               </div>
@@ -1871,15 +1868,15 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
             {/* Examiner tip */}
             {feedback.examinerTip && (
               <div style={{ background:'rgba(245,183,0,.05)', border:'1px solid rgba(245,183,0,.18)', borderRadius:13, padding:'14px', marginBottom:16 }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div>
-                <p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{feedback.examinerTip}</p>
+                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div>
+                <p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem', color:'#C8D0E8', lineHeight:1.55 }}>{feedback.examinerTip}</p>
               </div>
             )}
 
             {/* Actions */}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-              <button onClick={reset} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:13, padding:'14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
-              <button onClick={onNext} style={{ background:`linear-gradient(135deg,${topicColor}cc,${topicColor})`, border:'none', borderRadius:13, padding:'14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#fff', fontSize:'.88rem', boxShadow:`0 4px 16px ${topicColor}44` }}>
+              <button onClick={reset} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:13, padding:'14px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
+              <button onClick={onNext} style={{ background:`linear-gradient(135deg,${topicColor}cc,${topicColor})`, border:'none', borderRadius:13, padding:'14px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:'pointer', color:'#fff', fontSize:'.88rem', boxShadow:`0 4px 16px ${topicColor}44` }}>
                 {qIdx < total-1 ? 'Next →' : 'Finish ✓'}
               </button>
             </div>
@@ -1889,7 +1886,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
         {/* Submit button — hidden for locked MC (feedback already shown inline) */}
         {!feedback && !(mcLocked) && (
           <button onClick={grade} disabled={grading || (q.type === 'mc' && !answer) || (q.type === 'mc_multi' && (!answer || answer.length === 0))}
-            style={{ width:'100%', background:grading?'#1E2A40':`linear-gradient(135deg,${topicColor}cc,${topicColor})`, color:grading?'#4A5578':'#fff', border:'none', borderRadius:13, padding:'16px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:(grading||(q.type==='mc'&&!answer))?'default':'pointer', fontSize:'1rem', letterSpacing:'.01em', marginTop:4, boxShadow:grading?'none':`0 4px 20px ${topicColor}44`, transition:'all .2s',
+            style={{ width:'100%', background:grading?'rgba(255,255,255,0.08)':`linear-gradient(135deg,${topicColor}cc,${topicColor})`, color:grading?'#4A5578':'#fff', border:'none', borderRadius:13, padding:'16px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:(grading||(q.type==='mc'&&!answer))?'default':'pointer', fontSize:'1rem', letterSpacing:'.01em', marginTop:4, boxShadow:grading?'none':`0 4px 20px ${topicColor}44`, transition:'all .2s',
               opacity: (q.type === 'mc' && !answer) ? 0.4 : 1 }}>
             {grading ? '⏳ Marking your answer…' : mcHint ? 'Check again →' : 'Check my answer →'}
           </button>
@@ -1928,7 +1925,7 @@ function MathsBrowser({ onBack }) {
     : MATHS_TOPIC_GROUPS.filter(g => !g.calculator)
 
   return (
-    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
+    <div style={{ background:'#08090D', minHeight:'100vh', paddingBottom:90 }}>
       {fmOpen && <FormulaSheet onClose={() => setFm(false)} />}
 
       {/* Header */}
@@ -1936,10 +1933,10 @@ function MathsBrowser({ onBack }) {
         <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
           <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
           <div style={{ flex:1 }}>
-            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA Maths — Topics</div>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>{MATHS_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked</div>
+            <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA Maths — Topics</div>
+            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>{MATHS_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked</div>
           </div>
-          <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:10, padding:'7px 12px', fontFamily:"'Inter',sans-serif", fontSize:'.73rem', fontWeight:700, color:'#70B8FF', cursor:'pointer', flexShrink:0 }}>📐 Formulae</button>
+          <button onClick={() => setFm(true)} style={{ background:'rgba(59,130,255,.1)', border:'1px solid rgba(59,130,255,.22)', borderRadius:10, padding:'7px 12px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.73rem', fontWeight:700, color:'#70B8FF', cursor:'pointer', flexShrink:0 }}>📐 Formulae</button>
         </div>
       </div>
 
@@ -1951,36 +1948,36 @@ function MathsBrowser({ onBack }) {
             { id:'noncalc',  label:'✏️ No Calculator' },
             { id:'calc',     label:'🖩 Calculator allowed' },
           ].map(f => (
-            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(59,130,255,.15)':'#10182B', border:`1px solid ${filter===f.id?'#3B82FF':'#1E2A40'}`, borderRadius:10, padding:'9px 6px', fontFamily:"'Inter',sans-serif", fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#70B8FF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
+            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(59,130,255,.15)':'#151720', border:`1px solid ${filter===f.id?'#3B82FF':'rgba(255,255,255,0.08)'}`, borderRadius:10, padding:'9px 6px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#70B8FF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
           ))}
         </div>
 
         {/* Topic grid */}
         <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
           {filtered.map(group => (
-            <button key={group.id} onClick={() => setGroup(group)} style={{ background:'#10182B', border:`1px solid #1E2A40`, borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14, transition:'border-color .15s, transform .12s', width:'100%' }}>
+            <button key={group.id} onClick={() => setGroup(group)} style={{ background:'#151720', border:`1px solid #1E2A40`, borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14, transition:'border-color .15s, transform .12s', width:'100%' }}>
               {/* Icon */}
-              <div style={{ width:46, height:46, borderRadius:13, flexShrink:0, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'1rem', color:group.color }}>
+              <div style={{ width:46, height:46, borderRadius:13, flexShrink:0, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:800, fontSize:'1rem', color:group.color }}>
                 {group.icon}
               </div>
 
               <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{group.description}</div>
+                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
+                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', color:'#5A6480', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{group.description}</div>
                 <div style={{ display:'flex', gap:8, marginTop:7, alignItems:'center' }}>
                   {/* Mini progress-style pill */}
-                  <div style={{ flex:1, height:3, background:'#1E2A40', borderRadius:99, overflow:'hidden' }}>
+                  <div style={{ flex:1, height:3, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden' }}>
                     <div style={{ height:'100%', width:'0%', background:group.color, borderRadius:99 }} />
                   </div>
-                  <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:600, color:group.color, flexShrink:0 }}>{group.questions.length} Q{group.questions.length!==1?'s':''}</span>
+                  <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.68rem', fontWeight:600, color:group.color, flexShrink:0 }}>{group.questions.length} Q{group.questions.length!==1?'s':''}</span>
                   {group.calculator
-                    ? <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', color:'#38D27A', flexShrink:0 }}>🖩</span>
-                    : <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', color:'#FFC857', flexShrink:0 }}>✗</span>
+                    ? <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', color:'#38D27A', flexShrink:0 }}>🖩</span>
+                    : <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', color:'#FFC857', flexShrink:0 }}>✗</span>
                   }
                 </div>
               </div>
 
-              <span style={{ color:'#2A3552', fontSize:'1.1rem', flexShrink:0 }}>›</span>
+              <span style={{ color:'rgba(255,255,255,0.1)', fontSize:'1.1rem', flexShrink:0 }}>›</span>
             </button>
           ))}
         </div>
@@ -2027,13 +2024,13 @@ function EnglishBrowser({ onBack }) {
     : ENGLISH_TOPIC_GROUPS.filter(g => g.paper === 'Skills practice')
 
   return (
-    <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
+    <div style={{ background:'#08090D', minHeight:'100vh', paddingBottom:90 }}>
       <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
         <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
           <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
           <div style={{ flex:1 }}>
-            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA English Language</div>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>Papers 1 & 2 · {ENGLISH_TOPIC_GROUPS.length} skill areas · {totalQs} questions · AI marked</div>
+            <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA English Language</div>
+            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.72rem', color:'#5A6480' }}>Papers 1 & 2 · {ENGLISH_TOPIC_GROUPS.length} skill areas · {totalQs} questions · AI marked</div>
           </div>
         </div>
       </div>
@@ -2042,27 +2039,27 @@ function EnglishBrowser({ onBack }) {
         {/* Filter pills */}
         <div style={{ display:'flex', gap:8, marginBottom:20 }}>
           {filters.map(f => (
-            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(157,92,255,.15)':'#10182B', border:`1px solid ${filter===f.id?'#9D5CFF':'#1E2A40'}`, borderRadius:10, padding:'9px 6px', fontFamily:"'Inter',sans-serif", fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#C18CFF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
+            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(157,92,255,.15)':'#151720', border:`1px solid ${filter===f.id?'#9D5CFF':'rgba(255,255,255,0.08)'}`, borderRadius:10, padding:'9px 6px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#C18CFF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
           ))}
         </div>
 
         {/* Topic cards */}
         <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
           {filtered.map(group => (
-            <button key={group.id} onClick={() => setGroup(group)} style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14, width:'100%' }}>
+            <button key={group.id} onClick={() => setGroup(group)} style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14, width:'100%' }}>
               <div style={{ width:46, height:46, borderRadius:13, flexShrink:0, background:group.bg, border:`1px solid ${group.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.2rem', color:group.color, fontWeight:800 }}>
                 {group.icon}
               </div>
               <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.93rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.75rem', color:'#5A6480', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{group.description}</div>
+                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.93rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
+                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', color:'#5A6480', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{group.description}</div>
                 <div style={{ display:'flex', gap:8, marginTop:7, alignItems:'center' }}>
-                  <div style={{ flex:1, height:3, background:'#1E2A40', borderRadius:99 }} />
-                  <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:600, color:group.color, flexShrink:0 }}>{group.questions.length} Q{group.questions.length!==1?'s':''}</span>
-                  <span style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', color:'#4A5578', flexShrink:0 }}>{group.marks}m</span>
+                  <div style={{ flex:1, height:3, background:'rgba(255,255,255,0.08)', borderRadius:99 }} />
+                  <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.68rem', fontWeight:600, color:group.color, flexShrink:0 }}>{group.questions.length} Q{group.questions.length!==1?'s':''}</span>
+                  <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', color:'#4A5578', flexShrink:0 }}>{group.marks}m</span>
                 </div>
               </div>
-              <span style={{ color:'#2A3552', fontSize:'1.1rem', flexShrink:0 }}>›</span>
+              <span style={{ color:'rgba(255,255,255,0.1)', fontSize:'1.1rem', flexShrink:0 }}>›</span>
             </button>
           ))}
         </div>
@@ -2107,13 +2104,13 @@ function SociologyBrowser({ onBack }) {
   const SC = { color: '#FF5C7A', border: 'rgba(255,92,122,.28)' }
 
   return (
-    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
+    <div style={{ background: '#08090D', minHeight: '100vh', paddingBottom: 90 }}>
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
           <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Sociology</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: '#5A6480' }}>
+            <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Sociology</div>
+            <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.72rem', color: '#5A6480' }}>
               Papers 1 & 2 · {SOCIOLOGY_TOPIC_GROUPS.length} topic areas · {totalQs} questions · AI marked
             </div>
           </div>
@@ -2125,10 +2122,10 @@ function SociologyBrowser({ onBack }) {
         <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
           {filters.map(f => (
             <button key={f.id} onClick={() => setFilter(f.id)} style={{
-              flex: 1, background: filter === f.id ? 'rgba(255,92,122,.15)' : '#10182B',
-              border: `1px solid ${filter === f.id ? '#FF5C7A' : '#1E2A40'}`,
+              flex: 1, background: filter === f.id ? 'rgba(255,92,122,.15)' : '#151720',
+              border: `1px solid ${filter === f.id ? '#FF5C7A' : 'rgba(255,255,255,0.08)'}`,
               borderRadius: 10, padding: '9px 6px',
-              fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 600,
+              fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.75rem', fontWeight: 600,
               color: filter === f.id ? '#FF8DA1' : '#5A6480', cursor: 'pointer',
             }}>{f.label}</button>
           ))}
@@ -2138,7 +2135,7 @@ function SociologyBrowser({ onBack }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {filtered.map(group => (
             <button key={group.id} onClick={() => setGroup(group)} style={{
-              background: '#10182B', border: '1px solid #1E2A40',
+              background: '#151720', border: '1px solid #1E2A40',
               borderRadius: 16, padding: '16px', cursor: 'pointer',
               textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14, width: '100%',
             }}>
@@ -2148,15 +2145,15 @@ function SociologyBrowser({ onBack }) {
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem',
               }}>{group.icon}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
+                <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
+                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
                 <div style={{ display: 'flex', gap: 8, marginTop: 7, alignItems: 'center' }}>
-                  <div style={{ flex: 1, height: 3, background: '#1E2A40', borderRadius: 99 }} />
-                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.68rem', fontWeight: 600, color: group.color, flexShrink: 0 }}>{group.questions.length} Q{group.questions.length !== 1 ? 's' : ''}</span>
-                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.65rem', color: '#4A5578', flexShrink: 0 }}>{group.marks}m</span>
+                  <div style={{ flex: 1, height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 99 }} />
+                  <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.68rem', fontWeight: 600, color: group.color, flexShrink: 0 }}>{group.questions.length} Q{group.questions.length !== 1 ? 's' : ''}</span>
+                  <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.65rem', color: '#4A5578', flexShrink: 0 }}>{group.marks}m</span>
                 </div>
               </div>
-              <span style={{ color: '#2A3552', fontSize: '1.1rem', flexShrink: 0 }}>›</span>
+              <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: '1.1rem', flexShrink: 0 }}>›</span>
             </button>
           ))}
         </div>
@@ -2175,7 +2172,7 @@ function ChemImage({ imageKey, caption }) {
   if (!src) return null
   return (
     <div style={{ background: '#0D1424', border: '1px solid #1E2A40', borderRadius: 12, padding: '10px', marginBottom: 14 }}>
-      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#38D27A', marginBottom: 8 }}>
+      <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#38D27A', marginBottom: 8 }}>
         📐 Diagram — from AQA past paper
       </div>
       <img src={src} alt={caption || 'AQA Chemistry diagram'} style={{ maxWidth: '100%', height: 'auto', display: 'block', borderRadius: 8 }} />
@@ -2225,7 +2222,7 @@ function ChemistryTopicView({ group, onBack, qIdx: initialQIdx = 0, onQChange })
   }
 
   return (
-    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
+    <div style={{ background: '#08090D', minHeight: '100vh', paddingBottom: 90 }}>
       {/* Header */}
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '12px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto' }}>
@@ -2234,46 +2231,46 @@ function ChemistryTopicView({ group, onBack, qIdx: initialQIdx = 0, onQChange })
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
-                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color }}>Chemistry · {group.label}</span>
+                <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color }}>Chemistry · {group.label}</span>
               </div>
-              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.88rem', color: '#F5F7FB' }}>
+              <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.88rem', color: '#F5F7FB' }}>
                 {q.source} · {q.marks} mark{q.marks !== 1 ? 's' : ''}
               </div>
             </div>
             <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
               {group.calculator
-                ? <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}><span style={{fontSize:'.8rem'}}>🖩</span>Calculator OK</div>
-                : <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.18)', borderRadius:8, padding:'4px 10px', fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}><span style={{fontSize:'.8rem'}}>✏️</span>No Calculator</div>
+                ? <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(56,210,122,.1)', border:'1px solid rgba(56,210,122,.25)', borderRadius:8, padding:'4px 10px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#38D27A' }}><span style={{fontSize:'.8rem'}}>🖩</span>Calculator OK</div>
+                : <div style={{ display:'flex', alignItems:'center', gap:4, background:'rgba(255,200,87,.07)', border:'1px solid rgba(255,200,87,.18)', borderRadius:8, padding:'4px 10px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, color:'#FFC857' }}><span style={{fontSize:'.8rem'}}>✏️</span>No Calculator</div>
               }
             </div>
           </div>
-          <div style={{ height: 3, background: '#1E2A40', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
             <div style={{ height: '100%', width: `${((qIdx+1)/qs.length)*100}%`, background: `linear-gradient(90deg, ${color}88, ${color})`, borderRadius: 99, transition: 'width .4s' }} />
           </div>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.62rem', color: '#4A5578', marginTop: 5, textAlign: 'right' }}>{qIdx+1} / {qs.length}</div>
+          <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.62rem', color: '#4A5578', marginTop: 5, textAlign: 'right' }}>{qIdx+1} / {qs.length}</div>
         </div>
       </div>
 
       <div style={{ maxWidth: 660, margin: '0 auto', padding: '16px 16px 20px' }}>
         {/* Marks badge */}
         <div style={{ display: 'inline-flex', alignItems: 'center', background: `${color}18`, border: `1px solid ${color}44`, borderRadius: 99, padding: '4px 13px', marginBottom: 14 }}>
-          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '.78rem', fontWeight: 700, color }}>[{q.marks} mark{q.marks !== 1 ? 's' : ''}]</span>
+          <span style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontSize: '.78rem', fontWeight: 700, color }}>[{q.marks} mark{q.marks !== 1 ? 's' : ''}]</span>
         </div>
 
         {/* Chemistry diagram image */}
         {q.imageKey && <ChemImage imageKey={q.imageKey} />}
 
         {/* Question */}
-        <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 16, padding: '18px', marginBottom: 14 }}>
-          <pre style={{ fontFamily: "'Inter', sans-serif", fontSize: '1rem', lineHeight: 1.7, margin: 0, color: '#E0E6F0', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{q.q}</pre>
+        <div style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 16, padding: '18px', marginBottom: 14 }}>
+          <pre style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '1rem', lineHeight: 1.7, margin: 0, color: '#E0E6F0', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{q.q}</pre>
         </div>
 
         {/* Skill tip */}
         {!showTip
-          ? <button onClick={() => setTip(true)} style={{ background: 'transparent', border: '1px dashed #2A3552', borderRadius: 10, padding: '9px 14px', cursor: 'pointer', color: '#4A5578', fontSize: '.82rem', fontFamily: "'Inter', sans-serif", width: '100%', marginBottom: 14 }}>💡 How many marks do I need to earn?</button>
+          ? <button onClick={() => setTip(true)} style={{ background: 'transparent', border: '1px dashed #2A3552', borderRadius: 10, padding: '9px 14px', cursor: 'pointer', color: '#4A5578', fontSize: '.82rem', fontFamily: "'Plus Jakarta Sans',sans-serif", width: '100%', marginBottom: 14 }}>💡 How many marks do I need to earn?</button>
           : <div style={{ background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.18)', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#FFC857', marginBottom: 5 }}>{q.marks}-mark question</div>
-              <p style={{ fontFamily: "'Inter', sans-serif", margin: 0, fontSize: '.86rem', color: '#C8D0E8', lineHeight: 1.55 }}>{CHEM_TIPS[q.marks] || CHEM_TIPS[4]}</p>
+              <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#FFC857', marginBottom: 5 }}>{q.marks}-mark question</div>
+              <p style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", margin: 0, fontSize: '.86rem', color: '#C8D0E8', lineHeight: 1.55 }}>{CHEM_TIPS[q.marks] || CHEM_TIPS[4]}</p>
             </div>
         }
 
@@ -2282,44 +2279,44 @@ function ChemistryTopicView({ group, onBack, qIdx: initialQIdx = 0, onQChange })
           (q.type === 'mc' || q.type === 'mc_multi')
             ? <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
                 {q.options.map((opt, i) => (
-                  <button key={i} onClick={() => setAnswer(opt)} style={{ background: answer === opt ? `${color}18` : '#10182B', border: `1.5px solid ${answer === opt ? color : '#1E2A40'}`, borderRadius: 12, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', fontFamily: "'Inter', sans-serif", fontSize: '.93rem', color: answer === opt ? color : '#C8D0E8', transition: 'all .15s', display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ width: 24, height: 24, borderRadius: '50%', border: `1.5px solid ${answer === opt ? color : '#2A3552'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '.72rem', fontWeight: 700, color: answer === opt ? color : '#4A5578', background: answer === opt ? `${color}18` : 'transparent' }}>{String.fromCharCode(65+i)}</span>
+                  <button key={i} onClick={() => setAnswer(opt)} style={{ background: answer === opt ? `${color}18` : '#151720', border: `1.5px solid ${answer === opt ? color : 'rgba(255,255,255,0.08)'}`, borderRadius: 12, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.93rem', color: answer === opt ? color : '#C8D0E8', transition: 'all .15s', display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ width: 24, height: 24, borderRadius: '50%', border: `1.5px solid ${answer === opt ? color : 'rgba(255,255,255,0.1)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '.72rem', fontWeight: 700, color: answer === opt ? color : '#4A5578', background: answer === opt ? `${color}18` : 'transparent' }}>{String.fromCharCode(65+i)}</span>
                     {opt}
                   </button>
                 ))}
               </div>
-            : <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 14, padding: '14px', marginBottom: 16 }}>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A5578', marginBottom: 8 }}>Your answer</div>
-                <textarea value={answer} onChange={e => setAnswer(e.target.value)} placeholder="Write your answer here. Show any working…" style={{ width: '100%', border: 'none', background: 'transparent', resize: 'none', fontFamily: "'Inter', sans-serif", fontSize: '.95rem', color: '#E0E6F0', lineHeight: 1.7, outline: 'none', minHeight: q.marks >= 4 ? 160 : q.marks >= 2 ? 100 : 65 }} />
+            : <div style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 14, padding: '14px', marginBottom: 16 }}>
+                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A5578', marginBottom: 8 }}>Your answer</div>
+                <textarea value={answer} onChange={e => setAnswer(e.target.value)} placeholder="Write your answer here. Show any working…" style={{ width: '100%', border: 'none', background: 'transparent', resize: 'none', fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.95rem', color: '#E0E6F0', lineHeight: 1.7, outline: 'none', minHeight: q.marks >= 4 ? 160 : q.marks >= 2 ? 100 : 65 }} />
               </div>
         )}
 
         {/* Error */}
-        {error && <div style={{ background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.3)', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}><p style={{ fontFamily: "'Inter', sans-serif", margin: 0, fontSize: '.86rem', color: '#FF5D73' }}>{error}</p></div>}
+        {error && <div style={{ background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.3)', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}><p style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", margin: 0, fontSize: '.86rem', color: '#FF5D73' }}>{error}</p></div>}
 
         {/* Feedback */}
         {feedback && gs && (
           <div className="fade-up">
             <div style={{ background: gs.bg, border: `2px solid ${gs.border}`, borderRadius: 18, padding: '20px', marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '2rem', fontWeight: 800, color: gs.text, lineHeight: 1 }}>{feedback.marksAwarded}<span style={{ fontSize: '1.1rem', opacity: .5 }}>/{feedback.marksAvailable}</span></div>
-                <div style={{ background: gs.badge, color: '#000', borderRadius: 99, padding: '5px 14px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.8rem' }}>{feedback.grade}</div>
+                <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontSize: '2rem', fontWeight: 800, color: gs.text, lineHeight: 1 }}>{feedback.marksAwarded}<span style={{ fontSize: '1.1rem', opacity: .5 }}>/{feedback.marksAvailable}</span></div>
+                <div style={{ background: gs.badge, color: '#000', borderRadius: 99, padding: '5px 14px', fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.8rem' }}>{feedback.grade}</div>
               </div>
-              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.9rem', color: gs.text, margin: 0, lineHeight: 1.55, opacity: .9 }}>{feedback.summary}</p>
+              <p style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.9rem', color: gs.text, margin: 0, lineHeight: 1.55, opacity: .9 }}>{feedback.summary}</p>
             </div>
-            {feedback.achieved?.length > 0 && <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 13, padding: '14px', marginBottom: 8 }}><div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4DFF88', marginBottom: 10 }}>✓ What you got right</div>{feedback.achieved.map((a,i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}><span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span><p style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{a}</p></div>)}</div>}
-            {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 13, padding: '14px', marginBottom: 8 }}><div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#FF5D73', marginBottom: 10 }}>→ Next time, also include</div>{feedback.missed.map((m,i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}><span style={{ color: '#FF5D73', flexShrink: 0 }}>→</span><p style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{m}</p></div>)}</div>}
-            {feedback.examinerTip && <div style={{ background: 'rgba(245,183,0,.05)', border: '1px solid rgba(245,183,0,.18)', borderRadius: 13, padding: '14px', marginBottom: 16 }}><div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#F5B700', marginBottom: 6 }}>🗡️ Examiner tip</div><p style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{feedback.examinerTip}</p></div>}
+            {feedback.achieved?.length > 0 && <div style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 13, padding: '14px', marginBottom: 8 }}><div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4DFF88', marginBottom: 10 }}>✓ What you got right</div>{feedback.achieved.map((a,i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}><span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span><p style={{ margin: 0, fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{a}</p></div>)}</div>}
+            {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && <div style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 13, padding: '14px', marginBottom: 8 }}><div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#FF5D73', marginBottom: 10 }}>→ Next time, also include</div>{feedback.missed.map((m,i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}><span style={{ color: '#FF5D73', flexShrink: 0 }}>→</span><p style={{ margin: 0, fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{m}</p></div>)}</div>}
+            {feedback.examinerTip && <div style={{ background: 'rgba(245,183,0,.05)', border: '1px solid rgba(245,183,0,.18)', borderRadius: 13, padding: '14px', marginBottom: 16 }}><div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#F5B700', marginBottom: 6 }}>🗡️ Examiner tip</div><p style={{ margin: 0, fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{feedback.examinerTip}</p></div>}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              <button onClick={reset} style={{ background: '#10182B', border: '1px solid #2A3552', borderRadius: 13, padding: '14px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#9CA8C7', fontSize: '.88rem' }}>↩ Try again</button>
-              <button onClick={next} style={{ background: `linear-gradient(135deg, ${color}cc, ${color})`, border: 'none', borderRadius: 13, padding: '14px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#fff', fontSize: '.88rem', boxShadow: `0 4px 16px ${color}44` }}>{qIdx < qs.length-1 ? 'Next →' : 'Finish ✓'}</button>
+              <button onClick={reset} style={{ background: '#151720', border: '1px solid #2A3552', borderRadius: 13, padding: '14px', fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#9CA8C7', fontSize: '.88rem' }}>↩ Try again</button>
+              <button onClick={next} style={{ background: `linear-gradient(135deg, ${color}cc, ${color})`, border: 'none', borderRadius: 13, padding: '14px', fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#fff', fontSize: '.88rem', boxShadow: `0 4px 16px ${color}44` }}>{qIdx < qs.length-1 ? 'Next →' : 'Finish ✓'}</button>
             </div>
           </div>
         )}
 
         {/* Submit */}
         {!feedback && (
-          <button onClick={grade} disabled={grading} style={{ width: '100%', background: grading ? '#1E2A40' : `linear-gradient(135deg, ${color}cc, ${color})`, color: grading ? '#4A5578' : '#fff', border: 'none', borderRadius: 13, padding: '16px', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, cursor: grading ? 'default' : 'pointer', fontSize: '1rem', marginTop: 4, boxShadow: grading ? 'none' : `0 4px 20px ${color}44`, transition: 'all .2s' }}>
+          <button onClick={grade} disabled={grading} style={{ width: '100%', background: grading ? 'rgba(255,255,255,0.08)' : `linear-gradient(135deg, ${color}cc, ${color})`, color: grading ? '#4A5578' : '#fff', border: 'none', borderRadius: 13, padding: '16px', fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, cursor: grading ? 'default' : 'pointer', fontSize: '1rem', marginTop: 4, boxShadow: grading ? 'none' : `0 4px 20px ${color}44`, transition: 'all .2s' }}>
             {grading ? '⏳ Marking your answer…' : 'Check my answer →'}
           </button>
         )}
@@ -2349,13 +2346,13 @@ function ChemistryBrowser({ onBack }) {
     : CHEMISTRY_TOPIC_GROUPS.filter(g => g.calculator)
 
   return (
-    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
+    <div style={{ background: '#08090D', minHeight: '100vh', paddingBottom: 90 }}>
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
           <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Chemistry Foundation</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: '#5A6480' }}>Papers 1 & 2 · {CHEMISTRY_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked · Diagrams included</div>
+            <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Chemistry Foundation</div>
+            <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.72rem', color: '#5A6480' }}>Papers 1 & 2 · {CHEMISTRY_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked · Diagrams included</div>
           </div>
         </div>
       </div>
@@ -2363,24 +2360,24 @@ function ChemistryBrowser({ onBack }) {
       <div style={{ maxWidth: 660, margin: '0 auto', padding: '16px 16px' }}>
         <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
           {filters.map(f => (
-            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex: 1, background: filter === f.id ? 'rgba(56,210,122,.15)' : '#10182B', border: `1px solid ${filter === f.id ? '#38D27A' : '#1E2A40'}`, borderRadius: 10, padding: '9px 6px', fontFamily: "'Inter', sans-serif", fontSize: '.73rem', fontWeight: 600, color: filter === f.id ? '#38D27A' : '#5A6480', cursor: 'pointer' }}>{f.label}</button>
+            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex: 1, background: filter === f.id ? 'rgba(56,210,122,.15)' : '#151720', border: `1px solid ${filter === f.id ? '#38D27A' : 'rgba(255,255,255,0.08)'}`, borderRadius: 10, padding: '9px 6px', fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.73rem', fontWeight: 600, color: filter === f.id ? '#38D27A' : '#5A6480', cursor: 'pointer' }}>{f.label}</button>
           ))}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {filtered.map(group => (
-            <button key={group.id} onClick={() => setGroup(group)} style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 16, padding: '16px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14, width: '100%' }}>
+            <button key={group.id} onClick={() => setGroup(group)} style={{ background: '#151720', border: '1px solid #1E2A40', borderRadius: 16, padding: '16px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14, width: '100%' }}>
               <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: group.bg, border: `1px solid ${group.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>{group.icon}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
+                <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.93rem', color: '#F5F7FB', marginBottom: 3 }}>{group.label}</div>
+                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.75rem', color: '#5A6480', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{group.description}</div>
                 <div style={{ display: 'flex', gap: 8, marginTop: 7, alignItems: 'center' }}>
-                  <div style={{ flex: 1, height: 3, background: '#1E2A40', borderRadius: 99 }} />
-                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.68rem', fontWeight: 600, color: group.color, flexShrink: 0 }}>{group.questions.length} Q{group.questions.length !== 1 ? 's' : ''}</span>
-                  <span style={{ background: group.calculator ? 'rgba(56,210,122,.12)' : 'rgba(255,200,87,.08)', border: group.calculator ? '1px solid rgba(56,210,122,.25)' : '1px solid rgba(255,200,87,.2)', borderRadius:6, padding:'2px 8px', fontFamily:"'Inter',sans-serif", fontSize:'.6rem', fontWeight:700, color: group.calculator ? '#38D27A' : '#FFC857', flexShrink:0 }}>{group.calculator ? '🖩 Calc OK' : '✏️ No Calc'}</span>
+                  <div style={{ flex: 1, height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 99 }} />
+                  <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.68rem', fontWeight: 600, color: group.color, flexShrink: 0 }}>{group.questions.length} Q{group.questions.length !== 1 ? 's' : ''}</span>
+                  <span style={{ background: group.calculator ? 'rgba(56,210,122,.12)' : 'rgba(255,200,87,.08)', border: group.calculator ? '1px solid rgba(56,210,122,.25)' : '1px solid rgba(255,200,87,.2)', borderRadius:6, padding:'2px 8px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.6rem', fontWeight:700, color: group.calculator ? '#38D27A' : '#FFC857', flexShrink:0 }}>{group.calculator ? '🖩 Calc OK' : '✏️ No Calc'}</span>
                 </div>
               </div>
-              <span style={{ color: '#2A3552', fontSize: '1.1rem', flexShrink: 0 }}>›</span>
+              <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: '1.1rem', flexShrink: 0 }}>›</span>
             </button>
           ))}
         </div>
@@ -2806,9 +2803,9 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
       return (
         <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 20%, rgba(157,92,255,.2), transparent 38%), #050817', display:'flex', alignItems:'center', justifyContent:'center', color:'#F5F7FB', padding:24 }}>
           <div style={{ textAlign:'center' }}>
-            <div style={{ fontFamily:"'Inter',sans-serif", color:'#AAB4D4', fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:20 }}>{examConfig?.title || 'Exam Mode'}</div>
-            <div key={examCountdown} style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize: examCountdown === 'GO' ? '5rem' : '7rem', fontWeight:950, color: examCountdown === 'GO' ? '#38F27B' : '#C18CFF', textShadow:'0 0 42px rgba(157,92,255,.72)', animation:'examPop .85s ease both' }}>{examCountdown}</div>
-            <div style={{ color:'#7C8DB0', marginTop:18, fontFamily:"'Inter',sans-serif" }}>Breathe. Read the command word first.</div>
+            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", color:'#AAB4D4', fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:20 }}>{examConfig?.title || 'Exam Mode'}</div>
+            <div key={examCountdown} style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize: examCountdown === 'GO' ? '5rem' : '7rem', fontWeight:950, color: examCountdown === 'GO' ? '#38F27B' : '#C18CFF', textShadow:'0 0 42px rgba(157,92,255,.72)', animation:'examPop .85s ease both' }}>{examCountdown}</div>
+            <div style={{ color:'#7C8DB0', marginTop:18, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>Breathe. Read the command word first.</div>
             <style>{'@keyframes examPop { 0%{opacity:0;transform:scale(.72)} 45%{opacity:1;transform:scale(1.08)} 100%{opacity:1;transform:scale(1)} }'}</style>
           </div>
         </div>
@@ -2818,15 +2815,15 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     if (examPhase === 'round' && currentExamQuestion) {
       const isMC = currentExamQuestion.type === 'mc'
       return (
-        <div style={{ minHeight:'100vh', background:'#050817', color:'#F5F7FB', padding:'16px 16px 110px' }}>
+        <div style={{ minHeight:'100vh', background:'#08090D', color:'#F5F7FB', padding:'16px 16px 110px' }}>
           <div style={{ maxWidth:660, margin:'0 auto' }}>
             <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:14 }}>
               <button onClick={() => setExamPhase('summary')} style={{ width:40, height:40, borderRadius:'50%', border:'1px solid rgba(80,97,140,.45)', background:'rgba(12,18,38,.9)', color:'#DCE5FA', fontSize:'1.2rem', cursor:'pointer' }}>‹</button>
               <div style={{ flex:1 }}>
-                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:850, fontSize:'1.05rem' }}>{examConfig?.title}</div>
+                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:850, fontSize:'1.05rem' }}>{examConfig?.title}</div>
                 <div style={{ color:'#7C8DB0', fontSize:'.76rem' }}>Question {examIdx + 1} / {examQuestions.length} · {currentExamQuestion.subject} · {currentExamQuestion.topicLabel}</div>
               </div>
-              <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.14)' : 'rgba(157,92,255,.14)', border:'1px solid ' + (examTimeLeft < 60 ? 'rgba(255,93,115,.4)' : 'rgba(157,92,255,.35)'), borderRadius:999, color:examTimeLeft < 60 ? '#FF5D73' : '#C18CFF', fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, padding:'7px 11px', minWidth:64, textAlign:'center' }}>{examTime}</div>
+              <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.14)' : 'rgba(157,92,255,.14)', border:'1px solid ' + (examTimeLeft < 60 ? 'rgba(255,93,115,.4)' : 'rgba(157,92,255,.35)'), borderRadius:999, color:examTimeLeft < 60 ? '#FF5D73' : '#C18CFF', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:900, padding:'7px 11px', minWidth:64, textAlign:'center' }}>{examTime}</div>
             </div>
             <div style={{ height:5, background:'#151D33', borderRadius:99, overflow:'hidden', marginBottom:18 }}>
               <div style={{ width: ((examIdx + 1) / Math.max(1, examQuestions.length)) * 100 + '%', height:'100%', background:'linear-gradient(90deg,#7C3AED,#9D5CFF)', borderRadius:99 }} />
@@ -2838,7 +2835,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
             <div style={{ background:'linear-gradient(145deg,#10182B,#0D1424)', border:'1px solid #2A3552', borderRadius:18, padding:18, marginBottom:14 }}>
               <div style={{ display:'inline-flex', background:'rgba(245,183,0,.1)', border:'1px solid rgba(245,183,0,.24)', borderRadius:999, color:'#F5B700', fontWeight:850, fontSize:'.7rem', padding:'4px 10px', marginBottom:12 }}>[{currentExamQuestion.marks} mark{currentExamQuestion.marks !== 1 ? 's' : ''}]</div>
-              <div style={{ whiteSpace:'pre-wrap', fontFamily:"'Space Grotesk',sans-serif", fontWeight:750, fontSize:'1.05rem', lineHeight:1.45 }}>{currentExamQuestion.q}</div>
+              <div style={{ whiteSpace:'pre-wrap', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:750, fontSize:'1.05rem', lineHeight:1.45 }}>{currentExamQuestion.q}</div>
             </div>
 
             {isMC ? (
@@ -2847,18 +2844,18 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
                   const selectedOption = String(index) === examAnswer
                   const marked = Boolean(examFeedback)
                   const correct = index === currentExamQuestion.correctIndex
-                  return <button key={index} onClick={() => !marked && setExamAnswer(String(index))} style={{ background: marked ? (correct ? 'rgba(77,255,136,.1)' : selectedOption ? 'rgba(255,93,115,.1)' : '#10182B') : selectedOption ? 'rgba(157,92,255,.14)' : '#10182B', border:'1.5px solid ' + (marked ? (correct ? 'rgba(77,255,136,.45)' : selectedOption ? 'rgba(255,93,115,.4)' : '#2A3552') : selectedOption ? 'rgba(157,92,255,.45)' : '#2A3552'), borderRadius:13, padding:'13px 14px', color:'#DCE5FA', textAlign:'left', cursor:marked?'default':'pointer', fontWeight:650 }}>{option}</button>
+                  return <button key={index} onClick={() => !marked && setExamAnswer(String(index))} style={{ background: marked ? (correct ? 'rgba(77,255,136,.1)' : selectedOption ? 'rgba(255,93,115,.1)' : '#151720') : selectedOption ? 'rgba(157,92,255,.14)' : '#151720', border:'1.5px solid ' + (marked ? (correct ? 'rgba(77,255,136,.45)' : selectedOption ? 'rgba(255,93,115,.4)' : 'rgba(255,255,255,0.1)') : selectedOption ? 'rgba(157,92,255,.45)' : 'rgba(255,255,255,0.1)'), borderRadius:13, padding:'13px 14px', color:'#DCE5FA', textAlign:'left', cursor:marked?'default':'pointer', fontWeight:650 }}>{option}</button>
                 })}
               </div>
             ) : (
-              <textarea value={examAnswer} onChange={e => setExamAnswer(e.target.value)} disabled={Boolean(examFeedback)} placeholder="Write your answer..." style={{ width:'100%', minHeight:150, background:'#10182B', border:'1px solid #2A3552', borderRadius:14, padding:14, color:'#F5F7FB', marginBottom:14 }} />
+              <textarea value={examAnswer} onChange={e => setExamAnswer(e.target.value)} disabled={Boolean(examFeedback)} placeholder="Write your answer..." style={{ width:'100%', minHeight:150, background:'#151720', border:'1px solid #2A3552', borderRadius:14, padding:14, color:'#F5F7FB', marginBottom:14 }} />
             )}
 
             {error && <div style={{ color:'#FF5D73', marginBottom:12, fontWeight:700 }}>{error}</div>}
             {examFeedback && <div style={{ background: examFeedback.grade === 'Needs Work' ? 'rgba(255,93,115,.08)' : 'rgba(77,255,136,.08)', border:'1px solid ' + (examFeedback.grade === 'Needs Work' ? 'rgba(255,93,115,.3)' : 'rgba(77,255,136,.3)'), borderRadius:14, padding:14, marginBottom:14 }}><div style={{ fontWeight:850, color: examFeedback.grade === 'Needs Work' ? '#FF5D73' : '#4DFF88', marginBottom:5 }}>{examFeedback.grade || 'Marked'}</div><div style={{ color:'#C8D0E8', lineHeight:1.5 }}>{examFeedback.summary || examFeedback.examinerTip}</div>{examFeedback.examinerTip && <div style={{ color:'#AAB4D4', fontSize:'.84rem', marginTop:8 }}>{examFeedback.examinerTip}</div>}</div>}
 
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-              <button onClick={() => setExamPhase('summary')} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:13, padding:14, color:'#9CA8C7', fontWeight:800, cursor:'pointer' }}>End exam</button>
+              <button onClick={() => setExamPhase('summary')} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:13, padding:14, color:'#9CA8C7', fontWeight:800, cursor:'pointer' }}>End exam</button>
               {examFeedback ? <button onClick={nextExamQuestion} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:13, padding:14, color:'#fff', fontWeight:900, cursor:'pointer' }}>{examIdx < examQuestions.length - 1 ? 'Next →' : 'Finish ✓'}</button> : <button onClick={() => checkExamAnswer(currentExamQuestion)} disabled={examGrading} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:13, padding:14, color:'#fff', fontWeight:900, cursor:examGrading?'default':'pointer', opacity:examGrading?.7:1 }}>{examGrading ? 'Marking…' : 'Submit answer'}</button>}
             </div>
           </div>
@@ -2868,16 +2865,16 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
     if (examPhase === 'summary') {
       return (
-        <div style={{ minHeight:'100vh', background:'#050817', color:'#F5F7FB', padding:'28px 20px 120px' }}>
+        <div style={{ minHeight:'100vh', background:'#08090D', color:'#F5F7FB', padding:'28px 20px 120px' }}>
           <div style={{ maxWidth:520, margin:'0 auto', textAlign:'center' }}>
-            <div style={{ width:150, height:150, borderRadius:'50%', margin:'0 auto 22px', background:'conic-gradient(#38F27B ' + examAccuracy + '%, #172845 0)', display:'grid', placeItems:'center' }}><div style={{ width:122, height:122, borderRadius:'50%', background:'#071126', display:'grid', placeItems:'center' }}><div><div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.4rem', fontWeight:950 }}>{examAccuracy}%</div><div style={{ color:'#AAB4D4', fontWeight:800 }}>{examStats.correct}/{examStats.answered || 0}</div></div></div></div>
-            <h1 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2rem', margin:'0 0 8px' }}>Exam round complete</h1>
+            <div style={{ width:150, height:150, borderRadius:'50%', margin:'0 auto 22px', background:'conic-gradient(#38F27B ' + examAccuracy + '%, #172845 0)', display:'grid', placeItems:'center' }}><div style={{ width:122, height:122, borderRadius:'50%', background:'#071126', display:'grid', placeItems:'center' }}><div><div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'2.4rem', fontWeight:950 }}>{examAccuracy}%</div><div style={{ color:'#AAB4D4', fontWeight:800 }}>{examStats.correct}/{examStats.answered || 0}</div></div></div></div>
+            <h1 style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'2rem', margin:'0 0 8px' }}>Exam round complete</h1>
             <p style={{ color:'#AAB4D4', margin:'0 0 22px' }}>Adaptive questions mixed stronger areas with weak zones.</p>
-            <div style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:18, padding:18, marginBottom:20, textAlign:'left' }}>
+            <div style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:18, padding:18, marginBottom:20, textAlign:'left' }}>
               {Object.entries(examStats.bySubject).map(([subject, stats]) => <div key={subject} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'9px 0', borderBottom:'1px solid rgba(255,255,255,.06)' }}><span>{subject}</span><strong>{stats.correct}/{stats.answered}</strong></div>)}
             </div>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-              <button onClick={() => setExamPhase('landing')} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:13, padding:14, color:'#9CA8C7', fontWeight:800, cursor:'pointer' }}>Back</button>
+              <button onClick={() => setExamPhase('landing')} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:13, padding:14, color:'#9CA8C7', fontWeight:800, cursor:'pointer' }}>Back</button>
               <button onClick={() => startExamRound(examConfig?.subject || 'Random')} style={{ background:'linear-gradient(135deg,#38F27B,#2DD4A3)', border:'none', borderRadius:13, padding:14, color:'#03140B', fontWeight:950, cursor:'pointer' }}>Try again</button>
             </div>
           </div>
@@ -3031,7 +3028,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     const actionLine = accuracy >= 80 ? 'Keep it up!' : 'Focus on improvement.'
 
     return (
-      <div style={{ background:'radial-gradient(circle at 50% -10%, rgba(56,210,122,.12), transparent 38%), #050817', minHeight:'100vh', padding:'18px 20px calc(150px + env(safe-area-inset-bottom))', color:'#F5F7FB' }}>
+      <div style={{ background:'radial-gradient(circle at 50% -10%, rgba(101,230,198,.08), transparent 42%), #08090D', minHeight:'100vh', padding:'18px 20px calc(150px + env(safe-area-inset-bottom))', color:'#F4EFE6' }}>
         <div style={{ maxWidth:480, margin:'0 auto' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
             <button onClick={exitTestTopic} aria-label="Back" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(20,31,54,.78)', color:'#F5F7FB', fontSize:'1.45rem', cursor:'pointer' }}>‹</button>
@@ -3045,13 +3042,13 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
               display:'grid', placeItems:'center', boxShadow:'0 0 34px rgba(56,242,123,.18)',
             }}>
               <div style={{ width:142, height:142, borderRadius:'50%', background:'#071126', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', boxShadow:'inset 0 0 24px rgba(0,0,0,.45)' }}>
-                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.65rem', fontWeight:900, lineHeight:1 }}>{accuracy}%</div>
+                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'2.65rem', fontWeight:900, lineHeight:1 }}>{accuracy}%</div>
                 <div style={{ color:'#AAB4D4', fontSize:'.9rem', fontWeight:700, marginTop:5 }}>{quickFireSummary.correct} / {quickFireSummary.answered || 0}</div>
                 <div style={{ color:'#38F27B', fontSize:'.86rem', fontWeight:900, marginTop:4 }}>Correct</div>
               </div>
             </div>
             <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:9 }}>
-              <h1 style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'2.1rem', lineHeight:1.05, margin:0, color:'#F5F7FB' }}>{accuracy >= 60 ? 'Great work!' : 'Keep going!'}</h1>
+              <h1 style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'2.1rem', lineHeight:1.05, margin:0, color:'#F5F7FB' }}>{accuracy >= 60 ? 'Great work!' : 'Keep going!'}</h1>
               <span style={{ color:'#F5B700', fontSize:'1.45rem' }}>✩</span>
             </div>
             <p style={{ color:'#AAB4D4', fontSize:'.96rem', margin:'10px 0 0', lineHeight:1.45 }}>{encouragement}<br /><span style={{ color:'#38F27B', fontWeight:900 }}>{actionLine}</span></p>
@@ -3059,7 +3056,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
           <div style={{ background:'linear-gradient(145deg, rgba(16,24,43,.96), rgba(9,15,31,.96))', border:'1px solid rgba(62,78,118,.55)', borderRadius:18, padding:'18px 18px 14px', marginBottom:16, boxShadow:'0 14px 36px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.04)' }}>
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16 }}>
-              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'1rem' }}>Performance by subject</div>
+              <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:800, fontSize:'1rem' }}>Performance by subject</div>
               <button onClick={exitTestTopic} style={{ border:'none', background:'transparent', color:'#AAB4D4', fontSize:'.8rem', cursor:'pointer' }}>View all ›</button>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
@@ -3083,7 +3080,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
             <div style={{ width:54, height:54, borderRadius:'50%', background:recommendationMeta.color + '20', color:recommendationMeta.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.6rem', flexShrink:0 }}>{recommendationMeta.icon}</div>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
-                <div style={{ fontFamily:"'Space Grotesk',sans-serif", color:'#F5F7FB', fontWeight:850, fontSize:'1rem' }}>Recommended next</div>
+                <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", color:'#F5F7FB', fontWeight:850, fontSize:'1rem' }}>Recommended next</div>
                 <span style={{ background:'rgba(255,92,122,.18)', color:'#FF5C7A', borderRadius:999, padding:'5px 10px', fontSize:'.7rem', fontWeight:900 }}>🎯 Priority</span>
               </div>
               <div style={{ color:'#EAF0FF', fontWeight:850, fontSize:'.95rem' }}>{recommendation.subject} – {recommendation.topic}</div>
@@ -3095,7 +3092,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
           <button onClick={startRandomQuestion} style={{ width:'100%', border:'none', borderRadius:17, background:'linear-gradient(135deg,#38F27B,#2DD4A3)', color:'#03140B', padding:'20px 22px', display:'flex', alignItems:'center', gap:18, cursor:'pointer', boxShadow:'0 18px 36px rgba(45,212,163,.24)', marginBottom:18 }}>
             <span style={{ fontSize:'2rem', lineHeight:1 }}>↻</span>
             <span style={{ textAlign:'left' }}>
-              <span style={{ display:'block', fontFamily:"'Space Grotesk',sans-serif", fontSize:'1.25rem', fontWeight:950, letterSpacing:'.02em' }}>TRY AGAIN</span>
+              <span style={{ display:'block', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'1.25rem', fontWeight:950, letterSpacing:'.02em' }}>TRY AGAIN</span>
               <span style={{ display:'block', fontSize:'.86rem', fontWeight:750, marginTop:3 }}>Focus on {recommendation.subject} & {recommendation.topic} · ~3 mins</span>
             </span>
           </button>
@@ -3110,21 +3107,21 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
     const gs = feedback ? (GRADE_STYLE[feedback.grade] || GRADE_STYLE['Developing']) : null
     const isMC = q?.type === 'mc'
     return (
-      <div style={{ background:'#080C1A', minHeight:'100vh', paddingBottom:90 }}>
+      <div style={{ background:'#08090D', minHeight:'100vh', paddingBottom:90 }}>
         <div style={{ background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', padding:'12px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
             <button onClick={() => isQuickFire ? finishQuickFireRound('exit') : exitTestTopic()} style={{ background:isQuickFire?'rgba(255,93,115,.1)':'none', border:isQuickFire?'1px solid rgba(255,93,115,.24)':'none', borderRadius:isQuickFire?999:0, cursor:'pointer', color:isQuickFire?'#FF5D73':'#5A6480', fontSize:isQuickFire?'.72rem':'1.1rem', fontWeight:isQuickFire?800:400, padding:isQuickFire?'6px 10px':0 }}>{isQuickFire ? 'Exit' : '←'}</button>
             <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
-              <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.7rem', color:'#5A6480' }}>Question {qIdx+1} of {questions.length}</div>
+              <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
+              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.7rem', color:'#5A6480' }}>Question {qIdx+1} of {questions.length}</div>
             </div>
             {isQuickFire && (
-              <div style={{ background: quickFireTimeLeft <= 10 ? 'rgba(255,93,115,.12)' : 'rgba(157,92,255,.12)', border: quickFireTimeLeft <= 10 ? '1px solid rgba(255,93,115,.36)' : '1px solid rgba(157,92,255,.3)', borderRadius: 999, padding: '6px 10px', color: quickFireTimeLeft <= 10 ? '#FF5D73' : '#C18CFF', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 900, fontSize: '.86rem', minWidth: 58, textAlign: 'center' }}>
+              <div style={{ background: quickFireTimeLeft <= 10 ? 'rgba(255,93,115,.12)' : 'rgba(157,92,255,.12)', border: quickFireTimeLeft <= 10 ? '1px solid rgba(255,93,115,.36)' : '1px solid rgba(157,92,255,.3)', borderRadius: 999, padding: '6px 10px', color: quickFireTimeLeft <= 10 ? '#FF5D73' : '#C18CFF', fontFamily: "'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight: 900, fontSize: '.86rem', minWidth: 58, textAlign: 'center' }}>
                 {quickFireTime}
               </div>
             )}
           </div>
-          <div style={{ height:3, background:'#1E2A40', borderRadius:99, overflow:'hidden', marginTop:10, maxWidth:660, margin:'10px auto 0' }}>
+          <div style={{ height:3, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden', marginTop:10, maxWidth:660, margin:'10px auto 0' }}>
             <div style={{ height:'100%', width:`${((qIdx+1)/questions.length)*100}%`, background:'linear-gradient(90deg,#F5B700,#C98719)', borderRadius:99, transition:'width .3s' }} />
           </div>
           {isQuickFire && (
@@ -3136,22 +3133,22 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
         <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
           {q && <>
             <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(245,183,0,.1)', border:'1px solid rgba(245,183,0,.25)', borderRadius:99, padding:'4px 12px', marginBottom:14 }}>
-              <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'.75rem', fontWeight:700, color:'#F5B700' }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
+              <span style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'.75rem', fontWeight:700, color:'#F5B700' }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
             </div>
             {q.fig && FIGURES[q.fig] && (
-              <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'12px', marginBottom:14, textAlign:'center' }}>
-                <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em', color:'#5A6480', marginBottom:8 }}>Figure — from AQA past paper</div>
+              <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'12px', marginBottom:14, textAlign:'center' }}>
+                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em', color:'#5A6480', marginBottom:8 }}>Figure — from AQA past paper</div>
                 <img src={FIGURES[q.fig]} alt="AQA exam figure" style={{ maxWidth:'100%', height:'auto', borderRadius:8 }} />
               </div>
             )}
-            <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'16px', marginBottom:14 }}>
-              <pre style={{ fontFamily:"'Inter',sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
+            <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:14, padding:'16px', marginBottom:14 }}>
+              <pre style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
             </div>
             {!showTip
-              ? <button onClick={() => setTip(true)} style={{ background:'none', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Inter',sans-serif", width:'100%', marginBottom:14 }}>💡 Show mark tip</button>
+              ? <button onClick={() => setTip(true)} style={{ background:'none', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Plus Jakarta Sans',sans-serif", width:'100%', marginBottom:14 }}>💡 Show mark tip</button>
               : <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}>
-                  <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:5 }}>{q.marks}-mark question</div>
-                  <p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.85rem', color:'#C8D0E8' }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
+                  <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:5 }}>{q.marks}-mark question</div>
+                  <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", margin:0, fontSize:'.85rem', color:'#C8D0E8' }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
                 </div>
             }
             {!feedback && !tqMcLocked && (
@@ -3160,51 +3157,51 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
                     {/* Hint card after first wrong MC */}
                     {tqMcHint && (
                       <div style={{ background:'rgba(255,200,87,.06)', border:'1px solid rgba(255,200,87,.28)', borderRadius:14, padding:'14px 16px', marginBottom:12 }}>
-                        <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.63rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857', marginBottom:8 }}>💡 Have another look</div>
-                        <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.88rem', color:'#C8D0E8', margin:'0 0 4px', lineHeight:1.55 }}>
+                        <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.63rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857', marginBottom:8 }}>💡 Have another look</div>
+                        <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.88rem', color:'#C8D0E8', margin:'0 0 4px', lineHeight:1.55 }}>
                           {q.hint || (q.ms ? q.ms.split('.')[0] + '.' : 'Think carefully — what is the question specifically asking about?')}
                         </p>
-                        <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.78rem', color:'#FFC857', margin:0, fontStyle:'italic' }}>
+                        <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.78rem', color:'#FFC857', margin:0, fontStyle:'italic' }}>
                           You have one more try — you can get this.
                         </p>
                       </div>
                     )}
                     <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
                       {q.options.map((opt,i) => (
-                        <button key={i} onClick={() => setAnswer(opt)} style={{ background:answer===opt?'rgba(245,183,0,.1)':'#10182B', border:`1.5px solid ${answer===opt?'#F5B700':'#1E2A40'}`, borderRadius:12, padding:'13px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Inter',sans-serif", fontSize:'.93rem', color:answer===opt?'#F5B700':'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
-                          <span style={{ width:22, height:22, borderRadius:'50%', border:`1.5px solid ${answer===opt?'#F5B700':'#2A3552'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.72rem', fontWeight:700, color:answer===opt?'#F5B700':'#4A5578', background:answer===opt?'rgba(245,183,0,.1)':'transparent' }}>{String.fromCharCode(65+i)}</span>
+                        <button key={i} onClick={() => setAnswer(opt)} style={{ background:answer===opt?'rgba(245,183,0,.1)':'#151720', border:`1.5px solid ${answer===opt?'#F5B700':'rgba(255,255,255,0.08)'}`, borderRadius:12, padding:'13px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.93rem', color:answer===opt?'#F5B700':'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
+                          <span style={{ width:22, height:22, borderRadius:'50%', border:`1.5px solid ${answer===opt?'#F5B700':'rgba(255,255,255,0.1)'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.72rem', fontWeight:700, color:answer===opt?'#F5B700':'#4A5578', background:answer===opt?'rgba(245,183,0,.1)':'transparent' }}>{String.fromCharCode(65+i)}</span>
                           {opt}
                         </button>
                       ))}
                     </div>
                   </div>
-                : <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:14 }}>
-                    <div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>Your answer</div>
-                    <textarea value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Write your answer here…" style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Inter',sans-serif", fontSize:'.92rem', color:'#E0E6F0', lineHeight:1.65, outline:'none', minHeight:q.marks>=6?180:q.marks>=3?120:80 }} />
+                : <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:14 }}>
+                    <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>Your answer</div>
+                    <textarea value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Write your answer here…" style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.92rem', color:'#E0E6F0', lineHeight:1.65, outline:'none', minHeight:q.marks>=6?180:q.marks>=3?120:80 }} />
                   </div>
             )}
-            {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Inter',sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73' }}>{error}</p></div>}
+            {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73' }}>{error}</p></div>}
             {feedback && gs && (
               <div className="fade-up">
                 <div style={{ background:gs.bg, border:`2px solid ${gs.border}`, borderRadius:16, padding:'18px', marginBottom:12 }}>
                   <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
-                    <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:'1.8rem', fontWeight:800, color:gs.text, lineHeight:1 }}>{feedback.marksAwarded}<span style={{ fontSize:'1rem', opacity:.6 }}>/{feedback.marksAvailable}</span></div>
-                    <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'.82rem' }}>{feedback.grade}</div>
+                    <div style={{ fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontSize:'1.8rem', fontWeight:800, color:gs.text, lineHeight:1 }}>{feedback.marksAwarded}<span style={{ fontSize:'1rem', opacity:.6 }}>/{feedback.marksAvailable}</span></div>
+                    <div style={{ background:gs.badge, color:'#000', borderRadius:99, padding:'5px 14px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'.82rem' }}>{feedback.grade}</div>
                   </div>
-                  <p style={{ fontFamily:"'Inter',sans-serif", fontSize:'.9rem', color:gs.text, margin:0, opacity:.85 }}>{feedback.summary}</p>
+                  <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.9rem', color:gs.text, margin:0, opacity:.85 }}>{feedback.summary}</p>
                 </div>
-                {feedback.achieved?.length > 0 && feedback.achieved[0] !== 'Correct answer selected' && <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:8 }}>✓ What you got right</div>{feedback.achieved.map((a,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#4DFF88', flexShrink:0 }}>✓</span><p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{a}</p></div>)}</div>}
-                {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && feedback.missed[0] !== '' && <div style={{ background:'#10182B', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#9CA8C7', marginBottom:8 }}>→ Worth knowing</div>{feedback.missed.map((m,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#9CA8C7', flexShrink:0 }}>→</span><p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{m}</p></div>)}</div>}
-                {feedback.examinerTip && feedback.examinerTip !== '' && <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:12, padding:'13px 14px', marginBottom:14 }}><div style={{ fontFamily:"'Inter',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div><p style={{ margin:0, fontFamily:"'Inter',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{feedback.examinerTip}</p></div>}
+                {feedback.achieved?.length > 0 && feedback.achieved[0] !== 'Correct answer selected' && <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:8 }}>✓ What you got right</div>{feedback.achieved.map((a,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#4DFF88', flexShrink:0 }}>✓</span><p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{a}</p></div>)}</div>}
+                {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && feedback.missed[0] !== '' && <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#9CA8C7', marginBottom:8 }}>→ Worth knowing</div>{feedback.missed.map((m,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#9CA8C7', flexShrink:0 }}>→</span><p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{m}</p></div>)}</div>}
+                {feedback.examinerTip && feedback.examinerTip !== '' && <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:12, padding:'13px 14px', marginBottom:14 }}><div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div><p style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{feedback.examinerTip}</p></div>}
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                  <button onClick={fullResetQ} style={{ background:'#10182B', border:'1px solid #2A3552', borderRadius:12, padding:'13px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
-                  <button onClick={()=>tqNextQuestion(questions.length)} style={{ background:'linear-gradient(135deg,#F5B700,#C98719)', border:'none', borderRadius:12, padding:'13px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:'pointer', color:'#070500', fontSize:'.88rem' }}>{qIdx<questions.length-1?'Next →':'Finish ✓'}</button>
+                  <button onClick={fullResetQ} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:12, padding:'13px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
+                  <button onClick={()=>tqNextQuestion(questions.length)} style={{ background:'linear-gradient(135deg,#F5B700,#C98719)', border:'none', borderRadius:12, padding:'13px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:'pointer', color:'#070500', fontSize:'.88rem' }}>{qIdx<questions.length-1?'Next →':'Finish ✓'}</button>
                 </div>
               </div>
             )}
             {!feedback && !tqMcLocked && (
               <button onClick={() => handleTqCheck(q)} disabled={grading || (isMC && !answer)}
-                style={{ width:'100%', background:grading?'#1E2A40':'linear-gradient(135deg,#F5B700,#C98719)', color:grading?'#5A6480':'#070500', border:'none', borderRadius:12, padding:'15px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:(grading||(isMC&&!answer))?'default':'pointer', fontSize:'.97rem', marginTop:4, opacity:(isMC&&!answer)?0.4:1 }}>
+                style={{ width:'100%', background:grading?'rgba(255,255,255,0.08)':'linear-gradient(135deg,#F5B700,#C98719)', color:grading?'#5A6480':'#070500', border:'none', borderRadius:12, padding:'15px', fontFamily:"'Clash Display', 'Plus Jakarta Sans',sans-serif", fontWeight:700, cursor:(grading||(isMC&&!answer))?'default':'pointer', fontSize:'.97rem', marginTop:4, opacity:(isMC&&!answer)?0.4:1 }}>
                 {grading ? 'Marking…' : tqMcHint ? 'Check again — you can do this →' : 'Check my answer →'}
               </button>
             )}
@@ -3217,39 +3214,33 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
   const EXAM_SUBJECTS = [
     { icon: '👥', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: isExamMode ? () => startExamRound('Sociology') : () => setSociologyOpen(true) },
-    { icon: '🏰', label: 'History',   color: '#F5B700', completed: 6,  total: 12, action: isExamMode ? () => startExamRound('History') : () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
-    { icon: '🔬', label: 'Science',   color: '#38D27A', completed: 5,  total: 11, action: isExamMode ? () => startExamRound('Biology') : () => startTopic({ topicId: 'tb_cells', label: 'Science', subject: 'Biology' }) },
+    { icon: '🏛',  label: 'History',  color: '#C89B6D', completed: 6,  total: 12, action: isExamMode ? () => startExamRound('History') : () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
+    { logo: '/headers/bio-main.png',  label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: isExamMode ? () => startExamRound('Biology')    : () => startTopic({ topicId: 'tb_cells', label: 'Biology', subject: 'Biology' }) },
+    { logo: '/headers/chem-logo.png', label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Chemistry')  : () => setChemistryOpen(true) },
     { icon: '📐', label: 'Maths',     color: '#3B82FF', completed: 0,  total: 20, action: isExamMode ? () => startExamRound('Maths') : () => setMathsOpen(true) },
-    { icon: '📖', label: 'English',   color: '#9D5CFF', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('English') : () => setEnglishOpen(true) },
-    { icon: '⚗️', label: 'Chemistry', color: '#4ED8A0', completed: 0,  total: 12, action: isExamMode ? () => startExamRound('Chemistry') : () => setChemistryOpen(true) },
+    { icon: '📖', label: 'English',   color: '#9E3D52', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('English') : () => setEnglishOpen(true) },
   ]
 
   return (
-    <div style={{ background: '#080C1A', minHeight: '100vh', paddingBottom: 90 }}>
+    <div style={{ background: '#08090D', minHeight: '100vh', paddingBottom: 90 }}>
 
       {/* ── Header — 72px ── */}
       <div style={{ height: 72, padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxSizing: 'border-box' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {/* 52×52 avatar */}
-          <div style={{ width: 52, height: 52, borderRadius: '50%', flexShrink: 0, background: 'linear-gradient(145deg, #2D0A5E, #5B21B6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 22px rgba(109,40,217,.4)' }}>
-            <svg width="25" height="25" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="8" r="4" fill="rgba(255,255,255,.85)" />
-              <path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" stroke="rgba(255,255,255,.85)" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </div>
+          <img src="/logo.png" alt="RISE" style={{ height: 38, width: 'auto', objectFit: 'contain' }} />
           <div>
-            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.05rem', color: '#F5F7FB', lineHeight: 1.15 }}>
+            <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: '1.05rem', color: '#F4EFE6', lineHeight: 1.15 }}>
               {isQuickFire ? '90s Quick Fire' : isExamMode ? 'Exam Mode' : 'Practice Test'}
             </div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.73rem', color: '#6B7AA0', marginTop: 2 }}>
-              {isQuickFire ? '90 seconds. Answer fast.' : isExamMode ? 'Ready? ❤️' : 'Pick a topic to start'}
+            <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 11, color: '#7A7670', marginTop: 2 }}>
+              {isQuickFire ? '90 seconds. Answer fast.' : isExamMode ? 'Pick a subject. Face the examiner.' : 'Pick a topic to start'}
             </div>
           </div>
         </div>
         {/* Streak pill — 40px tall, 16px h-padding */}
         <div style={{ height: 40, paddingLeft: 16, paddingRight: 16, display: 'flex', alignItems: 'center', gap: 7, background: 'rgba(255,138,31,.11)', border: '1px solid rgba(255,138,31,.24)', borderRadius: 99, flexShrink: 0 }}>
           <span style={{ fontSize: '.85rem', lineHeight: 1 }}>🔥</span>
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.75rem', fontWeight: 700, color: '#FF8A1F' }}>{testStreak > 0 ? `${testStreak} day streak` : '8 day streak'}</span>
+          <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.75rem', fontWeight: 700, color: '#FF8A1F' }}>{testStreak > 0 ? `${testStreak} day streak` : '8 day streak'}</span>
           <span style={{ display: 'flex', gap: 3, marginLeft: 2 }}>
             {testStreakDots.map((filled, i) => (
               <span key={i} style={{ width: 5, height: 5, borderRadius: '50%', background: filled ? '#FF8A1F' : 'transparent', border: filled ? 'none' : '1px solid rgba(255,138,31,.38)', boxShadow: filled ? '0 0 6px rgba(255,138,31,.5)' : 'none' }} />
@@ -3262,57 +3253,47 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
         {/* RECOMMENDED label */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-          <span style={{ color: '#F5B700', fontSize: '.78rem', lineHeight: 1 }}>★</span>
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#F5B700' }}>Recommended</span>
+          <span style={{ color: '#65E6C6', fontSize: '.78rem', lineHeight: 1 }}>★</span>
+          <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#7A7670' }}>Recommended</span>
         </div>
 
-        {/* ── Hero card — 232px, 62/38 horizontal split ── */}
-        <div style={{ height: 232, background: 'linear-gradient(140deg, #2D0C70 0%, #1A0848 52%, #110630 100%)', borderRadius: 24, overflow: 'hidden', display: 'flex', marginBottom: 28, boxShadow: '0 8px 40px rgba(90,20,200,.28)' }}>
-          {/* Left — text block */}
-          <div style={{ flex: '0 0 62%', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxSizing: 'border-box' }}>
+        {/* ── Hero card — 220px, 62/38 split ── */}
+        <div style={{ height: 220, background: 'linear-gradient(140deg, #0A140F 0%, #081009 52%, #060C07 100%)', borderRadius: 22, overflow: 'hidden', display: 'flex', marginBottom: 28, border: '1px solid rgba(101,230,198,0.14)', boxShadow: '0 8px 40px rgba(0,0,0,.55)' }}>
+          <div style={{ flex: '0 0 62%', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxSizing: 'border-box' }}>
             <div>
-              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.08rem', color: '#F5F7FB', lineHeight: 1.2, marginBottom: 8 }}>
-                {isQuickFire ? '90s Challenge ⚡' : 'Random Exam Challenge ⚡'}
+              <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: '1.1rem', color: '#F4EFE6', lineHeight: 1.15, marginBottom: 10 }}>
+                {isQuickFire ? '90 Second Challenge' : isExamMode ? 'Exam Mode' : 'Random Challenge'}
               </div>
-              <div style={{ display: 'flex', gap: 10, marginBottom: 9, overflow: 'hidden' }}>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
                 {[
-                  { dot: '#4DFF88', text: isQuickFire ? '90 seconds' : '10 questions' },
-                  { dot: '#9D5CFF', text: 'Mixed' },
-                  { dot: '#3B82FF', text: 'Adaptive' },
+                  { dot: '#65E6C6', text: isQuickFire ? '90 seconds' : '10 questions' },
+                  { dot: '#C89B6D', text: 'Mixed topics' },
+                  { dot: '#65E6C6', text: 'Adaptive' },
                 ].map((s, i) => (
-                  <span key={i} style={{ fontFamily: "'Inter', sans-serif", fontSize: '.63rem', color: 'rgba(193,140,255,.82)', display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}>
+                  <span key={i} style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 11, color: '#7A7670', display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}>
                     <span style={{ width: 5, height: 5, borderRadius: '50%', background: s.dot, flexShrink: 0, display: 'inline-block' }} />
                     {s.text}
                   </span>
                 ))}
               </div>
-              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.7rem', color: 'rgba(193,140,255,.58)', margin: 0, fontStyle: 'italic', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                {isQuickFire ? 'A countdown starts the moment you open the first question.' : 'Maths. Then Macbeth. Then biology. You never know what\'s coming.'}
+              <p style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 11, color: '#7A7670', margin: 0, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                {isQuickFire ? 'A countdown starts the moment you open the first question.' : isExamMode ? 'Pick a subject and face the examiner.' : 'History. Then biology. Then Macbeth. You never know what\'s coming.'}
               </p>
             </div>
-            {/* CTA row */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <button onClick={startRandomQuestion} style={{ height: 54, width: '65%', background: 'linear-gradient(135deg, #6D28D9, #8B3DFF)', border: 'none', borderRadius: 18, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.86rem', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, boxShadow: '0 0 28px rgba(109,40,217,.65)', flexShrink: 0, boxSizing: 'border-box' }}>
-                {isQuickFire ? '⚡ Start 90s' : isExamMode ? '⤨ Start Exam' : '▶ Start Random'}
-              </button>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ fontSize: '.78rem', lineHeight: 1 }}>🔥</span>
-                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.7rem', color: '#FF8A1F', fontWeight: 600 }}>2x streak</span>
-                <span style={{ color: 'rgba(193,140,255,.32)', fontSize: '.9rem' }}>›</span>
-              </div>
-            </div>
+            <button onClick={startRandomQuestion} style={{ height: 46, paddingLeft: 18, paddingRight: 18, background: 'linear-gradient(135deg, #3D7A5E, #65E6C6)', border: 'none', borderRadius: 13, fontFamily: "'Plus Jakarta Sans',sans-serif", fontWeight: 700, fontSize: '.86rem', color: '#051209', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, boxShadow: '0 0 20px rgba(101,230,198,.28)', alignSelf: 'flex-start' }}>
+              {isQuickFire ? '⚡ Start 90s' : isExamMode ? '⤨ Start Exam' : '▶ Start Random'}
+            </button>
           </div>
-          {/* Right — image */}
           <div style={{ flex: '0 0 38%', position: 'relative', overflow: 'hidden' }}>
-            <img src="/mystery-cube.png" alt="" style={{ position: 'absolute', top: -4, right: -8, width: '115%', height: '115%', objectFit: 'cover', objectPosition: 'center', opacity: .9 }} />
+            <img src="/mystery-cube.png" alt="" style={{ position: 'absolute', top: -4, right: -8, width: '115%', height: '115%', objectFit: 'cover', objectPosition: 'center', opacity: .85, filter: 'saturate(0.8) hue-rotate(90deg)' }} />
           </div>
         </div>
 
-        {/* ── QUICK FOCUS — 58px horizontal scroll pills ── */}
+        {/* ── QUICK FOCUS — horizontal scroll pills ── */}
         <div style={{ marginBottom: 28 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#4A5578' }}>Quick Focus</span>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontSize: '.76rem', color: '#9D5CFF', fontWeight: 600, padding: 0 }}>See all</button>
+            <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#7A7670' }}>Quick Focus</span>
+            <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.76rem', color: '#65E6C6', fontWeight: 600, padding: 0 }}>See all</button>
           </div>
           <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 2, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
@@ -3320,7 +3301,7 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
               { icon: '✕', label: 'Last Mistakes' },
               { icon: '📊', label: 'Predicted Paper' },
             ].map((item, i) => (
-              <button key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, background: '#10182B', border: '1px solid #232E45', borderRadius: 18, height: 58, paddingLeft: 19, paddingRight: 19, cursor: 'pointer', flexShrink: 0, fontFamily: "'Inter', sans-serif", fontSize: '.8rem', fontWeight: 600, color: '#C8D0E8', whiteSpace: 'nowrap', boxSizing: 'border-box' }}>
+              <button key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, background: '#151720', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, height: 52, paddingLeft: 18, paddingRight: 18, cursor: 'pointer', flexShrink: 0, fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.8rem', fontWeight: 600, color: '#C9C4BA', whiteSpace: 'nowrap', boxSizing: 'border-box' }}>
                 <span style={{ fontSize: '.88rem', lineHeight: 1 }}>{item.icon}</span>
                 {item.label}
               </button>
@@ -3330,34 +3311,36 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
         {/* ── CHOOSE A SUBJECT — 88px compact rows, 4px bars ── */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 2 }}>Choose a Subject</div>
+          <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#7A7670', marginBottom: 12 }}>Choose a Subject</div>
           {EXAM_SUBJECTS.map((subj, i) => (
-            <button key={i} onClick={subj.action} style={{ width: '100%', boxSizing: 'border-box', background: 'none', border: 'none', borderBottom: '1px solid rgba(35,46,69,.9)', height: 88, padding: '0 2px 0 0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left' }}>
-              <div style={{ width: 54, height: 54, borderRadius: 15, background: `${subj.color}13`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>
-                {subj.icon}
+            <button key={i} onClick={subj.action} style={{ width: '100%', boxSizing: 'border-box', background: 'none', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.06)', height: 80, padding: '0 2px 0 0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left' }}>
+              <div style={{ width: 52, height: 52, borderRadius: 14, overflow: 'hidden', flexShrink: 0, background: `${subj.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>
+                {subj.logo
+                  ? <img src={subj.logo} alt={subj.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : subj.icon}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.9rem', color: '#F0F3FA', marginBottom: 3 }}>{subj.label}</div>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.68rem', color: subj.color, fontWeight: 600, marginBottom: 7 }}>{subj.completed}/{subj.total} modules</div>
-                <div style={{ height: 4, background: '#1A2338', borderRadius: 99, overflow: 'hidden' }}>
+                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontWeight: 700, fontSize: '.9rem', color: '#F4EFE6', marginBottom: 3 }}>{subj.label}</div>
+                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.68rem', color: subj.color, fontWeight: 600, marginBottom: 7 }}>{subj.completed}/{subj.total} modules</div>
+                <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 99, overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${(subj.completed / subj.total) * 100}%`, background: subj.color, borderRadius: 99 }} />
                 </div>
               </div>
-              <span style={{ color: '#2A3552', fontSize: '1.05rem', flexShrink: 0 }}>›</span>
+              <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '1.05rem', flexShrink: 0 }}>›</span>
             </button>
           ))}
         </div>
 
         {/* ── REAL EXAM PAPERS ── */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 12 }}>Real Exam Papers</div>
+          <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.6rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 12 }}>Real Exam Papers</div>
           <button style={{ width: '100%', boxSizing: 'border-box', background: '#0E1628', border: '1px solid #1E2A40', borderRadius: 24, padding: 20, display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer', textAlign: 'left' }}>
             <div style={{ width: 54, height: 54, borderRadius: 15, background: 'rgba(59,130,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>📋</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.92rem', color: '#F0F3FA' }}>Real Exam Papers</div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.73rem', color: '#4A5578', marginTop: 3 }}>AQA & Edexcel timed papers</div>
+              <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.92rem', color: '#F0F3FA' }}>Real Exam Papers</div>
+              <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.73rem', color: '#4A5578', marginTop: 3 }}>AQA & Edexcel timed papers</div>
             </div>
-            <span style={{ color: '#2A3552', fontSize: '1.05rem', flexShrink: 0 }}>›</span>
+            <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: '1.05rem', flexShrink: 0 }}>›</span>
           </button>
         </div>
 
