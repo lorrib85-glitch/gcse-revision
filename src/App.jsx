@@ -3616,82 +3616,69 @@ function TestTab({ mode = 'test', onOpenModule } = {}) {
 
       <div style={{ padding: '8px 20px 0' }}>
 
-        {/* RECOMMENDED label */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-          <span style={{ color: '#65E6C6', fontSize: '.78rem', lineHeight: 1 }}>★</span>
-          <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#7A7670' }}>Recommended</span>
-        </div>
-
-        {/* ── Hero card — 220px, 62/38 split ── */}
-        <div style={{ height: 220, background: 'linear-gradient(140deg, #0A140F 0%, #081009 52%, #060C07 100%)', borderRadius: 22, overflow: 'hidden', display: 'flex', marginBottom: 28, border: '1px solid rgba(101,230,198,0.14)', boxShadow: '0 8px 40px rgba(0,0,0,.55)' }}>
-          <div style={{ flex: '0 0 62%', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxSizing: 'border-box' }}>
-            <div>
-              <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: '1.1rem', color: '#F4EFE6', lineHeight: 1.15, marginBottom: 10 }}>
-                {isQuickFire ? '90 Second Challenge' : isExamMode ? 'Exam Mode' : 'Random Challenge'}
-              </div>
-              <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
-                {[
-                  { dot: '#65E6C6', text: isQuickFire ? '90 seconds' : '10 questions' },
-                  { dot: '#C89B6D', text: 'Mixed topics' },
-                  { dot: '#65E6C6', text: 'Adaptive' },
-                ].map((s, i) => (
-                  <span key={i} style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 11, color: '#7A7670', display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}>
-                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: s.dot, flexShrink: 0, display: 'inline-block' }} />
-                    {s.text}
-                  </span>
-                ))}
-              </div>
-              <p style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 11, color: '#7A7670', margin: 0, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                {isQuickFire ? 'A countdown starts the moment you open the first question.' : isExamMode ? 'Pick a subject and face the examiner.' : 'History. Then biology. Then Macbeth. You never know what\'s coming.'}
-              </p>
+        {/* ── QUICK FIRE CTA ── */}
+        <button onClick={startRandomQuestion} style={{
+          width: '100%', boxSizing: 'border-box', cursor: 'pointer',
+          background: 'linear-gradient(140deg, #0A1A14 0%, #081209 55%, #060E07 100%)',
+          border: '1px solid rgba(101,230,198,0.22)', borderRadius: 22,
+          padding: '22px 22px 20px', display: 'flex', alignItems: 'center', gap: 20,
+          marginBottom: 28, textAlign: 'left',
+          boxShadow: '0 0 40px rgba(101,230,198,0.06), 0 8px 32px rgba(0,0,0,0.5)',
+        }}>
+          <div style={{
+            width: 62, height: 62, borderRadius: 18, flexShrink: 0,
+            background: 'linear-gradient(135deg, #1B4A36, #2A7A58)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '1.6rem', boxShadow: '0 0 18px rgba(101,230,198,0.22)',
+          }}>⚡</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '1.1rem', color: '#F4EFE6', lineHeight: 1.15, marginBottom: 5 }}>
+              {isQuickFire ? '90s Quick Fire' : 'Random Quick Fire'}
             </div>
-            <button onClick={startRandomQuestion} style={{ height: 46, paddingLeft: 18, paddingRight: 18, background: 'linear-gradient(135deg, #3D7A5E, #65E6C6)', border: 'none', borderRadius: 13, fontFamily: "'Plus Jakarta Sans',sans-serif", fontWeight: 700, fontSize: '.86rem', color: '#051209', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, boxShadow: '0 0 20px rgba(101,230,198,.28)', alignSelf: 'flex-start' }}>
-              {isQuickFire ? '⚡ Start 90s' : isExamMode ? '⤨ Start Exam' : '▶ Start Random'}
-            </button>
+            <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.78rem', color: '#65E6C6', fontWeight: 600, marginBottom: 4 }}>
+              {isQuickFire ? '90 seconds · Answer fast' : '90 seconds · All subjects · Mixed'}
+            </div>
+            <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.72rem', color: '#5A6A50', lineHeight: 1.4 }}>
+              Random questions from across your GCSE subjects — you never know what's coming.
+            </div>
           </div>
-          <div style={{ flex: '0 0 38%', position: 'relative', overflow: 'hidden' }}>
-            <img src="/mystery-cube.png" alt="" style={{ position: 'absolute', top: -4, right: -8, width: '115%', height: '115%', objectFit: 'cover', objectPosition: 'center', opacity: .85, filter: 'saturate(0.8) hue-rotate(90deg)' }} />
+          <div style={{ flexShrink: 0, background: 'linear-gradient(135deg, #3D7A5E, #65E6C6)', borderRadius: 12, padding: '10px 14px', fontFamily: "'Plus Jakarta Sans',sans-serif", fontWeight: 800, fontSize: '.78rem', color: '#051209' }}>
+            {isQuickFire ? 'Start ⚡' : 'Go →'}
           </div>
+        </button>
+
+        {/* ── SELECT A TOPIC label ── */}
+        <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#7A7670', marginBottom: 14 }}>
+          Or select a topic
         </div>
 
-        {/* ── QUICK FOCUS — horizontal scroll pills ── */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <span style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#7A7670' }}>Quick Focus</span>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.76rem', color: '#65E6C6', fontWeight: 600, padding: 0 }}>See all</button>
-          </div>
-          <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 2, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {[
-              { icon: '🎯', label: 'Weak Zones' },
-              { icon: '✕', label: 'Last Mistakes' },
-              { icon: '📊', label: 'Predicted Paper' },
-            ].map((item, i) => (
-              <button key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, background: '#151720', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, height: 52, paddingLeft: 18, paddingRight: 18, cursor: 'pointer', flexShrink: 0, fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.8rem', fontWeight: 600, color: '#C9C4BA', whiteSpace: 'nowrap', boxSizing: 'border-box' }}>
-                <span style={{ fontSize: '.88rem', lineHeight: 1 }}>{item.icon}</span>
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* ── CHOOSE A SUBJECT — 88px compact rows, 4px bars ── */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#7A7670', marginBottom: 12 }}>Choose a Subject</div>
+        {/* ── SUBJECT GRID — 3 columns ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 28 }}>
           {EXAM_SUBJECTS.map((subj, i) => (
-            <button key={i} onClick={subj.action} style={{ width: '100%', boxSizing: 'border-box', background: 'none', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.06)', height: 80, padding: '0 2px 0 0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left' }}>
-              <div style={{ width: 52, height: 52, borderRadius: 14, overflow: 'hidden', flexShrink: 0, background: `${subj.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>
-                {subj.logo
-                  ? <img src={subj.logo} alt={subj.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  : subj.icon}
+            <button key={i} onClick={subj.action} style={{
+              position: 'relative', height: 112, borderRadius: 16, overflow: 'hidden',
+              border: `1px solid ${subj.color}28`, cursor: 'pointer', padding: 0,
+              background: '#0D0E10',
+              boxShadow: `0 4px 16px rgba(0,0,0,0.45)`,
+            }}>
+              {/* cinematic background image */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                backgroundImage: `url(${subj.logo})`,
+                backgroundSize: 'cover', backgroundPosition: 'center',
+                filter: 'saturate(0.75) brightness(0.72)',
+              }} />
+              {/* bottom gradient */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: 'linear-gradient(180deg, rgba(5,7,11,0.10) 0%, rgba(5,7,11,0.72) 58%, rgba(5,7,11,0.96) 100%)',
+              }} />
+              {/* label */}
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 10px 10px', textAlign: 'left' }}>
+                <div style={{ fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '.78rem', color: '#F4EFE6', lineHeight: 1.2 }}>{subj.label}</div>
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontWeight: 700, fontSize: '.9rem', color: '#F4EFE6', marginBottom: 3 }}>{subj.label}</div>
-                <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: '.68rem', color: subj.color, fontWeight: 600, marginBottom: 7 }}>{subj.completed}/{subj.total} modules</div>
-                <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 99, overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${(subj.completed / subj.total) * 100}%`, background: subj.color, borderRadius: 99 }} />
-                </div>
-              </div>
-              <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '1.05rem', flexShrink: 0 }}>›</span>
+              {/* accent top-left dot */}
+              <div style={{ position: 'absolute', top: 9, left: 9, width: 6, height: 6, borderRadius: '50%', background: subj.color, boxShadow: `0 0 8px ${subj.color}` }} />
             </button>
           ))}
         </div>
