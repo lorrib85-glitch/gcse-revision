@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { recordActivity, recordScore } from './progress.js'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
+import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1829,7 +1830,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   // hookDone / wylDone / introDone track whether the universal openers have been seen
   // We persist these inside the module state so resuming skips them correctly
   const [hookDone,  setHookDone]  = useState(() => saved.hookDone  || !module.hook)
-  const [wylDone,   setWylDone]   = useState(() => saved.wylDone   || false)
+  const [wylDone,   setWylDone]   = useState(() => saved.wylDone   || !module.outcomes)
   const [introDone, setIntroDone] = useState(() => saved.introDone || !module.intro)
   // navTo — in-memory only, drives navigation back to hook/wyl without changing "done" flags
   // null | 'hook' | 'wyl'
@@ -1881,7 +1882,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       if (hookPhase === 'reveal') { if (hookRevealDone) { setHookDone(true); scrollToTop() } else { hookState.nextRevealItem(); } return }
       return // question / feedback: Next does nothing — user must tap TRUE/FALSE
     }
-    if (navTo === 'wyl' || !wylDone) return // WYLScreen has its own button
     if (!introDone && module.intro) return // IntroScreen has its own button
     isLast ? handleFinish() : go(1)
   }
@@ -1893,14 +1893,13 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       if (hookPhase === 'grow')   return 'Next →'
       if (hookPhase === 'reveal') return hookRevealDone ? 'Start module →' : null // hidden until all revealed
     }
-    if (navTo === 'wyl' || !wylDone) return null // WYLScreen has its own button
     if (!introDone && module.intro) return null // IntroScreen has its own button
     return isLast ? 'Finish ✓' : 'Next →'
   }
 
   const showNextBtn  = nextLabel() !== null
   const nextBtnLabel = nextLabel()
-  const isFinishBtn  = !(!hookDone && module.hook) && wylDone && navTo === null && !(!introDone && module.intro) && isLast
+  const isFinishBtn  = !(!hookDone && module.hook) && wylDone && navTo === null && (!module.intro || introDone) && isLast
 
   const cur = module.screens[screen]
   const subjectColor = module.color || '#9D5CFF'
@@ -1940,6 +1939,21 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         explanation={module.hook.explanation || module.hook.correctFeedback || ''}
         onBack={() => { navTo === 'hook' ? setNavTo(null) : onBack() }}
         onContinue={() => { setHookDone(true); setNavTo(null); scrollToTop() }}
+      />
+    )
+  }
+
+  // ── Full-screen outcome screen — appears after hook, before content ──────────
+  if ((!wylDone || navTo === 'wyl') && module.outcomes) {
+    return (
+      <ChapterOutcomeScreen
+        subject={module.subject}
+        chapterNum={module.number}
+        chapterTitle={module.title}
+        introText={module.outcomes.intro}
+        outcomes={module.outcomes.bullets}
+        onBack={() => { navTo === 'wyl' ? setNavTo(null) : onBack() }}
+        onContinue={() => { setWylDone(true); setNavTo(null); scrollToTop() }}
       />
     )
   }
@@ -2148,7 +2162,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
 
           {/* What You'll Learn pill — always present */}
           {(() => {
-            const isActive = navTo === 'wyl' || (!wylDone && hookDone)
+            const isActive = navTo === 'wyl'
             const isDone   = wylDone && navTo !== 'wyl'
             return (
               <button
@@ -2166,7 +2180,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
                   boxShadow: isActive ? `0 0 10px ${subjectColor}55` : 'none',
                   transition: 'all .2s',
                 }}>
-                {isDone ? "✓ What You'll Learn" : "What You'll Learn"}
+                {isDone ? '✓ Outcomes' : 'Outcomes'}
               </button>
             )
           })()}
@@ -2209,15 +2223,13 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <div id="module-scroll-container" style={{ flex: 1, padding: '20px 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
         {(!hookDone && module.hook && !module.hook.statement)
           ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
-          : (navTo === 'wyl' || !wylDone)
-            ? <WYLScreen module={module} onDone={() => { setWylDone(true); setNavTo(null); scrollToTop() }} subjectColor={subjectColor} />
-            : !introDone && module.intro
-              ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
-              : (
-                <div key={animKey} className="anim-pop">
-                  <Screen screen={cur} subject={module.subject} />
-                </div>
-              )
+          : !introDone && module.intro
+            ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
+            : (
+              <div key={animKey} className="anim-pop">
+                <Screen screen={cur} subject={module.subject} />
+              </div>
+            )
         }
       </div>
 
@@ -2238,7 +2250,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           {/* Back — hidden during hook/intro */}
           <button
             onClick={() => go(-1)}
-            disabled={screen === 0 || !!navTo || !hookDone || !wylDone || !introDone}
+            disabled={screen === 0 || !!navTo || !hookDone || !wylDone || !introDone || screen === 0}
             style={{
               background: '#10182B',
               border: '1px solid #2A3552',

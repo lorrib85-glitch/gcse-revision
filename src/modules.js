@@ -76,6 +76,16 @@ export const MODULES = [
       ],
     },
 
+    outcomes: {
+      intro: "By the end of this chapter, you'll understand why medieval medicine was so bad — and why that made complete sense at the time.",
+      bullets: [
+        'Explain why people genuinely believed disease was sent by God',
+        'Describe what a medieval doctor actually looked like and did',
+        'See why bloodletting and the miasma theory made medical sense — even though they killed people',
+        'Link the Black Death to the first cracks in medieval medical thinking',
+      ],
+    },
+
     screens: [
       {
         label: 'Causes',
@@ -250,6 +260,16 @@ export const MODULES = [
         'Assess how far the Renaissance was a turning point in the history of medicine',
       ],
     },
+    outcomes: {
+      intro: "You're about to see how Renaissance artists and scientists started dismantling a thousand years of medical dogma.",
+      bullets: [
+        "Explain what Vesalius discovered — and why the Church didn't like it",
+        "Describe how Harvey's blood circulation theory changed everything",
+        'Understand why the Plague kept killing even as knowledge improved',
+        'See the gap between knowing more and being able to treat better',
+      ],
+    },
+
     screens: [
       {
         label: 'Renaissance',
@@ -398,6 +418,16 @@ export const MODULES = [
         'Assess the relative importance of Simpson, Lister and Nightingale',
       ],
     },
+    outcomes: {
+      intro: 'Surgery before anaesthetics was essentially a horror show. This chapter explains how it became something close to medicine.',
+      bullets: [
+        'Describe what surgery was actually like before 1846',
+        'Explain how anaesthetics changed the game — and created new problems',
+        "See why Lister's carbolic acid was revolutionary and controversial at the same time",
+        'Connect pain, infection and blood loss to surgical survival rates',
+      ],
+    },
+
     screens: [
       {
         label: 'The Problem',
@@ -578,6 +608,16 @@ export const MODULES = [
         'Assess why Pasteur and Koch were rivals — and why it helped science',
       ],
     },
+    outcomes: {
+      intro: 'Two scientists, one idea, and the moment everything changed in medicine.',
+      bullets: [
+        "Explain Pasteur's germ theory in your own words",
+        'Describe how Koch identified specific bacteria as disease causes',
+        'See why this idea was so difficult for doctors to accept at first',
+        'Link germ theory to the treatments and breakthroughs that followed',
+      ],
+    },
+
     screens: [
       {
         label: 'Old Ideas',
@@ -769,6 +809,16 @@ export const MODULES = [
         'Describe the 1875 Public Health Act and why it was a genuine turning point',
       ],
     },
+    outcomes: {
+      intro: "Knowing what causes disease is useless if society won't act on it. This chapter shows why change is always slower than science.",
+      bullets: [
+        'Explain why 19th-century cities were genuine death traps',
+        'Describe the cholera outbreaks and what they finally revealed',
+        'See why governments were so reluctant to improve public health',
+        "Link Snow's map and the Broad Street pump to the birth of epidemiology",
+      ],
+    },
+
     screens: [
       {
         label: 'Cities Explode',
@@ -955,6 +1005,16 @@ export const MODULES = [
         'Explain how X-rays and blood transfusions advanced medicine',
       ],
     },
+    outcomes: {
+      intro: 'Between 1840 and 1900, surgery transformed from butchery into medicine. This is exactly how it happened.',
+      bullets: [
+        'Explain why pain, infection and blood loss each limited surgery differently',
+        "Describe Simpson's discovery — and why surgeons resisted it",
+        "See why Lister's antiseptic approach eventually saved millions of lives",
+        'Connect these three breakthroughs to the drop in operating-theatre deaths',
+      ],
+    },
+
     screens: [
 
       // Screen 1 — Speed Surgery
@@ -1559,6 +1619,16 @@ export const MODULES = [
         'Evaluate the relative importance of individuals, teamwork, science and war',
       ],
     },
+    outcomes: {
+      intro: 'From magic bullets to penicillin, the 20th century declared war on infection — and started winning.',
+      bullets: [
+        "Explain what Ehrlich meant by a 'magic bullet' and why it mattered",
+        'Describe how Fleming accidentally discovered penicillin',
+        'See how Florey and Chain turned a lab curiosity into a life-saving drug',
+        'Understand why antibiotic resistance is the next crisis',
+      ],
+    },
+
     screens: [
 
       // Screen 1 — Why Infection Was Still Terrifying
@@ -2137,6 +2207,16 @@ export const MODULES = [
         'Evaluate which factors most transformed medicine after 1945',
       ],
     },
+    outcomes: {
+      intro: 'Scans, transplants, genetic sequencing — the 20th century changed what medicine could even imagine doing.',
+      bullets: [
+        'Describe how diagnostic technology changed the way doctors see inside the body',
+        'Explain what finally made organ transplants possible',
+        'See how DNA changed our understanding of disease and treatment',
+        'Discuss the ethical questions that modern medicine has created',
+      ],
+    },
+
     screens: [
 
       // Screen 1 — Seeing Inside the Body
@@ -2701,6 +2781,16 @@ export const MODULES = [
       ],
     },
 
+    outcomes: {
+      intro: "You're about to understand exactly how plants turn light into food — and why this matters for all life on Earth.",
+      bullets: [
+        'Describe the key parts of a plant cell and what each one does',
+        'Explain the photosynthesis equation and what it actually means',
+        'See why chlorophyll is the molecule that makes life possible',
+        'Connect photosynthesis to respiration and energy flow in ecosystems',
+      ],
+    },
+
     screens: [
       // ── SCREEN 0: Plant Cell Hotspot ───────────────────────────────────────
       {
@@ -3093,6 +3183,16 @@ export const MODULES = [
         'Estimate first, then check if calculator answers are sensible',
       ],
     },
+    outcomes: {
+      intro: 'Before anything else in maths makes sense, these fundamentals need to click. This chapter makes them click.',
+      bullets: [
+        'Work confidently with negative numbers without second-guessing yourself',
+        'Apply BIDMAS correctly so you stop losing easy marks',
+        'Handle rounding, estimation and significant figures under exam pressure',
+        'See why these basics show up in almost every GCSE maths question',
+      ],
+    },
+
     screens: [
       {
         label: 'Number Line',
@@ -3413,6 +3513,16 @@ export const MODULES = [
         'Simplify fractions without changing their value',
       ],
     },
+    outcomes: {
+      intro: "Fractions trip up more GCSE students than almost anything else. After this chapter, they shouldn't.",
+      bullets: [
+        'Add, subtract, multiply and divide fractions without a calculator',
+        'Convert between fractions, decimals and percentages confidently',
+        'Spot equivalent fractions and simplify them without thinking twice',
+        'Apply fraction skills to problem-solving and exam questions',
+      ],
+    },
+
     screens: [
       // Page 2 — What You'll Learn
       {
@@ -3936,6 +4046,16 @@ export const MODULES = [
         'Identify and apply sanctions to real scenarios',
       ],
     },
+    outcomes: {
+      intro: 'Sociology asks a question most people never think to ask: why are we the way we are? This chapter gives you the tools to start answering it.',
+      bullets: [
+        'Explain the difference between nature and nurture in shaping who we are',
+        "Describe what socialisation means — and why it's more powerful than most people realise",
+        "See how culture, norms and values shape everything we think is 'normal'",
+        'Understand why sociologists treat society itself as something worth questioning',
+      ],
+    },
+
     screens: [
       // Screen 1 — What Is Sociology?
       {
@@ -4640,6 +4760,16 @@ export const MODULES = [
         'Apply both theories to real-world scenarios and AQA exam questions',
       ],
     },
+    outcomes: {
+      intro: 'Two sociologists walk into a factory. One sees cooperation. The other sees exploitation. This chapter explains why.',
+      bullets: [
+        'Explain what Marxists and Functionalists each believe society is for',
+        'Describe the key ideas from Durkheim, Parsons, Marx and Engels',
+        'See how these perspectives explain inequality in completely different ways',
+        'Apply both lenses to real institutions like education and family',
+      ],
+    },
+
     screens: [
 
       // Screen 1 — Two Worlds
@@ -5513,6 +5643,16 @@ export const MODULES = [
         'Apply sociological perspectives to real-world scenarios',
       ],
     },
+    outcomes: {
+      intro: "Power isn't just about governments and armies. This chapter shows how it shapes everyday life — and who benefits.",
+      bullets: [
+        'Explain how different feminist perspectives understand gender inequality',
+        'Describe what Weber meant by power, status and class',
+        'See how life chances are shaped by gender, ethnicity and social class',
+        'Apply these ideas to explain real patterns in education, work and health',
+      ],
+    },
+
     screens: [
 
       // Screen 1 — What Is Feminism?
@@ -6257,6 +6397,16 @@ export const MODULES = [
         'Apply sociological perspectives to real family scenarios',
       ],
     },
+    outcomes: {
+      intro: "The family seems natural. Sociology shows it's actually constructed — and has changed dramatically over time.",
+      bullets: [
+        'Describe how family structures in the UK have changed since 1960',
+        "Explain what sociologists mean by 'the cereal packet family'",
+        'See why Marxists and Feminists both critique the traditional family',
+        'Apply functionalist and critical perspectives to modern family life',
+      ],
+    },
+
     screens: [
 
       // Screen 1 — Family Types
@@ -6960,6 +7110,16 @@ export const MODULES = [
         'Apply named sociologists confidently in exam answers',
       ],
     },
+    outcomes: {
+      intro: 'Behind every sociological claim is a method — and a debate about whether that method is actually trustworthy.',
+      bullets: [
+        'Describe the key sociological studies of family life',
+        'Explain the difference between positivist and interpretivist research approaches',
+        'See why researchers reach very different conclusions from the same data',
+        'Evaluate the strengths and limitations of specific sociological studies',
+      ],
+    },
+
     screens: [
 
       // Screen 1 — The Three Sociologists
@@ -7547,6 +7707,16 @@ export const MODULES = [
         'Evaluate the government\'s continuing role in shaping modern healthcare',
       ],
     },
+    outcomes: {
+      intro: "Medicine only matters if people can access it. This chapter asks who actually gets healthcare — and who doesn't.",
+      bullets: [
+        'Explain why the NHS was created and what made it genuinely radical',
+        'Describe how prevention became part of modern medicine',
+        'See the tension between individual freedom and public health policy',
+        'Evaluate how far medicine has actually improved ordinary lives',
+      ],
+    },
+
     screens: [
 
       // Screen 1 — Before the NHS
@@ -8096,6 +8266,16 @@ export const MODULES = [
       accentWords: ['every cell', 'same DNA'],
       explanation: "Every cell — brain to big toe — carries identical DNA. What differs is which genes are switched on or off.",
     },
+    outcomes: {
+      intro: 'Every living thing starts with a cell. Understanding how cells are built is the foundation for all of the biology that follows.',
+      bullets: [
+        'Identify the key organelles in plant and animal cells',
+        'Explain how microscopes changed our understanding of life',
+        'Describe the stages of cell division and why it matters',
+        'See how substances move in and out of cells',
+      ],
+    },
+
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 1',
@@ -8119,6 +8299,16 @@ export const MODULES = [
       accentWords: ['100,000 times a day'],
       explanation: "At 70 beats per minute, your heart beats roughly 100,800 times every day — about 3 billion times in a lifetime.",
     },
+    outcomes: {
+      intro: 'Your body is a machine of extraordinary complexity. This chapter shows how its major systems actually work.',
+      bullets: [
+        'Explain how cells organise into tissues, organs and systems',
+        'Describe the process of digestion from mouth to absorption',
+        'See how the heart and blood vessels deliver oxygen to every cell',
+        'Understand how plants transport water and nutrients through their structures',
+      ],
+    },
+
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 2',
@@ -8142,6 +8332,16 @@ export const MODULES = [
       accentWords: ['Antibiotics', 'kill a virus'],
       explanation: "Antibiotics only work on bacteria. Viruses live inside your own cells — which makes them much harder to target.",
     },
+    outcomes: {
+      intro: 'Your body is under constant attack. This chapter shows how pathogens invade — and how your immune system fights back.',
+      bullets: [
+        'Identify the types of pathogen and how each causes disease',
+        'Explain how the immune system recognises and destroys invaders',
+        'Describe how vaccines and antibiotics work — and where they fail',
+        'See why lifestyle factors drive non-communicable diseases',
+      ],
+    },
+
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 3',
@@ -8165,6 +8365,16 @@ export const MODULES = [
       accentWords: ['faster than a Formula 1 car'],
       explanation: "Nerve impulses travel at up to 120 m/s — over 430 km/h. The fastest F1 car tops out around 370 km/h.",
     },
+    outcomes: {
+      intro: 'Your body coordinates millions of signals every second. This chapter shows the two systems doing that work.',
+      bullets: [
+        'Explain how electrical nerve impulses carry information rapidly',
+        'Describe how hormones regulate blood glucose, growth and reproduction',
+        'See how reflex arcs protect you before your brain even registers danger',
+        'Understand how the menstrual cycle is hormonally controlled',
+      ],
+    },
+
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 5',
@@ -8188,6 +8398,16 @@ export const MODULES = [
       accentWords: ['50%', 'DNA with a banana'],
       explanation: "Around half of human DNA is shared with bananas — because both species share the basic cellular machinery for copying DNA and producing energy.",
     },
+    outcomes: {
+      intro: 'DNA is the instruction manual for life. This chapter shows how it gets read, inherited — and sometimes rewritten.',
+      bullets: [
+        'Explain how DNA encodes the instructions for building proteins',
+        'Use Punnett squares to predict the probability of inherited traits',
+        'Describe how natural selection drives evolution over generations',
+        'Evaluate the science and ethics of genetic engineering',
+      ],
+    },
+
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 6',
@@ -8211,6 +8431,16 @@ export const MODULES = [
       accentWords: ['single species', 'rarely matters'],
       explanation: "Remove a keystone species — like wolves from Yellowstone — and the whole ecosystem can collapse through a chain reaction called a trophic cascade.",
     },
+    outcomes: {
+      intro: 'Nothing in nature exists in isolation. This chapter shows how species depend on each other — and what happens when that balance breaks.',
+      bullets: [
+        'Describe how energy flows through food chains and food webs',
+        'Explain how species adapt to survive in specific environments',
+        'See why biodiversity matters — and what threatens it',
+        'Evaluate the real impact of human activity on ecosystems',
+      ],
+    },
+
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 7',
@@ -8236,6 +8466,16 @@ export const MODULES = [
       accentWords: ['mostly empty space'],
       explanation: "If an atom's nucleus were the size of a pea, the electrons would orbit 500 metres away. Everything in between is empty.",
     },
+    outcomes: {
+      intro: 'Everything you can touch, see or breathe is made of atoms. This chapter shows what that actually means.',
+      bullets: [
+        'Describe the structure of an atom and what each particle does',
+        'Explain the patterns in the Periodic Table and why they exist',
+        'See how ionic, covalent and metallic bonding work differently',
+        'Describe the properties of giant structures like diamond, graphite and metals',
+      ],
+    },
+
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 1',
@@ -8259,6 +8499,16 @@ export const MODULES = [
       accentWords: ['neutralise', 'adding more acid'],
       explanation: "You neutralise an acid with an alkali. Adding more acid makes it more acidic. Neutralisation needs opposite pH — acid meets base.",
     },
+    outcomes: {
+      intro: 'Chemistry is really just atoms rearranging themselves. This chapter shows you how to track — and predict — those rearrangements.',
+      bullets: [
+        'Write and balance chemical equations from scratch',
+        'Explain what happens during acid-base reactions',
+        'Describe how electrolysis splits compounds using electricity',
+        'Understand energy changes in exothermic and endothermic reactions',
+      ],
+    },
+
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 2',
@@ -8282,6 +8532,16 @@ export const MODULES = [
       accentWords: ['millions of years'],
       explanation: "Crude oil formed from marine organisms buried 300–400 million years ago. We're burning in decades what took geological ages to create.",
     },
+    outcomes: {
+      intro: 'Crude oil built the modern world. This chapter shows where it came from, what it contains, and what happens when it burns.',
+      bullets: [
+        'Explain how temperature, concentration and catalysts affect reaction rate',
+        'Describe what reversible reactions and equilibrium mean in practice',
+        'See how fractional distillation separates crude oil into useful fractions',
+        'Understand cracking — and why alkenes are more useful than alkanes',
+      ],
+    },
+
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 3',
@@ -8305,6 +8565,16 @@ export const MODULES = [
       accentWords: ['always been 21% oxygen'],
       explanation: "The early atmosphere was mostly carbon dioxide and nitrogen — no oxygen at all. Cyanobacteria slowly built it up over billions of years through photosynthesis.",
     },
+    outcomes: {
+      intro: 'The atmosphere we breathe is a chemical achievement 4 billion years in the making. This chapter shows how fragile that achievement is.',
+      bullets: [
+        "Describe how Earth's atmosphere evolved from volcanic gases",
+        'Explain the greenhouse effect and how human activity intensifies it',
+        'See how life cycle assessment measures environmental impact',
+        "Evaluate approaches to using Earth's resources more sustainably",
+      ],
+    },
+
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 4',
