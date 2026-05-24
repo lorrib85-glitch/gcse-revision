@@ -1754,45 +1754,124 @@ function BiologySection({ groups, onGroupClick }) {
 
 function HistoryMedicineBrowser({ onBack, onOpenModule }) {
   const histMods = MODULES.filter(m => m.subject === 'History')
+  const palette  = SUBJECT_PALETTES.History
+  const { sand, bronze, cream } = palette
+
   function modPct(mod) {
     if (!mod?.screens) return 0
     const s = safeGetModuleState(mod.id)
-    return Math.min(100, Math.round(((s.screen || 0) / mod.screens.length) * 100))
+    const screen = s.screen || 0
+    const hasStarted = (s.hookDone && s.wylDone) || screen > 0
+    if (!hasStarted) return 0
+    return Math.min(100, Math.round((screen / mod.screens.length) * 100))
   }
+
   return (
-    <div style={{ background: '#08090D', minHeight: '100vh', paddingBottom: 90 }}>
-      <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
-        <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
-          <img src="/headers/history-medicine-through-time.png" alt="History" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
-          <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>Medicine Through Time</div>
-            <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.72rem', color: '#5A6480' }}>{histMods.length} modules · AQA History</div>
+    <div style={{ minHeight: '100vh', background: '#08090D', paddingBottom: 120, overflowX: 'hidden' }}>
+
+      {/* Cinematic header */}
+      <div style={{ height: 200, position: 'relative', overflow: 'hidden' }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'url(/headers/history-medicine-through-time.png)',
+          backgroundSize: 'cover', backgroundPosition: 'center',
+          opacity: 0.72,
+        }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, #08090D 0%, rgba(8,9,13,0.88) 42%, rgba(8,9,13,0.28) 100%)' }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(180deg, transparent 0%, #08090D 100%)' }} />
+
+        {/* Back button */}
+        <button onClick={onBack} style={{
+          position: 'absolute', top: 20, left: 24, zIndex: 10,
+          width: 44, height: 44, borderRadius: 999,
+          background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)',
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'rgba(255,255,255,0.82)', fontSize: 20, fontFamily: "'Sora', sans-serif",
+        }}>←</button>
+
+        {/* Title block */}
+        <div style={{ position: 'absolute', bottom: 20, left: 24, zIndex: 5 }}>
+          <div style={{
+            fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 12, letterSpacing: '0.14em',
+            textTransform: 'uppercase', color: sand, marginBottom: 6,
+          }}>HISTORY</div>
+          <div style={{
+            fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 28, lineHeight: '32px',
+            letterSpacing: '-0.01em', color: '#F5F7FF',
+          }}>Medicine Through Time</div>
+          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.42)', marginTop: 4 }}>
+            {histMods.length} modules · AQA History
           </div>
         </div>
       </div>
-      <div style={{ maxWidth: 660, margin: '0 auto', padding: '16px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {histMods.map(mod => {
+
+      {/* Module list */}
+      <div style={{ padding: '16px 24px 0' }}>
+        {histMods.map((mod, i) => {
           const pct = modPct(mod)
+          const isStarted = pct > 0
           return (
-            <button key={mod.id} onClick={() => onOpenModule && onOpenModule(mod)} style={{ background: '#0D1020', border: `1px solid ${mod.color}28`, borderRadius: 18, padding: 0, cursor: 'pointer', overflow: 'hidden', position: 'relative', minHeight: 88, display: 'flex', alignItems: 'stretch', textAlign: 'left' }}>
-              <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/headers/history-medicine-through-time.png)', backgroundSize: 'cover', backgroundPosition: 'center right', filter: 'saturate(0.7) brightness(0.4)' }} />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(5,7,11,0.97) 0%, rgba(5,7,11,0.6) 60%, transparent 100%)' }} />
-              <div style={{ position: 'relative', zIndex: 2, padding: '14px 16px', flex: 1, display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0, background: mod.color + '22', border: '1px solid ' + mod.color + '44', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>{mod.icon}</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.92rem', color: '#F5F7FF', marginBottom: 2 }}>{mod.title}</div>
-                  <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.7rem', color: '#6B7280', marginBottom: 6 }}>{mod.era}</div>
-                  <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
-                    <div style={{ width: pct + '%', height: '100%', background: mod.color, borderRadius: 99, boxShadow: `0 0 6px ${mod.color}88`, transition: 'width .5s ease' }} />
+            <button
+              key={mod.id}
+              onClick={() => onOpenModule && onOpenModule(mod)}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: 16,
+                background: 'rgba(255,255,255,0.045)',
+                border: `1px solid rgba(255,255,255,${isStarted ? '0.10' : '0.06'})`,
+                borderRadius: 20, padding: '16px 18px', marginBottom: 10,
+                cursor: 'pointer', textAlign: 'left', boxSizing: 'border-box',
+                backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+              }}
+            >
+              {/* Module number */}
+              <div style={{
+                width: 36, height: 36, borderRadius: 12, flexShrink: 0,
+                background: isStarted ? `linear-gradient(135deg, ${bronze}, ${sand})` : 'rgba(255,255,255,0.06)',
+                border: isStarted ? `1px solid ${sand}60` : '1px solid rgba(255,255,255,0.10)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <span style={{
+                  fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 14,
+                  color: isStarted ? '#14110E' : 'rgba(255,255,255,0.38)',
+                }}>{i + 1}</span>
+              </div>
+
+              {/* Text + progress */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, lineHeight: '20px',
+                  color: '#F5F7FF', marginBottom: 3,
+                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                }}>{mod.title}</div>
+                {mod.era && (
+                  <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.38)', marginBottom: 8 }}>
+                    {mod.era}
                   </div>
+                )}
+                <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+                  <div style={{
+                    width: pct + '%', height: '100%', borderRadius: 99,
+                    background: `linear-gradient(90deg, ${bronze}, ${sand})`,
+                    boxShadow: pct > 0 ? `0 0 6px ${sand}66` : 'none',
+                    transition: 'width 0.5s ease',
+                  }} />
                 </div>
-                <div style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '.72rem', color: mod.color, flexShrink: 0 }}>{pct}%</div>
+              </div>
+
+              {/* % + chevron */}
+              <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{
+                  fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: 13,
+                  color: isStarted ? sand : 'rgba(255,255,255,0.22)',
+                }}>{pct}%</span>
+                <span style={{ color: 'rgba(255,255,255,0.28)', fontSize: 18 }}>›</span>
               </div>
             </button>
           )
         })}
       </div>
+
+      <BottomNav tab="subjects" setTab={() => onBack()} />
     </div>
   )
 }
