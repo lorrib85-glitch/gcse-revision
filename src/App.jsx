@@ -526,7 +526,11 @@ export default function App() {
           setTab('home')
         }}
         tab="subjects"
-        setTab={setTab}
+        setTab={(t) => {
+          setChapterCompleteData(null)
+          setView(null)
+          setTab(t)
+        }}
       />
     )
   }
