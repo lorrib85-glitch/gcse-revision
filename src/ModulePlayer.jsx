@@ -1626,13 +1626,18 @@ function IntroScreen({ module, onDone }) {
   const [answered, setAnswered] = useState(null)
   const [shakeIdx, setShakeIdx] = useState(null)
 
+  const hasRetrieval = !!intro.retrieval
+
   function choose(i) {
     if (answered !== null) return
     setAnswered(i)
     if (i !== intro.retrieval.correctIndex) setShakeIdx(i)
   }
 
-  const correct = answered === intro.retrieval.correctIndex
+  const correct = hasRetrieval && answered === intro.retrieval.correctIndex
+
+  // When there's no retrieval question, show goals immediately
+  const showGoals = !hasRetrieval || answered !== null
 
   return (
     <div style={{
@@ -1655,81 +1660,91 @@ function IntroScreen({ module, onDone }) {
               fontSize: '.63rem', fontWeight: 700,
               letterSpacing: '.12em', textTransform: 'uppercase',
               color: subjectColor,
-            }}>⚡ Retrieval Starter</span>
+            }}>{hasRetrieval ? '⚡ Retrieval Starter' : '🎯 Module Overview'}</span>
           </div>
           <h2 style={{
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 800, fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
             color: '#F5F7FB', margin: '0 0 6px', letterSpacing: '-.01em',
-          }}>What do you already know?</h2>
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.85rem', color: '#5A6480', margin: 0,
-          }}>No notes. No pressure. Just activate your brain.</p>
+          }}>{hasRetrieval ? 'What do you already know?' : "You'll be able to…"}</h2>
+          {hasRetrieval && (
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.85rem', color: '#5A6480', margin: 0,
+            }}>No notes. No pressure. Just activate your brain.</p>
+          )}
         </div>
 
-        {/* Retrieval question */}
-        <div style={{
-          background: 'linear-gradient(145deg, #10182B, #0D1424)',
-          border: '1px solid #1E2A40',
-          borderRadius: 16, padding: '18px', marginBottom: 12,
-          boxShadow: '0 4px 24px rgba(0,0,0,.3)',
-        }}>
-          <p style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 600, fontSize: '1rem',
-            color: '#F5F7FB', margin: 0, lineHeight: 1.45,
-          }}>{intro.retrieval.question}</p>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
-          {intro.retrieval.options.map((opt, i) => {
-            let bg = '#10182B', border = '#1E2A40', color = '#C8D0E8'
-            if (answered !== null) {
-              if (i === intro.retrieval.correctIndex) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
-              else if (i === answered) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
-            }
-            return (
-              <button key={i} onClick={() => choose(i)}
-                disabled={answered !== null}
-                style={{
-                  background: bg, border: '1.5px solid ' + border,
-                  borderRadius: 13, padding: '14px 16px',
-                  cursor: answered !== null ? 'default' : 'pointer',
-                  textAlign: 'left', fontFamily: "'Inter', sans-serif",
-                  fontWeight: 500, fontSize: '.93rem', color,
-                  transition: 'all .2s',
-                  display: 'flex', alignItems: 'center', gap: 10,
-                  animation: shakeIdx === i ? 'shake .35s ease' : 'none',
-                }}>
-                <span style={{ opacity: .4, flexShrink: 0, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.8rem' }}>
-                  {String.fromCharCode(65 + i)}
-                </span>
-                {opt}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Feedback */}
-        {answered !== null && (
-          <div style={{ animation: 'fadeIn .3s ease', marginBottom: 24 }}>
+        {/* Retrieval question — only when retrieval data exists */}
+        {hasRetrieval && (
+          <>
             <div style={{
-              background: correct ? 'rgba(77,255,136,.07)' : 'rgba(255,93,115,.07)',
-              border: '1px solid ' + (correct ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.3)'),
-              borderRadius: 13, padding: '14px 16px', marginBottom: 20,
+              background: 'linear-gradient(145deg, #10182B, #0D1424)',
+              border: '1px solid #1E2A40',
+              borderRadius: 16, padding: '18px', marginBottom: 12,
+              boxShadow: '0 4px 24px rgba(0,0,0,.3)',
             }}>
               <p style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '.88rem', color: correct ? '#4DFF88' : '#FF8DA1',
-                margin: 0, lineHeight: 1.55,
-              }}>
-                <strong>{correct ? '✓ Correct. ' : '✗ Nope — '}</strong>
-                {intro.retrieval.explanation}
-              </p>
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600, fontSize: '1rem',
+                color: '#F5F7FB', margin: 0, lineHeight: 1.45,
+              }}>{intro.retrieval.question}</p>
             </div>
 
-            {/* Learning goals */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+              {intro.retrieval.options.map((opt, i) => {
+                let bg = '#10182B', border = '#1E2A40', color = '#C8D0E8'
+                if (answered !== null) {
+                  if (i === intro.retrieval.correctIndex) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
+                  else if (i === answered) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
+                }
+                return (
+                  <button key={i} onClick={() => choose(i)}
+                    disabled={answered !== null}
+                    style={{
+                      background: bg, border: '1.5px solid ' + border,
+                      borderRadius: 13, padding: '14px 16px',
+                      cursor: answered !== null ? 'default' : 'pointer',
+                      textAlign: 'left', fontFamily: "'Inter', sans-serif",
+                      fontWeight: 500, fontSize: '.93rem', color,
+                      transition: 'all .2s',
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      animation: shakeIdx === i ? 'shake .35s ease' : 'none',
+                    }}>
+                    <span style={{ opacity: .4, flexShrink: 0, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.8rem' }}>
+                      {String.fromCharCode(65 + i)}
+                    </span>
+                    {opt}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Feedback */}
+            {answered !== null && (
+              <div style={{ animation: 'fadeIn .3s ease', marginBottom: 24 }}>
+                <div style={{
+                  background: correct ? 'rgba(77,255,136,.07)' : 'rgba(255,93,115,.07)',
+                  border: '1px solid ' + (correct ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.3)'),
+                  borderRadius: 13, padding: '14px 16px', marginBottom: 20,
+                }}>
+                  <p style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: '.88rem', color: correct ? '#4DFF88' : '#FF8DA1',
+                    margin: 0, lineHeight: 1.55,
+                  }}>
+                    <strong>{correct ? '✓ Correct. ' : '✗ Nope — '}</strong>
+                    {intro.retrieval.explanation}
+                  </p>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Learning goals — shown immediately when no retrieval, or after answering */}
+        {showGoals && (
+          <div style={{ animation: 'fadeIn .3s ease' }}>
             <div style={{
               background: 'linear-gradient(145deg, #10182B, #0D1424)',
               border: '1px solid #1E2A40',
