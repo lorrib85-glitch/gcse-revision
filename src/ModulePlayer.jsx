@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { recordActivity, recordScore } from './progress.js'
+import ChapterHookScreen from './ChapterHookScreen.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1922,6 +1923,23 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       sub: "Feels solid for now",
     },
   ]
+
+  // ── Full-screen hook screen — renders before the player shell ──────────────
+  if (!hookDone && module.hook?.statement) {
+    return (
+      <ChapterHookScreen
+        subject={module.subject}
+        chapterNum={module.number}
+        chapterTitle={module.title}
+        statement={module.hook.statement}
+        isTrue={module.hook.isTrue}
+        accentWords={module.hook.accentWords || []}
+        explanation={module.hook.explanation || module.hook.correctFeedback || ''}
+        onBack={onBack}
+        onContinue={() => { setHookDone(true); scrollToTop() }}
+      />
+    )
+  }
 
   if (showConfidence) {
     return (
