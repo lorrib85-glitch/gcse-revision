@@ -303,8 +303,7 @@ export default function ChapterCompleteScreen({
               animationDelay: '40ms',
             }}
           >
-            {isFinalChapter ? (moduleName || completedChapter) : completedChapter}
-            {' '}
+            {completedChapter}{' '}
             <span style={{ color: accent }}>Complete</span>
           </h1>
 
@@ -329,7 +328,7 @@ export default function ChapterCompleteScreen({
           {/* ── Primary CTA ── */}
           <button
             className="ccs-primary ccs-in"
-            aria-label={isFinalChapter ? 'Start exam practice' : `Continue to next ${nextChapterLabel.toLowerCase()}`}
+            aria-label={isFinalChapter ? 'Start exam practice' : nextChapterNum != null ? `Continue to ${nextChapterLabel} ${nextChapterNum}` : `Continue to ${nextChapterLabel}`}
             onClick={onContinue}
             style={{
               ...base,
@@ -373,7 +372,9 @@ export default function ChapterCompleteScreen({
               }}>
                 {isFinalChapter
                   ? 'Start Exam Practice'
-                  : `Continue to ${nextChapterLabel} ${nextChapterNum}`}
+                  : nextChapterNum != null
+                    ? `Continue to ${nextChapterLabel} ${nextChapterNum}`
+                    : `Continue to ${nextChapterLabel}`}
               </div>
               {!isFinalChapter && nextChapterTitle && (
                 <div style={{

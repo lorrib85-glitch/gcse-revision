@@ -393,9 +393,42 @@ export default function App() {
     'Music':     '#34D5FF',
   }
 
+  // Parent modules — each contains an ordered list of chapter IDs
+  // "Chapter" = one entry in MODULES; "Module" = this parent grouping
+  const MODULE_GROUPS = [
+    {
+      id: 'hist_medicine',
+      title: 'Medicine Through Time',
+      subject: 'History',
+      chapterIds: ['mod1','mod2','mod3','mod4','mod5','mod6','mod7','mod8','mod9'],
+    },
+    {
+      id: 'soc_family',
+      title: 'Sociology of the Family',
+      subject: 'Sociology',
+      chapterIds: ['soc1','soc2','soc3','soc4','soc6'],
+    },
+    {
+      id: 'maths_core',
+      title: 'GCSE Maths',
+      subject: 'Maths',
+      chapterIds: ['math1','math2'],
+    },
+    {
+      id: 'bio_core',
+      title: 'GCSE Biology',
+      subject: 'Biology',
+      chapterIds: ['sci_bio_w1','bio_building_life','bio_human_machine','bio_disease_wars','bio_control_systems','bio_genetics_evolution','bio_ecosystems_group'],
+    },
+    {
+      id: 'chem_core',
+      title: 'GCSE Chemistry',
+      subject: 'Chemistry',
+      chapterIds: ['chem_matter_atoms','chem_reactions','chem_rates_organic','chem_earth'],
+    },
+  ]
+
   function handleChapterComplete(completedModule) {
-    const idx     = MODULES.findIndex(m => m.id === completedModule.id)
-    const nextMod = idx >= 0 && idx < MODULES.length - 1 ? MODULES[idx + 1] : null
     const COPY = [
       'Momentum matters.',
       "That's another one locked in.",
@@ -404,15 +437,49 @@ export default function App() {
       'Another one down.',
     ]
     const accent = SUBJECT_ACCENT[completedModule.subject] || completedModule.color || '#9D5CFF'
+
+    // Find which parent module this chapter belongs to
+    const group      = MODULE_GROUPS.find(g => g.chapterIds.includes(completedModule.id))
+    const chapterIdx = group ? group.chapterIds.indexOf(completedModule.id) : -1
+    const nextChapterId = group ? group.chapterIds[chapterIdx + 1] : null
+
+    let nextMod, nextChapterLabel, nextChapterNum, nextChapterTitle, isFinalChapter
+
+    if (nextChapterId) {
+      // Another chapter exists in the same parent module
+      nextMod          = MODULES.find(m => m.id === nextChapterId)
+      nextChapterLabel = 'Chapter'
+      nextChapterNum   = chapterIdx + 2  // 1-based index of the next chapter
+      nextChapterTitle = nextMod?.title
+      isFinalChapter   = false
+    } else if (group) {
+      // Last chapter — find the next parent module
+      const groupIdx   = MODULE_GROUPS.indexOf(group)
+      const nextGroup  = MODULE_GROUPS[groupIdx + 1]
+      nextMod          = nextGroup ? MODULES.find(m => m.id === nextGroup.chapterIds[0]) : null
+      nextChapterLabel = 'Next Module'
+      nextChapterNum   = null            // no number shown for "Next Module"
+      nextChapterTitle = nextGroup?.title
+      isFinalChapter   = !nextGroup
+    } else {
+      // Chapter not in any defined group — fall back to sequential order
+      const idx        = MODULES.findIndex(m => m.id === completedModule.id)
+      nextMod          = idx >= 0 && idx < MODULES.length - 1 ? MODULES[idx + 1] : null
+      nextChapterLabel = 'Chapter'
+      nextChapterNum   = nextMod?.number
+      nextChapterTitle = nextMod?.title
+      isFinalChapter   = !nextMod
+    }
+
     setChapterCompleteData({
       accent,
       completedChapter: completedModule.title,
-      nextChapterNum:   nextMod?.number,
-      nextChapterTitle: nextMod?.title,
-      nextChapterLabel: 'Module',
+      nextChapterLabel,
+      nextChapterNum,
+      nextChapterTitle,
       supportingCopy:   COPY[Math.floor(Math.random() * COPY.length)],
-      isFinalChapter:   !nextMod,
-      moduleName:       completedModule.title,
+      isFinalChapter,
+      moduleName:       group?.title || completedModule.title,
       nextModule:       nextMod,
     })
     setView('chapter-complete')
