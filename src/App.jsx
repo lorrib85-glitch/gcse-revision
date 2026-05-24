@@ -378,7 +378,6 @@ export default function App() {
   const [progress, setProgress]       = useState(() => safeGetProgress())
   const [draft, setDraft]             = useState(() => safeGetDraft())
   const [activeModule,   setActiveModule]   = useState(null)
-  const [modulePageMod,  setModulePageMod]  = useState(null)
 
   useEffect(() => {
     const t = setTimeout(() => setShowSplash(false), 1400)
@@ -392,7 +391,7 @@ export default function App() {
   }, [])
 
   function openModule(mod) {
-    setModulePageMod(mod)
+    openModulePlayer(mod)
   }
 
   function openModulePlayer(mod, screenIndex) {
@@ -465,14 +464,6 @@ export default function App() {
   if (view === 'session' && session)     return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={closeOverlay} />
   if (view === 'end')                    return <EndScreen topicId={topicId} results={results} savedData={savedData} onHome={closeOverlay} onStart={startSession} />
 
-  // Module landing page (sits between browser and module player)
-  if (modulePageMod) return (
-    <ModulePage
-      module={modulePageMod}
-      onBack={() => setModulePageMod(null)}
-      onOpenTopic={(topic, screenIndex) => openModulePlayer(modulePageMod, screenIndex)}
-    />
-  )
 
   // Tab shell
   return (
@@ -1752,6 +1743,341 @@ function BiologySection({ groups, onGroupClick }) {
   return <SubjectLogoSection subjectLabel="Biology" logoSrc="/headers/bio-main.png" accent="#4F8A5B" groups={groups} onGroupClick={onGroupClick} />
 }
 
+// ─── SubjectBrowser ────────────────────────────────────────────────────────────
+
+const SUBJECT_HEADER_IMGS = {
+  History:   '/headers/history-medicine-through-time.png',
+  Biology:   '/headers/bio-main.png',
+  Chemistry: '/headers/history-elizabethan.png',
+  Maths:     '/headers/maths-main.png',
+  Sociology: '/headers/sociology-main.png',
+  English:   '/headers/history-usa-conflict.png',
+  Physics:   '/headers/history-spain-new-world.png',
+}
+
+const SUBJECT_DISPLAY_TITLES = {
+  History:   'Medicine Through Time',
+  Biology:   'AQA Biology',
+  Chemistry: 'AQA Chemistry',
+  Maths:     'AQA Mathematics',
+  Sociology: 'AQA Sociology',
+  English:   'AQA English',
+  Physics:   'AQA Physics',
+}
+
+function getSubjectModuleList(subjectName) {
+  const real = MODULES.filter(m => m.subject === subjectName)
+  const cs = (arr) => arr.map(x => ({ ...x, comingSoon: true }))
+  switch (subjectName) {
+    case 'History':
+      return [
+        ...real,
+        ...cs([
+          { id: 'cs_usa',   title: 'USA: Conflict at Home & Abroad', subtitle: 'AQA History · Period Study' },
+          { id: 'cs_eliz',  title: 'Early Elizabethans 1558–88',     subtitle: 'Elizabethan England' },
+          { id: 'cs_spain', title: 'Spain & the New World',          subtitle: 'British Depth Study' },
+        ]),
+      ]
+    case 'English':
+      return cs([
+        { id: 'cs_macbeth',   title: 'Macbeth',                subtitle: 'Shakespeare · Power & Ambition' },
+        { id: 'cs_inspector', title: 'An Inspector Calls',     subtitle: 'J.B. Priestley' },
+        { id: 'cs_poetry',    title: 'Power & Conflict Poetry',subtitle: 'AQA Anthology · 15 poems' },
+        { id: 'cs_lang1',     title: 'Language Paper 1',       subtitle: 'Reading & Creative Writing' },
+        { id: 'cs_lang2',     title: 'Language Paper 2',       subtitle: 'Non-fiction & Argument' },
+      ])
+    case 'Physics':
+      return cs([
+        { id: 'cs_forces', title: 'Forces & Motion',     subtitle: 'AQA Physics · Topic 5 & 6' },
+        { id: 'cs_energy', title: 'Energy',              subtitle: 'AQA Physics · Topic 1' },
+        { id: 'cs_waves',  title: 'Waves & Electricity', subtitle: 'AQA Physics · Topic 6 & 2' },
+        { id: 'cs_space',  title: 'Space',               subtitle: 'AQA Physics · Topic 8' },
+        { id: 'cs_matter', title: 'Matter & Particles',  subtitle: 'AQA Physics · Topic 3 & 4' },
+      ])
+    default:
+      if (real.length > 0) return real
+      return cs([{ id: `cs_${subjectName.toLowerCase()}`, title: 'Content coming soon', subtitle: subjectName }])
+  }
+}
+
+function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
+  const palette      = SUBJECT_PALETTES[subjectName] || SUBJECT_PALETTES.History
+  const { sand, bronze, cream, espresso } = palette
+  const sandRgb      = hexToRgb(sand)
+  const espressoRgb  = hexToRgb(espresso)
+  const headerImg    = SUBJECT_HEADER_IMGS[subjectName]    || '/headers/history-medicine-through-time.png'
+  const displayTitle = SUBJECT_DISPLAY_TITLES[subjectName] || subjectName
+
+  const rawMods = getSubjectModuleList(subjectName)
+  const items = rawMods.map((mod, i) => {
+    if (mod.comingSoon) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
+    const s = safeGetModuleState(mod.id)
+    const screen = s.screen || 0
+    const hasStarted = (s.hookDone && s.wylDone) || screen > 0
+    const total = mod.screens?.length || 1
+    const pct = Math.min(100, Math.round((screen / total) * 100))
+    const status = pct >= 100 ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
+    return { ...mod, number: i + 1, status, pct }
+  })
+
+  const completedCount = items.filter(m => m.status === 'completed').length
+  const realCount      = items.filter(m => m.status !== 'coming_soon').length
+  const overallPct     = realCount > 0 ? Math.round((completedCount / realCount) * 100) : 0
+
+  const [ringPct, setRingPct] = useState(0)
+  useEffect(() => { const t = setTimeout(() => setRingPct(overallPct), 80); return () => clearTimeout(t) }, [overallPct])
+
+  const R      = 32.5
+  const CIRCUM = 2 * Math.PI * R
+  const dashOff = CIRCUM * (1 - ringPct / 100)
+
+  function handleCardClick(item) {
+    if (item.status === 'coming_soon') return
+    const realMod = MODULES.find(m => m.id === item.id)
+    if (realMod && onOpenModule) onOpenModule(realMod)
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#08090D', paddingBottom: 120, overflowX: 'hidden' }}>
+      <style>{`
+        @keyframes sbPulse {
+          0%,100% { box-shadow: 0 0 18px rgba(${sandRgb},0.32), 0 0 8px rgba(${sandRgb},0.18); }
+          50%      { box-shadow: 0 0 30px rgba(${sandRgb},0.55), 0 0 14px rgba(${sandRgb},0.28); }
+        }
+      `}</style>
+
+      {/* ── CINEMATIC HEADER ── */}
+      <div style={{ height: 220, position: 'relative', overflow: 'hidden' }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: `url(${headerImg})`,
+          backgroundSize: 'cover', backgroundPosition: 'center',
+          opacity: 0.92,
+        }} />
+        {/* Subtle left fade — keeps top of image bright */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, bottom: 0, width: '68%',
+          background: 'linear-gradient(to right, rgba(8,9,13,0.70) 0%, rgba(8,9,13,0.22) 65%, transparent 100%)',
+        }} />
+        {/* Bottom fade to page bg only */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0, height: 85,
+          background: 'linear-gradient(180deg, transparent 0%, #08090D 100%)',
+        }} />
+        <button onClick={onBack} style={{
+          position: 'absolute', top: 20, left: 24, zIndex: 10,
+          width: 44, height: 44, borderRadius: 999,
+          background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)',
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'rgba(255,255,255,0.85)', fontSize: 20, fontFamily: "'Sora', sans-serif",
+        }}>←</button>
+        <div style={{ position: 'absolute', bottom: 18, left: 24, right: '35%', zIndex: 5 }}>
+          <div style={{
+            fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 11,
+            letterSpacing: '0.16em', color: sand, textTransform: 'uppercase', marginBottom: 7,
+          }}>{subjectName}</div>
+          <div style={{
+            fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 24, lineHeight: '28px',
+            letterSpacing: '-0.01em', color: '#F5F7FF',
+          }}>{displayTitle}</div>
+        </div>
+      </div>
+
+      {/* ── CONTENT ── */}
+      <div style={{ padding: '0 24px' }}>
+
+        {/* Progress card */}
+        <div style={{
+          width: '100%', borderRadius: 28, padding: '20px 22px', boxSizing: 'border-box',
+          background: 'rgba(255,255,255,0.055)', border: `1px solid ${sand}2A`,
+          backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+          boxShadow: '0 18px 50px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)',
+          marginTop: -10, marginBottom: 26,
+          display: 'flex', alignItems: 'center', gap: 16,
+        }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 14, color: 'rgba(255,255,255,0.55)' }}>Your progress</div>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 26, lineHeight: '30px', color: '#F5F7FF', marginTop: 5 }}>
+              {completedCount} of {realCount} completed
+            </div>
+            <div style={{ marginTop: 12, height: 5, borderRadius: 999, background: 'rgba(255,255,255,0.10)', overflow: 'hidden' }}>
+              <div style={{
+                height: '100%', borderRadius: 999, width: `${overallPct}%`,
+                background: `linear-gradient(90deg, ${bronze}, ${sand})`,
+                transition: 'width 700ms ease-out',
+              }} />
+            </div>
+          </div>
+          <div style={{ flexShrink: 0, width: 70, height: 70, position: 'relative' }}>
+            <svg width={70} height={70} viewBox="0 0 72 72" style={{ transform: 'rotate(-90deg)', display: 'block' }}>
+              <circle cx={36} cy={36} r={R} fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth={7} />
+              <circle cx={36} cy={36} r={R} fill="none" stroke={sand} strokeWidth={7}
+                strokeDasharray={CIRCUM} strokeDashoffset={dashOff} strokeLinecap="round"
+                style={{ transition: 'stroke-dashoffset 700ms ease-out', filter: `drop-shadow(0 0 5px ${sand}88)` }} />
+            </svg>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 18, color: cream, lineHeight: 1 }}>{overallPct}%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Section label */}
+        <div style={{
+          fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 12,
+          letterSpacing: '0.16em', color: 'rgba(255,255,255,0.40)',
+          textTransform: 'uppercase', marginBottom: 16,
+        }}>Your Modules</div>
+
+        {/* Rail */}
+        <div>
+          {items.map((item, i) => {
+            const isCompleted = item.status === 'completed'
+            const isCurrent   = item.status === 'in_progress'
+            const isComing    = item.status === 'coming_soon'
+            const isLast      = i === items.length - 1
+            const nodeSize    = isCurrent ? 50 : isCompleted ? 44 : 42
+            const cardH       = 96
+            const lineAboveGold = i > 0 && items[i - 1].status === 'completed'
+            const lineBelowGold = !isLast && isCompleted
+            const desc = item.subtitle || item.era || ''
+            return (
+              <div key={item.id} style={{ display: 'flex', gap: 14, alignItems: 'stretch', paddingBottom: isLast ? 0 : 14 }}>
+
+                {/* Rail column */}
+                <div style={{ width: 56, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div style={{
+                    width: 2, flexShrink: 0,
+                    height: Math.max(0, ((isCurrent ? 108 : cardH) - nodeSize) / 2),
+                    background: i === 0 ? 'transparent' : lineAboveGold ? sand : 'rgba(255,255,255,0.14)',
+                  }} />
+                  {isCompleted && (
+                    <div style={{
+                      width: 44, height: 44, borderRadius: 999, flexShrink: 0,
+                      background: `linear-gradient(135deg, ${bronze}, ${sand})`,
+                      border: `1px solid ${cream}72`,
+                      boxShadow: `0 0 20px rgba(${sandRgb},0.28), inset 0 1px 0 rgba(255,255,255,0.20)`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <svg width={22} height={22} viewBox="0 0 22 22" fill="none">
+                        <path d="M5 11.5L9 15.5L17 7" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  )}
+                  {isCurrent && (
+                    <div style={{
+                      width: 50, height: 50, borderRadius: 999, flexShrink: 0,
+                      background: `rgba(${espressoRgb},0.88)`, border: `2px solid ${sand}`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      animation: 'sbPulse 2.8s ease-in-out infinite',
+                    }}>
+                      <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 20, color: cream, lineHeight: 1 }}>{item.number}</span>
+                    </div>
+                  )}
+                  {!isCompleted && !isCurrent && (
+                    <div style={{
+                      width: 42, height: 42, borderRadius: 999, flexShrink: 0,
+                      background: 'rgba(255,255,255,0.035)', border: '1.5px solid rgba(255,255,255,0.16)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <span style={{
+                        fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 16,
+                        color: isComing ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.42)', lineHeight: 1,
+                      }}>{item.number}</span>
+                    </div>
+                  )}
+                  {!isLast ? (
+                    <div style={{ width: 2, flex: 1, background: lineBelowGold ? `linear-gradient(180deg, ${sand}, ${bronze})` : 'rgba(255,255,255,0.14)' }} />
+                  ) : <div style={{ flex: 1 }} />}
+                </div>
+
+                {/* Card */}
+                <button
+                  onClick={() => handleCardClick(item)}
+                  style={{
+                    flex: 1,
+                    ...(isCurrent ? { minHeight: 108 } : { height: cardH }),
+                    alignSelf: 'flex-start',
+                    borderRadius: 22, boxSizing: 'border-box',
+                    padding: isCurrent ? '16px 18px 16px 20px' : '0 18px 0 20px',
+                    cursor: isComing ? 'default' : 'pointer',
+                    textAlign: 'left',
+                    display: 'flex',
+                    flexDirection: isCurrent ? 'column' : 'row',
+                    alignItems: isCurrent ? 'flex-start' : 'center',
+                    justifyContent: 'space-between',
+                    gap: isCurrent ? 8 : 12,
+                    border: isCurrent
+                      ? `1.5px solid ${sand}CC`
+                      : isCompleted
+                        ? `1px solid rgba(${sandRgb},0.12)`
+                        : '1px solid rgba(255,255,255,0.07)',
+                    background: isCurrent
+                      ? `linear-gradient(90deg, rgba(${espressoRgb},0.45) 0%, rgba(255,255,255,0.05) 100%)`
+                      : isCompleted ? 'rgba(255,255,255,0.045)' : 'rgba(255,255,255,0.028)',
+                    opacity: isComing ? 0.42 : 1,
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{
+                      fontFamily: "'Sora', sans-serif", fontWeight: 700,
+                      fontSize: isCurrent ? 20 : 16, lineHeight: isCurrent ? '24px' : '20px',
+                      color: '#F5F7FF', marginBottom: desc ? 4 : 0,
+                    }}>{item.title}</div>
+                    {desc ? (
+                      <div style={{
+                        fontFamily: "'Outfit', sans-serif", fontSize: 13,
+                        color: 'rgba(255,255,255,0.46)', lineHeight: '17px',
+                        overflow: 'hidden', display: '-webkit-box',
+                        WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                      }}>{desc}</div>
+                    ) : null}
+                    {isCurrent && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleCardClick(item) }}
+                        style={{
+                          marginTop: 14, padding: '10px 22px',
+                          background: `linear-gradient(90deg, ${bronze}, ${sand})`,
+                          border: 'none', borderRadius: 14, cursor: 'pointer',
+                          fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15,
+                          color: '#14110E', boxShadow: `0 4px 14px rgba(${sandRgb},0.38)`,
+                        }}
+                      >Continue →</button>
+                    )}
+                  </div>
+                  {isCompleted && (
+                    <div style={{
+                      flexShrink: 0, alignSelf: 'center',
+                      background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.28)',
+                      borderRadius: 999, padding: '6px 12px',
+                      display: 'flex', alignItems: 'center', gap: 5,
+                    }}>
+                      <svg width={12} height={12} viewBox="0 0 12 12" fill="none">
+                        <path d="M2.5 6L5 8.5L9.5 3.5" stroke="#4ADE80" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 12, color: '#4ADE80', whiteSpace: 'nowrap' }}>Completed</span>
+                    </div>
+                  )}
+                  {isComing && (
+                    <div style={{
+                      flexShrink: 0, alignSelf: 'center',
+                      background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)',
+                      borderRadius: 999, padding: '6px 12px',
+                    }}>
+                      <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 12, color: 'rgba(255,255,255,0.32)', whiteSpace: 'nowrap' }}>Coming soon</span>
+                    </div>
+                  )}
+                </button>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      <BottomNav tab="subjects" setTab={() => onBack()} />
+    </div>
+  )
+}
+
 function HistoryMedicineBrowser({ onBack, onOpenModule }) {
   const histMods = MODULES.filter(m => m.subject === 'History')
   const palette  = SUBJECT_PALETTES.History
@@ -1879,14 +2205,10 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
 function ModulesTab({ onOpenModule }) {
   const { user } = useAuth()
   const modUserName = user?.name || 'you'
-  const [sociologyFilter, setSociologyFilter] = useState(null)
-  const [historyOpen, setHistoryOpen] = useState(false)
+  const [subjectBrowser, setSubjectBrowser] = useState(null)
 
-  if (sociologyFilter !== null) {
-    return <SociologyBrowser filterPrefix={sociologyFilter} onBack={() => setSociologyFilter(null)} />
-  }
-  if (historyOpen) {
-    return <HistoryMedicineBrowser onBack={() => setHistoryOpen(false)} onOpenModule={onOpenModule} />
+  if (subjectBrowser) {
+    return <SubjectBrowser subjectName={subjectBrowser} onBack={() => setSubjectBrowser(null)} onOpenModule={onOpenModule} />
   }
 
   function modPct(mod) {
@@ -2084,7 +2406,7 @@ function ModulesTab({ onOpenModule }) {
         const weakPct   = worst?.recentAvg ?? null
         return (
           <div style={{ padding: '14px 18px 0' }}>
-            <button onClick={() => setHistoryOpen(weakLabel === 'History')} style={{ width: '100%', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', borderRadius: 24, position: 'relative', textAlign: 'left', display: 'block' }}>
+            <button onClick={() => setSubjectBrowser(weakLabel)} style={{ width: '100%', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', borderRadius: 24, position: 'relative', textAlign: 'left', display: 'block' }}>
               <div style={{ position: 'absolute', inset: -1, borderRadius: 25, background: 'linear-gradient(135deg, rgba(251,113,133,0.2) 0%, rgba(139,92,246,0.15) 100%)', filter: 'blur(1.5px)', zIndex: 0 }} />
               <div style={{ position: 'relative', zIndex: 1, background: 'rgba(17,24,39,0.72)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderRadius: 24, border: '1px solid rgba(251,113,133,0.18)', boxShadow: '0 10px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)', padding: '14px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ width: 52, height: 52, borderRadius: 14, flexShrink: 0, overflow: 'hidden', background: '#0D1117', boxShadow: '0 0 20px rgba(45,212,191,0.35), inset 0 0 0 1px rgba(45,212,191,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -2110,13 +2432,13 @@ function ModulesTab({ onOpenModule }) {
 
       {/* ── SUBJECT SECTIONS ── */}
       <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 28 }}>
-        <SubjectLogoSection subjectLabel="History"   logoSrc="/headers/history-main.png"    accent="#C89B6D" groups={historyGroupCards}  onGroupClick={handleModuleClick} />
-        <SubjectLogoSection subjectLabel="English"   logoSrc="/headers/english-main.png"    accent="#B66DFF" groups={englishGroupCards}  onGroupClick={handleModuleClick} />
-        <BiologySection groups={biologyGroupCards} onGroupClick={handleModuleClick} />
-        <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.png"       accent="#9B59E8" groups={chemGroupCards}     onGroupClick={handleModuleClick} />
-        <SubjectLogoSection subjectLabel="Maths"     logoSrc="/headers/maths-main.png"      accent="#2DD4BF" groups={mathsGroupCards}    onGroupClick={handleModuleClick} />
-        <SubjectLogoSection subjectLabel="Physics"   logoSrc="/headers/physics-main.png"    accent="#3B82F6" groups={physicsGroupCards}  onGroupClick={handleModuleClick} />
-        <SubjectLogoSection subjectLabel="Sociology" logoSrc="/headers/sociology-main.png"  accent="#FF5C7A" groups={sociologyGroupCards} onGroupClick={g => setSociologyFilter(g.filterPrefix)} />
+        <SubjectLogoSection subjectLabel="History"   logoSrc="/headers/history-main.png"    accent="#C89B6D" groups={historyGroupCards}  onGroupClick={() => setSubjectBrowser('History')} />
+        <SubjectLogoSection subjectLabel="English"   logoSrc="/headers/english-main.png"    accent="#B66DFF" groups={englishGroupCards}  onGroupClick={() => setSubjectBrowser('English')} />
+        <BiologySection groups={biologyGroupCards} onGroupClick={() => setSubjectBrowser('Biology')} />
+        <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.png"       accent="#9B59E8" groups={chemGroupCards}     onGroupClick={() => setSubjectBrowser('Chemistry')} />
+        <SubjectLogoSection subjectLabel="Maths"     logoSrc="/headers/maths-main.png"      accent="#2DD4BF" groups={mathsGroupCards}    onGroupClick={() => setSubjectBrowser('Maths')} />
+        <SubjectLogoSection subjectLabel="Physics"   logoSrc="/headers/physics-main.png"    accent="#3B82F6" groups={physicsGroupCards}  onGroupClick={() => setSubjectBrowser('Physics')} />
+        <SubjectLogoSection subjectLabel="Sociology" logoSrc="/headers/sociology-main.png"  accent="#FF5C7A" groups={sociologyGroupCards} onGroupClick={() => setSubjectBrowser('Sociology')} />
       </div>
     </div>
   )
