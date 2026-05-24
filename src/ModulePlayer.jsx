@@ -1822,7 +1822,7 @@ function WYLScreen({ module, onDone, subjectColor }) {
 
 // ─── Main ModulePlayer ────────────────────────────────────────────────────────
 
-export default function ModulePlayer({ module, onBack }) {
+export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const saved   = getModuleState(module.id)
 
   // hookDone / wylDone / introDone track whether the universal openers have been seen
@@ -1859,9 +1859,11 @@ export default function ModulePlayer({ module, onBack }) {
   function handleConfidencePick(level) {
     setChosenConfidence(level)
     saveConfidenceRating(module.id, module.subject, module.title, level)
-    // Module completion always counts as activity
     recordActivity()
-    setTimeout(() => onBack(), 650)
+    setTimeout(() => {
+      if (onChapterComplete) onChapterComplete(module)
+      else onBack()
+    }, 650)
   }
 
   // Hook state — always called (hook is undefined when module has no hook)

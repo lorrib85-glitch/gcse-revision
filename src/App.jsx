@@ -14,6 +14,7 @@ import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getImprovements } from './progress.js'
 import { MODULES } from './modules.js'
 import ModulePlayer, { getAllConfidenceRatings } from './ModulePlayer.jsx'
+import ChapterCompleteScreen from './ChapterCompleteScreen.jsx'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -377,7 +378,45 @@ export default function App() {
   const [savedData, setSavedData]     = useState(null)
   const [progress, setProgress]       = useState(() => safeGetProgress())
   const [draft, setDraft]             = useState(() => safeGetDraft())
-  const [activeModule,   setActiveModule]   = useState(null)
+  const [activeModule,        setActiveModule]        = useState(null)
+  const [chapterCompleteData, setChapterCompleteData] = useState(null)
+
+  // Brand-document subject colours — always used in preference to module.color
+  const SUBJECT_ACCENT = {
+    'Maths':     '#2BBE9A',
+    'Biology':   '#38D27A',
+    'History':   '#F5B700',
+    'English':   '#9D5CFF',
+    'Sociology': '#FF5C7A',
+    'Chemistry': '#34D5FF',
+    'Drama':     '#FF4FC3',
+    'Music':     '#34D5FF',
+  }
+
+  function handleChapterComplete(completedModule) {
+    const idx     = MODULES.findIndex(m => m.id === completedModule.id)
+    const nextMod = idx >= 0 && idx < MODULES.length - 1 ? MODULES[idx + 1] : null
+    const COPY = [
+      'Momentum matters.',
+      "That's another one locked in.",
+      "You're getting faster.",
+      'Nice. Keep the streak moving.',
+      'Another one down.',
+    ]
+    const accent = SUBJECT_ACCENT[completedModule.subject] || completedModule.color || '#9D5CFF'
+    setChapterCompleteData({
+      accent,
+      completedChapter: completedModule.title,
+      nextChapterNum:   nextMod?.number,
+      nextChapterTitle: nextMod?.title,
+      nextChapterLabel: 'Module',
+      supportingCopy:   COPY[Math.floor(Math.random() * COPY.length)],
+      isFinalChapter:   !nextMod,
+      moduleName:       completedModule.title,
+      nextModule:       nextMod,
+    })
+    setView('chapter-complete')
+  }
 
   useEffect(() => {
     const t = setTimeout(() => setShowSplash(false), 1400)
@@ -460,7 +499,38 @@ export default function App() {
   }
 
   // Full-screen overlays take priority
-  if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} onBack={closeOverlay} />
+  if (view === 'chapter-complete' && chapterCompleteData) {
+    const d = chapterCompleteData
+    return (
+      <ChapterCompleteScreen
+        accent={d.accent}
+        completedChapter={d.completedChapter}
+        nextChapterNum={d.nextChapterNum}
+        nextChapterTitle={d.nextChapterTitle}
+        nextChapterLabel={d.nextChapterLabel}
+        supportingCopy={d.supportingCopy}
+        isFinalChapter={d.isFinalChapter}
+        moduleName={d.moduleName}
+        onContinue={() => {
+          setChapterCompleteData(null)
+          if (d.nextModule) { openModule(d.nextModule) } else { closeOverlay() }
+        }}
+        onQuiz={() => {
+          setChapterCompleteData(null)
+          setView(null)
+          setTab('quickfire')
+        }}
+        onHome={() => {
+          setChapterCompleteData(null)
+          closeOverlay()
+          setTab('home')
+        }}
+        tab="subjects"
+        setTab={setTab}
+      />
+    )
+  }
+  if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} onBack={closeOverlay} onChapterComplete={handleChapterComplete} />
   if (view === 'session' && session)     return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={closeOverlay} />
   if (view === 'end')                    return <EndScreen topicId={topicId} results={results} savedData={savedData} onHome={closeOverlay} onStart={startSession} />
 
