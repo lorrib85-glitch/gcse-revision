@@ -377,7 +377,8 @@ export default function App() {
   const [savedData, setSavedData]     = useState(null)
   const [progress, setProgress]       = useState(() => safeGetProgress())
   const [draft, setDraft]             = useState(() => safeGetDraft())
-  const [activeModule, setActiveModule] = useState(null)
+  const [activeModule,   setActiveModule]   = useState(null)
+  const [modulePageMod,  setModulePageMod]  = useState(null)
 
   useEffect(() => {
     const t = setTimeout(() => setShowSplash(false), 1400)
@@ -391,6 +392,22 @@ export default function App() {
   }, [])
 
   function openModule(mod) {
+    setModulePageMod(mod)
+  }
+
+  function openModulePlayer(mod, screenIndex) {
+    if (screenIndex !== undefined && screenIndex !== null) {
+      try {
+        const existing = safeGetModuleState(mod.id)
+        localStorage.setItem(`gcse_module_${mod.id}`, JSON.stringify({
+          ...existing,
+          screen: screenIndex,
+          hookDone:  screenIndex > 0 ? true : (existing.hookDone  || false),
+          wylDone:   screenIndex > 0 ? true : (existing.wylDone   || false),
+          introDone: screenIndex > 0 ? true : (existing.introDone || false),
+        }))
+      } catch {}
+    }
     setActiveModule(mod)
     setView('module')
   }
@@ -447,6 +464,15 @@ export default function App() {
   if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} onBack={closeOverlay} />
   if (view === 'session' && session)     return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={closeOverlay} />
   if (view === 'end')                    return <EndScreen topicId={topicId} results={results} savedData={savedData} onHome={closeOverlay} onStart={startSession} />
+
+  // Module landing page (sits between browser and module player)
+  if (modulePageMod) return (
+    <ModulePage
+      module={modulePageMod}
+      onBack={() => setModulePageMod(null)}
+      onOpenTopic={(topic, screenIndex) => openModulePlayer(modulePageMod, screenIndex)}
+    />
+  )
 
   // Tab shell
   return (
@@ -1164,6 +1190,418 @@ function PulseTab({ onStartQuickFire }) {
   )
 }
 
+// ─── ModulePage ───────────────────────────────────────────────────────────────
+// Universal module landing page showing ordered topics with progression rail.
+// Replaces the direct-to-ModulePlayer flow; always shows between module browser
+// and the actual lesson content.
+
+const MODULE_HEADER_IMAGES = {
+  'mod1': '/headers/history-medicine-through-time.png',
+  'mod2': '/headers/history-medicine-through-time.png',
+  'mod3': '/headers/history-medicine-through-time.png',
+  'mod4': '/headers/history-medicine-through-time.png',
+  'mod5': '/headers/history-medicine-through-time.png',
+  'mod6': '/headers/history-medicine-through-time.png',
+  'mod7': '/headers/history-medicine-through-time.png',
+  'mod8': '/headers/history-medicine-through-time.png',
+  'mod9': '/headers/history-medicine-through-time.png',
+  'sci_bio_w1': '/headers/bio-buildinglife.png',
+  'math1': '/headers/maths-numbers.png',
+  'math2': '/headers/maths-numbers.png',
+  'soc1': '/headers/sociology-family.png',
+  'soc2': '/headers/sociology-education.png',
+  'soc3': '/headers/sociology-crime.png',
+  'soc4': '/headers/sociology-stratification.png',
+  'soc6': '/headers/sociology-main.png',
+}
+
+function hexToRgb(hex) {
+  if (!hex || hex.length < 7) return '255,255,255'
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `${r},${g},${b}`
+}
+
+const SUBJECT_PALETTES = {
+  History:   { sand: '#C89B6D', bronze: '#9A7B4F', cream: '#E8D9B5', espresso: '#2B1A0E', ink: '#14110E' },
+  Sociology: { sand: '#C9B07C', bronze: '#9A7B4F', cream: '#E8D9B5', espresso: '#2B2118', ink: '#14110E' },
+  Biology:   { sand: '#4CAF7D', bronze: '#2E8B57', cream: '#B8F0D4', espresso: '#0A2E1A', ink: '#061408' },
+  Chemistry: { sand: '#9B59E8', bronze: '#7B3BD0', cream: '#DDD0F8', espresso: '#1A0E2B', ink: '#0D0816' },
+  Physics:   { sand: '#3B82F6', bronze: '#2563EB', cream: '#DBEAFE', espresso: '#0E1B2B', ink: '#060D18' },
+  English:   { sand: '#B66DFF', bronze: '#9B5CFF', cream: '#E8D5FF', espresso: '#1A0B2E', ink: '#0E0618' },
+  Maths:     { sand: '#2DD4BF', bronze: '#0D9488', cream: '#CCFBF1', espresso: '#0A2A27', ink: '#041612' },
+}
+
+function ModulePage({ module: mod, onBack, onOpenTopic }) {
+  const saved   = safeGetModuleState(mod.id)
+  const screenIdx = saved.screen || 0
+  const hasStarted = (saved.hookDone && saved.wylDone) || screenIdx > 0
+
+  const topics = (mod.screens || []).map((screen, i) => ({
+    number: i + 1,
+    title: screen.label || screen.heading || `Topic ${i + 1}`,
+    hook: screen.sub || screen.kicker || screen.heading || '',
+    status: !hasStarted ? 'not_started'
+      : i < screenIdx ? 'completed'
+      : i === screenIdx ? 'in_progress'
+      : 'not_started',
+  }))
+
+  const palette   = SUBJECT_PALETTES[mod.subject] || SUBJECT_PALETTES.History
+  const { sand, bronze, cream, espresso, ink } = palette
+  const completed = topics.filter(t => t.status === 'completed').length
+  const total     = topics.length
+  const pct       = total > 0 ? Math.round((completed / total) * 100) : 0
+
+  const [ringPct, setRingPct] = useState(0)
+  useEffect(() => { const t = setTimeout(() => setRingPct(pct), 80); return () => clearTimeout(t) }, [pct])
+
+  const R       = 32.5
+  const CIRCUM  = 2 * Math.PI * R
+  const dashOff = CIRCUM * (1 - ringPct / 100)
+
+  const heroImg = mod.headerImage || MODULE_HEADER_IMAGES[mod.id] || '/headers/history-medicine-through-time.png'
+  const sandRgb = hexToRgb(sand)
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#08090D', paddingBottom: 120, overflowX: 'hidden', position: 'relative' }}>
+      <style>{`
+        @keyframes mpNodePulse {
+          0%,100% { box-shadow: 0 0 18px rgba(${sandRgb},0.32), 0 0 8px rgba(${sandRgb},0.18); }
+          50%      { box-shadow: 0 0 30px rgba(${sandRgb},0.55), 0 0 14px rgba(${sandRgb},0.28); }
+        }
+        @media (max-width: 374px) {
+          .mp-title { font-size: 38px !important; }
+          .mp-topic-title { font-size: 19px !important; }
+          .mp-cta { min-width: 112px !important; }
+          .mp-ring { width: 64px !important; height: 64px !important; }
+          .mp-page { padding-left: 20px !important; padding-right: 20px !important; }
+          .mp-rail { width: 52px !important; }
+        }
+      `}</style>
+
+      {/* ── CINEMATIC HEADER (285px) ── */}
+      <div style={{ height: 285, position: 'relative', overflow: 'hidden' }}>
+        {/* Artwork — right side */}
+        <div style={{
+          position: 'absolute', right: 0, top: 0, width: '58%', height: 250,
+          backgroundImage: `url(${heroImg})`, backgroundSize: 'cover', backgroundPosition: 'center top',
+          opacity: 0.78,
+        }} />
+        {/* Horizontal fade over artwork */}
+        <div style={{
+          position: 'absolute', right: 0, top: 0, width: '58%', height: 250,
+          background: 'linear-gradient(to left, rgba(8,9,13,0) 0%, rgba(8,9,13,0.85) 70%, rgba(8,9,13,1) 100%)',
+        }} />
+        {/* Full-width left overlay */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(90deg, #08090D 0%, rgba(8,9,13,0.92) 38%, rgba(8,9,13,0.35) 100%)',
+        }} />
+        {/* Bottom fade into page background */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0, height: 110,
+          background: 'linear-gradient(180deg, transparent 0%, #08090D 92%)',
+        }} />
+
+        {/* Back button */}
+        <button
+          onClick={onBack}
+          style={{
+            position: 'absolute', top: 20, left: 24, zIndex: 10,
+            width: 44, height: 44, borderRadius: 999,
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.10)',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'rgba(255,255,255,0.82)', fontSize: 20, fontFamily: "'Sora', sans-serif",
+          }}
+        >←</button>
+
+        {/* Menu button */}
+        <button
+          style={{
+            position: 'absolute', top: 20, right: 24, zIndex: 10,
+            width: 44, height: 44, borderRadius: 999,
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.10)',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'rgba(255,255,255,0.82)', fontSize: 22, letterSpacing: 1,
+          }}
+        >···</button>
+
+        {/* Text block — bottom-left */}
+        <div style={{ position: 'absolute', bottom: 22, left: 24, right: '44%', zIndex: 5 }}>
+          <div style={{
+            fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 13, lineHeight: '18px',
+            letterSpacing: '0.14em', color: sand, textTransform: 'uppercase', marginBottom: 10,
+          }}>{mod.subject || ''}</div>
+          <div className="mp-title" style={{
+            fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 42, lineHeight: '44px',
+            letterSpacing: '-0.02em', color: '#F5F7FF', maxWidth: 260,
+          }}>{mod.title}</div>
+        </div>
+      </div>
+
+      {/* ── CONTENT ── */}
+      <div className="mp-page" style={{ padding: '0 24px' }}>
+
+        {/* ── PROGRESS CARD ── */}
+        <div style={{
+          width: '100%', borderRadius: 28, padding: '22px 24px', boxSizing: 'border-box',
+          background: 'rgba(255,255,255,0.055)',
+          border: `1px solid ${sand}2E`,
+          backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+          boxShadow: '0 18px 50px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)',
+          marginTop: -12, marginBottom: 28,
+          display: 'flex', alignItems: 'center', gap: 16,
+        }}>
+          {/* Left */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 15, lineHeight: '20px',
+              color: 'rgba(255,255,255,0.66)',
+            }}>Your progress</div>
+            <div style={{
+              fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 28, lineHeight: '32px',
+              color: '#F5F7FF', marginTop: 6,
+            }}>{completed} of {total} completed</div>
+            <div style={{ marginTop: 14, height: 6, borderRadius: 999, background: 'rgba(255,255,255,0.12)', overflow: 'hidden' }}>
+              <div style={{
+                height: '100%', borderRadius: 999,
+                width: `${pct}%`,
+                background: `linear-gradient(90deg, ${bronze}, ${sand})`,
+                transition: 'width 700ms ease-out',
+              }} />
+            </div>
+          </div>
+
+          {/* Ring */}
+          <div className="mp-ring" style={{ flexShrink: 0, width: 72, height: 72, position: 'relative' }}>
+            <svg width={72} height={72} viewBox="0 0 72 72" style={{ transform: 'rotate(-90deg)', display: 'block' }}>
+              <circle cx={36} cy={36} r={R} fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth={7} />
+              <circle cx={36} cy={36} r={R} fill="none" stroke={sand} strokeWidth={7}
+                strokeDasharray={CIRCUM} strokeDashoffset={dashOff}
+                strokeLinecap="round"
+                style={{ transition: 'stroke-dashoffset 700ms ease-out', filter: `drop-shadow(0 0 5px ${sand}88)` }}
+              />
+            </svg>
+            <div style={{
+              position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span style={{
+                fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 20, color: cream, lineHeight: 1,
+              }}>{pct}%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── TOPIC SECTION LABEL ── */}
+        <div style={{
+          fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 13, lineHeight: '18px',
+          letterSpacing: '0.14em', color: 'rgba(255,255,255,0.45)',
+          textTransform: 'uppercase', marginBottom: 18,
+        }}>Your Topics</div>
+
+        {/* ── TOPIC RAIL + CARDS ── */}
+        <div>
+          {topics.map((topic, i) => {
+            const isCompleted = topic.status === 'completed'
+            const isCurrent   = topic.status === 'in_progress'
+            const isUpcoming  = topic.status === 'not_started'
+            const isLast      = i === topics.length - 1
+
+            const cardH    = isCurrent ? null : 102  // current card is auto-height
+            const nodeSize = isCurrent ? 50 : isCompleted ? 44 : 42
+
+            // Line segment colour: gold if the topic ABOVE this one is completed
+            const lineAboveGold = i > 0 && topics[i - 1].status === 'completed'
+            // Line below: gold if this topic is completed (flows into next node)
+            const lineBelowGold = !isLast && isCompleted
+
+            return (
+              <div key={topic.number} style={{
+                display: 'flex', gap: 14, alignItems: 'stretch',
+                paddingBottom: isLast ? 0 : 14,
+              }}>
+                {/* Rail column */}
+                <div className="mp-rail" style={{
+                  width: 58, flexShrink: 0,
+                  display: 'flex', flexDirection: 'column', alignItems: 'center',
+                }}>
+                  {/* Line above node */}
+                  <div style={{
+                    width: 2, flexShrink: 0,
+                    height: Math.max(0, ((isCurrent ? 108 : cardH) - nodeSize) / 2),
+                    background: i === 0 ? 'transparent'
+                      : lineAboveGold ? `linear-gradient(180deg, ${sand}, ${sand})`
+                      : 'rgba(255,255,255,0.14)',
+                  }} />
+
+                  {/* NODE */}
+                  {isCompleted && (
+                    <div style={{
+                      width: 44, height: 44, borderRadius: 999, flexShrink: 0,
+                      background: `linear-gradient(135deg, ${bronze}, ${sand})`,
+                      border: `1px solid ${cream}72`,
+                      boxShadow: `0 0 20px rgba(${sandRgb},0.28), inset 0 1px 0 rgba(255,255,255,0.20)`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <svg width={22} height={22} viewBox="0 0 22 22" fill="none">
+                        <path d="M5 11.5L9 15.5L17 7" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  )}
+                  {isCurrent && (
+                    <div style={{
+                      width: 50, height: 50, borderRadius: 999, flexShrink: 0,
+                      background: `rgba(${hexToRgb(espresso)},0.88)`,
+                      border: `2px solid ${sand}`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      animation: 'mpNodePulse 2.8s ease-in-out infinite',
+                    }}>
+                      <span style={{
+                        fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 20, color: cream, lineHeight: 1,
+                      }}>{topic.number}</span>
+                    </div>
+                  )}
+                  {isUpcoming && (
+                    <div style={{
+                      width: 42, height: 42, borderRadius: 999, flexShrink: 0,
+                      background: 'rgba(255,255,255,0.035)',
+                      border: '1.5px solid rgba(255,255,255,0.18)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <span style={{
+                        fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 17,
+                        color: 'rgba(255,255,255,0.45)', lineHeight: 1,
+                      }}>{topic.number}</span>
+                    </div>
+                  )}
+
+                  {/* Line below node — extends through paddingBottom gap too */}
+                  {!isLast ? (
+                    <div style={{
+                      width: 2, flex: 1,
+                      background: lineBelowGold
+                        ? `linear-gradient(180deg, ${sand}, ${bronze})`
+                        : 'rgba(255,255,255,0.14)',
+                    }} />
+                  ) : (
+                    <div style={{ flex: 1 }} />
+                  )}
+                </div>
+
+                {/* TOPIC CARD */}
+                <button
+                  onClick={() => onOpenTopic(topic, i)}
+                  style={{
+                    flex: 1,
+                    ...(isCurrent ? { minHeight: 108 } : { height: cardH }),
+                    alignSelf: 'flex-start',
+                    borderRadius: 22,
+                    padding: isCurrent ? '16px 18px 16px 20px' : '18px 18px 18px 20px',
+                    cursor: 'pointer', textAlign: 'left', boxSizing: 'border-box',
+                    display: 'flex',
+                    flexDirection: isCurrent ? 'column' : 'row',
+                    alignItems: isCurrent ? 'flex-start' : 'center',
+                    justifyContent: 'space-between', gap: isCurrent ? 10 : 12,
+                    border: isCurrent
+                      ? `1.5px solid ${sand}BF`
+                      : isCompleted
+                        ? `1px solid rgba(${sandRgb},0.10)`
+                        : '1px solid rgba(255,255,255,0.07)',
+                    background: isCurrent
+                      ? `linear-gradient(90deg, rgba(${hexToRgb(espresso)},0.42) 0%, rgba(255,255,255,0.055) 100%)`
+                      : isCompleted
+                        ? 'rgba(255,255,255,0.045)'
+                        : 'rgba(255,255,255,0.04)',
+                    backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+                    boxShadow: isCurrent ? `0 0 28px rgba(${sandRgb},0.22), inset 0 1px 0 rgba(255,255,255,0.08)` : 'none',
+                    opacity: isUpcoming ? 0.78 : isCompleted ? 0.86 : 1,
+                  }}
+                >
+                  {/* Text */}
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div className="mp-topic-title" style={{
+                      fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 21, lineHeight: '25px',
+                      color: '#F5F7FF', letterSpacing: '-0.01em',
+                      ...(isCurrent
+                        ? { wordBreak: 'break-word' }
+                        : { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }),
+                    }}>{topic.title}</div>
+                    {topic.hook && (
+                      <div style={{
+                        fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 15.5, lineHeight: '21px',
+                        color: 'rgba(255,255,255,0.68)', marginTop: 5,
+                        overflow: 'hidden', display: '-webkit-box',
+                        WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                      }}>{topic.hook}</div>
+                    )}
+                  </div>
+
+                  {/* Right badge / CTA */}
+                  {isCompleted && (
+                    <div style={{
+                      flexShrink: 0, height: 32, padding: '0 12px', borderRadius: 999,
+                      background: 'rgba(46,125,72,0.22)',
+                      border: '1px solid rgba(83,220,134,0.35)',
+                      display: 'flex', alignItems: 'center', gap: 6,
+                    }}>
+                      <div style={{
+                        width: 16, height: 16, borderRadius: 999,
+                        background: 'rgba(83,220,134,0.3)', border: '1.5px solid #53DC86',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                      }}>
+                        <svg width={9} height={9} viewBox="0 0 9 9" fill="none">
+                          <path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="#9FE8B6" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                      <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 13.5, color: '#9FE8B6', whiteSpace: 'nowrap' }}>Completed</span>
+                    </div>
+                  )}
+                  {isCurrent && (
+                    <button
+                      onClick={e => { e.stopPropagation(); onOpenTopic(topic, i) }}
+                      className="mp-cta"
+                      style={{
+                        alignSelf: 'flex-start',
+                        height: 44, padding: '0 20px',
+                        borderRadius: 14,
+                        background: `linear-gradient(135deg, ${bronze}, ${sand})`,
+                        border: 'none', cursor: 'pointer',
+                        fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15,
+                        color: ink, whiteSpace: 'nowrap',
+                        boxShadow: `0 0 24px rgba(${sandRgb},0.30), inset 0 1px 0 rgba(255,255,255,0.22)`,
+                        transition: 'transform 120ms ease',
+                      }}
+                    >Continue →</button>
+                  )}
+                  {isUpcoming && (
+                    <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                      <div style={{
+                        height: 32, padding: '0 12px', borderRadius: 999,
+                        background: 'rgba(255,255,255,0.075)',
+                        display: 'flex', alignItems: 'center',
+                        fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 13.5,
+                        color: 'rgba(255,255,255,0.62)', whiteSpace: 'nowrap',
+                      }}>Not started</div>
+                      <span style={{ color: 'rgba(255,255,255,0.42)', fontSize: 20, marginLeft: 8 }}>›</span>
+                    </div>
+                  )}
+                </button>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Bottom nav — Subjects always selected */}
+      <BottomNav tab="subjects" setTab={() => onBack()} />
+    </div>
+  )
+}
+
 // ─── Modules tab ──────────────────────────────────────────────────────────────
 
 function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, headerImage, icon, isSelected, onClick }) {
@@ -1385,25 +1823,6 @@ function ModulesTab({ onOpenModule }) {
   const continuePct = modPct(continueRaw) || 0
   const selectedId = continueRaw?.id || 'mod1'
   const continueAccent = continueRaw?.color || '#C89B6D'
-  const MODULE_HEADER_IMAGES = {
-    'mod1': '/headers/history-medicine-through-time.png',
-    'mod2': '/headers/history-medicine-through-time.png',
-    'mod3': '/headers/history-medicine-through-time.png',
-    'mod4': '/headers/history-medicine-through-time.png',
-    'mod5': '/headers/history-medicine-through-time.png',
-    'mod6': '/headers/history-medicine-through-time.png',
-    'mod7': '/headers/history-medicine-through-time.png',
-    'mod8': '/headers/history-medicine-through-time.png',
-    'mod9': '/headers/history-medicine-through-time.png',
-    'sci_bio_w1': '/headers/bio-buildinglife.png',
-    'math1': '/headers/maths-numbers.png',
-    'math2': '/headers/maths-numbers.png',
-    'soc1': '/headers/sociology-family.png',
-    'soc2': '/headers/sociology-education.png',
-    'soc3': '/headers/sociology-crime.png',
-    'soc4': '/headers/sociology-stratification.png',
-    'soc6': '/headers/sociology-main.png',
-  }
   const continueHeaderImage = MODULE_HEADER_IMAGES[selectedId] || '/headers/history-medicine-through-time.png'
 
   // Medicine Through Time progress = average across all 5 sub-modules
