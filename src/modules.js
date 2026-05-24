@@ -86,6 +86,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Medieval doctors thought bad smells caused the plague.', isTrue: true },
+        { type: 'choice', question: 'What did medieval doctors trust most?', options: ['Galen\'s 1,000-year-old writings', 'Dissecting real human bodies', 'Observations of sick patients'], correct: 0 },
+        { type: 'connection', question: 'The Black Death changed medicine because...', options: [
+          { text: 'It wiped out the physicians who knew Galen', icon: 'book' },
+          { text: 'People began to question if old ideas actually worked', icon: 'lightbulb' },
+          { text: 'The Church banned Galenic medicine', icon: 'warning' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         label: 'Causes',
@@ -270,6 +281,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Vesalius proved Galen was wrong about human anatomy.', isTrue: true },
+        { type: 'choice', question: 'Harvey discovered that blood...', options: ['Was made fresh daily in the liver', 'Circulated continuously around the body', 'Carried disease from the air'], correct: 1 },
+        { type: 'connection', question: 'Renaissance medicine improved knowledge but...', options: [
+          { text: 'Treatments barely changed for most patients', icon: 'people' },
+          { text: 'Surgery became dramatically safer', icon: 'heart' },
+          { text: 'The Church accepted all new ideas', icon: 'book' },
+        ], correct: 0 },
+      ],
+    },
     screens: [
       {
         label: 'Renaissance',
@@ -428,6 +450,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Before 1846, surgeons operated on fully conscious patients.', isTrue: true },
+        { type: 'choice', question: 'Simpson discovered that chloroform could...', options: ['Kill bacteria during surgery', 'Make patients unconscious for operations', 'Speed up the healing of wounds'], correct: 1 },
+        { type: 'connection', question: 'Lister used carbolic acid to...', options: [
+          { text: 'Speed up the operating process', icon: 'gear' },
+          { text: 'Kill the bacteria causing post-op infections', icon: 'germ' },
+          { text: 'Numb patients before operations', icon: 'heart' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         label: 'The Problem',
@@ -618,6 +651,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Louis Pasteur was a trained doctor who worked in hospitals.', isTrue: false },
+        { type: 'choice', question: 'Koch\'s biggest contribution was...', options: ['Creating the first vaccine', 'Linking specific bacteria to specific diseases', 'Disproving the germ theory'], correct: 1 },
+        { type: 'connection', question: 'Germ theory transformed medicine because...', options: [
+          { text: 'It immediately gave doctors new treatments', icon: 'flask' },
+          { text: 'It explained WHY disease spread from person to person', icon: 'lightbulb' },
+          { text: 'It replaced Galen overnight in hospitals', icon: 'book' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         label: 'Old Ideas',
@@ -819,6 +863,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'John Snow proved cholera spread through water in 1854.', isTrue: true },
+        { type: 'choice', question: 'Why did governments resist improving public health?', options: ['Scientists disagreed about the causes', 'It was costly and meant government interference', 'People refused to use sewers'], correct: 1 },
+        { type: 'connection', question: 'The Great Stink of 1858 mattered because...', options: [
+          { text: 'It killed enough MPs to force a vote', icon: 'warning' },
+          { text: 'It forced Parliament to fund Bazalgette\'s sewer system', icon: 'people' },
+          { text: 'It proved miasma theory was correct after all', icon: 'leaf' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         label: 'Cities Explode',
@@ -1015,6 +1070,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Joseph Lister was the first surgeon to use anaesthetics.', isTrue: false },
+        { type: 'choice', question: 'Antiseptic surgery works by...', options: ['Numbing the patient during operations', 'Killing bacteria to prevent post-op infection', 'Stopping blood loss during surgery'], correct: 1 },
+        { type: 'connection', question: 'Surgery survival rates improved most when...', options: [
+          { text: 'Surgeons learned to work faster', icon: 'gear' },
+          { text: 'Pain, infection and blood loss were each solved', icon: 'lightbulb' },
+          { text: 'Hospitals were built larger and better lit', icon: 'house' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
 
       // Screen 1 — Speed Surgery
@@ -1629,6 +1695,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Fleming set out deliberately to discover penicillin.', isTrue: false },
+        { type: 'choice', question: 'Ehrlich called Salvarsan a \'magic bullet\' because...', options: ['It worked immediately with no side effects', 'It targeted syphilis specifically without harming the patient', 'It was his 606th experimental compound'], correct: 1 },
+        { type: 'connection', question: 'Penicillin saved lives in WWII because...', options: [
+          { text: 'It was cheap enough for every soldier', icon: 'arrow' },
+          { text: 'Florey and Chain produced it at mass scale for troops', icon: 'flask' },
+          { text: 'It cured all infections including viral ones', icon: 'germ' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
 
       // Screen 1 — Why Infection Was Still Terrifying
@@ -2217,6 +2294,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'The first successful organ transplant was a heart transplant.', isTrue: false },
+        { type: 'choice', question: 'DNA\'s double helix was discovered by...', options: ['Einstein and Oppenheimer', 'Watson, Crick, Franklin and Wilkins', 'Koch and Pasteur'], correct: 1 },
+        { type: 'connection', question: 'Modern medicine\'s biggest challenges are...', options: [
+          { text: 'Lack of scientific knowledge and technology', icon: 'atom' },
+          { text: 'Cost, access and difficult ethical decisions', icon: 'people' },
+          { text: 'Too many competing treatments available', icon: 'warning' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
 
       // Screen 1 — Seeing Inside the Body
@@ -2791,6 +2879,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Animal cells have a cell wall as well as a cell membrane.', isTrue: false },
+        { type: 'choice', question: 'In photosynthesis, plants absorb...', options: ['Oxygen and glucose from the air', 'Carbon dioxide and water using light energy', 'Nitrogen and minerals from the soil'], correct: 1 },
+        { type: 'connection', question: 'Chloroplasts are found in plant cells because...', options: [
+          { text: 'They make the plant appear green for camouflage', icon: 'leaf' },
+          { text: 'They capture light energy to make glucose', icon: 'atom' },
+          { text: 'They control what enters and exits the cell', icon: 'gear' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       // ── SCREEN 0: Plant Cell Hotspot ───────────────────────────────────────
       {
@@ -3193,6 +3292,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: '−3 is a greater value than −8.', isTrue: true },
+        { type: 'choice', question: 'In BIDMAS, what do you always calculate first?', options: ['Any addition you can see', 'Whatever is inside brackets', 'Division before multiplication'], correct: 1 },
+        { type: 'connection', question: 'Estimation matters in exams because...', options: [
+          { text: 'It\'s always accurate enough to use as a final answer', icon: 'arrow' },
+          { text: 'It helps you catch calculator errors before you write them down', icon: 'lightbulb' },
+          { text: 'It replaces the need to do actual calculation', icon: 'warning' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         label: 'Number Line',
@@ -3523,6 +3633,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: '½ and 4/8 are equal in value.', isTrue: true },
+        { type: 'choice', question: 'To multiply two fractions, you...', options: ['Add numerators and add denominators', 'Multiply numerators and multiply denominators', 'Flip the second fraction then add'], correct: 1 },
+        { type: 'connection', question: 'Simplifying fractions matters because...', options: [
+          { text: 'Examiners only accept the simplest form', icon: 'warning' },
+          { text: 'It\'s the same value but much easier to work with', icon: 'lightbulb' },
+          { text: 'It makes multiplication easier to check', icon: 'gear' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       // Page 2 — What You'll Learn
       {
@@ -4056,6 +4177,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Children raised without socialisation still learn language naturally.', isTrue: false },
+        { type: 'choice', question: 'Norms are best described as...', options: ['Laws enforced by the government', 'Shared unwritten rules about expected behaviour', 'Personal values people choose for themselves'], correct: 1 },
+        { type: 'connection', question: 'Sociology argues our identities are mainly shaped by...', options: [
+          { text: 'Genetics and biological instincts', icon: 'dna' },
+          { text: 'Society, culture and the process of socialisation', icon: 'people' },
+          { text: 'Entirely free individual choice', icon: 'arrow' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       // Screen 1 — What Is Sociology?
       {
@@ -4770,6 +4902,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Durkheim believed society was held together by shared values.', isTrue: true },
+        { type: 'choice', question: 'Marxists believe social institutions mainly serve...', options: ['Everyone in society equally', 'The ruling class and their interests', 'Individual freedom and expression'], correct: 1 },
+        { type: 'connection', question: 'Functionalism and Marxism disagree most about...', options: [
+          { text: 'Whether education and family actually exist', icon: 'book' },
+          { text: 'Whether society is built on cooperation or conflict', icon: 'people' },
+          { text: 'The impact of technology on social change', icon: 'device' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
 
       // Screen 1 — Two Worlds
@@ -5653,6 +5796,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Weber argued class was the only factor shaping life chances.', isTrue: false },
+        { type: 'choice', question: 'Radical feminists trace inequality back to...', options: ['Capitalism and economic exploitation', 'Patriarchy — male dominance built into every institution', 'Individual men\'s personal attitudes'], correct: 1 },
+        { type: 'connection', question: 'Life chances depend on multiple factors because...', options: [
+          { text: 'Sociologists just like to complicate things', icon: 'book' },
+          { text: 'Gender, class and ethnicity each limit access differently', icon: 'people' },
+          { text: 'It varies entirely by country and cannot be studied', icon: 'arrow' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
 
       // Screen 1 — What Is Feminism?
@@ -6407,6 +6561,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'The nuclear family has always been the most common family type.', isTrue: false },
+        { type: 'choice', question: 'Functionalists see the family as mainly...', options: ['A source of conflict and gender inequality', 'Performing essential positive functions for society', 'A capitalist institution that exploits women'], correct: 1 },
+        { type: 'connection', question: 'Feminist sociologists critique traditional family because...', options: [
+          { text: 'They believe people should live alone instead', icon: 'house' },
+          { text: 'It reinforces unequal gender roles and expectations', icon: 'people' },
+          { text: 'Nuclear families are now statistically very rare', icon: 'warning' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
 
       // Screen 1 — Family Types
@@ -7120,6 +7285,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Positivist sociologists prefer to work with quantitative data.', isTrue: true },
+        { type: 'choice', question: 'Young and Willmott argued working-class families had...', options: ['Isolated nuclear units with few community ties', 'Strong extended family networks and mutual support', 'Mainly dysfunctional and conflictual relationships'], correct: 1 },
+        { type: 'connection', question: 'Oakley\'s research challenged earlier studies because...', options: [
+          { text: 'She used a much larger and more diverse sample', icon: 'people' },
+          { text: 'She showed women still did most domestic work even when employed', icon: 'lightbulb' },
+          { text: 'She proved the nuclear family was the ideal family form', icon: 'house' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
 
       // Screen 1 — The Three Sociologists
@@ -7717,6 +7893,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'The NHS was created in 1948 and is free at point of use.', isTrue: true },
+        { type: 'choice', question: 'Beveridge\'s 1942 report proposed...', options: ['Privatising all hospitals and surgeries', 'A welfare state supporting people from cradle to grave', 'Making patients pay for prescriptions'], correct: 1 },
+        { type: 'connection', question: 'Prevention matters in modern medicine because...', options: [
+          { text: 'Treating illness costs far more than preventing it', icon: 'heart' },
+          { text: 'Doctors prefer not to perform surgery', icon: 'gear' },
+          { text: 'Hospitals are too full to treat anyone', icon: 'house' },
+        ], correct: 0 },
+      ],
+    },
     screens: [
 
       // Screen 1 — Before the NHS
@@ -8276,6 +8463,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Plant cells have both a cell membrane and a cell wall.', isTrue: true },
+        { type: 'choice', question: 'Mitosis produces cells that are...', options: ['Genetically different from the parent cell', 'Genetically identical to the parent cell', 'Half the chromosome count of the parent'], correct: 1 },
+        { type: 'connection', question: 'Cell membranes matter because...', options: [
+          { text: 'They make the cell rigid and give it shape', icon: 'gear' },
+          { text: 'They control precisely what enters and leaves the cell', icon: 'arrow' },
+          { text: 'They produce energy for the cell to use', icon: 'atom' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 1',
@@ -8309,6 +8507,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Enzymes are permanently destroyed when they catalyse a reaction.', isTrue: false },
+        { type: 'choice', question: 'The heart pumps blood to...', options: ['Only the lungs for oxygenation', 'Both the lungs and the entire body simultaneously', 'Only the brain and major organs'], correct: 1 },
+        { type: 'connection', question: 'The digestive system breaks down food so that...', options: [
+          { text: 'It can be stored safely as body fat', icon: 'leaf' },
+          { text: 'Nutrients can cross into the bloodstream and reach cells', icon: 'heart' },
+          { text: 'The body can produce more digestive enzymes', icon: 'flask' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 2',
@@ -8342,6 +8551,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Bacteria and viruses are the same category of pathogen.', isTrue: false },
+        { type: 'choice', question: 'Vaccines protect us by...', options: ['Directly killing pathogens in the body', 'Training the immune system to recognise threats', 'Replacing cells damaged by infection'], correct: 1 },
+        { type: 'connection', question: 'Antibiotic resistance is a growing crisis because...', options: [
+          { text: 'Antibiotics are becoming too expensive to produce', icon: 'flask' },
+          { text: 'Bacteria evolve to survive antibiotic treatment over time', icon: 'germ' },
+          { text: 'Antibiotics cause severe allergic reactions in most people', icon: 'warning' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 3',
@@ -8375,6 +8595,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Hormones travel through the nervous system to reach target organs.', isTrue: false },
+        { type: 'choice', question: 'Reflex arcs bypass the brain because...', options: ['The brain is damaged in stressful situations', 'Faster responses to danger happen without conscious thought', 'The spinal cord is more reliable than the brain'], correct: 1 },
+        { type: 'connection', question: 'Insulin is important because...', options: [
+          { text: 'It fights bacterial infections in the bloodstream', icon: 'germ' },
+          { text: 'It regulates blood glucose to keep cells working properly', icon: 'heart' },
+          { text: 'It accelerates nerve signal transmission speed', icon: 'arrow' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 5',
@@ -8408,6 +8639,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Every cell in your body contains a full copy of your DNA.', isTrue: true },
+        { type: 'choice', question: 'Natural selection favours individuals who are...', options: ['The largest members of the species', 'Best adapted to survive and reproduce in their environment', 'The slowest to reproduce'], correct: 1 },
+        { type: 'connection', question: 'DNA mutations can drive evolution because...', options: [
+          { text: 'Mutations always make the organism stronger immediately', icon: 'dna' },
+          { text: 'Some mutations provide survival advantages in a changing environment', icon: 'leaf' },
+          { text: 'They affect every member of the species simultaneously', icon: 'people' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 6',
@@ -8441,6 +8683,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Producers are animals that hunt and eat other animals.', isTrue: false },
+        { type: 'choice', question: 'Biodiversity matters because...', options: ['It makes ecosystems more visually impressive', 'More species makes ecosystems more stable and resilient', 'It prevents any species from dominating another'], correct: 1 },
+        { type: 'connection', question: 'Removing a keystone species causes ecosystem collapse because...', options: [
+          { text: 'It leaves more food for remaining animals to fight over', icon: 'warning' },
+          { text: 'Other species depend on it in ways that cascade through the whole web', icon: 'leaf' },
+          { text: 'It only affects the predators that fed on it directly', icon: 'arrow' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 7',
@@ -8476,6 +8729,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Atoms of the same element always have the same number of protons.', isTrue: true },
+        { type: 'choice', question: 'In ionic bonding, electrons are...', options: ['Shared equally between atoms', 'Transferred completely from one atom to another', 'Released into the surrounding atmosphere'], correct: 1 },
+        { type: 'connection', question: 'Diamond and graphite behave so differently because...', options: [
+          { text: 'They contain different numbers of protons in their nuclei', icon: 'atom' },
+          { text: 'Their carbon atoms are arranged in completely different structures', icon: 'gear' },
+          { text: 'Diamond contains more carbon atoms per cubic centimetre', icon: 'flask' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 1',
@@ -8509,6 +8773,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'A balanced equation has more atoms on the right than the left.', isTrue: false },
+        { type: 'choice', question: 'Neutralisation reactions always produce...', options: ['Only water as a product', 'A salt and water together', 'Carbon dioxide and water'], correct: 1 },
+        { type: 'connection', question: 'Electrolysis is used industrially to...', options: [
+          { text: 'Speed up reactions that would otherwise be too slow', icon: 'arrow' },
+          { text: 'Extract and purify metals like aluminium from their ores', icon: 'atom' },
+          { text: 'Create entirely new chemical elements in the lab', icon: 'flask' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 2',
@@ -8542,6 +8817,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Increasing temperature always slows down a chemical reaction.', isTrue: false },
+        { type: 'choice', question: 'Fractional distillation separates crude oil based on...', options: ['The colour of different hydrocarbon fractions', 'The boiling points of different hydrocarbons', 'The size of molecules only'], correct: 1 },
+        { type: 'connection', question: 'Cracking long-chain hydrocarbons is commercially valuable because...', options: [
+          { text: 'It produces more crude oil from existing reserves', icon: 'warning' },
+          { text: 'It creates shorter, more useful molecules like petrol and ethene', icon: 'flask' },
+          { text: 'It removes toxic impurities from petroleum products', icon: 'leaf' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 3',
@@ -8575,6 +8861,17 @@ export const MODULES = [
       ],
     },
 
+    recall: {
+      questions: [
+        { type: 'truefalse', question: 'Earth\'s early atmosphere contained almost no free oxygen.', isTrue: true },
+        { type: 'choice', question: 'The greenhouse effect causes warming because...', options: ['It destroys the ozone layer allowing UV in', 'Greenhouse gases trap heat that would otherwise escape into space', 'The sun\'s radiation has been steadily increasing'], correct: 1 },
+        { type: 'connection', question: 'Life cycle assessment matters because...', options: [
+          { text: 'Companies are legally required to display it on products', icon: 'warning' },
+          { text: 'It measures environmental impact across a product\'s entire life', icon: 'leaf' },
+          { text: 'It calculates the exact financial cost of manufacturing', icon: 'gear' },
+        ], correct: 1 },
+      ],
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 4',

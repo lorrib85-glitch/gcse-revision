@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { recordActivity, recordScore } from './progress.js'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
 import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
+import QuickRecallScreen from './QuickRecallScreen.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1829,11 +1830,16 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
 
   // hookDone / wylDone / introDone track whether the universal openers have been seen
   // We persist these inside the module state so resuming skips them correctly
-  const [hookDone,  setHookDone]  = useState(() => saved.hookDone  || !module.hook)
-  const [wylDone,   setWylDone]   = useState(() => saved.wylDone   || !module.outcomes)
-  const [introDone, setIntroDone] = useState(() => saved.introDone || !module.intro)
-  // navTo — in-memory only, drives navigation back to hook/wyl without changing "done" flags
-  // null | 'hook' | 'wyl'
+  const [hookDone,   setHookDone]   = useState(() => saved.hookDone   || !module.hook)
+  const [wylDone,    setWylDone]    = useState(() => saved.wylDone    || !module.outcomes)
+  // If user already has hookDone+wylDone saved (i.e. they've been to content before),
+  // treat recallDone as true to avoid forcing recall on existing progress.
+  const [recallDone, setRecallDone] = useState(() =>
+    saved.recallDone || !module.recall || !!(saved.hookDone && saved.wylDone)
+  )
+  const [introDone,  setIntroDone]  = useState(() => saved.introDone  || !module.intro)
+  // navTo — in-memory only, drives navigation back to hook/wyl/recall without changing "done" flags
+  // null | 'hook' | 'wyl' | 'recall'
   const [navTo, setNavTo] = useState(null)
   const [screen, setScreen] = useState(saved.screen || 0)
   const [showConfidence, setShowConfidence] = useState(false)
@@ -1844,8 +1850,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const [animKey, setAnimKey] = useState(0)
 
   useEffect(() => {
-    saveModuleState(module.id, { screen, hookDone, wylDone, introDone })
-  }, [screen, module.id, hookDone, wylDone, introDone])
+    saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone })
+  }, [screen, module.id, hookDone, wylDone, recallDone, introDone])
 
   function go(delta) {
     const next = Math.max(0, Math.min(total - 1, screen + delta))
@@ -1899,7 +1905,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
 
   const showNextBtn  = nextLabel() !== null
   const nextBtnLabel = nextLabel()
-  const isFinishBtn  = !(!hookDone && module.hook) && wylDone && navTo === null && (!module.intro || introDone) && isLast
+  const isFinishBtn  = !(!hookDone && module.hook) && wylDone && recallDone && navTo === null && (!module.intro || introDone) && isLast
 
   const cur = module.screens[screen]
   const subjectColor = module.color || '#9D5CFF'
@@ -1952,8 +1958,31 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         chapterTitle={module.title}
         introText={module.outcomes.intro}
         outcomes={module.outcomes.bullets}
-        onBack={() => { navTo === 'wyl' ? setNavTo(null) : onBack() }}
+        onBack={() => {
+          if (navTo === 'wyl') setNavTo(null)
+          else if (module.hook?.statement) setNavTo('hook')
+          else onBack()
+        }}
         onContinue={() => { setWylDone(true); setNavTo(null); scrollToTop() }}
+      />
+    )
+  }
+
+  // ── Full-screen recall screen — appears after outcomes, before content ────────
+  if ((!recallDone || navTo === 'recall') && module.recall) {
+    return (
+      <QuickRecallScreen
+        subject={module.subject}
+        chapterNum={module.number}
+        chapterTitle={module.title}
+        questions={module.recall.questions}
+        onBack={() => {
+          if (navTo === 'recall') setNavTo(null)
+          else if (module.outcomes) setNavTo('wyl')
+          else if (module.hook?.statement) setNavTo('hook')
+          else onBack()
+        }}
+        onContinue={() => { setRecallDone(true); setNavTo(null); scrollToTop() }}
       />
     )
   }
@@ -2185,15 +2214,41 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
             )
           })()}
 
+          {/* Quick Recall pill — only shown when module has recall data */}
+          {module.recall && (() => {
+            const isActive = navTo === 'recall'
+            const isDone   = recallDone && navTo !== 'recall'
+            return (
+              <button
+                key="recall-pill"
+                onClick={() => setNavTo('recall')}
+                style={{
+                  flexShrink: 0,
+                  background: isActive ? subjectColor : isDone ? 'rgba(77,255,136,.1)' : '#10182B',
+                  border: `1px solid ${isActive ? subjectColor : isDone ? 'rgba(77,255,136,.3)' : '#2A3552'}`,
+                  borderRadius: 99, padding: '5px 12px',
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.7rem', fontWeight: 600,
+                  color: isActive ? '#fff' : isDone ? '#4DFF88' : '#4A5578',
+                  cursor: 'pointer', whiteSpace: 'nowrap', letterSpacing: '.01em',
+                  boxShadow: isActive ? `0 0 10px ${subjectColor}55` : 'none',
+                  transition: 'all .2s',
+                }}>
+                {isDone ? '✓ Quick Recall' : 'Quick Recall'}
+              </button>
+            )
+          })()}
+
           {/* Content screen chips */}
           {module.screens.map((s, i) => {
-            const isActive = navTo === null && i === screen && hookDone && wylDone && (!module.intro || introDone)
-            const isDone   = navTo === null && hookDone && wylDone && (!module.intro || introDone) && i < screen
+            const isActive = navTo === null && i === screen && hookDone && wylDone && recallDone && (!module.intro || introDone)
+            const isDone   = navTo === null && hookDone && wylDone && recallDone && (!module.intro || introDone) && i < screen
             return (
               <button key={i}
                 onClick={() => {
                   setHookDone(true)
                   setWylDone(true)
+                  setRecallDone(true)
                   setIntroDone(true)
                   setNavTo(null)
                   setScreen(i)
@@ -2250,15 +2305,15 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           {/* Back — hidden during hook/intro */}
           <button
             onClick={() => go(-1)}
-            disabled={screen === 0 || !!navTo || !hookDone || !wylDone || !introDone || screen === 0}
+            disabled={screen === 0 || !!navTo || !hookDone || !wylDone || !recallDone || !introDone}
             style={{
               background: '#10182B',
               border: '1px solid #2A3552',
               borderRadius: 14, padding: '13px 10px',
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 700, fontSize: '.9rem',
-              color: (!!navTo || !hookDone || !wylDone || !introDone || screen === 0) ? '#2A3552' : '#9CA8C7',
-              cursor: (!!navTo || !hookDone || !wylDone || !introDone || screen === 0) ? 'default' : 'pointer',
+              color: (!!navTo || !hookDone || !wylDone || !recallDone || !introDone || screen === 0) ? '#2A3552' : '#9CA8C7',
+              cursor: (!!navTo || !hookDone || !wylDone || !recallDone || !introDone || screen === 0) ? 'default' : 'pointer',
               transition: 'all .15s',
             }}>← Back</button>
 
