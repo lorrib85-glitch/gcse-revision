@@ -8090,6 +8090,12 @@ export const MODULES = [
     id: 'bio_building_life', subject: 'Biology', number: 2,
     title: 'Building Life', subtitle: 'Cells, Microscopes & Division',
     icon: '🔬', color: '#65E6C6', colorLight: 'rgba(101,230,198,.15)',
+    hook: {
+      statement: 'Every cell in your body contains the same DNA.',
+      isTrue: true,
+      accentWords: ['every cell', 'same DNA'],
+      explanation: "Every cell — brain to big toe — carries identical DNA. What differs is which genes are switched on or off.",
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 1',
@@ -8107,6 +8113,12 @@ export const MODULES = [
     id: 'bio_human_machine', subject: 'Biology', number: 3,
     title: 'The Human Machine', subtitle: 'Organs, Digestion & Circulation',
     icon: '🫀', color: '#E87B5F', colorLight: 'rgba(232,123,95,.15)',
+    hook: {
+      statement: 'Your heart beats around 100,000 times a day.',
+      isTrue: true,
+      accentWords: ['100,000 times a day'],
+      explanation: "At 70 beats per minute, your heart beats roughly 100,800 times every day — about 3 billion times in a lifetime.",
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 2',
@@ -8124,6 +8136,12 @@ export const MODULES = [
     id: 'bio_disease_wars', subject: 'Biology', number: 4,
     title: 'Disease Wars', subtitle: 'Pathogens, Immunity & Treatment',
     icon: '🦠', color: '#E84F6B', colorLight: 'rgba(232,79,107,.15)',
+    hook: {
+      statement: 'Antibiotics can kill a virus.',
+      isTrue: false,
+      accentWords: ['Antibiotics', 'kill a virus'],
+      explanation: "Antibiotics only work on bacteria. Viruses live inside your own cells — which makes them much harder to target.",
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 3',
@@ -8141,6 +8159,12 @@ export const MODULES = [
     id: 'bio_control_systems', subject: 'Biology', number: 5,
     title: 'Control Systems', subtitle: 'Nerves, Hormones & Reproduction',
     icon: '🧠', color: '#9B8BE8', colorLight: 'rgba(155,139,232,.15)',
+    hook: {
+      statement: 'Your nervous system sends signals faster than a Formula 1 car.',
+      isTrue: true,
+      accentWords: ['faster than a Formula 1 car'],
+      explanation: "Nerve impulses travel at up to 120 m/s — over 430 km/h. The fastest F1 car tops out around 370 km/h.",
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 5',
@@ -8158,6 +8182,12 @@ export const MODULES = [
     id: 'bio_genetics_evolution', subject: 'Biology', number: 6,
     title: 'Genetics & Evolution', subtitle: 'DNA, Inheritance & Natural Selection',
     icon: '🧬', color: '#7EC8E3', colorLight: 'rgba(126,200,227,.15)',
+    hook: {
+      statement: 'Humans share 50% of their DNA with a banana.',
+      isTrue: true,
+      accentWords: ['50%', 'DNA with a banana'],
+      explanation: "Around half of human DNA is shared with bananas — because both species share the basic cellular machinery for copying DNA and producing energy.",
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 6',
@@ -8175,6 +8205,12 @@ export const MODULES = [
     id: 'bio_ecosystems_group', subject: 'Biology', number: 7,
     title: 'Ecosystems', subtitle: 'Food Chains, Biodiversity & Conservation',
     icon: '🌿', color: '#68C18A', colorLight: 'rgba(104,193,138,.15)',
+    hook: {
+      statement: 'Removing a single species from an ecosystem rarely matters.',
+      isTrue: false,
+      accentWords: ['single species', 'rarely matters'],
+      explanation: "Remove a keystone species — like wolves from Yellowstone — and the whole ecosystem can collapse through a chain reaction called a trophic cascade.",
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Topic Group 7',
@@ -8194,6 +8230,12 @@ export const MODULES = [
     id: 'chem_matter_atoms', subject: 'Chemistry', number: 1,
     title: 'Matter & Atoms', subtitle: 'Elements, Bonding & Giant Structures',
     icon: '⚛️', color: '#9B59E8', colorLight: 'rgba(155,89,232,.15)',
+    hook: {
+      statement: 'An atom is mostly empty space.',
+      isTrue: true,
+      accentWords: ['mostly empty space'],
+      explanation: "If an atom's nucleus were the size of a pea, the electrons would orbit 500 metres away. Everything in between is empty.",
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 1',
@@ -8211,6 +8253,12 @@ export const MODULES = [
     id: 'chem_reactions', subject: 'Chemistry', number: 2,
     title: 'Chemical Reactions', subtitle: 'Equations, Acids & Electrolysis',
     icon: '🧪', color: '#C459E8', colorLight: 'rgba(196,89,232,.15)',
+    hook: {
+      statement: 'You can neutralise an acid by adding more acid.',
+      isTrue: false,
+      accentWords: ['neutralise', 'adding more acid'],
+      explanation: "You neutralise an acid with an alkali. Adding more acid makes it more acidic. Neutralisation needs opposite pH — acid meets base.",
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 2',
@@ -8228,6 +8276,12 @@ export const MODULES = [
     id: 'chem_rates_organic', subject: 'Chemistry', number: 3,
     title: 'Rates & Organic Chemistry', subtitle: 'Rates, Equilibria, Hydrocarbons & Fuels',
     icon: '🛢️', color: '#8B59E8', colorLight: 'rgba(139,89,232,.15)',
+    hook: {
+      statement: 'Crude oil took millions of years to form.',
+      isTrue: true,
+      accentWords: ['millions of years'],
+      explanation: "Crude oil formed from marine organisms buried 300–400 million years ago. We're burning in decades what took geological ages to create.",
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 3',
@@ -8245,6 +8299,12 @@ export const MODULES = [
     id: 'chem_earth', subject: 'Chemistry', number: 4,
     title: 'Earth Chemistry', subtitle: 'Atmosphere, Climate & Resources',
     icon: '🌍', color: '#5980E8', colorLight: 'rgba(89,128,232,.15)',
+    hook: {
+      statement: "Earth's atmosphere has always been 21% oxygen.",
+      isTrue: false,
+      accentWords: ['always been 21% oxygen'],
+      explanation: "The early atmosphere was mostly carbon dioxide and nitrogen — no oxygen at all. Cyanobacteria slowly built it up over billions of years through photosynthesis.",
+    },
     screens: [
       {
         id: 's1', label: 'Overview', kicker: 'Group 4',
