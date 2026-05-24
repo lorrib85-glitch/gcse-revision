@@ -1831,6 +1831,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const [hookDone,  setHookDone]  = useState(() => saved.hookDone  || !module.hook)
   const [wylDone,   setWylDone]   = useState(() => saved.wylDone   || false)
   const [introDone, setIntroDone] = useState(() => saved.introDone || !module.intro)
+  // navTo — in-memory only, drives navigation back to hook/wyl without changing "done" flags
+  // null | 'hook' | 'wyl'
+  const [navTo, setNavTo] = useState(null)
   const [screen, setScreen] = useState(saved.screen || 0)
   const [showConfidence, setShowConfidence] = useState(false)
   const [chosenConfidence, setChosenConfidence] = useState(null)
@@ -1878,7 +1881,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       if (hookPhase === 'reveal') { if (hookRevealDone) { setHookDone(true); scrollToTop() } else { hookState.nextRevealItem(); } return }
       return // question / feedback: Next does nothing — user must tap TRUE/FALSE
     }
-    if (!wylDone) return // WYLScreen has its own button
+    if (navTo === 'wyl' || !wylDone) return // WYLScreen has its own button
     if (!introDone && module.intro) return // IntroScreen has its own button
     isLast ? handleFinish() : go(1)
   }
@@ -1890,14 +1893,14 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       if (hookPhase === 'grow')   return 'Next →'
       if (hookPhase === 'reveal') return hookRevealDone ? 'Start module →' : null // hidden until all revealed
     }
-    if (!wylDone) return null // WYLScreen has its own button
+    if (navTo === 'wyl' || !wylDone) return null // WYLScreen has its own button
     if (!introDone && module.intro) return null // IntroScreen has its own button
     return isLast ? 'Finish ✓' : 'Next →'
   }
 
   const showNextBtn  = nextLabel() !== null
   const nextBtnLabel = nextLabel()
-  const isFinishBtn  = !(!hookDone && module.hook) && wylDone && !(!introDone && module.intro) && isLast
+  const isFinishBtn  = !(!hookDone && module.hook) && wylDone && navTo === null && !(!introDone && module.intro) && isLast
 
   const cur = module.screens[screen]
   const subjectColor = module.color || '#9D5CFF'
@@ -1925,7 +1928,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   ]
 
   // ── Full-screen hook screen — renders before the player shell ──────────────
-  if (!hookDone && module.hook?.statement) {
+  if ((!hookDone && module.hook?.statement) || navTo === 'hook') {
     return (
       <ChapterHookScreen
         subject={module.subject}
@@ -1935,8 +1938,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         isTrue={module.hook.isTrue}
         accentWords={module.hook.accentWords || []}
         explanation={module.hook.explanation || module.hook.correctFeedback || ''}
-        onBack={onBack}
-        onContinue={() => { setHookDone(true); scrollToTop() }}
+        onBack={() => { navTo === 'hook' ? setNavTo(null) : onBack() }}
+        onContinue={() => { setHookDone(true); setNavTo(null); scrollToTop() }}
       />
     )
   }
@@ -2118,35 +2121,80 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 10,
           scrollbarWidth: 'none', msOverflowStyle: 'none',
         }}>
+
+          {/* True or False pill — always present when hook exists */}
+          {module.hook?.statement && (() => {
+            const isDone = hookDone
+            return (
+              <button
+                key="hook-pill"
+                onClick={() => setNavTo('hook')}
+                style={{
+                  flexShrink: 0,
+                  background: isDone ? 'rgba(77,255,136,.1)' : subjectColor,
+                  border: `1px solid ${isDone ? 'rgba(77,255,136,.3)' : subjectColor}`,
+                  borderRadius: 99, padding: '5px 12px',
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.7rem', fontWeight: 600,
+                  color: isDone ? '#4DFF88' : '#fff',
+                  cursor: 'pointer', whiteSpace: 'nowrap', letterSpacing: '.01em',
+                  boxShadow: isDone ? 'none' : `0 0 10px ${subjectColor}55`,
+                  transition: 'all .2s',
+                }}>
+                {isDone ? '✓ True or False' : 'True or False'}
+              </button>
+            )
+          })()}
+
+          {/* What You'll Learn pill — always present */}
+          {(() => {
+            const isActive = navTo === 'wyl' || (!wylDone && hookDone)
+            const isDone   = wylDone && navTo !== 'wyl'
+            return (
+              <button
+                key="wyl-pill"
+                onClick={() => setNavTo('wyl')}
+                style={{
+                  flexShrink: 0,
+                  background: isActive ? subjectColor : isDone ? 'rgba(77,255,136,.1)' : '#10182B',
+                  border: `1px solid ${isActive ? subjectColor : isDone ? 'rgba(77,255,136,.3)' : '#2A3552'}`,
+                  borderRadius: 99, padding: '5px 12px',
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '.7rem', fontWeight: 600,
+                  color: isActive ? '#fff' : isDone ? '#4DFF88' : '#4A5578',
+                  cursor: 'pointer', whiteSpace: 'nowrap', letterSpacing: '.01em',
+                  boxShadow: isActive ? `0 0 10px ${subjectColor}55` : 'none',
+                  transition: 'all .2s',
+                }}>
+                {isDone ? "✓ What You'll Learn" : "What You'll Learn"}
+              </button>
+            )
+          })()}
+
+          {/* Content screen chips */}
           {module.screens.map((s, i) => {
-            const isActive = i === screen && hookDone && wylDone && (!module.intro || introDone)
-            const isDone   = hookDone && wylDone && (!module.intro || introDone) && i < screen
+            const isActive = navTo === null && i === screen && hookDone && wylDone && (!module.intro || introDone)
+            const isDone   = navTo === null && hookDone && wylDone && (!module.intro || introDone) && i < screen
             return (
               <button key={i}
                 onClick={() => {
                   setHookDone(true)
                   setWylDone(true)
                   setIntroDone(true)
+                  setNavTo(null)
                   setScreen(i)
                   setAnimKey(k => k + 1)
                   scrollToTop()
                 }}
                 style={{
                   flexShrink: 0,
-                  background: isActive
-                    ? subjectColor
-                    : isDone
-                    ? 'rgba(77,255,136,.1)'
-                    : '#10182B',
+                  background: isActive ? subjectColor : isDone ? 'rgba(77,255,136,.1)' : '#10182B',
                   border: `1px solid ${isActive ? subjectColor : isDone ? 'rgba(77,255,136,.3)' : '#2A3552'}`,
-                  borderRadius: 99,
-                  padding: '5px 12px',
+                  borderRadius: 99, padding: '5px 12px',
                   fontFamily: "'Inter', sans-serif",
                   fontSize: '.7rem', fontWeight: 600,
                   color: isActive ? '#fff' : isDone ? '#4DFF88' : '#4A5578',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  letterSpacing: '.01em',
+                  cursor: 'pointer', whiteSpace: 'nowrap', letterSpacing: '.01em',
                   boxShadow: isActive ? `0 0 10px ${subjectColor}55` : 'none',
                   transition: 'all .2s',
                 }}>
@@ -2159,10 +2207,10 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
 
       {/* ── Screen content — hook, intro, or normal screen ── */}
       <div id="module-scroll-container" style={{ flex: 1, padding: '20px 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
-        {!hookDone && module.hook
+        {(!hookDone && module.hook && !module.hook.statement)
           ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
-          : !wylDone
-            ? <WYLScreen module={module} onDone={() => { setWylDone(true); scrollToTop() }} subjectColor={subjectColor} />
+          : (navTo === 'wyl' || !wylDone)
+            ? <WYLScreen module={module} onDone={() => { setWylDone(true); setNavTo(null); scrollToTop() }} subjectColor={subjectColor} />
             : !introDone && module.intro
               ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
               : (
@@ -2190,15 +2238,15 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           {/* Back — hidden during hook/intro */}
           <button
             onClick={() => go(-1)}
-            disabled={screen === 0 || !hookDone || !wylDone || !introDone}
+            disabled={screen === 0 || !!navTo || !hookDone || !wylDone || !introDone}
             style={{
               background: '#10182B',
               border: '1px solid #2A3552',
               borderRadius: 14, padding: '13px 10px',
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 700, fontSize: '.9rem',
-              color: (!hookDone || !wylDone || !introDone || screen === 0) ? '#2A3552' : '#9CA8C7',
-              cursor: (!hookDone || !wylDone || !introDone || screen === 0) ? 'default' : 'pointer',
+              color: (!!navTo || !hookDone || !wylDone || !introDone || screen === 0) ? '#2A3552' : '#9CA8C7',
+              cursor: (!!navTo || !hookDone || !wylDone || !introDone || screen === 0) ? 'default' : 'pointer',
               transition: 'all .15s',
             }}>← Back</button>
 
