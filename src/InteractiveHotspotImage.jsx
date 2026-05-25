@@ -3,92 +3,77 @@ import { useState } from 'react'
 // ── Subject themes ─────────────────────────────────────────────────────────────
 const THEMES = {
   Biology: {
-    glow:         '#7EE7B7',
-    glowRgb:      '126,231,183',
-    cardBg:       'linear-gradient(180deg, rgba(18,30,24,0.88), rgba(10,18,14,0.94))',
-    border:       'rgba(170,255,210,0.12)',
-    text:         '#EAF7F0',
-    muted:        'rgba(234,247,240,0.72)',
-    factBg:       'rgba(126,231,183,0.06)',
-    factBorder:   'rgba(126,231,183,0.12)',
-    labelBg:      'rgba(10,20,16,0.84)',
-    instructionColor: 'rgba(200,255,227,0.85)',
+    glow:        '#7EE7B7',
+    glowRgb:     '126,231,183',
+    infoBg:      'transparent',
+    border:      'rgba(126,231,183,0.12)',
+    text:        '#EAF7F0',
+    muted:       'rgba(234,247,240,0.68)',
+    factBorder:  'rgba(126,231,183,0.3)',
+    labelBg:     'rgba(6,14,10,0.82)',
   },
   History: {
-    glow:         '#D4A84B',
-    glowRgb:      '212,168,75',
-    cardBg:       'linear-gradient(180deg, rgba(28,20,10,0.88), rgba(16,12,6,0.94))',
-    border:       'rgba(212,168,75,0.12)',
-    text:         '#F5EDD8',
-    muted:        'rgba(245,237,216,0.72)',
-    factBg:       'rgba(212,168,75,0.06)',
-    factBorder:   'rgba(212,168,75,0.12)',
-    labelBg:      'rgba(16,10,4,0.84)',
-    instructionColor: 'rgba(245,220,160,0.85)',
+    glow:        '#D4A84B',
+    glowRgb:     '212,168,75',
+    infoBg:      'transparent',
+    border:      'rgba(212,168,75,0.12)',
+    text:        '#F5EDD8',
+    muted:       'rgba(245,237,216,0.68)',
+    factBorder:  'rgba(212,168,75,0.3)',
+    labelBg:     'rgba(14,10,4,0.82)',
   },
   Chemistry: {
-    glow:         '#5CC8FF',
-    glowRgb:      '92,200,255',
-    cardBg:       'linear-gradient(180deg, rgba(10,18,30,0.88), rgba(6,10,20,0.94))',
-    border:       'rgba(92,200,255,0.12)',
-    text:         '#E8F4FF',
-    muted:        'rgba(232,244,255,0.72)',
-    factBg:       'rgba(92,200,255,0.06)',
-    factBorder:   'rgba(92,200,255,0.12)',
-    labelBg:      'rgba(4,10,20,0.84)',
-    instructionColor: 'rgba(180,220,255,0.85)',
+    glow:        '#5CC8FF',
+    glowRgb:     '92,200,255',
+    infoBg:      'transparent',
+    border:      'rgba(92,200,255,0.12)',
+    text:        '#E8F4FF',
+    muted:       'rgba(232,244,255,0.68)',
+    factBorder:  'rgba(92,200,255,0.3)',
+    labelBg:     'rgba(4,10,20,0.82)',
   },
   Physics: {
-    glow:         '#5DA9E9',
-    glowRgb:      '93,169,233',
-    cardBg:       'linear-gradient(180deg, rgba(10,16,28,0.88), rgba(6,10,18,0.94))',
-    border:       'rgba(93,169,233,0.12)',
-    text:         '#E6F0FF',
-    muted:        'rgba(230,240,255,0.72)',
-    factBg:       'rgba(93,169,233,0.06)',
-    factBorder:   'rgba(93,169,233,0.12)',
-    labelBg:      'rgba(4,8,18,0.84)',
-    instructionColor: 'rgba(180,210,255,0.85)',
+    glow:        '#5DA9E9',
+    glowRgb:     '93,169,233',
+    infoBg:      'transparent',
+    border:      'rgba(93,169,233,0.12)',
+    text:        '#E6F0FF',
+    muted:       'rgba(230,240,255,0.68)',
+    factBorder:  'rgba(93,169,233,0.3)',
+    labelBg:     'rgba(4,8,18,0.82)',
   },
   Maths: {
-    glow:         '#2BBE9A',
-    glowRgb:      '43,190,154',
-    cardBg:       'linear-gradient(180deg, rgba(8,22,18,0.88), rgba(4,14,11,0.94))',
-    border:       'rgba(43,190,154,0.12)',
-    text:         '#E4F7F2',
-    muted:        'rgba(228,247,242,0.72)',
-    factBg:       'rgba(43,190,154,0.06)',
-    factBorder:   'rgba(43,190,154,0.12)',
-    labelBg:      'rgba(2,12,9,0.84)',
-    instructionColor: 'rgba(160,240,210,0.85)',
+    glow:        '#2BBE9A',
+    glowRgb:     '43,190,154',
+    infoBg:      'transparent',
+    border:      'rgba(43,190,154,0.12)',
+    text:        '#E4F7F2',
+    muted:       'rgba(228,247,242,0.68)',
+    factBorder:  'rgba(43,190,154,0.3)',
+    labelBg:     'rgba(2,12,9,0.82)',
   },
   English: {
-    glow:         '#C97090',
-    glowRgb:      '201,112,144',
-    cardBg:       'linear-gradient(180deg, rgba(24,12,16,0.88), rgba(16,8,10,0.94))',
-    border:       'rgba(201,112,144,0.12)',
-    text:         '#F5E8EE',
-    muted:        'rgba(245,232,238,0.72)',
-    factBg:       'rgba(201,112,144,0.06)',
-    factBorder:   'rgba(201,112,144,0.12)',
-    labelBg:      'rgba(14,6,8,0.84)',
-    instructionColor: 'rgba(240,190,210,0.85)',
+    glow:        '#C97090',
+    glowRgb:     '201,112,144',
+    infoBg:      'transparent',
+    border:      'rgba(201,112,144,0.12)',
+    text:        '#F5E8EE',
+    muted:       'rgba(245,232,238,0.68)',
+    factBorder:  'rgba(201,112,144,0.3)',
+    labelBg:     'rgba(14,6,8,0.82)',
   },
   Sociology: {
-    glow:         '#C9B07C',
-    glowRgb:      '201,176,124',
-    cardBg:       'linear-gradient(180deg, rgba(22,18,10,0.88), rgba(14,12,6,0.94))',
-    border:       'rgba(201,176,124,0.12)',
-    text:         '#F5EDD8',
-    muted:        'rgba(245,237,216,0.72)',
-    factBg:       'rgba(201,176,124,0.06)',
-    factBorder:   'rgba(201,176,124,0.12)',
-    labelBg:      'rgba(12,10,4,0.84)',
-    instructionColor: 'rgba(240,220,160,0.85)',
+    glow:        '#C9B07C',
+    glowRgb:     '201,176,124',
+    infoBg:      'transparent',
+    border:      'rgba(201,176,124,0.12)',
+    text:        '#F5EDD8',
+    muted:       'rgba(245,237,216,0.68)',
+    factBorder:  'rgba(201,176,124,0.3)',
+    labelBg:     'rgba(12,10,4,0.82)',
   },
 }
 
-// ── Reusable component ─────────────────────────────────────────────────────────
 export default function InteractiveHotspotImage({
   subject    = 'Biology',
   title      = '',
@@ -98,8 +83,7 @@ export default function InteractiveHotspotImage({
   hotspots   = [],
 }) {
   const theme = THEMES[subject] || THEMES.Biology
-  const { glow, glowRgb, cardBg, border, text, muted,
-          factBg, factBorder, labelBg, instructionColor } = theme
+  const { glow, glowRgb, border, text, muted, factBorder, labelBg } = theme
 
   const [selectedId, setSelectedId] = useState(null)
   const [visited,    setVisited]    = useState(new Set())
@@ -108,81 +92,49 @@ export default function InteractiveHotspotImage({
   const allDone  = visited.size === hotspots.length && hotspots.length > 0
 
   function handleTap(id) {
-    // Always select — never toggle closed by re-tapping
     setSelectedId(id)
     setVisited(prev => { const n = new Set(prev); n.add(id); return n })
   }
 
   return (
-    <div style={{ fontFamily: "'Sora', sans-serif", maxWidth: '430px', margin: '0 auto' }}>
+    <div style={{ fontFamily: "'Sora', sans-serif" }}>
       <style>{`
         @keyframes ihi-pulse {
-          0%, 100% { box-shadow:
-            0 0 0 1px rgba(${glowRgb},0.25),
-            0 0 20px rgba(${glowRgb},0.45),
-            0 0 50px rgba(${glowRgb},0.18); }
-          50%       { box-shadow:
-            0 0 0 2px rgba(${glowRgb},0.35),
-            0 0 28px rgba(${glowRgb},0.60),
-            0 0 64px rgba(${glowRgb},0.24); }
-        }
-        @keyframes ihi-orb {
-          0%, 100% { opacity: 0.7; transform: scale(1);   }
-          50%       { opacity: 1;   transform: scale(1.25); }
+          0%, 100% {
+            box-shadow:
+              0 0 0 1px rgba(${glowRgb},0.22),
+              0 0 18px rgba(${glowRgb},0.42),
+              0 0 44px rgba(${glowRgb},0.16);
+          }
+          50% {
+            box-shadow:
+              0 0 0 2px rgba(${glowRgb},0.30),
+              0 0 28px rgba(${glowRgb},0.58),
+              0 0 60px rgba(${glowRgb},0.22);
+          }
         }
         @keyframes ihi-label-in {
-          from { opacity: 0; transform: translateX(-5px); }
+          from { opacity: 0; transform: translateX(-4px); }
           to   { opacity: 1; transform: translateX(0);    }
         }
-        @keyframes ihi-card-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to   { opacity: 1; transform: translateY(0);    }
+        @keyframes ihi-info-in {
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: translateY(0);   }
+        }
+        @keyframes ihi-done-in {
+          from { opacity: 0; }
+          to   { opacity: 1; }
         }
       `}</style>
 
-      {/* Title */}
+      {/* ── Full-bleed image scene ──────────────────────────────────────────── */}
       <div style={{
-        fontSize: '40px', fontWeight: 700, lineHeight: 1,
-        letterSpacing: '-0.03em', color: text,
-        marginTop: '20px', marginBottom: '14px',
+        position: 'relative',
+        height: 'clamp(480px, 62vh, 760px)',
+        overflow: 'hidden',
+        // No border-radius, no border, no card — pure full-bleed
       }}>
-        {title}
-      </div>
 
-      {/* Intro paragraph */}
-      {introText && introText.split('\n\n').map((para, i) => (
-        <p key={i} style={{
-          fontSize: '18px', lineHeight: 1.7, fontWeight: 400,
-          color: muted, margin: '0 0 14px',
-        }}>
-          {para}
-        </p>
-      ))}
-
-      {/* Instruction row */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: '12px',
-        fontSize: '15px', color: instructionColor,
-        marginTop: '6px', marginBottom: '18px',
-      }}>
-        {/* Pulsing orb */}
-        <div style={{
-          flexShrink: 0, width: '10px', height: '10px', borderRadius: '50%',
-          background: `rgba(${glowRgb}, 0.85)`,
-          boxShadow: `0 0 6px rgba(${glowRgb},0.6), 0 0 14px rgba(${glowRgb},0.3)`,
-          animation: 'ihi-orb 2.4s ease-in-out infinite',
-        }} />
-        <span>
-          Tap each hotspot to explore.{' '}
-          <span style={{ color: muted }}>Visited hotspots stay illuminated.</span>
-        </span>
-      </div>
-
-      {/* ── Image container ── */}
-      <div style={{
-        position: 'relative', borderRadius: '28px', overflow: 'hidden',
-        aspectRatio: '4 / 5', background: '#111',
-      }}>
         {/* Photo */}
         <img
           src={image}
@@ -190,18 +142,29 @@ export default function InteractiveHotspotImage({
           style={{
             position: 'absolute', inset: 0,
             width: '100%', height: '100%',
-            objectFit: 'cover',
+            objectFit: 'cover', objectPosition: 'center',
             filter: 'brightness(0.88) contrast(1.05) saturate(1.02)',
           }}
         />
 
-        {/* Edge vignette */}
+        {/* Atmospheric edge vignette */}
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: `
-            radial-gradient(ellipse at center, transparent 42%, rgba(4,8,6,0.55) 100%),
-            linear-gradient(0deg, rgba(4,8,6,0.48) 0%, transparent 28%)
-          `,
+          background: 'radial-gradient(ellipse at 50% 38%, transparent 36%, rgba(0,0,0,0.46) 100%)',
+        }} />
+
+        {/* Bottom readability gradient for overlaid text */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.55) 22%, transparent 48%)',
+        }} />
+
+        {/* Bottom fade to page background — masks the image edge */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: '#080C1A',
+          WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 6%, rgba(0,0,0,0.2) 12%, rgba(0,0,0,0) 20%)',
+          maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 6%, rgba(0,0,0,0.2) 12%, rgba(0,0,0,0) 20%)',
         }} />
 
         {/* Hotspot dots */}
@@ -212,7 +175,7 @@ export default function InteractiveHotspotImage({
 
           return (
             <div key={h.id}>
-              {/* Dot */}
+              {/* Dot — no visible border, pure atmospheric glow */}
               <button
                 type="button"
                 aria-label={`Explore ${h.title}`}
@@ -222,30 +185,29 @@ export default function InteractiveHotspotImage({
                   position: 'absolute',
                   left: `${h.x}%`, top: `${h.y}%`,
                   transform: 'translate(-50%, -50%)',
-                  width: '32px', height: '32px',
+                  width: '24px', height: '24px',
                   borderRadius: '50%',
                   border: 'none', padding: 0, cursor: 'pointer',
                   background: isVisited
-                    ? `rgba(${glowRgb}, 0.22)`
-                    : 'rgba(255,255,255,0.07)',
+                    ? `rgba(${glowRgb}, 0.16)`
+                    : 'rgba(255,255,255,0.04)',
                   boxShadow: isSelected
-                    ? `0 0 0 1px rgba(${glowRgb},0.6), 0 0 22px rgba(${glowRgb},0.75), 0 0 54px rgba(${glowRgb},0.28)`
+                    ? `0 0 0 1px rgba(${glowRgb},0.55), 0 0 16px rgba(${glowRgb},0.75), 0 0 44px rgba(${glowRgb},0.32)`
                     : isVisited
-                      ? `0 0 0 1px rgba(${glowRgb},0.40), 0 0 18px rgba(${glowRgb},0.45), 0 0 40px rgba(${glowRgb},0.18)`
+                      ? `0 0 0 1px rgba(${glowRgb},0.32), 0 0 12px rgba(${glowRgb},0.46), 0 0 32px rgba(${glowRgb},0.18)`
                       : undefined,
                   animation: isVisited ? 'none' : 'ihi-pulse 2.8s ease-in-out infinite',
-                  transition: 'all 280ms cubic-bezier(0.22, 1, 0.36, 1)',
-                  zIndex: isSelected ? 3 : 2,
+                  transition: 'box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1)',
+                  zIndex: isSelected ? 5 : 4,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
               >
-                {/* Centre dot */}
                 <div style={{
-                  width: isSelected ? '10px' : isVisited ? '8px' : '6px',
-                  height: isSelected ? '10px' : isVisited ? '8px' : '6px',
+                  width: isSelected ? '9px' : isVisited ? '7px' : '5px',
+                  height: isSelected ? '9px' : isVisited ? '7px' : '5px',
                   borderRadius: '50%',
-                  background: isVisited ? glow : 'rgba(255,255,255,0.88)',
-                  boxShadow: isVisited ? `0 0 10px ${glow}` : 'none',
+                  background: isVisited ? glow : 'rgba(255,255,255,0.85)',
+                  boxShadow: isVisited ? `0 0 8px ${glow}` : 'none',
                   transition: 'all 280ms cubic-bezier(0.22, 1, 0.36, 1)',
                 }} />
               </button>
@@ -254,23 +216,21 @@ export default function InteractiveHotspotImage({
               {isSelected && (
                 <div style={{
                   position: 'absolute',
-                  top: `calc(${h.y}% - 14px)`,
+                  top: `calc(${h.y}% - 12px)`,
                   ...(labelOnLeft
-                    ? { right: `calc(${100 - h.x}% + 22px)` }
-                    : { left:  `calc(${h.x}% + 22px)` }
+                    ? { right: `calc(${100 - h.x}% + 18px)` }
+                    : { left:  `calc(${h.x}%  + 18px)` }
                   ),
                   background: labelBg,
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
+                  backdropFilter: 'blur(14px)',
+                  WebkitBackdropFilter: 'blur(14px)',
                   border: `1px solid rgba(${glowRgb},0.16)`,
                   borderRadius: '14px',
                   padding: '10px 14px',
                   fontSize: '16px', fontWeight: 500,
-                  color: text,
-                  whiteSpace: 'nowrap',
-                  pointerEvents: 'none',
-                  zIndex: 4,
-                  animation: 'ihi-label-in 260ms ease both',
+                  color: text, whiteSpace: 'nowrap',
+                  pointerEvents: 'none', zIndex: 6,
+                  animation: 'ihi-label-in 240ms ease both',
                 }}>
                   {h.shortLabel || h.title}
                 </div>
@@ -279,40 +239,96 @@ export default function InteractiveHotspotImage({
           )
         })}
 
-        {/* Completion badge */}
+        {/* Title + intro — overlaid at bottom of image */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          padding: '0 22px 28px',
+          zIndex: 3,
+        }}>
+          {/* Kicker / explore prompt */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            marginBottom: '10px',
+          }}>
+            <div style={{
+              width: '6px', height: '6px', borderRadius: '50%',
+              background: `rgba(${glowRgb}, 0.9)`,
+              boxShadow: `0 0 6px rgba(${glowRgb}, 0.6)`,
+              animation: 'ihi-pulse 2.4s ease-in-out infinite',
+              flexShrink: 0,
+            }} />
+            <span style={{
+              fontSize: '13px', letterSpacing: '0.14em', textTransform: 'uppercase',
+              color: `rgba(${glowRgb}, 0.75)`, fontWeight: 600,
+            }}>
+              Explore
+            </span>
+            <span style={{
+              fontSize: '13px', color: 'rgba(255,255,255,0.28)',
+              letterSpacing: '0.06em',
+            }}>
+              {visited.size} / {hotspots.length}
+            </span>
+          </div>
+
+          {/* Title */}
+          <div style={{
+            fontSize: '40px', fontWeight: 700, lineHeight: 1,
+            letterSpacing: '-0.03em', color: '#FFFFFF',
+            marginBottom: '10px',
+          }}>
+            {title}
+          </div>
+
+          {/* Short intro */}
+          {introText && (
+            <p style={{
+              fontSize: '16px', lineHeight: 1.65, fontWeight: 400,
+              color: 'rgba(255,255,255,0.72)', margin: 0,
+              maxWidth: '340px',
+            }}>
+              {introText}
+            </p>
+          )}
+        </div>
+
+        {/* All-explored badge — top right */}
         {allDone && (
           <div style={{
-            position: 'absolute', top: '14px', right: '14px',
-            background: `rgba(${glowRgb}, 0.10)`,
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            border: `1px solid rgba(${glowRgb}, 0.28)`,
+            position: 'absolute', top: '16px', right: '16px', zIndex: 6,
+            background: `rgba(${glowRgb}, 0.08)`,
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: `1px solid rgba(${glowRgb}, 0.22)`,
             borderRadius: '20px', padding: '8px 16px',
-            fontSize: '13px', fontWeight: 600,
-            letterSpacing: '0.06em', color: glow,
-            animation: 'ihi-label-in 400ms ease both',
+            fontSize: '13px', fontWeight: 600, letterSpacing: '0.05em',
+            color: glow,
+            animation: 'ihi-done-in 500ms ease both',
           }}>
             All explored ✓
           </div>
         )}
       </div>
 
-      {/* ── Info card ── */}
-      {selected ? (
+      {/* ── Info section — below image, no card ────────────────────────────── */}
+      {selected && (
         <div
           key={selected.id}
           style={{
-            background: cardBg,
-            borderRadius: '28px',
-            border: `1px solid ${border}`,
-            padding: '24px',
-            marginTop: '18px',
-            animation: 'ihi-card-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both',
+            padding: '20px 22px 32px',
+            animation: 'ihi-info-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both',
           }}
         >
+          {/* Thin accent rule */}
+          <div style={{
+            height: '1px',
+            background: `linear-gradient(to right, rgba(${glowRgb},0.28), transparent)`,
+            marginBottom: '20px',
+          }} />
+
           {/* Icon + title */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '14px' }}>
-            <div style={{ fontSize: '28px', lineHeight: 1, flexShrink: 0, marginTop: '3px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '12px' }}>
+            <div style={{ fontSize: '26px', lineHeight: 1, flexShrink: 0, marginTop: '4px' }}>
               {selected.icon}
             </div>
             <div style={{
@@ -325,24 +341,23 @@ export default function InteractiveHotspotImage({
 
           {/* Description */}
           <p style={{
-            fontSize: '15px', lineHeight: 1.7, fontWeight: 400,
+            fontSize: '15px', lineHeight: 1.75, fontWeight: 400,
             color: muted, margin: '0 0 16px',
           }}>
             {selected.description}
           </p>
 
-          {/* Extra fact box */}
+          {/* Why it matters */}
           {selected.extraFact && (
             <div style={{
-              background: factBg,
-              border: `1px solid ${factBorder}`,
-              borderRadius: '18px', padding: '18px',
-              marginBottom: '18px',
+              borderLeft: `2px solid ${factBorder}`,
+              paddingLeft: '14px',
+              marginBottom: '16px',
             }}>
               <div style={{
                 fontSize: '11px', fontWeight: 700,
                 letterSpacing: '0.14em', textTransform: 'uppercase',
-                color: glow, marginBottom: '8px',
+                color: glow, marginBottom: '6px',
               }}>
                 Why it matters:
               </div>
@@ -354,35 +369,6 @@ export default function InteractiveHotspotImage({
               </p>
             </div>
           )}
-
-          {/* Progress */}
-          <div style={{
-            fontSize: '13px', fontWeight: 600,
-            color: `rgba(${glowRgb}, 0.65)`,
-            letterSpacing: '0.06em',
-          }}>
-            {visited.size} / {hotspots.length} explored
-          </div>
-        </div>
-      ) : (
-        /* Default placeholder when nothing selected */
-        <div style={{
-          background: cardBg,
-          borderRadius: '28px',
-          border: `1px solid ${border}`,
-          padding: '22px 24px',
-          marginTop: '18px',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        }}>
-          <span style={{ fontSize: '14px', color: muted }}>
-            Tap a glowing point to explore.
-          </span>
-          <span style={{
-            fontSize: '13px', fontWeight: 600,
-            color: `rgba(${glowRgb}, 0.65)`, letterSpacing: '0.06em',
-          }}>
-            {visited.size} / {hotspots.length}
-          </span>
         </div>
       )}
     </div>

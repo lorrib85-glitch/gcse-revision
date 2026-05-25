@@ -2991,49 +2991,49 @@ Do NOT award marks for identifying practices without explaining the religious re
         // x/y positions are approximate — calibrate against the rendered image
         hotspots: [
           {
-            id: 'cell_wall', x: 14, y: 7,
+            id: 'cell_wall', x: 18, y: 7,
             shortLabel: 'Cell Wall', title: 'Cell Wall', icon: '🧱',
             description: 'Made of cellulose, the cell wall gives the plant cell a rigid, fixed shape. Animal cells do not have one. It provides structural support and prevents the cell from bursting.',
             extraFact: 'Without a cell wall, plant stems would collapse. This is why plants wilt when they lose water — the vacuole shrinks and the wall loses its rigid support.',
           },
           {
-            id: 'cell_membrane', x: 20, y: 14,
+            id: 'cell_membrane', x: 28, y: 11,
             shortLabel: 'Cell Membrane', title: 'Cell Membrane', icon: '🚪',
             description: 'A thin, flexible layer that controls what enters and leaves the cell. Found in all cells — plant and animal. It is selectively permeable, meaning it lets some substances through but not others.',
             extraFact: 'Glucose produced in the chloroplasts must pass through the cell membrane to reach other cells in the plant.',
           },
           {
-            id: 'cytoplasm', x: 32, y: 28,
+            id: 'cytoplasm', x: 35, y: 35,
             shortLabel: 'Cytoplasm', title: 'Cytoplasm', icon: '🌊',
             description: 'A jelly-like fluid that fills the cell and holds organelles in place. Most of the cell\'s chemical reactions take place here.',
             extraFact: 'Anaerobic respiration — the backup energy process that does not need oxygen — takes place entirely in the cytoplasm.',
           },
           {
-            id: 'nucleus', x: 72, y: 36,
+            id: 'nucleus', x: 72, y: 28,
             shortLabel: 'Nucleus', title: 'Nucleus', icon: '🧬',
             description: 'The control centre of the cell. Contains DNA — the instructions for everything the cell does, including making proteins and dividing.',
             extraFact: 'The nucleus directs the production of enzymes needed for photosynthesis. Without it, the chloroplasts could not function properly.',
           },
           {
-            id: 'chloroplast', x: 20, y: 64,
+            id: 'chloroplast', x: 22, y: 64,
             shortLabel: 'Chloroplast', title: 'Chloroplast', icon: '☀️',
             description: 'Contains chlorophyll, a green pigment that absorbs light energy. Plant cells use this energy to carry out photosynthesis and produce glucose. Only found in cells exposed to light.',
             extraFact: 'Photosynthesis allows plants to make their own food using sunlight, water and CO₂ — releasing oxygen as a by-product.',
           },
           {
-            id: 'vacuole', x: 32, y: 54,
+            id: 'vacuole', x: 32, y: 55,
             shortLabel: 'Permanent Vacuole', title: 'Large Permanent Vacuole', icon: '💧',
             description: 'A large, water-filled sac that keeps the cell firm (turgid). If the vacuole shrinks due to lack of water, the cell becomes flaccid and the plant wilts.',
             extraFact: 'The pressure of the full vacuole pushing against the cell wall creates turgor pressure, which gives plants their upright structure.',
           },
           {
-            id: 'mitochondria', x: 60, y: 18,
+            id: 'mitochondria', x: 62, y: 18,
             shortLabel: 'Mitochondria', title: 'Mitochondria', icon: '⚡',
             description: 'The site of aerobic respiration. Mitochondria release energy from glucose so the cell can do work — growing, moving, dividing, making proteins.',
             extraFact: 'Even though plant cells make glucose in chloroplasts, they still need mitochondria to convert that glucose into usable energy (ATP).',
           },
           {
-            id: 'ribosomes', x: 44, y: 44,
+            id: 'ribosomes', x: 54, y: 42,
             shortLabel: 'Ribosomes', title: 'Ribosomes', icon: '🔬',
             description: 'The site of protein synthesis. Ribosomes read instructions from DNA and assemble amino acids into proteins. Only visible under an electron microscope.',
             extraFact: 'All enzymes are proteins built by ribosomes. Every chemical reaction in the cell ultimately depends on them.',
