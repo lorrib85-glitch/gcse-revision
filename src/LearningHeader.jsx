@@ -1,13 +1,13 @@
 import { useState } from 'react'
 
 const PALETTES = {
-  history:   { accent: '#C89B6D', glow: 'rgba(200,155,109,0.35)' },
-  biology:   { accent: '#8FD6A3', glow: 'rgba(143,214,163,0.32)' },
-  chemistry: { accent: '#8B5CF6', glow: 'rgba(139,92,246,0.34)'  },
-  physics:   { accent: '#5DA9E9', glow: 'rgba(93,169,233,0.35)'  },
-  maths:     { accent: '#2BBE9A', glow: 'rgba(43,190,154,0.35)'  },
-  english:   { accent: '#9E3D52', glow: 'rgba(158,61,82,0.35)'   },
-  sociology: { accent: '#C9B07C', glow: 'rgba(201,176,124,0.32)' },
+  history:   { accent: '#C89B6D' },
+  biology:   { accent: '#8FD6A3' },
+  chemistry: { accent: '#8B5CF6' },
+  physics:   { accent: '#5DA9E9' },
+  maths:     { accent: '#2BBE9A' },
+  english:   { accent: '#9E3D52' },
+  sociology: { accent: '#C9B07C' },
 }
 
 function hexToRgb(hex) {
@@ -40,16 +40,17 @@ export default function LearningHeader({
   module,
   beats = [],
   currentBeatIndex = 0,
+  onBack,
   onExit,
   onJump,
   visible = true,
 }) {
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [backPressed, setBackPressed] = useState(false)
   const [exitPressed, setExitPressed] = useState(false)
 
   const subject = (module?.subject || '').toLowerCase()
-  const pal = PALETTES[subject] || PALETTES.history
-  const { accent } = pal
+  const { accent } = PALETTES[subject] || PALETTES.history
   const accentRgb = hexToRgb(accent)
 
   function handleJump(beat, i) {
@@ -76,8 +77,9 @@ export default function LearningHeader({
         WebkitBackdropFilter: 'blur(20px)',
         border: '1px solid rgba(255,255,255,0.05)',
         borderRadius: 22,
-        padding: '10px 14px 12px',
+        padding: '6px 4px',
         zIndex: 1001,
+        display: 'flex', alignItems: 'center', gap: 2,
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(-10px)',
         transition: visible
@@ -86,73 +88,43 @@ export default function LearningHeader({
         pointerEvents: visible ? 'auto' : 'none',
       }}>
 
-        {/* ── Row 1: module text + exit button ── */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 9 }}>
+        {/* ← Back */}
+        <button
+          aria-label="Go back"
+          onPointerDown={() => setBackPressed(true)}
+          onPointerUp={() => { setBackPressed(false); onBack?.() }}
+          onPointerLeave={() => setBackPressed(false)}
+          style={{
+            flexShrink: 0,
+            width: 44, height: 40,
+            background: 'none', border: 'none', padding: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer',
+            opacity: backPressed ? 0.9 : 0.6,
+            transform: backPressed ? 'scale(0.94)' : 'scale(1)',
+            transition: 'opacity 140ms ease, transform 140ms ease',
+          }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="rgba(255,255,255,1)" strokeWidth="2"
+            strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
 
-          {/* Text stack */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: 11, fontWeight: 600,
-              letterSpacing: '0.16em', textTransform: 'uppercase',
-              color: accent, lineHeight: 1,
-              marginBottom: 3,
-              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-            }}>
-              {(module?.subject || '').toUpperCase()}{module?.number != null ? ` · MODULE ${module.number}` : ''}
-            </div>
-            <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: 17, fontWeight: 800,
-              color: '#F5F7FF', lineHeight: 1.1,
-              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-            }}>
-              {module?.title}
-            </div>
-          </div>
-
-          {/* Exit button — subtle, top-right */}
-          <button
-            aria-label="Exit chapter"
-            onPointerDown={() => setExitPressed(true)}
-            onPointerUp={() => { setExitPressed(false); onExit?.() }}
-            onPointerLeave={() => setExitPressed(false)}
-            style={{
-              flexShrink: 0,
-              width: 36, height: 36,
-              background: 'none', border: 'none', padding: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-              marginRight: -4,
-              opacity: exitPressed ? 0.6 : 0.25,
-              transform: exitPressed ? 'scale(0.90)' : 'scale(1)',
-              transition: 'opacity 140ms ease, transform 140ms ease',
-            }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="rgba(255,255,255,1)" strokeWidth="2"
-              strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-        </div>
-
-        {/* ── Row 2: wide segmented progress rail ── */}
+        {/* ── Progress rail — tappable ── */}
         <button
           aria-label="Jump to section"
           onClick={() => setSheetOpen(true)}
           style={{
-            display: 'flex', width: '100%', gap: 5,
+            flex: 1, minWidth: 0,
+            display: 'flex', gap: 5, alignItems: 'center',
             background: 'none', border: 'none', cursor: 'pointer',
-            padding: '6px 0 2px',
-            alignItems: 'center',
+            padding: '14px 0',
           }}>
           {beats.map((_, i) => {
             const done    = i < currentBeatIndex
             const current = i === currentBeatIndex
-            const base = {
-              flex: 1, height: 4, borderRadius: 999, minWidth: 0,
-            }
+            const base = { flex: 1, height: 4, borderRadius: 999, minWidth: 0 }
             if (done) return (
               <div key={i} style={{
                 ...base,
@@ -175,6 +147,30 @@ export default function LearningHeader({
               }} />
             )
           })}
+        </button>
+
+        {/* × Exit */}
+        <button
+          aria-label="Exit chapter"
+          onPointerDown={() => setExitPressed(true)}
+          onPointerUp={() => { setExitPressed(false); onExit?.() }}
+          onPointerLeave={() => setExitPressed(false)}
+          style={{
+            flexShrink: 0,
+            width: 44, height: 40,
+            background: 'none', border: 'none', padding: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer',
+            opacity: exitPressed ? 0.6 : 0.22,
+            transform: exitPressed ? 'scale(0.90)' : 'scale(1)',
+            transition: 'opacity 140ms ease, transform 140ms ease',
+          }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="rgba(255,255,255,1)" strokeWidth="2"
+            strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
         </button>
 
       </div>

@@ -2050,6 +2050,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
             module={module}
             beats={beats}
             currentBeatIndex={0}
+            onBack={headerOnBack}
             onExit={onBack}
             onJump={handleBeatJump}
             visible={true}
@@ -2167,6 +2168,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           module={module}
           beats={beats}
           currentBeatIndex={currentBeatIndex}
+          onBack={headerOnBack}
           onExit={onBack}
           onJump={handleBeatJump}
           visible={cinematicHeaderVisible}
@@ -2177,7 +2179,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           fallbackImage={cur.fallbackImage}
           year={cur.year}
           paragraphs={cur.paragraphs}
-          onExit={onBack}
           onContinue={() => isLast ? handleFinish() : go(1)}
           onTextRevealStart={() => setCinematicHeaderVisible(true)}
         />
@@ -2193,6 +2194,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         module={module}
         beats={beats}
         currentBeatIndex={currentBeatIndex}
+        onBack={headerOnBack}
         onExit={onBack}
         onJump={handleBeatJump}
         visible={headerVisible}
