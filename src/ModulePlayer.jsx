@@ -4,6 +4,7 @@ import ChapterHookScreen from './ChapterHookScreen.jsx'
 import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 import QuickRecallScreen from './QuickRecallScreen.jsx'
 import CinematicRevealMoment from './CinematicRevealMoment.jsx'
+import LearningHeader from './LearningHeader.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1864,10 +1865,14 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const pct     = Math.round(((screen + 1) / total) * 100)
   const isLast  = screen === total - 1
   const [animKey, setAnimKey] = useState(0)
+  const [cinematicHeaderVisible, setCinematicHeaderVisible] = useState(false)
 
   useEffect(() => {
     saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone })
   }, [screen, module.id, hookDone, wylDone, recallDone, introDone])
+
+  // Reset cinematic header visibility whenever we navigate to a different screen
+  useEffect(() => { setCinematicHeaderVisible(false) }, [screen])
 
   function go(delta) {
     const next = Math.max(0, Math.min(total - 1, screen + delta))
@@ -1925,6 +1930,47 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
 
   const cur = module.screens[screen]
   const subjectColor = module.color || '#9D5CFF'
+
+  // ── Learning header beats ──────────────────────────────────────────────────
+  const beats = [
+    ...(module.recall ? [{ id: 'recall', label: 'Recall Starter', _navTo: 'recall', _screenIndex: null }] : []),
+    ...module.screens.map((s, i) => ({ id: `screen-${i}`, label: s.label, _navTo: null, _screenIndex: i })),
+  ]
+  const recallBeatOffset = module.recall ? 1 : 0
+  const currentBeatIndex = (navTo === 'recall')
+    ? 0
+    : (hookDone && wylDone && recallDone && (!module.intro || introDone))
+      ? recallBeatOffset + screen
+      : recallBeatOffset + screen
+
+  const headerVisible =
+    !showConfidence &&
+    hookDone && wylDone &&
+    (cur?.type === 'cinematic' ? cinematicHeaderVisible : true)
+
+  function headerOnBack() {
+    if (navTo === 'recall') {
+      if (module.outcomes) { setNavTo('wyl'); return }
+      if (module.hook?.statement) { setNavTo('hook'); return }
+      onBack(); return
+    }
+    if (screen === 0) onBack()
+    else go(-1)
+  }
+
+  function handleBeatJump(beat) {
+    if (beat._navTo === 'recall') {
+      setNavTo('recall')
+      scrollToTop()
+      return
+    }
+    setHookDone(true); setWylDone(true); setRecallDone(true); setIntroDone(true)
+    setNavTo(null)
+    setScreen(beat._screenIndex)
+    setAnimKey(k => k + 1)
+    scrollToTop()
+  }
+  // ──────────────────────────────────────────────────────────────────────────
 
   // ── Confidence overlay — neutral, no colour judgement ──────────────────
   const CONFIDENCE_LEVELS = [
@@ -1999,6 +2045,16 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           else onBack()
         }}
         onContinue={() => { setRecallDone(true); setNavTo(null); scrollToTop() }}
+        renderHeader={() => (
+          <LearningHeader
+            module={module}
+            beats={beats}
+            currentBeatIndex={0}
+            onBack={headerOnBack}
+            onJump={handleBeatJump}
+            visible={true}
+          />
+        )}
       />
     )
   }
@@ -2106,207 +2162,44 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   // ── Full-screen cinematic screen — takes over for type:'cinematic' screens ──
   if (cur?.type === 'cinematic') {
     return (
-      <CinematicRevealMoment
-        subject={module.subject}
-        videoSrc={cur.videoSrc}
-        fallbackImage={cur.fallbackImage}
-        year={cur.year}
-        paragraphs={cur.paragraphs}
-        onBack={() => screen === 0 ? onBack() : go(-1)}
-        onContinue={() => isLast ? handleFinish() : go(1)}
-      />
+      <>
+        <LearningHeader
+          module={module}
+          beats={beats}
+          currentBeatIndex={currentBeatIndex}
+          onBack={headerOnBack}
+          onJump={handleBeatJump}
+          visible={cinematicHeaderVisible}
+        />
+        <CinematicRevealMoment
+          subject={module.subject}
+          videoSrc={cur.videoSrc}
+          fallbackImage={cur.fallbackImage}
+          year={cur.year}
+          paragraphs={cur.paragraphs}
+          onBack={headerOnBack}
+          onContinue={() => isLast ? handleFinish() : go(1)}
+          onTextRevealStart={() => setCinematicHeaderVisible(true)}
+        />
+      </>
     )
   }
 
   return (
     <div style={{ background: '#080C1A', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
-      {/* ── Sticky top header ── */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 20,
-        background: 'rgba(8,12,26,.96)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid #1E2A40',
-        padding: '12px 16px 0',
-      }}>
-        {/* Row 1: subject label + counter + exit */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-          {/* Module icon */}
-          <div style={{
-            width: 28, height: 28, borderRadius: 8, flexShrink: 0,
-            background: `${subjectColor}22`,
-            border: `1px solid ${subjectColor}44`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '.9rem',
-          }}>{module.icon}</div>
-
-          {/* Subject + title — truncated cleanly */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.65rem', fontWeight: 700,
-              letterSpacing: '.1em', textTransform: 'uppercase',
-              color: subjectColor, marginBottom: 1,
-            }}>{module.subject} · Module {module.number}</div>
-            <div style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '.88rem', color: '#E0E6F0',
-              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-            }}>{module.title}</div>
-          </div>
-
-          {/* Counter */}
-          <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: '.78rem', fontWeight: 700,
-            color: '#4A5578', flexShrink: 0,
-          }}>{screen + 1}<span style={{ color: '#2A3552' }}>/{total}</span></div>
-
-          {/* Exit button */}
-          <button onClick={onBack} style={{
-            background: 'rgba(255,255,255,.05)',
-            border: '1px solid #2A3552',
-            borderRadius: 8, padding: '5px 10px',
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.72rem', fontWeight: 600,
-            color: '#4A5578', cursor: 'pointer',
-            flexShrink: 0, letterSpacing: '.02em',
-          }}>✕ exit</button>
-        </div>
-
-        {/* Progress bar */}
-        <div style={{
-          height: 3, background: '#1E2A40', borderRadius: 99,
-          overflow: 'hidden', marginBottom: 10,
-        }}>
-          <div style={{
-            height: '100%',
-            width: `${pct}%`,
-            background: `linear-gradient(90deg, ${subjectColor}aa, ${subjectColor})`,
-            borderRadius: 99,
-            boxShadow: `0 0 8px ${subjectColor}66`,
-            transition: 'width .5s ease',
-          }} />
-        </div>
-
-        {/* Section chips — scrollable, dark-themed */}
-        <div style={{
-          display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 10,
-          scrollbarWidth: 'none', msOverflowStyle: 'none',
-        }}>
-
-          {/* True or False pill — always present when hook exists */}
-          {module.hook?.statement && (() => {
-            const isDone = hookDone
-            return (
-              <button
-                key="hook-pill"
-                onClick={() => setNavTo('hook')}
-                style={{
-                  flexShrink: 0,
-                  background: isDone ? 'rgba(77,255,136,.1)' : subjectColor,
-                  border: `1px solid ${isDone ? 'rgba(77,255,136,.3)' : subjectColor}`,
-                  borderRadius: 99, padding: '5px 12px',
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.7rem', fontWeight: 600,
-                  color: isDone ? '#4DFF88' : '#fff',
-                  cursor: 'pointer', whiteSpace: 'nowrap', letterSpacing: '.01em',
-                  boxShadow: isDone ? 'none' : `0 0 10px ${subjectColor}55`,
-                  transition: 'all .2s',
-                }}>
-                {isDone ? '✓ True or False' : 'True or False'}
-              </button>
-            )
-          })()}
-
-          {/* What You'll Learn pill — always present */}
-          {(() => {
-            const isActive = navTo === 'wyl'
-            const isDone   = wylDone && navTo !== 'wyl'
-            return (
-              <button
-                key="wyl-pill"
-                onClick={() => setNavTo('wyl')}
-                style={{
-                  flexShrink: 0,
-                  background: isActive ? subjectColor : isDone ? 'rgba(77,255,136,.1)' : '#10182B',
-                  border: `1px solid ${isActive ? subjectColor : isDone ? 'rgba(77,255,136,.3)' : '#2A3552'}`,
-                  borderRadius: 99, padding: '5px 12px',
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.7rem', fontWeight: 600,
-                  color: isActive ? '#fff' : isDone ? '#4DFF88' : '#4A5578',
-                  cursor: 'pointer', whiteSpace: 'nowrap', letterSpacing: '.01em',
-                  boxShadow: isActive ? `0 0 10px ${subjectColor}55` : 'none',
-                  transition: 'all .2s',
-                }}>
-                {isDone ? '✓ Outcomes' : 'Outcomes'}
-              </button>
-            )
-          })()}
-
-          {/* Quick Recall pill — only shown when module has recall data */}
-          {module.recall && (() => {
-            const isActive = navTo === 'recall'
-            const isDone   = recallDone && navTo !== 'recall'
-            return (
-              <button
-                key="recall-pill"
-                onClick={() => setNavTo('recall')}
-                style={{
-                  flexShrink: 0,
-                  background: isActive ? subjectColor : isDone ? 'rgba(77,255,136,.1)' : '#10182B',
-                  border: `1px solid ${isActive ? subjectColor : isDone ? 'rgba(77,255,136,.3)' : '#2A3552'}`,
-                  borderRadius: 99, padding: '5px 12px',
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.7rem', fontWeight: 600,
-                  color: isActive ? '#fff' : isDone ? '#4DFF88' : '#4A5578',
-                  cursor: 'pointer', whiteSpace: 'nowrap', letterSpacing: '.01em',
-                  boxShadow: isActive ? `0 0 10px ${subjectColor}55` : 'none',
-                  transition: 'all .2s',
-                }}>
-                {isDone ? '✓ Quick Recall' : 'Quick Recall'}
-              </button>
-            )
-          })()}
-
-          {/* Content screen chips */}
-          {module.screens.map((s, i) => {
-            const isActive = navTo === null && i === screen && hookDone && wylDone && recallDone && (!module.intro || introDone)
-            const isDone   = navTo === null && hookDone && wylDone && recallDone && (!module.intro || introDone) && i < screen
-            return (
-              <button key={i}
-                onClick={() => {
-                  setHookDone(true)
-                  setWylDone(true)
-                  setRecallDone(true)
-                  setIntroDone(true)
-                  setNavTo(null)
-                  setScreen(i)
-                  setAnimKey(k => k + 1)
-                  scrollToTop()
-                }}
-                style={{
-                  flexShrink: 0,
-                  background: isActive ? subjectColor : isDone ? 'rgba(77,255,136,.1)' : '#10182B',
-                  border: `1px solid ${isActive ? subjectColor : isDone ? 'rgba(77,255,136,.3)' : '#2A3552'}`,
-                  borderRadius: 99, padding: '5px 12px',
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.7rem', fontWeight: 600,
-                  color: isActive ? '#fff' : isDone ? '#4DFF88' : '#4A5578',
-                  cursor: 'pointer', whiteSpace: 'nowrap', letterSpacing: '.01em',
-                  boxShadow: isActive ? `0 0 10px ${subjectColor}55` : 'none',
-                  transition: 'all .2s',
-                }}>
-                {isDone ? '✓ ' : ''}{s.label}
-              </button>
-            )
-          })}
-        </div>
-      </div>
+      {/* ── Universal floating learning header ── */}
+      <LearningHeader
+        module={module}
+        beats={beats}
+        currentBeatIndex={currentBeatIndex}
+        onBack={headerOnBack}
+        onJump={handleBeatJump}
+        visible={headerVisible}
+      />
 
       {/* ── Screen content — hook, intro, or normal screen ── */}
-      <div id="module-scroll-container" style={{ flex: 1, padding: '20px 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
+      <div id="module-scroll-container" style={{ flex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 112px) 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
         {(!hookDone && module.hook && !module.hook.statement)
           ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
           : !introDone && module.intro

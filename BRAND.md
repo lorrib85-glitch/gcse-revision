@@ -546,7 +546,7 @@ No other section order is acceptable. Do not reorder for aesthetics.
 | English | Plum | `#B66DFF` | Rich, literary |
 | History | Bronze | `#C89B6D` | Earthy, archival |
 | Biology | Sage | `#4F8A5B` | Natural, organic |
-| Chemistry | Purple | `#9B59E8` | Scientific depth |
+| Chemistry | Purple | `#8B5CF6` | Scientific depth — full palette: deep `#1A1026`, surface `#241537`, accent `#8B5CF6`, secondary `#B794F4`, glow `rgba(139,92,246,0.34)`, softGlow `rgba(183,148,244,0.18)`, text `#F4F0FF`, mutedText `rgba(244,240,255,0.72)` |
 | Physics | Blue | `#3B82F6` | Space, precision |
 | Sociology | Pink-red | `#FF5C7A` | Social, bold |
 | Drama | Crimson | `#8E2638` | Theatre, emotion |

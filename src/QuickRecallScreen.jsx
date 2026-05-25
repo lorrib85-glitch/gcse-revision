@@ -46,28 +46,6 @@ function Icon({ name, size = 22, color = 'currentColor' }) {
   }
 }
 
-function BackBtn({ onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      aria-label="Go back"
-      style={{
-        position: 'absolute', top: 22, left: 18, zIndex: 10,
-        width: 46, height: 46, borderRadius: 999,
-        background: 'rgba(255,255,255,0.05)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        cursor: 'pointer', transition: 'background 140ms ease',
-      }}>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="rgba(255,255,255,0.78)" strokeWidth="1.8"
-        strokeLinecap="round" strokeLinejoin="round">
-        <path d="M19 12H5M12 5l-7 7 7 7"/>
-      </svg>
-    </button>
-  )
-}
 
 function ProgressDots({ total, current, done, accent, rgb }) {
   return (
@@ -318,6 +296,7 @@ export default function QuickRecallScreen({
   questions    = [],
   onBack,
   onContinue,
+  renderHeader,
 }) {
   const img     = IMAGES[subject]   || IMAGES.History
   const palette = PALETTES[subject] || PALETTES.History
@@ -417,10 +396,8 @@ export default function QuickRecallScreen({
           pointerEvents: 'none', zIndex: 4,
         }} />
 
-        {/* Back button */}
-        <div style={{ position: 'relative', zIndex: 10 }}>
-          <BackBtn onClick={onBack} />
-        </div>
+        {/* Universal learning header (rendered by parent via renderHeader prop) */}
+        {renderHeader?.()}
 
         {/* Progress dots */}
         <ProgressDots

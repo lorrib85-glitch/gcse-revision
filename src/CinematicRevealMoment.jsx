@@ -64,6 +64,7 @@ export default function CinematicRevealMoment({
   paragraphs   = [],
   onBack,
   onContinue,
+  onTextRevealStart,
 }) {
   const key   = (subject || 'history').toLowerCase()
   const pal   = PALETTES[key] || PALETTES.history
@@ -90,7 +91,8 @@ export default function CinematicRevealMoment({
     setVideoEnded(true)
 
     // Year: 300ms after still, duration 900ms
-    schedule(() => setYearVisible(true), 300)
+    // Also signal parent that text has started revealing (so header can fade in)
+    schedule(() => { setYearVisible(true); onTextRevealStart?.() }, 300)
 
     // Each para: 900ms after the previous one STARTS
     // Para 0 starts at 300+900=1200ms
@@ -185,28 +187,6 @@ export default function CinematicRevealMoment({
           opacity: videoEnded ? 1 : 0,
           transition: 'opacity 900ms ease',
         }} />
-
-        {/* Back button */}
-        <button
-          onClick={onBack}
-          aria-label="Go back"
-          style={{
-            position: 'absolute',
-            top: 'calc(28px + env(safe-area-inset-top, 0px))',
-            left: 24, zIndex: 10,
-            width: 56, height: 56, borderRadius: 999,
-            background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(200,155,109,0.35)',
-            backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer',
-          }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="rgba(255,255,255,0.85)" strokeWidth="1.75"
-            strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
-        </button>
 
         {/* Text content — anchored to lower portion of screen */}
         <div style={{
