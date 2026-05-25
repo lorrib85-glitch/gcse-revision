@@ -40,12 +40,12 @@ export default function LearningHeader({
   module,
   beats = [],
   currentBeatIndex = 0,
-  onBack,
+  onExit,
   onJump,
   visible = true,
 }) {
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [backPressed, setBackPressed] = useState(false)
+  const [exitPressed, setExitPressed] = useState(false)
 
   const subject = (module?.subject || '').toLowerCase()
   const pal = PALETTES[subject] || PALETTES.history
@@ -86,32 +86,8 @@ export default function LearningHeader({
         pointerEvents: visible ? 'auto' : 'none',
       }}>
 
-        {/* ── Row 1: back arrow + module text ── */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginBottom: 9 }}>
-
-          {/* Back button — bare arrow, 48×48 tap target */}
-          <button
-            aria-label="Go back"
-            onPointerDown={() => setBackPressed(true)}
-            onPointerUp={() => { setBackPressed(false); onBack?.() }}
-            onPointerLeave={() => setBackPressed(false)}
-            style={{
-              flexShrink: 0,
-              width: 48, height: 48,
-              background: 'none', border: 'none', padding: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-              marginLeft: -6,
-              opacity: backPressed ? 1 : 0.72,
-              transform: backPressed ? 'scale(0.96)' : 'scale(1)',
-              transition: 'opacity 140ms ease, transform 140ms ease',
-            }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-              stroke="rgba(255,255,255,1)" strokeWidth="1.75"
-              strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
+        {/* ── Row 1: module text + exit button ── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 9 }}>
 
           {/* Text stack */}
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -134,6 +110,31 @@ export default function LearningHeader({
               {module?.title}
             </div>
           </div>
+
+          {/* Exit button — subtle, top-right */}
+          <button
+            aria-label="Exit chapter"
+            onPointerDown={() => setExitPressed(true)}
+            onPointerUp={() => { setExitPressed(false); onExit?.() }}
+            onPointerLeave={() => setExitPressed(false)}
+            style={{
+              flexShrink: 0,
+              width: 36, height: 36,
+              background: 'none', border: 'none', padding: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+              marginRight: -4,
+              opacity: exitPressed ? 0.6 : 0.25,
+              transform: exitPressed ? 'scale(0.90)' : 'scale(1)',
+              transition: 'opacity 140ms ease, transform 140ms ease',
+            }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="rgba(255,255,255,1)" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
         </div>
 
         {/* ── Row 2: wide segmented progress rail ── */}

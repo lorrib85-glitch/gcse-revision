@@ -2050,7 +2050,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
             module={module}
             beats={beats}
             currentBeatIndex={0}
-            onBack={headerOnBack}
+            onExit={onBack}
             onJump={handleBeatJump}
             visible={true}
           />
@@ -2167,7 +2167,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           module={module}
           beats={beats}
           currentBeatIndex={currentBeatIndex}
-          onBack={headerOnBack}
+          onExit={onBack}
           onJump={handleBeatJump}
           visible={cinematicHeaderVisible}
         />
@@ -2177,7 +2177,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           fallbackImage={cur.fallbackImage}
           year={cur.year}
           paragraphs={cur.paragraphs}
-          onBack={headerOnBack}
+          onExit={onBack}
           onContinue={() => isLast ? handleFinish() : go(1)}
           onTextRevealStart={() => setCinematicHeaderVisible(true)}
         />
@@ -2193,7 +2193,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         module={module}
         beats={beats}
         currentBeatIndex={currentBeatIndex}
-        onBack={headerOnBack}
+        onExit={onBack}
         onJump={handleBeatJump}
         visible={headerVisible}
       />
@@ -2212,7 +2212,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         }
       </div>
 
-      {/* ── Bottom navigation ── */}
+      {/* ── Bottom navigation — Next only ── */}
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 20,
         background: 'rgba(8,12,26,.97)',
@@ -2222,47 +2222,18 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         padding: '10px 16px calc(10px + env(safe-area-inset-bottom))',
         boxShadow: '0 -8px 32px rgba(0,0,0,.4)',
       }}>
-        <div style={{
-          maxWidth: 660, margin: '0 auto',
-          display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, alignItems: 'center',
-        }}>
-          {/* Back — hidden during hook/intro */}
-          <button
-            onClick={() => go(-1)}
-            disabled={screen === 0 || !!navTo || !hookDone || !wylDone || !recallDone || !introDone}
-            style={{
-              background: '#10182B',
-              border: '1px solid #2A3552',
-              borderRadius: 14, padding: '13px 10px',
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '.9rem',
-              color: (!!navTo || !hookDone || !wylDone || !recallDone || !introDone || screen === 0) ? '#2A3552' : '#9CA8C7',
-              cursor: (!!navTo || !hookDone || !wylDone || !recallDone || !introDone || screen === 0) ? 'default' : 'pointer',
-              transition: 'all .15s',
-            }}>← Back</button>
-
-          {/* Save + Exit */}
-          <button onClick={onBack} style={{
-            background: '#10182B',
-            border: '1px solid #2A3552',
-            borderRadius: 14, padding: '13px 10px',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700, fontSize: '.82rem',
-            color: '#5A6480', cursor: 'pointer',
-            lineHeight: 1.3, textAlign: 'center',
-          }}>Save +{'\n'}Exit</button>
-
-          {/* Next / Finish — dynamic based on hook/intro phase */}
+        <div style={{ maxWidth: 660, margin: '0 auto' }}>
           {showNextBtn ? (
             <button onClick={handleNext} style={{
+              width: '100%',
               background: isFinishBtn
                 ? 'linear-gradient(135deg, #1A4D2E, #38D27A)'
                 : `linear-gradient(135deg, ${subjectColor}cc, ${subjectColor})`,
               border: 'none',
-              borderRadius: 14, padding: '13px 10px',
+              borderRadius: 14, padding: '15px 10px',
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 700, fontSize: '.9rem',
-              color: isFinishBtn ? '#fff' : '#fff',
+              color: '#fff',
               cursor: 'pointer',
               boxShadow: isFinishBtn
                 ? '0 4px 16px rgba(56,210,122,.35)'
@@ -2270,7 +2241,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
               transition: 'all .15s',
             }}>{nextBtnLabel}</button>
           ) : (
-            <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 14, padding: '13px 10px' }} />
+            <div style={{ height: 50 }} />
           )}
         </div>
       </div>
