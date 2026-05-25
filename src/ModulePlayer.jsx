@@ -2251,7 +2251,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
             ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
             : cur?.type === 'interactiveImage'
               ? (
-                <div key={animKey} className="anim-pop">
+                <div key={animKey} className="anim-pop" style={{ margin: '0 -18px' }}>
                   <InteractiveHotspotImage
                     subject={module.subject}
                     title={cur.title}
@@ -2259,6 +2259,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
                     image={cur.image}
                     imageAlt={cur.imageAlt || cur.title}
                     hotspots={cur.hotspots || []}
+                    ctaLabel={cur.ctaLabel}
+                    onContinue={isLast ? handleFinish : () => go(1)}
                   />
                 </div>
               )
