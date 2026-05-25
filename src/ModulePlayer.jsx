@@ -3,6 +3,7 @@ import { recordActivity, recordScore } from './progress.js'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
 import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 import QuickRecallScreen from './QuickRecallScreen.jsx'
+import CinematicRevealMoment from './CinematicRevealMoment.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -2099,6 +2100,21 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           </p>
         </div>
       </div>
+    )
+  }
+
+  // ── Full-screen cinematic screen — takes over for type:'cinematic' screens ──
+  if (cur?.type === 'cinematic') {
+    return (
+      <CinematicRevealMoment
+        subject={module.subject}
+        videoSrc={cur.videoSrc}
+        fallbackImage={cur.fallbackImage}
+        year={cur.year}
+        paragraphs={cur.paragraphs}
+        onBack={() => screen === 0 ? onBack() : go(-1)}
+        onContinue={() => isLast ? handleFinish() : go(1)}
+      />
     )
   }
 

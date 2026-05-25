@@ -167,19 +167,23 @@ export const MODULES = [
       },
       {
         label: 'Black Death',
-        kicker: '1348',
-        heading: 'The Black Death',
-        sub: 'Roughly 1 in 3 people in England died. And nobody knew why.',
-        blocks: [
-          { type: 'read', label: '☠️ What Happened', text: 'The Black Death (bubonic plague) arrived in England in <strong>1348</strong> and killed roughly <strong>one third</strong> of the population by 1349. It returned in waves throughout the century. People blamed miasma, God\'s punishment and planetary alignment — none were correct.' },
-          { type: 'examtip', label: '🗡️ Exam Key Point', text: 'The actual cause was <strong>Yersinia pestis</strong> bacteria, spread by fleas on black rats. Nobody knew this — germ theory was 500+ years away.' },
-          { type: 'quiz', question: 'What did people NOT blame the Black Death on?', options: [
-            { text: 'Bacteria spread by fleas on rats', correct: true },
-            { text: 'Bad air (miasma)', correct: false },
-            { text: "God's punishment", correct: false },
-            { text: 'Planetary alignment', correct: false },
-          ], explanation: 'Germ theory wasn\'t developed until the 1860s. Nobody in 1348 had any concept of bacteria, fleas, or rats spreading disease.' },
-        ]
+        type: 'cinematic',
+        videoSrc: '/videos/black-death-reveal.mp4',
+        year: '1348.',
+        paragraphs: [
+          {
+            text: 'The Black Death tore through England, wiping out a third of the population.',
+            highlights: ['a third'],
+          },
+          {
+            text: 'Entire families vanished within days.',
+            highlights: ['vanished'],
+          },
+          {
+            text: 'Victims were left covered in swollen black buboes while terrified townspeople prayed, carried herbs, or simply waited to die.',
+            highlights: ['swollen black buboes', 'prayed'],
+          },
+        ],
       },
       {
         label: 'Flashcards',
