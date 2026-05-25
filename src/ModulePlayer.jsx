@@ -6,6 +6,7 @@ import QuickRecallScreen from './QuickRecallScreen.jsx'
 import CinematicRevealMoment from './CinematicRevealMoment.jsx'
 import LearningHeader from './LearningHeader.jsx'
 import FaceTheExaminer from './FaceTheExaminer.jsx'
+import InteractiveHotspotImage from './InteractiveHotspotImage.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -2248,11 +2249,24 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
           : !introDone && module.intro
             ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
-            : (
-              <div key={animKey} className="anim-pop">
-                <Screen screen={cur} subject={module.subject} />
-              </div>
-            )
+            : cur?.type === 'interactiveImage'
+              ? (
+                <div key={animKey} className="anim-pop">
+                  <InteractiveHotspotImage
+                    subject={module.subject}
+                    title={cur.title}
+                    introText={cur.introText}
+                    image={cur.image}
+                    imageAlt={cur.imageAlt || cur.title}
+                    hotspots={cur.hotspots || []}
+                  />
+                </div>
+              )
+              : (
+                <div key={animKey} className="anim-pop">
+                  <Screen screen={cur} subject={module.subject} />
+                </div>
+              )
         }
       </div>
 
