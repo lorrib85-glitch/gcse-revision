@@ -77,9 +77,8 @@ export default function LearningHeader({
         WebkitBackdropFilter: 'blur(20px)',
         border: '1px solid rgba(255,255,255,0.05)',
         borderRadius: 22,
-        padding: '6px 4px',
+        padding: '4px 4px 8px',
         zIndex: 1001,
-        display: 'flex', alignItems: 'center', gap: 2,
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(-10px)',
         transition: visible
@@ -88,38 +87,62 @@ export default function LearningHeader({
         pointerEvents: visible ? 'auto' : 'none',
       }}>
 
-        {/* ← Back */}
-        <button
-          aria-label="Go back"
-          onPointerDown={() => setBackPressed(true)}
-          onPointerUp={() => { setBackPressed(false); onBack?.() }}
-          onPointerLeave={() => setBackPressed(false)}
-          style={{
-            flexShrink: 0,
-            width: 44, height: 40,
-            background: 'none', border: 'none', padding: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer',
-            opacity: backPressed ? 0.9 : 0.6,
-            transform: backPressed ? 'scale(0.94)' : 'scale(1)',
-            transition: 'opacity 140ms ease, transform 140ms ease',
-          }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="rgba(255,255,255,1)" strokeWidth="2"
-            strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 18l-6-6 6-6"/>
-          </svg>
-        </button>
+        {/* ── Row 1: back ← … exit × ── */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
-        {/* ── Progress rail — tappable ── */}
+          <button
+            aria-label="Go back"
+            onPointerDown={() => setBackPressed(true)}
+            onPointerUp={() => { setBackPressed(false); onBack?.() }}
+            onPointerLeave={() => setBackPressed(false)}
+            style={{
+              width: 44, height: 40,
+              background: 'none', border: 'none', padding: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+              opacity: backPressed ? 0.9 : 0.6,
+              transform: backPressed ? 'scale(0.94)' : 'scale(1)',
+              transition: 'opacity 140ms ease, transform 140ms ease',
+            }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="rgba(255,255,255,1)" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <button
+            aria-label="Exit chapter"
+            onPointerDown={() => setExitPressed(true)}
+            onPointerUp={() => { setExitPressed(false); onExit?.() }}
+            onPointerLeave={() => setExitPressed(false)}
+            style={{
+              width: 44, height: 40,
+              background: 'none', border: 'none', padding: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+              opacity: exitPressed ? 0.6 : 0.22,
+              transform: exitPressed ? 'scale(0.90)' : 'scale(1)',
+              transition: 'opacity 140ms ease, transform 140ms ease',
+            }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="rgba(255,255,255,1)" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* ── Row 2: segmented progress rail ── */}
         <button
           aria-label="Jump to section"
           onClick={() => setSheetOpen(true)}
           style={{
-            flex: 1, minWidth: 0,
+            width: '100%',
             display: 'flex', gap: 5, alignItems: 'center',
             background: 'none', border: 'none', cursor: 'pointer',
-            padding: '14px 0',
+            padding: '2px 6px 2px',
           }}>
           {beats.map((_, i) => {
             const done    = i < currentBeatIndex
@@ -149,30 +172,6 @@ export default function LearningHeader({
           })}
         </button>
 
-        {/* × Exit */}
-        <button
-          aria-label="Exit chapter"
-          onPointerDown={() => setExitPressed(true)}
-          onPointerUp={() => { setExitPressed(false); onExit?.() }}
-          onPointerLeave={() => setExitPressed(false)}
-          style={{
-            flexShrink: 0,
-            width: 44, height: 40,
-            background: 'none', border: 'none', padding: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer',
-            opacity: exitPressed ? 0.6 : 0.22,
-            transform: exitPressed ? 'scale(0.90)' : 'scale(1)',
-            transition: 'opacity 140ms ease, transform 140ms ease',
-          }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="rgba(255,255,255,1)" strokeWidth="2"
-            strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-
       </div>
 
       {/* ── Bottom sheet backdrop ── */}
@@ -200,7 +199,6 @@ export default function LearningHeader({
         transition: 'transform 300ms ease',
       }}>
 
-        {/* Sheet header */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           marginBottom: 18,
@@ -221,7 +219,6 @@ export default function LearningHeader({
             }}>×</button>
         </div>
 
-        {/* Beat list */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           {beats.map((beat, i) => {
             const isDone    = i < currentBeatIndex
@@ -244,7 +241,6 @@ export default function LearningHeader({
                   transition: 'background 140ms ease',
                 }}>
 
-                {/* Number circle */}
                 <div style={{
                   width: 26, height: 26, borderRadius: 999, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -266,7 +262,6 @@ export default function LearningHeader({
                   )}
                 </div>
 
-                {/* Label */}
                 <div style={{
                   flex: 1, textAlign: 'left',
                   fontFamily: "'Outfit', sans-serif",
@@ -277,7 +272,6 @@ export default function LearningHeader({
                   {beat.label}
                 </div>
 
-                {/* Status */}
                 <div style={{
                   flexShrink: 0,
                   fontFamily: "'Outfit', sans-serif",
