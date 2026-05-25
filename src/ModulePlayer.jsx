@@ -1964,8 +1964,14 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       if (module.hook?.statement) { setNavTo('hook'); return }
       onBack(); return
     }
-    if (screen === 0) onBack()
-    else go(-1)
+    if (screen === 0) {
+      if (module.intro) { setIntroDone(false); scrollToTop(); return }
+      if (module.recall) { setNavTo('recall'); scrollToTop(); return }
+      if (module.outcomes) { setNavTo('wyl'); scrollToTop(); return }
+      if (module.hook?.statement) { setNavTo('hook'); scrollToTop(); return }
+      onBack(); return
+    }
+    go(-1)
   }
 
   function handleBeatJump(beat) {

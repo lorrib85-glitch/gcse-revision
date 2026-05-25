@@ -229,15 +229,15 @@ export default function ChapterHookScreen({
               </div>
 
               {/* Statement — word by word */}
-              <div style={{ position: 'absolute', top: '38%', left: 28, right: 28 }}>
+              <div style={{ position: 'absolute', top: '34%', left: 28, right: 28 }}>
                 <Glow rgb={rgb} />
                 <div style={{
                   position: 'relative',
                   maxWidth: 320,
                   fontFamily: "'Sora', sans-serif",
                   fontWeight: 800,
-                  fontSize: 'clamp(34px, 11vw, 46px)',
-                  lineHeight: 'clamp(38px, 12.4vw, 50px)',
+                  fontSize: 'clamp(28px, 9vw, 40px)',
+                  lineHeight: 'clamp(33px, 10.5vw, 46px)',
                   letterSpacing: '-0.05em',
                   color: '#FFFFFF',
                 }}>
