@@ -219,7 +219,7 @@ export default function CinematicRevealMoment({
           {yearVisible && (
             <div style={{
               fontFamily: "'Sora', sans-serif",
-              fontWeight: 900, fontSize: 74,
+              fontWeight: 900, fontSize: 58,
               lineHeight: 0.95, letterSpacing: '-0.04em',
               color: accent,
               marginBottom: 28,
@@ -233,7 +233,7 @@ export default function CinematicRevealMoment({
           {paragraphs.map((para, i) => paraVisible[i] && (
             <p key={i} style={{
               fontFamily: "'Sora', sans-serif",
-              fontWeight: 700, fontSize: 30,
+              fontWeight: 700, fontSize: 23,
               lineHeight: 1.18, letterSpacing: '-0.025em',
               color: 'rgba(245,238,225,0.95)',
               margin: 0,
