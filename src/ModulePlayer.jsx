@@ -5,6 +5,7 @@ import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 import QuickRecallScreen from './QuickRecallScreen.jsx'
 import CinematicRevealMoment from './CinematicRevealMoment.jsx'
 import LearningHeader from './LearningHeader.jsx'
+import FaceTheExaminer from './FaceTheExaminer.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1861,6 +1862,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const [screen, setScreen] = useState(saved.screen || 0)
   const [showConfidence, setShowConfidence] = useState(false)
   const [chosenConfidence, setChosenConfidence] = useState(null)
+  const [showExaminer, setShowExaminer] = useState(false)
+  const [examinerAttempts, setExaminerAttempts] = useState(() => saved.examinerAttempts || [])
   const total   = module.screens.length
   const pct     = Math.round(((screen + 1) / total) * 100)
   const isLast  = screen === total - 1
@@ -1868,8 +1871,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const [cinematicHeaderVisible, setCinematicHeaderVisible] = useState(false)
 
   useEffect(() => {
-    saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone })
-  }, [screen, module.id, hookDone, wylDone, recallDone, introDone])
+    saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts })
+  }, [screen, module.id, hookDone, wylDone, recallDone, introDone, examinerAttempts])
 
   // Reset cinematic header visibility whenever we navigate to a different screen
   useEffect(() => { setCinematicHeaderVisible(false) }, [screen])
@@ -1884,7 +1887,12 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   }
 
   function handleFinish() {
-    setShowConfidence(true)
+    const examinerDone = examinerAttempts.some(a => a.moduleId === module.id)
+    if (module.examiner && !examinerDone) {
+      setShowExaminer(true)
+    } else {
+      setShowConfidence(true)
+    }
     scrollToTop()
   }
 
@@ -1935,6 +1943,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const beats = [
     ...(module.recall ? [{ id: 'recall', label: 'Recall Starter', _navTo: 'recall', _screenIndex: null }] : []),
     ...module.screens.map((s, i) => ({ id: `screen-${i}`, label: s.label, _navTo: null, _screenIndex: i })),
+    ...(module.examiner ? [{ id: 'examiner', label: 'Face the Examiner', _navTo: 'examiner', _screenIndex: null }] : []),
   ]
   const recallBeatOffset = module.recall ? 1 : 0
   const currentBeatIndex = (navTo === 'recall')
@@ -1945,6 +1954,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
 
   const headerVisible =
     !showConfidence &&
+    !showExaminer &&
     hookDone && wylDone &&
     (cur?.type === 'cinematic' ? cinematicHeaderVisible : true)
 
@@ -2056,6 +2066,32 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
             visible={true}
           />
         )}
+      />
+    )
+  }
+
+  if (showExaminer) {
+    return (
+      <FaceTheExaminer
+        module={module}
+        examiner={module.examiner}
+        onExit={onBack}
+        onContinue={({ originalMark, finalMark, guessedMark }) => {
+          const attempt = {
+            moduleId: module.id,
+            questionId: `${module.id}-q1`,
+            guessedMark,
+            examinerMark: module.examiner.mark,
+            finalMark,
+            timestamp: Date.now(),
+          }
+          const updated = [...examinerAttempts, attempt]
+          setExaminerAttempts(updated)
+          saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts: updated })
+          setShowExaminer(false)
+          setShowConfidence(true)
+          scrollToTop()
+        }}
       />
     )
   }

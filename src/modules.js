@@ -203,7 +203,92 @@ export const MODULES = [
           ]}
         ]
       },
-    ]
+    ],
+
+    examiner: {
+      type: '8-mark-explain',
+      board: 'edexcel',
+      subject: 'history',
+      topic: 'medieval-medicine',
+      difficulty: 'standard',
+
+      question: 'Explain two ways in which religion influenced medical treatment in medieval England. [8 marks]',
+      marks: 8,
+      mark: 5,
+      summary: 'Some understanding of religious influence shown, but both points need more developed explanation to reach Level 3.',
+
+      markScheme: `Level 3 (6–8 marks): Detailed explanation of two ways with developed reasoning linking religious belief to specific treatments or practices.
+Level 2 (3–5 marks): Some explanation of religious influence, but at least one point lacks development.
+Level 1 (1–2 marks): Simple identification of religious practices with little or no explanation.
+Award marks for any two of (each requiring explanation not just identification):
+- Church controlled hospitals/monasteries — explanation must include WHY (belief in Christian duty/God's will/charity)
+- Prayer, fasting, pilgrimage as treatments — must link to belief that sin caused disease
+- Four Humours theory endorsed by Church — must show HOW this influenced practical treatment
+- Physicians trained in Church schools, only Church-approved ideas studied
+Do NOT award marks for identifying practices without explaining the religious reasoning.`,
+
+      sampleAnswer: `Religion had a big influence on medical treatment in medieval England. Firstly, the Church ran hospitals and monasteries where sick people could go to get help. Monks and nuns would look after the sick because they believed it was their Christian duty to help others. Secondly, doctors in medieval times believed that illness was caused by God as punishment for sins. This meant that treatments often involved prayer and going on pilgrimages to holy sites, because people thought that if they showed their faith to God, He would cure them. Some people also fasted or confessed their sins as a form of treatment.`,
+
+      annotations: [
+        {
+          id: 'ann1',
+          target: 'the Church ran hospitals and monasteries where sick people could go to get help.',
+          occurrence: 1,
+          type: 'weak',
+          comment: 'Identified but underdeveloped — WHY did the Church do this?',
+        },
+        {
+          id: 'ann2',
+          target: 'Monks and nuns would look after the sick because they believed it was their Christian duty to help others.',
+          occurrence: 1,
+          type: 'strong',
+          comment: 'Good — links practice to religious belief.',
+        },
+        {
+          id: 'ann3',
+          target: 'illness was caused by God as punishment for sins.',
+          occurrence: 1,
+          type: 'strong',
+          comment: 'Accurate causal link.',
+        },
+        {
+          id: 'ann4',
+          target: 'because people thought that if they showed their faith to God, He would cure them.',
+          occurrence: 1,
+          type: 'weak',
+          comment: 'Vague — needs a specific named example (e.g. Canterbury).',
+        },
+        {
+          id: 'ann5',
+          target: 'Some people also fasted or confessed their sins as a form of treatment.',
+          occurrence: 1,
+          type: 'irrelevant',
+          comment: 'Third point — only two ways required; this adds no new marks.',
+        },
+      ],
+
+      improvementPrompts: {
+        ann1: {
+          prompt: '+ Explain WHY the Church ran hospitals',
+          placeholder: 'e.g. The Church believed caring for the sick was a religious duty — a way of serving God and earning salvation...',
+        },
+        ann4: {
+          prompt: '+ Add a specific example of pilgrimage as treatment',
+          placeholder: 'e.g. Pilgrims travelled to the shrine of Thomas Becket at Canterbury Cathedral, believing holy relics could cure disease...',
+        },
+      },
+
+      criteriaOptions: [
+        'Accurate knowledge',
+        'Two clear ways',
+        'Specific evidence',
+        'Explains the impact',
+        'Developed explanation',
+        'Too vague',
+        'Repeats the point',
+        'Missing second way',
+      ],
+    },
   },
 
   {
