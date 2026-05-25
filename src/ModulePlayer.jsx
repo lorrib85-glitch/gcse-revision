@@ -7,6 +7,7 @@ import CinematicRevealMoment from './CinematicRevealMoment.jsx'
 import LearningHeader from './LearningHeader.jsx'
 import FaceTheExaminer from './FaceTheExaminer.jsx'
 import InteractiveHotspotImage from './InteractiveHotspotImage.jsx'
+import FillInTheBlanksBlock from './FillInTheBlanksBlock.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1266,6 +1267,7 @@ function Screen({ screen, subject }) {
           {block.type === 'builder'       && <BuilderBlock block={block} />}
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
           {block.type === 'boss'          && <BossBlock block={block} />}
+          {block.type === 'fillblanks'   && <FillInTheBlanksBlock block={block} subject={subject} />}
         </div>
       ))}
     </div>
