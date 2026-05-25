@@ -17,10 +17,9 @@ function hexToRgb(hex) {
   return `${r},${g},${b}`
 }
 
-// Padlock SVG
 function LockIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
       <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -28,10 +27,9 @@ function LockIcon() {
   )
 }
 
-// Checkmark SVG
 function CheckIcon({ color }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
       stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12"/>
     </svg>
@@ -51,7 +49,7 @@ export default function LearningHeader({
 
   const subject = (module?.subject || '').toLowerCase()
   const pal = PALETTES[subject] || PALETTES.history
-  const { accent, glow } = pal
+  const { accent } = pal
   const accentRgb = hexToRgb(accent)
 
   function handleJump(beat, i) {
@@ -64,23 +62,21 @@ export default function LearningHeader({
       <style>{`
         @keyframes lh-shimmer {
           0%, 80%, 100% { opacity: 1; }
-          40%            { opacity: 0.52; }
+          40%            { opacity: 0.48; }
         }
       `}</style>
 
       {/* ── Floating header capsule ── */}
       <div style={{
         position: 'fixed',
-        top: 'calc(12px + env(safe-area-inset-top, 0px))',
+        top: 'calc(10px + env(safe-area-inset-top, 0px))',
         left: 16, right: 16,
-        height: 88,
-        background: 'rgba(7,10,18,0.72)',
-        backdropFilter: 'blur(18px)',
-        WebkitBackdropFilter: 'blur(18px)',
-        border: '1px solid rgba(255,255,255,0.06)',
-        borderRadius: 24,
-        padding: '0 8px',
-        display: 'flex', alignItems: 'center', gap: 10,
+        background: 'rgba(7,10,18,0.70)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.05)',
+        borderRadius: 22,
+        padding: '10px 14px 12px',
         zIndex: 1001,
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(-10px)',
@@ -90,59 +86,49 @@ export default function LearningHeader({
         pointerEvents: visible ? 'auto' : 'none',
       }}>
 
-        {/* Back button */}
-        <button
-          aria-label="Go back"
-          onPointerDown={() => setBackPressed(true)}
-          onPointerUp={() => { setBackPressed(false); onBack?.() }}
-          onPointerLeave={() => setBackPressed(false)}
-          style={{
-            flexShrink: 0,
-            width: 56, height: 56, borderRadius: 999,
-            background: 'rgba(255,255,255,0.05)',
-            border: `1px solid rgba(${accentRgb},${backPressed ? '0.55' : '0.28'})`,
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer',
-            transform: backPressed ? 'scale(0.96)' : 'scale(1)',
-            transition: 'transform 140ms ease, border-color 140ms ease',
-          }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="rgba(255,255,255,0.85)" strokeWidth="1.75"
-            strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
-        </button>
+        {/* ── Row 1: back arrow + module text ── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginBottom: 9 }}>
 
-        {/* Icon + text stack */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, maxWidth: 135 }}>
-          {/* Subject icon box */}
-          {module?.icon && (
-            <div style={{
-              width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-              background: `rgba(${accentRgb},0.12)`,
-              border: `1px solid rgba(${accentRgb},0.22)`,
+          {/* Back button — bare arrow, 48×48 tap target */}
+          <button
+            aria-label="Go back"
+            onPointerDown={() => setBackPressed(true)}
+            onPointerUp={() => { setBackPressed(false); onBack?.() }}
+            onPointerLeave={() => setBackPressed(false)}
+            style={{
+              flexShrink: 0,
+              width: 48, height: 48,
+              background: 'none', border: 'none', padding: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 20,
-            }}>{module.icon}</div>
-          )}
+              cursor: 'pointer',
+              marginLeft: -6,
+              opacity: backPressed ? 1 : 0.72,
+              transform: backPressed ? 'scale(0.96)' : 'scale(1)',
+              transition: 'opacity 140ms ease, transform 140ms ease',
+            }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="rgba(255,255,255,1)" strokeWidth="1.75"
+              strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
           {/* Text stack */}
-          <div style={{ minWidth: 0 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
               fontFamily: "'Outfit', sans-serif",
               fontSize: 11, fontWeight: 600,
-              letterSpacing: '0.18em', textTransform: 'uppercase',
+              letterSpacing: '0.16em', textTransform: 'uppercase',
               color: accent, lineHeight: 1,
-              marginBottom: 4,
+              marginBottom: 3,
               whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
             }}>
               {(module?.subject || '').toUpperCase()}{module?.number != null ? ` · MODULE ${module.number}` : ''}
             </div>
             <div style={{
               fontFamily: "'Sora', sans-serif",
-              fontSize: 18, fontWeight: 800,
-              color: '#F5F7FF', lineHeight: 1.05,
+              fontSize: 17, fontWeight: 800,
+              color: '#F5F7FF', lineHeight: 1.1,
               whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
             }}>
               {module?.title}
@@ -150,55 +136,46 @@ export default function LearningHeader({
           </div>
         </div>
 
-        {/* Segmented progress rail */}
+        {/* ── Row 2: wide segmented progress rail ── */}
         <button
           aria-label="Jump to section"
           onClick={() => setSheetOpen(true)}
           style={{
-            flex: 1, minWidth: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
-            background: 'none', border: 'none', cursor: 'pointer', padding: '8px 0',
+            display: 'flex', width: '100%', gap: 5,
+            background: 'none', border: 'none', cursor: 'pointer',
+            padding: '6px 0 2px',
+            alignItems: 'center',
           }}>
           {beats.map((_, i) => {
             const done    = i < currentBeatIndex
             const current = i === currentBeatIndex
-            const baseStyle = {
-              flex: '1 1 0', maxWidth: 40, minWidth: 8, height: 6, borderRadius: 999,
+            const base = {
+              flex: 1, height: 4, borderRadius: 999, minWidth: 0,
             }
             if (done) return (
               <div key={i} style={{
-                ...baseStyle,
+                ...base,
                 background: accent,
-                boxShadow: `0 0 6px rgba(${accentRgb},0.5)`,
+                boxShadow: `0 0 5px rgba(${accentRgb},0.45)`,
               }} />
             )
             if (current) return (
               <div key={i} style={{
-                ...baseStyle,
+                ...base,
                 background: accent,
-                boxShadow: `0 0 10px rgba(${accentRgb},0.75)`,
+                boxShadow: `0 0 8px rgba(${accentRgb},0.65)`,
                 animation: 'lh-shimmer 4s ease-in-out infinite',
               }} />
             )
             return (
               <div key={i} style={{
-                ...baseStyle,
-                background: 'rgba(255,255,255,0.12)',
+                ...base,
+                background: 'rgba(255,255,255,0.10)',
               }} />
             )
           })}
         </button>
 
-        {/* Step counter */}
-        <div style={{
-          fontFamily: "'Outfit', sans-serif",
-          fontSize: 14, fontWeight: 700,
-          letterSpacing: '0.12em', textTransform: 'uppercase',
-          color: 'rgba(245,238,225,0.92)',
-          flexShrink: 0, whiteSpace: 'nowrap',
-        }}>
-          {currentBeatIndex + 1} OF {beats.length}
-        </div>
       </div>
 
       {/* ── Bottom sheet backdrop ── */}
@@ -220,34 +197,35 @@ export default function LearningHeader({
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderRadius: '24px 24px 0 0',
-        borderTop: '1px solid rgba(255,255,255,0.08)',
+        borderTop: '1px solid rgba(255,255,255,0.07)',
         padding: `24px 20px calc(24px + env(safe-area-inset-bottom, 0px))`,
         transform: sheetOpen ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 300ms ease',
       }}>
+
         {/* Sheet header */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          marginBottom: 20,
+          marginBottom: 18,
         }}>
           <span style={{
             fontFamily: "'Sora', sans-serif",
-            fontSize: 18, fontWeight: 700, color: '#F5F7FF',
+            fontSize: 17, fontWeight: 700, color: '#F5F7FF',
           }}>Jump to a section</span>
           <button
             onClick={() => setSheetOpen(false)}
             style={{
-              width: 36, height: 36, borderRadius: 999,
-              background: 'rgba(255,255,255,0.08)',
+              width: 34, height: 34, borderRadius: 999,
+              background: 'rgba(255,255,255,0.07)',
               border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: "'Sora', sans-serif",
-              fontSize: 18, color: 'rgba(255,255,255,0.7)',
+              fontSize: 17, color: 'rgba(255,255,255,0.65)',
             }}>×</button>
         </div>
 
         {/* Beat list */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           {beats.map((beat, i) => {
             const isDone    = i < currentBeatIndex
             const isCurrent = i === currentBeatIndex
@@ -259,33 +237,34 @@ export default function LearningHeader({
                 onClick={isLocked ? undefined : () => handleJump(beat, i)}
                 style={{
                   width: '100%',
-                  display: 'flex', alignItems: 'center', gap: 14,
-                  padding: '13px 14px',
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '11px 12px',
                   borderRadius: 14,
                   background: isCurrent ? `rgba(${accentRgb},0.08)` : 'transparent',
-                  border: isCurrent ? `1px solid rgba(${accentRgb},0.22)` : '1px solid transparent',
+                  border: isCurrent ? `1px solid rgba(${accentRgb},0.20)` : '1px solid transparent',
                   cursor: isLocked ? 'default' : 'pointer',
-                  opacity: isLocked ? 0.35 : 1,
+                  opacity: isLocked ? 0.32 : 1,
                   transition: 'background 140ms ease',
                 }}>
+
                 {/* Number circle */}
                 <div style={{
-                  width: 28, height: 28, borderRadius: 999, flexShrink: 0,
+                  width: 26, height: 26, borderRadius: 999, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   background: isDone
                     ? accent
                     : isCurrent
-                      ? `rgba(${accentRgb},0.18)`
-                      : 'rgba(255,255,255,0.06)',
-                  border: isCurrent ? `1px solid ${accent}` : '1px solid transparent',
+                      ? `rgba(${accentRgb},0.16)`
+                      : 'rgba(255,255,255,0.05)',
+                  border: isCurrent ? `1px solid rgba(${accentRgb},0.5)` : '1px solid transparent',
                 }}>
                   {isDone ? (
-                    <CheckIcon color={subject === 'history' ? '#241815' : '#081010'} />
+                    <CheckIcon color='#08090D' />
                   ) : (
                     <span style={{
                       fontFamily: "'Outfit', sans-serif",
-                      fontSize: 12, fontWeight: 700,
-                      color: isCurrent ? accent : 'rgba(255,255,255,0.3)',
+                      fontSize: 11, fontWeight: 700,
+                      color: isCurrent ? accent : 'rgba(255,255,255,0.28)',
                     }}>{i + 1}</span>
                   )}
                 </div>
@@ -295,7 +274,7 @@ export default function LearningHeader({
                   flex: 1, textAlign: 'left',
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: 15, fontWeight: 600,
-                  color: isLocked ? 'rgba(255,255,255,0.3)' : '#F5F7FF',
+                  color: isLocked ? 'rgba(255,255,255,0.28)' : '#F0ECFF',
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                 }}>
                   {beat.label}
@@ -306,18 +285,15 @@ export default function LearningHeader({
                   flexShrink: 0,
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: 12, fontWeight: 600,
-                  color: isDone
-                    ? accent
-                    : isCurrent
-                      ? accent
-                      : 'rgba(255,255,255,0.25)',
+                  color: isDone ? accent : isCurrent ? accent : 'rgba(255,255,255,0.22)',
+                  display: 'flex', alignItems: 'center',
                 }}>
                   {isDone && 'Completed'}
                   {isCurrent && (
                     <span style={{
                       display: 'inline-block',
-                      background: `rgba(${accentRgb},0.18)`,
-                      border: `1px solid rgba(${accentRgb},0.4)`,
+                      background: `rgba(${accentRgb},0.16)`,
+                      border: `1px solid rgba(${accentRgb},0.38)`,
                       borderRadius: 999, padding: '2px 8px',
                       color: accent,
                     }}>Current</span>
