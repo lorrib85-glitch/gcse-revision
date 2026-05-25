@@ -2203,9 +2203,25 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     )
   }
 
-  // ── Full-screen cinematic screen — takes over for type:'cinematic' screens ──
-  if (cur?.type === 'cinematic') {
+  // ── Full-screen interactive image — no header, takes over completely ─────────
+  if (cur?.type === 'interactiveImage') {
     return (
+      <InteractiveHotspotImage
+        subject={module.subject}
+        title={cur.title}
+        introText={cur.introText}
+        image={cur.image}
+        imageAlt={cur.imageAlt || cur.title}
+        hotspots={cur.hotspots || []}
+        ctaLabel={cur.ctaLabel}
+        onBack={headerOnBack}
+        onContinue={isLast ? handleFinish : () => go(1)}
+      />
+    )
+  }
+
+  // ── Full-screen cinematic screen — takes over for type:'cinematic' screens ──
+  if (cur?.type === 'cinematic') {    return (
       <>
         <LearningHeader
           module={module}
@@ -2249,21 +2265,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
           : !introDone && module.intro
             ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
-            : cur?.type === 'interactiveImage'
-              ? (
-                <div key={animKey} className="anim-pop" style={{ margin: '0 -18px' }}>
-                  <InteractiveHotspotImage
-                    subject={module.subject}
-                    title={cur.title}
-                    introText={cur.introText}
-                    image={cur.image}
-                    imageAlt={cur.imageAlt || cur.title}
-                    hotspots={cur.hotspots || []}
-                    ctaLabel={cur.ctaLabel}
-                    onContinue={isLast ? handleFinish : () => go(1)}
-                  />
-                </div>
-              )
               : (
                 <div key={animKey} className="anim-pop">
                   <Screen screen={cur} subject={module.subject} />
