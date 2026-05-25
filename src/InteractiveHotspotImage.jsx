@@ -12,6 +12,7 @@ const THEMES = {
     progressColor: 'rgba(126,231,183,0.84)',
     ctaBg:         'rgba(126,231,183,0.16)',
     ctaBorder:     'rgba(126,231,183,0.18)',
+    pageBg:        '#040C09',
   },
   History: {
     glow:          '#D4A84B',
@@ -24,6 +25,7 @@ const THEMES = {
     progressColor: 'rgba(212,168,75,0.84)',
     ctaBg:         'rgba(212,168,75,0.16)',
     ctaBorder:     'rgba(212,168,75,0.18)',
+    pageBg:        '#0B0702',
   },
   Chemistry: {
     glow:          '#5CC8FF',
@@ -36,6 +38,7 @@ const THEMES = {
     progressColor: 'rgba(92,200,255,0.84)',
     ctaBg:         'rgba(92,200,255,0.16)',
     ctaBorder:     'rgba(92,200,255,0.18)',
+    pageBg:        '#02060E',
   },
   Physics: {
     glow:          '#5DA9E9',
@@ -48,6 +51,7 @@ const THEMES = {
     progressColor: 'rgba(93,169,233,0.84)',
     ctaBg:         'rgba(93,169,233,0.16)',
     ctaBorder:     'rgba(93,169,233,0.18)',
+    pageBg:        '#02050C',
   },
   Maths: {
     glow:          '#2BBE9A',
@@ -60,6 +64,7 @@ const THEMES = {
     progressColor: 'rgba(43,190,154,0.84)',
     ctaBg:         'rgba(43,190,154,0.16)',
     ctaBorder:     'rgba(43,190,154,0.18)',
+    pageBg:        '#020A07',
   },
   English: {
     glow:          '#C97090',
@@ -72,6 +77,7 @@ const THEMES = {
     progressColor: 'rgba(201,112,144,0.84)',
     ctaBg:         'rgba(201,112,144,0.16)',
     ctaBorder:     'rgba(201,112,144,0.18)',
+    pageBg:        '#080304',
   },
   Sociology: {
     glow:          '#C9B07C',
@@ -84,43 +90,45 @@ const THEMES = {
     progressColor: 'rgba(201,176,124,0.84)',
     ctaBg:         'rgba(201,176,124,0.16)',
     ctaBorder:     'rgba(201,176,124,0.18)',
+    pageBg:        '#070501',
   },
 }
 
-// ── Smart label placement — 4 directions ──────────────────────────────────────
+// ── Smart label placement ──────────────────────────────────────────────────────
 function getLabelPos(h) {
-  const toLeft   = h.x > 55
-  const nearTop  = h.y < 18
-  const nearBot  = h.y > 78
+  const toLeft  = h.x > 55
+  const nearTop = h.y < 18
+  const nearBot = h.y > 80
 
   const horiz = toLeft
-    ? { right: `calc(${100 - h.x}% + 18px)` }
-    : { left:  `calc(${h.x}%  + 18px)` }
+    ? { right: `calc(${100 - h.x}% + 16px)` }
+    : { left:  `calc(${h.x}%  + 16px)` }
 
   const vert = nearBot
-    ? { bottom: `calc(${100 - h.y}% + 10px)` }
+    ? { bottom: `calc(${100 - h.y}% + 8px)` }
     : nearTop
-      ? { top: `calc(${h.y}% + 10px)` }
-      : { top: `calc(${h.y}% - 16px)` }
+      ? { top: `calc(${h.y}% + 8px)` }
+      : { top: `calc(${h.y}% - 14px)` }
 
   return { ...horiz, ...vert }
 }
 
 export default function InteractiveHotspotImage({
-  subject    = 'Biology',
-  title      = '',
-  introText  = '',
-  image      = '',
-  imageAlt   = '',
-  hotspots   = [],
-  ctaLabel   = 'Explore',
+  subject      = 'Biology',
+  title        = '',
+  introText    = '',
+  image        = '',
+  imageAlt     = '',
+  hotspots     = [],
+  ctaLabel     = 'Explore',
   onBack,
+  onEnterExplore,
   onContinue,
 }) {
   const theme = THEMES[subject] || THEMES.Biology
   const {
     glow, glowRgb, text, muted, labelBg,
-    sheetBg, sheetBorder, progressColor, ctaBg, ctaBorder,
+    sheetBg, sheetBorder, progressColor, ctaBg, ctaBorder, pageBg,
   } = theme
 
   const [viewMode,   setViewMode]   = useState('intro')   // 'intro' | 'explore'
@@ -133,9 +141,9 @@ export default function InteractiveHotspotImage({
   const selected     = hotspots.find(h => h.id === selectedId) || null
   const allDone      = visited.size === hotspots.length && hotspots.length > 0
 
-  // Title lines and staggered reveal timing
   const titleLines = title.split('\n')
-  const ctaDelay   = 200 + titleLines.length * 420 + 240 + 460 + 400
+  // Delay until all text lines + paragraph have animated in
+  const ctaDelay   = 200 + titleLines.length * 420 + 260 + 460 + 300
 
   useEffect(() => {
     const t = setTimeout(() => setCtaReady(true), ctaDelay)
@@ -143,7 +151,6 @@ export default function InteractiveHotspotImage({
   }, [ctaDelay])
 
   function handleTap(id) {
-    if (!isExplore) return
     setSelectedId(id)
     setVisited(prev => { const n = new Set(prev); n.add(id); return n })
   }
@@ -151,12 +158,13 @@ export default function InteractiveHotspotImage({
   function enterExplore() {
     setViewMode('explore')
     setSelectedId(null)
+    onEnterExplore?.()
   }
 
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 1000,
-      background: '#040C09',
+      background: pageBg,
       fontFamily: "'Sora', sans-serif",
       overflow: 'hidden',
     }}>
@@ -183,231 +191,261 @@ export default function InteractiveHotspotImage({
           from { opacity: 0; transform: translateX(-4px); }
           to   { opacity: 1; transform: translateX(0); }
         }
-        @keyframes ihi-fade-in {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
         .ihi-back:active  { background: rgba(255,255,255,0.12) !important; }
         .ihi-cta:hover    { background: rgba(${glowRgb},0.22) !important; }
         .ihi-cta:active   { opacity: 0.80; }
-        .ihi-dot          { transition: transform 200ms ease; }
-        .ihi-dot:active   { transform: translate(-50%,-50%) scale(0.88); }
+        .ihi-dot:active   { transform: translate(-50%,-50%) scale(0.88) !important; }
       `}</style>
 
-      {/* ── Full-screen image ─────────────────────────────────────────────── */}
-      <img
-        src={image}
-        alt={imageAlt}
-        draggable={false}
-        style={{
-          position: 'absolute', inset: 0,
-          width: '100%', height: '100%',
-          objectFit: 'cover',
-          objectPosition: 'center',
-          filter: isExplore
-            ? 'brightness(0.88) saturate(1.04)'
-            : 'brightness(0.38) saturate(0.85) blur(1px)',
-          transform: isExplore ? 'scale(1)' : 'scale(1.03)',
-          transition: 'filter 500ms cubic-bezier(0.22,1,0.36,1), transform 500ms cubic-bezier(0.22,1,0.36,1)',
-          userSelect: 'none',
-        }}
-      />
-
-      {/* Atmospheric gradient — always present */}
+      {/* ═══════════════════════════════════════════════════════════════════
+          INTRO PHASE — full-screen cover, fades out on explore
+      ═══════════════════════════════════════════════════════════════════ */}
       <div style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: 'linear-gradient(180deg, rgba(3,7,5,0.12) 0%, rgba(3,7,5,0.18) 28%, rgba(3,7,5,0.55) 68%, rgba(3,7,5,0.94) 100%)',
-      }} />
-
-      {/* ── Back button ───────────────────────────────────────────────────── */}
-      {onBack && (
-        <button
-          className="ihi-back"
-          onClick={onBack}
-          aria-label="Go back"
-          style={{
-            position: 'absolute',
-            top: 'max(18px, calc(env(safe-area-inset-top, 0px) + 14px))',
-            left: '16px',
-            width: '44px', height: '44px', borderRadius: '50%',
-            background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(255,255,255,0.10)',
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', zIndex: 20,
-            transition: 'background 120ms ease',
-          }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="rgba(255,255,255,0.78)" strokeWidth="1.8"
-            strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
-        </button>
-      )}
-
-      {/* ── INTRO content — anchored bottom-left, fades/slides out ──────── */}
-      <div style={{
-        position: 'absolute',
-        left: '28px', right: '28px',
-        bottom: 'max(72px, calc(env(safe-area-inset-bottom, 0px) + 72px))',
-        zIndex: 15,
-        opacity:   introVisible ? 1 : 0,
-        transform: introVisible ? 'translateY(0)' : 'translateY(22px)',
-        transition: 'opacity 400ms cubic-bezier(0.22,1,0.36,1), transform 400ms cubic-bezier(0.22,1,0.36,1)',
+        position: 'absolute', inset: 0,
+        opacity: introVisible ? 1 : 0,
+        transform: introVisible ? 'none' : 'none',
+        transition: 'opacity 500ms cubic-bezier(0.22,1,0.36,1)',
         pointerEvents: introVisible ? 'auto' : 'none',
       }}>
+        {/* Cover image — fills full screen for atmospheric intro */}
+        <img
+          src={image}
+          alt={imageAlt}
+          draggable={false}
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            filter: 'brightness(0.38) saturate(0.85) blur(1px)',
+            transform: 'scale(1.03)',
+            userSelect: 'none',
+          }}
+        />
 
-        {/* Title — line by line */}
+        {/* Atmospheric gradient */}
         <div style={{
-          fontSize: 'clamp(44px, 8vw, 66px)',
-          fontWeight: 700,
-          lineHeight: 0.94,
-          letterSpacing: '-0.04em',
-          color: '#F3FFF7',
-        }}>
-          {titleLines.map((line, i) => (
-            <div key={i} style={{
-              animation: `ihi-line-in 400ms cubic-bezier(0.22,1,0.36,1) ${200 + i * 420}ms both`,
-            }}>
-              {line}
-            </div>
-          ))}
-        </div>
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'linear-gradient(180deg, rgba(3,7,5,0.10) 0%, rgba(3,7,5,0.18) 30%, rgba(3,7,5,0.58) 68%, rgba(3,7,5,0.95) 100%)',
+        }} />
 
-        {/* Paragraph */}
-        <p style={{
-          margin: '20px 0 0',
-          fontSize: '18px',
-          lineHeight: 1.65,
-          fontWeight: 400,
-          color: 'rgba(234,247,240,0.82)',
-          maxWidth: '28ch',
-          animation: `ihi-line-in 400ms cubic-bezier(0.22,1,0.36,1) ${200 + titleLines.length * 420 + 240}ms both`,
-        }}>
-          {introText}
-        </p>
-
-        {/* CTA — appears after text finishes */}
-        <div style={{
-          marginTop: '28px',
-          opacity: ctaReady ? 1 : 0,
-          transition: 'opacity 440ms ease',
-          pointerEvents: ctaReady ? 'auto' : 'none',
-        }}>
+        {/* Back button */}
+        {onBack && (
           <button
-            type="button"
-            className="ihi-cta"
-            onClick={enterExplore}
+            className="ihi-back"
+            onClick={onBack}
+            aria-label="Go back"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              height: '54px',
-              padding: '0 26px',
-              borderRadius: '999px',
-              background: ctaBg,
+              position: 'absolute',
+              top: 'max(18px, calc(env(safe-area-inset-top, 0px) + 14px))',
+              left: '16px',
+              width: '44px', height: '44px', borderRadius: '50%',
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.10)',
               backdropFilter: 'blur(14px)',
               WebkitBackdropFilter: 'blur(14px)',
-              border: `1px solid ${ctaBorder}`,
-              color: '#EAF7F0',
-              fontSize: '16px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              letterSpacing: '-0.01em',
-              transition: 'background 160ms ease',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', zIndex: 5,
+              transition: 'background 120ms ease',
             }}
           >
-            {ctaLabel}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="rgba(255,255,255,0.78)" strokeWidth="1.8"
+              strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
           </button>
+        )}
+
+        {/* Title + paragraph + CTA — anchored low */}
+        <div style={{
+          position: 'absolute',
+          left: '28px', right: '28px',
+          bottom: 'max(72px, calc(env(safe-area-inset-bottom, 0px) + 72px))',
+          zIndex: 5,
+        }}>
+          <div style={{
+            fontSize: 'clamp(44px, 8vw, 66px)',
+            fontWeight: 700,
+            lineHeight: 0.94,
+            letterSpacing: '-0.04em',
+            color: '#F3FFF7',
+          }}>
+            {titleLines.map((line, i) => (
+              <div key={i} style={{
+                animation: `ihi-line-in 400ms cubic-bezier(0.22,1,0.36,1) ${200 + i * 420}ms both`,
+              }}>
+                {line}
+              </div>
+            ))}
+          </div>
+
+          <p style={{
+            margin: '20px 0 0',
+            fontSize: '18px',
+            lineHeight: 1.65,
+            fontWeight: 400,
+            color: 'rgba(234,247,240,0.82)',
+            maxWidth: '28ch',
+            animation: `ihi-line-in 400ms cubic-bezier(0.22,1,0.36,1) ${200 + titleLines.length * 420 + 260}ms both`,
+          }}>
+            {introText}
+          </p>
+
+          <div style={{
+            marginTop: '28px',
+            opacity: ctaReady ? 1 : 0,
+            transition: 'opacity 440ms ease',
+            pointerEvents: ctaReady ? 'auto' : 'none',
+          }}>
+            <button
+              type="button"
+              className="ihi-cta"
+              onClick={enterExplore}
+              style={{
+                display: 'flex', alignItems: 'center',
+                height: '54px', padding: '0 26px',
+                borderRadius: '999px',
+                background: ctaBg,
+                backdropFilter: 'blur(14px)',
+                WebkitBackdropFilter: 'blur(14px)',
+                border: `1px solid ${ctaBorder}`,
+                color: '#EAF7F0',
+                fontSize: '16px', fontWeight: 600,
+                cursor: 'pointer', letterSpacing: '-0.01em',
+                transition: 'background 160ms ease',
+              }}
+            >
+              {ctaLabel}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* ── Explore progress counter — top right ─────────────────────────── */}
+      {/* ═══════════════════════════════════════════════════════════════════
+          EXPLORE PHASE — natural proportions image, header returns above
+      ═══════════════════════════════════════════════════════════════════ */}
       <div style={{
-        position: 'absolute',
-        top: 'max(18px, calc(env(safe-area-inset-top, 0px) + 14px))',
-        right: '18px',
-        fontSize: '13px', fontWeight: 600, letterSpacing: '0.16em',
-        color: progressColor,
-        pointerEvents: 'none', zIndex: 20,
+        position: 'absolute', inset: 0,
+        overflowY: 'auto',
         opacity: isExplore ? 1 : 0,
         transition: 'opacity 500ms cubic-bezier(0.22,1,0.36,1)',
+        pointerEvents: isExplore ? 'auto' : 'none',
       }}>
-        EXPLORE {visited.size}/{hotspots.length}
+        {/* Image container — sits below the LearningHeader (112px + safe-area) */}
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          marginTop: 'calc(env(safe-area-inset-top, 0px) + 112px)',
+        }}>
+          {/* Full image at natural proportions — no crop */}
+          <img
+            src={image}
+            alt={imageAlt}
+            draggable={false}
+            style={{
+              display: 'block',
+              width: '100%',
+              height: 'auto',
+              filter: 'brightness(0.88) saturate(1.04)',
+              userSelect: 'none',
+            }}
+          />
+
+          {/* Subtle gradient over image bottom edge */}
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: 'linear-gradient(180deg, transparent 55%, rgba(3,7,5,0.45) 100%)',
+          }} />
+
+          {/* EXPLORE x/n counter — top-right of image */}
+          <div style={{
+            position: 'absolute', top: '16px', right: '14px',
+            fontSize: '12px', fontWeight: 600, letterSpacing: '0.16em',
+            color: progressColor,
+            pointerEvents: 'none', zIndex: 6,
+          }}>
+            EXPLORE {visited.size}/{hotspots.length}
+          </div>
+
+          {/* Hotspot dots — position: absolute relative to image */}
+          {hotspots.map(h => {
+            const isSelected = selectedId === h.id
+            const isVisited  = visited.has(h.id)
+
+            return (
+              <div key={h.id}>
+                <button
+                  type="button"
+                  className="ihi-dot"
+                  aria-label={`Explore ${h.title}`}
+                  aria-pressed={isSelected}
+                  onClick={() => handleTap(h.id)}
+                  style={{
+                    position: 'absolute',
+                    left: `${h.x}%`, top: `${h.y}%`,
+                    transform: 'translate(-50%,-50%)',
+                    width: '28px', height: '28px',
+                    borderRadius: '50%',
+                    border: 'none', padding: 0,
+                    cursor: 'pointer',
+                    background: isVisited
+                      ? `rgba(${glowRgb},0.16)`
+                      : 'rgba(255,255,255,0.04)',
+                    boxShadow: isSelected
+                      ? `0 0 0 1px rgba(${glowRgb},0.55), 0 0 16px rgba(${glowRgb},0.75), 0 0 48px rgba(${glowRgb},0.32)`
+                      : isVisited
+                        ? `0 0 0 1px rgba(${glowRgb},0.32), 0 0 12px rgba(${glowRgb},0.46), 0 0 32px rgba(${glowRgb},0.18)`
+                        : `0 0 0 1px rgba(${glowRgb},0.25), 0 0 20px rgba(${glowRgb},0.45), 0 0 50px rgba(${glowRgb},0.18)`,
+                    animation: !isVisited ? 'ihi-pulse 2.8s ease-in-out infinite' : 'none',
+                    transition: 'box-shadow 280ms cubic-bezier(0.22,1,0.36,1)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    zIndex: isSelected ? 8 : 6,
+                  }}
+                >
+                  <div style={{
+                    width:  isSelected ? '10px' : isVisited ? '8px'  : '6px',
+                    height: isSelected ? '10px' : isVisited ? '8px'  : '6px',
+                    borderRadius: '50%',
+                    background: isVisited ? glow : 'rgba(255,255,255,0.85)',
+                    boxShadow: isVisited ? `0 0 8px ${glow}` : 'none',
+                    transition: 'all 280ms cubic-bezier(0.22,1,0.36,1)',
+                  }} />
+                </button>
+
+                {/* Label — selected hotspot only */}
+                {isSelected && (
+                  <div style={{
+                    position: 'absolute',
+                    ...getLabelPos(h),
+                    background: labelBg,
+                    backdropFilter: 'blur(18px)',
+                    WebkitBackdropFilter: 'blur(18px)',
+                    border: `1px solid rgba(${glowRgb},0.14)`,
+                    borderRadius: '14px',
+                    padding: '9px 13px',
+                    fontSize: '14px', fontWeight: 500,
+                    color: text, whiteSpace: 'nowrap',
+                    pointerEvents: 'none', zIndex: 9,
+                    animation: 'ihi-label-in 220ms ease both',
+                  }}>
+                    {h.shortLabel || h.title}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Spacer so continue button is reachable when scrolled */}
+        <div style={{ height: '120px' }} />
       </div>
 
-      {/* ── Hotspot dots ─────────────────────────────────────────────────── */}
-      {hotspots.map(h => {
-        const isSelected = selectedId === h.id
-        const isVisited  = visited.has(h.id)
+      {/* ═══════════════════════════════════════════════════════════════════
+          SHARED OVERLAYS — appear in explore mode
+      ═══════════════════════════════════════════════════════════════════ */}
 
-        return (
-          <div key={h.id}>
-            <button
-              type="button"
-              className="ihi-dot"
-              aria-label={`Explore ${h.title}`}
-              aria-pressed={isSelected}
-              onClick={() => handleTap(h.id)}
-              style={{
-                position: 'absolute',
-                left: `${h.x}%`, top: `${h.y}%`,
-                transform: 'translate(-50%, -50%)',
-                width: '28px', height: '28px',
-                borderRadius: '50%',
-                border: 'none', padding: 0,
-                cursor: isExplore ? 'pointer' : 'default',
-                background: isVisited
-                  ? `rgba(${glowRgb},0.16)`
-                  : 'rgba(255,255,255,0.04)',
-                boxShadow: isSelected
-                  ? `0 0 0 1px rgba(${glowRgb},0.55), 0 0 16px rgba(${glowRgb},0.75), 0 0 48px rgba(${glowRgb},0.32)`
-                  : isVisited
-                    ? `0 0 0 1px rgba(${glowRgb},0.32), 0 0 12px rgba(${glowRgb},0.46), 0 0 32px rgba(${glowRgb},0.18)`
-                    : `0 0 0 1px rgba(${glowRgb},0.25), 0 0 20px rgba(${glowRgb},0.45), 0 0 50px rgba(${glowRgb},0.18)`,
-                opacity: isExplore ? 1 : 0.18,
-                pointerEvents: isExplore ? 'auto' : 'none',
-                animation: (!isVisited && isExplore) ? 'ihi-pulse 2.8s ease-in-out infinite' : 'none',
-                transition: 'opacity 500ms cubic-bezier(0.22,1,0.36,1), box-shadow 280ms cubic-bezier(0.22,1,0.36,1)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                zIndex: isSelected ? 12 : 10,
-              }}
-            >
-              <div style={{
-                width:  isSelected ? '10px' : isVisited ? '8px'  : '6px',
-                height: isSelected ? '10px' : isVisited ? '8px'  : '6px',
-                borderRadius: '50%',
-                background: isVisited ? glow : 'rgba(255,255,255,0.85)',
-                boxShadow: isVisited ? `0 0 8px ${glow}` : 'none',
-                transition: 'all 280ms cubic-bezier(0.22,1,0.36,1)',
-              }} />
-            </button>
-
-            {/* Label — selected hotspot only */}
-            {isSelected && isExplore && (
-              <div style={{
-                position: 'absolute',
-                ...getLabelPos(h),
-                background: labelBg,
-                backdropFilter: 'blur(18px)',
-                WebkitBackdropFilter: 'blur(18px)',
-                border: `1px solid rgba(${glowRgb},0.14)`,
-                borderRadius: '16px',
-                padding: '10px 14px',
-                fontSize: '15px', fontWeight: 500,
-                color: text, whiteSpace: 'nowrap',
-                pointerEvents: 'none', zIndex: 13,
-                animation: 'ihi-label-in 220ms ease both',
-              }}>
-                {h.shortLabel || h.title}
-              </div>
-            )}
-          </div>
-        )
-      })}
-
-      {/* ── Tap-to-dismiss overlay — behind sheet ────────────────────────── */}
+      {/* Tap-outside overlay — behind sheet, closes it */}
       {selected && isExplore && (
         <div
           onClick={() => setSelectedId(null)}
@@ -415,68 +453,65 @@ export default function InteractiveHotspotImage({
         />
       )}
 
-      {/* ── Bottom info sheet ─────────────────────────────────────────────── */}
+      {/* Bottom info sheet */}
       <div style={{
-        position: 'absolute',
-        bottom: 0, left: 0, right: 0,
+        position: 'absolute', bottom: 0, left: 0, right: 0,
         background: sheetBg,
         backdropFilter: 'blur(28px)',
         WebkitBackdropFilter: 'blur(28px)',
         border: `1px solid ${sheetBorder}`,
         borderBottom: 'none',
-        borderRadius: '22px 22px 0 0',
-        padding: `24px 24px calc(max(24px, env(safe-area-inset-bottom, 0px)) + 24px)`,
+        borderRadius: '20px 20px 0 0',
+        padding: `20px 22px calc(max(20px, env(safe-area-inset-bottom, 0px)) + 20px)`,
         transform: (selected && isExplore) ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 380ms cubic-bezier(0.22,1,0.36,1)',
         zIndex: 30,
-        maxHeight: '62vh',
+        maxHeight: '58vh',
         overflowY: 'auto',
       }}>
         {selected && (
           <>
             {/* Pull handle */}
             <div style={{
-              width: '36px', height: '4px', borderRadius: '2px',
-              background: `rgba(${glowRgb},0.22)`,
-              margin: '-6px auto 22px',
+              width: '32px', height: '3px', borderRadius: '2px',
+              background: `rgba(${glowRgb},0.20)`,
+              margin: '-4px auto 18px',
             }} />
 
             {/* Icon + title */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '12px' }}>
-              <div style={{ fontSize: '28px', lineHeight: 1, flexShrink: 0, marginTop: '2px' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '10px' }}>
+              <div style={{ fontSize: '24px', lineHeight: 1, flexShrink: 0, marginTop: '1px' }}>
                 {selected.icon}
               </div>
               <div style={{
-                fontSize: '22px', fontWeight: 700, lineHeight: 1.1,
+                fontSize: '20px', fontWeight: 700, lineHeight: 1.1,
                 letterSpacing: '-0.02em', color: text,
               }}>
                 {selected.title}
               </div>
             </div>
 
-            {/* Description */}
             <p style={{
-              fontSize: '15px', lineHeight: 1.75, fontWeight: 400,
-              color: muted, margin: '0 0 18px',
+              fontSize: '14px', lineHeight: 1.68, fontWeight: 400,
+              color: muted, margin: '0 0 14px',
             }}>
               {selected.description}
             </p>
 
-            {/* Why it matters */}
             {selected.extraFact && (
               <div style={{
-                borderLeft: `2px solid rgba(${glowRgb},0.30)`,
-                paddingLeft: '14px',
+                borderLeft: `2px solid rgba(${glowRgb},0.28)`,
+                paddingLeft: '12px',
               }}>
                 <div style={{
-                  fontSize: '11px', fontWeight: 700,
+                  fontSize: '10px', fontWeight: 700,
                   letterSpacing: '0.14em', textTransform: 'uppercase',
-                  color: glow, marginBottom: '6px',
+                  color: glow, marginBottom: '5px',
                 }}>
                   Why it matters:
                 </div>
                 <p style={{
-                  fontSize: '14px', lineHeight: 1.65,
+                  fontSize: '13px', lineHeight: 1.62,
                   color: muted, margin: 0,
                 }}>
                   {selected.extraFact}
@@ -487,7 +522,7 @@ export default function InteractiveHotspotImage({
         )}
       </div>
 
-      {/* ── Continue button — fades in when all explored and sheet closed ── */}
+      {/* Continue button — fades in when all explored, sheet closed */}
       <div style={{
         position: 'absolute',
         bottom: 'max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px))',
@@ -502,13 +537,13 @@ export default function InteractiveHotspotImage({
           type="button"
           onClick={onContinue}
           style={{
-            width: '100%', height: '56px',
+            width: '100%', height: '54px',
             borderRadius: '14px',
             background: `rgba(${glowRgb},0.18)`,
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
             border: `1px solid rgba(${glowRgb},0.26)`,
-            color: text, fontSize: '18px', fontWeight: 700,
+            color: text, fontSize: '17px', fontWeight: 700,
             cursor: 'pointer', letterSpacing: '0.01em',
           }}
         >

@@ -1870,6 +1870,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const isLast  = screen === total - 1
   const [animKey, setAnimKey] = useState(0)
   const [cinematicHeaderVisible, setCinematicHeaderVisible] = useState(false)
+  const [ihmExploreScreen, setIhmExploreScreen] = useState(null)
 
   useEffect(() => {
     saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts })
@@ -2203,20 +2204,33 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     )
   }
 
-  // ── Full-screen interactive image — no header, takes over completely ─────────
+  // ── Full-screen interactive image — intro hides header, explore shows it ────
   if (cur?.type === 'interactiveImage') {
+    const ihmExplore = ihmExploreScreen === screen
     return (
-      <InteractiveHotspotImage
-        subject={module.subject}
-        title={cur.title}
-        introText={cur.introText}
-        image={cur.image}
-        imageAlt={cur.imageAlt || cur.title}
-        hotspots={cur.hotspots || []}
-        ctaLabel={cur.ctaLabel}
-        onBack={headerOnBack}
-        onContinue={isLast ? handleFinish : () => go(1)}
-      />
+      <>
+        <LearningHeader
+          module={module}
+          beats={beats}
+          currentBeatIndex={currentBeatIndex}
+          onBack={headerOnBack}
+          onExit={onBack}
+          onJump={handleBeatJump}
+          visible={ihmExplore}
+        />
+        <InteractiveHotspotImage
+          subject={module.subject}
+          title={cur.title}
+          introText={cur.introText}
+          image={cur.image}
+          imageAlt={cur.imageAlt || cur.title}
+          hotspots={cur.hotspots || []}
+          ctaLabel={cur.ctaLabel}
+          onBack={headerOnBack}
+          onEnterExplore={() => setIhmExploreScreen(screen)}
+          onContinue={isLast ? handleFinish : () => go(1)}
+        />
+      </>
     )
   }
 
