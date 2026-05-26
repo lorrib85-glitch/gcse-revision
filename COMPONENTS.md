@@ -335,10 +335,27 @@ NOT applied in Phase 1:
 - Cinematic screens (RevealBlock, CinematicRevealMoment)
 - Hook screens (true/false and retrieval questions)
 
+**Rationale:**
+
+CardContainer v1 addresses a core UX goal: create unified visual consistency across content surfaces without the surface competing with the lesson. The locked decisions reflect specific architectural tradeoffs:
+
+1. **Wrapper pattern vs. internal rewrite:** Blocks already have type-specific styling (blue for read, purple for keypoint, yellow for funfact). Wrapping preserves this identity while adding outer atmospheric framing. Rewriting internals would risk losing visual differentiation and require more invasive changes.
+
+2. **Phased rollout:** Content blocks are diverse (some interactive, some static; some styled, some structured). Phase 1 targets safe, simple blocks with clear content hierarchies. Quizzes, cinematic screens, and hooks have complex state/animation that needs separate design iteration before wrapping. Phased approach allows testing and refinement per block type.
+
+3. **Subject atmosphere over fixed colors:** The app serves multiple subjects with different moods (History=sepia, Biology=organic, Physics=deep space). Reusing PALETTES system ties CardContainer to existing theme infrastructure rather than inventing new accent logic. Atmosphere is optional (showAtmosphere prop) for maximum flexibility.
+
+4. **Explicit variants vs. auto-detection:** Content density, layout needs, and visual priority vary by use case. Forcing developers to choose variant makes intent explicit, prevents accidental misuse, and keeps the component simple (no heuristics to maintain).
+
+5. **Low opacity atmosphere (0.06–0.12):** The spec emphasizes "almost disappear behind the learning." Heavy tinting (0.2+) would create visual competition. Low opacity supports readability, respects content focus, and creates subtle mood through color undertone rather than overlay. Learners should feel immersed in the subject mood, not distracted by card styling.
+
+6. **Static by default, animations added later:** Animations (glow breathing, parallax) are powerful but require careful timing with content reveal flow and mobile performance testing. Deferring animations lets layout stabilize first, prevents "busy" feeling, and allows future iterations without breaking existing layouts.
+
 This component is **LOCKED globally**. Changes must preserve its core contract.
 
 ---
 
+## AnswerInteraction v1
 
 **Purpose:** Reusable answer submission and feedback component for learning activities.
 
