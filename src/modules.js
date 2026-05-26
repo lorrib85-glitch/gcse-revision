@@ -413,7 +413,7 @@ Do NOT award marks for identifying practices without explaining the religious re
             { text: 'Nobody believed him', correct: false },
             { text: 'The Church banned his book', correct: false },
             { text: 'Bloodletting was made compulsory by law', correct: false },
-          ], explanation: 'Key AQA exam point: improved understanding does not automatically lead to better treatment.' },
+          ], hint: 'Harvey proved blood moves around the body — but what couldn\'t he explain about what blood is actually for?', explanation: 'Harvey could prove blood circulates but couldn\'t explain what blood actually does — carries oxygen, removes waste. Without that understanding, doctors had no reason to abandon treatments like bloodletting.' },
         ]
       },
       {
