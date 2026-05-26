@@ -120,12 +120,16 @@ export default function CinematicRevealMoment({
     <>
       <style>{`
         @keyframes crm-up {
-          from { opacity: 0; transform: translateY(16px); }
+          from { opacity: 0; transform: translateY(22px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes crm-btn {
-          from { opacity: 0; transform: translateY(10px); }
+        @keyframes crm-fade {
+          from { opacity: 0; transform: translateY(8px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes crm-pulse {
+          0%, 100% { opacity: 0.55; }
+          50%      { opacity: 1; }
         }
       `}</style>
 
@@ -171,7 +175,7 @@ export default function CinematicRevealMoment({
         {/* Left-side darkening for text legibility */}
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'linear-gradient(90deg, rgba(0,0,0,0.40) 0%, rgba(0,0,0,0.14) 55%, transparent 100%)',
+          background: 'linear-gradient(90deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.10) 55%, transparent 100%)',
         }} />
 
         {/* Vignette around all edges */}
@@ -191,7 +195,7 @@ export default function CinematicRevealMoment({
         {/* Text content — anchored to lower portion of screen */}
         <div style={{
           position: 'absolute',
-          left: 32, right: 32, bottom: 116,
+          left: 32, right: 32, bottom: 104,
           maxWidth: 'calc(100vw - 64px)',
         }}>
 
@@ -199,11 +203,12 @@ export default function CinematicRevealMoment({
           {yearVisible && (
             <div style={{
               fontFamily: "'Sora', sans-serif",
-              fontWeight: 900, fontSize: 58,
+              fontWeight: 900, fontSize: 62,
               lineHeight: 0.95, letterSpacing: '-0.04em',
               color: accent,
-              marginBottom: 28,
-              animation: 'crm-up 900ms ease both',
+              marginBottom: 26,
+              textShadow: '0 2px 28px rgba(0,0,0,0.55)',
+              animation: 'crm-up 900ms cubic-bezier(.16,1,.3,1) both',
             }}>
               {year}
             </div>
@@ -213,40 +218,39 @@ export default function CinematicRevealMoment({
           {paragraphs.map((para, i) => paraVisible[i] && (
             <p key={i} style={{
               fontFamily: "'Sora', sans-serif",
-              fontWeight: 700, fontSize: 23,
-              lineHeight: 1.18, letterSpacing: '-0.025em',
+              fontWeight: 700, fontSize: 24,
+              lineHeight: 1.2, letterSpacing: '-0.025em',
               color: 'rgba(245,238,225,0.95)',
               margin: 0,
-              marginBottom: i < paragraphs.length - 1 ? 30 : 0,
-              animation: `crm-up ${paraDuration(i)}ms ease both`,
+              marginBottom: i < paragraphs.length - 1 ? 28 : 0,
+              textShadow: '0 1px 20px rgba(0,0,0,0.5)',
+              animation: `crm-up ${paraDuration(i)}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
               {renderHighlighted(para.text, para.highlights, accent)}
             </p>
           ))}
         </div>
 
-        {/* Continue button — appears only after all copy is visible */}
+        {/* Continue prompt — quiet text invite, appears after all copy is visible */}
         {btnVisible && (
           <button
             onClick={onContinue}
             style={{
               position: 'absolute',
               left: 32, right: 32,
-              bottom: 'calc(32px + env(safe-area-inset-bottom, 0px))',
-              height: 58, borderRadius: 14,
-              border: `1.5px solid ${accent}`,
-              background: 'rgba(36,24,21,0.55)',
-              backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
+              bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))',
+              background: 'none', border: 'none', padding: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer',
-              animation: 'crm-btn 700ms ease both',
+              animation: 'crm-fade 700ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite',
             }}>
             <span style={{
               fontFamily: "'Sora', sans-serif",
-              fontWeight: 800, fontSize: 15,
-              letterSpacing: '0.18em', textTransform: 'uppercase',
+              fontWeight: 700, fontSize: 13,
+              letterSpacing: '0.34em', textTransform: 'uppercase',
               color: accent,
-            }}>CONTINUE →</span>
+              textShadow: '0 1px 16px rgba(0,0,0,0.6)',
+            }}>Continue&nbsp;&nbsp;→</span>
           </button>
         )}
 
