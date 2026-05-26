@@ -32,32 +32,48 @@ All locked components follow a frozen behavior contract. Visual redesigns are pe
 
 ## LearningProgressHeader v2
 
-**Purpose:** Progression layer with circular progress indicators and beat navigation.
+**Purpose:** Phase-based progress system beneath ModuleToolbar v1 (per RISE Module Header System spec).
 
-**Location:** `src/LearningProgressHeader.jsx` (245 lines)
+**Location:** `src/LearningProgressHeader.jsx` (250+ lines)
 
 **Props:**
-- `beats` (array) — beat objects with labels
+- `beats` (array) — phase/beat objects with labels
 - `currentBeatIndex` (number) — current position (0-indexed)
 - `accent` (hex) — subject colour
 - `accentRgb` (string) — "r,g,b" format for rgba()
-- `onJump` — callback when user jumps to a beat
+- `onJump` — callback when user jumps to a phase
 
 **State:**
 - `sheetOpen` — whether jump-to-section sheet is open
 
-**Visual:**
-- **Circular progress indicators** (redesigned from bars)
-  - Completed beats: filled circles with glow
-  - Current beat: filled circle with shimmer animation
-  - Future beats: unfilled circles (locked)
+**Visual (Per RISE Spec):**
+```
+○──○──◉──○──○
+
+Completed phases: filled circles with subject accent glow
+Active phase: larger filled circle with breathing animation + accent glow
+Future phases: hollow/dimmed circles (locked)
+Connector lines: neutral dark lines, highlight when complete
+```
+
+- **5-7 nodes maximum** (prevents overwhelming feeling)
+- **Node states:**
+  - Completed: filled, tappable, allows revisit
+  - Active: slightly larger, breathing glow, highest contrast
+  - Future: hollow/dimmed, untappable, visually present but locked
+- **Connector lines:** subtle neutral coloured, highlight with accent glow when complete
 - **Jump sheet:** bottom sheet modal with beat list, checkmarks, lock icons
 
-**Locked Rules:**
-- Progress circles must remain circular (not bars)
-- Forward-locking must be enforced (no jumping ahead)
-- Jump sheet must use portal to escape transform containing block
-- Feedback must feel calm and non-patronising
+**Locked Rules (Per RISE Spec):**
+- Progress nodes must remain phase-based (not bar-based)
+- Forward-locking must be enforced (no jumping ahead/skipping)
+- Completed phases must be tappable to revisit with preserved state
+- Active node uses subject accent glow with breathing animation
+- Connector lines remain neutral/dark/subtle
+- Max 7 visible nodes (never 20+)
+- Jump sheet uses portal to escape transform containing block
+- Must always sit BELOW ModuleToolbar v1
+- Toolbar and progress must never merge into same row
 
 ---
 

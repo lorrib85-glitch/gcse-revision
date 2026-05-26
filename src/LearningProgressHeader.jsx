@@ -21,21 +21,21 @@ function CheckIcon({ color }) {
 }
 
 // ── LearningProgressHeader v2 — LOCKED COMPONENT ──────────────────────────────
-// Phase/beat progression layer extracted from LearningHeader.
-// Owns the circular progress indicators + "jump to a section" sheet and its open state.
-// Forward navigation stays locked (future beats disabled); subject accent is
-// passed in from the orchestrator.
+// Phase-based progress layer beneath ModuleToolbar v1 (per RISE Module Header System spec).
+// Owns: phase progress nodes, connector lines, current phase state, "jump to section" sheet.
+// Does NOT own: back/exit navigation, titles, metadata, menu actions.
 //
-// Progress rail now shows circular indicators:
-// - Completed beats: filled circles with glow
-// - Current beat: filled circle with shimmer animation
-// - Future beats: unfilled circles (locked)
+// Progress nodes (5-7 ideal):
+// - Completed phases: filled circles with subject accent glow, tappable to revisit
+// - Active phase: larger filled circle with breathing animation + subject accent glow
+// - Future phases: hollow circles, dimmed, untappable (locked, prevents forward skip)
+// - Connector lines: neutral dark lines between nodes, highlight when complete
+// - Forward-locking enforced: no skipping ahead, no bypassing retrieval questions
 //
 // The jump sheet renders through a portal to document.body: the parent header
-// capsule uses `transform`, which would otherwise become the containing block
-// for the sheet's `position: fixed`. The original kept the sheet as a sibling
-// of the capsule for the same reason; the portal preserves that behaviour while
-// letting this component own the sheet.
+// capsule uses `transform`, which creates a containing block for `position: fixed`.
+// Portal preserves the original sibling positioning while allowing this component
+// to own the full progression concern.
 export default function LearningProgressHeader({
   beats = [],
   currentBeatIndex = 0,
@@ -53,52 +53,58 @@ export default function LearningProgressHeader({
   return (
     <>
       <style>{`
-        @keyframes lh-shimmer {
-          0%, 80%, 100% { opacity: 1; }
-          40%            { opacity: 0.48; }
+        @keyframes lh-breathing {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50%      { opacity: 0.7; transform: scale(1.08); }
         }
       `}</style>
 
-      {/* ── Circular progress indicators ── */}
+      {/* ── Phase-based progress nodes with connector lines ── */}
       <button
         aria-label="Jump to section"
         onClick={() => setSheetOpen(true)}
         style={{
           width: '100%',
-          display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'center',
+          display: 'flex', gap: 0, alignItems: 'center', justifyContent: 'center',
           background: 'none', border: 'none', cursor: 'pointer',
-          padding: '10px 6px',
+          padding: '12px 16px',
         }}>
         {beats.map((_, i) => {
           const done    = i < currentBeatIndex
           const current = i === currentBeatIndex
-          const radius = 6
-          const size = radius * 2
+          const isLast  = i === beats.length - 1
+          const nodeSize = current ? 10 : 8
+          const nodeGap = 6
 
-          if (done) return (
-            <div key={i} style={{
-              width: size, height: size, borderRadius: '50%',
-              background: accent,
-              boxShadow: `0 0 8px rgba(${accentRgb},0.6)`,
-              flexShrink: 0,
-            }} />
-          )
-          if (current) return (
-            <div key={i} style={{
-              width: size, height: size, borderRadius: '50%',
-              background: accent,
-              boxShadow: `0 0 12px rgba(${accentRgb},0.8)`,
-              animation: 'lh-shimmer 4s ease-in-out infinite',
-              flexShrink: 0,
-            }} />
-          )
           return (
-            <div key={i} style={{
-              width: size, height: size, borderRadius: '50%',
-              background: 'rgba(255,255,255,0.12)',
-              border: `1px solid rgba(255,255,255,0.08)`,
-              flexShrink: 0,
-            }} />
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+              {/* ── Progress node ── */}
+              <div style={{
+                width: nodeSize, height: nodeSize, borderRadius: '50%',
+                flexShrink: 0,
+                background: done ? accent : current ? accent : 'rgba(255,255,255,0.12)',
+                border: current || done ? 'none' : '1px solid rgba(255,255,255,0.15)',
+                boxShadow: current
+                  ? `0 0 14px rgba(${accentRgb},0.7)`
+                  : done ? `0 0 8px rgba(${accentRgb},0.5)` : 'none',
+                animation: current ? 'lh-breathing 3s ease-in-out infinite' : 'none',
+              }} />
+
+              {/* ── Connector line (not after last node) ── */}
+              {!isLast && (
+                <div style={{
+                  width: 20,
+                  height: 1,
+                  background: done
+                    ? accent
+                    : 'rgba(255,255,255,0.08)',
+                  opacity: done ? 0.5 : 1,
+                  margin: '0 2px',
+                  flexShrink: 0,
+                  boxShadow: done ? `0 0 4px rgba(${accentRgb},0.3)` : 'none',
+                }} />
+              )}
+            </div>
           )
         })}
       </button>
