@@ -105,7 +105,105 @@ Connector lines: neutral dark lines, highlight when complete
 
 ---
 
-## AnswerInteraction v1
+## RetrievalFrame v1
+
+**Purpose:** Cinematic wrapper for retrieval moments woven naturally into learning flow.
+
+**CRITICAL ARCHITECTURE:** RetrievalFrame is a wrapper only. AnswerInteraction v1 owns all answer logic.
+
+**Location:** `src/RetrievalFrame.jsx` (TBD)
+
+**Implementation decisions (locked):**
+
+1. **Data source:** Wraps existing `intro.retrieval` from modules. Does NOT create new retrieval array schema yet.
+
+2. **Integration scope:** First implementation replaces inline intro.retrieval rendering in HookScreen only. No broader block-type system yet.
+
+3. **Completion callback:** `onInteractionComplete()` — parent tracks completion state and enables ContinueButton via existing continue logic.
+
+4. **True/False exemption:** RetrievalFrame does NOT handle trueFalse questions. ChapterHookScreen retains T/F hook logic separate. RetrievalFrame for non-hook retrieval only.
+
+5. **Variant:** Explicit prop (fullBleed, contained, inline). Default = contained. No auto-detection.
+
+6. **Background:** Static only. No parallax implementation yet.
+
+7. **Question layout:** Normal flow (not sticky). Question visible in structure but does not require sticky positioning.
+
+**Props:**
+
+- `retrieval` — object from `intro.retrieval` with `{ question, options[], correctIndex, explanation }`
+- `variant` — 'fullBleed' | 'contained' | 'inline' (default: 'contained')
+- `subject` — subject key for accent styling
+- `topic` — topic name
+- `beatId` — learning beat ID (for WeakMemory metadata)
+- `contextImage` — optional background image path
+- `contextText` — optional setup line before question
+- `label` — label text (default: "Quick check")
+- `mode` — 'learning' | 'cinematic' | 'review' (default: 'learning')
+- `onInteractionComplete` — callback when AnswerInteraction completes
+- `onContinueReady` — optional callback when user can continue
+
+**Ownership:**
+
+RetrievalFrame owns:
+- Visual wrapper / containment
+- Label styling
+- Question placement
+- Atmospheric background
+- Spacing / rhythm
+- Passing props to AnswerInteraction v1
+- Receiving completion state from AnswerInteraction v1
+- Calling parent callbacks
+
+RetrievalFrame does NOT own:
+- Answer checking logic
+- Hint display
+- Attempt limits
+- Answer reveal
+- Correct/incorrect copy
+- Feedback styling (owned by AnswerInteraction)
+- WeakMemory logging
+- ContinueButton styling
+- True/False question handling
+
+**Component relationship:**
+
+```
+[Learning content]
+
+[RetrievalFrame v1]
+  [Label: "Quick check" / "Recall" etc.]
+  [Question block - large, visible, persistent]
+  
+  [AnswerInteraction v1]
+    - handles answer options
+    - handles submission
+    - shows hint on attempt 1 incorrect
+    - shows reveal on attempt 2 incorrect
+    - shows correct confirmation
+    - calls onInteractionComplete when done
+  
+[ContinueButton enabled by parent via callback]
+```
+
+**Visual hierarchy (contained variant):**
+
+- Optional subject accent label (small, muted)
+- Question (large, bold, readable)
+- AnswerInteraction (options + feedback below)
+- No dashboard chrome
+- Minimal app chrome
+
+**Mobile-first:** All variants designed for portrait first.
+
+**Variants:**
+
+- **contained** (default): soft glass container, clear boundaries, LearningMode
+- **fullBleed**: image background, dark overlay, large question, CinematicMode
+- **inline**: compact, between concept cards, minimal chrome
+
+---
+
 
 **Purpose:** Reusable answer submission and feedback component for learning activities.
 
