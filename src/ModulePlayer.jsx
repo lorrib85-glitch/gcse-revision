@@ -10,6 +10,7 @@ import InteractiveHotspotImage from './InteractiveHotspotImage.jsx'
 import FillInTheBlanksBlock from './FillInTheBlanksBlock.jsx'
 import AnswerInteraction from './AnswerInteraction.jsx'
 import RetrievalFrame from './RetrievalFrame.jsx'
+import CardContainer from './CardContainer.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -48,17 +49,12 @@ function saveConfidenceRating(moduleId, subject, title, confidence) {
 
 function ReadBlock({ block }) {
   return (
-    <div style={{
-      borderLeft: '3px solid #3B82FF',
-      background: 'rgba(59,130,255,.07)',
-      borderRadius: '0 14px 14px 0',
-      padding: '16px 18px', margin: '12px 0',
-    }}>
+    <div>
       {block.label && (
         <div style={{
           fontFamily: "'Inter', sans-serif",
           fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-          textTransform: 'uppercase', color: '#70B8FF', marginBottom: 8,
+          textTransform: 'uppercase', color: '#70B8FF', marginBottom: 12,
         }}>{block.label}</div>
       )}
       <p style={{
@@ -71,16 +67,11 @@ function ReadBlock({ block }) {
 
 function KeypointBlock({ block }) {
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, #1A2338 0%, #111828 100%)',
-      border: '1px solid rgba(157,92,255,.25)',
-      borderRadius: 16, padding: '18px 20px', margin: '14px 0',
-      boxShadow: '0 0 24px rgba(157,92,255,.08)',
-    }}>
+    <div>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 10,
+        textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 12,
       }}>⭐ Key Point</div>
       <p style={{
         fontFamily: "'Inter', sans-serif",
@@ -92,16 +83,11 @@ function KeypointBlock({ block }) {
 
 function FunFactBlock({ block }) {
   return (
-    <div style={{
-      background: 'rgba(255,200,87,.06)',
-      borderLeft: '3px solid #FFC857',
-      borderRadius: '0 14px 14px 0',
-      padding: '14px 18px', margin: '12px 0',
-    }}>
+    <div>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: '#FFC857', marginBottom: 6,
+        textTransform: 'uppercase', color: '#FFC857', marginBottom: 10,
       }}>{block.label || '🤯 Fun Fact'}</div>
       <p style={{
         fontFamily: "'Inter', sans-serif",
@@ -113,31 +99,26 @@ function FunFactBlock({ block }) {
 
 function ExamTipBlock({ block }) {
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, #0C2218 0%, #071610 100%)',
-      border: '1.5px dashed rgba(245,183,0,.35)',
-      borderRadius: 16, padding: '16px 18px', margin: '14px 0',
-      boxShadow: '0 0 20px rgba(245,183,0,.05)',
-    }}>
+    <div>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: '#F5B700', marginBottom: 10,
+        textTransform: 'uppercase', color: '#F5B700', marginBottom: 12,
       }}>{block.label || '🗡️ Exam Assassin'}</div>
       {block.text && (
         <p style={{
           fontFamily: "'Inter', sans-serif",
-          fontSize: '.9rem', margin: 0, color: '#C8D0E8', lineHeight: 1.65,
+          fontSize: '.9rem', margin: '0 0 12px 0', color: '#C8D0E8', lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.text }} />
       )}
       {block.tip && (
         <p style={{
           fontFamily: "'Inter', sans-serif",
-          fontSize: '.9rem', marginBottom: block.phrases ? 10 : 0, color: '#C8D0E8', lineHeight: 1.65,
+          fontSize: '.9rem', marginBottom: block.phrases ? 12 : 0, color: '#C8D0E8', lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.tip }} />
       )}
       {block.phrases && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
           {block.phrases.map(p => (
             <span key={p} style={{
               background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.3)',
@@ -1138,10 +1119,10 @@ function Screen({ screen, subject }) {
 
       {screen.blocks.map((block, i) => (
         <div key={i}>
-          {block.type === 'read'          && <ReadBlock block={block} />}
-          {block.type === 'keypoint'      && <KeypointBlock block={block} />}
-          {block.type === 'funfact'       && <FunFactBlock block={block} />}
-          {block.type === 'examtip'       && <ExamTipBlock block={block} />}
+          {block.type === 'read'          && <CardContainer variant="contained" subject={subject} padding={24}><ReadBlock block={block} /></CardContainer>}
+          {block.type === 'keypoint'      && <CardContainer variant="contained" subject={subject} padding={24}><KeypointBlock block={block} /></CardContainer>}
+          {block.type === 'funfact'       && <CardContainer variant="contained" subject={subject} padding={20}><FunFactBlock block={block} /></CardContainer>}
+          {block.type === 'examtip'       && <CardContainer variant="contained" subject={subject} padding={24}><ExamTipBlock block={block} /></CardContainer>}
           {block.type === 'timeline'      && <TimelineBlock block={block} />}
           {block.type === 'reveal'        && <RevealBlock block={block} />}
           {block.type === 'quiz'          && <AnswerInteraction block={block} subject={subject} onComplete={() => handleQuizComplete(i)} />}
