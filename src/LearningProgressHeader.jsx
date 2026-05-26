@@ -22,10 +22,14 @@ function CheckIcon({ color }) {
 
 // ── LearningProgressHeader v2 — LOCKED COMPONENT ──────────────────────────────
 // Phase/beat progression layer extracted from LearningHeader.
-// Owns the progress rail + "jump to a section" sheet and its open state.
+// Owns the circular progress indicators + "jump to a section" sheet and its open state.
 // Forward navigation stays locked (future beats disabled); subject accent is
-// passed in from the orchestrator. Behaviour, navigation logic and inline
-// styling preserved exactly — architectural separation only, no visual redesign.
+// passed in from the orchestrator.
+//
+// Progress rail now shows circular indicators:
+// - Completed beats: filled circles with glow
+// - Current beat: filled circle with shimmer animation
+// - Future beats: unfilled circles (locked)
 //
 // The jump sheet renders through a portal to document.body: the parent header
 // capsule uses `transform`, which would otherwise become the containing block
@@ -55,39 +59,45 @@ export default function LearningProgressHeader({
         }
       `}</style>
 
-      {/* ── Segmented progress rail ── */}
+      {/* ── Circular progress indicators ── */}
       <button
         aria-label="Jump to section"
         onClick={() => setSheetOpen(true)}
         style={{
           width: '100%',
-          display: 'flex', gap: 5, alignItems: 'center',
+          display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'center',
           background: 'none', border: 'none', cursor: 'pointer',
-          padding: '2px 6px 2px',
+          padding: '10px 6px',
         }}>
         {beats.map((_, i) => {
           const done    = i < currentBeatIndex
           const current = i === currentBeatIndex
-          const base = { flex: 1, height: 4, borderRadius: 999, minWidth: 0 }
+          const radius = 6
+          const size = radius * 2
+
           if (done) return (
             <div key={i} style={{
-              ...base,
+              width: size, height: size, borderRadius: '50%',
               background: accent,
-              boxShadow: `0 0 5px rgba(${accentRgb},0.45)`,
+              boxShadow: `0 0 8px rgba(${accentRgb},0.6)`,
+              flexShrink: 0,
             }} />
           )
           if (current) return (
             <div key={i} style={{
-              ...base,
+              width: size, height: size, borderRadius: '50%',
               background: accent,
-              boxShadow: `0 0 8px rgba(${accentRgb},0.65)`,
+              boxShadow: `0 0 12px rgba(${accentRgb},0.8)`,
               animation: 'lh-shimmer 4s ease-in-out infinite',
+              flexShrink: 0,
             }} />
           )
           return (
             <div key={i} style={{
-              ...base,
-              background: 'rgba(255,255,255,0.10)',
+              width: size, height: size, borderRadius: '50%',
+              background: 'rgba(255,255,255,0.12)',
+              border: `1px solid rgba(255,255,255,0.08)`,
+              flexShrink: 0,
             }} />
           )
         })}
