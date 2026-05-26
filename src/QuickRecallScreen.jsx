@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import AnswerInteraction from './AnswerInteraction.jsx'
 
 const IMAGES = {
   History:   '/historybacker.png',
@@ -138,12 +139,21 @@ function TrueFalseQuestion({ q, accent, rgb, onSelect }) {
 function ChoiceQuestion({ q, accent, rgb, onSelect, shaking, setShaking }) {
   const [chosen, setChosen] = useState(null)
 
-  function pick(i) {
-    if (chosen !== null) return
-    setChosen(i)
-    const correct = i === q.correct
+  // Convert quick quiz format to AnswerInteraction format
+  const block = {
+    question: q.question,
+    options: q.options.map((text, i) => ({
+      text,
+      correct: i === q.correct,
+    })),
+    explanation: q.explanation,
+    hint: q.hint,
+  }
+
+  function handleAnswered() {
+    const correct = chosen === q.correct
     if (!correct) {
-      setShaking(i)
+      setShaking(chosen)
       setTimeout(() => setShaking(null), 460)
     }
     setTimeout(() => onSelect(correct), correct ? 460 : 640)
@@ -161,50 +171,11 @@ function ChoiceQuestion({ q, accent, rgb, onSelect, shaking, setShaking }) {
         {q.question}
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {q.options.map((opt, i) => {
-          const picked  = chosen === i
-          const isRight = chosen !== null && i === q.correct
-          const isWrong = picked && !isRight
-          const isShaking = shaking === i
-
-          return (
-            <button
-              key={i}
-              onClick={() => pick(i)}
-              style={{
-                height: 68, borderRadius: 16,
-                background: isRight ? `rgba(${rgb},0.18)` : isWrong ? 'rgba(255,80,80,0.1)' : 'rgba(255,255,255,0.04)',
-                border: `1.5px solid ${isRight ? accent : isWrong ? 'rgba(255,80,80,0.5)' : 'rgba(255,255,255,0.10)'}`,
-                backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-                boxShadow: isRight ? `0 0 20px rgba(${rgb},0.18)` : 'none',
-                display: 'flex', alignItems: 'center', gap: 16,
-                padding: '0 20px', cursor: chosen !== null ? 'default' : 'pointer',
-                transition: 'background 280ms ease, border-color 280ms ease, box-shadow 280ms ease',
-                animation: isShaking ? 'qrs-shake 460ms ease' : 'none',
-              }}>
-              <span style={{
-                fontFamily: "'Sora', sans-serif",
-                fontWeight: 700, fontSize: 13,
-                color: isRight ? accent : isWrong ? 'rgba(255,100,100,0.8)' : 'rgba(255,255,255,0.30)',
-                minWidth: 20, textAlign: 'center',
-                transition: 'color 280ms ease',
-              }}>
-                {String.fromCharCode(65 + i)}
-              </span>
-              <span style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontWeight: 500, fontSize: 18,
-                color: isRight ? '#fff' : isWrong ? 'rgba(255,120,120,0.85)' : 'rgba(255,255,255,0.82)',
-                textAlign: 'left',
-                transition: 'color 280ms ease',
-              }}>
-                {opt}
-              </span>
-            </button>
-          )
-        })}
-      </div>
+      <AnswerInteraction
+        block={block}
+        subject={q.subject}
+        onAnswered={handleAnswered}
+      />
     </div>
   )
 }
@@ -212,12 +183,22 @@ function ChoiceQuestion({ q, accent, rgb, onSelect, shaking, setShaking }) {
 function ConnectionQuestion({ q, accent, rgb, onSelect, shaking, setShaking }) {
   const [chosen, setChosen] = useState(null)
 
-  function pick(i) {
-    if (chosen !== null) return
-    setChosen(i)
-    const correct = i === q.correct
+  // Convert quick quiz format to AnswerInteraction format
+  const block = {
+    question: q.question,
+    options: q.options.map((opt, i) => ({
+      text: opt.text || opt,
+      correct: i === q.correct,
+      icon: opt.icon,
+    })),
+    explanation: q.explanation,
+    hint: q.hint,
+  }
+
+  function handleAnswered() {
+    const correct = chosen === q.correct
     if (!correct) {
-      setShaking(i)
+      setShaking(chosen)
       setTimeout(() => setShaking(null), 460)
     }
     setTimeout(() => onSelect(correct), correct ? 460 : 640)
@@ -235,56 +216,11 @@ function ConnectionQuestion({ q, accent, rgb, onSelect, shaking, setShaking }) {
         {q.question}
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {q.options.map((opt, i) => {
-          const picked  = chosen === i
-          const isRight = chosen !== null && i === q.correct
-          const isWrong = picked && !isRight
-          const isShaking = shaking === i
-
-          return (
-            <button
-              key={i}
-              onClick={() => pick(i)}
-              style={{
-                minHeight: 68, borderRadius: 16,
-                background: isRight ? `rgba(${rgb},0.18)` : isWrong ? 'rgba(255,80,80,0.1)' : 'rgba(255,255,255,0.04)',
-                border: `1.5px solid ${isRight ? accent : isWrong ? 'rgba(255,80,80,0.5)' : 'rgba(255,255,255,0.10)'}`,
-                backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-                boxShadow: isRight ? `0 0 20px rgba(${rgb},0.18)` : 'none',
-                display: 'flex', alignItems: 'center', gap: 16,
-                padding: '14px 20px', cursor: chosen !== null ? 'default' : 'pointer',
-                transition: 'background 280ms ease, border-color 280ms ease, box-shadow 280ms ease',
-                animation: isShaking ? 'qrs-shake 460ms ease' : 'none',
-              }}>
-              {/* Icon circle */}
-              <div style={{
-                width: 42, height: 42, borderRadius: 999, flexShrink: 0,
-                background: isRight ? `rgba(${rgb},0.22)` : isWrong ? 'rgba(255,80,80,0.15)' : 'rgba(255,255,255,0.07)',
-                border: `1px solid ${isRight ? `rgba(${rgb},0.4)` : isWrong ? 'rgba(255,80,80,0.3)' : 'rgba(255,255,255,0.10)'}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'background 280ms ease, border-color 280ms ease',
-              }}>
-                <Icon
-                  name={opt.icon || 'arrow'}
-                  size={20}
-                  color={isRight ? accent : isWrong ? 'rgba(255,100,100,0.8)' : 'rgba(255,255,255,0.55)'}
-                />
-              </div>
-              <span style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontWeight: 500, fontSize: 17,
-                lineHeight: '24px',
-                color: isRight ? '#fff' : isWrong ? 'rgba(255,120,120,0.85)' : 'rgba(255,255,255,0.82)',
-                textAlign: 'left',
-                transition: 'color 280ms ease',
-              }}>
-                {opt.text}
-              </span>
-            </button>
-          )
-        })}
-      </div>
+      <AnswerInteraction
+        block={block}
+        subject={q.subject}
+        onAnswered={handleAnswered}
+      />
     </div>
   )
 }
