@@ -19,15 +19,19 @@ function CheckIcon({ color }) {
 // answer reveal, correctness confirmation, silent WeakMemory trigger.
 // Does not own: question title, module toolbar, progress header, navigation.
 //
+// CRITICAL: Parent must track completion via onComplete callback to enable progression.
+// Component is complete when: answered correctly OR after 2nd incorrect attempt.
+//
 // State machine:
 // idle → answering → checking → {correct → complete OR incorrect_hint → retrying →
 // checking → incorrect_reveal → complete}
 //
 // Max 2 attempts. After attempt 1 incorrect: show hint. After attempt 2 incorrect:
-// reveal answer, log to WeakMemory, enable continue.
+// reveal answer, log to WeakMemory, trigger onComplete callback.
 export default function AnswerInteraction({
   block,
   onAnswered,
+  onComplete,
   subject,
   mode = 'learning',
 }) {
@@ -36,23 +40,30 @@ export default function AnswerInteraction({
   const [attempts, setAttempts] = useState(0)
   const [showHint, setShowHint] = useState(false)
   const [locked, setLocked] = useState(false)
+  const [isComplete, setIsComplete] = useState(false)
 
   function choose(i) {
     if (locked) return
     const correct = block.options[i].correct
     setSelected(i)
-    setAttempts(a => a + 1)
+    const nextAttempt = attempts + 1
+    setAttempts(nextAttempt)
 
     if (correct) {
       setLocked(true)
+      setIsComplete(true)
       if (subject) recordScore({ subject, earned: 1, possible: 1, source: 'module' })
       if (onAnswered) setTimeout(() => onAnswered(), 700)
+      if (onComplete) setTimeout(() => onComplete({ correct: true, attempts: nextAttempt }), 700)
     } else {
       setShakeIdx(i)
       setShowHint(true)
-      if (attempts >= 1) {
+      if (nextAttempt >= 2) {
+        // After 2nd attempt, lock and mark complete
         setLocked(true)
+        setIsComplete(true)
         if (subject) recordScore({ subject, earned: 0, possible: 1, source: 'module' })
+        if (onComplete) setTimeout(() => onComplete({ correct: false, attempts: nextAttempt }), 600)
       }
       setTimeout(() => setShakeIdx(null), 500)
     }

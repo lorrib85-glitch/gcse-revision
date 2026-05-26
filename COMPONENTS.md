@@ -119,6 +119,9 @@ Connector lines: neutral dark lines, highlight when complete
 - `block` — question block object with options, question, hint, explanation
 - `subject` — subject for score recording
 - `onAnswered` — callback when answer submission complete
+- `onComplete` — **CRITICAL:** called when component reaches complete state (correct OR 2nd incorrect attempt)
+  - Signature: `onComplete({ correct: boolean, attempts: number })`
+  - Parent MUST call this to track completion and enable progression
 - `mode` — 'learning' | 'review' (default: 'learning')
 
 **State Machine:**
@@ -146,6 +149,17 @@ checking (answer is validated)
 - Attempt 2: user can try again
 - Attempt 2 incorrect: reveal correct answer + explanation, lock, silent WeakMemory log, enable continue
 - Correct on any attempt: show explanation, lock, enable continue
+
+**CRITICAL: Completion Tracking Requirement**
+
+Parent component MUST:
+1. Provide `onComplete` callback to AnswerInteraction
+2. Track when component calls onComplete (`correct: true` OR after 2 `attempts`)
+3. Use completion state to enable progression (e.g., display continue button)
+
+**Without onComplete wiring, component will lock but parent won't know progression is allowed.**
+
+---
 
 **Question Integration:**
 

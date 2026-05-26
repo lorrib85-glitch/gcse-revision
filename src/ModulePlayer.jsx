@@ -1102,6 +1102,12 @@ function ScenarioBlock({ block }) {
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
 function Screen({ screen, subject }) {
+  const [completedQuizzes, setCompletedQuizzes] = useState(new Set())
+
+  function handleQuizComplete(blockIndex) {
+    setCompletedQuizzes(prev => new Set([...prev, blockIndex]))
+  }
+
   return (
     <div>
       <div style={{ marginBottom: 20 }}>
@@ -1137,7 +1143,7 @@ function Screen({ screen, subject }) {
           {block.type === 'examtip'       && <ExamTipBlock block={block} />}
           {block.type === 'timeline'      && <TimelineBlock block={block} />}
           {block.type === 'reveal'        && <RevealBlock block={block} />}
-          {block.type === 'quiz'          && <AnswerInteraction block={block} subject={subject} />}
+          {block.type === 'quiz'          && <AnswerInteraction block={block} subject={subject} onComplete={() => handleQuizComplete(i)} />}
           {block.type === 'flashcards'    && <FlashcardsBlock block={block} />}
           {block.type === 'hotspot'       && <HotspotBlock block={block} />}
           {block.type === 'misconception' && <MisconceptionBlock block={block} />}
