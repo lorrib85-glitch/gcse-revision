@@ -107,77 +107,68 @@ Connector lines: neutral dark lines, highlight when complete
 
 ## AnswerInteraction v1
 
-**Purpose:** Reusable answer submission and feedback component for non-timed learning activities.
+**Purpose:** Reusable answer submission and feedback component for learning activities.
 
-**Location:** `src/AnswerInteraction.jsx` (220 lines)
+**EXEMPT:** True/False questions use existing ChapterHookScreen design (keep as-is).
+
+**Applied to:** MCQ questions (quiz blocks), free text, fill-in-blanks, connection questions.
+
+**Location:** `src/AnswerInteraction.jsx` (180 lines)
 
 **Props:**
-- `mode` — 'learning' | 'review' | 'timedExam' (default: 'learning')
-- `questionId` — unique ID for tracking
-- `questionType` — 'mcq' | 'shortText' | 'longText' | 'markScheme' | 'answerSheet'
-- `options` — array of answer options (for MCQ)
-- `correctAnswer` — string or array
-- `acceptedAnswers` — alternative accepted answers
-- `markScheme` — array of required marking points
-- `hint` — string or array of hints
-- `explanation` — feedback text shown after correct or reveal
-- `subject` — subject for accent colour
-- `onSubmit` — called when answer submitted
-- `onCorrect` — called when answer is correct
-- `onIncorrect` — called when answer is incorrect
-- `onReveal` — called when answer revealed after attempt 2
-- `onWeakMemoryLog` — silent logging callback
-- `allowRetry` — allow retry (default: true, false in timed exams)
-- `maxAttempts` — maximum attempts (default: 2)
+- `block` — question block object with options, question, hint, explanation
+- `subject` — subject for score recording
+- `onAnswered` — callback when answer submission complete
+- `mode` — 'learning' | 'review' (default: 'learning')
 
 **State Machine:**
 
 ```
-idle
+idle (user selects answer)
   ↓
-answering
+checking (answer is validated)
   ↓
-checking
-  ↓
-correct → complete
-
-OR
-
-incorrect_hint
-  ↓
-retrying
-  ↓
-checking
-  ↓
-incorrect_reveal → complete
+{
+  correct → complete (enable continue) OR
+  incorrect_hint (show hint, allow retry) →
+    retrying (user taps "Try again") →
+    checking →
+    {
+      correct → complete OR
+      incorrect_reveal (reveal answer, lock, log to WeakMemory)
+    }
+}
 ```
 
-**Feedback Layout:**
+**Attempt Logic:**
+- Attempt 1: user can select any option, auto-evaluates on choice
+- Attempt 1 incorrect: show hint, allow retry
+- Attempt 2: user can try again
+- Attempt 2 incorrect: reveal correct answer + explanation, lock, silent WeakMemory log, enable continue
+- Correct on any attempt: show explanation, lock, enable continue
 
-The question/stem must be **external and persistent** above this component.
+**Question Integration:**
+
+The question/stem must be **external and persistent** (rendered separately by parent).
 
 ```
-[Question block — parent responsibility]
+[Question block — parent responsibility, always visible]
 
 [AnswerInteraction v1]
-  [Answer input or options]
-  [Submit button]
-
-  [Feedback panel BELOW answer area]
+  [Option buttons A, B, C, D...]
+  
+  [After answer selected:]
     Attempt 1 incorrect:
-    - Not quite.
-    - Hint: [one targeted hint]
-    - Try again button
-
+    - 💡 Hint — think about this
+    - [hint text]
+    - [Try again →] button
+    
     Attempt 2 incorrect:
-    - Correct answer: [answer]
-    - Why: [brief explanation]
-
+    - ✗ Nope — the answer was: [correct]
+    - [explanation if provided]
+    
     Correct on any attempt:
-    - ✓ You're right.
-    - [Optional explanation]
-
-[ContinueButton v2 — parent enables when complete]
+    - ✓ Correct! [explanation if provided]
 ```
 
 **Locked Rules:**

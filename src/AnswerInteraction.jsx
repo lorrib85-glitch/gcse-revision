@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { recordScore } from './progress.js'
 
 function CheckIcon({ color }) {
   return (
@@ -11,6 +12,9 @@ function CheckIcon({ color }) {
 
 // ── AnswerInteraction v1 — LOCKED COMPONENT ────────────────────────────────────
 // Reusable answer submission and feedback component for all non-timed learning activities.
+// EXEMPT: True/False questions (use existing ChapterHookScreen design).
+//
+// Supports: MCQ, short/long free text, fill-in-the-blanks, connection questions.
 // Owns: input/options, submission, attempt count, checking state, hint display,
 // answer reveal, correctness confirmation, silent WeakMemory trigger.
 // Does not own: question title, module toolbar, progress header, navigation.
@@ -22,268 +26,110 @@ function CheckIcon({ color }) {
 // Max 2 attempts. After attempt 1 incorrect: show hint. After attempt 2 incorrect:
 // reveal answer, log to WeakMemory, enable continue.
 export default function AnswerInteraction({
-  mode = 'learning',
-  questionId,
-  questionType = 'mcq',
-  options = [],
-  correctAnswer,
-  acceptedAnswers = [],
-  markScheme = [],
-  hint,
-  explanation,
+  block,
+  onAnswered,
   subject,
-  onSubmit,
-  onCorrect,
-  onIncorrect,
-  onReveal,
-  onWeakMemoryLog,
-  allowRetry = true,
-  maxAttempts = 2,
+  mode = 'learning',
 }) {
-  const [state, setState] = useState('idle')
-  const [selectedAnswer, setSelectedAnswer] = useState(null)
-  const [userInput, setUserInput] = useState('')
-  const [attemptCount, setAttemptCount] = useState(0)
-  const [isChecking, setIsChecking] = useState(false)
-  const [hintShown, setHintShown] = useState(false)
+  const [selected, setSelected] = useState(null)
+  const [shakeIdx, setShakeIdx] = useState(null)
+  const [attempts, setAttempts] = useState(0)
+  const [showHint, setShowHint] = useState(false)
+  const [locked, setLocked] = useState(false)
 
-  const isComplete = state === 'correct' || state === 'incorrect_reveal'
-  const showHint = hintShown && (state === 'incorrect_hint' || state === 'retrying')
+  function choose(i) {
+    if (locked) return
+    const correct = block.options[i].correct
+    setSelected(i)
+    setAttempts(a => a + 1)
 
-  async function checkAnswer() {
-    setIsChecking(true)
-    const currentAttempt = attemptCount + 1
-    const answerText = questionType === 'mcq' ? selectedAnswer : userInput.trim()
-
-    const isCorrect =
-      questionType === 'mcq'
-        ? selectedAnswer === correctAnswer
-        : answerText.toLowerCase() === correctAnswer.toLowerCase() ||
-          acceptedAnswers.some(a => a.toLowerCase() === answerText.toLowerCase())
-
-    try {
-      const result = await onSubmit?.({ answer: answerText, attempt: currentAttempt })
-      setAttemptCount(currentAttempt)
-
-      if (isCorrect || result?.correct) {
-        setState('correct')
-        onCorrect?.({ answer: answerText, attempt: currentAttempt })
-      } else if (currentAttempt < maxAttempts) {
-        setState('incorrect_hint')
-        setHintShown(true)
-        onIncorrect?.({ answer: answerText, attempt: currentAttempt })
-      } else {
-        setState('incorrect_reveal')
-        onReveal?.({ answer: answerText, attempt: currentAttempt, correctAnswer })
-        onWeakMemoryLog?.({
-          questionId, subject, attemptCount: currentAttempt,
-          hintShown, revealNeeded: true, answer: answerText, correctAnswer,
-        })
+    if (correct) {
+      setLocked(true)
+      if (subject) recordScore({ subject, earned: 1, possible: 1, source: 'module' })
+      if (onAnswered) setTimeout(() => onAnswered(), 700)
+    } else {
+      setShakeIdx(i)
+      setShowHint(true)
+      if (attempts >= 1) {
+        setLocked(true)
+        if (subject) recordScore({ subject, earned: 0, possible: 1, source: 'module' })
       }
-    } finally {
-      setIsChecking(false)
+      setTimeout(() => setShakeIdx(null), 500)
     }
   }
 
-  const accentRgb = subject ? '157,92,255' : '147,197,253'
-  const accentColor = subject ? '#9D5CFF' : '#93C5FD'
+  function retry() {
+    setSelected(null)
+    setShakeIdx(null)
+  }
+
+  const answered = selected !== null
+  const wasCorrect = answered && block.options[selected]?.correct
+  const wasWrong = answered && !wasCorrect
+  const showFull = wasCorrect || locked
 
   return (
-    <div style={{ margin: '16px 0' }}>
-      {/* ── Input/Options Area ── */}
-      {questionType === 'mcq' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '12px 0' }}>
-          {options.map((option, i) => (
-            <button
-              key={i}
-              onClick={() => setSelectedAnswer(option.value || option)}
-              disabled={isComplete || isChecking}
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                borderRadius: 12,
-                background: selectedAnswer === (option.value || option)
-                  ? `rgba(${accentRgb},0.12)`
-                  : 'rgba(255,255,255,0.04)',
-                border: selectedAnswer === (option.value || option)
-                  ? `1.5px solid ${accentColor}`
-                  : '1px solid rgba(255,255,255,0.08)',
-                color: '#F0ECFF',
-                fontSize: 15,
-                fontFamily: "'Outfit', sans-serif",
-                cursor: isComplete ? 'default' : 'pointer',
-                opacity: isComplete ? 0.7 : 1,
-                transition: 'all 140ms ease',
-                textAlign: 'left',
-              }}>
-              {option.label || option}
+    <div style={{ margin: '14px 0' }}>
+      {/* Options */}
+      <div className="grid-stack">
+        {block.options.map((opt, i) => {
+          let cls = 'opt'
+          if (answered || locked) {
+            if (opt.correct && (showFull || wasCorrect)) cls += ' correct'
+            else if (i === selected && wasWrong) cls += ' wrong'
+          }
+          return (
+            <button key={i} className={`${cls}${shakeIdx === i ? ' shake' : ''}`}
+              onClick={() => choose(i)}
+              disabled={locked || wasCorrect}>
+              <span style={{ marginRight: 8, opacity: .45 }}>{String.fromCharCode(65 + i)}.</span>
+              {opt.text}
             </button>
-          ))}
+          )
+        })}
+      </div>
+
+      {/* Hint after first wrong attempt */}
+      {showHint && !locked && wasWrong && (
+        <div className="fade-up" style={{
+          background: 'rgba(255,200,87,.06)',
+          border: '1px solid rgba(255,200,87,.25)',
+          borderRadius: 12, padding: '12px 14px', marginTop: 10,
+        }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em',
+            textTransform: 'uppercase', color: '#FFC857', marginBottom: 6,
+          }}>💡 Hint — think about this</div>
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '.87rem', color: '#C8D0E8', margin: '0 0 10px', lineHeight: 1.55,
+          }}>{block.hint || block.explanation}</p>
+          <button onClick={retry} style={{
+            background: 'rgba(255,200,87,.1)',
+            border: '1px solid rgba(255,200,87,.3)',
+            borderRadius: 9, padding: '8px 16px',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700, fontSize: '.82rem', color: '#FFC857',
+            cursor: 'pointer',
+          }}>Try again →</button>
         </div>
       )}
 
-      {(questionType === 'shortText' || questionType === 'longText') && (
-        <textarea
-          value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
-          disabled={isComplete || isChecking}
-          placeholder="Enter your answer..."
-          style={{
-            width: '100%',
-            padding: '14px 16px',
-            borderRadius: 12,
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            color: '#F0ECFF',
-            fontSize: 15,
-            fontFamily: "'Outfit', sans-serif",
-            minHeight: questionType === 'longText' ? 120 : 50,
-            resize: 'vertical',
-            opacity: isComplete ? 0.7 : 1,
-          }}
-        />
-      )}
-
-      {/* ── Submit Button ── */}
-      <button
-        onClick={checkAnswer}
-        disabled={isComplete || isChecking || !selectedAnswer && !userInput.trim()}
-        style={{
-          width: '100%',
-          padding: '12px 16px',
-          marginTop: 12,
-          borderRadius: 10,
-          background: state === 'correct'
-            ? 'rgba(34,197,94,0.2)'
-            : isChecking ? accentColor : 'rgba(157,92,255,0.3)',
-          border: `1px solid ${state === 'correct' ? 'rgba(34,197,94,0.4)' : 'rgba(157,92,255,0.3)'}`,
-          color: state === 'correct' ? '#22C55E' : '#E0D5FF',
-          fontSize: 15,
-          fontWeight: 600,
-          fontFamily: "'Outfit', sans-serif",
-          cursor: isComplete || isChecking ? 'default' : 'pointer',
-          opacity: isComplete ? 0.6 : isChecking ? 0.8 : 1,
-          transition: 'all 140ms ease',
-        }}>
-        {isChecking ? '⏳ Checking...' : state === 'correct' ? '✓ Correct' : state === 'incorrect_hint' || state === 'retrying' ? 'Try again' : 'Check answer'}
-      </button>
-
-      {/* ── Feedback Panel ── */}
-      {state === 'correct' && (
-        <div style={{
-          marginTop: 14,
-          padding: '14px 16px',
-          borderRadius: 10,
-          background: 'rgba(34,197,94,0.08)',
-          border: '1px solid rgba(34,197,94,0.2)',
-          display: 'flex', alignItems: 'flex-start', gap: 10,
-        }}>
-          <CheckIcon color="#22C55E" />
-          <div>
-            <div style={{
-              color: '#22C55E',
-              fontSize: 14,
-              fontWeight: 600,
-              fontFamily: "'Outfit', sans-serif",
-            }}>You're right.</div>
-            {explanation && (
-              <div style={{
-                color: 'rgba(255,255,255,0.6)',
-                fontSize: 13,
-                marginTop: 6,
-                fontFamily: "'Outfit', sans-serif",
-              }}>
-                {explanation}
-              </div>
+      {/* Full feedback after correct or locked */}
+      {showFull && (
+        <div className={`feedback ${wasCorrect ? 'correct' : 'wrong'} fade-up`} style={{ marginTop: 10 }}>
+          <p style={{ margin: 0, fontSize: '.9rem', fontFamily: "'Inter', sans-serif" }}>
+            <strong>{wasCorrect ? '✓ Correct! ' : '✗ Nope — the answer was: '}</strong>
+            {wasCorrect ? block.explanation : (
+              <>
+                <strong style={{ color: '#4DFF88' }}>
+                  {block.options.find(o => o.correct)?.text}
+                </strong>
+                {block.explanation ? <><br />{block.explanation}</> : null}
+              </>
             )}
-          </div>
-        </div>
-      )}
-
-      {showHint && (state === 'incorrect_hint' || state === 'retrying') && (
-        <div style={{
-          marginTop: 14,
-          padding: '14px 16px',
-          borderRadius: 10,
-          background: 'rgba(217,119,6,0.08)',
-          border: '1px solid rgba(217,119,6,0.2)',
-        }}>
-          <div style={{
-            color: '#D97706',
-            fontSize: 12,
-            fontWeight: 700,
-            fontFamily: "'Outfit', sans-serif",
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            marginBottom: 6,
-          }}>Not quite. Hint:</div>
-          <div style={{
-            color: 'rgba(255,255,255,0.7)',
-            fontSize: 14,
-            fontFamily: "'Outfit', sans-serif",
-            lineHeight: 1.5,
-          }}>
-            {Array.isArray(hint) ? hint[0] : hint}
-          </div>
-        </div>
-      )}
-
-      {state === 'incorrect_reveal' && (
-        <div style={{
-          marginTop: 14,
-          borderRadius: 10,
-          overflow: 'hidden',
-        }}>
-          <div style={{
-            padding: '14px 16px',
-            background: 'rgba(59,130,255,0.08)',
-            border: '1px solid rgba(59,130,255,0.2)',
-            borderBottom: 'none',
-          }}>
-            <div style={{
-              color: '#60A5FA',
-              fontSize: 12,
-              fontWeight: 700,
-              fontFamily: "'Outfit', sans-serif",
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              marginBottom: 6,
-            }}>Correct answer:</div>
-            <div style={{
-              color: '#F0ECFF',
-              fontSize: 15,
-              fontWeight: 600,
-              fontFamily: "'Outfit', sans-serif",
-            }}>
-              {Array.isArray(correctAnswer) ? correctAnswer.join(', ') : correctAnswer}
-            </div>
-          </div>
-
-          {explanation && (
-            <div style={{
-              padding: '14px 16px',
-              background: 'rgba(59,130,255,0.04)',
-              borderTop: '1px solid rgba(59,130,255,0.15)',
-            }}>
-              <div style={{
-                color: '#60A5FA',
-                fontSize: 12,
-                fontWeight: 700,
-                fontFamily: "'Outfit', sans-serif",
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                marginBottom: 6,
-              }}>Why:</div>
-              <div style={{
-                color: 'rgba(255,255,255,0.7)',
-                fontSize: 13,
-                fontFamily: "'Outfit', sans-serif",
-                lineHeight: 1.6,
-              }}>
-                {explanation}
-              </div>
-            </div>
-          )}
+          </p>
         </div>
       )}
     </div>

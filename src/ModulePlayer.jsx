@@ -8,6 +8,7 @@ import LearningHeader from './LearningHeader.jsx'
 import FaceTheExaminer from './FaceTheExaminer.jsx'
 import InteractiveHotspotImage from './InteractiveHotspotImage.jsx'
 import FillInTheBlanksBlock from './FillInTheBlanksBlock.jsx'
+import AnswerInteraction from './AnswerInteraction.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -530,129 +531,6 @@ function RevealBlock({ block }) {
             fontFamily: "'Inter', sans-serif",
             margin: 0, fontSize: '.92rem', color: '#C8D0E8', lineHeight: 1.6,
           }}>{block.answer}</p>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function QuizBlock({ block, onAnswered, subject }) {
-  const [selected, setSelected]   = useState(null)
-  const [shakeIdx, setShakeIdx]   = useState(null)
-  const [attempts, setAttempts]   = useState(0)
-  const [showHint, setShowHint]   = useState(false)
-  const [locked, setLocked]       = useState(false)
-
-  function choose(i) {
-    if (locked) return
-    const correct = block.options[i].correct
-    setSelected(i)
-    setAttempts(a => a + 1)
-
-    if (correct) {
-      setLocked(true)
-      // Record a correct answer (1 mark per quiz question)
-      if (subject) recordScore({ subject, earned: 1, possible: 1, source: 'module' })
-      if (onAnswered) setTimeout(() => onAnswered(), 700)
-    } else {
-      setShakeIdx(i)
-      setShowHint(true)
-      // Lock after second wrong attempt — show full explanation
-      if (attempts >= 1) {
-        setLocked(true)
-        if (subject) recordScore({ subject, earned: 0, possible: 1, source: 'module' })
-      }
-      // Reset shake after animation
-      setTimeout(() => setShakeIdx(null), 500)
-    }
-  }
-
-  function retry() {
-    setSelected(null)
-    setShakeIdx(null)
-    // Keep showHint visible and attempts count
-  }
-
-  const answered    = selected !== null
-  const wasCorrect  = answered && block.options[selected]?.correct
-  const wasWrong    = answered && !wasCorrect
-  const showFull    = wasCorrect || locked  // show full explanation
-
-  return (
-    <div style={{ margin: '14px 0' }}>
-      {/* Question */}
-      <div style={{
-        background: 'linear-gradient(135deg, #12183A, #0E1330)',
-        border: '1px solid rgba(157,92,255,.2)',
-        borderRadius: 14, padding: '16px 18px', marginBottom: 12,
-      }}>
-        <p style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          color: '#F5F7FB', fontWeight: 600, fontSize: '1rem', margin: 0, lineHeight: 1.45,
-        }}>{block.question}</p>
-      </div>
-
-      {/* Options */}
-      <div className="grid-stack">
-        {block.options.map((opt, i) => {
-          let cls = 'opt'
-          if (answered || locked) {
-            if (opt.correct && (showFull || wasCorrect)) cls += ' correct'
-            else if (i === selected && wasWrong)         cls += ' wrong'
-          }
-          // After retry (selected cleared), show nothing highlighted yet
-          return (
-            <button key={i} className={`${cls}${shakeIdx === i ? ' shake' : ''}`}
-              onClick={() => choose(i)}
-              disabled={locked || (wasCorrect)}>
-              <span style={{ marginRight: 8, opacity: .45 }}>{String.fromCharCode(65 + i)}.</span>
-              {opt.text}
-            </button>
-          )
-        })}
-      </div>
-
-      {/* Hint after first wrong attempt — before locking */}
-      {showHint && !locked && wasWrong && (
-        <div className="fade-up" style={{
-          background: 'rgba(255,200,87,.06)',
-          border: '1px solid rgba(255,200,87,.25)',
-          borderRadius: 12, padding: '12px 14px', marginTop: 10,
-        }}>
-          <div style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em',
-            textTransform: 'uppercase', color: '#FFC857', marginBottom: 6,
-          }}>💡 Hint — think about this</div>
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.87rem', color: '#C8D0E8', margin: '0 0 10px', lineHeight: 1.55,
-          }}>{block.hint || block.explanation}</p>
-          <button onClick={retry} style={{
-            background: 'rgba(255,200,87,.1)',
-            border: '1px solid rgba(255,200,87,.3)',
-            borderRadius: 9, padding: '8px 16px',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700, fontSize: '.82rem', color: '#FFC857',
-            cursor: 'pointer',
-          }}>Try again →</button>
-        </div>
-      )}
-
-      {/* Full feedback after correct or locked */}
-      {showFull && (
-        <div className={`feedback ${wasCorrect ? 'correct' : 'wrong'} fade-up`} style={{ marginTop: 10 }}>
-          <p style={{ margin: 0, fontSize: '.9rem', fontFamily: "'Inter', sans-serif" }}>
-            <strong>{wasCorrect ? '✓ Correct! ' : '✗ Nope — the answer was: '}</strong>
-            {wasCorrect ? block.explanation : (
-              <>
-                <strong style={{ color: '#4DFF88' }}>
-                  {block.options.find(o => o.correct)?.text}
-                </strong>
-                {block.explanation ? <><br />{block.explanation}</> : null}
-              </>
-            )}
-          </p>
         </div>
       )}
     </div>
@@ -1259,7 +1137,7 @@ function Screen({ screen, subject }) {
           {block.type === 'examtip'       && <ExamTipBlock block={block} />}
           {block.type === 'timeline'      && <TimelineBlock block={block} />}
           {block.type === 'reveal'        && <RevealBlock block={block} />}
-          {block.type === 'quiz'          && <QuizBlock block={block} subject={subject} />}
+          {block.type === 'quiz'          && <AnswerInteraction block={block} subject={subject} />}
           {block.type === 'flashcards'    && <FlashcardsBlock block={block} />}
           {block.type === 'hotspot'       && <HotspotBlock block={block} />}
           {block.type === 'misconception' && <MisconceptionBlock block={block} />}
