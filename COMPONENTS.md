@@ -204,6 +204,141 @@ RetrievalFrame does NOT own:
 
 ---
 
+## CardContainer v1
+
+**Purpose:** Reusable cinematic content surface system for learning module content. Subtle atmospheric wrapper that supports readability and pacing without competing with lesson content.
+
+**Location:** `src/CardContainer.jsx` (120 lines)
+
+**Philosophy:**
+- The container should almost disappear behind the learning itself
+- Content is the focus; learner should remember the idea/scene/atmosphere, NOT the card
+- Provides soft tonal separation, depth, and breathing room
+- Mobile-first design with responsive spacing
+
+**Props:**
+
+- `children` — content to wrap
+- `variant` — 'contained' | 'inline' | 'compact' | 'fullBleed' (default: 'contained')
+- `subject` — subject key for subtle atmosphere tinting (history, biology, chemistry, physics, maths, english, sociology)
+- `padding` — 16 | 24 | 32 (default: varies by variant)
+- `contextImage` — optional background image URL (fullBleed only)
+- `showAtmosphere` — boolean (default: true) to control subject tinting
+
+**Variants:**
+
+1. **Contained (default):** Soft glass container, subtle blur (12px), clear boundaries
+   - Padding: 24px
+   - Margin: 20px vertical
+   - Use for: concept explanations, definitions, key ideas, remember-this moments
+   - Styling: gradient background, transparent tint, soft ambient shadow
+
+2. **Compact:** Reduced visual weight, lighter blur (8px)
+   - Padding: 16px
+   - Margin: 16px vertical
+   - Use for: shorter inline content, list items, secondary concepts
+
+3. **Inline:** Minimal framing, almost no visible surface
+   - Padding: 16px (inline-block)
+   - Margin: 12px vertical
+   - Use for: tiny reminders, embedded definitions mid-text
+   - Styling: ultra-subtle background, minimal border
+
+4. **FullBleed:** Image-dominant, full-width without margins
+   - Padding: 32px
+   - Margin: 28px -16px (bleeds to edges)
+   - Use for: after cinematic reveals, hero-style content moments
+   - Styling: image background with dark overlay, blends into atmosphere
+
+**Subject Atmosphere:**
+
+CardContainer inherits subtle mood from subject context via PALETTES system:
+
+- History: sepia warmth (C89B6D) — smoky, dusty, torchlit
+- Biology: organic green (8FD6A3) — humid, cellular, alive
+- Chemistry: purple reaction (8B5CF6) — luminous, atmospheric
+- Physics: deep blue (5DA9E9) — cold, space-like, luminous
+- Maths: teal precision (2BBE9A) — calm, balanced
+- English: literary plum (9E3D52) — moody, soft
+- Sociology: warm grey (C9B07C) — restrained, muted
+
+Atmosphere applied through:
+- **Background tint:** 0.09 opacity linear gradient
+- **Edge glow:** 0.06 opacity soft ambient effect
+- **Shadow tint:** 0.08 opacity colored shadow (subject-dependent)
+
+Intensity is intentionally low (0.06–0.12 range) — should be barely noticeable, supporting not dominating.
+
+**Visual Characteristics:**
+
+- Soft tonal separation (no hard edges)
+- Depth via blur and shadow (not borders)
+- Gentle rounded corners (24px contained, 20px compact, 14px inline)
+- Slight translucency with backdrop filter
+- Inset highlight for premium feel
+
+**Styling Approach:**
+
+- Uses blur() for atmospheric depth (not border-based framing)
+- Gradient backgrounds maintain dark cinematic mood
+- Subtle colored shadow tints per subject (optional, not mandatory)
+- No loud gradients, bright surfaces, or obvious glassmorphism
+- Preserves dark RISE theme (not bright, not dashboard-like)
+
+**Locked Rules:**
+
+- Variant must be explicit (no auto-detection from content)
+- Atmosphere intensity must stay 0.06–0.12 opacity range
+- No CSS filters (sepia, hue-rotate) on content or images
+- Padding must use RISE spacing scale only (8/16/24/32px)
+- Cannot be used for: full cinematic reveals, opening hooks, large immersive story scenes, dashboard sections, analytics
+- Content density: one idea per container (no overloading)
+- Must support mobile-first layouts (portrait width priority)
+
+**Animation Rules:**
+
+- Static by default
+- Optional gentle fade-in on render only
+- No glow breathing, parallax, or atmospheric movement yet
+- Motion reserved for future iterations once layout is stable
+
+**Reuse Rules:**
+
+Allowed modifications:
+- Subject atmosphere (any of the 7 palette options)
+- Variant selection (contained/inline/compact/fullBleed)
+- Padding within RISE spacing scale
+- ContextImage and background fallbacks
+- Content density per container
+
+Not allowed:
+- Dashboard-style redesigns
+- Playful gamification
+- Bright card systems with loud borders
+- Crowded multi-feature containers
+- Inconsistent spacing (breaking RISE scale)
+- CSS filters on wrapped content
+- Auto-detection of variant
+
+**Current Rollout Scope (Phase 1):**
+
+Applied to learning module content surfaces only:
+- ReadBlock (concept explanations)
+- KeypointBlock (key ideas / starred moments)
+- FunFactBlock (contextual facts / sidebar ideas)
+- ExamTipBlock (exam technique tips)
+
+NOT applied in Phase 1:
+- Quizzes (use AnswerInteraction container)
+- Exam mode content
+- Navigation/header content
+- Cinematic screens (RevealBlock, CinematicRevealMoment)
+- Hook screens (true/false and retrieval questions)
+
+This component is **LOCKED globally**. Changes must preserve its core contract.
+
+---
+
 
 **Purpose:** Reusable answer submission and feedback component for learning activities.
 
