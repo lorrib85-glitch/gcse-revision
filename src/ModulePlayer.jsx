@@ -4,6 +4,7 @@ import ChapterHookScreen from './ChapterHookScreen.jsx'
 import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 import QuickRecallScreen from './QuickRecallScreen.jsx'
 import CinematicRevealMoment from './CinematicRevealMoment.jsx'
+import ConceptReveal from './ConceptReveal.jsx'
 import LearningHeader from './LearningHeader.jsx'
 import FaceTheExaminer from './FaceTheExaminer.jsx'
 import InteractiveHotspotImage from './InteractiveHotspotImage.jsx'
@@ -1764,7 +1765,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     !showConfidence &&
     !showExaminer &&
     hookDone && wylDone &&
-    (cur?.type === 'cinematic' ? cinematicHeaderVisible : true)
+    ((cur?.type === 'cinematic' || cur?.type === 'conceptReveal') ? cinematicHeaderVisible : true)
 
   function headerOnBack() {
     if (navTo === 'recall') {
@@ -2035,6 +2036,29 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           onBack={headerOnBack}
           onEnterExplore={() => setIhmExploreScreen(screen)}
           onContinue={isLast ? handleFinish : () => go(1)}
+        />
+      </>
+    )
+  }
+
+  // ── Full-screen concept reveal — tap-through atmospheric sequence ──────────
+  if (cur?.type === 'conceptReveal') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          beats={beats}
+          currentBeatIndex={currentBeatIndex}
+          onBack={headerOnBack}
+          onExit={onBack}
+          onJump={handleBeatJump}
+          visible={cinematicHeaderVisible}
+        />
+        <ConceptReveal
+          subject={module.subject}
+          steps={cur.steps || []}
+          onRevealStart={() => setCinematicHeaderVisible(true)}
+          onContinue={() => isLast ? handleFinish() : go(1)}
         />
       </>
     )
