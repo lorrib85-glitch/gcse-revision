@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { MOTION } from '../../constants/motion.js'
+import { RADII } from '../../constants/radii.js'
 
 const IMAGES = {
   History:   '/history-truefalse.png',
@@ -37,7 +39,7 @@ function BackBtn({ onClick }) {
       aria-label="Go back"
       style={{
         position: 'absolute', top: 22, left: 18,
-        width: 46, height: 46, borderRadius: 999,
+        width: 46, height: 46, borderRadius: RADII.pill,
         background: 'rgba(255,255,255,0.05)',
         border: '1px solid rgba(255,255,255,0.08)',
         backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
@@ -189,7 +191,7 @@ export default function ChapterHookScreen({
             <div style={{
               position: 'relative', zIndex: 4, minHeight: '100dvh',
               opacity: isExiting ? 0 : 1,
-              transition: 'opacity 280ms ease',
+              transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
               pointerEvents: isExiting ? 'none' : 'auto',
             }}>
               <BackBtn onClick={onBack} />

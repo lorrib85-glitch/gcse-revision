@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { SPACING } from '../../constants/spacing.js'
+import { MOTION } from '../../constants/motion.js'
+import { RADII } from '../../constants/radii.js'
 
 // ─── Ring ─────────────────────────────────────────────────────────────────────
 const R_SIZE   = 96
@@ -60,7 +62,7 @@ function BottomNav({ tab, setTab }) {
         return (
           <button key={t.id} onClick={() => setTab?.(t.id)} style={{
             border: 'none', background: active ? 'rgba(139,92,246,0.15)' : 'transparent',
-            cursor: 'pointer', borderRadius: 22,
+            cursor: 'pointer', borderRadius: RADII.large,
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
             fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: active ? 600 : 500,
             color: active ? '#C4B5FD' : '#374151',
@@ -152,12 +154,12 @@ export default function ChapterCompleteScreen({
         }
         @keyframes ccs-pulse {
           0%,100% { transform: scale(1);     opacity: 1; }
-          50%      { transform: scale(1.015); opacity: 0.88; }
+          50%      { transform: scale(${MOTION.scale.subtle}); opacity: 0.88; }
         }
         .ccs-ring-pulse { animation: ccs-pulse 3500ms ease-in-out infinite; }
         .ccs-checkmark  { animation: ccs-check 360ms cubic-bezier(0.16,1,0.3,1) 620ms both; }
-        .ccs-in         { animation: ccs-in 420ms cubic-bezier(0.16,1,0.3,1) both; }
-        .ccs-primary:active  { transform: scale(0.985); }
+        .ccs-in         { animation: ccs-in ${MOTION.duration.slow} cubic-bezier(0.16,1,0.3,1) both; }
+        .ccs-primary:active  { transform: scale(${MOTION.scale.press}); }
         .ccs-quiz:active     { background: rgba(255,255,255,0.07) !important; transform: scale(0.99); }
         .ccs-home-row:active { opacity: 0.45 !important; }
         .ccs-navbtn:active   { background: rgba(255,255,255,0.09) !important; }
@@ -196,7 +198,7 @@ export default function ChapterCompleteScreen({
             onClick={onHome}
             style={{
               ...base,
-              width: 48, height: 48, borderRadius: 999,
+              width: 48, height: 48, borderRadius: RADII.pill,
               background: 'rgba(255,255,255,0.05)',
               border: '1px solid rgba(255,255,255,0.08)',
               backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
@@ -214,7 +216,7 @@ export default function ChapterCompleteScreen({
             aria-label="Menu"
             style={{
               ...base,
-              width: 48, height: 48, borderRadius: 999,
+              width: 48, height: 48, borderRadius: RADII.pill,
               background: 'rgba(255,255,255,0.05)',
               border: '1px solid rgba(255,255,255,0.08)',
               backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
@@ -350,7 +352,7 @@ export default function ChapterCompleteScreen({
           >
             {/* Icon circle */}
             <div style={{
-              width: 48, height: 48, borderRadius: 999,
+              width: 48, height: 48, borderRadius: RADII.pill,
               background: 'rgba(0,0,0,0.22)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
@@ -427,7 +429,7 @@ export default function ChapterCompleteScreen({
           >
             {/* Icon circle */}
             <div style={{
-              width: 44, height: 44, borderRadius: 999,
+              width: 44, height: 44, borderRadius: RADII.pill,
               border: `1px solid rgba(${ac},0.28)`,
               background: `rgba(${ac},0.06)`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',

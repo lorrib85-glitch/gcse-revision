@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { RADII } from '../../constants/radii.js'
 import { SPACING } from '../../constants/spacing.js'
 
 const IMAGES = {
@@ -52,7 +53,7 @@ function ProgressDots({ total, current, done, accent, rgb }) {
           <div key={i} style={{
             width: isActive ? 20 : 8,
             height: 8,
-            borderRadius: 999,
+            borderRadius: RADII.pill,
             background: isDone ? accent : isActive ? accent : 'rgba(255,255,255,0.22)',
             boxShadow: isActive ? `0 0 10px rgba(${rgb},0.6)` : isDone ? `0 0 6px rgba(${rgb},0.35)` : 'none',
             transition: 'all 300ms ease',

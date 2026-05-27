@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
+import { MOTION } from '../../constants/motion.js'
+import { RADII } from '../../constants/radii.js'
 
 let _wsrStyled = false
 function ensureStyles() {
@@ -138,7 +140,7 @@ export default function WeakSpotRecovery({
 
         {/* Progress bar */}
         <div style={{
-          height: 4, borderRadius: 999,
+          height: 4, borderRadius: RADII.pill,
           background: 'rgba(255,255,255,0.12)',
           overflow: 'hidden',
           marginBottom: SPACING.cinematic,
@@ -236,15 +238,15 @@ export default function WeakSpotRecovery({
             onMouseLeave={() => setIsPressed(false)}
             style={{
               width: '100%', height: 74,
-              borderRadius: 22, border: 'none',
+              borderRadius: RADII.large, border: 'none',
               background: accent,
               padding: '0 28px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               gap: 12,
               cursor: 'pointer',
               boxShadow: `0 4px 16px rgba(${rgb},0.15)`,
-              transform: isPressed ? 'scale(0.985)' : 'scale(1)',
-              transition: 'transform 180ms ease, filter 180ms ease',
+              transform: isPressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
+              transition: `transform ${MOTION.duration.fast} ease, filter ${MOTION.duration.fast} ease`,
               filter: isPressed ? 'brightness(0.92)' : 'brightness(1)',
             }}
           >

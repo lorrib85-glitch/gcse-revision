@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
+import { RADII } from '../../constants/radii.js'
 
 // ─── Keyframe styles injected once ───────────────────────────────────────────
 let _stylesInjected = false
@@ -137,7 +138,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
         <div style={{
           height: 32,
           padding: '0 14px',
-          borderRadius: 999,
+          borderRadius: RADII.pill,
           background: `rgba(${accentRgb},0.14)`,
           border: `1px solid rgba(${accentRgb},0.22)`,
           color: accent,
@@ -190,7 +191,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
       {source && (
         <div style={{
           padding: SPACING.standard,
-          borderRadius: 22,
+          borderRadius: RADII.large,
           background: 'rgba(255,255,255,0.045)',
           border: '1px solid rgba(255,255,255,0.05)',
           boxShadow: '0 8px 28px rgba(0,0,0,0.22)',
@@ -309,7 +310,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
           </div>
 
           <div style={{
-            borderRadius: 22,
+            borderRadius: RADII.large,
             background: focused ? 'rgba(255,255,255,0.038)' : 'rgba(255,255,255,0.028)',
             border: focused
               ? `1px solid rgba(${accentRgb},0.22)`
@@ -396,7 +397,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
               style={{
                 width: '100%',
                 height: 48,
-                borderRadius: 16,
+                borderRadius: RADII.medium,
                 padding: '0 24px',
                 background: 'rgba(255,255,255,0.04)',
                 color: 'rgba(245,245,245,0.48)',

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
+import { MOTION } from '../../constants/motion.js'
+import { RADII } from '../../constants/radii.js'
 
 // Map SUBJECTS theme to FillInTheBlanksBlock's expected structure
 function getTheme(subject) {
@@ -150,7 +152,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
       <div style={{
         background: theme.cardBg,
         border: `1px solid rgba(${theme.glowRgb},${allCorrect ? '0.22' : '0.10'})`,
-        borderRadius: '22px',
+        borderRadius: RADII.large,
         overflow: 'hidden',
         boxShadow: allCorrect
           ? `0 0 0 1px rgba(${theme.glowRgb},0.10), 0 0 52px rgba(${theme.glowRgb},0.09), 0 2px 20px rgba(0,0,0,0.32)`
@@ -240,7 +242,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
                           : isWrong
                             ? '0 0 0 1px rgba(255,175,40,0.12), 0 0 14px rgba(255,175,40,0.08)'
                             : 'none',
-                        transition: 'border-color 280ms cubic-bezier(0.22,1,0.36,1), box-shadow 280ms cubic-bezier(0.22,1,0.36,1)',
+                        transition: 'border-color ${MOTION.duration.standard} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}',
                         cursor: isCorrect ? 'default' : 'text',
                       }}
                     />
