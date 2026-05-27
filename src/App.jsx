@@ -15,6 +15,7 @@ import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionD
 import { MODULES } from './modules.js'
 import ModulePlayer, { getAllConfidenceRatings } from './ModulePlayer.jsx'
 import ChapterCompleteScreen from './ChapterCompleteScreen.jsx'
+import ExamQuestionFrame from './ExamQuestionFrame.jsx'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -4554,42 +4555,29 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
           {/* Scrollable paper */}
           <div style={{ padding:'16px 16px 130px', maxWidth:660, margin:'0 auto' }}>
             {examQuestions.map((q, idx) => {
-              const ans      = (examPaperAnswers[idx] ?? '').toString()
-              const fb       = examPaperFeedbacks[idx]
-              const grading  = examPaperGrading[idx]
-              const isMC     = q.type === 'mc'
+              const block = {
+                questionText: q.q,
+                marks: q.marks || 4,
+                markPoints: q.ms ? [q.ms] : [],
+                source: q.extract ? { label: 'Source', text: q.extract } : null,
+                commandWord: q.commandWord || null,
+                topic: q.topic || null,
+                paper: examConfig?.title || 'EXAM PRACTICE',
+              }
               return (
-                <div key={idx} style={{ marginBottom:24, background:'rgba(17,24,39,0.6)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:20, overflow:'hidden' }}>
-                  {/* Question header */}
-                  <div style={{ padding:'14px 16px 0', display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:8 }}>
-                    <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.72rem', color:'#6B7280', fontWeight:600 }}>Q{idx+1} · {q.subject}</div>
-                    <div style={{ background:'rgba(245,183,0,.1)', border:'1px solid rgba(245,183,0,.22)', borderRadius:999, color:'#F5B700', fontSize:'.68rem', fontWeight:800, padding:'2px 8px', flexShrink:0 }}>{q.marks} mark{q.marks!==1?'s':''}</div>
-                  </div>
-                  {/* Extracts / figures */}
-                  {q.extract && <div style={{ margin:'10px 16px 0', whiteSpace:'pre-wrap', background:'rgba(13,20,36,.8)', border:'1px solid rgba(255,255,255,.06)', borderRadius:10, padding:12, color:'#9CA3AF', fontSize:'.8rem', lineHeight:1.55 }}>{q.extract}</div>}
-                  {q.fig && FIGURES[q.fig] && <div style={{ margin:'10px 16px 0', textAlign:'center' }}><img src={FIGURES[q.fig]} alt="" style={{ maxWidth:'100%', borderRadius:8 }} /></div>}
-                  {q.imageKey && <div style={{ margin:'8px 16px 0' }}><ChemImage imageKey={q.imageKey} /></div>}
-                  {/* Question text */}
-                  <div style={{ padding:'12px 16px', fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem', lineHeight:1.45, whiteSpace:'pre-wrap' }}>{q.q}</div>
-                  {/* Answer area */}
-                  <div style={{ padding:'0 16px 16px' }}>
-                    {isMC ? (
-                      <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:10 }}>
-                        {q.options.map((opt, oi) => {
-                          const sel = ans === String(oi)
-                          const correct = oi === q.correctIndex
-                          const marked = Boolean(fb)
-                          return <button key={oi} onClick={() => !marked && setExamPaperAnswers(prev=>({...prev,[idx]:String(oi)}))} style={{ background:marked?(correct?'rgba(45,212,191,.12)':sel?'rgba(251,113,133,.1)':'rgba(255,255,255,.03)'):sel?'rgba(139,92,246,.14)':'rgba(255,255,255,.03)', border:'1.5px solid '+(marked?(correct?'rgba(45,212,191,.4)':sel?'rgba(251,113,133,.4)':'rgba(255,255,255,.08)'):sel?'rgba(139,92,246,.45)':'rgba(255,255,255,.08)'), borderRadius:12, padding:'11px 14px', color:'#DCE5FA', textAlign:'left', cursor:marked?'default':'pointer', fontSize:'.88rem' }}>{opt}</button>
-                        })}
-                      </div>
-                    ) : (
-                      <textarea value={examPaperAnswers[idx]||''} onChange={e=>setExamPaperAnswers(prev=>({...prev,[idx]:e.target.value}))} disabled={Boolean(fb)} placeholder="Write your answer here…" style={{ width:'100%', minHeight:100, background:'rgba(255,255,255,.04)', border:'1px solid rgba(255,255,255,.08)', borderRadius:12, padding:12, color:'#F5F7FB', fontSize:'.9rem', resize:'vertical', boxSizing:'border-box', marginBottom:10 }} />
-                    )}
-                    {/* Feedback */}
-                    {fb && <div style={{ background:fb.correct?'rgba(45,212,191,.08)':'rgba(251,113,133,.08)', border:'1px solid '+(fb.correct?'rgba(45,212,191,.3)':'rgba(251,113,133,.3)'), borderRadius:12, padding:'10px 14px', marginBottom:8 }}><div style={{ fontWeight:700, color:fb.correct?'#2DD4BF':'#FB7185', marginBottom:4, fontSize:'.85rem' }}>{fb.grade}</div><div style={{ color:'#9CA3AF', fontSize:'.82rem', lineHeight:1.5 }}>{fb.summary}{fb.examinerTip && fb.examinerTip !== fb.summary ? ' '+fb.examinerTip : ''}</div></div>}
-                    {/* Check button */}
-                    {!fb && <button onClick={()=>checkPaperAnswer(q,idx)} disabled={grading||(!isMC&&!(examPaperAnswers[idx]||'').trim())||(isMC&&ans==='')} style={{ background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:12, padding:'9px 18px', color:'#fff', fontWeight:700, fontSize:'.85rem', cursor:'pointer', opacity:(grading||(isMC&&ans==='')||(!isMC&&!(examPaperAnswers[idx]||'').trim()))?0.5:1 }}>{grading?'Marking…':'Check answer'}</button>}
-                  </div>
+                <div key={idx} style={{ marginBottom: 32 }}>
+                  <ExamQuestionFrame
+                    block={block}
+                    subject={q.subject || 'History'}
+                    mode="exam"
+                    questionNum={idx + 1}
+                    onComplete={({ marksAwarded }) => {
+                      setExamPaperFeedbacks(prev => ({
+                        ...prev,
+                        [idx]: { marksAwarded, grade: 'Submitted', summary: '' }
+                      }))
+                    }}
+                  />
                 </div>
               )
             })}

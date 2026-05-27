@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { recordActivity, recordScore } from './progress.js'
+import ExamQuestionFrame from './ExamQuestionFrame.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
 import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 import QuickRecallScreen from './QuickRecallScreen.jsx'
@@ -1133,7 +1134,7 @@ function Screen({ screen, subject }) {
           {block.type === 'scarf'         && <ScarfBlock block={block} />}
           {block.type === 'builder'       && <BuilderBlock block={block} />}
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
-          {block.type === 'boss'          && <BossBlock block={block} />}
+          {block.type === 'boss'          && <ExamQuestionFrame block={block} subject={subject} mode="practice" />}
           {block.type === 'fillblanks'   && <FillInTheBlanksBlock block={block} subject={subject} />}
         </div>
       ))}
