@@ -1,17 +1,9 @@
 import { useState, useEffect } from 'react'
-import AnswerInteraction from './AnswerInteraction.jsx'
-import recoveryQuizzes from './data/recoveryQuizzes.js'
+import AnswerInteraction from '../core/AnswerInteraction.jsx'
+import recoveryQuizzes from '../../data/recoveryQuizzes.js'
+import { SUBJECT_PALETTES } from '../../constants/subjects.js'
 
-const PALETTES = {
-  History:   { accent: '#D4A84B', rgb: '212,168,75'  },
-  Biology:   { accent: '#38D27A', rgb: '56,210,122'  },
-  Maths:     { accent: '#2BBE9A', rgb: '43,190,154'  },
-  Sociology: { accent: '#C9B07C', rgb: '201,176,124' },
-  Chemistry: { accent: '#5CC8FF', rgb: '92,200,255'  },
-  Physics:   { accent: '#5DA9E9', rgb: '93,169,233'  },
-  English:   { accent: '#9E3D52', rgb: '158,61,82'   },
-  Music:     { accent: '#C778DD', rgb: '199,120,221' },
-}
+const PALETTES = SUBJECT_PALETTES
 
 function ChoiceQuestion({ q, onSelect, subject }) {
   const block = {

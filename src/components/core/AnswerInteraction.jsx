@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { recordScore } from './progress.js'
+import { recordScore } from '../../progress.js'
 
 function CheckIcon({ color }) {
   return (

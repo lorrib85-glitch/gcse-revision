@@ -1,20 +1,5 @@
 import { useState } from 'react'
-
-// ─── Subject accent colours ───────────────────────────────────────────────────
-const SUBJECT_ACCENTS = {
-  History:   '#B38B63',
-  Biology:   '#78B98A',
-  Physics:   '#6EA8FF',
-  Chemistry: '#A77BFF',
-  English:   '#8F4C6B',
-  Maths:     '#5FC9B6',
-  Sociology: '#C9B07C',
-}
-
-function hexToRgb(hex) {
-  const c = hex.replace('#', '')
-  return [0, 2, 4].map(i => parseInt(c.slice(i, i + 2), 16)).join(',')
-}
+import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
 
 let _wsrStyled = false
 function ensureStyles() {

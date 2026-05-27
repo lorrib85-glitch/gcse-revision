@@ -1,22 +1,6 @@
 import ModuleToolbar from './ModuleToolbar.jsx'
 import LearningProgressHeader from './LearningProgressHeader.jsx'
-
-const PALETTES = {
-  history:   { accent: '#C89B6D' },
-  biology:   { accent: '#8FD6A3' },
-  chemistry: { accent: '#8B5CF6' },
-  physics:   { accent: '#5DA9E9' },
-  maths:     { accent: '#2BBE9A' },
-  english:   { accent: '#9E3D52' },
-  sociology: { accent: '#C9B07C' },
-}
-
-function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  return `${r},${g},${b}`
-}
+import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
 
 // ── LearningHeader — RISE Module Header System orchestrator ───────────────────
 // Owns the floating capsule shell + subject palette, and composes the two
@@ -34,8 +18,8 @@ export default function LearningHeader({
   onJump,
   visible = true,
 }) {
-  const subject = (module?.subject || '').toLowerCase()
-  const { accent } = PALETTES[subject] || PALETTES.history
+  const subject = module?.subject || 'History'
+  const accent = SUBJECT_ACCENTS[subject] || SUBJECT_ACCENTS.History
   const accentRgb = hexToRgb(accent)
 
   return (

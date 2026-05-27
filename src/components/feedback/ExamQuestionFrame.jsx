@@ -1,15 +1,5 @@
 import { useState, useRef } from 'react'
-
-// ─── Subject accent colours ───────────────────────────────────────────────────
-const SUBJECT_ACCENTS = {
-  History:   '#B38B63',
-  Biology:   '#78B98A',
-  Physics:   '#6EA8FF',
-  Chemistry: '#A77BFF',
-  English:   '#8F4C6B',
-  Maths:     '#5FC9B6',
-  Sociology: '#C9B07C',
-}
+import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
 
 // ─── Keyframe styles injected once ───────────────────────────────────────────
 let _stylesInjected = false
@@ -31,15 +21,6 @@ function ensureStyles() {
     }
   `
   document.head.appendChild(style)
-}
-
-// ─── hexToRgb helper ─────────────────────────────────────────────────────────
-function hexToRgb(hex) {
-  const clean = hex.replace('#', '')
-  const r = parseInt(clean.substring(0, 2), 16)
-  const g = parseInt(clean.substring(2, 4), 16)
-  const b = parseInt(clean.substring(4, 6), 16)
-  return `${r},${g},${b}`
 }
 
 // ─── ExamQuestionFrame ────────────────────────────────────────────────────────

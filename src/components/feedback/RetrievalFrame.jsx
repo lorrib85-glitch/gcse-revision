@@ -1,4 +1,4 @@
-import AnswerInteraction from './AnswerInteraction.jsx'
+import AnswerInteraction from '../core/AnswerInteraction.jsx'
 
 // ── RetrievalFrame v1 — LOCKED COMPONENT ──────────────────────────────────────
 // Cinematic wrapper for retrieval moments woven into learning flow.

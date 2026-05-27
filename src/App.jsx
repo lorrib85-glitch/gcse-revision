@@ -13,9 +13,9 @@ import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getImprovements } from './progress.js'
 import { MODULES } from './modules.js'
-import ModulePlayer, { getAllConfidenceRatings } from './ModulePlayer.jsx'
-import ChapterCompleteScreen from './ChapterCompleteScreen.jsx'
-import ExamQuestionFrame from './ExamQuestionFrame.jsx'
+import ModulePlayer, { getAllConfidenceRatings } from './components/layout/ModulePlayer.jsx'
+import ChapterCompleteScreen from './components/layout/ChapterCompleteScreen.jsx'
+import ExamQuestionFrame from './components/feedback/ExamQuestionFrame.jsx'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
