@@ -1,13 +1,15 @@
 import { useState } from 'react'
+import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
 
-const SUBJECT_ACCENT = {
-  Biology:   { glow: '#7EE7B7', glowRgb: '126,231,183', pageBg: '#040C09', cardBg: 'rgba(12,22,18,0.88)' },
-  History:   { glow: '#D4A84B', glowRgb: '212,168,75',  pageBg: '#0B0702', cardBg: 'rgba(20,14,6,0.88)'  },
-  Chemistry: { glow: '#5CC8FF', glowRgb: '92,200,255',  pageBg: '#02060E', cardBg: 'rgba(8,14,24,0.88)'  },
-  Physics:   { glow: '#5DA9E9', glowRgb: '93,169,233',  pageBg: '#020508', cardBg: 'rgba(6,10,20,0.88)'  },
-  Maths:     { glow: '#2BBE9A', glowRgb: '43,190,154',  pageBg: '#021008', cardBg: 'rgba(6,18,14,0.88)'  },
-  English:   { glow: '#E8A0BF', glowRgb: '232,160,191', pageBg: '#0C0608', cardBg: 'rgba(20,10,14,0.88)' },
-  Sociology: { glow: '#C9B07C', glowRgb: '201,176,124', pageBg: '#090806', cardBg: 'rgba(18,14,8,0.88)'  },
+// Map SUBJECTS theme to FillInTheBlanksBlock's expected structure
+function getTheme(subject) {
+  const subj = SUBJECTS[subject] || SUBJECTS.Biology
+  return {
+    glow: subj.accentSecondary,
+    glowRgb: hexToRgb(subj.accentSecondary),
+    pageBg: subj.background,
+    cardBg: subj.backgroundSecondary,
+  }
 }
 
 function levenshtein(a, b) {
@@ -39,7 +41,7 @@ function checkAnswer(input, sentence) {
 }
 
 export default function FillInTheBlanksBlock({ block, subject = 'Biology', onContinue }) {
-  const theme = SUBJECT_ACCENT[subject] || SUBJECT_ACCENT.Biology
+  const theme = getTheme(subject)
   const sentences = block.sentences || []
 
   const [values, setValues] = useState(() =>
