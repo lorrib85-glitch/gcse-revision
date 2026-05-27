@@ -1085,7 +1085,7 @@ function ScenarioBlock({ block }) {
 
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
-function Screen({ screen, subject }) {
+function Screen({ screen, subject, onScreenComplete }) {
   const [completedQuizzes, setCompletedQuizzes] = useState(new Set())
 
   function handleQuizComplete(blockIndex) {
@@ -1134,7 +1134,7 @@ function Screen({ screen, subject }) {
           {block.type === 'scarf'         && <ScarfBlock block={block} />}
           {block.type === 'builder'       && <BuilderBlock block={block} />}
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
-          {block.type === 'boss'          && <ExamQuestionFrame block={block} subject={subject} mode="practice" />}
+          {block.type === 'boss'          && <ExamQuestionFrame block={block} subject={subject} mode="practice" onSkip={onScreenComplete} />}
           {block.type === 'fillblanks'   && <FillInTheBlanksBlock block={block} subject={subject} />}
         </div>
       ))}
@@ -2112,7 +2112,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
             ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
               : (
                 <div key={animKey} className="anim-pop">
-                  <Screen screen={cur} subject={module.subject} />
+                  <Screen screen={cur} subject={module.subject} onScreenComplete={isLast ? handleFinish : () => go(1)} />
                 </div>
               )
         }

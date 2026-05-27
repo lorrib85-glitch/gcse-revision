@@ -43,7 +43,7 @@ function hexToRgb(hex) {
 }
 
 // ─── ExamQuestionFrame ────────────────────────────────────────────────────────
-export default function ExamQuestionFrame({ block, subject, mode = 'practice', questionNum, onComplete }) {
+export default function ExamQuestionFrame({ block, subject, mode = 'practice', questionNum, onComplete, onSkip }) {
   ensureStyles()
 
   const accent = SUBJECT_ACCENTS[subject] || '#B38B63'
@@ -404,6 +404,32 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
           >
             {grading ? 'Marking…' : 'Check answer →'}
           </button>
+
+          {/* 9b. Skip button (practice mode only) */}
+          {mode === 'practice' && onSkip && (
+            <button
+              onClick={onSkip}
+              disabled={grading}
+              style={{
+                width: '100%',
+                height: 48,
+                borderRadius: 16,
+                padding: '0 24px',
+                background: 'rgba(255,255,255,0.04)',
+                color: 'rgba(245,245,245,0.48)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                fontSize: 15,
+                fontFamily: "'Sora', sans-serif",
+                fontWeight: 500,
+                cursor: grading ? 'default' : 'pointer',
+                marginTop: 12,
+                transition: '220ms ease',
+                opacity: grading ? 0.5 : 1,
+              }}
+            >
+              Skip this question
+            </button>
+          )}
 
           {/* 10. Exam mode footer */}
           {mode === 'exam' && (
