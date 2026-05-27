@@ -136,10 +136,7 @@ function TrueFalseQuestion({ q, accent, rgb, onSelect }) {
   )
 }
 
-function ChoiceQuestion({ q, accent, rgb, onSelect, shaking, setShaking }) {
-  const [chosen, setChosen] = useState(null)
-
-  // Convert quick quiz format to AnswerInteraction format
+function ChoiceQuestion({ q, onSelect, subject }) {
   const block = {
     question: q.question,
     options: q.options.map((text, i) => ({
@@ -148,15 +145,6 @@ function ChoiceQuestion({ q, accent, rgb, onSelect, shaking, setShaking }) {
     })),
     explanation: q.explanation,
     hint: q.hint,
-  }
-
-  function handleAnswered() {
-    const correct = chosen === q.correct
-    if (!correct) {
-      setShaking(chosen)
-      setTimeout(() => setShaking(null), 460)
-    }
-    setTimeout(() => onSelect(correct), correct ? 460 : 640)
   }
 
   return (
@@ -173,17 +161,14 @@ function ChoiceQuestion({ q, accent, rgb, onSelect, shaking, setShaking }) {
 
       <AnswerInteraction
         block={block}
-        subject={q.subject}
-        onAnswered={handleAnswered}
+        subject={subject}
+        onComplete={({ correct }) => onSelect(correct)}
       />
     </div>
   )
 }
 
-function ConnectionQuestion({ q, accent, rgb, onSelect, shaking, setShaking }) {
-  const [chosen, setChosen] = useState(null)
-
-  // Convert quick quiz format to AnswerInteraction format
+function ConnectionQuestion({ q, onSelect, subject }) {
   const block = {
     question: q.question,
     options: q.options.map((opt, i) => ({
@@ -195,15 +180,6 @@ function ConnectionQuestion({ q, accent, rgb, onSelect, shaking, setShaking }) {
     hint: q.hint,
   }
 
-  function handleAnswered() {
-    const correct = chosen === q.correct
-    if (!correct) {
-      setShaking(chosen)
-      setTimeout(() => setShaking(null), 460)
-    }
-    setTimeout(() => onSelect(correct), correct ? 460 : 640)
-  }
-
   return (
     <div style={{ width: '100%' }}>
       <div style={{
@@ -218,8 +194,8 @@ function ConnectionQuestion({ q, accent, rgb, onSelect, shaking, setShaking }) {
 
       <AnswerInteraction
         block={block}
-        subject={q.subject}
-        onAnswered={handleAnswered}
+        subject={subject}
+        onComplete={({ correct }) => onSelect(correct)}
       />
     </div>
   )
@@ -244,7 +220,6 @@ export default function QuickRecallScreen({
   const [doneCnt, setDoneCnt] = useState(0) // how many answered correctly (for dots)
   const [phase,   setPhase]   = useState('in') // 'in' | 'active' | 'out' | 'done'
   const [animKey, setAnimKey] = useState(0)
-  const [shaking, setShaking] = useState(null)
 
   // Transition from 'in' → 'active' after mount
   useEffect(() => {
@@ -263,7 +238,6 @@ export default function QuickRecallScreen({
         setQIdx(nextIdx)
         setAnimKey(k => k + 1)
         setPhase('in')
-        setShaking(null)
       }, 360)
     }
   }
@@ -370,10 +344,10 @@ export default function QuickRecallScreen({
                 <TrueFalseQuestion q={cur} accent={accent} rgb={rgb} onSelect={handleSelect} />
               )}
               {cur.type === 'choice' && (
-                <ChoiceQuestion q={cur} accent={accent} rgb={rgb} onSelect={handleSelect} shaking={shaking} setShaking={setShaking} />
+                <ChoiceQuestion q={cur} onSelect={handleSelect} subject={subject} />
               )}
               {cur.type === 'connection' && (
-                <ConnectionQuestion q={cur} accent={accent} rgb={rgb} onSelect={handleSelect} shaking={shaking} setShaking={setShaking} />
+                <ConnectionQuestion q={cur} onSelect={handleSelect} subject={subject} />
               )}
             </div>
           )}
