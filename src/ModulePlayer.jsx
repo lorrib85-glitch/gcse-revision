@@ -1768,7 +1768,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     ((cur?.type === 'cinematic' || cur?.type === 'conceptReveal') ? cinematicHeaderVisible : true)
 
   function headerOnBack() {
-    if (navTo === 'recall') {
+    // Detect recall screen: either explicitly navigated back, or first-time (recallDone=false)
+    if (navTo === 'recall' || (!recallDone && module.recall)) {
       if (module.outcomes) { setNavTo('wyl'); return }
       if (module.hook?.statement) { setNavTo('hook'); return }
       onBack(); return
@@ -1830,7 +1831,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         isTrue={module.hook.isTrue}
         accentWords={module.hook.accentWords || []}
         explanation={module.hook.explanation || module.hook.correctFeedback || ''}
-        onBack={() => { navTo === 'hook' ? setNavTo(null) : onBack() }}
+        onBack={onBack}
         onContinue={() => { setHookDone(true); setNavTo(null); scrollToTop() }}
       />
     )
@@ -1846,8 +1847,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         introText={module.outcomes.intro}
         outcomes={module.outcomes.bullets}
         onBack={() => {
-          if (navTo === 'wyl') setNavTo(null)
-          else if (module.hook?.statement) setNavTo('hook')
+          if (module.hook?.statement) setNavTo('hook')
           else onBack()
         }}
         onContinue={() => { setWylDone(true); setNavTo(null); scrollToTop() }}
