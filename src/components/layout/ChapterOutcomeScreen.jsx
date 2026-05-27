@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { SPACING } from '../../constants/spacing.js'
 
 const IMAGES = {
   History:   '/historybacker.png',
@@ -177,7 +178,7 @@ export default function ChapterOutcomeScreen({
             <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
               {outcomes.map((outcome, i) => i < visibleCount ? (
                 <div key={i} style={{
-                  display: 'flex', alignItems: 'flex-start', gap: 16,
+                  display: 'flex', alignItems: 'flex-start', gap: SPACING.compact,
                   animation: 'cos-row 420ms ease both',
                 }}>
                   {/* Vertical accent bar */}

@@ -1,4 +1,5 @@
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
+import { SPACING } from '../../constants/spacing.js'
 
 // ── RetrievalFrame v1 — LOCKED COMPONENT ──────────────────────────────────────
 // Cinematic wrapper for retrieval moments woven into learning flow.
@@ -149,7 +150,7 @@ export default function RetrievalFrame({
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
           color: accent,
-          marginBottom: 16,
+          marginBottom: SPACING.compact,
           opacity: 0.85,
         }}>
           {label}
@@ -209,7 +210,7 @@ export default function RetrievalFrame({
           letterSpacing: '0.08em',
           textTransform: 'uppercase',
           color: accent,
-          marginBottom: 8,
+          marginBottom: SPACING.micro,
           opacity: 0.7,
         }}>
           {label}

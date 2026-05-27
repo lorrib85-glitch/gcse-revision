@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { SPACING } from '../../constants/spacing.js'
 
 // ─── Ring ─────────────────────────────────────────────────────────────────────
 const R_SIZE   = 96
@@ -232,7 +233,7 @@ export default function ChapterCompleteScreen({
         <div style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center',
           paddingTop: 92,
-          paddingLeft: 24, paddingRight: 24,
+          paddingLeft: SPACING.standard, paddingRight: SPACING.standard,
           maxWidth: 430, margin: '0 auto',
           position: 'relative', zIndex: 1,
         }}>
@@ -468,7 +469,7 @@ export default function ChapterCompleteScreen({
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
               stroke={accent} strokeWidth="2"
               strokeLinecap="round" strokeLinejoin="round"
-              style={{ flexShrink: 0, marginLeft: 8 }}>
+              style={{ flexShrink: 0, marginLeft: SPACING.micro }}>
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </button>
@@ -482,7 +483,7 @@ export default function ChapterCompleteScreen({
               ...base,
               marginTop: 22,
               background: 'none',
-              display: 'flex', alignItems: 'center', gap: 8,
+              display: 'flex', alignItems: 'center', gap: SPACING.micro,
               opacity: 0.72,
               transition: 'opacity 140ms ease',
               animationDelay: '240ms',

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import { SUBJECT_PALETTES } from '../../constants/subjects.js'
+import { SPACING } from '../../constants/spacing.js'
 
 const IMAGES = {
   History:   '/historybacker.png',
@@ -44,7 +45,7 @@ function ProgressDots({ total, current, done, accent, rgb }) {
   return (
     <div style={{
       position: 'absolute', top: 30, right: 24, zIndex: 10,
-      display: 'flex', gap: 8, alignItems: 'center',
+      display: 'flex', gap: SPACING.micro, alignItems: 'center',
     }}>
       {Array.from({ length: total }).map((_, i) => {
         const isDone   = i < done
