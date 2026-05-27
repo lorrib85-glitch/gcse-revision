@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { SPACING } from '../../constants/spacing.js'
 
 const PALETTES = {
   history:   { accent: '#C89B6D', bg: '#15110C' },
@@ -362,7 +363,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
             <div style={{
               fontFamily: "'Sora', sans-serif",
               fontSize: 14, color: 'rgba(255,255,255,0.4)',
-              marginTop: 16, textAlign: 'center',
+              marginTop: SPACING.compact, textAlign: 'center',
             }}>
               {remarkResult.verdict}
             </div>
@@ -612,8 +613,8 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
                   </div>
                   {examiner.annotations.map(ann => (
                     <div key={ann.id} style={{
-                      display: 'flex', alignItems: 'flex-start', gap: 8,
-                      marginBottom: 8,
+                      display: 'flex', alignItems: 'flex-start', gap: SPACING.micro,
+                      marginBottom: SPACING.micro,
                     }}>
                       <div style={{
                         width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0,
@@ -660,7 +661,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
 
               {/* Mark selector */}
               <div style={{
-                display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24,
+                display: 'flex', flexWrap: 'wrap', gap: SPACING.micro, marginBottom: SPACING.standard,
               }}>
                 {Array.from({ length: examiner.marks + 1 }, (_, i) => (
                   <button

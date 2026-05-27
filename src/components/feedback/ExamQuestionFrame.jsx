@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
+import { SPACING } from '../../constants/spacing.js'
 
 // ─── Keyframe styles injected once ───────────────────────────────────────────
 let _stylesInjected = false
@@ -156,7 +157,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
+          gap: SPACING.micro,
           fontSize: 14,
           marginBottom: 28,
         }}>
@@ -187,7 +188,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
       {/* 5. Source panel */}
       {source && (
         <div style={{
-          padding: 24,
+          padding: SPACING.standard,
           borderRadius: 22,
           background: 'rgba(255,255,255,0.045)',
           border: '1px solid rgba(255,255,255,0.05)',
@@ -225,7 +226,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
               <img
                 src={source.image}
                 alt=""
-                style={{ width: '100%', borderRadius: 12, marginBottom: 16 }}
+                style={{ width: '100%', borderRadius: 12, marginBottom: SPACING.compact }}
               />
             )}
 
@@ -237,7 +238,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                 letterSpacing: '0.18em',
                 textTransform: 'uppercase',
                 color: accent,
-                marginBottom: 8,
+                marginBottom: SPACING.micro,
               }}>
                 {source.label}
               </div>
@@ -249,7 +250,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                 fontSize: 13,
                 fontStyle: 'italic',
                 color: 'rgba(245,245,245,0.48)',
-                marginBottom: 16,
+                marginBottom: SPACING.compact,
               }}>
                 {source.attribution}
               </div>
@@ -316,7 +317,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
             transition: '220ms ease',
             padding: 22,
             position: 'relative',
-            marginBottom: 8,
+            marginBottom: SPACING.micro,
           }}>
             <textarea
               ref={textareaRef}
@@ -356,7 +357,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
             <div style={{
               fontSize: 13,
               color: '#FF8C8C',
-              marginBottom: 16,
+              marginBottom: SPACING.compact,
             }}>
               {error}
             </div>
@@ -379,7 +380,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
               fontFamily: "'Sora', sans-serif",
               fontWeight: 600,
               cursor: canSubmit ? 'pointer' : 'default',
-              marginTop: 24,
+              marginTop: SPACING.standard,
               transition: '220ms ease',
             }}
           >
@@ -418,7 +419,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
               textAlign: 'center',
               fontSize: 12,
               color: 'rgba(245,245,245,0.28)',
-              marginTop: 16,
+              marginTop: SPACING.compact,
             }}>
               ⊘ No tips or help in exam mode
             </div>
@@ -575,7 +576,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
           {feedback.examinerTip && (
             <div style={{
               borderTop: '1px solid rgba(255,255,255,0.04)',
-              padding: '16px 0',
+              padding: `${SPACING.compact}px 0`,
               animation: 'eqf-fade 480ms ease 480ms both',
               marginBottom: 28,
             }}>
@@ -585,7 +586,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
                 color: 'rgba(245,245,245,0.42)',
-                marginBottom: 8,
+                marginBottom: SPACING.micro,
               }}>
                 EXAMINER'S NOTE
               </div>

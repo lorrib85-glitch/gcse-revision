@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
+import { SPACING } from '../../constants/spacing.js'
 
 let _erStyled = false
 function ensureStyles() {
@@ -117,7 +118,7 @@ export default function ExplainReveal({ block, subject, onComplete }) {
             <div
               key={step.id || i}
               style={{
-                display: 'flex', gap: 16, alignItems: 'flex-start',
+                display: 'flex', gap: SPACING.compact, alignItems: 'flex-start',
                 opacity: isCurrent ? 1 : 0.92,
                 transition: 'opacity 320ms ease',
                 animation: isNew ? 'er-fade 320ms ease both' : 'none',
@@ -171,7 +172,7 @@ export default function ExplainReveal({ block, subject, onComplete }) {
                 {step.detail && (
                   <div style={{
                     ...F, fontSize: 15, lineHeight: 1.55,
-                    color: 'rgba(245,245,245,0.48)', marginTop: 8,
+                    color: 'rgba(245,245,245,0.48)', marginTop: SPACING.micro,
                   }}>
                     {step.detail}
                   </div>
@@ -185,7 +186,7 @@ export default function ExplainReveal({ block, subject, onComplete }) {
         {allRevealed && block.reflectionPrompt && (
           <div
             style={{
-              display: 'flex', gap: 16, alignItems: 'flex-start',
+              display: 'flex', gap: SPACING.compact, alignItems: 'flex-start',
               animation: 'er-fade 320ms ease both',
             }}
           >
@@ -252,9 +253,9 @@ export default function ExplainReveal({ block, subject, onComplete }) {
               border: `1px solid rgba(${rgb},0.22)`,
               borderRadius: 14, padding: '13px 22px',
               color: accent, fontSize: 15, fontWeight: 600, ...F,
-              cursor: 'pointer', marginTop: 16,
+              cursor: 'pointer', marginTop: SPACING.compact,
               transition: '220ms ease',
-              display: 'inline-flex', alignItems: 'center', gap: 8,
+              display: 'inline-flex', alignItems: 'center', gap: SPACING.micro,
             }}
           >
             Reveal next ›

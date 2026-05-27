@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import recoveryQuizzes from '../../data/recoveryQuizzes.js'
 import { SUBJECT_PALETTES } from '../../constants/subjects.js'
+import { SPACING } from '../../constants/spacing.js'
 
 const PALETTES = SUBJECT_PALETTES
 
@@ -72,9 +73,9 @@ export default function RecoveryQuizPlayer({
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: 18, margin: 0 }}>Quiz not found.</p>
           <button onClick={onBack} style={{
-            marginTop: 16,
+            marginTop: SPACING.compact,
             background: '#38D27A', border: 'none', borderRadius: 8,
-            padding: '8px 16px', color: '#000', fontWeight: 600,
+            padding: `${SPACING.micro}px ${SPACING.compact}px`, color: '#000', fontWeight: 600,
             cursor: 'pointer',
           }}>
             Go back

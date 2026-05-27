@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
+import { SPACING } from '../../constants/spacing.js'
 
 let _wsrStyled = false
 function ensureStyles() {
@@ -139,7 +140,7 @@ export default function WeakSpotRecovery({
           height: 4, borderRadius: 999,
           background: 'rgba(255,255,255,0.12)',
           overflow: 'hidden',
-          marginBottom: 72,
+          marginBottom: SPACING.cinematic,
         }}>
           <div style={{
             height: '100%',
@@ -173,7 +174,7 @@ export default function WeakSpotRecovery({
           <div style={{
             position: 'relative',
             maxWidth: '100%',
-            paddingBottom: 42,
+            paddingBottom: SPACING.separation,
           }}>
             {/* Ultra-subtle readability gradient */}
             <div style={{
@@ -221,7 +222,7 @@ export default function WeakSpotRecovery({
 
         {/* Button area */}
         <div style={{
-          marginTop: 72,
+          marginTop: SPACING.cinematic,
           display: 'flex', flexDirection: 'column', gap: 36,
           alignItems: 'center',
         }}>
