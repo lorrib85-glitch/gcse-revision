@@ -13,6 +13,8 @@ import InteractiveHotspotImage from './InteractiveHotspotImage.jsx'
 import FillInTheBlanksBlock from './FillInTheBlanksBlock.jsx'
 import AnswerInteraction from './AnswerInteraction.jsx'
 import RetrievalFrame from './RetrievalFrame.jsx'
+import WeakSpotRecovery from './WeakSpotRecovery.jsx'
+import RecoveryQuizPlayer from './RecoveryQuizPlayer.jsx'
 import CardContainer from './CardContainer.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
@@ -1671,8 +1673,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   // null | 'hook' | 'wyl' | 'recall'
   const [navTo, setNavTo] = useState(null)
   const [screen, setScreen] = useState(saved.screen || 0)
-  const [showConfidence, setShowConfidence] = useState(false)
-  const [chosenConfidence, setChosenConfidence] = useState(null)
+  const [showWeakSpotRecovery, setShowWeakSpotRecovery] = useState(false)
+  const [detectedWeakSpot, setDetectedWeakSpot] = useState(null)
+  const [recoveryQuizId, setRecoveryQuizId] = useState(null)
   const [showExaminer, setShowExaminer] = useState(false)
   const [examinerAttempts, setExaminerAttempts] = useState(() => saved.examinerAttempts || [])
   const total   = module.screens.length
@@ -1703,19 +1706,25 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     if (module.examiner && !examinerDone) {
       setShowExaminer(true)
     } else {
-      setShowConfidence(true)
+      // New flow: detect weak spots instead of confidence rating
+      detectWeakSpot()
     }
     scrollToTop()
   }
 
-  function handleConfidencePick(level) {
-    setChosenConfidence(level)
-    saveConfidenceRating(module.id, module.subject, module.title, level)
+  function detectWeakSpot() {
+    // V1: Simple heuristic-based weak spot detection
+    // For now, no actual weak spot — just proceed to completion
+    // This is where we'd integrate actual score analysis in future versions
+    completeModule()
+  }
+
+  function completeModule() {
     recordActivity()
     setTimeout(() => {
       if (onChapterComplete) onChapterComplete(module)
       else onBack()
-    }, 650)
+    }, 400)
   }
 
   // Hook state — always called (hook is undefined when module has no hook)
@@ -1765,7 +1774,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       : recallBeatOffset + screen
 
   const headerVisible =
-    !showConfidence &&
+    !showWeakSpotRecovery &&
+    !recoveryQuizId &&
     !showExaminer &&
     hookDone && wylDone &&
     ((cur?.type === 'cinematic' || cur?.type === 'conceptReveal') ? cinematicHeaderVisible : true)
@@ -1802,27 +1812,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   // ──────────────────────────────────────────────────────────────────────────
 
   // ── Confidence overlay — neutral, no colour judgement ──────────────────
-  const CONFIDENCE_LEVELS = [
-    {
-      id: 'confused',
-      emoji: '🤔',
-      label: "Still figuring it out",
-      sub: "That's fine — it takes more than one pass",
-    },
-    {
-      id: 'clicking',
-      emoji: '💭',
-      label: "Starting to get it",
-      sub: "Some bits are landing, some aren't yet",
-    },
-    {
-      id: 'confident',
-      emoji: '💡',
-      label: "Got it — could explain it",
-      sub: "Feels solid for now",
-    },
-  ]
-
   // ── Full-screen hook screen — renders before the player shell ──────────────
   if ((!hookDone && module.hook?.statement) || navTo === 'hook') {
     return (
@@ -1914,103 +1903,37 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     )
   }
 
-  if (showConfidence) {
+  // Recovery quiz player
+  if (recoveryQuizId) {
     return (
-      <div style={{
-        background: '#080C1A', minHeight: '100vh',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        padding: '32px 20px',
-      }}>
-        <div style={{ maxWidth: 400, width: '100%' }}>
-          {/* Module completed banner */}
-          <div style={{ textAlign: 'center', marginBottom: 32 }}>
-            <div style={{
-              width: 64, height: 64, borderRadius: 18, margin: '0 auto 16px',
-              background: subjectColor + '22',
-              border: '1px solid ' + subjectColor + '44',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1.8rem',
-              boxShadow: '0 0 32px ' + subjectColor + '22',
-            }}>{module.icon}</div>
-            <div style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.65rem', fontWeight: 700, letterSpacing: '.14em',
-              textTransform: 'uppercase', color: subjectColor, marginBottom: 8,
-            }}>{module.subject} · Module {module.number} complete</div>
-            <h2 style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 800, fontSize: '1.5rem',
-              color: '#F5F7FB', margin: '0 0 8px',
-              letterSpacing: '-.02em',
-            }}>How do you feel about this?</h2>
-            <p style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.88rem', color: '#5A6480',
-              margin: 0, lineHeight: 1.5,
-            }}>
-              Be honest — this shapes what you see next.
-            </p>
-          </div>
+      <RecoveryQuizPlayer
+        recoveryQuizId={recoveryQuizId}
+        onComplete={() => {
+          setRecoveryQuizId(null)
+          completeModule()
+        }}
+        onBack={() => setRecoveryQuizId(null)}
+      />
+    )
+  }
 
-          {/* Confidence buttons — neutral, no colour hierarchy */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {CONFIDENCE_LEVELS.map(level => {
-              const picked = chosenConfidence === level.id
-              const dimmed = chosenConfidence !== null && !picked
-              return (
-                <button
-                  key={level.id}
-                  onClick={() => handleConfidencePick(level.id)}
-                  disabled={chosenConfidence !== null}
-                  style={{
-                    background: picked
-                      ? 'rgba(255,255,255,.07)'
-                      : 'rgba(255,255,255,.02)',
-                    border: '1.5px solid ' + (picked ? 'rgba(255,255,255,.25)' : '#2A3552'),
-                    borderRadius: 16, padding: '18px 20px',
-                    cursor: chosenConfidence ? 'default' : 'pointer',
-                    textAlign: 'left',
-                    display: 'flex', alignItems: 'center', gap: 14,
-                    transition: 'all .2s',
-                    opacity: dimmed ? 0.35 : 1,
-                    transform: picked ? 'scale(1.02)' : 'scale(1)',
-                    width: '100%',
-                  }}
-                >
-                  <div style={{
-                    width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                    background: '#10182B',
-                    border: '1px solid #2A3552',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '1.3rem',
-                  }}>{level.emoji}</div>
-                  <div style={{ flex: 1, textAlign: 'left' }}>
-                    <div style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontWeight: 700, fontSize: '1rem',
-                      color: '#E0E6F0',
-                      marginBottom: 3,
-                    }}>{level.label}</div>
-                    <div style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontSize: '.78rem', color: '#4A5578',
-                    }}>{level.sub}</div>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.73rem', color: '#2A3552',
-            textAlign: 'center', marginTop: 20, margin: '20px 0 0',
-          }}>
-            Saved — used to prioritise what you revise next
-          </p>
-        </div>
-      </div>
+  // Weak spot recovery screen
+  if (showWeakSpotRecovery && detectedWeakSpot) {
+    return (
+      <WeakSpotRecovery
+        block={detectedWeakSpot}
+        subject={module.subject}
+        progress={{ current: screen + 1, total: total }}
+        onBack={() => setShowWeakSpotRecovery(false)}
+        onFixWeakSpot={(quizId) => {
+          setShowWeakSpotRecovery(false)
+          setRecoveryQuizId(quizId)
+        }}
+        onSkip={() => {
+          setShowWeakSpotRecovery(false)
+          completeModule()
+        }}
+      />
     )
   }
 
