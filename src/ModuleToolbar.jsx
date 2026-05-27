@@ -27,7 +27,7 @@ export default function ModuleToolbar({ onBack, onExit }) {
           transition: 'opacity 140ms ease, transform 140ms ease',
         }}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="rgba(255,255,255,1)" strokeWidth="2"
+          stroke="rgba(255,255,255,0.75)" strokeWidth="1.75"
           strokeLinecap="round" strokeLinejoin="round">
           <path d="M15 18l-6-6 6-6"/>
         </svg>
@@ -48,7 +48,7 @@ export default function ModuleToolbar({ onBack, onExit }) {
           transition: 'opacity 140ms ease, transform 140ms ease',
         }}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="rgba(255,255,255,1)" strokeWidth="2"
+          stroke="rgba(255,255,255,0.75)" strokeWidth="1.75"
           strokeLinecap="round" strokeLinejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"/>
           <line x1="6" y1="6" x2="18" y2="18"/>

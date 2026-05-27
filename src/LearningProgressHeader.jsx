@@ -53,9 +53,9 @@ export default function LearningProgressHeader({
   return (
     <>
       <style>{`
-        @keyframes lh-breathing {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50%      { opacity: 0.7; transform: scale(1.08); }
+        @keyframes lh-pulse {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0.62; }
         }
       `}</style>
 
@@ -67,41 +67,42 @@ export default function LearningProgressHeader({
           width: '100%',
           display: 'flex', gap: 0, alignItems: 'center', justifyContent: 'center',
           background: 'none', border: 'none', cursor: 'pointer',
-          padding: '12px 16px',
+          padding: '10px 16px',
         }}>
         {beats.map((_, i) => {
           const done    = i < currentBeatIndex
           const current = i === currentBeatIndex
           const isLast  = i === beats.length - 1
-          const nodeSize = current ? 10 : 8
-          const nodeGap = 6
 
           return (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
               {/* ── Progress node ── */}
               <div style={{
-                width: nodeSize, height: nodeSize, borderRadius: '50%',
+                width: 7, height: 7, borderRadius: '50%',
                 flexShrink: 0,
-                background: done ? accent : current ? accent : 'rgba(255,255,255,0.12)',
-                border: current || done ? 'none' : '1px solid rgba(255,255,255,0.15)',
+                background: current
+                  ? accent
+                  : done
+                    ? 'rgba(255,255,255,0.22)'
+                    : 'rgba(255,255,255,0.09)',
+                border: (!current && !done) ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                /* ring-around-dot for active node via layered box-shadow */
                 boxShadow: current
-                  ? `0 0 14px rgba(${accentRgb},0.7)`
-                  : done ? `0 0 8px rgba(${accentRgb},0.5)` : 'none',
-                animation: current ? 'lh-breathing 3s ease-in-out infinite' : 'none',
+                  ? `0 0 0 2.5px rgba(0,0,0,0.55), 0 0 0 4.5px rgba(${accentRgb},0.38), 0 0 7px rgba(${accentRgb},0.14)`
+                  : 'none',
+                animation: current ? 'lh-pulse 5s ease-in-out infinite' : 'none',
               }} />
 
               {/* ── Connector line (not after last node) ── */}
               {!isLast && (
                 <div style={{
-                  width: 20,
+                  width: 24,
                   height: 1,
                   background: done
-                    ? accent
-                    : 'rgba(255,255,255,0.08)',
-                  opacity: done ? 0.5 : 1,
+                    ? 'rgba(255,255,255,0.15)'
+                    : 'rgba(255,255,255,0.06)',
                   margin: '0 2px',
                   flexShrink: 0,
-                  boxShadow: done ? `0 0 4px rgba(${accentRgb},0.3)` : 'none',
                 }} />
               )}
             </div>
