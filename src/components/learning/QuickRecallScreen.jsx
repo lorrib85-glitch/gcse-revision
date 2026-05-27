@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
-import { SUBJECT_PALETTES } from '../../constants/subjects.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 
 const IMAGES = {
@@ -13,8 +13,6 @@ const IMAGES = {
   English:   '/Englishbacker.png',
   Music:     '/historybacker.png',
 }
-
-const PALETTES = SUBJECT_PALETTES
 
 // Icon SVGs keyed by name
 function Icon({ name, size = 22, color = 'currentColor' }) {
@@ -203,9 +201,9 @@ export default function QuickRecallScreen({
   onContinue,
   renderHeader,
 }) {
-  const img     = IMAGES[subject]   || IMAGES.History
-  const palette = PALETTES[subject] || PALETTES.History
-  const { accent, rgb } = palette
+  const img   = IMAGES[subject] || IMAGES.History
+  const theme = SUBJECTS[subject] || SUBJECTS.History
+  const { accent, accentRgb: rgb } = theme
 
   const total = questions.length
 

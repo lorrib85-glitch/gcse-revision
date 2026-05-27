@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 
 let _erStyled = false
@@ -44,8 +44,9 @@ function ensureStyles() {
 export default function ExplainReveal({ block, subject, onComplete }) {
   ensureStyles()
 
-  const accent    = SUBJECT_ACCENTS[subject] || '#B38B63'
-  const rgb       = hexToRgb(accent)
+  const theme     = SUBJECTS[subject] || SUBJECTS.History
+  const accent    = theme.accent
+  const rgb       = theme.accentRgb
   const steps     = block.steps || []
 
   const [revealed, setRevealed] = useState(Math.min(1, steps.length))

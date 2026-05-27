@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 
 let _wsrStyled = false
@@ -61,8 +61,9 @@ export default function WeakSpotRecovery({
 }) {
   ensureStyles()
 
-  const accent    = SUBJECT_ACCENTS[subject] || '#B38B63'
-  const rgb       = hexToRgb(accent)
+  const theme     = SUBJECTS[subject] || SUBJECTS.History
+  const accent    = theme.accent
+  const rgb       = theme.accentRgb
   const [isPressed, setIsPressed] = useState(false)
 
   const F = { fontFamily: "'Sora', sans-serif" }

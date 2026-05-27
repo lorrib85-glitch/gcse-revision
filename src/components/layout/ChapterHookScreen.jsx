@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { SUBJECT_PALETTES } from '../../constants/subjects.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 
 const IMAGES = {
   History:   '/history-truefalse.png',
@@ -11,8 +11,6 @@ const IMAGES = {
   English:   '/english-truefalse.png',
   Music:     '/music-truefalse.png',
 }
-
-const PALETTES = SUBJECT_PALETTES
 
 // ─── Map which word indices belong to accent phrases ──────────────────────────
 function buildAccentSet(words, accentWords) {
@@ -80,9 +78,9 @@ export default function ChapterHookScreen({
   onBack,
   onContinue,
 }) {
-  const img     = IMAGES[subject]   || IMAGES.History
-  const palette = PALETTES[subject] || PALETTES.History
-  const { accent, rgb } = palette
+  const img   = IMAGES[subject] || IMAGES.History
+  const theme = SUBJECTS[subject] || SUBJECTS.History
+  const { accent, accentRgb: rgb } = theme
 
   // ── Phase: 'question' → 'exiting' → 'reveal' ────────────────────────────────
   const [phase,       setPhase]       = useState('question')

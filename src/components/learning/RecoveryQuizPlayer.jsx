@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import recoveryQuizzes from '../../data/recoveryQuizzes.js'
-import { SUBJECT_PALETTES } from '../../constants/subjects.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
-
-const PALETTES = SUBJECT_PALETTES
 
 function ChoiceQuestion({ q, onSelect, subject }) {
   const block = {
@@ -85,8 +83,8 @@ export default function RecoveryQuizPlayer({
     )
   }
 
-  const palette = PALETTES[quiz.subject] || PALETTES.History
-  const { accent, rgb } = palette
+  const theme = SUBJECTS[quiz.subject] || SUBJECTS.History
+  const { accent, accentRgb: rgb } = theme
   const questions = quiz.questions || []
   const total = questions.length
 

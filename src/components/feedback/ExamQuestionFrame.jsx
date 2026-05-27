@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 
 // ─── Keyframe styles injected once ───────────────────────────────────────────
@@ -28,8 +28,9 @@ function ensureStyles() {
 export default function ExamQuestionFrame({ block, subject, mode = 'practice', questionNum, onComplete, onSkip }) {
   ensureStyles()
 
-  const accent = SUBJECT_ACCENTS[subject] || '#B38B63'
-  const accentRgb = hexToRgb(accent)
+  const theme = SUBJECTS[subject] || SUBJECTS.History
+  const accent = theme.accent
+  const accentRgb = theme.accentRgb
 
   // Normalise block data
   const questionText = block.questionText || block.question || ''
