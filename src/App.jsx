@@ -829,22 +829,20 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
             padding: 0, cursor: 'pointer', textAlign: 'left',
           }}
         >
-          {/* Landscape atmosphere */}
+          {/* Landscape atmosphere — full opacity, gradient handles left darkening */}
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0, zIndex: 0,
             backgroundImage: 'url(/module-atmosphere.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center right',
             backgroundRepeat: 'no-repeat',
-            opacity: 0.05,
-            filter: 'saturate(0.5) brightness(0.75)',
           }} />
-          {/* Overlay: heavy left dark, atmosphere emerges mid-right/lower-right only */}
+          {/* Left darkening gradient — solid dark left, image emerges right */}
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0, zIndex: 1,
             background: [
-              'linear-gradient(to right, #08090D 0%, #08090D 42%, rgba(8,9,13,0.85) 60%, rgba(8,9,13,0.45) 78%, rgba(8,9,13,0.12) 100%)',
-              'linear-gradient(to bottom, rgba(8,9,13,0.2) 0%, transparent 30%, rgba(8,9,13,0.55) 78%, #08090D 100%)',
+              'linear-gradient(to right, #08090D 0%, #08090D 50%, rgba(8,9,13,0.82) 65%, rgba(8,9,13,0.35) 80%, rgba(8,9,13,0.08) 100%)',
+              'linear-gradient(to bottom, rgba(8,9,13,0.5) 0%, transparent 20%, rgba(8,9,13,0.6) 80%, #08090D 100%)',
             ].join(', '),
           }} />
 
