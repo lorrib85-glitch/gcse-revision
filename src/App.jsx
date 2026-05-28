@@ -1,4 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { SUBJECTS } from './constants/subjects.js'
+import { SPACING }  from './constants/spacing.js'
+import { RADII }    from './constants/radii.js'
+import { TYPE }     from './constants/typography.js'
 import { useAuth } from './auth/AuthContext.jsx'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
 import { BIOLOGY_GROUPS } from './data/biologyGroups.js'
@@ -610,7 +614,7 @@ export default function App() {
   // Tab shell
   return (
     <div style={{ background: '#08090D', minHeight: '100vh' }}>
-      {tab === 'home'     && <Home progress={progress} onStart={startSession} onOpenModule={openModule} onOpenSubjects={() => setTab('subjects')} />}
+      {tab === 'home'     && <Home progress={progress} onStart={startSession} onOpenModule={openModule} onOpenSubjects={() => setTab('subjects')} onOpenPulse={() => setTab('pulse')} />}
       {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
       {tab === 'pulse'    && <PulseTab onStartQuickFire={() => setTab('quickfire')} />}
       {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab('pulse')} />}
@@ -645,356 +649,306 @@ function daysUntilExam() {
   return Math.max(0, Math.round((exam - today) / 86400000))
 }
 
-function getTimeGreeting(name) {
-  return `Hi, ${name}.`
+// ─── Home atmosphere — abstract network / constellation ────────────────────────
+function HomeAtmosphere({ accentRgb }) {
+  const nodes = [
+    [180, 48], [222, 26], [266, 16], [300, 36], [332, 22],
+    [356, 50], [362, 82], [334, 106], [300, 78], [266, 90],
+    [228, 68], [194, 90], [370, 62], [346, 130], [308, 116],
+  ]
+  const edges = [
+    [0,1],[1,2],[2,3],[3,4],[4,5],[5,12],[5,6],[6,7],
+    [7,8],[8,9],[9,10],[10,11],[11,0],[2,8],[3,8],[1,10],
+    [6,12],[7,13],[13,14],[8,14],
+  ]
+  return (
+    <div aria-hidden="true" style={{
+      position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden',
+    }}>
+      <style>{`
+        @keyframes ha-breathe { 0%,100%{opacity:0.08} 50%{opacity:0.13} }
+      `}</style>
+      <svg
+        width="100%" height="55%"
+        viewBox="0 0 390 300"
+        preserveAspectRatio="xMaxYMin meet"
+        style={{ animation: 'ha-breathe 18s ease-in-out infinite' }}
+      >
+        {edges.map(([a, b], i) => (
+          <line key={i}
+            x1={nodes[a][0]} y1={nodes[a][1]}
+            x2={nodes[b][0]} y2={nodes[b][1]}
+            stroke={`rgba(${accentRgb},0.55)`}
+            strokeWidth="0.65"
+          />
+        ))}
+        {nodes.map(([cx, cy], i) => (
+          <circle key={i} cx={cx} cy={cy} r="1.8" fill={`rgba(${accentRgb},0.75)`} />
+        ))}
+      </svg>
+      {/* Left-to-right vignette — keeps text area dark */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(90deg, #08090D 0%, rgba(8,9,13,0.72) 40%, rgba(8,9,13,0.18) 75%, transparent 100%)',
+      }} />
+    </div>
+  )
 }
 
-function Home({ progress, onStart, onOpenModule, onOpenSubjects }) {
-  const { user, signOut } = useAuth()
-  const userName    = user?.name || 'you'
-  const greeting    = getTimeGreeting(userName)
-  const todayIdx    = (() => { const d = new Date().getDay(); return d === 0 ? 6 : d - 1 })()
-  const dayLetters  = ['M','T','W','T','F','S','S']
+function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) {
+  const { user } = useAuth()
+  const userName = user?.name || 'you'
 
-  const medicineModule  = MODULES.find(m => m.id === 'mod1') || MODULES.find(m => m.subject === 'History')
-  const medState        = medicineModule ? safeGetModuleState(medicineModule.id) : {}
-  const medProgress     = medicineModule
-    ? Math.min(100, Math.max(12, Math.round(((medState.screen || 0) / (medicineModule.screens?.length || 1)) * 100)))
-    : 12
+  // Find the module with most progress to show in "Jump back in"
+  const jumpBackModule = (() => {
+    let best = null, bestPct = -1
+    for (const m of MODULES) {
+      const s = safeGetModuleState(m.id)
+      if ((s.screen || 0) > 0) {
+        const pct = ((s.screen || 0) / Math.max(1, m.screens?.length || 1)) * 100
+        if (pct > bestPct) { bestPct = pct; best = m }
+      }
+    }
+    return best || MODULES.find(m => m.id === 'mod1') || MODULES[0]
+  })()
+
+  const jumpModState = jumpBackModule ? safeGetModuleState(jumpBackModule.id) : {}
+  const jumpPct = jumpBackModule
+    ? Math.round(((jumpModState.screen || 0) / Math.max(1, jumpBackModule.screens?.length || 1)) * 100)
+    : 0
+
+  // Days active this calendar week (Mon–Sun)
+  const daysThisWeek = (() => {
+    try {
+      const today = new Date()
+      const jsDay = today.getDay() === 0 ? 7 : today.getDay()
+      const monday = new Date(today); monday.setDate(today.getDate() - (jsDay - 1))
+      const mondayStr = monday.toISOString().slice(0, 10)
+      const scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]')
+      return new Set(scores.filter(s => s.date >= mondayStr).map(s => s.date)).size
+    } catch { return progress.streak > 0 ? Math.min(progress.streak, 7) : 0 }
+  })()
+
+  // Weakest subject from recent scores — drives "Close the gaps"
+  const focusTopic = (() => {
+    try {
+      const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 14)
+      const cutoffStr = cutoff.toISOString().slice(0, 10)
+      const scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]').filter(s => s.date >= cutoffStr)
+      if (scores.length < 3) return null
+      const buckets = {}
+      scores.forEach(s => {
+        if (!buckets[s.subject]) buckets[s.subject] = []
+        buckets[s.subject].push(s.pct)
+      })
+      const avg = arr => Math.round(arr.reduce((a, b) => a + b, 0) / arr.length)
+      const entries = Object.entries(buckets)
+        .map(([subject, pcts]) => ({ subject, avg: avg(pcts), count: pcts.length }))
+        .filter(e => e.count >= 2)
+        .sort((a, b) => a.avg - b.avg)
+      return entries[0] || null
+    } catch { return null }
+  })()
+
+  const atmosphereSubject = jumpBackModule?.subject || 'History'
+  const theme = SUBJECTS[atmosphereSubject] || SUBJECTS.History
+  const accent = theme.accent
+  const rgb = theme.accentRgb
 
   return (
     <div style={{
-      minHeight: '100vh',
-      background: 'radial-gradient(ellipse 90% 45% at 50% -5%, rgba(139,92,246,0.14) 0%, transparent 60%), #060816',
-      paddingBottom: 120,
-      overflowX: 'hidden',
+      minHeight: '100vh', background: '#08090D',
+      paddingBottom: 120, overflowX: 'hidden', position: 'relative',
     }}>
-      <div style={{ maxWidth: 430, margin: '0 auto', padding: '14px 20px 0' }}>
+      <HomeAtmosphere accentRgb={rgb} />
 
-        {/* ── Greeting + Streak ── */}
-        <div style={{ marginBottom: 28, position: 'relative' }}>
+      <div style={{
+        position: 'relative', zIndex: 1,
+        maxWidth: 420, margin: '0 auto',
+        padding: `max(52px, calc(18px + env(safe-area-inset-top))) ${SPACING.standard}px 0`,
+      }}>
 
-          {/* Sign-out avatar — top right */}
-          <button
-            onClick={signOut}
-            title="Sign out"
-            style={{
-              position: 'absolute', top: 0, right: 0,
-              width: 32, height: 32, borderRadius: '50%',
-              border: '1.5px solid rgba(139,92,246,0.3)',
-              background: 'rgba(139,92,246,0.1)', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: 12, fontWeight: 700, color: '#C4B5FD',
-            }}
-          >
+        {/* ── Top row: avatar left, dots right ── */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          marginBottom: 36,
+        }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: RADII.pill,
+            background: `rgba(${rgb},0.12)`,
+            border: `1.5px solid rgba(${rgb},0.28)`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            ...TYPE.metadata, color: accent, letterSpacing: '0em',
+          }}>
             {userName.charAt(0).toUpperCase()}
-          </button>
-
-          {/* Streak chip */}
-          <div style={{ marginBottom: 16 }}><StreakChip /></div>
-
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontSize: 28, fontWeight: 700, color: '#F5F7FF',
-            lineHeight: 1.1, marginBottom: 8,
-            letterSpacing: '-0.01em',
-          }}>
-            {greeting}
           </div>
-
-          <div style={{
-            fontFamily: "'Outfit', sans-serif",
-            fontSize: 18, fontWeight: 500, color: 'rgba(255,255,255,0.68)', marginBottom: 22,
-            lineHeight: '26px',
+          <button aria-label="More options" style={{
+            background: 'none', border: 'none', cursor: 'default',
+            opacity: 0.32, padding: 4, display: 'flex', alignItems: 'center',
           }}>
-            Keep going — you're building momentum.
-          </div>
-
-          {/* Day tracker */}
-          {(() => {
-            // Build a set of dates with activity this week
-            let activityDates = new Set()
-            try {
-              const scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]')
-              scores.forEach(s => s.date && activityDates.add(s.date))
-            } catch {}
-            // Date string for each column (Mon=0 … Sun=6)
-            const weekDates = dayLetters.map((_, i) => {
-              const d = new Date()
-              const jsDay = d.getDay() === 0 ? 7 : d.getDay() // 1=Mon … 7=Sun
-              const diff = (i + 1) - jsDay
-              const nd = new Date(d)
-              nd.setDate(d.getDate() + diff)
-              return nd.toISOString().slice(0, 10)
-            })
-            return (
-              <>
-                <style>{`@keyframes dayPulse { 0%,100%{box-shadow:0 0 10px rgba(139,92,246,0.25)} 50%{box-shadow:0 0 20px rgba(139,92,246,0.55)} }`}</style>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  {dayLetters.map((d, i) => {
-                    const isToday  = i === todayIdx
-                    const isPast   = i < todayIdx
-                    const studied  = activityDates.has(weekDates[i])
-                    const isGreen  = studied && (isPast || isToday)
-                    const isAmber  = isPast && !studied
-                    const dotColor = isGreen ? '#4CAF7D' : isAmber ? '#E0A84F' : isToday ? '#8B5CF6' : 'rgba(255,255,255,0.12)'
-                    const ringColor = isGreen ? 'rgba(76,175,125,' : isAmber ? 'rgba(224,168,79,' : isToday ? 'rgba(139,92,246,' : 'rgba(255,255,255,0.0'
-                    return (
-                      <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
-                        <div style={{
-                          width: isToday ? 24 : 20, height: isToday ? 24 : 20,
-                          borderRadius: '50%',
-                          background: isGreen ? 'rgba(76,175,125,0.12)' : isAmber ? 'rgba(224,168,79,0.1)' : isToday ? 'rgba(139,92,246,0.18)' : 'rgba(255,255,255,0.03)',
-                          border: isGreen ? '1.5px solid rgba(76,175,125,0.4)' : isAmber ? '1.5px solid rgba(224,168,79,0.35)' : isToday ? '1.5px solid rgba(139,92,246,0.45)' : '1.5px solid rgba(255,255,255,0.05)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          animation: isToday ? 'dayPulse 2.2s ease-in-out infinite' : 'none',
-                        }}>
-                          <div style={{
-                            width: (isGreen || isAmber) ? 6 : isToday ? 7 : 4,
-                            height: (isGreen || isAmber) ? 6 : isToday ? 7 : 4,
-                            borderRadius: '50%',
-                            background: dotColor,
-                            boxShadow: isGreen ? '0 0 6px rgba(76,175,125,0.8)' : isAmber ? '0 0 5px rgba(224,168,79,0.6)' : isToday ? '0 0 8px rgba(139,92,246,0.9)' : 'none',
-                          }} />
-                        </div>
-                        <div style={{
-                          fontFamily: "'Outfit', sans-serif",
-                          fontSize: 10, fontWeight: 600, letterSpacing: '0.04em',
-                          color: isGreen ? '#4CAF7D' : isAmber ? '#E0A84F' : isToday ? '#C4B5FD' : '#1F2937',
-                        }}>
-                          {d}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </>
-            )
-          })()}
-        </div>
-
-        {/* ── Continue card ── */}
-        <div style={{ marginBottom: 14 }}>
-
-          <button
-            onClick={() => medicineModule && onOpenModule(medicineModule)}
-            style={{
-              width: '100%', height: 240, border: 'none', padding: 0,
-              cursor: medicineModule ? 'pointer' : 'default',
-              borderRadius: 24, overflow: 'hidden', position: 'relative',
-              background: '#0B1020', display: 'block',
-              boxShadow: '0 10px 40px rgba(0,0,0,0.55)',
-            }}
-          >
-            {/* Artwork */}
-            <div style={{
-              position: 'absolute', inset: 0,
-              backgroundImage: 'url(/headers/history-medicine-through-time.png)',
-              backgroundSize: 'cover', backgroundPosition: 'center right',
-              filter: 'saturate(0.85) contrast(0.9)',
-            }} />
-            {/* Gradient overlay */}
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'linear-gradient(90deg, rgba(6,8,22,0.97) 0%, rgba(6,8,22,0.88) 38%, rgba(6,8,22,0.5) 62%, rgba(6,8,22,0.08) 100%)',
-            }} />
-            {/* Border ring */}
-            <div style={{ position: 'absolute', inset: 0, borderRadius: 24, border: '1px solid rgba(255,255,255,0.07)' }} />
-
-            {/* Text — left 50% */}
-            <div style={{
-              position: 'absolute', inset: 0, padding: '22px 20px',
-              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-              maxWidth: '54%',
-            }}>
-              <div>
-                <div style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
-                  color: '#D6A166', textTransform: 'uppercase', marginBottom: 10,
-                }}>
-                  History
-                </div>
-                <div style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: 21, fontWeight: 700, color: '#F4EFE6', lineHeight: 1.2, marginBottom: 6,
-                }}>
-                  Medicine through Time
-                </div>
-                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, color: '#6B7280' }}>
-                  1250–present
-                </div>
-              </div>
-
-              <div>
-                <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 99, overflow: 'hidden', marginBottom: 7 }}>
-                  <div style={{
-                    width: medProgress + '%', height: '100%', borderRadius: 99,
-                    background: 'linear-gradient(90deg, #92400E, #D6A166)',
-                    boxShadow: '0 0 8px rgba(214,161,102,0.5)',
-                  }} />
-                </div>
-                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11, color: '#6B7280' }}>
-                  {medProgress}% complete
-                </div>
-              </div>
-            </div>
-
-            {/* Continue button */}
-            <div style={{
-              position: 'absolute', bottom: 20, right: 18,
-              background: 'rgba(214,161,102,0.14)',
-              border: '1px solid rgba(214,161,102,0.28)',
-              backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-              borderRadius: 12, padding: '9px 16px',
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: 12, fontWeight: 700, color: '#D6A166',
-              display: 'flex', alignItems: 'center', gap: 5,
-            }}>
-              Continue <span style={{ fontSize: 15 }}>›</span>
-            </div>
+            <svg width="20" height="4" viewBox="0 0 20 4" fill="none">
+              <circle cx="2" cy="2" r="1.5" fill="rgba(255,255,255,0.8)" />
+              <circle cx="10" cy="2" r="1.5" fill="rgba(255,255,255,0.8)" />
+              <circle cx="18" cy="2" r="1.5" fill="rgba(255,255,255,0.8)" />
+            </svg>
           </button>
         </div>
 
-        {/* ── Weak Zone ── */}
-        <div style={{ marginBottom: 20 }}>
-          <button
-            onClick={() => onOpenSubjects && onOpenSubjects()}
-            style={{
-              width: '100%', border: 'none', padding: 0,
-              cursor: 'pointer', borderRadius: 24, position: 'relative',
-              background: 'transparent', textAlign: 'left', display: 'block',
-            }}
-          >
-            {/* Ambient glow halo */}
-            <div style={{
-              position: 'absolute', inset: -1, borderRadius: 25,
-              background: 'linear-gradient(135deg, rgba(251,113,133,0.2) 0%, rgba(139,92,246,0.15) 100%)',
-              filter: 'blur(1.5px)', zIndex: 0,
-            }} />
+        {/* ── Greeting ── */}
+        <div style={{ ...TYPE.hero, color: '#F5F7FF', marginBottom: 14 }}>
+          Hi, {userName}.
+        </div>
 
-            <div style={{
-              position: 'relative', zIndex: 1,
-              background: 'rgba(17,24,39,0.72)',
-              backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
-              borderRadius: 24,
-              border: '1px solid rgba(251,113,133,0.18)',
-              boxShadow: '0 10px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)',
-              padding: '18px 16px 18px 16px',
-              display: 'flex', alignItems: 'center', gap: 14,
+        {/* ── Streak pill ── */}
+        {(daysThisWeek > 0 || progress.streak > 0) && (
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            background: 'rgba(245,158,11,0.08)',
+            border: '1px solid rgba(245,158,11,0.16)',
+            borderRadius: RADII.pill, padding: '5px 12px 5px 10px',
+            marginBottom: SPACING.cinematic,
+          }}>
+            <span style={{ fontSize: 13, filter: 'drop-shadow(0 0 4px rgba(245,158,11,0.45))' }}>🔥</span>
+            <span style={{
+              fontFamily: "'Sora', sans-serif",
+              fontSize: 13, fontWeight: 500,
+              color: '#F59E0B', letterSpacing: '0.02em',
             }}>
-              {/* Brain icon */}
+              {daysThisWeek > 0
+                ? `${daysThisWeek} day${daysThisWeek !== 1 ? 's' : ''} this week`
+                : `${progress.streak} day streak`}
+            </span>
+          </div>
+        )}
+
+        {/* ── Jump back in ── */}
+        <div style={{ marginBottom: SPACING.separation }}>
+          <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 10 }}>
+            Jump back in
+          </div>
+
+          {jumpBackModule && (
+            <div style={{ marginBottom: 18 }}>
               <div style={{
-                width: 72, height: 72, borderRadius: 20, flexShrink: 0, overflow: 'hidden',
-                background: '#0D1117',
-                boxShadow: '0 0 24px rgba(45,212,191,0.4), inset 0 0 0 1px rgba(45,212,191,0.12)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                ...TYPE.bodySmall,
+                color: 'rgba(255,255,255,0.46)',
+                marginBottom: 16,
               }}>
-                <img src="/icons/brain-icon.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 20 }} />
+                {jumpBackModule.title}
               </div>
 
-              {/* Text */}
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <button
+                onClick={() => onOpenModule(jumpBackModule)}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 12,
+                  background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                }}
+              >
                 <div style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
-                  color: '#FB7185', textTransform: 'uppercase', marginBottom: 5,
+                  width: 36, height: 36, borderRadius: RADII.pill, flexShrink: 0,
+                  background: `rgba(${rgb},0.12)`,
+                  border: `1px solid rgba(${rgb},0.24)`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  Weak Zone
+                  <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
+                    <path d="M1 1.5L10 6.5L1 11.5V1.5Z" fill={accent} />
+                  </svg>
                 </div>
-                <div style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: 16, fontWeight: 700, color: '#F4EFE6', lineHeight: 1.2, marginBottom: 6,
+                <span style={{
+                  ...TYPE.bodySmall,
+                  color: 'rgba(255,255,255,0.38)',
                 }}>
-                  Medicine through Time
-                </div>
-                <div style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  fontSize: 12, color: '#9CA3AF', lineHeight: 1.5,
-                }}>
-                  2 quick quizzes to get this{' '}
-                  <span style={{ color: '#2DD4BF', textShadow: '0 0 10px rgba(45,212,191,0.5)' }}>green</span> again.
-                </div>
-              </div>
-
-              {/* Recover button */}
-              <div style={{
-                flexShrink: 0,
-                background: 'rgba(139,92,246,0.14)',
-                border: '1px solid rgba(139,92,246,0.28)',
-                backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
-                borderRadius: 12, padding: '10px 12px',
-                fontFamily: "'Outfit', sans-serif",
-                fontSize: 11, fontWeight: 700, color: '#C4B5FD',
-                lineHeight: 1.3, textAlign: 'center',
-                boxShadow: '0 0 18px rgba(139,92,246,0.22)',
-              }}>
-                Recover<br />now <span style={{ fontSize: 13 }}>›</span>
-              </div>
+                  {jumpPct}% complete
+                </span>
+              </button>
             </div>
-          </button>
+          )}
         </div>
 
-        {/* ── This Week ── */}
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <div style={{
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
-              color: '#374151', textTransform: 'uppercase',
-            }}>
-              This Week
-            </div>
-            <div />
-          </div>
-
-          {(() => {
-            const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7); const cutoffStr = cutoff.toISOString().slice(0, 10)
-            let weekScores = []
-            try { weekScores = JSON.parse(localStorage.getItem('gcse_scores') || '[]').filter(s => s.date >= cutoffStr) } catch {}
-            const totalAnswered = weekScores.length
-            const totalEarned = weekScores.reduce((s, x) => s + (x.earned || 0), 0)
-            const studyMins = Math.round(totalAnswered * 2.5)
-            const studyStr = studyMins >= 60 ? `${Math.floor(studyMins/60)}h ${studyMins%60}m` : `${studyMins}m`
-            const statsItems = [
-              { icon: '⏱', label: 'Study time', value: totalAnswered > 0 ? studyStr : '—' },
-              { icon: '🧠', label: 'Questions',  value: totalAnswered > 0 ? String(totalAnswered) : '—' },
-              { icon: '⚡', label: 'Points',     value: totalEarned > 0 ? String(totalEarned) : '—' },
-            ]
-            return (
+        {/* ── Focus for you ── */}
+        <div style={{ marginBottom: SPACING.separation }}>
           <div style={{
-            background: 'rgba(17,24,39,0.72)',
-            backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: 20, padding: '18px 8px',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.35)',
-            display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
+            ...TYPE.metadata,
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.24)',
+            marginBottom: 14,
           }}>
-            {statsItems.map((s, i) => (
-              <div key={s.label} style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-                borderRight: i < 2 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-              }}>
-                <div style={{ fontSize: 18, opacity: 0.75 }}>{s.icon}</div>
-                <div style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: 22, fontWeight: 700, color: '#F4EFE6', lineHeight: 1,
-                }}>
-                  {s.value}
-                </div>
-                <div style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  fontSize: 10, color: '#374151', fontWeight: 600,
-                  letterSpacing: '0.07em', textTransform: 'uppercase',
-                }}>
-                  {s.label}
-                </div>
-              </div>
-            ))}
+            Focus for you
           </div>
-            )})()}
+
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 8 }}>
+                {focusTopic ? 'Close the gaps.' : 'Keep this fresh.'}
+              </div>
+              <div style={{
+                ...TYPE.bodySmall,
+                color: 'rgba(255,255,255,0.38)',
+                marginBottom: SPACING.standard,
+              }}>
+                {focusTopic
+                  ? 'These topics are holding you back.'
+                  : 'Quick questions to keep recent learning active.'}
+              </div>
+              <button
+                onClick={() => onOpenSubjects && onOpenSubjects()}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                  ...TYPE.bodySmall, color: accent, fontWeight: 500,
+                }}
+              >
+                {focusTopic ? 'See focus topics' : 'Start a quick session'}
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M3 7H11M8 4L11 7L8 10" stroke={accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Target / compass icon */}
+            <div style={{
+              width: 52, height: 52, flexShrink: 0,
+              borderRadius: RADII.pill,
+              background: `rgba(${rgb},0.08)`,
+              border: `1px solid rgba(${rgb},0.18)`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke={accent} strokeWidth="1.4" strokeLinecap="round">
+                <circle cx="12" cy="12" r="8" />
+                <circle cx="12" cy="12" r="3" />
+                <line x1="12" y1="2" x2="12" y2="6" />
+                <line x1="12" y1="18" x2="12" y2="22" />
+                <line x1="2" y1="12" x2="6" y2="12" />
+                <line x1="18" y1="12" x2="22" y2="12" />
+              </svg>
+            </div>
+          </div>
         </div>
+
+        {/* ── Check my progress ── */}
+        <button
+          onClick={() => onOpenPulse && onOpenPulse()}
+          style={{
+            width: '100%',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: RADII.medium, padding: '18px 20px',
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{
+            ...TYPE.bodySmall,
+            color: 'rgba(255,255,255,0.68)', fontWeight: 500,
+          }}>
+            Check my progress
+          </span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 8H12M9 5L12 8L9 11" stroke="rgba(255,255,255,0.28)"
+              strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
 
       </div>
     </div>
