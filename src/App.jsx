@@ -866,63 +866,65 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
         </div>
 
         {/* ── Focus for you ── */}
-        <div style={{ marginBottom: SPACING.separation }}>
-          <div style={{
-            ...TYPE.metadata,
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.24)',
-            marginBottom: 14,
-          }}>
-            Focus for you
-          </div>
+        <div style={{ marginBottom: SPACING.separation, position: 'relative', overflow: 'hidden' }}>
 
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 8 }}>
-                {focusTopic ? 'Close the gaps.' : 'Keep this fresh.'}
-              </div>
-              <div style={{
-                ...TYPE.bodySmall,
-                color: 'rgba(255,255,255,0.38)',
-                marginBottom: SPACING.standard,
-              }}>
-                {focusTopic
-                  ? 'These topics are holding you back.'
-                  : 'Quick questions to keep recent learning active.'}
-              </div>
-              <button
-                onClick={() => onOpenSubjects && onOpenSubjects()}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 5,
-                  background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                  ...TYPE.bodySmall, color: accent, fontWeight: 500,
-                }}
-              >
-                {focusTopic ? 'See focus topics' : 'Start a quick session'}
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M3 7H11M8 4L11 7L8 10" stroke={accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-            </div>
+          {/* Atmospheric background image */}
+          <div aria-hidden="true" style={{
+            position: 'absolute', inset: 0, zIndex: 0,
+            backgroundImage: 'url(/focus-atmosphere.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center right',
+            backgroundRepeat: 'no-repeat',
+            opacity: 0.28,
+          }} />
 
-            {/* Target / compass icon */}
+          {/* Overlay: protect text on left, fade to page bg at bottom */}
+          <div aria-hidden="true" style={{
+            position: 'absolute', inset: 0, zIndex: 1,
+            background: [
+              'linear-gradient(to right, #08090D 0%, rgba(8,9,13,0.90) 32%, rgba(8,9,13,0.30) 62%, rgba(8,9,13,0.05) 100%)',
+              'linear-gradient(to bottom, transparent 45%, rgba(8,9,13,0.55) 72%, #08090D 100%)',
+            ].join(', '),
+          }} />
+
+          {/* Content */}
+          <div style={{ position: 'relative', zIndex: 2, paddingBottom: SPACING.cinematic }}>
             <div style={{
-              width: 52, height: 52, flexShrink: 0,
-              borderRadius: RADII.pill,
-              background: `rgba(${rgb},0.08)`,
-              border: `1px solid rgba(${rgb},0.18)`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              ...TYPE.metadata,
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.24)',
+              marginBottom: 14,
             }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                stroke={accent} strokeWidth="1.4" strokeLinecap="round">
-                <circle cx="12" cy="12" r="8" />
-                <circle cx="12" cy="12" r="3" />
-                <line x1="12" y1="2" x2="12" y2="6" />
-                <line x1="12" y1="18" x2="12" y2="22" />
-                <line x1="2" y1="12" x2="6" y2="12" />
-                <line x1="18" y1="12" x2="22" y2="12" />
-              </svg>
+              Focus for you
             </div>
+
+            <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 8 }}>
+              {focusTopic ? 'Close the gaps.' : 'Keep this fresh.'}
+            </div>
+
+            <div style={{
+              ...TYPE.bodySmall,
+              color: 'rgba(255,255,255,0.38)',
+              marginBottom: SPACING.standard,
+            }}>
+              {focusTopic
+                ? 'These topics are holding you back.'
+                : 'Quick questions to keep recent learning active.'}
+            </div>
+
+            <button
+              onClick={() => onOpenSubjects && onOpenSubjects()}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 5,
+                background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                ...TYPE.bodySmall, color: accent, fontWeight: 500,
+              }}
+            >
+              {focusTopic ? 'See focus topics' : 'Start a quick session'}
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M3 7H11M8 4L11 7L8 10" stroke={accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
           </div>
         </div>
 
