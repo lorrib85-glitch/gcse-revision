@@ -801,13 +801,10 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
           Hi, {userName}<span style={{ color: accent }}>.</span>
         </div>
 
-        {/* ── Streak pill ── */}
+        {/* ── Streak ── */}
         {(daysThisWeek > 0 || progress.streak > 0) && (
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
-            background: 'rgba(245,158,11,0.08)',
-            border: '1px solid rgba(245,158,11,0.09)',
-            borderRadius: RADII.pill, padding: '5px 12px 5px 10px',
             marginBottom: SPACING.cinematic,
           }}>
             <span style={{ fontSize: 13, filter: 'drop-shadow(0 0 4px rgba(245,158,11,0.45))' }}>🔥</span>
@@ -824,16 +821,22 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
         )}
 
         {/* ── Jump back in ── */}
-        <div style={{ marginBottom: SPACING.separation, position: 'relative', overflow: 'hidden' }}>
-
-          {/* Landscape atmosphere — very low opacity, desaturated */}
+        <button
+          onClick={() => jumpBackModule && onOpenModule(jumpBackModule)}
+          style={{
+            marginBottom: SPACING.separation, position: 'relative', overflow: 'hidden',
+            display: 'block', width: '100%', background: 'none', border: 'none',
+            padding: 0, cursor: 'pointer', textAlign: 'left',
+          }}
+        >
+          {/* Landscape atmosphere */}
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0, zIndex: 0,
             backgroundImage: 'url(/module-atmosphere.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center right',
             backgroundRepeat: 'no-repeat',
-            opacity: 0.10,
+            opacity: 0.05,
             filter: 'saturate(0.5) brightness(0.75)',
           }} />
           {/* Overlay: heavy left dark, atmosphere emerges mid-right/lower-right only */}
@@ -845,55 +848,55 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
             ].join(', '),
           }} />
 
-          {/* Content */}
-          <div style={{ position: 'relative', zIndex: 2, paddingBottom: SPACING.standard }}>
-            <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 10 }}>
-              Jump back in
+          {/* Content — flex column so % complete sits at bottom */}
+          <div style={{
+            position: 'relative', zIndex: 2,
+            display: 'flex', flexDirection: 'column', minHeight: 130,
+            paddingBottom: SPACING.standard,
+          }}>
+            <div>
+              <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 10 }}>
+                Jump back in
+              </div>
+              {jumpBackModule && (
+                <div style={{ ...TYPE.bodySmall, color: 'rgba(255,255,255,0.46)' }}>
+                  {jumpBackModule.title}
+                </div>
+              )}
             </div>
 
             {jumpBackModule && (
-              <div style={{ marginBottom: 18 }}>
+              <div style={{
+                marginTop: 'auto', paddingTop: 16,
+                display: 'inline-flex', alignItems: 'center', gap: 12,
+              }}>
                 <div style={{
-                  ...TYPE.bodySmall,
-                  color: 'rgba(255,255,255,0.46)',
-                  marginBottom: 16,
+                  width: 36, height: 36, borderRadius: RADII.pill, flexShrink: 0,
+                  background: `rgba(${rgb},0.12)`,
+                  border: `1px solid rgba(${rgb},0.24)`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  {jumpBackModule.title}
+                  <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
+                    <path d="M1 1.5L10 6.5L1 11.5V1.5Z" fill={accent} />
+                  </svg>
                 </div>
-
-                <button
-                  onClick={() => onOpenModule(jumpBackModule)}
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 12,
-                    background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                  }}
-                >
-                  <div style={{
-                    width: 36, height: 36, borderRadius: RADII.pill, flexShrink: 0,
-                    background: `rgba(${rgb},0.12)`,
-                    border: `1px solid rgba(${rgb},0.24)`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
-                      <path d="M1 1.5L10 6.5L1 11.5V1.5Z" fill={accent} />
-                    </svg>
-                  </div>
-                  <span style={{
-                    ...TYPE.metadata,
-                    color: 'rgba(255,255,255,0.28)',
-                    fontWeight: 400,
-                  }}>
-                    {jumpPct}% complete
-                  </span>
-                </button>
+                <span style={{ ...TYPE.metadata, color: 'rgba(255,255,255,0.28)', fontWeight: 400 }}>
+                  {jumpPct}% complete
+                </span>
               </div>
             )}
           </div>
-        </div>
+        </button>
 
         {/* ── Close the gap ── pushed to bottom of screen above nav */}
-        <div style={{ marginTop: 'auto', position: 'relative', overflow: 'hidden' }}>
-
+        <button
+          onClick={() => onOpenSubjects && onOpenSubjects()}
+          style={{
+            marginTop: 'auto', position: 'relative', overflow: 'hidden',
+            display: 'block', width: '100%', background: 'none', border: 'none',
+            padding: 0, cursor: 'pointer', textAlign: 'left',
+          }}
+        >
           {/* Atmospheric background image */}
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0, zIndex: 0,
@@ -901,7 +904,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
             backgroundSize: 'cover',
             backgroundPosition: 'center right',
             backgroundRepeat: 'no-repeat',
-            opacity: 0.34,
+            opacity: 0.05,
             filter: 'blur(0.8px) contrast(0.88)',
           }} />
 
@@ -915,35 +918,33 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
             background: 'linear-gradient(to bottom, transparent 45%, rgba(8,9,13,0.6) 74%, #08090D 100%)',
           }} />
 
-          {/* Content */}
-          <div style={{ position: 'relative', zIndex: 2, paddingBottom: SPACING.cinematic }}>
-            <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 8 }}>
-              Close the gap.
+          {/* Content — flex column so CTA sits at bottom */}
+          <div style={{
+            position: 'relative', zIndex: 2,
+            display: 'flex', flexDirection: 'column', minHeight: 130,
+            paddingBottom: SPACING.cinematic,
+          }}>
+            <div>
+              <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 8 }}>
+                Close the gap.
+              </div>
+              <div style={{ ...TYPE.bodySmall, color: 'rgba(255,255,255,0.38)' }}>
+                This will make the biggest impact.
+              </div>
             </div>
 
             <div style={{
-              ...TYPE.bodySmall,
-              color: 'rgba(255,255,255,0.38)',
-              marginBottom: SPACING.standard,
+              marginTop: 'auto', paddingTop: 16,
+              display: 'inline-flex', alignItems: 'center', gap: 5,
+              ...TYPE.bodySmall, color: accent, fontWeight: 500,
             }}>
-              This will make the biggest impact.
-            </div>
-
-            <button
-              onClick={() => onOpenSubjects && onOpenSubjects()}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 5,
-                background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                ...TYPE.bodySmall, color: accent, fontWeight: 500,
-              }}
-            >
               See focus topics
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M3 7H11M8 4L11 7L8 10" stroke={accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </button>
+            </div>
           </div>
-        </div>
+        </button>
 
       </div>
     </div>
