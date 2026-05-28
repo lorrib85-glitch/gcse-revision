@@ -614,11 +614,13 @@ export default function App() {
   // Tab shell
   return (
     <div style={{ background: '#08090D', minHeight: '100vh' }}>
-      {tab === 'home'     && <Home progress={progress} onStart={startSession} onOpenModule={openModule} onOpenSubjects={() => setTab('subjects')} onOpenPulse={() => setTab('pulse')} />}
-      {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
-      {tab === 'pulse'    && <PulseTab onStartQuickFire={() => setTab('quickfire')} />}
-      {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab('pulse')} />}
-      {tab === 'exams'    && <TestTab mode="exam" onOpenModule={openModule} />}
+      <div key={tab} className="tab-content">
+        {tab === 'home'     && <Home progress={progress} onStart={startSession} onOpenModule={openModule} onOpenSubjects={() => setTab('subjects')} onOpenPulse={() => setTab('pulse')} />}
+        {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
+        {tab === 'pulse'    && <PulseTab onStartQuickFire={() => setTab('quickfire')} />}
+        {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab('pulse')} />}
+        {tab === 'exams'    && <TestTab mode="exam" onOpenModule={openModule} />}
+      </div>
       <BottomNav tab={tab} setTab={setTab} />
     </div>
   )
@@ -5467,7 +5469,7 @@ function ChurchCard({ card, onNext, isLast }) {
             <p style={{ fontWeight: 700, fontSize: '1rem', margin: 0 }}>{remaining[0].text}</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
-            <button className="btn btn-green" onClick={() => sort(remaining[0], 'helped')}
+            <button className="btn btn-success" onClick={() => sort(remaining[0], 'helped')}
               style={{ flexDirection: 'column', gap: 4, padding: '14px 10px' }}>
               <span style={{ fontSize: '1.2rem' }}>👍</span>
               <span style={{ fontSize: '.85rem' }}>Helped</span>

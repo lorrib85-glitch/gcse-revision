@@ -35,6 +35,15 @@
   --radius-sm:   12px;
   --shadow:      0 4px 24px rgba(0,0,0,.4);
   --shadow-lg:   0 8px 48px rgba(0,0,0,.55);
+
+  /* Legacy aliases used in session phase components */
+  --green:  var(--success);
+  --blue:   var(--maths);
+  --red:    var(--error);
+  --muted:  var(--text-muted);
+  --ink:    var(--text);
+  --ink2:   var(--text-mid);
+  --gold2:  var(--history2);
 }
 
 html { font-size: 16px; }
@@ -76,6 +85,7 @@ p  { color: var(--text-mid); }
 .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
 .btn-ghost:hover { border-color: var(--border-glow); color: var(--text); background: var(--bg3); }
 .btn-success { background: linear-gradient(135deg, var(--success), #38c070); color: #00140a; box-shadow: 0 0 20px rgba(77,255,136,.18); }
+.btn-success:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(77,255,136,.35); }
 .btn-lg  { font-size: 1.05rem; padding: 17px 40px; }
 .btn-full { width: 100%; border-radius: var(--radius-sm); }
 
@@ -223,4 +233,22 @@ textarea { background: transparent; border: none; resize: none; font-family: inh
   .card { padding: 18px 14px; }
   .btn-lg { padding: 15px 28px; }
   .hero { padding: 36px 18px 28px; }
+}
+
+/* ── Missing button variant used in ChurchCard sort game ── */
+.btn-red {
+  background: linear-gradient(135deg, var(--error), #c0243e);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255,93,115,.2);
+}
+.btn-red:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(255,93,115,.35); }
+
+/* ── Tab content fade-in on switch ── */
+.tab-content { animation: fadeUp .22s ease both; }
+
+/* ── Focus-visible outline (keyboard nav & accessibility) ── */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(157,92,255,.75);
+  outline-offset: 2px;
 }
