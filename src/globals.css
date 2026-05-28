@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+/*
+  Tailwind v4 theme — colours mapped to the app's design tokens.
+  These create utility classes: bg-background, text-foreground,
+  bg-primary, border-border, etc.
+*/
+@theme {
+  /* shadcn/ui semantic tokens */
+  --color-background:             #070B1A;
+  --color-foreground:             #F5F7FB;
+  --color-card:                   #10182B;
+  --color-card-foreground:        #F5F7FB;
+  --color-popover:                #0D1424;
+  --color-popover-foreground:     #F5F7FB;
+  --color-primary:                #9D5CFF;
+  --color-primary-foreground:     #ffffff;
+  --color-secondary:              #1A2338;
+  --color-secondary-foreground:   #C8D0E8;
+  --color-muted:                  #1A2338;
+  --color-muted-foreground:       #9CA8C7;
+  --color-accent:                 #1A2338;
+  --color-accent-foreground:      #F5F7FB;
+  --color-destructive:            #FF5D73;
+  --color-destructive-foreground: #ffffff;
+  --color-border:                 #2A3552;
+  --color-input:                  #2A3552;
+  --color-ring:                   #9D5CFF;
+
+  /* Subject colours */
+  --color-history:   #F5B700;
+  --color-science:   #38D27A;
+  --color-maths-c:   #3B82FF;
+  --color-english-c: #9D5CFF;
+  --color-sociology: #FF5C7A;
+  --color-success:   #4DFF88;
+  --color-warning:   #FFC857;
+  --color-error:     #FF5D73;
+  --color-streak:    #FF8A1F;
+
+  /* Radius */
+  --radius-sm:   0.5rem;
+  --radius-md:   0.75rem;
+  --radius-lg:   1rem;
+  --radius-xl:   1.25rem;
+  --radius-full: 9999px;
+}

@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { AuthProvider } from './auth/AuthContext.jsx'
+import './globals.css'
 import './styles.css'
 
 class ErrorBoundary extends React.Component {
