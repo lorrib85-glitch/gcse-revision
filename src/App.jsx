@@ -309,7 +309,7 @@ function StreakChip({ style = {} }) {
 function NavIcon({ id, active }) {
   const c = active ? '#A855F7' : '#4B5563'
   const s = { stroke: c, fill: 'none', strokeWidth: 1.75, strokeLinecap: 'round', strokeLinejoin: 'round' }
-  const glow = active ? `drop-shadow(0 0 6px rgba(168,85,247,0.65))` : 'none'
+  const glow = active ? `drop-shadow(0 0 3px rgba(168,85,247,0.30))` : 'none'
   const props = { width: 22, height: 22, viewBox: '0 0 22 22', style: { display: 'block', filter: glow, transition: 'filter 220ms ease' } }
   if (id === 'home') return (
     <svg {...props}><path d="M3 9.5L11 3l8 6.5V19a1.5 1.5 0 01-1.5 1.5h-4V14h-5v6.5H4.5A1.5 1.5 0 013 19V9.5z" {...s} /></svg>
@@ -338,11 +338,11 @@ function BottomNav({ tab, setTab }) {
     <div style={{
       position: 'fixed', left: '50%', bottom: 14, transform: 'translateX(-50%)',
       width: 'calc(100% - 32px)', maxWidth: 400, zIndex: 1000,
-      background: 'rgba(11,16,32,0.88)',
+      background: 'rgba(6,8,14,0.96)',
       backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
-      border: '1px solid rgba(139,92,246,0.12)',
+      border: '1px solid rgba(255,255,255,0.05)',
       borderRadius: 32,
-      boxShadow: '0 8px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.03) inset, 0 0 32px rgba(139,92,246,0.08)',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.65)',
       display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
       padding: '10px 6px calc(10px + env(safe-area-inset-bottom))',
       gap: 4,
@@ -351,14 +351,14 @@ function BottomNav({ tab, setTab }) {
         const active = tab === t.id || (t.id === 'pulse' && tab === 'quickfire')
         return (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
-            border: 'none', background: active ? 'rgba(139,92,246,0.18)' : 'transparent',
+            border: 'none', background: active ? 'rgba(255,255,255,0.06)' : 'transparent',
             cursor: 'pointer', borderRadius: 22,
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
             fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: active ? 600 : 500,
-            color: active ? '#C4B5FD' : '#374151',
+            color: active ? '#D4CFEC' : '#3A4054',
             padding: '6px 4px 5px', minWidth: 0,
             transition: 'background 220ms ease, color 220ms ease',
-            boxShadow: active ? '0 0 16px rgba(139,92,246,0.2)' : 'none',
+            boxShadow: 'none',
           }}>
             <NavIcon id={t.id} active={active} />
             <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', letterSpacing: '0.01em' }}>{t.label}</span>
@@ -650,7 +650,7 @@ function daysUntilExam() {
 }
 
 // ─── Home atmosphere — abstract network / constellation ────────────────────────
-function HomeAtmosphere({ accentRgb }) {
+function HomeAtmosphere() {
   const nodes = [
     [180, 48], [222, 26], [266, 16], [300, 36], [332, 22],
     [356, 50], [362, 82], [334, 106], [300, 78], [266, 90],
@@ -678,12 +678,12 @@ function HomeAtmosphere({ accentRgb }) {
           <line key={i}
             x1={nodes[a][0]} y1={nodes[a][1]}
             x2={nodes[b][0]} y2={nodes[b][1]}
-            stroke={`rgba(${accentRgb},0.55)`}
+            stroke="rgba(200,190,175,0.25)"
             strokeWidth="0.65"
           />
         ))}
         {nodes.map(([cx, cy], i) => (
-          <circle key={i} cx={cx} cy={cy} r="1.8" fill={`rgba(${accentRgb},0.75)`} />
+          <circle key={i} cx={cx} cy={cy} r="1.8" fill="rgba(215,205,190,0.35)" />
         ))}
       </svg>
       {/* Left-to-right vignette — keeps text area dark */}
@@ -760,7 +760,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
       minHeight: '100vh', background: '#08090D',
       paddingBottom: 120, overflowX: 'hidden', position: 'relative',
     }}>
-      <HomeAtmosphere accentRgb={rgb} />
+      <HomeAtmosphere />
 
       <div style={{
         position: 'relative', zIndex: 1,
@@ -822,47 +822,70 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
         )}
 
         {/* ── Jump back in ── */}
-        <div style={{ marginBottom: SPACING.separation }}>
-          <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 10 }}>
-            Jump back in
-          </div>
+        <div style={{ marginBottom: SPACING.separation, position: 'relative', overflow: 'hidden' }}>
 
-          {jumpBackModule && (
-            <div style={{ marginBottom: 18 }}>
-              <div style={{
-                ...TYPE.bodySmall,
-                color: 'rgba(255,255,255,0.46)',
-                marginBottom: 16,
-              }}>
-                {jumpBackModule.title}
-              </div>
+          {/* Landscape atmosphere — very low opacity, desaturated */}
+          <div aria-hidden="true" style={{
+            position: 'absolute', inset: 0, zIndex: 0,
+            backgroundImage: 'url(/module-atmosphere.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center right',
+            backgroundRepeat: 'no-repeat',
+            opacity: 0.13,
+            filter: 'saturate(0.5) brightness(0.75)',
+          }} />
+          {/* Overlay: text protection left + bottom page blend */}
+          <div aria-hidden="true" style={{
+            position: 'absolute', inset: 0, zIndex: 1,
+            background: [
+              'linear-gradient(to right, #08090D 0%, rgba(8,9,13,0.92) 38%, rgba(8,9,13,0.55) 65%, rgba(8,9,13,0.15) 100%)',
+              'linear-gradient(to bottom, transparent 50%, rgba(8,9,13,0.7) 80%, #08090D 100%)',
+            ].join(', '),
+          }} />
 
-              <button
-                onClick={() => onOpenModule(jumpBackModule)}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 12,
-                  background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                }}
-              >
-                <div style={{
-                  width: 36, height: 36, borderRadius: RADII.pill, flexShrink: 0,
-                  background: `rgba(${rgb},0.12)`,
-                  border: `1px solid rgba(${rgb},0.24)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
-                    <path d="M1 1.5L10 6.5L1 11.5V1.5Z" fill={accent} />
-                  </svg>
-                </div>
-                <span style={{
-                  ...TYPE.bodySmall,
-                  color: 'rgba(255,255,255,0.38)',
-                }}>
-                  {jumpPct}% complete
-                </span>
-              </button>
+          {/* Content */}
+          <div style={{ position: 'relative', zIndex: 2, paddingBottom: SPACING.standard }}>
+            <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 10 }}>
+              Jump back in
             </div>
-          )}
+
+            {jumpBackModule && (
+              <div style={{ marginBottom: 18 }}>
+                <div style={{
+                  ...TYPE.bodySmall,
+                  color: 'rgba(255,255,255,0.46)',
+                  marginBottom: 16,
+                }}>
+                  {jumpBackModule.title}
+                </div>
+
+                <button
+                  onClick={() => onOpenModule(jumpBackModule)}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 12,
+                    background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                  }}
+                >
+                  <div style={{
+                    width: 36, height: 36, borderRadius: RADII.pill, flexShrink: 0,
+                    background: `rgba(${rgb},0.12)`,
+                    border: `1px solid rgba(${rgb},0.24)`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
+                      <path d="M1 1.5L10 6.5L1 11.5V1.5Z" fill={accent} />
+                    </svg>
+                  </div>
+                  <span style={{
+                    ...TYPE.bodySmall,
+                    color: 'rgba(255,255,255,0.38)',
+                  }}>
+                    {jumpPct}% complete
+                  </span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ── Focus for you ── */}
@@ -875,16 +898,18 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
             backgroundSize: 'cover',
             backgroundPosition: 'center right',
             backgroundRepeat: 'no-repeat',
-            opacity: 0.28,
+            opacity: 0.34,
+            filter: 'blur(0.8px) contrast(0.88)',
           }} />
 
-          {/* Overlay: protect text on left, fade to page bg at bottom */}
+          {/* Overlay: radial text protection + bottom page blend */}
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0, zIndex: 1,
-            background: [
-              'linear-gradient(to right, #08090D 0%, rgba(8,9,13,0.90) 32%, rgba(8,9,13,0.30) 62%, rgba(8,9,13,0.05) 100%)',
-              'linear-gradient(to bottom, transparent 45%, rgba(8,9,13,0.55) 72%, #08090D 100%)',
-            ].join(', '),
+            background: 'radial-gradient(ellipse 80% 95% at 12% 50%, #08090D 0%, rgba(8,9,13,0.88) 28%, rgba(8,9,13,0.28) 55%, transparent 78%)',
+          }} />
+          <div aria-hidden="true" style={{
+            position: 'absolute', inset: 0, zIndex: 1,
+            background: 'linear-gradient(to bottom, transparent 45%, rgba(8,9,13,0.6) 74%, #08090D 100%)',
           }} />
 
           {/* Content */}
