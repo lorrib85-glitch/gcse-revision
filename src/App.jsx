@@ -761,6 +761,23 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
       paddingBottom: 120, overflowX: 'hidden', position: 'relative',
       display: 'flex', flexDirection: 'column',
     }}>
+      {/* Landscape background — covers full top area from screen edge to Close the gap */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        backgroundImage: 'url(/module-atmosphere.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center right',
+        backgroundRepeat: 'no-repeat',
+      }} />
+      {/* Gradient: darkens left (text readability) + fades to solid dark before Close the gap */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: 0, zIndex: 1,
+        background: [
+          'linear-gradient(to right, #08090D 0%, #08090D 48%, rgba(8,9,13,0.80) 63%, rgba(8,9,13,0.32) 78%, rgba(8,9,13,0.06) 100%)',
+          'linear-gradient(to bottom, rgba(8,9,13,0.45) 0%, transparent 10%, transparent 48%, rgba(8,9,13,0.85) 65%, #08090D 76%)',
+        ].join(', '),
+      }} />
+
       <HomeAtmosphere />
 
       <div style={{
@@ -824,28 +841,11 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
         <button
           onClick={() => jumpBackModule && onOpenModule(jumpBackModule)}
           style={{
-            marginBottom: SPACING.separation, position: 'relative', overflow: 'hidden',
+            marginBottom: 8, position: 'relative',
             display: 'block', width: '100%', background: 'none', border: 'none',
             padding: 0, cursor: 'pointer', textAlign: 'left',
           }}
         >
-          {/* Landscape atmosphere — full opacity, gradient handles left darkening */}
-          <div aria-hidden="true" style={{
-            position: 'absolute', inset: 0, zIndex: 0,
-            backgroundImage: 'url(/module-atmosphere.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center right',
-            backgroundRepeat: 'no-repeat',
-          }} />
-          {/* Left darkening gradient — solid dark left, image emerges right */}
-          <div aria-hidden="true" style={{
-            position: 'absolute', inset: 0, zIndex: 1,
-            background: [
-              'linear-gradient(to right, #08090D 0%, #08090D 50%, rgba(8,9,13,0.82) 65%, rgba(8,9,13,0.35) 80%, rgba(8,9,13,0.08) 100%)',
-              'linear-gradient(to bottom, rgba(8,9,13,0.5) 0%, transparent 20%, rgba(8,9,13,0.6) 80%, #08090D 100%)',
-            ].join(', '),
-          }} />
-
           {/* Content — flex column so % complete sits at bottom */}
           <div style={{
             position: 'relative', zIndex: 2,
