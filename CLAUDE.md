@@ -57,11 +57,35 @@ Question feedback and exam practice components.
 - `ExamQuestionFrame.jsx` — Universal exam question component with mark scheme reveal.
 - `RetrievalFrame.jsx` — LOCKED. Cinematic wrapper for retrieval moments. Delegates all answer logic to AnswerInteraction.
 
+## Design System Documentation
+
+**Before making any UI change, consult these docs in order:**
+
+| Priority | Doc | What it covers |
+|----------|-----|----------------|
+| 1 | `docs/system/PRODUCT_UI_CONSTITUTION.md` | Product identity, global colours, layout law, what Claude must never improvise |
+| 2 | `docs/system/COMPONENT_AUTHORING_RULES.md` | Required imports, forbidden patterns, locked component rules |
+| 3 | `docs/system/SPACING_SYSTEM.md` | All spacing tokens |
+| 3 | `docs/system/SUBJECT_THEME_SYSTEM.md` | All subject colour palettes |
+| 3 | `docs/system/BUTTON_RADII_SYSTEM.md` | Button dimensions and corner radii |
+| 3 | `docs/system/MOTION_SYSTEM.md` | Durations, easings, scale values |
+| 3 | `docs/system/TYPOGRAPHY_SYSTEM.md` | Font families, sizes, weights — TYPE tokens |
+| 3 | `docs/system/SCREEN_SHELL_SYSTEM.md` | ScreenShell and LearningScreenShell API |
+| 4 | `docs/components/COMPONENT_REGISTRY.md` | All components — check before building anything new |
+| 5 | `docs/components/LOCKED_COMPONENTS.md` | Locked components — must not change internals |
+
+See `docs/system/00_SYSTEM_INDEX.md` for the full order of authority.
+
 ## Constants
 
 | File | Contents |
 |------|----------|
-| `src/constants/subjects.js` | `SUBJECT_ACCENTS`, `SUBJECT_PALETTES`, `hexToRgb()` — single source of truth for all subject colours. Always import from here; never redefine locally. |
+| `src/constants/subjects.js` | `SUBJECTS`, `SUBJECT_ACCENTS`, `SUBJECT_PALETTES`, `hexToRgb()` — single source of truth for all subject colours. Always import from here; never redefine locally. |
+| `src/constants/spacing.js` | `SPACING` — all spacing tokens. Never use magic spacing numbers. |
+| `src/constants/motion.js` | `MOTION` — all durations, easings, scale values. Never hardcode animation timings. |
+| `src/constants/radii.js` | `RADII` — all corner radius values. Never invent random border-radius values. |
+| `src/constants/buttons.js` | `BUTTONS` — all button dimension and interaction tokens. |
+| `src/constants/typography.js` | `TYPE` — all typography tokens. Use spread syntax: `...TYPE.hero`. |
 
 ## Data Files
 
@@ -99,9 +123,10 @@ Loaded in `index.html` via `<link>` tags:
 
 ## Brand Rules
 
-See `BRAND.md` for ALL colour, typography, spacing, and component decisions.
+See `docs/system/PRODUCT_UI_CONSTITUTION.md` for the supreme design law.  
+See `BRAND.md` for detailed colour, typography, spacing, and component reference.
 
-**Never improvise design decisions not covered in BRAND.md.** When unsure, choose simpler / darker / calmer / less decorated.
+**Never improvise design decisions.** When unsure, choose simpler / darker / calmer / less decorated.
 
 ## Commands
 
