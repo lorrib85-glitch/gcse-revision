@@ -759,19 +759,21 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
     <div style={{
       minHeight: '100vh', background: '#08090D',
       paddingBottom: 120, overflowX: 'hidden', position: 'relative',
+      display: 'flex', flexDirection: 'column',
     }}>
       <HomeAtmosphere />
 
       <div style={{
         position: 'relative', zIndex: 1,
-        maxWidth: 420, margin: '0 auto',
+        maxWidth: 420, margin: '0 auto', width: '100%',
         padding: `max(52px, calc(18px + env(safe-area-inset-top))) ${SPACING.standard}px 0`,
+        flex: 1, display: 'flex', flexDirection: 'column',
       }}>
 
         {/* ── Top row: avatar left, dots right ── */}
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          marginBottom: 36,
+          marginBottom: 20,
         }}>
           <div style={{
             width: 32, height: 32, borderRadius: RADII.pill,
@@ -795,8 +797,8 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
         </div>
 
         {/* ── Greeting ── */}
-        <div style={{ ...TYPE.hero, color: '#F5F7FF', marginBottom: 14 }}>
-          Hi, {userName}.
+        <div style={{ ...TYPE.hero, fontSize: 26, fontWeight: 600, color: '#F5F7FF', marginBottom: 14 }}>
+          Hi, {userName}<span style={{ color: accent }}>.</span>
         </div>
 
         {/* ── Streak pill ── */}
@@ -804,7 +806,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             background: 'rgba(245,158,11,0.08)',
-            border: '1px solid rgba(245,158,11,0.16)',
+            border: '1px solid rgba(245,158,11,0.09)',
             borderRadius: RADII.pill, padding: '5px 12px 5px 10px',
             marginBottom: SPACING.cinematic,
           }}>
@@ -831,15 +833,15 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
             backgroundSize: 'cover',
             backgroundPosition: 'center right',
             backgroundRepeat: 'no-repeat',
-            opacity: 0.13,
+            opacity: 0.10,
             filter: 'saturate(0.5) brightness(0.75)',
           }} />
-          {/* Overlay: text protection left + bottom page blend */}
+          {/* Overlay: heavy left dark, atmosphere emerges mid-right/lower-right only */}
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0, zIndex: 1,
             background: [
-              'linear-gradient(to right, #08090D 0%, rgba(8,9,13,0.92) 38%, rgba(8,9,13,0.55) 65%, rgba(8,9,13,0.15) 100%)',
-              'linear-gradient(to bottom, transparent 50%, rgba(8,9,13,0.7) 80%, #08090D 100%)',
+              'linear-gradient(to right, #08090D 0%, #08090D 42%, rgba(8,9,13,0.85) 60%, rgba(8,9,13,0.45) 78%, rgba(8,9,13,0.12) 100%)',
+              'linear-gradient(to bottom, rgba(8,9,13,0.2) 0%, transparent 30%, rgba(8,9,13,0.55) 78%, #08090D 100%)',
             ].join(', '),
           }} />
 
@@ -877,8 +879,9 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
                     </svg>
                   </div>
                   <span style={{
-                    ...TYPE.bodySmall,
-                    color: 'rgba(255,255,255,0.38)',
+                    ...TYPE.metadata,
+                    color: 'rgba(255,255,255,0.28)',
+                    fontWeight: 400,
                   }}>
                     {jumpPct}% complete
                   </span>
@@ -888,8 +891,8 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
           </div>
         </div>
 
-        {/* ── Focus for you ── */}
-        <div style={{ marginBottom: SPACING.separation, position: 'relative', overflow: 'hidden' }}>
+        {/* ── Close the gap ── pushed to bottom of screen above nav */}
+        <div style={{ marginTop: 'auto', position: 'relative', overflow: 'hidden' }}>
 
           {/* Atmospheric background image */}
           <div aria-hidden="true" style={{
@@ -914,17 +917,8 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
 
           {/* Content */}
           <div style={{ position: 'relative', zIndex: 2, paddingBottom: SPACING.cinematic }}>
-            <div style={{
-              ...TYPE.metadata,
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.24)',
-              marginBottom: 14,
-            }}>
-              Focus for you
-            </div>
-
             <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 8 }}>
-              {focusTopic ? 'Close the gaps.' : 'Keep this fresh.'}
+              Close the gap.
             </div>
 
             <div style={{
@@ -932,9 +926,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
               color: 'rgba(255,255,255,0.38)',
               marginBottom: SPACING.standard,
             }}>
-              {focusTopic
-                ? 'These topics are holding you back.'
-                : 'Quick questions to keep recent learning active.'}
+              This will make the biggest impact.
             </div>
 
             <button
@@ -945,37 +937,13 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
                 ...TYPE.bodySmall, color: accent, fontWeight: 500,
               }}
             >
-              {focusTopic ? 'See focus topics' : 'Start a quick session'}
+              See focus topics
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M3 7H11M8 4L11 7L8 10" stroke={accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>
         </div>
-
-        {/* ── Check my progress ── */}
-        <button
-          onClick={() => onOpenPulse && onOpenPulse()}
-          style={{
-            width: '100%',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: RADII.medium, padding: '18px 20px',
-            cursor: 'pointer',
-          }}
-        >
-          <span style={{
-            ...TYPE.bodySmall,
-            color: 'rgba(255,255,255,0.68)', fontWeight: 500,
-          }}>
-            Check my progress
-          </span>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M4 8H12M9 5L12 8L9 11" stroke="rgba(255,255,255,0.28)"
-              strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
 
       </div>
     </div>
