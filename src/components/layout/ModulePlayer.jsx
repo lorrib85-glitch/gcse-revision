@@ -16,6 +16,7 @@ import RetrievalFrame from '../feedback/RetrievalFrame.jsx'
 import WeakSpotRecovery from '../learning/WeakSpotRecovery.jsx'
 import RecoveryQuizPlayer from '../learning/RecoveryQuizPlayer.jsx'
 import CardContainer from '../core/CardContainer.jsx'
+import GuidedChoiceCarousel from '../learning/GuidedChoiceCarousel.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1934,6 +1935,47 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           completeModule()
         }}
       />
+    )
+  }
+
+  // ── Full-screen guided choice carousel ────────────────────────────────────
+  if (cur?.type === 'guidedChoiceCarousel') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          beats={beats}
+          currentBeatIndex={currentBeatIndex}
+          onBack={headerOnBack}
+          onExit={onBack}
+          onJump={handleBeatJump}
+          visible={true}
+        />
+        <GuidedChoiceCarousel
+          subject={module.subject}
+          headline={cur.headline}
+          question={cur.question}
+          helperText={cur.helperText}
+          promptVisual={cur.promptVisual}
+          options={cur.options || []}
+          onBack={headerOnBack}
+          onContinue={(nextScreenId) => {
+            // Try to navigate to a named screen; fall back to linear progression
+            if (nextScreenId) {
+              const targetIdx = module.screens.findIndex(
+                s => s.id === nextScreenId || s.label === nextScreenId
+              )
+              if (targetIdx >= 0 && targetIdx !== screen) {
+                setScreen(targetIdx)
+                setAnimKey(k => k + 1)
+                scrollToTop()
+                return
+              }
+            }
+            isLast ? handleFinish() : go(1)
+          }}
+        />
+      </>
     )
   }
 
