@@ -3,7 +3,6 @@ import { recordActivity, recordScore } from '../../progress.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
-import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 import QuickRecallScreen from '../learning/QuickRecallScreen.jsx'
 import CinematicRevealMoment from '../learning/CinematicRevealMoment.jsx'
 import ConceptReveal from '../learning/ConceptReveal.jsx'
@@ -1663,7 +1662,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   // hookDone / wylDone / introDone track whether the universal openers have been seen
   // We persist these inside the module state so resuming skips them correctly
   const [hookDone,   setHookDone]   = useState(() => saved.hookDone   || !module.hook)
-  const [wylDone,    setWylDone]    = useState(() => saved.wylDone    || !module.outcomes)
+  const [wylDone,    setWylDone]    = useState(true)
   // If user already has hookDone+wylDone saved (i.e. they've been to content before),
   // treat recallDone as true to avoid forcing recall on existing progress.
   const [recallDone, setRecallDone] = useState(() =>
@@ -1784,14 +1783,12 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   function headerOnBack() {
     // Detect recall screen: either explicitly navigated back, or first-time (recallDone=false)
     if (navTo === 'recall' || (!recallDone && module.recall)) {
-      if (module.outcomes) { setNavTo('wyl'); return }
       if (module.hook?.statement) { setNavTo('hook'); return }
       onBack(); return
     }
     if (screen === 0) {
       if (module.intro) { setIntroDone(false); scrollToTop(); return }
       if (module.recall) { setNavTo('recall'); scrollToTop(); return }
-      if (module.outcomes) { setNavTo('wyl'); scrollToTop(); return }
       if (module.hook?.statement) { setNavTo('hook'); scrollToTop(); return }
       onBack(); return
     }
@@ -1818,24 +1815,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     )
   }
 
-  // ── Full-screen outcome screen — appears after hook, before content ──────────
-  if ((!wylDone || navTo === 'wyl') && module.outcomes) {
-    return (
-      <ChapterOutcomeScreen
-        subject={module.subject}
-        chapterNum={module.number}
-        chapterTitle={module.title}
-        introText={module.outcomes.intro}
-        outcomes={module.outcomes.bullets}
-        onBack={() => {
-          if (module.hook?.statement) setNavTo('hook')
-          else onBack()
-        }}
-        onContinue={() => { setWylDone(true); setNavTo(null); scrollToTop() }}
-      />
-    )
-  }
-
   // ── Full-screen recall screen — appears after outcomes, before content ────────
   if ((!recallDone || navTo === 'recall') && module.recall) {
     return (
@@ -1846,7 +1825,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         questions={module.recall.questions}
         onBack={() => {
           if (navTo === 'recall') setNavTo(null)
-          else if (module.outcomes) setNavTo('wyl')
           else if (module.hook?.statement) setNavTo('hook')
           else onBack()
         }}
