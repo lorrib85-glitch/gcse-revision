@@ -1669,7 +1669,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const [recallDone, setRecallDone] = useState(() =>
     saved.recallDone || !module.recall || !!(saved.hookDone && saved.wylDone)
   )
-  const [introDone,  setIntroDone]  = useState(() => saved.introDone  || !module.intro)
+  const [introDone,  setIntroDone]  = useState(true)
   // navTo — in-memory only, drives navigation back to hook/wyl/recall without changing "done" flags
   // null | 'hook' | 'wyl' | 'recall'
   const [navTo, setNavTo] = useState(null)
@@ -1788,18 +1788,14 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     ((cur?.type === 'cinematic' || cur?.type === 'conceptReveal' || cur?.type === 'visualNarrative') ? cinematicHeaderVisible : true)
 
   function headerOnBack() {
-    // Detect recall screen: either explicitly navigated back, or first-time (recallDone=false)
+    if (screen > 0) { go(-1); return }
     if (navTo === 'recall' || (!recallDone && module.recall)) {
       if (module.hook?.statement) { setNavTo('hook'); return }
       onBack(); return
     }
-    if (screen === 0) {
-      if (module.intro) { setIntroDone(false); scrollToTop(); return }
-      if (module.recall) { setNavTo('recall'); scrollToTop(); return }
-      if (module.hook?.statement) { setNavTo('hook'); scrollToTop(); return }
-      onBack(); return
-    }
-    go(-1)
+    if (module.recall) { setNavTo('recall'); scrollToTop(); return }
+    if (module.hook?.statement) { setNavTo('hook'); scrollToTop(); return }
+    onBack()
   }
   // ──────────────────────────────────────────────────────────────────────────
 

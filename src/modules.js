@@ -120,7 +120,6 @@ export const MODULES = [
             backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
           },
           {
-            eyebrow: 'What they didn\'t know',
             mainText: 'Medieval people did not.',
             supportText: 'No microscopes. No germ theory. No idea that tiny organisms could spread disease.',
             backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
