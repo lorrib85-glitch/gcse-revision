@@ -3,14 +3,14 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { RADII } from '../../constants/radii.js'
 
 const IMAGES = {
-  History:   '/historybacker.png',
-  Biology:   '/biologybacker.png',
-  Maths:     '/mathsbacker.png',
-  Sociology: '/sociologybacker.png',
-  Chemistry: '/chemsistrybacker.png',
-  Physics:   '/physicsbacker.png',
-  English:   '/Englishbacker.png',
-  Music:     '/historybacker.png',
+  History:   '/historybacker.webp',
+  Biology:   '/biologybacker.webp',
+  Maths:     '/mathsbacker.webp',
+  Sociology: '/sociologybacker.webp',
+  Chemistry: '/chemsistrybacker.webp',
+  Physics:   '/physicsbacker.webp',
+  English:   '/Englishbacker.webp',
+  Music:     '/historybacker.webp',
 }
 
 function BackBtn({ onClick }) {

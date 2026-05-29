@@ -4,14 +4,14 @@ import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 
 const IMAGES = {
-  History:   '/history-truefalse.png',
-  Biology:   '/biology-truefalse.png',
-  Maths:     '/maths-truefalse.png',
-  Sociology: '/sociology-truefalse.png',
-  Chemistry: '/chemistry-truefalse.png',
-  Physics:   '/physics-truefalse.png',
-  English:   '/english-truefalse.png',
-  Music:     '/music-truefalse.png',
+  History:   '/history-truefalse.webp',
+  Biology:   '/biology-truefalse.webp',
+  Maths:     '/maths-truefalse.webp',
+  Sociology: '/sociology-truefalse.webp',
+  Chemistry: '/chemistry-truefalse.webp',
+  Physics:   '/physics-truefalse.webp',
+  English:   '/english-truefalse.webp',
+  Music:     '/music-truefalse.webp',
 }
 
 function buildAccentSet(words, accentWords) {
@@ -265,19 +265,6 @@ export default function ChapterHookScreen({
                 </div>
               </div>
 
-              <div style={{
-                position: 'fixed', bottom: 158, left: 28,
-                fontFamily: "'Outfit', sans-serif",
-                fontWeight: 500, fontSize: 15,
-                color: 'rgba(255,255,255,0.28)',
-                letterSpacing: '0.03em',
-                zIndex: 5,
-                opacity: btnsReady ? 1 : 0,
-                transition: 'opacity 400ms ease',
-                pointerEvents: 'none',
-              }}>
-                What do you think?
-              </div>
             </div>
 
             <div style={{
