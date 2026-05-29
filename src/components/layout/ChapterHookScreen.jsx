@@ -87,7 +87,8 @@ export default function ChapterHookScreen({
 
   // Staged reveal state
   const hasBeats   = Array.isArray(revealBeats) && revealBeats.length > 0
-  const [beatIdx,   setBeatIdx]   = useState(0)
+  const [beatIdx,      setBeatIdx]      = useState(0)
+  const [beatTapLocked, setBeatTapLocked] = useState(false)
   const isLastBeat = !hasBeats || beatIdx >= revealBeats.length - 1
 
   const tokens = (() => {
@@ -110,6 +111,14 @@ export default function ChapterHookScreen({
     return () => clearTimeout(t)
   }, [btnDelayMs])
 
+  // Lock beat tap for 250ms after each beat appears (prevent accidental double-advance)
+  useEffect(() => {
+    if (phase !== 'reveal') return
+    setBeatTapLocked(true)
+    const t = setTimeout(() => setBeatTapLocked(false), 250)
+    return () => clearTimeout(t)
+  }, [beatIdx, phase])
+
   function choose(tappedTrue) {
     if (phase !== 'question' || !btnsReady) return
     const correct = tappedTrue === isTrue
@@ -124,6 +133,7 @@ export default function ChapterHookScreen({
   }
 
   function advanceBeat() {
+    if (beatTapLocked || !hasBeats) return
     if (isLastBeat) {
       onContinue()
     } else {
@@ -321,9 +331,9 @@ export default function ChapterHookScreen({
                 position: 'relative',
                 zIndex: 4,
                 minHeight: '100dvh',
-                cursor: hasBeats && !isLastBeat ? 'pointer' : 'default',
+                cursor: (hasBeats && !beatTapLocked) ? 'pointer' : 'default',
               }}
-              onClick={!isLastBeat && hasBeats ? advanceBeat : undefined}
+              onClick={hasBeats && !beatTapLocked ? advanceBeat : undefined}
             >
               <BackBtn onClick={onBack} />
 

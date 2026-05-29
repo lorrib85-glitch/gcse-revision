@@ -24,7 +24,8 @@ export const MODULES = [
         'Which is alarming, obviously.',
         "But medieval doctors weren't being random.",
         'They believed illness happened when the body fell out of balance.',
-        'So if they thought you had too much blood...\nthey tried to remove some.',
+        'So if they thought you had too much blood?',
+        'They tried to remove some.',
       ],
     },
 
