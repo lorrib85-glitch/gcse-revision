@@ -87,8 +87,7 @@ export default function ChapterHookScreen({
 
   // Staged reveal state
   const hasBeats   = Array.isArray(revealBeats) && revealBeats.length > 0
-  const [beatIdx,      setBeatIdx]      = useState(0)
-  const [beatTapLocked, setBeatTapLocked] = useState(false)
+  const [beatIdx,  setBeatIdx]  = useState(0)
   const isLastBeat = !hasBeats || beatIdx >= revealBeats.length - 1
 
   const tokens = (() => {
@@ -111,13 +110,14 @@ export default function ChapterHookScreen({
     return () => clearTimeout(t)
   }, [btnDelayMs])
 
-  // Lock beat tap for 250ms after each beat appears (prevent accidental double-advance)
+  // Auto-advance beats — delay proportional to reading time
   useEffect(() => {
-    if (phase !== 'reveal') return
-    setBeatTapLocked(true)
-    const t = setTimeout(() => setBeatTapLocked(false), 250)
+    if (phase !== 'reveal' || !hasBeats || isLastBeat) return
+    const words = (revealBeats[beatIdx] || '').split(/\s+/).filter(Boolean).length
+    const delay = 1400 + words * 220
+    const t = setTimeout(() => setBeatIdx(i => i + 1), delay)
     return () => clearTimeout(t)
-  }, [beatIdx, phase])
+  }, [beatIdx, phase, hasBeats, isLastBeat, revealBeats])
 
   function choose(tappedTrue) {
     if (phase !== 'question' || !btnsReady) return
@@ -130,15 +130,6 @@ export default function ChapterHookScreen({
       setPhase('exiting')
       setTimeout(() => setPhase('reveal'), 320)
     }, correct ? 260 : 540)
-  }
-
-  function advanceBeat() {
-    if (beatTapLocked || !hasBeats) return
-    if (isLastBeat) {
-      onContinue()
-    } else {
-      setBeatIdx(i => i + 1)
-    }
   }
 
   const isExiting  = phase === 'exiting'
@@ -318,9 +309,7 @@ export default function ChapterHookScreen({
                 position: 'relative',
                 zIndex: 4,
                 minHeight: '100dvh',
-                cursor: (hasBeats && !beatTapLocked) ? 'pointer' : 'default',
               }}
-              onClick={hasBeats && !beatTapLocked ? advanceBeat : undefined}
             >
               <BackBtn onClick={onBack} />
 
