@@ -1811,6 +1811,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         isTrue={module.hook.isTrue}
         accentWords={module.hook.accentWords || []}
         explanation={module.hook.explanation || module.hook.correctFeedback || ''}
+        revealBeats={module.hook.revealBeats}
         onBack={onBack}
         onContinue={() => { setHookDone(true); setNavTo(null); scrollToTop() }}
       />

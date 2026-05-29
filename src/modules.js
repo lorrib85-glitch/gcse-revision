@@ -20,6 +20,12 @@ export const MODULES = [
       isTrue: true,
       accentWords: ['deliberately removed blood', 'make them healthier'],
       explanation: 'True. Which is alarming, obviously. But to medieval doctors, bloodletting was not random cruelty. They believed illness happened when the body fell out of balance. So if they thought you had too much blood? They tried to remove some.',
+      revealBeats: [
+        'Which is alarming, obviously.',
+        "But medieval doctors weren't being random.",
+        'They believed illness happened when the body fell out of balance.',
+        'So if they thought you had too much blood...\nthey tried to remove some.',
+      ],
     },
 
     outcomes: {

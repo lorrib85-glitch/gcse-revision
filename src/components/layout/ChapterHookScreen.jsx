@@ -14,7 +14,6 @@ const IMAGES = {
   Music:     '/music-truefalse.png',
 }
 
-// ─── Map which word indices belong to accent phrases ──────────────────────────
 function buildAccentSet(words, accentWords) {
   const result = new Set()
   if (!accentWords?.length) return result
@@ -30,7 +29,6 @@ function buildAccentSet(words, accentWords) {
   return result
 }
 
-// ─── Back button — reduced visual weight, full hit area preserved ─────────────
 function BackBtn({ onClick }) {
   return (
     <button
@@ -55,7 +53,6 @@ function BackBtn({ onClick }) {
   )
 }
 
-// ─── Shared ambient glow ──────────────────────────────────────────────────────
 function Glow({ rgb }) {
   return (
     <div style={{
@@ -68,7 +65,6 @@ function Glow({ rgb }) {
   )
 }
 
-// ─── ChapterHookScreen ────────────────────────────────────────────────────────
 export default function ChapterHookScreen({
   subject      = 'History',
   chapterNum   = 1,
@@ -77,6 +73,7 @@ export default function ChapterHookScreen({
   isTrue       = false,
   accentWords  = [],
   explanation  = '',
+  revealBeats,
   onBack,
   onContinue,
 }) {
@@ -84,12 +81,15 @@ export default function ChapterHookScreen({
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
 
-  // ── Phase: 'question' → 'exiting' → 'reveal' ────────────────────────────────
   const [phase,       setPhase]       = useState('question')
   const [shakeTarget, setShakeTarget] = useState(null)
   const [btnsReady,   setBtnsReady]   = useState(false)
 
-  // Pre-tokenise statement into words + spaces with accent info
+  // Staged reveal state
+  const hasBeats   = Array.isArray(revealBeats) && revealBeats.length > 0
+  const [beatIdx,   setBeatIdx]   = useState(0)
+  const isLastBeat = !hasBeats || beatIdx >= revealBeats.length - 1
+
   const tokens = (() => {
     const words     = statement.split(/\s+/)
     const accentSet = buildAccentSet(words, accentWords)
@@ -102,7 +102,7 @@ export default function ChapterHookScreen({
     })
   })()
 
-  const wordCount = tokens.filter(t => !t.space).length
+  const wordCount  = tokens.filter(t => !t.space).length
   const btnDelayMs = 260 + (wordCount - 1) * 65 + 220 + 160
 
   useEffect(() => {
@@ -123,11 +123,18 @@ export default function ChapterHookScreen({
     }, correct ? 260 : 540)
   }
 
+  function advanceBeat() {
+    if (isLastBeat) {
+      onContinue()
+    } else {
+      setBeatIdx(i => i + 1)
+    }
+  }
+
   const isExiting  = phase === 'exiting'
   const isReveal   = phase === 'reveal'
   const isQuestion = phase === 'question' || isExiting
 
-  // ── Background — slightly increased image visibility, strong text overlays ──
   const BgLayers = () => (
     <>
       <div style={{
@@ -165,6 +172,10 @@ export default function ChapterHookScreen({
           from { opacity: 0; transform: translateY(22px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes chs-beat-in {
+          from { opacity: 0; transform: translateY(14px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
         @keyframes chs-shake {
           0%,100% { transform: translateX(0); }
           20%  { transform: translateX(-4px); }
@@ -193,7 +204,6 @@ export default function ChapterHookScreen({
             }}>
               <BackBtn onClick={onBack} />
 
-              {/* Chapter label */}
               <div style={{
                 position: 'absolute', top: 106, left: 28,
                 fontFamily: "'Outfit', sans-serif",
@@ -205,7 +215,6 @@ export default function ChapterHookScreen({
                 Chapter {chapterNum}
               </div>
 
-              {/* Chapter title */}
               <div style={{
                 position: 'absolute', top: 130, left: 28, right: 36,
                 fontFamily: "'Sora', sans-serif",
@@ -217,7 +226,6 @@ export default function ChapterHookScreen({
                 {chapterTitle}
               </div>
 
-              {/* Statement — word by word, unchanged */}
               <div style={{ position: 'absolute', top: '34%', left: 28, right: 28 }}>
                 <Glow rgb={rgb} />
                 <div style={{
@@ -247,7 +255,6 @@ export default function ChapterHookScreen({
                 </div>
               </div>
 
-              {/* "What do you think?" — moved up 28px */}
               <div style={{
                 position: 'fixed', bottom: 158, left: 28,
                 fontFamily: "'Outfit', sans-serif",
@@ -263,7 +270,6 @@ export default function ChapterHookScreen({
               </div>
             </div>
 
-            {/* TRUE / FALSE — equal weight before selection, moved up 28px */}
             <div style={{
               position: 'fixed', bottom: 100, left: 0, right: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -306,59 +312,93 @@ export default function ChapterHookScreen({
         )}
 
         {/* ══════════════════════════════════════════════════════════════
-            SCREEN 2 — REVEAL
+            SCREEN 2 — REVEAL (staged beats, tap to advance)
         ══════════════════════════════════════════════════════════════ */}
         {isReveal && (
           <>
-            <div style={{ position: 'relative', zIndex: 4, minHeight: '100dvh' }}>
+            <div
+              style={{
+                position: 'relative',
+                zIndex: 4,
+                minHeight: '100dvh',
+                cursor: hasBeats && !isLastBeat ? 'pointer' : 'default',
+              }}
+              onClick={!isLastBeat && hasBeats ? advanceBeat : undefined}
+            >
               <BackBtn onClick={onBack} />
 
               <div style={{
-                position: 'absolute', top: '38%', left: 28, right: 28,
+                position: 'absolute',
+                top: '30%',
+                left: 28, right: 28,
+                paddingBottom: 140,
                 animation: 'chs-reveal-up 500ms cubic-bezier(0.16,1,0.3,1) both',
               }}>
                 <Glow rgb={rgb} />
-
                 <div style={{ position: 'relative', maxWidth: 320 }}>
+
                   <div style={{
                     fontFamily: "'Outfit', sans-serif",
                     fontWeight: 700, fontSize: 13,
                     textTransform: 'uppercase', letterSpacing: '0.28em',
                     color: accent, opacity: 0.92,
-                    marginBottom: 24,
+                    marginBottom: 28,
                   }}>
                     {isTrue ? 'True.' : 'False.'}
                   </div>
 
-                  <div style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 'clamp(22px, 6.5vw, 28px)',
-                    lineHeight: 'clamp(30px, 8.8vw, 38px)',
-                    letterSpacing: '-0.03em',
-                    color: 'rgba(255,255,255,0.92)',
-                    maxWidth: 300,
-                  }}>
-                    {explanation}
-                  </div>
+                  {hasBeats ? (
+                    <div
+                      key={beatIdx}
+                      style={{
+                        fontFamily: "'Sora', sans-serif",
+                        fontWeight: 700,
+                        fontSize: 'clamp(24px, 7.5vw, 32px)',
+                        lineHeight: 'clamp(32px, 10vw, 42px)',
+                        letterSpacing: '-0.03em',
+                        color: 'rgba(255,255,255,0.92)',
+                        whiteSpace: 'pre-line',
+                        animation: 'chs-beat-in 380ms cubic-bezier(0.16,1,0.3,1) both',
+                      }}
+                    >
+                      {revealBeats[beatIdx]}
+                    </div>
+                  ) : (
+                    <div style={{
+                      fontFamily: "'Sora', sans-serif",
+                      fontWeight: 700,
+                      fontSize: 'clamp(22px, 6.5vw, 28px)',
+                      lineHeight: 'clamp(30px, 8.8vw, 38px)',
+                      letterSpacing: '-0.03em',
+                      color: 'rgba(255,255,255,0.92)',
+                      maxWidth: 300,
+                    }}>
+                      {explanation}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
 
-            <button
-              className="chs-cont"
-              onClick={onContinue}
-              style={{
-                position: 'fixed', bottom: 72, left: 28,
-                background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                zIndex: 10,
-                fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
-                color: accent,
-                transition: 'opacity 140ms ease',
-                animation: 'chs-reveal-up 480ms cubic-bezier(0.16,1,0.3,1) 180ms both',
-              }}>
-              Continue →
-            </button>
+            {/* Continue → only after final beat */}
+            {isLastBeat && (
+              <button
+                className="chs-cont"
+                onClick={onContinue}
+                style={{
+                  position: 'fixed',
+                  bottom: 'calc(72px + env(safe-area-inset-bottom, 0px))',
+                  left: 28,
+                  background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                  zIndex: 10,
+                  fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
+                  color: accent,
+                  animation: 'chs-reveal-up 480ms cubic-bezier(0.16,1,0.3,1) 180ms both',
+                }}
+              >
+                Continue →
+              </button>
+            )}
           </>
         )}
       </div>
