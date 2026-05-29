@@ -117,7 +117,7 @@ export default function VisualNarrativeScreen({
 
         {/* Timeline image — Beats 2 & 3 (same image, different opacity) */}
         <div style={{
-          position: 'absolute', inset: 0,
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: '42%',
           backgroundImage: `url(${(beats[1] || {}).image})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
