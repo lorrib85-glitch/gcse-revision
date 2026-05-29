@@ -1673,7 +1673,11 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   // navTo — in-memory only, drives navigation back to hook/wyl/recall without changing "done" flags
   // null | 'hook' | 'wyl' | 'recall'
   const [navTo, setNavTo] = useState(null)
-  const [screen, setScreen] = useState(saved.screen || 0)
+  const [screen, setScreen] = useState(() => {
+    const s = saved.screen || 0
+    // Guard against stale saved index (e.g. after a module restructure)
+    return s < module.screens.length ? s : 0
+  })
   const [showWeakSpotRecovery, setShowWeakSpotRecovery] = useState(false)
   const [detectedWeakSpot, setDetectedWeakSpot] = useState(null)
   const [recoveryQuizId, setRecoveryQuizId] = useState(null)
@@ -1722,6 +1726,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
 
   function completeModule() {
     recordActivity()
+    // Reset saved position so re-opening starts from the beginning
+    saveModuleState(module.id, { screen: 0, hookDone: false, wylDone: true, recallDone: false, introDone: false, examinerAttempts })
     setTimeout(() => {
       if (onChapterComplete) onChapterComplete(module)
       else onBack()
