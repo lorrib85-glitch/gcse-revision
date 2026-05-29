@@ -136,10 +136,11 @@ export default function QuickRecallScreen({
 
   const total = questions.length
 
-  const [qIdx,    setQIdx]    = useState(0)
-  const [doneCnt, setDoneCnt] = useState(0)
-  const [phase,   setPhase]   = useState('in')
-  const [animKey, setAnimKey] = useState(0)
+  const [qIdx,          setQIdx]          = useState(0)
+  const [doneCnt,       setDoneCnt]       = useState(0)
+  const [phase,         setPhase]         = useState('in')
+  const [animKey,       setAnimKey]       = useState(0)
+  const [pendingAdvance, setPendingAdvance] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setPhase('active'), 360)
@@ -147,6 +148,7 @@ export default function QuickRecallScreen({
   }, [animKey])
 
   function advance() {
+    setPendingAdvance(false)
     const nextIdx = qIdx + 1
     if (nextIdx >= total) {
       setTimeout(() => setPhase('done'), 0)
@@ -162,7 +164,7 @@ export default function QuickRecallScreen({
 
   function handleSelect(wasCorrect) {
     if (wasCorrect) setDoneCnt(d => d + 1)
-    advance()
+    setPendingAdvance(true)
   }
 
   const cur = questions[qIdx]
@@ -246,68 +248,89 @@ export default function QuickRecallScreen({
 
         {renderHeader?.()}
 
-        {/* "Quick Recall" label — left aligned */}
-        <div style={{
-          position: 'absolute', top: 32, left: 28, zIndex: 10,
-          fontFamily: "'Outfit', sans-serif",
-          fontWeight: 600, fontSize: 11,
-          textTransform: 'uppercase', letterSpacing: '0.30em',
-          color: accent, opacity: 0.80,
-          animation: 'qrs-label 400ms ease 100ms both',
-        }}>
-          Quick Recall
-        </div>
-
         {/* Progress dots */}
         <ProgressDots total={total} current={qIdx} done={doneCnt} accent={accent} rgb={rgb} />
 
-        {/* Question text — absolute at 34% from top */}
-        {phase !== 'done' && cur && (
-          <div
-            key={`q-${animKey}`}
-            style={{
-              position: 'absolute', top: '34%', left: 28, right: 28,
-              zIndex: 5,
-              ...slideStyle,
-            }}
-          >
-            <Glow rgb={rgb} />
-            <div style={{ position: 'relative', maxWidth: 340 }}>
-              <QuestionWords question={cur.question} />
-            </div>
-          </div>
-        )}
+        {/* Main layout — flex column prevents question/answer overlap */}
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 5,
+          display: 'flex', flexDirection: 'column',
+          padding: '0 28px',
+        }}>
+          {/* Spacer to position question at ~34% */}
+          <div style={{ height: '34vh', flexShrink: 0 }} />
 
-        {/* Answer area — fixed near bottom */}
-        {phase !== 'done' && cur && (
-          <div
-            key={`a-${animKey}`}
+          {/* "Quick Recall" label */}
+          <div style={{
+            flexShrink: 0,
+            fontFamily: "'Outfit', sans-serif",
+            fontWeight: 600, fontSize: 11,
+            textTransform: 'uppercase', letterSpacing: '0.30em',
+            color: accent, opacity: 0.80,
+            marginBottom: 18,
+            animation: 'qrs-label 400ms ease 100ms both',
+          }}>
+            Quick Recall
+          </div>
+
+          {/* Question text */}
+          {phase !== 'done' && cur && (
+            <div
+              key={`q-${animKey}`}
+              style={{ position: 'relative', flexShrink: 0, maxWidth: 340, ...slideStyle }}
+            >
+              <Glow rgb={rgb} />
+              <div style={{ position: 'relative' }}>
+                <QuestionWords question={cur.question} />
+              </div>
+            </div>
+          )}
+
+          {/* Elastic spacer — shrinks to keep answers from overlapping question */}
+          <div style={{ flex: 1, minHeight: 32 }} />
+
+          {/* Answer area */}
+          {phase !== 'done' && cur && (
+            <div
+              key={`a-${animKey}`}
+              style={{
+                flexShrink: 0,
+                paddingBottom: 'calc(90px + env(safe-area-inset-bottom, 0px))',
+                ...answerStyle,
+              }}
+            >
+              {cur.type === 'truefalse' && (
+                <TrueFalseButtons q={cur} accent={accent} onSelect={handleSelect} />
+              )}
+              {(cur.type === 'choice' || cur.type === 'connection') && (
+                <AnswerInteraction
+                  block={makeBlock(cur)}
+                  subject={subject}
+                  onComplete={({ correct }) => handleSelect(correct)}
+                />
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* "Continue →" — stays visible after answer until tapped */}
+        {pendingAdvance && phase !== 'done' && (
+          <button
+            onClick={advance}
             style={{
               position: 'fixed',
-              bottom: 'calc(90px + env(safe-area-inset-bottom, 0px))',
-              left: 28, right: 28,
-              zIndex: 6,
-              ...answerStyle,
-            }}
-          >
-            {cur.type === 'truefalse' && (
-              <TrueFalseButtons q={cur} accent={accent} onSelect={handleSelect} />
-            )}
-            {cur.type === 'choice' && (
-              <AnswerInteraction
-                block={makeBlock(cur)}
-                subject={subject}
-                onComplete={({ correct }) => handleSelect(correct)}
-              />
-            )}
-            {cur.type === 'connection' && (
-              <AnswerInteraction
-                block={makeBlock(cur)}
-                subject={subject}
-                onComplete={({ correct }) => handleSelect(correct)}
-              />
-            )}
-          </div>
+              bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))',
+              right: 28, zIndex: 10,
+              background: 'none', border: 'none', padding: 0,
+              cursor: 'pointer',
+              fontFamily: "'Sora', sans-serif",
+              fontWeight: 700, fontSize: 22,
+              color: accent,
+              textShadow: `0 0 24px rgba(${rgb},0.5)`,
+              animation: 'qrs-start 300ms ease both',
+            }}>
+            Continue →
+          </button>
         )}
 
         {/* "Start chapter →" — after all questions answered */}

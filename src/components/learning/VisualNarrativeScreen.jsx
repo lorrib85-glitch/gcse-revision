@@ -127,10 +127,10 @@ export default function VisualNarrativeScreen({
           pointerEvents: 'none',
         }} />
 
-        {/* Dark gradient — text legibility */}
+        {/* Dark gradient — text legibility + hides baked-in date labels in timeline image */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.18) 32%, rgba(0,0,0,0.64) 56%, rgba(0,0,0,0.93) 74%, rgba(0,0,0,0.99) 100%)',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.18) 28%, rgba(0,0,0,0.84) 50%, rgba(0,0,0,0.97) 68%, rgba(0,0,0,0.99) 100%)',
           pointerEvents: 'none',
         }} />
 
@@ -190,7 +190,7 @@ export default function VisualNarrativeScreen({
           <div style={{
             position: 'absolute',
             top: '44%', left: 28, right: 28,
-            paddingBottom: 120,
+            paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
             pointerEvents: 'none',
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -222,6 +222,24 @@ export default function VisualNarrativeScreen({
                   {beat.conclusion}
                 </div>
               )}
+
+              {showCTA && (
+                <div style={{ marginTop: 28, pointerEvents: 'auto' }}>
+                  <button
+                    className="vn-cta"
+                    onClick={(e) => { e.stopPropagation(); onContinue?.() }}
+                    style={{
+                      background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                      fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
+                      color: accent,
+                      animation: 'vnFadeIn 420ms ease both',
+                      transition: 'opacity 140ms ease',
+                    }}
+                  >
+                    Continue →
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -247,26 +265,6 @@ export default function VisualNarrativeScreen({
           </div>
         )}
 
-        {/* ── Continue CTA — beat 3, after conclusion only ──────────── */}
-        {showCTA && (
-          <button
-            className="vn-cta"
-            onClick={(e) => { e.stopPropagation(); onContinue?.() }}
-            style={{
-              position: 'absolute',
-              bottom: 'calc(72px + env(safe-area-inset-bottom, 0px))',
-              left: 28,
-              background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-              fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
-              color: accent,
-              animation: 'vnFadeIn 420ms ease both',
-              transition: 'opacity 140ms ease',
-              zIndex: 1,
-            }}
-          >
-            Continue →
-          </button>
-        )}
       </div>
     </>
   )
