@@ -42,30 +42,34 @@ export const MODULES = [
       // ── DISCOVER ───────────────────────────────────────────────────────
 
       {
+        type: 'visualNarrative',
         stage: 'Discover',
-        label: 'Hippocrates & Galen',
-        kicker: 'Ancient Authorities',
-        heading: 'Two Dead Greeks Ran Medieval Medicine',
-        sub: 'Why did ideas from 400 BC still control treatment in 1300?',
-        blocks: [
+        label: 'Ancient Authorities',
+        beats: [
           {
-            type: 'explainReveal',
-            title: 'Two dead Greeks ran medieval medicine',
-            steps: [
-              { id: 'ancient-1', statement: 'A lot of medieval medicine came from ancient Greek and Roman writers.' },
-              { id: 'hippocrates', statement: 'Hippocrates developed the idea of the Four Humours and encouraged doctors to', emphasis: 'observe patients.' },
-              { id: 'galen', statement: 'Galen built on this and promoted the Theory of Opposites, becoming hugely influential.' },
-              {
-                id: 'dominance',
-                statement: 'By the medieval period, their ideas had been copied, taught and trusted for centuries.',
-                detail: 'This is called continuity — ideas staying the same over a long period.',
-              },
-              { id: 'punchline', statement: 'Medicine was partly controlled by two men who had been dead for', emphasis: 'a very long time.' },
+            image: '/figures/history/medicine/medieval/ancient-authorities-back-to-back.webp',
+            label: 'ANCIENT AUTHORITIES',
+            headline: 'Two dead Greeks ran medieval medicine.',
+            body: 'When medieval doctors wanted answers, they looked to two men who had been dead for centuries.',
+          },
+          {
+            image: '/figures/history/medicine/medieval/ancient-authorities-timeline.webp',
+            label: 'LOOK AT THE DATES',
+            headline: 'Their ideas outlived them by over 1,000 years.',
+            body: 'Hippocrates lived around 400 BC.\n\nGalen lived around 200 AD.\n\nYet doctors in medieval England were still using their ideas in 1300 AD.',
+          },
+          {
+            image: '/figures/history/medicine/medieval/ancient-authorities-timeline.webp',
+            imageOpacity: 0.35,
+            facts: [
+              'Medieval doctors learned medicine from ancient Greek and Roman writers, especially Hippocrates and Galen.',
+              'The Church copied, protected and taught their books across Europe.',
+              'Their ideas became the foundation of medieval medicine for over 1,000 years.',
             ],
+            conclusion: 'If doctors could not see germs, who else were they supposed to trust?',
           },
         ],
-      }
-,
+      },
 
       {
         type: 'quickRecall',

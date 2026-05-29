@@ -16,6 +16,7 @@ import WeakSpotRecovery from '../learning/WeakSpotRecovery.jsx'
 import RecoveryQuizPlayer from '../learning/RecoveryQuizPlayer.jsx'
 import CardContainer from '../core/CardContainer.jsx'
 import GuidedChoiceCarousel from '../learning/GuidedChoiceCarousel.jsx'
+import VisualNarrativeScreen from '../learning/VisualNarrativeScreen.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1778,7 +1779,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     !recoveryQuizId &&
     !showExaminer &&
     hookDone && wylDone &&
-    ((cur?.type === 'cinematic' || cur?.type === 'conceptReveal') ? cinematicHeaderVisible : true)
+    ((cur?.type === 'cinematic' || cur?.type === 'conceptReveal' || cur?.type === 'visualNarrative') ? cinematicHeaderVisible : true)
 
   function headerOnBack() {
     // Detect recall screen: either explicitly navigated back, or first-time (recallDone=false)
@@ -2060,6 +2061,27 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           onBack={headerOnBack}
           onEnterExplore={() => setIhmExploreScreen(screen)}
           onContinue={isLast ? handleFinish : () => go(1)}
+        />
+      </>
+    )
+  }
+
+  // ── Visual narrative — tap-through image + fact sequence ────────────────────
+  if (cur?.type === 'visualNarrative') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={cinematicHeaderVisible}
+        />
+        <VisualNarrativeScreen
+          subject={module.subject}
+          beats={cur.beats || []}
+          onRevealStart={() => setCinematicHeaderVisible(true)}
+          onContinue={() => isLast ? handleFinish() : go(1)}
         />
       </>
     )
