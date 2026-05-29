@@ -18,7 +18,7 @@ const IMAGES = {
 function buildAccentSet(words, accentWords) {
   const result = new Set()
   if (!accentWords?.length) return result
-  const strip = w => w.replace(/[.,!?;:'""“”‘’]/g, '').toLowerCase()
+  const strip = w => w.replace(/[.,!?;:'""""'']/g, '').toLowerCase()
   for (const phrase of accentWords) {
     const pw = phrase.split(/\s+/).map(strip)
     for (let i = 0; i <= words.length - pw.length; i++) {
@@ -30,7 +30,7 @@ function buildAccentSet(words, accentWords) {
   return result
 }
 
-// ─── Shared back-button SVG ───────────────────────────────────────────────────
+// ─── Back button — reduced visual weight, full hit area preserved ─────────────
 function BackBtn({ onClick }) {
   return (
     <button
@@ -40,14 +40,14 @@ function BackBtn({ onClick }) {
       style={{
         position: 'absolute', top: 22, left: 18,
         width: 46, height: 46, borderRadius: RADII.pill,
-        background: 'rgba(255,255,255,0.05)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.05)',
         backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         cursor: 'pointer', transition: 'background 140ms ease',
       }}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="rgba(255,255,255,0.78)" strokeWidth="1.8"
+        stroke="rgba(255,255,255,0.58)" strokeWidth="1.8"
         strokeLinecap="round" strokeLinejoin="round">
         <path d="M19 12H5M12 5l-7 7 7 7"/>
       </svg>
@@ -103,7 +103,6 @@ export default function ChapterHookScreen({
   })()
 
   const wordCount = tokens.filter(t => !t.space).length
-  // Buttons appear 160ms after last word finishes fading in
   const btnDelayMs = 260 + (wordCount - 1) * 65 + 220 + 160
 
   useEffect(() => {
@@ -118,7 +117,6 @@ export default function ChapterHookScreen({
       setShakeTarget(tappedTrue ? 'true' : 'false')
       setTimeout(() => setShakeTarget(null), 300)
     }
-    // Wait for shake (wrong) or brief beat (correct), then cross-fade to reveal
     setTimeout(() => {
       setPhase('exiting')
       setTimeout(() => setPhase('reveal'), 320)
@@ -129,14 +127,14 @@ export default function ChapterHookScreen({
   const isReveal   = phase === 'reveal'
   const isQuestion = phase === 'question' || isExiting
 
-  // ── Shared background layers (always visible through both screens) ─────────
+  // ── Background — slightly increased image visibility, strong text overlays ──
   const BgLayers = () => (
     <>
       <div style={{
         position: 'fixed', inset: 0,
         backgroundImage: `url(${img})`,
         backgroundSize: 'cover', backgroundPosition: 'center top',
-        opacity: 0.21, filter: 'grayscale(10%) brightness(0.65)',
+        opacity: 0.26, filter: 'grayscale(10%) brightness(0.65)',
         pointerEvents: 'none', zIndex: 1,
       }} />
       <div style={{
@@ -174,7 +172,7 @@ export default function ChapterHookScreen({
           60%  { transform: translateX(-3px); }
           80%  { transform: translateX(2px); }
         }
-        .chs-back:active  { background: rgba(255,255,255,0.10) !important; }
+        .chs-back:active  { background: rgba(255,255,255,0.08) !important; }
         .chs-btn:active   { transform: scale(0.98); }
         .chs-cont:active  { opacity: 0.6 !important; }
       `}</style>
@@ -187,7 +185,6 @@ export default function ChapterHookScreen({
         ══════════════════════════════════════════════════════════════ */}
         {isQuestion && (
           <>
-            {/* Content layer */}
             <div style={{
               position: 'relative', zIndex: 4, minHeight: '100dvh',
               opacity: isExiting ? 0 : 1,
@@ -220,7 +217,7 @@ export default function ChapterHookScreen({
                 {chapterTitle}
               </div>
 
-              {/* Statement — word by word */}
+              {/* Statement — word by word, unchanged */}
               <div style={{ position: 'absolute', top: '34%', left: 28, right: 28 }}>
                 <Glow rgb={rgb} />
                 <div style={{
@@ -250,9 +247,9 @@ export default function ChapterHookScreen({
                 </div>
               </div>
 
-              {/* What do you think? — appears with buttons */}
+              {/* "What do you think?" — moved up 28px */}
               <div style={{
-                position: 'fixed', bottom: 130, left: 28,
+                position: 'fixed', bottom: 158, left: 28,
                 fontFamily: "'Outfit', sans-serif",
                 fontWeight: 500, fontSize: 15,
                 color: 'rgba(255,255,255,0.28)',
@@ -266,9 +263,9 @@ export default function ChapterHookScreen({
               </div>
             </div>
 
-            {/* TRUE / FALSE — separate fixed layer so it fades cleanly */}
+            {/* TRUE / FALSE — equal weight before selection, moved up 28px */}
             <div style={{
-              position: 'fixed', bottom: 72, left: 0, right: 0,
+              position: 'fixed', bottom: 100, left: 0, right: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               gap: 20, zIndex: 10,
               opacity: isExiting ? 0 : (btnsReady ? 1 : 0),
@@ -282,9 +279,8 @@ export default function ChapterHookScreen({
                   background: 'none', border: 'none', cursor: 'pointer',
                   fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 24,
                   textTransform: 'uppercase', letterSpacing: '0.18em',
-                  color: accent,
-                  textShadow: `0 0 18px rgba(${rgb},0.28)`,
-                  borderBottom: '1.5px solid rgba(255,255,255,0.18)', paddingBottom: 2,
+                  color: 'rgba(255,255,255,0.82)',
+                  borderBottom: '1.5px solid rgba(255,255,255,0.16)', paddingBottom: 2,
                   animation: shakeTarget === 'true' ? 'chs-shake 220ms ease' : 'none',
                 }}>
                 TRUE
@@ -299,8 +295,8 @@ export default function ChapterHookScreen({
                   background: 'none', border: 'none', cursor: 'pointer',
                   fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 24,
                   textTransform: 'uppercase', letterSpacing: '0.18em',
-                  color: 'rgba(255,255,255,0.74)',
-                  borderBottom: '1.5px solid rgba(255,255,255,0.09)', paddingBottom: 2,
+                  color: 'rgba(255,255,255,0.82)',
+                  borderBottom: '1.5px solid rgba(255,255,255,0.16)', paddingBottom: 2,
                   animation: shakeTarget === 'false' ? 'chs-shake 220ms ease' : 'none',
                 }}>
                 FALSE
@@ -317,7 +313,6 @@ export default function ChapterHookScreen({
             <div style={{ position: 'relative', zIndex: 4, minHeight: '100dvh' }}>
               <BackBtn onClick={onBack} />
 
-              {/* Reveal content — slides up */}
               <div style={{
                 position: 'absolute', top: '38%', left: 28, right: 28,
                 animation: 'chs-reveal-up 500ms cubic-bezier(0.16,1,0.3,1) both',
@@ -325,7 +320,6 @@ export default function ChapterHookScreen({
                 <Glow rgb={rgb} />
 
                 <div style={{ position: 'relative', maxWidth: 320 }}>
-                  {/* Verdict label — mirrors chapter label style */}
                   <div style={{
                     fontFamily: "'Outfit', sans-serif",
                     fontWeight: 700, fontSize: 13,
@@ -336,7 +330,6 @@ export default function ChapterHookScreen({
                     {isTrue ? 'True.' : 'False.'}
                   </div>
 
-                  {/* Explanation — the new hero */}
                   <div style={{
                     fontFamily: "'Sora', sans-serif",
                     fontWeight: 700,
@@ -352,7 +345,6 @@ export default function ChapterHookScreen({
               </div>
             </div>
 
-            {/* Continue → */}
             <button
               className="chs-cont"
               onClick={onContinue}
