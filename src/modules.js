@@ -38,6 +38,7 @@ export const MODULES = [
       // ── Screen 3: GuidedChoiceCarousel — Thomas chooses his healer ──────────
       {
         type: 'guidedChoiceCarousel',
+        stage: 'Discover',
         id: 'healer-carousel',
         label: 'Choose Your Healer',
         headline: 'Thomas has a fever.\nHe\'s coughing blood.',
@@ -99,6 +100,7 @@ export const MODULES = [
       // ── Choice reveal interstitials — all converge to quick-recall-healers ──
       {
         type: 'choiceReveal',
+        stage: 'Discover',
         id: 'reveal-physician',
         label: 'Your choice',
         nextId: 'quick-recall-healers',
@@ -111,6 +113,7 @@ export const MODULES = [
       },
       {
         type: 'choiceReveal',
+        stage: 'Discover',
         id: 'reveal-barber',
         label: 'Your choice',
         nextId: 'quick-recall-healers',
@@ -122,6 +125,7 @@ export const MODULES = [
       },
       {
         type: 'choiceReveal',
+        stage: 'Discover',
         id: 'reveal-wise-woman',
         label: 'Your choice',
         nextId: 'quick-recall-healers',
@@ -133,6 +137,7 @@ export const MODULES = [
       },
       {
         type: 'choiceReveal',
+        stage: 'Discover',
         id: 'reveal-priest',
         label: 'Your choice',
         nextId: 'quick-recall-healers',
@@ -147,6 +152,7 @@ export const MODULES = [
       // ── Screen 4: QuickRecallScreen — who was who ─────────────────────────
       {
         type: 'quickRecall',
+        stage: 'Discover',
         id: 'quick-recall-healers',
         label: 'Quick Recall: Who Was Who?',
         questions: [
@@ -177,6 +183,7 @@ export const MODULES = [
       // ── Screen 5: ConceptReveal — nobody knew about germs ─────────────────
       {
         type: 'conceptReveal',
+        stage: 'Understand',
         label: 'The Germ Problem',
         steps: [
           {
@@ -202,6 +209,7 @@ export const MODULES = [
       // ── Screen 6: ConceptReveal — The Four Humours ────────────────────────
       {
         type: 'conceptReveal',
+        stage: 'Understand',
         label: 'The Four Humours',
         steps: [
           {
@@ -225,6 +233,7 @@ export const MODULES = [
 
       // ── Screen 7: FillInTheBlanks ─────────────────────────────────────────
       {
+        stage: 'Understand',
         label: 'Fill the Gap',
         kicker: 'Four Humours',
         heading: 'Fill the Medieval Logic Gap',
@@ -259,6 +268,7 @@ export const MODULES = [
       // ── Screen 8: InteractiveHotspotImage — Four Humours body diagram ──────
       {
         type: 'interactiveImage',
+        stage: 'Understand',
         id: 'four-humours-hotspot',
         label: 'Explore the Humours',
         title: 'Tap the Four Humours',
@@ -297,6 +307,7 @@ export const MODULES = [
       // ── Screen 9: QuickRecallScreen — Four Humours check ─────────────────
       {
         type: 'quickRecall',
+        stage: 'Understand',
         label: 'Four Humours Check',
         questions: [
           {
@@ -325,6 +336,7 @@ export const MODULES = [
 
       // ── Screen 10: ExplainReveal — Theory of Opposites ────────────────────
       {
+        stage: 'Understand',
         label: 'Theory of Opposites',
         kicker: 'Galenic Medicine',
         heading: 'Opposites Cure Opposites',
@@ -350,6 +362,7 @@ export const MODULES = [
 
       // ── Screen 11: Scenario Challenge ────────────────────────────────────
       {
+        stage: 'Understand',
         label: 'Doctor Mode',
         kicker: 'Apply the Logic',
         heading: 'Medieval Doctor Mode',
@@ -374,6 +387,7 @@ export const MODULES = [
       // ── Screen 12: ConceptReveal — bloodletting logic ─────────────────────
       {
         type: 'conceptReveal',
+        stage: 'Understand',
         label: 'The Logic of Bloodletting',
         steps: [
           {
@@ -397,6 +411,7 @@ export const MODULES = [
 
       // ── Screen 13: Retrieval Q&A — lock it in ────────────────────────────
       {
+        stage: 'Investigate',
         label: 'Lock It In',
         kicker: 'Retrieval Practice',
         heading: 'Lock It In',
@@ -430,6 +445,7 @@ export const MODULES = [
 
       // ── Screen 14: ExplainReveal — two dead Greeks ran medicine ──────────
       {
+        stage: 'Investigate',
         label: 'Hippocrates & Galen',
         kicker: 'Ancient Authorities',
         heading: 'Two Dead Greeks Ran Medieval Medicine',
@@ -456,6 +472,7 @@ export const MODULES = [
       // ── Screen 15: QuickRecallScreen — who said what ─────────────────────
       {
         type: 'quickRecall',
+        stage: 'Investigate',
         label: 'Who Said What?',
         questions: [
           {
@@ -484,6 +501,7 @@ export const MODULES = [
 
       // ── Screen 16: ExplainReveal — The Church copy-paste machine ─────────
       {
+        stage: 'Investigate',
         label: 'The Church & Medicine',
         kicker: 'The Church\'s Role',
         heading: 'The Church Copy-Paste Machine',
@@ -509,6 +527,7 @@ export const MODULES = [
 
       // ── Screen 17: Retrieval Q&A — why old ideas survived ────────────────
       {
+        stage: 'Investigate',
         label: 'Why Old Ideas Survived',
         kicker: 'Retrieval Practice',
         heading: 'Why Did Old Ideas Survive?',
@@ -542,6 +561,7 @@ export const MODULES = [
 
       // ── Screen 18: ExplainReveal — astrology ─────────────────────────────
       {
+        stage: 'Investigate',
         label: 'Astrology & Medicine',
         kicker: 'Stars and Planets',
         heading: 'Trust Me, I\'m Following Jupiter',
@@ -564,6 +584,7 @@ export const MODULES = [
       // ── Screen 19: InteractiveHotspotImage — The Zodiac Man ──────────────
       {
         type: 'interactiveImage',
+        stage: 'Investigate',
         id: 'zodiac-man-hotspot',
         label: 'The Zodiac Man',
         title: 'The Zodiac Man',
@@ -602,6 +623,7 @@ export const MODULES = [
       // ── Screen 20: QuickRecallScreen — astrology check ────────────────────
       {
         type: 'quickRecall',
+        stage: 'Investigate',
         label: 'Astrology Check',
         questions: [
           {
@@ -630,6 +652,7 @@ export const MODULES = [
 
       // ── Screen 21: ExplainReveal — miasma ────────────────────────────────
       {
+        stage: 'Investigate',
         label: 'Miasma',
         kicker: 'Bad Air',
         heading: 'Bad Air. Bad Vibes. Bad Diagnosis.',
@@ -656,6 +679,7 @@ export const MODULES = [
       // ── Screen 22: QuickRecallScreen — miasma check ──────────────────────
       {
         type: 'quickRecall',
+        stage: 'Investigate',
         label: 'Miasma Check',
         questions: [
           {
@@ -689,6 +713,7 @@ export const MODULES = [
 
       // ── Screen 23: ExplainReveal — God, sin and sickness ─────────────────
       {
+        stage: 'Investigate',
         label: 'God & Illness',
         kicker: 'Religion & Disease',
         heading: 'God, Sin and Sickness',
@@ -722,6 +747,7 @@ export const MODULES = [
       // ── Screen 24: QuickRecallScreen — religion check ────────────────────
       {
         type: 'quickRecall',
+        stage: 'Investigate',
         label: 'Religion Check',
         questions: [
           {
@@ -755,6 +781,7 @@ export const MODULES = [
 
       // ── Screen 25: Mixed Scenario Challenge ───────────────────────────────
       {
+        stage: 'Challenge',
         label: 'Diagnose It',
         kicker: 'Apply Your Knowledge',
         heading: 'Diagnose Like It\'s 1340',
@@ -805,6 +832,7 @@ export const MODULES = [
       // ── Screen 26: FaceTheExaminer ────────────────────────────────────────
       {
         type: 'faceExaminer',
+        stage: 'Examiner',
         label: 'Face the Examiner',
         examiner: {
           question: 'Explain why medieval people believed bloodletting could cure disease. [4 marks]',
@@ -855,6 +883,7 @@ Do NOT award marks for simply stating "they did not know about germs" without li
 
       // ── Screen 27: Worked Example ─────────────────────────────────────────
       {
+        stage: 'Examiner',
         label: 'The Examiner Explains',
         kicker: 'What Gets Marks?',
         heading: 'What Would Get Marks?',
@@ -876,6 +905,7 @@ Do NOT award marks for simply stating "they did not know about germs" without li
 
       // ── Screen 28: Final Retrieval ────────────────────────────────────────
       {
+        stage: 'Complete',
         label: 'Final Retrieval',
         kicker: 'Final Retrieval',
         heading: 'Final Retrieval: No Hiding Now',

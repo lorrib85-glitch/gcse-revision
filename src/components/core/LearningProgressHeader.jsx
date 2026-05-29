@@ -1,106 +1,104 @@
 import { useState } from 'react'
-import { createPortal } from 'react-dom'
 
-function LockIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-    </svg>
-  )
+const STAGES = ['Discover', 'Understand', 'Investigate', 'Challenge', 'Examiner', 'Complete']
+
+const STAGE_DESCRIPTIONS = {
+  Discover:    'Setting the scene and activating prior knowledge',
+  Understand:  'Building core knowledge and concepts',
+  Investigate: 'Exploring evidence, causes and context',
+  Challenge:   'Applying knowledge to real scenarios',
+  Examiner:    'Practising exam technique',
+  Complete:    'Reviewing and locking in your learning',
 }
 
-function CheckIcon({ color }) {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-      stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>
-  )
-}
+// ── LearningProgressHeader v3 ─────────────────────────────────────────────────
+// Stage-based progress rail for the learning header.
+// 6 fixed stages; current stage shown as a labeled pill, completed as filled dots,
+// future as tiny hollow dots. No jump sheet, no screen navigation.
+// Tap rail to toggle a small tooltip showing the current stage description.
+export default function LearningProgressHeader({ currentStage, accent, accentRgb }) {
+  const [tooltipVisible, setTooltipVisible] = useState(false)
+  const currentIdx = Math.max(0, STAGES.indexOf(currentStage))
 
-// ── LearningProgressHeader v2 — LOCKED COMPONENT ──────────────────────────────
-// Phase-based progress layer beneath ModuleToolbar v1 (per RISE Module Header System spec).
-// Owns: phase progress nodes, connector lines, current phase state, "jump to section" sheet.
-// Does NOT own: back/exit navigation, titles, metadata, menu actions.
-//
-// Progress nodes (5-7 ideal):
-// - Completed phases: filled circles with subject accent glow, tappable to revisit
-// - Active phase: larger filled circle with breathing animation + subject accent glow
-// - Future phases: hollow circles, dimmed, untappable (locked, prevents forward skip)
-// - Connector lines: neutral dark lines between nodes, highlight when complete
-// - Forward-locking enforced: no skipping ahead, no bypassing retrieval questions
-//
-// The jump sheet renders through a portal to document.body: the parent header
-// capsule uses `transform`, which creates a containing block for `position: fixed`.
-// Portal preserves the original sibling positioning while allowing this component
-// to own the full progression concern.
-export default function LearningProgressHeader({
-  beats = [],
-  currentBeatIndex = 0,
-  accent,
-  accentRgb,
-  onJump,
-}) {
-  const [sheetOpen, setSheetOpen] = useState(false)
-
-  function handleJump(beat, i) {
-    onJump?.(beat, i)
-    setSheetOpen(false)
+  function handleTap() {
+    setTooltipVisible(v => !v)
   }
 
   return (
-    <>
-      <style>{`
-        @keyframes lh-pulse {
-          0%, 100% { opacity: 1; }
-          50%       { opacity: 0.62; }
-        }
-      `}</style>
-
-      {/* ── Phase-based progress nodes with connector lines ── */}
+    <div style={{ position: 'relative' }}>
       <button
-        aria-label="Jump to section"
-        onClick={() => setSheetOpen(true)}
+        aria-label={`Learning stage: ${currentStage}`}
+        onClick={handleTap}
         style={{
           width: '100%',
-          display: 'flex', gap: 0, alignItems: 'center', justifyContent: 'center',
-          background: 'none', border: 'none', cursor: 'pointer',
-          padding: '10px 16px',
-        }}>
-        {beats.map((_, i) => {
-          const done    = i < currentBeatIndex
-          const current = i === currentBeatIndex
-          const isLast  = i === beats.length - 1
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 0,
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '8px 6px 6px',
+        }}
+      >
+        {STAGES.map((stage, i) => {
+          const done    = i < currentIdx
+          const current = i === currentIdx
+          const isLast  = i === STAGES.length - 1
 
           return (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-              {/* ── Progress node ── */}
-              <div style={{
-                width: 7, height: 7, borderRadius: '50%',
-                flexShrink: 0,
-                background: current
-                  ? accent
-                  : done
-                    ? 'rgba(255,255,255,0.22)'
-                    : 'rgba(255,255,255,0.09)',
-                border: (!current && !done) ? '1px solid rgba(255,255,255,0.06)' : 'none',
-                /* ring-around-dot for active node via layered box-shadow */
-                boxShadow: current
-                  ? `0 0 0 2.5px rgba(0,0,0,0.55), 0 0 0 4.5px rgba(${accentRgb},0.38), 0 0 7px rgba(${accentRgb},0.14)`
-                  : 'none',
-                animation: current ? 'lh-pulse 5s ease-in-out infinite' : 'none',
-              }} />
+            <div key={stage} style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
 
-              {/* ── Connector line (not after last node) ── */}
+              {/* Stage node */}
+              {current ? (
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  background: `rgba(${accentRgb},0.13)`,
+                  border: `1px solid rgba(${accentRgb},0.32)`,
+                  borderRadius: 999,
+                  padding: '3px 10px 3px 7px',
+                  height: 22,
+                  flexShrink: 0,
+                }}>
+                  <div style={{
+                    width: 6, height: 6,
+                    borderRadius: '50%',
+                    background: accent,
+                    flexShrink: 0,
+                  }} />
+                  <span style={{
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    fontSize: 11, fontWeight: 700,
+                    color: accent,
+                    letterSpacing: '0.02em',
+                    lineHeight: 1,
+                  }}>{stage}</span>
+                </div>
+              ) : done ? (
+                <div style={{
+                  width: 6, height: 6,
+                  borderRadius: '50%',
+                  background: `rgba(${accentRgb},0.42)`,
+                  flexShrink: 0,
+                }} />
+              ) : (
+                <div style={{
+                  width: 4, height: 4,
+                  borderRadius: '50%',
+                  border: '1px solid rgba(255,255,255,0.11)',
+                  background: 'transparent',
+                  flexShrink: 0,
+                }} />
+              )}
+
+              {/* Connector line */}
               {!isLast && (
                 <div style={{
-                  width: 24,
+                  width: current ? 6 : 8,
                   height: 1,
-                  background: done
-                    ? 'rgba(255,255,255,0.15)'
-                    : 'rgba(255,255,255,0.06)',
+                  background: done ? `rgba(${accentRgb},0.22)` : 'rgba(255,255,255,0.07)',
                   margin: '0 2px',
                   flexShrink: 0,
                 }} />
@@ -110,133 +108,38 @@ export default function LearningProgressHeader({
         })}
       </button>
 
-      {createPortal(
-        <>
-          {/* ── Bottom sheet backdrop ── */}
-          <div
-            onClick={() => setSheetOpen(false)}
-            style={{
-              position: 'fixed', inset: 0, zIndex: 199,
-              background: 'rgba(0,0,0,0.5)',
-              opacity: sheetOpen ? 1 : 0,
-              pointerEvents: sheetOpen ? 'auto' : 'none',
-              transition: 'opacity 300ms ease',
-            }}
-          />
-
-          {/* ── Bottom sheet panel ── */}
+      {/* Stage tooltip */}
+      {tooltipVisible && (
+        <div
+          onClick={() => setTooltipVisible(false)}
+          style={{
+            position: 'absolute',
+            top: 'calc(100% + 6px)',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(8,11,20,0.97)',
+            border: `1px solid rgba(${accentRgb},0.22)`,
+            borderRadius: 10,
+            padding: '7px 13px',
+            zIndex: 10,
+            whiteSpace: 'nowrap',
+            pointerEvents: 'auto',
+            cursor: 'pointer',
+          }}
+        >
           <div style={{
-            position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 200,
-            background: 'rgba(10,12,20,0.97)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderRadius: '24px 24px 0 0',
-            borderTop: '1px solid rgba(255,255,255,0.07)',
-            padding: `24px 20px calc(24px + env(safe-area-inset-bottom, 0px))`,
-            transform: sheetOpen ? 'translateY(0)' : 'translateY(100%)',
-            transition: 'transform 300ms ease',
-          }}>
-
-            <div style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              marginBottom: 18,
-            }}>
-              <span style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: 17, fontWeight: 700, color: '#F5F7FF',
-              }}>Jump to a section</span>
-              <button
-                onClick={() => setSheetOpen(false)}
-                style={{
-                  width: 34, height: 34, borderRadius: 999,
-                  background: 'rgba(255,255,255,0.07)',
-                  border: 'none', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: 17, color: 'rgba(255,255,255,0.65)',
-                }}>×</button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              {beats.map((beat, i) => {
-                const isDone    = i < currentBeatIndex
-                const isCurrent = i === currentBeatIndex
-                const isLocked  = i > currentBeatIndex
-                return (
-                  <button
-                    key={i}
-                    disabled={isLocked}
-                    onClick={isLocked ? undefined : () => handleJump(beat, i)}
-                    style={{
-                      width: '100%',
-                      display: 'flex', alignItems: 'center', gap: 12,
-                      padding: '11px 12px',
-                      borderRadius: 14,
-                      background: isCurrent ? `rgba(${accentRgb},0.08)` : 'transparent',
-                      border: isCurrent ? `1px solid rgba(${accentRgb},0.20)` : '1px solid transparent',
-                      cursor: isLocked ? 'default' : 'pointer',
-                      opacity: isLocked ? 0.32 : 1,
-                      transition: 'background 140ms ease',
-                    }}>
-
-                    <div style={{
-                      width: 26, height: 26, borderRadius: 999, flexShrink: 0,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      background: isDone
-                        ? accent
-                        : isCurrent
-                          ? `rgba(${accentRgb},0.16)`
-                          : 'rgba(255,255,255,0.05)',
-                      border: isCurrent ? `1px solid rgba(${accentRgb},0.5)` : '1px solid transparent',
-                    }}>
-                      {isDone ? (
-                        <CheckIcon color='#08090D' />
-                      ) : (
-                        <span style={{
-                          fontFamily: "'Outfit', sans-serif",
-                          fontSize: 11, fontWeight: 700,
-                          color: isCurrent ? accent : 'rgba(255,255,255,0.28)',
-                        }}>{i + 1}</span>
-                      )}
-                    </div>
-
-                    <div style={{
-                      flex: 1, textAlign: 'left',
-                      fontFamily: "'Outfit', sans-serif",
-                      fontSize: 15, fontWeight: 600,
-                      color: isLocked ? 'rgba(255,255,255,0.28)' : '#F0ECFF',
-                      whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                    }}>
-                      {beat.label}
-                    </div>
-
-                    <div style={{
-                      flexShrink: 0,
-                      fontFamily: "'Outfit', sans-serif",
-                      fontSize: 12, fontWeight: 600,
-                      color: isDone ? accent : isCurrent ? accent : 'rgba(255,255,255,0.22)',
-                      display: 'flex', alignItems: 'center',
-                    }}>
-                      {isDone && 'Completed'}
-                      {isCurrent && (
-                        <span style={{
-                          display: 'inline-block',
-                          background: `rgba(${accentRgb},0.16)`,
-                          border: `1px solid rgba(${accentRgb},0.38)`,
-                          borderRadius: 999, padding: '2px 8px',
-                          color: accent,
-                        }}>Current</span>
-                      )}
-                      {isLocked && <LockIcon />}
-                    </div>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        </>,
-        document.body,
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: 11, fontWeight: 700,
+            color: accent,
+            marginBottom: 2,
+          }}>{currentStage}</div>
+          <div style={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: 10,
+            color: 'rgba(255,255,255,0.48)',
+          }}>{STAGE_DESCRIPTIONS[currentStage] || ''}</div>
+        </div>
       )}
-    </>
+    </div>
   )
 }

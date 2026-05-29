@@ -1761,18 +1761,18 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const cur = module.screens[screen]
   const subjectColor = module.color || '#9D5CFF'
 
-  // ── Learning header beats ──────────────────────────────────────────────────
-  const beats = [
-    ...(module.recall ? [{ id: 'recall', label: 'Recall Starter', _navTo: 'recall', _screenIndex: null }] : []),
-    ...module.screens.map((s, i) => ({ id: `screen-${i}`, label: s.label, _navTo: null, _screenIndex: i })),
-    ...(module.examiner ? [{ id: 'examiner', label: 'Face the Examiner', _navTo: 'examiner', _screenIndex: null }] : []),
-  ]
-  const recallBeatOffset = module.recall ? 1 : 0
-  const currentBeatIndex = (navTo === 'recall')
-    ? 0
-    : (hookDone && wylDone && recallDone && (!module.intro || introDone))
-      ? recallBeatOffset + screen
-      : recallBeatOffset + screen
+  // ── Stage-based learning header ───────────────────────────────────────────
+  const STAGE_NAMES = ['Discover', 'Understand', 'Investigate', 'Challenge', 'Examiner', 'Complete']
+  const currentStage = (() => {
+    if (navTo === 'recall' || (!recallDone && module.recall)) return 'Discover'
+    if (cur?.stage) return cur.stage
+    // Proportional fallback for legacy modules without explicit stage properties
+    const idx = Math.min(
+      Math.floor((screen / Math.max(total - 1, 1)) * STAGE_NAMES.length),
+      STAGE_NAMES.length - 1
+    )
+    return STAGE_NAMES[idx]
+  })()
 
   const headerVisible =
     !showWeakSpotRecovery &&
@@ -1796,19 +1796,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       onBack(); return
     }
     go(-1)
-  }
-
-  function handleBeatJump(beat) {
-    if (beat._navTo === 'recall') {
-      setNavTo('recall')
-      scrollToTop()
-      return
-    }
-    setHookDone(true); setWylDone(true); setRecallDone(true); setIntroDone(true)
-    setNavTo(null)
-    setScreen(beat._screenIndex)
-    setAnimKey(k => k + 1)
-    scrollToTop()
   }
   // ──────────────────────────────────────────────────────────────────────────
 
@@ -1866,11 +1853,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         renderHeader={() => (
           <LearningHeader
             module={module}
-            beats={beats}
-            currentBeatIndex={0}
+            currentStage="Discover"
             onBack={headerOnBack}
             onExit={onBack}
-            onJump={handleBeatJump}
             visible={true}
           />
         )}
@@ -1951,11 +1936,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <div style={{ position: 'fixed', inset: 0, background: '#080C1A', display: 'flex', flexDirection: 'column', zIndex: 60 }}>
         <LearningHeader
           module={module}
-          beats={beats}
-          currentBeatIndex={currentBeatIndex}
+          currentStage={currentStage}
           onBack={headerOnBack}
           onExit={onBack}
-          onJump={handleBeatJump}
           visible={true}
         />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '0 24px 48px' }}>
@@ -2004,14 +1987,12 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         onContinue={isLast ? handleFinish : () => go(1)}
         renderHeader={() => (
           <LearningHeader
-            module={module}
-            beats={beats}
-            currentBeatIndex={currentBeatIndex}
-            onBack={headerOnBack}
-            onExit={onBack}
-            onJump={handleBeatJump}
-            visible={true}
-          />
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={true}
+        />
         )}
       />
     )
@@ -2023,11 +2004,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <>
         <LearningHeader
           module={module}
-          beats={beats}
-          currentBeatIndex={currentBeatIndex}
+          currentStage={currentStage}
           onBack={headerOnBack}
           onExit={onBack}
-          onJump={handleBeatJump}
           visible={true}
         />
         <FaceTheExaminer
@@ -2046,11 +2025,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <>
         <LearningHeader
           module={module}
-          beats={beats}
-          currentBeatIndex={currentBeatIndex}
+          currentStage={currentStage}
           onBack={headerOnBack}
           onExit={onBack}
-          onJump={handleBeatJump}
           visible={true}
         />
         <GuidedChoiceCarousel
@@ -2088,11 +2065,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <>
         <LearningHeader
           module={module}
-          beats={beats}
-          currentBeatIndex={currentBeatIndex}
+          currentStage={currentStage}
           onBack={headerOnBack}
           onExit={onBack}
-          onJump={handleBeatJump}
           visible={ihmExplore}
         />
         <InteractiveHotspotImage
@@ -2117,11 +2092,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <>
         <LearningHeader
           module={module}
-          beats={beats}
-          currentBeatIndex={currentBeatIndex}
+          currentStage={currentStage}
           onBack={headerOnBack}
           onExit={onBack}
-          onJump={handleBeatJump}
           visible={cinematicHeaderVisible}
         />
         <ConceptReveal
@@ -2139,11 +2112,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <>
         <LearningHeader
           module={module}
-          beats={beats}
-          currentBeatIndex={currentBeatIndex}
+          currentStage={currentStage}
           onBack={headerOnBack}
           onExit={onBack}
-          onJump={handleBeatJump}
           visible={cinematicHeaderVisible}
         />
         <CinematicRevealMoment
@@ -2165,11 +2136,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       {/* ── Universal floating learning header ── */}
       <LearningHeader
         module={module}
-        beats={beats}
-        currentBeatIndex={currentBeatIndex}
+        currentStage={currentStage}
         onBack={headerOnBack}
         onExit={onBack}
-        onJump={handleBeatJump}
         visible={headerVisible}
       />
 
