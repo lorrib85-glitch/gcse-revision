@@ -273,14 +273,14 @@ export default function QuickRecallScreen({
           position: 'fixed', inset: 0,
           backgroundImage: `url(${img})`,
           backgroundSize: 'cover', backgroundPosition: 'center right',
-          filter: 'blur(0.5px) brightness(0.38) grayscale(12%)',
+          filter: 'blur(0.5px) brightness(0.60) grayscale(8%)',
           pointerEvents: 'none', zIndex: 1,
         }} />
 
         {/* Global overlay */}
         <div style={{
           position: 'fixed', inset: 0,
-          background: 'rgba(8,9,13,0.52)',
+          background: 'rgba(8,9,13,0.28)',
           pointerEvents: 'none', zIndex: 2,
         }} />
 

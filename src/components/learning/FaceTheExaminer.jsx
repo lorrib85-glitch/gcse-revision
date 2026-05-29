@@ -459,7 +459,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
             position: 'absolute', inset: 0, pointerEvents: 'none',
             backgroundImage: `url(${IMAGES[key]})`,
             backgroundSize: 'cover', backgroundPosition: 'center right',
-            opacity: 0.22, filter: 'grayscale(10%) brightness(0.7)',
+            opacity: 0.40, filter: 'grayscale(8%) brightness(0.75)',
           }} />
         )}
 
