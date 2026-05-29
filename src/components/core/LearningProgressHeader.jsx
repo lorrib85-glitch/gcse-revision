@@ -12,16 +12,23 @@ const STAGE_DESCRIPTIONS = {
 }
 
 // ── LearningProgressHeader v3 ─────────────────────────────────────────────────
-// Stage-based progress rail. Stretches to fill all available width.
-// Current stage: labeled accent pill. Completed: filled dot. Future: hollow dot.
-// Connectors are flex so they expand to fill the space between nodes.
-// Tap to toggle a tooltip with the current stage description.
+// Stage rail — fills all available width between nav buttons.
+// Current stage: solid dot + outer ring with gap + pulse glow; no label until tapped.
+// Completed: filled accent dot. Future: small hollow dot.
+// Tap to show stage name + description tooltip.
 export default function LearningProgressHeader({ currentStage, accent, accentRgb }) {
   const [tooltipVisible, setTooltipVisible] = useState(false)
   const currentIdx = Math.max(0, STAGES.indexOf(currentStage))
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
+      <style>{`
+        @keyframes stage-glow {
+          0%, 100% { box-shadow: 0 0 5px 1px rgba(${accentRgb},0.45); }
+          50%       { box-shadow: 0 0 11px 3px rgba(${accentRgb},0.70); }
+        }
+      `}</style>
+
       <button
         aria-label={`Learning stage: ${currentStage}`}
         onClick={() => setTooltipVisible(v => !v)}
@@ -52,29 +59,27 @@ export default function LearningProgressHeader({ currentStage, accent, accentRgb
             >
               {/* ── Stage node ── */}
               {current ? (
+                /* Active: inner dot + outer ring with gap, pulse glow */
                 <div style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  background: `rgba(${accentRgb},0.14)`,
-                  border: `1px solid rgba(${accentRgb},0.35)`,
-                  borderRadius: 999,
-                  padding: '4px 11px 4px 8px',
+                  position: 'relative',
+                  width: 20, height: 20,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
                   flexShrink: 0,
                 }}>
+                  {/* Outer ring */}
                   <div style={{
-                    width: 7, height: 7,
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: '50%',
+                    border: `1.5px solid rgba(${accentRgb},0.65)`,
+                  }} />
+                  {/* Inner dot with pulse glow */}
+                  <div style={{
+                    width: 8, height: 8,
                     borderRadius: '50%',
                     background: accent,
-                    flexShrink: 0,
+                    animation: 'stage-glow 2.8s ease-in-out infinite',
                   }} />
-                  <span style={{
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontSize: 12, fontWeight: 700,
-                    color: accent,
-                    letterSpacing: '0.01em',
-                    lineHeight: 1,
-                  }}>{stage}</span>
                 </div>
               ) : done ? (
                 <div style={{
@@ -110,7 +115,7 @@ export default function LearningProgressHeader({ currentStage, accent, accentRgb
         })}
       </button>
 
-      {/* ── Stage tooltip ── */}
+      {/* ── Stage tooltip — shown on tap ── */}
       {tooltipVisible && (
         <div
           onClick={() => setTooltipVisible(false)}
