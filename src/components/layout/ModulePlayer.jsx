@@ -1938,6 +1938,108 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     )
   }
 
+  // ── Choice-reveal interstitial — brief narrative after carousel selection ─
+  if (cur?.type === 'choiceReveal') {
+    const goToNext = () => {
+      if (cur.nextId) {
+        const targetIdx = module.screens.findIndex(s => s.id === cur.nextId)
+        if (targetIdx >= 0) { setScreen(targetIdx); setAnimKey(k => k + 1); scrollToTop(); return }
+      }
+      isLast ? handleFinish() : go(1)
+    }
+    return (
+      <div style={{ position: 'fixed', inset: 0, background: '#080C1A', display: 'flex', flexDirection: 'column', zIndex: 60 }}>
+        <LearningHeader
+          module={module}
+          beats={beats}
+          currentBeatIndex={currentBeatIndex}
+          onBack={headerOnBack}
+          onExit={onBack}
+          onJump={handleBeatJump}
+          visible={true}
+        />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '0 24px 48px' }}>
+          <div style={{ maxWidth: 480, margin: '0 auto', width: '100%' }}>
+            {(cur.paragraphs || []).map((p, i) => (
+              <p key={i} style={{
+                fontFamily: "'Sora', sans-serif",
+                fontSize: i === 0 ? 'clamp(1.2rem, 4.5vw, 1.5rem)' : 'clamp(.88rem, 3vw, 1rem)',
+                fontWeight: i === 0 ? 700 : 400,
+                color: i === 0 ? '#F5F7FB' : 'rgba(245,237,216,.62)',
+                lineHeight: 1.5,
+                margin: i === 0 ? '0 0 16px' : '0 0 10px',
+                animation: `crSlideIn 380ms cubic-bezier(.16,1,.3,1) ${i * 80}ms both`,
+              }}>{p}</p>
+            ))}
+            <button
+              onClick={goToNext}
+              style={{
+                marginTop: 28,
+                width: '100%',
+                background: `${subjectColor}22`,
+                border: `1.5px solid ${subjectColor}44`,
+                borderRadius: 16, padding: '16px',
+                fontFamily: "'Sora', sans-serif",
+                fontWeight: 700, fontSize: '.95rem',
+                color: subjectColor, cursor: 'pointer',
+                transition: 'all .15s',
+              }}
+            >Continue →</button>
+          </div>
+        </div>
+        <style>{`@keyframes crSlideIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }`}</style>
+      </div>
+    )
+  }
+
+  // ── Full-screen QuickRecallScreen as in-content screen ────────────────────
+  if (cur?.type === 'quickRecall') {
+    return (
+      <QuickRecallScreen
+        subject={module.subject}
+        chapterNum={module.number}
+        chapterTitle={module.title}
+        questions={cur.questions || []}
+        onBack={headerOnBack}
+        onContinue={isLast ? handleFinish : () => go(1)}
+        renderHeader={() => (
+          <LearningHeader
+            module={module}
+            beats={beats}
+            currentBeatIndex={currentBeatIndex}
+            onBack={headerOnBack}
+            onExit={onBack}
+            onJump={handleBeatJump}
+            visible={true}
+          />
+        )}
+      />
+    )
+  }
+
+  // ── FaceTheExaminer as a mid-module content screen ─────────────────────────
+  if (cur?.type === 'faceExaminer') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          beats={beats}
+          currentBeatIndex={currentBeatIndex}
+          onBack={headerOnBack}
+          onExit={onBack}
+          onJump={handleBeatJump}
+          visible={true}
+        />
+        <FaceTheExaminer
+          module={module}
+          examiner={cur.examiner}
+          onExit={headerOnBack}
+          onContinue={() => { isLast ? handleFinish() : go(1) }}
+        />
+      </>
+    )
+  }
+
   // ── Full-screen guided choice carousel ────────────────────────────────────
   if (cur?.type === 'guidedChoiceCarousel') {
     return (

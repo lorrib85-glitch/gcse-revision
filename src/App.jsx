@@ -405,7 +405,7 @@ export default function App() {
       id: 'hist_medicine',
       title: 'Medicine Through Time',
       subject: 'History',
-      chapterIds: ['mod1','mod2','mod3','mod4','mod5','mod6','mod7','mod8','mod9'],
+      chapterIds: ['history-medicine-medieval-beliefs-causes','mod2','mod3','mod4','mod5','mod6','mod7','mod8','mod9'],
     },
     {
       id: 'soc_family',
@@ -711,7 +711,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
         if (pct > bestPct) { bestPct = pct; best = m }
       }
     }
-    return best || MODULES.find(m => m.id === 'mod1') || MODULES[0]
+    return best || MODULES.find(m => m.id === 'history-medicine-medieval-beliefs-causes') || MODULES[0]
   })()
 
   const jumpModState = jumpBackModule ? safeGetModuleState(jumpBackModule.id) : {}
@@ -1279,7 +1279,7 @@ function PulseTab({ onStartQuickFire }) {
 // and the actual lesson content.
 
 const MODULE_HEADER_IMAGES = {
-  'mod1': '/headers/history-medicine-through-time.png',
+  'history-medicine-medieval-beliefs-causes': '/headers/history-medicine-through-time.png',
   'mod2': '/headers/history-medicine-through-time.png',
   'mod3': '/headers/history-medicine-through-time.png',
   'mod4': '/headers/history-medicine-through-time.png',
@@ -2314,7 +2314,7 @@ function ModulesTab({ onOpenModule }) {
   const medMods = histAllMods  // mod1-mod5 are all Medicine Through Time sub-topics
   const continueRaw = medMods.find(m => { const p = modPct(m); return p > 0 && p < 100 }) || medMods[0]
   const continuePct = modPct(continueRaw) || 0
-  const selectedId = continueRaw?.id || 'mod1'
+  const selectedId = continueRaw?.id || 'history-medicine-medieval-beliefs-causes'
   const continueAccent = continueRaw?.color || '#C89B6D'
   const continueHeaderImage = MODULE_HEADER_IMAGES[selectedId] || '/headers/history-medicine-through-time.png'
 
@@ -3958,7 +3958,7 @@ function ChemistryBrowser({ onBack }) {
 
 
 const QUICK_FIRE_QUESTIONS = [
-  { q: 'What theory said bad smells caused disease?', options: ['Miasma', 'Germ theory', 'Four humours', 'Natural selection'], correct: 0, subject: 'History', topic: 'Medieval Medicine', moduleId: 'mod1', ms: 'Miasma was the belief that bad air or smells caused disease.' },
+  { q: 'What theory said bad smells caused disease?', options: ['Miasma', 'Germ theory', 'Four humours', 'Natural selection'], correct: 0, subject: 'History', topic: 'Medieval Medicine', moduleId: 'history-medicine-medieval-beliefs-causes', ms: 'Miasma was the belief that bad air or smells caused disease.' },
   { q: 'Who proved blood circulates around the body?', options: ['William Harvey', 'Edward Jenner', 'Louis Pasteur', 'Robert Koch'], correct: 0, subject: 'History', topic: 'Renaissance Medicine', moduleId: 'mod2', ms: 'William Harvey published his ideas about blood circulation in 1628.' },
   { q: 'Which scientist developed germ theory?', options: ['Louis Pasteur', 'Galen', 'Vesalius', 'Florence Nightingale'], correct: 0, subject: 'History', topic: 'Germ Theory', moduleId: 'mod4', ms: 'Louis Pasteur showed that germs cause decay and disease.' },
   { q: 'What did Jenner create a vaccine for?', options: ['Smallpox', 'Cholera', 'Tuberculosis', 'Typhoid'], correct: 0, subject: 'History', topic: 'Vaccination', moduleId: 'mod4', ms: 'Edward Jenner developed vaccination against smallpox.' },
@@ -4009,7 +4009,7 @@ function saveQfPrevSession(accuracy, answered) {
 }
 
 const QUICK_FIRE_SUBJECT_META = {
-  History:    { icon: '🏛️', logo: '/headers/history-main.png',    color: '#C89B6D', moduleId: 'mod1' },
+  History:    { icon: '🏛️', logo: '/headers/history-main.png',    color: '#C89B6D', moduleId: 'history-medicine-medieval-beliefs-causes' },
   Maths:      { icon: '✖️', logo: '/headers/maths-main.png',      color: '#2DD4BF', moduleId: null },
   Sociology:  { icon: '👥', logo: '/headers/sociology-main.png',  color: '#FF5C7A', moduleId: null },
   Chemistry:  { icon: '⚗️', logo: '/headers/chem-logo.png',       color: '#9B59E8', moduleId: null },

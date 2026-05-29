@@ -5,290 +5,932 @@
 
 export const MODULES = [
   {
-    id: 'mod1',
+    id: 'history-medicine-medieval-beliefs-causes',
     subject: 'History',
     number: 1,
-    title: 'Medieval Medicine',
-    subtitle: 'Foundations',
-    era: 'c1250–c1500',
+    title: 'Trust me, I\'m Following Jupiter',
+    subtitle: 'Medieval Medicine: Beliefs and Causes of Disease',
+    era: 'c.1250–c.1500',
     icon: '⚕️',
     color: '#F5B700',
     colorLight: '#f5e6d3',
 
     hook: {
-      statement: 'Medieval doctors could cure the Black Death with garlic and prayer.',
-      isTrue: false,
-      accentWords: ['Black Death', 'garlic and prayer'],
-      explanation: 'Medieval doctors had no concept of bacteria or infection. Around 1 in 3 people in England died — and every treatment failed.',
-      storyLines: [
-        'England, 1348. A ship docks at a southern port.',
-        'Within weeks, people are dying in the streets.',
-        'One third of the entire population will be dead within a year.',
-        'The best doctors in England had a plan...',
-      ],
-      wrongFeedback: "They absolutely believed they could. But roughly 1 in 3 people died anyway.",
-      correctFeedback: "Right. Nothing worked. And that tells us everything about medieval medicine.",
-      bigQuestion: "Why couldn't the best doctors in the world stop it?",
-      revealItems: [
-        {
-          emoji: '🩸',
-          label: 'They thought blood caused it',
-          detail: 'The Four Humours theory said illness was an imbalance in blood, phlegm, yellow bile or black bile. So they bled patients to remove "excess blood".',
-          color: '#FF5D73',
-          bg: 'rgba(255,93,115,.08)',
-        },
-        {
-          emoji: '💨',
-          label: 'They blamed the smell',
-          detail: 'Miasma theory said bad air from rotting matter caused disease. Doctors carried posies of flowers to block the smell. It did nothing.',
-          color: '#FFC857',
-          bg: 'rgba(255,200,87,.08)',
-        },
-        {
-          emoji: '🙏',
-          label: 'They prayed for God to stop it',
-          detail: "The Church taught illness was God's punishment for sin. People whipped themselves in public to show repentance. The plague kept spreading.",
-          color: '#F5B700',
-          bg: 'rgba(245,183,0,.08)',
-        },
-      ],
-      punchline: 'Nobody knew about bacteria. Nobody knew about fleas on rats. This module explains why — and how medicine slowly changed.',
-    },
-
-    intro: {
-      retrieval: {
-        question: 'What were the Four Humours that medieval doctors believed controlled health?',
-        options: [
-          'Fire, water, earth and air',
-          'Blood, phlegm, yellow bile and black bile',
-          'Heart, liver, brain and lungs',
-          'Hot, cold, wet and dry',
-        ],
-        correctIndex: 1,
-        explanation: "The Four Humours (blood, phlegm, yellow bile, black bile) came from ancient Greek medicine. Illness meant imbalance — doctors tried to restore it by bleeding, purging or changing diet.",
-      },
-      learningGoals: [
-        'Explain the four main causes medieval people gave for illness',
-        "Describe at least three medieval treatments and why doctors used them",
-        'Distinguish between rational and supernatural explanations',
-        "Explain how and why Galen's ideas dominated medicine for 1,000 years",
-        'Describe the Black Death and why nobody could stop it',
-      ],
+      statement: 'Medieval doctors deliberately removed blood from sick patients because they believed it would make them healthier.',
+      isTrue: true,
+      accentWords: ['deliberately removed blood', 'make them healthier'],
+      explanation: 'True. Which is alarming, obviously. But to medieval doctors, bloodletting was not random cruelty. They believed illness happened when the body fell out of balance. So if they thought you had too much blood? They tried to remove some.',
     },
 
     outcomes: {
-      intro: "By the end of this chapter, you'll understand why medieval medicine was so bad — and why that made complete sense at the time.",
+      intro: "By the end, you'll understand why this made sense.",
       bullets: [
-        'Explain why people genuinely believed disease was sent by God',
-        'Describe what a medieval doctor actually looked like and did',
-        'See why bloodletting and the miasma theory made medical sense — even though they killed people',
-        'Link the Black Death to the first cracks in medieval medical thinking',
+        'Why medieval people blamed illness on unbalanced humours',
+        "God's punishment for sin",
+        'Bad air — and why it seemed like a reasonable explanation',
+        'The influence of the stars and planets on diagnosis',
+        'Ancient authorities like Hippocrates and Galen',
+        'Why doctors sometimes looked at Jupiter before treating a fever',
       ],
     },
 
-    recall: {
-      questions: [
-        { type: 'truefalse', question: 'Medieval doctors thought bad smells caused the plague.', isTrue: true },
-        { type: 'choice', question: 'What did medieval doctors trust most?', options: ['Galen\'s 1,000-year-old writings', 'Dissecting real human bodies', 'Observations of sick patients'], correct: 0 },
-        { type: 'connection', question: 'The Black Death changed medicine because...', options: [
-          { text: 'It wiped out the physicians who knew Galen', icon: 'book' },
-          { text: 'People began to question if old ideas actually worked', icon: 'lightbulb' },
-          { text: 'The Church banned Galenic medicine', icon: 'warning' },
-        ], correct: 1 },
-      ],
-    },
     screens: [
+      // ── Screen 3: GuidedChoiceCarousel — Thomas chooses his healer ──────────
       {
-        label: 'Causes',
-        kicker: 'Core Knowledge',
-        heading: 'Why Did People Get Ill?',
-        sub: 'Medieval medicine blamed four things. None of them were germs.',
-        blocks: [
-          { type: 'read', label: '📖 Core Knowledge', text: 'Medieval people believed illness was caused by four main things: the <strong>Four Humours</strong> (blood, phlegm, yellow bile, black bile), <strong>miasma</strong> (bad air from rotting matter), <strong>God\'s punishment</strong> for sin, and <strong>astrology</strong> — the position of stars and planets.' },
-          { type: 'keypoint', text: 'Medieval explanations were a mix of <strong>traditional beliefs</strong>, religious influence and limited scientific understanding.' },
-          { type: 'funfact', label: '🤯 Crazy But True', text: 'People genuinely believed bad smells could cause disease. To be fair, if your street smelled like death soup, you might also panic-blame the air.' },
-          { type: 'quiz', question: 'Would blood, phlegm and bile actually explain disease?', options: [
-            { text: 'No — it was wrong, but it seemed logical because doctors believed health meant balance', correct: true },
-            { text: 'Yes — humours are the same as germs', correct: false },
-            { text: 'Yes — it proved blood caused every illness', correct: false },
-            { text: 'No — but medieval doctors already understood bacteria', correct: false },
-          ], explanation: 'The Four Humours were wrong, but they felt logical because doctors believed health meant balance inside the body.' },
-        ]
-      },
-      {
-        label: 'Treatments',
-        kicker: 'What Did They Actually Do?',
-        heading: 'Treatments: Would This Actually Help?',
-        sub: 'Medieval treatments matched medieval beliefs. Wrong cause = wrong cure.',
-        blocks: [
-          { type: 'read', label: '📖 Core Knowledge', text: 'Medieval treatments matched medieval beliefs. If illness came from humour imbalance, doctors used <strong>bloodletting</strong>, <strong>purging</strong> or fasting to rebalance the body. If illness came from sin, people used <strong>prayer</strong>, confession, pilgrimage or relics. <strong>Herbal remedies</strong> were common and sometimes soothing. <strong>Barber surgeons</strong> did practical work like bloodletting, tooth-pulling, cauterisation and basic surgery — often without anaesthetic.' },
-          { type: 'keypoint', text: '<strong>Exam memory:</strong> treatments often failed because they were based on mistaken causes, but people trusted them because they fitted accepted beliefs.' },
-          { type: 'funfact', label: '🤯 Crazy But True', text: 'Cauterisation meant burning a wound shut. Yes, with heat. No, you would not enjoy the customer experience survey afterwards.' },
-          { type: 'examtip', label: '🗡️ Exam Assassin', phrases: ['limited understanding', 'traditional beliefs', 'religious influence'], tip: 'These phrases turn "they were wrong" into proper GCSE explanation.' },
-          { type: 'quiz', question: 'Why did people use bloodletting?', options: [
-            { text: 'They believed removing blood could rebalance the humours', correct: true },
-            { text: 'It was required by law', correct: false },
-            { text: 'They knew blood carried bacteria', correct: false },
-            { text: 'It made patients immune to disease', correct: false },
-          ], explanation: 'Removing blood was meant to rebalance the humours and restore health. It was based on a wrong theory, but made sense to people at the time.' },
-        ]
-      },
-      {
-        label: 'Rational vs Supernatural',
-        kicker: 'Exam Thinking',
-        heading: 'Rational or Supernatural?',
-        sub: 'A key distinction examiners love. Rational does NOT mean correct.',
-        blocks: [
-          { type: 'examtip', label: '🗡️ Exam Shortcut', text: '<strong>Rational</strong> = based on observation, logic or experience. <strong>Supernatural</strong> = based on God, religion, magic or astrology. <strong>Miasma</strong> was considered rational because it used observation and logic about bad smells and disease. <strong>God\'s punishment</strong> was supernatural because it relied on religion and belief.' },
-          { type: 'reveal', label: '⚡ Rapid Fire Sort', prompt: 'Sort each one: miasma / prayer / four humours / astrology / herbal remedies', answer: 'Miasma = rational. Prayer = supernatural. Four Humours = rational. Astrology = supernatural. Herbal remedies = rational/natural treatment.' },
-          { type: 'quiz', question: 'Why was miasma considered rational even though it was incorrect?', options: [
-            { text: 'It was based on observation and logical thinking about bad smells and disease spread, even though people had limited scientific understanding', correct: true },
-            { text: 'Because it was proven in a laboratory', correct: false },
-            { text: 'Because the Church approved it', correct: false },
-            { text: 'Because miasma and germ theory said the same thing', correct: false },
-          ], explanation: 'Rational means based on logic and observation — not necessarily correct. Miasma seemed to fit the evidence available.' },
-        ]
-      },
-      {
-        label: 'Galen & Church',
-        kicker: 'Authority & Influence',
-        heading: 'Hippocrates, Galen & the Church',
-        sub: 'Why did wrong ideas last for 1,000 years? Authority, tradition and religion.',
-        blocks: [
-          { type: 'read', label: '📖 Core Knowledge', text: '<strong>Hippocrates</strong> promoted observation and linked illness to imbalance in the Four Humours. <strong>Galen</strong> built on this with the <strong>Theory of Opposites</strong> and became hugely influential. People trusted them because ancient texts were respected, taught in universities and supported by the Church. These ideas lasted for centuries with very little change. This is called <strong>continuity</strong>.' },
-          { type: 'keypoint', text: 'The Church helped keep Galen\'s ideas alive by teaching them in universities and discouraging dissection. <strong>This both helped medicine (preserved knowledge) and hindered it (discouraged challenge).</strong>' },
-          { type: 'quiz', question: 'Why did Galen\'s ideas survive unchallenged for so long?', options: [
-            { text: 'The Church preserved his works and discouraged questioning ancient authority', correct: true },
-            { text: 'Galen was always completely correct', correct: false },
-            { text: 'Dissection proved Galen right', correct: false },
-            { text: 'Nobody read his books', correct: false },
-          ], explanation: 'The Church treated Galen\'s texts almost like holy scripture. Questioning Galen meant questioning the Church — which was dangerous.' },
-        ]
-      },
-      {
-        label: 'Black Death',
-        type: 'cinematic',
-        videoSrc: '/videos/black-death-reveal.mp4',
-        year: '1348.',
-        paragraphs: [
+        type: 'guidedChoiceCarousel',
+        id: 'healer-carousel',
+        label: 'Choose Your Healer',
+        headline: 'Thomas has a fever.\nHe\'s coughing blood.',
+        question: 'Who should he trust?',
+        helperText: 'Swipe to explore your options.',
+        promptVisual: '/figures/history/medicine/medieval/thomas-doodle.png',
+        options: [
           {
-            text: 'The Black Death tore through England, wiping out a third of the population.',
-            highlights: ['a third'],
+            title: 'Physician',
+            image: '/figures/history/medicine/medieval/physician.png',
+            sections: [
+              { heading: 'Favourite methods', items: ['Astrology', 'Urine charts', 'Four Humours'] },
+              { heading: 'Cost', items: ['💰💰💰💰💰'] },
+              { heading: 'Thomas confidence', items: ['⭐⭐⭐⭐⭐⭐☆☆☆☆'] },
+            ],
+            reaction: '"At least he looks expensive."',
+            buttonText: 'Choose the Physician',
+            nextScreenId: 'reveal-physician',
           },
           {
-            text: 'Entire families vanished within days.',
-            highlights: ['vanished'],
+            title: 'Barber Surgeon',
+            image: '/figures/history/medicine/medieval/barber-surgeon.png',
+            sections: [
+              { heading: 'Favourite methods', items: ['Bloodletting', 'Tooth-pulling', 'Basic surgery'] },
+              { heading: 'Cost', items: ['💰💰'] },
+              { heading: 'Thomas confidence', items: ['⭐⭐⭐⭐☆☆☆☆☆☆'] },
+            ],
+            reaction: '"Why is he carrying a knife?"',
+            buttonText: 'Choose the Barber Surgeon',
+            nextScreenId: 'reveal-barber',
           },
           {
-            text: 'Victims were left covered in swollen black buboes while terrified townspeople prayed, carried herbs, or simply waited to die.',
-            highlights: ['swollen black buboes', 'prayed'],
+            title: 'Wise Woman',
+            image: '/figures/history/medicine/medieval/wise-woman.png',
+            sections: [
+              { heading: 'Favourite methods', items: ['Herbs', 'Poultices', 'Traditional remedies'] },
+              { heading: 'Cost', items: ['💰'] },
+              { heading: 'Thomas confidence', items: ['⭐⭐⭐⭐⭐☆☆☆☆☆'] },
+            ],
+            reaction: '"Honestly, she seems the least terrifying."',
+            buttonText: 'Choose the Wise Woman',
+            nextScreenId: 'reveal-wise-woman',
+          },
+          {
+            title: 'Priest',
+            image: '/figures/history/medicine/medieval/priest.png',
+            sections: [
+              { heading: 'Favourite methods', items: ['Prayer', 'Confession', 'Repentance'] },
+              { heading: 'Cost', items: ['💰'] },
+              { heading: 'Thomas confidence', items: ['⭐⭐⭐☆☆☆☆☆☆☆'] },
+            ],
+            reaction: '"I was hoping for medicine."',
+            buttonText: 'Choose the Priest',
+            nextScreenId: 'reveal-priest',
           },
         ],
       },
+
+      // ── Choice reveal interstitials — all converge to quick-recall-healers ──
       {
-        label: 'Flashcards',
-        kicker: 'Final Recap',
-        heading: 'Flashcards',
-        sub: 'Tap to flip. Lock in the key facts.',
+        type: 'choiceReveal',
+        id: 'reveal-physician',
+        label: 'Your choice',
+        nextId: 'quick-recall-healers',
+        paragraphs: [
+          'Thomas chooses the physician.',
+          'The physician looks serious, educated and expensive.',
+          'Then he reaches for an astrology chart.',
+          'Thomas is not reassured.',
+        ],
+      },
+      {
+        type: 'choiceReveal',
+        id: 'reveal-barber',
+        label: 'Your choice',
+        nextId: 'quick-recall-healers',
+        paragraphs: [
+          'Thomas chooses the barber surgeon.',
+          'This man is practical, experienced and very comfortable around sharp objects.',
+          'That is either good news or extremely bad news.',
+        ],
+      },
+      {
+        type: 'choiceReveal',
+        id: 'reveal-wise-woman',
+        label: 'Your choice',
+        nextId: 'quick-recall-healers',
+        paragraphs: [
+          'Thomas chooses the wise woman.',
+          'She cannot offer university medicine.',
+          'But she knows the local plants, the local people and what ordinary families can afford.',
+        ],
+      },
+      {
+        type: 'choiceReveal',
+        id: 'reveal-priest',
+        label: 'Your choice',
+        nextId: 'quick-recall-healers',
+        paragraphs: [
+          'Thomas chooses the priest.',
+          'The priest listens carefully.',
+          'Then he suggests prayer, confession and repentance.',
+          'Thomas is beginning to suspect medieval healthcare is not going to be straightforward.',
+        ],
+      },
+
+      // ── Screen 4: QuickRecallScreen — who was who ─────────────────────────
+      {
+        type: 'quickRecall',
+        id: 'quick-recall-healers',
+        label: 'Quick Recall: Who Was Who?',
+        questions: [
+          {
+            type: 'choice',
+            question: 'Who was usually university-trained and expensive?',
+            options: ['Physician', 'Wise woman', 'Priest', 'Barber surgeon'],
+            correct: 0,
+            explanation: 'Physicians were trained, respected and mostly used by wealthier people.',
+          },
+          {
+            type: 'choice',
+            question: 'Who carried out bloodletting and basic surgery?',
+            options: ['Priest', 'Barber surgeon', 'Physician', 'Wise woman'],
+            correct: 1,
+            explanation: 'Barber surgeons did the hands-on work. Often with blades. Comforting.',
+          },
+          {
+            type: 'choice',
+            question: 'Who offered prayer and repentance as treatment?',
+            options: ['Priest', 'Wise woman', 'Physician', 'Barber surgeon'],
+            correct: 0,
+            explanation: 'Religion shaped how many medieval people understood illness.',
+          },
+        ],
+      },
+
+      // ── Screen 5: ConceptReveal — nobody knew about germs ─────────────────
+      {
+        type: 'conceptReveal',
+        label: 'The Germ Problem',
+        steps: [
+          {
+            eyebrow: 'The fundamental problem',
+            mainText: 'Nobody knew about germs.',
+          },
+          {
+            eyebrow: 'What we know now',
+            mainText: 'Today, we know many diseases are caused by bacteria or viruses.',
+          },
+          {
+            eyebrow: 'What they didn\'t know',
+            mainText: 'Medieval people did not.',
+            supportText: 'No microscopes. No germ theory. No idea that tiny organisms could spread disease.',
+          },
+          {
+            mainText: 'But people still got sick.',
+            supportText: 'So medieval doctors needed explanations. And they had plenty.',
+          },
+        ],
+      },
+
+      // ── Screen 6: ConceptReveal — The Four Humours ────────────────────────
+      {
+        type: 'conceptReveal',
+        label: 'The Four Humours',
+        steps: [
+          {
+            eyebrow: 'The most important medieval idea',
+            mainText: 'The Theory of the Four Humours.',
+          },
+          {
+            mainText: 'Doctors believed the body contained four important fluids.',
+            microPoints: ['Blood', 'Phlegm', 'Yellow bile', 'Black bile'],
+          },
+          {
+            eyebrow: 'The logic',
+            mainText: 'If these humours were balanced, you were healthy.',
+          },
+          {
+            mainText: 'If they became unbalanced, you became ill.',
+            supportText: 'Simple idea. Huge consequences.',
+          },
+        ],
+      },
+
+      // ── Screen 7: FillInTheBlanks ─────────────────────────────────────────
+      {
+        label: 'Fill the Gap',
+        kicker: 'Four Humours',
+        heading: 'Fill the Medieval Logic Gap',
+        sub: 'Complete the sentences.',
         blocks: [
-          { type: 'flashcards', cards: [
-            { front: 'Four Humours', back: 'Blood, phlegm, yellow bile and black bile. Imbalance = illness.' },
-            { front: 'Miasma', back: 'Bad air or foul smells believed to cause disease.' },
-            { front: 'Bloodletting', back: 'Removing blood to rebalance the humours.' },
-            { front: 'Galen', back: 'Roman physician whose ideas dominated medicine for 1,000+ years.' },
-            { front: 'The Black Death', back: '1348–49. Killed ~1/3 of England. Caused by bacteria on fleas on rats.' },
-            { front: 'Continuity', back: 'When ideas or practices stay the same over a long period.' },
-            { front: 'Rational', back: 'Based on observation and logic — not necessarily correct.' },
-            { front: 'Barber-surgeon', back: 'Tradesman who performed basic surgery, bloodletting and tooth extraction.' },
-          ]}
-        ]
+          {
+            type: 'fillblanks',
+            sentences: [
+              {
+                before: 'Medieval doctors believed illness was caused by an',
+                after: 'of the Four Humours.',
+                answer: 'imbalance',
+                hints: ['Think: when something is out of balance, it is an...', 'Starts with "i" — the body was no longer in balance.'],
+              },
+              {
+                before: 'The Four Humours were blood, phlegm, yellow bile and',
+                after: 'bile.',
+                answer: 'black',
+                hints: ['This humour was linked with sadness and melancholy.', 'One of the darkest colours — starts with "b."'],
+              },
+              {
+                before: 'If the humours were balanced, the person was considered',
+                after: '.',
+                answer: 'healthy',
+                hints: ['The opposite of ill.', 'Balance = being in good health.'],
+              },
+            ],
+          },
+        ],
+      },
+
+      // ── Screen 8: InteractiveHotspotImage — Four Humours body diagram ──────
+      {
+        type: 'interactiveImage',
+        id: 'four-humours-hotspot',
+        label: 'Explore the Humours',
+        title: 'Tap the Four Humours',
+        introText: 'Medieval doctors believed the body contained four vital fluids. Each humour had its own qualities — and its own associated illness when it went out of balance.',
+        image: '/figures/history/medicine/medieval/four-humours-body.png',
+        imageAlt: 'Medieval symbolic body diagram showing the positions of the Four Humours',
+        ctaLabel: 'Explore the body',
+        hotspots: [
+          {
+            id: 'blood', x: 48, y: 22,
+            shortLabel: 'Blood', title: 'Blood', icon: '🩸',
+            description: 'Linked with warmth, energy and a cheerful personality. Too much blood could be blamed for fever or a red face.',
+            extraFact: 'If a physician diagnosed excess blood, they would use bloodletting — cutting a vein or applying leeches — to "restore balance."',
+          },
+          {
+            id: 'phlegm', x: 52, y: 35,
+            shortLabel: 'Phlegm', title: 'Phlegm', icon: '💧',
+            description: 'Linked with coldness and calmness. Too much phlegm could be linked to coughs, colds and sluggishness.',
+            extraFact: 'The word "phlegmatic" — meaning calm and unemotional — comes directly from this humour.',
+          },
+          {
+            id: 'yellow_bile', x: 40, y: 52,
+            shortLabel: 'Yellow Bile', title: 'Yellow Bile', icon: '🟡',
+            description: 'Linked with heat and anger. Too much yellow bile could be blamed for fever or vomiting sickness.',
+            extraFact: 'Someone described as "bilious" — irritable or short-tempered — is still using this ancient medical vocabulary today.',
+          },
+          {
+            id: 'black_bile', x: 58, y: 62,
+            shortLabel: 'Black Bile', title: 'Black Bile', icon: '🖤',
+            description: 'Linked with sadness and melancholy. Too much black bile could be blamed for low mood or a wasting illness.',
+            extraFact: 'The word "melancholy" comes from the Greek for "black bile." Medieval doctors thought depression was literally a bodily fluid problem.',
+          },
+        ],
+      },
+
+      // ── Screen 9: QuickRecallScreen — Four Humours check ─────────────────
+      {
+        type: 'quickRecall',
+        label: 'Four Humours Check',
+        questions: [
+          {
+            type: 'choice',
+            question: 'What did medieval doctors believe caused illness?',
+            options: ['An imbalance of humours', 'Bacteria', 'Lack of vitamins', 'Electricity'],
+            correct: 0,
+            explanation: 'They believed the body had fallen out of balance.',
+          },
+          {
+            type: 'choice',
+            question: 'Which humour was linked with sadness?',
+            options: ['Blood', 'Phlegm', 'Black bile', 'Yellow bile'],
+            correct: 2,
+            explanation: 'Black bile was linked with melancholy.',
+          },
+          {
+            type: 'choice',
+            question: 'Which humour was linked with coughs and coldness?',
+            options: ['Phlegm', 'Blood', 'Yellow bile', 'Black bile'],
+            correct: 0,
+            explanation: 'Phlegm was linked with cold, wet illnesses.',
+          },
+        ],
+      },
+
+      // ── Screen 10: ExplainReveal — Theory of Opposites ────────────────────
+      {
+        label: 'Theory of Opposites',
+        kicker: 'Galenic Medicine',
+        heading: 'Opposites Cure Opposites',
+        sub: 'The logical chain that made bloodletting make sense.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            title: 'Opposites cure opposites',
+            steps: [
+              { id: 'galen-1', statement: 'Galen developed the idea of the Four Humours further.' },
+              { id: 'galen-2', statement: 'He argued that if the body was out of balance, treatment should', emphasis: 'restore balance.' },
+              { id: 'opposites', statement: 'This became known as the', emphasis: 'Theory of Opposites.' },
+              {
+                id: 'application',
+                statement: 'If an illness seemed hot, use something cold.',
+                detail: 'If it seemed wet, use something dry. If there was too much blood, remove blood.',
+              },
+              { id: 'punchline', statement: 'This is where medieval medicine starts sounding less random.', emphasis: 'Still wrong. But less random.' },
+            ],
+          },
+        ],
+      },
+
+      // ── Screen 11: Scenario Challenge ────────────────────────────────────
+      {
+        label: 'Doctor Mode',
+        kicker: 'Apply the Logic',
+        heading: 'Medieval Doctor Mode',
+        sub: 'Thomas has a fever. Apply what you know.',
+        blocks: [
+          {
+            type: 'scenario',
+            label: 'Medieval Doctor Decision',
+            scenarios: [
+              {
+                situation: 'Thomas has a fever, a red face and a pounding headache. A medieval doctor thinks he has too much blood. What treatment would seem logical?',
+                options: ['Give antibiotics', 'Remove blood', 'Use a microscope', 'Give a vaccine'],
+                correctIndex: 1,
+                explanation: 'If too much blood caused the illness, removing blood seemed like a way to restore balance. This is why bloodletting made sense to them. Not to Thomas, obviously.',
+              },
+            ],
+            completionText: 'That\'s the logic: wrong cause, but internally consistent treatment.',
+          },
+        ],
+      },
+
+      // ── Screen 12: ConceptReveal — bloodletting logic ─────────────────────
+      {
+        type: 'conceptReveal',
+        label: 'The Logic of Bloodletting',
+        steps: [
+          {
+            eyebrow: 'Let\'s follow the logic',
+            mainText: 'So… let\'s bleed the patient.',
+          },
+          {
+            mainText: 'Bloodletting was used because doctors believed it could rebalance the Four Humours.',
+            supportText: 'They might cut a vein or use leeches to remove blood.',
+          },
+          {
+            eyebrow: 'The chain of reasoning',
+            mainText: 'Too much blood → body out of balance → remove blood → restore balance.',
+          },
+          {
+            mainText: 'Was it usually helpful? No.',
+            supportText: 'Did they think it was? Very much yes.',
+          },
+        ],
+      },
+
+      // ── Screen 13: Retrieval Q&A — lock it in ────────────────────────────
+      {
+        label: 'Lock It In',
+        kicker: 'Retrieval Practice',
+        heading: 'Lock It In',
+        sub: 'Tap each question. Think of your answer. Then reveal.',
+        blocks: [
+          {
+            type: 'reveal',
+            label: 'Retrieval: Bloodletting',
+            prompt: 'Bloodletting was linked to which theory?',
+            answer: 'The Theory of the Four Humours / humoural theory.',
+          },
+          {
+            type: 'reveal',
+            label: 'Retrieval: Opposites',
+            prompt: 'What did the Theory of Opposites try to restore?',
+            answer: 'Balance within the body.',
+          },
+          {
+            type: 'reveal',
+            label: 'Retrieval: Why bloodletting',
+            prompt: 'Why did bloodletting seem logical?',
+            answer: 'Doctors believed removing excess blood could rebalance the body and restore health.',
+          },
+          {
+            type: 'examtip',
+            label: '🗡️ Exam Assassin',
+            tip: 'This is a high-value exam link: <strong>belief → treatment</strong>. Never just say "they used bloodletting." Always explain why it seemed logical given their beliefs.',
+          },
+        ],
+      },
+
+      // ── Screen 14: ExplainReveal — two dead Greeks ran medicine ──────────
+      {
+        label: 'Hippocrates & Galen',
+        kicker: 'Ancient Authorities',
+        heading: 'Two Dead Greeks Ran Medieval Medicine',
+        sub: 'Why did ideas from 400 BC still control treatment in 1300?',
+        blocks: [
+          {
+            type: 'explainReveal',
+            title: 'Two dead Greeks ran medieval medicine',
+            steps: [
+              { id: 'ancient-1', statement: 'A lot of medieval medicine came from ancient Greek and Roman writers.' },
+              { id: 'hippocrates', statement: 'Hippocrates developed the idea of the Four Humours and encouraged doctors to', emphasis: 'observe patients.' },
+              { id: 'galen', statement: 'Galen built on this and promoted the Theory of Opposites, becoming hugely influential.' },
+              {
+                id: 'dominance',
+                statement: 'By the medieval period, their ideas had been copied, taught and trusted for centuries.',
+                detail: 'This is called continuity — ideas staying the same over a long period.',
+              },
+              { id: 'punchline', statement: 'Medicine was partly controlled by two men who had been dead for', emphasis: 'a very long time.' },
+            ],
+          },
+        ],
+      },
+
+      // ── Screen 15: QuickRecallScreen — who said what ─────────────────────
+      {
+        type: 'quickRecall',
+        label: 'Who Said What?',
+        questions: [
+          {
+            type: 'choice',
+            question: 'Who is linked with developing the Four Humours?',
+            options: ['Hippocrates', 'Pasteur', 'Vesalius', 'Lister'],
+            correct: 0,
+            explanation: 'Hippocrates developed the Four Humours theory and encouraged observation of patients.',
+          },
+          {
+            type: 'choice',
+            question: 'Who developed the Theory of Opposites?',
+            options: ['Galen', 'Nightingale', 'Jenner', 'Koch'],
+            correct: 0,
+            explanation: 'Galen built on Hippocrates and developed the Theory of Opposites.',
+          },
+          {
+            type: 'choice',
+            question: 'What did both Hippocrates and Galen become in medieval medicine?',
+            options: ['Ancient authorities', 'Surgeons', 'Plague doctors', 'Monks'],
+            correct: 0,
+            explanation: 'Medieval doctors trusted ancient authorities heavily — their texts were treated almost like scripture.',
+          },
+        ],
+      },
+
+      // ── Screen 16: ExplainReveal — The Church copy-paste machine ─────────
+      {
+        label: 'The Church & Medicine',
+        kicker: 'The Church\'s Role',
+        heading: 'The Church Copy-Paste Machine',
+        sub: 'How religion kept 1,000-year-old ideas alive.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            title: 'The Church copy-paste machine',
+            steps: [
+              { id: 'church-1', statement: 'The Church was extremely powerful in medieval Europe.' },
+              { id: 'church-2', statement: 'Monasteries copied and preserved ancient medical books.' },
+              { id: 'church-3', statement: 'Universities often taught', emphasis: 'Galen\'s ideas.' },
+              {
+                id: 'church-4',
+                statement: 'Galen\'s ideas also fitted Christian beliefs because he suggested the body had been designed with purpose.',
+                detail: 'Questioning accepted ideas was difficult — and dangerous.',
+              },
+              { id: 'church-5', statement: 'When the Church backs your theory, your theory gets', emphasis: 'excellent brand protection.' },
+            ],
+          },
+        ],
+      },
+
+      // ── Screen 17: Retrieval Q&A — why old ideas survived ────────────────
+      {
+        label: 'Why Old Ideas Survived',
+        kicker: 'Retrieval Practice',
+        heading: 'Why Did Old Ideas Survive?',
+        sub: 'Think of your answer, then reveal.',
+        blocks: [
+          {
+            type: 'reveal',
+            label: 'Retrieval: Church & Galen',
+            prompt: 'Give one reason Galen\'s ideas stayed influential.',
+            answer: 'The Church supported and promoted them / universities taught them / monasteries copied the books / lack of alternatives / Galen\'s ideas fitted Christian beliefs.',
+          },
+          {
+            type: 'reveal',
+            label: 'Retrieval: Challenging Galen',
+            prompt: 'Why was challenging Galen difficult?',
+            answer: 'The Church supported his ideas and education was controlled by religious institutions — challenging Galen meant challenging the Church.',
+          },
+          {
+            type: 'reveal',
+            label: 'Retrieval: Limited medicine',
+            prompt: 'What was limited in medieval medicine?',
+            answer: 'Dissection, scientific testing and the ability to challenge ancient authorities.',
+          },
+          {
+            type: 'examtip',
+            label: '🗡️ Exam phrase to remember',
+            tip: '<strong>The Church preserved and promoted Galen\'s ideas.</strong> This helps with "why progress was limited" questions.',
+          },
+        ],
+      },
+
+      // ── Screen 18: ExplainReveal — astrology ─────────────────────────────
+      {
+        label: 'Astrology & Medicine',
+        kicker: 'Stars and Planets',
+        heading: 'Trust Me, I\'m Following Jupiter',
+        sub: 'Medieval physicians used the stars to guide treatment.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            title: 'Trust me, I\'m following Jupiter',
+            steps: [
+              { id: 'astrology-1', statement: 'Medieval physicians also used', emphasis: 'astrology.' },
+              { id: 'astrology-2', statement: 'They believed the stars and planets could influence health.' },
+              { id: 'astrology-3', statement: 'Some doctors used astrological charts to decide when treatment should happen.' },
+              { id: 'zodiac', statement: 'The Zodiac Man showed which zodiac signs were linked to different parts of the body.' },
+              { id: 'punchline', statement: 'Imagine coughing blood and your doctor says:', emphasis: '"Let\'s check Saturn."' },
+            ],
+          },
+        ],
+      },
+
+      // ── Screen 19: InteractiveHotspotImage — The Zodiac Man ──────────────
+      {
+        type: 'interactiveImage',
+        id: 'zodiac-man-hotspot',
+        label: 'The Zodiac Man',
+        title: 'The Zodiac Man',
+        introText: 'Tap the body parts to see how astrology was linked to medicine. Medieval physicians used charts like this to guide diagnosis and decide when to treat.',
+        image: '/figures/history/medicine/medieval/zodiac-man.png',
+        imageAlt: 'Medieval Zodiac Man diagram linking zodiac signs to body parts',
+        ctaLabel: 'Explore the Zodiac Man',
+        hotspots: [
+          {
+            id: 'head', x: 50, y: 8,
+            shortLabel: 'Head', title: 'Head — Aries', icon: '♈',
+            description: 'Linked to Aries. Doctors believed zodiac signs influenced different body parts and that treatment should align with planetary positions.',
+            extraFact: 'A physician might refuse to bleed a patient if the moon was in the sign governing that body part.',
+          },
+          {
+            id: 'chest', x: 50, y: 30,
+            shortLabel: 'Chest', title: 'Chest & Heart', icon: '♌',
+            description: 'Associated with signs affecting the upper body. Timing of treatment — especially bloodletting — was sometimes chosen using these charts.',
+            extraFact: 'Some medical texts included detailed astrological calendars showing the best and worst days for different treatments.',
+          },
+          {
+            id: 'stomach', x: 50, y: 50,
+            shortLabel: 'Stomach', title: 'Stomach & Digestion', icon: '♍',
+            description: 'Linked to digestion and internal balance. The combination of humours and astrology created a complex system of overlapping explanations.',
+            extraFact: 'Not every doctor relied equally on astrology — university-trained physicians used it more than barber surgeons or wise women.',
+          },
+          {
+            id: 'legs', x: 50, y: 78,
+            shortLabel: 'Legs & Feet', title: 'Legs & Feet — Pisces', icon: '♓',
+            description: 'Linked to lower-body signs. The Zodiac Man was found in many medical manuscripts and was a standard part of learned medicine.',
+            extraFact: 'The Zodiac Man diagram appeared in medical books across Europe — it was not a fringe idea. It was mainstream learned medicine.',
+          },
+        ],
+      },
+
+      // ── Screen 20: QuickRecallScreen — astrology check ────────────────────
+      {
+        type: 'quickRecall',
+        label: 'Astrology Check',
+        questions: [
+          {
+            type: 'choice',
+            question: 'What did medieval doctors believe astrology could influence?',
+            options: ['Health', 'Electricity', 'Germs', 'Vaccines'],
+            correct: 0,
+            explanation: 'Astrology was taken seriously as part of learned medicine.',
+          },
+          {
+            type: 'choice',
+            question: 'What was the Zodiac Man used for?',
+            options: ['Linking signs of the zodiac to body parts', 'Showing muscles', 'Explaining bacteria', 'Teaching surgery'],
+            correct: 0,
+            explanation: 'The Zodiac Man helped physicians decide when and where to treat based on planetary positions.',
+          },
+          {
+            type: 'choice',
+            question: 'Astrology was mainly used by which practitioner?',
+            options: ['Physician', 'Barber surgeon', 'Wise woman', 'Dentist'],
+            correct: 0,
+            explanation: 'Astrology was part of learned, university-trained medicine — especially for physicians.',
+          },
+        ],
+      },
+
+      // ── Screen 21: ExplainReveal — miasma ────────────────────────────────
+      {
+        label: 'Miasma',
+        kicker: 'Bad Air',
+        heading: 'Bad Air. Bad Vibes. Bad Diagnosis.',
+        sub: 'They blamed the smell. They weren\'t wrong about the places — just the reason.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            title: 'Bad air. Bad vibes. Bad diagnosis.',
+            steps: [
+              { id: 'miasma-1', statement: 'Another common explanation was', emphasis: 'miasma.' },
+              { id: 'miasma-2', statement: 'Miasma meant bad air or poisonous smells.' },
+              { id: 'miasma-3', statement: 'People linked disease to rotting waste, dirt, swamps and foul smells.' },
+              {
+                id: 'miasma-logic',
+                statement: 'This idea made some sense from observation.',
+                detail: 'Dirty, smelly places often were unhealthy. They just misunderstood why.',
+              },
+              { id: 'miasma-punchline', statement: 'They blamed the smell.', emphasis: 'The real problem was usually what lived in the filth.' },
+            ],
+          },
+        ],
+      },
+
+      // ── Screen 22: QuickRecallScreen — miasma check ──────────────────────
+      {
+        type: 'quickRecall',
+        label: 'Miasma Check',
+        questions: [
+          {
+            type: 'choice',
+            question: 'What was miasma?',
+            options: ['Bad air', 'Bad blood', 'Bad luck', 'Bad bones'],
+            correct: 0,
+            explanation: 'Miasma referred to bad air or poisonous smells believed to cause disease.',
+          },
+          {
+            type: 'choice',
+            question: 'Which place would medieval people most likely link to miasma?',
+            options: ['A clean chapel', 'A rotting pile of waste', 'A fresh loaf of bread', 'A new book'],
+            correct: 1,
+            explanation: 'Foul-smelling, dirty places were linked with disease through miasma theory.',
+          },
+          {
+            type: 'choice',
+            question: 'Why did miasma seem believable?',
+            options: [
+              'Smelly, dirty places were often linked with illness',
+              'They had microscopes',
+              'They knew about bacteria',
+              'It cured plague',
+            ],
+            correct: 0,
+            explanation: 'Miasma was wrong, but it was based on something people could observe — dirty places were genuinely more dangerous.',
+          },
+        ],
+      },
+
+      // ── Screen 23: ExplainReveal — God, sin and sickness ─────────────────
+      {
+        label: 'God & Illness',
+        kicker: 'Religion & Disease',
+        heading: 'God, Sin and Sickness',
+        sub: 'If God causes illness, prayer is the treatment.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            title: 'God, sin and sickness',
+            steps: [
+              { id: 'religion-1', statement: 'Religion shaped everyday life in medieval England.' },
+              { id: 'religion-2', statement: 'Many people believed disease could be', emphasis: 'sent by God.' },
+              {
+                id: 'religion-3',
+                statement: 'Illness might be seen as punishment for sin, a test of faith, or part of God\'s plan.',
+              },
+              {
+                id: 'treatments',
+                statement: 'So treatments could include prayer, confession, repentance, pilgrimages and relics.',
+                detail: 'These were not superstitions — they were logical responses to a religious explanation of disease.',
+              },
+              {
+                id: 'punchline',
+                statement: 'If you think God caused the illness,',
+                emphasis: 'prayer is not "extra." It is the treatment.',
+              },
+            ],
+          },
+        ],
+      },
+
+      // ── Screen 24: QuickRecallScreen — religion check ────────────────────
+      {
+        type: 'quickRecall',
+        label: 'Religion Check',
+        questions: [
+          {
+            type: 'choice',
+            question: 'What did some medieval people believe disease could be?',
+            options: ['Punishment from God', 'A vaccine reaction', 'A vitamin problem', 'A chemical reaction'],
+            correct: 0,
+            explanation: 'The Church taught that illness could be God\'s punishment for sin.',
+          },
+          {
+            type: 'choice',
+            question: 'Which treatment fits a religious explanation of illness?',
+            options: ['Prayer', 'Microscope', 'Antibiotics', 'X-ray'],
+            correct: 0,
+            explanation: 'If illness came from God, then prayer and repentance were the logical treatments.',
+          },
+          {
+            type: 'choice',
+            question: 'Why is religion important in medieval medicine?',
+            options: [
+              'It shaped how people explained illness and chose treatments',
+              'It discovered germs',
+              'It banned all hospitals',
+              'It invented vaccines',
+            ],
+            correct: 0,
+            explanation: 'Religion affected both causes and treatments — a religious explanation of disease produced religious treatments.',
+          },
+        ],
+      },
+
+      // ── Screen 25: Mixed Scenario Challenge ───────────────────────────────
+      {
+        label: 'Diagnose It',
+        kicker: 'Apply Your Knowledge',
+        heading: 'Diagnose Like It\'s 1340',
+        sub: 'Three scenarios. Apply what you\'ve learned.',
+        blocks: [
+          {
+            type: 'scenario',
+            label: 'Scenario 1: Town falls ill',
+            scenarios: [
+              {
+                situation: 'A town smells of rotting waste. Soon after, people become ill. Which explanation would medieval people probably use?',
+                options: ['Miasma', 'Vaccination', 'X-rays', 'DNA'],
+                correctIndex: 0,
+                explanation: 'Bad air was a common explanation for disease near foul-smelling places.',
+              },
+            ],
+            completionText: 'Miasma — the smell was the "cause."',
+          },
+          {
+            type: 'scenario',
+            label: 'Scenario 2: Thomas and the physician',
+            scenarios: [
+              {
+                situation: 'Thomas has a fever. A physician says his humours are unbalanced. Which treatment might follow?',
+                options: ['Bloodletting', 'Antibiotics', 'Chemotherapy', 'MRI scan'],
+                correctIndex: 0,
+                explanation: 'Bloodletting was used to rebalance the humours.',
+              },
+            ],
+            completionText: 'Bloodletting — remove the excess to restore balance.',
+          },
+          {
+            type: 'scenario',
+            label: 'Scenario 3: Plague arrives',
+            scenarios: [
+              {
+                situation: 'A village believes plague has arrived because people have sinned. Which response fits this belief?',
+                options: ['Prayer and repentance', 'Germ theory', 'Vaccination', 'Anaesthetic'],
+                correctIndex: 0,
+                explanation: 'Religious explanations led to religious treatments.',
+              },
+            ],
+            completionText: 'Prayer and repentance — sin caused illness, so faith was the cure.',
+          },
+        ],
+      },
+
+      // ── Screen 26: FaceTheExaminer ────────────────────────────────────────
+      {
+        type: 'faceExaminer',
+        label: 'Face the Examiner',
+        examiner: {
+          question: 'Explain why medieval people believed bloodletting could cure disease. [4 marks]',
+          marks: 4,
+          mark: 2,
+          summary: 'Some understanding shown, but the answer needs to link belief to treatment more explicitly.',
+          markScheme: `Award up to 4 marks for:
+- Medieval doctors believed in the Theory of the Four Humours (1 mark)
+- Illness was caused by an imbalance of the humours (1 mark)
+- Galen\'s Theory of Opposites stated that treatment should restore balance (1 mark)
+- Therefore removing excess blood (bloodletting) seemed a logical way to restore the balance of humours (1 mark)
+Do NOT award marks for simply stating "they did not know about germs" without linking to the humour belief.`,
+          sampleAnswer: 'Medieval doctors believed in the Theory of the Four Humours, which said illness was caused by an imbalance in the body. Galen developed the Theory of Opposites, so doctors believed they could restore balance by removing excess blood. This made bloodletting seem like a logical treatment.',
+          annotations: [
+            {
+              id: 'ann1',
+              target: 'Theory of the Four Humours, which said illness was caused by an imbalance in the body.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Correctly links the humour theory to the concept of imbalance.',
+            },
+            {
+              id: 'ann2',
+              target: 'Galen developed the Theory of Opposites',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Names the relevant authority and theory.',
+            },
+            {
+              id: 'ann3',
+              target: 'removing excess blood. This made bloodletting seem like a logical treatment.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Completes the chain: belief → treatment → logical justification.',
+            },
+          ],
+          improvementPrompts: {},
+          criteriaOptions: [
+            'Names Four Humours',
+            'Explains imbalance',
+            'Names Galen / Theory of Opposites',
+            'Links belief to treatment',
+            'Too vague',
+            'Missing the chain',
+          ],
+        },
+      },
+
+      // ── Screen 27: Worked Example ─────────────────────────────────────────
+      {
+        label: 'The Examiner Explains',
+        kicker: 'What Gets Marks?',
+        heading: 'What Would Get Marks?',
+        sub: '"Explain why medieval people believed bloodletting could cure disease."',
+        blocks: [
+          {
+            type: 'read',
+            label: '✗ Weak answer',
+            text: '<em>"They used bloodletting because they did not know about germs."</em><br/><br/>This is true — but too vague. It does not explain the medieval belief. An examiner cannot award marks for saying they got things wrong without showing you understand <strong>why they thought they were right</strong>.',
+          },
+          {
+            type: 'examtip',
+            label: '✓ Better answer',
+            text: '<em>"Medieval doctors believed in the Theory of the Four Humours, which said illness was caused by an imbalance in the body. Galen developed the Theory of Opposites, so doctors believed they could restore balance by removing excess blood. This made bloodletting seem like a logical treatment."</em>',
+            tip: 'This works because it links: <strong>belief → treatment → explanation.</strong> That is what examiners want. You are not just saying what happened — you are explaining the internal logic that made it seem sensible at the time.',
+          },
+        ],
+      },
+
+      // ── Screen 28: Final Retrieval ────────────────────────────────────────
+      {
+        label: 'Final Retrieval',
+        kicker: 'Final Retrieval',
+        heading: 'Final Retrieval: No Hiding Now',
+        sub: 'Seven questions. Think, then reveal.',
+        blocks: [
+          {
+            type: 'reveal',
+            label: 'Q1',
+            prompt: 'Name the Four Humours.',
+            answer: 'Blood, phlegm, yellow bile, black bile.',
+          },
+          {
+            type: 'reveal',
+            label: 'Q2',
+            prompt: 'What did medieval doctors believe caused illness in the Four Humours theory?',
+            answer: 'Imbalance — the humours were out of balance.',
+          },
+          {
+            type: 'reveal',
+            label: 'Q3',
+            prompt: 'What was miasma?',
+            answer: 'Bad air or poisonous smells believed to cause disease.',
+          },
+          {
+            type: 'reveal',
+            label: 'Q4',
+            prompt: 'Why was Galen important?',
+            answer: 'His ideas dominated medieval medicine — he developed the Theory of Opposites, which underpinned treatments like bloodletting.',
+          },
+          {
+            type: 'reveal',
+            label: 'Q5',
+            prompt: 'Why did the Church help old medical ideas survive?',
+            answer: 'It preserved and promoted ancient texts, taught Galen\'s ideas in universities, and discouraged challenges to accepted authority.',
+          },
+          {
+            type: 'reveal',
+            label: 'Q6',
+            prompt: 'What was the Zodiac Man?',
+            answer: 'A diagram linking zodiac signs to parts of the body, used by physicians to guide diagnosis and treatment timing.',
+          },
+          {
+            type: 'reveal',
+            label: 'Q7',
+            prompt: 'Give one religious explanation for illness.',
+            answer: 'God\'s punishment for sin / a test of faith / part of God\'s plan.',
+          },
+          {
+            type: 'examtip',
+            label: '🗡️ Final thought',
+            tip: 'Next time someone says medieval doctors were just stupid, you can say: <strong>"No. Worse. They were logical with terrible information."</strong>',
+          },
+        ],
       },
     ],
-
-    examiner: {
-      type: '8-mark-explain',
-      board: 'edexcel',
-      subject: 'history',
-      topic: 'medieval-medicine',
-      difficulty: 'standard',
-
-      question: 'Explain two ways in which religion influenced medical treatment in medieval England. [8 marks]',
-      marks: 8,
-      mark: 5,
-      summary: 'Some understanding of religious influence shown, but both points need more developed explanation to reach Level 3.',
-
-      markScheme: `Level 3 (6–8 marks): Detailed explanation of two ways with developed reasoning linking religious belief to specific treatments or practices.
-Level 2 (3–5 marks): Some explanation of religious influence, but at least one point lacks development.
-Level 1 (1–2 marks): Simple identification of religious practices with little or no explanation.
-Award marks for any two of (each requiring explanation not just identification):
-- Church controlled hospitals/monasteries — explanation must include WHY (belief in Christian duty/God's will/charity)
-- Prayer, fasting, pilgrimage as treatments — must link to belief that sin caused disease
-- Four Humours theory endorsed by Church — must show HOW this influenced practical treatment
-- Physicians trained in Church schools, only Church-approved ideas studied
-Do NOT award marks for identifying practices without explaining the religious reasoning.`,
-
-      sampleAnswer: `Religion had a big influence on medical treatment in medieval England. Firstly, the Church ran hospitals and monasteries where sick people could go to get help. Monks and nuns would look after the sick because they believed it was their Christian duty to help others. Secondly, doctors in medieval times believed that illness was caused by God as punishment for sins. This meant that treatments often involved prayer and going on pilgrimages to holy sites, because people thought that if they showed their faith to God, He would cure them. Some people also fasted or confessed their sins as a form of treatment.`,
-
-      annotations: [
-        {
-          id: 'ann1',
-          target: 'the Church ran hospitals and monasteries where sick people could go to get help.',
-          occurrence: 1,
-          type: 'weak',
-          comment: 'Identified but underdeveloped — WHY did the Church do this?',
-        },
-        {
-          id: 'ann2',
-          target: 'Monks and nuns would look after the sick because they believed it was their Christian duty to help others.',
-          occurrence: 1,
-          type: 'strong',
-          comment: 'Good — links practice to religious belief.',
-        },
-        {
-          id: 'ann3',
-          target: 'illness was caused by God as punishment for sins.',
-          occurrence: 1,
-          type: 'strong',
-          comment: 'Accurate causal link.',
-        },
-        {
-          id: 'ann4',
-          target: 'because people thought that if they showed their faith to God, He would cure them.',
-          occurrence: 1,
-          type: 'weak',
-          comment: 'Vague — needs a specific named example (e.g. Canterbury).',
-        },
-        {
-          id: 'ann5',
-          target: 'Some people also fasted or confessed their sins as a form of treatment.',
-          occurrence: 1,
-          type: 'irrelevant',
-          comment: 'Third point — only two ways required; this adds no new marks.',
-        },
-      ],
-
-      improvementPrompts: {
-        ann1: {
-          prompt: '+ Explain WHY the Church ran hospitals',
-          placeholder: 'e.g. The Church believed caring for the sick was a religious duty — a way of serving God and earning salvation...',
-        },
-        ann4: {
-          prompt: '+ Add a specific example of pilgrimage as treatment',
-          placeholder: 'e.g. Pilgrims travelled to the shrine of Thomas Becket at Canterbury Cathedral, believing holy relics could cure disease...',
-        },
-      },
-
-      criteriaOptions: [
-        'Accurate knowledge',
-        'Two clear ways',
-        'Specific evidence',
-        'Explains the impact',
-        'Developed explanation',
-        'Too vague',
-        'Repeats the point',
-        'Missing second way',
-      ],
-    },
   },
 
   {
