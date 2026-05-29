@@ -112,6 +112,7 @@ export default function VisualNarrativeScreen({
           backgroundPosition: 'center top',
           opacity: portraitOpacity,
           transition: 'opacity 700ms ease',
+          filter: 'brightness(2.5)',
           pointerEvents: 'none',
         }} />
 
