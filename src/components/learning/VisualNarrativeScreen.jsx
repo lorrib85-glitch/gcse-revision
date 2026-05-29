@@ -120,7 +120,7 @@ export default function VisualNarrativeScreen({
           position: 'absolute', top: 0, left: 0, right: 0, bottom: '42%',
           backgroundImage: `url(${(beats[1] || {}).image})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center top',
+          backgroundPosition: 'center 25%',
           opacity: timelineOpacity,
           transition: 'opacity 700ms ease',
           pointerEvents: 'none',
