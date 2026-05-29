@@ -108,19 +108,23 @@ export const MODULES = [
           {
             eyebrow: 'The fundamental problem',
             mainText: 'Nobody knew about germs.',
+            backgroundImage: '/figures/history/medicine/medieval/medieval-street.png',
           },
           {
             eyebrow: 'What we know now',
             mainText: 'Today, we know many diseases are caused by bacteria or viruses.',
+            backgroundImage: '/figures/history/medicine/medieval/medieval-street.png',
           },
           {
             eyebrow: 'What they didn\'t know',
             mainText: 'Medieval people did not.',
             supportText: 'No microscopes. No germ theory. No idea that tiny organisms could spread disease.',
+            backgroundImage: '/figures/history/medicine/medieval/medieval-street.png',
           },
           {
             mainText: 'But people still got sick.',
             supportText: 'So medieval doctors needed explanations. And they had plenty.',
+            backgroundImage: '/figures/history/medicine/medieval/medieval-street.png',
           },
         ],
       }
