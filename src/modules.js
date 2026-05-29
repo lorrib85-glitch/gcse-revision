@@ -30,14 +30,11 @@ export const MODULES = [
     },
 
     outcomes: {
-      intro: "By the end, you'll understand why this made sense.",
       bullets: [
-        'Why medieval people blamed illness on unbalanced humours',
-        "God's punishment for sin",
-        'Bad air — and why it seemed like a reasonable explanation',
-        'The influence of the stars and planets on diagnosis',
-        'Ancient authorities like Hippocrates and Galen',
-        'Why doctors sometimes looked at Jupiter before treating a fever',
+        { text: 'Why removing blood seemed sensible',                icon: 'drop'     },
+        { text: 'Why doctors checked the stars',                     icon: 'star'     },
+        { text: 'Why praying was considered medicine',               icon: 'prayer'   },
+        { text: 'Why almost everybody trusted ideas that were wrong', icon: 'question' },
       ],
     },
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { SPACING } from '../../constants/spacing.js'
+import { SUBJECTS } from '../../constants/subjects.js'
+import { RADII } from '../../constants/radii.js'
 
 const IMAGES = {
   History:   '/historybacker.png',
@@ -12,17 +13,6 @@ const IMAGES = {
   Music:     '/historybacker.png',
 }
 
-const PALETTES = {
-  History:   { accent: '#D4A84B', rgb: '212,168,75'  },
-  Biology:   { accent: '#38D27A', rgb: '56,210,122'  },
-  Maths:     { accent: '#2BBE9A', rgb: '43,190,154'  },
-  Sociology: { accent: '#C9B07C', rgb: '201,176,124' },
-  Chemistry: { accent: '#5CC8FF', rgb: '92,200,255'  },
-  Physics:   { accent: '#5DA9E9', rgb: '93,169,233'  },
-  English:   { accent: '#9E3D52', rgb: '158,61,82'   },
-  Music:     { accent: '#C778DD', rgb: '199,120,221' },
-}
-
 function BackBtn({ onClick }) {
   return (
     <button
@@ -31,15 +21,15 @@ function BackBtn({ onClick }) {
       aria-label="Go back"
       style={{
         position: 'absolute', top: 22, left: 18, zIndex: 10,
-        width: 46, height: 46, borderRadius: 999,
-        background: 'rgba(255,255,255,0.05)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        width: 46, height: 46, borderRadius: RADII.pill,
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.05)',
         backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         cursor: 'pointer', transition: 'background 140ms ease',
       }}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="rgba(255,255,255,0.78)" strokeWidth="1.8"
+        stroke="rgba(255,255,255,0.58)" strokeWidth="1.8"
         strokeLinecap="round" strokeLinejoin="round">
         <path d="M19 12H5M12 5l-7 7 7 7"/>
       </svg>
@@ -47,18 +37,53 @@ function BackBtn({ onClick }) {
   )
 }
 
+function ItemIcon({ icon, accent }) {
+  if (icon === 'drop') return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill={accent} style={{ flexShrink: 0, marginTop: 4 }}>
+      <path d="M12 2C9 7 4 12 4 16a8 8 0 0016 0C20 12 15 7 12 2z"/>
+    </svg>
+  )
+  if (icon === 'star') return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill={accent} style={{ flexShrink: 0, marginTop: 4 }}>
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.86L12 17.77l-6.18 3.23L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    </svg>
+  )
+  if (icon === 'prayer') return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+      stroke={accent} strokeWidth="2.2" strokeLinecap="round"
+      style={{ flexShrink: 0, marginTop: 4 }}>
+      <line x1="12" y1="2" x2="12" y2="22"/>
+      <line x1="6" y1="8" x2="18" y2="8"/>
+    </svg>
+  )
+  if (icon === 'question') return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+      stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      style={{ flexShrink: 0, marginTop: 4 }}>
+      <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+      <circle cx="12" cy="17" r="0.8" fill={accent} stroke="none"/>
+    </svg>
+  )
+  return (
+    <div style={{
+      width: 5, height: 5, borderRadius: '50%', background: accent,
+      flexShrink: 0, marginTop: 8,
+    }} />
+  )
+}
+
 export default function ChapterOutcomeScreen({
   subject      = 'History',
   chapterNum   = 1,
   chapterTitle = '',
-  introText    = '',
+  introText,         // kept for compat — not rendered
   outcomes     = [],
   onBack,
   onContinue,
 }) {
-  const img     = IMAGES[subject]   || IMAGES.History
-  const palette = PALETTES[subject] || PALETTES.History
-  const { accent, rgb } = palette
+  const img   = IMAGES[subject] || IMAGES.History
+  const theme = SUBJECTS[subject] || SUBJECTS.History
+  const { accent, accentRgb: rgb } = theme
 
   const [visibleCount, setVisibleCount] = useState(0)
   const [showCTA,      setShowCTA]      = useState(false)
@@ -79,63 +104,47 @@ export default function ChapterOutcomeScreen({
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes cos-row {
-          from { opacity: 0; transform: translateY(14px); }
+          from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes cos-cta {
-          from { opacity: 0; transform: translateY(18px); }
-          to   { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; }
+          to   { opacity: 1; }
         }
-        .cos-back:active { background: rgba(255,255,255,0.10) !important; }
-        .cos-cta:active  { transform: scale(0.985) !important; }
+        .cos-back:active { background: rgba(255,255,255,0.08) !important; }
+        .cos-cta:active  { opacity: 0.6 !important; }
       `}</style>
 
       <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: '#08090D' }}>
 
-        {/* Background image — atmospheric texture */}
+        {/* Background image */}
         <div style={{
           position: 'fixed', inset: 0,
           backgroundImage: `url(${img})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center right',
-          filter: 'blur(0.5px) brightness(0.55) grayscale(8%)',
+          backgroundSize: 'cover', backgroundPosition: 'center right',
+          opacity: 0.27, filter: 'grayscale(10%) brightness(0.65)',
           pointerEvents: 'none', zIndex: 1,
         }} />
 
-        {/* Global dark overlay */}
+        {/* Left-side dark gradient */}
         <div style={{
           position: 'fixed', inset: 0,
-          background: 'rgba(8,9,13,0.42)',
+          background: 'linear-gradient(90deg, rgba(8,9,13,0.94) 0%, rgba(8,9,13,0.78) 38%, rgba(8,9,13,0.42) 68%, rgba(8,9,13,0.16) 100%)',
           pointerEvents: 'none', zIndex: 2,
         }} />
 
-        {/* Left-side darkening — keeps text readable */}
+        {/* Bottom fade */}
         <div style={{
-          position: 'fixed', inset: 0,
-          background: 'linear-gradient(90deg, rgba(8,9,13,0.96) 0%, rgba(8,9,13,0.86) 34%, rgba(8,9,13,0.58) 64%, rgba(8,9,13,0.18) 100%)',
+          position: 'fixed', bottom: 0, left: 0, right: 0, height: 220,
+          background: 'linear-gradient(0deg, rgba(8,9,13,0.97) 0%, transparent 100%)',
           pointerEvents: 'none', zIndex: 3,
         }} />
 
-        {/* Bottom fade — lifts the CTA out of the image */}
-        <div style={{
-          position: 'fixed', bottom: 0, left: 0, right: 0, height: 240,
-          background: 'linear-gradient(0deg, rgba(8,9,13,0.98) 0%, transparent 100%)',
-          pointerEvents: 'none', zIndex: 4,
-        }} />
-
-        {/* Back button */}
-        <div style={{ position: 'relative', zIndex: 6 }}>
+        {/* Content layer */}
+        <div style={{ position: 'relative', zIndex: 5, minHeight: '100dvh' }}>
           <BackBtn onClick={onBack} />
-        </div>
 
-        {/* Main content */}
-        <div style={{
-          position: 'relative', zIndex: 5,
-          paddingTop: 120, paddingLeft: 28, paddingRight: 28,
-          paddingBottom: 160,
-          overflowY: 'auto', maxHeight: '100dvh',
-        }}>
-          <div style={{ maxWidth: 320 }}>
+          <div style={{ position: 'absolute', top: 100, left: 28, right: 28, maxWidth: 320 }}>
 
             {/* Chapter label */}
             <div style={{
@@ -149,89 +158,75 @@ export default function ChapterOutcomeScreen({
               Chapter {chapterNum}
             </div>
 
-            {/* Chapter title — hero text */}
+            {/* Chapter title */}
             <div style={{
               fontFamily: "'Sora', sans-serif",
-              fontWeight: 800, fontSize: 42,
+              fontWeight: 800, fontSize: 40,
               lineHeight: '44px', letterSpacing: '-0.04em',
               color: '#FFFFFF',
-              marginBottom: 18,
+              marginBottom: 32,
               animation: 'cos-up 520ms ease 80ms both',
             }}>
               {chapterTitle}
             </div>
 
-            {/* Intro text */}
+            {/* Discovery label */}
             <div style={{
               fontFamily: "'Outfit', sans-serif",
-              fontWeight: 500, fontSize: 18,
-              lineHeight: '29px',
-              color: 'rgba(255,255,255,0.72)',
-              maxWidth: 300,
-              marginBottom: 52,
+              fontWeight: 600, fontSize: 11,
+              textTransform: 'uppercase', letterSpacing: '0.30em',
+              color: 'rgba(255,255,255,0.28)',
+              marginBottom: 24,
               animation: 'cos-up 520ms ease 160ms both',
             }}>
-              {introText}
+              Things you're about to discover
             </div>
 
-            {/* Outcome rows */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-              {outcomes.map((outcome, i) => i < visibleCount ? (
-                <div key={i} style={{
-                  display: 'flex', alignItems: 'flex-start', gap: SPACING.compact,
-                  animation: 'cos-row 420ms ease both',
-                }}>
-                  {/* Vertical accent bar */}
-                  <div style={{
-                    width: 4, height: 22,
-                    borderRadius: 999, flexShrink: 0, marginTop: 5,
-                    background: accent,
-                    boxShadow: `0 0 14px rgba(${rgb},0.34)`,
-                  }} />
-                  <div style={{
-                    fontFamily: "'Outfit', sans-serif",
-                    fontWeight: 500, fontSize: 20,
-                    lineHeight: '31px',
-                    color: '#FFFFFF',
-                    maxWidth: 280,
+            {/* Discovery items */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+              {outcomes.map((item, i) => {
+                const text = typeof item === 'string' ? item       : item.text
+                const icon = typeof item === 'string' ? null       : item.icon
+                return i < visibleCount ? (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 14,
+                    animation: 'cos-row 380ms ease both',
                   }}>
-                    {outcome}
+                    <ItemIcon icon={icon} accent={accent} />
+                    <div style={{
+                      fontFamily: "'Outfit', sans-serif",
+                      fontWeight: 500, fontSize: 18,
+                      lineHeight: '26px',
+                      color: 'rgba(255,255,255,0.86)',
+                    }}>
+                      {text}
+                    </div>
                   </div>
-                </div>
-              ) : null)}
+                ) : null
+              })}
             </div>
 
           </div>
         </div>
 
-        {/* CTA — fixed at bottom, appears after final outcome */}
+        {/* CTA — reduced weight, text-only style */}
         {showCTA && (
           <button
             className="cos-cta"
             onClick={onContinue}
             style={{
-              position: 'fixed', bottom: 56, left: 28, right: 28, zIndex: 10,
-              height: 58, borderRadius: 18,
-              background: `rgba(${rgb},0.14)`,
-              border: `1px solid rgba(${rgb},0.24)`,
-              backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '0 24px',
-              cursor: 'pointer',
-              boxShadow: `0 0 28px rgba(${rgb},0.12)`,
-              transition: 'transform 120ms ease',
-              animation: 'cos-cta 320ms ease both',
-            }}>
-            <span style={{
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 700, fontSize: 20,
-              color: '#FFFFFF',
-            }}>Start chapter</span>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-              stroke="rgba(255,255,255,0.88)" strokeWidth="2"
-              strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+              position: 'fixed',
+              bottom: 'calc(72px + env(safe-area-inset-bottom, 0px))',
+              left: 28,
+              background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+              zIndex: 10,
+              fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
+              color: accent,
+              animation: 'cos-cta 400ms ease 100ms both',
+              transition: 'opacity 140ms ease',
+            }}
+          >
+            Start chapter →
           </button>
         )}
 
