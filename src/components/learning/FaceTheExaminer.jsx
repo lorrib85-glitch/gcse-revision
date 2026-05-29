@@ -11,6 +11,16 @@ const PALETTES = {
   sociology: { accent: '#C9B07C', bg: '#181410' },
 }
 
+const IMAGES = {
+  history:   '/historybacker.webp',
+  biology:   '/biologybacker.webp',
+  maths:     '/mathsbacker.webp',
+  sociology: '/sociologybacker.webp',
+  chemistry: '/chemsistrybacker.webp',
+  physics:   '/physicsbacker.webp',
+  english:   '/Englishbacker.webp',
+}
+
 const ANN_STYLES = {
   strong:    { borderBottom: '1.5px solid rgba(143,214,163,0.55)', color: 'inherit' },
   weak:      { borderBottom: '1.5px solid rgba(232,169,58,0.6)',   color: 'inherit' },
@@ -442,6 +452,16 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
         display: 'flex', flexDirection: 'column',
         overflow: 'hidden',
       }}>
+
+        {/* Backer image */}
+        {IMAGES[key] && (
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            backgroundImage: `url(${IMAGES[key]})`,
+            backgroundSize: 'cover', backgroundPosition: 'center right',
+            opacity: 0.22, filter: 'grayscale(10%) brightness(0.7)',
+          }} />
+        )}
 
         {/* ── Compact header ─────────────────────────────────────────────── */}
         <div style={headerStyle}>
