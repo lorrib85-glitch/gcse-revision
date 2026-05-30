@@ -27,6 +27,16 @@ export default function GuidedChoiceCarousel({
   const [dragOffset, setDragOffset]      = useState(0)
   const [isDragging, setIsDragging]      = useState(false)
 
+  // Preload all card images immediately on mount
+  useEffect(() => {
+    options.forEach(opt => {
+      if (opt.image) {
+        const img = new window.Image()
+        img.src = opt.image
+      }
+    })
+  }, [options])
+
   // Imperative refs so carousel event handlers are always stable
   const touchRef   = useRef({ startX: 0, startY: 0, isDrag: false, moved: false })
   const stateRef   = useRef({ currentIndex: 0, length: options.length })
@@ -295,12 +305,14 @@ export default function GuidedChoiceCarousel({
                         <img
                           src={opt.image}
                           alt={opt.title}
+                          loading="eager"
                           style={{
-                            width:      '100%',
-                            height:     '100%',
-                            objectFit:  'cover',
-                            display:    'block',
-                            filter:     'brightness(0.72) grayscale(8%) contrast(1.02)',
+                            width:           '100%',
+                            height:          '100%',
+                            objectFit:       'cover',
+                            objectPosition:  'center top',
+                            display:         'block',
+                            filter:          'brightness(0.72) grayscale(8%) contrast(1.02)',
                           }}
                           draggable={false}
                         />

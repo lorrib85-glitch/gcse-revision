@@ -151,6 +151,44 @@ export const MODULES = [
       },
 
       {
+        type: 'interactiveImage',
+        stage: 'Understand',
+        id: 'four-humours-hotspot',
+        label: 'Explore the Humours',
+        title: 'Tap the Four Humours',
+        introText: 'Medieval doctors believed the body contained four vital fluids. Each humour had its own qualities — and its own associated illness when it went out of balance.',
+        image: '/figures/history/medicine/medieval/four-humours-body.png',
+        imageAlt: 'Medieval symbolic body diagram showing the positions of the Four Humours',
+        ctaLabel: 'Explore the body',
+        hotspots: [
+          {
+            id: 'blood', x: 18, y: 18,
+            shortLabel: 'Blood', title: 'Blood', icon: '🩸',
+            description: 'Linked with warmth, energy and a cheerful personality. Too much blood could be blamed for fever or a red face.',
+            extraFact: 'If a physician diagnosed excess blood, they would use bloodletting — cutting a vein or applying leeches — to "restore balance."',
+          },
+          {
+            id: 'phlegm', x: 82, y: 18,
+            shortLabel: 'Phlegm', title: 'Phlegm', icon: '💧',
+            description: 'Linked with coldness and calmness. Too much phlegm could be linked to coughs, colds and sluggishness.',
+            extraFact: 'The word "phlegmatic" — meaning calm and unemotional — comes directly from this humour.',
+          },
+          {
+            id: 'yellow_bile', x: 18, y: 82,
+            shortLabel: 'Yellow Bile', title: 'Yellow Bile', icon: '🔥',
+            description: 'Linked with heat and anger. Too much yellow bile could be blamed for fever or vomiting sickness.',
+            extraFact: 'Someone described as "bilious" — irritable or short-tempered — is still using this ancient medical vocabulary today.',
+          },
+          {
+            id: 'black_bile', x: 82, y: 82,
+            shortLabel: 'Black Bile', title: 'Black Bile', icon: '🌙',
+            description: 'Linked with sadness and melancholy. Too much black bile could be blamed for low mood or a wasting illness.',
+            extraFact: 'The word "melancholy" comes from the Greek for "black bile." Medieval doctors thought depression was literally a bodily fluid problem.',
+          },
+        ],
+      },
+
+      {
         stage: 'Understand',
         label: 'Theory of Opposites',
         kicker: 'Galenic Medicine',
@@ -299,6 +337,44 @@ export const MODULES = [
       },
 
       {
+        type: 'interactiveImage',
+        stage: 'Investigate',
+        id: 'zodiac-man-hotspot',
+        label: 'The Zodiac Man',
+        title: 'The Zodiac Man',
+        introText: 'Tap the body parts to see how astrology was linked to medicine. Medieval physicians used charts like this to guide diagnosis and decide when to treat.',
+        image: '/figures/history/medicine/medieval/zodiac-man.png',
+        imageAlt: 'Medieval Zodiac Man diagram linking zodiac signs to body parts',
+        ctaLabel: 'Explore the Zodiac Man',
+        hotspots: [
+          {
+            id: 'head', x: 50, y: 11,
+            shortLabel: 'Head', title: 'Head — Aries', icon: '♈',
+            description: 'Linked to Aries. Doctors believed zodiac signs influenced different body parts and that treatment should align with planetary positions.',
+            extraFact: 'A physician might refuse to bleed a patient if the moon was in the sign governing that body part.',
+          },
+          {
+            id: 'chest', x: 50, y: 33,
+            shortLabel: 'Chest', title: 'Chest & Heart', icon: '♌',
+            description: 'Associated with Leo and signs affecting the upper body. Timing of treatment — especially bloodletting — was sometimes chosen using these charts.',
+            extraFact: 'Some medical texts included detailed astrological calendars showing the best and worst days for different treatments.',
+          },
+          {
+            id: 'stomach', x: 50, y: 52,
+            shortLabel: 'Stomach', title: 'Stomach & Digestion', icon: '♍',
+            description: 'Linked to Virgo and digestion. The combination of humours and astrology created a complex system of overlapping explanations.',
+            extraFact: 'Not every doctor relied equally on astrology — university-trained physicians used it more than barber surgeons or wise women.',
+          },
+          {
+            id: 'legs', x: 50, y: 80,
+            shortLabel: 'Legs & Feet', title: 'Legs & Feet — Pisces', icon: '♓',
+            description: 'Linked to Pisces and lower-body signs. The Zodiac Man diagram appeared in medical manuscripts across Europe — it was mainstream learned medicine.',
+            extraFact: 'The Zodiac Man diagram appeared in medical books across Europe — it was not a fringe idea. It was how educated physicians thought.',
+          },
+        ],
+      },
+
+      {
         type: 'guidedChoiceCarousel',
         stage: 'Challenge',
         id: 'healer-carousel',
@@ -410,44 +486,6 @@ export const MODULES = [
           'The priest listens carefully.',
           'Then he suggests prayer, confession and repentance.',
           'Thomas is beginning to suspect medieval healthcare is not going to be straightforward.',
-        ],
-      },
-
-      {
-        type: 'interactiveImage',
-        stage: 'Investigate',
-        id: 'zodiac-man-hotspot',
-        label: 'The Zodiac Man',
-        title: 'The Zodiac Man',
-        introText: 'Tap the body parts to see how astrology was linked to medicine. Medieval physicians used charts like this to guide diagnosis and decide when to treat.',
-        image: '/figures/history/medicine/medieval/zodiac-man.png',
-        imageAlt: 'Medieval Zodiac Man diagram linking zodiac signs to body parts',
-        ctaLabel: 'Explore the Zodiac Man',
-        hotspots: [
-          {
-            id: 'head', x: 50, y: 11,
-            shortLabel: 'Head', title: 'Head — Aries', icon: '♈',
-            description: 'Linked to Aries. Doctors believed zodiac signs influenced different body parts and that treatment should align with planetary positions.',
-            extraFact: 'A physician might refuse to bleed a patient if the moon was in the sign governing that body part.',
-          },
-          {
-            id: 'chest', x: 50, y: 33,
-            shortLabel: 'Chest', title: 'Chest & Heart', icon: '♌',
-            description: 'Associated with Leo and signs affecting the upper body. Timing of treatment — especially bloodletting — was sometimes chosen using these charts.',
-            extraFact: 'Some medical texts included detailed astrological calendars showing the best and worst days for different treatments.',
-          },
-          {
-            id: 'stomach', x: 50, y: 52,
-            shortLabel: 'Stomach', title: 'Stomach & Digestion', icon: '♍',
-            description: 'Linked to Virgo and digestion. The combination of humours and astrology created a complex system of overlapping explanations.',
-            extraFact: 'Not every doctor relied equally on astrology — university-trained physicians used it more than barber surgeons or wise women.',
-          },
-          {
-            id: 'legs', x: 50, y: 80,
-            shortLabel: 'Legs & Feet', title: 'Legs & Feet — Pisces', icon: '♓',
-            description: 'Linked to Pisces and lower-body signs. The Zodiac Man was found in medical manuscripts across Europe — it was mainstream learned medicine.',
-            extraFact: 'The Zodiac Man diagram appeared in medical books across Europe — it was not a fringe idea. It was how educated physicians thought.',
-          },
         ],
       },
 
