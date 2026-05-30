@@ -159,6 +159,38 @@ export const MODULES = [
       },
 
       {
+        type: 'spinningTreatmentWheel',
+        stage: 'Understand',
+        label: "Galen's Theory of Opposites",
+        introLabel: 'Patient symptoms',
+        symptoms: [
+          { label: 'Fever' },
+          { label: 'Hot skin' },
+          { label: 'Dry cough' },
+        ],
+        diagnosisLabel: "Galen's diagnosis:",
+        diagnosis: ['HOT', 'DRY'],
+        instruction: "Spin the wheel to find Galen's treatment",
+        centreLabel: 'GALEN',
+        wheelSegments: [
+          { id: 'hot',  label: 'HOT',  icon: '☀',  color: '#6B2A1F' },
+          { id: 'wet',  label: 'WET',  icon: '〜', color: '#1F3A5A' },
+          { id: 'cold', label: 'COLD', icon: '❄',  color: '#2A4555' },
+          { id: 'dry',  label: 'DRY',  icon: '✦',  color: '#5A3E1A' },
+        ],
+        prescriptionLabel: 'Galen would prescribe:',
+        correctPrescription: ['COLD', 'WET'],
+        prescriptionItems: [
+          { title: 'Cooling foods',     detail: "Cucumber, lettuce, cold water — to reduce the body's heat." },
+          { title: 'Moist remedies',    detail: 'Broths, honey water, steam — to counter the dryness.' },
+          { title: 'Rest and recovery', detail: 'Allow the body to restore its natural balance.' },
+        ],
+        explanationTitle: 'Why?',
+        explanation: "Galen believed illness was caused by an imbalance of the four humours. Hot, dry illness required cold, wet treatment to restore balance — Galen's Theory of Opposites.",
+        examTip: "Galen's Theory of Opposites: treat illness with its opposite quality. Hot → cold. Dry → wet. Examiners expect you to name the theory and explain the logic behind it.",
+      },
+
+      {
         type: 'interactiveImage',
         stage: 'Understand',
         id: 'four-humours-hotspot',
