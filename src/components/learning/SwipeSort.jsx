@@ -542,25 +542,14 @@ export default function SwipeSort({ block, subject, onComplete }) {
         paddingTop: 140,
         paddingBottom: 200,
       }}>
-        {remaining > 2 && (
-          <div style={{
-            position: 'absolute',
-            width: 'min(72vw, 280px)',
-            minHeight: 'min(44vw, 170px)',
-            background: 'rgba(255,255,255,0.04)',
-            borderRadius: 20,
-            border: '1px solid rgba(255,255,255,0.07)',
-            transform: 'translateY(20px) scale(0.90)',
-          }} />
-        )}
         {remaining > 1 && (
           <div style={{
             position: 'absolute',
             width: 'min(72vw, 280px)',
             minHeight: 'min(44vw, 170px)',
-            background: 'rgba(255,255,255,0.06)',
+            background: `rgba(${accentRgb},0.08)`,
             borderRadius: 20,
-            border: '1px solid rgba(255,255,255,0.10)',
+            border: `1px solid rgba(${accentRgb},0.15)`,
             transform: 'translateY(10px) scale(0.95)',
           }} />
         )}
