@@ -438,27 +438,27 @@ export default function SwipeSort({ block, subject, onComplete }) {
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
     >
-      {/* Split background — brighter base opacity */}
+      {/* Split background */}
       <div style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 0 }}>
         <div style={{
           flex: 1,
           backgroundImage: 'url(/swipe-supernatural.png)',
           backgroundSize: 'cover', backgroundPosition: 'center top',
-          opacity: dragX < -20 ? 0.56 : 0.34,
-          filter: 'grayscale(15%) brightness(0.65)',
+          opacity: dragX < -20 ? 0.72 : 0.55,
+          filter: 'grayscale(10%) brightness(0.85)',
           transition: dragging ? 'none' : 'opacity 0.4s ease',
         }} />
         <div style={{
           flex: 1,
           backgroundImage: 'url(/swipe-natural.png)',
           backgroundSize: 'cover', backgroundPosition: 'center top',
-          opacity: dragX > 20 ? 0.56 : 0.34,
-          filter: 'grayscale(15%) brightness(0.65)',
+          opacity: dragX > 20 ? 0.72 : 0.55,
+          filter: 'grayscale(10%) brightness(0.85)',
           transition: dragging ? 'none' : 'opacity 0.4s ease',
         }} />
       </div>
 
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(8,9,13,0.56)', zIndex: 1 }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(8,9,13,0.35)', zIndex: 1 }} />
 
       {/* Centre divider line */}
       <div style={{
@@ -480,7 +480,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
       }}>
         <div style={{
           flex: 1,
-          padding: '52px 18px 18px',
+          padding: '80px 18px 18px',
           display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
           opacity: dragX < -20 ? 1 : 0.48,
           transition: dragging ? 'none' : 'opacity 0.3s',
@@ -500,7 +500,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
         <div style={{ width: 1, background: 'rgba(255,255,255,0.08)', marginTop: 52 }} />
         <div style={{
           flex: 1,
-          padding: '52px 18px 18px',
+          padding: '80px 18px 18px',
           display: 'flex', flexDirection: 'column', alignItems: 'flex-end', textAlign: 'right',
           opacity: dragX > 20 ? 1 : 0.48,
           transition: dragging ? 'none' : 'opacity 0.3s',
@@ -519,17 +519,19 @@ export default function SwipeSort({ block, subject, onComplete }) {
         </div>
       </div>
 
-      {/* Progress */}
+      {/* Progress dots */}
       <div style={{
         position: 'absolute', top: 54, left: '50%', transform: 'translateX(-50%)',
-        zIndex: 5,
-        fontFamily: 'Outfit, sans-serif',
-        fontWeight: 600,
-        fontSize: 12,
-        color: 'rgba(245,245,245,0.38)',
-        letterSpacing: '0.10em',
+        zIndex: 5, display: 'flex', gap: 6,
       }}>
-        {cardIdx + 1} / {totalCards}
+        {Array.from({ length: totalCards }, (_, i) => (
+          <div key={i} style={{
+            width: 7, height: 7, borderRadius: '50%',
+            background: i <= cardIdx
+              ? `rgba(${accentRgb},0.85)`
+              : 'rgba(255,255,255,0.20)',
+          }} />
+        ))}
       </div>
 
       {/* Card stack */}
@@ -543,8 +545,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
         {remaining > 2 && (
           <div style={{
             position: 'absolute',
-            width: 'min(84vw, 340px)',
-            minHeight: 'min(48vw, 190px)',
+            width: 'min(72vw, 280px)',
+            minHeight: 'min(44vw, 170px)',
             background: 'rgba(255,255,255,0.04)',
             borderRadius: 20,
             border: '1px solid rgba(255,255,255,0.07)',
@@ -554,8 +556,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
         {remaining > 1 && (
           <div style={{
             position: 'absolute',
-            width: 'min(84vw, 340px)',
-            minHeight: 'min(48vw, 190px)',
+            width: 'min(72vw, 280px)',
+            minHeight: 'min(44vw, 170px)',
             background: 'rgba(255,255,255,0.06)',
             borderRadius: 20,
             border: '1px solid rgba(255,255,255,0.10)',
@@ -581,11 +583,11 @@ export default function SwipeSort({ block, subject, onComplete }) {
               onMouseDown={onMouseDown}
               style={{
                 position: 'relative',
-                width: 'min(84vw, 340px)',
+                width: 'min(72vw, 280px)',
                 background: 'rgba(22,24,34,0.97)',
                 borderRadius: 22,
                 border: `1px solid rgba(255,255,255,${Math.abs(dragX) > 20 ? 0.22 : 0.14})`,
-                padding: '28px 22px',
+                padding: '0',
                 cursor: dragging ? 'grabbing' : 'grab',
                 transform: cardTransform,
                 opacity: cardOpacity,
@@ -596,23 +598,17 @@ export default function SwipeSort({ block, subject, onComplete }) {
                 boxShadow: cardGlow,
               }}
             >
-              {/* Word box — frosted inner container */}
               <div style={{
-                background: 'rgba(255,255,255,0.10)',
-                border: '1px solid rgba(255,255,255,0.18)',
-                borderRadius: 14,
-                padding: '18px 20px',
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontWeight: 600,
+                fontStyle: 'italic',
+                fontSize: 'clamp(22px, 6vw, 28px)',
+                color: 'rgba(245,238,225,0.95)',
+                lineHeight: 1.3,
                 textAlign: 'center',
+                padding: '28px 20px',
               }}>
-                <div style={{
-                  fontFamily: 'Sora, sans-serif',
-                  fontWeight: 700,
-                  fontSize: 'clamp(17px, 4.8vw, 21px)',
-                  color: 'rgba(245,245,245,0.97)',
-                  lineHeight: 1.35,
-                }}>
-                  {cur.label}
-                </div>
+                {cur.label}
               </div>
             </div>
           </div>
