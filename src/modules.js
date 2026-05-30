@@ -76,7 +76,7 @@ export const MODULES = [
           },
           {
             image: '/figures/history/medicine/medieval/ancient-authorities-timeline.webp',
-            imageOpacity: 0.35,
+            imageOpacity: 1,
             facts: [
               'Medieval doctors learned medicine from ancient Greek and Roman writers, especially Hippocrates and Galen.',
               'The Church copied, protected and taught their books across Europe.',
@@ -698,48 +698,87 @@ export const MODULES = [
         stage: 'Examiner',
         label: 'Face the Examiner',
         examiner: {
-          question: 'Explain why medieval people believed bloodletting could cure disease. [4 marks]',
-          marks: 4,
-          mark: 2,
-          summary: 'Some understanding shown, but the answer needs to link belief to treatment more explicitly.',
-          markScheme: `Award up to 4 marks for:
-- Medieval doctors believed in the Theory of the Four Humours (1 mark)
-- Illness was caused by an imbalance of the humours (1 mark)
-- Galen\'s Theory of Opposites stated that treatment should restore balance (1 mark)
-- Therefore removing excess blood (bloodletting) seemed a logical way to restore the balance of humours (1 mark)
-Do NOT award marks for simply stating "they did not know about germs" without linking to the humour belief.`,
-          sampleAnswer: 'Medieval doctors believed in the Theory of the Four Humours, which said illness was caused by an imbalance in the body. Galen developed the Theory of Opposites, so doctors believed they could restore balance by removing excess blood. This made bloodletting seem like a logical treatment.',
+          type: '8-mark-explain',
+          board: 'edexcel',
+          subject: 'history',
+          topic: 'medieval-medicine',
+          difficulty: 'standard',
+
+          question: 'Explain two ways in which religion influenced medical treatment in medieval England. [8 marks]',
+          marks: 8,
+          mark: 5,
+          summary: 'Some understanding of religious influence shown, but both points need more developed explanation to reach Level 3.',
+
+          markScheme: `Level 3 (6–8 marks): Detailed explanation of two ways with developed reasoning linking religious belief to specific treatments or practices.
+Level 2 (3–5 marks): Some explanation of religious influence, but at least one point lacks development.
+Level 1 (1–2 marks): Simple identification of religious practices with little or no explanation.
+Award marks for any two of (each requiring explanation not just identification):
+- Church controlled hospitals/monasteries — explanation must include WHY (belief in Christian duty/God's will/charity)
+- Prayer, fasting, pilgrimage as treatments — must link to belief that sin caused disease
+- Four Humours theory endorsed by Church — must show HOW this influenced practical treatment
+- Physicians trained in Church schools, only Church-approved ideas studied
+Do NOT award marks for identifying practices without explaining the religious reasoning.`,
+
+          sampleAnswer: `Religion had a big influence on medical treatment in medieval England. Firstly, the Church ran hospitals and monasteries where sick people could go to get help. Monks and nuns would look after the sick because they believed it was their Christian duty to help others. Secondly, doctors in medieval times believed that illness was caused by God as punishment for sins. This meant that treatments often involved prayer and going on pilgrimages to holy sites, because people thought that if they showed their faith to God, He would cure them. Some people also fasted or confessed their sins as a form of treatment.`,
+
           annotations: [
             {
               id: 'ann1',
-              target: 'Theory of the Four Humours, which said illness was caused by an imbalance in the body.',
+              target: 'the Church ran hospitals and monasteries where sick people could go to get help.',
               occurrence: 1,
-              type: 'strong',
-              comment: 'Correctly links the humour theory to the concept of imbalance.',
+              type: 'weak',
+              comment: 'Identified but underdeveloped — WHY did the Church do this?',
             },
             {
               id: 'ann2',
-              target: 'Galen developed the Theory of Opposites',
+              target: 'Monks and nuns would look after the sick because they believed it was their Christian duty to help others.',
               occurrence: 1,
               type: 'strong',
-              comment: 'Names the relevant authority and theory.',
+              comment: 'Good — links practice to religious belief.',
             },
             {
               id: 'ann3',
-              target: 'removing excess blood. This made bloodletting seem like a logical treatment.',
+              target: 'illness was caused by God as punishment for sins.',
               occurrence: 1,
               type: 'strong',
-              comment: 'Completes the chain: belief → treatment → logical justification.',
+              comment: 'Accurate causal link.',
+            },
+            {
+              id: 'ann4',
+              target: 'because people thought that if they showed their faith to God, He would cure them.',
+              occurrence: 1,
+              type: 'weak',
+              comment: 'Vague — needs a specific named example (e.g. Canterbury).',
+            },
+            {
+              id: 'ann5',
+              target: 'Some people also fasted or confessed their sins as a form of treatment.',
+              occurrence: 1,
+              type: 'irrelevant',
+              comment: 'Third point — only two ways required; this adds no new marks.',
             },
           ],
-          improvementPrompts: {},
+
+          improvementPrompts: {
+            ann1: {
+              prompt: '+ Explain WHY the Church ran hospitals',
+              placeholder: 'e.g. The Church believed caring for the sick was a religious duty — a way of serving God and earning salvation...',
+            },
+            ann4: {
+              prompt: '+ Add a specific example of pilgrimage as treatment',
+              placeholder: 'e.g. Pilgrims travelled to the shrine of Thomas Becket at Canterbury Cathedral, believing holy relics could cure disease...',
+            },
+          },
+
           criteriaOptions: [
-            'Names Four Humours',
-            'Explains imbalance',
-            'Names Galen / Theory of Opposites',
-            'Links belief to treatment',
+            'Accurate knowledge',
+            'Two clear ways',
+            'Specific evidence',
+            'Explains the impact',
+            'Developed explanation',
             'Too vague',
-            'Missing the chain',
+            'Repeats the point',
+            'Missing second way',
           ],
         },
       },

@@ -165,9 +165,6 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
     for (const { end, addition } of toInsert) {
       text = text.slice(0, end) + addition + text.slice(end)
     }
-    // Append the general free-write paragraph if present
-    const general = studentEdits['__general__']?.trim()
-    if (general) text = text + ' ' + general
     return text
   }
 
@@ -662,47 +659,16 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
                 </div>
               )}
 
-              {/* "PUSH IT UP A GRADE" + free-write box in improving */}
+              {/* "PUSH IT UP A GRADE" heading in improving */}
               {isImproving && (
-                <div style={{ marginTop: 20 }}>
-                  <div style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontWeight: 800, fontSize: 11,
-                    letterSpacing: '0.16em', textTransform: 'uppercase',
-                    color: accent,
-                    marginBottom: 12,
-                  }}>
-                    Push it up a grade
-                  </div>
-                  <div style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontWeight: 400, fontSize: 13,
-                    color: 'rgba(255,255,255,0.42)',
-                    marginBottom: 10,
-                    lineHeight: 1.5,
-                  }}>
-                    Add a paragraph to strengthen this answer:
-                  </div>
-                  <textarea
-                    className="fte-textarea"
-                    rows={4}
-                    placeholder="Write an extra paragraph here — a stronger link, a named example, or a more precise chain of reasoning…"
-                    value={studentEdits['__general__'] || ''}
-                    onChange={e => setStudentEdits(prev => ({ ...prev, __general__: e.target.value }))}
-                    style={{
-                      width: '100%', boxSizing: 'border-box',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.14)',
-                      borderRadius: 10,
-                      padding: '12px 14px',
-                      color: 'rgba(245,238,225,0.9)',
-                      fontFamily: "'IBM Plex Serif', Georgia, serif",
-                      fontSize: 14, lineHeight: 1.65,
-                      resize: 'vertical',
-                      outline: 'none',
-                      display: 'block',
-                    }}
-                  />
+                <div style={{
+                  marginTop: 20,
+                  fontFamily: "'Sora', sans-serif",
+                  fontWeight: 800, fontSize: 11,
+                  letterSpacing: '0.16em', textTransform: 'uppercase',
+                  color: accent,
+                }}>
+                  Push it up a grade
                 </div>
               )}
             </div>

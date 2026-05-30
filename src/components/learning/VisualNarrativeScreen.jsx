@@ -25,10 +25,10 @@ export default function VisualNarrativeScreen({
 
   // Portrait: visible only on beat 0
   const portraitOpacity = beatIdx === 0 ? 1 : 0
-  // Timeline: full opacity on intermediate beats, dimmed on the final (facts) beat
+  // Timeline: full opacity once it appears (beat 1 onward)
   const timelineOpacity =
     beatIdx === 0 ? 0 :
-    isLastBeat ? (beat.imageOpacity ?? 0.35) :
+    isLastBeat ? (beat.imageOpacity ?? 1) :
     1
 
   // Reset hint after each action
@@ -127,10 +127,10 @@ export default function VisualNarrativeScreen({
           pointerEvents: 'none',
         }} />
 
-        {/* Dark gradient — text legibility + hides baked-in date labels in timeline image */}
+        {/* Dark gradient — keeps the timeline visible up top, darkens lower third for text legibility */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.18) 28%, rgba(0,0,0,0.84) 50%, rgba(0,0,0,0.97) 68%, rgba(0,0,0,0.99) 100%)',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.04) 32%, rgba(0,0,0,0.80) 52%, rgba(0,0,0,0.97) 68%, rgba(0,0,0,0.99) 100%)',
           pointerEvents: 'none',
         }} />
 
