@@ -17,6 +17,9 @@ import RecoveryQuizPlayer from '../learning/RecoveryQuizPlayer.jsx'
 import CardContainer from '../core/CardContainer.jsx'
 import GuidedChoiceCarousel from '../learning/GuidedChoiceCarousel.jsx'
 import VisualNarrativeScreen from '../learning/VisualNarrativeScreen.jsx'
+import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
+import TheoryCompareBlock from '../learning/TheoryCompareBlock.jsx'
+import ColSortBlock from '../learning/ColSortBlock.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1140,7 +1143,9 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
           {block.type === 'boss'          && <ExamQuestionFrame block={block} subject={subject} mode="practice" onSkip={onScreenComplete} />}
           {block.type === 'explainReveal' && <ExplainReveal block={block} subject={subject} onComplete={onScreenComplete} />}
-          {block.type === 'fillblanks'   && <FillInTheBlanksBlock block={block} subject={subject} />}
+          {block.type === 'fillblanks'    && <FillInTheBlanksBlock block={block} subject={subject} />}
+          {block.type === 'theoryCompare' && <TheoryCompareBlock block={block} subject={subject} />}
+          {block.type === 'colsort'       && <ColSortBlock block={block} subject={subject} />}
         </div>
       ))}
     </div>
@@ -1663,7 +1668,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   // hookDone / wylDone / introDone track whether the universal openers have been seen
   // We persist these inside the module state so resuming skips them correctly
   const [hookDone,   setHookDone]   = useState(() => saved.hookDone   || !module.hook)
-  const [wylDone,    setWylDone]    = useState(true)
+  const [wylDone,    setWylDone]    = useState(() => saved.wylDone ?? !module.outcomes)
   // If user already has hookDone+wylDone saved (i.e. they've been to content before),
   // treat recallDone as true to avoid forcing recall on existing progress.
   const [recallDone, setRecallDone] = useState(() =>
@@ -1814,6 +1819,20 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         revealBeats={module.hook.revealBeats}
         onBack={onBack}
         onContinue={() => { setHookDone(true); setNavTo(null); scrollToTop() }}
+      />
+    )
+  }
+
+  // ── Chapter outcomes screen — appears after hook, before recall ──────────────
+  if (hookDone && !wylDone && module.outcomes) {
+    return (
+      <ChapterOutcomeScreen
+        subject={module.subject}
+        chapterNum={module.number}
+        chapterTitle={module.title}
+        outcomes={module.outcomes.bullets || module.outcomes}
+        onBack={() => setHookDone(false)}
+        onContinue={() => { setWylDone(true); scrollToTop() }}
       />
     )
   }

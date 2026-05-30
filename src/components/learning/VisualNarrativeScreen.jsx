@@ -32,7 +32,7 @@ export default function VisualNarrativeScreen({
   // Reset hint after each action
   useEffect(() => {
     setHintVisible(false)
-    const t = setTimeout(() => setHintVisible(true), 1600)
+    const t = setTimeout(() => setHintVisible(true), 300)
     return () => clearTimeout(t)
   }, [beatIdx, factCount])
 
@@ -193,6 +193,17 @@ export default function VisualNarrativeScreen({
             paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
             pointerEvents: 'none',
           }}>
+            {factCount === 0 && (
+              <div style={{
+                fontFamily: "'Outfit', sans-serif",
+                fontWeight: 600, fontSize: 11,
+                letterSpacing: '0.18em', textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.30)',
+                marginBottom: 12,
+              }}>
+                Tap to reveal
+              </div>
+            )}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {beat.facts.slice(0, factCount).map((fact, i) => (
                 <div

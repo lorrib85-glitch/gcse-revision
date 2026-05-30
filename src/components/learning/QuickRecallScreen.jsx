@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
-import { RADII } from '../../constants/radii.js'
-import { SPACING } from '../../constants/spacing.js'
 
 const IMAGES = {
   History:   '/historybacker.webp',
@@ -15,23 +13,22 @@ const IMAGES = {
   Music:     '/historybacker.webp',
 }
 
-function Glow({ rgb }) {
-  return (
-    <div style={{
-      position: 'absolute', top: '35%', left: '30%',
-      transform: 'translate(-50%, -50%)',
-      width: 280, height: 280,
-      background: `radial-gradient(circle, rgba(${rgb},0.18) 0%, transparent 70%)`,
-      filter: 'blur(110px)', pointerEvents: 'none',
-    }} />
-  )
+function tokenize(text) {
+  const parts = text.split(/(\s+)/)
+  let wi = 0
+  return parts.map((part, i) => {
+    if (/^\s+$/.test(part)) return { key: i, space: true, text: part }
+    return { key: i, space: false, text: part, wordIdx: wi++ }
+  })
 }
 
 function ProgressDots({ total, current, done, accent, rgb }) {
   return (
     <div style={{
-      position: 'absolute', top: 30, right: 24, zIndex: 10,
-      display: 'flex', gap: SPACING.micro, alignItems: 'center',
+      position: 'fixed', bottom: 28,
+      left: '50%', transform: 'translateX(-50%)',
+      zIndex: 10,
+      display: 'flex', gap: 6, alignItems: 'center',
     }}>
       {Array.from({ length: total }).map((_, i) => {
         const isDone   = i < done
@@ -40,9 +37,11 @@ function ProgressDots({ total, current, done, accent, rgb }) {
           <div key={i} style={{
             width: isActive ? 20 : 8,
             height: 8,
-            borderRadius: RADII.pill,
+            borderRadius: 99,
             background: isDone ? accent : isActive ? accent : 'rgba(255,255,255,0.22)',
-            boxShadow: isActive ? `0 0 10px rgba(${rgb},0.6)` : isDone ? `0 0 6px rgba(${rgb},0.35)` : 'none',
+            boxShadow: isActive
+              ? `0 0 10px rgba(${rgb},0.6)`
+              : isDone ? `0 0 6px rgba(${rgb},0.35)` : 'none',
             transition: 'all 300ms ease',
           }} />
         )
@@ -51,72 +50,144 @@ function ProgressDots({ total, current, done, accent, rgb }) {
   )
 }
 
-function QuestionWords({ question }) {
-  const words = question.split(/\s+/)
+function TrueFalseQuestion({ q, accent, rgb, onSelect }) {
+  const [chosen,      setChosen]      = useState(null)
+  const [shakeTarget, setShakeTarget] = useState(null)
+  const [btnsReady,   setBtnsReady]   = useState(false)
+
+  const tokens    = tokenize(q.question)
+  const wordCount = tokens.filter(t => !t.space).length
+  const btnDelay  = 260 + (wordCount - 1) * 65 + 380
+
+  useEffect(() => {
+    const t = setTimeout(() => setBtnsReady(true), btnDelay)
+    return () => clearTimeout(t)
+  }, [btnDelay])
+
+  function pick(val) {
+    if (chosen !== null || !btnsReady) return
+    const correct = val === q.isTrue
+    if (!correct) {
+      setShakeTarget(val ? 'true' : 'false')
+      setTimeout(() => setShakeTarget(null), 300)
+    }
+    setChosen(val)
+    setTimeout(() => onSelect(correct), correct ? 500 : 700)
+  }
+
+  const answered = chosen !== null
+
   return (
-    <div style={{
-      fontFamily: "'Sora', sans-serif",
-      fontWeight: 800,
-      fontSize: 'clamp(26px, 8vw, 38px)',
-      lineHeight: 'clamp(32px, 10vw, 46px)',
-      letterSpacing: '-0.03em',
-      color: '#FFFFFF',
-    }}>
-      {words.map((word, i) => (
-        <span key={i} style={{
-          display: 'inline',
-          animation: `qrs-word 220ms ease ${260 + i * 65}ms both`,
+    <>
+      {/* Statement */}
+      <div style={{
+        position: 'absolute', top: '34%', left: 28, right: 28, zIndex: 5,
+        pointerEvents: 'none',
+      }}>
+        <div style={{
+          fontFamily: "'Sora', sans-serif",
+          fontWeight: 800,
+          fontSize: 'clamp(28px, 9vw, 40px)',
+          lineHeight: 'clamp(33px, 10.5vw, 46px)',
+          letterSpacing: '-0.05em',
+          color: '#FFFFFF',
+          maxWidth: 320,
         }}>
-          {i > 0 ? ' ' : ''}{word}
-        </span>
-      ))}
-    </div>
+          {tokens.map(tok =>
+            tok.space ? tok.text : (
+              <span
+                key={tok.key}
+                style={{
+                  display: 'inline-block',
+                  animation: `qrs-word 220ms ease ${260 + tok.wordIdx * 65}ms both`,
+                }}
+              >
+                {tok.text}
+              </span>
+            )
+          )}
+        </div>
+      </div>
+
+      {/* TRUE / FALSE buttons */}
+      <div style={{
+        position: 'fixed', bottom: 100, left: 0, right: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        gap: 20, zIndex: 10,
+        opacity: btnsReady ? 1 : 0,
+        transition: 'opacity 400ms ease',
+        pointerEvents: !btnsReady ? 'none' : 'auto',
+      }}>
+        <button
+          onClick={() => pick(true)}
+          style={{
+            background: 'none', border: 'none', cursor: answered ? 'default' : 'pointer',
+            fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 24,
+            textTransform: 'uppercase', letterSpacing: '0.18em',
+            color: answered
+              ? (q.isTrue ? accent : 'rgba(255,255,255,0.22)')
+              : 'rgba(255,255,255,0.82)',
+            borderBottom: '1.5px solid rgba(255,255,255,0.16)', paddingBottom: 2,
+            animation: shakeTarget === 'true' ? 'qrs-shake 220ms ease' : 'none',
+            transition: 'color 300ms ease',
+          }}>
+          TRUE
+        </button>
+        <div style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.14)', flexShrink: 0 }} />
+        <button
+          onClick={() => pick(false)}
+          style={{
+            background: 'none', border: 'none', cursor: answered ? 'default' : 'pointer',
+            fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 24,
+            textTransform: 'uppercase', letterSpacing: '0.18em',
+            color: answered
+              ? (!q.isTrue ? accent : 'rgba(255,255,255,0.22)')
+              : 'rgba(255,255,255,0.82)',
+            borderBottom: '1.5px solid rgba(255,255,255,0.16)', paddingBottom: 2,
+            animation: shakeTarget === 'false' ? 'qrs-shake 220ms ease' : 'none',
+            transition: 'color 300ms ease',
+          }}>
+          FALSE
+        </button>
+      </div>
+    </>
   )
 }
 
-function TrueFalseButtons({ q, accent, onSelect }) {
-  const [chosen, setChosen] = useState(null)
-
-  function pick(val) {
-    if (chosen !== null) return
-    setChosen(val)
-    setTimeout(() => onSelect(val === q.isTrue), 560)
+function ChoiceOrConnectionQuestion({ q, subject, onSelect }) {
+  const block = {
+    question: q.question,
+    options: (q.options || []).map((opt, i) => ({
+      text:    typeof opt === 'string' ? opt : opt.text || opt,
+      correct: i === q.correct,
+      icon:    typeof opt === 'object' ? opt.icon : undefined,
+    })),
+    explanation: q.explanation,
+    hint: q.hint,
   }
 
   return (
-    <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
-      {[true, false].map((val) => {
-        const label   = val ? 'True' : 'False'
-        const picked  = chosen === val
-        const isRight = chosen !== null && val === q.isTrue
-        const isWrong = picked && val !== q.isTrue
-
-        let color = 'rgba(255,255,255,0.82)'
-        if (isRight && chosen !== null)  color = accent
-        if (isWrong)                     color = 'rgba(255,80,80,0.8)'
-
-        const borderColor = (isRight && chosen !== null) ? accent : 'rgba(255,255,255,0.16)'
-
-        return (
-          <button
-            key={String(val)}
-            onClick={() => pick(val)}
-            style={{
-              background: 'none', border: 'none',
-              paddingBottom: 2,
-              borderBottom: `1.5px solid ${borderColor}`,
-              cursor: chosen !== null ? 'default' : 'pointer',
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 700, fontSize: 24,
-              textTransform: 'uppercase', letterSpacing: '0.18em',
-              color,
-              transition: 'color 300ms ease, border-color 300ms ease',
-              animation: isWrong ? 'qrs-shake 220ms ease' : 'none',
-            }}>
-            {label}
-          </button>
-        )
-      })}
+    <div style={{
+      position: 'absolute', top: '22%', left: 28, right: 28, zIndex: 5,
+      maxHeight: '72dvh', overflowY: 'auto',
+      WebkitOverflowScrolling: 'touch',
+    }}>
+      <div style={{
+        fontFamily: "'Sora', sans-serif",
+        fontWeight: 800,
+        fontSize: 'clamp(22px, 7vw, 30px)',
+        lineHeight: 1.3, letterSpacing: '-0.03em',
+        color: '#FFFFFF',
+        marginBottom: 32, maxWidth: 340,
+        animation: 'qrs-word 300ms ease 60ms both',
+      }}>
+        {q.question}
+      </div>
+      <AnswerInteraction
+        block={block}
+        subject={subject}
+        onComplete={({ correct }) => onSelect(correct)}
+      />
     </div>
   )
 }
@@ -136,11 +207,10 @@ export default function QuickRecallScreen({
 
   const total = questions.length
 
-  const [qIdx,          setQIdx]          = useState(0)
-  const [doneCnt,       setDoneCnt]       = useState(0)
-  const [phase,         setPhase]         = useState('in')
-  const [animKey,       setAnimKey]       = useState(0)
-  const [pendingAdvance, setPendingAdvance] = useState(false)
+  const [qIdx,    setQIdx]    = useState(0)
+  const [doneCnt, setDoneCnt] = useState(0)
+  const [phase,   setPhase]   = useState('in')
+  const [animKey, setAnimKey] = useState(0)
 
   useEffect(() => {
     const t = setTimeout(() => setPhase('active'), 360)
@@ -148,70 +218,59 @@ export default function QuickRecallScreen({
   }, [animKey])
 
   function advance() {
-    setPendingAdvance(false)
     const nextIdx = qIdx + 1
     if (nextIdx >= total) {
-      setTimeout(() => setPhase('done'), 0)
+      setPhase('done')
     } else {
       setPhase('out')
       setTimeout(() => {
         setQIdx(nextIdx)
         setAnimKey(k => k + 1)
         setPhase('in')
-      }, 360)
+      }, 300)
     }
   }
 
   function handleSelect(wasCorrect) {
     if (wasCorrect) setDoneCnt(d => d + 1)
-    setPendingAdvance(true)
+    advance()
   }
 
   const cur = questions[qIdx]
 
-  const slideStyle = {
-    in:     { animation: 'qrs-in 420ms cubic-bezier(0.16,1,0.3,1) both' },
-    active: { animation: 'none', opacity: 1 },
-    out:    { animation: 'qrs-out 300ms ease both' },
-    done:   { animation: 'none', opacity: 0, pointerEvents: 'none' },
+  const contentAnim = {
+    in:     { animation: 'qrs-up-in 360ms cubic-bezier(0.16,1,0.3,1) both' },
+    active: { opacity: 1 },
+    out:    { animation: 'qrs-up-out 280ms ease both' },
+    done:   { opacity: 0 },
   }[phase] || {}
-
-  const answerStyle = {
-    in:     { animation: 'qrs-in 420ms cubic-bezier(0.16,1,0.3,1) 80ms both' },
-    active: { animation: 'none', opacity: 1 },
-    out:    { animation: 'qrs-out 300ms ease both' },
-    done:   { animation: 'none', opacity: 0, pointerEvents: 'none' },
-  }[phase] || {}
-
-  function makeBlock(q) {
-    return {
-      question: q.question,
-      options: q.options.map((opt, i) => ({
-        text: opt.text || opt,
-        correct: i === q.correct,
-        icon: opt.icon,
-      })),
-      explanation: q.explanation,
-      hint: q.hint,
-    }
-  }
 
   return (
     <>
       <style>{`
-        @keyframes qrs-in  { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes qrs-out { from { opacity:1; transform:translateY(0); }    to { opacity:0; transform:translateY(-12px); } }
-        @keyframes qrs-word { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes qrs-shake {
-          0%,100% { transform:translateX(0); }
-          18% { transform:translateX(-9px); }
-          36% { transform:translateX(9px); }
-          54% { transform:translateX(-7px); }
-          72% { transform:translateX(7px); }
-          88% { transform:translateX(-3px); }
+        @keyframes qrs-word {
+          from { opacity: 0; transform: translateY(9px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes qrs-start { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes qrs-label { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes qrs-up-in {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes qrs-up-out {
+          from { opacity: 1; transform: translateY(0); }
+          to   { opacity: 0; transform: translateY(-12px); }
+        }
+        @keyframes qrs-done-in {
+          from { opacity: 0; transform: translateY(14px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes qrs-shake {
+          0%,100% { transform: translateX(0); }
+          20%  { transform: translateX(-4px); }
+          40%  { transform: translateX(4px); }
+          60%  { transform: translateX(-3px); }
+          80%  { transform: translateX(2px); }
+        }
       `}</style>
 
       <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: '#08090D', overflow: 'hidden' }}>
@@ -221,133 +280,72 @@ export default function QuickRecallScreen({
           position: 'fixed', inset: 0,
           backgroundImage: `url(${img})`,
           backgroundSize: 'cover', backgroundPosition: 'center top',
-          filter: 'blur(0.5px) brightness(0.60) grayscale(8%)',
+          opacity: 0.26,
+          filter: 'grayscale(10%) brightness(0.65)',
           pointerEvents: 'none', zIndex: 1,
         }} />
 
-        {/* Global overlay */}
+        {/* Left gradient */}
         <div style={{
           position: 'fixed', inset: 0,
-          background: 'rgba(8,9,13,0.28)',
+          background: 'linear-gradient(90deg, rgba(8,9,13,0.94) 0%, rgba(8,9,13,0.78) 38%, rgba(8,9,13,0.42) 68%, rgba(8,9,13,0.16) 100%)',
           pointerEvents: 'none', zIndex: 2,
         }} />
 
-        {/* Left darkening — text readable left, image bleeds right */}
+        {/* Dark overlay */}
         <div style={{
           position: 'fixed', inset: 0,
-          background: 'linear-gradient(90deg, rgba(8,9,13,0.97) 0%, rgba(8,9,13,0.88) 40%, rgba(8,9,13,0.62) 70%, rgba(8,9,13,0.22) 100%)',
+          background: 'rgba(8,9,13,0.28)',
           pointerEvents: 'none', zIndex: 3,
         }} />
 
         {/* Bottom fade */}
         <div style={{
-          position: 'fixed', bottom: 0, left: 0, right: 0, height: 260,
-          background: 'linear-gradient(0deg, rgba(8,9,13,0.99) 0%, transparent 100%)',
+          position: 'fixed', bottom: 0, left: 0, right: 0, height: 220,
+          background: 'linear-gradient(0deg, rgba(8,9,13,0.97) 0%, transparent 100%)',
           pointerEvents: 'none', zIndex: 4,
         }} />
 
         {renderHeader?.()}
 
-        {/* Progress dots */}
         <ProgressDots total={total} current={qIdx} done={doneCnt} accent={accent} rgb={rgb} />
 
-        {/* Main layout — flex column prevents question/answer overlap */}
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 5,
-          display: 'flex', flexDirection: 'column',
-          padding: '0 28px',
-        }}>
-          {/* Spacer to position question at ~34% */}
-          <div style={{ height: '34vh', flexShrink: 0 }} />
-
-          {/* "Quick Recall" label */}
-          <div style={{
-            flexShrink: 0,
-            fontFamily: "'Outfit', sans-serif",
-            fontWeight: 600, fontSize: 11,
-            textTransform: 'uppercase', letterSpacing: '0.30em',
-            color: accent, opacity: 0.80,
-            marginBottom: 18,
-            animation: 'qrs-label 400ms ease 100ms both',
-          }}>
-            Quick Recall
-          </div>
-
-          {/* Question text */}
-          {phase !== 'done' && cur && (
-            <div
-              key={`q-${animKey}`}
-              style={{ position: 'relative', flexShrink: 0, maxWidth: 340, ...slideStyle }}
-            >
-              <Glow rgb={rgb} />
-              <div style={{ position: 'relative' }}>
-                <QuestionWords question={cur.question} />
-              </div>
-            </div>
-          )}
-
-          {/* Elastic spacer — shrinks to keep answers from overlapping question */}
-          <div style={{ flex: 1, minHeight: 32 }} />
-
-          {/* Answer area */}
-          {phase !== 'done' && cur && (
-            <div
-              key={`a-${animKey}`}
-              style={{
-                flexShrink: 0,
-                paddingBottom: 'calc(90px + env(safe-area-inset-bottom, 0px))',
-                ...answerStyle,
-              }}
-            >
-              {cur.type === 'truefalse' && (
-                <TrueFalseButtons q={cur} accent={accent} onSelect={handleSelect} />
-              )}
-              {(cur.type === 'choice' || cur.type === 'connection') && (
-                <AnswerInteraction
-                  block={makeBlock(cur)}
-                  subject={subject}
-                  onComplete={({ correct }) => handleSelect(correct)}
-                />
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* "Continue →" — stays visible after answer until tapped */}
-        {pendingAdvance && phase !== 'done' && (
-          <button
-            onClick={advance}
+        {/* Question */}
+        {phase !== 'done' && cur && (
+          <div
+            key={animKey}
             style={{
-              position: 'fixed',
-              bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))',
-              right: 28, zIndex: 10,
+              position: 'relative', zIndex: 5,
+              width: '100%', height: '100%',
+              ...contentAnim,
+            }}
+          >
+            {cur.type === 'truefalse' && (
+              <TrueFalseQuestion q={cur} accent={accent} rgb={rgb} onSelect={handleSelect} />
+            )}
+            {(cur.type === 'choice' || cur.type === 'connection') && (
+              <ChoiceOrConnectionQuestion q={cur} subject={subject} onSelect={handleSelect} />
+            )}
+          </div>
+        )}
+
+        {/* Continue button after all questions */}
+        {phase === 'done' && (
+          <button
+            onClick={onContinue}
+            style={{
+              position: 'fixed', bottom: 80,
+              left: '50%', transform: 'translateX(-50%)',
+              zIndex: 10,
               background: 'none', border: 'none', padding: 0,
               cursor: 'pointer',
               fontFamily: "'Sora', sans-serif",
               fontWeight: 700, fontSize: 22,
               color: accent,
-              textShadow: `0 0 24px rgba(${rgb},0.5)`,
-              animation: 'qrs-start 300ms ease both',
+              whiteSpace: 'nowrap',
+              animation: 'qrs-done-in 420ms cubic-bezier(0.16,1,0.3,1) both',
             }}>
             Continue →
-          </button>
-        )}
-
-        {/* "Start chapter →" — after all questions answered */}
-        {phase === 'done' && (
-          <button
-            onClick={onContinue}
-            style={{
-              position: 'fixed', bottom: 64, right: 28, zIndex: 10,
-              background: 'none', border: 'none', padding: 0,
-              cursor: 'pointer',
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 700, fontSize: 30,
-              color: accent,
-              textShadow: `0 0 32px rgba(${rgb},0.55)`,
-              animation: 'qrs-start 420ms ease both',
-            }}>
-            Start chapter →
           </button>
         )}
 
