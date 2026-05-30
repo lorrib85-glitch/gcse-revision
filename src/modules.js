@@ -76,12 +76,6 @@ export const MODULES = [
           },
           {
             image: '/figures/history/medicine/medieval/ancient-authorities-timeline.webp',
-            label: 'LOOK AT THE DATES',
-            headline: 'Their ideas outlived them by over 1,000 years.',
-            body: 'Hippocrates lived around 400 BC.\n\nGalen lived around 200 AD.\n\nYet doctors in medieval England were still using their ideas in 1300 AD.',
-          },
-          {
-            image: '/figures/history/medicine/medieval/ancient-authorities-timeline.webp',
             imageOpacity: 0.35,
             facts: [
               'Medieval doctors learned medicine from ancient Greek and Roman writers, especially Hippocrates and Galen.',

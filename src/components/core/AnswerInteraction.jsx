@@ -103,25 +103,25 @@ export default function AnswerInteraction({
       {/* Hint after first wrong attempt */}
       {showHint && !locked && wasWrong && (
         <div className="fade-up" style={{
-          background: 'rgba(255,200,87,.06)',
-          border: '1px solid rgba(255,200,87,.25)',
+          background: 'rgba(72,178,255,.07)',
+          border: '1px solid rgba(72,178,255,.28)',
           borderRadius: 12, padding: '12px 14px', marginTop: 10,
         }}>
           <div style={{
             fontFamily: "'Inter', sans-serif",
             fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em',
-            textTransform: 'uppercase', color: '#FFC857', marginBottom: 6,
+            textTransform: 'uppercase', color: '#5BB8FF', marginBottom: 6,
           }}>💡 Hint — think about this</div>
           <p style={{
             fontFamily: "'Inter', sans-serif",
             fontSize: '.87rem', color: '#C8D0E8', margin: '0 0 10px', lineHeight: 1.55,
           }}>{block.hint || block.explanation}</p>
           <button onClick={retry} style={{
-            background: 'rgba(255,200,87,.1)',
-            border: '1px solid rgba(255,200,87,.3)',
+            background: 'rgba(72,178,255,.12)',
+            border: '1px solid rgba(72,178,255,.30)',
             borderRadius: 9, padding: '8px 16px',
             fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700, fontSize: '.82rem', color: '#FFC857',
+            fontWeight: 700, fontSize: '.82rem', color: '#5BB8FF',
             cursor: 'pointer',
           }}>Try again →</button>
         </div>

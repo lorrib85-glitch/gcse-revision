@@ -388,14 +388,14 @@ export default function App() {
 
   // Brand-document subject colours — always used in preference to module.color
   const SUBJECT_ACCENT = {
-    'Maths':     '#2BBE9A',
-    'Biology':   '#38D27A',
-    'History':   '#F5B700',
-    'English':   '#9D5CFF',
-    'Sociology': '#FF5C7A',
-    'Chemistry': '#34D5FF',
-    'Drama':     '#FF4FC3',
-    'Music':     '#34D5FF',
+    'Maths':     '#2CBFA3',
+    'Biology':   '#4FA36C',
+    'History':   '#D69B45',
+    'English':   '#7A284F',
+    'Sociology': '#B8A58F',
+    'Chemistry': '#8B4DFF',
+    'Drama':     '#8F1F44',
+    'Music':     '#A34DFF',
   }
 
   // Parent modules — each contains an ordered list of chapter IDs

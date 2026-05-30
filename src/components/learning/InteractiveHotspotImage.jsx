@@ -176,15 +176,15 @@ export default function InteractiveHotspotImage({
         @keyframes ihi-pulse {
           0%,100% {
             box-shadow:
-              0 0 0 1px rgba(${glowRgb},0.22),
-              0 0 18px rgba(${glowRgb},0.42),
-              0 0 44px rgba(${glowRgb},0.16);
+              0 0 0 2px rgba(${glowRgb},0.55),
+              0 0 22px rgba(${glowRgb},0.72),
+              0 0 52px rgba(${glowRgb},0.36);
           }
           50% {
             box-shadow:
-              0 0 0 2px rgba(${glowRgb},0.30),
-              0 0 28px rgba(${glowRgb},0.58),
-              0 0 60px rgba(${glowRgb},0.22);
+              0 0 0 3px rgba(${glowRgb},0.75),
+              0 0 36px rgba(${glowRgb},0.92),
+              0 0 72px rgba(${glowRgb},0.52);
           }
         }
         @keyframes ihi-label-in {
@@ -336,7 +336,7 @@ export default function InteractiveHotspotImage({
         <div style={{
           position: 'relative',
           width: '100%',
-          marginTop: 'calc(env(safe-area-inset-top, 0px) + 112px)',
+          marginTop: 'calc(env(safe-area-inset-top, 0px) + 80px)',
         }}>
           {/* Full image at natural proportions — no crop */}
           <img
@@ -393,10 +393,10 @@ export default function InteractiveHotspotImage({
                       ? `rgba(${glowRgb},0.16)`
                       : 'rgba(255,255,255,0.04)',
                     boxShadow: isSelected
-                      ? `0 0 0 1px rgba(${glowRgb},0.55), 0 0 16px rgba(${glowRgb},0.75), 0 0 48px rgba(${glowRgb},0.32)`
+                      ? `0 0 0 2px rgba(${glowRgb},0.75), 0 0 22px rgba(${glowRgb},0.92), 0 0 56px rgba(${glowRgb},0.45)`
                       : isVisited
-                        ? `0 0 0 1px rgba(${glowRgb},0.32), 0 0 12px rgba(${glowRgb},0.46), 0 0 32px rgba(${glowRgb},0.18)`
-                        : `0 0 0 1px rgba(${glowRgb},0.25), 0 0 20px rgba(${glowRgb},0.45), 0 0 50px rgba(${glowRgb},0.18)`,
+                        ? `0 0 0 1px rgba(${glowRgb},0.38), 0 0 14px rgba(${glowRgb},0.52), 0 0 36px rgba(${glowRgb},0.22)`
+                        : `0 0 0 2px rgba(${glowRgb},0.55), 0 0 22px rgba(${glowRgb},0.72), 0 0 52px rgba(${glowRgb},0.36)`,
                     animation: !isVisited ? 'ihi-pulse 2.8s ease-in-out infinite' : 'none',
                     transition: 'box-shadow 280ms cubic-bezier(0.22,1,0.36,1)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -404,8 +404,8 @@ export default function InteractiveHotspotImage({
                   }}
                 >
                   <div style={{
-                    width:  isSelected ? '10px' : isVisited ? '8px'  : '6px',
-                    height: isSelected ? '10px' : isVisited ? '8px'  : '6px',
+                    width:  isSelected ? '10px' : isVisited ? '8px'  : '8px',
+                    height: isSelected ? '10px' : isVisited ? '8px'  : '8px',
                     borderRadius: '50%',
                     background: isVisited ? glow : 'rgba(255,255,255,0.85)',
                     boxShadow: isVisited ? `0 0 8px ${glow}` : 'none',

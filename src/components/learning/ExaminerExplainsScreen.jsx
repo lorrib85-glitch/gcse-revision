@@ -224,7 +224,10 @@ export default function ExaminerExplainsScreen({
           {isTips && (
             <div style={{
               position: 'absolute', top: '24%', left: 28, right: 28,
-              paddingBottom: 160,
+              maxHeight: 'calc(100dvh - 180px)',
+              overflowY: 'auto',
+              paddingBottom: 100,
+              WebkitOverflowScrolling: 'touch',
             }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 30 }}>
                 {tips.slice(0, revealedCount).map((tip, i) => (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 
@@ -155,16 +155,18 @@ function TrueFalseQuestion({ q, accent, rgb, onSelect }) {
 }
 
 function ChoiceOrConnectionQuestion({ q, subject, onSelect }) {
-  const block = {
-    question: q.question,
-    options: (q.options || []).map((opt, i) => ({
+  const block = useMemo(() => {
+    const opts = (q.options || []).map((opt, i) => ({
       text:    typeof opt === 'string' ? opt : opt.text || opt,
       correct: i === q.correct,
       icon:    typeof opt === 'object' ? opt.icon : undefined,
-    })),
-    explanation: q.explanation,
-    hint: q.hint,
-  }
+    }))
+    for (let i = opts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [opts[i], opts[j]] = [opts[j], opts[i]]
+    }
+    return { question: q.question, options: opts, explanation: q.explanation, hint: q.hint }
+  }, [q])
 
   return (
     <div style={{
@@ -343,7 +345,6 @@ export default function QuickRecallScreen({
               fontWeight: 700, fontSize: 22,
               color: accent,
               whiteSpace: 'nowrap',
-              animation: 'qrs-done-in 420ms cubic-bezier(0.16,1,0.3,1) both',
             }}>
             Continue →
           </button>

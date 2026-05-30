@@ -1719,8 +1719,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       scrollToTop()
       return
     }
-    const examinerDone = examinerAttempts.some(a => a.moduleId === module.id)
-    if (module.examiner && !examinerDone) {
+    if (module.examiner) {
       setShowExaminer(true)
     } else {
       detectWeakSpot()
@@ -1878,8 +1877,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         onBack={() => { setShowExaminerExplains(false); go(-1) }}
         onContinue={() => {
           setShowExaminerExplains(false)
-          const examinerDone = examinerAttempts.some(a => a.moduleId === module.id)
-          if (module.examiner && !examinerDone) {
+          if (module.examiner) {
             setShowExaminer(true)
           } else {
             detectWeakSpot()

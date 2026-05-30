@@ -21,13 +21,15 @@ export default function VisualNarrativeScreen({
   const isFacts   = Array.isArray(beat.facts)
   const totalFacts = isFacts ? beat.facts.length : 0
 
+  const isLastBeat = beatIdx === beats.length - 1
+
   // Portrait: visible only on beat 0
   const portraitOpacity = beatIdx === 0 ? 1 : 0
-  // Timeline: beats 1 & 2 share the same image; dimmed on beat 2
+  // Timeline: full opacity on intermediate beats, dimmed on the final (facts) beat
   const timelineOpacity =
     beatIdx === 0 ? 0 :
-    beatIdx === 1 ? 1 :
-    (beat.imageOpacity ?? 0.35)
+    isLastBeat ? (beat.imageOpacity ?? 0.35) :
+    1
 
   // Reset hint after each action
   useEffect(() => {
@@ -44,8 +46,6 @@ export default function VisualNarrativeScreen({
 
   function handleTap() {
     if (locked) return
-
-    const isLastBeat = beatIdx === beats.length - 1
 
     if (!isLastBeat) {
       lockAndUnlock()
@@ -189,7 +189,7 @@ export default function VisualNarrativeScreen({
         {isFacts && (
           <div style={{
             position: 'absolute',
-            top: '44%', left: 28, right: 28,
+            top: '52%', left: 28, right: 28,
             paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
             pointerEvents: 'none',
           }}>
@@ -204,7 +204,7 @@ export default function VisualNarrativeScreen({
                 Tap to reveal
               </div>
             )}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {beat.facts.slice(0, factCount).map((fact, i) => (
                 <div
                   key={i}
