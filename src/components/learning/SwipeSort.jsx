@@ -345,16 +345,16 @@ export default function SwipeSort({ block, subject, onComplete }) {
             flex: 1,
             backgroundImage: 'url(/swipe-supernatural.png)',
             backgroundSize: 'cover', backgroundPosition: 'center top',
-            opacity: 0.18, filter: 'grayscale(30%) brightness(0.6)',
+            opacity: 0.45, filter: 'grayscale(15%) brightness(0.78)',
           }} />
           <div style={{
             flex: 1,
             backgroundImage: 'url(/swipe-natural.png)',
             backgroundSize: 'cover', backgroundPosition: 'center top',
-            opacity: 0.18, filter: 'grayscale(30%) brightness(0.6)',
+            opacity: 0.45, filter: 'grayscale(15%) brightness(0.78)',
           }} />
         </div>
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(8,9,13,0.72)', zIndex: 1 }} />
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(8,9,13,0.52)', zIndex: 1 }} />
 
         <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', maxWidth: 400 }}>
           <div style={{
@@ -444,21 +444,21 @@ export default function SwipeSort({ block, subject, onComplete }) {
           flex: 1,
           backgroundImage: 'url(/swipe-supernatural.png)',
           backgroundSize: 'cover', backgroundPosition: 'center top',
-          opacity: dragX < -20 ? 0.72 : 0.55,
-          filter: 'grayscale(10%) brightness(0.85)',
+          opacity: dragX < -20 ? 0.90 : 0.72,
+          filter: 'grayscale(5%) brightness(0.88)',
           transition: dragging ? 'none' : 'opacity 0.4s ease',
         }} />
         <div style={{
           flex: 1,
           backgroundImage: 'url(/swipe-natural.png)',
           backgroundSize: 'cover', backgroundPosition: 'center top',
-          opacity: dragX > 20 ? 0.72 : 0.55,
-          filter: 'grayscale(10%) brightness(0.85)',
+          opacity: dragX > 20 ? 0.90 : 0.72,
+          filter: 'grayscale(5%) brightness(0.88)',
           transition: dragging ? 'none' : 'opacity 0.4s ease',
         }} />
       </div>
 
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(8,9,13,0.35)', zIndex: 1 }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(8,9,13,0.22)', zIndex: 1 }} />
 
       {/* Centre divider line */}
       <div style={{
@@ -467,10 +467,10 @@ export default function SwipeSort({ block, subject, onComplete }) {
         background: 'linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.15) 25%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0.15) 75%, transparent 100%)',
       }} />
 
-      {/* Vignette overlay — draws eye to centre */}
+      {/* Vignette overlay — draws eye to centre card */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 70% 55% at 50% 50%, transparent 25%, rgba(5,6,10,0.68) 100%)',
+        background: 'radial-gradient(ellipse 85% 70% at 50% 50%, transparent 35%, rgba(5,6,10,0.50) 100%)',
       }} />
 
       {/* Column labels */}

@@ -137,6 +137,33 @@ export const MODULES = [
       {
         type: 'conceptReveal',
         stage: 'Understand',
+        label: 'So what did they think caused illness?',
+        steps: [
+          {
+            eyebrow: 'The problem',
+            mainText: 'Greek doctors could see symptoms. They could observe injuries.',
+            supportText: 'But they had no idea that tiny organisms called germs existed.',
+          },
+          {
+            eyebrow: 'The explanation',
+            mainText: 'So Hippocrates developed his own theory.',
+            supportText: 'He believed the body contained four important fluids called humours.',
+          },
+          {
+            mainText: 'When these humours were balanced, a person was healthy.',
+            supportText: 'When they became unbalanced, illness appeared.',
+          },
+          {
+            eyebrow: 'Why it matters',
+            mainText: 'This became one of the most influential medical theories in history.',
+            keyReveal: 'HIPPOCRATES CREATED THE FOUR HUMOURS THEORY. GALEN LATER BUILT ON IT.',
+          },
+        ],
+      },
+
+      {
+        type: 'conceptReveal',
+        stage: 'Understand',
         label: 'The Four Humours',
         steps: [
           {
