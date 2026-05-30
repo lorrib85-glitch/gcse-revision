@@ -120,8 +120,8 @@ export const MODULES = [
         stage: 'Understand',
         label: 'Supernatural vs Natural Causes',
         columns: [
-          { label: 'SUPERNATURAL\nBased on religion or belief', color: '#9D5CFF', bg: 'rgba(157,92,255,.07)' },
-          { label: 'RATIONAL\nBased on observation or logic', color: '#D69B45', bg: 'rgba(214,155,69,.07)' },
+          { label: 'SUPERNATURAL\nBased on religion or belief', color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)' },
+          { label: 'RATIONAL\nBased on observation or logic', color: '#D69B45', colorRgb: '214,155,69', bg: 'rgba(214,155,69,.07)' },
         ],
         items: [
           { label: 'Praying for God to remove illness', col: 0, explanation: 'Supernatural — based on religious belief that illness was God\'s punishment for sin.' },

@@ -88,7 +88,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
   const remaining  = totalCards - cardIdx
   const cur        = items[cardIdx] ?? null
 
-  const leftCol  = columns[0] ?? { label: 'Left',  color: '#9D5CFF' }
+  const leftCol  = columns[0] ?? { label: 'Left',  color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)' }
   const rightCol = columns[1] ?? { label: 'Right', color: accent }
 
   const dragSide = dragX < -SWIPE_THRESHOLD ? 0 : dragX > SWIPE_THRESHOLD ? 1 : null
@@ -190,10 +190,10 @@ export default function SwipeSort({ block, subject, onComplete }) {
     : flashCol === 'wrong'
     ? '0 0 44px rgba(160,85,15,0.60), 0 0 80px rgba(160,85,15,0.20), 0 8px 32px rgba(0,0,0,0.7)'
     : dragX < -SWIPE_THRESHOLD
-    ? '0 0 40px rgba(157,92,255,0.40), 0 8px 32px rgba(0,0,0,0.6)'
+    ? `0 0 40px rgba(${leftCol.colorRgb ?? '168,144,112'},0.40), 0 8px 32px rgba(0,0,0,0.6)`
     : dragX > SWIPE_THRESHOLD
     ? `0 0 40px rgba(${accentRgb},0.40), 0 8px 32px rgba(0,0,0,0.6)`
-    : '0 8px 32px rgba(0,0,0,0.5)'
+    : 'none'
 
   // ─── INTRO ──────────────────────────────────────────────────────────────────
   if (phase === 'intro') {
@@ -249,8 +249,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
           }}>
             <div style={{
               flex: 1,
-              background: 'rgba(157,92,255,0.10)',
-              border: '1.5px solid rgba(157,92,255,0.30)',
+              background: leftCol.bg ?? 'rgba(168,144,112,0.10)',
+              border: `1.5px solid rgba(${leftCol.colorRgb ?? '168,144,112'},0.30)`,
               borderRadius: 16,
               padding: '20px 14px',
               textAlign: 'center',
@@ -261,7 +261,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
                   fontFamily: 'Sora, sans-serif',
                   fontWeight: i === 0 ? 700 : 500,
                   fontSize: i === 0 ? 14 : 11,
-                  color: i === 0 ? (leftCol.color ?? '#9D5CFF') : 'rgba(245,245,245,0.50)',
+                  color: i === 0 ? (leftCol.color ?? '#A89070') : 'rgba(245,245,245,0.50)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.06em',
                   lineHeight: 1.4,
@@ -490,7 +490,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
               fontFamily: i === 0 ? 'Sora, sans-serif' : 'Outfit, sans-serif',
               fontWeight: i === 0 ? 700 : 500,
               fontSize: i === 0 ? 13 : 11,
-              color: i === 0 ? (leftCol.color ?? '#9D5CFF') : 'rgba(245,245,245,0.55)',
+              color: i === 0 ? (leftCol.color ?? '#A89070') : 'rgba(245,245,245,0.55)',
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
               lineHeight: 1.3,
@@ -542,18 +542,6 @@ export default function SwipeSort({ block, subject, onComplete }) {
         paddingTop: 140,
         paddingBottom: 200,
       }}>
-        {remaining > 1 && (
-          <div style={{
-            position: 'absolute',
-            width: 'min(72vw, 280px)',
-            minHeight: 'min(44vw, 170px)',
-            background: `rgba(${accentRgb},0.08)`,
-            borderRadius: 20,
-            border: `1px solid rgba(${accentRgb},0.15)`,
-            transform: 'translateY(10px) scale(0.95)',
-          }} />
-        )}
-
         {cur && (
           <div
             key={animKey}
@@ -635,11 +623,11 @@ export default function SwipeSort({ block, subject, onComplete }) {
           style={{
             flex: 1,
             padding: '18px 16px',
-            background: dragX < -SWIPE_THRESHOLD ? 'rgba(157,92,255,0.22)' : 'rgba(255,255,255,0.03)',
+            background: dragX < -SWIPE_THRESHOLD ? `rgba(${leftCol.colorRgb ?? '168,144,112'},0.22)` : 'rgba(255,255,255,0.03)',
             border: 'none',
             borderTop: '1px solid rgba(255,255,255,0.08)',
             borderRight: '1px solid rgba(255,255,255,0.06)',
-            color: leftCol.color ?? '#9D5CFF',
+            color: leftCol.color ?? '#A89070',
             fontFamily: 'Sora, sans-serif',
             fontWeight: 700,
             fontSize: 13,
