@@ -47,6 +47,10 @@ const CSS = `
   from { opacity: 0; transform: translateX(24px); }
   to   { opacity: 1; transform: translateX(0); }
 }
+@keyframes ss-float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-6px); }
+}
 `
 
 function injectStyles() {
@@ -214,7 +218,11 @@ export default function SwipeSort({ block, subject, onComplete }) {
             opacity: 0.65, filter: 'grayscale(10%) brightness(0.75)',
           }} />
         </div>
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,6,10,0.68)', zIndex: 1 }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,6,10,0.55)', zIndex: 1 }} />
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
+          background: 'radial-gradient(ellipse 80% 70% at 50% 50%, transparent 30%, rgba(5,6,10,0.75) 100%)',
+        }} />
 
         <div style={{
           position: 'relative', zIndex: 2,
@@ -222,15 +230,18 @@ export default function SwipeSort({ block, subject, onComplete }) {
           padding: '32px 28px', maxWidth: 420, width: '100%',
         }}>
           <div style={{
-            fontFamily: 'Sora, sans-serif',
-            fontWeight: 800,
-            fontSize: 'clamp(13px,3.5vw,15px)',
-            color: 'rgba(245,245,245,0.45)',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            marginBottom: 24,
-            animation: 'ss-intro-in 500ms cubic-bezier(.22,1,.36,1) both',
-          }}>Sort the Causes</div>
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontWeight: 600,
+            fontSize: 'clamp(36px, 9vw, 44px)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.02em',
+            color: 'rgba(245,238,225,0.92)',
+            textShadow: '0 2px 28px rgba(0,0,0,0.6)',
+            textAlign: 'center',
+            marginBottom: 0,
+            animation: 'ss-intro-in 600ms cubic-bezier(.22,1,.36,1) both',
+          }}>Two worlds.<br />One cause.</div>
+          <div style={{ width: 44, height: 1, background: 'rgba(255,255,255,0.12)', margin: '16px auto 24px' }} />
 
           <div style={{
             display: 'flex', gap: 12, width: '100%',
@@ -347,12 +358,16 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
         <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', maxWidth: 400 }}>
           <div style={{
-            fontFamily: 'Sora, sans-serif',
-            fontWeight: 800,
-            fontSize: 'clamp(26px, 7vw, 34px)',
-            color: accent,
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontWeight: 600,
+            fontStyle: 'italic',
+            fontSize: 'clamp(42px, 11vw, 54px)',
+            color: 'rgba(245,238,225,0.94)',
+            letterSpacing: '-0.02em',
+            lineHeight: 1.1,
+            textShadow: '0 2px 28px rgba(0,0,0,0.55)',
             marginBottom: 20,
-            lineHeight: 1.2,
+            animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) 0ms both',
           }}>All sorted.</div>
 
           {lastExpl && (
@@ -367,6 +382,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
               background: `rgba(${accentRgb},0.07)`,
               borderRadius: 14,
               border: `1px solid rgba(${accentRgb},0.16)`,
+              animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) 180ms both',
             }}>
               {lastExpl}
             </div>
@@ -380,6 +396,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
               color: 'rgba(245,245,245,0.80)',
               lineHeight: 1.65,
               marginBottom: 40,
+              animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) 280ms both',
             }}>
               {explanation}
             </div>
@@ -398,6 +415,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
               border: `1px solid rgba(${accentRgb},0.30)`,
               display: 'inline-block',
               cursor: 'pointer',
+              animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) 420ms both',
             }}
           >
             Continue →
@@ -441,6 +459,19 @@ export default function SwipeSort({ block, subject, onComplete }) {
       </div>
 
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(8,9,13,0.56)', zIndex: 1 }} />
+
+      {/* Centre divider line */}
+      <div style={{
+        position: 'absolute', top: 0, bottom: 0, left: '50%',
+        width: 1, zIndex: 2, pointerEvents: 'none',
+        background: 'linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.15) 25%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0.15) 75%, transparent 100%)',
+      }} />
+
+      {/* Vignette overlay — draws eye to centre */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse 70% 55% at 50% 50%, transparent 25%, rgba(5,6,10,0.68) 100%)',
+      }} />
 
       {/* Column labels */}
       <div style={{
@@ -535,44 +566,53 @@ export default function SwipeSort({ block, subject, onComplete }) {
         {cur && (
           <div
             key={animKey}
-            ref={cardRef}
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-            onMouseDown={onMouseDown}
             style={{
               position: 'relative',
-              width: 'min(84vw, 340px)',
-              background: 'rgba(22,24,34,0.97)',
-              borderRadius: 22,
-              border: `1px solid rgba(255,255,255,${Math.abs(dragX) > 20 ? 0.22 : 0.14})`,
-              padding: '28px 22px',
-              cursor: dragging ? 'grabbing' : 'grab',
-              transform: cardTransform,
-              opacity: cardOpacity,
-              animation: shaking
-                ? 'ss-shake 520ms ease both'
-                : `ss-card-in 400ms cubic-bezier(.22,1,.36,1) both`,
-              transition: shaking ? 'none' : cardTransition,
-              boxShadow: cardGlow,
+              animation: (!dragging && !shaking && !flyDir)
+                ? 'ss-float 3.2s ease-in-out infinite'
+                : 'none',
             }}
           >
-            {/* Word box — frosted inner container */}
-            <div style={{
-              background: 'rgba(255,255,255,0.10)',
-              border: '1px solid rgba(255,255,255,0.18)',
-              borderRadius: 14,
-              padding: '18px 20px',
-              textAlign: 'center',
-            }}>
+            <div
+              ref={cardRef}
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+              onMouseDown={onMouseDown}
+              style={{
+                position: 'relative',
+                width: 'min(84vw, 340px)',
+                background: 'rgba(22,24,34,0.97)',
+                borderRadius: 22,
+                border: `1px solid rgba(255,255,255,${Math.abs(dragX) > 20 ? 0.22 : 0.14})`,
+                padding: '28px 22px',
+                cursor: dragging ? 'grabbing' : 'grab',
+                transform: cardTransform,
+                opacity: cardOpacity,
+                animation: shaking
+                  ? 'ss-shake 520ms ease both'
+                  : `ss-card-in 400ms cubic-bezier(.22,1,.36,1) both`,
+                transition: shaking ? 'none' : cardTransition,
+                boxShadow: cardGlow,
+              }}
+            >
+              {/* Word box — frosted inner container */}
               <div style={{
-                fontFamily: 'Sora, sans-serif',
-                fontWeight: 700,
-                fontSize: 'clamp(17px, 4.8vw, 21px)',
-                color: 'rgba(245,245,245,0.97)',
-                lineHeight: 1.35,
+                background: 'rgba(255,255,255,0.10)',
+                border: '1px solid rgba(255,255,255,0.18)',
+                borderRadius: 14,
+                padding: '18px 20px',
+                textAlign: 'center',
               }}>
-                {cur.label}
+                <div style={{
+                  fontFamily: 'Sora, sans-serif',
+                  fontWeight: 700,
+                  fontSize: 'clamp(17px, 4.8vw, 21px)',
+                  color: 'rgba(245,245,245,0.97)',
+                  lineHeight: 1.35,
+                }}>
+                  {cur.label}
+                </div>
               </div>
             </div>
           </div>
