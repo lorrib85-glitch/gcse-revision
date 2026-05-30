@@ -1,34 +1,51 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 
-const SWIPE_THRESHOLD = 72  // px drag to commit
+const SWIPE_THRESHOLD = 72
 
-// Keyframes injected once
 const CSS = `
-@keyframes ss-correct-flash {
-  0%   { opacity: 0; transform: scale(0.85); }
-  18%  { opacity: 1; transform: scale(1.06); }
-  70%  { opacity: 1; transform: scale(1.0); }
-  100% { opacity: 0; transform: scale(1.0); }
+@keyframes ss-glow-correct {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
 }
-@keyframes ss-wrong-pulse {
-  0%,100% { transform: translateX(0); }
-  18%      { transform: translateX(-11px); }
-  36%      { transform: translateX(10px); }
-  54%      { transform: translateX(-8px); }
-  72%      { transform: translateX(6px); }
+@keyframes ss-glow-wrong {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  78%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes ss-shake {
+  0%,100% { transform: translateX(0) rotate(0deg); }
+  18%     { transform: translateX(-13px) rotate(-2deg); }
+  36%     { transform: translateX(12px) rotate(1.8deg); }
+  54%     { transform: translateX(-9px) rotate(-1.2deg); }
+  72%     { transform: translateX(6px) rotate(0.7deg); }
 }
 @keyframes ss-card-in {
-  from { opacity: 0; transform: translateY(18px) scale(0.97); }
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes ss-game-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 @keyframes ss-done-in {
   from { opacity: 0; transform: translateY(22px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes ss-col-pulse {
-  0%,100% { opacity: 0.55; }
-  50%      { opacity: 1; }
+@keyframes ss-intro-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ss-intro-left {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes ss-intro-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 `
 
@@ -48,31 +65,30 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
   const { columns = [], items = [], explanation = '' } = block
 
-  const [cardIdx,    setCardIdx]    = useState(0)
-  const [dragX,      setDragX]      = useState(0)
-  const [dragging,   setDragging]   = useState(false)
-  const [flashCol,   setFlashCol]   = useState(null)   // 'correct' | 'wrong'
-  const [flashSide,  setFlashSide]  = useState(null)   // 0 | 1 (which column flashed)
-  const [shaking,    setShaking]    = useState(false)
-  const [animKey,    setAnimKey]    = useState(0)
-  const [done,       setDone]       = useState(false)
-  const [lastExpl,   setLastExpl]   = useState('')
+  const [phase,    setPhase]    = useState('intro')
+  const [cardIdx,  setCardIdx]  = useState(0)
+  const [dragX,    setDragX]    = useState(0)
+  const [dragging, setDragging] = useState(false)
+  const [flashCol, setFlashCol] = useState(null)   // 'correct' | 'wrong'
+  const [shaking,  setShaking]  = useState(false)
+  const [flyDir,   setFlyDir]   = useState(null)   // null | 'left' | 'right'
+  const [animKey,  setAnimKey]  = useState(0)
+  const [done,     setDone]     = useState(false)
+  const [lastExpl, setLastExpl] = useState('')
 
-  const locked    = useRef(false)
-  const startX    = useRef(0)
-  const cardRef   = useRef(null)
+  const locked  = useRef(false)
+  const startX  = useRef(0)
+  const cardRef = useRef(null)
 
   const totalCards = items.length
   const remaining  = totalCards - cardIdx
   const cur        = items[cardIdx] ?? null
 
-  const leftCol  = columns[0] ?? { label: 'Left',  color: accent }
-  const rightCol = columns[1] ?? { label: 'Right', color: '#9D5CFF' }
+  const leftCol  = columns[0] ?? { label: 'Left',  color: '#9D5CFF' }
+  const rightCol = columns[1] ?? { label: 'Right', color: accent }
 
-  // Drag side: negative = left (supernatural), positive = right (natural)
   const dragSide = dragX < -SWIPE_THRESHOLD ? 0 : dragX > SWIPE_THRESHOLD ? 1 : null
 
-  // Touch/mouse handlers
   const onTouchStart = useCallback(e => {
     if (locked.current) return
     startX.current = e.touches[0].clientX
@@ -93,7 +109,6 @@ export default function SwipeSort({ block, subject, onComplete }) {
     else setDragX(0)
   }, [dragging, dragSide])
 
-  // Also support mouse for desktop
   const onMouseDown = e => {
     if (locked.current) return
     startX.current = e.clientX
@@ -114,17 +129,18 @@ export default function SwipeSort({ block, subject, onComplete }) {
   function commitChoice(chosenCol) {
     if (!cur || locked.current) return
     locked.current = true
+    setDragging(false)
 
     const correct = cur.col === chosenCol
 
     if (correct) {
-      setFlashCol('correct')
-      setFlashSide(chosenCol)
       setLastExpl(cur.explanation ?? '')
+      setFlashCol('correct')
+      setFlyDir(chosenCol === 0 ? 'left' : 'right')
+      setDragX(0)
       setTimeout(() => {
         setFlashCol(null)
-        setFlashSide(null)
-        setDragX(0)
+        setFlyDir(null)
         if (cardIdx + 1 >= totalCards) {
           setDone(true)
         } else {
@@ -132,28 +148,177 @@ export default function SwipeSort({ block, subject, onComplete }) {
           setAnimKey(k => k + 1)
         }
         locked.current = false
-      }, 900)
+      }, 520)
     } else {
       setFlashCol('wrong')
       setShaking(true)
+      setDragX(0)
       setTimeout(() => {
         setFlashCol(null)
         setShaking(false)
-        setDragX(0)
         locked.current = false
       }, 560)
     }
   }
 
-  // Column button tap (alternative to swipe)
   function tapColumn(colIdx) {
     if (locked.current || done) return
     commitChoice(colIdx)
   }
 
-  const cardRotate  = dragging ? dragX * 0.045 : 0
-  const cardOpacity = Math.max(0.4, 1 - Math.abs(dragX) / 380)
+  const cardRotate    = dragging ? dragX * 0.045 : 0
+  const cardTransform = flyDir === 'left'
+    ? 'translateX(-115vw) rotate(-22deg)'
+    : flyDir === 'right'
+    ? 'translateX(115vw) rotate(22deg)'
+    : `translateX(${dragX}px) rotate(${cardRotate}deg)`
 
+  const cardTransition = flyDir
+    ? 'transform 0.44s cubic-bezier(.4,0,.2,1), opacity 0.44s'
+    : dragging
+    ? 'box-shadow 0.12s'
+    : 'transform 0.32s cubic-bezier(.22,1,.36,1), opacity 0.28s, box-shadow 0.2s'
+
+  const cardOpacity = flyDir ? 0 : Math.max(0.4, 1 - Math.abs(dragX) / 380)
+
+  const cardGlow = flashCol === 'correct'
+    ? '0 0 52px rgba(34,197,94,0.65), 0 0 100px rgba(34,197,94,0.20), 0 8px 32px rgba(0,0,0,0.7)'
+    : flashCol === 'wrong'
+    ? '0 0 44px rgba(160,85,15,0.60), 0 0 80px rgba(160,85,15,0.20), 0 8px 32px rgba(0,0,0,0.7)'
+    : dragX < -SWIPE_THRESHOLD
+    ? '0 0 40px rgba(157,92,255,0.40), 0 8px 32px rgba(0,0,0,0.6)'
+    : dragX > SWIPE_THRESHOLD
+    ? `0 0 40px rgba(${accentRgb},0.40), 0 8px 32px rgba(0,0,0,0.6)`
+    : '0 8px 32px rgba(0,0,0,0.5)'
+
+  // ─── INTRO ──────────────────────────────────────────────────────────────────
+  if (phase === 'intro') {
+    return (
+      <div style={{
+        position: 'fixed', inset: 0,
+        background: '#05060A',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+      }}>
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 0 }}>
+          <div style={{
+            flex: 1,
+            backgroundImage: 'url(/swipe-supernatural.png)',
+            backgroundSize: 'cover', backgroundPosition: 'center top',
+            opacity: 0.65, filter: 'grayscale(10%) brightness(0.75)',
+          }} />
+          <div style={{
+            flex: 1,
+            backgroundImage: 'url(/swipe-natural.png)',
+            backgroundSize: 'cover', backgroundPosition: 'center top',
+            opacity: 0.65, filter: 'grayscale(10%) brightness(0.75)',
+          }} />
+        </div>
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,6,10,0.68)', zIndex: 1 }} />
+
+        <div style={{
+          position: 'relative', zIndex: 2,
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          padding: '32px 28px', maxWidth: 420, width: '100%',
+        }}>
+          <div style={{
+            fontFamily: 'Sora, sans-serif',
+            fontWeight: 800,
+            fontSize: 'clamp(13px,3.5vw,15px)',
+            color: 'rgba(245,245,245,0.45)',
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            marginBottom: 24,
+            animation: 'ss-intro-in 500ms cubic-bezier(.22,1,.36,1) both',
+          }}>Sort the Causes</div>
+
+          <div style={{
+            display: 'flex', gap: 12, width: '100%',
+            marginBottom: 28,
+          }}>
+            <div style={{
+              flex: 1,
+              background: 'rgba(157,92,255,0.10)',
+              border: '1.5px solid rgba(157,92,255,0.30)',
+              borderRadius: 16,
+              padding: '20px 14px',
+              textAlign: 'center',
+              animation: 'ss-intro-left 520ms cubic-bezier(.22,1,.36,1) 60ms both',
+            }}>
+              {leftCol.label.split('\n').map((line, i) => (
+                <div key={i} style={{
+                  fontFamily: 'Sora, sans-serif',
+                  fontWeight: i === 0 ? 700 : 500,
+                  fontSize: i === 0 ? 14 : 11,
+                  color: i === 0 ? (leftCol.color ?? '#9D5CFF') : 'rgba(245,245,245,0.50)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  lineHeight: 1.4,
+                }}>{i === 0 ? '← ' : ''}{line}</div>
+              ))}
+            </div>
+
+            <div style={{
+              flex: 1,
+              background: `rgba(${accentRgb},0.10)`,
+              border: `1.5px solid rgba(${accentRgb},0.30)`,
+              borderRadius: 16,
+              padding: '20px 14px',
+              textAlign: 'center',
+              animation: 'ss-intro-right 520ms cubic-bezier(.22,1,.36,1) 120ms both',
+            }}>
+              {rightCol.label.split('\n').map((line, i) => (
+                <div key={i} style={{
+                  fontFamily: 'Sora, sans-serif',
+                  fontWeight: i === 0 ? 700 : 500,
+                  fontSize: i === 0 ? 14 : 11,
+                  color: i === 0 ? (rightCol.color ?? accent) : 'rgba(245,245,245,0.50)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  lineHeight: 1.4,
+                }}>{line}{i === 0 ? ' →' : ''}</div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{
+            fontFamily: 'Outfit, sans-serif',
+            fontWeight: 500,
+            fontSize: 15,
+            color: 'rgba(245,245,245,0.60)',
+            lineHeight: 1.65,
+            textAlign: 'center',
+            marginBottom: 36,
+            animation: 'ss-intro-in 500ms cubic-bezier(.22,1,.36,1) 200ms both',
+          }}>
+            Each card shows a cause of disease. Swipe it — or tap the buttons below — to place it in the right column.
+          </div>
+
+          <button
+            onClick={() => setPhase('game')}
+            style={{
+              fontFamily: 'Sora, sans-serif',
+              fontWeight: 700,
+              fontSize: 16,
+              color: '#08090D',
+              background: accent,
+              border: 'none',
+              borderRadius: 50,
+              padding: '16px 44px',
+              cursor: 'pointer',
+              letterSpacing: '0.04em',
+              boxShadow: `0 0 36px rgba(${accentRgb},0.45)`,
+              animation: 'ss-intro-in 500ms cubic-bezier(.22,1,.36,1) 300ms both',
+            }}
+          >
+            Let's go →
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // ─── DONE ───────────────────────────────────────────────────────────────────
   if (done) {
     return (
       <div style={{
@@ -164,17 +329,16 @@ export default function SwipeSort({ block, subject, onComplete }) {
         padding: '32px 28px',
         animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) both',
       }}>
-        {/* Split background */}
         <div style={{ position: 'fixed', inset: 0, display: 'flex', zIndex: 0 }}>
           <div style={{
             flex: 1,
-            backgroundImage: `url(/swipe-supernatural.png)`,
+            backgroundImage: 'url(/swipe-supernatural.png)',
             backgroundSize: 'cover', backgroundPosition: 'center top',
             opacity: 0.18, filter: 'grayscale(30%) brightness(0.6)',
           }} />
           <div style={{
             flex: 1,
-            backgroundImage: `url(/swipe-natural.png)`,
+            backgroundImage: 'url(/swipe-natural.png)',
             backgroundSize: 'cover', backgroundPosition: 'center top',
             opacity: 0.18, filter: 'grayscale(30%) brightness(0.6)',
           }} />
@@ -189,9 +353,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
             color: accent,
             marginBottom: 20,
             lineHeight: 1.2,
-          }}>
-            All sorted.
-          </div>
+          }}>All sorted.</div>
 
           {lastExpl && (
             <div style={{
@@ -223,19 +385,20 @@ export default function SwipeSort({ block, subject, onComplete }) {
             </div>
           )}
 
-          <div style={{
-            fontFamily: 'Sora, sans-serif',
-            fontWeight: 700,
-            fontSize: 16,
-            color: accent,
-            padding: '14px 32px',
-            background: `rgba(${accentRgb},0.12)`,
-            borderRadius: 50,
-            border: `1px solid rgba(${accentRgb},0.30)`,
-            display: 'inline-block',
-            cursor: 'pointer',
-          }}
+          <div
             onClick={onComplete}
+            style={{
+              fontFamily: 'Sora, sans-serif',
+              fontWeight: 700,
+              fontSize: 16,
+              color: accent,
+              padding: '14px 32px',
+              background: `rgba(${accentRgb},0.12)`,
+              borderRadius: 50,
+              border: `1px solid rgba(${accentRgb},0.30)`,
+              display: 'inline-block',
+              cursor: 'pointer',
+            }}
           >
             Continue →
           </div>
@@ -244,46 +407,46 @@ export default function SwipeSort({ block, subject, onComplete }) {
     )
   }
 
+  // ─── GAME ───────────────────────────────────────────────────────────────────
   return (
     <div style={{
       position: 'fixed', inset: 0,
       background: '#08090D',
       overflow: 'hidden',
       userSelect: 'none', WebkitUserSelect: 'none',
+      animation: 'ss-game-in 380ms ease both',
     }}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
     >
-      {/* Split background: left=supernatural, right=natural */}
+      {/* Split background — brighter base opacity */}
       <div style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 0 }}>
         <div style={{
           flex: 1,
-          backgroundImage: `url(/swipe-supernatural.png)`,
+          backgroundImage: 'url(/swipe-supernatural.png)',
           backgroundSize: 'cover', backgroundPosition: 'center top',
-          opacity: dragX < -20 ? 0.42 : 0.22,
-          filter: 'grayscale(20%) brightness(0.55)',
+          opacity: dragX < -20 ? 0.56 : 0.34,
+          filter: 'grayscale(15%) brightness(0.65)',
           transition: dragging ? 'none' : 'opacity 0.4s ease',
         }} />
         <div style={{
           flex: 1,
-          backgroundImage: `url(/swipe-natural.png)`,
+          backgroundImage: 'url(/swipe-natural.png)',
           backgroundSize: 'cover', backgroundPosition: 'center top',
-          opacity: dragX > 20 ? 0.42 : 0.22,
-          filter: 'grayscale(20%) brightness(0.55)',
+          opacity: dragX > 20 ? 0.56 : 0.34,
+          filter: 'grayscale(15%) brightness(0.65)',
           transition: dragging ? 'none' : 'opacity 0.4s ease',
         }} />
       </div>
 
-      {/* Dark overlay */}
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(8,9,13,0.66)', zIndex: 1 }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(8,9,13,0.56)', zIndex: 1 }} />
 
-      {/* Column labels — fixed sides */}
+      {/* Column labels */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0,
         display: 'flex', zIndex: 3,
       }}>
-        {/* Left label */}
         <div style={{
           flex: 1,
           padding: '52px 18px 18px',
@@ -296,16 +459,14 @@ export default function SwipeSort({ block, subject, onComplete }) {
               fontFamily: i === 0 ? 'Sora, sans-serif' : 'Outfit, sans-serif',
               fontWeight: i === 0 ? 700 : 500,
               fontSize: i === 0 ? 13 : 11,
-              color: i === 0 ? leftCol.color ?? '#9D5CFF' : 'rgba(245,245,245,0.55)',
-              letterSpacing: i === 0 ? '0.08em' : '0.06em',
+              color: i === 0 ? (leftCol.color ?? '#9D5CFF') : 'rgba(245,245,245,0.55)',
+              letterSpacing: '0.08em',
               textTransform: 'uppercase',
               lineHeight: 1.3,
             }}>{line}</div>
           ))}
         </div>
-        {/* Divider */}
         <div style={{ width: 1, background: 'rgba(255,255,255,0.08)', marginTop: 52 }} />
-        {/* Right label */}
         <div style={{
           flex: 1,
           padding: '52px 18px 18px',
@@ -318,8 +479,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
               fontFamily: i === 0 ? 'Sora, sans-serif' : 'Outfit, sans-serif',
               fontWeight: i === 0 ? 700 : 500,
               fontSize: i === 0 ? 13 : 11,
-              color: i === 0 ? rightCol.color ?? accent : 'rgba(245,245,245,0.55)',
-              letterSpacing: i === 0 ? '0.08em' : '0.06em',
+              color: i === 0 ? (rightCol.color ?? accent) : 'rgba(245,245,245,0.55)',
+              letterSpacing: '0.08em',
               textTransform: 'uppercase',
               lineHeight: 1.3,
             }}>{line}</div>
@@ -327,7 +488,20 @@ export default function SwipeSort({ block, subject, onComplete }) {
         </div>
       </div>
 
-      {/* Card stack — ghost cards behind */}
+      {/* Progress */}
+      <div style={{
+        position: 'absolute', top: 54, left: '50%', transform: 'translateX(-50%)',
+        zIndex: 5,
+        fontFamily: 'Outfit, sans-serif',
+        fontWeight: 600,
+        fontSize: 12,
+        color: 'rgba(245,245,245,0.38)',
+        letterSpacing: '0.10em',
+      }}>
+        {cardIdx + 1} / {totalCards}
+      </div>
+
+      {/* Card stack */}
       <div style={{
         position: 'absolute', inset: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -335,24 +509,22 @@ export default function SwipeSort({ block, subject, onComplete }) {
         paddingTop: 140,
         paddingBottom: 200,
       }}>
-        {/* Ghost card 2 (deepest) */}
         {remaining > 2 && (
           <div style={{
             position: 'absolute',
             width: 'min(84vw, 340px)',
-            height: 'min(48vw, 190px)',
+            minHeight: 'min(48vw, 190px)',
             background: 'rgba(255,255,255,0.04)',
             borderRadius: 20,
             border: '1px solid rgba(255,255,255,0.07)',
             transform: 'translateY(20px) scale(0.90)',
           }} />
         )}
-        {/* Ghost card 1 */}
         {remaining > 1 && (
           <div style={{
             position: 'absolute',
             width: 'min(84vw, 340px)',
-            height: 'min(48vw, 190px)',
+            minHeight: 'min(48vw, 190px)',
             background: 'rgba(255,255,255,0.06)',
             borderRadius: 20,
             border: '1px solid rgba(255,255,255,0.10)',
@@ -360,7 +532,6 @@ export default function SwipeSort({ block, subject, onComplete }) {
           }} />
         )}
 
-        {/* Active card */}
         {cur && (
           <div
             key={animKey}
@@ -372,73 +543,63 @@ export default function SwipeSort({ block, subject, onComplete }) {
             style={{
               position: 'relative',
               width: 'min(84vw, 340px)',
-              background: 'rgba(20,21,28,0.92)',
-              borderRadius: 20,
-              border: `1px solid rgba(255,255,255,${Math.abs(dragX) > 20 ? 0.18 : 0.12})`,
-              padding: '28px 24px',
+              background: 'rgba(22,24,34,0.97)',
+              borderRadius: 22,
+              border: `1px solid rgba(255,255,255,${Math.abs(dragX) > 20 ? 0.22 : 0.14})`,
+              padding: '28px 22px',
               cursor: dragging ? 'grabbing' : 'grab',
-              transform: `translateX(${dragX}px) rotate(${cardRotate}deg)`,
+              transform: cardTransform,
               opacity: cardOpacity,
               animation: shaking
-                ? 'ss-wrong-pulse 480ms ease both'
+                ? 'ss-shake 520ms ease both'
                 : `ss-card-in 400ms cubic-bezier(.22,1,.36,1) both`,
-              transition: dragging ? 'none' : 'transform 0.35s cubic-bezier(.22,1,.36,1), opacity 0.3s',
-              boxShadow: dragX < -SWIPE_THRESHOLD
-                ? `0 0 40px rgba(157,92,255,0.35), 0 8px 32px rgba(0,0,0,0.6)`
-                : dragX > SWIPE_THRESHOLD
-                  ? `0 0 40px rgba(${accentRgb},0.35), 0 8px 32px rgba(0,0,0,0.6)`
-                  : `0 8px 32px rgba(0,0,0,0.5)`,
+              transition: shaking ? 'none' : cardTransition,
+              boxShadow: cardGlow,
             }}
           >
+            {/* Word box — frosted inner container */}
             <div style={{
-              fontFamily: 'Sora, sans-serif',
-              fontWeight: 700,
-              fontSize: 'clamp(16px, 4.5vw, 19px)',
-              color: 'rgba(245,245,245,0.94)',
-              lineHeight: 1.4,
+              background: 'rgba(255,255,255,0.10)',
+              border: '1px solid rgba(255,255,255,0.18)',
+              borderRadius: 14,
+              padding: '18px 20px',
               textAlign: 'center',
             }}>
-              {cur.label}
+              <div style={{
+                fontFamily: 'Sora, sans-serif',
+                fontWeight: 700,
+                fontSize: 'clamp(17px, 4.8vw, 21px)',
+                color: 'rgba(245,245,245,0.97)',
+                lineHeight: 1.35,
+              }}>
+                {cur.label}
+              </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* Correct flash overlay */}
+      {/* Green correct flash */}
       {flashCol === 'correct' && (
         <div style={{
           position: 'absolute', inset: 0, zIndex: 10,
-          background: flashSide === 1
-            ? `rgba(${accentRgb},0.22)`
-            : 'rgba(157,92,255,0.22)',
-          animation: 'ss-correct-flash 820ms ease both',
+          background: 'rgba(34,197,94,0.22)',
+          animation: 'ss-glow-correct 480ms ease both',
           pointerEvents: 'none',
         }} />
       )}
 
-      {/* Wrong flash overlay */}
+      {/* Brown wrong flash */}
       {flashCol === 'wrong' && (
         <div style={{
           position: 'absolute', inset: 0, zIndex: 10,
-          background: 'rgba(220,60,60,0.14)',
+          background: 'rgba(160,85,15,0.24)',
+          animation: 'ss-glow-wrong 540ms ease both',
           pointerEvents: 'none',
         }} />
       )}
 
-      {/* Progress counter */}
-      <div style={{
-        position: 'absolute', top: 52, left: '50%', transform: 'translateX(-50%)',
-        zIndex: 5,
-        fontFamily: 'Outfit, sans-serif',
-        fontWeight: 600,
-        fontSize: 12,
-        color: 'rgba(245,245,245,0.38)',
-        letterSpacing: '0.10em',
-      }}>
-        {cardIdx + 1} / {totalCards}
-      </div>
-
-      {/* Bottom column tap buttons */}
+      {/* Bottom tap buttons */}
       <div style={{
         position: 'absolute', bottom: 0, left: 0, right: 0,
         display: 'flex', zIndex: 5,
@@ -449,12 +610,10 @@ export default function SwipeSort({ block, subject, onComplete }) {
           style={{
             flex: 1,
             padding: '18px 16px',
-            background: dragX < -SWIPE_THRESHOLD
-              ? `rgba(157,92,255,0.22)`
-              : 'rgba(255,255,255,0.03)',
+            background: dragX < -SWIPE_THRESHOLD ? 'rgba(157,92,255,0.22)' : 'rgba(255,255,255,0.03)',
             border: 'none',
-            borderTop: `1px solid rgba(255,255,255,0.08)`,
-            borderRight: `1px solid rgba(255,255,255,0.06)`,
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+            borderRight: '1px solid rgba(255,255,255,0.06)',
             color: leftCol.color ?? '#9D5CFF',
             fontFamily: 'Sora, sans-serif',
             fontWeight: 700,
@@ -471,11 +630,9 @@ export default function SwipeSort({ block, subject, onComplete }) {
           style={{
             flex: 1,
             padding: '18px 16px',
-            background: dragX > SWIPE_THRESHOLD
-              ? `rgba(${accentRgb},0.22)`
-              : 'rgba(255,255,255,0.03)',
+            background: dragX > SWIPE_THRESHOLD ? `rgba(${accentRgb},0.22)` : 'rgba(255,255,255,0.03)',
             border: 'none',
-            borderTop: `1px solid rgba(255,255,255,0.08)`,
+            borderTop: '1px solid rgba(255,255,255,0.08)',
             color: rightCol.color ?? accent,
             fontFamily: 'Sora, sans-serif',
             fontWeight: 700,
@@ -489,7 +646,6 @@ export default function SwipeSort({ block, subject, onComplete }) {
         </button>
       </div>
 
-      {/* Swipe hint text */}
       <div style={{
         position: 'absolute',
         bottom: 80,

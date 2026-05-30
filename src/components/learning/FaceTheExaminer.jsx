@@ -124,6 +124,13 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
     schedule(() => setPhase('reading'),   2300)
   }
 
+  // Fallback: if video hasn't started playing after 3.5s (autoplay blocked), skip intro
+  useEffect(() => {
+    if (phase !== 'intro') return
+    const id = setTimeout(() => startTitleFade(), 3500)
+    return () => clearTimeout(id)
+  }, [phase]) // eslint-disable-line react-hooks/exhaustive-deps
+
   function handleTimeUpdate() {
     const vid = videoRef.current
     if (!vid || textStarted.current) return
@@ -158,6 +165,9 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
     for (const { end, addition } of toInsert) {
       text = text.slice(0, end) + addition + text.slice(end)
     }
+    // Append the general free-write paragraph if present
+    const general = studentEdits['__general__']?.trim()
+    if (general) text = text + ' ' + general
     return text
   }
 
@@ -259,7 +269,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
           {/* Base gradient */}
           <div style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.3) 45%, rgba(0,0,0,0.82) 80%, rgba(0,0,0,0.96) 100%)',
+            background: 'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.12) 40%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.85) 100%)',
           }} />
 
           {/* Darkening overlay — increases as title fades in */}
@@ -459,7 +469,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
             position: 'absolute', inset: 0, pointerEvents: 'none',
             backgroundImage: `url(${IMAGES[key]})`,
             backgroundSize: 'cover', backgroundPosition: 'center right',
-            opacity: 0.40, filter: 'grayscale(8%) brightness(0.75)',
+            opacity: 0.55, filter: 'grayscale(4%) brightness(0.90)',
           }} />
         )}
 
@@ -652,16 +662,47 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
                 </div>
               )}
 
-              {/* "PUSH IT UP A GRADE" heading in improving */}
+              {/* "PUSH IT UP A GRADE" + free-write box in improving */}
               {isImproving && (
-                <div style={{
-                  marginTop: 20,
-                  fontFamily: "'Sora', sans-serif",
-                  fontWeight: 800, fontSize: 11,
-                  letterSpacing: '0.16em', textTransform: 'uppercase',
-                  color: accent,
-                }}>
-                  Push it up a grade
+                <div style={{ marginTop: 20 }}>
+                  <div style={{
+                    fontFamily: "'Sora', sans-serif",
+                    fontWeight: 800, fontSize: 11,
+                    letterSpacing: '0.16em', textTransform: 'uppercase',
+                    color: accent,
+                    marginBottom: 12,
+                  }}>
+                    Push it up a grade
+                  </div>
+                  <div style={{
+                    fontFamily: "'Sora', sans-serif",
+                    fontWeight: 400, fontSize: 13,
+                    color: 'rgba(255,255,255,0.42)',
+                    marginBottom: 10,
+                    lineHeight: 1.5,
+                  }}>
+                    Add a paragraph to strengthen this answer:
+                  </div>
+                  <textarea
+                    className="fte-textarea"
+                    rows={4}
+                    placeholder="Write an extra paragraph here — a stronger link, a named example, or a more precise chain of reasoning…"
+                    value={studentEdits['__general__'] || ''}
+                    onChange={e => setStudentEdits(prev => ({ ...prev, __general__: e.target.value }))}
+                    style={{
+                      width: '100%', boxSizing: 'border-box',
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.14)',
+                      borderRadius: 10,
+                      padding: '12px 14px',
+                      color: 'rgba(245,238,225,0.9)',
+                      fontFamily: "'IBM Plex Serif', Georgia, serif",
+                      fontSize: 14, lineHeight: 1.65,
+                      resize: 'vertical',
+                      outline: 'none',
+                      display: 'block',
+                    }}
+                  />
                 </div>
               )}
             </div>
