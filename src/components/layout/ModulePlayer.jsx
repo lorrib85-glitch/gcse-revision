@@ -20,6 +20,7 @@ import VisualNarrativeScreen from '../learning/VisualNarrativeScreen.jsx'
 import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 import TheoryCompareBlock from '../learning/TheoryCompareBlock.jsx'
 import ColSortBlock from '../learning/ColSortBlock.jsx'
+import ExaminerExplainsScreen from '../learning/ExaminerExplainsScreen.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1686,7 +1687,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const [showWeakSpotRecovery, setShowWeakSpotRecovery] = useState(false)
   const [detectedWeakSpot, setDetectedWeakSpot] = useState(null)
   const [recoveryQuizId, setRecoveryQuizId] = useState(null)
-  const [showExaminer, setShowExaminer] = useState(false)
+  const [showExaminer,         setShowExaminer]         = useState(false)
+  const [showExaminerExplains, setShowExaminerExplains] = useState(false)
   const [examinerAttempts, setExaminerAttempts] = useState(() => saved.examinerAttempts || [])
   const total   = module.screens.length
   const pct     = Math.round(((screen + 1) / total) * 100)
@@ -1712,11 +1714,15 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   }
 
   function handleFinish() {
+    if (module.examinerExplains && !showExaminerExplains) {
+      setShowExaminerExplains(true)
+      scrollToTop()
+      return
+    }
     const examinerDone = examinerAttempts.some(a => a.moduleId === module.id)
     if (module.examiner && !examinerDone) {
       setShowExaminer(true)
     } else {
-      // New flow: detect weak spots instead of confidence rating
       detectWeakSpot()
     }
     scrollToTop()
@@ -1860,6 +1866,26 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
             visible={true}
           />
         )}
+      />
+    )
+  }
+
+  if (showExaminerExplains) {
+    return (
+      <ExaminerExplainsScreen
+        subject={module.subject}
+        examinerExplains={module.examinerExplains}
+        onBack={() => { setShowExaminerExplains(false); go(-1) }}
+        onContinue={() => {
+          setShowExaminerExplains(false)
+          const examinerDone = examinerAttempts.some(a => a.moduleId === module.id)
+          if (module.examiner && !examinerDone) {
+            setShowExaminer(true)
+          } else {
+            detectWeakSpot()
+          }
+          scrollToTop()
+        }}
       />
     )
   }
