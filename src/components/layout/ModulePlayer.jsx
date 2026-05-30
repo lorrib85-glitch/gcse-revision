@@ -21,6 +21,7 @@ import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 import TheoryCompareBlock from '../learning/TheoryCompareBlock.jsx'
 import ColSortBlock from '../learning/ColSortBlock.jsx'
 import ExaminerExplainsScreen from '../learning/ExaminerExplainsScreen.jsx'
+import SwipeSort from '../learning/SwipeSort.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1877,6 +1878,14 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         onBack={() => { setShowExaminerExplains(false); go(-1) }}
         onContinue={() => {
           setShowExaminerExplains(false)
+          // Navigate to the faceExaminer screen if one exists in this module
+          const faceExamIdx = module.screens.findIndex(s => s.type === 'faceExaminer')
+          if (faceExamIdx >= 0) {
+            setScreen(faceExamIdx)
+            setAnimKey(k => k + 1)
+            scrollToTop()
+            return
+          }
           if (module.examiner) {
             setShowExaminer(true)
           } else {
@@ -1907,7 +1916,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           setExaminerAttempts(updated)
           saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts: updated })
           setShowExaminer(false)
-          setShowConfidence(true)
+          completeModule()
           scrollToTop()
         }}
       />
@@ -2038,7 +2047,27 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           module={module}
           examiner={cur.examiner}
           onExit={headerOnBack}
-          onContinue={() => { isLast ? handleFinish() : go(1) }}
+          onContinue={completeModule}
+        />
+      </>
+    )
+  }
+
+  // ── SwipeSort — supernatural vs natural card sort ─────────────────────────
+  if (cur?.type === 'naturalSupernaturalSwipe') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={true}
+        />
+        <SwipeSort
+          block={cur}
+          subject={module.subject}
+          onComplete={() => { isLast ? handleFinish() : go(1) }}
         />
       </>
     )

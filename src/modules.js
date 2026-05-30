@@ -116,31 +116,22 @@ export const MODULES = [
       },
 
       {
+        type: 'naturalSupernaturalSwipe',
         stage: 'Understand',
         label: 'Supernatural vs Natural Causes',
-        kicker: 'Competing Explanations',
-        heading: 'Two Ways to Explain Illness',
-        sub: 'A long argument that changed how doctors thought.',
-        blocks: [
-          {
-            type: 'theoryCompare',
-            oldLabel: 'The old belief',
-            oldTitle: 'Supernatural causes',
-            oldPoints: [
-              'Illness could be sent by God as punishment for sin',
-              'Some believed demons or evil spirits caused disease',
-              'Celestial events like eclipses could trigger illness',
-            ],
-            newLabel: 'Hippocrates challenged this',
-            newTitle: 'Natural causes',
-            newPoints: [
-              'Hippocrates argued illness came from inside the body',
-              'He encouraged doctors to observe patients carefully',
-              'Disease could be explained and treated without supernatural causes',
-            ],
-            takeaway: 'This shift from God to the body is where medicine starts becoming science.',
-          },
+        columns: [
+          { label: 'SUPERNATURAL\nBased on religion or belief', color: '#9D5CFF', bg: 'rgba(157,92,255,.07)' },
+          { label: 'RATIONAL\nBased on observation or logic', color: '#D69B45', bg: 'rgba(214,155,69,.07)' },
         ],
+        items: [
+          { label: 'Praying for God to remove illness', col: 0, explanation: 'Supernatural — based on religious belief that illness was God\'s punishment for sin.' },
+          { label: 'Four Humours — illness caused by imbalance of fluids', col: 1, explanation: 'Rational — based on observation and logic, even though the theory was wrong.' },
+          { label: 'Visiting holy shrines and relics to be cured', col: 0, explanation: 'Supernatural — relying on faith and the power of sacred objects.' },
+          { label: 'Miasma — bad air from rotting matter causes disease', col: 1, explanation: 'Rational — based on observation. People noticed disease was common in dirty, smelly places.' },
+          { label: 'Planetary alignment determines when to treat patients', col: 0, explanation: 'Supernatural — astrology relied on celestial forces rather than observation of the body.' },
+          { label: 'Bloodletting to rebalance the humours', col: 1, explanation: 'Rational — based on the Four Humours theory. Wrong, but logically consistent with medieval beliefs.' },
+        ],
+        explanation: 'Medieval medicine mixed both approaches. Rational ideas came from Hippocrates and Galen — supernatural ones from the Church. Both shaped how doctors thought and treated patients.',
       },
 
       {

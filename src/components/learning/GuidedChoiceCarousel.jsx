@@ -638,8 +638,8 @@ export default function GuidedChoiceCarousel({
                 backgroundImage: `url(${selectedOption.image})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center top',
-                opacity: 0.38,
-                filter: 'grayscale(12%) brightness(0.52)',
+                opacity: 0.52,
+                filter: 'grayscale(12%) brightness(0.68)',
                 pointerEvents: 'none', zIndex: 1,
               }} />
 
