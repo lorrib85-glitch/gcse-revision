@@ -1,4 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+
+function tokenize(text) {
+  const parts = text.split(/(\s+)/)
+  let wi = 0
+  return parts.map((part, i) => {
+    if (/^\s+$/.test(part)) return { key: i, space: true, text: part }
+    return { key: i, space: false, text: part, wordIdx: wi++ }
+  })
+}
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { SPACING } from '../../constants/spacing.js'
@@ -26,6 +35,12 @@ export default function GuidedChoiceCarousel({
   const [selectedIndex, setSelectedIndex] = useState(null)
   const [dragOffset, setDragOffset]      = useState(0)
   const [isDragging, setIsDragging]      = useState(false)
+
+  // Cinematic reveal phase
+  const [showReveal,    setShowReveal]    = useState(false)
+  const [revealLineCnt, setRevealLineCnt] = useState(0)
+  const [revealHint,    setRevealHint]    = useState(false)
+  const [revealLocked,  setRevealLocked]  = useState(false)
 
   // Preload all card images immediately on mount
   useEffect(() => {
@@ -143,9 +158,28 @@ export default function GuidedChoiceCarousel({
     if (isChosen || choosing.current) return
     choosing.current = true
     setSelectedIndex(currentIndex)
-    setTimeout(() => {
-      onContinue(currentOption.nextScreenId)
-    }, 680)
+    setTimeout(() => setShowReveal(true), 450)
+  }
+
+  // ── Reveal phase helpers ───────────────────────────────────────────────────
+  const selectedOption = selectedIndex !== null ? options[selectedIndex] : null
+  const revealLines    = selectedOption?.revealLines || []
+  const titleLine      = revealLines[0] || ''
+  const bodyLines      = revealLines.slice(1)
+  const allRevealed    = revealLineCnt >= bodyLines.length
+
+  useEffect(() => {
+    if (!showReveal || allRevealed) return
+    setRevealHint(false)
+    const t = setTimeout(() => setRevealHint(true), 600)
+    return () => clearTimeout(t)
+  }, [showReveal, revealLineCnt, allRevealed])
+
+  function handleRevealTap() {
+    if (revealLocked || allRevealed) return
+    setRevealLocked(true)
+    setRevealLineCnt(c => c + 1)
+    setTimeout(() => setRevealLocked(false), 200)
   }
 
   // ── Track translation ──────────────────────────────────────────────────────
@@ -564,6 +598,170 @@ export default function GuidedChoiceCarousel({
           {isChosen ? '✓ Selected' : (currentOption.buttonText || 'Choose this')}
         </button>
       </div>
+
+      {/* ── Cinematic choice reveal overlay ─────────────────────────────────── */}
+      {showReveal && selectedOption && (() => {
+        const titleToks = tokenize(titleLine)
+        return (
+          <>
+            <style>{`
+              @keyframes gcc-word {
+                from { opacity: 0; transform: translateY(9px); }
+                to   { opacity: 1; transform: translateY(0); }
+              }
+              @keyframes gcc-line {
+                from { opacity: 0; transform: translateY(14px); }
+                to   { opacity: 1; transform: translateY(0); }
+              }
+              @keyframes gcc-hint {
+                0%, 100% { opacity: 0; transform: translateY(0); }
+                35%, 65%  { opacity: 0.5; transform: translateY(-3px); }
+              }
+              @keyframes gcc-cont {
+                from { opacity: 0; transform: translateY(14px); }
+                to   { opacity: 1; transform: translateY(0); }
+              }
+            `}</style>
+
+            <div
+              onClick={!allRevealed ? handleRevealTap : undefined}
+              style={{
+                position: 'fixed', inset: 0, zIndex: 1100,
+                background: '#08090D',
+                cursor: allRevealed ? 'default' : 'pointer',
+                userSelect: 'none', WebkitUserSelect: 'none',
+              }}
+            >
+              {/* Healer background image */}
+              <div style={{
+                position: 'fixed', inset: 0,
+                backgroundImage: `url(${selectedOption.image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center top',
+                opacity: 0.38,
+                filter: 'grayscale(12%) brightness(0.52)',
+                pointerEvents: 'none', zIndex: 1,
+              }} />
+
+              {/* Left gradient */}
+              <div style={{
+                position: 'fixed', inset: 0,
+                background: 'linear-gradient(90deg, rgba(8,9,13,0.97) 0%, rgba(8,9,13,0.82) 42%, rgba(8,9,13,0.46) 72%, rgba(8,9,13,0.18) 100%)',
+                pointerEvents: 'none', zIndex: 2,
+              }} />
+
+              {/* Overall dark overlay */}
+              <div style={{
+                position: 'fixed', inset: 0,
+                background: 'rgba(8,9,13,0.22)',
+                pointerEvents: 'none', zIndex: 3,
+              }} />
+
+              {/* Bottom fade */}
+              <div style={{
+                position: 'fixed', bottom: 0, left: 0, right: 0, height: 260,
+                background: 'linear-gradient(0deg, rgba(8,9,13,0.99) 0%, transparent 100%)',
+                pointerEvents: 'none', zIndex: 4,
+              }} />
+
+              {/* Content shell */}
+              <div style={{ position: 'relative', zIndex: 5, minHeight: '100dvh' }}>
+
+                {/* Title with word stagger */}
+                <div style={{
+                  position: 'absolute', top: '26%', left: 28, right: 28,
+                  maxHeight: 'calc(100dvh - 180px)',
+                  overflowY: 'auto',
+                  paddingBottom: 100,
+                  WebkitOverflowScrolling: 'touch',
+                }}>
+                  <div style={{
+                    fontFamily: "'Sora', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 'clamp(28px, 9vw, 40px)',
+                    lineHeight: 'clamp(33px, 10.5vw, 46px)',
+                    letterSpacing: '-0.04em',
+                    color: '#FFFFFF',
+                    maxWidth: 340,
+                    marginBottom: 28,
+                  }}>
+                    {titleToks.map(tok =>
+                      tok.space ? tok.text : (
+                        <span key={tok.key} style={{
+                          display: 'inline-block',
+                          animation: `gcc-word 220ms ease ${260 + tok.wordIdx * 65}ms both`,
+                        }}>
+                          {tok.text}
+                        </span>
+                      )
+                    )}
+                  </div>
+
+                  {/* Body lines revealed on tap */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                    {bodyLines.slice(0, revealLineCnt).map((line, i) => {
+                      const isPunchline = i === bodyLines.length - 1
+                      return (
+                        <div key={i} style={{
+                          fontFamily: isPunchline ? "'Sora', sans-serif" : "'Outfit', sans-serif",
+                          fontWeight: isPunchline ? 700 : 500,
+                          fontSize: isPunchline ? 'clamp(20px, 6vw, 26px)' : 17,
+                          lineHeight: isPunchline ? 1.3 : 1.65,
+                          letterSpacing: isPunchline ? '-0.02em' : 0,
+                          color: isPunchline ? accent : 'rgba(255,255,255,0.62)',
+                          animation: 'gcc-line 380ms cubic-bezier(0.16,1,0.3,1) both',
+                          marginTop: isPunchline ? 8 : 0,
+                        }}>
+                          {line}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Tap hint */}
+              {!allRevealed && revealHint && (
+                <div style={{
+                  position: 'fixed',
+                  bottom: 'calc(38px + env(safe-area-inset-bottom, 0px))',
+                  left: 0, right: 0, textAlign: 'center',
+                  pointerEvents: 'none', zIndex: 6,
+                  animation: 'gcc-hint 3.2s ease infinite',
+                }}>
+                  <span style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    fontWeight: 600, fontSize: 11,
+                    letterSpacing: '0.18em', textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.28)',
+                  }}>
+                    tap to continue
+                  </span>
+                </div>
+              )}
+
+              {/* Continue button — appears when all lines are revealed */}
+              {allRevealed && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onContinue(selectedOption.nextScreenId) }}
+                  style={{
+                    position: 'fixed',
+                    bottom: 'calc(72px + env(safe-area-inset-bottom, 0px))',
+                    left: 28,
+                    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                    zIndex: 10,
+                    fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
+                    color: accent,
+                    animation: 'gcc-cont 500ms cubic-bezier(0.16,1,0.3,1) 120ms both',
+                  }}
+                >
+                  Continue →
+                </button>
+              )}
+            </div>
+          </>
+        )
+      })()}
     </div>
   )
 }
