@@ -286,6 +286,8 @@ export default function GuidedChoiceCarousel({
             const isSelected    = selectedIndex === idx
             const isFaded       = isChosen && !isSelected
 
+            if (isChosen && !isSelected) return null   // hide non-selected cards immediately
+
             return (
               <div
                 key={idx}
@@ -627,41 +629,41 @@ export default function GuidedChoiceCarousel({
               onClick={!allRevealed ? handleRevealTap : undefined}
               style={{
                 position: 'fixed', inset: 0, zIndex: 1100,
-                background: '#08090D',
+                background: '#08090D', overflow: 'hidden',
                 cursor: allRevealed ? 'default' : 'pointer',
                 userSelect: 'none', WebkitUserSelect: 'none',
               }}
             >
-              {/* Healer background image */}
-              <div style={{
-                position: 'fixed', inset: 0,
-                backgroundImage: `url(${selectedOption.image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center top',
-                opacity: 0.52,
-                filter: 'grayscale(12%) brightness(0.68)',
-                pointerEvents: 'none', zIndex: 1,
-              }} />
+              {/* Healer figure — rendered as img so PNG transparency works correctly */}
+              {selectedOption.image && (
+                <img
+                  src={selectedOption.image}
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  style={{
+                    position: 'absolute', right: 0, top: 0,
+                    height: '100%', width: '60%',
+                    objectFit: 'cover', objectPosition: 'center top',
+                    opacity: 0.58,
+                    filter: 'grayscale(15%) brightness(0.72)',
+                    pointerEvents: 'none',
+                  }}
+                />
+              )}
 
-              {/* Left gradient */}
+              {/* Left gradient — covers most of screen, keeps text readable */}
               <div style={{
-                position: 'fixed', inset: 0,
-                background: 'linear-gradient(90deg, rgba(8,9,13,0.97) 0%, rgba(8,9,13,0.82) 42%, rgba(8,9,13,0.46) 72%, rgba(8,9,13,0.18) 100%)',
-                pointerEvents: 'none', zIndex: 2,
-              }} />
-
-              {/* Overall dark overlay */}
-              <div style={{
-                position: 'fixed', inset: 0,
-                background: 'rgba(8,9,13,0.22)',
-                pointerEvents: 'none', zIndex: 3,
+                position: 'absolute', inset: 0,
+                background: 'linear-gradient(90deg, rgba(8,9,13,1) 0%, rgba(8,9,13,0.92) 38%, rgba(8,9,13,0.55) 65%, rgba(8,9,13,0.10) 100%)',
+                pointerEvents: 'none',
               }} />
 
               {/* Bottom fade */}
               <div style={{
-                position: 'fixed', bottom: 0, left: 0, right: 0, height: 260,
+                position: 'absolute', bottom: 0, left: 0, right: 0, height: 260,
                 background: 'linear-gradient(0deg, rgba(8,9,13,0.99) 0%, transparent 100%)',
-                pointerEvents: 'none', zIndex: 4,
+                pointerEvents: 'none',
               }} />
 
               {/* Content shell */}
@@ -723,10 +725,10 @@ export default function GuidedChoiceCarousel({
               {/* Tap hint */}
               {!allRevealed && revealHint && (
                 <div style={{
-                  position: 'fixed',
+                  position: 'absolute',
                   bottom: 'calc(38px + env(safe-area-inset-bottom, 0px))',
                   left: 0, right: 0, textAlign: 'center',
-                  pointerEvents: 'none', zIndex: 6,
+                  pointerEvents: 'none',
                   animation: 'gcc-hint 3.2s ease infinite',
                 }}>
                   <span style={{
@@ -745,11 +747,10 @@ export default function GuidedChoiceCarousel({
                 <button
                   onClick={(e) => { e.stopPropagation(); onContinue(selectedOption.nextScreenId) }}
                   style={{
-                    position: 'fixed',
+                    position: 'absolute',
                     bottom: 'calc(72px + env(safe-area-inset-bottom, 0px))',
                     left: 28,
                     background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                    zIndex: 10,
                     fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
                     color: accent,
                     animation: 'gcc-cont 500ms cubic-bezier(0.16,1,0.3,1) 120ms both',
