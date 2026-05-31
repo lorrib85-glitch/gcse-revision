@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { recordActivity, recordScore } from '../../progress.js'
+import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'

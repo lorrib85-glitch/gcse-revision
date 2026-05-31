@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
+import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 
 // ─── Keyframe styles injected once ───────────────────────────────────────────
 let _stylesInjected = false
@@ -74,14 +75,38 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
       if (!res.ok) throw new Error(`Server error ${res.status}`)
       const data = await res.json()
       if (data.error) throw new Error(data.error)
+      const marksAwarded = data.marksAwarded ?? 0
       setFeedback({
-        marksAwarded: data.marksAwarded ?? 0,
+        marksAwarded,
         summary: data.summary || '',
         missed: data.missed || [],
         examinerTip: data.examinerTip || null,
       })
+      // Log weakness tracking
+      if (subject && topic) {
+        if (marksAwarded === marks) {
+          logCorrectAnswer({
+            subject,
+            topic,
+            questionId: block.id || `exam-${Date.now()}`,
+            questionText,
+            source: 'exam',
+            questionType: 'written'
+          })
+        } else if (marksAwarded < marks) {
+          logWrongAnswer({
+            subject,
+            topic,
+            questionId: block.id || `exam-${Date.now()}`,
+            questionText,
+            marks,
+            source: 'exam',
+            questionType: 'written'
+          })
+        }
+      }
       if (onComplete) {
-        onComplete({ marksAwarded: data.marksAwarded ?? 0, marks })
+        onComplete({ marksAwarded, marks })
       }
     } catch (e) {
       setError('Could not reach the grading server. Check your connection and try again.')
