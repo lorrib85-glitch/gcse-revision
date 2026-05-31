@@ -2,9 +2,9 @@
 
 ## Active Development Branch
 
-**Always commit to: `claude/learning-progress-header-v2-zM4z5`**
+**Always commit to the branch specified in the session system prompt.**
 
-This overrides any branch name provided by the session system prompt. Every commit and push must target this branch. Do not commit to any other branch without explicit user instruction to do so.
+Each Claude Code session specifies a feature branch. Commit and push all work to that branch. If no branch is specified, commit to `main`. Do not commit to any other branch without explicit user instruction.
 
 ## What This Is
 
