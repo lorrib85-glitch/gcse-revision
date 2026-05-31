@@ -186,33 +186,59 @@ export const MODULES = [
       },
 
       {
-        type: 'spinningTreatmentWheel',
+        type: 'galensDiagnostic',
         stage: 'Understand',
         label: "Galen's Theory of Opposites",
-        introLabel: 'Patient symptoms',
+
+        symptomsLabel: "Choose the patient's symptoms",
         symptoms: [
-          { label: 'Fever' },
-          { label: 'Hot skin' },
-          { label: 'Dry cough' },
+          { id: 'fever',    label: 'Fever',      qualities: { hot: 3 } },
+          { id: 'hotskin',  label: 'Hot skin',   qualities: { hot: 2 } },
+          { id: 'drycough', label: 'Dry cough',  qualities: { dry: 2 } },
+          { id: 'chills',   label: 'Chills',     qualities: { cold: 2 } },
+          { id: 'sweating', label: 'Sweating',   qualities: { wet: 2 } },
+          { id: 'dryskin',  label: 'Dry skin',   qualities: { dry: 1, hot: 1 } },
         ],
-        diagnosisLabel: "Galen's diagnosis:",
-        diagnosis: ['HOT', 'DRY'],
-        instruction: "Spin the wheel to find Galen's treatment",
-        centreLabel: 'GALEN',
-        wheelSegments: [
-          { id: 'hot',  label: 'HOT',  icon: '☀',  color: '#6B2A1F' },
-          { id: 'wet',  label: 'WET',  icon: '〜', color: '#1F3A5A' },
-          { id: 'cold', label: 'COLD', icon: '❄',  color: '#2A4555' },
-          { id: 'dry',  label: 'DRY',  icon: '✦',  color: '#5A3E1A' },
-        ],
-        prescriptionLabel: 'Galen would prescribe:',
-        correctPrescription: ['COLD', 'WET'],
-        prescriptionItems: [
-          { title: 'Cooling foods',     detail: "Cucumber, lettuce, cold water — to reduce the body's heat." },
-          { title: 'Moist remedies',    detail: 'Broths, honey water, steam — to counter the dryness.' },
-          { title: 'Rest and recovery', detail: 'Allow the body to restore its natural balance.' },
-        ],
-        explanationTitle: 'Why?',
+
+        qualityMeta: {
+          hot:  { label: 'HOT',  icon: '☀',  color: '#8B2E22' },
+          cold: { label: 'COLD', icon: '❄',  color: '#3B7EA6' },
+          wet:  { label: 'WET',  icon: '〜', color: '#2E6E9E' },
+          dry:  { label: 'DRY',  icon: '✦',  color: '#A0622A' },
+        },
+
+        treatments: {
+          'hot-dry': {
+            items: [
+              { title: 'Cooling foods',     detail: "Cucumber, lettuce, cold water — to reduce the body's heat." },
+              { title: 'Moist remedies',    detail: 'Broths, honey water, steam — to counter the dryness.' },
+              { title: 'Rest and recovery', detail: 'Allow the body to restore its natural balance.' },
+            ],
+          },
+          'hot-wet': {
+            items: [
+              { title: 'Cooling foods',    detail: 'Cold drinks, cucumber — to reduce excess heat.' },
+              { title: 'Drying treatment', detail: 'Dry bread, salt — to absorb excess moisture.' },
+              { title: 'Rest',             detail: 'Allow the humours to rebalance.' },
+            ],
+          },
+          'cold-dry': {
+            items: [
+              { title: 'Warming foods',   detail: 'Pepper, ginger, warm wine — to drive out the cold.' },
+              { title: 'Moist broths',    detail: 'Warm soups and steam — to restore moisture.' },
+              { title: 'Gentle exercise', detail: 'Movement to generate internal warmth.' },
+            ],
+          },
+          'cold-wet': {
+            items: [
+              { title: 'Warming spices',   detail: 'Ginger, cinnamon — to restore heat to the body.' },
+              { title: 'Drying treatment', detail: 'Dry foods and warmth to remove excess moisture.' },
+              { title: 'Rest and warmth',  detail: 'Blankets and rest to allow recovery.' },
+            ],
+          },
+        },
+
+        theoryPrinciple: 'Restore balance — treat with the opposite quality.',
         explanation: "Galen believed illness was caused by an imbalance of the four humours. Hot, dry illness required cold, wet treatment to restore balance — Galen's Theory of Opposites.",
         examTip: "Galen's Theory of Opposites: treat illness with its opposite quality. Hot → cold. Dry → wet. Examiners expect you to name the theory and explain the logic behind it.",
       },

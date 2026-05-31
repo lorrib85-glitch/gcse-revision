@@ -22,7 +22,7 @@ import TheoryCompareBlock from '../learning/TheoryCompareBlock.jsx'
 import ColSortBlock from '../learning/ColSortBlock.jsx'
 import ExaminerExplainsScreen from '../learning/ExaminerExplainsScreen.jsx'
 import SwipeSort from '../learning/SwipeSort.jsx'
-import SpinningTreatmentWheel from '../learning/SpinningTreatmentWheel.jsx'
+import GalensDiagnostic from '../learning/GalensDiagnostic.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -2162,7 +2162,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     )
   }
 
-  if (cur?.type === 'spinningTreatmentWheel') {
+  if (cur?.type === 'galensDiagnostic') {
     return (
       <>
         <LearningHeader
@@ -2172,7 +2172,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           onExit={onBack}
           visible={true}
         />
-        <SpinningTreatmentWheel
+        <GalensDiagnostic
           block={cur}
           subject={module.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
