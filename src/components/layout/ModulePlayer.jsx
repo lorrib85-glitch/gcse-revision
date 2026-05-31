@@ -2170,7 +2170,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           currentStage={currentStage}
           onBack={headerOnBack}
           onExit={onBack}
-          visible={cinematicHeaderVisible}
+          visible={true}
         />
         <SpinningTreatmentWheel
           block={cur}

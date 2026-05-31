@@ -78,27 +78,32 @@ export default function SpinningTreatmentWheel({ block, subject, onContinue }) {
   const prevX      = useRef(0)
   const prevT      = useRef(0)
   const rafId      = useRef(null)
+  const snapTid    = useRef(null)
   const liveRot    = useRef(0)   // always in sync with displayed rotation for rAF closures
   const svgRef     = useRef(null)
 
   const prefersReducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  useEffect(() => () => { if (rafId.current) cancelAnimationFrame(rafId.current) }, [])
+  useEffect(() => () => {
+    if (rafId.current) cancelAnimationFrame(rafId.current)
+    if (snapTid.current) clearTimeout(snapTid.current)
+  }, [])
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   function calcActiveIdx(r) {
-    const snapped = Math.round(r / segDeg) * segDeg
-    return ((Math.round(snapped / segDeg) % n) + n) % n
+    return ((Math.round(r / segDeg) % n) + n) % n
   }
 
   function snapTo(r) {
     if (rafId.current) { cancelAnimationFrame(rafId.current); rafId.current = null }
+    if (snapTid.current) { clearTimeout(snapTid.current); snapTid.current = null }
     const snapped = Math.round(r / segDeg) * segDeg
     setSnapTarget(snapped)
     setIsSnapping(true)
     const delay = prefersReducedMotion ? 50 : 520
-    setTimeout(() => {
+    snapTid.current = setTimeout(() => {
+      snapTid.current = null
       setRot(snapped)
       liveRot.current = snapped
       setIsSnapping(false)
