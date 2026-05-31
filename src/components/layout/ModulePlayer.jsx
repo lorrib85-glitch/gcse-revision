@@ -1,5 +1,28 @@
 import { useState, useEffect, useRef } from 'react'
-import { recordActivity, recordScore } from './progress.js'
+import { recordActivity, recordScore } from '../../progress.js'
+import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
+import ExplainReveal from '../learning/ExplainReveal.jsx'
+import ChapterHookScreen from './ChapterHookScreen.jsx'
+import QuickRecallScreen from '../learning/QuickRecallScreen.jsx'
+import CinematicRevealMoment from '../learning/CinematicRevealMoment.jsx'
+import ConceptReveal from '../learning/ConceptReveal.jsx'
+import LearningHeader from '../core/LearningHeader.jsx'
+import FaceTheExaminer from '../learning/FaceTheExaminer.jsx'
+import InteractiveHotspotImage from '../learning/InteractiveHotspotImage.jsx'
+import FillInTheBlanksBlock from '../learning/FillInTheBlanksBlock.jsx'
+import AnswerInteraction from '../core/AnswerInteraction.jsx'
+import RetrievalFrame from '../feedback/RetrievalFrame.jsx'
+import WeakSpotRecovery from '../learning/WeakSpotRecovery.jsx'
+import RecoveryQuizPlayer from '../learning/RecoveryQuizPlayer.jsx'
+import CardContainer from '../core/CardContainer.jsx'
+import GuidedChoiceCarousel from '../learning/GuidedChoiceCarousel.jsx'
+import VisualNarrativeScreen from '../learning/VisualNarrativeScreen.jsx'
+import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
+import TheoryCompareBlock from '../learning/TheoryCompareBlock.jsx'
+import ColSortBlock from '../learning/ColSortBlock.jsx'
+import ExaminerExplainsScreen from '../learning/ExaminerExplainsScreen.jsx'
+import SwipeSort from '../learning/SwipeSort.jsx'
+import GalensDiagnostic from '../learning/GalensDiagnostic.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -38,17 +61,12 @@ function saveConfidenceRating(moduleId, subject, title, confidence) {
 
 function ReadBlock({ block }) {
   return (
-    <div style={{
-      borderLeft: '3px solid #3B82FF',
-      background: 'rgba(59,130,255,.07)',
-      borderRadius: '0 14px 14px 0',
-      padding: '16px 18px', margin: '12px 0',
-    }}>
+    <div>
       {block.label && (
         <div style={{
           fontFamily: "'Inter', sans-serif",
           fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-          textTransform: 'uppercase', color: '#70B8FF', marginBottom: 8,
+          textTransform: 'uppercase', color: '#70B8FF', marginBottom: 12,
         }}>{block.label}</div>
       )}
       <p style={{
@@ -61,16 +79,11 @@ function ReadBlock({ block }) {
 
 function KeypointBlock({ block }) {
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, #1A2338 0%, #111828 100%)',
-      border: '1px solid rgba(157,92,255,.25)',
-      borderRadius: 16, padding: '18px 20px', margin: '14px 0',
-      boxShadow: '0 0 24px rgba(157,92,255,.08)',
-    }}>
+    <div>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 10,
+        textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 12,
       }}>⭐ Key Point</div>
       <p style={{
         fontFamily: "'Inter', sans-serif",
@@ -82,16 +95,11 @@ function KeypointBlock({ block }) {
 
 function FunFactBlock({ block }) {
   return (
-    <div style={{
-      background: 'rgba(255,200,87,.06)',
-      borderLeft: '3px solid #FFC857',
-      borderRadius: '0 14px 14px 0',
-      padding: '14px 18px', margin: '12px 0',
-    }}>
+    <div>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: '#FFC857', marginBottom: 6,
+        textTransform: 'uppercase', color: '#FFC857', marginBottom: 10,
       }}>{block.label || '🤯 Fun Fact'}</div>
       <p style={{
         fontFamily: "'Inter', sans-serif",
@@ -103,31 +111,26 @@ function FunFactBlock({ block }) {
 
 function ExamTipBlock({ block }) {
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, #0C2218 0%, #071610 100%)',
-      border: '1.5px dashed rgba(245,183,0,.35)',
-      borderRadius: 16, padding: '16px 18px', margin: '14px 0',
-      boxShadow: '0 0 20px rgba(245,183,0,.05)',
-    }}>
+    <div>
       <div style={{
         fontFamily: "'Inter', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: '#F5B700', marginBottom: 10,
+        textTransform: 'uppercase', color: '#F5B700', marginBottom: 12,
       }}>{block.label || '🗡️ Exam Assassin'}</div>
       {block.text && (
         <p style={{
           fontFamily: "'Inter', sans-serif",
-          fontSize: '.9rem', margin: 0, color: '#C8D0E8', lineHeight: 1.65,
+          fontSize: '.9rem', margin: '0 0 12px 0', color: '#C8D0E8', lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.text }} />
       )}
       {block.tip && (
         <p style={{
           fontFamily: "'Inter', sans-serif",
-          fontSize: '.9rem', marginBottom: block.phrases ? 10 : 0, color: '#C8D0E8', lineHeight: 1.65,
+          fontSize: '.9rem', marginBottom: block.phrases ? 12 : 0, color: '#C8D0E8', lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.tip }} />
       )}
       {block.phrases && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
           {block.phrases.map(p => (
             <span key={p} style={{
               background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.3)',
@@ -522,129 +525,6 @@ function RevealBlock({ block }) {
             fontFamily: "'Inter', sans-serif",
             margin: 0, fontSize: '.92rem', color: '#C8D0E8', lineHeight: 1.6,
           }}>{block.answer}</p>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function QuizBlock({ block, onAnswered, subject }) {
-  const [selected, setSelected]   = useState(null)
-  const [shakeIdx, setShakeIdx]   = useState(null)
-  const [attempts, setAttempts]   = useState(0)
-  const [showHint, setShowHint]   = useState(false)
-  const [locked, setLocked]       = useState(false)
-
-  function choose(i) {
-    if (locked) return
-    const correct = block.options[i].correct
-    setSelected(i)
-    setAttempts(a => a + 1)
-
-    if (correct) {
-      setLocked(true)
-      // Record a correct answer (1 mark per quiz question)
-      if (subject) recordScore({ subject, earned: 1, possible: 1, source: 'module' })
-      if (onAnswered) setTimeout(() => onAnswered(), 700)
-    } else {
-      setShakeIdx(i)
-      setShowHint(true)
-      // Lock after second wrong attempt — show full explanation
-      if (attempts >= 1) {
-        setLocked(true)
-        if (subject) recordScore({ subject, earned: 0, possible: 1, source: 'module' })
-      }
-      // Reset shake after animation
-      setTimeout(() => setShakeIdx(null), 500)
-    }
-  }
-
-  function retry() {
-    setSelected(null)
-    setShakeIdx(null)
-    // Keep showHint visible and attempts count
-  }
-
-  const answered    = selected !== null
-  const wasCorrect  = answered && block.options[selected]?.correct
-  const wasWrong    = answered && !wasCorrect
-  const showFull    = wasCorrect || locked  // show full explanation
-
-  return (
-    <div style={{ margin: '14px 0' }}>
-      {/* Question */}
-      <div style={{
-        background: 'linear-gradient(135deg, #12183A, #0E1330)',
-        border: '1px solid rgba(157,92,255,.2)',
-        borderRadius: 14, padding: '16px 18px', marginBottom: 12,
-      }}>
-        <p style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          color: '#F5F7FB', fontWeight: 600, fontSize: '1rem', margin: 0, lineHeight: 1.45,
-        }}>{block.question}</p>
-      </div>
-
-      {/* Options */}
-      <div className="grid-stack">
-        {block.options.map((opt, i) => {
-          let cls = 'opt'
-          if (answered || locked) {
-            if (opt.correct && (showFull || wasCorrect)) cls += ' correct'
-            else if (i === selected && wasWrong)         cls += ' wrong'
-          }
-          // After retry (selected cleared), show nothing highlighted yet
-          return (
-            <button key={i} className={`${cls}${shakeIdx === i ? ' shake' : ''}`}
-              onClick={() => choose(i)}
-              disabled={locked || (wasCorrect)}>
-              <span style={{ marginRight: 8, opacity: .45 }}>{String.fromCharCode(65 + i)}.</span>
-              {opt.text}
-            </button>
-          )
-        })}
-      </div>
-
-      {/* Hint after first wrong attempt — before locking */}
-      {showHint && !locked && wasWrong && (
-        <div className="fade-up" style={{
-          background: 'rgba(255,200,87,.06)',
-          border: '1px solid rgba(255,200,87,.25)',
-          borderRadius: 12, padding: '12px 14px', marginTop: 10,
-        }}>
-          <div style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em',
-            textTransform: 'uppercase', color: '#FFC857', marginBottom: 6,
-          }}>💡 Hint — think about this</div>
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.87rem', color: '#C8D0E8', margin: '0 0 10px', lineHeight: 1.55,
-          }}>{block.hint || block.explanation}</p>
-          <button onClick={retry} style={{
-            background: 'rgba(255,200,87,.1)',
-            border: '1px solid rgba(255,200,87,.3)',
-            borderRadius: 9, padding: '8px 16px',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700, fontSize: '.82rem', color: '#FFC857',
-            cursor: 'pointer',
-          }}>Try again →</button>
-        </div>
-      )}
-
-      {/* Full feedback after correct or locked */}
-      {showFull && (
-        <div className={`feedback ${wasCorrect ? 'correct' : 'wrong'} fade-up`} style={{ marginTop: 10 }}>
-          <p style={{ margin: 0, fontSize: '.9rem', fontFamily: "'Inter', sans-serif" }}>
-            <strong>{wasCorrect ? '✓ Correct! ' : '✗ Nope — the answer was: '}</strong>
-            {wasCorrect ? block.explanation : (
-              <>
-                <strong style={{ color: '#4DFF88' }}>
-                  {block.options.find(o => o.correct)?.text}
-                </strong>
-                {block.explanation ? <><br />{block.explanation}</> : null}
-              </>
-            )}
-          </p>
         </div>
       )}
     </div>
@@ -1215,7 +1095,13 @@ function ScenarioBlock({ block }) {
 
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
-function Screen({ screen, subject }) {
+function Screen({ screen, subject, onScreenComplete }) {
+  const [completedQuizzes, setCompletedQuizzes] = useState(new Set())
+
+  function handleQuizComplete(blockIndex) {
+    setCompletedQuizzes(prev => new Set([...prev, blockIndex]))
+  }
+
   return (
     <div>
       <div style={{ marginBottom: 20 }}>
@@ -1245,20 +1131,24 @@ function Screen({ screen, subject }) {
 
       {screen.blocks.map((block, i) => (
         <div key={i}>
-          {block.type === 'read'          && <ReadBlock block={block} />}
-          {block.type === 'keypoint'      && <KeypointBlock block={block} />}
-          {block.type === 'funfact'       && <FunFactBlock block={block} />}
-          {block.type === 'examtip'       && <ExamTipBlock block={block} />}
+          {block.type === 'read'          && <CardContainer variant="contained" subject={subject} padding={24}><ReadBlock block={block} /></CardContainer>}
+          {block.type === 'keypoint'      && <CardContainer variant="contained" subject={subject} padding={24}><KeypointBlock block={block} /></CardContainer>}
+          {block.type === 'funfact'       && <CardContainer variant="contained" subject={subject} padding={20}><FunFactBlock block={block} /></CardContainer>}
+          {block.type === 'examtip'       && <CardContainer variant="contained" subject={subject} padding={24}><ExamTipBlock block={block} /></CardContainer>}
           {block.type === 'timeline'      && <TimelineBlock block={block} />}
           {block.type === 'reveal'        && <RevealBlock block={block} />}
-          {block.type === 'quiz'          && <QuizBlock block={block} subject={subject} />}
+          {block.type === 'quiz'          && <AnswerInteraction block={block} subject={subject} onComplete={() => handleQuizComplete(i)} />}
           {block.type === 'flashcards'    && <FlashcardsBlock block={block} />}
           {block.type === 'hotspot'       && <HotspotBlock block={block} />}
           {block.type === 'misconception' && <MisconceptionBlock block={block} />}
           {block.type === 'scarf'         && <ScarfBlock block={block} />}
           {block.type === 'builder'       && <BuilderBlock block={block} />}
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
-          {block.type === 'boss'          && <BossBlock block={block} />}
+          {block.type === 'boss'          && <ExamQuestionFrame block={block} subject={subject} mode="practice" onSkip={onScreenComplete} />}
+          {block.type === 'explainReveal' && <ExplainReveal block={block} subject={subject} onComplete={onScreenComplete} />}
+          {block.type === 'fillblanks'    && <FillInTheBlanksBlock block={block} subject={subject} />}
+          {block.type === 'theoryCompare' && <TheoryCompareBlock block={block} subject={subject} />}
+          {block.type === 'colsort'       && <ColSortBlock block={block} subject={subject} />}
         </div>
       ))}
     </div>
@@ -1310,6 +1200,17 @@ function useHookPhase(hook) {
 function HookContent({ module, hook, hookState, subjectColor }) {
   const { phase, wasCorrect, growStep, revealIdx, allRevealed, choose, nextRevealItem } = hookState
 
+  // Support both storyLines (new format) and scenario (legacy format)
+  const storyLines = hook.storyLines || (() => {
+    if (!hook.scenario) return []
+    const s = hook.scenario
+    const lines = []
+    if (s.location) lines.push(s.location + '.')
+    if (s.hint) lines.push(s.hint)
+    if (s.items) s.items.forEach(item => lines.push('— ' + item))
+    return lines
+  })()
+
   return (
     <div style={{ paddingBottom: 20 }}>
 
@@ -1318,12 +1219,12 @@ function HookContent({ module, hook, hookState, subjectColor }) {
         <div style={{ animation: 'hFadeIn .4s ease' }}>
           {/* Story context */}
           <div style={{ marginBottom: 20 }}>
-            {hook.storyLines?.map((line, i) => (
+            {storyLines.map((line, i) => (
               <p key={i} style={{
                 fontFamily: "'Inter', sans-serif",
-                fontSize: '.88rem', color: i === hook.storyLines.length - 1 ? '#C8D0E8' : '#5A6480',
+                fontSize: '.88rem', color: i === storyLines.length - 1 ? '#C8D0E8' : '#5A6480',
                 margin: '0 0 5px', lineHeight: 1.65,
-                fontWeight: i === hook.storyLines.length - 1 ? 500 : 400,
+                fontWeight: i === storyLines.length - 1 ? 500 : 400,
               }}>{line}</p>
             ))}
           </div>
@@ -1609,16 +1510,12 @@ function HookContent({ module, hook, hookState, subjectColor }) {
 function IntroScreen({ module, onDone }) {
   const intro = module.intro
   const subjectColor = module.color || '#38D27A'
-  const [answered, setAnswered] = useState(null)
-  const [shakeIdx, setShakeIdx] = useState(null)
+  const [retrievalComplete, setRetrievalComplete] = useState(false)
 
-  function choose(i) {
-    if (answered !== null) return
-    setAnswered(i)
-    if (i !== intro.retrieval.correctIndex) setShakeIdx(i)
-  }
+  const hasRetrieval = !!intro.retrieval
 
-  const correct = answered === intro.retrieval.correctIndex
+  // When there's no retrieval question, show goals immediately
+  const showGoals = !hasRetrieval || retrievalComplete
 
   return (
     <div style={{
@@ -1641,81 +1538,38 @@ function IntroScreen({ module, onDone }) {
               fontSize: '.63rem', fontWeight: 700,
               letterSpacing: '.12em', textTransform: 'uppercase',
               color: subjectColor,
-            }}>⚡ Retrieval Starter</span>
+            }}>{hasRetrieval ? '⚡ Retrieval Starter' : '🎯 Module Overview'}</span>
           </div>
           <h2 style={{
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 800, fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
             color: '#F5F7FB', margin: '0 0 6px', letterSpacing: '-.01em',
-          }}>What do you already know?</h2>
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.85rem', color: '#5A6480', margin: 0,
-          }}>No notes. No pressure. Just activate your brain.</p>
+          }}>{hasRetrieval ? 'What do you already know?' : "You'll be able to…"}</h2>
+          {hasRetrieval && (
+            <p style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '.85rem', color: '#5A6480', margin: 0,
+            }}>No notes. No pressure. Just activate your brain.</p>
+          )}
         </div>
 
-        {/* Retrieval question */}
-        <div style={{
-          background: 'linear-gradient(145deg, #10182B, #0D1424)',
-          border: '1px solid #1E2A40',
-          borderRadius: 16, padding: '18px', marginBottom: 12,
-          boxShadow: '0 4px 24px rgba(0,0,0,.3)',
-        }}>
-          <p style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 600, fontSize: '1rem',
-            color: '#F5F7FB', margin: 0, lineHeight: 1.45,
-          }}>{intro.retrieval.question}</p>
-        </div>
+        {/* RetrievalFrame v1 — wraps retrieval question and AnswerInteraction */}
+        {hasRetrieval && (
+          <RetrievalFrame
+            retrieval={intro.retrieval}
+            variant="contained"
+            subject={module.subject}
+            topic={module.title}
+            beatId="intro"
+            label="Quick check"
+            mode="learning"
+            onInteractionComplete={(result) => setRetrievalComplete(true)}
+          />
+        )}
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
-          {intro.retrieval.options.map((opt, i) => {
-            let bg = '#10182B', border = '#1E2A40', color = '#C8D0E8'
-            if (answered !== null) {
-              if (i === intro.retrieval.correctIndex) { bg = 'rgba(77,255,136,.08)'; border = 'rgba(77,255,136,.4)'; color = '#4DFF88' }
-              else if (i === answered) { bg = 'rgba(255,93,115,.08)'; border = 'rgba(255,93,115,.35)'; color = '#FF5D73' }
-            }
-            return (
-              <button key={i} onClick={() => choose(i)}
-                disabled={answered !== null}
-                style={{
-                  background: bg, border: '1.5px solid ' + border,
-                  borderRadius: 13, padding: '14px 16px',
-                  cursor: answered !== null ? 'default' : 'pointer',
-                  textAlign: 'left', fontFamily: "'Inter', sans-serif",
-                  fontWeight: 500, fontSize: '.93rem', color,
-                  transition: 'all .2s',
-                  display: 'flex', alignItems: 'center', gap: 10,
-                  animation: shakeIdx === i ? 'shake .35s ease' : 'none',
-                }}>
-                <span style={{ opacity: .4, flexShrink: 0, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '.8rem' }}>
-                  {String.fromCharCode(65 + i)}
-                </span>
-                {opt}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Feedback */}
-        {answered !== null && (
-          <div style={{ animation: 'fadeIn .3s ease', marginBottom: 24 }}>
-            <div style={{
-              background: correct ? 'rgba(77,255,136,.07)' : 'rgba(255,93,115,.07)',
-              border: '1px solid ' + (correct ? 'rgba(77,255,136,.3)' : 'rgba(255,93,115,.3)'),
-              borderRadius: 13, padding: '14px 16px', marginBottom: 20,
-            }}>
-              <p style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '.88rem', color: correct ? '#4DFF88' : '#FF8DA1',
-                margin: 0, lineHeight: 1.55,
-              }}>
-                <strong>{correct ? '✓ Correct. ' : '✗ Nope — '}</strong>
-                {intro.retrieval.explanation}
-              </p>
-            </div>
-
-            {/* Learning goals */}
+        {/* Learning goals — shown immediately when no retrieval, or after answering */}
+        {showGoals && (
+          <div style={{ animation: 'fadeIn .3s ease' }}>
             <div style={{
               background: 'linear-gradient(145deg, #10182B, #0D1424)',
               border: '1px solid #1E2A40',
@@ -1772,26 +1626,85 @@ function IntroScreen({ module, onDone }) {
   )
 }
 
+// ─── What You Will Learn screen ──────────────────────────────────────────────
+
+function WYLScreen({ module, onDone, subjectColor }) {
+  const bullets = (module.screens || []).map(s => s.label).filter(Boolean)
+  const [visibleCount, setVisibleCount] = useState(0)
+
+  useEffect(() => {
+    if (visibleCount >= bullets.length) return
+    const t = setTimeout(() => setVisibleCount(c => c + 1), 380)
+    return () => clearTimeout(t)
+  }, [visibleCount, bullets.length])
+
+  return (
+    <div style={{ padding: '8px 4px' }}>
+      <style>{`@keyframes bulletIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }`}</style>
+      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: subjectColor, marginBottom: 10 }}>{module.subject}</div>
+      <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 26, fontWeight: 800, color: '#F5F7FF', lineHeight: '30px', marginBottom: 6, letterSpacing: '-0.01em' }}>What You&rsquo;ll Learn</div>
+      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.42)', marginBottom: 30 }}>{module.title}</div>
+      <div>
+        {bullets.map((label, i) => i < visibleCount ? (
+          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 16, animation: 'bulletIn 0.38s ease both' }}>
+            <div style={{ width: 30, height: 30, borderRadius: 10, background: `${subjectColor}18`, border: `1px solid ${subjectColor}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
+              <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 700, color: subjectColor }}>{i + 1}</span>
+            </div>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 600, color: '#E8ECF2', lineHeight: '26px', paddingTop: 3 }}>{label}</div>
+          </div>
+        ) : null)}
+      </div>
+      {visibleCount >= bullets.length && (
+        <button onClick={onDone} style={{ marginTop: 24, width: '100%', height: 52, borderRadius: 16, background: `linear-gradient(135deg, ${subjectColor}cc, ${subjectColor})`, border: 'none', cursor: 'pointer', fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: '#fff', boxShadow: `0 8px 24px ${subjectColor}44`, animation: 'bulletIn 0.38s ease both' }}>
+          Let&rsquo;s start →
+        </button>
+      )}
+    </div>
+  )
+}
+
 // ─── Main ModulePlayer ────────────────────────────────────────────────────────
 
-export default function ModulePlayer({ module, onBack }) {
+export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const saved   = getModuleState(module.id)
 
-  // hookDone / introDone track whether the universal openers have been seen
+  // hookDone / wylDone / introDone track whether the universal openers have been seen
   // We persist these inside the module state so resuming skips them correctly
-  const [hookDone,  setHookDone]  = useState(() => saved.hookDone  || !module.hook)
-  const [introDone, setIntroDone] = useState(() => saved.introDone || !module.intro)
-  const [screen, setScreen] = useState(saved.screen || 0)
-  const [showConfidence, setShowConfidence] = useState(false)
-  const [chosenConfidence, setChosenConfidence] = useState(null)
+  const [hookDone,   setHookDone]   = useState(() => saved.hookDone   || !module.hook)
+  const [wylDone,    setWylDone]    = useState(() => saved.wylDone ?? !module.outcomes)
+  // If user already has hookDone+wylDone saved (i.e. they've been to content before),
+  // treat recallDone as true to avoid forcing recall on existing progress.
+  const [recallDone, setRecallDone] = useState(() =>
+    saved.recallDone || !module.recall || !!(saved.hookDone && saved.wylDone)
+  )
+  const [introDone,  setIntroDone]  = useState(true)
+  // navTo — in-memory only, drives navigation back to hook/wyl/recall without changing "done" flags
+  // null | 'hook' | 'wyl' | 'recall'
+  const [navTo, setNavTo] = useState(null)
+  const [screen, setScreen] = useState(() => {
+    const s = saved.screen || 0
+    // Guard against stale saved index (e.g. after a module restructure)
+    return s < module.screens.length ? s : 0
+  })
+  const [showWeakSpotRecovery, setShowWeakSpotRecovery] = useState(false)
+  const [detectedWeakSpot, setDetectedWeakSpot] = useState(null)
+  const [recoveryQuizId, setRecoveryQuizId] = useState(null)
+  const [showExaminer,         setShowExaminer]         = useState(false)
+  const [showExaminerExplains, setShowExaminerExplains] = useState(false)
+  const [examinerAttempts, setExaminerAttempts] = useState(() => saved.examinerAttempts || [])
   const total   = module.screens.length
   const pct     = Math.round(((screen + 1) / total) * 100)
   const isLast  = screen === total - 1
   const [animKey, setAnimKey] = useState(0)
+  const [cinematicHeaderVisible, setCinematicHeaderVisible] = useState(false)
+  const [ihmExploreScreen, setIhmExploreScreen] = useState(null)
 
   useEffect(() => {
-    saveModuleState(module.id, { screen, hookDone, introDone })
-  }, [screen, module.id, hookDone, introDone])
+    saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts })
+  }, [screen, module.id, hookDone, wylDone, recallDone, introDone, examinerAttempts])
+
+  // Reset cinematic header visibility whenever we navigate to a different screen
+  useEffect(() => { setCinematicHeaderVisible(false) }, [screen])
 
   function go(delta) {
     const next = Math.max(0, Math.min(total - 1, screen + delta))
@@ -1803,16 +1716,34 @@ export default function ModulePlayer({ module, onBack }) {
   }
 
   function handleFinish() {
-    setShowConfidence(true)
+    if (module.examinerExplains && !showExaminerExplains) {
+      setShowExaminerExplains(true)
+      scrollToTop()
+      return
+    }
+    if (module.examiner) {
+      setShowExaminer(true)
+    } else {
+      detectWeakSpot()
+    }
     scrollToTop()
   }
 
-  function handleConfidencePick(level) {
-    setChosenConfidence(level)
-    saveConfidenceRating(module.id, module.subject, module.title, level)
-    // Module completion always counts as activity
+  function detectWeakSpot() {
+    // V1: Simple heuristic-based weak spot detection
+    // For now, no actual weak spot — just proceed to completion
+    // This is where we'd integrate actual score analysis in future versions
+    completeModule()
+  }
+
+  function completeModule() {
     recordActivity()
-    setTimeout(() => onBack(), 650)
+    // Reset saved position so re-opening starts from the beginning
+    saveModuleState(module.id, { screen: 0, hookDone: false, wylDone: true, recallDone: false, introDone: false, examinerAttempts })
+    setTimeout(() => {
+      if (onChapterComplete) onChapterComplete(module)
+      else onBack()
+    }, 400)
   }
 
   // Hook state — always called (hook is undefined when module has no hook)
@@ -1826,10 +1757,7 @@ export default function ModulePlayer({ module, onBack }) {
       if (hookPhase === 'reveal') { if (hookRevealDone) { setHookDone(true); scrollToTop() } else { hookState.nextRevealItem(); } return }
       return // question / feedback: Next does nothing — user must tap TRUE/FALSE
     }
-    if (!introDone && module.intro) {
-      // IntroScreen handles its own done button — nothing to do from nav
-      return
-    }
+    if (!introDone && module.intro) return // IntroScreen has its own button
     isLast ? handleFinish() : go(1)
   }
 
@@ -1846,257 +1774,484 @@ export default function ModulePlayer({ module, onBack }) {
 
   const showNextBtn  = nextLabel() !== null
   const nextBtnLabel = nextLabel()
-  const isFinishBtn  = !(!hookDone && module.hook) && !(!introDone && module.intro) && isLast
+  const isFinishBtn  = !(!hookDone && module.hook) && wylDone && recallDone && navTo === null && (!module.intro || introDone) && isLast
 
   const cur = module.screens[screen]
   const subjectColor = module.color || '#9D5CFF'
 
+  // ── Stage-based learning header ───────────────────────────────────────────
+  const STAGE_NAMES = ['Discover', 'Understand', 'Investigate', 'Challenge', 'Examiner', 'Complete']
+  const currentStage = (() => {
+    if (navTo === 'recall' || (!recallDone && module.recall)) return 'Discover'
+    if (cur?.stage) return cur.stage
+    // Proportional fallback for legacy modules without explicit stage properties
+    const idx = Math.min(
+      Math.floor((screen / Math.max(total - 1, 1)) * STAGE_NAMES.length),
+      STAGE_NAMES.length - 1
+    )
+    return STAGE_NAMES[idx]
+  })()
+
+  const headerVisible =
+    !showWeakSpotRecovery &&
+    !recoveryQuizId &&
+    !showExaminer &&
+    hookDone && wylDone &&
+    ((cur?.type === 'cinematic' || cur?.type === 'conceptReveal' || cur?.type === 'visualNarrative') ? cinematicHeaderVisible : true)
+
+  function headerOnBack() {
+    if (screen > 0) { go(-1); return }
+    if (navTo === 'recall' || (!recallDone && module.recall)) {
+      if (module.hook?.statement) { setNavTo('hook'); return }
+      onBack(); return
+    }
+    if (module.recall) { setNavTo('recall'); scrollToTop(); return }
+    if (module.hook?.statement) { setNavTo('hook'); scrollToTop(); return }
+    onBack()
+  }
+  // ──────────────────────────────────────────────────────────────────────────
+
   // ── Confidence overlay — neutral, no colour judgement ──────────────────
-  const CONFIDENCE_LEVELS = [
-    {
-      id: 'confused',
-      emoji: '🤔',
-      label: "Still figuring it out",
-      sub: "That's fine — it takes more than one pass",
-    },
-    {
-      id: 'clicking',
-      emoji: '💭',
-      label: "Starting to get it",
-      sub: "Some bits are landing, some aren't yet",
-    },
-    {
-      id: 'confident',
-      emoji: '💡',
-      label: "Got it — could explain it",
-      sub: "Feels solid for now",
-    },
-  ]
-
-  if (showConfidence) {
+  // ── Full-screen hook screen — renders before the player shell ──────────────
+  if ((!hookDone && module.hook?.statement) || navTo === 'hook') {
     return (
-      <div style={{
-        background: '#080C1A', minHeight: '100vh',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        padding: '32px 20px',
-      }}>
-        <div style={{ maxWidth: 400, width: '100%' }}>
-          {/* Module completed banner */}
-          <div style={{ textAlign: 'center', marginBottom: 32 }}>
-            <div style={{
-              width: 64, height: 64, borderRadius: 18, margin: '0 auto 16px',
-              background: subjectColor + '22',
-              border: '1px solid ' + subjectColor + '44',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1.8rem',
-              boxShadow: '0 0 32px ' + subjectColor + '22',
-            }}>{module.icon}</div>
-            <div style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.65rem', fontWeight: 700, letterSpacing: '.14em',
-              textTransform: 'uppercase', color: subjectColor, marginBottom: 8,
-            }}>{module.subject} · Module {module.number} complete</div>
-            <h2 style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 800, fontSize: '1.5rem',
-              color: '#F5F7FB', margin: '0 0 8px',
-              letterSpacing: '-.02em',
-            }}>How do you feel about this?</h2>
-            <p style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.88rem', color: '#5A6480',
-              margin: 0, lineHeight: 1.5,
-            }}>
-              Be honest — this shapes what you see next.
-            </p>
-          </div>
+      <ChapterHookScreen
+        subject={module.subject}
+        chapterNum={module.number}
+        chapterTitle={module.title}
+        statement={module.hook.statement}
+        isTrue={module.hook.isTrue}
+        accentWords={module.hook.accentWords || []}
+        explanation={module.hook.explanation || module.hook.correctFeedback || ''}
+        revealBeats={module.hook.revealBeats}
+        onBack={onBack}
+        onContinue={() => { setHookDone(true); setNavTo(null); scrollToTop() }}
+      />
+    )
+  }
 
-          {/* Confidence buttons — neutral, no colour hierarchy */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {CONFIDENCE_LEVELS.map(level => {
-              const picked = chosenConfidence === level.id
-              const dimmed = chosenConfidence !== null && !picked
-              return (
-                <button
-                  key={level.id}
-                  onClick={() => handleConfidencePick(level.id)}
-                  disabled={chosenConfidence !== null}
-                  style={{
-                    background: picked
-                      ? 'rgba(255,255,255,.07)'
-                      : 'rgba(255,255,255,.02)',
-                    border: '1.5px solid ' + (picked ? 'rgba(255,255,255,.25)' : '#2A3552'),
-                    borderRadius: 16, padding: '18px 20px',
-                    cursor: chosenConfidence ? 'default' : 'pointer',
-                    textAlign: 'left',
-                    display: 'flex', alignItems: 'center', gap: 14,
-                    transition: 'all .2s',
-                    opacity: dimmed ? 0.35 : 1,
-                    transform: picked ? 'scale(1.02)' : 'scale(1)',
-                    width: '100%',
-                  }}
-                >
-                  <div style={{
-                    width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                    background: '#10182B',
-                    border: '1px solid #2A3552',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '1.3rem',
-                  }}>{level.emoji}</div>
-                  <div style={{ flex: 1, textAlign: 'left' }}>
-                    <div style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontWeight: 700, fontSize: '1rem',
-                      color: '#E0E6F0',
-                      marginBottom: 3,
-                    }}>{level.label}</div>
-                    <div style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontSize: '.78rem', color: '#4A5578',
-                    }}>{level.sub}</div>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
+  // ── Chapter outcomes screen — appears after hook, before recall ──────────────
+  if (hookDone && !wylDone && module.outcomes) {
+    return (
+      <ChapterOutcomeScreen
+        subject={module.subject}
+        chapterNum={module.number}
+        chapterTitle={module.title}
+        outcomes={module.outcomes.bullets || module.outcomes}
+        onBack={() => setHookDone(false)}
+        onContinue={() => { setWylDone(true); scrollToTop() }}
+      />
+    )
+  }
 
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.73rem', color: '#2A3552',
-            textAlign: 'center', marginTop: 20, margin: '20px 0 0',
-          }}>
-            Saved — used to prioritise what you revise next
-          </p>
+  // ── Full-screen recall screen — appears after outcomes, before content ────────
+  if ((!recallDone || navTo === 'recall') && module.recall) {
+    return (
+      <QuickRecallScreen
+        subject={module.subject}
+        chapterNum={module.number}
+        chapterTitle={module.title}
+        questions={module.recall.questions}
+        onBack={() => {
+          if (navTo === 'recall') setNavTo(null)
+          else if (module.hook?.statement) setNavTo('hook')
+          else onBack()
+        }}
+        onContinue={() => { setRecallDone(true); setNavTo(null); scrollToTop() }}
+        renderHeader={() => (
+          <LearningHeader
+            module={module}
+            currentStage="Discover"
+            onBack={headerOnBack}
+            onExit={onBack}
+            visible={true}
+          />
+        )}
+      />
+    )
+  }
+
+  if (showExaminerExplains) {
+    return (
+      <ExaminerExplainsScreen
+        subject={module.subject}
+        examinerExplains={module.examinerExplains}
+        onBack={() => { setShowExaminerExplains(false); go(-1) }}
+        onContinue={() => {
+          setShowExaminerExplains(false)
+          // Navigate to the faceExaminer screen if one exists in this module
+          const faceExamIdx = module.screens.findIndex(s => s.type === 'faceExaminer')
+          if (faceExamIdx >= 0) {
+            setScreen(faceExamIdx)
+            setAnimKey(k => k + 1)
+            scrollToTop()
+            return
+          }
+          if (module.examiner) {
+            setShowExaminer(true)
+          } else {
+            detectWeakSpot()
+          }
+          scrollToTop()
+        }}
+      />
+    )
+  }
+
+  if (showExaminer) {
+    return (
+      <FaceTheExaminer
+        module={module}
+        examiner={module.examiner}
+        onExit={onBack}
+        onContinue={({ originalMark, finalMark, guessedMark }) => {
+          const attempt = {
+            moduleId: module.id,
+            questionId: `${module.id}-q1`,
+            guessedMark,
+            examinerMark: module.examiner.mark,
+            finalMark,
+            timestamp: Date.now(),
+          }
+          const updated = [...examinerAttempts, attempt]
+          setExaminerAttempts(updated)
+          saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts: updated })
+          setShowExaminer(false)
+          completeModule()
+          scrollToTop()
+        }}
+      />
+    )
+  }
+
+  // Recovery quiz player
+  if (recoveryQuizId) {
+    return (
+      <RecoveryQuizPlayer
+        recoveryQuizId={recoveryQuizId}
+        onComplete={() => {
+          setRecoveryQuizId(null)
+          completeModule()
+        }}
+        onBack={() => setRecoveryQuizId(null)}
+      />
+    )
+  }
+
+  // Weak spot recovery screen
+  if (showWeakSpotRecovery && detectedWeakSpot) {
+    return (
+      <WeakSpotRecovery
+        block={detectedWeakSpot}
+        subject={module.subject}
+        progress={{ current: screen + 1, total: total }}
+        onBack={() => setShowWeakSpotRecovery(false)}
+        onFixWeakSpot={(quizId) => {
+          setShowWeakSpotRecovery(false)
+          setRecoveryQuizId(quizId)
+        }}
+        onSkip={() => {
+          setShowWeakSpotRecovery(false)
+          completeModule()
+        }}
+      />
+    )
+  }
+
+  // ── Choice-reveal interstitial — brief narrative after carousel selection ─
+  if (cur?.type === 'choiceReveal') {
+    const goToNext = () => {
+      if (cur.nextId) {
+        const targetIdx = module.screens.findIndex(s => s.id === cur.nextId)
+        if (targetIdx >= 0) { setScreen(targetIdx); setAnimKey(k => k + 1); scrollToTop(); return }
+      }
+      isLast ? handleFinish() : go(1)
+    }
+    return (
+      <div style={{ position: 'fixed', inset: 0, background: '#080C1A', display: 'flex', flexDirection: 'column', zIndex: 60 }}>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={true}
+        />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '0 24px 48px' }}>
+          <div style={{ maxWidth: 480, margin: '0 auto', width: '100%' }}>
+            {(cur.paragraphs || []).map((p, i) => (
+              <p key={i} style={{
+                fontFamily: "'Sora', sans-serif",
+                fontSize: i === 0 ? 'clamp(1.2rem, 4.5vw, 1.5rem)' : 'clamp(.88rem, 3vw, 1rem)',
+                fontWeight: i === 0 ? 700 : 400,
+                color: i === 0 ? '#F5F7FB' : 'rgba(245,237,216,.62)',
+                lineHeight: 1.5,
+                margin: i === 0 ? '0 0 16px' : '0 0 10px',
+                animation: `crSlideIn 380ms cubic-bezier(.16,1,.3,1) ${i * 80}ms both`,
+              }}>{p}</p>
+            ))}
+            <button
+              onClick={goToNext}
+              style={{
+                marginTop: 28,
+                width: '100%',
+                background: `${subjectColor}22`,
+                border: `1.5px solid ${subjectColor}44`,
+                borderRadius: 16, padding: '16px',
+                fontFamily: "'Sora', sans-serif",
+                fontWeight: 700, fontSize: '.95rem',
+                color: subjectColor, cursor: 'pointer',
+                transition: 'all .15s',
+              }}
+            >Continue →</button>
+          </div>
         </div>
+        <style>{`@keyframes crSlideIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }`}</style>
       </div>
+    )
+  }
+
+  // ── Full-screen QuickRecallScreen as in-content screen ────────────────────
+  if (cur?.type === 'quickRecall') {
+    return (
+      <QuickRecallScreen
+        subject={module.subject}
+        chapterNum={module.number}
+        chapterTitle={module.title}
+        questions={cur.questions || []}
+        onBack={headerOnBack}
+        onContinue={isLast ? handleFinish : () => go(1)}
+        renderHeader={() => (
+          <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={true}
+        />
+        )}
+      />
+    )
+  }
+
+  // ── FaceTheExaminer as a mid-module content screen ─────────────────────────
+  if (cur?.type === 'faceExaminer') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={true}
+        />
+        <FaceTheExaminer
+          module={module}
+          examiner={cur.examiner}
+          onExit={headerOnBack}
+          onContinue={completeModule}
+        />
+      </>
+    )
+  }
+
+  // ── SwipeSort — supernatural vs natural card sort ─────────────────────────
+  if (cur?.type === 'naturalSupernaturalSwipe') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={true}
+        />
+        <SwipeSort
+          block={cur}
+          subject={module.subject}
+          onComplete={() => { isLast ? handleFinish() : go(1) }}
+        />
+      </>
+    )
+  }
+
+  // ── Full-screen guided choice carousel ────────────────────────────────────
+  if (cur?.type === 'guidedChoiceCarousel') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={true}
+        />
+        <GuidedChoiceCarousel
+          subject={module.subject}
+          headline={cur.headline}
+          question={cur.question}
+          helperText={cur.helperText}
+          promptVisual={cur.promptVisual}
+          options={cur.options || []}
+          onBack={headerOnBack}
+          onContinue={(nextScreenId) => {
+            // Try to navigate to a named screen; fall back to linear progression
+            if (nextScreenId) {
+              const targetIdx = module.screens.findIndex(
+                s => s.id === nextScreenId || s.label === nextScreenId
+              )
+              if (targetIdx >= 0 && targetIdx !== screen) {
+                setScreen(targetIdx)
+                setAnimKey(k => k + 1)
+                scrollToTop()
+                return
+              }
+            }
+            isLast ? handleFinish() : go(1)
+          }}
+        />
+      </>
+    )
+  }
+
+  // ── Full-screen interactive image — intro hides header, explore shows it ────
+  if (cur?.type === 'interactiveImage') {
+    const ihmExplore = ihmExploreScreen === screen
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={ihmExplore}
+        />
+        <InteractiveHotspotImage
+          subject={module.subject}
+          title={cur.title}
+          introText={cur.introText}
+          image={cur.image}
+          imageAlt={cur.imageAlt || cur.title}
+          hotspots={cur.hotspots || []}
+          ctaLabel={cur.ctaLabel}
+          onBack={headerOnBack}
+          onEnterExplore={() => setIhmExploreScreen(screen)}
+          onContinue={isLast ? handleFinish : () => go(1)}
+        />
+      </>
+    )
+  }
+
+  // ── Visual narrative — tap-through image + fact sequence ────────────────────
+  if (cur?.type === 'visualNarrative') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={cinematicHeaderVisible}
+        />
+        <VisualNarrativeScreen
+          subject={module.subject}
+          beats={cur.beats || []}
+          onRevealStart={() => setCinematicHeaderVisible(true)}
+          onContinue={() => isLast ? handleFinish() : go(1)}
+        />
+      </>
+    )
+  }
+
+  if (cur?.type === 'galensDiagnostic') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={true}
+        />
+        <GalensDiagnostic
+          block={cur}
+          subject={module.subject}
+          onContinue={() => isLast ? handleFinish() : go(1)}
+        />
+      </>
+    )
+  }
+
+  // ── Full-screen concept reveal — tap-through atmospheric sequence ──────────
+  if (cur?.type === 'conceptReveal') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={cinematicHeaderVisible}
+        />
+        <ConceptReveal
+          subject={module.subject}
+          steps={cur.steps || []}
+          onRevealStart={() => setCinematicHeaderVisible(true)}
+          onContinue={() => isLast ? handleFinish() : go(1)}
+        />
+      </>
+    )
+  }
+
+  // ── Full-screen cinematic screen — takes over for type:'cinematic' screens ──
+  if (cur?.type === 'cinematic') {    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={cinematicHeaderVisible}
+        />
+        <CinematicRevealMoment
+          subject={module.subject}
+          videoSrc={cur.videoSrc}
+          fallbackImage={cur.fallbackImage}
+          year={cur.year}
+          paragraphs={cur.paragraphs}
+          onContinue={() => isLast ? handleFinish() : go(1)}
+          onTextRevealStart={() => setCinematicHeaderVisible(true)}
+        />
+      </>
     )
   }
 
   return (
     <div style={{ background: '#080C1A', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
-      {/* ── Sticky top header ── */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 20,
-        background: 'rgba(8,12,26,.96)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid #1E2A40',
-        padding: '12px 16px 0',
-      }}>
-        {/* Row 1: subject label + counter + exit */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-          {/* Module icon */}
-          <div style={{
-            width: 28, height: 28, borderRadius: 8, flexShrink: 0,
-            background: `${subjectColor}22`,
-            border: `1px solid ${subjectColor}44`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '.9rem',
-          }}>{module.icon}</div>
-
-          {/* Subject + title — truncated cleanly */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '.65rem', fontWeight: 700,
-              letterSpacing: '.1em', textTransform: 'uppercase',
-              color: subjectColor, marginBottom: 1,
-            }}>{module.subject} · Module {module.number}</div>
-            <div style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '.88rem', color: '#E0E6F0',
-              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-            }}>{module.title}</div>
-          </div>
-
-          {/* Counter */}
-          <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: '.78rem', fontWeight: 700,
-            color: '#4A5578', flexShrink: 0,
-          }}>{screen + 1}<span style={{ color: '#2A3552' }}>/{total}</span></div>
-
-          {/* Exit button */}
-          <button onClick={onBack} style={{
-            background: 'rgba(255,255,255,.05)',
-            border: '1px solid #2A3552',
-            borderRadius: 8, padding: '5px 10px',
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.72rem', fontWeight: 600,
-            color: '#4A5578', cursor: 'pointer',
-            flexShrink: 0, letterSpacing: '.02em',
-          }}>✕ exit</button>
-        </div>
-
-        {/* Progress bar */}
-        <div style={{
-          height: 3, background: '#1E2A40', borderRadius: 99,
-          overflow: 'hidden', marginBottom: 10,
-        }}>
-          <div style={{
-            height: '100%',
-            width: `${pct}%`,
-            background: `linear-gradient(90deg, ${subjectColor}aa, ${subjectColor})`,
-            borderRadius: 99,
-            boxShadow: `0 0 8px ${subjectColor}66`,
-            transition: 'width .5s ease',
-          }} />
-        </div>
-
-        {/* Section chips — scrollable, dark-themed */}
-        <div style={{
-          display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 10,
-          scrollbarWidth: 'none', msOverflowStyle: 'none',
-        }}>
-          {module.screens.map((s, i) => {
-            const isActive = i === screen
-            const isDone   = i < screen
-            return (
-              <button key={i}
-                onClick={() => { setScreen(i); setAnimKey(k => k + 1); scrollToTop() }}
-                style={{
-                  flexShrink: 0,
-                  background: isActive
-                    ? subjectColor
-                    : isDone
-                    ? 'rgba(77,255,136,.1)'
-                    : '#10182B',
-                  border: `1px solid ${isActive ? subjectColor : isDone ? 'rgba(77,255,136,.3)' : '#2A3552'}`,
-                  borderRadius: 99,
-                  padding: '5px 12px',
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '.7rem', fontWeight: 600,
-                  color: isActive ? '#fff' : isDone ? '#4DFF88' : '#4A5578',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  letterSpacing: '.01em',
-                  boxShadow: isActive ? `0 0 10px ${subjectColor}55` : 'none',
-                  transition: 'all .2s',
-                }}>
-                {isDone ? '✓ ' : ''}{s.label}
-              </button>
-            )
-          })}
-        </div>
-      </div>
+      {/* ── Universal floating learning header ── */}
+      <LearningHeader
+        module={module}
+        currentStage={currentStage}
+        onBack={headerOnBack}
+        onExit={onBack}
+        visible={headerVisible}
+      />
 
       {/* ── Screen content — hook, intro, or normal screen ── */}
-      <div id="module-scroll-container" style={{ flex: 1, padding: '20px 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
-        {!hookDone && module.hook
+      <div id="module-scroll-container" style={{ flex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 112px) 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
+        {(!hookDone && module.hook && !module.hook.statement)
           ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
           : !introDone && module.intro
             ? <IntroScreen module={module} onDone={() => { setIntroDone(true); scrollToTop() }} />
-            : (
-              <div key={animKey} className="anim-pop">
-                <Screen screen={cur} subject={module.subject} />
-              </div>
-            )
+              : (
+                <div key={animKey} className="anim-pop">
+                  <Screen screen={cur} subject={module.subject} onScreenComplete={isLast ? handleFinish : () => go(1)} />
+                </div>
+              )
         }
       </div>
 
-      {/* ── Bottom navigation ── */}
+      {/* ── Bottom navigation — Next only ── */}
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 20,
         background: 'rgba(8,12,26,.97)',
@@ -2106,47 +2261,18 @@ export default function ModulePlayer({ module, onBack }) {
         padding: '10px 16px calc(10px + env(safe-area-inset-bottom))',
         boxShadow: '0 -8px 32px rgba(0,0,0,.4)',
       }}>
-        <div style={{
-          maxWidth: 660, margin: '0 auto',
-          display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, alignItems: 'center',
-        }}>
-          {/* Back — hidden during hook/intro */}
-          <button
-            onClick={() => go(-1)}
-            disabled={screen === 0 || !hookDone || !introDone}
-            style={{
-              background: '#10182B',
-              border: '1px solid #2A3552',
-              borderRadius: 14, padding: '13px 10px',
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '.9rem',
-              color: (!hookDone || !introDone || screen === 0) ? '#2A3552' : '#9CA8C7',
-              cursor: (!hookDone || !introDone || screen === 0) ? 'default' : 'pointer',
-              transition: 'all .15s',
-            }}>← Back</button>
-
-          {/* Save + Exit */}
-          <button onClick={onBack} style={{
-            background: '#10182B',
-            border: '1px solid #2A3552',
-            borderRadius: 14, padding: '13px 10px',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700, fontSize: '.82rem',
-            color: '#5A6480', cursor: 'pointer',
-            lineHeight: 1.3, textAlign: 'center',
-          }}>Save +{'\n'}Exit</button>
-
-          {/* Next / Finish — dynamic based on hook/intro phase */}
+        <div style={{ maxWidth: 660, margin: '0 auto' }}>
           {showNextBtn ? (
             <button onClick={handleNext} style={{
+              width: '100%',
               background: isFinishBtn
                 ? 'linear-gradient(135deg, #1A4D2E, #38D27A)'
                 : `linear-gradient(135deg, ${subjectColor}cc, ${subjectColor})`,
               border: 'none',
-              borderRadius: 14, padding: '13px 10px',
+              borderRadius: 14, padding: '15px 10px',
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 700, fontSize: '.9rem',
-              color: isFinishBtn ? '#fff' : '#fff',
+              color: '#fff',
               cursor: 'pointer',
               boxShadow: isFinishBtn
                 ? '0 4px 16px rgba(56,210,122,.35)'
@@ -2154,7 +2280,7 @@ export default function ModulePlayer({ module, onBack }) {
               transition: 'all .15s',
             }}>{nextBtnLabel}</button>
           ) : (
-            <div style={{ background: '#10182B', border: '1px solid #1E2A40', borderRadius: 14, padding: '13px 10px' }} />
+            <div style={{ height: 50 }} />
           )}
         </div>
       </div>

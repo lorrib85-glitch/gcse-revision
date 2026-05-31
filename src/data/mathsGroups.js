@@ -1,0 +1,83 @@
+// Maths topic groups — used in ModulesTab to render the Maths section.
+// Accent palette: teal-green family matching the cinematic maths images.
+
+export const MATHS_GROUPS = [
+  {
+    id: 'maths_numbers',
+    title: 'Numbers & Foundations',
+    subtitle: 'BIDMAS, Fractions, Indices & Primes',
+    icon: '🔢',
+    accent: '#2DD4BF',
+    headerImage: '/headers/maths-numbers.png',
+    locked: false,
+    modules: [
+      { id: 'maths_bidmas',     title: 'Order of Operations',   subtitle: 'BIDMAS & calculation rules', locked: false },
+      { id: 'maths_fractions',  title: 'Fractions & Decimals',  subtitle: 'Operations & conversions',   locked: true  },
+      { id: 'maths_indices',    title: 'Indices & Surds',       subtitle: 'Powers, roots & laws',       locked: true  },
+      { id: 'maths_primes',     title: 'Primes & Factors',      subtitle: 'HCF, LCM & prime factors',   locked: true  },
+      { id: 'maths_percentages',title: 'Percentages',           subtitle: 'Change, reverse & interest', locked: true  },
+    ],
+  },
+  {
+    id: 'maths_algebra',
+    title: 'Algebra & Graphs',
+    subtitle: 'Equations, Functions & Coordinate Geometry',
+    icon: '📈',
+    accent: '#34D399',
+    headerImage: '/headers/maths-algebra.png',
+    locked: false,
+    modules: [
+      { id: 'maths_expressions', title: 'Expressions & Formulae', subtitle: 'Simplify, expand & factorise', locked: false },
+      { id: 'maths_equations',   title: 'Solving Equations',      subtitle: 'Linear & simultaneous',        locked: true  },
+      { id: 'maths_inequalities',title: 'Inequalities',            subtitle: 'Solving & representing',       locked: true  },
+      { id: 'maths_graphs',      title: 'Straight Line Graphs',   subtitle: 'y=mx+c & parallel lines',      locked: true  },
+      { id: 'maths_quadratics',  title: 'Quadratics & Functions', subtitle: 'Factorising & the formula',    locked: true  },
+    ],
+  },
+  {
+    id: 'maths_geometry',
+    title: 'Geometry & Measure',
+    subtitle: 'Shapes, Angles, Pythagoras & Trigonometry',
+    icon: '📐',
+    accent: '#4ADE80',
+    headerImage: '/headers/maths-geometry.png',
+    locked: false,
+    modules: [
+      { id: 'maths_angles',     title: 'Angles & Polygons',      subtitle: 'Rules, proof & properties',  locked: false },
+      { id: 'maths_area',       title: 'Area & Perimeter',       subtitle: 'Shapes, circles & sectors',  locked: true  },
+      { id: 'maths_volume',     title: 'Volume & Surface Area',  subtitle: '3D solids & nets',           locked: true  },
+      { id: 'maths_pythagoras', title: 'Pythagoras & Trig',      subtitle: 'SOH CAH TOA & applications', locked: true  },
+      { id: 'maths_transforms', title: 'Transformations',        subtitle: 'Reflection, rotation & enlargement', locked: true },
+    ],
+  },
+  {
+    id: 'maths_data',
+    title: 'Data, Probability & Statistics',
+    subtitle: 'Averages, Charts & Probability',
+    icon: '📊',
+    accent: '#22D3EE',
+    headerImage: '/headers/maths-data.png',
+    locked: false,
+    modules: [
+      { id: 'maths_averages',    title: 'Averages & Spread',       subtitle: 'Mean, median, mode & range',  locked: false },
+      { id: 'maths_charts',      title: 'Charts & Diagrams',       subtitle: 'Histograms, box plots & more',locked: true  },
+      { id: 'maths_probability', title: 'Probability',             subtitle: 'Single, combined & tree diagrams', locked: true },
+      { id: 'maths_sampling',    title: 'Sampling & Collecting',   subtitle: 'Methods, bias & questionnaires', locked: true },
+    ],
+  },
+  {
+    id: 'maths_realworld',
+    title: 'Real World Maths',
+    subtitle: 'Ratio, Finance, Measures & Problem Solving',
+    icon: '🌍',
+    accent: '#A3E635',
+    headerImage: '/headers/maths-realworld.png',
+    locked: false,
+    modules: [
+      { id: 'maths_ratio',       title: 'Ratio & Proportion',     subtitle: 'Direct & inverse proportion', locked: false },
+      { id: 'maths_finance',     title: 'Finance & Money',        subtitle: 'Tax, interest & best buys',   locked: true  },
+      { id: 'maths_units',       title: 'Units & Measures',       subtitle: 'Conversion & estimation',     locked: true  },
+      { id: 'maths_speed',       title: 'Speed, Distance, Time',  subtitle: 'Rates of change & density',   locked: true  },
+    ],
+  },
+]

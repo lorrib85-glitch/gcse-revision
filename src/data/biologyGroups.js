@@ -1,0 +1,108 @@
+// Biology topic groups — used in ModulesTab to render the Biology section.
+// Each group has a headerImage and an array of module definitions.
+// color / accent: sage green family — #4F8A5B base, lighter tints per group.
+
+export const BIOLOGY_GROUPS = [
+  {
+    id: 'bio_building_life',
+    title: 'Building Life',
+    subtitle: 'Cells, Microscopes & Division',
+    icon: '🔬',
+    accent: '#65E6C6',
+    headerImage: '/headers/bio-buildinglife.png',
+    locked: false,
+    modules: [
+      { id: 'bio_cells_factories',  title: 'Cells: The Tiny Factories',        subtitle: 'Structure & organelles',       locked: false },
+      { id: 'bio_microscopes',      title: 'Microscopes & Magnification',       subtitle: 'Seeing the invisible',          locked: true  },
+      { id: 'bio_cell_division',    title: 'Cell Division & Stem Cells',        subtitle: 'Mitosis, meiosis & ethics',     locked: true  },
+      { id: 'bio_diffusion',        title: 'Moving Stuff In & Out of Cells',    subtitle: 'Diffusion, osmosis & transport',locked: true  },
+    ],
+  },
+  {
+    id: 'bio_human_machine',
+    title: 'The Human Machine',
+    subtitle: 'Organs, Digestion & Circulation',
+    icon: '🫀',
+    accent: '#E87B5F',
+    headerImage: '/headers/bio-humanmachine.png',
+    locked: false,
+    modules: [
+      { id: 'bio_tissues_organs',  title: 'Cells → Tissues → Organs',      subtitle: 'Levels of organisation',    locked: false },
+      { id: 'bio_digestion',       title: 'Digestion & Enzymes',            subtitle: 'Gut biology & catalysts',   locked: true  },
+      { id: 'bio_circulation',     title: 'Blood, Heart & Circulation',     subtitle: 'The body\'s delivery system',locked: true  },
+      { id: 'bio_plant_transport', title: 'Plant Transport Systems',        subtitle: 'Xylem, phloem & stomata',   locked: true  },
+    ],
+  },
+  {
+    id: 'bio_disease_wars',
+    title: 'Disease Wars',
+    subtitle: 'Pathogens, Immunity & Treatment',
+    icon: '🦠',
+    accent: '#E84F6B',
+    headerImage: '/headers/bio-diseasewars.png',
+    locked: false,
+    modules: [
+      { id: 'bio_pathogens',       title: 'Pathogens & Disease',            subtitle: 'Bacteria, viruses & fungi', locked: false },
+      { id: 'bio_immune_system',   title: 'The Immune System',              subtitle: 'Defence & white blood cells',locked: true  },
+      { id: 'bio_treating_disease',title: 'Treating Disease & Antibiotics', subtitle: 'Drugs, vaccines & trials',  locked: true  },
+      { id: 'bio_non_comm',        title: 'Non-Communicable Diseases',      subtitle: 'Cancer, CVD & lifestyle',   locked: true  },
+    ],
+  },
+  {
+    id: 'bio_energy_life',
+    title: 'Energy for Life',
+    subtitle: 'Photosynthesis & Respiration',
+    icon: '⚡',
+    accent: '#A8E660',
+    headerImage: '/headers/bio-energyforlife.png',
+    locked: false,
+    modules: [
+      { id: 'sci_bio_w1',      title: 'Photosynthesis',           subtitle: 'Light, chlorophyll & glucose', locked: false },
+      { id: 'bio_respiration', title: 'Respiration',              subtitle: 'Aerobic & anaerobic',          locked: true  },
+      { id: 'bio_exercise',    title: 'Exercise & Metabolism',    subtitle: 'ATP, oxygen debt & heart rate', locked: true  },
+    ],
+  },
+  {
+    id: 'bio_control_systems',
+    title: 'Control Systems',
+    subtitle: 'Nerves, Hormones & Reproduction',
+    icon: '🧠',
+    accent: '#9B8BE8',
+    headerImage: '/headers/bio-controlsystems.png',
+    locked: false,
+    modules: [
+      { id: 'bio_nervous',       title: 'The Nervous System',         subtitle: 'Neurons, synapses & reflexes',  locked: false },
+      { id: 'bio_hormones',      title: 'Hormones & Blood Glucose',   subtitle: 'Insulin, glucagon & diabetes',  locked: true  },
+      { id: 'bio_reproduction',  title: 'Reproduction & Fertility',   subtitle: 'Sexual & asexual, IVF & FSH',  locked: true  },
+    ],
+  },
+  {
+    id: 'bio_genetics_evolution',
+    title: 'Genetics & Evolution',
+    subtitle: 'DNA, Inheritance & Natural Selection',
+    icon: '🧬',
+    accent: '#7EC8E3',
+    headerImage: '/headers/bio-genetics.png',
+    locked: false,
+    modules: [
+      { id: 'bio_dna',           title: 'DNA & The Genome',           subtitle: 'Structure, genes & proteins',   locked: false },
+      { id: 'bio_inheritance',   title: 'Inheritance & Genetic Crosses',subtitle: 'Punnett squares & probability',locked: true  },
+      { id: 'bio_evolution',     title: 'Evolution & Natural Selection',subtitle: 'Darwin, evidence & speciation', locked: true  },
+      { id: 'bio_genetic_eng',   title: 'Genetic Engineering',        subtitle: 'CRISPR, GM & ethics',           locked: true  },
+    ],
+  },
+  {
+    id: 'bio_ecosystems',
+    title: 'Ecosystems',
+    subtitle: 'Food Chains, Biodiversity & Conservation',
+    icon: '🌿',
+    accent: '#68C18A',
+    headerImage: '/headers/bio-ecosystems.png',
+    locked: false,
+    modules: [
+      { id: 'bio_food_chains',   title: 'Ecosystems & Food Chains',   subtitle: 'Producers, consumers & energy',  locked: false },
+      { id: 'bio_adaptations',   title: 'Adaptations & Biodiversity', subtitle: 'How species survive & diversify', locked: true  },
+      { id: 'bio_human_impact',  title: 'Human Impact & Conservation',subtitle: 'Deforestation, pollution & rewilding',locked: true },
+    ],
+  },
+]
