@@ -67,7 +67,16 @@ export default function SwipeSort({ block, subject, onComplete }) {
   const accent    = SUBJECTS[subject]?.accent    ?? '#D69B45'
   const accentRgb = SUBJECTS[subject]?.accentRgb ?? '214,155,69'
 
-  const { columns = [], items = [], explanation = '' } = block
+  const { columns = [], items: rawItems = [], explanation = '' } = block
+
+  const [items] = useState(() => {
+    const arr = [...rawItems]
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+    }
+    return arr
+  })
 
   const [phase,    setPhase]    = useState('intro')
   const [cardIdx,  setCardIdx]  = useState(0)
@@ -519,21 +528,6 @@ export default function SwipeSort({ block, subject, onComplete }) {
         </div>
       </div>
 
-      {/* Progress dots */}
-      <div style={{
-        position: 'absolute', top: 54, left: '50%', transform: 'translateX(-50%)',
-        zIndex: 5, display: 'flex', gap: 6,
-      }}>
-        {Array.from({ length: totalCards }, (_, i) => (
-          <div key={i} style={{
-            width: 7, height: 7, borderRadius: '50%',
-            background: i <= cardIdx
-              ? `rgba(${accentRgb},0.85)`
-              : 'rgba(255,255,255,0.20)',
-          }} />
-        ))}
-      </div>
-
       {/* Card stack */}
       <div style={{
         position: 'absolute', inset: 0,
@@ -560,7 +554,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
               onMouseDown={onMouseDown}
               style={{
                 position: 'relative',
-                width: 'min(72vw, 280px)',
+                width: 'min(64vw, 252px)',
                 background: 'rgba(22,24,34,0.97)',
                 borderRadius: 22,
                 border: `1px solid rgba(255,255,255,${Math.abs(dragX) > 20 ? 0.22 : 0.14})`,
@@ -576,10 +570,9 @@ export default function SwipeSort({ block, subject, onComplete }) {
               }}
             >
               <div style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontWeight: 600,
-                fontStyle: 'italic',
-                fontSize: 'clamp(22px, 6vw, 28px)',
+                fontFamily: "'Sora', sans-serif",
+                fontWeight: 700,
+                fontSize: 'clamp(16px, 4.5vw, 20px)',
                 color: 'rgba(245,238,225,0.95)',
                 lineHeight: 1.3,
                 textAlign: 'center',

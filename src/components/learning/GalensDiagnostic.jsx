@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 
+const SUBJECT_BACKING_IMAGES = {
+  History:   '/headers/history-medicine-through-time.png',
+  Biology:   '/headers/bio-main.png',
+  Chemistry: '/headers/chem-reactions.png',
+  English:   '/headers/english-main.png',
+  Maths:     '/headers/maths-main.png',
+  Physics:   '/headers/physics-main.png',
+  Sociology: '/headers/sociology-main.png',
+}
+
 let _gdStyled = false
 function ensureStyles() {
   if (_gdStyled) return
@@ -275,16 +285,16 @@ export default function GalensDiagnostic({ block, subject, onContinue }) {
   // ── Beat 0: Symptom checklist ───────────────────────────────────────────────
   if (beat === 0) return (
     <div style={{ position: 'fixed', inset: 0, background: bg, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-      <img
-        src="/figures/history/medicine/medieval/physician.png"
-        alt="" aria-hidden="true"
-        style={{
-          position: 'absolute', right: 0, bottom: 0,
-          height: '62%', width: 'auto',
-          opacity: 0.17, filter: 'grayscale(1)',
-          pointerEvents: 'none', userSelect: 'none',
-        }}
-      />
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: `url(${SUBJECT_BACKING_IMAGES[subject] || SUBJECT_BACKING_IMAGES.History})`,
+        backgroundSize: 'cover', backgroundPosition: 'center top',
+        opacity: 0.18, filter: 'saturate(0.4) brightness(0.7)',
+      }} />
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to bottom, rgba(15,11,7,0.65) 0%, rgba(15,11,7,0.50) 100%)',
+      }} />
       <div style={{ padding: '96px 24px 80px', maxWidth: 440, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
         <div style={{
@@ -297,7 +307,7 @@ export default function GalensDiagnostic({ block, subject, onContinue }) {
           {symptomsLabel}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 36 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 10px', marginBottom: 36 }}>
           {symptoms.map((sym, i) => {
             const on = selected.has(sym.id)
             return (

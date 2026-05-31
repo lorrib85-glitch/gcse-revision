@@ -806,41 +806,13 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
           }}>
             {userName.charAt(0).toUpperCase()}
           </div>
-          <button aria-label="More options" style={{
-            background: 'none', border: 'none', cursor: 'default',
-            opacity: 0.32, padding: 4, display: 'flex', alignItems: 'center',
-          }}>
-            <svg width="20" height="4" viewBox="0 0 20 4" fill="none">
-              <circle cx="2" cy="2" r="1.5" fill="rgba(255,255,255,0.8)" />
-              <circle cx="10" cy="2" r="1.5" fill="rgba(255,255,255,0.8)" />
-              <circle cx="18" cy="2" r="1.5" fill="rgba(255,255,255,0.8)" />
-            </svg>
-          </button>
+          <StreakChip />
         </div>
 
         {/* ── Greeting ── */}
         <div style={{ ...TYPE.hero, fontSize: 26, fontWeight: 600, color: '#F5F7FF', marginBottom: 14 }}>
           Hi, {userName}<span style={{ color: accent }}>.</span>
         </div>
-
-        {/* ── Streak ── */}
-        {(daysThisWeek > 0 || progress.streak > 0) && (
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            marginBottom: SPACING.cinematic,
-          }}>
-            <span style={{ fontSize: 13, filter: 'drop-shadow(0 0 4px rgba(245,158,11,0.45))' }}>🔥</span>
-            <span style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: 13, fontWeight: 500,
-              color: '#F59E0B', letterSpacing: '0.02em',
-            }}>
-              {daysThisWeek > 0
-                ? `${daysThisWeek} day${daysThisWeek !== 1 ? 's' : ''} this week`
-                : `${progress.streak} day streak`}
-            </span>
-          </div>
-        )}
 
         {/* ── Jump back in ── */}
         <button
@@ -896,10 +868,18 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
           onClick={() => onOpenSubjects && onOpenSubjects()}
           style={{
             marginTop: 'auto', position: 'relative', overflow: 'hidden',
-            display: 'block', width: '100%', background: 'none', border: 'none',
+            display: 'block', width: '100%', background: '#08090D', border: 'none',
             padding: 0, cursor: 'pointer', textAlign: 'left',
           }}
         >
+          {/* Blur strip — blends top edge into the header image above */}
+          <div aria-hidden="true" style={{
+            position: 'absolute', top: 0, left: 0, right: 0, height: 56,
+            backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
+            zIndex: 2, pointerEvents: 'none',
+          }} />
           {/* Atmospheric background image */}
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0, zIndex: 0,
@@ -907,8 +887,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
             backgroundSize: 'cover',
             backgroundPosition: 'center right',
             backgroundRepeat: 'no-repeat',
-            opacity: 0.05,
-            filter: 'blur(0.8px) contrast(0.88)',
+            opacity: 0.08,
           }} />
 
           {/* Overlay: radial text protection + bottom page blend */}
