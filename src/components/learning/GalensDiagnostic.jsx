@@ -286,13 +286,13 @@ export default function GalensDiagnostic({ block, subject, onContinue }) {
   if (beat === 0) return (
     <div style={{ position: 'fixed', inset: 0, background: bg, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
       <div aria-hidden="true" style={{
-        position: 'absolute', inset: 0,
+        position: 'fixed', inset: 0,
         backgroundImage: `url(${SUBJECT_BACKING_IMAGES[subject] || SUBJECT_BACKING_IMAGES.History})`,
         backgroundSize: 'cover', backgroundPosition: 'center top',
         opacity: 0.18, filter: 'saturate(0.4) brightness(0.7)',
       }} />
       <div aria-hidden="true" style={{
-        position: 'absolute', inset: 0,
+        position: 'fixed', inset: 0,
         background: 'linear-gradient(to bottom, rgba(15,11,7,0.65) 0%, rgba(15,11,7,0.50) 100%)',
       }} />
       <div style={{ padding: '96px 24px 80px', maxWidth: 440, margin: '0 auto', position: 'relative', zIndex: 1 }}>
@@ -564,17 +564,18 @@ export default function GalensDiagnostic({ block, subject, onContinue }) {
 
   // ── Beat 5: Treatment plan ──────────────────────────────────────────────────
   if (beat === 5 && treatmentData) return (
-    <div style={{ position: 'fixed', inset: 0, background: bg, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-      <img
-        src="/figures/history/medicine/medieval/ancient-authorities-back-to-back.png"
-        alt="" aria-hidden="true"
-        style={{
-          position: 'fixed', right: 0, bottom: 0,
-          height: '55%', width: 'auto',
-          opacity: 0.13, filter: 'grayscale(1)',
-          pointerEvents: 'none', userSelect: 'none',
-        }}
-      />
+    <>
+    <img
+      src="/figures/history/medicine/medieval/ancient-authorities-back-to-back.png"
+      alt="" aria-hidden="true"
+      style={{
+        position: 'fixed', right: 0, bottom: 0,
+        height: '55%', width: 'auto',
+        opacity: 0.13, filter: 'grayscale(1)',
+        pointerEvents: 'none', userSelect: 'none', zIndex: 0,
+      }}
+    />
+    <div style={{ position: 'fixed', inset: 0, background: bg, overflowY: 'auto', WebkitOverflowScrolling: 'touch', zIndex: 1 }}>
       <div style={{ padding: '88px 24px 80px', maxWidth: 440, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
         <div style={{
@@ -677,6 +678,7 @@ export default function GalensDiagnostic({ block, subject, onContinue }) {
         </button>
       </div>
     </div>
+    </>
   )
 
   return null

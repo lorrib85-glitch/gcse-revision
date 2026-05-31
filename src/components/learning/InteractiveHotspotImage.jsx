@@ -217,7 +217,7 @@ export default function InteractiveHotspotImage({
             width: '100%', height: '100%',
             objectFit: 'cover',
             objectPosition: 'center',
-            filter: 'brightness(0.38) saturate(0.85) blur(1px)',
+            filter: 'brightness(0.65) saturate(0.85)',
             transform: 'scale(1.03)',
             userSelect: 'none',
           }}

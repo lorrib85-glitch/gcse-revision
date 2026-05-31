@@ -137,7 +137,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
     if (vid.duration && vid.currentTime >= vid.duration - 1.0) startTitleFade()
   }
   function handleVideoEnd()  { startTitleFade() }
-  function handleVideoError(){ setVideoError(true); startTitleFade() }
+  function handleVideoError(){ startTitleFade() }
 
   // ── Mark comparison ───────────────────────────────────────────────────────
   function markComparisonText() {
@@ -251,17 +251,15 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
           position: 'fixed', inset: 0, zIndex: 1000,
           background: '#080C10', overflow: 'hidden',
         }}>
-          {!videoError && (
-            <video
-              ref={videoRef}
-              src={videoSrc}
-              autoPlay muted playsInline preload="auto"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-              onTimeUpdate={handleTimeUpdate}
-              onEnded={handleVideoEnd}
-              onError={handleVideoError}
-            />
-          )}
+          <video
+            ref={videoRef}
+            src={videoSrc}
+            autoPlay muted playsInline preload="auto"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+            onTimeUpdate={handleTimeUpdate}
+            onEnded={handleVideoEnd}
+            onError={handleVideoError}
+          />
 
           {/* Base gradient */}
           <div style={{

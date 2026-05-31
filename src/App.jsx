@@ -289,14 +289,14 @@ function StreakChip({ style = {} }) {
   const streak = prog.streak || 0
   return (
     <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: 6,
-      background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)',
-      borderRadius: 999, padding: '4px 12px 4px 10px',
+      display: 'inline-flex', alignItems: 'center', gap: 5,
+      background: 'rgba(245,158,11,0.08)',
+      borderRadius: 999, padding: '5px 12px 5px 9px',
       ...style,
     }}>
-      <span style={{ fontSize: 14, filter: 'drop-shadow(0 0 6px rgba(245,158,11,0.6))' }}>🔥</span>
-      <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 700, color: '#F59E0B', letterSpacing: '0.02em' }}>
-        {streak > 0 ? `${streak} day streak` : 'Start your streak'}
+      <span style={{ fontSize: 13, lineHeight: 1 }}>🔥</span>
+      <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700, color: '#F59E0B', letterSpacing: '0.01em' }}>
+        {streak > 0 ? `${streak}` : '0'}
       </span>
     </div>
   )
@@ -1006,7 +1006,6 @@ function PulseTab({ onStartQuickFire }) {
 
         {/* ── Top row ── */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <StreakChip />
           <button
             onClick={signOut}
             title="Sign out"
@@ -1020,6 +1019,7 @@ function PulseTab({ onStartQuickFire }) {
           >
             {userName.charAt(0).toUpperCase()}
           </button>
+          <StreakChip />
         </div>
 
         {/* ── Heading ── */}

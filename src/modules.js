@@ -117,67 +117,6 @@ export const MODULES = [
       },
 
       {
-        stage: 'Investigate',
-        label: 'God & Illness',
-        kicker: 'Religion & Disease',
-        heading: 'God, Sin and Sickness',
-        sub: 'If God causes illness, prayer is the treatment.',
-        blocks: [
-          {
-            type: 'explainReveal',
-            title: 'God, sin and sickness',
-            steps: [
-              { id: 'religion-1', statement: 'Religion shaped everyday life in medieval England.' },
-              { id: 'religion-2', statement: 'Many people believed disease could be', emphasis: 'sent by God.' },
-              {
-                id: 'religion-3',
-                statement: 'Illness might be seen as punishment for sin, a test of faith, or part of God\'s plan.',
-              },
-              {
-                id: 'treatments',
-                statement: 'So treatments could include prayer, confession, repentance, pilgrimages and relics.',
-                detail: 'These were not superstitions — they were logical responses to a religious explanation of disease.',
-              },
-              {
-                id: 'punchline',
-                statement: 'If you think God caused the illness,',
-                emphasis: 'prayer is not "extra." It is the treatment.',
-              },
-            ],
-          },
-        ],
-      },
-
-      {
-        type: 'quickRecall',
-        stage: 'Discover',
-        label: 'Who Said What?',
-        questions: [
-          {
-            type: 'choice',
-            question: 'Who is linked with developing the Four Humours?',
-            options: ['Hippocrates', 'Pasteur', 'Vesalius', 'Lister'],
-            correct: 0,
-            explanation: 'Hippocrates developed the Four Humours theory and encouraged observation of patients.',
-          },
-          {
-            type: 'choice',
-            question: 'Who developed the Theory of Opposites?',
-            options: ['Galen', 'Nightingale', 'Jenner', 'Koch'],
-            correct: 0,
-            explanation: 'Galen built on Hippocrates and developed the Theory of Opposites.',
-          },
-          {
-            type: 'choice',
-            question: 'What did both Hippocrates and Galen become in medieval medicine?',
-            options: ['Ancient authorities', 'Surgeons', 'Plague doctors', 'Monks'],
-            correct: 0,
-            explanation: 'Medieval doctors trusted ancient authorities heavily — their texts were treated almost like scripture.',
-          },
-        ],
-      },
-
-      {
         type: 'conceptReveal',
         stage: 'Understand',
         label: 'The Problem',
@@ -362,7 +301,7 @@ export const MODULES = [
         headline: 'Thomas has a fever.\nHe\'s coughing blood.',
         question: 'Who should he trust?',
         helperText: 'Swipe to explore your options.',
-        promptVisual: '/figures/history/medicine/medieval/thomas-doodle.png',
+        promptVisual: { src: '/figures/history/medicine/medieval/thomas-doodle.png', alt: 'Thomas' },
         options: [
           {
             title: 'Physician',
@@ -374,7 +313,6 @@ export const MODULES = [
             ],
             reaction: '"At least he looks expensive."',
             buttonText: 'Choose the Physician',
-            nextScreenId: 'quick-recall-healers',
             revealLines: [
               "You chose the Physician.",
               "The good news? He's the most highly trained person in town.",
@@ -394,7 +332,6 @@ export const MODULES = [
             ],
             reaction: '"Why is he carrying a knife?"',
             buttonText: 'Choose the Barber Surgeon',
-            nextScreenId: 'quick-recall-healers',
             revealLines: [
               "You chose the Surgeon.",
               "Need a tooth pulled? A wound stitched? A leg removed?",
@@ -415,7 +352,6 @@ export const MODULES = [
             ],
             reaction: '"Honestly, she seems the least terrifying."',
             buttonText: 'Choose the Wise Woman',
-            nextScreenId: 'quick-recall-healers',
             revealLines: [
               "You chose the Wise Woman.",
               "No university degree. No fancy robes. No Latin.",
@@ -436,7 +372,6 @@ export const MODULES = [
             ],
             reaction: '"I was hoping for medicine."',
             buttonText: 'Choose the Priest',
-            nextScreenId: 'quick-recall-healers',
             revealLines: [
               "You chose the Priest.",
               "This might sound strange today... but many medieval people thought illness began with the soul, not the body.",
@@ -453,7 +388,6 @@ export const MODULES = [
         stage: 'Challenge',
         id: 'reveal-physician',
         label: 'Your choice',
-        nextId: 'quick-recall-healers',
         paragraphs: [
           'Thomas chooses the physician.',
           'The physician looks serious, educated and expensive.',
@@ -467,7 +401,6 @@ export const MODULES = [
         stage: 'Challenge',
         id: 'reveal-barber',
         label: 'Your choice',
-        nextId: 'quick-recall-healers',
         paragraphs: [
           'Thomas chooses the barber surgeon.',
           'This man is practical, experienced and very comfortable around sharp objects.',
@@ -480,7 +413,6 @@ export const MODULES = [
         stage: 'Challenge',
         id: 'reveal-wise-woman',
         label: 'Your choice',
-        nextId: 'quick-recall-healers',
         paragraphs: [
           'Thomas chooses the wise woman.',
           'She cannot offer university medicine.',
@@ -493,7 +425,6 @@ export const MODULES = [
         stage: 'Challenge',
         id: 'reveal-priest',
         label: 'Your choice',
-        nextId: 'quick-recall-healers',
         paragraphs: [
           'Thomas chooses the priest.',
           'The priest listens carefully.',
@@ -557,6 +488,38 @@ export const MODULES = [
             shortLabel: 'Legs & Feet', title: 'Legs & Feet — Pisces', icon: '♓',
             description: 'Linked to Pisces and lower-body signs. The Zodiac Man diagram appeared in medical manuscripts across Europe — it was mainstream learned medicine.',
             extraFact: 'The Zodiac Man diagram appeared in medical books across Europe — it was not a fringe idea. It was how educated physicians thought.',
+          },
+        ],
+      },
+
+      {
+        stage: 'Investigate',
+        label: 'God & Illness',
+        kicker: 'Religion & Disease',
+        heading: 'God, Sin and Sickness',
+        sub: 'If God causes illness, prayer is the treatment.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            title: 'God, sin and sickness',
+            steps: [
+              { id: 'religion-1', statement: 'Religion shaped everyday life in medieval England.' },
+              { id: 'religion-2', statement: 'Many people believed disease could be', emphasis: 'sent by God.' },
+              {
+                id: 'religion-3',
+                statement: 'Illness might be seen as punishment for sin, a test of faith, or part of God\'s plan.',
+              },
+              {
+                id: 'treatments',
+                statement: 'So treatments could include prayer, confession, repentance, pilgrimages and relics.',
+                detail: 'These were not superstitions — they were logical responses to a religious explanation of disease.',
+              },
+              {
+                id: 'punchline',
+                statement: 'If you think God caused the illness,',
+                emphasis: 'prayer is not "extra." It is the treatment.',
+              },
+            ],
           },
         ],
       },
@@ -766,6 +729,35 @@ Do NOT award marks for identifying practices without explaining the religious re
             'Missing second way',
           ],
         },
+      },
+
+      {
+        type: 'quickRecall',
+        stage: 'Discover',
+        label: 'Who Said What?',
+        questions: [
+          {
+            type: 'choice',
+            question: 'Who is linked with developing the Four Humours?',
+            options: ['Hippocrates', 'Pasteur', 'Vesalius', 'Lister'],
+            correct: 0,
+            explanation: 'Hippocrates developed the Four Humours theory and encouraged observation of patients.',
+          },
+          {
+            type: 'choice',
+            question: 'Who developed the Theory of Opposites?',
+            options: ['Galen', 'Nightingale', 'Jenner', 'Koch'],
+            correct: 0,
+            explanation: 'Galen built on Hippocrates and developed the Theory of Opposites.',
+          },
+          {
+            type: 'choice',
+            question: 'What did both Hippocrates and Galen become in medieval medicine?',
+            options: ['Ancient authorities', 'Surgeons', 'Plague doctors', 'Monks'],
+            correct: 0,
+            explanation: 'Medieval doctors trusted ancient authorities heavily — their texts were treated almost like scripture.',
+          },
+        ],
       },
 
       {
@@ -1373,6 +1365,7 @@ Do NOT award marks for identifying practices without explaining the religious re
           },
         ],
       },
+
     ],
   },
 
