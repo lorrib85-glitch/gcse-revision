@@ -756,6 +756,9 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
   const theme = SUBJECTS[atmosphereSubject] || SUBJECTS.History
   const accent = theme.accent
   const rgb = theme.accentRgb
+  const jumpHeaderImage = jumpBackModule?.headerImage
+    || MODULE_HEADER_IMAGES[jumpBackModule?.id]
+    || '/headers/history-medicine-through-time.png'
 
   return (
     <div style={{
@@ -766,7 +769,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
       {/* Landscape background — covers full top area from screen edge to Close the gap */}
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0, zIndex: 0,
-        backgroundImage: 'url(/module-atmosphere.png)',
+        backgroundImage: `url(${jumpHeaderImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center right',
         backgroundRepeat: 'no-repeat',

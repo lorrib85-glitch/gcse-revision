@@ -14,6 +14,7 @@ export const MODULES = [
     icon: '⚕️',
     color: '#F5B700',
     colorLight: '#f5e6d3',
+    headerImage: '/headers/history-medicine-through-time.png',
 
     hook: {
       statement: 'Medieval doctors deliberately removed blood from sick patients because they believed it would make them healthier.',
