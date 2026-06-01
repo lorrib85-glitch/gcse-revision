@@ -47,8 +47,10 @@ Screen-level learning interaction components.
 - `FaceTheExaminer.jsx` — Examiner-style written question interaction.
 - `FillInTheBlanksBlock.jsx` — Inline fill-in-the-blanks chapter block.
 - `InteractiveHotspotImage.jsx` — Full-screen image with tappable hotspots (two-phase intro→explore).
+- `KeyFigureReveal.jsx` — Scrollable portrait-hero screen introducing a key person. Portrait hero image (~60vh), name/role overlaid at bottom, significance statement, up to 4 knowledge sections, Continue button.
 - `QuickRecallScreen.jsx` — Rapid-fire retrieval screen (choice + connection questions).
 - `RecoveryQuizPlayer.jsx` — Lightweight recovery quiz player (3-4 focused questions).
+- `VisualLearning.jsx` — Click-to-continue cinematic scene sequence with background images, animated headlines, and optional final reveal.
 - `WeakSpotRecovery.jsx` — Full-screen behavioural intervention screen shown when a learner struggles.
 
 ### `src/components/layout/`
@@ -123,9 +125,11 @@ Always use `.png` extension for images. Never `.svg` for photos.
 
 Loaded in `index.html` via `<link>` tags:
 
-- **Plus Jakarta Sans** — Google Fonts — all UI text
-- **Clash Display** — Fontshare — hero headings and module titles
-- **Cormorant Garamond** — Google Fonts — History subject accents
+- **Sora** — Google Fonts — all UI text (buttons, labels, navigation, headings, body copy)
+- **Outfit** — Google Fonts — secondary UI text (used in some learning components)
+- **IBM Plex Serif** — Google Fonts — cinematic editorial moments (replaces Cormorant Garamond references in older docs)
+
+See `docs/system/TYPOGRAPHY_SYSTEM.md` for the canonical TYPE token definitions. Sora is the primary font across the product.
 
 ## Brand Rules
 
