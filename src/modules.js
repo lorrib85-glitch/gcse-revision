@@ -313,7 +313,7 @@ export const MODULES = [
             ],
             reaction: '"At least he looks expensive."',
             buttonText: 'Choose the Physician',
-            nextScreenId: 'reveal-physician',
+            nextScreenId: 'post-choice',
             revealLines: [
               "You chose the Physician.",
               "The good news? He's the most highly trained person in town.",
@@ -333,7 +333,7 @@ export const MODULES = [
             ],
             reaction: '"Why is he carrying a knife?"',
             buttonText: 'Choose the Barber Surgeon',
-            nextScreenId: 'reveal-barber',
+            nextScreenId: 'post-choice',
             revealLines: [
               "You chose the Surgeon.",
               "Need a tooth pulled? A wound stitched? A leg removed?",
@@ -354,7 +354,7 @@ export const MODULES = [
             ],
             reaction: '"Honestly, she seems the least terrifying."',
             buttonText: 'Choose the Wise Woman',
-            nextScreenId: 'reveal-wise-woman',
+            nextScreenId: 'post-choice',
             revealLines: [
               "You chose the Wise Woman.",
               "No university degree. No fancy robes. No Latin.",
@@ -375,7 +375,7 @@ export const MODULES = [
             ],
             reaction: '"I was hoping for medicine."',
             buttonText: 'Choose the Priest',
-            nextScreenId: 'reveal-priest',
+            nextScreenId: 'post-choice',
             revealLines: [
               "You chose the Priest.",
               "This might sound strange today... but many medieval people thought illness began with the soul, not the body.",
@@ -384,60 +384,6 @@ export const MODULES = [
               "Religion shaped almost every part of medieval life — including medicine.",
             ],
           },
-        ],
-      },
-
-      {
-        type: 'choiceReveal',
-        stage: 'Challenge',
-        id: 'reveal-physician',
-        nextId: 'post-choice',
-        label: 'Your choice',
-        paragraphs: [
-          'Thomas chooses the physician.',
-          'The physician looks serious, educated and expensive.',
-          'Then he reaches for an astrology chart.',
-          'Thomas is not reassured.',
-        ],
-      },
-
-      {
-        type: 'choiceReveal',
-        stage: 'Challenge',
-        id: 'reveal-barber',
-        nextId: 'post-choice',
-        label: 'Your choice',
-        paragraphs: [
-          'Thomas chooses the barber surgeon.',
-          'This man is practical, experienced and very comfortable around sharp objects.',
-          'That is either good news or extremely bad news.',
-        ],
-      },
-
-      {
-        type: 'choiceReveal',
-        stage: 'Challenge',
-        id: 'reveal-wise-woman',
-        nextId: 'post-choice',
-        label: 'Your choice',
-        paragraphs: [
-          'Thomas chooses the wise woman.',
-          'She cannot offer university medicine.',
-          'But she knows the local plants, the local people and what ordinary families can afford.',
-        ],
-      },
-
-      {
-        type: 'choiceReveal',
-        stage: 'Challenge',
-        id: 'reveal-priest',
-        nextId: 'post-choice',
-        label: 'Your choice',
-        paragraphs: [
-          'Thomas chooses the priest.',
-          'The priest listens carefully.',
-          'Then he suggests prayer, confession and repentance.',
-          'Thomas is beginning to suspect medieval healthcare is not going to be straightforward.',
         ],
       },
 
