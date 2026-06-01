@@ -39,8 +39,6 @@ export default function GuidedChoiceCarousel({
   // Cinematic reveal phase
   const [showReveal,    setShowReveal]    = useState(false)
   const [revealLineCnt, setRevealLineCnt] = useState(0)
-  const [revealHint,    setRevealHint]    = useState(false)
-  const [revealLocked,  setRevealLocked]  = useState(false)
 
   // Preload all card images immediately on mount
   useEffect(() => {
@@ -168,19 +166,13 @@ export default function GuidedChoiceCarousel({
   const bodyLines      = revealLines.slice(1)
   const allRevealed    = revealLineCnt >= bodyLines.length
 
+  // Auto-reveal all lines when the overlay opens — no tapping required
   useEffect(() => {
-    if (!showReveal || allRevealed) return
-    setRevealHint(false)
-    const t = setTimeout(() => setRevealHint(true), 600)
-    return () => clearTimeout(t)
-  }, [showReveal, revealLineCnt, allRevealed])
+    if (!showReveal) return
+    setRevealLineCnt(bodyLines.length)
+  }, [showReveal, bodyLines.length])
 
-  function handleRevealTap() {
-    if (revealLocked || allRevealed) return
-    setRevealLocked(true)
-    setRevealLineCnt(c => c + 1)
-    setTimeout(() => setRevealLocked(false), 200)
-  }
+  function handleRevealTap() {}
 
   // ── Track translation ──────────────────────────────────────────────────────
 
@@ -630,7 +622,7 @@ export default function GuidedChoiceCarousel({
               style={{
                 position: 'fixed', inset: 0, zIndex: 1100,
                 background: '#08090D', overflow: 'hidden',
-                cursor: allRevealed ? 'default' : 'pointer',
+                cursor: 'default',
                 userSelect: 'none', WebkitUserSelect: 'none',
               }}
             >
@@ -721,26 +713,6 @@ export default function GuidedChoiceCarousel({
                   </div>
                 </div>
               </div>
-
-              {/* Tap hint */}
-              {!allRevealed && revealHint && (
-                <div style={{
-                  position: 'absolute',
-                  bottom: 'calc(38px + env(safe-area-inset-bottom, 0px))',
-                  left: 0, right: 0, textAlign: 'center',
-                  pointerEvents: 'none',
-                  animation: 'gcc-hint 3.2s ease infinite',
-                }}>
-                  <span style={{
-                    fontFamily: "'Outfit', sans-serif",
-                    fontWeight: 600, fontSize: 11,
-                    letterSpacing: '0.18em', textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.28)',
-                  }}>
-                    tap to continue
-                  </span>
-                </div>
-              )}
 
               {/* Continue button — appears when all lines are revealed */}
               {allRevealed && (
