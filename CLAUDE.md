@@ -134,6 +134,15 @@ See `BRAND.md` for detailed colour, typography, spacing, and component reference
 
 **Never improvise design decisions.** When unsure, choose simpler / darker / calmer / less decorated.
 
+## Titles and Headings
+
+Use sentence case, not title case. Capitalise only the first word and proper nouns.
+
+- ✓ `Trust me, I'm following Jupiter`
+- ✗ `Trust Me, I'm Following Jupiter`
+
+This applies to module titles, chapter names, screen headings, button labels, and any other copy written into the codebase.
+
 ## Commands
 
 ```bash
