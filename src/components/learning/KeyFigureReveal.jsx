@@ -22,7 +22,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
       {/* ── Portrait hero ───────────────────────────────────────────────── */}
       <div style={{
         position: 'relative',
-        height: '62vh',
+        height: '56vh',
         overflow: 'hidden',
       }}>
         <img
@@ -53,10 +53,10 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         }}>
           <div style={{
             ...TYPE.hero,
-            fontSize: 'clamp(44px, 13vw, 60px)',
+            fontSize: 'clamp(34px, 9vw, 48px)',
             color: '#FFFFFF',
             textTransform: 'uppercase',
-            letterSpacing: '0.06em',
+            letterSpacing: '0.03em',
             marginBottom: 6,
           }}>
             {block.name}
