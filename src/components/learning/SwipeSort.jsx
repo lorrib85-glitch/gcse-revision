@@ -216,13 +216,13 @@ export default function SwipeSort({ block, subject, onComplete }) {
         <div style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 0 }}>
           <div style={{
             flex: 1,
-            backgroundImage: 'url(/swipe-supernatural.png)',
+            backgroundImage: 'url(/swipe-supernatural.webp)',
             backgroundSize: 'cover', backgroundPosition: 'center top',
             opacity: 0.65, filter: 'grayscale(10%) brightness(0.75)',
           }} />
           <div style={{
             flex: 1,
-            backgroundImage: 'url(/swipe-natural.png)',
+            backgroundImage: 'url(/swipe-natural.webp)',
             backgroundSize: 'cover', backgroundPosition: 'center top',
             opacity: 0.65, filter: 'grayscale(10%) brightness(0.75)',
           }} />
@@ -352,13 +352,13 @@ export default function SwipeSort({ block, subject, onComplete }) {
         <div style={{ position: 'fixed', inset: 0, display: 'flex', zIndex: 0 }}>
           <div style={{
             flex: 1,
-            backgroundImage: 'url(/swipe-supernatural.png)',
+            backgroundImage: 'url(/swipe-supernatural.webp)',
             backgroundSize: 'cover', backgroundPosition: 'center top',
             opacity: 0.45, filter: 'grayscale(15%) brightness(0.78)',
           }} />
           <div style={{
             flex: 1,
-            backgroundImage: 'url(/swipe-natural.png)',
+            backgroundImage: 'url(/swipe-natural.webp)',
             backgroundSize: 'cover', backgroundPosition: 'center top',
             opacity: 0.45, filter: 'grayscale(15%) brightness(0.78)',
           }} />
@@ -451,7 +451,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
       <div style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 0 }}>
         <div style={{
           flex: 1,
-          backgroundImage: 'url(/swipe-supernatural.png)',
+          backgroundImage: 'url(/swipe-supernatural.webp)',
           backgroundSize: 'cover', backgroundPosition: 'center top',
           opacity: dragX < -20 ? 0.90 : 0.72,
           filter: 'grayscale(5%) brightness(0.88)',
@@ -459,7 +459,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
         }} />
         <div style={{
           flex: 1,
-          backgroundImage: 'url(/swipe-natural.png)',
+          backgroundImage: 'url(/swipe-natural.webp)',
           backgroundSize: 'cover', backgroundPosition: 'center top',
           opacity: dragX > 20 ? 0.90 : 0.72,
           filter: 'grayscale(5%) brightness(0.88)',
@@ -491,7 +491,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
           flex: 1,
           padding: '80px 18px 18px',
           display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
-          opacity: dragX < -20 ? 1 : 0.48,
+          opacity: dragX < -20 ? 1 : 0.65,
           transition: dragging ? 'none' : 'opacity 0.3s',
         }}>
           {leftCol.label.split('\n').map((line, i) => (
@@ -511,7 +511,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
           flex: 1,
           padding: '80px 18px 18px',
           display: 'flex', flexDirection: 'column', alignItems: 'flex-end', textAlign: 'right',
-          opacity: dragX > 20 ? 1 : 0.48,
+          opacity: dragX > 20 ? 1 : 0.65,
           transition: dragging ? 'none' : 'opacity 0.3s',
         }}>
           {rightCol.label.split('\n').map((line, i) => (

@@ -406,8 +406,8 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
     <>
       <style>{`
         @keyframes fte-panel-up {
-          from { transform: translateY(100%); }
-          to   { transform: translateY(0); }
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes fte-fade {
           from { opacity: 0; }
