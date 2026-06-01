@@ -182,25 +182,42 @@ export const MODULES = [
       },
 
       {
+        type: 'keyFigureReveal',
         stage: 'Understand',
-        label: 'Theory of Opposites',
-        kicker: 'Galenic Medicine',
-        heading: 'Opposites Cure Opposites',
-        sub: 'The logical chain that made bloodletting make sense.',
-        blocks: [
+        label: 'Galen',
+        portrait: '/figures/history/medicine/medieval/galen-portrait.webp',
+        name: 'Galen',
+        role: 'Roman doctor and writer',
+        significance: 'The doctor whose ideas shaped medicine for 1,400 years.',
+        sections: [
           {
-            type: 'explainReveal',
-            title: 'Opposites cure opposites',
-            steps: [
-              { id: 'galen-1', statement: 'Galen developed the idea of the Four Humours further.' },
-              { id: 'galen-2', statement: 'He argued that if the body was out of balance, treatment should', emphasis: 'restore balance.' },
-              { id: 'opposites', statement: 'This became known as the', emphasis: 'Theory of Opposites.' },
-              {
-                id: 'application',
-                statement: 'If an illness seemed hot, use something cold.',
-                detail: 'If it seemed wet, use something dry. If there was too much blood, remove blood.',
-              },
-              { id: 'punchline', statement: 'This is where medieval medicine starts sounding less random.', emphasis: 'Still wrong. But less random.' },
+            title: 'Four humours',
+            lines: [
+              "Galen built on Hippocrates' idea that the body contained:",
+              'Blood · Phlegm · Yellow Bile · Black Bile',
+              'Disease happened when the humours became unbalanced.',
+            ],
+          },
+          {
+            title: 'Theory of Opposites',
+            lines: [
+              'Galen believed opposite treatments could restore balance.',
+              'Hot illnesses → Cold remedies',
+              'Wet illnesses → Dry remedies',
+            ],
+          },
+          {
+            title: 'Doctor to gladiators',
+            lines: [
+              'Galen dissected animals and treated wounded gladiators.',
+              'This gave him a reputation as one of the most skilled doctors in Rome.',
+            ],
+          },
+          {
+            title: 'Influence & limitations',
+            lines: [
+              'Doctors followed his ideas for over 1,400 years.',
+              'Some ideas were wrong because he studied animals, not humans.',
             ],
           },
         ],
