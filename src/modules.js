@@ -229,29 +229,30 @@ export const MODULES = [
         portrait: '/figures/history/medicine/medieval/galen-portrait.webp',
         name: 'Galen',
         role: 'Roman doctor and writer',
-        significance: 'The doctor whose ideas shaped medicine for 1,400 years.',
+        significance: 'The doctor whose ideas dominated medicine for over 1,400 years.',
         sections: [
           {
-            title: 'Four humours',
+            title: 'Gladiators & dissection',
             lines: [
-              "Galen built on Hippocrates' idea that the body contained:",
-              'Blood · Phlegm · Yellow Bile · Black Bile',
-              'Disease happened when the humours became unbalanced.',
+              'Galen spent years patching up wounded gladiators — giving him direct, hands-on experience of the human body.',
+              'He also dissected animals extensively to study anatomy.',
+              'This practical knowledge set him apart from most physicians of his time.',
             ],
           },
           {
-            title: 'Theory of Opposites',
+            title: 'Four humours & Theory of Opposites',
             lines: [
-              'Galen believed opposite treatments could restore balance.',
-              'Hot illnesses → Cold remedies',
-              'Wet illnesses → Dry remedies',
+              "Galen promoted Hippocrates' Four Humours — Blood, Phlegm, Yellow Bile, Black Bile — and added his own contribution.",
+              'He argued illness should be treated with its opposite: hot illness → cold remedy. Wet illness → dry remedy.',
+              'This became known as the Theory of Opposites.',
             ],
           },
           {
-            title: 'Doctor to gladiators',
+            title: 'The squealing pig',
             lines: [
-              'Galen dissected animals and treated wounded gladiators.',
-              'This gave him a reputation as one of the most skilled doctors in Rome.',
+              'Galen wanted to prove the brain — not the heart — controlled the body.',
+              'He performed a public demonstration, cutting the vocal cord nerves of a squealing pig mid-cry.',
+              'The pig fell instantly silent. The crowd was stunned. Galen\'s reputation was made.',
             ],
           },
           {
