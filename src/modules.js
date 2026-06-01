@@ -313,6 +313,7 @@ export const MODULES = [
             ],
             reaction: '"At least he looks expensive."',
             buttonText: 'Choose the Physician',
+            nextScreenId: 'reveal-physician',
             revealLines: [
               "You chose the Physician.",
               "The good news? He's the most highly trained person in town.",
@@ -332,6 +333,7 @@ export const MODULES = [
             ],
             reaction: '"Why is he carrying a knife?"',
             buttonText: 'Choose the Barber Surgeon',
+            nextScreenId: 'reveal-barber',
             revealLines: [
               "You chose the Surgeon.",
               "Need a tooth pulled? A wound stitched? A leg removed?",
@@ -352,6 +354,7 @@ export const MODULES = [
             ],
             reaction: '"Honestly, she seems the least terrifying."',
             buttonText: 'Choose the Wise Woman',
+            nextScreenId: 'reveal-wise-woman',
             revealLines: [
               "You chose the Wise Woman.",
               "No university degree. No fancy robes. No Latin.",
@@ -372,6 +375,7 @@ export const MODULES = [
             ],
             reaction: '"I was hoping for medicine."',
             buttonText: 'Choose the Priest',
+            nextScreenId: 'reveal-priest',
             revealLines: [
               "You chose the Priest.",
               "This might sound strange today... but many medieval people thought illness began with the soul, not the body.",
@@ -387,6 +391,7 @@ export const MODULES = [
         type: 'choiceReveal',
         stage: 'Challenge',
         id: 'reveal-physician',
+        nextId: 'post-choice',
         label: 'Your choice',
         paragraphs: [
           'Thomas chooses the physician.',
@@ -400,6 +405,7 @@ export const MODULES = [
         type: 'choiceReveal',
         stage: 'Challenge',
         id: 'reveal-barber',
+        nextId: 'post-choice',
         label: 'Your choice',
         paragraphs: [
           'Thomas chooses the barber surgeon.',
@@ -412,6 +418,7 @@ export const MODULES = [
         type: 'choiceReveal',
         stage: 'Challenge',
         id: 'reveal-wise-woman',
+        nextId: 'post-choice',
         label: 'Your choice',
         paragraphs: [
           'Thomas chooses the wise woman.',
@@ -424,6 +431,7 @@ export const MODULES = [
         type: 'choiceReveal',
         stage: 'Challenge',
         id: 'reveal-priest',
+        nextId: 'post-choice',
         label: 'Your choice',
         paragraphs: [
           'Thomas chooses the priest.',
@@ -435,6 +443,7 @@ export const MODULES = [
 
       {
         type: 'conceptReveal',
+        id: 'post-choice',
         stage: 'Understand',
         label: 'Miasma — The Poisoned Air Theory',
         steps: [
