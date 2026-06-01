@@ -144,6 +144,47 @@ export const MODULES = [
       },
 
       {
+        type: 'keyFigureReveal',
+        stage: 'Understand',
+        label: 'Hippocrates',
+        portrait: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
+        name: 'Hippocrates',
+        role: 'Ancient Greek doctor',
+        significance: 'One of the first people to argue that illness had natural causes rather than being sent by the gods.',
+        sections: [
+          {
+            title: 'Natural causes',
+            lines: [
+              'Most people believed disease was a punishment from the gods.',
+              'Hippocrates argued that illness had natural causes and natural treatments.',
+              'This was one of the first moves away from supernatural explanations of disease.',
+            ],
+          },
+          {
+            title: 'Four humours',
+            lines: [
+              'Hippocrates believed the body contained four humours:',
+              'Blood · Phlegm · Yellow Bile · Black Bile',
+              'Illness happened when these became unbalanced.',
+            ],
+          },
+          {
+            title: 'Observation',
+            lines: [
+              'Hippocrates believed doctors should observe symptoms carefully, examine patients closely, and keep records.',
+              'He encouraged reasoning rather than magic or superstition.',
+            ],
+          },
+          {
+            title: 'Influence',
+            lines: [
+              "His Four Humours theory was later developed by Galen and remained influential for over 1,500 years.",
+            ],
+          },
+        ],
+      },
+
+      {
         type: 'interactiveImage',
         stage: 'Understand',
         id: 'four-humours-hotspot',
