@@ -750,6 +750,7 @@ export default function GuidedChoiceCarousel({
                     position: 'absolute',
                     bottom: 'calc(72px + env(safe-area-inset-bottom, 0px))',
                     left: 28,
+                    zIndex: 10,
                     background: 'none', border: 'none', cursor: 'pointer', padding: 0,
                     fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
                     color: accent,

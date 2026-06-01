@@ -85,7 +85,7 @@ export default function WeakSpotRecovery({
         aria-hidden="true"
         style={{
           position: 'fixed', inset: 0,
-          backgroundImage: 'url(/headers/history-medicine-through-time.png)',
+          backgroundImage: 'url(/headers/history-medicine-through-time.webp)',
           backgroundSize: 'cover', backgroundPosition: 'left center',
           opacity: 0.11,
           filter: 'brightness(0.6)',

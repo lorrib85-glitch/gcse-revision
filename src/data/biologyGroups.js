@@ -9,7 +9,7 @@ export const BIOLOGY_GROUPS = [
     subtitle: 'Cells, Microscopes & Division',
     icon: '🔬',
     accent: '#65E6C6',
-    headerImage: '/headers/bio-buildinglife.png',
+    headerImage: '/headers/bio-buildinglife.webp',
     locked: false,
     modules: [
       { id: 'bio_cells_factories',  title: 'Cells: The Tiny Factories',        subtitle: 'Structure & organelles',       locked: false },
@@ -24,7 +24,7 @@ export const BIOLOGY_GROUPS = [
     subtitle: 'Organs, Digestion & Circulation',
     icon: '🫀',
     accent: '#E87B5F',
-    headerImage: '/headers/bio-humanmachine.png',
+    headerImage: '/headers/bio-humanmachine.webp',
     locked: false,
     modules: [
       { id: 'bio_tissues_organs',  title: 'Cells → Tissues → Organs',      subtitle: 'Levels of organisation',    locked: false },
@@ -39,7 +39,7 @@ export const BIOLOGY_GROUPS = [
     subtitle: 'Pathogens, Immunity & Treatment',
     icon: '🦠',
     accent: '#E84F6B',
-    headerImage: '/headers/bio-diseasewars.png',
+    headerImage: '/headers/bio-diseasewars.webp',
     locked: false,
     modules: [
       { id: 'bio_pathogens',       title: 'Pathogens & Disease',            subtitle: 'Bacteria, viruses & fungi', locked: false },
@@ -54,7 +54,7 @@ export const BIOLOGY_GROUPS = [
     subtitle: 'Photosynthesis & Respiration',
     icon: '⚡',
     accent: '#A8E660',
-    headerImage: '/headers/bio-energyforlife.png',
+    headerImage: '/headers/bio-energyforlife.webp',
     locked: false,
     modules: [
       { id: 'sci_bio_w1',      title: 'Photosynthesis',           subtitle: 'Light, chlorophyll & glucose', locked: false },
@@ -68,7 +68,7 @@ export const BIOLOGY_GROUPS = [
     subtitle: 'Nerves, Hormones & Reproduction',
     icon: '🧠',
     accent: '#9B8BE8',
-    headerImage: '/headers/bio-controlsystems.png',
+    headerImage: '/headers/bio-controlsystems.webp',
     locked: false,
     modules: [
       { id: 'bio_nervous',       title: 'The Nervous System',         subtitle: 'Neurons, synapses & reflexes',  locked: false },
@@ -82,7 +82,7 @@ export const BIOLOGY_GROUPS = [
     subtitle: 'DNA, Inheritance & Natural Selection',
     icon: '🧬',
     accent: '#7EC8E3',
-    headerImage: '/headers/bio-genetics.png',
+    headerImage: '/headers/bio-genetics.webp',
     locked: false,
     modules: [
       { id: 'bio_dna',           title: 'DNA & The Genome',           subtitle: 'Structure, genes & proteins',   locked: false },
@@ -97,7 +97,7 @@ export const BIOLOGY_GROUPS = [
     subtitle: 'Food Chains, Biodiversity & Conservation',
     icon: '🌿',
     accent: '#68C18A',
-    headerImage: '/headers/bio-ecosystems.png',
+    headerImage: '/headers/bio-ecosystems.webp',
     locked: false,
     modules: [
       { id: 'bio_food_chains',   title: 'Ecosystems & Food Chains',   subtitle: 'Producers, consumers & energy',  locked: false },

@@ -14,7 +14,7 @@ export const MODULES = [
     icon: '⚕️',
     color: '#F5B700',
     colorLight: '#f5e6d3',
-    headerImage: '/headers/history-medicine-through-time.png',
+    headerImage: '/headers/history-medicine-through-time.webp',
 
     hook: {
       statement: 'Medieval doctors deliberately removed blood from sick patients because they believed it would make them healthier.',
@@ -150,7 +150,7 @@ export const MODULES = [
         label: 'Explore the Humours',
         title: 'Tap the Four Humours',
         introText: 'Medieval doctors believed the body contained four vital fluids. Each humour had its own qualities — and its own associated illness when it went out of balance.',
-        image: '/figures/history/medicine/medieval/four-humours-body.png',
+        image: '/figures/history/medicine/medieval/four-humours-body.webp',
         imageAlt: 'Medieval symbolic body diagram showing the positions of the Four Humours',
         ctaLabel: 'Explore the body',
         hotspots: [
@@ -301,11 +301,11 @@ export const MODULES = [
         headline: 'Thomas has a fever.\nHe\'s coughing blood.',
         question: 'Who should he trust?',
         helperText: 'Swipe to explore your options.',
-        promptVisual: { src: '/figures/history/medicine/medieval/thomas-doodle.png', alt: 'Thomas' },
+        promptVisual: { src: '/figures/history/medicine/medieval/thomas-doodle.webp', alt: 'Thomas' },
         options: [
           {
             title: 'Physician',
-            image: '/figures/history/medicine/medieval/physician.png',
+            image: '/figures/history/medicine/medieval/physician.webp',
             sections: [
               { heading: 'Favourite methods', items: ['Astrology', 'Urine charts', 'Four Humours'] },
               { heading: 'Cost', items: ['💰💰💰💰💰'] },
@@ -324,7 +324,7 @@ export const MODULES = [
           },
           {
             title: 'Barber Surgeon',
-            image: '/figures/history/medicine/medieval/barber-surgeon.png',
+            image: '/figures/history/medicine/medieval/barber-surgeon.webp',
             sections: [
               { heading: 'Favourite methods', items: ['Bloodletting', 'Tooth-pulling', 'Basic surgery'] },
               { heading: 'Cost', items: ['💰💰'] },
@@ -344,7 +344,7 @@ export const MODULES = [
           },
           {
             title: 'Wise Woman',
-            image: '/figures/history/medicine/medieval/wise-woman.png',
+            image: '/figures/history/medicine/medieval/wise-woman.webp',
             sections: [
               { heading: 'Favourite methods', items: ['Herbs', 'Poultices', 'Traditional remedies'] },
               { heading: 'Cost', items: ['💰'] },
@@ -364,7 +364,7 @@ export const MODULES = [
           },
           {
             title: 'Priest',
-            image: '/figures/history/medicine/medieval/priest.png',
+            image: '/figures/history/medicine/medieval/priest.webp',
             sections: [
               { heading: 'Favourite methods', items: ['Prayer', 'Confession', 'Repentance'] },
               { heading: 'Cost', items: ['💰'] },
@@ -461,7 +461,7 @@ export const MODULES = [
         label: 'Diagnose Like It\'s 1340',
         title: 'The Zodiac Man',
         introText: 'Tap the body parts to see how astrology was linked to medicine. Medieval physicians used charts like this to guide diagnosis and decide when to treat.',
-        image: '/figures/history/medicine/medieval/zodiac-man.png',
+        image: '/figures/history/medicine/medieval/zodiac-man.webp',
         imageAlt: 'Medieval Zodiac Man diagram linking zodiac signs to body parts',
         ctaLabel: 'Explore the Zodiac Man',
         hotspots: [
@@ -925,7 +925,7 @@ Do NOT award marks for identifying practices without explaining the religious re
         label: 'Explore the Humours',
         title: 'Tap the Four Humours',
         introText: 'Medieval doctors believed the body contained four vital fluids. Each humour had its own qualities — and its own associated illness when it went out of balance.',
-        image: '/figures/history/medicine/medieval/four-humours-body.png',
+        image: '/figures/history/medicine/medieval/four-humours-body.webp',
         imageAlt: 'Medieval symbolic body diagram showing the positions of the Four Humours',
         ctaLabel: 'Explore the body',
         hotspots: [
@@ -4056,7 +4056,7 @@ Do NOT award marks for identifying practices without explaining the religious re
         label: '🔬 Plant Cell Explorer',
         title: 'Inside a\nPlant Cell',
         introText: 'Plant cells contain specialised structures called organelles. Each one has a specific job that keeps the cell alive.',
-        image: '/figures/plant-cell.png',
+        image: '/figures/plant-cell.webp',
         imageAlt: 'Illustration of a plant cell showing major organelles',
         ctaLabel: 'Explore cell',
         hotspots: [

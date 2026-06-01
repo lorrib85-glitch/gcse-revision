@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 
 const SUBJECT_BACKING_IMAGES = {
-  History:   '/headers/history-medicine-through-time.png',
-  Biology:   '/headers/bio-main.png',
-  Chemistry: '/headers/chem-reactions.png',
-  English:   '/headers/english-main.png',
-  Maths:     '/headers/maths-main.png',
-  Physics:   '/headers/physics-main.png',
-  Sociology: '/headers/sociology-main.png',
+  History:   '/headers/history-medicine-through-time.webp',
+  Biology:   '/headers/bio-main.webp',
+  Chemistry: '/headers/chem-reactions.webp',
+  English:   '/headers/english-main.webp',
+  Maths:     '/headers/maths-main.webp',
+  Physics:   '/headers/physics-main.webp',
+  Sociology: '/headers/sociology-main.webp',
 }
 
 let _gdStyled = false
@@ -566,7 +566,7 @@ export default function GalensDiagnostic({ block, subject, onContinue }) {
   if (beat === 5 && treatmentData) return (
     <>
     <img
-      src="/figures/history/medicine/medieval/ancient-authorities-back-to-back.png"
+      src="/figures/history/medicine/medieval/ancient-authorities-back-to-back.webp"
       alt="" aria-hidden="true"
       style={{
         position: 'fixed', right: 0, bottom: 0,
