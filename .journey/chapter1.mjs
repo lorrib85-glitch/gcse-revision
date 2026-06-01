@@ -264,8 +264,227 @@ await advanceScreen(page, 'quickRecall', 8);
 await page.waitForTimeout(700);
 await snap(page, '25-s6-done');
 
+// ─── 11. Screen 7 — guidedChoiceCarousel "Who should he trust?" ──────────────
+say('\n── 11. Screen 7: guidedChoiceCarousel ──');
+await page.waitForTimeout(800);
+await snap(page, '27-s7-start');
+
+// Click "Choose this" for the first card (Physician)
+await waitAndTap(page, /Choose this|Choose/i, 5000, 'Choose this');
+await page.waitForTimeout(600); // 450ms delay before showReveal=true
+
+// Tap the cinematic reveal overlay to advance each reveal line.
+// Physician has 5 body lines (revealLines[1..5]); each tap has a 200ms lock.
+// The overlay is at zIndex:1100, above LearningHeader (1001), so taps land on it.
+for (let t = 0; t < 12; t++) {
+  const cont = page.locator('button').filter({ hasText: /^Continue →/i }).first();
+  if (await cont.count() && await cont.isVisible()) break;
+  await page.locator('body').click({ position: { x: 195, y: 400 }, timeout: 2000 }).catch(() => {});
+  await page.waitForTimeout(380); // > 200ms revealLocked debounce
+}
+// Wait for gcc-cont entrance animation (120ms delay + 500ms duration) to complete
+await page.waitForTimeout(700);
+await snap(page, '28-s7-revealed');
+
+// The GCC content shell has zIndex:5, which visually overlaps the Continue → button
+// (position:absolute, no z-index). force:true dispatches to the wrong stacking layer.
+// page.evaluate().click() triggers React's event delegation directly and always works.
+await page.evaluate(() => {
+  const btn = [...document.querySelectorAll('button')].find(b => /^Continue/.test(b.textContent.trim()));
+  if (btn) btn.click();
+});
+say('  ✓ GCC Continue → clicked via JS');
+await page.waitForTimeout(800);
+
+// Verify navigation away from GCC overlay
+const gccStill = await page.locator('text="You chose the Physician"').count().catch(() => 0);
+if (gccStill > 0) {
+  say('  ⚠ GCC still showing — forcing click');
+  await page.locator('button').filter({ hasText: /^Continue →/i }).first()
+    .click({ force: true, timeout: 3000 }).catch(() => {});
+  await page.waitForTimeout(800);
+}
+await snap(page, '29-s7-done');
+
+// ─── 12. Screens 8-11 — choiceReveal × 4 ────────────────────────────────────
+say('\n── 12. Screens 8-11: choiceReveal ──');
+for (let cr = 8; cr <= 11; cr++) {
+  await page.waitForTimeout(600);
+  const snapIdx = 30 + (cr - 8);
+  await snap(page, `${snapIdx}-s${cr}-choiceReveal`);
+  await advanceScreen(page, `choiceReveal-s${cr}`, 8);
+  await page.waitForTimeout(600);
+}
+
+// ─── 13. Screen 12 — conceptReveal ──────────────────────────────────────────
+say('\n── 13. Screen 12: conceptReveal ──');
+await page.waitForTimeout(600);
+await snap(page, '34-s12-start');
+await advanceScreen(page, 'conceptReveal-s12', 18);
+await page.waitForTimeout(700);
+await snap(page, '35-s12-done');
+
+// ─── 14. Screen 13 — interactiveImage (zodiac-man) ──────────────────────────
+say('\n── 14. Screen 13: interactiveImage (zodiac-man) ──');
+await page.waitForTimeout(800);
+await snap(page, '36-s13-intro');
+
+await waitAndTap(page, /Explore/i, 6000, 'Explore CTA (zodiac)');
+await page.waitForTimeout(1200);
+
+for (const label of ['Head — Aries', 'Chest & Heart', 'Stomach & Digestion', 'Legs & Feet — Pisces']) {
+  const dot = page.locator(`button[aria-label="Explore ${label}"]`);
+  if (await dot.count()) {
+    await dot.first().click({ timeout: 3000, force: true });
+    await page.waitForTimeout(700);
+    say(`  tapped hotspot: ${label}`);
+    await page.locator('body').click({ position: { x: 195, y: 70 }, timeout: 2000 }).catch(() => {});
+    await page.waitForTimeout(500);
+  } else {
+    say(`  ⚠ hotspot not found: ${label}`);
+  }
+}
+await snap(page, '37-s13-explored');
+await advanceScreen(page, 'zodiac-IHI-done', 10);
+await page.waitForTimeout(700);
+await snap(page, '38-s13-done');
+
+// ─── 15. Screens 14-15 — undefined (fallback "Next →" footer) ────────────────
+say('\n── 15. Screens 14-15: unknown ──');
+for (let s = 14; s <= 15; s++) {
+  await page.waitForTimeout(600);
+  await advanceScreen(page, `screen${s}`, 12);
+  await page.waitForTimeout(600);
+}
+
+// ─── 16. Screen 16 — naturalSupernaturalSwipe ────────────────────────────────
+say('\n── 16. Screen 16: naturalSupernaturalSwipe ──');
+await page.waitForTimeout(800);
+await snap(page, '39-s16-intro');
+
+await waitAndTap(page, /Let's go/i, 5000, "Let's go →");
+await page.waitForTimeout(700);
+await snap(page, '40-s16-game');
+
+// Each card has a known correct column. Read the card label from the DOM and look
+// up the right column (0=SUPERNATURAL, 1=RATIONAL) before clicking.
+// tapColumn() only advances the card when the answer is correct — wrong answer shakes.
+const SWIPE_MAP = [
+  { key: 'Praying',          col: 0 },
+  { key: 'holy shrine',      col: 0 },
+  { key: 'Planetary',        col: 0 },
+  { key: 'Four Humours',     col: 1 },
+  { key: 'Miasma',           col: 1 },
+  { key: 'Bloodletting',     col: 1 },
+];
+
+for (let i = 0; i < 12; i++) {
+  // Done state: Continue → rendered as <div onClick>
+  const bodyTxt = await page.evaluate(() => document.body.innerText);
+  if (/All sorted/.test(bodyTxt)) break;
+
+  // Determine correct column from current card label
+  let colIdx = 0;
+  for (const { key, col } of SWIPE_MAP) {
+    if (bodyTxt.includes(key)) { colIdx = col; break; }
+  }
+
+  const colBtn = page.locator('button').filter({
+    hasText: colIdx === 0 ? /SUPERNATURAL/i : /RATIONAL/i,
+  }).first();
+
+  if (await colBtn.count()) {
+    await colBtn.click({ timeout: 3000 }).catch(() => {});
+    say(`  sorted card ${i + 1} → ${colIdx === 0 ? 'SUPERNATURAL' : 'RATIONAL'}`);
+    await page.waitForTimeout(750); // fly animation (520ms) + next card render
+  } else {
+    await page.waitForTimeout(600);
+  }
+}
+await snap(page, '41-s16-sorted');
+
+// Continue → is a <div onClick>, not a button — JS evaluate is most reliable
+await page.evaluate(() => {
+  const el = [...document.querySelectorAll('div')].find(d => d.textContent.trim() === 'Continue →' && d.onclick);
+  if (el) { el.click(); return true; }
+  // Fallback: any element with exact text
+  const any = [...document.querySelectorAll('*')].find(d => d.childNodes.length === 1 && d.textContent.trim() === 'Continue →');
+  if (any) any.click();
+});
+say('  ✓ SwipeSort Continue → clicked via JS');
+await page.waitForTimeout(700);
+await snap(page, '42-s16-done');
+
+// ─── 17. Screen 17 — quickRecall ─────────────────────────────────────────────
+say('\n── 17. Screen 17: quickRecall ──');
+await page.waitForTimeout(600);
+await snap(page, '43-s17-start');
+for (let qi = 0; qi < 10; qi++) {
+  const contBtn = page.locator('button').filter({ hasText: ADVANCE_RE }).first();
+  if (await contBtn.count() && await contBtn.isVisible()) break;
+  await page.waitForTimeout(900);
+  const trueBtn = page.locator('button').filter({ hasText: /^TRUE$/i }).first();
+  if (await trueBtn.count() && await trueBtn.isVisible()) {
+    await trueBtn.click({ timeout: 3000 }).catch(() => {});
+    say(`  answered q${qi + 1}: TRUE`); await page.waitForTimeout(950); continue;
+  }
+  const choiceBtn = page.locator('button').filter({ hasText: /.{5,}/ })
+    .filter({ hasNotText: ADVANCE_RE }).filter({ hasNotText: /^(TRUE|FALSE)$/i }).first();
+  if (await choiceBtn.count()) {
+    const t = await choiceBtn.innerText();
+    say(`  answered q${qi + 1}: "${t.trim().slice(0, 40)}"`);
+    await choiceBtn.click({ timeout: 3000 }).catch(() => {}); await page.waitForTimeout(950);
+  }
+}
+await advanceScreen(page, 'quickRecall-s17', 8);
+await page.waitForTimeout(700);
+await snap(page, '44-s17-done');
+
+// ─── 18. Screen 18 — undefined ───────────────────────────────────────────────
+say('\n── 18. Screen 18: unknown ──');
+await page.waitForTimeout(600);
+await advanceScreen(page, 'screen18', 12);
+await page.waitForTimeout(600);
+
+// ─── 19. Screen 19 — faceExaminer ────────────────────────────────────────────
+say('\n── 19. Screen 19: faceExaminer ──');
+await page.waitForTimeout(600);
+await snap(page, '45-s19-start');
+
+// Phase: intro — auto-advances to 'reading' at ~2300ms
+await page.waitForTimeout(3000);
+await snap(page, '46-s19-reading');
+
+// Phase: reading → "I've read the answer →" → judging
+await waitAndTap(page, /I've read the answer/i, 5000, "I've read the answer →");
+await page.waitForTimeout(400);
+
+// Phase: judging → select a mark number (click "5") → "Submit examiner report"
+const markBtn = page.locator('button').filter({ hasText: /^5$/ }).first();
+if (await markBtn.count()) {
+  await markBtn.click({ timeout: 3000 }).catch(() => {});
+  say('  selected mark: 5');
+  await page.waitForTimeout(400);
+}
+await waitAndTap(page, /Submit examiner report/i, 4000, 'Submit examiner report');
+await page.waitForTimeout(1200); // panel slides in after ~500ms
+await snap(page, '47-s19-reveal');
+
+// Phase: reveal → "Push it up a grade →" → improving
+await waitAndTap(page, /Push it up a grade/i, 4000, 'Push it up a grade →');
+await page.waitForTimeout(400);
+
+// Phase: improving → skip re-mark API → "Continue without improving →" → done
+await waitAndTap(page, /Continue without improving/i, 5000, 'Continue without improving →');
+await page.waitForTimeout(400);
+
+// Phase: done — auto-calls onContinue after ~2200ms
+say('  faceExaminer done phase — waiting for auto-advance (~2.2s)...');
+await page.waitForTimeout(3000);
+await snap(page, '48-s19-done');
+
 // Final snapshot
-await snap(page, '26-end');
+await snap(page, '49-end');
 
 // ─── Summary ─────────────────────────────────────────────────────────────────
 say('\n=== COMPLETE ===');
