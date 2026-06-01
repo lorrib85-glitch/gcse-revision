@@ -32,7 +32,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
   injectStyles()
 
   const scenes  = block?.scenes  || []
-  const palette = SUBJECTS[(subject || 'history').toLowerCase()] || SUBJECTS.history
+  const palette = SUBJECTS[subject] || SUBJECTS.History
   const accent  = palette.accent || '#C89B6D'
 
   const [idx,     setIdx]     = useState(0)
