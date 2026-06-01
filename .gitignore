@@ -6,3 +6,6 @@ dist
 
 *storybook.log
 storybook-static
+
+# Original PNG sources (converted to WebP for production)
+public/figures/history/medicine/medieval/vl-*.png
