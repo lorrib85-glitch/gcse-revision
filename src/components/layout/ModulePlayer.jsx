@@ -24,6 +24,7 @@ import ColSortBlock from '../learning/ColSortBlock.jsx'
 import ExaminerExplainsScreen from '../learning/ExaminerExplainsScreen.jsx'
 import SwipeSort from '../learning/SwipeSort.jsx'
 import GalensDiagnostic from '../learning/GalensDiagnostic.jsx'
+import VisualLearning from '../learning/VisualLearning.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -2067,6 +2068,26 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           visible={true}
         />
         <SwipeSort
+          block={cur}
+          subject={module.subject}
+          onComplete={() => { isLast ? handleFinish() : go(1) }}
+        />
+      </>
+    )
+  }
+
+  // ── Visual learning — click-through cinematic scene sequence ─────────────
+  if (cur?.type === 'visualLearning') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={true}
+        />
+        <VisualLearning
           block={cur}
           subject={module.subject}
           onComplete={() => { isLast ? handleFinish() : go(1) }}

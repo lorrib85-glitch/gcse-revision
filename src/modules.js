@@ -294,6 +294,44 @@ export const MODULES = [
       },
 
       {
+        type: 'visualLearning',
+        stage: 'Understand',
+        label: 'England, 1250',
+        scenes: [
+          {
+            image: '/figures/history/medicine/medieval/vl-medieval-town.webp',
+            headline: 'England, 1250',
+            body: 'The ideas of Hippocrates and Galen had already existed for over 1,000 years.',
+          },
+          {
+            image: '/figures/history/medicine/medieval/vl-church.webp',
+            headline: 'The Church was everywhere',
+            body: 'Almost everyone attended church. The Church shaped how people understood the world.',
+          },
+          {
+            image: '/figures/history/medicine/medieval/vl-monks-books.webp',
+            headline: 'Knowledge moved slowly',
+            body: 'Books had to be copied by hand, often by monks. A single manuscript could take months to create.',
+          },
+          {
+            image: '/figures/history/medicine/medieval/vl-university.webp',
+            headline: 'Doctors learnt from books',
+            body: 'Universities taught accepted medical ideas. Ancient writers like Galen were treated as authorities.',
+          },
+          {
+            image: '/figures/history/medicine/medieval/vl-dissection.webp',
+            headline: 'Testing ideas was difficult',
+            body: 'Human dissection was rare and considered a sin by the Church. Doctors had few ways to challenge old beliefs.',
+          },
+          {
+            finalReveal: true,
+            headline: 'If everyone learns the same ideas…',
+            body: '…those ideas can survive for centuries.',
+          },
+        ],
+      },
+
+      {
         type: 'guidedChoiceCarousel',
         stage: 'Challenge',
         id: 'healer-carousel',
