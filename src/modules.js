@@ -182,86 +182,64 @@ export const MODULES = [
       },
 
       {
+        type: 'theoryLab',
         stage: 'Understand',
-        label: 'Theory of Opposites',
-        kicker: 'Galenic Medicine',
-        heading: 'Opposites Cure Opposites',
-        sub: 'The logical chain that made bloodletting make sense.',
-        blocks: [
-          {
-            type: 'explainReveal',
-            title: 'Opposites cure opposites',
-            steps: [
-              { id: 'galen-1', statement: 'Galen developed the idea of the Four Humours further.' },
-              { id: 'galen-2', statement: 'He argued that if the body was out of balance, treatment should', emphasis: 'restore balance.' },
-              { id: 'opposites', statement: 'This became known as the', emphasis: 'Theory of Opposites.' },
-              {
-                id: 'application',
-                statement: 'If an illness seemed hot, use something cold.',
-                detail: 'If it seemed wet, use something dry. If there was too much blood, remove blood.',
-              },
-              { id: 'punchline', statement: 'This is where medieval medicine starts sounding less random.', emphasis: 'Still wrong. But less random.' },
-            ],
-          },
-        ],
-      },
+        label: 'Think Like Galen',
 
-      {
-        type: 'galensDiagnostic',
-        stage: 'Understand',
-        label: "Galen's Theory of Opposites",
+        title: 'Think Like Galen',
 
-        symptomsLabel: "Choose the patient's symptoms",
-        symptoms: [
-          { id: 'fever',    label: 'Fever',      qualities: { hot: 3 } },
-          { id: 'hotskin',  label: 'Hot skin',   qualities: { hot: 2 } },
-          { id: 'drycough', label: 'Dry cough',  qualities: { dry: 2 } },
-          { id: 'chills',   label: 'Chills',     qualities: { cold: 2 } },
-          { id: 'sweating', label: 'Sweating',   qualities: { wet: 2 } },
-          { id: 'dryskin',  label: 'Dry skin',   qualities: { dry: 1, hot: 1 } },
-        ],
-
-        qualityMeta: {
-          hot:  { label: 'HOT',  icon: '☀',  color: '#8B2E22' },
-          cold: { label: 'COLD', icon: '❄',  color: '#3B7EA6' },
-          wet:  { label: 'WET',  icon: '〜', color: '#2E6E9E' },
-          dry:  { label: 'DRY',  icon: '✦',  color: '#A0622A' },
+        theory: {
+          heading: 'Theory of Opposites',
+          explanation: "Galen believed illness happened when the body became unbalanced.\n\nTo restore balance, treat the illness using the opposite quality.",
+          grid: [
+            { left: 'HOT', right: 'COLD' },
+            { left: 'WET', right: 'DRY' },
+          ],
         },
 
-        treatments: {
-          'hot-dry': {
-            items: [
-              { title: 'Cooling foods',     detail: "Cucumber, lettuce, cold water — to reduce the body's heat." },
-              { title: 'Moist remedies',    detail: 'Broths, honey water, steam — to counter the dryness.' },
-              { title: 'Rest and recovery', detail: 'Allow the body to restore its natural balance.' },
-            ],
-          },
-          'hot-wet': {
-            items: [
-              { title: 'Cooling foods',    detail: 'Cold drinks, cucumber — to reduce excess heat.' },
-              { title: 'Drying treatment', detail: 'Dry bread, salt — to absorb excess moisture.' },
-              { title: 'Rest',             detail: 'Allow the humours to rebalance.' },
-            ],
-          },
-          'cold-dry': {
-            items: [
-              { title: 'Warming foods',   detail: 'Pepper, ginger, warm wine — to drive out the cold.' },
-              { title: 'Moist broths',    detail: 'Warm soups and steam — to restore moisture.' },
-              { title: 'Gentle exercise', detail: 'Movement to generate internal warmth.' },
-            ],
-          },
-          'cold-wet': {
-            items: [
-              { title: 'Warming spices',   detail: 'Ginger, cinnamon — to restore heat to the body.' },
-              { title: 'Drying treatment', detail: 'Dry foods and warmth to remove excess moisture.' },
-              { title: 'Rest and warmth',  detail: 'Blankets and rest to allow recovery.' },
-            ],
-          },
+        scenario: {
+          title: 'A Patient Arrives',
+          image: '/figures/history/medicine/medieval/physician.png',
+          symptoms: ['FEVER', 'RED FACE', 'SWEATING'],
+          question: 'Which qualities dominate?',
+          options: [
+            { label: 'HOT + WET', correct: true },
+            { label: 'HOT + DRY', correct: false },
+            { label: 'COLD + WET', correct: false },
+            { label: 'COLD + DRY', correct: false },
+          ],
         },
 
-        theoryPrinciple: 'Restore balance — treat with the opposite quality.',
-        explanation: "Galen believed illness was caused by an imbalance of the four humours. Hot, dry illness required cold, wet treatment to restore balance — Galen's Theory of Opposites.",
-        examTip: "Galen's Theory of Opposites: treat illness with its opposite quality. Hot → cold. Dry → wet. Examiners expect you to name the theory and explain the logic behind it.",
+        outcome: {
+          diagnosis: 'HOT + WET',
+          lines: ['Too much heat.', 'Too much moisture.'],
+        },
+
+        prescription: {
+          question: 'What would Galen prescribe?',
+          options: [
+            { label: 'Cucumber',   correct: true },
+            { label: 'Cold water', correct: true },
+            { label: 'Dry bread',  correct: true },
+            { label: 'Salt',       correct: true },
+            { label: 'Hot soup',   correct: false },
+            { label: 'Warm wine',  correct: false },
+          ],
+          reveal: 'Galen treats illness with opposite qualities.',
+        },
+
+        evaluation: {
+          transformation: { from: 'HOT + WET', to: 'COLD + DRY', result: 'BALANCE' },
+          worked: ['Rest', 'Fluids', 'Cooling foods'],
+          limitation: 'Disease is not caused by Four Humours.',
+          verdict: "Some treatments accidentally helped patients recover, making Galen's theory seem trustworthy even though the explanation was wrong.",
+          church: {
+            image: '/figures/history/medicine/medieval/priest.png',
+            heading: 'Supported by the Church',
+            body: "Christians believed God created a perfect and balanced body. This matched Galen's ideas — so the Church preserved and promoted his work for centuries.",
+          },
+          significance: "This helped Galen's ideas remain influential for over 1,000 years.",
+        },
       },
 
       {
