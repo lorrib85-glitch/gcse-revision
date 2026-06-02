@@ -8,7 +8,7 @@ export const MATHS_GROUPS = [
     subtitle: 'BIDMAS, Fractions, Indices & Primes',
     icon: '🔢',
     accent: '#2DD4BF',
-    headerImage: '/headers/maths-numbers.png',
+    headerImage: '/headers/maths-numbers.webp',
     locked: false,
     modules: [
       { id: 'maths_bidmas',     title: 'Order of Operations',   subtitle: 'BIDMAS & calculation rules', locked: false },
@@ -24,7 +24,7 @@ export const MATHS_GROUPS = [
     subtitle: 'Equations, Functions & Coordinate Geometry',
     icon: '📈',
     accent: '#34D399',
-    headerImage: '/headers/maths-algebra.png',
+    headerImage: '/headers/maths-algebra.webp',
     locked: false,
     modules: [
       { id: 'maths_expressions', title: 'Expressions & Formulae', subtitle: 'Simplify, expand & factorise', locked: false },
@@ -40,7 +40,7 @@ export const MATHS_GROUPS = [
     subtitle: 'Shapes, Angles, Pythagoras & Trigonometry',
     icon: '📐',
     accent: '#4ADE80',
-    headerImage: '/headers/maths-geometry.png',
+    headerImage: '/headers/maths-geometry.webp',
     locked: false,
     modules: [
       { id: 'maths_angles',     title: 'Angles & Polygons',      subtitle: 'Rules, proof & properties',  locked: false },
@@ -56,7 +56,7 @@ export const MATHS_GROUPS = [
     subtitle: 'Averages, Charts & Probability',
     icon: '📊',
     accent: '#22D3EE',
-    headerImage: '/headers/maths-data.png',
+    headerImage: '/headers/maths-data.webp',
     locked: false,
     modules: [
       { id: 'maths_averages',    title: 'Averages & Spread',       subtitle: 'Mean, median, mode & range',  locked: false },
@@ -71,7 +71,7 @@ export const MATHS_GROUPS = [
     subtitle: 'Ratio, Finance, Measures & Problem Solving',
     icon: '🌍',
     accent: '#A3E635',
-    headerImage: '/headers/maths-realworld.png',
+    headerImage: '/headers/maths-realworld.webp',
     locked: false,
     modules: [
       { id: 'maths_ratio',       title: 'Ratio & Proportion',     subtitle: 'Direct & inverse proportion', locked: false },

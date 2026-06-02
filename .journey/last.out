@@ -1,0 +1,14 @@
+=== JOURNEY LOG ===
+Home loaded -> /tmp/journeys/01-home.png
+Tab "Home": OK -> /tmp/journeys/02-tab-home.png
+Tab "Subjects": OK -> /tmp/journeys/03-tab-subjects.png
+Tab "Quiz": NOT FOUND
+Tab "Progress": NOT FOUND
+Tab "Exam": OK -> /tmp/journeys/04-tab-exam.png
+Subjects screen: 39 clickable elements
+Tapped element #3 -> /tmp/journeys/05-deep-3.png
+Tapped element #5 -> /tmp/journeys/06-deep-5.png
+Tapped element #8 -> /tmp/journeys/07-deep-8.png
+=== JS ERRORS (2) ===
+console.error: Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID
+console.error: Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID

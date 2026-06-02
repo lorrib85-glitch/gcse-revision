@@ -759,7 +759,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
   const rgb = theme.accentRgb
   const jumpHeaderImage = jumpBackModule?.headerImage
     || MODULE_HEADER_IMAGES[jumpBackModule?.id]
-    || '/headers/history-medicine-through-time.png'
+    || '/headers/history-medicine-through-time.webp'
 
   return (
     <div style={{
@@ -937,13 +937,13 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
 // ─── Pulse tab ─────────────────────────────────────────────────────────────────
 
 const PULSE_QUICK_START = [
-  { id: 'Sociology', label: 'Sociology', logo: '/headers/sociology-main.png', color: '#FF5C7A', glow: 'rgba(255,92,122,', status: 'Slipping',  statusColor: '#E05A52', progress: 38 },
-  { id: 'History',   label: 'History',   logo: '/headers/history-main.png',   color: '#C89B6D', glow: 'rgba(200,155,109,', status: 'Stable',   statusColor: '#F59E0B', progress: 62 },
-  { id: 'Biology',   label: 'Biology',   logo: '/headers/bio-main.png',        color: '#4CAF7D', glow: 'rgba(76,175,125,',  status: 'Strong',   statusColor: '#4CAF7D', progress: 81 },
-  { id: 'Chemistry', label: 'Chemistry', logo: '/headers/chem-logo.png',       color: '#9B59E8', glow: 'rgba(155,89,232,',  status: 'Slipping', statusColor: '#E05A52', progress: 29 },
-  { id: 'Maths',     label: 'Maths',     logo: '/headers/maths-main.png',      color: '#2DD4BF', glow: 'rgba(45,212,191,',  status: 'Improving',statusColor: '#2DD4BF', progress: 55 },
-  { id: 'English',   label: 'English',   logo: '/headers/english-main.png',    color: '#B66DFF', glow: 'rgba(182,109,255,', status: 'Stable',   statusColor: '#F59E0B', progress: 67 },
-  { id: 'Physics',   label: 'Physics',   logo: '/headers/physics-main.png',    color: '#3B82F6', glow: 'rgba(59,130,246,',  status: 'Improving',statusColor: '#2DD4BF', progress: 44 },
+  { id: 'Sociology', label: 'Sociology', logo: '/headers/sociology-main.webp', color: '#FF5C7A', glow: 'rgba(255,92,122,', status: 'Slipping',  statusColor: '#E05A52', progress: 38 },
+  { id: 'History',   label: 'History',   logo: '/headers/history-main.webp',   color: '#C89B6D', glow: 'rgba(200,155,109,', status: 'Stable',   statusColor: '#F59E0B', progress: 62 },
+  { id: 'Biology',   label: 'Biology',   logo: '/headers/bio-main.webp',        color: '#4CAF7D', glow: 'rgba(76,175,125,',  status: 'Strong',   statusColor: '#4CAF7D', progress: 81 },
+  { id: 'Chemistry', label: 'Chemistry', logo: '/headers/chem-logo.webp',       color: '#9B59E8', glow: 'rgba(155,89,232,',  status: 'Slipping', statusColor: '#E05A52', progress: 29 },
+  { id: 'Maths',     label: 'Maths',     logo: '/headers/maths-main.webp',      color: '#2DD4BF', glow: 'rgba(45,212,191,',  status: 'Improving',statusColor: '#2DD4BF', progress: 55 },
+  { id: 'English',   label: 'English',   logo: '/headers/english-main.webp',    color: '#B66DFF', glow: 'rgba(182,109,255,', status: 'Stable',   statusColor: '#F59E0B', progress: 67 },
+  { id: 'Physics',   label: 'Physics',   logo: '/headers/physics-main.webp',    color: '#3B82F6', glow: 'rgba(59,130,246,',  status: 'Improving',statusColor: '#2DD4BF', progress: 44 },
 ]
 
 function PulseTab({ onStartQuickFire }) {
@@ -1053,7 +1053,7 @@ function PulseTab({ onStartQuickFire }) {
           {/* Mystery cube artwork — right side */}
           <div style={{
             position: 'absolute', inset: 0,
-            backgroundImage: 'url(/headers/pulse-hero.png)',
+            backgroundImage: 'url(/headers/pulse-hero.webp)',
             backgroundSize: 'cover', backgroundPosition: 'right center',
             opacity: 0.82,
           }} />
@@ -1262,23 +1262,23 @@ function PulseTab({ onStartQuickFire }) {
 // and the actual lesson content.
 
 const MODULE_HEADER_IMAGES = {
-  'history-medicine-medieval-beliefs-causes': '/headers/history-medicine-through-time.png',
-  'mod2': '/headers/history-medicine-through-time.png',
-  'mod3': '/headers/history-medicine-through-time.png',
-  'mod4': '/headers/history-medicine-through-time.png',
-  'mod5': '/headers/history-medicine-through-time.png',
-  'mod6': '/headers/history-medicine-through-time.png',
-  'mod7': '/headers/history-medicine-through-time.png',
-  'mod8': '/headers/history-medicine-through-time.png',
-  'mod9': '/headers/history-medicine-through-time.png',
-  'sci_bio_w1': '/headers/bio-buildinglife.png',
-  'math1': '/headers/maths-numbers.png',
-  'math2': '/headers/maths-numbers.png',
-  'soc1': '/headers/sociology-family.png',
-  'soc2': '/headers/sociology-education.png',
-  'soc3': '/headers/sociology-crime.png',
-  'soc4': '/headers/sociology-stratification.png',
-  'soc6': '/headers/sociology-main.png',
+  'history-medicine-medieval-beliefs-causes': '/headers/history-medicine-through-time.webp',
+  'mod2': '/headers/history-medicine-through-time.webp',
+  'mod3': '/headers/history-medicine-through-time.webp',
+  'mod4': '/headers/history-medicine-through-time.webp',
+  'mod5': '/headers/history-medicine-through-time.webp',
+  'mod6': '/headers/history-medicine-through-time.webp',
+  'mod7': '/headers/history-medicine-through-time.webp',
+  'mod8': '/headers/history-medicine-through-time.webp',
+  'mod9': '/headers/history-medicine-through-time.webp',
+  'sci_bio_w1': '/headers/bio-buildinglife.webp',
+  'math1': '/headers/maths-numbers.webp',
+  'math2': '/headers/maths-numbers.webp',
+  'soc1': '/headers/sociology-family.webp',
+  'soc2': '/headers/sociology-education.webp',
+  'soc3': '/headers/sociology-crime.webp',
+  'soc4': '/headers/sociology-stratification.webp',
+  'soc6': '/headers/sociology-main.webp',
 }
 
 function hexToRgb(hex) {
@@ -1327,7 +1327,7 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
   const CIRCUM  = 2 * Math.PI * R
   const dashOff = CIRCUM * (1 - ringPct / 100)
 
-  const heroImg = mod.headerImage || MODULE_HEADER_IMAGES[mod.id] || '/headers/history-medicine-through-time.png'
+  const heroImg = mod.headerImage || MODULE_HEADER_IMAGES[mod.id] || '/headers/history-medicine-through-time.webp'
   const sandRgb = hexToRgb(sand)
 
   return (
@@ -1815,19 +1815,19 @@ function SubjectLogoSection({ subjectLabel, logoSrc, accent, groups, onGroupClic
 }
 
 function BiologySection({ groups, onGroupClick }) {
-  return <SubjectLogoSection subjectLabel="Biology" logoSrc="/headers/bio-main.png" accent="#4F8A5B" groups={groups} onGroupClick={onGroupClick} />
+  return <SubjectLogoSection subjectLabel="Biology" logoSrc="/headers/bio-main.webp" accent="#4F8A5B" groups={groups} onGroupClick={onGroupClick} />
 }
 
 // ─── SubjectBrowser ────────────────────────────────────────────────────────────
 
 const SUBJECT_HEADER_IMGS = {
-  History:   '/headers/history-medicine-through-time.png',
-  Biology:   '/headers/bio-main.png',
-  Chemistry: '/headers/history-elizabethan.png',
-  Maths:     '/headers/maths-main.png',
-  Sociology: '/headers/sociology-main.png',
-  English:   '/headers/history-usa-conflict.png',
-  Physics:   '/headers/history-spain-new-world.png',
+  History:   '/headers/history-medicine-through-time.webp',
+  Biology:   '/headers/bio-main.webp',
+  Chemistry: '/headers/history-elizabethan.webp',
+  Maths:     '/headers/maths-main.webp',
+  Sociology: '/headers/sociology-main.webp',
+  English:   '/headers/history-usa-conflict.webp',
+  Physics:   '/headers/history-spain-new-world.webp',
 }
 
 const SUBJECT_DISPLAY_TITLES = {
@@ -1880,7 +1880,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const { sand, bronze, cream, espresso } = palette
   const sandRgb      = hexToRgb(sand)
   const espressoRgb  = hexToRgb(espresso)
-  const headerImg    = SUBJECT_HEADER_IMGS[subjectName]    || '/headers/history-medicine-through-time.png'
+  const headerImg    = SUBJECT_HEADER_IMGS[subjectName]    || '/headers/history-medicine-through-time.webp'
   const displayTitle = SUBJECT_DISPLAY_TITLES[subjectName] || subjectName
 
   const rawMods = getSubjectModuleList(subjectName)
@@ -2174,7 +2174,7 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
       <div style={{ height: 200, position: 'relative', overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: 'url(/headers/history-medicine-through-time.png)',
+          backgroundImage: 'url(/headers/history-medicine-through-time.webp)',
           backgroundSize: 'cover', backgroundPosition: 'center',
           opacity: 0.72,
         }} />
@@ -2299,31 +2299,31 @@ function ModulesTab({ onOpenModule }) {
   const continuePct = modPct(continueRaw) || 0
   const selectedId = continueRaw?.id || 'history-medicine-medieval-beliefs-causes'
   const continueAccent = continueRaw?.color || '#C89B6D'
-  const continueHeaderImage = MODULE_HEADER_IMAGES[selectedId] || '/headers/history-medicine-through-time.png'
+  const continueHeaderImage = MODULE_HEADER_IMAGES[selectedId] || '/headers/history-medicine-through-time.webp'
 
   // Medicine Through Time progress = average across all 5 sub-modules
   const medPct = Math.round(medMods.reduce((sum, m) => sum + modPct(m), 0) / Math.max(medMods.length, 1))
 
   const historyGroupCards = [
-    { id: 'med_through_time',    title: 'Medicine Through Time',          subtitle: '', progress: medPct, locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-medicine-through-time.png' },
-    { id: 'usa_conflict',        title: 'USA: Conflict at Home & Abroad', subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-usa-conflict.png' },
-    { id: 'early_elizabethans',  title: 'Early Elizabethans',             subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-elizabethan.png' },
-    { id: 'spain_new_world',     title: 'Spain & the New World',          subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-spain-new-world.png' },
+    { id: 'med_through_time',    title: 'Medicine Through Time',          subtitle: '', progress: medPct, locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-medicine-through-time.webp' },
+    { id: 'usa_conflict',        title: 'USA: Conflict at Home & Abroad', subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-usa-conflict.webp' },
+    { id: 'early_elizabethans',  title: 'Early Elizabethans',             subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-elizabethan.webp' },
+    { id: 'spain_new_world',     title: 'Spain & the New World',          subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-spain-new-world.webp' },
   ]
 
   const englishGroupCards = [
-    { id: 'eng_macbeth',   title: 'Macbeth',                    subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-macbeth.png' },
-    { id: 'eng_inspector', title: 'An Inspector Calls',         subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-inspector.png' },
-    { id: 'eng_poetry',    title: 'Poetry',                     subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-poetry.png' },
-    { id: 'eng_lang1',     title: 'Reading Between the Lines',  subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-reading.png' },
+    { id: 'eng_macbeth',   title: 'Macbeth',                    subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-macbeth.webp' },
+    { id: 'eng_inspector', title: 'An Inspector Calls',         subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-inspector.webp' },
+    { id: 'eng_poetry',    title: 'Poetry',                     subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-poetry.webp' },
+    { id: 'eng_lang1',     title: 'Reading Between the Lines',  subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-reading.webp' },
   ]
 
   const physicsGroupCards = [
-    { id: 'phys_forces',  title: 'Forces & Motion',    subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-forces.png' },
-    { id: 'phys_energy',  title: 'Energy & Power',     subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-energy.png' },
-    { id: 'phys_waves',   title: 'Waves & Electricity',subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-waves.png' },
-    { id: 'phys_space',   title: 'Space',               subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-space.png' },
-    { id: 'phys_matter',  title: 'Matter & Particles',  subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-matter.png' },
+    { id: 'phys_forces',  title: 'Forces & Motion',    subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-forces.webp' },
+    { id: 'phys_energy',  title: 'Energy & Power',     subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-energy.webp' },
+    { id: 'phys_waves',   title: 'Waves & Electricity',subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-waves.webp' },
+    { id: 'phys_space',   title: 'Space',               subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-space.webp' },
+    { id: 'phys_matter',  title: 'Matter & Particles',  subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-matter.webp' },
   ]
 
 
@@ -2507,13 +2507,13 @@ function ModulesTab({ onOpenModule }) {
 
       {/* ── SUBJECT SECTIONS ── */}
       <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 28 }}>
-        <SubjectLogoSection subjectLabel="History"   logoSrc="/headers/history-main.png"    accent="#C89B6D" groups={historyGroupCards}  onGroupClick={() => setSubjectBrowser('History')} />
-        <SubjectLogoSection subjectLabel="English"   logoSrc="/headers/english-main.png"    accent="#B66DFF" groups={englishGroupCards}  onGroupClick={() => setSubjectBrowser('English')} />
+        <SubjectLogoSection subjectLabel="History"   logoSrc="/headers/history-main.webp"    accent="#C89B6D" groups={historyGroupCards}  onGroupClick={() => setSubjectBrowser('History')} />
+        <SubjectLogoSection subjectLabel="English"   logoSrc="/headers/english-main.webp"    accent="#B66DFF" groups={englishGroupCards}  onGroupClick={() => setSubjectBrowser('English')} />
         <BiologySection groups={biologyGroupCards} onGroupClick={() => setSubjectBrowser('Biology')} />
-        <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.png"       accent="#9B59E8" groups={chemGroupCards}     onGroupClick={() => setSubjectBrowser('Chemistry')} />
-        <SubjectLogoSection subjectLabel="Maths"     logoSrc="/headers/maths-main.png"      accent="#2DD4BF" groups={mathsGroupCards}    onGroupClick={() => setSubjectBrowser('Maths')} />
-        <SubjectLogoSection subjectLabel="Physics"   logoSrc="/headers/physics-main.png"    accent="#3B82F6" groups={physicsGroupCards}  onGroupClick={() => setSubjectBrowser('Physics')} />
-        <SubjectLogoSection subjectLabel="Sociology" logoSrc="/headers/sociology-main.png"  accent="#FF5C7A" groups={sociologyGroupCards} onGroupClick={() => setSubjectBrowser('Sociology')} />
+        <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.webp"       accent="#9B59E8" groups={chemGroupCards}     onGroupClick={() => setSubjectBrowser('Chemistry')} />
+        <SubjectLogoSection subjectLabel="Maths"     logoSrc="/headers/maths-main.webp"      accent="#2DD4BF" groups={mathsGroupCards}    onGroupClick={() => setSubjectBrowser('Maths')} />
+        <SubjectLogoSection subjectLabel="Physics"   logoSrc="/headers/physics-main.webp"    accent="#3B82F6" groups={physicsGroupCards}  onGroupClick={() => setSubjectBrowser('Physics')} />
+        <SubjectLogoSection subjectLabel="Sociology" logoSrc="/headers/sociology-main.webp"  accent="#FF5C7A" groups={sociologyGroupCards} onGroupClick={() => setSubjectBrowser('Sociology')} />
       </div>
     </div>
   )
@@ -3433,13 +3433,13 @@ function MathsTopicView({ group, onBack }) {
 
 function mathsTopicImg(id) {
   const n = id || ''
-  if (['number','negatives','fractions','percentages','decimals','indices','surds','primes','bidmas','powers'].some(k => n.includes(k))) return '/headers/maths-numbers.png'
-  if (['algebra','equations','inequalities','sequences','quadratic','expression','formula'].some(k => n.includes(k))) return '/headers/maths-algebra.png'
-  if (['graph','gradient','coordinate','straight','linear_graph'].some(k => n.includes(k))) return '/headers/maths-algebra.png'
-  if (['angles','area','volume','similarity','transforms','pythagoras','trig','geometry','polygon','shape','circle','perimeter'].some(k => n.includes(k))) return '/headers/maths-geometry.png'
-  if (['statistics','probability','data','averages','mean','sampling','charts'].some(k => n.includes(k))) return '/headers/maths-data.png'
-  if (['ratio','proportion','speed','density','money','finance','units'].some(k => n.includes(k))) return '/headers/maths-realworld.png'
-  return '/headers/maths-main.png'
+  if (['number','negatives','fractions','percentages','decimals','indices','surds','primes','bidmas','powers'].some(k => n.includes(k))) return '/headers/maths-numbers.webp'
+  if (['algebra','equations','inequalities','sequences','quadratic','expression','formula'].some(k => n.includes(k))) return '/headers/maths-algebra.webp'
+  if (['graph','gradient','coordinate','straight','linear_graph'].some(k => n.includes(k))) return '/headers/maths-algebra.webp'
+  if (['angles','area','volume','similarity','transforms','pythagoras','trig','geometry','polygon','shape','circle','perimeter'].some(k => n.includes(k))) return '/headers/maths-geometry.webp'
+  if (['statistics','probability','data','averages','mean','sampling','charts'].some(k => n.includes(k))) return '/headers/maths-data.webp'
+  if (['ratio','proportion','speed','density','money','finance','units'].some(k => n.includes(k))) return '/headers/maths-realworld.webp'
+  return '/headers/maths-main.webp'
 }
 
 function MathsBrowser({ onBack }) {
@@ -3462,7 +3462,7 @@ function MathsBrowser({ onBack }) {
       <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
         <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
           <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
-          <img src="/headers/maths-main.png" alt="Maths" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
+          <img src="/headers/maths-main.webp" alt="Maths" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
           <div style={{ flex:1 }}>
             <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA Maths — Topics</div>
             <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.72rem', color:'#5A6480' }}>{MATHS_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked</div>
@@ -3558,7 +3558,7 @@ function EnglishBrowser({ onBack }) {
       <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
         <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
           <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
-          <img src="/headers/english-main.png" alt="English" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
+          <img src="/headers/english-main.webp" alt="English" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
           <div style={{ flex:1 }}>
             <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA English Language</div>
             <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.72rem', color:'#5A6480' }}>Papers 1 & 2 · {ENGLISH_TOPIC_GROUPS.length} skill areas · {totalQs} questions · AI marked</div>
@@ -3579,7 +3579,7 @@ function EnglishBrowser({ onBack }) {
           {filtered.map(group => (
             <button key={group.id} onClick={() => setGroup(group)} style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:16, padding:'16px', cursor:'pointer', textAlign:'left', display:'flex', alignItems:'center', gap:14, width:'100%' }}>
               <div style={{ width:46, height:46, borderRadius:13, flexShrink:0, overflow:'hidden', border:'1px solid rgba(255,255,255,0.08)' }}>
-                <img src="/headers/english-main.png" alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                <img src="/headers/english-main.webp" alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
               </div>
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.93rem', color:'#F5F7FB', marginBottom:3 }}>{group.label}</div>
@@ -3644,7 +3644,7 @@ function SociologyBrowser({ onBack, filterPrefix = null }) {
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
-          <img src={socGroup?.headerImage || '/headers/sociology-main.png'} alt="Sociology" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
+          <img src={socGroup?.headerImage || '/headers/sociology-main.webp'} alt="Sociology" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>{headerTitle}</div>
             <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.72rem', color: '#5A6480' }}>
@@ -3679,11 +3679,11 @@ function SociologyBrowser({ onBack, filterPrefix = null }) {
               <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <img src={(() => {
                   const id = group.id
-                  if (id.startsWith('soc_families'))     return '/headers/sociology-family.png'
-                  if (id.startsWith('soc_education'))    return '/headers/sociology-education.png'
-                  if (id.startsWith('soc_crime'))        return '/headers/sociology-crime.png'
-                  if (id.startsWith('soc_stratification')) return '/headers/sociology-stratification.png'
-                  return '/headers/sociology-main.png'
+                  if (id.startsWith('soc_families'))     return '/headers/sociology-family.webp'
+                  if (id.startsWith('soc_education'))    return '/headers/sociology-education.webp'
+                  if (id.startsWith('soc_crime'))        return '/headers/sociology-crime.webp'
+                  if (id.startsWith('soc_stratification')) return '/headers/sociology-stratification.webp'
+                  return '/headers/sociology-main.webp'
                 })()} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -3892,7 +3892,7 @@ function ChemistryBrowser({ onBack }) {
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
-          <img src="/headers/chem-logo.png" alt="Chemistry" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
+          <img src="/headers/chem-logo.webp" alt="Chemistry" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Chemistry Foundation</div>
             <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.72rem', color: '#5A6480' }}>Papers 1 & 2 · {CHEMISTRY_TOPIC_GROUPS.length} topics · {totalQs} questions · AI marked · Diagrams included</div>
@@ -3913,11 +3913,11 @@ function ChemistryBrowser({ onBack }) {
               <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <img src={(() => {
                   const id = group.id || ''
-                  if (['chem_atom','chem_periodic','chem_bonding','chem_giant','chem_matter','chem_ions'].some(k => id.startsWith(k))) return '/headers/chem-matteratoms.png'
-                  if (['chem_react','chem_acid','chem_electro','chem_energy','chem_calcul'].some(k => id.startsWith(k))) return '/headers/chem-reactions.png'
-                  if (['chem_rates','chem_revers','chem_hydro','chem_crack','chem_organic','chem_polymer'].some(k => id.startsWith(k))) return '/headers/chem-rates.png'
-                  if (['chem_earth','chem_atmos','chem_pollu','chem_resource'].some(k => id.startsWith(k))) return '/headers/chem-earth.png'
-                  return '/headers/chem-logo.png'
+                  if (['chem_atom','chem_periodic','chem_bonding','chem_giant','chem_matter','chem_ions'].some(k => id.startsWith(k))) return '/headers/chem-matteratoms.webp'
+                  if (['chem_react','chem_acid','chem_electro','chem_energy','chem_calcul'].some(k => id.startsWith(k))) return '/headers/chem-reactions.webp'
+                  if (['chem_rates','chem_revers','chem_hydro','chem_crack','chem_organic','chem_polymer'].some(k => id.startsWith(k))) return '/headers/chem-rates.webp'
+                  if (['chem_earth','chem_atmos','chem_pollu','chem_resource'].some(k => id.startsWith(k))) return '/headers/chem-earth.webp'
+                  return '/headers/chem-logo.webp'
                 })()} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -3992,13 +3992,13 @@ function saveQfPrevSession(accuracy, answered) {
 }
 
 const QUICK_FIRE_SUBJECT_META = {
-  History:    { icon: '🏛️', logo: '/headers/history-main.png',    color: '#C89B6D', moduleId: 'history-medicine-medieval-beliefs-causes' },
-  Maths:      { icon: '✖️', logo: '/headers/maths-main.png',      color: '#2DD4BF', moduleId: null },
-  Sociology:  { icon: '👥', logo: '/headers/sociology-main.png',  color: '#FF5C7A', moduleId: null },
-  Chemistry:  { icon: '⚗️', logo: '/headers/chem-logo.png',       color: '#9B59E8', moduleId: null },
-  Biology:    { icon: '🌿', logo: '/headers/bio-main.png',         color: '#4F8A5B', moduleId: 'sci_bio_w1' },
-  English:    { icon: '📘', logo: '/headers/english-main.png',    color: '#B66DFF', moduleId: null },
-  Physics:    { icon: '⚡', logo: '/headers/physics-main.png',    color: '#3B82F6', moduleId: null },
+  History:    { icon: '🏛️', logo: '/headers/history-main.webp',    color: '#C89B6D', moduleId: 'history-medicine-medieval-beliefs-causes' },
+  Maths:      { icon: '✖️', logo: '/headers/maths-main.webp',      color: '#2DD4BF', moduleId: null },
+  Sociology:  { icon: '👥', logo: '/headers/sociology-main.webp',  color: '#FF5C7A', moduleId: null },
+  Chemistry:  { icon: '⚗️', logo: '/headers/chem-logo.webp',       color: '#9B59E8', moduleId: null },
+  Biology:    { icon: '🌿', logo: '/headers/bio-main.webp',         color: '#4F8A5B', moduleId: 'sci_bio_w1' },
+  English:    { icon: '📘', logo: '/headers/english-main.webp',    color: '#B66DFF', moduleId: null },
+  Physics:    { icon: '⚡', logo: '/headers/physics-main.webp',    color: '#3B82F6', moduleId: null },
   'Quick Fire': { icon: '⚡', logo: null,                          color: '#9D5CFF', moduleId: null },
 }
 
@@ -4927,13 +4927,13 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
 
 
   const EXAM_SUBJECTS = [
-    { logo: '/headers/sociology-main.png', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: isExamMode ? () => startExamRound('Sociology') : () => setSociologyOpen(true) },
-    { logo: '/headers/history-main.png',   label: 'History',   color: '#C89B6D', completed: 6,  total: 12, action: isExamMode ? () => startExamRound('History') : () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
-    { logo: '/headers/bio-main.png',        label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: isExamMode ? () => startExamRound('Biology')    : () => startTopic({ topicId: 'tb_cells', label: 'Biology', subject: 'Biology' }) },
-    { logo: '/headers/chem-logo.png',       label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Chemistry')  : () => setChemistryOpen(true) },
-    { logo: '/headers/maths-main.png',      label: 'Maths',     color: '#2DD4BF', completed: 0,  total: 20, action: isExamMode ? () => startExamRound('Maths') : () => setMathsOpen(true) },
-    { logo: '/headers/english-main.png',    label: 'English',   color: '#B66DFF', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('English') : () => setEnglishOpen(true) },
-    { logo: '/headers/physics-main.png',    label: 'Physics',   color: '#3B82F6', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Physics')  : () => {} },
+    { logo: '/headers/sociology-main.webp', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: isExamMode ? () => startExamRound('Sociology') : () => setSociologyOpen(true) },
+    { logo: '/headers/history-main.webp',   label: 'History',   color: '#C89B6D', completed: 6,  total: 12, action: isExamMode ? () => startExamRound('History') : () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
+    { logo: '/headers/bio-main.webp',        label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: isExamMode ? () => startExamRound('Biology')    : () => startTopic({ topicId: 'tb_cells', label: 'Biology', subject: 'Biology' }) },
+    { logo: '/headers/chem-logo.webp',       label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Chemistry')  : () => setChemistryOpen(true) },
+    { logo: '/headers/maths-main.webp',      label: 'Maths',     color: '#2DD4BF', completed: 0,  total: 20, action: isExamMode ? () => startExamRound('Maths') : () => setMathsOpen(true) },
+    { logo: '/headers/english-main.webp',    label: 'English',   color: '#B66DFF', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('English') : () => setEnglishOpen(true) },
+    { logo: '/headers/physics-main.webp',    label: 'Physics',   color: '#3B82F6', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Physics')  : () => {} },
   ]
 
   return (

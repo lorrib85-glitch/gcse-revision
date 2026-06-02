@@ -8,7 +8,7 @@ export const CHEMISTRY_GROUPS = [
     subtitle: 'Elements, Bonding & Giant Structures',
     icon: '⚛️',
     accent: '#9B59E8',
-    headerImage: '/headers/chem-matteratoms.png',
+    headerImage: '/headers/chem-matteratoms.webp',
     locked: false,
     modules: [
       { id: 'chem_atoms_elements',   title: 'Atoms & Elements',             subtitle: 'Protons, neutrons & electrons', locked: false },
@@ -23,7 +23,7 @@ export const CHEMISTRY_GROUPS = [
     subtitle: 'Equations, Acids & Electrolysis',
     icon: '🧪',
     accent: '#C459E8',
-    headerImage: '/headers/chem-reactions.png',
+    headerImage: '/headers/chem-reactions.webp',
     locked: false,
     modules: [
       { id: 'chem_reactions_eqs', title: 'Reactions & Equations',  subtitle: 'Balancing & types of reaction',   locked: false },
@@ -38,7 +38,7 @@ export const CHEMISTRY_GROUPS = [
     subtitle: 'Rates, Equilibria, Hydrocarbons & Fuels',
     icon: '🛢️',
     accent: '#8B59E8',
-    headerImage: '/headers/chem-rates.png',
+    headerImage: '/headers/chem-rates.webp',
     locked: false,
     modules: [
       { id: 'chem_rates',        title: 'Rates of Reaction',          subtitle: 'Concentration, temp & catalysts', locked: false },
@@ -53,7 +53,7 @@ export const CHEMISTRY_GROUPS = [
     subtitle: 'Atmosphere, Climate & Resources',
     icon: '🌍',
     accent: '#5980E8',
-    headerImage: '/headers/chem-earth.png',
+    headerImage: '/headers/chem-earth.webp',
     locked: false,
     modules: [
       { id: 'chem_atmosphere', title: "Earth's Atmosphere", subtitle: 'Evolution of the atmosphere',      locked: false },

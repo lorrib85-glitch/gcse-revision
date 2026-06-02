@@ -14,7 +14,7 @@ export const MODULES = [
     icon: '⚕️',
     color: '#F5B700',
     colorLight: '#f5e6d3',
-    headerImage: '/headers/history-medicine-through-time.png',
+    headerImage: '/headers/history-medicine-through-time.webp',
 
     hook: {
       statement: 'Medieval doctors deliberately removed blood from sick patients because they believed it would make them healthier.',
@@ -144,13 +144,54 @@ export const MODULES = [
       },
 
       {
+        type: 'keyFigureReveal',
+        stage: 'Understand',
+        label: 'Hippocrates',
+        portrait: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
+        name: 'Hippocrates',
+        role: 'Ancient Greek doctor',
+        significance: 'One of the first people to argue that illness had natural causes rather than being sent by the gods.',
+        sections: [
+          {
+            title: 'Natural causes',
+            lines: [
+              'Most people believed disease was a punishment from the gods.',
+              'Hippocrates argued that illness had natural causes and natural treatments.',
+              'This was one of the first moves away from supernatural explanations of disease.',
+            ],
+          },
+          {
+            title: 'Four humours',
+            lines: [
+              'Hippocrates believed the body contained four humours:',
+              'Blood · Phlegm · Yellow Bile · Black Bile',
+              'Illness happened when these became unbalanced.',
+            ],
+          },
+          {
+            title: 'Observation',
+            lines: [
+              'Hippocrates believed doctors should observe symptoms carefully, examine patients closely, and keep records.',
+              'He encouraged reasoning rather than magic or superstition.',
+            ],
+          },
+          {
+            title: 'Influence',
+            lines: [
+              "His Four Humours theory was later developed by Galen and remained influential for over 1,500 years.",
+            ],
+          },
+        ],
+      },
+
+      {
         type: 'interactiveImage',
         stage: 'Understand',
         id: 'four-humours-hotspot',
         label: 'Explore the Humours',
         title: 'Tap the Four Humours',
         introText: 'Medieval doctors believed the body contained four vital fluids. Each humour had its own qualities — and its own associated illness when it went out of balance.',
-        image: '/figures/history/medicine/medieval/four-humours-body.png',
+        image: '/figures/history/medicine/medieval/four-humours-body.webp',
         imageAlt: 'Medieval symbolic body diagram showing the positions of the Four Humours',
         ctaLabel: 'Explore the body',
         hotspots: [
@@ -177,6 +218,49 @@ export const MODULES = [
             shortLabel: 'Black Bile', title: 'Black Bile', icon: '🌙',
             description: 'Linked with sadness and melancholy. Too much black bile could be blamed for low mood or a wasting illness.',
             extraFact: 'The word "melancholy" comes from the Greek for "black bile." Medieval doctors thought depression was literally a bodily fluid problem.',
+          },
+        ],
+      },
+
+      {
+        type: 'keyFigureReveal',
+        stage: 'Understand',
+        label: 'Galen',
+        portrait: '/figures/history/medicine/medieval/galen-portrait.webp',
+        name: 'Galen',
+        role: 'Roman doctor and writer',
+        significance: 'The doctor whose ideas dominated medicine for over 1,400 years.',
+        sections: [
+          {
+            title: 'Gladiators & dissection',
+            lines: [
+              'Galen spent years patching up wounded gladiators — giving him direct, hands-on experience of the human body.',
+              'He also dissected animals extensively to study anatomy.',
+              'This practical knowledge set him apart from most physicians of his time.',
+            ],
+          },
+          {
+            title: 'Four humours & Theory of Opposites',
+            lines: [
+              "Galen promoted Hippocrates' Four Humours — Blood, Phlegm, Yellow Bile, Black Bile — and added his own contribution.",
+              'He argued illness should be treated with its opposite: hot illness → cold remedy. Wet illness → dry remedy.',
+              'This became known as the Theory of Opposites.',
+            ],
+          },
+          {
+            title: 'The squealing pig',
+            lines: [
+              'Galen wanted to prove the brain — not the heart — controlled the body.',
+              'He performed a public demonstration, cutting the vocal cord nerves of a squealing pig mid-cry.',
+              'The pig fell instantly silent. The crowd was stunned. Galen\'s reputation was made.',
+            ],
+          },
+          {
+            title: 'Influence & limitations',
+            lines: [
+              'Doctors followed his ideas for over 1,400 years.',
+              'Some ideas were wrong because he studied animals, not humans.',
+            ],
           },
         ],
       },
@@ -272,6 +356,44 @@ export const MODULES = [
       },
 
       {
+        type: 'visualLearning',
+        stage: 'Understand',
+        label: 'England, 1250',
+        scenes: [
+          {
+            image: '/figures/history/medicine/medieval/vl-medieval-town.webp',
+            headline: 'England, 1250',
+            body: 'The ideas of Hippocrates and Galen had already existed for over 1,000 years.',
+          },
+          {
+            image: '/figures/history/medicine/medieval/vl-church.webp',
+            headline: 'The Church was everywhere',
+            body: 'Almost everyone attended church. The Church shaped how people understood the world.',
+          },
+          {
+            image: '/figures/history/medicine/medieval/vl-monks-books.webp',
+            headline: 'Knowledge moved slowly',
+            body: 'Books had to be copied by hand, often by monks. A single manuscript could take months to create.',
+          },
+          {
+            image: '/figures/history/medicine/medieval/vl-university.webp',
+            headline: 'Doctors learnt from books',
+            body: 'Universities taught accepted medical ideas. Ancient writers like Galen were treated as authorities.',
+          },
+          {
+            image: '/figures/history/medicine/medieval/vl-dissection.webp',
+            headline: 'Testing ideas was difficult',
+            body: 'Human dissection was rare and considered a sin by the Church. Doctors had few ways to challenge old beliefs.',
+          },
+          {
+            finalReveal: true,
+            headline: 'If everyone learns the same ideas…',
+            body: '…those ideas can survive for centuries.',
+          },
+        ],
+      },
+
+      {
         type: 'guidedChoiceCarousel',
         stage: 'Challenge',
         id: 'healer-carousel',
@@ -279,11 +401,11 @@ export const MODULES = [
         headline: 'Thomas has a fever.\nHe\'s coughing blood.',
         question: 'Who should he trust?',
         helperText: 'Swipe to explore your options.',
-        promptVisual: { src: '/figures/history/medicine/medieval/thomas-doodle.png', alt: 'Thomas' },
+        promptVisual: { src: '/figures/history/medicine/medieval/thomas-doodle.webp', alt: 'Thomas' },
         options: [
           {
             title: 'Physician',
-            image: '/figures/history/medicine/medieval/physician.png',
+            image: '/figures/history/medicine/medieval/physician.webp',
             sections: [
               { heading: 'Favourite methods', items: ['Astrology', 'Urine charts', 'Four Humours'] },
               { heading: 'Cost', items: ['💰💰💰💰💰'] },
@@ -291,6 +413,7 @@ export const MODULES = [
             ],
             reaction: '"At least he looks expensive."',
             buttonText: 'Choose the Physician',
+            nextScreenId: 'post-choice',
             revealLines: [
               "You chose the Physician.",
               "The good news? He's the most highly trained person in town.",
@@ -302,7 +425,7 @@ export const MODULES = [
           },
           {
             title: 'Barber Surgeon',
-            image: '/figures/history/medicine/medieval/barber-surgeon.png',
+            image: '/figures/history/medicine/medieval/barber-surgeon.webp',
             sections: [
               { heading: 'Favourite methods', items: ['Bloodletting', 'Tooth-pulling', 'Basic surgery'] },
               { heading: 'Cost', items: ['💰💰'] },
@@ -310,6 +433,7 @@ export const MODULES = [
             ],
             reaction: '"Why is he carrying a knife?"',
             buttonText: 'Choose the Barber Surgeon',
+            nextScreenId: 'post-choice',
             revealLines: [
               "You chose the Surgeon.",
               "Need a tooth pulled? A wound stitched? A leg removed?",
@@ -322,7 +446,7 @@ export const MODULES = [
           },
           {
             title: 'Wise Woman',
-            image: '/figures/history/medicine/medieval/wise-woman.png',
+            image: '/figures/history/medicine/medieval/wise-woman.webp',
             sections: [
               { heading: 'Favourite methods', items: ['Herbs', 'Poultices', 'Traditional remedies'] },
               { heading: 'Cost', items: ['💰'] },
@@ -330,6 +454,7 @@ export const MODULES = [
             ],
             reaction: '"Honestly, she seems the least terrifying."',
             buttonText: 'Choose the Wise Woman',
+            nextScreenId: 'post-choice',
             revealLines: [
               "You chose the Wise Woman.",
               "No university degree. No fancy robes. No Latin.",
@@ -342,7 +467,7 @@ export const MODULES = [
           },
           {
             title: 'Priest',
-            image: '/figures/history/medicine/medieval/priest.png',
+            image: '/figures/history/medicine/medieval/priest.webp',
             sections: [
               { heading: 'Favourite methods', items: ['Prayer', 'Confession', 'Repentance'] },
               { heading: 'Cost', items: ['💰'] },
@@ -350,6 +475,7 @@ export const MODULES = [
             ],
             reaction: '"I was hoping for medicine."',
             buttonText: 'Choose the Priest',
+            nextScreenId: 'post-choice',
             revealLines: [
               "You chose the Priest.",
               "This might sound strange today... but many medieval people thought illness began with the soul, not the body.",
@@ -362,57 +488,8 @@ export const MODULES = [
       },
 
       {
-        type: 'choiceReveal',
-        stage: 'Challenge',
-        id: 'reveal-physician',
-        label: 'Your choice',
-        paragraphs: [
-          'Thomas chooses the physician.',
-          'The physician looks serious, educated and expensive.',
-          'Then he reaches for an astrology chart.',
-          'Thomas is not reassured.',
-        ],
-      },
-
-      {
-        type: 'choiceReveal',
-        stage: 'Challenge',
-        id: 'reveal-barber',
-        label: 'Your choice',
-        paragraphs: [
-          'Thomas chooses the barber surgeon.',
-          'This man is practical, experienced and very comfortable around sharp objects.',
-          'That is either good news or extremely bad news.',
-        ],
-      },
-
-      {
-        type: 'choiceReveal',
-        stage: 'Challenge',
-        id: 'reveal-wise-woman',
-        label: 'Your choice',
-        paragraphs: [
-          'Thomas chooses the wise woman.',
-          'She cannot offer university medicine.',
-          'But she knows the local plants, the local people and what ordinary families can afford.',
-        ],
-      },
-
-      {
-        type: 'choiceReveal',
-        stage: 'Challenge',
-        id: 'reveal-priest',
-        label: 'Your choice',
-        paragraphs: [
-          'Thomas chooses the priest.',
-          'The priest listens carefully.',
-          'Then he suggests prayer, confession and repentance.',
-          'Thomas is beginning to suspect medieval healthcare is not going to be straightforward.',
-        ],
-      },
-
-      {
         type: 'conceptReveal',
+        id: 'post-choice',
         stage: 'Understand',
         label: 'Miasma — The Poisoned Air Theory',
         steps: [
@@ -439,7 +516,7 @@ export const MODULES = [
         label: 'Diagnose Like It\'s 1340',
         title: 'The Zodiac Man',
         introText: 'Tap the body parts to see how astrology was linked to medicine. Medieval physicians used charts like this to guide diagnosis and decide when to treat.',
-        image: '/figures/history/medicine/medieval/zodiac-man.png',
+        image: '/figures/history/medicine/medieval/zodiac-man.webp',
         imageAlt: 'Medieval Zodiac Man diagram linking zodiac signs to body parts',
         ctaLabel: 'Explore the Zodiac Man',
         hotspots: [
@@ -903,7 +980,7 @@ Do NOT award marks for identifying practices without explaining the religious re
         label: 'Explore the Humours',
         title: 'Tap the Four Humours',
         introText: 'Medieval doctors believed the body contained four vital fluids. Each humour had its own qualities — and its own associated illness when it went out of balance.',
-        image: '/figures/history/medicine/medieval/four-humours-body.png',
+        image: '/figures/history/medicine/medieval/four-humours-body.webp',
         imageAlt: 'Medieval symbolic body diagram showing the positions of the Four Humours',
         ctaLabel: 'Explore the body',
         hotspots: [
@@ -4034,7 +4111,7 @@ Do NOT award marks for identifying practices without explaining the religious re
         label: '🔬 Plant Cell Explorer',
         title: 'Inside a\nPlant Cell',
         introText: 'Plant cells contain specialised structures called organelles. Each one has a specific job that keeps the cell alive.',
-        image: '/figures/plant-cell.png',
+        image: '/figures/plant-cell.webp',
         imageAlt: 'Illustration of a plant cell showing major organelles',
         ctaLabel: 'Explore cell',
         hotspots: [

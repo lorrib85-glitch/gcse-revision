@@ -5,7 +5,8 @@ const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser]           = useState(() => getStoredUser())
-  const [pendingAuth, setPending] = useState(false)
+  // Skip the Google sign-in wall — go straight to name entry when no stored user
+  const [pendingAuth, setPending] = useState(() => !getStoredUser())
   const [loading, setLoading]     = useState(false)
 
   async function signInWithGoogle() {
