@@ -5,41 +5,14 @@ import { SPACING }  from '../../constants/spacing.js'
 import { RADII }    from '../../constants/radii.js'
 import { MOTION }   from '../../constants/motion.js'
 
-// Sprite sheet: 8 cols × 5 rows
-// Row 0: Ancient Figure, Ancient Civilisation, War/Conflict, Monarch, Treaty/Agreement, Alliance, Castle/Fortress, Defence
-// Row 1: Exploration, Discovery, Empire, Colonisation, Trade, Economy, Law/Justice, Government
-// Row 2: Society, Religion, Church, Monastery, Pilgrimage, Knowledge, Writing, Document
-// Row 3: Printing Press, Science, Medicine, Physician/Doctor, Herbal Remedy, Bloodletting, Barber Surgeon, Hospital
-// Row 4: Disease/Plague, Time Period, Legacy/Impact, Innovation, Research, Industry, Revolt/Resistance, Important Event
-const ICON_COORDS = {
-  'ancient-figure': { col: 0, row: 0 },
-  'war-conflict':   { col: 2, row: 0 },
-  'religion':       { col: 1, row: 2 },
-  'church':         { col: 2, row: 2 },
-  'knowledge':      { col: 5, row: 2 },
-  'science':        { col: 1, row: 3 },
-  'medicine':       { col: 2, row: 3 },
-  'physician':      { col: 3, row: 3 },
-  'bloodletting':   { col: 5, row: 3 },
-  'hospital':       { col: 7, row: 3 },
-  'legacy':         { col: 2, row: 4 },
-  'disease':        { col: 0, row: 4 },
-}
-
 function HistoryIcon({ icon, size = 32 }) {
-  const coords = ICON_COORDS[icon]
-  if (!coords) return <div style={{ width: size, height: size }} />
-  const { col, row } = coords
+  if (!icon) return <div style={{ width: size, height: size }} />
   return (
-    <div style={{
-      width: size, height: size,
-      borderRadius: '50%',
-      backgroundImage: 'url(/icons/history-icon-sheet.png)',
-      backgroundSize: '800% 500%',
-      backgroundPosition: `${(col / 7) * 100}% ${(row / 4) * 100}%`,
-      backgroundRepeat: 'no-repeat',
-      flexShrink: 0,
-    }} />
+    <img
+      src={`/icons/history/${icon}.png`}
+      alt=""
+      style={{ width: size, height: size, borderRadius: '50%', flexShrink: 0, display: 'block' }}
+    />
   )
 }
 
