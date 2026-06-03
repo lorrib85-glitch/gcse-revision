@@ -174,14 +174,34 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
 
         {/* Section card */}
         <div key={sectionIdx} style={{
-          border: `1.5px solid rgba(${theme.accentRgb},0.28)`,
-          borderRadius: RADII.panel,
+          border: `2px solid rgba(${theme.accentRgb},0.45)`,
+          borderRadius: RADII.medium,
           padding: SPACING.standard,
-          background: 'rgba(255,255,255,0.02)',
+          background: `
+            radial-gradient(ellipse at 50% 0%, rgba(${theme.accentRgb},0.07) 0%, transparent 65%),
+            linear-gradient(160deg, rgba(${theme.accentRgb},0.05) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.18) 100%),
+            rgba(12,9,5,0.72)
+          `,
           backdropFilter: 'blur(8px)',
+          boxShadow: `
+            inset 0 1px 0 rgba(${theme.accentRgb},0.18),
+            inset 0 -1px 0 rgba(0,0,0,0.45),
+            inset 1px 0 0 rgba(${theme.accentRgb},0.06),
+            inset -1px 0 0 rgba(${theme.accentRgb},0.06),
+            0 4px 24px rgba(0,0,0,0.45)
+          `,
           animation: `keyRevealSlide 420ms ${MOTION.easing.standard} both`,
           marginBottom: SPACING.standard,
+          position: 'relative',
+          overflow: 'hidden',
         }}>
+          {/* Vignette — behind all card content */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'radial-gradient(ellipse at 50% 50%, transparent 45%, rgba(0,0,0,0.28) 100%)',
+            pointerEvents: 'none',
+          }} />
+
           <style>{`
             @keyframes keyRevealSlide {
               from { opacity: 0; transform: translateX(16px); }
@@ -189,44 +209,49 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             }
           `}</style>
 
-          {/* Section header with icon */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: SPACING.compact,
-            marginBottom: SPACING.standard,
-          }}>
+          {/* Content sits above vignette */}
+          <div style={{ position: 'relative', zIndex: 1 }}>
+
+            {/* Section header with icon */}
             <div style={{
-              width: 28, height: 28,
-              borderRadius: '50%',
-              background: `rgba(${theme.accentRgb},0.12)`,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              gap: SPACING.compact,
+              marginBottom: SPACING.standard,
             }}>
-              <SectionIcon icon={section.icon} accent={accent} />
+              <div style={{
+                width: 28, height: 28,
+                borderRadius: '50%',
+                background: `rgba(${theme.accentRgb},0.12)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <SectionIcon icon={section.icon} accent={accent} />
+              </div>
+              <div style={{
+                ...TYPE.metadata,
+                color: accent,
+                textTransform: 'uppercase',
+                fontSize: 13,
+              }}>
+                {section.title}
+              </div>
             </div>
-            <div style={{
-              ...TYPE.metadata,
-              color: accent,
-              textTransform: 'uppercase',
-              fontSize: 13,
-            }}>
-              {section.title}
-            </div>
-          </div>
 
-          {/* Section content */}
-          {section.lines?.map((line, i) => (
-            <p key={i} style={{
-              ...TYPE.bodySmall,
-              color: 'rgba(245,238,225,0.8)',
-              margin: `0 0 ${i < section.lines.length - 1 ? SPACING.micro : 0}px`,
-              lineHeight: 1.65,
-            }}>
-              {line}
-            </p>
-          ))}
+            {/* Section content */}
+            {section.lines?.map((line, i) => (
+              <p key={i} style={{
+                ...TYPE.bodySmall,
+                color: 'rgba(245,238,225,0.8)',
+                margin: `0 0 ${i < section.lines.length - 1 ? SPACING.micro : 0}px`,
+                lineHeight: 1.65,
+              }}>
+                {line}
+              </p>
+            ))}
+
+          </div>
         </div>
 
         {/* Swipe hint */}
