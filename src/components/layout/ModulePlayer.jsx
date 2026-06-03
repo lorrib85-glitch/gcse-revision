@@ -27,6 +27,7 @@ import GalensDiagnostic from '../learning/GalensDiagnostic.jsx'
 import TheoryLab from '../learning/TheoryLab.jsx'
 import VisualLearning from '../learning/VisualLearning.jsx'
 import KeyFigureReveal from '../learning/KeyFigureReveal.jsx'
+import InteractiveCollectionExplorer from '../learning/InteractiveCollectionExplorer.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -2179,6 +2180,30 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           ctaLabel={cur.ctaLabel}
           onBack={headerOnBack}
           onEnterExplore={() => setIhmExploreScreen(screen)}
+          onContinue={isLast ? handleFinish : () => go(1)}
+        />
+      </>
+    )
+  }
+
+  // ── Interactive collection explorer — tappable object discovery ─────────────
+  if (cur?.type === 'collectionExplorer') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={true}
+        />
+        <InteractiveCollectionExplorer
+          subject={module.subject}
+          title={cur.title}
+          description={cur.description}
+          backgroundImage={cur.backgroundImage}
+          items={cur.items || []}
+          synthesis={cur.synthesis || null}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
       </>

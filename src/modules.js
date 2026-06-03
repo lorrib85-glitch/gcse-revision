@@ -548,32 +548,105 @@ export const MODULES = [
       },
 
       {
+        type: 'collectionExplorer',
         stage: 'Investigate',
         label: 'God & Illness',
-        kicker: 'Religion & Disease',
-        heading: 'God, Sin and Sickness',
-        sub: 'If God causes illness, prayer is the treatment.',
-        blocks: [
+        title: 'God, sin and sickness',
+        description: 'Tap each object to explore how medieval people treated illness.',
+        backgroundImage: '/headers/religion-collection.png',
+        synthesis: {
+          heading: 'What the collection tells you',
+          points: [
+            'Every treatment followed from a theory of cause — medieval medicine was internally logical.',
+            'A religious explanation produced religious treatments: prayer, pilgrimage, confession.',
+            'The Four Humours produced physical treatments: bloodletting, purging, adjusted diet.',
+            'Religion and the Four Humours were not opposites — both operated at once.',
+          ],
+          examTakeaway: 'For the exam: always link cause to treatment. A religious cause produced religious treatments. A humoral cause produced physical ones.',
+        },
+        items: [
           {
-            type: 'explainReveal',
-            title: 'God, sin and sickness',
-            steps: [
-              { id: 'religion-1', statement: 'Religion shaped everyday life in medieval England.' },
-              { id: 'religion-2', statement: 'Many people believed disease could be', emphasis: 'sent by God.' },
-              {
-                id: 'religion-3',
-                statement: 'Illness might be seen as punishment for sin, a test of faith, or part of God\'s plan.',
-              },
-              {
-                id: 'treatments',
-                statement: 'So treatments could include prayer, confession, repentance, pilgrimages and relics.',
-                detail: 'These were not superstitions — they were logical responses to a religious explanation of disease.',
-              },
-              {
-                id: 'punchline',
-                statement: 'If you think God caused the illness,',
-                emphasis: 'prayer is not "extra." It is the treatment.',
-              },
+            id: 'prayer',
+            label: 'Prayer',
+            x: 35, y: 52,
+            reveals: [
+              { text: 'Medieval doctors were expected to pray before treating patients. It was written into their training — not optional, not extra.' },
+              { text: 'Prayer was a formal treatment. God was seen as both the cause of illness and the one who could remove it.' },
+              { text: 'If God sent illness as punishment for sin, then repentance and prayer were the direct, logical cure.' },
+              { text: "Don't say people 'just prayed.' Prayer was the primary treatment for a God-sent illness, not a supplement to real medicine." },
+              { text: 'Link cause to treatment: "A religious explanation of disease produced religious treatments — prayer was not superstition, it was logic."' },
+            ],
+          },
+          {
+            id: 'hospitals',
+            label: 'Hospitals',
+            x: 43, y: 76,
+            reveals: [
+              { text: 'Medieval hospitals were not built to cure patients. They were built to pray for them. Monks were the doctors.' },
+              { text: 'Hospitals were run by the Church. Monks and nuns cared for the sick as a Christian duty. St Bartholomew\'s Hospital opened in 1123.' },
+              { text: 'The Church controlled both who could practise medicine and where patients went. This concentrated power — and ancient ideas — in one institution.' },
+              { text: 'Medieval hospitals focused on care and prayer, not treatment or cure. Do not describe them as functioning like modern hospitals.' },
+              { text: 'Key example: St Bartholomew\'s Hospital, 1123 — Church-run, prayer-focused. Use for "Church\'s role in medicine" exam answers.' },
+            ],
+          },
+          {
+            id: 'pilgrimage',
+            label: 'Pilgrimage',
+            x: 71, y: 73,
+            reveals: [
+              { text: 'Pilgrims walked hundreds of miles to touch the bones of a dead saint — believing physical contact with a holy relic would cure their illness.' },
+              { text: 'Pilgrimage to holy shrines was a medical treatment. Canterbury Cathedral, shrine of Thomas Becket, was the most famous destination in England.' },
+              { text: 'Pilgrimage shows illness was understood as spiritual, not physical. You did not treat the body — you sought God\'s forgiveness to remove the cause.' },
+              { text: "Don't dismiss pilgrimage as irrational. Within a religious framework — where God sends illness — travelling to a holy shrine is the logical medical response." },
+              { text: 'Pilgrimage = supernatural treatment. Useful as evidence that religion dominated medieval medicine. Key location: Canterbury Cathedral.' },
+            ],
+          },
+          {
+            id: 'bloodletting',
+            label: 'Bloodletting',
+            x: 20, y: 30,
+            reveals: [
+              { text: 'Doctors sometimes deliberately removed over a litre of blood from patients who were already dangerously ill — and believed it was helping them.' },
+              { text: 'Bloodletting removed blood to rebalance the Four Humours. Methods included cutting a vein, applying leeches, or cupping glasses on the skin.' },
+              { text: 'Bloodletting shows medieval medicine was internally consistent. The theory was wrong, but the logic was tight: humoral imbalance → correct the imbalance.' },
+              { text: "Don't describe bloodletting as random or barbaric. Doctors had reasons. They were applying the Four Humours theory systematically — not guessing." },
+              { text: 'Bloodletting = rational humoral treatment. Exam phrase: "Bloodletting shows cause and treatment were logically linked within the Four Humours system."' },
+            ],
+          },
+          {
+            id: 'purging',
+            label: 'Purging',
+            x: 47, y: 30,
+            reveals: [
+              { text: 'Patients were given powerful laxatives until their body expelled what doctors believed was the excess humour causing the illness.' },
+              { text: 'Purging used laxatives and emetics to remove excess humours. It was often combined with bloodletting — remove the imbalance from both ends.' },
+              { text: 'Both bloodletting and purging fit the Four Humours model perfectly. The same cause (humoral imbalance) produced two complementary treatments.' },
+              { text: 'Purging was not considered extreme — it was medically mainstream. Disgust is a modern reaction. Medieval physicians saw it as precise treatment.' },
+              { text: 'Pair purging with bloodletting in exam answers: both target humoral imbalance, showing medieval treatment had internal logic even when the theory was wrong.' },
+            ],
+          },
+          {
+            id: 'dietAndRest',
+            label: 'Diet and rest',
+            x: 65, y: 32,
+            reveals: [
+              { text: 'A physician might prescribe cold cucumber for a "hot disease" — because matching food temperature to illness type was considered precise medical science.' },
+              { text: 'Specific foods were prescribed to rebalance the humours. Hot, cold, wet, and dry foods were matched against the patient\'s diagnosed imbalance.' },
+              { text: 'Diet and rest sometimes genuinely helped — not because the theory was correct, but because rest and nutrition do aid recovery. Accidental benefit.' },
+              { text: 'Diet was formal medical treatment, not folk wisdom. Medieval physicians had detailed dietary theory. Do not dismiss it as common sense or guesswork.' },
+              { text: 'Diet and rest = humoral treatment with unintended benefits. Useful in "continuity" questions and arguments about what did or did not improve outcomes.' },
+            ],
+          },
+          {
+            id: 'apothecary',
+            label: 'Apothecary',
+            x: 19, y: 43,
+            reveals: [
+              { text: "Apothecaries mixed crushed beetles, dried toads, and animal dung into medicines — but also used plant remedies that are still in use today." },
+              { text: 'Apothecaries were the medieval equivalent of pharmacists. They prepared herbal remedies using plants like willow bark, garlic, and honey.' },
+              { text: 'Some herbal remedies worked. Willow bark contains salicin — the compound behind aspirin. The theory behind the remedy was wrong; the chemistry was not.' },
+              { text: 'Do not dismiss all apothecary remedies as useless. Some plant-based treatments were genuinely effective. The problem was the wrong theory, not every plant.' },
+              { text: 'Apothecary = practical herbal medicine; some treatments worked. Use for continuity arguments: "Not all medieval medicine was ineffective."' },
             ],
           },
         ],
