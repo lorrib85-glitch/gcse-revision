@@ -1829,6 +1829,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         accentWords={module.hook.accentWords || []}
         explanation={module.hook.explanation || module.hook.correctFeedback || ''}
         revealBeats={module.hook.revealBeats}
+        backgroundImage={module.hook.backgroundImage || ''}
         onBack={onBack}
         onContinue={() => { setHookDone(true); setNavTo(null); scrollToTop() }}
       />

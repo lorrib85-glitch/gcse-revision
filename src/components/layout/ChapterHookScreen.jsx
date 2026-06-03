@@ -66,24 +66,26 @@ function Glow({ rgb }) {
 }
 
 export default function ChapterHookScreen({
-  subject      = 'History',
-  chapterNum   = 1,
-  chapterTitle = '',
-  statement    = '',
-  isTrue       = false,
-  accentWords  = [],
-  explanation  = '',
+  subject         = 'History',
+  chapterNum      = 1,
+  chapterTitle    = '',
+  statement       = '',
+  isTrue          = false,
+  accentWords     = [],
+  explanation     = '',
   revealBeats,
+  backgroundImage = '',
   onBack,
   onContinue,
 }) {
-  const img   = IMAGES[subject] || IMAGES.History
+  const img   = backgroundImage || IMAGES[subject] || IMAGES.History
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
 
   const [phase,       setPhase]       = useState('question')
   const [shakeTarget, setShakeTarget] = useState(null)
   const [btnsReady,   setBtnsReady]   = useState(false)
+  const [wasCorrect,  setWasCorrect]  = useState(null)
 
   // Staged reveal state
   const hasBeats   = Array.isArray(revealBeats) && revealBeats.length > 0
@@ -122,6 +124,7 @@ export default function ChapterHookScreen({
   function choose(tappedTrue) {
     if (phase !== 'question' || !btnsReady) return
     const correct = tappedTrue === isTrue
+    setWasCorrect(correct)
     if (!correct) {
       setShakeTarget(tappedTrue ? 'true' : 'false')
       setTimeout(() => setShakeTarget(null), 300)
@@ -130,6 +133,12 @@ export default function ChapterHookScreen({
       setPhase('exiting')
       setTimeout(() => setPhase('reveal'), 320)
     }, correct ? 260 : 540)
+  }
+
+  function revealLabel() {
+    if (wasCorrect === null) return isTrue ? 'True.' : 'False.'
+    if (wasCorrect)  return isTrue ? 'Exactly.' : 'Good catch.'
+    return isTrue ? "Nope — it's true." : "Actually, it's false."
   }
 
   const isExiting  = phase === 'exiting'
@@ -270,27 +279,33 @@ export default function ChapterHookScreen({
                 className="chs-btn"
                 onClick={() => choose(true)}
                 style={{
-                  background: 'none', border: 'none', cursor: 'pointer',
+                  background: 'rgba(255,255,255,0.07)',
+                  border: '1.5px solid rgba(255,255,255,0.22)',
+                  backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
+                  borderRadius: RADII.pill,
+                  padding: '14px 36px',
+                  cursor: 'pointer',
                   fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 24,
                   textTransform: 'uppercase', letterSpacing: '0.18em',
-                  color: 'rgba(255,255,255,0.82)',
-                  borderBottom: '1.5px solid rgba(255,255,255,0.16)', paddingBottom: 2,
+                  color: 'rgba(255,255,255,0.88)',
                   animation: shakeTarget === 'true' ? 'chs-shake 220ms ease' : 'none',
                 }}>
                 TRUE
               </button>
 
-              <div style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.14)', flexShrink: 0 }} />
-
               <button
                 className="chs-btn"
                 onClick={() => choose(false)}
                 style={{
-                  background: 'none', border: 'none', cursor: 'pointer',
+                  background: 'rgba(255,255,255,0.07)',
+                  border: '1.5px solid rgba(255,255,255,0.22)',
+                  backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
+                  borderRadius: RADII.pill,
+                  padding: '14px 36px',
+                  cursor: 'pointer',
                   fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 24,
                   textTransform: 'uppercase', letterSpacing: '0.18em',
-                  color: 'rgba(255,255,255,0.82)',
-                  borderBottom: '1.5px solid rgba(255,255,255,0.16)', paddingBottom: 2,
+                  color: 'rgba(255,255,255,0.88)',
                   animation: shakeTarget === 'false' ? 'chs-shake 220ms ease' : 'none',
                 }}>
                 FALSE
@@ -330,7 +345,7 @@ export default function ChapterHookScreen({
                     color: accent, opacity: 0.92,
                     marginBottom: 28,
                   }}>
-                    {isTrue ? 'True.' : 'False.'}
+                    {revealLabel()}
                   </div>
 
                   {hasBeats ? (
