@@ -78,7 +78,8 @@ export default function ChapterHookScreen({
   onBack,
   onContinue,
 }) {
-  const img   = backgroundImage || IMAGES[subject] || IMAGES.History
+  const subjectImg = IMAGES[subject] || IMAGES.History
+  const revealImg  = backgroundImage || subjectImg
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
 
@@ -147,11 +148,24 @@ export default function ChapterHookScreen({
 
   const BgLayers = () => (
     <>
+      {/* Subject image — question phase */}
       <div style={{
         position: 'fixed', inset: 0,
-        backgroundImage: `url(${img})`,
+        backgroundImage: `url(${subjectImg})`,
         backgroundSize: 'cover', backgroundPosition: 'center top',
-        opacity: 0.26, filter: 'grayscale(10%) brightness(0.65)',
+        opacity: isReveal ? 0 : 0.26,
+        filter: 'grayscale(10%) brightness(0.65)',
+        transition: `opacity 480ms ${MOTION.easing.gentle}`,
+        pointerEvents: 'none', zIndex: 1,
+      }} />
+      {/* Topic image — reveal phase */}
+      <div style={{
+        position: 'fixed', inset: 0,
+        backgroundImage: `url(${revealImg})`,
+        backgroundSize: 'cover', backgroundPosition: 'center top',
+        opacity: isReveal ? 0.32 : 0,
+        filter: 'grayscale(10%) brightness(0.65)',
+        transition: `opacity 480ms ${MOTION.easing.gentle}`,
         pointerEvents: 'none', zIndex: 1,
       }} />
       <div style={{
