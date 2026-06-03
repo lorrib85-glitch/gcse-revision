@@ -96,18 +96,9 @@ export const MODULES = [
         label: 'The Germ Problem',
         steps: [
           {
-            eyebrow: 'The fundamental problem',
-            mainText: 'Nobody knew about germs.',
-            backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
-          },
-          {
             eyebrow: 'What we know now',
             mainText: 'Today, we know many diseases are caused by bacteria or viruses.',
-            backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
-          },
-          {
-            mainText: 'Medieval people did not.',
-            supportText: 'No microscopes. No germ theory. No idea that tiny organisms could spread disease.',
+            supportText: 'Medieval people did not. No microscopes. No germ theory. No idea that tiny organisms could spread disease.',
             backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
           },
           {
@@ -123,11 +114,6 @@ export const MODULES = [
         stage: 'Understand',
         label: 'The search for answers',
         steps: [
-          {
-            eyebrow: 'The search for answers',
-            mainText: 'When disease struck,\npeople looked for explanations.',
-            backgroundImage: '/headers/history-medicine-germ-bridge.png',
-          },
           {
             eyebrow: 'Enter Hippocrates',
             mainText: 'One Greek doctor thought he had found one.',
