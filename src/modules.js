@@ -85,7 +85,7 @@ export const MODULES = [
               'The Church copied and taught their books across Europe.',
               'Their ideas shaped medicine for over 1,000 years.',
             ],
-            conclusion: 'Doctors could not see germs.\n\nWho else were they supposed to trust?',
+            conclusion: "Doctors couldn't see germs.\n\nSo who else were they supposed to trust?",
           },
         ],
       },

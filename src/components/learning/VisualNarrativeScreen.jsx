@@ -204,7 +204,7 @@ export default function VisualNarrativeScreen({
           </div>
         )}
 
-        {/* ── Beat 3: sequential facts + conclusion ─────────────────── */}
+        {/* ── Beat 3: sequential facts, then conclusion replaces them ── */}
         {isFacts && (
           <div style={{
             position: 'absolute',
@@ -212,66 +212,69 @@ export default function VisualNarrativeScreen({
             paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
             pointerEvents: 'none',
           }}>
-            {factCount === 0 && (
-              <div style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontWeight: 600, fontSize: 11,
-                letterSpacing: '0.18em', textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.30)',
-                marginBottom: 12,
-              }}>
-                Tap to reveal
-              </div>
-            )}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {beat.facts.slice(0, factCount).map((fact, i) => (
-                <div
-                  key={i}
-                  style={{
+            {!showConclusion ? (
+              // Facts phase
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {factCount === 0 && (
+                  <div style={{
                     fontFamily: "'Outfit', sans-serif",
-                    fontWeight: 500, fontSize: 18,
-                    lineHeight: 1.65,
-                    color: 'rgba(255,255,255,0.86)',
-                    animation: 'vnFadeUp 420ms cubic-bezier(0.16,1,0.3,1) both',
-                  }}
-                >
-                  {fact}
-                </div>
-              ))}
-
-              {showConclusion && (
+                    fontWeight: 600, fontSize: 11,
+                    letterSpacing: '0.18em', textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.30)',
+                    marginBottom: 12,
+                  }}>
+                    Tap to reveal
+                  </div>
+                )}
+                {beat.facts.slice(0, factCount).map((fact, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      fontFamily: "'Outfit', sans-serif",
+                      fontWeight: 500, fontSize: 18,
+                      lineHeight: 1.65,
+                      color: 'rgba(255,255,255,0.86)',
+                      animation: 'vnFadeUp 420ms cubic-bezier(0.16,1,0.3,1) both',
+                    }}
+                  >
+                    {fact}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // Conclusion phase — replaces the facts
+              <>
                 <div style={{
                   fontFamily: "'Sora', sans-serif",
                   fontWeight: 700,
                   fontSize: 'clamp(22px, 7vw, 30px)',
-                  lineHeight: 1.45,
+                  lineHeight: 1.5,
                   color: accent,
-                  marginTop: 32,
                   whiteSpace: 'pre-line',
                   animation: 'vnFadeIn 700ms ease both',
                 }}>
                   {beat.conclusion}
                 </div>
-              )}
 
-              {showCTA && (
-                <div style={{ marginTop: 28, pointerEvents: 'auto' }}>
-                  <button
-                    className="vn-cta"
-                    onClick={(e) => { e.stopPropagation(); onContinue?.() }}
-                    style={{
-                      background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                      fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
-                      color: accent,
-                      animation: 'vnFadeIn 420ms ease both',
-                      transition: 'opacity 140ms ease',
-                    }}
-                  >
-                    Continue →
-                  </button>
-                </div>
-              )}
-            </div>
+                {showCTA && (
+                  <div style={{ marginTop: 32, pointerEvents: 'auto' }}>
+                    <button
+                      className="vn-cta"
+                      onClick={(e) => { e.stopPropagation(); onContinue?.() }}
+                      style={{
+                        background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                        fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
+                        color: accent,
+                        animation: 'vnFadeIn 420ms ease both',
+                        transition: 'opacity 140ms ease',
+                      }}
+                    >
+                      Continue →
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
 
