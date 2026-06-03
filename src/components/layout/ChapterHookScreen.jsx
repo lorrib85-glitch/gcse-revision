@@ -33,7 +33,7 @@ function BackBtn({ onClick }) {
   return (
     <button
       className="chs-back"
-      onClick={onClick}
+      onClick={e => { e.stopPropagation(); onClick() }}
       aria-label="Go back"
       style={{
         position: 'absolute', top: 22, left: 18,
@@ -113,14 +113,9 @@ export default function ChapterHookScreen({
     return () => clearTimeout(t)
   }, [btnDelayMs])
 
-  // Auto-advance beats — delay proportional to reading time
-  useEffect(() => {
-    if (phase !== 'reveal' || !hasBeats || isLastBeat) return
-    const words = (revealBeats[beatIdx] || '').split(/\s+/).filter(Boolean).length
-    const delay = 1400 + words * 220
-    const t = setTimeout(() => setBeatIdx(i => i + 1), delay)
-    return () => clearTimeout(t)
-  }, [beatIdx, phase, hasBeats, isLastBeat, revealBeats])
+  function advanceBeat() {
+    if (!isLastBeat) setBeatIdx(i => i + 1)
+  }
 
   function choose(tappedTrue) {
     if (phase !== 'question' || !btnsReady) return
@@ -334,10 +329,12 @@ export default function ChapterHookScreen({
         {isReveal && (
           <>
             <div
+              onClick={advanceBeat}
               style={{
                 position: 'relative',
                 zIndex: 4,
                 minHeight: '100dvh',
+                cursor: isLastBeat ? 'default' : 'pointer',
               }}
             >
               <BackBtn onClick={onBack} />
