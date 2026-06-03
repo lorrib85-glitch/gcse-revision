@@ -112,7 +112,7 @@ export const MODULES = [
           },
           {
             mainText: 'But people still got sick.',
-            supportText: 'So medieval doctors needed explanations. And they had plenty.',
+            supportText: 'So they needed explanations.',
             backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
           },
         ],
@@ -121,26 +121,22 @@ export const MODULES = [
       {
         type: 'conceptReveal',
         stage: 'Understand',
-        label: 'The Problem',
+        label: 'The search for answers',
         steps: [
           {
-            eyebrow: 'The problem',
-            mainText: 'Greek doctors could see symptoms. They could observe injuries.',
-            supportText: 'But they had no idea that tiny organisms called germs existed.',
+            eyebrow: 'The search for answers',
+            mainText: 'When disease struck,\npeople looked for explanations.',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
           },
           {
-            eyebrow: 'The explanation',
-            mainText: 'So Hippocrates developed his own theory.',
-            supportText: 'He believed the body contained four important fluids called humours.',
+            eyebrow: 'Enter Hippocrates',
+            mainText: 'One Greek doctor thought he had found one.',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
           },
           {
-            mainText: 'When these humours were balanced, a person was healthy.',
-            supportText: 'When they became unbalanced, illness appeared.',
-          },
-          {
-            eyebrow: 'Why it matters',
-            mainText: 'This became one of the most influential medical theories in history.',
-            keyReveal: 'HIPPOCRATES CREATED THE FOUR HUMOURS THEORY. GALEN LATER BUILT ON IT.',
+            mainText: 'His name was Hippocrates.',
+            supportText: 'One Greek doctor would shape medicine for the next 2,000 years.',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
           },
         ],
       },
