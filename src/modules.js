@@ -36,7 +36,7 @@ export const MODULES = [
         { text: 'Why removing blood seemed sensible',                icon: 'drop'     },
         { text: 'Why doctors checked the stars',                     icon: 'star'     },
         { text: 'Why praying was considered medicine',               icon: 'prayer'   },
-        { text: 'Why almost everybody trusted ideas that were wrong', icon: 'question' },
+        { text: 'Why intelligent people believed things that weren\'t true', icon: 'question' },
       ],
     },
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { RADII } from '../../constants/radii.js'
+import { MOTION } from '../../constants/motion.js'
 
 const IMAGES = {
   History:   '/historybacker.webp',
@@ -87,14 +88,25 @@ export default function ChapterOutcomeScreen({
 
   const [visibleCount, setVisibleCount] = useState(0)
   const [showCTA,      setShowCTA]      = useState(false)
+  const [glowIdx,      setGlowIdx]      = useState(-1)
 
+  // Stagger items ~400ms apart so each one lands as a distinct discovery
   useEffect(() => {
     const timers = outcomes.map((_, i) =>
-      setTimeout(() => setVisibleCount(v => Math.max(v, i + 1)), 420 + i * 90)
+      setTimeout(() => setVisibleCount(v => Math.max(v, i + 1)), 480 + i * 400)
     )
-    const ctaTimer = setTimeout(() => setShowCTA(true), 420 + outcomes.length * 90 + 200)
+    const ctaTimer = setTimeout(() => setShowCTA(true), 480 + outcomes.length * 400 + 420)
     return () => { timers.forEach(clearTimeout); clearTimeout(ctaTimer) }
   }, [outcomes.length])
+
+  // Pulse the icon of each item as it arrives, then settle
+  useEffect(() => {
+    if (visibleCount === 0) return
+    const idx = visibleCount - 1
+    setGlowIdx(idx)
+    const t = setTimeout(() => setGlowIdx(-1), 680)
+    return () => clearTimeout(t)
+  }, [visibleCount])
 
   return (
     <>
@@ -179,7 +191,7 @@ export default function ChapterOutcomeScreen({
               marginBottom: 24,
               animation: 'cos-up 520ms ease 160ms both',
             }}>
-              Things you're about to discover
+              What you're about to uncover
             </div>
 
             {/* Discovery items */}
@@ -192,7 +204,16 @@ export default function ChapterOutcomeScreen({
                     display: 'flex', alignItems: 'flex-start', gap: 14,
                     animation: 'cos-row 380ms ease both',
                   }}>
-                    <ItemIcon icon={icon} accent={accent} />
+                    <div style={{
+                      flexShrink: 0,
+                      filter: glowIdx === i
+                        ? `drop-shadow(0 0 5px rgba(${rgb},0.95)) drop-shadow(0 0 14px rgba(${rgb},0.50))`
+                        : 'none',
+                      transform: glowIdx === i ? 'scale(1.20)' : 'scale(1)',
+                      transition: `filter 500ms ${MOTION.easing.gentle}, transform 380ms ${MOTION.easing.gentle}`,
+                    }}>
+                      <ItemIcon icon={icon} accent={accent} />
+                    </div>
                     <div style={{
                       fontFamily: "'Outfit', sans-serif",
                       fontWeight: 500, fontSize: 18,
