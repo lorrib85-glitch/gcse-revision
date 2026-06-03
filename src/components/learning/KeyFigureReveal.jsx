@@ -5,37 +5,42 @@ import { SPACING }  from '../../constants/spacing.js'
 import { RADII }    from '../../constants/radii.js'
 import { MOTION }   from '../../constants/motion.js'
 
-function SectionIcon({ icon, accent }) {
-  if (icon === 'head') return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke={accent} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7" />
-    </svg>
+// Sprite sheet: 8 cols × 5 rows
+// Row 0: Ancient Figure, Ancient Civilisation, War/Conflict, Monarch, Treaty/Agreement, Alliance, Castle/Fortress, Defence
+// Row 1: Exploration, Discovery, Empire, Colonisation, Trade, Economy, Law/Justice, Government
+// Row 2: Society, Religion, Church, Monastery, Pilgrimage, Knowledge, Writing, Document
+// Row 3: Printing Press, Science, Medicine, Physician/Doctor, Herbal Remedy, Bloodletting, Barber Surgeon, Hospital
+// Row 4: Disease/Plague, Time Period, Legacy/Impact, Innovation, Research, Industry, Revolt/Resistance, Important Event
+const ICON_COORDS = {
+  'ancient-figure': { col: 0, row: 0 },
+  'war-conflict':   { col: 2, row: 0 },
+  'religion':       { col: 1, row: 2 },
+  'church':         { col: 2, row: 2 },
+  'knowledge':      { col: 5, row: 2 },
+  'science':        { col: 1, row: 3 },
+  'medicine':       { col: 2, row: 3 },
+  'physician':      { col: 3, row: 3 },
+  'bloodletting':   { col: 5, row: 3 },
+  'hospital':       { col: 7, row: 3 },
+  'legacy':         { col: 2, row: 4 },
+  'disease':        { col: 0, row: 4 },
+}
+
+function HistoryIcon({ icon, size = 32 }) {
+  const coords = ICON_COORDS[icon]
+  if (!coords) return <div style={{ width: size, height: size }} />
+  const { col, row } = coords
+  return (
+    <div style={{
+      width: size, height: size,
+      borderRadius: '50%',
+      backgroundImage: 'url(/icons/history-icon-sheet.png)',
+      backgroundSize: '800% 500%',
+      backgroundPosition: `${(col / 7) * 100}% ${(row / 4) * 100}%`,
+      backgroundRepeat: 'no-repeat',
+      flexShrink: 0,
+    }} />
   )
-  if (icon === 'droplet') return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill={accent}>
-      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.32 0z" />
-    </svg>
-  )
-  if (icon === 'eye') return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke={accent} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  )
-  if (icon === 'network') return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke={accent} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="5" r="3" />
-      <circle cx="6" cy="18" r="3" />
-      <circle cx="18" cy="18" r="3" />
-      <line x1="12" y1="8" x2="6" y2="15" />
-      <line x1="12" y1="8" x2="18" y2="15" />
-    </svg>
-  )
-  return null
 }
 
 export default function KeyFigureReveal({ block, subject, onComplete }) {
@@ -83,9 +88,11 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
 
   return (
     <div style={{
-      minHeight: '100vh',
+      height: '100dvh',
       background: '#08090D',
-      paddingBottom: `calc(${SPACING.cinematic}px + env(safe-area-inset-bottom, 0px))`,
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
     }}>
 
       {/* ── Portrait hero ───────────────────────────────────────────────── */}
@@ -147,12 +154,17 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         onTouchEnd={handleTouchEnd}
         onClick={handleClick}
         style={{
+          flex: 1,
           position: 'relative',
           padding: `${SPACING.standard}px ${SPACING.standard}px`,
+          paddingBottom: `calc(${SPACING.standard}px + env(safe-area-inset-bottom, 0px))`,
           cursor: 'pointer',
           userSelect: 'none',
           WebkitUserSelect: 'none',
           WebkitTapHighlightColor: 'transparent',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
         }}
       >
         {/* Carousel dots */}
@@ -219,16 +231,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
               gap: SPACING.compact,
               marginBottom: SPACING.standard,
             }}>
-              <div style={{
-                width: 28, height: 28,
-                borderRadius: '50%',
-                background: `rgba(${theme.accentRgb},0.12)`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                <SectionIcon icon={section.icon} accent={accent} />
-              </div>
+              <HistoryIcon icon={section.icon} size={32} />
               <div style={{
                 ...TYPE.metadata,
                 color: accent,

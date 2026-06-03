@@ -137,14 +137,14 @@ export const MODULES = [
         sections: [
           {
             title: 'Who was he?',
-            icon: 'head',
+            icon: 'ancient-figure',
             lines: [
               'One of the first doctors to argue that illness had natural causes rather than punishment from the gods.',
             ],
           },
           {
             title: 'Four humours',
-            icon: 'droplet',
+            icon: 'medicine',
             lines: [
               'Hippocrates believed the body contained four humours:',
               'Blood · Phlegm · Yellow Bile · Black Bile',
@@ -153,7 +153,7 @@ export const MODULES = [
           },
           {
             title: 'Observation',
-            icon: 'eye',
+            icon: 'knowledge',
             lines: [
               'Hippocrates believed doctors should observe symptoms carefully, examine patients closely, and keep records.',
               'He encouraged reasoning rather than magic or superstition.',
@@ -161,7 +161,7 @@ export const MODULES = [
           },
           {
             title: 'Influence',
-            icon: 'network',
+            icon: 'legacy',
             lines: [
               "His Four Humours theory was developed by Galen and remained influential for over 1,500 years.",
             ],
@@ -218,6 +218,7 @@ export const MODULES = [
         sections: [
           {
             title: 'Gladiators & dissection',
+            icon: 'war-conflict',
             lines: [
               'Galen spent years patching up wounded gladiators — giving him direct, hands-on experience of the human body.',
               'He also dissected animals extensively to study anatomy.',
@@ -226,6 +227,7 @@ export const MODULES = [
           },
           {
             title: 'Four humours & Theory of Opposites',
+            icon: 'bloodletting',
             lines: [
               "Galen promoted Hippocrates' Four Humours — Blood, Phlegm, Yellow Bile, Black Bile — and added his own contribution.",
               'He argued illness should be treated with its opposite: hot illness → cold remedy. Wet illness → dry remedy.',
@@ -234,6 +236,7 @@ export const MODULES = [
           },
           {
             title: 'The squealing pig',
+            icon: 'science',
             lines: [
               'Galen wanted to prove the brain — not the heart — controlled the body.',
               'He performed a public demonstration, cutting the vocal cord nerves of a squealing pig mid-cry.',
@@ -242,6 +245,7 @@ export const MODULES = [
           },
           {
             title: 'Influence & limitations',
+            icon: 'legacy',
             lines: [
               'Doctors followed his ideas for over 1,400 years.',
               'Some ideas were wrong because he studied animals, not humans.',
