@@ -91,7 +91,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
       {/* ── Portrait hero ───────────────────────────────────────────────── */}
       <div style={{
         position: 'relative',
-        height: '52vh',
+        height: '56vh',
         overflow: 'hidden',
       }}>
         <img
