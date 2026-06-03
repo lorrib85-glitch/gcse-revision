@@ -8,7 +8,7 @@ export default function VisualNarrativeScreen({
   onContinue,
 }) {
   const theme  = SUBJECTS[subject] || SUBJECTS.History
-  const accent = theme.accent
+  const { accent, accentRgb: rgb } = theme
 
   const [beatIdx,        setBeatIdx]        = useState(0)
   const [factCount,      setFactCount]      = useState(0)
@@ -91,6 +91,10 @@ export default function VisualNarrativeScreen({
           0%, 100% { opacity: 0; transform: translateY(0); }
           35%, 65%  { opacity: 0.6; transform: translateY(-3px); }
         }
+        @keyframes vnEnglandPulse {
+          0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
+          50%       { opacity: 0.90; transform: translate(-50%, -50%) scale(1.35); }
+        }
         .vn-cta:active { opacity: 0.55 !important; }
       `}</style>
 
@@ -126,6 +130,21 @@ export default function VisualNarrativeScreen({
           transition: 'opacity 700ms ease',
           pointerEvents: 'none',
         }} />
+
+        {/* Medieval England glow — appears when the full chain is revealed */}
+        {showConclusion && (
+          <div style={{
+            position: 'absolute',
+            top: '21%', left: '73%',
+            width: 52, height: 52,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, rgba(${rgb},0.55) 0%, transparent 70%)`,
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+            zIndex: 2,
+            animation: 'vnEnglandPulse 2.8s ease-in-out infinite',
+          }} />
+        )}
 
         {/* Dark gradient — keeps the timeline visible up top, darkens lower third for text legibility */}
         <div style={{
@@ -224,11 +243,12 @@ export default function VisualNarrativeScreen({
                 <div style={{
                   fontFamily: "'Sora', sans-serif",
                   fontWeight: 700,
-                  fontSize: 'clamp(18px, 5.5vw, 24px)',
-                  lineHeight: 1.35,
+                  fontSize: 'clamp(22px, 7vw, 30px)',
+                  lineHeight: 1.45,
                   color: accent,
-                  marginTop: 6,
-                  animation: 'vnFadeIn 600ms ease both',
+                  marginTop: 32,
+                  whiteSpace: 'pre-line',
+                  animation: 'vnFadeIn 700ms ease both',
                 }}>
                   {beat.conclusion}
                 </div>
