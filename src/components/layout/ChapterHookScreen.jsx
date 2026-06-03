@@ -87,6 +87,7 @@ export default function ChapterHookScreen({
   const [shakeTarget, setShakeTarget] = useState(null)
   const [btnsReady,   setBtnsReady]   = useState(false)
   const [wasCorrect,  setWasCorrect]  = useState(null)
+  const [tappedBtn,   setTappedBtn]   = useState(null) // 'true' | 'false' | null
 
   // Staged reveal state
   const hasBeats   = Array.isArray(revealBeats) && revealBeats.length > 0
@@ -121,6 +122,7 @@ export default function ChapterHookScreen({
     if (phase !== 'question' || !btnsReady) return
     const correct = tappedTrue === isTrue
     setWasCorrect(correct)
+    setTappedBtn(tappedTrue ? 'true' : 'false')
     if (!correct) {
       setShakeTarget(tappedTrue ? 'true' : 'false')
       setTimeout(() => setShakeTarget(null), 300)
@@ -128,7 +130,7 @@ export default function ChapterHookScreen({
     setTimeout(() => {
       setPhase('exiting')
       setTimeout(() => setPhase('reveal'), 320)
-    }, correct ? 260 : 540)
+    }, correct ? 340 : 580)
   }
 
   function revealLabel() {
@@ -237,9 +239,9 @@ export default function ChapterHookScreen({
               <div style={{
                 position: 'absolute', top: 130, left: 28, right: 36,
                 fontFamily: "'Sora', sans-serif",
-                fontWeight: 800, fontSize: 34,
-                lineHeight: '38px', letterSpacing: '-0.03em',
-                color: '#FFFFFF',
+                fontWeight: 700, fontSize: 18,
+                lineHeight: '24px', letterSpacing: '-0.01em',
+                color: 'rgba(255,255,255,0.55)',
                 animation: 'chs-header-in 320ms ease 120ms both',
               }}>
                 {chapterTitle}
@@ -277,7 +279,7 @@ export default function ChapterHookScreen({
             </div>
 
             <div style={{
-              position: 'fixed', bottom: 100, left: 0, right: 0,
+              position: 'fixed', bottom: 56, left: 0, right: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               gap: 20, zIndex: 10,
               opacity: isExiting ? 0 : (btnsReady ? 1 : 0),
@@ -288,8 +290,15 @@ export default function ChapterHookScreen({
                 className="chs-btn"
                 onClick={() => choose(true)}
                 style={{
-                  background: 'rgba(255,255,255,0.07)',
-                  border: '1.5px solid rgba(255,255,255,0.22)',
+                  background: tappedBtn === 'true'
+                    ? `rgba(${rgb}, 0.22)`
+                    : 'rgba(255,255,255,0.07)',
+                  border: tappedBtn === 'true'
+                    ? `1.5px solid rgba(${rgb}, 0.60)`
+                    : '1.5px solid rgba(255,255,255,0.22)',
+                  boxShadow: tappedBtn === 'true'
+                    ? `0 0 0 1px rgba(${rgb},0.25), 0 0 32px rgba(${rgb},0.55), 0 0 64px rgba(${rgb},0.28)`
+                    : 'none',
                   backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
                   borderRadius: RADII.pill,
                   padding: '14px 36px',
@@ -297,6 +306,9 @@ export default function ChapterHookScreen({
                   fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 24,
                   textTransform: 'uppercase', letterSpacing: '0.18em',
                   color: 'rgba(255,255,255,0.88)',
+                  transform: tappedBtn === 'true' ? 'scale(1.10)' : 'scale(1)',
+                  opacity: tappedBtn === 'false' ? 0 : 1,
+                  transition: 'transform 300ms cubic-bezier(0.34,1.56,0.64,1), opacity 220ms ease, background 200ms ease, border-color 200ms ease, box-shadow 240ms ease',
                   animation: shakeTarget === 'true' ? 'chs-shake 220ms ease' : 'none',
                 }}>
                 TRUE
@@ -306,8 +318,15 @@ export default function ChapterHookScreen({
                 className="chs-btn"
                 onClick={() => choose(false)}
                 style={{
-                  background: 'rgba(255,255,255,0.07)',
-                  border: '1.5px solid rgba(255,255,255,0.22)',
+                  background: tappedBtn === 'false'
+                    ? `rgba(${rgb}, 0.22)`
+                    : 'rgba(255,255,255,0.07)',
+                  border: tappedBtn === 'false'
+                    ? `1.5px solid rgba(${rgb}, 0.60)`
+                    : '1.5px solid rgba(255,255,255,0.22)',
+                  boxShadow: tappedBtn === 'false'
+                    ? `0 0 0 1px rgba(${rgb},0.25), 0 0 32px rgba(${rgb},0.55), 0 0 64px rgba(${rgb},0.28)`
+                    : 'none',
                   backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
                   borderRadius: RADII.pill,
                   padding: '14px 36px',
@@ -315,6 +334,9 @@ export default function ChapterHookScreen({
                   fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 24,
                   textTransform: 'uppercase', letterSpacing: '0.18em',
                   color: 'rgba(255,255,255,0.88)',
+                  transform: tappedBtn === 'false' ? 'scale(1.10)' : 'scale(1)',
+                  opacity: tappedBtn === 'true' ? 0 : 1,
+                  transition: 'transform 300ms cubic-bezier(0.34,1.56,0.64,1), opacity 220ms ease, background 200ms ease, border-color 200ms ease, box-shadow 240ms ease',
                   animation: shakeTarget === 'false' ? 'chs-shake 220ms ease' : 'none',
                 }}>
                 FALSE

@@ -17,9 +17,10 @@ export const MODULES = [
     headerImage: '/headers/history-medicine-through-time.webp',
 
     hook: {
-      statement: 'Medieval doctors deliberately removed blood from sick patients because they believed it would make them healthier.',
+      statement: 'Medieval doctors removed blood to cure illness.',
       isTrue: true,
-      accentWords: ['deliberately removed blood', 'make them healthier'],
+      accentWords: ['removed blood', 'cure illness'],
+      backgroundImage: '/headers/history-medicine-bloodletting.png',
       explanation: 'True. Which is alarming, obviously. But to medieval doctors, bloodletting was not random cruelty. They believed illness happened when the body fell out of balance. So if they thought you had too much blood? They tried to remove some.',
       revealBeats: [
         'Which is alarming, obviously.',
