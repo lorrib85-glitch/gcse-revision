@@ -320,12 +320,12 @@ export const MODULES = [
         prescription: {
           question: 'What would Galen prescribe?',
           options: [
-            { label: 'Cucumber',   correct: true },
-            { label: 'Cold water', correct: true },
-            { label: 'Dry bread',  correct: true },
-            { label: 'Salt',       correct: true },
-            { label: 'Hot soup',   correct: false },
-            { label: 'Warm wine',  correct: false },
+            { label: 'Cucumber',   correct: true,  image: '/figures/history/medicine/medieval/treatments/cucumber.png' },
+            { label: 'Cold water', correct: true,  image: '/figures/history/medicine/medieval/treatments/cold-water.png' },
+            { label: 'Dry bread',  correct: true,  image: '/figures/history/medicine/medieval/treatments/dry-bread.png' },
+            { label: 'Salt',       correct: true,  image: '/figures/history/medicine/medieval/treatments/salt.png' },
+            { label: 'Hot soup',   correct: false, image: '/figures/history/medicine/medieval/treatments/hot-soup.png' },
+            { label: 'Warm wine',  correct: false, image: '/figures/history/medicine/medieval/treatments/warm-wine.png' },
           ],
           reveal: 'Galen treats illness with opposite qualities.',
         },

@@ -524,6 +524,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
   const [showTransform, setShowTransform] = useState(false)
 
   const ev = block.evaluation?.transformation || {}
+  const hasImages = options.some(o => o.image)
 
   function toggleOption(idx) {
     if (confirmed) return
@@ -533,100 +534,224 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
   function confirm() {
     if (selected.length === 0) return
     setConfirmed(true)
-    setTimeout(() => setShowTransform(true), 600)
+    setTimeout(() => setShowTransform(true), 700)
   }
 
   return (
     <Screen bgImage="/headers/history-medicine-through-time.png" bgOpacity={0.07}>
-      <Pad>
+      <Pad top={72}>
 
         <div style={{ animation: anim('tl-in', 320, 0) }}>
           <Kicker accent={accent}>Prescribe Treatment</Kicker>
           <h2 style={{
-            fontFamily: "'Clash Display', sans-serif",
-            fontSize: 24,
+            fontFamily: "'Sora', sans-serif",
+            fontSize: 20,
             fontWeight: 700,
             color: '#F0E6C8',
             letterSpacing: '-0.01em',
-            lineHeight: 1.2,
+            lineHeight: 1.25,
             margin: `0 0 ${SPACING.standard}px`,
           }}>
             {rx.question}
           </h2>
+          {!confirmed && (
+            <p style={{
+              ...TYPE.metadata,
+              color: 'rgba(240,230,200,0.4)',
+              margin: `0 0 ${SPACING.standard}px`,
+              fontStyle: 'italic',
+            }}>
+              Select all that apply
+            </p>
+          )}
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: SPACING.compact,
-          marginBottom: SPACING.standard,
-          animation: anim('tl-in', 360, 80),
-        }}>
-          {options.map((opt, i) => {
-            const isSelected = selected.includes(i)
-            const isCorrect = opt.correct
-            const showResult = confirmed
-            const highlight = showResult && isCorrect
-            const struck = showResult && !isCorrect && isSelected
+        {/* Image card grid */}
+        {hasImages ? (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: 10,
+            marginBottom: SPACING.standard,
+            animation: anim('tl-in', 360, 80),
+          }}>
+            {options.map((opt, i) => {
+              const isSelected = selected.includes(i)
+              const isCorrect = opt.correct
+              const highlight = confirmed && isCorrect
+              const struck = confirmed && !isCorrect && isSelected
+              const fadedOut = confirmed && !isCorrect && !isSelected
 
-            return (
-              <button
-                key={opt.label}
-                onClick={() => toggleOption(i)}
-                style={{
-                  padding: `${SPACING.compact}px`,
-                  background: highlight
-                    ? `rgba(${rgb}, 0.18)`
-                    : isSelected && !confirmed
-                      ? `rgba(${rgb}, 0.1)`
-                      : struck
-                        ? 'rgba(180,50,30,0.08)'
-                        : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${
-                    highlight
-                      ? `rgba(${rgb}, 0.55)`
+              return (
+                <button
+                  key={opt.label}
+                  onClick={() => toggleOption(i)}
+                  style={{
+                    padding: 0,
+                    background: struck
+                      ? 'rgba(160,40,20,0.12)'
+                      : highlight
+                        ? `rgba(${rgb}, 0.08)`
+                        : isSelected
+                          ? `rgba(${rgb}, 0.06)`
+                          : 'rgba(245,237,215,0.06)',
+                    border: `2px solid ${
+                      struck
+                        ? 'rgba(200,60,40,0.45)'
+                        : highlight
+                          ? `rgba(${rgb}, 0.7)`
+                          : isSelected
+                            ? `rgba(${rgb}, 0.45)`
+                            : 'rgba(240,225,195,0.12)'
+                    }`,
+                    borderRadius: RADII.medium,
+                    cursor: confirmed ? 'default' : 'pointer',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    transition: `all ${MOTION.fast}ms ease`,
+                    opacity: fadedOut ? 0.28 : 1,
+                    boxShadow: highlight
+                      ? `0 0 14px rgba(${rgb}, 0.3)`
                       : isSelected && !confirmed
-                        ? `rgba(${rgb}, 0.35)`
-                        : struck
-                          ? 'rgba(200,60,40,0.3)'
-                          : 'rgba(255,255,255,0.1)'
-                  }`,
-                  borderRadius: RADII.small,
-                  color: highlight
-                    ? accent
-                    : isSelected && !confirmed
-                      ? 'rgba(240,230,200,0.9)'
-                      : struck
-                        ? 'rgba(200,90,70,0.6)'
-                        : 'rgba(240,230,200,0.6)',
-                  fontFamily: "'Clash Display', sans-serif",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  letterSpacing: '0.04em',
-                  cursor: confirmed ? 'default' : 'pointer',
-                  textAlign: 'center',
-                  minHeight: 48,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 6,
-                  transition: `all ${MOTION.fast}ms ease`,
-                  textDecoration: struck ? 'line-through' : 'none',
-                  opacity: showResult && !isCorrect && !isSelected ? 0.35 : 1,
-                }}
-              >
-                {showResult && isCorrect && <span>✓</span>}
-                {struck && <span>✕</span>}
-                {opt.label}
-              </button>
-            )
-          })}
-        </div>
+                        ? `0 0 10px rgba(${rgb}, 0.18)`
+                        : 'none',
+                  }}
+                >
+                  {/* Image area — cream tile so white bg blends */}
+                  <div style={{
+                    width: '100%',
+                    aspectRatio: '1',
+                    background: struck
+                      ? 'rgba(60,20,10,0.6)'
+                      : 'rgba(245,237,215,0.92)',
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                  }}>
+                    <img
+                      src={opt.image}
+                      alt={opt.label}
+                      style={{
+                        width: '82%',
+                        height: '82%',
+                        objectFit: 'contain',
+                        mixBlendMode: 'multiply',
+                        display: 'block',
+                        opacity: struck ? 0.35 : 1,
+                        transition: `opacity ${MOTION.fast}ms ease`,
+                      }}
+                    />
+                    {/* Tick or cross overlay */}
+                    {(highlight || struck) && (
+                      <div style={{
+                        position: 'absolute',
+                        top: 4,
+                        right: 6,
+                        fontSize: 14,
+                        fontWeight: 700,
+                        color: highlight ? accent : 'rgba(220,70,50,0.9)',
+                        lineHeight: 1,
+                      }}>
+                        {highlight ? '✓' : '✕'}
+                      </div>
+                    )}
+                    {/* Selection ring glow (not confirmed) */}
+                    {isSelected && !confirmed && (
+                      <div style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background: `rgba(${rgb}, 0.12)`,
+                        pointerEvents: 'none',
+                      }} />
+                    )}
+                  </div>
+
+                  {/* Label */}
+                  <div style={{
+                    padding: '6px 4px',
+                    textAlign: 'center',
+                    width: '100%',
+                  }}>
+                    <span style={{
+                      fontFamily: "'Sora', sans-serif",
+                      fontSize: 10,
+                      fontWeight: 600,
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                      color: struck
+                        ? 'rgba(200,80,60,0.7)'
+                        : highlight
+                          ? accent
+                          : isSelected
+                            ? 'rgba(240,230,200,0.9)'
+                            : 'rgba(240,230,200,0.55)',
+                      textDecoration: struck ? 'line-through' : 'none',
+                      transition: `color ${MOTION.fast}ms ease`,
+                    }}>
+                      {opt.label}
+                    </span>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        ) : (
+          /* Text-only fallback */
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: SPACING.compact,
+            marginBottom: SPACING.standard,
+            animation: anim('tl-in', 360, 80),
+          }}>
+            {options.map((opt, i) => {
+              const isSelected = selected.includes(i)
+              const isCorrect = opt.correct
+              const highlight = confirmed && isCorrect
+              const struck = confirmed && !isCorrect && isSelected
+              return (
+                <button
+                  key={opt.label}
+                  onClick={() => toggleOption(i)}
+                  style={{
+                    padding: `${SPACING.compact}px`,
+                    background: highlight ? `rgba(${rgb}, 0.18)` : isSelected && !confirmed ? `rgba(${rgb}, 0.1)` : struck ? 'rgba(180,50,30,0.08)' : 'rgba(255,255,255,0.04)',
+                    border: `1px solid ${highlight ? `rgba(${rgb}, 0.55)` : isSelected && !confirmed ? `rgba(${rgb}, 0.35)` : struck ? 'rgba(200,60,40,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                    borderRadius: RADII.small,
+                    color: highlight ? accent : isSelected && !confirmed ? 'rgba(240,230,200,0.9)' : struck ? 'rgba(200,90,70,0.6)' : 'rgba(240,230,200,0.6)',
+                    fontFamily: "'Sora', sans-serif",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    letterSpacing: '0.04em',
+                    cursor: confirmed ? 'default' : 'pointer',
+                    textAlign: 'center',
+                    minHeight: 48,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                    transition: `all ${MOTION.fast}ms ease`,
+                    textDecoration: struck ? 'line-through' : 'none',
+                    opacity: confirmed && !isCorrect && !isSelected ? 0.35 : 1,
+                  }}
+                >
+                  {confirmed && isCorrect && <span>✓</span>}
+                  {struck && <span>✕</span>}
+                  {opt.label}
+                </button>
+              )
+            })}
+          </div>
+        )}
 
         {!confirmed && (
           <div style={{ animation: anim('tl-in', 320, 160) }}>
             <ActionBtn
-              label="Confirm Prescription"
+              label="Confirm →"
               onClick={confirm}
               accent={accent}
               rgb={rgb}
@@ -646,6 +771,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                 color: 'rgba(240,230,200,0.65)',
                 margin: `0 0 ${SPACING.standard}px`,
                 textAlign: 'center',
+                fontStyle: 'italic',
               }}>
                 {rx.reveal}
               </p>
@@ -660,8 +786,8 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
               marginBottom: SPACING.separation,
             }}>
               <p style={{
-                fontFamily: "'Clash Display', sans-serif",
-                fontSize: 22,
+                fontFamily: "'Sora', sans-serif",
+                fontSize: 20,
                 fontWeight: 700,
                 color: accent,
                 margin: 0,
@@ -678,8 +804,8 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                 ↓
               </p>
               <p style={{
-                fontFamily: "'Clash Display', sans-serif",
-                fontSize: 22,
+                fontFamily: "'Sora', sans-serif",
+                fontSize: 20,
                 fontWeight: 700,
                 color: '#F0E6C8',
                 margin: 0,
