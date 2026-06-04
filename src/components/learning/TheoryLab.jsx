@@ -305,7 +305,7 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
   }
 
   return (
-    <Screen bgImage={scenario.image} bgOpacity={0.2}>
+    <Screen bgImage={scenario.image} bgOpacity={0.35}>
       <Pad>
 
         <div style={{ animation: anim('tl-in', 320, 0) }}>

@@ -301,7 +301,7 @@ export const MODULES = [
 
         scenario: {
           title: 'A Patient Arrives',
-          image: '/figures/history/medicine/medieval/physician.png',
+          image: '/figures/history/medicine/medieval/patient-arrives.png',
           symptoms: ['FEVER', 'RED FACE', 'SWEATING'],
           question: 'Which qualities dominate?',
           options: [
