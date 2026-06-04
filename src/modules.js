@@ -208,6 +208,35 @@ export const MODULES = [
       },
 
       {
+        type: 'quickRecall',
+        stage: 'Understand',
+        label: 'Hippocrates — quick check',
+        questions: [
+          {
+            type: 'choice',
+            question: 'What did Hippocrates believe caused illness?',
+            options: ['Angry gods', 'Natural causes', 'Evil spirits', 'Witchcraft'],
+            correct: 1,
+            hint: 'Think about what made Hippocrates different from many people of his time.',
+          },
+          {
+            type: 'choice',
+            question: 'According to Hippocrates, illness happened when...',
+            options: ['The gods were unhappy', 'The body lost too much blood', 'The Four Humours became unbalanced', 'Bad smells entered the body'],
+            correct: 2,
+            hint: 'Remember the four fluids you just explored.',
+          },
+          {
+            type: 'choice',
+            question: 'Why did Hippocrates create the Four Humours theory?',
+            options: ['He could see germs causing disease', 'He wanted to explain why people became ill', 'The Church ordered him to create it', 'He copied it from Galen'],
+            correct: 1,
+            hint: "Think about the problem Hippocrates was trying to solve. If doctors couldn't see germs, what were they looking for instead?",
+          },
+        ],
+      },
+
+      {
         type: 'keyFigureReveal',
         stage: 'Understand',
         label: 'Galen',

@@ -3,7 +3,7 @@ import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 
 const IMAGES = {
-  History:   '/historybacker.webp',
+  History:   '/headers/history-quiz-bg.png',
   Biology:   '/biologybacker.webp',
   Maths:     '/mathsbacker.webp',
   Sociology: '/sociologybacker.webp',
@@ -11,6 +11,10 @@ const IMAGES = {
   Physics:   '/physicsbacker.webp',
   English:   '/Englishbacker.webp',
   Music:     '/historybacker.webp',
+}
+
+const BG_STYLE = {
+  History: { opacity: 0.55, filter: 'none' },
 }
 
 function tokenize(text) {
@@ -203,7 +207,8 @@ export default function QuickRecallScreen({
   onContinue,
   renderHeader,
 }) {
-  const img   = IMAGES[subject] || IMAGES.History
+  const img    = IMAGES[subject] || IMAGES.History
+  const bgStyle = BG_STYLE[subject] || { opacity: 0.26, filter: 'grayscale(10%) brightness(0.65)' }
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
 
@@ -282,8 +287,8 @@ export default function QuickRecallScreen({
           position: 'fixed', inset: 0,
           backgroundImage: `url(${img})`,
           backgroundSize: 'cover', backgroundPosition: 'center top',
-          opacity: 0.26,
-          filter: 'grayscale(10%) brightness(0.65)',
+          opacity: bgStyle.opacity,
+          filter: bgStyle.filter,
           pointerEvents: 'none', zIndex: 1,
         }} />
 
