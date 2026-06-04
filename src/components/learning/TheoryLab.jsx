@@ -619,13 +619,12 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                         : 'none',
                   }}
                 >
-                  {/* Image area — cream tile so white bg blends */}
                   <div style={{
                     width: '100%',
                     aspectRatio: '1',
                     background: struck
-                      ? 'rgba(60,20,10,0.6)'
-                      : 'rgba(245,237,215,0.92)',
+                      ? 'rgba(30,10,5,0.6)'
+                      : 'rgba(18,14,10,0.5)',
                     position: 'relative',
                     display: 'flex',
                     alignItems: 'center',
@@ -639,7 +638,6 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                         width: '82%',
                         height: '82%',
                         objectFit: 'contain',
-                        mixBlendMode: 'multiply',
                         display: 'block',
                         opacity: struck ? 0.35 : 1,
                         transition: `opacity ${MOTION.fast}ms ease`,
