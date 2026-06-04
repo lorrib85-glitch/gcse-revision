@@ -173,9 +173,9 @@ function TheoryStage({ block, accent, rgb, onNext }) {
   const first = (theory.grid || [])[0] || {}
 
   // phase 0 = HOT only, 1 = ↔ visible, 2 = COLD visible, 3 = tagline + continue
-  const [phase, setPhase] = React.useState(0)
+  const [phase, setPhase] = useState(0)
 
-  React.useEffect(() => {
+  useEffect(() => {
     const t1 = setTimeout(() => setPhase(1), 700)
     const t2 = setTimeout(() => setPhase(2), 1400)
     const t3 = setTimeout(() => setPhase(3), 2100)
