@@ -14,7 +14,7 @@ const IMAGES = {
 }
 
 const BG_STYLE = {
-  History: { opacity: 0.55, filter: 'none' },
+  History: { opacity: 1.0, filter: 'none', skipLeftGradient: true },
 }
 
 function tokenize(text) {
@@ -292,12 +292,14 @@ export default function QuickRecallScreen({
           pointerEvents: 'none', zIndex: 1,
         }} />
 
-        {/* Left gradient */}
-        <div style={{
-          position: 'fixed', inset: 0,
-          background: 'linear-gradient(90deg, rgba(8,9,13,0.94) 0%, rgba(8,9,13,0.78) 38%, rgba(8,9,13,0.42) 68%, rgba(8,9,13,0.16) 100%)',
-          pointerEvents: 'none', zIndex: 2,
-        }} />
+        {/* Left gradient — skipped for subjects with dark textured backgrounds */}
+        {!bgStyle.skipLeftGradient && (
+          <div style={{
+            position: 'fixed', inset: 0,
+            background: 'linear-gradient(90deg, rgba(8,9,13,0.94) 0%, rgba(8,9,13,0.78) 38%, rgba(8,9,13,0.42) 68%, rgba(8,9,13,0.16) 100%)',
+            pointerEvents: 'none', zIndex: 2,
+          }} />
+        )}
 
         {/* Dark overlay */}
         <div style={{
