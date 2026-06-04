@@ -292,6 +292,7 @@ export const MODULES = [
 
         theory: {
           heading: 'Theory of Opposites',
+          tagline: 'If a patient seemed too hot, physicians tried to cool them down.',
           explanation: "Galen believed illness happened when the body became unbalanced.\n\nTo restore balance, treat the illness using the opposite quality.",
           grid: [
             { left: 'HOT', right: 'COLD' },

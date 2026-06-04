@@ -170,7 +170,32 @@ function ActionBtn({ label, onClick, accent, rgb, disabled = false }) {
 
 function TheoryStage({ block, accent, rgb, onNext }) {
   const theory = block.theory || {}
-  const grid = theory.grid || []
+  const first = (theory.grid || [])[0] || {}
+
+  // phase 0 = HOT only, 1 = ↔ visible, 2 = COLD visible, 3 = tagline + continue
+  const [phase, setPhase] = React.useState(0)
+
+  React.useEffect(() => {
+    const t1 = setTimeout(() => setPhase(1), 700)
+    const t2 = setTimeout(() => setPhase(2), 1400)
+    const t3 = setTimeout(() => setPhase(3), 2100)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+  }, [])
+
+  const fadeIn = (visible) => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'translateY(0)' : 'translateY(6px)',
+    transition: `opacity ${MOTION.normal}ms ease, transform ${MOTION.normal}ms ease`,
+  })
+
+  const wordStyle = {
+    fontFamily: "'Clash Display', 'Sora', sans-serif",
+    fontSize: 52,
+    fontWeight: 700,
+    color: '#F0E6C8',
+    letterSpacing: '-0.02em',
+    lineHeight: 1,
+  }
 
   return (
     <Screen bgImage="/headers/history-medicine-through-time.png" bgOpacity={0.08}>
@@ -179,7 +204,7 @@ function TheoryStage({ block, accent, rgb, onNext }) {
         <div style={{ animation: anim('tl-in', 340, 0) }}>
           <Kicker accent={accent}>{block.title || 'Think Like Galen'}</Kicker>
           <h1 style={{
-            fontFamily: "'Clash Display', sans-serif",
+            fontFamily: "'Clash Display', 'Sora', sans-serif",
             fontSize: 30,
             fontWeight: 700,
             color: '#F0E6C8',
@@ -191,74 +216,56 @@ function TheoryStage({ block, accent, rgb, onNext }) {
           </h1>
         </div>
 
-        {grid.length > 0 && (
-          <div style={{
-            margin: `0 0 ${SPACING.separation}px`,
-            animation: anim('tl-in', 360, 80),
-          }}>
-            {grid.map((row, i) => (
-              <div key={i} style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginBottom: i < grid.length - 1 ? SPACING.standard : 0,
-              }}>
-                <span style={{
-                  flex: 1,
-                  textAlign: 'right',
-                  fontFamily: "'Clash Display', sans-serif",
-                  fontSize: 32,
-                  fontWeight: 700,
-                  color: '#F0E6C8',
-                  letterSpacing: '-0.01em',
-                  paddingRight: SPACING.compact,
-                }}>
-                  {row.left}
-                </span>
-                <span style={{
-                  ...TYPE.body,
-                  color: `rgba(${rgb}, 0.45)`,
-                  fontWeight: 600,
-                  width: 28,
-                  textAlign: 'center',
-                  flexShrink: 0,
-                }}>
-                  ↔
-                </span>
-                <span style={{
-                  flex: 1,
-                  fontFamily: "'Clash Display', sans-serif",
-                  fontSize: 32,
-                  fontWeight: 700,
-                  color: '#F0E6C8',
-                  letterSpacing: '-0.01em',
-                  paddingLeft: SPACING.compact,
-                }}>
-                  {row.right}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-
+        {/* Staged HOT ↔ COLD reveal */}
         <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: SPACING.compact,
+          marginBottom: SPACING.separation,
+          minHeight: 72,
+        }}>
+          <span style={wordStyle}>{first.left}</span>
+
+          <span style={{
+            ...TYPE.body,
+            color: `rgba(${rgb}, 0.55)`,
+            fontWeight: 700,
+            fontSize: 24,
+            width: 32,
+            textAlign: 'center',
+            flexShrink: 0,
+            ...fadeIn(phase >= 1),
+          }}>
+            ↔
+          </span>
+
+          <span style={{
+            ...wordStyle,
+            ...fadeIn(phase >= 2),
+          }}>
+            {first.right}
+          </span>
+        </div>
+
+        {/* Tagline */}
+        <div style={{
+          ...fadeIn(phase >= 3),
           borderLeft: `2px solid rgba(${rgb}, 0.3)`,
           paddingLeft: SPACING.compact,
           marginBottom: SPACING.separation,
-          animation: anim('tl-in', 360, 160),
         }}>
-          {(theory.explanation || '').split('\n\n').map((para, i) => (
-            <p key={i} style={{
-              ...TYPE.body,
-              color: 'rgba(240,230,200,0.72)',
-              margin: i > 0 ? `${SPACING.compact}px 0 0` : 0,
-              lineHeight: 1.6,
-            }}>
-              {para}
-            </p>
-          ))}
+          <p style={{
+            ...TYPE.body,
+            color: 'rgba(240,230,200,0.72)',
+            margin: 0,
+            lineHeight: 1.6,
+          }}>
+            {theory.tagline}
+          </p>
         </div>
 
-        <div style={{ animation: anim('tl-in', 360, 220) }}>
+        <div style={fadeIn(phase >= 3)}>
           <ActionBtn label="Continue →" onClick={onNext} accent={accent} rgb={rgb} />
         </div>
 
