@@ -8,283 +8,732 @@
 export const QUICK_QUIZ_QUESTIONS = [
 
   // ════════════════════════════════════════════════════════
-  // HISTORY — Medieval Medicine
+  // HISTORY — Medicine Through Time
+  // tag: thematic label used for adaptive weak-spot tracking.
+  //      When a student answers wrong, their weakness is recorded
+  //      against this tag so the app can surface relevant content.
   // ════════════════════════════════════════════════════════
 
+  // ── Q1-8: Medieval period ─────────────────────────────
+
   {
-    id: 'qq_h1', subject: 'History', topic: 'Medieval Medicine',
+    id: 'qq_h1', subject: 'History', topic: 'Medieval Medicine', tag: 'medieval-causes',
     difficulty: 'easy', type: 'mcq',
-    question: 'What were the four humours according to medieval doctors?',
-    options: ['Blood, phlegm, yellow bile, black bile', 'Fire, water, earth, air', 'Blood, water, bile, pus', 'Phlegm, spit, sweat, tears'],
+    question: 'What were the medieval explanations for disease?',
+    options: ['Punishment from God, the Four Humours and miasma', 'Bacteria, viruses and parasites', 'Bad diet, lack of sleep and cold weather', 'Four Humours, germ theory and surgery'],
     correctIndex: 0,
-    explanation: 'The four humours were blood, phlegm, yellow bile, and black bile.',
-    reasoning: 'Medieval doctors believed illness was caused by an imbalance of these four bodily fluids, based on Hippocrates\' theory.',
-    misconception: 'People often confuse the four humours with the four elements (fire, water, earth, air) — these are different concepts.',
+    explanation: 'Medieval doctors blamed disease on God\'s punishment, imbalance of the Four Humours, and miasma (bad air).',
+    reasoning: 'Without microscopes or modern science, medieval people relied on religion and ancient theories to explain illness.',
   },
 
   {
-    id: 'qq_h2', subject: 'History', topic: 'Medieval Medicine',
+    id: 'qq_h2', subject: 'History', topic: 'Medieval Medicine', tag: 'four-humours',
+    difficulty: 'medium', type: 'mcq',
+    question: 'What was the Theory of the Four Humours?',
+    options: ['Health depended on balancing blood, phlegm, black bile and yellow bile', 'Disease was caused by an imbalance of fire, water, earth and air', 'The body contained four organs that controlled all illness', 'Bloodletting restored balance between the heart, lungs, liver and brain'],
+    correctIndex: 0,
+    explanation: 'The Four Humours were blood, phlegm, yellow bile and black bile. Illness was caused by their imbalance.',
+    reasoning: 'Based on Hippocrates and developed by Galen, this theory dominated medicine for over 1,400 years.',
+    misconception: 'The four humours (body fluids) are different from the four elements (fire, water, earth, air).',
+  },
+
+  {
+    id: 'qq_h3', subject: 'History', topic: 'Medieval Medicine', tag: 'miasma',
     difficulty: 'easy', type: 'truefalse',
-    question: 'The Church ran hospitals like St Bartholomew\'s in medieval England.',
+    question: 'Miasma Theory was the belief that disease was caused by bad air.',
     correct: true,
-    explanation: 'True — the Church ran hospitals including St Bartholomew\'s, founded in 1123.',
-    reasoning: 'Religious orders cared for the sick as an act of Christian charity, providing rest and prayer.',
-    misconception: 'Some assume the Church only hindered medicine — but it also provided care and preserved medical texts.',
+    explanation: 'True — miasma theory held that foul-smelling air from rotting matter spread disease.',
+    reasoning: 'This explained why crowded, dirty cities had more disease. It was wrong about the cause but led to useful clean-up actions.',
   },
 
   {
-    id: 'qq_h3', subject: 'History', topic: 'Medieval Medicine',
+    id: 'qq_h4', subject: 'History', topic: 'Medieval Medicine', tag: 'galen',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why did Galen remain influential for over 1,400 years?',
+    options: ['His ideas were proven correct by later experiments', 'His ideas matched Church teachings and were rarely challenged', 'He wrote in English so everyone could read his work', 'Kings and rulers ordered doctors to follow his methods'],
+    correctIndex: 1,
+    explanation: 'The Church backed Galen\'s theories because they fitted Christian ideas. Challenging Galen meant challenging the Church.',
+    reasoning: 'This combination of religious and institutional authority made it almost impossible for doctors to question his work.',
+    misconception: 'Galen made significant errors — e.g. believing the liver made blood — but these went unchallenged for centuries.',
+  },
+
+  {
+    id: 'qq_h5', subject: 'History', topic: 'Medieval Medicine', tag: 'four-humours',
     difficulty: 'easy', type: 'mcq',
-    question: 'Which ancient physician\'s ideas dominated European medicine for over 1,000 years?',
-    options: ['Hippocrates', 'Galen', 'Vesalius', 'Pasteur'],
+    question: 'What was bloodletting used for in medieval medicine?',
+    options: ['Cleaning wounds to prevent infection', 'Removing blood to rebalance the humours', 'Testing patients for the presence of disease', 'Preparing the body for surgery'],
     correctIndex: 1,
-    explanation: 'Galen (c.129–216 AD) built on Hippocrates and his works were treated as near-sacred by the Church.',
-    reasoning: 'Because the Church preserved and backed his texts, questioning Galen meant questioning the Church itself.',
-    misconception: 'Hippocrates came first and developed the humours theory, but it was Galen whose specific ideas dominated medieval medicine.',
+    explanation: 'Bloodletting removed blood to restore the balance of the Four Humours — a core medieval treatment.',
+    reasoning: 'If a patient had "too much blood" (fever, red face), removing blood was thought to bring the humours back into balance.',
   },
 
   {
-    id: 'qq_h4', subject: 'History', topic: 'Medieval Medicine',
-    difficulty: 'easy', type: 'truefalse',
-    question: 'Medieval doctors understood that bacteria caused the Black Death.',
-    correct: false,
-    explanation: 'False — germ theory wasn\'t developed until the 1860s by Pasteur.',
-    reasoning: 'In 1348, people blamed the Black Death on bad air (miasma), God\'s punishment, or planetary alignment.',
-    misconception: 'Modern hindsight makes it easy to assume past people "should have known" about germs, but the technology to see bacteria didn\'t exist.',
-  },
-
-  {
-    id: 'qq_h5', subject: 'History', topic: 'Medieval Medicine',
-    difficulty: 'easy', type: 'fillgap',
-    question: 'The Black Death arrived in England in ___.',
-    options: ['1215', '1298', '1348', '1381'],
-    correctIndex: 2,
-    explanation: 'The Black Death arrived in England in 1348 and killed roughly one third of the population.',
-    reasoning: 'The plague spread via trade routes from Asia, arriving in English ports in 1348.',
-    misconception: '1381 was the Peasants\' Revolt — a different major medieval event that\'s easy to confuse.',
-  },
-
-  {
-    id: 'qq_h6', subject: 'History', topic: 'Medieval Medicine',
-    difficulty: 'medium', type: 'fillgap',
-    question: 'Galen wrongly believed that blood was made in the ___.',
-    options: ['Heart', 'Lungs', 'Liver', 'Brain'],
-    correctIndex: 2,
-    explanation: 'Galen thought the liver continuously produced new blood. Harvey later proved blood circulates in 1628.',
-    reasoning: 'Galen dissected animals rather than humans, leading to errors he applied to human anatomy.',
-    misconception: 'Students often think Galen got the heart wrong — but his liver error is the key one to remember.',
-  },
-
-  {
-    id: 'qq_h7', subject: 'History', topic: 'Medieval Medicine',
-    difficulty: 'medium', type: 'dragdrop',
-    question: 'Sort each statement into the correct category for the Church\'s role in medieval medicine:',
-    categories: ['Helped medicine', 'Hindered medicine'],
-    items: [
-      { text: 'Ran hospitals like St Bartholomew\'s (1123)', category: 0 },
-      { text: 'Discouraged human dissection', category: 1 },
-      { text: 'Preserved Galen\'s medical texts in universities', category: 0 },
-      { text: 'Backed Galen\'s authority and discouraged questioning', category: 1 },
-    ],
-    explanation: 'The Church both helped and hindered medicine — a key theme in this topic.',
-    reasoning: 'Hospitals and text preservation were positive; however, backing Galen uncritically and banning dissection slowed progress.',
-    misconception: 'It\'s a common mistake to say the Church only hindered medicine. Balance is essential for full marks.',
-  },
-
-  {
-    id: 'qq_h8', subject: 'History', topic: 'Medieval Medicine',
+    id: 'qq_h6', subject: 'History', topic: 'Medieval Medicine', tag: 'medieval-prevention',
     difficulty: 'medium', type: 'mcq',
-    question: 'Why did the Church discourage dissection of human bodies?',
-    options: [
-      'It was too expensive and time-consuming',
-      'Physicians already knew everything from Galen',
-      'The body was sacred and needed to be whole for resurrection',
-      'Dissection tools did not yet exist',
-    ],
+    question: 'How did medieval people try to prevent disease?',
+    options: ['Washing hands regularly and boiling water', 'Taking herbal medicines and vitamins', 'Prayer, fasting, purifying the air and religious actions', 'Quarantine, vaccination and isolation'],
     correctIndex: 2,
-    explanation: 'Christian belief in bodily resurrection meant disturbing a corpse was seen as interfering with God\'s plan.',
-    reasoning: 'This restricted anatomical knowledge — Galen\'s errors went unchallenged because nobody could verify them through dissection.',
-    misconception: 'Dissection was not physically impossible — it was a Church restriction, not a technical one.',
-  },
-
-  // ════════════════════════════════════════════════════════
-  // HISTORY — Renaissance Medicine
-  // ════════════════════════════════════════════════════════
-
-  {
-    id: 'qq_h9', subject: 'History', topic: 'Renaissance Medicine',
-    difficulty: 'medium', type: 'matchpairs',
-    question: 'Match each person to their key contribution to medicine:',
-    pairs: [
-      { left: 'Vesalius', right: 'Corrected over 300 of Galen\'s anatomical errors' },
-      { left: 'Harvey', right: 'Proved that blood circulates around the body' },
-      { left: 'Paré', right: 'Improved surgical techniques; used ligatures instead of boiling oil' },
-      { left: 'Pasteur', right: 'Proved micro-organisms cause disease (germ theory)' },
-    ],
-    explanation: 'Each made a distinct breakthrough — it\'s vital to attribute the right discovery to the right person.',
-    reasoning: 'Vesalius (1543), Harvey (1628), Paré (16th C), Pasteur (1861) each advanced medicine in different fields.',
-    misconception: 'Students sometimes confuse Harvey and Vesalius — Vesalius was about anatomy, Harvey was about circulation.',
+    explanation: 'Medieval prevention focused on religion (prayer, fasting) and miasma (purifying the air by burning herbs or carrying posies).',
+    reasoning: 'Since disease was blamed on God and bad air, prevention focused on pleasing God and avoiding bad smells.',
   },
 
   {
-    id: 'qq_h10', subject: 'History', topic: 'Renaissance Medicine',
-    difficulty: 'medium', type: 'truefalse',
-    question: 'Harvey\'s discovery of blood circulation immediately improved treatments for patients.',
-    correct: false,
-    explanation: 'False — understanding the circulation did not immediately change treatment. Doctors still bled patients.',
-    reasoning: 'Knowing how the body works and knowing how to treat illness are different things. Bloodletting continued for decades.',
-    misconception: 'Students assume scientific discoveries automatically lead to better medicine — but theory and practice often lag behind each other.',
-  },
-
-  {
-    id: 'qq_h11', subject: 'History', topic: 'Renaissance Medicine',
-    difficulty: 'hard', type: 'mcq',
-    question: 'The printing press contributed to Renaissance medicine primarily by:',
-    options: [
-      'Allowing doctors to perform surgery more quickly',
-      'Spreading new ideas like Vesalius\' discoveries across Europe rapidly',
-      'Replacing the Church as the authority on medicine',
-      'Training more physicians in universities',
-    ],
-    correctIndex: 1,
-    explanation: 'The printing press (mid-15th century) meant that Vesalius\' corrected anatomy could spread quickly across Europe.',
-    reasoning: 'Before printing, books were hand-copied and rare. New ideas spread slowly. Printing accelerated the sharing of knowledge.',
-    misconception: 'The printing press didn\'t replace the Church — it made ideas harder to suppress, but Church influence continued for centuries.',
-  },
-
-  {
-    id: 'qq_h12', subject: 'History', topic: 'Renaissance Medicine',
-    difficulty: 'hard', type: 'mcq',
-    question: 'Why did Vesalius\' work represent a significant change in how medicine developed?',
-    options: [
-      'He discovered the cause of the plague',
-      'He showed doctors should observe and test rather than accept ancient authority',
-      'He proved the four humours were correct',
-      'He invented the first surgical instruments',
-    ],
-    correctIndex: 1,
-    explanation: 'Vesalius demonstrated that Galen (over 1,000 years of authority) was wrong — observation beat inherited knowledge.',
-    reasoning: 'This shift from "trust ancient authority" to "test and observe" was a fundamental change in scientific thinking.',
-    misconception: 'Vesalius didn\'t discover the cause of disease — his contribution was to anatomy and the method of observation.',
-  },
-
-  // ════════════════════════════════════════════════════════
-  // HISTORY — Industrial Revolution
-  // ════════════════════════════════════════════════════════
-
-  {
-    id: 'qq_h13', subject: 'History', topic: 'Industrial Revolution',
-    difficulty: 'medium', type: 'sequence',
-    question: 'Put these medical developments in chronological order (earliest first):',
-    items: ['Pasteur\'s germ theory (1861)', 'Black Death arrives in England (1348)', 'Vesalius publishes De Fabrica (1543)', 'Fleming discovers penicillin (1928)'],
-    correctOrder: ['Black Death arrives in England (1348)', 'Vesalius publishes De Fabrica (1543)', 'Pasteur\'s germ theory (1861)', 'Fleming discovers penicillin (1928)'],
-    explanation: 'Correct order: Black Death (1348) → De Fabrica (1543) → Germ theory (1861) → Penicillin (1928)',
-    reasoning: 'Understanding the sequence of discoveries helps you write stronger "change and continuity" exam answers.',
-  },
-
-  {
-    id: 'qq_h14', subject: 'History', topic: 'Industrial Revolution',
+    id: 'qq_h7', subject: 'History', topic: 'Medieval Medicine', tag: 'medieval-practitioners',
     difficulty: 'medium', type: 'mcq',
-    question: 'What was the significance of the 1875 Public Health Act compared to the 1848 Act?',
-    options: [
-      'The 1875 Act was also voluntary, but had more recommendations',
-      'The 1875 Act made improvements to water and sewage systems compulsory, not optional',
-      'The 1875 Act focused only on London, not the whole country',
-      'The 1875 Act was passed in response to the Great Stink of 1858',
-    ],
+    question: 'What did physicians, apothecaries and barber-surgeons each do?',
+    options: ['All three performed surgery, just at different skill levels', 'Physicians diagnosed, apothecaries made remedies, barber-surgeons carried out simple operations', 'Physicians made medicines, apothecaries diagnosed, barber-surgeons prayed for patients', 'All three were trained at the same university and did similar work'],
     correctIndex: 1,
-    explanation: 'The 1875 Act made clean water and sewage systems compulsory — the 1848 Act was optional and largely ignored.',
-    reasoning: 'The shift from voluntary to compulsory action is the key change. It marked the end of the laissez-faire attitude to public health.',
-    misconception: 'The Great Stink (1858) led to Bazalgette\'s sewers but preceded the 1875 Act. Don\'t confuse the timeline.',
+    explanation: 'Physicians (university-trained) diagnosed; apothecaries made remedies; barber-surgeons performed practical procedures.',
+    reasoning: 'Most people could only afford barber-surgeons. Physicians were expensive and for the wealthy.',
   },
 
   {
-    id: 'qq_h15', subject: 'History', topic: 'Industrial Revolution',
+    id: 'qq_h8', subject: 'History', topic: 'Medieval Medicine', tag: 'black-death',
     difficulty: 'hard', type: 'mcq',
-    question: 'Why was the government slow to improve public health in the early 19th century?',
-    options: [
-      'They did not know about the cholera epidemic',
-      'Laissez-faire attitudes and the belief government should not interfere',
-      'The medical profession opposed all government involvement',
-      'Parliament had no legal power to pass health laws',
-    ],
+    question: 'How did people respond to the Black Death in 1348?',
+    options: ['They isolated themselves and developed vaccines', 'Prayer, pilgrimages, flagellation, bloodletting and cleaning streets', 'They used antiseptic techniques and herbal antibiotics', 'They burned down infected buildings and moved to new towns'],
     correctIndex: 1,
-    explanation: 'Laissez-faire (non-interference) was the dominant political view — ratepayers didn\'t want to pay for improvements.',
-    reasoning: 'Vested interests (landlords, water companies) also resisted change. The 1848 Act being optional reflects this reluctance.',
-    misconception: 'The government did know about cholera outbreaks — the issue was political will, not knowledge.',
+    explanation: 'Responses reflected dominant theories: religious responses (prayer, flagellation) and miasma responses (cleaning streets).',
+    reasoning: 'Since people believed in God\'s punishment and miasma, they tried to appease God and remove bad air — neither stopped plague bacteria.',
+  },
+
+  // ── Q9-14: Renaissance period ─────────────────────────
+
+  {
+    id: 'qq_h9', subject: 'History', topic: 'Renaissance Medicine', tag: 'scientific-method',
+    difficulty: 'hard', type: 'mcq',
+    question: 'What changed in Renaissance medicine compared to the medieval period?',
+    options: ['Doctors stopped believing in the Four Humours', 'Observation and experimentation became more important', 'The Church stopped influencing medical education', 'Doctors began vaccinating patients against disease'],
+    correctIndex: 1,
+    explanation: 'The Renaissance brought a scientific revolution: doctors began to observe and test rather than accept ancient authority.',
+    reasoning: 'This shift in method — from "trust Galen" to "test it yourself" — was more important than any single discovery.',
   },
 
   {
-    id: 'qq_h16', subject: 'History', topic: 'Industrial Revolution',
-    difficulty: 'hard', type: 'truefalse',
-    question: 'The 1848 Public Health Act was compulsory for all local authorities to follow.',
-    correct: false,
-    explanation: 'False — the 1848 Act was optional. Local authorities could choose whether to act.',
-    reasoning: 'This is why it largely failed. Only the compulsory 1875 Act brought real nationwide improvement.',
-    misconception: 'Students who know about the 1848 Act sometimes assume it worked — but its voluntary nature made it ineffective.',
-  },
-
-  {
-    id: 'qq_h17', subject: 'History', topic: 'Industrial Revolution',
+    id: 'qq_h10', subject: 'History', topic: 'Renaissance Medicine', tag: 'vesalius',
     difficulty: 'exam', type: 'mcq',
-    question: '"Pasteur\'s germ theory was the most important development in 19th-century medicine." Which argument BEST challenges this claim?',
-    options: [
-      'Germ theory happened too late in the century to matter',
-      'Anaesthetics (1847) and public health reforms also transformed medicine and were equally or more practically impactful',
-      'Pasteur\'s theory was rejected by most doctors at the time',
-      'Koch\'s work was more important because it identified specific bacteria',
-    ],
-    correctIndex: 1,
-    explanation: 'A strong counter-argument acknowledges other major developments: anaesthetics transformed surgery; public health acts saved thousands of lives.',
-    reasoning: 'Exam-style questions require you to weigh germ theory against other factors — anaesthetics, public health, and Koch\'s specific discoveries all transformed medicine.',
-    misconception: 'Koch\'s work built ON germ theory, not against it — it\'s better used to develop the argument, not challenge it.',
+    question: 'Why was Vesalius important to the development of medicine?',
+    options: ['He discovered that bacteria caused disease', 'He invented surgical anaesthetic to prevent pain', 'He corrected Galen through careful human dissection', 'He published the first medical textbook in English'],
+    correctIndex: 2,
+    explanation: 'Vesalius used direct observation through human dissection to show Galen had made over 300 errors in his anatomy.',
+    reasoning: 'This was revolutionary — it showed that 1,400 years of authority could be wrong if you actually tested the evidence.',
+    misconception: 'Vesalius did not discover the cause of disease; his contribution was to anatomy and scientific method.',
   },
 
-  // ════════════════════════════════════════════════════════
-  // HISTORY — Modern Medicine
-  // ════════════════════════════════════════════════════════
+  {
+    id: 'qq_h11', subject: 'History', topic: 'Renaissance Medicine', tag: 'printing-press',
+    difficulty: 'medium', type: 'mcq',
+    question: 'Why was the printing press important for medical progress?',
+    options: ['It allowed doctors to communicate instantly across Europe', 'It replaced the Church as the authority on medicine', 'It spread new medical knowledge faster', 'It made medical books cheaper to buy for patients'],
+    correctIndex: 2,
+    explanation: 'The printing press (1450s) meant Vesalius\' corrected anatomy spread across Europe rapidly rather than slowly by hand-copying.',
+    reasoning: 'Before printing, new ideas were limited to a few copied manuscripts. Printing accelerated the sharing of knowledge.',
+  },
 
   {
-    id: 'qq_h18', subject: 'History', topic: 'Modern Medicine',
-    difficulty: 'easy', type: 'mcq',
-    question: 'When was the National Health Service (NHS) founded?',
-    options: ['1928', '1939', '1948', '1956'],
+    id: 'qq_h12', subject: 'History', topic: 'Renaissance Medicine', tag: 'royal-society',
+    difficulty: 'hard', type: 'mcq',
+    question: 'What did the Royal Society (founded 1660) encourage?',
+    options: ['Bloodletting and traditional medical treatments', 'Church control of all medical research', 'Publication, experimentation and sharing evidence', 'The training of more apothecaries and barber-surgeons'],
+    correctIndex: 2,
+    explanation: 'The Royal Society promoted scientific inquiry: publishing findings, running experiments and sharing evidence across Europe.',
+    reasoning: 'This institutionalised the scientific method, making observation and testing the expected standard.',
+  },
+
+  {
+    id: 'qq_h13', subject: 'History', topic: 'Renaissance Medicine', tag: 'harvey',
+    difficulty: 'exam', type: 'mcq',
+    question: 'Why was Harvey significant in the history of medicine?',
+    options: ['He proved germs caused infectious disease', 'He proved blood circulates around the body', 'He invented the stethoscope to listen to the heart', 'He performed the first successful heart surgery'],
+    correctIndex: 1,
+    explanation: 'Harvey\'s 1628 discovery proved blood circulates — contradicting Galen\'s belief that the liver continuously made new blood.',
+    reasoning: 'Though it did not immediately improve treatments, it showed the heart as a pump and laid groundwork for modern cardiovascular science.',
+    misconception: 'Harvey\'s discovery did NOT immediately improve treatments — bloodletting continued for decades after.',
+  },
+
+  {
+    id: 'qq_h14', subject: 'History', topic: 'Renaissance Medicine', tag: 'great-plague',
+    difficulty: 'hard', type: 'mcq',
+    question: 'How did London respond to the Great Plague of 1665?',
+    options: ['They discovered the plague was caused by rat fleas', 'They developed the first effective vaccine against plague', 'Plague orders, shutting houses and controlling movement', 'The government built new hospitals to treat the sick'],
+    correctIndex: 2,
+    explanation: 'London\'s response included plague orders, shutting infected houses, controlling movement and mass graves.',
+    reasoning: 'These measures reflected miasma and isolation thinking — not germ theory — but isolation did slow the spread.',
+  },
+
+  // ── Q15-24: 19th century ──────────────────────────────
+
+  {
+    id: 'qq_h15', subject: 'History', topic: '19th-Century Medicine', tag: 'pasteur',
+    difficulty: 'exam', type: 'mcq',
+    question: 'Why was Pasteur important in the history of medicine?',
+    options: ['He invented the first antibiotic drug', 'He proved Galen\'s Four Humours theory was correct', 'He provided strong evidence for Germ Theory', 'He improved hospital sanitation after the Crimean War'],
+    correctIndex: 2,
+    explanation: 'Pasteur\'s 1861 experiments proved that microbes cause decay — providing the foundation for Germ Theory.',
+    reasoning: 'This transformed medicine: if microbes cause disease, you can identify, target and prevent specific diseases.',
+    misconception: 'Pasteur proposed the theory but it was Koch who identified specific bacteria causing specific diseases.',
+  },
+
+  {
+    id: 'qq_h16', subject: 'History', topic: '19th-Century Medicine', tag: 'nightingale',
+    difficulty: 'hard', type: 'mcq',
+    question: 'How did Florence Nightingale improve hospitals?',
+    options: ['She introduced the use of anaesthetics during surgery', 'Better hygiene, nursing standards and lower death rates at Scutari', 'She campaigned for the Public Health Acts of the 1870s', 'She discovered that bacteria caused infection in wounds'],
+    correctIndex: 1,
+    explanation: 'At Scutari during the Crimean War, Nightingale improved sanitation and nursing standards, dramatically reducing death rates.',
+    reasoning: 'Her statistical evidence linking cleanliness to survival changed how hospitals were run across Britain.',
+    misconception: 'Nightingale did not understand germ theory — she focused on cleanliness from a miasma perspective, but the results were the same.',
+  },
+
+  {
+    id: 'qq_h17', subject: 'History', topic: '19th-Century Medicine', tag: 'anaesthetics',
+    difficulty: 'medium', type: 'mcq',
+    question: 'What problem did anaesthetics solve?',
+    options: ['Post-operative infection from wounds', 'Blood loss during surgery', 'Pain during surgery', 'The spread of disease between patients'],
+    correctIndex: 2,
+    explanation: 'Anaesthetics (ether 1846, chloroform 1847) allowed surgeons to operate on patients without them being conscious and in pain.',
+    reasoning: 'Before anaesthetics, surgeons worked with incredible speed. Anaesthetics allowed longer, more careful operations.',
+    misconception: 'Anaesthetics solved pain, not infection. Infection remained a major killer until Lister\'s antiseptic methods.',
+  },
+
+  {
+    id: 'qq_h18', subject: 'History', topic: '19th-Century Medicine', tag: 'antiseptic-surgery',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why was Lister\'s antiseptic surgery important?',
+    options: ['It eliminated pain during operations for the first time', 'It proved that surgeons were the main cause of infection', 'Carbolic acid reduced infection during and after operations', 'It replaced the need for anaesthetics in surgery'],
+    correctIndex: 2,
+    explanation: 'Lister used carbolic acid spray to kill germs during surgery. Death rates from post-operative infection fell dramatically.',
+    reasoning: 'Inspired by Pasteur\'s Germ Theory, Lister applied it practically — showing that controlling germs saves lives.',
+    misconception: 'Antiseptics killed germs during surgery; aseptics (sterile technique) came later to prevent germs entering in the first place.',
+  },
+
+  {
+    id: 'qq_h19', subject: 'History', topic: '19th-Century Medicine', tag: 'public-health',
+    difficulty: 'hard', type: 'mcq',
+    question: 'What did the Public Health Act of 1875 do?',
+    options: ['It created the NHS and free healthcare for all', 'It banned miasma theory in medical education', 'It forced local authorities to improve sanitation and water supplies', 'It made vaccination against smallpox compulsory'],
+    correctIndex: 2,
+    explanation: 'The 1875 Act made it compulsory for local authorities to provide clean water, sewers and sanitation — unlike the voluntary 1848 Act.',
+    reasoning: 'The shift from voluntary (1848) to compulsory (1875) is the key change. It ended the laissez-faire approach to public health.',
+  },
+
+  {
+    id: 'qq_h20', subject: 'History', topic: '19th-Century Medicine', tag: 'vaccination',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why was Jenner\'s vaccination important?',
+    options: ['It was the first cure for an infectious disease', 'It protected people against smallpox using cowpox', 'It proved that germs caused disease for the first time', 'It was the first government-funded medical programme'],
+    correctIndex: 1,
+    explanation: 'In 1796, Jenner showed that cowpox infection gave immunity to the deadly smallpox virus.',
+    reasoning: 'Vaccination was a major breakthrough in prevention — stopping disease before it started rather than treating it after.',
+    misconception: 'Jenner did not understand germ theory and could not explain WHY vaccination worked — he just showed that it did.',
+  },
+
+  {
+    id: 'qq_h21', subject: 'History', topic: '19th-Century Medicine', tag: 'john-snow',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Who was John Snow and why is he significant?',
+    options: ['The doctor who invented chloroform anaesthetic', 'The doctor who linked cholera to contaminated water', 'The surgeon who first used carbolic acid antiseptic', 'The campaigner who forced the 1875 Public Health Act'],
+    correctIndex: 1,
+    explanation: 'John Snow mapped cholera cases around the Broad Street pump in 1854, linking cholera to contaminated water.',
+    reasoning: 'His evidence-based approach challenged miasma theory and showed disease could spread through water, not just air.',
+    misconception: 'Snow was right about water contamination but did not know about germ theory — it was not proven until 1861.',
+  },
+
+  {
+    id: 'qq_h22', subject: 'History', topic: '19th-Century Medicine', tag: 'john-snow',
+    difficulty: 'exam', type: 'mcq',
+    question: 'What evidence did John Snow use to link cholera to contaminated water?',
+    options: ['He injected cholera bacteria into laboratory animals', 'He proved miasma was absent near the Broad Street pump', 'Cholera cases clustered around the Broad Street pump on his map', 'He tested water samples under a microscope for bacteria'],
+    correctIndex: 2,
+    explanation: 'Snow mapped every cholera death and found they clustered around the Broad Street water pump. Removing the handle stopped the outbreak.',
+    reasoning: 'This was epidemiology — using patterns and evidence, not laboratory proof. It was compelling even without germ theory to explain it.',
+  },
+
+  {
+    id: 'qq_h23', subject: 'History', topic: '19th-Century Medicine', tag: 'pasteur',
+    difficulty: 'hard', type: 'mcq',
+    question: 'What evidence supported Germ Theory?',
+    options: ['Lister\'s use of carbolic acid during surgery', 'John Snow\'s mapping of the cholera outbreak', 'Pasteur\'s experiments on microbes and decay', 'Nightingale\'s statistical data from Scutari'],
+    correctIndex: 2,
+    explanation: 'Pasteur\'s swan-neck flask experiments (1859-61) showed microbes cause decay — providing the basis for Germ Theory.',
+    reasoning: 'His controlled experiments proved microbes come from outside and cause change, not that matter spontaneously generates germs.',
+  },
+
+  {
+    id: 'qq_h24', subject: 'History', topic: '19th-Century Medicine', tag: 'germ-theory',
+    difficulty: 'exam', type: 'mcq',
+    question: 'How did microbiology change medicine?',
+    options: ['It proved the Four Humours theory was basically correct', 'It identified specific disease-causing microbes', 'It allowed doctors to see inside the body without surgery', 'It replaced the need for surgery in most cases'],
+    correctIndex: 1,
+    explanation: 'Microbiology allowed scientists to identify the specific bacteria or viruses causing specific diseases.',
+    reasoning: 'If you can identify the cause, you can develop targeted treatments, vaccines and prevention methods.',
+  },
+
+  // ── Q25-50: Modern medicine ───────────────────────────
+
+  {
+    id: 'qq_h25', subject: 'History', topic: 'Modern Medicine', tag: 'nhs',
+    difficulty: 'medium', type: 'fillgap',
+    question: 'The NHS was established in ___.',
+    options: ['1928', '1939', '1948', '1960'],
     correctIndex: 2,
     explanation: 'The NHS was founded on 5 July 1948 by Minister of Health Aneurin Bevan.',
-    reasoning: 'The NHS provided free healthcare for all at the point of need — a major change from paying for every treatment.',
-    misconception: '1928 is when penicillin was discovered by Fleming — a different major event.',
+    reasoning: 'This date follows WWII (which proved government could run national healthcare) and the Beveridge Report (1942).',
+    misconception: '1928 is when Fleming discovered penicillin — a different important date.',
   },
 
   {
-    id: 'qq_h19', subject: 'History', topic: 'Modern Medicine',
+    id: 'qq_h26', subject: 'History', topic: 'Modern Medicine', tag: 'nhs',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why was the NHS important when it was founded in 1948?',
+    options: ['It introduced the first effective antibiotics', 'It improved access to healthcare for everyone', 'It trained more surgeons after wartime losses', 'It replaced all private hospitals with public ones'],
+    correctIndex: 1,
+    explanation: 'The NHS provided free healthcare at point of use for all — transforming access for those who previously could not afford treatment.',
+    reasoning: 'Before 1948, many people avoided seeking medical care because they could not pay. Universal access changed life expectancy significantly.',
+  },
+
+  {
+    id: 'qq_h27', subject: 'History', topic: 'Modern Medicine', tag: 'diagnosis',
     difficulty: 'medium', type: 'mcq',
-    question: 'Fleming discovered penicillin in 1928, yet it wasn\'t available as a treatment until the 1940s. Why?',
-    options: [
-      'The government banned its use until it was fully tested',
-      'Fleming couldn\'t find a way to produce it in large enough quantities',
-      'It was kept secret during World War II',
-      'Other scientists thought his discovery was wrong',
-    ],
+    question: 'How did blood tests improve diagnosis?',
+    options: ['They allowed surgeons to operate without pain', 'They revealed internal health conditions', 'They replaced the need for X-rays in hospitals', 'They identified which antibiotic to use for infection'],
     correctIndex: 1,
-    explanation: 'Fleming could not mass-produce penicillin. Florey and Chain solved this in the early 1940s, driven by wartime need.',
-    reasoning: 'This shows how a scientific discovery and a practical treatment can be separated by years — the production problem was the barrier.',
-    misconception: 'The government didn\'t ban it — the barrier was purely a manufacturing and funding challenge.',
+    explanation: 'Blood tests reveal a wide range of internal conditions — from anaemia to diabetes to infection markers — without invasive procedures.',
+    reasoning: 'This shifted diagnosis from observation alone to laboratory evidence, making it more accurate and precise.',
   },
 
   {
-    id: 'qq_h20', subject: 'History', topic: 'Modern Medicine',
-    difficulty: 'exam', type: 'mcq',
-    question: 'Which factor was MOST important in the development of the NHS in 1948?',
-    options: [
-      'Medical advances making treatment more effective',
-      'The experience of World War II showing government could organise healthcare nationally',
-      'Public demand for free healthcare after years of poverty',
-      'New drugs like penicillin making treatment cheaper',
-    ],
+    id: 'qq_h28', subject: 'History', topic: 'Modern Medicine', tag: 'diagnosis',
+    difficulty: 'hard', type: 'mcq',
+    question: 'How did scans (X-ray, MRI, CT) improve diagnosis?',
+    options: ['They replaced the need for blood tests', 'They allowed doctors to see inside the body without surgery', 'They proved that tumours were caused by bacteria', 'They made it possible to perform surgery without anaesthetic'],
     correctIndex: 1,
-    explanation: 'WWII proved the government could organise healthcare nationally (Emergency Medical Service). Combined with Beveridge Report (1942), this created political momentum.',
-    reasoning: 'While all factors matter, WWII provided both the model (EMS) and the political will. Strong exam answers consider multiple factors before reaching a judgement.',
-    misconception: 'Penicillin made treatment more effective, not cheaper — it was expensive to produce early on.',
+    explanation: 'Imaging technology allows doctors to diagnose internal problems — broken bones, tumours, organ disease — without operating.',
+    reasoning: 'Each step in imaging (X-ray 1895 → CT → MRI) reduced the risk of diagnosis while improving accuracy.',
+  },
+
+  {
+    id: 'qq_h29', subject: 'History', topic: 'Modern Medicine', tag: 'lifestyle-factors',
+    difficulty: 'easy', type: 'mcq',
+    question: 'What are lifestyle factors in causing modern disease?',
+    options: ['Bacteria, viruses, genetics and age', 'Weather, poverty, overcrowding and pollution', 'Diet, smoking, exercise, alcohol and stress', 'Work, education, housing and income'],
+    correctIndex: 2,
+    explanation: 'Lifestyle factors are personal choices and habits — diet, smoking, exercise, alcohol and stress — that influence disease risk.',
+    reasoning: 'Understanding lifestyle factors shifted medicine towards prevention: advising people on behaviour that reduces cancer and heart disease risk.',
+  },
+
+  {
+    id: 'qq_h30', subject: 'History', topic: 'Modern Medicine', tag: 'genetics',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why are genetics important in modern medicine?',
+    options: ['They proved that all diseases are inherited', 'They replaced the need for drug treatments', 'They help explain inherited disease and risk', 'They showed that vaccination is unnecessary'],
+    correctIndex: 2,
+    explanation: 'Genetic understanding helps identify inherited conditions (like cystic fibrosis, BRCA mutations) and predict disease risk.',
+    reasoning: 'Genetics represents a new frontier: rather than just treating disease, medicine can identify risk before symptoms appear.',
+  },
+
+  {
+    id: 'qq_h31', subject: 'History', topic: 'Modern Medicine', tag: 'penicillin',
+    difficulty: 'hard', type: 'mcq',
+    question: 'How did Alexander Fleming discover penicillin in 1928?',
+    options: ['He deliberately tested mould samples on bacteria in a controlled trial', 'He noticed mould killing bacteria on an accidentally contaminated Petri dish', 'He was asked by the government to find a cure for bacterial infection', 'He extracted the compound from a naturally occurring plant'],
+    correctIndex: 1,
+    explanation: 'Fleming noticed that Penicillium mould had killed the bacteria on a contaminated Petri dish he had left uncovered.',
+    reasoning: 'This was chance (serendipity), but Fleming had the knowledge and curiosity to recognise what he was seeing.',
+    misconception: 'Fleming discovered penicillin but could not develop it into a medicine. Florey and Chain made it into an effective drug in the 1940s.',
+  },
+
+  {
+    id: 'qq_h32', subject: 'History', topic: 'Modern Medicine', tag: 'penicillin',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why was penicillin significant in the history of medicine?',
+    options: ['It was the first drug to target cancer cells', 'It became the first widely used antibiotic', 'It proved that all diseases were caused by bacteria', 'It replaced vaccination as the main way to prevent disease'],
+    correctIndex: 1,
+    explanation: 'Penicillin was the first antibiotic used widely, treating bacterial infections that had previously been fatal.',
+    reasoning: 'It transformed the danger of infection — conditions like sepsis and pneumonia that routinely killed people became treatable.',
+  },
+
+  {
+    id: 'qq_h33', subject: 'History', topic: 'Modern Medicine', tag: 'magic-bullet',
+    difficulty: 'hard', type: 'mcq',
+    question: 'What was Ehrlich\'s "magic bullet" concept?',
+    options: ['A new surgical technique that removed tumours without side effects', 'Salvarsan 606, a drug used to treat syphilis', 'A vaccine that targeted all bacterial infections at once', 'A radiation treatment for cancer developed in the 1900s'],
+    correctIndex: 1,
+    explanation: 'Ehrlich\'s idea was to find a chemical that would target and kill a specific disease without harming the patient. Salvarsan 606 targeted syphilis.',
+    reasoning: 'This was the foundation of modern pharmacology — identifying and synthesising specific drugs for specific diseases.',
+  },
+
+  {
+    id: 'qq_h34', subject: 'History', topic: 'Modern Medicine', tag: 'surgery',
+    difficulty: 'exam', type: 'mcq',
+    question: 'How did surgery improve in the 20th century?',
+    options: ['Surgeons no longer needed anaesthetics due to training improvements', 'Better anaesthetics, antiseptics, imaging and technology', 'Blood transfusion made anaesthetic unnecessary for short operations', 'Surgery became less common as drugs replaced most operations'],
+    correctIndex: 1,
+    explanation: 'Surgery improved through safer anaesthetics, aseptic technique, blood transfusions, imaging and new technology such as keyhole surgery.',
+    reasoning: 'Each development reduced a specific risk: anaesthetics removed pain, aseptics removed infection, transfusions managed blood loss.',
+  },
+
+  {
+    id: 'qq_h35', subject: 'History', topic: 'Modern Medicine', tag: 'war-and-medicine',
+    difficulty: 'hard', type: 'mcq',
+    question: 'How did war accelerate medical progress?',
+    options: ['Doctors had more patients to experiment on', 'It accelerated advances in surgery, transfusions and treatment due to urgent need', 'Governments banned old treatments and forced doctors to use new ones', 'Wartime shortages forced doctors to discover natural alternatives'],
+    correctIndex: 1,
+    explanation: 'War created urgent need for medical solutions: WWI accelerated blood transfusion and plastic surgery; WWII mass-produced penicillin.',
+    reasoning: 'War is a "push factor" — the scale of casualties demanded rapid innovation and made governments fund research.',
+  },
+
+  {
+    id: 'qq_h36', subject: 'History', topic: '19th-Century Medicine', tag: 'communication',
+    difficulty: 'medium', type: 'mcq',
+    question: 'Why is communication important in medical progress?',
+    options: ['It helps patients describe their symptoms more clearly', 'It spreads new ideas quickly across countries', 'It allows governments to pass health legislation', 'It makes medical training cheaper and more accessible'],
+    correctIndex: 1,
+    explanation: 'Communication (printing press, journals, internet) allows medical discoveries to spread globally, speeding up progress.',
+    reasoning: 'Without communication, each country reinvents discoveries independently. Good communication means knowledge builds on itself.',
+  },
+
+  {
+    id: 'qq_h37', subject: 'History', topic: 'Medieval Medicine', tag: 'medieval-practitioners',
+    difficulty: 'medium', type: 'mcq',
+    question: 'What was the main role of medieval hospitals?',
+    options: ['Performing surgery and treating injuries', 'Training doctors and apothecaries', 'Care and shelter rather than cure', 'Testing new treatments for the Church'],
+    correctIndex: 2,
+    explanation: 'Medieval hospitals (mostly Church-run) provided rest, prayer and care — not medical treatment in the modern sense.',
+    reasoning: 'Since medieval medicine could not cure disease, hospitals offered spiritual care and comfortable conditions to help the body heal naturally.',
+  },
+
+  {
+    id: 'qq_h38', subject: 'History', topic: 'Medieval Medicine', tag: 'four-humours',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why were medieval treatments often ineffective?',
+    options: ['Doctors did not care about their patients', 'Governments refused to fund medical research', 'They relied on incorrect theories and limited knowledge', 'Medieval people were more vulnerable to disease than modern people'],
+    correctIndex: 2,
+    explanation: 'Medieval treatments were based on the Four Humours, miasma and religion — theories fundamentally wrong about the causes of disease.',
+    reasoning: 'You cannot develop effective treatments without understanding the true cause. Wrong theories lead to wrong treatments.',
+  },
+
+  {
+    id: 'qq_h39', subject: 'History', topic: 'Renaissance Medicine', tag: 'vesalius',
+    difficulty: 'hard', type: 'mcq',
+    question: 'What was a key Renaissance anatomy breakthrough?',
+    options: ['The discovery of bacteria and viruses for the first time', 'More accurate human dissection showing Galen\'s errors', 'The invention of the microscope to study cells', 'Using X-rays to study skeletal structure'],
+    correctIndex: 1,
+    explanation: 'Renaissance anatomists, especially Vesalius, used direct human dissection to build accurate anatomical knowledge for the first time.',
+    reasoning: 'Medieval anatomy was based on Galen who used animals. Dissection revealed major errors and created a new foundation.',
+  },
+
+  {
+    id: 'qq_h40', subject: 'History', topic: '19th-Century Medicine', tag: 'germ-theory',
+    difficulty: 'hard', type: 'mcq',
+    question: 'What was one key result of Germ Theory being accepted?',
+    options: ['Hospitals banned bloodletting and humour treatments', 'Greater focus on hygiene and sanitation', 'Governments immediately funded large hospitals', 'Medieval treatments were quickly replaced by antibiotics'],
+    correctIndex: 1,
+    explanation: 'Germ Theory showed that specific microbes cause disease, so preventing germ spread through hygiene and sanitation became a priority.',
+    reasoning: 'This connected germ theory to practical public health: clean water, sewers and hospital cleanliness all became understood as germ-prevention.',
+  },
+
+  {
+    id: 'qq_h41', subject: 'History', topic: '19th-Century Medicine', tag: 'john-snow',
+    difficulty: 'exam', type: 'mcq',
+    question: 'Why was the Broad Street pump important to the history of medicine?',
+    options: ['It was the first public water supply in London', 'It proved that cholera spread through bad air', 'It provided evidence that cholera spread through water', 'It led directly to the passing of the 1848 Public Health Act'],
+    correctIndex: 2,
+    explanation: 'John Snow\'s 1854 investigation showed all cholera deaths centred around the Broad Street pump. Removing the handle stopped the outbreak.',
+    reasoning: 'This was a landmark in epidemiology: evidence-based medicine challenging miasma theory through careful mapping.',
+  },
+
+  {
+    id: 'qq_h42', subject: 'History', topic: '19th-Century Medicine', tag: 'vaccination',
+    difficulty: 'medium', type: 'mcq',
+    question: 'What does vaccination do?',
+    options: ['Kills bacteria already causing an infection', 'Reduces pain and inflammation in the body', 'Creates immunity against a disease', 'Repairs damage caused by disease to organs'],
+    correctIndex: 2,
+    explanation: 'Vaccination introduces a weakened or harmless form of a pathogen, training the immune system to fight it without causing disease.',
+    reasoning: 'This is prevention rather than treatment — stopping disease before it starts, the key principle behind immunisation programmes.',
+  },
+
+  {
+    id: 'qq_h43', subject: 'History', topic: '19th-Century Medicine', tag: 'public-health',
+    difficulty: 'hard', type: 'mcq',
+    question: 'How did public health improve in the 19th century?',
+    options: ['The government funded research into new medicines', 'Better sewers, clean water and sanitation', 'Hospitals were built in every major town', 'Vaccination was made compulsory for all citizens'],
+    correctIndex: 1,
+    explanation: 'Key improvements were infrastructure: Bazalgette\'s sewers (1858), clean piped water and legislation forcing councils to maintain sanitation.',
+    reasoning: 'These reduced cholera, typhoid and waterborne diseases — mass deaths that vaccination or drugs could not address.',
+  },
+
+  {
+    id: 'qq_h44', subject: 'History', topic: '19th-Century Medicine', tag: 'antiseptic-surgery',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why did some doctors resist using antiseptics?',
+    options: ['Carbolic acid was too expensive for most hospitals', 'They had no access to the equipment needed', 'They resisted ideas that challenged existing practice', 'They thought anaesthetics were more important first'],
+    correctIndex: 2,
+    explanation: 'Many experienced surgeons resisted Lister\'s methods — they had built careers on existing techniques and found it hard to accept they were causing patient deaths.',
+    reasoning: 'This is a pattern in medical history: even good ideas face resistance from those with status and practice invested in the old approach.',
+    misconception: 'The resistance was not about cost or equipment — it was professional conservatism.',
+  },
+
+  {
+    id: 'qq_h45', subject: 'History', topic: 'Modern Medicine', tag: 'wwi-medicine',
+    difficulty: 'medium', type: 'mcq',
+    question: 'What is triage in medicine?',
+    options: ['The process of removing shrapnel from wounds', 'Prioritising patients according to injury severity and survival chances', 'Transporting injured soldiers from the battlefield', 'Using antiseptic on wounds to prevent infection'],
+    correctIndex: 1,
+    explanation: 'Triage prioritises treatment: treating those most likely to survive first rather than first-come-first-served.',
+    reasoning: 'Developed on WWI battlefields, triage maximises lives saved when there are more casualties than medical capacity.',
+  },
+
+  {
+    id: 'qq_h46', subject: 'History', topic: 'Modern Medicine', tag: 'wwi-medicine',
+    difficulty: 'exam', type: 'mcq',
+    question: 'Why was the First World War important for medical progress?',
+    options: ['It proved that penicillin could treat bacterial infections', 'It accelerated surgery, transfusions, X-rays, plastic surgery and evacuation methods', 'It led directly to the founding of the NHS in 1918', 'It ended miasma theory by proving wounds were infected by germs'],
+    correctIndex: 1,
+    explanation: 'WWI forced rapid advances: blood transfusions, X-ray units (Marie Curie), plastic surgery (Harold Gillies), the Thomas Splint and systematic evacuation chains.',
+    reasoning: 'The scale of casualties created urgent need. What might have taken decades of research happened in years under wartime pressure.',
+  },
+
+  {
+    id: 'qq_h47', subject: 'History', topic: 'Modern Medicine', tag: 'koch',
+    difficulty: 'exam', type: 'mcq',
+    question: 'Who was Robert Koch and why was he significant?',
+    options: ['He discovered penicillin by noticing mould killing bacteria', 'He proved blood circulates by pumping fluid through heart valves', 'He identified specific bacteria causing diseases such as TB and cholera', 'He invented the first effective vaccine against typhoid'],
+    correctIndex: 2,
+    explanation: 'Koch identified the bacteria causing tuberculosis (1882) and cholera (1883), proving specific germs cause specific diseases.',
+    reasoning: 'This built on Pasteur\'s germ theory: Koch showed not just that germs cause disease, but which specific germ causes which disease.',
+  },
+
+  {
+    id: 'qq_h48', subject: 'History', topic: '19th-Century Medicine', tag: 'anaesthetics',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why was James Simpson important?',
+    options: ['He invented the smallpox vaccination using cowpox', 'He introduced chloroform as an anaesthetic', 'He developed antiseptic techniques using carbolic acid', 'He built the first hospital for the poor in Edinburgh'],
+    correctIndex: 1,
+    explanation: 'Simpson introduced chloroform as an anaesthetic in 1847, providing a more reliable alternative to ether.',
+    reasoning: 'Chloroform was easier to administer than ether and allowed longer, more complex surgeries to be performed safely.',
+  },
+
+  {
+    id: 'qq_h49', subject: 'History', topic: 'Modern Medicine', tag: 'factors-in-change',
+    difficulty: 'exam', type: 'mcq',
+    question: 'What is the overall pattern of medical progress across history?',
+    options: ['Rapid and consistent improvement driven mainly by individual genius', 'Gradual change influenced by science, war, government, communication and individuals', 'Sudden leaps forward after each major war with long gaps between', 'Progress driven mainly by government investment and public demand'],
+    correctIndex: 1,
+    explanation: 'Medical progress is gradual, multi-causal and uneven. Multiple factors interact: science, war, government, communication and chance.',
+    reasoning: 'No single factor explains all progress. Strong exam answers consider the interaction of factors rather than crediting one cause.',
+  },
+
+  {
+    id: 'qq_h50', subject: 'History', topic: 'Modern Medicine', tag: 'factors-in-change',
+    difficulty: 'easy', type: 'mcq',
+    question: 'Which areas are most important to revise for Medicine Through Time?',
+    options: ['Dates, statistics and the names of all hospitals', 'Key individuals, case studies, factors and chronological developments', 'The exact texts of every Public Health Act', 'The specific symptoms of each disease covered in the topic'],
+    correctIndex: 1,
+    explanation: 'Exam success requires knowing key people (Pasteur, Jenner, Snow), case studies (Black Death, WWI), factors and the sequence of developments.',
+    reasoning: 'Edexcel exam questions focus on individuals, factors driving change, and continuity/change over time — not exhaustive factual lists.',
+  },
+
+  // ── Q51-70: Higher grade ──────────────────────────────
+
+  {
+    id: 'qq_h51', subject: 'History', topic: 'Renaissance Medicine', tag: 'scientific-method',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Who was Thomas Sydenham and why was he known as the "English Hippocrates"?',
+    options: ['He rewrote Galen\'s medical texts in English for the first time', 'He invented surgical tools used for over 200 years', 'He emphasised careful observation of patients and symptoms', 'He proved that bacteria caused most infectious diseases'],
+    correctIndex: 2,
+    explanation: 'Sydenham (1624-89) was called the "English Hippocrates" because he returned to careful clinical observation rather than relying on ancient theory.',
+    reasoning: 'He classified diseases by symptoms and treated what he observed — this empirical approach helped move medicine away from dogma.',
+  },
+
+  {
+    id: 'qq_h52', subject: 'History', topic: 'Renaissance Medicine', tag: 'scientific-method',
+    difficulty: 'exam', type: 'mcq',
+    question: 'Why was Sydenham important to the development of medicine?',
+    options: ['He discovered the first effective treatment for malaria', 'He improved diagnosis by classifying diseases based on symptoms', 'He founded the Royal Society and promoted experimentation', 'He proved that the Four Humours theory was incorrect'],
+    correctIndex: 1,
+    explanation: 'Sydenham classified diseases based on careful symptom observation, improving diagnosis and moving away from theoretical explanations.',
+    reasoning: 'His approach — observe, classify, treat — was a critical step in systematic clinical medicine, influencing doctors for centuries.',
+  },
+
+  {
+    id: 'qq_h53', subject: 'History', topic: 'Renaissance Medicine', tag: 'vesalius',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Who was William Hunter?',
+    options: ['A physician who discovered the smallpox vaccine', 'An anatomist who improved understanding of human anatomy through dissection', 'The surgeon who first used antiseptics in operations', 'The doctor who built London\'s first public hospital'],
+    correctIndex: 1,
+    explanation: 'William Hunter (1718-83) was a leading Scottish anatomist who advanced knowledge of human anatomy through systematic dissection.',
+    reasoning: 'Hunter built on Vesalius\' tradition of direct observation and trained many surgeons, spreading accurate anatomical knowledge widely.',
+  },
+
+  {
+    id: 'qq_h54', subject: 'History', topic: 'Renaissance Medicine', tag: 'vesalius',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why was William Hunter significant for medicine?',
+    options: ['He invented a new anaesthetic that made surgery painless', 'He trained surgeons and improved anatomical knowledge', 'He proved that blood types determine compatibility for transfusion', 'He developed a vaccine that protected against multiple diseases'],
+    correctIndex: 1,
+    explanation: 'Hunter trained many surgeons through his Great Windmill Street school, spreading accurate anatomical knowledge widely.',
+    reasoning: 'Improving medical education was as important as making discoveries — trained surgeons with correct anatomy saved far more lives than one individual could.',
+  },
+
+  {
+    id: 'qq_h55', subject: 'History', topic: 'Modern Medicine', tag: 'koch',
+    difficulty: 'exam', type: 'mcq',
+    question: 'What specific contribution did Robert Koch make to Germ Theory?',
+    options: ['He proved that microbes exist by viewing them under a microscope', 'He showed that different diseases are caused by different microorganisms', 'He developed vaccines for tuberculosis and cholera', 'He proved that Pasteur\'s germ theory was wrong in several areas'],
+    correctIndex: 1,
+    explanation: 'Koch proved that different specific microorganisms cause different specific diseases — TB has one cause, cholera another.',
+    reasoning: 'Pasteur showed microbes cause disease; Koch showed which microbe causes which disease, enabling targeted treatment and vaccination.',
+    misconception: 'Koch did not disprove Pasteur — he extended and proved germ theory with specific, identifiable bacteria.',
+  },
+
+  {
+    id: 'qq_h56', subject: 'History', topic: 'Modern Medicine', tag: 'koch',
+    difficulty: 'exam', type: 'truefalse',
+    question: 'Robert Koch proved that one type of germ can cause multiple different diseases.',
+    correct: false,
+    explanation: 'False — Koch proved the opposite: different diseases are caused by different specific microorganisms.',
+    reasoning: 'This "one germ, one disease" principle is fundamental to modern medicine — it means you can target a specific pathogen to treat a specific disease.',
+  },
+
+  {
+    id: 'qq_h57', subject: 'History', topic: 'Modern Medicine', tag: 'koch',
+    difficulty: 'exam', type: 'mcq',
+    question: 'Why was Koch important for developing Germ Theory further?',
+    options: ['He replicated Pasteur\'s experiments and confirmed all his findings', 'He provided evidence linking specific microbes to specific diseases', 'He invented the microscope used to view bacteria', 'He showed that Pasteur had made errors in his original work'],
+    correctIndex: 1,
+    explanation: 'Koch isolated TB bacteria (1882) and cholera bacteria (1883), providing definitive proof that specific germs cause specific diseases.',
+    reasoning: 'This moved medicine from "germs cause disease" (Pasteur) to "this specific germ causes this specific disease" (Koch) — enabling targeted diagnosis.',
+  },
+
+  {
+    id: 'qq_h58', subject: 'History', topic: 'Modern Medicine', tag: 'magic-bullet',
+    difficulty: 'hard', type: 'mcq',
+    question: 'What was Salvarsan 606?',
+    options: ['The 606th patient treated with Ehrlich\'s first antibiotic', 'Ehrlich\'s magic bullet drug used to treat syphilis', 'A vaccine against syphilis developed after 606 failed trials', 'The name of Ehrlich\'s laboratory where penicillin was discovered'],
+    correctIndex: 1,
+    explanation: 'Salvarsan 606 was Ehrlich\'s 606th compound tested — it successfully targeted syphilis bacteria without killing the patient.',
+    reasoning: 'The name "606" reflects the systematic trial-and-error approach Ehrlich used, testing hundreds of compounds to find one that worked.',
+  },
+
+  {
+    id: 'qq_h59', subject: 'History', topic: 'Modern Medicine', tag: 'magic-bullet',
+    difficulty: 'exam', type: 'mcq',
+    question: 'Why was Ehrlich\'s work on magic bullets important?',
+    options: ['It showed that vaccination was unnecessary if drugs could cure disease', 'It showed diseases could be targeted with specific drugs', 'It proved that bacteria could be killed by mould compounds', 'It provided the foundation for the NHS drug funding model'],
+    correctIndex: 1,
+    explanation: 'Ehrlich showed it was possible to design a drug that targeted and killed a specific pathogen — the foundation of modern pharmacology.',
+    reasoning: 'The "magic bullet" concept led directly to the development of antibiotics and chemotherapy: chemicals designed to destroy specific targets.',
+  },
+
+  {
+    id: 'qq_h60', subject: 'History', topic: 'Modern Medicine', tag: 'wwi-medicine',
+    difficulty: 'hard', type: 'mcq',
+    question: 'What were the main causes of death and injury on the Western Front in WWI?',
+    options: ['Gas attacks and starvation were the primary killers', 'Infection and disease were major threats alongside wounds', 'Blood loss from bullet wounds was responsible for most deaths', 'Cold and hypothermia killed more soldiers than combat injuries'],
+    correctIndex: 1,
+    explanation: 'Infected wounds (especially gas gangrene in trenches), diseases like dysentery and typhoid, and physical trauma all caused mass casualties.',
+    reasoning: 'The scale and nature of WWI injuries created unprecedented medical challenges requiring treatment never before attempted at such scale.',
+  },
+
+  {
+    id: 'qq_h61', subject: 'History', topic: 'Modern Medicine', tag: 'wwi-medicine',
+    difficulty: 'exam', type: 'mcq',
+    question: 'What was the Chain of Evacuation in WWI?',
+    options: ['A supply line bringing medical equipment to field hospitals', 'A system moving wounded soldiers from battlefield to hospital', 'The process of evacuating civilians from bombed towns', 'A communication chain passing medical orders from generals to doctors'],
+    correctIndex: 1,
+    explanation: 'The Chain of Evacuation moved wounded soldiers: Regimental Aid Post → Field Ambulance → Casualty Clearing Station → Base Hospital → home.',
+    reasoning: 'This progressive treatment system matched severity of treatment to severity of injury, getting soldiers into surgical care faster.',
+  },
+
+  {
+    id: 'qq_h62', subject: 'History', topic: 'Modern Medicine', tag: 'wwi-medicine',
+    difficulty: 'exam', type: 'mcq',
+    question: 'Why was the Chain of Evacuation important?',
+    options: ['It freed up battlefield commanders from making medical decisions', 'It improved survival rates by providing organised, progressive treatment', 'It reduced the cost of treating wounded soldiers', 'It allowed doctors to remain safe away from the front line'],
+    correctIndex: 1,
+    explanation: 'By organising treatment in stages from first aid to surgery to recovery, the Chain of Evacuation meant wounds were treated before they became fatal.',
+    reasoning: 'Organisation and speed were key: a wound that would kill in hours if untreated could be survived if surgery reached the patient quickly.',
+  },
+
+  {
+    id: 'qq_h63', subject: 'History', topic: 'Modern Medicine', tag: 'wwi-medicine',
+    difficulty: 'hard', type: 'mcq',
+    question: 'What role did X-rays play in WWI medicine?',
+    options: ['They were used to diagnose shell shock and psychological trauma', 'They helped locate bullets and shrapnel inside the body', 'They were used to sterilise wounds and kill bacteria', 'They proved that gas gangrene spread through the blood'],
+    correctIndex: 1,
+    explanation: 'Marie Curie organised mobile X-ray units that could locate metal fragments inside wounded soldiers without exploratory surgery.',
+    reasoning: 'Finding shrapnel before surgery saved time, reduced trauma and improved surgical success rates — accelerating X-ray adoption in peacetime medicine.',
+  },
+
+  {
+    id: 'qq_h64', subject: 'History', topic: 'Modern Medicine', tag: 'wwi-medicine',
+    difficulty: 'exam', type: 'mcq',
+    question: 'Who was Harold Gillies and what did he contribute?',
+    options: ['A general who developed the Chain of Evacuation system', 'The doctor who discovered blood types, enabling transfusions', 'A surgeon who pioneered plastic surgery during WWI', 'The physician who proved shell shock was a real medical condition'],
+    correctIndex: 2,
+    explanation: 'Harold Gillies developed plastic surgery techniques at Sidcup to repair severe facial injuries caused by WWI weapons, treating over 5,000 cases.',
+    reasoning: 'His techniques — skin grafts, rebuilding facial structure — created the foundation for modern plastic and reconstructive surgery.',
+  },
+
+  {
+    id: 'qq_h65', subject: 'History', topic: 'Modern Medicine', tag: 'wwi-medicine',
+    difficulty: 'exam', type: 'mcq',
+    question: 'What was the Thomas Splint and why was it important in WWI?',
+    options: ['A surgical instrument used to extract shrapnel from wounds', 'A device used to stabilise fractured legs and reduce deaths', 'A stretcher designed to move patients without causing further injury', 'A breathing device used in chemical weapon attacks'],
+    correctIndex: 1,
+    explanation: 'The Thomas Splint stabilised fractured femurs, preventing fatal blood loss and shock. Death rates from fractured femurs fell from ~80% to ~20%.',
+    reasoning: 'This single device saved thousands of lives by solving a specific problem: immobilising a broken leg without causing the movement that killed patients.',
+  },
+
+  {
+    id: 'qq_h66', subject: 'History', topic: 'Modern Medicine', tag: 'wwi-medicine',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why was blood transfusion important in WWI?',
+    options: ['It proved that blood could be stored and used later', 'It helped save severely wounded soldiers suffering blood loss', 'It allowed surgeons to operate without anaesthetic', 'It replaced the need for antiseptics to treat infected wounds'],
+    correctIndex: 1,
+    explanation: 'Blood transfusion saved soldiers who would otherwise die from blood loss. WWI also developed blood storage techniques for later use.',
+    reasoning: 'The scale of WWI casualties forced rapid development of transfusion practice, creating the knowledge base for modern blood banks.',
+  },
+
+  {
+    id: 'qq_h67', subject: 'History', topic: 'Modern Medicine', tag: 'lifestyle-factors',
+    difficulty: 'hard', type: 'mcq',
+    question: 'Why is lung cancer a significant case study in modern medicine?',
+    options: ['It was the first cancer treated successfully with chemotherapy', 'It showed how lifestyle factors such as smoking can cause disease', 'It proved that genetics determines who gets cancer', 'It led to the creation of the NHS screening programme'],
+    correctIndex: 1,
+    explanation: 'The link between smoking and lung cancer (established from the 1950s) showed how personal behaviour choices cause specific diseases.',
+    reasoning: 'This shifted medicine from treating disease to preventing it through lifestyle change — and drove major public health campaigns against smoking.',
+  },
+
+  {
+    id: 'qq_h68', subject: 'History', topic: 'Modern Medicine', tag: 'genetics',
+    difficulty: 'hard', type: 'mcq',
+    question: 'How has understanding DNA improved medicine?',
+    options: ['It has allowed doctors to replace surgery with gene editing', 'It helps identify inherited conditions and develop targeted treatments', 'It proved that all diseases are inherited through families', 'It made vaccines unnecessary for most infectious diseases'],
+    correctIndex: 1,
+    explanation: 'DNA knowledge allows medicine to identify inherited conditions (e.g. BRCA mutations for breast cancer) and develop targeted treatments.',
+    reasoning: 'Genetic medicine represents a new frontier: treating disease at its source (the DNA code) rather than managing symptoms.',
+  },
+
+  {
+    id: 'qq_h69', subject: 'History', topic: 'Modern Medicine', tag: 'genetics',
+    difficulty: 'exam', type: 'mcq',
+    question: 'What was the Human Genome Project?',
+    options: ['A programme to test all UK citizens for inherited disease', 'A project to develop gene therapy for cancer treatment', 'An international project that mapped the complete human DNA code', 'A research project into the genetic causes of the Black Death'],
+    correctIndex: 2,
+    explanation: 'Completed in 2003, the Human Genome Project mapped all 3 billion base pairs of human DNA — providing a complete blueprint of the human genetic code.',
+    reasoning: 'This foundation enables research into the genetic basis of disease, targeted drug development and personalised medicine.',
+  },
+
+  {
+    id: 'qq_h70', subject: 'History', topic: 'Modern Medicine', tag: 'factors-in-change',
+    difficulty: 'exam', type: 'mcq',
+    question: 'Which factors have been most important in driving medical progress across history?',
+    options: ['Science alone — all other factors are secondary', 'Government funding and public demand', 'Science and technology, individuals, government, war, communication and chance', 'War and chance discoveries, with science following after'],
+    correctIndex: 2,
+    explanation: 'Medical progress results from multiple interacting factors: science/technology, key individuals, government, war, communication and chance.',
+    reasoning: 'No single factor can explain the history of medicine. Strong exam answers consider which factor mattered most in a specific context.',
   },
 
   // ════════════════════════════════════════════════════════

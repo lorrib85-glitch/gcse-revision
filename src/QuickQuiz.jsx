@@ -10,9 +10,9 @@ function getWeaknesses() {
   try { return JSON.parse(localStorage.getItem(WK_KEY) || '{}') } catch { return {} }
 }
 
-function recordAnswer(subject, topic, correct) {
+function recordAnswer(subject, topic, correct, tag) {
   const w = getWeaknesses()
-  const k = `${subject}/${topic}`
+  const k = `${subject}/${tag || topic}`
   if (!w[k]) w[k] = { c: 0, i: 0 }
   correct ? w[k].c++ : w[k].i++
   localStorage.setItem(WK_KEY, JSON.stringify(w))
@@ -62,7 +62,7 @@ function shuffle(arr) {
 function selectSessionQuestions(mode = 'random') {
   const weaknesses = getWeaknesses()
   const all = QUICK_QUIZ_QUESTIONS.map(q => {
-    const k = `${q.subject}/${q.topic}`
+    const k = `${q.subject}/${q.tag || q.topic}`
     const w = weaknesses[k] || { c: 0, i: 0 }
     const total = w.c + w.i
     const errorRate = total > 0 ? w.i / total : 0.5
@@ -75,7 +75,7 @@ function selectSessionQuestions(mode = 'random') {
     // Find the weakest topics (error rate > 0, sorted worst first)
     const topicScores = {}
     all.forEach(q => {
-      const k = `${q.subject}/${q.topic}`
+      const k = `${q.subject}/${q.tag || q.topic}`
       if (!topicScores[k]) topicScores[k] = q._priority
     })
     const weakTopics = new Set(
@@ -85,8 +85,8 @@ function selectSessionQuestions(mode = 'random') {
         .slice(0, 6)
         .map(([k]) => k)
     )
-    const weakQ  = shuffle(all.filter(q => weakTopics.has(`${q.subject}/${q.topic}`)))
-    const otherQ = shuffle(all.filter(q => !weakTopics.has(`${q.subject}/${q.topic}`)))
+    const weakQ  = shuffle(all.filter(q => weakTopics.has(`${q.subject}/${q.tag || q.topic}`)))
+    const otherQ = shuffle(all.filter(q => !weakTopics.has(`${q.subject}/${q.tag || q.topic}`)))
     // Weak areas first, padded with general questions, across all difficulties
     session = [...weakQ, ...otherQ].slice(0, 26)
   } else {
@@ -649,7 +649,7 @@ export default function QuickQuiz({ mode = 'random', onClose, onOpenModule }) {
     setAnswered(true)
     setIsCorrect(correct)
     const q = questions[idx]
-    recordAnswer(q.subject, q.topic, correct)
+    recordAnswer(q.subject, q.topic, correct, q.tag)
     const newStreak = correct ? streak + 1 : 0
     setStreak(newStreak)
     setBestStreak(bs => Math.max(bs, newStreak))
