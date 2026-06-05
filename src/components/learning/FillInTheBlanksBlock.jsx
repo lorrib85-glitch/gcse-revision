@@ -1,5 +1,10 @@
 import { useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { SPACING } from '../../constants/spacing.js'
+import { MOTION } from '../../constants/motion.js'
+import { RADII } from '../../constants/radii.js'
+import { TYPE } from '../../constants/typography.js'
+import { BUTTONS } from '../../constants/buttons.js'
 
 function levenshtein(a, b) {
   const m = a.length, n = b.length
@@ -40,6 +45,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
   const [results, setResults] = useState(() => sentences.map(() => null))
   const [checked, setChecked] = useState(false)
   const [focusIdx, setFocusIdx] = useState(null)
+  const [pressed, setPressed] = useState(false)
 
   const allCorrect = sentences.length > 0 && results.every(r => r?.correct === true)
   const anyFilled  = Object.values(values).some(v => v.trim().length > 0)
@@ -65,7 +71,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
   }
 
   return (
-    <div style={{ margin: '14px 0' }}>
+    <div style={{ marginTop: SPACING.compact }}>
       <style>{`
         .fitb-input { outline: none; }
         .fitb-input::placeholder { color: rgba(234,247,240,0.28); font-style: italic; }
@@ -73,22 +79,29 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
           from { opacity: 0; transform: translateY(4px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes fitb-card-in {
+          from { opacity: 0; transform: translateY(10px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
       `}</style>
 
-      {/* ✦ Close answers count note */}
+      {/* Badge */}
       <div style={{
         display: 'inline-flex', alignItems: 'center', gap: 6,
-        background: `rgba(${rgb},0.07)`,
-        borderRadius: 6, padding: '3px 11px',
-        marginBottom: 20,
+        background: `rgba(${rgb},0.06)`,
+        border: `1px solid rgba(${rgb},0.18)`,
+        borderRadius: RADII.pill,
+        padding: '4px 12px',
+        marginBottom: SPACING.compact,
       }}>
-        <span style={{ fontSize: '.72rem', color: accent }}>✦</span>
         <span style={{
           fontFamily: "'Sora', sans-serif",
-          fontSize: '.72rem', fontWeight: 500,
-          color: accent, opacity: 0.72,
-          letterSpacing: '.02em',
+          fontSize: '12px', fontWeight: 600,
+          color: accent,
+          letterSpacing: '0.04em',
+          textTransform: 'uppercase',
         }}>Close answers count</span>
+        <span style={{ fontSize: '10px', color: accent, opacity: 0.6 }}>✦</span>
       </div>
 
       {/* Questions */}
@@ -98,24 +111,50 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
         const isWrong   = checked && res?.correct === false
         const isFocused = focusIdx === i
 
+        const borderOpacity = isCorrect ? '0.50' : isFocused ? '0.34' : '0.16'
         const borderColor = isCorrect
-          ? `rgba(${rgb},0.70)`
+          ? `rgba(${rgb},0.72)`
           : isWrong
-            ? `rgba(${rgb},0.35)`
+            ? `rgba(${rgb},0.38)`
             : isFocused
               ? `rgba(${rgb},0.55)`
               : `rgba(${rgb},0.22)`
 
-        return (
-          <div key={i}>
-            <div style={{ height: 1, background: `rgba(${rgb},0.12)`, margin: '18px 0' }} />
+        const cardShadow = isCorrect
+          ? `inset 0 1px 0 rgba(${rgb},0.24), 0 0 28px rgba(${rgb},0.10), 0 4px 20px rgba(0,0,0,0.32)`
+          : isFocused
+            ? `inset 0 1px 0 rgba(${rgb},0.18), 0 4px 20px rgba(0,0,0,0.32)`
+            : `inset 0 1px 0 rgba(${rgb},0.10), 0 4px 20px rgba(0,0,0,0.28)`
 
-            <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '15px', lineHeight: 1.75, color: '#EAF7F0',
+        return (
+          <div
+            key={i}
+            style={{
+              background: `linear-gradient(160deg, rgba(${rgb},0.07) 0%, rgba(0,0,0,0.22) 100%)`,
+              border: `1px solid rgba(${rgb},${borderOpacity})`,
+              boxShadow: cardShadow,
+              borderRadius: RADII.medium,
+              padding: `${SPACING.compact}px ${SPACING.compact}px 14px`,
+              marginBottom: SPACING.compact,
+              transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+              animation: `fitb-card-in ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+              animationDelay: `${i * 90}ms`,
+            }}
+          >
+            {/* Step counter */}
+            <span style={{
+              ...TYPE.metadata,
+              textTransform: 'uppercase',
+              color: `rgba(${rgb},0.48)`,
+              marginBottom: SPACING.micro,
+              display: 'block',
             }}>
+              {String(i + 1).padStart(2, '0')}
+            </span>
+
+            <div style={{ ...TYPE.bodySmall, color: '#EAF7F0' }}>
               {s.before && (
-                <p style={{ margin: '0 0 10px' }}>{s.before}</p>
+                <p style={{ margin: `0 0 ${SPACING.micro}px` }}>{s.before}</p>
               )}
 
               <input
@@ -130,44 +169,49 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
                 placeholder="Type answer..."
                 style={{
                   display: 'block',
-                  width: 'min(320px, 75%)',
-                  background: 'transparent',
-                  border: 'none',
-                  borderBottom: `1.5px solid ${borderColor}`,
-                  padding: '3px 8px 6px',
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: '15px', fontWeight: 500,
+                  width: '100%',
+                  background: 'rgba(0,0,0,0.28)',
+                  border: `1.5px solid ${borderColor}`,
+                  borderRadius: RADII.small,
+                  padding: '11px 14px',
+                  ...TYPE.bodySmall,
+                  fontWeight: 500,
                   color: isCorrect ? accent : '#EAF7F0',
-                  transition: 'border-color .2s, color .2s',
+                  textShadow: isCorrect ? `0 0 20px ${accent}55` : 'none',
+                  boxShadow: isFocused && !isCorrect ? `0 0 0 3px rgba(${rgb},0.12)` : 'none',
+                  transition: `border-color ${MOTION.duration.fast} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.fast} ${MOTION.easing.gentle}, color ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
                   cursor: isCorrect ? 'default' : 'text',
+                  boxSizing: 'border-box',
                 }}
               />
 
               {s.after && (
-                <p style={{ margin: '10px 0 0' }}>{s.after}</p>
+                <p style={{ margin: `${SPACING.micro}px 0 0` }}>{s.after}</p>
               )}
             </div>
 
             {/* Correct feedback */}
             {isCorrect && (
               <div style={{
-                marginTop: 8,
-                fontFamily: "'Sora', sans-serif",
-                fontSize: '13px', lineHeight: 1.55,
-                color: accent, opacity: 0.88,
+                marginTop: SPACING.micro,
+                ...TYPE.metadata,
+                fontWeight: 600,
+                color: accent,
+                textShadow: `0 0 14px ${accent}44`,
                 animation: 'fitb-fade-in 300ms ease forwards',
               }}>
-                ✓ {s.feedback || `Correct.`}
+                ✓ {s.feedback || 'Correct.'}
               </div>
             )}
 
-            {/* Wrong nudge — no boxes, no hints, just a quiet prompt */}
+            {/* Wrong nudge */}
             {isWrong && (
               <div style={{
-                marginTop: 8,
-                fontFamily: "'Sora', sans-serif",
-                fontSize: '13px', lineHeight: 1.55,
-                color: `rgba(234,247,240,0.42)`,
+                marginTop: SPACING.micro,
+                ...TYPE.metadata,
+                borderLeft: `2px solid rgba(${rgb},0.30)`,
+                paddingLeft: SPACING.micro,
+                color: 'rgba(245,238,225,0.45)',
               }}>
                 Not quite — adjust your answer and check again.
               </div>
@@ -176,16 +220,19 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
         )
       })}
 
-      <div style={{ height: 1, background: `rgba(${rgb},0.12)`, margin: '18px 0 24px' }} />
-
       {/* CTA */}
       <button
         onClick={allCorrect ? handleContinue : handleCheck}
         disabled={!anyFilled}
+        onMouseDown={() => setPressed(true)}
+        onMouseUp={() => setPressed(false)}
+        onMouseLeave={() => setPressed(false)}
+        onTouchStart={() => setPressed(true)}
+        onTouchEnd={() => setPressed(false)}
         style={{
           width: '100%',
-          height: 64,
-          borderRadius: '15px',
+          height: BUTTONS.primary.height,
+          borderRadius: BUTTONS.primary.borderRadius,
           background: allCorrect
             ? `linear-gradient(135deg, ${accent}, rgba(${rgb},0.72))`
             : `rgba(${rgb},0.10)`,
@@ -193,14 +240,16 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
           cursor: anyFilled ? 'pointer' : 'default',
           opacity: anyFilled ? 1 : 0.45,
           fontFamily: "'Sora', sans-serif",
-          fontSize: '16px', fontWeight: 700,
+          fontSize: BUTTONS.primary.fontSize,
+          fontWeight: BUTTONS.primary.fontWeight,
           color: allCorrect ? '#0A0804' : accent,
-          letterSpacing: '-0.01em',
-          boxShadow: allCorrect ? `0 4px 28px rgba(${rgb},0.22)` : 'none',
-          transition: 'all 350ms cubic-bezier(0.22,1,0.36,1)',
+          letterSpacing: '-0.02em',
+          boxShadow: allCorrect ? `0 4px 28px rgba(${rgb},0.28)` : 'none',
+          transition: `all ${BUTTONS.primary.transition}`,
+          transform: pressed && anyFilled ? `scale(${MOTION.scale.press})` : 'scale(1)',
         }}
       >
-        {allCorrect ? 'Continue →' : checked ? 'Check Again' : 'Check Answers'}
+        {allCorrect ? 'Continue →' : checked ? 'Try again' : 'Check answers'}
       </button>
     </div>
   )
