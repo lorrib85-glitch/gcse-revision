@@ -18,6 +18,7 @@ import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getImprovements } from './progress.js'
 import { getWeakTopics, getWeakestSubject } from './unifiedWeaknessTracker.js'
 import { MODULES } from './modules.js'
+import { TAG_MODULE_MAP, findTaggedScreen } from './data/tagModuleMap.js'
 import ModulePlayer, { getAllConfidenceRatings } from './components/layout/ModulePlayer.jsx'
 import ChapterCompleteScreen from './components/layout/ChapterCompleteScreen.jsx'
 import ExamQuestionFrame from './components/feedback/ExamQuestionFrame.jsx'
@@ -502,8 +503,8 @@ export default function App() {
     setProgress(safeGetProgress())
   }, [])
 
-  function openModule(mod) {
-    openModulePlayer(mod)
+  function openModule(mod, screenIndex) {
+    openModulePlayer(mod, screenIndex)
   }
 
   function openModulePlayer(mod, screenIndex) {
@@ -753,6 +754,25 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
     } catch { return null }
   })()
 
+  // Top unvisited gap module — if a tag has a high error rate and its module hasn't been started
+  const homeGapModule = (() => {
+    try {
+      const top = Object.entries(getQuizWeaknesses())
+        .map(([key, v]) => { const t = v.c + v.i; return { tag: key.split('/')[1], total: t, rate: t > 0 ? v.i / t : 0 } })
+        .filter(x => x.total >= 2 && x.rate > 0.4)
+        .sort((a, b) => b.rate - a.rate)
+      for (const w of top) {
+        const modId = TAG_MODULE_MAP[w.tag]
+        if (!modId) continue
+        const mod = MODULES.find(m => m.id === modId)
+        if (!mod) continue
+        const state = safeGetModuleState(mod.id)
+        if ((state.screen || 0) === 0) return { mod, tag: w.tag }
+      }
+      return null
+    } catch { return null }
+  })()
+
   const atmosphereSubject = jumpBackModule?.subject || 'History'
   const theme = SUBJECTS[atmosphereSubject] || SUBJECTS.History
   const accent = theme.accent
@@ -866,7 +886,13 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
 
         {/* ── Close the gap ── pushed to bottom of screen above nav */}
         <button
-          onClick={() => onOpenSubjects && onOpenSubjects()}
+          onClick={() => {
+            if (homeGapModule && onOpenModule) {
+              onOpenModule(homeGapModule.mod, findTaggedScreen(homeGapModule.mod, homeGapModule.tag))
+            } else {
+              onOpenSubjects && onOpenSubjects()
+            }
+          }}
           style={{
             marginTop: 'auto', position: 'relative', overflow: 'hidden',
             display: 'block', width: '100%', background: '#08090D', border: 'none',
@@ -912,7 +938,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
                 Close the gap.
               </div>
               <div style={{ ...TYPE.bodySmall, color: 'rgba(255,255,255,0.38)' }}>
-                This will make the biggest impact.
+                {homeGapModule ? homeGapModule.mod.title : 'This will make the biggest impact.'}
               </div>
             </div>
 
@@ -921,7 +947,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
               display: 'inline-flex', alignItems: 'center', gap: 5,
               ...TYPE.bodySmall, color: accent, fontWeight: 500,
             }}>
-              See focus topics
+              {homeGapModule ? `Study ${homeGapModule.tag.replace(/-/g, ' ')}` : 'See focus topics'}
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M3 7H11M8 4L11 7L8 10" stroke={accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -4145,6 +4171,10 @@ function pickQuickFireRecommendation(memory, roundStats) {
 
 
 
+function getQuizWeaknesses() {
+  try { return JSON.parse(localStorage.getItem('gcse_quiz_weaknesses') || '{}') } catch { return {} }
+}
+
 function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}) {
   const [mathsOpen, setMathsOpen]   = useState(false)
   const [englishOpen, setEnglishOpen]     = useState(false)
@@ -4724,6 +4754,31 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
       ? `${improvement}% improvement`
       : accuracy >= 60 ? 'Great work!' : 'Keep going!'
 
+    const QUIZ_SUBJECT_ACCENT = {
+      History:   { color: '#F5B700', bg: 'rgba(245,183,0,.14)',   border: 'rgba(245,183,0,.3)'   },
+      Biology:   { color: '#38D27A', bg: 'rgba(56,210,122,.14)',  border: 'rgba(56,210,122,.3)'  },
+      Chemistry: { color: '#8B4DFF', bg: 'rgba(139,77,255,.14)',  border: 'rgba(139,77,255,.3)'  },
+      Maths:     { color: '#3B82FF', bg: 'rgba(59,130,255,.14)',  border: 'rgba(59,130,255,.3)'  },
+      English:   { color: '#9D5CFF', bg: 'rgba(157,92,255,.14)',  border: 'rgba(157,92,255,.3)'  },
+      Sociology: { color: '#FF5C7A', bg: 'rgba(255,92,122,.14)',  border: 'rgba(255,92,122,.3)'  },
+    }
+    const gapModules = Object.entries(getQuizWeaknesses())
+      .map(([key, v]) => {
+        const t = v.c + v.i
+        return { key, tag: key.split('/')[1], total: t, rate: t > 0 ? v.i / t : 0 }
+      })
+      .filter(x => x.total >= 2 && x.rate > 0.4)
+      .sort((a, b) => b.rate - a.rate)
+      .reduce((acc, w) => {
+        const modId = TAG_MODULE_MAP[w.tag]
+        if (!modId) return acc
+        const mod = MODULES.find(m => m.id === modId)
+        if (!mod || acc.some(a => a.mod.id === modId)) return acc
+        acc.push({ mod, tag: w.tag, rate: w.rate })
+        return acc
+      }, [])
+      .slice(0, 3)
+
     return (
       <div style={{ background:'radial-gradient(circle at 50% -10%, rgba(101,230,198,.08), transparent 42%), #08090D', minHeight:'100vh', padding:'18px 20px calc(150px + env(safe-area-inset-bottom))', color:'#F4EFE6' }}>
         <div style={{ maxWidth:480, margin:'0 auto' }}>
@@ -4784,6 +4839,40 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
               ))}
             </div>
           </div>
+
+          {gapModules.length > 0 && (
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:11 }}>
+                <span style={{ fontSize:'.68rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857' }}>
+                  {gapModules.length === 1 ? 'Your biggest gap' : 'Your biggest gaps'}
+                </span>
+              </div>
+              {gapModules.map(({ mod, tag }) => {
+                const sc = QUIZ_SUBJECT_ACCENT[mod.subject] || QUIZ_SUBJECT_ACCENT.History
+                const screenIdx = findTaggedScreen(mod, tag)
+                return (
+                  <button
+                    key={mod.id}
+                    onClick={() => onOpenModule && onOpenModule(mod, screenIdx)}
+                    style={{ width:'100%', textAlign:'left', marginBottom:10, background:'#10182B', border:'1px solid rgba(255,200,87,.25)', borderRadius:14, padding:'14px 16px', display:'flex', alignItems:'center', gap:13, cursor:'pointer' }}
+                  >
+                    <div style={{ width:44, height:44, borderRadius:12, flexShrink:0, background:sc.bg, border:`1px solid ${sc.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem' }}>
+                      {mod.icon || '📚'}
+                    </div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:'.87rem', fontWeight:700, color:'#F5F7FB', marginBottom:2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+                        {mod.title}
+                      </div>
+                      <div style={{ fontSize:'.72rem', color:'#FFC857', textTransform:'capitalize' }}>
+                        {tag.replace(/-/g, ' ')}
+                      </div>
+                    </div>
+                    <span style={{ color:'#5A6480', fontSize:'1rem', flexShrink:0 }}>›</span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
 
           <button onClick={() => recommendedModule && onOpenModule ? onOpenModule(recommendedModule) : exitTestTopic()} style={{ width:'100%', background:'linear-gradient(145deg, rgba(16,24,43,.96), rgba(9,15,31,.96))', border:'1px solid rgba(62,78,118,.55)', borderRadius:18, padding:'18px', marginBottom:20, display:'flex', alignItems:'center', gap:16, textAlign:'left', cursor:'pointer', boxShadow:'0 14px 36px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.04)' }}>
             <div style={{ width:54, height:54, borderRadius:'50%', overflow:'hidden', flexShrink:0 }}>
