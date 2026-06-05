@@ -540,19 +540,19 @@ export const MODULES = [
         ctaLabel: 'Explore the Zodiac Man',
         hotspots: [
           {
-            id: 'head', x: 50, y: 16,
+            id: 'head', x: 50, y: 26,
             shortLabel: 'Head', title: 'Head — Aries', icon: '♈',
             description: 'Linked to Aries. Doctors believed zodiac signs influenced different body parts and that treatment should align with planetary positions.',
             extraFact: 'A physician might refuse to bleed a patient if the moon was in the sign governing that body part.',
           },
           {
-            id: 'chest', x: 50, y: 35,
+            id: 'chest', x: 50, y: 37,
             shortLabel: 'Chest', title: 'Chest & Heart', icon: '♌',
             description: 'Associated with Leo and signs affecting the upper body. Timing of treatment — especially bloodletting — was sometimes chosen using these charts.',
             extraFact: 'Some medical texts included detailed astrological calendars showing the best and worst days for different treatments.',
           },
           {
-            id: 'stomach', x: 50, y: 49,
+            id: 'stomach', x: 50, y: 47,
             shortLabel: 'Stomach', title: 'Stomach & Digestion', icon: '♍',
             description: 'Linked to Virgo and digestion. The combination of humours and astrology created a complex system of overlapping explanations.',
             extraFact: 'Not every doctor relied equally on astrology — university-trained physicians used it more than barber surgeons or wise women.',
