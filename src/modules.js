@@ -132,6 +132,7 @@ export const MODULES = [
         stage: 'Understand',
         tag: 'four-humours',
         label: 'Hippocrates',
+        portrait: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
         name: 'Hippocrates',
         role: 'Ancient Greek doctor',
         sections: [
