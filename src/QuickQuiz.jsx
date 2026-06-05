@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { QUICK_QUIZ_QUESTIONS } from './data/quickQuizData.js'
 import { MODULES } from './modules.js'
+import { TAG_MODULE_MAP } from './data/tagModuleMap.js'
 
 // ─── Weakness tracking ────────────────────────────────────────────────────────
 
@@ -420,11 +421,19 @@ function ResultsScreen({ score, total, streak, bestStreak, answeredQ, onRetry, o
   // Label for try-again button footer
   const tryAgainSubjects = weakSubjects.slice(0, 2).map(w => w.subject).join(' & ')
 
-  // All-time weak areas from localStorage
-  const allTimeWeak = Object.entries(getWeaknesses())
-    .map(([key, v]) => { const t = v.c + v.i; return { key, total: t, rate: t > 0 ? v.i / t : 0 } })
+  // Resolve gap tags → deduplicated module cards (worst first, cap 3)
+  const gapModules = Object.entries(getWeaknesses())
+    .map(([key, v]) => { const t = v.c + v.i; return { key, tag: key.split('/')[1], total: t, rate: t > 0 ? v.i / t : 0 } })
     .filter(x => x.total >= 2 && x.rate > 0.4)
     .sort((a, b) => b.rate - a.rate)
+    .reduce((acc, w) => {
+      const modId = TAG_MODULE_MAP[w.tag]
+      if (!modId) return acc
+      const mod = MODULES.find(m => m.id === modId)
+      if (!mod || acc.some(a => a.mod.id === modId)) return acc
+      acc.push({ mod, tag: w.tag, rate: w.rate })
+      return acc
+    }, [])
     .slice(0, 3)
 
   return (
@@ -538,19 +547,45 @@ function ResultsScreen({ score, total, streak, bestStreak, answeredQ, onRetry, o
           </div>
         )}
 
-        {/* All-time focus areas */}
-        {allTimeWeak.length > 0 && (
-          <div style={{ background: 'rgba(255,200,87,.05)', border: '1px solid rgba(255,200,87,.15)', borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
-              <span>🎯</span>
-              <span style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#FFC857' }}>Topics to revisit</span>
+        {/* Biggest gaps — module cards */}
+        {gapModules.length > 0 && (
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontSize: '.68rem', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#FFC857', marginBottom: 11 }}>
+              {gapModules.length === 1 ? 'Your biggest gap' : 'Your biggest gaps'}
             </div>
-            {allTimeWeak.map(w => (
-              <div key={w.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
-                <span style={{ fontSize: '.82rem', color: '#E0E6F0' }}>{w.key.replace('/', ' — ')}</span>
-                <span style={{ fontSize: '.72rem', color: '#FFC857', fontWeight: 700 }}>{Math.round(w.rate * 100)}% needs work</span>
-              </div>
-            ))}
+            {gapModules.map(({ mod, tag }) => {
+              const sc = SUBJECT_COLOUR[mod.subject] || SUBJECT_COLOUR.History
+              return (
+                <button
+                  key={mod.id}
+                  onClick={() => onOpenModule?.(mod)}
+                  style={{
+                    width: '100%', textAlign: 'left', marginBottom: 10,
+                    background: '#10182B',
+                    border: '1px solid rgba(255,200,87,.25)',
+                    borderRadius: 14, padding: '14px 16px',
+                    display: 'flex', alignItems: 'center', gap: 13,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                    background: sc.bg, border: `1px solid ${sc.border}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1.3rem',
+                  }}>{mod.icon || '📚'}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '.87rem', fontWeight: 700, color: '#F5F7FB', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {mod.title}
+                    </div>
+                    <div style={{ fontSize: '.72rem', color: '#FFC857', textTransform: 'capitalize' }}>
+                      {tag.replace(/-/g, ' ')}
+                    </div>
+                  </div>
+                  <span style={{ color: '#5A6480', fontSize: '1rem', flexShrink: 0 }}>›</span>
+                </button>
+              )
+            })}
           </div>
         )}
       </div>
