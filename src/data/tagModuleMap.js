@@ -1,5 +1,13 @@
 // Maps question tags to the most relevant module ID.
 // Used by the results screen to surface module content after identifying gaps.
+
+// Returns the index of the first screen in a module tagged with the given tag,
+// or undefined if no screen matches (caller opens module from the start).
+export function findTaggedScreen(mod, tag) {
+  const idx = (mod.screens || []).findIndex(s => s.tag === tag)
+  return idx >= 0 ? idx : undefined
+}
+
 export const TAG_MODULE_MAP = {
   // Medieval
   'four-humours':           'history-medicine-medieval-beliefs-causes',

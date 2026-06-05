@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { QUICK_QUIZ_QUESTIONS } from './data/quickQuizData.js'
 import { MODULES } from './modules.js'
-import { TAG_MODULE_MAP } from './data/tagModuleMap.js'
+import { TAG_MODULE_MAP, findTaggedScreen } from './data/tagModuleMap.js'
 
 // ─── Weakness tracking ────────────────────────────────────────────────────────
 
@@ -555,10 +555,11 @@ function ResultsScreen({ score, total, streak, bestStreak, answeredQ, onRetry, o
             </div>
             {gapModules.map(({ mod, tag }) => {
               const sc = SUBJECT_COLOUR[mod.subject] || SUBJECT_COLOUR.History
+              const screenIdx = findTaggedScreen(mod, tag)
               return (
                 <button
                   key={mod.id}
-                  onClick={() => onOpenModule?.(mod)}
+                  onClick={() => onOpenModule?.(mod, screenIdx)}
                   style={{
                     width: '100%', textAlign: 'left', marginBottom: 10,
                     background: '#10182B',

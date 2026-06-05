@@ -130,8 +130,8 @@ export const MODULES = [
       {
         type: 'keyFigureReveal',
         stage: 'Understand',
+        tag: 'four-humours',
         label: 'Hippocrates',
-        portrait: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
         name: 'Hippocrates',
         role: 'Ancient Greek doctor',
         sections: [
@@ -239,6 +239,7 @@ export const MODULES = [
       {
         type: 'keyFigureReveal',
         stage: 'Understand',
+        tag: 'galen',
         label: 'Galen',
         portrait: '/figures/history/medicine/medieval/galen-portrait.webp',
         name: 'Galen',
@@ -416,6 +417,7 @@ export const MODULES = [
         type: 'guidedChoiceCarousel',
         stage: 'Challenge',
         id: 'healer-carousel',
+        tag: 'medieval-practitioners',
         label: 'Choose Your Healer',
         headline: 'Thomas has a fever.\nHe\'s coughing blood.',
         question: 'Who should he trust?',
@@ -510,6 +512,7 @@ export const MODULES = [
         type: 'conceptReveal',
         id: 'post-choice',
         stage: 'Understand',
+        tag: 'miasma',
         label: 'Miasma — The Poisoned Air Theory',
         steps: [
           {
@@ -1789,6 +1792,7 @@ Do NOT award marks for identifying practices without explaining the religious re
         ]
       },
       {
+        tag: 'anaesthetics',
         label: 'Pain',
         kicker: 'Problem 1 · Pain',
         heading: 'Anaesthetics: Finally, Less Screaming',
@@ -1864,6 +1868,7 @@ Do NOT award marks for identifying practices without explaining the religious re
         ]
       },
       {
+        tag: 'antiseptic-surgery',
         label: 'Infection',
         kicker: 'Problem 2 · Infection',
         heading: 'Antiseptics: The Acid Febreze Era',
@@ -1970,6 +1975,7 @@ Do NOT award marks for identifying practices without explaining the religious re
     },
     screens: [
       {
+        tag: 'germ-theory',
         label: 'Old Ideas',
         kicker: 'Before Germ Theory',
         heading: 'Old Ideas Refused To Die',
@@ -1987,6 +1993,7 @@ Do NOT award marks for identifying practices without explaining the religious re
         ]
       },
       {
+        tag: 'vaccination',
         label: 'Jenner',
         kicker: '1796',
         heading: 'Jenner develops the smallpox vaccine.',
@@ -2004,6 +2011,7 @@ Do NOT award marks for identifying practices without explaining the religious re
         ],
       },
       {
+        tag: 'pasteur',
         label: 'Pasteur',
         kicker: '1861',
         heading: 'Louis Pasteur: The Wine Detective',
@@ -2022,6 +2030,7 @@ Do NOT award marks for identifying practices without explaining the religious re
         ]
       },
       {
+        tag: 'koch',
         label: 'Koch',
         kicker: 'Key Person 2',
         heading: 'Robert Koch: "Cool, But WHICH Germ?"',
@@ -2230,6 +2239,7 @@ Do NOT award marks for identifying practices without explaining the religious re
         ]
       },
       {
+        tag: 'john-snow',
         label: 'John Snow',
         kicker: 'Key Person 2',
         heading: 'John Snow: The Soho Water Mystery',
@@ -2247,6 +2257,7 @@ Do NOT award marks for identifying practices without explaining the religious re
         ]
       },
       {
+        tag: 'public-health',
         label: 'Government Acts',
         kicker: 'Government Action',
         heading: 'Public Health Acts: 1848 and 1875',
@@ -3051,6 +3062,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       // Screen 2 — Ehrlich & Magic Bullets
       {
+        tag: 'magic-bullet',
         label: 'Magic Bullets',
         kicker: '1909',
         heading: 'Could medicine target bacteria directly?',
@@ -3086,6 +3098,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       // Screen 3 — Fleming's Accident
       {
+        tag: 'penicillin',
         label: 'Fleming\'s Discovery',
         kicker: '1928',
         heading: 'The mould nobody cleaned up.',
@@ -3193,6 +3206,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       // Screen 6 — WWII & Mass Production
       {
+        tag: 'wwi-medicine',
         label: 'WWII & Production',
         kicker: '1941–1945',
         heading: 'War speeds everything up.',
