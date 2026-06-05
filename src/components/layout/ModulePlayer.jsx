@@ -28,6 +28,7 @@ import TheoryLab from '../learning/TheoryLab.jsx'
 import VisualLearning from '../learning/VisualLearning.jsx'
 import KeyFigureReveal from '../learning/KeyFigureReveal.jsx'
 import InteractiveCollectionExplorer from '../learning/InteractiveCollectionExplorer.jsx'
+import MedicalTheoryPrescription from '../learning/MedicalTheoryPrescription.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -2206,6 +2207,25 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           items={cur.items || []}
           synthesis={cur.synthesis || null}
           onContinue={isLast ? handleFinish : () => go(1)}
+        />
+      </>
+    )
+  }
+
+  // ── Medical theory prescription — cause → prescription → reveal ──────────────
+  if (cur?.type === 'medicalTheoryPrescription') {
+    return (
+      <>
+        <LearningHeader
+          module={module}
+          currentStage={currentStage}
+          onBack={headerOnBack}
+          onExit={onBack}
+          visible={true}
+        />
+        <MedicalTheoryPrescription
+          screen={cur}
+          onComplete={isLast ? handleFinish : () => go(1)}
         />
       </>
     )
