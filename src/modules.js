@@ -964,10 +964,863 @@ Do NOT award marks for identifying practices without explaining the religious re
     ],
   },
 
+  // ─── The Black Death, 1348–1349 ───────────────────────────────────────────
+  {
+    id: 'history-medicine-black-death',
+    subject: 'History',
+    number: 2,
+    title: 'Death comes from the east',
+    subtitle: 'The Black Death, 1348–1349',
+    era: 'c.1348–c.1350',
+    icon: '☠️',
+    color: '#8C3A2A',
+    colorLight: 'rgba(140,58,42,0.12)',
+    headerImage: '/figures/history/medicine/black-death/plague-background.png',
+
+    hook: {
+      statement: 'Medieval doctors had no useful treatment for the Black Death.',
+      isTrue: true,
+      accentWords: ['no useful treatment'],
+      backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+      explanation: 'True. Medieval doctors tried everything they knew — bloodletting, purging, prayer, burning herbs. None of it worked. The actual cause — bacteria spread by fleas on rats — would not be discovered for another 500 years.',
+      revealBeats: [
+        'True.',
+        'Medieval doctors tried everything they knew.',
+        'Bloodletting. Purging. Prayer. Burning aromatic herbs against the smell.',
+        'None of it worked.',
+        'The actual cause — bacteria spread by fleas on rats — would not be discovered for another 500 years.',
+      ],
+    },
+
+    outcomes: {
+      bullets: [
+        { text: 'Where the Black Death came from and how it spread',  icon: 'map'      },
+        { text: 'What medieval people believed caused it',            icon: 'question' },
+        { text: 'Why those beliefs led to useless treatments',        icon: 'medicine' },
+        { text: 'How the plague changed England forever',             icon: 'legacy'   },
+      ],
+    },
+
+    screens: [
+
+      // ── Section 1: Intro / Recall / Roadmap ─────────────────────────────────
+
+      {
+        type: 'priorKnowledgeRecall',
+        chapterTitle: 'Medieval medicine: beliefs and causes of disease',
+        prompt: 'What do you remember from the last chapter?',
+        backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+        sourceContent: `GCSE History: Medieval Medicine — Beliefs and Causes of Disease (c.1250–c.1500)
+
+Key figures:
+Hippocrates (ancient Greek doctor) argued illness had natural causes, not punishment from gods. He promoted observation of symptoms, recording of cases, and logical reasoning. His Four Humours theory said health depended on balance between four bodily fluids: blood, phlegm, yellow bile, and black bile. Imbalance caused disease.
+
+Galen (Roman doctor, c.129–216 AD) built on Hippocrates. He treated gladiators, dissected animals, and wrote medical books copied and taught in universities for over 1,400 years. His Theory of Opposites: treat illness with its opposite quality — a hot, feverish illness with cold remedies; a cold, wet condition with warm, dry treatments. Galen made errors (blood made in liver; heart septum had holes), but the Church backed his authority so he was rarely questioned.
+
+Causes of disease — four main theories:
+1. Four Humours: disease caused by imbalance of blood, phlegm, yellow bile, or black bile.
+2. God and sin: illness was God's punishment for sin, or a test of faith. Treatments: prayer, confession, repentance, pilgrimage, fasting, visiting holy relics.
+3. Miasma: bad air from rotting matter, sewers, marshes caused disease. The smell itself was believed to carry illness.
+4. Astrology: planets and zodiac signs influenced the body. Physicians used the Zodiac Man diagram and astrological calendars to time treatments. The Paris Medical Faculty blamed the Black Death on a triple conjunction of Saturn, Jupiter, and Mars in 1345.
+
+Medical practitioners:
+- Physician: university-trained, expensive, used Latin, diagnosed via uroscopy (examining urine colour using a jordan flask and urine charts) and astrological charts.
+- Barber surgeon: practical tradesman, moderate cost, performed bloodletting (removing blood by cutting a vein or applying leeches), tooth-pulling, and minor surgery.
+- Wise woman: no formal training, cheapest option, used herbal remedies and poultices. Most accessible to ordinary people in villages.
+- Priest: offered spiritual treatment — prayer, blessing, repentance. Believed illness began with sin.
+
+Treatments:
+- Bloodletting: removing blood (by cutting or leeches) to restore humoral balance.
+- Purging: inducing vomiting or diarrhoea to expel excess humours.
+- Herbal remedies, diet change, rest: cooling foods (cucumber) for fever; dry foods for cold conditions.
+- Prayer, pilgrimage, confession, fasting: for illness believed to be caused by God.
+
+The Church's role:
+The Church ran hospitals (St Bartholomew's, founded 1123) and copied ancient medical texts in monasteries. It preserved and promoted Galen's work because his ideas of bodily balance fitted Christian views of perfect divine design. The Church discouraged human dissection (belief in bodily resurrection) and made questioning Galen's authority difficult. This slowed medical progress significantly.
+
+Why medieval ideas survived so long:
+The Church preserved ancient texts and backed Galen's authority. Without microscopes or germ theory, no better explanation existed. Humoral logic was internally consistent — wrong premises, logical conclusions. Some treatments accidentally helped (rest, fluids, herbal remedies), making the flawed theory seem credible. Multiple explanations coexisted — people believed God, humours, miasma, and astrology simultaneously.`,
+        concepts: [
+          { tag: 'hippocrates',             label: 'Hippocrates' },
+          { tag: 'four-humours',            label: 'Four humours' },
+          { tag: 'galen',                   label: 'Galen' },
+          { tag: 'theory-of-opposites',     label: 'Theory of Opposites' },
+          { tag: 'miasma',                  label: 'Miasma theory' },
+          { tag: 'god-punishment',          label: 'God and sin' },
+          { tag: 'astrology',               label: 'Astrology and the zodiac man' },
+          { tag: 'bloodletting',            label: 'Bloodletting' },
+          { tag: 'church-role',             label: 'Church\'s role in medicine' },
+          { tag: 'supernatural-vs-natural', label: 'Supernatural vs natural causes' },
+          { tag: 'why-ideas-survived',      label: 'Why medieval ideas survived so long' },
+        ],
+      },
+
+      // ── Section 2: The arrival ───────────────────────────────────────────────
+
+      {
+        type: 'visualNarrative',
+        stage: 'The arrival',
+        label: 'England, 1348',
+        beats: [
+          {
+            image: '/figures/history/medicine/black-death/medieval-town.png',
+            label: 'ENGLAND, 1348',
+            headline: 'Something is coming.',
+            body: 'Rumours had been arriving for months. A terrible sickness. Killing everyone it touched.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/empty-town.png',
+            imageOpacity: 0.6,
+            facts: [
+              'In June 1348, ships docked at Melcombe in Dorset.',
+              'Within weeks, people began to die.',
+              'The disease moved fast — through towns, villages, and monasteries.',
+              'By 1350, it had reached Scotland.',
+            ],
+            conclusion: 'No one knew what it was.\n\nNo one knew how to stop it.',
+          },
+        ],
+      },
+
+      {
+        type: 'visualLearning',
+        stage: 'The arrival',
+        label: 'Where did it come from?',
+        scenes: [
+          {
+            image: '/figures/history/medicine/black-death/medieval-town.png',
+            headline: 'It began in central Asia.',
+            body: 'Possibly in the late 1330s. From there, it moved west along the trade routes that connected Asia to Europe.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/medieval-town.png',
+            headline: 'Trade routes carried death.',
+            body: 'Ships moving across the Mediterranean brought infected rats and fleas from port to port. By 1347, it had reached Sicily and southern Europe.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/medieval-town.png',
+            headline: 'England, 1348.',
+            body: 'Arriving through southern ports, the plague spread north. It reached London by autumn 1348 and had swept the country by 1350.',
+          },
+          {
+            finalReveal: true,
+            headline: 'Nowhere was safe.',
+            body: 'The plague killed an estimated one-third of Europe\'s population — roughly 25 million people — in just four years.',
+          },
+        ],
+      },
+
+      {
+        type: 'visualLearning',
+        stage: 'The arrival',
+        label: 'The scale of the disaster',
+        scenes: [
+          {
+            image: '/figures/history/medicine/black-death/empty-town.png',
+            headline: 'In England, between one-third and one-half of the entire population died.',
+            body: 'In some villages, no one survived. Whole communities ceased to exist.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/empty-town.png',
+            headline: 'Bodies piled up faster than they could be buried.',
+            body: 'Mass graves — plague pits — were dug outside towns. Normal burial rites became impossible.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/empty-town.png',
+            headline: 'Three types. All deadly.',
+            body: 'Bubonic (swellings in groin and armpit, spread by flea bites). Pneumonic (lung infection, spread through the air). Septicaemic (blood poisoning, almost always fatal).',
+          },
+          {
+            finalReveal: true,
+            headline: 'The symptoms were unmistakeable.',
+            body: 'Egg-sized swellings. Fever. Blackened skin. Death within days. Medieval people had never seen anything like it.',
+          },
+        ],
+      },
+
+      {
+        type: 'progressionTimeline',
+        stage: 'The arrival',
+        label: 'Symptoms of the plague',
+        title: 'How the plague killed',
+        description: 'Follow the progression of bubonic plague through the body.',
+        stages: [
+          { day: '1–2',  label: 'Flea bite',        description: 'A flea carrying Yersinia pestis bacteria bites the skin. The bacteria enter the lymphatic system.' },
+          { day: '3–5',  label: 'Buboes form',       description: 'Painful egg-sized swellings (buboes) appear in lymph nodes — groin, armpit, or neck.' },
+          { day: '5–7',  label: 'High fever',        description: 'Severe fever, chills, headache and extreme exhaustion as the body fights a losing battle.' },
+          { day: '7–10', label: 'Black patches',     description: 'Black patches of dead tissue appear on the skin. Internal bleeding causes dark discolouration.' },
+          { day: '10+',  label: 'Death or survival', description: 'Most victims died within 10 days. A small number survived, possibly due to natural immunity.' },
+        ],
+      },
+
+      // ── Section 3: Medieval explanations ────────────────────────────────────
+
+      {
+        type: 'guidedChoiceCarousel',
+        stage: 'Medieval explanations',
+        id: 'plague-belief-carousel',
+        tag: 'plague-explanations',
+        label: 'What would you believe?',
+        headline: 'Agnes has the plague.\nHer village is terrified.',
+        question: 'You have no microscope. No germ theory. What do you think caused this?',
+        helperText: 'Swipe to explore the explanations.',
+        promptVisual: { src: '/figures/history/medicine/black-death/medieval-town.png', alt: 'Medieval village during the plague' },
+        options: [
+          {
+            title: 'God\'s punishment',
+            image: '/headers/history-medicine-medieval-scripture.png',
+            sections: [
+              { heading: 'The logic',        items: ['Sin brings punishment', 'Only God can cure it', 'Repentance = recovery'] },
+              { heading: 'Who believed this', items: ['Church', 'Most ordinary people', 'Priests'] },
+              { heading: 'Treatments',       items: ['Prayer', 'Fasting', 'Flagellation'] },
+            ],
+            reaction: '"The Lord is punishing us for our sins."',
+            buttonText: 'Choose God\'s punishment',
+            nextScreenId: 'plague-beliefs-reveal',
+            revealLines: [
+              'You chose God\'s punishment.',
+              'To a medieval person, this was not superstition — it was logical.',
+              'If God controls everything and the plague kills thousands, then God must have sent it.',
+              'The response was prayer, fasting, pilgrimage, and confession.',
+              'Some went further: flagellants marched through towns, whipping themselves publicly.',
+              'None of it stopped the plague.',
+            ],
+          },
+          {
+            title: 'Miasma — bad air',
+            image: '/figures/history/medicine/black-death/miasma.png',
+            sections: [
+              { heading: 'The logic',        items: ['Bad smells carry disease', 'Plague smells terrible', 'Clean the air = stop the plague'] },
+              { heading: 'Who believed this', items: ['Physicians', 'Educated people', 'City authorities'] },
+              { heading: 'Treatments',       items: ['Burning herbs', 'Flowers and posies', 'Opening windows'] },
+            ],
+            reaction: '"The air near the plague pits reeks. It must be poisoned."',
+            buttonText: 'Choose miasma',
+            nextScreenId: 'plague-beliefs-reveal',
+            revealLines: [
+              'You chose miasma.',
+              'This was the most scientific view available.',
+              'People noticed plague was worse near sewers, rubbish heaps, and plague pits.',
+              'They were right about the location. Wrong about the cause.',
+              'It wasn\'t the smell — it was fleas and bacteria.',
+              'People carried flowers, burned aromatic wood, and some physicians wore beaked masks stuffed with herbs.',
+            ],
+          },
+          {
+            title: 'Planetary alignment',
+            image: '/headers/history-medicine-germ-bridge.png',
+            sections: [
+              { heading: 'The logic',        items: ['Planets influence health', 'Bad alignment = disease', 'Saturn, Jupiter, Mars'] },
+              { heading: 'Who believed this', items: ['University physicians', 'Paris Medical Faculty', 'Astrologers'] },
+              { heading: 'Treatments',       items: ['Wait for favourable stars', 'Consult charts', 'Avoid bad days'] },
+            ],
+            reaction: '"Saturn, Jupiter and Mars aligned in Aquarius. This poisoned the air."',
+            buttonText: 'Choose planetary alignment',
+            nextScreenId: 'plague-beliefs-reveal',
+            revealLines: [
+              'You chose planetary alignment.',
+              'In 1348, the Paris Medical Faculty officially blamed the plague on a triple conjunction of Saturn, Jupiter and Mars in Aquarius in 1345.',
+              'This was mainstream medicine — the official view of Europe\'s most respected medical institution.',
+              'If the stars caused the plague, you couldn\'t cure it by treating the body.',
+              'You had to wait for the stars to change.',
+            ],
+          },
+        ],
+      },
+
+      {
+        type: 'visualLearning',
+        id: 'plague-beliefs-reveal',
+        stage: 'Medieval explanations',
+        label: 'What medieval people believed',
+        scenes: [
+          {
+            image: '/figures/history/medicine/black-death/plague-background.png',
+            headline: 'Medieval people had three main explanations for the Black Death.',
+            body: 'God\'s punishment, miasma — bad air — and planetary alignment. Each came with its own treatment.',
+          },
+          {
+            image: '/headers/history-medicine-medieval-scripture.png',
+            headline: 'God was punishing humanity for its sins.',
+            body: 'This led to prayer, fasting, pilgrimage, and confession. Flagellants publicly whipped themselves to demonstrate suffering and seek mercy.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/miasma.png',
+            headline: 'Miasma — the smell of disease.',
+            body: 'Bad air from decaying matter was thought to carry the plague. People burned aromatic herbs and carried posies of flowers to counteract it.',
+          },
+          {
+            image: '/headers/history-medicine-germ-bridge.png',
+            headline: 'The stars were aligned in the wrong positions.',
+            body: 'In 1348, the Paris Medical Faculty officially blamed the Black Death on a triple conjunction of Saturn, Jupiter, and Mars in Aquarius in 1345.',
+          },
+          {
+            finalReveal: true,
+            headline: 'All three explanations were wrong.',
+            body: 'They were internally logical, given what was known. The actual cause would not be discovered for another 500 years.',
+          },
+        ],
+      },
+
+      {
+        type: 'matchingTask',
+        stage: 'Medieval explanations',
+        label: 'Beliefs and responses',
+        subject: 'History',
+        title: 'Beliefs and responses',
+        instruction: 'Match each plague explanation to its treatment.',
+        weakAreaCategory: 'Black Death Beliefs',
+        backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+        pairs: [
+          { id: 'god-prayer',    term: 'God\'s punishment',      answer: 'Prayer, fasting, pilgrimage, and flagellation to seek God\'s forgiveness.' },
+          { id: 'miasma-herbs',  term: 'Miasma — bad air',       answer: 'Burning aromatic herbs and carrying posies of flowers to counteract the smell.' },
+          { id: 'stars-charts',  term: 'Planetary alignment',    answer: 'Consulting astrological charts and waiting for favourable star positions.' },
+          { id: 'humours-blood', term: 'Imbalance of humours',   answer: 'Bloodletting and purging to restore balance between the Four Humours.' },
+        ],
+      },
+
+      {
+        type: 'visualLearning',
+        stage: 'Medieval explanations',
+        label: 'The actual cause',
+        scenes: [
+          {
+            image: '/figures/history/medicine/black-death/plague-background.png',
+            headline: 'The actual cause was invisible to medieval eyes.',
+            body: 'Not God. Not bad air. Not the stars.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/medieval-town.png',
+            headline: 'Black rats travelled on trading ships.',
+            body: 'The ships that brought goods from Asia also carried black rats — and the fleas that lived on them.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/medieval-town.png',
+            headline: 'Fleas carried the bacteria.',
+            body: 'Fleas fed on infected rats. When the rats died, the fleas moved to human hosts. The bite transferred Yersinia pestis bacteria into the bloodstream.',
+          },
+          {
+            finalReveal: true,
+            headline: 'This would not be discovered until 1894.',
+            body: 'Alexandre Yersin identified the bacteria in Hong Kong during a plague outbreak — almost 550 years after the Black Death hit England.',
+          },
+        ],
+      },
+
+      {
+        type: 'quickRecall',
+        stage: 'Medieval explanations',
+        label: 'Causes and beliefs check',
+        questions: [
+          {
+            type: 'choice',
+            question: 'What did the Paris Medical Faculty blame for the Black Death?',
+            options: ['A triple conjunction of Saturn, Jupiter and Mars', 'God\'s punishment for sin', 'Miasma from plague pits', 'Bad food and water'],
+            correct: 0,
+            explanation: 'The Paris Medical Faculty officially blamed the Black Death on the conjunction of Saturn, Jupiter and Mars in Aquarius in 1345.',
+          },
+          {
+            type: 'choice',
+            question: 'What actually caused the Black Death?',
+            options: ['Yersinia pestis bacteria spread by fleas on rats', 'Bad air from rotting matter', 'God\'s punishment for sin', 'Imbalance of the Four Humours'],
+            correct: 0,
+            explanation: 'Yersinia pestis bacteria were carried by fleas that lived on black rats. When infected rats died, the fleas moved to human hosts.',
+          },
+          {
+            type: 'choice',
+            question: 'Why did people carry posies of flowers during the plague?',
+            options: ['To ward off miasma — the bad air believed to cause disease', 'As offerings to God', 'Because flowers contained a natural remedy', 'To mark houses where plague had struck'],
+            correct: 0,
+            explanation: 'People believed miasma (bad air) spread the plague. Sweet-smelling flowers and herbs were thought to counteract the poisoned air.',
+          },
+        ],
+      },
+
+      // ── Section 4: Treatments ────────────────────────────────────────────────
+
+      {
+        type: 'collectionExplorer',
+        stage: 'Treatments and prevention',
+        label: 'Plague treatments',
+        title: 'Plague treatments',
+        description: 'Tap each item to discover what medieval people tried against the plague.',
+        backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+        items: [
+          {
+            id: 'flagellants',
+            label: 'Flagellants',
+            x: 18, y: 22,
+            reveals: [
+              { text: 'Flagellants were groups of people who marched between towns, whipping themselves publicly as an act of penance.' },
+              { text: 'They believed God had sent the plague as punishment for sin. By suffering publicly, they hoped to show God their repentance and earn mercy.' },
+              { text: 'The Church eventually condemned flagellant groups in 1349 — they had become too large and too independent of priestly authority.' },
+            ],
+          },
+          {
+            id: 'posies',
+            label: 'Posies and herbs',
+            x: 75, y: 18,
+            reveals: [
+              { text: 'People carried small bunches of sweet-smelling flowers and herbs — posies — because they believed miasma (bad air) carried the plague.' },
+              { text: 'Breathing pleasant smells was thought to counteract the poisoned air. Rosemary, lavender and rue were popular choices.' },
+              { text: 'Some physicians wore beaked masks stuffed with aromatic herbs when treating plague patients. The beak held the herbs near the face.' },
+            ],
+          },
+          {
+            id: 'bloodletting',
+            label: 'Bloodletting',
+            x: 28, y: 60,
+            reveals: [
+              { text: 'Physicians continued to prescribe bloodletting during the plague — removing blood to restore the body\'s humoral balance.' },
+              { text: 'Within the Four Humours system, this made sense: if the body was overwhelmed, excess of one humour might be responsible.' },
+              { text: 'Bloodletting weakened already ill patients and almost certainly made their condition worse. The theory was wrong, but internally consistent.' },
+            ],
+          },
+          {
+            id: 'burning-fires',
+            label: 'Burning fires',
+            x: 72, y: 62,
+            reveals: [
+              { text: 'City authorities ordered large fires to be lit in streets and open spaces, believing the smoke would cleanse the air of miasma.' },
+              { text: 'Aromatic wood such as oak was favoured. Some towns kept fires burning continuously during outbreaks.' },
+              { text: 'This was a rational response given the miasma theory — but entirely useless against Yersinia pestis bacteria.' },
+            ],
+          },
+          {
+            id: 'fleeing',
+            label: 'Fleeing the city',
+            x: 50, y: 83,
+            reveals: [
+              { text: 'Wealthy people fled to the countryside when plague struck. Without understanding the real cause, this sometimes helped — they left the fleas behind.' },
+              { text: 'But they could carry infected fleas with them, spreading the plague to new areas.' },
+              { text: 'The poor could not afford to flee. They stayed in crowded conditions and died at much higher rates.' },
+            ],
+          },
+        ],
+        synthesis: {
+          heading: 'What all these treatments had in common',
+          points: [
+            'Every treatment was based on a wrong understanding of the cause.',
+            'None of them addressed Yersinia pestis bacteria or the fleas that carried it.',
+            'Medieval people were not stupid — they were reasoning logically from wrong premises.',
+          ],
+          examTakeaway: 'Wrong cause → wrong treatment. Every time.',
+        },
+      },
+
+      {
+        type: 'matchingTask',
+        stage: 'Treatments and prevention',
+        label: 'Treatment to belief',
+        subject: 'History',
+        title: 'Treatment to belief',
+        instruction: 'Match each plague treatment to the belief that drove it.',
+        weakAreaCategory: 'Black Death Treatments',
+        backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+        pairs: [
+          { id: 'flagellants-god',    term: 'Flagellants whipping themselves',  answer: 'God sent the plague as punishment — public suffering might earn His forgiveness.' },
+          { id: 'posies-miasma',      term: 'Carrying posies of flowers',       answer: 'Miasma — sweet smells were thought to counteract the poisoned bad air.' },
+          { id: 'bloodletting-hum',   term: 'Bloodletting',                     answer: 'Four Humours — removing blood was meant to restore the body\'s natural balance.' },
+          { id: 'fires-miasma',       term: 'Burning fires in the streets',     answer: 'Miasma — smoke was thought to cleanse infected air and stop disease spreading.' },
+        ],
+      },
+
+      // ── Section 5: Living through the plague ────────────────────────────────
+
+      {
+        type: 'visualNarrative',
+        stage: 'Life during the plague',
+        label: 'A village in 1349',
+        beats: [
+          {
+            image: '/figures/history/medicine/black-death/medieval-town.png',
+            label: 'ENGLAND, 1349',
+            headline: 'A village at the edge of the epidemic.',
+            body: 'Three months ago, everything was normal. Then a traveller arrived.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/empty-town.png',
+            imageOpacity: 0.65,
+            facts: [
+              'The priest died first, then the blacksmith.',
+              'Farmers abandoned their fields to flee.',
+              'Landlords found no one to work their land.',
+              'Church bells rang almost without stopping — too many dead for individual funerals.',
+            ],
+            conclusion: 'For a year, normal life stopped.\n\nThe world that emerged would look very different.',
+          },
+        ],
+      },
+
+      {
+        type: 'visualLearning',
+        stage: 'Life during the plague',
+        label: 'Rich and poor',
+        scenes: [
+          {
+            image: '/figures/history/medicine/black-death/rich-vs-poor.png',
+            headline: 'The plague did not kill equally.',
+            body: 'Wealthy people could flee to the countryside. The poor, crowded into towns and unable to leave, died in far greater numbers.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/empty-town.png',
+            headline: 'Villages were abandoned.',
+            body: 'Entire communities disappeared. Hundreds of settlements in England were deserted. The evidence survives today as earthwork humps in fields.',
+          },
+          {
+            image: '/headers/history-medicine-medieval-scripture.png',
+            headline: 'The Church was badly hit.',
+            body: 'Priests and monks died in huge numbers — often because they stayed to care for the sick. In some areas, up to half of all clergy died.',
+          },
+          {
+            finalReveal: true,
+            headline: 'The scale of death was unlike anything in living memory.',
+            body: 'England after 1350 was a fundamentally different place. The old social order had been shaken to its foundations.',
+          },
+        ],
+      },
+
+      // ── Section 6: The aftermath ─────────────────────────────────────────────
+
+      {
+        type: 'visualLearning',
+        stage: 'The aftermath',
+        label: 'What changed after the plague',
+        scenes: [
+          {
+            image: '/figures/history/medicine/black-death/labour-shortage.png',
+            headline: 'The Black Death created a labour shortage.',
+            body: 'So many people died that there were not enough labourers to farm the land. For the first time, surviving peasants could demand higher wages.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/labour-shortage.png',
+            headline: 'Wages rose. Conditions improved.',
+            body: 'Landlords had to offer better pay and conditions to attract workers. Many peasants moved from one lord to another, seeking the best deal.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/flagellants.png',
+            headline: 'The Church\'s authority weakened.',
+            body: 'Prayers had not stopped the plague. Many people lost faith in the Church\'s ability to protect them. The Church\'s moral authority began to crack.',
+          },
+          {
+            finalReveal: true,
+            headline: 'The seeds of social change.',
+            body: 'The combination of labour power, weakened Church authority and social disruption helped lay the groundwork for the Peasants\' Revolt of 1381.',
+          },
+        ],
+      },
+
+      {
+        stage: 'The aftermath',
+        label: 'The causal chain',
+        kicker: 'Change and continuity',
+        heading: 'Why the Black Death changed England',
+        sub: 'Follow the chain of cause and effect.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            intro: 'The Black Death didn\'t just kill people. It set in motion a chain of changes that reshaped English society.',
+            atmosphereImage: '/figures/history/medicine/black-death/labour-shortage.png',
+            steps: [
+              {
+                id: 'population-falls',
+                statement: 'Between one-third and one-half of England\'s population died.',
+                emphasis: 'That meant far fewer workers to farm the land.',
+                detail: 'In some regions, entire villages disappeared. Landlords suddenly had too much land and too few people to work it.',
+              },
+              {
+                id: 'labour-shortage',
+                statement: 'The labour shortage gave surviving peasants rare bargaining power.',
+                emphasis: 'For the first time, they could demand higher wages.',
+                detail: 'This directly challenged the feudal system, in which peasants were bound to their lord and could not negotiate their conditions.',
+              },
+              {
+                id: 'church-weakened',
+                statement: 'The Church had promised that faith could protect the faithful.',
+                emphasis: 'It hadn\'t. The Church lost credibility.',
+                detail: 'Priests and monks died in huge numbers, often while tending to the sick. If God\'s own servants couldn\'t be protected, what did that say about God\'s power?',
+              },
+              {
+                id: 'social-change',
+                statement: 'A weaker Church and empowered peasants created instability.',
+                emphasis: 'This contributed to the Peasants\' Revolt of 1381.',
+                detail: 'When landlords tried to reimpose pre-plague labour conditions, the revolt showed how much England had changed. The old order could not simply be restored.',
+              },
+            ],
+            reflectionPrompt: 'How did population decline lead to social and religious change?',
+          },
+        ],
+      },
+
+      {
+        type: 'naturalSupernaturalSwipe',
+        stage: 'The aftermath',
+        label: 'Changed or stayed the same?',
+        columns: [
+          { label: 'CHANGED\nAfter the Black Death',         color: '#4CAF7D', colorRgb: '76,175,125',  bg: 'rgba(76,175,125,.07)'  },
+          { label: 'STAYED THE SAME\nAfter the Black Death', color: '#8C3A2A', colorRgb: '140,58,42',   bg: 'rgba(140,58,42,.07)'   },
+        ],
+        items: [
+          { label: 'Peasant wages — labourers could now demand higher pay',          col: 0, explanation: 'Changed — the labour shortage gave survivors real bargaining power for the first time.' },
+          { label: 'Medical explanations — doctors still blamed miasma and God',     col: 1, explanation: 'Stayed the same — medieval doctors used exactly the same explanations after the plague as before. Medicine did not change.' },
+          { label: 'Church authority — many people lost faith in its power',         col: 0, explanation: 'Changed — prayer had not stopped the plague. The Church\'s spiritual authority was visibly damaged.' },
+          { label: 'The Four Humours — still taught in universities after 1350',     col: 1, explanation: 'Stayed the same — the humoral system remained the basis of medical teaching. The plague gave doctors no new tools.' },
+          { label: 'Feudal labour obligations — many peasants refused to comply',    col: 0, explanation: 'Changed — surviving peasants used their scarcity to resist returning to pre-plague conditions.' },
+          { label: 'Medical treatments — bloodletting, herbs and prayer continued', col: 1, explanation: 'Stayed the same — without understanding the real cause, treatments could not improve.' },
+        ],
+        explanation: 'The Black Death changed society dramatically — but it changed medicine almost not at all. The same theories and treatments continued for another 300 years.',
+      },
+
+      {
+        type: 'cinematic',
+        stage: 'The aftermath',
+        label: 'Medicine stayed the same',
+        fallbackImage: '/figures/history/medicine/black-death/not-much-changed.png',
+        year: 'c.1350',
+        paragraphs: [
+          'The Black Death killed up to half of England.',
+          'It weakened the Church. It empowered the poor. It destabilised the feudal system.',
+          'But it did not change medicine.',
+          'Doctors looked at the plague and saw exactly what they expected to see: God\'s punishment, miasma, bad planetary alignment.',
+          'They already had their explanations. The plague just confirmed them.',
+          'The real cause — bacteria spread by fleas on rats — would not be discovered for another 546 years.',
+        ],
+      },
+
+      {
+        type: 'quickRecall',
+        stage: 'The aftermath',
+        label: 'Aftermath check',
+        questions: [
+          {
+            type: 'choice',
+            question: 'Why did peasant wages rise after the Black Death?',
+            options: ['There were not enough workers to farm the land', 'The king ordered wage increases', 'The Church paid workers more', 'Trade increased'],
+            correct: 0,
+            explanation: 'The population fall created a labour shortage. Surviving peasants could demand better wages because landowners needed workers and had to compete for them.',
+          },
+          {
+            type: 'choice',
+            question: 'How did the Black Death affect the Church\'s authority?',
+            options: ['It weakened it — prayer had failed to stop the plague', 'It strengthened it — people prayed more', 'It had no effect', 'It made the Church wealthier'],
+            correct: 0,
+            explanation: 'Many people lost faith in the Church because prayer had not protected the faithful. Clergy died in large numbers, damaging the Church\'s image of spiritual power.',
+          },
+          {
+            type: 'choice',
+            question: 'What happened to medical theory after the Black Death?',
+            options: ['It barely changed — the same explanations continued', 'Doctors discovered the true cause', 'Germ theory was developed', 'The Church banned the Four Humours theory'],
+            correct: 0,
+            explanation: 'Without microscopes or germ theory, medieval doctors continued using the same explanations after the plague as before. Medical thinking did not change.',
+          },
+        ],
+      },
+
+      // ── Section 7: Examiner ──────────────────────────────────────────────────
+
+      {
+        type: 'examinerExplains',
+        stage: 'Exam prep',
+        examinerExplains: {
+          opening: 'The Black Death is one of the most frequently examined topics in GCSE Medicine Through Time. Here\'s what earns marks.',
+          tips: [
+            {
+              heading: 'Know the actual cause — and contrast it',
+              body: 'The actual cause was Yersinia pestis bacteria spread by fleas on black rats. Examiners credit students who know this AND can contrast it with what medieval people believed.',
+            },
+            {
+              heading: 'Explain the logic, not just the name',
+              body: 'Don\'t just write "people believed in miasma." Explain why: dirty places smelled bad and people got ill there, so it seemed logical that the smell carried disease.',
+            },
+            {
+              heading: 'Link cause to treatment — always',
+              body: 'For every treatment, show the chain: Prayer → God\'s punishment. Posies → miasma. Bloodletting → Four Humours. The examiner wants the reasoning, not just the action.',
+            },
+            {
+              heading: 'Separate social change from medical change',
+              body: 'The plague changed society (wages, Church authority) but not medicine. Don\'t confuse the two — a key distinction for 8-mark questions.',
+            },
+          ],
+          closing: 'Show the examiner you understand why, not just what.',
+        },
+      },
+
+      {
+        type: 'faceExaminer',
+        stage: 'Exam prep',
+        label: 'Face the Examiner',
+        examiner: {
+          type: '4-mark-explain',
+          board: 'edexcel',
+          subject: 'history',
+          topic: 'black-death',
+          difficulty: 'standard',
+
+          question: 'Explain one way in which the Church\'s response to the Black Death shows the influence of religion on medieval medicine. [4 marks]',
+          marks: 4,
+          mark: 2,
+          summary: 'Identifies the religious response but needs more developed explanation to reach the top of Level 2.',
+
+          markScheme: `Level 2 (3–4 marks): Developed explanation linking religious belief to a specific treatment or response, showing understanding of why this response made sense within medieval thinking.
+Level 1 (1–2 marks): Simple identification of a religious response with little or no explanation of why it was chosen.
+Award marks for any explained response including:
+- Prayer, fasting or pilgrimage — must explain why (belief that illness = God's punishment for sin)
+- Flagellants — must explain the religious logic (public suffering to earn God's mercy)
+- Priests tending the sick — must link to Christian duty and belief in God's will
+Do NOT award for identifying practices without explaining the religious reasoning.`,
+
+          sampleAnswer: `The Church encouraged people to pray and fast during the Black Death. This shows the influence of religion because medieval people believed illness was sent by God as punishment for sin. If God had caused the plague, then the correct response was to seek God's forgiveness — which meant religious acts like prayer and confession, not medical treatments. This shows that the religious explanation for disease directly determined what treatments people chose.`,
+
+          annotations: [
+            {
+              id: 'ann1',
+              target: 'The Church encouraged people to pray and fast during the Black Death.',
+              occurrence: 1,
+              type: 'weak',
+              comment: 'Identifies the practice — but hasn\'t explained why yet.',
+            },
+            {
+              id: 'ann2',
+              target: 'medieval people believed illness was sent by God as punishment for sin.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Names the religious belief that drives the response.',
+            },
+            {
+              id: 'ann3',
+              target: 'If God had caused the plague, then the correct response was to seek God\'s forgiveness',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Excellent — shows the logical chain from belief to action.',
+            },
+            {
+              id: 'ann4',
+              target: 'This shows that the religious explanation for disease directly determined what treatments people chose.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Strong conclusion — explicitly links cause to treatment.',
+            },
+          ],
+
+          improvementPrompts: {
+            ann1: {
+              prompt: '+ Explain WHY prayer and fasting were chosen',
+              placeholder: 'e.g. Because medieval people believed the plague was God\'s punishment — if God had sent it, only God could remove it through acts of repentance...',
+            },
+          },
+
+          criteriaOptions: [
+            'Named the response',
+            'Explained the belief',
+            'Linked belief to treatment',
+            'Used specific evidence',
+            'Developed explanation',
+            'Too vague',
+            'Repeats the question',
+            'Missing explanation',
+          ],
+        },
+      },
+
+      {
+        type: 'faceExaminer',
+        stage: 'Exam prep',
+        label: 'Face the Examiner — 8 marks',
+        examiner: {
+          type: '8-mark-explain',
+          board: 'edexcel',
+          subject: 'history',
+          topic: 'black-death',
+          difficulty: 'challenging',
+
+          question: 'Explain two consequences of the Black Death for England in the fourteenth century. [8 marks]',
+          marks: 8,
+          mark: 4,
+          summary: 'Shows some understanding of two consequences but both need more developed explanation linking the consequence to its cause.',
+
+          markScheme: `Level 3 (6–8 marks): Detailed explanation of two consequences with developed reasoning, showing how the Black Death caused each one.
+Level 2 (3–5 marks): Some explanation of two consequences, but at least one lacks development of the causal chain.
+Level 1 (1–2 marks): Simple identification of consequences with little or no explanation.
+Award marks for any two of (each requiring causal explanation):
+- Labour shortage → higher wages → challenge to feudal system (must show the full chain)
+- Church authority weakened → people lost faith → contributed to later social unrest (must explain why)
+- Social disruption → Peasants' Revolt 1381 (must link Black Death to conditions that led to revolt)
+- Deserted villages / economic disruption (must explain the mechanism)
+Do NOT award for identifying consequences without explaining HOW the Black Death caused them.`,
+
+          sampleAnswer: `One consequence of the Black Death was that it caused a serious labour shortage. So many people died that there were not enough workers to farm the land. This gave surviving peasants the power to demand higher wages, because landowners needed workers and had to compete for them. This challenged the feudal system, where peasants were previously bound to their lord with no ability to bargain.
+
+A second consequence was that the Church's authority was weakened. Many priests and monks died while caring for plague victims, and prayer had failed to stop the disease. People questioned why God had allowed this to happen. The Church's reputation for spiritual power was damaged, and many people began to lose faith in it.`,
+
+          annotations: [
+            {
+              id: 'ann1',
+              target: 'it caused a serious labour shortage.',
+              occurrence: 1,
+              type: 'weak',
+              comment: 'Names the consequence — needs the causal chain.',
+            },
+            {
+              id: 'ann2',
+              target: 'This gave surviving peasants the power to demand higher wages, because landowners needed workers and had to compete for them.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Good — shows the causal chain: shortage → bargaining power.',
+            },
+            {
+              id: 'ann3',
+              target: 'This challenged the feudal system, where peasants were previously bound to their lord with no ability to bargain.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Excellent — develops the consequence and contextualises it within feudalism.',
+            },
+            {
+              id: 'ann4',
+              target: 'prayer had failed to stop the disease.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Key point — this is the mechanism for Church credibility loss.',
+            },
+            {
+              id: 'ann5',
+              target: 'People questioned why God had allowed this to happen.',
+              occurrence: 1,
+              type: 'weak',
+              comment: 'Vague — could add a specific example to develop this further.',
+            },
+          ],
+
+          improvementPrompts: {
+            ann1: {
+              prompt: '+ Explain HOW the labour shortage happened',
+              placeholder: 'e.g. Between a third and a half of the population died, meaning there were far fewer workers to farm the land — landlords could not find enough labourers...',
+            },
+            ann5: {
+              prompt: '+ Add a specific example of Church authority being challenged',
+              placeholder: 'e.g. Many clergy died despite their faith, including some bishops — if God\'s own servants were not protected, it suggested that prayer was not working...',
+            },
+          },
+
+          criteriaOptions: [
+            'Two clear consequences',
+            'Causal chain explained',
+            'Specific evidence used',
+            'Developed explanation',
+            'Links to feudal system',
+            'Too vague',
+            'Only one consequence developed',
+            'Missing explanation',
+          ],
+        },
+      },
+
+    ],
+  },
+
   {
     id: 'mod2',
     subject: 'History',
-    number: 2,
+    number: 3,
     title: 'Renaissance & the Plague',
     subtitle: 'Challenge & Continuity',
     era: 'c1500–c1700',
@@ -1657,7 +2510,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
   {
     id: 'mod3',
     subject: 'History',
-    number: 3,
+    number: 4,
     title: 'Surgery & Anatomy',
     subtitle: 'Hold Him Down and Hope',
     era: 'c1700–c1900',
@@ -1860,7 +2713,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
   {
     id: 'mod4',
     subject: 'History',
-    number: 4,
+    number: 5,
     title: 'Germ Theory',
     subtitle: 'Pasteur, Koch & the Invisible Enemy',
     era: 'c1850–c1900',
@@ -2068,7 +2921,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
   {
     id: 'mod5',
     subject: 'History',
-    number: 5,
+    number: 6,
     title: 'Public Health',
     subtitle: 'Cities, Sewers & Slow Progress',
     era: 'c1800–c1900',
@@ -2252,7 +3105,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
   {
     id: 'mod6',
     subject: 'History',
-    number: 6,
+    number: 7,
     title: 'The Surgery Revolution',
     subtitle: 'Pain, Infection & Survival (1840–1900)',
     era: 'c1840–c1900',
@@ -2877,7 +3730,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
   {
     id: 'mod7',
     subject: 'History',
-    number: 7,
+    number: 8,
     title: 'The War Against Infection',
     subtitle: 'Magic Bullets, Penicillin & the Antibiotic Revolution',
     era: 'c1890–c1945',
@@ -3479,7 +4332,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
   {
     id: 'mod8',
     subject: 'History',
-    number: 8,
+    number: 9,
     title: 'Inside Modern Medicine',
     subtitle: 'Scans, Transplants, DNA & The Future',
     era: 'c1945–present',
@@ -9113,7 +9966,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
   {
     id: 'mod9',
     subject: 'History',
-    number: 9,
+    number: 10,
     title: 'Who Gets Healthcare?',
     subtitle: 'The NHS, Prevention & Modern Public Health',
     era: 'AQA GCSE',

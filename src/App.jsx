@@ -408,7 +408,7 @@ export default function App() {
       id: 'hist_medicine',
       title: 'Medicine Through Time',
       subject: 'History',
-      chapterIds: ['history-medicine-medieval-beliefs-causes','mod2','mod3','mod4','mod5','mod6','mod7','mod8','mod9'],
+      chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','mod2','mod3','mod4','mod5','mod6','mod7','mod8','mod9'],
     },
     {
       id: 'soc_family',
@@ -1301,6 +1301,7 @@ function PulseTab({ onStartQuickFire }) {
 
 const MODULE_HEADER_IMAGES = {
   'history-medicine-medieval-beliefs-causes': '/headers/history-medicine-through-time.webp',
+  'history-medicine-black-death': '/figures/history/medicine/black-death/plague-background.png',
   'mod2': '/headers/history-medicine-through-time.webp',
   'mod3': '/headers/history-medicine-through-time.webp',
   'mod4': '/headers/history-medicine-through-time.webp',
