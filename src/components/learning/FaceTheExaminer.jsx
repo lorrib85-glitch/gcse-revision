@@ -93,11 +93,13 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
   // Auto-advance from done screen after 2.2s
   useEffect(() => {
     if (phase !== 'done') return
-    const id = setTimeout(() => {
-      onContinue({ originalMark: examiner.mark, finalMark: remarkResult?.marksAwarded ?? examiner.mark, guessedMark })
-    }, 2200)
+    const id = setTimeout(() => advance(), 2200)
     return () => clearTimeout(id)
   }, [phase]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  function advance() {
+    onContinue?.({ originalMark: examiner.mark, finalMark: remarkResult?.marksAwarded ?? examiner.mark, guessedMark })
+  }
 
   function schedule(fn, delay) {
     const id = setTimeout(fn, delay)
@@ -333,15 +335,23 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
             from { opacity: 0; transform: scale(0.94); }
             to   { opacity: 1; transform: scale(1); }
           }
+          @keyframes fte-done-cta {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
         `}</style>
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 1000,
-          background: bg,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexDirection: 'column',
-          padding: '0 32px',
-          animation: 'fte-done-in 600ms ease both',
-        }}>
+        <div
+          onClick={advance}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 1000,
+            background: bg,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexDirection: 'column',
+            padding: '0 32px',
+            animation: 'fte-done-in 600ms ease both',
+            cursor: 'pointer',
+          }}
+        >
           <div style={{
             fontFamily: "'Sora', sans-serif",
             fontWeight: 400, fontSize: 15,
@@ -383,6 +393,18 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
               {remarkResult.verdict}
             </div>
           )}
+
+          <div style={{
+            position: 'absolute',
+            bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))',
+            fontFamily: "'Sora', sans-serif",
+            fontWeight: 700, fontSize: 13,
+            letterSpacing: '0.34em', textTransform: 'uppercase',
+            color: accent,
+            animation: 'fte-done-cta 600ms ease 2s both',
+          }}>
+            Continue →
+          </div>
         </div>
       </>
     )
