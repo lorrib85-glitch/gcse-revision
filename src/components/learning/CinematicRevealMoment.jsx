@@ -61,6 +61,9 @@ export default function CinematicRevealMoment({
   videoSrc,
   fallbackImage,
   year,
+  label,
+  headline,
+  body,
   paragraphs   = [],
   onBack,
   onContinue,
@@ -199,8 +202,55 @@ export default function CinematicRevealMoment({
           maxWidth: 'calc(100vw - 64px)',
         }}>
 
-          {/* Year */}
-          {yearVisible && (
+          {/* Label */}
+          {yearVisible && label && (
+            <div style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontWeight: 600, fontSize: 11,
+              textTransform: 'uppercase', letterSpacing: '0.28em',
+              color: 'rgba(255,255,255,0.40)',
+              marginBottom: 14,
+              textShadow: '0 1px 16px rgba(0,0,0,0.5)',
+              animation: 'crm-up 900ms cubic-bezier(.16,1,.3,1) both',
+            }}>
+              {label}
+            </div>
+          )}
+
+          {/* Headline */}
+          {yearVisible && headline && (
+            <div style={{
+              fontFamily: "'Sora', sans-serif",
+              fontWeight: 800,
+              fontSize: 'clamp(26px, 8.5vw, 38px)',
+              lineHeight: 1.08, letterSpacing: '-0.04em',
+              color: 'rgba(255,255,255,0.97)',
+              marginBottom: 16,
+              maxWidth: 320,
+              textShadow: '0 2px 24px rgba(0,0,0,0.55)',
+              animation: 'crm-up 900ms cubic-bezier(.16,1,.3,1) both',
+            }}>
+              {headline}
+            </div>
+          )}
+
+          {/* Body */}
+          {yearVisible && body && (
+            <div style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontWeight: 500, fontSize: 16,
+              lineHeight: 1.7, whiteSpace: 'pre-line',
+              color: 'rgba(255,255,255,0.58)',
+              maxWidth: 300,
+              textShadow: '0 1px 16px rgba(0,0,0,0.5)',
+              animation: 'crm-up 900ms cubic-bezier(.16,1,.3,1) both',
+            }}>
+              {body}
+            </div>
+          )}
+
+          {/* Year — displayed when no label/headline/body, or alongside */}
+          {yearVisible && !label && (
             <div style={{
               fontFamily: "'Sora', sans-serif",
               fontWeight: 900, fontSize: 62,

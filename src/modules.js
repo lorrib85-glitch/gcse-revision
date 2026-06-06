@@ -1058,15 +1058,12 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       {
         type: 'cinematic',
         stage: 'The arrival',
-        label: 'Death comes from the east',
+        label: 'ENGLAND, 1348',
         videoSrc: '/videos/black-death-intro.mp4',
         fallbackImage: '/figures/history/medicine/black-death/plague-background.png',
         year: '1347',
-        paragraphs: [
-          'It began in Asia. It followed the trade routes west.',
-          'By the time it reached England, half of Europe was already dying.',
-          'This is the story of the Black Death.',
-        ],
+        headline: 'Something is coming.',
+        body: 'Rumours had been arriving for months. A terrible sickness. Killing everyone it touched.',
       },
 
       // ── Section 2: The arrival ───────────────────────────────────────────────
