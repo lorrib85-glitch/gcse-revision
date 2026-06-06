@@ -634,20 +634,6 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
           gap: SPACING.compact,
         }}>
 
-          {/* Rx header — no theory label */}
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontSize: 28,
-            fontWeight: 700,
-            color: '#3A2008',
-            letterSpacing: '-0.02em',
-            marginBottom: SPACING.compact,
-            borderBottom: '1.5px solid rgba(58,32,8,0.20)',
-            paddingBottom: SPACING.micro,
-          }}>
-            Rx
-          </div>
-
           {/* Inputs directly on parchment */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {theory.acceptedAnswers.map((ans, i) => (
@@ -763,22 +749,6 @@ function RevealPhase({ theory, tint, inputs, result, revealCount, allComplete, o
           <div style={{ ...TYPE.metadata, textTransform: 'uppercase', color: BRONZE, letterSpacing: '0.06em' }}>
             {theory.label}
           </div>
-        </div>
-
-        {/* Rx header */}
-        <div style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: 28, fontWeight: 700,
-          color: '#3A2008', letterSpacing: '-0.02em',
-          marginBottom: SPACING.compact,
-          borderBottom: '1.5px solid rgba(58,32,8,0.20)',
-          paddingBottom: SPACING.micro,
-          display: 'flex', alignItems: 'baseline', gap: 6,
-        }}>
-          <span>Rx</span>
-          <span style={{ ...TYPE.metadata, color: 'rgba(58,32,8,0.45)', fontSize: 11, fontStyle: 'italic', fontWeight: 400 }}>
-            {theory.label}
-          </span>
         </div>
 
         <div style={{ ...TYPE.cardTitle, color: '#2A1404', marginBottom: SPACING.micro }}>
@@ -900,32 +870,6 @@ function PrescriptionScroll({ theory, inputs, onChange, inputRefs, phase, result
         position: 'relative',
         padding: `${SPACING.standard}px`,
       }}>
-        {/* Rx header */}
-        <div style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: 28,
-          fontWeight: 700,
-          color: '#3A2008',
-          letterSpacing: '-0.02em',
-          marginBottom: SPACING.compact,
-          borderBottom: `1.5px solid rgba(58,32,8,0.20)`,
-          paddingBottom: SPACING.micro,
-          display: 'flex',
-          alignItems: 'baseline',
-          gap: 6,
-        }}>
-          <span>Rx</span>
-          <span style={{
-            ...TYPE.metadata,
-            color: 'rgba(58,32,8,0.45)',
-            fontSize: 11,
-            fontStyle: 'italic',
-            fontWeight: 400,
-          }}>
-            {theory.label}
-          </span>
-        </div>
-
         {/* Lines */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {phase === 'input' && answers.map((ans, i) => (
