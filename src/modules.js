@@ -586,7 +586,6 @@ export const MODULES = [
             introText: 'Different people had different explanations.',
             explanation: 'The priest believes Thomas may be ill because God is punishing him for his sins.',
             prescriptionPrompt: 'What treatments might the priest recommend for Thomas?',
-            hint: 'Think like someone living in 1250.',
             acceptedAnswers: [
               { canonical: 'Prayer',      accepted: ['prayer', 'pray', 'praying', 'prayers'] },
               { canonical: 'Pilgrimage',  accepted: ['pilgrimage', 'pilgrimages', 'go on pilgrimage', 'visit a shrine', 'shrine'] },

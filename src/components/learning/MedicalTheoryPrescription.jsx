@@ -238,7 +238,7 @@ const CSS = `
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
   .mtp-input { outline: none; background: transparent; }
-  .mtp-input::placeholder { color: rgba(60,35,8,0.38); font-style: italic; }
+  .mtp-input::placeholder { color: rgba(60,35,8,0.35); font-style: italic; font-family: 'Caveat', cursive; font-size: 20px; }
 `
 
 // ── Phase: Select ─────────────────────────────────────────────────────────────
@@ -549,24 +549,22 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      background: DARK,
     }}>
-      {/* Background: selected theory's icon */}
+      {/* Full-page parchment */}
       <div style={{
         position: 'absolute',
         inset: 0,
-        backgroundImage: `url(${theory.icon})`,
+        backgroundImage: 'url(/figures/history/medicine/medieval/parchment-scroll.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        filter: 'brightness(0.25) saturate(0.55)',
       }} />
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: `linear-gradient(to bottom, rgba(12,9,5,0.55) 0%, rgba(12,9,5,0.75) 50%, rgba(12,9,5,0.97) 100%)`,
+        background: 'rgba(240,215,150,0.30)',
       }} />
 
-      {/* Scrollable content */}
+      {/* Scrollable content on parchment */}
       <div style={{
         position: 'relative',
         flex: 1,
@@ -585,11 +583,10 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
           marginBottom: SPACING.micro,
         }}>
           <div style={{
-            width: 32,
-            height: 32,
+            width: 32, height: 32,
             borderRadius: RADII.small,
             overflow: 'hidden',
-            border: `1px solid rgba(${GOLD_RGB},0.28)`,
+            border: `1px solid rgba(58,32,8,0.28)`,
             flexShrink: 0,
           }}>
             <img src={theory.icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -597,43 +594,85 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
           <div style={{
             ...TYPE.metadata,
             textTransform: 'uppercase',
-            color: GOLD,
+            color: BRONZE,
             letterSpacing: '0.06em',
           }}>
             {theory.label}
           </div>
         </div>
 
+        {/* Rx header */}
+        <div style={{
+          fontFamily: "'Sora', sans-serif",
+          fontSize: 28, fontWeight: 700,
+          color: '#3A2008',
+          letterSpacing: '-0.02em',
+          marginBottom: SPACING.compact,
+          borderBottom: '1.5px solid rgba(58,32,8,0.20)',
+          paddingBottom: SPACING.micro,
+          display: 'flex', alignItems: 'baseline', gap: 6,
+        }}>
+          <span>Rx</span>
+          <span style={{
+            ...TYPE.metadata,
+            color: 'rgba(58,32,8,0.45)',
+            fontSize: 11,
+            fontStyle: 'italic',
+            fontWeight: 400,
+          }}>
+            {theory.label}
+          </span>
+        </div>
+
         {/* Prompt */}
         <div style={{
           ...TYPE.cardTitle,
-          color: '#F0E8D4',
+          color: '#2A1404',
           marginBottom: SPACING.micro,
           animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
         }}>
           {theory.prescriptionPrompt}
         </div>
 
-        {/* Prescription scroll */}
-        <PrescriptionScroll
-          theory={theory}
-          inputs={inputs}
-          onChange={onChange}
-          inputRefs={inputRefs}
-          onSubmit={onCheck}
-          phase="input"
-          prefersReducedMotion={prefersReducedMotion}
-        />
-
-        {/* Hint */}
-        <div style={{
-          ...TYPE.metadata,
-          color: `rgba(${GOLD_RGB},0.40)`,
-          fontStyle: 'italic',
-          textAlign: 'center',
-          paddingTop: SPACING.micro,
-        }}>
-          {theory.hint}
+        {/* Inputs directly on parchment */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {theory.acceptedAnswers.map((ans, i) => (
+            <div key={ans.canonical} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
+              <span style={{
+                ...TYPE.metadata,
+                color: 'rgba(58,32,8,0.45)',
+                fontWeight: 600,
+                width: 20, flexShrink: 0, textAlign: 'right',
+              }}>{i + 1}.</span>
+              <input
+                ref={el => { if (inputRefs?.current) inputRefs.current[i] = el }}
+                className="mtp-input"
+                value={inputs[i] || ''}
+                onChange={e => onChange?.(i, e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && inputRefs?.current?.[i + 1]) {
+                    inputRefs.current[i + 1].focus()
+                  }
+                }}
+                aria-label={`Treatment ${i + 1}`}
+                placeholder="Write a treatment…"
+                style={{
+                  flex: 1,
+                  border: 'none',
+                  borderBottom: '1.5px solid rgba(58,32,8,0.30)',
+                  padding: '4px 4px 8px',
+                  fontFamily: "'Caveat', cursive",
+                  fontSize: 22,
+                  fontWeight: 500,
+                  color: '#2A1404',
+                  background: 'transparent',
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  caretColor: '#8B4A10',
+                }}
+              />
+            </div>
+          ))}
         </div>
 
         <CTA
@@ -653,6 +692,17 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
 
 function RevealPhase({ theory, tint, inputs, result, revealCount, allComplete, onContinue, pressed, setPressed, prefersReducedMotion }) {
   const allRevealed = revealCount >= (result.missing?.length || 0)
+  const matched = result?.matched || []
+  const missing  = result?.missing  || []
+
+  function buildRevealLines() {
+    return theory.acceptedAnswers.map(ans => {
+      const matchEntry = matched.find(m => m.canonical === ans.canonical)
+      const missingIdx = missing.indexOf(ans.canonical)
+      return { canonical: ans.canonical, matchEntry, missingIdx }
+    })
+  }
+  const lines = buildRevealLines()
 
   return (
     <div style={{
@@ -661,21 +711,19 @@ function RevealPhase({ theory, tint, inputs, result, revealCount, allComplete, o
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      background: DARK,
     }}>
-      {/* Background */}
+      {/* Full-page parchment */}
       <div style={{
         position: 'absolute',
         inset: 0,
-        backgroundImage: `url(${theory.icon})`,
+        backgroundImage: 'url(/figures/history/medicine/medieval/parchment-scroll.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        filter: 'brightness(0.2) saturate(0.5)',
       }} />
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: `linear-gradient(to bottom, rgba(12,9,5,0.6) 0%, rgba(12,9,5,0.8) 50%, rgba(12,9,5,0.98) 100%)`,
+        background: 'rgba(240,215,150,0.30)',
       }} />
 
       <div style={{
@@ -687,58 +735,89 @@ function RevealPhase({ theory, tint, inputs, result, revealCount, allComplete, o
         padding: `${SPACING.section}px ${SPACING.standard}px ${SPACING.separation}px`,
         gap: SPACING.compact,
       }}>
-        {/* Header */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: SPACING.micro,
-          marginBottom: SPACING.micro,
-        }}>
+
+        {/* Theory label */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro, marginBottom: SPACING.micro }}>
           <div style={{
-            width: 32,
-            height: 32,
-            borderRadius: RADII.small,
-            overflow: 'hidden',
-            border: `1px solid rgba(${GOLD_RGB},0.35)`,
-            flexShrink: 0,
+            width: 32, height: 32,
+            borderRadius: RADII.small, overflow: 'hidden',
+            border: `1px solid rgba(58,32,8,0.28)`, flexShrink: 0,
           }}>
             <img src={theory.icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
-          <div style={{
-            ...TYPE.metadata,
-            textTransform: 'uppercase',
-            color: GOLD,
-            letterSpacing: '0.06em',
-          }}>
+          <div style={{ ...TYPE.metadata, textTransform: 'uppercase', color: BRONZE, letterSpacing: '0.06em' }}>
             {theory.label}
           </div>
         </div>
 
+        {/* Rx header */}
         <div style={{
-          ...TYPE.cardTitle,
-          color: '#F0E8D4',
-          marginBottom: SPACING.micro,
+          fontFamily: "'Sora', sans-serif",
+          fontSize: 28, fontWeight: 700,
+          color: '#3A2008', letterSpacing: '-0.02em',
+          marginBottom: SPACING.compact,
+          borderBottom: '1.5px solid rgba(58,32,8,0.20)',
+          paddingBottom: SPACING.micro,
+          display: 'flex', alignItems: 'baseline', gap: 6,
         }}>
+          <span>Rx</span>
+          <span style={{ ...TYPE.metadata, color: 'rgba(58,32,8,0.45)', fontSize: 11, fontStyle: 'italic', fontWeight: 400 }}>
+            {theory.label}
+          </span>
+        </div>
+
+        <div style={{ ...TYPE.cardTitle, color: '#2A1404', marginBottom: SPACING.micro }}>
           Here are the common treatments linked to this belief.
         </div>
 
-        {/* Revealed prescription */}
-        <PrescriptionScroll
-          theory={theory}
-          inputs={inputs}
-          phase="reveal"
-          result={result}
-          revealCount={revealCount}
-          prefersReducedMotion={prefersReducedMotion}
-        />
+        {/* Revealed lines on parchment */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {lines.map((line, i) => {
+            const isMatched  = !!line.matchEntry
+            const isRevealed = !isMatched && line.missingIdx >= 0 && line.missingIdx < revealCount
+            const text = isMatched ? line.matchEntry.userLine : isRevealed ? line.canonical : ''
+
+            return (
+              <div key={line.canonical} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
+                <span style={{
+                  ...TYPE.metadata,
+                  color: 'rgba(58,32,8,0.45)', fontWeight: 600,
+                  width: 20, flexShrink: 0, textAlign: 'right',
+                }}>{i + 1}.</span>
+                <span style={{
+                  flex: 1,
+                  fontFamily: "'Caveat', cursive",
+                  fontSize: 22,
+                  fontWeight: isMatched ? 600 : 500,
+                  color: isMatched ? '#2A1404' : isRevealed ? '#4A2800' : 'transparent',
+                  borderBottom: '1.5px solid rgba(58,32,8,0.20)',
+                  padding: '4px 4px 8px',
+                  minHeight: 38,
+                  animation: isRevealed && !prefersReducedMotion
+                    ? `mtp-ink ${MOTION.duration.slow} ${MOTION.easing.standard} both`
+                    : 'none',
+                  display: 'block',
+                }}>
+                  {text}
+                </span>
+                <span style={{
+                  flexShrink: 0, fontSize: 14,
+                  color: isMatched ? '#5C8A3A' : isRevealed ? '#8B6914' : 'transparent',
+                }}>
+                  {isMatched ? '✓' : isRevealed ? '✦' : ''}
+                </span>
+              </div>
+            )
+          })}
+        </div>
 
         {/* Explanation */}
         {allRevealed && (
           <div style={{
             ...TYPE.bodySmall,
-            color: `rgba(245,238,217,0.65)`,
+            color: 'rgba(42,20,4,0.70)',
             lineHeight: 1.6,
-            borderLeft: `2px solid rgba(${GOLD_RGB},0.28)`,
+            borderLeft: `2px solid rgba(58,32,8,0.28)`,
             paddingLeft: SPACING.compact,
             animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
           }}>
