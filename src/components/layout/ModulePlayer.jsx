@@ -2519,6 +2519,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           videoSrc={cur.videoSrc}
           fallbackImage={cur.fallbackImage}
           year={cur.year}
+          label={cur.label}
+          headline={cur.headline}
+          body={cur.body}
           paragraphs={cur.paragraphs}
           onContinue={() => isLast ? handleFinish() : go(1)}
           onTextRevealStart={() => setCinematicHeaderVisible(true)}
