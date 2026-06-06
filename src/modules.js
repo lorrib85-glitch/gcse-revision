@@ -1081,7 +1081,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         hotspots: [
           {
             id: 'ship',
-            x: 44, y: 14,
+            x: 47, y: 17,
             shortLabel: 'The ship', title: 'The trading ship',
             icon: '⚓',
             description: 'This ship sailed from ports on the Mediterranean where the Black Death was already killing thousands. Trade routes connected England to the infected regions of Europe and Asia.',
@@ -1089,7 +1089,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           },
           {
             id: 'crew',
-            x: 67, y: 29,
+            x: 68, y: 29,
             shortLabel: 'The crew', title: 'The sailors',
             icon: '🧑‍✈️',
             description: 'By the time the ship docked, some of the crew were already dying. The passengers showed the signs — swellings, fever, blackened skin. Onlookers had no idea what they were seeing.',
@@ -1097,7 +1097,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           },
           {
             id: 'dock',
-            x: 23, y: 57,
+            x: 44, y: 56,
             shortLabel: 'The dock', title: 'Melcombe Regis, June 1348',
             icon: '📍',
             description: 'This is where the Black Death first reached England — the port of Melcombe in Dorset, June 1348. Within weeks, the surrounding towns and villages were dying.',
@@ -1105,7 +1105,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           },
           {
             id: 'cargo',
-            x: 59, y: 51,
+            x: 62, y: 51,
             shortLabel: 'The cargo', title: 'Goods from the east',
             icon: '📦',
             description: 'Trading ships carried spices, cloth, and silks from the east. They also carried something no one could see. The same trade routes that made merchants wealthy were spreading death across the continent.',
@@ -1113,7 +1113,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           },
           {
             id: 'rat',
-            x: 32, y: 71,
+            x: 35, y: 73,
             shortLabel: 'The rat', title: 'Everywhere — but unnoticed',
             icon: '🐀',
             description: 'Rats were common at every dock in England. No one thought twice about them. No one noticed the dead rats before the sick people appeared. No one made the connection.',
