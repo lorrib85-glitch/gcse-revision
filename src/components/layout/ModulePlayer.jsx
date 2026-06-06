@@ -1138,7 +1138,7 @@ function Screen({ screen, subject, onScreenComplete }) {
         )}
       </div>
 
-      {screen.blocks.map((block, i) => (
+      {(screen.blocks || []).map((block, i) => (
         <div key={i}>
           {block.type === 'read'          && <CardContainer variant="contained" subject={subject} padding={24}><ReadBlock block={block} /></CardContainer>}
           {block.type === 'keypoint'      && <CardContainer variant="contained" subject={subject} padding={24}><KeypointBlock block={block} /></CardContainer>}
@@ -2459,6 +2459,51 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           onRevealStart={() => setCinematicHeaderVisible(true)}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  // ── Progression timeline — placeholder until DiseaseProgressionTimeline is built ──
+  if (cur?.type === 'progressionTimeline') {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <div style={{
+          minHeight: '100vh', background: '#080C1A',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: '0 24px',
+        }}>
+          <div style={{
+            background: 'rgba(140,58,42,0.10)',
+            border: '1px solid rgba(140,58,42,0.30)',
+            borderRadius: 20, padding: '32px 28px', textAlign: 'center', maxWidth: 360,
+          }}>
+            <div style={{
+              fontFamily: "'Outfit', sans-serif", fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.18em', textTransform: 'uppercase',
+              color: 'rgba(214,155,69,0.60)', marginBottom: 16,
+            }}>Coming soon</div>
+            <div style={{
+              fontFamily: "'Sora', sans-serif", fontSize: 22, fontWeight: 800,
+              color: 'rgba(255,255,255,0.90)', marginBottom: 12, lineHeight: 1.2,
+            }}>{cur.label || 'Disease progression'}</div>
+            <div style={{
+              fontFamily: "'Outfit', sans-serif", fontSize: 15, fontWeight: 500,
+              color: 'rgba(255,255,255,0.42)', lineHeight: 1.6, marginBottom: 28,
+            }}>This interactive timeline is being built.</div>
+            <button
+              onClick={isLast ? handleFinish : () => go(1)}
+              style={{
+                width: '100%', background: 'rgba(140,58,42,0.22)',
+                border: '1.5px solid rgba(140,58,42,0.50)',
+                borderRadius: 14, padding: '14px',
+                fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15,
+                color: '#D69B45', cursor: 'pointer',
+              }}
+            >Continue →</button>
+          </div>
+        </div>
         {jumpSheetPortal}
       </>
     )
