@@ -584,36 +584,41 @@ export const MODULES = [
       },
 
       {
-        type: 'explainReveal',
         stage: 'Medieval treatments',
         label: 'The colour of your illness',
-        title: 'The colour of your illness',
-        intro: 'Before a physician could treat you, they needed to diagnose you. Their most trusted tool? Your urine.',
-        atmosphereImage: '/headers/history-medicine-medieval-scripture.png',
-        steps: [
+        kicker: 'Diagnostic methods',
+        heading: 'The colour of your illness',
+        sub: 'Before treating you, a physician had to diagnose you — and their most trusted tool was your urine.',
+        blocks: [
           {
-            id: 'uroscopy-method',
-            statement: 'Medieval physicians examined urine to diagnose illness —',
-            emphasis: 'its colour, smell, and sometimes taste.',
-            detail: 'This practice was called uroscopy and was considered legitimate medical science.',
-          },
-          {
-            id: 'jordan-flask',
-            statement: 'Urine was collected in a glass flask called a',
-            emphasis: 'jordan.',
-            detail: 'The physician held it to the light and compared the colour against a chart of up to 20 shades.',
-          },
-          {
-            id: 'humour-link',
-            statement: 'Each shade was linked to a specific humour and illness.',
-            emphasis: 'Dark urine? Too much black bile. Cloudy? Excess phlegm.',
-            detail: 'Nothing was random — everything was read as evidence of which humour was dominant.',
-          },
-          {
-            id: 'exam-point',
-            statement: 'Uroscopy shows the internal logic of humoural medicine:',
-            emphasis: 'the body was always being read as a system in balance or imbalance.',
-            detail: 'Examiners reward students who explain the reasoning behind treatments, not just name them.',
+            type: 'explainReveal',
+            atmosphereImage: '/headers/history-medicine-medieval-scripture.png',
+            steps: [
+              {
+                id: 'uroscopy-method',
+                statement: 'Medieval physicians examined urine to diagnose illness —',
+                emphasis: 'its colour, smell, and sometimes taste.',
+                detail: 'This practice was called uroscopy and was considered legitimate medical science.',
+              },
+              {
+                id: 'jordan-flask',
+                statement: 'Urine was collected in a glass flask called a',
+                emphasis: 'jordan.',
+                detail: 'The physician held it to the light and compared the colour against a chart of up to 20 shades.',
+              },
+              {
+                id: 'humour-link',
+                statement: 'Each shade was linked to a specific humour and illness.',
+                emphasis: 'Dark urine? Too much black bile. Cloudy? Excess phlegm.',
+                detail: 'Nothing was random — everything was read as evidence of which humour was dominant.',
+              },
+              {
+                id: 'exam-point',
+                statement: 'Uroscopy shows the internal logic of humoural medicine:',
+                emphasis: 'the body was always being read as a system in balance or imbalance.',
+                detail: 'Examiners reward students who explain the reasoning behind treatments, not just name them.',
+              },
+            ],
           },
         ],
       },

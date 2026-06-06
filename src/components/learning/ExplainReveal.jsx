@@ -77,24 +77,28 @@ export default function ExplainReveal({ block, subject, onComplete }) {
 
       <div style={{ position: 'relative', zIndex: 1 }}>
 
-        {/* Section label */}
-        <div style={{
-          ...F, fontSize: 11, fontWeight: 600,
-          letterSpacing: '0.18em', textTransform: 'uppercase',
-          color: `rgba(${rgb},0.82)`, marginBottom: 20,
-        }}>
-          ExplainReveal
-        </div>
+        {/* Section label — optional eyebrow */}
+        {block.eyebrow && (
+          <div style={{
+            ...F, fontSize: 11, fontWeight: 600,
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+            color: `rgba(${rgb},0.82)`, marginBottom: 20,
+          }}>
+            {block.eyebrow}
+          </div>
+        )}
 
-        {/* Main title */}
-        <h2 style={{
-          ...F, fontSize: 42, fontWeight: 600,
-          lineHeight: 1.08, letterSpacing: '-0.03em',
-          color: 'rgba(245,245,245,0.96)',
-          maxWidth: '92%', margin: '0 0 24px',
-        }}>
-          {block.title}
-        </h2>
+        {/* Main title — optional */}
+        {block.title && (
+          <h2 style={{
+            ...F, fontSize: 42, fontWeight: 600,
+            lineHeight: 1.08, letterSpacing: '-0.03em',
+            color: 'rgba(245,245,245,0.96)',
+            maxWidth: '92%', margin: '0 0 24px',
+          }}>
+            {block.title}
+          </h2>
+        )}
 
         {/* Intro paragraph */}
         {block.intro && (
