@@ -643,39 +643,6 @@ export const MODULES = [
       },
 
       {
-        stage: 'Investigate',
-        label: 'Church and Religion',
-        kicker: 'Retrieval Practice',
-        heading: 'Why Did Old Ideas Survive?',
-        sub: 'Think of your answer, then reveal.',
-        blocks: [
-          {
-            type: 'reveal',
-            label: 'Retrieval: Church & Galen',
-            prompt: 'Give one reason Galen\'s ideas stayed influential.',
-            answer: 'The Church supported and promoted them / universities taught them / monasteries copied the books / lack of alternatives / Galen\'s ideas fitted Christian beliefs.',
-          },
-          {
-            type: 'reveal',
-            label: 'Retrieval: Challenging Galen',
-            prompt: 'Why was challenging Galen difficult?',
-            answer: 'The Church supported his ideas and education was controlled by religious institutions — challenging Galen meant challenging the Church.',
-          },
-          {
-            type: 'reveal',
-            label: 'Retrieval: Limited medicine',
-            prompt: 'What was limited in medieval medicine?',
-            answer: 'Dissection, scientific testing and the ability to challenge ancient authorities.',
-          },
-          {
-            type: 'examtip',
-            label: '🗡️ Exam phrase to remember',
-            tip: '<strong>The Church preserved and promoted Galen\'s ideas.</strong> This helps with "why progress was limited" questions.',
-          },
-        ],
-      },
-
-      {
         type: 'naturalSupernaturalSwipe',
         stage: 'Understand',
         label: 'Supernatural vs Natural Causes',
@@ -1425,6 +1392,65 @@ Do NOT award marks for identifying practices without explaining the religious re
             tip: 'This works because it links: <strong>belief → treatment → explanation.</strong> That is what examiners want. You are not just saying what happened — you are explaining the internal logic that made it seem sensible at the time.',
           },
         ],
+      },
+
+      {
+        type: 'matchingTask',
+        stage: 'Complete',
+        label: 'Knowledge check',
+        subject: 'History',
+        title: 'Knowledge check',
+        instruction: 'Match each medieval medicine term to its description.',
+        weakAreaCategory: 'Medieval Medicine Key Concepts',
+        backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+        pairs: [
+          {
+            id: 'urine-chart',
+            term: 'Urine chart',
+            answer: 'Used to identify which humour was believed to be out of balance.',
+            weakGroup: 'Diagnosis',
+          },
+          {
+            id: 'galen',
+            term: 'Galen',
+            answer: 'His ideas dominated medicine for over 1,000 years and were taught in medieval universities.',
+            weakGroup: 'People',
+          },
+          {
+            id: 'four-humours',
+            term: 'Four humours',
+            answer: 'Health depended on keeping four bodily liquids in balance.',
+            weakGroup: 'Beliefs',
+          },
+          {
+            id: 'theory-of-opposites',
+            term: 'Theory of opposites',
+            answer: 'Illness should be treated using qualities opposite to the symptoms.',
+            weakGroup: 'Beliefs',
+          },
+          {
+            id: 'physician',
+            term: 'Physician',
+            answer: 'A highly educated medical expert who diagnosed illness.',
+            weakGroup: 'Diagnosis',
+          },
+          {
+            id: 'wise-woman',
+            term: 'Wise woman',
+            answer: 'Relied on practical experience and herbal remedies rather than university training.',
+            weakGroup: 'People',
+          },
+          {
+            id: 'astrology',
+            term: 'Astrology',
+            answer: 'The belief that planets and stars could influence health.',
+            weakGroup: 'Beliefs',
+          },
+        ],
+        completion: {
+          title: 'Knowledge secured',
+          body: 'You have connected the key ideas that shaped medieval medicine.\n\nThese beliefs influenced how illness was diagnosed and treated for hundreds of years.',
+        },
       },
 
       {
