@@ -1146,7 +1146,7 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'examtip'       && <CardContainer variant="contained" subject={subject} padding={24}><ExamTipBlock block={block} /></CardContainer>}
           {block.type === 'timeline'      && <TimelineBlock block={block} />}
           {block.type === 'reveal'        && <RevealBlock block={block} />}
-          {block.type === 'quiz'          && <AnswerInteraction block={block} subject={subject} onComplete={() => handleQuizComplete(i)} />}
+          {block.type === 'quiz'          && <AnswerInteraction block={{...block, explanation: undefined}} subject={subject} onComplete={() => handleQuizComplete(i)} />}
           {block.type === 'flashcards'    && <FlashcardsBlock block={block} />}
           {block.type === 'hotspot'       && <HotspotBlock block={block} />}
           {block.type === 'misconception' && <MisconceptionBlock block={block} />}

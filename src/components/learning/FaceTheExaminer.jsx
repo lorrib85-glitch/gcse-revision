@@ -774,8 +774,8 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
               </button>
             )}
 
-            {/* Judging phase */}
-            {phase === 'judging' && (
+            {/* Judging phase — also shown when user switches to marking tab while still in reading */}
+            {(phase === 'judging' || (phase === 'reading' && activeTab === 'marking')) && (
               <button
                 style={ctaBtnStyle(guessedMark !== null)}
                 disabled={guessedMark === null}

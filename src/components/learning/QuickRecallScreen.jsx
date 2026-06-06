@@ -169,7 +169,7 @@ function ChoiceOrConnectionQuestion({ q, subject, onSelect }) {
       const j = Math.floor(Math.random() * (i + 1));
       [opts[i], opts[j]] = [opts[j], opts[i]]
     }
-    return { question: q.question, options: opts, explanation: q.explanation, hint: q.hint }
+    return { question: q.question, options: opts, hint: q.hint }
   }, [q])
 
   return (
