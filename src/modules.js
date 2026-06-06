@@ -1061,7 +1061,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         label: 'ENGLAND, 1348',
         videoSrc: '/videos/black-death-intro.mp4',
         fallbackImage: '/figures/history/medicine/black-death/plague-background.png',
-        year: '1347',
+        year: '1348',
         headline: 'Something is coming.',
         body: 'Rumours had been arriving for months. A terrible sickness. Killing everyone it touched.',
       },
