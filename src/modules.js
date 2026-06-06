@@ -982,13 +982,13 @@ Do NOT award marks for identifying practices without explaining the religious re
       isTrue: true,
       accentWords: ['no useful treatment'],
       backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
-      explanation: 'True. Medieval doctors tried everything they knew — bloodletting, purging, prayer, burning herbs. None of it worked. The actual cause — bacteria spread by fleas on rats — would not be discovered for another 500 years.',
+      explanation: 'True. Medieval doctors tried everything they knew — bloodletting, purging, prayer, burning herbs. None of it worked. The actual cause would not be discovered for another 500 years.',
       revealBeats: [
         'True.',
         'Medieval doctors tried everything they knew.',
         'Bloodletting. Purging. Prayer. Burning aromatic herbs against the smell.',
         'None of it worked.',
-        'The actual cause — bacteria spread by fleas on rats — would not be discovered for another 500 years.',
+        'The actual cause would not be discovered for another 500 years.',
       ],
     },
 
