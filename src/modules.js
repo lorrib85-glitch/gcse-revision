@@ -993,35 +993,6 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       {
         stage: 'Exam prep',
-        label: 'Types of Treatments',
-        kicker: 'Medieval Remedies',
-        heading: 'Treatments in Medieval England',
-        sub: 'From herbal remedies to holy relics.',
-        blocks: [
-          {
-            type: 'read',
-            text: 'Medieval treatments ranged from humoural medicine and herbal remedies to prayer, pilgrimage and ritual. The type of treatment depended largely on who you saw and what you could afford.',
-          },
-          {
-            type: 'keypoint',
-            label: 'Physicians',
-            text: 'University-trained physicians used humoural theory. Bloodletting, purging and herbal treatments were prescribed based on which humour was unbalanced.',
-          },
-          {
-            type: 'keypoint',
-            label: 'Wise women',
-            text: 'Wise women used herbal remedies passed down through tradition. Many were practical and occasionally effective, even without humoural theory behind them.',
-          },
-          {
-            type: 'keypoint',
-            label: 'Religious treatments',
-            text: 'Prayer, pilgrimage to holy shrines, and the touch of sacred relics were genuinely believed to heal. They were logical responses to a religious explanation of illness.',
-          },
-        ],
-      },
-
-      {
-        stage: 'Exam prep',
         label: 'What Survived Today?',
         kicker: 'Legacy',
         heading: 'Echoes of Medieval Medicine',
