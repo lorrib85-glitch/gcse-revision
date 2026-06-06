@@ -580,144 +580,124 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
   return (
     <div style={{
       minHeight: '100dvh',
-      position: 'relative',
       display: 'flex',
       flexDirection: 'column',
+      background: DARK,
       overflow: 'hidden',
     }}>
-      {/* Full-page parchment */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        backgroundImage: 'url(/figures/history/medicine/medieval/parchment-scroll.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }} />
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'rgba(240,215,150,0.30)',
-      }} />
 
-      {/* Scrollable content on parchment */}
+      {/* ── Dark top section — prompt above the parchment ── */}
       <div style={{
-        position: 'relative',
-        flex: 1,
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: `${SPACING.section}px ${SPACING.standard}px ${SPACING.separation}px`,
-        gap: SPACING.compact,
+        flexShrink: 0,
+        paddingTop: `calc(env(safe-area-inset-top, 0px) + ${SPACING.section}px)`,
+        paddingLeft: SPACING.standard,
+        paddingRight: SPACING.standard,
+        paddingBottom: SPACING.compact,
+        animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
       }}>
-
-        {/* Theory label */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: SPACING.micro,
-          marginBottom: SPACING.micro,
-        }}>
-          <div style={{
-            width: 32, height: 32,
-            borderRadius: RADII.small,
-            overflow: 'hidden',
-            border: `1px solid rgba(58,32,8,0.28)`,
-            flexShrink: 0,
-          }}>
-            <img src={theory.icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </div>
-          <div style={{
-            ...TYPE.metadata,
-            textTransform: 'uppercase',
-            color: BRONZE,
-            letterSpacing: '0.06em',
-          }}>
-            {theory.label}
-          </div>
-        </div>
-
-        {/* Rx header */}
-        <div style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: 28, fontWeight: 700,
-          color: '#3A2008',
-          letterSpacing: '-0.02em',
-          marginBottom: SPACING.compact,
-          borderBottom: '1.5px solid rgba(58,32,8,0.20)',
-          paddingBottom: SPACING.micro,
-          display: 'flex', alignItems: 'baseline', gap: 6,
-        }}>
-          <span>Rx</span>
-          <span style={{
-            ...TYPE.metadata,
-            color: 'rgba(58,32,8,0.45)',
-            fontSize: 11,
-            fontStyle: 'italic',
-            fontWeight: 400,
-          }}>
-            {theory.label}
-          </span>
-        </div>
-
-        {/* Prompt */}
         <div style={{
           ...TYPE.cardTitle,
-          color: '#2A1404',
-          marginBottom: SPACING.micro,
-          animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+          color: '#F5EED9',
         }}>
           {theory.prescriptionPrompt}
         </div>
+      </div>
 
-        {/* Inputs directly on parchment */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {theory.acceptedAnswers.map((ans, i) => (
-            <div key={ans.canonical} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
-              <span style={{
-                ...TYPE.metadata,
-                color: 'rgba(58,32,8,0.45)',
-                fontWeight: 600,
-                width: 20, flexShrink: 0, textAlign: 'right',
-              }}>{i + 1}.</span>
-              <input
-                ref={el => { if (inputRefs?.current) inputRefs.current[i] = el }}
-                className="mtp-input"
-                value={inputs[i] || ''}
-                onChange={e => onChange?.(i, e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && inputRefs?.current?.[i + 1]) {
-                    inputRefs.current[i + 1].focus()
-                  }
-                }}
-                aria-label={`Treatment ${i + 1}`}
-                placeholder="Write a treatment…"
-                style={{
-                  flex: 1,
-                  border: 'none',
-                  borderBottom: '1.5px solid rgba(58,32,8,0.30)',
-                  padding: '4px 4px 8px',
-                  fontFamily: "'Caveat', cursive",
-                  fontSize: 22,
-                  fontWeight: 500,
-                  color: '#2A1404',
-                  background: 'transparent',
-                  width: '100%',
-                  boxSizing: 'border-box',
-                  caretColor: '#8B4A10',
-                }}
-              />
-            </div>
-          ))}
+      {/* ── Parchment — fills the rest ── */}
+      <div style={{
+        flex: 1,
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'url(/figures/history/medicine/medieval/parchment-scroll.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }} />
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(240,215,150,0.30)',
+        }} />
+
+        <div style={{
+          position: 'relative',
+          flex: 1,
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.separation}px`,
+          gap: SPACING.compact,
+        }}>
+
+          {/* Rx header — no theory label */}
+          <div style={{
+            fontFamily: "'Sora', sans-serif",
+            fontSize: 28,
+            fontWeight: 700,
+            color: '#3A2008',
+            letterSpacing: '-0.02em',
+            marginBottom: SPACING.compact,
+            borderBottom: '1.5px solid rgba(58,32,8,0.20)',
+            paddingBottom: SPACING.micro,
+          }}>
+            Rx
+          </div>
+
+          {/* Inputs directly on parchment */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {theory.acceptedAnswers.map((ans, i) => (
+              <div key={ans.canonical} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
+                <span style={{
+                  ...TYPE.metadata,
+                  color: 'rgba(58,32,8,0.45)',
+                  fontWeight: 600,
+                  width: 20, flexShrink: 0, textAlign: 'right',
+                }}>{i + 1}.</span>
+                <input
+                  ref={el => { if (inputRefs?.current) inputRefs.current[i] = el }}
+                  className="mtp-input"
+                  value={inputs[i] || ''}
+                  onChange={e => onChange?.(i, e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && inputRefs?.current?.[i + 1]) {
+                      inputRefs.current[i + 1].focus()
+                    }
+                  }}
+                  aria-label={`Treatment ${i + 1}`}
+                  placeholder="Write a treatment…"
+                  style={{
+                    flex: 1,
+                    border: 'none',
+                    borderBottom: '1.5px solid rgba(58,32,8,0.30)',
+                    padding: '4px 4px 8px',
+                    fontFamily: "'Caveat', cursive",
+                    fontSize: 22,
+                    fontWeight: 500,
+                    color: '#2A1404',
+                    background: 'transparent',
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    caretColor: '#8B4A10',
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+
+          <CTA
+            label="Check prescription"
+            onClick={onCheck}
+            disabled={!anyFilled}
+            pressed={pressed}
+            setPressed={setPressed}
+            prefersReducedMotion={prefersReducedMotion}
+          />
         </div>
-
-        <CTA
-          label="Check prescription"
-          onClick={onCheck}
-          disabled={!anyFilled}
-          pressed={pressed}
-          setPressed={setPressed}
-          prefersReducedMotion={prefersReducedMotion}
-        />
       </div>
     </div>
   )
