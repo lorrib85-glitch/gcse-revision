@@ -113,10 +113,10 @@ export default function VisualNarrativeScreen({
           position: 'absolute', inset: 0,
           backgroundImage: `url(${(beats[0] || {}).image})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center top',
+          backgroundPosition: (beats[0] || {}).imagePosition || 'center top',
           opacity: portraitOpacity,
           transition: 'opacity 700ms ease',
-          filter: 'brightness(2.5)',
+          filter: (beats[0] || {}).imageFilter || 'brightness(2.5)',
           pointerEvents: 'none',
         }} />
 
@@ -125,7 +125,7 @@ export default function VisualNarrativeScreen({
           position: 'absolute', top: 0, left: 0, right: 0, bottom: '42%',
           backgroundImage: `url(${(beats[1] || {}).image})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center 25%',
+          backgroundPosition: (beats[1] || {}).imagePosition || 'center 25%',
           opacity: timelineOpacity,
           transition: 'opacity 700ms ease',
           pointerEvents: 'none',
@@ -271,6 +271,21 @@ export default function VisualNarrativeScreen({
                     >
                       Continue →
                     </button>
+                    {beat.source && (
+                      <div style={{
+                        marginTop: 20,
+                        fontFamily: "'Outfit', sans-serif",
+                        fontSize: 10, lineHeight: 1.5,
+                        color: 'rgba(255,255,255,0.22)',
+                        animation: 'vnFadeIn 600ms ease 200ms both',
+                        maxWidth: 280,
+                      }}>
+                        <span style={{ fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: 9 }}>
+                          Source{' '}
+                        </span>
+                        {beat.source}
+                      </div>
+                    )}
                   </div>
                 )}
               </>
