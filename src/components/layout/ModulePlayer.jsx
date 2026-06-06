@@ -1845,6 +1845,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const [cinematicHeaderVisible, setCinematicHeaderVisible] = useState(false)
   const [ihmExploreScreen, setIhmExploreScreen] = useState(null)
   const [jumpOpen, setJumpOpen] = useState(false)
+  const [selectedHealer, setSelectedHealer] = useState(null)
 
   useEffect(() => {
     saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts })
@@ -2277,7 +2278,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           promptVisual={cur.promptVisual}
           options={cur.options || []}
           onBack={headerOnBack}
-          onContinue={(nextScreenId) => {
+          onContinue={(nextScreenId, option) => {
+            if (option) setSelectedHealer(option)
             // Try to navigate to a named screen; fall back to linear progression
             if (nextScreenId) {
               const targetIdx = module.screens.findIndex(
@@ -2347,6 +2349,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         <LearningHeader {...H} visible={true} />
         <MedicalTheoryPrescription
           screen={cur}
+          selectedHealer={selectedHealer}
           onComplete={isLast ? handleFinish : () => go(1)}
         />
         {jumpSheetPortal}

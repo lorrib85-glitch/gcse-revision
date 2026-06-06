@@ -717,7 +717,7 @@ export default function GuidedChoiceCarousel({
               {/* Continue button — appears when all lines are revealed */}
               {allRevealed && (
                 <button
-                  onClick={(e) => { e.stopPropagation(); onContinue(selectedOption.nextScreenId) }}
+                  onClick={(e) => { e.stopPropagation(); onContinue(selectedOption.nextScreenId, selectedOption) }}
                   style={{
                     position: 'absolute',
                     bottom: 'calc(72px + env(safe-area-inset-bottom, 0px))',

@@ -67,7 +67,7 @@ const THEORY_TINTS = {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export default function MedicalTheoryPrescription({ screen, onComplete }) {
+export default function MedicalTheoryPrescription({ screen, selectedHealer, onComplete }) {
   const theories = screen.theories || []
 
   const [phase, setPhase]           = useState('select')
@@ -158,6 +158,7 @@ export default function MedicalTheoryPrescription({ screen, onComplete }) {
       completedIds={completedIds}
       onSelect={selectTheory}
       screen={screen}
+      selectedHealer={selectedHealer}
       prefersReducedMotion={prefersReducedMotion}
     />
   )
@@ -243,9 +244,11 @@ const CSS = `
 
 // ── Phase: Select ─────────────────────────────────────────────────────────────
 
-function SelectPhase({ theories, completedIds, onSelect, screen, prefersReducedMotion }) {
-  const remaining = theories.filter(t => !completedIds.includes(t.id))
-  const nextTheory = remaining[0]
+function SelectPhase({ theories, completedIds, onSelect, screen, selectedHealer, prefersReducedMotion }) {
+  const healerTitle = selectedHealer?.title?.toLowerCase()
+  const heading = healerTitle
+    ? `What does the ${healerTitle} think caused Thomas's illness?`
+    : 'What caused illness in medieval times?'
 
   return (
     <div style={{
@@ -266,8 +269,36 @@ function SelectPhase({ theories, completedIds, onSelect, screen, prefersReducedM
         paddingRight: SPACING.standard,
         background: `linear-gradient(160deg, rgba(${GOLD_RGB},0.08) 0%, rgba(0,0,0,0) 60%)`,
         borderBottom: `1px solid rgba(${GOLD_RGB},0.10)`,
+        overflow: 'hidden',
       }}>
+
+        {/* Selected healer — atmospheric figure on the right */}
+        {selectedHealer?.image && (
+          <>
+            <img
+              src={selectedHealer.image}
+              alt=""
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                right: 0, top: 0,
+                height: '100%', width: '55%',
+                objectFit: 'cover', objectPosition: 'center top',
+                opacity: 0.38,
+                filter: 'grayscale(20%) brightness(0.65)',
+                pointerEvents: 'none',
+              }}
+            />
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(90deg, rgba(12,9,5,1) 0%, rgba(12,9,5,0.92) 40%, rgba(12,9,5,0.50) 70%, rgba(12,9,5,0.10) 100%)',
+              pointerEvents: 'none',
+            }} />
+          </>
+        )}
+
         <div style={{
+          position: 'relative',
           ...TYPE.metadata,
           textTransform: 'uppercase',
           color: `rgba(${GOLD_RGB},0.55)`,
@@ -278,15 +309,18 @@ function SelectPhase({ theories, completedIds, onSelect, screen, prefersReducedM
         </div>
 
         <div style={{
+          position: 'relative',
           ...TYPE.sectionTitle,
           color: '#F5EED9',
           marginBottom: SPACING.compact,
+          maxWidth: 260,
           animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} 60ms both`,
         }}>
-          {nextTheory?.scenePrompt || 'What caused illness in medieval times?'}
+          {heading}
         </div>
 
         <div style={{
+          position: 'relative',
           ...TYPE.bodySmall,
           color: `rgba(245,238,217,0.55)`,
           animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} 120ms both`,
@@ -342,81 +376,45 @@ function SelectPhase({ theories, completedIds, onSelect, screen, prefersReducedM
 }
 
 function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
-  const [hovered, setHovered] = useState(false)
+  const [pressed, setPressed] = useState(false)
 
   return (
     <button
       onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onPointerDown={() => !done && setPressed(true)}
+      onPointerUp={() => setPressed(false)}
+      onPointerLeave={() => setPressed(false)}
       style={{
+        position: 'relative',
         display: 'flex',
-        alignItems: 'center',
-        gap: SPACING.compact,
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: 8,
         background: done
           ? `rgba(${GOLD_RGB},0.04)`
-          : hovered
-            ? `rgba(${GOLD_RGB},0.08)`
-            : `rgba(${GOLD_RGB},0.05)`,
-        border: `1px solid rgba(${GOLD_RGB},${done ? '0.30' : hovered ? '0.35' : '0.18'})`,
+          : `rgba(${GOLD_RGB},0.06)`,
+        border: `1px solid rgba(${GOLD_RGB},${done ? '0.28' : '0.16'})`,
         borderRadius: RADII.medium,
         padding: `${SPACING.compact}px`,
         cursor: done ? 'default' : 'pointer',
         textAlign: 'left',
         width: '100%',
-        minHeight: 96,
         transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
         animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} ${delay}ms both`,
-        boxShadow: done ? `inset 0 1px 0 rgba(${GOLD_RGB},0.15), 0 2px 12px rgba(0,0,0,0.28)` : 'none',
+        boxShadow: done ? `inset 0 1px 0 rgba(${GOLD_RGB},0.12)` : 'none',
         opacity: done ? 0.72 : 1,
-        position: 'relative',
+        transform: pressed ? 'scale(0.985)' : 'scale(1)',
         overflow: 'hidden',
       }}
     >
-      {/* Icon */}
+      {/* State indicator — top-right */}
       <div style={{
-        width: 64,
-        height: 64,
-        borderRadius: RADII.small,
-        flexShrink: 0,
-        overflow: 'hidden',
-        border: `1px solid rgba(${GOLD_RGB},${done ? '0.28' : '0.18'})`,
-      }}>
-        <img
-          src={theory.icon}
-          alt=""
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          onError={e => { e.target.style.display = 'none' }}
-        />
-      </div>
-
-      {/* Text */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          ...TYPE.metadata,
-          textTransform: 'uppercase',
-          color: done ? `rgba(${GOLD_RGB},0.55)` : GOLD,
-          marginBottom: 4,
-          letterSpacing: '0.06em',
-        }}>
-          {theory.shortLabel || theory.label}
-        </div>
-        <div style={{
-          ...TYPE.bodySmall,
-          color: `rgba(245,238,217,${done ? '0.45' : '0.70'})`,
-          lineHeight: 1.4,
-          fontSize: 14,
-        }}>
-          {theory.explanation.split('.')[0] + '.'}
-        </div>
-      </div>
-
-      {/* State indicator */}
-      <div style={{
-        width: 28,
-        height: 28,
+        position: 'absolute',
+        top: SPACING.compact,
+        right: SPACING.compact,
+        width: 26,
+        height: 26,
         borderRadius: '50%',
-        flexShrink: 0,
         border: `1.5px solid rgba(${GOLD_RGB},${done ? '0.55' : '0.22'})`,
         display: 'flex',
         alignItems: 'center',
@@ -429,6 +427,43 @@ function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
         ) : (
           <span style={{ color: `rgba(${GOLD_RGB},0.35)`, fontSize: 11 }}>›</span>
         )}
+      </div>
+
+      {/* Icon — PNG floating directly on card background, no box */}
+      <img
+        src={theory.icon}
+        alt=""
+        style={{
+          width: 68,
+          height: 68,
+          objectFit: 'contain',
+          objectPosition: 'left center',
+          display: 'block',
+          opacity: done ? 0.55 : 1,
+          filter: done ? 'grayscale(30%)' : 'none',
+        }}
+        onError={e => { e.target.style.display = 'none' }}
+      />
+
+      {/* Label */}
+      <div style={{
+        ...TYPE.metadata,
+        textTransform: 'uppercase',
+        color: done ? `rgba(${GOLD_RGB},0.55)` : GOLD,
+        letterSpacing: '0.06em',
+      }}>
+        {theory.shortLabel || theory.label}
+      </div>
+
+      {/* Short explanation */}
+      <div style={{
+        ...TYPE.bodySmall,
+        color: `rgba(245,238,217,${done ? '0.45' : '0.70'})`,
+        lineHeight: 1.4,
+        fontSize: 14,
+        paddingRight: 32,
+      }}>
+        {theory.explanation.split('.')[0] + '.'}
       </div>
     </button>
   )
