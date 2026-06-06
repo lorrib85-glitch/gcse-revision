@@ -1035,34 +1035,6 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Exam prep',
-        label: 'Medieval vs Modern',
-        kicker: 'Then and Now',
-        heading: 'How Much Has Changed?',
-        sub: 'Medical understanding across 700 years.',
-        blocks: [
-          {
-            type: 'theoryCompare',
-            oldLabel: 'Medieval understanding',
-            oldTitle: 'Disease as imbalance',
-            oldPoints: [
-              'Illness caused by imbalance of the Four Humours',
-              'Treatment aimed to restore balance through bloodletting, diet and purging',
-              'Stars, God and miasma were all valid explanations',
-            ],
-            newLabel: 'Modern understanding',
-            newTitle: 'Disease as mechanism',
-            newPoints: [
-              'Illness caused by specific pathogens, genetics or lifestyle factors',
-              'Treatment targets the specific cause — antibiotics, surgery, vaccines',
-              'All explanations must be tested against observable evidence',
-            ],
-            takeaway: 'The shift from medieval to modern medicine is about what tools became available to observe the body.',
-          },
-        ],
-      },
-
-      {
         type: 'interactiveImage',
         stage: 'Exam prep',
         id: 'four-humours-hotspot',
@@ -1163,52 +1135,6 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Exam prep',
-        label: 'The Church & Medicine',
-        kicker: 'The Church\'s Role',
-        heading: 'The Church Copy-Paste Machine',
-        sub: 'How religion kept 1,000-year-old ideas alive.',
-        blocks: [
-          {
-            type: 'explainReveal',
-            title: 'The Church copy-paste machine',
-            steps: [
-              { id: 'church-1', statement: 'The Church was extremely powerful in medieval Europe.' },
-              { id: 'church-2', statement: 'Monasteries copied and preserved ancient medical books.' },
-              { id: 'church-3', statement: 'Universities often taught', emphasis: 'Galen\'s ideas.' },
-              {
-                id: 'church-4',
-                statement: 'Galen\'s ideas also fitted Christian beliefs because he suggested the body had been designed with purpose.',
-                detail: 'Questioning accepted ideas was difficult — and dangerous.',
-              },
-              { id: 'church-5', statement: 'When the Church backs your theory, your theory gets', emphasis: 'excellent brand protection.' },
-            ],
-          },
-        ],
-      },
-
-      {
-        stage: 'Exam prep',
-        label: 'Astrology & Medicine',
-        kicker: 'Stars and Planets',
-        heading: 'Trust Me, I\'m Following Jupiter',
-        sub: 'Medieval physicians used the stars to guide treatment.',
-        blocks: [
-          {
-            type: 'explainReveal',
-            title: 'Trust me, I\'m following Jupiter',
-            steps: [
-              { id: 'astrology-1', statement: 'Medieval physicians also used', emphasis: 'astrology.' },
-              { id: 'astrology-2', statement: 'They believed the stars and planets could influence health.' },
-              { id: 'astrology-3', statement: 'Some doctors used astrological charts to decide when treatment should happen.' },
-              { id: 'zodiac', statement: 'The Zodiac Man showed which zodiac signs were linked to different parts of the body.' },
-              { id: 'punchline', statement: 'Imagine coughing blood and your doctor says:', emphasis: '"Let\'s check Saturn."' },
-            ],
-          },
-        ],
-      },
-
-      {
         type: 'quickRecall',
         stage: 'Exam prep',
         label: 'Astrology Check',
@@ -1233,31 +1159,6 @@ Do NOT award marks for identifying practices without explaining the religious re
             options: ['Physician', 'Barber surgeon', 'Wise woman', 'Dentist'],
             correct: 0,
             explanation: 'Astrology was part of learned, university-trained medicine — especially for physicians.',
-          },
-        ],
-      },
-
-      {
-        stage: 'Exam prep',
-        label: 'Miasma',
-        kicker: 'Bad Air',
-        heading: 'Bad Air. Bad Vibes. Bad Diagnosis.',
-        sub: 'They blamed the smell. They weren\'t wrong about the places — just the reason.',
-        blocks: [
-          {
-            type: 'explainReveal',
-            title: 'Bad air. Bad vibes. Bad diagnosis.',
-            steps: [
-              { id: 'miasma-1', statement: 'Another common explanation was', emphasis: 'miasma.' },
-              { id: 'miasma-2', statement: 'Miasma meant bad air or poisonous smells.' },
-              { id: 'miasma-3', statement: 'People linked disease to rotting waste, dirt, swamps and foul smells.' },
-              {
-                id: 'miasma-logic',
-                statement: 'This idea made some sense from observation.',
-                detail: 'Dirty, smelly places often were unhealthy. They just misunderstood why.',
-              },
-              { id: 'miasma-punchline', statement: 'They blamed the smell.', emphasis: 'The real problem was usually what lived in the filth.' },
-            ],
           },
         ],
       },
@@ -1362,29 +1263,6 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       {
         stage: 'Exam prep',
-        label: 'Doctor Mode',
-        kicker: 'Apply the Logic',
-        heading: 'Medieval Doctor Mode',
-        sub: 'Thomas has a fever. Apply what you know.',
-        blocks: [
-          {
-            type: 'scenario',
-            label: 'Medieval Doctor Decision',
-            scenarios: [
-              {
-                situation: 'Thomas has a fever, a red face and a pounding headache. A medieval doctor thinks he has too much blood. What treatment would seem logical?',
-                options: ['Give antibiotics', 'Remove blood', 'Use a microscope', 'Give a vaccine'],
-                correctIndex: 1,
-                explanation: 'If too much blood caused the illness, removing blood seemed like a way to restore balance. This is why bloodletting made sense to them. Not to Thomas, obviously.',
-              },
-            ],
-            completionText: 'That\'s the logic: wrong cause, but internally consistent treatment.',
-          },
-        ],
-      },
-
-      {
-        stage: 'Exam prep',
         label: 'Diagnose It',
         kicker: 'Apply Your Knowledge',
         heading: 'Diagnose Like It\'s 1340',
@@ -1449,63 +1327,6 @@ Do NOT award marks for identifying practices without explaining the religious re
             label: '✓ Better answer',
             text: '<em>"Medieval doctors believed in the Theory of the Four Humours, which said illness was caused by an imbalance in the body. Galen developed the Theory of Opposites, so doctors believed they could restore balance by removing excess blood. This made bloodletting seem like a logical treatment."</em>',
             tip: 'This works because it links: <strong>belief → treatment → explanation.</strong> That is what examiners want. You are not just saying what happened — you are explaining the internal logic that made it seem sensible at the time.',
-          },
-        ],
-      },
-
-      {
-        stage: 'Exam prep',
-        label: 'Final Retrieval',
-        kicker: 'Final Retrieval',
-        heading: 'Final Retrieval: No Hiding Now',
-        sub: 'Seven questions. Think, then reveal.',
-        blocks: [
-          {
-            type: 'reveal',
-            label: 'Q1',
-            prompt: 'Name the Four Humours.',
-            answer: 'Blood, phlegm, yellow bile, black bile.',
-          },
-          {
-            type: 'reveal',
-            label: 'Q2',
-            prompt: 'What did medieval doctors believe caused illness in the Four Humours theory?',
-            answer: 'Imbalance — the humours were out of balance.',
-          },
-          {
-            type: 'reveal',
-            label: 'Q3',
-            prompt: 'What was miasma?',
-            answer: 'Bad air or poisonous smells believed to cause disease.',
-          },
-          {
-            type: 'reveal',
-            label: 'Q4',
-            prompt: 'Why was Galen important?',
-            answer: 'His ideas dominated medieval medicine — he developed the Theory of Opposites, which underpinned treatments like bloodletting.',
-          },
-          {
-            type: 'reveal',
-            label: 'Q5',
-            prompt: 'Why did the Church help old medical ideas survive?',
-            answer: 'It preserved and promoted ancient texts, taught Galen\'s ideas in universities, and discouraged challenges to accepted authority.',
-          },
-          {
-            type: 'reveal',
-            label: 'Q6',
-            prompt: 'What was the Zodiac Man?',
-            answer: 'A diagram linking zodiac signs to parts of the body, used by physicians to guide diagnosis and treatment timing.',
-          },
-          {
-            type: 'reveal',
-            label: 'Q7',
-            prompt: 'Give one religious explanation for illness.',
-            answer: 'God\'s punishment for sin / a test of faith / part of God\'s plan.',
-          },
-          {
-            type: 'examtip',
-            label: '🗡️ Final thought',
-            tip: 'Next time someone says medieval doctors were just stupid, you can say: <strong>"No. Worse. They were logical with terrible information."</strong>',
           },
         ],
       },
