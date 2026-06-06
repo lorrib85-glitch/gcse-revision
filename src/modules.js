@@ -171,6 +171,30 @@ export const MODULES = [
       },
 
       {
+        type: 'conceptReveal',
+        stage: 'Hippocrates',
+        label: 'The Four Humours',
+        steps: [
+          {
+            eyebrow: 'The most important medieval idea',
+            mainText: 'The Theory of the Four Humours.',
+          },
+          {
+            mainText: 'Doctors believed the body contained four important fluids.',
+            microPoints: ['Blood', 'Phlegm', 'Yellow bile', 'Black bile'],
+          },
+          {
+            eyebrow: 'The logic',
+            mainText: 'If these humours were balanced, you were healthy.',
+          },
+          {
+            mainText: 'If they became unbalanced, you became ill.',
+            supportText: 'Simple idea. Huge consequences.',
+          },
+        ],
+      },
+
+      {
         type: 'interactiveImage',
         stage: 'Hippocrates',
         id: 'four-humours-hotspot',
@@ -900,30 +924,6 @@ Do NOT award marks for identifying practices without explaining the religious re
             options: ['Ancient authorities', 'Surgeons', 'Plague doctors', 'Monks'],
             correct: 0,
             explanation: 'Medieval doctors trusted ancient authorities heavily — their texts were treated almost like scripture.',
-          },
-        ],
-      },
-
-      {
-        type: 'conceptReveal',
-        stage: 'Exam prep',
-        label: 'The Four Humours',
-        steps: [
-          {
-            eyebrow: 'The most important medieval idea',
-            mainText: 'The Theory of the Four Humours.',
-          },
-          {
-            mainText: 'Doctors believed the body contained four important fluids.',
-            microPoints: ['Blood', 'Phlegm', 'Yellow bile', 'Black bile'],
-          },
-          {
-            eyebrow: 'The logic',
-            mainText: 'If these humours were balanced, you were healthy.',
-          },
-          {
-            mainText: 'If they became unbalanced, you became ill.',
-            supportText: 'Simple idea. Huge consequences.',
           },
         ],
       },
