@@ -571,6 +571,18 @@ export const MODULES = [
       },
 
       {
+        type: 'visualLearning',
+        stage: 'Investigate',
+        label: 'Causes of illness',
+        scenes: [
+          {
+            image: '/headers/history-medicine-medieval-scripture.png',
+            headline: 'So what did medieval people believe caused illness, and how did they treat them?',
+          },
+        ],
+      },
+
+      {
         type: 'medicalTheoryPrescription',
         stage: 'Investigate',
         label: 'What caused illness?',
