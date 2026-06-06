@@ -143,41 +143,6 @@ export default function ChapterHookScreen({
   const isReveal   = phase === 'reveal'
   const isQuestion = phase === 'question' || isExiting
 
-  const BgLayers = () => (
-    <>
-      {/* Subject image — question phase */}
-      <div style={{
-        position: 'fixed', inset: 0,
-        backgroundImage: `url(${subjectImg})`,
-        backgroundSize: 'cover', backgroundPosition: 'center top',
-        opacity: isReveal ? 0 : 0.26,
-        filter: 'grayscale(10%) brightness(0.65)',
-        transition: `opacity 480ms ${MOTION.easing.gentle}`,
-        pointerEvents: 'none', zIndex: 1,
-      }} />
-      {/* Topic image — reveal phase */}
-      <div style={{
-        position: 'fixed', inset: 0,
-        backgroundImage: `url(${revealImg})`,
-        backgroundSize: 'cover', backgroundPosition: 'center top',
-        opacity: isReveal ? 0.32 : 0,
-        filter: 'grayscale(10%) brightness(0.65)',
-        transition: `opacity 480ms ${MOTION.easing.gentle}`,
-        pointerEvents: 'none', zIndex: 1,
-      }} />
-      <div style={{
-        position: 'fixed', inset: 0,
-        background: 'linear-gradient(90deg, rgba(8,9,13,0.94) 0%, rgba(8,9,13,0.78) 38%, rgba(8,9,13,0.42) 68%, rgba(8,9,13,0.16) 100%)',
-        pointerEvents: 'none', zIndex: 2,
-      }} />
-      <div style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, height: 220,
-        background: 'linear-gradient(0deg, rgba(8,9,13,0.97) 0%, transparent 100%)',
-        pointerEvents: 'none', zIndex: 3,
-      }} />
-    </>
-  )
-
   return (
     <>
       <style>{`
@@ -210,7 +175,36 @@ export default function ChapterHookScreen({
       `}</style>
 
       <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: '#08090D' }}>
-        <BgLayers />
+        {/* Subject image — question phase */}
+        <div style={{
+          position: 'fixed', inset: 0,
+          backgroundImage: `url(${subjectImg})`,
+          backgroundSize: 'cover', backgroundPosition: 'center top',
+          opacity: isReveal ? 0 : 0.26,
+          filter: 'grayscale(10%) brightness(0.65)',
+          transition: `opacity 480ms ${MOTION.easing.gentle}`,
+          pointerEvents: 'none', zIndex: 1,
+        }} />
+        {/* Topic image — reveal phase */}
+        <div style={{
+          position: 'fixed', inset: 0,
+          backgroundImage: `url(${revealImg})`,
+          backgroundSize: 'cover', backgroundPosition: 'center top',
+          opacity: isReveal ? 0.50 : 0,
+          filter: 'brightness(0.70)',
+          transition: `opacity 480ms ${MOTION.easing.gentle}`,
+          pointerEvents: 'none', zIndex: 1,
+        }} />
+        <div style={{
+          position: 'fixed', inset: 0,
+          background: 'linear-gradient(90deg, rgba(8,9,13,0.94) 0%, rgba(8,9,13,0.78) 38%, rgba(8,9,13,0.42) 68%, rgba(8,9,13,0.16) 100%)',
+          pointerEvents: 'none', zIndex: 2,
+        }} />
+        <div style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0, height: 220,
+          background: 'linear-gradient(0deg, rgba(8,9,13,0.97) 0%, transparent 100%)',
+          pointerEvents: 'none', zIndex: 3,
+        }} />
 
         {/* ══════════════════════════════════════════════════════════════
             SCREEN 1 — QUESTION
