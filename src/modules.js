@@ -67,7 +67,7 @@ export const MODULES = [
 
       {
         type: 'visualNarrative',
-        stage: 'Discover',
+        stage: 'Intro',
         label: 'Ancient Authorities',
         beats: [
           {
@@ -92,7 +92,7 @@ export const MODULES = [
 
       {
         type: 'conceptReveal',
-        stage: 'Understand',
+        stage: 'Hippocrates',
         label: 'The Germ Problem',
         steps: [
           {
@@ -111,7 +111,7 @@ export const MODULES = [
 
       {
         type: 'conceptReveal',
-        stage: 'Understand',
+        stage: 'Hippocrates',
         label: 'The search for answers',
         steps: [
           {
@@ -129,7 +129,7 @@ export const MODULES = [
 
       {
         type: 'keyFigureReveal',
-        stage: 'Understand',
+        stage: 'Hippocrates',
         tag: 'four-humours',
         label: 'Hippocrates',
         portrait: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
@@ -172,7 +172,7 @@ export const MODULES = [
 
       {
         type: 'interactiveImage',
-        stage: 'Understand',
+        stage: 'Hippocrates',
         id: 'four-humours-hotspot',
         label: 'Explore the Humours',
         title: 'Tap the Four Humours',
@@ -210,7 +210,7 @@ export const MODULES = [
 
       {
         type: 'quickRecall',
-        stage: 'Understand',
+        stage: 'Hippocrates',
         label: 'Hippocrates — quick check',
         questions: [
           {
@@ -239,7 +239,7 @@ export const MODULES = [
 
       {
         type: 'keyFigureReveal',
-        stage: 'Understand',
+        stage: 'Galen',
         tag: 'galen',
         label: 'Galen',
         portrait: '/figures/history/medicine/medieval/galen-portrait.webp',
@@ -287,7 +287,7 @@ export const MODULES = [
 
       {
         type: 'theoryLab',
-        stage: 'Understand',
+        stage: 'Galen',
         label: 'Think Like Galen',
 
         title: 'Think Like Galen',
@@ -349,7 +349,7 @@ export const MODULES = [
 
       {
         type: 'quickRecall',
-        stage: 'Understand',
+        stage: 'Galen',
         label: 'Retrieval',
         questions: [
           {
@@ -378,7 +378,7 @@ export const MODULES = [
 
       {
         type: 'visualLearning',
-        stage: 'Understand',
+        stage: 'Medieval treatments',
         label: 'England, 1250',
         scenes: [
           {
@@ -416,7 +416,7 @@ export const MODULES = [
 
       {
         type: 'guidedChoiceCarousel',
-        stage: 'Challenge',
+        stage: 'Medieval treatments',
         id: 'healer-carousel',
         tag: 'medieval-practitioners',
         label: 'Choose Your Healer',
@@ -512,7 +512,7 @@ export const MODULES = [
       {
         type: 'conceptReveal',
         id: 'post-choice',
-        stage: 'Understand',
+        stage: 'Medieval treatments',
         tag: 'miasma',
         label: 'Miasma — The Poisoned Air Theory',
         steps: [
@@ -534,7 +534,7 @@ export const MODULES = [
 
       {
         type: 'interactiveImage',
-        stage: 'Investigate',
+        stage: 'Medieval treatments',
         id: 'zodiac-man-hotspot',
         label: 'Diagnose Like It\'s 1340',
         title: 'The Zodiac Man',
@@ -572,7 +572,7 @@ export const MODULES = [
 
       {
         type: 'visualLearning',
-        stage: 'Investigate',
+        stage: 'Medieval treatments',
         label: 'Causes of illness',
         scenes: [
           {
@@ -584,7 +584,7 @@ export const MODULES = [
 
       {
         type: 'medicalTheoryPrescription',
-        stage: 'Investigate',
+        stage: 'Medieval treatments',
         label: 'What caused illness?',
         contextName: 'Thomas',
         openingPractitioner: 'priest',
@@ -643,8 +643,67 @@ export const MODULES = [
       },
 
       {
+        type: 'matchingTask',
+        stage: 'Medieval treatments',
+        label: 'Knowledge check',
+        subject: 'History',
+        title: 'Knowledge check',
+        instruction: 'Match each medieval medicine term to its description.',
+        weakAreaCategory: 'Medieval Medicine Key Concepts',
+        backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+        pairs: [
+          {
+            id: 'urine-chart',
+            term: 'Urine chart',
+            answer: 'Used to identify which humour was believed to be out of balance.',
+            weakGroup: 'Diagnosis',
+          },
+          {
+            id: 'galen',
+            term: 'Galen',
+            answer: 'His ideas dominated medicine for over 1,000 years and were taught in medieval universities.',
+            weakGroup: 'People',
+          },
+          {
+            id: 'four-humours',
+            term: 'Four humours',
+            answer: 'Health depended on keeping four bodily liquids in balance.',
+            weakGroup: 'Beliefs',
+          },
+          {
+            id: 'theory-of-opposites',
+            term: 'Theory of opposites',
+            answer: 'Illness should be treated using qualities opposite to the symptoms.',
+            weakGroup: 'Beliefs',
+          },
+          {
+            id: 'physician',
+            term: 'Physician',
+            answer: 'A highly educated medical expert who diagnosed illness.',
+            weakGroup: 'Diagnosis',
+          },
+          {
+            id: 'wise-woman',
+            term: 'Wise woman',
+            answer: 'Relied on practical experience and herbal remedies rather than university training.',
+            weakGroup: 'People',
+          },
+          {
+            id: 'astrology',
+            term: 'Astrology',
+            answer: 'The belief that planets and stars could influence health.',
+            weakGroup: 'Beliefs',
+          },
+        ],
+        completion: {
+          title: 'Knowledge secured',
+          body: 'You have connected the key ideas that shaped medieval medicine.\n\nThese beliefs influenced how illness was diagnosed and treated for hundreds of years.',
+        },
+      },
+
+      {
         type: 'naturalSupernaturalSwipe',
-        stage: 'Understand',
+        stage: 'Rational vs supernatural',
         label: 'Supernatural vs Natural Causes',
         columns: [
           { label: 'SUPERNATURAL\nBased on religion or belief', color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)' },
@@ -663,7 +722,7 @@ export const MODULES = [
 
       {
         type: 'quickRecall',
-        stage: 'Investigate',
+        stage: 'Rational vs supernatural',
         label: 'Retrieval',
         questions: [
           {
@@ -691,7 +750,7 @@ export const MODULES = [
       },
 
       {
-        stage: 'Understand',
+        stage: 'Rational vs supernatural',
         label: 'Fill the Gap',
         kicker: 'Four Humours',
         heading: 'Fill the Medieval Logic Gap',
@@ -728,7 +787,7 @@ export const MODULES = [
 
       {
         type: 'faceExaminer',
-        stage: 'Examiner',
+        stage: 'Exam prep',
         label: 'Face the Examiner',
         examiner: {
           type: '8-mark-explain',
@@ -818,7 +877,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       {
         type: 'quickRecall',
-        stage: 'Discover',
+        stage: 'Exam prep',
         label: 'Who Said What?',
         questions: [
           {
@@ -847,7 +906,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       {
         type: 'conceptReveal',
-        stage: 'Understand',
+        stage: 'Exam prep',
         label: 'The Four Humours',
         steps: [
           {
@@ -870,7 +929,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Investigate',
+        stage: 'Exam prep',
         label: 'Urine Analysis',
         kicker: 'Diagnostic Methods',
         heading: 'The Colour of Your Illness',
@@ -895,7 +954,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       {
         type: 'conceptReveal',
-        stage: 'Understand',
+        stage: 'Exam prep',
         label: 'The Logic of Bloodletting',
         steps: [
           {
@@ -918,7 +977,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Investigate',
+        stage: 'Exam prep',
         label: 'Types of Treatments',
         kicker: 'Medieval Remedies',
         heading: 'Treatments in Medieval England',
@@ -947,7 +1006,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Investigate',
+        stage: 'Exam prep',
         label: 'What Survived Today?',
         kicker: 'Legacy',
         heading: 'Echoes of Medieval Medicine',
@@ -976,7 +1035,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Investigate',
+        stage: 'Exam prep',
         label: 'Medieval vs Modern',
         kicker: 'Then and Now',
         heading: 'How Much Has Changed?',
@@ -1005,7 +1064,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       {
         type: 'interactiveImage',
-        stage: 'Understand',
+        stage: 'Exam prep',
         id: 'four-humours-hotspot',
         label: 'Explore the Humours',
         title: 'Tap the Four Humours',
@@ -1043,7 +1102,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       {
         type: 'quickRecall',
-        stage: 'Understand',
+        stage: 'Exam prep',
         label: 'Four Humours Check',
         questions: [
           {
@@ -1071,7 +1130,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Understand',
+        stage: 'Exam prep',
         label: 'Lock It In',
         kicker: 'Retrieval Practice',
         heading: 'Lock It In',
@@ -1104,7 +1163,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Investigate',
+        stage: 'Exam prep',
         label: 'The Church & Medicine',
         kicker: 'The Church\'s Role',
         heading: 'The Church Copy-Paste Machine',
@@ -1129,7 +1188,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Investigate',
+        stage: 'Exam prep',
         label: 'Astrology & Medicine',
         kicker: 'Stars and Planets',
         heading: 'Trust Me, I\'m Following Jupiter',
@@ -1151,7 +1210,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       {
         type: 'quickRecall',
-        stage: 'Investigate',
+        stage: 'Exam prep',
         label: 'Astrology Check',
         questions: [
           {
@@ -1179,7 +1238,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Investigate',
+        stage: 'Exam prep',
         label: 'Miasma',
         kicker: 'Bad Air',
         heading: 'Bad Air. Bad Vibes. Bad Diagnosis.',
@@ -1205,7 +1264,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       {
         type: 'quickRecall',
-        stage: 'Investigate',
+        stage: 'Exam prep',
         label: 'Miasma Check',
         questions: [
           {
@@ -1239,7 +1298,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       {
         type: 'quickRecall',
-        stage: 'Investigate',
+        stage: 'Exam prep',
         label: 'Religion Check',
         questions: [
           {
@@ -1273,7 +1332,7 @@ Do NOT award marks for identifying practices without explaining the religious re
 
       {
         type: 'quickRecall',
-        stage: 'Challenge',
+        stage: 'Exam prep',
         id: 'quick-recall-healers',
         label: 'Quick Recall: Who Was Who?',
         questions: [
@@ -1302,7 +1361,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Challenge',
+        stage: 'Exam prep',
         label: 'Doctor Mode',
         kicker: 'Apply the Logic',
         heading: 'Medieval Doctor Mode',
@@ -1325,7 +1384,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Challenge',
+        stage: 'Exam prep',
         label: 'Diagnose It',
         kicker: 'Apply Your Knowledge',
         heading: 'Diagnose Like It\'s 1340',
@@ -1374,7 +1433,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Examiner',
+        stage: 'Exam prep',
         label: 'The Examiner Explains',
         kicker: 'What Gets Marks?',
         heading: 'What Would Get Marks?',
@@ -1395,66 +1454,7 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        type: 'matchingTask',
-        stage: 'Complete',
-        label: 'Knowledge check',
-        subject: 'History',
-        title: 'Knowledge check',
-        instruction: 'Match each medieval medicine term to its description.',
-        weakAreaCategory: 'Medieval Medicine Key Concepts',
-        backgroundImage: '/headers/history-medicine-medieval-scripture.png',
-        pairs: [
-          {
-            id: 'urine-chart',
-            term: 'Urine chart',
-            answer: 'Used to identify which humour was believed to be out of balance.',
-            weakGroup: 'Diagnosis',
-          },
-          {
-            id: 'galen',
-            term: 'Galen',
-            answer: 'His ideas dominated medicine for over 1,000 years and were taught in medieval universities.',
-            weakGroup: 'People',
-          },
-          {
-            id: 'four-humours',
-            term: 'Four humours',
-            answer: 'Health depended on keeping four bodily liquids in balance.',
-            weakGroup: 'Beliefs',
-          },
-          {
-            id: 'theory-of-opposites',
-            term: 'Theory of opposites',
-            answer: 'Illness should be treated using qualities opposite to the symptoms.',
-            weakGroup: 'Beliefs',
-          },
-          {
-            id: 'physician',
-            term: 'Physician',
-            answer: 'A highly educated medical expert who diagnosed illness.',
-            weakGroup: 'Diagnosis',
-          },
-          {
-            id: 'wise-woman',
-            term: 'Wise woman',
-            answer: 'Relied on practical experience and herbal remedies rather than university training.',
-            weakGroup: 'People',
-          },
-          {
-            id: 'astrology',
-            term: 'Astrology',
-            answer: 'The belief that planets and stars could influence health.',
-            weakGroup: 'Beliefs',
-          },
-        ],
-        completion: {
-          title: 'Knowledge secured',
-          body: 'You have connected the key ideas that shaped medieval medicine.\n\nThese beliefs influenced how illness was diagnosed and treated for hundreds of years.',
-        },
-      },
-
-      {
-        stage: 'Complete',
+        stage: 'Exam prep',
         label: 'Final Retrieval',
         kicker: 'Final Retrieval',
         heading: 'Final Retrieval: No Hiding Now',

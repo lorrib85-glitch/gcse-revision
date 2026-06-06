@@ -1937,7 +1937,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const subjectColor = module.color || '#9D5CFF'
 
   // ── Stage-based learning header ───────────────────────────────────────────
-  const STAGE_NAMES = ['Discover', 'Understand', 'Investigate', 'Challenge', 'Examiner', 'Complete']
+  const STAGE_NAMES = ['Intro', 'Hippocrates', 'Galen', 'Medieval treatments', 'Rational vs supernatural', 'Exam prep']
   const currentStage = (() => {
     if (navTo === 'recall' || (!recallDone && module.recall)) return 'Discover'
     if (cur?.stage) return cur.stage
@@ -1968,14 +1968,13 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   }
 
   const subjectRgb = hexToRgb(subjectColor) || '157,92,255'
-  const screenPos  = { current: screen + 1, total }
   const H = {
     module,
     currentStage,
     onBack:       headerOnBack,
     onExit:       onBack,
     onJumpOpen:   () => setJumpOpen(true),
-    screenPos,
+    screenPos:    null,
   }
   const jumpSheetPortal = jumpOpen ? createPortal(
     <JumpSheet
@@ -2213,7 +2212,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           module={module}
           examiner={cur.examiner}
           onExit={headerOnBack}
-          onContinue={completeModule}
+          onContinue={isLast ? handleFinish : () => go(1)}
         />
         {jumpSheetPortal}
       </>

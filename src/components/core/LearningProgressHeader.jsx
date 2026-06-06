@@ -1,14 +1,14 @@
 import { useState } from 'react'
 
-const STAGES = ['Discover', 'Understand', 'Investigate', 'Challenge', 'Examiner', 'Complete']
+const STAGES = ['Intro', 'Hippocrates', 'Galen', 'Medieval treatments', 'Rational vs supernatural', 'Exam prep']
 
 const STAGE_DESCRIPTIONS = {
-  Discover:    'Setting the scene and activating prior knowledge',
-  Understand:  'Building core knowledge and concepts',
-  Investigate: 'Exploring evidence, causes and context',
-  Challenge:   'Applying knowledge to real scenarios',
-  Examiner:    'Practising exam technique',
-  Complete:    'Reviewing and locking in your learning',
+  'Intro':                    'Setting the scene and activating prior knowledge',
+  'Hippocrates':              'The origins of ancient medical theory',
+  'Galen':                    'How Galen shaped medicine for 1,400 years',
+  'Medieval treatments':      'How illness was explained and treated',
+  'Rational vs supernatural': 'Sorting natural from religious explanations',
+  'Exam prep':                'Applying knowledge under exam conditions',
 }
 
 // ── LearningProgressHeader v3 ─────────────────────────────────────────────────
