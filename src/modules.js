@@ -1063,35 +1063,10 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         fallbackImage: '/figures/history/medicine/black-death/plague-background.png',
         year: '1348',
         headline: 'Something is coming.',
-        body: 'Rumours had been arriving for months. A terrible sickness. Killing everyone it touched.',
+        body: 'In June 1348, ships docked at Melcombe in Dorset.\n\nWithin weeks, people began to die.\n\nThe disease moved fast — through towns, villages, and monasteries.\n\nNo one knew what it was. No one knew how to stop it.',
       },
 
       // ── Section 2: The arrival ───────────────────────────────────────────────
-
-      {
-        type: 'visualNarrative',
-        stage: 'The arrival',
-        label: 'England, 1348',
-        beats: [
-          {
-            image: '/figures/history/medicine/black-death/medieval-town.png',
-            label: 'ENGLAND, 1348',
-            headline: 'Something is coming.',
-            body: 'Rumours had been arriving for months. A terrible sickness. Killing everyone it touched.',
-          },
-          {
-            image: '/figures/history/medicine/black-death/empty-town.png',
-            imageOpacity: 0.6,
-            facts: [
-              'In June 1348, ships docked at Melcombe in Dorset.',
-              'Within weeks, people began to die.',
-              'The disease moved fast — through towns, villages, and monasteries.',
-              'By 1350, it had reached Scotland.',
-            ],
-            conclusion: 'No one knew what it was.\n\nNo one knew how to stop it.',
-          },
-        ],
-      },
 
       {
         type: 'interactiveImage',
