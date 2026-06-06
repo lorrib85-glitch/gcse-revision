@@ -85,6 +85,13 @@ export default function CinematicRevealMoment({
   // Clear all pending timers on unmount
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
+  // Safety net: if video hasn't triggered reveal within 12s, start it anyway
+  useEffect(() => {
+    if (!videoSrc) { startReveal(); return }
+    const t = setTimeout(() => startReveal(), 12000)
+    return () => clearTimeout(t)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   function schedule(fn, delay) {
     timers.current.push(setTimeout(fn, delay))
   }
@@ -92,14 +99,7 @@ export default function CinematicRevealMoment({
   function startReveal() {
     if (videoEnded) return
     setVideoEnded(true)
-
-    // Year: 300ms after still, duration 900ms
-    // Also signal parent that text has started revealing (so header can fade in)
     schedule(() => { setYearVisible(true); onTextRevealStart?.() }, 300)
-
-    // Each para: 900ms after the previous one STARTS
-    // Para 0 starts at 300+900=1200ms
-    // Para 1 starts at 1200+900=2100ms, etc.
     paragraphs.forEach((_, i) => {
       schedule(() => {
         setParaVisible(prev => {
@@ -107,10 +107,18 @@ export default function CinematicRevealMoment({
         })
       }, 300 + 900 * (i + 1))
     })
-
-    // Button: last para start + last para duration (1300ms) + 600ms delay
     const lastParaStart = 300 + 900 * paragraphs.length
     schedule(() => setBtnVisible(true), lastParaStart + 1300 + 600)
+  }
+
+  function handleTap() {
+    if (!videoEnded) {
+      // Tap skips/ends the video and starts the reveal
+      if (videoRef.current) videoRef.current.pause()
+      startReveal()
+    } else if (btnVisible) {
+      onContinue?.()
+    }
   }
 
   function handleVideoEnd() { startReveal() }
@@ -136,10 +144,16 @@ export default function CinematicRevealMoment({
         }
       `}</style>
 
-      <div style={{
-        position: 'fixed', inset: 0, zIndex: 1000,
-        background: bg, overflow: 'hidden',
-      }}>
+      <div
+        onClick={handleTap}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 1000,
+          background: bg, overflow: 'hidden',
+          cursor: 'pointer',
+          WebkitTapHighlightColor: 'transparent',
+          userSelect: 'none',
+        }}
+      >
 
         {/* Video */}
         {!videoError && videoSrc && (
@@ -284,7 +298,7 @@ export default function CinematicRevealMoment({
         {/* Continue prompt — quiet text invite, appears after all copy is visible */}
         {btnVisible && (
           <button
-            onClick={onContinue}
+            onClick={e => { e.stopPropagation(); onContinue?.() }}
             style={{
               position: 'absolute',
               left: 32, right: 32,
