@@ -1006,6 +1006,20 @@ Do NOT award marks for identifying practices without explaining the religious re
       // ── Section 1: Intro / Recall / Roadmap ─────────────────────────────────
 
       {
+        type: 'cinematic',
+        stage: 'The arrival',
+        label: 'Death comes from the east',
+        videoSrc: '/videos/black-death-intro.mp4',
+        fallbackImage: '/figures/history/medicine/black-death/plague-background.png',
+        year: '1347',
+        paragraphs: [
+          'It began in Asia. It followed the trade routes west.',
+          'By the time it reached England, half of Europe was already dying.',
+          'This is the story of the Black Death.',
+        ],
+      },
+
+      {
         type: 'priorKnowledgeRecall',
         chapterTitle: 'Medieval medicine: beliefs and causes of disease',
         prompt: 'What do you remember from the last chapter?',
