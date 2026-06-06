@@ -1858,42 +1858,6 @@ Do NOT award for identifying practices without explaining the religious reasonin
       },
 
       {
-        stage: 'Exam prep',
-        label: 'Improving the answer',
-        kicker: 'Building to full marks',
-        heading: 'Improving the answer',
-        sub: 'See how each step adds marks.',
-        blocks: [
-          {
-            type: 'explainReveal',
-            intro: 'Here\'s how to turn a 1-mark sentence into a full 4-mark explanation.',
-            atmosphereImage: '/headers/history-medicine-medieval-scripture.png',
-            steps: [
-              {
-                id: 'original',
-                statement: 'Weak answer — 1 mark:',
-                emphasis: '"People prayed during the Black Death."',
-                detail: 'Identifies what happened but explains nothing. No causal chain, no belief stated.',
-              },
-              {
-                id: 'better',
-                statement: 'Better — 2 marks:',
-                emphasis: '"People prayed because they believed the disease was punishment from God."',
-                detail: 'Now connects the action to the belief. The "because" is doing the work here.',
-              },
-              {
-                id: 'best',
-                statement: 'Strong answer — 4 marks:',
-                emphasis: '"People prayed and performed acts of repentance — they hoped to persuade God to forgive humanity and end the plague."',
-                detail: 'Explains the belief AND the intended consequence. Notice: it answers why it made sense, not just what they did.',
-              },
-            ],
-            reflectionPrompt: 'The answer explains belief and consequence — not just what happened. That is what earns full marks.',
-          },
-        ],
-      },
-
-      {
         type: 'faceExaminer',
         stage: 'Exam prep',
         label: 'Face the Examiner — similarity',
