@@ -1616,32 +1616,148 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         ],
       },
 
-      // ── Section 7: Examiner ──────────────────────────────────────────────────
+      // ── Section 6: Summary & Examiner ──────────────────────────────────────────
+
+      {
+        type: 'visualLearning',
+        stage: 'Exam prep',
+        label: 'The story so far',
+        scenes: [
+          {
+            image: '/figures/history/medicine/black-death/plague-background.png',
+            headline: 'The Black Death reached England in 1348.',
+            body: 'People did not know what caused it.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/miasma.png',
+            headline: 'Medieval people blamed three things.',
+            body: 'God — as punishment for sin. Miasma — poisonous air. Astrology — planetary alignment.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/labour-shortage.png',
+            headline: 'Their treatments reflected those beliefs.',
+            body: 'Prayer, flagellation, burning herbs, bloodletting. None of it worked.',
+          },
+          {
+            image: '/figures/history/medicine/black-death/not-much-changed.png',
+            headline: 'The Black Death changed society dramatically.',
+            body: 'Labour shortage, higher wages, weaker Church authority. But medicine changed very little.',
+          },
+          {
+            finalReveal: true,
+            headline: 'Now let\'s make sure you can explain this — not just describe it.',
+            body: 'The examiner rewards explanation. Not description.',
+          },
+        ],
+      },
 
       {
         type: 'examinerExplains',
         stage: 'Exam prep',
+        label: 'How examiners think',
         examinerExplains: {
-          opening: 'The Black Death is one of the most frequently examined topics in GCSE Medicine Through Time. Here\'s what earns marks.',
+          opening: 'Many students lose marks because they stop too early. They identify a consequence — but they don\'t explain why it mattered.',
           tips: [
             {
+              heading: 'Top-mark answers keep going',
+              body: 'They explain: This happened... which meant that... which led to... which resulted in... Each phrase builds the causal chain that earns marks.',
+            },
+            {
+              heading: 'Two phrases unlock higher marks',
+              body: '"This meant that..." and "Which led to..." signal to the examiner that you understand causation, not just description. Use them deliberately.',
+            },
+            {
               heading: 'Know the actual cause — and contrast it',
-              body: 'The actual cause was Yersinia pestis bacteria spread by fleas on black rats. Examiners credit students who know this AND can contrast it with what medieval people believed.',
-            },
-            {
-              heading: 'Explain the logic, not just the name',
-              body: 'Don\'t just write "people believed in miasma." Explain why: dirty places smelled bad and people got ill there, so it seemed logical that the smell carried disease.',
-            },
-            {
-              heading: 'Link cause to treatment — always',
-              body: 'For every treatment, show the chain: Prayer → God\'s punishment. Posies → miasma. Bloodletting → Four Humours. The examiner wants the reasoning, not just the action.',
+              body: 'Yersinia pestis bacteria spread by fleas on black rats. Examiners credit students who know this AND contrast it with what medieval people believed.',
             },
             {
               heading: 'Separate social change from medical change',
               body: 'The plague changed society (wages, Church authority) but not medicine. Don\'t confuse the two — a key distinction for 8-mark questions.',
             },
           ],
-          closing: 'Show the examiner you understand why, not just what.',
+          closing: 'Show the examiner you understand why — not just what.',
+        },
+      },
+
+      {
+        stage: 'Exam prep',
+        label: 'Building a stronger explanation',
+        kicker: 'Examiner technique',
+        heading: 'Building a stronger explanation',
+        sub: 'Follow the causal chain step by step.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            intro: 'Strong history answers explain consequences — they don\'t just describe events. Here\'s the technique applied to the Black Death.',
+            atmosphereImage: '/figures/history/medicine/black-death/labour-shortage.png',
+            steps: [
+              {
+                id: 'step-event',
+                statement: 'Start with the event:',
+                emphasis: 'The Black Death killed around one-third of England\'s population.',
+                detail: 'This is your opening fact. Precise — not "lots of people died".',
+              },
+              {
+                id: 'step-1',
+                statement: 'This meant that...',
+                emphasis: 'There were fewer workers available.',
+                detail: 'Connect the event to the immediate consequence. First "this meant that" phrase.',
+              },
+              {
+                id: 'step-2',
+                statement: 'Which led to...',
+                emphasis: 'Labour shortages.',
+                detail: 'Name the consequence specifically. Don\'t stop here — keep the chain going.',
+              },
+              {
+                id: 'step-3',
+                statement: 'This meant that...',
+                emphasis: 'Surviving workers became more valuable.',
+                detail: 'Second "this meant that" phrase. Examiners reward this pattern.',
+              },
+              {
+                id: 'step-4',
+                statement: 'Which led to...',
+                emphasis: 'Higher wages and better conditions.',
+                detail: 'The economic result — follow through to the outcome.',
+              },
+              {
+                id: 'step-5',
+                statement: 'As a result...',
+                emphasis: 'Society began to change. The feudal system was challenged.',
+                detail: 'The significance. Top-level answer: shows why it mattered beyond the immediate event.',
+              },
+            ],
+            reflectionPrompt: 'Notice how each step explains the consequence. This is what examiners reward.',
+          },
+        ],
+      },
+
+      {
+        type: 'examinerExplains',
+        stage: 'Exam prep',
+        label: 'Common mistakes',
+        examinerExplains: {
+          opening: 'Before you practise, here are the four most common mistakes on Black Death questions.',
+          tips: [
+            {
+              heading: 'Mistake 1 — description only',
+              body: '"The Black Death killed lots of people." This identifies what happened but explains nothing. No marks for description alone.',
+            },
+            {
+              heading: 'Mistake 2 — missing explanation',
+              body: '"The Black Death caused higher wages." True — but the examiner needs the chain: why did it cause higher wages? Population fell → labour shortage → workers became scarce → wages rose.',
+            },
+            {
+              heading: 'Mistake 3 — historically inaccurate',
+              body: '"The Black Death improved medicine." This is wrong. Medicine changed very little. The same explanations (God, miasma, humours) continued after 1349. Writing this loses marks.',
+            },
+            {
+              heading: 'Mistake 4 — forgetting medieval beliefs',
+              body: 'Always include: God, miasma, and astrology. Medieval people used existing beliefs to explain the plague — they did not understand the real cause. Examiners check for this.',
+            },
+          ],
+          closing: 'Avoid these and you\'re already ahead of most answers.',
         },
       },
 
@@ -1656,12 +1772,12 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           topic: 'black-death',
           difficulty: 'standard',
 
-          question: 'Explain one way in which the Church\'s response to the Black Death shows the influence of religion on medieval medicine. [4 marks]',
+          question: 'Explain one way religious beliefs affected responses to the Black Death. [4 marks]',
           marks: 4,
-          mark: 2,
-          summary: 'Identifies the religious response but needs more developed explanation to reach the top of Level 2.',
+          mark: 1,
+          summary: 'This identifies what happened but does not explain why. It needs the causal chain to reach higher marks.',
 
-          markScheme: `Level 2 (3–4 marks): Developed explanation linking religious belief to a specific treatment or response, showing understanding of why this response made sense within medieval thinking.
+          markScheme: `Level 2 (3–4 marks): Developed explanation linking religious belief to a specific treatment or response, with the full chain (belief → response → why it followed logically).
 Level 1 (1–2 marks): Simple identification of a religious response with little or no explanation of why it was chosen.
 Award marks for any explained response including:
 - Prayer, fasting or pilgrimage — must explain why (belief that illness = God's punishment for sin)
@@ -1669,43 +1785,22 @@ Award marks for any explained response including:
 - Priests tending the sick — must link to Christian duty and belief in God's will
 Do NOT award for identifying practices without explaining the religious reasoning.`,
 
-          sampleAnswer: `The Church encouraged people to pray and fast during the Black Death. This shows the influence of religion because medieval people believed illness was sent by God as punishment for sin. If God had caused the plague, then the correct response was to seek God's forgiveness — which meant religious acts like prayer and confession, not medical treatments. This shows that the religious explanation for disease directly determined what treatments people chose.`,
+          sampleAnswer: `People prayed during the Black Death.`,
 
           annotations: [
             {
               id: 'ann1',
-              target: 'The Church encouraged people to pray and fast during the Black Death.',
+              target: 'People prayed during the Black Death.',
               occurrence: 1,
               type: 'weak',
-              comment: 'Identifies the practice — but hasn\'t explained why yet.',
-            },
-            {
-              id: 'ann2',
-              target: 'medieval people believed illness was sent by God as punishment for sin.',
-              occurrence: 1,
-              type: 'strong',
-              comment: 'Names the religious belief that drives the response.',
-            },
-            {
-              id: 'ann3',
-              target: 'If God had caused the plague, then the correct response was to seek God\'s forgiveness',
-              occurrence: 1,
-              type: 'strong',
-              comment: 'Excellent — shows the logical chain from belief to action.',
-            },
-            {
-              id: 'ann4',
-              target: 'This shows that the religious explanation for disease directly determined what treatments people chose.',
-              occurrence: 1,
-              type: 'strong',
-              comment: 'Strong conclusion — explicitly links cause to treatment.',
+              comment: 'Identifies what happened — but does not explain why prayer was chosen, or what the religious belief was.',
             },
           ],
 
           improvementPrompts: {
             ann1: {
-              prompt: '+ Explain WHY prayer and fasting were chosen',
-              placeholder: 'e.g. Because medieval people believed the plague was God\'s punishment — if God had sent it, only God could remove it through acts of repentance...',
+              prompt: '+ Explain WHY people prayed',
+              placeholder: 'e.g. People prayed because they believed the plague was God\'s punishment for sin. If God had sent the disease, then prayer and repentance were the logical response — asking for God\'s forgiveness to end the plague...',
             },
           },
 
@@ -1723,6 +1818,107 @@ Do NOT award for identifying practices without explaining the religious reasonin
       },
 
       {
+        stage: 'Exam prep',
+        label: 'Improving the answer',
+        kicker: 'Building to full marks',
+        heading: 'Improving the answer',
+        sub: 'See how each step adds marks.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            intro: 'Here\'s how to turn a 1-mark sentence into a full 4-mark explanation.',
+            atmosphereImage: '/headers/history-medicine-medieval-scripture.png',
+            steps: [
+              {
+                id: 'original',
+                statement: 'Weak answer — 1 mark:',
+                emphasis: '"People prayed during the Black Death."',
+                detail: 'Identifies what happened but explains nothing. No causal chain, no belief stated.',
+              },
+              {
+                id: 'better',
+                statement: 'Better — 2 marks:',
+                emphasis: '"People prayed because they believed the disease was punishment from God."',
+                detail: 'Now connects the action to the belief. The "because" is doing the work here.',
+              },
+              {
+                id: 'best',
+                statement: 'Strong answer — 4 marks:',
+                emphasis: '"People prayed and performed acts of repentance — they hoped to persuade God to forgive humanity and end the plague."',
+                detail: 'Explains the belief AND the intended consequence. Notice: it answers why it made sense, not just what they did.',
+              },
+            ],
+            reflectionPrompt: 'The answer explains belief and consequence — not just what happened. That is what earns full marks.',
+          },
+        ],
+      },
+
+      {
+        type: 'faceExaminer',
+        stage: 'Exam prep',
+        label: 'Face the Examiner — similarity',
+        examiner: {
+          type: '4-mark-explain',
+          board: 'edexcel',
+          subject: 'history',
+          topic: 'black-death',
+          difficulty: 'standard',
+
+          question: 'Explain one similarity between medieval medicine and Black Death treatments. [4 marks]',
+          marks: 4,
+          mark: 4,
+          summary: 'A strong answer — it identifies the similarity, names a specific example, and explains the reasoning.',
+
+          markScheme: `Level 2 (3–4 marks): Identifies a valid similarity with developed explanation, using specific evidence.
+Level 1 (1–2 marks): Simple identification of a similarity with little or no explanation.
+Award marks for:
+- Both relied on traditional beliefs rather than scientific evidence (e.g. Four Humours, miasma, God's punishment)
+- Both used the same practitioners and treatments (physicians, bloodletting, prayer)
+- Both lacked understanding of bacteria or germ theory
+Explanation must connect the similarity to why it existed.`,
+
+          sampleAnswer: `One similarity was that both relied on traditional beliefs rather than scientific evidence. For example, bloodletting was used before and during the Black Death because people continued to believe in the Four Humours. Medieval doctors responded to the plague using the same medical framework they had always used — they didn't change their approach because their explanation of disease hadn't changed.`,
+
+          annotations: [
+            {
+              id: 'ann1',
+              target: 'both relied on traditional beliefs rather than scientific evidence.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'States the similarity clearly and accurately.',
+            },
+            {
+              id: 'ann2',
+              target: 'bloodletting was used before and during the Black Death because people continued to believe in the Four Humours.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Specific named example with explanation — this is what earns marks.',
+            },
+            {
+              id: 'ann3',
+              target: 'they didn\'t change their approach because their explanation of disease hadn\'t changed.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Excellent conclusion — explains WHY the similarity existed.',
+            },
+          ],
+
+          improvementPrompts: {},
+
+          criteriaOptions: [
+            'Similarity clearly stated',
+            'Specific named example',
+            'Explained why similar',
+            'Developed explanation',
+            'Links to beliefs',
+            'Too vague',
+            'Missing example',
+            'Missing explanation',
+          ],
+        },
+      },
+
+      {
         type: 'faceExaminer',
         stage: 'Exam prep',
         label: 'Face the Examiner — 8 marks',
@@ -1733,10 +1929,10 @@ Do NOT award for identifying practices without explaining the religious reasonin
           topic: 'black-death',
           difficulty: 'challenging',
 
-          question: 'Explain two consequences of the Black Death for England in the fourteenth century. [8 marks]',
+          question: 'Explain two consequences of the Black Death in England. [8 marks]',
           marks: 8,
           mark: 4,
-          summary: 'Shows some understanding of two consequences but both need more developed explanation linking the consequence to its cause.',
+          summary: 'Identifies two consequences and understands the basic link to labour shortages and wages. Missing precise evidence, deeper explanation, and the "why it mattered" step.',
 
           markScheme: `Level 3 (6–8 marks): Detailed explanation of two consequences with developed reasoning, showing how the Black Death caused each one.
 Level 2 (3–5 marks): Some explanation of two consequences, but at least one lacks development of the causal chain.
@@ -1748,70 +1944,228 @@ Award marks for any two of (each requiring causal explanation):
 - Deserted villages / economic disruption (must explain the mechanism)
 Do NOT award for identifying consequences without explaining HOW the Black Death caused them.`,
 
-          sampleAnswer: `One consequence of the Black Death was that it caused a serious labour shortage. So many people died that there were not enough workers to farm the land. This gave surviving peasants the power to demand higher wages, because landowners needed workers and had to compete for them. This challenged the feudal system, where peasants were previously bound to their lord with no ability to bargain.
-
-A second consequence was that the Church's authority was weakened. Many priests and monks died while caring for plague victims, and prayer had failed to stop the disease. People questioned why God had allowed this to happen. The Church's reputation for spiritual power was damaged, and many people began to lose faith in it.`,
+          sampleAnswer: `One consequence of the Black Death was that lots of people died. This meant that there were fewer workers. Another consequence was that wages increased because there were fewer people available to work.`,
 
           annotations: [
             {
               id: 'ann1',
-              target: 'it caused a serious labour shortage.',
+              target: 'lots of people died.',
               occurrence: 1,
               type: 'weak',
-              comment: 'Names the consequence — needs the causal chain.',
+              comment: 'Vague — "lots of people" is not precise. How many? Around one-third.',
             },
             {
               id: 'ann2',
-              target: 'This gave surviving peasants the power to demand higher wages, because landowners needed workers and had to compete for them.',
+              target: 'This meant that there were fewer workers.',
               occurrence: 1,
               type: 'strong',
-              comment: 'Good — shows the causal chain: shortage → bargaining power.',
+              comment: 'Good — identifies the immediate consequence. But the chain stops here.',
             },
             {
               id: 'ann3',
-              target: 'This challenged the feudal system, where peasants were previously bound to their lord with no ability to bargain.',
-              occurrence: 1,
-              type: 'strong',
-              comment: 'Excellent — develops the consequence and contextualises it within feudalism.',
-            },
-            {
-              id: 'ann4',
-              target: 'prayer had failed to stop the disease.',
-              occurrence: 1,
-              type: 'strong',
-              comment: 'Key point — this is the mechanism for Church credibility loss.',
-            },
-            {
-              id: 'ann5',
-              target: 'People questioned why God had allowed this to happen.',
+              target: 'wages increased because there were fewer people available to work.',
               occurrence: 1,
               type: 'weak',
-              comment: 'Vague — could add a specific example to develop this further.',
+              comment: 'Correct but underdeveloped — needs the full chain and why this mattered.',
             },
           ],
 
           improvementPrompts: {
             ann1: {
-              prompt: '+ Explain HOW the labour shortage happened',
-              placeholder: 'e.g. Between a third and a half of the population died, meaning there were far fewer workers to farm the land — landlords could not find enough labourers...',
+              prompt: '+ Add precise evidence',
+              placeholder: 'e.g. Around one-third of England\'s population died — in some villages, no one survived...',
             },
-            ann5: {
-              prompt: '+ Add a specific example of Church authority being challenged',
-              placeholder: 'e.g. Many clergy died despite their faith, including some bishops — if God\'s own servants were not protected, it suggested that prayer was not working...',
+            ann3: {
+              prompt: '+ Explain why higher wages mattered',
+              placeholder: 'e.g. This challenged the feudal system, where peasants were previously bound to their lord with no ability to negotiate conditions...',
             },
           },
 
           criteriaOptions: [
             'Two clear consequences',
+            'Precise evidence used',
             'Causal chain explained',
-            'Specific evidence used',
             'Developed explanation',
             'Links to feudal system',
             'Too vague',
-            'Only one consequence developed',
-            'Missing explanation',
+            'Missing causal chain',
+            'Missing second consequence',
           ],
         },
+      },
+
+      {
+        stage: 'Exam prep',
+        label: 'Turning 4 marks into 8 marks',
+        kicker: 'Upgrading the answer',
+        heading: 'Turning 4 marks into 8 marks',
+        sub: 'Insert these into the answer — step by step.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            intro: 'The 4/8 answer was on the right track — it just stopped too soon. Here\'s what to add.',
+            atmosphereImage: '/figures/history/medicine/black-death/labour-shortage.png',
+            steps: [
+              {
+                id: 'precise',
+                statement: 'Insert precise evidence:',
+                emphasis: '"Around one-third of England\'s population died."',
+                detail: 'Replace "lots of people died" with specific scale. Examiners reward precision.',
+              },
+              {
+                id: 'fewer-workers',
+                statement: 'This meant that...',
+                emphasis: 'There were far fewer workers available to farm the land.',
+                detail: 'Immediate consequence — name it specifically, not just "fewer workers".',
+              },
+              {
+                id: 'labour',
+                statement: 'Which led to...',
+                emphasis: 'Labour shortages.',
+                detail: 'Name it. "Labour shortage" is the historical term — use it.',
+              },
+              {
+                id: 'valuable',
+                statement: 'Workers became more valuable.',
+                emphasis: 'This is the mechanism — what changed in the relationship between workers and landowners.',
+                detail: 'This step explains WHY wages could rise. Don\'t skip it.',
+              },
+              {
+                id: 'wages',
+                statement: 'Which led to...',
+                emphasis: 'Higher wages and better conditions.',
+                detail: 'The economic result. Follow through to the outcome.',
+              },
+              {
+                id: 'significance',
+                statement: 'This changed relationships between workers and landowners.',
+                emphasis: 'Ask yourself: "So what happened next?"',
+                detail: 'This is the significance. Connecting it to the feudal system earns top marks.',
+              },
+            ],
+            reflectionPrompt: 'Ask yourself: "So what happened next?" — that question drives answers from 4 marks to 8.',
+          },
+        ],
+      },
+
+      {
+        type: 'faceExaminer',
+        stage: 'Exam prep',
+        label: 'Face the Examiner — full marks',
+        examiner: {
+          type: '8-mark-explain',
+          board: 'edexcel',
+          subject: 'history',
+          topic: 'black-death',
+          difficulty: 'challenging',
+
+          question: 'Explain two consequences of the Black Death in England. [8 marks]',
+          marks: 8,
+          mark: 8,
+          summary: 'A full-mark answer — two consequences explained with precise evidence, causal chains, and clear explanation of why each consequence mattered.',
+
+          markScheme: `Level 3 (6–8 marks): Detailed explanation of two consequences with developed reasoning, showing how the Black Death caused each one.
+Level 2 (3–5 marks): Some explanation of two consequences, but at least one lacks development of the causal chain.
+Level 1 (1–2 marks): Simple identification of consequences with little or no explanation.`,
+
+          sampleAnswer: `One consequence of the Black Death was a shortage of workers. Around one-third of England's population died, meaning there were far fewer people available to work on farms. This led to labour shortages and made surviving workers more valuable. As a result, many workers could demand higher wages and better conditions. This challenged the feudal system, where peasants had previously been bound to their lord with no ability to negotiate.
+
+Another consequence was social and economic change. Many villages lost large numbers of people and some settlements were abandoned entirely. Because workers were scarce, landowners had to compete for labour. This changed relationships between workers and landowners, and contributed to the social unrest that led to the Peasants' Revolt of 1381.`,
+
+          annotations: [
+            {
+              id: 'ann1',
+              target: 'Around one-third of England\'s population died',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Precise evidence — "around one-third" is far stronger than "lots of people".',
+            },
+            {
+              id: 'ann2',
+              target: 'This led to labour shortages and made surviving workers more valuable.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Full causal chain: deaths → shortage → increased value of workers.',
+            },
+            {
+              id: 'ann3',
+              target: 'This challenged the feudal system, where peasants had previously been bound to their lord with no ability to negotiate.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Excellent — explains the significance. Shows why this consequence mattered.',
+            },
+            {
+              id: 'ann4',
+              target: 'contributed to the social unrest that led to the Peasants\' Revolt of 1381.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Strong conclusion — links consequence to longer-term historical significance.',
+            },
+          ],
+
+          improvementPrompts: {},
+
+          criteriaOptions: [
+            'Two clear consequences',
+            'Precise evidence used',
+            'Causal chain explained',
+            'Significance stated',
+            'Links to feudal system',
+            'Links to Peasants\' Revolt',
+            'Developed explanation',
+            'Strong conclusion',
+          ],
+        },
+      },
+
+      {
+        type: 'quickRecall',
+        stage: 'Exam prep',
+        label: 'Final chapter challenge',
+        questions: [
+          {
+            type: 'choice',
+            question: 'What year did the Black Death reach England?',
+            options: ['1348', '1350', '1345', '1381'],
+            correct: 0,
+            explanation: '1348 — ships arrived at Melcombe in Dorset in June 1348, bringing the plague to England.',
+          },
+          {
+            type: 'choice',
+            question: 'What was miasma?',
+            options: ['Poisonous air believed to cause disease', 'Bacteria carried by fleas', 'God\'s punishment for sin', 'An imbalance of the Four Humours'],
+            correct: 0,
+            explanation: 'Miasma meant poisonous air from rotting matter. Not germs — the smell itself was thought to carry disease.',
+          },
+          {
+            type: 'choice',
+            question: 'Why did people pray during the Black Death?',
+            options: ['They believed God had sent the disease as punishment for sin', 'Prayer was proven to cure plague', 'The Church ordered everyone to pray', 'They had no other option'],
+            correct: 0,
+            explanation: 'If illness was God\'s punishment, prayer and repentance were the logical response — they hoped God would forgive humanity and end the plague.',
+          },
+          {
+            type: 'choice',
+            question: 'What actually caused the Black Death?',
+            options: ['Plague bacteria (Yersinia pestis) carried by fleas on rats', 'Poisonous air from plague pits', 'God\'s punishment for sin', 'Planetary alignment'],
+            correct: 0,
+            explanation: 'Yersinia pestis bacteria, carried by fleas on black rats. This was not discovered until 1894 — 546 years after the Black Death.',
+          },
+          {
+            type: 'choice',
+            question: 'What changed significantly after the Black Death?',
+            options: ['Society — labour shortages led to higher wages', 'Medicine — doctors discovered the real cause', 'The Church — it became more powerful', 'Astrology — people stopped using it'],
+            correct: 0,
+            explanation: 'Society changed dramatically — labour shortages, higher wages, weakened Church authority. But medicine barely changed at all.',
+          },
+          {
+            type: 'choice',
+            question: 'What stayed the same after the Black Death?',
+            options: ['Medical beliefs — the same explanations continued', 'Peasant wages — they stayed low', 'The Church\'s authority — it remained strong', 'Village populations — they recovered quickly'],
+            correct: 0,
+            explanation: 'Medical beliefs stayed the same — doctors continued to blame God, miasma, and humoral imbalance. The actual cause was not discovered until 1894.',
+          },
+        ],
       },
 
     ],
