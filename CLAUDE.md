@@ -42,15 +42,26 @@ Foundation components used by many others.
 ### `src/components/learning/`
 Screen-level learning interaction components.
 - `CinematicRevealMoment.jsx` — Full-screen cinematic video/image reveal moment.
+- `ColSortBlock.jsx` — Interactive column-sort categorisation task where learners sort items into labelled columns with visual feedback.
 - `ConceptReveal.jsx` — Concept introduction with atmospheric reveal.
+- `ExaminerExplainsScreen.jsx` — Full-screen explanation screen with animated word-by-word text reveal and background imagery.
 - `ExplainReveal.jsx` — Progressive cause-and-effect reasoning chain, revealed step by step.
-- `FaceTheExaminer.jsx` — Examiner-style written question interaction.
+- `FaceTheExaminer.jsx` — Examiner-style written question interaction with mark, criteria selection, annotation, and optional re-mark.
 - `FillInTheBlanksBlock.jsx` — Inline fill-in-the-blanks chapter block.
+- `GalensDiagnostic.jsx` — Humour-based diagnostic scenario that walks learners through Galen's theory of the four humours.
+- `GuidedChoiceCarousel.jsx` — Scrollable single-choice carousel with atmospheric visual option cards (e.g. healer selection).
+- `InteractiveCollectionExplorer.jsx` — Theme-based explorer with colour-coded content sheets and fuzzy-match text validation.
 - `InteractiveHotspotImage.jsx` — Full-screen image with tappable hotspots (two-phase intro→explore).
 - `KeyFigureReveal.jsx` — Scrollable portrait-hero screen introducing a key person. Portrait hero image (~60vh), name/role overlaid at bottom, significance statement, up to 4 knowledge sections, Continue button.
+- `MatchingTask.jsx` — Term-to-description card-pair matching activity with SVG connector lines and round splitting for large sets.
+- `MedicalTheoryPrescription.jsx` — Cause → prescription → reveal flow with a parchment-textured input surface and fuzzy-match validation.
 - `QuickRecallScreen.jsx` — Rapid-fire retrieval screen (choice + connection questions).
-- `RecoveryQuizPlayer.jsx` — Lightweight recovery quiz player (3-4 focused questions).
+- `RecoveryQuizPlayer.jsx` — Lightweight recovery quiz player (3–4 focused questions).
+- `SwipeSort.jsx` — Swipe-gesture sorting activity; powers `naturalSupernaturalSwipe` screen type.
+- `TheoryCompareBlock.jsx` — Side-by-side theory comparison block with staggered fade-in animation.
+- `TheoryLab.jsx` — Multi-part diagnostic scenario linking a historical belief to its treatment logic and outcome.
 - `VisualLearning.jsx` — Click-to-continue cinematic scene sequence with background images, animated headlines, and optional final reveal.
+- `VisualNarrativeScreen.jsx` — Beat-based narrative screen supporting portraits, timelines, facts, and conclusion beats.
 - `WeakSpotRecovery.jsx` — Full-screen behavioural intervention screen shown when a learner struggles.
 
 ### `src/components/layout/`
@@ -78,7 +89,7 @@ Question feedback and exam practice components.
 | 3 | `docs/system/BUTTON_RADII_SYSTEM.md` | Button dimensions and corner radii |
 | 3 | `docs/system/MOTION_SYSTEM.md` | Durations, easings, scale values |
 | 3 | `docs/system/TYPOGRAPHY_SYSTEM.md` | Font families, sizes, weights — TYPE tokens |
-| 3 | `docs/system/SCREEN_SHELL_SYSTEM.md` | ScreenShell and LearningScreenShell API |
+| 3 | `docs/system/SCREEN_SHELL_SYSTEM.md` | ScreenShell layout API (reference only — not currently used) |
 | 4 | `docs/components/COMPONENT_REGISTRY.md` | All components — check before building anything new |
 | 5 | `docs/components/LOCKED_COMPONENTS.md` | Locked components — must not change internals |
 
@@ -113,7 +124,8 @@ See `docs/system/00_SYSTEM_INDEX.md` for the full order of authority.
 
 - `/public/logo.png` — RISE logo (teal glow, dark background) — used in ModulesTab header and as favicon
 - `/public/headers/` — cinematic header images for subject/module hero cards
-  - History: `history-medicine-through-time.png`, `history-elizabethan.png`, `history-usa-conflict.png`, `history-spain-new-world.png`
+  - History module cards: `history-medicine-through-time.png`, `history-elizabethan.png`, `history-usa-conflict.png`, `history-spain-new-world.png`
+  - History in-module screens: `history-medicine-medieval-scripture.png`, `history-medicine-bloodletting.png`, `history-medicine-germ-bridge.png`
   - Biology overview: `bio-main.png`
   - Biology topic groups: `bio-buildinglife.png`, `bio-humanmachine.png`, `bio-diseasewars.png`, `bio-energyforlife.png`, `bio-controlsystems.png`, `bio-genetics.png`, `bio-ecosystems.png`
 - `/public/mystery-cube.png` — used on locked/mystery module cards
