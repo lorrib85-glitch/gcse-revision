@@ -992,35 +992,6 @@ Do NOT award marks for identifying practices without explaining the religious re
       },
 
       {
-        stage: 'Exam prep',
-        label: 'What Survived Today?',
-        kicker: 'Legacy',
-        heading: 'Echoes of Medieval Medicine',
-        sub: "Which ideas survived? Which didn't?",
-        blocks: [
-          {
-            type: 'read',
-            text: 'Most humoural medicine was disproved by the 19th century — but traces survived much longer. Some words and concepts from medieval medicine are still with us today.',
-          },
-          {
-            type: 'keypoint',
-            label: 'Language',
-            text: '"Melancholy," "phlegmatic," "sanguine" and "bilious" all come directly from the Four Humours. These words still carry their medieval medical meaning.',
-          },
-          {
-            type: 'keypoint',
-            label: 'Herbal medicine',
-            text: 'Many herbal remedies developed in the medieval period are still used today. Some have been proven effective by modern research.',
-          },
-          {
-            type: 'keypoint',
-            label: 'The bigger shift',
-            text: 'The most important medieval legacy is the beginning of the idea that disease has causes that can be observed, studied, and treated.',
-          },
-        ],
-      },
-
-      {
         type: 'interactiveImage',
         stage: 'Exam prep',
         id: 'four-humours-hotspot',
@@ -1469,6 +1440,35 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           { tag: 'why-ideas-survived',      label: 'Why medieval ideas survived so long' },
         ],
       },
+      {
+        stage: 'Renaissance medicine',
+        label: 'What survived?',
+        kicker: 'Legacy',
+        heading: 'Echoes of medieval medicine',
+        sub: "Which ideas survived? Which didn't?",
+        blocks: [
+          {
+            type: 'read',
+            text: 'Most humoural medicine was disproved by the 19th century — but traces survived much longer. Some words and concepts from medieval medicine are still with us today.',
+          },
+          {
+            type: 'keypoint',
+            label: 'Language',
+            text: '"Melancholy," "phlegmatic," "sanguine" and "bilious" all come directly from the Four Humours. These words still carry their medieval medical meaning.',
+          },
+          {
+            type: 'keypoint',
+            label: 'Herbal medicine',
+            text: 'Many herbal remedies developed in the medieval period are still used today. Some have been proven effective by modern research.',
+          },
+          {
+            type: 'keypoint',
+            label: 'The bigger shift',
+            text: 'The most important medieval legacy is the beginning of the idea that disease has causes that can be observed, studied, and treated.',
+          },
+        ],
+      },
+
       {
         label: 'Renaissance',
         kicker: 'New Thinking',
