@@ -323,6 +323,463 @@ Avoid:
 - Components created for a single screen
 - Information that is interesting but not useful for GCSE success
 
-The goal is not to impress the learner.
-
 The goal is to make the learner remember, understand and apply the knowledge in the exam.
+
+---
+
+## History Module Architecture (LOCKED)
+
+This structure applies to all GCSE History modules unless explicitly overridden by the user.
+
+**The architecture is fixed.**
+
+**Only the content changes between modules.**
+
+**Do not reinterpret sections as different teaching categories.**
+
+**Do not redesign the structure.**
+
+### Fixed Section Order
+
+#### Section 1 — Intro, Recall & Roadmap
+
+**Mandatory Order**
+
+1. Cinematic intro OR True/False opener
+2. PriorKnowledgeRecall
+3. WhatYouWillLearn
+
+**Purpose**
+
+- Create curiosity
+- Reactivate previous chapter knowledge
+- Identify missing knowledge
+- Generate weak spots
+- Preview the chapter
+
+**Typical Components**
+
+- `CinematicRevealMoment`
+- `ChapterHookScreen` (True/False)
+- `PriorKnowledgeRecall`
+- (WhatYouWillLearn is auto-generated from screen labels)
+
+**Rules**
+
+- Retrieval must happen before the roadmap.
+- Missing concepts must be sent to the existing weakness tracker.
+- Do not introduce examiner content.
+- Do not turn Section 1 into a teaching section.
+
+---
+
+#### Section 2 — Learning Chunk 1
+
+**Purpose**
+
+Introduce the first major part of the topic.
+
+**Typical Components**
+
+- `VisualLearning`
+- `VisualNarrativeScreen`
+- `CinematicRevealMoment`
+- `InteractiveHotspotImage`
+- `InteractiveCollectionExplorer`
+- `GuidedChoiceCarousel`
+- `MatchingTask`
+- `QuickRecallScreen`
+
+**Rules**
+
+- Include at least one interaction.
+- Include at least one retrieval opportunity.
+- End the chunk with active participation.
+
+---
+
+#### Section 3 — Learning Chunk 2
+
+**Purpose**
+
+Develop understanding.
+
+Introduce new knowledge while revisiting earlier learning.
+
+**Typical Components**
+
+- `VisualLearning`
+- `VisualNarrativeScreen`
+- `InteractiveCollectionExplorer`
+- `GuidedChoiceCarousel`
+- `MatchingTask`
+- `ExplainReveal`
+- `QuickRecallScreen`
+
+**Rules**
+
+- Include interleaving.
+- Include active processing.
+- End with retrieval or interaction.
+
+---
+
+#### Section 4 — Learning Chunk 3
+
+**Purpose**
+
+Continue teaching.
+
+This may include:
+
+- Human experience
+- Stories
+- Consequences
+- Case studies
+- Deeper explanation
+
+depending on the chapter.
+
+**Typical Components**
+
+- `VisualLearning`
+- `VisualNarrativeScreen`
+- `InteractiveHotspotImage`
+- `GuidedChoiceCarousel`
+- `MatchingTask`
+- `ExplainReveal`
+- `QuickRecallScreen`
+
+**Rules**
+
+- Do not assume Section 4 is always "human experience".
+- Include interleaving.
+- Include active participation.
+- End with retrieval or interaction.
+
+---
+
+#### Section 5 — Learning Chunk 4
+
+**Purpose**
+
+Complete the chapter's teaching.
+
+Often used for:
+
+- Significance
+- Consequences
+- Change and continuity
+- Final understanding
+
+**Typical Components**
+
+- `VisualLearning`
+- `VisualNarrativeScreen`
+- `CinematicRevealMoment`
+- `ExplainReveal`
+- `ColSortBlock`
+- `MatchingTask`
+- `QuickRecallScreen`
+
+**Rules**
+
+- End with chapter-level retrieval.
+- Reinforce the chapter's core message.
+- Do not introduce Meet The Examiner.
+
+---
+
+#### Section 6 — Summary & Examiner
+
+**Mandatory Order**
+
+1. Final summary (optional)
+2. Examiner tips
+3. Meet the Examiner / Exam practice
+4. Chapter completion screen
+
+**Typical Components**
+
+- `ExaminerExplainsScreen`
+- `FaceTheExaminer`
+- `ChapterCompleteScreen`
+
+**Rules**
+
+- No major new content.
+- Focus on application.
+- Focus on exam technique.
+- Show improvement journeys.
+- End with a completion screen.
+
+---
+
+### PriorKnowledgeRecall Component
+
+This is the standard retrieval component used at the beginning of every History chapter.
+
+**Purpose**
+
+Ask students what they remember from the previous chapter.
+
+**Visual Design**
+
+This should feel like a continuation of the story.
+
+**Do NOT style this as:**
+
+- A worksheet
+- A form
+- A revision website
+- A dashboard
+
+**Instead use:**
+
+- Cinematic history background
+- Dark overlay
+- Large parchment-style writing area
+- Atmospheric presentation
+
+**Think:**
+
+"Returning to the story"
+
+rather than
+
+"Completing a form"
+
+**Component Flow**
+
+Screen A
+
+- Prompt: "What do you remember about the previous chapter?"
+- Student enters free text.
+
+Screen B
+
+- Analysis screen.
+- Show: ✓ Secure concepts, ○ Concepts to revisit
+- No grades. No percentages. No marks.
+
+Example output:
+
+```
+Good recall.
+
+You remembered:
+✓ Church power
+✓ Four Humours
+✓ God and illness
+
+Let's keep an eye on:
+○ Miasma
+○ Astrology
+
+These will appear again during the chapter.
+```
+
+**Concept Structure**
+
+```js
+{
+  tag: "miasma",
+  label: "Miasma",
+}
+```
+
+- Use `tag` and `label`
+- Do not use keyword lists (content-based AI assessment instead)
+- The API receives the actual module content as `sourceContent`
+
+**Scoring**
+
+Recommended thresholds:
+
+- 0.0 – 0.29 = weak (log to weakness tracker)
+- 0.3 – 0.69 = partial (show as "revisit")
+- 0.7 – 1.0 = secure (show as "recalled")
+
+**Weak Spot Handling**
+
+- Use the existing weakness tracker.
+- Do NOT create a separate store.
+- Missing concepts should later reappear in: `QuickRecallScreen`, `MatchingTask`, `ColSortBlock`, `FaceTheExaminer`, recovery quizzes.
+
+---
+
+### Retrieval Rule
+
+Whenever possible:
+
+```
+Recall
+  ↓
+Teach
+  ↓
+Apply
+  ↓
+Recall
+```
+
+Avoid long sequences of passive teaching screens.
+
+---
+
+### Weak Spot Recovery Rule
+
+Every module must deliberately revisit weak spots.
+
+Weak spots identified through:
+
+- `PriorKnowledgeRecall`
+- `QuickRecallScreen`
+- `MatchingTask`
+- `FaceTheExaminer`
+
+should reappear later in the module.
+
+Weak spots should not remain hidden until a future chapter.
+
+---
+
+### Interleaving Rule
+
+Interleaving means deliberately revisiting previous learning.
+
+Example: In the Black Death module, concepts like Church influence, Four Humours, Miasma, and Astrology should repeatedly reappear throughout activities.
+
+Do not introduce a concept once and then abandon it.
+
+---
+
+### One Screen = One Job
+
+Each screen should have one primary purpose.
+
+**GOOD**
+
+- Introduce miasma
+- Match treatments
+- Recall symptoms
+
+**BAD**
+
+- Teach miasma, teach astrology, explain treatments, ask questions all on the same screen
+
+---
+
+### History Storytelling Rule
+
+History should feel like a story unfolding.
+
+Prefer:
+
+```
+Question
+  ↓
+Discovery
+  ↓
+Explanation
+  ↓
+Retrieval
+```
+
+over:
+
+```
+Fact
+  ↓
+Fact
+  ↓
+Fact
+  ↓
+Fact
+```
+
+Create curiosity wherever possible.
+
+---
+
+### New Component Approval Rule
+
+Do not create a new component because a screen needs different content.
+
+Only create a new component when:
+
+1. The interaction mechanic is genuinely new.
+2. It is reusable across multiple modules.
+3. Existing components cannot reasonably achieve the same outcome.
+
+Default assumption: **Use an existing component.**
+
+---
+
+### Component Selection Hierarchy
+
+**When teaching:**
+
+1. `VisualLearning`
+2. `VisualNarrativeScreen`
+3. `InteractiveHotspotImage`
+4. `InteractiveCollectionExplorer`
+5. `GuidedChoiceCarousel`
+
+**When checking understanding:**
+
+1. `QuickRecallScreen`
+2. `MatchingTask`
+3. `ColSortBlock`
+4. `GuidedChoiceCarousel`
+
+**When explaining cause and effect:**
+
+1. `ExplainReveal`
+2. `VisualNarrativeScreen`
+
+**When creating atmosphere:**
+
+1. `CinematicRevealMoment`
+
+---
+
+### History Brand Rules
+
+Follow the History brand system.
+
+**Use:**
+
+- Antique brown
+- Bronze
+- Parchment
+- Warm historical tones
+- Dark cinematic backgrounds
+
+**Avoid:**
+
+- Dashboard layouts
+- Generic quiz websites
+- Excessive gamification
+- Glassmorphism
+- Neon UI
+- One-off visual styles
+
+History should feel premium, cinematic and immersive.
+
+---
+
+### Module Completion Test
+
+Before a History module is considered complete, verify:
+
+- ✓ Section 1 includes retrieval (PriorKnowledgeRecall)
+- ✓ Weak spots are generated
+- ✓ Every learning chunk includes interaction
+- ✓ Every learning chunk includes retrieval
+- ✓ Interleaving exists throughout the module
+- ✓ Weak spots are revisited in-module
+- ✓ Core chapter message is reinforced
+- ✓ Examiner content appears only in Section 6
+- ✓ Module ends with a completion screen
+
+If any of the above are missing, the module is incomplete.
