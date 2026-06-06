@@ -1043,17 +1043,6 @@ Do NOT award marks for identifying practices without explaining the religious re
       ],
     },
 
-    recall: {
-      questions: [
-        { type: 'truefalse', question: 'Vesalius proved Galen was wrong about human anatomy.', isTrue: true },
-        { type: 'choice', question: 'Harvey discovered that blood...', options: ['Was made fresh daily in the liver', 'Circulated continuously around the body', 'Carried disease from the air'], correct: 1 },
-        { type: 'connection', question: 'Renaissance medicine improved knowledge but...', options: [
-          { text: 'Treatments barely changed for most patients', icon: 'people' },
-          { text: 'Surgery became dramatically safer', icon: 'heart' },
-          { text: 'The Church accepted all new ideas', icon: 'book' },
-        ], correct: 0 },
-      ],
-    },
     screens: [
       {
         type: 'priorKnowledgeRecall',
