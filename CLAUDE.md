@@ -168,3 +168,161 @@ This applies to module titles, chapter names, screen headings, button labels, an
 # Production build
 ./node_modules/.bin/vite build
 ```
+
+## Educational design rules
+
+### Learning hierarchy (non-negotiable)
+
+Every module should prioritise:
+
+1. Retrieval
+2. Understanding
+3. Application
+4. Exam technique
+5. Presentation
+
+Never prioritise visual spectacle over learning outcomes.
+
+Every screen must answer:
+
+- What GCSE knowledge is being taught?
+- How is the learner actively processing it?
+- How will we know they understood it?
+
+If a screen only displays information, consider whether retrieval or interaction should be added.
+
+---
+
+### Before creating a new component
+
+Do not create a new component if an existing component can be adapted.
+
+Check in this order:
+
+1. Component Registry
+2. Existing learning interactions
+3. Existing screen types
+
+New components require:
+
+- A genuinely new learning mechanic
+- Reusability across at least 3 modules
+- Educational justification
+
+Prefer extending existing systems.
+
+---
+
+### Knowledge density
+
+Avoid screens that teach only a single isolated fact.
+
+Each learning screen should typically deliver:
+
+- 2–5 connected GCSE facts
+- A clear relationship between ideas
+- A reason why the information matters
+
+Avoid:
+
+- Fact dumping
+- Encyclopaedia screens
+- Long scrolling text
+- Decorative information with no exam value
+
+---
+
+### Weak area philosophy
+
+Weak areas are the primary personalisation mechanism.
+
+Any interaction that records incorrect answers should:
+
+- Log the misconception
+- Feed WeakSpotRecovery
+- Feed future retrieval
+- Influence progress tracking
+
+Do not create assessment interactions that bypass the weak area system.
+
+---
+
+### Exam-first content design
+
+When choosing content, use this priority order:
+
+1. Frequently examined content
+2. Core specification knowledge
+3. Common misconceptions
+4. Interesting enrichment
+
+Enrichment should never displace specification content.
+
+When deciding what to cut, cut enrichment first.
+
+---
+
+### Cognitive load law
+
+The learner is usually studying on a phone.
+
+Never place:
+
+- Multiple competing animations
+- More than one primary interaction on screen
+- Excessive text blocks
+- Multiple learning goals on one screen
+
+One screen = one job.
+
+If a screen attempts to teach multiple concepts, split it.
+
+---
+
+### Historical and scientific accuracy
+
+Educational accuracy takes precedence over storytelling.
+
+Never exaggerate, fictionalise or simplify information in a way that creates incorrect GCSE understanding.
+
+If simplification is required:
+
+- Simplify language
+- Preserve accuracy
+
+Exam knowledge always wins over narrative flair.
+
+---
+
+### GCSE outcome test
+
+Before implementing any new screen ask:
+
+1. What GCSE knowledge is learned?
+2. Is the learner active or passive?
+3. Could this be shorter?
+4. Could this use an existing component?
+5. Does this improve exam performance?
+6. Does it feed future retrieval?
+7. Would a typical 15-year-old willingly continue?
+
+If any answer is "no", redesign the screen.
+
+---
+
+### Anti-patterns
+
+Avoid:
+
+- Dashboard-style learning screens
+- Walls of text
+- Excessive gamification
+- Generic quiz chains
+- Decorative animations without educational purpose
+- Interactions that do not teach, test or reinforce knowledge
+- Components created for a single screen
+- Information that is interesting but not useful for GCSE success
+
+The goal is not to impress the learner.
+
+The goal is to make the learner remember, understand and apply the knowledge in the exam.
