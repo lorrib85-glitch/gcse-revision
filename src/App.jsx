@@ -13,6 +13,7 @@ import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopic
 import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
 import { CHEMISTRY_TOPIC_GROUPS, ALL_CHEMISTRY_QUESTIONS } from './data/chemistryTopics.js'
 import { CHEM_IMAGES } from './data/chemImages.js'
+import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, J23_Q6 } from './data/medicineExamPapers.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getImprovements } from './progress.js'
@@ -478,6 +479,10 @@ export default function App() {
       isFinalChapter   = !nextMod
     }
 
+    const pastPaperHint = completedModule.id === 'history-medicine-medieval-beliefs-causes'
+      ? { label: 'Practice 2023 exam questions', topicId: 'th1', paper: MEDICINE_2023_PAPER }
+      : null
+
     setChapterCompleteData({
       accent,
       completedChapter: completedModule.title,
@@ -488,6 +493,7 @@ export default function App() {
       isFinalChapter,
       moduleName:       group?.title || completedModule.title,
       nextModule:       nextMod,
+      pastPaperHint,
     })
     setView('chapter-complete')
   }
@@ -585,6 +591,7 @@ export default function App() {
         supportingCopy={d.supportingCopy}
         isFinalChapter={d.isFinalChapter}
         moduleName={d.moduleName}
+        pastPaperLabel={d.pastPaperHint?.label}
         onContinue={() => {
           setChapterCompleteData(null)
           if (d.nextModule) { openModule(d.nextModule) } else { closeOverlay() }
@@ -594,6 +601,11 @@ export default function App() {
           setView(null)
           setTab('quickfire')
         }}
+        onPastPaper={d.pastPaperHint ? () => {
+          setChapterCompleteData(null)
+          setView(null)
+          setTab('exams')
+        } : undefined}
         onHome={() => {
           setChapterCompleteData(null)
           closeOverlay()
@@ -2552,11 +2564,13 @@ const TEST_TOPICS = [
     subject: 'History',
     icon: '📜',
     topics: [
-      { id: 'th1', label: 'Medieval Medicine c1250–c1500',        questions: 4,  available: true },
-      { id: 'th2', label: 'Renaissance & the Plague c1500–c1700', questions: 3,  available: true },
-      { id: 'th3', label: 'Surgery & Anatomy c1700–c1900',        questions: 3,  available: true },
-      { id: 'th4', label: 'Germ Theory c1850–c1900',              questions: 3,  available: true },
-      { id: 'th5', label: 'Public Health c1800–c1900',            questions: 3,  available: true },
+      { id: 'th1',      label: 'Medieval Medicine c1250–c1500',        questions: 5,  available: true },
+      { id: 'th2',      label: 'Renaissance & the Plague c1500–c1700', questions: 4,  available: true },
+      { id: 'th3',      label: 'Surgery & Anatomy c1700–c1900',        questions: 4,  available: true },
+      { id: 'th4',      label: 'Germ Theory c1850–c1900',              questions: 3,  available: true },
+      { id: 'th5',      label: 'Public Health c1800–c1900',            questions: 3,  available: true },
+      { id: 'th_wf',    label: 'Western Front 1914–18',                questions: 3,  available: true },
+      { id: 'th_modern',label: 'Modern Medicine c1900–present',        questions: 1,  available: true },
     ]
   },
   {
@@ -2596,16 +2610,19 @@ const PAST_PAPER_QS = {
     { q: `Explain why the Church both helped and hindered medicine in the Middle Ages. [12 marks]`, type: 'written', marks: 12, ms: `Helped: preserved Galen\'s texts in universities; ran hospitals like St Bartholomew\'s (1123); provided care for sick; trained physicians. Hindered: discouraged dissection (body needed to be whole for resurrection); treated Galen\'s work as unquestionable; linked illness to sin/God\'s punishment; discouraged new thinking. Strong answers explain the mechanism, not just list.` },
     { q: `How far was the Black Death a turning point in the history of medicine? Explain your answer. [16 marks]`, type: 'written', marks: 16, ms: `Was a turning point: exposed limits of medieval medicine; prompted some public health action. Counter: beliefs and treatments barely changed; humours still dominant after 1349; no new understanding of disease. Strong answers need specific evidence (1348 arrival, 1/3 died, miasma/God\'s punishment blamed), explain why change/continuity happened, reach clear supported judgement.` },
     { q: `"The main reason medieval medicine made little progress was the influence of the Church." How far do you agree? Explain your answer. [16 marks]`, type: 'written', marks: 16, ms: `Agree: Church backed Galen, discouraged dissection, linked illness to God, trained physicians in outdated ideas. Disagree: other factors — lack of technology, four humours theory itself, tradition and conservatism, limited scientific method, Galen\'s own authority. Strong answers argue both sides with specific evidence, reach a clear judgement about which factor was most important and why.` },
+    J23_Q3,
   ],
   th2: [
     { q: "Describe two features of Vesalius's contribution to medicine. [4 marks]", type: 'written', marks: 4, ms: `Award up to 2 marks per feature. Features: corrected over 300 of Galen\'s errors; used human dissection himself; published De Fabrica (1543); proved jaw is one bone; showed septum of heart had no holes; encouraged observation over ancient authority.` },
     { q: "Explain why Harvey's discovery of blood circulation did not immediately lead to better treatments. [12 marks]", type: 'written', marks: 12, ms: `Key points: Harvey proved blood circulates but could not explain what blood does; doctors still used bloodletting because they did not know what else to do; understanding does not automatically change treatment; conservative medical profession; lack of technology. Strong answers explain the mechanism — why understanding and treatment are separate things.` },
     { q: `How far did the Renaissance change medicine? Explain your answer. [16 marks]`, type: 'written', marks: 16, ms: `Changed: Vesalius corrected anatomy, Harvey proved circulation, Paré improved surgery, printing press spread ideas. Continuity: treatments barely changed, humours still used, bleeding/purging continued, Great Plague 1665 shows disease understanding remained poor. Strong answers: balanced argument with specific evidence, clear judgement on extent of change.` },
+    J23_Q5,
   ],
   th3: [
     { q: `Describe two problems with surgery before the 1840s. [4 marks]`, type: 'written', marks: 4, ms: `Award up to 2 marks per problem. Problems: no anaesthetic so patients conscious and in pain; no antiseptics so infection was common; no blood transfusions so blood loss often fatal; dirty instruments spread infection; surgeons judged on speed not care.` },
     { q: `Explain why anaesthetics both helped and created new problems for surgery. [12 marks]`, type: 'written', marks: 12, ms: `Helped: removed pain, patients could stay still, surgeons could work more carefully, longer operations possible. Problems: longer operations increased infection risk; overconfidence led to more ambitious surgery before antiseptics; chloroform could be fatal if overdosed (Hannah Greener, 1848). Strong answers explain both effects with specific evidence.` },
     { q: "How important was Lister's use of antiseptics in improving surgery? [16 marks]", type: 'written', marks: 16, ms: `Important: carbolic acid dramatically reduced infection deaths; applied Pasteur\'s germ theory practically; changed surgical practice; aseptic surgery followed. Limits: other factors also improved surgery — anaesthetics (Simpson 1847), blood groups, aseptic methods went further; initial resistance from surgeons. Strong answers: weigh against other factors, reach supported judgement.` },
+    J23_Q6,
   ],
   th4: [
     { q: "Describe two features of Pasteur's germ theory. [4 marks]", type: 'written', marks: 4, ms: `Award up to 2 marks per feature. Features: proved micro-organisms cause disease/decay; swan-neck flask experiment (1861); overturned spontaneous generation; showed microbes come from air; led to pasteurisation; opened door to vaccines and antiseptics.` },
@@ -2617,6 +2634,14 @@ const PAST_PAPER_QS = {
     { q: `Explain why the government was slow to improve public health in the early 19th century. [12 marks]`, type: 'written', marks: 12, ms: `Key reasons: laissez-faire attitude (government should not interfere); cost — ratepayers did not want to pay; miasma theory meant people did not fully understand disease; vested interests (landlords, water companies); local not national responsibility; 1848 Act was optional not compulsory. Strong answers explain mechanism with evidence.` },
     { q: `How far was the Great Stink of 1858 a turning point in the history of public health? [16 marks]`, type: 'written', marks: 16, ms: `Was a turning point: Parliament directly affected so reform became urgent; led to Bazalgette\'s sewer system; reduced cholera outbreaks in London; showed engineering could solve public health. Not/other factors: Chadwick\'s 1842 report laid groundwork; Snow\'s 1854 pump handle removal proved waterborne spread; 1875 Act was arguably more significant nationally. Strong answers: balanced argument, specific evidence, clear judgement.` },
   ],
+
+  // ── HISTORY — Western Front 1914–18 (Edexcel 1HI0/11) ────────────────────────
+
+  th_wf: [ J23_Q1, J23_Q2A, J23_Q2B ],
+
+  // ── HISTORY — Modern Medicine c1900–present (Edexcel 1HI0/11) ────────────────
+
+  th_modern: [ J23_Q4 ],
 
   // ── BIOLOGY — Cells & microscopy ─────────────────────────────────────────────
   // Sources: Jun22 Q2, Jun23 Q7, Jun24 B1 Q1
@@ -4364,12 +4389,13 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
     setError(null)
   }
 
-  function startExamRound(subject = 'Random', { isTimedPaper = false } = {}) {
-    const questions = adaptiveExamQuestions(subject)
-    setExamConfig({ subject, title: subject === 'Random' ? 'Random Exam Challenge' : subject + ' Exam Sprint', isTimedPaper })
+  function startExamRound(subject = 'Random', { isTimedPaper = false, durationSeconds = EXAM_SECONDS, paperQuestions = null, title = null } = {}) {
+    const questions = paperQuestions || adaptiveExamQuestions(subject)
+    const derivedTitle = title || (subject === 'Random' ? 'Random Exam Challenge' : subject + ' Exam Sprint')
+    setExamConfig({ subject, title: derivedTitle, isTimedPaper })
     setExamQuestions(questions)
     setExamIdx(0)
-    setExamTimeLeft(EXAM_SECONDS)
+    setExamTimeLeft(durationSeconds)
     setExamCountdown(3)
     setExamStats({ correct: 0, answered: 0, bySubject: {} })
     resetExamQuestion()
@@ -4377,6 +4403,34 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
     setExamPaperFeedbacks({})
     setExamPaperGrading({})
     setExamPhase('countdown')
+  }
+
+  function startMedicinePaper2023() {
+    const paperQs = MEDICINE_2023_PAPER.questions.map(q => ({
+      id: q.id,
+      q: q.q,
+      marks: q.marks,
+      type: q.type,
+      ms: q.ms,
+      commandWord: q.commandWord,
+      topic: q.topic,
+      subject: q.subject,
+      extract: q.extract,
+      sectionHeader: q.sectionHeader,
+      sectionNote: q.sectionNote,
+      sourcesBooklet: q.sourcesBooklet,
+      sourceRefs: q.sourceRefs,
+      isChoice: q.isChoice,
+      choiceHeader: q.choiceHeader,
+      spagNote: q.spagNote,
+      note: q.note,
+    }))
+    startExamRound('History', {
+      isTimedPaper: true,
+      durationSeconds: MEDICINE_2023_PAPER.timeMins * 60,
+      paperQuestions: paperQs,
+      title: MEDICINE_2023_PAPER.title,
+    })
   }
 
   function addExamResult(question, earned, possible) {
@@ -4522,13 +4576,38 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
                 questionText: q.q,
                 marks: q.marks || 4,
                 markPoints: q.ms ? [q.ms] : [],
-                source: q.extract ? { label: 'Source', text: q.extract } : null,
+                source: q.extract ? { label: q.sourceRefs?.length > 1 ? 'Sources A and B' : 'Source', text: q.extract } : null,
                 commandWord: q.commandWord || null,
                 topic: q.topic || null,
                 paper: examConfig?.title || 'EXAM PRACTICE',
               }
               return (
                 <div key={idx} style={{ marginBottom: 32 }}>
+                  {/* Section header */}
+                  {q.sectionHeader && (
+                    <div style={{ marginBottom: 20, paddingBottom: 14, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                      <div style={{ fontFamily:"'Sora', sans-serif", fontWeight: 800, fontSize: '1rem', color: '#F4EFE6', marginBottom: 4 }}>{q.sectionHeader}</div>
+                      {q.sectionNote && <div style={{ fontFamily:"'Outfit', sans-serif", fontSize: '.78rem', color: '#6B7A9A' }}>{q.sectionNote}</div>}
+                    </div>
+                  )}
+                  {/* Sources booklet — shown inline before the first question that carries them */}
+                  {q.sourcesBooklet && q.sourcesBooklet.map((src, si) => (
+                    <div key={si} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: '18px 20px', marginBottom: 14 }}>
+                      <div style={{ fontFamily:"'Sora', sans-serif", fontWeight: 700, fontSize: '.78rem', letterSpacing: '.12em', textTransform: 'uppercase', color: '#C89B6D', marginBottom: 8 }}>{src.label}</div>
+                      <div style={{ fontFamily:"'Outfit', sans-serif", fontSize: '.8rem', fontStyle: 'italic', color: 'rgba(245,245,245,0.48)', marginBottom: 10, lineHeight: 1.5 }}>{src.attribution}</div>
+                      <div style={{ fontFamily:"'Outfit', sans-serif", fontSize: '.9rem', color: 'rgba(245,245,245,0.82)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{src.text}</div>
+                      {src.credit && <div style={{ fontFamily:"'Outfit', sans-serif", fontSize: '.7rem', color: 'rgba(245,245,245,0.3)', marginTop: 10, fontStyle: 'italic' }}>{src.credit}</div>}
+                    </div>
+                  ))}
+                  {/* Choice / SPaG note */}
+                  {q.choiceHeader && (
+                    <div style={{ background: 'rgba(157,92,255,0.08)', border: '1px solid rgba(157,92,255,0.2)', borderRadius: 12, padding: '12px 16px', marginBottom: 14 }}>
+                      <div style={{ fontFamily:"'Outfit', sans-serif", fontWeight: 700, fontSize: '.8rem', color: '#C4B5FD' }}>{q.choiceHeader}</div>
+                    </div>
+                  )}
+                  {q.spagNote && (
+                    <div style={{ fontFamily:"'Outfit', sans-serif", fontSize: '.76rem', color: '#6B7A9A', fontStyle: 'italic', marginBottom: 10, paddingLeft: 4 }}>{q.spagNote}</div>
+                  )}
                   <ExamQuestionFrame
                     block={block}
                     subject={q.subject || 'History'}
@@ -5115,10 +5194,27 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
         {/* ── REAL EXAM PAPERS ── */}
         <div style={{ marginBottom: 28 }}>
           <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4A5578', marginBottom: 12 }}>Real Exam Papers</div>
+
+          {/* Edexcel History Paper 1 — June 2023 */}
+          <button onClick={startMedicinePaper2023} style={{ width: '100%', boxSizing: 'border-box', background: '#0E1122', border: '1px solid rgba(200,155,109,0.22)', borderRadius: 24, padding: 20, display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer', textAlign: 'left', marginBottom: 10 }}>
+            <div style={{ width: 54, height: 54, borderRadius: 15, background: 'rgba(200,155,109,0.1)', border: '1px solid rgba(200,155,109,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C89B6D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="12" y2="15"/></svg>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.9rem', color: '#F0F3FA', lineHeight: 1.25, marginBottom: 3 }}>Edexcel History Paper 1 — June 2023</div>
+              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.72rem', color: '#C89B6D', fontWeight: 600, marginBottom: 2 }}>1HI0/11 · 52 marks · 75 min timer</div>
+              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.7rem', color: '#4A5578' }}>Medicine in Britain & Western Front 1914–18</div>
+            </div>
+            <div style={{ background: 'rgba(200,155,109,0.15)', border: '1px solid rgba(200,155,109,0.3)', borderRadius: 8, padding: '5px 10px', flexShrink: 0 }}>
+              <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.72rem', color: '#C89B6D', letterSpacing: '.04em', textTransform: 'uppercase' }}>Timed</span>
+            </div>
+          </button>
+
+          {/* Generic timed practice */}
           <button onClick={() => startExamRound('Random', { isTimedPaper: true })} style={{ width: '100%', boxSizing: 'border-box', background: '#0E1628', border: '1px solid #1E2A40', borderRadius: 24, padding: 20, display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer', textAlign: 'left' }}>
             <div style={{ width: 54, height: 54, borderRadius: 15, background: 'rgba(59,130,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>📋</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.92rem', color: '#F0F3FA' }}>Full Timed Paper</div>
+              <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.92rem', color: '#F0F3FA' }}>Timed mixed practice</div>
               <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.73rem', color: '#4A5578', marginTop: 3 }}>10 questions · 10 min timer · All subjects</div>
             </div>
             <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: '1.05rem', flexShrink: 0 }}>›</span>

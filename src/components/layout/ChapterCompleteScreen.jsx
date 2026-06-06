@@ -115,7 +115,8 @@ export default function ChapterCompleteScreen({
   supportingCopy   = 'Momentum matters.',
   isFinalChapter   = false,
   moduleName,
-  onContinue, onQuiz, onHome,
+  pastPaperLabel,
+  onContinue, onQuiz, onPastPaper, onHome,
   tab = 'subjects', setTab,
 }) {
   const ac           = rgb(accent)
@@ -475,6 +476,67 @@ export default function ChapterCompleteScreen({
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </button>
+
+          {/* ── Past paper link — shown only when module has tagged questions ── */}
+          {onPastPaper && (
+            <>
+              <div style={{ height: 10 }}/>
+              <button
+                className="ccs-quiz ccs-in"
+                aria-label={pastPaperLabel || 'Practice past paper questions'}
+                onClick={onPastPaper}
+                style={{
+                  ...base,
+                  width: '100%',
+                  maxWidth: 360,
+                  height: 72,
+                  borderRadius: 22,
+                  padding: '0 16px',
+                  background: 'rgba(200,155,109,0.06)',
+                  border: '1px solid rgba(200,155,109,0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  textAlign: 'left',
+                  transition: 'background 140ms ease, transform 140ms ease',
+                  animationDelay: '210ms',
+                }}
+              >
+                <div style={{
+                  width: 44, height: 44, borderRadius: RADII.pill,
+                  border: '1px solid rgba(200,155,109,0.3)',
+                  background: 'rgba(200,155,109,0.08)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                    stroke="#C89B6D" strokeWidth="2"
+                    strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="4" y="2" width="16" height="20" rx="2"/>
+                    <line x1="8" y1="7" x2="16" y2="7"/>
+                    <line x1="8" y1="11" x2="16" y2="11"/>
+                    <line x1="8" y1="15" x2="12" y2="15"/>
+                  </svg>
+                </div>
+                <div style={{ marginLeft: 14, flex: 1 }}>
+                  <div style={{
+                    fontFamily: "'Sora', 'Syne', system-ui, sans-serif",
+                    fontWeight: 700, fontSize: 18, lineHeight: '22px', color: '#F5F7FF',
+                  }}>{pastPaperLabel || 'Past paper questions'}</div>
+                  <div style={{
+                    fontFamily: "'Outfit', 'DM Sans', system-ui, sans-serif",
+                    fontWeight: 500, fontSize: 14, lineHeight: '18px',
+                    color: 'rgba(200,155,109,0.72)', marginTop: 2,
+                  }}>Real exam questions tagged to this module</div>
+                </div>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                  stroke="#C89B6D" strokeWidth="2"
+                  strokeLinecap="round" strokeLinejoin="round"
+                  style={{ flexShrink: 0, marginLeft: SPACING.micro }}>
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </button>
+            </>
+          )}
 
           {/* ── Return Home — text only, no card ── */}
           <button
