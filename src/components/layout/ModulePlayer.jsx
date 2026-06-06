@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import { hexToRgb } from '../../constants/subjects.js'
 import { recordActivity, recordScore } from '../../progress.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
@@ -1669,6 +1671,144 @@ function WYLScreen({ module, onDone, subjectColor }) {
   )
 }
 
+// ─── Chapter jump sheet ───────────────────────────────────────────────────────
+
+function JumpSheet({ screens, currentScreen, accent, accentRgb, onJumpTo, onClose }) {
+  const labeled = screens.filter(s => s.label)
+
+  return (
+    <>
+      <style>{`
+        @keyframes js-in {
+          from { opacity: 0; transform: translateY(-8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .js-row:hover { background: rgba(${accentRgb},0.07) !important; }
+        .js-row:active { background: rgba(${accentRgb},0.14) !important; }
+        .js-close:hover { background: rgba(255,255,255,0.10) !important; }
+      `}</style>
+
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 2000,
+          background: 'rgba(0,0,0,0.54)',
+          backdropFilter: 'blur(3px)',
+          WebkitBackdropFilter: 'blur(3px)',
+        }}
+      />
+
+      {/* Dropdown sheet */}
+      <div style={{
+        position: 'fixed',
+        top: 'calc(66px + env(safe-area-inset-top, 0px))',
+        left: 12, right: 12,
+        maxHeight: 'min(72vh, 540px)',
+        background: 'rgba(9,12,22,0.97)',
+        backdropFilter: 'blur(28px)',
+        WebkitBackdropFilter: 'blur(28px)',
+        border: `1px solid rgba(${accentRgb},0.16)`,
+        borderRadius: 20,
+        zIndex: 2001,
+        overflow: 'hidden',
+        display: 'flex', flexDirection: 'column',
+        boxShadow: `0 8px 48px rgba(0,0,0,0.64), 0 0 0 1px rgba(${accentRgb},0.06)`,
+        animation: 'js-in 200ms cubic-bezier(.16,1,.3,1) both',
+      }}>
+
+        {/* Header */}
+        <div style={{
+          padding: '14px 18px 12px',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          flexShrink: 0,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+            <span style={{
+              fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 700,
+              color: 'rgba(255,255,255,0.84)', letterSpacing: '-0.01em',
+            }}>Chapter contents</span>
+            <span style={{
+              fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 500,
+              color: `rgba(${accentRgb},0.56)`,
+            }}>{labeled.length} sections</span>
+          </div>
+          <button
+            className="js-close"
+            onClick={onClose}
+            aria-label="Close contents"
+            style={{
+              width: 28, height: 28, borderRadius: 14,
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: 'rgba(255,255,255,0.42)', fontSize: 13,
+              fontFamily: 'sans-serif', lineHeight: 1,
+            }}
+          >✕</button>
+        </div>
+
+        {/* Screen list */}
+        <div style={{ overflowY: 'auto', flex: 1, padding: '4px 0 8px' }}>
+          {screens.map((s, i) => {
+            if (!s.label) return null
+            const isCurrent = i === currentScreen
+            return (
+              <button
+                key={i}
+                className="js-row"
+                onClick={() => onJumpTo(i)}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '9px 18px',
+                  background: isCurrent ? `rgba(${accentRgb},0.09)` : 'none',
+                  border: 'none',
+                  borderLeft: isCurrent ? `3px solid ${accent}` : '3px solid transparent',
+                  cursor: 'pointer', textAlign: 'left',
+                  transition: 'background 100ms ease',
+                }}
+              >
+                <span style={{
+                  fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700,
+                  color: `rgba(${accentRgb},${isCurrent ? '0.90' : '0.36'})`,
+                  letterSpacing: '0.06em', minWidth: 22, flexShrink: 0,
+                }}>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span style={{
+                  fontFamily: "'Sora', sans-serif", fontSize: 14,
+                  fontWeight: isCurrent ? 600 : 400,
+                  color: isCurrent ? '#EAF7F0' : 'rgba(255,255,255,0.56)',
+                  flex: 1,
+                }}>
+                  {s.label}
+                </span>
+                {s.stage && (
+                  <span style={{
+                    fontFamily: "'Sora', sans-serif", fontSize: 9, fontWeight: 600,
+                    color: `rgba(${accentRgb},0.50)`,
+                    letterSpacing: '0.06em', textTransform: 'uppercase', flexShrink: 0,
+                  }}>
+                    {s.stage}
+                  </span>
+                )}
+                {isCurrent && (
+                  <span style={{
+                    width: 6, height: 6, borderRadius: '50%',
+                    background: accent, flexShrink: 0,
+                    boxShadow: `0 0 6px ${accent}`,
+                  }} />
+                )}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    </>
+  )
+}
+
 // ─── Main ModulePlayer ────────────────────────────────────────────────────────
 
 export default function ModulePlayer({ module, onBack, onChapterComplete }) {
@@ -1704,6 +1844,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const [animKey, setAnimKey] = useState(0)
   const [cinematicHeaderVisible, setCinematicHeaderVisible] = useState(false)
   const [ihmExploreScreen, setIhmExploreScreen] = useState(null)
+  const [jumpOpen, setJumpOpen] = useState(false)
 
   useEffect(() => {
     saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts })
@@ -1717,8 +1858,17 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     setScreen(next)
     setAnimKey(k => k + 1)
     scrollToTop()
-    // Any navigation in a module counts as activity for the streak
     recordActivity()
+    setJumpOpen(false)
+  }
+
+  function goTo(idx) {
+    const next = Math.max(0, Math.min(total - 1, idx))
+    setScreen(next)
+    setAnimKey(k => k + 1)
+    scrollToTop()
+    recordActivity()
+    setJumpOpen(false)
   }
 
   function handleFinish() {
@@ -1815,6 +1965,28 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     if (module.hook?.statement) { setNavTo('hook'); scrollToTop(); return }
     onBack()
   }
+
+  const subjectRgb = hexToRgb(subjectColor) || '157,92,255'
+  const screenPos  = { current: screen + 1, total }
+  const H = {
+    module,
+    currentStage,
+    onBack:       headerOnBack,
+    onExit:       onBack,
+    onJumpOpen:   () => setJumpOpen(true),
+    screenPos,
+  }
+  const jumpSheetPortal = jumpOpen ? createPortal(
+    <JumpSheet
+      screens={module.screens}
+      currentScreen={screen}
+      accent={subjectColor}
+      accentRgb={subjectRgb}
+      onJumpTo={goTo}
+      onClose={() => setJumpOpen(false)}
+    />,
+    document.body
+  ) : null
   // ──────────────────────────────────────────────────────────────────────────
 
   // ── Confidence overlay — neutral, no colour judgement ──────────────────
@@ -1854,27 +2026,24 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   // ── Full-screen recall screen — appears after outcomes, before content ────────
   if ((!recallDone || navTo === 'recall') && module.recall) {
     return (
-      <QuickRecallScreen
-        subject={module.subject}
-        chapterNum={module.number}
-        chapterTitle={module.title}
-        questions={module.recall.questions}
-        onBack={() => {
-          if (navTo === 'recall') setNavTo(null)
-          else if (module.hook?.statement) setNavTo('hook')
-          else onBack()
-        }}
-        onContinue={() => { setRecallDone(true); setNavTo(null); scrollToTop() }}
-        renderHeader={() => (
-          <LearningHeader
-            module={module}
-            currentStage="Discover"
-            onBack={headerOnBack}
-            onExit={onBack}
-            visible={true}
-          />
-        )}
-      />
+      <>
+        <QuickRecallScreen
+          subject={module.subject}
+          chapterNum={module.number}
+          chapterTitle={module.title}
+          questions={module.recall.questions}
+          onBack={() => {
+            if (navTo === 'recall') setNavTo(null)
+            else if (module.hook?.statement) setNavTo('hook')
+            else onBack()
+          }}
+          onContinue={() => { setRecallDone(true); setNavTo(null); scrollToTop() }}
+          renderHeader={() => (
+            <LearningHeader {...H} currentStage="Discover" visible={true} />
+          )}
+        />
+        {jumpSheetPortal}
+      </>
     )
   }
 
@@ -1975,14 +2144,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       isLast ? handleFinish() : go(1)
     }
     return (
+      <>
       <div style={{ position: 'fixed', inset: 0, background: '#080C1A', display: 'flex', flexDirection: 'column', zIndex: 60 }}>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={true}
-        />
+        <LearningHeader {...H} visible={true} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '0 24px 48px' }}>
           <div style={{ maxWidth: 480, margin: '0 auto', width: '100%' }}>
             {(cur.paragraphs || []).map((p, i) => (
@@ -2014,29 +2178,28 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         </div>
         <style>{`@keyframes crSlideIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }`}</style>
       </div>
+      {jumpSheetPortal}
+      </>
     )
   }
 
   // ── Full-screen QuickRecallScreen as in-content screen ────────────────────
   if (cur?.type === 'quickRecall') {
     return (
-      <QuickRecallScreen
-        subject={module.subject}
-        chapterNum={module.number}
-        chapterTitle={module.title}
-        questions={cur.questions || []}
-        onBack={headerOnBack}
-        onContinue={isLast ? handleFinish : () => go(1)}
-        renderHeader={() => (
-          <LearningHeader
-          module={module}
-          currentStage={currentStage}
+      <>
+        <QuickRecallScreen
+          subject={module.subject}
+          chapterNum={module.number}
+          chapterTitle={module.title}
+          questions={cur.questions || []}
           onBack={headerOnBack}
-          onExit={onBack}
-          visible={true}
+          onContinue={isLast ? handleFinish : () => go(1)}
+          renderHeader={() => (
+            <LearningHeader {...H} visible={true} />
+          )}
         />
-        )}
-      />
+        {jumpSheetPortal}
+      </>
     )
   }
 
@@ -2044,19 +2207,14 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'faceExaminer') {
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={true}
-        />
+        <LearningHeader {...H} visible={true} />
         <FaceTheExaminer
           module={module}
           examiner={cur.examiner}
           onExit={headerOnBack}
           onContinue={completeModule}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2065,18 +2223,13 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'naturalSupernaturalSwipe') {
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={true}
-        />
+        <LearningHeader {...H} visible={true} />
         <SwipeSort
           block={cur}
           subject={module.subject}
           onComplete={() => { isLast ? handleFinish() : go(1) }}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2085,18 +2238,13 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'visualLearning') {
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={true}
-        />
+        <LearningHeader {...H} visible={true} />
         <VisualLearning
           block={cur}
           subject={module.subject}
           onComplete={() => { isLast ? handleFinish() : go(1) }}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2105,18 +2253,13 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'keyFigureReveal') {
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={true}
-        />
+        <LearningHeader {...H} visible={true} />
         <KeyFigureReveal
           block={cur}
           subject={module.subject}
           onComplete={() => { isLast ? handleFinish() : go(1) }}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2125,13 +2268,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'guidedChoiceCarousel') {
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={true}
-        />
+        <LearningHeader {...H} visible={true} />
         <GuidedChoiceCarousel
           subject={module.subject}
           headline={cur.headline}
@@ -2156,6 +2293,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
             isLast ? handleFinish() : go(1)
           }}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2165,13 +2303,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     const ihmExplore = ihmExploreScreen === screen
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={ihmExplore}
-        />
+        <LearningHeader {...H} visible={ihmExplore} />
         <InteractiveHotspotImage
           subject={module.subject}
           title={cur.title}
@@ -2184,6 +2316,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           onEnterExplore={() => setIhmExploreScreen(screen)}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2192,13 +2325,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'collectionExplorer') {
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={true}
-        />
+        <LearningHeader {...H} visible={true} />
         <InteractiveCollectionExplorer
           subject={module.subject}
           title={cur.title}
@@ -2208,6 +2335,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           synthesis={cur.synthesis || null}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2216,17 +2344,12 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'medicalTheoryPrescription') {
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={true}
-        />
+        <LearningHeader {...H} visible={true} />
         <MedicalTheoryPrescription
           screen={cur}
           onComplete={isLast ? handleFinish : () => go(1)}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2235,19 +2358,14 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'visualNarrative') {
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={cinematicHeaderVisible}
-        />
+        <LearningHeader {...H} visible={cinematicHeaderVisible} />
         <VisualNarrativeScreen
           subject={module.subject}
           beats={cur.beats || []}
           onRevealStart={() => setCinematicHeaderVisible(true)}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2255,18 +2373,13 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'galensDiagnostic') {
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={true}
-        />
+        <LearningHeader {...H} visible={true} />
         <GalensDiagnostic
           block={cur}
           subject={module.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2274,18 +2387,13 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'theoryLab') {
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={true}
-        />
+        <LearningHeader {...H} visible={true} />
         <TheoryLab
           block={cur}
           subject={module.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2294,33 +2402,23 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'conceptReveal') {
     return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={cinematicHeaderVisible}
-        />
+        <LearningHeader {...H} visible={cinematicHeaderVisible} />
         <ConceptReveal
           subject={module.subject}
           steps={cur.steps || []}
           onRevealStart={() => setCinematicHeaderVisible(true)}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
+        {jumpSheetPortal}
       </>
     )
   }
 
   // ── Full-screen cinematic screen — takes over for type:'cinematic' screens ──
-  if (cur?.type === 'cinematic') {    return (
+  if (cur?.type === 'cinematic') {
+    return (
       <>
-        <LearningHeader
-          module={module}
-          currentStage={currentStage}
-          onBack={headerOnBack}
-          onExit={onBack}
-          visible={cinematicHeaderVisible}
-        />
+        <LearningHeader {...H} visible={cinematicHeaderVisible} />
         <CinematicRevealMoment
           subject={module.subject}
           videoSrc={cur.videoSrc}
@@ -2330,6 +2428,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           onContinue={() => isLast ? handleFinish() : go(1)}
           onTextRevealStart={() => setCinematicHeaderVisible(true)}
         />
+        {jumpSheetPortal}
       </>
     )
   }
@@ -2338,13 +2437,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     <div style={{ background: '#080C1A', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
       {/* ── Universal floating learning header ── */}
-      <LearningHeader
-        module={module}
-        currentStage={currentStage}
-        onBack={headerOnBack}
-        onExit={onBack}
-        visible={headerVisible}
-      />
+      <LearningHeader {...H} visible={headerVisible} />
 
       {/* ── Screen content — hook, intro, or normal screen ── */}
       <div id="module-scroll-container" style={{ flex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 112px) 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
@@ -2393,6 +2486,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           )}
         </div>
       </div>
+      {jumpSheetPortal}
     </div>
   )
 }

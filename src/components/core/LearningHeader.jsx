@@ -3,15 +3,18 @@ import LearningProgressHeader from './LearningProgressHeader.jsx'
 import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
 
 // ── LearningHeader — single-row module header ─────────────────────────────────
-// Single row: [back] [stage rail] [exit]
-// Stage rail shows 6 fixed stages; no navigation, no jump sheet.
-// Props: module, currentStage (string), onBack, onExit, visible
+// Single row: [back] [stage rail] [n/total] [exit]
+// Stage rail shows 6 fixed stages; tap rail for stage tooltip.
+// Tap n/total counter to open jump sheet (onJumpOpen callback).
+// Props: module, currentStage (string), onBack, onExit, visible, onJumpOpen, screenPos
 export default function LearningHeader({
   module,
   currentStage = 'Discover',
   onBack,
   onExit,
   visible = true,
+  onJumpOpen = null,
+  screenPos = null,
 }) {
   const [backPressed, setBackPressed] = useState(false)
   const [exitPressed, setExitPressed] = useState(false)
@@ -73,6 +76,26 @@ export default function LearningHeader({
           accentRgb={accentRgb}
         />
       </div>
+
+      {/* Screen position / jump trigger */}
+      {onJumpOpen && screenPos && (
+        <button
+          aria-label="Open chapter contents"
+          onClick={onJumpOpen}
+          style={{
+            height: 44, padding: '0 6px',
+            background: 'none', border: 'none',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', flexShrink: 0,
+            fontFamily: "'Sora', sans-serif",
+            fontSize: 11, fontWeight: 600,
+            color: `rgba(${accentRgb},0.52)`,
+            letterSpacing: '0.04em',
+          }}
+        >
+          {screenPos.current}/{screenPos.total}
+        </button>
+      )}
 
       {/* Exit button */}
       <button
