@@ -1102,140 +1102,555 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           { tag: 'why-ideas-survived',      label: 'Why medieval ideas survived so long' },
         ],
       },
+      // ── Section 2 — Learning Chunk 1: The Bridge ────────────────────────────
+
       {
-        stage: 'Renaissance medicine',
-        label: 'What survived?',
-        kicker: 'Legacy',
-        heading: 'Echoes of medieval medicine',
-        sub: "Which ideas survived? Which didn't?",
-        blocks: [
+        type: 'visualLearning',
+        stage: 'The bridge',
+        label: 'Echoes of medieval medicine',
+        scenes: [
           {
-            type: 'read',
-            text: 'Most humoural medicine was disproved by the 19th century — but traces survived much longer. Some words and concepts from medieval medicine are still with us today.',
+            image: '/figures/history/medicine/medieval/vl-monks-books.webp',
+            imagePosition: 'center top',
+            headline: 'Medieval medicine\ndidn\'t disappear.',
+            body: 'The Renaissance didn\'t erase a thousand years of thinking overnight.',
           },
           {
-            type: 'keypoint',
-            label: 'Language',
-            text: '"Melancholy," "phlegmatic," "sanguine" and "bilious" all come directly from the Four Humours. These words still carry their medieval medical meaning.',
+            image: '/figures/history/medicine/medieval/vl-monks-books.webp',
+            imagePosition: 'center 30%',
+            headline: 'Language survived.',
+            body: '"Melancholy", "phlegmatic", "sanguine", "bilious" — all come from the Four Humours. These words still carry their medieval meaning.',
           },
           {
-            type: 'keypoint',
-            label: 'Herbal medicine',
-            text: 'Many herbal remedies developed in the medieval period are still used today. Some have been proven effective by modern research.',
+            image: '/figures/history/medicine/medieval/vl-monks-books.webp',
+            imagePosition: 'center 60%',
+            headline: 'Remedies survived.',
+            body: 'Many herbal treatments used in the medieval period are still in use today. Some have since been proven effective by modern research.',
           },
           {
-            type: 'keypoint',
-            label: 'The bigger shift',
-            text: 'The most important medieval legacy is the beginning of the idea that disease has causes that can be observed, studied, and treated.',
+            finalReveal: true,
+            headline: 'But something was\nabout to change.',
+            body: 'The idea that disease could be studied, observed, and understood was about to collide with a new way of thinking about the world.',
           },
         ],
       },
 
       {
-        label: 'Renaissance',
-        kicker: 'New Thinking',
-        heading: 'Renaissance Medicine: Challenging the Ancients',
-        sub: 'The Renaissance encouraged people to question authority and look at evidence. Medicine slowly changed.',
-        blocks: [
-          { type: 'read', label: '📖 Core Knowledge', text: 'The Renaissance (roughly 1400–1600) encouraged artists and scientists to question ancient authority. In medicine, this meant challenging <strong>Galen</strong>. Key developments: <strong>Vesalius</strong> used human dissection to correct anatomical errors. <strong>Harvey</strong> proved blood circulates. <strong>Paré</strong> improved surgical techniques. The <strong>printing press</strong> helped new ideas spread rapidly.' },
-          { type: 'keypoint', text: '<strong>Renaissance medicine changed knowledge more than treatment.</strong> Vesalius, Harvey and Paré pushed observation and experiment forward — but the Great Plague shows disease causes and everyday cures stayed badly limited.' },
-          { type: 'quiz', question: 'What did Vesalius and Harvey mainly improve?', options: [
-            { text: 'Knowledge of anatomy and how the body worked', correct: true },
-            { text: 'Pain control during surgery', correct: false },
-            { text: 'Germ theory', correct: false },
-            { text: 'Blood transfusions', correct: false },
-          ], explanation: 'Renaissance discoveries improved knowledge before treatment became dramatically safer. Understanding came first; treatment improvements followed later.' },
-        ]
-      },
-      {
-        label: 'Key Figures',
-        kicker: '1543',
-        heading: 'Vesalius, Harvey & Paré',
-        headerImage: '/images/vesalius-1543.png',
-        sub: 'Three people who dared to challenge 1,000 years of received wisdom.',
-        blocks: [
-          { type: 'read', label: '🔬 Vesalius (1543)', text: '<strong>Andreas Vesalius</strong> dissected human bodies himself and published <em>De Humani Corporis Fabrica</em> (1543). It corrected over 300 of Galen\'s errors — including the claim that the jaw is two bones and that the septum of the heart has holes. He proved the value of direct observation over trusting ancient authority.' },
-          { type: 'read', label: '❤️ Harvey (1628)', text: '<strong>William Harvey</strong> proved that blood circulates continuously around the body, pumped by the heart. This overturned Galen\'s idea that the liver made new blood constantly. But: he couldn\'t explain what blood actually did — so treatments didn\'t immediately change.' },
-          { type: 'read', label: '⚔️ Paré (1530s+)', text: '<strong>Ambroise Paré</strong> was a French military surgeon who ran out of boiling oil (used on gunshot wounds) during a battle. He improvised with a soothing ointment and found patients healed better. He also designed artificial limbs and tied blood vessels instead of cauterising.' },
-          { type: 'quiz', question: 'Why did Harvey\'s discovery not immediately improve treatments?', options: [
-            { text: 'He could not explain what blood actually did, so doctors kept using old treatments', correct: true },
-            { text: 'Nobody believed him', correct: false },
-            { text: 'The Church banned his book', correct: false },
-            { text: 'Bloodletting was made compulsory by law', correct: false },
-          ], hint: 'Harvey proved blood moves around the body — but what couldn\'t he explain about what blood is actually for?', explanation: 'Harvey could prove blood circulates but couldn\'t explain what blood actually does — carries oxygen, removes waste. Without that understanding, doctors had no reason to abandon treatments like bloodletting.' },
-        ]
-      },
-      {
-        label: 'Royal Society',
-        kicker: '1660',
-        heading: 'The Royal Society',
-        headerImage: '/images/royal-society-1660.png',
-        sub: 'Science became organised — and started demanding evidence.',
-        blocks: [
-          { type: 'read', label: '🔬 What Happened', text: 'The <strong>Royal Society</strong> was founded in 1660 — a formal scientific institution where experiments were shared, tested and debated. Its motto: <em>Nullius in Verba</em> ("take nobody\'s word for it"). It represented the shift from trusting ancient authority to demanding <strong>observable, repeatable evidence</strong>.' },
-          { type: 'keypoint', text: '<strong>Why it matters for the exam:</strong> The Royal Society created a culture of scientific investigation. This directly enabled later breakthroughs — Harvey\'s ideas were published through such networks, and it set the stage for Jenner, Pasteur and Koch.' },
-          { type: 'quiz', question: 'What was the significance of the Royal Society\'s motto "Nullius in Verba"?', options: [
-            { text: 'It rejected ancient authority and demanded evidence from observation and experiment', correct: true },
-            { text: 'It said that only noblemen could join', correct: false },
-            { text: 'It meant that all medical cures needed royal approval', correct: false },
-          ], explanation: '"Take nobody\'s word for it" — the motto symbolised the rejection of Galen and ancient texts in favour of direct observation and experiment.' },
+        type: 'conceptReveal',
+        stage: 'The bridge',
+        label: 'A world about to change',
+        steps: [
+          {
+            eyebrow: 'c.1400–1600',
+            mainText: 'The Renaissance encouraged artists, thinkers, and scientists to question ancient authority.',
+            supportText: 'For centuries, Galen\'s word had been law. Now people asked: what if he was wrong?',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          },
+          {
+            mainText: 'The printing press (1440s) meant new ideas could spread across Europe in months, not decades.',
+            supportText: 'Previously, a single medical manuscript took months to copy by hand. Now a book could reach thousands.',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          },
+          {
+            eyebrow: 'The key tension',
+            mainText: 'Renaissance medicine changed knowledge far more than it changed treatment.',
+            supportText: 'Doctors were discovering new truths about the body — but patients were still being bled and purged.',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          },
         ],
       },
+
       {
-        label: 'Great Plague',
-        kicker: '1665',
-        heading: 'The Great Plague of London',
-        headerImage: '/images/great-plague-1665.png',
-        sub: 'Even after the Renaissance, people still had no idea what actually caused disease.',
-        blocks: [
-          { type: 'read', label: '☠️ What Happened', text: 'The Great Plague of 1665 killed around 100,000 people in London. Despite Renaissance advances in anatomy, people still blamed <strong>miasma</strong>, <strong>humours</strong> and <strong>God\'s punishment</strong>. The government\'s response was more organised than in 1348, but medical understanding was still badly limited.' },
-          { type: 'funfact', label: '🐈 The Cat Disaster', text: 'The mayor ordered stray cats and dogs to be killed because people thought they spread plague. But cats killed rats. Fewer cats meant more rats, more fleas and more plague. A horror film with terrible pest control.' },
-          { type: 'quiz', question: 'What was the real cause of the plague spreading?', options: [
-            { text: 'Fleas on rats carrying plague bacteria', correct: true },
-            { text: 'Bad smells directly poisoning people', correct: false },
-            { text: 'Too much blood in the body', correct: false },
-            { text: 'The Great Fire', correct: false },
-          ], explanation: 'People blamed miasma, humours or God, but the real cause was bacteria spread by fleas on rats.' },
-          { type: 'examtip', label: '🗡️ Exam Assassin', phrases: ['better government response', 'miasma continued', 'no germ theory'], tip: 'By 1665, government response was more organised than in 1348, but medical understanding was still badly limited because people did not know about germs.' },
-        ]
+        type: 'quickRecall',
+        stage: 'The bridge',
+        label: 'Before we go further',
+        questions: [
+          {
+            type: 'choice',
+            question: 'What theory said illness was caused by an imbalance of four bodily fluids?',
+            options: ['The Four Humours', 'Miasma theory', 'Astrology', 'Germ theory'],
+            correct: 0,
+            explanation: 'The Four Humours — blood, phlegm, yellow bile, black bile — underpinned medieval medicine and Galen\'s teaching.',
+          },
+          {
+            type: 'choice',
+            question: 'Which ancient authority\'s ideas were still taught in Renaissance universities?',
+            options: ['Galen', 'Vesalius', 'Pasteur', 'Harvey'],
+            correct: 0,
+            explanation: 'Galen\'s texts continued to dominate university medicine well into the Renaissance — even as new evidence emerged.',
+          },
+          {
+            type: 'choice',
+            question: 'Why did the Church preserve and promote Galen\'s medical ideas?',
+            options: [
+              'His idea of bodily balance fitted their view of God\'s perfect design',
+              'He was a Christian doctor who referenced the Bible',
+              'The Church paid him to write medical textbooks',
+              'He was the only doctor who could speak Latin',
+            ],
+            correct: 0,
+            explanation: 'Galen\'s concept of a body in perfect balance reinforced Christian ideas about divine order. The Church gave his authority serious backing.',
+          },
+        ],
       },
+
+      // ── Section 3 — Learning Chunk 2: Vesalius ──────────────────────────────
+
       {
-        label: 'Change vs Continuity',
-        kicker: 'The Big Picture',
-        heading: 'Did Everything Suddenly Improve?',
-        sub: 'No. History is annoying like that.',
-        blocks: [
-          { type: 'timeline', events: [
-            { year: '1543', text: 'Vesalius publishes anatomy work. More accurate anatomy and challenge to Galen.' },
-            { year: '1628', text: 'Harvey explains blood circulation. Better understanding of the body, but still limited treatment.' },
-            { year: '1665', text: 'The Great Plague exposes weak disease knowledge. Government action was more organised, but people still blamed miasma, humours and God.' },
-            { year: '1666', text: 'The Great Fire leads to rebuilding. Wider streets and better rebuilding reduced future outbreaks.' },
-          ]},
-          { type: 'keypoint', text: '<strong>Renaissance medicine changed knowledge more than treatment.</strong> Vesalius, Harvey, Paré and Hunter pushed observation and experiment forward, but the Great Plague shows disease causes and everyday cures stayed badly limited.' },
-          { type: 'quiz', question: 'Which is the best judgement about Renaissance medicine?', options: [
-            { text: 'There was important change in anatomy, but continuity in treatments and beliefs', correct: true },
-            { text: 'Everything changed instantly', correct: false },
-            { text: 'Nothing changed at all', correct: false },
-            { text: 'Treatments improved before knowledge', correct: false },
-          ], explanation: 'That balanced judgement is what examiners want: change and continuity, not cartoon history.' },
-        ]
+        type: 'keyFigureReveal',
+        stage: 'Vesalius',
+        tag: 'vesalius',
+        label: 'Vesalius',
+        portrait: '/images/vesalius-1543.png',
+        name: 'Andreas Vesalius',
+        role: 'Anatomist & Medical Revolutionary',
+        sections: [
+          {
+            title: 'Who was he?',
+            icon: 'ancient-figure',
+            lines: [
+              'A Flemish physician and anatomist working in Renaissance Italy.',
+              'Unlike Galen, Vesalius dissected human bodies himself rather than relying on ancient texts or animal dissection.',
+            ],
+          },
+          {
+            title: 'De Humani Corporis Fabrica (1543)',
+            icon: 'knowledge',
+            lines: [
+              'Published in the same year as Copernicus challenged the Earth-centred universe.',
+              'A groundbreaking illustrated anatomy textbook based on direct human dissection.',
+            ],
+          },
+          {
+            title: 'What he found',
+            icon: 'medicine',
+            lines: [
+              'Vesalius corrected over 300 errors in Galen\'s work.',
+              'Key corrections: the jaw is one bone (not two), the septum of the heart has no holes, the liver does not have five lobes.',
+            ],
+          },
+          {
+            title: 'Why it mattered',
+            icon: 'legacy',
+            lines: [
+              'Vesalius proved that direct observation was more reliable than trusting ancient authority.',
+              'This principle — look and test, rather than accept — became the foundation of modern science.',
+            ],
+          },
+        ],
       },
+
       {
-        label: 'Flashcards',
-        kicker: 'Final Recap',
-        heading: 'Flashcards',
-        sub: 'Tap to flip. Lock in the key facts.',
+        stage: 'Vesalius',
+        label: 'The anatomy revolution',
+        kicker: 'Breaking with Galen',
+        heading: 'What Vesalius actually found',
+        sub: 'And why it mattered for 400 years of medicine.',
         blocks: [
-          { type: 'flashcards', cards: [
-            { front: 'Vesalius', back: 'Corrected 300+ of Galen\'s errors using human dissection. De Fabrica, 1543.' },
-            { front: 'Harvey', back: 'Proved blood circulates around the body. 1628. Did not immediately change treatments.' },
-            { front: 'Paré', back: 'French surgeon who improved wound treatment and designed artificial limbs. Chance discovery.' },
-            { front: 'Printing press', back: 'Spread new medical ideas across Europe rapidly.' },
-            { front: 'Great Plague 1665', back: 'Killed ~100,000 in London. Still blamed on miasma. More organised response than 1348.' },
-            { front: 'Continuity', back: 'Renaissance improved knowledge more than treatment.' },
-          ]}
-        ]
+          {
+            type: 'explainReveal',
+            intro: 'Vesalius didn\'t just correct Galen — he changed how doctors thought knowledge should work.',
+            atmosphereImage: '/headers/history-medicine-germ-bridge.png',
+            steps: [
+              {
+                id: 'galens-errors',
+                statement: 'Galen made hundreds of errors because he mostly dissected',
+                emphasis: 'animals, not humans.',
+                detail: 'Galen dissected pigs, monkeys and goats. He assumed human anatomy was identical. It wasn\'t.',
+              },
+              {
+                id: 'vesalius-dissects',
+                statement: 'Vesalius dissected human bodies and found',
+                emphasis: 'over 300 mistakes in Galen\'s work.',
+                detail: 'Including the jaw (one bone, not two) and the heart septum (no holes, despite Galen\'s claim).',
+              },
+              {
+                id: 'authority-challenged',
+                statement: 'For the first time, an ancient authority\'s work was challenged',
+                emphasis: 'with observable, repeatable evidence.',
+                detail: 'This was not just a correction of facts — it was a new method: observe, don\'t just accept.',
+              },
+              {
+                id: 'knowledge-not-treatment',
+                statement: 'But anatomy improved faster than treatment.',
+                emphasis: 'Doctors still bled patients. The Four Humours still explained illness.',
+                detail: 'Better knowledge of the body did not immediately mean better cures. That gap would last another century.',
+              },
+            ],
+            reflectionPrompt: 'Why did correcting Galen\'s anatomy not immediately change how doctors treated patients?',
+          },
+        ],
       },
+
+      {
+        type: 'quickRecall',
+        stage: 'Vesalius',
+        label: 'Vesalius check',
+        questions: [
+          {
+            type: 'choice',
+            question: 'What was the name of Vesalius\'s 1543 anatomy textbook?',
+            options: [
+              'De Humani Corporis Fabrica',
+              'De Rerum Natura',
+              'Exercitatio Anatomica',
+              'Ars Medica',
+            ],
+            correct: 0,
+            explanation: 'De Humani Corporis Fabrica (On the Fabric of the Human Body) was based on direct human dissection and corrected over 300 of Galen\'s errors.',
+          },
+          {
+            type: 'choice',
+            question: 'Why had Galen made so many anatomical errors?',
+            options: [
+              'He dissected animals rather than human bodies',
+              'He was not actually a doctor',
+              'The Church forced him to write incorrect facts',
+              'He copied earlier, less accurate writers',
+            ],
+            correct: 0,
+            explanation: 'Galen dissected pigs, monkeys and goats and assumed human anatomy was the same. It wasn\'t.',
+          },
+          {
+            type: 'choice',
+            question: 'Despite correcting Galen\'s anatomy, what did most Renaissance doctors still use to treat illness?',
+            options: [
+              'Bloodletting and the Four Humours',
+              'Surgery and antiseptics',
+              'Germ theory and vaccines',
+              'Chemical remedies from Paracelsus',
+            ],
+            correct: 0,
+            explanation: 'New anatomical knowledge didn\'t immediately change treatments. Bloodletting and humoural theory persisted for decades after Vesalius.',
+          },
+        ],
+      },
+
+      // ── Section 4 — Learning Chunk 3: Harvey & Paré ─────────────────────────
+
+      {
+        type: 'conceptReveal',
+        stage: 'Harvey and Paré',
+        label: 'William Harvey',
+        steps: [
+          {
+            eyebrow: '1628',
+            mainText: 'Galen had claimed the liver constantly produced new blood — and the body used it up.',
+            supportText: 'This explained why bloodletting seemed logical: too much blood? Remove some.',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          },
+          {
+            mainText: 'Harvey proved that blood circulates continuously around the body, pumped by the heart.',
+            supportText: 'He calculated the volume of blood in the body was too large to be made fresh each day — so it must be reused.',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          },
+          {
+            eyebrow: 'The key limitation',
+            mainText: 'Harvey could not explain what blood actually does — so treatments didn\'t immediately change.',
+            supportText: 'Without knowing blood carries oxygen and removes waste, doctors had no reason to stop bloodletting.',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          },
+        ],
+      },
+
+      {
+        type: 'conceptReveal',
+        stage: 'Harvey and Paré',
+        label: 'Ambroise Paré',
+        steps: [
+          {
+            eyebrow: 'France, 1536',
+            mainText: 'Ambroise Paré was a French military surgeon treating soldiers wounded in battle.',
+            supportText: 'Gunshot wounds were treated by pouring boiling oil into them — believed to neutralise gunpowder poison.',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          },
+          {
+            mainText: 'During one battle, Paré ran out of oil. He improvised with a soothing ointment made from egg yolk, rose oil and turpentine.',
+            supportText: 'The next morning, patients treated with the ointment were in far less pain and recovering better.',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          },
+          {
+            eyebrow: 'The legacy',
+            mainText: 'Paré also stopped cauterising blood vessels with hot irons — he tied them off instead.',
+            supportText: 'He designed artificial limbs and wrote surgical guides. His work reduced the horror of military surgery significantly.',
+            backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          },
+        ],
+      },
+
+      {
+        type: 'matchingTask',
+        stage: 'Harvey and Paré',
+        label: 'Who did what?',
+        subject: 'History',
+        title: 'Match the figure to their contribution',
+        instruction: 'Connect each Renaissance figure to their key contribution.',
+        weakAreaCategory: 'Renaissance medicine key figures',
+        backgroundImage: '/headers/history-medicine-germ-bridge.png',
+        pairs: [
+          {
+            id: 'vesalius-correction',
+            term: 'Vesalius (1543)',
+            answer: 'Corrected over 300 of Galen\'s anatomical errors using direct human dissection.',
+            weakGroup: 'Key figures',
+          },
+          {
+            id: 'harvey-circulation',
+            term: 'Harvey (1628)',
+            answer: 'Proved blood circulates continuously around the body, pumped by the heart.',
+            weakGroup: 'Key figures',
+          },
+          {
+            id: 'pare-ointment',
+            term: 'Paré (1536)',
+            answer: 'Abandoned boiling oil for wound treatment after discovering a soothing ointment worked better.',
+            weakGroup: 'Key figures',
+          },
+          {
+            id: 'printing-press',
+            term: 'Printing press',
+            answer: 'Allowed new medical ideas to spread rapidly across Europe.',
+            weakGroup: 'Context',
+          },
+          {
+            id: 'knowledge-not-treatment',
+            term: 'Knowledge vs treatment',
+            answer: 'Renaissance medicine improved understanding of the body faster than it improved everyday treatments.',
+            weakGroup: 'Themes',
+          },
+        ],
+        completion: {
+          title: 'Figures connected',
+          body: 'Vesalius, Harvey and Paré each challenged a different part of Galen\'s legacy.\n\nBut all three showed the same thing: observation matters more than tradition.',
+        },
+      },
+
+      // ── Section 5 — Learning Chunk 4: The Royal Society & Change vs Continuity
+
+      {
+        type: 'conceptReveal',
+        stage: 'Change and continuity',
+        label: 'The Royal Society',
+        steps: [
+          {
+            eyebrow: '1660',
+            mainText: 'The Royal Society was founded as a formal institution where experiments were shared, tested and debated.',
+            supportText: 'Its motto: Nullius in Verba — "Take nobody\'s word for it." Evidence, not authority, was the new standard.',
+            backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+          },
+          {
+            mainText: 'For the first time, scientific discoveries could be published, challenged, and built upon by others.',
+            supportText: 'This network directly connected Vesalius, Harvey and the later work of Jenner, Pasteur and Koch.',
+            backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+          },
+          {
+            eyebrow: 'Exam point',
+            mainText: 'The Royal Society represents a shift in how knowledge itself was validated.',
+            supportText: 'Not "Galen said it" but "we tested it, published it, and others repeated it." This is the foundation of modern medicine.',
+            backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+          },
+        ],
+      },
+
+      {
+        type: 'visualNarrative',
+        stage: 'Change and continuity',
+        label: 'The Great Plague, 1665',
+        beats: [
+          {
+            image: '/images/great-plague-1665.png',
+            imagePosition: 'center center',
+            imageFilter: 'brightness(0.85) saturate(0.7)',
+            label: 'LONDON, 1665',
+            headline: 'Despite everything,\nthe plague returned.',
+            body: 'A hundred thousand dead. Anatomical breakthroughs meant nothing.\nPeople still blamed bad air, sin, and the stars.',
+          },
+          {
+            image: '/images/great-plague-1665.png',
+            imagePosition: 'center 30%',
+            imageOpacity: 0.55,
+            facts: [
+              'The Great Plague killed around 100,000 people in London in 1665.',
+              'Despite Renaissance advances, people still blamed miasma, the Four Humours, and God\'s punishment.',
+              'The government\'s response was more organised than in 1348 — quarantine, pest houses, bills of mortality.',
+              'The mayor ordered cats and dogs killed, believing they spread plague. Fewer cats meant more rats, more fleas, more plague.',
+            ],
+            conclusion: 'Renaissance medicine changed knowledge more than treatment.\nThe gap between understanding and curing would take two more centuries to close.',
+          },
+        ],
+      },
+
+      {
+        type: 'naturalSupernaturalSwipe',
+        stage: 'Change and continuity',
+        label: 'Change vs continuity',
+        columns: [
+          { label: 'CHANGED\nNew in the Renaissance', color: '#D4950A', colorRgb: '212,149,10', bg: 'rgba(212,149,10,.07)' },
+          { label: 'CONTINUED\nStayed the same', color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)' },
+        ],
+        items: [
+          { label: 'Understanding of human anatomy', col: 0, explanation: 'Changed — Vesalius corrected over 300 of Galen\'s anatomical errors through direct human dissection.' },
+          { label: 'Bloodletting as a treatment', col: 1, explanation: 'Continued — even after Harvey proved blood circulates, bloodletting persisted well into the 19th century.' },
+          { label: 'How new ideas were validated', col: 0, explanation: 'Changed — the Royal Society demanded observation and experiment. "Take nobody\'s word for it."' },
+          { label: 'Blaming plague on miasma and sin', col: 1, explanation: 'Continued — even in 1665, the Great Plague was still blamed on bad air and God\'s punishment.' },
+          { label: 'Using herbal remedies and purging', col: 1, explanation: 'Continued — these treatments based on the Four Humours carried on throughout the Renaissance and beyond.' },
+          { label: 'Knowledge that blood circulates', col: 0, explanation: 'Changed — Harvey\'s 1628 discovery overturned Galen\'s claim that the liver made new blood constantly.' },
+        ],
+        explanation: 'The Renaissance changed how doctors understood the body — but not how they treated patients. New knowledge co-existed with old practice for generations.',
+      },
+
+      {
+        type: 'quickRecall',
+        stage: 'Change and continuity',
+        label: 'Chapter retrieval',
+        questions: [
+          {
+            type: 'choice',
+            question: 'Why did Harvey\'s discovery of blood circulation not immediately change treatments?',
+            options: [
+              'He could not explain what blood actually does, so no reason to abandon bloodletting',
+              'The Church banned his work',
+              'His results could not be repeated by other scientists',
+              'Bloodletting was still the most effective treatment available',
+            ],
+            correct: 0,
+            explanation: 'Harvey proved blood circulates but couldn\'t explain its function. Without knowing blood carries oxygen, doctors had no reason to abandon humoural treatments.',
+          },
+          {
+            type: 'choice',
+            question: 'What does the Great Plague of 1665 tell us about Renaissance medicine?',
+            options: [
+              'New anatomical knowledge had not improved understanding of disease causes',
+              'Renaissance doctors successfully treated plague with herbal remedies',
+              'The Church had been completely overthrown as a medical authority by 1665',
+              'Germ theory had been discovered but not yet applied',
+            ],
+            correct: 0,
+            explanation: 'People still blamed miasma, humours and God. Renaissance anatomy improved knowledge of the body — not knowledge of what caused disease.',
+          },
+          {
+            type: 'choice',
+            question: 'What did the Royal Society\'s motto "Nullius in Verba" represent?',
+            options: [
+              'Rejection of ancient authority — evidence and experiment must replace tradition',
+              'Support for the Church\'s control over medical knowledge',
+              'A declaration that surgery required royal permission',
+              'A warning that doctors should not trust patients',
+            ],
+            correct: 0,
+            explanation: '"Take nobody\'s word for it" — the Royal Society created a culture where observation, experiment and publication replaced trusting Galen.',
+          },
+        ],
+      },
+
+      // ── Section 6 — Summary & Examiner ──────────────────────────────────────
+
+      {
+        type: 'examinerExplains',
+        stage: 'Exam prep',
+        examinerExplains: {
+          opening: "Renaissance medicine is exam gold — but students often lose marks by confusing change and continuity.",
+          tips: [
+            {
+              heading: 'Know the difference: knowledge vs treatment',
+              body: 'Vesalius and Harvey changed anatomy and understanding. But treatments — bloodletting, purging, herbal remedies — barely changed. The examiner wants this distinction.',
+            },
+            {
+              heading: 'Name the figures, name the year',
+              body: 'Vesalius 1543, Harvey 1628, Paré 1530s, Royal Society 1660, Great Plague 1665. These dates are signals of precision — use them.',
+            },
+            {
+              heading: 'Explain why change was slow',
+              body: 'Galen still dominated universities. The Church backed old ideas. Without germ theory, there was no alternative explanation for disease. Change happened at the edges, not overnight.',
+            },
+            {
+              heading: 'Use the Great Plague as evidence of continuity',
+              body: 'Despite the Renaissance, the 1665 plague showed people still blamed miasma and sin. This is the clearest evidence that new knowledge hadn\'t filtered into everyday treatment.',
+            },
+          ],
+          closing: "Show the examiner you understand both the change and the limits of change.",
+        },
+      },
+
+      {
+        type: 'faceExaminer',
+        stage: 'Exam prep',
+        label: 'Face the Examiner',
+        examiner: {
+          type: '8-mark-explain',
+          board: 'edexcel',
+          subject: 'history',
+          topic: 'renaissance-medicine',
+          difficulty: 'standard',
+
+          question: 'Explain two ways in which the work of Vesalius and Harvey changed medicine during the Renaissance. [8 marks]',
+          marks: 8,
+          mark: 5,
+          summary: 'Both figures are mentioned and their discoveries stated. However, the answer needs to explain the significance and impact of each discovery more fully to reach Level 3.',
+
+          markScheme: `Level 3 (6–8 marks): Detailed explanation of two ways with developed reasoning — must explain WHY each discovery was significant, not just what it was.
+Level 2 (3–5 marks): Some explanation of change, but at least one point lacks development of significance or impact.
+Level 1 (1–2 marks): Simple identification of discoveries with little explanation.
+Award marks for any two of (each requiring explanation not just identification):
+- Vesalius corrected anatomical errors — must explain WHY this mattered (proved direct observation beat ancient authority; challenged Galen's 1,400-year dominance)
+- Harvey proved blood circulation — must link to what changed AND what didn't (knowledge improved but treatments persisted)
+- Vesalius published De Fabrica — must explain impact (illustrated, spread via printing press, forced confrontation with Galen)
+- Harvey used mathematical method — must explain significance (new approach: weighing, calculating, not just observing)
+Do NOT award marks for naming discoveries without explaining their significance.`,
+
+          sampleAnswer: `During the Renaissance, the work of Vesalius and Harvey changed medicine in important ways. Firstly, Vesalius corrected many of Galen's mistakes about human anatomy. He dissected human bodies himself and published his findings in De Humani Corporis Fabrica in 1543. He found over 300 errors in Galen's work, including facts about the jaw bone and the heart. This was important because it showed that ancient authorities could be wrong, and that doctors should rely on direct observation rather than just trusting old books. Secondly, Harvey proved in 1628 that blood circulates continuously around the body, pumped by the heart. This was different from Galen's idea that the liver constantly produced new blood. However, Harvey could not explain what blood actually did, so doctors continued to use old treatments like bloodletting.`,
+
+          annotations: [
+            {
+              id: 'ann1',
+              target: 'corrected many of Galen\'s mistakes about human anatomy.',
+              occurrence: 1,
+              type: 'weak',
+              comment: 'Stated but needs development — which mistakes? Why did this matter?',
+            },
+            {
+              id: 'ann2',
+              target: 'He found over 300 errors in Galen\'s work, including facts about the jaw bone and the heart.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Specific — names the errors. Good knowledge.',
+            },
+            {
+              id: 'ann3',
+              target: 'it showed that ancient authorities could be wrong, and that doctors should rely on direct observation rather than just trusting old books.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Excellent — explains the significance, not just the fact.',
+            },
+            {
+              id: 'ann4',
+              target: 'Harvey could not explain what blood actually did, so doctors continued to use old treatments like bloodletting.',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'Very good — shows understanding of the limits of change.',
+            },
+          ],
+
+          improvementPrompts: {
+            ann1: {
+              prompt: '+ Explain WHY correcting Galen\'s anatomy was significant',
+              placeholder: 'e.g. Galen\'s work had been accepted for over 1,400 years without question. By proving him wrong, Vesalius established that evidence from direct observation was more reliable than ancient authority...',
+            },
+          },
+
+          criteriaOptions: [
+            'Accurate knowledge',
+            'Two clear ways',
+            'Specific evidence',
+            'Explains the impact',
+            'Developed explanation',
+            'Too vague',
+            'Repeats the point',
+            'Missing the "why it mattered"',
+          ],
+        },
+      },
+
     ]
   },
 
