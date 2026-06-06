@@ -31,6 +31,7 @@ import KeyFigureReveal from '../learning/KeyFigureReveal.jsx'
 import InteractiveCollectionExplorer from '../learning/InteractiveCollectionExplorer.jsx'
 import MedicalTheoryPrescription from '../learning/MedicalTheoryPrescription.jsx'
 import MatchingTask from '../learning/MatchingTask.jsx'
+import PriorKnowledgeRecall from '../learning/PriorKnowledgeRecall.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -2409,6 +2410,21 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           block={cur}
           subject={module.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  // ── Prior knowledge recall — AI-analysed free-text recall at chapter start ──
+  if (cur?.type === 'priorKnowledgeRecall') {
+    return (
+      <>
+        <PriorKnowledgeRecall
+          block={cur}
+          subject={module.subject}
+          onBack={headerOnBack}
+          onContinue={isLast ? handleFinish : () => go(1)}
         />
         {jumpSheetPortal}
       </>

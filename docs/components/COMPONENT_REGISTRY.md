@@ -127,6 +127,17 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
+### PriorKnowledgeRecall
+
+**File:** `src/components/learning/PriorKnowledgeRecall.jsx`  
+**Purpose:** Full-screen chapter-opening recall screen. Student writes free-text recall of the previous chapter. Claude (via `/api/recall`) scores each expected concept 0.0–1.0. Missing concepts (score < 0.3) are logged to the weakness tracker, feeding `WeakSpotRecovery` and future retrieval. Results are shown in three colour-coded groups: recalled (teal), partial (amber), gaps (muted).  
+**Props:** `block`, `subject`, `onContinue`, `onBack`  
+**Block shape:** `{ type: 'priorKnowledgeRecall', chapterTitle, prompt?, backgroundImage?, concepts: [{ tag, label, keywords[] }] }`  
+**Screen type:** `priorKnowledgeRecall`  
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `weaknessTracker`, `/api/recall`
+
+---
+
 ### RecoveryQuizPlayer
 
 **File:** `src/components/learning/RecoveryQuizPlayer.jsx`  
