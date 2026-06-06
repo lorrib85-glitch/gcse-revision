@@ -1,30 +1,30 @@
 export const config = { runtime: 'edge' }
 
-const SYSTEM_PROMPT = `You are analysing a GCSE student's free-text recall answer to identify which concepts they remembered from a previous chapter.
+const SYSTEM_PROMPT = `You are assessing a GCSE student's free-text recall answer against the actual content of a previous revision module.
 
 You will receive:
-1. The student's answer (written from memory)
-2. A list of concepts the chapter covered — each has a tag, label, and keywords
+1. The key content from the previous module (what was taught)
+2. The student's recall answer (what they wrote from memory)
+3. A list of concepts from that module — each has a tag and a label
 
-For each concept, score how well the student demonstrated knowledge of it:
-- 0.0 = Not mentioned at all, or clearly incorrect
-- 0.1–0.29 = Extremely vague — barely identifiable
-- 0.3–0.69 = Partial recall — mentioned but missing key details or accuracy
-- 0.7–0.89 = Good recall — clearly mentioned with reasonable accuracy
-- 0.9–1.0 = Comprehensive recall — mentioned with accurate, specific detail
+Using the module content as your reference, score how well the student demonstrated knowledge of each concept in their answer:
+- 0.0 = No evidence of this concept in the answer, or clearly incorrect
+- 0.1–0.29 = Extremely vague reference — barely identifiable
+- 0.3–0.69 = Partial recall — concept touched on but key detail missing or imprecise
+- 0.7–0.89 = Good recall — concept clearly addressed with reasonable accuracy
+- 0.9–1.0 = Strong recall — concept addressed with accurate, specific detail
 
-Use the keywords as recognition helpers, but also credit correct synonyms and paraphrasing.
-Example: a student writing "bad air" or "smells caused disease" should score well for a miasma-theory concept.
-Example: "doctors used herbs" is too vague to score above 0.2 for any specific concept.
-
-Be strict but fair — partial credit is real, but vague general statements should not score above 0.25.
+Assess based on the module content, not keyword matching. Credit correct paraphrasing and synonyms.
+Example: "bad smells caused disease" should score well for miasma even without the word "miasma".
+Example: "doctors used plants" is too vague to score above 0.2 for herbal remedies — it needs specificity.
+Be strict on vague generalisations. Be generous on accurate paraphrasing of the module content.
 
 Respond ONLY with this exact JSON format, no other text:
 {
   "concepts": [
     { "tag": "<tag>", "score": <0.0-1.0> }
   ],
-  "summary": "<one calm honest sentence summarising overall recall quality, aimed at a 15-year-old — no praise inflation>"
+  "summary": "<one calm honest sentence about their overall recall quality, aimed at a 15-year-old>"
 }`
 
 export default async function handler(req) {
@@ -42,7 +42,7 @@ export default async function handler(req) {
     return new Response(JSON.stringify({ error: 'Invalid request body' }), { status: 400 })
   }
 
-  const { answer, concepts } = body
+  const { answer, concepts, sourceContent } = body
   if (!answer || !concepts?.length) {
     return new Response(JSON.stringify({ error: 'Missing fields: answer and concepts required' }), { status: 400 })
   }
@@ -55,10 +55,13 @@ export default async function handler(req) {
   }
 
   const conceptList = concepts.map((c, i) =>
-    `${i + 1}. tag: "${c.tag}", label: "${c.label}", keywords: [${(c.keywords || [c.label]).join(', ')}]`
+    `${i + 1}. tag: "${c.tag}", label: "${c.label}"`
   ).join('\n')
 
-  const userMessage = `Student's recall answer:
+  const userMessage = `Module content (what was taught):
+${sourceContent || 'No source content provided — assess based on general GCSE knowledge.'}
+
+Student's recall answer:
 "${answer}"
 
 Concepts to assess:

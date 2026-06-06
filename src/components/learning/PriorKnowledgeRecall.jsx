@@ -29,11 +29,11 @@ function ensureStyles() {
   document.head.appendChild(el)
 }
 
-async function analyseRecall(answer, concepts) {
+async function analyseRecall(answer, concepts, sourceContent) {
   const response = await fetch('/api/recall', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ answer, concepts }),
+    body: JSON.stringify({ answer, concepts, sourceContent: sourceContent || '' }),
   })
   if (!response.ok) throw new Error(`Server error ${response.status}`)
   const data = await response.json()
@@ -122,7 +122,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
     setPhase('analyzing')
 
     try {
-      const data = await analyseRecall(answer, block.concepts || [])
+      const data = await analyseRecall(answer, block.concepts || [], block.sourceContent)
 
       // Log concepts scoring below SCORE_PARTIAL as weak spots
       const missingConcepts = (data.concepts || []).filter(c => c.score < SCORE_PARTIAL)

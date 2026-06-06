@@ -1605,6 +1605,64 @@ Do NOT award marks for identifying practices without explaining the religious re
     },
     screens: [
       {
+        type: 'priorKnowledgeRecall',
+        chapterTitle: 'Medieval medicine: beliefs and causes of disease',
+        prompt: 'What do you remember from the last chapter?',
+        backgroundImage: '/headers/history-medicine-through-time.png',
+        sourceContent: `GCSE History: Medieval Medicine — Beliefs and Causes of Disease (c.1250–c.1500)
+
+Key figures:
+Hippocrates (ancient Greek doctor) argued illness had natural causes, not punishment from gods. He promoted observation of symptoms, recording of cases, and logical reasoning. His Four Humours theory said health depended on balance between four bodily fluids: blood, phlegm, yellow bile, and black bile. Imbalance caused disease.
+
+Galen (Roman doctor, c.129–216 AD) built on Hippocrates. He treated gladiators, dissected animals, and wrote medical books copied and taught in universities for over 1,400 years. His Theory of Opposites: treat illness with its opposite quality — a hot, feverish illness with cold remedies; a cold, wet condition with warm, dry treatments. Galen made errors (blood made in liver; heart septum had holes), but the Church backed his authority so he was rarely questioned.
+
+Causes of disease — four main theories:
+1. Four Humours: disease caused by imbalance of blood, phlegm, yellow bile, or black bile.
+2. God and sin: illness was God's punishment for sin, or a test of faith. Treatments: prayer, confession, repentance, pilgrimage, fasting, visiting holy relics.
+3. Miasma: bad air from rotting matter, sewers, marshes caused disease. The smell itself was believed to carry illness.
+4. Astrology: planets and zodiac signs influenced the body. Physicians used the Zodiac Man diagram and astrological calendars to time treatments. The Paris Medical Faculty blamed the Black Death on a triple conjunction of Saturn, Jupiter, and Mars in 1345.
+
+Medical practitioners:
+- Physician: university-trained, expensive, used Latin, diagnosed via uroscopy (examining urine colour using a jordan flask and urine charts) and astrological charts.
+- Barber surgeon: practical tradesman, moderate cost, performed bloodletting (removing blood by cutting a vein or applying leeches), tooth-pulling, and minor surgery.
+- Wise woman: no formal training, cheapest option, used herbal remedies and poultices. Most accessible to ordinary people in villages.
+- Priest: offered spiritual treatment — prayer, blessing, repentance. Believed illness began with sin.
+
+Treatments:
+- Bloodletting: removing blood (by cutting or leeches) to restore humoral balance.
+- Purging: inducing vomiting or diarrhoea to expel excess humours.
+- Herbal remedies, diet change, rest: cooling foods (cucumber) for fever; dry foods for cold conditions.
+- Prayer, pilgrimage, confession, fasting: for illness believed to be caused by God.
+
+The Church's role:
+The Church ran hospitals (St Bartholomew's, founded 1123) and copied ancient medical texts in monasteries. It preserved and promoted Galen's work because his ideas of bodily balance fitted Christian views of perfect divine design. The Church discouraged human dissection (belief in bodily resurrection) and made questioning Galen's authority difficult. This slowed medical progress significantly.
+
+The Black Death (1348–49):
+Arrived in England in 1348, killing roughly one-third of the population. Blamed on miasma, God's punishment, and planetary alignment. Actual cause: Yersinia pestis bacteria spread by fleas on rats — unknown for another 500 years. Medieval explanations were wrong but internally logical given available knowledge.
+
+Why medieval ideas survived so long:
+The Church preserved ancient texts and backed Galen's authority. Without microscopes or germ theory, no better explanation existed. Humoral logic was internally consistent — wrong premises, logical conclusions. Some treatments accidentally helped (rest, fluids, herbal remedies), making the flawed theory seem credible. Multiple explanations coexisted — people believed God, humours, miasma, and astrology simultaneously.`,
+        concepts: [
+          { tag: 'hippocrates',             label: 'Hippocrates' },
+          { tag: 'four-humours',            label: 'Four humours' },
+          { tag: 'galen',                   label: 'Galen' },
+          { tag: 'theory-of-opposites',     label: 'Theory of Opposites' },
+          { tag: 'miasma',                  label: 'Miasma theory' },
+          { tag: 'god-punishment',          label: 'God and sin' },
+          { tag: 'astrology',               label: 'Astrology and the zodiac man' },
+          { tag: 'bloodletting',            label: 'Bloodletting' },
+          { tag: 'uroscopy',                label: 'Uroscopy' },
+          { tag: 'physician',               label: 'Physician' },
+          { tag: 'barber-surgeon',          label: 'Barber surgeon' },
+          { tag: 'wise-woman',              label: 'Wise woman' },
+          { tag: 'church-role',             label: "Church's role in medicine" },
+          { tag: 'black-death',             label: 'The Black Death (1348–49)' },
+          { tag: 'supernatural-vs-natural', label: 'Supernatural vs natural causes' },
+          { tag: 'herbal-remedies',         label: 'Herbal remedies and diet' },
+          { tag: 'why-ideas-survived',      label: 'Why medieval ideas survived so long' },
+        ],
+      },
+      {
         label: 'Renaissance',
         kicker: 'New Thinking',
         heading: 'Renaissance Medicine: Challenging the Ancients',
