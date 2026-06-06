@@ -40,29 +40,6 @@ export const MODULES = [
       ],
     },
 
-    examinerExplains: {
-      opening: "Before you face the examiner, here's what they actually reward.",
-      tips: [
-        {
-          heading: 'Use the exact terms',
-          body: 'Four humours, miasma, Theory of Opposites, bloodletting. Named terms signal precise knowledge and earn marks — vague language loses them.',
-        },
-        {
-          heading: 'Explain the logic, not just the fact',
-          body: "Don't just state what medieval doctors did. Explain why it seemed rational to them — the examiner wants to see you understand the thinking, not just the action.",
-        },
-        {
-          heading: 'Link cause to treatment',
-          body: "Examiners want the full chain: Galen argued illness = imbalance of humours → treatment must restore balance → bloodletting follows logically. Show the reasoning.",
-        },
-        {
-          heading: 'Address change and continuity',
-          body: 'Why did these ideas persist for 1,000 years? The Church, lack of alternatives, and the authority of ancient texts. If a question asks why ideas survived — answer with all three.',
-        },
-      ],
-      closing: "Now show them what you know.",
-    },
-
     screens: [
 
       {
@@ -807,6 +784,33 @@ export const MODULES = [
             ],
           },
         ],
+      },
+
+      {
+        type: 'examinerExplains',
+        stage: 'Exam prep',
+        examinerExplains: {
+          opening: "Before you face the examiner, here's what they actually reward.",
+          tips: [
+            {
+              heading: 'Use the exact terms',
+              body: 'Four humours, miasma, Theory of Opposites, bloodletting. Named terms signal precise knowledge and earn marks — vague language loses them.',
+            },
+            {
+              heading: 'Explain the logic, not just the fact',
+              body: "Don't just state what medieval doctors did. Explain why it seemed rational to them — the examiner wants to see you understand the thinking, not just the action.",
+            },
+            {
+              heading: 'Link cause to treatment',
+              body: "Examiners want the full chain: Galen argued illness = imbalance of humours → treatment must restore balance → bloodletting follows logically. Show the reasoning.",
+            },
+            {
+              heading: 'Address change and continuity',
+              body: 'Why did these ideas persist for 1,000 years? The Church, lack of alternatives, and the authority of ancient texts. If a question asks why ideas survived — answer with all three.',
+            },
+          ],
+          closing: "Now show them what you know.",
+        },
       },
 
       {

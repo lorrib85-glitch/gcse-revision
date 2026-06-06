@@ -2416,6 +2416,23 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     )
   }
 
+  // ── Examiner explains — inline screen using the module-level or screen-level data ──
+  if (cur?.type === 'examinerExplains') {
+    const explainData = cur.examinerExplains || module.examinerExplains
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <ExaminerExplainsScreen
+          subject={module.subject}
+          examinerExplains={explainData}
+          onBack={headerOnBack}
+          onContinue={isLast ? handleFinish : () => go(1)}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
   // ── Prior knowledge recall — AI-analysed free-text recall at chapter start ──
   if (cur?.type === 'priorKnowledgeRecall') {
     return (
