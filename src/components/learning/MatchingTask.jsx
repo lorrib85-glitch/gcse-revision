@@ -163,7 +163,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
 
   return (
     <div style={{
-      position: 'fixed', inset: 0,
+      position: 'fixed', inset: 0, zIndex: 1000,
       display: 'flex', flexDirection: 'column',
       overflow: 'hidden',
       fontFamily: "'Sora', sans-serif",
@@ -437,7 +437,7 @@ function CompleteScreen({ screen, bgImage, onComplete }) {
 
   return (
     <div style={{
-      position: 'fixed', inset: 0,
+      position: 'fixed', inset: 0, zIndex: 1000,
       display: 'flex', flexDirection: 'column',
       overflow: 'hidden',
       fontFamily: "'Sora', sans-serif",
