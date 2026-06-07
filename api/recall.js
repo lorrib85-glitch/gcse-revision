@@ -50,7 +50,7 @@ export default async function handler(req) {
   if (answer.trim().length < 5) {
     return new Response(JSON.stringify({
       concepts: concepts.map(c => ({ tag: c.tag, score: 0 })),
-      summary: "You haven't written anything yet — even rough notes count, so give it a go first.",
+      summary: "That's a blank page so far. Try jotting down anything that comes to mind — even a half-remembered detail is a good place to start.",
     }), { status: 200, headers: { 'Content-Type': 'application/json' } })
   }
 

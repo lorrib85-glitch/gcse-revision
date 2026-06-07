@@ -421,6 +421,11 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
   const isReveal    = phase === 'reveal'
   const isRemarking = phase === 'remarking'
 
+  // A full-mark answer has nothing left to push higher — only offer the
+  // upgrade path when there's a real weak annotation to improve.
+  const canImprove = examiner.mark < examiner.marks
+    && examiner.annotations?.some(ann => ann.type === 'weak')
+
   // Determine the content of the bottom panel
   const bottomPanelHeight = revealPanelVisible && isReveal ? 220 : 0
 
@@ -900,12 +905,21 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
             )}
 
             {/* CTA */}
-            <button
-              style={ctaBtnStyle(true)}
-              onClick={() => { setRevealPanelVisible(false); setPhase('improving') }}
-            >
-              Push it up a grade →
-            </button>
+            {canImprove ? (
+              <button
+                style={ctaBtnStyle(true)}
+                onClick={() => { setRevealPanelVisible(false); setPhase('improving') }}
+              >
+                Push it up a grade →
+              </button>
+            ) : (
+              <button
+                style={ctaBtnStyle(true)}
+                onClick={() => { setRevealPanelVisible(false); setPhase('done') }}
+              >
+                Continue →
+              </button>
+            )}
           </div>
         )}
 

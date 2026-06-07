@@ -226,7 +226,7 @@ export default function ExaminerExplainsScreen({
               position: 'absolute', top: '24%', left: 28, right: 28,
               maxHeight: 'calc(100dvh - 180px)',
               overflowY: 'auto',
-              paddingBottom: 100,
+              paddingBottom: showContinue ? 170 : 100,
               WebkitOverflowScrolling: 'touch',
             }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 30 }}>

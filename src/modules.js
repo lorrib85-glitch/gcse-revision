@@ -1123,17 +1123,59 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       },
 
       {
+        stage: 'The arrival',
+        label: 'How the plague actually spread',
+        kicker: 'The hidden chain',
+        heading: 'How the plague actually spread',
+        sub: 'Put together what you just explored on the dock.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            intro: 'You explored the ship, the crew, the cargo, and the rats. Here is the chain connecting them — the one nobody in 1348 could see.',
+            atmosphereImage: '/figures/history/medicine/black-death/plague-dock.png',
+            steps: [
+              {
+                id: 'ship',
+                statement: 'Trading ships',
+                emphasis: 'carried goods from infected Mediterranean ports.',
+                detail: 'Hidden in the hold, alongside the cargo, travelled black rats.',
+              },
+              {
+                id: 'rats',
+                statement: 'The rats',
+                emphasis: 'carried fleas infected with Yersinia pestis bacteria.',
+                detail: 'No one suspected the rats — they were everywhere on every dock, and ignored.',
+              },
+              {
+                id: 'fleas',
+                statement: 'The fleas',
+                emphasis: 'bit people once their rat hosts died.',
+                detail: 'A single bite passed the bacteria directly into a person\'s bloodstream.',
+              },
+              {
+                id: 'spread',
+                statement: 'From person to person,',
+                emphasis: 'the disease then spread through towns and villages.',
+                detail: 'Within weeks of the ship docking at Melcombe, the surrounding area was dying.',
+              },
+            ],
+            reflectionPrompt: 'This is the transmission chain: ship → rat → flea → person. Medieval people never made this connection — it would take another 500 years.',
+          },
+        ],
+      },
+
+      {
         type: 'visualLearning',
         stage: 'The arrival',
         label: 'Where did it come from?',
         scenes: [
           {
-            image: '/figures/history/medicine/black-death/medieval-town.png',
+            image: '/figures/history/medicine/black-death/trade-routes-map.png',
             headline: 'It began in central Asia.',
             body: 'Possibly in the late 1330s. From there, it moved west along the trade routes that connected Asia to Europe.',
           },
           {
-            image: '/figures/history/medicine/black-death/medieval-town.png',
+            image: '/figures/history/medicine/black-death/trade-routes-map.png',
             headline: 'Trade routes carried death.',
             body: 'Ships moving across the Mediterranean brought infected rats and fleas from port to port. By 1347, it had reached Sicily and southern Europe.',
           },
@@ -1145,7 +1187,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           {
             finalReveal: true,
             headline: 'Nowhere was safe.',
-            body: 'The plague killed an estimated one-third of Europe\'s population — roughly 25 million people — in just four years.',
+            body: 'The plague killed an estimated one-third of Europe\'s population — roughly 25 million people — in just four years. Picture every third person you know. Then picture them gone.',
           },
         ],
       },
@@ -1184,6 +1226,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         label: 'Symptoms of the plague',
         title: 'How the plague killed',
         description: 'Follow the progression of bubonic plague through the body.',
+        image: '/figures/history/medicine/black-death/symptom-case-file.png',
         stages: [
           { day: '1–2',  label: 'Flea bite',        description: 'A flea carrying Yersinia pestis bacteria bites the skin. The bacteria enter the lymphatic system.' },
           { day: '3–5',  label: 'Buboes form',       description: 'Painful egg-sized swellings (buboes) appear in lymph nodes — groin, armpit, or neck.' },
@@ -1212,7 +1255,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
             sections: [
               { heading: 'The logic',        items: ['Sin brings punishment', 'Only God can cure it', 'Repentance = recovery'] },
               { heading: 'Who believed this', items: ['Church', 'Most ordinary people', 'Priests'] },
-              { heading: 'Treatments',       items: ['Prayer', 'Fasting', 'Flagellation'] },
+              { heading: 'Belief → response', items: ['Sin caused it → so repent through prayer', 'Only God could lift it → so fast and go on pilgrimage', 'Suffering pleased God → so flagellants whipped themselves'] },
             ],
             reaction: '"The Lord is punishing us for our sins."',
             buttonText: 'Choose God\'s punishment',
@@ -1232,7 +1275,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
             sections: [
               { heading: 'The logic',        items: ['Bad smells carry disease', 'Plague smells terrible', 'Clean the air = stop the plague'] },
               { heading: 'Who believed this', items: ['Physicians', 'Educated people', 'City authorities'] },
-              { heading: 'Treatments',       items: ['Burning herbs', 'Flowers and posies', 'Opening windows'] },
+              { heading: 'Belief → response', items: ['Bad air carried it → so burn herbs to purify it', 'Pits and sewers smelled foul → so avoid them and carry flowers', 'Fresh air seemed safer → so open windows and air rooms out'] },
             ],
             reaction: '"The air near the plague pits reeks. It must be poisoned."',
             buttonText: 'Choose miasma',
@@ -1243,7 +1286,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
               'People noticed plague was worse near sewers, rubbish heaps, and plague pits.',
               'They were right about the location. Wrong about the cause.',
               'It wasn\'t the smell — it was fleas and bacteria.',
-              'People carried flowers, burned aromatic wood, and some physicians wore beaked masks stuffed with herbs.',
+              'People carried flowers, burned aromatic herbs indoors, and held sweet-smelling posies to the nose to "cleanse" the air.',
             ],
           },
           {
@@ -1252,7 +1295,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
             sections: [
               { heading: 'The logic',        items: ['Planets influence health', 'Bad alignment = disease', 'Saturn, Jupiter, Mars'] },
               { heading: 'Who believed this', items: ['University physicians', 'Paris Medical Faculty', 'Astrologers'] },
-              { heading: 'Treatments',       items: ['Wait for favourable stars', 'Consult charts', 'Avoid bad days'] },
+              { heading: 'Belief → response', items: ['Stars controlled health → so consult astrological charts', 'Bad alignment poisoned the air → so avoid risky days', 'Only the stars could change it → so wait for better skies'] },
             ],
             reaction: '"Saturn, Jupiter and Mars aligned in Aquarius. This poisoned the air."',
             buttonText: 'Choose planetary alignment',
@@ -1310,7 +1353,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         title: 'Beliefs and responses',
         instruction: 'Match each plague explanation to its treatment.',
         weakAreaCategory: 'Black Death Beliefs',
-        backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+        backgroundImage: '/figures/history/medicine/black-death/miasma.png',
         pairs: [
           { id: 'god-prayer',    term: 'God\'s punishment',      answer: 'Prayer, fasting, pilgrimage, and flagellation to seek God\'s forgiveness.' },
           { id: 'miasma-herbs',  term: 'Miasma — bad air',       answer: 'Burning aromatic herbs and carrying posies of flowers to counteract the smell.' },
@@ -1330,12 +1373,12 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
             body: 'Not God. Not bad air. Not the stars.',
           },
           {
-            image: '/figures/history/medicine/black-death/medieval-town.png',
+            image: '/figures/history/medicine/black-death/trade-routes-map.png',
             headline: 'Black rats travelled on trading ships.',
             body: 'The ships that brought goods from Asia also carried black rats — and the fleas that lived on them.',
           },
           {
-            image: '/figures/history/medicine/black-death/medieval-town.png',
+            image: '/figures/history/medicine/black-death/symptom-case-file.png',
             headline: 'Fleas carried the bacteria.',
             body: 'Fleas fed on infected rats. When the rats died, the fleas moved to human hosts. The bite transferred Yersinia pestis bacteria into the bloodstream.',
           },
@@ -1384,7 +1427,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         label: 'Plague treatments',
         title: 'Plague treatments',
         description: 'Tap each item to discover what medieval people tried against the plague.',
-        backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+        backgroundImage: '/figures/history/medicine/black-death/not-much-changed.png',
         items: [
           {
             id: 'flagellants',
@@ -1403,7 +1446,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
             reveals: [
               { text: 'People carried small bunches of sweet-smelling flowers and herbs — posies — because they believed miasma (bad air) carried the plague.' },
               { text: 'Breathing pleasant smells was thought to counteract the poisoned air. Rosemary, lavender and rue were popular choices.' },
-              { text: 'Some physicians wore beaked masks stuffed with aromatic herbs when treating plague patients. The beak held the herbs near the face.' },
+              { text: 'Physicians told the sick to hold a sponge soaked in vinegar or sweet herbs close to the nose, believing this could block the poisoned air from entering the body.' },
             ],
           },
           {
@@ -1456,7 +1499,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         title: 'Treatment to belief',
         instruction: 'Match each plague treatment to the belief that drove it.',
         weakAreaCategory: 'Black Death Treatments',
-        backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
+        backgroundImage: '/figures/history/medicine/black-death/flagellants.png',
         pairs: [
           { id: 'flagellants-god',    term: 'Flagellants whipping themselves',  answer: 'God sent the plague as punishment — public suffering might earn His forgiveness.' },
           { id: 'posies-miasma',      term: 'Carrying posies of flowers',       answer: 'Miasma — sweet smells were thought to counteract the poisoned bad air.' },
@@ -1597,8 +1640,8 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         stage: 'The aftermath',
         label: 'Changed or stayed the same?',
         columns: [
-          { label: 'CHANGED\nAfter the Black Death',         color: '#4CAF7D', colorRgb: '76,175,125',  bg: 'rgba(76,175,125,.07)'  },
-          { label: 'STAYED THE SAME\nAfter the Black Death', color: '#8C3A2A', colorRgb: '140,58,42',   bg: 'rgba(140,58,42,.07)'   },
+          { label: 'CHANGED\nBy 1350',   color: '#4CAF7D', colorRgb: '76,175,125',  bg: 'rgba(76,175,125,.07)'  },
+          { label: 'UNCHANGED\nBy 1350', color: '#8C3A2A', colorRgb: '140,58,42',   bg: 'rgba(140,58,42,.07)'   },
         ],
         items: [
           { label: 'Peasant wages — labourers could now demand higher pay',          col: 0, explanation: 'Changed — the labour shortage gave survivors real bargaining power for the first time.' },
@@ -1684,9 +1727,14 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
             body: 'Labour shortage, higher wages, weaker Church authority. But medicine changed very little.',
           },
           {
-            finalReveal: true,
+            image: '/figures/history/medicine/black-death/examiner-marked-answer.png',
             headline: 'Now let\'s make sure you can explain this — not just describe it.',
             body: 'The examiner rewards explanation. Not description.',
+          },
+          {
+            finalReveal: true,
+            headline: 'Time to step into the examiner\'s seat.',
+            body: 'You\'ll mark real answers, then build your own from 2 marks to full marks.',
           },
         ],
       },
@@ -1696,108 +1744,26 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         stage: 'Exam prep',
         label: 'How examiners think',
         examinerExplains: {
-          opening: 'Many students lose marks because they stop too early. They identify a consequence — but they don\'t explain why it mattered.',
+          opening: 'Most students lose marks for the same reason: they describe what happened, but never explain why it mattered. Here is what separates a weak answer from a strong one.',
           tips: [
             {
-              heading: 'Top-mark answers keep going',
-              body: 'They explain: This happened... which meant that... which led to... which resulted in... Each phrase builds the causal chain that earns marks.',
+              heading: 'Identify, then explain',
+              body: 'A weak answer just names something — "people prayed", "wages went up". A strong answer keeps going: this meant that... which led to... Each link builds the chain examiners reward.',
             },
             {
-              heading: 'Two phrases unlock higher marks',
-              body: '"This meant that..." and "Which led to..." signal to the examiner that you understand causation, not just description. Use them deliberately.',
+              heading: 'Use precise evidence',
+              body: 'Replace vague phrases like "lots of people died" with "around one-third of England\'s population died". Precision signals a secure, top-band answer.',
             },
             {
               heading: 'Know the actual cause — and contrast it',
-              body: 'Yersinia pestis bacteria spread by fleas on black rats. Examiners credit students who know this AND contrast it with what medieval people believed.',
+              body: 'Yersinia pestis bacteria, spread by fleas on black rats, was the real cause. Examiners credit students who know this AND can contrast it with what medieval people believed at the time.',
             },
             {
               heading: 'Separate social change from medical change',
-              body: 'The plague changed society (wages, Church authority) but not medicine. Don\'t confuse the two — a key distinction for 8-mark questions.',
+              body: 'The plague changed society — wages, the Church\'s authority — but barely changed medicine at all. Mixing these up is one of the most common ways students lose marks on 8-mark questions.',
             },
           ],
-          closing: 'Show the examiner you understand why — not just what.',
-        },
-      },
-
-      {
-        stage: 'Exam prep',
-        label: 'Building a stronger explanation',
-        kicker: 'Examiner technique',
-        heading: 'Building a stronger explanation',
-        sub: 'Follow the causal chain step by step.',
-        blocks: [
-          {
-            type: 'explainReveal',
-            intro: 'Strong history answers explain consequences — they don\'t just describe events. Here\'s the technique applied to the Black Death.',
-            atmosphereImage: '/figures/history/medicine/black-death/labour-shortage.png',
-            steps: [
-              {
-                id: 'step-event',
-                statement: 'Start with the event:',
-                emphasis: 'The Black Death killed around one-third of England\'s population.',
-                detail: 'This is your opening fact. Precise — not "lots of people died".',
-              },
-              {
-                id: 'step-1',
-                statement: 'This meant that...',
-                emphasis: 'There were fewer workers available.',
-                detail: 'Connect the event to the immediate consequence. First "this meant that" phrase.',
-              },
-              {
-                id: 'step-2',
-                statement: 'Which led to...',
-                emphasis: 'Labour shortages.',
-                detail: 'Name the consequence specifically. Don\'t stop here — keep the chain going.',
-              },
-              {
-                id: 'step-3',
-                statement: 'This meant that...',
-                emphasis: 'Surviving workers became more valuable.',
-                detail: 'Second "this meant that" phrase. Examiners reward this pattern.',
-              },
-              {
-                id: 'step-4',
-                statement: 'Which led to...',
-                emphasis: 'Higher wages and better conditions.',
-                detail: 'The economic result — follow through to the outcome.',
-              },
-              {
-                id: 'step-5',
-                statement: 'As a result...',
-                emphasis: 'Society began to change. The feudal system was challenged.',
-                detail: 'The significance. Top-level answer: shows why it mattered beyond the immediate event.',
-              },
-            ],
-            reflectionPrompt: 'Notice how each step explains the consequence. This is what examiners reward.',
-          },
-        ],
-      },
-
-      {
-        type: 'examinerExplains',
-        stage: 'Exam prep',
-        label: 'Common mistakes',
-        examinerExplains: {
-          opening: 'Before you practise, here are the four most common mistakes on Black Death questions.',
-          tips: [
-            {
-              heading: 'Mistake 1 — description only',
-              body: '"The Black Death killed lots of people." This identifies what happened but explains nothing. No marks for description alone.',
-            },
-            {
-              heading: 'Mistake 2 — missing explanation',
-              body: '"The Black Death caused higher wages." True — but the examiner needs the chain: why did it cause higher wages? Population fell → labour shortage → workers became scarce → wages rose.',
-            },
-            {
-              heading: 'Mistake 3 — historically inaccurate',
-              body: '"The Black Death improved medicine." This is wrong. Medicine changed very little. The same explanations (God, miasma, humours) continued after 1349. Writing this loses marks.',
-            },
-            {
-              heading: 'Mistake 4 — forgetting medieval beliefs',
-              body: 'Always include: God, miasma, and astrology. Medieval people used existing beliefs to explain the plague — they did not understand the real cause. Examiners check for this.',
-            },
-          ],
-          closing: 'Avoid these and you\'re already ahead of most answers.',
+          closing: 'Identify it. Then explain it.',
         },
       },
 
@@ -1814,8 +1780,8 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
 
           question: 'Explain one way religious beliefs affected responses to the Black Death. [4 marks]',
           marks: 4,
-          mark: 1,
-          summary: 'This identifies what happened but does not explain why. It needs the causal chain to reach higher marks.',
+          mark: 2,
+          summary: 'A partial answer. It correctly identifies prayer as a response and gestures at a reason — but the religious belief behind it stays vague, so the chain stalls before reaching the top band.',
 
           markScheme: `Level 2 (3–4 marks): Developed explanation linking religious belief to a specific treatment or response, with the full chain (belief → response → why it followed logically).
 Level 1 (1–2 marks): Simple identification of a religious response with little or no explanation of why it was chosen.
@@ -1825,22 +1791,40 @@ Award marks for any explained response including:
 - Priests tending the sick — must link to Christian duty and belief in God's will
 Do NOT award for identifying practices without explaining the religious reasoning.`,
 
-          sampleAnswer: `People prayed during the Black Death.`,
+          sampleAnswer: `People prayed during the Black Death because they thought God was angry with them. They believed praying would help stop the plague.`,
 
           annotations: [
             {
               id: 'ann1',
-              target: 'People prayed during the Black Death.',
+              target: 'People prayed during the Black Death',
+              occurrence: 1,
+              type: 'strong',
+              comment: 'A valid response, named clearly — a sound place to start.',
+            },
+            {
+              id: 'ann2',
+              target: 'because they thought God was angry with them.',
               occurrence: 1,
               type: 'weak',
-              comment: 'Identifies what happened — but does not explain why prayer was chosen, or what the religious belief was.',
+              comment: 'The right idea, but vague. "Angry with them" needs to become the precise GCSE belief: that the plague was God\'s punishment for humanity\'s sins.',
+            },
+            {
+              id: 'ann3',
+              target: 'They believed praying would help stop the plague.',
+              occurrence: 1,
+              type: 'weak',
+              comment: 'This restates the response rather than explaining the religious logic. Why would prayer work, if God had sent the plague? Link it to repentance and seeking forgiveness.',
             },
           ],
 
           improvementPrompts: {
-            ann1: {
-              prompt: '+ Explain WHY people prayed',
-              placeholder: 'e.g. People prayed because they believed the plague was God\'s punishment for sin. If God had sent the disease, then prayer and repentance were the logical response — asking for God\'s forgiveness to end the plague...',
+            ann2: {
+              prompt: '+ Sharpen the belief',
+              placeholder: 'e.g. ...because they believed the plague was God\'s punishment for humanity\'s sins...',
+            },
+            ann3: {
+              prompt: '+ Explain the religious logic',
+              placeholder: 'e.g. ...so praying, fasting and going on pilgrimage were ways of asking God for forgiveness, in the hope that He would lift the plague...',
             },
           },
 
@@ -1858,9 +1842,51 @@ Do NOT award for identifying practices without explaining the religious reasonin
       },
 
       {
+        stage: 'Exam prep',
+        label: 'Turning 2 marks into 4 marks',
+        kicker: 'Upgrading the answer',
+        heading: 'Turning 2 marks into 4 marks',
+        sub: 'Insert these into the answer — step by step.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            intro: 'The 2/4 answer named the response and gestured at a reason. Here\'s what turns it into a full-mark answer.',
+            atmosphereImage: '/figures/history/medicine/black-death/examiner-marked-answer.png',
+            steps: [
+              {
+                id: 'sharpen-belief',
+                statement: 'Sharpen the belief:',
+                emphasis: '"They believed the plague was God\'s punishment for humanity\'s sins."',
+                detail: 'Replace "God was angry" with the precise concept the mark scheme wants — sin and punishment.',
+              },
+              {
+                id: 'link-response',
+                statement: 'This meant that...',
+                emphasis: 'Praying, fasting, and going on pilgrimage felt like the logical response.',
+                detail: 'Connect the belief directly to the action. Why would someone do this, if they believed this?',
+              },
+              {
+                id: 'explain-why',
+                statement: 'Because...',
+                emphasis: 'these were ways of asking God for forgiveness, in the hope that He would lift the plague.',
+                detail: 'This is the missing religious logic — it shows you understand WHY, not just WHAT.',
+              },
+              {
+                id: 'evidence',
+                statement: 'Add specific evidence:',
+                emphasis: '"Flagellants marched through towns publicly whipping themselves, hoping visible suffering would earn God\'s mercy."',
+                detail: 'A precise, named example moves the answer into the top band.',
+              },
+            ],
+            reflectionPrompt: 'Notice how each addition explains WHY the response made sense to a medieval believer — not just what they did.',
+          },
+        ],
+      },
+
+      {
         type: 'faceExaminer',
         stage: 'Exam prep',
-        label: 'Face the Examiner — similarity',
+        label: 'Face the Examiner — full marks',
         examiner: {
           type: '4-mark-explain',
           board: 'edexcel',
@@ -1868,55 +1894,50 @@ Do NOT award for identifying practices without explaining the religious reasonin
           topic: 'black-death',
           difficulty: 'standard',
 
-          question: 'Explain one similarity between medieval medicine and Black Death treatments. [4 marks]',
+          question: 'Explain one way religious beliefs affected responses to the Black Death. [4 marks]',
           marks: 4,
           mark: 4,
-          summary: 'A strong answer — it identifies the similarity, names a specific example, and explains the reasoning.',
+          summary: 'A full-mark answer — it names the precise belief, explains the religious logic behind the response, and backs it with specific evidence.',
 
-          markScheme: `Level 2 (3–4 marks): Identifies a valid similarity with developed explanation, using specific evidence.
-Level 1 (1–2 marks): Simple identification of a similarity with little or no explanation.
-Award marks for:
-- Both relied on traditional beliefs rather than scientific evidence (e.g. Four Humours, miasma, God's punishment)
-- Both used the same practitioners and treatments (physicians, bloodletting, prayer)
-- Both lacked understanding of bacteria or germ theory
-Explanation must connect the similarity to why it existed.`,
+          markScheme: `Level 2 (3–4 marks): Developed explanation linking religious belief to a specific treatment or response, with the full chain (belief → response → why it followed logically).
+Level 1 (1–2 marks): Simple identification of a religious response with little or no explanation of why it was chosen.`,
 
-          sampleAnswer: `One similarity was that both relied on traditional beliefs rather than scientific evidence. For example, bloodletting was used before and during the Black Death because people continued to believe in the Four Humours. Medieval doctors responded to the plague using the same medical framework they had always used — they didn't change their approach because their explanation of disease hadn't changed.`,
+          sampleAnswer: `People believed the plague was sent by God as punishment for humanity's sins. This meant that praying, fasting and going on pilgrimage felt like the logical response — these were ways of asking God for forgiveness, in the hope that He would lift the plague. Some went further: flagellants marched through towns publicly whipping themselves, hoping that visible suffering would earn God's mercy and bring the disease to an end.`,
 
           annotations: [
             {
               id: 'ann1',
-              target: 'both relied on traditional beliefs rather than scientific evidence.',
+              target: 'People believed the plague was sent by God as punishment for humanity\'s sins.',
               occurrence: 1,
               type: 'strong',
-              comment: 'States the similarity clearly and accurately.',
+              comment: 'Names the precise belief — sin and punishment — rather than a vague feeling.',
             },
             {
               id: 'ann2',
-              target: 'bloodletting was used before and during the Black Death because people continued to believe in the Four Humours.',
+              target: 'these were ways of asking God for forgiveness, in the hope that He would lift the plague.',
               occurrence: 1,
               type: 'strong',
-              comment: 'Specific named example with explanation — this is what earns marks.',
+              comment: 'This is the religious logic the mark scheme is looking for — it explains WHY the response followed from the belief.',
             },
             {
               id: 'ann3',
-              target: 'they didn\'t change their approach because their explanation of disease hadn\'t changed.',
+              target: 'flagellants marched through towns publicly whipping themselves, hoping that visible suffering would earn God\'s mercy and bring the disease to an end.',
               occurrence: 1,
               type: 'strong',
-              comment: 'Excellent conclusion — explains WHY the similarity existed.',
+              comment: 'Specific, named evidence — exactly what lifts an answer into the top band.',
             },
           ],
 
           improvementPrompts: {},
 
           criteriaOptions: [
-            'Similarity clearly stated',
-            'Specific named example',
-            'Explained why similar',
+            'Named the response',
+            'Explained the belief',
+            'Linked belief to treatment',
+            'Used specific evidence',
             'Developed explanation',
-            'Links to beliefs',
             'Too vague',
-            'Missing example',
+            'Repeats the question',
             'Missing explanation',
           ],
         },
@@ -1935,8 +1956,8 @@ Explanation must connect the similarity to why it existed.`,
 
           question: 'Explain two consequences of the Black Death in England. [8 marks]',
           marks: 8,
-          mark: 4,
-          summary: 'Identifies two consequences and understands the basic link to labour shortages and wages. Missing precise evidence, deeper explanation, and the "why it mattered" step.',
+          mark: 5,
+          summary: 'A solid mid-level answer. Both consequences are real and the explanations have a genuine start — but each chain stops one step before the "so what?" that the top band needs.',
 
           markScheme: `Level 3 (6–8 marks): Detailed explanation of two consequences with developed reasoning, showing how the Black Death caused each one.
 Level 2 (3–5 marks): Some explanation of two consequences, but at least one lacks development of the causal chain.
@@ -1948,40 +1969,42 @@ Award marks for any two of (each requiring causal explanation):
 - Deserted villages / economic disruption (must explain the mechanism)
 Do NOT award for identifying consequences without explaining HOW the Black Death caused them.`,
 
-          sampleAnswer: `One consequence of the Black Death was that lots of people died. This meant that there were fewer workers. Another consequence was that wages increased because there were fewer people available to work.`,
+          sampleAnswer: `One consequence was that around one-third of England's population died. This meant that there weren't enough workers left to farm the land, so wages started to rise because landowners needed people to work for them.
+
+Another consequence was that people lost faith in the Church. Many priests died from the plague, and prayer hadn't stopped it spreading, so people began to question the Church's power.`,
 
           annotations: [
             {
               id: 'ann1',
-              target: 'lots of people died.',
+              target: 'around one-third of England\'s population died.',
               occurrence: 1,
-              type: 'weak',
-              comment: 'Vague — "lots of people" is not precise. How many? Around one-third.',
+              type: 'strong',
+              comment: 'Precise evidence — exactly the kind of detail examiners are looking for.',
             },
             {
               id: 'ann2',
-              target: 'This meant that there were fewer workers.',
+              target: 'so wages started to rise because landowners needed people to work for them.',
               occurrence: 1,
-              type: 'strong',
-              comment: 'Good — identifies the immediate consequence. But the chain stops here.',
+              type: 'weak',
+              comment: 'The chain is started well — but it stops short. What did rising wages change about the relationship between workers and landowners? Why did that matter?',
             },
             {
               id: 'ann3',
-              target: 'wages increased because there were fewer people available to work.',
+              target: 'people began to question the Church\'s power.',
               occurrence: 1,
               type: 'weak',
-              comment: 'Correct but underdeveloped — needs the full chain and why this mattered.',
+              comment: 'A real consequence with a reasonable start — but underdeveloped. Push it further: what did weakened Church authority lead to in the years that followed?',
             },
           ],
 
           improvementPrompts: {
-            ann1: {
-              prompt: '+ Add precise evidence',
-              placeholder: 'e.g. Around one-third of England\'s population died — in some villages, no one survived...',
+            ann2: {
+              prompt: '+ Explain why this mattered',
+              placeholder: 'e.g. ...This challenged the feudal system, because peasants had previously been bound to their lord with no power to negotiate — now they could demand higher wages and better conditions...',
             },
             ann3: {
-              prompt: '+ Explain why higher wages mattered',
-              placeholder: 'e.g. This challenged the feudal system, where peasants were previously bound to their lord with no ability to negotiate conditions...',
+              prompt: '+ Follow the chain further',
+              placeholder: 'e.g. ...This loss of trust contributed to growing resentment, which fed into the social unrest behind the Peasants\' Revolt of 1381...',
             },
           },
 
@@ -2000,54 +2023,36 @@ Do NOT award for identifying consequences without explaining HOW the Black Death
 
       {
         stage: 'Exam prep',
-        label: 'Turning 4 marks into 8 marks',
+        label: 'Turning 5 marks into 8 marks',
         kicker: 'Upgrading the answer',
-        heading: 'Turning 4 marks into 8 marks',
+        heading: 'Turning 5 marks into 8 marks',
         sub: 'Insert these into the answer — step by step.',
         blocks: [
           {
             type: 'explainReveal',
-            intro: 'The 4/8 answer was on the right track — it just stopped too soon. Here\'s what to add.',
-            atmosphereImage: '/figures/history/medicine/black-death/labour-shortage.png',
+            intro: 'The 5/8 answer had two real consequences and a decent start on each chain. Here\'s what completes them.',
+            atmosphereImage: '/figures/history/medicine/black-death/examiner-marked-answer.png',
             steps: [
               {
-                id: 'precise',
-                statement: 'Insert precise evidence:',
-                emphasis: '"Around one-third of England\'s population died."',
-                detail: 'Replace "lots of people died" with specific scale. Examiners reward precision.',
+                id: 'finish-chain-one',
+                statement: 'Finish the first chain:',
+                emphasis: '"This challenged the feudal system — peasants had previously been bound to their lord with no power to negotiate, but now they could demand higher wages and better conditions."',
+                detail: 'This is the "so what?" step — the significance the examiner is looking for.',
               },
               {
-                id: 'fewer-workers',
-                statement: 'This meant that...',
-                emphasis: 'There were far fewer workers available to farm the land.',
-                detail: 'Immediate consequence — name it specifically, not just "fewer workers".',
+                id: 'finish-chain-two',
+                statement: 'Finish the second chain:',
+                emphasis: '"This loss of trust contributed to growing resentment, which fed into the social unrest behind the Peasants\' Revolt of 1381."',
+                detail: 'Naming the Peasants\' Revolt links the consequence to its longer-term significance — a top-band move.',
               },
               {
-                id: 'labour',
-                statement: 'Which led to...',
-                emphasis: 'Labour shortages.',
-                detail: 'Name it. "Labour shortage" is the historical term — use it.',
-              },
-              {
-                id: 'valuable',
-                statement: 'Workers became more valuable.',
-                emphasis: 'This is the mechanism — what changed in the relationship between workers and landowners.',
-                detail: 'This step explains WHY wages could rise. Don\'t skip it.',
-              },
-              {
-                id: 'wages',
-                statement: 'Which led to...',
-                emphasis: 'Higher wages and better conditions.',
-                detail: 'The economic result. Follow through to the outcome.',
-              },
-              {
-                id: 'significance',
-                statement: 'This changed relationships between workers and landowners.',
-                emphasis: 'Ask yourself: "So what happened next?"',
-                detail: 'This is the significance. Connecting it to the feudal system earns top marks.',
+                id: 'keep-precision',
+                statement: 'Keep the precise evidence:',
+                emphasis: '"Around one-third of England\'s population died" stays in the answer.',
+                detail: 'Don\'t lose specific evidence while you develop the explanation — top answers need both.',
               },
             ],
-            reflectionPrompt: 'Ask yourself: "So what happened next?" — that question drives answers from 4 marks to 8.',
+            reflectionPrompt: 'Ask "so what happened next?" for every consequence — that question is what pushes an answer from 5 marks to 8.',
           },
         ],
       },
