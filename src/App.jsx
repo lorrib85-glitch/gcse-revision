@@ -1916,7 +1916,7 @@ function getSubjectModuleList(subjectName) {
 
 function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const palette      = SUBJECT_PALETTES[subjectName] || SUBJECT_PALETTES.History
-  const { sand, bronze, cream } = palette
+  const { sand, bronze, cream, espresso } = palette
   const accent       = sand
   const accentRgb    = hexToRgb(sand)
   const headerImg    = SUBJECT_HEADER_IMGS[subjectName]    || '/headers/history-medicine-through-time.webp'
@@ -1941,7 +1941,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const [ringPct, setRingPct] = useState(0)
   useEffect(() => { const t = setTimeout(() => setRingPct(overallPct), 80); return () => clearTimeout(t) }, [overallPct])
 
-  const R       = 33
+  const R       = 25.5
   const CIRCUM  = 2 * Math.PI * R
   const dashOff = CIRCUM * (1 - ringPct / 100)
 
@@ -1953,6 +1953,10 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
 
   function thumbFor(item) {
     return item.headerImage || MODULE_HEADER_IMAGES[item.id] || headerImg
+  }
+
+  function stripEra(s) {
+    return s.replace(/,?\s*c?\.?\s*\d{3,4}\s*[–\-]\s*c?\.?\s*\d{2,4}\s*$/i, '').trim()
   }
 
   return (
@@ -1988,11 +1992,11 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           color: 'rgba(255,255,255,0.85)', fontSize: 20, fontFamily: "'Sora', sans-serif",
         }}>←</button>
 
-        {/* Module journey indicator — circular progress */}
-        <div style={{ position: 'absolute', top: 20, right: 24, zIndex: 10, width: 72, height: 72 }}>
-          <svg width={72} height={72} viewBox="0 0 72 72" style={{ transform: 'rotate(-90deg)', display: 'block' }}>
-            <circle cx={36} cy={36} r={R} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={6} />
-            <circle cx={36} cy={36} r={R} fill="none" stroke={accent} strokeWidth={6}
+        {/* Module journey indicator — circular progress, small and quiet */}
+        <div style={{ position: 'absolute', top: 20, right: 24, zIndex: 10, width: 56, height: 56, opacity: 0.85 }}>
+          <svg width={56} height={56} viewBox="0 0 56 56" style={{ transform: 'rotate(-90deg)', display: 'block' }}>
+            <circle cx={28} cy={28} r={R} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={5} />
+            <circle cx={28} cy={28} r={R} fill="none" stroke={accent} strokeWidth={5}
               strokeDasharray={CIRCUM} strokeDashoffset={dashOff} strokeLinecap="round"
               style={{ transition: 'stroke-dashoffset 700ms ease-out' }} />
           </svg>
@@ -2020,90 +2024,105 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           const isCurrent   = item.status === 'in_progress'
           const isFuture    = item.status === 'not_started' || item.status === 'coming_soon'
           const isLast      = i === items.length - 1
-          const cardH       = isCurrent ? 280 : isCompleted ? 72 : 96
-          const nodeSize    = isCurrent ? 52 : isCompleted ? 42 : 40
+          const next        = items[i + 1]
+          const cardH       = isCurrent ? 268 : isCompleted ? 68 : 92
+          const nodeSize    = isCurrent ? 56 : isCompleted ? 42 : 42
           const segAboveAccent = i > 0 && !isFuture && (items[i - 1].status === 'completed' || items[i - 1].status === 'in_progress')
           const segBelowAccent = !isLast && isCompleted
+          const rowGap = !next ? 0 : isCurrent ? 16 : (next.status === 'in_progress' ? 14 : 12)
           const desc  = item.subtitle || item.era || ''
           const thumb = thumbFor(item)
           const dotsTotal  = 5
           const dotsFilled = Math.min(dotsTotal, Math.round((item.pct / 100) * dotsTotal))
 
           return (
-            <div key={item.id} style={{ display: 'flex', alignItems: 'stretch', gap: 16, paddingBottom: isLast ? 0 : 12 }}>
+            <div key={item.id} style={{ display: 'flex', alignItems: 'stretch', gap: 12, paddingBottom: rowGap, position: 'relative' }}>
 
-              {/* Timeline column — fixed width, stays put while scrolling */}
-              <div style={{ width: 56, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              {/* Timeline column — fixed width, nodes centred on their cards */}
+              <div style={{ width: 64, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{
                   width: 2, flexShrink: 0,
                   height: Math.max(0, (cardH - nodeSize) / 2),
-                  background: i === 0 ? 'transparent' : segAboveAccent ? accent : 'rgba(255,255,255,0.12)',
+                  background: i === 0 ? 'transparent' : segAboveAccent ? accent : 'rgba(255,255,255,0.14)',
                 }} />
 
                 {isCompleted && (
                   <div style={{
                     width: 42, height: 42, borderRadius: RADII.pill, flexShrink: 0,
-                    background: bronze,
-                    boxShadow: `0 0 12px rgba(${accentRgb},0.35)`,
+                    background: `rgba(${accentRgb},0.18)`, border: `1.5px solid ${accent}`,
+                    boxShadow: `0 0 12px rgba(${accentRgb},0.25)`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     <svg width={18} height={18} viewBox="0 0 18 18" fill="none">
-                      <path d="M4 9.2L7.2 12.4L14 5.5" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M4 9.2L7.2 12.4L14 5.5" stroke={cream} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
                 )}
                 {isCurrent && (
                   <div style={{
-                    width: 52, height: 52, borderRadius: RADII.pill, flexShrink: 0,
-                    background: '#0D0D0D', border: `2px solid ${accent}`,
+                    width: 56, height: 56, borderRadius: RADII.pill, flexShrink: 0,
+                    background: espresso, border: `2px solid ${accent}`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     animation: 'sbCurrentGlow 2.8s ease-in-out infinite',
                   }}>
-                    <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 19, color: cream, lineHeight: 1 }}>{item.number}</span>
+                    <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 24, color: cream, lineHeight: 1 }}>{item.number}</span>
                   </div>
                 )}
                 {isFuture && (
                   <div style={{
-                    width: 40, height: 40, borderRadius: RADII.pill, flexShrink: 0,
-                    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)',
+                    width: 42, height: 42, borderRadius: RADII.pill, flexShrink: 0,
+                    background: '#111', border: '1px solid rgba(255,255,255,0.12)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 15, color: 'rgba(255,255,255,0.34)', lineHeight: 1 }}>{item.number}</span>
+                    <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 18, color: 'rgba(255,255,255,0.38)', lineHeight: 1 }}>{item.number}</span>
                   </div>
                 )}
 
                 {!isLast ? (
-                  <div style={{ width: 2, flex: 1, background: segBelowAccent ? accent : 'rgba(255,255,255,0.12)' }} />
+                  <div style={{ width: 2, flex: 1, background: segBelowAccent ? accent : 'rgba(255,255,255,0.14)' }} />
                 ) : <div style={{ flex: 1 }} />}
               </div>
+
+              {/* Connector — bridges the active node to the active card */}
+              {isCurrent && (
+                <div style={{ position: 'absolute', left: 60, top: cardH / 2 - 1, width: 14, height: 2, background: accent, zIndex: 2 }} />
+              )}
 
               {/* Card */}
               {isCurrent ? (
                 <button onClick={() => handleCardClick(item)} style={{
-                  flex: 1, minWidth: 0, height: 280, borderRadius: RADII.panel, overflow: 'hidden', boxSizing: 'border-box',
-                  background: '#0D0D0D', border: `1.5px solid ${accent}`,
-                  boxShadow: `0 0 20px rgba(${accentRgb},0.18)`,
+                  flex: 1, minWidth: 0, height: 268, borderRadius: 24, overflow: 'hidden', boxSizing: 'border-box',
+                  background: 'linear-gradient(180deg, rgba(20,17,13,0.98), rgba(8,8,8,0.98))',
+                  border: `1.5px solid ${accent}`,
+                  boxShadow: `0 0 22px rgba(${accentRgb},0.18)`,
                   cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'column', padding: 0,
                 }}>
-                  <div style={{
-                    height: 140, width: '100%', flexShrink: 0,
-                    backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
-                  }} />
-                  <div style={{ flex: 1, padding: '16px 18px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div style={{ position: 'relative', height: 100, width: '100%', flexShrink: 0 }}>
+                    <div style={{
+                      position: 'absolute', inset: 0,
+                      backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
+                    }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent, rgba(5,5,5,0.78))' }} />
+                  </div>
+                  <div style={{ flex: 1, padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
-                      <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 32, lineHeight: '36px', color: '#F5F7FF', letterSpacing: '-0.01em' }}>
+                      <div style={{
+                        fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 24, lineHeight: 1.05, color: '#FFFFFF',
+                        overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                      }}>
                         {item.title}
                       </div>
                       {desc ? (
-                        <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 18, color: 'rgba(255,255,255,0.80)', marginTop: 4 }}>
-                          {desc}
+                        <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, fontWeight: 600, color: accent, marginTop: 3 }}>
+                          {stripEra(desc)}
                         </div>
                       ) : null}
-                      <div style={{ marginTop: 10, display: 'flex', gap: 6 }}>
+                      <div style={{ marginTop: 5, display: 'flex', gap: 6 }}>
                         {Array.from({ length: dotsTotal }).map((_, di) => (
                           <span key={di} style={{
-                            width: 7, height: 7, borderRadius: RADII.pill,
-                            background: di < dotsFilled ? accent : 'rgba(255,255,255,0.16)',
+                            width: 8, height: 8, borderRadius: RADII.pill,
+                            background: di < dotsFilled ? accent : 'transparent',
+                            border: di < dotsFilled ? 'none' : '1px solid rgba(255,255,255,0.24)',
                           }} />
                         ))}
                       </div>
@@ -2111,70 +2130,73 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                     <div
                       onClick={(e) => { e.stopPropagation(); handleCardClick(item) }}
                       style={{
-                        marginTop: 14, height: 52, borderRadius: RADII.large,
-                        background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: '#14110E',
+                        marginTop: 7, height: 44, borderRadius: 16,
+                        background: `linear-gradient(180deg, ${sand}, ${bronze})`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 15, color: '#111',
                       }}
-                    >Continue learning</div>
+                    >Continue Learning</div>
                   </div>
                 </button>
               ) : isCompleted ? (
                 <button onClick={() => handleCardClick(item)} style={{
-                  flex: 1, minWidth: 0, height: 72, borderRadius: RADII.large, boxSizing: 'border-box',
-                  background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
-                  cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14,
-                  padding: '0 16px',
+                  flex: 1, minWidth: 0, height: 68, borderRadius: 20, boxSizing: 'border-box',
+                  padding: '8px 12px', background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.07)',
+                  opacity: 0.85, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center',
                 }}>
-                  <div style={{ position: 'relative', flexShrink: 0, width: 56, height: 56 }}>
+                  <div style={{
+                    flexShrink: 0, width: 48, height: 48, borderRadius: 12, overflow: 'hidden',
+                    backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
+                  }} />
+                  <div style={{ marginLeft: 12, flex: 1, minWidth: 0 }}>
                     <div style={{
-                      width: 56, height: 56, borderRadius: RADII.small, overflow: 'hidden',
-                      backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
-                    }} />
-                    <div style={{
-                      position: 'absolute', bottom: -3, right: -3, width: 18, height: 18, borderRadius: RADII.pill,
-                      background: bronze, border: '2px solid #050505',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15, lineHeight: 1.15, color: 'rgba(255,255,255,0.78)',
+                      overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
                     }}>
-                      <svg width={9} height={9} viewBox="0 0 12 12" fill="none">
-                        <path d="M2.5 6L5 8.5L9.5 3.5" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, lineHeight: '20px', color: '#F5F7FF', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {item.title}
                     </div>
                     {desc ? (
-                      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.46)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{
+                        fontFamily: "'Outfit', sans-serif", fontSize: 12, lineHeight: 1.2, color: 'rgba(255,255,255,0.42)', marginTop: 2,
+                        overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
+                      }}>
                         {desc}
                       </div>
                     ) : null}
                   </div>
+                  <svg width={16} height={16} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginLeft: 8 }}>
+                    <path d="M3.5 8.2L6.5 11.2L12.5 4.5" stroke={bronze} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </button>
               ) : (
                 <button onClick={() => handleCardClick(item)} style={{
-                  flex: 1, minWidth: 0, height: 96, borderRadius: RADII.large, boxSizing: 'border-box',
-                  background: '#0D0D0D', border: '1px solid rgba(255,255,255,0.08)',
-                  cursor: item.status === 'coming_soon' ? 'default' : 'pointer', textAlign: 'left',
-                  display: 'flex', alignItems: 'center', gap: 14, padding: '0 16px',
-                  opacity: item.status === 'coming_soon' ? 0.5 : 0.7,
+                  flex: 1, minWidth: 0, height: 92, borderRadius: 22, boxSizing: 'border-box',
+                  padding: '10px 12px', background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.07)',
+                  opacity: 0.72, cursor: item.status === 'coming_soon' ? 'default' : 'pointer', textAlign: 'left',
+                  display: 'flex', alignItems: 'center',
                 }}>
                   <div style={{
-                    flexShrink: 0, width: 72, height: 72, borderRadius: RADII.small, overflow: 'hidden',
+                    flexShrink: 0, width: 64, height: 64, borderRadius: 14, overflow: 'hidden',
                     backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
                     filter: 'grayscale(0.4)',
                   }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, lineHeight: '20px', color: 'rgba(255,255,255,0.65)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ marginLeft: 14, flex: 1, minWidth: 0 }}>
+                    <div style={{
+                      fontFamily: "'Sora', sans-serif", fontWeight: 750, fontSize: 18, lineHeight: 1.1, color: 'rgba(255,255,255,0.72)',
+                      overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                    }}>
                       {item.title}
                     </div>
                     {desc ? (
-                      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.34)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{
+                        fontFamily: "'Outfit', sans-serif", fontSize: 13, lineHeight: 1.2, color: 'rgba(255,255,255,0.42)', marginTop: 5,
+                        overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
+                      }}>
                         {desc}
                       </div>
                     ) : null}
                   </div>
-                  <svg width={16} height={16} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+                  <svg width={18} height={18} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginLeft: 8 }}>
                     <rect x={3.5} y={7} width={9} height={6.5} rx={1.5} stroke="rgba(255,255,255,0.32)" strokeWidth={1.4} />
                     <path d="M5.5 7V5.2C5.5 3.7 6.6 2.5 8 2.5C9.4 2.5 10.5 3.7 10.5 5.2V7" stroke="rgba(255,255,255,0.32)" strokeWidth={1.4} strokeLinecap="round" />
                   </svg>
