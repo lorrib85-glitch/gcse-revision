@@ -2055,7 +2055,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           const isLast      = i === items.length - 1
           const next        = items[i + 1]
           // Completed and future read as smaller, quieter cards; current dominates as the hero
-          const cardH       = isCurrent ? 220 : isCompleted ? 76 : 80
+          const cardH       = isCurrent ? 206 : isCompleted ? 76 : 80
           const nodeSize    = isCurrent ? 56 : isCompleted ? 42 : 40
           const OVERLAP     = 14
           const segAboveAccent = i > 0 && !isFuture && (items[i - 1].status === 'completed' || items[i - 1].status === 'in_progress')
@@ -2116,25 +2116,24 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
               </div>
 
               {isCurrent ? (
-                /* ── CURRENT — the hero. Image stays to the left and blends into the dark card; the rest reads as one calm dark surface ── */
+                /* ── CURRENT — the hero. Full-width image up top fading to dark, compact title+button row below ── */
                 <button onClick={() => handleCardClick(item)} style={{
                   flex: 1, minWidth: 0, height: cardH, marginLeft: -OVERLAP, borderRadius: 24, overflow: 'hidden', boxSizing: 'border-box',
                   background: '#0D0D0D',
                   border: `1.5px solid ${accent}`,
                   animation: 'sbCurrentGlow 2.8s ease-in-out infinite',
-                  cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'row', padding: 0,
+                  cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'column', padding: 0,
                 }}>
-                  {/* Thumbnail — confined to the left, fades into the card's dark background */}
-                  <div style={{ position: 'relative', width: '38%', maxWidth: 150, flexShrink: 0, height: '100%' }}>
+                  {/* Thumbnail banner — spans the full card width, fades into the dark background below */}
+                  <div style={{ position: 'relative', height: 122, width: '100%', flexShrink: 0 }}>
                     <div style={{
                       position: 'absolute', inset: 0,
                       backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
                     }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(120deg, transparent 30%, #0D0D0D 100%)' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent 60%)' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 18%, #0D0D0D 78%)' }} />
 
-                    {/* Progress ring — overlaid on the thumbnail; arc length matches % complete, image darkened behind it for contrast */}
-                    <div style={{ position: 'absolute', left: 10, bottom: 10, width: CARD_RING_SIZE, height: CARD_RING_SIZE }}>
+                    {/* Progress ring — overlaid on the image; arc length matches % complete, image darkened behind it for contrast */}
+                    <div style={{ position: 'absolute', left: 12, bottom: 12, width: CARD_RING_SIZE, height: CARD_RING_SIZE }}>
                       <div style={{ position: 'absolute', inset: -4, borderRadius: RADII.pill, background: 'rgba(5,5,5,0.6)' }} />
                       <svg width={CARD_RING_SIZE} height={CARD_RING_SIZE} viewBox={`0 0 ${CARD_RING_SIZE} ${CARD_RING_SIZE}`}
                         style={{ position: 'relative', transform: 'rotate(-90deg)', display: 'block' }}>
@@ -2149,44 +2148,42 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                     </div>
                   </div>
 
-                  {/* Content — sits in the dark section of the card */}
-                  <div style={{ flex: 1, minWidth: 0, padding: '16px 16px 14px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <div>
+                  {/* Title + subtitle on the left, compact "Continue" beside it on the right */}
+                  <div style={{ flex: 1, minHeight: 0, padding: '12px 16px 14px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{
-                        fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 21, lineHeight: 1.08, color: '#FFFFFF',
+                        fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 19, lineHeight: 1.1, color: '#FFFFFF',
                         overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
                       }}>
                         {item.title}
                       </div>
                       {desc ? (
                         <div style={{
-                          fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: accent, marginTop: 4,
+                          fontFamily: "'Outfit', sans-serif", fontSize: 12.5, fontWeight: 600, color: accent, marginTop: 3,
                           overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
                         }}>
                           {stripEra(desc)}
                         </div>
                       ) : null}
-                    </div>
-                    <div>
-                      <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+                      <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
                         {Array.from({ length: dotsTotal }).map((_, di) => (
                           <span key={di} style={{
-                            width: 8, height: 8, borderRadius: RADII.pill,
+                            width: 7, height: 7, borderRadius: RADII.pill,
                             background: di < dotsFilled ? accent : 'transparent',
                             border: di < dotsFilled ? 'none' : '1px solid rgba(255,255,255,0.24)',
                           }} />
                         ))}
                       </div>
-                      <div
-                        onClick={(e) => { e.stopPropagation(); handleCardClick(item) }}
-                        style={{
-                          height: 40, borderRadius: 12, padding: '0 20px', alignSelf: 'flex-start',
-                          background: `linear-gradient(180deg, ${sand}, ${bronze})`,
-                          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap',
-                          fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 13, color: '#111',
-                        }}
-                      >Continue Learning</div>
                     </div>
+                    <div
+                      onClick={(e) => { e.stopPropagation(); handleCardClick(item) }}
+                      style={{
+                        height: 40, borderRadius: 12, padding: '0 18px', flexShrink: 0,
+                        background: `linear-gradient(180deg, ${sand}, ${bronze})`,
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap',
+                        fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 14, color: '#111',
+                      }}
+                    >Continue</div>
                   </div>
                 </button>
               ) : isCompleted ? (
