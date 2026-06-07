@@ -1879,6 +1879,16 @@ const SUBJECT_DISPLAY_TITLES = {
   Physics:   'AQA Physics',
 }
 
+const SUBJECT_DESCRIPTIONS = {
+  History:   'Explore how medicine and ideas have shaped the world.',
+  Biology:   'Build your understanding from cells to ecosystems.',
+  Chemistry: 'Master the reactions and patterns behind matter.',
+  Maths:     'Build number, algebra and problem-solving fluency.',
+  Sociology: 'Understand the social forces that shape our lives.',
+  English:   'Sharpen your reading, analysis and writing skills.',
+  Physics:   'Explore the forces and energy that shape our world.',
+}
+
 function getSubjectModuleList(subjectName) {
   const real = MODULES.filter(m => m.subject === subjectName)
   const cs = (arr) => arr.map(x => ({ ...x, comingSoon: true }))
@@ -1921,6 +1931,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const accentRgb    = hexToRgb(sand)
   const headerImg    = SUBJECT_HEADER_IMGS[subjectName]    || '/headers/history-medicine-through-time.webp'
   const displayTitle = SUBJECT_DISPLAY_TITLES[subjectName] || subjectName
+  const displayDesc  = SUBJECT_DESCRIPTIONS[subjectName]   || ''
 
   const rawMods = getSubjectModuleList(subjectName)
   const items = rawMods.map((mod, i) => {
@@ -1941,7 +1952,8 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const [ringPct, setRingPct] = useState(0)
   useEffect(() => { const t = setTimeout(() => setRingPct(overallPct), 80); return () => clearTimeout(t) }, [overallPct])
 
-  const R       = 25.5
+  const RING_SIZE = 68
+  const R       = 31
   const CIRCUM  = 2 * Math.PI * R
   const dashOff = CIRCUM * (1 - ringPct / 100)
 
@@ -1969,7 +1981,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
       `}</style>
 
       {/* ── HERO ── */}
-      <div style={{ height: 220, position: 'relative', overflow: 'hidden' }}>
+      <div style={{ height: 248, position: 'relative', overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', inset: 0,
           backgroundImage: `url(${headerImg})`,
@@ -1992,20 +2004,25 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           color: 'rgba(255,255,255,0.85)', fontSize: 20, fontFamily: "'Sora', sans-serif",
         }}>←</button>
 
-        {/* Module journey indicator — circular progress, small and quiet */}
-        <div style={{ position: 'absolute', top: 20, right: 24, zIndex: 10, width: 56, height: 56, opacity: 0.85 }}>
-          <svg width={56} height={56} viewBox="0 0 56 56" style={{ transform: 'rotate(-90deg)', display: 'block' }}>
-            <circle cx={28} cy={28} r={R} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={5} />
-            <circle cx={28} cy={28} r={R} fill="none" stroke={accent} strokeWidth={5}
+        {/* Module journey indicator — circular progress, draws in on mount */}
+        <div style={{ position: 'absolute', top: 20, right: 24, zIndex: 10, width: RING_SIZE, height: RING_SIZE, opacity: 0.9 }}>
+          <svg width={RING_SIZE} height={RING_SIZE} viewBox={`0 0 ${RING_SIZE} ${RING_SIZE}`} style={{ transform: 'rotate(-90deg)', display: 'block' }}>
+            <circle cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={R} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={5} />
+            <circle cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={R} fill="none" stroke={accent} strokeWidth={5}
               strokeDasharray={CIRCUM} strokeDashoffset={dashOff} strokeLinecap="round"
-              style={{ transition: 'stroke-dashoffset 700ms ease-out' }} />
+              style={{ transition: 'stroke-dashoffset 900ms cubic-bezier(0.22, 1, 0.36, 1)' }} />
           </svg>
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: '#F5F7FF', lineHeight: 1 }}>{overallPct}%</span>
+          <div style={{
+            position: 'absolute', inset: 7, borderRadius: RADII.pill,
+            background: 'rgba(5,5,5,0.5)', backdropFilter: 'blur(2px)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 17, color: '#F5F7FF', lineHeight: 1 }}>{overallPct}%</span>
+            <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 7, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginTop: 3 }}>Complete</span>
           </div>
         </div>
 
-        <div style={{ position: 'absolute', bottom: 18, left: 24, right: 100, zIndex: 5 }}>
+        <div style={{ position: 'absolute', bottom: 18, left: 24, right: 108, zIndex: 5 }}>
           <div style={{
             fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 11,
             letterSpacing: '0.16em', color: accent, textTransform: 'uppercase', marginBottom: 7,
@@ -2014,6 +2031,13 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
             fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 24, lineHeight: '28px',
             letterSpacing: '-0.01em', color: '#F5F7FF',
           }}>{displayTitle}</div>
+          {displayDesc ? (
+            <div style={{
+              fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 13, lineHeight: 1.35,
+              color: 'rgba(255,255,255,0.52)', marginTop: 6, maxWidth: 240,
+              overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+            }}>{displayDesc}</div>
+          ) : null}
         </div>
       </div>
 
@@ -2025,9 +2049,10 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           const isFuture    = item.status === 'not_started' || item.status === 'coming_soon'
           const isLast      = i === items.length - 1
           const next        = items[i + 1]
-          // Three different heights for three different shapes — breadcrumb, hero, locked row
-          const cardH       = isCurrent ? 264 : isCompleted ? 56 : 80
+          // Completed and future read as smaller, quieter cards; current dominates as the hero
+          const cardH       = isCurrent ? 264 : isCompleted ? 76 : 80
           const nodeSize    = isCurrent ? 56 : isCompleted ? 42 : 40
+          const OVERLAP     = 14
           const segAboveAccent = i > 0 && !isFuture && (items[i - 1].status === 'completed' || items[i - 1].status === 'in_progress')
           const segBelowAccent = !isLast && isCompleted
           const rowGap = !next ? 0 : isCurrent ? 12 : 8
@@ -2039,8 +2064,8 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           return (
             <div key={item.id} style={{ display: 'flex', alignItems: 'stretch', gap: 12, paddingBottom: rowGap, position: 'relative' }}>
 
-              {/* Timeline column — fixed width, nodes centred on their cards */}
-              <div style={{ width: 64, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              {/* Timeline column — nodes overlap the card's left edge so the journey reads as attached */}
+              <div style={{ width: 64, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 2 }}>
                 <div style={{
                   width: 2, flexShrink: 0,
                   height: Math.max(0, (cardH - nodeSize) / 2),
@@ -2085,18 +2110,13 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                 ) : <div style={{ flex: 1 }} />}
               </div>
 
-              {/* Connector — bridges the active node directly into the hero card */}
-              {isCurrent && (
-                <div style={{ position: 'absolute', left: 60, top: cardH / 2 - 1, width: 16, height: 2, background: accent, zIndex: 2 }} />
-              )}
-
               {isCurrent ? (
-                /* ── CURRENT — the hero. Full cinematic card, dominates the screen ── */
+                /* ── CURRENT — the hero. Full cinematic card, dominates the screen, glows softly ── */
                 <button onClick={() => handleCardClick(item)} style={{
-                  flex: 1, minWidth: 0, height: cardH, borderRadius: 24, overflow: 'hidden', boxSizing: 'border-box',
+                  flex: 1, minWidth: 0, height: cardH, marginLeft: -OVERLAP, borderRadius: 24, overflow: 'hidden', boxSizing: 'border-box',
                   background: '#0D0D0D',
                   border: `1.5px solid ${accent}`,
-                  boxShadow: `0 0 24px rgba(${accentRgb},0.18)`,
+                  animation: 'sbCurrentGlow 2.8s ease-in-out infinite',
                   cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'column', padding: 0,
                 }}>
                   <div style={{ position: 'relative', height: 106, width: '100%', flexShrink: 0 }}>
@@ -2121,14 +2141,17 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                       ) : null}
                     </div>
                     <div>
-                      <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
-                        {Array.from({ length: dotsTotal }).map((_, di) => (
-                          <span key={di} style={{
-                            width: 8, height: 8, borderRadius: RADII.pill,
-                            background: di < dotsFilled ? accent : 'transparent',
-                            border: di < dotsFilled ? 'none' : '1px solid rgba(255,255,255,0.24)',
-                          }} />
-                        ))}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          {Array.from({ length: dotsTotal }).map((_, di) => (
+                            <span key={di} style={{
+                              width: 8, height: 8, borderRadius: RADII.pill,
+                              background: di < dotsFilled ? accent : 'transparent',
+                              border: di < dotsFilled ? 'none' : '1px solid rgba(255,255,255,0.24)',
+                            }} />
+                          ))}
+                        </div>
+                        <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{item.pct}%</span>
                       </div>
                       <div
                         onClick={(e) => { e.stopPropagation(); handleCardClick(item) }}
@@ -2143,58 +2166,75 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                   </div>
                 </button>
               ) : isCompleted ? (
-                /* ── COMPLETED — a breadcrumb. No card chrome, no thumbnail, feels archived ── */
-                <div onClick={() => handleCardClick(item)} style={{
-                  flex: 1, minWidth: 0, height: cardH, display: 'flex', alignItems: 'center',
-                  background: 'transparent', cursor: 'default',
+                /* ── COMPLETED — small, closed card. Quiet, finished, still revisitable ── */
+                <button onClick={() => handleCardClick(item)} style={{
+                  flex: 1, minWidth: 0, height: cardH, marginLeft: -OVERLAP, borderRadius: 16, boxSizing: 'border-box',
+                  padding: '10px 14px', background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)',
+                  opacity: 0.7, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center',
                 }}>
-                  <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 700, color: accent, marginRight: 10, flexShrink: 0 }}>✓</span>
-                  <div style={{ minWidth: 0 }}>
+                  <div style={{
+                    flexShrink: 0, width: 48, height: 48, borderRadius: 11, overflow: 'hidden',
+                    backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
+                    filter: 'grayscale(0.5)', opacity: 0.78,
+                  }} />
+                  <div style={{ marginLeft: 12, flex: 1, minWidth: 0 }}>
                     <div style={{
-                      fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 14, lineHeight: 1.25, color: 'rgba(255,255,255,0.46)',
+                      fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 14, lineHeight: 1.25, color: 'rgba(255,255,255,0.5)',
                       overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
                     }}>{item.title}</div>
                     {desc ? (
                       <div style={{
-                        fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 12, lineHeight: 1.2, color: 'rgba(255,255,255,0.28)', marginTop: 2,
+                        fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 11.5, lineHeight: 1.2, color: 'rgba(255,255,255,0.3)', marginTop: 2,
                         overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
-                      }}>{desc}</div>
+                      }}>{stripEra(desc)}</div>
                     ) : null}
                   </div>
-                </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0, marginLeft: 8 }}>
+                    <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>100%</span>
+                    <span style={{
+                      width: 20, height: 20, borderRadius: RADII.pill, flexShrink: 0,
+                      background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <svg width={11} height={11} viewBox="0 0 18 18" fill="none">
+                        <path d="M4 9.2L7.2 12.4L14 5.5" stroke="#0D0D0D" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                  </div>
+                </button>
               ) : (
-                /* ── FUTURE — small locked row. Available later, not active, not archived ── */
+                /* ── FUTURE — smaller, dimmer card. Later, not locked, just not yet ── */
                 <button onClick={() => handleCardClick(item)} style={{
-                  flex: 1, minWidth: 0, height: cardH, borderRadius: 18, boxSizing: 'border-box',
-                  padding: '10px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
-                  opacity: 0.75, cursor: item.status === 'coming_soon' ? 'default' : 'pointer', textAlign: 'left',
+                  flex: 1, minWidth: 0, height: cardH, marginLeft: -OVERLAP, borderRadius: 18, boxSizing: 'border-box',
+                  padding: '10px 12px', background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)',
+                  opacity: 0.55, cursor: item.status === 'coming_soon' ? 'default' : 'pointer', textAlign: 'left',
                   display: 'flex', alignItems: 'center',
                 }}>
                   <div style={{
-                    flexShrink: 0, width: 56, height: 56, borderRadius: 13, overflow: 'hidden',
+                    flexShrink: 0, width: 52, height: 52, borderRadius: 12, overflow: 'hidden',
                     backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
-                    filter: 'grayscale(0.4)',
+                    filter: 'grayscale(0.5)', opacity: 0.7,
                   }} />
                   <div style={{ marginLeft: 12, flex: 1, minWidth: 0 }}>
                     <div style={{
-                      fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15, lineHeight: 1.2, color: 'rgba(255,255,255,0.66)',
+                      fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15, lineHeight: 1.2, color: 'rgba(255,255,255,0.56)',
                       overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
                     }}>
                       {item.title}
                     </div>
                     {desc ? (
                       <div style={{
-                        fontFamily: "'Outfit', sans-serif", fontSize: 12, lineHeight: 1.2, color: 'rgba(255,255,255,0.38)', marginTop: 3,
+                        fontFamily: "'Outfit', sans-serif", fontSize: 12, lineHeight: 1.2, color: 'rgba(255,255,255,0.32)', marginTop: 3,
                         overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
                       }}>
                         {desc}
                       </div>
                     ) : null}
                   </div>
-                  <svg width={16} height={16} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginLeft: 8 }}>
-                    <rect x={3.5} y={7} width={9} height={6.5} rx={1.5} stroke="rgba(255,255,255,0.32)" strokeWidth={1.4} />
-                    <path d="M5.5 7V5.2C5.5 3.7 6.6 2.5 8 2.5C9.4 2.5 10.5 3.7 10.5 5.2V7" stroke="rgba(255,255,255,0.32)" strokeWidth={1.4} strokeLinecap="round" />
-                  </svg>
+                  <div style={{ display: 'flex', gap: 5, flexShrink: 0, marginLeft: 8 }}>
+                    {Array.from({ length: dotsTotal }).map((_, di) => (
+                      <span key={di} style={{ width: 6, height: 6, borderRadius: RADII.pill, border: '1px solid rgba(255,255,255,0.16)' }} />
+                    ))}
+                  </div>
                 </button>
               )}
             </div>
