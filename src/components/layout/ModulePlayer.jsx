@@ -1162,8 +1162,8 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'fillblanks'    && <FillInTheBlanksBlock block={block} subject={subject} />}
           {block.type === 'theoryCompare' && <TheoryCompareBlock block={block} subject={subject} />}
           {block.type === 'colsort'       && <ColSortBlock block={block} subject={subject} />}
-          {block.type === 'spotTheError'  && <SpotTheError block={block} subject={subject} />}
-          {block.type === 'misconceptionCheck' && <MisconceptionCheck block={block} subject={subject} />}
+          {block.type === 'spotTheError'  && <SpotTheError block={block} subject={subject} onContinue={onScreenComplete} />}
+          {block.type === 'misconceptionCheck' && <MisconceptionCheck block={block} subject={subject} onContinue={onScreenComplete} />}
         </div>
       ))}
     </div>
