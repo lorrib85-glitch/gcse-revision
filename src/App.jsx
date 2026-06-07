@@ -1916,9 +1916,9 @@ function getSubjectModuleList(subjectName) {
 
 function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const palette      = SUBJECT_PALETTES[subjectName] || SUBJECT_PALETTES.History
-  const { sand, bronze, cream, espresso } = palette
-  const sandRgb      = hexToRgb(sand)
-  const espressoRgb  = hexToRgb(espresso)
+  const { sand, bronze, cream } = palette
+  const accent       = sand
+  const accentRgb    = hexToRgb(sand)
   const headerImg    = SUBJECT_HEADER_IMGS[subjectName]    || '/headers/history-medicine-through-time.webp'
   const displayTitle = SUBJECT_DISPLAY_TITLES[subjectName] || subjectName
 
@@ -1941,8 +1941,8 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const [ringPct, setRingPct] = useState(0)
   useEffect(() => { const t = setTimeout(() => setRingPct(overallPct), 80); return () => clearTimeout(t) }, [overallPct])
 
-  const R      = 32.5
-  const CIRCUM = 2 * Math.PI * R
+  const R       = 33
+  const CIRCUM  = 2 * Math.PI * R
   const dashOff = CIRCUM * (1 - ringPct / 100)
 
   function handleCardClick(item) {
@@ -1951,16 +1951,20 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
     if (realMod && onOpenModule) onOpenModule(realMod)
   }
 
+  function thumbFor(item) {
+    return item.headerImage || MODULE_HEADER_IMAGES[item.id] || headerImg
+  }
+
   return (
-    <div style={{ minHeight: '100vh', background: '#08090D', paddingBottom: 120, overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: '#050505', paddingBottom: 120, overflowX: 'hidden' }}>
       <style>{`
-        @keyframes sbPulse {
-          0%,100% { box-shadow: 0 0 18px rgba(${sandRgb},0.32), 0 0 8px rgba(${sandRgb},0.18); }
-          50%      { box-shadow: 0 0 30px rgba(${sandRgb},0.55), 0 0 14px rgba(${sandRgb},0.28); }
+        @keyframes sbCurrentGlow {
+          0%,100% { box-shadow: 0 0 16px rgba(${accentRgb},0.30), 0 0 7px rgba(${accentRgb},0.16); }
+          50%      { box-shadow: 0 0 26px rgba(${accentRgb},0.46), 0 0 12px rgba(${accentRgb},0.24); }
         }
       `}</style>
 
-      {/* ── CINEMATIC HEADER ── */}
+      {/* ── HERO ── */}
       <div style={{ height: 220, position: 'relative', overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', inset: 0,
@@ -1968,27 +1972,39 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           backgroundSize: 'cover', backgroundPosition: 'center',
           opacity: 0.92,
         }} />
-        {/* Subtle left fade — keeps top of image bright */}
         <div style={{
           position: 'absolute', top: 0, left: 0, bottom: 0, width: '68%',
-          background: 'linear-gradient(to right, rgba(8,9,13,0.70) 0%, rgba(8,9,13,0.22) 65%, transparent 100%)',
+          background: 'linear-gradient(to right, rgba(5,5,5,0.72) 0%, rgba(5,5,5,0.24) 65%, transparent 100%)',
         }} />
-        {/* Bottom fade to page bg only */}
         <div style={{
           position: 'absolute', bottom: 0, left: 0, right: 0, height: 85,
-          background: 'linear-gradient(180deg, transparent 0%, #08090D 100%)',
+          background: 'linear-gradient(180deg, transparent 0%, #050505 100%)',
         }} />
         <button onClick={onBack} style={{
           position: 'absolute', top: 20, left: 24, zIndex: 10,
-          width: 44, height: 44, borderRadius: 999,
+          width: 44, height: 44, borderRadius: RADII.pill,
           background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)',
           cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
           color: 'rgba(255,255,255,0.85)', fontSize: 20, fontFamily: "'Sora', sans-serif",
         }}>←</button>
-        <div style={{ position: 'absolute', bottom: 18, left: 24, right: '35%', zIndex: 5 }}>
+
+        {/* Module journey indicator — circular progress */}
+        <div style={{ position: 'absolute', top: 20, right: 24, zIndex: 10, width: 72, height: 72 }}>
+          <svg width={72} height={72} viewBox="0 0 72 72" style={{ transform: 'rotate(-90deg)', display: 'block' }}>
+            <circle cx={36} cy={36} r={R} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={6} />
+            <circle cx={36} cy={36} r={R} fill="none" stroke={accent} strokeWidth={6}
+              strokeDasharray={CIRCUM} strokeDashoffset={dashOff} strokeLinecap="round"
+              style={{ transition: 'stroke-dashoffset 700ms ease-out' }} />
+          </svg>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: '#F5F7FF', lineHeight: 1 }}>{overallPct}%</span>
+          </div>
+        </div>
+
+        <div style={{ position: 'absolute', bottom: 18, left: 24, right: 100, zIndex: 5 }}>
           <div style={{
             fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 11,
-            letterSpacing: '0.16em', color: sand, textTransform: 'uppercase', marginBottom: 7,
+            letterSpacing: '0.16em', color: accent, textTransform: 'uppercase', marginBottom: 7,
           }}>{subjectName}</div>
           <div style={{
             fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 24, lineHeight: '28px',
@@ -1997,194 +2013,176 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
         </div>
       </div>
 
-      {/* ── CONTENT ── */}
-      <div style={{ padding: '0 24px' }}>
+      {/* ── MODULE JOURNEY ── */}
+      <div style={{ padding: '20px 24px 0' }}>
+        {items.map((item, i) => {
+          const isCompleted = item.status === 'completed'
+          const isCurrent   = item.status === 'in_progress'
+          const isFuture    = item.status === 'not_started' || item.status === 'coming_soon'
+          const isLast      = i === items.length - 1
+          const cardH       = isCurrent ? 280 : isCompleted ? 72 : 96
+          const nodeSize    = isCurrent ? 52 : isCompleted ? 42 : 40
+          const segAboveAccent = i > 0 && !isFuture && (items[i - 1].status === 'completed' || items[i - 1].status === 'in_progress')
+          const segBelowAccent = !isLast && isCompleted
+          const desc  = item.subtitle || item.era || ''
+          const thumb = thumbFor(item)
+          const dotsTotal  = 5
+          const dotsFilled = Math.min(dotsTotal, Math.round((item.pct / 100) * dotsTotal))
 
-        {/* Progress card */}
-        <div style={{
-          width: '100%', borderRadius: 28, padding: '20px 22px', boxSizing: 'border-box',
-          background: 'rgba(255,255,255,0.055)', border: `1px solid ${sand}2A`,
-          backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-          boxShadow: '0 18px 50px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)',
-          marginTop: -10, marginBottom: 26,
-          display: 'flex', alignItems: 'center', gap: 16,
-        }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 14, color: 'rgba(255,255,255,0.55)' }}>Your progress</div>
-            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 26, lineHeight: '30px', color: '#F5F7FF', marginTop: 5 }}>
-              {completedCount} of {realCount} completed
-            </div>
-            <div style={{ marginTop: 12, height: 5, borderRadius: 999, background: 'rgba(255,255,255,0.10)', overflow: 'hidden' }}>
-              <div style={{
-                height: '100%', borderRadius: 999, width: `${overallPct}%`,
-                background: `linear-gradient(90deg, ${bronze}, ${sand})`,
-                transition: 'width 700ms ease-out',
-              }} />
-            </div>
-          </div>
-          <div style={{ flexShrink: 0, width: 70, height: 70, position: 'relative' }}>
-            <svg width={70} height={70} viewBox="0 0 72 72" style={{ transform: 'rotate(-90deg)', display: 'block' }}>
-              <circle cx={36} cy={36} r={R} fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth={7} />
-              <circle cx={36} cy={36} r={R} fill="none" stroke={sand} strokeWidth={7}
-                strokeDasharray={CIRCUM} strokeDashoffset={dashOff} strokeLinecap="round"
-                style={{ transition: 'stroke-dashoffset 700ms ease-out', filter: `drop-shadow(0 0 5px ${sand}88)` }} />
-            </svg>
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 18, color: cream, lineHeight: 1 }}>{overallPct}%</span>
-            </div>
-          </div>
-        </div>
+          return (
+            <div key={item.id} style={{ display: 'flex', alignItems: 'stretch', gap: 16, paddingBottom: isLast ? 0 : 12 }}>
 
-        {/* Section label */}
-        <div style={{
-          fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 12,
-          letterSpacing: '0.16em', color: 'rgba(255,255,255,0.40)',
-          textTransform: 'uppercase', marginBottom: 16,
-        }}>Your Modules</div>
+              {/* Timeline column — fixed width, stays put while scrolling */}
+              <div style={{ width: 56, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{
+                  width: 2, flexShrink: 0,
+                  height: Math.max(0, (cardH - nodeSize) / 2),
+                  background: i === 0 ? 'transparent' : segAboveAccent ? accent : 'rgba(255,255,255,0.12)',
+                }} />
 
-        {/* Rail */}
-        <div>
-          {items.map((item, i) => {
-            const isCompleted = item.status === 'completed'
-            const isCurrent   = item.status === 'in_progress'
-            const isComing    = item.status === 'coming_soon'
-            const isLast      = i === items.length - 1
-            const nodeSize    = isCurrent ? 50 : isCompleted ? 44 : 42
-            const cardH       = 96
-            const lineAboveGold = i > 0 && items[i - 1].status === 'completed'
-            const lineBelowGold = !isLast && isCompleted
-            const desc = item.subtitle || item.era || ''
-            return (
-              <div key={item.id} style={{ display: 'flex', gap: 14, alignItems: 'stretch', paddingBottom: isLast ? 0 : 14 }}>
-
-                {/* Rail column */}
-                <div style={{ width: 56, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                {isCompleted && (
                   <div style={{
-                    width: 2, flexShrink: 0,
-                    height: Math.max(0, ((isCurrent ? 108 : cardH) - nodeSize) / 2),
-                    background: i === 0 ? 'transparent' : lineAboveGold ? sand : 'rgba(255,255,255,0.14)',
-                  }} />
-                  {isCompleted && (
-                    <div style={{
-                      width: 44, height: 44, borderRadius: 999, flexShrink: 0,
-                      background: `linear-gradient(135deg, ${bronze}, ${sand})`,
-                      border: `1px solid ${cream}72`,
-                      boxShadow: `0 0 20px rgba(${sandRgb},0.28), inset 0 1px 0 rgba(255,255,255,0.20)`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <svg width={22} height={22} viewBox="0 0 22 22" fill="none">
-                        <path d="M5 11.5L9 15.5L17 7" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                  )}
-                  {isCurrent && (
-                    <div style={{
-                      width: 50, height: 50, borderRadius: 999, flexShrink: 0,
-                      background: `rgba(${espressoRgb},0.88)`, border: `2px solid ${sand}`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      animation: 'sbPulse 2.8s ease-in-out infinite',
-                    }}>
-                      <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 20, color: cream, lineHeight: 1 }}>{item.number}</span>
-                    </div>
-                  )}
-                  {!isCompleted && !isCurrent && (
-                    <div style={{
-                      width: 42, height: 42, borderRadius: 999, flexShrink: 0,
-                      background: 'rgba(255,255,255,0.035)', border: '1.5px solid rgba(255,255,255,0.16)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <span style={{
-                        fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 16,
-                        color: isComing ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.42)', lineHeight: 1,
-                      }}>{item.number}</span>
-                    </div>
-                  )}
-                  {!isLast ? (
-                    <div style={{ width: 2, flex: 1, background: lineBelowGold ? `linear-gradient(180deg, ${sand}, ${bronze})` : 'rgba(255,255,255,0.14)' }} />
-                  ) : <div style={{ flex: 1 }} />}
-                </div>
-
-                {/* Card */}
-                <button
-                  onClick={() => handleCardClick(item)}
-                  style={{
-                    flex: 1,
-                    ...(isCurrent ? { minHeight: 108 } : { height: cardH }),
-                    alignSelf: 'flex-start',
-                    borderRadius: 22, boxSizing: 'border-box',
-                    padding: isCurrent ? '16px 18px 16px 20px' : '0 18px 0 20px',
-                    cursor: isComing ? 'default' : 'pointer',
-                    textAlign: 'left',
-                    display: 'flex',
-                    flexDirection: isCurrent ? 'column' : 'row',
-                    alignItems: isCurrent ? 'flex-start' : 'center',
-                    justifyContent: 'space-between',
-                    gap: isCurrent ? 8 : 12,
-                    border: isCurrent
-                      ? `1.5px solid ${sand}CC`
-                      : isCompleted
-                        ? `1px solid rgba(${sandRgb},0.12)`
-                        : '1px solid rgba(255,255,255,0.07)',
-                    background: isCurrent
-                      ? `linear-gradient(90deg, rgba(${espressoRgb},0.45) 0%, rgba(255,255,255,0.05) 100%)`
-                      : isCompleted ? 'rgba(255,255,255,0.045)' : 'rgba(255,255,255,0.028)',
-                    opacity: isComing ? 0.42 : 1,
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                      fontFamily: "'Sora', sans-serif", fontWeight: 700,
-                      fontSize: isCurrent ? 20 : 16, lineHeight: isCurrent ? '24px' : '20px',
-                      color: '#F5F7FF', marginBottom: desc ? 4 : 0,
-                    }}>{item.title}</div>
-                    {desc ? (
-                      <div style={{
-                        fontFamily: "'Outfit', sans-serif", fontSize: 13,
-                        color: 'rgba(255,255,255,0.46)', lineHeight: '17px',
-                        overflow: 'hidden', display: '-webkit-box',
-                        WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-                      }}>{desc}</div>
-                    ) : null}
-                    {isCurrent && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleCardClick(item) }}
-                        style={{
-                          marginTop: 14, padding: '10px 22px',
-                          background: `linear-gradient(90deg, ${bronze}, ${sand})`,
-                          border: 'none', borderRadius: 14, cursor: 'pointer',
-                          fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15,
-                          color: '#14110E', boxShadow: `0 4px 14px rgba(${sandRgb},0.38)`,
-                        }}
-                      >Continue →</button>
-                    )}
+                    width: 42, height: 42, borderRadius: RADII.pill, flexShrink: 0,
+                    background: bronze,
+                    boxShadow: `0 0 12px rgba(${accentRgb},0.35)`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <svg width={18} height={18} viewBox="0 0 18 18" fill="none">
+                      <path d="M4 9.2L7.2 12.4L14 5.5" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
                   </div>
-                  {isCompleted && (
-                    <div style={{
-                      flexShrink: 0, alignSelf: 'center',
-                      background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.28)',
-                      borderRadius: 999, padding: '6px 12px',
-                      display: 'flex', alignItems: 'center', gap: 5,
-                    }}>
-                      <svg width={12} height={12} viewBox="0 0 12 12" fill="none">
-                        <path d="M2.5 6L5 8.5L9.5 3.5" stroke="#4ADE80" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 12, color: '#4ADE80', whiteSpace: 'nowrap' }}>Completed</span>
-                    </div>
-                  )}
-                  {isComing && (
-                    <div style={{
-                      flexShrink: 0, alignSelf: 'center',
-                      background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)',
-                      borderRadius: 999, padding: '6px 12px',
-                    }}>
-                      <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: 12, color: 'rgba(255,255,255,0.32)', whiteSpace: 'nowrap' }}>Coming soon</span>
-                    </div>
-                  )}
-                </button>
+                )}
+                {isCurrent && (
+                  <div style={{
+                    width: 52, height: 52, borderRadius: RADII.pill, flexShrink: 0,
+                    background: '#0D0D0D', border: `2px solid ${accent}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    animation: 'sbCurrentGlow 2.8s ease-in-out infinite',
+                  }}>
+                    <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 19, color: cream, lineHeight: 1 }}>{item.number}</span>
+                  </div>
+                )}
+                {isFuture && (
+                  <div style={{
+                    width: 40, height: 40, borderRadius: RADII.pill, flexShrink: 0,
+                    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 15, color: 'rgba(255,255,255,0.34)', lineHeight: 1 }}>{item.number}</span>
+                  </div>
+                )}
+
+                {!isLast ? (
+                  <div style={{ width: 2, flex: 1, background: segBelowAccent ? accent : 'rgba(255,255,255,0.12)' }} />
+                ) : <div style={{ flex: 1 }} />}
               </div>
-            )
-          })}
-        </div>
+
+              {/* Card */}
+              {isCurrent ? (
+                <button onClick={() => handleCardClick(item)} style={{
+                  flex: 1, minWidth: 0, height: 280, borderRadius: RADII.panel, overflow: 'hidden', boxSizing: 'border-box',
+                  background: '#0D0D0D', border: `1.5px solid ${accent}`,
+                  boxShadow: `0 0 20px rgba(${accentRgb},0.18)`,
+                  cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'column', padding: 0,
+                }}>
+                  <div style={{
+                    height: 140, width: '100%', flexShrink: 0,
+                    backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
+                  }} />
+                  <div style={{ flex: 1, padding: '16px 18px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 32, lineHeight: '36px', color: '#F5F7FF', letterSpacing: '-0.01em' }}>
+                        {item.title}
+                      </div>
+                      {desc ? (
+                        <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 18, color: 'rgba(255,255,255,0.80)', marginTop: 4 }}>
+                          {desc}
+                        </div>
+                      ) : null}
+                      <div style={{ marginTop: 10, display: 'flex', gap: 6 }}>
+                        {Array.from({ length: dotsTotal }).map((_, di) => (
+                          <span key={di} style={{
+                            width: 7, height: 7, borderRadius: RADII.pill,
+                            background: di < dotsFilled ? accent : 'rgba(255,255,255,0.16)',
+                          }} />
+                        ))}
+                      </div>
+                    </div>
+                    <div
+                      onClick={(e) => { e.stopPropagation(); handleCardClick(item) }}
+                      style={{
+                        marginTop: 14, height: 52, borderRadius: RADII.large,
+                        background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: '#14110E',
+                      }}
+                    >Continue learning</div>
+                  </div>
+                </button>
+              ) : isCompleted ? (
+                <button onClick={() => handleCardClick(item)} style={{
+                  flex: 1, minWidth: 0, height: 72, borderRadius: RADII.large, boxSizing: 'border-box',
+                  background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+                  cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14,
+                  padding: '0 16px',
+                }}>
+                  <div style={{ position: 'relative', flexShrink: 0, width: 56, height: 56 }}>
+                    <div style={{
+                      width: 56, height: 56, borderRadius: RADII.small, overflow: 'hidden',
+                      backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
+                    }} />
+                    <div style={{
+                      position: 'absolute', bottom: -3, right: -3, width: 18, height: 18, borderRadius: RADII.pill,
+                      background: bronze, border: '2px solid #050505',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <svg width={9} height={9} viewBox="0 0 12 12" fill="none">
+                        <path d="M2.5 6L5 8.5L9.5 3.5" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, lineHeight: '20px', color: '#F5F7FF', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {item.title}
+                    </div>
+                    {desc ? (
+                      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.46)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {desc}
+                      </div>
+                    ) : null}
+                  </div>
+                </button>
+              ) : (
+                <button onClick={() => handleCardClick(item)} style={{
+                  flex: 1, minWidth: 0, height: 96, borderRadius: RADII.large, boxSizing: 'border-box',
+                  background: '#0D0D0D', border: '1px solid rgba(255,255,255,0.08)',
+                  cursor: item.status === 'coming_soon' ? 'default' : 'pointer', textAlign: 'left',
+                  display: 'flex', alignItems: 'center', gap: 14, padding: '0 16px',
+                  opacity: item.status === 'coming_soon' ? 0.5 : 0.7,
+                }}>
+                  <div style={{
+                    flexShrink: 0, width: 72, height: 72, borderRadius: RADII.small, overflow: 'hidden',
+                    backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
+                    filter: 'grayscale(0.4)',
+                  }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, lineHeight: '20px', color: 'rgba(255,255,255,0.65)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {item.title}
+                    </div>
+                    {desc ? (
+                      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.34)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {desc}
+                      </div>
+                    ) : null}
+                  </div>
+                  <svg width={16} height={16} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+                    <rect x={3.5} y={7} width={9} height={6.5} rx={1.5} stroke="rgba(255,255,255,0.32)" strokeWidth={1.4} />
+                    <path d="M5.5 7V5.2C5.5 3.7 6.6 2.5 8 2.5C9.4 2.5 10.5 3.7 10.5 5.2V7" stroke="rgba(255,255,255,0.32)" strokeWidth={1.4} strokeLinecap="round" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          )
+        })}
       </div>
 
       <BottomNav tab="subjects" setTab={() => onBack()} />
