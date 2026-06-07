@@ -1957,6 +1957,11 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const CIRCUM  = 2 * Math.PI * R
   const dashOff = CIRCUM * (1 - ringPct / 100)
 
+  // Small progress ring overlaid on the current card's thumbnail
+  const CARD_RING_SIZE = 44
+  const CARD_RING_R    = 17
+  const CARD_RING_CIRCUM = 2 * Math.PI * CARD_RING_R
+
   function handleCardClick(item) {
     if (item.status === 'coming_soon') return
     const realMod = MODULES.find(m => m.id === item.id)
@@ -2050,7 +2055,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           const isLast      = i === items.length - 1
           const next        = items[i + 1]
           // Completed and future read as smaller, quieter cards; current dominates as the hero
-          const cardH       = isCurrent ? 264 : isCompleted ? 76 : 80
+          const cardH       = isCurrent ? 220 : isCompleted ? 76 : 80
           const nodeSize    = isCurrent ? 56 : isCompleted ? 42 : 40
           const OVERLAP     = 14
           const segAboveAccent = i > 0 && !isFuture && (items[i - 1].status === 'completed' || items[i - 1].status === 'in_progress')
@@ -2111,55 +2116,74 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
               </div>
 
               {isCurrent ? (
-                /* ── CURRENT — the hero. Full cinematic card, dominates the screen, glows softly ── */
+                /* ── CURRENT — the hero. Image stays to the left and blends into the dark card; the rest reads as one calm dark surface ── */
                 <button onClick={() => handleCardClick(item)} style={{
                   flex: 1, minWidth: 0, height: cardH, marginLeft: -OVERLAP, borderRadius: 24, overflow: 'hidden', boxSizing: 'border-box',
                   background: '#0D0D0D',
                   border: `1.5px solid ${accent}`,
                   animation: 'sbCurrentGlow 2.8s ease-in-out infinite',
-                  cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'column', padding: 0,
+                  cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'row', padding: 0,
                 }}>
-                  <div style={{ position: 'relative', height: 106, width: '100%', flexShrink: 0 }}>
+                  {/* Thumbnail — confined to the left, fades into the card's dark background */}
+                  <div style={{ position: 'relative', width: '38%', maxWidth: 150, flexShrink: 0, height: '100%' }}>
                     <div style={{
                       position: 'absolute', inset: 0,
                       backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
                     }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent, rgba(5,5,5,0.8))' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(120deg, transparent 30%, #0D0D0D 100%)' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent 60%)' }} />
+
+                    {/* Progress ring — overlaid on the thumbnail; arc length matches % complete, image darkened behind it for contrast */}
+                    <div style={{ position: 'absolute', left: 10, bottom: 10, width: CARD_RING_SIZE, height: CARD_RING_SIZE }}>
+                      <div style={{ position: 'absolute', inset: -4, borderRadius: RADII.pill, background: 'rgba(5,5,5,0.6)' }} />
+                      <svg width={CARD_RING_SIZE} height={CARD_RING_SIZE} viewBox={`0 0 ${CARD_RING_SIZE} ${CARD_RING_SIZE}`}
+                        style={{ position: 'relative', transform: 'rotate(-90deg)', display: 'block' }}>
+                        <circle cx={CARD_RING_SIZE / 2} cy={CARD_RING_SIZE / 2} r={CARD_RING_R} fill="none" stroke="rgba(255,255,255,0.26)" strokeWidth={3.5} />
+                        <circle cx={CARD_RING_SIZE / 2} cy={CARD_RING_SIZE / 2} r={CARD_RING_R} fill="none" stroke={accent} strokeWidth={3.5}
+                          strokeDasharray={CARD_RING_CIRCUM} strokeDashoffset={CARD_RING_CIRCUM * (1 - item.pct / 100)} strokeLinecap="round" />
+                      </svg>
+                      <span style={{
+                        position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 11, color: '#FFFFFF',
+                      }}>{item.pct}%</span>
+                    </div>
                   </div>
-                  <div style={{ flex: 1, minHeight: 0, padding: '13px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+
+                  {/* Content — sits in the dark section of the card */}
+                  <div style={{ flex: 1, minWidth: 0, padding: '16px 16px 14px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
                       <div style={{
-                        fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 24, lineHeight: 1.05, color: '#FFFFFF',
+                        fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 21, lineHeight: 1.08, color: '#FFFFFF',
                         overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
                       }}>
                         {item.title}
                       </div>
                       {desc ? (
-                        <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, fontWeight: 600, color: accent, marginTop: 4 }}>
+                        <div style={{
+                          fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: accent, marginTop: 4,
+                          overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+                        }}>
                           {stripEra(desc)}
                         </div>
                       ) : null}
                     </div>
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                        <div style={{ display: 'flex', gap: 6 }}>
-                          {Array.from({ length: dotsTotal }).map((_, di) => (
-                            <span key={di} style={{
-                              width: 8, height: 8, borderRadius: RADII.pill,
-                              background: di < dotsFilled ? accent : 'transparent',
-                              border: di < dotsFilled ? 'none' : '1px solid rgba(255,255,255,0.24)',
-                            }} />
-                          ))}
-                        </div>
-                        <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{item.pct}%</span>
+                      <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+                        {Array.from({ length: dotsTotal }).map((_, di) => (
+                          <span key={di} style={{
+                            width: 8, height: 8, borderRadius: RADII.pill,
+                            background: di < dotsFilled ? accent : 'transparent',
+                            border: di < dotsFilled ? 'none' : '1px solid rgba(255,255,255,0.24)',
+                          }} />
+                        ))}
                       </div>
                       <div
                         onClick={(e) => { e.stopPropagation(); handleCardClick(item) }}
                         style={{
-                          height: 44, borderRadius: 14, width: '100%',
+                          height: 40, borderRadius: 12, padding: '0 20px', alignSelf: 'flex-start',
                           background: `linear-gradient(180deg, ${sand}, ${bronze})`,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 15, color: '#111',
+                          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap',
+                          fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 13, color: '#111',
                         }}
                       >Continue Learning</div>
                     </div>
