@@ -54,6 +54,7 @@ Screen-level learning interaction components.
 - `InteractiveHotspotImage.jsx` — Full-screen image with tappable hotspots (two-phase intro→explore).
 - `KeyFigureReveal.jsx` — Scrollable portrait-hero screen introducing a key person. Portrait hero image (~60vh), name/role overlaid at bottom, significance statement, up to 4 knowledge sections, Continue button.
 - `MatchingTask.jsx` — Term-to-description card-pair matching activity with SVG connector lines and round splitting for large sets.
+- `MisconceptionCheck.jsx` — Full-screen, cinematic true/false misconception trap, one statement at a time, with calm reveal and exam-trap framing.
 - `MedicalTheoryPrescription.jsx` — Cause → prescription → reveal flow with a parchment-textured input surface and fuzzy-match validation.
 - `QuickRecallScreen.jsx` — Rapid-fire retrieval screen (choice + connection questions).
 - `RecoveryQuizPlayer.jsx` — Lightweight recovery quiz player (3–4 focused questions).
@@ -1329,4 +1330,4 @@ A Science chapter is complete only if the student can:
 
 If any of these are missing, revise the chapter before building.
 
-> **Note:** `MisconceptionCheck` is specified above as a required component for Part 4 (Check precision) but does not yet exist in `src/components/`. Before using it in a module, build it first per the New Component Approval Rule, and add it to `docs/components/COMPONENT_REGISTRY.md`. (`SpotTheError` now exists at `src/components/learning/SpotTheError.jsx` and is registered as block type `spotTheError`.)
+> **Note:** `MisconceptionCheck` and `SpotTheError` now both exist at `src/components/learning/` and are registered as block types `misconceptionCheck` and `spotTheError`.

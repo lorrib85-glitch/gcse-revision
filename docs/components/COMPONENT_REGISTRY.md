@@ -220,6 +220,17 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
+### MisconceptionCheck
+
+**File:** `src/components/learning/MisconceptionCheck.jsx`  
+**Purpose:** Precision-check interaction (Science blueprint Part 4 — Check precision). Full-screen, cinematic, one true/false misconception statement at a time — never a generic quiz card. Calm reveal headline ("Spotted it." / "Actually true."/"Actually false.") plus an optional exam-trap note. Logs to the weakness tracker under topic "Misconception recognition".  
+**Props:** `block`, `subject`, `onContinue`  
+**Block shape:** `{ type: 'misconceptionCheck', statements: [{ statement, answer: true|false, reveal, examTrap? }] }`  
+**Screen type:** `misconceptionCheck` (rendered as a `Screen` content block in `ModulePlayer`)  
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `BUTTONS`, `unifiedWeaknessTracker`
+
+---
+
 ### SpotTheError
 
 **File:** `src/components/learning/SpotTheError.jsx`  

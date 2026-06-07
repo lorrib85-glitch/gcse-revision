@@ -24,6 +24,7 @@ import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 import TheoryCompareBlock from '../learning/TheoryCompareBlock.jsx'
 import ColSortBlock from '../learning/ColSortBlock.jsx'
 import SpotTheError from '../learning/SpotTheError.jsx'
+import MisconceptionCheck from '../learning/MisconceptionCheck.jsx'
 import ExaminerExplainsScreen from '../learning/ExaminerExplainsScreen.jsx'
 import SwipeSort from '../learning/SwipeSort.jsx'
 import GalensDiagnostic from '../learning/GalensDiagnostic.jsx'
@@ -1162,6 +1163,7 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'theoryCompare' && <TheoryCompareBlock block={block} subject={subject} />}
           {block.type === 'colsort'       && <ColSortBlock block={block} subject={subject} />}
           {block.type === 'spotTheError'  && <SpotTheError block={block} subject={subject} />}
+          {block.type === 'misconceptionCheck' && <MisconceptionCheck block={block} subject={subject} />}
         </div>
       ))}
     </div>
