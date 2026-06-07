@@ -1897,8 +1897,10 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
 
   function completeModule() {
     recordActivity()
-    // Reset saved position so re-opening starts from the beginning
-    saveModuleState(module.id, { screen: 0, hookDone: false, wylDone: true, recallDone: false, introDone: false, examinerAttempts })
+    // Persist full completion (screen === total) so SubjectBrowser's pct/status calc reads this
+    // module as 'completed'. Keep the intro flags true so re-opening reviews the content
+    // straight away instead of replaying the hook/recall/outcomes screens.
+    saveModuleState(module.id, { screen: total, hookDone: true, wylDone: true, recallDone: true, introDone: true, examinerAttempts })
     setTimeout(() => {
       if (onChapterComplete) onChapterComplete(module)
       else onBack()
