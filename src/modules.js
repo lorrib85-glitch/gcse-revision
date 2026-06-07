@@ -1943,80 +1943,53 @@ Level 1 (1–2 marks): Simple identification of a religious response with little
       },
 
       {
-        type: 'faceExaminer',
+        type: 'guidedExamResponse',
         stage: 'Exam prep',
-        label: 'Face the Examiner — 8 marks',
-        examiner: {
-          type: '8-mark-explain',
+        label: 'Write for the examiner',
+        exam: {
           board: 'edexcel',
           subject: 'history',
           topic: 'black-death',
-          difficulty: 'challenging',
 
-          question: 'Explain two consequences of the Black Death in England. [8 marks]',
-          marks: 8,
-          mark: 5,
-          summary: 'A solid mid-level answer. Both consequences are real and the explanations have a genuine start — but each chain stops one step before the "so what?" that the top band needs.',
+          question: 'Describe two ways the Black Death spread through England. (4 marks)',
+          marks: 4,
 
-          markScheme: `Level 3 (6–8 marks): Detailed explanation of two consequences with developed reasoning, showing how the Black Death caused each one.
-Level 2 (3–5 marks): Some explanation of two consequences, but at least one lacks development of the causal chain.
-Level 1 (1–2 marks): Simple identification of consequences with little or no explanation.
-Award marks for any two of (each requiring causal explanation):
-- Labour shortage → higher wages → challenge to feudal system (must show the full chain)
-- Church authority weakened → people lost faith → contributed to later social unrest (must explain why)
-- Social disruption → Peasants' Revolt 1381 (must link Black Death to conditions that led to revolt)
-- Deserted villages / economic disruption (must explain the mechanism)
-Do NOT award for identifying consequences without explaining HOW the Black Death caused them.`,
-
-          sampleAnswer: `One consequence was that around one-third of England's population died. This meant that there weren't enough workers left to farm the land, so wages started to rise because landowners needed people to work for them.
-
-Another consequence was that people lost faith in the Church. Many priests died from the plague, and prayer hadn't stopped it spreading, so people began to question the Church's power.`,
-
-          annotations: [
+          sections: [
             {
-              id: 'ann1',
-              target: 'around one-third of England\'s population died.',
-              occurrence: 1,
-              type: 'strong',
-              comment: 'Precise evidence — exactly the kind of detail examiners are looking for.',
+              label: 'Your first way',
+              starter: 'One way the Black Death spread through England was…',
+              placeholder: '…ships brought infected rats from Europe into English ports.',
             },
             {
-              id: 'ann2',
-              target: 'so wages started to rise because landowners needed people to work for them.',
-              occurrence: 1,
-              type: 'weak',
-              comment: 'The chain is started well — but it stops short. What did rising wages change about the relationship between workers and landowners? Why did that matter?',
-            },
-            {
-              id: 'ann3',
-              target: 'people began to question the Church\'s power.',
-              occurrence: 1,
-              type: 'weak',
-              comment: 'A real consequence with a reasonable start — but underdeveloped. Push it further: what did weakened Church authority lead to in the years that followed?',
+              label: 'Your second way',
+              starter: 'Another way it spread was…',
+              placeholder: '…fleas living on rats bit people and passed on the disease.',
             },
           ],
 
-          improvementPrompts: {
-            ann2: {
-              prompt: '+ Explain why this mattered',
-              placeholder: 'e.g. ...This challenged the feudal system, because peasants had previously been bound to their lord with no power to negotiate — now they could demand higher wages and better conditions...',
-            },
-            ann3: {
-              prompt: '+ Follow the chain further',
-              placeholder: 'e.g. ...This loss of trust contributed to growing resentment, which fed into the social unrest behind the Peasants\' Revolt of 1381...',
-            },
-          },
+          markScheme: `Total: 4 marks. Award up to 2 marks per valid way described, maximum 2 ways.
+- 1 mark: simple identification of a valid method of spread (named but not explained)
+- 2 marks: identification + specific detail showing HOW that method worked
 
-          criteriaOptions: [
-            'Two clear consequences',
-            'Precise evidence used',
-            'Causal chain explained',
-            'Developed explanation',
-            'Links to feudal system',
-            'Too vague',
-            'Missing causal chain',
-            'Missing second consequence',
-          ],
+Way A — Trade and shipping
+  1 mark: "Ships brought the disease to England" / "It came from Europe by trade"
+  2 marks: shows the mechanism, e.g. "Trading ships arriving from Europe brought infected rats into English ports such as Melcombe" — names the route (Europe → English ports), the carrier, ideally a named port (Melcombe/Weymouth, where the plague is traditionally first recorded landing in England, 1348)
+
+Way B — Rats and fleas (biological transmission)
+  1 mark: "Rats spread it" / "Fleas bit people and made them ill"
+  2 marks: shows the chain, e.g. "Fleas living on black rats carried the plague bacteria and passed it to humans through bites" — must show flea → rat → human-bite chain; credit named detail (black rats / bacteria / Yersinia pestis)
+
+Other valid ways (mark on the same 1/2 basis if developed with equivalent specific detail):
+- Person-to-person contact in crowded towns, markets, fairs
+- Pneumonic spread via coughing/breathing infected air
+- Overcrowding/poor sanitation — ONLY if linked to a specific transmission mechanism, not vague "dirtiness"
+
+Do NOT credit:
+- Vague claims with no named mechanism ("people were dirty", "it spread quickly")
+- Two restatements of the same method (counts as one way)
+- Generic "germs"/"disease" with no transmission route described
+
+Exemplar 4/4 answer: "Trading ships arriving from Europe brought infected rats into English ports such as Melcombe. Fleas living on black rats carried the plague bacteria and passed it to humans through bites."`,
         },
       },
 

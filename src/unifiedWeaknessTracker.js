@@ -4,7 +4,9 @@
 
 const WRONG_ANSWERS_KEY = 'gcse_wrong_answers'
 const CORRECT_ANSWERS_KEY = 'gcse_correct_answers'
+const EXAM_TECHNIQUE_KEY = 'gcse_exam_techniques'
 const WEAK_THRESHOLD = 2  // Flag topic as weak after 2+ wrong answers
+const TECHNIQUE_PATTERN_THRESHOLD = 2  // Flag a technique pattern as recurring after 2+ occurrences
 
 // ─── Storage helpers ──────────────────────────────────────────────────────────
 
@@ -20,6 +22,13 @@ function loadCorrectAnswers() {
 }
 function saveCorrectAnswers(data) {
   try { localStorage.setItem(CORRECT_ANSWERS_KEY, JSON.stringify(data)) } catch {}
+}
+
+function loadExamTechniques() {
+  try { return JSON.parse(localStorage.getItem(EXAM_TECHNIQUE_KEY) || '[]') } catch { return [] }
+}
+function saveExamTechniques(data) {
+  try { localStorage.setItem(EXAM_TECHNIQUE_KEY, JSON.stringify(data)) } catch {}
 }
 
 // ─── Logging API ──────────────────────────────────────────────────────────────
@@ -252,6 +261,80 @@ export function clearWeaknessLog() {
     localStorage.removeItem(WRONG_ANSWERS_KEY)
     localStorage.removeItem(CORRECT_ANSWERS_KEY)
   } catch {}
+}
+
+// ─── Exam Technique Tracking ──────────────────────────────────────────────────
+// Separate from topic/content weaknesses: tracks meta-level patterns about HOW a
+// student approaches written exam questions (e.g. "names a method but never
+// explains how it works"), independent of whether the underlying knowledge is right.
+
+/**
+ * Log an exam-technique pattern. Called when AI marking detects a recurring
+ * approach issue in a student's written answer (e.g. missing examples, vague language).
+ *
+ * @param {Object} metadata - { subject, type, evidence, suggestion, questionId, source }
+ *   type: a fixed taxonomy key, e.g. 'missingExample' | 'noNamedMechanism' |
+ *         'onlyOneIdeaDeveloped' | 'vagueLanguage' | 'repeatsQuestion' | 'noSpecificDetail'
+ *   evidence: short quote/description of where the pattern showed up
+ *   suggestion: concrete next-time action tied to this pattern
+ *   source: 'module' | 'exam' | 'quiz'
+ */
+export function logExamTechnique(metadata = {}) {
+  const { subject, type } = metadata
+  if (!subject || !type) return
+
+  const log = loadExamTechniques()
+  const entry = {
+    timestamp: Date.now(),
+    date: new Date().toISOString().slice(0, 10),
+    subject,
+    type,
+    evidence: metadata.evidence || '',
+    suggestion: metadata.suggestion || '',
+    questionId: metadata.questionId || `${type}-${Date.now()}`,
+    source: metadata.source || 'unknown',
+  }
+
+  log.unshift(entry)
+  // Keep last 500 technique observations for pattern analysis
+  saveExamTechniques(log.slice(0, 500))
+}
+
+/**
+ * Aggregate logged technique observations into recurring patterns.
+ * Returns entries with count >= threshold, sorted by frequency (most persistent first).
+ */
+export function getExamTechniquePatterns(threshold = TECHNIQUE_PATTERN_THRESHOLD) {
+  const log = loadExamTechniques()
+  const byType = {}
+
+  log.forEach(entry => {
+    if (!byType[entry.type]) {
+      byType[entry.type] = { type: entry.type, count: 0, subjects: new Set(), recentEvidence: [] }
+    }
+    const bucket = byType[entry.type]
+    bucket.count += 1
+    bucket.subjects.add(entry.subject)
+    if (bucket.recentEvidence.length < 3 && entry.evidence) bucket.recentEvidence.push(entry.evidence)
+  })
+
+  return Object.values(byType)
+    .map(bucket => ({
+      type: bucket.type,
+      count: bucket.count,
+      subjects: Array.from(bucket.subjects),
+      recentEvidence: bucket.recentEvidence,
+    }))
+    .filter(p => p.count >= threshold)
+    .sort((a, b) => b.count - a.count)
+}
+
+/**
+ * Get the single most persistent exam-technique pattern (mirrors getWeakestSubject).
+ */
+export function getTopExamTechniquePattern() {
+  const patterns = getExamTechniquePatterns()
+  return patterns[0] || null
 }
 
 // ─── Legacy compatibility ─────────────────────────────────────────────────────

@@ -10,6 +10,7 @@ import CinematicRevealMoment from '../learning/CinematicRevealMoment.jsx'
 import ConceptReveal from '../learning/ConceptReveal.jsx'
 import LearningHeader from '../core/LearningHeader.jsx'
 import FaceTheExaminer from '../learning/FaceTheExaminer.jsx'
+import GuidedExamResponse from '../learning/GuidedExamResponse.jsx'
 import InteractiveHotspotImage from '../learning/InteractiveHotspotImage.jsx'
 import FillInTheBlanksBlock from '../learning/FillInTheBlanksBlock.jsx'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
@@ -2219,6 +2220,22 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         <FaceTheExaminer
           module={module}
           examiner={cur.examiner}
+          onExit={headerOnBack}
+          onContinue={isLast ? handleFinish : () => go(1)}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  // ── GuidedExamResponse as a mid-module content screen ───────────────────────
+  if (cur?.type === 'guidedExamResponse') {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <GuidedExamResponse
+          module={module}
+          exam={cur.exam}
           onExit={headerOnBack}
           onContinue={isLast ? handleFinish : () => go(1)}
         />
