@@ -2082,14 +2082,14 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                 <div style={{
                   width: 2, flexShrink: 0,
                   height: Math.max(0, (cardH - nodeSize) / 2),
-                  background: i === 0 ? 'transparent' : segAboveAccent ? accent : 'rgba(255,255,255,0.14)',
+                  background: i === 0 ? 'transparent' : segAboveAccent ? accent : `rgba(${accentRgb},0.18)`,
                 }} />
 
                 {isCompleted && (
                   <div style={{
                     width: 42, height: 42, borderRadius: RADII.pill, flexShrink: 0,
                     background: accent,
-                    boxShadow: `0 0 10px rgba(${accentRgb},0.25)`,
+                    boxShadow: `0 0 14px rgba(${accentRgb},0.4), 0 0 5px rgba(${accentRgb},0.5)`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     <svg width={18} height={18} viewBox="0 0 18 18" fill="none">
@@ -2111,15 +2111,15 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                 {isFuture && (
                   <div style={{
                     width: 40, height: 40, borderRadius: RADII.pill, flexShrink: 0,
-                    background: '#111', border: '1px solid rgba(255,255,255,0.1)',
+                    background: `rgba(${accentRgb},0.08)`, border: `1px solid rgba(${accentRgb},0.25)`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: 'rgba(255,255,255,0.34)', lineHeight: 1 }}>{item.number}</span>
+                    <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: `rgba(${accentRgb},0.55)`, lineHeight: 1 }}>{item.number}</span>
                   </div>
                 )}
 
                 {!isLast ? (
-                  <div style={{ width: 2, flex: 1, background: segBelowAccent ? accent : 'rgba(255,255,255,0.14)' }} />
+                  <div style={{ width: 2, flex: 1, background: segBelowAccent ? accent : `rgba(${accentRgb},0.18)` }} />
                 ) : <div style={{ flex: 1 }} />}
               </div>
 
@@ -2133,7 +2133,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                   cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'column', padding: 0,
                 }}>
                   {/* Thumbnail banner — spans the full card width, fades into the dark background below */}
-                  <div style={{ position: 'relative', height: 122, width: '100%', flexShrink: 0 }}>
+                  <div style={{ position: 'relative', height: 140, width: '100%', flexShrink: 0 }}>
                     <div style={{
                       position: 'absolute', inset: 0,
                       backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
@@ -2157,23 +2157,23 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                   </div>
 
                   {/* Title + subtitle on the left, compact "Continue" beside it on the right */}
-                  <div style={{ flex: 1, minHeight: 0, padding: '12px 16px 14px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  <div style={{ flex: 1, minHeight: 0, padding: '10px 16px 12px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{
-                        fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 19, lineHeight: 1.1, color: '#FFFFFF',
+                        fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 16, lineHeight: 1.2, color: '#FFFFFF',
                         overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
                       }}>
                         {item.title}
                       </div>
                       {desc ? (
                         <div style={{
-                          fontFamily: "'Outfit', sans-serif", fontSize: 12.5, fontWeight: 600, color: accent, marginTop: 3,
+                          fontFamily: "'Outfit', sans-serif", fontSize: 11, fontWeight: 600, color: accent, marginTop: 1,
                           overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
                         }}>
                           {stripEra(desc)}
                         </div>
                       ) : null}
-                      <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                      <div style={{ display: 'flex', gap: 6, marginTop: 5 }}>
                         {Array.from({ length: dotsTotal }).map((_, di) => (
                           <span key={di} style={{
                             width: 7, height: 7, borderRadius: RADII.pill,
@@ -2219,7 +2219,6 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                     ) : null}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0, marginLeft: 8 }}>
-                    <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>100%</span>
                     <span style={{
                       width: 20, height: 20, borderRadius: RADII.pill, flexShrink: 0,
                       background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center',
