@@ -720,6 +720,8 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
     let best = null, bestPct = -1
     for (const m of MODULES) {
       const s = safeGetModuleState(m.id)
+      // Completed modules don't belong in "jump back in" — that's for unfinished progress
+      if (s.completed) continue
       if ((s.screen || 0) > 0) {
         const pct = ((s.screen || 0) / Math.max(1, m.screens?.length || 1)) * 100
         if (pct > bestPct) { bestPct = pct; best = m }
@@ -730,7 +732,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
 
   const jumpModState = jumpBackModule ? safeGetModuleState(jumpBackModule.id) : {}
   const jumpPct = jumpBackModule
-    ? Math.round(((jumpModState.screen || 0) / Math.max(1, jumpBackModule.screens?.length || 1)) * 100)
+    ? (jumpModState.completed ? 100 : Math.round(((jumpModState.screen || 0) / Math.max(1, jumpBackModule.screens?.length || 1)) * 100))
     : 0
 
   // Days active this calendar week (Mon–Sun)
@@ -779,7 +781,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
         const mod = MODULES.find(m => m.id === modId)
         if (!mod) continue
         const state = safeGetModuleState(mod.id)
-        if ((state.screen || 0) === 0) return { mod, tag: w.tag }
+        if (!state.completed && (state.screen || 0) === 0) return { mod, tag: w.tag }
       }
       return null
     } catch { return null }
@@ -1940,8 +1942,10 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
     const screen = s.screen || 0
     const hasStarted = (s.hookDone && s.wylDone) || screen > 0
     const total = mod.screens?.length || 1
-    const pct = Math.min(100, Math.round((screen / total) * 100))
-    const status = pct >= 100 ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
+    // `completed` sticks once a module is finished — reviewing it afterwards moves `screen`
+    // back down, but it must never read as anything other than 'completed' again.
+    const pct = s.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
+    const status = s.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
     return { ...mod, number: i + 1, status, pct }
   })
 
@@ -2276,6 +2280,7 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
   function modPct(mod) {
     if (!mod?.screens) return 0
     const s = safeGetModuleState(mod.id)
+    if (s.completed) return 100
     const screen = s.screen || 0
     const hasStarted = (s.hookDone && s.wylDone) || screen > 0
     if (!hasStarted) return 0
@@ -2404,6 +2409,7 @@ function ModulesTab({ onOpenModule }) {
   function modPct(mod) {
     if (!mod || !mod.screens) return 0
     const s = safeGetModuleState(mod.id)
+    if (s.completed) return 100
     const screen = s.screen || 0
     return Math.min(100, Math.round((screen / mod.screens.length) * 100))
   }

@@ -1840,6 +1840,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const [showExaminer,         setShowExaminer]         = useState(false)
   const [showExaminerExplains, setShowExaminerExplains] = useState(false)
   const [examinerAttempts, setExaminerAttempts] = useState(() => saved.examinerAttempts || [])
+  // Sticks once a module has been finished — re-entering to review never un-completes it
+  const [completed, setCompleted] = useState(() => saved.completed || false)
   const total   = module.screens.length
   const pct     = Math.round(((screen + 1) / total) * 100)
   const isLast  = screen === total - 1
@@ -1850,8 +1852,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const [selectedHealer, setSelectedHealer] = useState(null)
 
   useEffect(() => {
-    saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts })
-  }, [screen, module.id, hookDone, wylDone, recallDone, introDone, examinerAttempts])
+    saveModuleState(module.id, { screen, hookDone, wylDone, recallDone, introDone, examinerAttempts, completed })
+  }, [screen, module.id, hookDone, wylDone, recallDone, introDone, examinerAttempts, completed])
 
   // Reset cinematic header visibility whenever we navigate to a different screen
   useEffect(() => { setCinematicHeaderVisible(false) }, [screen])
@@ -1897,10 +1899,12 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
 
   function completeModule() {
     recordActivity()
-    // Persist full completion (screen === total) so SubjectBrowser's pct/status calc reads this
-    // module as 'completed'. Keep the intro flags true so re-opening reviews the content
-    // straight away instead of replaying the hook/recall/outcomes screens.
-    saveModuleState(module.id, { screen: total, hookDone: true, wylDone: true, recallDone: true, introDone: true, examinerAttempts })
+    setCompleted(true)
+    // Persist full completion with a sticky `completed` flag so SubjectBrowser always reads this
+    // module as 'completed' — even while reviewing it afterwards moves `screen` back down. Keep
+    // the intro flags true so re-opening reviews the content straight away rather than replaying
+    // the hook/recall/outcomes screens.
+    saveModuleState(module.id, { screen: total, hookDone: true, wylDone: true, recallDone: true, introDone: true, examinerAttempts, completed: true })
     setTimeout(() => {
       if (onChapterComplete) onChapterComplete(module)
       else onBack()
