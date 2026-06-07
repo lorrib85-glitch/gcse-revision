@@ -1640,8 +1640,8 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         stage: 'The aftermath',
         label: 'Changed or stayed the same?',
         columns: [
-          { label: 'CHANGED\nBy 1350',   color: '#4CAF7D', colorRgb: '76,175,125',  bg: 'rgba(76,175,125,.07)'  },
-          { label: 'UNCHANGED\nBy 1350', color: '#8C3A2A', colorRgb: '140,58,42',   bg: 'rgba(140,58,42,.07)'   },
+          { label: 'CHANGED\nBy 1350',         color: '#4CAF7D', colorRgb: '76,175,125', bg: 'rgba(76,175,125,.07)', image: '/figures/history/medicine/black-death/aftermath-changed.png' },
+          { label: 'STAYED THE SAME\nBy 1350', color: '#8C3A2A', colorRgb: '140,58,42',  bg: 'rgba(140,58,42,.07)',  image: '/figures/history/medicine/black-death/aftermath-unchanged.png' },
         ],
         items: [
           { label: 'Peasant wages — labourers could now demand higher pay',          col: 0, explanation: 'Changed — the labour shortage gave survivors real bargaining power for the first time.' },

@@ -216,13 +216,13 @@ export default function SwipeSort({ block, subject, onComplete }) {
         <div style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 0 }}>
           <div style={{
             flex: 1,
-            backgroundImage: 'url(/swipe-supernatural.webp)',
+            backgroundImage: `url(${leftCol.image ?? '/swipe-supernatural.webp'})`,
             backgroundSize: 'cover', backgroundPosition: 'center top',
             opacity: 0.65, filter: 'grayscale(10%) brightness(0.75)',
           }} />
           <div style={{
             flex: 1,
-            backgroundImage: 'url(/swipe-natural.webp)',
+            backgroundImage: `url(${rightCol.image ?? '/swipe-natural.webp'})`,
             backgroundSize: 'cover', backgroundPosition: 'center top',
             opacity: 0.65, filter: 'grayscale(10%) brightness(0.75)',
           }} />
@@ -352,13 +352,13 @@ export default function SwipeSort({ block, subject, onComplete }) {
         <div style={{ position: 'fixed', inset: 0, display: 'flex', zIndex: 0 }}>
           <div style={{
             flex: 1,
-            backgroundImage: 'url(/swipe-supernatural.webp)',
+            backgroundImage: `url(${leftCol.image ?? '/swipe-supernatural.webp'})`,
             backgroundSize: 'cover', backgroundPosition: 'center top',
             opacity: 0.45, filter: 'grayscale(15%) brightness(0.78)',
           }} />
           <div style={{
             flex: 1,
-            backgroundImage: 'url(/swipe-natural.webp)',
+            backgroundImage: `url(${rightCol.image ?? '/swipe-natural.webp'})`,
             backgroundSize: 'cover', backgroundPosition: 'center top',
             opacity: 0.45, filter: 'grayscale(15%) brightness(0.78)',
           }} />
@@ -451,7 +451,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
       <div style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 0 }}>
         <div style={{
           flex: 1,
-          backgroundImage: 'url(/swipe-supernatural.webp)',
+          backgroundImage: `url(${leftCol.image ?? '/swipe-supernatural.webp'})`,
           backgroundSize: 'cover', backgroundPosition: 'center top',
           opacity: dragX < -20 ? 0.90 : 0.72,
           filter: 'grayscale(5%) brightness(0.88)',
@@ -459,7 +459,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
         }} />
         <div style={{
           flex: 1,
-          backgroundImage: 'url(/swipe-natural.webp)',
+          backgroundImage: `url(${rightCol.image ?? '/swipe-natural.webp'})`,
           backgroundSize: 'cover', backgroundPosition: 'center top',
           opacity: dragX > 20 ? 0.90 : 0.72,
           filter: 'grayscale(5%) brightness(0.88)',
@@ -482,58 +482,12 @@ export default function SwipeSort({ block, subject, onComplete }) {
         background: 'radial-gradient(ellipse 85% 70% at 50% 50%, transparent 35%, rgba(5,6,10,0.50) 100%)',
       }} />
 
-      {/* Column labels */}
-      <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0,
-        display: 'flex', zIndex: 3,
-      }}>
-        <div style={{
-          flex: 1,
-          padding: '80px 18px 18px',
-          display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
-          opacity: dragX < -20 ? 1 : 0.65,
-          transition: dragging ? 'none' : 'opacity 0.3s',
-        }}>
-          {leftCol.label.split('\n').map((line, i) => (
-            <div key={i} style={{
-              fontFamily: i === 0 ? 'Sora, sans-serif' : 'Outfit, sans-serif',
-              fontWeight: i === 0 ? 700 : 500,
-              fontSize: i === 0 ? 13 : 11,
-              color: i === 0 ? (leftCol.color ?? '#A89070') : 'rgba(245,245,245,0.55)',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              lineHeight: 1.3,
-            }}>{line}</div>
-          ))}
-        </div>
-        <div style={{ width: 1, background: 'rgba(255,255,255,0.08)', marginTop: 52 }} />
-        <div style={{
-          flex: 1,
-          padding: '80px 18px 18px',
-          display: 'flex', flexDirection: 'column', alignItems: 'flex-end', textAlign: 'right',
-          opacity: dragX > 20 ? 1 : 0.65,
-          transition: dragging ? 'none' : 'opacity 0.3s',
-        }}>
-          {rightCol.label.split('\n').map((line, i) => (
-            <div key={i} style={{
-              fontFamily: i === 0 ? 'Sora, sans-serif' : 'Outfit, sans-serif',
-              fontWeight: i === 0 ? 700 : 500,
-              fontSize: i === 0 ? 13 : 11,
-              color: i === 0 ? (rightCol.color ?? accent) : 'rgba(245,245,245,0.55)',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              lineHeight: 1.3,
-            }}>{line}</div>
-          ))}
-        </div>
-      </div>
-
       {/* Card stack */}
       <div style={{
         position: 'absolute', inset: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         zIndex: 4,
-        paddingTop: 140,
+        paddingTop: 60,
         paddingBottom: 200,
       }}>
         {cur && (
@@ -629,7 +583,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
             transition: 'background 0.2s',
           }}
         >
-          ← SUPERNATURAL
+          ← {leftCol.label.split('\n')[0]}
         </button>
         <button
           onClick={() => tapColumn(1)}
@@ -648,7 +602,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
             transition: 'background 0.2s',
           }}
         >
-          RATIONAL →
+          {rightCol.label.split('\n')[0]} →
         </button>
       </div>
 
