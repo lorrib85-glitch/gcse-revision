@@ -1953,6 +1953,10 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const realCount      = items.filter(m => m.status !== 'coming_soon').length
   const overallPct     = realCount > 0 ? Math.round((completedCount / realCount) * 100) : 0
 
+  // The next module to tackle — whether already in progress or not yet started — is
+  // highlighted as the hero CTA, so finishing one module always hands off the spotlight.
+  const nextUpIndex = items.findIndex(m => m.status !== 'completed' && m.status !== 'coming_soon')
+
   const [ringPct, setRingPct] = useState(0)
   useEffect(() => { const t = setTimeout(() => setRingPct(overallPct), 80); return () => clearTimeout(t) }, [overallPct])
 
@@ -2054,8 +2058,8 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
       <div style={{ padding: '20px 24px 0' }}>
         {items.map((item, i) => {
           const isCompleted = item.status === 'completed'
-          const isCurrent   = item.status === 'in_progress'
-          const isFuture    = item.status === 'not_started' || item.status === 'coming_soon'
+          const isCurrent   = item.status !== 'coming_soon' && i === nextUpIndex
+          const isFuture    = !isCompleted && !isCurrent
           const isLast      = i === items.length - 1
           const next        = items[i + 1]
           // Completed and future read as smaller, quieter cards; current dominates as the hero
@@ -2187,7 +2191,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                         display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap',
                         fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 14, color: '#111',
                       }}
-                    >Continue</div>
+                    >{item.pct > 0 ? 'Continue' : 'Start'}</div>
                   </div>
                 </button>
               ) : isCompleted ? (
