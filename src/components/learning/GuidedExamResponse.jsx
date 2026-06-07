@@ -3,7 +3,11 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
 import { RADII } from '../../constants/radii.js'
-import { logExamTechnique } from '../../unifiedWeaknessTracker.js'
+import { logExamTechnique, getExamTechniquePatterns } from '../../unifiedWeaknessTracker.js'
+
+// Only acknowledge a technique pattern once it has shown up more than twice —
+// a single slip isn't a pattern worth naming back to the student.
+const RECURRING_PATTERN_THRESHOLD = 3
 
 const PALETTES = {
   history:   { accent: '#C89B6D', bg: '#15110C' },
@@ -42,6 +46,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
   const [submitting, setSubmitting]     = useState(false)
   const [error, setError]               = useState(null)
   const [result, setResult]             = useState(null)
+  const [recurringPattern, setRecurringPattern] = useState(null)
   const loggedRef = useRef(false)
 
   useEffect(() => {
@@ -75,9 +80,10 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
 
       if (!loggedRef.current && Array.isArray(data.techniqueFlags) && data.techniqueFlags.length) {
         loggedRef.current = true
+        const flagSubject = module.subject || exam.subject
         data.techniqueFlags.forEach(flag => {
           logExamTechnique({
-            subject: module.subject || exam.subject,
+            subject: flagSubject,
             type: flag.type,
             evidence: flag.evidence,
             suggestion: flag.suggestion,
@@ -85,6 +91,13 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
             source: 'module',
           })
         })
+
+        // Only acknowledge a pattern on screen once it's recurred more than twice —
+        // a single slip isn't worth naming back to the student as a standing trait.
+        const flaggedTypes = new Set(data.techniqueFlags.map(f => f.type))
+        const recurring = getExamTechniquePatterns(RECURRING_PATTERN_THRESHOLD)
+          .find(p => flaggedTypes.has(p.type))
+        if (recurring) setRecurringPattern(recurring)
       }
 
       setPhase('result')
@@ -395,8 +408,6 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
   // PHASE: result — mark, section feedback, verdict, and how to gain more marks
   // ═══════════════════════════════════════════════════════════════════════════
   if (phase === 'result' && result) {
-    const flags = Array.isArray(result.techniqueFlags) ? result.techniqueFlags : []
-    const topFlag = flags[0]
     return (
       <div style={{
         position: 'fixed', inset: 0, zIndex: 1000,
@@ -471,7 +482,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
             </div>
           )}
 
-          {topFlag && (
+          {recurringPattern && (
             <div style={{
               padding: SPACING.compact,
               borderRadius: RADII.medium,
@@ -480,7 +491,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
             }}>
               <div style={sectionHeadingStyle}>Noticed</div>
               <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, lineHeight: 1.6, color: 'rgba(255,255,255,0.6)' }}>
-                We've noticed you tend towards {TECHNIQUE_LABELS[topFlag.type] || 'the same kind of slip'} — we'll bring this back up.
+                We've noticed you tend towards {TECHNIQUE_LABELS[recurringPattern.type] || 'the same kind of slip'} — we'll bring this back up.
               </div>
             </div>
           )}
