@@ -1209,11 +1209,59 @@ Use near the end of every major chapter. Must show: weak student response, mark 
 
 For Science, focus heavily on: vague wording, missing key terms, contradictions, overgeneralisation, not using data, not answering the command word.
 
-**`SpotTheError`**
+**`SpotTheError`** — built (`src/components/learning/SpotTheError.jsx`)
 
-Use for: misconceptions, calculations, practical method flaws, incorrect explanations, graph interpretation errors.
+**Purpose**
 
-Required interaction: student selects the wrong word/number/sentence, student explains why, feedback checks both the selected error and the explanation.
+Train students to identify incorrect reasoning, incorrect calculations, inaccurate statements and exam mistakes, and to explain *why* something is wrong. This is more powerful than multiple choice because it forces diagnosis, not recognition.
+
+**Core interaction**
+
+The student is shown a statement, calculation, graph interpretation, paragraph or exam answer with an error hidden inside it. They must:
+
+1. **Tap** the incorrect part.
+2. **Explain** why it's wrong.
+3. **Repair** it — rewrite the statement so it's accurate.
+
+The repair step matters most: most students can spot errors, fewer can fix them.
+
+**Visual structure**
+
+- No "Spot the error" title — too game-like. Use a small, plain, subtle opener: *"Something isn't right."* / *"Look closely."* / *"Check the reasoning."*
+- The statement dominates the screen in a large, lightly-bordered, dark translucent card (`RADII.large`, `SPACING.standard` padding).
+- **Every** word is individually selectable — never pre-chunk into obvious phrases like `[plant cells]` `[chloroplasts]`, or the answer becomes obvious. The student builds a selection by tapping words, phrases, numbers or clauses.
+- Selected text gets a subtle subject-coloured glow, a 1px outline and slightly brighter text — never giant green boxes — plus a single one-shot pulse (`MOTION.scale.subtle`, no looping/permanent animation).
+- The "Why is this incorrect?" explanation box slides up only after a selection is made — never shown upfront. Minimum height ~120px, placeholder *"Explain what is wrong..."*, character count hidden until typing starts.
+- The "Rewrite the statement correctly" repair box appears only once the explanation has content.
+- Submit button reads **"Check my thinking"** (sentence case per brand rules) and stays disabled until an error is selected and an explanation is entered.
+
+**Feedback**
+
+Never a bare "✗ Wrong". Use a calm headline — *"Good catch."* / *"Almost."* — followed by: what was wrong, why examiners care, the correct version, and the common GCSE trap it represents.
+
+**Weak area integration**
+
+Automatically logs **"Error identification"** and **"Scientific precision"** as separate weaknesses via `logWrongAnswer`/`logCorrectAnswer` (`src/unifiedWeaknessTracker.js`) — error identification is scored by how closely the selection overlaps the authored error span; scientific precision is scored against the explanation's use of the block's key GCSE terms.
+
+**Block shape**
+
+```js
+{
+  type: 'spotTheError',
+  prompt?: string,            // overrides the default opener line
+  statement: string,
+  errorTarget: string,        // substring of `statement` marking the error
+  whatWasWrong: string,
+  examinerNote: string,
+  correctVersion: string,
+  commonTrap: string,
+  keyTerms?: string[],        // used to judge explanation precision
+}
+```
+
+**Universal across subjects** — Biology (*"All plant cells contain chloroplasts."*), Chemistry (*"Atoms gain electrons to form positive ions."*), Physics (*"Current is used up in a circuit."*), and equally usable in Maths, History and English with subject-appropriate statements.
+
+**Layout rules:** mobile-first, max content width 720px, one error per screen, never reveal answer options — the student must diagnose independently. Subject imagery (if any) at 10–15% opacity only; focus stays on the statement. Should feel like an examiner handing the student a flawed piece of work and saying *"find the problem"* — not a quiz.
 
 **`MisconceptionCheck`**
 
@@ -1281,4 +1329,4 @@ A Science chapter is complete only if the student can:
 
 If any of these are missing, revise the chapter before building.
 
-> **Note:** `MisconceptionCheck` and `SpotTheError` are specified above as required components for Part 4 (Check precision) but do not yet exist in `src/components/`. Before using them in a module, build them first per the New Component Approval Rule, and add them to `docs/components/COMPONENT_REGISTRY.md`.
+> **Note:** `MisconceptionCheck` is specified above as a required component for Part 4 (Check precision) but does not yet exist in `src/components/`. Before using it in a module, build it first per the New Component Approval Rule, and add it to `docs/components/COMPONENT_REGISTRY.md`. (`SpotTheError` now exists at `src/components/learning/SpotTheError.jsx` and is registered as block type `spotTheError`.)

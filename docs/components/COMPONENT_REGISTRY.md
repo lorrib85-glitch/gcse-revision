@@ -220,6 +220,17 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
+### SpotTheError
+
+**File:** `src/components/learning/SpotTheError.jsx`  
+**Purpose:** Diagnostic precision-check interaction (Science blueprint Part 4 — Check precision). Shows a statement, calculation or explanation containing one hidden error. The student selects the incorrect span, explains why it's wrong, then rewrites it correctly — diagnosis, not recognition. Logs "Error identification" and "Scientific precision" as separate weaknesses.  
+**Props:** `block`, `subject`, `onContinue`  
+**Block shape:** `{ type: 'spotTheError', prompt?, statement, errorTarget, whatWasWrong, examinerNote, correctVersion, commonTrap, keyTerms? }`  
+**Screen type:** `spotTheError` (rendered as a `Screen` content block in `ModulePlayer`)  
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `BUTTONS`, `unifiedWeaknessTracker`
+
+---
+
 ### SwipeSort
 
 **File:** `src/components/learning/SwipeSort.jsx`  
