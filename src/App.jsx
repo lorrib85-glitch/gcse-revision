@@ -1302,13 +1302,13 @@ function PulseTab({ onStartQuickFire }) {
 const MODULE_HEADER_IMAGES = {
   'history-medicine-medieval-beliefs-causes': '/headers/history-medicine-through-time.webp',
   'history-medicine-black-death': '/figures/history/medicine/black-death/plague-background.png',
-  'mod2': '/headers/history-medicine-through-time.webp',
-  'mod3': '/headers/history-medicine-through-time.webp',
-  'mod4': '/headers/history-medicine-through-time.webp',
+  'mod2': '/headers/history-medicine-bloodletting.png',
+  'mod3': '/headers/history-medicine-germ-bridge.png',
+  'mod4': '/headers/history-medicine-medieval-scripture.png',
   'mod5': '/headers/history-medicine-through-time.webp',
-  'mod6': '/headers/history-medicine-through-time.webp',
-  'mod7': '/headers/history-medicine-through-time.webp',
-  'mod8': '/headers/history-medicine-through-time.webp',
+  'mod6': '/headers/history-medicine-bloodletting.png',
+  'mod7': '/headers/history-medicine-germ-bridge.png',
+  'mod8': '/headers/history-medicine-medieval-scripture.png',
   'mod9': '/headers/history-medicine-through-time.webp',
   'sci_bio_w1': '/headers/bio-buildinglife.webp',
   'math1': '/headers/maths-numbers.webp',
@@ -2025,11 +2025,12 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           const isFuture    = item.status === 'not_started' || item.status === 'coming_soon'
           const isLast      = i === items.length - 1
           const next        = items[i + 1]
-          const cardH       = isCurrent ? 268 : isCompleted ? 68 : 92
-          const nodeSize    = isCurrent ? 56 : isCompleted ? 42 : 42
+          // Three different heights for three different shapes — breadcrumb, hero, locked row
+          const cardH       = isCurrent ? 264 : isCompleted ? 56 : 80
+          const nodeSize    = isCurrent ? 56 : isCompleted ? 42 : 40
           const segAboveAccent = i > 0 && !isFuture && (items[i - 1].status === 'completed' || items[i - 1].status === 'in_progress')
           const segBelowAccent = !isLast && isCompleted
-          const rowGap = !next ? 0 : isCurrent ? 16 : (next.status === 'in_progress' ? 14 : 12)
+          const rowGap = !next ? 0 : isCurrent ? 12 : 8
           const desc  = item.subtitle || item.era || ''
           const thumb = thumbFor(item)
           const dotsTotal  = 5
@@ -2049,19 +2050,20 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                 {isCompleted && (
                   <div style={{
                     width: 42, height: 42, borderRadius: RADII.pill, flexShrink: 0,
-                    background: `rgba(${accentRgb},0.18)`, border: `1.5px solid ${accent}`,
-                    boxShadow: `0 0 12px rgba(${accentRgb},0.25)`,
+                    background: accent,
+                    boxShadow: `0 0 10px rgba(${accentRgb},0.25)`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     <svg width={18} height={18} viewBox="0 0 18 18" fill="none">
-                      <path d="M4 9.2L7.2 12.4L14 5.5" stroke={cream} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M4 9.2L7.2 12.4L14 5.5" stroke="#0D0D0D" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
                 )}
                 {isCurrent && (
                   <div style={{
                     width: 56, height: 56, borderRadius: RADII.pill, flexShrink: 0,
-                    background: espresso, border: `2px solid ${accent}`,
+                    background: '#0D0D0D', border: `2px solid ${accent}`,
+                    boxShadow: `0 0 20px rgba(${accentRgb},0.35)`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     animation: 'sbCurrentGlow 2.8s ease-in-out infinite',
                   }}>
@@ -2070,11 +2072,11 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                 )}
                 {isFuture && (
                   <div style={{
-                    width: 42, height: 42, borderRadius: RADII.pill, flexShrink: 0,
-                    background: '#111', border: '1px solid rgba(255,255,255,0.12)',
+                    width: 40, height: 40, borderRadius: RADII.pill, flexShrink: 0,
+                    background: '#111', border: '1px solid rgba(255,255,255,0.1)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 18, color: 'rgba(255,255,255,0.38)', lineHeight: 1 }}>{item.number}</span>
+                    <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: 'rgba(255,255,255,0.34)', lineHeight: 1 }}>{item.number}</span>
                   </div>
                 )}
 
@@ -2083,28 +2085,28 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                 ) : <div style={{ flex: 1 }} />}
               </div>
 
-              {/* Connector — bridges the active node to the active card */}
+              {/* Connector — bridges the active node directly into the hero card */}
               {isCurrent && (
-                <div style={{ position: 'absolute', left: 60, top: cardH / 2 - 1, width: 14, height: 2, background: accent, zIndex: 2 }} />
+                <div style={{ position: 'absolute', left: 60, top: cardH / 2 - 1, width: 16, height: 2, background: accent, zIndex: 2 }} />
               )}
 
-              {/* Card */}
               {isCurrent ? (
+                /* ── CURRENT — the hero. Full cinematic card, dominates the screen ── */
                 <button onClick={() => handleCardClick(item)} style={{
-                  flex: 1, minWidth: 0, height: 268, borderRadius: 24, overflow: 'hidden', boxSizing: 'border-box',
-                  background: 'linear-gradient(180deg, rgba(20,17,13,0.98), rgba(8,8,8,0.98))',
+                  flex: 1, minWidth: 0, height: cardH, borderRadius: 24, overflow: 'hidden', boxSizing: 'border-box',
+                  background: '#0D0D0D',
                   border: `1.5px solid ${accent}`,
-                  boxShadow: `0 0 22px rgba(${accentRgb},0.18)`,
+                  boxShadow: `0 0 24px rgba(${accentRgb},0.18)`,
                   cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'column', padding: 0,
                 }}>
-                  <div style={{ position: 'relative', height: 100, width: '100%', flexShrink: 0 }}>
+                  <div style={{ position: 'relative', height: 106, width: '100%', flexShrink: 0 }}>
                     <div style={{
                       position: 'absolute', inset: 0,
                       backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
                     }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent, rgba(5,5,5,0.78))' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent, rgba(5,5,5,0.8))' }} />
                   </div>
-                  <div style={{ flex: 1, padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div style={{ flex: 1, minHeight: 0, padding: '13px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
                       <div style={{
                         fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 24, lineHeight: 1.05, color: '#FFFFFF',
@@ -2113,11 +2115,13 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                         {item.title}
                       </div>
                       {desc ? (
-                        <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, fontWeight: 600, color: accent, marginTop: 3 }}>
+                        <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, fontWeight: 600, color: accent, marginTop: 4 }}>
                           {stripEra(desc)}
                         </div>
                       ) : null}
-                      <div style={{ marginTop: 5, display: 'flex', gap: 6 }}>
+                    </div>
+                    <div>
+                      <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
                         {Array.from({ length: dotsTotal }).map((_, di) => (
                           <span key={di} style={{
                             width: 8, height: 8, borderRadius: RADII.pill,
@@ -2126,38 +2130,61 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                           }} />
                         ))}
                       </div>
+                      <div
+                        onClick={(e) => { e.stopPropagation(); handleCardClick(item) }}
+                        style={{
+                          height: 44, borderRadius: 14, width: '100%',
+                          background: `linear-gradient(180deg, ${sand}, ${bronze})`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 15, color: '#111',
+                        }}
+                      >Continue Learning</div>
                     </div>
-                    <div
-                      onClick={(e) => { e.stopPropagation(); handleCardClick(item) }}
-                      style={{
-                        marginTop: 7, height: 44, borderRadius: 16,
-                        background: `linear-gradient(180deg, ${sand}, ${bronze})`,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 15, color: '#111',
-                      }}
-                    >Continue Learning</div>
                   </div>
                 </button>
               ) : isCompleted ? (
+                /* ── COMPLETED — a breadcrumb. No card chrome, no thumbnail, feels archived ── */
+                <div onClick={() => handleCardClick(item)} style={{
+                  flex: 1, minWidth: 0, height: cardH, display: 'flex', alignItems: 'center',
+                  background: 'transparent', cursor: 'default',
+                }}>
+                  <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 700, color: accent, marginRight: 10, flexShrink: 0 }}>✓</span>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{
+                      fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 14, lineHeight: 1.25, color: 'rgba(255,255,255,0.46)',
+                      overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+                    }}>{item.title}</div>
+                    {desc ? (
+                      <div style={{
+                        fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 12, lineHeight: 1.2, color: 'rgba(255,255,255,0.28)', marginTop: 2,
+                        overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+                      }}>{desc}</div>
+                    ) : null}
+                  </div>
+                </div>
+              ) : (
+                /* ── FUTURE — small locked row. Available later, not active, not archived ── */
                 <button onClick={() => handleCardClick(item)} style={{
-                  flex: 1, minWidth: 0, height: 68, borderRadius: 20, boxSizing: 'border-box',
-                  padding: '8px 12px', background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.07)',
-                  opacity: 0.85, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center',
+                  flex: 1, minWidth: 0, height: cardH, borderRadius: 18, boxSizing: 'border-box',
+                  padding: '10px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+                  opacity: 0.75, cursor: item.status === 'coming_soon' ? 'default' : 'pointer', textAlign: 'left',
+                  display: 'flex', alignItems: 'center',
                 }}>
                   <div style={{
-                    flexShrink: 0, width: 48, height: 48, borderRadius: 12, overflow: 'hidden',
+                    flexShrink: 0, width: 56, height: 56, borderRadius: 13, overflow: 'hidden',
                     backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
+                    filter: 'grayscale(0.4)',
                   }} />
                   <div style={{ marginLeft: 12, flex: 1, minWidth: 0 }}>
                     <div style={{
-                      fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15, lineHeight: 1.15, color: 'rgba(255,255,255,0.78)',
+                      fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15, lineHeight: 1.2, color: 'rgba(255,255,255,0.66)',
                       overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
                     }}>
                       {item.title}
                     </div>
                     {desc ? (
                       <div style={{
-                        fontFamily: "'Outfit', sans-serif", fontSize: 12, lineHeight: 1.2, color: 'rgba(255,255,255,0.42)', marginTop: 2,
+                        fontFamily: "'Outfit', sans-serif", fontSize: 12, lineHeight: 1.2, color: 'rgba(255,255,255,0.38)', marginTop: 3,
                         overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
                       }}>
                         {desc}
@@ -2165,38 +2192,6 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                     ) : null}
                   </div>
                   <svg width={16} height={16} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginLeft: 8 }}>
-                    <path d="M3.5 8.2L6.5 11.2L12.5 4.5" stroke={bronze} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              ) : (
-                <button onClick={() => handleCardClick(item)} style={{
-                  flex: 1, minWidth: 0, height: 92, borderRadius: 22, boxSizing: 'border-box',
-                  padding: '10px 12px', background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.07)',
-                  opacity: 0.72, cursor: item.status === 'coming_soon' ? 'default' : 'pointer', textAlign: 'left',
-                  display: 'flex', alignItems: 'center',
-                }}>
-                  <div style={{
-                    flexShrink: 0, width: 64, height: 64, borderRadius: 14, overflow: 'hidden',
-                    backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
-                    filter: 'grayscale(0.4)',
-                  }} />
-                  <div style={{ marginLeft: 14, flex: 1, minWidth: 0 }}>
-                    <div style={{
-                      fontFamily: "'Sora', sans-serif", fontWeight: 750, fontSize: 18, lineHeight: 1.1, color: 'rgba(255,255,255,0.72)',
-                      overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-                    }}>
-                      {item.title}
-                    </div>
-                    {desc ? (
-                      <div style={{
-                        fontFamily: "'Outfit', sans-serif", fontSize: 13, lineHeight: 1.2, color: 'rgba(255,255,255,0.42)', marginTop: 5,
-                        overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
-                      }}>
-                        {desc}
-                      </div>
-                    ) : null}
-                  </div>
-                  <svg width={18} height={18} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginLeft: 8 }}>
                     <rect x={3.5} y={7} width={9} height={6.5} rx={1.5} stroke="rgba(255,255,255,0.32)" strokeWidth={1.4} />
                     <path d="M5.5 7V5.2C5.5 3.7 6.6 2.5 8 2.5C9.4 2.5 10.5 3.7 10.5 5.2V7" stroke="rgba(255,255,255,0.32)" strokeWidth={1.4} strokeLinecap="round" />
                   </svg>
