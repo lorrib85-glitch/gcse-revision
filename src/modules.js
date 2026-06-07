@@ -1008,7 +1008,6 @@ Do NOT award marks for identifying practices without explaining the religious re
       {
         type: 'priorKnowledgeRecall',
         chapterTitle: 'Medieval medicine: beliefs and causes of disease',
-        prompt: 'What do you remember from the last chapter?',
         backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
         sourceContent: `GCSE History: Medieval Medicine — Beliefs and Causes of Disease (c.1250–c.1500)
 
@@ -2263,7 +2262,6 @@ Another consequence was social and economic change. Many villages lost large num
       {
         type: 'priorKnowledgeRecall',
         chapterTitle: 'Medieval medicine: beliefs and causes of disease',
-        prompt: 'What do you remember from the last chapter?',
         backgroundImage: '/headers/history-medicine-through-time.png',
         sourceContent: `GCSE History: Medieval Medicine — Beliefs and Causes of Disease (c.1250–c.1500)
 

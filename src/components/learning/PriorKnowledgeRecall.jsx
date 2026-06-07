@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
@@ -10,6 +10,16 @@ import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 const SCORE_RECALLED = 0.7   // >= recalled (teal)
 const SCORE_PARTIAL  = 0.3   // >= partial (amber), < recalled
                               // < 0.3 = missing — logged to weakness tracker
+
+// Recall timer — gives the learner a focused window to write before checking.
+// Pauses whenever the tab/screen is not visible and resumes from where it left off.
+const RECALL_DURATION = 3 * 60
+
+function formatTime(totalSeconds) {
+  const m = Math.floor(totalSeconds / 60)
+  const s = totalSeconds % 60
+  return `${m}:${String(s).padStart(2, '0')}`
+}
 
 let _prkStyled = false
 function ensureStyles() {
@@ -90,7 +100,6 @@ function ConceptGroup({ label, concepts, color }) {
 // {
 //   type: 'priorKnowledgeRecall',
 //   chapterTitle: 'Medieval medicine',
-//   prompt: 'What do you remember from the last chapter?',  // optional
 //   backgroundImage: '/headers/history-medicine-medieval-scripture.png',  // optional
 //   concepts: [
 //     { tag: 'miasma-theory', label: 'Miasma theory', keywords: ['miasma', 'bad air', 'smell'] },
@@ -107,11 +116,24 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
   const accent = theme.accent
   const rgb    = theme.accentRgb
 
-  const [phase,     setPhase]     = useState('input')   // 'input' | 'analyzing' | 'results'
-  const [answer,    setAnswer]    = useState('')
-  const [results,   setResults]   = useState(null)
-  const [error,     setError]     = useState(null)
-  const [isPressed, setIsPressed] = useState(false)
+  const [phase,       setPhase]       = useState('input')   // 'input' | 'analyzing' | 'results'
+  const [answer,      setAnswer]      = useState('')
+  const [results,     setResults]     = useState(null)
+  const [error,       setError]       = useState(null)
+  const [isPressed,   setIsPressed]   = useState(false)
+  const [secondsLeft, setSecondsLeft] = useState(RECALL_DURATION)
+
+  // Tick once a second, but only while the learner is actually looking at the screen —
+  // tabbing away pauses the countdown and it resumes from where it left off.
+  useEffect(() => {
+    if (phase !== 'input') return undefined
+    const id = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        setSecondsLeft(s => Math.max(0, s - 1))
+      }
+    }, 1000)
+    return () => clearInterval(id)
+  }, [phase])
 
   async function submit() {
     if (answer.trim().length < 10) {
@@ -176,6 +198,14 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
       stroke="#0D0F14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="5" y1="12" x2="19" y2="12"/>
       <polyline points="12 5 19 12 12 19"/>
+    </svg>
+  )
+
+  const ClockIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+      stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9"/>
+      <polyline points="12 7 12 12 15.5 14"/>
     </svg>
   )
 
@@ -254,10 +284,30 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 fontFamily: "'Sora', sans-serif",
                 ...TYPE.sectionTitle,
                 color: '#F5F7FF',
-                margin: 0, marginBottom: SPACING.micro,
+                margin: 0, marginBottom: SPACING.compact,
               }}>
-                {block.prompt || 'What do you remember from last time?'}
+                Tell us what you recall in 3 minutes
               </h1>
+
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '7px 12px',
+                borderRadius: RADII.pill,
+                background: `rgba(${rgb},0.12)`,
+                border: `1px solid rgba(${rgb},0.32)`,
+                marginBottom: SPACING.compact,
+              }}>
+                <ClockIcon />
+                <span style={{
+                  fontFamily: "'Sora', sans-serif",
+                  fontSize: 14, fontWeight: 700,
+                  color: accent,
+                  fontVariantNumeric: 'tabular-nums',
+                  letterSpacing: '0.02em',
+                }}>
+                  {formatTime(secondsLeft)}
+                </span>
+              </div>
 
               {block.chapterTitle && (
                 <p style={{
