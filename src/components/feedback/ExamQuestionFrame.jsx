@@ -106,7 +106,17 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
         }
       }
       if (onComplete) {
-        onComplete({ marksAwarded, marks })
+        onComplete({
+          marksAwarded,
+          marks,
+          answer,
+          questionText,
+          markScheme,
+          summary: data.summary || '',
+          achieved: data.achieved || [],
+          missed: data.missed || [],
+          examinerTip: data.examinerTip || null,
+        })
       }
     } catch (e) {
       setError('Could not reach the grading server. Check your connection and try again.')

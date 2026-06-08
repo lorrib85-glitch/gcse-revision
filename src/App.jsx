@@ -23,6 +23,7 @@ import { TAG_MODULE_MAP, findTaggedScreen } from './data/tagModuleMap.js'
 import ModulePlayer, { getAllConfidenceRatings } from './components/layout/ModulePlayer.jsx'
 import ChapterCompleteScreen from './components/layout/ChapterCompleteScreen.jsx'
 import ExamQuestionFrame from './components/feedback/ExamQuestionFrame.jsx'
+import ExamRoundDebrief from './components/feedback/ExamRoundDebrief.jsx'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -4664,7 +4665,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
                 markPoints: q.ms ? [q.ms] : [],
                 source: q.extract ? { label: q.sourceRefs?.length > 1 ? 'Sources A and B' : 'Source', text: q.extract } : null,
                 commandWord: q.commandWord || null,
-                topic: q.topic || null,
+                topic: q.topic || q.topicLabel || null,
                 paper: examConfig?.title || 'EXAM PRACTICE',
               }
               return (
@@ -4699,10 +4700,23 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
                     subject={q.subject || 'History'}
                     mode="exam"
                     questionNum={idx + 1}
-                    onComplete={({ marksAwarded }) => {
+                    onComplete={(result) => {
                       setExamPaperFeedbacks(prev => ({
                         ...prev,
-                        [idx]: { marksAwarded, grade: 'Submitted', summary: '' }
+                        [idx]: {
+                          marksAwarded: result.marksAwarded,
+                          marks: result.marks ?? q.marks ?? 4,
+                          grade: 'Submitted',
+                          subject: q.subject || 'History',
+                          topic: q.topic || q.topicLabel || null,
+                          questionText: result.questionText ?? q.q,
+                          markScheme: result.markScheme ?? q.ms ?? '',
+                          answer: result.answer ?? '',
+                          summary: result.summary ?? '',
+                          achieved: result.achieved ?? [],
+                          missed: result.missed ?? [],
+                          examinerTip: result.examinerTip ?? null,
+                        }
                       }))
                     }}
                   />
@@ -4725,7 +4739,28 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
             <div style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:18, padding:18, marginBottom:20, textAlign:'left' }}>
               {Object.entries(examStats.bySubject).map(([subject, stats]) => <div key={subject} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'9px 0', borderBottom:'1px solid rgba(255,255,255,.06)' }}><span>{subject}</span><strong>{stats.correct}/{stats.answered}</strong></div>)}
             </div>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+            {(() => {
+              const debriefResults = examQuestions
+                .map((q, idx) => {
+                  const fb = examPaperFeedbacks[idx]
+                  if (!fb) return null
+                  return {
+                    subject: fb.subject || q.subject || examConfig?.subject || 'History',
+                    topic: fb.topic || q.topic || q.topicLabel || null,
+                    question: fb.questionText || q.q,
+                    marks: fb.marks ?? q.marks ?? 4,
+                    markScheme: fb.markScheme || q.ms || '',
+                    answer: fb.answer || '',
+                    marksAwarded: fb.marksAwarded ?? 0,
+                    achieved: fb.achieved || [],
+                    missed: fb.missed || [],
+                  }
+                })
+                .filter(Boolean)
+              if (debriefResults.length === 0) return null
+              return <ExamRoundDebrief subject={examConfig?.subject} results={debriefResults} />
+            })()}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginTop: 20 }}>
               <button onClick={() => setExamPhase('landing')} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:13, padding:14, color:'#9CA8C7', fontWeight:800, cursor:'pointer' }}>Back</button>
               <button onClick={() => startExamRound(examConfig?.subject || 'Random')} style={{ background:'linear-gradient(135deg,#38F27B,#2DD4A3)', border:'none', borderRadius:13, padding:14, color:'#03140B', fontWeight:950, cursor:'pointer' }}>Try again</button>
             </div>
