@@ -1995,7 +1995,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
       `}</style>
 
       {/* ── HERO ── */}
-      <div style={{ height: 248, position: 'relative', overflow: 'hidden' }}>
+      <div style={{ height: 198, position: 'relative', overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', inset: 0,
           backgroundImage: `url(${headerImg})`,
@@ -2134,7 +2134,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                   cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'column', padding: 0,
                 }}>
                   {/* Thumbnail banner — spans the full card width, fades into the dark background below */}
-                  <div style={{ position: 'relative', height: 140, width: '100%', flexShrink: 0 }}>
+                  <div style={{ position: 'relative', height: 112, width: '100%', flexShrink: 0 }}>
                     <div style={{
                       position: 'absolute', inset: 0,
                       backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
