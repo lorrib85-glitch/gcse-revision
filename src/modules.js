@@ -5041,8 +5041,16 @@ Do NOT award marks for naming discoveries without explaining their significance.
     color: '#4FA36C',
     colorLight: 'rgba(79,163,108,.15)',
 
-    // No hook / outcomes / recall — the locked Part 1 sequence (cinematic →
-    // prediction → mission) replaces ModulePlayer's auto-rendered pre-screens.
+    outcomes: {
+      intro: 'All living things are made of cells. This chapter reveals the hidden world inside them.',
+      bullets: [
+        { text: 'Describe the structures inside animal and plant cells', icon: 'drop' },
+        { text: 'Explain what each organelle actually does in precise GCSE language', icon: 'star' },
+        { text: 'Spot the most common exam trap about plant cells before it costs you marks', icon: 'question' },
+        { text: 'Compare animal and plant cells with the precision a top answer needs', icon: 'prayer' },
+      ],
+    },
+
     screens: [
       // ═══ PART 1 — THE MYSTERY ═══════════════════════════════════════════════
 
@@ -11225,10 +11233,10 @@ Level 1 (1-2 marks): Structures named but not explained, or only one full differ
     outcomes: {
       intro: 'Every living thing starts with a cell. Understanding how cells are built is the foundation for all of the biology that follows.',
       bullets: [
-        'Identify the key organelles in plant and animal cells',
-        'Explain how microscopes changed our understanding of life',
-        'Describe the stages of cell division and why it matters',
-        'See how substances move in and out of cells',
+        { text: 'Identify the key organelles in plant and animal cells', icon: 'drop' },
+        { text: 'Explain how microscopes changed our understanding of life', icon: 'star' },
+        { text: 'Describe the stages of cell division and why it matters', icon: 'prayer' },
+        { text: 'See how substances move in and out of cells', icon: 'question' },
       ],
     },
 
@@ -11269,10 +11277,10 @@ Level 1 (1-2 marks): Structures named but not explained, or only one full differ
     outcomes: {
       intro: 'Your body is a machine of extraordinary complexity. This chapter shows how its major systems actually work.',
       bullets: [
-        'Explain how cells organise into tissues, organs and systems',
-        'Describe the process of digestion from mouth to absorption',
-        'See how the heart and blood vessels deliver oxygen to every cell',
-        'Understand how plants transport water and nutrients through their structures',
+        { text: 'Explain how cells organise into tissues, organs and systems', icon: 'drop' },
+        { text: 'Describe the process of digestion from mouth to absorption', icon: 'star' },
+        { text: 'See how the heart and blood vessels deliver oxygen to every cell', icon: 'prayer' },
+        { text: 'Understand how plants transport water and nutrients through their structures', icon: 'question' },
       ],
     },
 
@@ -11313,10 +11321,10 @@ Level 1 (1-2 marks): Structures named but not explained, or only one full differ
     outcomes: {
       intro: 'Your body is under constant attack. This chapter shows how pathogens invade — and how your immune system fights back.',
       bullets: [
-        'Identify the types of pathogen and how each causes disease',
-        'Explain how the immune system recognises and destroys invaders',
-        'Describe how vaccines and antibiotics work — and where they fail',
-        'See why lifestyle factors drive non-communicable diseases',
+        { text: 'Identify the types of pathogen and how each causes disease', icon: 'drop' },
+        { text: 'Explain how the immune system recognises and destroys invaders', icon: 'star' },
+        { text: 'Describe how vaccines and antibiotics work — and where they fail', icon: 'prayer' },
+        { text: 'See why lifestyle factors drive non-communicable diseases', icon: 'question' },
       ],
     },
 
@@ -11357,10 +11365,10 @@ Level 1 (1-2 marks): Structures named but not explained, or only one full differ
     outcomes: {
       intro: 'Your body coordinates millions of signals every second. This chapter shows the two systems doing that work.',
       bullets: [
-        'Explain how electrical nerve impulses carry information rapidly',
-        'Describe how hormones regulate blood glucose, growth and reproduction',
-        'See how reflex arcs protect you before your brain even registers danger',
-        'Understand how the menstrual cycle is hormonally controlled',
+        { text: 'Explain how electrical nerve impulses carry information rapidly', icon: 'drop' },
+        { text: 'Describe how hormones regulate blood glucose, growth and reproduction', icon: 'star' },
+        { text: 'See how reflex arcs protect you before your brain even registers danger', icon: 'prayer' },
+        { text: 'Understand how the menstrual cycle is hormonally controlled', icon: 'question' },
       ],
     },
 
@@ -11401,10 +11409,10 @@ Level 1 (1-2 marks): Structures named but not explained, or only one full differ
     outcomes: {
       intro: 'DNA is the instruction manual for life. This chapter shows how it gets read, inherited — and sometimes rewritten.',
       bullets: [
-        'Explain how DNA encodes the instructions for building proteins',
-        'Use Punnett squares to predict the probability of inherited traits',
-        'Describe how natural selection drives evolution over generations',
-        'Evaluate the science and ethics of genetic engineering',
+        { text: 'Explain how DNA encodes the instructions for building proteins', icon: 'drop' },
+        { text: 'Use Punnett squares to predict the probability of inherited traits', icon: 'star' },
+        { text: 'Describe how natural selection drives evolution over generations', icon: 'prayer' },
+        { text: 'Evaluate the science and ethics of genetic engineering', icon: 'question' },
       ],
     },
 
@@ -11445,10 +11453,10 @@ Level 1 (1-2 marks): Structures named but not explained, or only one full differ
     outcomes: {
       intro: 'Nothing in nature exists in isolation. This chapter shows how species depend on each other — and what happens when that balance breaks.',
       bullets: [
-        'Describe how energy flows through food chains and food webs',
-        'Explain how species adapt to survive in specific environments',
-        'See why biodiversity matters — and what threatens it',
-        'Evaluate the real impact of human activity on ecosystems',
+        { text: 'Describe how energy flows through food chains and food webs', icon: 'drop' },
+        { text: 'Explain how species adapt to survive in specific environments', icon: 'star' },
+        { text: 'See why biodiversity matters — and what threatens it', icon: 'prayer' },
+        { text: 'Evaluate the real impact of human activity on ecosystems', icon: 'question' },
       ],
     },
 

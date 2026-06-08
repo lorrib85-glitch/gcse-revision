@@ -9,7 +9,7 @@ export const BIOLOGY_GROUPS = [
     subtitle: 'Cells, Microscopes & Division',
     icon: '🔬',
     accent: '#65E6C6',
-    headerImage: '/headers/bio-buildinglife.webp',
+    headerImage: '/headers/bio-main.png',
     locked: false,
     modules: [
       { id: 'bio_cells_factories',  title: 'Cells: The Tiny Factories',        subtitle: 'Structure & organelles',       locked: false },

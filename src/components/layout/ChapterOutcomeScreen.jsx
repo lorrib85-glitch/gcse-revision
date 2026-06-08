@@ -5,7 +5,7 @@ import { MOTION } from '../../constants/motion.js'
 
 const IMAGES = {
   History:   '/historybacker.webp',
-  Biology:   '/biologybacker.webp',
+  Biology:   '/biologybacker.png',
   Maths:     '/mathsbacker.webp',
   Sociology: '/sociologybacker.webp',
   Chemistry: '/chemsistrybacker.webp',

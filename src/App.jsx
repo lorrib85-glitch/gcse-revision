@@ -1313,7 +1313,8 @@ const MODULE_HEADER_IMAGES = {
   'mod7': '/headers/history-medicine-germ-bridge.png',
   'mod8': '/headers/history-medicine-medieval-scripture.png',
   'mod9': '/headers/history-medicine-through-time.webp',
-  'sci_bio_w1': '/headers/bio-buildinglife.webp',
+  'sci_bio_w1': '/headers/bio-main.png',
+  'bio_building_blocks': '/headers/bio-main.png',
   'math1': '/headers/maths-numbers.webp',
   'math2': '/headers/maths-numbers.webp',
   'soc1': '/headers/sociology-family.webp',
@@ -1864,7 +1865,7 @@ function BiologySection({ groups, onGroupClick }) {
 
 const SUBJECT_HEADER_IMGS = {
   History:   '/headers/history-medicine-through-time.webp',
-  Biology:   '/headers/bio-buildinglife.webp',
+  Biology:   '/headers/bio-main.png',
   Chemistry: '/headers/chem-matteratoms.webp',
   Maths:     '/headers/maths-numbers.webp',
   Sociology: '/headers/sociology-family.webp',
