@@ -5038,8 +5038,8 @@ Do NOT award marks for naming discoveries without explaining their significance.
     title: 'Building blocks',
     subtitle: 'What every living thing is built from',
     icon: '🧬',
-    color: '#65E6C6',
-    colorLight: 'rgba(101,230,198,.15)',
+    color: '#4FA36C',
+    colorLight: 'rgba(79,163,108,.15)',
 
     // No hook / outcomes / recall — the locked Part 1 sequence (cinematic →
     // prediction → mission) replaces ModulePlayer's auto-rendered pre-screens.
