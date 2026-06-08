@@ -1939,6 +1939,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       if (hookPhase === 'reveal') return hookRevealDone ? 'Start module →' : null // hidden until all revealed
     }
     if (!introDone && module.intro) return null // IntroScreen has its own button
+    if ((module.screens[screen]?.blocks || []).some(b => b.type === 'spotTheError' || b.type === 'misconceptionCheck')) return null // these gate their own continue button
     return isLast ? 'Finish ✓' : 'Next →'
   }
 
@@ -2350,6 +2351,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <>
         <LearningHeader {...H} visible={ihmExplore} />
         <InteractiveHotspotImage
+          key={screen}
           subject={module.subject}
           title={cur.title}
           introText={cur.introText}
