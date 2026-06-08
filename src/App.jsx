@@ -1863,13 +1863,13 @@ function BiologySection({ groups, onGroupClick }) {
 // ─── SubjectBrowser ────────────────────────────────────────────────────────────
 
 const SUBJECT_HEADER_IMGS = {
-  History:   '/headers/history-medicine-through-time.webp',
+  History:   '/headers/history-main.webp',
   Biology:   '/headers/bio-main.webp',
-  Chemistry: '/headers/history-elizabethan.webp',
+  Chemistry: '/headers/chem-logo.webp',
   Maths:     '/headers/maths-main.webp',
   Sociology: '/headers/sociology-main.webp',
-  English:   '/headers/history-usa-conflict.webp',
-  Physics:   '/headers/history-spain-new-world.webp',
+  English:   '/headers/english-main.webp',
+  Physics:   '/headers/physics-main.webp',
 }
 
 const SUBJECT_DISPLAY_TITLES = {
