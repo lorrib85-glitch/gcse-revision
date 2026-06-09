@@ -3417,7 +3417,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
               <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:topicColor, marginBottom:8 }}>
                 {isRealExtract ? '📄 Source extract' : '📎 Where to find your source'}
               </div>
-              <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.88rem', lineHeight:1.7, margin:0, color: isRealExtract ? '#C8D0E8' : '#9CA8C7', whiteSpace:'pre-wrap' }}>{q.extract}</p>
+              <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.88rem', lineHeight:1.7, margin:0, color: isRealExtract ? '#C8D0E8' : '#9CA8C7', whiteSpace:'pre-wrap', maxHeight:240, overflowY:'auto', WebkitOverflowScrolling:'touch', paddingRight:4 }}>{q.extract}</p>
             </div>
           )
         })()}
@@ -4683,7 +4683,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
                     <div key={si} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: '18px 20px', marginBottom: 14 }}>
                       <div style={{ fontFamily:"'Sora', sans-serif", fontWeight: 700, fontSize: '.78rem', letterSpacing: '.12em', textTransform: 'uppercase', color: '#C89B6D', marginBottom: 8 }}>{src.label}</div>
                       <div style={{ fontFamily:"'Outfit', sans-serif", fontSize: '.8rem', fontStyle: 'italic', color: 'rgba(245,245,245,0.48)', marginBottom: 10, lineHeight: 1.5 }}>{src.attribution}</div>
-                      <div style={{ fontFamily:"'Outfit', sans-serif", fontSize: '.9rem', color: 'rgba(245,245,245,0.82)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{src.text}</div>
+                      <div style={{ fontFamily:"'Outfit', sans-serif", fontSize: '.9rem', color: 'rgba(245,245,245,0.82)', lineHeight: 1.7, whiteSpace: 'pre-wrap', maxHeight: 240, overflowY: 'auto', WebkitOverflowScrolling: 'touch', paddingRight: 4 }}>{src.text}</div>
                       {src.credit && <div style={{ fontFamily:"'Outfit', sans-serif", fontSize: '.7rem', color: 'rgba(245,245,245,0.3)', marginTop: 10, fontStyle: 'italic' }}>{src.credit}</div>}
                     </div>
                   ))}

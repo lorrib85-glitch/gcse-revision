@@ -22,6 +22,20 @@ function ensureStyles() {
     .eqf-textarea::placeholder {
       color: rgba(245,245,245,0.28);
     }
+    .eqf-source-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.16) transparent;
+    }
+    .eqf-source-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .eqf-source-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .eqf-source-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.16);
+      border-radius: 4px;
+    }
   `
   document.head.appendChild(style)
 }
@@ -295,24 +309,48 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
 
             {/* Source text */}
             {source.text && (
-              <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                <span style={{
-                  fontFamily: 'Georgia, serif',
-                  fontSize: 36,
-                  lineHeight: '28px',
-                  color: accent,
-                  opacity: 0.8,
-                  flexShrink: 0,
-                  marginTop: -2,
-                }}>❝</span>
-                <span style={{
-                  fontSize: 16,
-                  lineHeight: 1.7,
-                  color: 'rgba(245,245,245,0.82)',
-                }}>
-                  {source.text}
-                </span>
-              </div>
+              <>
+                <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                  <span style={{
+                    fontFamily: 'Georgia, serif',
+                    fontSize: 36,
+                    lineHeight: '28px',
+                    color: accent,
+                    opacity: 0.8,
+                    flexShrink: 0,
+                    marginTop: -2,
+                  }}>❝</span>
+                  <div
+                    className="eqf-source-scroll"
+                    style={{
+                      fontSize: 16,
+                      lineHeight: 1.7,
+                      color: 'rgba(245,245,245,0.82)',
+                      whiteSpace: 'pre-wrap',
+                      maxHeight: 240,
+                      overflowY: 'auto',
+                      paddingRight: 10,
+                      minWidth: 0,
+                      WebkitOverflowScrolling: 'touch',
+                    }}
+                  >
+                    {source.text}
+                  </div>
+                </div>
+                {source.text.length > 320 && (
+                  <div style={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(245,245,245,0.34)',
+                    marginTop: 10,
+                    paddingLeft: 50,
+                  }}>
+                    Scroll to read the full source ↓
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
