@@ -299,21 +299,29 @@ function StreakChip({ style = {} }) {
   const prog   = safeGetProgress()
   const streak = prog.streak || 0
   return (
-    <div style={{
-      display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2,
-      ...style,
-    }}>
-      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill={GENERAL.coral} style={{ flexShrink: 0 }}>
-          <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
-        </svg>
-        <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 700, color: GENERAL.coral, letterSpacing: '0.01em' }}>
-          {streak > 0 ? streak : 0}
+    <div style={{ position: 'relative', ...style }}>
+      {/* Standard corner darkening so the chip stays legible over any background */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', top: -32, right: -40, bottom: -40, left: -64,
+        background: `radial-gradient(ellipse at top right, rgba(${hexToRgb(GENERAL.neutral[0])},0.95) 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.6) 50%, transparent 100%)`,
+        pointerEvents: 'none', zIndex: 0,
+      }} />
+      <div style={{
+        position: 'relative', zIndex: 1,
+        display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2,
+      }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill={GENERAL.coral} style={{ flexShrink: 0 }}>
+            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+          </svg>
+          <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 700, color: GENERAL.coral, letterSpacing: '0.01em' }}>
+            {streak > 0 ? streak : 0}
+          </span>
+        </div>
+        <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 9, fontWeight: 500, color: GENERAL.slate, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          day streak
         </span>
       </div>
-      <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 9, fontWeight: 500, color: GENERAL.slate, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-        day streak
-      </span>
     </div>
   )
 }
