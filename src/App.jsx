@@ -2450,7 +2450,7 @@ function ModulesTab({ onOpenModule }) {
     <div style={{ background: GENERAL.neutral[0], minHeight: '100vh', paddingBottom: 108, overflowX: 'hidden' }}>
 
       {/* ── Hero ── */}
-      <div style={{ position: 'relative', width: '100%', height: '50vh', minHeight: 360, maxHeight: 480, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', width: '100%', height: '40vh', minHeight: 288, maxHeight: 384, overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', inset: 0,
           backgroundImage: `url(${continueHeaderImage})`,
