@@ -243,9 +243,27 @@ function buildBiggestWinReason(stats) {
  */
 export function getBiggestWin() {
   const wrongAnswers = loadWrongAnswers()
+  if (!wrongAnswers.length) return null
 
-  const candidates = getWeakTopics()
-    .filter(t => t.totalAttempts >= 2 && TAG_MODULE_MAP[t.topic])
+  // Primary: topics that have already crossed the standard weak-topic bar.
+  let pool = getWeakTopics().filter(t => TAG_MODULE_MAP[t.topic])
+
+  // Fallback: nothing has crossed that bar yet — point to the most recently
+  // missed topic with a real module mapping, so a learner who has only just
+  // started still gets an evidence-based pointer.
+  if (!pool.length) {
+    const seen = new Set()
+    pool = wrongAnswers
+      .filter(a => {
+        const key = `${a.subject}/${a.topic}`
+        if (!TAG_MODULE_MAP[a.topic] || seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+      .map(a => getTopicStatistics(a.subject, a.topic))
+  }
+
+  const candidates = pool
     .map(t => {
       const lastWrong = wrongAnswers.find(a => a.subject === t.subject && a.topic === t.topic)
       return { ...t, lastFailedAt: lastWrong?.timestamp || 0 }

@@ -2387,19 +2387,30 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
   )
 }
 
-// Portrait thumbnails for the "Your subjects" row on the Subjects tab.
-const SUBJECT_THUMBNAILS = [
-  { name: 'History',   image: '/headers/history-main.webp' },
-  { name: 'Biology',   image: '/headers/bio-main.webp' },
-  { name: 'Chemistry', image: '/headers/chem-logo.webp' },
-  { name: 'Physics',   image: '/headers/physics-main.webp' },
-  { name: 'Maths',     image: '/headers/maths-main.webp' },
-  { name: 'English',   image: '/headers/english-main.webp' },
-  { name: 'Sociology', image: '/headers/sociology-main.webp' },
-]
+// "Your subjects" row on the Subjects tab — each subject picks one cinematic
+// topic image at random from its own content, rather than a fixed logo.
+const SUBJECT_NAMES = ['History', 'Biology', 'Chemistry', 'Physics', 'Maths', 'English', 'Sociology']
+
+const SUBJECT_TOPIC_IMAGES = {
+  History:   ['/headers/history-medicine-through-time.webp', '/headers/history-elizabethan.webp', '/headers/history-spain-new-world.webp', '/headers/history-usa-conflict.webp'],
+  Biology:   ['/headers/bio-humanmachine.webp', '/headers/bio-diseasewars.webp', '/headers/bio-energyforlife.webp', '/headers/bio-controlsystems.webp', '/headers/bio-genetics.webp', '/headers/bio-ecosystems.webp'],
+  Chemistry: ['/headers/chem-matteratoms.webp', '/headers/chem-reactions.webp', '/headers/chem-rates.webp', '/headers/chem-earth.webp'],
+  Physics:   ['/headers/physics-energy.webp', '/headers/physics-forces.webp', '/headers/physics-matter.webp', '/headers/physics-space.webp', '/headers/physics-waves.webp'],
+  Maths:     ['/headers/maths-numbers.webp', '/headers/maths-algebra.webp', '/headers/maths-geometry.webp', '/headers/maths-data.webp', '/headers/maths-realworld.webp'],
+  English:   ['/headers/english-inspector.webp', '/headers/english-macbeth.webp', '/headers/english-poetry.webp', '/headers/english-reading.webp'],
+  Sociology: ['/headers/sociology-family.webp', '/headers/sociology-education.webp', '/headers/sociology-crime.webp', '/headers/sociology-stratification.webp'],
+}
 
 function ModulesTab({ onOpenModule }) {
   const [subjectBrowser, setSubjectBrowser] = useState(null)
+  const [subjectImages] = useState(() => {
+    const map = {}
+    SUBJECT_NAMES.forEach(name => {
+      const pool = SUBJECT_TOPIC_IMAGES[name]
+      map[name] = pool[Math.floor(Math.random() * pool.length)]
+    })
+    return map
+  })
 
   if (subjectBrowser) {
     return <SubjectBrowser subjectName={subjectBrowser} onBack={() => setSubjectBrowser(null)} onOpenModule={onOpenModule} />
@@ -2419,10 +2430,10 @@ function ModulesTab({ onOpenModule }) {
   } : null
 
   const weakestSubject = getWeakestSubject()?.subject || null
-  const subjectThumbs = SUBJECT_THUMBNAILS.map(s => {
-    const mods = MODULES.filter(m => m.subject === s.name)
+  const subjectThumbs = SUBJECT_NAMES.map(name => {
+    const mods = MODULES.filter(m => m.subject === name)
     const pct = mods.length ? Math.round(mods.reduce((sum, m) => sum + modPct(m), 0) / mods.length) : 0
-    return { ...s, pct, isWeakest: s.name === weakestSubject }
+    return { name, image: subjectImages[name], pct, isWeakest: name === weakestSubject }
   })
 
   return (
@@ -2526,6 +2537,26 @@ function ModulesTab({ onOpenModule }) {
               backgroundImage: `url(${biggestWin.headerImage})`, backgroundSize: 'cover', backgroundPosition: 'center',
             }} />
           </button>
+        </div>
+      )}
+
+      {!biggestWin && (
+        <div style={{ padding: `${SPACING.separation}px ${SPACING.compact}px 0` }}>
+          <div style={{ ...TYPE.metadata, color: GENERAL.slate, textTransform: 'uppercase', marginBottom: SPACING.compact }}>
+            Biggest win
+          </div>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: SPACING.compact, width: '100%',
+            padding: SPACING.compact, borderRadius: RADII.large,
+            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+              <path d="M13 2L4.5 13H11L10 22L19.5 10H13L13 2Z" fill={GENERAL.teal} />
+            </svg>
+            <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>
+              Answer a few questions and we'll show you exactly where to focus next.
+            </div>
+          </div>
         </div>
       )}
 
