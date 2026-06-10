@@ -84,6 +84,7 @@ Question feedback and exam practice components.
 | Priority | Doc | What it covers |
 |----------|-----|----------------|
 | 1 | `docs/system/PRODUCT_UI_CONSTITUTION.md` | Product identity, global colours, layout law, what Claude must never improvise |
+| 1 | `docs/system/GENERAL_APP_UI_CONSTITUTION.md` | Non-subject pages (Home, Subjects browser, Progress, Exam landing, onboarding, bottom nav) — design philosophy, copy style, personalisation, things to avoid |
 | 2 | `docs/system/COMPONENT_AUTHORING_RULES.md` | Required imports, forbidden patterns, locked component rules |
 | 3 | `docs/system/SPACING_SYSTEM.md` | All spacing tokens |
 | 3 | `docs/system/SUBJECT_THEME_SYSTEM.md` | All subject colour palettes |

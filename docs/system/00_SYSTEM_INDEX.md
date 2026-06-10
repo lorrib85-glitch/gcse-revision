@@ -19,6 +19,14 @@ The product's supreme design law. Defines product identity, global colour tokens
 
 ---
 
+### 1b. General App UI Constitution (Non-Subject Pages)
+
+`docs/system/GENERAL_APP_UI_CONSTITUTION.md`
+
+Governs Home, the Subjects/Modules browser, Progress, Exam landing/navigation, onboarding, and the bottom navigation shell — every screen that is not in-module subject content. Sets the tone for these pages: editorial, restrained, composition over containers, typography-led CTAs, and intelligent personalisation copy. In-module subject content remains governed by the Product UI Constitution and the Subject Theme System.
+
+---
+
 ### 2. Component Authoring Rules
 
 `docs/system/COMPONENT_AUTHORING_RULES.md`
