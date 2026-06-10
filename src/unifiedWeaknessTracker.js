@@ -2,6 +2,8 @@
 // Core personalization system: tracks every wrong answer across modules, exams, quizzes.
 // Single source of truth for weakness identification and recovery recommendations.
 
+import { TAG_MODULE_MAP } from './data/tagModuleMap.js'
+
 const WRONG_ANSWERS_KEY = 'gcse_wrong_answers'
 const CORRECT_ANSWERS_KEY = 'gcse_correct_answers'
 const EXAM_TECHNIQUE_KEY = 'gcse_exam_techniques'
@@ -158,6 +160,25 @@ export function getTopicStatistics(subject, topic) {
   const topicWrongs = wrongAnswers.filter(a => a.subject === subject && a.topic === topic)
   const topicCorrects = correctAnswers.filter(a => a.subject === subject && a.topic === topic)
 
+  const lastWrongDate = topicWrongs[0]?.date || null
+  const lastCorrectDate = topicCorrects[0]?.date || null
+  const lastAttemptDate = [lastWrongDate, lastCorrectDate].filter(Boolean).sort().pop() || null
+  const daysSinceLastAttempt = lastAttemptDate
+    ? Math.max(0, Math.floor((Date.now() - new Date(lastAttemptDate).getTime()) / 86400000))
+    : null
+
+  // Last 6 attempts on this topic (correct + wrong combined), most recent first
+  const recentSix = [
+    ...topicWrongs.map(a => ({ timestamp: a.timestamp, correct: false })),
+    ...topicCorrects.map(a => ({ timestamp: a.timestamp, correct: true })),
+  ]
+    .sort((a, b) => b.timestamp - a.timestamp)
+    .slice(0, 6)
+  const recentIncorrectCount = recentSix.filter(a => !a.correct).length
+
+  // Marks lost across the most recent wrong answers on this topic
+  const marksAtStake = topicWrongs.slice(0, 10).reduce((sum, a) => sum + (a.marks || 0), 0)
+
   return {
     subject,
     topic,
@@ -165,13 +186,83 @@ export function getTopicStatistics(subject, topic) {
     correctCount: topicCorrects.length,
     totalAttempts: topicWrongs.length + topicCorrects.length,
     errorRate: topicWrongs.length / Math.max(1, topicWrongs.length + topicCorrects.length),
-    lastWrongDate: topicWrongs[0]?.date || null,
-    lastCorrectDate: topicCorrects[0]?.date || null,
+    lastWrongDate,
+    lastCorrectDate,
+    lastAttemptDate,
+    daysSinceLastAttempt,
+    recentSix,
+    recentIncorrectCount,
+    marksAtStake,
     bySource: {
       module: topicWrongs.filter(a => a.source === 'module').length,
       exam: topicWrongs.filter(a => a.source === 'exam').length,
       quiz: topicWrongs.filter(a => a.source === 'quiz').length,
     },
+  }
+}
+
+/**
+ * Humanise a topic slug into a sentence-case label, e.g. "black-death" -> "Black death".
+ */
+function humanizeTopic(topic) {
+  const words = topic.replace(/-/g, ' ')
+  return words.charAt(0).toUpperCase() + words.slice(1)
+}
+
+/**
+ * Build the personalised "Biggest win" reason line for a topic, varying by
+ * whichever evidence is most relevant: a recent run of wrong answers, time
+ * since last revision, near-mastery, marks at stake, or overall average.
+ */
+function buildBiggestWinReason(stats) {
+  const { recentSix, recentIncorrectCount, daysSinceLastAttempt, errorRate, totalAttempts, marksAtStake } = stats
+
+  if (recentSix.length >= 4 && recentIncorrectCount >= Math.ceil(recentSix.length / 2)) {
+    return `${recentIncorrectCount} of your last ${recentSix.length} answers were incorrect.`
+  }
+  if (daysSinceLastAttempt !== null && daysSinceLastAttempt >= 21) {
+    const weeks = Math.round(daysSinceLastAttempt / 7)
+    return `Last attempted ${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago.`
+  }
+  if (daysSinceLastAttempt !== null && daysSinceLastAttempt >= 10) {
+    return `You haven't revised this for ${daysSinceLastAttempt} days.`
+  }
+  if (errorRate >= 0.2 && errorRate < 0.4 && totalAttempts >= 3) {
+    return `You're one step away from mastering this topic.`
+  }
+  if (marksAtStake > 0) {
+    return `Estimated gain: +${marksAtStake} mark${marksAtStake === 1 ? '' : 's'}.`
+  }
+  return `Average score: ${Math.round((1 - errorRate) * 100)}%.`
+}
+
+/**
+ * Pick the single highest-priority weak topic for the "Biggest win" card,
+ * with a reason line tailored to the evidence available for that topic.
+ * Returns null if no topic currently qualifies (don't fabricate one).
+ */
+export function getBiggestWin() {
+  const wrongAnswers = loadWrongAnswers()
+
+  const candidates = getWeakTopics()
+    .filter(t => t.totalAttempts >= 2 && TAG_MODULE_MAP[t.topic])
+    .map(t => {
+      const lastWrong = wrongAnswers.find(a => a.subject === t.subject && a.topic === t.topic)
+      return { ...t, lastFailedAt: lastWrong?.timestamp || 0 }
+    })
+    .sort((a, b) => b.errorRate - a.errorRate || b.lastFailedAt - a.lastFailedAt)
+
+  const top = candidates[0]
+  if (!top) return null
+
+  const stats = getTopicStatistics(top.subject, top.topic)
+
+  return {
+    subject: top.subject,
+    topic: top.topic,
+    label: humanizeTopic(top.topic),
+    reasonText: buildBiggestWinReason(stats),
+    moduleId: TAG_MODULE_MAP[top.topic],
   }
 }
 

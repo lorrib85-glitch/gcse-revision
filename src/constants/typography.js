@@ -48,7 +48,7 @@ export const TYPE = {
   },
 
   cinematic: {
-    fontFamily: "'Cormorant Garamond', serif",
+    fontFamily: "'IBM Plex Serif', serif",
     fontSize: 38,
     lineHeight: 1.02,
     fontWeight: 600,

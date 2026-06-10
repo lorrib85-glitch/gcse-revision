@@ -3,11 +3,9 @@ import { SUBJECTS } from './constants/subjects.js'
 import { SPACING }  from './constants/spacing.js'
 import { RADII }    from './constants/radii.js'
 import { TYPE }     from './constants/typography.js'
+import { GENERAL }  from './constants/generalTheme.js'
 import { useAuth } from './auth/AuthContext.jsx'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
-import { BIOLOGY_GROUPS } from './data/biologyGroups.js'
-import { CHEMISTRY_GROUPS } from './data/chemistryGroups.js'
-import { MATHS_GROUPS } from './data/mathsGroups.js'
 import { SOCIOLOGY_GROUPS } from './data/sociologyGroups.js'
 import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
 import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
@@ -16,8 +14,8 @@ import { CHEM_IMAGES } from './data/chemImages.js'
 import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, J23_Q6 } from './data/medicineExamPapers.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
-import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getImprovements } from './progress.js'
-import { getWeakTopics, getWeakestSubject } from './unifiedWeaknessTracker.js'
+import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore } from './progress.js'
+import { getWeakTopics, getWeakestSubject, getBiggestWin } from './unifiedWeaknessTracker.js'
 import { MODULES } from './modules.js'
 import { TAG_MODULE_MAP, findTaggedScreen } from './data/tagModuleMap.js'
 import ModulePlayer, { getAllConfidenceRatings } from './components/layout/ModulePlayer.jsx'
@@ -62,6 +60,15 @@ const TOPIC_IDS = TOPICS.map(t => t.id)
 
 function safeGetModuleState(moduleId) {
   try { return JSON.parse(localStorage.getItem('gcse_module_' + moduleId) || '{}') } catch { return {} }
+}
+
+// Percent of a module's screens completed (100 if marked complete).
+function modPct(mod) {
+  if (!mod || !mod.screens) return 0
+  const s = safeGetModuleState(mod.id)
+  if (s.completed) return 100
+  const screen = s.screen || 0
+  return Math.min(100, Math.round((screen / mod.screens.length) * 100))
 }
 
 function safeGetProgress() {
@@ -293,14 +300,17 @@ function StreakChip({ style = {} }) {
   const streak = prog.streak || 0
   return (
     <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: 5,
-      background: 'rgba(245,158,11,0.08)',
-      borderRadius: 999, padding: '5px 12px 5px 9px',
+      display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2,
       ...style,
     }}>
-      <span style={{ fontSize: 13, lineHeight: 1 }}>🔥</span>
-      <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700, color: '#F59E0B', letterSpacing: '0.01em' }}>
-        {streak > 0 ? `${streak}` : '0'}
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+        <span style={{ fontSize: 13, lineHeight: 1, filter: `drop-shadow(0 0 4px rgba(${GENERAL.coralRgb},0.5))` }}>🔥</span>
+        <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 700, color: GENERAL.coral, letterSpacing: '0.01em' }}>
+          {streak > 0 ? streak : 0}
+        </span>
+      </div>
+      <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 9, fontWeight: 500, color: GENERAL.slate, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+        day streak
       </span>
     </div>
   )
@@ -311,10 +321,9 @@ function StreakChip({ style = {} }) {
 // ─── Bottom nav ──────────────────────────────────────────────────────────────
 
 function NavIcon({ id, active }) {
-  const c = active ? '#A855F7' : '#4B5563'
+  const c = active ? GENERAL.teal : '#4B5563'
   const s = { stroke: c, fill: 'none', strokeWidth: 1.75, strokeLinecap: 'round', strokeLinejoin: 'round' }
-  const glow = active ? `drop-shadow(0 0 3px rgba(168,85,247,0.30))` : 'none'
-  const props = { width: 22, height: 22, viewBox: '0 0 22 22', style: { display: 'block', filter: glow, transition: 'filter 220ms ease' } }
+  const props = { width: 22, height: 22, viewBox: '0 0 22 22', style: { display: 'block', transition: 'stroke 220ms ease' } }
   if (id === 'home') return (
     <svg {...props}><path d="M3 9.5L11 3l8 6.5V19a1.5 1.5 0 01-1.5 1.5h-4V14h-5v6.5H4.5A1.5 1.5 0 013 19V9.5z" {...s} /></svg>
   )
@@ -355,13 +364,13 @@ function BottomNav({ tab, setTab }) {
         const active = tab === t.id || (t.id === 'pulse' && tab === 'quickfire')
         return (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
-            border: 'none', background: active ? 'rgba(255,255,255,0.06)' : 'transparent',
+            border: 'none', background: 'transparent',
             cursor: 'pointer', borderRadius: 22,
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
             fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: active ? 600 : 500,
-            color: active ? '#D4CFEC' : '#3A4054',
+            color: active ? GENERAL.teal : 'rgba(168,176,178,0.5)',
             padding: '6px 4px 5px', minWidth: 0,
-            transition: 'background 220ms ease, color 220ms ease',
+            transition: 'color 220ms ease',
             boxShadow: 'none',
           }}>
             <NavIcon id={t.id} active={active} />
@@ -374,6 +383,61 @@ function BottomNav({ tab, setTab }) {
 }
 
 // ─── App ─────────────────────────────────────────────────────────────────────
+
+// Parent modules — each contains an ordered list of chapter IDs, in app-wide
+// priority order. "Chapter" = one entry in MODULES; "Module" = this parent
+// grouping. Used by handleChapterComplete (next-chapter routing) and by
+// ModulesTab's getContinueModule (Subjects tab "Keep going" hero).
+const MODULE_GROUPS = [
+  {
+    id: 'hist_medicine',
+    title: 'Medicine Through Time',
+    subject: 'History',
+    chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','mod2','mod3','mod4','mod5','mod6','mod7','mod8','mod9'],
+  },
+  {
+    id: 'soc_family',
+    title: 'Sociology of the Family',
+    subject: 'Sociology',
+    chapterIds: ['soc1','soc2','soc3','soc4','soc6'],
+  },
+  {
+    id: 'maths_core',
+    title: 'GCSE Maths',
+    subject: 'Maths',
+    chapterIds: ['math1','math2'],
+  },
+  {
+    id: 'bio_core',
+    title: 'GCSE Biology',
+    subject: 'Biology',
+    chapterIds: ['sci_bio_w1','bio_building_life','bio_human_machine','bio_disease_wars','bio_control_systems','bio_genetics_evolution','bio_ecosystems_group'],
+  },
+  {
+    id: 'chem_core',
+    title: 'GCSE Chemistry',
+    subject: 'Chemistry',
+    chapterIds: ['chem_matter_atoms','chem_reactions','chem_rates_organic','chem_earth'],
+  },
+]
+
+// The module the "Keep going" hero should resume — the highest-priority
+// in-progress module, or if nothing is in progress, the highest-priority
+// module the learner hasn't started yet.
+function getContinueModule() {
+  const ordered = MODULE_GROUPS
+    .flatMap(g => g.chapterIds)
+    .map(id => MODULES.find(m => m.id === id))
+    .filter(Boolean)
+
+  const inProgress = ordered.find(m => { const p = modPct(m); return p > 0 && p < 100 })
+  if (inProgress) return inProgress
+
+  const unvisited = ordered.find(m => modPct(m) === 0)
+  if (unvisited) return unvisited
+
+  return ordered[0] || MODULES[0]
+}
 
 export default function App() {
   const { user, pendingAuth, signOut } = useAuth()
@@ -401,41 +465,6 @@ export default function App() {
     'Drama':     '#8F1F44',
     'Music':     '#A34DFF',
   }
-
-  // Parent modules — each contains an ordered list of chapter IDs
-  // "Chapter" = one entry in MODULES; "Module" = this parent grouping
-  const MODULE_GROUPS = [
-    {
-      id: 'hist_medicine',
-      title: 'Medicine Through Time',
-      subject: 'History',
-      chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','mod2','mod3','mod4','mod5','mod6','mod7','mod8','mod9'],
-    },
-    {
-      id: 'soc_family',
-      title: 'Sociology of the Family',
-      subject: 'Sociology',
-      chapterIds: ['soc1','soc2','soc3','soc4','soc6'],
-    },
-    {
-      id: 'maths_core',
-      title: 'GCSE Maths',
-      subject: 'Maths',
-      chapterIds: ['math1','math2'],
-    },
-    {
-      id: 'bio_core',
-      title: 'GCSE Biology',
-      subject: 'Biology',
-      chapterIds: ['sci_bio_w1','bio_building_life','bio_human_machine','bio_disease_wars','bio_control_systems','bio_genetics_evolution','bio_ecosystems_group'],
-    },
-    {
-      id: 'chem_core',
-      title: 'GCSE Chemistry',
-      subject: 'Chemistry',
-      chapterIds: ['chem_matter_atoms','chem_reactions','chem_rates_organic','chem_earth'],
-    },
-  ]
 
   function handleChapterComplete(completedModule) {
     const COPY = [
@@ -1817,50 +1846,6 @@ function SubjectSection({ heading, accent, modules, onModuleClick }) {
   )
 }
 
-function SubjectLogoSection({ subjectLabel, logoSrc, accent, groups, onGroupClick }) {
-  return (
-    <div>
-      <div style={{
-        display: 'flex', alignItems: 'center',
-        paddingLeft: 18, paddingRight: 18, marginBottom: 14, gap: 8,
-      }}>
-        <img src={logoSrc} alt={subjectLabel} style={{ width: 22, height: 22, borderRadius: 6, objectFit: 'cover' }} />
-        <span style={{
-          fontSize: 12, fontWeight: 700, letterSpacing: '0.14em',
-          textTransform: 'uppercase', color: 'rgba(255,255,255,0.38)',
-          fontFamily: "'Outfit', sans-serif", lineHeight: '18px',
-        }}>{subjectLabel}</span>
-      </div>
-      <div style={{
-        display: 'flex', gap: 10, overflowX: 'auto',
-        paddingLeft: 18, paddingRight: 18, paddingBottom: 4,
-        scrollbarWidth: 'none', msOverflowStyle: 'none',
-        alignItems: 'flex-end',
-      }}>
-        {groups.map(group => (
-          <ModuleCard
-            key={group.id}
-            title={group.title}
-            subtitle={group.subtitle}
-            progress={group.progress}
-            accentColour={group.accent}
-            headerImage={group.headerImage}
-            bgGradient={group.bg}
-            icon={group.icon}
-            locked={group.locked}
-            isSelected={group.isSelected}
-            onClick={() => onGroupClick && onGroupClick(group)}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function BiologySection({ groups, onGroupClick }) {
-  return <SubjectLogoSection subjectLabel="Biology" logoSrc="/headers/bio-main.webp" accent="#4F8A5B" groups={groups} onGroupClick={onGroupClick} />
-}
-
 // ─── SubjectBrowser ────────────────────────────────────────────────────────────
 
 const SUBJECT_HEADER_IMGS = {
@@ -2402,244 +2387,181 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
   )
 }
 
+// Portrait thumbnails for the "Your subjects" row on the Subjects tab.
+const SUBJECT_THUMBNAILS = [
+  { name: 'History',   image: '/headers/history-main.webp' },
+  { name: 'Biology',   image: '/headers/bio-main.webp' },
+  { name: 'Chemistry', image: '/headers/chem-logo.webp' },
+  { name: 'Physics',   image: '/headers/physics-main.webp' },
+  { name: 'Maths',     image: '/headers/maths-main.webp' },
+  { name: 'English',   image: '/headers/english-main.webp' },
+  { name: 'Sociology', image: '/headers/sociology-main.webp' },
+]
+
 function ModulesTab({ onOpenModule }) {
-  const { user } = useAuth()
-  const modUserName = user?.name || 'you'
   const [subjectBrowser, setSubjectBrowser] = useState(null)
 
   if (subjectBrowser) {
     return <SubjectBrowser subjectName={subjectBrowser} onBack={() => setSubjectBrowser(null)} onOpenModule={onOpenModule} />
   }
 
-  function modPct(mod) {
-    if (!mod || !mod.screens) return 0
-    const s = safeGetModuleState(mod.id)
-    if (s.completed) return 100
-    const screen = s.screen || 0
-    return Math.min(100, Math.round((screen / mod.screens.length) * 100))
-  }
+  const continueModule = getContinueModule()
+  const continuePct = modPct(continueModule)
+  const continueHeaderImage = continueModule.headerImage || MODULE_HEADER_IMAGES[continueModule.id] || '/headers/history-medicine-through-time.webp'
 
-  const histAllMods = MODULES.filter(m => m.subject === 'History')
-  const medMods = histAllMods  // mod1-mod5 are all Medicine Through Time sub-topics
-  const continueRaw = medMods.find(m => { const p = modPct(m); return p > 0 && p < 100 }) || medMods[0]
-  const continuePct = modPct(continueRaw) || 0
-  const selectedId = continueRaw?.id || 'history-medicine-medieval-beliefs-causes'
-  const continueAccent = continueRaw?.color || '#C89B6D'
-  const continueHeaderImage = MODULE_HEADER_IMAGES[selectedId] || '/headers/history-medicine-through-time.webp'
+  const biggestWinRaw = getBiggestWin()
+  const biggestWinModule = biggestWinRaw ? MODULES.find(m => m.id === biggestWinRaw.moduleId) : null
+  const biggestWin = biggestWinModule ? {
+    ...biggestWinRaw,
+    mod: biggestWinModule,
+    headerImage: biggestWinModule.headerImage || MODULE_HEADER_IMAGES[biggestWinModule.id],
+    startScreenIndex: findTaggedScreen(biggestWinModule, biggestWinRaw.topic),
+  } : null
 
-  // Medicine Through Time progress = average across all 5 sub-modules
-  const medPct = Math.round(medMods.reduce((sum, m) => sum + modPct(m), 0) / Math.max(medMods.length, 1))
-
-  const historyGroupCards = [
-    { id: 'med_through_time',    title: 'Medicine Through Time',          subtitle: '', progress: medPct, locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-medicine-through-time.webp' },
-    { id: 'usa_conflict',        title: 'USA: Conflict at Home & Abroad', subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-usa-conflict.webp' },
-    { id: 'early_elizabethans',  title: 'Early Elizabethans',             subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-elizabethan.webp' },
-    { id: 'spain_new_world',     title: 'Spain & the New World',          subtitle: '', progress: 0,      locked: false, isSelected: false, bg: '#0D0E10', accent: '#C89B6D', headerImage: '/headers/history-spain-new-world.webp' },
-  ]
-
-  const englishGroupCards = [
-    { id: 'eng_macbeth',   title: 'Macbeth',                    subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-macbeth.webp' },
-    { id: 'eng_inspector', title: 'An Inspector Calls',         subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-inspector.webp' },
-    { id: 'eng_poetry',    title: 'Poetry',                     subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-poetry.webp' },
-    { id: 'eng_lang1',     title: 'Reading Between the Lines',  subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#B66DFF', headerImage: '/headers/english-reading.webp' },
-  ]
-
-  const physicsGroupCards = [
-    { id: 'phys_forces',  title: 'Forces & Motion',    subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-forces.webp' },
-    { id: 'phys_energy',  title: 'Energy & Power',     subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-energy.webp' },
-    { id: 'phys_waves',   title: 'Waves & Electricity',subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-waves.webp' },
-    { id: 'phys_space',   title: 'Space',               subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-space.webp' },
-    { id: 'phys_matter',  title: 'Matter & Particles',  subtitle: '', progress: 0, locked: false, isSelected: false, bg: '#0D0E10', accent: '#3B82F6', headerImage: '/headers/physics-matter.webp' },
-  ]
-
-
-  function handleModuleClick(mod) {
-    if (mod.id === 'med_through_time' || mod.id === 'usa_conflict' || mod.id === 'early_elizabethans' || mod.id === 'spain_new_world') {
-      setHistoryOpen(true); return
-    }
-    const realMod = MODULES.find(m => m.id === mod.id)
-    if (realMod && onOpenModule) onOpenModule(realMod)
-  }
-
-  const biologyGroupCards = BIOLOGY_GROUPS.map(group => {
-    const realMod = MODULES.find(m => m.id === group.id)
-    const pct = realMod ? modPct(realMod) : 0
-    return { id: group.id, title: group.title, subtitle: group.subtitle, icon: group.icon, accent: group.accent, headerImage: group.headerImage, progress: pct, locked: false, isSelected: false, bg: '#0D0E10' }
+  const weakestSubject = getWeakestSubject()?.subject || null
+  const subjectThumbs = SUBJECT_THUMBNAILS.map(s => {
+    const mods = MODULES.filter(m => m.subject === s.name)
+    const pct = mods.length ? Math.round(mods.reduce((sum, m) => sum + modPct(m), 0) / mods.length) : 0
+    return { ...s, pct, isWeakest: s.name === weakestSubject }
   })
-
-  const chemGroupCards = CHEMISTRY_GROUPS.map(group => {
-    const realMod = MODULES.find(m => m.id === group.id)
-    const pct = realMod ? modPct(realMod) : 0
-    return { id: group.id, title: group.title, subtitle: group.subtitle, icon: group.icon, accent: group.accent, headerImage: group.headerImage, progress: pct, locked: false, isSelected: false, bg: '#0D0E10' }
-  })
-
-  const mathsGroupCards = MATHS_GROUPS.map(group => {
-    const realMod = MODULES.find(m => m.id === group.id)
-    const pct = realMod ? modPct(realMod) : 0
-    return { id: group.id, title: group.title, subtitle: group.subtitle, icon: group.icon, accent: group.accent, headerImage: group.headerImage, progress: pct, locked: false, isSelected: false, bg: '#0D0E10' }
-  })
-
-  const sociologyGroupCards = SOCIOLOGY_GROUPS.map(group => ({
-    id: group.id,
-    title: group.title,
-    subtitle: group.subtitle,
-    icon: group.icon,
-    accent: group.accent,
-    headerImage: group.headerImage,
-    progress: 0,
-    locked: group.locked,
-    isSelected: false,
-    bg: '#0D0E10',
-    filterPrefix: group.filterPrefix,
-  }))
-
-  const heroBg = [
-    'linear-gradient(90deg, #05070B 0%, rgba(5,7,11,0.92) 28%, rgba(5,7,11,0.40) 62%, rgba(5,7,11,0.08) 100%)',
-    'radial-gradient(ellipse at 84% 62%, rgba(185,115,30,0.56) 0%, rgba(95,52,14,0.34) 30%, transparent 62%)',
-    'radial-gradient(ellipse at 76% 26%, rgba(225,158,42,0.24) 0%, transparent 44%)',
-    'radial-gradient(ellipse at 92% 48%, rgba(148,82,22,0.30) 0%, transparent 40%)',
-    'linear-gradient(175deg, #0E0B05 0%, #13110A 42%, #1C1610 70%, #0F0E07 100%)',
-  ].join(', ')
 
   return (
-    <div style={{ background: '#05070B', minHeight: '100vh', paddingBottom: 108, overflowX: 'hidden' }}>
+    <div style={{ background: GENERAL.neutral[0], minHeight: '100vh', paddingBottom: 108, overflowX: 'hidden' }}>
 
-      {/* ── HERO — header only ── */}
-      <div style={{ width: '100%', position: 'relative', background: heroBg, overflow: 'hidden', paddingBottom: 14 }}>
-        {/* Warm column-silhouette suggestion layer */}
+      {/* ── Hero ── */}
+      <div style={{ position: 'relative', width: '100%', height: '50vh', minHeight: 360, maxHeight: 480, overflow: 'hidden' }}>
         <div style={{
-          position: 'absolute', right: 0, top: 0, width: '55%', height: '100%', pointerEvents: 'none',
-          background: [
-            'radial-gradient(ellipse at 80% 72%, rgba(210,148,50,0.10) 0%, transparent 42%)',
-            'linear-gradient(0deg, rgba(5,7,11,0.52) 0%, transparent 55%)',
-          ].join(', '),
+          position: 'absolute', inset: 0,
+          backgroundImage: `url(${continueHeaderImage})`,
+          backgroundSize: 'cover', backgroundPosition: 'center',
+          filter: 'saturate(0.9)',
+        }} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: `linear-gradient(180deg, rgba(13,15,16,0.45) 0%, rgba(13,15,16,0.05) 22%, rgba(13,15,16,0.10) 45%, rgba(13,15,16,0.55) 75%, ${GENERAL.neutral[0]} 100%)`,
         }} />
 
-        {/* Header */}
-        <div style={{
-          padding: '18px 18px 0',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          position: 'relative', zIndex: 5,
-        }}>
-          <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 13, color: 'rgba(255,255,255,0.32)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Subjects</div>
+        {/* Streak badge */}
+        <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: SPACING.compact, zIndex: 2 }}>
           <StreakChip />
         </div>
-      </div>
 
-      {/* ── KEEP GOING heading ── */}
-      <div style={{ padding: '14px 18px 0' }}>
-        <div style={{
-          color: '#F5F7FF', fontWeight: 800, fontSize: 36,
-          lineHeight: 1.05, marginBottom: 0,
-          fontFamily: "'Sora', sans-serif",
-          letterSpacing: '-0.02em',
-        }}>Keep going.</div>
-      </div>
-
-      {/* ── CONTINUE LEARNING CARD ── */}
-      <div style={{ padding: '14px 18px 0', position: 'relative', zIndex: 10 }}>
-        <div style={{
-          borderRadius: 22,
-          border: `1px solid ${continueAccent}4D`,
-          position: 'relative', overflow: 'hidden', minHeight: 190,
-          background: '#0B0703',
-        }}>
-          {/* Cinematic header image */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            backgroundImage: `url(${continueHeaderImage})`,
-            backgroundSize: 'cover', backgroundPosition: 'center right',
-            filter: 'saturate(0.85) contrast(0.9)',
-          }} />
-          {/* Dark left overlay */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(90deg, rgba(5,7,11,0.97) 0%, rgba(5,7,11,0.88) 40%, rgba(5,7,11,0.45) 65%, rgba(5,7,11,0.08) 100%)',
-          }} />
-          {/* Content sits above overlays */}
-          <div style={{ position: 'relative', zIndex: 2, padding: '20px 18px' }}>
-
-          <div style={{ paddingRight: 62 }}>
-            <div style={{
-              fontSize: '.58rem', fontWeight: 800, letterSpacing: '.30em',
-              textTransform: 'uppercase', color: continueAccent, marginBottom: 4,
-              fontFamily: "'Outfit', sans-serif",
-            }}>Continue Learning</div>
-            <div style={{ fontSize: '.72rem', color: '#7D7988', marginBottom: 5, fontFamily: "'Outfit', sans-serif" }}>
-              {continueRaw?.subject || 'History'} · Module {continueRaw?.number || 3}
-            </div>
-            <div style={{
-              color: '#F5F2EA', fontWeight: 700, fontSize: '1.12rem',
-              lineHeight: 1.18, marginBottom: 3, fontFamily: "'Outfit', sans-serif",
-            }}>{continueRaw?.title || 'Surgery & Anatomy'}</div>
-            <div style={{ color: '#B8B4C2', fontSize: '.75rem', marginBottom: 14, fontFamily: "'Outfit', sans-serif" }}>
-              {continueRaw?.subtitle || 'Hold Him Down and Hope'}
-            </div>
-            {/* Progress */}
-            <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: '.6rem', color: continueAccent, fontWeight: 700, marginBottom: 5, fontFamily: "'Outfit', sans-serif" }}>{continuePct}%</div>
-              <div style={{ height: 4, background: 'rgba(255,255,255,0.10)', borderRadius: 99, overflow: 'hidden' }}>
-                <div style={{ width: continuePct + '%', height: '100%', background: continueAccent, borderRadius: 99, boxShadow: `0 0 8px ${continueAccent}88` }} />
-              </div>
-            </div>
-            <button
-              onClick={() => { const m = MODULES.find(x => x.id === selectedId); if (m && onOpenModule) onOpenModule(m) }}
-              style={{
-                height: 58, paddingLeft: 24, paddingRight: 24,
-                background: `linear-gradient(90deg, ${continueAccent}AA, ${continueAccent})`,
-                border: 'none', borderRadius: 18, cursor: 'pointer',
-                color: '#fff', fontWeight: 700, fontSize: 20,
-                fontFamily: "'Sora', sans-serif",
-                letterSpacing: '-0.01em', lineHeight: '20px',
-                boxShadow: `0 4px 18px ${continueAccent}44`,
-                display: 'inline-flex', alignItems: 'center', gap: 7,
-              }}>▶ Continue Module</button>
+        {/* Headline */}
+        <div style={{ position: 'absolute', left: SPACING.compact, right: SPACING.compact, bottom: SPACING.standard, zIndex: 2 }}>
+          <div style={{ ...TYPE.cinematic, fontSize: 46, color: GENERAL.softWhite }}>
+            Keep going<span style={{ color: GENERAL.teal }}>.</span>
           </div>
-          </div>{/* close relative zIndex content wrapper */}
+          <div style={{ ...TYPE.body, color: 'rgba(241,250,238,0.7)', marginTop: SPACING.micro }}>
+            {continueModule.title}
+          </div>
         </div>
       </div>
 
-      {/* ── WEAK AREA CARD ── */}
-      {(() => {
-        const improvements = getImprovements()
-        const worst = [...improvements].sort((a,b) => (a.recentAvg||100)-(b.recentAvg||100))[0]
-        const weakLabel = worst?.subject || 'History'
-        const weakPct   = worst?.recentAvg ?? null
-        return (
-          <div style={{ padding: '14px 18px 0' }}>
-            <button onClick={() => setSubjectBrowser(weakLabel)} style={{ width: '100%', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', borderRadius: 24, position: 'relative', textAlign: 'left', display: 'block' }}>
-              <div style={{ position: 'absolute', inset: -1, borderRadius: 25, background: 'linear-gradient(135deg, rgba(251,113,133,0.2) 0%, rgba(139,92,246,0.15) 100%)', filter: 'blur(1.5px)', zIndex: 0 }} />
-              <div style={{ position: 'relative', zIndex: 1, background: 'rgba(17,24,39,0.72)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderRadius: 24, border: '1px solid rgba(251,113,133,0.18)', boxShadow: '0 10px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)', padding: '14px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 52, height: 52, borderRadius: 14, flexShrink: 0, overflow: 'hidden', background: '#0D1117', boxShadow: '0 0 20px rgba(45,212,191,0.35), inset 0 0 0 1px rgba(45,212,191,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <img src="/icons/brain-icon.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 14 }} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', color: '#FB7185', textTransform: 'uppercase', marginBottom: 3 }}>Weak Zone</div>
-                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 700, color: '#F4EFE6', lineHeight: 1.2, marginBottom: 4 }}>{weakLabel}</div>
-                  {weakPct !== null && (
-                    <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11, color: '#9CA3AF' }}>
-                      Recent score: <span style={{ color: '#2DD4BF', textShadow: '0 0 10px rgba(45,212,191,0.5)', fontWeight: 700 }}>{weakPct}%</span>
-                    </div>
-                  )}
-                </div>
-                <div style={{ flexShrink: 0, background: 'rgba(139,92,246,0.14)', border: '1px solid rgba(139,92,246,0.28)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', borderRadius: 10, padding: '8px 10px', fontFamily: "'Outfit', sans-serif", fontSize: 11, fontWeight: 700, color: '#C4B5FD', lineHeight: 1.3, textAlign: 'center' }}>
-                  Review<br />now ›
-                </div>
+      {/* ── Continue row ── */}
+      <button
+        onClick={() => onOpenModule && onOpenModule(continueModule)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: SPACING.compact, width: '100%',
+          padding: `${SPACING.standard}px ${SPACING.compact}px 0`,
+          background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left',
+        }}
+      >
+        <div style={{
+          width: 44, height: 44, borderRadius: RADII.pill, flexShrink: 0,
+          background: GENERAL.neutral[2], border: `1px solid rgba(${GENERAL.tealRgb},0.35)`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <svg width="14" height="16" viewBox="0 0 14 16" fill="none">
+            <path d="M2 1.5L13 8L2 14.5V1.5Z" fill={GENERAL.teal} />
+          </svg>
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{
+            fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 600,
+            letterSpacing: '0.18em', textTransform: 'uppercase', color: GENERAL.slate,
+            marginBottom: SPACING.micro,
+          }}>Continue</div>
+          <div style={{ height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: RADII.pill, overflow: 'hidden' }}>
+            <div style={{ width: `${continuePct}%`, height: '100%', background: GENERAL.teal, borderRadius: RADII.pill }} />
+          </div>
+        </div>
+
+        <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 600, color: GENERAL.slate, flexShrink: 0 }}>
+          {continuePct}%
+        </div>
+      </button>
+
+      {/* ── Biggest win ── */}
+      {biggestWin && (
+        <div style={{ padding: `${SPACING.separation}px ${SPACING.compact}px 0` }}>
+          <div style={{ ...TYPE.metadata, color: GENERAL.slate, textTransform: 'uppercase', marginBottom: SPACING.compact }}>
+            Biggest win
+          </div>
+          <button
+            onClick={() => onOpenModule && onOpenModule(biggestWin.mod, biggestWin.startScreenIndex)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: SPACING.compact, width: '100%',
+              padding: SPACING.compact, borderRadius: RADII.large,
+              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+              cursor: 'pointer', textAlign: 'left',
+            }}
+          >
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro, marginBottom: SPACING.micro }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M13 2L4.5 13H11L10 22L19.5 10H13L13 2Z" fill={GENERAL.teal} />
+                </svg>
+                <span style={{ ...TYPE.cardTitle, fontSize: 17, color: GENERAL.softWhite }}>{biggestWin.label}</span>
+              </div>
+              <div style={{ ...TYPE.bodySmall, color: GENERAL.slate, marginBottom: SPACING.micro }}>
+                {biggestWin.reasonText}
+              </div>
+              <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 600, color: GENERAL.teal }}>
+                Revisit →
+              </div>
+            </div>
+            <div style={{
+              width: 76, height: 76, borderRadius: RADII.medium, flexShrink: 0, overflow: 'hidden',
+              backgroundImage: `url(${biggestWin.headerImage})`, backgroundSize: 'cover', backgroundPosition: 'center',
+            }} />
+          </button>
+        </div>
+      )}
+
+      {/* ── Your subjects ── */}
+      <div style={{ padding: `${SPACING.separation}px 0 0` }}>
+        <div style={{ ...TYPE.metadata, color: GENERAL.slate, textTransform: 'uppercase', marginBottom: SPACING.compact, padding: `0 ${SPACING.compact}px` }}>
+          Your subjects
+        </div>
+        <div style={{
+          display: 'flex', gap: SPACING.compact, overflowX: 'auto',
+          padding: `0 ${SPACING.compact}px`, paddingBottom: SPACING.micro,
+          scrollbarWidth: 'none', msOverflowStyle: 'none',
+        }}>
+          {subjectThumbs.map(s => (
+            <button
+              key={s.name}
+              onClick={() => setSubjectBrowser(s.name)}
+              style={{ flexShrink: 0, width: 104, background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}
+            >
+              <div style={{
+                width: 104, height: 140, borderRadius: RADII.medium, overflow: 'hidden',
+                backgroundImage: `url(${s.image})`, backgroundSize: 'cover', backgroundPosition: 'center',
+                marginBottom: SPACING.micro,
+              }} />
+              <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 600, color: GENERAL.softWhite, marginBottom: 4 }}>
+                {s.name}
+              </div>
+              <div style={{ height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: RADII.pill, overflow: 'hidden', marginBottom: 4 }}>
+                <div style={{ width: `${s.pct}%`, height: '100%', background: s.isWeakest ? GENERAL.coral : GENERAL.teal, borderRadius: RADII.pill }} />
+              </div>
+              <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 500, color: GENERAL.slate }}>
+                {s.pct}%
               </div>
             </button>
-          </div>
-        )
-      })()}
-
-      {/* ── SUBJECT SECTIONS ── */}
-      <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 28 }}>
-        <SubjectLogoSection subjectLabel="History"   logoSrc="/headers/history-main.webp"    accent="#C89B6D" groups={historyGroupCards}  onGroupClick={() => setSubjectBrowser('History')} />
-        <SubjectLogoSection subjectLabel="English"   logoSrc="/headers/english-main.webp"    accent="#B66DFF" groups={englishGroupCards}  onGroupClick={() => setSubjectBrowser('English')} />
-        <BiologySection groups={biologyGroupCards} onGroupClick={() => setSubjectBrowser('Biology')} />
-        <SubjectLogoSection subjectLabel="Chemistry" logoSrc="/headers/chem-logo.webp"       accent="#9B59E8" groups={chemGroupCards}     onGroupClick={() => setSubjectBrowser('Chemistry')} />
-        <SubjectLogoSection subjectLabel="Maths"     logoSrc="/headers/maths-main.webp"      accent="#2DD4BF" groups={mathsGroupCards}    onGroupClick={() => setSubjectBrowser('Maths')} />
-        <SubjectLogoSection subjectLabel="Physics"   logoSrc="/headers/physics-main.webp"    accent="#3B82F6" groups={physicsGroupCards}  onGroupClick={() => setSubjectBrowser('Physics')} />
-        <SubjectLogoSection subjectLabel="Sociology" logoSrc="/headers/sociology-main.webp"  accent="#FF5C7A" groups={sociologyGroupCards} onGroupClick={() => setSubjectBrowser('Sociology')} />
+          ))}
+        </div>
       </div>
     </div>
   )

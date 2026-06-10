@@ -107,6 +107,7 @@ See `docs/system/00_SYSTEM_INDEX.md` for the full order of authority.
 | `src/constants/radii.js` | `RADII` — all corner radius values. Never invent random border-radius values. |
 | `src/constants/buttons.js` | `BUTTONS` — all button dimension and interaction tokens. |
 | `src/constants/typography.js` | `TYPE` — all typography tokens. Use spread syntax: `...TYPE.hero`. |
+| `src/constants/generalTheme.js` | `GENERAL` — non-subject page theme (Home, Subjects browser, Progress, Exam landing, onboarding, bottom nav). Subject colours stay in `subjects.js`; coral is a rare accent only. |
 
 ## Data Files
 
