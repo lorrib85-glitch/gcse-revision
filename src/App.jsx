@@ -732,18 +732,18 @@ function HomeAtmosphere() {
           <line key={i}
             x1={nodes[a][0]} y1={nodes[a][1]}
             x2={nodes[b][0]} y2={nodes[b][1]}
-            stroke="rgba(200,190,175,0.25)"
+            stroke={`rgba(${GENERAL.tealRgb},0.22)`}
             strokeWidth="0.65"
           />
         ))}
         {nodes.map(([cx, cy], i) => (
-          <circle key={i} cx={cx} cy={cy} r="1.8" fill="rgba(215,205,190,0.35)" />
+          <circle key={i} cx={cx} cy={cy} r="1.8" fill={`rgba(${GENERAL.tealRgb},0.32)`} />
         ))}
       </svg>
       {/* Left-to-right vignette — keeps text area dark */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(90deg, #08090D 0%, rgba(8,9,13,0.72) 40%, rgba(8,9,13,0.18) 75%, transparent 100%)',
+        background: `linear-gradient(90deg, ${GENERAL.neutral[0]} 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.72) 40%, rgba(${hexToRgb(GENERAL.neutral[0])},0.18) 75%, transparent 100%)`,
       }} />
     </div>
   )
@@ -825,17 +825,13 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
     } catch { return null }
   })()
 
-  const atmosphereSubject = jumpBackModule?.subject || 'History'
-  const theme = SUBJECTS[atmosphereSubject] || SUBJECTS.History
-  const accent = theme.accent
-  const rgb = theme.accentRgb
   const jumpHeaderImage = jumpBackModule?.headerImage
     || MODULE_HEADER_IMAGES[jumpBackModule?.id]
     || '/headers/history-medicine-through-time.webp'
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#08090D',
+      minHeight: '100vh', background: GENERAL.neutral[0],
       paddingBottom: 120, overflowX: 'hidden', position: 'relative',
       display: 'flex', flexDirection: 'column',
     }}>
@@ -851,8 +847,8 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0, zIndex: 1,
         background: [
-          'linear-gradient(to right, #08090D 0%, #08090D 48%, rgba(8,9,13,0.80) 63%, rgba(8,9,13,0.32) 78%, rgba(8,9,13,0.06) 100%)',
-          'linear-gradient(to bottom, rgba(8,9,13,0.45) 0%, transparent 10%, transparent 48%, rgba(8,9,13,0.85) 65%, #08090D 76%)',
+          `linear-gradient(to right, ${GENERAL.neutral[0]} 0%, ${GENERAL.neutral[0]} 48%, rgba(${hexToRgb(GENERAL.neutral[0])},0.80) 63%, rgba(${hexToRgb(GENERAL.neutral[0])},0.32) 78%, rgba(${hexToRgb(GENERAL.neutral[0])},0.06) 100%)`,
+          `linear-gradient(to bottom, rgba(${hexToRgb(GENERAL.neutral[0])},0.45) 0%, transparent 10%, transparent 48%, rgba(${hexToRgb(GENERAL.neutral[0])},0.85) 65%, ${GENERAL.neutral[0]} 76%)`,
         ].join(', '),
       }} />
 
@@ -872,10 +868,10 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
         }}>
           <div style={{
             width: 32, height: 32, borderRadius: RADII.pill,
-            background: `rgba(${rgb},0.12)`,
-            border: `1.5px solid rgba(${rgb},0.28)`,
+            background: `rgba(${GENERAL.tealRgb},0.12)`,
+            border: `1.5px solid rgba(${GENERAL.tealRgb},0.28)`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            ...TYPE.metadata, color: accent, letterSpacing: '0em',
+            ...TYPE.metadata, color: GENERAL.teal, letterSpacing: '0em',
           }}>
             {userName.charAt(0).toUpperCase()}
           </div>
@@ -883,8 +879,8 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
         </div>
 
         {/* ── Greeting ── */}
-        <div style={{ ...TYPE.hero, fontSize: 26, fontWeight: 600, color: '#F5F7FF', marginBottom: 14 }}>
-          Hi, {userName}<span style={{ color: accent }}>.</span>
+        <div style={{ ...TYPE.cinematic, fontSize: 38, color: GENERAL.softWhite, marginBottom: SPACING.compact }}>
+          Hi, {userName}<span style={{ color: GENERAL.teal }}>.</span>
         </div>
 
         {/* ── Jump back in ── */}
@@ -903,11 +899,11 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
             paddingBottom: SPACING.standard,
           }}>
             <div>
-              <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 10 }}>
+              <div style={{ ...TYPE.sectionTitle, color: GENERAL.softWhite, marginBottom: 10 }}>
                 Jump back in
               </div>
               {jumpBackModule && (
-                <div style={{ ...TYPE.bodySmall, color: 'rgba(255,255,255,0.46)' }}>
+                <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>
                   {jumpBackModule.title}
                 </div>
               )}
@@ -920,15 +916,15 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
               }}>
                 <div style={{
                   width: 36, height: 36, borderRadius: RADII.pill, flexShrink: 0,
-                  background: `rgba(${rgb},0.12)`,
-                  border: `1px solid rgba(${rgb},0.24)`,
+                  background: `rgba(${GENERAL.tealRgb},0.12)`,
+                  border: `1px solid rgba(${GENERAL.tealRgb},0.24)`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
                   <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
-                    <path d="M1 1.5L10 6.5L1 11.5V1.5Z" fill={accent} />
+                    <path d="M1 1.5L10 6.5L1 11.5V1.5Z" fill={GENERAL.teal} />
                   </svg>
                 </div>
-                <span style={{ ...TYPE.metadata, color: 'rgba(255,255,255,0.28)', fontWeight: 400 }}>
+                <span style={{ ...TYPE.metadata, color: GENERAL.slate, fontWeight: 400 }}>
                   {jumpPct}% complete
                 </span>
               </div>
@@ -947,7 +943,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
           }}
           style={{
             marginTop: 'auto', position: 'relative', overflow: 'hidden',
-            display: 'block', width: '100%', background: '#08090D', border: 'none',
+            display: 'block', width: '100%', background: GENERAL.neutral[0], border: 'none',
             padding: 0, cursor: 'pointer', textAlign: 'left',
           }}
         >
@@ -972,11 +968,11 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
           {/* Overlay: radial text protection + bottom page blend */}
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0, zIndex: 1,
-            background: 'radial-gradient(ellipse 80% 95% at 12% 50%, #08090D 0%, rgba(8,9,13,0.88) 28%, rgba(8,9,13,0.28) 55%, transparent 78%)',
+            background: `radial-gradient(ellipse 80% 95% at 12% 50%, ${GENERAL.neutral[0]} 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.88) 28%, rgba(${hexToRgb(GENERAL.neutral[0])},0.28) 55%, transparent 78%)`,
           }} />
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0, zIndex: 1,
-            background: 'linear-gradient(to bottom, transparent 45%, rgba(8,9,13,0.6) 74%, #08090D 100%)',
+            background: `linear-gradient(to bottom, transparent 45%, rgba(${hexToRgb(GENERAL.neutral[0])},0.6) 74%, ${GENERAL.neutral[0]} 100%)`,
           }} />
 
           {/* Content — flex column so CTA sits at bottom */}
@@ -986,10 +982,10 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
             paddingBottom: SPACING.cinematic,
           }}>
             <div>
-              <div style={{ ...TYPE.sectionTitle, color: '#F5F7FF', marginBottom: 8 }}>
+              <div style={{ ...TYPE.sectionTitle, color: GENERAL.softWhite, marginBottom: 8 }}>
                 Close the gap.
               </div>
-              <div style={{ ...TYPE.bodySmall, color: 'rgba(255,255,255,0.38)' }}>
+              <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>
                 {homeGapModule ? homeGapModule.mod.title : 'This will make the biggest impact.'}
               </div>
             </div>
@@ -997,11 +993,11 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
             <div style={{
               marginTop: 'auto', paddingTop: 16,
               display: 'inline-flex', alignItems: 'center', gap: 5,
-              ...TYPE.bodySmall, color: accent, fontWeight: 500,
+              ...TYPE.bodySmall, color: GENERAL.teal, fontWeight: 500,
             }}>
               {homeGapModule ? `Study ${homeGapModule.tag.replace(/-/g, ' ')}` : 'See focus topics'}
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M3 7H11M8 4L11 7L8 10" stroke={accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M3 7H11M8 4L11 7L8 10" stroke={GENERAL.teal} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
           </div>
