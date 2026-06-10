@@ -359,13 +359,11 @@ function BottomNav({ tab, setTab }) {
 
   return (
     <div style={{
-      position: 'fixed', left: '50%', bottom: 14, transform: 'translateX(-50%)',
-      width: 'calc(100% - 32px)', maxWidth: 400, zIndex: 1000,
+      position: 'fixed', left: 0, right: 0, bottom: 0,
+      width: '100%', zIndex: 1000,
       background: 'rgba(6,8,14,0.96)',
       backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
-      border: '1px solid rgba(255,255,255,0.05)',
-      borderRadius: 32,
-      boxShadow: '0 4px 20px rgba(0,0,0,0.65)',
+      borderTop: '1px solid rgba(255,255,255,0.05)',
       display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
       padding: '10px 6px calc(10px + env(safe-area-inset-bottom))',
       gap: 4,
