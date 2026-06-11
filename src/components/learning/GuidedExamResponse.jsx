@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
@@ -230,11 +231,11 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
   // PHASE: darkBeat — a single, wordless breath before the test
   // ═══════════════════════════════════════════════════════════════════════════
   if (phase === 'darkBeat') {
-    return (
+    return createPortal(
       <div
         onClick={() => setPhase('intro')}
         style={{
-          position: 'fixed', inset: 0, zIndex: 1000,
+          position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000,
           background: '#050505',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           cursor: 'pointer',
@@ -250,7 +251,8 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
         }}>
           {exam.beatText || 'Last task — give it a go yourself'}
         </div>
-      </div>
+      </div>,
+      document.body
     )
   }
 
@@ -258,7 +260,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
   // PHASE: intro — the real question, framed
   // ═══════════════════════════════════════════════════════════════════════════
   if (phase === 'intro') {
-    return (
+    return createPortal(
       <>
         <style>{`
           @keyframes ger-up {
@@ -267,7 +269,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
           }
         `}</style>
         <div style={{
-          position: 'fixed', inset: 0, zIndex: 1000,
+          position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000,
           background: bg,
           display: 'flex', flexDirection: 'column',
           overflow: 'hidden',
@@ -329,7 +331,8 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
             </button>
           </div>
         </div>
-      </>
+      </>,
+      document.body
     )
   }
 
@@ -337,14 +340,14 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
   // PHASE: writing — guided, scaffolded answer on a parchment surface
   // ═══════════════════════════════════════════════════════════════════════════
   if (phase === 'writing') {
-    return (
+    return createPortal(
       <>
         <style>{`
           .ger-textarea { outline: none; background: transparent; resize: none; }
           .ger-textarea::placeholder { color: rgba(60,35,8,0.35); font-style: italic; font-family: 'Caveat', cursive; font-size: 18px; }
         `}</style>
         <div style={{
-          position: 'fixed', inset: 0, zIndex: 1000,
+          position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000,
           background: bg,
           display: 'flex', flexDirection: 'column',
           overflow: 'hidden',
@@ -426,7 +429,8 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
             </div>
           </div>
         </div>
-      </>
+      </>,
+      document.body
     )
   }
 
@@ -434,9 +438,9 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
   // PHASE: marking — brief, calm loading state while Claude marks the answer
   // ═══════════════════════════════════════════════════════════════════════════
   if (phase === 'marking') {
-    return (
+    return createPortal(
       <div style={{
-        position: 'fixed', inset: 0, zIndex: 1000,
+        position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000,
         background: bg,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
@@ -448,7 +452,8 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
         }}>
           Marking your answer…
         </div>
-      </div>
+      </div>,
+      document.body
     )
   }
 
@@ -456,9 +461,9 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
   // PHASE: result — mark, section feedback, verdict, and how to gain more marks
   // ═══════════════════════════════════════════════════════════════════════════
   if (phase === 'result' && result) {
-    return (
+    return createPortal(
       <div style={{
-        position: 'fixed', inset: 0, zIndex: 1000,
+        position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000,
         background: bg,
         display: 'flex', flexDirection: 'column',
         overflow: 'hidden',
@@ -571,7 +576,8 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
         }}>
           <button onClick={advance} style={ctaStyle(true)}>Continue →</button>
         </div>
-      </div>
+      </div>,
+      document.body
     )
   }
 

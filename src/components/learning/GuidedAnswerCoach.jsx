@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
@@ -66,7 +67,7 @@ const textBtnStyle = {
 }
 
 function StageShell({ stageNum, onExit, children, footer }) {
-  return (
+  return createPortal(
     <>
       <style>{`
         @keyframes gac-up {
@@ -75,7 +76,7 @@ function StageShell({ stageNum, onExit, children, footer }) {
         }
       `}</style>
       <div style={{
-        position: 'fixed', inset: 0, zIndex: 1000,
+        position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', zIndex: 1000,
         background: GENERAL.neutral[0],
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
       }}>
@@ -118,7 +119,8 @@ function StageShell({ stageNum, onExit, children, footer }) {
           </div>
         )}
       </div>
-    </>
+    </>,
+    document.body
   )
 }
 
