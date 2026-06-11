@@ -49,16 +49,21 @@ Screen-level learning interaction components.
 - `FaceTheExaminer.jsx` — Examiner-style written question interaction with mark, criteria selection, annotation, and optional re-mark.
 - `FillInTheBlanksBlock.jsx` — Inline fill-in-the-blanks chapter block.
 - `GalensDiagnostic.jsx` — Humour-based diagnostic scenario that walks learners through Galen's theory of the four humours.
+- `GuidedAnswerCoach.jsx` — Multi-stage exam-technique coach for written answers (question → examiner expectations → modelled thinking → annotated model answer → guided write → independent write → debrief); supports subject or general app branding.
 - `GuidedChoiceCarousel.jsx` — Scrollable single-choice carousel with atmospheric visual option cards (e.g. healer selection).
+- `GuidedExamResponse.jsx` — Guided written-answer scaffold: exam question + marks, scaffolded answer structure, model answer reveal, mark-by-mark breakdown.
 - `InteractiveCollectionExplorer.jsx` — Theme-based explorer with colour-coded content sheets and fuzzy-match text validation.
 - `InteractiveHotspotImage.jsx` — Full-screen image with tappable hotspots (two-phase intro→explore).
 - `KeyFigureReveal.jsx` — Scrollable portrait-hero screen introducing a key person. Portrait hero image (~60vh), name/role overlaid at bottom, significance statement, up to 4 knowledge sections, Continue button.
 - `MatchingTask.jsx` — Term-to-description card-pair matching activity with SVG connector lines and round splitting for large sets.
 - `MisconceptionCheck.jsx` — Full-screen, cinematic true/false misconception trap, one statement at a time, with calm reveal and exam-trap framing.
 - `MedicalTheoryPrescription.jsx` — Cause → prescription → reveal flow with a parchment-textured input surface and fuzzy-match validation.
+- `PriorKnowledgeRecall.jsx` — Full-screen chapter-opening recall screen. Free-text recall scored via `/api/recall`; missing concepts logged to the weakness tracker. Standard Section 1 component for History chapters (see History Module Architecture below).
 - `QuickRecallScreen.jsx` — Rapid-fire retrieval screen (choice + connection questions).
 - `RecoveryQuizPlayer.jsx` — Lightweight recovery quiz player (3–4 focused questions).
+- `SpotTheError.jsx` — Diagnostic precision-check: student selects an error in a statement/calculation/explanation, explains why it's wrong, then rewrites it correctly. Logs "Error identification" and "Scientific precision" weaknesses.
 - `SwipeSort.jsx` — Swipe-gesture sorting activity; powers `naturalSupernaturalSwipe` screen type.
+- `SymptomProgression.jsx` — Case-file walkthrough of how an illness develops in the body, stage by stage (explain-the-chain mechanic).
 - `TheoryCompareBlock.jsx` — Side-by-side theory comparison block with staggered fade-in animation.
 - `TheoryLab.jsx` — Multi-part diagnostic scenario linking a historical belief to its treatment logic and outcome.
 - `VisualLearning.jsx` — Click-to-continue cinematic scene sequence with background images, animated headlines, and optional final reveal.
@@ -75,6 +80,7 @@ Module-level orchestration and chapter framing screens.
 ### `src/components/feedback/`
 Question feedback and exam practice components.
 - `ExamQuestionFrame.jsx` — Universal exam question component with mark scheme reveal.
+- `ExamRoundDebrief.jsx` — Examiner-voice end-of-round debrief; synthesises patterns across a full set of answers and logs recurring weaknesses for WeakSpotRecovery.
 - `RetrievalFrame.jsx` — LOCKED. Cinematic wrapper for retrieval moments. Delegates all answer logic to AnswerInteraction.
 
 ## Design System Documentation
@@ -115,13 +121,27 @@ See `docs/system/00_SYSTEM_INDEX.md` for the full order of authority.
 |------|----------|
 | `src/modules.js` | `MODULES` array — all module definitions (id, title, subject, colour, screens, etc.) |
 | `src/content.js` | `TOPICS` and `TOPIC_DATA` — History topic content and questions |
+| `src/contentIndex.js` | `CONTENT_INDEX` — maps topic tags to section metadata for the Targeted Brush-Up system |
 | `src/progress.js` | Progress helpers: `getProgress`, `saveSessionResult`, `getSessionDraft`, etc. |
+| `src/unifiedWeaknessTracker.js` | **Canonical weakness tracker.** `logWrongAnswer`, `logCorrectAnswer`, `logExamTechnique`, etc. — single source of truth for weakness identification, feeding `WeakSpotRecovery` and recovery quizzes. (`src/weaknessTracker.js` is a legacy, unused file — do not extend it.) |
+| `src/data/tagModuleMap.js` | `TAG_MODULE_MAP` + `findTaggedScreen()` — maps weakness tags to a module/screen for "fix this gap" links |
 | `src/data/mathsTopics.js` | Maths topic groups and questions |
+| `src/data/mathsGroups.js` | `MATHS_GROUPS` — Maths topic group definitions for ModulesTab |
+| `src/data/mathsQuestions.js` | `MATHS_FORMULA_SHEET` and AQA Maths past-paper questions |
 | `src/data/englishTopics.js` | English topic groups and questions |
 | `src/data/sociologyTopics.js` | Sociology topic groups and questions |
+| `src/data/sociologyGroups.js` | `SOCIOLOGY_GROUPS` — Sociology topic group definitions for ModulesTab |
+| `src/sociologyKeyTerms.js` | AQA GCSE Sociology specification vocabulary list |
 | `src/data/chemistryTopics.js` | Chemistry topic groups and questions |
+| `src/data/chemistryGroups.js` | `CHEMISTRY_GROUPS` — Chemistry topic group definitions for ModulesTab |
+| `src/data/chemImages.js` | `CHEM_IMAGES` — inline base64 chemistry figure images |
+| `src/data/physicsTopics.js` | `PHYSICS_TOPIC_GROUPS` — AQA GCSE Physics Foundation past-paper questions by topic |
 | `src/data/biologyGroups.js` | `BIOLOGY_GROUPS` — 7 Biology topic group definitions with module lists and header images |
+| `src/figures.js` | `FIGURES` — figure image paths served from `/public/figures/` |
+| `src/data/medicineExamPapers.js` | Edexcel History (Medicine) past-paper sources and questions, by exam series |
+| `src/data/guidedAnswerCoach.js` | Content for `GuidedAnswerCoach` — exam-technique question types, model answers and mark schemes |
 | `src/data/recoveryQuizzes.js` | Recovery quiz definitions keyed by `recoveryQuizId` — used by RecoveryQuizPlayer |
+| `src/data/quickQuizData.js` | `QUICK_QUIZ_QUESTIONS` — 90s Quiz question bank (mcq, truefalse, fillgap, matchpairs, sequence, dragdrop) |
 
 ## Public Assets
 
@@ -134,7 +154,7 @@ See `docs/system/00_SYSTEM_INDEX.md` for the full order of authority.
 - `/public/mystery-cube.png` — used on locked/mystery module cards
 - `/public/figures/` — biology/chemistry diagram images used in question content
 
-Always use `.png` extension for images. Never `.svg` for photos.
+Both `.png` and `.webp` are approved image formats and are used throughout the codebase (often as matching pairs in `/public`). `.webp` is preferred for new image assets where practical (smaller file size); `.png` remains acceptable. Never `.svg` for photos.
 
 ## Fonts
 
@@ -247,6 +267,8 @@ Any interaction that records incorrect answers should:
 - Influence progress tracking
 
 Do not create assessment interactions that bypass the weak area system.
+
+The canonical weakness tracker is `src/unifiedWeaknessTracker.js` — always log through it (`logWrongAnswer`, `logCorrectAnswer`, `logExamTechnique`). Do not use or extend `src/weaknessTracker.js`.
 
 ---
 
@@ -1331,5 +1353,3 @@ A Science chapter is complete only if the student can:
 - understand how the examiner awards marks
 
 If any of these are missing, revise the chapter before building.
-
-> **Note:** `MisconceptionCheck` and `SpotTheError` now both exist at `src/components/learning/` and are registered as block types `misconceptionCheck` and `spotTheError`.
