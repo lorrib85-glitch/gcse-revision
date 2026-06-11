@@ -12,6 +12,7 @@ import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociolog
 import { CHEMISTRY_TOPIC_GROUPS, ALL_CHEMISTRY_QUESTIONS } from './data/chemistryTopics.js'
 import { CHEM_IMAGES } from './data/chemImages.js'
 import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, J23_Q6 } from './data/medicineExamPapers.js'
+import { GUIDED_COACH_TYPES } from './data/guidedAnswerCoach.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore } from './progress.js'
@@ -22,6 +23,7 @@ import ModulePlayer, { getAllConfidenceRatings } from './components/layout/Modul
 import ChapterCompleteScreen from './components/layout/ChapterCompleteScreen.jsx'
 import ExamQuestionFrame from './components/feedback/ExamQuestionFrame.jsx'
 import ExamRoundDebrief from './components/feedback/ExamRoundDebrief.jsx'
+import GuidedAnswerCoach from './components/learning/GuidedAnswerCoach.jsx'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -4187,6 +4189,8 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
   const [sociologyOpen, setSociologyOpen]     = useState(false)
   const [chemistryOpen, setChemistryOpen]     = useState(false)
   const [paperChooserOpen, setPaperChooserOpen] = useState(false)
+  const [examTechniqueOpen, setExamTechniqueOpen] = useState(false)
+  const [activeCoachType, setActiveCoachType] = useState(null)
   const [selected, setSelected]   = useState(null)
   const [qIdx, setQIdx]           = useState(0)
   const [answer, setAnswer]       = useState('')
@@ -4679,6 +4683,76 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
   // ── Exams landing (cinematic redesign) ──────────────────────────────────
   if (isExamMode && examPhase === 'landing') {
 
+    // ── Guided answer coach (full-screen overlay) ──
+    if (activeCoachType) {
+      const coachType = GUIDED_COACH_TYPES.find(t => t.id === activeCoachType)
+      if (coachType) {
+        return (
+          <GuidedAnswerCoach
+            coachType={coachType}
+            onExit={(target) => {
+              setActiveCoachType(null)
+              if (target !== 'chooser') setExamTechniqueOpen(false)
+            }}
+          />
+        )
+      }
+    }
+
+    // ── Exam technique chooser ──
+    if (examTechniqueOpen) {
+      return (
+        <div style={{ minHeight: '100vh', background: GENERAL.neutral[0], paddingBottom: 110, boxSizing: 'border-box' }}>
+          <div style={{ maxWidth: 430, margin: '0 auto', padding: `0 ${SPACING.compact}px` }}>
+
+            <div style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 14px)', paddingBottom: SPACING.compact }}>
+              <button onClick={() => setExamTechniqueOpen(false)} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer',
+                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)',
+                borderRadius: RADII.pill, color: GENERAL.slate,
+                fontFamily: "'Sora', sans-serif", fontSize: 12.5, fontWeight: 600, padding: '7px 14px 7px 10px',
+              }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={GENERAL.slate} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11 5L4 12L11 19M4 12H20" />
+                </svg>
+                Back
+              </button>
+            </div>
+
+            <div style={{ ...TYPE.cinematic, fontSize: 32, color: GENERAL.softWhite, marginBottom: 6 }}>
+              Nail exam technique<span style={{ color: GENERAL.teal }}>.</span>
+            </div>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, color: GENERAL.slate, lineHeight: 1.5, marginBottom: SPACING.standard }}>
+              Pick a question type and learn exactly what the examiner wants.
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {GUIDED_COACH_TYPES.map(coachType => (
+                <button key={coachType.id} onClick={() => setActiveCoachType(coachType.id)} style={{
+                  display: 'flex', alignItems: 'center', gap: 14, width: '100%', textAlign: 'left',
+                  padding: '14px 16px', cursor: 'pointer', borderRadius: RADII.large,
+                  background: GENERAL.neutral[1], border: '1px solid rgba(255,255,255,0.06)',
+                  borderLeft: `2px solid ${coachType.accent}`,
+                }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: coachType.accent, marginBottom: 4 }}>
+                      {coachType.marksLabel}
+                    </div>
+                    <div style={{ ...TYPE.cinematic, fontSize: 18, color: GENERAL.softWhite, marginBottom: 4 }}>{coachType.title}</div>
+                    <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 12.5, lineHeight: 1.45, color: GENERAL.slate }}>{coachType.shortDesc}</div>
+                  </div>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={coachType.accent} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </button>
+              ))}
+            </div>
+
+          </div>
+        </div>
+      )
+    }
+
     // ── Paper chooser ──
     if (paperChooserOpen) {
       return (
@@ -4818,7 +4892,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
         onClick: () => startExamRound('Random', { title: 'Weak spot practice' }),
       },
       {
-        id: 'technique', accent: PULSE_GOLD, kicker: 'Coming soon', title: 'Nail exam technique',
+        id: 'technique', accent: PULSE_GOLD, kicker: 'Coach', title: 'Nail exam technique',
         lines: ['Learn exactly how top answers are built', 'before writing your own.'],
         icon: (
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={PULSE_GOLD} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -4826,7 +4900,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
           </svg>
         ),
-        disabled: true,
+        onClick: () => setExamTechniqueOpen(true),
       },
       {
         id: 'paper', accent: GENERAL.coral, kicker: 'Challenge', title: 'Sit a full paper',

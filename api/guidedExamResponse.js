@@ -23,6 +23,11 @@ Respond ONLY in this exact JSON format with no other text:
   ],
   "verdict": "<one warm but honest sentence summing up the answer overall>",
   "improvementSuggestions": ["<specific next action to gain more marks>", "<another, max 3 total>"],
+  "rewrittenSentence": {
+    "originalWeakness": "<the exact sentence or short passage from the student's answer that is weakest>",
+    "improvedSentence": "<that sentence rewritten so it earns more credit>",
+    "whyItScoresBetter": "<one line: what changed and why it now earns more credit>"
+  },
   "techniqueFlags": [
     { "type": "<one taxonomy key>", "evidence": "<short quote or close paraphrase from the student's answer>", "suggestion": "<concrete next-time action>" }
   ]
@@ -33,7 +38,9 @@ MARKING GUIDELINES:
 - Be fair: credit any valid point that meets the scheme's criteria, even if phrased differently from the exemplar
 - Never award more than the marks available
 - If a section is blank or just repeats its sentence starter with no real content, award 0 for that section and say so plainly but kindly
-- improvementSuggestions must be concrete and actionable — phrase them as direct next steps ("Name the port the ships landed at"), never generic praise or vague encouragement
+- improvementSuggestions must always diagnose the missing SKILL, not just say "add more detail" — e.g. "Explain why this caused the change, not just that it happened", "Link this evidence back to the question's focus", "Use your own knowledge to explain why the source is useful for this enquiry", "Compare directly with the second period using 'similarly' or 'in contrast'". Phrase each as a direct next step, never generic praise or vague encouragement
+- sectionFeedback comments must also name the missing skill where marks were lost, not just "needs more detail" — be specific about what kind of thinking or content is missing
+- rewrittenSentence: pick the single weakest sentence the student actually wrote (quote it in originalWeakness), rewrite it so it would earn more credit against the mark scheme, and explain in one line what changed and why it now scores better. If the student's answer has no usable sentence to rewrite (e.g. a section was left blank), base it on the weakest section's starter instead
 - Keep sectionFeedback comments concise — one or two sentences each, specific to what that section actually contains
 - Keep the overall verdict to one sentence`
 

@@ -34,6 +34,50 @@ function hasWritten(text, starter) {
   return (text || '').trim().length > (starter || '').trim().length + 1
 }
 
+// Collapsible bronze-palette card showing the source(s) the question refers
+// to — collapsed by default so it doesn't compete with the question itself.
+function SourcesCard({ sources, accent, open, onToggle }) {
+  if (!Array.isArray(sources) || sources.length === 0) return null
+  return (
+    <div style={{
+      borderRadius: RADII.medium,
+      border: `1px solid ${accent}40`,
+      background: `${accent}0F`,
+      marginBottom: SPACING.compact,
+      overflow: 'hidden',
+    }}>
+      <button onClick={onToggle} style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        width: '100%', padding: '10px 14px', background: 'none', border: 'none', cursor: 'pointer',
+        fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 11,
+        letterSpacing: '0.14em', textTransform: 'uppercase', color: accent,
+      }}>
+        <span>{sources.length > 1 ? `Sources (${sources.length})` : 'Source'}</span>
+        <span style={{ fontSize: 14 }}>{open ? '−' : '+'}</span>
+      </button>
+      {open && (
+        <div style={{ padding: '0 14px 14px', display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
+          {sources.map(src => (
+            <div key={src.label}>
+              <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: accent, marginBottom: 4 }}>
+                {src.label}
+              </div>
+              {src.attribution && (
+                <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 11.5, fontStyle: 'italic', color: 'rgba(245,238,225,0.5)', marginBottom: 6 }}>
+                  {src.attribution}
+                </div>
+              )}
+              <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 13.5, lineHeight: 1.6, color: 'rgba(245,238,225,0.85)', whiteSpace: 'pre-wrap' }}>
+                {src.text}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function GuidedExamResponse({ module, exam, onExit, onContinue }) {
   const key    = (exam.subject || module.subject || 'history').toLowerCase()
   const pal    = PALETTES[key] || PALETTES.history
@@ -47,6 +91,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
   const [error, setError]               = useState(null)
   const [result, setResult]             = useState(null)
   const [recurringPattern, setRecurringPattern] = useState(null)
+  const [sourcesOpen, setSourcesOpen] = useState(false)
   const loggedRef = useRef(false)
 
   useEffect(() => {
@@ -102,7 +147,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
 
       setPhase('result')
     } catch (err) {
-      setError(err.message || 'Failed to mark your answer — try again.')
+      setError("Marking failed — your answer hasn't been lost, just give it another go.")
       setPhase('writing')
     } finally {
       setSubmitting(false)
@@ -203,7 +248,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
           opacity: beatVisible ? 1 : 0,
           transition: `opacity ${MOTION.duration.cinematic} ${MOTION.easing.standard}`,
         }}>
-          Last task — give it a go yourself
+          {exam.beatText || 'Last task — give it a go yourself'}
         </div>
       </div>
     )
@@ -250,6 +295,8 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
             }}>
               Your turn — no sample answer this time
             </div>
+
+            <SourcesCard sources={exam.sources} accent={accent} open={sourcesOpen} onToggle={() => setSourcesOpen(o => !o)} />
 
             <div style={{
               fontFamily: "'IBM Plex Serif', Georgia, serif",
@@ -316,6 +363,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
             flexShrink: 0,
             padding: `${SPACING.compact}px ${SPACING.standard}px`,
           }}>
+            <SourcesCard sources={exam.sources} accent={accent} open={sourcesOpen} onToggle={() => setSourcesOpen(o => !o)} />
             <div style={{
               fontFamily: "'IBM Plex Serif', Georgia, serif",
               fontSize: 15.5, lineHeight: 1.5,
@@ -479,6 +527,24 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {result.rewrittenSentence && (
+            <div style={{ marginBottom: 26 }}>
+              <div style={sectionHeadingStyle}>Try it like this</div>
+              <div style={{
+                padding: SPACING.compact, borderRadius: RADII.medium,
+                background: `${accent}14`, border: `1px solid ${accent}40`,
+                marginBottom: SPACING.micro,
+              }}>
+                <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 14.5, lineHeight: 1.6, color: 'rgba(245,238,225,0.92)' }}>
+                  {result.rewrittenSentence.improvedSentence}
+                </div>
+              </div>
+              <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, lineHeight: 1.55, color: 'rgba(255,255,255,0.6)' }}>
+                {result.rewrittenSentence.whyItScoresBetter}
+              </div>
             </div>
           )}
 
