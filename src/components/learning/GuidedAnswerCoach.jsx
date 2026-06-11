@@ -405,6 +405,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
     return (
       <GuidedExamResponse
         key={stage}
+        theme="general"
         module={{ id: 'examCoach', subject: 'history' }}
         exam={attempts[stage]}
         onExit={onExit}

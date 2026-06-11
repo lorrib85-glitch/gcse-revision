@@ -4,6 +4,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
 import { RADII } from '../../constants/radii.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import { logExamTechnique, getExamTechniquePatterns } from '../../unifiedWeaknessTracker.js'
 
 // Only acknowledge a technique pattern once it has shown up more than twice —
@@ -79,11 +80,16 @@ function SourcesCard({ sources, accent, open, onToggle }) {
   )
 }
 
-export default function GuidedExamResponse({ module, exam, onExit, onContinue }) {
+// theme="general" renders the whole flow in the GENERAL (non-subject) app
+// branding — used by the exam-technique coach, which lives outside any module.
+// The default keeps the subject palette + parchment writing surface for
+// in-module use via ModulePlayer.
+export default function GuidedExamResponse({ module, exam, onExit, onContinue, theme }) {
   const key    = (exam.subject || module.subject || 'history').toLowerCase()
   const pal    = PALETTES[key] || PALETTES.history
-  const accent = pal.accent
-  const bg     = pal.bg
+  const isGeneral = theme === 'general'
+  const accent = isGeneral ? GENERAL.teal : pal.accent
+  const bg     = isGeneral ? GENERAL.neutral[0] : pal.bg
 
   const [phase, setPhase]               = useState('darkBeat')
   const [beatVisible, setBeatVisible]   = useState(false)
@@ -342,7 +348,10 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
   if (phase === 'writing') {
     return createPortal(
       <>
-        <style>{`
+        <style>{isGeneral ? `
+          .ger-textarea { outline: none; background: transparent; resize: none; }
+          .ger-textarea::placeholder { color: rgba(255,255,255,0.25); font-family: 'Sora', sans-serif; font-size: 14px; }
+        ` : `
           .ger-textarea { outline: none; background: transparent; resize: none; }
           .ger-textarea::placeholder { color: rgba(60,35,8,0.35); font-style: italic; font-family: 'Caveat', cursive; font-size: 18px; }
         `}</style>
@@ -376,14 +385,18 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
             </div>
           </div>
 
-          {/* Parchment surface */}
+          {/* Writing surface — parchment in-module, plain dark in the general theme */}
           <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <div style={{
-              position: 'absolute', inset: 0,
-              backgroundImage: 'url(/figures/history/medicine/medieval/parchment-scroll.png)',
-              backgroundSize: 'cover', backgroundPosition: 'center',
-            }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'rgba(240,215,150,0.30)' }} />
+            {!isGeneral && (
+              <>
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  backgroundImage: 'url(/figures/history/medicine/medieval/parchment-scroll.png)',
+                  backgroundSize: 'cover', backgroundPosition: 'center',
+                }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(240,215,150,0.30)' }} />
+              </>
+            )}
 
             <div style={{
               position: 'relative', flex: 1, overflowY: 'auto',
@@ -396,7 +409,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
                     fontFamily: "'Sora', sans-serif",
                     fontWeight: 700, fontSize: 11,
                     letterSpacing: '0.1em', textTransform: 'uppercase',
-                    color: 'rgba(58,32,8,0.55)',
+                    color: isGeneral ? GENERAL.slate : 'rgba(58,32,8,0.55)',
                     marginBottom: 8,
                   }}>
                     {section.label}
@@ -408,7 +421,15 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
                     onChange={e => setSectionTexts(prev => prev.map((t, j) => (j === i ? e.target.value : t)))}
                     placeholder={section.placeholder}
                     aria-label={section.label}
-                    style={{
+                    style={isGeneral ? {
+                      width: '100%', boxSizing: 'border-box',
+                      border: 'none', borderBottom: '1.5px solid rgba(255,255,255,0.15)',
+                      padding: '4px 4px 8px',
+                      fontFamily: "'Sora', sans-serif",
+                      fontSize: 15, fontWeight: 400, lineHeight: 1.6,
+                      color: GENERAL.softWhite,
+                      caretColor: GENERAL.teal,
+                    } : {
                       width: '100%', boxSizing: 'border-box',
                       border: 'none', borderBottom: '1.5px solid rgba(58,32,8,0.30)',
                       padding: '4px 4px 8px',
@@ -423,7 +444,11 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue })
 
               {error && <div style={errorStyle}>{error}</div>}
 
-              <button onClick={handleSubmit} disabled={!allFilled || submitting} style={parchmentCtaStyle(allFilled && !submitting)}>
+              <button
+                onClick={handleSubmit}
+                disabled={!allFilled || submitting}
+                style={isGeneral ? ctaStyle(allFilled && !submitting) : parchmentCtaStyle(allFilled && !submitting)}
+              >
                 Submit my answer →
               </button>
             </div>
