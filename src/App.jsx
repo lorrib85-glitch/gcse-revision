@@ -4847,7 +4847,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
         <div style={{
           position: 'absolute', inset: 0,
           backgroundImage: 'url(/headers/exam-summit.png)',
-          backgroundSize: 'cover', backgroundPosition: 'center 8%',
+          backgroundSize: 'auto 140%', backgroundPosition: 'center 30%',
         }} />
         <div style={{
           position: 'absolute', inset: 0,
