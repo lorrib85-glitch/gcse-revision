@@ -4507,11 +4507,11 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
   // Quickfire 3-2-1 countdown screen
   if (isQuickFire && quickFireCountdown !== null) {
     return (
-      <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 25%, rgba(101,230,198,0.12), transparent 45%), #060816', display:'flex', alignItems:'center', justifyContent:'center', color:'#F5F7FB' }}>
+      <div style={{ minHeight:'100vh', background:`radial-gradient(circle at 50% 25%, rgba(${GENERAL.tealRgb},0.10), transparent 45%), ${GENERAL.neutral[0]}`, display:'flex', alignItems:'center', justifyContent:'center', color:GENERAL.softWhite }}>
         <div style={{ textAlign:'center' }}>
-          <div style={{ fontFamily:"'Outfit', sans-serif", color:'#7A7670', fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:24 }}>90 Second Quick Fire</div>
-          <div key={quickFireCountdown} style={{ fontFamily:"'Sora', sans-serif", fontSize: quickFireCountdown === 'GO' ? '5rem' : '7.5rem', fontWeight:900, color: quickFireCountdown === 'GO' ? '#65E6C6' : '#F4EFE6', textShadow: quickFireCountdown === 'GO' ? '0 0 48px rgba(101,230,198,0.75)' : '0 0 32px rgba(255,255,255,0.2)', animation:'examPop .8s ease both' }}>{quickFireCountdown}</div>
-          <div style={{ color:'#4B5563', marginTop:20, fontFamily:"'Outfit', sans-serif", fontSize:'.88rem' }}>Answer as many as you can.</div>
+          <div style={{ fontFamily:"'Outfit', sans-serif", color:GENERAL.slate, fontWeight:700, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:24 }}>90 Second Quick Fire</div>
+          <div key={quickFireCountdown} style={{ fontFamily:"'Sora', sans-serif", fontSize: quickFireCountdown === 'GO' ? '5rem' : '7.5rem', fontWeight:900, color: quickFireCountdown === 'GO' ? GENERAL.teal : GENERAL.softWhite, textShadow: quickFireCountdown === 'GO' ? `0 0 32px rgba(${GENERAL.tealRgb},0.4)` : '0 0 32px rgba(255,255,255,0.2)', animation:'examPop .8s ease both' }}>{quickFireCountdown}</div>
+          <div style={{ color:GENERAL.slate, marginTop:20, fontFamily:"'Outfit', sans-serif", fontSize:'.88rem' }}>Answer as many as you can.</div>
           <style>{'@keyframes examPop { 0%{opacity:0;transform:scale(.7)} 50%{opacity:1;transform:scale(1.1)} 100%{opacity:1;transform:scale(1)} }'}</style>
         </div>
       </div>
@@ -4671,10 +4671,10 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
   if (chemistryOpen) return <ChemistryBrowser onBack={() => setChemistryOpen(false)} />
 
   const GRADE_STYLE = {
-    'Excellent':  { bg:'rgba(77,255,136,.08)',  border:'rgba(77,255,136,.3)',  text:'#4DFF88', badge:'#38D27A' },
-    'Good':       { bg:'rgba(77,255,136,.06)',  border:'rgba(77,255,136,.2)',  text:'#6BFFB0', badge:'#38D27A' },
-    'Developing': { bg:'rgba(255,200,87,.08)',  border:'rgba(255,200,87,.3)',  text:'#FFC857', badge:'#F5B700' },
-    'Needs Work': { bg:'rgba(255,93,115,.08)',  border:'rgba(255,93,115,.3)',  text:'#FF5D73', badge:'#FF5D73' },
+    'Excellent':  { bg:`rgba(${GENERAL.tealRgb},.10)`,  border:`rgba(${GENERAL.tealRgb},.35)`,  text:GENERAL.teal, badge:GENERAL.teal },
+    'Good':       { bg:`rgba(${GENERAL.tealRgb},.06)`,  border:`rgba(${GENERAL.tealRgb},.22)`,  text:GENERAL.teal, badge:GENERAL.teal },
+    'Developing': { bg:`rgba(${hexToRgb(PULSE_GOLD)},.08)`,  border:`rgba(${hexToRgb(PULSE_GOLD)},.3)`,  text:PULSE_GOLD, badge:PULSE_GOLD },
+    'Needs Work': { bg:`rgba(${GENERAL.coralRgb},.08)`,  border:`rgba(${GENERAL.coralRgb},.3)`,  text:GENERAL.coral, badge:GENERAL.coral },
   }
   const MARK_TIPS = {
     1:'One clear specific point.',
@@ -4846,19 +4846,11 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
       : improvement > 0 ? `+${improvement}% better than last time`
       : improvement < 0 ? `${Math.abs(improvement)}% lower than last time`
       : 'Same as last time'
-    const improvementColor = improvement > 0 ? '#4CAF7D' : improvement < 0 ? '#E05A52' : '#A89FC2'
+    const improvementColor = improvement > 0 ? GENERAL.teal : improvement < 0 ? GENERAL.coral : GENERAL.slate
     const headlineText = improvement !== null && improvement > 0
       ? `${improvement}% improvement`
       : accuracy >= 60 ? 'Great work!' : 'Keep going!'
 
-    const QUIZ_SUBJECT_ACCENT = {
-      History:   { color: '#F5B700', bg: 'rgba(245,183,0,.14)',   border: 'rgba(245,183,0,.3)'   },
-      Biology:   { color: '#38D27A', bg: 'rgba(56,210,122,.14)',  border: 'rgba(56,210,122,.3)'  },
-      Chemistry: { color: '#8B4DFF', bg: 'rgba(139,77,255,.14)',  border: 'rgba(139,77,255,.3)'  },
-      Maths:     { color: '#3B82FF', bg: 'rgba(59,130,255,.14)',  border: 'rgba(59,130,255,.3)'  },
-      English:   { color: '#9D5CFF', bg: 'rgba(157,92,255,.14)',  border: 'rgba(157,92,255,.3)'  },
-      Sociology: { color: '#FF5C7A', bg: 'rgba(255,92,122,.14)',  border: 'rgba(255,92,122,.3)'  },
-    }
     const gapModules = Object.entries(getQuizWeaknesses())
       .map(([key, v]) => {
         const t = v.c + v.i
@@ -4877,43 +4869,43 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
       .slice(0, 3)
 
     return (
-      <div style={{ background:'radial-gradient(circle at 50% -10%, rgba(101,230,198,.08), transparent 42%), #08090D', minHeight:'100vh', padding:'18px 20px calc(150px + env(safe-area-inset-bottom))', color:'#F4EFE6' }}>
+      <div style={{ background:`radial-gradient(circle at 50% -10%, rgba(${GENERAL.tealRgb},.08), transparent 42%), ${GENERAL.neutral[0]}`, minHeight:'100vh', padding:'18px 20px calc(150px + env(safe-area-inset-bottom))', color:GENERAL.softWhite }}>
         <div style={{ maxWidth:480, margin:'0 auto' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
-            <button onClick={exitTestTopic} aria-label="Back" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(20,31,54,.78)', color:'#F5F7FB', fontSize:'1.45rem', cursor:'pointer' }}>‹</button>
-            <button aria-label="Share" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(20,31,54,.78)', color:'#F5F7FB', fontSize:'1rem', cursor:'pointer' }}>⇧</button>
+            <button onClick={exitTestTopic} aria-label="Back" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(255,255,255,0.06)', color:GENERAL.softWhite, fontSize:'1.45rem', cursor:'pointer' }}>‹</button>
+            <button aria-label="Share" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(255,255,255,0.06)', color:GENERAL.softWhite, fontSize:'1rem', cursor:'pointer' }}>⇧</button>
           </div>
 
           <div style={{ textAlign:'center', marginBottom:28 }}>
             <div style={{
               width:168, height:168, borderRadius:'50%', margin:'0 auto 18px',
-              background:'conic-gradient(#38F27B ' + accuracy + '%, rgba(23,40,69,.9) 0)',
-              display:'grid', placeItems:'center', boxShadow:'0 0 34px rgba(56,242,123,.18)',
+              background:`conic-gradient(${GENERAL.teal} ` + accuracy + `%, ${GENERAL.neutral[2]} 0)`,
+              display:'grid', placeItems:'center',
             }}>
-              <div style={{ width:142, height:142, borderRadius:'50%', background:'#071126', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', boxShadow:'inset 0 0 24px rgba(0,0,0,.45)' }}>
+              <div style={{ width:142, height:142, borderRadius:'50%', background:GENERAL.neutral[1], display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
                 <div style={{ fontFamily:"'Sora', sans-serif", fontSize:'2.65rem', fontWeight:900, lineHeight:1 }}>{accuracy}%</div>
-                <div style={{ color:'#AAB4D4', fontSize:'.9rem', fontWeight:700, marginTop:5 }}>{quickFireSummary.correct} / {quickFireSummary.answered || 0}</div>
-                <div style={{ color:'#38F27B', fontSize:'.86rem', fontWeight:900, marginTop:4 }}>Correct</div>
+                <div style={{ color:GENERAL.slate, fontSize:'.9rem', fontWeight:700, marginTop:5 }}>{quickFireSummary.correct} / {quickFireSummary.answered || 0}</div>
+                <div style={{ color:GENERAL.teal, fontSize:'.86rem', fontWeight:900, marginTop:4 }}>Correct</div>
               </div>
             </div>
             <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:9 }}>
-              <h1 style={{ fontFamily:"'Sora', sans-serif", fontSize:'2.1rem', lineHeight:1.05, margin:0, color:'#F5F7FB' }}>{headlineText}</h1>
-              {improvement > 0 && <span style={{ color:'#4CAF7D', fontSize:'1.45rem' }}>↑</span>}
+              <h1 style={{ fontFamily:"'Sora', sans-serif", fontSize:'2.1rem', lineHeight:1.05, margin:0, color:GENERAL.softWhite }}>{headlineText}</h1>
+              {improvement > 0 && <span style={{ color:GENERAL.teal, fontSize:'1.45rem' }}>↑</span>}
             </div>
             {improvementText && (
-              <div style={{ display:'inline-flex', alignItems:'center', gap:6, background: improvement > 0 ? 'rgba(76,175,125,.12)' : improvement < 0 ? 'rgba(224,90,82,.1)' : 'rgba(255,255,255,.06)', border:'1px solid ' + (improvement > 0 ? 'rgba(76,175,125,.35)' : improvement < 0 ? 'rgba(224,90,82,.3)' : 'rgba(255,255,255,.1)'), borderRadius:999, padding:'6px 14px', marginTop:10 }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:6, background: improvement > 0 ? `rgba(${GENERAL.tealRgb},.12)` : improvement < 0 ? `rgba(${GENERAL.coralRgb},.10)` : 'rgba(255,255,255,.06)', border:'1px solid ' + (improvement > 0 ? `rgba(${GENERAL.tealRgb},.35)` : improvement < 0 ? `rgba(${GENERAL.coralRgb},.3)` : 'rgba(255,255,255,.1)'), borderRadius:999, padding:'6px 14px', marginTop:10 }}>
                 <span style={{ color:improvementColor, fontFamily:"'Sora', sans-serif", fontWeight:800, fontSize:'.9rem' }}>{improvementText}</span>
               </div>
             )}
             {!improvementText && (
-              <p style={{ color:'#AAB4D4', fontSize:'.96rem', margin:'10px 0 0', lineHeight:1.45 }}>{accuracy >= 80 ? 'Excellent recall.' : accuracy >= 60 ? 'Strong session.' : 'Good start — now sharpen the weak spots.'}</p>
+              <p style={{ color:GENERAL.slate, fontSize:'.96rem', margin:'10px 0 0', lineHeight:1.45 }}>{accuracy >= 80 ? 'Excellent recall.' : accuracy >= 60 ? 'Strong session.' : 'Good start — now sharpen the weak spots.'}</p>
             )}
           </div>
 
-          <div style={{ background:'linear-gradient(145deg, rgba(16,24,43,.96), rgba(9,15,31,.96))', border:'1px solid rgba(62,78,118,.55)', borderRadius:18, padding:'18px 18px 14px', marginBottom:16, boxShadow:'0 14px 36px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.04)' }}>
+          <div style={{ background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.06)', borderRadius:18, padding:'18px 18px 14px', marginBottom:16 }}>
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16 }}>
               <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:800, fontSize:'1rem' }}>Performance by subject</div>
-              <button onClick={exitTestTopic} style={{ border:'none', background:'transparent', color:'#AAB4D4', fontSize:'.8rem', cursor:'pointer' }}>View all ›</button>
+              <button onClick={exitTestTopic} style={{ border:'none', background:'transparent', color:GENERAL.slate, fontSize:'.8rem', cursor:'pointer' }}>View all ›</button>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
               {summarySubjects.slice(0, 5).map(item => (
@@ -4921,17 +4913,17 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
                   <div style={{ width:38, height:38, borderRadius:'50%', overflow:'hidden', flexShrink:0 }}>
                     {item.logo
                       ? <img src={item.logo} alt={item.subject} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                      : <div style={{ width:'100%', height:'100%', background:item.color+'22', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.12rem', color:item.color }}>{item.icon}</div>
+                      : <div style={{ width:'100%', height:'100%', background:`rgba(${GENERAL.tealRgb},0.12)`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.12rem', color:GENERAL.teal }}>{item.icon}</div>
                     }
                   </div>
                   <div>
-                    <div style={{ color:item.color, fontWeight:850, fontSize:'.86rem', marginBottom:7 }}>{item.subject}</div>
-                    <div style={{ height:5, background:'rgba(58,75,111,.52)', borderRadius:99, overflow:'hidden' }}>
-                      <div style={{ width:item.accuracy + '%', height:'100%', borderRadius:99, background:item.color, boxShadow:'0 0 10px ' + item.color }} />
+                    <div style={{ color:GENERAL.softWhite, fontWeight:850, fontSize:'.86rem', marginBottom:7 }}>{item.subject}</div>
+                    <div style={{ height:5, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden' }}>
+                      <div style={{ width:item.accuracy + '%', height:'100%', borderRadius:99, background:GENERAL.teal }} />
                     </div>
                   </div>
-                  <div style={{ color:'#DCE5FA', fontWeight:800, fontSize:'.86rem', textAlign:'right' }}>{item.correct} / {item.answered}</div>
-                  <div style={{ justifySelf:'end', color:item.color, background:item.color + '18', border:'1px solid ' + item.color + '30', borderRadius:8, padding:'4px 7px', fontWeight:900, fontSize:'.76rem' }}>{item.accuracy}%</div>
+                  <div style={{ color:GENERAL.slate, fontWeight:800, fontSize:'.86rem', textAlign:'right' }}>{item.correct} / {item.answered}</div>
+                  <div style={{ justifySelf:'end', color:GENERAL.slate, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.10)', borderRadius:8, padding:'4px 7px', fontWeight:900, fontSize:'.76rem' }}>{item.accuracy}%</div>
                 </div>
               ))}
             </div>
@@ -4940,59 +4932,58 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
           {gapModules.length > 0 && (
             <div style={{ marginBottom: 20 }}>
               <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:11 }}>
-                <span style={{ fontSize:'.68rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857' }}>
+                <span style={{ fontSize:'.68rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:GENERAL.slate }}>
                   {gapModules.length === 1 ? 'Your biggest gap' : 'Your biggest gaps'}
                 </span>
               </div>
               {gapModules.map(({ mod, tag }) => {
-                const sc = QUIZ_SUBJECT_ACCENT[mod.subject] || QUIZ_SUBJECT_ACCENT.History
                 const screenIdx = findTaggedScreen(mod, tag)
                 return (
                   <button
                     key={mod.id}
                     onClick={() => onOpenModule && onOpenModule(mod, screenIdx)}
-                    style={{ width:'100%', textAlign:'left', marginBottom:10, background:'#10182B', border:'1px solid rgba(255,200,87,.25)', borderRadius:14, padding:'14px 16px', display:'flex', alignItems:'center', gap:13, cursor:'pointer' }}
+                    style={{ width:'100%', textAlign:'left', marginBottom:10, background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.08)', borderRadius:14, padding:'14px 16px', display:'flex', alignItems:'center', gap:13, cursor:'pointer' }}
                   >
-                    <div style={{ width:44, height:44, borderRadius:12, flexShrink:0, background:sc.bg, border:`1px solid ${sc.border}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem' }}>
+                    <div style={{ width:44, height:44, borderRadius:12, flexShrink:0, background:`rgba(${GENERAL.tealRgb},0.10)`, border:`1px solid rgba(${GENERAL.tealRgb},0.25)`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem' }}>
                       {mod.icon || '📚'}
                     </div>
                     <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:'.87rem', fontWeight:700, color:'#F5F7FB', marginBottom:2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+                      <div style={{ fontSize:'.87rem', fontWeight:700, color:GENERAL.softWhite, marginBottom:2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
                         {mod.title}
                       </div>
-                      <div style={{ fontSize:'.72rem', color:'#FFC857', textTransform:'capitalize' }}>
+                      <div style={{ fontSize:'.72rem', color:GENERAL.teal, textTransform:'capitalize' }}>
                         {tag.replace(/-/g, ' ')}
                       </div>
                     </div>
-                    <span style={{ color:'#5A6480', fontSize:'1rem', flexShrink:0 }}>›</span>
+                    <span style={{ color:GENERAL.slate, fontSize:'1rem', flexShrink:0 }}>›</span>
                   </button>
                 )
               })}
             </div>
           )}
 
-          <button onClick={() => recommendedModule && onOpenModule ? onOpenModule(recommendedModule) : exitTestTopic()} style={{ width:'100%', background:'linear-gradient(145deg, rgba(16,24,43,.96), rgba(9,15,31,.96))', border:'1px solid rgba(62,78,118,.55)', borderRadius:18, padding:'18px', marginBottom:20, display:'flex', alignItems:'center', gap:16, textAlign:'left', cursor:'pointer', boxShadow:'0 14px 36px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.04)' }}>
+          <button onClick={() => recommendedModule && onOpenModule ? onOpenModule(recommendedModule) : exitTestTopic()} style={{ width:'100%', background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.06)', borderRadius:18, padding:'18px', marginBottom:20, display:'flex', alignItems:'center', gap:16, textAlign:'left', cursor:'pointer' }}>
             <div style={{ width:54, height:54, borderRadius:'50%', overflow:'hidden', flexShrink:0 }}>
               {recommendationMeta.logo
                 ? <img src={recommendationMeta.logo} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                : <div style={{ width:'100%', height:'100%', background:recommendationMeta.color+'20', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.6rem', color:recommendationMeta.color }}>{recommendationMeta.icon}</div>
+                : <div style={{ width:'100%', height:'100%', background:`rgba(${GENERAL.tealRgb},0.12)`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.6rem', color:GENERAL.teal }}>{recommendationMeta.icon}</div>
               }
             </div>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
-                <div style={{ fontFamily:"'Sora', sans-serif", color:'#F5F7FB', fontWeight:850, fontSize:'1rem' }}>Recommended next</div>
-                <span style={{ background:'rgba(255,92,122,.18)', color:'#FF5C7A', borderRadius:999, padding:'5px 10px', fontSize:'.7rem', fontWeight:900 }}>🎯 Priority</span>
+                <div style={{ fontFamily:"'Sora', sans-serif", color:GENERAL.softWhite, fontWeight:850, fontSize:'1rem' }}>Recommended next</div>
+                <span style={{ background:`rgba(${GENERAL.coralRgb},.14)`, color:GENERAL.coral, borderRadius:999, padding:'5px 10px', fontSize:'.7rem', fontWeight:900 }}>Priority</span>
               </div>
-              <div style={{ color:'#EAF0FF', fontWeight:850, fontSize:'.95rem' }}>{recommendation.subject} – {recommendation.topic}</div>
-              <div style={{ color:'#AAB4D4', fontSize:'.84rem', marginTop:4, lineHeight:1.35 }}>You struggled with questions and keywords here. {recommendedModule ? 'Open the module to strengthen it.' : 'Focus your next quick practice here.'}</div>
+              <div style={{ color:GENERAL.softWhite, fontWeight:850, fontSize:'.95rem' }}>{recommendation.subject} – {recommendation.topic}</div>
+              <div style={{ color:GENERAL.slate, fontSize:'.84rem', marginTop:4, lineHeight:1.35 }}>You struggled with questions and keywords here. {recommendedModule ? 'Open the module to strengthen it.' : 'Focus your next quick practice here.'}</div>
             </div>
-            <span style={{ color:'#AAB4D4', fontSize:'1.6rem' }}>›</span>
+            <span style={{ color:GENERAL.slate, fontSize:'1.6rem' }}>›</span>
           </button>
 
-          <button onClick={startRandomQuestion} style={{ width:'100%', border:'none', borderRadius:17, background:'linear-gradient(135deg,#38F27B,#2DD4A3)', color:'#03140B', padding:'20px 22px', display:'flex', alignItems:'center', gap:18, cursor:'pointer', boxShadow:'0 18px 36px rgba(45,212,163,.24)', marginBottom:18 }}>
+          <button onClick={startRandomQuestion} style={{ width:'100%', border:'none', borderRadius:17, background:GENERAL.teal, color:GENERAL.neutral[0], padding:'20px 22px', display:'flex', alignItems:'center', gap:18, cursor:'pointer', marginBottom:18 }}>
             <span style={{ fontSize:'2rem', lineHeight:1 }}>↻</span>
             <span style={{ textAlign:'left' }}>
-              <span style={{ display:'block', fontFamily:"'Sora', sans-serif", fontSize:'1.25rem', fontWeight:950, letterSpacing:'.02em' }}>TRY AGAIN</span>
+              <span style={{ display:'block', fontFamily:"'Sora', sans-serif", fontSize:'1.25rem', fontWeight:950, letterSpacing:'.02em' }}>Try again</span>
               <span style={{ display:'block', fontSize:'.86rem', fontWeight:750, marginTop:3 }}>Focus on {recommendation.subject} & {recommendation.topic} · ~3 mins</span>
             </span>
           </button>
@@ -5007,48 +4998,48 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
     const gs = feedback ? (GRADE_STYLE[feedback.grade] || GRADE_STYLE['Developing']) : null
     const isMC = q?.type === 'mc'
     return (
-      <div style={{ background:'#08090D', minHeight:'100vh', paddingBottom:90 }}>
-        <div style={{ background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', padding:'12px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
+      <div style={{ background:GENERAL.neutral[0], minHeight:'100vh', paddingBottom:90 }}>
+        <div style={{ background:`rgba(${hexToRgb(GENERAL.neutral[0])},0.96)`, borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
-            <button onClick={() => isQuickFire ? finishQuickFireRound('exit') : exitTestTopic()} style={{ background:isQuickFire?'rgba(255,93,115,.1)':'none', border:isQuickFire?'1px solid rgba(255,93,115,.24)':'none', borderRadius:isQuickFire?999:0, cursor:'pointer', color:isQuickFire?'#FF5D73':'#5A6480', fontSize:isQuickFire?'.72rem':'1.1rem', fontWeight:isQuickFire?800:400, padding:isQuickFire?'6px 10px':0 }}>{isQuickFire ? 'Exit' : '←'}</button>
+            <button onClick={() => isQuickFire ? finishQuickFireRound('exit') : exitTestTopic()} style={{ background:isQuickFire?'rgba(255,255,255,0.06)':'none', border:isQuickFire?'1px solid rgba(255,255,255,0.10)':'none', borderRadius:isQuickFire?999:0, cursor:'pointer', color:GENERAL.slate, fontSize:isQuickFire?'.72rem':'1.1rem', fontWeight:isQuickFire?600:400, padding:isQuickFire?'6px 10px':0 }}>{isQuickFire ? 'Exit' : '←'}</button>
             <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.9rem', color:'#F5F7FB', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
-              <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.7rem', color:'#5A6480' }}>Question {qIdx+1} of {questions.length}</div>
+              <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.9rem', color:GENERAL.softWhite, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
+              <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.7rem', color:GENERAL.slate }}>Question {qIdx+1} of {questions.length}</div>
             </div>
             {isQuickFire && (
-              <div style={{ background: quickFireTimeLeft <= 10 ? 'rgba(255,93,115,.12)' : 'rgba(157,92,255,.12)', border: quickFireTimeLeft <= 10 ? '1px solid rgba(255,93,115,.36)' : '1px solid rgba(157,92,255,.3)', borderRadius: 999, padding: '6px 10px', color: quickFireTimeLeft <= 10 ? '#FF5D73' : '#C18CFF', fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: '.86rem', minWidth: 58, textAlign: 'center' }}>
+              <div style={{ background: quickFireTimeLeft <= 10 ? `rgba(${GENERAL.coralRgb},.12)` : `rgba(${GENERAL.tealRgb},.12)`, border: quickFireTimeLeft <= 10 ? `1px solid rgba(${GENERAL.coralRgb},.36)` : `1px solid rgba(${GENERAL.tealRgb},.3)`, borderRadius: 999, padding: '6px 10px', color: quickFireTimeLeft <= 10 ? GENERAL.coral : GENERAL.teal, fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: '.86rem', minWidth: 58, textAlign: 'center' }}>
                 {quickFireTime}
               </div>
             )}
           </div>
           <div style={{ height:3, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden', marginTop:10, maxWidth:660, margin:'10px auto 0' }}>
-            <div style={{ height:'100%', width:`${((qIdx+1)/questions.length)*100}%`, background:'linear-gradient(90deg,#F5B700,#C98719)', borderRadius:99, transition:'width .3s' }} />
+            <div style={{ height:'100%', width:`${((qIdx+1)/questions.length)*100}%`, background:'rgba(241,250,238,0.30)', borderRadius:99, transition:'width .3s' }} />
           </div>
           {isQuickFire && (
-            <div style={{ height:4, background:'rgba(157,92,255,.12)', borderRadius:99, overflow:'hidden', maxWidth:660, margin:'7px auto 0' }}>
-              <div style={{ height:'100%', width: quickFirePct + '%', background: quickFireTimeLeft <= 10 ? 'linear-gradient(90deg,#FF5D73,#FF8A1F)' : 'linear-gradient(90deg,#7C3AED,#9D5CFF)', borderRadius:99, transition:'width 1s linear' }} />
+            <div style={{ height:4, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden', maxWidth:660, margin:'7px auto 0' }}>
+              <div style={{ height:'100%', width: quickFirePct + '%', background: quickFireTimeLeft <= 10 ? GENERAL.coral : GENERAL.teal, borderRadius:99, transition:'width 1s linear' }} />
             </div>
           )}
         </div>
         <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
           {q && <>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(245,183,0,.1)', border:'1px solid rgba(245,183,0,.25)', borderRadius:99, padding:'4px 12px', marginBottom:14 }}>
-              <span style={{ fontFamily:"'Sora', sans-serif", fontSize:'.75rem', fontWeight:700, color:'#F5B700' }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:`rgba(${GENERAL.tealRgb},.10)`, border:`1px solid rgba(${GENERAL.tealRgb},.25)`, borderRadius:99, padding:'4px 12px', marginBottom:14 }}>
+              <span style={{ fontFamily:"'Sora', sans-serif", fontSize:'.75rem', fontWeight:700, color:GENERAL.teal }}>[{q.marks} mark{q.marks!==1?'s':''}]</span>
             </div>
             {q.fig && FIGURES[q.fig] && (
-              <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'12px', marginBottom:14, textAlign:'center' }}>
-                <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em', color:'#5A6480', marginBottom:8 }}>Figure — from AQA past paper</div>
+              <div style={{ background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.06)', borderRadius:12, padding:'12px', marginBottom:14, textAlign:'center' }}>
+                <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.08em', color:GENERAL.slate, marginBottom:8 }}>Figure — from AQA past paper</div>
                 <img src={FIGURES[q.fig]} alt="AQA exam figure" style={{ maxWidth:'100%', height:'auto', borderRadius:8 }} />
               </div>
             )}
-            <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:14, padding:'16px', marginBottom:14 }}>
-              <pre style={{ fontFamily:"'Outfit', sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:'#E0E6F0', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
+            <div style={{ background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.06)', borderRadius:14, padding:'16px', marginBottom:14 }}>
+              <pre style={{ fontFamily:"'Outfit', sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:GENERAL.softWhite, whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
             </div>
             {!showTip
-              ? <button onClick={() => setTip(true)} style={{ background:'none', border:'1px dashed #2A3552', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:'#4A5578', fontSize:'.82rem', fontFamily:"'Outfit', sans-serif", width:'100%', marginBottom:14 }}>💡 Show mark tip</button>
-              : <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}>
-                  <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:5 }}>{q.marks}-mark question</div>
-                  <p style={{ fontFamily:"'Outfit', sans-serif", margin:0, fontSize:'.85rem', color:'#C8D0E8' }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
+              ? <button onClick={() => setTip(true)} style={{ background:'none', border:'1px dashed rgba(255,255,255,0.14)', borderRadius:10, padding:'9px 14px', cursor:'pointer', color:GENERAL.slate, fontSize:'.82rem', fontFamily:"'Outfit', sans-serif", width:'100%', marginBottom:14 }}>Show mark tip</button>
+              : <div style={{ background:`rgba(${GENERAL.tealRgb},.06)`, border:`1px solid rgba(${GENERAL.tealRgb},.2)`, borderRadius:10, padding:'11px 14px', marginBottom:14 }}>
+                  <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:GENERAL.teal, marginBottom:5 }}>{q.marks}-mark question</div>
+                  <p style={{ fontFamily:"'Outfit', sans-serif", margin:0, fontSize:'.85rem', color:GENERAL.slate }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
                 </div>
             }
             {!feedback && !tqMcLocked && (
@@ -5056,31 +5047,31 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
                 ? <div style={{ marginBottom:14 }}>
                     {/* Hint card after first wrong MC */}
                     {tqMcHint && (
-                      <div style={{ background:'rgba(255,200,87,.06)', border:'1px solid rgba(255,200,87,.28)', borderRadius:14, padding:'14px 16px', marginBottom:12 }}>
-                        <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#FFC857', marginBottom:8 }}>💡 Have another look</div>
-                        <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.88rem', color:'#C8D0E8', margin:'0 0 4px', lineHeight:1.55 }}>
+                      <div style={{ background:`rgba(${GENERAL.tealRgb},.06)`, border:`1px solid rgba(${GENERAL.tealRgb},.28)`, borderRadius:14, padding:'14px 16px', marginBottom:12 }}>
+                        <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.63rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:GENERAL.teal, marginBottom:8 }}>Have another look</div>
+                        <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.88rem', color:GENERAL.slate, margin:'0 0 4px', lineHeight:1.55 }}>
                           {q.hint || (q.ms ? q.ms.split('.')[0] + '.' : 'Think carefully — what is the question specifically asking about?')}
                         </p>
-                        <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.78rem', color:'#FFC857', margin:0, fontStyle:'italic' }}>
+                        <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.78rem', color:GENERAL.teal, margin:0, fontStyle:'italic' }}>
                           You have one more try — you can get this.
                         </p>
                       </div>
                     )}
                     <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
                       {q.options.map((opt,i) => (
-                        <button key={i} onClick={() => setAnswer(opt)} style={{ background:answer===opt?'rgba(245,183,0,.1)':'#151720', border:`1.5px solid ${answer===opt?'#F5B700':'rgba(255,255,255,0.08)'}`, borderRadius:12, padding:'13px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Outfit', sans-serif", fontSize:'.93rem', color:answer===opt?'#F5B700':'#C8D0E8', transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
-                          <span style={{ width:22, height:22, borderRadius:'50%', border:`1.5px solid ${answer===opt?'#F5B700':'rgba(255,255,255,0.1)'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.72rem', fontWeight:700, color:answer===opt?'#F5B700':'#4A5578', background:answer===opt?'rgba(245,183,0,.1)':'transparent' }}>{String.fromCharCode(65+i)}</span>
+                        <button key={i} onClick={() => setAnswer(opt)} style={{ background:answer===opt?`rgba(${GENERAL.tealRgb},.10)`:GENERAL.neutral[1], border:`1.5px solid ${answer===opt?GENERAL.teal:'rgba(255,255,255,0.08)'}`, borderRadius:12, padding:'13px 16px', cursor:'pointer', textAlign:'left', fontFamily:"'Outfit', sans-serif", fontSize:'.93rem', color:answer===opt?GENERAL.teal:GENERAL.softWhite, transition:'all .15s', display:'flex', alignItems:'center', gap:10 }}>
+                          <span style={{ width:22, height:22, borderRadius:'50%', border:`1.5px solid ${answer===opt?GENERAL.teal:'rgba(255,255,255,0.12)'}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontSize:'.72rem', fontWeight:700, color:answer===opt?GENERAL.teal:GENERAL.slate, background:answer===opt?`rgba(${GENERAL.tealRgb},.10)`:'transparent' }}>{String.fromCharCode(65+i)}</span>
                           {opt}
                         </button>
                       ))}
                     </div>
                   </div>
-                : <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:14, padding:'14px', marginBottom:14 }}>
-                    <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4A5578', marginBottom:8 }}>Your answer</div>
-                    <textarea value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Write your answer here…" style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Outfit', sans-serif", fontSize:'.92rem', color:'#E0E6F0', lineHeight:1.65, outline:'none', minHeight:q.marks>=6?180:q.marks>=3?120:80 }} />
+                : <div style={{ background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.06)', borderRadius:14, padding:'14px', marginBottom:14 }}>
+                    <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:GENERAL.slate, marginBottom:8 }}>Your answer</div>
+                    <textarea value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Write your answer here…" style={{ width:'100%', border:'none', background:'transparent', resize:'none', fontFamily:"'Outfit', sans-serif", fontSize:'.92rem', color:GENERAL.softWhite, lineHeight:1.65, outline:'none', minHeight:q.marks>=6?180:q.marks>=3?120:80 }} />
                   </div>
             )}
-            {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'11px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Outfit', sans-serif", margin:0, fontSize:'.86rem', color:'#FF5D73' }}>{error}</p></div>}
+            {error && <div style={{ background:`rgba(${GENERAL.coralRgb},.08)`, border:`1px solid rgba(${GENERAL.coralRgb},.3)`, borderRadius:10, padding:'11px 14px', marginBottom:14 }}><p style={{ fontFamily:"'Outfit', sans-serif", margin:0, fontSize:'.86rem', color:GENERAL.coral }}>{error}</p></div>}
             {feedback && gs && (
               <div className="fade-up">
                 <div style={{ background:gs.bg, border:`2px solid ${gs.border}`, borderRadius:16, padding:'18px', marginBottom:12 }}>
@@ -5090,18 +5081,18 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
                   </div>
                   <p style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.9rem', color:gs.text, margin:0, opacity:.85 }}>{feedback.summary}</p>
                 </div>
-                {feedback.achieved?.length > 0 && feedback.achieved[0] !== 'Correct answer selected' && <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#4DFF88', marginBottom:8 }}>✓ What you got right</div>{feedback.achieved.map((a,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#4DFF88', flexShrink:0 }}>✓</span><p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{a}</p></div>)}</div>}
-                {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && feedback.missed[0] !== '' && <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#9CA8C7', marginBottom:8 }}>→ Worth knowing</div>{feedback.missed.map((m,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:'#9CA8C7', flexShrink:0 }}>→</span><p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{m}</p></div>)}</div>}
-                {feedback.examinerTip && feedback.examinerTip !== '' && <div style={{ background:'rgba(245,183,0,.06)', border:'1px solid rgba(245,183,0,.2)', borderRadius:12, padding:'13px 14px', marginBottom:14 }}><div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'#F5B700', marginBottom:6 }}>🗡️ Examiner tip</div><p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.87rem', color:'#C8D0E8' }}>{feedback.examinerTip}</p></div>}
+                {feedback.achieved?.length > 0 && feedback.achieved[0] !== 'Correct answer selected' && <div style={{ background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.06)', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:GENERAL.teal, marginBottom:8 }}>✓ What you got right</div>{feedback.achieved.map((a,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:GENERAL.teal, flexShrink:0 }}>✓</span><p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.87rem', color:GENERAL.slate }}>{a}</p></div>)}</div>}
+                {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && feedback.missed[0] !== '' && <div style={{ background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.06)', borderRadius:12, padding:'13px 14px', marginBottom:8 }}><div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:GENERAL.slate, marginBottom:8 }}>→ Worth knowing</div>{feedback.missed.map((m,i)=><div key={i} style={{ display:'flex', gap:8, marginBottom:6 }}><span style={{ color:GENERAL.slate, flexShrink:0 }}>→</span><p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.87rem', color:GENERAL.slate }}>{m}</p></div>)}</div>}
+                {feedback.examinerTip && feedback.examinerTip !== '' && <div style={{ background:`rgba(${GENERAL.tealRgb},.06)`, border:`1px solid rgba(${GENERAL.tealRgb},.2)`, borderRadius:12, padding:'13px 14px', marginBottom:14 }}><div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:GENERAL.teal, marginBottom:6 }}>Examiner tip</div><p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.87rem', color:GENERAL.slate }}>{feedback.examinerTip}</p></div>}
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                  <button onClick={fullResetQ} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:12, padding:'13px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
-                  <button onClick={()=>tqNextQuestion(questions.length)} style={{ background:'linear-gradient(135deg,#F5B700,#C98719)', border:'none', borderRadius:12, padding:'13px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:'#070500', fontSize:'.88rem' }}>{qIdx<questions.length-1?'Next →':'Finish ✓'}</button>
+                  <button onClick={fullResetQ} style={{ background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.10)', borderRadius:12, padding:'13px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:GENERAL.slate, fontSize:'.88rem' }}>↩ Try again</button>
+                  <button onClick={()=>tqNextQuestion(questions.length)} style={{ background:GENERAL.teal, border:'none', borderRadius:12, padding:'13px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:GENERAL.neutral[0], fontSize:'.88rem' }}>{qIdx<questions.length-1?'Next →':'Finish ✓'}</button>
                 </div>
               </div>
             )}
             {!feedback && !tqMcLocked && (
               <button onClick={() => handleTqCheck(q)} disabled={grading || (isMC && !answer)}
-                style={{ width:'100%', background:grading?'rgba(255,255,255,0.08)':'linear-gradient(135deg,#F5B700,#C98719)', color:grading?'#5A6480':'#070500', border:'none', borderRadius:12, padding:'15px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:(grading||(isMC&&!answer))?'default':'pointer', fontSize:'.97rem', marginTop:4, opacity:(isMC&&!answer)?0.4:1 }}>
+                style={{ width:'100%', background:grading?'rgba(255,255,255,0.08)':GENERAL.teal, color:grading?GENERAL.slate:GENERAL.neutral[0], border:'none', borderRadius:12, padding:'15px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:(grading||(isMC&&!answer))?'default':'pointer', fontSize:'.97rem', marginTop:4, opacity:(isMC&&!answer)?0.4:1 }}>
                 {grading ? 'Marking…' : tqMcHint ? 'Check again — you can do this →' : 'Check my answer →'}
               </button>
             )}
