@@ -4,6 +4,7 @@ import { SPACING }  from './constants/spacing.js'
 import { RADII }    from './constants/radii.js'
 import { TYPE }     from './constants/typography.js'
 import { GENERAL }  from './constants/generalTheme.js'
+import { MOTION }   from './constants/motion.js'
 import { useAuth } from './auth/AuthContext.jsx'
 import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
 import { SOCIOLOGY_GROUPS } from './data/sociologyGroups.js'
@@ -3965,26 +3966,26 @@ function ChemistryBrowser({ onBack }) {
 
 
 const QUICK_FIRE_QUESTIONS = [
-  { q: 'What theory said bad smells caused disease?', options: ['Miasma', 'Germ theory', 'Four humours', 'Natural selection'], correct: 0, subject: 'History', topic: 'Medieval Medicine', moduleId: 'history-medicine-medieval-beliefs-causes', ms: 'Miasma was the belief that bad air or smells caused disease.' },
-  { q: 'Who proved blood circulates around the body?', options: ['William Harvey', 'Edward Jenner', 'Louis Pasteur', 'Robert Koch'], correct: 0, subject: 'History', topic: 'Renaissance Medicine', moduleId: 'mod2', ms: 'William Harvey published his ideas about blood circulation in 1628.' },
-  { q: 'Which scientist developed germ theory?', options: ['Louis Pasteur', 'Galen', 'Vesalius', 'Florence Nightingale'], correct: 0, subject: 'History', topic: 'Germ Theory', moduleId: 'mod4', ms: 'Louis Pasteur showed that germs cause decay and disease.' },
-  { q: 'What did Jenner create a vaccine for?', options: ['Smallpox', 'Cholera', 'Tuberculosis', 'Typhoid'], correct: 0, subject: 'History', topic: 'Vaccination', moduleId: 'mod4', ms: 'Edward Jenner developed vaccination against smallpox.' },
-  { q: 'What did Lister use as an antiseptic?', options: ['Carbolic acid', 'Penicillin', 'Ether', 'Aspirin'], correct: 0, subject: 'History', topic: 'Surgery & Anatomy', moduleId: 'mod3', ms: 'Joseph Lister used carbolic acid to reduce infection in surgery.' },
-  { q: 'Who discovered penicillin?', options: ['Alexander Fleming', 'Robert Koch', 'James Simpson', 'John Snow'], correct: 0, subject: 'History', topic: 'Modern Medicine', moduleId: 'mod4', ms: 'Alexander Fleming discovered penicillin in 1928.' },
-  { q: 'What did John Snow remove in 1854?', options: ['A pump handle', 'A hospital ward', 'A sewer pipe', 'A microscope lens'], correct: 0, subject: 'History', topic: 'Public Health', moduleId: 'mod5', ms: 'John Snow removed the Broad Street pump handle during a cholera outbreak.' },
-  { q: 'Which war helped plastic surgery develop?', options: ['First World War', 'Crimean War', 'Vietnam War', 'English Civil War'], correct: 0, subject: 'History', topic: 'Modern Surgery', moduleId: 'mod3', ms: 'The First World War created a need for reconstructive plastic surgery.' },
-  { q: 'Which organ pumps blood?', options: ['Heart', 'Liver', 'Lung', 'Kidney'], correct: 0, subject: 'Biology', topic: 'Circulation', moduleId: null, ms: 'The heart pumps blood around the body.' },
-  { q: 'What is the control centre of a cell?', options: ['Nucleus', 'Ribosome', 'Cell wall', 'Cytoplasm'], correct: 0, subject: 'Biology', topic: 'Cells', moduleId: 'sci_bio_w1', ms: 'The nucleus contains genetic material and controls cell activities.' },
-  { q: 'What process moves water through a membrane?', options: ['Osmosis', 'Diffusion', 'Respiration', 'Transpiration'], correct: 0, subject: 'Biology', topic: 'Osmosis', moduleId: 'sci_bio_w1', ms: 'Osmosis is the movement of water through a partially permeable membrane.' },
-  { q: 'What gas do plants take in for photosynthesis?', options: ['Carbon dioxide', 'Oxygen', 'Nitrogen', 'Hydrogen'], correct: 0, subject: 'Biology', topic: 'Photosynthesis', moduleId: 'sci_bio_w1', ms: 'Plants use carbon dioxide during photosynthesis.' },
-  { q: 'What is 7 x 8?', options: ['56', '54', '64', '48'], correct: 0, subject: 'Maths', topic: 'Times Tables', moduleId: null, ms: '7 x 8 = 56.' },
-  { q: 'What is 15% of 200?', options: ['30', '15', '20', '35'], correct: 0, subject: 'Maths', topic: 'Percentages', moduleId: null, ms: '10% is 20 and 5% is 10, so 15% is 30.' },
-  { q: 'What is the mean of 2, 4 and 9?', options: ['5', '6', '7', '15'], correct: 0, subject: 'Maths', topic: 'Averages', moduleId: null, ms: '(2 + 4 + 9) / 3 = 5.' },
-  { q: 'What word means a comparison using like or as?', options: ['Simile', 'Metaphor', 'Verb', 'Noun'], correct: 0, subject: 'English', topic: 'Language Devices', moduleId: null, ms: 'A simile compares using like or as.' },
-  { q: 'What is a word that describes a noun?', options: ['Adjective', 'Verb', 'Adverb', 'Pronoun'], correct: 0, subject: 'English', topic: 'Grammar', moduleId: null, ms: 'An adjective describes a noun.' },
-  { q: 'Which word means repeating the same starting sound?', options: ['Alliteration', 'Oxymoron', 'Personification', 'Zoomorphism'], correct: 0, subject: 'English', topic: 'Language Devices', moduleId: null, ms: 'Alliteration repeats the same initial sound.' },
-  { q: 'What is the pH of a neutral solution?', options: ['7', '1', '14', '0'], correct: 0, subject: 'Chemistry', topic: 'Acids and Alkalis', moduleId: null, ms: 'Neutral solutions have pH 7.' },
-  { q: 'What particle has a negative charge?', options: ['Electron', 'Proton', 'Neutron', 'Nucleus'], correct: 0, subject: 'Chemistry', topic: 'Atomic Structure', moduleId: null, ms: 'Electrons have a negative charge.' },
+  { q: 'What theory said bad smells caused disease?', options: ['Miasma', 'Germ theory', 'Four humours', 'Natural selection'], correct: 0, subject: 'History', topic: 'Medieval Medicine', moduleId: 'history-medicine-medieval-beliefs-causes', ms: 'Miasma was the belief that bad air or smells caused disease.', hint: 'Think about what people believed travelled through bad-smelling air.' },
+  { q: 'Who proved blood circulates around the body?', options: ['William Harvey', 'Edward Jenner', 'Louis Pasteur', 'Robert Koch'], correct: 0, subject: 'History', topic: 'Renaissance Medicine', moduleId: 'mod2', ms: 'William Harvey published his ideas about blood circulation in 1628.', hint: 'This 17th-century English doctor showed the heart pumps blood around the body in a continuous loop.' },
+  { q: 'Which scientist developed germ theory?', options: ['Louis Pasteur', 'Galen', 'Vesalius', 'Florence Nightingale'], correct: 0, subject: 'History', topic: 'Germ Theory', moduleId: 'mod4', ms: 'Louis Pasteur showed that germs cause decay and disease.', hint: 'This French scientist showed that tiny living organisms — not bad air — cause disease.' },
+  { q: 'What did Jenner create a vaccine for?', options: ['Smallpox', 'Cholera', 'Tuberculosis', 'Typhoid'], correct: 0, subject: 'History', topic: 'Vaccination', moduleId: 'mod4', ms: 'Edward Jenner developed vaccination against smallpox.', hint: 'He noticed milkmaids who caught a mild disease from cows seemed protected from a much deadlier one.' },
+  { q: 'What did Lister use as an antiseptic?', options: ['Carbolic acid', 'Penicillin', 'Ether', 'Aspirin'], correct: 0, subject: 'History', topic: 'Surgery & Anatomy', moduleId: 'mod3', ms: 'Joseph Lister used carbolic acid to reduce infection in surgery.', hint: 'This chemical was already used to treat sewage before Lister sprayed it on wounds and instruments.' },
+  { q: 'Who discovered penicillin?', options: ['Alexander Fleming', 'Robert Koch', 'James Simpson', 'John Snow'], correct: 0, subject: 'History', topic: 'Modern Medicine', moduleId: 'mod4', ms: 'Alexander Fleming discovered penicillin in 1928.', hint: 'He noticed a mould had killed the bacteria growing around it on a petri dish he had left out.' },
+  { q: 'What did John Snow remove in 1854?', options: ['A pump handle', 'A hospital ward', 'A sewer pipe', 'A microscope lens'], correct: 0, subject: 'History', topic: 'Public Health', moduleId: 'mod5', ms: 'John Snow removed the Broad Street pump handle during a cholera outbreak.', hint: 'He mapped cholera deaths around Broad Street and traced them back to a contaminated water source.' },
+  { q: 'Which war helped plastic surgery develop?', options: ['First World War', 'Crimean War', 'Vietnam War', 'English Civil War'], correct: 0, subject: 'History', topic: 'Modern Surgery', moduleId: 'mod3', ms: 'The First World War created a need for reconstructive plastic surgery.', hint: 'Trench warfare caused huge numbers of severe facial injuries that needed reconstruction.' },
+  { q: 'Which organ pumps blood?', options: ['Heart', 'Liver', 'Lung', 'Kidney'], correct: 0, subject: 'Biology', topic: 'Circulation', moduleId: null, ms: 'The heart pumps blood around the body.', hint: 'This muscular organ in your chest contracts to push blood around your body.' },
+  { q: 'What is the control centre of a cell?', options: ['Nucleus', 'Ribosome', 'Cell wall', 'Cytoplasm'], correct: 0, subject: 'Biology', topic: 'Cells', moduleId: 'sci_bio_w1', ms: 'The nucleus contains genetic material and controls cell activities.', hint: 'This structure holds the genetic material that controls what the cell does.' },
+  { q: 'What process moves water through a membrane?', options: ['Osmosis', 'Diffusion', 'Respiration', 'Transpiration'], correct: 0, subject: 'Biology', topic: 'Osmosis', moduleId: 'sci_bio_w1', ms: 'Osmosis is the movement of water through a partially permeable membrane.', hint: 'This is the movement of water — specifically — through a partially permeable membrane.' },
+  { q: 'What gas do plants take in for photosynthesis?', options: ['Carbon dioxide', 'Oxygen', 'Nitrogen', 'Hydrogen'], correct: 0, subject: 'Biology', topic: 'Photosynthesis', moduleId: 'sci_bio_w1', ms: 'Plants use carbon dioxide during photosynthesis.', hint: 'Plants take this gas in through their leaves and combine it with water using light energy.' },
+  { q: 'What is 7 x 8?', options: ['56', '54', '64', '48'], correct: 0, subject: 'Maths', topic: 'Times Tables', moduleId: null, ms: '7 x 8 = 56.', hint: 'Think of 7 groups of 8. What is 8 × 7?' },
+  { q: 'What is 15% of 200?', options: ['30', '15', '20', '35'], correct: 0, subject: 'Maths', topic: 'Percentages', moduleId: null, ms: '10% is 20 and 5% is 10, so 15% is 30.', hint: 'Find 10% first, then half of that for 5%, and add the two together.' },
+  { q: 'What is the mean of 2, 4 and 9?', options: ['5', '6', '7', '15'], correct: 0, subject: 'Maths', topic: 'Averages', moduleId: null, ms: '(2 + 4 + 9) / 3 = 5.', hint: 'Add all the values together, then divide by how many numbers there are.' },
+  { q: 'What word means a comparison using like or as?', options: ['Simile', 'Metaphor', 'Verb', 'Noun'], correct: 0, subject: 'English', topic: 'Language Devices', moduleId: null, ms: 'A simile compares using like or as.', hint: 'This device directly compares two things using a specific connecting word.' },
+  { q: 'What is a word that describes a noun?', options: ['Adjective', 'Verb', 'Adverb', 'Pronoun'], correct: 0, subject: 'English', topic: 'Grammar', moduleId: null, ms: 'An adjective describes a noun.', hint: 'This word type gives extra information about a person, place or thing.' },
+  { q: 'Which word means repeating the same starting sound?', options: ['Alliteration', 'Oxymoron', 'Personification', 'Zoomorphism'], correct: 0, subject: 'English', topic: 'Language Devices', moduleId: null, ms: 'Alliteration repeats the same initial sound.', hint: 'This device is about the sounds at the start of words, not their meaning.' },
+  { q: 'What is the pH of a neutral solution?', options: ['7', '1', '14', '0'], correct: 0, subject: 'Chemistry', topic: 'Acids and Alkalis', moduleId: null, ms: 'Neutral solutions have pH 7.', hint: 'On the pH scale, this number sits exactly halfway between acidic and alkaline.' },
+  { q: 'What particle has a negative charge?', options: ['Electron', 'Proton', 'Neutron', 'Nucleus'], correct: 0, subject: 'Chemistry', topic: 'Atomic Structure', moduleId: null, ms: 'Electrons have a negative charge.', hint: 'This subatomic particle orbits the nucleus and has a much smaller mass than a proton or neutron.' },
 ]
 
 const QUICK_FIRE_MEMORY_KEY = 'gcse_quickfire_memory_v1'
@@ -4183,6 +4184,179 @@ function getQuizWeaknesses() {
   try { return JSON.parse(localStorage.getItem('gcse_quiz_weaknesses') || '{}') } catch { return {} }
 }
 
+// ─── Quick Fire — circular countdown ────────────────────────────────────────
+// Hero element of the Quick Fire header. Continuously updates, never pauses,
+// never pulses or glows — see "90 Second Quick Fire" UX spec.
+function CircularTimer({ seconds, totalSeconds }) {
+  const size = 84
+  const stroke = 4
+  const radius = (size - stroke) / 2
+  const circumference = 2 * Math.PI * radius
+  const pct = Math.max(0, Math.min(1, totalSeconds ? seconds / totalSeconds : 0))
+  const offset = circumference * (1 - pct)
+  return (
+    <div style={{ position:'relative', width:size, height:size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ display:'block', transform:'rotate(-90deg)' }}>
+        <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={stroke} />
+        <circle
+          cx={size/2} cy={size/2} r={radius} fill="none" stroke={GENERAL.teal} strokeWidth={stroke} strokeLinecap="round"
+          strokeDasharray={circumference} strokeDashoffset={offset}
+          style={{ transition:`stroke-dashoffset ${MOTION.duration.standard} ${MOTION.easing.linear}` }}
+        />
+      </svg>
+      <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
+        <span style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1.05rem', color:GENERAL.softWhite, lineHeight:1 }}>{seconds}</span>
+        <span style={{ fontFamily:"'Sora', sans-serif", fontWeight:600, fontSize:'.5rem', letterSpacing:'.16em', color:GENERAL.slate, marginTop:3 }}>SEC</span>
+      </div>
+    </div>
+  )
+}
+
+// ─── Quick Fire — question screen ───────────────────────────────────────────
+// Implements the "90 Second Quick Fire" locked UX spec: tap-to-grade answer
+// cards, retry-in-place on an incorrect tap, auto-advance on a correct one.
+// Calm, monochrome, no badges/labels/progress bars — the timer is the only
+// chrome. `onAnswer` fires once per question (first attempt only).
+function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, onAdvance }) {
+  const [tapped, setTapped]         = useState(null)
+  const [status, setStatus]         = useState(null) // null | 'correct' | 'incorrect'
+  const [hintVisible, setHintVisible] = useState(false)
+  const [entered, setEntered]       = useState(false)
+  const [leaving, setLeaving]       = useState(false)
+  const firstAttemptRef = useRef(false)
+  const timersRef = useRef([])
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setEntered(true))
+    return () => {
+      cancelAnimationFrame(raf)
+      timersRef.current.forEach(clearTimeout)
+    }
+  }, [])
+
+  if (!q) return null
+
+  function selectOption(opt) {
+    if (status) return
+    const isCorrect = opt === q.options[q.correct]
+    setTapped(opt)
+    setStatus(isCorrect ? 'correct' : 'incorrect')
+    if (navigator.vibrate) navigator.vibrate(isCorrect ? 10 : 20)
+    if (!firstAttemptRef.current) {
+      firstAttemptRef.current = true
+      onAnswer(isCorrect)
+    }
+    if (isCorrect) {
+      const holdMs = parseInt(MOTION.duration.cinematic, 10)
+      const outMs = parseInt(MOTION.duration.standard, 10)
+      timersRef.current.push(setTimeout(() => {
+        setLeaving(true)
+        timersRef.current.push(setTimeout(onAdvance, outMs))
+      }, holdMs))
+    } else {
+      const hintMs = parseInt(MOTION.duration.fast, 10)
+      timersRef.current.push(setTimeout(() => setHintVisible(true), hintMs))
+    }
+  }
+
+  function retry() {
+    setTapped(null)
+    setStatus(null)
+    setHintVisible(false)
+  }
+
+  return (
+    <div style={{ background:GENERAL.neutral[0], minHeight:'100dvh', display:'flex', flexDirection:'column', color:GENERAL.softWhite }}>
+      <style>{`
+        @keyframes qfMarkIn { from { opacity:0; transform:translateY(-50%) scale(0.5); } to { opacity:1; transform:translateY(-50%) scale(1); } }
+        @keyframes qfHintIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+      `}</style>
+
+      <div style={{ padding:'24px 20px 0', display:'flex', flexDirection:'column', alignItems:'center', flexShrink:0 }}>
+        <div style={{ width:'100%', maxWidth:520 }}>
+          <button onClick={onExit} aria-label="Exit" style={{
+            width:42, height:42, borderRadius:'50%', border:'1px solid rgba(255,255,255,0.14)',
+            background:'transparent', color:GENERAL.slate, fontSize:'1.2rem', lineHeight:1,
+            display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', padding:0,
+          }}>×</button>
+        </div>
+        <div style={{ marginTop:16, fontFamily:"'Sora', sans-serif", fontWeight:600, fontSize:'.92rem', color:GENERAL.slate }}>90s Quick Fire</div>
+        <div style={{ marginTop:18 }}>
+          <CircularTimer seconds={timeLeft} totalSeconds={totalSeconds} />
+        </div>
+      </div>
+
+      <div style={{
+        flex:1, display:'flex', flexDirection:'column', justifyContent:'center',
+        padding:`${SPACING.standard}px 20px ${SPACING.cinematic}px`, maxWidth:520, width:'100%', margin:'0 auto', boxSizing:'border-box',
+        opacity: entered && !leaving ? 1 : 0,
+        transform: leaving ? 'translateY(-8px)' : entered ? 'translateY(0)' : 'translateY(8px)',
+        transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+      }}>
+        <div style={{ background:GENERAL.neutral[1], borderRadius:RADII.panel, padding:'28px 24px', marginBottom:SPACING.standard }}>
+          <p style={{ ...TYPE.cardTitle, margin:0, color:GENERAL.softWhite }}>{q.q}</p>
+        </div>
+
+        <div style={{ display:'flex', flexDirection:'column', gap:SPACING.micro }}>
+          {q.options.map((opt, i) => {
+            const isTapped = tapped === opt
+            let opacity = 1
+            let background = GENERAL.neutral[1]
+            let border = '1px solid rgba(255,255,255,0.06)'
+            if (status === 'incorrect' && isTapped) opacity = 0.58
+            if (status === 'correct' && isTapped) {
+              background = `rgba(${GENERAL.tealRgb}, 0.07)`
+              border = `1px solid ${GENERAL.teal}`
+            }
+            return (
+              <button key={i} onClick={() => selectOption(opt)} disabled={!!status} style={{
+                position:'relative', width:'100%', textAlign:'left', background, border, borderRadius:RADII.large,
+                padding:'18px 44px 18px 20px', cursor: status ? 'default' : 'pointer',
+                ...TYPE.body, fontWeight:500, color:GENERAL.softWhite,
+                opacity,
+                transition:`opacity ${MOTION.duration.instant} ${MOTION.easing.gentle}, background ${MOTION.duration.instant} ${MOTION.easing.gentle}, border-color ${MOTION.duration.instant} ${MOTION.easing.gentle}`,
+              }}>
+                {opt}
+                {status === 'incorrect' && isTapped && (
+                  <span aria-hidden="true" style={{ position:'absolute', right:18, top:'50%', color:GENERAL.coral, fontSize:'1.15rem', fontWeight:700, animation:`qfMarkIn ${MOTION.duration.fast} ${MOTION.easing.standard} both` }}>×</span>
+                )}
+                {status === 'correct' && isTapped && (
+                  <span aria-hidden="true" style={{ position:'absolute', right:18, top:'50%', color:GENERAL.teal, fontSize:'1.15rem', fontWeight:700, animation:`qfMarkIn ${MOTION.duration.fast} ${MOTION.easing.standard} both` }}>✓</span>
+                )}
+              </button>
+            )
+          })}
+        </div>
+
+        {hintVisible && (
+          <div style={{
+            marginTop:SPACING.standard, background:GENERAL.neutral[1], borderRadius:RADII.large,
+            borderLeft:`3px solid ${GENERAL.teal}`, padding:'16px 18px',
+            display:'flex', gap:12, alignItems:'flex-start',
+            animation:`qfHintIn ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ color:GENERAL.slate, flexShrink:0, marginTop:3 }}>
+              <path d="M9 18h6M10 21h4M12 2a6.5 6.5 0 0 0-4 11.6c.6.5 1 1.3 1 2.4h6c0-1.1.4-1.9 1-2.4A6.5 6.5 0 0 0 12 2z" />
+            </svg>
+            <div>
+              <div style={{ ...TYPE.metadata, color:GENERAL.slate, marginBottom:6 }}>Hint</div>
+              <p style={{ margin:0, ...TYPE.body, fontSize:'.92rem', color:GENERAL.softWhite }}>{q.hint || q.ms}</p>
+            </div>
+          </div>
+        )}
+
+        {status === 'incorrect' && (
+          <button onClick={retry} style={{
+            marginTop:SPACING.standard, width:'100%', border:'none', borderRadius:RADII.large,
+            background:GENERAL.teal, color:GENERAL.neutral[0], padding:'17px',
+            fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem', cursor:'pointer',
+          }}>Try again →</button>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart = false } = {}) {
   const [mathsOpen, setMathsOpen]   = useState(false)
   const [englishOpen, setEnglishOpen]     = useState(false)
@@ -4298,8 +4472,6 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const quickFirePct = Math.max(0, Math.min(100, (quickFireTimeLeft / QUICK_FIRE_SECONDS) * 100))
-  const quickFireTime = Math.floor(quickFireTimeLeft / 60) + ':' + String(quickFireTimeLeft % 60).padStart(2, '0')
   const examTime = Math.floor(examTimeLeft / 60) + ':' + String(examTimeLeft % 60).padStart(2, '0')
 
 
@@ -5161,45 +5333,18 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
     if (q.type === 'mc') {
       if (!answer) { setError('Pick an option first.'); return }
       const isCorrect = answer === q.options[q.correct]
-      const wasPrevWrong = isQuickFire && wasQfPrevWrong(q)
       const newAttempts = tqMcAttempts + 1
       setTqMcAttempts(newAttempts)
       if (isCorrect) {
-        if (isQuickFire) {
-          setQuickFireStats(stats => addQuickFireAnswer(stats, q, true))
-          updateQfQuestionHistory(q, true)
-          setQfConsecutiveWrong(0)
-        }
         setTqMcLocked(true)
-        const correctMsg = wasPrevWrong
-          ? "Well done — you didn't get that right last time!"
-          : "That's the one. Well done for getting it."
         setFeedback({ marksAwarded: q.marks, marksAvailable: q.marks, grade: 'Excellent',
-          summary: correctMsg, achieved: ['Correct answer selected'], missed: [], examinerTip: '' })
+          summary: "That's the one. Well done for getting it.", achieved: ['Correct answer selected'], missed: [], examinerTip: '' })
         recordScore({ subject: selected.subject, earned: q.marks, possible: q.marks, source: 'test' })
       } else if (newAttempts === 1) {
         setTqMcHint(true)
         setAnswer('')
         setError('')
       } else {
-        if (isQuickFire) {
-          setQuickFireStats(stats => addQuickFireAnswer(stats, q, false))
-          updateQfQuestionHistory(q, false)
-          const newConsecutive = qfConsecutiveWrong + 1
-          setQfConsecutiveWrong(newConsecutive)
-          // After 3 consecutive wrong answers, inject a revisit question from the queue
-          if (newConsecutive >= 3) {
-            setQfConsecutiveWrong(0)
-            const revisitCandidate = quickFireQuestionSet.slice(qIdx + 2).find(qItem => wasQfPrevWrong(qItem))
-            if (revisitCandidate) {
-              setQuickFireQuestionSet(prev => {
-                const next = [...prev]
-                next.splice(qIdx + 1, 0, { ...revisitCandidate, _retryPrevWrong: true })
-                return next
-              })
-            }
-          }
-        }
         setTqMcLocked(true)
         const correctText = q.options[q.correct] || ''
         setFeedback({ marksAwarded: 0, marksAvailable: q.marks, grade: 'Needs Work',
@@ -5374,32 +5519,59 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
 
   if (selected) {
     const questions = isQuickFire ? quickFireQuestionSet : (PAST_PAPER_QS[selected.topicId] || [])
-    const q = isQuickFire && questions[qIdx] ? { type: 'mc', marks: 1, ...questions[qIdx] } : questions[qIdx]
+
+    if (isQuickFire) {
+      const qfQ = questions[qIdx] ? { type: 'mc', marks: 1, ...questions[qIdx] } : null
+      return (
+        <QuickFireQuestionScreen
+          key={qIdx}
+          q={qfQ}
+          timeLeft={quickFireTimeLeft}
+          totalSeconds={QUICK_FIRE_SECONDS}
+          onExit={() => finishQuickFireRound('exit')}
+          onAnswer={(isCorrect) => {
+            setQuickFireStats(stats => addQuickFireAnswer(stats, qfQ, isCorrect))
+            updateQfQuestionHistory(qfQ, isCorrect)
+            recordScore({ subject: selected.subject, earned: isCorrect ? qfQ.marks : 0, possible: qfQ.marks, source: 'test' })
+            if (isCorrect) {
+              setQfConsecutiveWrong(0)
+            } else {
+              const newConsecutive = qfConsecutiveWrong + 1
+              setQfConsecutiveWrong(newConsecutive)
+              if (newConsecutive >= 3) {
+                setQfConsecutiveWrong(0)
+                const revisitCandidate = quickFireQuestionSet.slice(qIdx + 2).find(qItem => wasQfPrevWrong(qItem))
+                if (revisitCandidate) {
+                  setQuickFireQuestionSet(prev => {
+                    const next = [...prev]
+                    next.splice(qIdx + 1, 0, { ...revisitCandidate, _retryPrevWrong: true })
+                    return next
+                  })
+                }
+              }
+            }
+          }}
+          onAdvance={() => tqNextQuestion(questions.length)}
+        />
+      )
+    }
+
+    const q = questions[qIdx]
     const gs = feedback ? (GRADE_STYLE[feedback.grade] || GRADE_STYLE['Developing']) : null
     const isMC = q?.type === 'mc'
     return (
       <div style={{ background:GENERAL.neutral[0], minHeight:'100vh', paddingBottom:90 }}>
         <div style={{ background:`rgba(${hexToRgb(GENERAL.neutral[0])},0.96)`, borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
-            <button onClick={() => isQuickFire ? finishQuickFireRound('exit') : exitTestTopic()} style={{ background:isQuickFire?'rgba(255,255,255,0.06)':'none', border:isQuickFire?'1px solid rgba(255,255,255,0.10)':'none', borderRadius:isQuickFire?999:0, cursor:'pointer', color:GENERAL.slate, fontSize:isQuickFire?'.72rem':'1.1rem', fontWeight:isQuickFire?600:400, padding:isQuickFire?'6px 10px':0 }}>{isQuickFire ? 'Exit' : '←'}</button>
+            <button onClick={exitTestTopic} style={{ background:'none', border:'none', cursor:'pointer', color:GENERAL.slate, fontSize:'1.1rem', fontWeight:400, padding:0 }}>←</button>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.9rem', color:GENERAL.softWhite, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
               <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.7rem', color:GENERAL.slate }}>Question {qIdx+1} of {questions.length}</div>
             </div>
-            {isQuickFire && (
-              <div style={{ background: quickFireTimeLeft <= 10 ? `rgba(${GENERAL.coralRgb},.12)` : `rgba(${GENERAL.tealRgb},.12)`, border: quickFireTimeLeft <= 10 ? `1px solid rgba(${GENERAL.coralRgb},.36)` : `1px solid rgba(${GENERAL.tealRgb},.3)`, borderRadius: 999, padding: '6px 10px', color: quickFireTimeLeft <= 10 ? GENERAL.coral : GENERAL.teal, fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: '.86rem', minWidth: 58, textAlign: 'center' }}>
-                {quickFireTime}
-              </div>
-            )}
           </div>
           <div style={{ height:3, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden', marginTop:10, maxWidth:660, margin:'10px auto 0' }}>
             <div style={{ height:'100%', width:`${((qIdx+1)/questions.length)*100}%`, background:'rgba(241,250,238,0.30)', borderRadius:99, transition:'width .3s' }} />
           </div>
-          {isQuickFire && (
-            <div style={{ height:4, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden', maxWidth:660, margin:'7px auto 0' }}>
-              <div style={{ height:'100%', width: quickFirePct + '%', background: quickFireTimeLeft <= 10 ? GENERAL.coral : GENERAL.teal, borderRadius:99, transition:'width 1s linear' }} />
-            </div>
-          )}
         </div>
         <div style={{ maxWidth:660, margin:'0 auto', padding:'16px 16px' }}>
           {q && <>
