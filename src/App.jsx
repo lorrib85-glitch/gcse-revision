@@ -4847,23 +4847,22 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
         <div style={{
           position: 'absolute', inset: 0,
           backgroundImage: 'url(/headers/exam-summit.png)',
-          backgroundSize: 'cover', backgroundPosition: 'center top',
+          backgroundSize: 'cover', backgroundPosition: 'center 8%',
         }} />
         <div style={{
           position: 'absolute', inset: 0,
-          background: `linear-gradient(to bottom, rgba(${hexToRgb(GENERAL.neutral[0])},0.55) 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.22) 24%, transparent 38%, rgba(${hexToRgb(GENERAL.neutral[0])},0.55) 70%, rgba(${hexToRgb(GENERAL.neutral[0])},0.92) 100%)`,
+          background: `linear-gradient(to bottom, rgba(${hexToRgb(GENERAL.neutral[0])},0.92) 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.8) 22%, rgba(${hexToRgb(GENERAL.neutral[0])},0.35) 34%, rgba(${hexToRgb(GENERAL.neutral[0])},0.1) 46%, rgba(${hexToRgb(GENERAL.neutral[0])},0.55) 70%, rgba(${hexToRgb(GENERAL.neutral[0])},0.92) 100%)`,
         }} />
 
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 430, margin: '0 auto', padding: `0 ${SPACING.compact}px` }}>
 
-          {/* Top row — logo + streak */}
-          <div style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 14px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-            <img src="/logo.png" alt="RISE" style={{ height: 34, width: 'auto', display: 'block', borderRadius: RADII.small }} />
+          {/* Top row — streak */}
+          <div style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 14px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-end' }}>
             <StreakChip />
           </div>
 
           {/* Headline */}
-          <div style={{ marginTop: SPACING.section }}>
+          <div style={{ marginTop: SPACING.section, textShadow: '0 2px 16px rgba(0,0,0,0.55)' }}>
             <div style={{ ...TYPE.cinematic, fontSize: 38, color: GENERAL.softWhite }}>
               Exams<span style={{ color: GENERAL.teal }}>.</span>
             </div>
