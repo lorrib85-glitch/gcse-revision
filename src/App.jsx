@@ -671,7 +671,7 @@ export default function App() {
         {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
         {tab === 'pulse'    && <PulseTab onStartQuickFire={() => setTab('quickfire')} />}
         {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab('pulse')} />}
-        {tab === 'exams'    && <TestTab mode="exam" onOpenModule={openModule} />}
+        {tab === 'exams'    && <TestTab mode="exam" onOpenModule={openModule} onOpenPulse={() => setTab('pulse')} />}
       </div>
       <BottomNav tab={tab} setTab={setTab} />
     </div>
@@ -4181,11 +4181,12 @@ function getQuizWeaknesses() {
   try { return JSON.parse(localStorage.getItem('gcse_quiz_weaknesses') || '{}') } catch { return {} }
 }
 
-function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}) {
+function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart = false } = {}) {
   const [mathsOpen, setMathsOpen]   = useState(false)
   const [englishOpen, setEnglishOpen]     = useState(false)
   const [sociologyOpen, setSociologyOpen]     = useState(false)
   const [chemistryOpen, setChemistryOpen]     = useState(false)
+  const [paperChooserOpen, setPaperChooserOpen] = useState(false)
   const [selected, setSelected]   = useState(null)
   const [qIdx, setQIdx]           = useState(0)
   const [answer, setAnswer]       = useState('')
@@ -4665,6 +4666,312 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
 
   }
 
+  const EXAM_SUBJECTS = [
+    { logo: '/headers/sociology-main.webp', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: isExamMode ? () => startExamRound('Sociology') : () => setSociologyOpen(true) },
+    { logo: '/headers/history-main.webp',   label: 'History',   color: '#C89B6D', completed: 6,  total: 12, action: isExamMode ? () => startExamRound('History') : () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
+    { logo: '/headers/bio-main.webp',        label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: isExamMode ? () => startExamRound('Biology')    : () => startTopic({ topicId: 'tb_cells', label: 'Biology', subject: 'Biology' }) },
+    { logo: '/headers/chem-logo.webp',       label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Chemistry')  : () => setChemistryOpen(true) },
+    { logo: '/headers/maths-main.webp',      label: 'Maths',     color: '#2DD4BF', completed: 0,  total: 20, action: isExamMode ? () => startExamRound('Maths') : () => setMathsOpen(true) },
+    { logo: '/headers/english-main.webp',    label: 'English',   color: '#B66DFF', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('English') : () => setEnglishOpen(true) },
+    { logo: '/headers/physics-main.webp',    label: 'Physics',   color: '#3B82F6', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Physics')  : () => {} },
+  ]
+
+  // ── Exams landing (cinematic redesign) ──────────────────────────────────
+  if (isExamMode && examPhase === 'landing') {
+
+    // ── Paper chooser ──
+    if (paperChooserOpen) {
+      return (
+        <div style={{ minHeight: '100vh', background: GENERAL.neutral[0], paddingBottom: 110, boxSizing: 'border-box' }}>
+          <div style={{ maxWidth: 430, margin: '0 auto', padding: `0 ${SPACING.compact}px` }}>
+
+            <div style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 14px)', paddingBottom: SPACING.compact }}>
+              <button onClick={() => setPaperChooserOpen(false)} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer',
+                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)',
+                borderRadius: RADII.pill, color: GENERAL.slate,
+                fontFamily: "'Sora', sans-serif", fontSize: 12.5, fontWeight: 600, padding: '7px 14px 7px 10px',
+              }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={GENERAL.slate} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11 5L4 12L11 19M4 12H20" />
+                </svg>
+                Back
+              </button>
+            </div>
+
+            <div style={{ ...TYPE.cinematic, fontSize: 32, color: GENERAL.softWhite, marginBottom: 6 }}>
+              Sit a full paper<span style={{ color: GENERAL.teal }}>.</span>
+            </div>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, color: GENERAL.slate, lineHeight: 1.5, marginBottom: SPACING.standard }}>
+              Real timings, real conditions — pick a full paper or practise by subject.
+            </div>
+
+            <div style={{
+              fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 600,
+              letterSpacing: '0.18em', textTransform: 'uppercase', color: GENERAL.slate, marginBottom: 10,
+            }}>
+              Real exam papers
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: SPACING.standard }}>
+              {/* Edexcel History Paper 1 — June 2023 */}
+              <button onClick={() => { setPaperChooserOpen(false); startMedicinePaper2023() }} style={{
+                display: 'flex', alignItems: 'center', gap: 14, width: '100%', textAlign: 'left',
+                padding: '14px 16px', cursor: 'pointer', borderRadius: RADII.large,
+                background: GENERAL.neutral[1], border: '1px solid rgba(255,255,255,0.06)',
+                borderLeft: '2px solid #C89B6D',
+              }}>
+                <div style={{ width: 46, height: 46, borderRadius: '50%', flexShrink: 0, border: '1.5px solid #C89B6D', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C89B6D" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="12" y2="15"/></svg>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#C89B6D', marginBottom: 4 }}>Timed</div>
+                  <div style={{ ...TYPE.cinematic, fontSize: 18, color: GENERAL.softWhite, marginBottom: 4 }}>Edexcel history paper 1 — June 2023</div>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 12.5, lineHeight: 1.45, color: GENERAL.slate }}>1HI0/11 · 52 marks · 75 min · medicine in Britain & Western Front</div>
+                </div>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C89B6D" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </button>
+
+              {/* Generic timed practice */}
+              <button onClick={() => { setPaperChooserOpen(false); startExamRound('Random', { isTimedPaper: true }) }} style={{
+                display: 'flex', alignItems: 'center', gap: 14, width: '100%', textAlign: 'left',
+                padding: '14px 16px', cursor: 'pointer', borderRadius: RADII.large,
+                background: GENERAL.neutral[1], border: '1px solid rgba(255,255,255,0.06)',
+                borderLeft: `2px solid ${GENERAL.teal}`,
+              }}>
+                <div style={{ width: 46, height: 46, borderRadius: '50%', flexShrink: 0, border: `1.5px solid ${GENERAL.teal}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={GENERAL.teal} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2.5 2.5" /><path d="M9 1h6" /></svg>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: GENERAL.teal, marginBottom: 4 }}>Timed</div>
+                  <div style={{ ...TYPE.cinematic, fontSize: 18, color: GENERAL.softWhite, marginBottom: 4 }}>Timed mixed practice</div>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 12.5, lineHeight: 1.45, color: GENERAL.slate }}>10 questions · 10 min · all subjects</div>
+                </div>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={GENERAL.teal} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </button>
+            </div>
+
+            <div style={{
+              fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 600,
+              letterSpacing: '0.18em', textTransform: 'uppercase', color: GENERAL.slate, marginBottom: 10,
+            }}>
+              By subject
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+              {EXAM_SUBJECTS.map((subj, i) => (
+                <button key={i} onClick={() => { setPaperChooserOpen(false); subj.action() }} style={{
+                  position: 'relative', height: 112, borderRadius: RADII.medium, overflow: 'hidden',
+                  border: `1px solid ${subj.color}28`, cursor: 'pointer', padding: 0,
+                  background: GENERAL.neutral[1],
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.45)',
+                }}>
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    backgroundImage: `url(${subj.logo})`,
+                    backgroundSize: 'cover', backgroundPosition: 'center',
+                    filter: 'saturate(0.75) brightness(0.72)',
+                  }} />
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'linear-gradient(180deg, rgba(5,7,11,0.10) 0%, rgba(5,7,11,0.72) 58%, rgba(5,7,11,0.96) 100%)',
+                  }} />
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 10px 10px', textAlign: 'left' }}>
+                    <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 14, color: '#F5F7FF', lineHeight: '18px', letterSpacing: '-0.01em' }}>{subj.label}</div>
+                  </div>
+                  <div style={{ position: 'absolute', top: 9, left: 9, width: 6, height: 6, borderRadius: '50%', background: subj.color, boxShadow: `0 0 8px ${subj.color}` }} />
+                </button>
+              ))}
+            </div>
+
+          </div>
+        </div>
+      )
+    }
+
+    // ── Landing ──
+    const examWeekStats = (() => {
+      try {
+        const scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]')
+        const d = new Date(); d.setDate(d.getDate() - 7)
+        const cutoff = d.toISOString().slice(0, 10)
+        const week = scores.filter(s => s.source === 'exam' && s.date > cutoff)
+        if (!week.length) return null
+        return { count: week.length, avgPct: Math.round(week.reduce((sum, s) => sum + s.pct, 0) / week.length) }
+      } catch { return null }
+    })()
+
+    const EXAM_MODE_CARDS = [
+      {
+        id: 'weak', accent: GENERAL.teal, kicker: 'Start', title: 'Practice a weak spot',
+        lines: ['Adaptive questions based on', "where you're struggling most."],
+        icon: (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="8.5" stroke={GENERAL.teal} strokeWidth="1.5" />
+            <circle cx="12" cy="12" r="3" fill={GENERAL.teal} />
+          </svg>
+        ),
+        onClick: () => startExamRound('Random', { title: 'Weak spot practice' }),
+      },
+      {
+        id: 'technique', accent: PULSE_GOLD, kicker: 'Coming soon', title: 'Nail exam technique',
+        lines: ['Learn exactly how top answers are built', 'before writing your own.'],
+        icon: (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={PULSE_GOLD} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
+          </svg>
+        ),
+        disabled: true,
+      },
+      {
+        id: 'paper', accent: GENERAL.coral, kicker: 'Challenge', title: 'Sit a full paper',
+        lines: ['Real timings. Real conditions.', 'No hints.'],
+        icon: (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={GENERAL.coral} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="13" r="8" />
+            <path d="M12 9v4l2.5 2.5" />
+            <path d="M9 1h6" />
+          </svg>
+        ),
+        onClick: () => setPaperChooserOpen(true),
+      },
+    ]
+
+    return (
+      <div style={{ position: 'relative', minHeight: '100vh', background: GENERAL.neutral[0], paddingBottom: 110, overflow: 'hidden' }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'url(/headers/exam-summit.png)',
+          backgroundSize: 'cover', backgroundPosition: 'center top',
+        }} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: `linear-gradient(to bottom, rgba(${hexToRgb(GENERAL.neutral[0])},0.55) 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.22) 24%, transparent 38%, rgba(${hexToRgb(GENERAL.neutral[0])},0.55) 70%, rgba(${hexToRgb(GENERAL.neutral[0])},0.92) 100%)`,
+        }} />
+
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: 430, margin: '0 auto', padding: `0 ${SPACING.compact}px` }}>
+
+          {/* Top row — logo + streak */}
+          <div style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 14px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+            <img src="/logo.png" alt="RISE" style={{ height: 34, width: 'auto', display: 'block', borderRadius: RADII.small }} />
+            <StreakChip />
+          </div>
+
+          {/* Headline */}
+          <div style={{ marginTop: SPACING.section }}>
+            <div style={{ ...TYPE.cinematic, fontSize: 38, color: GENERAL.softWhite }}>
+              Exams<span style={{ color: GENERAL.teal }}>.</span>
+            </div>
+            <div style={{
+              marginTop: 10, fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 600,
+              letterSpacing: '0.22em', textTransform: 'uppercase', color: GENERAL.teal,
+            }}>
+              Practise like it's the real thing.
+            </div>
+          </div>
+
+          {/* Section label */}
+          <div style={{
+            marginTop: SPACING.standard, marginBottom: 10,
+            fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 600,
+            letterSpacing: '0.18em', textTransform: 'uppercase', color: GENERAL.slate,
+          }}>
+            Choose your next step.
+          </div>
+
+          {/* Mode cards */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {EXAM_MODE_CARDS.map(card => (
+              <button key={card.id} onClick={card.onClick} disabled={card.disabled} style={{
+                display: 'flex', alignItems: 'center', gap: 14, width: '100%', textAlign: 'left',
+                padding: '14px 16px', cursor: card.disabled ? 'default' : 'pointer',
+                borderRadius: RADII.large, background: GENERAL.neutral[1],
+                border: '1px solid rgba(255,255,255,0.06)', borderLeft: `2px solid ${card.accent}`,
+                opacity: card.disabled ? 0.55 : 1,
+              }}>
+                <div style={{
+                  width: 46, height: 46, borderRadius: '50%', flexShrink: 0,
+                  border: `1.5px solid ${card.accent}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {card.icon}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{
+                    fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700,
+                    letterSpacing: '0.2em', textTransform: 'uppercase', color: card.accent, marginBottom: 4,
+                  }}>
+                    {card.kicker}
+                  </div>
+                  <div style={{ ...TYPE.cinematic, fontSize: 22, color: GENERAL.softWhite, marginBottom: 4 }}>
+                    {card.title}
+                  </div>
+                  {card.lines.map((line, i) => (
+                    <div key={i} style={{ fontFamily: "'Sora', sans-serif", fontSize: 12.5, lineHeight: 1.45, color: GENERAL.slate }}>
+                      {line}
+                    </div>
+                  ))}
+                </div>
+                {!card.disabled && (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={card.accent} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Progress stat card */}
+          {examWeekStats ? (
+            <button onClick={onOpenPulse} style={{
+              display: 'flex', alignItems: 'center', gap: 14, width: '100%', textAlign: 'left',
+              marginTop: SPACING.standard, padding: '14px 16px', cursor: 'pointer',
+              borderRadius: RADII.large, background: GENERAL.neutral[1],
+              border: '1px solid rgba(255,255,255,0.06)',
+            }}>
+              <div style={{
+                width: 52, height: 52, borderRadius: '50%', flexShrink: 0,
+                background: `conic-gradient(${GENERAL.teal} ${examWeekStats.avgPct}%, ${GENERAL.neutral[2]} 0)`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: '50%', background: GENERAL.neutral[1],
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700, color: GENERAL.softWhite,
+                }}>
+                  {examWeekStats.avgPct}%
+                </div>
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, color: GENERAL.softWhite, lineHeight: 1.4, marginBottom: 4 }}>
+                  You've answered {examWeekStats.count} exam question{examWeekStats.count === 1 ? '' : 's'} this week.
+                </div>
+                <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 600, color: GENERAL.teal }}>
+                  View your progress →
+                </div>
+              </div>
+            </button>
+          ) : (
+            <div style={{
+              marginTop: SPACING.standard, padding: '14px 16px',
+              borderRadius: RADII.large, background: GENERAL.neutral[1],
+              border: '1px solid rgba(255,255,255,0.06)',
+              fontFamily: "'Sora', sans-serif", fontSize: 13, color: GENERAL.slate, lineHeight: 1.5,
+            }}>
+              Sit your first paper to start tracking progress.
+            </div>
+          )}
+
+        </div>
+      </div>
+    )
+  }
+
   if (mathsOpen)   return <MathsBrowser   onBack={() => setMathsOpen(false)} />
   if (englishOpen)   return <EnglishBrowser   onBack={() => setEnglishOpen(false)} />
   if (sociologyOpen)  return <SociologyBrowser  onBack={() => setSociologyOpen(false)} />
@@ -5103,30 +5410,15 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
   }
 
 
-  const EXAM_SUBJECTS = [
-    { logo: '/headers/sociology-main.webp', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: isExamMode ? () => startExamRound('Sociology') : () => setSociologyOpen(true) },
-    { logo: '/headers/history-main.webp',   label: 'History',   color: '#C89B6D', completed: 6,  total: 12, action: isExamMode ? () => startExamRound('History') : () => startTopic({ topicId: 'medieval', label: 'History', subject: 'History' }) },
-    { logo: '/headers/bio-main.webp',        label: 'Biology',   color: '#4F8A5B', completed: 1,  total: 7,  action: isExamMode ? () => startExamRound('Biology')    : () => startTopic({ topicId: 'tb_cells', label: 'Biology', subject: 'Biology' }) },
-    { logo: '/headers/chem-logo.webp',       label: 'Chemistry', color: '#9B59E8', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Chemistry')  : () => setChemistryOpen(true) },
-    { logo: '/headers/maths-main.webp',      label: 'Maths',     color: '#2DD4BF', completed: 0,  total: 20, action: isExamMode ? () => startExamRound('Maths') : () => setMathsOpen(true) },
-    { logo: '/headers/english-main.webp',    label: 'English',   color: '#B66DFF', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('English') : () => setEnglishOpen(true) },
-    { logo: '/headers/physics-main.webp',    label: 'Physics',   color: '#3B82F6', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Physics')  : () => {} },
-  ]
-
   return (
     <div style={{ background: '#08090D', minHeight: '100vh', paddingBottom: 90 }}>
 
       {/* ── Header — 60px ── */}
       <div style={{ height: 60, padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxSizing: 'border-box' }}>
         <div>
-          {!isExamMode && (
-            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F4EFE6' }}>
-              {isQuickFire ? '90s Quick Fire' : 'Practice Test'}
-            </div>
-          )}
-          {isExamMode && (
-            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F4EFE6' }}>Exams</div>
-          )}
+          <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F4EFE6' }}>
+            {isQuickFire ? '90s Quick Fire' : 'Practice Test'}
+          </div>
         </div>
         <StreakChip />
       </div>
