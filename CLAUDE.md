@@ -1353,3 +1353,31 @@ A Science chapter is complete only if the student can:
 - understand how the examiner awards marks
 
 If any of these are missing, revise the chapter before building.
+
+---
+
+## Exam Technique Coach (`GuidedAnswerCoach`)
+
+This is a standalone, app-wide feature. It is **not** part of the per-module History or Science architectures above and is not bound by their locked Section 1–6 / Part 1–6 structures.
+
+**Where it lives:** Exam Mode (5th bottom nav tab) → "Exam technique" chooser → `GuidedAnswerCoach` full-screen overlay (`src/App.jsx`, `activeCoachType` / `examTechniqueOpen`). It sits outside `ModulePlayer` entirely.
+
+**What it is:** A bank of GCSE exam question types defined in `src/data/guidedAnswerCoach.js` (`GUIDED_COACH_TYPES` — currently `TYPE_A`–`TYPE_F`). Each type walks the student through an eight-stage scaffold:
+
+1. The question
+2. What the examiner wants
+3. Watch an examiner think
+4. An annotated model answer
+5. Write with support
+6. Write with light support
+7. Write independently
+8. Progress debrief
+
+**Current content:** Six Edexcel GCSE History (Medicine) question types (`explain-similar-different`, `source-utility`, `source-follow-up`, `explain-why`, `how-far-do-you-agree`, `describe-two-features`). The component itself is subject-agnostic — `GuidedAnswerCoach.jsx` defines palettes for History, Biology, Chemistry, Physics, Maths, English and Sociology, and supports `theme="general"` for general-app branding when used outside a subject context.
+
+**Relationship to `ExamRoundDebrief`:** Both features sit within Exam Mode and both feed `unifiedWeaknessTracker.js`, but they are separate flows and are not directly composed:
+
+- `ExamRoundDebrief` appears at the end of an **Exam Round** (a set of adaptive practice questions, possibly mixing subjects) and synthesises content-knowledge weaknesses across the round via `logWrongAnswer`.
+- `GuidedAnswerCoach`'s debrief stage logs **exam-technique patterns** — recurring issues in *how* the student approaches a question type — via `logExamTechnique` / `getExamTechniquePatterns`.
+
+**Adding new coach content:** Follow the existing `TYPE_A`–`TYPE_F` shape in `src/data/guidedAnswerCoach.js` and add the new entry to `GUIDED_COACH_TYPES`. Worked examples reuse `GuidedExamResponse`'s `exam` shape (`board`, `subject`, `topic`, `question`, `marks`, `sections`, `markScheme`, `sources?`, `beatText?`).

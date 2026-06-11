@@ -1,5 +1,7 @@
 # Standard Module Spine
 
+> **Superseded — retained for historical reference only.** This document predates and conflicts with the module architecture defined in `CLAUDE.md` ("History Module Architecture (LOCKED)" and "Science Module Blueprint (LOCKED)"). `CLAUDE.md` is the current authority for module structure — do not use this document for new module builds.
+
 Every module in the GCSE Revision app must follow this spine unless explicitly marked as an approved variant.
 
 ## The Locked Flow

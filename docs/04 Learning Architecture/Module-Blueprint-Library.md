@@ -1,5 +1,7 @@
 # Module Blueprint Library
 
+> **Superseded — retained for historical reference only.** This document predates and conflicts with the module architecture defined in `CLAUDE.md` ("History Module Architecture (LOCKED)" and "Science Module Blueprint (LOCKED)"). `CLAUDE.md` is the current authority for module structure — do not use this document for new module builds.
+
 **Authority:** This document sits beneath the Product UI Constitution, Component Registry, and Brand guide. It governs how approved components are assembled into learning sequences. It does not define new components or modify any UI.
 
 **Purpose:** Define reusable, flexible learning journey patterns for GCSE modules. These are assembly guides for existing components — not fixed templates. A blueprint tells you what kinds of screen to use and in what order; it does not specify exact content or word count.
