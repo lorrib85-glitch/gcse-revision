@@ -5036,7 +5036,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, autoStart = false } = {}
               <pre style={{ fontFamily:"'Outfit', sans-serif", fontSize:'1rem', lineHeight:1.65, margin:0, color:GENERAL.softWhite, whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
             </div>
             {!showTip
-              ? <button onClick={() => setTip(true)} style={{ background:'none', border:`1px dashed rgba(${GENERAL.tealRgb},0.4)`, borderRadius:10, padding:'9px 14px', cursor:'pointer', color:GENERAL.teal, fontSize:'.82rem', fontFamily:"'Outfit', sans-serif", width:'100%', marginBottom:14 }}>Show mark tip</button>
+              ? <button onClick={() => setTip(true)} style={{ background:'none', border:`1px dashed ${GENERAL.coral}`, borderRadius:10, padding:'9px 14px', cursor:'pointer', color:GENERAL.coral, fontSize:'.82rem', fontFamily:"'Outfit', sans-serif", width:'100%', marginBottom:14, fontWeight:600 }}>Show mark tip</button>
               : <div style={{ background:`rgba(${GENERAL.tealRgb},.06)`, border:`1px solid rgba(${GENERAL.tealRgb},.2)`, borderRadius:10, padding:'11px 14px', marginBottom:14 }}>
                   <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:GENERAL.teal, marginBottom:5 }}>{q.marks}-mark question</div>
                   <p style={{ fontFamily:"'Outfit', sans-serif", margin:0, fontSize:'.85rem', color:GENERAL.slate }}>{MARK_TIPS[q.marks] || MARK_TIPS[3]}</p>
