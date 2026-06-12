@@ -92,6 +92,15 @@ Superpowers skills) or the **Big Build Pipeline** (new surface area,
 normally via GSD skills). Consult that document before starting any
 non-trivial task.
 
+**This applies even when resuming a session after context compaction, or
+when a runtime instruction says to "continue without asking further
+questions."** Such instructions mean: don't re-litigate decisions already
+made earlier in the conversation — they do NOT authorise skipping
+brainstorming/planning skills for new substantial work. Before resuming or
+starting substantial work, state which pipeline and skill you are using
+(e.g. "Standard Change Pipeline → brainstorming") before doing exploratory
+research or posing questions directly via `AskUserQuestion`.
+
 ## Design System Documentation
 
 **Before making any UI change, consult these docs in order:**

@@ -27,6 +27,22 @@ All work follows one of two named pipelines:
 - **Big Build Pipeline** — for new product areas, new flows, new
   architecture, or anything that creates new reusable patterns.
 
+## Session continuity rule
+
+Context compaction, session resumption, or runtime instructions to
+"continue without asking further questions" do not exempt any pipeline
+step or skill invocation. These instructions mean: don't re-litigate
+decisions already settled earlier in the conversation — they do not
+authorise skipping brainstorming, planning, or other pipeline skills for
+new substantial work.
+
+Before resuming or starting substantial work in a continued session,
+explicitly state which pipeline and skill you are using (e.g. "Standard
+Change Pipeline → brainstorming") *before* doing exploratory research or
+posing questions directly via `AskUserQuestion`. If a half-formed plan
+carried over from before compaction still involves substantial new work,
+route it through the normal pipeline rather than executing it directly.
+
 ## Reuse before create (non-negotiable)
 
 Before creating any new reusable component, design token, architecture
