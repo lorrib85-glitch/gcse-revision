@@ -50,7 +50,7 @@ Every question type in the product delegates answer logic here. If AnswerInterac
 **File:** `src/components/core/BackButton.jsx`
 
 **What it owns:**
-- The visual design of every back-navigation control in the app: 44×44 touch target, `rgba(255,255,255,0.05)` fill, 1px near-invisible border, fully rounded pill (`RADII.pill`), left-chevron icon only, no "Back" label
+- The visual design of every back-navigation control in the app: 40×40 touch target, `rgba(255,255,255,0.05)` fill, 1px near-invisible border (`rgba(255,255,255,0.03)`), fully rounded pill (`RADII.pill`), left-chevron icon only, no "Back" label
 - The hover/press feedback: identical opacity (0.6) on both `:hover` and `:active`, via the shared `.rise-back-button` rule in `src/styles.css`
 
 **Why locked:**

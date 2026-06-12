@@ -27,9 +27,9 @@ back-navigation implementation allowed anywhere in the app.
 
 ### Visual contract
 
-- 44×44 touch target
+- 40×40 touch target (revised from the original 44×44 — see Revisions)
 - Fill: `rgba(255,255,255,0.05)`
-- Border: 1px, near-invisible (`rgba(255,255,255,0.06)`)
+- Border: 1px, near-invisible (`rgba(255,255,255,0.03)` — revised from `0.06`, see Revisions)
 - Fully rounded pill (`RADII.pill`)
 - Left chevron icon only — no "Back" text label
 - Hover and press produce the **same** opacity value (0.6), via a single
@@ -122,3 +122,11 @@ corrected from the documented (but inaccurate) "composes ModuleToolbar" to
   wrappers delegate to `BackButton`).
 - Playwright spot-check across representative screens (module player header,
   SubjectBrowser, Exams choosers, TestTab) at 390×844.
+
+## Revisions
+
+**2026-06-12 (same day):** Touch target reduced from 44×44 to 40×40, and the
+border made more transparent (`rgba(255,255,255,0.06)` → `0.03`), per direct
+user request. Fill, radius, icon, and hover/press opacity behaviour are
+unchanged. Updated in `BackButton.jsx` and the constitutional references in
+`LOCKED_COMPONENTS.md` / `COMPONENT_REGISTRY.md`.

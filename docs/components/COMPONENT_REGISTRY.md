@@ -27,7 +27,7 @@ Foundation components used by many others. Handle atomic UI concerns.
 ### BackButton — **LOCKED**
 
 **File:** `src/components/core/BackButton.jsx`  
-**Purpose:** The only back-navigation button allowed anywhere in the app. 44×44 pill, near-invisible fill/border, left chevron only, no label, identical hover/press opacity.  
+**Purpose:** The only back-navigation button allowed anywhere in the app. 40×40 pill, near-invisible fill/border, left chevron only, no label, identical hover/press opacity.  
 **Props:** `onClick`, `ariaLabel` (default `'Go back'`), `style` (layout overrides only — position/margin/zIndex)  
 **Lock reason:** Constitutional rule — every back-navigation control in the product must use this component. No inline back-button implementations are allowed.
 
