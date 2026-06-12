@@ -112,6 +112,12 @@ non-trivial task.
 
 See `docs/system/00_SYSTEM_INDEX.md` for the full order of authority.
 
+## Creative Philosophy
+
+Read whenever making creative, educational, storytelling or interaction decisions where multiple technically correct solutions exist:
+
+docs/system/LEARNING_EXPERIENCE_PRINCIPLES.md
+
 ## Constants
 
 | File | Contents |
