@@ -4288,29 +4288,27 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
       `}</style>
 
       <div style={{ padding:`${SPACING.compact}px 20px 0`, display:'flex', flexDirection:'column', alignItems:'center', flexShrink:0 }}>
-        <div style={{ width:'100%', maxWidth:520 }}>
+        <div style={{ width:'100%', maxWidth:520, display:'flex', alignItems:'flex-start', justifyContent:'space-between' }}>
           <button onClick={onExit} aria-label="Exit" style={{
             width:42, height:42, borderRadius:'50%', border:'1px solid rgba(255,255,255,0.14)',
             background:'transparent', color:GENERAL.slate, fontSize:'1.2rem', lineHeight:1,
             display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', padding:0,
           }}>×</button>
-        </div>
-        <div style={{ marginTop:12, fontFamily:"'Sora', sans-serif", fontWeight:600, fontSize:'.92rem', color:GENERAL.slate }}>90s Quick Fire</div>
-        <div style={{ marginTop:12 }}>
           <CircularTimer seconds={timeLeft} totalSeconds={totalSeconds} />
         </div>
       </div>
 
       <div style={{
-        flex:1, display:'flex', flexDirection:'column', justifyContent:'center',
+        flex:1, display:'flex', flexDirection:'column', justifyContent:'flex-start',
         padding:`${SPACING.compact}px 20px ${SPACING.standard}px`, maxWidth:520, width:'100%', margin:'0 auto', boxSizing:'border-box',
         opacity: entered && !leaving ? 1 : 0,
         transform: leaving ? 'translateY(-8px)' : entered ? 'translateY(0)' : 'translateY(8px)',
         transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
       }}>
-        <div style={{ background:GENERAL.neutral[1], borderRadius:RADII.panel, padding:'20px 22px', marginBottom:SPACING.compact }}>
-          <p style={{ ...TYPE.cardTitle, margin:0, color:GENERAL.softWhite }}>{q.q}</p>
-        </div>
+        <p style={{
+          fontFamily:"'IBM Plex Serif', serif", fontSize:26, lineHeight:1.25, fontWeight:600,
+          letterSpacing:'-0.01em', margin:`0 0 ${SPACING.standard}px`, color:GENERAL.softWhite,
+        }}>{q.q}</p>
 
         <div style={{ display:'flex', flexDirection:'column', gap:SPACING.micro }}>
           {q.options.map((opt, i) => {
