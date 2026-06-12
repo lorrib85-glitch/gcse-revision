@@ -4112,6 +4112,13 @@ function confidencePriorityForModule(moduleId) {
   return 0
 }
 
+// Shuffle a quick-fire question's options so the correct answer isn't always at the same index
+function withShuffledQfOptions(q) {
+  const indexed = q.options.map((text, i) => ({ text, isCorrect: i === q.correct }))
+  const shuffled = shuffle(indexed)
+  return { ...q, options: shuffled.map(o => o.text), correct: shuffled.findIndex(o => o.isCorrect) }
+}
+
 function prioritizedQuickFireQuestions() {
   const memory = readQuickFireMemory()
   const qHist = readQfQuestionHistory()
@@ -4131,7 +4138,7 @@ function prioritizedQuickFireQuestions() {
       return { question, score: subjectWeakness + topicWeakness + confidenceBoost + wrongBoost + correctPenalty }
     })
     .sort((a, b) => b.score - a.score)
-    .map(item => item.question)
+    .map(item => withShuffledQfOptions(item.question))
 }
 
 function pickQuickFireRecommendation(memory, roundStats) {
@@ -4240,25 +4247,32 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
       }
       return
     }
-    // One retry after the hint: pick a different answer, then confirm with the button below
+    // One retry after the hint: picking a different answer marks it immediately
     if (status === 'incorrect' && hintVisible && retryStatus === null && opt !== tapped) {
+      const isCorrect = opt === q.options[q.correct]
       setRetryTapped(opt)
+      setRetryStatus(isCorrect ? 'correct' : 'incorrect')
+      if (navigator.vibrate) navigator.vibrate(isCorrect ? 10 : 20)
+      advanceAfterHold()
     }
   }
 
-  function checkRetry() {
-    if (!retryTapped) return
-    const isCorrect = retryTapped === q.options[q.correct]
-    setRetryStatus(isCorrect ? 'correct' : 'incorrect')
-    if (navigator.vibrate) navigator.vibrate(isCorrect ? 10 : 20)
-    advanceAfterHold()
-  }
-
   function mark(kind) {
-    const ok = kind === 'correct'
+    if (kind !== 'correct') {
+      return (
+        <span aria-hidden="true" style={{ position:'absolute', right:18, top:'50%', transform:'translateY(-50%)', color:GENERAL.coral, fontSize:'1.15rem', fontWeight:700, animation:`qfMarkIn ${MOTION.duration.fast} ${MOTION.easing.standard} both` }}>
+          ×
+        </span>
+      )
+    }
     return (
-      <span aria-hidden="true" style={{ position:'absolute', right:18, top:'50%', color: ok ? GENERAL.teal : GENERAL.coral, fontSize:'1.15rem', fontWeight:700, animation:`qfMarkIn ${MOTION.duration.fast} ${MOTION.easing.standard} both` }}>
-        {ok ? '✓' : '×'}
+      <span aria-hidden="true" style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', width:30, height:30 }}>
+        <span style={{ position:'absolute', inset:0, borderRadius:'50%', background:`rgba(${GENERAL.tealRgb}, 0.4)`, animation:`qfRingOut ${MOTION.duration.slow} ${MOTION.easing.standard} both` }} />
+        <span style={{ position:'absolute', inset:0, borderRadius:'50%', background:GENERAL.teal, display:'flex', alignItems:'center', justifyContent:'center', animation:`qfMarkPop ${MOTION.duration.standard} ${MOTION.easing.standard} both` }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={GENERAL.neutral[0]} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 13l4 4L19 7" style={{ strokeDasharray:24, strokeDashoffset:24, animation:`qfCheckDraw ${MOTION.duration.standard} ${MOTION.easing.standard} ${MOTION.duration.instant} forwards` }} />
+          </svg>
+        </span>
       </span>
     )
   }
@@ -4268,9 +4282,12 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
       <style>{`
         @keyframes qfMarkIn { from { opacity:0; transform:translateY(-50%) scale(0.5); } to { opacity:1; transform:translateY(-50%) scale(1); } }
         @keyframes qfHintIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes qfMarkPop { 0% { transform:scale(0.4); opacity:0; } 65% { transform:scale(1.15); opacity:1; } 100% { transform:scale(1); opacity:1; } }
+        @keyframes qfRingOut { 0% { transform:scale(0.6); opacity:0.45; } 100% { transform:scale(1.9); opacity:0; } }
+        @keyframes qfCheckDraw { to { stroke-dashoffset:0; } }
       `}</style>
 
-      <div style={{ padding:'24px 20px 0', display:'flex', flexDirection:'column', alignItems:'center', flexShrink:0 }}>
+      <div style={{ padding:`${SPACING.compact}px 20px 0`, display:'flex', flexDirection:'column', alignItems:'center', flexShrink:0 }}>
         <div style={{ width:'100%', maxWidth:520 }}>
           <button onClick={onExit} aria-label="Exit" style={{
             width:42, height:42, borderRadius:'50%', border:'1px solid rgba(255,255,255,0.14)',
@@ -4278,20 +4295,20 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
             display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', padding:0,
           }}>×</button>
         </div>
-        <div style={{ marginTop:16, fontFamily:"'Sora', sans-serif", fontWeight:600, fontSize:'.92rem', color:GENERAL.slate }}>90s Quick Fire</div>
-        <div style={{ marginTop:18 }}>
+        <div style={{ marginTop:12, fontFamily:"'Sora', sans-serif", fontWeight:600, fontSize:'.92rem', color:GENERAL.slate }}>90s Quick Fire</div>
+        <div style={{ marginTop:12 }}>
           <CircularTimer seconds={timeLeft} totalSeconds={totalSeconds} />
         </div>
       </div>
 
       <div style={{
         flex:1, display:'flex', flexDirection:'column', justifyContent:'center',
-        padding:`${SPACING.standard}px 20px ${SPACING.cinematic}px`, maxWidth:520, width:'100%', margin:'0 auto', boxSizing:'border-box',
+        padding:`${SPACING.compact}px 20px ${SPACING.standard}px`, maxWidth:520, width:'100%', margin:'0 auto', boxSizing:'border-box',
         opacity: entered && !leaving ? 1 : 0,
         transform: leaving ? 'translateY(-8px)' : entered ? 'translateY(0)' : 'translateY(8px)',
         transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
       }}>
-        <div style={{ background:GENERAL.neutral[1], borderRadius:RADII.panel, padding:'28px 24px', marginBottom:SPACING.standard }}>
+        <div style={{ background:GENERAL.neutral[1], borderRadius:RADII.panel, padding:'20px 22px', marginBottom:SPACING.compact }}>
           <p style={{ ...TYPE.cardTitle, margin:0, color:GENERAL.softWhite }}>{q.q}</p>
         </div>
 
@@ -4331,7 +4348,7 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
             return (
               <button key={i} onClick={() => selectOption(opt)} disabled={disabled} style={{
                 position:'relative', width:'100%', textAlign:'left', background, border, borderRadius:RADII.large,
-                padding:'18px 44px 18px 20px', cursor: disabled ? 'default' : 'pointer',
+                padding:'14px 44px 14px 18px', cursor: disabled ? 'default' : 'pointer',
                 ...TYPE.body, fontWeight:500, color:GENERAL.softWhite,
                 opacity,
                 transition:`opacity ${MOTION.duration.instant} ${MOTION.easing.gentle}, background ${MOTION.duration.instant} ${MOTION.easing.gentle}, border-color ${MOTION.duration.instant} ${MOTION.easing.gentle}`,
@@ -4349,8 +4366,8 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
 
         {hintVisible && status === 'incorrect' && (
           <div style={{
-            marginTop:SPACING.standard, background:GENERAL.neutral[1], borderRadius:RADII.large,
-            borderLeft:`3px solid ${GENERAL.teal}`, padding:'16px 18px',
+            marginTop:SPACING.compact, background:GENERAL.neutral[1], borderRadius:RADII.large,
+            borderLeft:`3px solid ${GENERAL.teal}`, padding:'12px 16px',
             display:'flex', gap:12, alignItems:'flex-start',
             animation:`qfHintIn ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
           }}>
@@ -4360,20 +4377,9 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
             <div>
               <div style={{ ...TYPE.metadata, color:GENERAL.slate, marginBottom:6 }}>Hint</div>
               <p style={{ margin:0, ...TYPE.body, fontSize:'.92rem', color:GENERAL.softWhite }}>{q.hint || q.ms}</p>
+              <p style={{ margin:'6px 0 0', ...TYPE.body, fontSize:'.8rem', color:GENERAL.teal, fontStyle:'italic' }}>Pick another answer — it'll mark straight away.</p>
             </div>
           </div>
-        )}
-
-        {status === 'incorrect' && hintVisible && retryStatus === null && (
-          <button onClick={checkRetry} disabled={!retryTapped} style={{
-            marginTop:SPACING.standard, width:'100%', border:'none', borderRadius:RADII.large,
-            background: retryTapped ? GENERAL.teal : GENERAL.neutral[1],
-            color: retryTapped ? GENERAL.neutral[0] : GENERAL.slate,
-            padding:'17px',
-            fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem',
-            cursor: retryTapped ? 'pointer' : 'default',
-            transition:`background ${MOTION.duration.instant} ${MOTION.easing.gentle}, color ${MOTION.duration.instant} ${MOTION.easing.gentle}`,
-          }}>{retryTapped ? 'Check answer →' : 'Choose another answer'}</button>
         )}
       </div>
     </div>
