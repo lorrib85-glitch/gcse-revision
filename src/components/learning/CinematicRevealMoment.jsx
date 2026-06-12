@@ -1,36 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
-
-// Subject palettes — extend when adding new subjects
-const PALETTES = {
-  history: {
-    accent: '#C89B6D',
-    bg:     '#241815',
-  },
-  biology: {
-    accent: '#38D27A',
-    bg:     '#081A10',
-  },
-  chemistry: {
-    accent: '#5CC8FF',
-    bg:     '#071522',
-  },
-  physics: {
-    accent: '#5DA9E9',
-    bg:     '#070E1C',
-  },
-  maths: {
-    accent: '#2BBE9A',
-    bg:     '#071512',
-  },
-  english: {
-    accent: '#9E3D52',
-    bg:     '#150810',
-  },
-  sociology: {
-    accent: '#C9B07C',
-    bg:     '#181410',
-  },
-}
+import { SUBJECTS } from '../../constants/subjects.js'
 
 // Splits paragraph text and wraps highlight phrases in accent-coloured spans
 function renderHighlighted(text, highlights, accent) {
@@ -69,9 +38,8 @@ export default function CinematicRevealMoment({
   onContinue,
   onTextRevealStart,
 }) {
-  const key   = (subject || 'history').toLowerCase()
-  const pal   = PALETTES[key] || PALETTES.history
-  const { accent, bg } = pal
+  const theme = SUBJECTS[subject] || SUBJECTS.History
+  const { accent, background: bg } = theme
 
   const videoRef = useRef(null)
   const timers   = useRef([])

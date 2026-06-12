@@ -318,11 +318,11 @@ function StreakChip({ style = {} }) {
           <svg width="13" height="13" viewBox="0 0 24 24" fill={GENERAL.coral} style={{ flexShrink: 0 }}>
             <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
           </svg>
-          <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 700, color: GENERAL.coral, letterSpacing: '0.01em' }}>
+          <span style={{ ...TYPE.metadata, fontSize: 14, fontWeight: 700, color: GENERAL.coral, letterSpacing: '0.01em' }}>
             {streak > 0 ? streak : 0}
           </span>
         </div>
-        <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 9, fontWeight: 500, color: GENERAL.slate, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+        <span style={{ ...TYPE.metadata, fontSize: 9, color: GENERAL.slate, textTransform: 'uppercase' }}>
           day streak
         </span>
       </div>
@@ -335,7 +335,7 @@ function StreakChip({ style = {} }) {
 // ─── Bottom nav ──────────────────────────────────────────────────────────────
 
 function NavIcon({ id, active }) {
-  const c = active ? GENERAL.teal : '#4B5563'
+  const c = active ? GENERAL.teal : `rgba(${hexToRgb(GENERAL.slate)},0.5)`
   const s = { stroke: c, fill: 'none', strokeWidth: 1.75, strokeLinecap: 'round', strokeLinejoin: 'round' }
   const props = { width: 22, height: 22, viewBox: '0 0 22 22', style: { display: 'block', transition: 'stroke 220ms ease' } }
   if (id === 'home') return (
@@ -365,7 +365,7 @@ function BottomNav({ tab, setTab }) {
     <div style={{
       position: 'fixed', left: 0, right: 0, bottom: 0,
       width: '100%', zIndex: 1000,
-      background: 'rgba(6,8,14,0.96)',
+      background: `rgba(${hexToRgb(GENERAL.neutral[0])},0.96)`,
       backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
       borderTop: '1px solid rgba(255,255,255,0.05)',
       display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
@@ -380,7 +380,7 @@ function BottomNav({ tab, setTab }) {
             cursor: 'pointer', borderRadius: 22,
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
             fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: active ? 600 : 500,
-            color: active ? GENERAL.teal : 'rgba(168,176,178,0.5)',
+            color: active ? GENERAL.teal : `rgba(${hexToRgb(GENERAL.slate)},0.5)`,
             padding: '6px 4px 5px', minWidth: 0,
             transition: 'color 220ms ease',
             boxShadow: 'none',

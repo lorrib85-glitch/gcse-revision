@@ -1,22 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-
-const PALETTES = {
-  history:   { accent: '#C89B6D', bg: '#241815' },
-  biology:   { accent: '#38D27A', bg: '#081A10' },
-  chemistry: { accent: '#5CC8FF', bg: '#071522' },
-  physics:   { accent: '#5DA9E9', bg: '#070E1C' },
-  maths:     { accent: '#2BBE9A', bg: '#071512' },
-  english:   { accent: '#9E3D52', bg: '#150810' },
-  sociology: { accent: '#C9B07C', bg: '#181410' },
-}
+import { SUBJECTS } from '../../constants/subjects.js'
 
 const STEP_MS = 380
 
 export default function ConceptReveal({ subject: subjectProp, steps = [], onContinue, onRevealStart }) {
-  const key    = (subjectProp || 'history').toLowerCase()
-  const pal    = PALETTES[key] || PALETTES.history
-  const accent = pal.accent
-  const palBg  = pal.bg
+  const theme  = SUBJECTS[subjectProp] || SUBJECTS.History
+  const accent = theme.accent
+  const palBg  = theme.background
 
   const [stepIdx,       setStepIdx]       = useState(0)
   const [animKey,       setAnimKey]       = useState(0)

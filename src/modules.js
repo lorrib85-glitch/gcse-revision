@@ -2637,8 +2637,8 @@ Do NOT award marks for naming discoveries without explaining their significance.
     id: 'mod3',
     subject: 'History',
     number: 4,
-    title: 'Surgery & Anatomy',
-    subtitle: 'Hold Him Down and Hope',
+    title: 'Surgery & anatomy',
+    subtitle: 'Hold him down and hope',
     era: 'c1700–c1900',
     icon: '🩺',
     color: '#C47828',
@@ -2697,7 +2697,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'The Problem',
         kicker: 'Core Problem',
-        heading: 'Why Was Surgery Terrifying?',
+        heading: 'Why was surgery terrifying?',
         sub: 'Before modern surgery, the method was basically: "hold him down and hope."',
         blocks: [
           { type: 'read', label: '❌ Before improvements', text: 'No anaesthetic. No antiseptics. No blood transfusions. Infection was common. Surgeons were judged partly on speed — <strong>Robert Liston</strong> could amputate a leg in under 40 seconds in the 1840s.' },
@@ -2710,7 +2710,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
         tag: 'anaesthetics',
         label: 'Pain',
         kicker: 'Problem 1 · Pain',
-        heading: 'Anaesthetics: Finally, Less Screaming',
+        heading: 'Anaesthetics: finally, less screaming',
         sub: 'Anaesthetics reduced pain so surgeons could operate more carefully and attempt longer, more complex procedures.',
         blocks: [
           { type: 'examtip', label: '🗡️ Exam Trap', text: '<strong>Anaesthetics did not fix surgery by themselves.</strong> They reduced pain, but longer operations could increase infection risk if surgeons still had dirty hands, tools and theatres.' },
@@ -2725,7 +2725,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Davy',
         kicker: '1799',
-        heading: 'Humphry Davy: Laughing Gas',
+        heading: 'Humphry Davy: laughing gas',
         sub: 'The first hint that pain in surgery could one day be solved.',
         blocks: [
           { type: 'read', label: '🔬 The Discovery', text: '<strong>Humphry Davy</strong> discovered that inhaling <strong>nitrous oxide</strong> (laughing gas) reduced the sensation of pain. He even suggested it could be used during surgery. But surgeons ignored him — partly because it made people giggle, and partly because no one believed patients needed to be unconscious.' },
@@ -2735,7 +2735,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Morton',
         kicker: '1846',
-        heading: 'William Morton: Ether',
+        heading: 'William Morton: ether',
         sub: 'The first successful public demonstration of surgical anaesthesia.',
         blocks: [
           { type: 'read', label: '🔬 The Discovery', text: '<strong>William Morton</strong>, an American dentist, publicly demonstrated that <strong>ether</strong> could render a patient unconscious during surgery in 1846. The news spread to Britain rapidly. For the first time, surgeons could operate without a patient screaming — but ether was flammable and caused nausea.' },
@@ -2745,7 +2745,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Simpson',
         kicker: '1847',
-        heading: 'James Simpson: Chloroform',
+        heading: 'James Simpson: chloroform',
         sub: 'Better than ether — and discovered over a dinner party.',
         blocks: [
           { type: 'read', label: '🔬 The Discovery', text: '<strong>James Simpson</strong>, a Scottish obstetrician, was searching for something better than ether. In 1847, he and two colleagues inhaled various chemicals at a dinner party. They woke up under the table having discovered <strong>chloroform</strong> — more powerful, faster acting, and less flammable than ether. It allowed much longer operations.' },
@@ -2755,7 +2755,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Greener',
         kicker: '1848',
-        heading: 'Hannah Greener: A Warning',
+        heading: 'Hannah Greener: a warning',
         sub: 'The new wonder drug had a dangerous side.',
         blocks: [
           { type: 'read', label: '⚠️ What Happened', text: '<strong>Hannah Greener</strong>, aged 15, died from an overdose of chloroform in 1848 — one year after its discovery. She had been given too much. Her death showed that anaesthetics were not automatically safe. The problem was dosage: there was no precise way to control how much a patient received.' },
@@ -2765,7 +2765,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Snow',
         kicker: '1850s',
-        heading: 'John Snow: Safer Dosage',
+        heading: 'John Snow: safer dosage',
         sub: 'The man who solved cholera also made chloroform much safer.',
         blocks: [
           { type: 'read', label: '🔬 The Improvement', text: '<strong>John Snow</strong> — best known for tracing the 1854 cholera outbreak to a water pump — developed an <strong>inhaler</strong> that allowed surgeons to control exactly how much chloroform a patient received. Controlled dosage dramatically reduced the risk of overdose and death. Chloroform became far more trusted as a result.' },
@@ -2775,7 +2775,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Victoria',
         kicker: '1853',
-        heading: 'Queen Victoria: Royal Seal of Approval',
+        heading: 'Queen Victoria: royal seal of approval',
         sub: 'When the Queen used it in childbirth, public resistance collapsed.',
         blocks: [
           { type: 'read', label: '👑 The Endorsement', text: '<strong>Queen Victoria</strong> used chloroform during the birth of her eighth child in 1853 — and praised it publicly. Until this point, many religious figures argued that pain in childbirth was God\'s will and should not be numbed. The Queen\'s endorsement silenced most opposition overnight. Chloroform use spread rapidly.' },
@@ -2786,7 +2786,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
         tag: 'antiseptic-surgery',
         label: 'Infection',
         kicker: 'Problem 2 · Infection',
-        heading: 'Antiseptics: The Acid Febreze Era',
+        heading: 'Antiseptics: the acid Febreze era',
         sub: 'Anaesthetics helped pain, but created a new problem: longer operations meant more chance for infection.',
         blocks: [
           { type: 'read', label: '🦠 Pasteur → Lister', text: '<strong>Louis Pasteur\'s germ theory</strong> showed microorganisms caused decay and disease. <strong>Joseph Lister</strong> applied that idea to surgery in the 1860s by using <strong>carbolic acid</strong> to clean wounds, instruments, bandages and operating theatres.' },
@@ -2803,7 +2803,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Aseptic',
         kicker: 'Infection Gets Smarter',
-        heading: 'Aseptic Surgery: Stop Germs Getting In',
+        heading: 'Aseptic surgery: stop germs getting in',
         sub: 'Antiseptics killed germs afterwards. Aseptic surgery aimed to stop germs entering in the first place.',
         blocks: [
           { type: 'read', label: '🧴 Antiseptic vs Aseptic', text: '<strong>Antiseptic</strong>: kill germs after they appear. Lister\'s carbolic acid was antiseptic — useful but still messy. <strong>Aseptic</strong>: prevent germs entering in the first place. Surgeons began sterilising instruments, wearing gloves and masks, and using clean operating theatres.' },
@@ -2840,8 +2840,8 @@ Do NOT award marks for naming discoveries without explaining their significance.
     id: 'mod4',
     subject: 'History',
     number: 5,
-    title: 'Germ Theory',
-    subtitle: 'Pasteur, Koch & the Invisible Enemy',
+    title: 'Germ theory',
+    subtitle: 'Pasteur, Koch & the invisible enemy',
     era: 'c1850–c1900',
     icon: '🦠',
     color: '#B06520',
@@ -2893,7 +2893,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
         tag: 'germ-theory',
         label: 'Old Ideas',
         kicker: 'Before Germ Theory',
-        heading: 'Old Ideas Refused To Die',
+        heading: 'Old ideas refused to die',
         sub: 'Doctors did not just wake up one day and say "germs, obviously." Medicine had centuries of bad habits to unlearn.',
         blocks: [
           { type: 'read', label: '💨 Miasma', text: 'Disease was believed to be caused by bad air or foul smells. This seemed logical because disease was common in filthy places.' },
@@ -2929,7 +2929,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
         tag: 'pasteur',
         label: 'Pasteur',
         kicker: '1861',
-        heading: 'Louis Pasteur: The Wine Detective',
+        heading: 'Louis Pasteur: the wine detective',
         headerImage: '/images/pasteur-1861.png',
         sub: 'Global breakthrough begins with someone\'s drink being ruined.',
         blocks: [
@@ -2948,7 +2948,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
         tag: 'koch',
         label: 'Koch',
         kicker: 'Key Person 2',
-        heading: 'Robert Koch: "Cool, But WHICH Germ?"',
+        heading: 'Robert Koch: "Cool, but WHICH germ?"',
         sub: 'Pasteur showed microbes caused disease. Koch proved specific germs caused specific diseases.',
         blocks: [
           { type: 'read', label: '📖 Core Knowledge', text: '<strong>Robert Koch</strong> was a German doctor. He used <strong>industrial dyes</strong> to stain bacteria so they were easier to see under microscopes. He identified the bacteria behind three major killers — and each time, it made germ theory harder to ignore.' },
@@ -2964,7 +2964,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Anthrax',
         kicker: '1876',
-        heading: 'Koch Identifies Anthrax',
+        heading: 'Koch identifies anthrax',
         sub: 'The first time a specific bacterium was definitively linked to a specific disease.',
         blocks: [
           { type: 'read', label: '🔬 The Discovery', text: '<strong>Robert Koch</strong> identified <em>Bacillus anthracis</em> — the bacterium causing anthrax — in 1876. He used industrial dyes to stain bacteria so they were visible under a microscope. This was the first time a specific microbe had been definitively linked to a specific disease, turning germ theory from an idea into a proven tool.' },
@@ -2974,7 +2974,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Tuberculosis',
         kicker: '1882',
-        heading: 'Koch Identifies TB',
+        heading: 'Koch identifies TB',
         sub: 'TB killed one in seven people in Europe. Now they knew what caused it.',
         blocks: [
           { type: 'read', label: '🔬 The Discovery', text: 'In <strong>1882</strong>, Koch identified the bacterium causing <strong>tuberculosis (TB)</strong> — one of the biggest killers in Europe. This single discovery made germ theory widely accepted because TB was so visible and deadly. Doctors could no longer dismiss the idea that invisible microbes caused disease.' },
@@ -2984,7 +2984,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Cholera',
         kicker: '1883',
-        heading: 'Koch Identifies Cholera',
+        heading: 'Koch identifies cholera',
         sub: 'Cholera had swept across Europe in waves. Koch found out why.',
         blocks: [
           { type: 'read', label: '🔬 The Discovery', text: 'In <strong>1883</strong>, Koch identified the bacterium causing <strong>cholera</strong>. This built on John Snow\'s earlier work — Snow had proved cholera spread through contaminated water (1854) without knowing why. Koch found the actual cause. Together their work transformed public health and disease prevention.' },
@@ -2994,7 +2994,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Vaccines',
         kicker: 'Chance + Science',
-        heading: 'Chicken Cholera: The Holiday Mistake',
+        heading: 'Chicken cholera: the holiday mistake',
         sub: 'Chance plays a role in science — but only when someone\'s there to recognise it.',
         blocks: [
           { type: 'funfact', label: '🐔 The Oops', text: 'In 1879, Pasteur\'s assistant <strong>Charles Chamberland</strong> left chicken cholera germs unrefrigerated before going on holiday. When the old germs were injected into chickens, they did not become ill. When fresh germs were injected later — still no illness. Pasteur had discovered a way to create vaccines using weakened germs.' },
@@ -3010,7 +3010,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Impact',
         kicker: 'Why It Mattered',
-        heading: 'Why Germ Theory Was Such A Big Deal',
+        heading: 'Why germ theory was such a big deal',
         sub: 'It did not immediately cure everything. But it changed the direction of medicine permanently.',
         blocks: [
           { type: 'read', label: '🧼 Surgery', text: 'Lister used germ theory to develop antiseptic surgery with carbolic acid.' },
@@ -3048,8 +3048,8 @@ Do NOT award marks for naming discoveries without explaining their significance.
     id: 'mod5',
     subject: 'History',
     number: 6,
-    title: 'Public Health',
-    subtitle: 'Cities, Sewers & Slow Progress',
+    title: 'Public health',
+    subtitle: 'Cities, sewers & slow progress',
     era: 'c1800–c1900',
     icon: '🏭',
     color: '#9A5A18',
@@ -3108,7 +3108,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Cities Explode',
         kicker: 'Cause of the Problem',
-        heading: 'Industrialisation: Cities Exploded',
+        heading: 'Industrialisation: cities exploded',
         sub: 'From 1750, people moved from rural areas into towns and cities. The cities were not ready. Not even slightly.',
         blocks: [
           { type: 'read', label: '📖 Core Knowledge', text: 'Urban populations grew hugely, but public health systems did not grow with them. More people meant more waste, more overcrowding and faster disease spread. <strong>London</strong> grew from 1.09m to 5.57m between 1801 and 1901. Manchester, Birmingham and Glasgow saw similar explosions.' },
@@ -3125,7 +3125,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Cholera',
         kicker: 'Disease',
-        heading: 'Cholera: The Killer Nobody Understood',
+        heading: 'Cholera: the killer nobody understood',
         sub: 'Cholera spread fast and killed through severe dehydration. People still blamed bad air.',
         blocks: [
           { type: 'read', label: '☠️ Cholera', text: 'Cholera first arrived in England in <strong>1831</strong>. It caused vomiting, diarrhoea, dehydration and often death. Major epidemics happened in <strong>1831, 1848, 1854 and 1866</strong>. Even during outbreaks, many people still believed <strong>miasma</strong> caused disease — which slowed acceptance of the waterborne explanation.' },
@@ -3140,7 +3140,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Chadwick',
         kicker: 'Key Person 1',
-        heading: 'Edwin Chadwick: "Please Clean Literally Anything"',
+        heading: 'Edwin Chadwick: "Please clean literally anything"',
         sub: 'Chadwick investigated living conditions and used evidence to push for public health reform.',
         blocks: [
           { type: 'read', label: '📖 Core Knowledge', text: '<strong>Edwin Chadwick</strong> was a lawyer and social reformer. In <strong>1842</strong> he published the <em>Report on the Sanitary Conditions of the Labouring Population of Great Britain</em>. It showed that poor sanitation and poverty were linked to low life expectancy. Manchester labourers lived to 15–19; rural professionals lived to around 52.' },
@@ -3157,7 +3157,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
         tag: 'john-snow',
         label: 'John Snow',
         kicker: 'Key Person 2',
-        heading: 'John Snow: The Soho Water Mystery',
+        heading: 'John Snow: the Soho water mystery',
         sub: 'Snow worked like a detective. He mapped deaths, followed the evidence and challenged miasma.',
         blocks: [
           { type: 'read', label: '📖 Core Knowledge', text: 'During the <strong>1854 cholera outbreak</strong> in Soho, London, <strong>John Snow</strong> plotted cholera deaths on a map. He found they clustered around the <strong>Broad Street pump</strong>. He believed sewage from a nearby cesspit had contaminated the water. He had the pump handle removed, helping stop the outbreak.' },
@@ -3175,7 +3175,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
         tag: 'public-health',
         label: 'Government Acts',
         kicker: 'Government Action',
-        heading: 'Public Health Acts: 1848 and 1875',
+        heading: 'Public health acts: 1848 and 1875',
         sub: 'From optional and underfunded to compulsory. Progress was slow.',
         blocks: [
           { type: 'read', label: '📖 1848 Public Health Act', text: 'Created a <strong>Central Board of Health</strong>. Local authorities <em>could</em> set up local boards of health — but they were usually not compulsory. Areas with a mortality rate above 23 per 1,000 had to set one up. Funding was weak. Many councils did nothing.' },
@@ -3192,7 +3192,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
       {
         label: 'Great Stink & Sewers',
         kicker: 'Turning Point',
-        heading: 'The Great Stink & Bazalgette\'s Sewers',
+        heading: 'The Great Stink & Bazalgette\'s sewers',
         sub: 'In 1858, the Thames smelled so bad that Parliament shut down. Reform suddenly became urgent.',
         blocks: [
           { type: 'funfact', label: '🤢 1858', text: 'The river smelled so bad Parliament shut down. Poor people had suffered from filthy conditions for years. But once politicians personally had to smell the Thames, reform suddenly became urgent. Peak human behaviour.' },
@@ -3232,8 +3232,8 @@ Do NOT award marks for naming discoveries without explaining their significance.
     id: 'mod6',
     subject: 'History',
     number: 7,
-    title: 'The Surgery Revolution',
-    subtitle: 'Pain, Infection & Survival (1840–1900)',
+    title: 'The surgery revolution',
+    subtitle: 'Pain, infection & survival (1840–1900)',
     era: 'c1840–c1900',
     icon: '🔪',
     color: '#7A4515',
@@ -3857,8 +3857,8 @@ Do NOT award marks for naming discoveries without explaining their significance.
     id: 'mod7',
     subject: 'History',
     number: 8,
-    title: 'The War Against Infection',
-    subtitle: 'Magic Bullets, Penicillin & the Antibiotic Revolution',
+    title: 'The war against infection',
+    subtitle: 'Magic bullets, penicillin & the antibiotic revolution',
     era: 'c1890–c1945',
     icon: '💊',
     color: '#7A4515',
@@ -4459,8 +4459,8 @@ Do NOT award marks for naming discoveries without explaining their significance.
     id: 'mod8',
     subject: 'History',
     number: 9,
-    title: 'Inside Modern Medicine',
-    subtitle: 'Scans, Transplants, DNA & The Future',
+    title: 'Inside modern medicine',
+    subtitle: 'Scans, transplants, DNA & the future',
     era: 'c1945–present',
     icon: '🧬',
     color: '#1A5276',
@@ -10600,8 +10600,8 @@ Level 1 (1-2 marks): Structures named but not explained, or only one full differ
     id: 'mod9',
     subject: 'History',
     number: 10,
-    title: 'Who Gets Healthcare?',
-    subtitle: 'The NHS, Prevention & Modern Public Health',
+    title: 'Who gets healthcare?',
+    subtitle: 'The NHS, prevention & modern public health',
     era: 'AQA GCSE',
     icon: '🏥',
     color: '#C47828',

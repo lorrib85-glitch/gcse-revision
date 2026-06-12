@@ -135,13 +135,13 @@ export default function LearningProgressHeader({ currentStage, accent, accentRgb
           }}
         >
           <div style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontSize: 11, fontWeight: 700,
             color: accent,
             marginBottom: 2,
           }}>{currentStage}</div>
           <div style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontSize: 10,
             color: 'rgba(255,255,255,0.48)',
           }}>{STAGE_DESCRIPTIONS[currentStage] || ''}</div>

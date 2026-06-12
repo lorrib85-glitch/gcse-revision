@@ -1,16 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { SPACING } from '../../constants/spacing.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import BackButton from '../core/BackButton.jsx'
-
-const PALETTES = {
-  history:   { accent: '#C89B6D', bg: '#15110C' },
-  biology:   { accent: '#8FD6A3', bg: '#0A1510' },
-  chemistry: { accent: '#8B5CF6', bg: '#0D0A1A' },
-  physics:   { accent: '#5DA9E9', bg: '#08111E' },
-  maths:     { accent: '#2BBE9A', bg: '#081512' },
-  english:   { accent: '#9E3D52', bg: '#150810' },
-  sociology: { accent: '#C9B07C', bg: '#181410' },
-}
 
 const IMAGES = {
   history:   '/historybacker.webp',
@@ -54,10 +45,9 @@ function buildAnnotatedSegments(text, annotations) {
 }
 
 export default function FaceTheExaminer({ module, examiner, onExit, onContinue }) {
-  const key    = (module.subject || 'history').toLowerCase()
-  const pal    = PALETTES[key] || PALETTES.history
-  const accent = pal.accent
-  const bg     = pal.bg
+  const theme  = SUBJECTS[module.subject] || SUBJECTS.History
+  const accent = theme.accent
+  const bg     = theme.background
 
   // ── Phase state ───────────────────────────────────────────────────────────
   const [phase, setPhase] = useState('intro')
