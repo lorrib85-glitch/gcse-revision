@@ -35,6 +35,31 @@ pattern, or interaction pattern, search existing canonical documentation
 for an existing solution. Extend before inventing. This applies to both
 pipelines.
 
+## Debugging discipline
+
+Non-trivial bugs should use a structured debugging methodology before
+implementation — form a hypothesis, gather evidence, and confirm the root
+cause before changing code. Avoid speculative fixes or repeated
+trial-and-error changes.
+
+## Decision capture rule
+
+Whenever implementation introduces a new reusable component, a new
+architectural pattern, a new design rule, a new workflow rule, or a new
+educational pattern, explicitly decide whether it is intended to become
+part of the permanent system:
+
+- **If yes** — update the canonical documentation (`CLAUDE.md`,
+  `docs/system/`, `docs/components/`) appropriately, as part of each
+  pipeline's "Documentation update" step.
+- **If no** — treat it as a local implementation detail only. Do not
+  elevate it into permanent documentation or constitutional rules.
+
+This keeps canonical docs accurate over time and prevents documentation
+drift or unnecessary expansion of the constitutional documents — only
+genuinely reusable or system-level decisions become part of the permanent
+architecture.
+
 ## Pipeline 1 — Standard Change Pipeline
 
 Use for existing-surface work.
@@ -50,8 +75,9 @@ Use for existing-surface work.
    design tokens, routing, architecture, product behaviour, or workflow
    rules
 6. Review — perform code review and incorporate findings
-7. Verification — build (`./node_modules/.bin/vite build`) and Playwright
-   check
+7. Verification — build (`./node_modules/.bin/vite build`) passes, and the
+   change is exercised by running the app to confirm the real behaviour
+   works as intended — not static inspection alone
 8. Confirm working tree status — commit + push to `main`
 
 *Normally implemented via Superpowers: `brainstorming`, `writing-plans`,
@@ -135,11 +161,12 @@ Before marking any build complete, confirm:
 - Specification/documentation written where the triggers above require it
 - No new undocumented reusable pattern introduced (reuse-before-create
   honoured)
-- Canonical docs updated where needed
+- Canonical docs updated where needed (decision capture rule applied)
 - Code review completed
 - UI review completed where visual behaviour changed
 - Build passed
-- Playwright verification completed
+- Implementation verified by running the app and confirming the real
+  behaviour works as intended — not static inspection alone
 - Working tree checked (committed + pushed to `main`)
 
 No task is complete at implementation alone.
