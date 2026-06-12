@@ -60,6 +60,10 @@ drift or unnecessary expansion of the constitutional documents — only
 genuinely reusable or system-level decisions become part of the permanent
 architecture.
 
+Only capture rules likely to be forgotten, disputed, or applied
+inconsistently. Simple, self-evidently correct practices don't need
+documenting.
+
 ## Pipeline 1 — Standard Change Pipeline
 
 Use for existing-surface work.
