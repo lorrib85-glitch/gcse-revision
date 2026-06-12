@@ -383,6 +383,14 @@ Do not build or edit subject module content without loading the relevant archite
 
 ---
 
+## Visual Asset Planning
+
+Before planning or generating visual assets for a new module, read:
+
+docs/system/VISUAL_ASSET_SYSTEM.md
+
+---
+
 ## Exam Technique Coach (`GuidedAnswerCoach`)
 
 This is a standalone, app-wide feature. It is **not** part of the per-module History or Science architectures above and is not bound by their locked Section 1–6 / Part 1–6 structures.
