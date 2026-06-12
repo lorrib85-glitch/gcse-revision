@@ -6,6 +6,7 @@ import { TYPE } from '../../constants/typography.js'
 import { RADII } from '../../constants/radii.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import GuidedExamResponse from './GuidedExamResponse.jsx'
+import { logCoachTypeResult } from '../../unifiedWeaknessTracker.js'
 
 const BRONZE = '#C89B6D'
 
@@ -410,6 +411,12 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         exam={attempts[stage]}
         onExit={onExit}
         onContinue={(res) => {
+          logCoachTypeResult({
+            typeId: coachType.id,
+            subject: 'History',
+            marksAwarded: res.marksAwarded,
+            marksAvailable: res.marksAvailable,
+          })
           setResults(prev => ({ ...prev, [stage]: res }))
           setStage(next)
         }}

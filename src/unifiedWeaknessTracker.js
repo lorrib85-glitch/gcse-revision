@@ -7,8 +7,10 @@ import { TAG_MODULE_MAP } from './data/tagModuleMap.js'
 const WRONG_ANSWERS_KEY = 'gcse_wrong_answers'
 const CORRECT_ANSWERS_KEY = 'gcse_correct_answers'
 const EXAM_TECHNIQUE_KEY = 'gcse_exam_techniques'
+const COACH_TYPE_RESULTS_KEY = 'gcse_coach_type_results'
 const WEAK_THRESHOLD = 2  // Flag topic as weak after 2+ wrong answers
 const TECHNIQUE_PATTERN_THRESHOLD = 2  // Flag a technique pattern as recurring after 2+ occurrences
+const COACH_TYPE_WEAK_THRESHOLD = 0.6  // Suggest a question type when scoring below 60%
 
 // ─── Storage helpers ──────────────────────────────────────────────────────────
 
@@ -31,6 +33,13 @@ function loadExamTechniques() {
 }
 function saveExamTechniques(data) {
   try { localStorage.setItem(EXAM_TECHNIQUE_KEY, JSON.stringify(data)) } catch {}
+}
+
+function loadCoachTypeResults() {
+  try { return JSON.parse(localStorage.getItem(COACH_TYPE_RESULTS_KEY) || '[]') } catch { return [] }
+}
+function saveCoachTypeResults(data) {
+  try { localStorage.setItem(COACH_TYPE_RESULTS_KEY, JSON.stringify(data)) } catch {}
 }
 
 // ─── Logging API ──────────────────────────────────────────────────────────────
@@ -444,6 +453,65 @@ export function getExamTechniquePatterns(threshold = TECHNIQUE_PATTERN_THRESHOLD
 export function getTopExamTechniquePattern() {
   const patterns = getExamTechniquePatterns()
   return patterns[0] || null
+}
+
+// ─── Guided answer coach — question-type performance ──────────────────────────
+
+/**
+ * Log the result of one GuidedAnswerCoach attempt (stage 5, 6 or 7).
+ *
+ * @param {Object} metadata - { typeId, subject, marksAwarded, marksAvailable }
+ *   typeId: GUIDED_COACH_TYPES id, e.g. 'explain-why'
+ */
+export function logCoachTypeResult(metadata = {}) {
+  const { typeId, subject, marksAwarded, marksAvailable } = metadata
+  if (!typeId || !subject || marksAvailable == null) return
+
+  const log = loadCoachTypeResults()
+  const entry = {
+    timestamp: Date.now(),
+    date: new Date().toISOString().slice(0, 10),
+    typeId,
+    subject,
+    marksAwarded: marksAwarded || 0,
+    marksAvailable,
+  }
+
+  log.unshift(entry)
+  saveCoachTypeResults(log.slice(0, 500))
+}
+
+/**
+ * Aggregate logged coach results by question type for a subject.
+ * Returns types scoring below threshold, weakest first.
+ */
+export function getWeakQuestionTypes(subject, threshold = COACH_TYPE_WEAK_THRESHOLD) {
+  const log = loadCoachTypeResults().filter(e => e.subject === subject)
+
+  const byType = {}
+  log.forEach(entry => {
+    if (!byType[entry.typeId]) {
+      byType[entry.typeId] = { typeId: entry.typeId, subject, attempts: 0, totalAwarded: 0, totalAvailable: 0 }
+    }
+    const bucket = byType[entry.typeId]
+    bucket.attempts += 1
+    bucket.totalAwarded += entry.marksAwarded
+    bucket.totalAvailable += entry.marksAvailable
+  })
+
+  return Object.values(byType)
+    .map(b => ({ ...b, pct: b.totalAvailable ? b.totalAwarded / b.totalAvailable : 0 }))
+    .filter(t => t.pct < threshold)
+    .sort((a, b) => a.pct - b.pct)
+}
+
+/**
+ * Convenience wrapper: the single weakest question type for a subject, or
+ * null if there's no data yet (cold start) or nothing below threshold.
+ */
+export function getSuggestedQuestionType(subject) {
+  const weak = getWeakQuestionTypes(subject)
+  return weak[0] ? weak[0].typeId : null
 }
 
 // ─── Legacy compatibility ─────────────────────────────────────────────────────

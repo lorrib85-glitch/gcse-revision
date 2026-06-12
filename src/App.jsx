@@ -17,7 +17,7 @@ import { GUIDED_COACH_TYPES } from './data/guidedAnswerCoach.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore } from './progress.js'
-import { getWeakTopics, getWeakestSubject, getBiggestWin } from './unifiedWeaknessTracker.js'
+import { getWeakTopics, getWeakestSubject, getBiggestWin, getSuggestedQuestionType } from './unifiedWeaknessTracker.js'
 import { MODULES } from './modules.js'
 import { TAG_MODULE_MAP, findTaggedScreen } from './data/tagModuleMap.js'
 import ModulePlayer, { getAllConfidenceRatings } from './components/layout/ModulePlayer.jsx'
@@ -4917,6 +4917,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
 
     // ── Exam technique chooser ──
     if (examTechniqueOpen) {
+      const suggestedTypeId = getSuggestedQuestionType('History')
       return (
         <div style={{ minHeight: '100vh', background: GENERAL.neutral[0], paddingBottom: 110, boxSizing: 'border-box' }}>
           <div style={{ maxWidth: 430, margin: '0 auto', padding: `0 ${SPACING.compact}px` }}>
@@ -4942,9 +4943,32 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
               Pick a question type and learn exactly what the examiner wants.
             </div>
 
+            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', WebkitOverflowScrolling: 'touch', marginBottom: SPACING.standard, scrollbarWidth: 'none' }}>
+              {EXAM_SUBJECTS.map((subj, i) => {
+                const isHistory = subj.label === 'History'
+                return (
+                  <div key={i} style={{
+                    flexShrink: 0, whiteSpace: 'nowrap', padding: '8px 14px', borderRadius: RADII.pill,
+                    fontFamily: "'Sora', sans-serif", fontSize: 12.5, fontWeight: 600,
+                    background: isHistory ? 'rgba(200,155,109,0.14)' : GENERAL.neutral[1],
+                    border: isHistory ? '1px solid #C89B6D' : '1px solid rgba(255,255,255,0.06)',
+                    color: isHistory ? '#C89B6D' : 'rgba(168,176,178,0.45)',
+                  }}>
+                    {subj.label}
+                    {!isHistory && (
+                      <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(168,176,178,0.35)' }}>
+                        Soon
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {GUIDED_COACH_TYPES.map(coachType => (
                 <button key={coachType.id} onClick={() => setActiveCoachType(coachType.id)} style={{
+                  position: 'relative',
                   display: 'flex', alignItems: 'center', gap: 14, width: '100%', textAlign: 'left',
                   padding: '14px 16px', cursor: 'pointer', borderRadius: RADII.large,
                   background: GENERAL.neutral[1], border: '1px solid rgba(255,255,255,0.06)',
@@ -4960,6 +4984,18 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={coachType.accent} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                     <path d="M5 12h14M13 6l6 6-6 6" />
                   </svg>
+                  {coachType.id === suggestedTypeId && (
+                    <div style={{
+                      position: 'absolute', top: 10, right: 12,
+                      fontFamily: "'Sora', sans-serif", fontSize: 9, fontWeight: 700,
+                      letterSpacing: '0.14em', textTransform: 'uppercase',
+                      color: GENERAL.teal, background: 'rgba(42,157,143,0.12)',
+                      border: '1px solid rgba(42,157,143,0.3)', borderRadius: RADII.pill,
+                      padding: '3px 8px',
+                    }}>
+                      Suggested
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
