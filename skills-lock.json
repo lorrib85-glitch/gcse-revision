@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "dashmotion": {
+      "source": "csthink/dashmotion",
+      "sourceType": "github",
+      "skillPath": "skills/dashmotion/SKILL.md",
+      "computedHash": "489168e0826046c99d9f53178467bef824ac4b7427a5300b3aa92c91b7a1bcf2"
+    }
+  }
+}
