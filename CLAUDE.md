@@ -83,6 +83,15 @@ Question feedback and exam practice components.
 - `ExamRoundDebrief.jsx` — Examiner-voice end-of-round debrief; synthesises patterns across a full set of answers and logs recurring weaknesses for WeakSpotRecovery.
 - `RetrievalFrame.jsx` — LOCKED. Cinematic wrapper for retrieval moments. Delegates all answer logic to AnswerInteraction.
 
+## Development Workflow
+
+All work — from a one-line copy tweak to a brand-new product surface —
+follows one of two pipelines defined in `docs/system/DEVELOPMENT_WORKFLOW.md`:
+the **Standard Change Pipeline** (existing-surface work, normally via
+Superpowers skills) or the **Big Build Pipeline** (new surface area,
+normally via GSD skills). Consult that document before starting any
+non-trivial task.
+
 ## Design System Documentation
 
 **Before making any UI change, consult these docs in order:**

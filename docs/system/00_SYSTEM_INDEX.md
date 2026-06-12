@@ -3,6 +3,10 @@
 **Version:** v1 — Locked Foundation  
 **Scope:** All design and development decisions in this codebase
 
+> **Process note:** This index governs *what* gets built and how it must
+> look. For *how work is approached* — pipeline selection, planning, review
+> and verification steps — see `docs/system/DEVELOPMENT_WORKFLOW.md`.
+
 ---
 
 ## Order of Authority
