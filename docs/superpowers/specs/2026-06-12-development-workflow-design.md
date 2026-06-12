@@ -21,6 +21,12 @@ per-phase branches and PR creation (it ships a `gsd-pr-branch` skill and a
 
 ## Decision
 
+### Guiding principle
+
+The workflow exists to improve product quality and consistency, not to force
+unnecessary process. When a lighter approach achieves the same outcome
+without increasing long-term maintenance cost, prefer the lighter approach.
+
 ### Core rule
 
 All work follows one of two named pipelines:
@@ -35,46 +41,60 @@ truth for the product. `.planning/`, `docs/superpowers/specs/`, and GSD phase
 files are **process artefacts only** — they must never become competing
 documentation.
 
+### Reuse before create (non-negotiable)
+
+Before creating any new reusable component, design token, architecture
+pattern, or interaction pattern, search existing canonical documentation
+(`docs/components/COMPONENT_REGISTRY.md`, `docs/system/`) and the codebase
+for an existing solution. Extend before inventing. This applies to both
+pipelines.
+
 ### Pipeline 1 — Standard Change Pipeline
 
 Use for existing-surface work.
 
-1. Brainstorm / clarify intent
-2. Create or update spec in `docs/superpowers/specs/`
-3. Use `writing-plans`
-4. Implement change
-5. Use subagents where helpful
-6. Update canonical docs if the change affects: reusable components, design
-   tokens, routing, architecture, product behaviour, or workflow rules
-7. Request code review (`requesting-code-review`)
-8. Receive and apply code review (`receiving-code-review`)
-9. Build (`./node_modules/.bin/vite build`)
-10. Verify in Playwright
-11. Confirm working tree status (commit + push to `main`)
+1. Clarify intent — brainstorm or discuss as needed
+2. Specification — only when the change is substantial, introduces a new
+   pattern, or benefits from documented planning. Minor bug fixes and
+   straightforward UI tweaks do not require one. When needed, written to
+   `docs/superpowers/specs/`.
+3. Planning
+4. Execution — implement the change; use subagents where helpful
+5. Documentation update — only if the change affects reusable components,
+   design tokens, routing, architecture, product behaviour, or workflow rules
+6. Review — perform code review and incorporate findings
+7. Verification — build (`./node_modules/.bin/vite build`) and Playwright
+   check
+8. Confirm working tree status — commit + push to `main`
+
+*Normally implemented via Superpowers: `brainstorming`, `writing-plans`,
+`executing-plans`, code review skills, `verification-before-completion`.*
 
 ### Pipeline 2 — Big Build Pipeline
 
 Use for new surface area.
 
-**One-time bootstrap:** `.planning/` does not exist yet. The *first* Big
-Build ever must run `gsd-new-project` once to bootstrap it. Every Big Build
-after that starts directly at step 1.
+**One-time bootstrap:** `.planning/` does not exist yet. The first Big Build
+ever must bootstrap it before step 1. Every Big Build after that starts
+directly at step 1.
 
-1. `gsd-new-milestone`
-2. `gsd-spec-phase`
-3. `gsd-discuss-phase`
-4. `gsd-map-codebase` — check existing `CLAUDE.md`, `docs/system/`,
-   `docs/components/`; identify reusable components before inventing new ones
-5. `gsd-plan-phase`
-6. `gsd-execute-phase`
-7. `gsd-docs-update` — write to existing canonical docs; do not create a
+1. Specification
+2. Discussion
+3. Architecture mapping — check `CLAUDE.md`, `docs/system/`,
+   `docs/components/`; apply the reuse-before-create rule before proposing
+   anything new
+4. Planning
+5. Execution
+6. Documentation update — write to existing canonical docs; never create a
    parallel documentation tree
-8. `gsd-code-review`
-9. `gsd-ui-review`
-10. `gsd-verify-work`
-11. Build (`./node_modules/.bin/vite build`)
-12. Playwright verification
-13. Confirm working tree status (commit + push to `main`)
+7. Review — code review, and UI review where visual behaviour changed
+8. Verification
+9. Confirm working tree status — commit + push to `main`
+
+*Normally implemented via the corresponding GSD skills (e.g. spec-phase,
+discuss-phase, map-codebase, plan-phase, execute-phase, docs-update,
+code-review/ui-review, verify-work). Bootstrap via the GSD project-init skill
+once, then the milestone skill for each Big Build thereafter.*
 
 ### Routing rule
 
@@ -84,25 +104,39 @@ after that starts directly at step 1.
   type, new route, new reusable component family, new architecture pattern,
   or anything likely to affect future builds.
 - When uncertain, default to **Big Build Pipeline** for planning, then
-  downshift to **Standard Change Pipeline** only if the mapping phase
-  (`gsd-map-codebase`) proves it is existing-surface work.
+  downshift to **Standard Change Pipeline** only if architecture mapping
+  proves it is existing-surface work.
 
 ### Branching policy
 
 GSD is configured for **main-only operation**, matching the existing
 Superpowers/CLAUDE.md habit:
 
-- `gsd-config`/`gsd-settings` disables per-phase branches and automatic PR
-  creation, so `gsd-execute-phase` and related skills commit straight to
-  `main`.
+- GSD's project/settings configuration disables per-phase branches and
+  automatic PR creation, so execution skills commit straight to `main`.
 - No pipeline — Standard or Big Build — creates a feature branch or PR
   unless the user explicitly asks for one in a given session.
+
+### Context Loading Policy
+
+Load only:
+
+- `CLAUDE.md`
+- `DEVELOPMENT_WORKFLOW.md`
+- directly relevant canonical docs
+- files being modified
+
+Do not read large documentation trees or perform architecture-wide reviews
+unless required by the selected pipeline.
+
+Minimise context usage while preserving correctness.
 
 ### Document placement
 
 - **`docs/system/DEVELOPMENT_WORKFLOW.md`** (new) — the operational doc
-  containing both pipelines, the routing rule, and the completion checklist.
-  This is the doc consulted every session before starting work.
+  containing both pipelines, the routing rule, the reuse-before-create rule,
+  the context loading policy, and the completion checklist. This is the doc
+  consulted every session before starting work.
 - **`CLAUDE.md`** — new short section near the top (before "Design System
   Documentation"), since this governs all work, not just UI changes. Points
   to `docs/system/DEVELOPMENT_WORKFLOW.md`.
@@ -116,21 +150,24 @@ Superpowers/CLAUDE.md habit:
 
 Applied once during implementation of this design:
 
-- `gsd-config`/`gsd-settings`: set branching/PR behaviour to main-only (no
-  per-phase branches, no automatic PR creation).
-- `gsd-surface`: hide skills oriented at teams/PRs/cloud-offload that don't
-  fit a solo, main-only project. Candidates: `gsd-pr-branch`, `gsd-ship`,
-  `gsd-workspace`, `gsd-workstreams`, `gsd-inbox`, `gsd-review`,
-  `gsd-ultraplan-phase`. Exact mechanism confirmed against `gsd-surface`'s own
-  documentation during implementation.
+- GSD project/settings configuration: set branching/PR behaviour to
+  main-only (no per-phase branches, no automatic PR creation).
+- Skill surfacing: hide skills oriented at teams/PRs/cloud-offload that don't
+  fit a solo, main-only project — `gsd-pr-branch`, `gsd-ship`,
+  `gsd-workspace`, `gsd-workstreams`, `gsd-inbox`. Leave `gsd-review` (and
+  anything else not clearly team/PR/workspace-oriented) visible until its
+  function is better understood. Exact mechanism confirmed against the
+  skill-surfacing tool's own documentation during implementation.
 
 ### Non-negotiable completion checklist
 
 Before marking any build complete, confirm:
 
 - Implementation completed
+- Specification/documentation written where the triggers above require it
+- No new undocumented reusable pattern introduced (reuse-before-create
+  honoured)
 - Canonical docs updated where needed
-- No new undocumented reusable pattern introduced
 - Code review completed
 - UI review completed where visual behaviour changed
 - Build passed
@@ -144,15 +181,14 @@ No task is complete at implementation alone.
 - New: `docs/system/DEVELOPMENT_WORKFLOW.md`
 - Edit: `CLAUDE.md` (new short "Development Workflow" section)
 - Edit: `docs/system/00_SYSTEM_INDEX.md` (cross-reference)
-- Global GSD config: `gsd-config`/`gsd-settings` (main-only), `gsd-surface`
-  (curated skill list) — outside the repo, in `~/.claude`
+- Global GSD config: project/settings (main-only), skill surfacing (curated
+  skill list) — outside the repo, in `~/.claude`
 
 ## Verification
 
 - New doc renders correctly; cross-references from `CLAUDE.md` and
   `00_SYSTEM_INDEX.md` resolve to `docs/system/DEVELOPMENT_WORKFLOW.md`.
-- `gsd-config`/`gsd-surface` changes confirmed via their own status/list
-  output.
+- GSD config/surfacing changes confirmed via their own status/list output.
 - No change to the existing build/test process —
   `./node_modules/.bin/vite build` remains the build check; Playwright
   remains the visual spot-check tool.
