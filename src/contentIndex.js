@@ -237,12 +237,12 @@ export const CONTENT_INDEX = {
     },
   },
 
-  // ── History: Germ Theory (mod4) ────────────────────────────────────────────
+  // ── History: Germ Theory (history-medicine-germ-theory) ───────────────────
   'germ-theory': {
     sectionId: 'germ-theory',
     title: 'Germ Theory — Pasteur and Koch',
     subject: 'History',
-    moduleId: 'mod4',
+    moduleId: 'history-medicine-germ-theory',
     screenLabel: 'Pasteur',
     keywords: ['germ theory', 'Pasteur', 'Koch', 'bacteria', 'microbes', 'swan-neck flask', '1861'],
     summary: 'Pasteur proved microbes cause decay and disease. Koch identified specific bacteria behind TB, cholera and anthrax.',

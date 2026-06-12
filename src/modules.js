@@ -2837,12 +2837,58 @@ Do NOT award marks for naming discoveries without explaining their significance.
   },
 
   {
-    id: 'mod4',
+    id: 'history-medicine-jenner-vaccination',
     subject: 'History',
     number: 5,
-    title: 'Germ theory',
-    subtitle: 'Pasteur, Koch & the invisible enemy',
-    era: 'c1850–c1900',
+    title: 'The boy, the cow and the cure',
+    subtitle: 'Edward Jenner and the birth of vaccination',
+    era: 'c.1796–c.1853',
+    icon: '🐄',
+    color: '#BD7224',
+    colorLight: 'rgba(189,114,36,.12)',
+    hook: {
+      statement: 'Edward Jenner invented vaccination by studying how the immune system fights disease.',
+      isTrue: false,
+      accentWords: ['the immune system'],
+      backgroundImage: '/images/jenner-1796.png',
+      explanation: "Jenner had never heard of the immune system — that idea didn't exist for almost another century. He worked from a simple farmyard observation, decades before anyone understood why it worked.",
+      revealBeats: [
+        'Jenner had no idea what a virus was, or what the immune system did.',
+        'He noticed dairy workers who had caught cowpox never seemed to catch smallpox.',
+        'In 1796, he scratched cowpox matter into eight-year-old James Phipps, then deliberately exposed him to smallpox.',
+        'Phipps stayed healthy.',
+        'By 1853, vaccination was made compulsory in England — decades before anyone understood why it worked.',
+      ],
+    },
+    screens: [
+      {
+        tag: 'vaccination',
+        label: 'Jenner',
+        kicker: '1796',
+        heading: 'Jenner develops the smallpox vaccine.',
+        headerImage: '/images/jenner-1796.png',
+        sub: 'The first vaccine — discovered by observation, not by understanding germs.',
+        blocks: [
+          { type: 'read', label: '💉 What Happened', text: '<strong>Edward Jenner</strong> noticed that milkmaids who caught <strong>cowpox</strong> rarely got <strong>smallpox</strong>. In 1796 he deliberately infected James Phipps — a boy — with cowpox, then exposed him to smallpox. The boy did not get ill. The <strong>smallpox vaccine</strong> was born.' },
+          { type: 'keypoint', text: '<strong>Critical exam point:</strong> Jenner did not know about germs or the immune system. He worked by observation and experiment — not by understanding why it worked. Pasteur later explained the mechanism. This shows how <strong>chance observation + scientific method</strong> can lead to breakthroughs.' },
+          { type: 'funfact', label: '😨 Controversy', text: 'Many people were horrified. Cartoons showed patients growing cow heads after vaccination. The Church opposed it. Parliament eventually made smallpox vaccination compulsory in 1853 — the first compulsory vaccination law in England.' },
+          { type: 'quiz', question: 'Why is Jenner\'s smallpox vaccine significant for understanding medical progress?', options: [
+            { text: 'It proved that observation and experiment could produce breakthroughs even without understanding the cause', correct: true },
+            { text: 'It proved that germ theory was correct', correct: false },
+            { text: 'It showed that the Church supported scientific progress', correct: false },
+          ], explanation: 'Jenner had no knowledge of germs or immunity — he used observation and careful experiment. His work paved the way for Pasteur, who later explained WHY vaccines work.' },
+        ],
+      },
+    ]
+  },
+
+  {
+    id: 'history-medicine-germ-theory',
+    subject: 'History',
+    number: 6,
+    title: 'The invisible enemy',
+    subtitle: 'Pasteur, Koch and germ theory',
+    era: 'c1857–c1883',
     icon: '🦠',
     color: '#B06520',
     colorLight: 'rgba(176,101,32,.12)',
@@ -2906,24 +2952,6 @@ Do NOT award marks for naming discoveries without explaining their significance.
             { text: 'Germs came from bad surgery', correct: false },
           ], explanation: 'Spontaneous generation said germs appeared from decay — they were a symptom of illness, not its cause. Pasteur proved the opposite.' },
         ]
-      },
-      {
-        tag: 'vaccination',
-        label: 'Jenner',
-        kicker: '1796',
-        heading: 'Jenner develops the smallpox vaccine.',
-        headerImage: '/images/jenner-1796.png',
-        sub: 'The first vaccine — discovered by observation, not by understanding germs.',
-        blocks: [
-          { type: 'read', label: '💉 What Happened', text: '<strong>Edward Jenner</strong> noticed that milkmaids who caught <strong>cowpox</strong> rarely got <strong>smallpox</strong>. In 1796 he deliberately infected James Phipps — a boy — with cowpox, then exposed him to smallpox. The boy did not get ill. The <strong>smallpox vaccine</strong> was born.' },
-          { type: 'keypoint', text: '<strong>Critical exam point:</strong> Jenner did not know about germs or the immune system. He worked by observation and experiment — not by understanding why it worked. Pasteur later explained the mechanism. This shows how <strong>chance observation + scientific method</strong> can lead to breakthroughs.' },
-          { type: 'funfact', label: '😨 Controversy', text: 'Many people were horrified. Cartoons showed patients growing cow heads after vaccination. The Church opposed it. Parliament eventually made smallpox vaccination compulsory in 1853 — the first compulsory vaccination law in England.' },
-          { type: 'quiz', question: 'Why is Jenner\'s smallpox vaccine significant for understanding medical progress?', options: [
-            { text: 'It proved that observation and experiment could produce breakthroughs even without understanding the cause', correct: true },
-            { text: 'It proved that germ theory was correct', correct: false },
-            { text: 'It showed that the Church supported scientific progress', correct: false },
-          ], explanation: 'Jenner had no knowledge of germs or immunity — he used observation and careful experiment. His work paved the way for Pasteur, who later explained WHY vaccines work.' },
-        ],
       },
       {
         tag: 'pasteur',
@@ -3047,7 +3075,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
   {
     id: 'mod5',
     subject: 'History',
-    number: 6,
+    number: 7,
     title: 'The Great Stink',
     subtitle: 'Cities, sewers & slow progress',
     era: 'c1800–c1900',
@@ -3231,7 +3259,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
   {
     id: 'mod6',
     subject: 'History',
-    number: 7,
+    number: 8,
     title: 'The surgery revolution',
     subtitle: 'Pain, infection & survival (1840–1900)',
     era: 'c1840–c1900',
@@ -3856,7 +3884,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
   {
     id: 'mod7',
     subject: 'History',
-    number: 8,
+    number: 9,
     title: 'The accidental miracle',
     subtitle: 'Magic bullets, penicillin & the antibiotic revolution',
     era: 'c1890–c1945',
@@ -4458,7 +4486,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
   {
     id: 'mod8',
     subject: 'History',
-    number: 9,
+    number: 10,
     title: 'Inside modern medicine',
     subtitle: 'Scans, transplants, DNA & the future',
     era: 'c1945–present',
@@ -10599,7 +10627,7 @@ Level 1 (1-2 marks): Structures named but not explained, or only one full differ
   {
     id: 'mod9',
     subject: 'History',
-    number: 10,
+    number: 11,
     title: 'Who gets healthcare?',
     subtitle: 'The NHS, prevention & modern public health',
     era: 'AQA GCSE',

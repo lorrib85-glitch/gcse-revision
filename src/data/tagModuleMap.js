@@ -29,10 +29,10 @@ export const TAG_MODULE_MAP = {
   'antiseptic-surgery':     'mod3',
   'surgery':                'mod3',
   // Germ Theory
-  'pasteur':                'mod4',
-  'germ-theory':            'mod4',
-  'vaccination':            'mod4',
-  'koch':                   'mod4',
+  'pasteur':                'history-medicine-germ-theory',
+  'germ-theory':            'history-medicine-germ-theory',
+  'vaccination':            'history-medicine-jenner-vaccination',
+  'koch':                   'history-medicine-germ-theory',
   // Public Health
   'john-snow':              'mod5',
   'public-health':          'mod5',

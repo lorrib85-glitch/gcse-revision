@@ -53,8 +53,8 @@ it happened because of recurring agents of change.
 | 3 | The Beginning of Doubt | Medical Renaissance | `mod2` — "Renaissance & the Plague" | Built, but `mod2` currently bundles Episodes 3–5 into one module (see below). |
 | 4 | The Man Who Proved Everyone Wrong | William Harvey | `mod2` (shared — see Episode 3) | Harvey's circulation theory is taught inside `mod2`, not as its own module. |
 | 5 | London's Year of Terror | Great Plague | `mod2` (shared — see Episode 3) | The 1665 Great Plague currently appears inside `mod2` as a "continuity" case study. |
-| 6 | The Boy, the Cow and the Cure | Jenner | `mod4` — "Germ theory" | Built, but `mod4` currently bundles Episodes 6–7 into one module (see below). |
-| 7 | The Invisible Enemy | Pasteur & Koch | `mod4` (shared — see Episode 6) | |
+| 6 | The Boy, the Cow and the Cure | Jenner | `history-medicine-jenner-vaccination` — "The boy, the cow and the cure" | Built and aligned — title now matches the spine. |
+| 7 | The Invisible Enemy | Pasteur & Koch | `history-medicine-germ-theory` — "The invisible enemy" | Built and aligned — title now matches the spine. |
 | 8 | The Great Stink | Public Health | `mod5` — "The Great Stink" | Built and aligned — title now matches the spine. |
 | 9 | The Day Surgery Changed Forever | Anaesthetics & Antiseptics | `mod3` + `mod6` — "Surgery & anatomy" / "The surgery revolution" | Built as a two-part story: `mod3` sets up the problem (pain, infection, blood loss before 1840), `mod6` delivers the revolution (anaesthetics, antiseptics, Lister). |
 | 10 | The Lady with the Lamp? | Florence Nightingale | — | Not yet built. Nightingale currently appears only as a comparison point in `mod2`'s learning objectives. |
@@ -68,8 +68,9 @@ it happened because of recurring agents of change.
 - **`mod2` → split into Episodes 3, 4 and 5.** Vesalius (Ep 3), Harvey
   and Paré (Ep 4), and the 1665 Great Plague (Ep 5) are currently one
   module and need separating to match the 14-episode spine.
-- **`mod4` → split into Episodes 6 and 7.** Jenner's vaccine (Ep 6) and
-  Pasteur & Koch's germ theory (Ep 7) are currently one module.
+- **`mod4` split into Episodes 6 and 7 — done.** Jenner's vaccine (Ep 6) now
+  lives in `history-medicine-jenner-vaccination`, and Pasteur & Koch's germ
+  theory (Ep 7) lives in `history-medicine-germ-theory`.
 - **`mod3` + `mod6` → realign as Episode 9's two halves**, or merge into
   a single Episode 9 module — currently named/positioned as separate
   modules (numbers 4 and 7) with a large content gap between them.
