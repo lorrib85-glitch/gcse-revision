@@ -31,6 +31,15 @@ Governs Home, the Subjects/Modules browser, Progress, Exam landing/navigation, o
 
 ---
 
+### 1c. Subject Module Architecture (History & Science)
+
+`docs/system/HISTORY_MODULE_ARCHITECTURE.md`
+`docs/system/SCIENCE_MODULE_BLUEPRINT.md`
+
+Locked chapter/module structure rules for History and Science (Biology, Chemistry, Physics) content. Loaded on demand — see "Subject Module Architecture" in `CLAUDE.md` for when each applies. Do not build or edit subject module content without reading the relevant file first.
+
+---
+
 ### 2. Component Authoring Rules
 
 `docs/system/COMPONENT_AUTHORING_RULES.md`
