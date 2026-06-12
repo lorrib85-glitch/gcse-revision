@@ -4221,9 +4221,10 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
   const [tapped, setTapped]         = useState(null)
   const [status, setStatus]         = useState(null) // null | 'correct' | 'incorrect'
   const [hintVisible, setHintVisible] = useState(false)
+  const [retryTapped, setRetryTapped] = useState(null)
+  const [retryStatus, setRetryStatus] = useState(null) // null | 'correct' | 'incorrect'
   const [entered, setEntered]       = useState(false)
   const [leaving, setLeaving]       = useState(false)
-  const firstAttemptRef = useRef(false)
   const timersRef = useRef([])
 
   useEffect(() => {
@@ -4236,33 +4237,51 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
 
   if (!q) return null
 
+  function advanceAfterHold() {
+    const holdMs = parseInt(MOTION.duration.cinematic, 10)
+    const outMs = parseInt(MOTION.duration.standard, 10)
+    timersRef.current.push(setTimeout(() => {
+      setLeaving(true)
+      timersRef.current.push(setTimeout(onAdvance, outMs))
+    }, holdMs))
+  }
+
   function selectOption(opt) {
-    if (status) return
-    const isCorrect = opt === q.options[q.correct]
-    setTapped(opt)
-    setStatus(isCorrect ? 'correct' : 'incorrect')
-    if (navigator.vibrate) navigator.vibrate(isCorrect ? 10 : 20)
-    if (!firstAttemptRef.current) {
-      firstAttemptRef.current = true
+    if (status === null) {
+      const isCorrect = opt === q.options[q.correct]
+      setTapped(opt)
+      setStatus(isCorrect ? 'correct' : 'incorrect')
+      if (navigator.vibrate) navigator.vibrate(isCorrect ? 10 : 20)
       onAnswer(isCorrect)
+      if (isCorrect) {
+        advanceAfterHold()
+      } else {
+        const hintMs = parseInt(MOTION.duration.fast, 10)
+        timersRef.current.push(setTimeout(() => setHintVisible(true), hintMs))
+      }
+      return
     }
-    if (isCorrect) {
-      const holdMs = parseInt(MOTION.duration.cinematic, 10)
-      const outMs = parseInt(MOTION.duration.standard, 10)
-      timersRef.current.push(setTimeout(() => {
-        setLeaving(true)
-        timersRef.current.push(setTimeout(onAdvance, outMs))
-      }, holdMs))
-    } else {
-      const hintMs = parseInt(MOTION.duration.fast, 10)
-      timersRef.current.push(setTimeout(() => setHintVisible(true), hintMs))
+    // One retry after the hint: pick a different answer, then confirm with the button below
+    if (status === 'incorrect' && hintVisible && retryStatus === null && opt !== tapped) {
+      setRetryTapped(opt)
     }
   }
 
-  function retry() {
-    setTapped(null)
-    setStatus(null)
-    setHintVisible(false)
+  function checkRetry() {
+    if (!retryTapped) return
+    const isCorrect = retryTapped === q.options[q.correct]
+    setRetryStatus(isCorrect ? 'correct' : 'incorrect')
+    if (navigator.vibrate) navigator.vibrate(isCorrect ? 10 : 20)
+    advanceAfterHold()
+  }
+
+  function mark(kind) {
+    const ok = kind === 'correct'
+    return (
+      <span aria-hidden="true" style={{ position:'absolute', right:18, top:'50%', color: ok ? GENERAL.teal : GENERAL.coral, fontSize:'1.15rem', fontWeight:700, animation:`qfMarkIn ${MOTION.duration.fast} ${MOTION.easing.standard} both` }}>
+        {ok ? '✓' : '×'}
+      </span>
+    )
   }
 
   return (
@@ -4299,36 +4318,57 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
 
         <div style={{ display:'flex', flexDirection:'column', gap:SPACING.micro }}>
           {q.options.map((opt, i) => {
-            const isTapped = tapped === opt
+            const isFirstTapped = tapped === opt
+            const isRetryTapped = retryTapped === opt
+            const isCorrectOpt = i === q.correct
             let opacity = 1
             let background = GENERAL.neutral[1]
             let border = '1px solid rgba(255,255,255,0.06)'
-            if (status === 'incorrect' && isTapped) opacity = 0.58
-            if (status === 'correct' && isTapped) {
+
+            if (status === 'incorrect' && isFirstTapped) opacity = 0.58
+            if (status === 'correct' && isFirstTapped) {
               background = `rgba(${GENERAL.tealRgb}, 0.07)`
               border = `1px solid ${GENERAL.teal}`
             }
+            if (isRetryTapped && retryStatus === null) {
+              border = `1px solid rgba(${GENERAL.tealRgb}, 0.5)`
+            }
+            if (isRetryTapped && retryStatus === 'correct') {
+              background = `rgba(${GENERAL.tealRgb}, 0.07)`
+              border = `1px solid ${GENERAL.teal}`
+            }
+            if (isRetryTapped && retryStatus === 'incorrect') opacity = 0.58
+            if (retryStatus === 'incorrect' && isCorrectOpt) {
+              background = `rgba(${GENERAL.tealRgb}, 0.07)`
+              border = `1px solid ${GENERAL.teal}`
+            }
+
+            const disabled = status === 'correct'
+              ? true
+              : status === 'incorrect'
+                ? (retryStatus !== null || isFirstTapped || !hintVisible)
+                : false
+
             return (
-              <button key={i} onClick={() => selectOption(opt)} disabled={!!status} style={{
+              <button key={i} onClick={() => selectOption(opt)} disabled={disabled} style={{
                 position:'relative', width:'100%', textAlign:'left', background, border, borderRadius:RADII.large,
-                padding:'18px 44px 18px 20px', cursor: status ? 'default' : 'pointer',
+                padding:'18px 44px 18px 20px', cursor: disabled ? 'default' : 'pointer',
                 ...TYPE.body, fontWeight:500, color:GENERAL.softWhite,
                 opacity,
                 transition:`opacity ${MOTION.duration.instant} ${MOTION.easing.gentle}, background ${MOTION.duration.instant} ${MOTION.easing.gentle}, border-color ${MOTION.duration.instant} ${MOTION.easing.gentle}`,
               }}>
                 {opt}
-                {status === 'incorrect' && isTapped && (
-                  <span aria-hidden="true" style={{ position:'absolute', right:18, top:'50%', color:GENERAL.coral, fontSize:'1.15rem', fontWeight:700, animation:`qfMarkIn ${MOTION.duration.fast} ${MOTION.easing.standard} both` }}>×</span>
-                )}
-                {status === 'correct' && isTapped && (
-                  <span aria-hidden="true" style={{ position:'absolute', right:18, top:'50%', color:GENERAL.teal, fontSize:'1.15rem', fontWeight:700, animation:`qfMarkIn ${MOTION.duration.fast} ${MOTION.easing.standard} both` }}>✓</span>
-                )}
+                {status === 'incorrect' && isFirstTapped && mark('incorrect')}
+                {status === 'correct' && isFirstTapped && mark('correct')}
+                {isRetryTapped && retryStatus === 'correct' && mark('correct')}
+                {isRetryTapped && retryStatus === 'incorrect' && mark('incorrect')}
+                {retryStatus === 'incorrect' && isCorrectOpt && !isRetryTapped && mark('correct')}
               </button>
             )
           })}
         </div>
 
-        {hintVisible && (
+        {hintVisible && status === 'incorrect' && (
           <div style={{
             marginTop:SPACING.standard, background:GENERAL.neutral[1], borderRadius:RADII.large,
             borderLeft:`3px solid ${GENERAL.teal}`, padding:'16px 18px',
@@ -4345,12 +4385,16 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
           </div>
         )}
 
-        {status === 'incorrect' && (
-          <button onClick={retry} style={{
+        {status === 'incorrect' && hintVisible && retryStatus === null && (
+          <button onClick={checkRetry} disabled={!retryTapped} style={{
             marginTop:SPACING.standard, width:'100%', border:'none', borderRadius:RADII.large,
-            background:GENERAL.teal, color:GENERAL.neutral[0], padding:'17px',
-            fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem', cursor:'pointer',
-          }}>Try again →</button>
+            background: retryTapped ? GENERAL.teal : GENERAL.neutral[1],
+            color: retryTapped ? GENERAL.neutral[0] : GENERAL.slate,
+            padding:'17px',
+            fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem',
+            cursor: retryTapped ? 'pointer' : 'default',
+            transition:`background ${MOTION.duration.instant} ${MOTION.easing.gentle}, color ${MOTION.duration.instant} ${MOTION.easing.gentle}`,
+          }}>{retryTapped ? 'Check answer →' : 'Choose another answer'}</button>
         )}
       </div>
     </div>
