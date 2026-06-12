@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { SPACING } from '../../constants/spacing.js'
+import BackButton from '../core/BackButton.jsx'
 
 const PALETTES = {
   history:   { accent: '#C89B6D', bg: '#15110C' },
@@ -497,14 +498,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
 
         {/* ── Compact header ─────────────────────────────────────────────── */}
         <div style={headerStyle}>
-          <button
-            onClick={onExit}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer',
-              color: 'rgba(255,255,255,0.45)', fontSize: 20, lineHeight: 1,
-              padding: '8px 8px 8px 0',
-            }}
-          >←</button>
+          <BackButton onClick={onExit} />
 
           <div style={{
             fontFamily: "'Sora', sans-serif",

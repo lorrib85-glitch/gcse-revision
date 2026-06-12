@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import BackButton from '../core/BackButton.jsx'
 
 let _wsrStyled = false
 function ensureStyles() {
@@ -110,22 +111,7 @@ export default function WeakSpotRecovery({
           marginBottom: 20,
         }}>
           {/* Back button */}
-          <button
-            onClick={onBack}
-            style={{
-              background: 'none', border: 'none', padding: 0,
-              cursor: 'pointer', opacity: 0.92,
-              color: 'rgba(255,255,255,0.92)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: 22, height: 22,
-            }}
-            aria-label="Back"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"/>
-            </svg>
-          </button>
+          <BackButton onClick={onBack} />
 
           {/* Progress text */}
           {progress && (

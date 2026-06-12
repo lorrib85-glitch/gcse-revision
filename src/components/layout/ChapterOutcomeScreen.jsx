@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
-import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
+import BackButton from '../core/BackButton.jsx'
 
 const IMAGES = {
   History:   '/historybacker.webp',
@@ -16,25 +16,10 @@ const IMAGES = {
 
 function BackBtn({ onClick }) {
   return (
-    <button
-      className="cos-back"
+    <BackButton
       onClick={onClick}
-      aria-label="Go back"
-      style={{
-        position: 'absolute', top: 22, left: 18, zIndex: 10,
-        width: 46, height: 46, borderRadius: RADII.pill,
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.05)',
-        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        cursor: 'pointer', transition: 'background 140ms ease',
-      }}>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="rgba(255,255,255,0.58)" strokeWidth="1.8"
-        strokeLinecap="round" strokeLinejoin="round">
-        <path d="M19 12H5M12 5l-7 7 7 7"/>
-      </svg>
-    </button>
+      style={{ position: 'absolute', top: 22, left: 18, zIndex: 10 }}
+    />
   )
 }
 
@@ -123,7 +108,6 @@ export default function ChapterOutcomeScreen({
           from { opacity: 0; }
           to   { opacity: 1; }
         }
-        .cos-back:active { background: rgba(255,255,255,0.08) !important; }
         .cos-cta:active  { opacity: 0.6 !important; }
       `}</style>
 

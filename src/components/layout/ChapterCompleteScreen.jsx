@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import BackButton from '../core/BackButton.jsx'
 
 // ─── Ring ─────────────────────────────────────────────────────────────────────
 const R_SIZE   = 96
@@ -193,25 +194,7 @@ export default function ChapterCompleteScreen({
           display: 'flex', justifyContent: 'space-between',
           zIndex: 10,
         }}>
-          <button
-            className="ccs-navbtn"
-            aria-label="Go back"
-            onClick={onHome}
-            style={{
-              ...base,
-              width: 48, height: 48, borderRadius: RADII.pill,
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'background 140ms ease',
-            }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-              stroke="rgba(255,255,255,0.78)" strokeWidth="1.8"
-              strokeLinecap="round" strokeLinejoin="round">
-              <path d="M19 12H5M12 5l-7 7 7 7"/>
-            </svg>
-          </button>
+          <BackButton onClick={onHome} />
           <button
             className="ccs-navbtn"
             aria-label="Menu"

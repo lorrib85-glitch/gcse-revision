@@ -129,6 +129,25 @@ When modifying locked components:
 
 ---
 
+## Back Navigation Rule
+
+`src/components/core/BackButton.jsx` is the **only** back-navigation button implementation allowed anywhere in the app. This is constitutional — see `docs/components/LOCKED_COMPONENTS.md`.
+
+```js
+import BackButton from '../core/BackButton.jsx'
+
+<BackButton onClick={onBack} />
+```
+
+Never:
+- Write a new inline back button (chevron `<svg>`, `←`/`‹` character, or "Back" text label)
+- Create a local component that re-implements the back-button visual design
+- Change BackButton's size, fill, border, radius, icon, or hover/press opacity
+
+`style` may only be used for layout placement (`position`, `top`/`left`/`right`/`bottom`, `margin`, `zIndex`).
+
+---
+
 ## Motion Rules
 
 Motion must feel cinematic, restrained, and purposeful.

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import BackButton from '../core/BackButton.jsx'
 
 const IMAGES = {
   History:   '/historybacker.webp',
@@ -23,24 +24,10 @@ function tokenize(text) {
 
 function BackBtn({ onClick }) {
   return (
-    <button
+    <BackButton
       onClick={(e) => { e.stopPropagation(); onClick() }}
-      aria-label="Go back"
-      style={{
-        position: 'absolute', top: 22, left: 18,
-        width: 46, height: 46, borderRadius: 99,
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.05)',
-        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        cursor: 'pointer',
-      }}>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="rgba(255,255,255,0.58)" strokeWidth="1.8"
-        strokeLinecap="round" strokeLinejoin="round">
-        <path d="M19 12H5M12 5l-7 7 7 7"/>
-      </svg>
-    </button>
+      style={{ position: 'absolute', top: 22, left: 18, zIndex: 10 }}
+    />
   )
 }
 

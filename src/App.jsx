@@ -21,6 +21,7 @@ import { getWeakTopics, getWeakestSubject, getBiggestWin, getSuggestedQuestionTy
 import { MODULES } from './modules.js'
 import { TAG_MODULE_MAP, findTaggedScreen } from './data/tagModuleMap.js'
 import ModulePlayer, { getAllConfidenceRatings } from './components/layout/ModulePlayer.jsx'
+import BackButton from './components/core/BackButton.jsx'
 import ChapterCompleteScreen from './components/layout/ChapterCompleteScreen.jsx'
 import ExamQuestionFrame from './components/feedback/ExamQuestionFrame.jsx'
 import ExamRoundDebrief from './components/feedback/ExamRoundDebrief.jsx'
@@ -1377,17 +1378,7 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
         }} />
 
         {/* Back button */}
-        <button
-          onClick={onBack}
-          style={{
-            position: 'absolute', top: 20, left: 24, zIndex: 10,
-            width: 44, height: 44, borderRadius: 999,
-            background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(255,255,255,0.10)',
-            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'rgba(255,255,255,0.82)', fontSize: 20, fontFamily: "'Sora', sans-serif",
-          }}
-        >←</button>
+        <BackButton onClick={onBack} style={{ position: 'absolute', top: 20, left: 24, zIndex: 10 }} />
 
         {/* Menu button */}
         <button
@@ -1929,13 +1920,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           position: 'absolute', bottom: 0, left: 0, right: 0, height: 85,
           background: 'linear-gradient(180deg, transparent 0%, #050505 100%)',
         }} />
-        <button onClick={onBack} style={{
-          position: 'absolute', top: 20, left: 24, zIndex: 10,
-          width: 44, height: 44, borderRadius: RADII.pill,
-          background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)',
-          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: 'rgba(255,255,255,0.85)', fontSize: 20, fontFamily: "'Sora', sans-serif",
-        }}>←</button>
+        <BackButton onClick={onBack} style={{ position: 'absolute', top: 20, left: 24, zIndex: 10 }} />
 
         {/* Module journey indicator — circular progress, draws in on mount */}
         <div style={{ position: 'absolute', top: 20, right: 24, zIndex: 10, width: RING_SIZE, height: RING_SIZE, opacity: 0.9 }}>
@@ -2225,13 +2210,7 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(180deg, transparent 0%, #08090D 100%)' }} />
 
         {/* Back button */}
-        <button onClick={onBack} style={{
-          position: 'absolute', top: 20, left: 24, zIndex: 10,
-          width: 44, height: 44, borderRadius: 999,
-          background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)',
-          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: 'rgba(255,255,255,0.82)', fontSize: 20, fontFamily: "'Sora', sans-serif",
-        }}>←</button>
+        <BackButton onClick={onBack} style={{ position: 'absolute', top: 20, left: 24, zIndex: 10 }} />
 
         {/* Title block */}
         <div style={{ position: 'absolute', bottom: 20, left: 24, zIndex: 5 }}>
@@ -3260,7 +3239,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
       <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'12px 16px' }}>
         <div style={{ maxWidth:660, margin:'0 auto' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:8 }}>
-            <button onClick={() => { reset(); onBack() }} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0, lineHeight:1 }}>←</button>
+            <BackButton onClick={() => { reset(); onBack() }} />
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:2 }}>
                 <div style={{ width:8, height:8, borderRadius:'50%', background:topicColor, flexShrink:0, boxShadow:`0 0 6px ${topicColor}` }} />
@@ -3486,7 +3465,7 @@ function MathsBrowser({ onBack }) {
       {/* Header */}
       <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
         <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
-          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
+          <BackButton onClick={onBack} />
           <img src="/headers/maths-main.webp" alt="Maths" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
           <div style={{ flex:1 }}>
             <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA Maths — Topics</div>
@@ -3582,7 +3561,7 @@ function EnglishBrowser({ onBack }) {
     <div style={{ background:'#08090D', minHeight:'100vh', paddingBottom:90 }}>
       <div style={{ position:'sticky', top:0, zIndex:20, background:'rgba(8,12,26,.97)', borderBottom:'1px solid #1E2A40', backdropFilter:'blur(14px)', padding:'14px 16px' }}>
         <div style={{ maxWidth:660, margin:'0 auto', display:'flex', alignItems:'center', gap:12 }}>
-          <button onClick={onBack} style={{ background:'none', border:'none', cursor:'pointer', color:'#5A6480', fontSize:'1.1rem', padding:0, flexShrink:0 }}>←</button>
+          <BackButton onClick={onBack} />
           <img src="/headers/english-main.webp" alt="English" style={{ width:32, height:32, borderRadius:8, objectFit:'cover', flexShrink:0 }} />
           <div style={{ flex:1 }}>
             <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'1rem', color:'#F5F7FB' }}>AQA English Language</div>
@@ -3668,7 +3647,7 @@ function SociologyBrowser({ onBack, filterPrefix = null }) {
     <div style={{ background: '#08090D', minHeight: '100vh', paddingBottom: 90 }}>
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
+          <BackButton onClick={onBack} />
           <img src={socGroup?.headerImage || '/headers/sociology-main.webp'} alt="Sociology" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>{headerTitle}</div>
@@ -3794,7 +3773,7 @@ function ChemistryTopicView({ group, onBack, qIdx: initialQIdx = 0, onQChange })
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '12px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-            <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0, lineHeight: 1 }}>←</button>
+            <BackButton onClick={onBack} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
@@ -3916,7 +3895,7 @@ function ChemistryBrowser({ onBack }) {
     <div style={{ background: '#08090D', minHeight: '100vh', paddingBottom: 90 }}>
       <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(8,12,26,.97)', borderBottom: '1px solid #1E2A40', backdropFilter: 'blur(14px)', padding: '14px 16px' }}>
         <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5A6480', fontSize: '1.1rem', padding: 0, flexShrink: 0 }}>←</button>
+          <BackButton onClick={onBack} />
           <img src="/headers/chem-logo.webp" alt="Chemistry" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#F5F7FB' }}>AQA Chemistry Foundation</div>
@@ -4761,7 +4740,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
         <div style={{ minHeight:'100vh', background:'#08090D', color:'#F5F7FB' }}>
           {/* Sticky timer bar */}
           <div style={{ position:'sticky', top:0, zIndex:50, background:'rgba(8,9,13,0.96)', backdropFilter:'blur(16px)', borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 16px', display:'flex', alignItems:'center', gap:12, boxSizing:'border-box' }}>
-            <button onClick={() => setExamPhase('summary')} style={{ width:36, height:36, borderRadius:'50%', border:'1px solid rgba(80,97,140,.4)', background:'rgba(12,18,38,.9)', color:'#DCE5FA', fontSize:'1.1rem', cursor:'pointer', flexShrink:0 }}>‹</button>
+            <BackButton onClick={() => setExamPhase('summary')} />
             <div style={{ flex:1 }}>
               <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.95rem', color:'#F4EFE6' }}>{examConfig?.title}</div>
               <div style={{ color:'#4B5563', fontSize:'.72rem' }}>{examQuestions.length} questions · scroll to answer all</div>
@@ -4923,17 +4902,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
           <div style={{ maxWidth: 430, margin: '0 auto', padding: `0 ${SPACING.compact}px` }}>
 
             <div style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 14px)', paddingBottom: SPACING.compact }}>
-              <button onClick={() => setExamTechniqueOpen(false)} style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer',
-                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)',
-                borderRadius: RADII.pill, color: GENERAL.slate,
-                fontFamily: "'Sora', sans-serif", fontSize: 12.5, fontWeight: 600, padding: '7px 14px 7px 10px',
-              }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={GENERAL.slate} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M11 5L4 12L11 19M4 12H20" />
-                </svg>
-                Back
-              </button>
+              <BackButton onClick={() => setExamTechniqueOpen(false)} />
             </div>
 
             <div style={{ ...TYPE.cinematic, fontSize: 32, color: GENERAL.softWhite, marginBottom: 6 }}>
@@ -5012,17 +4981,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
           <div style={{ maxWidth: 430, margin: '0 auto', padding: `0 ${SPACING.compact}px` }}>
 
             <div style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 14px)', paddingBottom: SPACING.compact }}>
-              <button onClick={() => setPaperChooserOpen(false)} style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer',
-                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)',
-                borderRadius: RADII.pill, color: GENERAL.slate,
-                fontFamily: "'Sora', sans-serif", fontSize: 12.5, fontWeight: 600, padding: '7px 14px 7px 10px',
-              }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={GENERAL.slate} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M11 5L4 12L11 19M4 12H20" />
-                </svg>
-                Back
-              </button>
+              <BackButton onClick={() => setPaperChooserOpen(false)} />
             </div>
 
             <div style={{ ...TYPE.cinematic, fontSize: 32, color: GENERAL.softWhite, marginBottom: 6 }}>
@@ -5477,7 +5436,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
       <div style={{ background:`radial-gradient(circle at 50% -10%, rgba(${GENERAL.tealRgb},.08), transparent 42%), ${GENERAL.neutral[0]}`, minHeight:'100vh', padding:'18px 20px calc(150px + env(safe-area-inset-bottom))', color:GENERAL.softWhite }}>
         <div style={{ maxWidth:480, margin:'0 auto' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
-            <button onClick={exitTestTopic} aria-label="Back" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(255,255,255,0.06)', color:GENERAL.softWhite, fontSize:'1.45rem', cursor:'pointer' }}>‹</button>
+            <BackButton onClick={exitTestTopic} />
             <button aria-label="Share" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(255,255,255,0.06)', color:GENERAL.softWhite, fontSize:'1rem', cursor:'pointer' }}>⇧</button>
           </div>
 
@@ -5643,7 +5602,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
       <div style={{ background:GENERAL.neutral[0], minHeight:'100vh', paddingBottom:90 }}>
         <div style={{ background:`rgba(${hexToRgb(GENERAL.neutral[0])},0.96)`, borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 16px', position:'sticky', top:0, zIndex:10, backdropFilter:'blur(12px)' }}>
           <div style={{ display:'flex', alignItems:'center', gap:10, maxWidth:660, margin:'0 auto' }}>
-            <button onClick={exitTestTopic} style={{ background:'none', border:'none', cursor:'pointer', color:GENERAL.slate, fontSize:'1.1rem', fontWeight:400, padding:0 }}>←</button>
+            <BackButton onClick={exitTestTopic} />
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:700, fontSize:'.9rem', color:GENERAL.softWhite, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selected.label}</div>
               <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.7rem', color:GENERAL.slate }}>Question {qIdx+1} of {questions.length}</div>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import LearningProgressHeader from './LearningProgressHeader.jsx'
+import BackButton from './BackButton.jsx'
 import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
 
 // ── LearningHeader — single-row module header ─────────────────────────────────
@@ -16,7 +17,6 @@ export default function LearningHeader({
   onJumpOpen = null,
   screenPos = null,
 }) {
-  const [backPressed, setBackPressed] = useState(false)
   const [exitPressed, setExitPressed] = useState(false)
 
   const subject = module?.subject || 'History'
@@ -46,27 +46,7 @@ export default function LearningHeader({
     }}>
 
       {/* Back button */}
-      <button
-        aria-label="Go back"
-        onPointerDown={() => setBackPressed(true)}
-        onPointerUp={() => { setBackPressed(false); onBack?.() }}
-        onPointerLeave={() => setBackPressed(false)}
-        style={{
-          width: 44, height: 44,
-          background: 'none', border: 'none', padding: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer',
-          flexShrink: 0,
-          opacity: backPressed ? 0.9 : 0.6,
-          transform: backPressed ? 'scale(0.94)' : 'scale(1)',
-          transition: 'opacity 140ms ease, transform 140ms ease',
-        }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="rgba(255,255,255,0.75)" strokeWidth="1.75"
-          strokeLinecap="round" strokeLinejoin="round">
-          <path d="M15 18l-6-6 6-6"/>
-        </svg>
-      </button>
+      <BackButton onClick={onBack} />
 
       {/* Stage rail */}
       <div style={{ flex: 1, minWidth: 0 }}>

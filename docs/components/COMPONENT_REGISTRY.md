@@ -24,6 +24,15 @@ Foundation components used by many others. Handle atomic UI concerns.
 
 ---
 
+### BackButton — **LOCKED**
+
+**File:** `src/components/core/BackButton.jsx`  
+**Purpose:** The only back-navigation button allowed anywhere in the app. 44×44 pill, near-invisible fill/border, left chevron only, no label, identical hover/press opacity.  
+**Props:** `onClick`, `ariaLabel` (default `'Go back'`), `style` (layout overrides only — position/margin/zIndex)  
+**Lock reason:** Constitutional rule — every back-navigation control in the product must use this component. No inline back-button implementations are allowed.
+
+---
+
 ### CardContainer — **LOCKED**
 
 **File:** `src/components/core/CardContainer.jsx`  
@@ -36,9 +45,9 @@ Foundation components used by many others. Handle atomic UI concerns.
 ### LearningHeader
 
 **File:** `src/components/core/LearningHeader.jsx`  
-**Purpose:** Floating capsule header shell for learning screens. Composes `ModuleToolbar` (navigation) and `LearningProgressHeader` (progress display).  
+**Purpose:** Floating capsule header shell for learning screens. Composes `BackButton` (back navigation) and `LearningProgressHeader` (progress display).  
 **Props:** `module`, `progress`, `currentStep`, `totalSteps`, `onBack`, `onExit`  
-**Dependencies:** `ModuleToolbar`, `LearningProgressHeader`, `SUBJECTS`
+**Dependencies:** `BackButton`, `LearningProgressHeader`, `SUBJECTS`
 
 ---
 
@@ -54,8 +63,9 @@ Foundation components used by many others. Handle atomic UI concerns.
 ### ModuleToolbar — **LOCKED**
 
 **File:** `src/components/core/ModuleToolbar.jsx`  
-**Purpose:** Back and exit navigation buttons for learning screens. Navigation only — no learning logic.  
+**Purpose:** Back and exit navigation buttons for learning screens. Navigation only — no learning logic. Back button delegates to `BackButton`.  
 **Props:** `onBack`, `onExit`  
+**Dependencies:** `BackButton`  
 **Lock reason:** Navigation contract. Changing button positions or behaviour breaks muscle memory.
 
 ---

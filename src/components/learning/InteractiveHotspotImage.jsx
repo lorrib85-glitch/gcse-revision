@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import BackButton from '../core/BackButton.jsx'
 
 const THEMES = {
   Biology: {
@@ -191,7 +192,6 @@ export default function InteractiveHotspotImage({
           from { opacity: 0; transform: translateX(-4px); }
           to   { opacity: 1; transform: translateX(0); }
         }
-        .ihi-back:active  { background: rgba(255,255,255,0.12) !important; }
         .ihi-cta:hover    { background: rgba(${glowRgb},0.22) !important; }
         .ihi-cta:active   { opacity: 0.80; }
         .ihi-dot:active   { transform: translate(-50%,-50%) scale(0.88) !important; }
@@ -231,30 +231,15 @@ export default function InteractiveHotspotImage({
 
         {/* Back button */}
         {onBack && (
-          <button
-            className="ihi-back"
+          <BackButton
             onClick={onBack}
-            aria-label="Go back"
             style={{
               position: 'absolute',
               top: 'max(18px, calc(env(safe-area-inset-top, 0px) + 14px))',
               left: '16px',
-              width: '44px', height: '44px', borderRadius: '50%',
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.10)',
-              backdropFilter: 'blur(14px)',
-              WebkitBackdropFilter: 'blur(14px)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', zIndex: 5,
-              transition: 'background 120ms ease',
+              zIndex: 5,
             }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-              stroke="rgba(255,255,255,0.78)" strokeWidth="1.8"
-              strokeLinecap="round" strokeLinejoin="round">
-              <path d="M19 12H5M12 5l-7 7 7 7"/>
-            </svg>
-          </button>
+          />
         )}
 
         {/* Title + paragraph + CTA — anchored low */}

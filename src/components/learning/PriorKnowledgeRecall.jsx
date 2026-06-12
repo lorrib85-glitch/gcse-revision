@@ -5,6 +5,7 @@ import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
+import BackButton from '../core/BackButton.jsx'
 
 // Concept score thresholds
 const SCORE_RECALLED = 0.7   // >= recalled (teal)
@@ -245,21 +246,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           height: 44, marginBottom: SPACING.compact, flexShrink: 0,
         }}>
-          <button
-            onClick={onBack}
-            style={{
-              background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-              color: 'rgba(255,255,255,0.7)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: 22, height: 22,
-            }}
-            aria-label="Back"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"/>
-            </svg>
-          </button>
+          <BackButton onClick={onBack} />
 
           <div style={{
             fontFamily: "'Sora', sans-serif",

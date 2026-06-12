@@ -3,6 +3,7 @@ import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import recoveryQuizzes from '../../data/recoveryQuizzes.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
+import BackButton from '../core/BackButton.jsx'
 
 function ChoiceQuestion({ q, onSelect, subject }) {
   const block = {
@@ -148,17 +149,7 @@ export default function RecoveryQuizPlayer({
           zIndex: 10,
           position: 'relative',
         }}>
-          <button
-            onClick={onBack}
-            style={{
-              background: 'none', border: 'none', padding: 0,
-              cursor: 'pointer', color: accent, opacity: 0.82,
-              display: 'flex', alignItems: 'center', fontSize: 14,
-              fontFamily: "'Inter', sans-serif", fontWeight: 600,
-            }}
-          >
-            ← Back
-          </button>
+          <BackButton onClick={onBack} />
 
           <div style={{
             fontFamily: "'Inter', sans-serif",

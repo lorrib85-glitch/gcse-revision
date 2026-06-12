@@ -45,6 +45,28 @@ Every question type in the product delegates answer logic here. If AnswerInterac
 
 ---
 
+### BackButton
+
+**File:** `src/components/core/BackButton.jsx`
+
+**What it owns:**
+- The visual design of every back-navigation control in the app: 44×44 touch target, `rgba(255,255,255,0.05)` fill, 1px near-invisible border, fully rounded pill (`RADII.pill`), left-chevron icon only, no "Back" label
+- The hover/press feedback: identical opacity (0.6) on both `:hover` and `:active`, via the shared `.rise-back-button` rule in `src/styles.css`
+
+**Why locked:**
+This is a constitutional, app-wide rule: **BackButton is the only back-navigation button implementation allowed anywhere in the app.** Before this component existed, back buttons had drifted into at least four divergent inline patterns (ghost circles, bordered pills with/without "Back" text, bare chevron characters). All of these have been migrated to this single component (28 call sites across `src/App.jsx` and `src/components/**`).
+
+**Allowed changes:**
+- Import path corrections
+- Layout-only overrides via the `style` prop (`position`, `top`/`left`/`right`/`bottom`, `margin`, `zIndex`) — these do not change visual identity
+
+**Not allowed:**
+- Changing size, fill, border, radius, icon, or opacity behaviour
+- Adding a text label
+- Creating any new inline back-button implementation instead of using this component — every back-navigation control, in every new screen, must use `<BackButton />`
+
+---
+
 ### CardContainer
 
 **File:** `src/components/core/CardContainer.jsx`
@@ -96,12 +118,14 @@ Core navigation affordance. Learners develop spatial memory for progress locatio
 **File:** `src/components/core/ModuleToolbar.jsx`
 
 **What it owns:**
-- Back button
+- Back button (delegates to `BackButton` — see above)
 - Exit button
 - Navigation button positions
 
 **Why locked:**
 Navigation contract. Learners build muscle memory for back/exit button positions.
+
+**2026-06-12 change:** the inline back-button implementation was replaced with `<BackButton onClick={onBack} />` as part of the app-wide BackButton consolidation (constitutional rule — see BackButton entry above). The exit button and toolbar layout are unchanged. Treated as covered by the same sign-off, since this component's back button was explicitly named in scope.
 
 **Allowed changes:**
 - Import path corrections
@@ -110,6 +134,7 @@ Navigation contract. Learners build muscle memory for back/exit button positions
 - Moving button positions
 - Adding buttons to the toolbar
 - Changing button visual design
+- Reintroducing an inline back-button implementation (must use `BackButton`)
 
 ---
 

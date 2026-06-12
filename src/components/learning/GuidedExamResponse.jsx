@@ -6,6 +6,7 @@ import { TYPE } from '../../constants/typography.js'
 import { RADII } from '../../constants/radii.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { logExamTechnique, getExamTechniquePatterns } from '../../unifiedWeaknessTracker.js'
+import BackButton from '../core/BackButton.jsx'
 
 // Only acknowledge a technique pattern once it has shown up more than twice —
 // a single slip isn't a pattern worth naming back to the student.
@@ -174,11 +175,6 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
     padding: '0 16px',
     height: 52, flexShrink: 0,
   }
-  const backBtnStyle = {
-    background: 'none', border: 'none', cursor: 'pointer',
-    color: 'rgba(255,255,255,0.45)', fontSize: 20, lineHeight: 1,
-    padding: '8px 8px 8px 0',
-  }
   const labelStyle = {
     fontFamily: "'Sora', sans-serif",
     fontWeight: 700, fontSize: 11,
@@ -281,7 +277,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
           overflow: 'hidden',
         }}>
           <div style={headerStyle}>
-            <button onClick={onExit} style={backBtnStyle}>←</button>
+            <BackButton onClick={onExit} />
             <div style={labelStyle}>
               Exam practice
               <span style={{ color: accent, marginLeft: 6 }}>· {(module.subject || '').toUpperCase()}</span>
@@ -362,7 +358,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
           overflow: 'hidden',
         }}>
           <div style={headerStyle}>
-            <button onClick={onExit} style={backBtnStyle}>←</button>
+            <BackButton onClick={onExit} />
             <div style={labelStyle}>
               Write for the examiner
               <span style={{ color: accent, marginLeft: 6 }}>· {(module.subject || '').toUpperCase()}</span>
@@ -494,7 +490,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
         overflow: 'hidden',
       }}>
         <div style={headerStyle}>
-          <button onClick={onExit} style={backBtnStyle}>←</button>
+          <BackButton onClick={onExit} />
           <div style={labelStyle}>
             Examiner's verdict
             <span style={{ color: accent, marginLeft: 6 }}>· {(module.subject || '').toUpperCase()}</span>
