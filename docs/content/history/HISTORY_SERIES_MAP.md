@@ -49,16 +49,16 @@ it happened because of recurring agents of change.
 | # | Episode | GCSE topic | Current module | Notes |
 |---|---------|-----------|-----------------|-------|
 | 1 | Trust Me, I'm Following Jupiter | Medieval Medicine c1250–1500 | `history-medicine-medieval-beliefs-causes` — "Trust me, I'm Following Jupiter" | Built and aligned — title already matches. |
-| 2 | The Day Everything Changed | Black Death | `history-medicine-black-death` — "Death comes from the east" | Built — covers the right topic but the title doesn't match the spine yet. |
+| 2 | The Day Everything Changed | Black Death | `history-medicine-black-death` — "The day everything changed" | Built and aligned — title now matches the spine. |
 | 3 | The Beginning of Doubt | Medical Renaissance | `mod2` — "Renaissance & the Plague" | Built, but `mod2` currently bundles Episodes 3–5 into one module (see below). |
 | 4 | The Man Who Proved Everyone Wrong | William Harvey | `mod2` (shared — see Episode 3) | Harvey's circulation theory is taught inside `mod2`, not as its own module. |
 | 5 | London's Year of Terror | Great Plague | `mod2` (shared — see Episode 3) | The 1665 Great Plague currently appears inside `mod2` as a "continuity" case study. |
 | 6 | The Boy, the Cow and the Cure | Jenner | `mod4` — "Germ theory" | Built, but `mod4` currently bundles Episodes 6–7 into one module (see below). |
 | 7 | The Invisible Enemy | Pasteur & Koch | `mod4` (shared — see Episode 6) | |
-| 8 | The Great Stink | Public Health | `mod5` — "Public health" | Built — covers the right topic but the title doesn't match the spine yet. |
+| 8 | The Great Stink | Public Health | `mod5` — "The Great Stink" | Built and aligned — title now matches the spine. |
 | 9 | The Day Surgery Changed Forever | Anaesthetics & Antiseptics | `mod3` + `mod6` — "Surgery & anatomy" / "The surgery revolution" | Built as a two-part story: `mod3` sets up the problem (pain, infection, blood loss before 1840), `mod6` delivers the revolution (anaesthetics, antiseptics, Lister). |
 | 10 | The Lady with the Lamp? | Florence Nightingale | — | Not yet built. Nightingale currently appears only as a comparison point in `mod2`'s learning objectives. |
-| 11 | The Accidental Miracle | Penicillin | `mod7` — "The war against infection" | Built — covers the right topic but the title doesn't match the spine yet. |
+| 11 | The Accidental Miracle | Penicillin | `mod7` — "The accidental miracle" | Built and aligned — title now matches the spine. |
 | 12 | When Medicine Became Magic | NHS & Modern Medicine | `mod8` + `mod9` — "Inside modern medicine" / "Who gets healthcare?" | Built, but split awkwardly: `mod8` covers the "magic" half (scans, transplants, DNA), `mod9` opens with the 1948 NHS founding then drifts into Episode 13 content (see below). |
 | 13 | Can We Beat Cancer? | Lung Cancer | `mod9` (shared — see Episode 12) | Lifestyle-disease/lung-cancer content currently lives in the back half of `mod9`, with no clear break from the NHS content. |
 | 14 | Hell in the Trenches | Western Front | — | Not yet built. This is Edexcel's Historic Environment topic (the British sector of the Western Front, 1914–18). |
