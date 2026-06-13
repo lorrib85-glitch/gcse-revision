@@ -127,6 +127,12 @@ Read whenever making creative, educational, storytelling or interaction decision
 
 docs/system/LEARNING_EXPERIENCE_PRINCIPLES.md
 
+## Content Voice
+
+Read before authoring or editing any learner-facing content (module copy, screen text, narration, feedback):
+
+docs/system/TEACHING_VOICE_GUIDE.md
+
 ## Constants
 
 | File | Contents |
