@@ -72,6 +72,13 @@ export default function QuickRecallScreen({
     return () => clearTimeout(t)
   }, [animKey])
 
+  useEffect(() => {
+    if (phase === 'done') {
+      const t = setTimeout(() => onContinue?.(), 100)
+      return () => clearTimeout(t)
+    }
+  }, [phase, onContinue])
+
   function advance() {
     const nextIdx = qIdx + 1
     if (nextIdx >= total) {
@@ -130,40 +137,6 @@ export default function QuickRecallScreen({
 
         {/* Header overlay */}
         {phase !== 'done' && renderHeader?.()}
-
-        {/* Done state with continue button */}
-        {phase === 'done' && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: '#08090D', overflow: 'hidden' }}>
-            <div style={{
-              position: 'absolute', inset: 0,
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <div style={{
-                fontFamily: "'Sora', sans-serif",
-                fontWeight: 700, fontSize: 32,
-                color: accent,
-                marginBottom: 32,
-              }}>
-                All done! 🎯
-              </div>
-              <button
-                onClick={onContinue}
-                style={{
-                  background: accent,
-                  border: 'none',
-                  borderRadius: 12,
-                  padding: '14px 28px',
-                  cursor: 'pointer',
-                  fontFamily: "'Sora', sans-serif",
-                  fontWeight: 700, fontSize: 16,
-                  color: '#08090D',
-                }}
-              >
-                Continue →
-              </button>
-            </div>
-          </div>
-        )}
       </>
 
     </>
