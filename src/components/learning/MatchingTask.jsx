@@ -58,7 +58,6 @@ export default function MatchingTask({ screen, subject, onComplete }) {
   const [wrongTermId,     setWrongTermId]      = useState(null)
   const [feedback,        setFeedback]         = useState('')
   const [lines,           setLines]            = useState([])
-  const [showComplete,    setShowComplete]      = useState(false)
   const [ctaPressed,      setCtaPressed]       = useState(false)
 
   const panelRef  = useRef(null)
@@ -132,7 +131,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
       requestAnimationFrame(() => requestAnimationFrame(() => computeLines(newLocked)))
       // Advance on completion
       if (newLocked.length === currentRound.length && isLastRound) {
-        setTimeout(() => setShowComplete(true), 700)
+        setTimeout(() => onComplete?.(), 700)
       }
     } else {
       // Wrong match
@@ -153,8 +152,6 @@ export default function MatchingTask({ screen, subject, onComplete }) {
       }, 420)
     }
   }
-
-  if (showComplete) return <CompleteScreen screen={screen} bgImage={bgImage} onComplete={onComplete} />
 
   const n              = currentRound.length
   const cardMinHeight  = n >= 5 ? 56 : 64
@@ -424,95 +421,6 @@ export default function MatchingTask({ screen, subject, onComplete }) {
             Continue →
           </button>
         )}
-      </div>
-    </div>
-  )
-}
-
-// ── Complete screen ───────────────────────────────────────────────────────────
-
-function CompleteScreen({ screen, bgImage, onComplete }) {
-  const completion = screen.completion || {}
-  const [pressed, setPressed] = useState(false)
-
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      display: 'flex', flexDirection: 'column',
-      overflow: 'hidden',
-      fontFamily: "'Sora', sans-serif",
-    }}>
-      <style>{CSS}</style>
-
-      {bgImage && (
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: `url(${bgImage})`,
-          backgroundSize: 'cover', backgroundPosition: 'center',
-          zIndex: 0,
-        }} />
-      )}
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(8,5,2,0.84)', zIndex: 0 }} />
-
-      <div style={{
-        position: 'relative', zIndex: 1,
-        flex: 1,
-        display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        padding: '20px 24px',
-        maxWidth: 430, margin: '0 auto', width: '100%',
-        boxSizing: 'border-box',
-      }}>
-        <div style={{
-          fontSize: 11, textTransform: 'uppercase',
-          letterSpacing: '0.12em',
-          color: `rgba(${BRONZE_RGB},0.65)`,
-          marginBottom: 16,
-          animation: 'mt-fade-in 400ms ease both',
-        }}>
-          Complete
-        </div>
-
-        <div style={{
-          fontWeight: 700, fontSize: 32,
-          lineHeight: 1.05, letterSpacing: '-0.02em',
-          color: 'rgba(255,244,222,0.97)',
-          marginBottom: 20,
-          animation: 'mt-fade-in 400ms ease 60ms both',
-        }}>
-          {completion.title || 'Knowledge secured'}
-        </div>
-
-        <div style={{
-          fontSize: 15, lineHeight: 1.65,
-          color: 'rgba(245,230,200,0.72)',
-          marginBottom: 40,
-          maxWidth: 340,
-          whiteSpace: 'pre-line',
-          animation: 'mt-fade-in 400ms ease 120ms both',
-        }}>
-          {completion.body || 'You have matched all the key concepts.'}
-        </div>
-
-        <button
-          onClick={onComplete}
-          onPointerDown={() => setPressed(true)}
-          onPointerUp={() => setPressed(false)}
-          onPointerLeave={() => setPressed(false)}
-          style={{
-            width: '100%', height: 48,
-            borderRadius: 16, border: 'none', cursor: 'pointer',
-            background: `linear-gradient(135deg, rgba(${BRONZE_RGB},0.85), ${BRONZE})`,
-            color: '#0A0804',
-            fontFamily: "'Sora', sans-serif",
-            fontSize: 14, fontWeight: 700,
-            boxShadow: `0 4px 20px rgba(${BRONZE_RGB},0.28)`,
-            transform: pressed ? 'scale(0.985)' : 'scale(1)',
-            transition: 'transform 120ms ease',
-            animation: 'mt-fade-in 400ms ease 200ms both',
-          }}
-        >
-          Continue
-        </button>
       </div>
     </div>
   )
