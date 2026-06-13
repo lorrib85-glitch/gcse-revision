@@ -100,6 +100,12 @@ export default function QuickRecallScreen({
 
   const cur = questions[qIdx]
 
+  // Normalize true/false recall questions ({ type: 'truefalse', isTrue }) into
+  // the options/correct shape UnifiedQuestionScreen expects.
+  const isTrueFalse = cur?.type === 'truefalse'
+  const curOptions = isTrueFalse ? ['True', 'False'] : (cur?.options || [])
+  const curCorrect = isTrueFalse ? (cur?.isTrue ? 0 : 1) : cur?.correct
+
   const contentAnim = {
     in:     { animation: 'qrs-up-in 360ms cubic-bezier(0.16,1,0.3,1) both' },
     active: { opacity: 1 },
@@ -117,8 +123,8 @@ export default function QuickRecallScreen({
             key={animKey}
             question={cur.question || cur.q}
             type={cur.type || 'choice'}
-            options={cur.options || []}
-            correct={cur.correct}
+            options={curOptions}
+            correct={curCorrect}
             hint={cur.hint}
             explanation={cur.explanation}
             backgroundImage={img}
