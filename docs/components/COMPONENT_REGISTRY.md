@@ -206,6 +206,18 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
+### GraphView
+
+**File:** `src/components/learning/GraphView.jsx`  
+**What it is:** Embeddable SVG chart block — bar, line, scatter, or pie — rendered inline within a content screen.  
+**Best used for:** Displaying GCSE Maths/Science data (frequency tables, linear/real-life graphs, scatter graphs with line of best fit, proportion/probability pie charts) alongside a question elsewhere on the screen (e.g. an `ExamQuestionFrame`/`quiz` block that says "use the graph to find..."). Purely a data display — does not log to the weakness tracker itself.  
+**Props:** `block`, `subject` (defaults to `Maths`)  
+**Block shape:** `{ type: 'graphView', graphType: 'bar'|'line'|'scatter'|'pie', title?, caption?, xLabel?, yLabel?, data?: [{label, value}], points?: [{x, y}], lineOfBestFit?: {from: {x,y}, to: {x,y}}, xMin?, xMax?, yMin?, yMax? }`  
+**Screen type:** `graphView` (content block, rendered inside `Screen` in `ModulePlayer.jsx`)  
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `TYPE`, `CardContainer`
+
+---
+
 ### GuidedChoiceCarousel
 
 **File:** `src/components/learning/GuidedChoiceCarousel.jsx`  
