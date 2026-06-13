@@ -95,7 +95,8 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### ExplainReveal
 
 **File:** `src/components/learning/ExplainReveal.jsx`  
-**Purpose:** Progressive cause-and-effect reasoning chain. Reveals steps one by one — teaches the logic, not just the answer.  
+**What it is:** Progressive step-by-step reasoning chain with tap-to-reveal steps.  
+**Best used for:** Teaching cause-and-effect logic (e.g., "Wrong belief → Wrong treatment → Patient harm"). Teaches the reasoning chain, not just facts.  
 **Props:** `block`, `subject`, `onContinue`, `onBack`  
 **Dependencies:** `SUBJECTS`, `MOTION`
 
@@ -169,7 +170,8 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### ColSortBlock
 
 **File:** `src/components/learning/ColSortBlock.jsx`  
-**Purpose:** Interactive column-sort categorisation task. Learners sort item chips into labelled columns with tap selection and animated correct/wrong feedback.  
+**What it is:** Interactive categorisation task where learners sort items into labelled columns.  
+**Best used for:** Grouping concepts into categories (e.g., "Supernatural vs Natural causes", "Treatments vs Prevention methods"). Tap-to-select with visual feedback.  
 **Props:** `block`, `subject`, `onComplete`  
 **Dependencies:** `SUBJECTS`, `MOTION`
 
@@ -178,10 +180,10 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### DragToOrderTask
 
 **File:** `src/components/learning/DragToOrderTask.jsx`  
-**Purpose:** Timeline/sequence ordering task. Learners drag items to arrange them in chronological or logical order (e.g., Hippocrates → Galen → Jenner). Uses native HTML5 drag-and-drop. Logs correct/incorrect to the weakness tracker.  
+**What it is:** Drag-to-reorder component for arranging items in sequence.  
+**Best used for:** Chronological ordering tasks (e.g., timeline events, historical figures in order, process steps). Uses native HTML5 drag-and-drop. Logs answers to weakness tracker.  
 **Props:** `items`, `subject`, `onComplete`, `backgroundImage`  
 **Data shape:** `items: [{ id, label, description? }, ...]` (order in array = correct sequence)  
-**Screen type:** Can be used as a full-screen component or integrated into ModulePlayer  
 **Dependencies:** `SUBJECTS`, `MOTION`, `SPACING`, `unifiedWeaknessTracker`
 
 ---
@@ -225,9 +227,10 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### MatchingTask
 
 **File:** `src/components/learning/MatchingTask.jsx`  
-**Purpose:** Term-to-description card-pair matching activity. Draws SVG connector lines between matched pairs. Splits large sets (>6) into rounds. Logs wrong answers to the weakness tracker.  
+**What it is:** Card-pair matching activity with visual connector lines.  
+**Best used for:** Linking terms to definitions, concepts to examples, or causes to effects (e.g., "Medieval beliefs" ↔ "Treatments"). Splits large sets into rounds. One-retry mechanism.  
 **Props:** `screen`, `subject`, `onComplete`  
-**Screen data shape:** `{ pairs: [{ id, term, answer, weakGroup }], backgroundImage, completion: { title, body } }`  
+**Screen data shape:** `{ pairs: [{ id, term, answer, weakGroup }], backgroundImage }`  
 **Dependencies:** `MOTION`, `unifiedWeaknessTracker`
 
 ---
@@ -244,10 +247,10 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### MisconceptionCheck
 
 **File:** `src/components/learning/MisconceptionCheck.jsx`  
-**Purpose:** Precision-check interaction (Science blueprint Part 4 — Check precision). Full-screen, cinematic, one true/false misconception statement at a time — never a generic quiz card. Calm reveal headline ("Spotted it." / "Actually true."/"Actually false.") plus an optional exam-trap note. Logs to the weakness tracker under topic "Misconception recognition".  
+**What it is:** Cinematic true/false misconception trap checker.  
+**Best used for:** Catching common false beliefs (e.g., "Galen was never wrong" — FALSE). Full-screen, one statement at a time. Calm, non-punitive reveals. Logs to weakness tracker.  
 **Props:** `block`, `subject`, `onContinue`  
 **Block shape:** `{ type: 'misconceptionCheck', statements: [{ statement, answer: true|false, reveal, examTrap? }] }`  
-**Screen type:** `misconceptionCheck` (rendered as a `Screen` content block in `ModulePlayer`)  
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `BUTTONS`, `unifiedWeaknessTracker`
 
 ---
@@ -255,10 +258,10 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### SpotTheError
 
 **File:** `src/components/learning/SpotTheError.jsx`  
-**Purpose:** Diagnostic precision-check interaction (Science blueprint Part 4 — Check precision). Shows a statement, calculation or explanation containing one hidden error. The student selects the incorrect span, explains why it's wrong, then rewrites it correctly — diagnosis, not recognition. Logs "Error identification" and "Scientific precision" as separate weaknesses.  
+**What it is:** Error identification and correction activity — find the mistake, explain it, rewrite correctly.  
+**Best used for:** Precision-checking misconceptions or calculation errors. Teaches diagnosis (finding errors) not just recognition (knowing answers). Logs multiple weakness types.  
 **Props:** `block`, `subject`, `onContinue`  
 **Block shape:** `{ type: 'spotTheError', prompt?, statement, errorTarget, whatWasWrong, examinerNote, correctVersion, commonTrap, keyTerms? }`  
-**Screen type:** `spotTheError` (rendered as a `Screen` content block in `ModulePlayer`)  
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`, `TYPE`, `BUTTONS`, `unifiedWeaknessTracker`
 
 ---
@@ -266,7 +269,8 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### SwipeSort
 
 **File:** `src/components/learning/SwipeSort.jsx`  
-**Purpose:** Swipe-gesture sorting activity. Learners drag/swipe cards into category zones. Powers the `naturalSupernaturalSwipe` screen type.  
+**What it is:** Swipe-gesture categorisation activity with cards dragged into zones.  
+**Best used for:** Binary or multi-way classification (e.g., "Supernatural vs Natural" causes). Mobile-friendly drag interaction. Fast-paced categorisation tasks.  
 **Props:** `block`, `subject`, `onComplete`  
 **Dependencies:** `SUBJECTS`, `MOTION`
 
@@ -355,7 +359,8 @@ Question feedback and exam practice components.
 ### RetrievalFrame — **LOCKED**
 
 **File:** `src/components/feedback/RetrievalFrame.jsx`  
-**Purpose:** Cinematic wrapper for retrieval moments. Delegates all answer logic to AnswerInteraction. Provides atmospheric framing for question display.  
+**What it is:** Cinematic wrapper for spaced-retrieval practice questions.  
+**Best used for:** Testing knowledge recall in a low-pressure moment. Wraps any question type with atmospheric framing. No penalty for wrong answers.  
 **Props:** `block`, `subject`, `progress`, `onAnswer`, `onContinue`, `onBack`  
 **Lock reason:** Visual contract for all retrieval screens. Changing it risks inconsistency across all question presentations.  
 **Dependencies:** `AnswerInteraction`, `SUBJECTS`
