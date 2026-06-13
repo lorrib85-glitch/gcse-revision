@@ -468,6 +468,27 @@ export const MODULES = [
             ],
           },
           {
+            title: 'Apothecary',
+            image: '/figures/history/medicine/medieval/medieval-street.webp',
+            sections: [
+              { heading: 'Favourite methods', items: ['Mixing remedies', 'Herbal medicine', 'Purging'] },
+              { heading: 'Cost', items: ['💰💰💰'] },
+              { heading: 'Thomas confidence', items: ['⭐⭐⭐⭐⭐☆☆☆☆☆'] },
+            ],
+            reaction: '"At least this one smells nice."',
+            buttonText: 'Choose the Apothecary',
+            nextScreenId: 'post-choice',
+            revealLines: [
+              "You chose the Apothecary.",
+              "Think of him as a medieval pharmacist.",
+              "He mixes herbs, spices and other ingredients into ready-made remedies — and sells them straight from his shop.",
+              "Cheaper than a physician, and no appointment needed.",
+              "Physicians weren't keen on him.",
+              "He was competition. And he sometimes sold the poisons used for purging — something physicians saw as breaking their oath to do no harm.",
+              "For most people in town, the apothecary's shop was where medicine actually happened.",
+            ],
+          },
+          {
             title: 'Wise Woman',
             image: '/figures/history/medicine/medieval/wise-woman.webp',
             sections: [
@@ -732,6 +753,244 @@ export const MODULES = [
       },
 
       {
+        type: 'collectionExplorer',
+        stage: 'Prevention and care',
+        id: 'staying-well-1400',
+        label: 'Staying Well in 1400',
+        title: 'Staying well in 1400',
+        description: 'Tap each object to find out how people tried to stay healthy — before anyone knew about germs.',
+        backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
+        items: [
+          {
+            id: 'regimen-sanitatis',
+            x: 22, y: 38,
+            label: "A physician's lifestyle chart",
+            reveals: [
+              { text: "A wealthy merchant keeps a written chart pinned to his wall — instructions for exactly how to eat, sleep and bathe." },
+              { text: "This is a Regimen Sanitatis: a physician's personal guide to diet, exercise, sleep and bathing, written to keep a patient's humours in balance." },
+              { text: "Prevention followed the same logic as treatment. If the Four Humours explained illness, keeping them balanced through daily habits should stop illness before it started." },
+              { text: "It's tempting to think prevention was free for everyone. A personalised Regimen Sanitatis came from a physician — which meant it cost money. Only the wealthy could afford this kind of advice." },
+              { text: "Exam takeaway: link prevention back to the Four Humours whenever you can. It shows the theory shaped daily life, not just doctor's visits." },
+            ],
+          },
+          {
+            id: 'stewes',
+            x: 70, y: 60,
+            label: 'A public bathhouse',
+            reveals: [
+              { text: "Down a side street, steam rises from a public bathhouse — and anyone can walk in." },
+              { text: "These are stewes: medieval public baths. Unlike a Regimen Sanitatis, they were free to use." },
+              { text: 'Bathing fitted both major theories of disease. It rebalanced "wet" and "dry" qualities under the Four Humours, and washed away the dirt thought to cause bad-smelling, disease-carrying air.' },
+              { text: "Don't assume medieval people never washed. Public baths existed in towns and were used regularly — the idea of total medieval filth is exaggerated." },
+              { text: "Exam takeaway: stewes show prevention wasn't only for the rich — though, as with most things, the wealthy still had better options at home." },
+            ],
+          },
+          {
+            id: 'purifying-air',
+            x: 45, y: 22,
+            label: 'A bunch of dried herbs',
+            reveals: [
+              { text: "A woman walking through town presses a small bunch of dried flowers to her nose." },
+              { text: 'This is "purifying the air" — carrying sweet-smelling herbs (a posy) and ringing bells to keep the air moving, both believed to protect against miasma.' },
+              { text: "If bad-smelling air carried disease, then good smells and moving air should push it away. This is a direct, logical use of miasma theory in everyday life." },
+              { text: 'This wasn\'t random superstition. Miasma theory came from Hippocrates and Galen — so "purifying the air" was following respected medical authority, not folk magic.' },
+              { text: "Exam takeaway: if a question asks how ideas about disease shaped prevention, this is your clearest example — belief in miasma led directly to carrying herbs and ringing bells." },
+            ],
+          },
+          {
+            id: 'clean-water',
+            x: 82, y: 80,
+            label: 'A water pipe',
+            reveals: [
+              { text: "In Gloucester, water runs through lead pipes straight into a wealthy household. Across the country in Hull, a cart waits outside to empty the cesspit." },
+              { text: 'Some towns invested in clean water and waste removal. Gloucester used lead pipes and an aqueduct — though mainly for the rich. Hull used "night carts" to empty cesspits.' },
+              { text: "Removing waste and securing clean water were genuine attempts at prevention, separate from humours, miasma or astrology — based on the simple observation that dirty places bred illness." },
+              { text: "Don't picture every medieval town as equally dirty or equally clean. Provision varied hugely, and depended heavily on wealth." },
+              { text: "Exam takeaway: clean water schemes are one of your strongest \"genuine progress in prevention\" examples — alongside London's rakers and Edward III's 1352 law." },
+            ],
+          },
+        ],
+        synthesis: {
+          heading: 'Prevention followed belief',
+          points: [
+            'A Regimen Sanitatis followed the Four Humours — diet, sleep and bathing kept the body in balance.',
+            'Sweet herbs and ringing bells followed miasma theory — pushing away the bad air believed to carry disease.',
+            'Stewes and clean water schemes show some genuine, practical progress — town by town, and unevenly.',
+            "Wealth decided how much prevention you could afford, from a private Regimen Sanitatis to Gloucester's lead pipes.",
+          ],
+          examTakeaway: 'Every prevention method here connects back to a cause theory you already know. When you explain medieval prevention, name the belief behind it — that link is where the marks are.',
+        },
+      },
+
+      {
+        stage: 'Prevention and care',
+        label: 'Whose job was it to stay healthy?',
+        kicker: 'Public health',
+        heading: 'Whose job was it to stay healthy?',
+        sub: 'Sort each example by who was responsible for it.',
+        blocks: [
+          {
+            type: 'colsort',
+            question: 'Government action or individual responsibility?',
+            columns: [
+              { label: 'GOVERNMENT / TOWN\nOrganised by authorities', color: '#D69B45', bg: 'rgba(214,155,69,.07)' },
+              { label: 'INDIVIDUAL / FAMILY\nPersonal choices and money', color: '#A89070', bg: 'rgba(168,144,112,.07)' },
+            ],
+            items: [
+              { label: "Edward III's 1352 law banning littering in London's streets", col: 0, explanation: 'Government action — a royal law aimed at the whole city.' },
+              { label: '12 rakers employed to clear London\'s streets by 1370', col: 0, explanation: 'Government action — the town paid workers to keep streets clear.' },
+              { label: 'Hull\'s "night carts" emptying cesspits', col: 0, explanation: 'Government action — an organised town service.' },
+              { label: "Public latrines built in London, with butchers ordered to remove their waste", col: 0, explanation: 'Government action — a rule enforced on traders by the town.' },
+              { label: 'Carrying sweet-smelling herbs to ward off bad air', col: 1, explanation: 'Individual choice — a personal precaution anyone could take.' },
+              { label: "Gloucester's lead pipes bringing fresh water to wealthy homes", col: 1, explanation: 'Paid for by wealthy individuals — clean water was a privilege of money, not a service for everyone.' },
+              { label: "Following a physician's Regimen Sanitatis", col: 1, explanation: 'Individual choice — and only for those who could pay for the advice.' },
+              { label: 'Ringing bells to keep the air moving near your home', col: 1, explanation: 'Individual choice — a household precaution based on miasma theory.' },
+            ],
+            explanation: 'Most organised public health came from towns and government — but usually only once a problem became impossible to ignore. For most people, staying healthy day to day was still down to what they believed and what they could afford.',
+          },
+        ],
+      },
+
+      {
+        type: 'interactiveImage',
+        stage: 'Prevention and care',
+        id: 'medieval-hospitals',
+        label: 'A Walk Through Medieval London',
+        title: 'A walk through medieval London',
+        introText: 'By 1400, England had over 500 hospitals. Tap each one to find out what really happened inside.',
+        image: '/figures/history/medicine/medieval/vl-church.webp',
+        imageAlt: 'A medieval church and hospital building in London',
+        ctaLabel: 'Step inside',
+        hotspots: [
+          {
+            id: 'st-barts', x: 30, y: 35,
+            shortLabel: "St Bartholomew's", title: "St Bartholomew's, 1123", icon: '🏥',
+            description: "Founded in 1123, St Bartholomew's was the first hospital in England. By 1400, over 500 hospitals existed across the country — most run by the Church, often inside monasteries, or paid for by wealthy donors.",
+            extraFact: "St Bartholomew's Hospital is still treating patients in London today — nearly 900 years after it was founded.",
+          },
+          {
+            id: 'care-not-cure', x: 62, y: 52,
+            shortLabel: 'Inside the ward', title: 'Care, not cure', icon: '🛏️',
+            description: "Most hospitals offered food, warmth, clean bedding and prayer. Monks and nuns looked after patients as a religious duty. What they didn't offer was a cure.",
+            extraFact: "Patients with infectious or terminal illnesses were often turned away. If nothing could be done for a condition, the hospital had no role for them.",
+          },
+          {
+            id: 'lazar-house', x: 80, y: 28,
+            shortLabel: 'The Lazar House', title: 'The Lazar House', icon: '⛪',
+            description: 'A Lazar House was a separate hospital for people with leprosy, run by the Church and kept apart from the rest of the town.',
+            extraFact: 'Keeping leprosy sufferers apart shows medieval people understood some diseases could pass between people — even without knowing why.',
+          },
+          {
+            id: 'endowment', x: 48, y: 75,
+            shortLabel: 'Who paid for this?', title: 'Money left in a will', icon: '📜',
+            description: "Hospitals were expensive to run. Many were funded by an endowment — money a wealthy person left in their will, often to help guarantee their soul's place in heaven.",
+            extraFact: 'For the donor, funding a hospital was also a religious investment. Caring for the sick was believed to count in your favour with God.',
+          },
+        ],
+      },
+
+      {
+        stage: 'Prevention and care',
+        label: 'How John Bradmore saved a prince',
+        kicker: 'Surgery in wartime',
+        heading: 'How John Bradmore saved a prince',
+        sub: '1403. An arrow. A teenage prince. A surgeon with no anaesthetic, no antiseptic — and no idea why either would matter.',
+        blocks: [
+          {
+            type: 'explainReveal',
+            intro: 'At the Battle of Shrewsbury in 1403, a 16-year-old prince — later Henry V — was hit in the face by an arrow. The arrowhead broke off and lodged deep in the bone. Here is how his surgeon, John Bradmore, saved his life.',
+            atmosphereImage: '/figures/history/medicine/medieval/barber-surgeon.webp',
+            steps: [
+              {
+                id: 'problem',
+                statement: 'The arrowhead',
+                emphasis: "was lodged six inches deep in bone, behind the prince's nose.",
+                detail: 'Pulling it out the way it went in would tear the wound wider and risk killing him.',
+              },
+              {
+                id: 'tool',
+                statement: 'Bradmore designed a tool —',
+                emphasis: 'a hollow metal screw that could grip the inside of the arrowhead and draw it out in a straight line.',
+                detail: 'No textbook described this. It was a practical solution to a problem no one had written about.',
+              },
+              {
+                id: 'antiseptic',
+                statement: 'Before removing it,',
+                emphasis: 'Bradmore washed the wound with wine and treated it with honey.',
+                detail: 'Wine acted as an antiseptic and honey helped clean the wound — though Bradmore had no idea why either worked. He knew, from experience, that they helped.',
+              },
+              {
+                id: 'recovery',
+                statement: 'The prince survived,',
+                emphasis: 'recovering over several weeks — though the scar stayed with him for life.',
+                detail: 'Many soldiers with similar wounds died, not from the injury itself but from infection afterwards. This patient was one of the lucky ones.',
+              },
+            ],
+            reflectionPrompt: "Bradmore had no university training in this. His tool, his wine, his honey — all came from practical experience treating soldiers, not from Galen's books. War created a space where practical skill counted more than ancient authority.",
+          },
+        ],
+      },
+
+      {
+        type: 'matchingTask',
+        stage: 'Prevention and care',
+        label: 'Words from a medieval medicine chest',
+        subject: 'History',
+        title: 'Words from a medieval medicine chest',
+        instruction: 'Match each term to its description.',
+        weakAreaCategory: 'Medieval Medicine Key Concepts',
+        backgroundImage: '/headers/history-medicine-medieval-scripture.png',
+        pairs: [
+          {
+            id: 'apothecary',
+            term: 'Apothecary',
+            answer: 'Like a pharmacist — mixed and sold ready-made herbal remedies; disliked by physicians as cheaper competition.',
+            weakGroup: 'People',
+          },
+          {
+            id: 'vademecum',
+            term: 'Vademecum',
+            answer: 'A book of diagnoses that a physician carried with them.',
+            weakGroup: 'Tools and methods',
+          },
+          {
+            id: 'lazar-house',
+            term: 'Lazar House',
+            answer: 'A separate hospital for people with leprosy, run by the Church.',
+            weakGroup: 'Hospitals',
+          },
+          {
+            id: 'endowment',
+            term: 'Endowment',
+            answer: "Money left in a wealthy person's will to help fund a hospital.",
+            weakGroup: 'Hospitals',
+          },
+          {
+            id: 'rakers',
+            term: 'Rakers',
+            answer: 'Workers paid by a town to clear the streets of waste — there were 12 in London by 1370.',
+            weakGroup: 'Public health',
+          },
+          {
+            id: 'theriaca',
+            term: 'Theriaca',
+            answer: 'A herbal remedy made from many different spices, used to treat almost any illness.',
+            weakGroup: 'Treatments',
+          },
+          {
+            id: 'trepanning',
+            term: 'Trepanning',
+            answer: 'Drilling a hole in the skull — originally to release demons believed to cause mental illness.',
+            weakGroup: 'Treatments',
+          },
+        ],
+        completion: {
+          title: 'Knowledge secured',
+          body: "These words cover the practical world of medieval medicine — who sold remedies, who got cared for, who cleaned the streets, and how physicians carried their knowledge with them.\n\nTogether they give you the detail examiners reward in \"describe\" and \"explain\" questions about treatment, hospitals and public health.",
+        },
+      },
+
+      {
         type: 'naturalSupernaturalSwipe',
         stage: 'Rational vs supernatural',
         label: 'Supernatural vs Natural Causes',
@@ -959,6 +1218,126 @@ Do NOT award marks for identifying practices without explaining the religious re
             explanation: 'Medieval doctors trusted ancient authorities heavily — their texts were treated almost like scripture.',
           },
         ],
+      },
+
+      {
+        stage: 'How much did medicine change?',
+        label: 'Common traps',
+        kicker: 'Before the big essay',
+        heading: 'Three statements. Look closely.',
+        sub: 'Each one sounds true. Decide before you read on.',
+        blocks: [
+          {
+            type: 'misconceptionCheck',
+            statements: [
+              {
+                statement: 'Hippocrates invented the Theory of Opposites.',
+                answer: false,
+                reveal: 'Hippocrates created the Theory of the Four Humours — the idea that the body contains four substances that must stay balanced. It was Galen, writing centuries later, who built on this and added the Theory of Opposites.',
+                examTrap: 'Mixing up Hippocrates and Galen is one of the most common errors in this topic. If a question names a theory, check which physician it belongs to before you write.',
+              },
+              {
+                statement: 'Medieval hospitals existed to cure the sick.',
+                answer: false,
+                reveal: 'Most hospitals offered "care, not cure" — food, warmth, clean bedding and prayer. Patients with infectious or terminal illnesses were often turned away, because the hospital had nothing it could do for them.',
+                examTrap: 'If a question asks about the purpose of medieval hospitals, "curing illness" is the wrong answer. The correct framing is care, charity and religious duty.',
+              },
+              {
+                statement: 'Bloodletting and purging were known to be useless, even at the time.',
+                answer: false,
+                reveal: 'To medieval doctors, bloodletting and purging looked like they worked. A patient who vomited or sneezed appeared to be expelling an excess humour — visible "evidence" the treatment was succeeding.',
+                examTrap: "When a question asks why people used a treatment, don't answer as if they knew it was pointless. Explain why it seemed logical to them, based on what they could see.",
+              },
+            ],
+          },
+        ],
+      },
+
+      {
+        type: 'conceptReveal',
+        id: 'core-takeaway',
+        stage: 'How much did medicine change?',
+        tag: 'core-takeaway',
+        label: 'So How Much Actually Changed?',
+        steps: [
+          {
+            eyebrow: 'The big question',
+            mainText: 'Between 1250 and 1500, medical knowledge barely moved.',
+            supportText: 'Every idea in this chapter — the Four Humours, miasma, astrology — was a logical response to the evidence people could see. Sneezing looked like the body curing itself. Disease really was worse near swamps and rubbish. These ideas made sense.',
+          },
+          {
+            mainText: 'So why did these ideas survive for over a thousand years, unchanged?',
+            supportText: "The Church controlled education, books and training. Physicians studied only Galen, because Galen was the only writer the Church approved. Dissection was banned — bodies had to stay whole for the soul — so no one could find evidence against Galen, even by accident.",
+          },
+          {
+            mainText: "Even when evidence did contradict Galen, it didn't count.",
+            supportText: 'On the rare occasions a dissection showed something Galen hadn\'t described, doctors explained it away as "an imperfect body" — not as a mistake in Galen\'s work. Authority came first. Evidence came second.',
+          },
+          {
+            mainText: 'One area moved faster: surgery.',
+            supportText: "John Bradmore's tool for removing an arrowhead came from battlefield experience, not a Church-approved textbook. War sat outside the university system — so practical skill could develop where ancient authority didn't reach.",
+          },
+          {
+            mainText: "People weren't stupid. Their ideas were logical, given what they knew.",
+            supportText: "What stopped medicine changing wasn't a shortage of good thinking — it was a shortage of permission to test it. Next time you meet an idea that lasted far longer than it should have, ask the same question: who controlled the knowledge, and what would it have cost them to be wrong?",
+          },
+        ],
+      },
+
+      {
+        type: 'guidedExamResponse',
+        stage: 'How much did medicine change?',
+        label: 'Write the big essay',
+        exam: {
+          board: 'edexcel',
+          subject: 'history',
+          topic: 'medieval-medicine',
+          beatText: 'One last test. The biggest question in this chapter.',
+          question: '"The role of the Church was the main reason why there was little change in care and treatment in the years c1250–c1500." How far do you agree? Explain your answer. (16 marks)',
+          marks: 16,
+          sections: [
+            {
+              label: 'Agree — the Church controlled medicine',
+              starter: 'The Church was the main reason for the lack of change because...',
+              placeholder: '...it controlled medical training, so physicians studied only Galen for over 1,000 years. It also banned dissection, which meant...',
+            },
+            {
+              label: 'Disagree — other factors mattered too',
+              starter: 'However, the Church was not the only reason, because...',
+              placeholder: '...most people were treated at home using herbal remedies, which had little link to the Church. Also, some change did happen outside Church control — for example...',
+            },
+            {
+              label: 'Your judgement',
+              starter: 'Overall, I think the Church...',
+              placeholder: '...was / was not the main reason, because... [give your overall judgement and back it up with your strongest point]',
+            },
+          ],
+          markScheme: `Total: 16 marks (AO1: 6, AO2: 10) — assesses analysis and judgement of how far the Church's role explains the lack of change in care and treatment, c1250–c1500.
+
+Stimulus points given in the exam: medical training; herbal remedies.
+
+FOR — the Church was the main reason:
+- The Church controlled medical training: universities taught only Galen's ideas, approved because they fitted belief in the soul.
+- Because training stayed Galen-based, physicians kept using bleeding, purging and the Theory of Opposites for over 1,000 years.
+- The Church taught that illness was sent by God as punishment for sin, which discouraged the search for other causes.
+- Church-run hospitals focused on "care not cure" — prayer and charity, not medical treatment.
+- The Church banned dissection, so no anatomical evidence could ever challenge Galen.
+
+AGAINST — other factors also explain the lack of change:
+- Most people were treated at home, mainly by women using herbal remedies — this had no direct link to the Church.
+- Some herbal remedies genuinely worked for minor illness, regardless of what the Church taught.
+- The scientific method needed to test or disprove old ideas did not exist yet — the Church didn't need to block progress that wasn't possible anyway.
+- Apothecaries sold remedies based on physicians' ideas — a knock-on effect of medical training, not something the Church controlled directly.
+- Some practical progress did happen outside Church control — for example wartime surgery (John Bradmore) and town public health measures (London's rakers, Edward III's 1352 law).
+
+LEVEL DESCRIPTORS:
+Level 1 (1-4 marks): Simple or generalised statements, little development. A judgement may be missing or simply asserted without support.
+Level 2 (5-8 marks): Some analysis, but development is limited and reasoning is not sustained. A judgement is given but not well supported. CAPPED AT 7/16 if the answer does not go beyond the stimulus points (medical training, herbal remedies).
+Level 3 (9-12 marks): Sustained analysis focused on the question, generally well-reasoned. A judgement is given and justified, though some of the reasoning behind it may be implicit. CAPPED AT 11/16 if the answer does not go beyond the stimulus points.
+Level 4 (13-16 marks): Consistent, coherent and sustained analytical reasoning throughout, with wide-ranging and precisely selected own knowledge. A judgement is reached and fully justified by the analysis. Level 4 is not available unless the answer goes beyond the stimulus points — own additional knowledge is essential.
+
+Strong Level 4 conclusion: the Church was the dominant reason physician-led medicine stayed the same — but most medieval healthcare happened outside that system entirely, in homes and via apothecaries, where the Church's control was weaker or absent. The strongest answers separate "why did physician-led treatment stay the same" (Church-dominated) from "why did medicine in general barely change" (the Church, plus the simple absence of any alternative way of testing ideas).`,
+        },
       },
 
     ],
