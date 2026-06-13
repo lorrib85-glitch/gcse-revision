@@ -1,4 +1,4 @@
-# Topic brief generator — design
+# Canonical topic generator — design
 
 ## Context
 
@@ -16,20 +16,22 @@ chapter, there's currently no single document that brings together:
   guides) needed to write it.
 
 This design adds a project Skill that synthesizes all of this into one
-`topic.md` per chapter, on demand, using source material the user shares
-in the same session (transient — not stored in the repo).
+**canonical topic file** per chapter, on demand, using source material the
+user shares in the same session (transient — not stored in the repo). This
+file becomes the canonical knowledge source for that chapter — a future
+build/audit session reads it *instead of* re-gathering source material.
 
 ## Skill
 
-**Name/location:** `.claude/skills/topic-brief/SKILL.md` (project-level
+**Name/location:** `.claude/skills/canonical-topic/SKILL.md` (project-level
 skill, standard frontmatter + markdown instructions).
 
-**Invocation:** `/topic-brief <argument>`, where `<argument>` is either:
+**Invocation:** `/canonical-topic <argument>`, where `<argument>` is either:
 
-- a single episode name (e.g. `/topic-brief The Great Stink`), or
-- a series name (e.g. `/topic-brief Medicine Through Time`) — the skill
+- a single episode name (e.g. `/canonical-topic The Great Stink`), or
+- a series name (e.g. `/canonical-topic Medicine Through Time`) — the skill
   loops over every episode row for that series in the relevant series-map
-  doc and writes one `topic.md` per episode.
+  doc and writes one canonical topic file per episode.
 
 Both forms are supported by the same skill; it decides which mode based on
 whether the argument matches a series name or an episode name in the
@@ -92,9 +94,39 @@ Examples (Series 1): `01_Trust_Me_Im_Following_Jupiter.md`,
 Files are **permanent and committed** — they become the canonical
 pre-build/audit reference for that chapter.
 
+## Content philosophy
+
+**The primary consumer of every canonical topic file is another LLM** (a
+future Claude session doing the actual build/audit), not a human skimming
+the page. This governs how every section of the output template below is
+written:
+
+- **Completeness over brevity.** Include every fact, date, name, figure,
+  cause-and-effect link, and exam-relevant detail available from
+  session-provided material and from the series map / architecture doc. Do
+  not summarize away detail "for readability" — a future session reading
+  this file should not need to re-read the original source material. If in
+  doubt, include the fact.
+- **Structure over prose.** Prefer bullet lists, nested bullets, explicit
+  `X → Y` relationship lines, and tables over flowing paragraphs. Headings
+  and sub-headings should make the file skimmable and greppable.
+- **Never silently infer or invent.** If session-provided material doesn't
+  cover something the spec/architecture implies is needed, do not fill the
+  gap with plausible-sounding invented content:
+  - Write `MISSING: <what's needed, and which sub-topic it covers>` —
+    derived from the series map's GCSE topic / Key Topic description, so a
+    future session knows exactly what to go and source.
+  - Write `UNCERTAIN: <the fact, and what's uncertain about it>` for facts
+    that are partially supported but not confidently confirmed.
+- **Flag conflicts, don't resolve them silently.** If two pieces of
+  session-provided material disagree (e.g. different dates for the same
+  event), present both and write `CONFLICT: <description>` rather than
+  picking one.
+
 ## Output template
 
-Each `topic.md` has six sections:
+Each canonical topic file has six sections, written per the Content
+philosophy above:
 
 ### 1. Identity
 Episode number, title, subtitle, era, Key Topic reference, and current build
@@ -109,10 +141,15 @@ status — either `Built as <module-id>` (with its current title/number in
   Time) has no Key Topic numbering — omit this field for Series 1 episodes.
 
 ### 2. Specification requirements
-What the GCSE specification requires for this topic — summarized from
-whatever spec material was shared in the session. If no spec material was
-provided for this episode, state that explicitly and fall back to the
-series map's topic description only.
+An exhaustive bulleted list of every specification requirement for this
+topic, drawn from whatever spec material was shared in the session — one
+bullet per sub-topic/concept, with nested bullets for supporting detail
+(named examples, date ranges, key terms). For any sub-topic the series map's
+GCSE topic / Key Topic description implies but the session material doesn't
+cover, add a `MISSING:` bullet naming that sub-topic specifically. If no
+spec material was provided at all, state that explicitly, then list
+`MISSING:` bullets for every sub-topic implied by the series map's topic
+description — this becomes the next session's sourcing checklist.
 
 ### 3. Architecture checklist (tailored)
 Walk through Section 1–6 from the architecture doc. For each section:
@@ -135,11 +172,16 @@ summarize and map only the screens/content relevant to *this* episode's
 topic, and flag the bundling explicitly so section 6 can recommend the split.
 
 ### 5. Content reference pack
-Key facts, dates, people, case studies, and exam-angle notes (common
-question types, mark scheme patterns, misconceptions worth a
-`MisconceptionCheck`) drawn from session-provided source material. If no
-source material was provided, state that explicitly rather than inventing
-content.
+Exhaustive, structured, bulleted, organized under sub-headings: dates &
+timeline, key people (name/role/significance), key terms & definitions,
+case studies/named examples, causes & effects (as explicit `X → Y` bullets),
+and exam angles (common question types, mark scheme patterns/keywords, and
+misconceptions worth a `MisconceptionCheck`, each stated precisely enough to
+write a true/false statement from later) — all drawn from session-provided
+source material. If no source material was provided, state that explicitly,
+then list `MISSING:` bullets per sub-heading naming what kind of material
+(spec excerpt / past paper / revision guide) would fill it, rather than
+inventing content.
 
 ### 6. Build recommendations
 A prioritized list combining gaps from section 4 and suggestions from
@@ -151,20 +193,38 @@ the five agents of change).
 ## Edge cases
 
 - **Series argument with some episodes already built, some not**: the
-  skill produces a `topic.md` for every episode in the series regardless
-  of build status; section 4 differs (gap analysis vs "not yet built").
+  skill produces a canonical topic file for every episode in the series
+  regardless of build status; section 4 differs (gap analysis vs "not yet
+  built").
 - **No source material for some episodes in a batch**: sections 2 and 5
-  note the absence rather than failing or skipping the file — the file is
-  still useful for its architecture/identity sections.
+  note the absence via `MISSING:` bullets rather than failing or skipping
+  the file — the file is still useful for its architecture/identity
+  sections and as a sourcing checklist for next time.
 - **Output file already exists**: the skill overwrites it (each run
   represents the latest synthesis; the user re-runs when they have new
   source material).
+
+## Rollout strategy
+
+This skill is not trusted with a full series run on day one:
+
+1. Build the skill.
+2. Run it on **one episode only** — Episode 1, "Trust Me, I'm Following
+   Jupiter" (Medicine Through Time).
+3. Review the output together with the user.
+4. Refine the skill based on that review, then re-run the pilot episode
+   until the output quality is approved.
+5. Only then run it across the rest of Medicine Through Time (series mode).
+6. Only after Medicine Through Time's full output has been reviewed and is
+   producing excellent results should this skill be pointed at any other
+   subject/series.
 
 ## Out of scope
 
 - Storing/cataloguing source PDFs or building an artefact-map config —
   source material is transient per the user's framing.
 - Non-History subjects' directory-name mappings — added when those
-  subjects get their own series map + architecture doc.
+  subjects get their own series map + architecture doc, and only after the
+  Rollout strategy above reaches step 6.
 - Any change to `src/modules.js`, components, or app behaviour — this
   skill only produces planning documents.
