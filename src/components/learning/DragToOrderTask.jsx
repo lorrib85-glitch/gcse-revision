@@ -104,10 +104,6 @@ export default function DragToOrderTask({
     }}>
       <style>{`
         @keyframes dto-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes dto-item-lift { from { transform: scale(1) translateY(0); } to { transform: scale(1.03) translateY(-4px); } }
-        @keyframes dto-item-snap { from { transform: scale(0.98); opacity: 0.7; } to { transform: scale(1); opacity: 1; } }
-        @keyframes dto-item-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-        @keyframes dto-pulse { 0%, 100% { box-shadow: 0 0 0 0 currentColor; } 50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); } }
       `}</style>
 
       {/* Background image */}
@@ -187,7 +183,6 @@ export default function DragToOrderTask({
                   transform: isDragging ? 'scale(1.03) translateY(-4px)' : 'scale(1)',
                   transition: isDragging ? 'none' : `all ${MOTION.duration.instant} ease`,
                   userSelect: 'none',
-                  animation: submitted && index === correctOrder.indexOf(item.id) ? `dto-item-bounce ${MOTION.duration.slow} ease` : 'none',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.small }}>
