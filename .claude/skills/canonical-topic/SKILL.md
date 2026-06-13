@@ -1,6 +1,6 @@
 ---
 name: canonical-topic
-description: "Generate the canonical knowledge-source file for a GCSE History episode or series — synthesizes the series map, locked module architecture, current src/modules.js state, and session-provided source material into a structured, exhaustive reference for future build/audit sessions"
+description: "Generate the canonical knowledge-source files for a GCSE History episode or series — synthesizes the series map, locked module architecture, current src/modules.js state, and session-provided source material into two structured, exhaustive reference files (a content file and an architecture file) per episode for future build/audit sessions"
 argument-hint: "<episode title> | <series name>"
 allowed-tools:
   - Read
@@ -12,23 +12,33 @@ allowed-tools:
 
 # Canonical topic generator
 
-Generates one canonical knowledge-source file per History episode at
-`docs/content/history/<Series_Dir>/<NN>_<Title_With_Underscores>.md` — a
-permanent, committed reference that a future Claude session will read
-*instead of* re-gathering source material, before building or auditing that
-chapter. It synthesizes:
+Generates two canonical knowledge-source files per History episode at
+`docs/content/history/<Series_Dir>/<NN>_<Title_With_Underscores>_Content.md`
+and `..._Architecture.md` — permanent, committed references that a future
+Claude session will read *instead of* re-gathering source material, before
+building or auditing that chapter.
+
+The split is deliberate: the **content file** is the episode's knowledge
+(facts, narrative, exam material) and can be reviewed/corrected on its own
+merits; the **architecture file** is the build mapping (Section 1–6
+placement, current-state assessment, recommendations) and can change
+independently as the build evolves without touching the content record.
+
+Together they synthesize:
 
 1. **Session-provided source material** — spec excerpts, past papers, mark
    schemes, revision notes the user has shared earlier in this conversation
    as PDFs, extracted to plain text and searched per Step 0 below (do not
    `Read` source PDFs directly — see Step 0). Nothing here is copied into
-   the repo separately — only the synthesized file is saved.
+   the repo separately — only the two synthesized files per episode are
+   saved. Feeds mainly the content file.
 2. `docs/content/history/HISTORY_SERIES_MAP.md` — episode identity, GCSE
-   topic, and (Series 1 only) current build status.
+   topic, and (Series 1 only) current build status. Feeds both files.
 3. `docs/system/HISTORY_MODULE_ARCHITECTURE.md` (LOCKED) — the Section 1–6
    structure, "Typical Components" per section, and the 9-point Module
-   Completion Test.
-4. The matching entry/entries in `src/modules.js`, if built.
+   Completion Test. Feeds the architecture file.
+4. The matching entry/entries in `src/modules.js`, if built. Feeds the
+   architecture file.
 
 Only History has both a series map and a locked architecture doc today, so
 this skill only runs against History. `$ARGUMENTS` is the episode title or
@@ -56,6 +66,11 @@ Claude session), not a human skimming the page. Write accordingly:
     future session knows exactly what to go and source.
   - Write `UNCERTAIN: <the fact, and what's uncertain about it>` for facts
     that are partially supported but not confidently confirmed.
+- **Draft interpretive claims, don't assert them as settled.** For
+  interpretive/thesis-level content (most notably the Storyline's Core
+  takeaway, see Step 4 §2) that is derived rather than explicitly supplied
+  by the user, write `DRAFT (for user confirmation): <claim>` rather than
+  presenting it as confirmed fact.
 - **Flag conflicts, don't resolve them silently.** If two pieces of
   session-provided material disagree (e.g. different dates for the same
   event), present both and write `CONFLICT: <description>` rather than
@@ -192,7 +207,25 @@ Note explicitly, per episode, whether material was found — don't carry
 material from one episode's file into another's unless it's clearly
 relevant to both.
 
-## Step 3 — Resolve output path
+### 2g. Storyline / core takeaway
+
+Search this conversation for an explicit statement of this episode's central
+argument — phrasing like "the core takeaway is...", "the storyline is...",
+"the main point/thesis is...". If found, record it **verbatim** — this
+becomes the content file's Storyline §Core takeaway, and must not be
+paraphrased or "improved."
+
+If no explicit statement exists for this episode:
+
+- Look across 2f's material for a recurring single-cause pattern — especially
+  `X → Y` cause/effect chains (Section 4 of the content file) that keep
+  tracing back to the same root cause (e.g. multiple chains all rooting in
+  "the Church controlled education/ideas"). A root cause repeated across
+  several independent chains is a strong candidate for a **draft** takeaway.
+- Do not invent a takeaway with no textual basis. See Step 4 §2 for how to
+  write up the draft/missing cases.
+
+## Step 3 — Resolve output paths
 
 **Series directory:**
 
@@ -203,55 +236,92 @@ relevant to both.
 | 3 — The USA, 1954–75: Conflict at Home and Abroad | `USA_1954-75` |
 | 4 — Early Elizabethan England | `Elizabethan_England` |
 
-**Filename**, from the episode's title and `#`:
+**Shared filename stem**, from the episode's title and `#`:
 
 1. Take the title as written in the series map.
 2. Strip punctuation: apostrophes, commas, colons, question marks, etc.
 3. Replace spaces with underscores.
 4. Prefix with the episode's `#`, zero-padded to 2 digits, plus underscore.
-5. Append `.md`.
 
-Examples: "Trust Me, I'm Following Jupiter" (Ep 1) →
-`01_Trust_Me_Im_Following_Jupiter.md`. "Can You Win a Guerrilla War?" (Ep 10,
-Series 3) → `10_Can_You_Win_a_Guerrilla_War.md`.
+This gives `<NN>_<Title_With_Underscores>` — e.g. "Trust Me, I'm Following
+Jupiter" (Ep 1) → `01_Trust_Me_Im_Following_Jupiter`. "Can You Win a
+Guerrilla War?" (Ep 10, Series 3) → `10_Can_You_Win_a_Guerrilla_War`.
 
-**Full path**: `docs/content/history/<directory>/<filename>`.
+**Two output files per episode**, both in
+`docs/content/history/<directory>/`:
 
-If the file already exists, overwrite it — each run represents the latest
-synthesis.
+- Content: `<stem>_Content.md`
+- Architecture: `<stem>_Architecture.md`
 
-## Step 4 — Write the canonical topic file
+E.g. Episode 1 → `docs/content/history/Medicine/01_Trust_Me_Im_Following_Jupiter_Content.md`
+and `docs/content/history/Medicine/01_Trust_Me_Im_Following_Jupiter_Architecture.md`.
 
-Write the file as:
+If either file already exists, overwrite it — each run represents the latest
+synthesis. If a combined single-file version from a previous (pre-split) run
+exists at `docs/content/history/<directory>/<stem>.md`, delete it after
+writing the two new files — it is superseded.
+
+## Step 4 — Write the content file
+
+Write `docs/content/history/<directory>/<stem>_Content.md` as:
 
 ```markdown
-# Episode <#>: <Title>
+# Episode <#>: <Title> — Content
 
 ## 1. Identity
 ...
 
-## 2. Specification requirements
+## 2. Storyline
 ...
 
-## 3. Architecture checklist (tailored)
+## 3. Specification requirements
 ...
 
-## 4. Current state & gap analysis
-...
-
-## 5. Content reference pack
-...
-
-## 6. Build recommendations
+## 4. Content reference pack
 ...
 ```
 
 ### 1. Identity
 
 A bulleted key:value list: Episode number, Title, Subtitle/GCSE topic, Era
-(2e), Key Topic reference (2a — omit for Series 1), Build status (2b).
+(2e), Key Topic reference (2a — omit for Series 1).
 
-### 2. Specification requirements
+### 2. Storyline
+
+A short narrative-thesis section — the episode's central argument, the "so
+what" that ties Sections 3–4 together and that a learner should be able to
+articulate by the end of the chapter. This is **content** (a historical
+interpretation/claim), not a build decision — how it gets threaded through
+screens belongs in the architecture file's Build recommendations.
+
+- **Core takeaway** — 2–4 sentences stating the episode's central argument,
+  from 2g:
+  - If 2g found an explicit user-supplied statement, reproduce it
+    **verbatim**.
+  - Else if 2g identified a recurring root-cause pattern, write `DRAFT (for
+    user confirmation): <the proposed takeaway>` followed by a one-line note
+    on which recurring chains it's drawn from.
+  - Else write `MISSING: Storyline / core takeaway — ask the user for this
+    episode's central argument before building.`
+- **Evidence for the takeaway** — bulleted list (aim for 4–8) of specific
+  facts or `X → Y` cause/effect chains from Section 4 below that demonstrate
+  the core takeaway. Each bullet should be something a learner could cite as
+  exam evidence for the judgement. Skip this if Core takeaway is `MISSING`.
+- **Series throughline** — how this episode's takeaway connects to the wider
+  series arc:
+  - For Medicine Through Time, frame using the five agents of change (War,
+    Religion, Individuals, Government, Science & technology) from
+    `HISTORY_SERIES_MAP.md`, and name which earlier/later episode(s) this
+    takeaway connects to via continuity or change.
+  - For Series 2–4, use whatever overarching framing `HISTORY_SERIES_MAP.md`
+    gives for that series. If none is given, write `MISSING: series-level
+    throughline framing for <series> — not found in HISTORY_SERIES_MAP.md`.
+- **Exam framing** — name the specific judgement-style exam questions (e.g.
+  "how far do you agree") from Section 4's Exam angles where this takeaway
+  *is* the winning argument — a learner who has internalised the Storyline
+  already has that answer's spine. Skip if Core takeaway is `MISSING`.
+
+### 3. Specification requirements
 
 An exhaustive bulleted list of every specification requirement for this
 topic, drawn from 2f's material — one bullet per sub-topic/concept, with
@@ -269,37 +339,7 @@ series map's GCSE topic / Key Topic description, drawing on general
 knowledge of the Edexcel specification for that topic — this becomes the
 sourcing checklist for the next session.
 
-### 3. Architecture checklist (tailored)
-
-For each of Section 1–6 in `HISTORY_MODULE_ARCHITECTURE.md`, a bullet block:
-
-- **Section N — <name>**
-  - Purpose: <from architecture doc, verbatim or near-verbatim>
-  - Proposed content for this episode: bulleted list of every specific
-    fact/concept from section 2 above that belongs in this slot — not a
-    single summary sentence.
-  - Suggested component(s): one or more from that section's "Typical
-    Components" list, each with a one-line note on why it fits this
-    episode's content.
-
-End with the architecture doc's 9-point Module Completion Test, reproduced
-verbatim as an unchecked Markdown checklist (`- [ ] ...` × 9).
-
-### 4. Current state & gap analysis
-
-- `Not yet built` → write exactly: `Not yet built — full rebuild from spec.`
-- Any `Built...` status → a bulleted, screen-by-screen inventory: for each
-  relevant hook/outcomes/recall/screen entry from 2d, its `id`/`tag`, a
-  bulleted list of the specific facts/concepts it currently teaches, and
-  which Section 1–6 slot (from section 3) it maps to. Follow with a `GAPS:`
-  bulleted list — every item from section 3's "Proposed content" not covered
-  by any existing screen.
-- `Built (shared)` / `Built across` statuses → as above, scoped to only the
-  screens/content relevant to *this* episode's topic, plus a `BUNDLING:`
-  bullet naming the other episode(s) sharing the module(s) and what content
-  belongs to them instead.
-
-### 5. Content reference pack
+### 4. Content reference pack
 
 Exhaustive, structured, bulleted, organized under these sub-headings:
 
@@ -315,23 +355,97 @@ Exhaustive, structured, bulleted, organized under these sub-headings:
 - **Exam angles** — bulleted: common question types for this topic, mark
   scheme patterns/keywords, and misconceptions worth a `MisconceptionCheck`
   (each stated precisely enough to write a true/false statement from later).
+- **Sourcing notes** — which extracted source files contributed content,
+  and any files/regions that produced nothing usable (e.g. zero-text PDFs,
+  out-of-scope content reserved for another episode).
 
 All drawn from 2f. If 2f found no material: state that explicitly as one
 line, then list `MISSING:` bullets per sub-heading above, each naming what
 kind of source material (spec excerpt / past paper / revision guide) would
 fill it.
 
-### 6. Build recommendations
+## Step 5 — Write the architecture file
 
-A numbered, prioritized list combining section 4's `GAPS:`/`BUNDLING:` items
-and section 3's "Suggested component(s)": what to build or fix first, which
-component for each slot, and — for Medicine Through Time — which of the five
-agents of change (from `HISTORY_SERIES_MAP.md`) each recommendation connects
-to, plus interleaving links to concepts from earlier episodes per the
-Interleaving Rule.
+Write `docs/content/history/<directory>/<stem>_Architecture.md` as:
 
-## Step 5 — Report back
+```markdown
+# Episode <#>: <Title> — Architecture
 
-After writing all files for this invocation, list each full path written,
-one per line. For series mode, also report counts by build status (e.g. "6
-built, 4 built (shared), 2 built across two modules, 2 not yet built").
+## 1. Identity (brief)
+...
+
+## 2. Architecture checklist (tailored)
+...
+
+## 3. Current state & gap analysis
+...
+
+## 4. Build recommendations
+...
+```
+
+### 1. Identity (brief)
+
+- Episode number, Title, Build status (2b).
+- A pointer line: "Content, Storyline, Specification requirements and the
+  full Content reference pack: see `<stem>_Content.md` in this directory."
+
+### 2. Architecture checklist (tailored)
+
+Per `docs/system/HISTORY_MODULE_ARCHITECTURE.md` (LOCKED). For each of
+Section 1–6, a bullet block:
+
+- **Section N — <name>**
+  - Purpose: <from architecture doc, verbatim or near-verbatim>
+  - Proposed content for this episode: bulleted list of every specific
+    fact/concept from the content file's Section 3 (Specification
+    requirements) and Section 4 (Content reference pack) that belongs in
+    this slot — not a single summary sentence.
+  - Suggested component(s): one or more from that section's "Typical
+    Components" list, each with a one-line note on why it fits this
+    episode's content.
+
+End with the architecture doc's 9-point Module Completion Test, reproduced
+verbatim as an unchecked Markdown checklist (`- [ ] ...` × 9).
+
+### 3. Current state & gap analysis
+
+- `Not yet built` → write exactly: `Not yet built — full rebuild from spec.`
+- Any `Built...` status → a bulleted, screen-by-screen inventory: for each
+  relevant hook/outcomes/recall/screen entry from 2d, its `id`/`tag`, a
+  bulleted list of the specific facts/concepts it currently teaches, and
+  which Section 1–6 slot (from Section 2 above) it maps to. Follow with a
+  `GAPS:` bulleted list — every item from Section 2's "Proposed content" not
+  covered by any existing screen.
+- `Built (shared)` / `Built across` statuses → as above, scoped to only the
+  screens/content relevant to *this* episode's topic, plus a `BUNDLING:`
+  bullet naming the other episode(s) sharing the module(s) and what content
+  belongs to them instead.
+
+### 4. Build recommendations
+
+A numbered, prioritized list. Lead with:
+
+1. **Storyline integration** — how the content file's Storyline §Core
+   takeaway should be threaded through the module as a recurring
+   interleaving thread: name which Section 1–6 slots (from Section 2 above)
+   revisit it, and with what new evidence each time, per the Interleaving
+   Rule and the Module Completion Test's "Core chapter message is
+   reinforced" point. If the Core takeaway is `MISSING` or `DRAFT`, say so
+   here and note that this recommendation is blocked until it's resolved.
+
+Then continue the numbered list combining Section 3's `GAPS:`/`BUNDLING:`
+items and Section 2's "Suggested component(s)": what to build or fix next,
+which component for each slot, and — for Medicine Through Time — which of
+the five agents of change (from `HISTORY_SERIES_MAP.md`) each recommendation
+connects to, plus interleaving links to concepts from earlier episodes per
+the Interleaving Rule.
+
+## Step 6 — Report back
+
+After writing all files for this invocation, list each full path written —
+content file then architecture file, per episode — one per line. For series
+mode, also report counts by build status (e.g. "6 built, 4 built (shared), 2
+built across two modules, 2 not yet built"), and for each episode note
+whether the Storyline's Core takeaway was user-supplied verbatim, `DRAFT`, or
+`MISSING`.
