@@ -746,10 +746,6 @@ export const MODULES = [
             weakGroup: 'Beliefs',
           },
         ],
-        completion: {
-          title: 'Knowledge secured',
-          body: 'You have connected the key ideas that shaped medieval medicine.\n\nThese beliefs influenced how illness was diagnosed and treated for hundreds of years.',
-        },
       },
 
       {
@@ -984,10 +980,6 @@ export const MODULES = [
             weakGroup: 'Treatments',
           },
         ],
-        completion: {
-          title: 'Knowledge secured',
-          body: "These words cover the practical world of medieval medicine — who sold remedies, who got cared for, who cleaned the streets, and how physicians carried their knowledge with them.\n\nTogether they give you the detail examiners reward in \"describe\" and \"explain\" questions about treatment, hospitals and public health.",
-        },
       },
 
       {
@@ -2779,10 +2771,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
             weakGroup: 'Themes',
           },
         ],
-        completion: {
-          title: 'Figures connected',
-          body: 'Vesalius, Harvey and Paré each challenged a different part of Galen\'s legacy.\n\nBut all three showed the same thing: observation matters more than tradition.',
-        },
       },
 
       // ── Section 5 — Learning Chunk 4: The Royal Society & Change vs Continuity
@@ -5743,7 +5731,6 @@ Do NOT award marks for naming discoveries without explaining their significance.
           { id: 'chloroplast',  term: 'Chloroplast',         answer: 'Absorbs light energy to carry out photosynthesis',                 weakGroup: 'Cell structures' },
           { id: 'vacuole',      term: 'Permanent vacuole',   answer: 'Contains cell sap — keeps the cell firm and full of water',        weakGroup: 'Cell structures' },
         ],
-        completion: { title: 'Locked in', body: 'Eight structures, eight precise functions — written exactly the way an examiner wants to see them.' },
       },
 
       // ── SCREEN 9: Fill in the blanks ────────────────────────────────────────
