@@ -35,7 +35,7 @@ Together they synthesize:
 2. `docs/content/history/HISTORY_SERIES_MAP.md` — episode identity, GCSE
    topic, and (Series 1 only) current build status. Feeds both files.
 3. `docs/system/HISTORY_MODULE_ARCHITECTURE.md` (LOCKED) — the Section 1–6
-   structure, "Typical Components" per section, and the 9-point Module
+   structure, "Typical Components" per section, and the 10-point Module
    Completion Test. Feeds the architecture file.
 4. The matching entry/entries in `src/modules.js`, if built. Feeds the
    architecture file.
@@ -159,7 +159,7 @@ Read this episode's "Current module" cell:
 Read `docs/system/HISTORY_MODULE_ARCHITECTURE.md` in full. You'll reuse:
 
 - The Section 1–6 structure (each section's purpose + "Typical Components").
-- The 9-point Module Completion Test.
+- The 10-point Module Completion Test.
 - The Interleaving Rule, and — for Medicine Through Time — the "five agents
   of change" from `HISTORY_SERIES_MAP.md`.
 
@@ -405,8 +405,8 @@ Section 1–6, a bullet block:
     Components" list, each with a one-line note on why it fits this
     episode's content.
 
-End with the architecture doc's 9-point Module Completion Test, reproduced
-verbatim as an unchecked Markdown checklist (`- [ ] ...` × 9).
+End with the architecture doc's 10-point Module Completion Test, reproduced
+verbatim as an unchecked Markdown checklist (`- [ ] ...` × 10).
 
 ### 3. Current state & gap analysis
 

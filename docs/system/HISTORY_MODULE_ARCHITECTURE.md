@@ -414,6 +414,27 @@ Default assumption: **Use an existing component.**
 
 ---
 
+### Component Repetition Limit
+
+Within a single chapter, no feature component (the "Typical Components"
+used for teaching, checking understanding, cause-and-effect, or atmosphere —
+see Component Selection Hierarchy) should be used more than twice.
+
+If a third use is needed, choose a different component from the same
+hierarchy tier instead of repeating one.
+
+This rule does not apply to:
+
+- Section 1 and Section 6 mandatory-order components — each appears once by
+  definition.
+- `QuickRecallScreen` and `PriorKnowledgeRecall`, which deliberately recur
+  under the Retrieval Rule and Weak Spot Recovery Rule.
+
+Repeating the same feature component more than twice makes a chapter feel
+repetitive, even when the content is different each time.
+
+---
+
 ### History Brand Rules
 
 Follow the History brand system.
@@ -452,5 +473,6 @@ Before a History module is considered complete, verify:
 - ✓ Core chapter message is reinforced
 - ✓ Examiner content appears only in Section 6
 - ✓ Module ends with a completion screen
+- ✓ No feature component is used more than twice in the module
 
 If any of the above are missing, the module is incomplete.
