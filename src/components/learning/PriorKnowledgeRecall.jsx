@@ -64,6 +64,10 @@ function ensureStyles() {
       from { transform: rotate(0deg); }
       to   { transform: rotate(360deg); }
     }
+    @keyframes prk-breathe {
+      0%, 100% { opacity: 0.7; }
+      50%      { opacity: 1; }
+    }
   `
   document.head.appendChild(el)
 }
@@ -93,28 +97,6 @@ function ConceptChip({ label, color }) {
       color,
     }}>
       {label}
-    </div>
-  )
-}
-
-// ─── ConceptGroup ─────────────────────────────────────────────────────────────
-function ConceptGroup({ label, concepts, color }) {
-  return (
-    <div style={{ marginBottom: SPACING.standard }}>
-      <div style={{
-        fontFamily: "'Sora', sans-serif",
-        fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
-        textTransform: 'uppercase',
-        color, opacity: 0.8,
-        marginBottom: SPACING.micro,
-      }}>
-        {label}
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-        {concepts.map(c => (
-          <ConceptChip key={c.tag} label={c.label} color={color} />
-        ))}
-      </div>
     </div>
   )
 }
@@ -227,10 +209,17 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
     }
   }
 
-  // Sort concepts into three groups
+  // Sort concepts: securely recalled vs. gaps to revisit (logged above to the weakness tracker).
   const recalled = results?.concepts.filter(c => c.score >= SCORE_RECALLED) || []
-  const partial   = results?.concepts.filter(c => c.score >= SCORE_PARTIAL && c.score < SCORE_RECALLED) || []
-  const missing   = results?.concepts.filter(c => c.score < SCORE_PARTIAL) || []
+  const missing  = results?.concepts.filter(c => c.score < SCORE_PARTIAL) || []
+
+  const recallRatio = results ? recalled.length / Math.max(results.concepts.length, 1) : 0
+  const recallMessage =
+    recalled.length === 0
+      ? { title: "That's okay.", body: 'Retrieval is a skill — it gets easier with practice.' }
+      : recallRatio < 0.6
+      ? { title: 'Good start.', body: "You're holding onto some of this already." }
+      : { title: 'Nice work.', body: 'Most of this is still with you.' }
 
   const pressProps = {
     onMouseDown:  () => setIsPressed(true),
@@ -272,6 +261,28 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
       stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="5" y1="12" x2="19" y2="12"/>
       <polyline points="12 5 19 12 12 19"/>
+    </svg>
+  )
+
+  const BrainIcon = () => (
+    <svg width="40" height="40" viewBox="0 0 48 48" fill="none"
+      stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 8c-4 0-7 3-7 7 0 1 .2 2 .5 3-2 1-3.5 3-3.5 5.5 0 2 1 3.8 2.5 5-1 1.2-1.5 2.7-1.5 4.5 0 4 3 7 7 7h2"/>
+      <path d="M29 8c4 0 7 3 7 7 0 1-.2 2-.5 3 2 1 3.5 3 3.5 5.5 0 2-1 3.8-2.5 5 1 1.2 1.5 2.7 1.5 4.5 0 4-3 7-7 7h-2"/>
+      <path d="M21 8v32"/>
+      <path d="M21 16c2 0 3 1.5 3 3"/>
+      <path d="M21 26c2 0 3 1.5 3 3"/>
+      <path d="M27 16c-2 0-3 1.5-3 3"/>
+    </svg>
+  )
+
+  const CycleIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+      stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+      <path d="M21 3v5h-5"/>
+      <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+      <path d="M3 21v-5h5"/>
     </svg>
   )
 
@@ -533,66 +544,108 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 color: '#F5F7FF',
                 margin: 0, marginBottom: SPACING.compact,
               }}>
-                Recall check
+                You remembered
               </h1>
 
-              {results.summary && (
-                <p style={{
+              <div style={{
+                display: 'flex', alignItems: 'baseline', gap: SPACING.micro,
+                marginBottom: SPACING.separation,
+              }}>
+                <div style={{ display: 'inline-block' }}>
+                  <span style={{
+                    fontFamily: "'Sora', sans-serif",
+                    ...TYPE.hero,
+                    color: accent,
+                  }}>
+                    {recalled.length}
+                  </span>
+                  <div style={{
+                    height: 3, width: '100%',
+                    background: accent, borderRadius: RADII.pill,
+                    marginTop: SPACING.micro,
+                  }} />
+                </div>
+                <span style={{
                   fontFamily: "'Sora', sans-serif",
                   ...TYPE.bodySmall,
-                  color: 'rgba(168,159,194,0.8)',
-                  margin: 0, marginBottom: SPACING.separation,
-                  lineHeight: 1.6,
+                  color: 'rgba(245,247,255,0.55)',
                 }}>
-                  {results.summary}
-                </p>
-              )}
+                  {recalled.length === 1 ? 'idea recognised' : 'ideas recognised'}
+                </span>
+              </div>
 
-              {recalled.length > 0 && (
-                <ConceptGroup
-                  label={`Recalled — ${recalled.length}`}
-                  concepts={recalled}
-                  color="#4CAF7D"
-                />
-              )}
-
-              {partial.length > 0 && (
-                <ConceptGroup
-                  label={`Partial — ${partial.length}`}
-                  concepts={partial}
-                  color="#E0A84F"
-                />
-              )}
-
-              {missing.length > 0 && (
-                <ConceptGroup
-                  label={`Gaps to revisit — ${missing.length}`}
-                  concepts={missing}
-                  color="#5E5874"
-                />
-              )}
-
-              {missing.length > 0 && (
-                <p style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: 13, fontWeight: 400, lineHeight: 1.55,
-                  color: 'rgba(94,88,116,0.75)',
-                  margin: `${SPACING.micro}px 0 0`,
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: SPACING.standard }}>
+                <div className="prk-breathe" style={{
+                  width: 96, height: 96, borderRadius: '50%',
+                  background: `radial-gradient(circle, rgba(${rgb},0.18) 0%, rgba(${rgb},0.05) 55%, transparent 80%)`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  animation: `prk-breathe ${MOTION.duration.atmospheric} ${MOTION.easing.linear} infinite`,
                 }}>
-                  These gaps have been added to your weak spots and will come up in future sessions.
-                </p>
-              )}
+                  <BrainIcon />
+                </div>
+              </div>
 
-              {missing.length === 0 && recalled.length > 0 && (
-                <p style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: 13, fontWeight: 400, lineHeight: 1.55,
-                  color: 'rgba(76,175,125,0.7)',
-                  margin: `${SPACING.micro}px 0 0`,
-                }}>
-                  No gaps found. Strong recall going into this chapter.
-                </p>
-              )}
+              <h2 style={{
+                fontFamily: "'Sora', sans-serif",
+                ...TYPE.cardTitle,
+                color: '#F5F7FF',
+                textAlign: 'center',
+                margin: 0, marginBottom: SPACING.micro,
+              }}>
+                {recallMessage.title}
+              </h2>
+
+              <p style={{
+                fontFamily: "'Sora', sans-serif",
+                ...TYPE.bodySmall,
+                color: 'rgba(168,159,194,0.7)',
+                textAlign: 'center', lineHeight: 1.6,
+                margin: 0, marginBottom: SPACING.standard,
+              }}>
+                {recallMessage.body}
+              </p>
+
+              <div style={{
+                height: 1, background: 'rgba(255,255,255,0.08)',
+                marginBottom: SPACING.standard,
+              }} />
+
+              <div style={{ display: 'flex', gap: SPACING.compact, alignItems: 'flex-start' }}>
+                <div style={{ flexShrink: 0, marginTop: 2 }}>
+                  <CycleIcon />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{
+                    fontFamily: "'Sora', sans-serif",
+                    ...TYPE.bodySmall, fontWeight: 600,
+                    color: '#F5F7FF',
+                    marginBottom: SPACING.micro,
+                  }}>
+                    {missing.length > 0 ? "We'll handle the rest" : 'All clear for now'}
+                  </div>
+                  <p style={{
+                    fontFamily: "'Sora', sans-serif",
+                    ...TYPE.bodySmall,
+                    color: 'rgba(168,159,194,0.7)',
+                    lineHeight: 1.6,
+                    margin: 0,
+                  }}>
+                    {missing.length > 0
+                      ? "These will come back naturally during the chapter until they stick."
+                      : 'Nothing from last chapter needs extra practice yet.'}
+                  </p>
+                  {missing.length > 0 && (
+                    <div style={{
+                      display: 'flex', flexWrap: 'wrap', gap: 8,
+                      marginTop: SPACING.compact,
+                    }}>
+                      {missing.map(c => (
+                        <ConceptChip key={c.tag} label={c.label} color="#A89FC2" />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             <button
