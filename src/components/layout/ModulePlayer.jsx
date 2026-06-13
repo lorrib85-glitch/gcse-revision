@@ -6,6 +6,7 @@ import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
 import QuickRecallScreen from '../learning/QuickRecallScreen.jsx'
+import TieredQuizScreen from '../learning/TieredQuizScreen.jsx'
 import CinematicRevealMoment from '../learning/CinematicRevealMoment.jsx'
 import ConceptReveal from '../learning/ConceptReveal.jsx'
 import LearningHeader from '../core/LearningHeader.jsx'
@@ -2211,6 +2212,24 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           renderHeader={() => (
             <LearningHeader {...H} visible={true} />
           )}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  // ── Full-screen TieredQuizScreen as in-content screen ─────────────────────
+  if (cur?.type === 'tieredquiz') {
+    return (
+      <>
+        <TieredQuizScreen
+          subject={module.subject}
+          backgroundImage={cur.backgroundImage}
+          tiers={cur.tiers || []}
+          renderHeader={() => (
+            <LearningHeader {...H} visible={true} />
+          )}
+          onContinue={isLast ? handleFinish : () => go(1)}
         />
         {jumpSheetPortal}
       </>
