@@ -2,5 +2,18 @@
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ \"$CLAUDE_CODE_REMOTE\" = \"true\" ]; then git fetch origin main && git checkout -B main origin/main; fi || true"
+          }
+        ]
+      }
+    ]
   }
 }
