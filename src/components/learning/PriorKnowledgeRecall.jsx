@@ -64,10 +64,6 @@ function ensureStyles() {
       from { transform: rotate(0deg); }
       to   { transform: rotate(360deg); }
     }
-    @keyframes prk-breathe {
-      0%, 100% { opacity: 0.7; }
-      50%      { opacity: 1; }
-    }
   `
   document.head.appendChild(el)
 }
@@ -82,23 +78,6 @@ async function analyseRecall(answer, concepts, sourceContent) {
   const data = await response.json()
   if (data.error) throw new Error(data.error)
   return data
-}
-
-// ─── ConceptChip ──────────────────────────────────────────────────────────────
-function ConceptChip({ label, color }) {
-  return (
-    <div style={{
-      background: `${color}18`,
-      border: `1px solid ${color}40`,
-      borderRadius: RADII.medium,
-      padding: '7px 14px',
-      fontFamily: "'Sora', sans-serif",
-      fontSize: 14, fontWeight: 500, lineHeight: 1,
-      color,
-    }}>
-      {label}
-    </div>
-  )
 }
 
 // ─── PromptChip ───────────────────────────────────────────────────────────────
@@ -209,17 +188,9 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
     }
   }
 
-  // Sort concepts: securely recalled vs. gaps to revisit (logged above to the weakness tracker).
+  // Securely recalled concepts — gaps below SCORE_PARTIAL are already logged
+  // to the weakness tracker in submit().
   const recalled = results?.concepts.filter(c => c.score >= SCORE_RECALLED) || []
-  const missing  = results?.concepts.filter(c => c.score < SCORE_PARTIAL) || []
-
-  const recallRatio = results ? recalled.length / Math.max(results.concepts.length, 1) : 0
-  const recallMessage =
-    recalled.length === 0
-      ? { title: "That's okay.", body: 'Retrieval is a skill — it gets easier with practice.' }
-      : recallRatio < 0.6
-      ? { title: 'Good start.', body: "You're holding onto some of this already." }
-      : { title: 'Nice work.', body: 'Most of this is still with you.' }
 
   const pressProps = {
     onMouseDown:  () => setIsPressed(true),
@@ -261,28 +232,6 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
       stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="5" y1="12" x2="19" y2="12"/>
       <polyline points="12 5 19 12 12 19"/>
-    </svg>
-  )
-
-  const BrainIcon = () => (
-    <svg width="40" height="40" viewBox="0 0 48 48" fill="none"
-      stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 8c-4 0-7 3-7 7 0 1 .2 2 .5 3-2 1-3.5 3-3.5 5.5 0 2 1 3.8 2.5 5-1 1.2-1.5 2.7-1.5 4.5 0 4 3 7 7 7h2"/>
-      <path d="M29 8c4 0 7 3 7 7 0 1-.2 2-.5 3 2 1 3.5 3 3.5 5.5 0 2-1 3.8-2.5 5 1 1.2 1.5 2.7 1.5 4.5 0 4-3 7-7 7h-2"/>
-      <path d="M21 8v32"/>
-      <path d="M21 16c2 0 3 1.5 3 3"/>
-      <path d="M21 26c2 0 3 1.5 3 3"/>
-      <path d="M27 16c-2 0-3 1.5-3 3"/>
-    </svg>
-  )
-
-  const CycleIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
-      <path d="M21 3v5h-5"/>
-      <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
-      <path d="M3 21v-5h5"/>
     </svg>
   )
 
@@ -537,7 +486,10 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
             flex: 1, display: 'flex', flexDirection: 'column',
             animation: 'prk-fade-in 420ms ease both',
           }}>
-            <div style={{ flex: 1 }}>
+            <div style={{
+              flex: 1, display: 'flex', flexDirection: 'column',
+              justifyContent: 'center',
+            }}>
               <h1 style={{
                 fontFamily: "'Sora', sans-serif",
                 ...TYPE.sectionTitle,
@@ -549,7 +501,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
 
               <div style={{
                 display: 'flex', alignItems: 'baseline', gap: SPACING.micro,
-                marginBottom: SPACING.separation,
+                marginBottom: SPACING.section,
               }}>
                 <div style={{ display: 'inline-block' }}>
                   <span style={{
@@ -574,25 +526,14 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 </span>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: SPACING.standard }}>
-                <div className="prk-breathe" style={{
-                  width: 96, height: 96, borderRadius: '50%',
-                  background: `radial-gradient(circle, rgba(${rgb},0.18) 0%, rgba(${rgb},0.05) 55%, transparent 80%)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  animation: `prk-breathe ${MOTION.duration.atmospheric} ${MOTION.easing.linear} infinite`,
-                }}>
-                  <BrainIcon />
-                </div>
-              </div>
-
               <h2 style={{
                 fontFamily: "'Sora', sans-serif",
                 ...TYPE.cardTitle,
                 color: '#F5F7FF',
                 textAlign: 'center',
-                margin: 0, marginBottom: SPACING.micro,
+                margin: 0, marginBottom: SPACING.compact,
               }}>
-                {recallMessage.title}
+                Now we know what to strengthen.
               </h2>
 
               <p style={{
@@ -600,52 +541,10 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 ...TYPE.bodySmall,
                 color: 'rgba(168,159,194,0.7)',
                 textAlign: 'center', lineHeight: 1.6,
-                margin: 0, marginBottom: SPACING.standard,
+                margin: 0,
               }}>
-                {recallMessage.body}
+                Retrieval is a skill — it gets easier with practice. We'll revisit these until they stick.
               </p>
-
-              <div style={{
-                height: 1, background: 'rgba(255,255,255,0.08)',
-                marginBottom: SPACING.standard,
-              }} />
-
-              <div style={{ display: 'flex', gap: SPACING.compact, alignItems: 'flex-start' }}>
-                <div style={{ flexShrink: 0, marginTop: 2 }}>
-                  <CycleIcon />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{
-                    fontFamily: "'Sora', sans-serif",
-                    ...TYPE.bodySmall, fontWeight: 600,
-                    color: '#F5F7FF',
-                    marginBottom: SPACING.micro,
-                  }}>
-                    {missing.length > 0 ? "We'll handle the rest" : 'All clear for now'}
-                  </div>
-                  <p style={{
-                    fontFamily: "'Sora', sans-serif",
-                    ...TYPE.bodySmall,
-                    color: 'rgba(168,159,194,0.7)',
-                    lineHeight: 1.6,
-                    margin: 0,
-                  }}>
-                    {missing.length > 0
-                      ? "These will come back naturally during the chapter until they stick."
-                      : 'Nothing from last chapter needs extra practice yet.'}
-                  </p>
-                  {missing.length > 0 && (
-                    <div style={{
-                      display: 'flex', flexWrap: 'wrap', gap: 8,
-                      marginTop: SPACING.compact,
-                    }}>
-                      {missing.map(c => (
-                        <ConceptChip key={c.tag} label={c.label} color="#A89FC2" />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
 
             <button
