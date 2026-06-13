@@ -173,7 +173,7 @@ export default function UnifiedQuestionScreen({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
-        padding: '24px 20px 20px',
+        padding: '80px 20px 20px',
         maxWidth: 520,
         width: '100%',
         margin: '0 auto',
