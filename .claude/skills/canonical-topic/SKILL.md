@@ -7,6 +7,7 @@ allowed-tools:
   - Write
   - Glob
   - Grep
+  - Bash
 ---
 
 # Canonical topic generator
@@ -19,8 +20,9 @@ chapter. It synthesizes:
 
 1. **Session-provided source material** — spec excerpts, past papers, mark
    schemes, revision notes the user has shared earlier in this conversation
-   (read PDFs via page-range `Read` calls for large documents). Nothing here
-   is copied into the repo separately — only the synthesized file is saved.
+   as PDFs, extracted to plain text and searched per Step 0 below (do not
+   `Read` source PDFs directly — see Step 0). Nothing here is copied into
+   the repo separately — only the synthesized file is saved.
 2. `docs/content/history/HISTORY_SERIES_MAP.md` — episode identity, GCSE
    topic, and (Series 1 only) current build status.
 3. `docs/system/HISTORY_MODULE_ARCHITECTURE.md` (LOCKED) — the Section 1–6
@@ -58,6 +60,32 @@ Claude session), not a human skimming the page. Write accordingly:
   session-provided material disagree (e.g. different dates for the same
   event), present both and write `CONFLICT: <description>` rather than
   picking one.
+
+## Step 0 — Extract source PDFs to text
+
+Source PDFs (specs, past papers, mark schemes, revision guides) are shared
+as conversation attachments and can be large and numerous. Reading a PDF via
+`Read` renders its pages as images and is expensive at scale — extract to
+plain text once per session instead, then search the text.
+
+For each PDF attachment referenced in this conversation that hasn't already
+been extracted this session (check whether `/tmp/canonical-topic/<safe-stem>.txt`
+already exists first — if so, reuse it and skip re-extraction):
+
+- Derive `<safe-stem>` from the original filename: drop any upload-hash
+  prefix and the `.pdf` extension, then replace non-alphanumeric characters
+  with `_`.
+- Ensure `/tmp/canonical-topic/` exists (`mkdir -p /tmp/canonical-topic`),
+  then run
+  `pdftotext -layout "<pdf-path>" "/tmp/canonical-topic/<safe-stem>.txt"`
+  via Bash. If `pdftotext` is not found, run
+  `apt-get update && apt-get install -y poppler-utils` once, then retry.
+- Do NOT `Read` the original PDF. Extraction is a local operation and costs
+  no model tokens regardless of the PDF's size or page count.
+
+Keep a mental map of `<safe-stem>.txt → original filename / description` for
+this session — these extracted files are reused for source-gathering across
+every episode processed in this run, however many that is.
 
 ## Step 1 — Resolve mode
 
@@ -140,10 +168,29 @@ not the whole module(s).
 
 ### 2f. Session-provided source material
 
-Scan the conversation for anything the user has shared relevant to this
-episode's GCSE topic. Note explicitly, per episode, whether material was
-found — don't carry material from one episode's file into another's unless
-it's clearly relevant to both.
+Search (don't bulk-read) the files extracted in Step 0 for content relevant
+to this episode's GCSE topic:
+
+1. Build a keyword set for this episode from its GCSE topic text (2a), Key
+   Topic reference (2a), and any strand/case-study wording already gathered
+   for this episode or sibling episodes in the same series.
+2. `Grep` each `/tmp/canonical-topic/*.txt` file for those keywords (case
+   insensitive, with line numbers) to locate candidate regions.
+3. For each match worth pursuing, `Read` only that line range (plus ~10–15
+   lines of context) from the extracted `.txt` file — never the whole
+   extracted file, and never the original PDF.
+4. **Exclusion check**: if another episode in this series owns part of the
+   same source content (e.g. Series 1 Episode 2 owns the Black Death case
+   study within Key Topic 1, which Episode 1's source material also
+   contains), exclude matched regions that clearly belong to that other
+   episode's topic per the spec's strand/case-study boundaries. Note under
+   "Session-provided source material" that such content exists in the
+   source but is reserved for Episode `<N>` — don't duplicate it into this
+   episode's file.
+
+Note explicitly, per episode, whether material was found — don't carry
+material from one episode's file into another's unless it's clearly
+relevant to both.
 
 ## Step 3 — Resolve output path
 
