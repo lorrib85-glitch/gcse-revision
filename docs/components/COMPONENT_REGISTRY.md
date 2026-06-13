@@ -175,6 +175,17 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
+### DragToOrderTask
+
+**File:** `src/components/learning/DragToOrderTask.jsx`  
+**Purpose:** Timeline/sequence ordering task. Learners drag items to arrange them in chronological or logical order (e.g., Hippocrates → Galen → Jenner). Uses native HTML5 drag-and-drop. Logs correct/incorrect to the weakness tracker.  
+**Props:** `items`, `subject`, `onComplete`, `backgroundImage`  
+**Data shape:** `items: [{ id, label, description? }, ...]` (order in array = correct sequence)  
+**Screen type:** Can be used as a full-screen component or integrated into ModulePlayer  
+**Dependencies:** `SUBJECTS`, `MOTION`, `SPACING`, `unifiedWeaknessTracker`
+
+---
+
 ### ExaminerExplainsScreen
 
 **File:** `src/components/learning/ExaminerExplainsScreen.jsx`  
