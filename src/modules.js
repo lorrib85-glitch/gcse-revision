@@ -1387,6 +1387,7 @@ Strong Level 4 conclusion: the Church was the dominant reason physician-led medi
       {
         type: 'priorKnowledgeRecall',
         chapterTitle: 'Medieval medicine: beliefs and causes of disease',
+        recallPrompts: ['People', 'Theories', 'Causes', 'Treatments', 'Church'],
         backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
         sourceContent: `GCSE History: Medieval Medicine — Beliefs and Causes of Disease (c.1250–c.1500)
 
@@ -2406,6 +2407,7 @@ Exemplar 4/4 answer: "Trading ships arriving from Europe brought infected rats i
       {
         type: 'priorKnowledgeRecall',
         chapterTitle: 'Medieval medicine: beliefs and causes of disease',
+        recallPrompts: ['People', 'Theories', 'Causes', 'Treatments', 'Church'],
         backgroundImage: '/headers/history-medicine-through-time.png',
         sourceContent: `GCSE History: Medieval Medicine — Beliefs and Causes of Disease (c.1250–c.1500)
 

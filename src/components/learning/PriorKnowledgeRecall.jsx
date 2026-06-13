@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import { BUTTONS } from '../../constants/buttons.js'
 import { TYPE } from '../../constants/typography.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 import BackButton from '../core/BackButton.jsx'
@@ -20,6 +21,33 @@ function formatTime(totalSeconds) {
   const m = Math.floor(totalSeconds / 60)
   const s = totalSeconds % 60
   return `${m}:${String(s).padStart(2, '0')}`
+}
+
+// Muted memory-nudge chips shown above the recall box. Chapters can override
+// with `block.recallPrompts` (array of strings) for topic-specific nudges.
+const DEFAULT_RECALL_PROMPTS = ['People', 'Events', 'Causes', 'Effects', 'Key terms', 'Dates']
+
+// Rough "ideas captured" count — splits free text on sentence/line/list breaks.
+function countIdeas(text) {
+  const trimmed = text.trim()
+  if (!trimmed) return 0
+  return trimmed.split(/[\n.,;]+/).map(s => s.trim()).filter(Boolean).length
+}
+
+// Recall timer ring
+const RING_SIZE   = 28
+const RING_STROKE = 3
+const RING_RADIUS = RING_SIZE / 2 - RING_STROKE / 2
+const RING_CIRC   = 2 * Math.PI * RING_RADIUS
+
+// Warm, muted tone the timer ring gently shifts toward as time runs low —
+// no red alert, stays inside the History warm-tone palette.
+const LOW_TIME_RGB = '201,123,99'
+
+function lerpColor(rgbA, rgbB, t) {
+  const a = rgbA.split(',').map(Number)
+  const b = rgbB.split(',').map(Number)
+  return a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',')
 }
 
 let _prkStyled = false
@@ -91,6 +119,25 @@ function ConceptGroup({ label, concepts, color }) {
   )
 }
 
+// ─── PromptChip ───────────────────────────────────────────────────────────────
+// Muted, non-interactive memory nudge — visual only.
+function PromptChip({ label }) {
+  return (
+    <div style={{
+      padding: '6px 12px',
+      borderRadius: RADII.small,
+      background: 'rgba(255,255,255,0.03)',
+      border: '1px solid rgba(255,255,255,0.07)',
+      fontFamily: "'Sora', sans-serif",
+      fontSize: 12, fontWeight: 500, letterSpacing: '0.04em',
+      textTransform: 'uppercase',
+      color: 'rgba(245,247,255,0.32)',
+    }}>
+      {label}
+    </div>
+  )
+}
+
 // ─── PriorKnowledgeRecall ─────────────────────────────────────────────────────
 //
 // Full-screen chapter-opening component. Student writes free-text recall of the
@@ -122,7 +169,18 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
   const [results,     setResults]     = useState(null)
   const [error,       setError]       = useState(null)
   const [isPressed,   setIsPressed]   = useState(false)
+  const [isFocused,   setIsFocused]   = useState(false)
   const [secondsLeft, setSecondsLeft] = useState(RECALL_DURATION)
+
+  const recallPrompts = block.recallPrompts || DEFAULT_RECALL_PROMPTS
+  const ideaCount = countIdeas(answer)
+
+  // Timer ring progress + gentle colour shift toward LOW_TIME_RGB in the final
+  // 40% of the countdown — no flashing, just a slow warm drift.
+  const timeFrac = secondsLeft / RECALL_DURATION
+  const SHIFT_START = 0.4
+  const shiftAmount = timeFrac >= SHIFT_START ? 0 : 1 - (timeFrac / SHIFT_START)
+  const ringRgb = lerpColor(rgb, LOW_TIME_RGB, shiftAmount)
 
   // Tick once a second, but only while the learner is actually looking at the screen —
   // tabbing away pauses the countdown and it resumes from where it left off.
@@ -194,19 +252,26 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
     flexShrink: 0,
   }
 
-  const ArrowIcon = () => (
+  // Input-phase CTA — premium but lighter than the primary button above:
+  // outlined accent fill rather than a solid block, so it stays secondary
+  // to the writing task.
+  const inputBtnStyle = {
+    width: '100%', height: BUTTONS.secondary.height,
+    borderRadius: BUTTONS.secondary.borderRadius,
+    border: `1.5px solid rgba(${rgb},0.32)`,
+    background: `rgba(${rgb},0.10)`,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    gap: 10, cursor: 'pointer',
+    transform: isPressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
+    transition: `transform ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+    flexShrink: 0,
+  }
+
+  const ArrowIcon = ({ color = '#0D0F14' }) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-      stroke="#0D0F14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="5" y1="12" x2="19" y2="12"/>
       <polyline points="12 5 19 12 12 19"/>
-    </svg>
-  )
-
-  const ClockIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-      stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9"/>
-      <polyline points="12 7 12 12 15.5 14"/>
     </svg>
   )
 
@@ -271,26 +336,46 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 fontFamily: "'Sora', sans-serif",
                 ...TYPE.sectionTitle,
                 color: '#F5F7FF',
-                margin: 0, marginBottom: SPACING.compact,
+                margin: 0, marginBottom: SPACING.micro,
               }}>
-                Tell us what you recall in 3 minutes
+                Empty your brain.
               </h1>
 
+              <p style={{
+                fontFamily: "'Sora', sans-serif",
+                ...TYPE.bodySmall,
+                color: 'rgba(245,247,255,0.55)',
+                margin: 0, marginBottom: SPACING.compact,
+              }}>
+                Names. Theories. Ideas. Rough notes are fine.
+              </p>
+
               <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                padding: '7px 12px',
-                borderRadius: RADII.pill,
-                background: `rgba(${rgb},0.12)`,
-                border: `1px solid rgba(${rgb},0.32)`,
+                display: 'inline-flex', alignItems: 'center', gap: 8,
                 marginBottom: SPACING.compact,
               }}>
-                <ClockIcon />
+                <svg width={RING_SIZE} height={RING_SIZE} viewBox={`0 0 ${RING_SIZE} ${RING_SIZE}`}
+                  style={{ transform: 'rotate(-90deg)', flexShrink: 0 }}>
+                  <circle
+                    cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RING_RADIUS}
+                    fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={RING_STROKE}
+                  />
+                  <circle
+                    cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RING_RADIUS}
+                    fill="none" stroke={`rgb(${ringRgb})`} strokeWidth={RING_STROKE}
+                    strokeLinecap="round"
+                    strokeDasharray={RING_CIRC}
+                    strokeDashoffset={RING_CIRC * (1 - timeFrac)}
+                    style={{ transition: `stroke-dashoffset ${MOTION.duration.slow} ${MOTION.easing.linear}, stroke ${MOTION.duration.slow} ${MOTION.easing.linear}` }}
+                  />
+                </svg>
                 <span style={{
                   fontFamily: "'Sora', sans-serif",
                   fontSize: 14, fontWeight: 700,
-                  color: accent,
+                  color: `rgb(${ringRgb})`,
                   fontVariantNumeric: 'tabular-nums',
                   letterSpacing: '0.02em',
+                  transition: `color ${MOTION.duration.slow} ${MOTION.easing.linear}`,
                 }}>
                   {formatTime(secondsLeft)}
                 </span>
@@ -301,18 +386,27 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                   fontFamily: "'Sora', sans-serif",
                   ...TYPE.bodySmall,
                   color: 'rgba(168,159,194,0.65)',
-                  margin: 0, marginBottom: SPACING.separation,
+                  margin: 0, marginBottom: SPACING.compact,
                 }}>
                   {block.chapterTitle}
                 </p>
               )}
 
               <div style={{
+                display: 'flex', flexWrap: 'wrap', gap: SPACING.micro,
+                marginBottom: SPACING.compact,
+              }}>
+                {recallPrompts.map(p => <PromptChip key={p} label={p} />)}
+              </div>
+
+              <div style={{
                 background: '#101218',
-                border: '1.5px solid rgba(255,255,255,0.08)',
+                border: isFocused ? `1.5px solid rgba(${rgb},0.32)` : '1.5px solid rgba(255,255,255,0.08)',
                 borderRadius: RADII.large,
                 padding: `${SPACING.compact}px ${SPACING.standard}px`,
-                marginBottom: error ? SPACING.compact : SPACING.standard,
+                marginBottom: SPACING.micro,
+                boxShadow: isFocused ? `0 0 0 1px rgba(${rgb},0.12), 0 0 28px rgba(${rgb},0.10)` : 'none',
+                transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
               }}>
                 <div style={{
                   fontFamily: "'Sora', sans-serif",
@@ -323,22 +417,56 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 }}>
                   Your recall
                 </div>
-                <textarea
-                  value={answer}
-                  onChange={e => { setAnswer(e.target.value); setError(null) }}
-                  placeholder="Write what you remember — concepts, names, theories. Rough notes are fine."
-                  rows={7}
-                  style={{
-                    width: '100%',
-                    background: 'transparent', border: 'none', outline: 'none',
-                    resize: 'none',
-                    fontFamily: "'Sora', sans-serif",
-                    ...TYPE.bodySmall,
-                    color: '#F5F7FF',
-                    lineHeight: 1.65,
-                    caretColor: accent,
-                  }}
-                />
+                <div style={{ position: 'relative' }}>
+                  {answer.length === 0 && (
+                    <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+                      <div style={{
+                        fontFamily: "'Sora', sans-serif",
+                        fontSize: TYPE.bodySmall.fontSize, fontWeight: TYPE.bodySmall.fontWeight,
+                        lineHeight: 1.7, letterSpacing: '0.01em',
+                        color: 'rgba(245,247,255,0.30)',
+                      }}>
+                        Write anything you remember.
+                      </div>
+                      <div style={{
+                        fontFamily: "'Sora', sans-serif",
+                        fontSize: 13, fontWeight: 400, lineHeight: 1.5,
+                        color: 'rgba(245,247,255,0.16)',
+                        marginTop: 2,
+                      }}>
+                        Messy notes are fine.
+                      </div>
+                    </div>
+                  )}
+                  <textarea
+                    value={answer}
+                    onChange={e => { setAnswer(e.target.value); setError(null) }}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    rows={7}
+                    aria-label="Write anything you remember"
+                    style={{
+                      width: '100%', padding: 0,
+                      background: 'transparent', border: 'none', outline: 'none',
+                      resize: 'none',
+                      fontFamily: "'Sora', sans-serif",
+                      ...TYPE.bodySmall,
+                      color: '#F5F7FF',
+                      lineHeight: 1.7, letterSpacing: '0.01em',
+                      caretColor: accent,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={{
+                display: 'flex', justifyContent: 'flex-end',
+                fontFamily: "'Sora', sans-serif",
+                fontSize: 12, fontWeight: 500, letterSpacing: '0.02em',
+                color: 'rgba(245,247,255,0.25)',
+                marginBottom: error ? SPACING.compact : SPACING.standard,
+              }}>
+                Ideas captured: {ideaCount}
               </div>
 
               {error && (
@@ -353,14 +481,15 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               )}
             </div>
 
-            <button onClick={submit} {...pressProps} style={btnStyle}>
+            <button onClick={submit} {...pressProps} style={inputBtnStyle}>
               <span style={{
                 fontFamily: "'Sora', sans-serif",
-                fontSize: 18, fontWeight: 600, color: '#0D0F14',
+                fontSize: BUTTONS.secondary.fontSize, fontWeight: BUTTONS.secondary.fontWeight,
+                color: accent,
               }}>
                 Check my recall
               </span>
-              <ArrowIcon />
+              <ArrowIcon color={accent} />
             </button>
           </div>
         )}
