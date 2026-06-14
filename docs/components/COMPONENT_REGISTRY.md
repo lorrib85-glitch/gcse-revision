@@ -309,12 +309,12 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### TimelineCanvas
 
 **File:** `src/components/learning/TimelineCanvas.jsx`  
-**What it is:** Full-screen GSAP ScrollTrigger "pin and pan" canvas — vertical scroll on the screen drives a 1:1 horizontal pan across a wide canvas of step cards connected by curved SVG paths and connector dots. A bouncing "Scroll to explore →" hint fades as the user begins scrolling. Tapping a card's "+" opens a "Why it mattered" detail panel below the canvas (gated continue, like `TimelineChain`).  
+**What it is:** Full-screen "swipe to pan" canvas — natively horizontally-scrollable wide canvas of step cards connected by curved SVG paths and connector dots; the user pans with a 1:1 finger swipe. Each connector line draws itself in (and its dot lights up) as the pan position passes over it. A bouncing "Swipe to explore →" hint fades once panning begins. Tapping a card's "+" opens a "Why it mattered" detail panel below the canvas (gated continue, like `TimelineChain`).  
 **Best used for:** A deliberately different rhythm to `TimelineChain` — an occasional "jarring" interruption to vary pacing between chapter moments, reusing the same kind of causal-chain content. Not for routine use; the spring/bounce motion is an intentional one-off exception to the Motion Rules (documented in-file).  
 **Props:** `block`, `subject` (defaults to `History`), `onContinue`  
 **Block shape:** `{ type: 'timelineCanvas', title?, intro?, steps: [{ id?, icon?, image?, label, detail, stats?: [string, string] }] }`  
 **Screen type:** `timelineCanvas` (full-screen, routed directly in `ModulePlayer.jsx` like `TimelineChain`)  
-**Dependencies:** `gsap` (+ `gsap/ScrollTrigger`), `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
 
 ---
 

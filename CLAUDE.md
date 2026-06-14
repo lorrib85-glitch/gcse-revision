@@ -67,7 +67,7 @@ Screen-level learning interaction components.
 - `SymptomProgression.jsx` — Case-file walkthrough of how an illness develops in the body, stage by stage (explain-the-chain mechanic).
 - `TheoryCompareBlock.jsx` — Side-by-side theory comparison block with staggered fade-in animation.
 - `TheoryLab.jsx` — Multi-part diagnostic scenario linking a historical belief to its treatment logic and outcome.
-- `TimelineCanvas.jsx` — Full-screen GSAP ScrollTrigger "pin and pan" canvas: scroll pans across a wide chain of cards with curved connectors; tap + to reveal why each step mattered. A deliberate one-off variation in rhythm from `TimelineChain`.
+- `TimelineCanvas.jsx` — Full-screen "swipe to pan" canvas: swipe horizontally to pan across a wide chain of cards with curved connectors that draw in as you pan; tap + to reveal why each step mattered. A deliberate one-off variation in rhythm from `TimelineChain`.
 - `TimelineChain.jsx` — Full-screen horizontal scroll-snap chain of flip cards connected by a connector rail, revealing a chapter's causal sequence step by step.
 - `VisualLearning.jsx` — Click-to-continue cinematic scene sequence with background images, animated headlines, and optional final reveal.
 - `VisualNarrativeScreen.jsx` — Beat-based narrative screen supporting portraits, timelines, facts, and conclusion beats.

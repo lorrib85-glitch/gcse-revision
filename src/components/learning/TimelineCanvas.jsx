@@ -1,22 +1,19 @@
 import { useState, useRef, useLayoutEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 
-gsap.registerPlugin(ScrollTrigger)
-
 // ─── TimelineCanvas v1 ──────────────────────────────────────────────────────
 //
-// Full-screen GSAP ScrollTrigger "pin and pan" canvas — a deliberately
-// different rhythm to TimelineChain. Vertical scroll on the screen drives a
-// 1:1 horizontal pan across a wide canvas of cards connected by curved SVG
-// paths and connector dots. Tapping a card's "+" reveals why that step
-// mattered. A bouncing "Scroll to explore" hint fades as the user begins
-// scrolling — both intentionally reproduce the spring/bounce feel of the
-// reference interaction, re-skinned in dark cinematic / SUBJECTS tokens.
+// Full-screen "swipe to pan" canvas — a deliberately different rhythm to
+// TimelineChain. Swipe horizontally to pan across a wide canvas of cards
+// connected by curved SVG paths; each connector line draws itself in (and its
+// dot lights up) as the pan position passes over it. Tapping a card's "+"
+// reveals why that step mattered. A bouncing "Swipe to explore" hint fades
+// once panning begins — both intentionally reproduce the spring/bounce feel
+// of the reference interaction, re-skinned in dark cinematic / SUBJECTS
+// tokens.
 //
 // This is a deliberate exception to the Motion Rules' "no bounce, no spring"
 // guidance — used sparingly, as a one-off "jarring" interruption to vary the
@@ -26,7 +23,7 @@ gsap.registerPlugin(ScrollTrigger)
 // {
 //   type: 'timelineCanvas',
 //   title?: 'How the Black Death spread',
-//   intro?: 'Scroll to explore the chain. Tap + on each card to reveal why it mattered.',
+//   intro?: 'Swipe to explore the chain. Tap + on each card to reveal why it mattered.',
 //   steps: [
 //     { id, icon?: '🚢', image?: '/path.png', label: 'Ships carried rats',
 //       detail: 'Trade ships from Asia carried black rats...', stats?: ['Step 1 of 4', 'Tap + for detail'] },
@@ -64,6 +61,9 @@ function ensureStyles() {
       transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
     .tcv-card:active { --ty: -54%; --s: 1.015; }
+    .tcv-connector-dot {
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
   `
   document.head.appendChild(el)
 }
@@ -87,10 +87,9 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   const [opened, setOpened] = useState(() => new Set())
 
   const scrollerRef = useRef(null)
-  const spacerRef = useRef(null)
-  const stickyRef = useRef(null)
-  const canvasRef = useRef(null)
   const hintRef = useRef(null)
+  const pathRefs = useRef([])
+  const dotRefs = useRef([])
 
   const centers = steps.map((_, i) => ({
     x: CANVAS_PAD + i * STEP_GAP,
@@ -98,69 +97,52 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   }))
   const canvasW = CANVAS_PAD + Math.max(steps.length - 1, 0) * STEP_GAP + CANVAS_PAD
 
-  const paths = centers.slice(0, -1).map((c, i) => {
+  const segments = centers.slice(0, -1).map((c, i) => {
     const n = centers[i + 1]
     const midX = (c.x + n.x) / 2
-    return `M ${c.x} ${c.y} C ${midX} ${c.y}, ${midX} ${n.y}, ${n.x} ${n.y}`
-  })
-  const dots = centers.slice(0, -1).map((c, i) => {
-    const n = centers[i + 1]
-    return { x: (c.x + n.x) / 2, y: (c.y + n.y) / 2 }
+    return {
+      d: `M ${c.x} ${c.y} C ${midX} ${c.y}, ${midX} ${n.y}, ${n.x} ${n.y}`,
+      dot: { x: (c.x + n.x) / 2, y: (c.y + n.y) / 2 },
+      from: c.x, to: n.x,
+    }
   })
 
-  // Pin the canvas in place while vertical scroll scrubs it horizontally —
-  // 1px of scroll maps to 1px of pan, matching the reference behaviour.
-  // Re-runs when the detail panel opens/closes, since that resizes the
-  // scroller (flex sibling) and the sticky/spacer heights must follow.
+  // Draw each connector line in (and light up its dot) as the pan position
+  // moves across it, and fade the swipe hint once panning begins.
   useLayoutEffect(() => {
     const scroller = scrollerRef.current
-    const spacer = spacerRef.current
-    const canvas = canvasRef.current
-    if (!scroller || !spacer || !canvas || steps.length === 0) return
+    if (!scroller || segments.length === 0) return
 
-    const viewportW = scroller.clientWidth
-    const viewportH = scroller.clientHeight
-    const scrollMax = Math.max(canvasW - viewportW + 80, 0)
-    spacer.style.height = `${viewportH + scrollMax}px`
-    if (stickyRef.current) stickyRef.current.style.height = `${viewportH}px`
-
-    const panTween = gsap.to(canvas, {
-      x: -scrollMax,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: spacer,
-        scroller,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: true,
-      },
+    const lengths = pathRefs.current.map(p => p?.getTotalLength?.() || 0)
+    pathRefs.current.forEach((p, i) => {
+      if (p) p.style.strokeDasharray = `${lengths[i]}`
     })
 
-    let hintTween
-    if (hintRef.current) {
-      hintTween = gsap.to(hintRef.current, {
-        opacity: 0, y: 20, ease: 'none',
-        scrollTrigger: {
-          trigger: spacer,
-          scroller,
-          start: 'top top',
-          end: '+=120',
-          scrub: true,
-        },
+    function update() {
+      const focusX = scroller.scrollLeft + scroller.clientWidth / 2
+
+      segments.forEach((seg, i) => {
+        const progress = Math.max(0, Math.min(1, (focusX - seg.from) / (seg.to - seg.from)))
+        const path = pathRefs.current[i]
+        if (path) path.style.strokeDashoffset = `${lengths[i] * (1 - progress)}`
+        const dot = dotRefs.current[i]
+        if (dot) {
+          const lit = progress > 0.5
+          dot.style.opacity = lit ? '1' : '0'
+          dot.style.transform = `translate(-50%,-50%) scale(${lit ? 1 : 0.4})`
+        }
       })
-    }
 
-    ScrollTrigger.refresh()
-
-    return () => {
-      panTween.scrollTrigger?.kill()
-      panTween.kill()
-      if (hintTween) {
-        hintTween.scrollTrigger?.kill()
-        hintTween.kill()
+      if (hintRef.current) {
+        const p = Math.min(scroller.scrollLeft / 100, 1)
+        hintRef.current.style.opacity = `${1 - p}`
       }
     }
-  }, [steps.length, canvasW, openIndex !== null])
+
+    update()
+    scroller.addEventListener('scroll', update, { passive: true })
+    return () => scroller.removeEventListener('scroll', update)
+  }, [steps.length, canvasW])
 
   function togglePlus(i) {
     setOpenIndex(prev => (prev === i ? null : i))
@@ -201,134 +183,151 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
         )}
       </div>
 
-      {/* Pin-and-pan canvas */}
-      <div ref={scrollerRef} className="tcv-scroller" style={{ flex: 1, position: 'relative', overflowY: 'auto', overflowX: 'hidden' }}>
-        <div ref={spacerRef} style={{ position: 'relative' }}>
-          <div ref={stickyRef} style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}>
-            <div ref={canvasRef} style={{ position: 'absolute', top: '50%', left: 0, transform: 'translateY(-50%)', width: canvasW, height: CANVAS_H }}>
+      {/* Swipe-to-pan canvas */}
+      <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
+        <div ref={scrollerRef} className="tcv-scroller" style={{
+          position: 'absolute', inset: 0,
+          display: 'flex', alignItems: 'center',
+          overflowX: 'auto', overflowY: 'hidden',
+          WebkitOverflowScrolling: 'touch',
+        }}>
+          <div style={{ position: 'relative', flexShrink: 0, width: canvasW, height: CANVAS_H }}>
 
-              <svg width={canvasW} height={CANVAS_H} viewBox={`0 0 ${canvasW} ${CANVAS_H}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-                {paths.map((d, i) => (
-                  <path key={i} d={d} stroke={`rgba(${rgb},0.32)`} strokeWidth={3} fill="none" strokeLinecap="round" />
-                ))}
-              </svg>
+            <svg width={canvasW} height={CANVAS_H} viewBox={`0 0 ${canvasW} ${CANVAS_H}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+              {segments.map((seg, i) => (
+                <path
+                  key={i}
+                  ref={el => { pathRefs.current[i] = el }}
+                  d={seg.d}
+                  stroke={`rgba(${rgb},0.32)`}
+                  strokeWidth={3}
+                  fill="none"
+                  strokeLinecap="round"
+                  style={{ strokeDasharray: 600, strokeDashoffset: 600 }}
+                />
+              ))}
+            </svg>
 
-              {dots.map((d, i) => (
-                <div key={i} style={{
-                  position: 'absolute', left: d.x, top: d.y, transform: 'translate(-50%,-50%)',
+            {segments.map((seg, i) => (
+              <div
+                key={i}
+                ref={el => { dotRefs.current[i] = el }}
+                className="tcv-connector-dot"
+                style={{
+                  position: 'absolute', left: seg.dot.x, top: seg.dot.y,
+                  transform: 'translate(-50%,-50%) scale(0.4)', opacity: 0,
                   width: 20, height: 20, borderRadius: '50%',
                   background: accent, border: '6px solid #08090D',
                   boxShadow: `0 0 14px rgba(${rgb},0.55)`,
                   zIndex: 2,
-                }} />
-              ))}
+                }}
+              />
+            ))}
 
-              {steps.map((step, i) => {
-                const c = centers[i]
-                const isOpen = openIndex === i
-                return (
-                  <div key={step.id || i}>
-                    {/* Card */}
-                    <div className="tcv-card" style={{
-                      position: 'absolute', left: c.x, top: c.y,
-                      width: CARD_W, height: CARD_H,
-                      borderRadius: RADII.large,
-                      border: `1px solid rgba(${rgb},0.18)`,
-                      background: 'rgba(255,255,255,0.03)',
-                      boxShadow: '0 20px 48px rgba(0,0,0,0.5)',
-                      overflow: 'hidden', zIndex: 3,
-                    }}>
-                      {/* media */}
-                      <div style={{ position: 'relative', height: CARD_VIDEO_H, width: '100%', overflow: 'hidden', background: '#000' }}>
-                        {step.image && (
-                          <img src={step.image} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                        )}
-                        <div style={{
-                          position: 'absolute', inset: 0,
-                          background: `linear-gradient(180deg, rgba(${rgb},0.16) 0%, rgba(8,9,13,0) 45%, rgba(8,9,13,0.85) 100%)`,
-                        }} />
-                        {/* header badges */}
-                        <div style={{ position: 'absolute', top: 12, left: 12, right: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <div style={{
-                            ...F, padding: '5px 12px', borderRadius: RADII.pill, fontSize: 12, fontWeight: 700,
-                            color: '#08090D', background: accent,
-                            boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.4), 0 3px 8px rgba(0,0,0,0.35)',
-                          }}>
-                            STEP {i + 1}
-                          </div>
-                          {step.icon && (
-                            <div style={{
-                              width: 32, height: 32, borderRadius: '50%',
-                              background: 'rgba(255,255,255,0.14)', backdropFilter: 'blur(6px)',
-                              border: '1px solid rgba(255,255,255,0.25)',
-                              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15,
-                            }}>
-                              {step.icon}
-                            </div>
-                          )}
-                        </div>
-                        {/* title */}
-                        <div style={{
-                          position: 'absolute', bottom: 12, left: 0, width: '100%', textAlign: 'center',
-                          ...F, color: 'rgba(255,255,255,0.96)', fontWeight: 700, fontSize: 16,
-                          textShadow: '0 3px 10px rgba(0,0,0,0.6)', padding: '0 12px', boxSizing: 'border-box',
-                        }}>
-                          {step.label}
-                        </div>
-                      </div>
-                      {/* stats footer */}
+            {steps.map((step, i) => {
+              const c = centers[i]
+              const isOpen = openIndex === i
+              return (
+                <div key={step.id || i}>
+                  {/* Card */}
+                  <div className="tcv-card" style={{
+                    position: 'absolute', left: c.x, top: c.y,
+                    width: CARD_W, height: CARD_H,
+                    borderRadius: RADII.large,
+                    border: `1px solid rgba(${rgb},0.18)`,
+                    background: 'rgba(255,255,255,0.03)',
+                    boxShadow: '0 20px 48px rgba(0,0,0,0.5)',
+                    overflow: 'hidden', zIndex: 3,
+                  }}>
+                    {/* media */}
+                    <div style={{ position: 'relative', height: CARD_VIDEO_H, width: '100%', overflow: 'hidden', background: '#000' }}>
+                      {step.image && (
+                        <img src={step.image} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                      )}
                       <div style={{
-                        height: CARD_STATS_H, display: 'flex', justifyContent: 'space-evenly', alignItems: 'center',
-                        ...F, fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.46)',
-                        background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.06)',
+                        position: 'absolute', inset: 0,
+                        background: `linear-gradient(180deg, rgba(${rgb},0.16) 0%, rgba(8,9,13,0) 45%, rgba(8,9,13,0.85) 100%)`,
+                      }} />
+                      {/* header badges */}
+                      <div style={{ position: 'absolute', top: 12, left: 12, right: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div style={{
+                          ...F, padding: '5px 12px', borderRadius: RADII.pill, fontSize: 12, fontWeight: 700,
+                          color: '#08090D', background: accent,
+                          boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.4), 0 3px 8px rgba(0,0,0,0.35)',
+                        }}>
+                          STEP {i + 1}
+                        </div>
+                        {step.icon && (
+                          <div style={{
+                            width: 32, height: 32, borderRadius: '50%',
+                            background: 'rgba(255,255,255,0.14)', backdropFilter: 'blur(6px)',
+                            border: '1px solid rgba(255,255,255,0.25)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15,
+                          }}>
+                            {step.icon}
+                          </div>
+                        )}
+                      </div>
+                      {/* title */}
+                      <div style={{
+                        position: 'absolute', bottom: 12, left: 0, width: '100%', textAlign: 'center',
+                        ...F, color: 'rgba(255,255,255,0.96)', fontWeight: 700, fontSize: 16,
+                        textShadow: '0 3px 10px rgba(0,0,0,0.6)', padding: '0 12px', boxSizing: 'border-box',
                       }}>
-                        {(step.stats || [`Step ${i + 1} of ${steps.length}`, 'Tap + for detail']).map((s, si) => (
-                          <span key={si}>{s}</span>
-                        ))}
+                        {step.label}
                       </div>
                     </div>
-
-                    {/* Plus button */}
-                    <button
-                      className={`tcv-plus-btn${isOpen ? ' is-open' : ''}`}
-                      onClick={() => togglePlus(i)}
-                      style={{
-                        position: 'absolute',
-                        left: c.x + CARD_W / 2 - 8, top: c.y + CARD_H / 2 - 8,
-                        width: 44, height: 44, borderRadius: '50%',
-                        border: `2px solid rgba(${rgb},0.5)`,
-                        background: isOpen ? accent : `rgba(${rgb},0.14)`,
-                        color: isOpen ? '#08090D' : accent,
-                        fontSize: 22, fontWeight: 700, lineHeight: 1,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
-                        cursor: 'pointer', zIndex: 4, padding: 0,
-                        WebkitTapHighlightColor: 'transparent',
-                      }}
-                    >
-                      {isOpen ? '×' : '+'}
-                    </button>
+                    {/* stats footer */}
+                    <div style={{
+                      height: CARD_STATS_H, display: 'flex', justifyContent: 'space-evenly', alignItems: 'center',
+                      ...F, fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.46)',
+                      background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.06)',
+                    }}>
+                      {(step.stats || [`Step ${i + 1} of ${steps.length}`, 'Tap + for detail']).map((s, si) => (
+                        <span key={si}>{s}</span>
+                      ))}
+                    </div>
                   </div>
-                )
-              })}
-            </div>
 
-            {/* Scroll hint */}
-            {steps.length > 1 && openIndex === null && (
-              <div ref={hintRef} style={{
-                position: 'absolute', bottom: 16, left: '50%',
-                ...F, fontWeight: 700, fontSize: 13, color: accent,
-                background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.12)', borderRadius: RADII.pill,
-                padding: '10px 20px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-                pointerEvents: 'none', animation: 'tcv-bounce 2s infinite ease-in-out',
-                transform: 'translateX(-50%)',
-              }}>
-                Scroll to explore →
-              </div>
-            )}
+                  {/* Plus button */}
+                  <button
+                    className={`tcv-plus-btn${isOpen ? ' is-open' : ''}`}
+                    onClick={() => togglePlus(i)}
+                    style={{
+                      position: 'absolute',
+                      left: c.x + CARD_W / 2 - 8, top: c.y + CARD_H / 2 - 8,
+                      width: 44, height: 44, borderRadius: '50%',
+                      border: `2px solid rgba(${rgb},0.5)`,
+                      background: isOpen ? accent : `rgba(${rgb},0.14)`,
+                      color: isOpen ? '#08090D' : accent,
+                      fontSize: 22, fontWeight: 700, lineHeight: 1,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
+                      cursor: 'pointer', zIndex: 4, padding: 0,
+                      WebkitTapHighlightColor: 'transparent',
+                    }}
+                  >
+                    {isOpen ? '×' : '+'}
+                  </button>
+                </div>
+              )
+            })}
           </div>
         </div>
+
+        {/* Swipe hint */}
+        {steps.length > 1 && openIndex === null && (
+          <div ref={hintRef} style={{
+            position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)',
+            ...F, fontWeight: 700, fontSize: 13, color: accent,
+            background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255,255,255,0.12)', borderRadius: RADII.pill,
+            padding: '10px 20px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            pointerEvents: 'none', animation: 'tcv-bounce 2s infinite ease-in-out',
+          }}>
+            Swipe to explore →
+          </div>
+        )}
       </div>
 
       {/* Detail reveal panel */}
