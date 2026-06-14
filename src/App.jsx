@@ -825,11 +825,11 @@ function TaskCard({ task, position, onClick }) {
   const { magnitude, signed } = position
   const scale = magnitude === 0 ? 1.06 : magnitude === 1 ? 0.86 : 0.74
   const opacity = magnitude === 0 ? 1 : magnitude === 1 ? 0.45 : 0.18
-  const distance = magnitude === 1 ? 250 : magnitude === 2 ? 280 : 0
+  const distance = magnitude === 1 ? 219 : magnitude === 2 ? 245 : 0
   const translateX = signed === 0 ? 0 : signed > 0 ? distance : -distance
   const rotation = magnitude === 1 ? 14 : magnitude === 2 ? 24 : 0
   const rotateY = signed === 0 ? 0 : signed > 0 ? -rotation : rotation
-  const depth = magnitude === 0 ? 0 : magnitude === 1 ? -40 : -90
+  const depth = magnitude === 0 ? 0 : magnitude === 1 ? -35 : -79
   const accentColor = magnitude === 0 ? GENERAL.coral : GENERAL.teal
 
   return (
@@ -837,7 +837,7 @@ function TaskCard({ task, position, onClick }) {
       onClick={onClick}
       style={{
         position: 'absolute', top: '50%', left: '50%',
-        width: 256, height: 360,
+        width: 224, height: 315,
         transform: `translate(-50%, -50%) translateX(${translateX}px) translateZ(${depth}px) rotateY(${rotateY}deg) scale(${scale})`,
         opacity, zIndex: 10 - magnitude,
         transition: `transform ${MOTION.duration.cinematic} ${MOTION.easing.standard}, opacity ${MOTION.duration.cinematic} ${MOTION.easing.standard}`,
@@ -853,20 +853,19 @@ function TaskCard({ task, position, onClick }) {
             position: 'absolute', inset: 0, zIndex: 0,
             backgroundImage: `url(${task.image})`,
             backgroundSize: 'cover', backgroundPosition: 'center',
-            opacity: 0.10,
           }} />
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0, zIndex: 0,
-            background: `linear-gradient(to bottom, transparent 30%, ${GENERAL.neutral[1]} 100%)`,
+            background: `linear-gradient(to bottom, transparent 35%, ${GENERAL.neutral[1]} 100%)`,
           }} />
         </>
       )}
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1 }}>
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'flex-end' }}>
         <div style={{ ...TYPE.body, fontWeight: 600, color: accentColor }}>
           {task.title}
         </div>
         <div style={{
-          marginTop: 'auto', paddingTop: 16,
+          marginTop: SPACING.micro,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div style={{
@@ -880,13 +879,9 @@ function TaskCard({ task, position, onClick }) {
             {`~${task.durationMinutes} min`}
           </div>
           {magnitude === 0 && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 4,
-              ...TYPE.metadata, fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', color: accentColor,
-            }}>
-              Start
-              <span style={{ fontSize: 15, lineHeight: 1 }}>→</span>
-            </div>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
           )}
         </div>
       </div>
@@ -921,7 +916,7 @@ function TaskCarousel({ tasks, onSelect }) {
           const diff = touchStartX.current - e.changedTouches[0].screenX
           if (Math.abs(diff) > 50) go(active + (diff > 0 ? 1 : -1))
         }}
-        style={{ position: 'relative', height: 396, overflow: 'hidden', perspective: 1200 }}
+        style={{ position: 'relative', height: 347, overflow: 'hidden', perspective: 1200 }}
       >
         {tasks.map((task, i) => {
           const raw = (i - active + count) % count
