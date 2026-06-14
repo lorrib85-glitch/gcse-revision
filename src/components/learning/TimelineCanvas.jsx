@@ -26,7 +26,7 @@ import { RADII } from '../../constants/radii.js'
 //   title?: 'How the Black Death spread',
 //   intro?: 'Swipe to explore the chain. Tap + on each card to reveal why it mattered.',
 //   steps: [
-//     { id, icon?: '🚢', image?: '/path.png', label: 'Ships carried rats',
+//     { id, image?: '/path.png', label: 'Ships carried rats',
 //       detail: 'Trade ships from Asia carried black rats...', stats?: ['Step 1 of 4', 'Tap + for detail'] },
 //     ...
 //   ],
@@ -255,26 +255,6 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                         position: 'absolute', inset: 0,
                         background: `linear-gradient(180deg, rgba(${rgb},0.16) 0%, rgba(8,9,13,0) 45%, rgba(8,9,13,0.85) 100%)`,
                       }} />
-                      {/* header badges */}
-                      <div style={{ position: 'absolute', top: 12, left: 12, right: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div style={{
-                          ...F, padding: '5px 12px', borderRadius: RADII.pill, fontSize: 12, fontWeight: 700,
-                          color: '#08090D', background: accent,
-                          boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.4), 0 3px 8px rgba(0,0,0,0.35)',
-                        }}>
-                          STEP {i + 1}
-                        </div>
-                        {step.icon && (
-                          <div style={{
-                            width: 32, height: 32, borderRadius: '50%',
-                            background: 'rgba(255,255,255,0.14)', backdropFilter: 'blur(6px)',
-                            border: '1px solid rgba(255,255,255,0.25)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15,
-                          }}>
-                            {step.icon}
-                          </div>
-                        )}
-                      </div>
                       {/* title */}
                       <div style={{
                         position: 'absolute', bottom: 12, left: 0, width: '100%', textAlign: 'center',

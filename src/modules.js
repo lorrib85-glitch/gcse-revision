@@ -1542,12 +1542,11 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         type: 'timelineCanvas',
         stage: 'The arrival',
         label: 'The chain, scroll by scroll',
-        title: 'Scroll the chain',
-        intro: 'Same chain, a different pace. Scroll to pan across the timeline, then tap + on each step to recall why it mattered.',
+        title: 'How it spread',
+        intro: 'Scroll to follow the infection.',
         steps: [
           {
             id: 'ship',
-            icon: '🚢',
             image: '/figures/history/medicine/black-death/plague-dock.png', // placeholder — replace with a ship-specific image
             label: 'Trade ships docked at English ports',
             detail: 'Genoese and other Mediterranean trading ships carried grain, cloth and wine into English ports — and, hidden in the hold, black rats infested with fleas. The Black Death reached England via the port of Melcombe (modern Weymouth) in June 1348.',
@@ -1555,7 +1554,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           },
           {
             id: 'rats',
-            icon: '🐀',
             image: '/figures/history/medicine/black-death/medieval-town.png', // placeholder — replace with a rat-specific image
             label: 'Black rats lived alongside humans',
             detail: 'Rats nested in grain stores, ships’ holds and crowded housing. Nobody connected the rats to illness — medieval explanations focused on miasma (bad air) and God’s punishment, not animals.',
@@ -1563,7 +1561,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           },
           {
             id: 'fleas',
-            icon: '🦟',
             image: '/figures/history/medicine/black-death/plague-background.png', // placeholder — replace with a flea-specific image
             label: 'Fleas carried Yersinia pestis',
             detail: 'When an infected rat died, its fleas jumped to the nearest warm body — often human. A single bite transferred the bacterium Yersinia pestis into the bloodstream, causing bubonic plague.',
@@ -1571,7 +1568,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           },
           {
             id: 'spread',
-            icon: '🏘️',
             image: '/figures/history/medicine/black-death/trade-routes-map.png', // placeholder — replace with a town-spread image
             label: 'The disease spread along trade and travel routes',
             detail: 'From Melcombe, the plague spread along roads and waterways used for trade — reaching Bristol and London within months. By 1350, it had killed an estimated one-third to one-half of England’s population.',
