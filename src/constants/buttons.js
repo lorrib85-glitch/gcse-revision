@@ -31,6 +31,20 @@ export const BUTTONS = {
     pressScale: 0.985,
   },
 
+  // The primary progression CTA — "Continue" — used to advance to the next
+  // screen on the vast majority of learning screens. Full-width within the
+  // screen's existing side padding, accent-filled, RADII.large (unlike
+  // `secondary`, which uses RADII.medium for lighter supporting actions).
+  continue: {
+    height: 56,
+    borderRadius: RADII.large,
+    paddingX: 24,
+    fontSize: 17,
+    fontWeight: 600,
+    transition: '180ms ease',
+    pressScale: 0.985,
+  },
+
   compact: {
     height: 44,
     borderRadius: RADII.small,
