@@ -774,28 +774,28 @@ function HomeAtmosphere() {
       {/* Large slow-drifting wave bands */}
       <svg
         width="100%" height="100%"
-        viewBox="0 0 390 844"
+        viewBox="0 0 390 300"
         preserveAspectRatio="none"
         style={{ position: 'absolute', inset: 0 }}
       >
         <defs>
           <linearGradient id="ha-wave-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={`rgba(${GENERAL.tealRgb},0.16)`} />
-            <stop offset="100%" stopColor={`rgba(${hexToRgb(GENERAL.darkTeal)},0.05)`} />
+            <stop offset="0%" stopColor={`rgba(${GENERAL.tealRgb},0.38)`} />
+            <stop offset="100%" stopColor={`rgba(${hexToRgb(GENERAL.darkTeal)},0.1)`} />
           </linearGradient>
         </defs>
         <g style={{ animation: 'ha-wave-drift-a 30s linear infinite' }}>
-          <path d="M0,190 Q48.75,212 97.5,190 T195,190 T292.5,190 T390,190 T487.5,190 T585,190 T682.5,190 T780,190 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="0.5" />
+          <path d="M0,170 Q48.75,198 97.5,170 T195,170 T292.5,170 T390,170 T487.5,170 T585,170 T682.5,170 T780,170 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="0.5" />
         </g>
         <g style={{ animation: 'ha-wave-drift-b 42s linear infinite' }}>
-          <path d="M0,130 Q48.75,156 97.5,130 T195,130 T292.5,130 T390,130 T487.5,130 T585,130 T682.5,130 T780,130 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="0.7" />
+          <path d="M0,110 Q48.75,138 97.5,110 T195,110 T292.5,110 T390,110 T487.5,110 T585,110 T682.5,110 T780,110 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="0.7" />
         </g>
         <g style={{ animation: 'ha-wave-drift-a 54s linear infinite' }}>
-          <path d="M0,80 Q48.75,108 97.5,80 T195,80 T292.5,80 T390,80 T487.5,80 T585,80 T682.5,80 T780,80 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="1" />
+          <path d="M0,60 Q48.75,90 97.5,60 T195,60 T292.5,60 T390,60 T487.5,60 T585,60 T682.5,60 T780,60 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="1" />
         </g>
       </svg>
       <svg
-        width="100%" height="55%"
+        width="100%" height="75%"
         viewBox="0 0 390 300"
         preserveAspectRatio="xMaxYMin meet"
         style={{ animation: 'ha-breathe 18s ease-in-out infinite' }}
@@ -804,18 +804,18 @@ function HomeAtmosphere() {
           <line key={i}
             x1={nodes[a][0]} y1={nodes[a][1]}
             x2={nodes[b][0]} y2={nodes[b][1]}
-            stroke={`rgba(${GENERAL.tealRgb},0.22)`}
+            stroke={`rgba(${GENERAL.tealRgb},0.35)`}
             strokeWidth="0.65"
           />
         ))}
         {nodes.map(([cx, cy], i) => (
-          <circle key={i} cx={cx} cy={cy} r="1.8" fill={`rgba(${GENERAL.tealRgb},0.32)`} />
+          <circle key={i} cx={cx} cy={cy} r="1.8" fill={`rgba(${GENERAL.tealRgb},0.5)`} />
         ))}
       </svg>
       {/* Left-to-right vignette — keeps text area dark */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: `linear-gradient(90deg, ${GENERAL.neutral[0]} 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.72) 40%, rgba(${hexToRgb(GENERAL.neutral[0])},0.18) 75%, transparent 100%)`,
+        background: `linear-gradient(90deg, ${GENERAL.neutral[0]} 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.55) 40%, rgba(${hexToRgb(GENERAL.neutral[0])},0.12) 75%, transparent 100%)`,
       }} />
     </div>
   )
@@ -974,10 +974,10 @@ function Home({ onSelectTask }) {
 
         {/* Headline */}
         <div style={{ position: 'absolute', left: SPACING.compact, right: SPACING.compact, bottom: SPACING.standard, zIndex: 2 }}>
-          <div style={{ ...TYPE.cinematic, fontSize: 46, color: GENERAL.softWhite }}>
+          <div style={{ ...TYPE.body, color: 'rgba(241,250,238,0.7)' }}>
             Hi, {userName}<span style={{ color: GENERAL.teal }}>.</span>
           </div>
-          <div style={{ ...TYPE.body, color: 'rgba(241,250,238,0.7)', marginTop: SPACING.micro }}>
+          <div style={{ ...TYPE.cinematic, fontSize: 46, color: GENERAL.softWhite, marginTop: SPACING.micro }}>
             What's today's plan?
           </div>
         </div>
@@ -2310,7 +2310,7 @@ function ModulesTab({ onOpenModule }) {
     <div style={{ background: GENERAL.neutral[0], minHeight: '100vh', paddingBottom: 108, overflowX: 'hidden' }}>
 
       {/* ── Hero ── */}
-      <div style={{ position: 'relative', width: '100%', height: '40vh', minHeight: 288, maxHeight: 384, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', width: '100%', height: '34vh', minHeight: 260, maxHeight: 340, overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', inset: 0,
           backgroundImage: `url(${continueHeaderImage})`,
@@ -2319,11 +2319,11 @@ function ModulesTab({ onOpenModule }) {
         }} />
         <div style={{
           position: 'absolute', inset: 0,
-          background: `linear-gradient(180deg, rgba(13,15,16,0.45) 0%, rgba(13,15,16,0.05) 22%, rgba(13,15,16,0.10) 45%, rgba(13,15,16,0.55) 75%, ${GENERAL.neutral[0]} 100%)`,
+          background: `linear-gradient(180deg, rgba(13,15,16,0.5) 0%, rgba(13,15,16,0.1) 28%, rgba(13,15,16,0.25) 58%, ${GENERAL.neutral[0]} 100%)`,
         }} />
 
         {/* Streak badge */}
-        <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: SPACING.compact, zIndex: 2 }}>
+        <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 14px)', right: SPACING.compact, zIndex: 2 }}>
           <StreakChip />
         </div>
 
