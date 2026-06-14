@@ -838,122 +838,112 @@ function HomeAtmosphere() {
   )
 }
 
+function TaskCard({ task, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        flexShrink: 0, width: '78%', scrollSnapAlign: 'start',
+        position: 'relative', overflow: 'hidden',
+        display: 'flex', flexDirection: 'column', minHeight: 172,
+        textAlign: 'left', background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.06)', borderRadius: RADII.large,
+        padding: SPACING.standard, cursor: 'pointer',
+      }}
+    >
+      {task.image && (
+        <>
+          <div aria-hidden="true" style={{
+            position: 'absolute', inset: 0, zIndex: 0,
+            backgroundImage: `url(${task.image})`,
+            backgroundSize: 'cover', backgroundPosition: 'center',
+            opacity: 0.10,
+          }} />
+          <div aria-hidden="true" style={{
+            position: 'absolute', inset: 0, zIndex: 0,
+            background: `linear-gradient(to bottom, transparent 30%, ${GENERAL.neutral[1]} 100%)`,
+          }} />
+        </>
+      )}
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <div style={{
+          ...TYPE.metadata, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.16em',
+          color: task.accent, marginBottom: 10,
+        }}>
+          {task.kicker}
+        </div>
+        <div style={{ ...TYPE.cardTitle, color: task.titleColor, marginBottom: 6 }}>
+          {task.title}
+        </div>
+        <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>
+          {task.reason}
+        </div>
+        <div style={{
+          marginTop: 'auto', paddingTop: 16,
+          ...TYPE.metadata, fontSize: 12, fontWeight: 400, letterSpacing: '0.06em', color: GENERAL.slate,
+        }}>
+          {task.duration}
+        </div>
+      </div>
+    </button>
+  )
+}
+
 function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) {
   const { user } = useAuth()
   const userName = user?.name || 'you'
 
-  // Find the module with most progress to show in "Jump back in"
-  const jumpBackModule = (() => {
-    let best = null, bestPct = -1
-    for (const m of MODULES) {
-      const s = safeGetModuleState(m.id)
-      // Completed modules don't belong in "jump back in" — that's for unfinished progress
-      if (s.completed) continue
-      if ((s.screen || 0) > 0) {
-        const pct = ((s.screen || 0) / Math.max(1, m.screenCount || 1)) * 100
-        if (pct > bestPct) { bestPct = pct; best = m }
-      }
-    }
-    return best || MODULES.find(m => m.id === 'history-medicine-medieval-beliefs-causes') || MODULES[0]
-  })()
+  const isWeekend = [0, 6].includes(new Date().getDay())
 
-  const jumpModState = jumpBackModule ? safeGetModuleState(jumpBackModule.id) : {}
-  const jumpPct = jumpBackModule
-    ? (jumpModState.completed ? 100 : Math.round(((jumpModState.screen || 0) / Math.max(1, jumpBackModule.screenCount || 1)) * 100))
-    : 0
+  // Mock plan for the Phase 1 visual-review checkpoint — replaced by
+  // buildTodaysPlan() in Phase 2.
+  const todaysPlan = [
+    {
+      type: 'warmup', kicker: 'Warm up', title: '90 second sprint',
+      reason: 'Mixed questions to start the day.', duration: '2 min',
+      titleColor: GENERAL.coral, accent: GENERAL.coral, image: null,
+    },
+    {
+      type: 'revisit', kicker: 'Revisit', title: 'The Black Death',
+      reason: '4 of your last 6 answers were incorrect.', duration: '5 min',
+      titleColor: GENERAL.softWhite, accent: GENERAL.teal,
+      image: '/figures/history/medicine/black-death/plague-background.png',
+    },
+    {
+      type: 'continue', kicker: 'Continue', title: 'The accidental miracle',
+      reason: '6 screens left in this module.', duration: '15 min',
+      titleColor: GENERAL.softWhite, accent: GENERAL.teal, image: null,
+    },
+  ]
+  if (isWeekend) {
+    todaysPlan.push({
+      type: 'paper', kicker: 'This weekend', title: 'Full History paper',
+      reason: 'A timed past paper, marked like the real thing.', duration: '50 min',
+      titleColor: GENERAL.softWhite, accent: GENERAL.teal,
+      image: '/headers/history-medicine-through-time.webp',
+    })
+  }
 
-  // Days active this calendar week (Mon–Sun)
-  const daysThisWeek = (() => {
-    try {
-      const today = new Date()
-      const jsDay = today.getDay() === 0 ? 7 : today.getDay()
-      const monday = new Date(today); monday.setDate(today.getDate() - (jsDay - 1))
-      const mondayStr = monday.toISOString().slice(0, 10)
-      const scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]')
-      return new Set(scores.filter(s => s.date >= mondayStr).map(s => s.date)).size
-    } catch { return progress.streak > 0 ? Math.min(progress.streak, 7) : 0 }
-  })()
-
-  // Weakest subject from recent scores — drives "Close the gaps"
-  const focusTopic = (() => {
-    try {
-      const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 14)
-      const cutoffStr = cutoff.toISOString().slice(0, 10)
-      const scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]').filter(s => s.date >= cutoffStr)
-      if (scores.length < 3) return null
-      const buckets = {}
-      scores.forEach(s => {
-        if (!buckets[s.subject]) buckets[s.subject] = []
-        buckets[s.subject].push(s.pct)
-      })
-      const avg = arr => Math.round(arr.reduce((a, b) => a + b, 0) / arr.length)
-      const entries = Object.entries(buckets)
-        .map(([subject, pcts]) => ({ subject, avg: avg(pcts), count: pcts.length }))
-        .filter(e => e.count >= 2)
-        .sort((a, b) => a.avg - b.avg)
-      return entries[0] || null
-    } catch { return null }
-  })()
-
-  // Top unvisited gap module — if a tag has a high error rate and its module hasn't been started
-  const homeGapModule = (() => {
-    try {
-      const top = Object.entries(getQuizWeaknesses())
-        .map(([key, v]) => { const t = v.c + v.i; return { tag: key.split('/')[1], total: t, rate: t > 0 ? v.i / t : 0 } })
-        .filter(x => x.total >= 2 && x.rate > 0.4)
-        .sort((a, b) => b.rate - a.rate)
-      for (const w of top) {
-        const modId = TAG_MODULE_MAP[w.tag]
-        if (!modId) continue
-        const mod = MODULES.find(m => m.id === modId)
-        if (!mod) continue
-        const state = safeGetModuleState(mod.id)
-        if (!state.completed && (state.screen || 0) === 0) return { mod, tag: w.tag }
-      }
-      return null
-    } catch { return null }
-  })()
-
-  const jumpHeaderImage = jumpBackModule?.headerImage
-    || MODULE_HEADER_IMAGES[jumpBackModule?.id]
-    || '/headers/history-medicine-through-time.webp'
+  // Mock weekly trend line — replaced by getWeeklyTrend() in Phase 2.
+  const weekNote = "You're remembering more than last week."
 
   return (
     <div style={{
       minHeight: '100vh', background: GENERAL.neutral[0],
       paddingBottom: 120, overflowX: 'hidden', position: 'relative',
-      display: 'flex', flexDirection: 'column',
     }}>
-      {/* Landscape background — covers full top area from screen edge to Close the gap */}
-      <div aria-hidden="true" style={{
-        position: 'absolute', inset: 0, zIndex: 0,
-        backgroundImage: `url(${jumpHeaderImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center right',
-        backgroundRepeat: 'no-repeat',
-      }} />
-      {/* Gradient: darkens left (text readability) + fades to solid dark before Close the gap */}
-      <div aria-hidden="true" style={{
-        position: 'absolute', inset: 0, zIndex: 1,
-        background: [
-          `linear-gradient(to right, ${GENERAL.neutral[0]} 0%, ${GENERAL.neutral[0]} 48%, rgba(${hexToRgb(GENERAL.neutral[0])},0.80) 63%, rgba(${hexToRgb(GENERAL.neutral[0])},0.32) 78%, rgba(${hexToRgb(GENERAL.neutral[0])},0.06) 100%)`,
-          `linear-gradient(to bottom, rgba(${hexToRgb(GENERAL.neutral[0])},0.45) 0%, transparent 10%, transparent 48%, rgba(${hexToRgb(GENERAL.neutral[0])},0.85) 65%, ${GENERAL.neutral[0]} 76%)`,
-        ].join(', '),
-      }} />
-
       <HomeAtmosphere />
 
       <div style={{
         position: 'relative', zIndex: 1,
         maxWidth: 420, margin: '0 auto', width: '100%',
-        padding: `max(52px, calc(18px + env(safe-area-inset-top))) ${SPACING.standard}px 0`,
-        flex: 1, display: 'flex', flexDirection: 'column',
+        padding: `max(52px, calc(18px + env(safe-area-inset-top))) 0 0`,
       }}>
 
-        {/* ── Top row: avatar left, dots right ── */}
+        {/* ── Top row: avatar left, streak right ── */}
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          marginBottom: 20,
+          marginBottom: 20, padding: `0 ${SPACING.standard}px`,
         }}>
           <div style={{
             width: 32, height: 32, borderRadius: RADII.pill,
@@ -968,129 +958,33 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
         </div>
 
         {/* ── Greeting ── */}
-        <div style={{ ...TYPE.cinematic, fontSize: 38, color: GENERAL.softWhite, marginBottom: SPACING.compact }}>
+        <div style={{ ...TYPE.cinematic, fontSize: 38, color: GENERAL.softWhite, marginBottom: SPACING.micro, padding: `0 ${SPACING.standard}px` }}>
           Hi, {userName}<span style={{ color: GENERAL.teal }}>.</span>
         </div>
 
-        {/* ── Jump back in ── */}
-        <button
-          onClick={() => jumpBackModule && onOpenModule(jumpBackModule)}
-          style={{
-            marginBottom: 8, position: 'relative',
-            display: 'block', width: '100%', background: 'none', border: 'none',
-            padding: 0, cursor: 'pointer', textAlign: 'left',
-          }}
-        >
-          {/* Content — flex column so % complete sits at bottom */}
-          <div style={{
-            position: 'relative', zIndex: 2,
-            display: 'flex', flexDirection: 'column', minHeight: 130,
-            paddingBottom: SPACING.standard,
-          }}>
-            <div>
-              <div style={{ ...TYPE.sectionTitle, color: GENERAL.softWhite, marginBottom: 10 }}>
-                Jump back in
-              </div>
-              {jumpBackModule && (
-                <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>
-                  {jumpBackModule.title}
-                </div>
-              )}
-            </div>
+        {/* ── This week ── */}
+        <div style={{ ...TYPE.bodySmall, color: GENERAL.slate, marginBottom: SPACING.separation, padding: `0 ${SPACING.standard}px` }}>
+          {weekNote}
+        </div>
 
-            {jumpBackModule && (
-              <div style={{
-                marginTop: 'auto', paddingTop: 16,
-                display: 'inline-flex', alignItems: 'center', gap: 12,
-              }}>
-                <div style={{
-                  width: 36, height: 36, borderRadius: RADII.pill, flexShrink: 0,
-                  background: `rgba(${GENERAL.tealRgb},0.12)`,
-                  border: `1px solid rgba(${GENERAL.tealRgb},0.24)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
-                    <path d="M1 1.5L10 6.5L1 11.5V1.5Z" fill={GENERAL.teal} />
-                  </svg>
-                </div>
-                <span style={{ ...TYPE.metadata, color: GENERAL.slate, fontWeight: 400 }}>
-                  {jumpPct}% complete
-                </span>
-              </div>
-            )}
-          </div>
-        </button>
+        {/* ── Today's plan ── */}
+        <div style={{
+          ...TYPE.metadata, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.16em',
+          color: GENERAL.slate, marginBottom: SPACING.compact, padding: `0 ${SPACING.standard}px`,
+        }}>
+          Today's plan
+        </div>
 
-        {/* ── Close the gap ── pushed to bottom of screen above nav */}
-        <button
-          onClick={() => {
-            if (homeGapModule && onOpenModule) {
-              onOpenModule(homeGapModule.mod, findTaggedScreen(homeGapModule.mod, homeGapModule.tag))
-            } else {
-              onOpenSubjects && onOpenSubjects()
-            }
-          }}
-          style={{
-            marginTop: 'auto', position: 'relative', overflow: 'hidden',
-            display: 'block', width: '100%', background: GENERAL.neutral[0], border: 'none',
-            padding: 0, cursor: 'pointer', textAlign: 'left',
-          }}
-        >
-          {/* Blur strip — blends top edge into the header image above */}
-          <div aria-hidden="true" style={{
-            position: 'absolute', top: 0, left: 0, right: 0, height: 56,
-            backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
-            maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
-            zIndex: 2, pointerEvents: 'none',
-          }} />
-          {/* Atmospheric background image */}
-          <div aria-hidden="true" style={{
-            position: 'absolute', inset: 0, zIndex: 0,
-            backgroundImage: 'url(/focus-atmosphere.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center right',
-            backgroundRepeat: 'no-repeat',
-            opacity: 0.08,
-          }} />
-
-          {/* Overlay: radial text protection + bottom page blend */}
-          <div aria-hidden="true" style={{
-            position: 'absolute', inset: 0, zIndex: 1,
-            background: `radial-gradient(ellipse 80% 95% at 12% 50%, ${GENERAL.neutral[0]} 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.88) 28%, rgba(${hexToRgb(GENERAL.neutral[0])},0.28) 55%, transparent 78%)`,
-          }} />
-          <div aria-hidden="true" style={{
-            position: 'absolute', inset: 0, zIndex: 1,
-            background: `linear-gradient(to bottom, transparent 45%, rgba(${hexToRgb(GENERAL.neutral[0])},0.6) 74%, ${GENERAL.neutral[0]} 100%)`,
-          }} />
-
-          {/* Content — flex column so CTA sits at bottom */}
-          <div style={{
-            position: 'relative', zIndex: 2,
-            display: 'flex', flexDirection: 'column', minHeight: 130,
-            paddingBottom: SPACING.cinematic,
-          }}>
-            <div>
-              <div style={{ ...TYPE.sectionTitle, color: GENERAL.softWhite, marginBottom: 8 }}>
-                Close the gap.
-              </div>
-              <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>
-                {homeGapModule ? homeGapModule.mod.title : 'This will make the biggest impact.'}
-              </div>
-            </div>
-
-            <div style={{
-              marginTop: 'auto', paddingTop: 16,
-              display: 'inline-flex', alignItems: 'center', gap: 5,
-              ...TYPE.bodySmall, color: GENERAL.teal, fontWeight: 500,
-            }}>
-              {homeGapModule ? `Study ${homeGapModule.tag.replace(/-/g, ' ')}` : 'See focus topics'}
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M3 7H11M8 4L11 7L8 10" stroke={GENERAL.teal} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-          </div>
-        </button>
+        <div style={{
+          display: 'flex', gap: SPACING.compact, overflowX: 'auto',
+          scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'none', msOverflowStyle: 'none',
+          padding: `0 ${SPACING.standard}px`, paddingBottom: 4,
+        }}>
+          {todaysPlan.map((task, i) => (
+            <TaskCard key={task.type + i} task={task} onClick={() => {}} />
+          ))}
+        </div>
 
       </div>
     </div>
