@@ -15,7 +15,7 @@ export const HISTORY_MODULES = [
     icon: '⚕️',
     color: '#F5B700',
     colorLight: '#f5e6d3',
-    headerImage: '/headers/history-medicine-through-time.webp',
+    headerImage: '/headers/history-medicine-medieval-beliefs-causes.png',
 
     hook: {
       statement: 'Medieval doctors removed blood to cure illness.',

@@ -196,7 +196,8 @@ docs/system/TEACHING_VOICE_GUIDE.md
 
 - `/public/logo.png` — RISE logo (teal glow, dark background) — used in ModulesTab header and as favicon
 - `/public/headers/` — cinematic header images for subject/module hero cards
-  - History module cards: `history-medicine-through-time.png`, `history-elizabethan.png`, `history-usa-conflict.png`, `history-spain-new-world.png`
+  - History series cards (shared across a series' episodes by default): `history-medicine-through-time.png`, `history-elizabethan.png`, `history-usa-conflict.png`, `history-spain-new-world.png`
+  - History per-module card images (override the series card for one specific module's `headerImage`, filename = module id): `history-medicine-medieval-beliefs-causes.png` (Episode 1, "Trust me, I'm following Jupiter")
   - History in-module screens: `history-medicine-medieval-scripture.png`, `history-medicine-bloodletting.png`, `history-medicine-germ-bridge.png`
   - Biology overview: `bio-main.png`
   - Biology topic groups: `bio-buildinglife.png`, `bio-humanmachine.png`, `bio-diseasewars.png`, `bio-energyforlife.png`, `bio-controlsystems.png`, `bio-genetics.png`, `bio-ecosystems.png`
