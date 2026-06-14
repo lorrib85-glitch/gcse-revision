@@ -10,10 +10,11 @@ import { RADII } from '../../constants/radii.js'
 // TimelineChain. Swipe horizontally to pan across a wide canvas of cards
 // connected by curved SVG paths; each connector line draws itself in (and its
 // dot lights up) as the pan position passes over it. Tapping a card's "+"
-// reveals why that step mattered. A bouncing "Swipe to explore" hint fades
-// once panning begins — both intentionally reproduce the spring/bounce feel
-// of the reference interaction, re-skinned in dark cinematic / SUBJECTS
-// tokens.
+// reveals why that step mattered — each "+" glows gently until tapped. A
+// bouncing "Swipe to explore" hint sits above the canvas and disappears for
+// good the moment the user starts panning — both intentionally reproduce the
+// spring/bounce feel of the reference interaction, re-skinned in dark
+// cinematic / SUBJECTS tokens.
 //
 // This is a deliberate exception to the Motion Rules' "no bounce, no spring"
 // guidance — used sparingly, as a one-off "jarring" interruption to vary the
@@ -45,6 +46,10 @@ function ensureStyles() {
       from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+    @keyframes tcv-plus-glow {
+      0%, 100% { box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 0 0 rgba(var(--glow-rgb), 0.5); }
+      50%      { box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 14px 3px rgba(var(--glow-rgb), 0.5); }
+    }
     .tcv-scroller::-webkit-scrollbar { display: none; }
     .tcv-plus-btn {
       --s: 1;
@@ -54,6 +59,7 @@ function ensureStyles() {
                   color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .tcv-plus-btn:active, .tcv-plus-btn.is-open { --s: 1.15; }
+    .tcv-plus-btn.tcv-glow { animation: tcv-plus-glow 2.2s infinite ease-in-out; }
     .tcv-card {
       --ty: -50%;
       --s: 1;
@@ -85,11 +91,12 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
 
   const [openIndex, setOpenIndex] = useState(null)
   const [opened, setOpened] = useState(() => new Set())
+  const [hasPanned, setHasPanned] = useState(false)
 
   const scrollerRef = useRef(null)
-  const hintRef = useRef(null)
   const pathRefs = useRef([])
   const dotRefs = useRef([])
+  const hasPannedRef = useRef(false)
 
   const centers = steps.map((_, i) => ({
     x: CANVAS_PAD + i * STEP_GAP,
@@ -108,7 +115,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   })
 
   // Draw each connector line in (and light up its dot) as the pan position
-  // moves across it, and fade the swipe hint once panning begins.
+  // moves across it, and hide the swipe hint for good once panning begins.
   useLayoutEffect(() => {
     const scroller = scrollerRef.current
     if (!scroller || segments.length === 0) return
@@ -133,9 +140,9 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
         }
       })
 
-      if (hintRef.current) {
-        const p = Math.min(scroller.scrollLeft / 100, 1)
-        hintRef.current.style.opacity = `${1 - p}`
+      if (!hasPannedRef.current && scroller.scrollLeft > 4) {
+        hasPannedRef.current = true
+        setHasPanned(true)
       }
     }
 
@@ -291,7 +298,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
 
                   {/* Plus button */}
                   <button
-                    className={`tcv-plus-btn${isOpen ? ' is-open' : ''}`}
+                    className={`tcv-plus-btn${isOpen ? ' is-open' : ''}${!opened.has(i) ? ' tcv-glow' : ''}`}
                     onClick={() => togglePlus(i)}
                     style={{
                       position: 'absolute',
@@ -305,6 +312,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                       boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
                       cursor: 'pointer', zIndex: 4, padding: 0,
                       WebkitTapHighlightColor: 'transparent',
+                      '--glow-rgb': rgb,
                     }}
                   >
                     {isOpen ? '×' : '+'}
@@ -316,14 +324,13 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
         </div>
 
         {/* Swipe hint */}
-        {steps.length > 1 && openIndex === null && (
-          <div ref={hintRef} style={{
-            position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)',
+        {steps.length > 1 && openIndex === null && !hasPanned && (
+          <div style={{
+            position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
             ...F, fontWeight: 700, fontSize: 13, color: accent,
-            background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255,255,255,0.12)', borderRadius: RADII.pill,
-            padding: '10px 20px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            textShadow: '0 2px 12px rgba(0,0,0,0.8)',
             pointerEvents: 'none', animation: 'tcv-bounce 2s infinite ease-in-out',
+            zIndex: 5,
           }}>
             Swipe to explore →
           </div>
