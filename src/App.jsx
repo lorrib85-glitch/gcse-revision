@@ -860,13 +860,7 @@ function TaskCard({ task, position, onClick }) {
         </>
       )}
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <div style={{
-          ...TYPE.metadata, fontSize: 12, fontWeight: 600, letterSpacing: '0.08em',
-          textTransform: 'uppercase', color: accentColor, marginBottom: 8,
-        }}>
-          {task.kicker}
-        </div>
-        <div style={{ ...TYPE.cardTitle, color: GENERAL.softWhite }}>
+        <div style={{ ...TYPE.body, fontWeight: 600, color: accentColor }}>
           {task.title}
         </div>
         <div style={{
@@ -963,7 +957,6 @@ function Home({ onSelectTask }) {
   const userName = user?.name || 'you'
 
   const todaysPlan = buildTodaysPlan()
-  const { trendNote } = getWeeklyTrend()
 
   return (
     <div style={{
@@ -994,14 +987,9 @@ function Home({ onSelectTask }) {
         {/* ── Today's plan ── */}
         <div style={{
           ...TYPE.sectionTitle, color: GENERAL.softWhite,
-          marginBottom: SPACING.micro, padding: `0 ${SPACING.standard}px`,
+          marginBottom: SPACING.separation, padding: `0 ${SPACING.standard}px`,
         }}>
           What's today's plan?
-        </div>
-
-        {/* ── This week ── */}
-        <div style={{ ...TYPE.bodySmall, color: GENERAL.slate, marginBottom: SPACING.separation, padding: `0 ${SPACING.standard}px` }}>
-          {trendNote}
         </div>
 
         <TaskCarousel tasks={todaysPlan} onSelect={onSelectTask} />

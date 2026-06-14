@@ -31,7 +31,7 @@ function buildWarmupCard() {
   return {
     type: 'warmup',
     kicker: 'Warm up',
-    title: '90 second sprint',
+    title: '90s warm up',
     reason: 'Mixed questions to start the day.',
     durationMinutes: 2,
     onSelect: { kind: 'quickfire' },
