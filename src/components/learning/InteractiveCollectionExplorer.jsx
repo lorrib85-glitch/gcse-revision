@@ -3,6 +3,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
+import { BUTTONS } from '../../constants/buttons.js'
 
 const THEMES = {
   History: {
@@ -162,19 +163,21 @@ function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, sheetB
       <button
         onClick={onContinue}
         style={{
-          width: '100%', height: 52,
-          borderRadius: RADII.medium,
-          background: `rgba(${glowRgb}, 0.14)`,
-          border: `1px solid rgba(${glowRgb}, 0.28)`,
-          color: text,
-          ...TYPE.bodySmall,
-          fontWeight: 700,
+          width: '100%', height: BUTTONS.continue.height,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          borderRadius: BUTTONS.continue.borderRadius,
+          background: glow,
+          border: 'none',
+          color: '#0D0F14',
+          fontFamily: "'Sora', sans-serif",
+          fontSize: BUTTONS.continue.fontSize,
+          fontWeight: BUTTONS.continue.fontWeight,
           cursor: 'pointer',
           opacity: visible ? 1 : 0,
-          transition: `opacity 400ms ${MOTION.easing.standard} 600ms`,
+          transition: `opacity 400ms ${MOTION.easing.standard} 600ms, transform ${BUTTONS.continue.transition}`,
         }}
       >
-        Continue →
+        Continue
       </button>
     </div>
   )

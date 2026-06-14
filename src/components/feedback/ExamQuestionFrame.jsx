@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
+import { BUTTONS } from '../../constants/buttons.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 
 // ─── Keyframe styles injected once ───────────────────────────────────────────
@@ -685,8 +686,8 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
               onClick={handleRetry}
               style={{
                 flex: 1,
-                height: 52,
-                borderRadius: 14,
+                height: BUTTONS.continue.height,
+                borderRadius: BUTTONS.continue.borderRadius,
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 color: 'rgba(245,245,245,0.68)',
@@ -703,18 +704,18 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                 onClick={() => onComplete({ marksAwarded: feedback.marksAwarded, marks })}
                 style={{
                   flex: 1,
-                  height: 52,
-                  borderRadius: 14,
+                  height: BUTTONS.continue.height,
+                  borderRadius: BUTTONS.continue.borderRadius,
                   background: accent,
                   border: 'none',
                   color: '#0D0F14',
-                  fontSize: 15,
+                  fontSize: BUTTONS.continue.fontSize,
                   fontFamily: "'Sora', sans-serif",
-                  fontWeight: 600,
+                  fontWeight: BUTTONS.continue.fontWeight,
                   cursor: 'pointer',
                 }}
               >
-                Continue →
+                Continue
               </button>
             )}
           </div>

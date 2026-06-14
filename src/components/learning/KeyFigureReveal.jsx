@@ -4,6 +4,7 @@ import { TYPE }     from '../../constants/typography.js'
 import { SPACING }  from '../../constants/spacing.js'
 import { RADII }    from '../../constants/radii.js'
 import { MOTION }   from '../../constants/motion.js'
+import { BUTTONS }  from '../../constants/buttons.js'
 
 function HistoryIcon({ icon, size = 32 }) {
   if (!icon) return <div style={{ width: size, height: size }} />
@@ -259,24 +260,26 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           <button
             onClick={(e) => { e.stopPropagation(); onComplete?.() }}
             style={{
-              display: 'block',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               width: '100%',
-              height: 52,
+              height: BUTTONS.continue.height,
               background: accent,
-              color: '#08090D',
+              color: '#0D0F14',
               border: 'none',
-              borderRadius: RADII.medium,
+              borderRadius: BUTTONS.continue.borderRadius,
               fontFamily: "'Sora', sans-serif",
-              fontSize: 16,
-              fontWeight: 700,
+              fontSize: BUTTONS.continue.fontSize,
+              fontWeight: BUTTONS.continue.fontWeight,
               cursor: 'pointer',
-              transition: `transform ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+              transition: `transform ${BUTTONS.continue.transition}`,
             }}
             onMouseDown={(e) => e.currentTarget.style.transform = `scale(${MOTION.scale.press})`}
             onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            Continue →
+            Continue
           </button>
         )}
       </div>

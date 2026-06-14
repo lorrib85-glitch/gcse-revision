@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
+import { BUTTONS } from '../../constants/buttons.js'
 
 let _spStyled = false
 function ensureStyles() {
@@ -172,16 +173,18 @@ export default function SymptomProgression({
           onClick={handleAdvance}
           style={{
             marginTop: SPACING.standard, width: '100%',
+            height: BUTTONS.continue.height,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: allRevealed ? accent : `rgba(${rgb},0.12)`,
             border: allRevealed ? 'none' : `1px solid rgba(${rgb},0.28)`,
-            borderRadius: RADII.medium, padding: '15px',
-            ...F, fontWeight: 700, fontSize: 16,
+            borderRadius: BUTTONS.continue.borderRadius,
+            ...F, fontWeight: BUTTONS.continue.fontWeight, fontSize: BUTTONS.continue.fontSize,
             color: allRevealed ? '#0D0F14' : accent,
             cursor: 'pointer',
-            transition: `${MOTION.duration.fast} ${MOTION.easing.standard}`,
+            transition: `transform ${BUTTONS.continue.transition}`,
           }}
         >
-          {allRevealed ? 'Continue ›' : 'Reveal next stage ›'}
+          {allRevealed ? 'Continue' : 'Reveal next stage ›'}
         </button>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
 import { RADII } from '../../constants/radii.js'
+import { BUTTONS } from '../../constants/buttons.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { logExamTechnique, getExamTechniquePatterns } from '../../unifiedWeaknessTracker.js'
 import BackButton from '../core/BackButton.jsx'
@@ -194,16 +195,15 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
     marginBottom: 12,
   }
   const ctaStyle = (enabled) => ({
-    display: 'block', width: '100%',
-    height: 54, borderRadius: RADII.medium,
-    border: `1.5px solid ${enabled ? accent : 'rgba(255,255,255,0.12)'}`,
-    background: enabled ? `${accent}1A` : 'rgba(255,255,255,0.03)',
-    color: enabled ? accent : 'rgba(255,255,255,0.3)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%',
+    height: BUTTONS.continue.height, borderRadius: BUTTONS.continue.borderRadius,
+    border: 'none',
+    background: enabled ? accent : 'rgba(255,255,255,0.08)',
+    color: enabled ? '#0D0F14' : 'rgba(255,255,255,0.3)',
     fontFamily: "'Sora', sans-serif",
-    fontWeight: 700, fontSize: 14,
-    letterSpacing: '0.02em',
+    fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
     cursor: enabled ? 'pointer' : 'default',
-    transition: `all ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+    transition: `transform ${BUTTONS.continue.transition}`,
   })
   // Parchment-surface CTA — warm gradient + dark text, readable against the light scroll
   const parchmentCtaStyle = (enabled) => ({
@@ -595,7 +595,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
           background: bg,
           borderTop: '1px solid rgba(255,255,255,0.06)',
         }}>
-          <button onClick={advance} style={ctaStyle(true)}>Continue →</button>
+          <button onClick={advance} style={ctaStyle(true)}>Continue</button>
         </div>
       </div>,
       document.body

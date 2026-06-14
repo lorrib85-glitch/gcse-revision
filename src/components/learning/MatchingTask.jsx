@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { MOTION } from '../../constants/motion.js'
+import { BUTTONS } from '../../constants/buttons.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 
 // Fisher-Yates shuffle
@@ -405,20 +406,20 @@ export default function MatchingTask({ screen, subject, onComplete }) {
             onPointerUp={() => setCtaPressed(false)}
             onPointerLeave={() => setCtaPressed(false)}
             style={{
-              width: '100%', height: 48,
-              borderRadius: 16, border: 'none', cursor: 'pointer',
-              background: `linear-gradient(135deg, rgba(${BRONZE_RGB},0.85), ${BRONZE})`,
-              color: '#0A0804',
+              width: '100%', height: BUTTONS.continue.height,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: BUTTONS.continue.borderRadius, border: 'none', cursor: 'pointer',
+              background: BRONZE,
+              color: '#0D0F14',
               fontFamily: "'Sora', sans-serif",
-              fontSize: 14, fontWeight: 700,
-              boxShadow: `0 4px 20px rgba(${BRONZE_RGB},0.28)`,
+              fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
               transform: ctaPressed ? 'scale(0.985)' : 'scale(1)',
-              transition: 'transform 120ms ease',
+              transition: `transform ${BUTTONS.continue.transition}`,
               marginTop: 14,
               animation: 'mt-fade-in 360ms ease both',
             }}
           >
-            Continue →
+            Continue
           </button>
         )}
       </div>

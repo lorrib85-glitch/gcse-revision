@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { BUTTONS } from '../../constants/buttons.js'
 import BackButton from '../core/BackButton.jsx'
 
 const THEMES = {
@@ -522,17 +523,17 @@ export default function InteractiveHotspotImage({
           type="button"
           onClick={onContinue}
           style={{
-            width: '100%', height: '54px',
-            borderRadius: '14px',
-            background: `rgba(${glowRgb},0.18)`,
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: `1px solid rgba(${glowRgb},0.26)`,
-            color: text, fontSize: '17px', fontWeight: 700,
-            cursor: 'pointer', letterSpacing: '0.01em',
+            width: '100%', height: BUTTONS.continue.height,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            borderRadius: BUTTONS.continue.borderRadius,
+            background: glow,
+            border: 'none',
+            color: '#0D0F14', fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
+            cursor: 'pointer',
+            transition: `transform ${BUTTONS.continue.transition}`,
           }}
         >
-          Continue →
+          Continue
         </button>
       </div>
     </div>

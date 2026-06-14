@@ -4,6 +4,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
+import { BUTTONS } from '../../constants/buttons.js'
 
 // ── Block data shape ──────────────────────────────────────────────────────────
 //
@@ -148,17 +149,17 @@ function ActionBtn({ label, onClick, accent, rgb, disabled = false }) {
       disabled={disabled}
       style={{
         width: '100%',
-        padding: `${SPACING.compact}px ${SPACING.standard}px`,
-        background: disabled ? 'rgba(255,255,255,0.04)' : `rgba(${rgb}, 0.12)`,
-        border: `1px solid ${disabled ? 'rgba(255,255,255,0.08)' : `rgba(${rgb}, 0.36)`}`,
-        borderRadius: RADII.medium,
-        color: disabled ? 'rgba(255,255,255,0.28)' : accent,
-        ...TYPE.bodySmall,
-        fontWeight: 600,
-        letterSpacing: '0.06em',
-        textTransform: 'uppercase',
+        height: BUTTONS.continue.height,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: disabled ? 'rgba(255,255,255,0.08)' : accent,
+        border: 'none',
+        borderRadius: BUTTONS.continue.borderRadius,
+        color: disabled ? 'rgba(255,255,255,0.3)' : '#0D0F14',
+        fontFamily: "'Sora', sans-serif",
+        fontSize: BUTTONS.continue.fontSize,
+        fontWeight: BUTTONS.continue.fontWeight,
         cursor: disabled ? 'default' : 'pointer',
-        transition: `opacity ${MOTION.fast}ms ease`,
+        transition: `transform ${BUTTONS.continue.transition}`,
       }}
     >
       {label}
@@ -266,7 +267,7 @@ function TheoryStage({ block, accent, rgb, onNext }) {
         </div>
 
         <div style={fadeIn(phase >= 3)}>
-          <ActionBtn label="Continue →" onClick={onNext} accent={accent} rgb={rgb} />
+          <ActionBtn label="Continue" onClick={onNext} accent={accent} rgb={rgb} />
         </div>
 
       </Pad>
@@ -512,7 +513,7 @@ function OutcomeStage({ block, accent, rgb, onNext }) {
         </div>
 
         <div style={{ animation: anim('tl-in', 360, 420) }}>
-          <ActionBtn label="Continue →" onClick={onNext} accent={accent} rgb={rgb} />
+          <ActionBtn label="Continue" onClick={onNext} accent={accent} rgb={rgb} />
         </div>
 
       </Pad>
@@ -820,7 +821,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
               </p>
             </div>
 
-            <ActionBtn label="Continue →" onClick={onNext} accent={accent} rgb={rgb} />
+            <ActionBtn label="Continue" onClick={onNext} accent={accent} rgb={rgb} />
           </div>
         )}
 

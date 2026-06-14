@@ -201,14 +201,13 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
   }
 
   const btnStyle = {
-    width: '100%', height: 64,
-    borderRadius: RADII.large, border: 'none',
+    width: '100%', height: BUTTONS.continue.height,
+    borderRadius: BUTTONS.continue.borderRadius, border: 'none',
     background: accent,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    gap: 10, cursor: 'pointer',
-    boxShadow: `0 4px 20px rgba(${rgb},0.18)`,
+    cursor: 'pointer',
     transform: isPressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
-    transition: `transform ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+    transition: `transform ${BUTTONS.continue.transition}`,
     flexShrink: 0,
   }
 
@@ -554,11 +553,10 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
             >
               <span style={{
                 fontFamily: "'Sora', sans-serif",
-                fontSize: 18, fontWeight: 600, color: '#0D0F14',
+                fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight, color: '#0D0F14',
               }}>
                 Continue
               </span>
-              <ArrowIcon />
             </button>
           </div>
         )}

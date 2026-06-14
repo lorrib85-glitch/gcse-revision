@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { hexToRgb } from '../../constants/subjects.js'
+import { hexToRgb, SUBJECTS } from '../../constants/subjects.js'
+import { BUTTONS } from '../../constants/buttons.js'
 import { recordActivity, recordScore, getAllConfidenceRatings } from '../../progress.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
@@ -1933,16 +1934,16 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     isLast ? handleFinish() : go(1)
   }
 
-  // Label + disabled state for the Next/Finish button
+  // Label + disabled state for the Continue/Finish button
   function nextLabel() {
     if (!hookDone && module.hook) {
       if (hookPhase === 'question' || hookPhase === 'feedback') return null // hidden
-      if (hookPhase === 'grow')   return 'Next →'
-      if (hookPhase === 'reveal') return hookRevealDone ? 'Start module →' : null // hidden until all revealed
+      if (hookPhase === 'grow')   return 'Continue'
+      if (hookPhase === 'reveal') return hookRevealDone ? 'Continue' : null // hidden until all revealed
     }
     if (!introDone && module.intro) return null // IntroScreen has its own button
     if ((module.screens[screen]?.blocks || []).some(b => b.type === 'spotTheError' || b.type === 'misconceptionCheck')) return null // these gate their own continue button
-    return isLast ? 'Finish ✓' : 'Next →'
+    return isLast ? 'Finish ✓' : 'Continue'
   }
 
   const showNextBtn  = nextLabel() !== null
@@ -2630,22 +2631,24 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           {showNextBtn ? (
             <button onClick={handleNext} style={{
               width: '100%',
+              height: BUTTONS.continue.height,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: isFinishBtn
                 ? 'linear-gradient(135deg, #1A4D2E, #38D27A)'
-                : `linear-gradient(135deg, ${subjectColor}cc, ${subjectColor})`,
+                : (SUBJECTS[module.subject]?.accent || subjectColor),
               border: 'none',
-              borderRadius: 14, padding: '15px 10px',
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700, fontSize: '.9rem',
-              color: '#fff',
+              borderRadius: BUTTONS.continue.borderRadius,
+              fontFamily: "'Sora', sans-serif",
+              fontWeight: BUTTONS.continue.fontWeight, fontSize: BUTTONS.continue.fontSize,
+              color: isFinishBtn ? '#fff' : '#0D0F14',
               cursor: 'pointer',
               boxShadow: isFinishBtn
                 ? '0 4px 16px rgba(56,210,122,.35)'
-                : `0 4px 16px ${subjectColor}44`,
-              transition: 'all .15s',
+                : 'none',
+              transition: `transform ${BUTTONS.continue.transition}`,
             }}>{nextBtnLabel}</button>
           ) : (
-            <div style={{ height: 50 }} />
+            <div style={{ height: BUTTONS.continue.height }} />
           )}
         </div>
       </div>

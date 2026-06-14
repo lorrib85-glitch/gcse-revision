@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
 import { SPACING } from '../../constants/spacing.js'
+import { BUTTONS } from '../../constants/buttons.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 
 export default function DragToOrderTask({
@@ -280,8 +281,8 @@ export default function DragToOrderTask({
               <button
                 onClick={handleReset}
                 style={{
-                  flex: 1, height: 48,
-                  background: 'rgba(255,255,255,0.08)', border: `1px solid rgba(255,255,255,0.12)`, borderRadius: 12,
+                  flex: 1, height: BUTTONS.continue.height,
+                  background: 'rgba(255,255,255,0.08)', border: `1px solid rgba(255,255,255,0.12)`, borderRadius: BUTTONS.continue.borderRadius,
                   fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15,
                   color: 'rgba(255,255,255,0.72)', cursor: 'pointer',
                   transition: `all ${MOTION.duration.instant} ease`,
@@ -300,16 +301,16 @@ export default function DragToOrderTask({
               <button
                 onClick={handleContinue}
                 style={{
-                  flex: 1, height: 48,
-                  background: accent, border: 'none', borderRadius: 12,
-                  fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15,
-                  color: '#08090D', cursor: 'pointer',
+                  flex: 1, height: BUTTONS.continue.height,
+                  background: accent, border: 'none', borderRadius: BUTTONS.continue.borderRadius,
+                  fontFamily: "'Sora', sans-serif", fontWeight: BUTTONS.continue.fontWeight, fontSize: BUTTONS.continue.fontSize,
+                  color: '#0D0F14', cursor: 'pointer',
                   transition: `all ${MOTION.duration.instant} ease`,
                 }}
                 onMouseEnter={(e) => e.target.style.opacity = '0.85'}
                 onMouseLeave={(e) => e.target.style.opacity = '1'}
               >
-                Continue →
+                Continue
               </button>
             </>
           )}

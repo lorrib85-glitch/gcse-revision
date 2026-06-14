@@ -4,6 +4,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
 import { RADII } from '../../constants/radii.js'
+import { BUTTONS } from '../../constants/buttons.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import GuidedExamResponse from './GuidedExamResponse.jsx'
 import { logCoachTypeResult } from '../../unifiedWeaknessTracker.js'
@@ -45,19 +46,20 @@ const bulletRowStyle = { display: 'flex', alignItems: 'flex-start', gap: SPACING
 const bulletTextStyle = { fontFamily: "'Sora', sans-serif", fontSize: 13.5, lineHeight: 1.55, color: 'rgba(255,255,255,0.7)' }
 const bulletDotStyle = (color) => ({ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: color })
 
-// Outline CTA matching GuidedExamResponse's button language, but in GENERAL teal
-// (or bronze, for the stage-4 "Your turn" handoff) rather than a subject accent.
+// Primary Progression CTA — accent-filled, in GENERAL teal (or bronze, for the
+// stage-4 "Your turn" handoff) rather than a subject accent, since this coach
+// has no single subject context.
 const ctaStyle = (enabled, accent = GENERAL.teal) => ({
-  display: 'block', width: '100%',
-  height: 54, borderRadius: RADII.medium,
-  border: `1.5px solid ${enabled ? accent : 'rgba(255,255,255,0.12)'}`,
-  background: enabled ? `${accent}1A` : 'rgba(255,255,255,0.03)',
-  color: enabled ? accent : 'rgba(255,255,255,0.3)',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  width: '100%',
+  height: BUTTONS.continue.height, borderRadius: BUTTONS.continue.borderRadius,
+  border: 'none',
+  background: enabled ? accent : 'rgba(255,255,255,0.08)',
+  color: enabled ? '#0D0F14' : 'rgba(255,255,255,0.3)',
   fontFamily: "'Sora', sans-serif",
-  fontWeight: 700, fontSize: 14,
-  letterSpacing: '0.02em',
+  fontWeight: BUTTONS.continue.fontWeight, fontSize: BUTTONS.continue.fontSize,
   cursor: enabled ? 'pointer' : 'default',
-  transition: `all ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+  transition: `transform ${BUTTONS.continue.transition}`,
 })
 
 const textBtnStyle = {
@@ -145,7 +147,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
   if (stage === 'q') {
     return (
       <StageShell stageNum={1} onExit={onExit} footer={
-        <button onClick={() => setStage('focus')} style={ctaStyle(true)}>Continue →</button>
+        <button onClick={() => setStage('focus')} style={ctaStyle(true)}>Continue</button>
       }>
         <div style={kickerStyle}>1 · The question</div>
         <div style={{ ...TYPE.cinematic, fontSize: 30, color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
@@ -184,7 +186,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
     const { examFocus } = worked
     return (
       <StageShell stageNum={2} onExit={onExit} footer={
-        <button onClick={() => setStage('thinking')} style={ctaStyle(true)}>Continue →</button>
+        <button onClick={() => setStage('thinking')} style={ctaStyle(true)}>Continue</button>
       }>
         <div style={kickerStyle}>2 · What earns marks</div>
         <div style={{ ...TYPE.cinematic, fontSize: 28, color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
@@ -247,7 +249,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
     return (
       <StageShell stageNum={3} onExit={onExit} footer={
         strongRevealed ? (
-          <button onClick={nextBeat} style={ctaStyle(true)}>{isLast ? 'Continue →' : 'Next example →'}</button>
+          <button onClick={nextBeat} style={ctaStyle(true)}>Continue</button>
         ) : null
       }>
         <div style={kickerStyle}>3 · Examiner thinking</div>
@@ -326,7 +328,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
   if (stage === 'model') {
     return (
       <StageShell stageNum={4} onExit={onExit} footer={
-        <button onClick={() => setStage('supported')} style={ctaStyle(true, BRONZE)}>Your turn →</button>
+        <button onClick={() => setStage('supported')} style={ctaStyle(true, BRONZE)}>Continue</button>
       }>
         <div style={kickerStyle}>4 · Model answer</div>
         <div style={{ ...TYPE.cinematic, fontSize: 28, color: GENERAL.softWhite, marginBottom: 6, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>

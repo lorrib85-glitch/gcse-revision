@@ -334,21 +334,20 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
             onTouchEnd={() => setPressed(false)}
             style={{
               width: '100%',
-              height: BUTTONS.primary.height,
-              borderRadius: BUTTONS.primary.borderRadius,
-              background: `linear-gradient(135deg, ${accent}, rgba(${rgb},0.72))`,
+              height: BUTTONS.continue.height,
+              borderRadius: BUTTONS.continue.borderRadius,
+              background: accent,
               border: 'none',
               cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: "'Sora', sans-serif",
-              fontSize: BUTTONS.primary.fontSize,
-              fontWeight: BUTTONS.primary.fontWeight,
-              color: '#0A0804',
-              letterSpacing: '-0.02em',
-              boxShadow: `0 4px 28px rgba(${rgb},0.28)`,
-              transition: `all ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+              fontSize: BUTTONS.continue.fontSize,
+              fontWeight: BUTTONS.continue.fontWeight,
+              color: '#0D0F14',
+              transition: `transform ${BUTTONS.continue.transition}`,
               transform: pressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
             }}
-          >Continue →</button>
+          >Continue</button>
         </div>
       )}
     </div>
