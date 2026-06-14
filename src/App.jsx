@@ -838,14 +838,23 @@ function HomeAtmosphere() {
   )
 }
 
-function TaskCard({ task, onClick }) {
+function TaskCard({ task, position, onClick }) {
+  const { magnitude, signed } = position
+  const scale = magnitude === 0 ? 1.06 : magnitude === 1 ? 0.86 : 0.74
+  const opacity = magnitude === 0 ? 1 : magnitude === 1 ? 0.45 : 0.18
+  const distance = magnitude === 1 ? 250 : magnitude === 2 ? 280 : 0
+  const translateX = signed === 0 ? 0 : signed > 0 ? distance : -distance
+
   return (
     <button
       onClick={onClick}
       style={{
-        flexShrink: 0, width: '78%', scrollSnapAlign: 'start',
-        position: 'relative', overflow: 'hidden',
-        display: 'flex', flexDirection: 'column', minHeight: 172,
+        position: 'absolute', top: '50%', left: '50%',
+        width: 256, height: 280,
+        transform: `translate(-50%, -50%) translateX(${translateX}px) scale(${scale})`,
+        opacity, zIndex: 10 - magnitude,
+        transition: `transform ${MOTION.duration.cinematic} ${MOTION.easing.standard}, opacity ${MOTION.duration.cinematic} ${MOTION.easing.standard}`,
+        overflow: 'hidden', display: 'flex', flexDirection: 'column',
         textAlign: 'left', background: 'rgba(255,255,255,0.03)',
         border: '1px solid rgba(255,255,255,0.06)', borderRadius: RADII.large,
         padding: SPACING.standard, cursor: 'pointer',
@@ -872,7 +881,7 @@ function TaskCard({ task, onClick }) {
         }}>
           {task.kicker}
         </div>
-        <div style={{ ...TYPE.cardTitle, color: task.titleColor, marginBottom: 6 }}>
+        <div style={{ ...TYPE.cardTitle, color: task.titleColor, marginBottom: 8 }}>
           {task.title}
         </div>
         <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>
@@ -886,6 +895,66 @@ function TaskCard({ task, onClick }) {
         </div>
       </div>
     </button>
+  )
+}
+
+// Centred 3D-style task carousel — swipe, click-to-focus, and arrow-key
+// navigation. The focused (centre) card is the only one that triggers
+// onSelect; tapping a side card brings it to focus instead.
+function TaskCarousel({ tasks, onSelect }) {
+  const [active, setActive] = useState(0)
+  const count = tasks.length
+  const touchStartX = useRef(0)
+
+  const go = (i) => setActive(((i % count) + count) % count)
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === 'ArrowLeft') go(active - 1)
+      else if (e.key === 'ArrowRight') go(active + 1)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [active, count])
+
+  return (
+    <div>
+      <div
+        onTouchStart={(e) => { touchStartX.current = e.changedTouches[0].screenX }}
+        onTouchEnd={(e) => {
+          const diff = touchStartX.current - e.changedTouches[0].screenX
+          if (Math.abs(diff) > 50) go(active + (diff > 0 ? 1 : -1))
+        }}
+        style={{ position: 'relative', height: 304, overflow: 'hidden' }}
+      >
+        {tasks.map((task, i) => {
+          const raw = (i - active + count) % count
+          const signed = raw <= count / 2 ? raw : raw - count
+          return (
+            <TaskCard
+              key={task.type + i}
+              task={task}
+              position={{ magnitude: Math.abs(signed), signed }}
+              onClick={() => (i === active ? onSelect(task) : go(i))}
+            />
+          )
+        })}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: SPACING.micro, marginTop: SPACING.compact }}>
+        {tasks.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => go(i)}
+            aria-label={`Go to task ${i + 1}`}
+            style={{
+              width: 6, height: 6, padding: 0, border: 'none', borderRadius: RADII.pill, cursor: 'pointer',
+              background: i === active ? GENERAL.teal : `rgba(${GENERAL.tealRgb},0.2)`,
+              transition: `background ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
+            }}
+          />
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -975,16 +1044,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
           Today's plan
         </div>
 
-        <div style={{
-          display: 'flex', gap: SPACING.compact, overflowX: 'auto',
-          scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'none', msOverflowStyle: 'none',
-          padding: `0 ${SPACING.standard}px`, paddingBottom: 4,
-        }}>
-          {todaysPlan.map((task, i) => (
-            <TaskCard key={task.type + i} task={task} onClick={() => {}} />
-          ))}
-        </div>
+        <TaskCarousel tasks={todaysPlan} onSelect={() => {}} />
 
       </div>
     </div>
