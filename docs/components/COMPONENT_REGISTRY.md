@@ -306,6 +306,18 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
+### TimelineChain
+
+**File:** `src/components/learning/TimelineChain.jsx`  
+**What it is:** Full-screen horizontal scroll-snap chain of flip cards connected by a connector rail (line segments + dot per card).  
+**Best used for:** A chapter's "big idea" causal sequence, step by step (e.g. how the Black Death spread). Card fronts show a short step label; tapping flips a card to reveal why that step mattered / how it links to the next. Continue only appears once every card has been flipped.  
+**Props:** `block`, `subject` (defaults to `History`), `onContinue`  
+**Block shape:** `{ type: 'timelineChain', title, intro?, steps: [{ id?, icon?, label, detail }] }`  
+**Screen type:** `timelineChain` (full-screen, routed directly in `ModulePlayer.jsx` like `VisualNarrativeScreen`)  
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
+
+---
+
 ### VisualNarrativeScreen
 
 **File:** `src/components/learning/VisualNarrativeScreen.jsx`  
