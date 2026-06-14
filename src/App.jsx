@@ -366,17 +366,19 @@ function OnboardingScreen() {
 // ─── Shared streak chip ───────────────────────────────────────────────────────
 // Reads live from localStorage so it's always accurate wherever it's rendered.
 
-function StreakChip({ style = {} }) {
+function StreakChip({ style = {}, backdrop = true }) {
   const prog   = safeGetProgress()
   const streak = prog.streak || 0
   return (
     <div style={{ position: 'relative', ...style }}>
-      {/* Standard corner darkening so the chip stays legible over any background */}
-      <div aria-hidden="true" style={{
-        position: 'absolute', top: -32, right: -40, bottom: -40, left: -64,
-        background: `radial-gradient(ellipse at top right, rgba(${hexToRgb(GENERAL.neutral[0])},0.95) 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.6) 50%, transparent 100%)`,
-        pointerEvents: 'none', zIndex: 0,
-      }} />
+      {/* Standard corner darkening so the chip stays legible over busy backgrounds (hero images, atmosphere) */}
+      {backdrop && (
+        <div aria-hidden="true" style={{
+          position: 'absolute', top: -32, right: -40, bottom: -40, left: -64,
+          background: `radial-gradient(ellipse at top right, rgba(${hexToRgb(GENERAL.neutral[0])},0.95) 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.6) 50%, transparent 100%)`,
+          pointerEvents: 'none', zIndex: 0,
+        }} />
+      )}
       <div style={{
         position: 'relative', zIndex: 1,
         display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2,
@@ -976,7 +978,7 @@ function Home({ onSelectTask }) {
           display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
           marginBottom: 20, padding: `0 ${SPACING.standard}px`,
         }}>
-          <StreakChip />
+          <StreakChip backdrop={false} />
         </div>
 
         {/* ── Greeting ── */}
