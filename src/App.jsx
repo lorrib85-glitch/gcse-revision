@@ -810,7 +810,33 @@ function HomeAtmosphere() {
     }}>
       <style>{`
         @keyframes ha-breathe { 0%,100%{opacity:0.08} 50%{opacity:0.13} }
+        @keyframes ha-wave-drift-a { from { transform: translateX(0) } to { transform: translateX(-390px) } }
+        @keyframes ha-wave-drift-b { from { transform: translateX(-390px) } to { transform: translateX(0) } }
       `}</style>
+
+      {/* Large slow-drifting wave bands */}
+      <svg
+        width="100%" height="100%"
+        viewBox="0 0 390 844"
+        preserveAspectRatio="none"
+        style={{ position: 'absolute', inset: 0 }}
+      >
+        <defs>
+          <linearGradient id="ha-wave-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={`rgba(${GENERAL.tealRgb},0.16)`} />
+            <stop offset="100%" stopColor={`rgba(${hexToRgb(GENERAL.darkTeal)},0.05)`} />
+          </linearGradient>
+        </defs>
+        <g style={{ animation: 'ha-wave-drift-a 46s linear infinite' }}>
+          <path d="M0,560 Q48.75,538 97.5,560 T195,560 T292.5,560 T390,560 T487.5,560 T585,560 T682.5,560 T780,560 L780,844 L0,844 Z" fill="url(#ha-wave-grad)" opacity="0.5" />
+        </g>
+        <g style={{ animation: 'ha-wave-drift-b 64s linear infinite' }}>
+          <path d="M0,660 Q48.75,634 97.5,660 T195,660 T292.5,660 T390,660 T487.5,660 T585,660 T682.5,660 T780,660 L780,844 L0,844 Z" fill="url(#ha-wave-grad)" opacity="0.7" />
+        </g>
+        <g style={{ animation: 'ha-wave-drift-a 80s linear infinite' }}>
+          <path d="M0,750 Q48.75,722 97.5,750 T195,750 T292.5,750 T390,750 T487.5,750 T585,750 T682.5,750 T780,750 L780,844 L0,844 Z" fill="url(#ha-wave-grad)" opacity="1" />
+        </g>
+      </svg>
       <svg
         width="100%" height="55%"
         viewBox="0 0 390 300"
@@ -844,14 +870,18 @@ function TaskCard({ task, position, onClick }) {
   const opacity = magnitude === 0 ? 1 : magnitude === 1 ? 0.45 : 0.18
   const distance = magnitude === 1 ? 250 : magnitude === 2 ? 280 : 0
   const translateX = signed === 0 ? 0 : signed > 0 ? distance : -distance
+  const rotation = magnitude === 1 ? 14 : magnitude === 2 ? 24 : 0
+  const rotateY = signed === 0 ? 0 : signed > 0 ? -rotation : rotation
+  const depth = magnitude === 0 ? 0 : magnitude === 1 ? -40 : -90
+  const accentColor = magnitude === 0 ? GENERAL.coral : GENERAL.teal
 
   return (
     <button
       onClick={onClick}
       style={{
         position: 'absolute', top: '50%', left: '50%',
-        width: 256, height: 280,
-        transform: `translate(-50%, -50%) translateX(${translateX}px) scale(${scale})`,
+        width: 256, height: 360,
+        transform: `translate(-50%, -50%) translateX(${translateX}px) translateZ(${depth}px) rotateY(${rotateY}deg) scale(${scale})`,
         opacity, zIndex: 10 - magnitude,
         transition: `transform ${MOTION.duration.cinematic} ${MOTION.easing.standard}, opacity ${MOTION.duration.cinematic} ${MOTION.easing.standard}`,
         overflow: 'hidden', display: 'flex', flexDirection: 'column',
@@ -875,13 +905,7 @@ function TaskCard({ task, position, onClick }) {
         </>
       )}
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <div style={{
-          ...TYPE.metadata, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.16em',
-          color: task.accent, marginBottom: 10,
-        }}>
-          {task.kicker}
-        </div>
-        <div style={{ ...TYPE.cardTitle, color: task.titleColor, marginBottom: 8 }}>
+        <div style={{ ...TYPE.cardTitle, color: accentColor, marginBottom: 8 }}>
           {task.title}
         </div>
         <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>
@@ -889,9 +913,27 @@ function TaskCard({ task, position, onClick }) {
         </div>
         <div style={{
           marginTop: 'auto', paddingTop: 16,
-          ...TYPE.metadata, fontSize: 12, fontWeight: 400, letterSpacing: '0.06em', color: GENERAL.slate,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
-          {task.duration}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            ...TYPE.metadata, fontSize: 12, fontWeight: 400, letterSpacing: '0.06em', color: GENERAL.slate,
+          }}>
+            <svg width="13" height="13" viewBox="0 0 22 22" fill="none" style={{ flexShrink: 0 }}>
+              <circle cx="11" cy="11" r="8.5" stroke={GENERAL.slate} strokeWidth="1.75" />
+              <path d="M11 6.5V11l3 2" stroke={GENERAL.slate} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {task.duration}
+          </div>
+          {magnitude === 0 && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 4,
+              ...TYPE.metadata, fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', color: accentColor,
+            }}>
+              Start
+              <span style={{ fontSize: 15, lineHeight: 1 }}>→</span>
+            </div>
+          )}
         </div>
       </div>
     </button>
@@ -925,7 +967,7 @@ function TaskCarousel({ tasks, onSelect }) {
           const diff = touchStartX.current - e.changedTouches[0].screenX
           if (Math.abs(diff) > 50) go(active + (diff > 0 ? 1 : -1))
         }}
-        style={{ position: 'relative', height: 304, overflow: 'hidden' }}
+        style={{ position: 'relative', height: 396, overflow: 'hidden', perspective: 1200 }}
       >
         {tasks.map((task, i) => {
           const raw = (i - active + count) % count
@@ -968,27 +1010,23 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
   // buildTodaysPlan() in Phase 2.
   const todaysPlan = [
     {
-      type: 'warmup', kicker: 'Warm up', title: '90 second sprint',
-      reason: 'Mixed questions to start the day.', duration: '2 min',
-      titleColor: GENERAL.coral, accent: GENERAL.coral, image: null,
+      type: 'warmup', title: '90 second sprint',
+      reason: 'Mixed questions to start the day.', duration: '2 min', image: null,
     },
     {
-      type: 'revisit', kicker: 'Revisit', title: 'The Black Death',
+      type: 'revisit', title: 'The Black Death',
       reason: '4 of your last 6 answers were incorrect.', duration: '5 min',
-      titleColor: GENERAL.softWhite, accent: GENERAL.teal,
       image: '/figures/history/medicine/black-death/plague-background.png',
     },
     {
-      type: 'continue', kicker: 'Continue', title: 'The accidental miracle',
-      reason: '6 screens left in this module.', duration: '15 min',
-      titleColor: GENERAL.softWhite, accent: GENERAL.teal, image: null,
+      type: 'continue', title: 'The accidental miracle',
+      reason: '6 screens left in this module.', duration: '15 min', image: null,
     },
   ]
   if (isWeekend) {
     todaysPlan.push({
-      type: 'paper', kicker: 'This weekend', title: 'Full History paper',
+      type: 'paper', title: 'Full History paper',
       reason: 'A timed past paper, marked like the real thing.', duration: '50 min',
-      titleColor: GENERAL.softWhite, accent: GENERAL.teal,
       image: '/headers/history-medicine-through-time.webp',
     })
   }
@@ -1009,20 +1047,11 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
         padding: `max(52px, calc(18px + env(safe-area-inset-top))) 0 0`,
       }}>
 
-        {/* ── Top row: avatar left, streak right ── */}
+        {/* ── Top row: streak ── */}
         <div style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
           marginBottom: 20, padding: `0 ${SPACING.standard}px`,
         }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: RADII.pill,
-            background: `rgba(${GENERAL.tealRgb},0.12)`,
-            border: `1.5px solid rgba(${GENERAL.tealRgb},0.28)`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            ...TYPE.metadata, color: GENERAL.teal, letterSpacing: '0em',
-          }}>
-            {userName.charAt(0).toUpperCase()}
-          </div>
           <StreakChip />
         </div>
 
@@ -1038,10 +1067,10 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
 
         {/* ── Today's plan ── */}
         <div style={{
-          ...TYPE.metadata, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.16em',
-          color: GENERAL.slate, marginBottom: SPACING.compact, padding: `0 ${SPACING.standard}px`,
+          ...TYPE.bodySmall, fontWeight: 600, color: GENERAL.softWhite,
+          marginBottom: SPACING.compact, padding: `0 ${SPACING.standard}px`,
         }}>
-          Today's plan
+          What's today's plan?
         </div>
 
         <TaskCarousel tasks={todaysPlan} onSelect={() => {}} />
