@@ -782,14 +782,14 @@ function HomeAtmosphere() {
             <stop offset="100%" stopColor={`rgba(${hexToRgb(GENERAL.darkTeal)},0.05)`} />
           </linearGradient>
         </defs>
-        <g style={{ animation: 'ha-wave-drift-a 46s linear infinite' }}>
-          <path d="M0,560 Q48.75,538 97.5,560 T195,560 T292.5,560 T390,560 T487.5,560 T585,560 T682.5,560 T780,560 L780,844 L0,844 Z" fill="url(#ha-wave-grad)" opacity="0.5" />
+        <g style={{ animation: 'ha-wave-drift-a 30s linear infinite' }}>
+          <path d="M0,190 Q48.75,212 97.5,190 T195,190 T292.5,190 T390,190 T487.5,190 T585,190 T682.5,190 T780,190 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="0.5" />
         </g>
-        <g style={{ animation: 'ha-wave-drift-b 64s linear infinite' }}>
-          <path d="M0,660 Q48.75,634 97.5,660 T195,660 T292.5,660 T390,660 T487.5,660 T585,660 T682.5,660 T780,660 L780,844 L0,844 Z" fill="url(#ha-wave-grad)" opacity="0.7" />
+        <g style={{ animation: 'ha-wave-drift-b 42s linear infinite' }}>
+          <path d="M0,130 Q48.75,156 97.5,130 T195,130 T292.5,130 T390,130 T487.5,130 T585,130 T682.5,130 T780,130 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="0.7" />
         </g>
-        <g style={{ animation: 'ha-wave-drift-a 80s linear infinite' }}>
-          <path d="M0,750 Q48.75,722 97.5,750 T195,750 T292.5,750 T390,750 T487.5,750 T585,750 T682.5,750 T780,750 L780,844 L0,844 Z" fill="url(#ha-wave-grad)" opacity="1" />
+        <g style={{ animation: 'ha-wave-drift-a 54s linear infinite' }}>
+          <path d="M0,80 Q48.75,108 97.5,80 T195,80 T292.5,80 T390,80 T487.5,80 T585,80 T682.5,80 T780,80 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="1" />
         </g>
       </svg>
       <svg
@@ -840,7 +840,7 @@ function TaskCard({ task, position, onClick }) {
         opacity, zIndex: 10 - magnitude,
         transition: `transform ${MOTION.duration.cinematic} ${MOTION.easing.standard}, opacity ${MOTION.duration.cinematic} ${MOTION.easing.standard}`,
         overflow: 'hidden', display: 'flex', flexDirection: 'column',
-        textAlign: 'left', background: 'rgba(255,255,255,0.03)',
+        textAlign: 'left', background: GENERAL.neutral[1],
         border: '1px solid rgba(255,255,255,0.06)', borderRadius: RADII.large,
         padding: SPACING.standard, cursor: 'pointer',
       }}
@@ -987,7 +987,7 @@ function Home({ onSelectTask }) {
         {/* ── Today's plan ── */}
         <div style={{
           ...TYPE.sectionTitle, color: GENERAL.softWhite,
-          marginBottom: SPACING.separation, padding: `0 ${SPACING.standard}px`,
+          marginBottom: SPACING.cinematic, padding: `0 ${SPACING.standard}px`,
         }}>
           What's today's plan?
         </div>
