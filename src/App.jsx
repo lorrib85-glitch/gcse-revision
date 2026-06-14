@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { SUBJECTS } from './constants/subjects.js'
 import { SPACING }  from './constants/spacing.js'
 import { RADII }    from './constants/radii.js'
@@ -16,16 +16,20 @@ import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, 
 import { GUIDED_COACH_TYPES } from './data/guidedAnswerCoach.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
-import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore } from './progress.js'
+import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getAllConfidenceRatings } from './progress.js'
 import { getWeakTopics, getWeakestSubject, getBiggestWin, getSuggestedQuestionType } from './unifiedWeaknessTracker.js'
 import { MODULES } from './modules.js'
 import { TAG_MODULE_MAP, findTaggedScreen } from './data/tagModuleMap.js'
-import ModulePlayer, { getAllConfidenceRatings } from './components/layout/ModulePlayer.jsx'
 import BackButton from './components/core/BackButton.jsx'
 import ChapterCompleteScreen from './components/layout/ChapterCompleteScreen.jsx'
 import ExamQuestionFrame from './components/feedback/ExamQuestionFrame.jsx'
 import ExamRoundDebrief from './components/feedback/ExamRoundDebrief.jsx'
 import GuidedAnswerCoach from './components/learning/GuidedAnswerCoach.jsx'
+
+// ModulePlayer (and the ~40 learning/feedback components it imports) is only
+// needed once a user opens a module — lazy-load it as its own chunk so
+// Home/Subjects/Progress/Quiz don't pay for it on first load.
+const ModulePlayer = lazy(() => import('./components/layout/ModulePlayer.jsx'))
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -114,6 +118,21 @@ function SplashScreen() {
         src="/logo.png" alt="RISE"
         style={{ width: 96, height: 96, objectFit: 'contain', animation: 'risePulse 1.8s ease-in-out infinite' }}
       />
+    </div>
+  )
+}
+
+// ─── Module loading screen ─────────────────────────────────────────────────────
+// Suspense fallback while ModulePlayer's chunk downloads (first open only — cached after).
+
+function ModuleLoadingScreen() {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 100,
+      background: '#08090D',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <img src="/logo.png" alt="" style={{ width: 64, height: 64, objectFit: 'contain', opacity: 0.5 }} />
     </div>
   )
 }
@@ -662,7 +681,11 @@ export default function App() {
       />
     )
   }
-  if (view === 'module' && activeModule) return <ModulePlayer module={activeModule} onBack={closeOverlay} onChapterComplete={handleChapterComplete} />
+  if (view === 'module' && activeModule) return (
+    <Suspense fallback={<ModuleLoadingScreen />}>
+      <ModulePlayer module={activeModule} onBack={closeOverlay} onChapterComplete={handleChapterComplete} />
+    </Suspense>
+  )
   if (view === 'session' && session)     return <Session session={session} topicId={topicId} startPhase={startPhase} initialResults={results} onFinish={finishSession} onHome={closeOverlay} />
   if (view === 'end')                    return <EndScreen topicId={topicId} results={results} savedData={savedData} onHome={closeOverlay} onStart={startSession} />
 

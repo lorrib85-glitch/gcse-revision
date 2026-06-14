@@ -1,6 +1,7 @@
 const KEY          = 'gcse_progress'
 const SESSION_KEY  = 'gcse_session'
 const SCORES_KEY   = 'gcse_scores'
+const CONFIDENCE_KEY = 'gcse_confidence'
 
 // ─── Read / write ─────────────────────────────────────────────────
 
@@ -183,6 +184,14 @@ export function getSessionDraft() {
 
 export function clearSessionDraft() {
   try { localStorage.removeItem(SESSION_KEY) } catch {}
+}
+
+// ─── Confidence ratings ───────────────────────────────────────────
+// Keyed by moduleId, stored in a shared array.
+// Shape: [{ moduleId, subject, title, confidence, timestamp }, ...]
+
+export function getAllConfidenceRatings() {
+  return readArr(CONFIDENCE_KEY)
 }
 
 // ─── Topic routing ────────────────────────────────────────────────

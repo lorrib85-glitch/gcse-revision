@@ -14,6 +14,10 @@ React + Vite GCSE revision app. Mobile-first, dark cinematic theme. Designed to 
 
 `src/App.jsx` — single large file. All components are defined inline here. Do not split into separate files unless asked.
 
+## Bundle Size / Lazy Loading
+
+`ModulePlayer` (and the ~40 learning/feedback components it imports) is loaded via `React.lazy()` + `Suspense` in `App.jsx`, as its own chunk — it's only needed once a user opens a module, not for Home/Subjects/Progress/Quiz. Follow this pattern for any other large, module-only component added in future: lazy-import it in `App.jsx` rather than adding it to the static import list. Small shared helpers used outside `ModulePlayer` (e.g. `getAllConfidenceRatings`) live in `src/progress.js`, not in `ModulePlayer.jsx`, so importing them doesn't pull in the lazy chunk.
+
 ## Key Components in App.jsx
 
 - `App` — top-level router, manages tab state and session flow

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { hexToRgb } from '../../constants/subjects.js'
-import { recordActivity, recordScore } from '../../progress.js'
+import { recordActivity, recordScore, getAllConfidenceRatings } from '../../progress.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
@@ -63,11 +63,6 @@ function saveModuleState(moduleId, state) {
   try { localStorage.setItem(`gcse_module_${moduleId}`, JSON.stringify(state)) } catch {}
 }
 
-// Confidence ratings — keyed by moduleId, stored in a shared array
-// Shape: [{ moduleId, subject, title, confidence, timestamp }, ...]
-export function getAllConfidenceRatings() {
-  try { return JSON.parse(localStorage.getItem('gcse_confidence') || '[]') } catch { return [] }
-}
 function saveConfidenceRating(moduleId, subject, title, confidence) {
   try {
     const all = getAllConfidenceRatings()
