@@ -3,8 +3,10 @@
 
 // Returns the index of the first screen in a module tagged with the given tag,
 // or undefined if no screen matches (caller opens module from the start).
+// Uses the metadata-only screenTags list, so this works without loading the
+// module's full lesson content.
 export function findTaggedScreen(mod, tag) {
-  const idx = (mod.screens || []).findIndex(s => s.tag === tag)
+  const idx = (mod.screenTags || []).indexOf(tag)
   return idx >= 0 ? idx : undefined
 }
 

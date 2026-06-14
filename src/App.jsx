@@ -72,11 +72,11 @@ function safeGetModuleState(moduleId) {
 
 // Percent of a module's screens completed (100 if marked complete).
 function modPct(mod) {
-  if (!mod || !mod.screens) return 0
+  if (!mod || !mod.screenCount) return 0
   const s = safeGetModuleState(mod.id)
   if (s.completed) return 100
   const screen = s.screen || 0
-  return Math.min(100, Math.round((screen / mod.screens.length) * 100))
+  return Math.min(100, Math.round((screen / mod.screenCount) * 100))
 }
 
 function safeGetProgress() {
@@ -123,7 +123,9 @@ function SplashScreen() {
 }
 
 // ─── Module loading screen ─────────────────────────────────────────────────────
-// Suspense fallback while ModulePlayer's chunk downloads (first open only — cached after).
+// Shown both while ModulePlayer's chunk downloads (Suspense fallback, first open
+// only) and while a module's full lesson content is being fetched (see
+// loadModuleContent below).
 
 function ModuleLoadingScreen() {
   return (
@@ -135,6 +137,27 @@ function ModuleLoadingScreen() {
       <img src="/logo.png" alt="" style={{ width: 64, height: 64, objectFit: 'contain', opacity: 0.5 }} />
     </div>
   )
+}
+
+// ─── Module content loading ────────────────────────────────────────────────────
+// Full lesson content (hook, outcomes, screens, intro, recall) lives in
+// src/modules/<subject>.js, split out of src/modules.js so it's only downloaded
+// when a module from that subject is opened. src/modules.js itself keeps only
+// the lightweight metadata used for browsing, cards and progress.
+
+const SUBJECT_MODULE_LOADERS = {
+  History:   () => import('./modules/history.js').then(m => m.HISTORY_MODULES),
+  Biology:   () => import('./modules/biology.js').then(m => m.BIOLOGY_MODULES),
+  Maths:     () => import('./modules/maths.js').then(m => m.MATHS_MODULES),
+  Sociology: () => import('./modules/sociology.js').then(m => m.SOCIOLOGY_MODULES),
+  Chemistry: () => import('./modules/chemistry.js').then(m => m.CHEMISTRY_MODULES),
+}
+
+async function loadModuleContent(mod) {
+  const loader = SUBJECT_MODULE_LOADERS[mod.subject]
+  if (!loader) return null
+  const subjectModules = await loader()
+  return subjectModules.find(m => m.id === mod.id) || null
 }
 
 // ─── Login screen ─────────────────────────────────────────────────────────────
@@ -587,8 +610,9 @@ export default function App() {
         }))
       } catch {}
     }
-    setActiveModule(mod)
+    setActiveModule(null)
     setView('module')
+    loadModuleContent(mod).then(fullMod => setActiveModule(fullMod || mod))
   }
 
   function startSession(id, resumePhase = 1, resumeResults = {}) {
@@ -681,6 +705,7 @@ export default function App() {
       />
     )
   }
+  if (view === 'module' && !activeModule) return <ModuleLoadingScreen />
   if (view === 'module' && activeModule) return (
     <Suspense fallback={<ModuleLoadingScreen />}>
       <ModulePlayer module={activeModule} onBack={closeOverlay} onChapterComplete={handleChapterComplete} />
@@ -788,7 +813,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
       // Completed modules don't belong in "jump back in" — that's for unfinished progress
       if (s.completed) continue
       if ((s.screen || 0) > 0) {
-        const pct = ((s.screen || 0) / Math.max(1, m.screens?.length || 1)) * 100
+        const pct = ((s.screen || 0) / Math.max(1, m.screenCount || 1)) * 100
         if (pct > bestPct) { bestPct = pct; best = m }
       }
     }
@@ -797,7 +822,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
 
   const jumpModState = jumpBackModule ? safeGetModuleState(jumpBackModule.id) : {}
   const jumpPct = jumpBackModule
-    ? (jumpModState.completed ? 100 : Math.round(((jumpModState.screen || 0) / Math.max(1, jumpBackModule.screens?.length || 1)) * 100))
+    ? (jumpModState.completed ? 100 : Math.round(((jumpModState.screen || 0) / Math.max(1, jumpBackModule.screenCount || 1)) * 100))
     : 0
 
   // Days active this calendar week (Mon–Sun)
@@ -1876,7 +1901,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
     const s = safeGetModuleState(mod.id)
     const screen = s.screen || 0
     const hasStarted = (s.hookDone && s.wylDone) || screen > 0
-    const total = mod.screens?.length || 1
+    const total = mod.screenCount || 1
     // `completed` sticks once a module is finished — reviewing it afterwards moves `screen`
     // back down, but it must never read as anything other than 'completed' again.
     const pct = s.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
@@ -2210,13 +2235,13 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
   const { sand, bronze, cream } = palette
 
   function modPct(mod) {
-    if (!mod?.screens) return 0
+    if (!mod?.screenCount) return 0
     const s = safeGetModuleState(mod.id)
     if (s.completed) return 100
     const screen = s.screen || 0
     const hasStarted = (s.hookDone && s.wylDone) || screen > 0
     if (!hasStarted) return 0
-    return Math.min(100, Math.round((screen / mod.screens.length) * 100))
+    return Math.min(100, Math.round((screen / mod.screenCount) * 100))
   }
 
   return (

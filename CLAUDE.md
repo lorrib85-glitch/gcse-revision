@@ -18,6 +18,12 @@ React + Vite GCSE revision app. Mobile-first, dark cinematic theme. Designed to 
 
 `ModulePlayer` (and the ~40 learning/feedback components it imports) is loaded via `React.lazy()` + `Suspense` in `App.jsx`, as its own chunk — it's only needed once a user opens a module, not for Home/Subjects/Progress/Quiz. Follow this pattern for any other large, module-only component added in future: lazy-import it in `App.jsx` rather than adding it to the static import list. Small shared helpers used outside `ModulePlayer` (e.g. `getAllConfidenceRatings`) live in `src/progress.js`, not in `ModulePlayer.jsx`, so importing them doesn't pull in the lazy chunk.
 
+### Module content is split by subject
+
+Full lesson content for each module (`hook`, `outcomes`, `screens`, `intro`, `recall`) lives in `src/modules/<subject>.js` (`history.js`, `biology.js`, `maths.js`, `sociology.js`, `chemistry.js`), not in `src/modules.js`. `src/modules.js` holds only lightweight metadata for all 30 modules — `id, subject, number, title, subtitle, era, icon, color, colorLight, headerImage, screenCount, screenTags`. `App.jsx`'s `openModulePlayer()` dynamically `import()`s the right `src/modules/<subject>.js` file (via `SUBJECT_MODULE_LOADERS`/`loadModuleContent`) when a module is opened, showing `ModuleLoadingScreen` while it loads, and merges in the full module object as `activeModule`.
+
+When adding a new module: add its full content to the matching `src/modules/<subject>.js` file (creating a new per-subject file + loader entry if it's a new subject), and add a matching metadata entry to `src/modules.js` with `screenCount` (= `screens.length`) and `screenTags` (= `screens.map(s => s.tag ?? null)`). Anywhere that previously read `mod.screens.length` should use `mod.screenCount`; anything needing a tagged screen index should use `findTaggedScreen(mod, tag)` (`src/data/tagModuleMap.js`), which reads `mod.screenTags`.
+
 ## Key Components in App.jsx
 
 - `App` — top-level router, manages tab state and session flow
@@ -157,7 +163,8 @@ docs/system/TEACHING_VOICE_GUIDE.md
 
 | File | Contents |
 |------|----------|
-| `src/modules.js` | `MODULES` array — all module definitions (id, title, subject, colour, screens, etc.) |
+| `src/modules.js` | `MODULES` array — lightweight metadata for all 30 modules (id, title, subject, colour, screenCount, screenTags, etc.) for browsing/cards/progress. Full lesson content lives in `src/modules/<subject>.js` (see Bundle Size / Lazy Loading) |
+| `src/modules/<subject>.js` | `history.js`, `biology.js`, `maths.js`, `sociology.js`, `chemistry.js` — full module content (`hook`, `outcomes`, `screens`, `intro`, `recall`), dynamically imported by `App.jsx` when a module from that subject is opened |
 | `src/content.js` | `TOPICS` and `TOPIC_DATA` — History topic content and questions |
 | `src/contentIndex.js` | `CONTENT_INDEX` — maps topic tags to section metadata for the Targeted Brush-Up system |
 | `src/progress.js` | Progress helpers: `getProgress`, `saveSessionResult`, `getSessionDraft`, etc. |
