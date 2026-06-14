@@ -821,6 +821,15 @@ function HomeAtmosphere() {
   )
 }
 
+// Shared "go" arrow used on task/mode cards across Home, Pulse and Exams.
+function NavArrow({ color }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  )
+}
+
 function TaskCard({ task, position, onClick }) {
   const { magnitude, signed } = position
   const scale = magnitude === 0 ? 1.06 : magnitude === 1 ? 0.86 : 0.74
@@ -879,9 +888,7 @@ function TaskCard({ task, position, onClick }) {
             {`~${task.durationMinutes} min`}
           </div>
           {magnitude === 0 && (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-              <path d="M5 12h14M13 6l6 6-6 6" />
-            </svg>
+            <NavArrow color={accentColor} />
           )}
         </div>
       </div>
@@ -1200,9 +1207,7 @@ function PulseTab({ onStartQuickFire }) {
                   </div>
                 ))}
               </div>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={m.accent} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
+              <NavArrow color={m.accent} />
             </button>
           ))}
         </div>
@@ -4925,9 +4930,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
                     <div style={{ ...TYPE.cinematic, fontSize: 18, color: GENERAL.softWhite, marginBottom: 4 }}>{coachType.title}</div>
                     <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 12.5, lineHeight: 1.45, color: GENERAL.slate }}>{coachType.shortDesc}</div>
                   </div>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={coachType.accent} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                    <path d="M5 12h14M13 6l6 6-6 6" />
-                  </svg>
+                  <NavArrow color={coachType.accent} />
                   {coachType.id === suggestedTypeId && (
                     <div style={{
                       position: 'absolute', top: 10, right: 12,
@@ -4989,9 +4992,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
                   <div style={{ ...TYPE.cinematic, fontSize: 18, color: GENERAL.softWhite, marginBottom: 4 }}>Edexcel history paper 1 — June 2023</div>
                   <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 12.5, lineHeight: 1.45, color: GENERAL.slate }}>1HI0/11 · 52 marks · 75 min · medicine in Britain & Western Front</div>
                 </div>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C89B6D" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                  <path d="M5 12h14M13 6l6 6-6 6" />
-                </svg>
+                <NavArrow color="#C89B6D" />
               </button>
 
               {/* Generic timed practice */}
@@ -5009,9 +5010,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
                   <div style={{ ...TYPE.cinematic, fontSize: 18, color: GENERAL.softWhite, marginBottom: 4 }}>Timed mixed practice</div>
                   <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 12.5, lineHeight: 1.45, color: GENERAL.slate }}>10 questions · 10 min · all subjects</div>
                 </div>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={GENERAL.teal} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                  <path d="M5 12h14M13 6l6 6-6 6" />
-                </svg>
+                <NavArrow color={GENERAL.teal} />
               </button>
             </div>
 
@@ -5182,9 +5181,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
                   ))}
                 </div>
                 {!card.disabled && (
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={card.accent} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                    <path d="M5 12h14M13 6l6 6-6 6" />
-                  </svg>
+                  <NavArrow color={card.accent} />
                 )}
               </button>
             ))}
