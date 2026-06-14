@@ -961,42 +961,32 @@ function Home({ onSelectTask }) {
   const todaysPlan = buildTodaysPlan()
 
   return (
-    <div style={{
-      minHeight: '100vh', background: GENERAL.neutral[0],
-      paddingBottom: 120, overflowX: 'hidden', position: 'relative',
-    }}>
-      <HomeAtmosphere />
+    <div style={{ minHeight: '100vh', background: GENERAL.neutral[0], paddingBottom: 120, overflowX: 'hidden' }}>
 
-      <div style={{
-        position: 'relative', zIndex: 1,
-        maxWidth: 420, margin: '0 auto', width: '100%',
-        padding: `max(52px, calc(18px + env(safe-area-inset-top))) 0 0`,
-      }}>
+      {/* ── Hero ── */}
+      <div style={{ position: 'relative', width: '100%', height: '34vh', minHeight: 260, maxHeight: 340, overflow: 'hidden' }}>
+        <HomeAtmosphere />
 
-        {/* ── Top row: streak ── */}
-        <div style={{
-          display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
-          marginBottom: 20, padding: `0 ${SPACING.standard}px`,
-        }}>
+        {/* Top row — streak */}
+        <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 14px)', right: SPACING.compact, zIndex: 2 }}>
           <StreakChip backdrop={false} />
         </div>
 
-        {/* ── Greeting ── */}
-        <div style={{ ...TYPE.body, color: GENERAL.slate, marginBottom: SPACING.micro, padding: `0 ${SPACING.standard}px` }}>
-          Hi, {userName}<span style={{ color: GENERAL.teal }}>.</span>
+        {/* Headline */}
+        <div style={{ position: 'absolute', left: SPACING.compact, right: SPACING.compact, bottom: SPACING.standard, zIndex: 2 }}>
+          <div style={{ ...TYPE.cinematic, fontSize: 46, color: GENERAL.softWhite }}>
+            Hi, {userName}<span style={{ color: GENERAL.teal }}>.</span>
+          </div>
+          <div style={{ ...TYPE.body, color: 'rgba(241,250,238,0.7)', marginTop: SPACING.micro }}>
+            What's today's plan?
+          </div>
         </div>
-
-        {/* ── Today's plan ── */}
-        <div style={{
-          ...TYPE.sectionTitle, color: GENERAL.softWhite,
-          marginBottom: SPACING.cinematic, padding: `0 ${SPACING.standard}px`,
-        }}>
-          What's today's plan?
-        </div>
-
-        <TaskCarousel tasks={todaysPlan} onSelect={onSelectTask} />
-
       </div>
+
+      <div style={{ maxWidth: 420, margin: '0 auto', width: '100%', marginTop: SPACING.compact + 4 }}>
+        <TaskCarousel tasks={todaysPlan} onSelect={onSelectTask} />
+      </div>
+
     </div>
   )
 }
@@ -5118,27 +5108,29 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
     ]
 
     return (
-      <div style={{ position: 'relative', minHeight: '100vh', background: GENERAL.neutral[0], paddingBottom: 110, overflow: 'hidden' }}>
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'url(/headers/exam-summit.png)',
-          backgroundSize: 'auto 140%', backgroundPosition: 'center 30%',
-        }} />
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: `linear-gradient(to bottom, rgba(${hexToRgb(GENERAL.neutral[0])},0.92) 0%, rgba(${hexToRgb(GENERAL.neutral[0])},0.8) 22%, rgba(${hexToRgb(GENERAL.neutral[0])},0.35) 34%, rgba(${hexToRgb(GENERAL.neutral[0])},0.1) 46%, rgba(${hexToRgb(GENERAL.neutral[0])},0.55) 70%, rgba(${hexToRgb(GENERAL.neutral[0])},0.92) 100%)`,
-        }} />
+      <div style={{ minHeight: '100vh', background: GENERAL.neutral[0], paddingBottom: 110, overflowX: 'hidden' }}>
 
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 430, margin: '0 auto', padding: `0 ${SPACING.compact}px` }}>
+        {/* ── Hero ── */}
+        <div style={{ position: 'relative', width: '100%', height: '34vh', minHeight: 260, maxHeight: 340, overflow: 'hidden' }}>
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'url(/headers/exam-summit.png)',
+            backgroundSize: 'cover', backgroundPosition: 'center 30%',
+            filter: 'saturate(0.9)',
+          }} />
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: `linear-gradient(180deg, rgba(13,15,16,0.5) 0%, rgba(13,15,16,0.1) 28%, rgba(13,15,16,0.25) 58%, ${GENERAL.neutral[0]} 100%)`,
+          }} />
 
           {/* Top row — streak */}
-          <div style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 14px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-end' }}>
+          <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 14px)', right: SPACING.compact, zIndex: 2 }}>
             <StreakChip />
           </div>
 
           {/* Headline */}
-          <div style={{ marginTop: SPACING.section, textShadow: '0 2px 16px rgba(0,0,0,0.55)' }}>
-            <div style={{ ...TYPE.cinematic, fontSize: 38, color: GENERAL.softWhite }}>
+          <div style={{ position: 'absolute', left: SPACING.compact, right: SPACING.compact, bottom: SPACING.standard, zIndex: 2 }}>
+            <div style={{ ...TYPE.cinematic, fontSize: 46, color: GENERAL.softWhite }}>
               Exams<span style={{ color: GENERAL.teal }}>.</span>
             </div>
             <div style={{
@@ -5148,10 +5140,13 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
               Practise like it's the real thing.
             </div>
           </div>
+        </div>
+
+        <div style={{ maxWidth: 430, margin: '0 auto', padding: `0 ${SPACING.compact}px` }}>
 
           {/* Section label */}
           <div style={{
-            marginTop: SPACING.standard, marginBottom: 10,
+            marginTop: SPACING.compact + 4, marginBottom: 10,
             fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 600,
             letterSpacing: '0.18em', textTransform: 'uppercase', color: GENERAL.slate,
           }}>
