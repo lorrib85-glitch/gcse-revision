@@ -250,7 +250,7 @@ function buildBiggestWinReason(stats) {
  * with a reason line tailored to the evidence available for that topic.
  * Returns null if no topic currently qualifies (don't fabricate one).
  */
-export function getBiggestWin() {
+export function getBiggestWin(excludeTopic = null) {
   const wrongAnswers = loadWrongAnswers()
   if (!wrongAnswers.length) return null
 
@@ -273,6 +273,7 @@ export function getBiggestWin() {
   }
 
   const candidates = pool
+    .filter(t => t.topic !== excludeTopic)
     .map(t => {
       const lastWrong = wrongAnswers.find(a => a.subject === t.subject && a.topic === t.topic)
       return { ...t, lastFailedAt: lastWrong?.timestamp || 0 }
@@ -336,11 +337,12 @@ export function isWeakArea(subject, topic, threshold = WEAK_THRESHOLD) {
 /**
  * Get the weakest subject by total wrong answers.
  */
-export function getWeakestSubject() {
+export function getWeakestSubject(excludeSubject = null) {
   const wrongAnswers = loadWrongAnswers()
   const subjectCounts = {}
 
   wrongAnswers.forEach(a => {
+    if (a.subject === excludeSubject) return
     subjectCounts[a.subject] = (subjectCounts[a.subject] || 0) + 1
   })
 

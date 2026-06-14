@@ -11,10 +11,11 @@ import { CHEM_IMAGES } from './data/chemImages.js'
 import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, J23_Q6 } from './data/medicineExamPapers.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
-import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getAllConfidenceRatings } from './progress.js'
+import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getAllConfidenceRatings, getModuleState as safeGetModuleState, getModulePct as modPct, MODULE_GROUPS, getContinueModule, getWeeklyTrend } from './progress.js'
 import { getWeakTopics, getWeakestSubject, getBiggestWin, getSuggestedQuestionType } from './unifiedWeaknessTracker.js'
 import { MODULES } from './modules.js'
 import { TAG_MODULE_MAP, findTaggedScreen } from './data/tagModuleMap.js'
+import { buildTodaysPlan } from './todaysPlan.js'
 import BackButton from './components/core/BackButton.jsx'
 import ChapterCompleteScreen from './components/layout/ChapterCompleteScreen.jsx'
 import ExamQuestionFrame from './components/feedback/ExamQuestionFrame.jsx'
@@ -60,19 +61,6 @@ function buildSession(topicId) {
 }
 
 const TOPIC_IDS = TOPICS.map(t => t.id)
-
-function safeGetModuleState(moduleId) {
-  try { return JSON.parse(localStorage.getItem('gcse_module_' + moduleId) || '{}') } catch { return {} }
-}
-
-// Percent of a module's screens completed (100 if marked complete).
-function modPct(mod) {
-  if (!mod || !mod.screenCount) return 0
-  const s = safeGetModuleState(mod.id)
-  if (s.completed) return 100
-  const screen = s.screen || 0
-  return Math.min(100, Math.round((screen / mod.screenCount) * 100))
-}
 
 function safeGetProgress() {
   try { return getProgress() } catch { return { streak: 0, lastSessionDate: null, topicProgress: {}, history: [] } }
@@ -475,61 +463,6 @@ function BottomNav({ tab, setTab }) {
 
 // ─── App ─────────────────────────────────────────────────────────────────────
 
-// Parent modules — each contains an ordered list of chapter IDs, in app-wide
-// priority order. "Chapter" = one entry in MODULES; "Module" = this parent
-// grouping. Used by handleChapterComplete (next-chapter routing) and by
-// ModulesTab's getContinueModule (Subjects tab "Keep going" hero).
-const MODULE_GROUPS = [
-  {
-    id: 'hist_medicine',
-    title: 'Medicine Through Time',
-    subject: 'History',
-    chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','mod2','mod3','history-medicine-jenner-vaccination','history-medicine-germ-theory','mod5','mod6','mod7','mod8','mod9'],
-  },
-  {
-    id: 'soc_family',
-    title: 'Sociology of the Family',
-    subject: 'Sociology',
-    chapterIds: ['soc1','soc2','soc3','soc4','soc6'],
-  },
-  {
-    id: 'maths_core',
-    title: 'GCSE Maths',
-    subject: 'Maths',
-    chapterIds: ['math1','math2'],
-  },
-  {
-    id: 'bio_core',
-    title: 'GCSE Biology',
-    subject: 'Biology',
-    chapterIds: ['sci_bio_w1','bio_building_life','bio_human_machine','bio_disease_wars','bio_control_systems','bio_genetics_evolution','bio_ecosystems_group'],
-  },
-  {
-    id: 'chem_core',
-    title: 'GCSE Chemistry',
-    subject: 'Chemistry',
-    chapterIds: ['chem_matter_atoms','chem_reactions','chem_rates_organic','chem_earth'],
-  },
-]
-
-// The module the "Keep going" hero should resume — the highest-priority
-// in-progress module, or if nothing is in progress, the highest-priority
-// module the learner hasn't started yet.
-function getContinueModule() {
-  const ordered = MODULE_GROUPS
-    .flatMap(g => g.chapterIds)
-    .map(id => MODULES.find(m => m.id === id))
-    .filter(Boolean)
-
-  const inProgress = ordered.find(m => { const p = modPct(m); return p > 0 && p < 100 })
-  if (inProgress) return inProgress
-
-  const unvisited = ordered.find(m => modPct(m) === 0)
-  if (unvisited) return unvisited
-
-  return ordered[0] || MODULES[0]
-}
-
 export default function App() {
   const { user, pendingAuth, signOut } = useAuth()
   const [showSplash, setShowSplash]   = useState(true)
@@ -544,6 +477,7 @@ export default function App() {
   const [draft, setDraft]             = useState(() => safeGetDraft())
   const [activeModule,        setActiveModule]        = useState(null)
   const [chapterCompleteData, setChapterCompleteData] = useState(null)
+  const [examAutoStart,       setExamAutoStart]       = useState(null)
 
   // Brand-document subject colours — always used in preference to module.color
   const SUBJECT_ACCENT = {
@@ -632,6 +566,27 @@ export default function App() {
 
   function openModule(mod, screenIndex) {
     openModulePlayer(mod, screenIndex)
+  }
+
+  // Routes a tap on one of Home's "Today's plan" cards.
+  function handleTodaysPlanSelect(task) {
+    const sel = task?.onSelect
+    if (!sel) return
+    if (sel.kind === 'quickfire') {
+      setTab('quickfire')
+    } else if (sel.kind === 'module') {
+      const mod = MODULES.find(m => m.id === sel.moduleId)
+      if (mod) openModule(mod, sel.screenIndex)
+    } else if (sel.kind === 'practice' || sel.kind === 'paper') {
+      setExamAutoStart({
+        subject: sel.subject,
+        isTimedPaper: sel.isTimedPaper,
+        durationSeconds: sel.durationSeconds,
+        paperQuestions: sel.paperQuestions,
+        title: sel.title,
+      })
+      setTab('exams')
+    }
   }
 
   function openModulePlayer(mod, screenIndex) {
@@ -756,11 +711,11 @@ export default function App() {
   return (
     <div style={{ background: '#08090D', minHeight: '100vh' }}>
       <div key={tab} className="tab-content">
-        {tab === 'home'     && <Home progress={progress} onStart={startSession} onOpenModule={openModule} onOpenSubjects={() => setTab('subjects')} onOpenPulse={() => setTab('pulse')} />}
+        {tab === 'home'     && <Home onSelectTask={handleTodaysPlanSelect} />}
         {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
         {tab === 'pulse'    && <PulseTab onStartQuickFire={() => setTab('quickfire')} />}
         {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab('pulse')} />}
-        {tab === 'exams'    && <TestDataProvider><TestTab mode="exam" onOpenModule={openModule} onOpenPulse={() => setTab('pulse')} /></TestDataProvider>}
+        {tab === 'exams'    && <TestDataProvider><TestTab mode="exam" onOpenModule={openModule} onOpenPulse={() => setTab('pulse')} examAutoStart={examAutoStart} clearExamAutoStart={() => setExamAutoStart(null)} /></TestDataProvider>}
       </div>
       <BottomNav tab={tab} setTab={setTab} />
     </div>
@@ -923,7 +878,7 @@ function TaskCard({ task, position, onClick }) {
               <circle cx="11" cy="11" r="8.5" stroke={GENERAL.slate} strokeWidth="1.75" />
               <path d="M11 6.5V11l3 2" stroke={GENERAL.slate} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            {task.duration}
+            {`~${task.durationMinutes} min`}
           </div>
           {magnitude === 0 && (
             <div style={{
@@ -1000,39 +955,12 @@ function TaskCarousel({ tasks, onSelect }) {
   )
 }
 
-function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) {
+function Home({ onSelectTask }) {
   const { user } = useAuth()
   const userName = user?.name || 'you'
 
-  const isWeekend = [0, 6].includes(new Date().getDay())
-
-  // Mock plan for the Phase 1 visual-review checkpoint — replaced by
-  // buildTodaysPlan() in Phase 2.
-  const todaysPlan = [
-    {
-      type: 'warmup', title: '90 second sprint',
-      reason: 'Mixed questions to start the day.', duration: '2 min', image: null,
-    },
-    {
-      type: 'revisit', title: 'The Black Death',
-      reason: '4 of your last 6 answers were incorrect.', duration: '5 min',
-      image: '/figures/history/medicine/black-death/plague-background.png',
-    },
-    {
-      type: 'continue', title: 'The accidental miracle',
-      reason: '6 screens left in this module.', duration: '15 min', image: null,
-    },
-  ]
-  if (isWeekend) {
-    todaysPlan.push({
-      type: 'paper', title: 'Full History paper',
-      reason: 'A timed past paper, marked like the real thing.', duration: '50 min',
-      image: '/headers/history-medicine-through-time.webp',
-    })
-  }
-
-  // Mock weekly trend line — replaced by getWeeklyTrend() in Phase 2.
-  const weekNote = "You're remembering more than last week."
+  const todaysPlan = buildTodaysPlan()
+  const { trendNote } = getWeeklyTrend()
 
   return (
     <div style={{
@@ -1062,7 +990,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
 
         {/* ── This week ── */}
         <div style={{ ...TYPE.bodySmall, color: GENERAL.slate, marginBottom: SPACING.separation, padding: `0 ${SPACING.standard}px` }}>
-          {weekNote}
+          {trendNote}
         </div>
 
         {/* ── Today's plan ── */}
@@ -1073,7 +1001,7 @@ function Home({ progress, onStart, onOpenModule, onOpenSubjects, onOpenPulse }) 
           What's today's plan?
         </div>
 
-        <TaskCarousel tasks={todaysPlan} onSelect={() => {}} />
+        <TaskCarousel tasks={todaysPlan} onSelect={onSelectTask} />
 
       </div>
     </div>
@@ -1109,39 +1037,17 @@ function PulseSparkline({ points }) {
 
 function PulseTab({ onStartQuickFire }) {
   // Week-over-week recall trend from real quiz scores
-  const trend = (() => {
-    try {
-      const scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]')
-      const cutoff = days => { const d = new Date(); d.setDate(d.getDate() - days); return d.toISOString().slice(0, 10) }
-      const week = scores.filter(s => s.date > cutoff(7))
-      const prevWeek = scores.filter(s => s.date > cutoff(14) && s.date <= cutoff(7))
-      const avg = arr => arr.length ? Math.round(arr.reduce((a, b) => a + b.pct, 0) / arr.length) : null
-      const byDay = {}
-      week.forEach(s => { (byDay[s.date] = byDay[s.date] || []).push(s.pct) })
-      const points = Object.keys(byDay).sort()
-        .map(d => Math.round(byDay[d].reduce((a, b) => a + b, 0) / byDay[d].length))
-      return { thisAvg: avg(week), prevAvg: avg(prevWeek), points }
-    } catch { return { thisAvg: null, prevAvg: null, points: [] } }
-  })()
+  const trend = getWeeklyTrend()
 
   let trendHeadline = null
   let trendColor = GENERAL.teal
-  let trendNote = 'Play one round to start tracking your memory.'
+  let trendNote = trend.trendNote
   if (trend.thisAvg != null && trend.prevAvg != null) {
     const delta = trend.thisAvg - trend.prevAvg
-    if (delta === 0) {
-      trendHeadline = `${trend.thisAvg}%`
-      trendNote = 'Holding steady on last week.'
-    } else {
-      trendHeadline = `${delta > 0 ? '+' : ''}${delta}%`
-      trendColor = delta > 0 ? GENERAL.teal : GENERAL.coral
-      trendNote = delta > 0
-        ? "You're remembering more than last week."
-        : 'Slightly down on last week. One round can fix that.'
-    }
+    trendHeadline = delta === 0 ? `${trend.thisAvg}%` : `${delta > 0 ? '+' : ''}${delta}%`
+    trendColor = delta >= 0 ? GENERAL.teal : GENERAL.coral
   } else if (trend.thisAvg != null) {
     trendHeadline = `${trend.thisAvg}%`
-    trendNote = 'Your average score this week.'
   }
 
   const weakCount = getWeakTopics().length
@@ -4459,7 +4365,7 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
   )
 }
 
-function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart = false } = {}) {
+function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart = false, examAutoStart = null, clearExamAutoStart } = {}) {
   const { ALL_MATHS_QUESTIONS, ALL_ENGLISH_QUESTIONS, ALL_SOCIOLOGY_QUESTIONS, ALL_CHEMISTRY_QUESTIONS, GUIDED_COACH_TYPES } = useTestData() || {}
   const [mathsOpen, setMathsOpen]   = useState(false)
   const [englishOpen, setEnglishOpen]     = useState(false)
@@ -4572,6 +4478,17 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
     if (autoStart && isQuickFire && !autoStartedRef.current) {
       autoStartedRef.current = true
       startRandomQuestion()
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-start an exam round when launched from Home's "Today's plan"
+  const examAutoStartedRef = useRef(false)
+  useEffect(() => {
+    if (isExamMode && examAutoStart && !examAutoStartedRef.current) {
+      examAutoStartedRef.current = true
+      const { subject, ...opts } = examAutoStart
+      startExamRound(subject, opts)
+      clearExamAutoStart?.()
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 

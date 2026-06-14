@@ -33,7 +33,7 @@ When adding a new module: add its full content to the matching `src/modules/<sub
 - `App` — top-level router, manages tab state and session flow
 - `BottomNav` — fixed 5-tab nav (Home / Subjects / 90s Quiz / Progress / Exam) with SVG line icons
 - `BiologySection` — biology-specific horizontal scroll section with topic group image cards
-- `Home` — home screen: greeting, resume card, weak zone, subjects grid, quiz CTA
+- `Home` — home screen: greeting, weekly recall trend line, and a "Today's plan" task carousel (`TaskCarousel`/`TaskCard`) built by `buildTodaysPlan()` (`src/todaysPlan.js`) — warm-up, weak-spot revisit or continue-module, exam practice, plus a weekend full-paper card
 - `ModulesTab` — subjects/modules browser
 - `SubjectSection` — renders a subject heading + its module cards
 - `ModuleCard` — individual module card with progress, accent colour, icon

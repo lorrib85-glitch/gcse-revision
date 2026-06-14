@@ -1,3 +1,5 @@
+import { MODULES } from './modules.js'
+
 const KEY          = 'gcse_progress'
 const SESSION_KEY  = 'gcse_session'
 const SCORES_KEY   = 'gcse_scores'
@@ -203,4 +205,110 @@ export function getNextTopicId(topicIds) {
   if (overdue) return overdue
   const unseen = topicIds.find(id => !topicProgress[id])
   return unseen || topicIds[0]
+}
+
+// ─── Per-module screen progress ────────────────────────────────────
+
+export function getModuleState(moduleId) {
+  try { return JSON.parse(localStorage.getItem('gcse_module_' + moduleId) || '{}') } catch { return {} }
+}
+
+// Percent of a module's screens completed (100 if marked complete).
+export function getModulePct(mod) {
+  if (!mod || !mod.screenCount) return 0
+  const s = getModuleState(mod.id)
+  if (s.completed) return 100
+  const screen = s.screen || 0
+  return Math.min(100, Math.round((screen / mod.screenCount) * 100))
+}
+
+// Parent modules — each contains an ordered list of chapter IDs, in app-wide
+// priority order. "Chapter" = one entry in MODULES; "Module" = this parent
+// grouping. Used by handleChapterComplete (next-chapter routing) and by
+// getContinueModule (Subjects tab "Keep going" hero, Home's "Today's plan").
+export const MODULE_GROUPS = [
+  {
+    id: 'hist_medicine',
+    title: 'Medicine Through Time',
+    subject: 'History',
+    chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','mod2','mod3','history-medicine-jenner-vaccination','history-medicine-germ-theory','mod5','mod6','mod7','mod8','mod9'],
+  },
+  {
+    id: 'soc_family',
+    title: 'Sociology of the Family',
+    subject: 'Sociology',
+    chapterIds: ['soc1','soc2','soc3','soc4','soc6'],
+  },
+  {
+    id: 'maths_core',
+    title: 'GCSE Maths',
+    subject: 'Maths',
+    chapterIds: ['math1','math2'],
+  },
+  {
+    id: 'bio_core',
+    title: 'GCSE Biology',
+    subject: 'Biology',
+    chapterIds: ['sci_bio_w1','bio_building_life','bio_human_machine','bio_disease_wars','bio_control_systems','bio_genetics_evolution','bio_ecosystems_group'],
+  },
+  {
+    id: 'chem_core',
+    title: 'GCSE Chemistry',
+    subject: 'Chemistry',
+    chapterIds: ['chem_matter_atoms','chem_reactions','chem_rates_organic','chem_earth'],
+  },
+]
+
+// The module the "Keep going" hero should resume — the highest-priority
+// in-progress module, or if nothing is in progress, the highest-priority
+// module the learner hasn't started yet.
+export function getContinueModule() {
+  const ordered = MODULE_GROUPS
+    .flatMap(g => g.chapterIds)
+    .map(id => MODULES.find(m => m.id === id))
+    .filter(Boolean)
+
+  const inProgress = ordered.find(m => { const p = getModulePct(m); return p > 0 && p < 100 })
+  if (inProgress) return inProgress
+
+  const unvisited = ordered.find(m => getModulePct(m) === 0)
+  if (unvisited) return unvisited
+
+  return ordered[0] || MODULES[0]
+}
+
+// Like getContinueModule, but returns null unless that module is actually
+// in progress (used by Home's "Today's plan" — a not-yet-started module
+// isn't a "continue" task).
+export function getInProgressModule() {
+  const mod = getContinueModule()
+  const pct = getModulePct(mod)
+  return (pct > 0 && pct < 100) ? mod : null
+}
+
+// ─── Weekly recall trend ────────────────────────────────────────────
+// Shared by PulseTab and Home's "this week" line.
+
+export function getWeeklyTrend() {
+  const scores = readArr(SCORES_KEY)
+  const cutoff = days => { const d = new Date(); d.setDate(d.getDate() - days); return d.toISOString().slice(0, 10) }
+  const week = scores.filter(s => s.date > cutoff(7))
+  const prevWeek = scores.filter(s => s.date > cutoff(14) && s.date <= cutoff(7))
+  const avg = arr => arr.length ? Math.round(arr.reduce((a, b) => a + b.pct, 0) / arr.length) : null
+  const byDay = {}
+  week.forEach(s => { (byDay[s.date] = byDay[s.date] || []).push(s.pct) })
+  const points = Object.keys(byDay).sort()
+    .map(d => Math.round(byDay[d].reduce((a, b) => a + b, 0) / byDay[d].length))
+  const thisAvg = avg(week)
+  const prevAvg = avg(prevWeek)
+  let trendNote = 'Play one round to start tracking your memory.'
+  if (thisAvg != null && prevAvg != null) {
+    const delta = thisAvg - prevAvg
+    trendNote = delta === 0 ? 'Holding steady on last week.'
+      : delta > 0 ? "You're remembering more than last week."
+      : 'Slightly down on last week. One round can fix that.'
+  } else if (thisAvg != null) {
+    trendNote = 'Your average score this week.'
+  }
+  return { thisAvg, prevAvg, points, trendNote }
 }
