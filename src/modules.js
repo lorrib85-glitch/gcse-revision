@@ -1501,36 +1501,39 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         sub: 'Put together what you just explored on the dock.',
         blocks: [
           {
-            type: 'explainReveal',
-            intro: 'You explored the ship, the crew, the cargo, and the rats. Here is the chain connecting them — the one nobody in 1348 could see.',
-            atmosphereImage: '/figures/history/medicine/black-death/plague-dock.png',
+            type: 'timelineChain',
+            intro: 'You explored the ship, the crew, the cargo, and the rats. Here is the chain connecting them — the one nobody in 1348 could see. Tap each step to reveal why it mattered.',
             steps: [
               {
                 id: 'ship',
-                statement: 'Trading ships',
-                emphasis: 'carried goods from infected Mediterranean ports.',
-                detail: 'Hidden in the hold, alongside the cargo, travelled black rats.',
+                icon: '🚢',
+                image: '/figures/history/medicine/black-death/plague-dock.png', // placeholder — replace with a ship-specific image
+                label: 'Trading ships carried infected cargo',
+                detail: 'Hidden in the hold, alongside the cargo, travelled black rats — carried from infected Mediterranean ports.',
               },
               {
                 id: 'rats',
-                statement: 'The rats',
-                emphasis: 'carried fleas infected with Yersinia pestis bacteria.',
-                detail: 'No one suspected the rats — they were everywhere on every dock, and ignored.',
+                icon: '🐀',
+                image: '/figures/history/medicine/black-death/plague-dock.png', // placeholder — replace with a rat-specific image
+                label: 'The rats carried infected fleas',
+                detail: 'No one suspected the rats — they were everywhere on every dock, and ignored. The fleas they carried were infected with Yersinia pestis bacteria.',
               },
               {
                 id: 'fleas',
-                statement: 'The fleas',
-                emphasis: 'bit people once their rat hosts died.',
+                icon: '🦟',
+                image: '/figures/history/medicine/black-death/plague-dock.png', // placeholder — replace with a flea-specific image
+                label: 'The fleas bit people when rats died',
                 detail: 'A single bite passed the bacteria directly into a person\'s bloodstream.',
               },
               {
                 id: 'spread',
-                statement: 'From person to person,',
-                emphasis: 'the disease then spread through towns and villages.',
+                icon: '🏘️',
+                image: '/figures/history/medicine/black-death/plague-dock.png', // placeholder — replace with a town-spread image
+                label: 'The disease spread through towns and villages',
                 detail: 'Within weeks of the ship docking at Melcombe, the surrounding area was dying.',
               },
             ],
-            reflectionPrompt: 'This is the transmission chain: ship → rat → flea → person. Medieval people never made this connection — it would take another 500 years.',
+            outro: 'This is the transmission chain: ship → rat → flea → person. Medieval people never made this connection — it would take another 500 years. Try explaining the chain in your own words.',
           },
         ],
       },

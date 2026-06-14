@@ -312,8 +312,20 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 **What it is:** Full-screen horizontal scroll-snap chain of flip cards connected by a connector rail (line segments + dot per card).  
 **Best used for:** A chapter's "big idea" causal sequence, step by step (e.g. how the Black Death spread). Card fronts show a short step label; tapping flips a card to reveal why that step mattered / how it links to the next. Continue only appears once every card has been flipped.  
 **Props:** `block`, `subject` (defaults to `History`), `onContinue`  
-**Block shape:** `{ type: 'timelineChain', title, intro?, steps: [{ id?, icon?, label, detail }] }`  
+**Block shape:** `{ type: 'timelineChain', title, intro?, steps: [{ id?, icon?, image?, label, detail }] }`  
 **Screen type:** `timelineChain` (full-screen, routed directly in `ModulePlayer.jsx` like `VisualNarrativeScreen`)  
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
+
+---
+
+### TimelineChainBlock
+
+**File:** `src/components/learning/TimelineChain.jsx` (named export, alongside `TimelineChain`)  
+**What it is:** Embedded variant of `TimelineChain` — the same flip-card chain with connector rail, scaled down to sit inline within a normal content screen instead of taking over the full screen. No completion gating; the screen's own Continue/Next controls progression.  
+**Best used for:** Slotting a short causal/sequence chain (2–5 steps) into an existing content screen alongside its heading/intro — e.g. recapping a transmission chain just explored elsewhere. Each card front can show a placeholder/illustrative `image` with an overlaid step number, plus a short label; tapping flips to reveal the "why it mattered" detail. An optional `outro` paragraph (e.g. a reflection prompt) renders below the chain.  
+**Props:** `block`, `subject` (defaults to `History`)  
+**Block shape:** `{ type: 'timelineChain', intro?, steps: [{ id?, icon?, image?, label, detail }], outro? }`  
+**Screen type:** `timelineChain` (content block, rendered inside `Screen` in `ModulePlayer.jsx` — same block-type string as the full-screen variant's screen type, but checked on `block.type` rather than `screen.type`)  
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
 
 ---

@@ -21,7 +21,7 @@ import RecoveryQuizPlayer from '../learning/RecoveryQuizPlayer.jsx'
 import CardContainer from '../core/CardContainer.jsx'
 import GuidedChoiceCarousel from '../learning/GuidedChoiceCarousel.jsx'
 import VisualNarrativeScreen from '../learning/VisualNarrativeScreen.jsx'
-import TimelineChain from '../learning/TimelineChain.jsx'
+import TimelineChain, { TimelineChainBlock } from '../learning/TimelineChain.jsx'
 import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 import TheoryCompareBlock from '../learning/TheoryCompareBlock.jsx'
 import GraphView from '../learning/GraphView.jsx'
@@ -1165,6 +1165,7 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'fillblanks'    && <FillInTheBlanksBlock block={block} subject={subject} />}
           {block.type === 'theoryCompare' && <TheoryCompareBlock block={block} subject={subject} />}
           {block.type === 'graphView'     && <GraphView block={block} subject={subject} />}
+          {block.type === 'timelineChain' && <TimelineChainBlock block={block} subject={subject} />}
           {block.type === 'colsort'       && <ColSortBlock block={block} subject={subject} />}
           {block.type === 'spotTheError'  && <SpotTheError block={block} subject={subject} onContinue={onScreenComplete} />}
           {block.type === 'misconceptionCheck' && <MisconceptionCheck block={block} subject={subject} onContinue={onScreenComplete} />}

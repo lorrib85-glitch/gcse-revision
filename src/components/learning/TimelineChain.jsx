@@ -38,6 +38,10 @@ function ensureStyles() {
 const CARD_W = 240
 const CARD_H = 290
 
+const EMBED_CARD_W = 200
+const EMBED_CARD_H = 270
+const EMBED_RAIL_H = 16
+
 export default function TimelineChain({ block, subject = 'History', onContinue }) {
   ensureStyles()
 
@@ -168,16 +172,16 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
   )
 }
 
-function ChainCard({ step, index, total, flipped, onFlip, accent, rgb }) {
+function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = CARD_W, cardH = CARD_H, railH = 20, scrollAlign = 'center' }) {
   const F = { fontFamily: "'Sora', sans-serif" }
   const isFirst = index === 0
   const isLast = index === total - 1
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0, scrollSnapAlign: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0, scrollSnapAlign: scrollAlign }}>
 
       {/* Connector rail */}
-      <div style={{ position: 'relative', height: 20, width: CARD_W, flexShrink: 0 }}>
+      <div style={{ position: 'relative', height: railH, width: cardW, flexShrink: 0 }}>
         {!isFirst && (
           <div style={{ position: 'absolute', left: 0, right: '50%', top: '50%', height: 1, background: `rgba(${rgb},0.30)` }} />
         )}
@@ -196,7 +200,7 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb }) {
       {/* Flip card */}
       <div
         onClick={onFlip}
-        style={{ width: CARD_W, height: CARD_H, perspective: 1200, cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}
+        style={{ width: cardW, height: cardH, perspective: 1200, cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}
       >
         <div style={{
           position: 'relative', width: '100%', height: '100%',
@@ -215,18 +219,42 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb }) {
             boxShadow: '0 20px 48px rgba(0,0,0,0.45)',
             padding: SPACING.standard,
             display: 'flex', flexDirection: 'column',
+            overflow: 'hidden',
           }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: '50%',
-              border: `1px solid rgba(${rgb},0.32)`,
-              background: `rgba(${rgb},0.10)`,
-              color: accent, fontSize: 15, fontWeight: 700, ...F,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              marginBottom: SPACING.standard,
-            }}>
-              {index + 1}
-            </div>
-            {step.icon && (
+            {step.image && (
+              <div style={{
+                position: 'relative',
+                margin: `-${SPACING.standard}px -${SPACING.standard}px ${SPACING.compact}px`,
+                height: Math.round(cardH * 0.42),
+                borderRadius: `${RADII.large}px ${RADII.large}px 0 0`,
+                overflow: 'hidden', flexShrink: 0,
+              }}>
+                <img src={step.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <div style={{
+                  position: 'absolute', top: SPACING.micro, left: SPACING.micro,
+                  width: 30, height: 30, borderRadius: '50%',
+                  border: `1px solid rgba(${rgb},0.32)`,
+                  background: 'rgba(8,9,13,0.55)', backdropFilter: 'blur(6px)',
+                  color: accent, fontSize: 13, fontWeight: 700, ...F,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {index + 1}
+                </div>
+              </div>
+            )}
+            {!step.image && (
+              <div style={{
+                width: 36, height: 36, borderRadius: '50%',
+                border: `1px solid rgba(${rgb},0.32)`,
+                background: `rgba(${rgb},0.10)`,
+                color: accent, fontSize: 15, fontWeight: 700, ...F,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: SPACING.standard, flexShrink: 0,
+              }}>
+                {index + 1}
+              </div>
+            )}
+            {step.icon && !step.image && (
               <div style={{ fontSize: 40, marginBottom: SPACING.compact }}>{step.icon}</div>
             )}
             <div style={{ ...F, fontSize: 19, fontWeight: 600, lineHeight: 1.35, color: 'rgba(255,255,255,0.94)', flex: 1 }}>
@@ -259,6 +287,95 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb }) {
 
         </div>
       </div>
+    </div>
+  )
+}
+
+// ─── TimelineChainBlock — embedded variant ─────────────────────────────────
+//
+// The same flip-card chain, scaled down for use inline within a content
+// screen's `blocks` array (block.type === 'timelineChain', rendered inside
+// `Screen` in ModulePlayer.jsx). No fixed positioning and no completion
+// gating — the screen's own Continue/Next controls progression.
+//
+// Block shape:
+// {
+//   type: 'timelineChain',
+//   intro?: 'Tap each step to see why it mattered.',
+//   steps: [ { id, icon?, image?, label, detail }, ... ],
+//   outro?: 'This is the transmission chain: ship → rat → flea → person...',
+// }
+
+export function TimelineChainBlock({ block, subject = 'History' }) {
+  ensureStyles()
+
+  const theme = SUBJECTS[subject] || SUBJECTS.History
+  const { accent, accentRgb: rgb } = theme
+  const steps = block.steps || []
+
+  const [flipped, setFlipped] = useState(() => new Set())
+
+  function toggleFlip(i) {
+    setFlipped(prev => {
+      const next = new Set(prev)
+      if (next.has(i)) next.delete(i)
+      else next.add(i)
+      return next
+    })
+  }
+
+  const F = { fontFamily: "'Sora', sans-serif" }
+
+  return (
+    <div style={F}>
+      {block.intro && (
+        <p style={{ ...F, fontSize: 15, lineHeight: 1.5, color: 'rgba(255,255,255,0.52)', margin: '0 0 16px' }}>
+          {block.intro}
+        </p>
+      )}
+
+      <div
+        className="tc-row"
+        style={{
+          display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch', gap: SPACING.compact, paddingBottom: 4,
+        }}
+      >
+        {steps.map((step, i) => (
+          <ChainCard
+            key={step.id || i}
+            step={step}
+            index={i}
+            total={steps.length}
+            flipped={flipped.has(i)}
+            onFlip={() => toggleFlip(i)}
+            accent={accent}
+            rgb={rgb}
+            cardW={EMBED_CARD_W}
+            cardH={EMBED_CARD_H}
+            railH={EMBED_RAIL_H}
+            scrollAlign="start"
+          />
+        ))}
+        <div style={{ flexShrink: 0, width: 1 }} />
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: SPACING.compact }}>
+        {steps.map((_, i) => (
+          <div key={i} style={{
+            width: flipped.has(i) ? 20 : 8, height: 8, borderRadius: RADII.pill,
+            background: flipped.has(i) ? accent : 'rgba(255,255,255,0.16)',
+            boxShadow: flipped.has(i) ? `0 0 8px rgba(${rgb},0.45)` : 'none',
+            transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+          }} />
+        ))}
+      </div>
+
+      {block.outro && (
+        <p style={{ ...F, fontSize: 14, lineHeight: 1.55, color: 'rgba(255,255,255,0.56)', margin: `${SPACING.compact}px 0 0` }}>
+          {block.outro}
+        </p>
+      )}
     </div>
   )
 }
