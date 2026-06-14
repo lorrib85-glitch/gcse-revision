@@ -74,6 +74,18 @@ Foundation components used by many others. Handle atomic UI concerns.
 
 Screen-level learning interaction components. Each is a distinct learning beat.
 
+### CinematicCarousel
+
+**File:** `src/components/learning/CinematicCarousel.jsx`  
+**What it is:** Full-screen "deep dive" carousel — one large image at a time (`objectFit: contain`, so any aspect ratio works), with glass prev/next arrow buttons either side. A name + key-facts panel below slides in to match the navigation direction (`key={index}` remount + direction-aware slide-in animation). Progress dots track which items have been viewed; Continue unlocks once every item has been seen at least once.  
+**Best used for:** Browsing a small related set of things in turn, each worth a focused look — e.g. the organelles inside a cell, the planets of the solar system, the stages of a specialised cell. Designed for cinematic single-item focus, not for scanning a large list.  
+**Props:** `block`, `subject` (defaults to `Biology`), `onContinue`  
+**Block shape:** `{ type: 'cinematicCarousel', title?, intro?, items: [{ id, image, label, facts: string[] }] }`  
+**Screen type:** `cinematicCarousel` (full-screen, routed directly in `ModulePlayer.jsx` like `TimelineCanvas`)  
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `RADII`
+
+---
+
 ### CinematicRevealMoment
 
 **File:** `src/components/learning/CinematicRevealMoment.jsx`  

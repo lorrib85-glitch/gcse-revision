@@ -41,6 +41,7 @@ Foundation components used by many others.
 
 ### `src/components/learning/`
 Screen-level learning interaction components.
+- `CinematicCarousel.jsx` — Full-screen "deep dive" carousel: one large image at a time with prev/next glass nav and a sliding name + key-facts panel, for browsing a small related set of things in turn (e.g. organelles, planets).
 - `CinematicRevealMoment.jsx` — Full-screen cinematic video/image reveal moment.
 - `ColSortBlock.jsx` — Interactive column-sort categorisation task where learners sort items into labelled columns with visual feedback.
 - `ConceptReveal.jsx` — Concept introduction with atmospheric reveal.

@@ -23,6 +23,7 @@ import GuidedChoiceCarousel from '../learning/GuidedChoiceCarousel.jsx'
 import VisualNarrativeScreen from '../learning/VisualNarrativeScreen.jsx'
 import TimelineChain, { TimelineChainBlock } from '../learning/TimelineChain.jsx'
 import TimelineCanvas from '../learning/TimelineCanvas.jsx'
+import CinematicCarousel from '../learning/CinematicCarousel.jsx'
 import ChapterOutcomeScreen from './ChapterOutcomeScreen.jsx'
 import TheoryCompareBlock from '../learning/TheoryCompareBlock.jsx'
 import GraphView from '../learning/GraphView.jsx'
@@ -2461,6 +2462,20 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <>
         <LearningHeader {...H} visible={true} />
         <TimelineCanvas
+          block={cur}
+          subject={module.subject}
+          onContinue={() => isLast ? handleFinish() : go(1)}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  if (cur?.type === 'cinematicCarousel') {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <CinematicCarousel
           block={cur}
           subject={module.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
