@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, lazy, Suspense } from 'react'
+import { useEffect, useRef, useState, lazy, Suspense, createContext, useContext } from 'react'
 import { SUBJECTS } from './constants/subjects.js'
 import { SPACING }  from './constants/spacing.js'
 import { RADII }    from './constants/radii.js'
@@ -6,14 +6,9 @@ import { TYPE }     from './constants/typography.js'
 import { GENERAL }  from './constants/generalTheme.js'
 import { MOTION }   from './constants/motion.js'
 import { useAuth } from './auth/AuthContext.jsx'
-import { MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS, FORMULA_SHEET, DIAGRAMS } from './data/mathsTopics.js'
 import { SOCIOLOGY_GROUPS } from './data/sociologyGroups.js'
-import { ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS } from './data/englishTopics.js'
-import { SOCIOLOGY_TOPIC_GROUPS, ALL_SOCIOLOGY_QUESTIONS } from './data/sociologyTopics.js'
-import { CHEMISTRY_TOPIC_GROUPS, ALL_CHEMISTRY_QUESTIONS } from './data/chemistryTopics.js'
 import { CHEM_IMAGES } from './data/chemImages.js'
 import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, J23_Q6 } from './data/medicineExamPapers.js'
-import { GUIDED_COACH_TYPES } from './data/guidedAnswerCoach.js'
 import { FIGURES } from './figures.js'
 import { TOPICS, TOPIC_DATA } from './content.js'
 import { getProgress, saveSessionResult, getNextTopicId, daysUntil, saveSessionDraft, getSessionDraft, clearSessionDraft, recordActivity, recordScore, getAllConfidenceRatings } from './progress.js'
@@ -158,6 +153,48 @@ async function loadModuleContent(mod) {
   if (!loader) return null
   const subjectModules = await loader()
   return subjectModules.find(m => m.id === mod.id) || null
+}
+
+// ─── Exam Mode question-bank loading ───────────────────────────────────────────
+// The Maths/English/Sociology/Chemistry question banks and the exam-technique
+// coach types are only needed inside Exam Mode (TestTab mode="exam") — load
+// them on demand and share them via context so they're not in the main bundle.
+
+const TestDataContext = createContext(null)
+
+function useTestData() {
+  return useContext(TestDataContext)
+}
+
+function TestDataProvider({ children }) {
+  const [data, setData] = useState(null)
+
+  useEffect(() => {
+    Promise.all([
+      import('./data/mathsTopics.js'),
+      import('./data/englishTopics.js'),
+      import('./data/sociologyTopics.js'),
+      import('./data/chemistryTopics.js'),
+      import('./data/guidedAnswerCoach.js'),
+    ]).then(([maths, english, sociology, chemistry, coach]) => {
+      setData({
+        MATHS_TOPIC_GROUPS: maths.MATHS_TOPIC_GROUPS,
+        ALL_MATHS_QUESTIONS: maths.ALL_MATHS_QUESTIONS,
+        FORMULA_SHEET: maths.FORMULA_SHEET,
+        DIAGRAMS: maths.DIAGRAMS,
+        ENGLISH_TOPIC_GROUPS: english.ENGLISH_TOPIC_GROUPS,
+        ALL_ENGLISH_QUESTIONS: english.ALL_ENGLISH_QUESTIONS,
+        SOCIOLOGY_TOPIC_GROUPS: sociology.SOCIOLOGY_TOPIC_GROUPS,
+        ALL_SOCIOLOGY_QUESTIONS: sociology.ALL_SOCIOLOGY_QUESTIONS,
+        CHEMISTRY_TOPIC_GROUPS: chemistry.CHEMISTRY_TOPIC_GROUPS,
+        ALL_CHEMISTRY_QUESTIONS: chemistry.ALL_CHEMISTRY_QUESTIONS,
+        GUIDED_COACH_TYPES: coach.GUIDED_COACH_TYPES,
+      })
+    })
+  }, [])
+
+  if (!data) return <ModuleLoadingScreen />
+  return <TestDataContext.Provider value={data}>{children}</TestDataContext.Provider>
 }
 
 // ─── Login screen ─────────────────────────────────────────────────────────────
@@ -723,7 +760,7 @@ export default function App() {
         {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
         {tab === 'pulse'    && <PulseTab onStartQuickFire={() => setTab('quickfire')} />}
         {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab('pulse')} />}
-        {tab === 'exams'    && <TestTab mode="exam" onOpenModule={openModule} onOpenPulse={() => setTab('pulse')} />}
+        {tab === 'exams'    && <TestDataProvider><TestTab mode="exam" onOpenModule={openModule} onOpenPulse={() => setTab('pulse')} /></TestDataProvider>}
       </div>
       <BottomNav tab={tab} setTab={setTab} />
     </div>
@@ -3084,6 +3121,7 @@ const MARK_TIPS = {
 
 // ─── Formula sheet modal ──────────────────────────────────────────────────────
 function FormulaSheet({ onClose }) {
+  const { FORMULA_SHEET } = useTestData() || {}
   return (
     <div onClick={onClose} style={{ position:'fixed', inset:0, zIndex:300, background:'rgba(0,0,0,.8)', backdropFilter:'blur(8px)', display:'flex', alignItems:'flex-end', justifyContent:'center' }}>
       <div onClick={e=>e.stopPropagation()} style={{ background:'#0E1330', border:'1px solid rgba(59,130,255,.3)', borderRadius:'20px 20px 0 0', padding:'20px 18px 40px', width:'100%', maxWidth:660, maxHeight:'82vh', overflowY:'auto' }}>
@@ -3094,7 +3132,7 @@ function FormulaSheet({ onClose }) {
           </div>
           <button onClick={onClose} style={{ background:'rgba(255,255,255,.08)', border:'1px solid #2A3552', borderRadius:8, padding:'6px 14px', color:'#9CA8C7', cursor:'pointer', fontFamily:'inherit', fontSize:'.82rem' }}>✕</button>
         </div>
-        {FORMULA_SHEET.map(cat => (
+        {(FORMULA_SHEET || []).map(cat => (
           <div key={cat.section} style={{ marginBottom:18 }}>
             <div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, letterSpacing:'.12em', textTransform:'uppercase', color:'#3B82FF', marginBottom:10 }}>{cat.section}</div>
             <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
@@ -3114,7 +3152,8 @@ function FormulaSheet({ onClose }) {
 
 // ─── Inline diagram renderer ──────────────────────────────────────────────────
 function MathsDiagram({ diagramKey }) {
-  const svg = DIAGRAMS[diagramKey]
+  const { DIAGRAMS } = useTestData() || {}
+  const svg = DIAGRAMS?.[diagramKey]
   if (!svg) return null
   return (
     <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:12, padding:'14px', marginBottom:14 }}>
@@ -3496,6 +3535,7 @@ function mathsTopicImg(id) {
 }
 
 function MathsBrowser({ onBack }) {
+  const { MATHS_TOPIC_GROUPS } = useTestData() || {}
   const [activeGroup, setGroup] = useState(null)
   const [fmOpen, setFm]         = useState(false)
   const [filter, setFilter]     = useState('all')   // 'all' | 'calc' | 'noncalc'
@@ -3588,6 +3628,7 @@ function EnglishTopicView({ group, onBack }) {
 
 // ─── English browser ──────────────────────────────────────────────────────────
 function EnglishBrowser({ onBack }) {
+  const { ENGLISH_TOPIC_GROUPS } = useTestData() || {}
   const [activeGroup, setGroup] = useState(null)
   const [filter, setFilter]     = useState('all')
 
@@ -3670,6 +3711,7 @@ function SociologyTopicView({ group, onBack }) {
 
 // ─── Sociology browser ────────────────────────────────────────────────────────
 function SociologyBrowser({ onBack, filterPrefix = null }) {
+  const { SOCIOLOGY_TOPIC_GROUPS } = useTestData() || {}
   const [activeGroup, setGroup] = useState(null)
   const [filter, setFilter]     = useState('all')
 
@@ -3922,6 +3964,7 @@ function ChemistryTopicView({ group, onBack, qIdx: initialQIdx = 0, onQChange })
 
 // ─── Chemistry browser ────────────────────────────────────────────────────────
 function ChemistryBrowser({ onBack }) {
+  const { CHEMISTRY_TOPIC_GROUPS } = useTestData() || {}
   const [activeGroup, setGroup] = useState(null)
   const [filter, setFilter]     = useState('all')
   const [chemQIdx, setChemQIdx] = useState(0)
@@ -4434,6 +4477,7 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
 }
 
 function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart = false } = {}) {
+  const { ALL_MATHS_QUESTIONS, ALL_ENGLISH_QUESTIONS, ALL_SOCIOLOGY_QUESTIONS, ALL_CHEMISTRY_QUESTIONS, GUIDED_COACH_TYPES } = useTestData() || {}
   const [mathsOpen, setMathsOpen]   = useState(false)
   const [englishOpen, setEnglishOpen]     = useState(false)
   const [sociologyOpen, setSociologyOpen]     = useState(false)
