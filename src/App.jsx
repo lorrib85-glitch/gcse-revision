@@ -860,11 +860,14 @@ function TaskCard({ task, position, onClick }) {
         </>
       )}
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <div style={{ ...TYPE.cardTitle, color: accentColor, marginBottom: 8 }}>
-          {task.title}
+        <div style={{
+          ...TYPE.metadata, fontSize: 12, fontWeight: 600, letterSpacing: '0.08em',
+          textTransform: 'uppercase', color: accentColor, marginBottom: 8,
+        }}>
+          {task.kicker}
         </div>
-        <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>
-          {task.reason}
+        <div style={{ ...TYPE.cardTitle, color: GENERAL.softWhite }}>
+          {task.title}
         </div>
         <div style={{
           marginTop: 'auto', paddingTop: 16,
@@ -984,21 +987,21 @@ function Home({ onSelectTask }) {
         </div>
 
         {/* ── Greeting ── */}
-        <div style={{ ...TYPE.cinematic, fontSize: 38, color: GENERAL.softWhite, marginBottom: SPACING.micro, padding: `0 ${SPACING.standard}px` }}>
+        <div style={{ ...TYPE.body, color: GENERAL.slate, marginBottom: SPACING.micro, padding: `0 ${SPACING.standard}px` }}>
           Hi, {userName}<span style={{ color: GENERAL.teal }}>.</span>
+        </div>
+
+        {/* ── Today's plan ── */}
+        <div style={{
+          ...TYPE.sectionTitle, color: GENERAL.softWhite,
+          marginBottom: SPACING.micro, padding: `0 ${SPACING.standard}px`,
+        }}>
+          What's today's plan?
         </div>
 
         {/* ── This week ── */}
         <div style={{ ...TYPE.bodySmall, color: GENERAL.slate, marginBottom: SPACING.separation, padding: `0 ${SPACING.standard}px` }}>
           {trendNote}
-        </div>
-
-        {/* ── Today's plan ── */}
-        <div style={{
-          ...TYPE.bodySmall, fontWeight: 600, color: GENERAL.softWhite,
-          marginBottom: SPACING.compact, padding: `0 ${SPACING.standard}px`,
-        }}>
-          What's today's plan?
         </div>
 
         <TaskCarousel tasks={todaysPlan} onSelect={onSelectTask} />
