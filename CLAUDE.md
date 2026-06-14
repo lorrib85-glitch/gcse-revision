@@ -179,7 +179,7 @@ docs/system/TEACHING_VOICE_GUIDE.md
 | `src/sociologyKeyTerms.js` | AQA GCSE Sociology specification vocabulary list |
 | `src/data/chemistryTopics.js` | Chemistry topic groups and questions |
 | `src/data/chemistryGroups.js` | `CHEMISTRY_GROUPS` — Chemistry topic group definitions for ModulesTab |
-| `src/data/chemImages.js` | `CHEM_IMAGES` — inline base64 chemistry figure images |
+| `src/data/chemImages.js` | `CHEM_IMAGES` — maps chemistry diagram keys to static file paths under `/public/figures/` (kept out of the JS bundle; only fetched when a `<ChemImage>` renders) |
 | `src/data/physicsTopics.js` | `PHYSICS_TOPIC_GROUPS` — AQA GCSE Physics Foundation past-paper questions by topic |
 | `src/data/biologyGroups.js` | `BIOLOGY_GROUPS` — 7 Biology topic group definitions with module lists and header images |
 | `src/figures.js` | `FIGURES` — figure image paths served from `/public/figures/` |

@@ -3,8 +3,6 @@
 // Sources: JUN22, JUN23, JUN24 past papers
 // Images rendered from actual AQA past paper pages
 
-import { CHEM_IMAGES } from './chemImages.js'
-
 export const CHEMISTRY_TOPIC_GROUPS = [
 
   // ── ATOMIC STRUCTURE ──────────────────────────────────────────────────────
