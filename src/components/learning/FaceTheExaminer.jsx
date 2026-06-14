@@ -4,13 +4,13 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import BackButton from '../core/BackButton.jsx'
 
 const IMAGES = {
-  history:   '/historybacker.webp',
-  biology:   '/biologybacker.webp',
-  maths:     '/mathsbacker.webp',
-  sociology: '/sociologybacker.webp',
-  chemistry: '/chemsistrybacker.webp',
-  physics:   '/physicsbacker.webp',
-  english:   '/Englishbacker.webp',
+  History:   '/historybacker.webp',
+  Biology:   '/biologybacker.webp',
+  Maths:     '/mathsbacker.webp',
+  Sociology: '/sociologybacker.webp',
+  Chemistry: '/chemsistrybacker.webp',
+  Physics:   '/physicsbacker.webp',
+  English:   '/Englishbacker.webp',
 }
 
 const ANN_STYLES = {
@@ -48,6 +48,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
   const theme  = SUBJECTS[module.subject] || SUBJECTS.History
   const accent = theme.accent
   const bg     = theme.background
+  const backerImage = IMAGES[module.subject] || IMAGES.History
 
   // ── Phase state ───────────────────────────────────────────────────────────
   const [phase, setPhase] = useState('intro')
@@ -477,10 +478,10 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
       }}>
 
         {/* Backer image */}
-        {IMAGES[key] && (
+        {backerImage && (
           <div style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            backgroundImage: `url(${IMAGES[key]})`,
+            backgroundImage: `url(${backerImage})`,
             backgroundSize: 'cover', backgroundPosition: 'center right',
             opacity: 0.55, filter: 'grayscale(4%) brightness(0.90)',
           }} />
