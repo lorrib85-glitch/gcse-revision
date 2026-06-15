@@ -4,6 +4,7 @@ import { MOTION } from '../../constants/motion.js'
 import { SPACING } from '../../constants/spacing.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 
 export default function DragToOrderTask({
   items = [],           // [{ id, label, description? }, ...]
@@ -298,20 +299,14 @@ export default function DragToOrderTask({
               >
                 Try again
               </button>
-              <button
-                onClick={handleContinue}
-                style={{
-                  flex: 1, height: BUTTONS.continue.height,
-                  background: accent, border: 'none', borderRadius: BUTTONS.continue.borderRadius,
-                  fontFamily: "'Sora', sans-serif", fontWeight: BUTTONS.continue.fontWeight, fontSize: BUTTONS.continue.fontSize,
-                  color: '#0D0F14', cursor: 'pointer',
-                  transition: `all ${MOTION.duration.instant} ease`,
-                }}
-                onMouseEnter={(e) => e.target.style.opacity = '0.85'}
-                onMouseLeave={(e) => e.target.style.opacity = '1'}
-              >
-                Continue
-              </button>
+              <div style={{ flex: 1 }}>
+                <ContinueCTA
+                  onClick={handleContinue}
+                  accent={accent}
+                  onMouseEnter={(e) => e.target.style.opacity = '0.85'}
+                  onMouseLeave={(e) => e.target.style.opacity = '1'}
+                />
+              </div>
             </>
           )}
         </div>

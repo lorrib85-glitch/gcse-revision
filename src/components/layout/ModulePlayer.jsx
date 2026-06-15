@@ -11,6 +11,7 @@ import TieredQuizScreen from '../learning/TieredQuizScreen.jsx'
 import CinematicRevealMoment from '../learning/CinematicRevealMoment.jsx'
 import ConceptReveal from '../learning/ConceptReveal.jsx'
 import LearningHeader from '../core/LearningHeader.jsx'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 import FaceTheExaminer from '../learning/FaceTheExaminer.jsx'
 import GuidedExamResponse from '../learning/GuidedExamResponse.jsx'
 import InteractiveHotspotImage from '../learning/InteractiveHotspotImage.jsx'
@@ -2177,20 +2178,11 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
                 animation: `crSlideIn 380ms cubic-bezier(.16,1,.3,1) ${i * 80}ms both`,
               }}>{p}</p>
             ))}
-            <button
+            <ContinueCTA
               onClick={goToNext}
-              style={{
-                marginTop: 28,
-                width: '100%',
-                background: `${subjectColor}22`,
-                border: `1.5px solid ${subjectColor}44`,
-                borderRadius: 16, padding: '16px',
-                fontFamily: "'Sora', sans-serif",
-                fontWeight: 700, fontSize: '.95rem',
-                color: subjectColor, cursor: 'pointer',
-                transition: 'all .15s',
-              }}
-            >Continue →</button>
+              accent={subjectColor}
+              style={{ marginTop: 28 }}
+            />
           </div>
         </div>
         <style>{`@keyframes crSlideIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }`}</style>
@@ -2629,24 +2621,15 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       }}>
         <div style={{ maxWidth: 660, margin: '0 auto' }}>
           {showNextBtn ? (
-            <button onClick={handleNext} style={{
-              width: '100%',
-              height: BUTTONS.continue.height,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: isFinishBtn
+            <ContinueCTA
+              onClick={handleNext}
+              label={nextBtnLabel}
+              accent={isFinishBtn
                 ? 'linear-gradient(135deg, #1A4D2E, #38D27A)'
-                : (SUBJECTS[module.subject]?.accent || subjectColor),
-              border: 'none',
-              borderRadius: BUTTONS.continue.borderRadius,
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: BUTTONS.continue.fontWeight, fontSize: BUTTONS.continue.fontSize,
-              color: isFinishBtn ? '#fff' : '#0D0F14',
-              cursor: 'pointer',
-              boxShadow: isFinishBtn
-                ? '0 4px 16px rgba(56,210,122,.35)'
-                : 'none',
-              transition: `transform ${BUTTONS.continue.transition}`,
-            }}>{nextBtnLabel}</button>
+                : (SUBJECTS[module.subject]?.accent || subjectColor)}
+              textColor={isFinishBtn ? '#fff' : '#0D0F14'}
+              style={isFinishBtn ? { boxShadow: '0 4px 16px rgba(56,210,122,.35)' } : undefined}
+            />
           ) : (
             <div style={{ height: BUTTONS.continue.height }} />
           )}

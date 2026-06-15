@@ -4,6 +4,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 
 // ─── Keyframe styles injected once ───────────────────────────────────────────
 let _stylesInjected = false
@@ -700,23 +701,12 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
               ↩ Try again
             </button>
             {onComplete && (
-              <button
-                onClick={() => onComplete({ marksAwarded: feedback.marksAwarded, marks })}
-                style={{
-                  flex: 1,
-                  height: BUTTONS.continue.height,
-                  borderRadius: BUTTONS.continue.borderRadius,
-                  background: accent,
-                  border: 'none',
-                  color: '#0D0F14',
-                  fontSize: BUTTONS.continue.fontSize,
-                  fontFamily: "'Sora', sans-serif",
-                  fontWeight: BUTTONS.continue.fontWeight,
-                  cursor: 'pointer',
-                }}
-              >
-                Continue
-              </button>
+              <div style={{ flex: 1 }}>
+                <ContinueCTA
+                  onClick={() => onComplete({ marksAwarded: feedback.marksAwarded, marks })}
+                  accent={accent}
+                />
+              </div>
             )}
           </div>
         </div>

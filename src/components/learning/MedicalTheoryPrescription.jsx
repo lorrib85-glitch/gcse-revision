@@ -4,6 +4,7 @@ import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import { BUTTONS } from '../../constants/buttons.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 
 // ── Fuzzy matching ────────────────────────────────────────────────────────────
 
@@ -966,7 +967,7 @@ function PrescriptionScroll({ theory, inputs, onChange, inputRefs, phase, result
 
 // ── Phase: Final ──────────────────────────────────────────────────────────────
 
-function FinalPhase({ theories, results, finalPhase, screen, onComplete, pressed, setPressed, prefersReducedMotion }) {
+function FinalPhase({ theories, results, finalPhase, screen, onComplete, prefersReducedMotion }) {
   return (
     <div style={{
       minHeight: '100dvh',
@@ -1105,12 +1106,13 @@ function FinalPhase({ theories, results, finalPhase, screen, onComplete, pressed
       )}
 
       {finalPhase >= theories.length && (
-        <CTA
-          label="Continue"
+        <ContinueCTA
           onClick={onComplete}
-          pressed={pressed}
-          setPressed={setPressed}
-          prefersReducedMotion={prefersReducedMotion}
+          accent={GOLD}
+          style={{
+            marginTop: SPACING.micro,
+            animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+          }}
         />
       )}
     </div>

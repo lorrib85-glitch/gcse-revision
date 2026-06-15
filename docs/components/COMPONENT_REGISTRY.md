@@ -42,12 +42,41 @@ Foundation components used by many others. Handle atomic UI concerns.
 
 ---
 
+### CinematicContinueCTA — **LOCKED**
+
+**File:** `src/components/core/CinematicContinueCTA.jsx`  
+**Purpose:** The only Cinematic Reveal CTA implementation allowed anywhere in the app — see `docs/system/BUTTON_RADII_SYSTEM.md` "Progression CTA System". Plain centred "Continue →" text, fixed to the bottom of a full-screen cinematic moment, with a fade-in + idle pulse.  
+**Props:** `onClick`, `accent`, `animation` (default `'crm-fade 700ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite'`), `style` (layout overrides only — position, animation, zIndex; never new typography, spacing or colour logic)  
+**Used by:** `CinematicRevealMoment`, `ExaminerExplainsScreen`  
+**Lock reason:** Constitutional rule — every cinematic "Continue →" prompt in the product must use this component. No inline implementations are allowed.
+
+---
+
+### ContinueCTA — **LOCKED**
+
+**File:** `src/components/core/ContinueCTA.jsx`  
+**Purpose:** The only Primary Progression CTA implementation allowed anywhere in the app — see `docs/system/BUTTON_RADII_SYSTEM.md` "Progression CTA System". 56px tall, `RADII.large`, solid accent fill, `#0D0F14` text, "Continue" label, with built-in press-scale feedback.  
+**Props:** `onClick`, `label` (default `'Continue'`), `accent`, `disabled`, `disabledBackground`, `disabledColor`, `textColor`, `onMouseEnter`, `onMouseLeave`, `style` (layout overrides only — width/flex, margin, position, animation, transition; never new height, radius, font or colour logic)  
+**Used by:** every screen-to-screen "Continue" button across `src/components/learning/` and `src/components/feedback/`, plus `ModulePlayer`'s bottom navigation (also covers the "Finish ✓" label via `label`)  
+**Lock reason:** Constitutional rule — every Primary Progression CTA in the product must use this component. No inline implementations are allowed.
+
+---
+
+### ExitButton — **LOCKED**
+
+**File:** `src/components/core/ExitButton.jsx`  
+**Purpose:** The only exit-navigation button allowed anywhere in the app. 44×44, near-invisible "X" icon, opacity/scale press feedback.  
+**Props:** `onClick`, `ariaLabel` (default `'Exit chapter'`), `style` (layout overrides only — position/margin/zIndex)  
+**Lock reason:** Constitutional rule — every exit-navigation control in the product must use this component. No inline exit-button implementations are allowed.
+
+---
+
 ### LearningHeader
 
 **File:** `src/components/core/LearningHeader.jsx`  
-**Purpose:** Floating capsule header shell for learning screens. Composes `BackButton` (back navigation) and `LearningProgressHeader` (progress display).  
-**Props:** `module`, `progress`, `currentStep`, `totalSteps`, `onBack`, `onExit`  
-**Dependencies:** `BackButton`, `LearningProgressHeader`, `SUBJECTS`
+**Purpose:** Single-row floating capsule header shell for learning screens: `[back] [stage rail] [n/total] [exit]`. Composes `BackButton` (back navigation), `LearningProgressHeader` (stage rail) and `ExitButton` (exit navigation).  
+**Props:** `module`, `currentStage`, `onBack`, `onExit`, `visible`, `onJumpOpen`, `screenPos`  
+**Dependencies:** `BackButton`, `ExitButton`, `LearningProgressHeader`, `SUBJECT_ACCENTS`/`hexToRgb`
 
 ---
 
@@ -56,16 +85,16 @@ Foundation components used by many others. Handle atomic UI concerns.
 **File:** `src/components/core/LearningProgressHeader.jsx`  
 **Purpose:** Progress rail and jump sheet display. Shows current position within a module. Display only — owns no interaction logic.  
 **Props:** `progress`, `currentStep`, `totalSteps`, `steps`  
-**Lock reason:** Core navigation affordance. Visual contract is established and relied upon across learning flow.
+**Lock reason:** Core navigation affordance. Visual contract is established and relied upon across learning flow. This is also the only progress-bar implementation allowed for module screens — no inline progress bars.
 
 ---
 
 ### ModuleToolbar — **LOCKED**
 
 **File:** `src/components/core/ModuleToolbar.jsx`  
-**Purpose:** Back and exit navigation buttons for learning screens. Navigation only — no learning logic. Back button delegates to `BackButton`.  
+**Purpose:** Back and exit navigation buttons for learning screens. Navigation only — no learning logic. Delegates to `BackButton` and `ExitButton`.  
 **Props:** `onBack`, `onExit`  
-**Dependencies:** `BackButton`  
+**Dependencies:** `BackButton`, `ExitButton`  
 **Lock reason:** Navigation contract. Changing button positions or behaviour breaks muscle memory.
 
 ---

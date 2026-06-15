@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import BackButton from '../core/BackButton.jsx'
+import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 
 const IMAGES = {
   History:   '/historybacker.webp',
@@ -101,10 +102,6 @@ export default function ExaminerExplainsScreen({
         @keyframes expl-hint {
           0%, 100% { opacity: 0; transform: translateY(0); }
           35%, 65%  { opacity: 0.5; transform: translateY(-3px); }
-        }
-        @keyframes expl-cont {
-          from { opacity: 0; transform: translateY(14px); }
-          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
 
@@ -313,27 +310,12 @@ export default function ExaminerExplainsScreen({
 
         {/* Continue CTA */}
         {showContinue && (
-          <button
-            onClick={(e) => { e.stopPropagation(); onContinue() }}
-            style={{
-              position: 'fixed',
-              left: 32, right: 32,
-              bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))',
-              background: 'none', border: 'none', padding: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-              zIndex: 10,
-              animation: 'expl-cont 500ms cubic-bezier(0.16,1,0.3,1) 120ms both',
-            }}
-          >
-            <span style={{
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 700, fontSize: 13,
-              letterSpacing: '0.34em', textTransform: 'uppercase',
-              color: accent,
-              textShadow: '0 1px 16px rgba(0,0,0,0.6)',
-            }}>Continue&nbsp;&nbsp;→</span>
-          </button>
+          <CinematicContinueCTA
+            onClick={onContinue}
+            accent={accent}
+            animation="expl-cont 500ms cubic-bezier(0.16,1,0.3,1) 120ms both"
+            style={{ zIndex: 10 }}
+          />
         )}
       </div>
     </>

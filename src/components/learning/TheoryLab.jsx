@@ -5,6 +5,7 @@ import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import { BUTTONS } from '../../constants/buttons.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 
 // ── Block data shape ──────────────────────────────────────────────────────────
 //
@@ -267,7 +268,7 @@ function TheoryStage({ block, accent, rgb, onNext }) {
         </div>
 
         <div style={fadeIn(phase >= 3)}>
-          <ActionBtn label="Continue" onClick={onNext} accent={accent} rgb={rgb} />
+          <ContinueCTA onClick={onNext} accent={accent} />
         </div>
 
       </Pad>
@@ -513,7 +514,7 @@ function OutcomeStage({ block, accent, rgb, onNext }) {
         </div>
 
         <div style={{ animation: anim('tl-in', 360, 420) }}>
-          <ActionBtn label="Continue" onClick={onNext} accent={accent} rgb={rgb} />
+          <ContinueCTA onClick={onNext} accent={accent} />
         </div>
 
       </Pad>
@@ -821,7 +822,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
               </p>
             </div>
 
-            <ActionBtn label="Continue" onClick={onNext} accent={accent} rgb={rgb} />
+            <ContinueCTA onClick={onNext} accent={accent} />
           </div>
         )}
 

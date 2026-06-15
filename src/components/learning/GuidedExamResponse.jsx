@@ -8,6 +8,7 @@ import { BUTTONS } from '../../constants/buttons.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { logExamTechnique, getExamTechniquePatterns } from '../../unifiedWeaknessTracker.js'
 import BackButton from '../core/BackButton.jsx'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 
 // Only acknowledge a technique pattern once it has shown up more than twice —
 // a single slip isn't a pattern worth naming back to the student.
@@ -595,7 +596,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
           background: bg,
           borderTop: '1px solid rgba(255,255,255,0.06)',
         }}>
-          <button onClick={advance} style={ctaStyle(true)}>Continue</button>
+          <ContinueCTA onClick={advance} accent={accent} />
         </div>
       </div>,
       document.body

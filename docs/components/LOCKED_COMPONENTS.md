@@ -91,6 +91,70 @@ The visual contract for all content cards. Changing it cascades across every car
 
 ---
 
+### CinematicContinueCTA
+
+**File:** `src/components/core/CinematicContinueCTA.jsx`
+
+**What it owns:**
+- The visual design of every cinematic "Continue →" prompt: plain centred text, fixed to the bottom of a full-screen cinematic moment, `crm-fade`/`crm-pulse` fade-in + idle pulse animation by default
+- The `onClick` contract: always calls `e.stopPropagation()` before invoking the handler, so it can sit inside a tap-to-advance container without triggering the container's own navigation
+
+**Why locked:**
+Constitutional rule — see `docs/system/BUTTON_RADII_SYSTEM.md` "Progression CTA System". This is the only Cinematic Reveal CTA implementation allowed anywhere in the app. Consolidated from inline implementations in `CinematicRevealMoment` and `ExaminerExplainsScreen` (2026-06-15).
+
+**Allowed changes:**
+- Import path corrections
+- Layout-only overrides via the `style` prop (`position`, `zIndex`) and the `animation` prop (for screen-specific entrance timing)
+
+**Not allowed:**
+- Changing typography, spacing, or colour logic
+- Creating any new inline "Continue →" implementation instead of using this component
+
+---
+
+### ContinueCTA
+
+**File:** `src/components/core/ContinueCTA.jsx`
+
+**What it owns:**
+- The visual design of every Primary Progression CTA: 56px tall, `RADII.large`, solid accent fill, `#0D0F14` text, "Continue" label by default (overridable via `label`)
+- The press-scale feedback: `BUTTONS.continue.pressScale` on `onPointerDown`/`onPointerUp`/`onPointerLeave`
+- The `disabled` state appearance (`disabledBackground`/`disabledColor`)
+
+**Why locked:**
+Constitutional rule — see `docs/system/BUTTON_RADII_SYSTEM.md` "Progression CTA System". This is the only Primary Progression CTA implementation allowed anywhere in the app. Consolidated from inline implementations across `src/components/learning/`, `src/components/feedback/`, and `ModulePlayer.jsx`'s bottom navigation (2026-06-15).
+
+**Allowed changes:**
+- Import path corrections
+- Layout-only overrides via the `style` prop (width/flex, margin, position, animation, transition)
+
+**Not allowed:**
+- Changing height, radius, font, or colour logic
+- Creating any new inline "Continue" button implementation instead of using this component — every screen-to-screen progression button must use `<ContinueCTA />`
+
+---
+
+### ExitButton
+
+**File:** `src/components/core/ExitButton.jsx`
+
+**What it owns:**
+- The visual design of every exit-navigation control in the app: 44×44 touch target, near-invisible "X" icon (`opacity: 0.22` at rest)
+- The press feedback: opacity 0.6 + scale 0.90 on press, via `onPointerDown`/`onPointerUp`/`onPointerLeave`
+
+**Why locked:**
+Constitutional rule: **ExitButton is the only exit-navigation button implementation allowed anywhere in the app.** Consolidated from the inline exit-button implementation previously in `ModuleToolbar`/`LearningHeader` (2026-06-15).
+
+**Allowed changes:**
+- Import path corrections
+- Layout-only overrides via the `style` prop (`position`, `margin`, `zIndex`)
+
+**Not allowed:**
+- Changing size, icon, or opacity/press behaviour
+- Creating any new inline exit-button implementation instead of using this component
+
+---
+
 ### LearningProgressHeader
 
 **File:** `src/components/core/LearningProgressHeader.jsx`
@@ -101,7 +165,7 @@ The visual contract for all content cards. Changing it cascades across every car
 - Step indicator
 
 **Why locked:**
-Core navigation affordance. Learners develop spatial memory for progress location.
+Core navigation affordance. Learners develop spatial memory for progress location. This is also the only progress-bar implementation allowed for module screens — every module progress display must use `<LearningProgressHeader />` (via `LearningHeader`), not an inline progress bar.
 
 **Allowed changes:**
 - Import path corrections
@@ -110,6 +174,7 @@ Core navigation affordance. Learners develop spatial memory for progress locatio
 - Moving the progress bar position
 - Changing progress rail appearance
 - Adding interaction logic (it is display-only)
+- Creating any new inline progress-bar implementation instead of using this component
 
 ---
 
@@ -119,13 +184,15 @@ Core navigation affordance. Learners develop spatial memory for progress locatio
 
 **What it owns:**
 - Back button (delegates to `BackButton` — see above)
-- Exit button
+- Exit button (delegates to `ExitButton` — see below)
 - Navigation button positions
 
 **Why locked:**
 Navigation contract. Learners build muscle memory for back/exit button positions.
 
 **2026-06-12 change:** the inline back-button implementation was replaced with `<BackButton onClick={onBack} />` as part of the app-wide BackButton consolidation (constitutional rule — see BackButton entry above). The exit button and toolbar layout are unchanged. Treated as covered by the same sign-off, since this component's back button was explicitly named in scope.
+
+**2026-06-15 change (v2):** the inline exit-button implementation was replaced with `<ExitButton onClick={onExit} />` as part of the app-wide ExitButton consolidation (constitutional rule — see ExitButton entry above). `LearningHeader` was updated the same way. Toolbar layout is unchanged.
 
 **Allowed changes:**
 - Import path corrections
@@ -134,7 +201,7 @@ Navigation contract. Learners build muscle memory for back/exit button positions
 - Moving button positions
 - Adding buttons to the toolbar
 - Changing button visual design
-- Reintroducing an inline back-button implementation (must use `BackButton`)
+- Reintroducing an inline back-button or exit-button implementation (must use `BackButton`/`ExitButton`)
 
 ---
 

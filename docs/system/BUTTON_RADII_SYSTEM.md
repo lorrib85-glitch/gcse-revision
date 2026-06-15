@@ -147,51 +147,37 @@ BUTTONS.text = {
 
 ### 1. Primary Progression CTA (~90% of screens)
 
-The default "Continue" button on in-flow learning screens.
+The default "Continue" button on in-flow learning screens. **The only implementation allowed is `<ContinueCTA>`** (`src/components/core/ContinueCTA.jsx`, LOCKED) — never an inline `<button>`.
 
 ```js
-import { BUTTONS } from '../../constants/buttons.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 
 const accent = SUBJECTS[subject].accent
 
-<button style={{
-  width: '100%',                          // sits within the screen's 24px side padding
-  height: BUTTONS.continue.height,        // 56px
-  borderRadius: BUTTONS.continue.borderRadius, // RADII.large (22px)
-  background: accent,                     // subject accent — "gold" in History, teal in Biology, etc.
-  color: '#0D0F14',                       // near-black, for contrast on accent fill
-  fontFamily: "'Sora', sans-serif",
-  fontSize: BUTTONS.continue.fontSize,
-  fontWeight: BUTTONS.continue.fontWeight,
-  border: 'none', cursor: 'pointer',
-  transition: `transform ${BUTTONS.continue.transition}`,
-}}>
-  Continue
-</button>
+<ContinueCTA onClick={handleContinue} accent={accent} />
 ```
 
-- Sits inside the screen's existing 24px side margins (`SPACING.standard`) — full width of that content column, no extra outer margin
+- `ContinueCTA` itself owns: `width: 100%` (sits within the screen's 24px side padding, `SPACING.standard`), `height: BUTTONS.continue.height` (56px), `borderRadius: BUTTONS.continue.borderRadius` (`RADII.large`, 22px), `#0D0F14` text, the `BUTTONS.continue.pressScale` press-scale feedback, and the default "Continue" label
 - Fill is always the active subject's accent colour (`SUBJECTS[subject].accent`) — never a hardcoded "gold" or other hex
-- Text is near-black (`#0D0F14`) for contrast against the accent fill
-- Label is exactly **"Continue"** — no arrow icon, no arrow character
+- `style` may only carry layout overrides (width/flex, margin, position, animation, transition) — never new height, radius, font or colour logic
+- Label is exactly **"Continue"** (the `label` prop default) — no arrow icon, no arrow character. The only exception is `ModulePlayer`'s final screen, which uses `label="Finish ✓"` for the chapter-completion state
 
 ### 2. Cinematic Reveal CTA
 
-Used only on full-screen cinematic "reveal moment" screens with no button chrome (e.g. `CinematicRevealMoment`, `CinematicCarousel`, `TimelineChain`, `TimelineCanvas`, `VisualNarrativeScreen`, `GuidedChoiceCarousel`).
+Used only on full-screen cinematic "reveal moment" screens with no button chrome (e.g. `CinematicRevealMoment`, `CinematicCarousel`, `TimelineChain`, `TimelineCanvas`, `VisualNarrativeScreen`, `GuidedChoiceCarousel`, `ExaminerExplainsScreen`). **The only implementation allowed is `<CinematicContinueCTA>`** (`src/components/core/CinematicContinueCTA.jsx`, LOCKED) — never an inline `<span>`/`<button>`.
 
 ```js
-<span style={{
-  fontFamily: "'Sora', sans-serif",
-  fontWeight: 700, fontSize: 13,
-  letterSpacing: '0.34em', textTransform: 'uppercase',
-  color: accent,
-}}>Continue&nbsp;&nbsp;→</span>
+import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
+
+<CinematicContinueCTA onClick={handleContinue} accent={accent} />
 ```
 
 - No background, no border, no fill — plain text only
 - Label is exactly **"Continue →"** (right arrow)
-- Centred, quiet, appears once the reveal copy has finished animating in
+- Centred, fixed to the bottom of the screen, with a fade-in + idle pulse (`crm-fade`/`crm-pulse`) by default — pass a different `animation` string for screen-specific entrance timing
+- `onClick` always calls `e.stopPropagation()` internally, so it can sit inside a tap-to-advance container without triggering the container's own navigation
+- `style` may only carry layout overrides (`position`, `zIndex`, `animation`) — never new typography, spacing or colour logic
 
 ### Forbidden labels
 

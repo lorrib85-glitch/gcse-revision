@@ -5,6 +5,7 @@ import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import { BUTTONS } from '../../constants/buttons.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 
 function slugify(text) {
@@ -166,28 +167,7 @@ export default function MisconceptionCheck({ block, subject = 'Biology', onConti
               </div>
             )}
 
-            <button
-              onClick={handleNext}
-              onMouseDown={() => setPressed('next')}
-              onMouseUp={() => setPressed(null)}
-              onMouseLeave={() => setPressed(null)}
-              onTouchStart={() => setPressed('next')}
-              onTouchEnd={() => setPressed(null)}
-              style={{
-                width: '100%',
-                height: BUTTONS.continue.height,
-                borderRadius: BUTTONS.continue.borderRadius,
-                background: accent,
-                border: 'none',
-                cursor: 'pointer',
-                fontFamily: "'Sora', sans-serif",
-                fontSize: BUTTONS.continue.fontSize,
-                fontWeight: BUTTONS.continue.fontWeight,
-                color: '#0D0F14',
-                transition: `transform ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-                transform: pressed === 'next' ? `scale(${MOTION.scale.press})` : 'scale(1)',
-              }}
-            >Continue</button>
+            <ContinueCTA onClick={handleNext} accent={accent} />
           </div>
         )}
       </div>

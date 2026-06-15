@@ -48,10 +48,14 @@ All standalone components live under `src/components/`. Do not add new `.jsx` fi
 ### `src/components/core/`
 Foundation components used by many others.
 - `AnswerInteraction.jsx` — LOCKED. Universal answer UI (choice, connection, true/false). Owns all answer logic.
+- `BackButton.jsx` — LOCKED. The only back-navigation button allowed anywhere in the app.
 - `CardContainer.jsx` — LOCKED. Atmospheric content surface wrapper with optional background image.
-- `LearningHeader.jsx` — Floating capsule header shell. Composes ModuleToolbar + LearningProgressHeader.
+- `CinematicContinueCTA.jsx` — LOCKED. The only cinematic "Continue →" prompt allowed anywhere in the app.
+- `ContinueCTA.jsx` — LOCKED. The only Primary Progression CTA ("Continue") allowed anywhere in the app.
+- `ExitButton.jsx` — LOCKED. The only exit-navigation button allowed anywhere in the app.
+- `LearningHeader.jsx` — Floating capsule header shell. Composes BackButton + ExitButton + LearningProgressHeader.
 - `LearningProgressHeader.jsx` — LOCKED. Progress rail + jump sheet (progression display only).
-- `ModuleToolbar.jsx` — LOCKED. Back + exit navigation buttons only.
+- `ModuleToolbar.jsx` — LOCKED. Back + exit navigation buttons only, delegating to BackButton + ExitButton.
 
 ### `src/components/learning/`
 Screen-level learning interaction components.

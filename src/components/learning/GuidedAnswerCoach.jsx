@@ -7,6 +7,7 @@ import { RADII } from '../../constants/radii.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import GuidedExamResponse from './GuidedExamResponse.jsx'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 import { logCoachTypeResult } from '../../unifiedWeaknessTracker.js'
 
 const BRONZE = '#C89B6D'
@@ -147,7 +148,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
   if (stage === 'q') {
     return (
       <StageShell stageNum={1} onExit={onExit} footer={
-        <button onClick={() => setStage('focus')} style={ctaStyle(true)}>Continue</button>
+        <ContinueCTA onClick={() => setStage('focus')} accent={GENERAL.teal} />
       }>
         <div style={kickerStyle}>1 · The question</div>
         <div style={{ ...TYPE.cinematic, fontSize: 30, color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
@@ -186,7 +187,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
     const { examFocus } = worked
     return (
       <StageShell stageNum={2} onExit={onExit} footer={
-        <button onClick={() => setStage('thinking')} style={ctaStyle(true)}>Continue</button>
+        <ContinueCTA onClick={() => setStage('thinking')} accent={GENERAL.teal} />
       }>
         <div style={kickerStyle}>2 · What earns marks</div>
         <div style={{ ...TYPE.cinematic, fontSize: 28, color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
@@ -249,7 +250,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
     return (
       <StageShell stageNum={3} onExit={onExit} footer={
         strongRevealed ? (
-          <button onClick={nextBeat} style={ctaStyle(true)}>Continue</button>
+          <ContinueCTA onClick={nextBeat} accent={GENERAL.teal} />
         ) : null
       }>
         <div style={kickerStyle}>3 · Examiner thinking</div>
@@ -328,7 +329,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
   if (stage === 'model') {
     return (
       <StageShell stageNum={4} onExit={onExit} footer={
-        <button onClick={() => setStage('supported')} style={ctaStyle(true, BRONZE)}>Continue</button>
+        <ContinueCTA onClick={() => setStage('supported')} accent={BRONZE} />
       }>
         <div style={kickerStyle}>4 · Model answer</div>
         <div style={{ ...TYPE.cinematic, fontSize: 28, color: GENERAL.softWhite, marginBottom: 6, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BUTTONS } from '../../constants/buttons.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 import BackButton from '../core/BackButton.jsx'
 
 const THEMES = {
@@ -519,22 +519,7 @@ export default function InteractiveHotspotImage({
         transition: 'opacity 500ms cubic-bezier(0.22,1,0.36,1), transform 500ms cubic-bezier(0.22,1,0.36,1)',
         pointerEvents: (allDone && isExplore && !selected) ? 'auto' : 'none',
       }}>
-        <button
-          type="button"
-          onClick={onContinue}
-          style={{
-            width: '100%', height: BUTTONS.continue.height,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            borderRadius: BUTTONS.continue.borderRadius,
-            background: glow,
-            border: 'none',
-            color: '#0D0F14', fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
-            cursor: 'pointer',
-            transition: `transform ${BUTTONS.continue.transition}`,
-          }}
-        >
-          Continue
-        </button>
+        <ContinueCTA onClick={onContinue} accent={glow} />
       </div>
     </div>
   )

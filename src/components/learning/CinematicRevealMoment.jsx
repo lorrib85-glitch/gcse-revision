@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 
 // Splits paragraph text and wraps highlight phrases in accent-coloured spans
 function renderHighlighted(text, highlights, accent) {
@@ -101,14 +102,6 @@ export default function CinematicRevealMoment({
         @keyframes crm-up {
           from { opacity: 0; transform: translateY(22px); }
           to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes crm-fade {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes crm-pulse {
-          0%, 100% { opacity: 0.55; }
-          50%      { opacity: 1; }
         }
       `}</style>
 
@@ -265,25 +258,11 @@ export default function CinematicRevealMoment({
 
         {/* Continue prompt — quiet text invite, appears after all copy is visible */}
         {btnVisible && (
-          <button
-            onClick={e => { e.stopPropagation(); onContinue?.() }}
-            style={{
-              position: 'absolute',
-              left: 32, right: 32,
-              bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))',
-              background: 'none', border: 'none', padding: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-              animation: 'crm-fade 700ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite',
-            }}>
-            <span style={{
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 700, fontSize: 13,
-              letterSpacing: '0.34em', textTransform: 'uppercase',
-              color: accent,
-              textShadow: '0 1px 16px rgba(0,0,0,0.6)',
-            }}>Continue&nbsp;&nbsp;→</span>
-          </button>
+          <CinematicContinueCTA
+            onClick={onContinue}
+            accent={accent}
+            style={{ position: 'absolute' }}
+          />
         )}
 
       </div>

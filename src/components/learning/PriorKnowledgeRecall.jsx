@@ -7,6 +7,7 @@ import { BUTTONS } from '../../constants/buttons.js'
 import { TYPE } from '../../constants/typography.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 import BackButton from '../core/BackButton.jsx'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 
 // Concept score thresholds
 const SCORE_RECALLED = 0.7   // >= recalled (teal)
@@ -198,17 +199,6 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
     onMouseLeave: () => setIsPressed(false),
     onTouchStart: () => setIsPressed(true),
     onTouchEnd:   () => setIsPressed(false),
-  }
-
-  const btnStyle = {
-    width: '100%', height: BUTTONS.continue.height,
-    borderRadius: BUTTONS.continue.borderRadius, border: 'none',
-    background: accent,
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    cursor: 'pointer',
-    transform: isPressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
-    transition: `transform ${BUTTONS.continue.transition}`,
-    flexShrink: 0,
   }
 
   // Input-phase CTA — premium but lighter than the primary button above:
@@ -546,18 +536,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               </p>
             </div>
 
-            <button
-              onClick={onContinue}
-              {...pressProps}
-              style={{ ...btnStyle, marginTop: SPACING.standard }}
-            >
-              <span style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight, color: '#0D0F14',
-              }}>
-                Continue
-              </span>
-            </button>
+            <ContinueCTA onClick={onContinue} accent={accent} style={{ marginTop: SPACING.standard }} />
           </div>
         )}
 

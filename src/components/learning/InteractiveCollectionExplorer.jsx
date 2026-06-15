@@ -4,6 +4,7 @@ import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import { BUTTONS } from '../../constants/buttons.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 
 const THEMES = {
   History: {
@@ -160,25 +161,14 @@ function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, sheetB
         )}
       </div>
 
-      <button
+      <ContinueCTA
         onClick={onContinue}
+        accent={glow}
         style={{
-          width: '100%', height: BUTTONS.continue.height,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          borderRadius: BUTTONS.continue.borderRadius,
-          background: glow,
-          border: 'none',
-          color: '#0D0F14',
-          fontFamily: "'Sora', sans-serif",
-          fontSize: BUTTONS.continue.fontSize,
-          fontWeight: BUTTONS.continue.fontWeight,
-          cursor: 'pointer',
           opacity: visible ? 1 : 0,
           transition: `opacity 400ms ${MOTION.easing.standard} 600ms, transform ${BUTTONS.continue.transition}`,
         }}
-      >
-        Continue
-      </button>
+      />
     </div>
   )
 }

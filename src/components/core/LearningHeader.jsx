@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import LearningProgressHeader from './LearningProgressHeader.jsx'
 import BackButton from './BackButton.jsx'
+import ExitButton from './ExitButton.jsx'
 import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
 
 // ── LearningHeader — single-row module header ─────────────────────────────────
@@ -17,8 +17,6 @@ export default function LearningHeader({
   onJumpOpen = null,
   screenPos = null,
 }) {
-  const [exitPressed, setExitPressed] = useState(false)
-
   const subject = module?.subject || 'History'
   const accent = SUBJECT_ACCENTS[subject] || SUBJECT_ACCENTS.History
   const accentRgb = hexToRgb(accent)
@@ -78,28 +76,7 @@ export default function LearningHeader({
       )}
 
       {/* Exit button */}
-      <button
-        aria-label="Exit chapter"
-        onPointerDown={() => setExitPressed(true)}
-        onPointerUp={() => { setExitPressed(false); onExit?.() }}
-        onPointerLeave={() => setExitPressed(false)}
-        style={{
-          width: 44, height: 44,
-          background: 'none', border: 'none', padding: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer',
-          flexShrink: 0,
-          opacity: exitPressed ? 0.6 : 0.22,
-          transform: exitPressed ? 'scale(0.90)' : 'scale(1)',
-          transition: 'opacity 140ms ease, transform 140ms ease',
-        }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="rgba(255,255,255,0.75)" strokeWidth="1.75"
-          strokeLinecap="round" strokeLinejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
+      <ExitButton onClick={onExit} />
     </div>
   )
 }

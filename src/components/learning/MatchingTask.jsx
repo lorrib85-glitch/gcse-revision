@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { MOTION } from '../../constants/motion.js'
-import { BUTTONS } from '../../constants/buttons.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 
 // Fisher-Yates shuffle
 function shuffle(arr) {
@@ -59,7 +59,6 @@ export default function MatchingTask({ screen, subject, onComplete }) {
   const [wrongTermId,     setWrongTermId]      = useState(null)
   const [feedback,        setFeedback]         = useState('')
   const [lines,           setLines]            = useState([])
-  const [ctaPressed,      setCtaPressed]       = useState(false)
 
   const panelRef  = useRef(null)
   const termRefs  = useRef({})
@@ -400,27 +399,11 @@ export default function MatchingTask({ screen, subject, onComplete }) {
 
         {/* Continue to next round */}
         {roundComplete && !isLastRound && (
-          <button
+          <ContinueCTA
             onClick={() => setRoundIdx(r => r + 1)}
-            onPointerDown={() => setCtaPressed(true)}
-            onPointerUp={() => setCtaPressed(false)}
-            onPointerLeave={() => setCtaPressed(false)}
-            style={{
-              width: '100%', height: BUTTONS.continue.height,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              borderRadius: BUTTONS.continue.borderRadius, border: 'none', cursor: 'pointer',
-              background: BRONZE,
-              color: '#0D0F14',
-              fontFamily: "'Sora', sans-serif",
-              fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
-              transform: ctaPressed ? 'scale(0.985)' : 'scale(1)',
-              transition: `transform ${BUTTONS.continue.transition}`,
-              marginTop: 14,
-              animation: 'mt-fade-in 360ms ease both',
-            }}
-          >
-            Continue
-          </button>
+            accent={BRONZE}
+            style={{ marginTop: 14, animation: 'mt-fade-in 360ms ease both' }}
+          />
         )}
       </div>
     </div>
