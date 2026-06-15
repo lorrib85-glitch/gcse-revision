@@ -14,6 +14,7 @@ import { getProgress, recordActivity, recordScore, getAllConfidenceRatings, getM
 import { getWeakTopics, getWeakestSubject, getBiggestWin, getSuggestedQuestionType } from './unifiedWeaknessTracker.js'
 import { MODULES } from './modules.js'
 import { TAG_MODULE_MAP, findTaggedScreen } from './data/tagModuleMap.js'
+import { QUICK_QUIZ_QUESTIONS } from './data/quickQuizData.js'
 import { buildTodaysPlan } from './todaysPlan.js'
 import BackButton from './components/core/BackButton.jsx'
 import ChapterCompleteScreen from './components/layout/ChapterCompleteScreen.jsx'
@@ -3838,7 +3839,27 @@ function ChemistryBrowser({ onBack }) {
 
 
 
-const QUICK_FIRE_QUESTIONS = [
+// Quick Fire's tap-to-grade UI needs an `options` array with a `correct`
+// index — these quickQuizData.js types map onto that shape directly
+// (truefalse becomes a True/False pair). matchpairs/sequence/dragdrop need a
+// different interaction and are left for the 90s Pulse quiz only.
+const QUICK_FIRE_BANK_TYPES = new Set(['mcq', 'truefalse', 'fillgap'])
+
+function quickFireFromBank(q) {
+  const isTrueFalse = q.type === 'truefalse'
+  return {
+    q: q.question,
+    options: isTrueFalse ? ['True', 'False'] : q.options,
+    correct: isTrueFalse ? (q.correct ? 0 : 1) : q.correctIndex,
+    subject: q.subject,
+    topic: q.topic,
+    moduleId: TAG_MODULE_MAP[q.tag] || null,
+    ms: q.explanation,
+    hint: q.reasoning,
+  }
+}
+
+const QUICK_FIRE_HANDWRITTEN_QUESTIONS = [
   { q: 'What theory said bad smells caused disease?', options: ['Miasma', 'Germ theory', 'Four humours', 'Natural selection'], correct: 0, subject: 'History', topic: 'Medieval Medicine', moduleId: 'history-medicine-medieval-beliefs-causes', ms: 'Miasma was the belief that bad air or smells caused disease.', hint: 'Think about what people believed travelled through bad-smelling air.' },
   { q: 'Who proved blood circulates around the body?', options: ['William Harvey', 'Edward Jenner', 'Louis Pasteur', 'Robert Koch'], correct: 0, subject: 'History', topic: 'Renaissance Medicine', moduleId: 'mod2', ms: 'William Harvey published his ideas about blood circulation in 1628.', hint: 'This 17th-century English doctor showed the heart pumps blood around the body in a continuous loop.' },
   { q: 'Which scientist developed germ theory?', options: ['Louis Pasteur', 'Galen', 'Vesalius', 'Florence Nightingale'], correct: 0, subject: 'History', topic: 'Germ Theory', moduleId: 'history-medicine-germ-theory', ms: 'Louis Pasteur showed that germs cause decay and disease.', hint: 'This French scientist showed that tiny living organisms — not bad air — cause disease.' },
@@ -3859,6 +3880,11 @@ const QUICK_FIRE_QUESTIONS = [
   { q: 'Which word means repeating the same starting sound?', options: ['Alliteration', 'Oxymoron', 'Personification', 'Zoomorphism'], correct: 0, subject: 'English', topic: 'Language Devices', moduleId: null, ms: 'Alliteration repeats the same initial sound.', hint: 'This device is about the sounds at the start of words, not their meaning.' },
   { q: 'What is the pH of a neutral solution?', options: ['7', '1', '14', '0'], correct: 0, subject: 'Chemistry', topic: 'Acids and Alkalis', moduleId: null, ms: 'Neutral solutions have pH 7.', hint: 'On the pH scale, this number sits exactly halfway between acidic and alkaline.' },
   { q: 'What particle has a negative charge?', options: ['Electron', 'Proton', 'Neutron', 'Nucleus'], correct: 0, subject: 'Chemistry', topic: 'Atomic Structure', moduleId: null, ms: 'Electrons have a negative charge.', hint: 'This subatomic particle orbits the nucleus and has a much smaller mass than a proton or neutron.' },
+]
+
+const QUICK_FIRE_QUESTIONS = [
+  ...QUICK_FIRE_HANDWRITTEN_QUESTIONS,
+  ...QUICK_QUIZ_QUESTIONS.filter(q => QUICK_FIRE_BANK_TYPES.has(q.type)).map(quickFireFromBank),
 ]
 
 const QUICK_FIRE_MEMORY_KEY = 'gcse_quickfire_memory_v1'
