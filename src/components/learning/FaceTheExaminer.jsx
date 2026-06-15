@@ -74,6 +74,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
   // ── Improving ────────────────────────────────────────────────────────────
   const [studentEdits,  setStudentEdits]  = useState({})
   const [expandedEdit,  setExpandedEdit]  = useState(null)
+  const expandedTextareaRef = useRef(null)
 
   // ── Re-marking ───────────────────────────────────────────────────────────
   const [remarkResult,  setRemarkResult]  = useState(null)
@@ -612,19 +613,23 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
                             {' '}
                             <button
                               className={`fte-improve-btn${hasEdit ? ' edited' : ''}`}
-                              onClick={() => setExpandedEdit(isExpanded ? null : ann.id)}
+                              onClick={() => {
+                                const next = isExpanded ? null : ann.id
+                                setExpandedEdit(next)
+                                if (next) setTimeout(() => expandedTextareaRef.current?.focus(), 50)
+                              }}
                             >
                               {hasEdit ? '✓ edited' : (examiner.improvementPrompts?.[ann.id]?.prompt || '+ improve')}
                             </button>
                             {isExpanded && (
                               <span style={{ display: 'block' }}>
                                 <textarea
+                                  ref={expandedTextareaRef}
                                   className="fte-textarea"
                                   rows={3}
                                   placeholder={examiner.improvementPrompts?.[ann.id]?.placeholder || 'Add your improvement here...'}
                                   value={studentEdits[ann.id] || ''}
                                   onChange={e => setStudentEdits(prev => ({ ...prev, [ann.id]: e.target.value }))}
-                                  autoFocus
                                 />
                               </span>
                             )}

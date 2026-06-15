@@ -243,6 +243,9 @@ function OnboardingScreen() {
   const { completeOnboarding } = useAuth()
   const [name, setName] = useState('')
   const valid = name.trim().length >= 2
+  const inputRef = useRef(null)
+
+  useEffect(() => { inputRef.current?.focus() }, [])
 
   function handleSubmit() {
     if (!valid) return
@@ -281,12 +284,12 @@ function OnboardingScreen() {
 
         {/* Glassmorphism input */}
         <input
+          ref={inputRef}
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSubmit()}
           placeholder="Your name"
-          autoFocus
           maxLength={30}
           style={{
             width: '100%', height: 58, boxSizing: 'border-box',
