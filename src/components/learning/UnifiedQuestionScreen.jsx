@@ -69,7 +69,9 @@ export default function UnifiedQuestionScreen({
       if (navigator.vibrate) navigator.vibrate(isCorrect ? 10 : 20)
       onAnswer?.(isCorrect)
 
-      if (isCorrect) {
+      if (isCorrect || type === 'truefalse') {
+        // True/false is binary — a wrong tap already reveals the answer, so
+        // skip the hint and retry step and move straight on.
         advanceAfterHold()
       } else {
         const hintMs = parseInt(MOTION.duration.fast, 10) // 180ms

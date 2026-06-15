@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import UnifiedQuestionScreen from './UnifiedQuestionScreen.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 
 const IMAGES = {
   History:   '/headers/history-quiz-bg.png',
@@ -133,6 +134,16 @@ export default function QuickRecallScreen({
             qTotal={total}
             onAnswer={(isCorrect) => {
               if (isCorrect) setDoneCnt(d => d + 1)
+              if (isTrueFalse) {
+                const log = isCorrect ? logCorrectAnswer : logWrongAnswer
+                log({
+                  subject,
+                  topic: chapterTitle,
+                  questionText: cur.question || cur.q,
+                  source: 'module',
+                  questionType: 'truefalse',
+                })
+              }
             }}
             onComplete={advance}
           />

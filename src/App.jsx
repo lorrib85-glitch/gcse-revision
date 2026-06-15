@@ -11,7 +11,7 @@ import { CHEM_IMAGES } from './data/chemImages.js'
 import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, J23_Q6 } from './data/medicineExamPapers.js'
 import { FIGURES } from './figures.js'
 import { getProgress, recordActivity, recordScore, getAllConfidenceRatings, getModuleState as safeGetModuleState, getModulePct as modPct, MODULE_GROUPS, getContinueModule, getWeeklyTrend } from './progress.js'
-import { getWeakTopics, getWeakestSubject, getBiggestWin, getSuggestedQuestionType } from './unifiedWeaknessTracker.js'
+import { getWeakTopics, getWeakestSubject, getBiggestWin, getSuggestedQuestionType, logWrongAnswer, logCorrectAnswer } from './unifiedWeaknessTracker.js'
 import { MODULES } from './modules.js'
 import { TAG_MODULE_MAP, findTaggedScreen } from './data/tagModuleMap.js'
 import { QUICK_QUIZ_QUESTIONS } from './data/quickQuizData.js'
@@ -3849,6 +3849,7 @@ function quickFireFromBank(q) {
   const isTrueFalse = q.type === 'truefalse'
   return {
     q: q.question,
+    type: isTrueFalse ? 'truefalse' : 'mc',
     options: isTrueFalse ? ['True', 'False'] : q.options,
     correct: isTrueFalse ? (q.correct ? 0 : 1) : q.correctIndex,
     subject: q.subject,
@@ -4159,7 +4160,9 @@ function QuickFireQuestionScreen({ q, timeLeft, totalSeconds, onExit, onAnswer, 
       setStatus(isCorrect ? 'correct' : 'incorrect')
       if (navigator.vibrate) navigator.vibrate(isCorrect ? 10 : 20)
       onAnswer(isCorrect)
-      if (isCorrect) {
+      if (isCorrect || q.type === 'truefalse') {
+        // True/false is binary — a wrong tap already reveals the answer, so
+        // skip the hint and retry step and move straight on.
         advanceAfterHold()
       } else {
         const hintMs = parseInt(MOTION.duration.fast, 10)
@@ -5504,6 +5507,16 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
           onAnswer={(isCorrect) => {
             setQuickFireStats(stats => addQuickFireAnswer(stats, qfQ, isCorrect))
             updateQfQuestionHistory(qfQ, isCorrect)
+            if (qfQ.type === 'truefalse') {
+              const log = isCorrect ? logCorrectAnswer : logWrongAnswer
+              log({
+                subject: qfQ.subject,
+                topic: qfQ.topic,
+                questionText: qfQ.q,
+                source: 'quiz',
+                questionType: 'truefalse',
+              })
+            }
             recordScore({ subject: selected.subject, earned: isCorrect ? qfQ.marks : 0, possible: qfQ.marks, source: 'test' })
             if (isCorrect) {
               setQfConsecutiveWrong(0)
