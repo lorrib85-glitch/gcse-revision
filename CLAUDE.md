@@ -244,6 +244,9 @@ This applies to module titles, chapter names, screen headings, button labels, an
 
 # Production build
 ./node_modules/.bin/vite build
+
+# Run Storybook stories as Vitest browser tests
+./node_modules/.bin/vitest
 ```
 
 ## Educational design rules
