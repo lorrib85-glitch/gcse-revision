@@ -3,6 +3,7 @@
 // Single source of truth for weakness identification and recovery recommendations.
 
 import { TAG_MODULE_MAP } from './data/tagModuleMap.js'
+import { getArray, setJson, removeKey } from './lib/storage.js'
 
 const WRONG_ANSWERS_KEY = 'gcse_wrong_answers'
 const CORRECT_ANSWERS_KEY = 'gcse_correct_answers'
@@ -14,33 +15,17 @@ const COACH_TYPE_WEAK_THRESHOLD = 0.6  // Suggest a question type when scoring b
 
 // ─── Storage helpers ──────────────────────────────────────────────────────────
 
-function loadWrongAnswers() {
-  try { return JSON.parse(localStorage.getItem(WRONG_ANSWERS_KEY) || '[]') } catch { return [] }
-}
-function saveWrongAnswers(data) {
-  try { localStorage.setItem(WRONG_ANSWERS_KEY, JSON.stringify(data)) } catch {}
-}
+function loadWrongAnswers() { return getArray(WRONG_ANSWERS_KEY) }
+function saveWrongAnswers(data) { setJson(WRONG_ANSWERS_KEY, data) }
 
-function loadCorrectAnswers() {
-  try { return JSON.parse(localStorage.getItem(CORRECT_ANSWERS_KEY) || '[]') } catch { return [] }
-}
-function saveCorrectAnswers(data) {
-  try { localStorage.setItem(CORRECT_ANSWERS_KEY, JSON.stringify(data)) } catch {}
-}
+function loadCorrectAnswers() { return getArray(CORRECT_ANSWERS_KEY) }
+function saveCorrectAnswers(data) { setJson(CORRECT_ANSWERS_KEY, data) }
 
-function loadExamTechniques() {
-  try { return JSON.parse(localStorage.getItem(EXAM_TECHNIQUE_KEY) || '[]') } catch { return [] }
-}
-function saveExamTechniques(data) {
-  try { localStorage.setItem(EXAM_TECHNIQUE_KEY, JSON.stringify(data)) } catch {}
-}
+function loadExamTechniques() { return getArray(EXAM_TECHNIQUE_KEY) }
+function saveExamTechniques(data) { setJson(EXAM_TECHNIQUE_KEY, data) }
 
-function loadCoachTypeResults() {
-  try { return JSON.parse(localStorage.getItem(COACH_TYPE_RESULTS_KEY) || '[]') } catch { return [] }
-}
-function saveCoachTypeResults(data) {
-  try { localStorage.setItem(COACH_TYPE_RESULTS_KEY, JSON.stringify(data)) } catch {}
-}
+function loadCoachTypeResults() { return getArray(COACH_TYPE_RESULTS_KEY) }
+function saveCoachTypeResults(data) { setJson(COACH_TYPE_RESULTS_KEY, data) }
 
 // ─── Logging API ──────────────────────────────────────────────────────────────
 
@@ -377,10 +362,8 @@ export function getWeaknessSummary() {
  * Clear all weakness tracking data (for testing or user reset).
  */
 export function clearWeaknessLog() {
-  try {
-    localStorage.removeItem(WRONG_ANSWERS_KEY)
-    localStorage.removeItem(CORRECT_ANSWERS_KEY)
-  } catch {}
+  removeKey(WRONG_ANSWERS_KEY)
+  removeKey(CORRECT_ANSWERS_KEY)
 }
 
 // ─── Exam Technique Tracking ──────────────────────────────────────────────────

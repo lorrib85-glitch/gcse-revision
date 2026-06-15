@@ -1,4 +1,5 @@
 import { MODULES } from './modules.js'
+import { getObject, getArray, setJson } from './lib/storage.js'
 
 const KEY          = 'gcse_progress'
 const SCORES_KEY   = 'gcse_scores'
@@ -6,15 +7,9 @@ const CONFIDENCE_KEY = 'gcse_confidence'
 
 // ─── Read / write ─────────────────────────────────────────────────
 
-function read(k) {
-  try { return JSON.parse(localStorage.getItem(k) || '{}') } catch { return {} }
-}
-function readArr(k) {
-  try { return JSON.parse(localStorage.getItem(k) || '[]') } catch { return [] }
-}
-function write(k, d) {
-  try { localStorage.setItem(k, JSON.stringify(d)) } catch {}
-}
+const read    = getObject
+const readArr = getArray
+const write   = setJson
 
 // ─── Date helpers ─────────────────────────────────────────────────
 
@@ -148,7 +143,7 @@ export function getAllConfidenceRatings() {
 // ─── Per-module screen progress ────────────────────────────────────
 
 export function getModuleState(moduleId) {
-  try { return JSON.parse(localStorage.getItem('gcse_module_' + moduleId) || '{}') } catch { return {} }
+  return getObject('gcse_module_' + moduleId)
 }
 
 // Percent of a module's screens completed (100 if marked complete).
