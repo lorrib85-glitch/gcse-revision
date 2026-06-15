@@ -181,10 +181,10 @@ export default function CinematicRevealMoment({
           {yearVisible && label && (
             <div style={{
               fontFamily: "'Outfit', sans-serif",
-              fontWeight: 600, fontSize: 11,
-              textTransform: 'uppercase', letterSpacing: '0.28em',
-              color: 'rgba(255,255,255,0.40)',
-              marginBottom: 14,
+              fontWeight: 600, fontSize: 14,
+              letterSpacing: '-0.01em',
+              color: 'rgba(255,255,255,0.50)',
+              marginBottom: 10,
               textShadow: '0 1px 16px rgba(0,0,0,0.5)',
               animation: 'crm-up 900ms cubic-bezier(.16,1,.3,1) both',
             }}>

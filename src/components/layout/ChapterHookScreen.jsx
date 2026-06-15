@@ -205,23 +205,12 @@ export default function ChapterHookScreen({
               <BackBtn onClick={onBack} />
 
               <div style={{
-                position: 'absolute', top: 106, left: 28,
-                fontFamily: "'Outfit', sans-serif",
-                fontWeight: 600, fontSize: 12,
-                textTransform: 'uppercase', letterSpacing: '0.28em',
-                color: accent, opacity: 0.92,
-                animation: 'chs-header-in 320ms ease 40ms both',
-              }}>
-                Chapter {chapterNum}
-              </div>
-
-              <div style={{
-                position: 'absolute', top: 130, left: 28, right: 36,
+                position: 'absolute', top: 106, left: 28, right: 36,
                 fontFamily: "'Sora', sans-serif",
                 fontWeight: 700, fontSize: 18,
                 lineHeight: '24px', letterSpacing: '-0.01em',
                 color: 'rgba(255,255,255,0.55)',
-                animation: 'chs-header-in 320ms ease 120ms both',
+                animation: 'chs-header-in 320ms ease 40ms both',
               }}>
                 {chapterTitle}
               </div>
@@ -352,10 +341,10 @@ export default function ChapterHookScreen({
 
                   <div style={{
                     fontFamily: "'Outfit', sans-serif",
-                    fontWeight: 700, fontSize: 13,
-                    textTransform: 'uppercase', letterSpacing: '0.28em',
+                    fontWeight: 700, fontSize: 16,
+                    letterSpacing: '-0.01em',
                     color: accent, opacity: 0.92,
-                    marginBottom: 28,
+                    marginBottom: 16,
                   }}>
                     {revealLabel()}
                   </div>

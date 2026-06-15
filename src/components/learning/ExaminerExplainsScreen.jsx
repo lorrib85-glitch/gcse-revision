@@ -95,10 +95,6 @@ export default function ExaminerExplainsScreen({
           from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes expl-header-in {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
         @keyframes expl-hint {
           0%, 100% { opacity: 0; transform: translateY(0); }
           35%, 65%  { opacity: 0.5; transform: translateY(-3px); }
@@ -149,35 +145,9 @@ export default function ExaminerExplainsScreen({
         <div style={{ position: 'relative', zIndex: 5, minHeight: '100dvh' }}>
           <BackBtn onClick={onBack} />
 
-          {/* Eyebrow — tips phase only */}
-          {isTips && (
-            <div style={{
-              position: 'absolute', top: 106, left: 28,
-              fontFamily: "'Outfit', sans-serif",
-              fontWeight: 600, fontSize: 11,
-              textTransform: 'uppercase', letterSpacing: '0.28em',
-              color: accent, opacity: 0.70,
-              animation: 'expl-header-in 320ms ease 40ms both',
-            }}>
-              What examiners reward
-            </div>
-          )}
-
           {/* ── OPENING ─────────────────────────────────── */}
           {phase === 'opening' && (
             <div style={{ position: 'absolute', top: '34%', left: 28, right: 28 }}>
-              {/* Accent label */}
-              <div style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontWeight: 600, fontSize: 11,
-                textTransform: 'uppercase', letterSpacing: '0.28em',
-                color: accent, opacity: 0.72,
-                marginBottom: 20,
-                animation: 'expl-header-in 320ms ease 80ms both',
-              }}>
-                The Examiner
-              </div>
-
               <div style={{
                 fontFamily: "'Sora', sans-serif",
                 fontWeight: 800,

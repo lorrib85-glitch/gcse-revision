@@ -142,18 +142,6 @@ export default function ChapterOutcomeScreen({
 
           <div style={{ position: 'absolute', top: 100, left: 28, right: 28, maxWidth: 320 }}>
 
-            {/* Chapter label */}
-            <div style={{
-              fontFamily: "'Outfit', sans-serif",
-              fontWeight: 600, fontSize: 12,
-              textTransform: 'uppercase', letterSpacing: '0.28em',
-              color: accent, opacity: 0.92,
-              marginBottom: 14,
-              animation: 'cos-up 520ms ease 40ms both',
-            }}>
-              Chapter {chapterNum}
-            </div>
-
             {/* Chapter title */}
             <div style={{
               fontFamily: "'Sora', sans-serif",
@@ -161,7 +149,7 @@ export default function ChapterOutcomeScreen({
               lineHeight: '44px', letterSpacing: '-0.04em',
               color: '#FFFFFF',
               marginBottom: 32,
-              animation: 'cos-up 520ms ease 80ms both',
+              animation: 'cos-up 520ms ease 40ms both',
             }}>
               {chapterTitle}
             </div>

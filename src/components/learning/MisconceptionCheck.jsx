@@ -76,16 +76,6 @@ export default function MisconceptionCheck({ block, subject = 'Biology', onConti
         padding: `${SPACING.section}px ${SPACING.standard}px`,
         maxWidth: 560, marginInline: 'auto', width: '100%', boxSizing: 'border-box',
       }}>
-        {/* Plain step counter — minimal chrome, not a quiz progress bar */}
-        <p style={{
-          ...TYPE.metadata,
-          textTransform: 'uppercase', letterSpacing: '0.28em',
-          color: `rgba(${rgb},0.42)`,
-          marginBottom: SPACING.standard,
-        }}>
-          {String(index + 1).padStart(2, '0')} / {String(statements.length).padStart(2, '0')}
-        </p>
-
         {/* The statement — dominates the screen, cinematic not card-like */}
         <p
           key={index}

@@ -167,10 +167,10 @@ export default function VisualNarrativeScreen({
             {beat.label && (
               <div style={{
                 fontFamily: "'Outfit', sans-serif",
-                fontWeight: 600, fontSize: 11,
-                textTransform: 'uppercase', letterSpacing: '0.28em',
-                color: 'rgba(255,255,255,0.40)',
-                marginBottom: 14,
+                fontWeight: 600, fontSize: 14,
+                letterSpacing: '-0.01em',
+                color: 'rgba(255,255,255,0.50)',
+                marginBottom: 10,
               }}>
                 {beat.label}
               </div>
