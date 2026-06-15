@@ -56,7 +56,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
   }
 
   function handleClick(e) {
-    const rect = e.currentTarget.getBoundingClientRect()
+    const rect = e.currentTarget.getBoundingClientRect();
     (e.clientX - rect.left) / rect.width < 0.25 ? retreat() : advance()
   }
 
