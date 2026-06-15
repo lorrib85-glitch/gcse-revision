@@ -95,9 +95,10 @@ Use for existing-surface work.
    design tokens, routing, architecture, product behaviour, or workflow
    rules
 6. Review — perform code review and incorporate findings
-7. Verification — build (`./node_modules/.bin/vite build`) passes, and the
-   change is exercised by running the app to confirm the real behaviour
-   works as intended — not static inspection alone
+7. Verification — lint (`./node_modules/.bin/eslint .`) and build
+   (`./node_modules/.bin/vite build`) pass, and the change is exercised by
+   running the app to confirm the real behaviour works as intended — not
+   static inspection alone
 8. Confirm working tree status — commit + push to `main`
 
 *Normally implemented via Superpowers: `brainstorming`, `writing-plans`,
@@ -159,6 +160,14 @@ exists, which matches this policy with no extra configuration. If a future
 bootstrap) and a setup prompt asks about branching strategy, choose `"none"`
 to keep this policy intact.
 
+## Continuous Integration
+
+A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push
+and pull request to `main`: `npm ci`, then `npm run lint`, then
+`npm run build`. It deliberately does not run `npm test` (Storybook/Vitest)
+or any Playwright/browser-based checks. Running step 7's lint and build
+locally before pushing keeps `main` from failing this CI.
+
 ## Context Loading Policy
 
 Load only:
@@ -184,6 +193,7 @@ Before marking any build complete, confirm:
 - Canonical docs updated where needed (decision capture rule applied)
 - Code review completed
 - UI review completed where visual behaviour changed
+- Lint passed
 - Build passed
 - Implementation verified by running the app and confirming the real
   behaviour works as intended — not static inspection alone
