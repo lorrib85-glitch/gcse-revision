@@ -60,6 +60,17 @@ export default function RecoveryQuizPlayer({
   onBack,
 }) {
   const quiz = recoveryQuizzes[recoveryQuizId]
+
+  const [qIdx, setQIdx] = useState(0)
+  const [doneCnt, setDoneCnt] = useState(0)
+  const [phase, setPhase] = useState('in')
+  const [animKey, setAnimKey] = useState(0)
+
+  useEffect(() => {
+    const t = setTimeout(() => setPhase('active'), 360)
+    return () => clearTimeout(t)
+  }, [animKey])
+
   if (!quiz) {
     return (
       <div style={{
@@ -88,16 +99,6 @@ export default function RecoveryQuizPlayer({
   const { accent, accentRgb: rgb } = theme
   const questions = quiz.questions || []
   const total = questions.length
-
-  const [qIdx, setQIdx] = useState(0)
-  const [doneCnt, setDoneCnt] = useState(0)
-  const [phase, setPhase] = useState('in')
-  const [animKey, setAnimKey] = useState(0)
-
-  useEffect(() => {
-    const t = setTimeout(() => setPhase('active'), 360)
-    return () => clearTimeout(t)
-  }, [animKey])
 
   function advance() {
     const nextIdx = qIdx + 1
