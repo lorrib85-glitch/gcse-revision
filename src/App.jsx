@@ -680,7 +680,11 @@ function daysUntilExam() {
   return Math.max(0, Math.round((exam - today) / 86400000))
 }
 
-// ─── Home atmosphere — abstract network / constellation ────────────────────────
+// ─── HomeAtmosphere — LOCKED COMPONENT ────────────────────────────────────────
+// Three drifting SVG wave bands + teal constellation network, rendered in the
+// 34vh hero section of the Home tab. Must NOT be removed, renamed, or have its
+// wave/gradient/animation structure altered. Small colour tweaks to teal values
+// are OK; removing the SVG layers or the component call in Home is not.
 function HomeAtmosphere() {
   const nodes = [
     [180, 48], [222, 26], [266, 16], [300, 36], [332, 22],
