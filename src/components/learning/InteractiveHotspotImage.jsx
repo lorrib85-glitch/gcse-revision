@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import BackButton from '../core/BackButton.jsx'
+// CinematicShell used here because full-bleed imagery and floating hotspot overlays need
+// the full viewport; InteractionShell's inset padding would clip hotspot positions.
+import CinematicShell from '../layout/CinematicShell.jsx'
 
 const THEMES = {
   Biology: {
@@ -164,12 +167,7 @@ export default function InteractiveHotspotImage({
   }
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      background: pageBg,
-      fontFamily: "'Sora', sans-serif",
-      overflow: 'hidden',
-    }}>
+    <CinematicShell style={{ background: pageBg, zIndex: 1000 }}>
       <style>{`
         @keyframes ihi-line-in {
           from { opacity: 0; transform: translateY(18px); }
@@ -521,6 +519,6 @@ export default function InteractiveHotspotImage({
       }}>
         <ContinueCTA onClick={onContinue} accent={glow} />
       </div>
-    </div>
+    </CinematicShell>
   )
 }

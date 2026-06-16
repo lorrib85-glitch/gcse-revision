@@ -7,24 +7,6 @@
 
 const F = "'Sora', sans-serif"
 
-// Small uppercase label above a title. Pass accent for coloured eyebrows.
-export function ScreenEyebrow({ children, accent, style }) {
-  return (
-    <div style={{
-      fontFamily: F,
-      fontSize: 11,
-      fontWeight: 600,
-      letterSpacing: '0.14em',
-      textTransform: 'uppercase',
-      color: accent ?? 'rgba(255,255,255,0.45)',
-      marginBottom: 8,
-      ...style,
-    }}>
-      {children}
-    </div>
-  )
-}
-
 // Primary heading. Tight line-height and narrow max-width for dramatic weight.
 export function ScreenTitle({ children, style }) {
   return (

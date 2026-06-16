@@ -5,6 +5,9 @@ import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+// CinematicShell used here because both the synthesis screen and the explorer view are
+// full-viewport fixed layers with background imagery and slide-up sheets.
+import CinematicShell from '../layout/CinematicShell.jsx'
 
 const THEMES = {
   History: {
@@ -64,10 +67,9 @@ function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, sheetB
   }, [])
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
+    <CinematicShell style={{
       background: pageBg,
-      fontFamily: "'Sora', sans-serif",
+      zIndex: 1000,
       display: 'flex', flexDirection: 'column',
       padding: `calc(env(safe-area-inset-top, 0px) + ${SPACING.cinematic}px) ${SPACING.standard}px`,
       paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${SPACING.separation}px)`,
@@ -169,7 +171,7 @@ function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, sheetB
           transition: `opacity 400ms ${MOTION.easing.standard} 600ms, transform ${BUTTONS.continue.transition}`,
         }}
       />
-    </div>
+    </CinematicShell>
   )
 }
 
@@ -239,12 +241,7 @@ export default function InteractiveCollectionExplorer({
   }
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      background: pageBg,
-      fontFamily: "'Sora', sans-serif",
-      overflow: 'hidden',
-    }}>
+    <CinematicShell style={{ background: pageBg, zIndex: 1000 }}>
       <style>{`
         @keyframes ice-pulse {
           0%,100% {
@@ -514,6 +511,6 @@ export default function InteractiveCollectionExplorer({
           </>
         )}
       </div>
-    </div>
+    </CinematicShell>
   )
 }

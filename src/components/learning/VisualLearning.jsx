@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+// CinematicShell used here because full-bleed background imagery and the global
+// click-to-advance handler need full viewport coverage without content padding.
+import CinematicShell from '../layout/CinematicShell.jsx'
 
 const SLIDE_MS = 420
 
@@ -79,17 +82,16 @@ export default function VisualLearning({ block, subject, onComplete }) {
   const isFinalReveal = !!scene.finalReveal
 
   return (
-    <div
-      onClick={advance}
-      style={{
-        position: 'fixed', inset: 0, zIndex: 100,
-        overflow: 'hidden',
-        cursor: 'pointer',
-        userSelect: 'none', WebkitUserSelect: 'none',
-        WebkitTapHighlightColor: 'transparent',
-        background: '#08090D',
-      }}
-    >
+    <CinematicShell style={{ background: '#08090D', zIndex: 100 }}>
+      <div
+        onClick={advance}
+        style={{
+          position: 'absolute', inset: 0,
+          cursor: 'pointer',
+          userSelect: 'none', WebkitUserSelect: 'none',
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
       {/* Background image — keyed so it fades between scenes */}
       {scene.image && (
         <div
@@ -245,6 +247,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
           )}
         </div>
       )}
-    </div>
+      </div>
+    </CinematicShell>
   )
 }
