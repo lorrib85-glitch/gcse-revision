@@ -1895,7 +1895,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
       {/* ── SERIES PICKER (History only) ── */}
       {isHistory && (
         <div style={{
-          display: 'flex', gap: 10, padding: '16px 24px 0',
+          display: 'flex', gap: 10, padding: '20px 24px 8px',
           overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch',
         }}>
           {HISTORY_SERIES.map(s => {
@@ -1910,6 +1910,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                   border: isActive ? `2px solid ${accent}` : '2px solid transparent',
                   padding: 0, opacity: isActive ? 1 : 0.38,
                   transform: isActive ? 'scale(1.04)' : 'scale(1)',
+                  transformOrigin: 'center bottom',
                   transition: 'opacity 0.22s, transform 0.22s, border-color 0.22s',
                   boxShadow: isActive ? `0 0 18px rgba(${accentRgb},0.4)` : 'none',
                 }}
