@@ -1722,7 +1722,7 @@ const HISTORY_SERIES = [
     title: 'USA: Conflict at Home & Abroad',
     short: 'USA',
     headerImage: '/headers/history-usa-conflict.webp',
-    comingSoon: true,
+    comingSoon: false,
   },
 ]
 
