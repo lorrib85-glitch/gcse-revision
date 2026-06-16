@@ -711,18 +711,18 @@ function HomeAtmosphere() {
       >
         <defs>
           <linearGradient id="ha-wave-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={`rgba(${GENERAL.tealRgb},0.38)`} />
-            <stop offset="100%" stopColor={`rgba(${hexToRgb(GENERAL.darkTeal)},0.1)`} />
+            <stop offset="0%" stopColor={`rgba(${GENERAL.tealRgb},0.62)`} />
+            <stop offset="100%" stopColor={`rgba(${hexToRgb(GENERAL.darkTeal)},0.18)`} />
           </linearGradient>
         </defs>
         <g style={{ animation: 'ha-wave-drift-a 30s linear infinite' }}>
-          <path d="M0,170 Q48.75,198 97.5,170 T195,170 T292.5,170 T390,170 T487.5,170 T585,170 T682.5,170 T780,170 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="0.5" />
+          <path d="M0,200 Q48.75,228 97.5,200 T195,200 T292.5,200 T390,200 T487.5,200 T585,200 T682.5,200 T780,200 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="0.5" />
         </g>
         <g style={{ animation: 'ha-wave-drift-b 42s linear infinite' }}>
-          <path d="M0,110 Q48.75,138 97.5,110 T195,110 T292.5,110 T390,110 T487.5,110 T585,110 T682.5,110 T780,110 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="0.7" />
+          <path d="M0,140 Q48.75,168 97.5,140 T195,140 T292.5,140 T390,140 T487.5,140 T585,140 T682.5,140 T780,140 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="0.7" />
         </g>
         <g style={{ animation: 'ha-wave-drift-a 54s linear infinite' }}>
-          <path d="M0,60 Q48.75,90 97.5,60 T195,60 T292.5,60 T390,60 T487.5,60 T585,60 T682.5,60 T780,60 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="1" />
+          <path d="M0,90 Q48.75,120 97.5,90 T195,90 T292.5,90 T390,90 T487.5,90 T585,90 T682.5,90 T780,90 L780,0 L0,0 Z" fill="url(#ha-wave-grad)" opacity="1" />
         </g>
       </svg>
       <svg
