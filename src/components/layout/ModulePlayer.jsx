@@ -43,6 +43,8 @@ import MedicalTheoryPrescription from '../learning/MedicalTheoryPrescription.jsx
 import MatchingTask from '../learning/MatchingTask.jsx'
 import PriorKnowledgeRecall from '../learning/PriorKnowledgeRecall.jsx'
 import SymptomProgression from '../learning/SymptomProgression.jsx'
+import ContentShell from './ContentShell.jsx'
+import { ScreenTitle, ScreenBody } from '../core/ScreenText.jsx'
 
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
@@ -1119,30 +1121,12 @@ function Screen({ screen, subject, onScreenComplete }) {
 
   return (
     <div>
-      <div style={{ marginBottom: 20 }}>
-        <div style={{
-          display: 'inline-flex',
-          background: 'rgba(157,92,255,.12)',
-          border: '1px solid rgba(157,92,255,.25)',
-          color: '#C18CFF',
-          borderRadius: 99, padding: '4px 12px',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: '.68rem', fontWeight: 700,
-          letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 12,
-        }}>{screen.kicker}</div>
-        <h2 style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 'clamp(1.3rem, 4vw, 1.75rem)',
-          marginBottom: 8, color: '#F5F7FB',
-          fontWeight: 700, letterSpacing: '-.01em', lineHeight: 1.2,
-        }}>{screen.heading}</h2>
-        {screen.sub && (
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.9rem', color: '#5A6480', lineHeight: 1.6, margin: 0,
-          }}>{screen.sub}</p>
-        )}
-      </div>
+      {(screen.heading || screen.sub) && (
+        <div style={{ marginBottom: 20 }}>
+          {screen.heading && <ScreenTitle>{screen.heading}</ScreenTitle>}
+          {screen.sub && <ScreenBody style={{ color: 'rgba(255,255,255,0.65)' }}>{screen.sub}</ScreenBody>}
+        </div>
+      )}
 
       {(screen.blocks || []).map((block, i) => (
         <div key={i}>
@@ -2590,13 +2574,9 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   }
 
   return (
-    <div style={{ background: '#080C1A', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-
-      {/* ── Universal floating learning header ── */}
+    <>
       <LearningHeader {...H} visible={headerVisible} />
-
-      {/* ── Screen content — hook, intro, or normal screen ── */}
-      <div id="module-scroll-container" style={{ flex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 112px) 18px 120px', maxWidth: 660, margin: '0 auto', width: '100%' }}>
+      <ContentShell subject={module.subject}>
         {(!hookDone && module.hook && !module.hook.statement)
           ? <HookContent module={module} hook={module.hook} hookState={hookState} subjectColor={subjectColor} />
           : !introDone && module.intro
@@ -2607,19 +2587,17 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
                 </div>
               )
         }
-      </div>
+      </ContentShell>
 
       {/* ── Bottom navigation — Next only ── */}
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 20,
-        background: 'rgba(8,12,26,.97)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderTop: '1px solid #1E2A40',
+        background: 'rgba(8,9,13,0.92)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
         padding: '10px 16px calc(10px + env(safe-area-inset-bottom))',
-        boxShadow: '0 -8px 32px rgba(0,0,0,.4)',
       }}>
-        <div style={{ maxWidth: 660, margin: '0 auto' }}>
+        <div style={{ maxWidth: 420, margin: '0 auto' }}>
           {showNextBtn ? (
             <ContinueCTA
               onClick={handleNext}
@@ -2636,6 +2614,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         </div>
       </div>
       {jumpSheetPortal}
-    </div>
+    </>
   )
 }
