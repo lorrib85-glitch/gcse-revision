@@ -129,7 +129,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
           }}
         >
           <div style={{
-            fontFamily: "'Clash Display', 'Sora', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontWeight: 700,
             fontSize: 'clamp(28px, 7.5vw, 40px)',
             lineHeight: 1.2,
@@ -187,7 +187,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
           }}
         >
           <div style={{
-            fontFamily: "'Clash Display', 'Sora', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontWeight: 700,
             fontSize: 'clamp(26px, 7vw, 36px)',
             lineHeight: 1.15,
