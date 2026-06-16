@@ -67,7 +67,7 @@ export const MODULES = [
     icon: "☠️",
     color: "#8C3A2A",
     colorLight: "rgba(140,58,42,0.12)",
-    headerImage: "/figures/history/medicine/black-death/plague-background.png",
+    headerImage: "/headers/history-medicine-black-death.png",
     screenCount: 27,
     screenTags: [
       null,
@@ -109,7 +109,7 @@ export const MODULES = [
     icon: "🔬",
     color: "#D4950A",
     colorLight: "rgba(212,149,10,.12)",
-    headerImage: "/headers/history-medicine-medieval-scripture.png",
+    headerImage: "/headers/history-medicine-renaissance.png",
     screenCount: 16,
     screenTags: [
       null,
@@ -140,7 +140,7 @@ export const MODULES = [
     icon: "🩺",
     color: "#C47828",
     colorLight: "rgba(196,120,40,.12)",
-    headerImage: "/headers/history-medicine-bloodletting.png",
+    headerImage: "/headers/history-medicine-man-proved-wrong.png",
     screenCount: 11,
     screenTags: [
       null,
@@ -166,7 +166,7 @@ export const MODULES = [
     icon: "🐄",
     color: "#BD7224",
     colorLight: "rgba(189,114,36,.12)",
-    headerImage: "/headers/history-medicine-germ-bridge.png",
+    headerImage: "/headers/history-medicine-jenner.png",
     screenCount: 1,
     screenTags: [
       "vaccination",
@@ -182,7 +182,7 @@ export const MODULES = [
     icon: "🦠",
     color: "#B06520",
     colorLight: "rgba(176,101,32,.12)",
-    headerImage: "/headers/history-medicine-germ-bridge.png",
+    headerImage: "/headers/history-medicine-invisible-enemy.png",
     screenCount: 9,
     screenTags: [
       "germ-theory",
@@ -206,7 +206,7 @@ export const MODULES = [
     icon: "🏭",
     color: "#9A5A18",
     colorLight: "rgba(154,90,24,.12)",
-    headerImage: "/headers/history-medicine-through-time.webp",
+    headerImage: "/headers/history-medicine-great-stink.png",
     screenCount: 7,
     screenTags: [
       null,
@@ -228,7 +228,7 @@ export const MODULES = [
     icon: "🔪",
     color: "#7A4515",
     colorLight: "rgba(122,69,21,.12)",
-    headerImage: "/headers/history-medicine-bloodletting.png",
+    headerImage: "/headers/history-medicine-surgery-revolution.png",
     screenCount: 10,
     screenTags: [
       null,
@@ -253,7 +253,7 @@ export const MODULES = [
     icon: "💊",
     color: "#7A4515",
     colorLight: "rgba(122,69,21,.12)",
-    headerImage: "/headers/history-medicine-germ-bridge.png",
+    headerImage: "/headers/history-medicine-accidental-miracle.png",
     screenCount: 11,
     screenTags: [
       null,
@@ -279,7 +279,7 @@ export const MODULES = [
     icon: "🧬",
     color: "#1A5276",
     colorLight: "rgba(26,82,118,.12)",
-    headerImage: "/headers/history-medicine-through-time.webp",
+    headerImage: "/headers/history-medicine-modern.png",
     screenCount: 9,
     screenTags: [
       null,
@@ -542,7 +542,7 @@ export const MODULES = [
     icon: "🏥",
     color: "#C47828",
     colorLight: "rgba(196,120,40,.12)",
-    headerImage: "/headers/history-main.webp",
+    headerImage: "/headers/history-medicine-nhs.png",
     screenCount: 10,
     screenTags: [
       null,
