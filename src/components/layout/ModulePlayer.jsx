@@ -2573,6 +2573,23 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     )
   }
 
+  // ── MisconceptionCheck block — full-screen; must bypass ContentShell's
+  // overflowY:auto container which breaks position:fixed on mobile browsers ──
+  const mcBlock = (cur?.blocks || []).find(b => b.type === 'misconceptionCheck')
+  if (mcBlock) {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <MisconceptionCheck
+          block={mcBlock}
+          subject={module.subject}
+          onContinue={isLast ? handleFinish : () => go(1)}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
   return (
     <>
       <LearningHeader {...H} visible={headerVisible} />
