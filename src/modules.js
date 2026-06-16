@@ -109,7 +109,7 @@ export const MODULES = [
     icon: "🔬",
     color: "#D4950A",
     colorLight: "rgba(212,149,10,.12)",
-    headerImage: null,
+    headerImage: "/headers/history-medicine-medieval-scripture.png",
     screenCount: 16,
     screenTags: [
       null,
@@ -140,7 +140,7 @@ export const MODULES = [
     icon: "🩺",
     color: "#C47828",
     colorLight: "rgba(196,120,40,.12)",
-    headerImage: null,
+    headerImage: "/headers/history-medicine-bloodletting.png",
     screenCount: 11,
     screenTags: [
       null,
@@ -166,7 +166,7 @@ export const MODULES = [
     icon: "🐄",
     color: "#BD7224",
     colorLight: "rgba(189,114,36,.12)",
-    headerImage: null,
+    headerImage: "/headers/history-medicine-germ-bridge.png",
     screenCount: 1,
     screenTags: [
       "vaccination",
@@ -182,7 +182,7 @@ export const MODULES = [
     icon: "🦠",
     color: "#B06520",
     colorLight: "rgba(176,101,32,.12)",
-    headerImage: null,
+    headerImage: "/headers/history-medicine-germ-bridge.png",
     screenCount: 9,
     screenTags: [
       "germ-theory",
@@ -206,7 +206,7 @@ export const MODULES = [
     icon: "🏭",
     color: "#9A5A18",
     colorLight: "rgba(154,90,24,.12)",
-    headerImage: null,
+    headerImage: "/headers/history-medicine-through-time.webp",
     screenCount: 7,
     screenTags: [
       null,
@@ -228,7 +228,7 @@ export const MODULES = [
     icon: "🔪",
     color: "#7A4515",
     colorLight: "rgba(122,69,21,.12)",
-    headerImage: null,
+    headerImage: "/headers/history-medicine-bloodletting.png",
     screenCount: 10,
     screenTags: [
       null,
@@ -253,7 +253,7 @@ export const MODULES = [
     icon: "💊",
     color: "#7A4515",
     colorLight: "rgba(122,69,21,.12)",
-    headerImage: null,
+    headerImage: "/headers/history-medicine-germ-bridge.png",
     screenCount: 11,
     screenTags: [
       null,
@@ -279,7 +279,7 @@ export const MODULES = [
     icon: "🧬",
     color: "#1A5276",
     colorLight: "rgba(26,82,118,.12)",
-    headerImage: null,
+    headerImage: "/headers/history-medicine-through-time.webp",
     screenCount: 9,
     screenTags: [
       null,
@@ -303,7 +303,7 @@ export const MODULES = [
     icon: "🧬",
     color: "#4FA36C",
     colorLight: "rgba(79,163,108,.15)",
-    headerImage: null,
+    headerImage: "/headers/bio-main.webp",
     screenCount: 13,
     screenTags: [
       null,
@@ -331,7 +331,7 @@ export const MODULES = [
     icon: "🌿",
     color: "#38D27A",
     colorLight: "rgba(56,210,122,.15)",
-    headerImage: null,
+    headerImage: "/headers/bio-buildinglife.webp",
     screenCount: 9,
     screenTags: [
       null,
@@ -355,7 +355,7 @@ export const MODULES = [
     icon: "🔢",
     color: "#4B90FF",
     colorLight: "rgba(75,144,255,.12)",
-    headerImage: null,
+    headerImage: "/headers/maths-numbers.webp",
     screenCount: 8,
     screenTags: [
       null,
@@ -378,7 +378,7 @@ export const MODULES = [
     icon: "🍕",
     color: "#4B90FF",
     colorLight: "rgba(75,144,255,.12)",
-    headerImage: null,
+    headerImage: "/headers/maths-numbers.webp",
     screenCount: 9,
     screenTags: [
       null,
@@ -402,7 +402,7 @@ export const MODULES = [
     icon: "👥",
     color: "#D96030",
     colorLight: "rgba(217,96,48,.12)",
-    headerImage: null,
+    headerImage: "/headers/sociology-main.webp",
     screenCount: 12,
     screenTags: [
       null,
@@ -429,7 +429,7 @@ export const MODULES = [
     icon: "⚔️",
     color: "#D96030",
     colorLight: "rgba(217,96,48,.12)",
-    headerImage: null,
+    headerImage: "/headers/sociology-main.webp",
     screenCount: 17,
     screenTags: [
       null,
@@ -461,7 +461,7 @@ export const MODULES = [
     icon: "⚖️",
     color: "#D96030",
     colorLight: "rgba(123,63,140,.12)",
-    headerImage: null,
+    headerImage: "/headers/sociology-stratification.webp",
     screenCount: 12,
     screenTags: [
       null,
@@ -488,7 +488,7 @@ export const MODULES = [
     icon: "🏠",
     color: "#D96030",
     colorLight: "rgba(217,96,48,.12)",
-    headerImage: null,
+    headerImage: "/headers/sociology-family.webp",
     screenCount: 12,
     screenTags: [
       null,
@@ -515,7 +515,7 @@ export const MODULES = [
     icon: "⚔️",
     color: "#D96030",
     colorLight: "rgba(217,96,48,.12)",
-    headerImage: null,
+    headerImage: "/headers/sociology-family.webp",
     screenCount: 12,
     screenTags: [
       null,
@@ -542,7 +542,7 @@ export const MODULES = [
     icon: "🏥",
     color: "#C47828",
     colorLight: "rgba(196,120,40,.12)",
-    headerImage: null,
+    headerImage: "/headers/history-main.webp",
     screenCount: 10,
     screenTags: [
       null,
@@ -567,7 +567,7 @@ export const MODULES = [
     icon: "🔬",
     color: "#65E6C6",
     colorLight: "rgba(101,230,198,.15)",
-    headerImage: null,
+    headerImage: "/headers/bio-buildinglife.webp",
     screenCount: 1,
     screenTags: [
       null,
@@ -583,7 +583,7 @@ export const MODULES = [
     icon: "🫀",
     color: "#E87B5F",
     colorLight: "rgba(232,123,95,.15)",
-    headerImage: null,
+    headerImage: "/headers/bio-humanmachine.webp",
     screenCount: 1,
     screenTags: [
       null,
@@ -599,7 +599,7 @@ export const MODULES = [
     icon: "🦠",
     color: "#E84F6B",
     colorLight: "rgba(232,79,107,.15)",
-    headerImage: null,
+    headerImage: "/headers/bio-diseasewars.webp",
     screenCount: 1,
     screenTags: [
       null,
@@ -615,7 +615,7 @@ export const MODULES = [
     icon: "🧠",
     color: "#9B8BE8",
     colorLight: "rgba(155,139,232,.15)",
-    headerImage: null,
+    headerImage: "/headers/bio-controlsystems.webp",
     screenCount: 1,
     screenTags: [
       null,
@@ -631,7 +631,7 @@ export const MODULES = [
     icon: "🧬",
     color: "#7EC8E3",
     colorLight: "rgba(126,200,227,.15)",
-    headerImage: null,
+    headerImage: "/headers/bio-genetics.webp",
     screenCount: 1,
     screenTags: [
       null,
@@ -647,7 +647,7 @@ export const MODULES = [
     icon: "🌿",
     color: "#68C18A",
     colorLight: "rgba(104,193,138,.15)",
-    headerImage: null,
+    headerImage: "/headers/bio-ecosystems.webp",
     screenCount: 1,
     screenTags: [
       null,
@@ -663,7 +663,7 @@ export const MODULES = [
     icon: "⚛️",
     color: "#9B59E8",
     colorLight: "rgba(155,89,232,.15)",
-    headerImage: null,
+    headerImage: "/headers/chem-matteratoms.webp",
     screenCount: 1,
     screenTags: [
       null,
@@ -679,7 +679,7 @@ export const MODULES = [
     icon: "🧪",
     color: "#C459E8",
     colorLight: "rgba(196,89,232,.15)",
-    headerImage: null,
+    headerImage: "/headers/chem-reactions.webp",
     screenCount: 1,
     screenTags: [
       null,
@@ -695,7 +695,7 @@ export const MODULES = [
     icon: "🛢️",
     color: "#8B59E8",
     colorLight: "rgba(139,89,232,.15)",
-    headerImage: null,
+    headerImage: "/headers/chem-rates.webp",
     screenCount: 1,
     screenTags: [
       null,
@@ -711,7 +711,7 @@ export const MODULES = [
     icon: "🌍",
     color: "#5980E8",
     colorLight: "rgba(89,128,232,.15)",
-    headerImage: null,
+    headerImage: "/headers/chem-earth.webp",
     screenCount: 1,
     screenTags: [
       null,
