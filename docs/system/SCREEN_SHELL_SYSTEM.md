@@ -1,163 +1,153 @@
 # Screen Shell System
 
-**Version:** v1 — Locked Foundation Layer  
-**Source files:** `src/components/layout/ScreenShell.jsx` + `src/components/layout/LearningScreenShell.jsx`
+**Version:** v2  
+**Source files:** `src/components/layout/ContentShell.jsx`, `src/components/layout/InteractionShell.jsx`, `src/components/layout/CinematicShell.jsx`
 
 ---
 
 ## Purpose
 
-Defines the canonical screen structure for the product. Every major screen should sit inside a consistent shell.
-
-Without shells, each screen invents its own wrapper logic — leading to inconsistent safe-area padding, different max widths, inconsistent background layering, and layout drift.
-
-The shell is invisible when done well. Users should not notice it. But they should feel: consistency, calmness, premium structure, cinematic spacing, reliable navigation rhythm.
+Defines the canonical screen structure for all learning module screens. Shells are structural primitives that provide consistent safe-area handling, max-width centering, background layering, and top/bottom clearance. They own no behaviour, no state, and no sequencing logic.
 
 ---
 
-## ScreenShell
+## Decision rule
 
-**File:** `src/components/layout/ScreenShell.jsx`
+**Default to `ContentShell`.** Reach for `InteractionShell` when the screen contains an answer mechanic that needs to control its own scroll and fill available space. Only use `CinematicShell` when you have a specific written justification for why neither of the others can be used.
 
-Base wrapper for full-screen mobile views.
+---
 
-### Responsibilities
+## ContentShell
 
-- `position: fixed, inset: 0` full-screen container
-- Base background colour from `SUBJECTS[subject].background`
-- Optional atmospheric background image
-- Optional overlay from `SUBJECTS[subject].overlay`
-- Safe-area padding: `max(18px, env(safe-area-inset-top))` / `max(34px, env(safe-area-inset-bottom))`
-- Max content width: `420px`, horizontally centred
-- Horizontal padding: `SPACING.standard` (24px)
-- Optional scroll behaviour
+**File:** `src/components/layout/ContentShell.jsx`  
+**Use for:** Knowledge delivery screens — ConceptReveal, KeyFigureReveal, ExaminerExplainsScreen, VisualLearning, VisualNarrativeScreen, ExplainReveal, etc.
+
+### Alignment guarantees
+
+| Property | Value |
+|----------|-------|
+| Outer container | `position: fixed; inset: 0; overflow: hidden` |
+| Max content width | `420px`, horizontally centred |
+| Horizontal padding | `SPACING.compact` (16px) each side |
+| Top clearance | `calc(80px + env(safe-area-inset-top, 0px))` — clears the fixed LearningHeader |
+| Bottom clearance | `calc(96px + env(safe-area-inset-bottom, 0px))` — clears the fixed CTA bar |
+| Content scroll | `overflow-y: auto` — content scrolls within the shell |
+| Background | `SUBJECTS[subject].background` (dark base) |
+| Atmospheric image | Ghosted at `backgroundOpacity` (default 0.13), z-index 0, pointer-events none |
 
 ### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
+| `subject` | string | — | Subject name for theme lookup. Falls back to `History` if unrecognised. |
+| `backgroundImage` | string \| null | `null` | Atmospheric image URL |
+| `backgroundOpacity` | number | `0.13` | Opacity of atmospheric image layer |
+| `backgroundPosition` | string | `'center'` | CSS background-position for atmospheric image |
 | `children` | node | — | Screen content |
-| `subject` | string | — | Subject name for theme resolution |
-| `background` | string | — | Override subject background colour |
-| `backgroundImage` | string | — | Atmospheric image URL |
-| `backgroundPosition` | string | `'center'` | CSS background-position |
-| `backgroundOpacity` | number | `0.13` | Atmospheric image opacity (8–18% recommended) |
-| `backgroundFilter` | string | — | CSS filter on background image |
-| `overlay` | bool | `true` | Apply subject overlay over background |
-| `scroll` | bool | `true` | Enable scrollable content zone |
-| `centreContent` | bool | `false` | Vertically centre content (for completion/reveal screens) |
-| `className` | string | — | Additional CSS class on outer container |
-| `style` | object | — | Additional inline styles on outer container |
 
 ### Usage
 
 ```jsx
-import ScreenShell from '../layout/ScreenShell.jsx'
+import ContentShell from '../layout/ContentShell.jsx'
 
-<ScreenShell
+<ContentShell
   subject="History"
   backgroundImage="/headers/history-medicine-through-time.png"
-  backgroundPosition="left center"
   backgroundOpacity={0.11}
-  backgroundFilter="brightness(0.6)"
-  overlay={false}
-  style={{ animation: 'fade-in 360ms ease both' }}
+  backgroundPosition="left center"
 >
-  {/* Screen content */}
-</ScreenShell>
+  <h2>Medieval beliefs about disease</h2>
+  <p>Physicians in 1350 believed illness was caused by…</p>
+</ContentShell>
 ```
-
-### Background Layering Order
-
-1. Base colour (from `SUBJECTS[subject].background` or `background` prop)
-2. Optional atmospheric image (z-index 0)
-3. Optional overlay (z-index 1)
-4. Content zone (z-index 2)
 
 ---
 
-## LearningScreenShell
+## InteractionShell
 
-**File:** `src/components/layout/LearningScreenShell.jsx`
+**File:** `src/components/layout/InteractionShell.jsx`  
+**Use for:** Screens where the learner must complete an interaction before advancing — MatchingTask, GuidedChoiceCarousel, QuickRecallScreen, MisconceptionCheck, ColSortBlock, SwipeSort, FillInTheBlanksBlock, etc.
 
-Extends ScreenShell for learning module screens. Adds a header area with title, progress bar, and step count above the content zone.
+### Alignment guarantees
 
-### Responsibilities
+| Property | Value |
+|----------|-------|
+| Outer container | `position: fixed; inset: 0; overflow: hidden` |
+| Max content width | `420px`, horizontally centred |
+| Horizontal padding | `SPACING.compact` (16px) each side |
+| Top clearance | `calc(80px + env(safe-area-inset-top, 0px))` — clears the fixed LearningHeader |
+| Bottom clearance | `env(safe-area-inset-bottom, 0px)` only — interaction surface manages its own spacing |
+| Content overflow | `overflow: hidden` — inner area does not scroll; children control their own scroll |
+| Flex layout | `display: flex; flex-direction: column` — children can use `flex: 1` to fill height |
+| Background | Same as ContentShell |
 
-- Everything ScreenShell handles
-- Progress bar display at the top of content
-- Title and subtitle placement
-- Consistent content top offset for learning screens
+Children that need full-bleed content (e.g. a carousel going edge-to-edge) should apply `marginLeft: -SPACING.compact` and `marginRight: -SPACING.compact` on their own element.
+
+### Props
+
+Same as ContentShell — `subject`, `backgroundImage`, `backgroundOpacity` (default `0.13`), `backgroundPosition` (default `'center'`), `children`.
+
+### Usage
+
+```jsx
+import InteractionShell from '../layout/InteractionShell.jsx'
+
+<InteractionShell subject="Biology" backgroundImage="/headers/bio-diseasewars.png">
+  <MatchingTask
+    pairs={pairs}
+    onComplete={handleComplete}
+  />
+</InteractionShell>
+```
+
+---
+
+## CinematicShell
+
+**File:** `src/components/layout/CinematicShell.jsx`  
+**Use for:** Full-bleed immersive screens that deliberately break standard chrome — CinematicRevealMoment, TimelineCanvas, ChapterHookScreen. Use only when ContentShell or InteractionShell would actively prevent the required visual treatment.
+
+The component enforces one rule at the file level: **using it requires a written comment in the consuming component explaining why ContentShell or InteractionShell cannot be used.**
+
+### Alignment guarantees
+
+| Property | Value |
+|----------|-------|
+| Outer container | `position: fixed; inset: 0; overflow: hidden` |
+| Everything else | Component's responsibility |
+
+No background, no padding, no max-width, no safe-area handling is applied. The consuming component owns all of it.
 
 ### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | node | — | Screen content below header |
-| `subject` | string | — | Subject name for theme resolution |
-| `title` | string | — | Screen title (displayed in header) |
-| `subtitle` | string | — | Supporting subtitle |
-| `progress` | number | — | Progress value 0–1 for progress bar |
-| `currentStep` | number | — | Current step number (displayed as `n / total`) |
-| `totalSteps` | number | — | Total step count |
-| `backgroundImage` | string | — | Atmospheric image URL |
-| `showHeader` | bool | `true` | Show/hide header area |
-| `scroll` | bool | `true` | Enable scrollable content zone |
-| `className` | string | — | Additional CSS class |
-| `style` | object | — | Additional inline styles |
+| `children` | node | — | Full-bleed content |
+| `style` | object | — | Top-level style overrides (e.g. background colour) |
 
 ### Usage
 
 ```jsx
-import LearningScreenShell from '../layout/LearningScreenShell.jsx'
+// CinematicShell used here because this screen renders a full-bleed panning canvas
+// that must reach all four edges; the 16px horizontal padding in ContentShell/InteractionShell
+// would clip the swipe gesture area and break the connector rail alignment.
+import CinematicShell from '../layout/CinematicShell.jsx'
 
-<LearningScreenShell
-  subject="Biology"
-  title="Disease & Immunity"
-  progress={0.6}
-  currentStep={6}
-  totalSteps={10}
-  backgroundImage="/headers/bio-diseasewars.png"
->
-  {/* Learning screen content */}
-</LearningScreenShell>
+<CinematicShell style={{ background: '#0A0806' }}>
+  <TimelineCanvas events={events} onComplete={onComplete} />
+</CinematicShell>
 ```
 
 ---
 
 ## What Shells Must Not Do
 
-- Decide what component appears
+Shells are structural primitives. They must never:
+
+- Decide what component appears on screen
 - Sequence module screens
-- Calculate progress
-- Own answer state
+- Calculate or display progress
+- Own answer state or interaction state
 - Handle learning flow logic
 
-Shells are structural primitives — they provide consistent housing, not behaviour.
-
----
-
-## Migration Strategy
-
-Apply shells gradually — one screen at a time, verify visual output before continuing.
-
-**Good first candidates:**
-- `WeakSpotRecovery`
-- `ChapterHookScreen`
-- `ChapterCompleteScreen`
-
-**Avoid initially:**
-- Heavily nested ModulePlayer internals
-- Old inline App.jsx flows
-- Fragile locked components
-
----
-
-## Anti-Patterns Shells Prevent
-
-- Every screen defining its own full-screen wrapper
-- Inconsistent safe-area padding
-- Random max widths
-- Inconsistent background overlays
-- Cropped mobile screens
-- Content pushed too low by accident
+If you find yourself adding conditional rendering or state to a shell, the logic belongs in `ModulePlayer.jsx` or the consuming component.
