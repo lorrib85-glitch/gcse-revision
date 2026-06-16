@@ -3,6 +3,10 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import BackButton from '../core/BackButton.jsx'
+// CinematicShell used here because all inner layers are position: fixed (they escape any
+// containing block) and the screen must cover the full viewport including under system chrome;
+// ContentShell's padding would not reach these fixed children and would create an unwanted gap.
+import CinematicShell from './CinematicShell.jsx'
 
 const IMAGES = {
   History:   '/history-truefalse.webp',
@@ -159,7 +163,7 @@ export default function ChapterHookScreen({
         .chs-cont:active  { opacity: 0.6 !important; }
       `}</style>
 
-      <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: '#08090D' }}>
+      <CinematicShell style={{ background: '#08090D', zIndex: 1000 }}>
         {/* Subject image — question phase */}
         <div style={{
           position: 'fixed', inset: 0,
@@ -403,7 +407,7 @@ export default function ChapterHookScreen({
             )}
           </>
         )}
-      </div>
+      </CinematicShell>
     </>
   )
 }

@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+// CinematicShell used here because this screen renders full-bleed absolute-positioned portrait
+// and timeline image layers that must reach all four edges; ContentShell's 16px horizontal
+// padding and opaque background would clip the atmospheric imagery and break the layout.
+import CinematicShell from '../layout/CinematicShell.jsx'
 
 export default function VisualNarrativeScreen({
   subject = 'History',
@@ -98,10 +102,10 @@ export default function VisualNarrativeScreen({
         .vn-cta:active { opacity: 0.55 !important; }
       `}</style>
 
+      <CinematicShell style={{ background: '#08090D', zIndex: 100 }}>
       <div
         style={{
-          position: 'fixed', inset: 0, zIndex: 100,
-          background: '#08090D',
+          position: 'absolute', inset: 0,
           cursor: 'pointer',
           WebkitTapHighlightColor: 'transparent',
           userSelect: 'none', WebkitUserSelect: 'none',
@@ -315,6 +319,7 @@ export default function VisualNarrativeScreen({
         )}
 
       </div>
+      </CinematicShell>
     </>
   )
 }

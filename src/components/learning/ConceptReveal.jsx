@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+// CinematicShell used here because the background is either a full-bleed cover image or a
+// gradient that must fill the entire screen with no padding; ContentShell's padding and
+// safe-area offsets would create gaps around the atmospheric background.
+import CinematicShell from '../layout/CinematicShell.jsx'
 
 const STEP_MS = 380
 
@@ -81,13 +85,10 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
         }
       `}</style>
 
+      <CinematicShell style={{ background: bg, backgroundSize: 'cover', backgroundPosition: 'center', zIndex: 100 }}>
       <div
         style={{
-          position: 'fixed', inset: 0, zIndex: 100,
-          background: bg,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          overflow: 'hidden',
+          position: 'absolute', inset: 0,
           cursor: 'pointer',
           WebkitTapHighlightColor: 'transparent',
           userSelect: 'none',
@@ -211,6 +212,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
           </div>
         )}
       </div>
+      </CinematicShell>
     </>
   )
 }

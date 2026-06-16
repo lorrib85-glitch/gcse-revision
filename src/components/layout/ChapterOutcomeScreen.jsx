@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
 import BackButton from '../core/BackButton.jsx'
+// CinematicShell used here because all inner layers are position: fixed (they escape any
+// containing block) and the screen must cover the full viewport; ContentShell's padding
+// would not reach these fixed children and would create an unwanted gap.
+import CinematicShell from './CinematicShell.jsx'
 
 const IMAGES = {
   History:   '/historybacker.webp',
@@ -111,7 +115,7 @@ export default function ChapterOutcomeScreen({
         .cos-cta:active  { opacity: 0.6 !important; }
       `}</style>
 
-      <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: '#08090D' }}>
+      <CinematicShell style={{ background: '#08090D', zIndex: 1000 }}>
 
         {/* Background image */}
         <div style={{
@@ -223,7 +227,7 @@ export default function ChapterOutcomeScreen({
           </button>
         )}
 
-      </div>
+      </CinematicShell>
     </>
   )
 }
