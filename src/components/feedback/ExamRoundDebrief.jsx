@@ -78,7 +78,7 @@ export default function ExamRoundDebrief({ subject, results }) {
         marginTop: SPACING.compact,
         textAlign: 'left',
       }}>
-        <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.85rem', color: '#6B7A9A' }}>
+        <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '.85rem', color: '#6B7A9A' }}>
           Your examiner is looking back over the round…
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function ExamRoundDebrief({ subject, results }) {
         marginTop: SPACING.compact,
         textAlign: 'left',
       }}>
-        <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.85rem', color: '#6B7A9A' }}>
+        <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '.85rem', color: '#6B7A9A' }}>
           {error || 'No debrief available for this round.'}
         </div>
       </div>
@@ -123,7 +123,7 @@ export default function ExamRoundDebrief({ subject, results }) {
         From the examiner
       </div>
 
-      <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: '1rem', lineHeight: 1.6, color: '#F5F7FB', margin: '0 0 16px' }}>
+      <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '1rem', lineHeight: 1.6, color: '#F5F7FB', margin: '0 0 16px' }}>
         {debrief.headline}
       </p>
 
@@ -138,7 +138,7 @@ export default function ExamRoundDebrief({ subject, results }) {
           <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.7rem', letterSpacing: '.1em', textTransform: 'uppercase', color: '#9CA8C7', marginBottom: 6 }}>
             What kept costing you marks
           </div>
-          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.92rem', lineHeight: 1.6, color: 'rgba(245,247,251,0.88)' }}>
+          <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '.92rem', lineHeight: 1.6, color: 'rgba(245,247,251,0.88)' }}>
             {debrief.pattern}
           </div>
         </div>
@@ -146,10 +146,10 @@ export default function ExamRoundDebrief({ subject, results }) {
 
       {Array.isArray(debrief.moments) && debrief.moments.map((m, i) => (
         <div key={i} style={{ marginBottom: 12, paddingLeft: 14, borderLeft: `2px solid rgba(${accentRgb},0.4)` }}>
-          <div style={{ fontFamily: "'Outfit', sans-serif", fontStyle: 'italic', fontSize: '.88rem', lineHeight: 1.55, color: 'rgba(245,247,251,0.7)', marginBottom: 4 }}>
+          <div style={{ fontFamily: "'Sora', sans-serif", fontStyle: 'italic', fontSize: '.88rem', lineHeight: 1.55, color: 'rgba(245,247,251,0.7)', marginBottom: 4 }}>
             "{m.quote}"
           </div>
-          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.85rem', lineHeight: 1.55, color: 'rgba(245,247,251,0.92)' }}>
+          <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '.85rem', lineHeight: 1.55, color: 'rgba(245,247,251,0.92)' }}>
             {m.examinerNote}
           </div>
         </div>
@@ -160,7 +160,7 @@ export default function ExamRoundDebrief({ subject, results }) {
           <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '.7rem', letterSpacing: '.1em', textTransform: 'uppercase', color: accent, marginBottom: 6 }}>
             Next, try this
           </div>
-          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.9rem', lineHeight: 1.6, color: 'rgba(245,247,251,0.88)' }}>
+          <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '.9rem', lineHeight: 1.6, color: 'rgba(245,247,251,0.88)' }}>
             {debrief.nextStep}
           </div>
         </div>

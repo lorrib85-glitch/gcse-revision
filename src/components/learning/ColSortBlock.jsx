@@ -63,7 +63,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
       {/* Question label */}
       {block.question && (
         <div style={{
-          fontFamily: "'Outfit', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontWeight: 600, fontSize: 11,
           textTransform: 'uppercase', letterSpacing: '0.22em',
           color: `rgba(${rgb},0.72)`,
@@ -77,7 +77,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
         <>
           {/* Progress */}
           <div style={{
-            fontFamily: "'Outfit', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontWeight: 500, fontSize: 12,
             color: 'rgba(255,255,255,0.30)',
             marginBottom: 14,
@@ -109,7 +109,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
           {/* Correct feedback explanation */}
           {feedback === 'correct' && lastExpl && (
             <div style={{
-              fontFamily: "'Outfit', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontWeight: 500, fontSize: 13, lineHeight: 1.55,
               color: `rgba(${rgb},0.82)`,
               marginBottom: 20,
@@ -142,7 +142,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
                   <div
                     key={li}
                     style={{
-                      fontFamily: li === 0 ? "'Sora', sans-serif" : "'Outfit', sans-serif",
+                      fontFamily: "'Sora', sans-serif",
                       fontWeight: li === 0 ? 700 : 500,
                       fontSize: li === 0 ? 14 : 12,
                       letterSpacing: li === 0 ? '0.08em' : '0.02em',
@@ -171,7 +171,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
           </div>
           {block.explanation && (
             <div style={{
-              fontFamily: "'Outfit', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontWeight: 500, fontSize: 15, lineHeight: 1.65,
               color: 'rgba(245,245,245,0.72)',
             }}>

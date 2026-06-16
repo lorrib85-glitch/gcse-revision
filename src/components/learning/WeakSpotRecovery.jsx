@@ -70,7 +70,7 @@ export default function WeakSpotRecovery({
   const [isPressed, setIsPressed] = useState(false)
 
   const F = { fontFamily: "'Sora', sans-serif" }
-  const Serif = { fontFamily: "'Cormorant Garamond', serif" }
+  const Serif = { fontFamily: "'IBM Plex Serif', serif" }
 
   return (
     <div style={{

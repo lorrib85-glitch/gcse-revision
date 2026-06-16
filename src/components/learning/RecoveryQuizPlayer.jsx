@@ -78,7 +78,7 @@ export default function RecoveryQuizPlayer({
         background: '#080C1A',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         color: '#E0E6F0',
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Sora', sans-serif",
       }}>
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: 18, margin: 0 }}>Quiz not found.</p>
@@ -153,7 +153,7 @@ export default function RecoveryQuizPlayer({
           <BackButton onClick={onBack} />
 
           <div style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontSize: 13, fontWeight: 700, letterSpacing: '.08em',
             textTransform: 'uppercase',
             color: accent, opacity: 0.8,
@@ -216,7 +216,7 @@ export default function RecoveryQuizPlayer({
               </h2>
 
               <p style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: 15, color: 'rgba(255,255,255,0.6)',
                 margin: '0 0 28px',
                 lineHeight: 1.5,

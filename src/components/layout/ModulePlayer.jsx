@@ -81,13 +81,13 @@ function ReadBlock({ block }) {
     <div>
       {block.label && (
         <div style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
           textTransform: 'uppercase', color: '#70B8FF', marginBottom: 12,
         }}>{block.label}</div>
       )}
       <p style={{
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Sora', sans-serif",
         fontSize: '.95rem', lineHeight: 1.7, margin: 0, color: '#C8D0E8',
       }} dangerouslySetInnerHTML={{ __html: block.text }} />
     </div>
@@ -98,12 +98,12 @@ function KeypointBlock({ block }) {
   return (
     <div>
       <div style={{
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Sora', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
         textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 12,
       }}>⭐ Key Point</div>
       <p style={{
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Sora', sans-serif",
         fontSize: '.95rem', lineHeight: 1.65, margin: 0, color: '#E0E6F0',
       }} dangerouslySetInnerHTML={{ __html: block.text }} />
     </div>
@@ -114,12 +114,12 @@ function FunFactBlock({ block }) {
   return (
     <div>
       <div style={{
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Sora', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
         textTransform: 'uppercase', color: '#FFC857', marginBottom: 10,
       }}>{block.label || '🤯 Fun Fact'}</div>
       <p style={{
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Sora', sans-serif",
         fontSize: '.92rem', margin: 0, color: '#C8D0E8', lineHeight: 1.65,
       }}>{block.text}</p>
     </div>
@@ -130,19 +130,19 @@ function ExamTipBlock({ block }) {
   return (
     <div>
       <div style={{
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Sora', sans-serif",
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
         textTransform: 'uppercase', color: '#F5B700', marginBottom: 12,
       }}>{block.label || '🗡️ Exam Assassin'}</div>
       {block.text && (
         <p style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontSize: '.9rem', margin: '0 0 12px 0', color: '#C8D0E8', lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.text }} />
       )}
       {block.tip && (
         <p style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontSize: '.9rem', marginBottom: block.phrases ? 12 : 0, color: '#C8D0E8', lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.tip }} />
       )}
@@ -152,7 +152,7 @@ function ExamTipBlock({ block }) {
             <span key={p} style={{
               background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.3)',
               color: '#F5B700', borderRadius: 8, padding: '5px 11px',
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontSize: '.78rem', fontWeight: 600,
             }}>{p}</span>
           ))}
@@ -179,7 +179,7 @@ function TimelineBlock({ block }) {
               color: open === i ? '#070500' : '#F5B700',
               border: `1px solid ${open === i ? '#F5B700' : '#2A3552'}`,
               borderRadius: 12, display: 'grid', placeItems: 'center',
-              fontWeight: 800, fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 800, fontFamily: "'Sora', sans-serif",
               fontSize: '.8rem', padding: '10px 6px', minHeight: 56, transition: 'all .2s',
             }}>{e.year}</div>
             <div style={{
@@ -189,7 +189,7 @@ function TimelineBlock({ block }) {
               display: 'flex', alignItems: 'center',
             }}>
               <span style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: '.9rem', fontWeight: 500, color: '#C8D0E8',
               }} dangerouslySetInnerHTML={{ __html: e.text }} />
             </div>
@@ -291,13 +291,13 @@ function BossBlock({ block }) {
         }}>
           <span style={{ fontSize: '1rem' }}>{tierEmoji}</span>
           <div style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
             textTransform: 'uppercase', color: '#38D27A',
           }}>{block.label || 'Boss Challenge'}</div>
         </div>
         <p style={{
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontWeight: 600, fontSize: '1rem',
           color: '#F5F7FB', margin: 0, lineHeight: 1.45,
         }}>{block.question}</p>
@@ -313,7 +313,7 @@ function BossBlock({ block }) {
             transition: 'border-color .2s',
           }}>
             <div style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
               letterSpacing: '.1em', color: '#4A5578', marginBottom: 8,
             }}>Your answer</div>
@@ -325,7 +325,7 @@ function BossBlock({ block }) {
               style={{
                 width: '100%', border: 'none', background: 'transparent',
                 resize: 'none', outline: 'none',
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: '.93rem', color: '#E0E6F0',
                 lineHeight: 1.7, minHeight: 100,
                 opacity: grading ? .5 : 1,
@@ -338,7 +338,7 @@ function BossBlock({ block }) {
               background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.28)',
               borderRadius: 10, padding: '10px 14px', marginBottom: 10,
             }}>
-              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.83rem', color: '#FF5D73', margin: 0 }}>{error}</p>
+              <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.83rem', color: '#FF5D73', margin: 0 }}>{error}</p>
             </div>
           )}
 
@@ -349,7 +349,7 @@ function BossBlock({ block }) {
               : 'linear-gradient(135deg, #38D27A, #6BFFB0)',
             border: grading ? '1px solid #2A3552' : 'none',
             borderRadius: 13, padding: '14px',
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontWeight: 700, fontSize: '.95rem',
             color: grading ? '#4A5578' : '#001A0A',
             cursor: grading ? 'default' : 'pointer',
@@ -378,7 +378,7 @@ function BossBlock({ block }) {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
               <div style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontWeight: 800, fontSize: '1.4rem', color: gs.text,
               }}>
                 {feedback.score}/3
@@ -386,12 +386,12 @@ function BossBlock({ block }) {
               <div style={{
                 background: gs.badge, color: '#000',
                 borderRadius: 99, padding: '4px 12px',
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontWeight: 700, fontSize: '.75rem',
               }}>{gs.label}</div>
             </div>
             <p style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontSize: '.9rem', color: gs.text,
               margin: 0, lineHeight: 1.55, opacity: .9,
             }}>{feedback.summary}</p>
@@ -404,14 +404,14 @@ function BossBlock({ block }) {
               borderRadius: 13, padding: '14px', marginBottom: 8,
             }}>
               <div style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
                 letterSpacing: '.1em', color: '#4DFF88', marginBottom: 8,
               }}>✓ What you got right</div>
               {feedback.achieved.map((a, i) => (
                 <div key={i} style={{ display: 'flex', gap: 8, marginBottom: i < feedback.achieved.length - 1 ? 7 : 0 }}>
                   <span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span>
-                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{a}</p>
+                  <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{a}</p>
                 </div>
               ))}
             </div>
@@ -424,14 +424,14 @@ function BossBlock({ block }) {
               borderRadius: 13, padding: '14px', marginBottom: 8,
             }}>
               <div style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
                 letterSpacing: '.1em', color: '#FF5D73', marginBottom: 8,
               }}>→ Key points you missed</div>
               {feedback.missed.map((m, i) => (
                 <div key={i} style={{ display: 'flex', gap: 8, marginBottom: i < feedback.missed.length - 1 ? 7 : 0 }}>
                   <span style={{ color: '#FF5D73', flexShrink: 0 }}>→</span>
-                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{m}</p>
+                  <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{m}</p>
                 </div>
               ))}
             </div>
@@ -444,11 +444,11 @@ function BossBlock({ block }) {
               borderRadius: 13, padding: '14px', marginBottom: 10,
             }}>
               <div style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
                 letterSpacing: '.1em', color: '#F5B700', marginBottom: 6,
               }}>🗡️ Examiner tip</div>
-              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{feedback.examinerTip}</p>
+              <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{feedback.examinerTip}</p>
             </div>
           )}
 
@@ -459,14 +459,14 @@ function BossBlock({ block }) {
               borderRadius: 13, padding: '14px', marginBottom: 10,
             }}>
               <div style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
                 letterSpacing: '.1em', color: '#38D27A', marginBottom: 8,
               }}>📋 To score higher, your answer needs</div>
               {feedback.missed.map((m, i) => (
                 <div key={i} style={{ display: 'flex', gap: 8, marginBottom: i < feedback.missed.length - 1 ? 6 : 0 }}>
                   <span style={{ color: '#38D27A', flexShrink: 0, fontSize: '.85rem' }}>+</span>
-                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{m}</p>
+                  <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.85rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{m}</p>
                 </div>
               ))}
             </div>
@@ -477,7 +477,7 @@ function BossBlock({ block }) {
             width: '100%',
             background: 'linear-gradient(135deg, #38D27Acc, #38D27A)',
             border: 'none', borderRadius: 13, padding: '13px',
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontWeight: 700, fontSize: '.9rem', color: '#001A0A',
             cursor: 'pointer',
             boxShadow: '0 4px 16px rgba(56,210,122,.3)',
@@ -499,7 +499,7 @@ function RevealBlock({ block }) {
         borderRadius: 14, padding: '16px 18px', marginBottom: 10,
       }}>
         <div style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
           textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 8,
           display: 'flex', alignItems: 'center', gap: 6,
@@ -507,7 +507,7 @@ function RevealBlock({ block }) {
           ⚡ {block.label || 'Rapid Fire Sort'}
         </div>
         <p style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontWeight: 500, margin: 0,
           color: '#7C8DB0', fontSize: '.95rem', lineHeight: 1.5,
         }}>{block.prompt}</p>
@@ -519,7 +519,7 @@ function RevealBlock({ block }) {
           background: 'transparent',
           border: '1px solid #2A3552',
           borderRadius: 14, padding: '14px',
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontWeight: 600, fontSize: '.92rem',
           color: '#9CA8C7', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -534,12 +534,12 @@ function RevealBlock({ block }) {
           borderRadius: 14, padding: '16px 18px',
         }}>
           <div style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontSize: '.68rem', fontWeight: 700, letterSpacing: '.1em',
             textTransform: 'uppercase', color: '#4DFF88', marginBottom: 8,
           }}>✓ Answer</div>
           <p style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             margin: 0, fontSize: '.92rem', color: '#C8D0E8', lineHeight: 1.6,
           }}>{block.answer}</p>
         </div>
@@ -569,14 +569,14 @@ function FlashcardsBlock({ block }) {
           }}>
           <div>
             <div style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontWeight: 700, fontSize: '.88rem',
               color: flipped.has(i) ? '#C18CFF' : '#E0E6F0',
               marginBottom: flipped.has(i) ? 6 : 0,
             }}>{c.front}</div>
             {flipped.has(i) && (
               <div className="fade-up" style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 color: '#9CA8C7', fontSize: '.78rem', lineHeight: 1.5,
               }}>{c.back}</div>
             )}
@@ -633,7 +633,7 @@ function HotspotBlock({ block }) {
         boxShadow: '0 0 32px rgba(56,210,122,.06)',
       }}>
         <div style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
           textTransform: 'uppercase', color: '#38D27A', marginBottom: 10,
           display: 'flex', alignItems: 'center', gap: 6,
@@ -713,7 +713,7 @@ function HotspotBlock({ block }) {
             borderRadius: 14, padding: '14px 16px', marginTop: 10,
           }}>
             <div style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontWeight: 700, fontSize: '1rem',
               color: info.color, marginBottom: 6,
               display: 'flex', alignItems: 'center', gap: 6,
@@ -721,19 +721,19 @@ function HotspotBlock({ block }) {
               {info.icon} {info.title}
             </div>
             <p style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontSize: '.88rem', color: '#C8D0E8',
               margin: '0 0 6px', lineHeight: 1.55,
             }}>{info.job}</p>
             <p style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontSize: '.75rem', color: info.color,
               margin: 0, opacity: .8,
             }}>🏭 {info.analogy}</p>
           </div>
         ) : (
           <p style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontSize: '.78rem', color: '#4A5578',
             textAlign: 'center', margin: '10px 0 0',
           }}>
@@ -752,7 +752,7 @@ function MisconceptionBlock({ block }) {
   return (
     <div style={{ margin: '14px 0' }}>
       <div style={{
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Sora', sans-serif",
         fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
         textTransform: 'uppercase', color: '#FF5D73', marginBottom: 10,
       }}>⚠️ {block.label || 'Common Mistakes — tap to reveal why'}</div>
@@ -767,7 +767,7 @@ function MisconceptionBlock({ block }) {
             <div style={{ display: 'flex', gap: 10, marginBottom: revealed.has(i) ? 10 : 0 }}>
               <span style={{ color: '#FF5D73', fontSize: '1rem', flexShrink: 0 }}>✗</span>
               <div style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: '.88rem', color: '#C8D0E8',
                 textDecoration: revealed.has(i) ? 'line-through' : 'none',
                 opacity: revealed.has(i) ? .5 : 1,
@@ -778,7 +778,7 @@ function MisconceptionBlock({ block }) {
                 marginLeft: 22,
                 background: 'rgba(255,93,115,.1)', border: '1px solid rgba(255,93,115,.25)',
                 borderRadius: 8, padding: '5px 12px',
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: '.75rem', fontWeight: 600, color: '#FF5D73',
                 cursor: 'pointer',
               }}>Why does this lose marks?</button>
@@ -787,12 +787,12 @@ function MisconceptionBlock({ block }) {
                 <div style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
                   <span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span>
                   <div style={{
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'Sora', sans-serif",
                     fontSize: '.88rem', color: '#4DFF88', fontWeight: 600,
                   }}>{m.right}</div>
                 </div>
                 <div style={{
-                  fontFamily: "'Inter', sans-serif",
+                  fontFamily: "'Sora', sans-serif",
                   fontSize: '.78rem', color: '#9CA8C7', lineHeight: 1.5,
                 }}>{m.reason}</div>
               </div>
@@ -817,7 +817,7 @@ function ScarfBlock({ block }) {
         boxShadow: '0 0 24px rgba(56,210,122,.05)',
       }}>
         <div style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
           textTransform: 'uppercase', color: '#38D27A', marginBottom: 12,
         }}>🧣 {block.label || 'SCARF — uses of glucose'}</div>
@@ -837,17 +837,17 @@ function ScarfBlock({ block }) {
                 background: 'rgba(56,210,122,.12)',
                 border: '1px solid rgba(56,210,122,.25)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontWeight: 900, fontSize: '1.2rem', color: '#38D27A',
               }}>{item.letter}</div>
               <div style={{ flex: 1 }}>
                 <div style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontFamily: "'Sora', sans-serif",
                   fontWeight: 700, fontSize: '.9rem', color: '#F5F7FB',
                 }}>{item.word}</div>
                 {open === i && (
                   <div className="fade-up" style={{
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'Sora', sans-serif",
                     fontSize: '.82rem', color: '#9CA8C7',
                     marginTop: 4, lineHeight: 1.5,
                   }}>{item.detail}</div>
@@ -899,7 +899,7 @@ function BuilderBlock({ block }) {
         borderRadius: 18, padding: '16px',
       }}>
         <div style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Sora', sans-serif",
           fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
           textTransform: 'uppercase', color: '#38D27A', marginBottom: 12,
         }}>🧪 {block.label || 'Build the equation'}</div>
@@ -924,7 +924,7 @@ function BuilderBlock({ block }) {
                   borderRadius: 10,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: s ? 'pointer' : 'default',
-                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontFamily: "'Sora', sans-serif",
                   fontWeight: 700, fontSize: '.85rem',
                   color: s ? '#F5F7FB' : '#4A5578',
                   transition: 'all .2s', padding: '0 8px',
@@ -953,7 +953,7 @@ function BuilderBlock({ block }) {
                   background: 'rgba(56,210,122,.1)',
                   border: '1px solid rgba(56,210,122,.3)',
                   borderRadius: 10, padding: '8px 14px',
-                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontFamily: "'Sora', sans-serif",
                   fontWeight: 600, fontSize: '.85rem', color: '#6BFFB0',
                   cursor: 'pointer', transition: 'all .15s',
                 }}>
@@ -968,7 +968,7 @@ function BuilderBlock({ block }) {
             width: '100%',
             background: 'linear-gradient(135deg, #38D27A, #6BFFB0)',
             border: 'none', borderRadius: 12, padding: '12px',
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontWeight: 700, fontSize: '.9rem', color: '#000',
             cursor: 'pointer',
           }}>Check →</button>
@@ -981,22 +981,22 @@ function BuilderBlock({ block }) {
                 background: 'rgba(77,255,136,.08)', border: '1px solid rgba(77,255,136,.3)',
                 borderRadius: 12, padding: '14px', textAlign: 'center',
               }}>
-                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, color: '#4DFF88', marginBottom: 4 }}>✓ Correct!</div>
-                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#C8D0E8', margin: 0 }}>{block.successText}</p>
+                <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, color: '#4DFF88', marginBottom: 4 }}>✓ Correct!</div>
+                <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.85rem', color: '#C8D0E8', margin: 0 }}>{block.successText}</p>
               </div>
             ) : (
               <div style={{
                 background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.3)',
                 borderRadius: 12, padding: '14px',
               }}>
-                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, color: '#FF5D73', marginBottom: 6 }}>Not quite — try again</div>
-                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.83rem', color: '#C8D0E8', margin: '0 0 10px' }}>
+                <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, color: '#FF5D73', marginBottom: 6 }}>Not quite — try again</div>
+                <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.83rem', color: '#C8D0E8', margin: '0 0 10px' }}>
                   Hint: {block.hint}
                 </p>
                 <button onClick={() => { setSubmitted(false); setSlots(block.slots.map(() => null)); setAvailable([...block.pieces]) }} style={{
                   background: 'rgba(255,93,115,.12)', border: '1px solid rgba(255,93,115,.3)',
                   borderRadius: 9, padding: '8px 16px',
-                  fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: '.82rem',
+                  fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: '.82rem',
                   color: '#FF5D73', cursor: 'pointer',
                 }}>Try again</button>
               </div>
@@ -1033,10 +1033,10 @@ function ScenarioBlock({ block }) {
         background: 'rgba(77,255,136,.07)', border: '1px solid rgba(77,255,136,.25)',
         borderRadius: 16, padding: '16px', textAlign: 'center',
       }}>
-        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1.1rem', color: '#4DFF88', marginBottom: 6 }}>
+        <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1.1rem', color: '#4DFF88', marginBottom: 6 }}>
           {score}/{block.scenarios.length} — {score === block.scenarios.length ? 'Perfect! 🎉' : 'Good effort!'}
         </div>
-        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '.85rem', color: '#9CA8C7', margin: 0 }}>
+        <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.85rem', color: '#9CA8C7', margin: 0 }}>
           {block.completionText || 'Scenarios complete.'}
         </p>
       </div>
@@ -1054,10 +1054,10 @@ function ScenarioBlock({ block }) {
         borderRadius: 18, padding: '16px',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#38D27A' }}>
+          <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#38D27A' }}>
             🌱 {block.label || 'Glucose Decision'}
           </div>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '.72rem', color: '#4A5578' }}>
+          <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '.72rem', color: '#4A5578' }}>
             {current + 1}/{block.scenarios.length}
           </div>
         </div>
@@ -1066,7 +1066,7 @@ function ScenarioBlock({ block }) {
           background: '#10182B', border: '1px solid #2A3552',
           borderRadius: 12, padding: '14px', marginBottom: 12,
         }}>
-          <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '.95rem', color: '#F5F7FB', margin: 0 }}>
+          <p style={{ fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: '.95rem', color: '#F5F7FB', margin: 0 }}>
             {scenario.situation}
           </p>
         </div>
@@ -1084,7 +1084,7 @@ function ScenarioBlock({ block }) {
                   : '#2A3552'}`,
                 borderRadius: 12, padding: '12px 10px',
                 cursor: justAnswered ? 'default' : 'pointer',
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontWeight: 600, fontSize: '.82rem',
                 color: justAnswered
                   ? i === scenario.correctIndex ? '#4DFF88' : answered[answered.length-1]?.chosen === i ? '#FF5D73' : '#5A6480'
@@ -1099,7 +1099,7 @@ function ScenarioBlock({ block }) {
         {justAnswered && (
           <div className="fade-up" style={{
             marginTop: 10,
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontSize: '.8rem', color: '#9CA8C7', lineHeight: 1.5,
           }}>
             {lastAnswer.correct ? `✓ Correct — ${scenario.explanation}` : `✗ ${scenario.explanation}`}
@@ -1224,7 +1224,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
           <div style={{ marginBottom: 20 }}>
             {storyLines.map((line, i) => (
               <p key={i} style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: '.88rem', color: i === storyLines.length - 1 ? '#C8D0E8' : '#5A6480',
                 margin: '0 0 5px', lineHeight: 1.65,
                 fontWeight: i === storyLines.length - 1 ? 500 : 400,
@@ -1241,12 +1241,12 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             boxShadow: '0 8px 40px rgba(0,0,0,.4)',
           }}>
             <div style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontSize: '.6rem', fontWeight: 700, letterSpacing: '.14em',
               textTransform: 'uppercase', color: '#4A5578', marginBottom: 12,
             }}>True or False?</div>
             <p style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontSize: 'clamp(1.05rem, 3.5vw, 1.3rem)',
               fontWeight: 700, color: '#F5F7FB',
               margin: 0, lineHeight: 1.35, letterSpacing: '-.01em',
@@ -1265,7 +1265,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             }}>
               <span style={{ fontSize: '2rem' }}>✅</span>
               <span style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontWeight: 900, fontSize: '1.25rem',
                 color: '#4DFF88', letterSpacing: '.04em',
               }}>TRUE</span>
@@ -1280,7 +1280,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             }}>
               <span style={{ fontSize: '2rem' }}>❌</span>
               <span style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontWeight: 900, fontSize: '1.25rem',
                 color: '#FF5D73', letterSpacing: '.04em',
               }}>FALSE</span>
@@ -1299,7 +1299,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             {wasCorrect ? '🎯' : '💥'}
           </div>
           <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontWeight: 900, fontSize: '2rem', marginBottom: 14,
             color: wasCorrect ? '#4DFF88' : '#FF5D73',
             textShadow: wasCorrect ? '0 0 40px rgba(77,255,136,.5)' : '0 0 40px rgba(255,93,115,.6)',
@@ -1307,7 +1307,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             {wasCorrect ? 'CORRECT' : 'NOPE'}
           </div>
           <p style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontSize: '.95rem', lineHeight: 1.6,
             color: wasCorrect ? '#6BFFB0' : '#FF8DA1',
             maxWidth: 300, margin: '0 auto',
@@ -1316,7 +1316,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
               ? (hook.correctFeedback || "Right. Now find out why...")
               : (hook.wrongFeedback   || "That's what most people think. The numbers tell a different story...")}
           </p>
-          <div style={{ marginTop: 20, color: '#4A5578', fontSize: '.78rem', fontFamily: "'Inter', sans-serif" }}>
+          <div style={{ marginTop: 20, color: '#4A5578', fontSize: '.78rem', fontFamily: "'Sora', sans-serif" }}>
             Loading the experiment...
           </div>
         </div>
@@ -1326,7 +1326,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
       {phase === 'grow' && (
         <div style={{ animation: 'hFadeIn .4s ease' }}>
           <div style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontSize: '.65rem', fontWeight: 700, letterSpacing: '.14em',
             textTransform: 'uppercase', color: '#5A6480', marginBottom: 16, textAlign: 'center',
           }}>1648 — Somewhere in Belgium</div>
@@ -1387,7 +1387,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             {/* Year label inside card */}
             <div style={{
               textAlign: 'center', padding: '10px 0 14px',
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontWeight: 700, fontSize: '.82rem', color: '#5A6480',
             }}>
               {growStep === 0 && 'Planting the sapling...'}
@@ -1403,11 +1403,11 @@ function HookContent({ module, hook, hookState, subjectColor }) {
             borderRadius: 14, padding: '14px 16px', textAlign: 'center',
           }}>
             <p style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontWeight: 700, fontSize: '1rem', color: '#F5F7FB', margin: 0,
             }}>{hook.bigQuestion || 'So where did 74 kg of tree come from?'}</p>
             <p style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontSize: '.78rem', color: '#5A6480', margin: '6px 0 0',
             }}>Tap Next to find out →</p>
           </div>
@@ -1419,12 +1419,12 @@ function HookContent({ module, hook, hookState, subjectColor }) {
         <div style={{ animation: 'hFadeIn .4s ease' }}>
           <div style={{ marginBottom: 18, textAlign: 'center' }}>
             <p style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontSize: '.7rem', color: '#5A6480', margin: '0 0 8px',
               letterSpacing: '.08em', textTransform: 'uppercase',
             }}>If not the soil... then:</p>
             <h2 style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontWeight: 800, fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
               color: '#F5F7FB', margin: 0, letterSpacing: '-.01em',
             }}>{hook.bigQuestion || 'Where did 74 kg come from?'}</h2>
@@ -1446,13 +1446,13 @@ function HookContent({ module, hook, hookState, subjectColor }) {
                   <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>{item.emoji}</span>
                   <div>
                     <div style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontFamily: "'Sora', sans-serif",
                       fontWeight: 700, fontSize: '.95rem',
                       color: visible ? (item.color || '#4DFF88') : '#2A3552',
                     }}>{item.label}</div>
                     {visible && item.detail && (
                       <div style={{
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: "'Sora', sans-serif",
                         fontSize: '.78rem', color: '#9CA8C7',
                         marginTop: 3, lineHeight: 1.5, animation: 'hFadeIn .3s ease',
                       }}>{item.detail}</div>
@@ -1469,7 +1469,7 @@ function HookContent({ module, hook, hookState, subjectColor }) {
               background: 'rgba(56,210,122,.08)',
               border: '1.5px solid rgba(56,210,122,.3)',
               borderRadius: 14, padding: '14px',
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontWeight: 700, fontSize: '.92rem', color: '#6BFFB0',
               cursor: 'pointer', display: 'flex',
               alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -1484,12 +1484,12 @@ function HookContent({ module, hook, hookState, subjectColor }) {
               boxShadow: '0 0 32px rgba(56,210,122,.07)',
             }}>
               <p style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontWeight: 700, fontSize: '.95rem',
                 color: '#4DFF88', margin: 0, lineHeight: 1.5,
               }}>{hook.punchline}</p>
               <p style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: '.75rem', color: '#5A6480',
                 margin: '8px 0 0',
               }}>Tap Next to start learning →</p>
@@ -1537,20 +1537,20 @@ function IntroScreen({ module, onDone }) {
             borderRadius: 99, padding: '4px 12px', marginBottom: 14,
           }}>
             <span style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontSize: '.63rem', fontWeight: 700,
               letterSpacing: '.12em', textTransform: 'uppercase',
               color: subjectColor,
             }}>{hasRetrieval ? '⚡ Retrieval Starter' : '🎯 Module Overview'}</span>
           </div>
           <h2 style={{
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "'Sora', sans-serif",
             fontWeight: 800, fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
             color: '#F5F7FB', margin: '0 0 6px', letterSpacing: '-.01em',
           }}>{hasRetrieval ? 'What do you already know?' : "You'll be able to…"}</h2>
           {hasRetrieval && (
             <p style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontSize: '.85rem', color: '#5A6480', margin: 0,
             }}>No notes. No pressure. Just activate your brain.</p>
           )}
@@ -1579,7 +1579,7 @@ function IntroScreen({ module, onDone }) {
               borderRadius: 18, padding: '18px 20px', marginBottom: 20,
             }}>
               <div style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Sora', sans-serif",
                 fontSize: '.63rem', fontWeight: 700,
                 letterSpacing: '.12em', textTransform: 'uppercase',
                 color: subjectColor, marginBottom: 14,
@@ -1600,7 +1600,7 @@ function IntroScreen({ module, onDone }) {
                       marginTop: 1,
                     }}>{i + 1}</div>
                     <p style={{
-                      fontFamily: "'Inter', sans-serif",
+                      fontFamily: "'Sora', sans-serif",
                       fontSize: '.88rem', color: '#C8D0E8',
                       margin: 0, lineHeight: 1.5,
                     }}>{goal}</p>
@@ -1613,7 +1613,7 @@ function IntroScreen({ module, onDone }) {
               width: '100%',
               background: 'linear-gradient(135deg, ' + subjectColor + 'cc, ' + subjectColor + ')',
               border: 'none', borderRadius: 16, padding: '16px',
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Sora', sans-serif",
               fontWeight: 800, fontSize: '1rem', color: '#001A0A',
               cursor: 'pointer',
               boxShadow: '0 6px 24px ' + subjectColor + '44',

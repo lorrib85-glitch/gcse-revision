@@ -242,7 +242,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
           padding: '32px 28px', maxWidth: 420, width: '100%',
         }}>
           <div style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontFamily: "'IBM Plex Serif', Georgia, serif",
             fontWeight: 600,
             fontSize: 'clamp(36px, 9vw, 44px)',
             lineHeight: 1.05,
@@ -305,7 +305,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
           </div>
 
           <div style={{
-            fontFamily: 'Outfit, sans-serif',
+            fontFamily: 'Sora, sans-serif',
             fontWeight: 500,
             fontSize: 15,
             color: 'rgba(245,245,245,0.60)',
@@ -369,7 +369,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
         <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', maxWidth: 400 }}>
           <div style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontFamily: "'IBM Plex Serif', Georgia, serif",
             fontWeight: 600,
             fontStyle: 'italic',
             fontSize: 'clamp(42px, 11vw, 54px)',
@@ -383,7 +383,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
           {lastExpl && (
             <div style={{
-              fontFamily: 'Outfit, sans-serif',
+              fontFamily: 'Sora, sans-serif',
               fontWeight: 500,
               fontSize: 15,
               color: 'rgba(245,245,245,0.60)',
@@ -401,7 +401,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
           {explanation && (
             <div style={{
-              fontFamily: 'Outfit, sans-serif',
+              fontFamily: 'Sora, sans-serif',
               fontWeight: 500,
               fontSize: 16,
               color: 'rgba(245,245,245,0.80)',
@@ -611,7 +611,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
         bottom: 80,
         left: '50%', transform: 'translateX(-50%)',
         zIndex: 5,
-        fontFamily: 'Outfit, sans-serif',
+        fontFamily: 'Sora, sans-serif',
         fontWeight: 500,
         fontSize: 11,
         color: 'rgba(245,245,245,0.28)',
