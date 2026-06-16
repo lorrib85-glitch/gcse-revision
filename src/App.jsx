@@ -1695,19 +1695,43 @@ const SUBJECT_DESCRIPTIONS = {
   Physics:   'Explore the forces and energy that shape our world.',
 }
 
+const HISTORY_SERIES = [
+  {
+    id: 'medicine',
+    title: 'Medicine Through Time',
+    short: 'Medicine',
+    headerImage: '/headers/history-medicine-through-time.webp',
+    comingSoon: false,
+  },
+  {
+    id: 'spain-new-world',
+    title: 'Spain & the New World',
+    short: 'Spain',
+    headerImage: '/headers/history-spain-new-world.webp',
+    comingSoon: false,
+  },
+  {
+    id: 'elizabethan',
+    title: 'Elizabethan England',
+    short: 'Elizabethan',
+    headerImage: '/headers/history-elizabethan.webp',
+    comingSoon: true,
+  },
+  {
+    id: 'usa',
+    title: 'USA: Conflict at Home & Abroad',
+    short: 'USA',
+    headerImage: '/headers/history-usa-conflict.webp',
+    comingSoon: true,
+  },
+]
+
 function getSubjectModuleList(subjectName) {
   const real = MODULES.filter(m => m.subject === subjectName)
   const cs = (arr) => arr.map(x => ({ ...x, comingSoon: true }))
   switch (subjectName) {
     case 'History':
-      return [
-        ...real,
-        ...cs([
-          { id: 'cs_usa',   title: 'USA: Conflict at Home & Abroad', subtitle: 'AQA History · Period Study' },
-          { id: 'cs_eliz',  title: 'Early Elizabethans 1558–88',     subtitle: 'Elizabethan England' },
-          { id: 'cs_spain', title: 'Spain & the New World',          subtitle: 'British Depth Study' },
-        ]),
-      ]
+      return real
     case 'English':
       return cs([
         { id: 'cs_macbeth',   title: 'Macbeth',                subtitle: 'Shakespeare · Power & Ambition' },
@@ -1739,8 +1763,11 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const displayTitle = SUBJECT_DISPLAY_TITLES[subjectName] || subjectName
   const displayDesc  = SUBJECT_DESCRIPTIONS[subjectName]   || ''
 
+  const isHistory = subjectName === 'History'
+  const [activeSeries, setActiveSeries] = useState(() => isHistory ? HISTORY_SERIES[0] : null)
+
   const rawMods = getSubjectModuleList(subjectName)
-  const items = rawMods.map((mod, i) => {
+  const allItems = rawMods.map((mod, i) => {
     if (mod.comingSoon) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
     const s = safeGetModuleState(mod.id)
     const screen = s.screen || 0
@@ -1750,8 +1777,15 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
     // back down, but it must never read as anything other than 'completed' again.
     const pct = s.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
     const status = s.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
-    return { ...mod, number: i + 1, status, pct }
+    return { ...mod, number: mod.number || i + 1, status, pct }
   })
+
+  const items = (isHistory && activeSeries)
+    ? allItems.filter(m => (m.series || 'medicine') === activeSeries.id)
+    : allItems
+
+  const heroImage = isHistory && activeSeries ? activeSeries.headerImage : headerImg
+  const heroTitle = isHistory && activeSeries ? activeSeries.title : displayTitle
 
   const completedCount = items.filter(m => m.status === 'completed').length
   const realCount      = items.filter(m => m.status !== 'coming_soon').length
@@ -1801,9 +1835,10 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
       <div style={{ height: 198, position: 'relative', overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: `url(${headerImg})`,
+          backgroundImage: `url(${heroImage})`,
           backgroundSize: 'cover', backgroundPosition: 'center',
           opacity: 0.92,
+          transition: 'background-image 0.3s ease',
         }} />
         <div style={{
           position: 'absolute', top: 0, left: 0, bottom: 0, width: '68%',
@@ -1841,8 +1876,13 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           <div style={{
             fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 24, lineHeight: '28px',
             letterSpacing: '-0.01em', color: '#F5F7FF',
-          }}>{displayTitle}</div>
-          {displayDesc ? (
+          }}>{heroTitle}</div>
+          {isHistory ? (
+            <div style={{
+              fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 13, lineHeight: 1.35,
+              color: 'rgba(255,255,255,0.52)', marginTop: 6,
+            }}>{activeSeries?.comingSoon ? 'Coming soon' : `${items.length} episodes · AQA History`}</div>
+          ) : displayDesc ? (
             <div style={{
               fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 13, lineHeight: 1.35,
               color: 'rgba(255,255,255,0.52)', marginTop: 6, maxWidth: 240,
@@ -1852,7 +1892,68 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
         </div>
       </div>
 
+      {/* ── SERIES PICKER (History only) ── */}
+      {isHistory && (
+        <div style={{
+          display: 'flex', gap: 10, padding: '16px 24px 0',
+          overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch',
+        }}>
+          {HISTORY_SERIES.map(s => {
+            const isActive = activeSeries?.id === s.id
+            return (
+              <button
+                key={s.id}
+                onClick={() => setActiveSeries(s)}
+                style={{
+                  flexShrink: 0, width: 136, height: 84, borderRadius: 16,
+                  overflow: 'hidden', position: 'relative', cursor: 'pointer',
+                  border: isActive ? `2px solid ${accent}` : '2px solid transparent',
+                  padding: 0, opacity: isActive ? 1 : 0.38,
+                  transform: isActive ? 'scale(1.04)' : 'scale(1)',
+                  transition: 'opacity 0.22s, transform 0.22s, border-color 0.22s',
+                  boxShadow: isActive ? `0 0 18px rgba(${accentRgb},0.4)` : 'none',
+                }}
+              >
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  backgroundImage: `url(${s.headerImage})`,
+                  backgroundSize: 'cover', backgroundPosition: 'center',
+                }} />
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.12) 100%)',
+                }} />
+                <div style={{ position: 'absolute', bottom: 8, left: 10, right: 10 }}>
+                  <div style={{
+                    fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 11, lineHeight: 1.25,
+                    color: '#fff', textAlign: 'left',
+                    overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                  }}>{s.title}</div>
+                  {s.comingSoon ? (
+                    <div style={{
+                      marginTop: 3, fontFamily: "'Outfit', sans-serif", fontSize: 9,
+                      fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,0.45)',
+                    }}>Coming soon</div>
+                  ) : null}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      )}
+
       {/* ── MODULE JOURNEY ── */}
+      {isHistory && activeSeries?.comingSoon ? (
+        <div style={{ padding: '64px 24px', textAlign: 'center' }}>
+          <div style={{
+            fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 20, color: '#F5F7FF', marginBottom: 10,
+          }}>{activeSeries.title}</div>
+          <div style={{
+            fontFamily: "'Outfit', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.38)', maxWidth: 250, margin: '0 auto',
+          }}>This series is being built — episodes will appear here when ready.</div>
+        </div>
+      ) : (
       <div style={{ padding: '20px 24px 0' }}>
         {items.map((item, i) => {
           const isCompleted = item.status === 'completed'
@@ -2067,6 +2168,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
           )
         })}
       </div>
+      )}
 
       <BottomNav tab="subjects" setTab={() => onBack()} />
     </div>
