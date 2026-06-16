@@ -3,6 +3,10 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+// CinematicShell used here because the atmospheric background uses position:fixed with a
+// custom brightness+grayscale filter that must reach the full viewport; this screen is also
+// rendered without a LearningHeader so ContentShell's 80px top clearance would waste space.
+import CinematicShell from '../layout/CinematicShell.jsx'
 import { BUTTONS } from '../../constants/buttons.js'
 import { TYPE } from '../../constants/typography.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
@@ -225,10 +229,9 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
   )
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
+    <CinematicShell style={{
       background: '#08090D',
-      overflow: 'hidden',
+      zIndex: 1000,
       display: 'flex', flexDirection: 'column',
       animation: 'prk-fade-in 360ms ease both',
     }}>
@@ -541,6 +544,6 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
         )}
 
       </div>
-    </div>
+    </CinematicShell>
   )
 }

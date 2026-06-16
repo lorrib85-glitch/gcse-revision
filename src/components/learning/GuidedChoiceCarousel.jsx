@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+// CinematicShell used here because the full-screen cinematic reveal overlay (zIndex:1100) and
+// edge-to-edge carousel track require the outer container to have no padding or inset constraint.
+import CinematicShell from '../layout/CinematicShell.jsx'
 
 function tokenize(text) {
   const parts = text.split(/(\s+)/)
@@ -182,13 +185,10 @@ export default function GuidedChoiceCarousel({
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div style={{
-      position:        'fixed',
-      inset:           0,
+    <CinematicShell style={{
       background:      '#08090D',
       display:         'flex',
       flexDirection:   'column',
-      overflow:        'hidden',
       userSelect:      'none',
       WebkitUserSelect: 'none',
     }}>
@@ -736,6 +736,6 @@ export default function GuidedChoiceCarousel({
           </>
         )
       })()}
-    </div>
+    </CinematicShell>
   )
 }

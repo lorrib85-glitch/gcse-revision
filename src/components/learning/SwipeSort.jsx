@@ -1,5 +1,9 @@
 import { useState, useRef, useCallback } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+// CinematicShell used here because the split full-bleed background images and swipe gesture
+// zone must reach all four viewport edges; InteractionShell's padding would clip the
+// image split and break gesture hit areas near the screen edges.
+import CinematicShell from '../layout/CinematicShell.jsx'
 
 const SWIPE_THRESHOLD = 72
 
@@ -207,8 +211,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
   // ─── INTRO ──────────────────────────────────────────────────────────────────
   if (phase === 'intro') {
     return (
-      <div style={{
-        position: 'fixed', inset: 0,
+      <CinematicShell style={{
         background: '#05060A',
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
@@ -334,15 +337,14 @@ export default function SwipeSort({ block, subject, onComplete }) {
             Let's go →
           </button>
         </div>
-      </div>
+      </CinematicShell>
     )
   }
 
   // ─── DONE ───────────────────────────────────────────────────────────────────
   if (done) {
     return (
-      <div style={{
-        position: 'fixed', inset: 0,
+      <CinematicShell style={{
         background: '#08090D',
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
@@ -430,23 +432,21 @@ export default function SwipeSort({ block, subject, onComplete }) {
             Continue →
           </div>
         </div>
-      </div>
+      </CinematicShell>
     )
   }
 
   // ─── GAME ───────────────────────────────────────────────────────────────────
   return (
-    <div style={{
-      position: 'fixed', inset: 0,
+    <CinematicShell style={{
       background: '#08090D',
-      overflow: 'hidden',
-      userSelect: 'none', WebkitUserSelect: 'none',
       animation: 'ss-game-in 380ms ease both',
-    }}
-      onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
-      onMouseLeave={onMouseUp}
-    >
+    }}>
+      <div style={{ position: 'absolute', inset: 0, userSelect: 'none', WebkitUserSelect: 'none' }}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseUp}
+      >
       {/* Split background */}
       <div style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 0 }}>
         <div style={{
@@ -621,6 +621,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
       }}>
         swipe or tap to sort
       </div>
-    </div>
+      </div>
+    </CinematicShell>
   )
 }

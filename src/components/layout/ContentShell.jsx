@@ -6,6 +6,8 @@ export default function ContentShell({
   backgroundImage = null,
   backgroundOpacity = 0.13,
   backgroundPosition = 'center',
+  // 'learning' clears the fixed LearningHeader (80px); 'none' applies safe-area only (headerless screens)
+  header = 'learning',
   children,
 }) {
   const theme = SUBJECTS[subject] || SUBJECTS.History
@@ -41,8 +43,9 @@ export default function ContentShell({
         width: '100%',
         margin: '0 auto',
         boxSizing: 'border-box',
-        // 80px clears the fixed LearningHeader (~44px tall at 10px top + 16px gap below)
-        paddingTop: 'calc(80px + env(safe-area-inset-top, 0px))',
+        paddingTop: header === 'none'
+          ? 'env(safe-area-inset-top, 0px)'
+          : 'calc(80px + env(safe-area-inset-top, 0px))',
         paddingLeft: SPACING.compact,
         paddingRight: SPACING.compact,
         // 96px clears the fixed CTA bar (10px pad + 56px button + 10px pad + safe-area + buffer)

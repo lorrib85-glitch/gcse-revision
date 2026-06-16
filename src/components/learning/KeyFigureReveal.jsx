@@ -3,6 +3,10 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE }     from '../../constants/typography.js'
 import { SPACING }  from '../../constants/spacing.js'
 import { RADII }    from '../../constants/radii.js'
+// CinematicShell used here because the 56vh portrait hero image must be full-bleed with no
+// horizontal padding; ContentShell's 16px inset would create unwanted margins around the
+// hero and disrupt the name/role overlay anchored to the hero's edges.
+import CinematicShell from '../layout/CinematicShell.jsx'
 import { MOTION }   from '../../constants/motion.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 
@@ -61,12 +65,10 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
   }
 
   return (
-    <div style={{
-      height: '100dvh',
+    <CinematicShell style={{
       background: '#08090D',
       display: 'flex',
       flexDirection: 'column',
-      overflow: 'hidden',
     }}>
 
       {/* ── Portrait hero ───────────────────────────────────────────────── */}
@@ -260,6 +262,6 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           <ContinueCTA onClick={(e) => { e.stopPropagation(); onComplete?.() }} accent={accent} />
         )}
       </div>
-    </div>
+    </CinematicShell>
   )
 }

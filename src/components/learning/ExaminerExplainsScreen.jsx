@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import BackButton from '../core/BackButton.jsx'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
+// CinematicShell used here because multiple inner layers use position:fixed (background image,
+// gradients, overlays) that must reach all four viewport edges; ContentShell's 16px padding
+// and safe-area inner div would confine them to the content column.
+import CinematicShell from '../layout/CinematicShell.jsx'
 
 const IMAGES = {
   History:   '/historybacker.webp',
@@ -101,11 +105,11 @@ export default function ExaminerExplainsScreen({
         }
       `}</style>
 
+      <CinematicShell style={{ background: '#08090D', zIndex: 1000 }}>
       <div
         onClick={!showContinue ? handleTap : undefined}
         style={{
-          position: 'fixed', inset: 0, zIndex: 1000,
-          background: '#08090D',
+          position: 'absolute', inset: 0,
           cursor: showContinue ? 'default' : 'pointer',
           userSelect: 'none', WebkitUserSelect: 'none',
         }}
@@ -288,6 +292,7 @@ export default function ExaminerExplainsScreen({
           />
         )}
       </div>
+      </CinematicShell>
     </>
   )
 }

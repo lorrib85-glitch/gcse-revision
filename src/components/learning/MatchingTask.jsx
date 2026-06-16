@@ -2,6 +2,10 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { MOTION } from '../../constants/motion.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+// CinematicShell used here because the full-bleed background image and vignette overlays
+// (position:absolute, inset:0) must fill the entire viewport; InteractionShell's 16px
+// horizontal padding would constrain them to the content column width.
+import CinematicShell from '../layout/CinematicShell.jsx'
 
 // Fisher-Yates shuffle
 function shuffle(arr) {
@@ -159,10 +163,9 @@ export default function MatchingTask({ screen, subject, onComplete }) {
   const answerFontSize = n >= 5 ? 11.5 : 12.5
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
+    <CinematicShell style={{
+      zIndex: 1000,
       display: 'flex', flexDirection: 'column',
-      overflow: 'hidden',
       fontFamily: "'Sora', sans-serif",
     }}>
       <style>{CSS}</style>
@@ -406,6 +409,6 @@ export default function MatchingTask({ screen, subject, onComplete }) {
           />
         )}
       </div>
-    </div>
+    </CinematicShell>
   )
 }
