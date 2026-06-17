@@ -47,15 +47,26 @@ DRAFT (for user confirmation): Before 1847, surgery was a race against pain and 
   - **Infection:** patients would often survive operations but die from gangrene and sepsis; hospital environments were dirty; surgeons moved between patients without washing
   - **Bleeding:** major blood loss during operations; no solution until blood transfusions (20th century — Episode 12 scope)
 
+- **Ether as anaesthetic:**
+  - Before chloroform, surgeons experimented with ether
+  - **Advantages:** reduced pain during surgery
+  - **Disadvantages:** made patients cough; made patients vomit; was highly flammable
+  - These weaknesses encouraged Simpson to search for a better anaesthetic
+
 - **Solving pain — James Simpson (1847) and chloroform:**
-  - Ether used as anaesthetic in America but made patients vomit and cough
-  - 1847: Scottish surgeon James Simpson experimented with chemicals and found chloroform vapour was effective anaesthetic
+  - 1847: Scottish surgeon James Simpson experimented with chemicals and found chloroform vapour was a more effective and safer anaesthetic than ether
   - Queen Victoria used chloroform during childbirth (1853) → made it socially acceptable and fashionable
   - Problems with chloroform:
     - Overdose could kill the patient
     - Sometimes affected the heart → perfectly fit people could die
     - With effective anaesthetic, surgeons attempted more complex operations → infection and bleeding became bigger problems
     - Some people thought pain relief interfered with God's plan (childbirth and other procedures "meant to be painful")
+
+  **Why some surgeons resisted anaesthetics:**
+  - Some feared patients could die from chloroform (legitimate concern — there was a risk of overdose and heart damage)
+  - Some worried that longer operations (now possible because patients weren't in pain) would increase infection risk
+  - Many surgeons preferred familiar methods — resistance to change is common in any profession
+  - Acceptance of chloroform was therefore gradual rather than immediate
 
 - **Solving infection — Joseph Lister (1865) and antiseptics:**
   - Before germ theory, patients often survived operations but died from infections like gangrene and sepsis
@@ -67,10 +78,14 @@ DRAFT (for user confirmation): Before 1847, surgery was a race against pain and 
     - Science behind antiseptics wasn't understood; Lister focused on getting people to use carbolic spray, not explaining why it worked
     - Carbolic spray dried out the skin; surgeons found it uncomfortable (hands became sore)
 
-- **Aseptic surgery (by 1900):**
-  - Move from *anti*septic (killing germs during surgery) to *a*septic (removing all germs from theatre before surgery)
+- **Aseptic surgery (by 1900) — why it developed:**
+  - Pasteur's germ theory (1861) suggested that germs caused infection
+  - Koch identified specific bacteria that caused particular diseases (anthrax 1876; tuberculosis 1882; cholera 1883)
+  - This convinced surgeons that infection had a real physical cause (bacteria) — not just bad luck or miasma
+  - Surgeons moved from *anti*septic (killing germs during surgery) to *a*septic (preventing germs from entering before surgery)
   - Practices: surgical instruments steam sterilised; operating theatres cleaned; surgeons wore gloves, gowns and masks
   - By 1900 this was commonplace
+  - The key insight: understanding the cause (bacteria) through germ theory and Koch's work encouraged the move to prevention
 
 - **Nightingale's role in hospital reform (Episode 10 scope — brief reference):**
   - Nightingale improved hospital cleanliness and nursing standards (1854–1860)

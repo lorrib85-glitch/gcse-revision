@@ -58,6 +58,19 @@ DRAFT (for user confirmation): The Victorian public health revolution shows that
   - Voluntary — therefore ineffective; local authorities often ignored it
   - "Laissez-faire" government attitude: belief that government shouldn't interfere in people's lives
 
+  **Local Boards of Health:**
+  - The 1848 Act allowed local areas to create Local Boards of Health
+  - These boards could improve drainage, provide clean water, and remove rubbish and waste
+  - However, the Act was voluntary — many areas chose not to create boards
+  - This explains why the 1848 Act had very limited impact
+
+  **Why reform was difficult:**
+  - Water companies did not want government interference (would lose profits)
+  - Landlords did not want to pay for improvements to their properties
+  - Many politicians believed in laissez-faire ideas (government shouldn't interfere)
+  - Some local authorities did not want the expense of public health improvements
+  - These groups slowed reform even when public health problems were obvious
+
 - **Cholera epidemics:**
   - Multiple cholera epidemics hit Britain in 19th century (1831, 1848, 1854, 1866)
   - Before 1854, miasma was the dominant explanation for cholera
@@ -67,11 +80,12 @@ DRAFT (for user confirmation): The Victorian public health revolution shows that
   - Anaesthetist (he gave Queen Victoria chloroform during childbirth) — respected figure
   - 1854: mapped all cholera deaths in Broad Street area of London
   - Deaths centred around the Broad Street pump
-  - Removed the handle of the pump → cholera cases fell → demonstrated waterborne transmission
+  - Removed the handle of the pump → cholera cases fell → provided strong evidence for waterborne transmission
   - Later found the pump had been contaminated by a leaking cesspit nearby
   - Presented findings to Parliament 1855
-  - Initial impact limited: no scientific proof; rejected by miasma believers; wasn't from government
-  - Long-term: Snow's ideas backed up by Pasteur's germ theory 1861 — but Snow died in 1858 before vindication
+  - Initial impact limited: provided evidence but not scientific proof of the mechanism; most people still believed miasma; he wasn't a government figure and didn't influence immediate policy
+  - Long-term: Snow's ideas were backed up by Pasteur's germ theory (1861), which explained *why* water spread cholera — but Snow died in 1858 before vindication
+  - Crucial exam point: Snow's evidence was epidemiological (mapping cases) not microbiological (seeing bacteria)
   - Snow had *immediate* impact on the Broad Street area but not on wider government policy
 
 - **The Great Stink (1858):**
@@ -142,7 +156,7 @@ DRAFT (for user confirmation): The Victorian public health revolution shows that
 - Second Public Health Act 1875 → COMPULSORY → cities must act → UK-wide improvement in sanitation and life expectancy
 
 ### Exam angles
-- **"Explain why it took so long to improve public health in 19th-century Britain" (12 marks):** Three-factor structure: (1) laissez-faire attitude — government believed it shouldn't interfere; (2) 1848 Act was voluntary — no enforcement; (3) miasma was the dominant explanation — right solution (sanitation) reached for wrong reason; (4) vested interests (water companies, landlords) opposed change.
+- **"Explain why it took so long to improve public health in 19th-century Britain" (12 marks):** Four-factor structure: (1) laissez-faire attitude — government believed it shouldn't interfere; (2) 1848 Act was voluntary — no enforcement; (3) miasma was the dominant explanation — right solution (sanitation) reached for wrong reason; (4) vested interests — water companies, landlords, local authorities all opposed change because it would cost money or reduce profits. Strong answers explain *why* each factor mattered.
 - **"How important was John Snow in improving public health?" (12 marks):** Snow proved waterborne cholera; immediate impact limited (Parliament needed the Great Stink to act); Great Stink + Bazalgette = the actual change agent. Snow's importance = long-term, not immediate. Best answers: Snow contributed the evidence; government and Bazalgette converted it into action.
 - **"'The Great Stink of 1858 was the most important reason for improved public health in Britain in the 19th century.' How far do you agree?" (16 marks):** Agree: Great Stink directly prompted Bazalgette's sewers; government couldn't ignore Parliament's own building smelling. Counter: Chadwick's 1842 report established the case; Snow's 1854 evidence proved waterborne cause; 1875 Act ensured national action beyond London. Judgement: Great Stink was crucial catalyst but not the whole story.
 - **Misconceptions for `MisconceptionCheck`:**

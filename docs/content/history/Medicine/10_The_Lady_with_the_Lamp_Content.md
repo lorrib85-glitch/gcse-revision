@@ -51,6 +51,29 @@ DRAFT (for user confirmation): Florence Nightingale revolutionised hospital care
   - New hospitals in 1700s funded by wealthy businessmen; now focused on treating not just caring
   - As hospitals expanded, they became less sanitary; doctors moved between patients without washing; wards mixed infectious patients with others
 
+  **Voluntary hospitals:**
+  - During the eighteenth and nineteenth centuries many hospitals were funded by donations from wealthy people
+  - These were known as voluntary hospitals
+  - They helped provide treatment for the "deserving poor" (respectable working-class people)
+  - Voluntary hospitals expanded access to medical care before state-funded healthcare existed
+
+  **Cottage hospitals:**
+  - Small local hospitals appeared in rural areas during the nineteenth century
+  - They allowed patients to receive treatment closer to home
+  - They expanded access to healthcare beyond major cities
+
+  **Specialist hospitals:**
+  - Some hospitals began focusing on particular conditions or groups of patients
+  - Examples included children's hospitals, eye hospitals, and maternity hospitals
+  - This reflected growing medical knowledge and increasing demand for treatment
+
+- **Before Nightingale — the state of nursing:**
+  - Nursing existed before Florence Nightingale — it was not invented by her
+  - Most nurses had little formal training and worked with very basic knowledge
+  - Nursing had relatively low status as a profession — it was seen as unskilled work done by working-class women
+  - Hospitals were often poorly organised, with little coordination between nurses and doctors
+  - Nightingale's breakthrough was to professionalise nursing, not to invent it
+
 - **Florence Nightingale (1820–1910):**
   - Sent by government (with 38 nurses) to treat British soldiers in the Crimean War (1854)
   - British army hospital at Scutari: dirty, smelly, high death rate
@@ -83,16 +106,13 @@ DRAFT (for user confirmation): Florence Nightingale revolutionised hospital care
   - As more people used hospitals → less sanitary → doctors went between wards without washing
 
 - **Mary Seacole (1805–1881):**
-  - Born Mary Jane Grant in Kingston, Jamaica; her mother ran a lodging house for invalid soldiers and practiced medicine using West Indian and African herbal remedies — a "doctress" in the Jamaican tradition
-  - Mary learned these skills from her mother and gained nursing experience treating cholera and yellow fever outbreaks in Jamaica and Central America
-  - When the Crimean War broke out (1854), Seacole was determined to help; she applied to the War Office in London, to Florence Nightingale's nursing organisation, and to the Army Medical Board — she was rejected by all three; racial prejudice almost certainly played a role
-  - Seacole self-funded her journey to Crimea — she traveled at her own expense, with no government or institutional support
-  - Near Balaclava, she set up and ran the "British Hotel": a wooden hut providing food, drink, rest, and medical care to soldiers and officers; she also sold supplies to fund her work
-  - She treated soldiers on the battlefield itself, going forward to the front lines to tend to the wounded — she was often closer to the fighting than Nightingale, who remained at Scutari
-  - Used both her Caribbean herbal remedy knowledge and conventional medical supplies; her approach was practical and individual rather than administrative and systemic
-  - Became known among the troops as "Mother Seacole"; was widely respected by the soldiers she treated
-  - After the war, she was financially ruined; a public subscription fund and benefit concerts raised money for her
-  - Published *Wonderful Adventures of Mrs Seacole in Many Lands* (1857) — autobiography; very popular; fell out of public memory after her death and was rediscovered in the 1980s–1990s
+  - Born in Kingston, Jamaica; mother practiced medicine using West Indian herbal remedies; Seacole gained nursing experience treating cholera and yellow fever outbreaks in Jamaica
+  - When the Crimean War broke out (1854), Seacole applied to the War Office, to Nightingale's nursing organisation, and to the Army Medical Board — she was rejected by all three; racial prejudice almost certainly played a role
+  - Seacole self-funded her journey to Crimea — she traveled at her own expense with no government or institutional support
+  - Near Balaclava, she set up the "British Hotel": providing food, drink, rest, and medical care to soldiers; also treated soldiers on the battlefield itself, often closer to the fighting than Nightingale
+  - Became known as "Mother Seacole" among the troops; was widely respected
+  - After the war, she was financially ruined; public subscription and benefit concerts raised money for her
+  - Published *Wonderful Adventures of Mrs Seacole in Many Lands* (1857) — autobiography, very popular; fell out of public memory after her death and was rediscovered in the 1980s–1990s
   - **Contrast with Nightingale:**
     - Nightingale: government-backed; led 38 government-appointed nurses; worked from Scutari hospital; focused on administration, sanitation systems, statistical evidence; middle-class English woman with establishment connections
     - Seacole: self-funded; rejected by the establishment; worked on and near the battlefield; provided individual care using herbal and conventional methods; Black Jamaican woman with no institutional backing
