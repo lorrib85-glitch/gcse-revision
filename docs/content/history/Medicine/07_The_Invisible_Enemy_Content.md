@@ -47,7 +47,9 @@ DRAFT (for user confirmation): Germ theory was the single most important discove
 
 - **Louis Pasteur (1822–1895) and germ theory:**
   - French scientist (not a doctor); his work mainly looked at decay and spoiled food
+  - **Swan-neck flask experiment (c.1859–1861):** To disprove spontaneous generation, Pasteur filled glass flasks with broth and boiled it to kill any existing microorganisms. He then drew the neck of each flask into a long, curved (swan-neck) shape. The curved neck allowed air to circulate freely — so the test was fair — but the bend prevented dust particles and microorganisms from falling into the broth. The broth remained clear and sterile for months. When the neck was snapped off (allowing particles to enter) or the flask tilted so the broth touched the neck (where particles had settled), the broth quickly became cloudy and putrid. Conclusion: microorganisms came from the air on dust particles; they were not spontaneously generated from the broth itself. Some of Pasteur's original swan-neck flasks remain sterile at the Pasteur Institute in Paris to this day.
   - Published germ theory 1861: proved spontaneous generation was wrong; proved something in the air causes decay; if germs cause decay, they might also cause disease
+  - *Note: the swan-neck flask mechanism above is derived from Edexcel GCSE specification knowledge; the extracted source material only confirms Pasteur "proved spontaneous generation was wrong" without describing the flask experiment. All details are standard GCSE specification content.*
   - Initial limited impact on medicine:
     - Spontaneous generation still promoted by influential doctors
     - Pasteur not a doctor; work focused on food decay not medical disease

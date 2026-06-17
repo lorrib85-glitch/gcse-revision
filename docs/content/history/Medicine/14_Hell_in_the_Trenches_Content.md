@@ -33,7 +33,7 @@ DRAFT (for user confirmation): The Western Front was medicine under impossible c
 - Harold Gillies: plastic surgery/skin grafts pioneered at Queen Mary's Hospital Sidcup; facial injuries from artillery and gas → specialist surgical techniques developed that had no peacetime equivalent
 - Mobile X-rays: allowed doctors to locate shrapnel near the front line — previously impossible without surgery
 - Shell shock: recognised and treated as a real medical condition for the first time; previously dismissed or court-martialled; treatment was primitive but recognition was the first step
-- RAMC grew from ~3,000 medical workers in 1914 to ~13,000 by 1918 — medicine scaled up at industrial speed
+- RAMC grew substantially in size and capacity across the war — medicine scaled up at industrial speed; exact manpower figures UNCERTAIN (see sourcing notes)
 
 ### Series throughline
 - **Agent: War (⚔️):** This episode is the fullest and most explicit expression of ⚔️ War as an agent of change in the series. WWI created urgent need → medical innovation followed. Specifically: blood banks (→ Episode 12's surgery revolution), Thomas splint (immediate lives saved), plastic surgery (new surgical field).
@@ -77,10 +77,10 @@ DRAFT (for user confirmation): The Western Front was medicine under impossible c
     4. **Casualty Clearing Station (CCS):** Larger, more advanced field hospitals (semi-permanent); performed surgery; often located near railways for triage and onward transport; most surgery on the Western Front was done here
     5. **Base Hospitals:** Located on the French coast; railway links for long-term treatment; could also transport soldiers back to Britain
   - FANY (First Aid Nursing Yeomanry): women who drove ambulances, transporting injured soldiers from front line to hospitals
-  - RAMC (Royal Army Medical Corps): the medical branch of the British Army responsible for the entire medical provision; grew from ~3,000 medical workers (1914) to ~13,000 (1918)
+  - RAMC (Royal Army Medical Corps): the medical branch of the British Army responsible for the entire medical provision; expanded enormously across the war (exact manpower figures UNCERTAIN — see sourcing notes)
 
 - **Medical developments on the Western Front:**
-  - **Thomas splint:** Designed by Hugh Owen Thomas (pre-war, originally for fractures); introduced on Western Front; immobilised fractured femur (thigh bone) and prevented further injury; reduced deaths from leg fractures from 80% to 20% — one of the most dramatic improvements in survival rates in the war
+  - **Thomas splint:** Designed by Hugh Owen Thomas (pre-war, 1875; originally for treating limb fractures in civilian practice); Thomas died in 1891 before the war; his nephew Sir Robert Jones championed the splint's use on the Western Front and had it adopted systematically across British Army medical provision; immobilised fractured femur (thigh bone) and prevented further injury during evacuation; reduced deaths from leg fractures from 80% to 20% — one of the most dramatic improvements in survival rates in the war
   - **Mobile X-rays:** Allowed doctors to locate bullets and shrapnel near the front line without surgery; important advance in diagnosis under battlefield conditions
   - **Blood transfusions:** Initially carried out using a syringe and tube with the donor present; ways to store blood discovered by Lewisohn, Weil, Rous and Turner; blood depot set up before the Battle of Cambrai (1917); many soldiers were dying from blood loss rather than from the injury itself — transfusions were critical; Lawrence Robertson pioneered blood transfusions on the Western Front (1917)
   - **Aseptic surgery:** Sterilisation of instruments and wounds reduced infection rates; applied under battlefield conditions
@@ -101,21 +101,22 @@ DRAFT (for user confirmation): The Western Front was medicine under impossible c
 
 ### Dates & timeline
 - 1914 — WWI begins; British Expeditionary Force deployed to Western Front; RAMC medical provision begins
-- 1914 — Thomas splint introduced on Western Front (designed pre-war by Hugh Owen Thomas)
+- 1914 — Thomas splint introduced on Western Front (designed pre-war by Hugh Owen Thomas, c.1875; championed for Western Front use by his nephew Sir Robert Jones; Thomas himself died in 1891)
 - 1914–1918 — trench system built across northern France and Belgium
 - 1915 — Steel helmets introduced to British Army; reduced head injury deaths
 - 1915 — Some dressing stations begin including nurses (previously only male medical orderlies)
 - 1917 — Lawrence Robertson pioneers blood transfusions on the Western Front
 - 1917 — Blood depot set up before the Battle of Cambrai (one of the first organised blood banks)
 - 1917 — Methods of storing blood discovered (Lewisohn, Weil, Rous, Turner)
-- 1918 — WWI ends; RAMC has grown from ~3,000 (1914) to ~13,000 medical workers
+- 1918 — WWI ends; RAMC has expanded enormously over the war (exact manpower figures UNCERTAIN — see sourcing notes)
 
 ### Key people
-- **Hugh Owen Thomas (1834–1891):** Welsh surgeon who designed the Thomas splint (pre-war) for limb fractures; died before the war but his invention was deployed on the Western Front and saved thousands of lives; deaths from femur fractures fell from 80% to 20%
+- **Hugh Owen Thomas (1834–1891):** Welsh orthopaedic surgeon who designed the Thomas splint (c.1875) for civilian limb fracture treatment; died before WWI; never saw his invention used in wartime; the splint was brought to the Western Front by his nephew Sir Robert Jones
+- **Sir Robert Jones (1857–1933):** Welsh orthopaedic surgeon; nephew and former student of Hugh Owen Thomas; Director of Military Orthopaedics for the British Army in WWI; championed the Thomas splint's systematic use on the Western Front and ensured it was adopted across the entire British medical evacuation chain; directly responsible for the femur fracture death rate falling from 80% to 20%
 - **Lawrence Robertson:** Canadian surgeon who pioneered blood transfusions on the Western Front (1917); first to use blood transfusions systematically rather than ad hoc; set up blood depot before Battle of Cambrai
 - **Harold Gillies (1882–1960):** New Zealand-born surgeon; pioneered plastic surgery and skin graft techniques for facial injuries at Queen Mary's Hospital, Sidcup; his work on WWI patients became the foundation of modern plastic surgery
 - **FANY (First Aid Nursing Yeomanry):** Organisation of women who drove ambulances and transported injured soldiers from the front line to dressing stations and hospitals; significant contribution to the chain of evacuation
-- **RAMC (Royal Army Medical Corps):** The British Army's medical corps; grew from ~3,000 to ~13,000 medical workers during WWI; responsible for the entire chain of evacuation from stretcher bearers through to base hospitals
+- **RAMC (Royal Army Medical Corps):** The British Army's medical corps; expanded enormously during WWI to meet the scale of casualties (exact manpower figures UNCERTAIN — see sourcing notes); responsible for the entire chain of evacuation from stretcher bearers through to base hospitals
 
 ### Key terms & definitions
 - **Chain of evacuation:** The five-stage system for moving wounded soldiers from the front line to appropriate treatment — stretcher bearers → RAP → ADS/MDS → CCS → Base Hospital
@@ -155,7 +156,7 @@ DRAFT (for user confirmation): The Western Front was medicine under impossible c
 - **Q2(a) source utility framework:** Content (what does it show about the enquiry?) + Provenance (nature/origin/purpose — who, why, when?) + Contextual knowledge (what do we know that supports/qualifies the source?). Never give generic provenance comments that aren't linked to the specific enquiry.
 - **Q2(b) source follow-up:** Select a specific detail → question → source type → how it would help. E.g. detail: "I could only transfuse an occasional patient" → question: "Why were transfusions such a problem?" → source type: army medical records about blood storage → how it helps: records show each patient's case and treatment.
 - **Misconceptions for `MisconceptionCheck`:**
-  - "The Thomas splint was invented during WWI" — FALSE: designed pre-war by Hugh Owen Thomas; introduced on the Western Front but not invented there
+  - "The Thomas splint was invented during WWI" — FALSE: designed pre-war by Hugh Owen Thomas (~1875); Hugh Owen Thomas died in 1891 before the war; it was his nephew Sir Robert Jones who championed its systematic adoption on the Western Front
   - "Blood transfusions were straightforward on the Western Front" — FALSE: initially the donor had to be present; blood storage was only developed during the war; resources were often inadequate
   - "Shell shock was well-understood and treated on the Western Front" — FALSE: it was gradually recognised but many soldiers were court-martialled for its symptoms; treatment was primitive and inconsistent
 
@@ -166,5 +167,6 @@ DRAFT (for user confirmation): The Western Front was medicine under impossible c
 - **`Edexcel_GCSE_History_Paper_1_Option_11_November_2021_Mark_Scheme.txt`** — 2021 mark scheme: dressing station features (abandoned buildings/tents, staffing, minor injuries treated/severe passed on), blood transfusion source utility
 - **`Edexcel_GCSE_History_June_2022_P1_Op_11_MS.txt`** — 2022 mark scheme: trench foot (Passchendaele waterlogging, whale oil, foot inspection, gangrene/amputation risk)
 - MISSING: `Textbook_pages_British_Sector.txt` — 0 bytes (scanned PDF, no extractable text); if this was a dedicated Western Front textbook section, it would have been the primary source; all content derived from Knowledge Organiser and past paper mark schemes instead
-- MISSING: RAMC exact manpower figures (3,000 to 13,000 range) — derived from the summary's contextual notes; not confirmed in extracted source material. Treat as UNCERTAIN.
-- MISSING: Hugh Owen Thomas biographical dates and pre-war context — the Knowledge Organiser names him but gives no dates; dates derived from general GCSE knowledge
+- UNCERTAIN: RAMC manpower figures — the Knowledge Organiser and previous session notes cited ~3,000→~13,000 workers, but total RAMC strength (including officers, orderlies, stretcher bearers, nurses, support staff) is reported in some secondary sources as growing from ~9,000 (1914) to ~113,000+ (1918); the discrepancy may reflect different counting methods (medical workers only vs total corps). Do not use either figure in learner-facing content until a primary source can confirm; use "expanded enormously" as a safe alternative.
+- UNCERTAIN: Hugh Owen Thomas biographical dates (1834–1891 in this file) — derived from general knowledge; the Knowledge Organiser names him but gives no dates. Date of splint design (~1875) is also derived from general knowledge. Core fact confirmed: the splint predates the war and Thomas died before 1914.
+- ADDED from general knowledge: Sir Robert Jones (1857–1933) — nephew and former student of Hugh Owen Thomas; Director of Military Orthopaedics in WWI; responsible for championing the Thomas splint's systematic adoption on the Western Front. His role is well-established in GCSE specification context but not confirmed in any of the extracted source PDFs for this synthesis.

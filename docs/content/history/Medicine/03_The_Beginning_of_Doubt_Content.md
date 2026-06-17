@@ -74,6 +74,19 @@ DRAFT (for user confirmation): The Renaissance didn't cure anyone — but it pro
   - Encouraged other doctors to carry out dissections rather than relying on old books
   - Laid foundation for others to investigate human body in more detail
 
+- **Ambroise Paré (c.1510–1590) and surgery:**
+  - French barber-surgeon; served as army surgeon in French campaigns in Italy and elsewhere
+  - Traditional treatment for gunshot wounds: pour boiling oil into the wound (believed gunpowder was poisonous; oil thought to cauterise and neutralise it)
+  - c.1537: during a campaign, Paré ran out of boiling oil mid-battle; improvised a soothing mixture of egg yolk, oil of roses, and turpentine instead
+  - Next morning: soldiers treated with the mixture were in better condition (less pain, less swelling, less fever) than those who had received boiling oil
+  - Conclusion: the traditional treatment was harmful; abandoned boiling oil entirely
+  - Also developed the **ligature**: instead of cauterising amputated limb stumps with a red-hot iron (standard practice), he tied blood vessels with thread — reduced death from shock and blood loss
+  - Also: designed prosthetic limbs and artificial eyes for wounded soldiers
+  - Famous quote: "Je le pansai, Dieu le guérit" — "I dressed him, God healed him" — acknowledged God's role; showed humility; an empiricist who still worked within a religious frame
+  - Published surgical manuals in French (not Latin) — accessible to surgeons without a university education; spread new methods more widely
+  - Significance: advanced surgery from a crude craft toward a skilled, evidence-based discipline; demonstrated that careful observation could overturn centuries of received practice
+  - *Note: Paré's content is derived from Edexcel GCSE specification knowledge; not found in extracted source PDFs for this synthesis. All details are standard GCSE specification content.*
+
 - **Changes in treatment:**
   - Transference: disease could be transferred to something else (e.g. warts rubbed on onion; illness transferred to live animals)
   - Herbal remedies: now chosen by colour or shape (yellow herbs for jaundice); new herbs from the New World (ipecac from Brazil for dysentery; cinchona bark from Peru for malaria by Thomas Sydenham; tobacco used against miasma)
@@ -97,6 +110,8 @@ DRAFT (for user confirmation): The Renaissance didn't cure anyone — but it pro
 - 1440 — Printing press invented (carries forward from medieval period; now begins to have impact)
 - 1492 — New World discovered; new herbs and ingredients available
 - c1500s — Henry VIII closes London bathhouses; closes monasteries → hospitals close
+- c.1537 — Paré abandons boiling oil for gunshot wounds; discovers soothing mixture produces better outcomes
+- c.1545 — Paré introduces ligature technique for amputations (tying blood vessels instead of cauterising)
 - 1543 — Vesalius publishes *On the Fabric of the Human Body*
 - 1628 — Harvey publishes circulation of blood (Episode 4 scope — noted here for series continuity)
 - 1660 — Royal Society formed
@@ -106,6 +121,7 @@ DRAFT (for user confirmation): The Renaissance didn't cure anyone — but it pro
 - 1685 — Charles II treated with bloodletting and purging → illustrates humoural continuity
 
 ### Key people
+- **Ambroise Paré (c.1510–1590):** French barber-surgeon and army surgeon; abandoned boiling oil for gunshot wounds after running out mid-battle (~1537) and observing better outcomes with a soothing mixture (egg yolk, rose oil, turpentine); introduced ligature (tying blood vessels with thread) instead of cauterisation for amputations; designed prosthetic limbs; published surgical manuals in French (not Latin); famous quote: "I dressed him, God healed him"; advanced surgery from a craft toward an evidence-based discipline. *Derived from GCSE specification knowledge; not in extracted source PDFs.*
 - **Andreas Vesalius (c1514–1564):** Italian physician; published *On the Fabric of the Human Body* (1543); found ~300 errors in Galen through human dissection; encouraged empirical investigation over book-learning
 - **Thomas Sydenham (1624–1689) — "The English Hippocrates":** Refused to rely on medical books; observed patients closely; believed illness caused by external factors; correctly differentiated measles from scarlet fever; published *Observationes Medicae* (1676)
 - **Antony von Leeuwenhoek (1632–1723):** Observed "animalcules" (bacteria) under microscope; didn't connect them to disease causation — significant in retrospect
@@ -120,12 +136,15 @@ DRAFT (for user confirmation): The Renaissance didn't cure anyone — but it pro
 - **Secular:** non-religious; more willing to seek scientific explanations
 - **Dissection:** examination of human bodies to study anatomy; became more possible during Renaissance
 - **Fugitive sheets:** detailed anatomical drawings used to teach surgeons
+- **Ligature:** surgical technique developed by Paré; tying blood vessels with thread to stop bleeding after amputation; replaced the red-hot iron cauterisation method; reduced death from shock and blood loss
 - **Transference:** belief that illness could be transferred to another object or living thing
 - **Medical chemistry (alchemy):** use of chemical compounds (mercury, antimony) as medical treatments
 - **Pest houses:** new type of hospital for plague/pox victims only; kept contagious patients separate
 - **Royal Society:** group of scientists formed 1660; shared experiments and promoted scientific ideas; *Philosophical Transactions* journal
 
 ### Case studies / named examples
+- **Paré's gunshot wound experiment (c.1537):** Paré ran out of boiling oil mid-battle and was forced to use a soothing mixture of egg yolk, oil of roses, and turpentine. The next morning, soldiers who received the mixture were in better condition than those who received boiling oil. This is the textbook example of an accidental discovery leading to better practice — pure observation overturning centuries of received wisdom. The specific details (ran out of oil, soothing mixture, next morning comparison) are all exam-testable.
+- **Paré's ligature technique:** By tying blood vessels after amputation (instead of burning with a red-hot iron), Paré reduced death from shock dramatically. The contrast (hot iron → patient dies of shock; thread ligature → patient survives) is exam-testable as a Renaissance surgical improvement. *Derived from GCSE specification knowledge.*
 - **Vesalius's 300 errors in Galen:** The specific list (jawbone, ribs, vena cava, breastbone) is exam-essential; each error shows that Galen dissected animals not humans
 - **Charles II's treatment (1685):** Despite the Renaissance, when Charles II fell ill he received bloodletting and purging — humoural treatments unchanged; illustrates continuity
 - **Tobacco as a medicine:** Used to ward off miasma; shows that even "new" Renaissance ideas were built on the same miasma framework
@@ -138,10 +157,13 @@ DRAFT (for user confirmation): The Renaissance didn't cure anyone — but it pro
 - Printing press + Royal Society → scientific ideas shared faster and more widely than ever before → cumulative effect on knowledge
 - New World exploration → new herbs/ingredients → herbal remedies diversified (but still within same framework)
 - Monastery closures → hospitals close → fewer places of care for the poor
+- Paré runs out of boiling oil (c.1537) → forced to improvise → observes better outcomes with soothing mixture → abandons boiling oil → surgical treatment of gunshot wounds improved
+- Paré introduces ligature → amputation patients survive shock → surgery becomes less immediately fatal → surgery as a discipline advances
 
 ### Exam angles
 - **"'There was little progress in medicine in Britain during the Renaissance period.' How far do you agree?" (16 marks + SPaG):** Standard 16-mark essay. Mark scheme rewards: (agree) Vesalius improved anatomy not treatment; Harvey had no practical use; Galen still dominated medical training; religion remained a factor; (disagree) authority of Church declining; printing press spread new ideas; Royal Society formed; Vesalius proved Galen could be wrong. Best answers deliver a supported overall judgement.
 - **"Explain why Vesalius was able to challenge Galen's ideas" (12 marks):** Use agents of change: 🔬 Technology (printing press, opportunity to dissect criminals), ⛪ Religion declining (Reformation), 👤 Individual ability, 🏛️ Government (some rulers supported science)
+- **"Explain why surgery improved during the Renaissance" (12 marks):** Paré = the key answer. Two developments: (1) abandoned boiling oil — observed better outcomes with soothing mixture (empirical observation over tradition); (2) ligature — tied blood vessels instead of cauterising (reduced shock deaths). Paré's manuals in French (not Latin) spread these improvements. Counter: most people still received humoural treatments (Charles II 1685); Paré's improvements were not immediately universal. *Paré is derived from GCSE specification knowledge; not confirmed in extracted source PDFs for this synthesis.*
 - **Misconceptions for `MisconceptionCheck`:**
   - "Vesalius changed how patients were treated in the Renaissance" — PARTLY FALSE: he changed understanding of anatomy, not treatments; humoural treatments continued
   - "The Church had no role in Renaissance medicine" — FALSE: Church authority declined but religious explanations still used, especially in epidemics

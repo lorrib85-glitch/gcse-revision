@@ -94,7 +94,7 @@ DRAFT (for user confirmation): Modern medicine after 1900 did not just improve o
 
 - **Ideas about treatment — impact of the NHS:**
   - After WWII, people wanted to improve society; people housing evacuees were shocked by how unhealthy some city children were
-  - 1942: William Beveridge report identified "5 Evils" needing to be eradicated from society
+  - 1942: William Beveridge report identified "5 Evils" needing to be eradicated from society: Want (poverty/inadequate income), Disease (lack of healthcare), Ignorance (lack of education), Squalor (poor housing), Idleness (unemployment)
   - 1948: NHS launched — aimed to provide medical care to everybody free at the point of delivery; paid for through National Insurance contributions
   - Overseen by Minister of Health Aneurin Bevan
   - NHS took over existing hospitals and surgeries; government could not afford to update them initially
@@ -137,7 +137,7 @@ DRAFT (for user confirmation): Modern medicine after 1900 did not just improve o
 
 ### Key terms & definitions
 - **NHS (National Health Service):** Free medical service launched 1948; funded through National Insurance; available to all at point of delivery; the most significant 🏛️ Government intervention in modern British medicine
-- **Beveridge Report (1942):** Report by William Beveridge identifying "5 Evils" (Want, Disease, Ignorance, Squalor, Idleness) that the post-war government should eradicate; directly inspired the NHS
+- **Beveridge Report (1942):** Report by William Beveridge identifying "5 Evils" that the post-war government should eradicate — Want (poverty/inadequate income), Disease (lack of healthcare), Ignorance (lack of education), Squalor (poor housing), Idleness (unemployment); directly inspired the creation of the NHS and the post-war welfare state. *The source material confirms "5 Evils" but does not list them by name; names derived from standard GCSE specification knowledge.*
 - **DNA (deoxyribonucleic acid):** The molecule in human cells that carries genetic information; double helix structure identified by Watson and Crick (1953); knowledge of structure enabled identification of hereditary disease causes
 - **Human Genome Project (1990):** International scientific project to map the complete human DNA sequence (over 3 billion pairs); over 10 years; 18 countries; enables identification of genetic disease markers
 - **Blood groups:** Identified by Landsteiner (1900); made blood transfusions safe by ensuring donor and recipient blood compatibility; solved surgery's bleeding problem
