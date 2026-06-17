@@ -23,7 +23,7 @@ DRAFT (for user confirmation): Medieval medicine was not random superstition —
 
 ### Evidence for the takeaway
 - Church controlled all books and education → Galen's texts were the only ones widely taught → no exposure to alternative theories
-- Dissection largely illegal (Church: body must remain whole for the soul) → no hands-on testing of Galen's claims → errors persisted for 1300+ years
+- Human dissection was uncommon and opportunities to test Galen's ideas directly were limited → many errors in anatomy remained unchallenged for centuries
 - Physicians' economic incentive: patients wanted Galen treatments, not experiments → market pressure reinforced orthodoxy
 - The printing press (invented 1440) existed by the late medieval period but had not yet disrupted the Church's control of knowledge
 - When dissections of criminals were occasionally allowed, disagreements with Galen could be "explained away" because the criminal body was imperfect
@@ -59,10 +59,38 @@ DRAFT (for user confirmation): Medieval medicine was not random superstition —
     - Humours linked to seasons (winter = wet/cold = too much phlegm), personality traits (hot-tempered = too much yellow bile), star signs
     - Galen added Theory of Opposites: treat excess of one humour with its opposite (e.g. too much phlegm [cold] → eat something hot like pepper; too much blood [hot/wet] → eat cucumber)
 
+  #### Humour qualities
+
+  Each humour was believed to have its own qualities:
+
+  | Humour | Qualities |
+  |--------|-----------|
+  | Blood | Hot and Wet |
+  | Phlegm | Cold and Wet |
+  | Yellow Bile | Hot and Dry |
+  | Black Bile | Cold and Dry |
+
+  Physicians believed illness happened when these qualities became unbalanced. Galen's Theory of Opposites aimed to restore balance by using treatments with opposite qualities.
+
 - **Why Galen and Hippocrates had such influence — three reasons:**
   - **Influence of the Church:** Galen believed in the soul → fitted Christian beliefs → Church promoted his texts → only texts widely taught
   - **Importance of book learning:** Good physician = widely read, not experienced; physicians who hadn't read Galen couldn't find work
-  - **Lack of alternatives:** Dissection mostly illegal → couldn't test theories; exceptions (criminals) could be explained away; printing press not yet disruptive
+  - **Lack of alternatives:** Human dissection was rare and opportunities to examine the body were limited, making it difficult to test Galen's ideas and challenge his conclusions
+
+- **Natural and supernatural explanations:**
+  Medieval people often divided illness into natural and supernatural causes.
+
+  **Natural causes**
+  - Four Humours imbalance
+  - Miasma (bad air)
+
+  **Supernatural causes**
+  - Punishment from God
+  - A test of faith
+  - The influence of the Devil
+  - Astrology (often linked to God's control of the heavens)
+
+  People did not see these explanations as competing theories. Many believed several could be true at the same time.
 
 - **Approaches to treatment:**
   - **Religious treatments:** prayer, fasting, paying for a special Mass, pilgrimages — to remove sin and show faith
@@ -75,14 +103,25 @@ DRAFT (for user confirmation): Medieval medicine was not random superstition —
   - **Herbal remedies:** drunk, sniffed or bathed in; common ingredients: aloe vera, mint, saffron; theriaca (spice-based mixture with many ingredients, used for many illnesses); bathing with herbs added
   - **Hospitals:** 
     - Run by Church in monasteries, or funded by endowments (wealthy person's will)
-    - Over 500 hospitals by 1400 but focus on hospitality/care not cure
+    - Over 500 hospitals by 1400 but focused on prayer, food, rest and care of the soul rather than curing disease
     - Clean, good for rest and recovery, but no physicians or surgeons
     - Infectious/terminal patients often rejected
-  - **Home care:** majority treated at home by women; herbal remedies; comfort and feeding
+  - **Home care:** Most people were treated at home by women. Medical knowledge was often passed down through families, and women acted as local healers using herbal remedies, practical experience and traditional treatments.
   - **Three types of medic:**
     - Physicians: university-trained (Galen's works), diagnosed illness (did not treat themselves), very expensive
     - Barber surgeons: small operations (bloodletting), knowledge from experience not books, cheaper
     - Apothecaries: mixed herbal remedies, disliked by physicians (cheaper, sometimes gave poison)
+
+  #### Why surgery was uncommon
+
+  Surgery was usually a last resort because it was extremely dangerous.
+
+  - No anaesthetics meant operations were very painful.
+  - No antiseptics meant wounds often became infected.
+  - Surgeons had limited knowledge of anatomy.
+  - Even minor operations could be fatal.
+
+  As a result, most treatment focused on balancing the humours rather than surgery.
 
 - **Approaches to prevention:**
   - **Religious approach:** lead a sin-free life; prayer, confessions, tithes
@@ -102,7 +141,7 @@ DRAFT (for user confirmation): Medieval medicine was not random superstition —
 - 1348 — Black Death reaches England (EXCLUDED — Episode 2 scope)
 
 ### Key people
-- **Hippocrates (Ancient Greece, c460–370 BC):** Created the Four Humours theory; encouraged observation and note-taking; the Hippocratic Oath originates here
+- **Hippocrates (Ancient Greece, c460–370 BC):** Created the Four Humours theory; encouraged careful observation of patients, recording symptoms and looking for natural causes of illness rather than relying only on superstition. The Hippocratic Oath originates here.
 - **Galen (Ancient Rome, c129–216 AD):** Built on Hippocrates; added Theory of Opposites; believed in the soul (made him compatible with Church doctrine); dissected animals → around 300 errors in his descriptions of human anatomy that persisted until Vesalius; his ideas dominated medieval medicine entirely
 - **The Church (institutional "individual"):** Preserved and promoted Galen's ideas through monasteries and universities; controlled all books and education; made dissection largely illegal; ran hospitals
 
