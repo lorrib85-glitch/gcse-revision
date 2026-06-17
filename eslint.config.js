@@ -4,6 +4,7 @@ import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
+import noHardcodedTokens from './eslint-rules/no-hardcoded-design-tokens.js'
 
 export default [
   { ignores: ['dist/**', 'storybook-static/**'] },
@@ -23,6 +24,11 @@ export default [
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       'jsx-a11y': jsxA11y,
+      'custom-rules': {
+        rules: {
+          'no-hardcoded-design-tokens': noHardcodedTokens,
+        },
+      },
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -53,6 +59,10 @@ export default [
       'jsx-a11y/click-events-have-key-events': 'off',
       'jsx-a11y/no-static-element-interactions': 'off',
       'jsx-a11y/mouse-events-have-key-events': 'off',
+
+      // ─── GCSE App Custom Rules ─────────────────────────────────────────
+      // Enforce design token usage for consistency across headings, buttons, spacing
+      'custom-rules/no-hardcoded-design-tokens': 'warn',
     },
     settings: {
       react: { version: 'detect' },
