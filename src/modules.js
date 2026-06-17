@@ -582,7 +582,7 @@ export const MODULES = [
     icon: "🕊️",
     color: "#1A3262",
     colorLight: "rgba(26,50,98,.12)",
-    headerImage: "/headers/history-usa-conflict.webp",
+    headerImage: "/headers/usa-long-way-out.png",
     screenCount: 0,
     screenTags: [],
   },
