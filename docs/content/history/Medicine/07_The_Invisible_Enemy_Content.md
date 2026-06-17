@@ -48,14 +48,15 @@ DRAFT (for user confirmation): Germ theory was the single most important discove
 - **Louis Pasteur (1822–1895) and germ theory:**
   - French scientist (not a doctor); his work mainly looked at decay and spoiled food
   - **Swan-neck flask experiment (c.1859–1861):** To disprove spontaneous generation, Pasteur filled glass flasks with broth and boiled it to kill any existing microorganisms. He then drew the neck of each flask into a long, curved (swan-neck) shape. The curved neck allowed air to circulate freely — so the test was fair — but the bend prevented dust particles and microorganisms from falling into the broth. The broth remained clear and sterile for months. When the neck was snapped off (allowing particles to enter) or the flask tilted so the broth touched the neck (where particles had settled), the broth quickly became cloudy and putrid. Conclusion: microorganisms came from the air on dust particles; they were not spontaneously generated from the broth itself. Some of Pasteur's original swan-neck flasks remain sterile at the Pasteur Institute in Paris to this day.
-  - Published germ theory 1861: proved spontaneous generation was wrong; proved something in the air causes decay; if germs cause decay, they might also cause disease
+  - **1861 — First milestone:** Published germ theory; proved spontaneous generation was wrong; proved something in the air (germs/microorganisms) causes decay; argued that if germs cause decay, they might also cause disease. This was the theoretical claim — not yet a direct link between germs and human illness.
   - *Note: the swan-neck flask mechanism above is derived from Edexcel GCSE specification knowledge; the extracted source material only confirms Pasteur "proved spontaneous generation was wrong" without describing the flask experiment. All details are standard GCSE specification content.*
   - Initial limited impact on medicine:
     - Spontaneous generation still promoted by influential doctors
     - Pasteur not a doctor; work focused on food decay not medical disease
     - Bacteria found all over the body, even in healthy people → seemed illogical they caused disease
     - Pasteur hadn't identified specific germs causing specific diseases → no practical use in treatment
-  - Later work: developed vaccines for chicken cholera, anthrax, rabies (1870s); published germ theory of infection (1878) — built on Jenner
+  - **1878 — Second milestone:** Published his germ theory of infection; this time germs were directly linked to human disease (not just decay); built on Jenner's vaccination work; inspired Lister's antiseptics; explained why vaccines worked. This was the medical claim — a direct statement that specific microorganisms cause specific diseases in humans.
+  - Later work: developed vaccines for chicken cholera, anthrax, rabies (1870s); inspired Emil von Behring (tetanus and diphtheria vaccines, 1890s)
   - Inspired Emil von Behring to develop vaccines for tetanus and diphtheria (1890s)
   - Inspired Lister to develop antiseptic surgery (Episode 9)
 
@@ -66,6 +67,7 @@ DRAFT (for user confirmation): Germ theory was the single most important discove
     - Tuberculosis (1882)
     - Cholera (1883)
   - Koch's method: growing bacteria in solid jelly (culture medium), colouring with purple dye, photographing under microscope → enabled other scientists to identify bacteria systematically
+  - Koch and his team developed the use of **agar jelly** as an improved culture medium: agar made bacteria easier to isolate and study individually; this was a key technical advance that helped scientists identify specific disease-causing microbes with greater precision
   - Key advantage: received funding from the German government → resources and credibility
   - His method was used by other scientists worldwide to identify further disease-causing bacteria
 
@@ -86,10 +88,10 @@ DRAFT (for user confirmation): Germ theory was the single most important discove
 ### Dates & timeline
 - Early 1700s — Spontaneous generation theory developed
 - 1858 — Great Stink of London (miasma still believed despite early germ theory)
-- 1861 — Pasteur publishes germ theory (germs cause decay → might cause disease)
+- 1861 — Pasteur publishes germ theory: germs cause decay → might cause disease (theoretical; not yet a direct claim about human illness)
 - 1865 — Lister uses carbolic acid as antiseptic (directly inspired by germ theory — Episode 9 scope)
 - 1876 — Koch identifies bacteria causing anthrax
-- 1878 — Pasteur publishes germ theory of infection
+- 1878 — Pasteur publishes germ theory of infection: germs directly linked to human disease (medical claim; explains why vaccines work; inspires Lister)
 - 1882 — Koch identifies tuberculosis bacterium
 - 1883 — Koch identifies cholera bacterium
 - 1890s — Emil von Behring develops vaccines for tetanus and diphtheria
@@ -105,6 +107,7 @@ DRAFT (for user confirmation): Germ theory was the single most important discove
 - **Spontaneous generation:** incorrect theory that microbes are created by decaying matter; disproved by Pasteur
 - **Bacteria:** microscopic single-celled organisms; identified by Koch as causing specific diseases
 - **Culture medium:** solid jelly used by Koch to grow bacteria in laboratory conditions
+- **Agar jelly:** the improved culture medium developed by Koch and his team; made bacteria easier to isolate and study individually; a key technical advance in bacteriology
 - **Bacteriology:** the study of bacteria; Koch's method established it as a scientific discipline
 - **Miasma:** belief that bad air caused disease; persisted alongside germ theory even into the 1880s
 - **Anthrax:** bacterial disease caused by *Bacillus anthracis*; first disease Koch identified the bacterium for (1876)

@@ -14,7 +14,7 @@
 ## 2. Storyline
 
 ### Core takeaway
-DRAFT (for user confirmation): Jenner's vaccine was the first time in human history that a disease could be reliably *prevented* — not just treated after the fact. But Jenner himself couldn't explain *why* it worked, which meant it could only be applied to one disease. His discovery was brilliant and transformative, but it depended on a chance observation about cowpox and dairy maids — and without Pasteur's germ theory fifty years later, it could never be replicated for other diseases. Jenner opened a door he couldn't fully walk through himself.
+DRAFT (for user confirmation): Jenner's vaccine was the first safer and more reliable method of preventing a deadly disease — far less dangerous than inoculation, which already existed but could kill or spread the very disease it was meant to prevent. But Jenner himself couldn't explain *why* it worked, which meant it could only be applied to one disease. His discovery was brilliant and transformative, but it depended on a chance observation about cowpox and dairy maids — and without Pasteur's germ theory fifty years later, it could never be replicated for other diseases. Jenner opened a door he couldn't fully walk through himself.
 
 ### Evidence for the takeaway
 - In the 1790s, Jenner observed that dairy maids who had had cowpox didn't catch smallpox
@@ -45,12 +45,23 @@ DRAFT (for user confirmation): Jenner's vaccine was the first time in human hist
   - Risk: inoculated person might get a strong dose and die, or spread smallpox to others
   - Inoculators had financial interest in keeping inoculation going → resisted vaccination
 
+- **Inoculation vs vaccination — comparison:**
+
+  | | Inoculation | Vaccination |
+  |---|---|---|
+  | Material used | Pus from a smallpox scab | Cowpox (a related, milder disease) |
+  | Risk | Could spread smallpox; sometimes caused death | Much safer; cowpox does not cause smallpox |
+  | Result | Mild dose → immunity (if survived) | Immunity to smallpox without the disease |
+  | Legal status | Made illegal in 1840 | Made compulsory in 1853 |
+
+  The key exam point: inoculation already existed before Jenner, but vaccination replaced it because it was far safer and could not spread the disease.
+
 - **Jenner's discovery (1796):**
   - Edward Jenner: country doctor (Gloucestershire); not a London physician
   - Observed that dairy maids who had had cowpox did not catch smallpox
   - 1796: experimented by infecting a boy (James Phipps, aged 8) with cowpox; waited six weeks; tried to infect him with smallpox → boy didn't catch smallpox
   - Called the process "vaccination" (from Latin: vacca = cow)
-  - Jenner published his findings; initially dismissed by London medical establishment
+  - 1798: Jenner published his findings and promoted vaccination more widely; this is when the campaign for public adoption began; initially dismissed by London medical establishment
 
 - **Opposition to vaccination:**
   - Church: felt that using a disease linked to animals to treat humans was unnatural; trials were unnatural
@@ -80,6 +91,7 @@ DRAFT (for user confirmation): Jenner's vaccine was the first time in human hist
 ### Dates & timeline
 - 1700s — Smallpox major cause of death; inoculation used as prevention (risky)
 - 1796 — Jenner infects James Phipps with cowpox, then tests with smallpox; vaccination born
+- 1798 — Jenner publishes his findings; promotes vaccination more widely; begins the public campaign for adoption
 - 1840 — Government makes inoculation a crime; provides free children's vaccinations
 - 1853 — Smallpox vaccination made compulsory
 - 1870s — Pasteur develops vaccines for chicken cholera, anthrax, rabies

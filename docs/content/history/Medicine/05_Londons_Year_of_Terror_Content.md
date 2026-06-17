@@ -17,7 +17,7 @@ This episode covers the Great Plague of London (1665) as a case study, examining
 ## 2. Storyline
 
 ### Core takeaway
-DRAFT (for user confirmation): The Great Plague of 1665 proves that three hundred years of Renaissance thinking had changed almost nothing about how ordinary people responded to epidemic disease. Despite Vesalius and Harvey, people still blamed miasma, planetary alignment, and God's punishment — and the government's response was the same: quarantine, bonfires, and prayer. The difference is not in medicine but in administration: the 1665 government was more organised than in 1348, and some containment measures were more systematically enforced. But the beliefs were identical.
+DRAFT (for user confirmation): The Great Plague of 1665 proves that three hundred years of Renaissance thinking had changed almost nothing about how ordinary people understood epidemic disease. Despite Vesalius and Harvey, people still blamed miasma, planetary alignment, and God's punishment — and responded with the same prayers, bonfires and herbs as their ancestors in 1348. The beliefs were almost identical. The government response, however, was more organised and more actively enforced than in 1348: watchmen guarded quarantined houses, searchers inspected the sick, crowds were banned, and streets were cleaned. The difference is not in medical understanding but in administration.
 
 *Derived from: source material shows 1665 responses mirror 1348 responses with slightly more systematic government organisation.*
 
@@ -74,7 +74,8 @@ DRAFT (for user confirmation): The Great Plague of 1665 proves that three hundre
   - Stray animals killed (animals blamed as carriers of miasma)
   - Searchers appointed: people (often women) employed to inspect houses for plague victims
   - Streets cleaned
-  - Red cross painted on doors of infected houses with "Lord have mercy" inscription
+  - Red crosses painted on the doors of infected houses; the words "Lord have mercy upon us" written alongside
+  - **Watchmen:** placed outside infected houses to stop families breaking quarantine; guarded houses marked with the plague cross; this shows government action was more organised than during the Black Death
 
 - **Comparison with Black Death (1348) — key exam content:**
   - **Similarities:** Both blamed on God and miasma; both used prayer and religious responses; both used purifying the air; both involved quarantine (albeit better enforced in 1665); both were caused by the same actual mechanism (fleas on rats) but this was unknown
@@ -99,17 +100,18 @@ DRAFT (for user confirmation): The Great Plague of 1665 proves that three hundre
 - **Searchers:** women employed to inspect houses for plague victims during the 1665 Great Plague
 - **Quarantine:** isolation of plague victims; laws existed in both 1348 and 1665; more systematically enforced in 1665
 - **Quack doctors:** people without medical qualifications who sold useless remedies during public health crises
-- **Red cross:** mark painted on the door of a house with plague victims, along with "Lord have mercy"
+- **Red cross:** mark painted on the door of a house containing plague victims; accompanied by the words "Lord have mercy upon us"; guarded by watchmen to enforce quarantine
+- **Watchmen:** guards placed outside quarantined houses during the Great Plague; prevented infected families from leaving; a more active enforcement mechanism than anything used during the Black Death
 
 ### Case studies / named examples
 - **Great Plague of 1665 vs. Black Death of 1348:** The primary case study of this episode is the *comparison* of the two epidemics — beliefs, treatments, prevention, government response. This is the most-tested exam scenario for this period.
 - **Plague doctors:** Visual icon of the 1665 plague; their beaked masks are a direct consequence of miasma belief — herbs in the beak to filter bad air. The costume is based on a wrong belief.
-- **Government orders 1665:** The list of government actions (searchers, crowd bans, street cleaning, stray animals killed) shows more sophisticated public health administration — but still based on wrong understanding of cause.
+- **Government orders 1665:** The list of government actions (watchmen outside quarantined houses, searchers, crowd bans, street cleaning, stray animals killed) shows more sophisticated public health administration than in 1348 — but still based on wrong understanding of cause.
 
 ### Causes & effects
 - Miasma belief → bonfires and pomanders as prevention → no effect on actual transmission (fleas/rats)
 - Miasma belief → people fled cities to escape bad air → geographically spread the plague
-- Government quarantine orders → more systematic enforcement than 1348 (searchers, crowd bans, animal killing) → some marginal reduction in spread but plague still devastating
+- Government quarantine orders → more systematic enforcement than 1348 (watchmen outside houses, searchers, crowd bans, animal killing, street cleaning) → some marginal reduction in spread but plague still devastating
 - Quack doctors exploit panic → sell useless remedies → public harm compounded by false hope
 
 ### Exam angles
