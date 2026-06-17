@@ -17,7 +17,7 @@ This episode covers the Black Death as a **case study** testing the medieval med
 ## 2. Storyline
 
 ### Core takeaway
-DRAFT (for user confirmation): The Black Death was the ultimate test of medieval medicine — and medieval medicine failed completely. People applied the same beliefs about God, miasma, and the Four Humours that they always had. They were wrong about every single cause, and every treatment they tried was useless. But their failure wasn't ignorance: it was the inevitable result of a belief system that had no mechanism for self-correction. The Black Death didn't change medieval medicine — and that's the real story.
+DRAFT (for user confirmation): The Black Death was the ultimate test of medieval medicine — and medieval medicine failed completely. People applied the same beliefs about God, miasma, and the Four Humours that they always had. Some people correctly observed that the plague spread between people and communities — but nobody understood the true cause. Because the cause was unknown, every major treatment and prevention method failed. Their failure wasn't ignorance: it was the inevitable result of a belief system that had no mechanism for self-correction. The Black Death didn't change medieval medicine — and that's the real story.
 
 *Derived from: every cause belief and treatment in source material is shown to have failed; medicine remained unchanged after the Black Death until Renaissance period.*
 
@@ -45,10 +45,15 @@ DRAFT (for user confirmation): The Black Death was the ultimate test of medieval
 ## 3. Specification requirements
 
 - **Arrival and scale:**
-  - Reached England 1348; spread by fleas on rats (real cause)
+  - Black Death originated in Asia
+  - Travelled west along major trade routes
+  - Merchant ships carried infected rats and fleas between ports
+  - Spread through Europe before reaching England in 1348
+  - Trade networks helped turn a local outbreak into an international catastrophe
   - Main symptom: large, painful buboes (swollen lymph nodes)
   - Most victims died within days
   - Approximately one-third of England's population died
+  - The huge loss of life created labour shortages and social change (wider consequences outside this episode's scope)
 
 - **Beliefs about causes (medieval framework applied):**
   - Religious/supernatural: God's punishment for sin; unusual planetary positioning in 1345
@@ -69,11 +74,33 @@ DRAFT (for user confirmation): The Black Death was the ultimate test of medieval
   - Purifying the air: carrying sweet herbs/posies; running away from cities (paradoxically spread plague)
   - Government quarantine laws: isolation of plague victims ordered; poorly enforced — rich people moved freely, Church ran as normal, local authorities had little power
 
+  **Why government action struggled:**
+  - Medieval government was small and local
+  - There was no police force
+  - Orders relied on local officials and voluntary cooperation
+  - Wealthy people could often ignore restrictions and leave affected areas
+  - Quarantine measures were therefore difficult to enforce effectively
+
 - **Real cause (what we now know):**
   - Bubonic plague caused by Yersinia pestis bacterium
+  - Merchant ships carrying infected rats brought the disease to English ports; fleas transferred the infection from rats to humans
   - Carried by fleas living on black rats; flea bites transmitted bacteria to humans
   - Symptoms: buboes (armpits/groin/neck), fever, vomiting, bleeding under skin, death within days for most
   - Not identified until 1894 (Kitasato Shibasaburō and Alexandre Yersin independently)
+
+- **Three forms of plague:**
+  - **Bubonic plague:** spread by infected flea bites; caused buboes; most common form
+  - **Pneumonic plague:** infected the lungs; spread through coughing and sneezing; highly contagious person-to-person
+  - **Septicaemic plague:** infected the bloodstream; usually caused death very quickly
+  - Medieval people did not realise these were different forms of the same disease
+
+- **Impact on medical knowledge:**
+  - People continued believing in the Four Humours after the Black Death
+  - Miasma remained widely accepted
+  - Religious explanations remained important
+  - No scientific explanation emerged from the Black Death
+  - The Black Death exposed the weaknesses of medieval medicine but did not immediately change medical thinking
+  - This is one of the strongest examples of **continuity** in the Medicine Through Time course — one-third of England died and the medical framework remained entirely unchanged
 
 ---
 
@@ -91,7 +118,7 @@ DRAFT (for user confirmation): The Black Death was the ultimate test of medieval
 - **Government (institutional):** issued quarantine laws; unable to enforce them
 
 ### Key terms & definitions
-- **Buboes:** large, painful swellings of the lymph nodes; defining symptom of bubonic plague; appear in armpits, groin, neck
+- **Buboes:** swollen lymph nodes; the defining symptom of bubonic plague; appeared in the neck, armpit or groin; could grow to the size of an apple; extremely painful
 - **Flagellants:** people who whipped themselves publicly to atone for sin and seek God's mercy during the Black Death
 - **Quarantine:** isolation of plague victims to prevent spread; laws existed but poorly enforced
 - **Transference:** belief that disease could be transferred to another living thing (e.g. strapping live chicken to bubo)
@@ -105,11 +132,19 @@ DRAFT (for user confirmation): The Black Death was the ultimate test of medieval
 - **Lancing buboes:** Surgeons occasionally pierced buboes; occasional survivors — coincidental but noted as "treatment that might work"
 
 ### Causes & effects
-- Flea bites from infected rats → Yersinia pestis enters bloodstream → buboes develop → fever, vomiting, bleeding → death in days
+- Black Death originates in Asia → spreads west along trade routes → merchant ships carry infected rats to English ports → fleas transfer infection from rats to humans → Yersinia pestis enters bloodstream → buboes develop → fever, vomiting, bleeding → death in days
 - Belief: plague = God's punishment → response: prayer and flagellation → no effect on plague transmission
 - Belief: plague = miasma → response: sweet herbs, bonfires, running away → running away actually spread plague geographically
 - Government issues quarantine laws → Church runs normally + rich ignore → enforcement fails → plague spreads unchecked
-- One-third of England dies → labour shortages → eventual social/economic changes (outside episode scope)
+- One-third of England dies → labour shortages and social change (wider consequences outside this episode's scope)
+
+### Impact on medical knowledge
+
+- The Black Death killed around one-third of England's population — yet the medical framework (Four Humours, miasma, religious causation) remained entirely unchanged
+- No new theories emerged; physicians returned to the same authorities (Galen, Hippocrates) after the epidemic
+- Some people observed that plague spread from person to person and community to community — but this observation produced no new explanatory framework
+- The Church's authority was shaken in the short term (God had not answered prayers) but recovered; religious causation remained central to most people's understanding of disease
+- This episode is the strongest continuity example in the Medicine Through Time course — use it in any "how far did medicine change?" question to argue that catastrophe alone does not produce progress
 
 ### Exam angles
 - **"Describe two features of the Black Death" (2 × 2 marks):** Feature + supporting detail model: "The Black Death was caused by fleas on rats (1); most victims died within days of developing buboes (1)."
@@ -120,6 +155,7 @@ DRAFT (for user confirmation): The Black Death was the ultimate test of medieval
   - "The Black Death changed medieval medicine immediately" — FALSE: medicine remained essentially unchanged; changes came 150+ years later
   - "Quarantine was only used in 1665" — FALSE: quarantine laws existed in 1348 but were poorly enforced
   - "Flagellants were considered extremists in medieval society" — UNCERTAIN: flagellation was within the mainstream of religious response; it reflected normal beliefs taken to an extreme
+  - "Plague doctors treated victims during the Black Death of 1348" — FALSE: the famous beaked plague doctor costume is mainly associated with later outbreaks, particularly the seventeenth century; it was not a feature of the 1348 response in England
 
 ### Sourcing notes
 - **`content1.txt`** — Black Death case study (pp. 10–13 equivalent); covers causes, treatments, prevention, government action. Primary source for this episode.
