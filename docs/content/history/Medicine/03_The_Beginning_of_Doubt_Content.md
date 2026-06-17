@@ -50,6 +50,13 @@ DRAFT (for user confirmation): The Renaissance didn't cure anyone — but it pro
   - Humanism: thinking that broke away from religious/supernatural explanations; humans can decide for themselves
   - Printing press: new ideas spread more quickly; Church no longer controlled what was published
 
+  **Anatomy theatres:**
+  - Universities began holding public dissections in anatomy theatres
+  - Students and doctors watched dissections being carried out
+  - This helped spread anatomical knowledge more widely
+  - It encouraged doctors to learn from direct observation rather than relying only on books
+  - Anatomy theatres symbolised the growing importance of evidence and investigation during the Renaissance
+
 - **The Royal Society:**
   - Formed 1660; members shared experiments and promoted scientific ideas
   - Published *Philosophical Transactions*; reports written in English not Latin → accessible
@@ -74,6 +81,13 @@ DRAFT (for user confirmation): The Renaissance didn't cure anyone — but it pro
   - Encouraged other doctors to carry out dissections rather than relying on old books
   - Laid foundation for others to investigate human body in more detail
 
+  **Limitations of Vesalius:**
+  - Vesalius corrected many of Galen's anatomical mistakes but did not discover how the body actually functioned
+  - He still accepted some of Galen's ideas (e.g. the theory of the Four Humours remained unchallenged by him)
+  - Most treatments remained unchanged — correcting anatomy did not change how patients were cared for
+  - Many doctors continued teaching Galen's work despite Vesalius's corrections
+  - His greatest contribution was improving knowledge of anatomy rather than improving treatment
+
 - **Ambroise Paré (c.1510–1590) and surgery:**
   - French barber-surgeon; served as army surgeon in French campaigns in Italy and elsewhere
   - Traditional treatment for gunshot wounds: pour boiling oil into the wound (believed gunpowder was poisonous; oil thought to cauterise and neutralise it)
@@ -86,6 +100,12 @@ DRAFT (for user confirmation): The Renaissance didn't cure anyone — but it pro
   - Published surgical manuals in French (not Latin) — accessible to surgeons without a university education; spread new methods more widely
   - Significance: advanced surgery from a crude craft toward a skilled, evidence-based discipline; demonstrated that careful observation could overturn centuries of received practice
   - *Note: Paré's content is derived from Edexcel GCSE specification knowledge; not found in extracted source PDFs for this synthesis. All details are standard GCSE specification content.*
+
+  **Limits of Paré's impact:**
+  - Many surgeons were slow to adopt ligatures — the technique took longer than cauterisation
+  - Infection remained a major problem even after Paré's improvements
+  - Many surgeons trusted traditional methods and were reluctant to change
+  - Paré's ideas spread gradually rather than replacing older techniques immediately
 
 - **Changes in treatment:**
   - Transference: disease could be transferred to something else (e.g. warts rubbed on onion; illness transferred to live animals)
@@ -135,6 +155,7 @@ DRAFT (for user confirmation): The Renaissance didn't cure anyone — but it pro
 - **Reformation:** Henry VIII's break from the Catholic Church; monasteries closed; Church power declined
 - **Secular:** non-religious; more willing to seek scientific explanations
 - **Dissection:** examination of human bodies to study anatomy; became more possible during Renaissance
+- **Anatomy theatre:** public venue in a university where dissections were performed in front of students and doctors; spread anatomical knowledge; symbolised the shift from book-learning to direct observation
 - **Fugitive sheets:** detailed anatomical drawings used to teach surgeons
 - **Ligature:** surgical technique developed by Paré; tying blood vessels with thread to stop bleeding after amputation; replaced the red-hot iron cauterisation method; reduced death from shock and blood loss
 - **Transference:** belief that illness could be transferred to another object or living thing
@@ -166,6 +187,8 @@ DRAFT (for user confirmation): The Renaissance didn't cure anyone — but it pro
 - **"Explain why surgery improved during the Renaissance" (12 marks):** Paré = the key answer. Two developments: (1) abandoned boiling oil — observed better outcomes with soothing mixture (empirical observation over tradition); (2) ligature — tied blood vessels instead of cauterising (reduced shock deaths). Paré's manuals in French (not Latin) spread these improvements. Counter: most people still received humoural treatments (Charles II 1685); Paré's improvements were not immediately universal. *Paré is derived from GCSE specification knowledge; not confirmed in extracted source PDFs for this synthesis.*
 - **Misconceptions for `MisconceptionCheck`:**
   - "Vesalius changed how patients were treated in the Renaissance" — PARTLY FALSE: he changed understanding of anatomy, not treatments; humoural treatments continued
+  - "Vesalius completely rejected Galen's ideas" — FALSE: Vesalius corrected Galen's anatomical errors but still accepted some of his ideas; he did not challenge the Four Humours theory
+  - "Paré's ligature technique was quickly adopted by all surgeons" — FALSE: many surgeons were slow to change; the technique took longer than cauterisation and infection remained a problem regardless
   - "The Church had no role in Renaissance medicine" — FALSE: Church authority declined but religious explanations still used, especially in epidemics
   - "The Royal Society was formed to oppose the Church" — FALSE: it promoted scientific investigation; Charles II gave it a Royal Charter, linking it to royal authority not opposition to religion
 
