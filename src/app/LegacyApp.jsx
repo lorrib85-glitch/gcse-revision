@@ -5,27 +5,27 @@ import { RADII }    from '../constants/radii.js'
 import { TYPE }     from '../constants/typography.js'
 import { GENERAL }  from '../constants/generalTheme.js'
 import { MOTION }   from '../constants/motion.js'
-import { useAuth } from './auth/AuthContext.jsx'
-import { SOCIOLOGY_GROUPS } from './data/sociologyGroups.js'
-import { CHEM_IMAGES } from './data/chemImages.js'
-import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, J23_Q6 } from './data/medicineExamPapers.js'
-import { FIGURES } from './figures.js'
-import { getProgress, recordActivity, recordScore, getAllConfidenceRatings, getModuleState as safeGetModuleState, getModulePct as modPct, MODULE_GROUPS, getContinueModule, getWeeklyTrend } from './progress.js'
-import { getWeakTopics, getWeakestSubject, getBiggestWin, getSuggestedQuestionType, logWrongAnswer, logCorrectAnswer } from './unifiedWeaknessTracker.js'
-import { MODULES } from './modules.js'
-import { TAG_MODULE_MAP, findTaggedScreen } from './data/tagModuleMap.js'
-import { QUICK_QUIZ_QUESTIONS } from './data/quickQuizData.js'
-import { buildTodaysPlan } from './todaysPlan.js'
-import BackButton from './components/core/BackButton.jsx'
-import ChapterCompleteScreen from './components/layout/ChapterCompleteScreen.jsx'
-import ExamQuestionFrame from './components/feedback/ExamQuestionFrame.jsx'
-import ExamRoundDebrief from './components/feedback/ExamRoundDebrief.jsx'
-import GuidedAnswerCoach from './components/learning/GuidedAnswerCoach.jsx'
+import { useAuth } from '../auth/AuthContext.jsx'
+import { SOCIOLOGY_GROUPS } from '../data/sociologyGroups.js'
+import { CHEM_IMAGES } from '../data/chemImages.js'
+import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, J23_Q6 } from '../data/medicineExamPapers.js'
+import { FIGURES } from '../figures.js'
+import { getProgress, recordActivity, recordScore, getAllConfidenceRatings, getModuleState as safeGetModuleState, getModulePct as modPct, MODULE_GROUPS, getContinueModule, getWeeklyTrend } from '../progress.js'
+import { getWeakTopics, getWeakestSubject, getBiggestWin, getSuggestedQuestionType, logWrongAnswer, logCorrectAnswer } from '../unifiedWeaknessTracker.js'
+import { MODULES } from '../modules.js'
+import { TAG_MODULE_MAP, findTaggedScreen } from '../data/tagModuleMap.js'
+import { QUICK_QUIZ_QUESTIONS } from '../data/quickQuizData.js'
+import { buildTodaysPlan } from '../todaysPlan.js'
+import BackButton from '../components/core/BackButton.jsx'
+import ChapterCompleteScreen from '../components/layout/ChapterCompleteScreen.jsx'
+import ExamQuestionFrame from '../components/feedback/ExamQuestionFrame.jsx'
+import ExamRoundDebrief from '../components/feedback/ExamRoundDebrief.jsx'
+import GuidedAnswerCoach from '../components/learning/GuidedAnswerCoach.jsx'
 
 // ModulePlayer (and the ~40 learning/feedback components it imports) is only
 // needed once a user opens a module — lazy-load it as its own chunk so
 // Home/Subjects/Progress/Quiz don't pay for it on first load.
-const ModulePlayer = lazy(() => import('./components/layout/ModulePlayer.jsx'))
+const ModulePlayer = lazy(() => import('../components/layout/ModulePlayer.jsx'))
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -101,11 +101,11 @@ function ModuleLoadingScreen() {
 // the lightweight metadata used for browsing, cards and progress.
 
 const SUBJECT_MODULE_LOADERS = {
-  History:   () => import('./modules/history.js').then(m => m.HISTORY_MODULES),
-  Biology:   () => import('./modules/biology.js').then(m => m.BIOLOGY_MODULES),
-  Maths:     () => import('./modules/maths.js').then(m => m.MATHS_MODULES),
-  Sociology: () => import('./modules/sociology.js').then(m => m.SOCIOLOGY_MODULES),
-  Chemistry: () => import('./modules/chemistry.js').then(m => m.CHEMISTRY_MODULES),
+  History:   () => import('../modules/history.js').then(m => m.HISTORY_MODULES),
+  Biology:   () => import('../modules/biology.js').then(m => m.BIOLOGY_MODULES),
+  Maths:     () => import('../modules/maths.js').then(m => m.MATHS_MODULES),
+  Sociology: () => import('../modules/sociology.js').then(m => m.SOCIOLOGY_MODULES),
+  Chemistry: () => import('../modules/chemistry.js').then(m => m.CHEMISTRY_MODULES),
 }
 
 async function loadModuleContent(mod) {
@@ -131,11 +131,11 @@ function TestDataProvider({ children }) {
 
   useEffect(() => {
     Promise.all([
-      import('./data/mathsTopics.js'),
-      import('./data/englishTopics.js'),
-      import('./data/sociologyTopics.js'),
-      import('./data/chemistryTopics.js'),
-      import('./data/guidedAnswerCoach.js'),
+      import('../data/mathsTopics.js'),
+      import('../data/englishTopics.js'),
+      import('../data/sociologyTopics.js'),
+      import('../data/chemistryTopics.js'),
+      import('../data/guidedAnswerCoach.js'),
     ]).then(([maths, english, sociology, chemistry, coach]) => {
       setData({
         MATHS_TOPIC_GROUPS: maths.MATHS_TOPIC_GROUPS,
