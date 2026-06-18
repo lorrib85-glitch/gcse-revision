@@ -10,12 +10,13 @@ import { SOCIOLOGY_GROUPS } from '../data/sociologyGroups.js'
 import { CHEM_IMAGES } from '../data/chemImages.js'
 import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, J23_Q6 } from '../data/medicineExamPapers.js'
 import { FIGURES } from '../figures.js'
-import { getProgress, recordActivity, recordScore, getAllConfidenceRatings, getModuleState as safeGetModuleState, getModulePct as modPct, MODULE_GROUPS, getContinueModule, getWeeklyTrend } from '../progress.js'
+import { getProgress, recordActivity, recordScore, getAllConfidenceRatings, getModuleState as safeGetModuleState, getModulePct as modPct, getContinueModule, getWeeklyTrend } from '../progress.js'
 import { getWeakTopics, getWeakestSubject, getBiggestWin, getSuggestedQuestionType, logWrongAnswer, logCorrectAnswer } from '../unifiedWeaknessTracker.js'
 import { MODULES } from '../modules.js'
 import { TAG_MODULE_MAP, findTaggedScreen } from '../data/tagModuleMap.js'
 import { QUICK_QUIZ_QUESTIONS } from '../data/quickQuizData.js'
 import { buildTodaysPlan } from '../todaysPlan.js'
+import { buildChapterCompletePayload, prepareModuleScreenState, resolveTaskDestination } from './moduleNavigation.js'
 import BackButton from '../components/core/BackButton.jsx'
 import ChapterCompleteScreen from '../components/layout/ChapterCompleteScreen.jsx'
 import ExamQuestionFrame from '../components/feedback/ExamQuestionFrame.jsx'
@@ -450,77 +451,8 @@ export default function App() {
   const [chapterCompleteData, setChapterCompleteData] = useState(null)
   const [examAutoStart,       setExamAutoStart]       = useState(null)
 
-  // Brand-document subject colours — always used in preference to module.color
-  const SUBJECT_ACCENT = {
-    'Maths':     '#2CBFA3',
-    'Biology':   '#4FA36C',
-    'History':   '#D69B45',
-    'English':   '#7A284F',
-    'Sociology': '#B8A58F',
-    'Chemistry': '#8B4DFF',
-    'Drama':     '#8F1F44',
-    'Music':     '#A34DFF',
-  }
-
   function handleChapterComplete(completedModule) {
-    const COPY = [
-      'Momentum matters.',
-      "That's another one locked in.",
-      "You're getting faster.",
-      'Nice. Keep the streak moving.',
-      'Another one down.',
-    ]
-    const accent = SUBJECT_ACCENT[completedModule.subject] || completedModule.color || '#9D5CFF'
-
-    // Find which parent module this chapter belongs to
-    const group      = MODULE_GROUPS.find(g => g.chapterIds.includes(completedModule.id))
-    const chapterIdx = group ? group.chapterIds.indexOf(completedModule.id) : -1
-    const nextChapterId = group ? group.chapterIds[chapterIdx + 1] : null
-
-    let nextMod, nextChapterLabel, nextChapterNum, nextChapterTitle, isFinalChapter
-
-    if (nextChapterId) {
-      // Another chapter exists in the same parent module
-      nextMod          = MODULES.find(m => m.id === nextChapterId)
-      nextChapterLabel = 'Chapter'
-      nextChapterNum   = chapterIdx + 2  // 1-based index of the next chapter
-      nextChapterTitle = nextMod?.title
-      isFinalChapter   = false
-    } else if (group) {
-      // Last chapter — find the next parent module
-      const groupIdx   = MODULE_GROUPS.indexOf(group)
-      const nextGroup  = MODULE_GROUPS[groupIdx + 1]
-      nextMod          = nextGroup ? MODULES.find(m => m.id === nextGroup.chapterIds[0]) : null
-      nextChapterLabel = 'Next Module'
-      nextChapterNum   = null            // no number shown for "Next Module"
-      nextChapterTitle = nextGroup?.title
-      isFinalChapter   = !nextGroup
-    } else {
-      // Chapter not in any defined group — fall back to sequential order
-      const idx        = MODULES.findIndex(m => m.id === completedModule.id)
-      nextMod          = idx >= 0 && idx < MODULES.length - 1 ? MODULES[idx + 1] : null
-      nextChapterLabel = 'Chapter'
-      nextChapterNum   = nextMod?.number
-      nextChapterTitle = nextMod?.title
-      isFinalChapter   = !nextMod
-    }
-
-    const pastPaperHint = completedModule.id === 'history-medicine-medieval-beliefs-causes'
-      ? { label: 'Practice 2023 exam questions', topicId: 'th1', paper: MEDICINE_2023_PAPER }
-      : null
-
-    setChapterCompleteData({
-      accent,
-      completedChapter: completedModule.title,
-      nextChapterLabel,
-      nextChapterNum,
-      nextChapterTitle,
-      supportingCopy:   COPY[Math.floor(Math.random() * COPY.length)],
-      isFinalChapter,
-      moduleName:       group?.title || completedModule.title,
-      nextModule:       nextMod,
-      pastPaperHint,
-    })
+    setChapterCompleteData(buildChapterCompletePayload(completedModule))
     setView('chapter-complete')
   }
 
@@ -539,22 +471,20 @@ export default function App() {
     openModulePlayer(mod, screenIndex)
   }
 
-  // Routes a tap on one of Home's "Today's plan" cards.
   function handleTodaysPlanSelect(task) {
-    const sel = task?.onSelect
-    if (!sel) return
-    if (sel.kind === 'quickfire') {
+    const dest = resolveTaskDestination(task)
+    if (!dest) return
+    if (dest.kind === 'quickfire') {
       setTab('quickfire')
-    } else if (sel.kind === 'module') {
-      const mod = MODULES.find(m => m.id === sel.moduleId)
-      if (mod) openModule(mod, sel.screenIndex)
-    } else if (sel.kind === 'practice' || sel.kind === 'paper') {
+    } else if (dest.kind === 'module') {
+      openModule(dest.mod, dest.screenIndex)
+    } else if (dest.kind === 'exam') {
       setExamAutoStart({
-        subject: sel.subject,
-        isTimedPaper: sel.isTimedPaper,
-        durationSeconds: sel.durationSeconds,
-        paperQuestions: sel.paperQuestions,
-        title: sel.title,
+        subject:         dest.subject,
+        isTimedPaper:    dest.isTimedPaper,
+        durationSeconds: dest.durationSeconds,
+        paperQuestions:  dest.paperQuestions,
+        title:           dest.title,
       })
       setTab('exams')
     }
@@ -564,13 +494,9 @@ export default function App() {
     if (screenIndex !== undefined && screenIndex !== null) {
       try {
         const existing = safeGetModuleState(mod.id)
-        localStorage.setItem(`gcse_module_${mod.id}`, JSON.stringify({
-          ...existing,
-          screen: screenIndex,
-          hookDone:  screenIndex > 0 ? true : (existing.hookDone  || false),
-          wylDone:   screenIndex > 0 ? true : (existing.wylDone   || false),
-          introDone: screenIndex > 0 ? true : (existing.introDone || false),
-        }))
+        localStorage.setItem(`gcse_module_${mod.id}`, JSON.stringify(
+          prepareModuleScreenState(screenIndex, existing)
+        ))
       } catch {}
     }
     setActiveModule(null)
