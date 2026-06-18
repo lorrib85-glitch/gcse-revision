@@ -31,6 +31,14 @@ export default mergeConfig(viteConfig, defineConfig({
   test: {
     projects: [
       {
+        extends: false,
+        test: {
+          name: 'architecture',
+          include: ['tests/architecture/**/*.test.js'],
+          environment: 'node',
+        },
+      },
+      {
         extends: true,
         plugins: [
           storybookTest({ configDir: resolve(__dirname, '.storybook') }),
