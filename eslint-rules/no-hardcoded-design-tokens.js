@@ -10,7 +10,7 @@
 //
 // Run: npm run lint
 
-module.exports = {
+export default {
   meta: {
     type: 'problem',
     docs: {

@@ -13,6 +13,7 @@ import { getSuggestedQuestionType, logWrongAnswer, logCorrectAnswer } from '../.
 import { MODULES } from '../../modules.js'
 import { TAG_MODULE_MAP, findTaggedScreen } from '../../data/tagModuleMap.js'
 import { QUICK_QUIZ_QUESTIONS } from '../../data/quickQuizData.js'
+import { StreakChip } from '../home/StreakChip.jsx'
 import BackButton from '../../components/core/BackButton.jsx'
 import ExamQuestionFrame from '../../components/feedback/ExamQuestionFrame.jsx'
 import ExamRoundDebrief from '../../components/feedback/ExamRoundDebrief.jsx'
@@ -78,6 +79,17 @@ const W = {
   goldLight:  'rgba(245,183,0,.12)',
   green:      '#4DFF88',
   btnPrimary: 'linear-gradient(135deg, #F5B700, #C98719)',
+}
+
+const PULSE_GOLD = '#D2A24C'
+
+function shuffle(arr) {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
 }
 
 // ─── Shared "go" arrow used on task/mode cards across Home, Pulse and Exams.
