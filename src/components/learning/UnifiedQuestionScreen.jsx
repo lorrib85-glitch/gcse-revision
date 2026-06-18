@@ -27,6 +27,8 @@ export default function UnifiedQuestionScreen({
   timeLeft,           // number: seconds remaining (if showTimer true)
   totalSeconds = 90,  // number: total seconds (for timer scaling)
 }) {
+  const FEEDBACK_HOLD_MS = 1200
+
   const subjectData = SUBJECTS[subject] || SUBJECTS.History
   const accent = subjectData.accent
   const rgb = subjectData.accentRgb
@@ -56,7 +58,7 @@ export default function UnifiedQuestionScreen({
   const correctIdx = typeof correct === 'number' ? correct : 0
 
   function advanceAfterHold() {
-    const holdMs = parseInt(MOTION.duration.cinematic, 10) // 720ms
+    const holdMs = FEEDBACK_HOLD_MS
     const outMs = parseInt(MOTION.duration.standard, 10)   // 280ms
     timersRef.current.push(setTimeout(() => {
       setLeaving(true)
