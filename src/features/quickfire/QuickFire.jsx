@@ -9,11 +9,12 @@ import { CHEM_IMAGES } from '../../data/chemImages.js'
 import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, J23_Q6 } from '../../data/medicineExamPapers.js'
 import { FIGURES } from '../../figures.js'
 import { getProgress, recordScore, getAllConfidenceRatings } from '../../progress.js'
-import { getSuggestedQuestionType, logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
+import { getSuggestedQuestionType, logWrongAnswer, logCorrectAnswer, getWeakTopics } from '../../unifiedWeaknessTracker.js'
 import { MODULES } from '../../modules.js'
 import { TAG_MODULE_MAP, findTaggedScreen } from '../../data/tagModuleMap.js'
 import { QUICK_QUIZ_QUESTIONS } from '../../data/quickQuizData.js'
 import { StreakChip } from '../home/StreakChip.jsx'
+import AnimatedNumber from '../../components/core/AnimatedNumber.jsx'
 import BackButton from '../../components/core/BackButton.jsx'
 import ContinueCTA from '../../components/core/ContinueCTA.jsx'
 import ExamQuestionFrame from '../../components/feedback/ExamQuestionFrame.jsx'
@@ -1795,12 +1796,6 @@ function pickQuickFireRecommendation(memory, roundStats) {
   return { subject: 'Biology', topic: 'Photosynthesis', moduleId: 'sci_bio_w1', accuracy: 0, answered: 0 }
 }
 
-
-
-function getQuizWeaknesses() {
-  try { return JSON.parse(localStorage.getItem('gcse_quiz_weaknesses') || '{}') } catch { return {} }
-}
-
 // ─── Quick Fire — circular countdown ────────────────────────────────────────
 // Hero element of the Quick Fire header. Continuously updates, never pauses,
 // never pulses or glows — see "90 Second Quick Fire" UX spec.
@@ -3043,159 +3038,73 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
   }
 
   if (quickFireSummary) {
-    const accuracy = quickFireSummary.answered ? Math.round((quickFireSummary.correct / quickFireSummary.answered) * 100) : 0
-    const summarySubjects = quickFireSummary.subjects?.length
-      ? quickFireSummary.subjects
-      : rankedQuickFireSubjects(readQuickFireMemory(), emptyQuickFireStats())
-    const recommendation = quickFireSummary.recommendation || pickQuickFireRecommendation(readQuickFireMemory(), emptyQuickFireStats())
-    const recommendedModule = recommendation?.moduleId ? MODULES.find(m => m.id === recommendation.moduleId) : null
-    const recommendationMeta = QUICK_FIRE_SUBJECT_META[recommendation?.subject] || QUICK_FIRE_SUBJECT_META.Biology
-    const prevAcc = quickFireSummary.prevAccuracy
-    const improvement = (prevAcc !== null && quickFireSummary.answered >= 3) ? accuracy - prevAcc : null
-    const improvementText = improvement === null ? null
-      : improvement > 0 ? `+${improvement}% better than last time`
-      : improvement < 0 ? `${Math.abs(improvement)}% lower than last time`
-      : 'Same as last time'
-    const improvementColor = improvement > 0 ? GENERAL.teal : improvement < 0 ? GENERAL.coral : GENERAL.slate
-    const headlineText = improvement !== null && improvement > 0
-      ? `${improvement}% improvement`
-      : accuracy >= 60 ? 'Great work!' : 'Keep going!'
-
-    const gapModules = Object.entries(getQuizWeaknesses())
-      .map(([key, v]) => {
-        const t = v.c + v.i
-        return { key, tag: key.split('/')[1], total: t, rate: t > 0 ? v.i / t : 0 }
-      })
-      .filter(x => x.total >= 2 && x.rate > 0.4)
-      .sort((a, b) => b.rate - a.rate)
-      .reduce((acc, w) => {
-        const modId = TAG_MODULE_MAP[w.tag]
-        if (!modId) return acc
-        const mod = MODULES.find(m => m.id === modId)
-        if (!mod || acc.some(a => a.mod.id === modId)) return acc
-        acc.push({ mod, tag: w.tag, rate: w.rate })
-        return acc
-      }, [])
-      .slice(0, 3)
+    const accuracy = quickFireSummary.answered > 0
+      ? Math.round((quickFireSummary.correct / quickFireSummary.answered) * 100)
+      : 0
+    const feedbackLine = accuracy >= 90 ? 'Excellent recall.'
+      : accuracy >= 75 ? 'Sharp recall.'
+      : accuracy >= 50 ? 'Nearly there.'
+      : 'Worth a quick rebuild.'
+    const weakCount = getWeakTopics().length
 
     return (
-      <div style={{ background:`radial-gradient(circle at 50% -10%, rgba(${GENERAL.tealRgb},.08), transparent 42%), ${GENERAL.neutral[0]}`, minHeight:'100vh', padding:'18px 20px calc(150px + env(safe-area-inset-bottom))', color:GENERAL.softWhite }}>
-        <div style={{ maxWidth:480, margin:'0 auto' }}>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
-            <BackButton onClick={exitTestTopic} />
-            <button aria-label="Share" style={{ width:42, height:42, borderRadius:'50%', border:'none', background:'rgba(255,255,255,0.06)', color:GENERAL.softWhite, fontSize:'1rem', cursor:'pointer' }}>⇧</button>
+      <div style={{
+        minHeight: '100vh', background: GENERAL.neutral[0], color: GENERAL.softWhite,
+        display: 'flex', flexDirection: 'column',
+        padding: `0 ${SPACING.compact}px`,
+      }}>
+        <div style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 16px)', marginBottom: 8 }}>
+          <BackButton onClick={exitTestTopic} />
+        </div>
+
+        <div style={{
+          flex: 1, display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+        }}>
+          <div style={{
+            fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.2em', textTransform: 'uppercase', color: GENERAL.slate,
+            marginBottom: 14,
+          }}>
+            Accuracy
           </div>
 
-          <div style={{ textAlign:'center', marginBottom:28 }}>
+          <div style={{
+            ...TYPE.cinematic, fontSize: 88, lineHeight: 0.92,
+            color: GENERAL.teal, marginBottom: 20,
+          }}>
+            <AnimatedNumber value={accuracy} />%
+          </div>
+
+          <div style={{
+            fontFamily: "'Sora', sans-serif", fontSize: 19, fontWeight: 600,
+            color: GENERAL.softWhite, marginBottom: 12,
+          }}>
+            {feedbackLine}
+          </div>
+
+          {weakCount > 0 && (
             <div style={{
-              width:168, height:168, borderRadius:'50%', margin:'0 auto 18px',
-              background:`conic-gradient(${GENERAL.teal} ` + accuracy + `%, ${GENERAL.neutral[2]} 0)`,
-              display:'grid', placeItems:'center',
+              fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 400,
+              color: GENERAL.slate,
             }}>
-              <div style={{ width:142, height:142, borderRadius:'50%', background:GENERAL.neutral[1], display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
-                <div style={{ fontFamily:"'Sora', sans-serif", fontSize:'2.65rem', fontWeight:900, lineHeight:1 }}>{accuracy}%</div>
-                <div style={{ color:GENERAL.slate, fontSize:'.9rem', fontWeight:700, marginTop:5 }}>{quickFireSummary.correct} / {quickFireSummary.answered || 0}</div>
-                <div style={{ color:GENERAL.teal, fontSize:'.86rem', fontWeight:900, marginTop:4 }}>Correct</div>
-              </div>
-            </div>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:9 }}>
-              <h1 style={{ fontFamily:"'Sora', sans-serif", fontSize:'2.1rem', lineHeight:1.05, margin:0, color:GENERAL.softWhite }}>{headlineText}</h1>
-              {improvement > 0 && <span style={{ color:GENERAL.teal, fontSize:'1.45rem' }}>↑</span>}
-            </div>
-            {improvementText && (
-              <div style={{ display:'inline-flex', alignItems:'center', gap:6, background: improvement > 0 ? `rgba(${GENERAL.tealRgb},.12)` : improvement < 0 ? `rgba(${GENERAL.coralRgb},.10)` : 'rgba(255,255,255,.06)', border:'1px solid ' + (improvement > 0 ? `rgba(${GENERAL.tealRgb},.35)` : improvement < 0 ? `rgba(${GENERAL.coralRgb},.3)` : 'rgba(255,255,255,.1)'), borderRadius:999, padding:'6px 14px', marginTop:10 }}>
-                <span style={{ color:improvementColor, fontFamily:"'Sora', sans-serif", fontWeight:800, fontSize:'.9rem' }}>{improvementText}</span>
-              </div>
-            )}
-            {!improvementText && (
-              <p style={{ color:GENERAL.slate, fontSize:'.96rem', margin:'10px 0 0', lineHeight:1.45 }}>{accuracy >= 80 ? 'Excellent recall.' : accuracy >= 60 ? 'Strong session.' : 'Good start — now sharpen the weak spots.'}</p>
-            )}
-          </div>
-
-          <div style={{ background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.06)', borderRadius:18, padding:'18px 18px 14px', marginBottom:16 }}>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16 }}>
-              <div style={{ fontFamily:"'Sora', sans-serif", fontWeight:800, fontSize:'1rem' }}>Performance by subject</div>
-              <button onClick={exitTestTopic} style={{ border:'none', background:'transparent', color:GENERAL.slate, fontSize:'.8rem', cursor:'pointer' }}>View all ›</button>
-            </div>
-            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-              {summarySubjects.slice(0, 5).map(item => (
-                <div key={item.subject} style={{ display:'grid', gridTemplateColumns:'40px 1fr 54px 48px', alignItems:'center', gap:10 }}>
-                  <div style={{ width:38, height:38, borderRadius:'50%', overflow:'hidden', flexShrink:0 }}>
-                    {item.logo
-                      ? <img src={item.logo} alt={item.subject} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                      : <div style={{ width:'100%', height:'100%', background:`rgba(${GENERAL.tealRgb},0.12)`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.12rem', color:GENERAL.teal }}>{item.icon}</div>
-                    }
-                  </div>
-                  <div>
-                    <div style={{ color:GENERAL.softWhite, fontWeight:850, fontSize:'.86rem', marginBottom:7 }}>{item.subject}</div>
-                    <div style={{ height:5, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden' }}>
-                      <div style={{ width:item.accuracy + '%', height:'100%', borderRadius:99, background:GENERAL.teal }} />
-                    </div>
-                  </div>
-                  <div style={{ color:GENERAL.slate, fontWeight:800, fontSize:'.86rem', textAlign:'right' }}>{item.correct} / {item.answered}</div>
-                  <div style={{ justifySelf:'end', color:GENERAL.slate, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.10)', borderRadius:8, padding:'4px 7px', fontWeight:900, fontSize:'.76rem' }}>{item.accuracy}%</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {gapModules.length > 0 && (
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:11 }}>
-                <span style={{ fontSize:'.68rem', fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:GENERAL.slate }}>
-                  {gapModules.length === 1 ? 'Your biggest gap' : 'Your biggest gaps'}
-                </span>
-              </div>
-              {gapModules.map(({ mod, tag }) => {
-                const screenIdx = findTaggedScreen(mod, tag)
-                return (
-                  <button
-                    key={mod.id}
-                    onClick={() => onOpenModule && onOpenModule(mod, screenIdx)}
-                    style={{ width:'100%', textAlign:'left', marginBottom:10, background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.08)', borderRadius:14, padding:'14px 16px', display:'flex', alignItems:'center', gap:13, cursor:'pointer' }}
-                  >
-                    <div style={{ width:44, height:44, borderRadius:12, flexShrink:0, background:`rgba(${GENERAL.tealRgb},0.10)`, border:`1px solid rgba(${GENERAL.tealRgb},0.25)`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem' }}>
-                      {mod.icon || '📚'}
-                    </div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:'.87rem', fontWeight:700, color:GENERAL.softWhite, marginBottom:2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
-                        {mod.title}
-                      </div>
-                      <div style={{ fontSize:'.72rem', color:GENERAL.teal, textTransform:'capitalize' }}>
-                        {tag.replace(/-/g, ' ')}
-                      </div>
-                    </div>
-                    <span style={{ color:GENERAL.slate, fontSize:'1rem', flexShrink:0 }}>›</span>
-                  </button>
-                )
-              })}
+              {weakCount} weak spot{weakCount !== 1 ? 's' : ''} to practise
             </div>
           )}
+        </div>
 
-          <button onClick={() => recommendedModule && onOpenModule ? onOpenModule(recommendedModule) : exitTestTopic()} style={{ width:'100%', background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.06)', borderRadius:18, padding:'18px', marginBottom:20, display:'flex', alignItems:'center', gap:16, textAlign:'left', cursor:'pointer' }}>
-            <div style={{ width:54, height:54, borderRadius:'50%', overflow:'hidden', flexShrink:0 }}>
-              {recommendationMeta.logo
-                ? <img src={recommendationMeta.logo} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                : <div style={{ width:'100%', height:'100%', background:`rgba(${GENERAL.tealRgb},0.12)`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.6rem', color:GENERAL.teal }}>{recommendationMeta.icon}</div>
-              }
-            </div>
-            <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
-                <div style={{ fontFamily:"'Sora', sans-serif", color:GENERAL.softWhite, fontWeight:850, fontSize:'1rem' }}>Recommended next</div>
-                <span style={{ background:`rgba(${GENERAL.coralRgb},.14)`, color:GENERAL.coral, borderRadius:999, padding:'5px 10px', fontSize:'.7rem', fontWeight:900 }}>Priority</span>
-              </div>
-              <div style={{ color:GENERAL.softWhite, fontWeight:850, fontSize:'.95rem' }}>{recommendation.subject} – {recommendation.topic}</div>
-              <div style={{ color:GENERAL.slate, fontSize:'.84rem', marginTop:4, lineHeight:1.35 }}>You struggled with questions and keywords here. {recommendedModule ? 'Open the module to strengthen it.' : 'Focus your next quick practice here.'}</div>
-            </div>
-            <span style={{ color:GENERAL.slate, fontSize:'1.6rem' }}>›</span>
-          </button>
-
-          <button onClick={startRandomQuestion} style={{ width:'100%', border:'none', borderRadius:17, background:GENERAL.teal, color:GENERAL.neutral[0], padding:'20px 22px', display:'flex', alignItems:'center', gap:18, cursor:'pointer', marginBottom:18 }}>
-            <span style={{ fontSize:'2rem', lineHeight:1 }}>↻</span>
-            <span style={{ textAlign:'left' }}>
-              <span style={{ display:'block', fontFamily:"'Sora', sans-serif", fontSize:'1.25rem', fontWeight:950, letterSpacing:'.02em' }}>Try again</span>
-              <span style={{ display:'block', fontSize:'.86rem', fontWeight:750, marginTop:3 }}>Focus on {recommendation.subject} & {recommendation.topic} · ~3 mins</span>
-            </span>
+        <div style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 24px)' }}>
+          <button
+            onClick={startRandomQuestion}
+            style={{
+              width: '100%', background: GENERAL.teal, color: GENERAL.neutral[0],
+              border: 'none', borderRadius: RADII.large,
+              padding: '18px 0',
+              fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            Try again
           </button>
         </div>
       </div>
