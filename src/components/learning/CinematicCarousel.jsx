@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
@@ -171,15 +172,15 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
       </div>
 
       {/* Progress dots */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: SPACING.standard, flexShrink: 0 }}>
-        {items.map((_, i) => (
-          <div key={i} style={{
-            width: viewed.has(i) ? 20 : 8, height: 8, borderRadius: RADII.pill,
-            background: viewed.has(i) ? accent : 'rgba(255,255,255,0.16)',
-            boxShadow: viewed.has(i) ? `0 0 8px rgba(${rgb},0.45)` : 'none',
-            transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-          }} />
-        ))}
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.standard, flexShrink: 0 }}>
+        <SequenceProgress
+          total={items.length}
+          current={index}
+          viewed={Array.from(viewed)}
+          accent={accent}
+          accentRgb={rgb}
+          ariaLabel="Carousel progress"
+        />
       </div>
 
       {/* Continue */}

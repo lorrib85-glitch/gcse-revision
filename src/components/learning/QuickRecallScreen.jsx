@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import UnifiedQuestionScreen from './UnifiedQuestionScreen.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 
@@ -16,34 +17,6 @@ const IMAGES = {
 
 const BG_STYLE = {
   History: { opacity: 1.0, filter: 'none', skipLeftGradient: true },
-}
-
-function ProgressDots({ total, current, done, accent, rgb }) {
-  return (
-    <div style={{
-      position: 'fixed', bottom: 28,
-      left: '50%', transform: 'translateX(-50%)',
-      zIndex: 10,
-      display: 'flex', gap: 6, alignItems: 'center',
-    }}>
-      {Array.from({ length: total }).map((_, i) => {
-        const isDone   = i < done
-        const isActive = i === current
-        return (
-          <div key={i} style={{
-            width: isActive ? 20 : 8,
-            height: 8,
-            borderRadius: 99,
-            background: isDone ? accent : isActive ? accent : 'rgba(255,255,255,0.22)',
-            boxShadow: isActive
-              ? `0 0 10px rgba(${rgb},0.6)`
-              : isDone ? `0 0 6px rgba(${rgb},0.35)` : 'none',
-            transition: 'all 300ms ease',
-          }} />
-        )
-      })}
-    </div>
-  )
 }
 
 
@@ -150,7 +123,18 @@ export default function QuickRecallScreen({
         )}
 
         {/* Progress dots overlay */}
-        {phase !== 'done' && <ProgressDots total={total} current={qIdx} done={doneCnt} accent={accent} rgb={rgb} />}
+        {phase !== 'done' && (
+          <div style={{ position: 'fixed', bottom: 28, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
+            <SequenceProgress
+              total={total}
+              current={qIdx}
+              completed={doneCnt}
+              accent={accent}
+              accentRgb={rgb}
+              ariaLabel="Question progress"
+            />
+          </div>
+        )}
 
         {/* Header overlay */}
         {phase !== 'done' && renderHeader?.()}

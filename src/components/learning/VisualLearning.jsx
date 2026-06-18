@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 // CinematicShell used here because full-bleed background imagery and the global
 // click-to-advance handler need full viewport coverage without content padding.
@@ -35,8 +36,9 @@ export default function VisualLearning({ block, subject, onComplete }) {
   injectStyles()
 
   const scenes  = block?.scenes  || []
-  const palette = SUBJECTS[subject] || SUBJECTS.History
-  const accent  = palette.accent || '#C89B6D'
+  const palette    = SUBJECTS[subject] || SUBJECTS.History
+  const accent     = palette.accent    || '#C89B6D'
+  const accentRgb  = palette.accentRgb || '200,155,60'
 
   const [idx,     setIdx]     = useState(0)
   const [animKey, setAnimKey] = useState(0)
@@ -210,20 +212,18 @@ export default function VisualLearning({ block, subject, onComplete }) {
             {scene.body}
           </div>
 
-          {/* Scene counter */}
-          <div style={{
-            display: 'flex', gap: 6,
-            marginTop: 28,
-          }}>
-            {scenes.map((_, i) => (
-              <div key={i} style={{
-                height: 2, flex: 1,
-                maxWidth: 28,
-                background: i <= idx ? accent : 'rgba(255,255,255,0.18)',
-                borderRadius: 2,
-                transition: 'background 0.3s ease',
-              }} />
-            ))}
+          {/* Scene progress */}
+          <div style={{ marginTop: 28 }}>
+            <SequenceProgress
+              total={scenes.length}
+              current={idx}
+              completed={idx}
+              accent={accent}
+              accentRgb={accentRgb}
+              variant="sash"
+              compact={true}
+              ariaLabel="Scene progress"
+            />
           </div>
 
           {/* Tap hint */}

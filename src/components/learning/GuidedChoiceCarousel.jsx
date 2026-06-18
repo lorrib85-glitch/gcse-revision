@@ -11,6 +11,7 @@ function tokenize(text) {
     return { key: i, space: false, text: part, wordIdx: wi++ }
   })
 }
+import SequenceProgress from '../core/SequenceProgress.jsx'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { SPACING } from '../../constants/spacing.js'
@@ -538,27 +539,15 @@ export default function GuidedChoiceCarousel({
         </div>
 
         {/* Dot indicators */}
-        <div style={{
-          display:         'flex',
-          justifyContent:  'center',
-          gap:             SPACING.micro,
-          marginTop:       SPACING.compact,
-          paddingBottom:   SPACING.micro,
-        }}>
-          {options.map((_, idx) => (
-            <div
-              key={idx}
-              style={{
-                width:        idx === currentIndex ? 20 : 6,
-                height:       6,
-                borderRadius: RADII.pill,
-                background:   idx === currentIndex
-                  ? accent
-                  : 'rgba(255,255,255,0.14)',
-                transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-              }}
-            />
-          ))}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.compact, paddingBottom: SPACING.micro }}>
+          <SequenceProgress
+            total={options.length}
+            current={currentIndex}
+            accent={accent}
+            accentRgb={accentRgb}
+            compact={true}
+            ariaLabel="Option progress"
+          />
         </div>
       </div>
 

@@ -99,6 +99,23 @@ Foundation components used by many others. Handle atomic UI concerns.
 
 ---
 
+### SequenceProgress — **LOCKED CORE UTILITY**
+
+**File:** `src/components/core/SequenceProgress.jsx`  
+**Purpose:** Local sequence progress through a short sequence inside a learning component. Provides consistent dot and sash indicators for carousels, image sets, swipe cards, mini-steps, and question sets.  
+**Use for:** carousels, image sets, swipe cards, multi-question task progress, mini-step progress inside a learning component, small viewed/current/remaining indicators  
+**Do NOT use for:** top module progress rail, chapter navigation, global app progress (use `LearningProgressHeader` for those)  
+**Props:** `total`, `current` (zero-based, default 0), `completed` (count, default 0), `viewed` (index array for non-linear flows, default []), `accent`, `accentRgb`, `variant` (`'dots'` | `'sash'`, default `'dots'`), `compact` (boolean, default false), `ariaLabel`  
+**Approved variants:**
+- `dots` — default. 20×8px accent pill for current, 8px muted-accent circle for done/viewed, 8px muted-white for future. `compact` reduces to 16×6px pill and 6px circles.
+- `sash` — thin horizontal segments (3px, or 2px when compact). Accent for current, muted accent for done/viewed, muted white for future. Use where dots are too subtle (longer flows, step interactions).  
+**Behaviour:** display only — no navigation. `viewed` array takes priority over `completed` count when supplied. `current` is zero-based.  
+**Hard rule:** Never renders numbers, labels, counters, percentages, or "x of y" — no exceptions.  
+**Rule:** Do not create local `ProgressDots` or one-off carousel dots anywhere in the codebase. Use this component instead.  
+**Used by:** `QuickRecallScreen`, `CinematicCarousel`, `VisualLearning`, `GuidedChoiceCarousel`
+
+---
+
 ## `src/components/learning/`
 
 Screen-level learning interaction components. Each is a distinct learning beat.
