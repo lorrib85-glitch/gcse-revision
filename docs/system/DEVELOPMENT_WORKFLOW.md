@@ -90,7 +90,8 @@ Use for existing-surface work.
    straightforward UI tweaks do not require one. When needed, written to
    `docs/superpowers/specs/`.
 3. Planning
-4. Execution — implement the change; use subagents where helpful
+4. Execution — implement the change; use subagents where helpful; run
+   `/ponytail-review` on the diff before moving on
 5. Documentation update — only if the change affects reusable components,
    design tokens, routing, architecture, product behaviour, or workflow
    rules
@@ -118,7 +119,7 @@ starts directly at step 1.
    `docs/components/`; apply the reuse-before-create rule before proposing
    anything new
 4. Planning
-5. Execution
+5. Execution — run `/ponytail-review` on the diff before moving on
 6. Documentation update — write to existing canonical docs; never create a
    parallel documentation tree
 7. Review — code review, and UI review where visual behaviour changed
