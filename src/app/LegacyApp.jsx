@@ -2,10 +2,11 @@ import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { getProgress, recordActivity, getModuleState as safeGetModuleState } from '../progress.js'
 import { buildChapterCompletePayload, prepareModuleScreenState, resolveTaskDestination } from './moduleNavigation.js'
-import TestTab, { TestDataProvider, readQfBest } from '../features/quickfire/QuickFire.jsx'
+import TestTab, { readQfBest } from '../features/quickfire/QuickFire.jsx'
 import Home from '../features/home/Home.jsx'
 import PulseTab from '../features/pulse/Pulse.jsx'
 import ModulesTab from '../features/subjects/Subjects.jsx'
+import ExamPractice from '../features/exams/ExamPractice.jsx'
 import BottomNav from './BottomNav.jsx'
 import ChapterCompleteScreen from '../components/layout/ChapterCompleteScreen.jsx'
 
@@ -410,7 +411,7 @@ export default function App() {
         {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
         {tab === 'pulse'    && <PulseTab onStartQuickFire={() => setTab('quickfire')} best={readQfBest()} />}
         {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab('pulse')} />}
-        {tab === 'exams'    && <TestDataProvider><TestTab mode="exam" onOpenModule={openModule} onOpenPulse={() => setTab('pulse')} examAutoStart={examAutoStart} clearExamAutoStart={() => setExamAutoStart(null)} /></TestDataProvider>}
+        {tab === 'exams'    && <ExamPractice tab={tab} onOpenModule={openModule} onOpenPulse={() => setTab('pulse')} examAutoStart={examAutoStart} setExamAutoStart={setExamAutoStart} />}
       </div>
       <BottomNav tab={tab} setTab={setTab} />
     </div>
