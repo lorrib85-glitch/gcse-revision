@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
@@ -91,12 +92,14 @@ function StageShell({ stageNum, onExit, children, footer }) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '0 16px', height: 52, flexShrink: 0,
         }}>
-          <div style={{
-            fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 11,
-            letterSpacing: '0.14em', textTransform: 'uppercase', color: GENERAL.slate,
-          }}>
-            Stage {stageNum} of 8
-          </div>
+          <SequenceProgress
+            total={8}
+            current={stageNum - 1}
+            completed={stageNum - 1}
+            accent={GENERAL.teal}
+            accentRgb={GENERAL.tealRgb}
+            ariaLabel="Stage progress"
+          />
           <button onClick={() => onExit()} style={{
             background: 'none', border: 'none', cursor: 'pointer',
             color: 'rgba(255,255,255,0.45)', fontSize: 22, lineHeight: 1, padding: 8,

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import BackButton from '../core/BackButton.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 // CinematicShell used here because full-bleed imagery and floating hotspot overlays need
 // the full viewport; InteractionShell's inset padding would clip hotspot positions.
 import CinematicShell from '../layout/CinematicShell.jsx'
@@ -342,14 +343,17 @@ export default function InteractiveHotspotImage({
             background: 'linear-gradient(180deg, transparent 55%, rgba(3,7,5,0.45) 100%)',
           }} />
 
-          {/* EXPLORE x/n counter — top-right of image */}
-          <div style={{
-            position: 'absolute', top: '16px', right: '14px',
-            fontSize: '12px', fontWeight: 600, letterSpacing: '0.16em',
-            color: progressColor,
-            pointerEvents: 'none', zIndex: 6,
-          }}>
-            EXPLORE {visited.size}/{hotspots.length}
+          {/* Hotspot progress — top-right of image */}
+          <div style={{ position: 'absolute', top: '16px', right: '14px', pointerEvents: 'none', zIndex: 6 }}>
+            <SequenceProgress
+              total={hotspots.length}
+              current={-1}
+              viewed={hotspots.map((h, i) => visited.has(h.id) ? i : -1).filter(i => i >= 0)}
+              accent={glow}
+              accentRgb={glowRgb}
+              compact={true}
+              ariaLabel="Hotspot progress"
+            />
           </div>
 
           {/* Hotspot dots — position: absolute relative to image */}

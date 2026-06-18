@@ -4,6 +4,7 @@ import recoveryQuizzes from '../../data/recoveryQuizzes.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import BackButton from '../core/BackButton.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 
 function ChoiceQuestion({ q, onSelect, subject }) {
   const block = {
@@ -144,27 +145,14 @@ export default function RecoveryQuizPlayer({
           position: 'relative',
         }}>
           <BackButton onClick={onBack} />
-
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontSize: 13, fontWeight: 700, letterSpacing: '.08em',
-            textTransform: 'uppercase',
-            color: accent, opacity: 0.8,
-          }}>
-            Recovery: {qIdx + 1} / {total}
-          </div>
-        </div>
-
-        {/* Progress bar */}
-        <div style={{
-          height: 3, background: 'rgba(255,255,255,0.08)',
-          position: 'relative', zIndex: 10,
-        }}>
-          <div style={{
-            height: '100%', background: accent,
-            width: `${((qIdx + 1) / total) * 100}%`,
-            transition: 'width 500ms ease',
-          }} />
+          <SequenceProgress
+            total={total}
+            current={qIdx}
+            completed={qIdx}
+            accent={accent}
+            accentRgb={rgb}
+            ariaLabel="Recovery progress"
+          />
         </div>
 
         {/* Question area */}

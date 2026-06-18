@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 import { MOTION } from '../../constants/motion.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
@@ -226,17 +227,17 @@ export default function MatchingTask({ screen, subject, onComplete }) {
           {screen.instruction || 'Match each term to its description.'}
         </div>
 
-        {/* Round indicator */}
+        {/* Round progress */}
         {rounds.length > 1 && (
-          <div style={{
-            fontSize: 11,
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            color: `rgba(${BRONZE_RGB},0.60)`,
-            marginBottom: 12,
-            animation: 'mt-fade-in 380ms ease 70ms both',
-          }}>
-            Round {roundIdx + 1} of {rounds.length}
+          <div style={{ marginBottom: 12, animation: 'mt-fade-in 380ms ease 70ms both' }}>
+            <SequenceProgress
+              total={rounds.length}
+              current={roundIdx}
+              completed={roundIdx}
+              accent={BRONZE}
+              accentRgb={BRONZE_RGB}
+              ariaLabel="Round progress"
+            />
           </div>
         )}
 
