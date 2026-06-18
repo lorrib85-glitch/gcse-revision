@@ -1609,15 +1609,7 @@ function IntroScreen({ module, onDone }) {
               </div>
             </div>
 
-            <button onClick={onDone} style={{
-              width: '100%',
-              background: 'linear-gradient(135deg, ' + subjectColor + 'cc, ' + subjectColor + ')',
-              border: 'none', borderRadius: 16, padding: '16px',
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 800, fontSize: '1rem', color: '#001A0A',
-              cursor: 'pointer',
-              boxShadow: '0 6px 24px ' + subjectColor + '44',
-            }}>Start learning →</button>
+            <ContinueCTA onClick={onDone} label="Start learning →" accent={subjectColor} textColor="#001A0A" />
           </div>
         )}
       </div>
@@ -1658,9 +1650,7 @@ function WYLScreen({ module, onDone, subjectColor }) {
         ) : null)}
       </div>
       {visibleCount >= bullets.length && (
-        <button onClick={onDone} style={{ marginTop: 24, width: '100%', height: 52, borderRadius: 16, background: `linear-gradient(135deg, ${subjectColor}cc, ${subjectColor})`, border: 'none', cursor: 'pointer', fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: '#fff', boxShadow: `0 8px 24px ${subjectColor}44`, animation: 'bulletIn 0.38s ease both' }}>
-          Let&rsquo;s start →
-        </button>
+        <ContinueCTA onClick={onDone} label="Let\u2019s start \u2192" accent={subjectColor} style={{ marginTop: 24, animation: 'bulletIn 0.38s ease both' }} />
       )}
     </div>
   )

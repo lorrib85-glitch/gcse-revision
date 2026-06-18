@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import UnifiedQuestionScreen from './UnifiedQuestionScreen.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 
 const IMAGES = {
   History:   '/headers/history-quiz-bg.png',
@@ -301,25 +302,7 @@ export default function TieredQuizScreen({
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 240 }}>
-              <button
-                onClick={handleContinueFromSummary}
-                style={{
-                  background: accent,
-                  border: 'none',
-                  borderRadius: 12,
-                  padding: '14px 20px',
-                  cursor: 'pointer',
-                  fontFamily: "'Sora', sans-serif",
-                  fontWeight: 700,
-                  fontSize: 16,
-                  color: '#08090D',
-                  transition: 'all 120ms ease',
-                }}
-                onMouseEnter={(e) => e.target.style.transform = 'scale(0.98)'}
-                onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-              >
-                Continue →
-              </button>
+              <ContinueCTA onClick={handleContinueFromSummary} accent={accent} textColor="#08090D" />
 
               <button
                 onClick={backToTierSelect}

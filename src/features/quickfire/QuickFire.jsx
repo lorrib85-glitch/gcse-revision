@@ -15,6 +15,7 @@ import { TAG_MODULE_MAP, findTaggedScreen } from '../../data/tagModuleMap.js'
 import { QUICK_QUIZ_QUESTIONS } from '../../data/quickQuizData.js'
 import { StreakChip } from '../home/StreakChip.jsx'
 import BackButton from '../../components/core/BackButton.jsx'
+import ContinueCTA from '../../components/core/ContinueCTA.jsx'
 import ExamQuestionFrame from '../../components/feedback/ExamQuestionFrame.jsx'
 import ExamRoundDebrief from '../../components/feedback/ExamRoundDebrief.jsx'
 import GuidedAnswerCoach from '../../components/learning/GuidedAnswerCoach.jsx'
@@ -1001,9 +1002,7 @@ function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, onBack,
             {/* Actions */}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
               <button onClick={reset} style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:13, padding:'14px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:'#9CA8C7', fontSize:'.88rem' }}>↩ Try again</button>
-              <button onClick={onNext} style={{ background:`linear-gradient(135deg,${topicColor}cc,${topicColor})`, border:'none', borderRadius:13, padding:'14px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:'#fff', fontSize:'.88rem', boxShadow:`0 4px 16px ${topicColor}44` }}>
-                {qIdx < total-1 ? 'Next →' : 'Finish ✓'}
-              </button>
+              <ContinueCTA onClick={onNext} label={qIdx < total-1 ? 'Next \u2192' : 'Finish \u2713'} accent={topicColor} />
             </div>
           </div>
         )}
@@ -1460,7 +1459,7 @@ function ChemistryTopicView({ group, onBack, qIdx: initialQIdx = 0, onQChange })
             {feedback.examinerTip && <div style={{ background: 'rgba(245,183,0,.05)', border: '1px solid rgba(245,183,0,.18)', borderRadius: 13, padding: '14px', marginBottom: 16 }}><div style={{ fontFamily: "'Outfit', sans-serif", fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#F5B700', marginBottom: 6 }}>🗡️ Examiner tip</div><p style={{ margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: '.88rem', color: '#C8D0E8', lineHeight: 1.55 }}>{feedback.examinerTip}</p></div>}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               <button onClick={reset} style={{ background: '#151720', border: '1px solid #2A3552', borderRadius: 13, padding: '14px', fontFamily: "'Sora', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#9CA8C7', fontSize: '.88rem' }}>↩ Try again</button>
-              <button onClick={next} style={{ background: `linear-gradient(135deg, ${color}cc, ${color})`, border: 'none', borderRadius: 13, padding: '14px', fontFamily: "'Sora', sans-serif", fontWeight: 700, cursor: 'pointer', color: '#fff', fontSize: '.88rem', boxShadow: `0 4px 16px ${color}44` }}>{qIdx < qs.length-1 ? 'Next →' : 'Finish ✓'}</button>
+              <ContinueCTA onClick={next} label={qIdx < qs.length-1 ? 'Next →' : 'Finish ✓'} accent={color} />
             </div>
           </div>
         )}
@@ -3334,7 +3333,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
                 {feedback.examinerTip && feedback.examinerTip !== '' && <div style={{ background:`rgba(${GENERAL.tealRgb},.06)`, border:`1px solid rgba(${GENERAL.tealRgb},.2)`, borderRadius:12, padding:'13px 14px', marginBottom:14 }}><div style={{ fontFamily:"'Outfit', sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:GENERAL.teal, marginBottom:6 }}>Examiner tip</div><p style={{ margin:0, fontFamily:"'Outfit', sans-serif", fontSize:'.87rem', color:GENERAL.slate }}>{feedback.examinerTip}</p></div>}
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
                   <button onClick={fullResetQ} style={{ background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.10)', borderRadius:12, padding:'13px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:GENERAL.slate, fontSize:'.88rem' }}>↩ Try again</button>
-                  <button onClick={()=>tqNextQuestion(questions.length)} style={{ background:GENERAL.teal, border:'none', borderRadius:12, padding:'13px', fontFamily:"'Sora', sans-serif", fontWeight:700, cursor:'pointer', color:GENERAL.neutral[0], fontSize:'.88rem' }}>{qIdx<questions.length-1?'Next →':'Finish ✓'}</button>
+                  <ContinueCTA onClick={()=>tqNextQuestion(questions.length)} label={qIdx<questions.length-1?'Next →':'Finish ✓'} accent={GENERAL.teal} textColor={GENERAL.neutral[0]} />
                 </div>
               </div>
             )}

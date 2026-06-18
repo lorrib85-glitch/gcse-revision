@@ -82,14 +82,7 @@ export default function RecoveryQuizPlayer({
       }}>
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: 18, margin: 0 }}>Quiz not found.</p>
-          <button onClick={onBack} style={{
-            marginTop: SPACING.compact,
-            background: '#38D27A', border: 'none', borderRadius: 8,
-            padding: `${SPACING.micro}px ${SPACING.compact}px`, color: '#000', fontWeight: 600,
-            cursor: 'pointer',
-          }}>
-            Go back
-          </button>
+          <BackButton onClick={onBack} style={{ marginTop: SPACING.compact }} />
         </div>
       </div>
     )

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 
 const SUBJECT_BACKING_IMAGES = {
   History:   '/headers/history-medicine-through-time.webp',
@@ -665,17 +666,11 @@ export default function GalensDiagnostic({ block, subject, onContinue }) {
           </div>
         )}
 
-        <button
+        <ContinueCTA
           onClick={onContinue}
-          style={{
-            marginTop: 12, ...F, fontWeight: 700, fontSize: 20,
-            color: accent, background: 'none', border: 'none',
-            cursor: 'pointer', padding: '12px 0',
-            animation: `gd-fade-up 360ms ${ease} 460ms both`,
-          }}
-        >
-          Continue →
-        </button>
+          accent={accent}
+          style={{ marginTop: 12, animation: `gd-fade-up 360ms ${ease} 460ms both` }}
+        />
       </div>
     </div>
     </>

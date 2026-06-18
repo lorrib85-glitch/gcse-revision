@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 // CinematicShell used here because the horizontal scroll-snap chain and connector rail must
 // reach the full viewport width; InteractionShell's 16px inset would clip the rail and break
 // the scroll-snap alignment.
@@ -154,18 +155,13 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
       </div>
 
       {/* Continue */}
-      <div style={{ textAlign: 'center', marginTop: SPACING.standard, padding: `0 ${SPACING.standard}px`, flexShrink: 0 }}>
+      <div style={{ marginTop: SPACING.standard, padding: `0 ${SPACING.standard}px`, flexShrink: 0 }}>
         {allFlipped ? (
-          <button
+          <ContinueCTA
             onClick={onContinue}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-              ...F, fontWeight: 700, fontSize: 18, color: accent,
-              animation: `tc-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-            }}
-          >
-            Continue →
-          </button>
+            accent={accent}
+            style={{ animation: `tc-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both` }}
+          />
         ) : (
           <div style={{ ...F, fontSize: 13, color: 'rgba(255,255,255,0.32)' }}>
             Flip every step to continue

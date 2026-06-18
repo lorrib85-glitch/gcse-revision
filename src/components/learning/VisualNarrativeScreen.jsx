@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import ContinueCTA from '../core/ContinueCTA.jsx'
 // CinematicShell used here because this screen renders full-bleed absolute-positioned portrait
 // and timeline image layers that must reach all four edges; ContentShell's 16px horizontal
 // padding and opaque background would clip the atmospheric imagery and break the layout.
@@ -262,19 +263,11 @@ export default function VisualNarrativeScreen({
 
                 {showCTA && (
                   <div style={{ marginTop: 32, pointerEvents: 'auto' }}>
-                    <button
-                      className="vn-cta"
+                    <ContinueCTA
                       onClick={(e) => { e.stopPropagation(); onContinue?.() }}
-                      style={{
-                        background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                        fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
-                        color: accent,
-                        animation: 'vnFadeIn 420ms ease both',
-                        transition: 'opacity 140ms ease',
-                      }}
-                    >
-                      Continue →
-                    </button>
+                      accent={accent}
+                      style={{ animation: 'vnFadeIn 420ms ease both' }}
+                    />
                     {beat.source && (
                       <div style={{
                         marginTop: 20,
