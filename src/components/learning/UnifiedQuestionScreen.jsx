@@ -2,6 +2,11 @@ import { useState, useEffect, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
 
+function getOptionLabel(option) {
+  if (typeof option === 'string') return option
+  return option?.text ?? ''
+}
+
 export default function UnifiedQuestionScreen({
   question,           // string: the question text (normalized from 'q' or 'question' field)
   type = 'choice',    // 'choice' | 'truefalse'
@@ -256,7 +261,7 @@ export default function UnifiedQuestionScreen({
                   transition: `opacity ${MOTION.duration.instant} ${MOTION.easing.gentle}, background ${MOTION.duration.instant} ${MOTION.easing.gentle}, border-color ${MOTION.duration.instant} ${MOTION.easing.gentle}`,
                 }}
               >
-                {opt}
+                {getOptionLabel(opt)}
                 {status === 'incorrect' && isFirstTapped && mark('incorrect')}
                 {status === 'correct' && isFirstTapped && mark('correct')}
                 {isRetryTapped && retryStatus === 'correct' && mark('correct')}
