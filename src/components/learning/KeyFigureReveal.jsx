@@ -83,6 +83,8 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
       background: '#08090D',
       display: 'flex',
       flexDirection: 'column',
+      overflow: 'auto',
+      WebkitOverflowScrolling: 'touch',
     }}>
 
       <style>{`
@@ -99,7 +101,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
       {/* ── Portrait hero ───────────────────────────────────────────────── */}
       <div style={{
         position: 'relative',
-        height: '50vh',
+        height: '44vh',
         overflow: 'hidden',
         flexShrink: 0,
       }}>
@@ -150,17 +152,16 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         onTouchEnd={handleTouchEnd}
         onClick={handleClick}
         style={{
-          flex: 1,
           position: 'relative',
           padding: `${SPACING.compact}px ${SPACING.standard}px`,
-          paddingBottom: `calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
+          paddingBottom: `calc(28px + env(safe-area-inset-bottom, 0px))`,
           cursor: 'pointer',
           userSelect: 'none',
           WebkitUserSelect: 'none',
           WebkitTapHighlightColor: 'transparent',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
+          gap: SPACING.compact,
         }}
       >
 
@@ -252,8 +253,8 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             {section.lines?.map((line, i) => (
               <p key={i} style={{
                 fontFamily: "'Sora', sans-serif",
-                fontSize: 14,
-                lineHeight: 1.6,
+                fontSize: 15,
+                lineHeight: 1.5,
                 color: bodyColor,
                 margin: `0 0 ${i < section.lines.length - 1 ? 8 : 0}px`,
               }}>
