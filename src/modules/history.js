@@ -245,6 +245,7 @@ export const HISTORY_MODULES = [
         tag: 'galen',
         label: 'Galen',
         portrait: '/figures/history/medicine/medieval/galen-portrait.webp',
+        cardBackground: '/figures/history/medicine/medieval/galen-parchment.png',
         name: 'Galen',
         role: 'Roman doctor and writer',
         significance: 'The doctor whose ideas dominated medicine for over 1,400 years.',
@@ -252,6 +253,7 @@ export const HISTORY_MODULES = [
           {
             title: 'Gladiators & dissection',
             icon: 'war-conflict',
+            sectionImage: '/figures/history/medicine/medieval/galen-gladiators.png',
             lines: [
               'Galen spent years patching up wounded gladiators — giving him direct, hands-on experience of the human body.',
               'He also dissected animals extensively to study anatomy.',
@@ -259,17 +261,19 @@ export const HISTORY_MODULES = [
             ],
           },
           {
-            title: 'Four humours & Theory of Opposites',
+            title: 'Theory of the four humours',
             icon: 'bloodletting',
+            sectionImage: '/figures/history/medicine/medieval/galen-teaching.png',
             lines: [
               "Galen promoted Hippocrates' Four Humours — Blood, Phlegm, Yellow Bile, Black Bile — and added his own contribution.",
               'He argued illness should be treated with its opposite: hot illness → cold remedy. Wet illness → dry remedy.',
-              'This became known as the Theory of Opposites.',
             ],
+            quote: 'Health exists when the four humours are in perfect balance.',
           },
           {
             title: 'The squealing pig',
             icon: 'science',
+            sectionImage: '/figures/history/medicine/medieval/galen-dissection.png',
             lines: [
               'Galen wanted to prove the brain — not the heart — controlled the body.',
               'He performed a public demonstration, cutting the vocal cord nerves of a squealing pig mid-cry.',
@@ -277,11 +281,12 @@ export const HISTORY_MODULES = [
             ],
           },
           {
-            title: 'Influence & limitations',
+            title: 'Influence & lasting legacy',
             icon: 'legacy',
             lines: [
-              'Doctors followed his ideas for over 1,400 years.',
-              'Some ideas were wrong because he studied animals, not humans.',
+              'Galen\'s writings became the most authoritative medical texts in the medieval world.',
+              'His ideas influenced doctors for more than a millennium.',
+              'He laid the foundations for modern anatomy and medical research — even though some ideas were wrong because he studied animals, not humans.',
             ],
           },
         ],

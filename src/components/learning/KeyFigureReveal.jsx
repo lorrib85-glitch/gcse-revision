@@ -3,14 +3,14 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE }     from '../../constants/typography.js'
 import { SPACING }  from '../../constants/spacing.js'
 import { RADII }    from '../../constants/radii.js'
-// CinematicShell used here because the 56vh portrait hero image must be full-bleed with no
+// CinematicShell used here because the portrait hero must be full-bleed with no
 // horizontal padding; ContentShell's 16px inset would create unwanted margins around the
 // hero and disrupt the name/role overlay anchored to the hero's edges.
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { MOTION }   from '../../constants/motion.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 
-function HistoryIcon({ icon, size = 32 }) {
+function HistoryIcon({ icon, size = 28 }) {
   if (!icon) return <div style={{ width: size, height: size }} />
   return (
     <img
@@ -24,14 +24,14 @@ function HistoryIcon({ icon, size = 32 }) {
 export default function KeyFigureReveal({ block, subject, onComplete }) {
   const theme  = SUBJECTS[subject] || SUBJECTS.History
   const accent = theme.accent
+  const rgb    = theme.accentRgb
 
   const [sectionIdx, setSectionIdx] = useState(0)
-  const [dragStart, setDragStart] = useState(null)
   const touchRef = useRef(null)
 
   const sections = block.sections || []
-  const section = sections[sectionIdx] || {}
-  const isLast = sectionIdx === sections.length - 1
+  const section  = sections[sectionIdx] || {}
+  const isLast   = sectionIdx === sections.length - 1
 
   function advance() {
     if (isLast) {
@@ -42,9 +42,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
   }
 
   function retreat() {
-    if (sectionIdx > 0) {
-      setSectionIdx(i => i - 1)
-    }
+    if (sectionIdx > 0) setSectionIdx(i => i - 1)
   }
 
   function handleTouchStart(e) {
@@ -60,9 +58,16 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
   }
 
   function handleClick(e) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    (e.clientX - rect.left) / rect.width < 0.25 ? retreat() : advance()
+    const rect = e.currentTarget.getBoundingClientRect()
+    ;(e.clientX - rect.left) / rect.width < 0.25 ? retreat() : advance()
   }
+
+  // Card background: parchment texture with dark warm overlay if provided, else flat dark
+  const cardBg = block.cardBackground
+    ? `linear-gradient(rgba(18,12,6,0.82), rgba(18,12,6,0.86)), url(${block.cardBackground}) center/cover`
+    : `radial-gradient(ellipse at 50% 0%, rgba(${rgb},0.07) 0%, transparent 65%),
+       linear-gradient(160deg, rgba(${rgb},0.05) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.18) 100%),
+       rgba(12,9,5,0.88)`
 
   return (
     <CinematicShell style={{
@@ -71,11 +76,23 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
       flexDirection: 'column',
     }}>
 
+      <style>{`
+        @keyframes kfr-slide-in {
+          from { opacity: 0; transform: translateX(18px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes kfr-img-in {
+          from { opacity: 0; transform: scale(1.03); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+
       {/* ── Portrait hero ───────────────────────────────────────────────── */}
       <div style={{
         position: 'relative',
-        height: '56vh',
+        height: '50vh',
         overflow: 'hidden',
+        flexShrink: 0,
       }}>
         <img
           src={block.portrait}
@@ -93,11 +110,11 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to bottom, rgba(8,9,13,0.08) 0%, rgba(8,9,13,0.12) 38%, rgba(8,9,13,0.72) 68%, rgba(8,9,13,0.98) 100%)',
+          background: 'linear-gradient(to bottom, rgba(8,9,13,0.06) 0%, rgba(8,9,13,0.10) 35%, rgba(8,9,13,0.70) 65%, rgba(8,9,13,0.98) 100%)',
           pointerEvents: 'none',
         }} />
 
-        {/* Name pinned to bottom of portrait */}
+        {/* Name + role + progress dots — pinned to bottom of portrait */}
         <div style={{
           position: 'absolute',
           bottom: 0, left: 0, right: 0,
@@ -109,7 +126,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             color: '#FFFFFF',
             textTransform: 'uppercase',
             letterSpacing: '0.03em',
-            marginBottom: 6,
+            marginBottom: 4,
           }}>
             {block.name}
           </div>
@@ -118,13 +135,33 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             ...TYPE.metadata,
             color: accent,
             textTransform: 'uppercase',
+            marginBottom: 10,
           }}>
             {block.role}
           </div>
+
+          {/* Progress dots — live in the hero overlay */}
+          {sections.length > 1 && (
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              {sections.map((_, i) => (
+                <div key={i} style={{
+                  width: i === sectionIdx ? 18 : 6,
+                  height: 6,
+                  borderRadius: 99,
+                  background: i === sectionIdx
+                    ? accent
+                    : i < sectionIdx
+                      ? `rgba(${rgb},0.55)`
+                      : 'rgba(255,255,255,0.28)',
+                  transition: `all ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                }} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ── Carousel section ─────────────────────────────────────────────── */}
+      {/* ── Insight card carousel ─────────────────────────────────────── */}
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -143,124 +180,147 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           justifyContent: 'center',
         }}
       >
-        {/* Carousel dots */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 8,
-          marginBottom: SPACING.standard,
-        }}>
-          {sections.map((_, i) => (
-            <div key={i} style={{
-              width: 6, height: 6,
-              borderRadius: '50%',
-              background: i === sectionIdx ? accent : 'rgba(255,255,255,0.2)',
-              transition: `background ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
-            }} />
-          ))}
-        </div>
 
-        {/* Section card */}
-        <div key={sectionIdx} style={{
-          border: `2px solid rgba(${theme.accentRgb},0.45)`,
-          borderRadius: RADII.medium,
-          padding: SPACING.standard,
-          background: `
-            radial-gradient(ellipse at 50% 0%, rgba(${theme.accentRgb},0.07) 0%, transparent 65%),
-            linear-gradient(160deg, rgba(${theme.accentRgb},0.05) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.18) 100%),
-            rgba(12,9,5,0.72)
-          `,
-          backdropFilter: 'blur(8px)',
-          boxShadow: `
-            inset 0 1px 0 rgba(${theme.accentRgb},0.18),
-            inset 0 -1px 0 rgba(0,0,0,0.45),
-            inset 1px 0 0 rgba(${theme.accentRgb},0.06),
-            inset -1px 0 0 rgba(${theme.accentRgb},0.06),
-            0 4px 24px rgba(0,0,0,0.45)
-          `,
-          animation: `keyRevealSlide 420ms ${MOTION.easing.standard} both`,
-          marginBottom: SPACING.standard,
-          position: 'relative',
-          overflow: 'hidden',
-        }}>
-          {/* Vignette — behind all card content */}
+        {/* Insight card */}
+        <div
+          key={sectionIdx}
+          style={{
+            borderRadius: RADII.medium,
+            padding: SPACING.standard,
+            background: cardBg,
+            border: `1px solid rgba(${rgb},0.32)`,
+            boxShadow: `
+              inset 0 1px 0 rgba(${rgb},0.14),
+              inset 0 -1px 0 rgba(0,0,0,0.35),
+              0 4px 28px rgba(0,0,0,0.5)
+            `,
+            animation: `kfr-slide-in 380ms ${MOTION.easing.standard} both`,
+            overflow: 'hidden',
+            position: 'relative',
+            marginBottom: isLast ? SPACING.standard : 0,
+          }}
+        >
+
+          {/* Card header: medallion + title */}
           <div style={{
-            position: 'absolute', inset: 0,
-            background: 'radial-gradient(ellipse at 50% 50%, transparent 45%, rgba(0,0,0,0.28) 100%)',
-            pointerEvents: 'none',
-          }} />
-
-          <style>{`
-            @keyframes keyRevealSlide {
-              from { opacity: 0; transform: translateX(16px); }
-              to   { opacity: 1; transform: translateX(0); }
-            }
-          `}</style>
-
-          {/* Content sits above vignette */}
-          <div style={{ position: 'relative', zIndex: 1 }}>
-
-            {/* Section header with icon */}
+            display: 'flex',
+            alignItems: 'center',
+            gap: SPACING.compact,
+            marginBottom: SPACING.compact,
+          }}>
+            {/* Icon medallion */}
             <div style={{
+              width: 52, height: 52,
+              borderRadius: '50%',
+              background: `rgba(${rgb},0.14)`,
+              border: `1px solid rgba(${rgb},0.38)`,
               display: 'flex',
               alignItems: 'center',
-              gap: SPACING.compact,
-              marginBottom: SPACING.standard,
+              justifyContent: 'center',
+              flexShrink: 0,
             }}>
-              <HistoryIcon icon={section.icon} size={32} />
-              <div style={{
-                ...TYPE.metadata,
-                color: accent,
-                textTransform: 'uppercase',
-                fontSize: 13,
-              }}>
-                {section.title}
-              </div>
+              <HistoryIcon icon={section.icon} size={28} />
             </div>
 
-            {/* Section content */}
-            {section.lines?.map((line, i) => (
-              <p key={i} style={{
-                ...TYPE.bodySmall,
-                color: 'rgba(245,238,225,0.8)',
-                margin: `0 0 ${i < section.lines.length - 1 ? SPACING.micro : 0}px`,
-                lineHeight: 1.65,
-              }}>
-                {line}
-              </p>
-            ))}
-
+            {/* Section title */}
+            <div style={{
+              fontFamily: "'Sora', sans-serif",
+              fontSize: 15,
+              fontWeight: 700,
+              color: accent,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              lineHeight: 1.25,
+            }}>
+              {section.title}
+            </div>
           </div>
+
+          {/* Section image */}
+          {section.sectionImage && (
+            <div style={{
+              borderRadius: RADII.small,
+              overflow: 'hidden',
+              marginBottom: SPACING.compact,
+              animation: `kfr-img-in 480ms ${MOTION.easing.standard} both`,
+            }}>
+              <img
+                src={section.sectionImage}
+                alt=""
+                style={{
+                  width: '100%',
+                  height: 150,
+                  objectFit: 'cover',
+                  objectPosition: 'center top',
+                  display: 'block',
+                }}
+              />
+            </div>
+          )}
+
+          {/* Body text */}
+          {section.lines?.map((line, i) => (
+            <p key={i} style={{
+              fontFamily: "'Sora', sans-serif",
+              fontSize: 15,
+              lineHeight: 1.65,
+              color: 'rgba(245,238,225,0.82)',
+              margin: `0 0 ${i < section.lines.length - 1 ? 10 : 0}px`,
+            }}>
+              {line}
+            </p>
+          ))}
+
+          {/* Pull quote */}
+          {section.quote && (
+            <div style={{
+              borderLeft: `2px solid rgba(${rgb},0.55)`,
+              paddingLeft: 12,
+              marginTop: 14,
+              fontFamily: "'IBM Plex Serif', serif",
+              fontStyle: 'italic',
+              fontSize: 14,
+              lineHeight: 1.6,
+              color: `rgba(${245},${220},${175},0.75)`,
+            }}>
+              "{section.quote}"
+            </div>
+          )}
+
         </div>
 
-        {/* Swipe hint */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: SPACING.compact,
-          color: 'rgba(255,255,255,0.4)',
-          ...TYPE.metadata,
-          fontSize: 11,
-          textTransform: 'uppercase',
-          letterSpacing: '0.16em',
-          marginBottom: SPACING.standard,
-        }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-          Swipe to discover
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </div>
+        {/* Swipe affordance — hidden on final insight */}
+        {!isLast && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: SPACING.compact,
+            color: 'rgba(255,255,255,0.35)',
+            fontFamily: "'Sora', sans-serif",
+            fontSize: 11,
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.16em',
+            marginTop: SPACING.compact,
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+            Swipe to discover
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </div>
+        )}
 
-        {/* Continue button — only on last section */}
+        {/* Continue — final insight only */}
         {isLast && (
           <ContinueCTA onClick={(e) => { e.stopPropagation(); onComplete?.() }} accent={accent} />
         )}
+
       </div>
     </CinematicShell>
   )
