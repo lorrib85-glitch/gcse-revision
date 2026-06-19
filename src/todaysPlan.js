@@ -34,6 +34,7 @@ function buildWarmupCard() {
     title: '90s warm up',
     reason: 'Mixed questions to start the day.',
     durationMinutes: 2,
+    image: '/headers/pulse-90s-recall.png',
     onSelect: { kind: 'quickfire' },
   }
 }
