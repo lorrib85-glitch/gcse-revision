@@ -111,7 +111,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           style={{
             width: '100%', height: '100%',
             objectFit: 'cover',
-            objectPosition: 'center top',
+            objectPosition: block.portraitPosition || 'center top',
             display: 'block',
           }}
         />
