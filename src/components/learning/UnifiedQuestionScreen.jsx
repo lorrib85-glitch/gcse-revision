@@ -146,6 +146,10 @@ export default function UnifiedQuestionScreen({
         @keyframes uqs-check-draw { to { stroke-dashoffset: 0; } }
         @keyframes uqs-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes uqs-fade-out { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-8px); } }
+        @keyframes uqs-correct-glow {
+          0%   { background: rgba(${rgb}, 0.28); box-shadow: 0 0 0 1px rgba(${rgb}, 0.38), 0 0 36px rgba(${rgb}, 0.48); }
+          100% { background: rgba(${rgb}, 0.14); box-shadow: 0 0 0 1px rgba(${rgb}, 0.16), 0 0 22px rgba(${rgb}, 0.22); }
+        }
       `}</style>
 
       {/* Background image (if provided) */}
@@ -220,6 +224,8 @@ export default function UnifiedQuestionScreen({
             let background = 'rgba(21,23,32,0.9)'
             let border = '1px solid rgba(255,255,255,0.12)'
             let color = '#F5F7FF'
+            let boxShadow = undefined
+            let correctAnimation = undefined
 
             const answered = status !== null
             const retryDone = retryStatus !== null
@@ -265,6 +271,14 @@ export default function UnifiedQuestionScreen({
               border = `1px solid rgba(${rgb}, 0.45)`
             }
 
+            // Correct-answer glow — runs after all other conditions so it always wins
+            if (isCorrectOpt && (status === 'correct' || retryDone)) {
+              background = `rgba(${rgb}, 0.14)`
+              border = `1px solid rgba(${rgb}, 0.72)`
+              boxShadow = `0 0 0 1px rgba(${rgb}, 0.16), 0 0 22px rgba(${rgb}, 0.22)`
+              correctAnimation = `uqs-correct-glow 520ms cubic-bezier(0.22, 1, 0.36, 1) both`
+            }
+
             const disabled = status === 'correct'
               ? true
               : status === 'incorrect'
@@ -292,6 +306,8 @@ export default function UnifiedQuestionScreen({
                   color,
                   opacity,
                   WebkitTapHighlightColor: 'transparent',
+                  boxShadow,
+                  animation: correctAnimation,
                   transition: `opacity ${MOTION.duration.instant} ${MOTION.easing.gentle}, background ${MOTION.duration.instant} ${MOTION.easing.gentle}, border-color ${MOTION.duration.instant} ${MOTION.easing.gentle}`,
                 }}
               >
