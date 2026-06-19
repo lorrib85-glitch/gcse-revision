@@ -28,6 +28,17 @@
   --color-input:                  #2A3552;
   --color-ring:                   #9D5CFF;
 
+  /* Constitution background scale */
+  --color-bg-primary:             #08090D;
+  --color-bg-secondary:           #101218;
+  --color-bg-card:                #151720;
+  --color-bg-elevated:            #1B1E27;
+
+  /* Constitution text scale */
+  --color-text-primary:           #F5F7FF;
+  --color-text-secondary:         #A89FC2;
+  --color-text-muted:             #5E5874;
+
   /* Subject colours */
   --color-history:   #F5B700;
   --color-science:   #38D27A;
@@ -45,4 +56,162 @@
   --radius-lg:   1rem;
   --radius-xl:   1.25rem;
   --radius-full: 9999px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Cinematic Learning Screen — component layer
+   ────────────────────────────────────────────────────────────────────────
+   Reusable classes for the in-module cinematic treatment.
+   Reference: docs/system/PRODUCT_UI_CONSTITUTION.md §Cinematic Learning
+   Screen Treatment.
+
+   Design rules enforced here:
+     • Dark, calm, premium — never gamified or dashboard-style
+     • Mobile-first, max-width 420px (PRODUCT_UI_CONSTITUTION global layout law)
+     • Artefact cards: dark surface, thin low-opacity neutral border, soft shadow
+     • Spacing from SPACING tokens: micro 8 · compact 16 · standard 24 · separation 42
+     • Radii from RADII tokens: small 10 · medium 16 · large 22 · panel 26
+     • No glassmorphism, no neon glow, no pill on primary CTAs
+     • Subject accent is NOT hardcoded — inject via CSS var (--cinematic-accent)
+       or override background on the element directly from component props
+   ══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+
+  /* ── cinematic-screen ─────────────────────────────────────────────────────
+     Outermost full-viewport container for a single learning screen.
+     Centres the 420px column, sets the deep background, clips overflow. */
+  .cinematic-screen {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    margin-inline: auto;
+    min-height: 100dvh;
+    background-color: #08090D;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── cinematic-shell ──────────────────────────────────────────────────────
+     Padded content column inside cinematic-screen.
+     24px side padding (SPACING.standard), grows to fill space for
+     bottom-anchored CTAs, respects device safe-area bottom. */
+  .cinematic-shell {
+    width: 100%;
+    max-width: 420px;
+    margin-inline: auto;
+    padding-inline: 24px;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 24px);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* ── cinematic-card ───────────────────────────────────────────────────────
+     Standard artefact card: bg-card surface, thin neutral border, soft depth.
+     Subject-tinted border colour comes from the component via inline style —
+     never hardcode a subject colour in this rule. */
+  .cinematic-card {
+    background-color: #151720;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;  /* RADII.medium */
+    padding: 24px;        /* SPACING.standard */
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  /* ── cinematic-card-soft ──────────────────────────────────────────────────
+     Elevated variant: bg-elevated surface, larger radius, even softer border.
+     Use for secondary cards or nested content blocks inside a cinematic-card. */
+  .cinematic-card-soft {
+    background-color: #1B1E27;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 22px;  /* RADII.large */
+    padding: 24px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  /* ── cinematic-eyebrow ────────────────────────────────────────────────────
+     Small uppercase section label that sits above a heading.
+     Matches TYPE.metadata sizing with uppercase + letter-spacing.
+     Neutral muted colour by default; override with a subject accent class
+     only when the label signals active state or category. */
+  .cinematic-eyebrow {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.875rem;    /* TYPE.metadata — 14px */
+    font-weight: 700;
+    letter-spacing: 0.08em; /* TYPE.metadata.letterSpacing */
+    text-transform: uppercase;
+    line-height: 1.3;
+    color: #5E5874;         /* text-muted from constitution */
+  }
+
+  /* ── cinematic-body ───────────────────────────────────────────────────────
+     Body copy for learning content.
+     TYPE.bodySmall scale (16px) — calm and readable on mobile. */
+  .cinematic-body {
+    font-family: 'Sora', sans-serif;
+    font-size: 1rem;    /* TYPE.bodySmall — 16px */
+    line-height: 1.6;
+    font-weight: 400;
+    letter-spacing: 0em;
+    color: #A89FC2;     /* text-secondary from constitution */
+  }
+
+  /* ── cinematic-muted ──────────────────────────────────────────────────────
+     Muted secondary copy: captions, timestamps, de-emphasised text.
+     One step below cinematic-body in visual hierarchy. */
+  .cinematic-muted {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.875rem; /* TYPE.metadata — 14px */
+    line-height: 1.4;
+    font-weight: 400;
+    letter-spacing: 0em;
+    color: #5E5874;      /* text-muted from constitution */
+  }
+
+  /* ── cinematic-image ──────────────────────────────────────────────────────
+     Editorial image inside a card or screen.
+     16:9 default aspect ratio, darkened per imagery law (brightness 0.7,
+     grayscale 10%). Override aspect-ratio inline when content demands it.
+     Image must carry learning weight — not be purely decorative. */
+  .cinematic-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 10px;                  /* RADII.small */
+    filter: brightness(0.7) grayscale(10%);
+  }
+
+  /* ── cinematic-primary-action ─────────────────────────────────────────────
+     Full-width primary CTA button.
+     Subject accent is injected via the CSS variable --cinematic-accent;
+     set it on the button or a parent via inline style:
+       style={{ '--cinematic-accent': subjectPalette.accent }}
+     Border-radius is RADII.large (22px) — constitution forbids pill on primary.
+     Press state uses scale + opacity; no bounce, no spring (motion law). */
+  .cinematic-primary-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 56px;
+    padding-inline: 24px;
+    border-radius: 22px;   /* RADII.large — never pill */
+    border: none;
+    font-family: 'Sora', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: #ffffff;
+    background-color: var(--cinematic-accent, #9D5CFF); /* override per subject */
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 180ms ease-out, transform 120ms ease-out;
+  }
+
+  .cinematic-primary-action:active {
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
 }
