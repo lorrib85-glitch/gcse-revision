@@ -102,7 +102,7 @@ export default function UnifiedQuestionScreen({
       return (
         <span aria-hidden="true" style={{
           position: 'absolute', right: 18, top: '50%', transform: 'translateY(-50%)',
-          color: '#E84C45', fontSize: '1.15rem', fontWeight: 700,
+          color: '#E05A52', fontSize: '1.15rem', fontWeight: 700,
           animation: `uqs-mark-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
         }}>
           ×
@@ -137,15 +137,14 @@ export default function UnifiedQuestionScreen({
   }
 
   return (
-    <div style={{
-      background: '#08090D',
-      minHeight: '100dvh',
-      display: 'flex',
-      flexDirection: 'column',
-      color: '#F4EFE6',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
+    <div
+      className="cinematic-screen"
+      style={{
+        opacity: entered && !leaving ? 1 : 0,
+        transform: leaving ? 'translateY(-8px)' : entered ? 'translateY(0)' : 'translateY(8px)',
+        transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+      }}
+    >
       <style>{`
         @keyframes uqs-mark-in { from { opacity: 0; transform: translateY(-50%) scale(0.5); } to { opacity: 1; transform: translateY(-50%) scale(1); } }
         @keyframes uqs-hint-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -158,80 +157,80 @@ export default function UnifiedQuestionScreen({
 
       {/* Background image (if provided) */}
       {backgroundImage && (
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center top',
-          zIndex: 0,
-          opacity: 1,
-        }} />
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center top',
+            zIndex: 0,
+          }}
+        />
       )}
 
-      {/* Dark overlay */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'rgba(8,9,13,0.88)',
-        zIndex: 1,
-        pointerEvents: 'none',
-      }} />
+      {/* Dark overlay — dims bg image and anchors content legibility */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute', inset: 0,
+          background: 'rgba(8,9,13,0.88)',
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}
+      />
 
-      {/* Content container */}
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        padding: '80px 20px 20px',
-        maxWidth: 520,
-        width: '100%',
-        margin: '0 auto',
-        boxSizing: 'border-box',
-        position: 'relative',
-        zIndex: 2,
-        opacity: entered && !leaving ? 1 : 0,
-        transform: leaving ? 'translateY(-8px)' : entered ? 'translateY(0)' : 'translateY(8px)',
-        transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-      }}>
+      {/* Content shell — sits above overlay, handles padding */}
+      <div
+        className="cinematic-shell"
+        style={{
+          paddingTop: 80,
+          position: 'relative',
+          zIndex: 2,
+          '--cinematic-accent': accent,
+        }}
+      >
 
-        {/* Question text */}
+        {/* Question — dominant focus, editorial serif */}
         <p style={{
           fontFamily: "'IBM Plex Serif', serif",
           fontSize: 26,
           lineHeight: 1.25,
           fontWeight: 600,
           letterSpacing: '-0.01em',
-          margin: `0 0 24px`,
-          color: '#FFFFFF',
+          margin: '0 0 28px',
+          color: '#F5F7FF',
         }}>
           {q}
         </p>
 
-        {/* Options */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {/* Answer options */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {options.map((opt, i) => {
             const isFirstTapped = tapped === opt
             const isRetryTapped = retryTapped === opt
             const isCorrectOpt = i === correctIdx
+
+            // Base: neutral cinematic card surface — no subject warmth baked in
             let opacity = 1
-            let background = 'rgba(36,22,11,0.72)'
-            let border = '1px solid rgba(255,255,255,0.06)'
+            let background = 'rgba(21,23,32,0.9)'
+            let border = '1px solid rgba(255,255,255,0.08)'
 
             if (status === 'incorrect' && isFirstTapped) opacity = 0.58
             if (status === 'correct' && isFirstTapped) {
-              background = `rgba(${rgb}, 0.07)`
+              background = `rgba(${rgb}, 0.10)`
               border = `1px solid ${accent}`
             }
             if (isRetryTapped && retryStatus === null) {
               border = `1px solid rgba(${rgb}, 0.5)`
             }
             if (isRetryTapped && retryStatus === 'correct') {
-              background = `rgba(${rgb}, 0.07)`
+              background = `rgba(${rgb}, 0.10)`
               border = `1px solid ${accent}`
             }
             if (isRetryTapped && retryStatus === 'incorrect') opacity = 0.58
             if (retryStatus === 'incorrect' && isCorrectOpt) {
-              background = `rgba(${rgb}, 0.07)`
+              background = `rgba(${rgb}, 0.10)`
               border = `1px solid ${accent}`
             }
 
@@ -253,13 +252,15 @@ export default function UnifiedQuestionScreen({
                   background,
                   border,
                   borderRadius: 14,
-                  padding: '14px 44px 14px 18px',
+                  padding: '14px 48px 14px 18px',
                   cursor: disabled ? 'default' : 'pointer',
                   fontFamily: "'Sora', sans-serif",
                   fontWeight: 500,
-                  fontSize: '0.95rem',
-                  color: '#F4EFE6',
+                  fontSize: '0.9375rem',
+                  lineHeight: 1.45,
+                  color: '#F5F7FF',
                   opacity,
+                  WebkitTapHighlightColor: 'transparent',
                   transition: `opacity ${MOTION.duration.instant} ${MOTION.easing.gentle}, background ${MOTION.duration.instant} ${MOTION.easing.gentle}, border-color ${MOTION.duration.instant} ${MOTION.easing.gentle}`,
                 }}
               >
@@ -274,53 +275,47 @@ export default function UnifiedQuestionScreen({
           })}
         </div>
 
-        {/* Hint box (after wrong attempt) */}
+        {/* Hint box — appears after first wrong attempt */}
         {hintVisible && status === 'incorrect' && (
-          <div style={{
-            marginTop: 16,
-            background: 'rgba(36,22,11,0.72)',
-            borderRadius: 14,
-            borderLeft: `3px solid ${accent}`,
-            padding: '12px 16px',
-            display: 'flex',
-            gap: 12,
-            alignItems: 'flex-start',
-            animation: `uqs-hint-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
-          }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{
-              color: 'rgba(255,255,255,0.56)',
-              flexShrink: 0,
-              marginTop: 3,
-            }}>
+          <div
+            style={{
+              marginTop: 16,
+              background: 'rgba(27,30,39,0.92)',
+              borderRadius: 14,
+              borderLeft: `3px solid ${accent}`,
+              padding: '12px 16px',
+              display: 'flex',
+              gap: 12,
+              alignItems: 'flex-start',
+              animation: `uqs-hint-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
+            }}
+          >
+            <svg
+              width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="1.5"
+              strokeLinecap="round" strokeLinejoin="round"
+              aria-hidden="true"
+              style={{ color: 'rgba(255,255,255,0.4)', flexShrink: 0, marginTop: 3 }}
+            >
               <path d="M9 18h6M10 21h4M12 2a6.5 6.5 0 0 0-4 11.6c.6.5 1 1.3 1 2.4h6c0-1.1.4-1.9 1-2.4A6.5 6.5 0 0 0 12 2z" />
             </svg>
             <div>
-              <div style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                color: accent,
-                marginBottom: 6,
-              }}>
+              <div
+                className="cinematic-eyebrow"
+                style={{ color: accent, marginBottom: 6 }}
+              >
                 Hint
               </div>
-              <p style={{
-                margin: 0,
-                fontFamily: "'Outfit', sans-serif",
-                fontSize: '0.9rem',
-                color: '#F4EFE6',
-              }}>
+              <p
+                className="cinematic-body"
+                style={{ margin: 0, color: '#F5F7FF' }}
+              >
                 {hint || explanation || 'Try again — pick a different answer.'}
               </p>
-              <p style={{
-                margin: '6px 0 0',
-                fontFamily: "'Outfit', sans-serif",
-                fontSize: '0.8rem',
-                color: accent,
-                fontStyle: 'italic',
-              }}>
+              <p
+                className="cinematic-muted"
+                style={{ margin: '6px 0 0', color: accent, fontStyle: 'italic' }}
+              >
                 Pick another answer — it'll mark straight away.
               </p>
             </div>
