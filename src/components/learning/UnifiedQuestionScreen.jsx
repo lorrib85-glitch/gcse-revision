@@ -182,6 +182,7 @@ export default function UnifiedQuestionScreen({
         className="cinematic-shell"
         style={{
           paddingTop: 110,
+          paddingInline: 32,
           position: 'relative',
           zIndex: 2,
           '--cinematic-accent': accent,
