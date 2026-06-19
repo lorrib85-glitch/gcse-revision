@@ -121,6 +121,195 @@ All header and subject images must feel cinematic and editorial:
 - Images should feel like film stills or documentary photography
 - Always `.png` — never `.svg` for photos
 
+For image planning, reuse and asset creation decisions, defer to `docs/system/VISUAL_ASSET_SYSTEM.md`.
+
+---
+
+## Cinematic Learning Screen Treatment
+
+This section defines the preferred treatment for **in-module learning screens**. It sharpens this constitution for the newer premium cinematic direction without replacing the existing layout, theme, motion or typography laws.
+
+The goal is not to make screens more decorative. The goal is to make each learning moment feel calmer, more memorable and more worth opening.
+
+### Core Treatment Principle
+
+Every learning screen should feel like a focused scene, not a dashboard.
+
+A tired but capable teenager should be able to understand the next action in **three seconds**.
+
+If the screen asks the learner to read, choose, remember, analyse, navigate and interpret all at once, it is doing too much.
+
+### One-Screen Rule
+
+Each screen should have:
+
+- one primary learning job
+- one dominant visual, idea, question or decision
+- one clear next action
+- one quiet local progress signal, only when needed
+
+Do not cram several teaching tasks into one screen. Sequence them instead.
+
+Correct pattern:
+
+1. create curiosity
+2. reveal one idea
+3. ask for one action
+4. give feedback or insight
+5. move on
+
+Incorrect pattern:
+
+- title
+- long explanation
+- image
+- multiple cards
+- several buttons
+- extra labels
+- progress
+- hint
+- exam tip
+- summary
+- secondary navigation
+
+This produces compliance, not attention.
+
+### Image-Led Learning Cards
+
+Where a screen uses imagery, the image should carry learning weight.
+
+Use images to:
+
+- create curiosity before explanation
+- make abstract ideas concrete
+- anchor memory
+- show a person, place, decision, process or consequence
+- support an interaction that would be weaker without the image
+
+Do not use images merely to break up text.
+
+When used inside a card, the image should feel integrated:
+
+- rounded with the card
+- softly darkened at the bottom where text may sit
+- large enough to become the focus
+- not competing with multiple other images on the same screen
+
+### Artefact Card Treatment
+
+Cards should feel like premium learning artefacts, not dashboard widgets.
+
+Preferred qualities:
+
+- dark charcoal or near-black surface
+- subtle subject-tinted border at low opacity
+- soft depth, barely visible shadow
+- generous internal padding
+- one clear hierarchy
+- restrained accent use
+
+Avoid:
+
+- stacked dashboard panels
+- thick borders
+- glassmorphism
+- bright glowing edges
+- lots of equal-weight cards
+- coloured boxes used as hierarchy
+
+A card should earn its container. If the content can breathe without a card, avoid adding one.
+
+### Progressive Disclosure
+
+Never show all explanation at once just because the data exists.
+
+Prefer:
+
+- short setup first
+- detail on reveal
+- one misconception at a time
+- one exam tip at the point of need
+- optional deeper layer after the learner acts
+
+This follows `docs/system/LEARNING_EXPERIENCE_PRINCIPLES.md`: discovery, investigation and memorable insight beat information density.
+
+### Subject Accent Use
+
+Subject accent should signal meaning. It is not decoration.
+
+Use accent for:
+
+- selected state
+- active local progress
+- primary action
+- tiny section label
+- meaningful emphasis
+- feedback state, where appropriate
+
+Do not use accent for:
+
+- every border
+- every icon
+- every heading
+- every card
+- decorative glow
+- filling empty space
+
+If everything glows, nothing matters.
+
+### Local Progress
+
+For local in-component progress, use `SequenceProgress` only.
+
+Allowed:
+
+- dots
+- sash
+- current / viewed / future state
+
+Not allowed:
+
+- visible local progress numbers
+- percentages
+- `2/5`
+- "Step 3"
+- labels beside progress dots
+- one-off local `ProgressDots` implementations
+
+The top module rail is separate and is not governed by this local progress rule.
+
+### Teen-at-9pm Test
+
+Before shipping any learning screen, ask:
+
+> If a tired, distracted 15-year-old opened this at 9pm, would they know what to do next in three seconds?
+
+If not, reduce the screen.
+
+Remove before adding:
+
+- remove labels before adding instructions
+- hide detail before shrinking text
+- split the task before adding more hierarchy
+- use one strong visual before adding several supporting visuals
+
+### Screen Treatment Checklist
+
+Before refactoring or shipping an in-module screen, check:
+
+- Is there one clear learning job?
+- Is one thing visually dominant?
+- Is the next action obvious?
+- Can any text be hidden until reveal?
+- Are there too many cards?
+- Are there too many equal-weight buttons?
+- Is the image doing learning work, not decoration?
+- Is subject accent used as signal, not wallpaper?
+- Is local progress quiet and number-free?
+- Would a smart tired teenager know what to do next?
+
+If three or more answers are weak, the screen needs recomposition before styling.
+
 ---
 
 ## Copy Tone Law
