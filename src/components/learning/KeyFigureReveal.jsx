@@ -4,8 +4,7 @@ import { TYPE }     from '../../constants/typography.js'
 import { SPACING }  from '../../constants/spacing.js'
 import { RADII }    from '../../constants/radii.js'
 // CinematicShell used here because the portrait hero must be full-bleed with no
-// horizontal padding; ContentShell's 16px inset would create unwanted margins around the
-// hero and disrupt the name/role overlay anchored to the hero's edges.
+// horizontal padding; ContentShell's 16px inset would create unwanted margins.
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { MOTION }   from '../../constants/motion.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
@@ -33,12 +32,12 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
   const section  = sections[sectionIdx] || {}
   const isLast   = sectionIdx === sections.length - 1
 
+  // Parchment mode: light warm surface with dark ink text
+  const isParchment = !!block.cardBackground
+
   function advance() {
-    if (isLast) {
-      onComplete?.()
-    } else {
-      setSectionIdx(i => i + 1)
-    }
+    if (isLast) onComplete?.()
+    else setSectionIdx(i => i + 1)
   }
 
   function retreat() {
@@ -62,9 +61,19 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
     ;(e.clientX - rect.left) / rect.width < 0.25 ? retreat() : advance()
   }
 
-  // Card background: parchment texture with dark warm overlay if provided, else flat dark
-  const cardBg = block.cardBackground
-    ? `linear-gradient(rgba(18,12,6,0.82), rgba(18,12,6,0.86)), url(${block.cardBackground}) center/cover`
+  // ── Colour tokens that switch between parchment and dark-card modes ──
+  const titleColor   = isParchment ? '#4A2508' : accent
+  const bodyColor    = isParchment ? '#2C1A06' : 'rgba(245,238,225,0.82)'
+  const quoteColor   = isParchment ? '#5C3820' : `rgba(245,220,175,0.75)`
+  const dividerColor = isParchment ? 'rgba(110,65,22,0.28)' : `rgba(${rgb},0.22)`
+  const medalBg      = isParchment ? 'rgba(110,65,22,0.14)' : `rgba(${rgb},0.14)`
+  const medalBorder  = isParchment ? 'rgba(110,65,22,0.48)' : `rgba(${rgb},0.38)`
+  const cardBorder   = isParchment ? '1px solid rgba(139,90,43,0.55)' : `1px solid rgba(${rgb},0.32)`
+  const cardShadow   = isParchment
+    ? 'inset 0 0 60px rgba(80,40,10,0.28), 0 4px 28px rgba(80,40,10,0.22)'
+    : `inset 0 1px 0 rgba(${rgb},0.14), inset 0 -1px 0 rgba(0,0,0,0.35), 0 4px 28px rgba(0,0,0,0.5)`
+  const cardBg       = isParchment
+    ? `url(${block.cardBackground}) center/cover`
     : `radial-gradient(ellipse at 50% 0%, rgba(${rgb},0.07) 0%, transparent 65%),
        linear-gradient(160deg, rgba(${rgb},0.05) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.18) 100%),
        rgba(12,9,5,0.88)`
@@ -82,7 +91,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           to   { opacity: 1; transform: translateX(0); }
         }
         @keyframes kfr-img-in {
-          from { opacity: 0; transform: scale(1.03); }
+          from { opacity: 0; transform: scale(1.04); }
           to   { opacity: 1; transform: scale(1); }
         }
       `}</style>
@@ -98,23 +107,18 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           src={block.portrait}
           alt={block.name}
           style={{
-            width: '100%',
-            height: '100%',
+            width: '100%', height: '100%',
             objectFit: 'cover',
             objectPosition: 'center top',
             display: 'block',
           }}
         />
-
-        {/* Gradient — heavy at bottom so name reads cleanly */}
         <div style={{
-          position: 'absolute',
-          inset: 0,
+          position: 'absolute', inset: 0,
           background: 'linear-gradient(to bottom, rgba(8,9,13,0.06) 0%, rgba(8,9,13,0.10) 35%, rgba(8,9,13,0.70) 65%, rgba(8,9,13,0.98) 100%)',
           pointerEvents: 'none',
         }} />
-
-        {/* Name + role + progress dots — pinned to bottom of portrait */}
+        {/* Name + role pinned to bottom of portrait */}
         <div style={{
           position: 'absolute',
           bottom: 0, left: 0, right: 0,
@@ -130,38 +134,17 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           }}>
             {block.name}
           </div>
-
           <div style={{
             ...TYPE.metadata,
             color: accent,
             textTransform: 'uppercase',
-            marginBottom: 10,
           }}>
             {block.role}
           </div>
-
-          {/* Progress dots — live in the hero overlay */}
-          {sections.length > 1 && (
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-              {sections.map((_, i) => (
-                <div key={i} style={{
-                  width: i === sectionIdx ? 18 : 6,
-                  height: 6,
-                  borderRadius: 99,
-                  background: i === sectionIdx
-                    ? accent
-                    : i < sectionIdx
-                      ? `rgba(${rgb},0.55)`
-                      : 'rgba(255,255,255,0.28)',
-                  transition: `all ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
-                }} />
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
-      {/* ── Insight card carousel ─────────────────────────────────────── */}
+      {/* ── Insight card + bottom nav ─────────────────────────────────── */}
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -169,15 +152,15 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         style={{
           flex: 1,
           position: 'relative',
-          padding: `${SPACING.standard}px ${SPACING.standard}px`,
-          paddingBottom: `calc(${SPACING.standard}px + env(safe-area-inset-bottom, 0px))`,
+          padding: `${SPACING.compact}px ${SPACING.standard}px`,
+          paddingBottom: `calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
           cursor: 'pointer',
           userSelect: 'none',
           WebkitUserSelect: 'none',
           WebkitTapHighlightColor: 'transparent',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
+          justifyContent: 'space-between',
         }}
       >
 
@@ -186,140 +169,193 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           key={sectionIdx}
           style={{
             borderRadius: RADII.medium,
-            padding: SPACING.standard,
+            padding: '16px 18px',
             background: cardBg,
-            border: `1px solid rgba(${rgb},0.32)`,
-            boxShadow: `
-              inset 0 1px 0 rgba(${rgb},0.14),
-              inset 0 -1px 0 rgba(0,0,0,0.35),
-              0 4px 28px rgba(0,0,0,0.5)
-            `,
-            animation: `kfr-slide-in 380ms ${MOTION.easing.standard} both`,
+            border: cardBorder,
+            boxShadow: cardShadow,
+            animation: `kfr-slide-in 360ms ${MOTION.easing.standard} both`,
             overflow: 'hidden',
             position: 'relative',
-            marginBottom: isLast ? SPACING.standard : 0,
           }}
         >
-
-          {/* Card header: medallion + title */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: SPACING.compact,
-            marginBottom: SPACING.compact,
-          }}>
-            {/* Icon medallion */}
+          {/* Parchment edge vignette — only in parchment mode */}
+          {isParchment && (
             <div style={{
-              width: 52, height: 52,
-              borderRadius: '50%',
-              background: `rgba(${rgb},0.14)`,
-              border: `1px solid rgba(${rgb},0.38)`,
+              position: 'absolute', inset: 0,
+              background: 'radial-gradient(ellipse at center, transparent 45%, rgba(80,40,10,0.22) 100%)',
+              pointerEvents: 'none',
+            }} />
+          )}
+
+          {/* All card content sits above vignette */}
+          <div style={{ position: 'relative' }}>
+
+            {/* Header: medallion + title */}
+            <div style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
+              gap: 12,
+              marginBottom: 12,
             }}>
-              <HistoryIcon icon={section.icon} size={28} />
+              <div style={{
+                width: 48, height: 48,
+                borderRadius: '50%',
+                background: medalBg,
+                border: `1px solid ${medalBorder}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <HistoryIcon icon={section.icon} size={26} />
+              </div>
+              <div style={{
+                fontFamily: "'Sora', sans-serif",
+                fontSize: 14,
+                fontWeight: 700,
+                color: titleColor,
+                textTransform: 'uppercase',
+                letterSpacing: '0.07em',
+                lineHeight: 1.25,
+              }}>
+                {section.title}
+              </div>
             </div>
 
-            {/* Section title */}
-            <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: 15,
-              fontWeight: 700,
-              color: accent,
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              lineHeight: 1.25,
-            }}>
-              {section.title}
-            </div>
+            {/* Divider under header */}
+            <div style={{ height: 1, background: dividerColor, marginBottom: 12 }} />
+
+            {/* Evidence tile image */}
+            {section.image && (
+              <div style={{
+                borderRadius: RADII.small,
+                overflow: 'hidden',
+                marginBottom: 12,
+                animation: `kfr-img-in 440ms ${MOTION.easing.standard} both`,
+              }}>
+                <img
+                  src={section.image}
+                  alt=""
+                  style={{
+                    width: '100%',
+                    height: 120,
+                    objectFit: 'cover',
+                    objectPosition: section.imagePosition || 'center center',
+                    display: 'block',
+                    filter: 'saturate(0.88) brightness(0.96)',
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Body lines */}
+            {section.lines?.map((line, i) => (
+              <p key={i} style={{
+                fontFamily: "'Sora', sans-serif",
+                fontSize: 14,
+                lineHeight: 1.6,
+                color: bodyColor,
+                margin: `0 0 ${i < section.lines.length - 1 ? 8 : 0}px`,
+              }}>
+                {line}
+              </p>
+            ))}
+
+            {/* Pull quote */}
+            {section.quote && (
+              <div style={{
+                borderLeft: `2px solid ${dividerColor}`,
+                paddingLeft: 10,
+                marginTop: 10,
+                fontFamily: "'IBM Plex Serif', serif",
+                fontStyle: 'italic',
+                fontSize: 13,
+                lineHeight: 1.55,
+                color: quoteColor,
+              }}>
+                "{section.quote}"
+              </div>
+            )}
+
+            {/* Takeaway — stronger closing line */}
+            {section.takeaway && (
+              <>
+                <div style={{ height: 1, background: dividerColor, margin: '10px 0' }} />
+                <p style={{
+                  fontFamily: "'Sora', sans-serif",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  lineHeight: 1.5,
+                  color: titleColor,
+                  margin: 0,
+                }}>
+                  {section.takeaway}
+                </p>
+              </>
+            )}
+
           </div>
-
-          {/* Section image */}
-          {section.sectionImage && (
-            <div style={{
-              borderRadius: RADII.small,
-              overflow: 'hidden',
-              marginBottom: SPACING.compact,
-              animation: `kfr-img-in 480ms ${MOTION.easing.standard} both`,
-            }}>
-              <img
-                src={section.sectionImage}
-                alt=""
-                style={{
-                  width: '100%',
-                  height: 150,
-                  objectFit: 'cover',
-                  objectPosition: 'center top',
-                  display: 'block',
-                }}
-              />
-            </div>
-          )}
-
-          {/* Body text */}
-          {section.lines?.map((line, i) => (
-            <p key={i} style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: 15,
-              lineHeight: 1.65,
-              color: 'rgba(245,238,225,0.82)',
-              margin: `0 0 ${i < section.lines.length - 1 ? 10 : 0}px`,
-            }}>
-              {line}
-            </p>
-          ))}
-
-          {/* Pull quote */}
-          {section.quote && (
-            <div style={{
-              borderLeft: `2px solid rgba(${rgb},0.55)`,
-              paddingLeft: 12,
-              marginTop: 14,
-              fontFamily: "'IBM Plex Serif', serif",
-              fontStyle: 'italic',
-              fontSize: 14,
-              lineHeight: 1.6,
-              color: `rgba(${245},${220},${175},0.75)`,
-            }}>
-              "{section.quote}"
-            </div>
-          )}
-
         </div>
 
-        {/* Swipe affordance — hidden on final insight */}
-        {!isLast && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: SPACING.compact,
-            color: 'rgba(255,255,255,0.35)',
-            fontFamily: "'Sora', sans-serif",
-            fontSize: 11,
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.16em',
-            marginTop: SPACING.compact,
-          }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-            Swipe to discover
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </div>
-        )}
+        {/* Bottom navigation strip */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 10,
+          paddingTop: SPACING.compact,
+        }}>
+          {isLast ? (
+            <ContinueCTA
+              onClick={(e) => { e.stopPropagation(); onComplete?.() }}
+              accent={accent}
+            />
+          ) : (
+            <>
+              {/* Swipe affordance */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                color: 'rgba(255,255,255,0.32)',
+                fontFamily: "'Sora', sans-serif",
+                fontSize: 10,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.18em',
+              }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+                Swipe to discover
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </div>
 
-        {/* Continue — final insight only */}
-        {isLast && (
-          <ContinueCTA onClick={(e) => { e.stopPropagation(); onComplete?.() }} accent={accent} />
-        )}
+              {/* Progress dots */}
+              {sections.length > 1 && (
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                  {sections.map((_, i) => (
+                    <div key={i} style={{
+                      width: i === sectionIdx ? 18 : 6,
+                      height: 6,
+                      borderRadius: 99,
+                      background: i === sectionIdx
+                        ? accent
+                        : i < sectionIdx
+                          ? `rgba(${rgb},0.5)`
+                          : 'rgba(255,255,255,0.22)',
+                      transition: `all ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
+                    }} />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
 
       </div>
     </CinematicShell>

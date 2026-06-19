@@ -253,7 +253,8 @@ export const HISTORY_MODULES = [
           {
             title: 'Gladiators & dissection',
             icon: 'war-conflict',
-            sectionImage: '/figures/history/medicine/medieval/galen-gladiators.png',
+            image: '/figures/history/medicine/medieval/galen-gladiators.png',
+            imagePosition: 'center 45%',
             lines: [
               'Galen spent years patching up wounded gladiators — giving him direct, hands-on experience of the human body.',
               'He also dissected animals extensively to study anatomy.',
@@ -263,7 +264,8 @@ export const HISTORY_MODULES = [
           {
             title: 'Theory of the four humours',
             icon: 'bloodletting',
-            sectionImage: '/figures/history/medicine/medieval/galen-teaching.png',
+            image: '/figures/history/medicine/medieval/galen-teaching.png',
+            imagePosition: 'center center',
             lines: [
               "Galen promoted Hippocrates' Four Humours — Blood, Phlegm, Yellow Bile, Black Bile — and added his own contribution.",
               'He argued illness should be treated with its opposite: hot illness → cold remedy. Wet illness → dry remedy.',
@@ -273,7 +275,8 @@ export const HISTORY_MODULES = [
           {
             title: 'The squealing pig',
             icon: 'science',
-            sectionImage: '/figures/history/medicine/medieval/galen-dissection.png',
+            image: '/figures/history/medicine/medieval/galen-dissection.png',
+            imagePosition: 'center 35%',
             lines: [
               'Galen wanted to prove the brain — not the heart — controlled the body.',
               'He performed a public demonstration, cutting the vocal cord nerves of a squealing pig mid-cry.',
@@ -286,8 +289,8 @@ export const HISTORY_MODULES = [
             lines: [
               'Galen\'s writings became the most authoritative medical texts in the medieval world.',
               'His ideas influenced doctors for more than a millennium.',
-              'He laid the foundations for modern anatomy and medical research — even though some ideas were wrong because he studied animals, not humans.',
             ],
+            takeaway: 'He laid the foundations for modern anatomy and medical research — even though some ideas were wrong because he studied animals, not humans.',
           },
         ],
       },
