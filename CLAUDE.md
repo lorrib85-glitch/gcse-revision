@@ -144,6 +144,27 @@ research or posing questions directly via `AskUserQuestion`.
 
 See `docs/system/00_SYSTEM_INDEX.md` for the full order of authority.
 
+### Cinematic CSS class layer
+
+`src/globals.css` defines nine reusable `@layer components` classes for the cinematic learning screen treatment:
+
+| Class | Purpose |
+|-------|---------|
+| `cinematic-screen` | Outermost full-viewport container (max-width 420px, `#08090D` bg) |
+| `cinematic-shell` | Padded content column inside `cinematic-screen` (24px inline, safe-area bottom) |
+| `cinematic-card` | Standard artefact card (bg-card `#151720`, thin border, 16px radius) |
+| `cinematic-card-soft` | Elevated nested card (bg-elevated `#1B1E27`, 22px radius) |
+| `cinematic-eyebrow` | Uppercase section label (Sora 14px, 700, 0.08em spacing) |
+| `cinematic-body` | Body copy (Sora 16px, 1.6 line-height) |
+| `cinematic-muted` | Muted secondary copy (Sora 14px) |
+| `cinematic-image` | Editorial image (16:9, brightness 0.7, grayscale 10%) |
+| `cinematic-primary-action` | Full-width primary CTA (accent via `--cinematic-accent`, 22px radius, never pill) |
+
+**Rules:**
+- Subject accent is injected via `style={{ '--cinematic-accent': accent }}` — never hardcode a subject colour in these rules.
+- `cinematic-shell` must never carry `opacity` or `transform` in static/resting state — doing so breaks `position: fixed` descendants (e.g. SequenceProgress dots). Animation is allowed inline as a transient state but the outer `cinematic-screen` must remain transform-free.
+- Do not create parallel cinematic wrappers — extend these classes or use them directly.
+
 ## Creative Philosophy
 
 Read whenever making creative, educational, storytelling or interaction decisions where multiple technically correct solutions exist:
