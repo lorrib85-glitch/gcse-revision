@@ -129,7 +129,7 @@ function buildWeekendPaperCard() {
       title: `Full ${subject} paper`,
       reason: 'A timed past paper, marked like the real thing.',
       durationMinutes: MEDICINE_2023_PAPER.timeMins,
-      image: '/headers/history-medicine-through-time.png',
+      image: '/headers/home-exam-paper.png',
       onSelect: {
         kind: 'paper', subject, isTimedPaper: true,
         durationSeconds: MEDICINE_2023_PAPER.timeMins * 60,
@@ -144,6 +144,7 @@ function buildWeekendPaperCard() {
     title: `Full ${subject} paper`,
     reason: 'A timed past paper, marked like the real thing.',
     durationMinutes: 50,
+    image: '/headers/home-exam-paper.png',
     onSelect: {
       kind: 'paper', subject, isTimedPaper: true,
       durationSeconds: 50 * 60,
