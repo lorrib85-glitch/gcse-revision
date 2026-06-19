@@ -101,8 +101,8 @@ export default function UnifiedQuestionScreen({
     if (kind !== 'correct') {
       return (
         <span aria-hidden="true" style={{
-          position: 'absolute', right: 18, top: '50%', transform: 'translateY(-50%)',
-          color: '#E05A52', fontSize: '1.15rem', fontWeight: 700,
+          position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
+          color: '#E05A52', fontSize: '1.3rem', fontWeight: 800, lineHeight: 1,
           animation: `uqs-mark-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
         }}>
           ×
@@ -177,7 +177,7 @@ export default function UnifiedQuestionScreen({
       <div
         className="cinematic-shell"
         style={{
-          paddingTop: 132,
+          paddingTop: 114,
           position: 'relative',
           zIndex: 2,
           '--cinematic-accent': accent,
@@ -212,7 +212,7 @@ export default function UnifiedQuestionScreen({
         </div>
 
         {/* Answer options */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 'calc(100% - 24px)', marginInline: 'auto', width: '100%' }}>
           {options.map((opt, i) => {
             const isFirstTapped = tapped === opt
             const isRetryTapped = retryTapped === opt
@@ -221,24 +221,32 @@ export default function UnifiedQuestionScreen({
             // Base: neutral cinematic card surface — no subject warmth baked in
             let opacity = 1
             let background = 'rgba(21,23,32,0.9)'
-            let border = '1px solid rgba(255,255,255,0.11)'
+            let border = '1px solid rgba(255,255,255,0.16)'
 
-            if (status === 'incorrect' && isFirstTapped) opacity = 0.58
+            if (status === 'incorrect' && isFirstTapped) {
+              background = 'rgba(224,90,82,0.08)'
+              border = '1px solid rgba(224,90,82,0.55)'
+              opacity = 0.72
+            }
             if (status === 'correct' && isFirstTapped) {
-              background = `rgba(${rgb}, 0.10)`
-              border = `1px solid ${accent}`
+              background = `rgba(${rgb}, 0.13)`
+              border = `1px solid rgba(${rgb}, 0.65)`
             }
             if (isRetryTapped && retryStatus === null) {
               border = `1px solid rgba(${rgb}, 0.5)`
             }
             if (isRetryTapped && retryStatus === 'correct') {
-              background = `rgba(${rgb}, 0.10)`
-              border = `1px solid ${accent}`
+              background = `rgba(${rgb}, 0.13)`
+              border = `1px solid rgba(${rgb}, 0.65)`
             }
-            if (isRetryTapped && retryStatus === 'incorrect') opacity = 0.58
+            if (isRetryTapped && retryStatus === 'incorrect') {
+              background = 'rgba(224,90,82,0.08)'
+              border = '1px solid rgba(224,90,82,0.55)'
+              opacity = 0.72
+            }
             if (retryStatus === 'incorrect' && isCorrectOpt) {
-              background = `rgba(${rgb}, 0.10)`
-              border = `1px solid ${accent}`
+              background = `rgba(${rgb}, 0.13)`
+              border = `1px solid rgba(${rgb}, 0.65)`
             }
 
             const disabled = status === 'correct'
