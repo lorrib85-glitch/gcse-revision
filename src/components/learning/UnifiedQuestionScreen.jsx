@@ -137,14 +137,7 @@ export default function UnifiedQuestionScreen({
   }
 
   return (
-    <div
-      className="cinematic-screen"
-      style={{
-        opacity: entered && !leaving ? 1 : 0,
-        transform: leaving ? 'translateY(-8px)' : entered ? 'translateY(0)' : 'translateY(8px)',
-        transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-      }}
-    >
+    <div className="cinematic-screen">
       <style>{`
         @keyframes uqs-mark-in { from { opacity: 0; transform: translateY(-50%) scale(0.5); } to { opacity: 1; transform: translateY(-50%) scale(1); } }
         @keyframes uqs-hint-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -188,6 +181,9 @@ export default function UnifiedQuestionScreen({
           position: 'relative',
           zIndex: 2,
           '--cinematic-accent': accent,
+          opacity: entered && !leaving ? 1 : 0,
+          transform: leaving ? 'translateY(-8px)' : entered ? 'translateY(0)' : 'translateY(8px)',
+          transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
         }}
       >
 
@@ -256,7 +252,7 @@ export default function UnifiedQuestionScreen({
                   cursor: disabled ? 'default' : 'pointer',
                   fontFamily: "'Sora', sans-serif",
                   fontWeight: 500,
-                  fontSize: '0.9375rem',
+                  fontSize: '1rem',
                   lineHeight: 1.45,
                   color: '#F5F7FF',
                   opacity,
