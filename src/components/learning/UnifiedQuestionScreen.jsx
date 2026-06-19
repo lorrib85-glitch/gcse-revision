@@ -177,7 +177,7 @@ export default function UnifiedQuestionScreen({
       <div
         className="cinematic-shell"
         style={{
-          paddingTop: 114,
+          paddingTop: 110,
           position: 'relative',
           zIndex: 2,
           '--cinematic-accent': accent,
@@ -187,32 +187,26 @@ export default function UnifiedQuestionScreen({
         }}
       >
 
-        {/* Question — dominant focus, editorial serif inside a subtle frame */}
-        <div style={{
-          background: 'rgba(8,9,13,0.28)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 24,
-          padding: '22px 20px',
-          marginBottom: 16,
+        {/* Question — hero prompt, no card frame */}
+        <p style={{
+          fontFamily: "'IBM Plex Serif', serif",
+          fontSize: 'clamp(2.125rem, 8vw, 2.25rem)',
+          lineHeight: 1.12,
+          fontWeight: 600,
+          letterSpacing: '-0.02em',
+          marginTop: 0,
+          marginBottom: 22,
+          marginInline: 'auto',
+          color: '#F5F7FF',
+          maxWidth: 'calc(100% - 24px)',
+          overflowWrap: 'break-word',
+          textAlign: 'left',
         }}>
-          <p style={{
-            fontFamily: "'IBM Plex Serif', serif",
-            fontSize: '2.25rem',
-            lineHeight: 1.12,
-            fontWeight: 600,
-            letterSpacing: '-0.02em',
-            margin: 0,
-            color: '#F5F7FF',
-            width: '100%',
-            maxWidth: '100%',
-            overflowWrap: 'break-word',
-          }}>
-            {q}
-          </p>
-        </div>
+          {q}
+        </p>
 
         {/* Answer options */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 'calc(100% - 24px)', marginInline: 'auto', width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 'calc(100% - 32px)', marginInline: 'auto', width: '100%' }}>
           {options.map((opt, i) => {
             const isFirstTapped = tapped === opt
             const isRetryTapped = retryTapped === opt
@@ -221,31 +215,31 @@ export default function UnifiedQuestionScreen({
             // Base: neutral cinematic card surface — no subject warmth baked in
             let opacity = 1
             let background = 'rgba(21,23,32,0.9)'
-            let border = '1px solid rgba(255,255,255,0.16)'
+            let border = '1px solid rgba(255,255,255,0.12)'
 
             if (status === 'incorrect' && isFirstTapped) {
-              background = 'rgba(224,90,82,0.08)'
+              background = 'rgba(180,50,44,0.09)'
               border = '1px solid rgba(224,90,82,0.55)'
-              opacity = 0.72
+              opacity = 0.75
             }
             if (status === 'correct' && isFirstTapped) {
-              background = `rgba(${rgb}, 0.13)`
+              background = `rgba(${rgb}, 0.12)`
               border = `1px solid rgba(${rgb}, 0.65)`
             }
             if (isRetryTapped && retryStatus === null) {
-              border = `1px solid rgba(${rgb}, 0.5)`
+              border = `1px solid rgba(${rgb}, 0.45)`
             }
             if (isRetryTapped && retryStatus === 'correct') {
-              background = `rgba(${rgb}, 0.13)`
+              background = `rgba(${rgb}, 0.12)`
               border = `1px solid rgba(${rgb}, 0.65)`
             }
             if (isRetryTapped && retryStatus === 'incorrect') {
-              background = 'rgba(224,90,82,0.08)'
+              background = 'rgba(180,50,44,0.09)'
               border = '1px solid rgba(224,90,82,0.55)'
-              opacity = 0.72
+              opacity = 0.75
             }
             if (retryStatus === 'incorrect' && isCorrectOpt) {
-              background = `rgba(${rgb}, 0.13)`
+              background = `rgba(${rgb}, 0.12)`
               border = `1px solid rgba(${rgb}, 0.65)`
             }
 
