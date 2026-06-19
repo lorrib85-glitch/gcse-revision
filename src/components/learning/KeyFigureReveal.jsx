@@ -31,6 +31,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
   const sections = block.sections || []
   const section  = sections[sectionIdx] || {}
   const isLast   = sectionIdx === sections.length - 1
+  const lines    = section.lines || []
 
   // Parchment mode: light warm surface with dark ink text
   const isParchment = !!block.cardBackground
@@ -226,41 +227,88 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             {/* Divider under header */}
             <div style={{ height: 1, background: dividerColor, marginBottom: 12 }} />
 
-            {/* Evidence tile image */}
-            {section.image && (
-              <div style={{
-                borderRadius: RADII.small,
-                overflow: 'hidden',
-                marginBottom: 12,
-                animation: `kfr-img-in 440ms ${MOTION.easing.standard} both`,
-              }}>
-                <img
-                  src={section.image}
-                  alt=""
-                  style={{
-                    width: '100%',
-                    height: 120,
-                    objectFit: 'cover',
-                    objectPosition: section.imagePosition || 'center center',
-                    display: 'block',
-                    filter: 'saturate(0.88) brightness(0.96)',
-                  }}
-                />
-              </div>
+            {/* Body: evidence tile (left) + flowing text, or plain lines */}
+            {section.image ? (
+              <>
+                {/* Two-column row: vertical tile + first line */}
+                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                  <div style={{
+                    width: '36%',
+                    flexShrink: 0,
+                    borderRadius: 9,
+                    overflow: 'hidden',
+                    animation: `kfr-img-in 440ms ${MOTION.easing.standard} both`,
+                  }}>
+                    <img
+                      src={section.image}
+                      alt=""
+                      style={{
+                        width: '100%',
+                        height: 240,
+                        objectFit: section.imageFit || 'cover',
+                        objectPosition: section.imagePosition || 'center center',
+                        display: 'block',
+                        filter: 'saturate(0.88) brightness(0.96)',
+                      }}
+                    />
+                  </div>
+                  {lines[0] && (
+                    <p style={{
+                      flex: 1,
+                      fontFamily: "'Sora', sans-serif",
+                      fontSize: 13,
+                      lineHeight: 1.5,
+                      color: bodyColor,
+                      margin: 0,
+                      paddingTop: 2,
+                    }}>
+                      {lines[0]}
+                    </p>
+                  )}
+                </div>
+                {/* Remaining lines with subtle dividers; last line auto-takeaway if no explicit one */}
+                {lines.slice(1).map((line, i) => {
+                  const isAutoTakeaway = i === lines.length - 2 && !section.takeaway
+                  return (
+                    <div key={i}>
+                      <div style={{ height: 1, background: dividerColor, margin: '8px 0' }} />
+                      <p style={{
+                        fontFamily: "'Sora', sans-serif",
+                        fontSize: 13,
+                        fontWeight: isAutoTakeaway ? 600 : 400,
+                        lineHeight: 1.5,
+                        color: isAutoTakeaway ? titleColor : bodyColor,
+                        margin: 0,
+                      }}>
+                        {line}
+                      </p>
+                    </div>
+                  )
+                })}
+              </>
+            ) : (
+              /* No image — plain lines with dividers; last line auto-takeaway if no explicit one */
+              <>
+                {lines.map((line, i) => {
+                  const isAutoTakeaway = i === lines.length - 1 && !section.takeaway
+                  return (
+                    <div key={i}>
+                      {i > 0 && <div style={{ height: 1, background: dividerColor, margin: '8px 0' }} />}
+                      <p style={{
+                        fontFamily: "'Sora', sans-serif",
+                        fontSize: 15,
+                        fontWeight: isAutoTakeaway ? 600 : 400,
+                        lineHeight: 1.5,
+                        color: isAutoTakeaway ? titleColor : bodyColor,
+                        margin: 0,
+                      }}>
+                        {line}
+                      </p>
+                    </div>
+                  )
+                })}
+              </>
             )}
-
-            {/* Body lines */}
-            {section.lines?.map((line, i) => (
-              <p key={i} style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: 15,
-                lineHeight: 1.5,
-                color: bodyColor,
-                margin: `0 0 ${i < section.lines.length - 1 ? 8 : 0}px`,
-              }}>
-                {line}
-              </p>
-            ))}
 
             {/* Pull quote */}
             {section.quote && (

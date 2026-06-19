@@ -255,7 +255,7 @@ export const HISTORY_MODULES = [
             title: 'Gladiators & dissection',
             icon: 'war-conflict',
             image: '/figures/history/medicine/medieval/galen-gladiators.png',
-            imagePosition: 'center 45%',
+            imagePosition: 'center 55%',
             lines: [
               'Galen spent years patching up wounded gladiators — giving him direct, hands-on experience of the human body.',
               'He also dissected animals extensively to study anatomy.',
