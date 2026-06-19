@@ -44,6 +44,13 @@ export default function UnifiedQuestionScreen({
 
   const timersRef = useRef([])
 
+  // Lock body scroll while this full-screen overlay is mounted
+  useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [])
+
   // Enter animation
   useEffect(() => {
     const raf = requestAnimationFrame(() => setEntered(true))
