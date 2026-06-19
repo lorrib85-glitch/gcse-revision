@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { hexToRgb, SUBJECTS } from '../../constants/subjects.js'
 import { BUTTONS } from '../../constants/buttons.js'
-import { recordActivity, recordScore, getAllConfidenceRatings } from '../../progress.js'
+import { SPACING } from '../../constants/spacing.js'
+import { recordActivity } from '../../progress.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
@@ -68,14 +69,6 @@ function saveModuleState(moduleId, state) {
   try { localStorage.setItem(`gcse_module_${moduleId}`, JSON.stringify(state)) } catch {}
 }
 
-function saveConfidenceRating(moduleId, subject, title, confidence) {
-  try {
-    const all = getAllConfidenceRatings()
-    const filtered = all.filter(r => r.moduleId !== moduleId)
-    filtered.push({ moduleId, subject, title, confidence, timestamp: Date.now() })
-    localStorage.setItem('gcse_confidence', JSON.stringify(filtered))
-  } catch {}
-}
 
 function ReadBlock({ block }) {
   return (
@@ -201,293 +194,6 @@ function TimelineBlock({ block }) {
   )
 }
 
-// ─── BossBlock — free text answer graded by Claude API ───────────────────────
-const GRADE_COLOURS_BOSS = {
-  strong:     { bg: 'rgba(77,255,136,.08)',  border: 'rgba(77,255,136,.35)',  text: '#4DFF88',  badge: '#38D27A',  label: 'Strong answer' },
-  partial:    { bg: 'rgba(255,200,87,.07)',  border: 'rgba(255,200,87,.3)',   text: '#FFC857',  badge: '#F5B700',  label: 'Partial — keep going' },
-  weak:       { bg: 'rgba(255,93,115,.08)',  border: 'rgba(255,93,115,.3)',   text: '#FF5D73',  badge: '#FF5D73',  label: 'Needs more' },
-}
-
-// Boss answers are graded via the same /api/grade endpoint used by test questions.
-// This keeps the API key server-side and shares the full examiner prompt.
-// The mark scheme is passed as the markScheme field; we use 3 as a proxy mark count
-// so the response shape (marksAwarded/marksAvailable/grade/etc.) matches what we render.
-async function gradeBossAnswer(question, markPoints, studentAnswer) {
-  const response = await fetch('/api/grade', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      question,
-      answer: studentAnswer,
-      marks: 3,
-      markScheme: markPoints,
-    }),
-  })
-  if (!response.ok) throw new Error(`Server error ${response.status}`)
-  const data = await response.json()
-  if (data.error) throw new Error(data.error)
-  // Normalise /api/grade shape → BossBlock shape
-  return {
-    grade:       data.grade === 'Excellent' || data.grade === 'Good' ? 'strong'
-               : data.grade === 'Developing' ? 'partial' : 'weak',
-    score:       data.marksAwarded ?? 0,
-    summary:     data.summary,
-    achieved:    data.achieved || [],
-    missed:      data.missed   || [],
-    modelAnswer: null,   // not returned by /api/grade — shown via examinerTip instead
-    examinerTip: data.examinerTip,
-  }
-}
-
-function BossBlock({ block }) {
-  const [answer, setAnswer] = useState('')
-  const [grading, setGrading] = useState(false)
-  const [feedback, setFeedback] = useState(null)
-  const [error, setError] = useState(null)
-
-  const TIER_COLOURS = {
-    '🟢': 'rgba(77,255,136,.15)',
-    '🟡': 'rgba(255,200,87,.12)',
-    '🔴': 'rgba(255,93,115,.12)',
-  }
-  const tierEmoji = block.tier || '🟢'
-  const tierBg = TIER_COLOURS[tierEmoji] || TIER_COLOURS['🟢']
-
-  async function submit() {
-    if (answer.trim().length < 10) {
-      setError('Write at least a sentence — even a rough attempt is fine.')
-      return
-    }
-    setError(null)
-    setGrading(true)
-    try {
-      const result = await gradeBossAnswer(block.question, block.markPoints, answer)
-      setFeedback(result)
-    } catch (e) {
-      setError('Could not reach the grading server. Check your connection and try again.')
-    } finally {
-      setGrading(false)
-    }
-  }
-
-  function retry() {
-    setAnswer('')
-    setFeedback(null)
-    setError(null)
-  }
-
-  const gs = feedback ? (GRADE_COLOURS_BOSS[feedback.grade] || GRADE_COLOURS_BOSS.partial) : null
-
-  return (
-    <div style={{ margin: '14px 0' }}>
-      {/* Question card */}
-      <div style={{
-        background: `linear-gradient(145deg, #0E1A28, #0A1320)`,
-        border: `1px solid ${tierBg.replace('.15', '.4').replace('.12', '.4')}`,
-        borderRadius: 16, padding: '16px 18px', marginBottom: 12,
-        boxShadow: `0 0 20px ${tierBg}`,
-      }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10,
-        }}>
-          <span style={{ fontSize: '1rem' }}>{tierEmoji}</span>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
-            textTransform: 'uppercase', color: '#38D27A',
-          }}>{block.label || 'Boss Challenge'}</div>
-        </div>
-        <p style={{
-          fontFamily: "'Sora', sans-serif",
-          fontWeight: 600, fontSize: '1rem',
-          color: '#F5F7FB', margin: 0, lineHeight: 1.45,
-        }}>{block.question}</p>
-      </div>
-
-      {/* Answer area — hidden once feedback received */}
-      {!feedback && (
-        <>
-          <div style={{
-            background: '#10182B',
-            border: `1.5px solid ${grading ? 'rgba(56,210,122,.35)' : '#2A3552'}`,
-            borderRadius: 14, padding: '14px 16px', marginBottom: 10,
-            transition: 'border-color .2s',
-          }}>
-            <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
-              letterSpacing: '.1em', color: '#4A5578', marginBottom: 8,
-            }}>Your answer</div>
-            <textarea
-              value={answer}
-              onChange={e => { setAnswer(e.target.value); setError(null) }}
-              placeholder="Write your answer here. Use correct scientific terms. Minimum one full sentence."
-              disabled={grading}
-              style={{
-                width: '100%', border: 'none', background: 'transparent',
-                resize: 'none', outline: 'none',
-                fontFamily: "'Sora', sans-serif",
-                fontSize: '.93rem', color: '#E0E6F0',
-                lineHeight: 1.7, minHeight: 100,
-                opacity: grading ? .5 : 1,
-              }}
-            />
-          </div>
-
-          {error && (
-            <div style={{
-              background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.28)',
-              borderRadius: 10, padding: '10px 14px', marginBottom: 10,
-            }}>
-              <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.83rem', color: '#FF5D73', margin: 0 }}>{error}</p>
-            </div>
-          )}
-
-          <button onClick={submit} disabled={grading} style={{
-            width: '100%',
-            background: grading
-              ? '#10182B'
-              : 'linear-gradient(135deg, #38D27A, #6BFFB0)',
-            border: grading ? '1px solid #2A3552' : 'none',
-            borderRadius: 13, padding: '14px',
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 700, fontSize: '.95rem',
-            color: grading ? '#4A5578' : '#001A0A',
-            cursor: grading ? 'default' : 'pointer',
-            boxShadow: grading ? 'none' : '0 4px 20px rgba(56,210,122,.35)',
-            transition: 'all .2s',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          }}>
-            {grading ? (
-              <>
-                <span style={{ display: 'inline-block', animation: 'spin 1s linear infinite' }}>⏳</span>
-                Marking your answer…
-              </>
-            ) : 'Submit for marking →'}
-          </button>
-        </>
-      )}
-
-      {/* Feedback */}
-      {feedback && gs && (
-        <div className="fade-up">
-          {/* Score card */}
-          <div style={{
-            background: gs.bg,
-            border: `2px solid ${gs.border}`,
-            borderRadius: 18, padding: '18px 20px', marginBottom: 10,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-              <div style={{
-                fontFamily: "'Sora', sans-serif",
-                fontWeight: 800, fontSize: '1.4rem', color: gs.text,
-              }}>
-                {feedback.score}/3
-              </div>
-              <div style={{
-                background: gs.badge, color: '#000',
-                borderRadius: 99, padding: '4px 12px',
-                fontFamily: "'Sora', sans-serif",
-                fontWeight: 700, fontSize: '.75rem',
-              }}>{gs.label}</div>
-            </div>
-            <p style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '.9rem', color: gs.text,
-              margin: 0, lineHeight: 1.55, opacity: .9,
-            }}>{feedback.summary}</p>
-          </div>
-
-          {/* What they got right */}
-          {feedback.achieved?.length > 0 && (
-            <div style={{
-              background: '#10182B', border: '1px solid #1E2A40',
-              borderRadius: 13, padding: '14px', marginBottom: 8,
-            }}>
-              <div style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
-                letterSpacing: '.1em', color: '#4DFF88', marginBottom: 8,
-              }}>✓ What you got right</div>
-              {feedback.achieved.map((a, i) => (
-                <div key={i} style={{ display: 'flex', gap: 8, marginBottom: i < feedback.achieved.length - 1 ? 7 : 0 }}>
-                  <span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span>
-                  <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{a}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* What they missed */}
-          {feedback.missed?.length > 0 && (
-            <div style={{
-              background: '#10182B', border: '1px solid #1E2A40',
-              borderRadius: 13, padding: '14px', marginBottom: 8,
-            }}>
-              <div style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
-                letterSpacing: '.1em', color: '#FF5D73', marginBottom: 8,
-              }}>→ Key points you missed</div>
-              {feedback.missed.map((m, i) => (
-                <div key={i} style={{ display: 'flex', gap: 8, marginBottom: i < feedback.missed.length - 1 ? 7 : 0 }}>
-                  <span style={{ color: '#FF5D73', flexShrink: 0 }}>→</span>
-                  <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{m}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Examiner tip */}
-          {feedback.examinerTip && (
-            <div style={{
-              background: 'rgba(245,183,0,.05)', border: '1px solid rgba(245,183,0,.18)',
-              borderRadius: 13, padding: '14px', marginBottom: 10,
-            }}>
-              <div style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
-                letterSpacing: '.1em', color: '#F5B700', marginBottom: 6,
-              }}>🗡️ Examiner tip</div>
-              <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.87rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{feedback.examinerTip}</p>
-            </div>
-          )}
-
-          {/* Model answer — generated inline from what was missed */}
-          {feedback.missed?.length > 0 && (
-            <div style={{
-              background: 'rgba(56,210,122,.05)', border: '1px solid rgba(56,210,122,.18)',
-              borderRadius: 13, padding: '14px', marginBottom: 10,
-            }}>
-              <div style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase',
-                letterSpacing: '.1em', color: '#38D27A', marginBottom: 8,
-              }}>📋 To score higher, your answer needs</div>
-              {feedback.missed.map((m, i) => (
-                <div key={i} style={{ display: 'flex', gap: 8, marginBottom: i < feedback.missed.length - 1 ? 6 : 0 }}>
-                  <span style={{ color: '#38D27A', flexShrink: 0, fontSize: '.85rem' }}>+</span>
-                  <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '.85rem', color: '#C8D0E8', margin: 0, lineHeight: 1.5 }}>{m}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Retry */}
-          <button onClick={retry} style={{
-            width: '100%',
-            background: 'linear-gradient(135deg, #38D27Acc, #38D27A)',
-            border: 'none', borderRadius: 13, padding: '13px',
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 700, fontSize: '.9rem', color: '#001A0A',
-            cursor: 'pointer',
-            boxShadow: '0 4px 16px rgba(56,210,122,.3)',
-          }}>↩ Try again with improvements</button>
-        </div>
-      )}
-    </div>
-  )
-}
 
 function RevealBlock({ block }) {
   const [shown, setShown] = useState(false)
@@ -630,7 +336,7 @@ function HotspotBlock({ block }) {
       <div style={{
         background: 'linear-gradient(145deg, #081A0F, #0B1F12)',
         border: '1px solid rgba(56,210,122,.2)',
-        borderRadius: 18, padding: '16px', marginBottom: 10,
+        borderRadius: 18, padding: SPACING.compact, marginBottom: 10,
         boxShadow: '0 0 32px rgba(56,210,122,.06)',
       }}>
         <div style={{
@@ -814,7 +520,7 @@ function ScarfBlock({ block }) {
       <div style={{
         background: 'linear-gradient(145deg, #0E1A0E, #0A1508)',
         border: '1px solid rgba(56,210,122,.2)',
-        borderRadius: 18, padding: '16px',
+        borderRadius: 18, padding: SPACING.compact,
         boxShadow: '0 0 24px rgba(56,210,122,.05)',
       }}>
         <div style={{
@@ -897,7 +603,7 @@ function BuilderBlock({ block }) {
       <div style={{
         background: 'linear-gradient(145deg, #0A1520, #0D1A28)',
         border: '1px solid rgba(56,210,122,.2)',
-        borderRadius: 18, padding: '16px',
+        borderRadius: 18, padding: SPACING.compact,
       }}>
         <div style={{
           fontFamily: "'Sora', sans-serif",
@@ -968,7 +674,7 @@ function BuilderBlock({ block }) {
           <button onClick={() => setSubmitted(true)} style={{
             width: '100%',
             background: 'linear-gradient(135deg, #38D27A, #6BFFB0)',
-            border: 'none', borderRadius: 12, padding: '12px',
+            border: 'none', borderRadius: 12, padding: SPACING.micro,
             fontFamily: "'Sora', sans-serif",
             fontWeight: 700, fontSize: '.9rem', color: '#000',
             cursor: 'pointer',
@@ -1032,7 +738,7 @@ function ScenarioBlock({ block }) {
     <div style={{ margin: '14px 0' }}>
       <div style={{
         background: 'rgba(77,255,136,.07)', border: '1px solid rgba(77,255,136,.25)',
-        borderRadius: 16, padding: '16px', textAlign: 'center',
+        borderRadius: 16, padding: SPACING.compact, textAlign: 'center',
       }}>
         <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1.1rem', color: '#4DFF88', marginBottom: 6 }}>
           {score}/{block.scenarios.length} — {score === block.scenarios.length ? 'Perfect! 🎉' : 'Good effort!'}
@@ -1052,7 +758,7 @@ function ScenarioBlock({ block }) {
       <div style={{
         background: 'linear-gradient(145deg, #0A1520, #0D1A28)',
         border: '1px solid rgba(56,210,122,.2)',
-        borderRadius: 18, padding: '16px',
+        borderRadius: 18, padding: SPACING.compact,
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
           <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#38D27A' }}>
@@ -1114,7 +820,7 @@ function ScenarioBlock({ block }) {
 // ─── Single screen renderer ───────────────────────────────────────────────────
 
 function Screen({ screen, subject, onScreenComplete }) {
-  const [completedQuizzes, setCompletedQuizzes] = useState(new Set())
+  const [_completedQuizzes, setCompletedQuizzes] = useState(new Set())
 
   function handleQuizComplete(blockIndex) {
     setCompletedQuizzes(prev => new Set([...prev, blockIndex]))
@@ -1201,7 +907,7 @@ function useHookPhase(hook) {
            canAdvance, revealDone, choose, nextFromGrow, nextRevealItem }
 }
 
-function HookContent({ module, hook, hookState, subjectColor }) {
+function HookContent({ module: _module, hook, hookState, subjectColor: _subjectColor }) {
   const { phase, wasCorrect, growStep, revealIdx, allRevealed, choose, nextRevealItem } = hookState
 
   // Support both storyLines (new format) and scenario (legacy format)
@@ -1567,7 +1273,7 @@ function IntroScreen({ module, onDone }) {
             beatId="intro"
             label="Quick check"
             mode="learning"
-            onInteractionComplete={(result) => setRetrievalComplete(true)}
+            onInteractionComplete={(_result) => setRetrievalComplete(true)}
           />
         )}
 
@@ -1618,41 +1324,6 @@ function IntroScreen({ module, onDone }) {
         @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
         @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
       `}</style>
-    </div>
-  )
-}
-
-// ─── What You Will Learn screen ──────────────────────────────────────────────
-
-function WYLScreen({ module, onDone, subjectColor }) {
-  const bullets = (module.screens || []).map(s => s.label).filter(Boolean)
-  const [visibleCount, setVisibleCount] = useState(0)
-
-  useEffect(() => {
-    if (visibleCount >= bullets.length) return
-    const t = setTimeout(() => setVisibleCount(c => c + 1), 380)
-    return () => clearTimeout(t)
-  }, [visibleCount, bullets.length])
-
-  return (
-    <div style={{ padding: '8px 4px' }}>
-      <style>{`@keyframes bulletIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }`}</style>
-      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: subjectColor, marginBottom: 10 }}>{module.subject}</div>
-      <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 26, fontWeight: 800, color: '#F5F7FF', lineHeight: '30px', marginBottom: 6, letterSpacing: '-0.01em' }}>What You&rsquo;ll Learn</div>
-      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.42)', marginBottom: 30 }}>{module.title}</div>
-      <div>
-        {bullets.map((label, i) => i < visibleCount ? (
-          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 16, animation: 'bulletIn 0.38s ease both' }}>
-            <div style={{ width: 30, height: 30, borderRadius: 10, background: `${subjectColor}18`, border: `1px solid ${subjectColor}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
-              <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 700, color: subjectColor }}>{i + 1}</span>
-            </div>
-            <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 600, color: '#E8ECF2', lineHeight: '26px', paddingTop: 3 }}>{label}</div>
-          </div>
-        ) : null)}
-      </div>
-      {visibleCount >= bullets.length && (
-        <ContinueCTA onClick={onDone} label="Let\u2019s start \u2192" accent={subjectColor} style={{ marginTop: 24, animation: 'bulletIn 0.38s ease both' }} />
-      )}
     </div>
   )
 }
@@ -1819,7 +1490,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     return s < module.screens.length ? s : 0
   })
   const [showWeakSpotRecovery, setShowWeakSpotRecovery] = useState(false)
-  const [detectedWeakSpot, setDetectedWeakSpot] = useState(null)
+  const [detectedWeakSpot, _setDetectedWeakSpot] = useState(null)
   const [recoveryQuizId, setRecoveryQuizId] = useState(null)
   const [showExaminer,         setShowExaminer]         = useState(false)
   const [showExaminerExplains, setShowExaminerExplains] = useState(false)
@@ -1827,7 +1498,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   // Sticks once a module has been finished — re-entering to review never un-completes it
   const [completed, setCompleted] = useState(() => saved.completed || false)
   const total   = module.screens.length
-  const pct     = Math.round(((screen + 1) / total) * 100)
   const isLast  = screen === total - 1
   const [animKey, setAnimKey] = useState(0)
   const [cinematicHeaderVisible, setCinematicHeaderVisible] = useState(false)
@@ -1897,7 +1567,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
 
   // Hook state — always called (hook is undefined when module has no hook)
   const hookState = useHookPhase(module.hook || {})
-  const { phase: hookPhase, canAdvance: hookCanAdvance, revealDone: hookRevealDone } = hookState
+  const { phase: hookPhase, revealDone: hookRevealDone } = hookState
 
   // Determine what the "Next" button does at each stage
   function handleNext() {
@@ -2073,7 +1743,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         module={module}
         examiner={module.examiner}
         onExit={onBack}
-        onContinue={({ originalMark, finalMark, guessedMark }) => {
+        onContinue={({ originalMark: _originalMark, finalMark, guessedMark }) => {
           const attempt = {
             moduleId: module.id,
             questionId: `${module.id}-q1`,
