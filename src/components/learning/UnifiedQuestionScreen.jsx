@@ -352,7 +352,7 @@ export default function UnifiedQuestionScreen({
                 className="cinematic-eyebrow"
                 style={{ color: accent, marginBottom: 6 }}
               >
-                Hint
+                Try again
               </div>
               <p
                 className="cinematic-body"
@@ -360,12 +360,7 @@ export default function UnifiedQuestionScreen({
               >
                 {hint || explanation || 'Try again — pick a different answer.'}
               </p>
-              <p
-                className="cinematic-muted"
-                style={{ margin: '6px 0 0', color: accent, fontStyle: 'italic' }}
-              >
-                Pick another answer — it'll mark straight away.
-              </p>
+
             </div>
           </div>
         )}
