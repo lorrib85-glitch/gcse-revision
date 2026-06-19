@@ -212,35 +212,57 @@ export default function UnifiedQuestionScreen({
             const isRetryTapped = retryTapped === opt
             const isCorrectOpt = i === correctIdx
 
-            // Base: neutral cinematic card surface — no subject warmth baked in
+            // ── Per-button state styling ──────────────────────────────────
+            // Rule: only the selected wrong tap gets red treatment.
+            // All other non-correct options simply recede (dimmed, no red).
+            // The correct option gets accent treatment whenever revealed.
             let opacity = 1
             let background = 'rgba(21,23,32,0.9)'
             let border = '1px solid rgba(255,255,255,0.12)'
+            let color = '#F5F7FF'
 
-            if (status === 'incorrect' && isFirstTapped) {
-              background = 'rgba(180,50,44,0.09)'
-              border = '1px solid rgba(224,90,82,0.55)'
-              opacity = 0.75
+            const answered = status !== null
+            const retryDone = retryStatus !== null
+
+            // After first answer is submitted
+            if (answered) {
+              // Selected wrong answer — red treatment
+              if (isFirstTapped && status === 'incorrect') {
+                background = 'rgba(160,40,36,0.10)'
+                border = '1px solid rgba(224,90,82,0.52)'
+                opacity = 0.82
+              }
+              // Correct answer — accent treatment (on direct correct tap or revealed)
+              else if (isCorrectOpt && (status === 'correct' || retryDone)) {
+                background = `rgba(${rgb}, 0.13)`
+                border = `1px solid rgba(${rgb}, 0.65)`
+              }
+              // All other untouched options — quietly recede, no red
+              else if (!isFirstTapped && !isRetryTapped) {
+                opacity = 0.38
+                border = '1px solid rgba(255,255,255,0.06)'
+              }
             }
-            if (status === 'correct' && isFirstTapped) {
-              background = `rgba(${rgb}, 0.12)`
-              border = `1px solid rgba(${rgb}, 0.65)`
+
+            // After retry
+            if (retryDone) {
+              if (isRetryTapped && retryStatus === 'incorrect') {
+                // Second wrong tap — same red treatment as first
+                background = 'rgba(160,40,36,0.10)'
+                border = '1px solid rgba(224,90,82,0.52)'
+                opacity = 0.82
+              }
+              if (isRetryTapped && retryStatus === 'correct') {
+                // Retry was correct — accent
+                background = `rgba(${rgb}, 0.13)`
+                border = `1px solid rgba(${rgb}, 0.65)`
+                opacity = 1
+              }
             }
+
+            // Hover-pending retry tap (retryTapped set but retryStatus not yet)
             if (isRetryTapped && retryStatus === null) {
               border = `1px solid rgba(${rgb}, 0.45)`
-            }
-            if (isRetryTapped && retryStatus === 'correct') {
-              background = `rgba(${rgb}, 0.12)`
-              border = `1px solid rgba(${rgb}, 0.65)`
-            }
-            if (isRetryTapped && retryStatus === 'incorrect') {
-              background = 'rgba(180,50,44,0.09)'
-              border = '1px solid rgba(224,90,82,0.55)'
-              opacity = 0.75
-            }
-            if (retryStatus === 'incorrect' && isCorrectOpt) {
-              background = `rgba(${rgb}, 0.12)`
-              border = `1px solid rgba(${rgb}, 0.65)`
             }
 
             const disabled = status === 'correct'
@@ -267,7 +289,7 @@ export default function UnifiedQuestionScreen({
                   fontWeight: 500,
                   fontSize: '1rem',
                   lineHeight: 1.45,
-                  color: '#F5F7FF',
+                  color,
                   opacity,
                   WebkitTapHighlightColor: 'transparent',
                   transition: `opacity ${MOTION.duration.instant} ${MOTION.easing.gentle}, background ${MOTION.duration.instant} ${MOTION.easing.gentle}, border-color ${MOTION.duration.instant} ${MOTION.easing.gentle}`,
