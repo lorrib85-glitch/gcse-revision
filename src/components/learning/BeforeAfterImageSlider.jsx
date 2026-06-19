@@ -1,30 +1,38 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { MOTION } from '../../constants/motion.js'
+import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 
 export default function BeforeAfterImageSlider({
   beforeSrc,
   afterSrc,
-  beforeAlt  = '',
-  afterAlt   = '',
+  beforeAlt   = '',
+  afterAlt    = '',
   beforeLabel = 'Before',
   afterLabel  = 'After',
   heading,
-  subheading,
-  accent     = '#D69B45',
-  initial    = 50,
+  accent      = '#D69B45',
+  initial     = 50,
   onComplete,
 }) {
-  const [pct, setPct]       = useState(() => Math.min(100, Math.max(0, initial)))
-  const containerRef        = useRef(null)
-  const rafRef              = useRef(null)
-  const pendingPctRef       = useRef(pct)
-  const [entered, setEntered] = useState(false)
+  const [pct, setPct]             = useState(() => Math.min(100, Math.max(0, initial)))
+  const containerRef               = useRef(null)
+  const rafRef                     = useRef(null)
+  const pendingPctRef              = useRef(pct)
+  const [entered, setEntered]     = useState(false)
+  const [showPulse, setShowPulse] = useState(false)
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => setEntered(true))
     return () => cancelAnimationFrame(raf)
   }, [])
+
+  // Single gentle handle pulse 500ms after entry — teaches the interaction without text
+  useEffect(() => {
+    if (!entered) return
+    const t = setTimeout(() => setShowPulse(true), 500)
+    return () => clearTimeout(t)
+  }, [entered])
 
   // Apply queued pct via rAF — keeps DOM writes in the animation frame
   const flush = useCallback(() => {
@@ -85,33 +93,25 @@ export default function BeforeAfterImageSlider({
       transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
     }}>
 
-      {/* ── Heading ── */}
-      {(heading || subheading) && (
-        <div style={{ padding: '80px 24px 16px', flexShrink: 0 }}>
-          {heading && (
-            <p style={{
-              fontFamily: "'IBM Plex Serif', serif",
-              fontSize: 'clamp(1.6rem, 6vw, 2rem)',
-              fontWeight: 600,
-              lineHeight: 1.15,
-              letterSpacing: '-0.02em',
-              color: '#F5F7FF',
-              margin: '0 0 8px',
-            }}>
-              {heading}
-            </p>
-          )}
-          {subheading && (
-            <p style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: 13,
-              lineHeight: 1.5,
-              color: 'rgba(245,238,225,0.55)',
-              margin: 0,
-            }}>
-              {subheading}
-            </p>
-          )}
+      <style>{`
+        @keyframes bas-hint {
+          0%   { box-shadow: 0 0 0 0px  rgba(255,255,255,0.50), 0 4px 16px rgba(0,0,0,0.55); }
+          55%  { box-shadow: 0 0 0 14px rgba(255,255,255,0.00), 0 4px 16px rgba(0,0,0,0.55); }
+          100% { box-shadow: 0 0 0 3px  rgba(255,255,255,0.25), 0 4px 16px rgba(0,0,0,0.55); }
+        }
+      `}</style>
+
+      {/* ── Heading — question is the hero ── */}
+      {heading && (
+        <div style={{ padding: '80px 24px 12px', flexShrink: 0 }}>
+          <p style={{
+            ...TYPE.cinematic,
+            fontSize: 'clamp(1.75rem, 9.5vw, 2.375rem)',
+            color: '#F5F7FF',
+            margin: 0,
+          }}>
+            {heading}
+          </p>
         </div>
       )}
 
@@ -170,7 +170,6 @@ export default function BeforeAfterImageSlider({
               display: 'block',
               clipPath,
               pointerEvents: 'none',
-              // will-change hints to browser for clip-path animation
               willChange: 'clip-path',
             }}
           />
@@ -182,7 +181,7 @@ export default function BeforeAfterImageSlider({
             left: `${pct}%`,
             width: 2,
             transform: 'translateX(-50%)',
-            background: `rgba(255,255,255,0.80)`,
+            background: 'rgba(255,255,255,0.80)',
             pointerEvents: 'none',
           }} />
 
@@ -201,32 +200,32 @@ export default function BeforeAfterImageSlider({
             alignItems: 'center',
             justifyContent: 'center',
             pointerEvents: 'none',
-            transition: `box-shadow ${MOTION.duration.instant} ${MOTION.easing.gentle}`,
+            animation: showPulse
+              ? `bas-hint ${MOTION.duration.slow} ${MOTION.easing.gentle} 1 both`
+              : 'none',
           }}>
-            {/* ‹ › chevrons */}
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="M8 6l-4 4 4 4" stroke="#08090D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M12 6l4 4-4 4" stroke="#08090D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
 
-          {/* Labels */}
+          {/* Labels — quiet museum captions */}
           {beforeLabel && (
             <div style={{
               position: 'absolute',
               top: 12, left: 12,
-              padding: '4px 10px',
-              background: 'rgba(8,9,13,0.58)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
+              padding: '3px 8px',
+              background: 'rgba(8,9,13,0.28)',
+              backdropFilter: 'blur(4px)',
+              WebkitBackdropFilter: 'blur(4px)',
               borderRadius: 20,
-              border: '1px solid rgba(255,255,255,0.10)',
+              border: '1px solid rgba(255,255,255,0.06)',
               fontFamily: "'Sora', sans-serif",
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              color: 'rgba(245,238,225,0.72)',
+              fontSize: 10,
+              fontWeight: 500,
+              letterSpacing: '0.01em',
+              color: 'rgba(245,238,225,0.58)',
               pointerEvents: 'none',
               opacity: pct < 15 ? 0 : 1,
               transition: `opacity ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
@@ -238,18 +237,17 @@ export default function BeforeAfterImageSlider({
             <div style={{
               position: 'absolute',
               top: 12, right: 12,
-              padding: '4px 10px',
-              background: 'rgba(8,9,13,0.58)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
+              padding: '3px 8px',
+              background: 'rgba(8,9,13,0.28)',
+              backdropFilter: 'blur(4px)',
+              WebkitBackdropFilter: 'blur(4px)',
               borderRadius: 20,
-              border: '1px solid rgba(255,255,255,0.10)',
+              border: '1px solid rgba(255,255,255,0.06)',
               fontFamily: "'Sora', sans-serif",
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              color: 'rgba(245,238,225,0.72)',
+              fontSize: 10,
+              fontWeight: 500,
+              letterSpacing: '0.01em',
+              color: 'rgba(245,238,225,0.58)',
               pointerEvents: 'none',
               opacity: pct > 85 ? 0 : 1,
               transition: `opacity ${MOTION.duration.fast} ${MOTION.easing.gentle}`,
@@ -257,6 +255,25 @@ export default function BeforeAfterImageSlider({
               {afterLabel}
             </div>
           )}
+
+          {/* Micro-copy — revealed when the damaged side dominates */}
+          <div style={{
+            position: 'absolute',
+            bottom: 14,
+            left: 12,
+            right: 12,
+            textAlign: 'center',
+            fontFamily: "'Sora', sans-serif",
+            fontSize: 12,
+            lineHeight: 1.55,
+            color: 'rgba(245,238,225,0.82)',
+            textShadow: '0 1px 6px rgba(0,0,0,0.72)',
+            opacity: pct > 75 ? 1 : 0,
+            transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
+            pointerEvents: 'none',
+          }}>
+            Smoking is the biggest cause of lung cancer in the UK.
+          </div>
         </div>
       </div>
 
