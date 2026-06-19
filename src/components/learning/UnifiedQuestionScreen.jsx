@@ -177,7 +177,7 @@ export default function UnifiedQuestionScreen({
       <div
         className="cinematic-shell"
         style={{
-          paddingTop: 80,
+          paddingTop: 116,
           position: 'relative',
           zIndex: 2,
           '--cinematic-accent': accent,
@@ -190,12 +190,15 @@ export default function UnifiedQuestionScreen({
         {/* Question — dominant focus, editorial serif */}
         <p style={{
           fontFamily: "'IBM Plex Serif', serif",
-          fontSize: 26,
-          lineHeight: 1.25,
+          fontSize: '2.25rem',
+          lineHeight: 1.12,
           fontWeight: 600,
-          letterSpacing: '-0.01em',
+          letterSpacing: '-0.02em',
           margin: '0 0 28px',
           color: '#F5F7FF',
+          width: '100%',
+          maxWidth: '100%',
+          overflowWrap: 'break-word',
         }}>
           {q}
         </p>
