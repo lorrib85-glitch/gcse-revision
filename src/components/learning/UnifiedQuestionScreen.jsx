@@ -177,7 +177,7 @@ export default function UnifiedQuestionScreen({
       <div
         className="cinematic-shell"
         style={{
-          paddingTop: 116,
+          paddingTop: 132,
           position: 'relative',
           zIndex: 2,
           '--cinematic-accent': accent,
@@ -187,21 +187,29 @@ export default function UnifiedQuestionScreen({
         }}
       >
 
-        {/* Question — dominant focus, editorial serif */}
-        <p style={{
-          fontFamily: "'IBM Plex Serif', serif",
-          fontSize: '2.25rem',
-          lineHeight: 1.12,
-          fontWeight: 600,
-          letterSpacing: '-0.02em',
-          margin: '0 0 28px',
-          color: '#F5F7FF',
-          width: '100%',
-          maxWidth: '100%',
-          overflowWrap: 'break-word',
+        {/* Question — dominant focus, editorial serif inside a subtle frame */}
+        <div style={{
+          background: 'rgba(8,9,13,0.28)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 24,
+          padding: '22px 20px',
+          marginBottom: 16,
         }}>
-          {q}
-        </p>
+          <p style={{
+            fontFamily: "'IBM Plex Serif', serif",
+            fontSize: '2.25rem',
+            lineHeight: 1.12,
+            fontWeight: 600,
+            letterSpacing: '-0.02em',
+            margin: 0,
+            color: '#F5F7FF',
+            width: '100%',
+            maxWidth: '100%',
+            overflowWrap: 'break-word',
+          }}>
+            {q}
+          </p>
+        </div>
 
         {/* Answer options */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -213,7 +221,7 @@ export default function UnifiedQuestionScreen({
             // Base: neutral cinematic card surface — no subject warmth baked in
             let opacity = 1
             let background = 'rgba(21,23,32,0.9)'
-            let border = '1px solid rgba(255,255,255,0.08)'
+            let border = '1px solid rgba(255,255,255,0.11)'
 
             if (status === 'incorrect' && isFirstTapped) opacity = 0.58
             if (status === 'correct' && isFirstTapped) {
