@@ -43,6 +43,7 @@ import MedicalTheoryPrescription from '../learning/MedicalTheoryPrescription.jsx
 import MatchingTask from '../learning/MatchingTask.jsx'
 import PriorKnowledgeRecall from '../learning/PriorKnowledgeRecall.jsx'
 import SymptomProgression from '../learning/SymptomProgression.jsx'
+import BeforeAfterImageSlider from '../learning/BeforeAfterImageSlider.jsx'
 import ContentShell from './ContentShell.jsx'
 import { ScreenTitle, ScreenBody } from '../core/ScreenText.jsx'
 
@@ -2535,6 +2536,29 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           image={cur.image}
           stages={cur.stages || []}
           onContinue={isLast ? handleFinish : () => go(1)}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  // ── Before/After image slider — full-screen interactive comparison ──
+  if (cur?.type === 'beforeAfterSlider') {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <BeforeAfterImageSlider
+          beforeSrc={cur.beforeSrc}
+          afterSrc={cur.afterSrc}
+          beforeAlt={cur.beforeAlt || ''}
+          afterAlt={cur.afterAlt || ''}
+          beforeLabel={cur.beforeLabel}
+          afterLabel={cur.afterLabel}
+          heading={cur.heading}
+          subheading={cur.subheading}
+          accent={subjectColor}
+          initial={cur.initial ?? 50}
+          onComplete={isLast ? handleFinish : () => go(1)}
         />
         {jumpSheetPortal}
       </>

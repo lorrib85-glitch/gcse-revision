@@ -230,9 +230,9 @@ export const MODULES = [
     color: "#C47828",
     colorLight: "rgba(196,120,40,.12)",
     headerImage: "/headers/history-medicine-nhs.png",
-    screenCount: 10,
+    screenCount: 11,
     screenTags: [
-      null, null, null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null, null, null, null,
     ],
   },
   {

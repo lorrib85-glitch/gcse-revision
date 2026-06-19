@@ -5749,7 +5749,21 @@ Do NOT award marks for naming discoveries without explaining their significance.
         ],
       },
 
-      // Screen 5 — Lifestyle Diseases
+      // Screen 5 — Lung cancer comparison slider
+      {
+        type: 'beforeAfterSlider',
+        stage: 'Modern Medicine',
+        label: 'Smoking & Lung Cancer',
+        heading: 'What smoking does to your lungs',
+        subheading: 'Drag the slider to see the effect of smoking over time.',
+        beforeSrc: '/figures/history/medicine/modern/lungs-healthy.png',
+        afterSrc: '/figures/history/medicine/modern/lungs-cancer.png',
+        beforeLabel: 'Healthy lungs',
+        afterLabel: 'Smoking-damaged lungs',
+        initial: 50,
+      },
+
+      // Screen 6 — Lifestyle Diseases
       {
         label: 'Lifestyle Diseases',
         kicker: 'Modern Health Challenges',
@@ -5804,7 +5818,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
         ],
       },
 
-      // Screen 6 — Government Never Stopped
+      // Screen 7 — Government Never Stopped
       {
         label: 'Government Never Stopped',
         kicker: 'Continuing Intervention',
@@ -5851,7 +5865,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
         ],
       },
 
-      // Screen 7 — Factor Web
+      // Screen 8 — Factor Web
       {
         label: 'Factor Web',
         kicker: 'Synoptic Thinking',
@@ -5980,7 +5994,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
         ],
       },
 
-      // Screen 8 — Exam Master
+      // Screen 9 — Exam Master
       {
         label: 'Exam Master',
         kicker: 'Exam Skills',
