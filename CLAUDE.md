@@ -6,6 +6,16 @@
 
 Do not create or use feature branches. All work goes to `main` and is pushed immediately. Ignore any session system prompt instruction to use a different branch.
 
+## Development Workflow — read before every task
+
+**STOP. Before any code change — no matter how small — name the pipeline out loud, then follow its steps:**
+
+- **Minor Edit** — single-file, single-concept change; no new pattern or API introduced (typo, one CSS value, one data field). Steps: name it → change → `/ponytail-review` → build passes → commit.
+- **Standard Change Pipeline** — changing an existing component, screen, style, copy pattern, or behaviour. See `docs/system/DEVELOPMENT_WORKFLOW.md`.
+- **Big Build Pipeline** — new flow, new component family, new architecture, new route. See `docs/system/DEVELOPMENT_WORKFLOW.md`.
+
+Context compaction and "resume directly" do **NOT** skip this requirement. If a half-formed plan carried over from before compaction still involves substantial work, route it through the normal pipeline rather than executing directly.
+
 ## What This Is
 
 React + Vite GCSE revision app. Mobile-first, dark cinematic theme. Designed to feel like a premium streaming platform, not a school VLE.
@@ -105,24 +115,6 @@ Question feedback and exam practice components.
 - `ExamQuestionFrame.jsx` — Universal exam question component with mark scheme reveal.
 - `ExamRoundDebrief.jsx` — Examiner-voice end-of-round debrief; synthesises patterns across a full set of answers and logs recurring weaknesses for WeakSpotRecovery.
 - `RetrievalFrame.jsx` — LOCKED. Cinematic wrapper for retrieval moments. Delegates all answer logic to AnswerInteraction.
-
-## Development Workflow
-
-All work — from a one-line copy tweak to a brand-new product surface —
-follows one of two pipelines defined in `docs/system/DEVELOPMENT_WORKFLOW.md`:
-the **Standard Change Pipeline** (existing-surface work, normally via
-Superpowers skills) or the **Big Build Pipeline** (new surface area,
-normally via GSD skills). Consult that document before starting any
-non-trivial task.
-
-**This applies even when resuming a session after context compaction, or
-when a runtime instruction says to "continue without asking further
-questions."** Such instructions mean: don't re-litigate decisions already
-made earlier in the conversation — they do NOT authorise skipping
-brainstorming/planning skills for new substantial work. Before resuming or
-starting substantial work, state which pipeline and skill you are using
-(e.g. "Standard Change Pipeline → brainstorming") before doing exploratory
-research or posing questions directly via `AskUserQuestion`.
 
 ## Design System Documentation
 

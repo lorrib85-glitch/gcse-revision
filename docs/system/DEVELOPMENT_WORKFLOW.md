@@ -20,8 +20,10 @@ approach.
 
 ## Core rule
 
-All work follows one of two named pipelines:
+All work follows one of three named pipelines:
 
+- **Minor Edit** — single-file, single-concept change with no new pattern
+  or API surface introduced.
 - **Standard Change Pipeline** — for improving, refactoring, or extending
   existing screens/components.
 - **Big Build Pipeline** — for new product areas, new flows, new
@@ -79,6 +81,22 @@ architecture.
 Only capture rules likely to be forgotten, disputed, or applied
 inconsistently. Simple, self-evidently correct practices don't need
 documenting.
+
+## Pipeline 0 — Minor Edit
+
+Use for single-file, single-concept changes where no new prop, API,
+reusable pattern, or component behaviour is introduced. Examples: fix a
+CSS value, correct a typo, update one data field, adjust one colour token.
+
+**Does NOT qualify if:** the change touches a locked component, introduces
+a new prop or API surface, affects more than one concept, or could have
+side effects across screens. When in doubt, use Standard Change Pipeline.
+
+1. Name it — state "Minor Edit" before touching anything
+2. Make the change
+3. Run `/ponytail-review` on the diff
+4. Build passes (`./node_modules/.bin/vite build`)
+5. Commit + push to `main`
 
 ## Pipeline 1 — Standard Change Pipeline
 

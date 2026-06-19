@@ -15,6 +15,17 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'WORKFLOW: Before any code change, name the pipeline — Minor Edit / Standard Change / Big Build — then follow its steps. Context compaction and \"resume directly\" do NOT skip this. See DEVELOPMENT_WORKFLOW.md.'"
+          }
+        ]
+      }
     ]
   }
 }
