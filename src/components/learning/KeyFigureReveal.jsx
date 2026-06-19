@@ -102,7 +102,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
       {/* ── Portrait hero ───────────────────────────────────────────────── */}
       <div style={{
         position: 'relative',
-        height: '44vh',
+        height: '40vh',
         overflow: 'hidden',
         flexShrink: 0,
       }}>
@@ -154,7 +154,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         onClick={handleClick}
         style={{
           position: 'relative',
-          padding: `${SPACING.compact}px ${SPACING.standard}px`,
+          padding: `${SPACING.micro}px ${SPACING.standard}px`,
           paddingBottom: `calc(28px + env(safe-area-inset-bottom, 0px))`,
           cursor: 'pointer',
           userSelect: 'none',
@@ -162,7 +162,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           WebkitTapHighlightColor: 'transparent',
           display: 'flex',
           flexDirection: 'column',
-          gap: SPACING.compact,
+          gap: SPACING.micro,
         }}
       >
 
@@ -171,7 +171,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           key={sectionIdx}
           style={{
             borderRadius: RADII.medium,
-            padding: '16px 18px',
+            padding: '12px 16px',
             background: cardBg,
             border: cardBorder,
             boxShadow: cardShadow,
@@ -196,8 +196,8 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 12,
-              marginBottom: 12,
+              gap: 10,
+              marginBottom: 8,
             }}>
               <div style={{
                 width: 48, height: 48,
@@ -225,7 +225,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             </div>
 
             {/* Divider under header */}
-            <div style={{ height: 1, background: dividerColor, marginBottom: 12 }} />
+            <div style={{ height: 1, background: dividerColor, marginBottom: 10 }} />
 
             {/* Body: evidence tile (left) + flowing text, or plain lines */}
             {section.image ? (
@@ -257,7 +257,8 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                       flex: 1,
                       fontFamily: "'Sora', sans-serif",
                       fontSize: 13,
-                      lineHeight: 1.5,
+                      fontWeight: 500,
+                      lineHeight: 1.55,
                       color: bodyColor,
                       margin: 0,
                       paddingTop: 2,
@@ -291,14 +292,15 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
               <>
                 {lines.map((line, i) => {
                   const isAutoTakeaway = i === lines.length - 1 && !section.takeaway
+                  const isLead = i === 0
                   return (
                     <div key={i}>
                       {i > 0 && <div style={{ height: 1, background: dividerColor, margin: '8px 0' }} />}
                       <p style={{
                         fontFamily: "'Sora', sans-serif",
-                        fontSize: 15,
-                        fontWeight: isAutoTakeaway ? 600 : 400,
-                        lineHeight: 1.5,
+                        fontSize: isLead ? 15 : 14,
+                        fontWeight: isAutoTakeaway ? 600 : isLead ? 500 : 400,
+                        lineHeight: 1.55,
                         color: isAutoTakeaway ? titleColor : bodyColor,
                         margin: 0,
                       }}>
