@@ -16,11 +16,11 @@
 - **Proposed content for this episode:**
   - Cinematic hook: 28 August 1963 — 250,000 people standing in front of the Lincoln Memorial. How did the movement get here? And what did it cost?
   - ChapterHookScreen (True/False): "MLK's 'I Have a Dream' was a fully scripted, prepared speech" (False); "Bull Connor used fire hoses on children during the Birmingham campaign" (True); "The 1964 Civil Rights Act gave Black Americans full voting rights" (False)
-  - PriorKnowledgeRecall: concepts from Episodes 1–4 — `non_violent_direct_action`, `mlk`, `sclc`, `sncc`, `freedom_rides`, `brown_v_board`
+  - PriorKnowledgeRecall: concepts from Episodes 1–4 — `non_violent_direct_action`, `mlk`, `sclc`, `sncc`, `freedom_rides`, `brown_v_board`, `civil_rights_act_1957`
   - WhatYouWillLearn: auto-generated from screen labels
 - **Suggested component(s):**
   - `ChapterHookScreen` (True/False) — the "speech was planned" misconception and the "Act gave voting rights" misconception bracket the episode's core argument
-  - `PriorKnowledgeRecall` — retrieval of Episodes 1–4; concepts: `non_violent_direct_action`, `mlk`, `sclc`, `sncc`, `freedom_rides`, `brown_v_board`
+  - `PriorKnowledgeRecall` — retrieval of Episodes 1–4; concepts: `non_violent_direct_action`, `mlk`, `sclc`, `sncc`, `freedom_rides`, `brown_v_board`, `civil_rights_act_1957`
 
 ### Section 2 — Learning Chunk 1
 - **Purpose:** Introduce Birmingham 1963 — why it was chosen, what Project C was, and what happened.
@@ -56,24 +56,27 @@
   - `MatchingTask` — match person to role/act: (Bayard Rustin → chief logistical organiser), (John Lewis → SNCC, speech toned down), (Mahalia Jackson → "Tell them about the dream"), (LBJ → pledged Civil Rights Act after Kennedy's assassination); active processing of the episode's key figures
 
 ### Section 5 — Learning Chunk 4
-- **Purpose:** The Civil Rights Act 1964 — what it achieved and what it didn't.
+- **Purpose:** The Civil Rights Act 1964 — what it achieved, what it didn't, and why it leads to Selma.
 - **Proposed content for this episode:**
   - What the Act did: outlawed discrimination in public places and employment; EEOC created; federal enforcement power
+  - Legislative comparison: stronger than the weak Civil Rights Act 1957, which mainly investigated voting-rights abuses and had limited enforcement
   - What the Act didn't do: voting rights (needing 1965 Voting Rights Act), housing (1968 Act), economic inequality (never fully addressed)
   - Why it was passed: Birmingham + march + Kennedy assassination + LBJ's political commitment — the convergence of factors
+  - Bridge line: the 1964 Act attacked public segregation and employment, but did not solve voting rights; that gap leads directly to Selma and the Voting Rights Act 1965
   - Consolidation retrieval: key facts, dates, terms from the whole episode
 - **Suggested component(s):**
-  - `ColSortBlock` — sort evidence into "What the 1964 Civil Rights Act achieved" vs "What it left unaddressed"; directly prepares students for Q2 "how significant was the Act" questions and the progress/limits structure
-  - `QuickRecallScreen` — retrieval of full episode content: Project C, Bull Connor, Children's Crusade, Kennedy's speech, Evers assassination, March on Washington, Sixteenth Street Baptist Church bombing, LBJ, Civil Rights Act 1964
+  - `ColSortBlock` — sort evidence into "What the 1964 Civil Rights Act achieved" vs "What it left unaddressed"; include voting rights as the key unresolved gap; directly prepares students for Q2 significance questions and the progress/limits structure
+  - `QuickRecallScreen` — retrieval of full episode content: Project C, Bull Connor, Children's Crusade, Kennedy's speech, Evers assassination, March on Washington, Sixteenth Street Baptist Church bombing, LBJ, Civil Rights Act 1964, voting-rights gap
 
 ### Section 6 — Summary & Examiner
 - **Purpose:** No major new content; apply knowledge to exam technique; end with completion screen.
 - **Proposed content for this episode:**
   - Examiner explains the Q2 "Explain why" structure — "Why was the Civil Rights Act (1964) passed?" as worked example; three-cause structure: Birmingham/media, March on Washington, Kennedy assassination + LBJ
   - Examiner tip: students who name all three causes AND link them causally (rather than listing) score in the higher bands; the chain from Birmingham images → Kennedy's speech → march pressure → Kennedy assassination → LBJ's pledge → Act is the full causal argument
+  - Examiner tip: do not claim the 1964 Act gave voting rights. Use it as a progress-and-limits point: public discrimination/employment = addressed; voting rights = unresolved until 1965
   - FaceTheExaminer: Q2-style question — "Explain why the Birmingham campaign was important for the civil rights movement"
 - **Suggested component(s):**
-  - `ExaminerExplainsScreen` — animated Q2 structure explanation; "Why was the 1964 Civil Rights Act passed?" as worked example; models three-cause linked structure
+  - `ExaminerExplainsScreen` — animated Q2 structure explanation; "Why was the 1964 Civil Rights Act passed?" as worked example; models three-cause linked structure and the bridge to 1965
   - `FaceTheExaminer` — Q2 question: "Explain why the Birmingham campaign was important for the civil rights movement"; marks against criteria; logs exam-technique patterns
   - `ChapterCompleteScreen`
 
@@ -110,4 +113,6 @@ Not yet built — full rebuild from spec.
 
 5. **The 1964 Act's limits as exam-prep content:** Section 5's `ColSortBlock` maps directly onto Q3(d) interpretation questions about the extent of civil rights progress. Make the column labels explicitly exam-language: "evidence of significant progress" / "evidence of limited progress" — training students in the vocabulary they need for a 16-mark evaluation.
 
-6. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), VisualLearning (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), VisualNarrativeScreen (S3), InteractiveCollectionExplorer (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
+6. **Bridge from 1964 to 1965:** Add a clear, repeated line that the 1964 Act was stronger than 1957 but did not solve voting rights. This sets up Episode 7 cleanly and prevents the common misconception that the 1964 Act finished civil rights law.
+
+7. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), VisualLearning (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), VisualNarrativeScreen (S3), InteractiveCollectionExplorer (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
