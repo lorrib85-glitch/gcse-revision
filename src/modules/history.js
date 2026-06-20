@@ -245,7 +245,7 @@ export const HISTORY_MODULES = [
         tag: 'galen',
         label: 'Galen',
         portrait: '/figures/history/medicine/medieval/galen-portrait.png',
-        portraitPosition: 'center top',
+        portraitPosition: 'center 25%',
         cardBackground: '/figures/history/medicine/medieval/galen-parchment.png',
         name: 'Galen',
         role: 'Roman doctor and writer',

@@ -196,7 +196,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
               display: 'flex',
               alignItems: 'center',
               gap: 10,
-              marginBottom: 8,
+              marginBottom: 4,
             }}>
               <div style={{
                 width: 48, height: 48,
@@ -223,7 +223,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             </div>
 
             {/* Divider under header */}
-            <div style={{ height: 1, background: dividerColor, marginBottom: 10 }} />
+            <div style={{ height: 1, background: dividerColor, marginBottom: 6 }} />
 
             {/* Body: evidence tile (left) + flowing text, or plain lines */}
             {section.image ? (
@@ -242,7 +242,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                       alt=""
                       style={{
                         width: '100%',
-                        height: 240,
+                        height: 140,
                         objectFit: section.imageFit || 'cover',
                         objectPosition: section.imagePosition || 'center center',
                         display: 'block',
@@ -345,8 +345,8 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 10,
-          paddingTop: SPACING.compact,
+          gap: 6,
+          paddingTop: SPACING.micro,
         }}>
           {isLast ? (
             <ContinueCTA
