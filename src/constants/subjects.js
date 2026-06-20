@@ -26,20 +26,32 @@ export const SUBJECTS = {
   },
 
   English: {
-    accent: '#7A284F',
-    accentSecondary: '#A14A73',
-    accentTertiary: '#4A102C',
+    // English palette: rich, literary, oxblood and parchment.
+    // Use oxblood with intention for key actions, active states and progress.
+    accent: '#6A343D',
+    accentSecondary: '#8A6A6E',
+    accentTertiary: '#4C242B',
 
-    background: '#12070D',
-    backgroundSecondary: '#1A0C14',
+    background: '#0D0F10',
+    backgroundSecondary: '#1F1C1B',
 
-    glow: 'rgba(161,74,115,0.34)',
-    glowStrong: 'rgba(122,40,79,0.22)',
+    glow: 'rgba(106,52,61,0.32)',
+    glowStrong: 'rgba(138,106,110,0.20)',
 
     overlay: 'rgba(0,0,0,0.58)',
-    progressFill: '#A14A73',
+    progressFill: '#6A343D',
 
-    accentRgb: '161,74,115',
+    accentRgb: '106,52,61',
+
+    palette: {
+      oxblood: '#6A343D',
+      mahogany: '#4C242B',
+      walnut: '#3B2626',
+      dustyRose: '#8A6A6E',
+      parchment: '#E9E1D3',
+      ink: '#1F1C1B',
+      tealAccent: '#2A9D8F',
+    },
   },
 
   Physics: {
