@@ -226,67 +226,57 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             {/* Divider under header */}
             <div style={{ height: 1, background: dividerColor, marginBottom: 6 }} />
 
-            {/* Body: evidence tile (left) + flowing text, or plain lines */}
+            {/* Body: evidence tile with text wrapped around it, or plain lines */}
             {section.image ? (
-              <>
-                {/* Two-column row: image tile + first line of text */}
-                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                  <div style={{
-                    width: '40%',
-                    flexShrink: 0,
-                    borderRadius: 9,
-                    overflow: 'hidden',
-                    animation: `kfr-img-in 440ms ${MOTION.easing.standard} both`,
-                  }}>
-                    <img
-                      src={section.image}
-                      alt=""
-                      style={{
-                        width: '100%',
-                        height: 180,
-                        objectFit: section.imageFit || 'cover',
-                        objectPosition: section.imagePosition || 'center center',
-                        display: 'block',
-                        filter: 'saturate(0.88) brightness(0.96)',
-                      }}
-                    />
-                  </div>
-                  {lines[0] && (
-                    <p style={{
-                      flex: 1,
+              <div style={{
+                fontFamily: "'Sora', sans-serif",
+                fontSize: 13,
+                lineHeight: 1.5,
+                color: bodyColor,
+              }}>
+                {/* Float lets later paragraphs use the space beside the image instead of being forced below a tall flex row. */}
+                <div style={{
+                  float: 'left',
+                  width: '40%',
+                  marginRight: 10,
+                  marginBottom: 6,
+                  borderRadius: 9,
+                  overflow: 'hidden',
+                  animation: `kfr-img-in 440ms ${MOTION.easing.standard} both`,
+                }}>
+                  <img
+                    src={section.image}
+                    alt=""
+                    style={{
+                      width: '100%',
+                      height: 180,
+                      objectFit: section.imageFit || 'cover',
+                      objectPosition: section.imagePosition || 'center center',
+                      display: 'block',
+                      filter: 'saturate(0.88) brightness(0.96)',
+                    }}
+                  />
+                </div>
+
+                {lines.map((line, i) => {
+                  const isAutoTakeaway = i === lines.length - 1 && !section.takeaway
+                  const isLead = i === 0
+                  return (
+                    <p key={i} style={{
                       fontFamily: "'Sora', sans-serif",
                       fontSize: 13,
-                      fontWeight: 500,
-                      lineHeight: 1.55,
-                      color: bodyColor,
-                      margin: 0,
-                      paddingTop: 2,
+                      fontWeight: isAutoTakeaway ? 600 : isLead ? 500 : 400,
+                      lineHeight: isLead ? 1.55 : 1.5,
+                      color: isAutoTakeaway ? titleColor : bodyColor,
+                      margin: i === 0 && lines.length > 1 ? '0 0 4px' : 0,
                     }}>
-                      {lines[0]}
+                      {line}
                     </p>
-                  )}
-                </div>
-                {/* Remaining lines — gap below image, then continuous text flow */}
-                {lines.slice(1).length > 0 && (
-                  <div style={{ marginTop: 10 }}>
-                    {lines.slice(1).map((line, i) => {
-                      const isAutoTakeaway = i === lines.length - 2 && !section.takeaway
-                      return (
-                        <p key={i} style={{
-                          fontFamily: "'Sora', sans-serif",
-                          fontSize: 13,
-                          fontWeight: isAutoTakeaway ? 600 : 400,
-                          lineHeight: 1.5,
-                          color: isAutoTakeaway ? titleColor : bodyColor,
-                          margin: 0,
-                        }}>
-                          {line}
-                        </p>
-                      )
-                    })}
-                  </div>
-                )}
-              </>
+                  )
+                })}
+
+                <div style={{ clear: 'both' }} />
+              </div>
             ) : (
               /* No image — continuous text flow, no gaps between lines */
               <>
