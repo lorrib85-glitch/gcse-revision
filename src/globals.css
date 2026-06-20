@@ -222,12 +222,21 @@
     will-change: transform, opacity, filter;
   }
 
+  /* Home page title fly-in — delayed so it rises after the greeting settles */
+  .homeTitleFlyIn {
+    animation: homeTitleFlyIn 1100ms cubic-bezier(0.16, 1, 0.3, 1) 420ms both;
+    transform-origin: left center;
+    will-change: transform, opacity, filter;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .homeGreetingFlyIn {
+    .homeGreetingFlyIn,
+    .homeTitleFlyIn {
       animation: none;
       opacity: 1;
       transform: none;
       filter: none;
+      text-shadow: none;
     }
   }
 }
@@ -252,5 +261,28 @@
     transform: scale(1) translateY(0);
     filter: none;
     letter-spacing: normal;
+  }
+}
+
+@keyframes homeTitleFlyIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(6px);
+    text-shadow: 0 0 0px rgba(241, 250, 238, 0);
+  }
+
+  45% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+    text-shadow: 0 0 48px rgba(241, 250, 238, 0.4);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: none;
+    text-shadow: 0 0 0px rgba(241, 250, 238, 0);
   }
 }
