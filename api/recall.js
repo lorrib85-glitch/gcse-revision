@@ -35,9 +35,9 @@ export default async function handler(req) {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY
-  console.log('[recall] api key present:', !!apiKey)
+  console.log('[recall] api key present:', !!apiKey, '| type:', typeof apiKey, '| length:', apiKey?.length ?? 'n/a')
   if (!apiKey) {
-    return new Response(JSON.stringify({ error: 'API key not configured' }), { status: 500 })
+    return new Response(JSON.stringify({ error: 'API key not configured', keyType: typeof apiKey }), { status: 500 })
   }
 
   let body
