@@ -16,32 +16,35 @@
 - **Proposed content for this episode:**
   - Cinematic hook: 1 December 1955 — a woman stays seated on a bus in Montgomery, Alabama. What follows changes American history.
   - ChapterHookScreen (True/False): "Rosa Parks refused to move because she was exhausted from work" (False); "The bus boycott lasted over a year" (True); "Rosa Parks was the first Black person to refuse to give up her seat on a Montgomery bus" (False)
-  - PriorKnowledgeRecall: concepts from Episodes 1–2 — `jim_crow`, `naacp`, `brown_v_board`, `little_rock`, `massive_resistance`
+  - PriorKnowledgeRecall: concepts from Episodes 1–2 — `jim_crow`, `naacp`, `brown_v_board`, `little_rock`, `massive_resistance`, `white_citizens_councils`
   - WhatYouWillLearn: auto-generated from screen labels
 - **Suggested component(s):**
   - `ChapterHookScreen` (True/False) — the "tired woman" misconception is the most common misconception about Rosa Parks; opening with it primes the more complex reality
-  - `PriorKnowledgeRecall` — retrieval of Episodes 1–2; concepts: `jim_crow`, `naacp`, `brown_v_board`, `little_rock`, `massive_resistance`
+  - `PriorKnowledgeRecall` — retrieval of Episodes 1–2; concepts: `jim_crow`, `naacp`, `brown_v_board`, `little_rock`, `massive_resistance`, `white_citizens_councils`
 
 ### Section 2 — Learning Chunk 1
 - **Purpose:** Introduce Rosa Parks — who she really was, her arrest, and the context that made it the right moment.
 - **Proposed content for this episode:**
   - Segregated buses in Montgomery: the rules, the humiliations, the drivers' power
+  - Long-term causes: WPC had campaigned on bus discrimination since 1950; requests to bus company officials had been ignored
   - Claudette Colvin (March 1955): refused to move, arrested — why NAACP didn't use her case
   - Rosa Parks: NAACP secretary, Highlander Folk School training, her actual arrest (1 December 1955)
   - Jo Ann Gibson Robinson and the WPC: had been planning this for five years; overnight leaflets
 - **Suggested component(s):**
-  - `VisualNarrativeScreen` — beat-by-beat: segregated bus rules → Claudette Colvin's arrest (March 1955, not used) → Rosa Parks's arrest (1 December 1955) → overnight leaflets → first day of boycott; establishes that this was planned, not spontaneous
+  - `VisualNarrativeScreen` — beat-by-beat: segregated bus rules → WPC campaigning since 1950 → Claudette Colvin's arrest (March 1955, not used) → Rosa Parks's arrest (1 December 1955) → overnight leaflets → first day of boycott; establishes that this was planned, not spontaneous
   - `QuickRecallScreen` — retrieval of Jim Crow (Episode 1) interleaved with Parks/WPC facts just taught; connects the bus rules to the wider system of segregation
 
 ### Section 3 — Learning Chunk 2
 - **Purpose:** The boycott in action — 381 days of community organisation and sacrifice.
 - **Proposed content for this episode:**
-  - MIA formation; MLK elected (young, no enemies — a compromise candidate); his first mass meeting speech
-  - How the boycott worked: carpools, mule carts, walking miles; 300+ pick-up stations; taxi drivers charged 10 cents
-  - White resistance: MLK's house bombed; 89 arrests under anti-boycott law; violence; MLK's "kitchen table experience"
+  - MIA formation: in the days after Parks's arrest, activists organised the boycott; on 5 December 1955 the MIA was formed and MLK was elected leader (young, no enemies — a compromise candidate); his first mass meeting speech
+  - 8 December meeting: MIA representatives met bus company officials; officials refused to change rules; MIA continued the boycott until victory
+  - How the boycott worked: carpools involving over 300 cars, mule carts, walking miles; organised pick-up points; taxi drivers charged 10 cents
+  - Reasons for success: organisation, commitment, publicity, economic pressure, legal challenge
+  - White resistance: opposition from the mayor, bus company owners, white drivers, KKK and White Citizens' Councils; MLK's house bombed; 89 arrests under anti-boycott law; violence; MLK's "kitchen table experience"
   - Interleaving: connect White Citizens' Councils (Episode 2) to the white response in Montgomery — the same pattern of organised resistance
 - **Suggested component(s):**
-  - `InteractiveCollectionExplorer` — explore "How the boycott was organised" (Jo Ann Robinson / MIA car pools / church network / taxi drivers / walking pledges); colour-coded by type; makes the logistics tangible
+  - `InteractiveCollectionExplorer` — explore "How the boycott was organised" (Jo Ann Robinson / MIA car pools / church network / taxi drivers / walking pledges / publicity / legal strategy); colour-coded by type; makes the logistics tangible
   - `QuickRecallScreen` — retrieval of *Brown v Board* and Little Rock (Episodes 1–2) interleaved with MIA/boycott facts; interleaving of legal + direct action threads
 
 ### Section 4 — Learning Chunk 3
@@ -58,22 +61,23 @@
 ### Section 5 — Learning Chunk 4
 - **Purpose:** Significance and the takeaway — what the boycott proved for the movement.
 - **Proposed content for this episode:**
-  - The model it created: non-violent direct action + legal challenge + church network + media coverage
+  - The model it created: non-violent direct action + legal challenge + church network + publicity/media coverage
   - MLK as national figure: the boycott launched his national career; SCLC gave him an institutional base
-  - Economic pressure as a weapon: 75% of bus passengers were Black — withdrawing patronage hit the bus company; a model that would return in sit-ins and Freedom Rides
+  - Economic pressure as a weapon: around 75% of bus passengers were Black — withdrawing patronage hit the bus company; a model that would return in sit-ins and Freedom Rides
+  - GCSE success factors consolidated: organisation, commitment, publicity, economic pressure, legal challenge
   - Limits: only one city; violence continued; broader segregation untouched; next step was sit-ins and nationwide action
 - **Suggested component(s):**
-  - `ColSortBlock` — sort evidence into "Boycott model: what worked" vs "Boycott model: what it couldn't do alone"; prepares students to evaluate the significance and limits for Q2/Q3(d)
-  - `QuickRecallScreen` — retrieval of full episode content: Parks (NAACP, Highlander), Colvin, Jo Ann Robinson, MIA, MLK's kitchen table, *Browder v Gayle*, 381 days, SCLC
+  - `ColSortBlock` — sort evidence into "Why the boycott succeeded" vs "Limits of the boycott"; include organisation, commitment, publicity, economic pressure and legal challenge as named success factors; prepares students to evaluate the significance and limits for Q2/Q3(d)
+  - `QuickRecallScreen` — retrieval of full episode content: Parks (NAACP, Highlander), Colvin, Jo Ann Robinson, WPC, MIA, 8 December meeting, MLK's kitchen table, *Browder v Gayle*, 381 days, SCLC
 
 ### Section 6 — Summary & Examiner
 - **Purpose:** No major new content; apply knowledge to exam technique; end with completion screen.
 - **Proposed content for this episode:**
-  - Examiner explains the Q2 "Explain why" question type — "Why was the Montgomery Bus Boycott successful?" as the worked example; three-cause structure modelled: community organisation, legal challenge, media/economic pressure
-  - Examiner tip: students who distinguish between what *caused* the boycott to start (Parks's arrest) and what *made it succeed* (dual strategy, 381-day commitment, *Browder*) score higher; they're separate Q2 questions
+  - Examiner explains the Q2 "Explain why" question type — "Why was the Montgomery Bus Boycott successful?" as the worked example; five-cause structure modelled: organisation, commitment, publicity, economic pressure, legal challenge
+  - Examiner tip: students who distinguish between what *caused* the boycott to start (Parks's arrest + long-term bus discrimination) and what *made it succeed* (dual strategy, 381-day commitment, publicity, economic pressure, *Browder*) score higher; they're separate Q2 questions
   - FaceTheExaminer: Q2-style question — "Explain why Rosa Parks's actions were important for the civil rights movement"
 - **Suggested component(s):**
-  - `ExaminerExplainsScreen` — animated explanation of the Q2 three-cause structure; uses boycott success as worked example; models distinction between cause-of-event vs cause-of-success
+  - `ExaminerExplainsScreen` — animated explanation of the Q2 cause structure; uses boycott success as worked example; models distinction between cause-of-event vs cause-of-success
   - `FaceTheExaminer` — Q2 question: "Explain why Rosa Parks's actions were important for the civil rights movement"; marks against criteria; logs exam-technique patterns
   - `ChapterCompleteScreen`
 
@@ -102,12 +106,16 @@ Not yet built — full rebuild from spec.
 
 1. **The "planned, not spontaneous" misconception as the episode's hook:** The Rosa Parks story is the most widely misunderstood moment in civil rights history. The ChapterHookScreen opens with the "tired" myth; every subsequent section reveals the planned, organised reality. This creates a revelation arc that feels like a documentary correcting the record — which is exactly the tone the VisualNarrativeScreen should hit in Section 2.
 
-2. **Jo Ann Gibson Robinson as an under-taught hero:** The WPC's overnight leaflet print run is one of the most remarkable logistical feats of the whole movement and almost never appears in GCSE answers. The InteractiveCollectionExplorer in Section 3 is the right place to give it weight alongside the car pools and taxi drivers — making the organisational infrastructure visible rather than invisible.
+2. **Jo Ann Gibson Robinson as an under-taught hero:** The WPC's overnight leaflet print run is one of the most remarkable logistical feats of the whole movement and almost never appears in GCSE answers. The InteractiveCollectionExplorer in Section 3 is the right place to give it weight alongside the car pools, taxi drivers, publicity and legal strategy — making the organisational infrastructure visible rather than invisible.
 
-3. **MLK's "kitchen table experience" as a humanising beat:** Section 3 should include this moment in the `InteractiveCollectionExplorer` or as a pull-quote in the `VisualNarrativeScreen`. It is private, human, and memorable — and it gives students something distinct to write that separates them from mid-range answers.
+3. **The 8 December meeting should be used as the reason the protest became sustained:** This detail gives students a clean causal step: activists tried negotiation → bus officials refused → boycott continued. It is excellent for Q2 because it shows the boycott was not just emotional protest; it was strategic escalation.
 
-4. **Dual-strategy model as the episode's structural spine:** The boycott worked because of economic pressure AND legal challenge simultaneously. The `ExplainReveal` in Section 4 should make this explicit — not as two separate events but as a converging strategy. Students who can describe the dual strategy in Q2 answers earn higher marks.
+4. **MLK's "kitchen table experience" as a humanising beat:** Section 3 should include this moment in the `InteractiveCollectionExplorer` or as a pull-quote in the `VisualNarrativeScreen`. It is private, human, and memorable — and it gives students something distinct to write that separates them from mid-range answers.
 
-5. **Claudette Colvin as an interleaving bridge:** Colvin (March 1955) is introduced in Section 2 and should be revisited briefly in Section 5's `ColSortBlock` — the fact that the NAACP chose their plaintiff carefully is evidence of how organised (not spontaneous) the movement was, and belongs in the "what the boycott model shows" column.
+5. **Dual-strategy model as the episode's structural spine:** The boycott worked because of economic pressure AND legal challenge simultaneously. The `ExplainReveal` in Section 4 should make this explicit — not as two separate events but as a converging strategy. Students who can describe the dual strategy in Q2 answers earn higher marks.
 
-6. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), VisualNarrativeScreen (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), InteractiveCollectionExplorer (S3), ExplainReveal (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
+6. **Success factors need explicit GCSE labels:** Organisation, commitment, publicity, economic pressure and legal challenge should appear as named labels in Section 5 and the Examiner screen. This helps students avoid vague answers like "people worked together" and gives them ready-made paragraph categories.
+
+7. **Claudette Colvin as an interleaving bridge:** Colvin (March 1955) is introduced in Section 2 and should be revisited briefly in Section 5's `ColSortBlock` — the fact that the NAACP chose their plaintiff carefully is evidence of how organised (not spontaneous) the movement was, and belongs in the "why the boycott succeeded" logic.
+
+8. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), VisualNarrativeScreen (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), InteractiveCollectionExplorer (S3), ExplainReveal (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
