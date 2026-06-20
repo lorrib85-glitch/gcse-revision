@@ -120,4 +120,12 @@ Not yet built — full rebuild from spec.
 
 6. **Containment should be named before domino theory:** Use Truman/containment as the broad policy, then domino theory as the Southeast Asia version of that policy. This gives students a cleaner causal hierarchy for Q2.
 
-7. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), ExplainReveal (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), VisualLearning (S3), VisualNarrativeScreen (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
+7. **Claude build detail — exact implementation requirements:**
+   - Do not teach domino theory as a floating definition. Build the causal ladder: China 1949 → Korea 1950–53 → McCarthyism → containment pressure → domino theory → Vietnam.
+   - Include one short retrieval question that asks: "Why did US politicians fear being accused of being soft on communism?" Correct answer must mention McCarthyism or the Cold War climate.
+   - Include one misconception question: "Was Ho Chi Minh only popular because he was communist?" Correct answer: no, he was also a nationalist who fought foreign rule.
+   - In the `ExplainReveal`, each reveal step should be one sentence maximum, with a clear arrow/chain relationship. Avoid a dense paragraph.
+   - In the Examiner screen, model a Q2 paragraph using this structure: point = domino theory/containment; evidence = China/Korea/McCarthyism; explanation = presidents feared another Asian country falling to communism; link = this made Vietnam seem strategically important.
+   - Do not over-teach Truman as a separate mini-topic. Name containment as the broader policy and keep Truman as context only.
+
+8. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), ExplainReveal (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), VisualLearning (S3), VisualNarrativeScreen (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
