@@ -45,6 +45,7 @@ import MatchingTask from '../learning/MatchingTask.jsx'
 import PriorKnowledgeRecall from '../learning/PriorKnowledgeRecall.jsx'
 import SymptomProgression from '../learning/SymptomProgression.jsx'
 import BeforeAfterImageSlider from '../learning/BeforeAfterImageSlider.jsx'
+import FactorWeb from '../learning/FactorWeb.jsx'
 import ContentShell from './ContentShell.jsx'
 import { ScreenTitle, ScreenBody } from '../core/ScreenText.jsx'
 
@@ -2251,6 +2252,20 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           paragraphs={cur.paragraphs}
           onContinue={() => isLast ? handleFinish() : go(1)}
           onTextRevealStart={() => setCinematicHeaderVisible(true)}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  if (cur?.type === 'factorWeb') {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <FactorWeb
+          block={cur}
+          subject={module.subject}
+          onContinue={() => isLast ? handleFinish() : go(1)}
         />
         {jumpSheetPortal}
       </>

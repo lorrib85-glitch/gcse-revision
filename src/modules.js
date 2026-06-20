@@ -130,9 +130,9 @@ export const MODULES = [
     color: "#B06520",
     colorLight: "rgba(176,101,32,.12)",
     headerImage: "/headers/history-medicine-invisible-enemy.png",
-    screenCount: 9,
+    screenCount: 10,
     screenTags: [
-      "germ-theory", "pasteur", "koch", null, null, null, null, null, null,
+      "germ-theory", "pasteur", "koch", null, null, null, null, null, "factor-web", null,
     ],
   },
   {
