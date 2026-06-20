@@ -122,4 +122,13 @@ Not yet built — full rebuild from spec.
 
 7. **Westmoreland's optimism as a setup for Tet:** Section 5 should end with Westmoreland's "crossover point" theory and his public statements that the war was being won. This sets up Episode 10's Tet Offensive — which destroyed his credibility overnight — as a reversal the learner is primed to appreciate.
 
-8. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), ExplainReveal (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), InteractiveCollectionExplorer (S3), VisualLearning (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
+8. **Claude build detail — exact implementation requirements:**
+   - The Section 4 `VisualLearning` must show the loop, not just list methods: Search and Destroy → village damaged/burned → civilians displaced/angered → Hearts and Minds lost → more tolerance/support for VC → more US patrols.
+   - Use "Hearts and Minds" as an explicit label on screen at least twice: once in Section 4 teaching, once in Section 6 exam explanation.
+   - Add a quick misconception check that forces the napalm/Agent Orange distinction: napalm = immediate incendiary burning; Agent Orange = defoliant/herbicide with long-term health/environmental effects.
+   - ARVN weakness must be explained as a bridge, not a throwaway: weak ARVN → US carries the fighting → withdrawal becomes harder → Vietnamisation later depends on the same weak army.
+   - Living Room War should be a short bridge only: one line showing how TV made military methods politically damaging at home. Do not turn it into Episode 11's full anti-war lesson.
+   - In the Examiner model answer, include one paragraph on guerrilla tactics and one paragraph on US methods backfiring. The second paragraph must use Hearts and Minds language.
+   - Avoid graphic/gory visual treatment. Keep imagery cinematic and tense: smoke, empty burned village, abandoned supplies, damaged landscape, anxious civilians, not explicit wounds or bodies.
+
+9. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), ExplainReveal (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), InteractiveCollectionExplorer (S3), VisualLearning (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
