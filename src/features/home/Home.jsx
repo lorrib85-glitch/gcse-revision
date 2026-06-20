@@ -243,7 +243,7 @@ export default function Home({ onSelectTask }) {
 
         {/* Headline */}
         <div style={{ position: 'absolute', left: SPACING.compact, right: SPACING.compact, bottom: SPACING.standard, zIndex: 2 }}>
-          <div style={{ ...TYPE.body, color: 'rgba(241,250,238,0.7)' }}>
+          <div className="homeGreetingFlyIn" style={{ ...TYPE.body, color: 'rgba(241,250,238,0.7)' }}>
             Hi, {userName}<span style={{ color: GENERAL.teal }}>.</span>
           </div>
           <div style={{ ...TYPE.cinematic, fontSize: 46, color: GENERAL.softWhite, marginTop: SPACING.micro }}>
