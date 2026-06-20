@@ -48,36 +48,39 @@
   - `QuickRecallScreen` — retrieval of *Brown v Board* and Little Rock (Episodes 1–2) interleaved with MIA/boycott facts; interleaving of legal + direct action threads
 
 ### Section 4 — Learning Chunk 3
-- **Purpose:** The legal route alongside the boycott — *Browder v Gayle* and the Supreme Court victory.
+- **Purpose:** The legal route alongside the boycott — *Browder v Gayle*, the Supreme Court victory and the limited early federal response.
 - **Proposed content for this episode:**
   - *Browder v Gayle*: four plaintiffs (not Parks); Thurgood Marshall argues; district court rules June 1956; Supreme Court affirms November 1956
   - Buses integrated 21 December 1956; MLK, Abernathy, and others ride the first integrated bus; some violence continues (snipers, bombings)
   - Why the dual strategy (boycott + legal challenge) worked: economic pressure + constitutional route converged
   - SCLC founded January 1957: church network, non-violent model, MLK as leader; blueprint for future campaigns
+  - Civil Rights Act 1957: first federal civil rights law since Reconstruction; created Civil Rights Commission and investigated voting-rights abuses, but was weakened by Southern opposition and had limited impact
 - **Suggested component(s):**
-  - `ExplainReveal` — cause-and-effect chain: Parks's arrest → MIA boycott (economic pressure) + *Browder* legal case (constitutional route) → Supreme Court ruling → buses integrated → SCLC founded → blueprint for future campaigns; reveals the dual-strategy structure progressively
-  - `MatchingTask` — match key people to their role: (Rosa Parks → NAACP secretary, planned act of resistance), (Jo Ann Robinson → overnight leaflets, WPC), (MLK → MIA leader, first speech), (Thurgood Marshall → argued *Browder v Gayle*); active processing of the episode's cast
+  - `ExplainReveal` — cause-and-effect chain: Parks's arrest → MIA boycott (economic pressure) + *Browder* legal case (constitutional route) → Supreme Court ruling → buses integrated → SCLC founded → limited federal action in 1957 → stronger legislation still needed; reveals the dual-strategy and early-law structure progressively
+  - `MatchingTask` — match key people/laws to their role: (Rosa Parks → NAACP secretary, planned act of resistance), (Jo Ann Robinson → overnight leaflets, WPC), (MLK → MIA leader, first speech), (Thurgood Marshall → argued *Browder v Gayle*), (Civil Rights Act 1957 → weak early federal civil-rights law); active processing of the episode's cast and early federal response
 
 ### Section 5 — Learning Chunk 4
-- **Purpose:** Significance and the takeaway — what the boycott proved for the movement.
+- **Purpose:** Significance and the takeaway — what the boycott proved for the movement, and why early federal action was not enough.
 - **Proposed content for this episode:**
   - The model it created: non-violent direct action + legal challenge + church network + publicity/media coverage
   - MLK as national figure: the boycott launched his national career; SCLC gave him an institutional base
   - Economic pressure as a weapon: around 75% of bus passengers were Black — withdrawing patronage hit the bus company; a model that would return in sit-ins and Freedom Rides
   - GCSE success factors consolidated: organisation, commitment, publicity, economic pressure, legal challenge
-  - Limits: only one city; violence continued; broader segregation untouched; next step was sit-ins and nationwide action
+  - Limited federal response: the 1957 Act showed federal government was beginning to move, but Southern politicians could still weaken reform
+  - Limits: only one city; violence continued; broader segregation untouched; 1957 Act did not end voting discrimination; next step was sit-ins, Freedom Rides and stronger legislation
 - **Suggested component(s):**
-  - `ColSortBlock` — sort evidence into "Why the boycott succeeded" vs "Limits of the boycott"; include organisation, commitment, publicity, economic pressure and legal challenge as named success factors; prepares students to evaluate the significance and limits for Q2/Q3(d)
-  - `QuickRecallScreen` — retrieval of full episode content: Parks (NAACP, Highlander), Colvin, Jo Ann Robinson, WPC, MIA, 8 December meeting, MLK's kitchen table, *Browder v Gayle*, 381 days, SCLC
+  - `ColSortBlock` — sort evidence into "Why the boycott mattered" vs "Why more action was still needed"; include organisation, commitment, publicity, economic pressure, legal challenge, SCLC, and the weak 1957 Act as named evidence; prepares students to evaluate the significance and limits for Q2/Q3(d)
+  - `QuickRecallScreen` — retrieval of full episode content: Parks (NAACP, Highlander), Colvin, Jo Ann Robinson, WPC, MIA, 8 December meeting, MLK's kitchen table, *Browder v Gayle*, 381 days, SCLC, Civil Rights Act 1957
 
 ### Section 6 — Summary & Examiner
 - **Purpose:** No major new content; apply knowledge to exam technique; end with completion screen.
 - **Proposed content for this episode:**
   - Examiner explains the Q2 "Explain why" question type — "Why was the Montgomery Bus Boycott successful?" as the worked example; five-cause structure modelled: organisation, commitment, publicity, economic pressure, legal challenge
   - Examiner tip: students who distinguish between what *caused* the boycott to start (Parks's arrest + long-term bus discrimination) and what *made it succeed* (dual strategy, 381-day commitment, publicity, economic pressure, *Browder*) score higher; they're separate Q2 questions
+  - Examiner tip: the 1957 Act is useful as a contrast point — it was early federal action, but weak compared with 1964 and 1965 legislation
   - FaceTheExaminer: Q2-style question — "Explain why Rosa Parks's actions were important for the civil rights movement"
 - **Suggested component(s):**
-  - `ExaminerExplainsScreen` — animated explanation of the Q2 cause structure; uses boycott success as worked example; models distinction between cause-of-event vs cause-of-success
+  - `ExaminerExplainsScreen` — animated explanation of the Q2 cause structure; uses boycott success as worked example; models distinction between cause-of-event vs cause-of-success; adds 1957 Act as a limitation/continuity point
   - `FaceTheExaminer` — Q2 question: "Explain why Rosa Parks's actions were important for the civil rights movement"; marks against criteria; logs exam-technique patterns
   - `ChapterCompleteScreen`
 
@@ -110,12 +113,14 @@ Not yet built — full rebuild from spec.
 
 3. **The 8 December meeting should be used as the reason the protest became sustained:** This detail gives students a clean causal step: activists tried negotiation → bus officials refused → boycott continued. It is excellent for Q2 because it shows the boycott was not just emotional protest; it was strategic escalation.
 
-4. **MLK's "kitchen table experience" as a humanising beat:** Section 3 should include this moment in the `InteractiveCollectionExplorer` or as a pull-quote in the `VisualNarrativeScreen`. It is private, human, and memorable — and it gives students something distinct to write that separates them from mid-range answers.
+4. **Civil Rights Act 1957 as the end-of-chapter bridge:** Do not over-teach it here, but include it as a concise bridge: Montgomery/SCLC/growing pressure → first federal civil-rights law since Reconstruction → weakened by Southern opposition → limited impact → stronger direct action and stronger federal legislation still needed. It prepares students for Chapter 5 and Chapter 7 without derailing the boycott story.
 
-5. **Dual-strategy model as the episode's structural spine:** The boycott worked because of economic pressure AND legal challenge simultaneously. The `ExplainReveal` in Section 4 should make this explicit — not as two separate events but as a converging strategy. Students who can describe the dual strategy in Q2 answers earn higher marks.
+5. **MLK's "kitchen table experience" as a humanising beat:** Section 3 should include this moment in the `InteractiveCollectionExplorer` or as a pull-quote in the `VisualNarrativeScreen`. It is private, human, and memorable — and it gives students something distinct to write that separates them from mid-range answers.
 
-6. **Success factors need explicit GCSE labels:** Organisation, commitment, publicity, economic pressure and legal challenge should appear as named labels in Section 5 and the Examiner screen. This helps students avoid vague answers like "people worked together" and gives them ready-made paragraph categories.
+6. **Dual-strategy model as the episode's structural spine:** The boycott worked because of economic pressure AND legal challenge simultaneously. The `ExplainReveal` in Section 4 should make this explicit — not as two separate events but as a converging strategy. Students who can describe the dual strategy in Q2 answers earn higher marks.
 
-7. **Claudette Colvin as an interleaving bridge:** Colvin (March 1955) is introduced in Section 2 and should be revisited briefly in Section 5's `ColSortBlock` — the fact that the NAACP chose their plaintiff carefully is evidence of how organised (not spontaneous) the movement was, and belongs in the "why the boycott succeeded" logic.
+7. **Success factors need explicit GCSE labels:** Organisation, commitment, publicity, economic pressure and legal challenge should appear as named labels in Section 5 and the Examiner screen. This helps students avoid vague answers like "people worked together" and gives them ready-made paragraph categories.
 
-8. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), VisualNarrativeScreen (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), InteractiveCollectionExplorer (S3), ExplainReveal (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
+8. **Claudette Colvin as an interleaving bridge:** Colvin (March 1955) is introduced in Section 2 and should be revisited briefly in Section 5's `ColSortBlock` — the fact that the NAACP chose their plaintiff carefully is evidence of how organised (not spontaneous) the movement was, and belongs in the "why the boycott succeeded" logic.
+
+9. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), VisualNarrativeScreen (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), InteractiveCollectionExplorer (S3), ExplainReveal (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
