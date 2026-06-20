@@ -28,26 +28,32 @@ Respond ONLY with this exact JSON format, no other text:
 }`
 
 export default async function handler(req) {
+  console.log('[recall] invoked, method:', req.method)
+
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 })
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY
+  console.log('[recall] api key present:', !!apiKey)
   if (!apiKey) {
     return new Response(JSON.stringify({ error: 'API key not configured' }), { status: 500 })
   }
 
   let body
   try { body = await req.json() } catch {
+    console.log('[recall] body parse failed')
     return new Response(JSON.stringify({ error: 'Invalid request body' }), { status: 400 })
   }
 
   const { answer, concepts, sourceContent } = body
+  console.log('[recall] concepts:', concepts?.length ?? 0, 'answer length:', answer?.length ?? 0)
   if (!answer || !concepts?.length) {
     return new Response(JSON.stringify({ error: 'Missing fields: answer and concepts required' }), { status: 400 })
   }
 
   if (answer.trim().length < 5) {
+    console.log('[recall] answer too short')
     return new Response(JSON.stringify({
       concepts: concepts.map(c => ({ tag: c.tag, score: 0 })),
       summary: "That's a blank page so far. Try jotting down anything that comes to mind — even a half-remembered detail is a good place to start.",
@@ -67,6 +73,7 @@ Student's recall answer:
 Concepts to assess:
 ${conceptList}`
 
+  console.log('[recall] calling Anthropic API')
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -85,8 +92,10 @@ ${conceptList}`
 
     if (!response.ok) {
       const err = await response.text()
+      console.log('[recall] Anthropic error:', response.status, err)
       return new Response(JSON.stringify({ error: `API error: ${err}` }), { status: 500 })
     }
+    console.log('[recall] Anthropic responded ok')
 
     const data = await response.json()
     const text = data.content?.[0]?.text || ''
@@ -113,6 +122,7 @@ ${conceptList}`
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (err) {
+    console.log('[recall] caught error:', err.message)
     return new Response(JSON.stringify({ error: err.message }), { status: 500 })
   }
 }
