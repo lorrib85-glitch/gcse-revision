@@ -125,4 +125,14 @@ Not yet built — full rebuild from spec.
 
 7. **Credibility gap needs a before/after:** Teach it as already growing before Tet, then made undeniable by Tet. This helps students avoid writing as if Cronkite alone changed everything.
 
-8. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), VisualNarrativeScreen (S2, S3 — used twice; allowed under the component repetition limit for "feature" components; check: VisualNarrativeScreen appears twice — at the limit), QuickRecallScreen (S2, S3, S5 — retrieval rule), ExplainReveal (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). VisualNarrativeScreen used twice — within the limit. No other feature component exceeds twice.
+8. **Claude build detail — exact implementation requirements:**
+   - Section 2 must explicitly label Tet as a "military defeat for the VC but political disaster for the USA". This exact distinction should appear again in Section 5 and Section 6.
+   - The `VisualNarrativeScreen` should build suspense from false confidence to collapse: Westmoreland says progress → Tet erupts → Embassy images shock viewers → Cronkite says stalemate → LBJ changes course.
+   - Include Paris peace talks as a bridge, not a full Episode 12 lesson: one clear causal chain from Tet to bombing halt to Paris talks to Nixon/Vietnamization.
+   - My Lai must be taught with two dates: 16 March 1968 = massacre; November 1969 = public revelation. Do not imply immediate public outrage.
+   - Hugh Thompson must be a named moral counterpoint, but avoid graphic visual detail. Focus on his helicopter landing, protection of civilians, report being buried, and delayed recognition.
+   - Add one retrieval item that asks: "Why can something be a military defeat for one side but still a political victory?" Correct answer should reference Tet.
+   - Add one misconception item: "My Lai caused public outrage immediately in March 1968" = false, because it was covered up until 1969.
+   - Keep visuals cinematic but restrained: embassy chaos, newsroom, maps, empty village aftermath, helicopter silhouette. No gore, no explicit bodies.
+
+9. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), VisualNarrativeScreen (S2, S3 — used twice; allowed under the component repetition limit for "feature" components; check: VisualNarrativeScreen appears twice — at the limit), QuickRecallScreen (S2, S3, S5 — retrieval rule), ExplainReveal (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). VisualNarrativeScreen used twice — within the limit. No other feature component exceeds twice.
