@@ -16,11 +16,11 @@
 - **Proposed content for this episode:**
   - Cinematic hook: 30 April 1975. A helicopter on the roof of the US Embassy in Saigon. The last Americans are leaving. In a few hours, the city will fall. After twenty years, 58,000 dead and more bombs than all of World War II — the domino has fallen anyway.
   - ChapterHookScreen (True/False): "The Paris Peace Accords ended the Vietnam War" (False — they ended US involvement; Saigon fell two years later); "Vietnamization produced an effective South Vietnamese fighting force" (False — Lam Son 719 exposed this); "North Vietnam signed the Paris Accords intending to honour them permanently" (False)
-  - PriorKnowledgeRecall: concepts from Episodes 8–11 — `vietnamization`, `gulf_of_tonkin_resolution`, `kent_state`, `tet_offensive`, `anti_war_movement`, `search_and_destroy`
+  - PriorKnowledgeRecall: concepts from Episodes 8–11 — `vietnamization`, `gulf_of_tonkin_resolution`, `kent_state`, `tet_offensive`, `anti_war_movement`, `search_and_destroy`, `arvn_weakness`, `paris_peace_talks`
   - WhatYouWillLearn: auto-generated from screen labels
 - **Suggested component(s):**
   - `ChapterHookScreen` (True/False) — all three True/False statements address misconceptions about the series' ending; the episode's work is to correct them all
-  - `PriorKnowledgeRecall` — retrieval of Episodes 8–11 (the Vietnam arc); concepts: `vietnamization`, `gulf_of_tonkin_resolution`, `kent_state`, `tet_offensive`, `anti_war_movement`
+  - `PriorKnowledgeRecall` — retrieval of Episodes 8–11 (the Vietnam arc); concepts: `vietnamization`, `gulf_of_tonkin_resolution`, `kent_state`, `tet_offensive`, `anti_war_movement`, `arvn_weakness`
 
 ### Section 2 — Learning Chunk 1
 - **Purpose:** Nixon's strategy — Vietnamization and why it was supposed to work.
@@ -67,7 +67,7 @@
   - Consolidation retrieval: key facts, dates, terms from the whole episode and the series
 - **Suggested component(s):**
   - `ColSortBlock` — sort evidence into "Why South Vietnam fell" vs "What the US achieved in Vietnam" — a final series-level evaluation; maps to Q3(d) "how far did the US achieve its aims?" question structure; the right answer to "what the US achieved" is close to nothing in Vietnam, which sets up the Q3(d) counter-argument that requires genuine critical thinking
-  - `QuickRecallScreen` — retrieval of full episode content: Nixon Doctrine, Vietnamization troop numbers, Lam Son 719, Paris Peace Accords terms, Le Duc Tho refusal, Watergate, Operation Frequent Wind, 30 April 1975, 58,000 US dead
+  - `QuickRecallScreen` — retrieval of full episode content: Nixon Doctrine, Vietnamization troop numbers, Lam Son 719, Paris Peace Accords terms, Le Duc Tho refusal, Watergate, Operation Frequent Wind, 30 April 1975, 58,000 US dead, domino theory irony
 
 ### Section 6 — Summary & Examiner
 - **Purpose:** No major new content; apply knowledge to exam technique; close the series; end with completion screen.
@@ -75,6 +75,7 @@
   - Examiner explains Q2 "Explain why" — "Why did the USA fail to prevent the fall of Saigon?" as worked example; three-cause structure: Vietnamization's failure (ARVN could never fight independently, Lam Son 719), Paris Peace Accords' fatal flaw (NVA left in South), Watergate ending Nixon's ability to honour his promises
   - Series close: a brief examiner note connecting both halves of the series — the same nation that fought for civil rights at home and failed to win the war abroad; the through-line stated, then the student is complete
   - FaceTheExaminer: Q2-style question — "Explain why the USA was unable to prevent the fall of Saigon in 1975"
+  - Alternative examiner prompt: "Explain why peace negotiations in 1972–73 failed to produce lasting peace in Vietnam" — use Paris Peace Accords, NVA troops in the South, Le Duc Tho's refusal, Nixon's weakened position and Watergate
 - **Suggested component(s):**
   - `ExaminerExplainsScreen` — animated Q2 structure; "Why did Saigon fall?" as worked example; three-cause structure modelled; brief series-close moment embedded — "you've now covered 21 years of American history across 12 episodes; the exam will ask you to use this knowledge under pressure. You're ready."
   - `FaceTheExaminer` — Q2 question: "Explain why the USA was unable to prevent the fall of Saigon in 1975"; marks against criteria; logs exam-technique patterns
@@ -113,4 +114,15 @@ Not yet built — full rebuild from spec.
 
 5. **The 2023 exam paper connection:** The 2023 paper Q2 was about peace negotiations 1972–73 — this episode's content. The `FaceTheExaminer` should offer this as an alternative Q2 question alongside the Saigon question, or the `ExaminerExplainsScreen` should explicitly reference the 2023 question type.
 
-6. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), ExplainReveal (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), VisualNarrativeScreen (S3), InteractiveCollectionExplorer (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
+6. **Claude build detail — exact implementation requirements:**
+   - Do not frame Vietnamization as simply "US troops went down". Teach it as a flawed transfer strategy: US withdrawal depended on ARVN being able to fight, but ARVN weakness had been visible since Ap Bac.
+   - The Section 2 `ExplainReveal` must show the logic gap: Nixon needs exit → trains/equips ARVN → ARVN must replace US troops → ARVN has structural weaknesses → policy is fragile from the start.
+   - Section 3 should treat Lam Son 719 as the practical test of Vietnamization, not a side-detail. The student should leave knowing: Laos mission + US air support only + ARVN retreat = warning sign that Vietnamization was failing.
+   - Section 4 `InteractiveCollectionExplorer` must present the Paris Peace Accords as an exit mechanism, not a peace settlement. Use at least five cards: NVA troops left in South, no enforcement mechanism, Le Duc Tho refuses Nobel, Nixon promises Thieu support, Watergate/Congress make that promise worthless.
+   - Include one misconception check: "The Paris Peace Accords ended the Vietnam War" = false; they ended US involvement, but fighting continued until Saigon fell in 1975.
+   - Include one retrieval question that brings back Episode 8: "What was the domino theory, and what is ironic about Saigon falling in 1975?" Correct answer: the US intervened to stop South Vietnam falling to communism, but it fell anyway and the wider Asian domino effect did not happen as predicted.
+   - Section 5 visuals should be cinematic and solemn, not action-movie. Use helicopter evacuation, empty offices, maps, abandoned equipment, crowds at gates, palace gates; avoid triumphant or explosive battle imagery.
+   - The final Examiner screen should model two Q2 structures: Saigon fall and peace negotiations 1972–73. Keep each concise but explicit enough to show different answer routes.
+   - End with a quiet synthesis, not a celebratory game moment. This is a serious final chapter: use a mature completion tone that recognises the student has completed a difficult historical arc.
+
+7. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), ExplainReveal (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), VisualNarrativeScreen (S3), InteractiveCollectionExplorer (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
