@@ -33,8 +33,10 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
   const isLast   = sectionIdx === sections.length - 1
   const lines    = section.lines || []
 
-  // Parchment mode: light warm surface with dark ink text
-  const isParchment = !!block.cardBackground
+  // History figures always use parchment; other subjects use dark card unless block.cardBackground overrides
+  const parchmentSrc = block.cardBackground
+    || (subject === 'History' ? '/figures/history/medicine/medieval/galen-parchment.png' : null)
+  const isParchment = !!parchmentSrc
 
   function advance() {
     if (isLast) onComplete?.()
@@ -74,7 +76,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
     ? 'inset 0 0 60px rgba(80,40,10,0.28), 0 4px 28px rgba(80,40,10,0.22)'
     : `inset 0 1px 0 rgba(${rgb},0.14), inset 0 -1px 0 rgba(0,0,0,0.35), 0 4px 28px rgba(0,0,0,0.5)`
   const cardBg       = isParchment
-    ? `url(${block.cardBackground}) center/cover`
+    ? `url(${parchmentSrc}) center/cover`
     : `radial-gradient(ellipse at 50% 0%, rgba(${rgb},0.07) 0%, transparent 65%),
        linear-gradient(160deg, rgba(${rgb},0.05) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.18) 100%),
        rgba(12,9,5,0.88)`
