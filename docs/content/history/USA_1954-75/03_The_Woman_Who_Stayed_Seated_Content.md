@@ -5,17 +5,17 @@
 - **Episode number:** 3
 - **Title:** The Woman Who Stayed Seated
 - **Subtitle / GCSE topic:** Rosa Parks and the Montgomery Bus Boycott, 1955–56 (Key Topic 1)
-- **Era:** 1955–1956
-- **Key Topic reference (KT1):** Reasons for the civil rights movement and early protests, 1954–62: segregation, Brown v Board, Montgomery Bus Boycott.
+- **Era:** 1955–1957
+- **Key Topic reference (KT1):** Reasons for the civil rights movement and early protests, 1954–62: segregation, Brown v Board, Montgomery Bus Boycott, early federal response.
 
 ---
 
 ## 2. Storyline
 
 ### Core takeaway
-DRAFT (for user confirmation): Rosa Parks's arrest was the spark — but the Montgomery Bus Boycott was the proof. For 381 days, the Black community of Montgomery organised, sacrificed and held together to show that non-violent economic pressure could defeat legal segregation. It launched the civil rights movement's most important leader and proved a model that would be used again and again.
+DRAFT (for user confirmation): Rosa Parks's arrest was the spark — but the Montgomery Bus Boycott was the proof. For 381 days, the Black community of Montgomery organised, sacrificed and held together to show that non-violent economic pressure could defeat legal segregation. It launched the civil rights movement's most important leader and proved a model that would be used again and again. The limited Civil Rights Act 1957 then showed the next problem: federal government was beginning to move, but still cautiously and weakly.
 
-*Drawn from recurring pattern: the boycott is cited in every source as the event that proved non-violent direct action could work; it also established MLK as the national leader — a figure who reappears throughout KT1 and KT2.*
+*Drawn from recurring pattern: the boycott is cited in every source as the event that proved non-violent direct action could work; it also established MLK as the national leader — a figure who reappears throughout KT1 and KT2. The 1957 Act is useful as an early example of limited federal response before later, stronger laws in 1964 and 1965.*
 
 ### Evidence for the takeaway
 - Rosa Parks arrested 1 December 1955 — a planned act of resistance (Parks was trained in activism, not just a tired woman; she was secretary of the Montgomery NAACP)
@@ -28,24 +28,27 @@ DRAFT (for user confirmation): Rosa Parks's arrest was the spark — but the Mon
 - Legal route ran in parallel: *Browder v Gayle* (filed by four women, argued by NAACP) challenged bus segregation in federal court
 - December 1956: Supreme Court ruled bus segregation unconstitutional (*Browder v Gayle*); buses integrated on 21 December 1956
 - Significance: proved non-violent direct action worked; made MLK a national figure; created the SCLC (1957) as a model for future campaigns; showed economic pressure was a lever
+- Limited federal response: Civil Rights Act 1957 was the first federal civil rights law since Reconstruction, but Southern opposition weakened it; it created the Civil Rights Commission and allowed investigation of voting-rights abuses but had limited practical impact
 
 ### Series through-line
-Episode 3 is the proof of concept for the whole series. The boycott formula — community organisation, non-violent pressure, legal challenge, national media — is used in every major KT1 and KT2 protest. MLK's emergence here is the prerequisite for Episodes 5 (March on Washington) and his role in KT2. Jo Ann Gibson Robinson and the Women's Political Council's preparation (they had been planning a bus boycott since 1950) shows again that the movement had organised roots — the same through-line as Episode 1's NAACP infrastructure.
+Episode 3 is the proof of concept for the whole series. The boycott formula — community organisation, non-violent pressure, legal challenge, national media — is used in every major KT1 and KT2 protest. MLK's emergence here is the prerequisite for Episodes 5 (March on Washington) and his role in KT2. Jo Ann Gibson Robinson and the Women's Political Council's preparation (they had been planning a bus boycott since 1950) shows again that the movement had organised roots — the same through-line as Episode 1's NAACP infrastructure. The Civil Rights Act 1957 introduces another recurring pattern: federal law could signal progress while still being too weak to solve the underlying problem.
 
 ### Exam framing
 - Q2 "Explain why the Montgomery Bus Boycott was successful" — five GCSE-ready pillars: community unity and organisation (MIA, WPC, carpools), commitment (381 days of sacrifice), publicity (churches, newspapers, white violence), economic pressure (75% of passengers were Black), legal challenge (*Browder v Gayle*)
 - Q2 "Explain why Rosa Parks's arrest was significant" — the catalyst, but also the planned nature, MLK's emergence, the MIA's rapid organisation
+- Q2 "Explain why federal action on civil rights was limited in the 1950s" — Southern opposition weakened the 1957 Act; presidents and Congress still feared Dixiecrat resistance; voting-rights abuses continued
 - Misconceptions worth a MisconceptionCheck:
   - "Rosa Parks refused to give up her seat because she was tired" — she was a trained activist and secretary of the Montgomery NAACP; her act was a planned challenge
   - "Rosa Parks was the first Black person to refuse to give up her seat" — Claudette Colvin was arrested for the same act nine months earlier (March 1955)
   - "The boycott was organised spontaneously overnight" — Jo Ann Gibson Robinson and the Women's Political Council had been planning it since 1950
   - "The boycott succeeded only because of Rosa Parks" — Parks was the spark, but success came from organisation, commitment, publicity, economic pressure and *Browder v Gayle*
+  - "The 1957 Civil Rights Act solved voting rights" — it was weak and limited; the real breakthrough on voting rights came with the 1965 Voting Rights Act
 
 ---
 
 ## 3. Specification requirements
 
-### Key Topic 1 — Montgomery Bus Boycott
+### Key Topic 1 — Montgomery Bus Boycott and limited federal response
 
 - **Segregation on buses:** Montgomery city buses were segregated; Black passengers had to sit at the back; were required to give up seats for white passengers; bus drivers were often abusive
 - **Long-term causes of the boycott:**
@@ -72,6 +75,13 @@ Episode 3 is the proof of concept for the whole series. The boycott formula — 
 - **Legal challenge:** *Browder v Gayle* — filed on behalf of four Black women (Aurelia Browder, Susie McDonald, Claudette Colvin, Mary Louise Smith) who had all been mistreated on Montgomery buses; Thurgood Marshall and NAACP argued the case; federal district court ruled bus segregation unconstitutional (June 1956); Supreme Court affirmed November 1956
 - **End of the boycott:** Supreme Court ruling delivered 20 November 1956; buses integrated 21 December 1956; MLK, Ralph Abernathy and other leaders rode the first integrated bus; some violence continued (snipers fired at buses, churches bombed) but the boycott had succeeded
 - **Southern Christian Leadership Conference (SCLC):** Founded January 1957 by MLK and other Black ministers; used the model of the boycott — non-violent direct action, church network as organising base, media attention — as the blueprint for future campaigns
+- **Civil Rights Act 1957:**
+  - First federal civil rights law since Reconstruction
+  - Created the Civil Rights Commission to investigate civil rights abuses, especially voting-rights discrimination
+  - Allowed the federal government to investigate and bring cases against voting-rights abuses
+  - Weakened by Southern opposition and filibustering in Congress
+  - Had limited practical impact because prosecutions were difficult and Southern states continued to restrict voting
+  - Significance: showed federal government was beginning to act, but also showed how cautious and limited early federal action remained before 1964–65
 - **Significance:**
   - First major successful non-violent direct action campaign of the civil rights movement
   - Established MLK as the movement's foremost leader
@@ -79,10 +89,12 @@ Episode 3 is the proof of concept for the whole series. The boycott formula — 
   - Created SCLC as the institutional base for future campaigns
   - Showed that ordinary Black Americans would sustain sacrifice over the long term
   - Showed that legal challenge and mass protest could work together
+  - Helped create the atmosphere for limited federal civil rights action in 1957
 - **Limits:**
   - Victory was limited to buses in one city
   - White violence continued after integration
   - Wider segregation in schools, housing, voting and public facilities remained
+  - The 1957 Act did not end voting discrimination; stronger federal legislation was still needed
 
 ---
 
@@ -102,6 +114,7 @@ Episode 3 is the proof of concept for the whole series. The boycott formula — 
 - **20 November 1956:** Supreme Court order delivered to Montgomery
 - **21 December 1956:** Montgomery buses integrated; boycott ends after 381 days
 - **January 1957:** SCLC founded by MLK and ministers from across the South
+- **September 1957:** Civil Rights Act 1957 signed — first federal civil rights law since Reconstruction, but weakened by Southern opposition
 
 ### Key people
 - **Rosa Parks (1913–2005):** Secretary of the Montgomery NAACP; trained activist (Highlander Folk School, 1955); her arrest on 1 December 1955 became the catalyst for the boycott; later known as "the mother of the civil rights movement"
@@ -111,6 +124,7 @@ Episode 3 is the proof of concept for the whole series. The boycott formula — 
 - **Ralph Abernathy:** MLK's closest ally throughout the movement; co-founded SCLC; rode the first integrated bus alongside King
 - **Claudette Colvin:** 15-year-old student arrested in March 1955 for refusing to give up her seat — nine months before Parks; NAACP chose not to use her case
 - **Aurelia Browder:** Lead plaintiff in *Browder v Gayle* — the legal case that actually desegregated Montgomery's buses (Parks's case was a city charge, not the federal constitutional challenge)
+- **President Dwight D. Eisenhower:** Signed the Civil Rights Act 1957; personally cautious on civil rights but willing to act when federal authority was challenged or pressure became unavoidable
 
 ### Key terms & definitions
 - **Boycott:** Refusal to use a service or buy goods as a form of protest; in Montgomery, Black residents refused to use buses until segregation ended
@@ -119,12 +133,14 @@ Episode 3 is the proof of concept for the whole series. The boycott formula — 
 - **Women's Political Council (WPC):** Montgomery organisation led by Jo Ann Gibson Robinson; had campaigned against bus discrimination since 1950 and helped launch the boycott
 - **Southern Christian Leadership Conference (SCLC):** Civil rights organisation founded 1957 by MLK and Black ministers; used church networks across the South; led non-violent campaigns
 - **Browder v Gayle (1956):** Federal court case that ruled bus segregation unconstitutional; the legal instrument that ended the boycott
+- **Civil Rights Act 1957:** First federal civil rights law since Reconstruction; created a Civil Rights Commission and allowed investigation of voting-rights abuses, but was weakened and had limited impact
 - **Economic pressure:** Tactic used in the boycott — Black passengers made up around 75% of bus revenue; withdrawing patronage forced the bus company and city to negotiate
 - **Carpool:** System of shared car journeys organised by MIA to replace buses; grew to involve over 300 cars and organised pick-up points, allowing the boycott to last 381 days
 
 ### Case studies / named examples
 - **Rosa Parks's arrest (1 December 1955):** Parks was sitting in the "coloured" section; when the white section filled, the driver ordered her and others to move back; Parks refused; arrested and charged. Her composure and dignity, and her role in the NAACP, made her the ideal plaintiff for the legal challenge. Critically, she had been trained at Highlander Folk School in civil disobedience — this was not a spontaneous moment.
 - **8 December meeting with bus company officials:** The MIA met bus company officials soon after the boycott began. Officials refused to change bus segregation rules, which convinced the MIA to continue the boycott until segregation ended rather than treating it as a one-day protest.
+- **Civil Rights Act 1957:** Useful as a contrast point with later legislation. Unlike the 1964 Civil Rights Act and the 1965 Voting Rights Act, it did not transform everyday life for Black Americans. Its importance is mainly that it marked the federal government's first civil-rights law in decades while revealing how much Southern politicians could weaken reform.
 - **MLK's "kitchen table experience" (January 1956):** After his house was bombed and he had received death threats, King sat at his kitchen table at midnight, exhausted and afraid. He prayed and felt a divine reassurance; he stood up renewed. He described this moment later as the foundation of his conviction. It is the private human story behind the public leader — and frequently cited in History sources as evidence that non-violent commitment required immense personal courage.
 - **Jo Ann Gibson Robinson's overnight leaflets:** On the night of Parks's arrest, Robinson stayed up all night printing 52,500 leaflets at Alabama State College. She risked her job and potentially her freedom. The leaflets — calling for a one-day boycott on 5 December — were distributed to Black schools, businesses and churches by 5am. Without her organisation, the first day might not have happened.
 
@@ -138,21 +154,24 @@ Episode 3 is the proof of concept for the whole series. The boycott formula — 
 - White violence (bombings, arrests) → drew national media attention → Northern public sympathy grew → federal pressure increased
 - *Browder v Gayle* ruling (1956) → legal basis for integration → boycott ended in victory
 - Success of boycott → SCLC founded 1957 → non-violent direct action model available for future campaigns (sit-ins, Freedom Rides, Selma)
+- Growing civil rights pressure + Eisenhower administration's need to respond → Civil Rights Act 1957 → limited federal investigation powers but weak enforcement → stronger legislation still needed
 - MLK's leadership of boycott → national media profile → became the movement's spokesperson nationally
 
 ### Exam angles
 - **Q2 (Explain why, 12 marks):** "Explain why the Montgomery Bus Boycott was successful." Five useful factors: community unity/organisation (MIA, Jo Ann Robinson's leaflets, carpools — 381 days of sacrifice); commitment despite violence/arrests; publicity through churches/newspapers/media; economic pressure because 75% of passengers were Black; legal challenge (*Browder v Gayle* — gave the Supreme Court route). Own knowledge: MLK, Rosa Parks, 8 December meeting, 381 days.
 - **Q2 variant:** "Explain why the actions of Rosa Parks were important." Planned nature (not spontaneous); NAACP platform gave her case legal weight; her dignity under arrest became a symbol; triggered MIA formation and MLK's emergence.
-- **Q3(d) context:** Interpretations on the boycott — the extent to which it represents a turning point (first successful campaign, SCLC founded, MLK launched) vs. how limited its impact was (buses desegregated in one city only; violence continued; broader segregation unchanged).
+- **Q2 variant:** "Explain why early federal action on civil rights was limited." Southern politicians weakened legislation; presidents relied on Southern support; the 1957 Act had limited enforcement power; voting discrimination remained.
+- **Q3(d) context:** Interpretations on the boycott — the extent to which it represents a turning point (first successful campaign, SCLC founded, MLK launched, early federal response) vs. how limited its impact was (buses desegregated in one city only; violence continued; broader segregation unchanged; 1957 Act weak).
 - **Misconceptions worth a MisconceptionCheck:**
   - "Rosa Parks was just tired after a long day at work" — she was a trained activist; her arrest was a planned challenge to segregation
   - "The boycott was spontaneous community anger" — Jo Ann Gibson Robinson and the WPC had planned for years; the MIA made the logistics work
   - "Rosa Parks was the first to refuse to give up her seat" — Claudette Colvin was arrested nine months earlier; the NAACP chose Parks as a more suitable plaintiff
   - "The boycott succeeded because of one person" — it succeeded because a whole community combined organisation, sacrifice, publicity, economic pressure and legal challenge
+  - "The 1957 Act solved civil rights" — it was the beginning of federal action, not a solution; compare it with stronger 1964 and 1965 Acts
 
 ### Sourcing notes
 - **reviseedexcelgcsehistorytheusaconflictrevisionguideandworkbook.txt:** Pages 8–11 cover Rosa Parks, MIA, the boycott organisation, *Browder v Gayle*, SCLC founding. Primary source for all factual content above.
-- **JEY_USA_195475_Revision_2025.txt:** Confirms Rosa Parks, Montgomery Bus Boycott, MLK, SCLC as specification key terms.
+- **JEY_USA_195475_Revision_2025.txt:** Confirms Rosa Parks, Montgomery Bus Boycott, MLK, SCLC as specification key terms; confirms Civil Rights Act 1957 as timeline/key content.
 - **ed_gcse_usa_conflict_at_home_abroad.txt:** SAMPLE guide confirms Montgomery boycott narrative and significance points.
 - **Paper31HI033USAconflictathomeandabroadSAMsmarkscheme.txt:** SAM mark scheme confirms the boycott and its causes as examinable; stimulus Q mentions Rosa Parks.
 - **1hi033que20240612.txt:** 2024 Q1 source on Black Americans in the 1950s — contextually relevant to this episode's background.
