@@ -86,8 +86,6 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
       background: '#08090D',
       display: 'flex',
       flexDirection: 'column',
-      overflow: 'auto',
-      WebkitOverflowScrolling: 'touch',
     }}>
 
       <style>{`
@@ -146,15 +144,16 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         </div>
       </div>
 
-      {/* ── Insight card + bottom nav ─────────────────────────────────── */}
+      {/* ── Insight card + bottom nav — fills remaining viewport height ── */}
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onClick={handleClick}
         style={{
+          flex: 1,
           position: 'relative',
           padding: `${SPACING.micro}px ${SPACING.standard}px`,
-          paddingBottom: `calc(28px + env(safe-area-inset-bottom, 0px))`,
+          paddingBottom: `calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
           cursor: 'pointer',
           userSelect: 'none',
           WebkitUserSelect: 'none',
@@ -162,13 +161,15 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           display: 'flex',
           flexDirection: 'column',
           gap: SPACING.micro,
+          overflow: 'hidden',
         }}
       >
 
-        {/* Insight card */}
+        {/* Insight card — grows to fill available space */}
         <div
           key={sectionIdx}
           style={{
+            flex: 1,
             borderRadius: RADII.medium,
             padding: '12px 16px',
             background: cardBg,
@@ -228,10 +229,10 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             {/* Body: evidence tile (left) + flowing text, or plain lines */}
             {section.image ? (
               <>
-                {/* Two-column row: vertical tile + first line */}
+                {/* Two-column row: image tile + first line of text */}
                 <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                   <div style={{
-                    width: '36%',
+                    width: '40%',
                     flexShrink: 0,
                     borderRadius: 9,
                     overflow: 'hidden',
@@ -242,7 +243,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                       alt=""
                       style={{
                         width: '100%',
-                        height: 140,
+                        height: 180,
                         objectFit: section.imageFit || 'cover',
                         objectPosition: section.imagePosition || 'center center',
                         display: 'block',
@@ -265,25 +266,29 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                     </p>
                   )}
                 </div>
-                {/* Remaining lines with subtle dividers; last line auto-takeaway if no explicit one */}
-                {lines.slice(1).map((line, i) => {
-                  const isAutoTakeaway = i === lines.length - 2 && !section.takeaway
-                  return (
-                    <p key={i} style={{
-                      fontFamily: "'Sora', sans-serif",
-                      fontSize: 13,
-                      fontWeight: isAutoTakeaway ? 600 : 400,
-                      lineHeight: 1.5,
-                      color: isAutoTakeaway ? titleColor : bodyColor,
-                      margin: '6px 0 0',
-                    }}>
-                      {line}
-                    </p>
-                  )
-                })}
+                {/* Remaining lines — gap below image, then continuous text flow */}
+                {lines.slice(1).length > 0 && (
+                  <div style={{ marginTop: 10 }}>
+                    {lines.slice(1).map((line, i) => {
+                      const isAutoTakeaway = i === lines.length - 2 && !section.takeaway
+                      return (
+                        <p key={i} style={{
+                          fontFamily: "'Sora', sans-serif",
+                          fontSize: 13,
+                          fontWeight: isAutoTakeaway ? 600 : 400,
+                          lineHeight: 1.5,
+                          color: isAutoTakeaway ? titleColor : bodyColor,
+                          margin: 0,
+                        }}>
+                          {line}
+                        </p>
+                      )
+                    })}
+                  </div>
+                )}
               </>
             ) : (
-              /* No image — plain lines with dividers; last line auto-takeaway if no explicit one */
+              /* No image — continuous text flow, no gaps between lines */
               <>
                 {lines.map((line, i) => {
                   const isAutoTakeaway = i === lines.length - 1 && !section.takeaway
@@ -295,7 +300,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                       fontWeight: isAutoTakeaway ? 600 : isLead ? 500 : 400,
                       lineHeight: 1.55,
                       color: isAutoTakeaway ? titleColor : bodyColor,
-                      margin: i > 0 ? '6px 0 0' : 0,
+                      margin: 0,
                     }}>
                       {line}
                     </p>
@@ -340,13 +345,13 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           </div>
         </div>
 
-        {/* Bottom navigation strip */}
+        {/* Bottom navigation strip — always visible at bottom of viewport */}
         <div style={{
+          flexShrink: 0,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           gap: 6,
-          paddingTop: SPACING.micro,
         }}>
           {isLast ? (
             <ContinueCTA
