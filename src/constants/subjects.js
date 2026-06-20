@@ -72,20 +72,32 @@ export const SUBJECTS = {
   },
 
   Biology: {
-    accent: '#4FA36C',
-    accentSecondary: '#7BD89A',
-    accentTertiary: '#2E6844',
+    // Biology palette: natural, organic, calm and focused.
+    // Greens should represent life, growth and clarity.
+    accent: '#6BAA5B',
+    accentSecondary: '#A8C5A2',
+    accentTertiary: '#4C6B3E',
 
-    background: '#08130C',
-    backgroundSecondary: '#102017',
+    background: '#0D0F10',
+    backgroundSecondary: '#1B2520',
 
-    glow: 'rgba(79,163,108,0.34)',
-    glowStrong: 'rgba(123,216,154,0.20)',
+    glow: 'rgba(107,170,91,0.30)',
+    glowStrong: 'rgba(168,197,162,0.18)',
 
     overlay: 'rgba(0,0,0,0.58)',
-    progressFill: '#4FA36C',
+    progressFill: '#6BAA5B',
 
-    accentRgb: '79,163,108',
+    accentRgb: '107,170,91',
+
+    palette: {
+      leafGreen: '#6BAA5B',
+      mossGreen: '#4C6B3E',
+      forest: '#2E4A35',
+      sage: '#A8C5A2',
+      naturalClay: '#E6E0CF',
+      stone: '#2B2B28',
+      tealAccent: '#2A9D8F',
+    },
   },
 
   Chemistry: {
@@ -123,20 +135,33 @@ export const SUBJECTS = {
   },
 
   Sociology: {
-    accent: '#B8A58F',
-    accentSecondary: '#D2C4B3',
-    accentTertiary: '#756858',
+    // Sociology palette: natural, grounded, curious and human.
+    // Neutrals should represent connection, understanding and perspective.
+    accent: '#A79B8C',
+    accentSecondary: '#B8B3AA',
+    accentTertiary: '#7B7366',
 
-    background: '#11100E',
-    backgroundSecondary: '#191715',
+    background: '#0D0F10',
+    backgroundSecondary: '#1B2124',
 
-    glow: 'rgba(184,165,143,0.28)',
-    glowStrong: 'rgba(210,196,179,0.16)',
+    glow: 'rgba(167,155,140,0.24)',
+    glowStrong: 'rgba(184,179,170,0.16)',
 
     overlay: 'rgba(0,0,0,0.58)',
-    progressFill: '#B8A58F',
+    progressFill: '#A79B8C',
 
-    accentRgb: '184,165,143',
+    accentRgb: '167,155,140',
+
+    palette: {
+      taupe: '#A79B8C',
+      warmStone: '#7B7366',
+      clay: '#5B544A',
+      mink: '#3D3934',
+      parchment: '#E8E3D6',
+      softGrey: '#B8B3AA',
+      charcoal: '#1F1E1C',
+      tealAccent: '#2A9D8F',
+    },
   },
 
   Drama: {
