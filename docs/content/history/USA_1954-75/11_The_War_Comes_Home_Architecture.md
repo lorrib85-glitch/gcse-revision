@@ -16,11 +16,11 @@
 - **Proposed content for this episode:**
   - Cinematic hook: 4 May 1970. Kent State University, Ohio. The National Guard opens fire on students protesting a war in Southeast Asia. Four are killed. The war has come home.
   - ChapterHookScreen (True/False): "The anti-war movement was mostly students and hippies" (False — veterans, religious leaders, MLK, senators all opposed the war); "Muhammad Ali was stripped of his boxing title for refusing military service" (True); "Kent State's shootings caused campuses to close and Congress to repeal the Gulf of Tonkin Resolution" (True)
-  - PriorKnowledgeRecall: concepts from Episodes 9–10 — `rolling_thunder`, `search_and_destroy`, `tet_offensive`, `my_lai`, `credibility_gap`, `body_count`
+  - PriorKnowledgeRecall: concepts from Episodes 9–10 — `rolling_thunder`, `search_and_destroy`, `tet_offensive`, `my_lai`, `credibility_gap`, `body_count`, `living_room_war`
   - WhatYouWillLearn: auto-generated from screen labels
 - **Suggested component(s):**
   - `ChapterHookScreen` (True/False) — the "students and hippies" misconception is the most important to challenge; the Kent State sequence in the third question signals the episode's climax
-  - `PriorKnowledgeRecall` — retrieval of Episodes 9–10; concepts: `rolling_thunder`, `search_and_destroy`, `tet_offensive`, `my_lai`, `credibility_gap`
+  - `PriorKnowledgeRecall` — retrieval of Episodes 9–10; concepts: `rolling_thunder`, `search_and_destroy`, `tet_offensive`, `my_lai`, `credibility_gap`, `living_room_war`
 
 ### Section 2 — Learning Chunk 1
 - **Purpose:** Television and the credibility gap — how the media turned public opinion.
@@ -69,8 +69,8 @@
   - Pentagon Papers (June 1971): the confirmation of everything opponents had claimed
   - Consolidation retrieval: key facts, dates, terms from the whole episode
 - **Suggested component(s):**
-  - `ColSortBlock` — sort evidence into "Factors that caused opposition to grow" vs "Government attempts to suppress opposition" — prepares students for Q2 "explain why opposition grew" and also shows the two-sided nature of the conflict between protesters and the state
-  - `QuickRecallScreen` — retrieval of full episode content: Cronkite, Pentagon Papers, draft deferments, Black casualty rates, MLK's speech, Ali, Moratorium, Kent State (date, four names, 450 campuses), Gulf of Tonkin repeal
+  - `ColSortBlock` — sort evidence into "Factors that caused opposition to grow" vs "Government attempts to suppress or outflank opposition" — prepares students for Q2 "explain why opposition grew" and also shows the two-sided nature of the conflict between protesters and the state
+  - `QuickRecallScreen` — retrieval of full episode content: Cronkite, Pentagon Papers, draft deferments, Black casualty rates, MLK's speech, Ali, Moratorium, Kent State (date, four names, 450 campuses), Jackson State, Gulf of Tonkin repeal
 
 ### Section 6 — Summary & Examiner
 - **Purpose:** No major new content; apply knowledge to exam technique; end with completion screen.
@@ -116,4 +116,16 @@ Not yet built — full rebuild from spec.
 
 5. **The "breadth" argument for Q2 answers:** The 2022 Q2 mark scheme rewards answers that show opposition was not just student/fringe — it included veterans, religious figures, civil rights leaders, senators. The `InteractiveCollectionExplorer` in Section 4 is directly structured to build this breadth argument.
 
-6. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), VisualLearning (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), VisualNarrativeScreen (S3), InteractiveCollectionExplorer (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
+6. **Claude build detail — exact implementation requirements:**
+   - Do not make this module feel like a generic protest timeline. The core idea is: opposition grew because the war became visible, personal and morally indefensible.
+   - Section 2 should teach "Living Room War" as a media mechanism: images entered the home → contradicted official optimism → widened the credibility gap → made opposition more mainstream. Keep visual treatment restrained: newsroom, TV glow, newspapers, silhouettes, not gore.
+   - The media sequence must distinguish event from publication: Tet happened in January 1968; My Lai happened March 1968 but was revealed November 1969; Pentagon Papers were published June 1971.
+   - Section 3 must make the draft feel unfair in a concrete way: college deferments protected many white middle-class men while poorer men and Black Americans were more exposed to combat. Include Ali as a named human example.
+   - Section 3 should include one explicit series-bridge retrieval question: "Why did MLK argue the Vietnam War was connected to civil rights?" Correct answer: Black Americans were asked to fight for democracy abroad while denied equality at home, and war spending damaged anti-poverty programmes.
+   - Section 4 `InteractiveCollectionExplorer` must have at least five cards: Students/SDS, MLK/religious leaders, Muhammad Ali, Vietnam Veterans Against the War, Moratorium marches. Optional sixth: Pentagon Papers / Daniel Ellsberg.
+   - Section 5 must include Kent State and Jackson State together. Do not let Jackson State become a tiny footnote; use it to show race and media attention were still unequal.
+   - Include one misconception check: "The anti-war movement was just students and hippies" = false; it included veterans, civil rights leaders, religious figures, senators, athletes and ordinary families.
+   - In the Examiner model answer, use three linked paragraphs: media/credibility gap; draft inequality; Kent State/My Lai/Pentagon Papers as moments that made opposition mainstream.
+   - Avoid excessive protest-poster styling. Keep it cinematic-history: television newsrooms, campus steps, newspaper rooms, courtroom/congress atmosphere, candlelit vigils, not neon protest collage.
+
+7. **Component count check:** ChapterHookScreen (S1 — mandatory), PriorKnowledgeRecall (S1 — mandatory), VisualLearning (S2), QuickRecallScreen (S2, S3, S5 — retrieval rule), VisualNarrativeScreen (S3), InteractiveCollectionExplorer (S4), MatchingTask (S4), ColSortBlock (S5), ExaminerExplainsScreen (S6 — mandatory), FaceTheExaminer (S6 — mandatory), ChapterCompleteScreen (S6 — mandatory). No feature component exceeds twice.
