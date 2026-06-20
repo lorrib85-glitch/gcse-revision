@@ -102,7 +102,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
       {/* ── Portrait hero ───────────────────────────────────────────────── */}
       <div style={{
         position: 'relative',
-        height: '40vh',
+        height: '44vh',
         overflow: 'hidden',
         flexShrink: 0,
       }}>
@@ -152,7 +152,9 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         style={{
           flex: 1,
           position: 'relative',
-          padding: `${SPACING.micro}px ${SPACING.standard}px`,
+          paddingLeft: SPACING.standard,
+          paddingRight: SPACING.standard,
+          paddingTop: SPACING.compact,
           paddingBottom: `calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
           cursor: 'pointer',
           userSelect: 'none',
@@ -171,7 +173,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           style={{
             flex: 1,
             borderRadius: RADII.medium,
-            padding: '12px 16px',
+            padding: '11px 16px',
             background: cardBg,
             border: cardBorder,
             boxShadow: cardShadow,
