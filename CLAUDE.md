@@ -72,6 +72,7 @@ Foundation components used by many others.
 Screen-level learning interaction components.
 - `CinematicCarousel.jsx` — Full-screen "deep dive" carousel: one large image at a time with prev/next glass nav and a sliding name + key-facts panel, for browsing a small related set of things in turn (e.g. organelles, planets).
 - `CinematicRevealMoment.jsx` — Full-screen cinematic video/image reveal moment.
+- `CircuitDiagram.jsx` — GCSE Physics simple series circuit (battery, wire loop, bulb, switch) drawn with inline SVG primitives. A single `closed` prop toggles open/closed: closed shows an animated cyan current overlay and an amber bulb glow; open raises the switch arm, hides the current, and dims the bulb. Respects `prefers-reduced-motion`.
 - `ColSortBlock.jsx` — Interactive column-sort categorisation task where learners sort items into labelled columns with visual feedback.
 - `ConceptReveal.jsx` — Concept introduction with atmospheric reveal.
 - `ExaminerExplainsScreen.jsx` — Full-screen explanation screen with animated word-by-word text reveal and background imagery.

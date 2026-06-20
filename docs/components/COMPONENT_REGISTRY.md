@@ -141,6 +141,15 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
+### CircuitDiagram
+
+**File:** `src/components/learning/CircuitDiagram.jsx`  
+**Purpose:** Renders a GCSE Physics simple series circuit (battery, wire loop, bulb, switch) as inline SVG primitives — not a static image. Open vs closed is driven by a single `closed` prop: when closed the switch arm bridges both contacts, an animated cyan current overlay flows around the loop, and the bulb glows warm amber; when open the arm is raised, the current overlay is hidden, and the bulb is dim. Restrained Physics blue/cyan glow only; the moving current animation is disabled under `prefers-reduced-motion`.  
+**Props:** `closed` (boolean)  
+**Dependencies:** `SUBJECTS` (Physics palette); injects animation/glow CSS classes once via an `ensureStyles()` `<style>` block (same pattern as `GraphView`).
+
+---
+
 ### ConceptReveal
 
 **File:** `src/components/learning/ConceptReveal.jsx`  
