@@ -56,12 +56,28 @@ Never obvious.
 
 ### Colour Palette
 
-| Role | Example |
-|------|---------|
-| Primary interface colour — muted mineral teal | `#2A9D8F` |
-| Dark anchor | `#264653` |
-| Soft text white | `#F1FAEE` |
-| Rare warm accent — coral | `#E76F51` |
+| Role | Token | Hex | Usage |
+|------|-------|-----|-------|
+| Primary interface colour | `teal` | `#2A9D8F` | Progress, active states, key action and selected items |
+| Dark anchor | `darkTeal` | `#264653` | Surfaces, navigation and deep background elements |
+| Primary text | `softWhite` | `#F1FAEE` | Primary text, headings and high-emphasis content |
+| Muted support | `slate` | `#A8B0B3` | Secondary text, icons and disabled states |
+| Rare warm accent | `coral` | `#E76F51` | Streaks, highlights and important alerts only |
+
+### Neutral Scale
+
+| Token | Hex |
+|-------|-----|
+| `neutral.900` | `#0D0F10` |
+| `neutral.800` | `#14181A` |
+| `neutral.700` | `#1B2124` |
+| `neutral.600` | `#232A2E` |
+| `neutral.500` | `#2B3337` |
+| `neutral.400` | `#3A4246` |
+| `neutral.300` | `#5A6367` |
+| `neutral.200` | `#A8B0B3` |
+
+The older `neutral.0` to `neutral.4` aliases remain available in code for backwards compatibility, but new work should use the 900–200 scale.
 
 Coral should be used sparingly. It should feel like an event, not part of the
 interface.
