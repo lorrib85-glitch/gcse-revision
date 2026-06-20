@@ -3,30 +3,39 @@
 // Used by Home, Subjects browser, Progress/Pulse, Exam landing, bottom nav,
 // onboarding and any other shell screen that sits outside a module's subject
 // theme. Subject colours for in-module content remain in
-// src/constants/subjects.js (BRAND.md) and are unaffected by this file.
+// src/constants/subjects.js and docs/system/SUBJECT_THEME_SYSTEM.md.
 //
-// Coral is a RARE accent — streak flame, weakest-subject emphasis only.
-// Do not use it for general decoration.
+// General palette: cinematic, calm, focused. Dark backgrounds are atmosphere,
+// not decoration. Teal is the primary interface accent. Coral is rare.
 
 export const GENERAL = {
-  teal:      '#2A9D8F',   // primary actions, progress, active nav state
+  teal:      '#2A9D8F',
   tealRgb:   '42,157,143',
-  darkTeal:  '#264653',   // surfaces, deep backgrounds
-  softWhite: '#F1FAEE',   // headings, high-emphasis text
-  slate:     '#A8B0B2',   // secondary text, icons, inactive nav
-  coral:     '#E76F51',   // rare: streak flame, weakest-subject emphasis
+  darkTeal:  '#264653',
+  softWhite: '#F1FAEE',
+  slate:     '#A8B0B3',
+  coral:     '#E76F51',
   coralRgb:  '231,111,81',
 
   neutral: {
+    900: '#0D0F10',
+    800: '#14181A',
+    700: '#1B2124',
+    600: '#232A2E',
+    500: '#2B3337',
+    400: '#3A4246',
+    300: '#5A6367',
+    200: '#A8B0B3',
+
     0: '#0D0F10',
-    1: '#14161A',
-    2: '#1B2126',
-    3: '#252B31',
-    4: '#32383E',
+    1: '#14181A',
+    2: '#1B2124',
+    3: '#232A2E',
+    4: '#2B3337',
   },
 
   gradient: {
     tealFade: 'linear-gradient(180deg, rgba(42,157,143,0.18), rgba(13,15,16,0))',
-    warm:     'linear-gradient(135deg, #E76F51, #7A3226)',
+    warm:     'linear-gradient(135deg, #E76F51, #7A2E24)',
   },
 }
