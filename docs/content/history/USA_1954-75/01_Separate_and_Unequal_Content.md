@@ -23,7 +23,8 @@ DRAFT (for user confirmation): America proclaimed itself the land of the free, b
 - Voting rights denied through poll taxes, literacy tests, grandfather clauses, physical intimidation
 - Black Americans in the South could not sit on juries, were policed and judged by officials sympathetic to the KKK
 - In the North, de facto segregation through housing discrimination, economic exclusion and high unemployment
-- NAACP and CORE already active before 1954 — the movement had pre-existing infrastructure
+- Factors helping the movement grow in the 1950s included Second World War service, migration to northern cities, television/media coverage, Cold War embarrassment and research challenging racist ideas
+- NAACP, CORE, churches and local organisations already active before 1954 — the movement had pre-existing infrastructure
 - Murder of Emmett Till (1955) — acquitted killers later admitted guilt, exposing the total failure of Southern justice
 
 ### Series through-line
@@ -32,7 +33,7 @@ This episode establishes the starting conditions that make all 12 episodes neces
 MISSING: series-level framing for how this episode's takeaway connects explicitly to the Vietnam episodes (KT3–4) in HISTORY_SERIES_MAP.md — no explicit link is drawn in the map beyond the core through-line.
 
 ### Exam framing
-- Q2 "Explain why the civil rights movement emerged in the 1950s" — the legal system and political exclusion are the three causal pillars
+- Q2 "Explain why the civil rights movement emerged in the 1950s" — the legal system, political exclusion, existing organisation and wider post-war/Cold War factors are the causal pillars
 - Q3(d) "How far do you agree with Interpretation X about the position of Black Americans in the 1950s" — this episode's content is the bedrock contextual knowledge needed
 
 ---
@@ -63,13 +64,23 @@ MISSING: series-level framing for how this episode's takeaway connects explicitl
   - Racism and discrimination in employment and housing
   - Some voting rights, but economically disadvantaged
 - **Plessy v Ferguson (1896):** Supreme Court ruling that segregation was constitutional as long as facilities were "separate but equal" — key legal precedent standing until *Brown* (1954)
+- **Federal vs state government foundation:** Federal law covered the whole country, but state laws and state officials controlled many areas of daily life. Southern state governments used this power to maintain segregation, while the Supreme Court could declare state laws unconstitutional. This tension explains why court rulings such as *Brown* mattered, but also why enforcement was difficult.
 - **Why the federal government didn't act earlier:**
   - Congress and presidents relied on Southern (Dixiecrat) votes
   - Many judges were opposed to civil rights
   - Southern politicians had power to block legislation
+  - Presidents were reluctant to use federal power against state governments unless national/international pressure became unavoidable
+- **Factors behind the growth of the civil rights movement in the 1950s:**
+  - Black Americans who served in the Second World War expected greater equality after fighting for democracy abroad
+  - Migration to northern cities increased political awareness and changed Black communities
+  - Television and newspapers made racist violence and segregation harder to ignore
+  - The Cold War embarrassed the USA because it claimed to lead the "free world" while denying rights to Black citizens
+  - Research increasingly challenged racist claims and showed segregation damaged Black children's confidence and opportunities
+  - Existing organisations meant protests could be planned quickly when opportunities arose
 - **Civil rights organisations already active:**
-  - **NAACP (National Association for the Advancement of Colored People):** fought segregation through legal cases; larger membership; more progress in northern states; racially integrated
-  - **CORE (Congress of Racial Equality):** smaller membership; used non-violent direct action; more active in North
+  - **NAACP (National Association for the Advancement of Colored People):** fought segregation through legal cases; larger membership; more progress in northern states; racially integrated; focused on overturning "separate but equal"
+  - **CORE (Congress of Racial Equality):** smaller membership; used non-violent direct action; more active in North; trained activists in peaceful resistance; used tactics such as boycotts, pickets and sit-ins
+  - **Churches and local organisations:** Black churches were central organising spaces; church leaders had status, communication networks and meeting spaces. Local organisations, universities and groups such as the Regional Council of Negro Leadership also supported civil rights through meetings, education, rallies and voter-registration campaigns
 
 ---
 
@@ -82,6 +93,7 @@ MISSING: series-level framing for how this episode's takeaway connects explicitl
 - **1896:** *Plessy v Ferguson* — Supreme Court ruled "separate but equal" constitutional
 - **1909:** NAACP founded
 - **1942:** CORE founded
+- **1945 onwards:** Black veterans and wartime workers increasingly expected civil rights after the Second World War
 - **August 1955:** Emmett Till murdered in Mississippi; trial results in acquittal; open-coffin funeral generates national outrage
 - **1955:** NAACP produced booklet "M is for Mississippi and Murder" highlighting unpunished murders
 
@@ -100,37 +112,45 @@ MISSING: series-level framing for how this episode's takeaway connects explicitl
 - **Desegregation:** the process of ending racial separation and integrating facilities/institutions
 - **The US Constitution:** fundamental laws of the USA; can only be changed by an amendment
 - **Supreme Court:** highest court in the USA; no-one can overrule it; key civil rights rulings came from here
+- **Federal government:** national government of the USA; could use federal law, federal courts and federal troops, but often avoided direct confrontation with Southern states
+- **State government:** government of an individual state; Southern state governments used state laws, police and governors to maintain segregation
 - **Poll tax:** fee required to register to vote; used in the South to deny Black Americans the vote
 - **Literacy test:** reading/writing test required to vote; deliberately made harder for Black applicants
 - **Grandfather clause:** voters had to prove their forefathers voted — impossible for descendants of slaves
 - **KKK (Ku Klux Klan):** racist terrorist organisation founded 1865 in the South; used violence and murder to intimidate Black Americans and opponents of segregation; membership overlapped with law enforcement
+- **Dixiecrats:** Southern Democrat politicians who defended segregation and used their power in Congress to block civil rights legislation
 - **NAACP:** National Association for the Advancement of Colored People; pursued civil rights through legal action
-- **CORE:** Congress of Racial Equality; smaller, used non-violent direct action
+- **CORE:** Congress of Racial Equality; smaller, used non-violent direct action such as boycotts, pickets and sit-ins
 - **Lynching:** extrajudicial killing (usually hanging) by a mob; used to terrorise Black communities in the South
 - **Plessy v Ferguson (1896):** Supreme Court case establishing "separate but equal" as constitutional
 
 ### Case studies / named examples
 - **Emmett Till case (1955):** Examinable in full — the open coffin, the acquittal, the later confession, the NAACP booklet. Demonstrates that Black Americans had no protection from the legal system in the South and that national media coverage was beginning to shift Northern opinion.
 - **Women's Political Council, Montgomery:** Had been campaigning against bus discrimination since 1950 — shows the movement had organised roots before Rosa Parks' arrest
+- **CORE direct action methods:** CORE trained activists to remain non-violent during abuse and used boycotts, pickets and sit-ins. This foreshadows later sit-ins and Freedom Rides, so students should not treat non-violent direct action as starting only in 1960.
 
 ### Causes & effects
 - Jim Crow laws enacted 1890–1910 → legal system entrenched racial hierarchy for 60+ years
 - *Plessy v Ferguson* (1896) → gave courts legal cover to uphold segregation until 1954
 - Poll taxes + literacy tests + intimidation → very few Black Americans could vote in the South → no political representation → no mechanism for change from within
+- Second World War service + Cold War pressure → made US racial inequality harder to justify at home and abroad
+- Television/media coverage → exposed segregation and racist violence to wider audiences → increased pressure for federal action
 - Emmett Till's open-coffin funeral → mass media coverage nationally → Northern white Americans confronted with reality of Southern violence → growth of support for civil rights
 - Emmett Till acquittal + killers' confession → exposed Southern justice as corrupt → strengthened NAACP campaigns → increased urgency of legal challenges
 - Black Americans confined to ghettos in the North → lower wages, higher unemployment, worse education → economic inequality reinforced across the country even where legal segregation didn't apply
 - KKK membership overlapping with law enforcement → assaults and murders of Black people went uninvestigated → created culture of total impunity
+- NAACP/CORE/churches/local groups already existed → when trigger events occurred, activists had networks, leaders and tactics ready
 
 ### Exam angles
 - **Q1 (Source inference, 4 marks):** Sources often show segregated facilities, or evidence of KKK violence/intimidation. Key inferences: that facilities were unequal despite "equal" claim; that violence went unpunished; that Black Americans organised in response
-- **Q2 (Explain why, 12 marks):** "Explain why the civil rights movement emerged/grew in the 1950s." Three causal pillars: legal segregation + voting exclusion + organised resistance (NAACP/CORE already in place). Stimulus points typically include Brown v Topeka and/or Montgomery. Own knowledge: Emmett Till, *Plessy*, Jim Crow, KKK, Dixiecrats
-- **Q3(d) "How far do you agree" (16 marks):** 2021 paper used interpretations about the position of Black Americans in the 1950s (one emphasising progress in education; one emphasising continued inequality). This episode's content supports the "inequality was pervasive" interpretation
+- **Q2 (Explain why, 12 marks):** "Explain why the civil rights movement emerged/grew in the 1950s." Three causal pillars: legal segregation + voting exclusion + organised resistance. Stronger own knowledge: Second World War expectations, Cold War embarrassment, television/media coverage, Emmett Till, *Plessy*, Jim Crow, KKK, Dixiecrats
+- **Q3(d) "How far do you agree" (16 marks):** 2021 paper used interpretations about the position of Black Americans in the 1950s (one emphasising progress in education; one emphasising continued inequality). This episode's content supports the "inequality was pervasive" interpretation, while also preparing learners to recognise arguments about growing awareness and organised resistance
 - **Misconceptions worth a MisconceptionCheck:**
   - "Segregation was only about schools" — it covered virtually every aspect of public and civic life
   - "The Supreme Court always supported civil rights" — *Plessy v Ferguson* upheld segregation for 58 years
   - "Black Americans in the North had equality" — de facto segregation, economic exclusion, housing discrimination
   - "Emmett Till's killers were convicted" — they were acquitted; later confessed
+  - "The civil rights movement began suddenly with Rosa Parks" — NAACP, CORE, churches, WPC and local groups were already organising
 
 ### Sourcing notes
 - **reviseedexcelgcsehistorytheusaconflictrevisionguideandworkbook.txt:** Primary source for all factual content above. Pages 1 (early 1950s), 2 (Brown v Topeka context), 5 (KKK), 6 (Emmett Till), 7 (political opposition to desegregation / White Citizens' Councils) all directly relevant.
@@ -138,4 +158,4 @@ MISSING: series-level framing for how this episode's takeaway connects explicitl
 - **ed_gcse_usa_conflict_at_home_abroad.txt:** Sample-only study guide; discrimination sections (pp.14–16) confirm treatment of Black Americans but revision section removed
 - **Paper31HI033USAconflictathomeandabroadSAMsmarkscheme.txt:** SAM Q1 uses a source about segregated facilities (WPC poster); confirms inference angles for segregation
 - **1HIA_33_que_20211126.txt / mark scheme:** Q3(d) in the 2021 paper asked "how far do you agree about the position of black Americans in the 1950s" — the two interpretations (Paterson et al. vs Farmer/Sanders) map directly onto this episode's content
-- **Textbook_pages_civil_rights.txt:** Empty — scanned image PDF, no extractable text. Unable to use.
+- **Textbook_pages_civil_rights.pdf:** Scanned-image source used for additional Edexcel-aligned details, including federal/state government foundation, factors behind civil rights growth, church/local organisations, CORE tactics and political opposition
