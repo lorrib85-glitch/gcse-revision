@@ -131,8 +131,6 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             ...TYPE.hero,
             fontSize: 'clamp(34px, 9vw, 48px)',
             color: '#FFFFFF',
-            textTransform: 'uppercase',
-            letterSpacing: '0.03em',
             marginBottom: 4,
           }}>
             {block.name}
@@ -140,7 +138,6 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           <div style={{
             ...TYPE.metadata,
             color: accent,
-            textTransform: 'uppercase',
           }}>
             {block.role}
           </div>
@@ -216,8 +213,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                 fontSize: 14,
                 fontWeight: 700,
                 color: titleColor,
-                textTransform: 'uppercase',
-                letterSpacing: '0.07em',
+                letterSpacing: '0.02em',
                 lineHeight: 1.25,
               }}>
                 {section.title}
@@ -271,19 +267,16 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                 {lines.slice(1).map((line, i) => {
                   const isAutoTakeaway = i === lines.length - 2 && !section.takeaway
                   return (
-                    <div key={i}>
-                      <div style={{ height: 1, background: dividerColor, margin: '8px 0' }} />
-                      <p style={{
-                        fontFamily: "'Sora', sans-serif",
-                        fontSize: 13,
-                        fontWeight: isAutoTakeaway ? 600 : 400,
-                        lineHeight: 1.5,
-                        color: isAutoTakeaway ? titleColor : bodyColor,
-                        margin: 0,
-                      }}>
-                        {line}
-                      </p>
-                    </div>
+                    <p key={i} style={{
+                      fontFamily: "'Sora', sans-serif",
+                      fontSize: 13,
+                      fontWeight: isAutoTakeaway ? 600 : 400,
+                      lineHeight: 1.5,
+                      color: isAutoTakeaway ? titleColor : bodyColor,
+                      margin: '6px 0 0',
+                    }}>
+                      {line}
+                    </p>
                   )
                 })}
               </>
@@ -294,19 +287,16 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                   const isAutoTakeaway = i === lines.length - 1 && !section.takeaway
                   const isLead = i === 0
                   return (
-                    <div key={i}>
-                      {i > 0 && <div style={{ height: 1, background: dividerColor, margin: '8px 0' }} />}
-                      <p style={{
-                        fontFamily: "'Sora', sans-serif",
-                        fontSize: isLead ? 15 : 14,
-                        fontWeight: isAutoTakeaway ? 600 : isLead ? 500 : 400,
-                        lineHeight: 1.55,
-                        color: isAutoTakeaway ? titleColor : bodyColor,
-                        margin: 0,
-                      }}>
-                        {line}
-                      </p>
-                    </div>
+                    <p key={i} style={{
+                      fontFamily: "'Sora', sans-serif",
+                      fontSize: isLead ? 15 : 14,
+                      fontWeight: isAutoTakeaway ? 600 : isLead ? 500 : 400,
+                      lineHeight: 1.55,
+                      color: isAutoTakeaway ? titleColor : bodyColor,
+                      margin: i > 0 ? '6px 0 0' : 0,
+                    }}>
+                      {line}
+                    </p>
                   )
                 })}
               </>

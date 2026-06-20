@@ -244,7 +244,7 @@ export const HISTORY_MODULES = [
         stage: 'Galen',
         tag: 'galen',
         label: 'Galen',
-        portrait: '/figures/history/medicine/medieval/galen-portrait.webp',
+        portrait: '/figures/history/medicine/medieval/galen-portrait.png',
         portraitPosition: 'center top',
         cardBackground: '/figures/history/medicine/medieval/galen-parchment.png',
         name: 'Galen',
