@@ -41,6 +41,7 @@ Each subject entry contains:
 | `overlay` | rgba string | Screen overlay for background image dimming |
 | `progressFill` | hex string | Progress bar fill colour |
 | `accentRgb` | rgb string | Accent as `'r,g,b'` for use in rgba() |
+| `palette` | object, optional | Named extended palette for subject-specific cinematic design work |
 
 ---
 
@@ -59,14 +60,30 @@ accentRgb:        44,191,163
 
 ### English
 ```
-accent:           #7A284F
-accentSecondary:  #A14A73
-accentTertiary:   #4A102C
-background:       #12070D
-backgroundSecondary: #1A0C14
-glow:             rgba(161,74,115,0.34)
-accentRgb:        161,74,115
+accent:           #6A343D
+accentSecondary:  #8A6A6E
+accentTertiary:   #4C242B
+background:       #0D0F10
+backgroundSecondary: #1F1C1B
+glow:             rgba(106,52,61,0.32)
+glowStrong:       rgba(138,106,110,0.20)
+progressFill:     #6A343D
+accentRgb:        106,52,61
 ```
+
+Extended English palette:
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `oxblood` | `#6A343D` | Key actions, active states, progress highlights and important emphasis |
+| `mahogany` | `#4C242B` | Secondary actions, interactive elements and subtle highlights |
+| `walnut` | `#3B2626` | Surfaces, cards and overlays to add warmth and depth |
+| `dustyRose` | `#8A6A6E` | Supportive elements, subtle highlights and soft accents |
+| `parchment` | `#E9E1D3` | Text on dark backgrounds and soft contrasting areas |
+| `ink` | `#1F1C1B` | Muted text, icons and disabled states |
+| `tealAccent` | `#2A9D8F` | Cross-subject consistency and active navigation only |
+
+English should feel rich, intelligent and literary — dark academic rather than purple neon. Use oxblood with intention. Do not let teal take over English screens.
 
 ### Physics
 ```
@@ -163,34 +180,6 @@ These exports exist for legacy compatibility only. New components must use `SUBJ
 
 ---
 
-## Usage Examples
-
-```js
-// Basic subject-aware component
-const theme = SUBJECTS[subject] || SUBJECTS.History
-
-// Primary accent colour
-const accent = theme.accent
-
-// For rgba() in shadows/glows
-const rgb = theme.accentRgb
-// usage: `rgba(${rgb}, 0.15)`
-
-// Background colour
-const bg = theme.background
-
-// Atmospheric glow
-const glow = theme.glow
-
-// Progress bar
-<div style={{ background: theme.progressFill }} />
-
-// Screen overlay on background image
-<div style={{ background: theme.overlay }} />
-```
-
----
-
 ## Subject Emotional Identities
 
 Each subject palette was designed with a specific emotional character:
@@ -198,7 +187,7 @@ Each subject palette was designed with a specific emotional character:
 | Subject | Emotional Identity |
 |---------|--------------------|
 | Maths | Clean, logical, precise |
-| English | Rich, literary, deep plum |
+| English | Rich, literary, oxblood, parchment and ink |
 | Physics | Precise, expansive, electric blue |
 | Biology | Natural, organic, earthy green |
 | Chemistry | Scientific depth, violet mystery |
