@@ -1,6 +1,7 @@
 import { MODULES } from '../modules.js'
 import { MODULE_GROUPS } from '../progress.js'
 import { MEDICINE_2023_PAPER } from '../data/medicineExamPapers.js'
+import { SUBJECTS } from '../constants/subjects.js'
 
 const CHAPTER_COPY = [
   'Momentum matters.',
@@ -10,20 +11,9 @@ const CHAPTER_COPY = [
   'Another one down.',
 ]
 
-const SUBJECT_ACCENT = {
-  'Maths':     '#2CBFA3',
-  'Biology':   '#4FA36C',
-  'History':   '#D69B45',
-  'English':   '#7A284F',
-  'Sociology': '#B8A58F',
-  'Chemistry': '#8B4DFF',
-  'Drama':     '#8F1F44',
-  'Music':     '#A34DFF',
-}
-
 // Pure: compute the data object needed by ChapterCompleteScreen.
 export function buildChapterCompletePayload(completedModule) {
-  const accent = SUBJECT_ACCENT[completedModule.subject] || completedModule.color || '#9D5CFF'
+  const accent = SUBJECTS[completedModule.subject]?.accent || completedModule.color || '#9D5CFF'
 
   const group         = MODULE_GROUPS.find(g => g.chapterIds.includes(completedModule.id))
   const chapterIdx    = group ? group.chapterIds.indexOf(completedModule.id) : -1
