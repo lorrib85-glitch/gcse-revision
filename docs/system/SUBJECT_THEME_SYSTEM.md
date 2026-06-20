@@ -98,14 +98,30 @@ accentRgb:        61,165,255
 
 ### Biology
 ```
-accent:           #4FA36C
-accentSecondary:  #7BD89A
-accentTertiary:   #2E6844
-background:       #08130C
-backgroundSecondary: #102017
-glow:             rgba(79,163,108,0.34)
-accentRgb:        79,163,108
+accent:           #6BAA5B
+accentSecondary:  #A8C5A2
+accentTertiary:   #4C6B3E
+background:       #0D0F10
+backgroundSecondary: #1B2520
+glow:             rgba(107,170,91,0.30)
+glowStrong:       rgba(168,197,162,0.18)
+progressFill:     #6BAA5B
+accentRgb:        107,170,91
 ```
+
+Extended Biology palette:
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `leafGreen` | `#6BAA5B` | Key actions, selection states, progress highlights and important emphasis |
+| `mossGreen` | `#4C6B3E` | Secondary actions, interactive elements and subtle highlights |
+| `forest` | `#2E4A35` | Surfaces, cards and overlays to create depth and focus |
+| `sage` | `#A8C5A2` | Supporting elements, gentle highlights and positive states |
+| `naturalClay` | `#E6E0CF` | Text on dark backgrounds and soft contrasting areas |
+| `stone` | `#2B2B28` | Muted text, icons and disabled states |
+| `tealAccent` | `#2A9D8F` | Cross-subject consistency and active navigation only |
+
+Biology should feel calm, fresh and organic. Use greens with intention so they represent life, growth and clarity.
 
 ### Chemistry
 ```
@@ -131,14 +147,31 @@ accentRgb:        214,155,69
 
 ### Sociology
 ```
-accent:           #B8A58F
-accentSecondary:  #D2C4B3
-accentTertiary:   #756858
-background:       #11100E
-backgroundSecondary: #191715
-glow:             rgba(184,165,143,0.28)
-accentRgb:        184,165,143
+accent:           #A79B8C
+accentSecondary:  #B8B3AA
+accentTertiary:   #7B7366
+background:       #0D0F10
+backgroundSecondary: #1B2124
+glow:             rgba(167,155,140,0.24)
+glowStrong:       rgba(184,179,170,0.16)
+progressFill:     #A79B8C
+accentRgb:        167,155,140
 ```
+
+Extended Sociology palette:
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `taupe` | `#A79B8C` | Key actions, selection states, progress highlights and important emphasis |
+| `warmStone` | `#7B7366` | Secondary actions, interactive elements and subtle highlights |
+| `clay` | `#5B544A` | Surfaces, cards and overlays to create depth and focus |
+| `mink` | `#3D3934` | Supportive elements, subtle highlights and muted accents |
+| `parchment` | `#E8E3D6` | Text on dark backgrounds and soft contrasting areas |
+| `softGrey` | `#B8B3AA` | Muted text, icons and disabled states |
+| `charcoal` | `#1F1E1C` | Strong text, icons and depth when used sparingly |
+| `tealAccent` | `#2A9D8F` | Cross-subject consistency and active navigation only |
+
+Sociology should feel natural, grounded and human. Use neutrals with intention so they represent connection, understanding and perspective.
 
 ### Drama
 ```
@@ -189,9 +222,9 @@ Each subject palette was designed with a specific emotional character:
 | Maths | Clean, logical, precise |
 | English | Rich, literary, oxblood, parchment and ink |
 | Physics | Precise, expansive, electric blue |
-| Biology | Natural, organic, earthy green |
+| Biology | Natural, organic, leaf green, sage and living systems |
 | Chemistry | Scientific depth, violet mystery |
 | History | Archival, earthy, warm bronze |
-| Sociology | Warm neutral, understated |
+| Sociology | Natural, grounded, taupe, stone and human connection |
 | Drama | Theatrical, crimson intensity |
 | Music | Vibrant, multi-tonal, electric |
