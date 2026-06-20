@@ -133,6 +133,7 @@ export default function VisualNarrativeScreen({
           backgroundPosition: (beats[1] || {}).imagePosition || 'center 25%',
           opacity: timelineOpacity,
           transition: 'opacity 700ms ease',
+          filter: (beats[1] || {}).imageFilter || 'brightness(1.12) saturate(1.04)',
           pointerEvents: 'none',
         }} />
 
@@ -151,10 +152,10 @@ export default function VisualNarrativeScreen({
           }} />
         )}
 
-        {/* Dark gradient — keeps the timeline visible up top, darkens lower third for text legibility */}
+        {/* Dark gradient — keeps text readable without crushing the image into black */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.04) 32%, rgba(0,0,0,0.80) 52%, rgba(0,0,0,0.97) 68%, rgba(0,0,0,0.99) 100%)',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.02) 32%, rgba(0,0,0,0.56) 54%, rgba(0,0,0,0.86) 72%, rgba(0,0,0,0.94) 100%)',
           pointerEvents: 'none',
         }} />
 
@@ -199,7 +200,7 @@ export default function VisualNarrativeScreen({
                 fontFamily: "'Outfit', sans-serif",
                 fontWeight: 500, fontSize: 16,
                 lineHeight: 1.7,
-                color: 'rgba(255,255,255,0.58)',
+                color: 'rgba(255,255,255,0.64)',
                 maxWidth: 300,
                 whiteSpace: 'pre-line',
               }}>
