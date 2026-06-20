@@ -79,7 +79,16 @@ async function analyseRecall(answer, concepts, sourceContent) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ answer, concepts, sourceContent: sourceContent || '' }),
   })
-  if (!response.ok) throw new Error(`Server error ${response.status}`)
+  if (!response.ok) {
+    let detail = ''
+    try {
+      const errBody = await response.json()
+      detail = errBody.error || JSON.stringify(errBody)
+    } catch {
+      try { detail = await response.text() } catch { /* ignore */ }
+    }
+    throw new Error(`Server error ${response.status}${detail ? `: ${detail}` : ''}`)
+  }
   const data = await response.json()
   if (data.error) throw new Error(data.error)
   return data
@@ -165,11 +174,20 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
       setError('Write at least a sentence — rough notes count.')
       return
     }
+
+    if (!block.concepts?.length) {
+      if (import.meta.env.DEV) {
+        console.warn('[PriorKnowledgeRecall] block.concepts missing or empty for block:', block.title ?? block.type)
+      }
+      setError('Could not analyse your answer. Check your connection and try again.')
+      return
+    }
+
     setError(null)
     setPhase('analyzing')
 
     try {
-      const data = await analyseRecall(answer, block.concepts || [], block.sourceContent)
+      const data = await analyseRecall(answer, block.concepts, block.sourceContent)
 
       // Log concepts scoring below SCORE_PARTIAL as weak spots
       const missingConcepts = (data.concepts || []).filter(c => c.score < SCORE_PARTIAL)
@@ -187,7 +205,10 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
 
       setResults(data)
       setPhase('results')
-    } catch {
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.error('[PriorKnowledgeRecall] analyseRecall failed:', err)
+      }
       setError('Could not analyse your answer. Check your connection and try again.')
       setPhase('input')
     }
