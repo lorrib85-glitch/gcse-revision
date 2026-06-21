@@ -104,36 +104,59 @@ This is a **premium streaming-platform experience** — think Apple TV, Spotify,
 
 | Family | Source | Usage |
 |--------|--------|-------|
-| **Sora** | Google Fonts | All headings, display text, module titles, buttons, nav labels |
-| **Outfit** | Google Fonts | All UI text — body copy, subtitles, chips, captions, input fields |
+| Manrope | Google Fonts | Headings, screen titles, module titles, section titles, card titles, cinematic hierarchy |
+| Sora | Google Fonts | Body copy, explanations, questions, answer options, feedback, labels, metadata, buttons, navigation, captions |
 
 Load both via Google Fonts in `index.html`:
 
 ```html
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 ```
 
 ### Type Scale
 
 | Name | Size | Weight | Font | Line Height | Letter Spacing | Usage |
 |------|------|--------|------|-------------|----------------|-------|
-| `display-xl` | 42px | 800 | Sora | 1.05 | -0.02em | Hero screen headings (Home, Subjects greeting) |
-| `display-lg` | 32px | 700 | Sora | 1.1 | -0.02em | Section headings, browser headers |
-| `heading-md` | 20px | 700 | Sora | 1.2 | -0.01em | Card titles, module names |
-| `heading-sm` | 18px | 700 | Sora | 1.25 | -0.01em | Sub-headings, list item titles |
-| `button-lg` | 20px | 700 | Sora | 1 | -0.01em | Primary CTA buttons (height 58px) |
-| `button-sm` | 16px | 600 | Sora | 1 | normal | Secondary/ghost buttons |
-| `body-lg` | 16px | 500 | Outfit | 1.55 | normal | Reading content, descriptions |
-| `body-md` | 15px | 400 | Outfit | 1.5 | normal | Standard body copy |
-| `label` | 13px | 600 | Outfit | 1.4 | 0.14em | Section labels, category tags (uppercase) |
-| `nav` | 13px | 600/500 | Outfit | 1 | normal | Bottom nav labels (600 active, 500 inactive) |
-| `caption` | 12px | 500 | Outfit | 1.4 | normal | Chips, timestamps, fine print |
+| screenHeading | clamp(30px, 8vw, 42px) | 800 | Manrope | 1.02 | -0.045em | Hero headings, page titles, module-level titles |
+| sectionHeading | clamp(22px, 6vw, 30px) | 750 or 700 | Manrope | 1.08 | -0.035em | Major section titles, module screen titles |
+| cardTitle | 1.12rem | 700 | Manrope | 1.18 | -0.02em | Card titles, module names, key figure names |
+| bodyText | 0.95rem | 400 | Sora | 1.5 | -0.005em | Main learning copy, explanations, feedback |
+| bodySmall | 0.84rem | 400 | Sora | 1.45 | -0.005em | Supporting copy, helper text, card descriptions |
+| metadataText | 0.72rem | 650 or 600 | Sora | 1.2 | 0.10em | Uppercase labels, kickers, topic markers |
+| captionText | 0.78rem | 400 | Sora | 1.35 | -0.003em | Captions, quiet helper text |
+| buttonText | 0.92rem | 700 | Sora | 1.2 | -0.005em | Buttons and tappable actions |
 
 ### Rules
 
-- **Never mix Sora and Outfit on the same line** — headings are Sora, supporting copy is Outfit.
-- **Sora** is used wherever the element is the primary focal point of a hierarchy level.
-- **Outfit** is used for everything that supports or describes, never leads.
+- Is the text creating hierarchy, identity or a cinematic moment? Use Manrope.
+- Is the text being read, tapped, answered, scanned or used to learn? Use Sora.
+- When unsure, default to Sora for clarity.
+
+### Spacing Guidance
+
+- Screen heading → body: 12–16px
+- Section heading → body: 8–12px
+- Card title → body: 6–10px
+- Metadata → heading/title: 8–10px
+- Between short body paragraphs: 10–12px
+- Between body and CTA: 20–28px
+- Between cards: 12–16px
+- Between major sections: 24–32px
+
+### Readability Guidance
+
+- Body text should usually sit within 28–42 characters per line on mobile.
+- Large headings should avoid more than 3 lines.
+- Question text should avoid more than 4 lines.
+- Avoid low-contrast text below 14px.
+- Do not put long body text over busy images unless a dark overlay is behind it.
+- For image overlays: use Manrope for headline, Sora for body, and keep body to 1–2 short sentences.
+
+### Anti-drift
+
+- No new fonts: Manrope and Sora only.
+- Remove any instruction saying “Sora and Outfit only”.
+- Remove/replace any instruction saying headings are Sora and body is Outfit.
 - No italic styling in the UI — all text is upright.
 - Section labels (`label` style) must be UPPERCASE.
 
