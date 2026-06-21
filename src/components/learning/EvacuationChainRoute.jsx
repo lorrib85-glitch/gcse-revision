@@ -342,7 +342,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
             boxShadow: `0 0 6px 1px rgba(${BRONZE_RGB},0.28), 0 0 1.5px rgba(${BRONZE_RGB},0.45)`,
           }} />
 
-          {/* Stage cards — 10px gap, no flow arrows */}
+          {/* Stage cards — readable stacked layout for mobile */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {stages.map((stage, idx) => {
               const placedId  = slots[stage.id]
@@ -379,7 +379,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                     {idx + 1}
                   </div>
 
-                  {/* Stage card — compact horizontal grid */}
+                  {/* Stage card — title and answer are stacked so no text is crushed */}
                   <div
                     onClick={() => handleSlotTap(stage.id)}
                     style={{
@@ -396,12 +396,12 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                         : isWrong
                           ? 'inset 0 1px 0 rgba(0,0,0,0.30), 0 2px 6px rgba(0,0,0,0.35)'
                           : 'inset 0 1px 0 rgba(255,215,150,0.05), inset 0 -1px 0 rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.35)',
-                      padding: '14px 14px',
-                      maxHeight: 104,
-                      display: 'grid',
-                      gridTemplateColumns: '54% 46%',
-                      columnGap: 10,
-                      alignItems: 'center',
+                      padding: '12px 12px',
+                      minHeight: 122,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 10,
+                      alignItems: 'stretch',
                       position: 'relative',
                       cursor: !checked ? 'pointer' : 'default',
                       transition: `border-color 220ms ease, box-shadow 220ms ease, background 220ms ease`,
@@ -417,10 +417,10 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                     <div style={{ ...RIVET, bottom: 5, left: 5 }} />
                     <div style={{ ...RIVET, bottom: 5, right: 5 }} />
 
-                    {/* Left column: icon badge + title + clue */}
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 7, minWidth: 0 }}>
+                    {/* Top row: icon badge + title + clue */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, minWidth: 0 }}>
                       <div style={{
-                        width: 30, height: 30, borderRadius: '50%',
+                        width: 28, height: 28, borderRadius: '50%',
                         background: `rgba(${BRONZE_RGB},0.14)`,
                         border: `1.5px solid rgba(${BRONZE_RGB},0.38)`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -430,31 +430,32 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                         <IconComp />
                       </div>
 
-                      <div style={{ minWidth: 0 }}>
+                      <div style={{ minWidth: 0, flex: 1 }}>
                         <div style={{
-                          fontWeight: 600, fontSize: 17,
-                          color: TEXT_PRIMARY, lineHeight: 1.2,
-                          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                          fontWeight: 650, fontSize: 15.5,
+                          color: TEXT_PRIMARY, lineHeight: 1.16,
+                          overflowWrap: 'break-word',
                         }}>
                           {stage.title}
                         </div>
                         <div style={{
-                          fontSize: 13, color: TEXT_DIM, marginTop: 2, lineHeight: 1.3,
+                          fontSize: 12.5, color: TEXT_DIM, marginTop: 3, lineHeight: 1.28,
+                          overflowWrap: 'break-word',
                         }}>
                           {stage.clue}
                         </div>
                       </div>
                     </div>
 
-                    {/* Right column: drop zone, vertically centred */}
+                    {/* Full-width drop zone */}
                     <div>
                       {placed ? (
                         <div style={{
-                          height: 54,
+                          minHeight: 48,
                           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                           gap: 6,
                           borderRadius: 12,
-                          padding: '0 10px',
+                          padding: '8px 10px',
                           background: isSuccess
                             ? `rgba(${BRONZE_RGB},0.12)`
                             : `rgba(${BRONZE_RGB},0.10)`,
@@ -464,11 +465,12 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                           boxShadow: isSuccess
                             ? `0 0 0 2px rgba(${BRONZE_RGB},0.18), inset 0 0 10px rgba(${BRONZE_RGB},0.07)`
                             : 'none',
-                          fontSize: 13, lineHeight: 1.35,
+                          fontSize: 12.5, lineHeight: 1.25,
                           color: TEXT_PRIMARY,
                           transition: `all 200ms ease`,
+                          overflowWrap: 'break-word',
                         }}>
-                          {placed.text}
+                          <span>{placed.text}</span>
                           {isSuccess && (
                             <div style={{
                               flexShrink: 0,
@@ -484,12 +486,12 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                         </div>
                       ) : (
                         <div style={{
-                          height: 54,
+                          minHeight: 48,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           borderRadius: 12,
                           border: `1px dashed rgba(${BRONZE_RGB},0.14)`,
                           background: 'rgba(0,0,0,0.12)',
-                          fontSize: 13, lineHeight: 1.35,
+                          fontSize: 12.5, lineHeight: 1.3,
                           color: `rgba(${BRONZE_RGB},0.22)`,
                           fontStyle: 'italic',
                         }}>
@@ -524,7 +526,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                   disabled={checked}
                   style={{
                     borderRadius: 12,
-                    padding: '14px 16px',
+                    padding: '12px 14px',
                     border: `1px solid ${
                       isSelected ? ANSWER_BORDER_SELECTED :
                       isPlaced   ? ANSWER_BORDER_PLACED   :
@@ -539,9 +541,9 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                     cursor: isPlaced || checked ? 'default' : 'pointer',
                     textAlign: 'left',
                     fontFamily: "'Sora', sans-serif",
-                    fontSize: 15, lineHeight: 1.3,
+                    fontSize: 13.5, lineHeight: 1.28,
                     color: isPlaced ? TEXT_PLACED : TEXT_PRIMARY,
-                    minHeight: 82,
+                    minHeight: 76,
                     display: 'flex', flexDirection: 'column',
                     transform: isSelected ? 'translateY(-2px)' : 'none',
                     transition: [
