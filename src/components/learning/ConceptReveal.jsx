@@ -216,7 +216,7 @@ function MainReveal({ text, emphasis, accent }) {
     color: 'rgba(245,238,225,0.97)',
     whiteSpace: 'pre-wrap',
     wordBreak: 'break-word',
-    maxWidth: '12ch',
+    maxWidth: '18ch',
     textShadow: '0 2px 28px rgba(0,0,0,.62)',
   }
 
