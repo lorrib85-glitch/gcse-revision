@@ -33,7 +33,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "./node_modules/.bin/eslint . --quiet > /tmp/eslint-check.log 2>&1 && ./node_modules/.bin/vite build > /tmp/vite-build-check.log 2>&1 && echo '{\"systemMessage\":\"Lint ✓  Build ✓\"}' || echo '{\"systemMessage\":\"⚠ GATE FAILED — fix before pushing. Check /tmp/eslint-check.log or /tmp/vite-build-check.log\"}'"
+            "command": "./node_modules/.bin/eslint . --quiet > /tmp/eslint-check.log 2>&1 && ./node_modules/.bin/vite build > /tmp/vite-build-check.log 2>&1 && awk 'BEGIN{ok=1} /\\/index-[^\\/]+\\.js/ {if ($2+0 > 600) {print \"BUDGET: main bundle \" $2 \"kB > 600kB limit\"; ok=0}} /\\/ModulePlayer-[^\\/]+\\.js/ {if ($2+0 > 550) {print \"BUDGET: ModulePlayer \" $2 \"kB > 550kB limit\"; ok=0}} /\\/history-[^\\/]+\\.js/ {if ($2+0 > 450) {print \"BUDGET: history \" $2 \"kB > 450kB limit\"; ok=0}} END{exit !ok}' /tmp/vite-build-check.log > /tmp/budget-check.log 2>&1 && echo '{\"systemMessage\":\"Lint ✓  Build ✓  Budget ✓\"}' || echo '{\"systemMessage\":\"⚠ GATE FAILED — check /tmp/eslint-check.log, /tmp/vite-build-check.log, or /tmp/budget-check.log\"}'"
           }
         ]
       }
