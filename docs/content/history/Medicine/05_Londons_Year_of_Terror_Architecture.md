@@ -4,69 +4,98 @@
 
 - **Episode number:** 5
 - **Title:** London's Year of Terror
-- **Build status:** Built (shared) as `mod2` — also covers Episodes 3 (Vesalius) and 4 (Harvey). Separate module `history-medicine-great-plague` exists in modules.js with 0 screens — not yet built as standalone.
+- **Build status:** Built (shared) as `mod2` — also covers Episodes 3 (Vesalius) and 4 (Harvey)
 - Content, Storyline, Specification requirements and the full Content reference pack: see `05_Londons_Year_of_Terror_Content.md` in this directory.
+
+### Bundling note
+`mod2` currently covers Episodes 3, 4 and 5 in one module. The series map recommends splitting the 1665 Great Plague into its own clear module so students can compare it properly with the Black Death.
+
+---
+
+## Navigation spine (6 parts)
+
+Every Medicine module must be built as six clear navigation parts. These titles should appear in the module journey/progress navigation so the student always knows where they are in the story.
+
+1. **Plague Returns to the Capital** — intro hook, Black Death/Renaissance recall and roadmap.
+2. **London Under Infection** — 1665 context, symptoms, spread and Bills of Mortality.
+3. **Old Explanations, New City** — miasma, God, astrology and continuity from 1348.
+4. **Shut the Door and Mark the House** — quarantine, searchers, watchmen, pest houses and public orders.
+5. **More Organised, Still Not Modern** — change/continuity and government action.
+6. **Exam Prep: Compare Two Plagues** — examiner traps, similarity/difference judgement and exam practice.
 
 ---
 
 ## 2. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
-- **Purpose:** Recall Black Death responses (Episode 2); create curiosity about whether anything changed in 300 years; preview the episode.
+- **Purpose:** Recall Black Death and Renaissance knowledge; frame 1665 as a comparison case.
 - **Proposed content for Episode 5:**
-  - PriorKnowledgeRecall: probe plague-explanations (Ep 2), miasma, four-humours, quarantine, flagellation — all will reappear
-  - Hook: "It is 1665. A new plague strikes London. You've just learned about the Black Death of 1348. Have any of the treatments changed?"
+  - PriorKnowledgeRecall: Black Death causes/treatments/prevention; Renaissance challenge to Galen
+  - Hook: More than 300 years after the Black Death, plague returns — had medicine actually improved?
+  - Roadmap: students compare continuity and change between 1348 and 1665.
 - **Suggested components:**
-  - `CinematicRevealMoment` — London street 1665; plague doctor walking in beaked mask; caption: "Three hundred years had passed. Nothing had changed."
-  - `ChapterHookScreen` (True/False) — "People in 1665 blamed the Great Plague on bad air." [TRUE]
-  - `PriorKnowledgeRecall` — target: plague-explanations, miasma, quarantine from Episode 2
+  - `CinematicRevealMoment` — London street with shut-up houses and plague marks, restrained/no gore
+  - `PriorKnowledgeRecall`
+  - `WhatYouWillLearn`
 
 ### Section 2 — Learning Chunk 1
-- **Purpose:** The Great Plague — context, scale, and beliefs about causes.
+- **Purpose:** Establish the Great Plague context and scale.
 - **Proposed content for Episode 5:**
-  - Great Plague 1665; spread across England; London worst affected
-  - Beliefs: God's punishment, planetary alignment (October/November 1664), miasma from rubbish/sewage
-  - Same as 1348 — the core continuity argument begins here
+  - 1665 outbreak in London
+  - Symptoms and fear similar to earlier plague outbreaks
+  - Bills of Mortality recorded deaths and made the crisis visible
+  - Dense urban conditions helped disease spread
 - **Suggested components:**
-  - `VisualLearning` — cinematic London 1665 street scenes; contrast with 1348 imagery from Episode 2
-  - `QuickRecallScreen` — "What did people in 1665 believe caused the plague?" (retrieval mirrors Episode 2 content)
+  - `VisualNarrativeScreen`
+  - `InteractiveHotspotImage` — London street / Bills of Mortality clues
+  - `QuickRecallScreen`
 
 ### Section 3 — Learning Chunk 2
-- **Purpose:** Treatments and prevention in 1665 — continuity and limited change.
+- **Purpose:** Develop understanding of continuity in explanations.
 - **Proposed content for Episode 5:**
-  - Treatments: woolly clothes/fire to sweat out disease; transference (live chicken); herbal remedies; quack doctors
-  - Prevention: pomanders (sweet herbs); bonfires; prayer; fasting; garlic diet; plague doctors (beaked masks, wax coats)
-  - Government orders: quarantine, crowd bans, stray animals killed, searchers appointed, streets cleaned, red cross on doors
+  - Many people still blamed miasma, God or astrology
+  - Germ theory did not yet exist
+  - Some practical observations existed, but causes were still misunderstood
+  - Link back to Black Death and medieval explanations
 - **Suggested components:**
-  - `InteractiveCollectionExplorer` — plague response categories: Religious / Purifying the air / Government / Medical; explore each
-  - `MatchingTask` — match 1665 prevention measure to the belief it was based on (e.g. pomander → miasma)
+  - `TheoryCompare` — 1348 vs 1665 explanations
+  - `MatchingTask` — belief to prevention/treatment response
+  - `QuickRecallScreen`
 
 ### Section 4 — Learning Chunk 3
-- **Purpose:** Comparing 1348 and 1665 — the signature exam skill.
+- **Purpose:** Teach public responses and prevention.
 - **Proposed content for Episode 5:**
-  - Side-by-side: Black Death 1348 vs. Great Plague 1665
-  - Similarities: same beliefs (miasma, God, astrology), same responses (prayer, herbs, running away), same quarantine (poorly enforced → better enforced)
-  - Differences: 1665 government more systematic (searchers, animal killing, crowd bans); transference and quack doctors more prominent in 1665 sources
-  - The exam framing: "How similar?" → judgement: overwhelmingly similar because beliefs unchanged
+  - Shutting up infected houses
+  - Watchmen, searchers and examiners
+  - Killing cats/dogs, cleaning streets, lighting fires, carrying herbs
+  - Pest houses and quarantine-type measures
+  - Limits and cruelty of policies
 - **Suggested components:**
-  - `TheoryCompareBlock` — side-by-side comparison: 1348 beliefs and responses vs. 1665 beliefs and responses; staggered reveal
-  - `MisconceptionCheck` — "The Great Plague had very different responses from the Black Death" [FALSE]; "Plague doctors' masks were based on understanding of infection" [FALSE]
+  - `GuidedChoiceCarousel` — act as city official choosing plague responses
+  - `ColSortBlock` — practical / miasma-based / religious responses
+  - `QuickRecallScreen`
 
 ### Section 5 — Learning Chunk 4
-- **Purpose:** The significance of continuity — what this tells us about the limits of Renaissance medicine.
+- **Purpose:** Complete teaching — judge change and continuity.
 - **Proposed content for Episode 5:**
-  - Despite Vesalius (Ep 3) and Harvey (Ep 4), ordinary medicine in a crisis was unchanged
-  - The one real change: government organisation (🏛️ Government agent) — more systematic public health measures
-  - Forward link: this government action grows into Chadwick (1842) and the Public Health Acts (1848, 1875) in Episode 8
-  - Agents absent: 🔬 Science & technology had no impact on the Great Plague; 👤 Individuals produced no heroes
+  - Change: more organised local government response and recording of deaths
+  - Continuity: causes still misunderstood; miasma and religion remained influential
+  - Compared with Black Death: prevention more systematic, medicine still limited
+  - Agents: Government, religion, science & technology not yet transformative
 - **Suggested components:**
-  - `ExplainReveal` — chain: Renaissance discoveries (Vesalius/Harvey) → limited immediate impact on treatment → Great Plague 1665 = unchanged responses → only government organisation as meaningful development
-  - `QuickRecallScreen` — final retrieval: 1665 vs 1348 comparison facts
+  - `ColSortBlock` — changed since 1348 / stayed the same
+  - `ExplainReveal` — why better organisation did not mean medical understanding
+  - `QuickRecallScreen`
 
 ### Section 6 — Summary & Examiner
+- **Purpose:** Exam application, comparison skill and module completion.
+- **Proposed content for Episode 5:**
+  - Common traps: saying 1665 was medically modern; forgetting government role; confusing public health with cure
+  - Exam practice: similarity/difference between Black Death and Great Plague responses; explain government action
+  - Students should use comparative language: whereas, similarly, however, more organised, still limited
 - **Suggested components:**
-  - `ExaminerExplainsScreen` — examiner explains how to structure the "how similar were reactions" answer (similarity first, then difference, then overall judgement)
-  - `FaceTheExaminer` — source-comparison question: how similar were Black Death and Great Plague reactions?
+  - `ExaminerExplainsScreen`
+  - `FaceTheExaminer`
   - `ChapterCompleteScreen`
 
 ### Module Completion Test
@@ -85,24 +114,18 @@
 
 ## 3. Current state & gap analysis
 
-Not yet built as standalone — full rebuild from spec.
+Built inside shared `mod2`. Episode 5 needs a clean module boundary because comparison with the Black Death is a high-value exam skill.
 
-`history-medicine-great-plague` exists in `src/modules.js` with 0 screens. The module metadata is ready; the content needs building from scratch in `src/modules/history.js`.
-
-BUNDLING: Within `mod2`, Episode 5 content estimated at ~5 screens. No Great Plague–specific tags in `mod2`'s screenTags. Insufficient coverage.
+**Audit priority:** confirm public-health measures are explicit and not just atmospheric background detail.
 
 ---
 
 ## 4. Build recommendations
 
-1. **Storyline integration (🏛️ Government agent):** Core takeaway — 1665 responses mirrored 1348 but government was more organised — should thread via: Section 1 hook ("have any of the treatments changed?"), Section 4 comparison reveal (TheoryCompareBlock), Section 5 government-as-the-one-change conclusion. Every section returns to the continuity question.
+1. **Make comparison unavoidable:** Navigation and retrieval should repeatedly connect 1348 and 1665.
 
-2. **The comparison is the episode (🏛️ vs ⛪):** More than any other episode, Episode 5 is built around a comparison. Every screen should either establish 1665 facts OR explicitly connect them back to 1348 equivalents. Do not teach 1665 in isolation.
+2. **Separate public health from treatment:** Students need to understand that government action can improve prevention while medical causation remains wrong.
 
-3. **Plague doctor visual hook (⛪ Religion + miasma):** The beaked mask is the most iconic visual in this episode and one of the most memorable in the whole series. Use `CinematicRevealMoment` in Section 1 to land it with weight.
+3. **Use Bills of Mortality carefully:** They are useful as evidence of organisation and fear, not proof of germ theory.
 
-4. **Searchers screen (🏛️ Government):** The appointment of searchers — women specifically employed to inspect houses — is a commonly tested feature. Add a dedicated moment for this in Section 3.
-
-5. **Connect to Episode 8 (🏛️ Government):** Section 5 should explicitly name the chain: 1348 quarantine → 1665 quarantine+searchers → 1842 Chadwick report → 1875 Public Health Act. This is the government-agent interleaving thread running through the whole series.
-
-6. **Episode 6 handoff:** End of Episode 5: "In 1665, medicine still had nothing. But in 1796, something happened that would change that — not through understanding disease, but through a lucky observation about cows." Sets up Jenner (Episode 6).
+4. **Part 6 should train comparison answers:** This is the best exam payoff for the episode.
