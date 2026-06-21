@@ -5,17 +5,13 @@
 // Usage:
 //   import { ScreenTitle, ScreenBody, ScreenCaption } from '../core/ScreenText.jsx'
 
-const F = "'Sora', sans-serif"
+import { TYPE } from '../../constants/typography.js'
 
-// Primary heading. Tight line-height and narrow max-width for dramatic weight.
+// Primary heading. Tight max-width for dramatic weight.
 export function ScreenTitle({ children, style }) {
   return (
     <h2 style={{
-      fontFamily: F,
-      fontSize: 'clamp(22px, 6vw, 28px)',
-      fontWeight: 700,
-      lineHeight: 0.95,
-      letterSpacing: '-0.02em',
+      ...TYPE.sectionHeading,
       color: 'rgba(255,255,255,0.96)',
       maxWidth: '12ch',
       margin: '0 0 10px',
@@ -30,11 +26,7 @@ export function ScreenTitle({ children, style }) {
 export function ScreenSubtitle({ children, style }) {
   return (
     <h3 style={{
-      fontFamily: F,
-      fontSize: 19,
-      fontWeight: 600,
-      lineHeight: 1.15,
-      letterSpacing: '-0.01em',
+      ...TYPE.cardTitle,
       color: 'rgba(255,255,255,0.80)',
       maxWidth: '20ch',
       margin: '0 0 10px',
@@ -49,10 +41,7 @@ export function ScreenSubtitle({ children, style }) {
 export function ScreenBody({ children, style }) {
   return (
     <p style={{
-      fontFamily: F,
-      fontSize: 17,
-      fontWeight: 400,
-      lineHeight: 1.55,
+      ...TYPE.bodyText,
       color: 'rgba(255,255,255,0.78)',
       maxWidth: '34ch',
       margin: '0 0 14px',
@@ -67,10 +56,7 @@ export function ScreenBody({ children, style }) {
 export function ScreenCaption({ children, style }) {
   return (
     <p style={{
-      fontFamily: F,
-      fontSize: 13,
-      fontWeight: 400,
-      lineHeight: 1.45,
+      ...TYPE.captionText,
       color: 'rgba(255,255,255,0.42)',
       maxWidth: '40ch',
       margin: '0 0 10px',
@@ -86,10 +72,8 @@ export function ScreenCaption({ children, style }) {
 export function ScreenCallout({ children, accent, style }) {
   return (
     <div style={{
-      fontFamily: F,
-      fontSize: 16,
+      ...TYPE.bodyText,
       fontWeight: 500,
-      lineHeight: 1.5,
       color: 'rgba(255,255,255,0.88)',
       maxWidth: '34ch',
       borderLeft: `3px solid ${accent ?? 'rgba(255,255,255,0.22)'}`,
@@ -117,9 +101,7 @@ export function ScreenList({ items = [], style, itemStyle }) {
     }}>
       {items.map((item, i) => (
         <li key={i} style={{
-          fontFamily: F,
-          fontSize: 16,
-          lineHeight: 1.55,
+          ...TYPE.bodyText,
           color: 'rgba(255,255,255,0.78)',
           paddingLeft: 18,
           position: 'relative',
