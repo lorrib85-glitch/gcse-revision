@@ -219,3 +219,5 @@ ${conceptList}`
     })
   }
 }
+
+// Deployment trigger: ensure Vercel rebuilds the recall fallback from latest main.
