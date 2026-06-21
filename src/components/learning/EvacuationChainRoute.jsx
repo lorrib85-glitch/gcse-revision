@@ -12,6 +12,10 @@ const TEXT_PRIMARY = 'rgba(255,244,222,0.96)'
 const TEXT_DIM = 'rgba(240,220,185,0.62)'
 const PANEL_BG = 'rgba(27,16,7,0.92)'
 const PANEL_BORDER = 'rgba(175,128,58,0.42)'
+const ANSWER_BG = 'rgba(27,16,7,0.42)'
+const ANSWER_BG_SELECTED = 'rgba(175,128,58,0.12)'
+const ANSWER_BORDER = 'rgba(175,128,58,0.22)'
+const ANSWER_BORDER_SELECTED = 'rgba(175,128,58,0.65)'
 
 const RIVET = {
   position: 'absolute',
