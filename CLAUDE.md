@@ -67,3 +67,49 @@ Foundation components used by many others.
 - `LearningHeader.jsx` — Floating capsule header shell. Composes BackButton + ExitButton + LearningProgressHeader.
 - `LearningProgressHeader.jsx` — LOCKED. Progress rail + jump sheet (progression display only).
 - `ModuleToolbar.jsx` — LOCKED. Back + exit navigation buttons only, delegating to BackButton + ExitButton.
+
+## Design System Documentation
+
+**Before making any UI change, consult these docs in order:**
+
+| Priority | Doc | What it covers |
+|----------|-----|----------------|
+| 1 | `docs/system/PRODUCT_UI_CONSTITUTION.md` | Product identity, global colours, layout law, what Claude must never improvise |
+| 1 | `docs/system/GENERAL_APP_UI_CONSTITUTION.md` | Non-subject pages (Home, Subjects browser, Progress, Exam landing, onboarding, bottom nav) — design philosophy, copy style, personalisation, things to avoid |
+| 2 | `docs/system/COMPONENT_AUTHORING_RULES.md` | Required imports, forbidden patterns, locked component rules |
+| 3 | `docs/system/SPACING_SYSTEM.md` | All spacing tokens |
+| 3 | `docs/system/SUBJECT_THEME_SYSTEM.md` | All subject colour palettes |
+| 3 | `docs/system/BUTTON_RADII_SYSTEM.md` | Button dimensions and corner radii |
+| 3 | `docs/system/MOTION_SYSTEM.md` | Durations, easings, scale values |
+| 3 | `docs/system/TYPOGRAPHY_SYSTEM.md` | Font families, sizes, weights — TYPE tokens |
+| 3 | `docs/system/SCREEN_SHELL_SYSTEM.md` | ScreenShell layout API (reference only — not currently used) |
+| 4 | `docs/components/COMPONENT_REGISTRY.md` | All components — check before building anything new |
+| 5 | `docs/components/LOCKED_COMPONENTS.md` | Locked components — must not change internals |
+
+See `docs/system/00_SYSTEM_INDEX.md` for the full order of authority.
+
+## Creative Philosophy
+
+Read whenever making creative, educational, storytelling or interaction decisions where multiple technically correct solutions exist:
+
+docs/system/LEARNING_EXPERIENCE_PRINCIPLES.md
+
+## Content Voice
+
+Read before authoring or editing any learner-facing content (module copy, screen text, narration, feedback):
+
+docs/system/TEACHING_VOICE_GUIDE.md
+
+## Subject Module Architecture
+
+History and Science module rules are locked, but loaded on demand to reduce context cost.
+
+When working on any History module, History learning component, History content, History exam practice, or Medicine Through Time feature, read:
+
+docs/system/HISTORY_MODULE_ARCHITECTURE.md
+
+When working on any Biology, Chemistry, Physics, Combined Science module, Science learning component, Science content, required practical, or Science exam practice, read:
+
+docs/system/SCIENCE_MODULE_BLUEPRINT.md
+
+Do not build or edit subject module content without loading the relevant architecture file first.
