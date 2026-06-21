@@ -2,6 +2,7 @@ import LearningProgressHeader from './LearningProgressHeader.jsx'
 import BackButton from './BackButton.jsx'
 import ExitButton from './ExitButton.jsx'
 import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
+import { TYPE } from '../../constants/typography.js'
 
 // ── LearningHeader — single-row module header ─────────────────────────────────
 // Single row: [back] [stage rail] [n/total] [exit]
@@ -72,8 +73,9 @@ export default function LearningHeader({
             background: 'none', border: 'none',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: 'pointer', flexShrink: 0,
-            fontFamily: "'Sora', sans-serif",
-            fontSize: 11, fontWeight: 600,
+            ...TYPE.metadataText,
+            fontSize: 11,
+            fontWeight: 600,
             color: `rgba(${accentRgb},0.52)`,
             letterSpacing: '0.04em',
           }}
