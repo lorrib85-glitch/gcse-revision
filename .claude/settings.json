@@ -37,17 +37,6 @@
           }
         ]
       }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Edit|Write|Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"PIPELINE CHECK: Have you named the pipeline (Minor Edit / Standard Change / Big Build) in this turn? If not, stop and name it now before this tool runs. Standard Change and Big Build require explicit sign-off on each step — see docs/system/DEVELOPMENT_WORKFLOW.md. This is a structural enforcement gate, not a suggestion.\"}}'"
-          }
-        ]
-      }
     ]
   }
 }
