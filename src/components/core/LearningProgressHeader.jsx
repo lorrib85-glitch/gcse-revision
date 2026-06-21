@@ -1,24 +1,55 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-const STAGES = ['Intro', 'Hippocrates', 'Galen', 'Medieval treatments', 'Rational vs supernatural', 'Exam prep']
+// ── LearningProgressHeader v4 ─────────────────────────────────────────────────
+// Stage rail — six dots representing the module's 6 navigation stages.
+// Active dot: filled inner + outer ring + pulse glow. Completed: filled accent.
+// Future: small hollow dot. Labels hidden by default; tap a dot to see name + description.
+// Each dot is its own button. Tapping calls onStageJump(screenIndex) for that stage.
+// Header appears on all learning pages.
+// Hidden only for full-screen cinematic/video moments where overlay UI would reduce immersion.
 
-const STAGE_DESCRIPTIONS = {
-  'Intro':                    'Setting the scene and activating prior knowledge',
-  'Hippocrates':              'The origins of ancient medical theory',
-  'Galen':                    'How Galen shaped medicine for 1,400 years',
-  'Medieval treatments':      'How illness was explained and treated',
-  'Rational vs supernatural': 'Sorting natural from religious explanations',
-  'Exam prep':                'Applying knowledge under exam conditions',
-}
+const INTERNAL_FALLBACK = [
+  { id: 'f1', title: 'Intro',     description: '' },
+  { id: 'f2', title: 'Learn 1',   description: '' },
+  { id: 'f3', title: 'Learn 2',   description: '' },
+  { id: 'f4', title: 'Learn 3',   description: '' },
+  { id: 'f5', title: 'Review',    description: '' },
+  { id: 'f6', title: 'Exam prep', description: 'Exam practice and final application.' },
+]
 
-// ── LearningProgressHeader v3 ─────────────────────────────────────────────────
-// Stage rail — fills all available width between nav buttons.
-// Current stage: solid dot + outer ring with gap + pulse glow; no label until tapped.
-// Completed: filled accent dot. Future: small hollow dot.
-// Tap to show stage name + description tooltip.
-export default function LearningProgressHeader({ currentStage, accent, accentRgb }) {
-  const [tooltipVisible, setTooltipVisible] = useState(false)
-  const currentIdx = Math.max(0, STAGES.indexOf(currentStage))
+export default function LearningProgressHeader({
+  currentStage,
+  stageNavigation = [],
+  currentScreen = 0,
+  onStageJump = null,
+  accent,
+  accentRgb,
+}) {
+  const [openTooltip, setOpenTooltip] = useState(null)
+
+  // Close tooltip when screen changes (navigation occurred)
+  useEffect(() => { setOpenTooltip(null) }, [currentScreen])
+
+  const stages = stageNavigation.length === 6 ? stageNavigation : INTERNAL_FALLBACK
+
+  // Active = last stage whose screenIndex is a number and ≤ currentScreen
+  const activeIdx = (() => {
+    let ai = 0
+    for (let i = 0; i < stages.length; i++) {
+      const si = stages[i].screenIndex
+      if (typeof si === 'number' && si <= currentScreen) ai = i
+    }
+    return ai
+  })()
+
+  function handleDotClick(stage, idx) {
+    const isActive = idx === activeIdx
+    // Toggle tooltip; jump if not the current stage
+    setOpenTooltip(prev => prev === idx ? null : idx)
+    if (!isActive && onStageJump && typeof stage.screenIndex === 'number') {
+      onStageJump(stage.screenIndex)
+    }
+  }
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
@@ -29,27 +60,21 @@ export default function LearningProgressHeader({ currentStage, accent, accentRgb
         }
       `}</style>
 
-      <button
-        aria-label={`Learning stage: ${currentStage}`}
-        onClick={() => setTooltipVisible(v => !v)}
-        style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          padding: '10px 4px',
-        }}
-      >
-        {STAGES.map((stage, i) => {
-          const done    = i < currentIdx
-          const current = i === currentIdx
-          const isLast  = i === STAGES.length - 1
+      {/* ── Dot rail ── */}
+      <div style={{
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '10px 4px',
+      }}>
+        {stages.map((stage, i) => {
+          const done    = i < activeIdx
+          const current = i === activeIdx
+          const isLast  = i === stages.length - 1
 
           return (
             <div
-              key={stage}
+              key={stage.id || i}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -57,53 +82,66 @@ export default function LearningProgressHeader({ currentStage, accent, accentRgb
                 minWidth: 0,
               }}
             >
-              {/* ── Stage node ── */}
-              {current ? (
-                /* Active: inner dot + outer ring with gap, pulse glow */
-                <div style={{
-                  position: 'relative',
-                  width: 20, height: 20,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+              {/* ── Stage dot button ── */}
+              <button
+                aria-label={`Jump to ${stage.title}`}
+                onClick={() => handleDotClick(stage, i)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: current ? 20 : 12,
+                  height: current ? 20 : 12,
                   flexShrink: 0,
-                }}>
-                  {/* Outer ring */}
+                  WebkitTapHighlightColor: 'transparent',
+                }}
+              >
+                {current ? (
                   <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: '50%',
-                    border: `1.5px solid rgba(${accentRgb},0.65)`,
-                  }} />
-                  {/* Inner dot with pulse glow */}
+                    position: 'relative',
+                    width: 20, height: 20,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {/* Outer ring */}
+                    <div style={{
+                      position: 'absolute', inset: 0,
+                      borderRadius: '50%',
+                      border: `1.5px solid rgba(${accentRgb},0.65)`,
+                    }} />
+                    {/* Inner dot with pulse */}
+                    <div style={{
+                      width: 8, height: 8,
+                      borderRadius: '50%',
+                      background: accent,
+                      animation: 'stage-glow 2.8s ease-in-out infinite',
+                    }} />
+                  </div>
+                ) : done ? (
                   <div style={{
                     width: 8, height: 8,
                     borderRadius: '50%',
-                    background: accent,
-                    animation: 'stage-glow 2.8s ease-in-out infinite',
+                    background: `rgba(${accentRgb},0.45)`,
                   }} />
-                </div>
-              ) : done ? (
-                <div style={{
-                  width: 8, height: 8,
-                  borderRadius: '50%',
-                  background: `rgba(${accentRgb},0.45)`,
-                  flexShrink: 0,
-                }} />
-              ) : (
-                <div style={{
-                  width: 6, height: 6,
-                  borderRadius: '50%',
-                  border: '1.5px solid rgba(255,255,255,0.13)',
-                  background: 'transparent',
-                  flexShrink: 0,
-                }} />
-              )}
+                ) : (
+                  <div style={{
+                    width: 6, height: 6,
+                    borderRadius: '50%',
+                    border: '1.5px solid rgba(255,255,255,0.13)',
+                    background: 'transparent',
+                  }} />
+                )}
+              </button>
 
               {/* ── Connector — stretches to fill remaining space ── */}
               {!isLast && (
                 <div style={{
                   flex: 1,
                   height: 1,
-                  background: done
+                  background: (done || current)
                     ? `rgba(${accentRgb},0.25)`
                     : 'rgba(255,255,255,0.08)',
                   margin: '0 5px',
@@ -113,12 +151,12 @@ export default function LearningProgressHeader({ currentStage, accent, accentRgb
             </div>
           )
         })}
-      </button>
+      </div>
 
-      {/* ── Stage tooltip — shown on tap ── */}
-      {tooltipVisible && (
+      {/* ── Per-dot tooltip — shown on tap ── */}
+      {openTooltip !== null && stages[openTooltip] && (
         <div
-          onClick={() => setTooltipVisible(false)}
+          onClick={() => setOpenTooltip(null)}
           style={{
             position: 'absolute',
             top: 'calc(100% + 4px)',
@@ -129,7 +167,8 @@ export default function LearningProgressHeader({ currentStage, accent, accentRgb
             borderRadius: 10,
             padding: '7px 14px',
             zIndex: 10,
-            whiteSpace: 'nowrap',
+            maxWidth: 180,
+            whiteSpace: 'normal',
             pointerEvents: 'auto',
             cursor: 'pointer',
           }}
@@ -139,12 +178,14 @@ export default function LearningProgressHeader({ currentStage, accent, accentRgb
             fontSize: 11, fontWeight: 700,
             color: accent,
             marginBottom: 2,
-          }}>{currentStage}</div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontSize: 10,
-            color: 'rgba(255,255,255,0.48)',
-          }}>{STAGE_DESCRIPTIONS[currentStage] || ''}</div>
+          }}>{stages[openTooltip].title}</div>
+          {stages[openTooltip].description ? (
+            <div style={{
+              fontFamily: "'Sora', sans-serif",
+              fontSize: 10,
+              color: 'rgba(255,255,255,0.48)',
+            }}>{stages[openTooltip].description}</div>
+          ) : null}
         </div>
       )}
     </div>

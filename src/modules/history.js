@@ -41,6 +41,15 @@ export const HISTORY_MODULES = [
       ],
     },
 
+    stageNavigation: [
+      { id: 'part-1', title: 'Strange Ideas, Serious Medicine', description: 'Intro hook, prior recall and roadmap.', screenIndex: 0 },
+      { id: 'part-2', title: 'What Made People Sick?', description: 'Religious, astrological, miasma and humoural explanations.', screenIndex: 1 },
+      { id: 'part-3', title: 'Why Galen Ruled the Room', description: 'Hippocrates, Galen, Church authority and book learning.', screenIndex: 7 },
+      { id: 'part-4', title: 'The Medieval Treatment Toolkit', description: 'Physicians, barber surgeons, apothecaries, hospitals and prevention.', screenIndex: 10 },
+      { id: 'part-5', title: 'Why the System Survived', description: 'Continuity, agents of change/continuity and the coherent-but-wrong system.', screenIndex: 23 },
+      { id: 'part-6', title: 'Exam Prep: Explain the Grip of Galen', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 26 },
+    ],
+
     screens: [
 
       {
@@ -1382,6 +1391,15 @@ Strong Level 4 conclusion: the Church was the dominant reason physician-led medi
       ],
     },
 
+    stageNavigation: [
+      { id: 'part-1', title: 'The Ship That Changed England', description: 'Intro hook, prior recall and roadmap.', screenIndex: 0 },
+      { id: 'part-2', title: 'What Was the Black Death?', description: 'Arrival, spread and symptoms of the plague.', screenIndex: 1 },
+      { id: 'part-3', title: 'How Medieval Minds Explained It', description: 'God, miasma, astrology and humoural beliefs.', screenIndex: 8 },
+      { id: 'part-4', title: 'Treatments in a World Without Germs', description: 'Plague responses, treatments and prevention attempts.', screenIndex: 13 },
+      { id: 'part-5', title: 'Changed by Disaster?', description: 'Social, economic and medical aftermath of the plague.', screenIndex: 17 },
+      { id: 'part-6', title: 'Exam Prep: Crisis, Continuity and Change', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 22 },
+    ],
+
     screens: [
 
       // ── Section 1: Intro / Recall / Roadmap ─────────────────────────────────
@@ -2446,6 +2464,16 @@ Exemplar 4/4 answer: "Trading ships arriving from Europe brought infected rats i
       ],
     },
 
+    // TODO: split mod2 into separate Episode 3, 4 and 5 modules, each with its own stageNavigation.
+    stageNavigation: [
+      { id: 'part-1', title: 'Old Certainties Start to Crack', description: 'Intro hook, prior recall and roadmap.', screenIndex: 0 },
+      { id: 'part-2', title: 'The Renaissance Mindset Shift', description: 'How medieval ideas began to loosen.', screenIndex: 1 },
+      { id: 'part-3', title: 'Vesalius Opens the Body', description: 'Vesalius, dissection and challenging Galen.', screenIndex: 4 },
+      { id: 'part-4', title: 'Printing Changes the Argument', description: 'Harvey, Paré and spreading new ideas.', screenIndex: 7 },
+      { id: 'part-5', title: 'Doubt Without Revolution', description: 'Royal Society, Great Plague and continuity of old ideas.', screenIndex: 10 },
+      { id: 'part-6', title: 'Exam Prep: Why Did Ideas Begin to Change?', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 14 },
+    ],
+
     screens: [
       {
         type: 'priorKnowledgeRecall',
@@ -3113,6 +3141,15 @@ Do NOT award marks for naming discoveries without explaining their significance.
         ], correct: 1 },
       ],
     },
+    // TODO: mod3 lacks blood loss and dedicated exam prep screens; indices 9–10 are approximate.
+    stageNavigation: [
+      { id: 'part-1', title: 'The Three Enemies of Surgery', description: 'Pain, infection and blood loss before the 1840s.', screenIndex: 0 },
+      { id: 'part-2', title: 'Pain: The Patient\'s Nightmare', description: 'Anaesthetics from Davy to Simpson.', screenIndex: 1 },
+      { id: 'part-3', title: 'Infection: The Invisible Killer', description: 'Lister, antiseptics and aseptic surgery.', screenIndex: 8 },
+      { id: 'part-4', title: 'Blood Loss and Better Technique', description: 'Aseptic surgery and improving surgical outcomes.', screenIndex: 9 },
+      { id: 'part-5', title: 'From Last Resort to Real Treatment', description: 'How surgery became safer and more routine.', screenIndex: 9 },
+      { id: 'part-6', title: 'Exam Prep: Why Surgery Improved', description: 'Exam practice and final application.', screenIndex: 10 },
+    ],
     screens: [
       {
         label: 'The Problem',
@@ -3280,6 +3317,15 @@ Do NOT award marks for naming discoveries without explaining their significance.
         'By 1853, vaccination was made compulsory in England — decades before anyone understood why it worked.',
       ],
     },
+    // TODO: module only has 1 screen — expand content before activating full stageNavigation.
+    stageNavigation: [
+      { id: 'part-1', title: 'Smallpox: The Killer Everyone Feared', description: 'Context: the disease and early variolation.', screenIndex: 0 },
+      { id: 'part-2', title: 'Before Jenner: Risky Protection', description: 'Variolation as imperfect prevention.', screenIndex: 0 },
+      { id: 'part-3', title: 'The Cowpox Clue', description: 'Jenner\'s farmyard observation.', screenIndex: 0 },
+      { id: 'part-4', title: 'From Experiment to Vaccination', description: 'The James Phipps trial and proof of concept.', screenIndex: 0 },
+      { id: 'part-5', title: 'A Prevention Breakthrough', description: 'Spread and compulsory vaccination by 1853.', screenIndex: 0 },
+      { id: 'part-6', title: 'Exam Prep: Why Vaccination Mattered', description: 'Exam practice and final application.', screenIndex: 0 },
+    ],
     screens: [
       {
         tag: 'vaccination',
@@ -3354,6 +3400,15 @@ Do NOT award marks for naming discoveries without explaining their significance.
         ], correct: 1 },
       ],
     },
+    // TODO: module uses old-format screens without stages; screen indices are proportional estimates.
+    stageNavigation: [
+      { id: 'part-1', title: 'Something Smaller Than Sight', description: 'Context before germ theory: miasma and spontaneous generation.', screenIndex: 0 },
+      { id: 'part-2', title: 'Before Germ Theory: Bad Air Still Rules', description: 'Why the old ideas persisted.', screenIndex: 0 },
+      { id: 'part-3', title: 'Pasteur Finds the Enemy', description: 'Pasteur\'s wine experiments and the germ theory proof.', screenIndex: 1 },
+      { id: 'part-4', title: 'Koch Hunts Specific Killers', description: 'Koch identifies anthrax, TB and cholera bacteria.', screenIndex: 2 },
+      { id: 'part-5', title: 'Changing Medicine\'s Direction', description: 'Impact of germ theory on vaccines and treatments.', screenIndex: 6 },
+      { id: 'part-6', title: 'Exam Prep: From Miasma to Microbes', description: 'Exam practice and final application.', screenIndex: 8 },
+    ],
     screens: [
       {
         tag: 'germ-theory',
@@ -3618,6 +3673,14 @@ Do NOT award marks for naming discoveries without explaining their significance.
         ], correct: 1 },
       ],
     },
+    stageNavigation: [
+      { id: 'part-1', title: 'A City That Could Not Breathe', description: 'Industrial towns, overcrowding and the public health crisis.', screenIndex: 0 },
+      { id: 'part-2', title: 'Cholera, Crowding and Filth', description: 'Cholera outbreaks and why cities were death traps.', screenIndex: 1 },
+      { id: 'part-3', title: 'Miasma Meets Evidence', description: 'Chadwick\'s report and John Snow\'s map.', screenIndex: 2 },
+      { id: 'part-4', title: 'The Government Finally Moves', description: 'From laissez-faire to the 1875 Public Health Act.', screenIndex: 4 },
+      { id: 'part-5', title: 'Prevention Becomes Public', description: 'The Great Stink, Bazalgette\'s sewers and lasting change.', screenIndex: 5 },
+      { id: 'part-6', title: 'Exam Prep: Why Public Health Changed', description: 'Exam practice and final application.', screenIndex: 6 },
+    ],
     screens: [
       {
         label: 'Cities Explode',
@@ -3827,6 +3890,14 @@ Do NOT award marks for naming discoveries without explaining their significance.
         ], correct: 1 },
       ],
     },
+    stageNavigation: [
+      { id: 'part-1', title: 'The Three Enemies of Surgery', description: 'Pain, infection and blood loss before the 1840s.', screenIndex: 0 },
+      { id: 'part-2', title: 'Pain: The Patient\'s Nightmare', description: 'Anaesthetics from Davy to Simpson.', screenIndex: 1 },
+      { id: 'part-3', title: 'Infection: The Invisible Killer', description: 'Lister, carbolic acid and antiseptic surgery.', screenIndex: 2 },
+      { id: 'part-4', title: 'Blood Loss and Better Technique', description: 'X-rays, blood transfusions and aseptic surgery.', screenIndex: 5 },
+      { id: 'part-5', title: 'From Last Resort to Real Treatment', description: 'Source skills and the surgical transformation.', screenIndex: 6 },
+      { id: 'part-6', title: 'Exam Prep: Why Surgery Improved', description: 'Exam practice and final application.', screenIndex: 7 },
+    ],
     screens: [
 
       // Screen 1 — Speed Surgery
@@ -4452,6 +4523,14 @@ Do NOT award marks for naming discoveries without explaining their significance.
         ], correct: 1 },
       ],
     },
+    stageNavigation: [
+      { id: 'part-1', title: 'The Mould That Shouldn\'t Matter', description: 'The infection problem and early magic bullet attempts.', screenIndex: 0 },
+      { id: 'part-2', title: 'Before Antibiotics: Infection Wins', description: 'Ehrlich\'s magic bullets and the search for a cure.', screenIndex: 1 },
+      { id: 'part-3', title: 'Fleming Notices the Accident', description: 'The mould, the petri dish and the accidental discovery.', screenIndex: 2 },
+      { id: 'part-4', title: 'Florey, Chain and Mass Production', description: 'Oxford team, WWII catalyst and industrial production.', screenIndex: 4 },
+      { id: 'part-5', title: 'A New Age of Treatment', description: 'The antibiotic revolution and the NHS.', screenIndex: 6 },
+      { id: 'part-6', title: 'Exam Prep: Accident or Team Effort?', description: 'Exam practice and final application.', screenIndex: 8 },
+    ],
     screens: [
 
       // Screen 1 — Why Infection Was Still Terrifying
@@ -5054,6 +5133,15 @@ Do NOT award marks for naming discoveries without explaining their significance.
         ], correct: 1 },
       ],
     },
+    // TODO: mod8 focuses on technology rather than NHS access; Part 4 index is approximate.
+    stageNavigation: [
+      { id: 'part-1', title: 'Medicine Starts Looking Inside', description: 'Medical scanning and new diagnostic tools.', screenIndex: 0 },
+      { id: 'part-2', title: 'Diagnosis Gets Powerful', description: 'Transplants and high-tech treatment breakthroughs.', screenIndex: 1 },
+      { id: 'part-3', title: 'Treatment Becomes High-Tech', description: 'Precision surgery, DNA and genetic medicine.', screenIndex: 2 },
+      { id: 'part-4', title: 'The NHS Changes Access', description: 'Medical ethics and society\'s new challenges.', screenIndex: 3 },
+      { id: 'part-5', title: 'Progress With New Problems', description: 'Ethics, limits and unintended consequences of modern medicine.', screenIndex: 4 },
+      { id: 'part-6', title: 'Exam Prep: Modern Medicine\'s Big Leap', description: 'Exam practice and final application.', screenIndex: 6 },
+    ],
     screens: [
 
       // Screen 1 — Seeing Inside the Body
@@ -5628,6 +5716,15 @@ Do NOT award marks for naming discoveries without explaining their significance.
         ], correct: 0 },
       ],
     },
+    // TODO: mod9 covers NHS and lifestyle diseases broadly; cancer-specific titles are approximate.
+    stageNavigation: [
+      { id: 'part-1', title: 'The Disease Modern Medicine Still Fights', description: 'NHS origins and the health gap before 1948.', screenIndex: 0 },
+      { id: 'part-2', title: 'What Makes Lung Cancer Different?', description: 'Vaccination, prevention and lifestyle links to disease.', screenIndex: 3 },
+      { id: 'part-3', title: 'Finding Cancer Earlier', description: 'Screening, smoking and the evidence base.', screenIndex: 4 },
+      { id: 'part-4', title: 'Treating the Hard Cases', description: 'Lifestyle diseases and modern treatment limits.', screenIndex: 5 },
+      { id: 'part-5', title: 'Prevention, Choice and Society', description: 'Government intervention and individual responsibility.', screenIndex: 6 },
+      { id: 'part-6', title: 'Exam Prep: Lifestyle Disease and Modern Limits', description: 'Exam practice and final application.', screenIndex: 8 },
+    ],
     screens: [
 
       // Screen 1 — Before the NHS
@@ -6216,6 +6313,15 @@ Do NOT award marks for naming discoveries without explaining their significance.
         { text: 'How to answer Western Front source questions in the exam', icon: 'exam' },
       ],
     },
+
+    stageNavigation: [
+      { id: 'part-1', title: 'Medicine Under Fire', description: 'Intro recall and roadmap.', screenIndex: 0 },
+      { id: 'part-2', title: 'Why the Western Front Was So Deadly', description: 'Trench conditions and medical challenges.', screenIndex: 1 },
+      { id: 'part-3', title: 'From Trench to Treatment', description: 'The evacuation chain from frontline to base hospital.', screenIndex: 4 },
+      { id: 'part-4', title: 'New Problems, New Methods', description: 'Medical breakthroughs driven by wartime need.', screenIndex: 6 },
+      { id: 'part-5', title: 'War Speeds Up Medicine', description: 'Source skills and the long-term impact of war on medicine.', screenIndex: 10 },
+      { id: 'part-6', title: 'Exam Prep: Historic Environment Mastery', description: 'Examiner technique for Q1, Q2(a) and Q2(b).', screenIndex: 13 },
+    ],
 
     screens: [
 

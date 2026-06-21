@@ -50,6 +50,40 @@ import FactorWeb from '../learning/FactorWeb.jsx'
 import ContentShell from './ContentShell.jsx'
 import { ScreenTitle, ScreenBody } from '../core/ScreenText.jsx'
 
+// ── Stage navigation helpers ──────────────────────────────────────────────────
+
+// Header appears on all learning pages.
+// It is hidden only for full-screen cinematic/video moments where overlay UI would reduce immersion.
+function isFullScreenVideoScreen(screen) {
+  return screen?.type === 'cinematic' || screen?.type === 'cinematicReveal' || screen?.type === 'video'
+}
+
+function getStageNavigation(module, total) {
+  const fromModule = Array.isArray(module.stageNavigation) ? module.stageNavigation : []
+  if (fromModule.length === 6) {
+    return fromModule.map((stage, index) => ({
+      id: stage.id || `part-${index + 1}`,
+      title: stage.title || `Part ${index + 1}`,
+      description: stage.description || '',
+      screenIndex: Math.max(0, Math.min(total - 1, Number(stage.screenIndex) || 0)),
+    }))
+  }
+  const fallbackTitles = ['Intro', 'Learn 1', 'Learn 2', 'Learn 3', 'Review', 'Exam prep']
+  return fallbackTitles.map((title, index) => ({
+    id: `fallback-${index + 1}`,
+    title,
+    description: index === 5 ? 'Exam practice and final application.' : '',
+    screenIndex: Math.min(total - 1, Math.floor((index / 6) * total)),
+  }))
+}
+
+function getCurrentStageFromNavigation(stageNavigation, screen) {
+  const active = [...stageNavigation]
+    .filter(stage => stage.screenIndex <= screen)
+    .sort((a, b) => b.screenIndex - a.screenIndex)[0]
+  return active?.title || stageNavigation[0]?.title || 'Intro'
+}
+
 // iOS Safari ignores window.scrollTo on fixed-position shells.
 // scrollToTop() tries window first, then falls back to the document element.
 function scrollToTop() {
@@ -1602,16 +1636,10 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const subjectColor = module.color || '#9D5CFF'
 
   // ── Stage-based learning header ───────────────────────────────────────────
-  const STAGE_NAMES = ['Intro', 'Hippocrates', 'Galen', 'Medieval treatments', 'Rational vs supernatural', 'Exam prep']
+  const stageNavigation = getStageNavigation(module, total)
   const currentStage = (() => {
-    if (navTo === 'recall' || (!recallDone && module.recall)) return 'Discover'
-    if (cur?.stage) return cur.stage
-    // Proportional fallback for legacy modules without explicit stage properties
-    const idx = Math.min(
-      Math.floor((screen / Math.max(total - 1, 1)) * STAGE_NAMES.length),
-      STAGE_NAMES.length - 1
-    )
-    return STAGE_NAMES[idx]
+    if (navTo === 'recall' || (!recallDone && module.recall)) return stageNavigation[0]?.title || 'Intro'
+    return getCurrentStageFromNavigation(stageNavigation, screen)
   })()
 
   const headerVisible =
@@ -1619,7 +1647,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     !recoveryQuizId &&
     !showExaminer &&
     hookDone && wylDone &&
-    ((cur?.type === 'cinematic' || cur?.type === 'conceptReveal' || cur?.type === 'visualNarrative') ? cinematicHeaderVisible : true)
+    (isFullScreenVideoScreen(cur) ? cinematicHeaderVisible : true)
 
   function headerOnBack() {
     if (screen > 0) { go(-1); return }
@@ -1636,10 +1664,13 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const H = {
     module,
     currentStage,
-    onBack:       headerOnBack,
-    onExit:       onBack,
-    onJumpOpen:   () => setJumpOpen(true),
-    screenPos:    null,
+    stageNavigation,
+    currentScreen:  screen,
+    onStageJump:    goTo,
+    onBack:         headerOnBack,
+    onExit:         onBack,
+    onJumpOpen:     () => setJumpOpen(true),
+    screenPos:      null,
   }
   const jumpSheetPortal = jumpOpen ? createPortal(
     <JumpSheet
@@ -2081,7 +2112,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'visualNarrative') {
     return (
       <>
-        <LearningHeader {...H} visible={cinematicHeaderVisible} />
+        <LearningHeader {...H} visible={true} />
         <VisualNarrativeScreen
           subject={module.subject}
           beats={cur.beats || []}
@@ -2199,7 +2230,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (cur?.type === 'conceptReveal') {
     return (
       <>
-        <LearningHeader {...H} visible={cinematicHeaderVisible} />
+        <LearningHeader {...H} visible={true} />
         <ConceptReveal
           subject={module.subject}
           steps={cur.steps || []}

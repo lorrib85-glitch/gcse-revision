@@ -5,12 +5,16 @@ import { SUBJECT_ACCENTS, hexToRgb } from '../../constants/subjects.js'
 
 // ── LearningHeader — single-row module header ─────────────────────────────────
 // Single row: [back] [stage rail] [n/total] [exit]
-// Stage rail shows 6 fixed stages; tap rail for stage tooltip.
-// Tap n/total counter to open jump sheet (onJumpOpen callback).
-// Props: module, currentStage (string), onBack, onExit, visible, onJumpOpen, screenPos
+// Stage rail shows the module's 6 navigation stages; each dot jumps to the start of that stage.
+// Labels are hidden unless tapped. Tap n/total counter to open jump sheet (onJumpOpen callback).
+// Props: module, currentStage, stageNavigation, currentScreen, onStageJump,
+//        onBack, onExit, visible, onJumpOpen, screenPos
 export default function LearningHeader({
   module,
   currentStage = 'Discover',
+  stageNavigation = null,
+  currentScreen = 0,
+  onStageJump = null,
   onBack,
   onExit,
   visible = true,
@@ -50,6 +54,9 @@ export default function LearningHeader({
       <div style={{ flex: 1, minWidth: 0 }}>
         <LearningProgressHeader
           currentStage={currentStage}
+          stageNavigation={stageNavigation}
+          currentScreen={currentScreen}
+          onStageJump={onStageJump}
           accent={accent}
           accentRgb={accentRgb}
         />
