@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **An enemy you cannot see** — hook around guerrilla warfare and why US power struggled.
+2. **How the Vietcong fought** — tunnels, ambushes, booby traps, local support and no clear front line.
+3. **How America tried to win** — Search and Destroy, body counts, bombing and Hearts and Minds.
+4. **Tet changes the story** — the Tet Offensive as military defeat for the Vietcong but political disaster for the USA.
+5. **Why methods backfired** — My Lai, the credibility gap, media impact and public trust collapsing.
+6. **Exam prep: methods, Tet and turning points** — Q2 causation on why US methods failed and why Tet mattered.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; reactivate Episode 9 knowledge; preview this chapter.
@@ -103,13 +118,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **The Tet paradox as the episode's central exam skill:** The most important conceptual move in this episode is the military/political distinction: VC were destroyed militarily, but the political war was lost. This distinction must appear explicitly in the `VisualNarrativeScreen` (Section 2), the `ColSortBlock` (Section 5), and the `ExaminerExplainsScreen` (Section 6). Students who can make this distinction in Q2 answers move from the middle to the top band.
 
