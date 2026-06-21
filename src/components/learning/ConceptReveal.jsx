@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { TYPE } from '../../constants/typography.js'
 // CinematicShell used here because the background is either a full-bleed cover image or a
 // gradient that must fill the entire screen with no padding; ContentShell's padding and
 // safe-area offsets would create gaps around the atmospheric background.
@@ -119,14 +120,9 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
         >
           {step.eyebrow && (
             <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '.68rem',
-              fontWeight: 600,
-              letterSpacing: '.08em',
-              textTransform: 'uppercase',
+              ...TYPE.overlayEyebrow,
               color: accent + '88',
               marginBottom: 12,
-              lineHeight: 1.3,
             }}>
               {step.eyebrow}
             </div>
@@ -136,13 +132,10 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
 
           {step.supportText && (
             <p style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: 'clamp(.88rem, 3.4vw, 1rem)',
-              fontWeight: 500,
-              lineHeight: 1.6,
-              color: 'rgba(245,238,225,.52)',
-              margin: '16px 0 0',
-              maxWidth: '88%',
+              ...TYPE.overlayBody,
+              color: 'rgba(245,238,225,.64)',
+              margin: '14px 0 0',
+              maxWidth: '34ch',
             }}>
               {step.supportText}
             </p>
@@ -163,10 +156,10 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
                     marginTop: '0.6em', flexShrink: 0,
                   }} />
                   <span style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontSize: '.8rem',
-                    color: 'rgba(245,238,225,.42)',
-                    lineHeight: 1.5,
+                    fontFamily: "'Outfit', sans-serif",
+                    fontSize: 14,
+                    color: 'rgba(245,238,225,.48)',
+                    lineHeight: 1.45,
                   }}>{pt}</span>
                 </li>
               ))}
@@ -202,9 +195,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
             animation: 'crHintPulse 3.2s ease infinite',
           }}>
             <span style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '.62rem', fontWeight: 600,
-              letterSpacing: '.18em', textTransform: 'uppercase',
+              ...TYPE.overlayPrompt,
               color: 'rgba(255,255,255,.38)',
             }}>
               {isLast ? 'tap to finish' : 'tap to continue'}
@@ -221,15 +212,12 @@ function MainReveal({ text, emphasis, accent }) {
   if (!text) return null
 
   const base = {
-    fontFamily: "'Sora', sans-serif",
-    fontWeight: 900,
-    fontSize: 'clamp(3rem, 12vw, 5.2rem)',
-    lineHeight: 1.0,
-    letterSpacing: '-.04em',
+    ...TYPE.overlayTitle,
     color: 'rgba(245,238,225,0.97)',
     whiteSpace: 'pre-wrap',
     wordBreak: 'break-word',
-    textShadow: '0 2px 32px rgba(0,0,0,.6)',
+    maxWidth: '12ch',
+    textShadow: '0 2px 28px rgba(0,0,0,.62)',
   }
 
   if (!emphasis) return <div style={base}>{text}</div>
@@ -258,7 +246,7 @@ function MainReveal({ text, emphasis, accent }) {
         ) : (
           <span key={i} style={{
             color: accent,
-            textShadow: `0 0 40px ${accent}44`,
+            textShadow: `0 0 32px ${accent}40`,
           }}>{s.val}</span>
         )
       )}
