@@ -18,14 +18,11 @@ const STAGE_BORDER_WRONG   = 'rgba(72,46,22,0.35)'
 
 const ANSWER_BG          = 'rgba(28,16,6,0.94)'
 const ANSWER_BG_SELECTED = 'rgba(55,34,12,0.96)'
-const ANSWER_BG_PLACED   = 'rgba(14,9,4,0.35)'
 const ANSWER_BORDER          = 'rgba(158,112,46,0.38)'
 const ANSWER_BORDER_SELECTED = `rgba(${BRONZE_RGB},0.82)`
-const ANSWER_BORDER_PLACED   = 'rgba(62,42,16,0.22)'
 
 const TEXT_PRIMARY = 'rgba(255,244,222,0.94)'
 const TEXT_DIM     = 'rgba(240,220,185,0.60)'
-const TEXT_PLACED  = 'rgba(190,155,100,0.36)'
 
 const RIVET = {
   position: 'absolute',
@@ -160,9 +157,17 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
   })
 
   const placedIds  = new Set(Object.values(slots).filter(Boolean))
+  const availableAnswers = shuffled.filter(answer => !placedIds.has(answer.id))
   const allFilled  = stages.every(s => slots[s.id] !== null)
   const allCorrect = checked && stages.every(s => results[s.id] === 'correct')
   const hasWrong   = checked && stages.some(s => results[s.id] === 'wrong')
+  const instruction = checked
+    ? (hasWrong ? 'Fix the stages that shook.' : 'Evacuation chain rebuilt.')
+    : allFilled
+      ? 'All stages filled — check your answer.'
+      : selectedId
+        ? 'Now tap the correct stage.'
+        : 'Choose a job card below.'
 
   function handlePoolTap(answerId) {
     if (checked) return
@@ -267,21 +272,21 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
       {/* Left-side darkness */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(to right, rgba(6,3,1,0.88) 0%, rgba(6,3,1,0.52) 42%, rgba(6,3,1,0.22) 100%)',
+        background: 'linear-gradient(to right, rgba(6,3,1,0.90) 0%, rgba(6,3,1,0.58) 42%, rgba(6,3,1,0.28) 100%)',
         zIndex: 0, pointerEvents: 'none',
       }} />
 
       {/* Bottom darkness — heavy fade for content legibility */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(to top, rgba(4,2,0,0.97) 0%, rgba(4,2,0,0.82) 28%, rgba(4,2,0,0.38) 54%, transparent 72%)',
+        background: 'linear-gradient(to top, rgba(4,2,0,0.98) 0%, rgba(4,2,0,0.84) 28%, rgba(4,2,0,0.42) 54%, transparent 72%)',
         zIndex: 0, pointerEvents: 'none',
       }} />
 
       {/* Top vignette */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(to bottom, rgba(3,1,0,0.55) 0%, transparent 18%)',
+        background: 'linear-gradient(to bottom, rgba(3,1,0,0.62) 0%, transparent 18%)',
         zIndex: 0, pointerEvents: 'none',
       }} />
 
@@ -308,13 +313,50 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
 
         {/* Subtitle */}
         <p style={{
-          margin: '0 0 14px',
+          margin: '0 0 10px',
           fontSize: 12, lineHeight: 1.45,
           color: TEXT_DIM, maxWidth: 320,
           animation: 'ecr-in 360ms ease 55ms both',
         }}>
           {screen.subtitle || 'Tap a job, then tap the correct stage.'}
         </p>
+
+        {/* Interaction guidance */}
+        <div style={{
+          margin: '0 0 12px',
+          padding: '8px 10px',
+          borderRadius: 999,
+          border: `1px solid rgba(${BRONZE_RGB},0.24)`,
+          background: selectedId
+            ? `rgba(${BRONZE_RGB},0.13)`
+            : 'rgba(12,7,3,0.62)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 10,
+          boxShadow: selectedId
+            ? `0 0 18px rgba(${BRONZE_RGB},0.12)`
+            : 'inset 0 1px 0 rgba(255,215,150,0.04)',
+          animation: 'ecr-in 360ms ease 75ms both',
+        }}>
+          <span style={{
+            color: selectedId ? TEXT_PRIMARY : TEXT_DIM,
+            fontSize: 11.5,
+            lineHeight: 1.2,
+            fontWeight: 600,
+          }}>
+            {instruction}
+          </span>
+          <span style={{
+            flexShrink: 0,
+            color: BRONZE,
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: '0.03em',
+          }}>
+            {placedIds.size}/{stages.length}
+          </span>
+        </div>
 
         {/* ── Route chain ── */}
         <div style={{
@@ -336,10 +378,10 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
             left: 19,
             top: 44, bottom: 44,
             width: 2.5,
-            background: `linear-gradient(to bottom, rgba(${BRONZE_RGB},0.92) 0%, rgba(${BRONZE_RGB},0.52) 55%, rgba(${BRONZE_RGB},0.22) 100%)`,
+            background: `linear-gradient(to bottom, rgba(${BRONZE_RGB},0.86) 0%, rgba(${BRONZE_RGB},0.46) 55%, rgba(${BRONZE_RGB},0.20) 100%)`,
             borderRadius: 2,
             zIndex: 0,
-            boxShadow: `0 0 6px 1px rgba(${BRONZE_RGB},0.28), 0 0 1.5px rgba(${BRONZE_RGB},0.45)`,
+            boxShadow: `0 0 6px 1px rgba(${BRONZE_RGB},0.22), 0 0 1.5px rgba(${BRONZE_RGB},0.38)`,
           }} />
 
           {/* Stage cards — readable stacked layout for mobile */}
@@ -388,14 +430,16 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                       border: `1px solid ${
                         isSuccess ? STAGE_BORDER_SUCCESS :
                         isWrong   ? STAGE_BORDER_WRONG   :
-                        STAGE_BORDER
+                        selectedId && !placed ? `rgba(${BRONZE_RGB},0.62)` : STAGE_BORDER
                       }`,
                       background: isSuccess ? STAGE_BG_SUCCESS : isWrong ? STAGE_BG_WRONG : STAGE_BG,
                       boxShadow: isSuccess
                         ? `0 0 0 1px rgba(${BRONZE_RGB},0.20), 0 0 28px rgba(${BRONZE_RGB},0.30), inset 0 0 14px rgba(${BRONZE_RGB},0.08)`
-                        : isWrong
-                          ? 'inset 0 1px 0 rgba(0,0,0,0.30), 0 2px 6px rgba(0,0,0,0.35)'
-                          : 'inset 0 1px 0 rgba(255,215,150,0.05), inset 0 -1px 0 rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.35)',
+                        : selectedId && !placed
+                          ? `0 0 0 1px rgba(${BRONZE_RGB},0.12), 0 0 20px rgba(${BRONZE_RGB},0.10), inset 0 1px 0 rgba(255,215,150,0.06)`
+                          : isWrong
+                            ? 'inset 0 1px 0 rgba(0,0,0,0.30), 0 2px 6px rgba(0,0,0,0.35)'
+                            : 'inset 0 1px 0 rgba(255,215,150,0.05), inset 0 -1px 0 rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.35)',
                       padding: '12px 12px',
                       minHeight: 122,
                       display: 'flex',
@@ -489,13 +533,18 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                           minHeight: 48,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           borderRadius: 12,
-                          border: `1px dashed rgba(${BRONZE_RGB},0.14)`,
-                          background: 'rgba(0,0,0,0.12)',
+                          border: selectedId
+                            ? `1px dashed rgba(${BRONZE_RGB},0.50)`
+                            : `1px dashed rgba(${BRONZE_RGB},0.14)`,
+                          background: selectedId
+                            ? `rgba(${BRONZE_RGB},0.08)`
+                            : 'rgba(0,0,0,0.12)',
                           fontSize: 12.5, lineHeight: 1.3,
-                          color: `rgba(${BRONZE_RGB},0.22)`,
+                          color: selectedId ? `rgba(${BRONZE_RGB},0.72)` : `rgba(${BRONZE_RGB},0.22)`,
                           fontStyle: 'italic',
+                          transition: `border-color ${MOTION.duration.fast} ease, background ${MOTION.duration.fast} ease, color ${MOTION.duration.fast} ease`,
                         }}>
-                          Drop job here
+                          {selectedId ? 'Tap to place here' : 'Drop job here'}
                         </div>
                       )}
                     </div>
@@ -507,7 +556,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
         </div>
 
         {/* ── Answer card pool ── */}
-        {!allCorrect && (
+        {!allCorrect && availableAnswers.length > 0 && (
           <div style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
@@ -515,8 +564,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
             marginTop: 14,
             animation: 'ecr-in 360ms ease 130ms both',
           }}>
-            {shuffled.map(answer => {
-              const isPlaced   = placedIds.has(answer.id)
+            {availableAnswers.map(answer => {
               const isSelected = selectedId === answer.id
 
               return (
@@ -527,22 +575,16 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                   style={{
                     borderRadius: 12,
                     padding: '12px 14px',
-                    border: `1px solid ${
-                      isSelected ? ANSWER_BORDER_SELECTED :
-                      isPlaced   ? ANSWER_BORDER_PLACED   :
-                      ANSWER_BORDER
-                    }`,
-                    background: isSelected ? ANSWER_BG_SELECTED : isPlaced ? ANSWER_BG_PLACED : ANSWER_BG,
-                    boxShadow: isPlaced
-                      ? 'none'
-                      : isSelected
-                        ? `0 4px 16px rgba(0,0,0,0.50), 0 0 18px rgba(${BRONZE_RGB},0.14), 0 0 0 1px rgba(${BRONZE_RGB},0.12)`
-                        : '0 2px 8px rgba(0,0,0,0.42), 0 1px 3px rgba(0,0,0,0.32)',
-                    cursor: isPlaced || checked ? 'default' : 'pointer',
+                    border: `1px solid ${isSelected ? ANSWER_BORDER_SELECTED : ANSWER_BORDER}`,
+                    background: isSelected ? ANSWER_BG_SELECTED : ANSWER_BG,
+                    boxShadow: isSelected
+                      ? `0 4px 16px rgba(0,0,0,0.50), 0 0 18px rgba(${BRONZE_RGB},0.14), 0 0 0 1px rgba(${BRONZE_RGB},0.12)`
+                      : '0 2px 8px rgba(0,0,0,0.42), 0 1px 3px rgba(0,0,0,0.32)',
+                    cursor: checked ? 'default' : 'pointer',
                     textAlign: 'left',
                     fontFamily: "'Sora', sans-serif",
                     fontSize: 13.5, lineHeight: 1.28,
-                    color: isPlaced ? TEXT_PLACED : TEXT_PRIMARY,
+                    color: TEXT_PRIMARY,
                     minHeight: 76,
                     display: 'flex', flexDirection: 'column',
                     transform: isSelected ? 'translateY(-2px)' : 'none',
@@ -552,7 +594,6 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                       `transform ${MOTION.duration.instant} ease`,
                       `opacity ${MOTION.duration.fast} ease`,
                     ].join(', '),
-                    opacity: isPlaced ? 0.34 : 1,
                     WebkitTapHighlightColor: 'transparent',
                   }}
                 >
