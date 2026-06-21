@@ -22,7 +22,7 @@ React + Vite GCSE revision app. Mobile-first, dark cinematic theme. Designed to 
 
 ## Entry Point
 
-`src/App.jsx` — single large file. All components are defined inline here. Do not split into separate files unless asked.
+`src/App.jsx` is now a tiny wrapper that renders `src/app/LegacyApp.jsx`. The main app shell, tab state, auth flow, overlays, module opening and lazy-loading orchestration live in `src/app/LegacyApp.jsx`. Do not treat `src/App.jsx` as the old single-file app, and do not re-inline extracted components back into it.
 
 ## Bundle Size / Lazy Loading
 
