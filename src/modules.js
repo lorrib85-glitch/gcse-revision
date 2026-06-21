@@ -132,7 +132,7 @@ export const MODULES = [
     headerImage: "/headers/history-medicine-invisible-enemy.png",
     screenCount: 10,
     screenTags: [
-      "germ-theory", "pasteur", "koch", null, null, null, null, null, "factor-web", null,
+      "germ-theory", "pasteur", "koch", null, null, null, null, null, null, null,
     ],
   },
   {
