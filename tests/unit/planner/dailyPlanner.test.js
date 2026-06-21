@@ -24,7 +24,30 @@ const {
   buildSundayBlocks,
   buildDailyPlan,
   savePlannerRotation,
+  saveWeakPoints,
   ALL_SUBJECTS,
+  // Part 2 exports
+  PULSE_DURATIONS,
+  PULSE_LABELS,
+  WEAK_POINT_STATUSES,
+  INCOMPLETE_STATUSES,
+  MAX_WEEKDAY_CARRYOVER_MINUTES,
+  MAX_SUNDAY_CARRYOVER_MINUTES,
+  MATHS_INTERLEAVE_FAMILIES,
+  HISTORY_INTERLEAVE_THEMES,
+  HISTORY_MEDICINE_ERAS,
+  SCIENCE_SUBJECTS,
+  normalisePulseDuration,
+  getPulseLabel,
+  getPulseMix,
+  calculateWeakPointSeverity,
+  updateWeakPointFromResult,
+  createOrUpdateWeakPoint,
+  applyPulseResultToLearningState,
+  selectWeakPointRepair,
+  selectInterleavingActivity,
+  classifyIncompleteWork,
+  handleMissedDay,
 } = await import('../../../src/features/planner/dailyPlanner.js')
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
@@ -43,6 +66,7 @@ const emptyState = {
   moduleStates:    {},
   rotationHistory: {},
   progress:        {},
+  weakPoints:      [],
 }
 
 const defaultProfile = {
@@ -53,11 +77,30 @@ const defaultProfile = {
   name:             'Test User',
 }
 
+function makeWeakPoint(overrides = {}) {
+  return {
+    weakPointId:      'test_wp_1',
+    subject:          'History',
+    topic:            'germ_theory',
+    skillTag:         null,
+    misconceptionTag: null,
+    errorType:        null,
+    severity:         'medium',
+    firstSeenAt:      '2026-06-15',
+    lastSeenAt:       '2026-06-20',
+    timesFailed:      3,
+    timesCorrectAfter: 0,
+    status:           'new',
+    nextReviewAt:     '2026-06-21',
+    ...overrides,
+  }
+}
+
 beforeEach(() => {
   vi.clearAllMocks()
 })
 
-// ─── 1–3: getPlanningMode ─────────────────────────────────────────────────────
+// ─── 1–7: getPlanningMode ─────────────────────────────────────────────────────
 
 describe('getPlanningMode', () => {
   it('returns "weekday" on Monday', () => {
@@ -90,7 +133,7 @@ describe('getPlanningMode', () => {
   })
 })
 
-// ─── 4–8: Weekday plan structure ──────────────────────────────────────────────
+// ─── buildWeekdayBlocks ───────────────────────────────────────────────────────
 
 describe('buildWeekdayBlocks', () => {
   it('returns exactly four blocks', () => {
@@ -136,11 +179,10 @@ describe('buildWeekdayBlocks', () => {
     expect(blocks[0].subject).toBe('Biology')
   })
 
-  it('puts main subject in mainProgress, weakRepair, examMove', () => {
+  it('puts main subject in mainProgress and weakRepair', () => {
     const blocks = buildWeekdayBlocks('History', 'Biology', emptyState, defaultProfile)
     expect(blocks[1].subject).toBe('History')
     expect(blocks[2].subject).toBe('History')
-    expect(blocks[3].subject).toBe('History')
   })
 
   it('uses mainSubject for pulse when secondarySubject is null', () => {
@@ -157,7 +199,7 @@ describe('buildWeekdayBlocks', () => {
   })
 })
 
-// ─── 9–10: Saturday plan structure ───────────────────────────────────────────
+// ─── buildSaturdayBlocks ─────────────────────────────────────────────────────
 
 describe('buildSaturdayBlocks', () => {
   it('returns exactly four blocks', () => {
@@ -192,7 +234,7 @@ describe('buildSaturdayBlocks', () => {
 
   it('Mark & Decode is a distinct block (not merged with testPaper)', () => {
     const blocks = buildSaturdayBlocks('History', 'Biology', emptyState, defaultProfile)
-    const mark = blocks.find(b => b.type === 'markAndReview')
+    const mark  = blocks.find(b => b.type === 'markAndReview')
     const paper = blocks.find(b => b.type === 'testPaper')
     expect(mark).toBeDefined()
     expect(paper).toBeDefined()
@@ -200,7 +242,7 @@ describe('buildSaturdayBlocks', () => {
   })
 })
 
-// ─── 11–12: Sunday plan structure ────────────────────────────────────────────
+// ─── buildSundayBlocks ────────────────────────────────────────────────────────
 
 describe('buildSundayBlocks', () => {
   it('returns exactly four blocks', () => {
@@ -232,7 +274,7 @@ describe('buildSundayBlocks', () => {
   })
 })
 
-// ─── 13: buildDailyPlan purity ────────────────────────────────────────────────
+// ─── buildDailyPlan — storage side effects ────────────────────────────────────
 
 describe('buildDailyPlan — storage side effects', () => {
   it('does NOT call setJson when options.persistRotation is absent', () => {
@@ -263,7 +305,7 @@ describe('buildDailyPlan — storage side effects', () => {
   })
 })
 
-// ─── 14: No unselected subject in any plan ────────────────────────────────────
+// ─── buildDailyPlan — subject containment ────────────────────────────────────
 
 describe('buildDailyPlan — subject containment', () => {
   it('weekday plan only uses subjects from selectedSubjects', () => {
@@ -303,22 +345,21 @@ describe('buildDailyPlan — subject containment', () => {
   })
 })
 
-// ─── 15: Rotation — same main subject avoided after 2 consecutive days ────────
+// ─── selectMainSubject — rotation avoidance ───────────────────────────────────
 
 describe('selectMainSubject — rotation avoidance', () => {
   it('avoids yesterday\'s main subject where another option exists', () => {
-    const yesterday = '2026-06-21'  // Sunday before Monday
+    const yesterday = '2026-06-21'
     const state = {
       ...emptyState,
       rotationHistory: { [yesterday]: { main: 'History', secondary: 'Biology' } },
     }
-    // With History penalised -6, Biology or Sociology should win
     const main = selectMainSubject(['History', 'Biology', 'Sociology'], state, MONDAY)
     expect(main).not.toBe('History')
   })
 
   it('avoids 2-days-ago main subject where another option exists', () => {
-    const twoDaysAgo = '2026-06-20'  // Saturday
+    const twoDaysAgo = '2026-06-20'
     const state = {
       ...emptyState,
       rotationHistory: { [twoDaysAgo]: { main: 'History', secondary: 'Biology' } },
@@ -338,12 +379,10 @@ describe('selectMainSubject — rotation avoidance', () => {
   })
 
   it('rotation penalty is recovered after 3+ days gap', () => {
-    // Set History as main 3 days ago — penalty should NOT apply (only yesterday and 2-days-ago)
     const threeDaysAgo = '2026-06-19'
     const state = {
       ...emptyState,
       rotationHistory: { [threeDaysAgo]: { main: 'Biology', secondary: 'Sociology' } },
-      // Give History a strong weakness signal so it should win without penalty interference
       wrongAnswers: Array.from({ length: 5 }, () => ({ subject: 'History', topic: 'germ-theory' })),
       correctAnswers: [],
     }
@@ -400,5 +439,252 @@ describe('buildDailyPlan — integration', () => {
     if (plan.secondarySubject !== null) {
       expect(plan.secondarySubject).not.toBe(plan.mainSubject)
     }
+  })
+})
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PART 2 TESTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ─── A: Pulse duration system ─────────────────────────────────────────────────
+
+describe('Pulse durations', () => {
+  it('valid Pulse duration is returned unchanged', () => {
+    expect(normalisePulseDuration(10, 'weekday')).toBe(10)
+    expect(normalisePulseDuration(15, 'saturday')).toBe(15)
+    expect(normalisePulseDuration(30, 'weekday')).toBe(30)
+  })
+
+  it('invalid duration clamps to nearest valid option', () => {
+    // 7 is closer to 5 (diff 2) than 10 (diff 3) — wait, |7-5|=2, |7-10|=3 → 5
+    expect(normalisePulseDuration(7, 'weekday')).toBe(5)
+    // 12 → nearest is 10 (diff 2) or 15 (diff 3) → 10
+    expect(normalisePulseDuration(12, 'weekday')).toBe(10)
+    // 0 or falsy → weekday default (8 → nearest is 10)
+    const result = normalisePulseDuration(0, 'weekday')
+    expect(PULSE_DURATIONS.includes(result) || result === 8).toBe(true)
+  })
+
+  it('weekday Pulse mix has correct ratios', () => {
+    const mix = getPulseMix('weekday', 10)
+    expect(mix.spacedRecall).toBe(0.4)
+    expect(mix.weakPoints).toBe(0.3)
+    expect(mix.recentlyLearned).toBe(0.2)
+    expect(mix.interleaving).toBe(0.1)
+  })
+
+  it('weekend Pulse mix has correct ratios', () => {
+    const mix = getPulseMix('saturday', 15)
+    expect(mix.spacedRecall).toBe(0.3)
+    expect(mix.weakPoints).toBe(0.3)
+    expect(mix.examStyle).toBe(0.2)
+    expect(mix.crossSubject).toBe(0.2)
+  })
+
+  it('30-minute Power Pulse uses power mix', () => {
+    const mix = getPulseMix('weekday', 30)
+    expect(mix.weakPoints).toBe(0.35)
+    expect(mix.spacedRecall).toBe(0.25)
+    expect(mix.examStyle).toBe(0.25)
+    expect(mix.olderContent).toBe(0.15)
+  })
+
+  it('pulse block in buildWeekdayBlocks includes .pulse metadata', () => {
+    const blocks = buildWeekdayBlocks('History', 'Biology', emptyState, defaultProfile)
+    const pulse = blocks[0]
+    expect(pulse.pulse).toBeDefined()
+    expect(pulse.pulse.duration).toBe(8)
+    expect(pulse.pulse.label).toBe('Daily Pulse')
+    expect(pulse.pulse.mix).toBeDefined()
+    expect(typeof pulse.pulse.mix.spacedRecall).toBe('number')
+  })
+})
+
+// ─── B: Weak point lifecycle ──────────────────────────────────────────────────
+
+describe('Weak point lifecycle', () => {
+  it('wrong answer creates a new weak point', () => {
+    const result = {
+      questionId: 'q1', subject: 'History', topic: 'germ_theory',
+      skillTag: null, correct: false, answeredAt: '2026-06-22T10:00:00Z',
+    }
+    const newState = createOrUpdateWeakPoint(emptyState, result)
+    expect(newState.weakPoints).toHaveLength(1)
+    expect(newState.weakPoints[0].topic).toBe('germ_theory')
+    expect(newState.weakPoints[0].status).toBe('new')
+  })
+
+  it('one correct answer does not immediately resolve a weak point', () => {
+    const state = { ...emptyState, weakPoints: [makeWeakPoint({ timesFailed: 5, status: 'new' })] }
+    const result = {
+      questionId: 'q1', subject: 'History', topic: 'germ_theory',
+      skillTag: null, correct: true, answeredAt: '2026-06-22T10:00:00Z',
+    }
+    const newState = applyPulseResultToLearningState(state, result)
+    const wp = newState.weakPoints.find(w => w.topic === 'germ_theory')
+    expect(wp.status).not.toBe('resolved')
+    expect(wp.status).toBe('retest_due')
+  })
+
+  it('repeated wrong answers increase weak point severity to high', () => {
+    const result = {
+      questionId: 'q1', subject: 'History', topic: 'germ_theory',
+      skillTag: null, correct: false, answeredAt: '2026-06-22T10:00:00Z',
+    }
+    let state = { ...emptyState, weakPoints: [] }
+    for (let i = 0; i < 5; i++) {
+      state = createOrUpdateWeakPoint(state, result)
+    }
+    const wp = state.weakPoints.find(w => w.topic === 'germ_theory')
+    expect(wp.severity).toBe('high')
+    expect(wp.timesFailed).toBe(5)
+  })
+
+  it('severe overdue weak point is injected into Exam Move via selectInterleavingActivity', () => {
+    const state = {
+      ...emptyState,
+      weakPoints: [makeWeakPoint({
+        weakPointId: 'bio_1',
+        subject:     'Biology',
+        topic:       'cell_division',
+        severity:    'high',
+        status:      'retest_due',
+        timesFailed: 5,
+        nextReviewAt: '2026-06-15',  // 7 days overdue relative to MONDAY 2026-06-22
+      })],
+    }
+    const activity = selectInterleavingActivity('History', state, MONDAY)
+    expect(activity.reasonCodes).toContain('WEAK_POINT_INJECTION')
+    expect(activity.subject).toBe('Biology')
+  })
+})
+
+// ─── C: Enriched blocks ───────────────────────────────────────────────────────
+
+describe('Enriched blocks', () => {
+  it('Fix One Thing gains topic metadata when weak point exists for main subject', () => {
+    const state = {
+      ...emptyState,
+      weakPoints: [makeWeakPoint({ topic: 'germ_theory', skillTag: 'miasma_vs_germ' })],
+    }
+    const blocks = buildWeekdayBlocks('History', 'Biology', state, defaultProfile)
+    const weakRepair = blocks.find(b => b.type === 'weakRepair')
+    expect(weakRepair.topic).toBe('germ_theory')
+  })
+
+  it('Exam Move gains interleaving metadata where available', () => {
+    const state = {
+      ...emptyState,
+      weakPoints: [makeWeakPoint({ topic: 'germ_theory', skillTag: 'change_and_continuity' })],
+    }
+    const blocks = buildWeekdayBlocks('History', 'Biology', state, defaultProfile)
+    const examMove = blocks.find(b => b.type === 'examMove')
+    const hasMetadata = examMove.topic || examMove.skillTag || examMove.interleaveWith?.length
+    expect(hasMetadata).toBeTruthy()
+  })
+})
+
+// ─── D: Interleaving ──────────────────────────────────────────────────────────
+
+describe('Interleaving', () => {
+  it('Maths interleaving prefers related skill family, not a random task', () => {
+    const state = {
+      ...emptyState,
+      weakPoints: [makeWeakPoint({ subject: 'Maths', topic: 'fractions', skillTag: 'fractions', severity: 'medium', status: 'new', timesFailed: 2 })],
+    }
+    const activity = selectInterleavingActivity('Maths', state, MONDAY)
+    expect(activity.reasonCodes).not.toContain('INTERLEAVE_GENERAL')
+    expect(activity.topic).toBe('number')
+  })
+
+  it('Maths interleaving returns related skills within the same family', () => {
+    const state = {
+      ...emptyState,
+      weakPoints: [makeWeakPoint({ subject: 'Maths', topic: 'fractions', skillTag: 'fractions', severity: 'medium', status: 'new', timesFailed: 2 })],
+    }
+    const activity = selectInterleavingActivity('Maths', state, MONDAY)
+    expect(activity.interleaveWith).toEqual(expect.arrayContaining(['percentages', 'ratio']))
+  })
+
+  it('Science interleaving crosses Biology, Chemistry, Physics', () => {
+    const state = {
+      ...emptyState,
+      weakPoints: [makeWeakPoint({ subject: 'Chemistry', topic: 'atomic_structure', severity: 'medium', status: 'new', timesFailed: 3 })],
+    }
+    const activity = selectInterleavingActivity('Biology', state, MONDAY)
+    expect(activity.subject).toBe('Chemistry')
+    expect(activity.reasonCodes).toContain('INTERLEAVE_CROSS_SUBJECT')
+  })
+
+  it('History interleaving uses change and continuity or chronology theme', () => {
+    const activity = selectInterleavingActivity('History', emptyState, MONDAY)
+    expect(HISTORY_INTERLEAVE_THEMES).toContain(activity.skillTag)
+  })
+})
+
+// ─── E: Incomplete work classification ────────────────────────────────────────
+
+describe('classifyIncompleteWork', () => {
+  it('retrieval returns to pool', () => {
+    expect(classifyIncompleteWork({ type: 'retrieval', progressPercent: 0 })).toBe('return_to_pool')
+  })
+
+  it('pulse returns to pool', () => {
+    expect(classifyIncompleteWork({ type: 'pulse', progressPercent: 0 })).toBe('return_to_pool')
+  })
+
+  it('incomplete weak repair converts to recall', () => {
+    expect(classifyIncompleteWork({ type: 'weakRepair', incomplete: true, progressPercent: 0 })).toBe('convert_to_recall')
+  })
+
+  it('started module above 35% resumes next session', () => {
+    expect(classifyIncompleteWork({ type: 'mainProgress', progressPercent: 50 })).toBe('resume_next')
+  })
+
+  it('abandoned module below 35% with little time spent becomes shrink_and_retry', () => {
+    expect(classifyIncompleteWork({ type: 'mainProgress', progressPercent: 20, timeSpent: 5 })).toBe('shrink_and_retry')
+  })
+})
+
+// ─── F: Missed day and carry-over ─────────────────────────────────────────────
+
+describe('handleMissedDay', () => {
+  it('missed day is folded, not duplicated (foldedMessage present)', () => {
+    const missedPlan = buildDailyPlan(defaultProfile, emptyState, MONDAY)
+    const result = handleMissedDay(missedPlan)
+    expect(result.foldedMessage).toBeTruthy()
+    expect(result.carryOver).toBeDefined()
+    expect(result.returnToPool).toBeDefined()
+  })
+
+  it('weekday carry-over total does not exceed MAX_WEEKDAY_CARRYOVER_MINUTES', () => {
+    const missedPlan = buildDailyPlan(defaultProfile, emptyState, MONDAY)
+    const result = handleMissedDay(missedPlan)
+    const total = result.carryOver.reduce((s, b) => s + b.duration, 0)
+    expect(total).toBeLessThanOrEqual(MAX_WEEKDAY_CARRYOVER_MINUTES)
+  })
+
+  it('no exit ticket block appears in Part 2 weekday blocks', () => {
+    const blocks = buildWeekdayBlocks('History', 'Biology', { ...emptyState, weakPoints: [] }, defaultProfile)
+    const exitTicket = blocks.find(b =>
+      b.type === 'exitTicket' ||
+      b.label?.toLowerCase().includes('exit') ||
+      b.label?.toLowerCase().includes('ticket')
+    )
+    expect(exitTicket).toBeUndefined()
+  })
+
+  it('Saturday block structure is intact after Part 2 changes', () => {
+    const blocks = buildSaturdayBlocks('History', 'Biology', emptyState, defaultProfile)
+    expect(blocks).toHaveLength(4)
+    expect(blocks.map(b => b.type)).toEqual(['pulse', 'testPaper', 'markAndReview', 'targetedRepair'])
+    expect(blocks.map(b => b.duration)).toEqual([15, 50, 15, 10])
+  })
+
+  it('Sunday block structure is intact after Part 2 changes', () => {
+    const blocks = buildSundayBlocks('History', 'Biology', emptyState, defaultProfile)
+    expect(blocks).toHaveLength(4)
+    expect(blocks.map(b => b.type)).toEqual(['pulse', 'carryOverOrProgress', 'paperMistakeRepair', 'lightExamPractice'])
+    expect(blocks.map(b => b.duration)).toEqual([15, 25, 10, 10])
   })
 })
