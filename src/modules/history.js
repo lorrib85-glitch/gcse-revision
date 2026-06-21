@@ -6294,6 +6294,15 @@ War creates urgent demand for faster, better treatment. The First World War prod
         title: 'What made treatment so difficult?',
         description: 'The trenches did not just create wounds. They created disease, infection and mental trauma. Tap each to find out more.',
         backgroundImage: '/figures/history/medicine/western-front/trench-soldiers.png',
+        synthesis: {
+          heading: 'Three types of problem',
+          points: [
+            'Weapons caused direct injuries: shrapnel, gas attacks, bullets, head wounds.',
+            'Living conditions caused disease: trench foot and trench fever from mud, cold and lice.',
+            'Psychological trauma caused shell shock — which was poorly understood and barely treated.',
+          ],
+          examTakeaway: 'The trenches made medicine harder in three ways: more injuries, dirtier wounds, and slower evacuation. Shell shock is the key limitation point for any "how much did medicine improve?" question.',
+        },
         items: [
           {
             id: 'trench-foot',
