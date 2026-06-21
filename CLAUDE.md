@@ -24,6 +24,6 @@ React + Vite GCSE revision app. Mobile-first, dark cinematic theme. Designed to 
 
 `src/App.jsx` is now a tiny wrapper that renders `src/app/LegacyApp.jsx`. The main app shell, tab state, auth flow, overlays, module opening and lazy-loading orchestration live in `src/app/LegacyApp.jsx`. Do not treat `src/App.jsx` as the old single-file app, and do not re-inline extracted components back into it.
 
-## Important
+## Recovery note
 
-The previous full `CLAUDE.md` guide was accidentally shortened by connector edits in this session. Restore the full detailed guide from repository history if more detailed Claude instructions are needed. The critical stale instruction has been removed: `src/App.jsx` is not the old single-file app.
+This file should be restored from commit `9fac4ea772b2af28ed50f2a5a0552e293342d6ea` if a full guide is needed. Do not build further off this shortened version.
