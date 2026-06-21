@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **Leaving without winning** — hook around Saigon, evacuation and the failure to stop the domino falling.
+2. **Nixon's exit strategy** — Vietnamization, ARVN weakness, bombing and the contradiction of widening the war to leave it.
+3. **Peace talks and broken trust** — Paris Peace Accords, Le Duc Tho, Watergate and the promise to Thieu.
+4. **The war ends badly** — Lam Son 719, Easter Offensive, Linebacker, funding cuts and the fall of Saigon.
+5. **Why America failed** — Vietnamization's limits, South Vietnam's collapse and the final judgement on US aims.
+6. **Exam prep: why did the USA fail in Vietnam?** — Q2 causation and final series synthesis.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; reactivate Episodes 9–11 knowledge; preview this chapter and close the series.
@@ -101,13 +116,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **Le Duc Tho's Nobel Prize refusal as the episode's key insight:** The most elegant piece of knowledge in this episode is Le Duc Tho's refusal of the Nobel Peace Prize. It's a single detail that contains the entire argument: the most honest person in the Paris negotiations said publicly that no peace had been established. Students who cite this in Q2 answers demonstrate a level of sophistication that immediately separates them from the middle band. The `InteractiveCollectionExplorer` in Section 4 should give it a dedicated card.
 
