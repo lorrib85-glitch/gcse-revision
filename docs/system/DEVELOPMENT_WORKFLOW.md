@@ -114,10 +114,10 @@ Use for existing-surface work.
    design tokens, routing, architecture, product behaviour, or workflow
    rules
 6. Review — perform code review and incorporate findings
-7. Verification — lint (`./node_modules/.bin/eslint .`) and build
-   (`./node_modules/.bin/vite build`) pass, and the change is exercised by
-   running the app via `/verify` to confirm the real behaviour works as
-   intended — not static inspection alone
+7. Verification — build (`./node_modules/.bin/vite build`) passes; if a
+   Storybook story exists for the changed component, run `npx vitest run`
+   to confirm it mounts and renders without error; then exercise the change
+   in the running app via `/verify`
 8. Confirm working tree status — commit + push to `main`
 
 *Normally implemented via Superpowers: `brainstorming`, `writing-plans`,
@@ -146,10 +146,10 @@ starts directly at step 1.
 6. Documentation update — write to existing canonical docs; never create a
    parallel documentation tree
 7. Review — code review, and UI review where visual behaviour changed
-8. Verification — lint (`./node_modules/.bin/eslint .`) and build
-   (`./node_modules/.bin/vite build`) pass, and the change is exercised by
-   running the app via `/verify` to confirm the real behaviour works as
-   intended — not static inspection alone
+8. Verification — build (`./node_modules/.bin/vite build`) passes; run
+   `npx vitest run` to confirm all stories mount and render without error;
+   exercise the change in the running app via `/verify` to confirm real
+   behaviour — not static inspection alone
 9. Confirm working tree status — commit + push to `main`
 
 *Normally implemented via the corresponding GSD skills (e.g. spec-phase,
@@ -220,10 +220,11 @@ Before marking any build complete, confirm:
 - Canonical docs updated where needed (decision capture rule applied)
 - Code review completed
 - UI review completed where visual behaviour changed
-- Lint passed
-- Build passed
-- Implementation verified by running the app and confirming the real
-  behaviour works as intended — not static inspection alone
+- Build passed (`./node_modules/.bin/vite build`)
+- Vitest passed (`npx vitest run`) — Standard Change: if a story exists
+  for the changed component; Big Build: always
+- Implementation verified in the running app via `/verify` — Standard
+  Change and Big Build only; Minor Edit is build-only
 - Working tree checked (committed + pushed to `main`)
 
 No task is complete at implementation alone.
