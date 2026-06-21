@@ -48,6 +48,19 @@ const {
   selectInterleavingActivity,
   classifyIncompleteWork,
   handleMissedDay,
+  // Part 3 exports
+  PAPER_ACTIVITY_TYPES,
+  PAPER_PRACTICE_WEIGHTS,
+  ERROR_TYPES,
+  isTopicEligibleForPaperPractice,
+  selectPaperActivity,
+  selectWeekendPaperSubject,
+  calculatePaperMistakeSeverity,
+  selectHighestValuePaperRepair,
+  buildPaperReviewSummary,
+  calculateSubjectBoostsFromPaper,
+  processPaperResults,
+  applyPaperResultToLearningState,
 } = await import('../../../src/features/planner/dailyPlanner.js')
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
@@ -686,5 +699,408 @@ describe('handleMissedDay', () => {
     expect(blocks).toHaveLength(4)
     expect(blocks.map(b => b.type)).toEqual(['pulse', 'carryOverOrProgress', 'paperMistakeRepair', 'lightExamPractice'])
     expect(blocks.map(b => b.duration)).toEqual([15, 25, 10, 10])
+  })
+})
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PART 3 TESTS — Weekend paper practice
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ─── Shared Part 3 fixtures ───────────────────────────────────────────────────
+
+const samplePaperResult = {
+  paperId:       'pr_001',
+  subject:       'Maths',
+  examBoard:     'AQA',
+  paperType:     'paperSection',
+  duration:      50,
+  marksAvailable: 20,
+  marksScored:   14,
+  completedAt:   '2026-06-20T10:00:00Z',
+  questionResults: [
+    { questionId: 'q1', topic: 'ratio',       skillTag: 'ratio_problem_solving', marksAvailable: 4, marksScored: 2, errorType: 'weakMethod' },
+    { questionId: 'q2', topic: 'algebra',     skillTag: 'solving_equations',     marksAvailable: 6, marksScored: 3, errorType: 'weakMethod' },
+    { questionId: 'q3', topic: 'fractions',   skillTag: 'fraction_operations',   marksAvailable: 4, marksScored: 4, errorType: null },
+    { questionId: 'q4', topic: 'probability', skillTag: 'probability_tree',      marksAvailable: 6, marksScored: 5, errorType: 'misreadQuestion' },
+  ],
+}
+
+// Helper to create a state where a subject has enough correct answers to be
+// eligible for paper practice (bypasses the module-state coverage check).
+function stateWithAnswers(subjects, paperResults = []) {
+  return {
+    ...emptyState,
+    correctAnswers: subjects.map(s => ({ subject: s, topic: 'sample', date: '2026-01-01', source: 'test' })),
+    paperResults,
+  }
+}
+
+// ─── 1. Saturday block types ──────────────────────────────────────────────────
+
+describe('Part 3 — Saturday block structure', () => {
+  it('Saturday plan includes pulse, testPaper, markAndReview, targetedRepair', () => {
+    const blocks = buildSaturdayBlocks('History', 'Biology', emptyState, defaultProfile)
+    expect(blocks.map(b => b.type)).toEqual(['pulse', 'testPaper', 'markAndReview', 'targetedRepair'])
+  })
+
+  // ─── 2. Mark & Decode is never removed ───────────────────────────────────────
+
+  it('markAndReview block is always present and has at least 15 minutes', () => {
+    const blocks = buildSaturdayBlocks('History', 'Biology', emptyState, defaultProfile)
+    const review = blocks.find(b => b.type === 'markAndReview')
+    expect(review).toBeDefined()
+    expect(review.duration).toBeGreaterThanOrEqual(15)
+  })
+
+  it('markAndReview is a distinct block separate from testPaper', () => {
+    const blocks = buildSaturdayBlocks('History', 'Biology', emptyState, defaultProfile)
+    const review = blocks.find(b => b.type === 'markAndReview')
+    const paper  = blocks.find(b => b.type === 'testPaper')
+    expect(review).not.toBe(paper)
+    expect(review.label).toBe('Mark & Decode')
+  })
+
+  // ─── 3. Longer pulse shrinks paper, not review ────────────────────────────
+
+  it('longer pulse reduces testPaper duration before review duration', () => {
+    const profileLongPulse = { ...defaultProfile, saturdayPulseDuration: 20 }
+    const blocks           = buildSaturdayBlocks('History', 'Biology', emptyState, profileLongPulse)
+    const paper  = blocks.find(b => b.type === 'testPaper')
+    const review = blocks.find(b => b.type === 'markAndReview')
+    // pulse=20 → paper = 90-20-15-10 = 45, review stays at 15
+    expect(paper.duration).toBe(45)
+    expect(review.duration).toBe(15)
+  })
+
+  it('does not exceed total available time', () => {
+    const profileLongPulse = { ...defaultProfile, saturdayPulseDuration: 20 }
+    const blocks           = buildSaturdayBlocks('History', 'Biology', emptyState, profileLongPulse)
+    const total            = blocks.reduce((s, b) => s + b.duration, 0)
+    expect(total).toBe(90)
+  })
+
+  // ─── 21. No exit ticket ───────────────────────────────────────────────────
+
+  it('no exit ticket block in Saturday plan', () => {
+    const blocks = buildSaturdayBlocks('History', 'Biology', emptyState, defaultProfile)
+    const exitTicket = blocks.find(b =>
+      b.type === 'exitTicket' ||
+      b.label?.toLowerCase().includes('exit') ||
+      b.label?.toLowerCase().includes('ticket')
+    )
+    expect(exitTicket).toBeUndefined()
+  })
+})
+
+// ─── 4. Sunday block types ────────────────────────────────────────────────────
+
+describe('Part 3 — Sunday block structure', () => {
+  it('Sunday plan includes pulse, carryOverOrProgress, paperMistakeRepair, lightExamPractice', () => {
+    const blocks = buildSundayBlocks('History', 'Biology', emptyState, defaultProfile)
+    expect(blocks.map(b => b.type)).toEqual([
+      'pulse', 'carryOverOrProgress', 'paperMistakeRepair', 'lightExamPractice',
+    ])
+  })
+
+  it('no exit ticket block in Sunday plan', () => {
+    const blocks = buildSundayBlocks('History', 'Biology', emptyState, defaultProfile)
+    const exitTicket = blocks.find(b =>
+      b.type === 'exitTicket' ||
+      b.label?.toLowerCase().includes('exit') ||
+      b.label?.toLowerCase().includes('ticket')
+    )
+    expect(exitTicket).toBeUndefined()
+  })
+
+  it('lightExamPractice block has practiceType shortExamQuestion', () => {
+    const blocks       = buildSundayBlocks('History', 'Biology', emptyState, defaultProfile)
+    const lightPractice = blocks.find(b => b.type === 'lightExamPractice')
+    expect(lightPractice.practiceType).toBe('shortExamQuestion')
+  })
+})
+
+// ─── 5–8. Paper subject selection ─────────────────────────────────────────────
+
+describe('Part 3 — selectWeekendPaperSubject', () => {
+  // ─── 5. Only selected subjects ───────────────────────────────────────────
+
+  it('paper subject selection only uses selected subjects', () => {
+    const state   = stateWithAnswers(['Maths', 'History', 'Sociology'])
+    const profile = { ...defaultProfile, selectedSubjects: ['Maths', 'Sociology'] }
+    const subject = selectWeekendPaperSubject(state, profile, SATURDAY)
+    expect(['Maths', 'Sociology']).toContain(subject)
+  })
+
+  // ─── 6. Paper weights favour Maths over Sociology ────────────────────────
+
+  it('paper practice weights favour Maths over History over Sociology when all else equal', () => {
+    const state   = stateWithAnswers(['Maths', 'History', 'Sociology'])
+    const profile = { ...defaultProfile, selectedSubjects: ['Maths', 'History', 'Sociology'] }
+    const subject = selectWeekendPaperSubject(state, profile, SATURDAY)
+    expect(subject).toBe('Maths')
+  })
+
+  // ─── 7. Recent paper penalty ──────────────────────────────────────────────
+
+  it('subject with recent paper is penalised so a different subject is preferred', () => {
+    const recentMathsPaper = {
+      paperId: 'pr_x', subject: 'Maths',
+      completedAt: '2026-06-14T10:00:00Z',  // 6 days before SATURDAY
+    }
+    const state   = stateWithAnswers(['Maths', 'History'], [recentMathsPaper])
+    const profile = { ...defaultProfile, selectedSubjects: ['Maths', 'History'] }
+    // Maths (95) - recent penalty (20) = 75 < History (80) → History wins
+    const subject = selectWeekendPaperSubject(state, profile, SATURDAY)
+    expect(subject).toBe('History')
+  })
+
+  // ─── 8. Weakness boost ────────────────────────────────────────────────────
+
+  it('subject with high weakness count is boosted above the higher-weight subject', () => {
+    const state = {
+      ...stateWithAnswers(['Maths', 'History']),
+      weakPoints: Array.from({ length: 5 }, (_, i) => makeWeakPoint({
+        weakPointId: `hist_wp_${i}`,
+        subject:     'History',
+        topic:       `history_topic_${i}`,
+        severity:    'high',
+        timesFailed: 5,
+      })),
+    }
+    const profile = { ...defaultProfile, selectedSubjects: ['Maths', 'History'] }
+    // History: 80 + 20 (weakness) + 15 = 115 > Maths: 95 + 0 + 15 = 110
+    const subject = selectWeekendPaperSubject(state, profile, SATURDAY)
+    expect(subject).toBe('History')
+  })
+})
+
+// ─── 9–10. Topic eligibility ──────────────────────────────────────────────────
+
+describe('Part 3 — isTopicEligibleForPaperPractice', () => {
+  // ─── 9. Untaught topics excluded ─────────────────────────────────────────
+
+  it('excludes notStarted topics from paper practice', () => {
+    expect(isTopicEligibleForPaperPractice({ status: 'notStarted' })).toBe(false)
+  })
+
+  it('includes learned, reviewed, weak, mastered topics', () => {
+    expect(isTopicEligibleForPaperPractice({ status: 'learned' })).toBe(true)
+    expect(isTopicEligibleForPaperPractice({ status: 'reviewed' })).toBe(true)
+    expect(isTopicEligibleForPaperPractice({ status: 'weak' })).toBe(true)
+    expect(isTopicEligibleForPaperPractice({ status: 'mastered' })).toBe(true)
+  })
+
+  // ─── 10. Diagnostic mode overrides ───────────────────────────────────────
+
+  it('diagnostic mode can include untaught topics', () => {
+    expect(isTopicEligibleForPaperPractice({ status: 'notStarted' }, { diagnosticMode: true })).toBe(true)
+  })
+})
+
+// ─── 11–13. selectPaperActivity ───────────────────────────────────────────────
+
+describe('Part 3 — selectPaperActivity', () => {
+  // Drama has no MODULE_GROUP so uses the correctAnswers fallback for coverage.
+
+  it('returns microPaper for low coverage (no answers recorded)', () => {
+    const result = selectPaperActivity('Drama', emptyState, 50)
+    expect(result).toBe('microPaper')
+  })
+
+  it('returns paperSection for medium coverage (10–19 correct answers)', () => {
+    const state = {
+      ...emptyState,
+      correctAnswers: Array.from({ length: 12 }, () => ({ subject: 'Drama', topic: 'performance', date: '2026-01-01', source: 'test' })),
+    }
+    const result = selectPaperActivity('Drama', state, 50)
+    expect(result).toBe('paperSection')
+  })
+
+  it('returns fullPaper for high coverage and sufficient time', () => {
+    const state = {
+      ...emptyState,
+      correctAnswers: Array.from({ length: 30 }, () => ({ subject: 'Drama', topic: 'performance', date: '2026-01-01', source: 'test' })),
+    }
+    const result = selectPaperActivity('Drama', state, 90)
+    expect(result).toBe('fullPaper')
+  })
+
+  it('returns microPaper in diagnostic mode regardless of coverage', () => {
+    const state = {
+      ...emptyState,
+      correctAnswers: Array.from({ length: 30 }, () => ({ subject: 'Drama', topic: 'performance', date: '2026-01-01', source: 'test' })),
+    }
+    const result = selectPaperActivity('Drama', state, 90, { diagnosticMode: true })
+    expect(result).toBe('microPaper')
+  })
+})
+
+// ─── 14. Paper result model ───────────────────────────────────────────────────
+
+describe('Part 3 — paper result model', () => {
+  it('paper result model accepts question-level marks', () => {
+    expect(samplePaperResult.questionResults).toHaveLength(4)
+    expect(samplePaperResult.questionResults[0].marksAvailable).toBe(4)
+    expect(samplePaperResult.questionResults[0].marksScored).toBe(2)
+    expect(samplePaperResult.questionResults[0].errorType).toBe('weakMethod')
+  })
+
+  it('ERROR_TYPES constant contains expected error types', () => {
+    expect(ERROR_TYPES).toContain('knowledgeGap')
+    expect(ERROR_TYPES).toContain('tooVague')
+    expect(ERROR_TYPES).toContain('poorExamTechnique')
+  })
+})
+
+// ─── 15. Paper mistakes create weak points ────────────────────────────────────
+
+describe('Part 3 — processPaperResults', () => {
+  it('paper mistakes create weak points for incorrect questions', () => {
+    const { weakPoints } = processPaperResults(samplePaperResult, emptyState)
+    expect(weakPoints.length).toBeGreaterThan(0)
+    const ratioWP = weakPoints.find(wp => wp.topic === 'ratio')
+    expect(ratioWP).toBeDefined()
+    expect(ratioWP.subject).toBe('Maths')
+  })
+
+  it('correct answers do not create weak points', () => {
+    const { weakPoints } = processPaperResults(samplePaperResult, emptyState)
+    const fractionsWP = weakPoints.find(wp => wp.topic === 'fractions')
+    expect(fractionsWP).toBeUndefined()
+  })
+
+  // ─── 16. tooVague → exam-technique severity ───────────────────────────────
+
+  it('tooVague error on a question with ≥40% marks lost gets high severity', () => {
+    const qResult = {
+      topic: 'source_eval', skillTag: 'evaluation',
+      marksAvailable: 4, marksScored: 1, errorType: 'tooVague',
+    }
+    const severity = calculatePaperMistakeSeverity(qResult)
+    expect(severity).toBe('high')
+  })
+
+  it('zero-mark answer gets high severity regardless of error type', () => {
+    const qResult = {
+      topic: 'algebra', skillTag: null,
+      marksAvailable: 6, marksScored: 0, errorType: 'knowledgeGap',
+    }
+    const severity = calculatePaperMistakeSeverity(qResult)
+    expect(severity).toBe('high')
+  })
+
+  // ─── 17. Review summary identifies top pattern ────────────────────────────
+
+  it('paper review summary identifies the top mistake pattern', () => {
+    const paperWithVagueness = {
+      ...samplePaperResult,
+      subject: 'History',
+      questionResults: [
+        { questionId: 'q1', topic: 'source_eval',    skillTag: 'evaluation', marksAvailable: 4, marksScored: 1, errorType: 'tooVague' },
+        { questionId: 'q2', topic: 'source_utility', skillTag: 'inference',  marksAvailable: 4, marksScored: 2, errorType: 'tooVague' },
+        { questionId: 'q3', topic: 'chronology',     skillTag: null,         marksAvailable: 2, marksScored: 1, errorType: 'knowledgeGap' },
+      ],
+    }
+    const summary = buildPaperReviewSummary(paperWithVagueness, [])
+    expect(summary.topMistakePattern).toBe('tooVague')
+    expect(summary).toHaveProperty('highestValueRepair')
+    expect(summary).toHaveProperty('quickWin')
+  })
+})
+
+// ─── 18. Weekend results boost next week ─────────────────────────────────────
+
+describe('Part 3 — applyPaperResultToLearningState', () => {
+  it('weekend paper results boost the relevant subject priority for next week', () => {
+    const newState = applyPaperResultToLearningState(emptyState, samplePaperResult)
+    expect(newState.subjectBoosts).toBeDefined()
+    expect(newState.subjectBoosts['Maths']).toBeGreaterThan(0)
+  })
+
+  it('paper result is stored in paperResults array', () => {
+    const newState = applyPaperResultToLearningState(emptyState, samplePaperResult)
+    expect(newState.paperResults).toHaveLength(1)
+    expect(newState.paperResults[0].paperId).toBe('pr_001')
+  })
+
+  it('weak points are added from paper question results', () => {
+    const newState = applyPaperResultToLearningState(emptyState, samplePaperResult)
+    expect(newState.weakPoints.length).toBeGreaterThan(0)
+  })
+
+  it('calculateSubjectBoostsFromPaper returns higher boost for more marks lost', () => {
+    const badPaper    = { ...samplePaperResult, subject: 'History', marksAvailable: 20, marksScored: 0 }
+    const averagePaper = { ...samplePaperResult, subject: 'History', marksAvailable: 20, marksScored: 10 }
+    const highBoost   = calculateSubjectBoostsFromPaper(badPaper)['History']
+    const lowerBoost  = calculateSubjectBoostsFromPaper(averagePaper)['History']
+    expect(highBoost).toBeGreaterThan(lowerBoost)
+  })
+})
+
+// ─── 19–20. Sunday paperMistakeRepair ─────────────────────────────────────────
+
+describe('Part 3 — Sunday paperMistakeRepair source', () => {
+  // ─── 19. Uses Saturday paper result ──────────────────────────────────────
+
+  it('Sunday Patch uses Saturday recommended repair when Saturday paper result is available', () => {
+    const stateWithPaper = {
+      ...emptyState,
+      paperResults: [{ ...samplePaperResult, subject: 'Maths', completedAt: '2026-06-20T10:00:00Z' }],
+      weakPoints: [{
+        weakPointId:      'maths_ratio_1',
+        subject:          'Maths',
+        topic:            'ratio',
+        skillTag:         'ratio_problem_solving',
+        errorType:        'weakMethod',
+        severity:         'medium',
+        firstSeenAt:      '2026-06-20',
+        lastSeenAt:       '2026-06-20',
+        timesFailed:      2,
+        timesCorrectAfter: 0,
+        status:           'new',
+        nextReviewAt:     '2026-06-21',
+      }],
+    }
+    const profile = { ...defaultProfile, selectedSubjects: ['Maths', 'History'] }
+    const blocks  = buildSundayBlocks('Maths', 'History', stateWithPaper, profile)
+    const patch   = blocks.find(b => b.type === 'paperMistakeRepair')
+    expect(patch.source).toBe('saturdayPaper')
+    expect(patch.topic).toBe('ratio')
+  })
+
+  // ─── 20. Falls back to weak point ────────────────────────────────────────
+
+  it('Sunday Patch falls back to highest-priority weak point when no Saturday result exists', () => {
+    const stateWithWeakPoint = {
+      ...emptyState,
+      weakPoints: [makeWeakPoint({ subject: 'History', topic: 'germ_theory', status: 'new', timesFailed: 3 })],
+    }
+    const blocks = buildSundayBlocks('History', null, stateWithWeakPoint, defaultProfile)
+    const patch  = blocks.find(b => b.type === 'paperMistakeRepair')
+    expect(patch.topic).toBe('germ_theory')
+    expect(patch.source).toBeUndefined()
+  })
+
+  it('Sunday Patch block is never absent even with no history', () => {
+    const blocks = buildSundayBlocks('History', 'Biology', emptyState, defaultProfile)
+    const patch  = blocks.find(b => b.type === 'paperMistakeRepair')
+    expect(patch).toBeDefined()
+    expect(patch.label).toBe('Patch')
+  })
+})
+
+// ─── 22. classifyIncompleteWork testPaper ─────────────────────────────────────
+
+describe('Part 3 — classifyIncompleteWork testPaper', () => {
+  it('started testPaper above 50% resumes next session', () => {
+    expect(classifyIncompleteWork({ type: 'testPaper', progressPercent: 60 })).toBe('resume_next')
+  })
+
+  it('not-started testPaper is dropped or deferred', () => {
+    expect(classifyIncompleteWork({ type: 'testPaper', progressPercent: 0 })).toBe('drop_or_defer')
+  })
+
+  it('missed testPaper below 50% is dropped, not carried forward as debt', () => {
+    expect(classifyIncompleteWork({ type: 'testPaper', progressPercent: 30 })).toBe('drop_or_defer')
   })
 })

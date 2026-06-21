@@ -146,6 +146,28 @@ export const SCIENCE_SUBJECTS = ['Biology', 'Chemistry', 'Physics']
 
 const SOCIOLOGY_SKILLS = ['key_terms', 'studies_and_theorists', 'evaluation', 'application']
 
+// ─── Paper practice constants ─────────────────────────────────────────────────
+
+export const PAPER_ACTIVITY_TYPES = ['fullPaper', 'paperSection', 'microPaper']
+
+export const PAPER_PRACTICE_WEIGHTS = {
+  maths:             95,
+  combinedScience:   95,
+  englishLanguage:   80,
+  history:           80,
+  sociology:         60,
+  englishLiterature: 60,
+  music:             35,
+  drama:             30,
+}
+
+export const ERROR_TYPES = [
+  'knowledgeGap', 'misreadQuestion', 'weakMethod', 'poorExamTechnique',
+  'timing', 'calculationError', 'tooVague', 'noEvidence', 'didNotEvaluate',
+]
+
+const PAPER_RESULTS_KEY = 'gcse_planner_paper_results'
+
 // ─── Date helpers ─────────────────────────────────────────────────────────────
 
 function dateStr(date) {
@@ -197,6 +219,11 @@ export function saveWeakPoints(weakPoints) {
   setJson(WEAK_POINTS_KEY, weakPoints)
 }
 
+export function savePaperResult(paperResult) {
+  const existing = getArray(PAPER_RESULTS_KEY)
+  setJson(PAPER_RESULTS_KEY, [...existing, paperResult])
+}
+
 // ─── loadLearningState ────────────────────────────────────────────────────────
 // The only function in this module that reads from the persistence layer.
 // All planner logic operates on the returned object so each function
@@ -209,13 +236,14 @@ export function loadLearningState() {
   const progress        = getObject(PROGRESS_KEY)
   const rotationHistory = loadRotationHistory()
   const weakPoints      = getArray(WEAK_POINTS_KEY)
+  const paperResults    = getArray(PAPER_RESULTS_KEY)
 
   const moduleStates = {}
   MODULES.forEach(m => {
     moduleStates[m.id] = getObject('gcse_module_' + m.id)
   })
 
-  return { scores, wrongAnswers, correctAnswers, moduleStates, rotationHistory, progress, weakPoints }
+  return { scores, wrongAnswers, correctAnswers, moduleStates, rotationHistory, progress, weakPoints, paperResults }
 }
 
 // ─── loadUserProfile ──────────────────────────────────────────────────────────
@@ -759,11 +787,35 @@ export function buildWeekdayBlocks(mainSubject, secondarySubject, learningState,
 
 // ─── buildSaturdayBlocks ──────────────────────────────────────────────────────
 // Saturday = Test Day. Exactly four blocks.
-// Durations: 15 + 50 + 15 + 10 = 90 minutes
+// Default durations: 15 + 50 + 15 + 10 = 90 minutes.
+// Paper duration = saturdayMinutes - pulseDuration - 15 (review) - 10 (repair).
+// If saturdayMinutes > 90, extra time goes to paper first, then review.
 
-export function buildSaturdayBlocks(mainSubject, secondarySubject, _learningState, _userProfile) {
-  const pulseSubject  = secondarySubject || mainSubject
-  const pulseDuration = SATURDAY_DURATIONS.pulse
+export function buildSaturdayBlocks(mainSubject, secondarySubject, learningState, userProfile) {
+  const subjects        = userProfile?.selectedSubjects || ALL_SUBJECTS
+  const saturdayMinutes = userProfile?.saturdayMinutes  ?? 90
+  const pulseDuration   = userProfile?.saturdayPulseDuration ?? SATURDAY_DURATIONS.pulse
+  const pulseSubject    = secondarySubject || mainSubject
+
+  const MIN_REVIEW = 15
+  const MIN_REPAIR = 10
+
+  const testPaperDuration = Math.max(20, saturdayMinutes - pulseDuration - MIN_REVIEW - MIN_REPAIR)
+
+  const paperSubject = learningState && userProfile
+    ? selectWeekendPaperSubject(learningState, { ...userProfile, selectedSubjects: subjects }, new Date())
+    : mainSubject
+
+  const paperActivityType = learningState
+    ? selectPaperActivity(paperSubject, learningState, testPaperDuration)
+    : 'paperSection'
+
+  const coverage       = learningState ? getSubjectCoverage(paperSubject, learningState) : 0
+  const eligibleTopics = []
+
+  const weakPoint = learningState
+    ? selectWeakPointRepair(paperSubject, learningState, new Date())
+    : null
 
   return [
     {
@@ -779,36 +831,82 @@ export function buildSaturdayBlocks(mainSubject, secondarySubject, _learningStat
       },
     },
     {
-      type:        'testPaper',
-      label:       'Paper Practice',
-      duration:    SATURDAY_DURATIONS.testPaper,
-      subject:     mainSubject,
-      reasonCodes: ['EXAM_PRACTICE'],
+      type:             'testPaper',
+      label:            'Paper Practice',
+      duration:         testPaperDuration,
+      subject:          paperSubject,
+      paperActivityType,
+      reasonCodes:      ['SATURDAY_TEST_DAY', 'PAPER_PRACTICE_DUE'],
+      paper: {
+        paperType:      paperActivityType,
+        coverage,
+        eligibleTopics,
+      },
     },
     {
       type:        'markAndReview',
       label:       'Mark & Decode',
-      duration:    SATURDAY_DURATIONS.markAndReview,
-      subject:     mainSubject,
+      duration:    MIN_REVIEW,
+      subject:     paperSubject,
       reasonCodes: ['EXAM_REVIEW'],
     },
     {
       type:        'targetedRepair',
       label:       'Fix One Thing',
-      duration:    SATURDAY_DURATIONS.targetedRepair,
-      subject:     mainSubject,
+      duration:    MIN_REPAIR,
+      subject:     paperSubject,
       reasonCodes: ['WEAK_POINT_REPAIR'],
+      ...(weakPoint           ? { topic: weakPoint.topic }         : {}),
+      ...(weakPoint?.skillTag ? { skillTag: weakPoint.skillTag }   : {}),
+      ...(weakPoint?.errorType ? { errorType: weakPoint.errorType } : {}),
     },
   ]
 }
 
 // ─── buildSundayBlocks ────────────────────────────────────────────────────────
 // Sunday = Reset Day. Exactly four blocks.
-// Durations: 15 + 25 + 10 + 10 = 60 minutes
+// Durations: 15 + 25 + 10 + 10 = 60 minutes.
+// paperMistakeRepair uses Saturday's recommended repair if available, then
+// falls back to the highest-priority existing weak point.
 
-export function buildSundayBlocks(mainSubject, secondarySubject, _learningState, _userProfile) {
+export function buildSundayBlocks(mainSubject, secondarySubject, learningState, userProfile) {
   const pulseSubject  = secondarySubject || mainSubject
   const pulseDuration = SUNDAY_DURATIONS.pulse
+  const selectedSubjects = userProfile?.selectedSubjects || ALL_SUBJECTS
+
+  // Look for the most recent Saturday paper result
+  const paperResults = learningState?.paperResults || []
+  const recentPaperResult = paperResults
+    .filter(pr => pr.completedAt)
+    .sort((a, b) => b.completedAt.localeCompare(a.completedAt))[0] || null
+
+  // Resolve paperMistakeRepair target
+  let mistakeRepair = null
+  let mistakeSubject = mainSubject
+  let repairSource   = undefined
+
+  if (recentPaperResult) {
+    const subjectWeakPoints = (learningState?.weakPoints || []).filter(
+      wp => wp.subject === recentPaperResult.subject && wp.status !== 'resolved'
+    )
+    const repair = selectHighestValuePaperRepair(subjectWeakPoints, recentPaperResult)
+    if (repair) {
+      mistakeRepair  = repair
+      mistakeSubject = recentPaperResult.subject
+      repairSource   = 'saturdayPaper'
+    }
+  }
+
+  if (!mistakeRepair) {
+    mistakeRepair  = selectWeakPointRepair(mainSubject, learningState || { weakPoints: [] }, new Date())
+    mistakeSubject = mainSubject
+  }
+
+  // lightExamPractice subject: paper subject if available and still selected, else main
+  const lightSubjectCandidate = recentPaperResult?.subject
+  const lightPracticeSubject  = (lightSubjectCandidate && selectedSubjects.includes(lightSubjectCandidate))
+    ? lightSubjectCandidate
+    : mainSubject
 
   return [
     {
@@ -834,15 +932,20 @@ export function buildSundayBlocks(mainSubject, secondarySubject, _learningState,
       type:        'paperMistakeRepair',
       label:       'Patch',
       duration:    SUNDAY_DURATIONS.paperMistakeRepair,
-      subject:     mainSubject,
-      reasonCodes: ['PAPER_MISTAKE_REPAIR'],
+      subject:     mistakeSubject,
+      reasonCodes: ['WEAK_POINT_REPAIR'],
+      ...(mistakeRepair            ? { topic: mistakeRepair.topic }           : {}),
+      ...(mistakeRepair?.skillTag  ? { skillTag: mistakeRepair.skillTag }     : {}),
+      ...(mistakeRepair?.errorType ? { errorType: mistakeRepair.errorType }   : {}),
+      ...(repairSource             ? { source: repairSource }                 : {}),
     },
     {
-      type:        'lightExamPractice',
-      label:       'Exam Move',
-      duration:    SUNDAY_DURATIONS.lightExamPractice,
-      subject:     mainSubject,
-      reasonCodes: ['LIGHT_EXAM_PRACTICE'],
+      type:         'lightExamPractice',
+      label:        'Exam Move',
+      duration:     SUNDAY_DURATIONS.lightExamPractice,
+      subject:      lightPracticeSubject,
+      practiceType: 'shortExamQuestion',
+      reasonCodes:  ['INTERLEAVE_RELATED_TOPIC'],
     },
   ]
 }
@@ -899,6 +1002,11 @@ export function classifyIncompleteWork(activity) {
 
   if (type === 'weakRepair' && incomplete) {
     return 'convert_to_recall'
+  }
+
+  if (type === 'testPaper') {
+    if (progressPercent >= 50) return 'resume_next'
+    return 'drop_or_defer'
   }
 
   if (type === 'examPractice' || type === 'examMove') {
@@ -960,5 +1068,288 @@ export function handleMissedDay(missedPlan) {
     carryOver,
     returnToPool,
     foldedMessage: "Yesterday's work has been folded into today. No need to catch up everything.",
+  }
+}
+
+// ─── Paper practice helpers ───────────────────────────────────────────────────
+
+function subjectToPaperWeightKey(subject) {
+  const map = {
+    Maths:              'maths',
+    Biology:            'combinedScience',
+    Chemistry:          'combinedScience',
+    Physics:            'combinedScience',
+    History:            'history',
+    'English Language': 'englishLanguage',
+    'English Literature': 'englishLiterature',
+    Sociology:          'sociology',
+    Music:              'music',
+    Drama:              'drama',
+  }
+  return map[subject] || subject.toLowerCase()
+}
+
+function paperPracticeWeight(subject) {
+  const key = subjectToPaperWeightKey(subject)
+  return PAPER_PRACTICE_WEIGHTS[key] ?? 50
+}
+
+// Returns true if the subject has at least some covered content suitable for paper practice.
+function subjectHasPaperPractice(subject, learningState) {
+  const group = MODULE_GROUPS.find(g => g.subject === subject)
+  if (group) {
+    const hasStarted = group.chapterIds.some(id => {
+      const state = learningState.moduleStates[id] || {}
+      return state.screen > 0 || state.completed
+    })
+    if (hasStarted) return true
+  }
+  return (learningState.correctAnswers || []).some(c => c.subject === subject)
+}
+
+// Estimates % of subject content covered based on module progress or answer history.
+function getSubjectCoverage(subject, learningState) {
+  const group = MODULE_GROUPS.find(g => g.subject === subject)
+
+  if (group && group.chapterIds.length) {
+    const total = group.chapterIds.length
+    const done  = group.chapterIds.filter(id => {
+      const state = learningState.moduleStates[id] || {}
+      return state.completed || (state.screen && state.screen > 0)
+    }).length
+    return Math.round((done / total) * 100)
+  }
+
+  // No MODULE_GROUP — estimate from correct answer volume
+  const correct = (learningState.correctAnswers || []).filter(c => c.subject === subject).length
+  if (correct >= 30) return 80
+  if (correct >= 20) return 60
+  if (correct >= 10) return 40
+  return 20
+}
+
+// ─── Paper subject selection scoring helpers ──────────────────────────────────
+
+function weaknessBoost(subject, learningState) {
+  const count = (learningState.weakPoints || []).filter(
+    wp => wp.subject === subject && wp.status !== 'resolved'
+  ).length
+  return Math.min(20, count * 4)
+}
+
+function daysSinceLastPaperBoost(subject, learningState, date) {
+  const results = (learningState.paperResults || [])
+    .filter(pr => pr.subject === subject && pr.completedAt)
+    .sort((a, b) => b.completedAt.localeCompare(a.completedAt))
+
+  if (!results.length) return 15
+
+  const days = daysBetween(results[0].completedAt.slice(0, 10), dateStr(date))
+  if (days >= 14) return 15
+  if (days >= 7)  return 10
+  if (days >= 3)  return 5
+  return 0
+}
+
+function upcomingAssessmentBoost(_subject, _userProfile, _date) {
+  return 0
+}
+
+function coverageReadinessBoost(subject, learningState) {
+  const coverage = getSubjectCoverage(subject, learningState)
+  if (coverage >= 60) return 10
+  if (coverage >= 35) return 5
+  return 0
+}
+
+function recentPaperPenalty(subject, learningState, date) {
+  const results = (learningState.paperResults || [])
+    .filter(pr => pr.subject === subject && pr.completedAt)
+    .sort((a, b) => b.completedAt.localeCompare(a.completedAt))
+
+  if (!results.length) return 0
+
+  const days = daysBetween(results[0].completedAt.slice(0, 10), dateStr(date))
+  return days < 7 ? 20 : 0
+}
+
+// ─── isTopicEligibleForPaperPractice ─────────────────────────────────────────
+// A topic must have been taught before appearing in paper practice.
+// diagnosticMode = true allows untaught topics (for diagnostic papers only).
+
+export function isTopicEligibleForPaperPractice(topic, options = {}) {
+  if (!topic || !topic.status) return false
+  if (options.diagnosticMode) return true
+  return ['learned', 'reviewed', 'weak', 'mastered'].includes(topic.status)
+}
+
+// ─── selectPaperActivity ─────────────────────────────────────────────────────
+// Chooses the format of the Saturday paper practice block.
+
+export function selectPaperActivity(subject, learningState, availableMinutes, options = {}) {
+  if (options.diagnosticMode) return 'microPaper'
+
+  const coverage = getSubjectCoverage(subject, learningState)
+
+  if (availableMinutes >= 90 && coverage > 70) return 'fullPaper'
+  if (coverage > 35) return 'paperSection'
+  return 'microPaper'
+}
+
+// ─── selectWeekendPaperSubject ────────────────────────────────────────────────
+// Scores each eligible selected subject and picks the best paper target.
+
+export function selectWeekendPaperSubject(learningState, userProfile, date) {
+  const subjects   = userProfile.selectedSubjects || ALL_SUBJECTS
+  const candidates = subjects.filter(s => subjectHasPaperPractice(s, learningState))
+
+  if (!candidates.length) return subjects[0] || ALL_SUBJECTS[0]
+
+  return candidates
+    .map(subject => ({
+      subject,
+      score:
+        paperPracticeWeight(subject)
+        + weaknessBoost(subject, learningState)
+        + daysSinceLastPaperBoost(subject, learningState, date)
+        + upcomingAssessmentBoost(subject, userProfile, date)
+        + coverageReadinessBoost(subject, learningState)
+        - recentPaperPenalty(subject, learningState, date),
+    }))
+    .sort((a, b) => b.score - a.score)[0].subject
+}
+
+// ─── calculatePaperMistakeSeverity ───────────────────────────────────────────
+// Derives severity from marks lost and error type.
+// High: large portion of marks lost, or technique error with ≥40% loss.
+
+export function calculatePaperMistakeSeverity(questionResult) {
+  const lostMarks = questionResult.marksAvailable - questionResult.marksScored
+  const lostRatio = lostMarks / Math.max(questionResult.marksAvailable, 1)
+
+  const TECHNIQUE_ERRORS = ['poorExamTechnique', 'timing', 'noEvidence', 'didNotEvaluate', 'tooVague']
+
+  if (lostRatio >= 0.8) return 'high'
+  if (lostRatio >= 0.4 && TECHNIQUE_ERRORS.includes(questionResult.errorType)) return 'high'
+  if (lostRatio >= 0.4) return 'medium'
+  return 'low'
+}
+
+// ─── selectHighestValuePaperRepair ────────────────────────────────────────────
+// Picks the highest-priority weak point to repair after a paper, weighting by
+// severity and marks lost on the matching question if available.
+
+export function selectHighestValuePaperRepair(weakPoints, paperResult) {
+  if (!weakPoints || !weakPoints.length) return null
+
+  const { questionResults = [] } = paperResult || {}
+
+  const scored = weakPoints.map(wp => {
+    let score = 0
+    if (wp.severity === 'high')        score += 10
+    else if (wp.severity === 'medium') score += 6
+    else                               score += 3
+
+    const related = questionResults.find(
+      q => q.topic === wp.topic || q.skillTag === wp.skillTag
+    )
+    if (related) score += (related.marksAvailable - related.marksScored)
+
+    return { ...wp, _score: score }
+  })
+
+  const best = scored.sort((a, b) => b._score - a._score)[0]
+  const { _score, ...wp } = best
+  return wp
+}
+
+// ─── buildPaperReviewSummary ──────────────────────────────────────────────────
+// After marking, identifies the top mistake pattern, highest-value repair,
+// and one quick win. Keeps review focused — not a list of every failure.
+
+export function buildPaperReviewSummary(paperResult, weakPoints) {
+  const { questionResults = [] } = paperResult
+  const incorrect = questionResults.filter(q => q.marksScored < q.marksAvailable)
+
+  const errorCounts = {}
+  incorrect.forEach(q => {
+    if (q.errorType) errorCounts[q.errorType] = (errorCounts[q.errorType] || 0) + 1
+  })
+
+  const topEntry = Object.entries(errorCounts).sort((a, b) => b[1] - a[1])[0]
+  const topMistakePattern = topEntry ? topEntry[0] : 'knowledgeGap'
+
+  const subjectWeak = weakPoints.filter(
+    wp => wp.subject === paperResult.subject && wp.status !== 'resolved'
+  )
+  const highestValueRepair = selectHighestValuePaperRepair(subjectWeak, paperResult)
+
+  const quickWinQ = incorrect
+    .filter(q => (q.marksAvailable - q.marksScored) <= 2 && q.errorType === 'weakMethod')
+    .sort((a, b) => (b.marksAvailable - b.marksScored) - (a.marksAvailable - a.marksScored))[0]
+
+  const quickWin = quickWinQ
+    ? { topic: quickWinQ.topic, skillTag: quickWinQ.skillTag, errorType: 'weakMethod' }
+    : (subjectWeak.find(wp => wp.severity === 'low') || null)
+
+  return { topMistakePattern, highestValueRepair, quickWin }
+}
+
+// ─── calculateSubjectBoostsFromPaper ─────────────────────────────────────────
+// Returns a { [subject]: number } map of next-week priority boosts proportional
+// to marks lost.
+
+export function calculateSubjectBoostsFromPaper(paperResult) {
+  const { subject, marksAvailable = 0, marksScored = 0 } = paperResult
+  const lostRatio = marksAvailable > 0 ? (marksAvailable - marksScored) / marksAvailable : 0
+  return { [subject]: Math.round(lostRatio * 15) }
+}
+
+// ─── processPaperResults ─────────────────────────────────────────────────────
+// Pure: takes a completed paperResult and the current learningState.
+// Returns updated weakPoints and metadata — does NOT write to storage.
+
+export function processPaperResults(paperResult, learningState) {
+  const { questionResults = [] } = paperResult
+  let state = { ...learningState, weakPoints: learningState.weakPoints || [] }
+
+  for (const q of questionResults) {
+    state = createOrUpdateWeakPoint(state, {
+      subject:   paperResult.subject,
+      topic:     q.topic,
+      skillTag:  q.skillTag || null,
+      errorType: q.errorType || null,
+      correct:   q.marksScored >= q.marksAvailable,
+      answeredAt: paperResult.completedAt,
+    })
+  }
+
+  const subjectWeakPoints = state.weakPoints.filter(
+    wp => wp.subject === paperResult.subject && wp.status !== 'resolved'
+  )
+
+  const nextWeekBoosts     = calculateSubjectBoostsFromPaper(paperResult)
+  const recommendedRepair  = selectHighestValuePaperRepair(subjectWeakPoints, paperResult)
+  const reviewSummary      = buildPaperReviewSummary(paperResult, state.weakPoints)
+
+  return { weakPoints: state.weakPoints, nextWeekBoosts, recommendedRepair, reviewSummary }
+}
+
+// ─── applyPaperResultToLearningState ─────────────────────────────────────────
+// Pure: integrates a paper result into learningState.
+// Caller is responsible for persisting the returned state.
+
+export function applyPaperResultToLearningState(learningState, paperResult) {
+  const state     = { ...learningState, weakPoints: learningState.weakPoints || [] }
+  const processed = processPaperResults(paperResult, state)
+
+  return {
+    ...state,
+    weakPoints:    processed.weakPoints,
+    paperResults:  [...(learningState.paperResults || []), paperResult],
+    subjectBoosts: {
+      ...(learningState.subjectBoosts || {}),
+      ...processed.nextWeekBoosts,
+    },
   }
 }
