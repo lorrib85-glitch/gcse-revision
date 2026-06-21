@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **A dream on the steps** — hook around the March on Washington and King's speech.
+2. **Why 1963 became a turning point** — Birmingham, Bull Connor, media attention and growing pressure.
+3. **The march itself** — aims, organisation, scale, speakers and the symbolism of Washington.
+4. **From protest to law** — Kennedy, Johnson, the Civil Rights Act 1964 and Voting Rights Act 1965.
+5. **How much did peaceful protest achieve?** — progress, limits, opposition and the role of federal government.
+6. **Exam prep: peaceful protest and legal change** — Q2 causation and Q3d interpretation judgement.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; reactivate Episodes 1–4 knowledge; preview this chapter.
@@ -95,13 +110,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **Birmingham as deliberate strategy — not reactive:** The most important conceptual point in this episode is that Birmingham was chosen because Bull Connor was predictably brutal and the cameras were already there. The `VisualLearning` in Section 2 should make the SCLC's strategic calculation explicit before showing Connor's response — otherwise students describe what happened without explaining the strategy behind it.
 
