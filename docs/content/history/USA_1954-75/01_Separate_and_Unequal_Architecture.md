@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **A Country Split in Two** — introduce 1950s America, Jim Crow and the contradiction between freedom claims and segregation.
+2. **The Rules of Segregation** — Jim Crow, *Plessy v Ferguson*, federal vs state power and voting-rights barriers.
+3. **Violence Without Justice** — KKK intimidation, Emmett Till and the failure of Southern justice.
+4. **Resistance Before the Headlines** — NAACP, CORE, churches, local organisations and why federal action was limited.
+5. **Why the Movement Was Ready to Grow** — Second World War, migration, media, Cold War embarrassment and organised resistance.
+6. **Exam Prep: Why Civil Rights Grew** — Q2 causation and Q3d interpretation preparation.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; reactivate prior knowledge; identify missing knowledge; generate weak spots; preview the chapter.
@@ -99,13 +114,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **Storyline integration:** The DRAFT core takeaway ("the system of Jim Crow was total and deliberately constructed") should be threaded as a recurring thread:
    - Section 1 (CinematicRevealMoment): open on the *scale* of Jim Crow to establish the takeaway visually before teaching begins
