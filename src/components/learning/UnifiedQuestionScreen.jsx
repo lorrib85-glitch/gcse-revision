@@ -63,6 +63,7 @@ export default function UnifiedQuestionScreen({
   // Normalize question and correct fields
   const q = question || ''
   const correctIdx = typeof correct === 'number' ? correct : 0
+  const isTrueFalse = type === 'truefalse'
 
   function advanceAfterHold() {
     const holdMs = FEEDBACK_HOLD_MS
@@ -83,7 +84,7 @@ export default function UnifiedQuestionScreen({
       if (navigator.vibrate) navigator.vibrate(isCorrect ? 10 : 20)
       onAnswer?.(isCorrect)
 
-      if (isCorrect || type === 'truefalse') {
+      if (isCorrect || isTrueFalse) {
         // True/false is binary — a wrong tap already reveals the answer, so
         // skip the hint and retry step and move straight on.
         advanceAfterHold()
@@ -188,11 +189,13 @@ export default function UnifiedQuestionScreen({
       <div
         className="cinematic-shell"
         style={{
-          paddingTop: 110,
-          paddingInline: 32,
+          paddingTop: isTrueFalse ? 'calc(84px + env(safe-area-inset-top, 0px))' : 110,
+          paddingBottom: isTrueFalse ? 'calc(160px + env(safe-area-inset-bottom, 0px))' : undefined,
+          paddingInline: isTrueFalse ? 28 : 32,
           position: 'relative',
           zIndex: 2,
           '--cinematic-accent': accent,
+          justifyContent: isTrueFalse ? 'center' : 'flex-start',
           opacity: entered && !leaving ? 1 : 0,
           transform: leaving ? 'translateY(-8px)' : entered ? 'translateY(0)' : 'translateY(8px)',
           transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
@@ -202,15 +205,15 @@ export default function UnifiedQuestionScreen({
         {/* Question — hero prompt, no card frame */}
         <p style={{
           fontFamily: "'IBM Plex Serif', serif",
-          fontSize: 'clamp(2.125rem, 8vw, 2.25rem)',
+          fontSize: isTrueFalse ? 'clamp(2rem, 7.6vw, 2.25rem)' : 'clamp(2.125rem, 8vw, 2.25rem)',
           lineHeight: 1.12,
           fontWeight: 600,
           letterSpacing: '-0.02em',
           marginTop: 0,
-          marginBottom: 22,
+          marginBottom: isTrueFalse ? 18 : 22,
           marginInline: 'auto',
           color: '#F5F7FF',
-          maxWidth: 'calc(100% - 24px)',
+          maxWidth: isTrueFalse ? '100%' : 'calc(100% - 24px)',
           overflowWrap: 'break-word',
           textAlign: 'left',
         }}>
@@ -218,7 +221,15 @@ export default function UnifiedQuestionScreen({
         </p>
 
         {/* Answer options */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 'calc(100% - 32px)', marginInline: 'auto', width: '100%' }}>
+        <div style={{
+          display: isTrueFalse ? 'grid' : 'flex',
+          gridTemplateColumns: isTrueFalse ? '1fr 1fr' : undefined,
+          flexDirection: isTrueFalse ? undefined : 'column',
+          gap: isTrueFalse ? 16 : 10,
+          maxWidth: isTrueFalse ? '100%' : 'calc(100% - 32px)',
+          marginInline: 'auto',
+          width: '100%',
+        }}>
           {options.map((opt, i) => {
             const isFirstTapped = tapped === opt
             const isRetryTapped = retryTapped === opt
@@ -301,15 +312,16 @@ export default function UnifiedQuestionScreen({
                 style={{
                   position: 'relative',
                   width: '100%',
-                  textAlign: 'left',
+                  minHeight: isTrueFalse ? 58 : undefined,
+                  textAlign: isTrueFalse ? 'center' : 'left',
                   background,
                   border,
-                  borderRadius: 14,
-                  padding: '14px 48px 14px 18px',
+                  borderRadius: isTrueFalse ? 18 : 14,
+                  padding: isTrueFalse ? '15px 18px' : '14px 48px 14px 18px',
                   cursor: disabled ? 'default' : 'pointer',
                   fontFamily: "'Sora', sans-serif",
-                  fontWeight: 500,
-                  fontSize: '1rem',
+                  fontWeight: 700,
+                  fontSize: isTrueFalse ? '1.05rem' : '1rem',
                   lineHeight: 1.45,
                   color,
                   opacity,
