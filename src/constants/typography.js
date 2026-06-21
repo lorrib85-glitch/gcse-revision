@@ -7,6 +7,22 @@ export const TYPE = {
     letterSpacing: '-0.03em',
   },
 
+  screenHeading: {
+    fontFamily: "'Sora', sans-serif",
+    fontSize: 'clamp(30px, 8vw, 42px)',
+    lineHeight: 1.05,
+    fontWeight: 800,
+    letterSpacing: '-0.03em',
+  },
+
+  sectionHeading: {
+    fontFamily: "'Sora', sans-serif",
+    fontSize: 'clamp(24px, 6.4vw, 32px)',
+    lineHeight: 1.12,
+    fontWeight: 700,
+    letterSpacing: '-0.02em',
+  },
+
   sectionTitle: {
     fontFamily: "'Sora', sans-serif",
     fontSize: 28,
@@ -31,6 +47,22 @@ export const TYPE = {
     letterSpacing: '0em',
   },
 
+  bodyText: {
+    fontFamily: "'Outfit', sans-serif",
+    fontSize: '0.95rem',
+    lineHeight: 1.55,
+    fontWeight: 430,
+    letterSpacing: '-0.005em',
+  },
+
+  bodyLarge: {
+    fontFamily: "'Outfit', sans-serif",
+    fontSize: '1.05rem',
+    lineHeight: 1.48,
+    fontWeight: 450,
+    letterSpacing: '-0.006em',
+  },
+
   bodySmall: {
     fontFamily: "'Sora', sans-serif",
     fontSize: 16,
@@ -39,12 +71,45 @@ export const TYPE = {
     letterSpacing: '0em',
   },
 
+  bodySmallText: {
+    fontFamily: "'Outfit', sans-serif",
+    fontSize: '0.84rem',
+    lineHeight: 1.45,
+    fontWeight: 430,
+    letterSpacing: '-0.003em',
+  },
+
   metadata: {
     fontFamily: "'Sora', sans-serif",
     fontSize: 14,
     lineHeight: 1.3,
     fontWeight: 500,
     letterSpacing: '0.08em',
+  },
+
+  metadataText: {
+    fontFamily: "'Sora', sans-serif",
+    fontSize: '0.72rem',
+    lineHeight: 1.2,
+    fontWeight: 700,
+    letterSpacing: '0.12em',
+    textTransform: 'uppercase',
+  },
+
+  captionText: {
+    fontFamily: "'Outfit', sans-serif",
+    fontSize: '0.78rem',
+    lineHeight: 1.35,
+    fontWeight: 430,
+    letterSpacing: '0em',
+  },
+
+  buttonText: {
+    fontFamily: "'Sora', sans-serif",
+    fontSize: '0.92rem',
+    lineHeight: 1.2,
+    fontWeight: 700,
+    letterSpacing: '0.01em',
   },
 
   // Mobile-first text over full-bleed imagery. Use this for cinematic learning
