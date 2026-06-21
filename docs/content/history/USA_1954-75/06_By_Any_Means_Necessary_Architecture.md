@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **A different voice** — hook around Malcolm X and the challenge to non-violence.
+2. **Why some lost faith in non-violence** — continued racism, poverty, police brutality and slow progress.
+3. **Malcolm X and Black nationalism** — Nation of Islam, self-defence, separation, pride and criticism of MLK.
+4. **Black Power arrives** — Stokely Carmichael, the Black Panthers, raised fists and community programmes.
+5. **Radicalism: progress or problem?** — appeal, fear, media reaction, government response and civil rights divisions.
+6. **Exam prep: Malcolm X, Black Power and impact** — Q2 causation and judgement on radicalism.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; reactivate Episodes 1–5 knowledge; preview this chapter.
@@ -97,13 +112,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **The 2022 Q3 Black Panthers interpretation as the exam anchor:** This episode contains the content for the most recently examined Q3(d) question in the series (2022). Section 4's `InteractiveCollectionExplorer` and Section 6's `ExaminerExplainsScreen` should explicitly reference the evaluation structure needed for this question type. The two dimensions of the Panthers (community programmes / militant tactics) are the two halves of the exam answer.
 
