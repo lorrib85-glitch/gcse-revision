@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **A Protest That Refused to Move** — hook around sit-ins and Freedom Rides.
+2. **Sitting In to Stand Up** — Greensboro, SNCC, student activism and disciplined non-violent protest.
+3. **Testing the Law on Wheels** — Freedom Rides, CORE, interstate travel and deliberate confrontation.
+4. **Violence, Cameras and Federal Pressure** — Anniston, Birmingham, Montgomery, media coverage and Kennedy's response.
+5. **Direct Action Becomes a Weapon** — strengths, risks and limits of sit-ins/Freedom Rides.
+6. **Exam Prep: Protest Methods Compared** — Q2 causation and similarity/difference exam preparation.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; reactivate Episodes 1–3 knowledge; preview this chapter.
@@ -97,13 +112,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **"The violence was the strategy" as the episode's central insight:** The most common student error in Q2 answers about the Freedom Rides is treating the violence as evidence of failure. The `ExplainReveal` in Section 4 and the `ExaminerExplainsScreen` in Section 6 should both address this explicitly: the riders intended to provoke the reaction because they knew it would generate media coverage and force federal attention.
 
