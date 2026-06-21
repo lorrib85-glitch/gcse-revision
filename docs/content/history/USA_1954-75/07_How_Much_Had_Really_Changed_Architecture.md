@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **Victory or illusion?** — hook around judging civil rights progress by 1975.
+2. **What changed in law** — Civil Rights Act, Voting Rights Act, desegregation and federal enforcement.
+3. **What stayed unequal** — housing, jobs, poverty, education, police brutality and de facto segregation.
+4. **Different routes to equality** — MLK after 1965, Black Power, local activism and continuing protest.
+5. **The 1975 judgement** — weighing progress against limits using evidence across the course.
+6. **Exam prep: how far had civil rights progressed?** — Q3d interpretation/evaluation focus.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; reactivate Episodes 1–6 knowledge; preview this chapter.
@@ -100,13 +115,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **The 61% income figure as the episode's anchor statistic:** Median Black family income at 61% of white median is the single most powerful statistic in this episode for Q3(d) answers. It should appear in multiple places: the `ChapterHookScreen`, the `InteractiveCollectionExplorer`, and the `ColSortBlock`. Students who can use specific statistics in Q3(d) answers score in the highest bands.
 
