@@ -19,23 +19,23 @@ import { RADII } from './radii.js'
 
 /**
  * Main screen heading (e.g., Home hero "Good evening")
- * Uses TYPE.hero
+ * Uses TYPE.screenHeading (Manrope, 800 weight)
  */
 export const screenHeading = () => ({
-  ...TYPE.hero,
+  ...TYPE.screenHeading,
 })
 
 /**
  * Section heading (e.g., "Weak zones", "Continue learning")
- * Uses TYPE.sectionTitle (28px, 600 weight)
+ * Uses TYPE.sectionHeading (Manrope, 700/750 weight)
  */
 export const sectionHeading = () => ({
-  ...TYPE.sectionTitle,
+  ...TYPE.sectionHeading,
 })
 
 /**
  * Card/module title (e.g., module name on a card)
- * Uses TYPE.cardTitle (22px, 600 weight)
+ * Uses TYPE.cardTitle (Manrope, 700 weight)
  */
 export const cardHeading = () => ({
   ...TYPE.cardTitle,
@@ -43,40 +43,40 @@ export const cardHeading = () => ({
 
 /**
  * Subsection or small heading (e.g., topic name, quiz round label)
- * Uses bodySmall + 600 weight (16px, 600 weight)
+ * Uses Manrope if it is genuinely a heading for hierarchy.
  */
 export const smallHeading = () => ({
-  ...TYPE.bodySmall,
-  fontWeight: 600,
+  ...TYPE.cardTitle,
+  fontSize: '1rem',
 })
 
 /**
  * Body copy (standard reading text, descriptions)
- * Uses TYPE.body (18px, 400 weight)
+ * Uses TYPE.bodyText (Sora, 400 weight)
  */
 export const bodyText = () => ({
-  ...TYPE.body,
+  ...TYPE.bodyText,
 })
 
 /**
  * Small body text (secondary descriptions, metadata)
- * Uses TYPE.bodySmall (16px, 400 weight)
+ * Uses TYPE.bodySmallText (Sora, 400 weight)
  */
 export const smallText = () => ({
-  ...TYPE.bodySmall,
+  ...TYPE.bodySmallText,
 })
 
 /**
  * Metadata/label text (captions, timestamps, category tags)
- * Uses TYPE.metadata (14px, 500 weight, +0.08em letter-spacing)
+ * Uses TYPE.metadataText (Sora, 600 weight, uppercase)
  */
 export const metadataText = () => ({
-  ...TYPE.metadata,
+  ...TYPE.metadataText,
 })
 
 /**
  * Cinematic/editorial text (full-screen reveals, story moments)
- * Uses TYPE.cinematic (38px, IBM Plex Serif, 600 weight)
+ * Uses TYPE.cinematic (Manrope, cinematic weight)
  */
 export const cinematicHeading = () => ({
   ...TYPE.cinematic,
@@ -88,7 +88,7 @@ export const cinematicHeading = () => ({
 
 /**
  * Primary CTA button (full-width "Continue →" buttons)
- * Height: 56px, large border-radius, accent color
+ * Height: 58px, large border-radius, accent color, Sora 700
  */
 export const buttonPrimary = (accentColor = '#2BBE9A') => ({
   display: 'flex',
@@ -97,10 +97,13 @@ export const buttonPrimary = (accentColor = '#2BBE9A') => ({
   gap: SPACING.sm,
   height: BUTTONS.primary.height,
   borderRadius: BUTTONS.primary.borderRadius,
-  paddingX: BUTTONS.primary.paddingX,
-  fontSize: BUTTONS.primary.fontSize,
-  fontWeight: BUTTONS.primary.fontWeight,
-  fontFamily: "'Sora', sans-serif",
+  paddingLeft: BUTTONS.primary.paddingX,
+  paddingRight: BUTTONS.primary.paddingX,
+  fontSize: TYPE.buttonText.fontSize,
+  fontWeight: TYPE.buttonText.fontWeight,
+  fontFamily: TYPE.buttonText.fontFamily,
+  letterSpacing: TYPE.buttonText.letterSpacing,
+  lineHeight: TYPE.buttonText.lineHeight,
   background: accentColor,
   color: '#F5F7FF',
   border: 'none',
@@ -113,7 +116,7 @@ export const buttonPrimary = (accentColor = '#2BBE9A') => ({
 
 /**
  * Secondary button (supporting actions, less emphasis)
- * Height: 56px, medium border-radius, subtle background
+ * Height: 56px, medium border-radius, subtle background, Sora 700
  */
 export const buttonSecondary = () => ({
   display: 'flex',
@@ -122,10 +125,13 @@ export const buttonSecondary = () => ({
   gap: SPACING.sm,
   height: BUTTONS.secondary.height,
   borderRadius: BUTTONS.secondary.borderRadius,
-  paddingX: BUTTONS.secondary.paddingX,
-  fontSize: BUTTONS.secondary.fontSize,
-  fontWeight: BUTTONS.secondary.fontWeight,
-  fontFamily: "'Sora', sans-serif",
+  paddingLeft: BUTTONS.secondary.paddingX,
+  paddingRight: BUTTONS.secondary.paddingX,
+  fontSize: TYPE.buttonText.fontSize,
+  fontWeight: TYPE.buttonText.fontWeight,
+  fontFamily: TYPE.buttonText.fontFamily,
+  letterSpacing: TYPE.buttonText.letterSpacing,
+  lineHeight: TYPE.buttonText.lineHeight,
   background: 'rgba(255, 255, 255, 0.06)',
   color: '#F5F7FF',
   border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -138,7 +144,7 @@ export const buttonSecondary = () => ({
 
 /**
  * Compact button (inline actions, "Try again", "Show hint")
- * Height: 44px, small border-radius, minimal visual weight
+ * Height: 44px, small border-radius, minimal visual weight, Sora 700
  */
 export const buttonCompact = () => ({
   display: 'flex',
@@ -147,10 +153,13 @@ export const buttonCompact = () => ({
   gap: SPACING.xs,
   height: BUTTONS.compact.height,
   borderRadius: BUTTONS.compact.borderRadius,
-  paddingX: BUTTONS.compact.paddingX,
-  fontSize: BUTTONS.compact.fontSize,
-  fontWeight: BUTTONS.compact.fontWeight,
-  fontFamily: "'Sora', sans-serif",
+  paddingLeft: BUTTONS.compact.paddingX,
+  paddingRight: BUTTONS.compact.paddingX,
+  fontSize: '0.88rem',
+  fontWeight: TYPE.buttonText.fontWeight,
+  fontFamily: TYPE.buttonText.fontFamily,
+  letterSpacing: TYPE.buttonText.letterSpacing,
+  lineHeight: TYPE.buttonText.lineHeight,
   background: 'rgba(255, 255, 255, 0.06)',
   color: '#F5F7FF',
   border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -167,9 +176,10 @@ export const buttonCompact = () => ({
  */
 export const buttonText = () => ({
   display: 'inline-block',
-  fontSize: BUTTONS.text.fontSize,
-  fontWeight: BUTTONS.text.fontWeight,
-  fontFamily: "'Outfit', sans-serif",
+  fontSize: TYPE.buttonText.fontSize,
+  fontWeight: TYPE.buttonText.fontWeight,
+  fontFamily: TYPE.buttonText.fontFamily,
+  letterSpacing: TYPE.buttonText.letterSpacing,
   color: '#A89FC2',
   background: 'transparent',
   border: 'none',
