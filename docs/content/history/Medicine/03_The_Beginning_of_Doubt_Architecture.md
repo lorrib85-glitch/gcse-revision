@@ -12,72 +12,89 @@
 
 ---
 
+## Navigation spine (6 parts)
+
+Every Medicine module must be built as six clear navigation parts. These titles should appear in the module journey/progress navigation so the student always knows where they are in the story.
+
+1. **Old Certainties Start to Crack** — intro hook, prior recall and roadmap.
+2. **The Renaissance Mindset Shift** — humanism, questioning and rediscovery of ancient texts.
+3. **Vesalius Opens the Body** — anatomy, dissection, observation and Galen's errors.
+4. **Printing Changes the Argument** — books, diagrams, universities and spread of ideas.
+5. **Doubt Without Revolution** — what changed, what stayed the same and why progress was limited.
+6. **Exam Prep: Why Did Ideas Begin to Change?** — examiner traps, change/continuity judgement and exam practice.
+
+---
+
 ## 2. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Recall Episodes 1–2 knowledge; create curiosity about Renaissance change; preview the episode.
 - **Proposed content for Episode 3:**
   - PriorKnowledgeRecall: probe Four Humours, miasma, Church dominance, Galen errors from Episodes 1–2
-  - Hook: "It is 1543. A doctor in Padua has just proved the greatest authority in medicine has been wrong for 1300 years. What happens next?"
-  - WhatYouWillLearn: preview the Renaissance context and Vesalius
+  - Hook: For 1300 years, Galen was treated like the answer. Then someone started cutting into bodies and looking properly.
+  - Roadmap: students should understand why the Renaissance began to challenge old ideas, but did not instantly transform treatment.
 - **Suggested components:**
-  - `ChapterHookScreen` (True/False) — "Vesalius proved Galen wrong about the human body." [TRUE, ~300 errors]
-  - `PriorKnowledgeRecall` — target: four-humours, galen, miasma, church-influence from Episodes 1–2
+  - `CinematicRevealMoment` — candlelit anatomy theatre; Vesalius looking from the book to the body
+  - `PriorKnowledgeRecall`
+  - `WhatYouWillLearn`
 
 ### Section 2 — Learning Chunk 1
-- **Purpose:** Renaissance background — why change became possible.
+- **Purpose:** Introduce why Renaissance medicine became more questioning.
 - **Proposed content for Episode 3:**
-  - Renaissance meaning "re-birth"; renewed interest in learning; secular thinking (humanism)
-  - Reformation: Henry VIII breaks from Rome → Church authority declines → monasteries close
-  - Printing press: ideas spread without Church control; anatomical drawings published widely
-  - Royal Society (1660): shared experiments; *Philosophical Transactions*; Charles II's Royal Charter
+  - Renaissance means rebirth of interest in learning, art, science and classical texts
+  - Humanism encouraged observation and questioning rather than pure reliance on authority
+  - Wealthy patrons, universities and printed books helped ideas spread
+  - But most people still believed in Galen, Four Humours and miasma
 - **Suggested components:**
-  - `VisualLearning` — contrast: medieval scholar copying manuscripts in a monastery vs. Renaissance physician dissecting; the shift in approach
-  - `ExplainReveal` — chain: Reformation → Church authority declines → Vesalius can challenge Galen without fear
+  - `VisualLearning` — Renaissance study, books, anatomy sketches
+  - `ExplainReveal` — why new thinking became possible
+  - `QuickRecallScreen`
 
 ### Section 3 — Learning Chunk 2
-- **Purpose:** Vesalius — the breakthrough and its limits.
+- **Purpose:** Develop understanding of Vesalius and anatomy.
 - **Proposed content for Episode 3:**
-  - Vesalius: *On the Fabric of the Human Body* (1543); dissected executed criminals (not animals)
-  - Found ~300 Galen errors: jawbone (one part not two), ribs (no difference between men/women), vena cava, breastbone
-  - Encouraged empirical investigation; laid foundation for Harvey (Ep 4)
-  - Limited immediate impact: physicians still used humoural treatments; medical training still dominated by Galen
-  - Sydenham: observed patients; distinguished measles from scarlet fever; *Observationes Medicae* (1676)
-  - Leeuwenhoek: observed "animalcules"; didn't connect to disease
+  - Andreas Vesalius used human dissection and direct observation
+  - Published *On the Fabric of the Human Body* in 1543
+  - Corrected some of Galen's anatomical errors because Galen had dissected animals
+  - Accurate illustrations made anatomy clearer and easier to teach
 - **Suggested components:**
-  - `InteractiveHotspotImage` — anatomical diagram of the human body; hotspots reveal Vesalius corrections to Galen's errors
-  - `MatchingTask` — match Galen's claim to Vesalius's correction (e.g. "jawbone in two parts" → "jawbone in one part")
+  - `InteractiveHotspotImage` — anatomy theatre / book illustration hotspots
+  - `MatchingTask` — Galen's claim vs Vesalius' correction
+  - `QuickRecallScreen`
 
 ### Section 4 — Learning Chunk 3
-- **Purpose:** Treatment changes and continuities in the Renaissance.
+- **Purpose:** Show why printing and communication mattered.
 - **Proposed content for Episode 3:**
-  - New treatments: transference; chemical cures (mercury, antimony); New World herbs
-  - Continuing treatments: humoural (bloodletting, purging) — Charles II received these in 1685
-  - Hospital changes: pest houses; fewer hospitals due to monastery closures; more emphasis on curing; surgeons need licences
-  - Prevention changes: government role increased; miasma still believed; bathing less fashionable (syphilis)
+  - Printing press allowed identical diagrams and arguments to spread more widely
+  - Scientists could compare, challenge and build on work
+  - Vesalius' book made anatomical challenge visible
+  - Communication changed faster than treatments did
 - **Suggested components:**
-  - `ColSortBlock` — sort treatments into "Medieval" / "Renaissance" / "Both periods" (most humoural treatments sort to "Both")
-  - `QuickRecallScreen` — retrieval on Vesalius's specific corrections to Galen
+  - `VisualNarrativeScreen` — idea travelling from dissection table to printed page to university
+  - `GuidedChoiceCarousel` — choose which invention/condition helps ideas spread fastest
+  - `QuickRecallScreen`
 
 ### Section 5 — Learning Chunk 4
-- **Purpose:** Significance and "how far" judgement — was the Renaissance real progress?
+- **Purpose:** Complete teaching — assess change and continuity.
 - **Proposed content for Episode 3:**
-  - What changed: anatomy (Vesalius); empirical method as an approach; printing press; Royal Society; government role
-  - What stayed the same: most treatment (humoural); miasma belief; Four Humours for ordinary people; religion in epidemics
-  - The core argument: progress was in *method* not immediate treatment; significance = long-term enablement
-  - Agent check: 🔬 Science & technology + 👤 Individuals = the drivers here; ⛪ Religion = declining but not absent
+  - Change: anatomy improved; Galen could be challenged; observation became more important
+  - Continuity: treatments still relied heavily on Four Humours; Church and tradition still influential
+  - Key judgement: Renaissance medicine changed knowledge more than everyday treatment at first
+  - Agents of change: Science & technology, individuals, religion/Church influence decreasing slowly
 - **Suggested components:**
-  - `ExplainReveal` — "Why did Vesalius change medicine less than you'd expect?" — reveal chain showing limited immediate impact
-  - `QuickRecallScreen` — final retrieval: Vesalius facts, Royal Society, changes/continuities
+  - `ColSortBlock` — change vs continuity
+  - `ExplainReveal` — why better anatomy did not immediately mean better cures
+  - `QuickRecallScreen`
 
 ### Section 6 — Summary & Examiner
-- **Purpose:** Exam application — "how far do you agree" Renaissance question.
+- **Purpose:** Exam application, misconception correction and module completion.
 - **Proposed content for Episode 3:**
-  - "How far do you agree that there was little progress in the Renaissance?" — balanced answer structure
-  - Mark scheme language: agree = anatomy not treatment, Galen still in medical training; disagree = Vesalius proved Galen wrong, printing press, Royal Society
+  - Common traps: saying Vesalius disproved all of Galen; saying the Renaissance immediately cured disease; forgetting continuity
+  - Exam practice: explain why medical knowledge improved in the Renaissance / how far Vesalius changed medicine
+  - Students should use precise phrases: anatomy, dissection, observation, printing press, challenge to authority
 - **Suggested components:**
-  - `ExaminerExplainsScreen` — examiner walks through the balanced argument structure for the 16-mark Renaissance question
-  - `FaceTheExaminer` — 16-mark Renaissance progress question
+  - `ExaminerExplainsScreen`
+  - `FaceTheExaminer`
   - `ChapterCompleteScreen`
 
 ### Module Completion Test
@@ -96,36 +113,18 @@
 
 ## 3. Current state & gap analysis
 
-Built (shared) as `mod2` — 16 screens total; also covers Episodes 4 and 5.
+Built inside shared `mod2`. Episode 3 content should be separated from Harvey and Great Plague content when the Medicine spine is rebuilt into 14 clean modules.
 
-Known screen tags from `src/modules.js`: `vesalius` (s5), remaining 15 screens have `null` tags.
-
-**Inventory (Episode 3 content only — based on tag `vesalius` at s5):**
-- s5 `vesalius` → likely Section 3 (Vesalius's corrections to Galen) ✓
-
-**GAPS for Episode 3 within `mod2`:**
-- No `renaissance-background` tag — whether Reformation/printing press/Royal Society background is covered unconfirmed
-- No `sydenham` or `leeuwenhoek` tag — these individuals' coverage unconfirmed
-- No `renaissance-treatments` tag — treatment changes unconfirmed
-- With only 16 total screens across 3 bundled episodes, coverage of Episode 3 is likely only 5–6 screens
-
-BUNDLING: `mod2` currently covers:
-- Episode 3 (Renaissance/Vesalius): s1–~s5
-- Episode 4 (Harvey): ~s6–~s10 (covered in Episode 4 architecture file)
-- Episode 5 (Great Plague 1665): ~s11–~s16 (covered in Episode 5 architecture file)
+**Audit priority:** confirm Vesalius/anatomy content has its own clear section and is not blurred with Harvey/circulation.
 
 ---
 
 ## 4. Build recommendations
 
-1. **Storyline integration (🔬 Science & technology + 👤 Individuals):** Core takeaway — Vesalius proved Galen wrong through empirical observation — should thread via: Section 1 hook, Section 3 `InteractiveHotspotImage`, Section 5 `ExplainReveal`. Key: always contrast *method* (looking/observing) vs *authority* (book-learning from Galen).
+1. **Keep the story as doubt, not instant revolution:** Vesalius starts a crack in old authority; he does not make modern medicine arrive overnight.
 
-2. **Split `mod2` into Episodes 3, 4 and 5 (highest priority):** The series map explicitly recommends this split. At 16 screens across 3 episodes, each episode gets only ~5 screens — far below the 25–32 screens of built modules (Ep 1: 32, Ep 2: 27). A rebuild is needed. This recommendation applies across all three bundled episodes.
+2. **Use Episode 1 interleaving:** Galen, Church authority and Four Humours must be recalled so students understand what Vesalius was challenging.
 
-3. **Vesalius errors screen (👤 Individuals):** The `vesalius` tag at s5 likely covers this, but verify it includes all four named errors (jawbone, ribs, vena cava, breastbone) — all four appear in past-paper questions.
+3. **Make printing press visible:** This is high-value exam content because it explains why ideas spread beyond one anatomy theatre.
 
-4. **Renaissance background screen (⛪ Religion declining + 🏛️ Government):** The Reformation and printing press are the *enabling factors* for Vesalius. A dedicated screen covering these should appear before the Vesalius reveal.
-
-5. **Interleaving from Episodes 1–2:** The `ColSortBlock` (sort treatments into Medieval/Renaissance/Both) is particularly effective here because it forces learners to recall Episode 1 content (bloodletting, purging, herbal remedies) in the context of Episode 3 change/continuity.
-
-6. **Episode 4 handoff:** End of Episode 3 should bridge to Harvey — "Vesalius rebuilt the map of the body. But he couldn't answer one fundamental question: what does the heart actually do?" Agent: 👤 Individuals + 🔬 Technology.
+4. **End with judgement:** Better knowledge of anatomy = major change in knowledge, limited immediate change in treatment.
