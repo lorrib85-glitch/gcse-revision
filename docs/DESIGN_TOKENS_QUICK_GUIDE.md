@@ -8,28 +8,25 @@
 
 ```
 Is this the MAIN page title (Home greeting, Subjects page hero)?
-  → Use screenHeading() — 34px, bold
+  → Use screenHeading() — Manrope, clamp(30px, 8vw, 42px), 800, -0.045em
 
 Is this a MAJOR section title (e.g., "Weak zones", "Your modules")?
-  → Use sectionHeading() — 28px, 600 weight
+  → Use sectionHeading() — Manrope, clamp(22px, 6vw, 30px), 700/750, -0.035em
 
 Is this a CARD or MODULE title?
-  → Use cardHeading() — 22px, 600 weight
-
-Is this a small subsection label (e.g., topic name, quiz round)?
-  → Use smallHeading() — 16px, 600 weight
+  → Use cardHeading() — Manrope, 1.12rem, 700, -0.02em
 
 Is this standard reading copy or description?
-  → Use bodyText() — 18px, 400 weight
+  → Use bodyText() — Sora, 0.95rem, 400, -0.005em
 
 Is this small secondary text (timestamps, metadata)?
-  → Use smallText() — 16px, 400 weight
+  → Use smallText() — Sora, 0.84rem, 400, -0.005em
 
 Is this a caption or label (UPPERCASE tags, fine print)?
-  → Use metadataText() — 14px, 500 weight, +0.08em spacing
+  → Use metadataText() — Sora, 0.72rem, 600/650, uppercase, +0.10em
 
-Is this a full-screen cinematic moment or editorial reveal?
-  → Use cinematicHeading() — 38px, IBM Plex Serif, bold
+Is this a button or tappable action?
+  → Use buttonText() — Sora, 0.92rem, 700, -0.005em
 ```
 
 ---
@@ -59,7 +56,7 @@ Is this a text link or minimal action?
 
 ```jsx
 // Hardcoding sizes — creates inconsistencies
-<h1 style={{ fontSize: '34px', fontWeight: 700, fontFamily: "'Sora', sans-serif" }}>
+<h1 style={{ fontSize: '34px', fontWeight: 700, fontFamily: "'Manrope', sans-serif" }}>
   Welcome back
 </h1>
 

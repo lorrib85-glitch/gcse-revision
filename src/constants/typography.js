@@ -1,119 +1,122 @@
 export const TYPE = {
-  hero: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: 34,
-    lineHeight: 1.05,
-    fontWeight: 700,
-    letterSpacing: '-0.03em',
-  },
-
+  // Cinematic Hierarchy (Manrope)
   screenHeading: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: 'clamp(30px, 8vw, 42px)',
-    lineHeight: 1.05,
+    fontFamily: "'Manrope', sans-serif",
+    fontSize: "clamp(30px, 8vw, 42px)",
+    lineHeight: 1.02,
     fontWeight: 800,
-    letterSpacing: '-0.03em',
+    letterSpacing: "-0.045em"
   },
 
   sectionHeading: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: 'clamp(24px, 6.4vw, 32px)',
-    lineHeight: 1.12,
+    fontFamily: "'Manrope', sans-serif",
+    fontSize: "clamp(22px, 6vw, 30px)",
+    lineHeight: 1.08,
     fontWeight: 700,
-    letterSpacing: '-0.02em',
-  },
-
-  sectionTitle: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: 28,
-    lineHeight: 1.12,
-    fontWeight: 600,
-    letterSpacing: '-0.02em',
+    letterSpacing: "-0.035em"
   },
 
   cardTitle: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: 22,
-    lineHeight: 1.2,
-    fontWeight: 600,
-    letterSpacing: '-0.01em',
+    fontFamily: "'Manrope', sans-serif",
+    fontSize: "1.12rem",
+    lineHeight: 1.18,
+    fontWeight: 700,
+    letterSpacing: "-0.02em"
   },
 
-  body: {
+  // Learning & UI (Sora)
+  bodyText: {
     fontFamily: "'Sora', sans-serif",
-    fontSize: 18,
+    fontSize: "0.95rem",
     lineHeight: 1.5,
     fontWeight: 400,
-    letterSpacing: '0em',
-  },
-
-  bodyText: {
-    fontFamily: "'Outfit', sans-serif",
-    fontSize: '0.95rem',
-    lineHeight: 1.55,
-    fontWeight: 430,
-    letterSpacing: '-0.005em',
+    letterSpacing: "-0.005em"
   },
 
   bodyLarge: {
-    fontFamily: "'Outfit', sans-serif",
-    fontSize: '1.05rem',
-    lineHeight: 1.48,
-    fontWeight: 450,
-    letterSpacing: '-0.006em',
-  },
-
-  bodySmall: {
     fontFamily: "'Sora', sans-serif",
-    fontSize: 16,
-    lineHeight: 1.45,
+    fontSize: "1.02rem",
+    lineHeight: 1.48,
     fontWeight: 400,
-    letterSpacing: '0em',
+    letterSpacing: "-0.006em"
   },
 
   bodySmallText: {
-    fontFamily: "'Outfit', sans-serif",
-    fontSize: '0.84rem',
-    lineHeight: 1.45,
-    fontWeight: 430,
-    letterSpacing: '-0.003em',
-  },
-
-  metadata: {
     fontFamily: "'Sora', sans-serif",
-    fontSize: 14,
-    lineHeight: 1.3,
-    fontWeight: 500,
-    letterSpacing: '0.08em',
+    fontSize: "0.84rem",
+    lineHeight: 1.45,
+    fontWeight: 400,
+    letterSpacing: "-0.005em"
   },
 
   metadataText: {
     fontFamily: "'Sora', sans-serif",
-    fontSize: '0.72rem',
+    fontSize: "0.72rem",
     lineHeight: 1.2,
-    fontWeight: 700,
-    letterSpacing: '0.12em',
-    textTransform: 'uppercase',
+    fontWeight: 600,
+    letterSpacing: "0.10em",
+    textTransform: "uppercase"
   },
 
   captionText: {
-    fontFamily: "'Outfit', sans-serif",
-    fontSize: '0.78rem',
+    fontFamily: "'Sora', sans-serif",
+    fontSize: "0.78rem",
     lineHeight: 1.35,
-    fontWeight: 430,
-    letterSpacing: '0em',
+    fontWeight: 400,
+    letterSpacing: "-0.003em"
   },
 
   buttonText: {
     fontFamily: "'Sora', sans-serif",
-    fontSize: '0.92rem',
+    fontSize: "0.92rem",
     lineHeight: 1.2,
     fontWeight: 700,
-    letterSpacing: '0.01em',
+    letterSpacing: "-0.005em"
   },
 
-  // Mobile-first text over full-bleed imagery. Use this for cinematic learning
-  // overlays so titles, bodies and tap prompts stay consistent across modules.
+  // Compatibility Aliases (pointing to new values)
+  hero: {
+    fontFamily: "'Manrope', sans-serif",
+    fontSize: "clamp(30px, 8vw, 42px)",
+    lineHeight: 1.02,
+    fontWeight: 800,
+    letterSpacing: "-0.045em"
+  },
+
+  sectionTitle: {
+    fontFamily: "'Manrope', sans-serif",
+    fontSize: "clamp(22px, 6vw, 30px)",
+    lineHeight: 1.08,
+    fontWeight: 700,
+    letterSpacing: "-0.035em"
+  },
+
+  body: {
+    fontFamily: "'Sora', sans-serif",
+    fontSize: "0.95rem",
+    lineHeight: 1.5,
+    fontWeight: 400,
+    letterSpacing: "-0.005em"
+  },
+
+  bodySmall: {
+    fontFamily: "'Sora', sans-serif",
+    fontSize: "0.84rem",
+    lineHeight: 1.45,
+    fontWeight: 400,
+    letterSpacing: "-0.005em"
+  },
+
+  metadata: {
+    fontFamily: "'Sora', sans-serif",
+    fontSize: "0.72rem",
+    lineHeight: 1.2,
+    fontWeight: 600,
+    letterSpacing: "0.10em",
+    textTransform: "uppercase"
+  },
+
+  // Overlay & Cinematic Overrides
   overlayEyebrow: {
     fontFamily: "'Sora', sans-serif",
     fontSize: 11,
@@ -124,7 +127,7 @@ export const TYPE = {
   },
 
   overlayTitle: {
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: "'Manrope', sans-serif",
     fontSize: 'clamp(24px, 6.4vw, 30px)',
     lineHeight: 1.08,
     fontWeight: 750,
@@ -132,7 +135,7 @@ export const TYPE = {
   },
 
   overlayBody: {
-    fontFamily: "'Outfit', sans-serif",
+    fontFamily: "'Sora', sans-serif",
     fontSize: 'clamp(15px, 4vw, 17px)',
     lineHeight: 1.45,
     fontWeight: 500,
@@ -149,7 +152,7 @@ export const TYPE = {
   },
 
   impactTitle: {
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: "'Manrope', sans-serif",
     fontSize: 'clamp(28px, 8vw, 36px)',
     lineHeight: 1.04,
     fontWeight: 850,
@@ -157,7 +160,7 @@ export const TYPE = {
   },
 
   cinematic: {
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: "'Manrope', sans-serif",
     fontSize: 'clamp(24px, 6.4vw, 30px)',
     lineHeight: 1.08,
     fontWeight: 750,
