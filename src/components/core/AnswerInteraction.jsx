@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { recordScore } from '../../progress.js'
+import { TYPE } from '../../constants/typography.js'
 
 function CheckIcon({ color }) {
   return (
@@ -108,20 +109,20 @@ export default function AnswerInteraction({
           borderRadius: 12, padding: '12px 14px', marginTop: 10,
         }}>
           <div style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.63rem', fontWeight: 700, letterSpacing: '.1em',
-            textTransform: 'uppercase', color: '#5BB8FF', marginBottom: 6,
+            ...TYPE.metadataText,
+            color: '#5BB8FF',
+            marginBottom: 6,
           }}>💡 Hint — think about this</div>
           <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '.87rem', color: '#C8D0E8', margin: '0 0 10px', lineHeight: 1.55,
+            ...TYPE.bodySmallText,
+            color: '#C8D0E8', margin: '0 0 10px', lineHeight: 1.55,
           }}>{block.hint || block.explanation}</p>
           <button onClick={retry} style={{
+            ...TYPE.buttonText,
             background: 'rgba(72,178,255,.12)',
             border: '1px solid rgba(72,178,255,.30)',
             borderRadius: 9, padding: '8px 16px',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700, fontSize: '.82rem', color: '#5BB8FF',
+            color: '#5BB8FF',
             cursor: 'pointer',
           }}>Try again →</button>
         </div>
@@ -130,7 +131,7 @@ export default function AnswerInteraction({
       {/* Full feedback after correct or locked */}
       {showFull && (
         <div className={`feedback ${wasCorrect ? 'correct' : 'wrong'} fade-up`} style={{ marginTop: 10 }}>
-          <p style={{ margin: 0, fontSize: '.9rem', fontFamily: "'Inter', sans-serif" }}>
+          <p style={{ ...TYPE.bodySmallText, margin: 0 }}>
             <strong>{wasCorrect ? '✓ Correct! ' : '✗ Nope — the answer was: '}</strong>
             {wasCorrect ? block.explanation : (
               <>
