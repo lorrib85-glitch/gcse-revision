@@ -110,14 +110,17 @@ Use for existing-surface work.
 3. Planning
 4. Execution — implement the change; use subagents where helpful; run
    `/ponytail-review` on the diff before moving on
-5. Documentation update — only if the change affects reusable components,
+5. Story — if the changed component has new or modified props, visible
+   state, or interaction behaviour, write or update its Vitest story. New
+   reusable components always need a story. Stories live alongside the
+   component in `src/` with a `.stories.jsx` suffix.
+6. Documentation update — only if the change affects reusable components,
    design tokens, routing, architecture, product behaviour, or workflow
    rules
-6. Review — perform code review and incorporate findings
-7. Verification — build (`./node_modules/.bin/vite build`) passes; if a
-   Storybook story exists for the changed component, run `npx vitest run`
-   to confirm it mounts and renders without error; then exercise the change
-   in the running app via `/verify`
+7. Review — perform code review and incorporate findings
+8. Verification — build (`./node_modules/.bin/vite build`) passes; run
+   `npx vitest run` to confirm the story mounts and renders without error;
+   then exercise the change in the running app via `/verify`
 8. Confirm working tree status — commit + push to `main`
 
 *Normally implemented via Superpowers: `brainstorming`, `writing-plans`,
@@ -143,10 +146,14 @@ starts directly at step 1.
    not part of this step.
 4. Planning
 5. Execution — run `/ponytail-review` on the diff before moving on
-6. Documentation update — write to existing canonical docs; never create a
+6. Story — write a Vitest story for every new reusable component
+   introduced. Update stories for any substantially modified components.
+   Stories live alongside the component in `src/` with a `.stories.jsx`
+   suffix.
+7. Documentation update — write to existing canonical docs; never create a
    parallel documentation tree
-7. Review — code review, and UI review where visual behaviour changed
-8. Verification — build (`./node_modules/.bin/vite build`) passes; run
+8. Review — code review, and UI review where visual behaviour changed
+9. Verification — build (`./node_modules/.bin/vite build`) passes; run
    `npx vitest run` to confirm all stories mount and render without error;
    exercise the change in the running app via `/verify` to confirm real
    behaviour — not static inspection alone
@@ -220,9 +227,10 @@ Before marking any build complete, confirm:
 - Canonical docs updated where needed (decision capture rule applied)
 - Code review completed
 - UI review completed where visual behaviour changed
+- Story written or updated — Standard Change: if props/behaviour changed
+  on a reusable component; Big Build: always for new reusable components
 - Build passed (`./node_modules/.bin/vite build`)
-- Vitest passed (`npx vitest run`) — Standard Change: if a story exists
-  for the changed component; Big Build: always
+- Vitest passed (`npx vitest run`) — Standard Change and Big Build always
 - Implementation verified in the running app via `/verify` — Standard
   Change and Big Build only; Minor Edit is build-only
 - Working tree checked (committed + pushed to `main`)
