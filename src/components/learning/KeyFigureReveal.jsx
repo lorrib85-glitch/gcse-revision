@@ -81,6 +81,11 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
        linear-gradient(160deg, rgba(${rgb},0.05) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.18) 100%),
        rgba(12,9,5,0.88)`
 
+  // Galen's portrait is vertically tight on mobile; lower the image crop so his full head clears the browser/progress overlay.
+  const portraitPosition = block.portrait?.includes('galen-portrait')
+    ? 'center 8%'
+    : block.portraitPosition || 'center top'
+
   return (
     <CinematicShell style={{
       background: '#08090D',
@@ -112,7 +117,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
           style={{
             width: '100%', height: '100%',
             objectFit: 'cover',
-            objectPosition: block.portraitPosition || 'center top',
+            objectPosition: portraitPosition,
             display: 'block',
           }}
         />
