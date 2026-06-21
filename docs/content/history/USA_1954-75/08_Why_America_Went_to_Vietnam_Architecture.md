@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **A faraway war becomes America's problem** — hook around why Vietnam mattered to US presidents.
+2. **Cold War thinking** — containment, domino theory, China, Korea, McCarthyism and SEATO.
+3. **Vietnam before US troops** — French Indochina, Ho Chi Minh, Geneva, Diem and the cancelled elections.
+4. **Presidents escalate commitment** — Eisenhower, Kennedy, advisers, Strategic Hamlets, Agent Orange and Diem's collapse.
+5. **From support to war path** — Gulf of Tonkin, LBJ and the resolution that opened the door to war.
+6. **Exam prep: why did the USA get involved?** — Q2 causation using ideology, politics and existing commitment.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; shift the series into the Vietnam half; reactivate series-level knowledge; preview this chapter.
@@ -100,13 +115,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **The "defending democracy" misconception as the episode's hook:** The ChapterHookScreen opens with this — and every section should implicitly return to it. Diem's rigged elections, cancelled referendums and Buddhist persecution are the content that proves the misconception false. By the end of Section 3, students should be able to articulate why this framing was false — which earns marks in Q2 answers.
 
