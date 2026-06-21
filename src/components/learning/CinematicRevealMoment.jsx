@@ -2,6 +2,13 @@ import { useRef, useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 
+const REVEAL_START_MS = 180
+const PARAGRAPH_STAGGER_MS = 360
+const CTA_DELAY_MS = 620
+const TEXT_ANIMATION_MS = 560
+const OVERLAY_FADE_MS = 420
+const VIDEO_SAFETY_MS = 4000
+
 // Splits paragraph text and wraps highlight phrases in accent-coloured spans
 function renderHighlighted(text, highlights, accent) {
   if (!highlights?.length) return [text]
@@ -51,56 +58,96 @@ export default function CinematicRevealMoment({
   const [paraVisible, setParaVisible] = useState(() => new Array(paragraphs.length).fill(false))
   const [btnVisible,  setBtnVisible]  = useState(false)
 
-  // Clear all pending timers on unmount
-  useEffect(() => () => timers.current.forEach(clearTimeout), [])
-
-  // Safety net: if video hasn't triggered reveal within 12s, start it anyway
+  // Keep paragraph visibility in sync if the module content changes while mounted.
   useEffect(() => {
-    if (!videoSrc) { startReveal(); return }
-    const t = setTimeout(() => startReveal(), 12000)
+    setParaVisible(new Array(paragraphs.length).fill(false))
+    setYearVisible(false)
+    setBtnVisible(false)
+    setVideoEnded(false)
+  }, [paragraphs.length, videoSrc, fallbackImage])
+
+  // Clear all pending timers on unmount
+  useEffect(() => () => clearTimers(), [])
+
+  // Safety net: if video stalls, start the learning reveal quickly rather than making
+  // the screen feel broken. Still-image reveals wait for the user's tap.
+  useEffect(() => {
+    if (!videoSrc) return undefined
+    const t = setTimeout(() => startReveal(), VIDEO_SAFETY_MS)
     return () => clearTimeout(t)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  function clearTimers() {
+    timers.current.forEach(clearTimeout)
+    timers.current = []
+  }
+
   function schedule(fn, delay) {
-    timers.current.push(setTimeout(fn, delay))
+    const timer = setTimeout(fn, delay)
+    timers.current.push(timer)
+  }
+
+  function revealAllText() {
+    clearTimers()
+    setVideoEnded(true)
+    setYearVisible(true)
+    setParaVisible(new Array(paragraphs.length).fill(true))
+    setBtnVisible(true)
+    onTextRevealStart?.()
   }
 
   function startReveal() {
     if (videoEnded) return
+    clearTimers()
     setVideoEnded(true)
-    schedule(() => { setYearVisible(true); onTextRevealStart?.() }, 300)
+
+    schedule(() => {
+      setYearVisible(true)
+      onTextRevealStart?.()
+    }, REVEAL_START_MS)
+
     paragraphs.forEach((_, i) => {
       schedule(() => {
         setParaVisible(prev => {
-          const next = [...prev]; next[i] = true; return next
+          const next = [...prev]
+          next[i] = true
+          return next
         })
-      }, 300 + 900 * (i + 1))
+      }, REVEAL_START_MS + PARAGRAPH_STAGGER_MS * (i + 1))
     })
-    const lastParaStart = 300 + 900 * paragraphs.length
-    schedule(() => setBtnVisible(true), lastParaStart + 1300 + 600)
+
+    const lastTextDelay = paragraphs.length > 0
+      ? REVEAL_START_MS + PARAGRAPH_STAGGER_MS * paragraphs.length
+      : REVEAL_START_MS
+
+    schedule(() => setBtnVisible(true), lastTextDelay + CTA_DELAY_MS)
   }
 
   function handleTap() {
     if (!videoEnded) {
-      // Tap skips/ends the video and starts the reveal
+      // Tap skips/ends the video and starts the reveal.
       if (videoRef.current) videoRef.current.pause()
       startReveal()
-    } else if (btnVisible) {
-      onContinue?.()
+      return
     }
+
+    if (!btnVisible) {
+      // Second tap during the reveal should finish the copy immediately, not do nothing.
+      revealAllText()
+      return
+    }
+
+    onContinue?.()
   }
 
   function handleVideoEnd() { startReveal() }
   function handleVideoError() { setVideoError(true); startReveal() }
 
-  // Para animation duration: last para gets 1300ms, others 1100ms
-  function paraDuration(i) { return i === paragraphs.length - 1 ? 1300 : 1100 }
-
   return (
     <>
       <style>{`
         @keyframes crm-up {
-          from { opacity: 0; transform: translateY(22px); }
+          from { opacity: 0; transform: translateY(18px); }
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
@@ -162,12 +209,12 @@ export default function CinematicRevealMoment({
           background: 'radial-gradient(ellipse at 50% 50%, transparent 38%, rgba(0,0,0,0.58) 100%)',
         }} />
 
-        {/* Deepening overlay that transitions in on video end */}
+        {/* Deepening overlay that transitions in on reveal */}
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
           background: 'rgba(0,0,0,0.38)',
           opacity: videoEnded ? 1 : 0,
-          transition: 'opacity 900ms ease',
+          transition: `opacity ${OVERLAY_FADE_MS}ms ease`,
         }} />
 
         {/* Text content — anchored to lower portion of screen */}
@@ -186,7 +233,7 @@ export default function CinematicRevealMoment({
               color: 'rgba(255,255,255,0.50)',
               marginBottom: 10,
               textShadow: '0 1px 16px rgba(0,0,0,0.5)',
-              animation: 'crm-up 900ms cubic-bezier(.16,1,.3,1) both',
+              animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
               {label}
             </div>
@@ -203,7 +250,7 @@ export default function CinematicRevealMoment({
               marginBottom: 16,
               maxWidth: 320,
               textShadow: '0 2px 24px rgba(0,0,0,0.55)',
-              animation: 'crm-up 900ms cubic-bezier(.16,1,.3,1) both',
+              animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
               {headline}
             </div>
@@ -218,7 +265,7 @@ export default function CinematicRevealMoment({
               color: 'rgba(255,255,255,0.58)',
               maxWidth: 300,
               textShadow: '0 1px 16px rgba(0,0,0,0.5)',
-              animation: 'crm-up 900ms cubic-bezier(.16,1,.3,1) both',
+              animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
               {body}
             </div>
@@ -233,7 +280,7 @@ export default function CinematicRevealMoment({
               color: accent,
               marginBottom: 26,
               textShadow: '0 2px 28px rgba(0,0,0,0.55)',
-              animation: 'crm-up 900ms cubic-bezier(.16,1,.3,1) both',
+              animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
               {year}
             </div>
@@ -249,7 +296,7 @@ export default function CinematicRevealMoment({
               margin: 0,
               marginBottom: i < paragraphs.length - 1 ? 28 : 0,
               textShadow: '0 1px 20px rgba(0,0,0,0.5)',
-              animation: `crm-up ${paraDuration(i)}ms cubic-bezier(.16,1,.3,1) both`,
+              animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
               {renderHighlighted(para.text, para.highlights, accent)}
             </p>
