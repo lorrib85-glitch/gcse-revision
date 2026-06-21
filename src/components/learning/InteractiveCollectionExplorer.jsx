@@ -71,8 +71,9 @@ function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, sheetB
       background: pageBg,
       zIndex: 1000,
       display: 'flex', flexDirection: 'column',
-      padding: `calc(env(safe-area-inset-top, 0px) + ${SPACING.cinematic}px) ${SPACING.standard}px`,
-      paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${SPACING.separation}px)`,
+      padding: `calc(env(safe-area-inset-top, 0px) + ${SPACING.standard}px) ${SPACING.standard}px`,
+      paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${SPACING.standard}px)`,
+      overflow: 'hidden',
     }}>
       <style>{`
         @keyframes ice-synth-in {
@@ -81,7 +82,16 @@ function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, sheetB
         }
       `}</style>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{
+        flex: 1,
+        minHeight: 0,
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        paddingBottom: SPACING.compact,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+      }}>
         <div style={{
           ...TYPE.metadata,
           color: `rgba(${glowRgb}, 0.55)`,
@@ -163,14 +173,16 @@ function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, sheetB
         )}
       </div>
 
-      <ContinueCTA
-        onClick={onContinue}
-        accent={glow}
-        style={{
-          opacity: visible ? 1 : 0,
-          transition: `opacity 400ms ${MOTION.easing.standard} 600ms, transform ${BUTTONS.continue.transition}`,
-        }}
-      />
+      <div style={{ flexShrink: 0, paddingTop: SPACING.compact }}>
+        <ContinueCTA
+          onClick={onContinue}
+          accent={glow}
+          style={{
+            opacity: visible ? 1 : 0,
+            transition: `opacity 400ms ${MOTION.easing.standard} 600ms, transform ${BUTTONS.continue.transition}`,
+          }}
+        />
+      </div>
     </CinematicShell>
   )
 }
