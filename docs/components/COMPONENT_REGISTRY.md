@@ -314,6 +314,28 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
+### EvacuationChainRoute
+
+**File:** `src/components/learning/EvacuationChainRoute.jsx`  
+**Screen type:** `evacuationChainRoute`  
+**What it is:** Ordered chain activity — learner taps a job card then taps the stage slot it belongs to. Amber vertical route line connects numbered nodes on the left; dark military field-tag cards sit to the right. Checks all slots at once; correct slots glow amber, wrong slots dim and can be retried.  
+**Best used for:** Recalling the steps or stages of a process in order — evacuation chains, scientific processes, historical sequences.  
+**Props:** `screen`, `subject`, `onComplete`  
+**Screen data shape:**
+```js
+{
+  type: 'evacuationChainRoute',
+  title, subtitle, backgroundImage,
+  stages: [{ id, icon, title, clue, answerId }],  // icon: 'helmet'|'cross'|'hut'|'train'
+  answers: [{ id, text }],
+}
+```
+**Interaction:** tap pool card to select → tap stage slot to place; tap filled slot (no selection) to unplace; tapping filled slot while selected swaps them. Pool cards ghost at 38% opacity when placed.  
+**Dependencies:** `MOTION`, `CinematicShell`, `ContinueCTA`, `unifiedWeaknessTracker`  
+**Do not use when:** The relationship between items is unordered (use `MatchingTask` instead).
+
+---
+
 ### MedicalTheoryPrescription
 
 **File:** `src/components/learning/MedicalTheoryPrescription.jsx`  

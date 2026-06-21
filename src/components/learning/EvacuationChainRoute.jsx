@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { MOTION } from '../../constants/motion.js'
-import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
+import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 // CinematicShell: full-bleed background + vignette overlays must fill the full viewport;
 // InteractionShell's 16px padding would clip them.
@@ -38,11 +38,6 @@ const CSS = `
     46%  { transform: translateX(5px); }
     68%  { transform: translateX(-3px); }
     86%  { transform: translateX(2px); }
-  }
-  @keyframes ecr-pop {
-    0%   { transform: scale(1); }
-    40%  { transform: scale(1.025); }
-    100% { transform: scale(1); }
   }
 `
 
@@ -132,6 +127,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
   const [checked,    setChecked]    = useState(false)
   const [results,    setResults]    = useState({})   // stageId → 'correct' | 'wrong'
   const [shakeIds,   setShakeIds]   = useState([])
+  const shakeTimerRef = useRef(null)
 
   // Shuffle answers once on mount
   const [shuffled] = useState(() => {
@@ -190,7 +186,8 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
     const wrongIds = stages.filter(s => res[s.id] === 'wrong').map(s => s.id)
     if (wrongIds.length > 0) {
       setShakeIds(wrongIds)
-      setTimeout(() => setShakeIds([]), 420)
+      clearTimeout(shakeTimerRef.current)
+      shakeTimerRef.current = setTimeout(() => setShakeIds([]), 420)
     }
 
     for (const stage of stages) {
@@ -203,6 +200,14 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
           source: 'module',
           questionType: 'connection',
           marks: 1,
+          weakGroup: 'Evacuation chain',
+        })
+      } else {
+        logCorrectAnswer({
+          subject: subjectKey,
+          topic: stage.title,
+          questionId: `evacuation-chain-${stage.id}`,
+          source: 'module',
         })
       }
     }
@@ -213,7 +218,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
   }
 
   function handleRetry() {
-    // Clear only wrong slots
+    clearTimeout(shakeTimerRef.current)
     setSlots(prev => {
       const next = { ...prev }
       for (const stage of stages) {
@@ -263,7 +268,6 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
 
       {/* Scrollable column */}
       <div
-        id="ecr-scroll"
         style={{
           position: 'relative', zIndex: 1,
           flex: 1, overflowY: 'auto', overflowX: 'hidden',
@@ -470,7 +474,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
               return (
                 <button
                   key={answer.id}
-                  onClick={() => isPlaced ? undefined : handlePoolTap(answer.id)}
+                  onClick={() => handlePoolTap(answer.id)}
                   disabled={checked}
                   style={{
                     borderRadius: 12,
@@ -495,7 +499,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                     transition: [
                       `border-color ${MOTION.duration.fast} ease`,
                       `box-shadow ${MOTION.duration.fast} ease`,
-                      `transform 120ms ease`,
+                      `transform ${MOTION.duration.instant} ease`,
                       `opacity ${MOTION.duration.fast} ease`,
                     ].join(', '),
                     opacity: isPlaced ? 0.38 : 1,

@@ -87,6 +87,7 @@ Screen-level learning interaction components.
 - `InteractiveCollectionExplorer.jsx` — Theme-based explorer with colour-coded content sheets and fuzzy-match text validation.
 - `InteractiveHotspotImage.jsx` — Full-screen image with tappable hotspots (two-phase intro→explore).
 - `KeyFigureReveal.jsx` — Scrollable portrait-hero screen introducing a key person. Portrait hero image (~60vh), name/role overlaid at bottom, significance statement, up to 4 knowledge sections, Continue button.
+- `EvacuationChainRoute.jsx` — Ordered chain activity (screen type `evacuationChainRoute`): tap a job card then tap the stage it belongs to. Amber vertical route line + numbered nodes on the left, dark military field-tag cards on the right. Use for recalling steps of a process in sequence. Do not use when order is unordered — use `MatchingTask` instead.
 - `MatchingTask.jsx` — Term-to-description card-pair matching activity with SVG connector lines and round splitting for large sets.
 - `MisconceptionCheck.jsx` — Full-screen, cinematic true/false misconception trap, one statement at a time, with calm reveal and exam-trap framing.
 - `MedicalTheoryPrescription.jsx` — Cause → prescription → reveal flow with a parchment-textured input surface and fuzzy-match validation.
