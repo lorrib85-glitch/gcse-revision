@@ -276,14 +276,14 @@ export default function ChapterHookScreen({
                   padding: '14px 36px',
                   cursor: 'pointer',
                   fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 24,
-                  textTransform: 'uppercase', letterSpacing: '0.18em',
+                  letterSpacing: '0.08em',
                   color: 'rgba(255,255,255,0.88)',
                   transform: tappedBtn === 'true' ? 'scale(1.10)' : 'scale(1)',
                   opacity: tappedBtn === 'false' ? 0 : 1,
                   transition: 'transform 300ms cubic-bezier(0.34,1.56,0.64,1), opacity 220ms ease, background 200ms ease, border-color 200ms ease, box-shadow 240ms ease',
                   animation: shakeTarget === 'true' ? 'chs-shake 220ms ease' : 'none',
                 }}>
-                TRUE
+                True
               </button>
 
               <button
@@ -304,14 +304,14 @@ export default function ChapterHookScreen({
                   padding: '14px 36px',
                   cursor: 'pointer',
                   fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 24,
-                  textTransform: 'uppercase', letterSpacing: '0.18em',
+                  letterSpacing: '0.08em',
                   color: 'rgba(255,255,255,0.88)',
                   transform: tappedBtn === 'false' ? 'scale(1.10)' : 'scale(1)',
                   opacity: tappedBtn === 'true' ? 0 : 1,
                   transition: 'transform 300ms cubic-bezier(0.34,1.56,0.64,1), opacity 220ms ease, background 200ms ease, border-color 200ms ease, box-shadow 240ms ease',
                   animation: shakeTarget === 'false' ? 'chs-shake 220ms ease' : 'none',
                 }}>
-                FALSE
+                False
               </button>
             </div>
           </>
