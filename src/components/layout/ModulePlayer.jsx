@@ -42,6 +42,7 @@ import KeyFigureReveal from '../learning/KeyFigureReveal.jsx'
 import InteractiveCollectionExplorer from '../learning/InteractiveCollectionExplorer.jsx'
 import MedicalTheoryPrescription from '../learning/MedicalTheoryPrescription.jsx'
 import MatchingTask from '../learning/MatchingTask.jsx'
+import EvacuationChainRoute from '../learning/EvacuationChainRoute.jsx'
 import PriorKnowledgeRecall from '../learning/PriorKnowledgeRecall.jsx'
 import SymptomProgression from '../learning/SymptomProgression.jsx'
 import BeforeAfterImageSlider from '../learning/BeforeAfterImageSlider.jsx'
@@ -1917,6 +1918,21 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           block={cur}
           subject={module.subject}
           onComplete={() => { isLast ? handleFinish() : go(1) }}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  // ── Evacuation chain route — order-and-match chain activity ─────────────
+  if (cur?.type === 'evacuationChainRoute') {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <EvacuationChainRoute
+          screen={cur}
+          subject={module.subject}
+          onComplete={isLast ? handleFinish : () => go(1)}
         />
         {jumpSheetPortal}
       </>
