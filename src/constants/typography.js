@@ -54,8 +54,7 @@ export const TYPE = {
     fontSize: "0.72rem",
     lineHeight: 1.2,
     fontWeight: 600,
-    letterSpacing: "0.10em",
-    textTransform: "uppercase"
+    letterSpacing: "0.10em"
   },
 
   captionText: {
@@ -112,8 +111,7 @@ export const TYPE = {
     fontSize: "0.72rem",
     lineHeight: 1.2,
     fontWeight: 600,
-    letterSpacing: "0.10em",
-    textTransform: "uppercase"
+    letterSpacing: "0.10em"
   },
 
   // Overlay & Cinematic Overrides
@@ -123,7 +121,6 @@ export const TYPE = {
     lineHeight: 1.2,
     fontWeight: 650,
     letterSpacing: '0.16em',
-    textTransform: 'uppercase',
   },
 
   overlayTitle: {
@@ -148,7 +145,6 @@ export const TYPE = {
     lineHeight: 1.2,
     fontWeight: 650,
     letterSpacing: '0.18em',
-    textTransform: 'uppercase',
   },
 
   impactTitle: {
