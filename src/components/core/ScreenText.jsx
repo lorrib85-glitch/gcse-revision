@@ -13,7 +13,7 @@ export function ScreenTitle({ children, style }) {
     <h2 style={{
       ...TYPE.sectionHeading,
       color: 'rgba(255,255,255,0.96)',
-      maxWidth: '12ch',
+      maxWidth: '18ch',
       margin: '0 0 10px',
       ...style,
     }}>
@@ -28,7 +28,7 @@ export function ScreenSubtitle({ children, style }) {
     <h3 style={{
       ...TYPE.cardTitle,
       color: 'rgba(255,255,255,0.80)',
-      maxWidth: '20ch',
+      maxWidth: '24ch',
       margin: '0 0 10px',
       ...style,
     }}>
