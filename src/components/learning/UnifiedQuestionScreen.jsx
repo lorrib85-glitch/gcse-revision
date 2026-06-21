@@ -227,6 +227,7 @@ export default function UnifiedQuestionScreen({
           flexDirection: isTrueFalse ? undefined : 'column',
           gap: isTrueFalse ? 16 : 10,
           maxWidth: isTrueFalse ? '100%' : 'calc(100% - 32px)',
+          marginTop: isTrueFalse ? 14 : 0,
           marginInline: 'auto',
           width: '100%',
         }}>
