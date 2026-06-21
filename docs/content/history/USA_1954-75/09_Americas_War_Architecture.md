@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **The superpower steps in** — hook around US Marines landing at Da Nang and the scale of escalation.
+2. **Johnson chooses escalation** — Rolling Thunder, ground troops, ARVN weakness and troop numbers rising.
+3. **A war of attrition** — Search and Destroy, body counts, free fire zones and Westmoreland's strategy.
+4. **The human cost** — bombing, napalm, Agent Orange, civilian suffering and the living room war.
+5. **Why victory wasn't simple** — Vietcong tactics, tunnels, booby traps, Hearts and Minds and US limits.
+6. **Exam prep: why did escalation fail?** — Q2 causation on why the USA could not win.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; reactivate Episode 8 knowledge; preview this chapter.
@@ -100,13 +115,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **The self-defeating loop of Search and Destroy as the episode's core insight:** The `VisualLearning` in Section 4 should make this loop vivid: burning villages creates refugees who join the VC who attack US troops who burn more villages. Add Hearts and Minds explicitly so students can name the idea as well as explain it. Students who can describe this causal loop in Q2 answers earn the highest marks.
 
