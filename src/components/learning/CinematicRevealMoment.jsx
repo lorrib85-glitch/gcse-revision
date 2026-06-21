@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { TYPE } from '../../constants/typography.js'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 
 const REVEAL_START_MS = 180
@@ -227,9 +228,7 @@ export default function CinematicRevealMoment({
           {/* Label */}
           {yearVisible && label && (
             <div style={{
-              fontFamily: "'Outfit', sans-serif",
-              fontWeight: 600, fontSize: 14,
-              letterSpacing: '-0.01em',
+              ...TYPE.overlayEyebrow,
               color: 'rgba(255,255,255,0.50)',
               marginBottom: 10,
               textShadow: '0 1px 16px rgba(0,0,0,0.5)',
@@ -242,12 +241,9 @@ export default function CinematicRevealMoment({
           {/* Headline */}
           {yearVisible && headline && (
             <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 800,
-              fontSize: 'clamp(26px, 8.5vw, 38px)',
-              lineHeight: 1.08, letterSpacing: '-0.04em',
+              ...TYPE.overlayTitle,
               color: 'rgba(255,255,255,0.97)',
-              marginBottom: 16,
+              marginBottom: 14,
               maxWidth: 320,
               textShadow: '0 2px 24px rgba(0,0,0,0.55)',
               animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
@@ -259,11 +255,10 @@ export default function CinematicRevealMoment({
           {/* Body */}
           {yearVisible && body && (
             <div style={{
-              fontFamily: "'Outfit', sans-serif",
-              fontWeight: 500, fontSize: 16,
-              lineHeight: 1.7, whiteSpace: 'pre-line',
-              color: 'rgba(255,255,255,0.58)',
-              maxWidth: 300,
+              ...TYPE.overlayBody,
+              whiteSpace: 'pre-line',
+              color: 'rgba(255,255,255,0.64)',
+              maxWidth: '34ch',
               textShadow: '0 1px 16px rgba(0,0,0,0.5)',
               animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
@@ -274,11 +269,9 @@ export default function CinematicRevealMoment({
           {/* Year — displayed when no label/headline/body, or alongside */}
           {yearVisible && !label && (
             <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 900, fontSize: 62,
-              lineHeight: 0.95, letterSpacing: '-0.04em',
+              ...TYPE.impactTitle,
               color: accent,
-              marginBottom: 26,
+              marginBottom: 24,
               textShadow: '0 2px 28px rgba(0,0,0,0.55)',
               animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
@@ -289,12 +282,10 @@ export default function CinematicRevealMoment({
           {/* Paragraphs */}
           {paragraphs.map((para, i) => paraVisible[i] && (
             <p key={i} style={{
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 700, fontSize: 24,
-              lineHeight: 1.2, letterSpacing: '-0.025em',
+              ...TYPE.overlayTitle,
               color: 'rgba(245,238,225,0.95)',
               margin: 0,
-              marginBottom: i < paragraphs.length - 1 ? 28 : 0,
+              marginBottom: i < paragraphs.length - 1 ? 22 : 0,
               textShadow: '0 1px 20px rgba(0,0,0,0.5)',
               animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
