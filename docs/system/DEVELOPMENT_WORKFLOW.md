@@ -116,8 +116,8 @@ Use for existing-surface work.
 6. Review — perform code review and incorporate findings
 7. Verification — lint (`./node_modules/.bin/eslint .`) and build
    (`./node_modules/.bin/vite build`) pass, and the change is exercised by
-   running the app to confirm the real behaviour works as intended — not
-   static inspection alone
+   running the app via `/verify` to confirm the real behaviour works as
+   intended — not static inspection alone
 8. Confirm working tree status — commit + push to `main`
 
 *Normally implemented via Superpowers: `brainstorming`, `writing-plans`,
@@ -146,7 +146,10 @@ starts directly at step 1.
 6. Documentation update — write to existing canonical docs; never create a
    parallel documentation tree
 7. Review — code review, and UI review where visual behaviour changed
-8. Verification
+8. Verification — lint (`./node_modules/.bin/eslint .`) and build
+   (`./node_modules/.bin/vite build`) pass, and the change is exercised by
+   running the app via `/verify` to confirm the real behaviour works as
+   intended — not static inspection alone
 9. Confirm working tree status — commit + push to `main`
 
 *Normally implemented via the corresponding GSD skills (e.g. spec-phase,

@@ -33,7 +33,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "./node_modules/.bin/vite build > /tmp/vite-build-check.log 2>&1 && echo '{\"systemMessage\":\"Build verified ✓\"}' || echo '{\"systemMessage\":\"⚠ BUILD FAILED — fix before pushing. Run: cat /tmp/vite-build-check.log\"}'"
+            "command": "./node_modules/.bin/eslint . --quiet > /tmp/eslint-check.log 2>&1 && ./node_modules/.bin/vite build > /tmp/vite-build-check.log 2>&1 && echo '{\"systemMessage\":\"Lint ✓  Build ✓\"}' || echo '{\"systemMessage\":\"⚠ GATE FAILED — fix before pushing. Check /tmp/eslint-check.log or /tmp/vite-build-check.log\"}'"
           }
         ]
       }
