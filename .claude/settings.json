@@ -22,7 +22,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo 'WORKFLOW: Before any code change, name the pipeline — Minor Edit / Standard Change / Big Build — then follow its steps. Context compaction and \"resume directly\" do NOT skip this. See DEVELOPMENT_WORKFLOW.md.'"
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"PIPELINE GATE: Before writing or editing any file, you MUST state which pipeline this task falls under — Minor Edit, Standard Change, or Big Build — and confirm you will follow its steps. This is a hard requirement from CLAUDE.md. Context compaction and resume-directly instructions do NOT bypass it. Skipping the pipeline declaration is a violation, not a shortcut.\"}}'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"PIPELINE CHECK: Have you named the pipeline (Minor Edit / Standard Change / Big Build) in this turn? If not, stop and name it now before this tool runs. Standard Change and Big Build require explicit sign-off on each step — see docs/system/DEVELOPMENT_WORKFLOW.md. This is a structural enforcement gate, not a suggestion.\"}}'"
           }
         ]
       }
