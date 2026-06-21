@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **The Seat That Started a Movement** — hook around Rosa Parks and the Montgomery Bus Boycott.
+2. **Montgomery Before Parks** — bus segregation, local activism, Jo Ann Robinson, E. D. Nixon and the WPC.
+3. **381 Days of Pressure** — boycott organisation, car pools, churches, arrests and economic pressure.
+4. **King Becomes a Leader** — MLK, non-violent protest, the MIA and national media attention.
+5. **Victory and Its Limits** — Supreme Court ruling, desegregated buses, white backlash and the model for later protest.
+6. **Exam Prep: Why the Boycott Succeeded** — Q2 causation and leadership/mass action judgement.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; reactivate Episodes 1–2 knowledge; identify missing knowledge; preview the chapter.
@@ -99,13 +114,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **The "planned, not spontaneous" misconception as the episode's hook:** The Rosa Parks story is the most widely misunderstood moment in civil rights history. The ChapterHookScreen opens with the "tired" myth; every subsequent section reveals the planned, organised reality. This creates a revelation arc that feels like a documentary correcting the record — which is exactly the tone the VisualNarrativeScreen should hit in Section 2.
 
