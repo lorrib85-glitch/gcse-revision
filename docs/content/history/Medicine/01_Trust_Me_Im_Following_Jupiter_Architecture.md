@@ -9,6 +9,19 @@
 
 ---
 
+## Navigation spine (6 parts)
+
+Every Medicine module must be built as six clear navigation parts. These titles should appear in the module journey/progress navigation so the student always knows where they are in the story.
+
+1. **Strange Ideas, Serious Medicine** — intro hook, prior recall and roadmap.
+2. **What Made People Sick?** — religious, astrological, miasma and humoural explanations.
+3. **Why Galen Ruled the Room** — Hippocrates, Galen, Church authority and book learning.
+4. **The Medieval Treatment Toolkit** — physicians, barber surgeons, apothecaries, hospitals and prevention.
+5. **Why the System Survived** — continuity, agents of change/continuity and the coherent-but-wrong system.
+6. **Exam Prep: Explain the Grip of Galen** — examiner traps, mark-scheme thinking and exam practice.
+
+---
+
 ## 2. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
