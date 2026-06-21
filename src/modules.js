@@ -246,7 +246,7 @@ export const MODULES = [
     icon: "⚔️",
     color: "#5A6A4A",
     colorLight: "rgba(90,106,74,.12)",
-    headerImage: "/headers/history-medicine-trenches.png",
+    headerImage: "/headers/history-medicine-western-front.png",
     screenCount: 19,
     screenTags: [
       "prior-knowledge-western-front",

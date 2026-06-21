@@ -6191,13 +6191,13 @@ Do NOT award marks for naming discoveries without explaining their significance.
     icon: '⚔️',
     color: '#5A6A4A',
     colorLight: 'rgba(90,106,74,.12)',
-    headerImage: '/headers/history-medicine-trenches.png',
+    headerImage: '/headers/history-medicine-western-front.png',
 
     hook: {
       statement: 'The Thomas splint was invented during the First World War.',
       isTrue: false,
       accentWords: ['First World War'],
-      backgroundImage: '/headers/history-medicine-trenches.png',
+      backgroundImage: '/figures/history/medicine/western-front/trench-soldiers.png',
       explanation: 'False. The Thomas splint was designed before the war by Hugh Owen Thomas. What changed during the First World War was its use. Sir Robert Jones championed it on the Western Front, and it helped reduce deaths from fractured femurs from about 80% to about 20%.',
       revealBeats: [
         'It was not invented in the trenches.',
@@ -6226,7 +6226,7 @@ Do NOT award marks for naming discoveries without explaining their significance.
         tag: 'prior-knowledge-western-front',
         chapterTitle: 'Surgery and medicine before the First World War',
         recallPrompts: ['Surgery', 'Anaesthetics', 'Antiseptics', 'Blood loss', 'War'],
-        backgroundImage: '/headers/history-medicine-trenches.png',
+        backgroundImage: '/figures/history/medicine/western-front/trench-soldiers.png',
         sourceContent: `GCSE History: Medicine on the Western Front — Prior Knowledge
 
 Before the Western Front, surgery had improved significantly since the mid-nineteenth century.
@@ -6258,22 +6258,22 @@ War creates urgent demand for faster, better treatment. The First World War prod
         label: 'The Western Front',
         scenes: [
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/trench-soldiers.png',
             headline: 'A line of trenches across Europe',
             body: 'The Western Front stretched across northern France and Belgium. British, French, Belgian and allied forces faced German forces across a huge trench system.',
           },
           {
-            image: '/headers/history-medicine-trenches.png', // TODO: /figures/history/medicine/western-front/trench-system.webp
+            image: '/figures/history/medicine/western-front/trench-soldiers.png', // TODO: /figures/history/medicine/western-front/trench-system.webp
             headline: 'The trench system',
             body: 'Soldiers did not just live in one trench. There were front line trenches, support trenches about 60–90 metres behind, reserve trenches, and communication trenches linking them.',
           },
           {
-            image: '/headers/history-medicine-trenches.png', // TODO: /figures/history/medicine/western-front/wounded-evacuation.webp
+            image: '/figures/history/medicine/western-front/stretcher-bearers.png', // TODO: /figures/history/medicine/western-front/wounded-evacuation.webp
             headline: 'Medicine under pressure',
             body: 'Machine guns, artillery, gas attacks and shrapnel created injuries on a scale doctors had never faced before.',
           },
           {
-            image: '/headers/history-medicine-trenches.png', // TODO: /figures/history/medicine/western-front/medical-post.webp
+            image: '/figures/history/medicine/western-front/ramc-aid-post.png', // TODO: /figures/history/medicine/western-front/medical-post.webp
             headline: 'The core problem',
             body: 'How do you treat thousands of wounded men in mud, cold, shellfire and chaos?',
           },
@@ -6293,7 +6293,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
         label: 'What made treatment so difficult?',
         title: 'What made treatment so difficult?',
         description: 'The trenches did not just create wounds. They created disease, infection and mental trauma. Tap each to find out more.',
-        backgroundImage: '/headers/history-medicine-trenches.png',
+        backgroundImage: '/figures/history/medicine/western-front/trench-soldiers.png',
         items: [
           {
             id: 'trench-foot',
@@ -6436,13 +6436,13 @@ War creates urgent demand for faster, better treatment. The First World War prod
         label: 'From trench to hospital',
         beats: [
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/stretcher-bearers.png',
             label: 'THE EVACUATION CHAIN',
             headline: 'A wounded soldier did not go straight from the trench to a hospital.',
             body: 'He moved through a chain of evacuation — five stages, each further from the fighting.',
           },
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/stretcher-bearers.png',
             label: 'STAGE 1',
             headline: '1. Stretcher bearers',
             body: 'Stretcher bearers carried wounded men from the front line. This was dangerous, slow and physically exhausting, especially under shellfire and through mud.',
@@ -6453,7 +6453,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
             ],
           },
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/ramc-aid-post.png',
             label: 'STAGE 2',
             headline: '2. Regimental Aid Post (RAP)',
             body: 'The RAP was close to the front line. It gave basic first aid. Minor wounds could be treated so the soldier returned to fight. Serious cases were sent further back.',
@@ -6464,7 +6464,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
             ],
           },
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/ramc-aid-post.png',
             label: 'STAGE 3',
             headline: '3. Advanced/Main Dressing Station',
             body: 'About 400 metres behind the line. Treated more serious injuries in tents or abandoned buildings. Staffed by medical officers, orderlies and stretcher bearers.',
@@ -6475,7 +6475,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
             ],
           },
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/stretcher-bearers.png',
             label: 'STAGE 4',
             headline: '4. Casualty Clearing Station (CCS)',
             body: 'Larger field hospitals, often near railways. Performed most surgery on the Western Front. Sorted patients by urgency — this is called triage.',
@@ -6486,7 +6486,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
             ],
           },
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/ramc-aid-post.png',
             label: 'STAGE 5',
             headline: '5. Base Hospital',
             body: 'Base hospitals were on the French coast. They provided longer-term treatment and could send soldiers back to Britain.',
@@ -6509,7 +6509,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
         title: 'Match the treatment stage',
         instruction: 'Match each part of the evacuation chain to its job.',
         weakAreaCategory: 'Western Front: Chain of Evacuation',
-        backgroundImage: '/headers/history-medicine-trenches.png',
+        backgroundImage: '/figures/history/medicine/western-front/stretcher-bearers.png',
         pairs: [
           {
             id: 'stretcher-bearers',
@@ -6565,22 +6565,22 @@ War creates urgent demand for faster, better treatment. The First World War prod
         label: 'Breakthroughs and limits',
         scenes: [
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/trench-soldiers.png',
             headline: 'War created the problem',
             body: 'The Western Front produced huge numbers of wounded men with broken bones, blood loss, infections, shrapnel wounds and facial injuries.',
           },
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/ramc-aid-post.png',
             headline: 'Doctors had to adapt',
             body: 'Battlefield medicine developed because old methods were not enough for industrial-scale war.',
           },
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/ramc-aid-post.png',
             headline: 'Four developments mattered most',
             body: 'Thomas splints, blood transfusions, mobile X-rays and plastic surgery all improved treatment.',
           },
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/trench-soldiers.png',
             headline: 'But progress was uneven',
             body: 'Some problems improved dramatically. Others, like shell shock, remained poorly understood.',
           },
@@ -6603,7 +6603,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
           {
             type: 'explainReveal',
             intro: 'A fractured femur — a broken thigh bone — was one of the deadliest injuries on the Western Front. Here is how one existing device changed the death rate dramatically.',
-            atmosphereImage: '/headers/history-medicine-trenches.png',
+            atmosphereImage: '/figures/history/medicine/western-front/ramc-aid-post.png',
             steps: [
               {
                 id: 'problem',
@@ -6652,7 +6652,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
           {
             type: 'explainReveal',
             intro: 'Before the war, blood loss was still one of surgery\'s biggest unsolved problems. The Western Front forced a breakthrough.',
-            atmosphereImage: '/headers/history-medicine-trenches.png',
+            atmosphereImage: '/figures/history/medicine/western-front/ramc-aid-post.png',
             steps: [
               {
                 id: 'old-problem',
@@ -6757,22 +6757,22 @@ War creates urgent demand for faster, better treatment. The First World War prod
         label: 'How to judge source utility',
         scenes: [
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/trench-soldiers.png',
             headline: 'The Western Front is different',
             body: 'This is the only Medicine module where the exam uses sources. Q2(a) asks how useful two sources are for an enquiry into a specific aspect of the Western Front.',
           },
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/ramc-aid-post.png',
             headline: 'Three things a strong answer needs',
             body: 'Content: what does the source actually show or say?\nProvenance: who made it, when, and why?\nContextual knowledge: what do you know that supports, challenges or adds to the source?',
           },
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/stretcher-bearers.png',
             headline: 'Generic provenance does not score well',
             body: 'Weak: "It is useful because it is from the time."\n\nBetter: "It is useful because it was written by a surgeon working on the Western Front, so the writer had direct medical experience."',
           },
           {
-            image: '/headers/history-medicine-trenches.png',
+            image: '/figures/history/medicine/western-front/ramc-aid-post.png',
             headline: 'Common source types in this topic',
             body: 'Private diary: honest but limited to one person\'s experience.\nOfficial army record: precise details but may omit failures.\nPhotograph: real conditions but could be staged.\nMedical report: expert and detailed but focused on clinical evidence.',
           },
