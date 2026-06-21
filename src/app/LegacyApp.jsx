@@ -328,6 +328,7 @@ export default function App() {
   }
 
   function openModulePlayer(mod, screenIndex) {
+    if (!mod?.screenCount) return
     if (screenIndex !== undefined && screenIndex !== null) {
       try {
         const existing = safeGetModuleState(mod.id)

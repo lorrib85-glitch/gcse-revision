@@ -623,6 +623,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const rawMods = getSubjectModuleList(subjectName)
   const allItems = rawMods.map((mod, i) => {
     if (mod.comingSoon) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
+    if (!mod.screenCount) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
     const s = safeGetModuleState(mod.id)
     const screen = s.screen || 0
     const hasStarted = (s.hookDone && s.wylDone) || screen > 0
@@ -1012,11 +1013,19 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                       </div>
                     ) : null}
                   </div>
-                  <div style={{ display: 'flex', gap: 5, flexShrink: 0, marginLeft: 8 }}>
-                    {Array.from({ length: dotsTotal }).map((_, di) => (
-                      <span key={di} style={{ width: 6, height: 6, borderRadius: RADII.pill, border: '1px solid rgba(255,255,255,0.16)' }} />
-                    ))}
-                  </div>
+                  {item.status === 'coming_soon' ? (
+                    <span style={{
+                      flexShrink: 0, marginLeft: 8,
+                      fontFamily: "'Outfit', sans-serif", fontSize: 11, fontWeight: 600,
+                      color: `rgba(${accentRgb},0.45)`, letterSpacing: '0.04em',
+                    }}>Coming soon</span>
+                  ) : (
+                    <div style={{ display: 'flex', gap: 5, flexShrink: 0, marginLeft: 8 }}>
+                      {Array.from({ length: dotsTotal }).map((_, di) => (
+                        <span key={di} style={{ width: 6, height: 6, borderRadius: RADII.pill, border: '1px solid rgba(255,255,255,0.16)' }} />
+                      ))}
+                    </div>
+                  )}
                 </button>
               )}
             </div>
