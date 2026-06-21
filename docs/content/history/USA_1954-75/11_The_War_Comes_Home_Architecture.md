@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **The war on the evening news** — hook around television, photographs and the credibility gap.
+2. **Why opposition grew** — media, My Lai, the Pentagon Papers, draft inequality and moral shock.
+3. **Media, My Lai and public trust** — how official claims collapsed when evidence reached American homes.
+4. **Protest becomes national** — students, MLK, Muhammad Ali, veterans, Moratorium marches and the silent majority backlash.
+5. **How protest pressured presidents** — Cambodia, Kent State, Jackson State and the repeal of the Gulf of Tonkin Resolution.
+6. **Exam prep: why did Americans turn against the war?** — Q2 causation using linked causes rather than a protest list.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; reactivate Episodes 9–10 knowledge; preview this chapter.
@@ -102,13 +117,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **MLK's "Beyond Vietnam" as the series convergence moment:** This is the most important interleaving in the entire series — the two threads (civil rights and Vietnam) collide in a single speech. Section 3's `VisualNarrativeScreen` should give this speech a dedicated beat with the direct quote about Black men dying for democracy they were denied at home. Students who can cite this speech in either a KT2 or a KT4 exam answer demonstrate a rare level of series-level command.
 
