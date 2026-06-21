@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 // CinematicShell used here because this screen renders full-bleed absolute-positioned portrait
 // and timeline image layers that must reach all four edges; ContentShell's 16px horizontal
@@ -172,9 +173,7 @@ export default function VisualNarrativeScreen({
           >
             {beat.label && (
               <div style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontWeight: 600, fontSize: 14,
-                letterSpacing: '-0.01em',
+                ...TYPE.overlayEyebrow,
                 color: 'rgba(255,255,255,0.50)',
                 marginBottom: 10,
               }}>
@@ -183,13 +182,9 @@ export default function VisualNarrativeScreen({
             )}
 
             <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 800,
-              fontSize: 'clamp(26px, 8.5vw, 38px)',
-              lineHeight: 1.08,
-              letterSpacing: '-0.04em',
+              ...TYPE.overlayTitle,
               color: 'rgba(255,255,255,0.97)',
-              marginBottom: 16,
+              marginBottom: 14,
               maxWidth: 320,
             }}>
               {beat.headline}
@@ -197,11 +192,9 @@ export default function VisualNarrativeScreen({
 
             {beat.body && (
               <div style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontWeight: 500, fontSize: 16,
-                lineHeight: 1.7,
-                color: 'rgba(255,255,255,0.64)',
-                maxWidth: 300,
+                ...TYPE.overlayBody,
+                color: 'rgba(255,255,255,0.68)',
+                maxWidth: '34ch',
                 whiteSpace: 'pre-line',
               }}>
                 {beat.body}
@@ -220,12 +213,10 @@ export default function VisualNarrativeScreen({
           }}>
             {!showConclusion ? (
               // Facts phase
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {factCount === 0 && (
                   <div style={{
-                    fontFamily: "'Outfit', sans-serif",
-                    fontWeight: 600, fontSize: 11,
-                    letterSpacing: '0.18em', textTransform: 'uppercase',
+                    ...TYPE.overlayPrompt,
                     color: 'rgba(255,255,255,0.30)',
                     marginBottom: 12,
                   }}>
@@ -236,10 +227,8 @@ export default function VisualNarrativeScreen({
                   <div
                     key={i}
                     style={{
-                      fontFamily: "'Outfit', sans-serif",
-                      fontWeight: 500, fontSize: 18,
-                      lineHeight: 1.65,
-                      color: 'rgba(255,255,255,0.86)',
+                      ...TYPE.overlayBody,
+                      color: 'rgba(255,255,255,0.84)',
                       animation: 'vnFadeUp 420ms cubic-bezier(0.16,1,0.3,1) both',
                     }}
                   >
@@ -251,10 +240,7 @@ export default function VisualNarrativeScreen({
               // Conclusion phase — replaces the facts
               <>
                 <div style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontWeight: 700,
-                  fontSize: 'clamp(22px, 7vw, 30px)',
-                  lineHeight: 1.5,
+                  ...TYPE.overlayTitle,
                   color: accent,
                   whiteSpace: 'pre-line',
                   animation: 'vnFadeIn 700ms ease both',
@@ -302,9 +288,7 @@ export default function VisualNarrativeScreen({
             animation: 'vnHintPulse 3.2s ease infinite',
           }}>
             <span style={{
-              fontFamily: "'Outfit', sans-serif",
-              fontWeight: 600, fontSize: 11,
-              letterSpacing: '0.18em', textTransform: 'uppercase',
+              ...TYPE.overlayPrompt,
               color: 'rgba(255,255,255,0.30)',
             }}>
               tap to continue
