@@ -9,7 +9,22 @@
 
 ---
 
-## 2. Architecture checklist (tailored)
+## 2. Navigation spine (6 parts)
+
+These are the six progress-rail stages for this module. Each stage should become one tappable dot in the in-module progress bar. The dot should jump to the first screen of that stage. Do **not** use one dot per screen.
+
+1. **The Law Changes First** — hook around *Brown v Board* and the gap between legal victory and lived reality.
+2. **Brown Breaks Plessy** — *Brown*, *Brown II*, Thurgood Marshall, 723 districts and the limits of court rulings.
+3. **Elizabeth Faces the Mob** — Little Rock Nine, Elizabeth Eckford, Faubus and the media shock.
+4. **Troops at the School Gate** — Eisenhower, the 101st Airborne, Ernest Green, the Lost Year and *Cooper v Aaron*.
+5. **Progress Meets Backlash** — what Little Rock proved, what it did not settle, and why the federal government acted.
+6. **Exam Prep: Brown, Little Rock and Significance** — Q2 causation and progress/limits judgement.
+
+**Progress rail rule:** render these as six dots only. Labels stay hidden unless tapped. The rail should appear on all normal learning pages and be hidden only on full-screen video/cinematic reveal moments.
+
+---
+
+## 3. Architecture checklist (tailored)
 
 ### Section 1 — Intro, Recall & Roadmap
 - **Purpose:** Create curiosity; reactivate Episode 1 knowledge; identify missing knowledge; preview this chapter.
@@ -98,13 +113,13 @@
 
 ---
 
-## 3. Current state & gap analysis
+## 4. Current state & gap analysis
 
 Not yet built — full rebuild from spec.
 
 ---
 
-## 4. Build recommendations
+## 5. Build recommendations
 
 1. **Elizabeth Eckford as central human throughline:** The 4 September 1957 moment is this episode's most powerful narrative beat — analogous to Emmett Till in Episode 1. The `VisualNarrativeScreen` in Section 3 is the right vehicle: beat-by-beat from the failed notification → arriving alone → the mob → photographs → Cold War humiliation.
 
