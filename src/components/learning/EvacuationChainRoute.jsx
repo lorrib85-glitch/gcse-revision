@@ -9,23 +9,30 @@ import CinematicShell from '../layout/CinematicShell.jsx'
 const BRONZE     = '#D69B45'
 const BRONZE_RGB = '214,155,69'
 
-const STAGE_BG          = 'rgba(28,18,9,0.90)'
-const STAGE_BG_SUCCESS  = 'rgba(34,22,8,0.92)'
-const STAGE_BG_WRONG    = 'rgba(24,14,7,0.92)'
-const STAGE_BORDER      = 'rgba(160,115,55,0.30)'
-const STAGE_BORDER_SUCCESS = 'rgba(214,155,69,0.72)'
-const STAGE_BORDER_WRONG   = 'rgba(90,55,30,0.42)'
+const STAGE_BG          = 'rgba(30,18,8,0.93)'
+const STAGE_BG_SUCCESS  = 'rgba(36,24,8,0.95)'
+const STAGE_BG_WRONG    = 'rgba(22,13,7,0.93)'
+const STAGE_BORDER      = 'rgba(175,128,58,0.42)'
+const STAGE_BORDER_SUCCESS = 'rgba(214,155,69,0.88)'
+const STAGE_BORDER_WRONG   = 'rgba(72,46,22,0.35)'
 
-const ANSWER_BG          = 'rgba(22,13,6,0.92)'
-const ANSWER_BG_SELECTED = 'rgba(52,32,12,0.96)'
-const ANSWER_BG_PLACED   = 'rgba(14,9,4,0.60)'
-const ANSWER_BORDER          = 'rgba(145,100,45,0.32)'
-const ANSWER_BORDER_SELECTED = `rgba(${BRONZE_RGB},0.72)`
-const ANSWER_BORDER_PLACED   = 'rgba(80,55,25,0.18)'
+const ANSWER_BG          = 'rgba(28,16,6,0.94)'
+const ANSWER_BG_SELECTED = 'rgba(55,34,12,0.96)'
+const ANSWER_BG_PLACED   = 'rgba(14,9,4,0.35)'
+const ANSWER_BORDER          = 'rgba(158,112,46,0.38)'
+const ANSWER_BORDER_SELECTED = `rgba(${BRONZE_RGB},0.82)`
+const ANSWER_BORDER_PLACED   = 'rgba(62,42,16,0.22)'
 
-const TEXT_PRIMARY = 'rgba(255,244,222,0.92)'
-const TEXT_DIM     = 'rgba(240,220,185,0.68)'
-const TEXT_PLACED  = 'rgba(200,165,110,0.42)'
+const TEXT_PRIMARY = 'rgba(255,244,222,0.94)'
+const TEXT_DIM     = 'rgba(240,220,185,0.60)'
+const TEXT_PLACED  = 'rgba(190,155,100,0.36)'
+
+const RIVET = {
+  position: 'absolute',
+  width: 5, height: 5, borderRadius: '50%',
+  background: 'rgba(165,120,48,0.28)',
+  border: '1px solid rgba(195,148,58,0.20)',
+}
 
 const CSS = `
   @keyframes ecr-in {
@@ -44,15 +51,15 @@ const CSS = `
 function GripDots({ selected }) {
   return (
     <div style={{
-      display: 'grid', gridTemplateColumns: 'repeat(3, 4px)', gap: 2.5,
+      display: 'grid', gridTemplateColumns: 'repeat(3, 3px)', gap: 2,
       marginBottom: 5,
     }}>
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} style={{
-          width: 4, height: 4, borderRadius: '50%',
+          width: 3, height: 3, borderRadius: '50%',
           background: selected
-            ? `rgba(${BRONZE_RGB}, 0.65)`
-            : 'rgba(200,165,110,0.25)',
+            ? `rgba(${BRONZE_RGB},0.55)`
+            : 'rgba(200,165,110,0.18)',
           transition: `background ${MOTION.duration.fast} ease`,
         }} />
       ))}
@@ -64,7 +71,7 @@ function GripDots({ selected }) {
 
 function IconHelmet() {
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+    <svg width="17" height="17" viewBox="0 0 20 20" fill="none">
       <path d="M3 13c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke={BRONZE} strokeWidth="1.6" strokeLinecap="round"/>
       <path d="M2 13h16" stroke={BRONZE} strokeWidth="1.6" strokeLinecap="round"/>
       <path d="M5 13v1.5a1 1 0 001 1h8a1 1 0 001-1V13" stroke={BRONZE} strokeWidth="1.4" strokeLinecap="round"/>
@@ -74,7 +81,7 @@ function IconHelmet() {
 
 function IconCross() {
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+    <svg width="17" height="17" viewBox="0 0 20 20" fill="none">
       <rect x="8" y="3" width="4" height="14" rx="1" fill={BRONZE} opacity="0.85"/>
       <rect x="3" y="8" width="14" height="4" rx="1" fill={BRONZE} opacity="0.85"/>
     </svg>
@@ -83,7 +90,7 @@ function IconCross() {
 
 function IconHut() {
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+    <svg width="17" height="17" viewBox="0 0 20 20" fill="none">
       <path d="M2 10l8-7 8 7" stroke={BRONZE} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
       <rect x="4" y="10" width="12" height="8" rx="1" stroke={BRONZE} strokeWidth="1.5"/>
       <rect x="8" y="13" width="4" height="5" rx="0.5" stroke={BRONZE} strokeWidth="1.2"/>
@@ -93,7 +100,7 @@ function IconHut() {
 
 function IconTrain() {
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+    <svg width="17" height="17" viewBox="0 0 20 20" fill="none">
       <rect x="3" y="4" width="14" height="10" rx="2" stroke={BRONZE} strokeWidth="1.5"/>
       <path d="M3 8h14" stroke={BRONZE} strokeWidth="1.3"/>
       <circle cx="6.5" cy="17" r="1.5" stroke={BRONZE} strokeWidth="1.3"/>
@@ -111,25 +118,38 @@ const ICON_MAP = {
   train:  IconTrain,
 }
 
+// Highlight "evacuation chain" in the title with amber
+function renderTitle(text) {
+  const phrase = 'evacuation chain'
+  const lower = (text || '').toLowerCase()
+  const idx = lower.indexOf(phrase)
+  if (idx === -1) return text
+  return (
+    <>
+      {text.slice(0, idx)}
+      <span style={{ color: BRONZE }}>{text.slice(idx, idx + phrase.length)}</span>
+      {text.slice(idx + phrase.length)}
+    </>
+  )
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export default function EvacuationChainRoute({ screen, subject, onComplete }) {
   const stages  = screen.stages  || []
   const answers = screen.answers || []
-  const bgImage = screen.backgroundImage || ''
+  const bgImage = screen.backgroundImage || '/headers/history-medicine-trenches.png'
   const subjectKey = subject || screen.subject || 'History'
 
-  // slots: stageId → answerId | null
   const [slots, setSlots] = useState(() =>
     Object.fromEntries(stages.map(s => [s.id, null]))
   )
-  const [selectedId, setSelectedId] = useState(null) // id of selected answer card
+  const [selectedId, setSelectedId] = useState(null)
   const [checked,    setChecked]    = useState(false)
-  const [results,    setResults]    = useState({})   // stageId → 'correct' | 'wrong'
+  const [results,    setResults]    = useState({})
   const [shakeIds,   setShakeIds]   = useState([])
   const shakeTimerRef = useRef(null)
 
-  // Shuffle answers once on mount
   const [shuffled] = useState(() => {
     const a = [...answers]
     for (let i = a.length - 1; i > 0; i--) {
@@ -144,23 +164,18 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
   const allCorrect = checked && stages.every(s => results[s.id] === 'correct')
   const hasWrong   = checked && stages.some(s => results[s.id] === 'wrong')
 
-  // ── Interaction ─────────────────────────────────────────────────────────────
-
   function handlePoolTap(answerId) {
     if (checked) return
-    if (placedIds.has(answerId)) return // can't select from pool when placed; tap slot instead
+    if (placedIds.has(answerId)) return
     setSelectedId(prev => prev === answerId ? null : answerId)
   }
 
   function handleSlotTap(stageId) {
     if (checked) return
     const inSlot = slots[stageId]
-
     if (selectedId) {
-      // Place selected card — swap if slot occupied
       setSlots(prev => {
         const next = { ...prev }
-        // Remove selected from any slot it currently occupies
         for (const sid of Object.keys(next)) {
           if (next[sid] === selectedId) next[sid] = null
         }
@@ -169,7 +184,6 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
       })
       setSelectedId(null)
     } else if (inSlot) {
-      // No selection — tap filled slot to unplace
       setSlots(prev => ({ ...prev, [stageId]: null }))
     }
   }
@@ -241,28 +255,33 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
     }}>
       <style>{CSS}</style>
 
-      {/* Background image */}
-      {bgImage && (
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: `url(${bgImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center 30%',
-          zIndex: 0,
-        }} />
-      )}
-
-      {/* Dark overlay — leaves soldiers visible in upper portion */}
+      {/* Background image — centre top to keep stretcher bearers visible */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'rgba(10,6,2,0.70)',
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
         zIndex: 0,
       }} />
 
-      {/* Vignette — heavier at bottom for CTA legibility */}
+      {/* Left-side darkness */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 22%, transparent 55%, rgba(0,0,0,0.62) 100%)',
+        background: 'linear-gradient(to right, rgba(6,3,1,0.88) 0%, rgba(6,3,1,0.52) 42%, rgba(6,3,1,0.22) 100%)',
+        zIndex: 0, pointerEvents: 'none',
+      }} />
+
+      {/* Bottom darkness — heavy fade for content legibility */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to top, rgba(4,2,0,0.97) 0%, rgba(4,2,0,0.82) 28%, rgba(4,2,0,0.38) 54%, transparent 72%)',
+        zIndex: 0, pointerEvents: 'none',
+      }} />
+
+      {/* Top vignette */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to bottom, rgba(3,1,0,0.55) 0%, transparent 18%)',
         zIndex: 0, pointerEvents: 'none',
       }} />
 
@@ -279,19 +298,19 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
       >
         {/* Title */}
         <h1 style={{
-          margin: '0 0 6px',
-          fontWeight: 700, fontSize: 25, lineHeight: 1.08,
+          margin: '0 0 5px',
+          fontWeight: 700, fontSize: 22, lineHeight: 1.10,
           color: TEXT_PRIMARY, maxWidth: '92%',
           animation: 'ecr-in 360ms ease both',
         }}>
-          {screen.title || 'Rebuild the evacuation chain'}
+          {renderTitle(screen.title || 'Rebuild the evacuation chain')}
         </h1>
 
         {/* Subtitle */}
         <p style={{
           margin: '0 0 20px',
-          fontSize: 13, lineHeight: 1.45,
-          color: TEXT_DIM, maxWidth: 340,
+          fontSize: 12, lineHeight: 1.45,
+          color: TEXT_DIM, maxWidth: 320,
           animation: 'ecr-in 360ms ease 55ms both',
         }}>
           {screen.subtitle || 'Tap a job, then tap the correct stage.'}
@@ -302,19 +321,28 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
           position: 'relative',
           animation: 'ecr-in 360ms ease 95ms both',
         }}>
-          {/* Amber vertical route line */}
+          {/* Warm haze behind route area */}
           <div style={{
             position: 'absolute',
-            left: 19,
-            top: 19,
-            bottom: 19,
-            width: 2,
-            background: `linear-gradient(to bottom, ${BRONZE} 0%, rgba(${BRONZE_RGB},0.28) 100%)`,
-            borderRadius: 1,
+            inset: '0 -12px',
+            background: 'radial-gradient(ellipse 90% 75% at 12% 50%, rgba(140,88,28,0.08) 0%, transparent 68%)',
+            pointerEvents: 'none',
             zIndex: 0,
           }} />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {/* Amber vertical route line with glow */}
+          <div style={{
+            position: 'absolute',
+            left: 19,
+            top: 19, bottom: 19,
+            width: 2.5,
+            background: `linear-gradient(to bottom, rgba(${BRONZE_RGB},0.92) 0%, rgba(${BRONZE_RGB},0.52) 55%, rgba(${BRONZE_RGB},0.22) 100%)`,
+            borderRadius: 2,
+            zIndex: 0,
+            boxShadow: `0 0 7px 1px rgba(${BRONZE_RGB},0.28), 0 0 2px rgba(${BRONZE_RGB},0.45)`,
+          }} />
+
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             {stages.map((stage, idx) => {
               const placedId  = slots[stage.id]
               const placed    = placedId ? answers.find(a => a.id === placedId) : null
@@ -326,131 +354,156 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
               const IconComp = ICON_MAP[stage.icon] || IconCross
 
               return (
-                <div
-                  key={stage.id}
-                  style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}
-                >
-                  {/* Numbered node */}
-                  <div style={{
-                    flexShrink: 0,
-                    width: 38, height: 38, borderRadius: '50%',
-                    background: isSuccess
-                      ? `rgba(${BRONZE_RGB}, 0.18)`
-                      : 'rgba(30,18,8,0.95)',
-                    border: `2px solid ${isSuccess ? BRONZE : `rgba(${BRONZE_RGB},0.48)`}`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontFamily: "'Sora', sans-serif",
-                    fontWeight: 700, fontSize: 14,
-                    color: BRONZE,
-                    zIndex: 1, position: 'relative',
-                    boxShadow: isSuccess
-                      ? `0 0 0 3px rgba(${BRONZE_RGB},0.12), 0 0 16px rgba(${BRONZE_RGB},0.20)`
-                      : 'none',
-                    transition: `box-shadow ${MOTION.duration.standard} ease, background ${MOTION.duration.standard} ease`,
-                  }}>
-                    {idx + 1}
-                  </div>
+                <div key={stage.id}>
+                  {/* Stage row */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
 
-                  {/* Stage card */}
-                  <div
-                    onClick={() => handleSlotTap(stage.id)}
-                    style={{
-                      flex: 1,
-                      borderRadius: 14,
-                      border: `1px solid ${
-                        isSuccess ? STAGE_BORDER_SUCCESS :
-                        isWrong   ? STAGE_BORDER_WRONG   :
-                        STAGE_BORDER
-                      }`,
-                      background: isSuccess ? STAGE_BG_SUCCESS : isWrong ? STAGE_BG_WRONG : STAGE_BG,
-                      boxShadow: isSuccess
-                        ? `0 0 0 1px rgba(${BRONZE_RGB},0.14), 0 0 18px rgba(${BRONZE_RGB},0.16), inset 0 0 10px rgba(${BRONZE_RGB},0.06)`
-                        : 'none',
-                      padding: '9px 12px 10px',
-                      cursor: !checked ? 'pointer' : 'default',
-                      transition: `border-color ${MOTION.duration.standard} ease, box-shadow ${MOTION.duration.standard} ease, background ${MOTION.duration.standard} ease`,
-                      animation: isShaking ? 'ecr-shake 400ms ease' : undefined,
-                      WebkitTapHighlightColor: 'transparent',
-                    }}
-                  >
-                    {/* Stage header */}
+                    {/* Numbered node — lit route marker */}
                     <div style={{
-                      display: 'flex', alignItems: 'center', gap: 8,
-                      marginBottom: 7,
+                      flexShrink: 0,
+                      width: 38, height: 38, borderRadius: '50%',
+                      background: isSuccess
+                        ? `rgba(${BRONZE_RGB},0.20)`
+                        : 'rgba(22,13,5,0.96)',
+                      border: `2px solid ${isSuccess ? BRONZE : `rgba(${BRONZE_RGB},0.55)`}`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontFamily: "'Sora', sans-serif",
+                      fontWeight: 700, fontSize: 14,
+                      color: BRONZE,
+                      zIndex: 1, position: 'relative',
+                      boxShadow: isSuccess
+                        ? `0 0 0 4px rgba(${BRONZE_RGB},0.16), 0 0 22px rgba(${BRONZE_RGB},0.38)`
+                        : `0 0 0 3px rgba(${BRONZE_RGB},0.06), 0 0 10px rgba(${BRONZE_RGB},0.10)`,
+                      transition: `box-shadow 220ms ease, background 220ms ease, border-color 220ms ease`,
                     }}>
-                      {/* Icon in a small circle */}
+                      {idx + 1}
+                    </div>
+
+                    {/* Stage card — dark military field tag */}
+                    <div
+                      onClick={() => handleSlotTap(stage.id)}
+                      style={{
+                        flex: 1,
+                        borderRadius: 13,
+                        border: `1px solid ${
+                          isSuccess ? STAGE_BORDER_SUCCESS :
+                          isWrong   ? STAGE_BORDER_WRONG   :
+                          STAGE_BORDER
+                        }`,
+                        background: isSuccess ? STAGE_BG_SUCCESS : isWrong ? STAGE_BG_WRONG : STAGE_BG,
+                        boxShadow: isSuccess
+                          ? `0 0 0 1px rgba(${BRONZE_RGB},0.20), 0 0 28px rgba(${BRONZE_RGB},0.30), inset 0 0 14px rgba(${BRONZE_RGB},0.08)`
+                          : isWrong
+                            ? 'inset 0 1px 0 rgba(0,0,0,0.30), 0 2px 6px rgba(0,0,0,0.35)'
+                            : 'inset 0 1px 0 rgba(255,215,150,0.05), inset 0 -1px 0 rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.35)',
+                        padding: '11px 13px 12px',
+                        position: 'relative',
+                        cursor: !checked ? 'pointer' : 'default',
+                        transition: `border-color 220ms ease, box-shadow 220ms ease, background 220ms ease`,
+                        animation: isShaking ? 'ecr-shake 400ms ease' : undefined,
+                        opacity: isWrong ? 0.62 : 1,
+                        filter: isWrong ? 'saturate(0.45)' : 'none',
+                        WebkitTapHighlightColor: 'transparent',
+                      }}
+                    >
+                      {/* Corner rivets */}
+                      <div style={{ ...RIVET, top: 5, left: 5 }} />
+                      <div style={{ ...RIVET, top: 5, right: 5 }} />
+                      <div style={{ ...RIVET, bottom: 5, left: 5 }} />
+                      <div style={{ ...RIVET, bottom: 5, right: 5 }} />
+
+                      {/* Stage header */}
                       <div style={{
-                        width: 28, height: 28, borderRadius: '50%',
-                        background: `rgba(${BRONZE_RGB},0.10)`,
-                        border: `1px solid rgba(${BRONZE_RGB},0.22)`,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        flexShrink: 0,
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        marginBottom: 7,
                       }}>
-                        <IconComp />
-                      </div>
-
-                      <div style={{ flex: 1, minWidth: 0 }}>
+                        {/* Icon amber badge */}
                         <div style={{
-                          fontWeight: 600, fontSize: 12.5,
-                          color: TEXT_PRIMARY, lineHeight: 1.2,
-                          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                        }}>
-                          {stage.title}
-                        </div>
-                        <div style={{
-                          fontSize: 10.5, color: TEXT_DIM, marginTop: 1,
-                        }}>
-                          {stage.clue}
-                        </div>
-                      </div>
-
-                      {isSuccess && (
-                        <div style={{
-                          width: 18, height: 18, borderRadius: '50%',
-                          background: `rgba(${BRONZE_RGB},0.18)`,
-                          border: `1px solid rgba(${BRONZE_RGB},0.48)`,
+                          width: 30, height: 30, borderRadius: '50%',
+                          background: `rgba(${BRONZE_RGB},0.14)`,
+                          border: `1.5px solid rgba(${BRONZE_RGB},0.38)`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: 10, color: BRONZE, flexShrink: 0,
+                          flexShrink: 0,
+                          boxShadow: `inset 0 1px 0 rgba(255,215,150,0.07)`,
                         }}>
-                          ✓
+                          <IconComp />
+                        </div>
+
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{
+                            fontWeight: 600, fontSize: 12.5,
+                            color: TEXT_PRIMARY, lineHeight: 1.2,
+                            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                          }}>
+                            {stage.title}
+                          </div>
+                          <div style={{
+                            fontSize: 10.5, color: TEXT_DIM, marginTop: 1,
+                          }}>
+                            {stage.clue}
+                          </div>
+                        </div>
+
+                        {isSuccess && (
+                          <div style={{
+                            width: 18, height: 18, borderRadius: '50%',
+                            background: `rgba(${BRONZE_RGB},0.18)`,
+                            border: `1px solid rgba(${BRONZE_RGB},0.52)`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: 10, color: BRONZE, flexShrink: 0,
+                          }}>
+                            ✓
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Drop zone */}
+                      {placed ? (
+                        <div style={{
+                          borderRadius: 8,
+                          padding: '7px 10px',
+                          background: `rgba(${BRONZE_RGB},0.10)`,
+                          border: `1px solid rgba(${BRONZE_RGB},0.28)`,
+                          fontSize: 11.5, lineHeight: 1.42,
+                          color: TEXT_PRIMARY,
+                          transition: `all 220ms ease`,
+                        }}>
+                          {placed.text}
+                        </div>
+                      ) : (
+                        <div style={{
+                          borderRadius: 8,
+                          padding: '7px 10px',
+                          border: `1px dashed rgba(${BRONZE_RGB},0.14)`,
+                          background: 'rgba(0,0,0,0.12)',
+                          fontSize: 11, lineHeight: 1.35,
+                          color: `rgba(${BRONZE_RGB},0.22)`,
+                          fontStyle: 'italic',
+                        }}>
+                          Drop job here
                         </div>
                       )}
                     </div>
-
-                    {/* Drop zone */}
-                    {placed ? (
-                      <div style={{
-                        borderRadius: 8,
-                        padding: '6px 10px',
-                        background: isWrong
-                          ? 'rgba(16,9,4,0.55)'
-                          : `rgba(${BRONZE_RGB},0.08)`,
-                        border: `1px solid ${
-                          isWrong
-                            ? 'rgba(90,55,28,0.35)'
-                            : `rgba(${BRONZE_RGB},0.22)`
-                        }`,
-                        fontSize: 11.5, lineHeight: 1.35,
-                        color: isWrong
-                          ? 'rgba(190,148,90,0.48)'
-                          : TEXT_PRIMARY,
-                        transition: `color ${MOTION.duration.standard} ease, background ${MOTION.duration.standard} ease`,
-                      }}>
-                        {placed.text}
-                      </div>
-                    ) : (
-                      <div style={{
-                        borderRadius: 8,
-                        padding: '6px 10px',
-                        border: `1.5px dashed rgba(${BRONZE_RGB},0.22)`,
-                        fontSize: 11.5, lineHeight: 1.35,
-                        color: `rgba(${BRONZE_RGB},0.32)`,
-                        fontStyle: 'italic',
-                      }}>
-                        Drop job here
-                      </div>
-                    )}
                   </div>
+
+                  {/* Flow arrow between nodes */}
+                  {idx < stages.length - 1 && (
+                    <div style={{
+                      height: 11,
+                      paddingLeft: 13,
+                      display: 'flex',
+                      alignItems: 'center',
+                      position: 'relative',
+                      zIndex: 1,
+                    }}>
+                      <div style={{
+                        width: 0, height: 0,
+                        borderLeft: '4px solid transparent',
+                        borderRight: '4px solid transparent',
+                        borderTop: `5px solid rgba(${BRONZE_RGB},0.50)`,
+                      }} />
+                    </div>
+                  )}
                 </div>
               )
             })}
@@ -485,13 +538,15 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                       ANSWER_BORDER
                     }`,
                     background: isSelected ? ANSWER_BG_SELECTED : isPlaced ? ANSWER_BG_PLACED : ANSWER_BG,
-                    boxShadow: isSelected
-                      ? `0 0 0 1px rgba(${BRONZE_RGB},0.16), 0 0 16px rgba(${BRONZE_RGB},0.14)`
-                      : 'none',
+                    boxShadow: isPlaced
+                      ? 'none'
+                      : isSelected
+                        ? `0 4px 16px rgba(0,0,0,0.50), 0 0 18px rgba(${BRONZE_RGB},0.14), 0 0 0 1px rgba(${BRONZE_RGB},0.12)`
+                        : '0 2px 8px rgba(0,0,0,0.42), 0 1px 3px rgba(0,0,0,0.32)',
                     cursor: isPlaced || checked ? 'default' : 'pointer',
                     textAlign: 'left',
                     fontFamily: "'Sora', sans-serif",
-                    fontSize: 11.5, lineHeight: 1.38,
+                    fontSize: 11.5, lineHeight: 1.45,
                     color: isPlaced ? TEXT_PLACED : TEXT_PRIMARY,
                     minHeight: 74,
                     display: 'flex', flexDirection: 'column',
@@ -502,7 +557,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                       `transform ${MOTION.duration.instant} ease`,
                       `opacity ${MOTION.duration.fast} ease`,
                     ].join(', '),
-                    opacity: isPlaced ? 0.38 : 1,
+                    opacity: isPlaced ? 0.34 : 1,
                     WebkitTapHighlightColor: 'transparent',
                   }}
                 >
@@ -523,6 +578,8 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
             onClick={handleCheck}
             accent={BRONZE}
             disabled={!allFilled}
+            disabledBackground='rgba(42,26,8,0.20)'
+            disabledColor='rgba(175,140,72,0.40)'
           />
         ) : hasWrong ? (
           <ContinueCTA
