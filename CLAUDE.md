@@ -215,6 +215,7 @@ docs/system/TEACHING_VOICE_GUIDE.md
 | `src/data/guidedAnswerCoach.js` | Content for `GuidedAnswerCoach` — exam-technique question types, model answers and mark schemes |
 | `src/data/recoveryQuizzes.js` | Recovery quiz definitions keyed by `recoveryQuizId` — used by RecoveryQuizPlayer |
 | `src/data/quickQuizData.js` | `QUICK_QUIZ_QUESTIONS` — 90s Quiz question bank (mcq, truefalse, fillgap, matchpairs, sequence, dragdrop) |
+| `src/features/planner/dailyPlanner.js` | Adaptive daily revision planner — `buildDailyPlan()`, `buildSaturdayBlocks()`, `buildSundayBlocks()`, `processPaperResults()`, `applyPaperResultToLearningState()`, `savePaperResult()`, `loadLearningState()`. Pure functions except the three that read/write via `src/lib/storage.js`. Never access localStorage directly. |
 
 ## Public Assets
 

@@ -802,20 +802,10 @@ export function buildSaturdayBlocks(mainSubject, secondarySubject, learningState
 
   const testPaperDuration = Math.max(20, saturdayMinutes - pulseDuration - MIN_REVIEW - MIN_REPAIR)
 
-  const paperSubject = learningState && userProfile
-    ? selectWeekendPaperSubject(learningState, { ...userProfile, selectedSubjects: subjects }, new Date())
-    : mainSubject
-
-  const paperActivityType = learningState
-    ? selectPaperActivity(paperSubject, learningState, testPaperDuration)
-    : 'paperSection'
-
-  const coverage       = learningState ? getSubjectCoverage(paperSubject, learningState) : 0
-  const eligibleTopics = []
-
-  const weakPoint = learningState
-    ? selectWeakPointRepair(paperSubject, learningState, new Date())
-    : null
+  const paperSubject      = selectWeekendPaperSubject(learningState, { ...userProfile, selectedSubjects: subjects }, new Date())
+  const paperActivityType = selectPaperActivity(paperSubject, learningState, testPaperDuration)
+  const coverage          = getSubjectCoverage(paperSubject, learningState)
+  const weakPoint         = selectWeakPointRepair(paperSubject, learningState, new Date())
 
   return [
     {
@@ -838,9 +828,8 @@ export function buildSaturdayBlocks(mainSubject, secondarySubject, learningState
       paperActivityType,
       reasonCodes:      ['SATURDAY_TEST_DAY', 'PAPER_PRACTICE_DUE'],
       paper: {
-        paperType:      paperActivityType,
+        paperType: paperActivityType,
         coverage,
-        eligibleTopics,
       },
     },
     {
@@ -880,27 +869,19 @@ export function buildSundayBlocks(mainSubject, secondarySubject, learningState, 
     .filter(pr => pr.completedAt)
     .sort((a, b) => b.completedAt.localeCompare(a.completedAt))[0] || null
 
-  // Resolve paperMistakeRepair target
-  let mistakeRepair = null
-  let mistakeSubject = mainSubject
-  let repairSource   = undefined
+  // Resolve paperMistakeRepair target — prefer Saturday paper repair, fall back to weak point
+  const satRepair = recentPaperResult
+    ? selectHighestValuePaperRepair(
+        (learningState?.weakPoints || []).filter(
+          wp => wp.subject === recentPaperResult.subject && wp.status !== 'resolved'
+        ),
+        recentPaperResult
+      )
+    : null
 
-  if (recentPaperResult) {
-    const subjectWeakPoints = (learningState?.weakPoints || []).filter(
-      wp => wp.subject === recentPaperResult.subject && wp.status !== 'resolved'
-    )
-    const repair = selectHighestValuePaperRepair(subjectWeakPoints, recentPaperResult)
-    if (repair) {
-      mistakeRepair  = repair
-      mistakeSubject = recentPaperResult.subject
-      repairSource   = 'saturdayPaper'
-    }
-  }
-
-  if (!mistakeRepair) {
-    mistakeRepair  = selectWeakPointRepair(mainSubject, learningState || { weakPoints: [] }, new Date())
-    mistakeSubject = mainSubject
-  }
+  const mistakeRepair  = satRepair || selectWeakPointRepair(mainSubject, learningState || { weakPoints: [] }, new Date())
+  const mistakeSubject = satRepair ? recentPaperResult.subject : mainSubject
+  const repairSource   = satRepair ? 'saturdayPaper' : undefined
 
   // lightExamPractice subject: paper subject if available and still selected, else main
   const lightSubjectCandidate = recentPaperResult?.subject
@@ -1073,24 +1054,13 @@ export function handleMissedDay(missedPlan) {
 
 // ─── Paper practice helpers ───────────────────────────────────────────────────
 
-function subjectToPaperWeightKey(subject) {
-  const map = {
-    Maths:              'maths',
-    Biology:            'combinedScience',
-    Chemistry:          'combinedScience',
-    Physics:            'combinedScience',
-    History:            'history',
-    'English Language': 'englishLanguage',
-    'English Literature': 'englishLiterature',
-    Sociology:          'sociology',
-    Music:              'music',
-    Drama:              'drama',
-  }
-  return map[subject] || subject.toLowerCase()
-}
-
 function paperPracticeWeight(subject) {
-  const key = subjectToPaperWeightKey(subject)
+  const key = {
+    Maths: 'maths', Biology: 'combinedScience', Chemistry: 'combinedScience',
+    Physics: 'combinedScience', History: 'history', Sociology: 'sociology',
+    'English Language': 'englishLanguage', 'English Literature': 'englishLiterature',
+    Music: 'music', Drama: 'drama',
+  }[subject] ?? subject.toLowerCase()
   return PAPER_PRACTICE_WEIGHTS[key] ?? 50
 }
 
@@ -1151,10 +1121,6 @@ function daysSinceLastPaperBoost(subject, learningState, date) {
   return 0
 }
 
-function upcomingAssessmentBoost(_subject, _userProfile, _date) {
-  return 0
-}
-
 function coverageReadinessBoost(subject, learningState) {
   const coverage = getSubjectCoverage(subject, learningState)
   if (coverage >= 60) return 10
@@ -1212,7 +1178,6 @@ export function selectWeekendPaperSubject(learningState, userProfile, date) {
         paperPracticeWeight(subject)
         + weaknessBoost(subject, learningState)
         + daysSinceLastPaperBoost(subject, learningState, date)
-        + upcomingAssessmentBoost(subject, userProfile, date)
         + coverageReadinessBoost(subject, learningState)
         - recentPaperPenalty(subject, learningState, date),
     }))
