@@ -4,6 +4,7 @@ import { HISTORY_MODULES } from '../../src/modules/history.js'
 import { MEDICINE_EPISODES } from '../../src/content/history/medicine/index.js'
 import episodeMedievalBeliefs from '../../src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.js'
 import episodeBlackDeath from '../../src/content/history/medicine/episodes/episode-02-black-death.js'
+import episodeRenaissanceMedicine from '../../src/content/history/medicine/episodes/episode-03-renaissance-medicine.js'
 import episodeJenner from '../../src/content/history/medicine/episodes/episode-06-jenner-vaccination.js'
 import episodeGermTheory from '../../src/content/history/medicine/episodes/episode-07-germ-theory.js'
 import episodeGreatStink from '../../src/content/history/medicine/episodes/episode-08-great-stink.js'
@@ -45,6 +46,44 @@ describe('Content registry — episode-01-medieval-beliefs-causes', () => {
     for (const stage of episodeMedievalBeliefs.stageNavigation) {
       expect(stage.screenIndex).toBeGreaterThanOrEqual(0)
       expect(stage.screenIndex).toBeLessThan(episodeMedievalBeliefs.screens.length)
+    }
+  })
+})
+
+describe('Content registry — episode-03-renaissance-medicine (legacy id: mod2)', () => {
+  it('id exists in src/modules.js (as legacy mod2)', () => {
+    const meta = MODULES.find(m => m.id === episodeRenaissanceMedicine.id)
+    expect(meta).toBeDefined()
+  })
+
+  it('number matches src/modules.js', () => {
+    const meta = MODULES.find(m => m.id === episodeRenaissanceMedicine.id)
+    expect(episodeRenaissanceMedicine.number).toBe(meta.number)
+  })
+
+  it('filename prefix matches episode number (episode-03-* → number: 3)', () => {
+    expect(episodeRenaissanceMedicine.number).toBe(3)
+  })
+
+  it('screens array is non-empty', () => {
+    expect(Array.isArray(episodeRenaissanceMedicine.screens)).toBe(true)
+    expect(episodeRenaissanceMedicine.screens.length).toBeGreaterThan(0)
+  })
+
+  it('stageNavigation entries have id, title, and screenIndex', () => {
+    if (!episodeRenaissanceMedicine.stageNavigation) return
+    for (const stage of episodeRenaissanceMedicine.stageNavigation) {
+      expect(stage).toHaveProperty('id')
+      expect(stage).toHaveProperty('title')
+      expect(stage).toHaveProperty('screenIndex')
+    }
+  })
+
+  it('stageNavigation screenIndex values are within bounds', () => {
+    if (!episodeRenaissanceMedicine.stageNavigation) return
+    for (const stage of episodeRenaissanceMedicine.stageNavigation) {
+      expect(stage.screenIndex).toBeGreaterThanOrEqual(0)
+      expect(stage.screenIndex).toBeLessThan(episodeRenaissanceMedicine.screens.length)
     }
   })
 })
@@ -255,6 +294,10 @@ describe('Content registry — series index (MEDICINE_EPISODES)', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-black-death')).toBeDefined()
   })
 
+  it('includes the renaissance medicine episode (legacy id: mod2)', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'mod2')).toBeDefined()
+  })
+
   it('includes the jenner episode', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-jenner-vaccination')).toBeDefined()
   })
@@ -290,6 +333,15 @@ describe('Content registry — compatibility layer (HISTORY_MODULES)', () => {
 
   it('black death episode has screens', () => {
     const ep = HISTORY_MODULES.find(m => m.id === 'history-medicine-black-death')
+    expect(ep?.screens?.length).toBeGreaterThan(0)
+  })
+
+  it('includes the renaissance medicine episode (legacy id: mod2)', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'mod2')).toBeDefined()
+  })
+
+  it('renaissance medicine episode has screens', () => {
+    const ep = HISTORY_MODULES.find(m => m.id === 'mod2')
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 
