@@ -13,10 +13,12 @@
 
 import episode06 from './episodes/episode-06-jenner-vaccination.js'
 import episode07 from './episodes/episode-07-germ-theory.js'
+import episode14 from './episodes/episode-14-western-front.js'
 
 // Ordered registry — add future episodes here as they are extracted.
 export const MEDICINE_EPISODES = [
   episode06,
   episode07,
-  // episode01–05, episode08–14 (add as extracted, in number order)
+  // episode08–13 (add as extracted, in number order)
+  episode14,
 ]
