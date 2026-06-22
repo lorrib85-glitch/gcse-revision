@@ -2,11 +2,50 @@ import { describe, it, expect } from 'vitest'
 import { MODULES } from '../../src/modules.js'
 import { HISTORY_MODULES } from '../../src/modules/history.js'
 import { MEDICINE_EPISODES } from '../../src/content/history/medicine/index.js'
+import episodeMedievalBeliefs from '../../src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.js'
 import episodeJenner from '../../src/content/history/medicine/episodes/episode-06-jenner-vaccination.js'
 import episodeGermTheory from '../../src/content/history/medicine/episodes/episode-07-germ-theory.js'
 import episodeWesternFront from '../../src/content/history/medicine/episodes/episode-14-western-front.js'
 
 // ─── Per-episode guards ───────────────────────────────────────────────────────
+
+describe('Content registry — episode-01-medieval-beliefs-causes', () => {
+  it('id exists in src/modules.js', () => {
+    const meta = MODULES.find(m => m.id === episodeMedievalBeliefs.id)
+    expect(meta).toBeDefined()
+  })
+
+  it('number matches src/modules.js', () => {
+    const meta = MODULES.find(m => m.id === episodeMedievalBeliefs.id)
+    expect(episodeMedievalBeliefs.number).toBe(meta.number)
+  })
+
+  it('filename prefix matches episode number (episode-01-* → number: 1)', () => {
+    expect(episodeMedievalBeliefs.number).toBe(1)
+  })
+
+  it('screens array is non-empty', () => {
+    expect(Array.isArray(episodeMedievalBeliefs.screens)).toBe(true)
+    expect(episodeMedievalBeliefs.screens.length).toBeGreaterThan(0)
+  })
+
+  it('stageNavigation entries have id, title, and screenIndex', () => {
+    if (!episodeMedievalBeliefs.stageNavigation) return
+    for (const stage of episodeMedievalBeliefs.stageNavigation) {
+      expect(stage).toHaveProperty('id')
+      expect(stage).toHaveProperty('title')
+      expect(stage).toHaveProperty('screenIndex')
+    }
+  })
+
+  it('stageNavigation screenIndex values are within bounds', () => {
+    if (!episodeMedievalBeliefs.stageNavigation) return
+    for (const stage of episodeMedievalBeliefs.stageNavigation) {
+      expect(stage.screenIndex).toBeGreaterThanOrEqual(0)
+      expect(stage.screenIndex).toBeLessThan(episodeMedievalBeliefs.screens.length)
+    }
+  })
+})
 
 describe('Content registry — episode-06-jenner-vaccination', () => {
   it('id exists in src/modules.js', () => {
@@ -130,6 +169,10 @@ describe('Content registry — series index (MEDICINE_EPISODES)', () => {
     expect(numbers).toEqual([...numbers].sort((a, b) => a - b))
   })
 
+  it('includes the medieval beliefs episode', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-medieval-beliefs-causes')).toBeDefined()
+  })
+
   it('includes the jenner episode', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-jenner-vaccination')).toBeDefined()
   })
@@ -146,6 +189,15 @@ describe('Content registry — series index (MEDICINE_EPISODES)', () => {
 // ─── Compatibility export guards ─────────────────────────────────────────────
 
 describe('Content registry — compatibility layer (HISTORY_MODULES)', () => {
+  it('includes the medieval beliefs episode', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'history-medicine-medieval-beliefs-causes')).toBeDefined()
+  })
+
+  it('medieval beliefs episode has screens', () => {
+    const ep = HISTORY_MODULES.find(m => m.id === 'history-medicine-medieval-beliefs-causes')
+    expect(ep?.screens?.length).toBeGreaterThan(0)
+  })
+
   it('includes the jenner episode', () => {
     expect(HISTORY_MODULES.find(m => m.id === 'history-medicine-jenner-vaccination')).toBeDefined()
   })
