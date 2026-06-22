@@ -12,9 +12,11 @@
 // Episodes not yet migrated to their own file remain inline in src/modules/history.js.
 
 import episode06 from './episodes/episode-06-jenner-vaccination.js'
+import episode07 from './episodes/episode-07-germ-theory.js'
 
 // Ordered registry — add future episodes here as they are extracted.
 export const MEDICINE_EPISODES = [
   episode06,
-  // episode01–05, episode07–14 (add as extracted, in number order)
+  episode07,
+  // episode01–05, episode08–14 (add as extracted, in number order)
 ]
