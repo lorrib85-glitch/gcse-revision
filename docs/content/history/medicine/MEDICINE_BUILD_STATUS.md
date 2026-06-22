@@ -24,7 +24,7 @@ Update this file whenever an episode is built, extracted, or expanded.
 | # | Title | ID | Build status | Registry status | Notes / next action |
 |---|-------|----|--------------|-----------------|---------------------|
 | 1 | Trust me, I'm following Jupiter | `history-medicine-medieval-beliefs-causes` | built (32 screens) | extracted | ✓ Complete |
-| 2 | The day everything changed | `history-medicine-black-death` | built (27 screens) | inline | Extract when convenient |
+| 2 | The day everything changed | `history-medicine-black-death` | built (27 screens) | extracted | ✓ Complete |
 | 3 | The beginning of doubt | `mod2` | built (16 screens) | inline | ID needs migration to slug pattern before extraction |
 | 4 | The man who proved everyone wrong | `mod3` | built (11 screens) | inline | ID needs migration to slug pattern before extraction |
 | 5 | London's year of terror | `history-medicine-great-plague` | **unbuilt** | not built | screenCount 0; build from scratch |
@@ -44,8 +44,8 @@ Update this file whenever an episode is built, extracted, or expanded.
 
 | State | Count | Episodes |
 |-------|-------|---------|
-| Extracted (registry complete) | 4 | 1, 7, 14, 6 (stub) |
-| Built, inline (awaiting extraction) | 8 | 2, 3, 4, 8, 9, 11, 12, 13 |
+| Extracted (registry complete) | 5 | 1, 2, 7, 14, 6 (stub) |
+| Built, inline (awaiting extraction) | 7 | 3, 4, 8, 9, 11, 12, 13 |
 | Unbuilt | 2 | 5, 10 |
 
 ## Notes on legacy IDs
