@@ -15,8 +15,14 @@ bulk-read this file.
 **Use for:** typo, one CSS value, one image path, one data field, one copy
 word — single-file, single-concept, no new pattern introduced.
 
-**Qualification rule:** ≤2 lines changed, ≤1 file, no design docs needed,
-no logic or component structure touched. If in doubt, escalate to B or C.
+**Qualification rule:** ≤2 lines changed, ≤1 file, no new visual system
+rule required, no logic or component structure touched.
+
+"No design docs needed" means no new visual decision is being made —
+looking up an existing spacing, colour, or radius token is a reference
+check, not a judgment call. If the target component already uses local
+pixel values, follow that local pattern and stay at A. Escalate to B only
+if the change creates a new rule or has cross-screen impact.
 
 ### Phases
 
@@ -152,8 +158,13 @@ issue, progress bug, test failure, any unexpected behaviour.
 
 ### Phases
 
-1. **Triage** — `/gcse-triage` → Lane D.
-2. **Reproduce** — `superpowers:systematic-debugging`:
+1. **Triage** — `/gcse-triage` → Lane D. No pre-triage clarifying question
+   is needed — broken behaviour is always D. Reproduction details are
+   established in phase 2, not before classification.
+2. **Reproduce** — `superpowers:systematic-debugging`. The first debugging
+   step must establish: which screen/module, expected behaviour, actual
+   behaviour, and reproduction path. Ask or confirm these before forming a
+   hypothesis.
    ```
    Symptom:
    Reproduction path:
@@ -229,8 +240,10 @@ reusable component family, new app-level flow, new architecture pattern.
    ```
    Do not proceed to planning until all open decisions are resolved.
 5. **Source / canonical check:**
-   - `/canonical-topic` for History content — grep for specific sections
-     first; never bulk-read a canonical file
+   - Read existing canonical and architecture docs first — grep for the
+     relevant section; do not bulk-read. Run `/canonical-topic` only if
+     canonical docs for this episode are missing, stale, or explicitly
+     requested by the user. Do not run it by default.
    - `/frontend-design` if a new visual surface is introduced
 6. **Plan phase** — `superpowers:writing-plans` → `/gsd-plan-phase`.
    Only after discussion decisions are closed.

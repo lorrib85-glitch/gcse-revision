@@ -44,11 +44,18 @@ Work through in order. Stop at the first match.
    question banks — inside an already-built module?
    → **C — Content / Module Update**
 
-6. Does it change the appearance of an existing screen or component, or
-   require reading design docs or making visual judgment calls?
+6. Does it change the appearance of an existing screen or component AND
+   requires making a new visual system decision (new token, new pattern,
+   cross-screen impact)?
    → **B — Visual / UI Build**
 
-7. ≤2 lines changed, ≤1 file, no design docs needed, no logic touched?
+   Note: looking up an existing spacing, colour, or radius token value is
+   a reference check — not a visual judgment call. If the target component
+   already uses local pixel values, follow that local pattern. Escalate to
+   B only when a new visual rule is being created or the change affects
+   multiple screens.
+
+7. ≤2 lines changed, ≤1 file, no new visual system rule, no logic touched?
    → **A — Minor Edit**
 
 If none match cleanly, name the closest lane and add a one-line note
@@ -68,6 +75,9 @@ Forbidden:        <list>
 Required reading: <files actually needed — not the full possible set>
 Stop points:      <specific triggers for this task>
 Implementation:   YES — explicit request / NO — discussion only
+                  Big Build (E): use "Intent: YES / Immediate: NO —
+                  discussion + scope lock required before /gsd-execute-phase"
+                  when the user names the task but phases are not yet done
 ```
 
 For full workflow detail (phases, steps, allowed/forbidden per phase),
@@ -78,8 +88,8 @@ Do not bulk-read the whole map.
 
 | Lane | Use for | Key gate |
 |------|---------|---------|
-| A | Typo, one CSS value, one data field | ≤2 lines, ≤1 file, no design docs |
-| B | Screen or component appearance change | `/frontend-design` if non-trivial; full `vitest` if stories exist |
+| A | Typo, one CSS value, one data field | ≤2 lines, ≤1 file; follow local pattern; no new visual rule |
+| B | Screen or component appearance change | Only when new visual rule needed; `/frontend-design` if so; full `vitest` if stories exist |
 | C | Module content, screens, questions in existing module | Coverage check; `vitest run tests/architecture` after |
 | D | Broken behaviour, build failure, test failure | Root cause confirmed before any code change |
 | E | New episode, new component, new flow | Brainstorm→plan→execute; story required for new components |
