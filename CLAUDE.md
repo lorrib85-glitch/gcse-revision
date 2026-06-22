@@ -30,6 +30,20 @@ The `superpowers` plugin is installed. Wire these three skills into the standard
 
 **`superpowers:test-driven-development`** applies selectively to pure logic units (`src/progress.js`, `src/unifiedWeaknessTracker.js`, `src/features/planner/dailyPlanner.js`) — not to visual React components where browser verification is the test.
 
+### GSD command scope
+
+GSD Core is installed for **planning and documentation only** unless explicitly asked to build.
+
+| Command | What it produces | Permission to build? |
+|---------|-----------------|----------------------|
+| `/gsd-discuss-phase` | `CONTEXT.md` — planning documentation | Not required |
+| `/gsd-plan-phase` | `PLAN.md` — implementation planning only | Not required |
+| `/gsd-execute-phase` | Source code changes | **Explicit user request required** |
+
+**A roadmap phase being listed, discussed, or planned is not permission to build it.**
+
+Do not invoke `/gsd-execute-phase` or write any source code for a phase unless the user has explicitly asked to start building in the current session.
+
 ## What This Is
 
 React + Vite GCSE revision app. Mobile-first, dark cinematic theme. Designed to feel like a premium streaming platform, not a school VLE.
