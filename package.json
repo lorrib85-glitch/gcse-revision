@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "test": "vitest",
     "test:architecture": "vitest run tests/architecture",
+    "verify": "pnpm lint && pnpm test:architecture && pnpm build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
