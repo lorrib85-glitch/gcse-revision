@@ -19,15 +19,15 @@ Typography should NOT feel: corporate, productivity-app-like, overly decorative,
 
 | Font | Usage |
 |------|-------|
-| **Sora** | All UI text — buttons, labels, navigation, metadata, headings, body copy |
-| **Cormorant Garamond** | Cinematic editorial moments only — used sparingly |
+| **Manrope** | Cinematic display type — headings, titles, impact moments, `TYPE.cinematic` |
+| **Sora** | All other UI text — body copy, buttons, labels, navigation, metadata, captions |
 
 Both fonts are loaded via Google Fonts in `index.html`.
 
 **Rules:**
 - Never introduce a third font family
-- Cormorant Garamond must not be used for body copy or UI labels
-- If overused, Cormorant Garamond makes the app feel theatrical and inconsistent
+- Manrope is for display hierarchy and emotional weight — not body copy or fine-print labels
+- Sora handles everything else; it is the dominant font by character count across the product
 
 ---
 
@@ -39,13 +39,18 @@ import { TYPE } from '../../constants/typography.js'
 
 | Token | Font | Size | Weight | Line Height | Letter Spacing | Usage |
 |-------|------|------|--------|-------------|----------------|-------|
-| `TYPE.hero` | Sora | 34px | 700 | 1.05 | -0.03em | Chapter hooks, recovery titles, cinematic reveals |
-| `TYPE.sectionTitle` | Sora | 28px | 600 | 1.12 | -0.02em | Section headings, module titles |
-| `TYPE.cardTitle` | Sora | 22px | 600 | 1.2 | -0.01em | Card titles, prominent labels |
-| `TYPE.body` | Sora | 18px | 400 | 1.5 | 0em | Explanation copy, reading content |
-| `TYPE.bodySmall` | Sora | 16px | 400 | 1.45 | 0em | Supporting copy, skip links, secondary text |
-| `TYPE.metadata` | Sora | 14px | 500 | 1.3 | 0.08em | Timing, question counts, progress labels |
-| `TYPE.cinematic` | Cormorant Garamond | 38px | 600 | 1.02 | -0.03em | Topic titles, emotional reveals, chapter moments |
+| `TYPE.screenHeading` | Manrope | clamp(30px,8vw,42px) | 800 | 1.02 | -0.045em | Chapter hooks, recovery titles, screen-level impact |
+| `TYPE.sectionHeading` | Manrope | clamp(22px,6vw,30px) | 700 | 1.08 | -0.035em | Section headings, module titles |
+| `TYPE.impactTitle` | Manrope | clamp(28px,8vw,36px) | 850 | 1.04 | -0.045em | Maximum-weight display moments |
+| `TYPE.cinematic` | Manrope | clamp(24px,6.4vw,30px) | 750 | 1.08 | -0.035em | Topic titles, overlay titles, cinematic reveals |
+| `TYPE.cardTitle` | Manrope | 1.12rem | 700 | 1.18 | -0.02em | Card titles, prominent labels |
+| `TYPE.bodyText` | Sora | 0.95rem | 400 | 1.5 | -0.005em | Explanation copy, reading content |
+| `TYPE.bodyLarge` | Sora | 1.02rem | 400 | 1.48 | -0.006em | Larger body passages |
+| `TYPE.buttonText` | Sora | 0.92rem | 700 | 1.2 | -0.005em | All button labels |
+| `TYPE.metadataText` | Sora | 0.72rem | 600 | 1.2 | 0.10em | Timing, question counts, progress labels |
+| `TYPE.captionText` | Sora | 0.78rem | 400 | 1.35 | -0.003em | Captions, timestamps, fine print |
+
+Aliases retained for backwards compatibility: `TYPE.hero` = `TYPE.screenHeading`, `TYPE.sectionTitle` = `TYPE.sectionHeading`, `TYPE.body` = `TYPE.bodyText`, `TYPE.bodySmall` = `TYPE.bodySmallText`, `TYPE.metadata` = `TYPE.metadataText`.
 
 ---
 
@@ -118,21 +123,20 @@ Metadata text (timing, labels, question counts):
 
 ---
 
-## Cinematic Font Rules
+## Manrope display rules
 
-Cormorant Garamond (`TYPE.cinematic`) should be used **very sparingly**.
+Manrope (`TYPE.cinematic`, `TYPE.screenHeading`, `TYPE.impactTitle`) carries emotional and cinematic weight.
 
 Use for:
-- Emotional reveals
-- Historical drama
+- Screen-level headings and emotional reveals
 - Topic titles in recovery/reveal screens
-- Chapter moments
+- Chapter moments and impact statements
+- Overlay titles
 
 Do not use for:
 - Body copy
-- UI labels
-- Navigation
-- Buttons
+- UI labels or navigation
+- Buttons or form elements
 
 ---
 

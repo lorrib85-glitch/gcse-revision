@@ -86,8 +86,8 @@ Two fonts only:
 
 | Font | Source | Usage |
 |------|--------|-------|
-| **Sora** | Google Fonts | All headings, buttons, UI labels, navigation |
-| **Cormorant Garamond** | Google Fonts | Cinematic editorial moments only — use sparingly |
+| **Manrope** | Google Fonts | Cinematic display type — headings, titles, impact moments |
+| **Sora** | Google Fonts | All other UI text — body copy, buttons, labels, navigation, metadata |
 
 Typography tokens are defined in `src/constants/typography.js`. See `docs/system/TYPOGRAPHY_SYSTEM.md`.
 
@@ -95,7 +95,7 @@ Typography tokens are defined in `src/constants/typography.js`. See `docs/system
 - Never introduce a third font family
 - No italic styling
 - Section labels must be UPPERCASE
-- Cormorant Garamond must not appear in body copy or UI labels
+- Manrope must not appear in body copy, UI labels, or navigation
 
 ---
 
@@ -331,7 +331,7 @@ If three or more answers are weak, the screen needs recomposition before styling
 ## What Claude Must Never Improvise
 
 - **No new colour palettes** — use tokens from Section 3 and `subjects.js` only
-- **No new fonts** — Sora and Cormorant Garamond only
+- **No new fonts** — Sora and Manrope only
 - **No playful or childish styling** — no bubbly buttons, no pastel fills, no emoji in UI
 - **No new layout patterns** — single-column scroll, max-width 420px
 - **No decorative gradients** — gradient use limited to: button fills, progress bars, atmospheric overlays

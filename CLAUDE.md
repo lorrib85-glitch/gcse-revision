@@ -249,11 +249,10 @@ Both `.png` and `.webp` are approved image formats and are used throughout the c
 
 Loaded in `index.html` via `<link>` tags:
 
-- **Sora** — Google Fonts — all UI text (buttons, labels, navigation, headings, body copy)
-- **Outfit** — Google Fonts — secondary UI text (used in some learning components)
-- **IBM Plex Serif** — Google Fonts — cinematic editorial moments (replaces Cormorant Garamond references in older docs)
+- **Manrope** — Google Fonts — cinematic display type (headings, titles, `TYPE.cinematic`, `TYPE.screenHeading`, `TYPE.impactTitle`)
+- **Sora** — Google Fonts — all other UI text (body copy, buttons, labels, navigation, metadata, captions)
 
-See `docs/system/TYPOGRAPHY_SYSTEM.md` for the canonical TYPE token definitions. Sora is the primary font across the product.
+See `docs/system/TYPOGRAPHY_SYSTEM.md` for the canonical TYPE token definitions and full token table.
 
 ## Brand Rules
 
