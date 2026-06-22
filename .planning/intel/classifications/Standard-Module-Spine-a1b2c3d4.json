@@ -1,0 +1,13 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/04 Learning Architecture/Standard_Module_Spine.md",
+  "type": "ADR",
+  "confidence": "medium",
+  "manifest_override": false,
+  "title": "Standard Module Spine",
+  "summary": "Defines the locked 15-role sequential spine all GCSE revision modules must follow, from hook through to chapter complete; now superseded by CLAUDE.md.",
+  "scope": ["module structure", "learning flow", "ChapterHookScreen", "ChapterOutcomeScreen", "QuickRecallScreen", "FaceTheExaminer", "ChapterCompleteScreen", "ModulePlayer"],
+  "cross_refs": ["CLAUDE.md", "docs/system/HISTORY_MODULE_ARCHITECTURE.md", "docs/system/SCIENCE_MODULE_BLUEPRINT.md"],
+  "locked": false,
+  "precedence": null,
+  "notes": "Document opens with an explicit Superseded notice. No formal ADR frontmatter or numbered filename, but content is a single architectural decision (module spine order) with locked rules and variant exceptions — consistent with ADR pattern. Status is Superseded so locked is false. Confidence medium because ADR signals come from content rather than filename/frontmatter convention."
+}

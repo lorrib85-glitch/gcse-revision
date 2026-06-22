@@ -1,0 +1,13 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/TYPOGRAPHY_SYSTEM.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Typography System",
+  "summary": "Defines all typography tokens, font families, and usage rules for the GCSE revision app UI.",
+  "scope": ["typography", "TYPE tokens", "Sora", "Cormorant Garamond", "font families", "src/constants/typography.js"],
+  "cross_refs": ["src/constants/typography.js", "index.html"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

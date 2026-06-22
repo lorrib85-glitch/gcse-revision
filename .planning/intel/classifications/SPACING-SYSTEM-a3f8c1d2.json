@@ -1,0 +1,13 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/SPACING_SYSTEM.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Spacing System",
+  "summary": "Defines all spacing tokens (micro through section) and rules governing their use across every screen and component.",
+  "scope": ["spacing tokens", "SPACING constants", "src/constants/spacing.js", "layout rhythm", "screen padding", "component gaps"],
+  "cross_refs": ["src/constants/spacing.js"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

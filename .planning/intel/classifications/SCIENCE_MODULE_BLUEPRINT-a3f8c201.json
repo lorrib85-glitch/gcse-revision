@@ -1,0 +1,33 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/SCIENCE_MODULE_BLUEPRINT.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Science Module Blueprint (LOCKED)",
+  "summary": "Defines the mandatory six-part pedagogical structure, component usage rules, and content design principles for all AQA GCSE Biology, Chemistry, and Physics modules.",
+  "scope": [
+    "Science modules",
+    "Biology",
+    "Chemistry",
+    "Physics",
+    "AQA GCSE Combined Science",
+    "ModulePlayer",
+    "CinematicRevealMoment",
+    "InteractiveHotspotImage",
+    "MisconceptionCheck",
+    "SpotTheError",
+    "FaceTheExaminer",
+    "GuidedExamResponse",
+    "ExamQuestionFrame",
+    "WeakSpotRecovery",
+    "ChapterCompleteScreen",
+    "unifiedWeaknessTracker"
+  ],
+  "cross_refs": [
+    "src/components/learning/SpotTheError.jsx",
+    "src/unifiedWeaknessTracker.js"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

@@ -1,0 +1,31 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/superpowers/specs/2026-06-12-back-button-component-design.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "BackButton — locked, constitutional component",
+  "summary": "Records the decision to create a single locked BackButton component as the only permitted back-navigation implementation across the app, with its visual contract and API.",
+  "scope": ["BackButton", "back-navigation", "ModuleToolbar", "LearningHeader", "src/components/core/BackButton.jsx"],
+  "cross_refs": [
+    "src/App.jsx",
+    "src/components/core/ModuleToolbar.jsx",
+    "src/components/core/LearningHeader.jsx",
+    "src/components/learning/InteractiveHotspotImage.jsx",
+    "src/components/learning/WeakSpotRecovery.jsx",
+    "src/components/learning/PriorKnowledgeRecall.jsx",
+    "src/components/learning/ExaminerExplainsScreen.jsx",
+    "src/components/layout/ChapterHookScreen.jsx",
+    "src/components/layout/ChapterOutcomeScreen.jsx",
+    "src/components/layout/ChapterCompleteScreen.jsx",
+    "src/components/learning/GuidedExamResponse.jsx",
+    "src/components/learning/FaceTheExaminer.jsx",
+    "src/components/learning/RecoveryQuizPlayer.jsx",
+    "docs/components/LOCKED_COMPONENTS.md",
+    "docs/components/COMPONENT_REGISTRY.md",
+    "docs/system/COMPONENT_AUTHORING_RULES.md",
+    "src/styles.css"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": "Status is 'Implemented' rather than the canonical 'Accepted' — treated as equivalent to Accepted for an ADR but locked is set false because the exact token is absent. The document lives under a specs/ path, giving a SPEC filename signal, but the Problem/Decision/Consequences structure and single-decision focus are dominant ADR signals. Ambiguity resolved in favour of ADR."
+}

@@ -1,0 +1,29 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/DEVELOPMENT_WORKFLOW.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Development Workflow",
+  "summary": "Defines the three named development pipelines (Minor Edit, Standard Change, Big Build) and operational rules governing all code changes in the codebase.",
+  "scope": [
+    "development workflow",
+    "Minor Edit pipeline",
+    "Standard Change Pipeline",
+    "Big Build Pipeline",
+    "session continuity",
+    "debugging discipline",
+    "decision capture",
+    "component reuse"
+  ],
+  "cross_refs": [
+    "docs/superpowers/specs/2026-06-12-development-workflow-design.md",
+    "CLAUDE.md",
+    "docs/system/",
+    "docs/components/",
+    "docs/components/COMPONENT_REGISTRY.md",
+    ".planning/"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

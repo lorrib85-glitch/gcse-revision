@@ -1,0 +1,26 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/superpowers/specs/2026-06-12-topic-brief-skill-design.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Canonical topic generator — design",
+  "summary": "Specifies the design, invocation contract, inputs, output schema, naming conventions, and rollout strategy for a project skill that synthesizes canonical per-chapter topic files.",
+  "scope": [
+    "canonical-topic skill",
+    ".claude/skills/canonical-topic/SKILL.md",
+    "docs/content/history/",
+    "HISTORY_SERIES_MAP.md",
+    "HISTORY_MODULE_ARCHITECTURE.md",
+    "src/modules.js",
+    "Medicine Through Time",
+    "History modules"
+  ],
+  "cross_refs": [
+    "docs/content/history/HISTORY_SERIES_MAP.md",
+    "docs/system/HISTORY_MODULE_ARCHITECTURE.md",
+    "src/modules.js"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

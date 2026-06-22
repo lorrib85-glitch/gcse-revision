@@ -1,0 +1,13 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/VISUAL_ASSET_SYSTEM.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Visual Asset System",
+  "summary": "Planning guidance for how visual assets are categorised, organised, and reused across RISE modules before production begins.",
+  "scope": ["visual assets", "image manifest", "scene packs", "hero imagery", "interactive images", "functional diagrams", "module planning"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

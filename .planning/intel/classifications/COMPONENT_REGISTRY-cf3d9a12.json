@@ -1,0 +1,29 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/components/COMPONENT_REGISTRY.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Component Registry",
+  "summary": "Reference catalogue of all standalone components in src/components/, listing file paths, props, lock status, and usage rules.",
+  "scope": [
+    "src/components/core",
+    "src/components/learning",
+    "src/components/layout",
+    "src/components/feedback",
+    "AnswerInteraction",
+    "BackButton",
+    "CardContainer",
+    "CinematicContinueCTA",
+    "ContinueCTA",
+    "ExitButton",
+    "LearningHeader",
+    "ModulePlayer"
+  ],
+  "cross_refs": [
+    "docs/system/BUTTON_RADII_SYSTEM.md",
+    "docs/components/LOCKED_COMPONENTS.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

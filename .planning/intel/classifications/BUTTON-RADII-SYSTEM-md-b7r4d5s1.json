@@ -1,0 +1,27 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/BUTTON_RADII_SYSTEM.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Button & Radius System",
+  "summary": "Defines locked token contracts for all button dimensions, corner radii, and the Progression CTA system that components must honor.",
+  "scope": [
+    "RADII tokens",
+    "BUTTONS tokens",
+    "ContinueCTA",
+    "CinematicContinueCTA",
+    "Progression CTA System",
+    "src/constants/buttons.js",
+    "src/constants/radii.js"
+  ],
+  "cross_refs": [
+    "src/constants/buttons.js",
+    "src/constants/radii.js",
+    "src/constants/subjects.js",
+    "src/components/core/ContinueCTA.jsx",
+    "src/components/core/CinematicContinueCTA.jsx"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

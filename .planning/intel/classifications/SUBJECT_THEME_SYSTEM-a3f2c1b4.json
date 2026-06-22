@@ -1,0 +1,13 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/SUBJECT_THEME_SYSTEM.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Subject Theme System",
+  "summary": "Defines locked atmospheric colour palettes, token schemas, and import contracts for all subjects in the app.",
+  "scope": ["subject palettes", "colour tokens", "SUBJECTS constant", "src/constants/subjects.js", "accent colours", "glow values", "overlay tones", "design system"],
+  "cross_refs": ["src/constants/subjects.js"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

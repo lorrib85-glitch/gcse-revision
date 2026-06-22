@@ -1,0 +1,13 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/TEACHING_VOICE_GUIDE.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Teaching Voice Guide",
+  "summary": "Tone-of-voice and writing-style rules for all learner-facing content in the GCSE revision app.",
+  "scope": ["content authoring", "copy style", "writing principles", "tone of voice", "learner-facing text", "module copy", "screen text", "narration", "examiner feedback"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

@@ -1,0 +1,28 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/GENERAL_APP_UI_CONSTITUTION.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "General App UI Constitution (Non-Subject Pages)",
+  "summary": "Design philosophy, colour palette, typography, layout rules, and copy style for non-subject pages: Home, Subjects browser, Progress, Exam landing, onboarding, and bottom nav.",
+  "scope": [
+    "Home screen",
+    "Subjects/Modules browser",
+    "Progress tab",
+    "Exam landing",
+    "Onboarding",
+    "Bottom navigation",
+    "Visual language",
+    "Colour palette",
+    "Typography",
+    "Copy style",
+    "Personalisation"
+  ],
+  "cross_refs": [
+    "docs/system/PRODUCT_UI_CONSTITUTION.md",
+    "docs/system/SUBJECT_THEME_SYSTEM.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

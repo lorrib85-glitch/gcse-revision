@@ -1,0 +1,40 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/superpowers/specs/2026-06-14-home-todays-plan-redesign.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Home redesign — \"Today's plan\" task carousel",
+  "summary": "Technical specification for replacing the Home screen's reactive suggestions with a structured daily task carousel driven by a new buildTodaysPlan() engine.",
+  "scope": [
+    "Home screen",
+    "TaskCarousel",
+    "TaskCard",
+    "buildTodaysPlan",
+    "src/todaysPlan.js",
+    "src/progress.js",
+    "src/App.jsx",
+    "TestTab",
+    "PulseTab",
+    "getWeeklyTrend",
+    "adaptiveExamQuestions",
+    "startExamRound",
+    "TAG_MODULE_MAP",
+    "getBiggestWin",
+    "getWeakTopics",
+    "findTaggedScreen"
+  ],
+  "cross_refs": [
+    "src/App.jsx",
+    "src/progress.js",
+    "src/todaysPlan.js",
+    "src/data/tagModuleMap.js",
+    "src/data/medicineExamPapers.js",
+    "src/unifiedWeaknessTracker.js",
+    "docs/system/GENERAL_APP_UI_CONSTITUTION.md",
+    "docs/components/COMPONENT_REGISTRY.md",
+    "CLAUDE.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

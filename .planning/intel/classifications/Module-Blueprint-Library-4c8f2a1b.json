@@ -1,0 +1,13 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/04 Learning Architecture/Module-Blueprint-Library.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Module Blueprint Library",
+  "summary": "Superseded assembly guide defining reusable learning journey patterns and component sequencing rules for GCSE modules.",
+  "scope": ["module blueprints", "learning sequence", "component assembly", "ChapterHookScreen", "ChapterOutcomeScreen", "QuickRecallScreen", "energy curve", "memorable moment"],
+  "cross_refs": ["CLAUDE.md"],
+  "locked": false,
+  "precedence": null,
+  "notes": "Document is explicitly marked Superseded; CLAUDE.md (History Module Architecture and Science Module Blueprint) is the current authority. Retained for historical reference only."
+}

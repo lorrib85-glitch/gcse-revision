@@ -1,0 +1,37 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/components/LOCKED_COMPONENTS.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Locked Components",
+  "summary": "Defines which core UI components are locked, what each owns, and what changes are and are not permitted.",
+  "scope": [
+    "AnswerInteraction",
+    "BackButton",
+    "CardContainer",
+    "CinematicContinueCTA",
+    "ContinueCTA",
+    "ExitButton",
+    "LearningProgressHeader",
+    "ModuleToolbar",
+    "RetrievalFrame",
+    "src/components/core",
+    "src/components/feedback"
+  ],
+  "cross_refs": [
+    "docs/system/BUTTON_RADII_SYSTEM.md",
+    "src/components/core/AnswerInteraction.jsx",
+    "src/components/core/BackButton.jsx",
+    "src/components/core/CardContainer.jsx",
+    "src/components/core/CinematicContinueCTA.jsx",
+    "src/components/core/ContinueCTA.jsx",
+    "src/components/core/ExitButton.jsx",
+    "src/components/core/LearningProgressHeader.jsx",
+    "src/components/core/ModuleToolbar.jsx",
+    "src/components/feedback/RetrievalFrame.jsx",
+    "src/styles.css"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

@@ -1,0 +1,33 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/COMPONENT_AUTHORING_RULES.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Component Authoring Rules",
+  "summary": "Mandatory governance rules for creating and editing React components in the cinematic GCSE revision app, covering imports, naming, motion, theming, and anti-patterns.",
+  "scope": [
+    "React components",
+    "design tokens",
+    "spacing system",
+    "motion system",
+    "typography system",
+    "subject theming",
+    "locked components",
+    "back navigation",
+    "build verification"
+  ],
+  "cross_refs": [
+    "docs/components/LOCKED_COMPONENTS.md",
+    "docs/components/COMPONENT_REGISTRY.md",
+    "src/constants/spacing.js",
+    "src/constants/subjects.js",
+    "src/constants/radii.js",
+    "src/constants/buttons.js",
+    "src/constants/motion.js",
+    "src/constants/typography.js",
+    "src/components/core/BackButton.jsx"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

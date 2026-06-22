@@ -1,0 +1,19 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/superpowers/specs/2026-06-12-development-workflow-design.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Development workflow — two pipelines (Superpowers + GSD)",
+  "summary": "Defines two named development pipelines (Standard Change and Big Build) and routing rules integrating Superpowers and GSD-core toolkits with a main-only branching policy.",
+  "scope": ["development workflow", "Standard Change Pipeline", "Big Build Pipeline", "Superpowers plugin", "GSD-core", "branching policy", "CLAUDE.md", "DEVELOPMENT_WORKFLOW.md"],
+  "cross_refs": [
+    "docs/system/DEVELOPMENT_WORKFLOW.md",
+    "CLAUDE.md",
+    "docs/system/00_SYSTEM_INDEX.md",
+    "docs/components/COMPONENT_REGISTRY.md",
+    "docs/system/"
+  ],
+  "locked": true,
+  "precedence": null,
+  "notes": ""
+}

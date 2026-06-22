@@ -1,0 +1,27 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/SCREEN_SHELL_SYSTEM.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Screen Shell System",
+  "summary": "Defines the three canonical screen-shell layout primitives (ContentShell, InteractionShell, CinematicShell) with alignment contracts, props, and usage rules for all learning module screens.",
+  "scope": [
+    "ContentShell",
+    "InteractionShell",
+    "CinematicShell",
+    "src/components/layout",
+    "ModulePlayer",
+    "LearningHeader",
+    "safe-area handling",
+    "screen layout"
+  ],
+  "cross_refs": [
+    "src/components/layout/ContentShell.jsx",
+    "src/components/layout/InteractionShell.jsx",
+    "src/components/layout/CinematicShell.jsx",
+    "src/components/layout/ModulePlayer.jsx"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

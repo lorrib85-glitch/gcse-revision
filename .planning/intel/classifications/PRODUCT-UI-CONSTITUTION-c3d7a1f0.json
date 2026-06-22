@@ -1,0 +1,30 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/PRODUCT_UI_CONSTITUTION.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Product UI Constitution",
+  "summary": "Supreme design law defining product identity, global colour tokens, typography, motion, imagery, and cinematic learning screen treatment for the GCSE revision app.",
+  "scope": [
+    "design system",
+    "colour tokens",
+    "typography",
+    "motion",
+    "imagery",
+    "layout",
+    "cinematic learning screens",
+    "product identity"
+  ],
+  "cross_refs": [
+    "docs/system/SUBJECT_THEME_SYSTEM.md",
+    "docs/system/TYPOGRAPHY_SYSTEM.md",
+    "docs/system/MOTION_SYSTEM.md",
+    "docs/system/VISUAL_ASSET_SYSTEM.md",
+    "src/constants/subjects.js",
+    "src/constants/typography.js",
+    "src/constants/motion.js"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

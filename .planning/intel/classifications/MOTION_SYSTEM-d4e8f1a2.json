@@ -1,0 +1,13 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/MOTION_SYSTEM.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Motion System",
+  "summary": "Defines all animation duration, easing, and scale tokens with usage rules and forbidden patterns for cinematic UI consistency.",
+  "scope": ["motion tokens", "animation system", "transitions", "MOTION constant", "src/constants/motion.js"],
+  "cross_refs": ["src/constants/motion.js"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

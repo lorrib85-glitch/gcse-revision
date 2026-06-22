@@ -1,0 +1,35 @@
+{
+  "source_path": "/home/user/gcse-revision/docs/system/00_SYSTEM_INDEX.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "System Index",
+  "summary": "Order-of-authority reference listing all design and development governance documents with a pre-change checklist for UI work.",
+  "scope": [
+    "design system",
+    "component authoring",
+    "UI governance",
+    "foundation tokens",
+    "component registry"
+  ],
+  "cross_refs": [
+    "docs/system/DEVELOPMENT_WORKFLOW.md",
+    "docs/system/PRODUCT_UI_CONSTITUTION.md",
+    "docs/system/GENERAL_APP_UI_CONSTITUTION.md",
+    "docs/system/HISTORY_MODULE_ARCHITECTURE.md",
+    "docs/system/SCIENCE_MODULE_BLUEPRINT.md",
+    "docs/system/COMPONENT_AUTHORING_RULES.md",
+    "docs/system/SPACING_SYSTEM.md",
+    "docs/system/SUBJECT_THEME_SYSTEM.md",
+    "docs/system/BUTTON_RADII_SYSTEM.md",
+    "docs/system/MOTION_SYSTEM.md",
+    "docs/system/TYPOGRAPHY_SYSTEM.md",
+    "docs/system/SCREEN_SHELL_SYSTEM.md",
+    "docs/components/COMPONENT_REGISTRY.md",
+    "docs/components/",
+    "CLAUDE.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}
