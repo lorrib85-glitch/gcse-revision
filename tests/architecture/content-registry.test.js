@@ -6,6 +6,7 @@ import episodeMedievalBeliefs from '../../src/content/history/medicine/episodes/
 import episodeBlackDeath from '../../src/content/history/medicine/episodes/episode-02-black-death.js'
 import episodeJenner from '../../src/content/history/medicine/episodes/episode-06-jenner-vaccination.js'
 import episodeGermTheory from '../../src/content/history/medicine/episodes/episode-07-germ-theory.js'
+import episodeGreatStink from '../../src/content/history/medicine/episodes/episode-08-great-stink.js'
 import episodeWesternFront from '../../src/content/history/medicine/episodes/episode-14-western-front.js'
 
 // ─── Per-episode guards ───────────────────────────────────────────────────────
@@ -162,6 +163,44 @@ describe('Content registry — episode-07-germ-theory', () => {
   })
 })
 
+describe('Content registry — episode-08-great-stink', () => {
+  it('id exists in src/modules.js', () => {
+    const meta = MODULES.find(m => m.id === episodeGreatStink.id)
+    expect(meta).toBeDefined()
+  })
+
+  it('number matches src/modules.js', () => {
+    const meta = MODULES.find(m => m.id === episodeGreatStink.id)
+    expect(episodeGreatStink.number).toBe(meta.number)
+  })
+
+  it('filename prefix matches episode number (episode-08-* → number: 8)', () => {
+    expect(episodeGreatStink.number).toBe(8)
+  })
+
+  it('screens array is non-empty', () => {
+    expect(Array.isArray(episodeGreatStink.screens)).toBe(true)
+    expect(episodeGreatStink.screens.length).toBeGreaterThan(0)
+  })
+
+  it('stageNavigation entries have id, title, and screenIndex', () => {
+    if (!episodeGreatStink.stageNavigation) return
+    for (const stage of episodeGreatStink.stageNavigation) {
+      expect(stage).toHaveProperty('id')
+      expect(stage).toHaveProperty('title')
+      expect(stage).toHaveProperty('screenIndex')
+    }
+  })
+
+  it('stageNavigation screenIndex values are within bounds', () => {
+    if (!episodeGreatStink.stageNavigation) return
+    for (const stage of episodeGreatStink.stageNavigation) {
+      expect(stage.screenIndex).toBeGreaterThanOrEqual(0)
+      expect(stage.screenIndex).toBeLessThan(episodeGreatStink.screens.length)
+    }
+  })
+})
+
 describe('Content registry — episode-14-western-front', () => {
   it('id exists in src/modules.js', () => {
     const meta = MODULES.find(m => m.id === episodeWesternFront.id)
@@ -224,6 +263,10 @@ describe('Content registry — series index (MEDICINE_EPISODES)', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-germ-theory')).toBeDefined()
   })
 
+  it('includes the great stink episode', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-great-stink')).toBeDefined()
+  })
+
   it('includes the western front episode', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-western-front')).toBeDefined()
   })
@@ -265,6 +308,15 @@ describe('Content registry — compatibility layer (HISTORY_MODULES)', () => {
 
   it('germ theory episode has screens', () => {
     const ep = HISTORY_MODULES.find(m => m.id === 'history-medicine-germ-theory')
+    expect(ep?.screens?.length).toBeGreaterThan(0)
+  })
+
+  it('includes the great stink episode', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'history-medicine-great-stink')).toBeDefined()
+  })
+
+  it('great stink episode has screens', () => {
+    const ep = HISTORY_MODULES.find(m => m.id === 'history-medicine-great-stink')
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 

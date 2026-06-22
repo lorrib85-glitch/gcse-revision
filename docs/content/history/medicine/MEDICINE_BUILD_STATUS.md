@@ -30,7 +30,7 @@ Update this file whenever an episode is built, extracted, or expanded.
 | 5 | London's year of terror | `history-medicine-great-plague` | **unbuilt** | not built | screenCount 0; build from scratch |
 | 6 | The boy, the cow and the cure | `history-medicine-jenner-vaccination` | **stub** (1 screen) | extracted | 1-screen placeholder; needs full expansion |
 | 7 | The invisible enemy | `history-medicine-germ-theory` | built (10 screens) | extracted | ✓ Complete |
-| 8 | The great stink | `mod5` | built (7 screens) | inline | ID needs migration to slug pattern before extraction |
+| 8 | The great stink | `history-medicine-great-stink` | built (7 screens) | extracted | ✓ Complete |
 | 9 | The day surgery changed forever | `mod6` | built (10 screens) | inline | ID needs migration to slug pattern before extraction |
 | 10 | The lady with the lamp | `history-medicine-nightingale` | **unbuilt** | not built | screenCount 0; build from scratch |
 | 11 | The accidental miracle | `mod7` | built (11 screens) | inline | ID needs migration to slug pattern before extraction |
@@ -44,18 +44,18 @@ Update this file whenever an episode is built, extracted, or expanded.
 
 | State | Count | Episodes |
 |-------|-------|---------|
-| Extracted (registry complete) | 5 | 1, 2, 7, 14, 6 (stub) |
-| Built, inline (awaiting extraction) | 7 | 3, 4, 8, 9, 11, 12, 13 |
+| Extracted (registry complete) | 6 | 1, 2, 7, 8, 14, 6 (stub) |
+| Built, inline (awaiting extraction) | 6 | 3, 4, 9, 11, 12, 13 |
 | Unbuilt | 2 | 5, 10 |
 
 ## Notes on legacy IDs
 
-Episodes 3, 4, 8, 9, 11, 12, 13 use short legacy IDs (`mod2`, `mod3`, `mod5`–`mod9`).
+Episodes 3, 4, 9, 11, 12, 13 use short legacy IDs (`mod2`, `mod3`, `mod6`–`mod9`).
 Before extracting these, their IDs should be migrated to the canonical slug pattern
 (`history-medicine-<slug>`) in `src/modules.js`. This is a Workflow C task and requires
 updating `screenTags` references in `src/data/tagModuleMap.js` if any exist.
 
-## ⚠ Legacy ID caution — read before touching episodes 3, 4, 8, 9, 11–13
+## ⚠ Legacy ID caution — read before touching episodes 3, 4, 9, 11–13
 
 **Do not rename legacy IDs casually.** The `id` field is the primary key used at
 runtime to open modules, persist progress, and route between screens. Renaming

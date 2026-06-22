@@ -26,7 +26,7 @@ const MODULE_HEADER_IMAGES = {
   'mod3': '/headers/history-medicine-germ-bridge.png',
   'history-medicine-jenner-vaccination': '/headers/history-medicine-medieval-scripture.png',
   'history-medicine-germ-theory': '/headers/history-medicine-germ-bridge.png',
-  'mod5': '/headers/history-medicine-through-time.webp',
+  'history-medicine-great-stink': '/headers/history-medicine-through-time.webp',
   'mod6': '/headers/history-medicine-bloodletting.png',
   'mod7': '/headers/history-medicine-germ-bridge.png',
   'mod8': '/headers/history-medicine-medieval-scripture.png',

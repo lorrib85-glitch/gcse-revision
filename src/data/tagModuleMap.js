@@ -36,10 +36,10 @@ export const TAG_MODULE_MAP = {
   'vaccination':            'history-medicine-jenner-vaccination',
   'koch':                   'history-medicine-germ-theory',
   // Public Health
-  'john-snow':              'mod5',
-  'public-health':          'mod5',
-  'nightingale':            'mod5',
-  'communication':          'mod5',
+  'john-snow':              'history-medicine-great-stink',
+  'public-health':          'history-medicine-great-stink',
+  'nightingale':            'history-medicine-great-stink',
+  'communication':          'history-medicine-great-stink',
   // WWI / antibiotics
   'penicillin':             'mod7',
   'magic-bullet':           'mod7',

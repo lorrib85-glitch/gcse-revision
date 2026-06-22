@@ -15,6 +15,7 @@ import episode01 from './episodes/episode-01-medieval-beliefs-causes.js'
 import episode02 from './episodes/episode-02-black-death.js'
 import episode06 from './episodes/episode-06-jenner-vaccination.js'
 import episode07 from './episodes/episode-07-germ-theory.js'
+import episode08 from './episodes/episode-08-great-stink.js'
 import episode14 from './episodes/episode-14-western-front.js'
 
 // Ordered registry — add future episodes here as they are extracted.
@@ -25,7 +26,8 @@ export const MEDICINE_EPISODES = [
   // episode05: history-medicine-great-plague — unbuilt (screenCount 0), add when built
   episode06,
   episode07,
-  // episode08–09: legacy IDs (mod5, mod6) — migrate ID before extraction
+  episode08,
+  // episode09: legacy ID (mod6) — migrate ID before extraction
   // episode10: history-medicine-nightingale — unbuilt (screenCount 0), add when built
   // episode11–13: legacy IDs (mod7, mod8, mod9) — migrate ID before extraction
   episode14,

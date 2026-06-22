@@ -164,7 +164,7 @@ export const MODULE_GROUPS = [
     id: 'hist_medicine',
     title: 'Medicine Through Time',
     subject: 'History',
-    chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','mod2','mod3','history-medicine-jenner-vaccination','history-medicine-germ-theory','mod5','mod6','mod7','mod8','mod9'],
+    chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','mod2','mod3','history-medicine-jenner-vaccination','history-medicine-germ-theory','history-medicine-great-stink','mod6','mod7','mod8','mod9'],
   },
   {
     id: 'soc_family',

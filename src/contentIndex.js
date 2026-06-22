@@ -263,12 +263,12 @@ export const CONTENT_INDEX = {
     },
   },
 
-  // ── History: Public Health (mod5) ──────────────────────────────────────────
+  // ── History: Public Health (history-medicine-great-stink) ─────────────────
   'public-health': {
     sectionId: 'public-health',
     title: '19th Century Public Health',
     subject: 'History',
-    moduleId: 'mod5',
+    moduleId: 'history-medicine-great-stink',
     screenLabel: 'Cities Explode',
     keywords: ['public health', 'cholera', 'Chadwick', 'Snow', 'sewers', 'Bazalgette', 'Great Stink', 'laissez-faire'],
     summary: 'Industrial towns were disease hotspots. Government had to be forced to act on sewers and clean water.',

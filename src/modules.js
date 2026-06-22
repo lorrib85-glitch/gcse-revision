@@ -136,7 +136,7 @@ export const MODULES = [
     ],
   },
   {
-    id: "mod5",
+    id: "history-medicine-great-stink",
     subject: "History",
     series: "medicine",
     number: 8,
