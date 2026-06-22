@@ -54,3 +54,22 @@ Episodes 3, 4, 8, 9, 11, 12, 13 use short legacy IDs (`mod2`, `mod3`, `mod5`–`
 Before extracting these, their IDs should be migrated to the canonical slug pattern
 (`history-medicine-<slug>`) in `src/modules.js`. This is a Workflow C task and requires
 updating `screenTags` references in `src/data/tagModuleMap.js` if any exist.
+
+## ⚠ Legacy ID caution — read before touching episodes 3, 4, 8, 9, 11–13
+
+**Do not rename legacy IDs casually.** The `id` field is the primary key used at
+runtime to open modules, persist progress, and route between screens. Renaming
+without a full impact audit will silently break saved progress for any user who
+has opened one of these modules.
+
+**Before extracting or rebuilding any legacy-ID episode, run a targeted ID impact check across all of the following:**
+
+| Area | What to check |
+|------|--------------|
+| `src/modules.js` | Confirm the new slug is unique and consistent with the naming pattern |
+| `src/modules/history.js` | Update the inline `id:` field to match; verify no other string references the old ID |
+| Saved progress / localStorage | `src/progress.js` keys progress by module `id` — old saves will no longer match after rename; decide whether a migration shim is needed |
+| Module opening / routing | `App.jsx` / `LegacyApp.jsx` opens modules by `id`; verify `SUBJECT_MODULE_LOADERS` and `openModulePlayer()` are unaffected |
+| `HISTORY_MODULES` compatibility | The renamed module must still appear in `HISTORY_MODULES` with the same runtime shape |
+| `src/data/tagModuleMap.js` | Check whether any `TAG_MODULE_MAP` entry references the old ID |
+| Architecture tests | `tests/architecture/content-registry.test.js` — tests must still pass after rename |
