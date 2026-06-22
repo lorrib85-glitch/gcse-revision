@@ -16,6 +16,20 @@ Do not create or use feature branches. All work goes to `main` and is pushed imm
 
 Context compaction and "resume directly" do **NOT** skip this requirement. If a half-formed plan carried over from before compaction still involves substantial work, route it through the normal pipeline rather than executing directly.
 
+### Superpowers skill integration
+
+The `superpowers` plugin is installed. Wire these three skills into the standard pipelines:
+
+| When | Skill | Why |
+|---|---|---|
+| Starting any **Big Build** | `superpowers:brainstorming` → `superpowers:writing-plans` → `superpowers:subagent-driven-development` | Spec first, plan second, parallel execution third — replaces ad-hoc planning |
+| Any **bug, test failure, or unexpected behaviour** | `superpowers:systematic-debugging` | Root-cause investigation before any fix attempt |
+| Before marking any task **done** | `superpowers:verification-before-completion` | Evidence before assertions — no claiming success without running the app |
+
+**Do not use `superpowers:using-git-worktrees`** — it conflicts with the "commit directly to main" rule above.
+
+**`superpowers:test-driven-development`** applies selectively to pure logic units (`src/progress.js`, `src/unifiedWeaknessTracker.js`, `src/features/planner/dailyPlanner.js`) — not to visual React components where browser verification is the test.
+
 ## What This Is
 
 React + Vite GCSE revision app. Mobile-first, dark cinematic theme. Designed to feel like a premium streaming platform, not a school VLE.
