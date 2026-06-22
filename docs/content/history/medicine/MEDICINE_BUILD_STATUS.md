@@ -26,7 +26,7 @@ Update this file whenever an episode is built, extracted, or expanded.
 | 1 | Trust me, I'm following Jupiter | `history-medicine-medieval-beliefs-causes` | built (32 screens) | extracted | ✓ Complete |
 | 2 | The day everything changed | `history-medicine-black-death` | built (27 screens) | extracted | ✓ Complete |
 | 3 | The beginning of doubt | `mod2` (legacy) | built (16 screens) | extracted | ✓ Complete — legacy ID preserved, no migration |
-| 4 | The man who proved everyone wrong | `mod3` | built (11 screens) | inline | ID needs migration to slug pattern before extraction |
+| 4 | Surgery & anatomy | `mod3` | built (11 screens) | extracted | ✓ Complete — legacy ID preserved, metadata corrected to match surgery/anaesthetics content |
 | 5 | London's year of terror | `history-medicine-great-plague` | **unbuilt** | not built | screenCount 0; build from scratch |
 | 6 | The boy, the cow and the cure | `history-medicine-jenner-vaccination` | **stub** (1 screen) | extracted | 1-screen placeholder; needs full expansion |
 | 7 | The invisible enemy | `history-medicine-germ-theory` | built (10 screens) | extracted | ✓ Complete |
@@ -44,13 +44,13 @@ Update this file whenever an episode is built, extracted, or expanded.
 
 | State | Count | Episodes |
 |-------|-------|---------|
-| Extracted (registry complete) | 7 | 1, 2, 3, 7, 8, 14, 6 (stub) |
-| Built, inline (awaiting extraction) | 5 | 4, 9, 11, 12, 13 |
+| Extracted (registry complete) | 8 | 1, 2, 3, 4, 7, 8, 14, 6 (stub) |
+| Built, inline (awaiting extraction) | 4 | 9, 11, 12, 13 |
 | Unbuilt | 2 | 5, 10 |
 
 ## Notes on legacy IDs
 
-Episodes 4, 9, 11, 12, 13 use short legacy IDs (`mod3`, `mod6`–`mod9`). Episode 3 has been extracted preserving its legacy ID `mod2` — no migration was performed.
+Episodes 9, 11, 12, 13 use short legacy IDs (`mod6`–`mod9`). Episodes 3 and 4 have been extracted preserving their legacy IDs (`mod2`, `mod3`) — no migration was performed. Episode 4's modules.js metadata was corrected from a stale Harvey draft to match the actual surgery/anaesthetics content.
 Before extracting these, their IDs should be migrated to the canonical slug pattern
 (`history-medicine-<slug>`) in `src/modules.js`. This is a Workflow C task and requires
 updating `screenTags` references in `src/data/tagModuleMap.js` if any exist.
