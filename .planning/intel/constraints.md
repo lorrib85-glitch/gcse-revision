@@ -182,20 +182,23 @@ scope: TYPE tokens, font families, src/constants/typography.js
 
 ### Content
 
-Fonts: Sora (all UI text — buttons, labels, navigation, headings, body copy) and Cormorant Garamond (cinematic editorial moments only, sparingly).
+Fonts: two fonts only — Manrope (cinematic display type — headings, titles, impact moments) and Sora (all other UI text — body copy, buttons, labels, navigation, metadata).
 
-NOTE: CLAUDE.md system prompt states "IBM Plex Serif replaces Cormorant Garamond references in older docs." This conflicts with the SPEC and DOC sources that name Cormorant Garamond. See INGEST-CONFLICTS.md [WARNING] entry. Until resolved, use Cormorant Garamond per the SPEC unless CLAUDE.md is updated to reflect the change formally.
+Conflict resolved 2026-06-22 (Phase 1): TYPOGRAPHY_SYSTEM.md and PRODUCT_UI_CONSTITUTION.md updated to match src/constants/typography.js. Cormorant Garamond and IBM Plex Serif references removed from all docs.
 
-TYPE tokens (spread syntax: ...TYPE.hero):
-- TYPE.hero: Sora, 34px, weight 700, lineHeight 1.05, letterSpacing -0.03em (chapter hooks, recovery titles, cinematic reveals)
-- TYPE.sectionTitle: Sora, 28px, weight 600, lineHeight 1.12, letterSpacing -0.02em (section headings, module titles)
-- TYPE.cardTitle: Sora, 22px, weight 600, lineHeight 1.2, letterSpacing -0.01em (card titles, prominent labels)
-- TYPE.body: Sora, 18px, weight 400, lineHeight 1.5, letterSpacing 0em (explanation copy)
-- TYPE.bodySmall: Sora, 16px, weight 400, lineHeight 1.45, letterSpacing 0em (supporting copy, skip links)
-- TYPE.metadata: Sora, 14px, weight 500, lineHeight 1.3, letterSpacing 0.08em (timing, question counts, progress labels)
-- TYPE.cinematic: Cormorant Garamond (or IBM Plex Serif — see conflict note), 38px, weight 600, lineHeight 1.02, letterSpacing -0.03em (topic titles, emotional reveals, chapter moments)
+TYPE tokens (spread syntax: ...TYPE.hero — alias for TYPE.screenHeading):
+- TYPE.screenHeading / TYPE.hero: Manrope, clamp(30px,8vw,42px), weight 800, lineHeight 1.02, letterSpacing -0.045em (chapter hooks, recovery titles, screen-level impact)
+- TYPE.sectionHeading / TYPE.sectionTitle: Manrope, clamp(22px,6vw,30px), weight 700, lineHeight 1.08, letterSpacing -0.035em (section headings, module titles)
+- TYPE.impactTitle: Manrope, clamp(28px,8vw,36px), weight 850, lineHeight 1.04, letterSpacing -0.045em (maximum-weight display moments)
+- TYPE.cinematic / TYPE.overlayTitle: Manrope, clamp(24px,6.4vw,30px), weight 750, lineHeight 1.08, letterSpacing -0.035em (topic titles, overlay titles, cinematic reveals)
+- TYPE.cardTitle: Manrope, 1.12rem, weight 700, lineHeight 1.18, letterSpacing -0.02em (card titles, prominent labels)
+- TYPE.body / TYPE.bodyText: Sora, 0.95rem, weight 400, lineHeight 1.5, letterSpacing -0.005em (explanation copy)
+- TYPE.bodyLarge: Sora, 1.02rem, weight 400, lineHeight 1.48, letterSpacing -0.006em (larger body passages)
+- TYPE.bodySmall / TYPE.bodySmallText: Sora, 0.84rem, weight 400, lineHeight 1.45, letterSpacing -0.005em (supporting copy)
+- TYPE.metadata / TYPE.metadataText: Sora, 0.72rem, weight 600, lineHeight 1.2, letterSpacing 0.10em (timing, question counts, progress labels)
+- TYPE.buttonText: Sora, 0.92rem, weight 700, lineHeight 1.2, letterSpacing -0.005em (all button labels)
 
-Rules: never introduce a third font family. Cormorant Garamond (or replacement serif) must not appear in body copy or UI labels. Each screen has one dominant text element, one supporting hierarchy, clear breathing room between levels. Section labels must be UPPERCASE.
+Rules: never introduce a third font family. Manrope is display/emotional only — never body copy or UI labels. Sora handles everything else. Section labels must be UPPERCASE. Each screen has one dominant text element, one supporting hierarchy, clear breathing room between levels.
 
 ---
 

@@ -15,15 +15,10 @@ No LOCKED-vs-LOCKED ADR contradictions detected. No UNKNOWN-confidence-low docum
 
 ---
 
-## WARNINGS (1)
+## WARNINGS (0)
 
-[WARNING] Competing font family assertions — Cormorant Garamond vs IBM Plex Serif
-  Found: docs/system/TYPOGRAPHY_SYSTEM.md (SPEC) declares two fonts: Sora and Cormorant Garamond. Cormorant Garamond is assigned to TYPE.cinematic and all editorial/emotional moments.
-  Found: docs/system/PRODUCT_UI_CONSTITUTION.md (DOC) repeats the same two-font rule: Sora and Cormorant Garamond.
-  Found: CLAUDE.md (system prompt, supreme project authority) states in the Fonts section: "IBM Plex Serif — Google Fonts — secondary UI text (used in some learning components)" and explicitly notes it "replaces Cormorant Garamond references in older docs."
-  Impact: TYPOGRAPHY_SYSTEM.md and PRODUCT_UI_CONSTITUTION.md name a font (Cormorant Garamond) that CLAUDE.md declares replaced. The TYPE.cinematic token's font family is therefore undefined in the canonical SPEC. Any component consuming TYPE.cinematic, or any new screen using a serif for editorial moments, cannot resolve which font to use without risking a divergence from CLAUDE.md.
-  Current state: src/constants/typography.js may already reference IBM Plex Serif (the runtime codebase has likely been updated), but the SPEC and DOC sources ingested here still say Cormorant Garamond. This is a documentation drift conflict, not necessarily a code conflict.
-  → Resolve by updating TYPOGRAPHY_SYSTEM.md and PRODUCT_UI_CONSTITUTION.md to replace all Cormorant Garamond references with IBM Plex Serif, and confirming that TYPE.cinematic in src/constants/typography.js already uses IBM Plex Serif. Until resolved, treat CLAUDE.md as the operative authority (IBM Plex Serif) for new work, since it is the supreme project document.
+~~[WARNING] Competing font family assertions — Cormorant Garamond vs IBM Plex Serif~~
+**RESOLVED 2026-06-22 (Phase 1):** TYPOGRAPHY_SYSTEM.md and PRODUCT_UI_CONSTITUTION.md updated to Manrope + Sora. CLAUDE.md Fonts section updated. src/constants/typography.js confirmed as ground truth (Manrope for cinematic display, Sora for all other UI). Cormorant Garamond and IBM Plex Serif references removed from all docs. See commit ae64b47.
 
 ---
 

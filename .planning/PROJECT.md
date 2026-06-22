@@ -105,7 +105,7 @@ Superseded by `HISTORY_MODULE_ARCHITECTURE.md` and `SCIENCE_MODULE_BLUEPRINT.md`
 - **CON-03** (Motion tokens): All durations and easings from `MOTION` constants. No bounce/spring/confetti.
 - **CON-04** (Spacing tokens): All spacing from `SPACING` constants. Screen horizontal padding always 24px (`SPACING.standard`).
 - **CON-05** (Subject theme tokens): All subject colours from `SUBJECTS` in `src/constants/subjects.js`. Never duplicate locally.
-- **CON-06** (Typography tokens): All type from `TYPE` tokens. Two fonts only: Sora (UI) and IBM Plex Serif (cinematic editorial). Note: `TYPOGRAPHY_SYSTEM.md` still names Cormorant Garamond — CLAUDE.md is the operative authority (IBM Plex Serif).
+- **CON-06** (Typography tokens): All type from `TYPE` tokens. Two fonts only: Manrope (cinematic display — headings, titles, `TYPE.cinematic`, `TYPE.screenHeading`, `TYPE.impactTitle`) and Sora (all other UI — body, buttons, labels, navigation, metadata). Resolved 2026-06-22.
 - **CON-07** (Screen shells): Three canonical shells — `ContentShell` (default), `InteractionShell` (answer mechanics), `CinematicShell` (last resort with written justification).
 - **CON-08** (Science module structure): All Biology/Chemistry/Physics modules follow the locked 6-part structure in `SCIENCE_MODULE_BLUEPRINT.md`.
 - **CON-09** (Canonical topic schema): Output from `/canonical-topic` must follow the 6-section schema in `docs/superpowers/specs/2026-06-12-topic-brief-skill-design.md`.
@@ -129,8 +129,11 @@ Superseded by `HISTORY_MODULE_ARCHITECTURE.md` and `SCIENCE_MODULE_BLUEPRINT.md`
 
 ## Open Issues
 
-- `TYPOGRAPHY_SYSTEM.md` and `PRODUCT_UI_CONSTITUTION.md` still reference Cormorant Garamond — needs documentation update to IBM Plex Serif (non-blocking; CLAUDE.md is authoritative)
-- History Medicine episodes 5 and 10 have 0/1 screens — canonical files exist, content build pending
+- History Medicine episodes 5 (0 screens), 6 (1-screen stub), and 10 (0 screens) — canonical files exist, content build pending (Phase 2)
+- History USA 1954–75: 12 episodes at 0 screens — canonical files complete, content build pending (Phase 3)
+- History Spain & New World: 10 episodes at 0 screens — no canonical files yet (Phase 4)
+- Biology modules 3–8: stub only (1 screen each) — Phase 5
+- Chemistry modules 1–4: stub only (1 screen each) — Phase 5
 - Spain and the New World: 10 episodes with 0 screens, no canonical files
 - USA 1954–75: 12 episodes with 0 screens, canonical files complete
 - Biology modules 3–8: stub only (1 screen each)
