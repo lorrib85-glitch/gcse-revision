@@ -6,7 +6,7 @@
 //
 // Episodes being migrated to src/content/history/medicine/episodes/ are imported
 // below. Episodes not yet migrated remain inline in this file.
-import episodeJenner from '../content/history/medicine/episodes/episode-03-jenner-vaccination.js'
+import episodeJenner from '../content/history/medicine/episodes/episode-06-jenner-vaccination.js'
 
 export const HISTORY_MODULES = [
   {

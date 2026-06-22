@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { HISTORY_MODULES } from '../../src/modules/history.js'
 import { MEDICINE_EPISODES } from '../../src/content/history/medicine/index.js'
-import episodeJenner from '../../src/content/history/medicine/episodes/episode-03-jenner-vaccination.js'
+import episodeJenner from '../../src/content/history/medicine/episodes/episode-06-jenner-vaccination.js'
 
 describe('Content registry — episode-03-jenner-vaccination', () => {
   it('episode file exports an object with the correct id', () => {
