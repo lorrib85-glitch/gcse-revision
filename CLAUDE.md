@@ -8,11 +8,13 @@ Do not create or use feature branches. All work goes to `main` and is pushed imm
 
 ## Development Workflow — read before every task
 
-**STOP. Before any code change — no matter how small — name the pipeline out loud, then follow its steps:**
+**STOP. Run `/gcse-triage` before any code change — no matter how small. Triage classifies the work into one of seven lanes (A–G) and names the allowed tools. Then name the pipeline out loud and follow its steps:**
 
-- **Minor Edit** — single-file, single-concept change; no new pattern or API introduced (typo, one CSS value, one data field). Steps: name it → change → `/ponytail-review` → build passes → commit.
-- **Standard Change Pipeline** — changing an existing component, screen, style, copy pattern, or behaviour. See `docs/system/DEVELOPMENT_WORKFLOW.md`.
-- **Big Build Pipeline** — new flow, new component family, new architecture, new route. See `docs/system/DEVELOPMENT_WORKFLOW.md`.
+- **Minor Edit** (Workflow A) — single-file, single-concept change; no new pattern or API introduced (typo, one CSS value, one data field). Steps: triage → change → `/ponytail-review` → build passes → commit.
+- **Standard Change Pipeline** (Workflows B / C) — changing an existing component, screen, style, copy pattern, module content, or behaviour. See `docs/system/DEVELOPMENT_WORKFLOW.md`.
+- **Big Build Pipeline** (Workflows D / E / F / G) — bug fix, new flow, new component family, new architecture, or workflow governance. See `docs/system/DEVELOPMENT_WORKFLOW.md`.
+
+Full lane detail (phases, allowed/forbidden skills, verification per lane) lives in `docs/system/RISE_WORKFLOW_MAP.md`.
 
 Context compaction and "resume directly" do **NOT** skip this requirement. If a half-formed plan carried over from before compaction still involves substantial work, route it through the normal pipeline rather than executing directly.
 

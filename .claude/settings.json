@@ -22,7 +22,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"PIPELINE GATE: Before writing or editing any file, you MUST state which pipeline this task falls under — Minor Edit, Standard Change, or Big Build — and confirm you will follow its steps. This is a hard requirement from CLAUDE.md. Context compaction and resume-directly instructions do NOT bypass it. Skipping the pipeline declaration is a violation, not a shortcut.\"}}'"
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"PIPELINE GATE: Run /gcse-triage first — it classifies the work and names the workflow lane (A–G). Then state which pipeline this task falls under and confirm you will follow its steps. This is a hard requirement from CLAUDE.md. Context compaction and resume-directly instructions do NOT bypass it. Skipping triage or the pipeline declaration is a violation, not a shortcut.\"}}'"
           }
         ]
       }
@@ -34,7 +34,7 @@
           {
             "type": "command",
             "if": "Bash(git commit*)",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"COMMIT GATE — confirm each item before proceeding:\\n1. /ponytail-review run on the diff\\n2. Story written or updated (if props/behaviour changed, or new reusable component)\\n3. Docs updated (if reusable pattern, token, route, or workflow rule changed)\\n4. Build passes: ./node_modules/.bin/vite build\\n5. Vitest passes: npx vitest run (Standard/Big Build only)\\n6. /verify completed in the running app (Standard/Big Build only)\\nIf any item is outstanding, stop and complete it first.\"}}'"
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"COMMIT GATE — confirm each item before proceeding:\\n1. /gcse-triage was run and the workflow lane (A–G) was declared\\n2. /ponytail-review run on the diff\\n3. Story written or updated (if props/behaviour changed, or new reusable component)\\n4. Docs updated (if reusable pattern, token, route, or workflow rule changed)\\n5. Build passes: ./node_modules/.bin/vite build\\n6. Tests pass per RISE_WORKFLOW_MAP.md routing table:\\n   - Module metadata changed → vitest run tests/architecture\\n   - Logic files changed → vitest run tests/unit\\n   - Stories in play → vitest (full, Playwright)\\n7. /verify completed in the running app (Standard/Big Build only)\\nIf any item is outstanding, stop and complete it first.\"}}'"
           }
         ]
       }
