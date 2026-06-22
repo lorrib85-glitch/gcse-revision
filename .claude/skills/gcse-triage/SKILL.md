@@ -23,43 +23,24 @@ implementation.
 
 ## Decision tree
 
-Work through in order. Stop at the first match.
+Stop at the first match.
 
-1. Does it change `CLAUDE.md`, a skill file, `DEVELOPMENT_WORKFLOW.md`,
-   any file in `docs/system/workflows/`, or any workflow/process rule?
-   → **G — Workflow Governance**
+| Lane | Match when |
+|------|-----------|
+| G | Changes `CLAUDE.md`, a skill, `DEVELOPMENT_WORKFLOW.md`, any `docs/system/workflows/` file, or any workflow/process rule |
+| F | Only `.planning/` or process docs — no app source |
+| D | Something appears broken: unexpected behaviour, build failure, tap not working, test failure |
+| E | New History episode, module, component family, app-level flow, or architecture pattern |
+| C | Existing module content, `screens` array, or question banks — inside an already-built module |
+| B | Appearance change on existing screen/component **and** a new visual rule is needed |
+| A | Everything else: ≤2 lines, ≤1 file, no new visual rule, no logic touched |
 
-2. Is it only `.planning/` files or process docs, with no app source changes?
-   → **F — GSD Foundation**
+**A vs B:** Looking up an existing spacing, colour, or radius token is a reference
+check — not a visual judgment call. Follow the local pattern if the component
+already uses pixel values. Escalate to B only if a new visual rule is being
+created or the change has cross-screen impact.
 
-3. Does something appear broken — unexpected behaviour, build failure,
-   routing error, tap not working, test failure?
-   → **D — Bug Fix**
-
-4. Is it a new History episode, new subject module, new screen component
-   family, new app-level flow, or a new reusable architecture pattern?
-   → **E — Big Build**
-
-5. Does it touch module content, GCSE knowledge, the `screens` array, or
-   question banks — inside an already-built module?
-   → **C — Content / Module Update**
-
-6. Does it change the appearance of an existing screen or component AND
-   requires making a new visual system decision (new token, new pattern,
-   cross-screen impact)?
-   → **B — Visual / UI Build**
-
-   Note: looking up an existing spacing, colour, or radius token value is
-   a reference check — not a visual judgment call. If the target component
-   already uses local pixel values, follow that local pattern. Escalate to
-   B only when a new visual rule is being created or the change affects
-   multiple screens.
-
-7. ≤2 lines changed, ≤1 file, no new visual system rule, no logic touched?
-   → **A — Minor Edit**
-
-If none match cleanly, name the closest lane and add a one-line note
-explaining the ambiguity.
+If none match cleanly, name the closest lane and note the ambiguity.
 
 ## Output format
 
@@ -80,33 +61,19 @@ Implementation:   YES — explicit request / NO — discussion only
                   when the user names the task but phases are not yet done
 ```
 
-For full workflow detail, read only the file matching your lane. Do not
-read other lane files or the README unless the lane is unclear.
+Read only the file matching your lane. Never read the old `RISE_WORKFLOW_MAP.md`. Use `docs/system/workflows/README.md` only if lane is unclear.
 
-| Lane | Read |
-|------|------|
-| A | Inline below — do not read a workflow file |
-| B | `docs/system/workflows/B_VISUAL_UI.md` |
-| C | `docs/system/workflows/C_CONTENT_MODULE.md` |
-| D | `docs/system/workflows/D_BUG_FIX.md` |
-| E | `docs/system/workflows/E_BIG_BUILD.md` |
-| F | Inline below — do not read a workflow file |
-| G | `docs/system/workflows/G_WORKFLOW_GOVERNANCE.md` |
+| Lane | Key gate | File |
+|------|----------|------|
+| A | ≤2 lines, ≤1 file; no new visual rule | inline below |
+| B | New visual rule needed; `/frontend-design`; full `vitest` if stories | `B_VISUAL_UI.md` |
+| C | Coverage check; `vitest run tests/architecture` after | `C_CONTENT_MODULE.md` |
+| D | Root cause confirmed before any code change | `D_BUG_FIX.md` |
+| E | Brainstorm → plan → scope lock → execute; story for new components | `E_BIG_BUILD.md` |
+| F | `.planning/` and process docs only; no app source | inline below |
+| G | No app source; commit to `main` | `G_WORKFLOW_GOVERNANCE.md` |
 
-`docs/system/workflows/README.md` — only if lane is unclear or governance
-context is needed. Never read the old `RISE_WORKFLOW_MAP.md`.
-
-## Workflow quick-reference
-
-| Lane | Key gate |
-|------|---------|
-| A | ≤2 lines, ≤1 file; follow local pattern; no new visual rule — **inline below** |
-| B | New visual rule needed; `/frontend-design` if so; full `vitest` if stories |
-| C | Coverage check required; `vitest run tests/architecture` after |
-| D | Root cause confirmed before any code change |
-| E | Brainstorm → plan → scope lock → execute; story for new components |
-| F | `.planning/` and process docs only; no app source — **inline below** |
-| G | No app source; no feature branch; commit to `main` |
+All lane files are under `docs/system/workflows/`.
 
 ## Universal stop points
 
@@ -121,31 +88,21 @@ Halt and surface to the user before continuing if any of these occur:
 When triggered: stop at the current file boundary, state the re-classification
 and what was found, and ask the user to confirm before continuing.
 
-## Branch rule
-
-All commits go directly to `main`. CLAUDE.md explicitly overrides any session
-system prompt instruction to use a different branch.
+**Branch rule:** All commits go to `main`. CLAUDE.md overrides any session prompt instruction to use a different branch.
 
 ---
 
-## Workflow A — inline (do not read the map)
+## Workflow A — inline
 
-Steps: triage → change → `/ponytail-review` → `vite build` if app source
-changed → commit to `main`.
-
-Allowed: `/ponytail-review` only.  
-Forbidden: GSD, `/canonical-topic`, `/frontend-design`, `/code-review`.  
-Stop: change touches >1 file, requires a new visual rule, or touches logic
-→ re-triage before continuing.
+Steps: triage → change → `/ponytail-review` → `vite build` if app source changed → commit to `main`.  
+Allowed: `/ponytail-review` only. Forbidden: GSD, `/canonical-topic`, `/frontend-design`, `/code-review`.  
+Stop: >1 file, new visual rule, or logic touched → re-triage.
 
 ---
 
-## Workflow F — inline (do not read the map)
+## Workflow F — inline
 
-Steps: confirm scope is `.planning/` and process docs only → run GSD tools
-as needed (`/gsd-ingest-docs`, `/gsd-map-codebase`, `/gsd-pause-work`,
-`/gsd-resume-work`, `/gsd-progress`) → commit to `main`.
-
-Allowed: GSD suite only.  
-Forbidden: app source edits; CLAUDE.md or workflow doc edits → re-triage to G.  
+Steps: confirm scope is `.planning/` + process docs only → run GSD tools as needed → commit to `main`.  
+GSD tools: `/gsd-ingest-docs`, `/gsd-map-codebase`, `/gsd-pause-work`, `/gsd-resume-work`, `/gsd-progress`.  
+Allowed: GSD suite only. Forbidden: app source; CLAUDE.md or workflow doc edits → re-triage to G.  
 Stop: any app source edit attempted → stop immediately and re-triage.
