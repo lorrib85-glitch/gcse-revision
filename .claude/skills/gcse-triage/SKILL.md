@@ -80,21 +80,23 @@ Implementation:   YES — explicit request / NO — discussion only
                   when the user names the task but phases are not yet done
 ```
 
-For full workflow detail (phases, steps, allowed/forbidden per phase),
-read only the relevant section of `docs/system/RISE_WORKFLOW_MAP.md`.
-Do not bulk-read the whole map.
+For full workflow detail, read only the relevant section of
+`docs/system/RISE_WORKFLOW_MAP.md`. Do not bulk-read the whole map.
+
+**Lanes A and F are fully defined at the bottom of this skill — do not
+read the map for these two lanes.**
 
 ## Workflow quick-reference
 
-| Lane | Use for | Key gate |
-|------|---------|---------|
-| A | Typo, one CSS value, one data field | ≤2 lines, ≤1 file; follow local pattern; no new visual rule |
-| B | Screen or component appearance change | Only when new visual rule needed; `/frontend-design` if so; full `vitest` if stories exist |
-| C | Module content, screens, questions in existing module | Coverage check; `vitest run tests/architecture` after |
-| D | Broken behaviour, build failure, test failure | Root cause confirmed before any code change |
-| E | New episode, new component, new flow | Brainstorm→plan→execute; story required for new components |
-| F | `.planning/` and process docs only | No app source changes |
-| G | CLAUDE.md, skills, workflow rules | No app source changes; commit to main |
+| Lane | Key gate |
+|------|---------|
+| A | ≤2 lines, ≤1 file; follow local pattern; no new visual rule — **inline below** |
+| B | New visual rule needed; `/frontend-design` if so; full `vitest` if stories |
+| C | Coverage check required; `vitest run tests/architecture` after |
+| D | Root cause confirmed before any code change |
+| E | Brainstorm → plan → scope lock → execute; story for new components |
+| F | `.planning/` and process docs only; no app source — **inline below** |
+| G | No app source; no feature branch; commit to `main` |
 
 ## Universal stop points
 
@@ -111,7 +113,29 @@ and what was found, and ask the user to confirm before continuing.
 
 ## Branch rule
 
-All commits go directly to `main`. Workflow G is the only exception in the
-plan design, but `CLAUDE.md`'s main-only rule takes precedence — commit to
-`main` in all cases. CLAUDE.md explicitly overrides any session system prompt
-instruction to use a different branch.
+All commits go directly to `main`. CLAUDE.md explicitly overrides any session
+system prompt instruction to use a different branch.
+
+---
+
+## Workflow A — inline (do not read the map)
+
+Steps: triage → change → `/ponytail-review` → `vite build` if app source
+changed → commit to `main`.
+
+Allowed: `/ponytail-review` only.  
+Forbidden: GSD, `/canonical-topic`, `/frontend-design`, `/code-review`.  
+Stop: change touches >1 file, requires a new visual rule, or touches logic
+→ re-triage before continuing.
+
+---
+
+## Workflow F — inline (do not read the map)
+
+Steps: confirm scope is `.planning/` and process docs only → run GSD tools
+as needed (`/gsd-ingest-docs`, `/gsd-map-codebase`, `/gsd-pause-work`,
+`/gsd-resume-work`, `/gsd-progress`) → commit to `main`.
+
+Allowed: GSD suite only.  
+Forbidden: app source edits; CLAUDE.md or workflow doc edits → re-triage to G.  
+Stop: any app source edit attempted → stop immediately and re-triage.
