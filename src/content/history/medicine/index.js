@@ -21,9 +21,12 @@ import episode14 from './episodes/episode-14-western-front.js'
 export const MEDICINE_EPISODES = [
   episode01,
   episode02,
-  // episode03–05 (add as extracted, in number order)
+  // episode03–04: legacy IDs (mod2, mod3) — migrate ID before extraction
+  // episode05: history-medicine-great-plague — unbuilt (screenCount 0), add when built
   episode06,
   episode07,
-  // episode08–13 (add as extracted, in number order)
+  // episode08–09: legacy IDs (mod5, mod6) — migrate ID before extraction
+  // episode10: history-medicine-nightingale — unbuilt (screenCount 0), add when built
+  // episode11–13: legacy IDs (mod7, mod8, mod9) — migrate ID before extraction
   episode14,
 ]

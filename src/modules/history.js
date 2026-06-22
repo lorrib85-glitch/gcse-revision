@@ -925,6 +925,9 @@ Do NOT award marks for naming discoveries without explaining their significance.
     ]
   },
 
+  // ── Episode 5: London's year of terror (history-medicine-great-plague) ───────
+  // Unbuilt — screenCount 0 in src/modules.js. No inline content. Build from scratch when ready.
+
   episodeJenner,
 
   episodeGermTheory,
@@ -1752,6 +1755,9 @@ Do NOT award marks for naming discoveries without explaining their significance.
       },
     ],
   },
+
+  // ── Episode 10: The lady with the lamp (history-medicine-nightingale) ─────────
+  // Unbuilt — screenCount 0 in src/modules.js. No inline content. Build from scratch when ready.
 
   // ── History Module 7: The War Against Infection ──────────────────────────────
   {
