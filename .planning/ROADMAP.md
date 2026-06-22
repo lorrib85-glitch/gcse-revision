@@ -14,7 +14,7 @@ This is an active codebase, not a greenfield build. The app shell, all navigatio
 
 ## Phases
 
-- [ ] **Phase 1: Documentation fix** - Resolve the Cormorant Garamond / IBM Plex Serif conflict in canonical docs
+- [x] **Phase 1: Documentation fix** - Resolve the Cormorant Garamond font conflict in canonical docs — DONE 2026-06-22
 - [ ] **Phase 2: History Medicine — gaps filled** - Complete the three unfinished Medicine Through Time episodes
 - [ ] **Phase 3: History USA 1954–75 — full build** - Build all 12 episodes using existing canonical files
 - [ ] **Phase 4: History Spain and the New World — canonical files + build** - Generate canonical files then build all 10 Spain episodes
@@ -25,16 +25,16 @@ This is an active codebase, not a greenfield build. The app shell, all navigatio
 
 ## Phase Details
 
-### Phase 1: Documentation fix
+### Phase 1: Documentation fix ✅ DONE 2026-06-22
 **Goal**: The typography token conflict is resolved and canonical docs match the codebase.
 **Depends on**: Nothing
 **Requirements**: REQ-06
-**Success Criteria** (what must be TRUE):
-  1. `TYPOGRAPHY_SYSTEM.md` TYPE.cinematic font is IBM Plex Serif — Cormorant Garamond appears nowhere
-  2. `PRODUCT_UI_CONSTITUTION.md` font references match (IBM Plex Serif, not Cormorant Garamond)
-  3. `src/constants/typography.js` confirms IBM Plex Serif in the TYPE.cinematic token
-  4. No future session can introduce a third font by reading the spec docs and acting on the old value
-**Plans**: TBD
+**Success Criteria** (all TRUE):
+  1. `TYPOGRAPHY_SYSTEM.md` font table documents Manrope + Sora — Cormorant Garamond removed ✓
+  2. `PRODUCT_UI_CONSTITUTION.md` font table and rules updated to Manrope + Sora ✓
+  3. `CLAUDE.md` Fonts section updated — Outfit and IBM Plex Serif removed, Manrope listed ✓
+  4. `src/constants/typography.js` confirmed: TYPE.cinematic = Manrope (no code changes needed) ✓
+**Plans**: Complete
 
 ---
 
@@ -114,7 +114,7 @@ This is an active codebase, not a greenfield build. The app shell, all navigatio
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Documentation fix | 0/0 | Not started | - |
+| 1. Documentation fix | 1/1 | ✅ Complete | 2026-06-22 |
 | 2. History Medicine gaps | 0/0 | Not started | - |
 | 3. History USA | 0/0 | Not started | - |
 | 4. History Spain | 0/0 | Not started | - |
