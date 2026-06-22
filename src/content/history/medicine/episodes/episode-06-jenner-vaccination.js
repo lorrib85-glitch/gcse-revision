@@ -17,7 +17,7 @@
 export default {
   id: 'history-medicine-jenner-vaccination',
   subject: 'History',
-  number: 5,
+  number: 6,
   title: 'The boy, the cow and the cure',
   subtitle: 'Edward Jenner and the birth of vaccination',
   era: 'c.1796–c.1853',
