@@ -9,6 +9,7 @@ import episodeSurgeryAnaesthetics from '../../src/content/history/medicine/episo
 import episodeJenner from '../../src/content/history/medicine/episodes/episode-06-jenner-vaccination.js'
 import episodeGermTheory from '../../src/content/history/medicine/episodes/episode-07-germ-theory.js'
 import episodeGreatStink from '../../src/content/history/medicine/episodes/episode-08-great-stink.js'
+import episodeSurgeryRevolution from '../../src/content/history/medicine/episodes/episode-09-surgery-revolution.js'
 import episodeWesternFront from '../../src/content/history/medicine/episodes/episode-14-western-front.js'
 
 // ─── Per-episode guards ───────────────────────────────────────────────────────
@@ -279,6 +280,44 @@ describe('Content registry — episode-08-great-stink', () => {
   })
 })
 
+describe('Content registry — episode-09-surgery-revolution (legacy id: mod6)', () => {
+  it('id exists in src/modules.js (as legacy mod6)', () => {
+    const meta = MODULES.find(m => m.id === episodeSurgeryRevolution.id)
+    expect(meta).toBeDefined()
+  })
+
+  it('number matches src/modules.js', () => {
+    const meta = MODULES.find(m => m.id === episodeSurgeryRevolution.id)
+    expect(episodeSurgeryRevolution.number).toBe(meta.number)
+  })
+
+  it('filename prefix matches episode number (episode-09-* → number: 9)', () => {
+    expect(episodeSurgeryRevolution.number).toBe(9)
+  })
+
+  it('screens array is non-empty', () => {
+    expect(Array.isArray(episodeSurgeryRevolution.screens)).toBe(true)
+    expect(episodeSurgeryRevolution.screens.length).toBeGreaterThan(0)
+  })
+
+  it('stageNavigation entries have id, title, and screenIndex', () => {
+    if (!episodeSurgeryRevolution.stageNavigation) return
+    for (const stage of episodeSurgeryRevolution.stageNavigation) {
+      expect(stage).toHaveProperty('id')
+      expect(stage).toHaveProperty('title')
+      expect(stage).toHaveProperty('screenIndex')
+    }
+  })
+
+  it('stageNavigation screenIndex values are within bounds', () => {
+    if (!episodeSurgeryRevolution.stageNavigation) return
+    for (const stage of episodeSurgeryRevolution.stageNavigation) {
+      expect(stage.screenIndex).toBeGreaterThanOrEqual(0)
+      expect(stage.screenIndex).toBeLessThan(episodeSurgeryRevolution.screens.length)
+    }
+  })
+})
+
 describe('Content registry — episode-14-western-front', () => {
   it('id exists in src/modules.js', () => {
     const meta = MODULES.find(m => m.id === episodeWesternFront.id)
@@ -353,6 +392,10 @@ describe('Content registry — series index (MEDICINE_EPISODES)', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-great-stink')).toBeDefined()
   })
 
+  it('includes the surgery revolution episode (legacy id: mod6)', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'mod6')).toBeDefined()
+  })
+
   it('includes the western front episode', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-western-front')).toBeDefined()
   })
@@ -421,6 +464,15 @@ describe('Content registry — compatibility layer (HISTORY_MODULES)', () => {
 
   it('great stink episode has screens', () => {
     const ep = HISTORY_MODULES.find(m => m.id === 'history-medicine-great-stink')
+    expect(ep?.screens?.length).toBeGreaterThan(0)
+  })
+
+  it('includes the surgery revolution episode (legacy id: mod6)', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'mod6')).toBeDefined()
+  })
+
+  it('surgery revolution episode has screens', () => {
+    const ep = HISTORY_MODULES.find(m => m.id === 'mod6')
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 
