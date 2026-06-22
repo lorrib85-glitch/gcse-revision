@@ -26,7 +26,7 @@ implementation.
 Work through in order. Stop at the first match.
 
 1. Does it change `CLAUDE.md`, a skill file, `DEVELOPMENT_WORKFLOW.md`,
-   `RISE_WORKFLOW_MAP.md`, or any workflow/process rule?
+   any file in `docs/system/workflows/`, or any workflow/process rule?
    → **G — Workflow Governance**
 
 2. Is it only `.planning/` files or process docs, with no app source changes?
@@ -80,11 +80,21 @@ Implementation:   YES — explicit request / NO — discussion only
                   when the user names the task but phases are not yet done
 ```
 
-For full workflow detail, read only the relevant section of
-`docs/system/RISE_WORKFLOW_MAP.md`. Do not bulk-read the whole map.
+For full workflow detail, read only the file matching your lane. Do not
+read other lane files or the README unless the lane is unclear.
 
-**Lanes A and F are fully defined at the bottom of this skill — do not
-read the map for these two lanes.**
+| Lane | Read |
+|------|------|
+| A | Inline below — do not read a workflow file |
+| B | `docs/system/workflows/B_VISUAL_UI.md` |
+| C | `docs/system/workflows/C_CONTENT_MODULE.md` |
+| D | `docs/system/workflows/D_BUG_FIX.md` |
+| E | `docs/system/workflows/E_BIG_BUILD.md` |
+| F | Inline below — do not read a workflow file |
+| G | `docs/system/workflows/G_WORKFLOW_GOVERNANCE.md` |
+
+`docs/system/workflows/README.md` — only if lane is unclear or governance
+context is needed. Never read the old `RISE_WORKFLOW_MAP.md`.
 
 ## Workflow quick-reference
 
