@@ -59,14 +59,14 @@ Every episode follows this 7-stage rhythm:
 Every episode, before marking complete, must pass all 10 checks:
 
 - [ ] Students can define every key concept from this episode accurately and in their own words
-- [ ] Students can name at least two sociologists relevant to this episode and state their perspective
-- [ ] Students can write one correct "X argues that…" sentence per sociologist
-- [ ] Students can state the main evaluation point / limitation for each theory taught
+- [ ] Where named research is included, students can name the relevant sociologist(s), state their perspective, and write one accurate "X argues that…" sentence
+- [ ] Where an episode is concept-only, students can accurately apply definitions to examples without forcing named research
+- [ ] Where theory is taught, students can state the main evaluation point / limitation
 - [ ] Students have applied at least one concept to a scenario or item-style question
 - [ ] Students have practised at least one AQA exam question format (3-mark, 4-mark, or 12-mark)
 - [ ] Students have retrieved content from at least one earlier episode
 - [ ] The episode's core takeaway is explicitly connected to the series throughline (who benefits from the "normal" family?)
-- [ ] At least two contrasting perspectives are represented in this episode
+- [ ] Where the episode is perspective-led, at least two contrasting perspectives are represented; where it is concept-led, the episode clearly builds foundation knowledge for later perspectives
 - [ ] A methods link is present where the episode includes named research
 
 ---
@@ -117,11 +117,10 @@ Every episode, before marking complete, must pass all 10 checks:
   - LAT: committed couple living at separate addresses
 - **Named evidence:**
   - No named sociologists required in this episode — concept-building only
-  - AQA definition of family: "a married couple or cohabiting couple, with or without dependent children, or a single parent with their child or children"
-  - Household data: Bangladeshi and Pakistani households on average larger; 10% multigenerational extended family (2001 Census)
-  - Ethnic diversity in household size as evidence of cultural diversity
+  - Core GCSE Sociology definition of family used in the course materials: "a married couple or cohabiting couple, with or without dependent children, or a single parent with their child or children"
+  - Preview evidence for Episode 4: census data shows household size and multigenerational households vary by ethnicity, which links to cultural diversity and family diversity
 - **Active learning interactions:**
-  - `SwipeSort`: family / household / both / neither — borderline cases (step-parent household, foster care, friends sharing, grandparent raising child, LAT couple, student house)
+  - `SwipeSort`: family / household / both / neither — borderline cases such as step-parent household, friends sharing, grandparent raising a child, LAT couple, student house, and foster care / looked-after child setting. Handle foster care carefully: it may be experienced as a family setting, but it can also connect to state care and alternatives to family.
   - `VisualLearning` or carousel: one person moves through different family forms over their life course
   - `FillInTheBlanksBlock`: family vs household definitions
 - **Retrieval points:**
@@ -134,7 +133,7 @@ Every episode, before marking complete, must pass all 10 checks:
   - MISCONCEPTION: "A household is always a family." Correction: a household can be one person alone or unrelated people sharing.
   - MISCONCEPTION: "Extended families always live together." Correction: modified extended families live apart but maintain regular contact and support.
   - MISCONCEPTION: "Same-sex couples can't have children." Correction: same-sex families include couples with children through adoption, IVF or previous relationships.
-- **Build notes:** Lead with a sorting challenge using borderline cases (foster care, LAT couple, student house). The engagement comes from the ambiguity — sociology questions what "everyone already knows." Sociology subject palette: soft oat, stone, olive beige.
+- **Build notes:** Lead with a sorting challenge using borderline cases (LAT couple, student house, step-parent household, foster care / looked-after child setting). The engagement comes from the ambiguity — sociology questions what "everyone already knows." Handle care-experienced examples neutrally and respectfully; never imply foster care is "not a real family." Sociology subject palette: soft oat, stone, olive beige.
 
 ---
 
