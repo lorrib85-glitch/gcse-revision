@@ -16,12 +16,12 @@
 
 ### Core takeaway
 
-Act 1 Scene 3 is the scene on which the entire tragedy pivots. The witches deliver their prophecies; Banquo and Macbeth hear the same words but respond completely differently. Banquo is suspicious and resists; Macbeth is immediately captivated and, crucially, begins to imagine the "horrid image" of murder without any prompting from the witches. Shakespeare's point is that the prophecies do not plant the idea of murder — they reveal an ambition that was already present. The witches are catalysts, not causes. The tragedy is that Macbeth knows this ("why do I yield to that suggestion / Whose horrid image doth unfix my hair") and acts anyway.
+Act 1 Scene 3 is the scene on which the entire tragedy pivots. The witches deliver their prophecies; Banquo and Macbeth hear the same words but respond completely differently. Banquo is intrigued but cautious; Macbeth is immediately captivated and, crucially, begins to imagine the "horrid image" of murder without any prompting from the witches. Shakespeare's point is that the prophecies do not plant the idea of murder — they reveal an ambition that was already present. The witches are catalysts, not causes. The tragedy is that Macbeth knows this ("why do I yield to that suggestion / Whose horrid image doth unfix my hair") and acts anyway.
 
 ### Evidence for the takeaway
 
 - Macbeth's immediate internal response to "Thou shalt be king hereafter" — before the witches have finished speaking, he is already imagining murder ("my thought, whose murder yet is but fantastical")
-- Banquo, hearing identical prophecies, responds with suspicion: "instruments of darkness tell us truths, / Win us with honest trifles, to betray's / In deepest consequence"
+- Banquo, hearing identical prophecies, responds with caution: "instruments of darkness tell us truths, / Win us with honest trifles, to betray's / In deepest consequence"
 - Macbeth's aside: "why do I yield to that suggestion / Whose horrid image doth unfix my hair" — he recognises the impulse is coming from *within* him, not from the witches
 - "Nothing is but what is not" — Macbeth's language becomes inverted/paradoxical, mirroring the witches' own speech; he is already beginning to think like them
 - "Cannot be ill, cannot be good" — Macbeth's first verbal response to the prophecies is paralysis: the moral categories that should guide him have already broken down
@@ -67,7 +67,7 @@ Very high retrieval priority. This episode supports:
 ### Key people
 
 - **Macbeth:** His response to the prophecies is immediate and internal — the aside reveals pre-existing ambition; his language becomes fractured and paradoxical
-- **Banquo:** Macbeth's foil; hears the same prophecies; maintains scepticism and warns about the danger of trusting supernatural sources ("instruments of darkness")
+- **Banquo:** Macbeth's foil; hears the same prophecies; is intrigued but cautious; warns about the danger of trusting supernatural sources ("instruments of darkness") and does not allow the prophecies to become a plan of action
 - **The Witches:** Deliver the prophecies but do not suggest murder; their power lies in *revealing* rather than *creating* Macbeth's ambition
 - **Ross and Angus:** Arrive to confirm the Cawdor title; their presence makes the witches' first prophecy immediately true, which is what tips Macbeth toward believing the rest
 
@@ -78,13 +78,13 @@ Very high retrieval priority. This episode supports:
 - **Soliloquy:** Macbeth's extended internal speech during the scene approaches soliloquy — he is effectively alone with his thoughts even when other characters are present
 - **Equivocation:** Deliberately misleading half-truths; "lesser than Macbeth, and greater" is equivocal — true in different senses simultaneously; this technique will destroy Macbeth in Act 4
 - **Paradox:** Contradictory statements that contain truth — "lesser than Macbeth, and greater; / Not so happy, yet much happier"; the paradox about Banquo proves true
-- **Foil:** A character who contrasts with another to highlight qualities — Banquo is Macbeth's foil; his scepticism makes Macbeth's susceptibility more visible
+- **Foil:** A character who contrasts with another to highlight qualities — Banquo is Macbeth's foil; his cautious response makes Macbeth's susceptibility more visible
 - **Hamartia:** Macbeth's fatal flaw (ambition) is not given to him by the witches in this scene; it is *revealed* by them
 
 ### Case studies / named examples
 
 - **The aside: "why do I yield to that suggestion":** This is the most psychologically significant moment in the scene. Macbeth recognises that the "suggestion" (of murder) comes from inside him, not from the witches. The word "yield" implies resistance followed by capitulation — he knows he should not feel this way and does anyway. For AQA: this is the evidence that Macbeth has free will and chooses to act on ambition.
-- **Banquo's warning: "instruments of darkness":** The most important alternative voice in the play. Banquo sees through the witches immediately. His warning — that they "tell us truths" in small things to "betray's / In deepest consequence" — is an exact description of what happens to Macbeth. Students should use this contrast in any essay about free will or supernatural.
+- **Banquo's warning: "instruments of darkness":** The most important alternative voice in the play. Banquo is intrigued by the prophecies but cautious about their source. His warning — that they "tell us truths" in small things to "betray's / In deepest consequence" — is an exact description of what happens to Macbeth. Students should use this contrast in any essay about free will or supernatural.
 - **"Nothing is but what is not":** Macbeth's language in this scene begins to mirror the witches'. His thought processes are already inverted — reality and imagination are collapsing together. For AO2: this syntactical inversion is Shakespeare's way of showing Macbeth's mind starting to unravel before he has done anything.
 - **The immediate fulfilment of the Cawdor prophecy:** Ross and Angus arrive mid-scene with the confirmation. Shakespeare does this deliberately: when one prophecy proves immediately true, Macbeth's belief in the others becomes rational. This is the mechanics of the trap.
 
@@ -93,7 +93,7 @@ Very high retrieval priority. This episode supports:
 - Witches deliver three prophecies → two are already true/about to be confirmed → Macbeth has structural reason to believe the third
 - First prophecy confirmed immediately by Ross and Angus → Macbeth's faith in the witches escalates → he begins actively imagining the path to kingship
 - Macbeth hears "Thou shalt be king hereafter" → aside reveals pre-existing murderous thought ("horrid image") → the witches did not plant this; they uncovered it
-- Banquo and Macbeth hear identical prophecies → Banquo remains sceptical → contrast reveals that Macbeth's response is a character choice, not a supernatural compulsion
+- Banquo and Macbeth hear identical prophecies → Banquo is intrigued but cautious, while Macbeth becomes mentally absorbed → contrast reveals that Macbeth's response is a character choice, not a supernatural compulsion
 - Macbeth writes to Lady Macbeth about the prophecies → she immediately begins to plan the murder → the letter activates her ambition as the witches activated his
 
 ### Exam angles
@@ -111,7 +111,7 @@ Very high retrieval priority. This episode supports:
 
 **Misconceptions worth a MisconceptionCheck:**
 - "The witches made Macbeth commit murder" — FALSE: the aside proves the murderous thought was already in Macbeth's mind before the witches finished speaking
-- "Banquo is also tempted but just stronger than Macbeth" — MISLEADING: Banquo is suspicious from the outset, not tempted and resisting; the contrast is sharper than mere willpower
+- "Banquo is also tempted but just stronger than Macbeth" — MISLEADING: Banquo is intrigued but cautious; unlike Macbeth, he does not allow the prophecies to become a plan of action
 - "The witches are in control of events" — OVERSIMPLIFIED: they predict and tempt but Macbeth's free will remains; Banquo proves this by making a different choice
 
 ### Sourcing notes
