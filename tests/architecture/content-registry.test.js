@@ -10,6 +10,7 @@ import episodeJenner from '../../src/content/history/medicine/episodes/episode-0
 import episodeGermTheory from '../../src/content/history/medicine/episodes/episode-07-germ-theory.js'
 import episodeGreatStink from '../../src/content/history/medicine/episodes/episode-08-great-stink.js'
 import episodeSurgeryRevolution from '../../src/content/history/medicine/episodes/episode-09-surgery-revolution.js'
+import episodeAccidentalMiracle from '../../src/content/history/medicine/episodes/episode-11-accidental-miracle.js'
 import episodeWesternFront from '../../src/content/history/medicine/episodes/episode-14-western-front.js'
 
 // ─── Per-episode guards ───────────────────────────────────────────────────────
@@ -318,6 +319,44 @@ describe('Content registry — episode-09-surgery-revolution (legacy id: mod6)',
   })
 })
 
+describe('Content registry — episode-11-accidental-miracle (legacy id: mod7)', () => {
+  it('id exists in src/modules.js (as legacy mod7)', () => {
+    const meta = MODULES.find(m => m.id === episodeAccidentalMiracle.id)
+    expect(meta).toBeDefined()
+  })
+
+  it('number matches src/modules.js', () => {
+    const meta = MODULES.find(m => m.id === episodeAccidentalMiracle.id)
+    expect(episodeAccidentalMiracle.number).toBe(meta.number)
+  })
+
+  it('filename prefix matches episode number (episode-11-* → number: 11)', () => {
+    expect(episodeAccidentalMiracle.number).toBe(11)
+  })
+
+  it('screens array is non-empty', () => {
+    expect(Array.isArray(episodeAccidentalMiracle.screens)).toBe(true)
+    expect(episodeAccidentalMiracle.screens.length).toBeGreaterThan(0)
+  })
+
+  it('stageNavigation entries have id, title, and screenIndex', () => {
+    if (!episodeAccidentalMiracle.stageNavigation) return
+    for (const stage of episodeAccidentalMiracle.stageNavigation) {
+      expect(stage).toHaveProperty('id')
+      expect(stage).toHaveProperty('title')
+      expect(stage).toHaveProperty('screenIndex')
+    }
+  })
+
+  it('stageNavigation screenIndex values are within bounds', () => {
+    if (!episodeAccidentalMiracle.stageNavigation) return
+    for (const stage of episodeAccidentalMiracle.stageNavigation) {
+      expect(stage.screenIndex).toBeGreaterThanOrEqual(0)
+      expect(stage.screenIndex).toBeLessThan(episodeAccidentalMiracle.screens.length)
+    }
+  })
+})
+
 describe('Content registry — episode-14-western-front', () => {
   it('id exists in src/modules.js', () => {
     const meta = MODULES.find(m => m.id === episodeWesternFront.id)
@@ -394,6 +433,10 @@ describe('Content registry — series index (MEDICINE_EPISODES)', () => {
 
   it('includes the surgery revolution episode (legacy id: mod6)', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'mod6')).toBeDefined()
+  })
+
+  it('includes the accidental miracle episode (legacy id: mod7)', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'mod7')).toBeDefined()
   })
 
   it('includes the western front episode', () => {
@@ -473,6 +516,15 @@ describe('Content registry — compatibility layer (HISTORY_MODULES)', () => {
 
   it('surgery revolution episode has screens', () => {
     const ep = HISTORY_MODULES.find(m => m.id === 'mod6')
+    expect(ep?.screens?.length).toBeGreaterThan(0)
+  })
+
+  it('includes the accidental miracle episode (legacy id: mod7)', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'mod7')).toBeDefined()
+  })
+
+  it('accidental miracle episode has screens', () => {
+    const ep = HISTORY_MODULES.find(m => m.id === 'mod7')
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 
