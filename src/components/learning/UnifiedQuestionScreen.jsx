@@ -204,16 +204,16 @@ export default function UnifiedQuestionScreen({
 
         {/* Question — hero prompt, no card frame */}
         <p style={{
-          fontFamily: "'IBM Plex Serif', serif",
-          fontSize: isTrueFalse ? 'clamp(2rem, 7.6vw, 2.25rem)' : 'clamp(2.125rem, 8vw, 2.25rem)',
-          lineHeight: 1.12,
-          fontWeight: 600,
-          letterSpacing: '-0.02em',
+          fontFamily: "'Sora', sans-serif",
+          fontSize: isTrueFalse ? 'clamp(1.75rem, 7vw, 2.25rem)' : 'clamp(1.875rem, 7.6vw, 2.625rem)',
+          lineHeight: 1.08,
+          fontWeight: 700,
+          letterSpacing: '-0.04em',
           marginTop: 0,
           marginBottom: isTrueFalse ? 18 : 22,
           marginInline: 'auto',
-          color: '#F5F7FF',
-          maxWidth: isTrueFalse ? '100%' : 'calc(100% - 24px)',
+          color: 'rgba(255,255,255,0.94)',
+          maxWidth: isTrueFalse ? '100%' : '92%',
           overflowWrap: 'break-word',
           textAlign: 'left',
         }}>
@@ -243,7 +243,7 @@ export default function UnifiedQuestionScreen({
             let opacity = 1
             let background = 'rgba(21,23,32,0.9)'
             let border = '1px solid rgba(255,255,255,0.12)'
-            let color = '#F5F7FF'
+            let color = 'rgba(255,255,255,0.78)'
             let boxShadow = undefined
             let correctAnimation = undefined
 
@@ -256,17 +256,20 @@ export default function UnifiedQuestionScreen({
               if (isFirstTapped && status === 'incorrect') {
                 background = 'rgba(160,40,36,0.10)'
                 border = '1px solid rgba(224,90,82,0.52)'
-                opacity = 0.82
+                color = 'rgba(255,255,255,0.92)'
+                opacity = 1
               }
               // Correct answer — accent treatment (on direct correct tap or revealed)
               else if (isCorrectOpt && (status === 'correct' || retryDone)) {
                 background = `rgba(${rgb}, 0.13)`
                 border = `1px solid rgba(${rgb}, 0.65)`
+                color = 'rgba(255,255,255,0.94)'
               }
               // All other untouched options — quietly recede, no red
               else if (!isFirstTapped && !isRetryTapped) {
-                opacity = 0.38
-                border = '1px solid rgba(255,255,255,0.06)'
+                color = 'rgba(255,255,255,0.58)'
+                opacity = 0.72
+                border = '1px solid rgba(255,255,255,0.07)'
               }
             }
 
@@ -276,12 +279,14 @@ export default function UnifiedQuestionScreen({
                 // Second wrong tap — same red treatment as first
                 background = 'rgba(160,40,36,0.10)'
                 border = '1px solid rgba(224,90,82,0.52)'
-                opacity = 0.82
+                color = 'rgba(255,255,255,0.92)'
+                opacity = 1
               }
               if (isRetryTapped && retryStatus === 'correct') {
                 // Retry was correct — accent
                 background = `rgba(${rgb}, 0.13)`
                 border = `1px solid rgba(${rgb}, 0.65)`
+                color = 'rgba(255,255,255,0.94)'
                 opacity = 1
               }
             }
@@ -289,12 +294,14 @@ export default function UnifiedQuestionScreen({
             // Hover-pending retry tap (retryTapped set but retryStatus not yet)
             if (isRetryTapped && retryStatus === null) {
               border = `1px solid rgba(${rgb}, 0.45)`
+              color = 'rgba(255,255,255,0.9)'
             }
 
             // Correct-answer glow — runs after all other conditions so it always wins
             if (isCorrectOpt && (status === 'correct' || retryDone)) {
               background = `rgba(${rgb}, 0.14)`
               border = `1px solid rgba(${rgb}, 0.72)`
+              color = 'rgba(255,255,255,0.94)'
               boxShadow = `0 0 0 1px rgba(${rgb}, 0.16), 0 0 22px rgba(${rgb}, 0.22)`
               correctAnimation = `uqs-correct-glow 520ms cubic-bezier(0.22, 1, 0.36, 1) both`
             }
@@ -321,9 +328,9 @@ export default function UnifiedQuestionScreen({
                   padding: isTrueFalse ? '15px 18px' : '14px 48px 14px 18px',
                   cursor: disabled ? 'default' : 'pointer',
                   fontFamily: "'Sora', sans-serif",
-                  fontWeight: 700,
-                  fontSize: isTrueFalse ? '1.05rem' : '1rem',
-                  lineHeight: 1.45,
+                  fontWeight: 650,
+                  fontSize: isTrueFalse ? '1.05rem' : '1.0625rem',
+                  lineHeight: 1.35,
                   color,
                   opacity,
                   WebkitTapHighlightColor: 'transparent',
@@ -351,7 +358,7 @@ export default function UnifiedQuestionScreen({
               background: 'rgba(27,30,39,0.92)',
               borderRadius: 14,
               borderLeft: `3px solid ${accent}`,
-              padding: '12px 16px',
+              padding: '14px 16px',
               display: 'flex',
               gap: 12,
               alignItems: 'flex-start',
@@ -369,14 +376,26 @@ export default function UnifiedQuestionScreen({
             </svg>
             <div>
               <div
-                className="cinematic-eyebrow"
-                style={{ color: accent, marginBottom: 6 }}
+                style={{
+                  fontFamily: "'Sora', sans-serif",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: accent,
+                  marginBottom: 8,
+                }}
               >
                 Try again
               </div>
               <p
-                className="cinematic-body"
-                style={{ margin: 0, color: '#F5F7FF' }}
+                style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 18,
+                  lineHeight: 1.55,
+                  margin: 0,
+                  color: '#F5F7FF',
+                }}
               >
                 {hint || explanation || 'Try again — pick a different answer.'}
               </p>
