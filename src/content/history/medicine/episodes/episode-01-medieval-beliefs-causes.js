@@ -490,7 +490,7 @@ export default {
         },
         {
           title: 'Apothecary',
-          image: '/figures/history/medicine/medieval/medieval-street.webp',
+          image: '/figures/history/medicine/medieval/apothecary.png',
           sections: [
             { heading: 'Favourite methods', items: ['Mixing remedies', 'Herbal medicine', 'Purging'] },
             { heading: 'Cost', items: ['💰💰💰'] },

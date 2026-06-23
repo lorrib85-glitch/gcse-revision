@@ -659,11 +659,11 @@ export default function GuidedChoiceCarousel({
                   WebkitOverflowScrolling: 'touch',
                 }}>
                   <div style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontWeight: 800,
+                    fontFamily: "'Manrope', sans-serif",
+                    fontWeight: 850,
                     fontSize: 'clamp(28px, 9vw, 40px)',
                     lineHeight: 'clamp(33px, 10.5vw, 46px)',
-                    letterSpacing: '-0.04em',
+                    letterSpacing: '-0.045em',
                     color: '#FFFFFF',
                     maxWidth: 340,
                     marginBottom: 28,
@@ -686,7 +686,7 @@ export default function GuidedChoiceCarousel({
                       const isPunchline = i === bodyLines.length - 1
                       return (
                         <div key={i} style={{
-                          fontFamily: isPunchline ? "'Sora', sans-serif" : "'Outfit', sans-serif",
+                          fontFamily: "'Sora', sans-serif",
                           fontWeight: isPunchline ? 700 : 500,
                           fontSize: isPunchline ? 'clamp(20px, 6vw, 26px)' : 17,
                           lineHeight: isPunchline ? 1.3 : 1.65,
