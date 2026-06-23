@@ -5,6 +5,7 @@
 - **Episode number:** 12
 - **Title:** Build the essay machine
 - **Build status:** Not yet built — full build from spec
+- **Header image:** `/English/An Inspector/aic-02-grade-9-essay-structure-header.png`
 - **Content pointer:** see `12_Build_The_Essay_Machine_Content.md` in this directory.
 
 ---

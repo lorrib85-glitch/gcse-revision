@@ -5,6 +5,7 @@
 - **Episode number:** 6
 - **Title:** Daisy Renton and the gentleman rescuer
 - **Build status:** Not yet built — full build from spec
+- **Header image:** `/English/An Inspector/aic-03-character-essay-main-body-header.png`
 - **Content pointer:** see `06_Daisy_Renton_And_The_Gentleman_Rescuer_Content.md` in this directory.
 
 ---

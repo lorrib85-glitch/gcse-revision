@@ -5,6 +5,7 @@
 - **Episode number:** 7
 - **Title:** The charity that shut the door
 - **Build status:** Not yet built — full build from spec
+- **Header image:** `/English/An Inspector/aic-07-mrs-birling-characterisation-header.png`
 - **Content pointer:** see `07_The_Charity_That_Shut_The_Door_Content.md` in this directory.
 
 ---

@@ -5,6 +5,7 @@
 - **Episode number:** 3
 - **Title:** The Inspector enters
 - **Build status:** Not yet built — full build from spec
+- **Header image:** `/English/An Inspector/aic-06-inspector-importance-header.png`
 - **Content pointer:** Content, Storyline, Specification requirements and the full Content reference pack: see `03_The_Inspector_Enters_Content.md` in this directory.
 
 ---

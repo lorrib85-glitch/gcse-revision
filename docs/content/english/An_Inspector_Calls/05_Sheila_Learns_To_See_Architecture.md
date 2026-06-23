@@ -5,6 +5,7 @@
 - **Episode number:** 5
 - **Title:** Sheila learns to see
 - **Build status:** Not yet built — full build from spec
+- **Header image:** `/English/An Inspector/aic-08-sheila-characterisation-header.png`
 - **Content pointer:** see `05_Sheila_Learns_To_See_Content.md` in this directory.
 
 ---

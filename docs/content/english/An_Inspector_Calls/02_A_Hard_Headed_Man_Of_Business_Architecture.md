@@ -5,6 +5,7 @@
 - **Episode number:** 2
 - **Title:** A hard-headed man of business
 - **Build status:** Not yet built — full build from spec
+- **Header image:** `/English/An Inspector/aic-01-birling-vs-inspector-header.png`
 - **Content pointer:** Content, Storyline, Specification requirements and the full Content reference pack: see `02_A_Hard_Headed_Man_Of_Business_Content.md` in this directory.
 
 ---

@@ -5,6 +5,7 @@
 - **Episode number:** 1
 - **Title:** A respectable room with cracks in it
 - **Build status:** Not yet built — full build from spec
+- **Header image:** `/English/An Inspector/aic-05-opening-structure-conclusion-header.png`
 - **Content pointer:** Content, Storyline, Specification requirements and the full Content reference pack: see `01_A_Respectable_Room_With_Cracks_In_It_Content.md` in this directory.
 
 ---

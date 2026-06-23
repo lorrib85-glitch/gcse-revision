@@ -5,6 +5,7 @@
 - **Episode number:** 8
 - **Title:** The son they refused to see
 - **Build status:** Not yet built — full build from spec
+- **Header image:** `/English/An Inspector/aic-03-character-essay-main-body-header.png`
 - **Content pointer:** see `08_The_Son_They_Refused_To_See_Content.md` in this directory.
 
 ---

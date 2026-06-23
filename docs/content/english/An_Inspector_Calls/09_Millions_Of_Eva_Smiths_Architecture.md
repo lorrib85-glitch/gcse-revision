@@ -5,6 +5,7 @@
 - **Episode number:** 9
 - **Title:** Millions of Eva Smiths
 - **Build status:** Not yet built — full build from spec
+- **Header image:** `/English/An Inspector/aic-09-context-writers-intentions-header.png`
 - **Content pointer:** see `09_Millions_Of_Eva_Smiths_Content.md` in this directory.
 
 ---

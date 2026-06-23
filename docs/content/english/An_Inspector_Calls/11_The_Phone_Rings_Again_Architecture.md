@@ -5,6 +5,7 @@
 - **Episode number:** 11
 - **Title:** The phone rings again
 - **Build status:** Not yet built — full build from spec
+- **Header image:** `/English/An Inspector/aic-05-opening-structure-conclusion-header.png`
 - **Content pointer:** see `11_The_Phone_Rings_Again_Content.md` in this directory.
 
 ---

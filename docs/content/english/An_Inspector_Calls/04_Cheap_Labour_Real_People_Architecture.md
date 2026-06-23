@@ -5,6 +5,7 @@
 - **Episode number:** 4
 - **Title:** Cheap labour, real people
 - **Build status:** Not yet built — full build from spec
+- **Header image:** `/English/An Inspector/aic-04-theme-based-questions-header.png`
 - **Content pointer:** see `04_Cheap_Labour_Real_People_Content.md` in this directory.
 
 ---
