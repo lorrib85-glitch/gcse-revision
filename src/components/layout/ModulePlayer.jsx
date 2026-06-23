@@ -47,6 +47,7 @@ import PriorKnowledgeRecall from '../learning/PriorKnowledgeRecall.jsx'
 import SymptomProgression from '../learning/SymptomProgression.jsx'
 import BeforeAfterImageSlider from '../learning/BeforeAfterImageSlider.jsx'
 import FactorWeb from '../learning/FactorWeb.jsx'
+import ConnectionMap from '../learning/ConnectionMap.jsx'
 import ContentShell from './ContentShell.jsx'
 import { ScreenTitle, ScreenBody } from '../core/ScreenText.jsx'
 
@@ -2313,6 +2314,21 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           block={cur}
           subject={module.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  // ── Connection map — radial concept explorer with explanation panel ────────
+  if (cur?.type === 'connectionMap') {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <ConnectionMap
+          block={cur}
+          subject={module.subject}
+          onComplete={() => { isLast ? handleFinish() : go(1) }}
         />
         {jumpSheetPortal}
       </>

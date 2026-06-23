@@ -25,11 +25,12 @@ export const MODULES = [
     color: "#F5B700",
     colorLight: "#f5e6d3",
     headerImage: "/headers/history-medicine-medieval-beliefs-causes.png",
-    screenCount: 32,
+    screenCount: 33,
     screenTags: [
       null, null, null, "four-humours", null, null, null, "galen", null, null, null,
       "medieval-practitioners", "miasma", null, null, null, null, null, null, null,
       null, null, null, null, null, null, null, null, null, null, "core-takeaway", null,
+      null,
     ],
   },
   {
