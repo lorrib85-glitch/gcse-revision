@@ -25,17 +25,17 @@ Update this file whenever an episode is built, extracted, or expanded.
 |---|-------|----|--------------|-----------------|---------------------|
 | 1 | Trust me, I'm following Jupiter | `history-medicine-medieval-beliefs-causes` | built (32 screens) | extracted | ✓ Complete |
 | 2 | The day everything changed | `history-medicine-black-death` | built (27 screens) | extracted | ✓ Complete |
-| 3 | The beginning of doubt | `mod2` (legacy) | built (16 screens) | extracted | ✓ Complete — legacy ID preserved, no migration |
-| 4 | Surgery & anatomy | `mod3` | built (11 screens) | extracted | ✓ Complete — legacy ID preserved, metadata corrected to match surgery/anaesthetics content |
+| 3 | The beginning of doubt | `history-medicine-renaissance-medicine` | built (16 screens) | extracted | ✓ Complete — formerly `mod2`; ID migrated June 2026 |
+| 4 | Surgery & anatomy | `history-medicine-surgery-anaesthetics` | built (11 screens) | extracted | ✓ Complete — formerly `mod3`; ID migrated June 2026; metadata corrected |
 | 5 | London's year of terror | `history-medicine-great-plague` | **unbuilt** | not built | screenCount 0; build from scratch |
 | 6 | The boy, the cow and the cure | `history-medicine-jenner-vaccination` | **stub** (1 screen) | extracted | 1-screen placeholder; needs full expansion |
 | 7 | The invisible enemy | `history-medicine-germ-theory` | built (10 screens) | extracted | ✓ Complete |
 | 8 | The great stink | `history-medicine-great-stink` | built (7 screens) | extracted | ✓ Complete |
-| 9 | The day surgery changed forever | `mod6` | built (10 screens) | extracted | ✓ Complete — legacy ID preserved |
+| 9 | The day surgery changed forever | `history-medicine-surgery-revolution` | built (10 screens) | extracted | ✓ Complete — formerly `mod6`; ID migrated June 2026 |
 | 10 | The lady with the lamp | `history-medicine-nightingale` | **unbuilt** | not built | screenCount 0; build from scratch |
-| 11 | The accidental miracle | `mod7` | built (11 screens) | extracted | ✓ Complete — legacy ID preserved |
-| 12 | When medicine became magic | `mod8` | built (9 screens) | extracted | ✓ Complete — legacy ID preserved, metadata normalised |
-| 13 | Can we beat cancer? | `mod9` | built (11 screens) | extracted | ✓ Complete — legacy ID preserved, metadata normalised |
+| 11 | The accidental miracle | `history-medicine-accidental-miracle` | built (11 screens) | extracted | ✓ Complete — formerly `mod7`; ID migrated June 2026 |
+| 12 | When medicine became magic | `history-medicine-modern-medicine` | built (9 screens) | extracted | ✓ Complete — formerly `mod8`; ID migrated June 2026; metadata normalised |
+| 13 | Can we beat cancer? | `history-medicine-cancer` | built (11 screens) | extracted | ✓ Complete — formerly `mod9`; ID migrated June 2026; metadata normalised |
 | 14 | Hell in the trenches | `history-medicine-western-front` | built (19 screens) | extracted | ✓ Complete |
 
 ---
@@ -48,25 +48,6 @@ Update this file whenever an episode is built, extracted, or expanded.
 | Built, inline (awaiting extraction) | 0 | — |
 | Unbuilt | 2 | 5, 10 |
 
-## Notes on legacy IDs
+## ID migration note
 
-Episodes 3, 4, 9, 11, 12, and 13 use short legacy IDs (`mod2`, `mod3`, `mod6`–`mod9`). All were extracted preserving their legacy IDs — no ID migration was performed. Episode 4's modules.js metadata was corrected from a stale Harvey draft to match the actual surgery/anaesthetics content. Episodes 12 and 13 had metadata drift corrected (number, title, subtitle) to match `src/modules.js` as the canonical source. Legacy IDs remain the runtime keys for progress persistence.
-
-## ⚠ Legacy ID caution — read before touching episodes 3, 4, 9, 11–13
-
-**Do not rename legacy IDs casually.** The `id` field is the primary key used at
-runtime to open modules, persist progress, and route between screens. Renaming
-without a full impact audit will silently break saved progress for any user who
-has opened one of these modules.
-
-**Before renaming any legacy-ID episode, run a targeted ID impact check across all of the following:**
-
-| Area | What to check |
-|------|--------------|
-| `src/modules.js` | Confirm the new slug is unique and consistent with the naming pattern |
-| `src/content/history/medicine/episodes/` | Update the `id:` field in the episode file |
-| Saved progress / localStorage | `src/progress.js` keys progress by module `id` — old saves will no longer match after rename; decide whether a migration shim is needed |
-| Module opening / routing | `App.jsx` / `LegacyApp.jsx` opens modules by `id`; verify `SUBJECT_MODULE_LOADERS` and `openModulePlayer()` are unaffected |
-| `HISTORY_MODULES` compatibility | The renamed module must still appear in `HISTORY_MODULES` with the same runtime shape |
-| `src/data/tagModuleMap.js` | Check whether any `TAG_MODULE_MAP` entry references the old ID |
-| Architecture tests | `tests/architecture/content-registry.test.js` — tests must still pass after rename |
+Episodes 3, 4, 9, 11, 12, and 13 previously used short legacy IDs (`mod2`, `mod3`, `mod6`–`mod9`). These were migrated to canonical `history-medicine-<slug>` IDs in June 2026 as part of `refactor: migrate Medicine legacy module IDs`. A one-shot storage migration shim in `src/progress.js` copies old `gcse_module_<legacy>` keys to canonical keys on first load. No legacy IDs remain in runtime source. Episode 4's `src/modules.js` metadata was corrected during extraction from a stale Harvey draft to match the surgery/anaesthetics content. Episodes 12 and 13 had metadata drift corrected (number, title, subtitle) during extraction.

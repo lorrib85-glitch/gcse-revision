@@ -4,7 +4,7 @@
 
 - **Episode number:** 11
 - **Title:** The Accidental Miracle
-- **Build status:** Built as `mod7`
+- **Build status:** Built as `history-medicine-accidental-miracle` (formerly `mod7`)
 - Content, Storyline, Specification requirements and the full Content reference pack: see `11_The_Accidental_Miracle_Content.md` in this directory.
 
 ---
@@ -70,7 +70,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 ## 3. Current state & gap analysis
 
-Built as `mod7`. Audit that the module does not over-credit Fleming and that Part 6 trains factor judgement.
+Built as `history-medicine-accidental-miracle` (formerly `mod7`). Audit that the module does not over-credit Fleming and that Part 6 trains factor judgement.
 
 ---
 

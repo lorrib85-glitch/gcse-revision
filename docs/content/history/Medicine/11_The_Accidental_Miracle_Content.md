@@ -6,7 +6,7 @@
 - **Title (series map):** The Accidental Miracle
 - **Subtitle / GCSE topic:** Magic bullets, penicillin and the antibiotic revolution
 - **Era:** c1890–c1945
-- **Build status:** Built as `mod7` (11 screens; tags: `magic-bullet` s2, `penicillin` s3, `wwi-medicine` s6)
+- **Build status:** Built as `history-medicine-accidental-miracle` (formerly `mod7`) (11 screens; tags: `magic-bullet` s2, `penicillin` s3, `wwi-medicine` s6)
 - **Key Topic reference:** n/a (Series 1)
 
 ---

@@ -4,11 +4,11 @@
 
 - **Episode number:** 3
 - **Title:** The Beginning of Doubt
-- **Build status:** Built (shared) as `mod2` — also covers Episodes 4 (Harvey) and 5 (Great Plague)
+- **Build status:** Built (shared) as `history-medicine-renaissance-medicine` (formerly `mod2`) — also covers Episodes 4 (Harvey) and 5 (Great Plague)
 - Content, Storyline, Specification requirements and the full Content reference pack: see `03_The_Beginning_of_Doubt_Content.md` in this directory.
 
 ### Bundling note
-`mod2` currently covers Episodes 3, 4 and 5 in one module. The series map recommends splitting it. Until that split happens, this architecture file covers only Episode 3 content within `mod2`. Episode 4 and 5 content from `mod2` is assessed in their own architecture files.
+`history-medicine-renaissance-medicine` currently covers Episodes 3, 4 and 5 in one module. The series map recommends splitting it. Until that split happens, this architecture file covers only Episode 3 content within this module. Episode 4 and 5 content is assessed in their own architecture files.
 
 ---
 
@@ -113,7 +113,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 ## 3. Current state & gap analysis
 
-Built inside shared `mod2`. Episode 3 content should be separated from Harvey and Great Plague content when the Medicine spine is rebuilt into 14 clean modules.
+Built inside `history-medicine-renaissance-medicine` (formerly `mod2`). Episode 3 content should be separated from Harvey and Great Plague content when the Medicine spine is rebuilt into 14 clean modules.
 
 **Audit priority:** confirm Vesalius/anatomy content has its own clear section and is not blurred with Harvey/circulation.
 

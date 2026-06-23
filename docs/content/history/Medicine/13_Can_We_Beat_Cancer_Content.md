@@ -6,11 +6,11 @@
 - **Title (series map):** Can We Beat Cancer?
 - **Subtitle / GCSE topic:** Modern prevention — lung cancer, government intervention, mass vaccinations
 - **Era:** c1900–present (case study focus c1950–present)
-- **Build status:** Built (shared) as `mod9` — also covers Episode 12
+- **Build status:** Built (shared) as `history-medicine-cancer` (formerly `mod9`) — also covers Episode 12
 - **Key Topic reference:** n/a (Series 1)
 
 ### Note on build status
-`mod9` is shared with Episode 12. The split between modern medicine content (Ep 12) and prevention/lung cancer content (Ep 13) within `mod9`'s 10 screens is unverifiable without loading `history.js`. See Architecture file for rebuild recommendations.
+`history-medicine-cancer` (formerly `mod9`) is shared with Episode 12. The split between modern medicine content (Ep 12) and prevention/lung cancer content (Ep 13) within this module's 10 screens is unverifiable without loading the episode file. See Architecture file for rebuild recommendations.
 
 ---
 

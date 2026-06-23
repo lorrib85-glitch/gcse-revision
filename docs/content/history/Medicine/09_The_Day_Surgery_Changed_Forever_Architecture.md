@@ -4,7 +4,7 @@
 
 - **Episode number:** 9
 - **Title:** The Day Surgery Changed Forever
-- **Build status:** Built across `mod3` and `mod6`
+- **Build status:** Built across `history-medicine-surgery-anaesthetics` and `history-medicine-surgery-revolution` (formerly `mod3` and `mod6`)
 - Content, Storyline, Specification requirements and the full Content reference pack: see `09_The_Day_Surgery_Changed_Forever_Content.md` in this directory.
 
 ### Bundling note
@@ -73,7 +73,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 ## 3. Current state & gap analysis
 
-Built across `mod3` and `mod6`. Audit that pain, infection and blood loss all appear clearly and that the final section is exam prep.
+Built across `history-medicine-surgery-anaesthetics` and `history-medicine-surgery-revolution` (formerly `mod3` and `mod6`). Audit that pain, infection and blood loss all appear clearly and that the final section is exam prep.
 
 ---
 

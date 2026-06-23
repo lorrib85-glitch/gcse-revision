@@ -4,11 +4,11 @@
 
 - **Episode number:** 12
 - **Title:** When Medicine Became Magic
-- **Build status:** Built across `mod8` and `mod9`
+- **Build status:** Built across `history-medicine-modern-medicine` and `history-medicine-cancer` (formerly `mod8` and `mod9`)
 - Content, Storyline, Specification requirements and the full Content reference pack: see `12_When_Medicine_Became_Magic_Content.md` in this directory.
 
 ### Bundling note
-Modern medicine and NHS/lifestyle disease content are currently split awkwardly across `mod8` and `mod9`. This episode should focus on modern diagnosis, treatment and access; Episode 13 should handle lung cancer/lifestyle disease.
+Modern medicine and NHS/lifestyle disease content are currently split awkwardly across `history-medicine-modern-medicine` and `history-medicine-cancer`. This episode should focus on modern diagnosis, treatment and access; Episode 13 should handle lung cancer/lifestyle disease.
 
 ---
 
@@ -73,7 +73,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 ## 3. Current state & gap analysis
 
-Built across `mod8` and `mod9`. Audit boundaries so this module does not drift into Episode 13 lung cancer content.
+Built across `history-medicine-modern-medicine` and `history-medicine-cancer` (formerly `mod8` and `mod9`). Audit boundaries so this module does not drift into Episode 13 lung cancer content.
 
 ---
 

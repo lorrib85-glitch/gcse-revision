@@ -4,11 +4,11 @@
 
 - **Episode number:** 5
 - **Title:** London's Year of Terror
-- **Build status:** Built (shared) as `mod2` — also covers Episodes 3 (Vesalius) and 4 (Harvey)
+- **Build status:** Built (shared) as `history-medicine-renaissance-medicine` (formerly `history-medicine-renaissance-medicine`) — also covers Episodes 3 (Vesalius) and 4 (Harvey)
 - Content, Storyline, Specification requirements and the full Content reference pack: see `05_Londons_Year_of_Terror_Content.md` in this directory.
 
 ### Bundling note
-`mod2` currently covers Episodes 3, 4 and 5 in one module. The series map recommends splitting the 1665 Great Plague into its own clear module so students can compare it properly with the Black Death.
+`history-medicine-renaissance-medicine` currently covers Episodes 3, 4 and 5 in one module. The series map recommends splitting the 1665 Great Plague into its own clear module so students can compare it properly with the Black Death.
 
 ---
 
@@ -114,7 +114,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 ## 3. Current state & gap analysis
 
-Built inside shared `mod2`. Episode 5 needs a clean module boundary because comparison with the Black Death is a high-value exam skill.
+Built inside shared `history-medicine-renaissance-medicine`. Episode 5 needs a clean module boundary because comparison with the Black Death is a high-value exam skill.
 
 **Audit priority:** confirm public-health measures are explicit and not just atmospheric background detail.
 

@@ -6,7 +6,7 @@
 - **Title (series map):** London's Year of Terror
 - **Subtitle / GCSE topic:** The Great Plague of 1665
 - **Era:** c1665
-- **Build status:** Built (shared) as `mod2` — also covers Episodes 3 (Vesalius) and 4 (Harvey)
+- **Build status:** Built (shared) as `history-medicine-renaissance-medicine` (formerly `mod2`) — also covers Episodes 3 (Vesalius) and 4 (Harvey)
 - **Key Topic reference:** n/a (Series 1)
 
 ### Scope note

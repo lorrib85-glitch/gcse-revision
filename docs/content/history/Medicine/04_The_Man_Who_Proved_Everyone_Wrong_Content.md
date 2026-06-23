@@ -6,11 +6,11 @@
 - **Title (series map):** The Man Who Proved Everyone Wrong
 - **Subtitle / GCSE topic:** William Harvey and the circulation of blood
 - **Era:** c1628 (publication of key work)
-- **Build status:** Built (shared) as `mod2` — also covers Episodes 3 (Vesalius) and 5 (Great Plague)
+- **Build status:** Built (shared) as `history-medicine-renaissance-medicine` (formerly `history-medicine-renaissance-medicine`) — also covers Episodes 3 (Vesalius) and 5 (Great Plague)
 - **Key Topic reference:** n/a (Series 1)
 
 ### Scope note
-This episode covers William Harvey's discovery of the circulation of blood and the factors that enabled it. It also includes Ambroise Paré in the context of surgical innovation — though Paré is sometimes grouped with Vesalius in the spec. Content from `mod2` attributable to Harvey is noted here. Episodes 3 and 5 are covered in their own files.
+This episode covers William Harvey's discovery of the circulation of blood and the factors that enabled it. It also includes Ambroise Paré in the context of surgical innovation — though Paré is sometimes grouped with Vesalius in the spec. Content from `history-medicine-renaissance-medicine` attributable to Harvey is noted here. Episodes 3 and 5 are covered in their own files.
 
 ---
 
@@ -27,7 +27,7 @@ DRAFT (for user confirmation): Harvey proved that the heart was a pump and blood
 - Harvey's method: used observation, measurement and experiment — not book-learning
 - Harvey's discovery was helped by: his own abilities, being employed by Charles I (credibility), mechanical water pump as technological inspiration, more commonplace dissections, societal interest in science/anatomy
 - Limited immediate impact: theory correct but offered no practical use in treatment → many ignored or criticised it
-- Ambroise Paré (if covered in `mod2`): French surgeon who replaced scalding oil on wounds with ointment; tied off blood vessels instead of cauterising during amputations; showed trial and observation working in surgery
+- Ambroise Paré (if covered in `history-medicine-renaissance-medicine`): French surgeon who replaced scalding oil on wounds with ointment; tied off blood vessels instead of cauterising during amputations; showed trial and observation working in surgery
 
 ### Series throughline
 - **Agent: Individuals (👤):** Harvey is the second great individual of the series — the first since Vesalius (Ep 3). His work shows that individuals, not institutions, now drive medical progress.
@@ -75,9 +75,9 @@ DRAFT (for user confirmation): Harvey proved that the heart was a pump and blood
   - His discovery did not immediately improve treatment for patients
   - Acceptance of Harvey's ideas was therefore slow, and humoural treatments continued for decades
 
-- **Ambroise Paré (c1510–1590) — if covered in `mod2`:**
+- **Ambroise Paré (c1510–1590) — if covered in `history-medicine-renaissance-medicine`:**
   - French surgeon (not explicitly on Edexcel spec as a standalone figure but appears in some resources)
-  - UNCERTAIN: whether Paré is covered in `mod2` given limited screen count
+  - UNCERTAIN: whether Paré is covered in `history-medicine-renaissance-medicine` given limited screen count
   - If covered: replaced scalding oil on gunshot wounds with ointment (after running out of oil accidentally); tied off blood vessels during amputations rather than cauterising → reduced pain and improved survival; also made artificial limbs
 
 - **Continued continuities in the Renaissance:**

@@ -4,11 +4,11 @@
 
 - **Episode number:** 4
 - **Title:** The Man Who Proved Everyone Wrong
-- **Build status:** Built (shared) as `mod2` — also covers Episodes 3 (Vesalius) and 5 (Great Plague)
+- **Build status:** Built (shared) as `history-medicine-renaissance-medicine` (formerly `mod2`) — also covers Episodes 3 (Vesalius) and 5 (Great Plague)
 - Content, Storyline, Specification requirements and the full Content reference pack: see `04_The_Man_Who_Proved_Everyone_Wrong_Content.md` in this directory.
 
 ### Bundling note
-`mod2` currently covers Episodes 3, 4 and 5 in one 16-screen module. Harvey content within `mod2` is estimated at ~5 screens. The series map recommends splitting into three separate modules.
+`history-medicine-renaissance-medicine` currently covers Episodes 3, 4 and 5 in one 16-screen module. Harvey content within this module is estimated at ~5 screens. The series map recommends splitting into three separate modules.
 
 ---
 
@@ -114,7 +114,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 ## 3. Current state & gap analysis
 
-Built inside shared `mod2`. Episode 4 should be split into its own module so Harvey's evidence chain is not crowded by Vesalius or Great Plague content.
+Built inside `history-medicine-renaissance-medicine` (formerly `mod2`). Episode 4 should be split into its own module so Harvey's evidence chain is not crowded by Vesalius or Great Plague content.
 
 **Audit priority:** confirm the module teaches Harvey's method, not just the headline discovery.
 

@@ -6,11 +6,11 @@
 - **Title (series map):** When Medicine Became Magic
 - **Subtitle / GCSE topic:** NHS, modern medicine, modern treatments and diagnosis
 - **Era:** c1900–present
-- **Build status:** Built across `mod8` + `mod9` (mod8: 9 screens, no tags; mod9: 10 screens, no tags)
+- **Build status:** Built across `history-medicine-modern-medicine` + `history-medicine-cancer` (formerly `mod8` + `mod9`) (first module: 9 screens, no tags; second module: 10 screens, no tags)
 - **Key Topic reference:** n/a (Series 1)
 
-### Note on mod8/mod9 bundling
-`mod9` appears in both the Episode 12 and Episode 13 build status — it is shared across both episodes. `mod8` is Episode 12 only. The boundary between "modern medicine" (Ep 12) and "prevention / lung cancer case study" (Ep 13) must be resolved when rebuilding these modules. See Architecture file for recommendations.
+### Note on bundling
+`history-medicine-cancer` (formerly `mod9`) appears in both the Episode 12 and Episode 13 build status — it is shared across both episodes. `history-medicine-modern-medicine` (formerly `mod8`) is Episode 12 only. The boundary between "modern medicine" (Ep 12) and "prevention / lung cancer case study" (Ep 13) must be resolved when rebuilding these modules. See Architecture file for recommendations.
 
 ---
 

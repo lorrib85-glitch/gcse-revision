@@ -4,7 +4,7 @@
 
 - **Episode number:** 13
 - **Title:** Can We Beat Cancer?
-- **Build status:** Built (shared) in `mod9`
+- **Build status:** Built (shared) in `history-medicine-cancer` (formerly `mod9`)
 - Content, Storyline, Specification requirements and the full Content reference pack: see `13_Can_We_Beat_Cancer_Content.md` in this directory.
 
 ### Bundling note
@@ -73,7 +73,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 ## 3. Current state & gap analysis
 
-Built in shared `mod9`. Audit that lung cancer/lifestyle disease becomes a clean episode and is not buried after NHS content.
+Built in shared `history-medicine-cancer` (formerly `mod9`). Audit that lung cancer/lifestyle disease becomes a clean episode and is not buried after NHS content.
 
 ---
 

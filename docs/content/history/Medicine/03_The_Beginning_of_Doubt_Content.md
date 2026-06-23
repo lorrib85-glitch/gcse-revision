@@ -6,11 +6,11 @@
 - **Title (series map):** The Beginning of Doubt
 - **Subtitle / GCSE topic:** Medical Renaissance c1500–c1700 (Vesalius)
 - **Era:** c1500–c1700
-- **Build status:** Built (shared) as `mod2` — also covers Episodes 4 and 5
+- **Build status:** Built (shared) as `history-medicine-renaissance-medicine` (formerly `mod2`) — also covers Episodes 4 and 5
 - **Key Topic reference:** n/a (Series 1)
 
 ### Scope note
-`mod2` currently bundles Episodes 3, 4 and 5 (Vesalius / Harvey / Great Plague). This file covers **Episode 3's content only** — Vesalius, the Medical Renaissance background, and the first challenges to Galen. Harvey (Episode 4) and the Great Plague (Episode 5) are covered in their own files. Content from `mod2` is only noted here if it is clearly attributable to the Renaissance/Vesalius topic.
+`history-medicine-renaissance-medicine` currently bundles Episodes 3, 4 and 5 (Vesalius / Harvey / Great Plague). This file covers **Episode 3's content only** — Vesalius, the Medical Renaissance background, and the first challenges to Galen. Harvey (Episode 4) and the Great Plague (Episode 5) are covered in their own files. Content from this module is only noted here if it is clearly attributable to the Renaissance/Vesalius topic.
 
 ---
 

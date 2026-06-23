@@ -6,11 +6,11 @@
 - **Title (series map):** The Day Surgery Changed Forever
 - **Subtitle / GCSE topic:** Anaesthetics and antiseptics
 - **Era:** c1840–c1900
-- **Build status:** Built across `mod3` + `mod6` (11 + 10 = 21 screens; `mod3` has tags `anaesthetics`, `antiseptic-surgery`; `mod6` has no tags)
+- **Build status:** Built across `history-medicine-surgery-anaesthetics` + `history-medicine-surgery-revolution` (formerly `mod3` + `mod6`) (11 + 10 = 21 screens; the first module has tags `anaesthetics`, `antiseptic-surgery`; the second has no tags)
 - **Key Topic reference:** n/a (Series 1)
 
 ### Scope note
-The series map notes `mod3` sets up the pre-1840 surgery problem (pain, infection, blood loss) and `mod6` delivers the revolution (anaesthetics → antiseptics → aseptic surgery). This file covers the full Episode 9 arc across both modules.
+The series map notes `history-medicine-surgery-anaesthetics` sets up the pre-1840 surgery problem (pain, infection, blood loss) and `history-medicine-surgery-revolution` delivers the revolution (anaesthetics → antiseptics → aseptic surgery). This file covers the full Episode 9 arc across both modules.
 
 ---
 
