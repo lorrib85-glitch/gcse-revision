@@ -16,11 +16,12 @@
 
 ### Core takeaway
 
-Act 1 Scene 7 is the most philosophically dense scene in the play. In his soliloquy, Macbeth demonstrates complete moral awareness: he understands that murdering Duncan is wrong in every dimension — morally, politically, religiously, practically. He lists every reason not to kill. He arrives at the conclusion that "vaulting ambition" is the only spur. And then, when Lady Macbeth challenges his masculinity, he abandons all of this reasoning and agrees to the murder. This is Shakespeare's most direct presentation of how ambition overrides conscience: the tragedy is not that Macbeth is ignorant of the consequences — it is that he knows them completely and chooses to act anyway.
+Act 1 Scene 7 is the most philosophically dense scene in the play. In his soliloquy, Macbeth demonstrates complete moral awareness: he understands that murdering Duncan is wrong in every dimension — morally, politically, religiously, practically. He lists every reason not to kill. He arrives at the conclusion that "vaulting ambition" is the only spur. And then, when Lady Macbeth challenges his masculinity, he abandons all of this reasoning and agrees to the murder. This is Shakespeare's most direct presentation of how ambition overrides conscience: the tragedy is not that Macbeth is ignorant of the consequences — it is that he knows them completely and chooses to act anyway. This is not a machine with no choice; it is a human being choosing to turn moral reasoning into action.
 
 ### Evidence for the takeaway
 
-- The "double trust" speech: Macbeth lists the reasons not to murder — he is Duncan's kinsman, subject, host; Duncan is virtuous; the angels will "blow the horrid deed in every eye" — this is extraordinary moral clarity from the man who will commit the murder
+- Act 1 Scene 6 makes the murder more shocking because Duncan praises Inverness as pleasant and safe, while the audience knows Lady Macbeth is preparing betrayal. Shakespeare uses dramatic irony to make Duncan's trust feel tragic rather than foolish
+- The "double trust" speech: Macbeth lists the reasons not to murder — Duncan trusts Macbeth in more than one role: as family, as subject and as host; Duncan is virtuous; the angels will "blow the horrid deed in every eye" — this is extraordinary moral clarity from the man who will commit the murder
 - "Vaulting ambition, which o'erleaps itself" — Macbeth names his only motive; he offers no other justification; this is self-knowledge, not self-deception
 - "We will proceed no further in this business" — Macbeth explicitly calls it off; he has made a moral choice; Lady Macbeth then reverses it through manipulation alone
 - "When you durst do it, then you were a man" — Lady Macbeth's challenge reduces Macbeth's masculinity to the capacity for violence; he cannot bear this definition to be turned against him
@@ -37,7 +38,7 @@ This episode is the point of no return. Before it, Macbeth has been tempted; aft
 >
 > Extract: Act 1 Scene 7 — Lady Macbeth's manipulation of Macbeth after he calls off the murder ("Was the hope drunk / Wherein you dressed yourself?" ... "screw your courage to the sticking-place")
 
-This is the highest-priority exam practice episode in the series. The 2024 exam set this exact extract.
+This is the highest-priority exam practice episode in the series. The 2024 exam set this exact extract. Act 1 Scene 6 also gives students a strong whole-play/context link: Duncan's praise of Inverness and Lady Macbeth's performed welcome make the coming murder more shocking because Shakespeare makes Duncan's trust feel tragic rather than foolish.
 
 ---
 
@@ -58,27 +59,30 @@ This is the highest-priority exam practice episode in the series. The 2024 exam 
 
 ### Dates & timeline
 
-- Act 1 Scene 6: Duncan arrives at Inverness castle; praises its beauty; Lady Macbeth greets him with lavish false loyalty
+- Act 1 Scene 6: Duncan arrives at Inverness castle; praises its beauty; Lady Macbeth greets him with lavish false loyalty. The audience knows the castle is not safe, so Shakespeare uses dramatic irony to make Duncan's trust feel tragic rather than foolish
 - Act 1 Scene 7: Macbeth slips away before the feast to reconsider; his soliloquy runs through every reason not to murder Duncan; he decides to stop; Lady Macbeth enters and reverses the decision through manipulation
 
 ### Key people
 
-- **Macbeth:** At his most morally lucid in this scene; his soliloquy is not the speech of a man who doesn't understand the consequences — it is the speech of a man who understands them completely and chooses wrong anyway; this is the tragedy
+- **Macbeth:** At his most morally lucid in this scene; his soliloquy is not the speech of a man who doesn't understand the consequences — it is the speech of a man who understands them completely and chooses wrong anyway; this is the tragedy. He is not mindless or forced: Act 1.7 proves he reasons clearly, understands the moral consequences, and chooses badly
 - **Lady Macbeth:** At her most powerful; her arguments shift from logic (the plan, the opportunity) to psychological manipulation (challenging his masculinity, using the nursing/infanticide image as evidence of her own ruthlessness); she wins the argument she should not be able to win
 - **Duncan:** Appears briefly in 1.6 praising the "pleasant seat" of the castle; his praise is dramatically ironic — he is standing at the place of his own murder; his innocence and goodness are at their most visible here
 
 ### Key terms & definitions
 
 - **Soliloquy:** Macbeth's unbroken speech in 1.7; reveals his private moral reasoning; the audience sees a man who knows the right thing and chooses the wrong one
-- **"Double trust":** Macbeth is Duncan's kinsman AND subject AND host — three separate bonds of loyalty, each of which makes murder a different kind of betrayal; the "double" understates (it is triple)
+- **"Double trust":** Duncan trusts Macbeth in more than one role: as family, as subject and as host. Shakespeare makes the murder worse by stacking the broken duties
 - **"Vaulting ambition":** The sole motive Macbeth can identify; "vaulting" (leaping over) + "o'erleaps itself" = ambition that is so excessive it causes its own fall; a self-defeating force
 - **"Sticking-place":** Lady Macbeth's image of a crossbow string wound to its tightest point — maximum tension before release; she is asking Macbeth to hold himself at maximum murderous resolve
 - **Hospitality codes:** In Jacobean society, the host-guest bond was sacred; to murder a guest (especially a king) under your own roof was a profound violation of social and divine law
 - **Masculinity challenge:** Lady Macbeth's central manipulation tool — she attacks Macbeth's identity as a man to override his moral reasoning; this tactic works because Macbeth's sense of masculinity is bound up with courage and action
+- **Dramatic irony in Act 1 Scene 6:** Duncan reads Inverness as pleasant and safe, while the audience knows Lady Macbeth is preparing betrayal. This makes his trust feel tragic rather than foolish
 
 ### Case studies / named examples
 
-- **"He's here in double trust":** Macbeth lists the reasons not to murder: kinsman, subject, host. The word "double" (actually meaning multiple/compound) signals that every possible bond of loyalty is being violated. For AQA AO1: use this to show Macbeth's moral awareness before the murder makes him more, not less, culpable. For AO2: the listing structure (anaphora) mirrors the weight of each obligation.
+- **"This castle hath a pleasant seat":** Duncan's praise of Inverness in Act 1.6 creates painful dramatic irony. He thinks the castle feels peaceful and welcoming, but the audience knows Lady Macbeth is preparing his murder. For AQA: this is a strong appearance-vs-reality and kingship link, because Duncan's trust is shown as innocence and goodness rather than stupidity.
+
+- **"He's here in double trust":** Macbeth lists the reasons not to murder: family, subject, host. Shakespeare makes the murder worse by stacking the broken duties. For AQA AO1: use this to show Macbeth's moral awareness before the murder makes him more, not less, culpable. For AO2: the listing structure mirrors the weight of each obligation.
 
 - **"I have no spur / To prick the sides of my intent, but only / Vaulting ambition":** The horse-riding metaphor is sustained — a horse needs a spur to move; Macbeth has no spur *except* ambition. The word "only" is crucial: he identifies ambition as the *sole* motive, with no moral justification. For AQA AO2: analyse "only" — it is an admission of the thinness of his reason. For AO1: this is Macbeth naming his own hamartia.
 
@@ -92,6 +96,7 @@ This is the highest-priority exam practice episode in the series. The 2024 exam 
 
 ### Causes & effects
 
+- Duncan praises Inverness as pleasant and safe → audience knows Lady Macbeth is preparing betrayal → dramatic irony makes Duncan's trust feel tragic rather than foolish
 - Macbeth lists every moral reason not to kill → arrives at "vaulting ambition" as the only motive → should stop (and does, briefly) → Lady Macbeth's challenge overrides all moral reasoning
 - Lady Macbeth challenges Macbeth's masculinity → Macbeth's identity as a "man" is bound to action and courage → he cannot accept the female-coded alternative (hesitancy, compassion) → he agrees to the murder
 - The infanticide image → demonstrates Lady Macbeth's suppressed maternal humanity → this suppression will not hold → the image of a nursing child reappears as guilt imagery in Act 5
@@ -113,10 +118,14 @@ This is the highest-priority exam practice episode in the series. The 2024 exam 
 3. Whole play paragraph: In Act 5.1, the sleepwalking scene reverses this strength; the suppressed guilt returns; "out, damned spot" echoes the "wash this filthy witness from your hand" she dismissed in Act 2.2
 4. Whole play paragraph: Her strength diminishes from Act 3 — she is excluded from the Banquo plot; she fails to control Macbeth at the banquet; she dies by suicide
 
+**Extra whole-play/context move using Act 1.6:**
+- Act 1 Scene 6 can be used to show that Lady Macbeth's performed hospitality and Duncan's trusting praise of Inverness make the murder more shocking. Shakespeare uses dramatic irony to show that evil can hide inside a place that appears welcoming and safe.
+
 **Misconceptions worth a MisconceptionCheck:**
 - "Lady Macbeth is more ambitious than Macbeth" — PARTLY: she is more decisive here, but Macbeth's ambition is shown as pre-existing and personal in his 1.3 aside; she accelerates what is already there
 - "Macbeth murders Duncan because Lady Macbeth makes him" — OVERSIMPLIFIED: he is shown as a morally autonomous agent who chooses against his own moral reasoning; the tragedy requires his free choice
 - "The 'infanticide' image means Lady Macbeth has actually killed a child" — FALSE: it is hypothetical; she has *not* murdered a child; it is the *willingness* she is claiming, not a past act
+- "The murder machine means Macbeth is automatic or mindless" — FALSE: the chapter title is memorable, but the scene proves the opposite. Macbeth reasons clearly, understands the moral consequences, and chooses badly
 
 ### Sourcing notes
 
