@@ -4,9 +4,9 @@
 
 - **Episode number:** 5
 - **Title:** Sheila learns to see
-- **Subtitle / GCSE focus:** Sheila's interrogation; Milwards; character change; young vs old
-- **Primary act:** Act 1 (Sheila's interrogation)
-- **Secondary whole-play links:** Act 2 Gerald's confession; Act 3 young vs old; Act 3 hoax reaction
+- **Subtitle / GCSE focus:** Sheila's interrogation; Milwards; class and consumer power; remorse; character change; young vs old
+- **Primary act:** Act 1 — Sheila's interrogation and the Milwards incident
+- **Secondary whole-play links:** Episode 1 opening characterisation; Episode 4 Eva leaves factory for Milwards; Episode 6 Gerald's confession; Episode 9 Inspector's final speech; Episode 10 young vs old split
 - **Build status:** Not yet built
 
 ---
@@ -14,90 +14,171 @@
 ## 2. Storyline
 
 ### Core takeaway
-Sheila changes from sheltered and materialistic to morally awake and socially responsible. She changes faster and more completely than any other character. Her acceptance of guilt, her refusal to hide behind pretence, and her growing role as a "pseudo-Inspector" (warning others and seeing through excuses) make her Priestley's primary symbol of hope for the younger generation. She does not forget what she has learned when the Inspector leaves — unlike her parents.
+
+Sheila changes from sheltered, excited and materialistic to morally awake and socially responsible. Her first reaction to Eva's death is emotional, but her real importance is that she converts feeling into responsibility. She does not only feel sorry. She accepts what she did, learns from it, and begins challenging the moral blindness of the people around her.
+
+The Milwards incident shows how class power can be used casually and destructively. Sheila has no official legal power over Eva, but her status as an upper-middle-class customer gives her influence. A moment of jealousy and wounded vanity leads to another working-class woman losing her job.
+
+Sheila becomes Priestley's main symbol of hope for the younger generation. She is not perfect — she begins the play privileged, childish and capable of cruelty — but she is teachable. That is the point. Priestley does not present hope as innocence. He presents hope as the ability to accept guilt and change.
 
 ### Evidence for the takeaway
-- "very pleased with life and rather excited" (opening stage direction) → naive, materialistic start
-- "furious" — she used her power to get Eva sacked from Milwards; a consumer's petty act with devastating consequences
-- "I'll never, never do it again to anybody" — she accepts responsibility immediately and completely; the double "never" signals commitment
-- "these girls aren't cheap labour — they're people" (Act 1) — her moral correction of Birling
-- "you mustn't try to build up a wall between us and what happened" — she refuses the family's self-protective logic
-- "it frightens me the way you talk" — by Act 3 she is frightened of her family's capacity for moral blindness
-- "we all started like that — so confident, so pleased with ourselves until he began asking us questions" — she sees her family's confidence as the problem, not the solution
+
+- "very pleased with life and rather excited" — opening stage direction; sheltered, happy and protected by privilege
+- "Oh — how horrible!" — emotional response to Eva's death; Sheila is affected before she is accused
+- "these girls aren't cheap labour — they're people" — from Episode 4; her moral vision starts before her own guilt is exposed
+- "I went to the manager and told him that this girl had been very impertinent" — Sheila uses class/customer power to punish Eva
+- "I was in a furious temper" — she admits the emotional cause; not justice, but anger and insecurity
+- "I know I'm to blame — and I'm desperately sorry" — direct responsibility; no evasion
+- "If I could help her now, I would" — remorse combined with a desire to repair, even though repair is impossible
+- "I'll never, never do it again to anybody" — repetition shows commitment to changed behaviour
+- "you knew it was me all the time" — Sheila realises the Inspector already knows; she understands his method faster than the adults do
+- "You mustn't try to build up a kind of wall between us and that girl" — she rejects emotional and class separation
+- "No, he's giving us the rope — so that we'll hang ourselves" — Sheila sees the Inspector's method and warns Gerald
+- "it frightens me the way you talk" — by Act 3, she is frightened by the older generation's refusal to learn
+- "we all started like that — so confident, so pleased with ourselves" — she links personal guilt to the family's wider complacency
 
 ### Series throughline
-Sheila embodies Priestley's central hope: that the younger generation can learn from the mistakes of the older one, and build a fairer society. Her arc is the positive counterpart to Birling's refusal to change. By Act 3 she is more morally articulate than anyone else in the room. Her silence at the end is not defeat — it is the silence of someone who has tried and cannot make others change; she has changed herself.
+
+Sheila is the first character to show genuine moral learning. Birling refuses responsibility; Sheila accepts it. This contrast becomes one of the play's most important structural oppositions: older generation denial versus younger generation change.
+
+Her development also complicates class and gender. Sheila is constrained by Edwardian expectations of femininity, marriage and respectability, but she still has more power than Eva because she is wealthy. Priestley uses Sheila to show that privilege can harm even when it is used in a small, emotional moment.
+
+By Acts 2 and 3, Sheila becomes a kind of pseudo-Inspector. She begins to understand how the Inspector works, anticipates the next revelations, warns others not to lie, and refuses to let the family retreat into comfort. This does not make her equal to the Inspector, but it shows she has internalised his moral lesson.
 
 ### Exam framing
+
 This episode is essential for essays on:
-- "How does Priestley present Sheila Birling?" — the clearest character arc in the play
-- "How does Priestley present young and old in An Inspector Calls?"
-- "How does Priestley present responsibility?"
-- "How does Priestley present gender in An Inspector Calls?" — Sheila's powerlessness in Edwardian gender structures, and her breaking free of them
+- "How does Priestley present Sheila Birling?" — the clearest positive character arc in the play
+- "How does Priestley present the younger generation?" — Sheila learns and refuses to forget
+- "How does Priestley present responsibility?" — Sheila moves from guilt to responsibility to change
+- "How does Priestley present social class?" — upper-middle-class consumer power damages working-class employment
+- "How does Priestley present gender?" — Sheila is both constrained by patriarchy and capable of misusing class privilege
+- "How does Priestley present Eva Smith?" — Eva's vulnerability continues through the Milwards dismissal
+
+**AQA format reminder:** *An Inspector Calls* is a whole-play essay text. There is no printed extract, so Sheila's Act 1 confession should be linked to her opening innocence, her later warnings to Gerald, her Act 3 refusal to forget, and her contrast with Arthur/Sybil.
 
 ---
 
 ## 3. Specification requirements
 
-- Sheila's opening characterisation: "very pleased with life and rather excited" — naive, materialistic
-- The Milwards incident: Sheila had Eva sacked after Eva smiled/laughed at her; Sheila was "furious" — consumer power weaponised against a vulnerable worker
-- Her immediate acceptance of responsibility: "I'll never, never do it again to anybody"
-- Her growing role as a "pseudo-Inspector": she begins to see what the Inspector sees; she warns Gerald and her parents
-- Her refusal to return to pre-Inspector complacency: "you mustn't try to build up a wall"
-- "it frightens me the way you talk" — her response to the older generation's denial in Act 3
-- Young vs old: she and Eric accept guilt; Arthur and Sybil refuse
-- AO3: gender in 1912 — what it means for a woman to use her social position to punish a shop girl
-- AO3: her function as Priestley's hope for post-war social change
+- Sheila's opening characterisation: "very pleased with life and rather excited" — naive, protected and materialistic
+- The Milwards incident: Eva works in a smart department store after leaving Birling's factory
+- Sheila tries on a dress that does not suit her; Eva smiles/laughs at another assistant; Sheila feels mocked
+- Sheila uses her family's customer status to complain to the manager and get Eva dismissed
+- Sheila admits she was "furious" and later accepts blame directly
+- Her responsibility quote: "I know I'm to blame — and I'm desperately sorry"
+- Her behaviour-change quote: "I'll never, never do it again to anybody"
+- Her class-responsibility quote: "these girls aren't cheap labour — they're people"
+- Her wall metaphor: "You mustn't try to build up a kind of wall between us and that girl"
+- Her pseudo-Inspector role: "he's giving us the rope — so that we'll hang ourselves"
+- Young vs old: Sheila and Eric change; Arthur and Sybil mostly resist
+- AO3: Edwardian gender expectations; consumer culture; class hierarchy; working-class women had limited employment security
+- AO2: stage directions, repetition, metaphor, confession, contrast, structural character arc, pseudo-Inspector function
 
 ---
 
 ## 4. Content reference pack
 
 ### Dates & timeline
-- **Approximately two months before the play's 1912 setting:** Sheila had Eva dismissed from Milwards — so Eva was at Milwards briefly after the factory sacking
+
+- **Opening, Act 1:** Sheila is introduced as "very pleased with life and rather excited"
+- **After factory dismissal:** Eva gains work at Milwards, a respectable shop/department store
+- **A few months before the play:** Sheila complains about Eva at Milwards; Eva is dismissed again
+- **Act 1 interrogation:** Sheila recognises the photograph, confesses and accepts responsibility
+- **Acts 2–3:** Sheila increasingly sees through excuses and becomes the clearest younger-generation moral voice
 
 ### Key people
-- **Sheila Birling:** "pretty girl in her early twenties, very pleased with life and rather excited"; fiancée of Gerald; her arc is from naive to morally aware; she is Priestley's most fully realised character of hope
-- **Eva Smith (at Milwards):** Eva was employed at Milwards (a smart department store) after losing her factory job; she smiled/laughed at Sheila during a fitting; Sheila, who was in a bad mood, reported her; Eva was dismissed
+
+- **Sheila Birling:** privileged, initially naive, but emotionally receptive and morally teachable. Her power lies in her capacity to change.
+- **Eva Smith:** at Milwards she is no longer a factory worker but a shop assistant. The move suggests she is trying to rebuild respectability after losing factory work.
+- **Inspector Goole:** guides Sheila from emotion to responsibility. His questioning exposes her but also enables her transformation.
+- **Arthur and Sybil Birling:** older-generation contrast. They prioritise reputation, status and self-defence more than moral change.
+- **Gerald Croft:** Sheila's next test. Her ability to question and warn him shows her pseudo-Inspector role developing.
 
 ### Key terms & definitions
-- **Consumer power:** Sheila's ability to have Eva sacked by complaining to the management; she had no legal power over Eva but used her class position to punish her
-- **Pseudo-Inspector:** a critical term for Sheila's role in Acts 2 and 3; she begins to anticipate the Inspector's questions and to question others on his behalf
-- **Social responsibility:** the principle that individuals have duties to others in society; Sheila accepts this; the Birlings (Arthur and Sybil) refuse it
+
+- **Character arc:** a character's development across the play. Sheila has one of the clearest arcs: naive privilege → remorse → moral responsibility → refusal to forget.
+- **Consumer power:** influence held by a customer. Sheila has no formal authority over Eva but her wealthy customer status gives her destructive power.
+- **Pseudo-Inspector:** a useful critical label for Sheila in Acts 2 and 3; she begins to see patterns, warn others and challenge excuses.
+- **Remorse:** genuine sorrow for wrongdoing. Sheila feels remorse, but Priestley makes her important because she also changes.
+- **Responsibility:** accepting that one's actions had consequences and refusing to hide from them.
+- **Generational divide:** contrast between younger characters who can learn and older characters who mainly defend themselves.
+- **Class privilege:** unearned social power from wealth/status. Sheila's class gives her influence over Eva.
 
 ### Case studies / named examples
-- **The Milwards incident:** Sheila saw Eva in the dress department; Eva was helping her; Sheila "caught the girl smiling at the assistant, and she went and told the manager" — the trigger was a perceived slight in a changing room; Sheila used her family's account status to have Eva fired; Eva had only been there a few months
-- **"I'll never, never do it again to anybody":** the repetition of "never" is emphatic; she means it; unlike the adults she does not later try to minimise her guilt
+
+- **Opening Sheila:** "very pleased with life and rather excited". Priestley begins her as protected and immature. This makes her later change more visible. She is not born morally superior; she becomes more responsible.
+
+- **Milwards and the dress:** Sheila is in a bad mood because the dress does not suit her. When Eva appears to smile or laugh, Sheila interprets it as mockery. Priestley shows that upper-class insecurity can become dangerous when it is backed by class power.
+
+- **"I went to the manager":** This small phrase reveals how power works. Sheila does not need to threaten Eva directly. The class system does the work for her: the manager listens to the wealthy customer, not the shop assistant.
+
+- **"I was in a furious temper":** The adjective "furious" exposes the emotional pettiness behind the action. This was not justice or principle; it was wounded vanity.
+
+- **"I know I'm to blame — and I'm desperately sorry":** Sheila's confession is direct. Unlike Birling, she does not hide behind business logic. The dash creates a pause that makes the second clause feel sincere and emotionally weighted.
+
+- **"I'll never, never do it again to anybody":** The repetition of "never" is the clearest sign that remorse may become behavioural change. The final word "anybody" widens the lesson beyond Eva.
+
+- **"These girls aren't cheap labour — they're people":** This line is crucial because Sheila sees personhood before the Inspector has finished exposing her. Priestley presents her as morally receptive.
+
+- **"You mustn't try to build up a kind of wall":** The wall metaphor shows Sheila understands emotional avoidance. The family want a barrier between themselves and Eva; Sheila knows responsibility requires connection.
+
+- **"He's giving us the rope — so that we'll hang ourselves":** Sheila has understood the Inspector's method. He does not need to force confessions; he allows the characters' own words to expose them.
+
+- **"It frightens me the way you talk":** By Act 3, Sheila's fear is not of scandal but of moral blindness. This is the key difference between her and her parents.
 
 ### Causes & effects
-- Sheila is "furious" in Milwards → complains to management → Eva is dismissed again
-- Eva dismissed from Milwards → seeks other work → eventually meets Gerald (Episode 6)
-- Sheila accepts guilt immediately → refuses to build a wall → becomes the episode's moral voice
-- Sheila's early moral awakening → she warns Gerald and her parents → she becomes a "pseudo-Inspector"
-- Young vs old divide emerges in this episode → Sheila and Eric (young) change; Arthur and Sybil (old) refuse → Priestley's generational argument encoded
+
+- Sheila's insecurity in Milwards → she complains to the manager → Eva loses another job
+- Eva loses Milwards job → she becomes more vulnerable → she later meets Gerald
+- Sheila recognises the photograph → confesses quickly → accepts blame
+- Sheila accepts responsibility → begins warning others → becomes pseudo-Inspector figure
+- Sheila learns from Eva → refuses to dismiss the experience as a hoax → young vs old divide sharpens
+- Sheila's class power harms Eva → Sheila's later moral change offers Priestley's hope that privilege can be challenged from within
 
 ### Exam angles
-**Common question types:**
-- "How does Priestley present Sheila Birling in An Inspector Calls?"
-- "How does Priestley present the younger generation?"
 
-**Mark scheme keywords:** character arc; transformation; guilt; responsibility; pseudo-Inspector; young vs old; gender; consumer power; social responsibility; hope
+**Common question types:**
+- "How does Priestley present Sheila Birling in *An Inspector Calls*?"
+- "How does Priestley present the younger generation?"
+- "How does Priestley present responsibility?"
+- "How does Priestley present social class?"
+- "How does Priestley present gender?"
+- "How does Priestley present change?"
+
+**Mark scheme keywords:** character arc; remorse; responsibility; change; pseudo-Inspector; young vs old; gender; consumer power; social responsibility; class privilege; Priestley's hope; contrast; structure
+
+**Grade 9 essay move:**
+Do not present Sheila as simply "good". Priestley's point is stronger: Sheila begins as flawed and privileged, but becomes hopeful because she can recognise harm, accept responsibility and change.
+
+**Possible high-level interpretation:**
+Some readers see Sheila's final quietness as the silence of someone who has changed but cannot force others to change. Use this carefully as one interpretation, not as the only reading.
+
+**Useful paragraph stem:**
+Priestley presents Sheila as morally flawed but teachable: her misuse of class power harms Eva, but her immediate acceptance of responsibility makes her a symbol of generational hope.
 
 **Key misconceptions for MisconceptionCheck:**
-- "Sheila is weak and passive throughout the play" — FALSE: she becomes one of the play's strongest moral voices
-- "Sheila's guilt is enough to redeem her — she has done her part" — FALSE: Priestley shows that individual guilt must translate into changed behaviour and wider social change
-- "The Milwards incident is trivial compared to what others did" — FALSE: Eva's loss of her Milwards job was critical to her spiral; every link in the chain matters
+- "Sheila is weak and passive throughout" — false: she becomes one of the play's strongest moral voices
+- "Sheila is completely innocent because she feels sorry" — false: remorse matters, but she still caused real harm
+- "The Milwards incident is trivial" — false: it is a crucial link in Eva's downfall
+- "Sheila changes only when she is personally accused" — too simple: her moral awareness begins when she challenges Birling's "cheap labour" language
+- "Sheila has no power because she is a woman in 1912" — too simple: she has less patriarchal power than men but still has class power over Eva
 
 **Techniques to name:**
-- Stage directions ("very pleased with life" — opening vs her final demeanour — structural contrast)
-- Repetition ("never, never" — emphatic commitment)
-- Dramatic irony (the audience knows what the family doesn't about Eva yet)
-- The pseudo-Inspector function (Sheila as the Inspector's ally)
-- Consumer power / class power (weaponised complaint in a department store)
+- Stage directions: "very pleased with life and rather excited"
+- Repetition: "never, never"
+- Confession/direct speech: "I know I'm to blame"
+- Metaphor: "build up a wall"
+- Dramatic irony and anticipation: Sheila begins to understand the Inspector before others do
+- Structural contrast: opening Sheila vs Act 3 Sheila
+- Pseudo-Inspector function: warning, seeing, challenging
+- Class-power contrast: wealthy customer vs vulnerable shop assistant
 
 ### Sourcing notes
-- **knowledge_organiser.txt:** Sheila character description and quotes — used
-- **grade9_essay_context.txt:** extended analysis of Sheila's function; model essay on Sheila — primary source
-- **booklet_aic.txt:** Sheila character table, Act 1 plot summary — used
-- **themes_aic.txt:** age/generation theme section — used
-- **spine_bf.txt:** episode structure, quote cues — primary structural source
+
+- **Attached play text:** Sheila's Milwards confession; dress incident; manager complaint; remorse quotes; pseudo-Inspector warnings
+- **Attached knowledge organiser:** Sheila character arc; young vs old; key quotations; responsibility theme
+- **Attached themes pack:** age/generation; gender; class; responsibility; Sheila as Priestley's hope
+- **Attached revision guide:** AQA whole-play format; character and theme essay practice; AO2/AO3 balance
+- **Attached Grade 9 context essay:** Sheila's function as generational hope; big-idea framing; careful treatment of change
+- **Series map:** AQA whole-play essay requirement; AO1/AO2/AO3/AO4 balance; six-section episode architecture
