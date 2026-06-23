@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
+import { TYPE } from '../../constants/typography.js'
 
 function getOptionLabel(option) {
   if (typeof option === 'string') return option
@@ -8,50 +9,42 @@ function getOptionLabel(option) {
 }
 
 export default function UnifiedQuestionScreen({
-  question,           // string: the question text (normalized from 'q' or 'question' field)
-  type = 'choice',    // 'choice' | 'truefalse'
-  options = [],       // string[] for choices or ['True', 'False'] for truefalse
-  correct,            // number: index of correct option
-  hint,               // string: displayed after first wrong attempt
-  explanation,        // string: shown after correct or final wrong
-
-  backgroundImage,    // string: URL for background (optional)
-  subject = 'History',// string: subject name for accent colour
-  qIndex = 0,         // number: current question index (for progress)
-  qTotal = 1,         // number: total questions in sequence
-
-  onAnswer,           // (isCorrect: bool) => void: called after submission
-  onComplete,         // () => void: called when moving to next question
-
-  showTimer = false,  // bool: if true, render circular timer
-  timeLeft,           // number: seconds remaining (if showTimer true)
-  totalSeconds = 90,  // number: total seconds (for timer scaling)
+  question,
+  type = 'choice',
+  options = [],
+  correct,
+  hint,
+  explanation,
+  backgroundImage,
+  subject = 'History',
+  qIndex = 0,
+  qTotal = 1,
+  onAnswer,
+  onComplete,
+  showTimer = false,
+  timeLeft,
+  totalSeconds = 90,
 }) {
   const FEEDBACK_HOLD_MS = 1200
-
   const subjectData = SUBJECTS[subject] || SUBJECTS.History
   const accent = subjectData.accent
   const rgb = subjectData.accentRgb
 
-  // State management
   const [tapped, setTapped] = useState(null)
-  const [status, setStatus] = useState(null)         // null | 'correct' | 'incorrect'
+  const [status, setStatus] = useState(null)
   const [hintVisible, setHintVisible] = useState(false)
   const [retryTapped, setRetryTapped] = useState(null)
   const [retryStatus, setRetryStatus] = useState(null)
   const [entered, setEntered] = useState(false)
   const [leaving, setLeaving] = useState(false)
-
   const timersRef = useRef([])
 
-  // Lock body scroll while this full-screen overlay is mounted
   useEffect(() => {
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = prev }
   }, [])
 
-  // Enter animation
   useEffect(() => {
     const raf = requestAnimationFrame(() => setEntered(true))
     return () => {
@@ -60,14 +53,13 @@ export default function UnifiedQuestionScreen({
     }
   }, [])
 
-  // Normalize question and correct fields
   const q = question || ''
   const correctIdx = typeof correct === 'number' ? correct : 0
   const isTrueFalse = type === 'truefalse'
 
   function advanceAfterHold() {
     const holdMs = FEEDBACK_HOLD_MS
-    const outMs = parseInt(MOTION.duration.standard, 10)   // 280ms
+    const outMs = parseInt(MOTION.duration.standard, 10)
     timersRef.current.push(setTimeout(() => {
       setLeaving(true)
       timersRef.current.push(setTimeout(() => {
@@ -85,17 +77,14 @@ export default function UnifiedQuestionScreen({
       onAnswer?.(isCorrect)
 
       if (isCorrect || isTrueFalse) {
-        // True/false is binary — a wrong tap already reveals the answer, so
-        // skip the hint and retry step and move straight on.
         advanceAfterHold()
       } else {
-        const hintMs = parseInt(MOTION.duration.fast, 10) // 180ms
+        const hintMs = parseInt(MOTION.duration.fast, 10)
         timersRef.current.push(setTimeout(() => setHintVisible(true), hintMs))
       }
       return
     }
 
-    // One retry after the hint: picking a different answer marks it immediately
     if (status === 'incorrect' && hintVisible && retryStatus === null && opt !== tapped) {
       const isCorrect = opt === options[correctIdx]
       setRetryTapped(opt)
@@ -117,6 +106,7 @@ export default function UnifiedQuestionScreen({
         </span>
       )
     }
+
     return (
       <span aria-hidden="true" style={{
         position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
@@ -160,7 +150,6 @@ export default function UnifiedQuestionScreen({
         }
       `}</style>
 
-      {/* Background image (if provided) */}
       {backgroundImage && (
         <div
           aria-hidden="true"
@@ -174,7 +163,6 @@ export default function UnifiedQuestionScreen({
         />
       )}
 
-      {/* Dark overlay — dims bg image and anchors content legibility */}
       <div
         aria-hidden="true"
         style={{
@@ -185,7 +173,6 @@ export default function UnifiedQuestionScreen({
         }}
       />
 
-      {/* Content shell — sits above overlay, handles padding */}
       <div
         className="cinematic-shell"
         style={{
@@ -201,26 +188,23 @@ export default function UnifiedQuestionScreen({
           transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
         }}
       >
-
-        {/* Question — hero prompt, no card frame */}
         <p style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: isTrueFalse ? 'clamp(1.75rem, 7vw, 2.25rem)' : 'clamp(1.875rem, 7.6vw, 2.625rem)',
+          ...TYPE.screenHeading,
+          fontSize: isTrueFalse ? 'clamp(28px, 7vw, 36px)' : 'clamp(30px, 7.4vw, 40px)',
           lineHeight: 1.08,
-          fontWeight: 700,
+          fontWeight: 780,
           letterSpacing: '-0.04em',
           marginTop: 0,
           marginBottom: isTrueFalse ? 18 : 22,
           marginInline: 'auto',
           color: 'rgba(255,255,255,0.94)',
-          maxWidth: isTrueFalse ? '100%' : '92%',
+          maxWidth: isTrueFalse ? '100%' : '94%',
           overflowWrap: 'break-word',
           textAlign: 'left',
         }}>
           {q}
         </p>
 
-        {/* Answer options */}
         <div style={{
           display: isTrueFalse ? 'grid' : 'flex',
           gridTemplateColumns: isTrueFalse ? '1fr 1fr' : undefined,
@@ -235,55 +219,40 @@ export default function UnifiedQuestionScreen({
             const isFirstTapped = tapped === opt
             const isRetryTapped = retryTapped === opt
             const isCorrectOpt = i === correctIdx
-
-            // ── Per-button state styling ──────────────────────────────────
-            // Rule: only the selected wrong tap gets red treatment.
-            // All other non-correct options simply recede (dimmed, no red).
-            // The correct option gets accent treatment whenever revealed.
             let opacity = 1
             let background = 'rgba(21,23,32,0.9)'
             let border = '1px solid rgba(255,255,255,0.12)'
             let color = 'rgba(255,255,255,0.78)'
             let boxShadow = undefined
             let correctAnimation = undefined
-
             const answered = status !== null
             const retryDone = retryStatus !== null
 
-            // After first answer is submitted
             if (answered) {
-              // Selected wrong answer — red treatment
               if (isFirstTapped && status === 'incorrect') {
                 background = 'rgba(160,40,36,0.10)'
                 border = '1px solid rgba(224,90,82,0.52)'
                 color = 'rgba(255,255,255,0.92)'
                 opacity = 1
-              }
-              // Correct answer — accent treatment (on direct correct tap or revealed)
-              else if (isCorrectOpt && (status === 'correct' || retryDone)) {
+              } else if (isCorrectOpt && (status === 'correct' || retryDone)) {
                 background = `rgba(${rgb}, 0.13)`
                 border = `1px solid rgba(${rgb}, 0.65)`
                 color = 'rgba(255,255,255,0.94)'
-              }
-              // All other untouched options — quietly recede, no red
-              else if (!isFirstTapped && !isRetryTapped) {
+              } else if (!isFirstTapped && !isRetryTapped) {
                 color = 'rgba(255,255,255,0.58)'
                 opacity = 0.72
                 border = '1px solid rgba(255,255,255,0.07)'
               }
             }
 
-            // After retry
             if (retryDone) {
               if (isRetryTapped && retryStatus === 'incorrect') {
-                // Second wrong tap — same red treatment as first
                 background = 'rgba(160,40,36,0.10)'
                 border = '1px solid rgba(224,90,82,0.52)'
                 color = 'rgba(255,255,255,0.92)'
                 opacity = 1
               }
               if (isRetryTapped && retryStatus === 'correct') {
-                // Retry was correct — accent
                 background = `rgba(${rgb}, 0.13)`
                 border = `1px solid rgba(${rgb}, 0.65)`
                 color = 'rgba(255,255,255,0.94)'
@@ -291,13 +260,11 @@ export default function UnifiedQuestionScreen({
               }
             }
 
-            // Hover-pending retry tap (retryTapped set but retryStatus not yet)
             if (isRetryTapped && retryStatus === null) {
               border = `1px solid rgba(${rgb}, 0.45)`
               color = 'rgba(255,255,255,0.9)'
             }
 
-            // Correct-answer glow — runs after all other conditions so it always wins
             if (isCorrectOpt && (status === 'correct' || retryDone)) {
               background = `rgba(${rgb}, 0.14)`
               border = `1px solid rgba(${rgb}, 0.72)`
@@ -327,8 +294,7 @@ export default function UnifiedQuestionScreen({
                   borderRadius: isTrueFalse ? 18 : 14,
                   padding: isTrueFalse ? '15px 18px' : '14px 48px 14px 18px',
                   cursor: disabled ? 'default' : 'pointer',
-                  fontFamily: "'Sora', sans-serif",
-                  fontWeight: 650,
+                  ...TYPE.buttonText,
                   fontSize: isTrueFalse ? '1.05rem' : '1.0625rem',
                   lineHeight: 1.35,
                   color,
@@ -350,7 +316,6 @@ export default function UnifiedQuestionScreen({
           })}
         </div>
 
-        {/* Hint box — appears after first wrong attempt */}
         {hintVisible && status === 'incorrect' && (
           <div
             style={{
@@ -377,10 +342,7 @@ export default function UnifiedQuestionScreen({
             <div>
               <div
                 style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  letterSpacing: '0.14em',
+                  ...TYPE.metadata,
                   textTransform: 'uppercase',
                   color: accent,
                   marginBottom: 8,
@@ -390,7 +352,7 @@ export default function UnifiedQuestionScreen({
               </div>
               <p
                 style={{
-                  fontFamily: "'Outfit', sans-serif",
+                  ...TYPE.bodyLarge,
                   fontSize: 18,
                   lineHeight: 1.55,
                   margin: 0,
@@ -399,11 +361,9 @@ export default function UnifiedQuestionScreen({
               >
                 {hint || explanation || 'Try again — pick a different answer.'}
               </p>
-
             </div>
           </div>
         )}
-
       </div>
     </div>
   )
