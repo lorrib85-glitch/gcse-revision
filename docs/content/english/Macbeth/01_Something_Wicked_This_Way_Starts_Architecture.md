@@ -64,21 +64,9 @@ Content, Storyline, Specification requirements and the full Content reference pa
   - `FillInTheBlanksBlock` — complete the analysis of "Fair is foul": "Shakespeare uses ______ to suggest that ______, which reflects the Jacobean belief that ______"
   - `InteractiveCollectionExplorer` — browse the episode's quotes by theme category
 
-### Section 5 — Exam Practice
-- **Purpose:** At least one AQA-style practice moment.
+### Section 5 — Retrieval & Wider Play Links
+- **Purpose:** Build whole-play awareness. Episode 1 has no earlier episodes to retrieve from, so it should make explicit forward links that will become retrieval anchors later.
 - **Proposed content for this episode:**
-  - Question stem: "Starting with this extract, explore how Shakespeare presents the supernatural in Macbeth." (Act 1.1 as extract)
-  - The opening scene is ideal for extract-opening analysis: every technique (pathetic fallacy, rhyme, paradox, brevity) serves the question
-  - Model paragraph: analysis of "Fair is foul, and foul is fair" using Point → Quote → Analysis → Context → Whole play
-  - Guided response: students identify AO2 techniques in the scene, then use them in a structured paragraph
-  - Mark scheme awareness: Level 3 = explains a technique; Level 4 = analyses + contextualises; Level 5 = conceptualised, convincing
-- **Suggested components:**
-  - `GuidedExamResponse` — scaffolded paragraph building on "Fair is foul" as the analytical anchor
-  - `ExaminerExplainsScreen` — animated word-by-word reveal of what a Level 4/5 answer does differently
-
-### Section 6 — Retrieval & Wider Play Links
-- **Purpose:** Interleave knowledge from earlier episodes; build whole-play awareness.
-- **Proposed content for this episode (Episode 1 = no earlier episodes; link forward instead):**
   - Forward link: Where do the witches appear next? (1.3 — Episode 3) What do they do there?
   - Forward link: Macbeth's echo of "foul and fair" in 1.3 — what does it suggest about his connection to them?
   - Retrieval: What is equivocation? (seeds Episode 3, 8 Porter scene, Episode 11)
@@ -87,6 +75,18 @@ Content, Storyline, Specification requirements and the full Content reference pa
 - **Suggested components:**
   - `QuickRecallScreen` — rapid-fire retrieval of the episode's key facts and terms
   - `RecoveryQuizPlayer` — 3-4 targeted questions if recall is weak
+
+### Section 6 — Exam Practice
+- **Purpose:** Final AQA-style practice moment. The final navigation/progress dot must land on exam prep.
+- **Proposed content for this episode:**
+  - Question stem: "Starting with this extract, explore how Shakespeare presents the supernatural in Macbeth." (Act 1.1 as practice extract)
+  - Act 1 Scene 1 is high-value as a whole-play link for supernatural, disorder and appearance/reality questions. It can be used for practice, but students should understand it is more likely to support a wider-play argument than appear alone as a full exam extract.
+  - Model paragraph: analysis of "Fair is foul, and foul is fair" using Point → Quote → Analysis → Context → Whole play
+  - Guided response: students identify AO2 techniques in the scene, then use them in a structured paragraph
+  - Mark scheme awareness: Level 3 = explains a technique; Level 4 = analyses + contextualises; Level 5 = conceptualised, convincing
+- **Suggested components:**
+  - `GuidedExamResponse` — scaffolded paragraph building on "Fair is foul" as the analytical anchor
+  - `ExaminerExplainsScreen` — animated word-by-word reveal of what a Level 4/5 answer does differently
 
 ---
 
@@ -98,7 +98,7 @@ Not yet built — full build from spec.
 
 ## 4. Build recommendations
 
-1. **Storyline integration:** The core takeaway (the witches establish moral inversion as the play's founding principle) should be stated in Section 3 and practised in Section 5. In Section 3, teach the "Fair is foul" paradox as more than a quote — it is the structural logic of the entire play. In Section 5, the model paragraph should demonstrate how a student can use this as a conceptualised argument, not just a language point.
+1. **Storyline integration:** The core takeaway (the witches establish moral inversion as the play's founding principle) should be stated in Section 3 and practised in Section 6. In Section 3, teach the "Fair is foul" paradox as more than a quote — it is the structural logic of the entire play. In Section 6, the model paragraph should demonstrate how a student can use this as a conceptualised argument, not just a language point.
 
 2. **Section 1 must address the primary misconception:** "The witches make Macbeth commit murder." The ChapterHookScreen true/false should include this statement and use the reveal to establish from the start that Macbeth has free will — this frames the entire series correctly.
 
@@ -106,7 +106,7 @@ Not yet built — full build from spec.
 
 4. **Section 4 — prioritise "Fair is foul" for exam practice:** This is the quote most students know but most students cannot analyse properly beyond "it means good is bad." The FillInTheBlanksBlock should push them toward the play-wide implications of the paradox (the *structural* principle, not just the local meaning).
 
-5. **Section 6 — use this episode to preview Episode 3:** Since there are no earlier episodes to retrieve from, use Section 6 to prime the learner for what comes next. The forward link to Macbeth's echo in 1.3 establishes continuity and seeds retrieval for the next session.
+5. **Section 5 — use this episode to preview Episode 3:** Since there are no earlier episodes to retrieve from, use Section 5 to prime the learner for what comes next. The forward link to Macbeth's echo in 1.3 establishes continuity and seeds retrieval for the next session.
 
 ---
 
@@ -118,7 +118,7 @@ Not yet built — full build from spec.
 - [ ] Students have actively retrieved at least 4 key quotes from the episode (Section 4)
 - [ ] Students can analyse each key quote using Point → Quote → Analysis → Context (Section 4)
 - [ ] Students can identify and name at least 2 language/structural techniques from the episode (Section 4)
-- [ ] Students have practised at least one AQA-style written response (Section 5)
-- [ ] Students have been shown or produced a mark-scheme-aware paragraph (Section 5)
-- [ ] Students have retrieved content from at least one earlier episode (Section 6)
-- [ ] The episode's core takeaway (how it contributes to the series throughline) has been stated and practised (Section 3 or 5)
+- [ ] Students have made at least one explicit forward link to later episodes (Section 5)
+- [ ] Students have practised at least one AQA-style written response (Section 6)
+- [ ] Students have been shown or produced a mark-scheme-aware paragraph (Section 6)
+- [ ] The episode's core takeaway (how it contributes to the series throughline) has been stated and practised (Section 3 or 6)
