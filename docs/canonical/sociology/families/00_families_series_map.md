@@ -226,8 +226,9 @@ Every episode, before marking complete, must pass all 10 checks:
   - Family diversity: the variety of family types living in Britain today
   - Rapoport and Rapoport's five types of family diversity: organisational, cultural, social class, life-course, cohort
   - How family forms differ in the UK and within a global context
-  - Migration and cultural diversity in family structure
-  - Beanpole families as a consequence of demographic change
+  - Demographic trends as drivers of family diversity: declining birth rates, falling death rates, ageing population and increased life expectancy all reshape family forms
+  - Migration and globalisation: movement of people and increasing global interconnectedness create cultural diversity in family structure
+  - Ageing population and family structure: beanpole families, one-person pensioner households, growing dependency ratio
   - How diversity challenges the idea of one "normal" family
 - **Key concepts / vocabulary:**
   - Family diversity: variation in family forms in contemporary society
@@ -237,6 +238,13 @@ Every episode, before marking complete, must pass all 10 checks:
   - Life-course diversity: variation at different stages of an individual's life (e.g. born into lone-parent family, then nuclear, then lone again after divorce)
   - Cohort diversity: differences between generations — families formed in different historical periods look different
   - Beanpole family: multigenerational, few members per generation (result of declining birth rate + increased life expectancy)
+  - Birth rate: number of live births per 1,000 of the population per year — long-term decline since 1900
+  - Death rate: number of deaths per 1,000 of the population per year — declining due to improved nutrition, medical advances and changing living standards
+  - Ageing population: average age of the population is rising due to falling death rates and declining birth rates
+  - Life expectancy: how long on average a person born in a given year can expect to live (UK males: approx 50 in 1900; 76.9 by 2003)
+  - Migration: movement of people from one country to another — push and pull factors; contributes to cultural diversity in family structure
+  - Globalisation: increasing interconnectedness of the world; barriers between societies are dissolving; affects migration, family structure and family policy
+  - Dependency ratio: measure of dependants (aged 0–14 and over 65) relative to the working-age population (aged 15–64)
 - **Named evidence:**
   - **Rapoport and Rapoport** (1982): five types of family diversity. Source: 'British families in transition' in *Families in Britain*, Routledge, 1982. Note: their work predates legal recognition of same-sex relationships.
   - Census data: 10% of Bangladeshi and Pakistani households multigenerational extended families vs 2% white British (2001 Census)
@@ -410,7 +418,8 @@ Every episode, before marking complete, must pass all 10 checks:
   - Jenks: childhood not disappearing but changing — postmodern children are intensively monitored, career-focused, checked up on by parents
   - Sue Palmer: "toxic childhood" — technology, consumerism and lack of play damaging children's development
   - Financial dependence of young people: boomerang children, sandwich generation
-  - Wider kinship networks: grandparents, extended family roles
+  - Wider kinship networks: grandparents, extended family roles, care of elderly relatives
+  - Demographic context: increased life expectancy means more grandparents are alive and active in family life; ageing population creates beanpole families (long, thin across generations) and increases the care burden on the sandwich generation; declining birth rates mean fewer children per family; boomerang children reflect financial pressures and rising housing costs
 - **Key concepts / vocabulary:**
   - Child-centred family: family organisation in which children's needs take priority
   - Social construct: an idea created by society rather than fixed by nature or biology
@@ -450,8 +459,8 @@ Every episode, before marking complete, must pass all 10 checks:
 
 - **Big question:** Why are people less likely to marry — and more likely to leave?
 - **Syllabus coverage:**
-  - Marriage trends: declining marriage rate since 1970s, rising age of first marriage, rising remarriage rate
-  - Cohabitation: increasing, particularly in 25–34 age range ("try before you buy")
+  - Marriage trends: declining marriage rate since 1970s, rising age of first marriage, rising remarriage rate; declining birth rates and smaller average family sizes are linked to later marriage and increased cohabitation
+  - Cohabitation: increasing, particularly in 25–34 age range ("try before you buy"); greater female economic independence means women are less financially dependent on marriage
   - Same-sex marriage (legal since 2014) and civil partnerships
   - Living Apart Together (LAT)
   - Divorce trends since 1945: long-term rise, recent decline, but increase in over-60s
@@ -599,8 +608,8 @@ Every episode, before marking complete, must pass all 10 checks:
 - [x] Childhood as a social construct (Aries, Postman, Jenks) — Episode 8
 - [x] Divorce patterns since 1945 + reasons + consequences — Episode 9
 - [x] 12-mark exam technique — Episode 10
-- [ ] MISSING: Demographic trends (birth rates, death rates, ageing population, migration) — from the knowledge organiser; check whether this is examinable in the 8192/1 families section or a separate topic
-- [ ] MISSING: Social policy and the family — appears in course booklet and KO; check spec scope
+- [x] Demographic trends: birth rates, death rates, ageing population, life expectancy, migration and globalisation — woven into Episodes 4, 8 and 9 as explanations for family diversity, beanpole families, one-person pensioner households, sandwich generation, boomerang children, marriage/cohabitation trends and changing family structures
+- [x] Social policy and the family — treated as light supporting context where relevant, not a standalone episode; link briefly to divorce law, civil partnerships, same-sex marriage/adoption, child protection, compulsory education and welfare where these already support existing episode content
 
 ### Episode completeness
 
