@@ -31,10 +31,10 @@ Content, Storyline, Specification requirements and the full Content reference pa
   - Duncan names Malcolm as Prince of Cumberland (the heir)
   - Macbeth's reaction — internal: "Stars, hide your fires"
   - Lady Macbeth not yet present; Macbeth is already planning
-  - The mechanism of dramatic irony: Duncan says "There's no art to find the mind's construction in the face" immediately to Macbeth
+  - The mechanism of dramatic irony: Duncan says "There's no art to find the mind's construction in the face" about Cawdor immediately before Macbeth enters, so the audience applies it to the new Cawdor
 - **Suggested components:**
   - `VisualNarrativeScreen` — Duncan's court; the ceremony of trust and naming; Macbeth's presence in both registers (public loyalty / private planning)
-  - `ExplainReveal` — the dramatic irony chain: Duncan about Cawdor → immediately to Macbeth's face → audience understands
+  - `ExplainReveal` — the dramatic irony chain: Duncan about old Cawdor → Macbeth enters as new Cawdor → audience understands history is repeating
 
 ### Section 3 — Theme & Context
 - **Purpose:** Connect to major themes and AO3 context.
@@ -43,18 +43,19 @@ Content, Storyline, Specification requirements and the full Content reference pa
   - Theme: Kingship — Duncan as ideal king: generous, trusting, paternal; the agricultural metaphor ("I have begun to plant thee") shows his vision of nurturing loyalty
   - Theme: Betrayal — the Cawdor parallel: betrayed a trusted gentleman → Macbeth is the next trusted gentleman
   - Context: Divine right of kings — Duncan's authority is God-given; his trust is a virtue, not a flaw
-  - Context: Gunpowder Plot — Everard Digby (a close friend of James I who became a conspirator) = the old Thane of Cawdor; James I watching the play recognised this immediately
+  - Context: Gunpowder Plot — a Jacobean audience, especially under James I after the Gunpowder Plot, may have recognised the anxiety around trusted nobles becoming traitors
 - **Suggested components:**
   - `TheoryCompareBlock` — Duncan as ideal king vs Macbeth's later tyranny
-  - `ExplainReveal` — Gunpowder Plot parallel: Cawdor → Digby → James I's recognition
+  - `ExplainReveal` — Gunpowder Plot parallel: trusted noble → treason → Jacobean anxiety about betrayal close to the king
   - `ColSortBlock` — sort features of "ideal kingship" vs "tyrant"
 
 ### Section 4 — Quote Analysis (AO2)
 - **Purpose:** Active retrieval and analysis.
 - **Proposed content:**
-  - **"There's no art to find the mind's construction in the face"**: dramatic irony; AO2: said about Cawdor but addressed to Macbeth; "art" = skill; the irony is that the person who cannot be read is right in front of Duncan
+  - **"There's no art to find the mind's construction in the face"**: dramatic irony; Duncan says this about Cawdor immediately before Macbeth enters, so the audience applies it to the new Cawdor; Shakespeare makes Duncan's inability to read treachery repeat itself
   - **"He was a gentleman on whom I built an absolute trust"**: Duncan about Cawdor; AO2: the past tense "was"; the word "built" = construction/investment; whole-play link: the same phrase now applies to Macbeth
   - **"I have begun to plant thee"**: agricultural metaphor; AO2: Duncan as nurturing cultivator; irony: the "plant" (Macbeth) will destroy the gardener (Duncan)
+  - **"The Prince of Cumberland! That is a step / On which I must fall down, or else o'erleap"**: obstacle metaphor; Malcolm becomes a physical barrier in Macbeth's mind; "fall down" suggests surrender or failure; "o'erleap" suggests ambition jumping over moral and political boundaries
   - **"Stars, hide your fires"**: darkness imagery; AO2: stars = providence/divine order; asking them to hide = asking God not to witness; whole-play link: Lady Macbeth's "Come thick night" in 1.5
   - **"black and deep desires"**: AO2: the colour "black" = moral darkness + concealment; "deep" = hidden, rooted; "desires" = ambition coded as desire/lust
   - PQAC: students analyse "Stars, hide your fires" — what does Macbeth want God not to see?
@@ -62,19 +63,8 @@ Content, Storyline, Specification requirements and the full Content reference pa
   - `MatchingTask` — quote to technique to theme to whole-play link
   - `FillInTheBlanksBlock` — complete PQAC for "There's no art to find the mind's construction in the face"
 
-### Section 5 — Exam Practice
-- **Purpose:** AQA-style practice.
-- **Proposed content:**
-  - Question: "How does Shakespeare present kingship in Macbeth?" — Act 1.4 is the primary evidence for Duncan as ideal king; contrast with Macbeth's tyranny in Acts 3–4
-  - Key argument: Duncan's trust is a kingly virtue that makes his murder a greater tragedy; his goodness is what Macbeth is destroying
-  - Model paragraph: analysis of "There's no art to find the mind's construction in the face" as dramatic irony + AO3 context (Duncan's absolute trust mirrors James I's experience with the Gunpowder Plot conspirators)
-  - Paragraph planning frame: Claim + Quote + Technique + Effect + Context + Whole-play link
-- **Suggested components:**
-  - `GuidedExamResponse` — scaffolded paragraph on Duncan as ideal king
-  - `ExaminerExplainsScreen` — how to integrate AO3 context without letting it take over the paragraph
-
-### Section 6 — Retrieval & Wider Play Links
-- **Purpose:** Interleave; build whole-play awareness.
+### Section 5 — Retrieval & Wider Play Links
+- **Purpose:** Interleave; build whole-play awareness before the final exam-prep section.
 - **Proposed content:**
   - Retrieve from Episode 3: What did Macbeth's aside in 1.3 reveal about his ambition?
   - Retrieve from Episode 2: How does the Captain's description of Macbeth in 1.2 set up the dramatic irony of Duncan's trust?
@@ -83,6 +73,17 @@ Content, Storyline, Specification requirements and the full Content reference pa
 - **Suggested components:**
   - `QuickRecallScreen` — 4 rapid questions on quotes, themes, context, techniques
   - `RecoveryQuizPlayer` — targeted recovery
+
+### Section 6 — Exam Practice
+- **Purpose:** Final AQA-style practice moment. The final navigation/progress dot must land on exam prep.
+- **Proposed content:**
+  - Question: "How does Shakespeare present kingship in Macbeth?" — Act 1.4 is the primary evidence for Duncan as ideal king; contrast with Macbeth's tyranny in Acts 3–4
+  - Key argument: Duncan's trust is a kingly virtue that makes his murder a greater tragedy; his goodness is what Macbeth is destroying
+  - Model paragraph: analysis of "There's no art to find the mind's construction in the face" as dramatic irony + AO3 context (Duncan's trust reflects Jacobean anxieties around trusted nobles becoming traitors)
+  - Paragraph planning frame: Claim + Quote + Technique + Effect + Context + Whole-play link
+- **Suggested components:**
+  - `GuidedExamResponse` — scaffolded paragraph on Duncan as ideal king
+  - `ExaminerExplainsScreen` — how to integrate AO3 context without letting it take over the paragraph
 
 ---
 
@@ -94,11 +95,11 @@ Not yet built — full build from spec.
 
 ## 4. Build recommendations
 
-1. **Storyline integration:** The core takeaway (Duncan's trust is both his virtue and his vulnerability; Macbeth begins concealing here) should be stated explicitly in Section 3 and practised in Section 5. The Section 3 comparison activity (ideal king vs tyrant) seeds the whole-play contrast every student needs.
+1. **Storyline integration:** The core takeaway (Duncan's trust is both his virtue and his vulnerability; Macbeth begins concealing here) should be stated explicitly in Section 3 and practised in Section 6. The Section 3 comparison activity (ideal king vs tyrant) seeds the whole-play contrast every student needs.
 
-2. **Section 2 — lead with the dramatic irony:** "There's no art to find the mind's construction in the face" said immediately before/to Macbeth is the scene's most powerful moment. It should be the narrative climax of the Section 2 teaching, not a footnote.
+2. **Section 2 — lead with the dramatic irony:** "There's no art to find the mind's construction in the face" is the scene's most powerful moment. Duncan says it about Cawdor immediately before Macbeth enters; the audience applies it to Macbeth, the new Cawdor. It should be the narrative climax of the Section 2 teaching, not a footnote.
 
-3. **Section 3 — teach the Gunpowder Plot parallel:** The Cawdor/Digby/James I connection is one of the most accessible AO3 points in the whole play and requires no difficult background to grasp. The ExplainReveal should make this chain explicit and memorable.
+3. **Section 3 — teach the Gunpowder Plot anxiety carefully:** Avoid overclaiming a one-to-one parallel. The key GCSE-safe point is that a Jacobean audience, especially under James I after the Gunpowder Plot, may have recognised the anxiety around trusted nobles becoming traitors.
 
 4. **Section 4 — the light/dark contrast is central:** "Stars, hide your fires" and "black and deep desires" both introduce the concealment-through-darkness motif. Students should understand that both Macbeth (Episode 4) and Lady Macbeth (Episode 5) independently invoke darkness to hide their plans — suggesting the plotting is mutual.
 
@@ -114,7 +115,7 @@ Not yet built — full build from spec.
 - [ ] Students have actively retrieved at least 4 key quotes from the episode (Section 4)
 - [ ] Students can analyse each key quote using Point → Quote → Analysis → Context (Section 4)
 - [ ] Students can identify and name at least 2 language/structural techniques from the episode (Section 4)
-- [ ] Students have practised at least one AQA-style written response (Section 5)
-- [ ] Students have been shown or produced a mark-scheme-aware paragraph (Section 5)
-- [ ] Students have retrieved content from at least one earlier episode (Section 6)
-- [ ] The episode's core takeaway (how it contributes to the series throughline) has been stated and practised (Section 3 or 5)
+- [ ] Students have retrieved content from at least one earlier episode (Section 5)
+- [ ] Students have practised at least one AQA-style written response (Section 6)
+- [ ] Students have been shown or produced a mark-scheme-aware paragraph (Section 6)
+- [ ] The episode's core takeaway (how it contributes to the series throughline) has been stated and practised (Section 3 or 6)
