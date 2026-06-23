@@ -34,10 +34,12 @@ This episode is the keystone of the series. Every subsequent episode traces the 
 
 ### Exam framing
 
-This episode's core takeaway is the winning argument for:
+This episode's core takeaway is a winning wider-play argument for:
 - "How does Shakespeare present the supernatural in Macbeth?" → The witches' function is not to cause events but to create a world where moral certainty is impossible
-- "How does Shakespeare create disorder and chaos in Macbeth?" → The play's opening 12 lines do more work than any later scene in establishing the theme of disordered nature
-- Extract-opening analysis questions: this scene is frequently the opening extract because it sets up all the play's major techniques
+- "How does Shakespeare create disorder and chaos in Macbeth?" → The play's opening 12 lines establish the theme of disordered nature with unusual speed and force
+- Extract-to-whole-play questions on supernatural, appearance/reality, fate/free will or disorder → Act 1 Scene 1 gives students concise evidence to connect the extract to the play's opening pattern
+
+Act 1 Scene 1 is high-value as a whole-play link for supernatural, disorder and appearance/reality questions. It can be used for practice, but students should understand it is more likely to support a wider-play argument than appear alone as a full exam extract.
 
 ---
 
@@ -101,7 +103,7 @@ This episode's core takeaway is the winning argument for:
 ### Exam angles
 
 **Common question types for this episode:**
-- "How does Shakespeare present the supernatural in this extract and in the play as a whole?" (extract likely from 1.1 or 4.1)
+- "How does Shakespeare present the supernatural in this extract and in the play as a whole?" (Act 1.1 can be used as a practice extract, but is more valuable as a whole-play link)
 - "How does Shakespeare use the witches to explore the theme of appearance and reality?"
 - "How does Shakespeare create atmosphere in the opening of Macbeth?"
 
