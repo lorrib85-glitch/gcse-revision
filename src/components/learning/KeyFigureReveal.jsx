@@ -86,6 +86,12 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
     ? 'center 8%'
     : block.portraitPosition || 'center top'
 
+  // Galen has important visual evidence on the right of the hero; keep the bottom readable without burying that detail.
+  const portraitScrim = block.portrait?.includes('galen-portrait')
+    ? `linear-gradient(to bottom, rgba(8,9,13,0.03) 0%, rgba(8,9,13,0.06) 35%, rgba(8,9,13,0.46) 65%, rgba(8,9,13,0.94) 100%),
+       linear-gradient(to right, rgba(8,9,13,0.08) 0%, rgba(8,9,13,0.00) 42%, rgba(8,9,13,0.00) 100%)`
+    : 'linear-gradient(to bottom, rgba(8,9,13,0.06) 0%, rgba(8,9,13,0.10) 35%, rgba(8,9,13,0.70) 65%, rgba(8,9,13,0.98) 100%)'
+
   return (
     <CinematicShell style={{
       background: '#08090D',
@@ -123,7 +129,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
         />
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(8,9,13,0.06) 0%, rgba(8,9,13,0.10) 35%, rgba(8,9,13,0.70) 65%, rgba(8,9,13,0.98) 100%)',
+          background: portraitScrim,
           pointerEvents: 'none',
         }} />
         {/* Name + role pinned to bottom of portrait */}
