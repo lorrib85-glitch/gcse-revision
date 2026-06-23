@@ -4,8 +4,7 @@
 // (id, subject, number, title, subtitle, era, icon, color, colorLight, headerImage,
 // screenCount, screenTags) in sync if you add/remove a module here.
 //
-// Episodes being migrated to src/content/history/medicine/episodes/ are imported
-// below. Episodes not yet migrated remain inline in this file.
+// Medicine episode content now lives in src/content/history/medicine/episodes; this file preserves the legacy HISTORY_MODULES compatibility export.
 import episodeMedievalBeliefs from '../content/history/medicine/episodes/episode-01-medieval-beliefs-causes.js'
 import episodeBlackDeath from '../content/history/medicine/episodes/episode-02-black-death.js'
 import episodeRenaissanceMedicine from '../content/history/medicine/episodes/episode-03-renaissance-medicine.js'
