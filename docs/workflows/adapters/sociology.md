@@ -13,7 +13,7 @@ Sociology uses the new `docs/canonical/` location (no legacy content exists).
 |-----------|----------|
 | Per-topic spine | `docs/canonical/sociology/<topic>/00_<topic>_series_map.md` |
 | Episode content files | `docs/canonical/sociology/<topic>/<NN>_<episode>_Content.md` |
-| Architecture | Embedded in spine by default (see Architecture convention) |
+| Episode architecture files | `docs/canonical/sociology/<topic>/<NN>_<episode>_Architecture.md` |
 
 **Topic directory names** — lowercase, spaces → hyphens:
 
@@ -30,10 +30,9 @@ Sociology uses the new `docs/canonical/` location (no legacy content exists).
 
 ## Architecture convention
 
-Architecture is **embedded in the spine** by default. Only create a separate
-architecture file if the topic requires an unusually complex interaction map
-(e.g. a research methods episode with a multi-stage quantitative/qualitative
-flow). Document the reason in the spine if separating.
+Always use the **two-file split per episode**: one `_Content.md` file and
+one `_Architecture.md` file. Do not embed architecture in the spine —
+each episode's knowledge and build mapping grow independently.
 
 ---
 

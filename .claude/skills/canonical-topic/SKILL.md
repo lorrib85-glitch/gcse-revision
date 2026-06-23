@@ -118,12 +118,14 @@ every episode processed in this run, however many that is.
 
 ### 1b. Discover available spine files
 
-Glob `docs/content/` to find all subject directories. For each subject:
+Search both `docs/content/` (legacy: History, English) and `docs/canonical/`
+(new: Sociology, Science, Maths) for subject directories. For each directory
+found under either root:
 
-- Look for a **subject-wide spine**: `docs/content/<subject>/<SUBJECT_UPPER>_SERIES_MAP.md`
+- Look for a **subject-wide spine**: `<root>/<subject>/<SUBJECT_UPPER>_SERIES_MAP.md`
   (e.g. `docs/content/history/HISTORY_SERIES_MAP.md`).
-- Look for **per-series spines**: `docs/content/<subject>/*/00_*_Series_Map.md`
-  (e.g. `docs/content/english/An_Inspector_Calls/00_An_Inspector_Calls_Series_Map.md`).
+- Look for **per-series spines**: `<root>/<subject>/*/00_*_Series_Map.md`
+  (e.g. `docs/canonical/sociology/families/00_families_series_map.md`).
 
 Build a table of all spines found: subject, spine type (subject-wide /
 per-series), spine path, series name (from the spine's main heading or
@@ -297,8 +299,15 @@ If no explicit statement exists:
 
 ### 3a. Subject directory
 
-`docs/content/<subject>/` where `<subject>` is the detected subject key
-(lowercase).
+Use the base directory specified by the subject adapter's directory
+convention. Examples:
+
+- History, English: `docs/content/<subject>/`
+- Sociology: `docs/canonical/sociology/`
+- Biology / Chemistry / Physics / Combined Science: `docs/canonical/<science>/`
+- Maths: `docs/canonical/maths/`
+
+If no adapter applies, default to `docs/content/<subject>/`.
 
 ### 3b. Series directory
 
@@ -331,7 +340,7 @@ If no explicit statement exists:
 
 ### 3d. Output files
 
-Both in `docs/content/<subject>/<series-dir>/`:
+Both in `<subject-dir>/<series-dir>/` (using 3a's adapter-resolved base path):
 - Content: `<stem>_Content.md`
 - Architecture: `<stem>_Architecture.md`
 

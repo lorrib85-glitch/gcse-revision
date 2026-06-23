@@ -14,6 +14,7 @@ or **topic area** (matching AQA's strand organisation).
 |----------|
 | `docs/canonical/maths/<topic>/00_<topic>_series_map.md` |
 | `docs/canonical/maths/<topic>/<NN>_<episode>_Content.md` |
+| `docs/canonical/maths/<topic>/<NN>_<episode>_Architecture.md` |
 
 **Topic directory names** — lowercase, hyphens, matching AQA strand labels:
 
@@ -34,11 +35,9 @@ parent strand: `algebra/linear-equations`.
 
 ## Architecture convention
 
-Architecture is **embedded in the spine by default**.
-
-Create a separate architecture file only when the topic has an unusually
-complex method progression (e.g. a multi-stage proof sequence or a long
-prerequisite dependency chain that warrants its own mapping).
+Always use the **two-file split per episode**: one `_Content.md` file and
+one `_Architecture.md` file. Do not embed architecture in the spine —
+each episode's knowledge and build mapping grow independently.
 
 ---
 

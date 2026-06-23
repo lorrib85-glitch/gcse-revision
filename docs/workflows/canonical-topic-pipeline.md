@@ -17,7 +17,7 @@ defaults here.
 | Primary output location | `docs/content/<subject>/` | `docs/canonical/<subject>/` (default; adapters may override) |
 | Source discovery | PDF extraction only | PDFs + spec scan + knowledge organiser + past papers + existing docs |
 | Spine fields | Facts, dates, key people, exam angles | All of the above + big question, active learning interactions, retrieval points, exam skill focus, misconceptions |
-| Architecture default | Always two files (Content + Architecture) | Embedded by default; separate only when justified |
+| Architecture default | Always two files (Content + Architecture) | Always two files (Content + Architecture) |
 | Validation | None | Six-point checklist before commit |
 | Subject handling | Inline conditionals in skill body | Separate adapter files per subject |
 
@@ -168,7 +168,11 @@ episodes?>
 
 ---
 
-## [Module architecture — embed here if Step 5 decision is "embed"]
+## Module architecture (shared stage rhythm and completion test only)
+
+[Architecture overview embedded here: stage names, purposes, typical
+components, and module completion test. Per-episode build detail goes in
+each episode's `_Architecture.md` file.]
 
 ---
 
@@ -217,31 +221,36 @@ episodes?>
 
 ## Step 5 — Architecture handling
 
-### Default: embed in the spine
+### Always use the two-file split
 
-Embed the module architecture directly in the spine, between the Series
-identity section and the episode table. This keeps the spine self-contained
-for future sessions.
+Every episode produces two files:
 
-### Separate architecture file when:
+- `<NN>_<stem>_Content.md` — the knowledge file: what the student must know,
+  understand, and remember. Subject matter, spec points, named evidence,
+  vocabulary, misconceptions.
+- `<NN>_<stem>_Architecture.md` — the build file: how the episode is
+  taught. Stage mapping, component choices, retrieval points, exam skill
+  focus, build notes, module completion test.
 
-- The topic is **asset-heavy** — many images, diagrams, or simulations that
-  need their own build mapping.
-- The topic is **chronology-heavy** — a large number of dated events that
-  benefit from a standalone timeline.
-- The topic is **interaction-heavy** — complex component sequences that need
-  a dedicated specification.
-- The **subject adapter specifies** separation (e.g. History already uses
-  `docs/system/HISTORY_MODULE_ARCHITECTURE.md`).
+The spine (`00_<topic>_series_map.md`) is the **index only**: series
+identity, throughline, shared module architecture (stage rhythm and
+completion test), episode table with links, exam question bank, validation
+checklist, and global tags. It does not contain per-episode detail.
 
-### Never separate just for tidiness.
+### Architecture content per episode file
 
-### Architecture content (embedded or separate)
+Each `_Architecture.md` must include:
 
-- Ordered section list (e.g. Section 1–6), each with: purpose, typical
-  components, and subject-specific rules.
-- Module completion test — checklist of pass criteria.
-- Interleaving or throughline rule if one exists.
+- Identity (episode number, title, subject, build status, pointer to content file).
+- Stage mapping — the subject's standard stage rhythm (from the spine) applied
+  to this episode's content: proposed content per stage + suggested component(s).
+- Active learning interactions — the specific interaction types planned for each stage.
+- Retrieval points — what students must be able to recall after this episode;
+  informs Stage 7 quick-fire content.
+- Exam skill focus — which AQA question type(s) this episode builds; informs
+  Stage 6 content.
+- Build notes — any implementation constraints or design decisions.
+- Module completion test — the full checklist reproduced as an unchecked list.
 
 ---
 

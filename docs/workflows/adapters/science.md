@@ -14,12 +14,12 @@ it is labelled **[Biology]**, **[Chemistry]**, **[Physics]**, or
 
 Science uses the new `docs/canonical/` location. Use per-science directories:
 
-| Subject | Location |
-|---------|----------|
-| Biology | `docs/canonical/biology/<topic>/00_<topic>_series_map.md` |
-| Chemistry | `docs/canonical/chemistry/<topic>/00_<topic>_series_map.md` |
-| Physics | `docs/canonical/physics/<topic>/00_<topic>_series_map.md` |
-| Combined Science | `docs/canonical/combined-science/<topic>/00_<topic>_series_map.md` |
+| Subject | Spine | Episode files |
+|---------|-------|---------------|
+| Biology | `docs/canonical/biology/<topic>/00_<topic>_series_map.md` | `<NN>_<episode>_Content.md` + `_Architecture.md` |
+| Chemistry | `docs/canonical/chemistry/<topic>/00_<topic>_series_map.md` | `<NN>_<episode>_Content.md` + `_Architecture.md` |
+| Physics | `docs/canonical/physics/<topic>/00_<topic>_series_map.md` | `<NN>_<episode>_Content.md` + `_Architecture.md` |
+| Combined Science | `docs/canonical/combined-science/<topic>/00_<topic>_series_map.md` | `<NN>_<episode>_Content.md` + `_Architecture.md` |
 
 **Topic directory names** — lowercase, hyphens (match AQA chapter/topic
 headings where possible):
@@ -31,16 +31,11 @@ Examples: `cell-biology`, `atomic-structure`, `forces`, `homeostasis`,
 
 ## Architecture convention
 
-Architecture is **embedded in the spine by default**.
-
-Create a separate architecture file when the topic is:
-
-- **Interaction-heavy** — complex diagram sequences, multi-stage simulations,
-  or required practical walkthroughs that need their own component mapping.
-- **Asset-heavy** — multiple diagrams, microscopy images, or circuit drawings
-  that require a separate asset list.
-
-Document the reason in the spine if separating.
+Always use the **two-file split per episode**: one `_Content.md` file and
+one `_Architecture.md` file. Do not embed architecture in the spine —
+each episode's knowledge and build mapping grow independently.
+Asset-heavy and interaction-heavy episodes use the architecture file to
+manage diagrams, required practicals, and component sequences.
 
 ---
 
