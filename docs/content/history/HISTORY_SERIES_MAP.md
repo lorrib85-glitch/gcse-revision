@@ -55,7 +55,7 @@ it happened because of recurring agents of change.
 | 5 | London's Year of Terror | Great Plague | `history-medicine-renaissance-medicine` (shared — see Episode 3) | The 1665 Great Plague currently appears inside this module as a "continuity" case study. |
 | 6 | The Boy, the Cow and the Cure | Jenner | `history-medicine-jenner-vaccination` — "The boy, the cow and the cure" | Built and aligned — title now matches the spine. |
 | 7 | The Invisible Enemy | Pasteur & Koch | `history-medicine-germ-theory` — "The invisible enemy" | Built and aligned — title now matches the spine. |
-| 8 | The Great Stink | Public Health | `mod5` — "The Great Stink" | Built and aligned — title now matches the spine. |
+| 8 | The Great Stink | Public Health | `history-medicine-great-stink` (formerly `mod5`) — "The great stink" | Built and aligned — title now matches the spine. |
 | 9 | The Day Surgery Changed Forever | Anaesthetics & Antiseptics | `history-medicine-surgery-anaesthetics` + `history-medicine-surgery-revolution` (formerly `mod3` + `mod6`) — "Surgery & anatomy" / "The surgery revolution" | Built as a two-part story: the first module sets up the problem (pain, infection, blood loss before 1840), the second delivers the revolution (anaesthetics, antiseptics, Lister). |
 | 10 | The Lady with the Lamp? | Florence Nightingale | — | Not yet built. Nightingale currently appears only as a comparison point in `history-medicine-renaissance-medicine`'s learning objectives. |
 | 11 | The Accidental Miracle | Penicillin | `history-medicine-accidental-miracle` (formerly `mod7`) — "The accidental miracle" | Built and aligned — title now matches the spine. |

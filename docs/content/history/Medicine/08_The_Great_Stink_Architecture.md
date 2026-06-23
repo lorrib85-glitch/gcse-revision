@@ -4,7 +4,7 @@
 
 - **Episode number:** 8
 - **Title:** The Great Stink
-- **Build status:** Built as `mod5`
+- **Build status:** Built as `history-medicine-great-stink` (formerly `mod5`)
 - Content, Storyline, Specification requirements and the full Content reference pack: see `08_The_Great_Stink_Content.md` in this directory.
 
 ---
@@ -70,7 +70,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 ## 3. Current state & gap analysis
 
-Built as `mod5`. Audit that the six-part navigation spine is reflected in the built journey and that Part 6 is exam prep.
+Built as `history-medicine-great-stink` (formerly `mod5`). Audit that the six-part navigation spine is reflected in the built journey and that Part 6 is exam prep.
 
 ---
 

@@ -6,7 +6,7 @@
 - **Title (series map):** The Great Stink
 - **Subtitle / GCSE topic:** Public health 1800–1900
 - **Era:** c1800–c1900
-- **Build status:** Built as `mod5` (7 screens; tags include `john-snow`, `public-health`)
+- **Build status:** Built as `history-medicine-great-stink` (formerly `mod5`) (7 screens; tags include `john-snow`, `public-health`)
 - **Key Topic reference:** n/a (Series 1)
 
 ---
