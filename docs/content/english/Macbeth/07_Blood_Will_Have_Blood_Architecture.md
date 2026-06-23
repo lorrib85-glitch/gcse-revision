@@ -45,9 +45,9 @@ Content, Storyline, Specification requirements and the full Content reference pa
   - Theme: Guilt — immediate; overwhelming; permanent; the murder damages Macbeth before the body is cold
   - Theme: Blood motif — blood as guilt introduced here; runs to 5.1
   - Theme: Sleep motif — sleep as God's gift; "Macbeth does murder sleep" = murders innocence itself
-  - Theme: Conscience — Macbeth cannot say "Amen"; his conscience severs his connection to God
+  - Theme: Conscience — Macbeth cannot say "Amen"; Macbeth feels spiritually cut off from God's blessing and forgiveness
   - Theme: Macbeth/Lady Macbeth relationship — the first role reversal; she is more capable of action; he is paralysed
-  - Context: Jacobean religion — sin, damnation, God's mercy; Macbeth has placed himself outside divine forgiveness
+  - Context: Jacobean religion — sin, damnation, God's mercy; Macbeth experiences the murder as spiritual rupture
   - Context: Sleep in Jacobean belief — God's restorative; murderers cannot sleep (a common belief)
 - **Suggested components:**
   - `TheoryCompareBlock` — Macbeth's response vs Lady Macbeth's response to the same situation
@@ -57,10 +57,10 @@ Content, Storyline, Specification requirements and the full Content reference pa
 ### Section 4 — Quote Analysis (AO2)
 - **Purpose:** Active retrieval and analysis — quote-rich episode.
 - **Proposed content:**
-  - **"Is this a dagger which I see before me?"**: AO2: rhetorical question; hallucination as dramatic technique; "heat-oppressed brain" — Macbeth attempts rational explanation; ambiguity: real or psychological?
+  - **"Is this a dagger which I see before me?"**: AO2: rhetorical question; hallucination as dramatic technique; the repeated soft /s/ sounds create a whispering, uncertain rhythm; Macbeth seems to be testing reality as he speaks; "heat-oppressed brain" — Macbeth attempts rational explanation; ambiguity: real or psychological?
   - **"I could not say 'Amen'"**: AO2: brevity and simplicity; the gravity conveyed through what is *not* said; "could not" = inability, not unwillingness; spiritual severance
   - **"Macbeth does murder sleep"**: AO2: the voice as external conscience; the generalisation (not "murdered Duncan" but "murdered sleep" = murdered universal human peace); personification of sleep
-  - **"Will all great Neptune's ocean wash this blood clean from my hand?"**: AO2: hyperbole (Neptune = the sea); "all great" maximises the scale; the implicit answer is "no" (confirmed in 5.1)
+  - **"Will all great Neptune's ocean wash this blood clean from my hand?"**: AO2: hyperbole (Neptune = the sea); "all great" maximises the scale; the ocean as an immense natural force that still cannot cleanse Macbeth's guilt; the implicit answer is "no" (confirmed in 5.1)
   - **"A little water clears us of this deed"**: AO2: contrast with the Neptune speech; the dismissal of blood's significance; dramatic irony (proven wrong in 5.1)
   - **"To know my deed, 'twere best not know myself"**: AO2: the paradox of self-knowledge; Macbeth knows that to fully understand what he has done would destroy his sense of self
   - PQAC: students analyse "Will all great Neptune's ocean wash this blood clean from my hand?" — connect to "A little water" (Lady Macbeth) and "Out, damned spot" (5.1)
@@ -69,8 +69,20 @@ Content, Storyline, Specification requirements and the full Content reference pa
   - `FillInTheBlanksBlock` — PQAC for "I could not say Amen" (spiritual context) and Neptune speech
   - `InteractiveCollectionExplorer` — browse blood motif quotes across the whole play
 
-### Section 5 — Exam Practice
-- **Purpose:** AQA-style practice — this episode is the 2021 actual exam question.
+### Section 5 — Retrieval & Wider Play Links
+- **Purpose:** Interleave; build whole-play awareness before the final exam-prep section.
+- **Proposed content:**
+  - Retrieve from Episode 6: What is Macbeth's "double trust"? How does the guilt here connect to what he already knew in the soliloquy?
+  - Retrieve from Episode 5: Lady Macbeth invoked spirits to suppress her conscience; why does her dismissal of guilt in 2.2 prove this suppression is working (temporarily)?
+  - Whole-play link: "A little water clears us of this deed" ↔ "Out, damned spot" (5.1)
+  - Whole-play link: "Macbeth does murder sleep" ↔ Lady Macbeth's sleepwalking (5.1)
+  - Quick quiz: 5 questions
+- **Suggested components:**
+  - `QuickRecallScreen` — 5 rapid-fire retrieval questions
+  - `RecoveryQuizPlayer` — targeted recovery
+
+### Section 6 — Exam Practice
+- **Purpose:** Final AQA-style practice moment. The final navigation/progress dot must land on exam prep. This episode is the 2021 actual exam question.
 - **Proposed content:**
   - **AQA Nov 2021 actual question:** "Starting with this conversation, explore how Shakespeare presents the relationship between Macbeth and Lady Macbeth." Extract: Act 2.2
   - Essay structure:
@@ -83,18 +95,6 @@ Content, Storyline, Specification requirements and the full Content reference pa
   - `GuidedExamResponse` — 4-paragraph structure with model opening sentences
   - `FaceTheExaminer` — students write the extract paragraph independently; see model
 
-### Section 6 — Retrieval & Wider Play Links
-- **Purpose:** Interleave; build whole-play awareness.
-- **Proposed content:**
-  - Retrieve from Episode 6: What is Macbeth's "double trust"? How does the guilt here connect to what he already knew in the soliloquy?
-  - Retrieve from Episode 5: Lady Macbeth invoked spirits to suppress her conscience; why does her dismissal of guilt in 2.2 prove this suppression is working (temporarily)?
-  - Whole-play link: "A little water clears us of this deed" ↔ "Out, damned spot" (5.1)
-  - Whole-play link: "Macbeth does murder sleep" ↔ Lady Macbeth's sleepwalking (5.1)
-  - Quick quiz: 5 questions
-- **Suggested components:**
-  - `QuickRecallScreen` — 5 rapid-fire retrieval questions
-  - `RecoveryQuizPlayer` — targeted recovery
-
 ---
 
 ## 3. Current state & gap analysis
@@ -105,15 +105,17 @@ Not yet built — full build from spec.
 
 ## 4. Build recommendations
 
-1. **Storyline integration:** The core takeaway (the murder damages the murderers immediately and permanently) should be stated in Section 2 as part of the narrative teaching and reinforced in Section 5's essay structure. Students must understand that Act 2.2 is where guilt begins, not where it ends.
+1. **Storyline integration:** The core takeaway (the murder damages the murderers immediately and permanently) should be stated in Section 2 as part of the narrative teaching and reinforced in Section 6's essay structure. Students must understand that Act 2.2 is where guilt begins, not where it ends.
 
 2. **Section 2 — teach the offstage murder as a structural decision:** Why does Shakespeare not show it? The question is exam-ready: the audience's imagination; the moral weight; the focus on Macbeth's psychological response rather than the act itself. This is AO2 (structural choice) + AO1 (character focus).
 
 3. **Section 4 — the blood/water contrast is the episode's richest AO2 teaching moment:** The contrast between Macbeth's Neptune speech (blood is permanent, the ocean cannot cleanse it) and Lady Macbeth's "A little water" dismissal (blood is trivial, easily washed) is the irony that Act 5 resolves. This should be taught as a pair, with the 5.1 completion made explicit.
 
-4. **Section 5 — use the actual 2021 past paper question:** The AQA Nov 2021 extract from 2.2 is an ideal exam practice vehicle. Use the mark scheme indicative content explicitly. The role reversal demonstrated in this scene (Lady Macbeth as capable manager; Macbeth as paralysed) is the AO2 move that reaches Level 4.
+4. **Section 6 — use the actual 2021 past paper question:** The AQA Nov 2021 extract from 2.2 is an ideal exam practice vehicle. Use the mark scheme indicative content explicitly. The role reversal demonstrated in this scene (Lady Macbeth as capable manager; Macbeth as paralysed) is the AO2 move that reaches Level 4.
 
 5. **The sleep motif must be tracked here and forward:** "Macbeth does murder sleep" is one of the most important motif moments in the play. Students should know it connects forward to Lady Macbeth's sleepwalking (5.1). The InteractiveCollectionExplorer browsing the blood/sleep motifs across the play is essential for building whole-play awareness.
+
+6. **Soften religious certainty while keeping AO3 clear:** Teach Macbeth as feeling spiritually cut off from God's blessing and forgiveness; avoid absolute claims that he is outside God's mercy.
 
 ---
 
@@ -125,7 +127,7 @@ Not yet built — full build from spec.
 - [ ] Students have actively retrieved at least 4 key quotes from the episode (Section 4)
 - [ ] Students can analyse each key quote using Point → Quote → Analysis → Context (Section 4)
 - [ ] Students can identify and name at least 2 language/structural techniques from the episode (Section 4)
-- [ ] Students have practised at least one AQA-style written response (Section 5)
-- [ ] Students have been shown or produced a mark-scheme-aware paragraph (Section 5)
-- [ ] Students have retrieved content from at least one earlier episode (Section 6)
-- [ ] The episode's core takeaway (how it contributes to the series throughline) has been stated and practised (Section 3 or 5)
+- [ ] Students have retrieved content from at least one earlier episode (Section 5)
+- [ ] Students have practised at least one AQA-style written response (Section 6)
+- [ ] Students have been shown or produced a mark-scheme-aware paragraph (Section 6)
+- [ ] The episode's core takeaway (how it contributes to the series throughline) has been stated and practised (Section 3 or 6)
