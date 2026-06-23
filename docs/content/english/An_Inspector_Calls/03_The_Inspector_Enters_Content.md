@@ -4,9 +4,9 @@
 
 - **Episode number:** 3
 - **Title:** The Inspector enters
-- **Subtitle / GCSE focus:** Inspector Goole's arrival; his physical presence; questioning method; Priestley's moral force
-- **Primary act:** Act 1 (Inspector's arrival and announcement of Eva's death)
-- **Secondary whole-play links:** Act 2 interrogations; Act 3 final speech; Act 3 phone call; whole-play structure
+- **Subtitle / GCSE focus:** Inspector Goole's arrival; stagecraft; moral authority; questioning method; Priestley's dramatic function
+- **Primary act:** Act 1 — Inspector's arrival and announcement of Eva Smith's death
+- **Secondary whole-play links:** Act 2 interrogations; Act 3 final speech; Act 3 hoax debate; Act 3 final phone call; whole-play cyclical structure
 - **Build status:** Not yet built
 
 ---
@@ -14,100 +14,172 @@
 ## 2. Storyline
 
 ### Core takeaway
-Inspector Goole disrupts the family's comfort and becomes Priestley's moral force. He is not a realistic police inspector — his name ("Goole" = ghoul), his knowledge, his control of evidence, his departure and the final phone call all signal he is something other than a real detective. He is Priestley's dramatic weapon: a socialist prophet, a personification of collective conscience, a figure who ensures that the exploiters of Eva Smith cannot escape the consequences of their actions. His power lies not in legal authority but in moral authority.
+
+Inspector Goole enters at the exact point when Birling has been dismissing social responsibility. The doorbell cuts across Birling's comfortable world and the lighting changes from "pink and intimate" to "brighter and harder". Priestley makes the Inspector's entrance feel like a moral interruption, not just a police visit.
+
+The Inspector's power does not mainly come from legal authority. It comes from moral authority, stagecraft and control. He controls the pace, the photograph, the line of questioning and the room itself. He cannot be flattered, bullied, rushed or distracted by status.
+
+Crucially, he is not only a character. He is a dramatic function: Priestley's moral force, socialist mouthpiece, collective conscience and possible supernatural/morality-play figure. The play never fully closes his identity. Act 3 casts doubt on whether he was an ordinary police inspector, but the final phone call makes the warning real again. That ambiguity is exam gold.
 
 ### Evidence for the takeaway
-- "massiveness, solidity and purposefulness" — three nouns; each is a moral quality as much as a physical one; compared to Birling's "heavy" (imposing but hollow), the Inspector's mass is purposeful
-- "speaks carefully, weightily" — his language is deliberate and controlled; the opposite of Birling's pomposity
-- "looking hard at" — he sees through pretence; his gaze strips away the facade (mirrors Episode 1's lighting change)
-- "one person and one line of inquiry at a time" — his method is disciplined, methodical; he cannot be rushed or deflected
-- "Burnt her inside out, of course" — dysphemism; the casual "of course" is sarcastic; he will not let them minimise Eva's suffering
-- "there are millions and millions of Eva Smiths" (Act 3 — foreshadowed here) — Eva is not one person but a symbol
-- He controls who sees the photograph — the audience never sees it; its reality is constructed entirely through the characters' reactions
+
+- The doorbell interrupts Birling's individualist speech — structure turns the Inspector into the answer to Birling's selfish worldview
+- "pink and intimate" → "brighter and harder" — the Inspector's arrival changes the moral atmosphere of the stage
+- "need not be a big man" — his power is not just physical size; it comes from presence and purpose
+- "massiveness, solidity and purposefulness" — three abstract nouns; each suggests moral force as much as physical presence
+- "speaks carefully, weightily" — controlled, deliberate speech; opposite of Birling's pompous overconfidence
+- "has a disconcerting habit of looking hard at the person he addresses" — his gaze makes characters uncomfortable and exposes pretence
+- "a girl has just died — on her way to the Infirmary — after swallowing some disinfectant" — blunt revelation; he forces the Birlings to face suffering directly
+- "Burnt her inside out, of course" — harsh dysphemism; he refuses to sanitise Eva's death for the family's comfort
+- "one person and one line of inquiry at a time" — his method controls the play's structure; no one can hide in confusion
+- The photograph — shown selectively; it isolates each character and prevents a group defence
+- "Public men, Mr Birling, have responsibilities as well as privileges" — the Inspector directly challenges Birling's status-based worldview
+- "what happened to her then may have determined what happened to her afterwards" — the Inspector introduces the chain of consequences that drives the whole play
+- "there are millions and millions of Eva Smiths" — Act 3 endpoint of the idea introduced here: Eva is both individual and symbolic
 
 ### Series throughline
-The Inspector is the play's spine. Every episode from 4 onwards is driven by his investigation. His methods (one person at a time, no hurrying) enforce the play's structure. His final speech (Episode 9) is the play's moral climax. His identity (real? supernatural? Priestley? conscience?) is the play's most debated interpretive question. This episode establishes what he is before any of that debate begins: a force that cannot be deflected by wealth, status or intimidation.
+
+The Inspector is the play's spine. Every episode from this point onwards is driven by his investigation. His method — one person, one line of inquiry, one stage of responsibility at a time — is also Priestley's structure. The Inspector turns a dinner party into a moral trial.
+
+This episode also completes the first major clash of worldviews. Episode 2 gives Birling's thesis: look after yourself. Episode 3 introduces the counter-force: public people have responsibilities; actions create chains; suffering cannot be hidden behind respectability.
+
+His identity remains deliberately unstable. Students should not reduce him to one answer. He can be read as a police inspector, a supernatural figure, a ghoul-like messenger, Priestley's voice, a morality-play judge, a socialist conscience, or the embodiment of social responsibility. The stronger exam move is to explain what those interpretations allow Priestley to do.
 
 ### Exam framing
+
 This episode is essential for essays on:
-- "How does Priestley present Inspector Goole in An Inspector Calls?"
-- "How does Priestley present responsibility in An Inspector Calls?" — the Inspector is the play's vehicle for this
-- "How does Priestley use stagecraft to create tension?" — the Inspector's entrance is the play's central dramatic moment
-- "How does Priestley present the Inspector as different from the Birlings?" — the contrast is encoded in the stage directions
+- "How does Priestley present Inspector Goole?" — entrance, authority, method, ambiguity and function
+- "How does Priestley present responsibility?" — the Inspector begins turning individual actions into a chain of consequences
+- "How does Priestley use stagecraft?" — doorbell, lighting, photograph, gaze and controlled interrogation
+- "How does Priestley present the Inspector as different from Mr Birling?" — moral authority vs class/legal authority
+- "How does Priestley present social class?" — the Inspector refuses to let status protect the Birlings
+- "How does Priestley structure the play?" — the Inspector's arrival and the final phone call frame the moral lesson
+
+**AQA format reminder:** *An Inspector Calls* is a whole-play essay. There is no printed extract, so Inspector entrance evidence should be linked to his final speech, his departure, the hoax debate and the final phone call.
 
 ---
 
 ## 3. Specification requirements
 
-- The Inspector's stage directions: "need not be a big man but he creates at once an impression of massiveness, solidity and purposefulness"
-- The announcement of Eva Smith's death: "a girl has just died — on her way to the Infirmary — after swallowing some disinfectant"
+- The Inspector's entrance stage direction: "need not be a big man" but creates "massiveness, solidity and purposefulness"
+- The lighting change from Episode 1 must be linked directly to the Inspector's arrival
+- The doorbell interruption: Inspector arrives after Birling's self-interest speech, creating structural contrast
+- The announcement of Eva Smith's death: "a girl has just died" after swallowing disinfectant
+- "Burnt her inside out, of course" — the Inspector's harsh, unsanitised language
 - The Inspector's questioning method: "one person and one line of inquiry at a time"
-- The photograph: the Inspector controls who sees it; only one at a time; no one is allowed to compare notes
-- The Inspector's refusal to be charmed or intimidated by wealth and status
-- His name: "Goole" — connotations of 'ghoul'; suggests a supernatural or allegorical figure
-- "Burnt her inside out, of course" — his matter-of-fact description of Eva's death; dysphemism
-- His speech style: "speaks carefully, weightily, and has a disconcerting habit of looking hard at the person he addresses"
-- His function as Priestley's socialist mouthpiece — "I tell you, we are all responsible for each other"
-- The contrast between the Inspector's arrival and the Birling family's self-satisfied mood
+- The photograph as stagecraft: controlled, selective evidence; characters react but audience never sees it
+- The Inspector's refusal to be charmed, rushed or intimidated by wealth, class, gender or legal status
+- "Public men, Mr Birling, have responsibilities as well as privileges" — direct challenge to Birling
+- His name: "Goole" — sounds like "ghoul"; suggests a supernatural or allegorical figure
+- His speech style: careful, weighty, disconcerting, hard gaze
+- His function as Priestley's socialist mouthpiece and collective conscience
+- The Act 3 identity ambiguity: the play suggests he may not be an ordinary police inspector, but deliberately refuses a simple answer
+- AO2: stage directions, lighting, doorbell, photograph, speech rhythm, gaze, dysphemism, structural control, naming
+- AO3: socialism, morality play, 1945 audience, Priestley's post-war warning, responsibility and public duty
 
 ---
 
 ## 4. Content reference pack
 
 ### Dates & timeline
-- Play's events: a single evening in 1912 — the Inspector controls time within this evening
-- 1945: first London performance; the audience in 1945 has lived through Priestley's warning; they understand the Inspector's urgency
+
+- **One evening in 1912:** the Inspector controls the sequence of revelations within a compressed time frame
+- **1912 context:** Birling's status as magistrate/former mayor should command respect in Edwardian society; the Inspector disrupts that hierarchy
+- **1945/46 audience:** a post-war audience has seen what happens when selfishness and social division go unchecked; the Inspector's warning feels urgent, not abstract
+- **Act 3 endpoint:** after he leaves, the family debate whether he was real; the final phone call prevents that doubt from removing responsibility
 
 ### Key people
-- **Inspector Goole:** not a real policeman (confirmed in Act 3); his name rhymes with 'ghoul'; he is variously interpreted as: a real inspector from a different force, a supernatural figure, Priestley's voice, the collective conscience of society, a time-traveller, a morality-play allegorical figure
-- **Eva Smith (mentioned, unseen):** "a pretty girl in her early twenties" who died swallowing disinfectant; her name is significant — Smith is the most common English surname (she is everywoman); Eva suggests Eve (Biblical first woman, the archetype)
+
+- **Inspector Goole:** deliberately ambiguous. He may be read as an ordinary inspector, a supernatural messenger, Priestley's voice, a socialist conscience, a morality-play figure, or a time-loop warning. What matters is that he exposes moral truth.
+- **Arthur Birling:** tries to rely on status, authority and connections. The Inspector is unmoved, showing that moral authority is stronger than class authority.
+- **Eva Smith:** introduced as a dead young working-class woman, but her symbolic significance grows. "Smith" suggests ordinary/everyday people; "Eva" can evoke Eve and female archetype.
+- **The Birling family:** move from self-satisfied celebration into defensive discomfort. The Inspector's entrance begins the collapse of the family facade.
 
 ### Key terms & definitions
-- **Dysphemism:** using harsh or shocking language where softer language would be expected; "Burnt her inside out" is a dysphemism that prevents the Birlings (and the audience) from minimising Eva's death
-- **Allegory:** a story where characters and events represent abstract ideas; the Inspector is an allegorical figure representing conscience/justice/socialism
-- **Morality play:** medieval dramatic form in which allegorical figures represent virtues and vices; the Inspector functions as the morality play's "Truth" or "Justice" figure
-- **Collective conscience:** the shared moral sense of a community; the Inspector personifies this
-- **Interrogation:** the Inspector's method; exposes truth through relentless, methodical questioning; he cannot be bought, flattered or deflected
+
+- **Moral authority:** authority based on justice and truth, not official rank or class power. The Inspector has this more than Birling does.
+- **Legal authority:** official power within law/policing. Priestley complicates this because the Inspector's legal status becomes uncertain, while his moral truth remains powerful.
+- **Dysphemism:** harsh language where softer language might be expected. "Burnt her inside out" forces the family to confront Eva's suffering.
+- **Allegory:** a story or character representing abstract ideas. The Inspector can represent conscience, justice or social responsibility.
+- **Morality play:** a drama designed to teach a moral lesson; the Inspector functions like a judge or truth-teller.
+- **Collective conscience:** society's shared moral awareness; the Inspector gives that conscience a voice.
+- **Interrogation:** methodical questioning that exposes truth. The Inspector's method structures the play.
+- **Stagecraft:** practical dramatic choices — doorbell, lighting, photograph, entrances, gaze, silence and positioning.
 
 ### Case studies / named examples
-- **"massiveness, solidity and purposefulness":** three nouns in the stage direction; each contrasts with Birling's "heavy" — Birling is heavy (pompous, hollow) but the Inspector has purposeful weight; the alliteration in "solidity and purposefulness" gives it rhythmic authority
-- **The photograph:** the Inspector never lets two characters view it at the same time — this is a deliberate structural device that keeps the Birlings from comparing notes and constructing a collective defence; it also raises the question (Act 3) of whether there was one photograph or several
-- **"one person and one line of inquiry at a time":** the Inspector states his own method explicitly; this is Priestley showing us how moral interrogation works — you cannot hide behind collective confusion
-- **"Burnt her inside out, of course":** the "of course" is sarcastic and devastating; it suggests this is what inevitably happens to exploited working-class women; the Inspector is casual not because he doesn't care but because he needs the Birlings to face the fact directly
+
+- **Doorbell as interruption:** The Inspector arrives just after Birling has dismissed community responsibility. Structurally, this matters: Priestley has Birling state the wrong moral lesson, then brings on the character who will correct it.
+
+- **Lighting as moral exposure:** The stage direction shifts from "pink and intimate" to "brighter and harder" when the Inspector arrives. The stage itself changes sides. Comfort gives way to truth.
+
+- **"Need not be a big man":** Priestley tells us physical size is not the point. The Inspector's authority is created by presence, certainty and purpose, not by conventional power.
+
+- **"Massiveness, solidity and purposefulness":** Three nouns create a feeling of moral weight. "Massiveness" gives presence; "solidity" suggests reliability and firmness; "purposefulness" suggests he has arrived with a mission. This sharply contrasts with Birling's "heavy-looking" pomposity.
+
+- **"Speaks carefully, weightily":** The adverbs make his speech controlled and deliberate. Unlike Birling, he wastes no words. His language has weight because it is attached to truth.
+
+- **"Looking hard at":** His gaze acts like the lighting. It exposes. He does not let characters hide behind politeness, wealth or family roles.
+
+- **The photograph:** The photograph is one of Priestley's cleverest props. The audience never sees it, and characters see it one at a time. This creates mystery, prevents collaboration and makes each character's reaction the real evidence.
+
+- **"One person and one line of inquiry at a time":** This is both a police method and Priestley's structure. Each character is isolated and made responsible. It is the opposite of the family's attempt to blur guilt.
+
+- **"Burnt her inside out, of course":** This is deliberately uncomfortable. The Inspector uses ugly language because the Birlings' comfortable language would make Eva's death easier to ignore.
+
+- **"Public men, Mr Birling, have responsibilities as well as privileges":** This line directly challenges Birling's view of status. Priestley argues that public position creates duty, not just prestige.
+
+- **Identity ambiguity:** If the Inspector were only a normal detective, the play would be a crime investigation. Because he is ambiguous, the play becomes a moral investigation. That is why the Act 3 uncertainty matters.
 
 ### Causes & effects
-- Inspector's arrival → lighting changes to "brighter and harder" → the Inspector and truth are equated
-- Inspector controls the photograph → Birlings cannot compare notes → each is isolated and exposed
-- Inspector's "one person and one line of inquiry" method → no collective defence is possible → each character is made individually responsible
-- "Burnt her inside out" → shocks the comfortable family → forces them to visualise Eva's suffering, not abstract it
-- Inspector's refusal to be intimidated by Birling's status → shows that moral authority > legal/class authority
-- Inspector's name "Goole" → ambiguity about his identity → prepares the audience for Act 3's revelation that he was not a real inspector
+
+- Birling dismisses community → doorbell interrupts → Inspector arrives as moral counter-force
+- Inspector arrives → lighting becomes brighter/harder → truth replaces self-deception
+- Inspector controls the photograph → characters cannot compare stories → each is isolated and exposed
+- Inspector insists on one line of inquiry → no collective defence → each stage of responsibility is revealed clearly
+- Inspector describes Eva's death harshly → family cannot keep her suffering abstract → audience is forced into moral discomfort
+- Inspector challenges Birling's status → class/legal authority loses power → moral authority takes control
+- Inspector's identity remains uncertain → audience focuses on moral truth rather than procedural realism
 
 ### Exam angles
-**Common question types:**
-- "How does Priestley present Inspector Goole in An Inspector Calls?"
-- "How does Priestley present the Inspector as different from Mr Birling?"
-- "What is the importance of the Inspector in An Inspector Calls?"
 
-**Mark scheme keywords:** moral authority; allegorical; socialist; mouthpiece; stagecraft; purpose; 1945 audience; contrast; dysphemism; names; interrogation method; collective conscience
+**Common question types:**
+- "How does Priestley present Inspector Goole in *An Inspector Calls*?"
+- "How does Priestley present the Inspector as different from Mr Birling?"
+- "What is the importance of the Inspector in *An Inspector Calls*?"
+- "How does Priestley use stagecraft in *An Inspector Calls*?"
+- "How does Priestley present responsibility?"
+
+**Mark scheme keywords:** moral authority; legal authority; allegorical; socialist; mouthpiece; stagecraft; purpose; 1945 audience; contrast; dysphemism; naming; interrogation method; collective conscience; ambiguity; morality play; structure
+
+**Grade 9 essay move:**
+Do not only describe the Inspector as "powerful". Explain his function: Priestley uses him to change the genre from a comfortable drawing-room drama into a moral trial.
+
+**Useful paragraph stem:**
+Priestley presents the Inspector less as a realistic detective and more as a dramatic force whose entrance changes the room, the lighting and the moral direction of the play.
 
 **Key misconceptions for MisconceptionCheck:**
-- "Inspector Goole is a real police inspector investigating a real crime" — UNCERTAIN: the play is deliberately ambiguous; what matters is the moral truth he reveals, not his legal status
-- "The Inspector is just a plot device to get the characters talking" — FALSE: he is Priestley's most important character; he is the play's moral voice
-- "The Inspector is kind and gentle" — FALSE: he is forceful, purposeful and refuses to be deflected; he is not cruel but he is unyielding
+- "Inspector Goole is definitely not real" — too certain: the play deliberately makes his identity ambiguous
+- "Inspector Goole is definitely an ordinary police inspector" — too simple: his name, knowledge, method, departure and final phone call complicate this
+- "The Inspector's power comes from being a policeman" — false: his moral authority matters more than his legal status
+- "The photograph proves everything straightforwardly" — too simple: the audience never sees it, and the selective viewing creates mystery
+- "The Inspector is kind and gentle" — false: he is moral, but also forceful, deliberate and unyielding
 
 **Techniques to name:**
-- Stage directions (characterisation through physical description and manner)
-- Naming (Goole/ghoul — phonological suggestion of the supernatural)
-- Dysphemism ("Burnt her inside out")
-- Contrast (Inspector's purposefulness vs Birling's pomposity)
-- Structural control (one person and one line of inquiry at a time)
-- Symbolism (Eva Smith = everywoman; the photograph as evidence withheld from collective view)
+- Stage directions: physical and vocal characterisation
+- Lighting: truth/moral exposure
+- Doorbell interruption: structural disruption
+- Naming: Goole/ghoul
+- Dysphemism: "Burnt her inside out"
+- Contrast: Inspector's purposefulness vs Birling's pomposity
+- Structural control: one person/one line of inquiry
+- Prop symbolism: the photograph as controlled evidence
+- Ambiguity: identity left unresolved
 
 ### Sourcing notes
-- **themes_aic.txt:** extended section on the Inspector as socialist personification, specific quotes with AO2 commentary — primary source
-- **knowledge_organiser.txt:** Inspector character description, plot summary of arrival — used
-- **booklet_aic.txt:** Inspector character analysis, plot summary — used
-- **grade9_essay_context.txt:** Grade 9 model essay contrasting Birling and Inspector — directly relevant
-- **context_aic.txt:** socialism, morality play form, Priestley biography — used for AO3
-- **spine_bf.txt:** episode structure, quote cues — primary structural source
+
+- **Attached play text:** Inspector entrance stage directions; lighting change; death announcement; photograph; one-line inquiry method; public responsibility challenge
+- **Attached knowledge organiser:** Inspector as Priestley's mouthpiece; social justice; stagecraft devices; dramatic irony; plot sequence and final phone call
+- **Attached themes pack:** Inspector as socialist mouthpiece; social responsibility; chain of events; one body; capitalism vs socialism contrast
+- **Attached revision guide:** AQA Paper 2 whole-play format; play/stagecraft terms; audience and performance focus
+- **Attached Grade 9 context essay:** Birling vs Inspector ideological contrast; big-idea framing and Priestley's message
+- **Series map:** AQA whole-play essay requirement; AO1/AO2/AO3/AO4 balance; six-section episode architecture
