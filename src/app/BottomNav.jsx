@@ -1,12 +1,5 @@
 import { GENERAL } from '../constants/generalTheme.js'
-
-function hexToRgb(hex) {
-  if (!hex || hex.length < 7) return '255,255,255'
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  return `${r},${g},${b}`
-}
+import { hexToRgb } from '../constants/subjects.js'
 
 function NavIcon({ id, active }) {
   const c = active ? GENERAL.teal : `rgba(${hexToRgb(GENERAL.slate)},0.5)`
