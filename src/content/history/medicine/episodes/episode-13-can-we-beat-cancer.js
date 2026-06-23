@@ -1,16 +1,12 @@
-// LEGACY ID NOTE:
-//   This episode preserves legacy id 'mod9' exactly as it exists in the codebase.
-//   Metadata (number, title, subtitle) in this file follows src/modules.js as the
-//   single source of truth. The inline history.js draft had stale/diverged values:
-//     number:   11  → corrected to 13
-//     title:    'Who gets healthcare?'  → corrected to 'Can we beat cancer?'
-//     subtitle: 'The NHS, prevention & modern public health'
-//               → corrected to 'Lung cancer and modern public health'
-//     era:      'AQA GCSE'  → unchanged (both sources agree)
+// EXTRACTION NOTE:
+//   Metadata corrected from inline history.js draft during extraction:
+//     number: 11 → 13 | title: 'Who gets healthcare?' → 'Can we beat cancer?'
+//     subtitle: 'The NHS, prevention & modern public health' → 'Lung cancer and modern public health'
+//     era: 'AQA GCSE' — unchanged (both sources agree)
 //   Screen content is verbatim from the inline block — nothing rewritten or expanded.
 
 const episode = {
-  id: 'mod9',
+  id: 'history-medicine-cancer',
   subject: 'History',
   number: 13,
   title: 'Can we beat cancer?',
@@ -98,7 +94,7 @@ const episode = {
       ], correct: 0 },
     ],
   },
-  // TODO: mod9 covers NHS and lifestyle diseases broadly; cancer-specific titles are approximate.
+  // TODO: history-medicine-cancer covers NHS and lifestyle diseases broadly; cancer-specific titles are approximate.
   stageNavigation: [
     { id: 'part-1', title: 'The Disease Modern Medicine Still Fights', description: 'NHS origins and the health gap before 1948.', screenIndex: 0 },
     { id: 'part-2', title: 'What Makes Lung Cancer Different?', description: 'Vaccination, prevention and lifestyle links to disease.', screenIndex: 3 },

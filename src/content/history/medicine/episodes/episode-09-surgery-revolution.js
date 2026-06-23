@@ -4,19 +4,8 @@
 // Asset path resolution lives in src/content/history/medicine/assets.js.
 // Canonical content + architecture docs live in docs/content/history/medicine/.
 //
-// LEGACY ID NOTE:
-//   This episode preserves legacy id 'mod6' exactly as it exists in the codebase.
-//   Metadata (number, title, subtitle, era) in this file follows src/modules.js as the
-//   single source of truth; the inline history.js draft had stale values
-//   (number: 8, title: 'The surgery revolution', subtitle: 'Pain, infection & survival
-//   (1840–1900)', era: 'c1840–c1900' without dots) which have been normalised to match
-//   the corrected modules.js values during extraction.
-//   If ID migration from 'mod6' to a canonical slug is ever required, that must be
-//   handled as a separate, explicit ID migration task with a full impact audit
-//   across all affected files.
-
 export const episode = {
-  id: 'mod6',
+  id: 'history-medicine-surgery-revolution',
   subject: 'History',
   number: 9,
   title: 'The day surgery changed forever',

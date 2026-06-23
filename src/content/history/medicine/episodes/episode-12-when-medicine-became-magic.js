@@ -1,15 +1,12 @@
-// LEGACY ID NOTE:
-//   This episode preserves legacy id 'mod8' exactly as it exists in the codebase.
-//   Metadata (number, title, subtitle, era) in this file follows src/modules.js as the
-//   single source of truth. The inline history.js draft had stale/diverged values:
-//     number:   10  → corrected to 12
-//     title:    'Inside modern medicine'  → corrected to 'When medicine became magic'
-//     subtitle: 'Scans, transplants, DNA & the future'  → corrected to 'NHS & modern medicine'
-//     era:      'c1945–present'  → corrected to 'c.1948–present' (dots added; start year corrected)
+// EXTRACTION NOTE:
+//   Metadata corrected from inline history.js draft during extraction:
+//     number:   10  → 12 | title: 'Inside modern medicine' → 'When medicine became magic'
+//     subtitle: 'Scans, transplants, DNA & the future' → 'NHS & modern medicine'
+//     era:      'c1945–present' → 'c.1948–present'
 //   Screen content is verbatim from the inline block — nothing rewritten or expanded.
 
 const episode = {
-  id: 'mod8',
+  id: 'history-medicine-modern-medicine',
   subject: 'History',
   number: 12,
   title: 'When medicine became magic',
@@ -97,7 +94,7 @@ const episode = {
       ], correct: 1 },
     ],
   },
-  // TODO: mod8 focuses on technology rather than NHS access; Part 4 index is approximate.
+  // TODO: history-medicine-modern-medicine focuses on technology rather than NHS access; Part 4 index is approximate.
   stageNavigation: [
     { id: 'part-1', title: 'Medicine Starts Looking Inside', description: 'Medical scanning and new diagnostic tools.', screenIndex: 0 },
     { id: 'part-2', title: 'Diagnosis Gets Powerful', description: 'Transplants and high-tech treatment breakthroughs.', screenIndex: 1 },

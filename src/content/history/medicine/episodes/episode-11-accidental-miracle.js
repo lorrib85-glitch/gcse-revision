@@ -4,20 +4,10 @@
 // Asset path resolution lives in src/content/history/medicine/assets.js.
 // Canonical content + architecture docs live in docs/content/history/medicine/.
 //
-// LEGACY ID NOTE:
-//   This episode preserves legacy id 'mod7' exactly as it exists in the codebase.
-//   Metadata (number, era) in this file follows src/modules.js as the single source
-//   of truth; the inline history.js draft had stale values (number: 9,
-//   era: 'c1890–c1945' without dots) which have been normalised to match the
-//   corrected modules.js values during extraction.
-//   The 'wwi-medicine' screenTag on the WWII production screen (index 5) is
-//   preserved verbatim from src/modules.js — do not rename.
-//   If ID migration from 'mod7' to a canonical slug is ever required, that must be
-//   handled as a separate, explicit ID migration task with a full impact audit
-//   across all affected files.
+// The 'wwi-medicine' screenTag on screen index 5 is verbatim from src/modules.js — do not rename.
 
 export const episode = {
-  id: 'mod7',
+  id: 'history-medicine-accidental-miracle',
   subject: 'History',
   number: 11,
   title: 'The accidental miracle',

@@ -52,7 +52,7 @@ export const MODULES = [
     ],
   },
   {
-    id: "mod2",
+    id: "history-medicine-renaissance-medicine",
     subject: "History",
     series: "medicine",
     number: 3,
@@ -70,7 +70,7 @@ export const MODULES = [
     ],
   },
   {
-    id: "mod3",
+    id: "history-medicine-surgery-anaesthetics",
     subject: "History",
     series: "medicine",
     number: 4,
@@ -153,7 +153,7 @@ export const MODULES = [
     ],
   },
   {
-    id: "mod6",
+    id: "history-medicine-surgery-revolution",
     subject: "History",
     series: "medicine",
     number: 9,
@@ -185,7 +185,7 @@ export const MODULES = [
     screenTags: [],
   },
   {
-    id: "mod7",
+    id: "history-medicine-accidental-miracle",
     subject: "History",
     series: "medicine",
     number: 11,
@@ -202,7 +202,7 @@ export const MODULES = [
     ],
   },
   {
-    id: "mod8",
+    id: "history-medicine-modern-medicine",
     subject: "History",
     series: "medicine",
     number: 12,
@@ -219,7 +219,7 @@ export const MODULES = [
     ],
   },
   {
-    id: "mod9",
+    id: "history-medicine-cancer",
     subject: "History",
     series: "medicine",
     number: 13,

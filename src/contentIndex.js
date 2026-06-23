@@ -137,12 +137,12 @@ export const CONTENT_INDEX = {
     },
   },
 
-  // ── History: Renaissance (mod2) ────────────────────────────────────────────
+  // ── History: Renaissance (history-medicine-renaissance-medicine) ──────────
   'renaissance-change': {
     sectionId: 'renaissance-change',
     title: 'Renaissance Medical Change',
     subject: 'History',
-    moduleId: 'mod2',
+    moduleId: 'history-medicine-renaissance-medicine',
     screenLabel: 'Renaissance',
     keywords: ['Renaissance', 'Vesalius', 'Harvey', 'printing press', 'dissection', 'observation', 'change'],
     summary: 'The Renaissance saw new challenges to Galen. Vesalius proved Galen wrong on anatomy. Harvey proved blood circulates.',
@@ -168,7 +168,7 @@ export const CONTENT_INDEX = {
     sectionId: 'great-plague',
     title: 'The Great Plague 1665',
     subject: 'History',
-    moduleId: 'mod2',
+    moduleId: 'history-medicine-renaissance-medicine',
     screenLabel: 'Great Plague',
     keywords: ['Great Plague', '1665', 'London', 'miasma', 'government response', 'continuity'],
     summary: 'Despite Renaissance advances, people still blamed miasma and God for the 1665 plague. Government response improved but medicine had not.',
@@ -189,12 +189,12 @@ export const CONTENT_INDEX = {
     },
   },
 
-  // ── History: Anaesthetics (mod3 and mod6) ──────────────────────────────────
+  // ── History: Anaesthetics (history-medicine-surgery-revolution) ───────────
   'anaesthetics': {
     sectionId: 'anaesthetics',
     title: 'Development of Anaesthetics',
     subject: 'History',
-    moduleId: 'mod6',
+    moduleId: 'history-medicine-surgery-revolution',
     screenLabel: 'Anaesthetics',
     keywords: ['anaesthetic', 'Simpson', 'Morton', 'chloroform', 'ether', 'pain', 'surgery', 'nitrous oxide'],
     summary: 'Anaesthetics reduced pain during surgery but initially caused new problems. Simpson\'s chloroform was key.',
@@ -215,7 +215,7 @@ export const CONTENT_INDEX = {
     sectionId: 'antiseptics',
     title: 'Antiseptics and Lister',
     subject: 'History',
-    moduleId: 'mod6',
+    moduleId: 'history-medicine-surgery-revolution',
     screenLabel: 'Lister',
     keywords: ['Lister', 'antiseptic', 'carbolic acid', 'Pasteur', 'germ theory', 'infection', '1865'],
     summary: 'Lister applied Pasteur\'s germ theory to surgery in the 1860s, using carbolic acid to kill germs.',
@@ -290,12 +290,12 @@ export const CONTENT_INDEX = {
     },
   },
 
-  // ── History: Penicillin (mod7) ─────────────────────────────────────────────
+  // ── History: Penicillin (history-medicine-accidental-miracle) ────────────
   'penicillin': {
     sectionId: 'penicillin',
     title: 'Discovery of Penicillin',
     subject: 'History',
-    moduleId: 'mod7',
+    moduleId: 'history-medicine-accidental-miracle',
     screenLabel: 'Fleming\'s Discovery',
     keywords: ['penicillin', 'Fleming', 'Florey', 'Chain', 'antibiotics', '1928', 'mould', 'staphylococcus'],
     summary: 'Fleming discovered penicillin by accident in 1928. Florey and Chain turned it into a usable drug.',
@@ -321,7 +321,7 @@ export const CONTENT_INDEX = {
     sectionId: 'nhs',
     title: 'The National Health Service (NHS)',
     subject: 'History',
-    moduleId: 'mod7',
+    moduleId: 'history-medicine-accidental-miracle',
     screenLabel: 'The NHS',
     keywords: ['NHS', '1948', 'Bevan', 'Beveridge', 'welfare state', 'free healthcare', 'government'],
     summary: 'The NHS (1948) gave everyone free healthcare at the point of need — a turning point in public health.',

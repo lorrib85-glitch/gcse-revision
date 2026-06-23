@@ -55,8 +55,8 @@ describe('Content registry — episode-01-medieval-beliefs-causes', () => {
   })
 })
 
-describe('Content registry — episode-03-renaissance-medicine (legacy id: mod2)', () => {
-  it('id exists in src/modules.js (as legacy mod2)', () => {
+describe('Content registry — episode-03-renaissance-medicine', () => {
+  it('id exists in src/modules.js', () => {
     const meta = MODULES.find(m => m.id === episodeRenaissanceMedicine.id)
     expect(meta).toBeDefined()
   })
@@ -93,8 +93,8 @@ describe('Content registry — episode-03-renaissance-medicine (legacy id: mod2)
   })
 })
 
-describe('Content registry — episode-04-surgery-anaesthetics (legacy id: mod3)', () => {
-  it('id exists in src/modules.js (as legacy mod3)', () => {
+describe('Content registry — episode-04-surgery-anaesthetics', () => {
+  it('id exists in src/modules.js', () => {
     const meta = MODULES.find(m => m.id === episodeSurgeryAnaesthetics.id)
     expect(meta).toBeDefined()
   })
@@ -283,8 +283,8 @@ describe('Content registry — episode-08-great-stink', () => {
   })
 })
 
-describe('Content registry — episode-09-surgery-revolution (legacy id: mod6)', () => {
-  it('id exists in src/modules.js (as legacy mod6)', () => {
+describe('Content registry — episode-09-surgery-revolution', () => {
+  it('id exists in src/modules.js', () => {
     const meta = MODULES.find(m => m.id === episodeSurgeryRevolution.id)
     expect(meta).toBeDefined()
   })
@@ -321,8 +321,8 @@ describe('Content registry — episode-09-surgery-revolution (legacy id: mod6)',
   })
 })
 
-describe('Content registry — episode-11-accidental-miracle (legacy id: mod7)', () => {
-  it('id exists in src/modules.js (as legacy mod7)', () => {
+describe('Content registry — episode-11-accidental-miracle', () => {
+  it('id exists in src/modules.js', () => {
     const meta = MODULES.find(m => m.id === episodeAccidentalMiracle.id)
     expect(meta).toBeDefined()
   })
@@ -359,8 +359,8 @@ describe('Content registry — episode-11-accidental-miracle (legacy id: mod7)',
   })
 })
 
-describe('Content registry — episode-12-when-medicine-became-magic (legacy id: mod8)', () => {
-  it('id exists in src/modules.js (as legacy mod8)', () => {
+describe('Content registry — episode-12-when-medicine-became-magic', () => {
+  it('id exists in src/modules.js', () => {
     const meta = MODULES.find(m => m.id === episodeWhenMedicineBecameMagic.id)
     expect(meta).toBeDefined()
   })
@@ -397,8 +397,8 @@ describe('Content registry — episode-12-when-medicine-became-magic (legacy id:
   })
 })
 
-describe('Content registry — episode-13-can-we-beat-cancer (legacy id: mod9)', () => {
-  it('id exists in src/modules.js (as legacy mod9)', () => {
+describe('Content registry — episode-13-can-we-beat-cancer', () => {
+  it('id exists in src/modules.js', () => {
     const meta = MODULES.find(m => m.id === episodeCanWeBeatCancer.id)
     expect(meta).toBeDefined()
   })
@@ -489,12 +489,12 @@ describe('Content registry — series index (MEDICINE_EPISODES)', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-black-death')).toBeDefined()
   })
 
-  it('includes the renaissance medicine episode (legacy id: mod2)', () => {
-    expect(MEDICINE_EPISODES.find(m => m.id === 'mod2')).toBeDefined()
+  it('includes the renaissance medicine episode', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-renaissance-medicine')).toBeDefined()
   })
 
-  it('includes the surgery & anaesthetics episode (legacy id: mod3)', () => {
-    expect(MEDICINE_EPISODES.find(m => m.id === 'mod3')).toBeDefined()
+  it('includes the surgery & anaesthetics episode', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-surgery-anaesthetics')).toBeDefined()
   })
 
   it('includes the jenner episode', () => {
@@ -509,20 +509,20 @@ describe('Content registry — series index (MEDICINE_EPISODES)', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-great-stink')).toBeDefined()
   })
 
-  it('includes the surgery revolution episode (legacy id: mod6)', () => {
-    expect(MEDICINE_EPISODES.find(m => m.id === 'mod6')).toBeDefined()
+  it('includes the surgery revolution episode', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-surgery-revolution')).toBeDefined()
   })
 
-  it('includes the accidental miracle episode (legacy id: mod7)', () => {
-    expect(MEDICINE_EPISODES.find(m => m.id === 'mod7')).toBeDefined()
+  it('includes the accidental miracle episode', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-accidental-miracle')).toBeDefined()
   })
 
-  it('includes the when medicine became magic episode (legacy id: mod8)', () => {
-    expect(MEDICINE_EPISODES.find(m => m.id === 'mod8')).toBeDefined()
+  it('includes the when medicine became magic episode', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-modern-medicine')).toBeDefined()
   })
 
-  it('includes the can we beat cancer episode (legacy id: mod9)', () => {
-    expect(MEDICINE_EPISODES.find(m => m.id === 'mod9')).toBeDefined()
+  it('includes the can we beat cancer episode', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-cancer')).toBeDefined()
   })
 
   it('includes the western front episode', () => {
@@ -551,21 +551,21 @@ describe('Content registry — compatibility layer (HISTORY_MODULES)', () => {
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 
-  it('includes the renaissance medicine episode (legacy id: mod2)', () => {
-    expect(HISTORY_MODULES.find(m => m.id === 'mod2')).toBeDefined()
+  it('includes the renaissance medicine episode', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'history-medicine-renaissance-medicine')).toBeDefined()
   })
 
   it('renaissance medicine episode has screens', () => {
-    const ep = HISTORY_MODULES.find(m => m.id === 'mod2')
+    const ep = HISTORY_MODULES.find(m => m.id === 'history-medicine-renaissance-medicine')
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 
-  it('includes the surgery & anaesthetics episode (legacy id: mod3)', () => {
-    expect(HISTORY_MODULES.find(m => m.id === 'mod3')).toBeDefined()
+  it('includes the surgery & anaesthetics episode', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'history-medicine-surgery-anaesthetics')).toBeDefined()
   })
 
   it('surgery & anaesthetics episode has screens', () => {
-    const ep = HISTORY_MODULES.find(m => m.id === 'mod3')
+    const ep = HISTORY_MODULES.find(m => m.id === 'history-medicine-surgery-anaesthetics')
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 
@@ -596,39 +596,39 @@ describe('Content registry — compatibility layer (HISTORY_MODULES)', () => {
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 
-  it('includes the surgery revolution episode (legacy id: mod6)', () => {
-    expect(HISTORY_MODULES.find(m => m.id === 'mod6')).toBeDefined()
+  it('includes the surgery revolution episode', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'history-medicine-surgery-revolution')).toBeDefined()
   })
 
   it('surgery revolution episode has screens', () => {
-    const ep = HISTORY_MODULES.find(m => m.id === 'mod6')
+    const ep = HISTORY_MODULES.find(m => m.id === 'history-medicine-surgery-revolution')
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 
-  it('includes the accidental miracle episode (legacy id: mod7)', () => {
-    expect(HISTORY_MODULES.find(m => m.id === 'mod7')).toBeDefined()
+  it('includes the accidental miracle episode', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'history-medicine-accidental-miracle')).toBeDefined()
   })
 
   it('accidental miracle episode has screens', () => {
-    const ep = HISTORY_MODULES.find(m => m.id === 'mod7')
+    const ep = HISTORY_MODULES.find(m => m.id === 'history-medicine-accidental-miracle')
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 
-  it('includes the when medicine became magic episode (legacy id: mod8)', () => {
-    expect(HISTORY_MODULES.find(m => m.id === 'mod8')).toBeDefined()
+  it('includes the when medicine became magic episode', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'history-medicine-modern-medicine')).toBeDefined()
   })
 
   it('when medicine became magic episode has screens', () => {
-    const ep = HISTORY_MODULES.find(m => m.id === 'mod8')
+    const ep = HISTORY_MODULES.find(m => m.id === 'history-medicine-modern-medicine')
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 
-  it('includes the can we beat cancer episode (legacy id: mod9)', () => {
-    expect(HISTORY_MODULES.find(m => m.id === 'mod9')).toBeDefined()
+  it('includes the can we beat cancer episode', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'history-medicine-cancer')).toBeDefined()
   })
 
   it('can we beat cancer episode has screens', () => {
-    const ep = HISTORY_MODULES.find(m => m.id === 'mod9')
+    const ep = HISTORY_MODULES.find(m => m.id === 'history-medicine-cancer')
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 

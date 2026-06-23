@@ -4,16 +4,8 @@
 // Asset path resolution lives in src/content/history/medicine/assets.js.
 // Canonical content + architecture docs live in docs/content/history/medicine/.
 //
-// LEGACY ID NOTE:
-//   This episode preserves legacy id 'mod2' exactly as it exists in the codebase.
-//   Metadata (title, subtitle, era) follows src/modules.js as the single source of truth.
-//   The inline history.js draft had different values for title/subtitle/era — those were stale
-//   and have been discarded during extraction.
-//   If ID migration from 'mod2' to a canonical slug is ever required, that must be handled
-//   as a separate, explicit ID migration task with a full impact audit across all affected files.
-
 export const episode = {
-  id: 'mod2',
+  id: 'history-medicine-renaissance-medicine',
   subject: 'History',
   number: 3,
   title: 'The beginning of doubt',
@@ -95,7 +87,7 @@ export const episode = {
     ],
   },
 
-  // TODO: split mod2 into separate Episode 3, 4 and 5 modules, each with its own stageNavigation.
+  // TODO: split history-medicine-renaissance-medicine into separate Episode 3, 4 and 5 modules, each with its own stageNavigation.
   stageNavigation: [
     { id: 'part-1', title: 'Old Certainties Start to Crack', description: 'Intro hook, prior recall and roadmap.', screenIndex: 0 },
     { id: 'part-2', title: 'The Renaissance Mindset Shift', description: 'How medieval ideas began to loosen.', screenIndex: 1 },

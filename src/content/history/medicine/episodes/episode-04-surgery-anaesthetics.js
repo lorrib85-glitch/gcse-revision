@@ -4,18 +4,8 @@
 // Asset path resolution lives in src/content/history/medicine/assets.js.
 // Canonical content + architecture docs live in docs/content/history/medicine/.
 //
-// LEGACY ID NOTE:
-//   This episode preserves legacy id 'mod3' exactly as it exists in the codebase.
-//   Metadata (title, subtitle, era) in this file follows src/modules.js as the
-//   single source of truth; the inline history.js draft had stale values
-//   (title 'Surgery & anatomy', era 'c1700–c1900' without dots) which have been
-//   normalised to match the corrected modules.js values during extraction.
-//   If ID migration from 'mod3' to a canonical slug is ever required, that must be
-//   handled as a separate, explicit ID migration task with a full impact audit
-//   across all affected files.
-
 export const episode = {
-  id: 'mod3',
+  id: 'history-medicine-surgery-anaesthetics',
   subject: 'History',
   number: 4,
   title: 'Surgery & anatomy',
@@ -77,7 +67,7 @@ export const episode = {
       ], correct: 1 },
     ],
   },
-  // TODO: mod3 lacks blood loss and dedicated exam prep screens; indices 9–10 are approximate.
+  // TODO: history-medicine-surgery-anaesthetics lacks blood loss and dedicated exam prep screens; indices 9–10 are approximate.
   stageNavigation: [
     { id: 'part-1', title: 'The Three Enemies of Surgery', description: 'Pain, infection and blood loss before the 1840s.', screenIndex: 0 },
     { id: 'part-2', title: 'Pain: The Patient\'s Nightmare', description: 'Anaesthetics from Davy to Simpson.', screenIndex: 1 },

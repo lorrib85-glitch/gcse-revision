@@ -1,5 +1,5 @@
 import { MODULES } from './modules.js'
-import { getObject, getArray, setJson } from './lib/storage.js'
+import { getJson, getObject, getArray, setJson, removeKey } from './lib/storage.js'
 
 const KEY          = 'gcse_progress'
 const SCORES_KEY   = 'gcse_scores'
@@ -164,7 +164,7 @@ export const MODULE_GROUPS = [
     id: 'hist_medicine',
     title: 'Medicine Through Time',
     subject: 'History',
-    chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','mod2','mod3','history-medicine-jenner-vaccination','history-medicine-germ-theory','history-medicine-great-stink','mod6','mod7','mod8','mod9'],
+    chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','history-medicine-renaissance-medicine','history-medicine-surgery-anaesthetics','history-medicine-jenner-vaccination','history-medicine-germ-theory','history-medicine-great-stink','history-medicine-surgery-revolution','history-medicine-accidental-miracle','history-medicine-modern-medicine','history-medicine-cancer'],
   },
   {
     id: 'soc_family',
@@ -245,3 +245,28 @@ export function getWeeklyTrend() {
   }
   return { thisAvg, prevAvg, points, trendNote }
 }
+
+// ─── Legacy module ID migration shim ───────────────────────────────
+// One-shot storage migration: copies progress from old gcse_module_<legacy>
+// keys to new gcse_module_<canonical> keys. Safe to run on every page load:
+// - Only copies if old key has data AND new key has no data (no overwrite).
+// - Always removes old key once processed (idempotent: second run is a no-op).
+// - gcse_confidence is read-only in the current codebase; no migration needed.
+const _LEGACY_MODULE_ID_MAP = {
+  mod2: 'history-medicine-renaissance-medicine',
+  mod3: 'history-medicine-surgery-anaesthetics',
+  mod6: 'history-medicine-surgery-revolution',
+  mod7: 'history-medicine-accidental-miracle',
+  mod8: 'history-medicine-modern-medicine',
+  mod9: 'history-medicine-cancer',
+}
+;(function _migrateLegacyModuleIds() {
+  for (const [oldId, newId] of Object.entries(_LEGACY_MODULE_ID_MAP)) {
+    const oldKey = 'gcse_module_' + oldId
+    const newKey = 'gcse_module_' + newId
+    const oldVal = getJson(oldKey, null)
+    if (oldVal === null) continue
+    if (getJson(newKey, null) === null) setJson(newKey, oldVal)
+    removeKey(oldKey)
+  }
+})()
