@@ -22,14 +22,14 @@ The murder of Duncan is the pivot of the entire play. Shakespeare does not drama
 
 - "Is this a dagger which I see before me?" — the hallucination precedes the murder; Macbeth's mind is already unravelling under the pressure of what he is about to do; or the supernatural is participating
 - "I go, and it is done" — Macbeth's speech before committing the murder is almost minimalist; the elaborate moral reasoning of 1.7 is replaced by a soldier's clipped command to himself
-- "I could not say 'Amen'" — immediately after the murder, Macbeth cannot access God's blessing; his first words after killing are about spiritual rupture; he has placed himself outside God's mercy
+- "I could not say 'Amen'" — immediately after the murder, Macbeth feels spiritually cut off from God's blessing and forgiveness; his first words after killing are about spiritual rupture
 - "Macbeth does murder sleep" — the voice Macbeth hears generalises the crime: sleep is universal human restoration; to murder sleep is to murder all of humanity's peace, not just Duncan's
-- "Will all great Neptune's ocean wash this blood clean from my hand?" — immediately establishes that the murder cannot be undone; blood = guilt; no natural force (even the ocean) can cleanse it
+- "Will all great Neptune's ocean wash this blood clean from my hand?" — immediately establishes that the murder cannot be undone; blood = guilt; no natural force, even the ocean, can cleanse it
 - "A little water clears us of this deed" — Lady Macbeth's dismissal of the blood imagery; dramatically ironic given her sleepwalking scene obsession with blood
 
 ### Series throughline
 
-Every subsequent episode is a consequence of this one. The hallucination returns (Banquo's ghost, 3.4). The sleep motif threads through (Lady Macbeth's sleepwalking, 5.1). The blood motif expands from Macbeth's question in 2.2 to Lady Macbeth's "the smell of the blood still" in 5.1. The "Amen" moment — Macbeth's first indication that he has severed his connection with God — anticipates Episode 8 (2.3–2.4, the unnatural events that follow regicide) and Episode 12's nihilism. Lady Macbeth's dismissal "A little water" makes her collapse in 5.1 more powerful: she said it wouldn't matter; it does.
+Every subsequent episode is a consequence of this one. The hallucination returns (Banquo's ghost, 3.4). The sleep motif threads through (Lady Macbeth's sleepwalking, 5.1). The blood motif expands from Macbeth's question in 2.2 to Lady Macbeth's "the smell of the blood still" in 5.1. The "Amen" moment — Macbeth's first indication that he feels spiritually severed from God's blessing — anticipates Episode 8 (2.3–2.4, the unnatural events that follow regicide) and Episode 12's nihilism. Lady Macbeth's dismissal "A little water" makes her collapse in 5.1 more powerful: she said it wouldn't matter; it does.
 
 ### Exam framing
 
@@ -51,8 +51,8 @@ This is the highest-priority exam practice episode for the **Macbeth/Lady Macbet
 - Understanding of the sleep motif and its symbolic significance
 - Understanding of the blood motif and the impossibility of cleansing guilt
 - Understanding of the contrast between Macbeth's psychological collapse and Lady Macbeth's attempted practical control
-- Understanding of the "Amen" moment as spiritual severance
-- Understanding of AO3 context: Jacobean religion (sin, damnation, divine justice); the belief that regicide is a sin against God; sleep as God's gift; the ocean as a symbol of God's infinite mercy that even God cannot override the consequences of sin
+- Understanding of the "Amen" moment as spiritual rupture, with Macbeth feeling cut off from God's blessing and forgiveness
+- Understanding of AO3 context: Jacobean religion (sin, damnation, divine justice); the belief that regicide is a sin against God; sleep as God's gift; the ocean as an image of an immense natural force that still cannot cleanse Macbeth's guilt
 - Understanding of AO2: hallucination as dramatic technique; motif (blood, sleep); symbolism; stagecraft (offstage murder)
 
 ---
@@ -76,12 +76,12 @@ This is the highest-priority exam practice episode for the **Macbeth/Lady Macbet
 - **Hallucination:** The air-drawn dagger; it may be supernatural or psychological; Shakespeare deliberately leaves this ambiguous; it functions as both — a sign of Macbeth's unstable mind and a possible supernatural omen
 - **Motif:** A recurring image or idea; blood and sleep are the two central motifs of this episode and they run through the entire play
 - **Stagecraft:** The decision to keep the murder offstage is a deliberate artistic choice — the audience's imagination creates something more disturbing than any staging could; it also means the murder is always filtered through description and hallucination, never directly shown
-- **"Amen":** In Christian theology, "Amen" seals a prayer and invokes God's blessing; Macbeth's inability to say it signals that he has separated himself from God; he cannot accept divine affirmation of his existence because his existence is now murderous
-- **Neptune:** Roman god of the sea; "Will all great Neptune's ocean" — the greatest natural force imaginable cannot cleanse the guilt; Shakespeare is using classical mythology to express the infinite weight of the crime
+- **"Amen":** In Christian theology, "Amen" seals a prayer and invokes God's blessing; Macbeth's inability to say it suggests he feels spiritually cut off from God's blessing and forgiveness
+- **Neptune:** Roman god of the sea; "Will all great Neptune's ocean" — the greatest natural force imaginable cannot cleanse the guilt; Shakespeare is using classical mythology to express the immense weight of the crime
 
 ### Case studies / named examples
 
-- **"Is this a dagger which I see before me?":** The dagger hallucination is one of the most famous moments in English drama. For AQA AO2: the rhetorical question is addressed to the dagger itself, not to the audience — Macbeth is genuinely unsure of his own perception. The word "sensible" (able to be felt by the senses) reveals he tries to touch it and cannot. The phrase "heat-oppressed brain" suggests he half-attributes it to fever — he is trying to rationalise a supernatural event and failing.
+- **"Is this a dagger which I see before me?":** The dagger hallucination is one of the most famous moments in English drama. For AQA AO2: the rhetorical question is addressed to the dagger itself, not to the audience — Macbeth is genuinely unsure of his own perception. The repeated soft /s/ sounds create a whispering, uncertain rhythm; Macbeth seems to be testing reality as he speaks. The word "sensible" (able to be felt by the senses) reveals he tries to touch it and cannot. The phrase "heat-oppressed brain" suggests he half-attributes it to fever — he is trying to rationalise a supernatural event and failing.
 
 - **AQA Nov 2021 extract (Act 2.2) — Relationship analysis:**
   - Macbeth: "Methought I heard a voice cry 'Sleep no more'" — he is reporting a supernatural experience; he is passive, shocked, destabilised
@@ -100,7 +100,7 @@ This is the highest-priority exam practice episode for the **Macbeth/Lady Macbet
 
 - Macbeth hallucinates dagger → ambiguity about supernatural involvement → or his mind is already collapsing under the pressure of the decision → his psychological state is fragile before he commits the act
 - Murder committed offstage → audience imagination engaged → the horror is personal/interpreted, not spectacle → Shakespeare's choice raises the moral weight rather than the theatrical impact
-- "I could not say Amen" → Macbeth recognises his spiritual severance → the murder has placed him outside God's mercy → this begins the arc toward nihilism ("Tomorrow" speech in 5.5)
+- "I could not say Amen" → Macbeth feels spiritually cut off from God's blessing and forgiveness → this begins the arc toward nihilism ("Tomorrow" speech in 5.5)
 - Macbeth brings back the daggers → Lady Macbeth must return them → she enters the murder chamber; Macbeth cannot → this is the first role reversal; she is more capable of action; he is more consumed by conscience
 - Lady Macbeth dismisses blood as easily washed → "A little water clears us of this deed" → the dramatic irony: in 5.1 she cannot stop washing her hands in her sleep
 
