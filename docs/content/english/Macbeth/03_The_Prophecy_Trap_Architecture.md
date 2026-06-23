@@ -65,19 +65,8 @@ Content, Storyline, Specification requirements and the full Content reference pa
   - `FillInTheBlanksBlock` — complete PQAC for "instruments of darkness" or "horrid image"
   - `InteractiveCollectionExplorer` — browse quotes by theme: fate vs free will / supernatural / ambition
 
-### Section 5 — Exam Practice
-- **Purpose:** AQA-style practice moment; this is one of the highest-priority episodes for exam practice.
-- **Proposed content:**
-  - Question: "How does Shakespeare present the supernatural?" (extract from Act 1.3)
-  - Key argument: the supernatural in 1.3 does not plant the idea of murder — it *reveals* pre-existing ambition (the aside proves this)
-  - Model paragraph: Banquo's "instruments of darkness" speech — use it to argue that Shakespeare presents the supernatural as exploiting weakness, not creating it
-  - Second paragraph planning: the contrast with 4.1 (where Macbeth actively seeks supernatural reassurance) shows the relationship between Macbeth and the witches reversing
-- **Suggested components:**
-  - `GuidedExamResponse` — staged response: identify the argument; choose the quote; write the analysis; add context
-  - `FaceTheExaminer` — students write a paragraph independently, then see the mark scheme framing
-
-### Section 6 — Retrieval & Wider Play Links
-- **Purpose:** Interleave; build whole-play awareness.
+### Section 5 — Retrieval & Wider Play Links
+- **Purpose:** Interleave; build whole-play awareness before the final exam-prep section.
 - **Proposed content:**
   - Retrieve from Episode 1: What is "Fair is foul"? How does the paradox connect to the witches' prophecies in 1.3?
   - Retrieve from Episode 2: How does the Captain's description of Macbeth in Act 1.2 make the aside in 1.3 more significant? (ambition was already embedded in the violence)
@@ -86,6 +75,17 @@ Content, Storyline, Specification requirements and the full Content reference pa
 - **Suggested components:**
   - `QuickRecallScreen` — 4 rapid-fire retrieval questions
   - `RecoveryQuizPlayer` — targeted recovery for weak items
+
+### Section 6 — Exam Practice
+- **Purpose:** Final AQA-style practice moment. The final navigation/progress dot must land on exam prep.
+- **Proposed content:**
+  - Question: "How does Shakespeare present the supernatural?" (extract from Act 1.3)
+  - Key argument: the supernatural in 1.3 does not plant the idea of murder — it *reveals* pre-existing ambition (the aside proves this)
+  - Model paragraph: Banquo's "instruments of darkness" speech — use it to argue that Shakespeare presents the supernatural as exploiting weakness, not creating it
+  - Second paragraph planning: the contrast with 4.1 (where Macbeth actively seeks supernatural reassurance) shows the relationship between Macbeth and the witches reversing
+- **Suggested components:**
+  - `GuidedExamResponse` — staged response: identify the argument; choose the quote; write the analysis; add context
+  - `FaceTheExaminer` — students write a paragraph independently, then see the mark scheme framing
 
 ---
 
@@ -97,7 +97,7 @@ Not yet built — full build from spec.
 
 ## 4. Build recommendations
 
-1. **Storyline integration:** The core takeaway (the prophecies reveal, not create, Macbeth's ambition; Banquo's contrast proves Macbeth's response is a choice) must be the spine of Section 3 and Section 5. The Section 3 contrast activity (Macbeth vs Banquo) should crystallise this explicitly. Section 5's model paragraph should demonstrate the argument, not just quote analysis.
+1. **Storyline integration:** The core takeaway (the prophecies reveal, not create, Macbeth's ambition; Banquo's contrast proves Macbeth's response is a choice) must be the spine of Section 3 and Section 6. The Section 3 contrast activity (Macbeth vs Banquo) should crystallise this explicitly. Section 6's model paragraph should demonstrate the argument, not just quote analysis.
 
 2. **Section 1 — lead with the primary misconception:** "The witches made Macbeth commit murder" is the most damaging misconception in Macbeth study. The ChapterHookScreen must target it immediately. The reveal must use the aside as evidence.
 
@@ -105,7 +105,7 @@ Not yet built — full build from spec.
 
 4. **Section 4 — prioritise "instruments of darkness" and the aside:** These two quotes carry the episode's core argument. The "instruments of darkness" quote is Banquo's most important speech; the aside is the most important evidence of Macbeth's pre-existing ambition. Both require full PQAC treatment.
 
-5. **This is a Very High retrieval priority episode:** Section 6 retrieval should be substantial. Consider a 5-question QuickRecallScreen rather than 3, given the density of this episode's exam value.
+5. **This is a Very High retrieval priority episode:** Section 5 retrieval should be substantial. Consider a 5-question QuickRecallScreen rather than 3, given the density of this episode's exam value.
 
 ---
 
@@ -117,7 +117,7 @@ Not yet built — full build from spec.
 - [ ] Students have actively retrieved at least 4 key quotes from the episode (Section 4)
 - [ ] Students can analyse each key quote using Point → Quote → Analysis → Context (Section 4)
 - [ ] Students can identify and name at least 2 language/structural techniques from the episode (Section 4)
-- [ ] Students have practised at least one AQA-style written response (Section 5)
-- [ ] Students have been shown or produced a mark-scheme-aware paragraph (Section 5)
-- [ ] Students have retrieved content from at least one earlier episode (Section 6)
-- [ ] The episode's core takeaway (how it contributes to the series throughline) has been stated and practised (Section 3 or 5)
+- [ ] Students have retrieved content from at least one earlier episode (Section 5)
+- [ ] Students have practised at least one AQA-style written response (Section 6)
+- [ ] Students have been shown or produced a mark-scheme-aware paragraph (Section 6)
+- [ ] The episode's core takeaway (how it contributes to the series throughline) has been stated and practised (Section 3 or 6)
