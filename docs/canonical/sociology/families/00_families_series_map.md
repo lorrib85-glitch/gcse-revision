@@ -143,24 +143,42 @@ Every episode, before marking complete, must pass all 10 checks:
 - **Syllabus coverage:**
   - The conventional family: Oakley's definition — nuclear families composed of legally married couples, voluntarily choosing parenthood
   - The power of the conventional family idea: social stereotypes, gender roles, social control
+  - Oakley's view that the conventional family creates strains beneath the image of family happiness
+  - Financial inequality in conventional families, especially women’s dependence on men’s wages and unpaid domestic work
+  - Social class differences in attitudes to gender roles, with working-class couples more likely to hold traditional views than middle-class couples
+  - Signs of change, including dual-worker families and lone-parent families, while noting that change is uneven across social groups
   - Oakley's feminist critique: the conventional family is not neutral — it reflects and reinforces gender inequality
   - How family diversity challenges the "normal" family idea
 - **Key concepts / vocabulary:**
   - Conventional family (Oakley): nuclear family, legally married, voluntarily choosing parenthood
+  - Patriarchy: male power and dominance over women
+  - Financial dependence: when one partner relies on the other’s income, reducing independence and power
+  - Unpaid domestic work: housework, childcare and family labour carried out without wages
+  - Dual-worker family: a family where both adult partners are in paid employment
   - Social control: the ways society pressures individuals to conform to norms
   - Social construct: an idea created and accepted by society, not biologically fixed
   - Gender roles: expected behaviours based on gender, reinforced through socialisation
   - Norms: shared expectations of behaviour within a society
 - **Named evidence:**
-  - **Ann Oakley** (feminist, 1982): defines the conventional family; argues this ideal is a powerful social idea even though family life is more diverse; links it to gender roles, unpaid work and financial dependence; concludes that stereotypes are becoming "increasingly archaic" — but still influential
+  - **Ann Oakley** (feminist, 1982):
+    - She defines the conventional family as a nuclear family made up of a legally married couple voluntarily choosing parenthood
+    - She argues the conventional family remains a powerful ideal even though family life is more diverse
+    - She links the conventional family to unpaid domestic work, gender roles, women’s financial dependence and the strain of trying to live up to the ideal
+    - She notes signs of movement towards more open ways of living, but not evenly across all social groups; concludes that stereotypes are becoming "increasingly archaic" — but still influential
   - Oakley's source: 'Conventional families' in *Families in Britain*, Routledge, 1982
 - **Active learning interactions:**
-  - `MisconceptionCheck`: myth vs reality cards ("The nuclear family is natural" / "Most children grow up in nuclear families")
+  - `StrainReveal`: show the public image of the happy conventional family, then reveal hidden strains such as unpaid work, breadwinner pressure and financial dependence
+  - `ClassContrastCards`: compare working-class and middle-class attitudes to traditional gender roles
   - `KeyFigureReveal`: Oakley profile card — perspective, key claim, best used for
+  - `MisconceptionCheck`: myth vs reality cards ("The nuclear family is natural" / "Most children grow up in nuclear families")
   - `FillInTheBlanksBlock` or quote builder: "Oakley argues that…"
   - Scenario check: which family is being treated as "normal" in this situation?
 - **Retrieval points:**
   - Oakley's definition of the conventional family (verbatim-level accuracy)
+  - One strain of conventional family life according to Oakley
+  - One example of financial inequality in the conventional family
+  - One social class difference in attitudes to gender roles
+  - One sign that conventional family norms may be changing
   - Oakley's perspective (feminist) and her key claim
   - One way the conventional family idea relates to gender inequality
   - One way family diversity challenges the conventional family idea
@@ -168,7 +186,9 @@ Every episode, before marking complete, must pass all 10 checks:
 - **Likely misconceptions:**
   - MISCONCEPTION: "The conventional family is just a description of what's most common." Correction: Oakley argues it is a normative ideal — a moral standard — not just a description of reality.
   - MISCONCEPTION: "Oakley is just describing family types." Correction: Oakley is critiquing the power of the conventional family as a social control mechanism.
-- **Build notes:** Open with "who decides what a normal family is?" — teenagers already feel judged on this. The sociological move is to show that "normal" is always political.
+  - MISCONCEPTION: "Oakley says all families are equally affected by conventional family norms." Correction: Oakley identifies social class differences and argues change is uneven.
+  - MISCONCEPTION: "The problem is only who does housework." Correction: Oakley also highlights financial dependence, gender expectations and the emotional strain of conventional roles.
+- **Build notes:** Open with "who decides what a normal family is?" — teenagers already feel judged on this. The sociological move is to show that "normal" is always political. The episode should build toward: the public image of the normal family, the hidden work and pressure underneath, and why Oakley sees this as a feminist issue.
 
 ---
 
@@ -201,457 +221,231 @@ Every episode, before marking complete, must pass all 10 checks:
   - Function match: match each of Murdock's four functions to an everyday example
   - `ConceptReveal`: Parsons' "warm bath" — the family as emotional safe haven
   - `TheoryCompareBlock`: functionalism vs Marxism vs New Right on what the family is "for"
-  - Attack the theory: what does the functionalist view ignore? (conflict, diversity, change)
-  - `SwipeSort` or perspective snap: functionalist / Marxist / New Right — which perspective does this statement belong to?
+  - Attack the theory: what does the functionalist view miss? (e.g., domestic violence, poverty, dual-worker reality)
 - **Retrieval points:**
-  - Murdock's four functions — all four, correct names
-  - Parsons' two functions — both, precise names
-  - Distinction between instrumental and expressive roles
-  - One evaluation of functionalism
-  - Engels' key claim about the family and capitalism
-  - Murray's New Right argument in one sentence
-- **Exam skill focus:** 4-mark explain (explain one function of the family according to functionalists) and 12-mark preparation — "Discuss how far sociologists would agree that the nuclear family performs important functions for society" (JUN24, Q11)
+  - Murdock's four functions (name them)
+  - Parsons' two irreducible functions
+  - Definition of primary socialisation
+  - One Marxist criticism of the nuclear family (inheritance)
+  - One New Right criticism of lone-parent families
+- **Exam skill focus:** 4-mark identify-and-explain (explain two functions of the family according to Murdock) and 12-mark preparation (outlining functionalist vs Marxist views)
 - **Likely misconceptions:**
-  - MISCONCEPTION: "Parsons and Murdock say the same thing." Correction: Murdock identifies four functions; Parsons narrows to two irreducible functions and adds the role distinction.
-  - MISCONCEPTION: "New Right and functionalism are the same." Correction: New Right is politically motivated and criticises non-nuclear family forms; functionalists describe what the family does, not what form it should take.
-  - MISCONCEPTION: "Marxists and functionalists disagree about whether the family works — but they agree on who it benefits." Correction: functionalists say the family benefits everyone; Marxists say it primarily benefits capitalism/the ruling class.
-- **Methods link:** Research methods: secondary data (official statistics on family types) used to support or challenge claims about the nuclear family's prevalence.
+  - MISCONCEPTION: "Functionalists think families are perfect." Correction: they argue families *should* perform these functions for society to work, but they focus on the ideal-type nuclear family.
+  - MISCONCEPTION: "The 'warm bath' is a real bath." Correction: it's a metaphor for the family soaking away the stresses of the working day.
+- **Build notes:** Contrast the "warm bath" (Parsons) with the "dark side" (foreshadowing Episode 7). Use a "Who said it?" quiz to distinguish between functionalist, Marxist and New Right claims.
 
 ---
 
 ### Episode 4: One shape does not fit all
 
-- **Big question:** Are families becoming more diverse — or were they always diverse?
+- **Big question:** Is the nuclear family still the norm, or is diversity the new normal?
 - **Syllabus coverage:**
-  - Family diversity: the variety of family types living in Britain today
-  - Rapoport and Rapoport's five types of family diversity: organisational, cultural, social class, life-course, cohort
-  - How family forms differ in the UK and within a global context
-  - Demographic trends as drivers of family diversity: declining birth rates, falling death rates, ageing population and increased life expectancy all reshape family forms
-  - Migration and globalisation: movement of people and increasing global interconnectedness create cultural diversity in family structure
-  - Ageing population and family structure: beanpole families, one-person pensioner households, growing dependency ratio
-  - How diversity challenges the idea of one "normal" family
+  - Family diversity: the idea that there are many different types of family in contemporary society
+  - Rapoport and Rapoport’s five types of family diversity: organisational, cultural, social class, life course, and cohort
+  - Reasons for the increase in family diversity: legal changes, changing social attitudes, secularisation, migration
+  - The "New Right" vs "Diversity" debate (briefly introduced)
 - **Key concepts / vocabulary:**
-  - Family diversity: variation in family forms in contemporary society
-  - Organisational diversity: differences in internal divisions of domestic labour and role relationships
-  - Cultural diversity: differences based on ethnicity, religion, and cultural values (e.g. multigenerational households more common in some ethnic communities)
-  - Social class diversity: how class position affects family structure, resources and relationships
-  - Life-course diversity: variation at different stages of an individual's life (e.g. born into lone-parent family, then nuclear, then lone again after divorce)
-  - Cohort diversity: differences between generations — families formed in different historical periods look different
-  - Beanpole family: multigenerational, few members per generation (result of declining birth rate + increased life expectancy)
-  - Birth rate: number of live births per 1,000 of the population per year — long-term decline since 1900
-  - Death rate: number of deaths per 1,000 of the population per year — declining due to improved nutrition, medical advances and changing living standards
-  - Ageing population: average age of the population is rising due to falling death rates and declining birth rates
-  - Life expectancy: how long on average a person born in a given year can expect to live (UK males: approx 50 in 1900; 76.9 by 2003)
-  - Migration: movement of people from one country to another — push and pull factors; contributes to cultural diversity in family structure
-  - Globalisation: increasing interconnectedness of the world; barriers between societies are dissolving; affects migration, family structure and family policy
-  - Dependency ratio: measure of dependants (aged 0–14 and over 65) relative to the working-age population (aged 15–64)
+  - Family diversity: the variety of family structures and arrangements in society
+  - Organisational diversity: differences in how family roles and tasks are organised (e.g., dual-worker vs breadwinner)
+  - Cultural diversity: differences in family structures and values across different ethnic and religious groups
+  - Social class diversity: differences in family life and child-rearing between different social classes
+  - Cohort diversity: differences in family experiences based on the historical period in which people lived
 - **Named evidence:**
-  - **Rapoport and Rapoport** (1982): five types of family diversity. Source: 'British families in transition' in *Families in Britain*, Routledge, 1982. Note: their work predates legal recognition of same-sex relationships.
-  - Census data: 10% of Bangladeshi and Pakistani households multigenerational extended families vs 2% white British (2001 Census)
-  - Beanpole family emergence: linked to declining birth rates and ageing population
+  - **Rhona and Robert Rapoport** (1982): identified five types of family diversity; argued that diversity is a positive response to people's needs and that the nuclear family is no longer the dominant form. Source: *British Families in Transition*, 1982.
 - **Active learning interactions:**
-  - Five doors of diversity: each reveals one of Rapoport and Rapoport's types with a concrete example
-  - Spot the diversity: identify which type of diversity is illustrated in a scenario
-  - `KeyFigureReveal`: Rapoport and Rapoport profile card
-  - Exam skill: describe one type of family diversity (3-mark format)
+  - `InteractiveCollectionExplorer`: explore examples of the five types of Rapoport diversity
+  - `SwipeSort`: match scenarios to the correct type of diversity (e.g., "A family where both parents work" → Organisational)
+  - `VisualLearning`: data visualization showing the decline of the nuclear family and the rise of other forms
 - **Retrieval points:**
-  - Rapoport and Rapoport's five types — all five by name
-  - One concrete example for each type
-  - Definition of beanpole family
-  - Why cultural diversity exists in family structure (migration + cultural values)
-  - How diversity challenges the conventional family idea (links to Episode 2)
-- **Exam skill focus:** 3-mark describe (describe one type of family diversity) and 12-mark preparation — "Discuss how far sociologists would agree that family diversity exists in Britain today" (JUN24, Q10)
+  - Definition of family diversity
+  - Name the five types of diversity identified by the Rapoports
+  - One reason why family diversity has increased
+- **Exam skill focus:** 3-mark describe (describe one type of family diversity) and 4-mark identify-and-explain (explain why family diversity has increased)
 - **Likely misconceptions:**
-  - MISCONCEPTION: "Family diversity is a new thing." Correction: Rapoport and Rapoport's five types show diversity existed historically — cohort diversity captures this.
-  - MISCONCEPTION: "Cultural diversity just means ethnicity." Correction: cultural diversity includes religion, values and beliefs — not only ethnicity.
-  - MISCONCEPTION: "The beanpole family is a type of extended family." Correction: beanpole families are multigenerational but have fewer members per generation than a classic extended family.
-- **Methods link:** Secondary data: census statistics as a source of evidence for changing family forms — strength (large scale, representative), weakness (snapshot in time, definitions change).
+  - MISCONCEPTION: "Family diversity is a brand new thing." Correction: while it has increased, different family forms have always existed; what's changed is their visibility and social acceptance.
+  - MISCONCEPTION: "The nuclear family has disappeared." Correction: it is still common, but it is no longer the only "normal" or dominant form.
+- **Build notes:** Use real-world examples and data to ground the concepts. Connect back to Episode 2 — if the "normal" family is a trap, diversity is the escape.
 
 ---
 
 ### Episode 5: Who does the work at home?
 
-- **Big question:** If both people live there, why is the work still not equal?
+- **Big question:** Is the division of labour in the home becoming more equal, or do women still carry the "double burden"?
 - **Syllabus coverage:**
-  - Conjugal roles: domestic roles of married or cohabiting partners
-  - Segregated conjugal roles (Bott): separate male/female tasks and leisure — typical in traditional working-class families with close-knit kin networks
-  - Joint/integrated conjugal roles: shared domestic tasks and leisure
-  - Domestic division of labour: all household tasks (cooking, cleaning, childcare, DIY, decision-making, money management, leisure)
-  - Instrumental role (male) and expressive role (female) — Parsons
-  - Why roles are changing: women's economic activity, weakening gender identities, technology, commercialisation of domestic labour
-  - Decision-making and money management as power
-  - Dual-worker vs dual-career families
-  - Triple shift: paid work + domestic labour + emotional labour (feminist critique)
+  - Conjugal roles: the roles of husbands and wives (or partners) within the home
+  - Segregated vs joint conjugal roles (Bott)
+  - The domestic division of labour: who does the housework, childcare, and emotion work?
+  - The "double burden" and "triple shift" (Duncombe and Marsden)
+  - Power and decision-making in the family: who controls the money? (Pahl and Vogler)
 - **Key concepts / vocabulary:**
-  - Conjugal roles: domestic roles within a partnership
-  - Segregated conjugal roles: clearly separate male/female domestic tasks and leisure
-  - Joint (integrated) conjugal roles: shared domestic tasks, joint leisure
-  - Domestic division of labour: division of household tasks between partners
-  - Triple shift: paid work + unpaid housework + emotional management (feminist concept)
-  - Dual-worker family: both partners in paid work (but domestic labour may be unequal)
-  - Dual-career family: both partners with professional careers
+  - Conjugal roles: the parts played by partners in a domestic relationship
+  - Segregated conjugal roles: clear division of labour between partners (e.g., breadwinner husband, housewife wife)
+  - Joint conjugal roles: shared tasks and roles within the home
+  - Double burden: when women have a paid job and also do the majority of housework and childcare
+  - Triple shift: when women do paid work, housework/childcare, AND the emotional work of the family
 - **Named evidence:**
-  - **Elizabeth Bott** (feminist, 1957): segregated vs joint conjugal roles; segregated roles typical in families with close-knit kin networks. Source: *Family and Social Network*, 1957.
-  - **Willmott and Young** (1973): conjugal roles becoming more equal (joint roles) — but see Episode 6 for full symmetrical family argument.
-  - **Ann Oakley** (feminist): segregated roles persist; women still carry most domestic labour even when working; developed concept of double/triple shift. Source: *The Sociology of Housework*, 1974.
-  - **Jan Pahl** (1989): interviewed 102 married couples in Kent; men still more likely to control financial resources; women often have little access to household money — financial control = power. Source: *Money and Marriage*, 1989.
-  - **Scott and Clery** (2013): despite changed attitudes, women still do majority of domestic labour; gender inequalities in the home make workplace equality harder to achieve. Source: *British Social Attitudes*, 2013.
-  - **Caroline Gatrell**: heterosexual couples in full-time employment; fathers doing more childcare but still less than mothers — "new father" image not matched by reality.
+  - **Elizabeth Bott** (1957): distinguished between segregated and joint conjugal roles. Source: *Family and Social Network*, 1957.
+  - **Stephen Edgell** (1980): found that men made the most important decisions (e.g., moving house, finances), while women made less important ones (e.g., food, children's clothes). Source: *Middle-Class Couples*, 1980.
+  - **Duncombe and Marsden** (1995): identified the "triple shift" performed by women. Source: 'Work and the family', 1995.
 - **Active learning interactions:**
-  - Household task allocator: student assigns chores, then compares with sociological evidence
-  - Money power scenario: who controls spending — power or practicality?
-  - Mini research design: design a short questionnaire on household labour (methods link)
-  - `TheoryCompareBlock`: functionalist (natural roles) vs feminist (unequal power) on domestic division
+  - `ColSortBlock`: sort tasks into "traditionally male", "traditionally female", or "joint"
+  - `InteractiveCollectionExplorer`: explore different types of decision-making in families
+  - `GuidedAnswerCoach`: practice writing a paragraph about the double burden
 - **Retrieval points:**
-  - Precise definitions of segregated and joint conjugal roles
-  - Bott's key finding on segregated roles
-  - Oakley's triple shift concept — all three elements
-  - Jan Pahl's finding on money management
-  - One sociologist who challenges the view that roles are becoming equal
-- **Exam skill focus:** 4-mark identify-and-explain (identify and explain one way conjugal role relationships may be segregated — JUN24, Q4) and 12-mark preparation — "Discuss how far sociologists would agree that gender roles are equal in families in Britain today" (JUN23, Q11)
+  - Difference between segregated and joint conjugal roles
+  - Definition of the "double burden"
+  - One example of how power is exercised through decision-making
+- **Exam skill focus:** 4-mark identify-and-explain (explain one reason why conjugal roles might be becoming more equal) and 12-mark preparation (discussing the extent of equality in the home)
 - **Likely misconceptions:**
-  - MISCONCEPTION: "Bott is a Marxist." Correction: Bott is a feminist sociologist.
-  - MISCONCEPTION: "Joint conjugal roles mean completely equal roles." Correction: Willmott and Young say roles are symmetrical (similar contribution/importance) — not identical or interchangeable.
-  - MISCONCEPTION: "The triple shift is just paid work + housework." Correction: the third element is emotional labour — managing the emotional wellbeing of family members.
-- **Methods link:** Questionnaire and interview as methods for researching conjugal roles — Pahl used structured interviews with married couples; strength (depth), weakness (couples may present a socially desirable picture).
+  - MISCONCEPTION: "If a man does some housework, the roles are equal." Correction: sociologists look at the *overall* distribution of time, responsibility, and power, not just individual tasks.
+  - MISCONCEPTION: "Equality is only about housework." Correction: it also includes childcare, emotional work, and financial decision-making.
+- **Build notes:** Use relatable scenarios and perhaps a "chore calculator" style interaction to make the concepts concrete.
 
 ---
 
-### Episode 6: The symmetrical family — real change or PR spin?
+### Episode 6: The symmetrical family: real change or PR spin?
 
-- **Big question:** Are families actually more equal now, or do they just look more equal?
+- **Big question:** Is the "symmetrical family" a reality for most people, or is it an optimistic myth?
 - **Syllabus coverage:**
-  - Willmott and Young's symmetrical family thesis (Stage 3 nuclear family)
-  - Principle of stratified diffusion: what happens at the top of the stratification system today diffuses downward
-  - Home-centred family life: shift from work-centred to home-centred
-  - Feminist criticisms of symmetry: Oakley's challenge — women still carry most domestic labour
-  - Double shift (paid work + domestic labour) and triple shift
-  - Changing role of fathers — evidence for and against
-  - Scott and Clery (2013): gender inequalities persist despite attitude change
-  - Caroline Gatrell: "new father" image vs reality
+  - The symmetrical family (Willmott and Young): the idea that family life is becoming more equal and home-centered
+  - The "march of progress" view of the family
+  - Feminist critiques of the symmetrical family (Oakley)
+  - The impact of paid work on conjugal roles
 - **Key concepts / vocabulary:**
-  - Symmetrical family: family where partners make similar (though not identical) contributions to home life — shared chores, shared decision-making; conjugal roles of equal importance (Willmott and Young)
-  - Principle of stratified diffusion: patterns established in upper strata gradually spread downward
-  - Home-centred: family and leisure take priority over work (Stage 3 — working class)
-  - Work-centred: careers take priority, wife manages home (Stage 4 — managing director family)
-  - Double shift: paid work + unpaid domestic labour (feminist critique of symmetry)
+  - Symmetrical family: a nuclear family where roles are more similar (though not identical) and partners spend more time together
+  - March of progress: the idea that society (and the family) is gradually becoming better and more equal
 - **Named evidence:**
-  - **Willmott and Young** (1973): surveyed nearly 2,000 people in Greater London; coined "symmetrical family" — Stage 3; symmetry more common in working-class families; attributed to boring/uninvolving manual work leading workers to focus on home. Source: *The Symmetrical Family*, 1973.
-  - **Ann Oakley** (feminist): challenges symmetry claim — women still do majority of housework; Willmott and Young exaggerated equality; even men's increased participation is modest.
-  - **Scott and Clery** (2013): British Social Attitudes data; people's attitudes have changed but behaviour has not followed — women still do more.
-  - **Caroline Gatrell**: fathers doing more childcare than in the past, but still less than mothers — the "new father" is more involved but not equal.
+  - **Young and Willmott** (1973): argued that the family was becoming more symmetrical due to changes like the rise of the nuclear family, improved living standards, and women going out to work. Source: *The Symmetrical Family*, 1973.
+  - **Ann Oakley** (1974): strongly disagreed with Young and Willmott; her research found that although some men "helped", the main responsibility for housework and childcare still rested with women. Source: *The Sociology of Housework*, 1974.
 - **Active learning interactions:**
-  - Courtroom debate: "The family is now equal" — build both sides using evidence cards
-  - Evidence cards: Willmott and Young arguments vs Oakley / Scott and Clery counter-evidence
-  - Double shift reveal: interactive sequence showing paid work hours + unpaid domestic hours
-  - 12-mark paragraph builder: build a "for" paragraph (Willmott and Young) and an "against" paragraph (Oakley)
+  - `TheoryCompareBlock`: Young and Willmott vs Oakley on symmetry
+  - `SwipeSort`: "Symmetrical family" vs "Double burden" scenarios
+  - `FaceTheExaminer`: 4-mark question on the symmetrical family
 - **Retrieval points:**
-  - Willmott and Young's key claim about the symmetrical family (one precise sentence)
-  - What "symmetrical" means — roles of equal importance, not identical
-  - The principle of stratified diffusion — definition and implication
-  - Oakley's main criticism of the symmetrical family argument
-  - Scott and Clery's finding on attitudes vs behaviour
-- **Exam skill focus:** 12-mark preparation — "Discuss how far sociologists would agree that families in Britain today are symmetrical" (NOV20, Q10) and "Discuss how far sociologists would agree that gender inequalities continue to exist within the family in Britain today" (NOV21, Q11)
+  - Definition of the symmetrical family
+  - Two reasons why Young and Willmott thought the family was becoming more symmetrical
+  - One reason why Oakley criticized the idea of the symmetrical family
+- **Exam skill focus:** 12-mark paragraph builder (evaluating the march of progress view)
 - **Likely misconceptions:**
-  - MISCONCEPTION: "Willmott and Young are feminists." Correction: they write from a functionalist-influenced perspective and are generally positive about the direction of change.
-  - MISCONCEPTION: "The symmetrical family means both partners do exactly the same tasks." Correction: symmetrical means similar contributions of equal importance — roles remain distinct but equally valued.
-  - MISCONCEPTION: "Oakley says nothing has changed." Correction: Oakley acknowledges some change but argues it is overstated and insufficient to call families equal.
+  - MISCONCEPTION: "Symmetrical means identical." Correction: Young and Willmott argued roles were becoming more *similar* and balanced, not exactly the same.
+  - MISCONCEPTION: "Oakley says men do nothing." Correction: Oakley found men might "help out", but the *responsibility* remained with the woman.
+- **Build notes:** This episode is a direct debate. Use the "Oakley vs Young & Willmott" rivalry to drive the engagement.
 
 ---
 
 ### Episode 7: The family under attack
 
-- **Big question:** Is the family a safe place — or a place of control, exploitation and harm?
+- **Big question:** Is the family a safe haven, or a place of oppression and conflict?
 - **Syllabus coverage:**
-  - Marxist critique (Zaretsky): family as prop to capitalism — unpaid domestic labour reproduces the workforce; family as unit of consumption; privatised family life creates illusion of separation from the economy
-  - Engels: isolated nuclear family enables inheritance of private property → maintains capitalist class system
-  - Feminist critique (Delphy and Leonard): family as patriarchal economic system — men benefit from women's labour; even women in paid employment still do most domestic labour; family is where patriarchy is reproduced
-  - Radical feminism: patriarchy must be abolished; marriage and family are key institutions of male power
-  - Dark side of the family: domestic abuse, neglect, power and control; statistics on domestic violence
-  - Criticisms of the family (general): isolation, unrealistic idealisation, loss of traditional functions, lack of contact with wider kin networks
-  - Difference feminism: not all families are oppressive — for some women (e.g. Black women in a racist society), the family may be a refuge, not a site of oppression
+  - Marxist criticisms of the family: reproducing inequality, supporting capitalism, the family as a unit of consumption
+  - Feminist criticisms of the family: patriarchy, domestic violence, the "dark side" of the family
+  - Radical feminist views on the family (e.g., Delphy and Leonard)
 - **Key concepts / vocabulary:**
-  - Unit of consumption: the family as the primary consumer unit in capitalism, targeted by advertisers (Zaretsky)
-  - Unpaid domestic labour: housework and childcare performed without wages, maintaining the workforce for capitalism
-  - Patriarchy: a system of social organisation in which men hold dominant power over women
-  - Domestic abuse: physical, emotional, financial or sexual abuse within the home
-  - Alienation (Zaretsky): under capitalism, people are separated from the products of their work — the family provides false comfort
-  - Difference feminism: feminist strand arguing that women's experiences differ by race, class, sexuality — not all families oppress all women equally
+  - Unit of consumption: how the family buys and consumes the products of capitalism, keeping the system going
+  - Patriarchy: a society or system where men hold the power and women are largely excluded from it
+  - The "dark side" of the family: the hidden reality of domestic violence, abuse, and conflict within families
 - **Named evidence:**
-  - **Eli Zaretsky** (Marxist, 1976): the capitalist family creates an illusion of "private life" separate from the economy; the family cushions alienation while perpetuating the system; domestic labour reproduces future workers; family is a vital unit of consumption; only socialism can end this artificial separation. Source: *Capitalism, the Family and Personal Life*, Pluto Press, 1976.
-  - **Friedrich Engels** (Marxist): isolated nuclear family enables men to confirm paternity, ensure private property inheritance → family sustains class system.
-  - **Christine Delphy and Diana Leonard** (feminist, 1992): family is an economic system in which men benefit from and exploit women's labour; even women in paid work still do majority of domestic labour; men are the prime beneficiaries — not capitalism abstractly. Source: *Familiar Exploitation*, Polity Press, 1992.
-  - **Radical feminism**: men are the enemy; marriage and the family are key institutions through which patriarchy is sustained — must be abolished (no single named sociologist specified in AQA spec — use as a perspective, not a named study).
-  - **Difference feminism**: other feminist strands ignore the diversity of women's experiences — a Black woman may find family a refuge from societal racism, not a place of oppression.
-  - Domestic abuse statistics: victim surveys (e.g. Crime Survey for England and Wales) show domestic violence disproportionately affects women — dark figure of crime means official statistics undercount.
+  - **Delphy and Leonard** (1992): radical feminists who argued that the family is a patriarchal institution where men exploit the unpaid labour of women. Source: *Familiar Exploitation*, 1992.
+  - **Zaretsky** (1976): Marxist who argued the family provides a "safe haven" from the frustrations of work, but this actually helps capitalism by keeping workers compliant. Source: *Capitalism, the Family and Personal Life*, 1976.
 - **Active learning interactions:**
-  - Theory split screen: capitalism vs patriarchy — what does each perspective see when it looks at the family?
-  - Hidden work reveal: unpaid labour, emotional labour, consumption — building the Zaretsky/Delphy argument
-  - `MisconceptionCheck`: "Marxists and feminists criticise the family for the same reason" — false; Marxists say capitalism, feminists say men/patriarchy
-  - Safe haven challenge: does Parsons' warm bath theory explain all families? (Links to dark side)
-  - `ColSortBlock`: statements → Marxist / feminist / New Right / functionalist
+  - `ConceptReveal`: "Unit of consumption" — how families support the economy
+  - `TheoryCompareBlock`: Marxist vs Feminist vs Functionalist views on the "purpose" of the family
+  - `InteractiveCollectionExplorer`: explore different types of feminist perspectives (Liberal, Radical, Marxist)
 - **Retrieval points:**
-  - Zaretsky's key claim in one sentence (perspective + argument)
-  - Two ways the family serves capitalism according to Zaretsky
-  - Delphy and Leonard's key claim in one sentence
-  - The difference between Zaretsky's Marxist critique and Delphy and Leonard's feminist critique
-  - Definition of domestic abuse + why official statistics may undercount it (dark figure)
-  - What difference feminism adds to the feminist debate on the family
-- **Exam skill focus:** 4-mark compare (compare Zaretsky's and Delphy and Leonard's criticisms of the family) and 12-mark preparation — "Discuss how far sociologists would agree that the main function of the family is to serve capitalism" (JUN23, Q10)
+  - One Marxist criticism of the family
+  - One feminist criticism of the family
+  - Definition of patriarchy
+- **Exam skill focus:** 12-mark argument builder (discussing the extent to which the family is a patriarchal institution)
 - **Likely misconceptions:**
-  - MISCONCEPTION: "Zaretsky says the family is bad for capitalism." Correction: Zaretsky says the family is essential TO capitalism — it reproduces labour power and absorbs workers' alienation.
-  - MISCONCEPTION: "Marxists and radical feminists say the same thing." Correction: Marxists blame capitalism; radical feminists blame men/patriarchy.
-  - MISCONCEPTION: "Difference feminism is not a real feminist perspective." Correction: difference feminism is a legitimate strand that critiques white, middle-class feminism for ignoring race and class.
-- **Methods link:** Victim surveys (Crime Survey for England and Wales) — strengths (anonymous, captures dark figure), limitations (still underestimates — fear, shame, normalisation of abuse).
+  - MISCONCEPTION: "Marxists hate families." Correction: they criticize the *role* the nuclear family plays in supporting capitalism, not necessarily the idea of people living together.
+  - MISCONCEPTION: "Feminists think all men are bad." Correction: they criticize the *system* of patriarchy that exists within the family structure.
+- **Build notes:** Handle the "dark side" topics (abuse, violence) with sensitivity and include signposting to support where appropriate.
 
 ---
 
 ### Episode 8: Parents, children and power
 
-- **Big question:** Has childhood become better, more controlled — or just different?
+- **Big question:** Has childhood become better, or have we just found new ways to control children?
 - **Syllabus coverage:**
-  - Changing parent-child relationships: from authoritarian to child-centred
-  - March of Progress view (functionalist): childhood has improved — child labour laws, medical improvements, compulsory education, children's rights
-  - Conflict view: not all children have the same experience — class, gender and ethnicity create very different childhoods; 4.2 million children in the UK in poverty
-  - Childhood as a social construct (Aries): historical and cultural evidence — medieval children treated as small adults; child soldiers in some societies
-  - Neil Postman: disappearance of childhood — children acquiring adult rights, clothing, crimes (James Bulger case); TV/media blurs adult/child boundary
-  - Jenks: childhood not disappearing but changing — postmodern children are intensively monitored, career-focused, checked up on by parents
-  - Sue Palmer: "toxic childhood" — technology, consumerism and lack of play damaging children's development
-  - Financial dependence of young people: boomerang children, sandwich generation
-  - Wider kinship networks: grandparents, extended family roles, care of elderly relatives
-  - Demographic context: increased life expectancy means more grandparents are alive and active in family life; ageing population creates beanpole families (long, thin across generations) and increases the care burden on the sandwich generation; declining birth rates mean fewer children per family; boomerang children reflect financial pressures and rising housing costs
+  - Changing parent-child relationships: from "seen and not heard" to child-centered families
+  - The "march of progress" view of childhood (Aries)
+  - Conflict views of childhood: inequalities between children and adults, and between children of different classes/ethnicities
+  - The "disappearance of childhood" (Postman) or "toxic childhood" (Palmer)
 - **Key concepts / vocabulary:**
-  - Child-centred family: family organisation in which children's needs take priority
-  - Social construct: an idea created by society rather than fixed by nature or biology
-  - March of Progress: the view that childhood has continuously improved over centuries
-  - Boomerang children: adult children who return to live with parents, typically due to financial pressures
-  - Sandwich generation: parents caring for both children and elderly parents simultaneously
-  - Life expectancy: average length of life — rising in UK (males 76.9 years by 2003 vs 50 in 1900)
+  - Child-centered family: a family where the needs and interests of the children are a top priority
+  - Age patriarchy: the power that adults have over children
+  - Toxic childhood: the idea that modern life (technology, junk food, testing) is harming children's development
 - **Named evidence:**
-  - **Philippe Aries** (1960s): historical evidence — medieval paintings show children as small adults, suggesting childhood is a modern social invention. Source: *Centuries of Childhood*, 1962.
-  - **Neil Postman** (1994): children gaining adult rights/clothes/criminal responsibility; TV removes the "information gap" between children and adults → childhood disappearing. Source: *The Disappearance of Childhood*, 1994.
-  - **Jenks** (postmodern): childhood not disappearing but changing — parents are protective, career-focused for children, maintain contact after leaving home. Source: *Childhood*, 1996.
-  - **Sue Palmer**: technology, lack of play, consumerism and junk food creating "toxic childhood." Source: *Toxic Childhood*, 2006.
-  - **Scott** (2004): questions March of Progress view — children are still dependent (doing housework, translating for immigrant parents).
-  - **Willmott and Young**: parent-child relationships less authoritarian; young people have more freedom than previous generations.
-  - Prior and Trinder, Charles et al. — evidence on changing father-child relationships (UNCERTAIN: specific claims not confirmed from available sources — verify from spec or textbook).
+  - **Philippe Aries** (1960): argued that childhood is a relatively recent social construct; in the past, children were seen as "mini-adults". Source: *Centuries of Childhood*, 1960.
+  - **Neil Postman** (1982): argued that childhood is "disappearing" because the boundary between children and adults is being blurred by media and technology. Source: *The Disappearance of Childhood*, 1982.
 - **Active learning interactions:**
-  - Then vs now comparison: child labour → child-centred family
-  - Dependency slider: when does adulthood actually start? (financial, legal, social)
-  - `TheoryCompareBlock`: March of Progress vs Conflict view
-  - `MisconceptionCheck`: "Childhood is a universal, natural stage of life" — false, it is a social construct
+  - `VisualLearning`: historical timeline of childhood
+  - `SwipeSort`: "Child-centered" vs "Adult-centered" family practices
+  - `MatchingTask`: match the sociologist to their view on childhood
 - **Retrieval points:**
-  - Definition of childhood as a social construct with one piece of evidence (historical or cultural)
-  - March of Progress view — two improvements to childhood
-  - Conflict view — one inequality that shapes childhood (class, gender or ethnicity)
-  - Postman's key claim about childhood
-  - Jenks' alternative argument
-  - Definition of boomerang children and sandwich generation
-- **Exam skill focus:** 4-mark explain (explain one way parent-child relationships have changed) and 12-mark preparation — "Discuss how far sociologists would agree that childhood and parent-child relationships have improved over time"
+  - One way parent-child relationships have changed
+  - Definition of a child-centered family
+  - One reason why Postman thinks childhood is disappearing
+- **Exam skill focus:** 4-mark identify-and-explain (explain one reason for the rise of the child-centered family)
 - **Likely misconceptions:**
-  - MISCONCEPTION: "The March of Progress view means everything has got better for all children." Correction: the conflict view shows that improvements are uneven — class, gender and ethnicity still create very different childhoods.
-  - MISCONCEPTION: "Postman and Jenks agree that childhood is disappearing." Correction: Postman says childhood is disappearing; Jenks says it is changing but not disappearing.
-- **Methods link:** Official statistics on child poverty (4.2 million children in UK poverty); secondary data strengths (large scale) and weaknesses (political definitions may change).
+  - MISCONCEPTION: "Children have always been treated the same." Correction: Aries shows that the concept of "childhood" has changed significantly over time.
+  - MISCONCEPTION: "Child-centered means children are in charge." Correction: it means the family's resources and focus are directed towards the children's well-being.
+- **Build notes:** Use visual aids to show the contrast between historical and modern childhood.
 
 ---
 
 ### Episode 9: Marriage, cohabitation and divorce
 
-- **Big question:** Why are people less likely to marry — and more likely to leave?
+- **Big question:** Why are people marrying less and divorcing more — and does it matter?
 - **Syllabus coverage:**
-  - Marriage trends: declining marriage rate since 1970s, rising age of first marriage, rising remarriage rate; declining birth rates and smaller average family sizes are linked to later marriage and increased cohabitation
-  - Cohabitation: increasing, particularly in 25–34 age range ("try before you buy"); greater female economic independence means women are less financially dependent on marriage
-  - Same-sex marriage (legal since 2014) and civil partnerships
-  - Living Apart Together (LAT)
-  - Divorce trends since 1945: long-term rise, recent decline, but increase in over-60s
-  - Reasons for divorce increase: legal changes (Divorce Reform Act 1969), changing social attitudes, secularisation (decline of religion), changing status of women, media and romantic expectations (Giddens' pure relationship)
-  - Consequences of divorce: for husband/wife, for children, for extended family; increase in lone-parent families; reconstituted families; remarriage
-  - Functionalist view on divorce: threatens social stability, weakens socialisation
-  - Feminist view: divorce as liberation for women from oppressive marriages
-  - New Right view: divorce as moral decline; weakens nuclear family; produces welfare dependency (Murray)
-  - Giddens (postmodern): pure relationship — relationships maintained only while rewarding; reflects individualism and changing expectations
+  - Trends in marriage and cohabitation: why are they changing?
+  - Trends in divorce: reasons for the increase (legal changes, social attitudes, secularisation, women's independence)
+  - Consequences of divorce for individuals and society
+  - Different perspectives on divorce (Functionalist, Feminist, New Right)
 - **Key concepts / vocabulary:**
-  - Secularisation: the declining influence of religion on social life and behaviour
-  - Divorce Reform Act 1969: made "irretrievable breakdown" sufficient grounds for divorce → significantly increased divorce rates
-  - Cohabitation: living together without marriage
-  - Pure relationship (Giddens): a relationship continued only so long as both partners find it rewarding — reflects postmodern individualism
-  - Reconstituted family: family where one or both partners have children from previous relationships
-  - Lone-parent family: result of divorce, separation, death of a partner, or choice
+  - Secularisation: the declining influence of religion in society
+  - Cohabitation: living together in a sexual relationship without being married
+  - Divorce rate: the number of divorces per 1,000 married people per year
 - **Named evidence:**
-  - **Giddens** (postmodern): pure relationship concept — relationships no longer held together by tradition or religion but by individual satisfaction. Source: *The Transformation of Intimacy*, 1992.
-  - **Divorce Reform Act 1969**: key legal turning point — "irretrievable breakdown of marriage" becomes sufficient grounds.
-  - Statistical trends: divorce rate rose sharply after 1969; declined recently overall but increased among over-60s ("silver splitters"); cohabitation rising in 25–34 age group.
-  - Secularisation evidence: church attendance declining; fewer religious marriages.
-  - **New Right (Murray)**: divorce seen as moral decline; single mothers produce underclass; welfare dependence undermines self-reliance.
-  - **Feminist view**: rising divorce partly explained by women having more economic independence and legal rights to initiate divorce.
+  - No specific new sociologists required, but students should apply existing perspectives (e.g., New Right's Murray on the impact of divorce on the "underclass").
 - **Active learning interactions:**
-  - Trend detective: interpret simple graphs on marriage/divorce rates (working scientifically / interpreting data)
-  - Cause chain: law → attitudes → behaviour (interactive causal chain)
-  - Perspective battle: functionalist / Marxist / feminist / New Right views on divorce
-  - Exam skill: explain one reason for the rise in divorce (4-mark format)
+  - `VisualLearning`: graphs showing trends in marriage, divorce, and cohabitation
+  - `ColSortBlock`: sort reasons for divorce into "legal", "social", and "economic" categories
+  - `TheoryCompareBlock`: Functionalist vs Feminist vs New Right on divorce
 - **Retrieval points:**
-  - Four main reasons for increased divorce since 1945 (legal, attitudes, secularisation, women's status)
-  - Giddens' pure relationship concept — definition and implication
-  - Main consequences of divorce for family structure (lone-parent families, reconstituted families)
-  - New Right argument about divorce in one sentence
-  - Feminist argument about divorce in one sentence
-- **Exam skill focus:** 12-mark preparation — "Discuss how far sociologists would agree that changes in the law are the main reason for the pattern of divorce in Britain since 1969" (JUN22, Q10) and "Discuss how far sociologists would agree that marriage is still important in Britain today" (JUN19, Q11)
+  - Two reasons for the increase in divorce rates
+  - One reason for the rise in cohabitation
+  - One consequence of divorce for children
+- **Exam skill focus:** 12-mark argument builder (discussing the reasons for changing patterns of marriage and divorce)
 - **Likely misconceptions:**
-  - MISCONCEPTION: "Divorce rate has been rising continuously since 1945." Correction: it rose sharply after 1969 but has declined in recent years — though the over-60s rate has increased.
-  - MISCONCEPTION: "Secularisation alone explains rising divorce." Correction: secularisation is one factor among several — legal change, women's economic independence and changing expectations are all important. AQA mark scheme will credit nuanced multi-cause answers.
-  - MISCONCEPTION: "Giddens is a Marxist or feminist." Correction: Giddens writes from a postmodern / late-modernity perspective.
-- **Methods link:** Interpreting official statistics (marriage and divorce rates) — strengths (official, comprehensive, longitudinal) and weaknesses (definitions change over time, administrative data reflects legal status not relationships).
+  - MISCONCEPTION: "Divorce is easy now." Correction: while legal barriers have been removed, it is still a significant and often difficult process.
+  - MISCONCEPTION: "Nobody gets married anymore." Correction: marriage rates have declined, but the majority of people still marry at some point in their lives.
+- **Build notes:** Use clear, up-to-date data. This is a great episode for applying multiple perspectives.
 
 ---
 
 ### Episode 10: The 12-mark family argument lab
 
-- **Big question:** How do you turn family knowledge into marks?
+- **Big question:** How do you build a winning 12-mark argument in Sociology?
 - **Syllabus coverage:**
-  - AO1: Sociological knowledge and understanding — using key thinkers accurately, correct perspectives, precise concepts (4 marks)
-  - AO2: Application — applying evidence and theory to the specific question, not generic answers (4 marks)
-  - AO3: Analysis and evaluation — comparing perspectives, challenging claims, "how far" judgement, supported conclusions (4 marks)
-  - Building 12-mark answers: introduction (define key term, signpost argument), evidence paragraphs (claim, sociologist, evidence, evaluation), conclusion (how far, judgement)
-  - Common errors: narrative without theory, listing sociologists without explaining their argument, evaluating without evidence, no conclusion
-  - Using named researchers to support/challenge perspectives
+  - Review of all key perspectives and sociologists
+  - AO1 (Knowledge and understanding), AO2 (Application), and AO3 (Analysis and evaluation) skills
+  - Structuring a 12-mark essay: Introduction, PEEEL paragraphs, Conclusion
+  - Using evidence and evaluation effectively
 - **Key concepts / vocabulary:**
-  - AO1 / AO2 / AO3 — as defined above
-  - "How far": requires a judgement — not "yes" or "no" but a supported, conditional conclusion
-  - Specialist terminology: use precise sociological vocabulary throughout (not everyday language)
-  - Claim, evidence, challenge, judgement: the four-stage 12-mark paragraph structure
-- **Named evidence (all episodes — revision):**
-  - Murdock: four functions (sexual, reproductive, economic, educational)
-  - Parsons: primary socialisation + stabilisation of adult personalities
-  - Rapoport and Rapoport: five types of diversity (organisational, cultural, class, life-course, cohort)
-  - Oakley: conventional family; feminist critique of symmetry; triple shift
-  - Willmott and Young: symmetrical family; stratified diffusion
-  - Zaretsky: unit of consumption; unpaid labour; capitalism
-  - Delphy and Leonard: patriarchal economic system; men benefit from women's labour
-  - Bott: segregated vs joint conjugal roles
-  - Jan Pahl: money management = financial control
-  - Scott and Clery: changed attitudes, unchanged behaviour
-  - Giddens: pure relationship
-  - Murray (New Right): underclass; nuclear family self-sufficiency
-  - Aries / Postman / Jenks: childhood debates
+  - AO1: Knowledge and understanding
+  - AO2: Application
+  - AO3: Analysis and evaluation
+- **Named evidence:**
+  - Synthesis of all sociologists covered in the module (Oakley, Murdock, Parsons, Rapoports, Willmott & Young, etc.)
 - **Active learning interactions:**
-  - Claim, evidence, challenge, judgement builder — interactive paragraph scaffold
-  - Researcher card matching: match sociologist to perspective, key claim, best 12-mark use
-  - `FaceTheExaminer`: weak answer vs upgraded answer — two versions of the same paragraph
-  - 12-mark timed practice: "Discuss how far sociologists would agree that…" (student selects from bank)
-  - Final family case file: student builds their own argument using evidence from all episodes
-- **Retrieval points:** All named sociologists + perspective + key claim (from all 10 episodes)
-- **Exam skill focus:** Full 12-mark construction — plan, write, check against level descriptors
+  - `GuidedExamResponse`: step-by-step builder for a 12-mark essay
+  - `ExaminerExplainsScreen`: video or text explaining how to hit the top marks
+  - `MatchingTask`: match evaluation points to the correct theory
+- **Retrieval points:**
+  - Synthesis of key points from all previous episodes
+- **Exam skill focus:** 12-mark essay construction (the primary focus of this episode)
 - **Likely misconceptions:**
-  - MISCONCEPTION: "A longer answer is always better." Correction: AQA marks precision and structure — a focused 4-paragraph answer at Level 4 beats a sprawling one without evaluation.
-  - MISCONCEPTION: "You need to cover every sociologist." Correction: depth beats breadth — two well-developed sociologists with evaluation outperform six names with no explanation.
-- **Build notes:** This episode is the module's culmination. The "family case file" motif from the recurring design thread should pay off here — students close the case by making their own argument.
-
----
-
-## Complete exam question bank (AQA 8192/1 past papers — Section A: Families)
-
-### 12-mark questions by year
-
-| Year | Q | Question |
-|------|---|----------|
-| JUN19 | Q10 | Discuss how far sociologists would agree that families are the main agent of socialisation. |
-| JUN19 | Q11 | Discuss how far sociologists would agree that marriage is still important in Britain today. |
-| NOV20 | Q10 | Discuss how far sociologists would agree that families in Britain today are symmetrical. |
-| NOV20 | Q11 | Discuss how far sociologists would agree that the extended family is still important in Britain today. |
-| NOV21 | Q10 | Discuss how far sociologists would agree that the traditional nuclear family is the most appropriate family type in which to raise children in Britain today. |
-| NOV21 | Q11 | Discuss how far sociologists would agree that gender inequalities continue to exist within the family in Britain today. |
-| JUN22 | Q10 | Discuss how far sociologists would agree that changes in the law are the main reason for the pattern of divorce in Britain since 1969. |
-| JUN22 | Q11 | Discuss how far sociologists would agree that the nuclear family is still considered the most important family type. |
-| JUN23 | Q10 | Discuss how far sociologists would agree that the main function of the family is to serve capitalism. |
-| JUN23 | Q11 | Discuss how far sociologists would agree that gender roles are equal in families in Britain today. |
-| JUN24 | Q10 | Discuss how far sociologists would agree that family diversity exists in Britain today. |
-| JUN24 | Q11 | Discuss how far sociologists would agree that the nuclear family performs important functions for society. |
-
-### Shorter question types (from past papers)
-
-- 1-mark: Define a term (e.g. "What term describes a family in which a man holds dominant power?" — Answer: patriarchal family)
-- 2-mark: From Item A, examine one strength/weakness of the data
-- 3-mark: Describe one example of primary socialisation / describe one family type
-- 4-mark: Identify and explain one way conjugal role relationships may be segregated (JUN24, Q4); identify and explain one disadvantage of using a case study (JUN24, Q9)
-
-### 12-mark level descriptors (AQA, 2024)
-
-| Level | Marks | AO1 | AO2 | AO3 |
-|-------|-------|-----|-----|-----|
-| 4 | 10–12 | Detailed knowledge, wide range of specialist terms used with precision | Sustained application, few/no inaccuracies | Developed critical analysis, well-constructed arguments, evidence-based conclusions |
-| 3 | 7–9 | Good knowledge, good range of specialist terms | Good application, some inaccuracies | Good analysis and evaluation |
-| 2 | 4–6 | Some knowledge | Some application | Some evaluation |
-| 1 | 1–3 | Limited knowledge | Limited application | Limited evaluation |
-
----
-
-## Validation checklist
-
-### Coverage
-
-- [x] Functionalism (Murdock, Parsons) — Episodes 3, 10
-- [x] Marxism (Engels, Zaretsky) — Episodes 3, 7, 10
-- [x] Feminism (Oakley, Bott, Delphy and Leonard, Scott and Clery, Gatrell, Jan Pahl) — Episodes 2, 5, 6, 7, 10
-- [x] New Right (Murray) — Episode 3, 9
-- [x] Postmodern (Giddens) — Episode 9
-- [x] Difference feminism — Episode 7
-- [x] Liberal feminism / Marxist feminism / Radical feminism — Episode 7
-- [x] Definitions: family vs household — Episode 1
-- [x] Family types (nuclear, extended, lone-parent, reconstituted, same-sex, beanpole) — Episode 1
-- [x] Conventional family + Oakley — Episode 2
-- [x] Family diversity + Rapoport and Rapoport — Episode 4
-- [x] Conjugal roles + domestic division of labour — Episodes 5, 6
-- [x] Symmetrical family + stratified diffusion — Episode 6
-- [x] Criticisms of the family (isolation, idealisation, dark side) — Episode 7
-- [x] Domestic abuse / dark side of the family — Episode 7
-- [x] Changing parent-child relationships — Episode 8
-- [x] Childhood as a social construct (Aries, Postman, Jenks) — Episode 8
-- [x] Divorce patterns since 1945 + reasons + consequences — Episode 9
-- [x] 12-mark exam technique — Episode 10
-- [x] Demographic trends: birth rates, death rates, ageing population, life expectancy, migration and globalisation — woven into Episodes 4, 8 and 9 as explanations for family diversity, beanpole families, one-person pensioner households, sandwich generation, boomerang children, marriage/cohabitation trends and changing family structures
-- [x] Social policy and the family — treated as light supporting context where relevant, not a standalone episode; link briefly to divorce law, civil partnerships, same-sex marriage/adoption, child protection, compulsory education and welfare where these already support existing episode content
-
-### Episode completeness
-
-- [x] Every episode has a Big question
-- [x] Every episode has Syllabus coverage points
-- [x] Every episode has an Exam skill focus
-- [x] Every episode has Retrieval points
-- [x] No episode is purely presentational
-
-### Exam skills
-
-- [x] 3-mark describe: Episodes 1, 3, 4
-- [x] 4-mark identify-and-explain: Episodes 2, 5, 7, 9
-- [x] 12-mark preparation: Every episode from 3 onward
-- [x] Full 12-mark construction: Episode 10
-- [x] Highest-weighted question type (12-mark) has dedicated episode (Episode 10)
-
-### Structure
-
-- [x] No duplicate directory created
-- [x] File naming follows sociology adapter convention
-- [x] Architecture embedded (not separated — no sufficient justification for separation)
-
-### Subject brand
-
-- [x] Sociology palette noted: soft oat, stone, olive beige, dark slate, near-black
-- [x] Tone: documentary, case-file, evidence-driven
-- [x] Recurring motif: family case file — each episode adds evidence to the central question
-- [x] Avoidance list noted: cartoon family trees, generic neon, childish gamification
-
----
-
-## Global tags
-
-- `aqa-sociology`
-- `paper-1-section-a`
-- `families-and-households`
-- `functionalism` / `marxism` / `feminism` / `new-right` / `postmodern`
-- `conjugal-roles` / `domestic-division-of-labour` / `symmetrical-family`
-- `family-diversity` / `conventional-family`
-- `divorce` / `cohabitation` / `marriage`
-- `childhood` / `parent-child-relationships`
-- `12-mark-essay` / `discuss-how-far`
-- `named-sociologist`
-- `murdock` / `parsons` / `oakley` / `willmott-young` / `rapoport-rapoport` / `zaretsky` / `delphy-leonard`
+  - MISCONCEPTION: "More is better." Correction: quality of argument, application, and evaluation is more important than just writing a lot.
+  - MISCONCEPTION: "You just need to state the facts." Correction: you must analyze and evaluate those facts to get the higher marks.
+- **Build notes:** This is the "boss level" of the module. Focus on confidence-building and clear structures. Use a "drag and drop" essay builder if possible.
