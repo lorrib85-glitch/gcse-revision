@@ -20,6 +20,7 @@ import episode07 from './episodes/episode-07-germ-theory.js'
 import episode08 from './episodes/episode-08-great-stink.js'
 import episode09 from './episodes/episode-09-surgery-revolution.js'
 import episode11 from './episodes/episode-11-accidental-miracle.js'
+import episode12 from './episodes/episode-12-when-medicine-became-magic.js'
 import episode14 from './episodes/episode-14-western-front.js'
 
 // Ordered registry — add future episodes here as they are extracted.
@@ -35,6 +36,7 @@ export const MEDICINE_EPISODES = [
   episode09,
   // episode10: history-medicine-nightingale — unbuilt (screenCount 0), add when built
   episode11,
-  // episode12–13: legacy IDs (mod8, mod9) — migrate ID before extraction
+  episode12,
+  // episode13: legacy ID (mod9) — migrate ID before extraction
   episode14,
 ]
