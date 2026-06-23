@@ -12,6 +12,7 @@ import episodeGreatStink from '../../src/content/history/medicine/episodes/episo
 import episodeSurgeryRevolution from '../../src/content/history/medicine/episodes/episode-09-surgery-revolution.js'
 import episodeAccidentalMiracle from '../../src/content/history/medicine/episodes/episode-11-accidental-miracle.js'
 import episodeWhenMedicineBecameMagic from '../../src/content/history/medicine/episodes/episode-12-when-medicine-became-magic.js'
+import episodeCanWeBeatCancer from '../../src/content/history/medicine/episodes/episode-13-can-we-beat-cancer.js'
 import episodeWesternFront from '../../src/content/history/medicine/episodes/episode-14-western-front.js'
 
 // ─── Per-episode guards ───────────────────────────────────────────────────────
@@ -396,6 +397,44 @@ describe('Content registry — episode-12-when-medicine-became-magic (legacy id:
   })
 })
 
+describe('Content registry — episode-13-can-we-beat-cancer (legacy id: mod9)', () => {
+  it('id exists in src/modules.js (as legacy mod9)', () => {
+    const meta = MODULES.find(m => m.id === episodeCanWeBeatCancer.id)
+    expect(meta).toBeDefined()
+  })
+
+  it('number matches src/modules.js', () => {
+    const meta = MODULES.find(m => m.id === episodeCanWeBeatCancer.id)
+    expect(episodeCanWeBeatCancer.number).toBe(meta.number)
+  })
+
+  it('filename prefix matches episode number (episode-13-* → number: 13)', () => {
+    expect(episodeCanWeBeatCancer.number).toBe(13)
+  })
+
+  it('screens array is non-empty', () => {
+    expect(Array.isArray(episodeCanWeBeatCancer.screens)).toBe(true)
+    expect(episodeCanWeBeatCancer.screens.length).toBeGreaterThan(0)
+  })
+
+  it('stageNavigation entries have id, title, and screenIndex', () => {
+    if (!episodeCanWeBeatCancer.stageNavigation) return
+    for (const stage of episodeCanWeBeatCancer.stageNavigation) {
+      expect(stage).toHaveProperty('id')
+      expect(stage).toHaveProperty('title')
+      expect(stage).toHaveProperty('screenIndex')
+    }
+  })
+
+  it('stageNavigation screenIndex values are within bounds', () => {
+    if (!episodeCanWeBeatCancer.stageNavigation) return
+    for (const stage of episodeCanWeBeatCancer.stageNavigation) {
+      expect(stage.screenIndex).toBeGreaterThanOrEqual(0)
+      expect(stage.screenIndex).toBeLessThan(episodeCanWeBeatCancer.screens.length)
+    }
+  })
+})
+
 describe('Content registry — episode-14-western-front', () => {
   it('id exists in src/modules.js', () => {
     const meta = MODULES.find(m => m.id === episodeWesternFront.id)
@@ -480,6 +519,10 @@ describe('Content registry — series index (MEDICINE_EPISODES)', () => {
 
   it('includes the when medicine became magic episode (legacy id: mod8)', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'mod8')).toBeDefined()
+  })
+
+  it('includes the can we beat cancer episode (legacy id: mod9)', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'mod9')).toBeDefined()
   })
 
   it('includes the western front episode', () => {
@@ -577,6 +620,15 @@ describe('Content registry — compatibility layer (HISTORY_MODULES)', () => {
 
   it('when medicine became magic episode has screens', () => {
     const ep = HISTORY_MODULES.find(m => m.id === 'mod8')
+    expect(ep?.screens?.length).toBeGreaterThan(0)
+  })
+
+  it('includes the can we beat cancer episode (legacy id: mod9)', () => {
+    expect(HISTORY_MODULES.find(m => m.id === 'mod9')).toBeDefined()
+  })
+
+  it('can we beat cancer episode has screens', () => {
+    const ep = HISTORY_MODULES.find(m => m.id === 'mod9')
     expect(ep?.screens?.length).toBeGreaterThan(0)
   })
 
