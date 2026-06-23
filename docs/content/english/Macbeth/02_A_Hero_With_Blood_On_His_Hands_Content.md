@@ -24,6 +24,7 @@ Macbeth enters the play not in person but in report: a wounded Captain describes
 - Duncan's response ("O valiant cousin, worthy gentleman") shows he reads only the loyalty, not the violence
 - "What he hath lost, noble Macbeth hath won" — the thane of Cawdor's treason is immediately rewarded with Macbeth's promotion; this foreshadows Macbeth himself becoming a traitor in possession of the same title
 - "Brave Macbeth — well he deserves that name" — the Captain's use of "brave" as almost a synonym for "violent" reveals Jacobean warrior culture's association of masculinity with bloodshed
+- "As sparrows eagles, or the hare the lion" — animal imagery makes Macbeth and Banquo seem naturally superior to their enemies, reinforcing heroic masculinity and battlefield dominance
 - Macbeth's second battle against the Norwegian king shows he acts alone against "the multiplying villainies of nature" — he is positioned as a defender of natural order even before he becomes its destroyer
 
 ### Series throughline
@@ -68,7 +69,7 @@ This episode's core takeaway supports:
 - **The Captain (Sergeant):** A wounded soldier who has witnessed Macbeth's heroism; his speech is the audience's first account of Macbeth; his own wounds establish him as a reliable witness from the battlefield
 - **King Duncan:** Scotland's legitimate king; trusting, generous, unable to "find the mind's construction in the face" (1.4); his praise of Macbeth establishes what is about to be betrayed
 - **Macbeth (absent):** Introduced entirely through others' reports — a deliberate structural choice; the audience forms an image of a violent hero before meeting the man
-- **Banquo:** Mentioned alongside Macbeth in the battle; "As sparrows eagles, or the hare the lion" (comparison); will become Macbeth's most feared rival and victim
+- **Banquo:** Mentioned alongside Macbeth in the battle; "As sparrows eagles, or the hare the lion" makes Macbeth and Banquo seem naturally superior to their enemies; Banquo will later become Macbeth's most feared rival and victim
 - **The Thane of Cawdor:** A traitor; never appears; Macbeth inherits his title — a dramatic irony since Macbeth will replicate his treason
 - **Ross:** A Scottish nobleman; brings the news that Macbeth has defeated Norway; later a messenger of tragedy (4.3)
 
@@ -77,6 +78,7 @@ This episode's core takeaway supports:
 - **Dramatic irony:** When the audience knows something a character does not — here, the audience will realise (retrospectively) that giving Macbeth the traitor's title is bitterly ironic
 - **In medias res:** Starting in the middle of action; the battle is already underway; creates pace and urgency
 - **Hyperbole:** Extreme exaggeration for effect — the Captain's description of Macbeth uses hyperbole to elevate him to almost mythic status
+- **Animal imagery:** Shakespeare uses animal comparisons to suggest natural hierarchy and dominance; in this scene Macbeth and Banquo are compared to powerful predators, while their enemies are made to seem weak
 - **Aside (none in this scene):** Macbeth is absent; the audience receives him entirely through report — an unusual structural choice
 - **Hamartia:** The Greek term for tragic flaw; Macbeth's hamartia is ambition, but its root here is visible — a man who is *too* capable of violence
 
@@ -84,6 +86,7 @@ This episode's core takeaway supports:
 
 - **"Unseam'd him from the nave to th'chaps":** The single most important image in Act 1.2 — describes Macbeth disembowelling an enemy from navel to jaw. It is simultaneously the mark of a warrior and the mark of a butcher. For AQA analysis: the word "unseam'd" implies precision and skill (like a tailor), but the act is dismemberment. The image establishes that Macbeth's violence is both impressive and disturbing.
 - **"Brave Macbeth — well he deserves that name":** The Captain's use of "brave" attaches heroism to the act of killing; this is Jacobean warrior culture's definition of masculinity. For AO3: Jacobean society valorised violence in service of the king; Macbeth's violence is currently *legitimate*.
+- **"As sparrows eagles, or the hare the lion":** Animal imagery makes Macbeth and Banquo seem naturally superior to their enemies. Sparrows and hares suggest vulnerability; eagles and lions suggest dominance, nobility and predatory strength. This reinforces battlefield masculinity and positions Macbeth and Banquo as heroic defenders of Scotland.
 - **"Like valour's minion":** Macbeth is described as valour's favourite/servant — a metaphor that simultaneously elevates and diminishes him; he serves an abstract concept (valour), suggesting he is defined by it
 - **"What he hath lost, noble Macbeth hath won":** Final line of the Captain's section — foreshadows the entire play: titles are won through violence; but the next title Macbeth wins (king) will be through treachery, not battle
 
@@ -92,6 +95,7 @@ This episode's core takeaway supports:
 - Duncan cannot be present on the battlefield → Duncan is dependent on reports; he never witnesses Macbeth's violence directly → he remains deceived about Macbeth's true nature
 - Macbeth defeats the rebel Macdonwald → he is rewarded with Cawdor's title → dramatic irony: the reward for defeating a traitor is the title of a traitor
 - The Captain's violent imagery → audience is unsettled even while admiring Macbeth → ambiguity established from the outset
+- "As sparrows eagles, or the hare the lion" → Macbeth and Banquo are presented as naturally dominant warriors → this strengthens Banquo's later role as Macbeth's foil because both men begin from a position of honour
 - "Brave Macbeth" = admired violence → when Macbeth directs the same violence against Duncan → the Jacobean audience understands why it is monstrous: violence has left its legitimate context
 - Banquo's parallel bravery in battle → established as Macbeth's equal in courage → later contrast: Banquo resists ambition; Macbeth does not
 
