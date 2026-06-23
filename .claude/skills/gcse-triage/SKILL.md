@@ -102,7 +102,7 @@ Stop: >1 file, new visual rule, or logic touched → re-triage.
 
 ## Workflow F — inline
 
-Steps: confirm scope is `.planning/` + process docs only → run GSD tools as needed → commit to `main`.  
+Steps: confirm scope is `.planning/` + process docs only → run GSD tools as needed → `/ponytail-review` → commit to `main`.  
 GSD tools: `/gsd-ingest-docs`, `/gsd-map-codebase`, `/gsd-pause-work`, `/gsd-resume-work`, `/gsd-progress`.  
-Allowed: GSD suite only. Forbidden: app source; CLAUDE.md or workflow doc edits → re-triage to G.  
+Allowed: GSD suite + `/ponytail-review`. Forbidden: app source; CLAUDE.md or workflow doc edits → re-triage to G.  
 Stop: any app source edit attempted → stop immediately and re-triage.

@@ -30,12 +30,13 @@ task touches `CLAUDE.md` or workflow rules → re-triage to G.
    - Is it noisier than it needs to be?
    - Does the roadmap accidentally imply permission to build a phase?
 5. **Tidy** — only if the review found issues.
-6. **Commit** — directly to `main`.
+6. **Review** — `/ponytail-review` to confirm created docs aren't noisier or more structured than they need to be.
+7. **Commit** — directly to `main`.
 
 ## Allowed skills
 
 GSD suite: `/gsd-ingest-docs`, `/gsd-map-codebase`, `/gsd-pause-work`,
-`/gsd-resume-work`, `/gsd-progress`
+`/gsd-resume-work`, `/gsd-progress`; `/ponytail-review`
 
 ## Forbidden
 
