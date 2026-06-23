@@ -4,9 +4,9 @@
 
 - **Episode number:** 2
 - **Title:** A hard-headed man of business
-- **Subtitle / GCSE focus:** Mr Birling's capitalism speeches; dramatic irony; self-interest vs social responsibility
-- **Primary act:** Act 1 (Birling's speeches before the Inspector arrives)
-- **Secondary whole-play links:** Act 1 Inspector arrival; Act 3 Birling's denial; Act 3 final phone call
+- **Subtitle / GCSE focus:** Mr Birling's capitalism speeches; dramatic irony; reputation; self-interest vs social responsibility
+- **Primary act:** Act 1 — Birling's speeches before the Inspector arrives
+- **Secondary whole-play links:** Act 1 Inspector arrival; Act 1 Eva's dismissal; Act 3 Birling's denial; Act 3 final phone call
 - **Build status:** Not yet built
 
 ---
@@ -14,98 +14,166 @@
 ## 2. Storyline
 
 ### Core takeaway
-Mr Birling represents capitalist arrogance, selfishness and false confidence. Priestley deliberately makes him sound authoritative but exposes him as ignorant — his every claim (no war, the Titanic unsinkable, prosperity guaranteed) is known by the 1945 audience to be catastrophically wrong. By making Birling a fool who confidently predicts the opposite of reality, Priestley invites his audience to reject the entire worldview Birling represents: a capitalism that prioritises profit over people and refuses any responsibility for others.
+
+Mr Birling represents capitalist arrogance, selfishness and false confidence. Priestley deliberately makes him sound authoritative but exposes him as ignorant: his confident claims about war, the Titanic, labour relations, Russia and future prosperity are all undercut by what a 1945/46 audience knows. By making Birling confidently wrong, Priestley invites the audience to reject the worldview Birling represents: profit before people, reputation before morality, and individual success before collective responsibility.
+
+Birling is not just "a bad man". He is more useful than that for an exam answer. He is a dramatic device. Priestley uses him as the mouthpiece for Edwardian capitalist certainty, then dismantles that certainty through dramatic irony and the Inspector's later socialist message.
 
 ### Evidence for the takeaway
-- "hard-headed practical man of business" repeated three times → pompous, comic repetition; Priestley mocks him through excess
-- "unsinkable, absolutely unsinkable" → the Titanic sank; dramatic irony at maximum; Birling's confidence is exposed as catastrophically wrong
-- "the Germans don't want war — nobody wants war" → WWI and WWII both happened; again, the 1945 audience knows
-- "a man has to make his own way — has to look after himself" → the capitalist creed that the Inspector will dismantle
-- "community and all that nonsense" → he dismisses collective responsibility as "nonsense"; the Inspector's final speech proves the opposite
-- "lower costs and higher prices" → he views the Sheila/Gerald marriage as a business deal; people are commodities
-- "interests of Capital" / "interests are properly protected" → employers protecting profit, not workers
+
+- "a hard-headed business man" / "hard headed, practical man of business" / "hard-headed practical business men" — repeated self-description; Birling keeps advertising his own reliability, which makes his mistakes funnier and more damning
+- "Your father and I have been friendly rivals in business" — even Sheila and Gerald's engagement is discussed through competition and commercial alliance
+- "lower costs and higher prices" — Birling reduces marriage, family and future prosperity to profit margins
+- "the interests of Capital" — Birling openly identifies with the employer class, not with workers
+- "miners came out on strike" / "possible labour trouble" — early context for industrial unrest and workers' rights
+- "steadily increasing prosperity" — confidently optimistic, but deeply ironic for a 1945/46 audience after two wars and economic hardship
+- "war's inevitable. And to that I say — fiddlesticks!" — comic dismissal; the audience knows war came in 1914 and again in 1939
+- "The Germans don't want war. Nobody wants war" — another false certainty; the 1945 audience has lived through both world wars
+- "the Titanic... unsinkable, absolutely unsinkable" — the clearest dramatic irony; Birling's certainty becomes absurd because the ship sank almost immediately after the play's setting
+- "except of course in Russia, which will always be behindhand naturally" — dramatic irony because Russia would undergo revolution in 1917 and become politically central to the twentieth century
+- "Bernard Shaws and H. G. Wellses" — Birling dismisses well-known socialist/progressive writers, signalling Priestley's ideological target
+- "a man has to make his own way — has to look after himself" — Birling's individualist creed; the Inspector's final speech will directly challenge it
+- "community and all that nonsense" — he dismisses collective responsibility as absurd
+- "there's a fair chance that I might find my way into the next Honours List" / "just a knighthood" — Birling's reputation and status anxiety sit beneath his confidence
+- "so long as we behave ourselves, don't get into the police court or start a scandal" — he worries about public image before moral truth; this foreshadows his Act 3 response
 
 ### Series throughline
-Birling is the play's central embodiment of everything Priestley opposes. Every theme the play develops — social responsibility, class, capitalism, generational failure — runs through Birling. His failure to change by Act 3 is the play's bleakest moment; his fear when the phone rings is Priestley's warning that the consequences of selfishness cannot be permanently escaped.
+
+Birling is the play's central embodiment of everything Priestley opposes: self-interest, capitalist certainty, class complacency and moral irresponsibility. Every theme the play develops — social responsibility, class, capitalism, generational failure and appearance vs reality — runs through Birling.
+
+His Act 1 speeches are the negative thesis of the play. The Inspector's final speech in Act 3 becomes the answer to them. Birling says people should look after themselves; the Inspector says "We are members of one body". Birling dismisses community as "nonsense"; Priestley structures the entire play to prove that every action creates consequences for others.
 
 ### Exam framing
+
 This episode is essential for essays on:
-- "How does Priestley present Mr Birling?" — the full character arc from pompous fool to panic-stricken scapegoat
-- "How does Priestley present capitalism in An Inspector Calls?" — Birling is the play's capitalist emblem
-- "How does Priestley use dramatic irony in An Inspector Calls?" — the Titanic and war predictions are the clearest examples
-- "How does Priestley present responsibility?" — Birling's refusal to accept any is the negative pole
+- "How does Priestley present Arthur Birling?" — pompous, capitalist, socially anxious, dramatically discredited
+- "How does Priestley present capitalism?" — Birling is the play's capitalist emblem
+- "How does Priestley use dramatic irony?" — Titanic, war, Russia and future prosperity are the clearest examples
+- "How does Priestley present responsibility?" — Birling's refusal to accept responsibility is the negative pole
+- "How does Priestley present social class?" — Birling's new money wants Croft status; workers are treated as costs
+- "How does Priestley present older and younger generations?" — Birling's lecture is aimed at Gerald, Eric and Sheila, but Priestley wants younger audiences to reject it
+
+**AQA format reminder:** *An Inspector Calls* is a whole-play essay text. There is no printed extract, so Birling's Act 1 speeches need to be linked to later moments: Eva's dismissal, his Act 3 reputation panic, and the final phone call.
 
 ---
 
 ## 3. Specification requirements
 
-- Mr Birling's character as a "hard-headed practical man of business"
-- His self-interest philosophy: "a man has to make his own way — has to look after himself"
-- His dismissal of collective responsibility: "community and all that nonsense"
-- His view of Gerald and Sheila's engagement as a business opportunity: "lower costs and higher prices"
-- Dramatic irony: Titanic ("absolutely unsinkable"), WWI ("the Germans don't want war"), future prosperity ("steadily increasing prosperity")
-- His role as a magistrate — he has legal authority but will be morally judged by the Inspector
-- His relationship with Gerald Croft: attempts to impress Gerald's family; class anxiety
-- His "interests of Capital" speech — Priestley's critique of employer class solidarity against workers
-- The repetition of "hard-headed" / "practical man of business" — Priestley's comic mockery of pomposity
-- Mr Birling as a self-made man ("new money") — social insecurity beneath the confidence
+- Mr Birling's character as a self-described "hard-headed" businessman
+- His capitalist worldview: competition, employer solidarity, profit margins, self-interest and suspicion of labour movements
+- His use of Sheila and Gerald's engagement as a business opportunity: "lower costs and higher prices"
+- His dismissal of social responsibility: "a man has to make his own way"; "community and all that nonsense"
+- Dramatic irony: Titanic, war, prosperity, Russia, industrial conflict
+- His role as a magistrate and former Lord Mayor — legal/status authority that will be morally challenged
+- His class anxiety about the Crofts: Gerald's parents are Sir George and Lady Croft, and Birling wants acceptance from old money
+- His knighthood anxiety: reputation matters more than truth
+- His link to 1912 context: laissez-faire capitalism, industrial unrest, limited workers' rights, fear of labour organisation
+- His link to 1945 context: Priestley writes after two wars, in a post-war climate more open to social reform and collective responsibility
+- AO2: dramatic irony, repetition, stage directions, comic pomposity, foreshadowing, symbolism, rhetorical confidence
+- AO3: 1912 vs 1945, capitalism vs socialism, class hierarchy, labour unrest, WWI/WWII, Titanic, Russia, socialist writers
 
 ---
 
 ## 4. Content reference pack
 
 ### Dates & timeline
-- **April 1912:** setting; Titanic sank this month — dramatic irony is immediate for any audience
-- **1914–18:** WWI — Birling says it won't happen; the 1945 audience has lived through two world wars
-- **1940s:** Birling predicts prosperity ("by the forties") — the 1940s in fact brought the Blitz, the Depression's aftermath, rationing
+
+- **Spring 1912:** play setting; Birling speaks from a world of Edwardian confidence
+- **March–April 1912:** national coal strike; Birling's reference to miners and labour trouble places the play inside real industrial unrest
+- **April 1912:** Titanic sails and sinks; Birling's "absolutely unsinkable" line becomes immediate dramatic irony
+- **1914–1918:** First World War; Birling's dismissal of war is catastrophically wrong
+- **1917:** Russian Revolution; Birling's confidence that Russia will remain "behindhand" is undercut
+- **1939–1945:** Second World War; Priestley's first audiences had lived through another war after Birling's claims
+- **1945:** Labour landslide and appetite for social reform; Priestley's critique of Birling lands in a Britain rethinking responsibility and welfare
 
 ### Key people
-- **Mr Arthur Birling:** "heavy-looking, rather portentous man in his middle fifties with fairly easy manners but rather provincial in his speech"; a "self-made man"; magistrate; expecting a knighthood; capitalist; his confidence is Priestley's target
+
+- **Mr Arthur Birling:** "heavy-looking, rather portentous"; self-made manufacturer; former Lord Mayor; magistrate; expecting a knighthood; capitalist; socially ambitious; his confident authority is Priestley's target
+- **Gerald Croft:** Birling's desired social/business connection; Gerald's old-money family makes Birling anxious and eager to impress
+- **Eric Birling:** present for the lecture; his uneasy interruptions foreshadow cracks in the family and later generational conflict
+- **Sheila Birling:** the engagement is supposedly about her happiness, but Birling turns it into business advantage
+- **Inspector Goole:** not yet present in most of this episode, but structurally he is the coming counter-force to Birling's worldview
 
 ### Key terms & definitions
-- **Dramatic irony:** the audience knows something the characters do not; in AIC, the gap between 1912 setting and 1945 audience knowledge creates systemic dramatic irony — every confident claim Birling makes was already proven wrong
-- **Capitalist:** a person who owns and controls the means of production; uses labour to generate profit; prioritises private profit
-- **Laissez-faire:** "let do" — the Liberal government's economic policy in 1912; minimal government interference with business; gave employers near-total freedom
-- **Nouveau riche / new money:** wealth made in one's own lifetime (through industry), rather than inherited; the Birlings are nouveau riche; the Crofts have "old money"
-- **Portentous:** pompously self-important; the stage direction applies directly to Birling's manner
+
+- **Dramatic irony:** when the audience knows more than a character. In AIC, the 1912/1945 split makes Birling's predictions visibly wrong to the audience.
+- **Capitalism:** an economic and social system based on private ownership, competition and profit. Priestley uses Birling to show its selfishness and moral blindness.
+- **Socialism:** a political/economic system emphasising shared responsibility, public welfare and community. The Inspector later becomes Priestley's socialist mouthpiece.
+- **Laissez-faire:** minimal state interference in business; in 1912 this allowed employers major freedom over wages and conditions.
+- **Capital vs Labour:** conflict between employers/owners and workers; Birling sides explicitly with capital.
+- **Nouveau riche / new money:** recently acquired wealth from business rather than inherited status; the Birlings are new money.
+- **Old money:** inherited social status and aristocratic respectability; the Crofts represent this.
+- **Portentous:** pompously self-important; the stage direction applies directly to Birling's manner.
+- **Hubris:** excessive pride or confidence leading to downfall; Birling's Titanic confidence is a symbolic example.
 
 ### Case studies / named examples
-- **The Titanic speech:** "She sails next week — forty-six thousand eight hundred tons — New York in five days — and every luxury — and unsinkable, absolutely unsinkable" — the repetition of the tonnage mimics Birling's obsession with size and scale; "absolutely" is the adverb of certainty that makes the irony devastating; the Titanic sank on 14–15 April 1912 with 1500+ deaths
-- **The war speech:** "The Germans don't want war. Nobody wants war, except some half-civilised folks in the Balkans. And why? There's too much at stake these days. Everything to lose and nothing to gain by war" — every clause is wrong; WWI began 1914; WWII 1939; the 1945 audience has lived through both
-- **The self-interest speech:** "a man has to make his own way — has to look after himself — and his family too, of course, when he has one — and so long as he does that he won't come to much harm" — the insertion of "his family too" is a revealing afterthought; even his family is secondary to himself
-- **The Capital speech:** "employers are at last coming together to see that our interests — and the interests of Capital — are properly protected" — the equivalence of "our interests" and "the interests of Capital" reveals that Birling sees himself as indistinguishable from his profit
+
+- **Engagement as business deal:** Birling says Gerald and Sheila's engagement may bring Crofts and Birlings together for "lower costs and higher prices". This is excellent for capitalism essays because Priestley shows capitalism invading family and marriage. Even love becomes a commercial opportunity.
+
+- **"Interests of Capital":** Birling claims employers are coming together to protect "our interests — and the interests of Capital". The phrase reveals his class allegiance. He does not speak about protecting workers, families or society. He speaks about protecting profit.
+
+- **The labour unrest context:** Birling refers to miners coming out on strike and possible labour trouble. This foreshadows Eva Smith's dismissal for strike activity and connects the individual plot to wider class conflict. Priestley shows that Eva is not an isolated case; she belongs to a broader system of exploited labour.
+
+- **The Titanic speech:** "She sails next week — forty-six thousand eight hundred tons — New York in five days — and every luxury — and unsinkable, absolutely unsinkable." The repeated facts and figures make Birling sound knowledgeable, but the audience knows the conclusion is wrong. The adverb "absolutely" turns confidence into comedy and warning. The Titanic becomes a symbol of capitalist hubris: enormous, luxurious, class-divided and falsely secure.
+
+- **The war speech:** Birling's "fiddlesticks" dismissal of war makes him appear absurd to a post-war audience. A 1945/46 audience had lived through two world wars, so his confidence is not just mistaken but morally offensive. Priestley uses dramatic irony to discredit the entire complacent Edwardian ruling class.
+
+- **Russia and socialist writers:** Birling's dismissal of Russia, Bernard Shaw and H. G. Wells identifies him as hostile to socialist/progressive thinking. Priestley positions him against the kind of social reform the play advocates.
+
+- **The self-interest speech:** "a man has to make his own way — has to look after himself — and his family too, of course". The phrase "of course" sounds like an afterthought; even family responsibility is secondary to individual self-advancement. This is directly opposed to the Inspector's "We are responsible for each other".
+
+- **"Community and all that nonsense":** Birling reduces the central moral solution of the play to "nonsense". Priestley makes this a structural setup: the rest of the play proves that community and responsibility are not nonsense but survival.
+
+- **Knighthood/reputation anxiety:** Birling tells Gerald there is a chance of "just a knighthood" as long as the family does not get into the police court or start a scandal. This foreshadows his Act 3 priorities: when he thinks the Inspector was a hoax, his relief is about reputation, not Eva.
 
 ### Causes & effects
-- Birling's "look after himself" philosophy → he fires Eva for organising a strike → Eva's chain of misfortune begins
-- Birling's view of the engagement as a business deal → "lower costs and higher prices" → Priestley shows capitalism colonises even personal relationships
-- Birling's confidence about war/Titanic → exposed as catastrophically wrong by 1945 audience → his worldview is discredited before the Inspector even arrives
-- Birling's dismissal of "community and all that nonsense" → sets up the Inspector's counter-argument: "We are members of one body"
-- Birling's "interests of Capital" speech → establishes the capitalist/socialist binary the Inspector will dismantle
+
+- Birling's profit-first worldview → engagement becomes business alliance → family relationships are contaminated by capitalism
+- Birling sides with "Capital" → workers are treated as costs → Eva is later dismissed for asking for higher wages
+- Birling's predictions are dramatically wrong → audience distrusts his judgement → Priestley discredits capitalism before the Inspector arrives
+- Birling dismisses community → Inspector later argues collective responsibility → the play becomes a debate between individualism and socialism
+- Birling fears scandal → he resists moral accountability → Act 3 shows he has not really changed
+- Birling lectures the younger generation → Sheila and Eric later reject the older generation's values → generational conflict is planted early
 
 ### Exam angles
-**Common question types:**
-- "How does Priestley present Arthur Birling in An Inspector Calls?" [Q1 in York Notes]
-- "How does Priestley present capitalism in An Inspector Calls?"
-- "How does Priestley use dramatic irony in An Inspector Calls?"
 
-**Mark scheme keywords:** dramatic irony; pomposity; self-importance; capitalist; self-interest; social responsibility; repetition; juxtaposition; Priestley's purpose; 1945 audience; comic; foreshadowing
+**Common question types:**
+- "How does Priestley present Arthur Birling in *An Inspector Calls*?"
+- "How does Priestley present capitalism in *An Inspector Calls*?"
+- "How does Priestley use dramatic irony in *An Inspector Calls*?"
+- "How does Priestley present social responsibility?"
+- "How does Priestley present the older generation?"
+- "How does Priestley present social class?"
+
+**Mark scheme keywords:** dramatic irony; capitalism; self-interest; social responsibility; pomposity; hubris; stage directions; repetition; symbolism; foreshadowing; Priestley's purpose; 1945 audience; Edwardian society; labour unrest; new money; old money
+
+**Grade 9 essay move:**
+A strong answer should not just say "Birling is wrong". It should argue that Priestley uses Birling as a dramatic warning: a man who sounds powerful and practical, but whose worldview has already been disproved by history.
+
+**Useful paragraph stem:**
+Priestley presents Birling as a symbol of Edwardian capitalist certainty, but uses dramatic irony to make that certainty collapse in front of a 1945 audience.
 
 **Key misconceptions for MisconceptionCheck:**
-- "Birling is just an ordinary businessman doing his best" — FALSE: Priestley deliberately makes his predictions wrong to discredit his worldview
-- "The Titanic reference is just a historical detail" — FALSE: it is Priestley's most explicit use of dramatic irony; it is a deliberate device to undermine Birling's authority
-- "Birling changes by the end of the play" — FALSE: he is "panic-stricken" at the final phone call but has not genuinely accepted responsibility; he celebrates when he thinks it's a hoax
+- "Birling is just an ordinary businessman doing his best" — too soft: Priestley makes him a representative of a damaging ideology
+- "The Titanic reference is just historical detail" — false: it is a deliberate symbol of false confidence and class-divided capitalism
+- "Birling's war comments only show he is stupid" — too simple: they discredit the complacent ruling-class worldview he represents
+- "Birling changes by the end" — false: he becomes frightened, but he does not accept responsibility
+- "Capitalism vs socialism is only about money" — too narrow: Priestley links it to morality, family, class, responsibility and survival
 
 **Techniques to name:**
-- Dramatic irony (Titanic, war, prosperity — all wrong)
-- Repetition ("hard-headed practical man of business" × 3; "forty-six thousand eight hundred tons" × 2)
-- Characterisation through stage directions ("portentous")
-- Juxtaposition (Birling's confidence vs the Inspector's knowledge; Birling's "nonsense" vs the Inspector's "members of one body")
-- Symbolism (the Titanic as a symbol of capitalism's hubris and its inevitable sinking)
+- Dramatic irony: Titanic, war, Russia, future prosperity
+- Repetition: "hard-headed" self-advertising; Titanic's tonnage
+- Stage-direction characterisation: "portentous"
+- Symbolism: Titanic as capitalist hubris
+- Foreshadowing: knighthood/scandal anxiety; labour trouble; doorbell interruption
+- Juxtaposition: Birling's individualism vs Inspector's collective responsibility
+- Semantic field: business, costs, prices, capital, interests
 
 ### Sourcing notes
-- **themes_aic.txt:** extended analysis of Mr Birling as capitalist emblem, specific quotes with AO2 commentary — primary source
-- **knowledge_organiser.txt:** character descriptions, thematic quotes, dramatic irony table — used throughout
-- **grade9_essay_context.txt:** Grade 9 model essay on Birling vs Inspector — used for exam angles and model analysis
-- **context_aic.txt:** capitalism vs socialism section, 1912 political context, workers' rights — used for context section
-- **booklet_aic.txt:** Act 1 summary, Birling character description — used for plot/character section
-- **spine_bf.txt:** episode structure, quote cues, theme/context/exam skill tags — primary structural source
+
+- **Attached play text:** Act 1 Birling speeches; Titanic, war, Russia, Bernard Shaw/H. G. Wells, Capital vs Labour, knighthood and Inspector arrival
+- **Attached themes pack:** capitalism vs socialism; Mr Birling as capitalist emblem; Inspector as socialist mouthpiece; laissez-faire and 1912/1945 political contrast
+- **Attached knowledge organiser:** character functions, dramatic irony, 1912/1945 context, social/historical allusions and key quotations
+- **Attached revision guide:** AQA Paper 2 format; AO balance; form/stagecraft guidance; whole-play thematic writing
+- **Attached Grade 9 context essay:** Birling vs Inspector ideological contrast; big-idea essay framing; dramatic irony analysis
+- **Series map:** AQA whole-play essay requirement; AO1/AO2/AO3/AO4 balance; six-section episode architecture
