@@ -133,7 +133,7 @@ function AnalysisCard({ item, accentRgb, accent, seen, index, onClick, itemCount
       <div style={{ minWidth: 0 }}>
         <div style={{
           ...TYPE.cardTitle,
-          color: seen || isFirst ? accent : '#E8E2D8',
+          color: seen || isFirst ? accent : '#E9E1D3',
           marginBottom: 4,
           fontSize: '1rem',
           lineHeight: 1.16,
@@ -143,7 +143,7 @@ function AnalysisCard({ item, accentRgb, accent, seen, index, onClick, itemCount
         </div>
         <div style={{
           ...TYPE.captionText,
-          color: 'rgba(232,226,216,0.58)',
+          color: 'rgba(233,225,211,0.78)',
           lineHeight: 1.35,
         }}>
           {item.explainer}
@@ -194,7 +194,7 @@ function ItemExpanded({ item, accent, accentRgb, parchment, palette, onClose }) 
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ ...TYPE.sectionHeading, color: parchment }}>{item.heading}</div>
-            <div style={{ ...TYPE.captionText, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>{item.explainer}</div>
+            <div style={{ ...TYPE.captionText, color: 'rgba(233,225,211,0.72)', marginTop: 2 }}>{item.explainer}</div>
           </div>
           <button onClick={onClose} aria-label="Close" style={{ width: 36, height: 36, flexShrink: 0, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: RADII.pill, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.55)', ...TYPE.buttonText }}>✕</button>
         </div>
@@ -204,11 +204,11 @@ function ItemExpanded({ item, accent, accentRgb, parchment, palette, onClose }) 
             <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 14 }}>{item.content.title}</div>
           )}
 
-          <p style={{ ...TYPE.bodyLarge, color: parchment, margin: 0, opacity: 0.88 }}>{item.content.body}</p>
+          <p style={{ ...TYPE.bodyLarge, color: parchment, margin: 0 }}>{item.content.body}</p>
 
           {item.content.keyWords?.length > 0 && (
             <div style={{ marginTop: 24 }}>
-              <div style={{ ...TYPE.metadataText, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: 10 }}>Key words</div>
+              <div style={{ ...TYPE.metadataText, color: 'rgba(233,225,211,0.58)', textTransform: 'uppercase', marginBottom: 10 }}>Key words</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {item.content.keyWords.map(word => (
                   <span key={word} style={{ background: `rgba(${accentRgb}, 0.12)`, border: `1px solid rgba(${accentRgb}, 0.28)`, color: accent, borderRadius: RADII.small, padding: '5px 12px', ...TYPE.captionText, fontWeight: 600 }}>{word}</span>
@@ -286,7 +286,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
             </blockquote>
 
             {block.location && (
-              <p style={{ margin: '18px 0 0', ...TYPE.captionText, color: 'rgba(232,226,216,0.68)', opacity: visibleWords >= quoteWords.length ? 1 : 0, transition: 'opacity 0.5s ease 0.3s', letterSpacing: '0.01em' }}>{block.location}</p>
+              <p style={{ margin: '18px 0 0', ...TYPE.captionText, color: 'rgba(233,225,211,0.72)', opacity: visibleWords >= quoteWords.length ? 1 : 0, transition: 'opacity 0.5s ease 0.3s', letterSpacing: '0.01em' }}>{block.location}</p>
             )}
           </div>
         </div>
@@ -299,7 +299,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
 
         <div style={{ flex: 1, padding: '0 24px', display: 'flex', flexDirection: 'column', paddingBottom: allSeen ? 110 : 28 }}>
           {(block.items || []).map((item, i) => (
-            <AnalysisCard key={item.id} item={item} accent={accent} accentRgb={accentRgb} seen={seen.has(item.id)} index={i} itemCount={block.items.length} onClick={() => setActiveItem(item)} />
+            <AnalysisCard key={item.id} item={item} accent={accent} accentRgb={accentRgb} seen={seen.has(item.id)} index={i} itemCount={(block.items || []).length} onClick={() => setActiveItem(item)} />
           ))}
         </div>
       </div>
