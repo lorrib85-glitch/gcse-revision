@@ -393,8 +393,8 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
       {/* ── Quote hero ───────────────────────────────────────────────── */}
       <div style={{
         position: 'relative',
-        height: '32vh',
-        minHeight: 210,
+        height: '44vh',
+        minHeight: 260,
         overflow: 'hidden',
         flexShrink: 0,
       }}>
@@ -435,9 +435,9 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
             <p style={{
               margin: 0,
               fontFamily: "'Manrope', sans-serif",
-              fontSize: 'clamp(1.2rem, 5vw, 1.55rem)',
-              fontWeight: 700,
-              lineHeight: 1.38,
+              fontSize: 'clamp(1.55rem, 6.5vw, 2rem)',
+              fontWeight: 750,
+              lineHeight: 1.3,
               letterSpacing: '-0.02em',
               color: parchment,
             }}>

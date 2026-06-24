@@ -22,7 +22,7 @@ export const ENGLISH_MODULES = [
         tag: null,
         quote: '"Stars, hide your fires; let not light see my black and deep desires."',
         location: 'Act I, Scene IV — Macbeth',
-        backgroundImage: null,
+        backgroundImage: '/English/Macbeth/heroes/10-murder-decision.webp',
         items: [
           {
             id: 'word-focus',
