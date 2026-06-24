@@ -41,7 +41,7 @@ const SUBJECT_PALETTES = {
   Biology:   { sand: '#4CAF7D', bronze: '#2E8B57', cream: '#B8F0D4', espresso: '#0A2E1A', ink: '#061408' },
   Chemistry: { sand: '#9B59E8', bronze: '#7B3BD0', cream: '#DDD0F8', espresso: '#1A0E2B', ink: '#0D0816' },
   Physics:   { sand: '#3B82F6', bronze: '#2563EB', cream: '#DBEAFE', espresso: '#0E1B2B', ink: '#060D18' },
-  English:   { sand: '#B66DFF', bronze: '#9B5CFF', cream: '#E8D5FF', espresso: '#1A0B2E', ink: '#0E0618' },
+  English:   { sand: '#6A343D', bronze: '#4F2329', cream: '#E9E1D3', espresso: '#1A0E0F', ink: '#0D0709' },
   Maths:     { sand: '#2DD4BF', bronze: '#0D9488', cream: '#CCFBF1', espresso: '#0A2A27', ink: '#041612' },
 }
 
@@ -573,20 +573,41 @@ const HISTORY_SERIES = [
   },
 ]
 
+const ENGLISH_SERIES = [
+  {
+    id: 'macbeth',
+    title: 'Macbeth',
+    short: 'Macbeth',
+    headerImage: '/headers/history-medicine-through-time.webp',
+    comingSoon: false,
+  },
+  {
+    id: 'inspector',
+    title: 'An Inspector Calls',
+    short: 'Inspector',
+    headerImage: '/headers/sociology-family.webp',
+    comingSoon: true,
+  },
+]
+
 function getSubjectModuleList(subjectName) {
   const real = MODULES.filter(m => m.subject === subjectName)
   const cs = (arr) => arr.map(x => ({ ...x, comingSoon: true }))
   switch (subjectName) {
     case 'History':
       return real
-    case 'English':
-      return cs([
-        { id: 'cs_macbeth',   title: 'Macbeth',                subtitle: 'Shakespeare · Power & Ambition' },
-        { id: 'cs_inspector', title: 'An Inspector Calls',     subtitle: 'J.B. Priestley' },
-        { id: 'cs_poetry',    title: 'Power & Conflict Poetry',subtitle: 'AQA Anthology · 15 poems' },
-        { id: 'cs_lang1',     title: 'Language Paper 1',       subtitle: 'Reading & Creative Writing' },
-        { id: 'cs_lang2',     title: 'Language Paper 2',       subtitle: 'Non-fiction & Argument' },
-      ])
+    case 'English': {
+      const macbethCh1 = MODULES.find(m => m.id === 'english-macbeth-power-ambition')
+      return [
+        macbethCh1 ? { ...macbethCh1, series: 'macbeth', number: 1 } : null,
+        { id: 'cs_macbeth_2', title: 'Out, damned spot',                  subtitle: 'Guilt and consequence',          comingSoon: true, series: 'macbeth',   number: 2 },
+        { id: 'cs_macbeth_3', title: 'Double, double, toil and trouble',  subtitle: 'The witches and fate',           comingSoon: true, series: 'macbeth',   number: 3 },
+        { id: 'cs_macbeth_4', title: 'Fair is foul, foul is fair',        subtitle: 'Appearance vs reality',          comingSoon: true, series: 'macbeth',   number: 4 },
+        { id: 'cs_inspector_1', title: 'We are members of one body',      subtitle: "Priestley's social message",     comingSoon: true, series: 'inspector', number: 1 },
+        { id: 'cs_inspector_2', title: 'I accept no blame',               subtitle: 'Responsibility and denial',      comingSoon: true, series: 'inspector', number: 2 },
+        { id: 'cs_inspector_3', title: 'Fire, blood and anguish',         subtitle: 'Consequences and resolution',    comingSoon: true, series: 'inspector', number: 3 },
+      ].filter(Boolean)
+    }
     case 'Physics':
       return cs([
         { id: 'cs_forces', title: 'Forces & Motion',     subtitle: 'AQA Physics · Topic 5 & 6' },
@@ -611,7 +632,13 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const displayDesc  = SUBJECT_DESCRIPTIONS[subjectName]   || ''
 
   const isHistory = subjectName === 'History'
-  const [activeSeries, setActiveSeries] = useState(() => isHistory ? HISTORY_SERIES[0] : null)
+  const isEnglish = subjectName === 'English'
+  const hasSeries = isHistory || isEnglish
+  const [activeSeries, setActiveSeries] = useState(() => {
+    if (isHistory) return HISTORY_SERIES[0]
+    if (isEnglish) return ENGLISH_SERIES[0]
+    return null
+  })
 
   const rawMods = getSubjectModuleList(subjectName)
   const allItems = rawMods.map((mod, i) => {
@@ -628,12 +655,13 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
     return { ...mod, number: mod.number || i + 1, status, pct }
   })
 
-  const items = (isHistory && activeSeries)
-    ? allItems.filter(m => (m.series || 'medicine') === activeSeries.id)
+  const defaultSeries = isHistory ? 'medicine' : 'macbeth'
+  const items = (hasSeries && activeSeries)
+    ? allItems.filter(m => (m.series || defaultSeries) === activeSeries.id)
     : allItems
 
-  const heroImage = isHistory && activeSeries ? activeSeries.headerImage : headerImg
-  const heroTitle = isHistory && activeSeries ? activeSeries.title : displayTitle
+  const heroImage = hasSeries && activeSeries ? activeSeries.headerImage : headerImg
+  const heroTitle = hasSeries && activeSeries ? activeSeries.title : displayTitle
 
   const completedCount = items.filter(m => m.status === 'completed').length
   const realCount      = items.filter(m => m.status !== 'coming_soon').length
@@ -725,11 +753,13 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
             fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 24, lineHeight: '28px',
             letterSpacing: '-0.01em', color: '#F5F7FF',
           }}>{heroTitle}</div>
-          {isHistory ? (
+          {hasSeries ? (
             <div style={{
               fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 13, lineHeight: 1.35,
               color: 'rgba(255,255,255,0.52)', marginTop: 6,
-            }}>{activeSeries?.comingSoon ? 'Coming soon' : `${items.length} episodes · AQA History`}</div>
+            }}>{activeSeries?.comingSoon ? 'Coming soon'
+              : isHistory ? `${items.length} episodes · AQA History`
+              : `${items.length} chapters · AQA English Lit`}</div>
           ) : displayDesc ? (
             <div style={{
               fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: 13, lineHeight: 1.35,
@@ -740,13 +770,13 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
         </div>
       </div>
 
-      {/* ── SERIES PICKER (History only) ── */}
-      {isHistory && (
+      {/* ── SERIES PICKER ── */}
+      {hasSeries && (
         <div style={{
           display: 'flex', gap: 10, padding: '20px 24px 8px',
           overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch',
         }}>
-          {HISTORY_SERIES.map(s => {
+          {(isHistory ? HISTORY_SERIES : ENGLISH_SERIES).map(s => {
             const isActive = activeSeries?.id === s.id
             return (
               <button
@@ -793,7 +823,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
       )}
 
       {/* ── MODULE JOURNEY ── */}
-      {isHistory && activeSeries?.comingSoon ? (
+      {hasSeries && activeSeries?.comingSoon ? (
         <div style={{ padding: '64px 24px', textAlign: 'center' }}>
           <div style={{
             fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 20, color: '#F5F7FF', marginBottom: 10,
