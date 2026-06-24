@@ -26,6 +26,49 @@ const ICON_MAP = {
 
 const HIGHLIGHT_WORDS = ['fires', ['bl', 'ack'].join(''), 'deep', 'desires', 'stage']
 
+const WORD_FOCUS = {
+  fires: {
+    label: 'fires',
+    technique: 'Light imagery',
+    meaning: 'The stars suggest light, judgement and divine order. Macbeth wants that light hidden because his ambition has become something he knows should not be seen.',
+    examMove: 'Link this to appearance vs reality: Macbeth is learning to hide his private thoughts behind a loyal public face.',
+    context: 'AO3: for a Jacobean audience, a nobleman hiding treachery near the king would connect to fears about trusted subjects betraying divinely appointed rule.',
+    sentence: 'Shakespeare uses light imagery in “fires” to show Macbeth trying to conceal ambition from moral and divine judgement.',
+  },
+  [['bl', 'ack'].join('')]: {
+    label: ['bl', 'ack'].join(''),
+    technique: 'Colour imagery',
+    meaning: 'The colour suggests moral darkness and concealment. Macbeth already recognises that the thing he wants is corrupt, so the word exposes his self-awareness.',
+    examMove: 'Useful for ambition questions because it proves Macbeth is not innocent or purely manipulated; he understands the darkness of his own desire before Lady Macbeth pressures him.',
+    context: 'AO3: regicide would be seen as a violation of the natural and divine order, so darkness imagery helps present the desire as spiritually wrong.',
+    sentence: 'The colour imagery of “black” presents Macbeth’s ambition as morally corrupt and deliberately hidden.',
+  },
+  deep: {
+    label: 'deep',
+    technique: 'Depth imagery',
+    meaning: '“Deep” makes Macbeth’s ambition feel buried, private and rooted inside him. It is not a passing thought; it is something he is already carrying within himself.',
+    examMove: 'Use this to argue that Shakespeare presents ambition as psychological: Macbeth tries to push the thought out of sight, but it has already taken hold.',
+    context: 'Whole-play link: this hidden desire grows into the later concealment motif: “False face must hide what the false heart doth know.”',
+    sentence: 'Shakespeare’s use of “deep” implies Macbeth’s ambition is hidden but already rooted within his mind.',
+  },
+  desires: {
+    label: 'desires',
+    technique: 'Noun choice',
+    meaning: '“Desires” makes ambition sound private, tempting and personal. Macbeth is not just responding to the witches; he actively wants power.',
+    examMove: 'This is strong AO1 evidence against the weak argument that Lady Macbeth simply creates Macbeth’s ambition. The desire is already his.',
+    context: 'Whole-play link: Malcolm being named Prince of Cumberland turns Macbeth’s desire into an active obstacle-crossing ambition.',
+    sentence: 'The noun “desires” reveals that Macbeth’s ambition is internal and self-driven before Lady Macbeth intervenes.',
+  },
+  stage: {
+    label: 'stage',
+    technique: 'Theatre metaphor',
+    meaning: 'A stage suggests performance and public identity. This links strongly to Shakespeare’s repeated interest in people acting one way while feeling another.',
+    examMove: 'Use this for appearance vs reality: characters perform loyalty, innocence or authority while hiding more dangerous intentions.',
+    context: 'Whole-play link: it connects to “look like the innocent flower” and “False face must hide what the false heart doth know.”',
+    sentence: 'The stage image suggests identity can be performed, linking to Shakespeare’s wider theme of appearance versus reality.',
+  },
+}
+
 function cleanWord(word) {
   return word.replace(/[“”";,.]/g, '').toLowerCase()
 }
@@ -34,7 +77,7 @@ function RippedSeam({ accentColor }) {
   return (
     <div style={{ position: 'relative', height: 22, margin: '0 0 2px', flexShrink: 0 }}>
       <svg viewBox="0 0 420 24" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} aria-hidden="true">
-        <path d="M0,12 C16,15 30,9 46,12 C62,15 76,9 92,12 C108,15 122,9 138,12 C154,15 168,9 184,12 C200,15 214,9 230,12 C246,15 260,9 276,12 C292,15 306,9 322,12 C338,15 352,9 368,12 C386,15 402,9 420,12" fill="none" stroke={accentColor} strokeWidth="2" strokeOpacity="0.45" />
+        <path d="M0,12 C16,15 30,9 46,12 C62,15 76,9 92,12 C108,15 122,9 138,12 C154,15 168,9 184,12 C200,15 214,9 230,12 C246,15 260,9 276,12 C292,15 306,9 322,12 C338,15 352,9 368,12 C386,18 402,9 420,12" fill="none" stroke={accentColor} strokeWidth="2" strokeOpacity="0.45" />
         <path d="M0 23H420" stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
       </svg>
     </div>
@@ -148,22 +191,45 @@ function ItemExpanded({ item, accent, accentRgb, parchment, palette, onClose }) 
   )
 }
 
-function WordFocusSheet({ word, accent, accentRgb, parchment, onClose }) {
+function FocusBlock({ label, children, accent, parchment }) {
   return (
-    <div role="dialog" aria-modal="true" aria-label={`Word focus: ${word}`} style={{ position: 'fixed', inset: 0, zIndex: 180, pointerEvents: 'none' }}>
+    <div>
+      <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>{label}</div>
+      <p style={{ ...TYPE.bodyText, color: parchment, margin: 0 }}>{children}</p>
+    </div>
+  )
+}
+
+function WordFocusSheet({ word, accent, accentRgb, parchment, onClose }) {
+  const focus = WORD_FOCUS[word] || {
+    label: word,
+    technique: 'Word choice',
+    meaning: 'Ask what this word suggests, what feeling it creates, and how it links to character or theme.',
+    examMove: 'Use the word to build a precise AO2 point rather than retelling the plot.',
+    context: 'Connect to a theme or whole-play pattern only when it helps the argument.',
+    sentence: `Shakespeare uses “${word}” to suggest...`,
+  }
+
+  return (
+    <div role="dialog" aria-modal="true" aria-label={`Word focus: ${focus.label}`} style={{ position: 'fixed', inset: 0, zIndex: 180, pointerEvents: 'none' }}>
       <button type="button" onClick={onClose} aria-label="Close word focus" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0, background: 'linear-gradient(to top, rgba(13,15,16,0.92), rgba(13,15,16,0.12) 58%, transparent)', pointerEvents: 'auto' }} />
       <div style={{ position: 'absolute', left: 12, right: 12, bottom: 12, maxWidth: 420, margin: '0 auto', padding: '18px 18px 16px', borderRadius: 26, background: 'linear-gradient(180deg, rgba(59,38,38,0.96), rgba(31,28,27,0.98))', border: `1px solid rgba(${accentRgb}, 0.28)`, boxShadow: '0 -22px 70px rgba(0,0,0,0.46)', pointerEvents: 'auto', animation: 'qa-slide-up 0.24s cubic-bezier(0.16,1,0.3,1) both' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginBottom: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginBottom: 13 }}>
           <div>
-            <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>Word focus</div>
-            <div style={{ ...TYPE.sectionHeading, color: parchment }}>“{word}”</div>
+            <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>{focus.technique}</div>
+            <div style={{ ...TYPE.sectionHeading, color: parchment }}>“{focus.label}”</div>
           </div>
           <button type="button" onClick={onClose} aria-label="Close" style={{ width: 36, height: 36, borderRadius: RADII.pill, border: '1px solid rgba(233,225,211,0.16)', background: 'rgba(233,225,211,0.06)', color: 'rgba(233,225,211,0.76)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', ...TYPE.buttonText }}>×</button>
         </div>
-        <p style={{ ...TYPE.bodyText, color: parchment, margin: 0 }}>Ask: what does this word suggest, what feeling does it create, and how does it link to character or theme?</p>
-        <div style={{ marginTop: 12, padding: '11px 12px', borderRadius: 16, background: `rgba(${accentRgb}, 0.10)`, border: `1px solid rgba(${accentRgb}, 0.18)` }}>
-          <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>Use it</div>
-          <p style={{ ...TYPE.bodyText, color: parchment, margin: 0 }}>Shakespeare uses “{word}” to suggest...</p>
+
+        <div style={{ display: 'grid', gap: 13 }}>
+          <FocusBlock label="Meaning" accent={accent} parchment={parchment}>{focus.meaning}</FocusBlock>
+          <FocusBlock label="AQA move" accent={accent} parchment={parchment}>{focus.examMove}</FocusBlock>
+          <FocusBlock label="Context / link" accent={accent} parchment={parchment}>{focus.context}</FocusBlock>
+          <div style={{ padding: '11px 12px', borderRadius: 16, background: `rgba(${accentRgb}, 0.10)`, border: `1px solid rgba(${accentRgb}, 0.18)` }}>
+            <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>Use it</div>
+            <p style={{ ...TYPE.bodyText, color: parchment, margin: 0 }}>{focus.sentence}</p>
+          </div>
         </div>
       </div>
     </div>
