@@ -29,31 +29,31 @@ function ensureFloatStyles() {
 ensureFloatStyles()
 
 // ─── Node positions (% of container) ─────────────────────────────────────────
-// 6-node layout: exact spec values. Centre sits at (50%, 48%) in a 320×390 container.
+// Layout uses a true radial system around the centre node at (50%, 50%).
 const POSITIONS = {
   5: [
-    { x: 50, y: 10 },
-    { x: 83, y: 31 },
-    { x: 72, y: 72 },
-    { x: 28, y: 72 },
-    { x: 17, y: 31 },
+    { x: 50, y: 16 },
+    { x: 78, y: 35 },
+    { x: 67, y: 78 },
+    { x: 33, y: 78 },
+    { x: 22, y: 35 },
   ],
   6: [
-    { x: 50, y: 7  },  // top — raised to maintain clearance from raised centre
-    { x: 84, y: 30 },  // upper right
-    { x: 82, y: 62 },  // lower right
-    { x: 50, y: 78 },  // bottom
-    { x: 18, y: 62 },  // lower left
-    { x: 16, y: 30 },  // upper left
+    { x: 50, y: 16 },  // top
+    { x: 79, y: 31 },  // upper right
+    { x: 79, y: 69 },  // lower right
+    { x: 50, y: 84 },  // bottom
+    { x: 21, y: 69 },  // lower left
+    { x: 21, y: 31 },  // upper left
   ],
   7: [
-    { x: 50, y: 8  },
-    { x: 80, y: 22 },
-    { x: 84, y: 54 },
-    { x: 64, y: 79 },
-    { x: 36, y: 79 },
-    { x: 16, y: 54 },
-    { x: 20, y: 22 },
+    { x: 50, y: 14 },
+    { x: 75, y: 27 },
+    { x: 80, y: 54 },
+    { x: 64, y: 78 },
+    { x: 36, y: 78 },
+    { x: 20, y: 54 },
+    { x: 25, y: 27 },
   ],
 }
 
@@ -61,18 +61,18 @@ function resolvePositions(count) {
   if (POSITIONS[count]) return POSITIONS[count]
   return Array.from({ length: count }, (_, i) => {
     const a = (i * 360 / count - 90) * Math.PI / 180
-    return { x: Math.round(50 + 30 * Math.cos(a)), y: Math.round(48 + 30 * Math.sin(a)) }
+    return { x: Math.round(50 + 29 * Math.cos(a)), y: Math.round(50 + 34 * Math.sin(a)) }
   })
 }
 
-// ─── Line path — pixel-aware offset for non-square 320×390 container ─────────
+// ─── Line path — pixel-aware offset for non-square 320×360 container ─────────
 // Lines start at the centre node edge and end at the outer node edge.
 // W/H = design reference dimensions; startPx/endPx = circle radii in pixels.
 function linePath(pos) {
-  const W = 320, H = 390   // design reference: maxWidth × fixed height
-  const cx = 50, cy = 33   // centre node position in %
-  const startPx = 56        // centre radius (112px / 2)
-  const endPx   = 41        // outer node radius (82px / 2)
+  const W = 320, H = 360   // design reference: maxWidth × fixed height
+  const cx = 50, cy = 50   // centre node position in %
+  const startPx = 48        // centre radius (96px / 2)
+  const endPx   = 39        // outer node radius (78px / 2)
 
   const dx_px = (pos.x - cx) / 100 * W
   const dy_px = (pos.y - cy) / 100 * H
@@ -243,12 +243,12 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
             </div>
           )}
 
-          {/* ── Radial map — 390px fixed height, maxWidth 320px ─────────────── */}
+          {/* ── Radial map — 360px fixed height, maxWidth 320px ─────────────── */}
           <div style={{
             position: 'relative',
             width: '100%',
             maxWidth: 320,
-            height: 390,
+            height: 360,
             margin: '0 auto',
             flexShrink: 0,
           }}>
@@ -296,17 +296,17 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               })}
             </svg>
 
-            {/* Centre node — dominant, z-index 2 (above lines, below active outer) */}
+            {/* Centre node — true visual and mathematical centre */}
             <motion.div
               role="img"
               aria-label={centreLabel}
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: '33%',
+                top: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: 112,
-                height: 112,
+                width: 96,
+                height: 96,
                 borderRadius: '50%',
                 background: `radial-gradient(circle, rgba(${rgb},0.22) 0%, rgba(${rgb},0.08) 60%, transparent 100%)`,
                 border: `1.5px solid rgba(${rgb}, 0.38)`,
@@ -327,7 +327,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                 fontWeight: 700,
                 letterSpacing: '0.04em',
                 textTransform: 'uppercase',
-                maxWidth: 72,
+                maxWidth: 68,
                 textAlign: 'center',
                 display: '-webkit-box',
                 WebkitLineClamp: 5,
@@ -377,8 +377,8 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                         alignItems: 'center',
                         justifyContent: 'center',
                         padding: 6,
-                        width: 82,
-                        height: 82,
+                        width: 78,
+                        height: 78,
                         minWidth: 44,
                         minHeight: 44,
                         borderRadius: '50%',
@@ -428,7 +428,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                         WebkitLineClamp: 3,
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden',
-                        maxWidth: 62,
+                        maxWidth: 58,
                         letterSpacing: '0.02em',
                         transition: `color ${MOTION.duration.fast}`,
                         userSelect: 'none',
