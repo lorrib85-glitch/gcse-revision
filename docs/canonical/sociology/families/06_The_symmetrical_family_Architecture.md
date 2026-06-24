@@ -17,11 +17,11 @@
 - **Components:** `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ### Stage 2 — Core concept decode
-- **Proposed:** Symmetrical family definition — "similar contributions of equal importance." Teach the key features: less segregated roles, more shared leisure, more shared decision-making, home-centred family life and warmer relationships. Distinguish symmetrical from identical.
+- **Proposed:** Symmetrical family definition — "similar contributions of equal importance." Teach the key features: less segregated roles, more shared leisure, more shared decision-making, home-centred family life and warmer relationships. Distinguish symmetrical from identical. Add the crucial distinction between routine responsibility and occasional help.
 - **Components:** `ConceptReveal`, `FillInTheBlanksBlock`
 
 ### Stage 3 — Sociologist evidence
-- **Proposed:** Willmott and Young profile card — method (survey, nearly 2,000 people), finding, symmetrical family, home-centred life and principle of stratified diffusion. Include a quick memory trick: stratified = social layers; diffusion = spreading.
+- **Proposed:** Willmott and Young profile card — method (survey, nearly 2,000 people in Greater London), finding, symmetrical family, home-centred life and principle of stratified diffusion. Include a quick memory trick: stratified = social layers; diffusion = spreading.
 - **Components:** `KeyFigureReveal`
 
 ### Stage 4 — Challenge & perspectives
@@ -29,15 +29,15 @@
 - **Components:** `TheoryCompareBlock`, `MisconceptionCheck`
 
 ### Stage 5 — Apply & scenario
-- **Proposed:** Evidence cards — Willmott and Young arguments vs Oakley / Scott and Clery / Gatrell / Pahl counter-evidence. Double shift reveal: paid work hours + unpaid domestic hours. Decision-making scenario: does shared money management prove equality?
+- **Proposed:** Evidence cards — Willmott and Young arguments vs Oakley / Scott and Clery / Gatrell / Pahl counter-evidence. Double shift reveal: paid work hours + unpaid domestic hours. Decision-making scenario: does shared money management prove equality? Routine vs occasional help scenario: who usually remembers, plans and repeats the task?
 - **Components:** `ColSortBlock`, interactive evidence sorter
 
 ### Stage 6 — Exam build
-- **Proposed:** 4-mark explain: explain one criticism of the symmetrical family theory. 12-mark paragraph builder: build a "for" paragraph (Willmott and Young) and an "against" paragraph (Oakley, Scott and Clery, Gatrell or Pahl). Full 12-mark preparation.
+- **Proposed:** 4-mark explain: explain one criticism of the symmetrical family theory. 4-mark explain: explain one reason why families may have become more symmetrical. 12-mark paragraph builder: build a "for" paragraph (Willmott and Young) and an "against" paragraph (Oakley, Scott and Clery, Gatrell or Pahl). Full 12-mark preparation.
 - **Components:** `FaceTheExaminer`, `GuidedAnswerCoach`
 
 ### Stage 7 — Quick fire retrieval
-- **Proposed:** Willmott and Young's key claim, features of the symmetrical family, what "symmetrical" means, principle of stratified diffusion, one reason symmetry may have increased, Oakley's criticism, Scott and Clery's finding, one Gatrell detail.
+- **Proposed:** Willmott and Young's key claim, features of the symmetrical family, what "symmetrical" means, principle of stratified diffusion, one reason symmetry may have increased, Oakley's criticism, Scott and Clery's finding, one Gatrell detail, routine work vs occasional help.
 - **Components:** `QuickRecallScreen`
 
 ---
@@ -46,13 +46,16 @@
 
 - Courtroom debate: "The family is now equal" — build both sides using evidence cards
 - Feature match: match each feature of the symmetrical family to an everyday example
-- Reasons reveal: feminism, contraception, women's paid work, financial independence, home-based leisure and technology
+- Reasons reveal: feminism, contraception, women's paid work, financial independence, home-based leisure, labour-saving technology and higher living standards
 - Stratified diffusion mini-visual: social layers with the idea spreading downwards
 - Evidence cards: Willmott and Young arguments vs Oakley / Scott and Clery / Gatrell / Pahl counter-evidence
 - Washing-up evidence check: why does "he washed up once a week" not prove equality?
+- Routine responsibility check: sort examples into occasional help vs routine responsibility
 - Double shift reveal: interactive sequence showing paid work hours + unpaid domestic hours
 - Decision-making scenario: shared money management or hidden power?
+- Methods validity check: why might self-report surveys overstate equality?
 - 4-mark practice: explain one criticism of the symmetrical family theory
+- 4-mark practice: explain one reason why families may have become more symmetrical
 - 12-mark paragraph builder: build a "for" paragraph and an "against" paragraph, then add a judgement
 
 ---
@@ -64,16 +67,19 @@
 - What "symmetrical" means — roles of equal importance, not identical tasks
 - The principle of stratified diffusion — definition and implication
 - One reason families may have become more symmetrical
+- Difference between routine responsibility and occasional help
 - Oakley's main criticism of the symmetrical family argument
 - Scott and Clery's finding on attitudes vs behaviour
 - Gatrell's finding on fathers doing more than before but still less than mothers
 - Jan Pahl's money management challenge from Episode 5
+- One limitation of Willmott and Young's survey evidence
 
 ---
 
 ## 5. Exam skill focus
 
 - 4-mark explain: explain one criticism of the symmetrical family theory
+- 4-mark explain: explain one reason why families may have become more symmetrical
 - Sentence starter: "One criticism of the symmetrical family theory is..."
 - 12-mark preparation: "Discuss how far sociologists would agree that families in Britain today are symmetrical" (NOV20, Q10)
 - 12-mark preparation: "Discuss how far sociologists would agree that gender inequalities continue to exist within the family in Britain today" (NOV21, Q11)
@@ -87,6 +93,8 @@ Frame it as a debate: are modern families genuinely equal, or do they just look 
 Do not over-teach the full Stage 1–4 family history model here. Only teach Stage 3 home-centred symmetrical family and Stage 4 managing-director family if needed to explain stratified diffusion. The GCSE priority is the symmetrical family debate, not a whole historical model.
 
 Keep the emotional hook concrete: who plans the meals, who books the appointments, who knows the PE kit is missing, who gets uninterrupted leisure time? The sociological point is that equality is not just about whether fathers "help" sometimes; it is about routine work, power, decision-making and emotional labour.
+
+When building the episode, avoid a simplistic "then unequal / now equal" story. The stronger exam answer is: roles may have become more symmetrical, but equality is uneven and depends on how we measure work, power and responsibility.
 
 ---
 
