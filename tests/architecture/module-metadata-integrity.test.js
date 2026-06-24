@@ -5,6 +5,7 @@ import { BIOLOGY_MODULES } from '../../src/modules/biology.js'
 import { MATHS_MODULES } from '../../src/modules/maths.js'
 import { SOCIOLOGY_MODULES } from '../../src/modules/sociology.js'
 import { CHEMISTRY_MODULES } from '../../src/modules/chemistry.js'
+import { ENGLISH_MODULES } from '../../src/modules/english.js'
 
 const subjectLookup = {
   History:   new Map(HISTORY_MODULES.map((m)   => [m.id, m])),
@@ -12,6 +13,7 @@ const subjectLookup = {
   Maths:     new Map(MATHS_MODULES.map((m)     => [m.id, m])),
   Sociology: new Map(SOCIOLOGY_MODULES.map((m) => [m.id, m])),
   Chemistry: new Map(CHEMISTRY_MODULES.map((m) => [m.id, m])),
+  English:   new Map(ENGLISH_MODULES.map((m)   => [m.id, m])),
 }
 
 const placeholders = MODULES.filter((m) => m.screenCount === 0)

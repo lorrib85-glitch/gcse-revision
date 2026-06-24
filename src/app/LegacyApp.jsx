@@ -85,6 +85,7 @@ const SUBJECT_MODULE_LOADERS = {
   Maths:     () => import('../modules/maths.js').then(m => m.MATHS_MODULES),
   Sociology: () => import('../modules/sociology.js').then(m => m.SOCIOLOGY_MODULES),
   Chemistry: () => import('../modules/chemistry.js').then(m => m.CHEMISTRY_MODULES),
+  English:   () => import('../modules/english.js').then(m => m.ENGLISH_MODULES),
 }
 
 async function loadModuleContent(mod) {

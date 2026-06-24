@@ -526,6 +526,42 @@ Question feedback and exam practice components.
 
 ---
 
+---
+
+## `src/components/learning/` (continued)
+
+### QuoteAnalyser
+
+**File:** `src/components/learning/QuoteAnalyser.jsx`  
+**What it is:** Full-screen quote analysis screen with a cinematic hero quote section (animated word-by-word reveal, optional background image), a ripped-seam SVG divider, and 5 tappable analysis item cards. Each card expands to a full-screen overlay; Continue only unlocks once all 5 items have been seen.  
+**Best used for:** English Literature close reading — any play, poem, or novel extract where the learner needs to explore word choice, connotations, literary methods, interpretations, and essay construction from a single quotation.  
+**Props:** `block`, `subject` (defaults to `'English'`), `onContinue`  
+**Block shape:**
+```js
+{
+  type: 'quoteAnalyser',
+  quote: string,            // full quote text including opening/closing marks
+  location: string,         // e.g. 'Act I, Scene IV — Macbeth'
+  backgroundImage?: string, // optional path for hero background
+  items: [{
+    id: string,
+    icon: 'search' | 'feather' | 'mask' | 'bulb' | 'flame',
+    heading: string,
+    explainer: string,
+    content: {
+      title?: string,
+      body: string,
+      keyWords?: string[],  // renders as accent-coloured chips below body
+    },
+  }]
+}
+```
+**Screen type:** `quoteAnalyser` (full-screen, routed in `ModulePlayer.jsx`)  
+**Animation:** word-by-word quote reveal via staggered `opacity` transitions; card entrance via `qa-card-in` CSS keyframe; seen-tick pop via `qa-tick-pop`; expanded overlay via `qa-slide-up`  
+**Dependencies:** `SUBJECTS`, `RADII`, `TYPE`, `ContinueCTA`
+
+---
+
 ### RetrievalFrame — **LOCKED**
 
 **File:** `src/components/feedback/RetrievalFrame.jsx`  

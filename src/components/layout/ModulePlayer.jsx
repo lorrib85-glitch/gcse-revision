@@ -48,6 +48,7 @@ import SymptomProgression from '../learning/SymptomProgression.jsx'
 import BeforeAfterImageSlider from '../learning/BeforeAfterImageSlider.jsx'
 import FactorWeb from '../learning/FactorWeb.jsx'
 import ConnectionMap from '../learning/ConnectionMap.jsx'
+import QuoteAnalyser from '../learning/QuoteAnalyser.jsx'
 import ContentShell from './ContentShell.jsx'
 import { ScreenTitle, ScreenBody } from '../core/ScreenText.jsx'
 
@@ -2329,6 +2330,21 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           block={cur}
           subject={module.subject}
           onComplete={() => { isLast ? handleFinish() : go(1) }}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  // ── Quote analyser — full-screen quote dissection with 5 analysis items ──────
+  if (cur?.type === 'quoteAnalyser') {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <QuoteAnalyser
+          block={cur}
+          subject={module.subject}
+          onContinue={() => isLast ? handleFinish() : go(1)}
         />
         {jumpSheetPortal}
       </>

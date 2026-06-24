@@ -892,4 +892,20 @@ export const MODULES = [
     screenCount: 1,
     screenTags: [null],
   },
+
+  // ── English: Macbeth ────────────────────────────────────────────────────────
+
+  {
+    id: 'english-macbeth-power-ambition',
+    subject: 'English',
+    number: 1,
+    title: 'Stars, hide your fires',
+    subtitle: 'Macbeth — power, ambition and concealment',
+    icon: '🗡️',
+    color: '#6A343D',
+    colorLight: 'rgba(106,52,61,0.12)',
+    headerImage: null,
+    screenCount: 1,
+    screenTags: [null],
+  },
 ]
