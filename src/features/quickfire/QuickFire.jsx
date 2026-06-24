@@ -7,6 +7,8 @@ import { MOTION }   from '../../constants/motion.js'
 import { SOCIOLOGY_GROUPS } from '../../data/sociologyGroups.js'
 import { CHEM_IMAGES } from '../../data/chemImages.js'
 import { MEDICINE_2023_PAPER, J23_Q1, J23_Q2A, J23_Q2B, J23_Q3, J23_Q4, J23_Q5, J23_Q6 } from '../../data/medicineExamPapers.js'
+import { ALL_EXAM_PAPERS } from '../../data/examPapers/index.js'
+import { ExamPaperRunner } from '../exampaper/ExamPaperRunner.jsx'
 import { FIGURES } from '../../figures.js'
 import { getProgress, recordScore, getAllConfidenceRatings } from '../../progress.js'
 import { getSuggestedQuestionType, logWrongAnswer, logCorrectAnswer, getWeakTopics } from '../../unifiedWeaknessTracker.js'
@@ -2011,6 +2013,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
   const [englishOpen, setEnglishOpen]     = useState(false)
   const [sociologyOpen, setSociologyOpen]     = useState(false)
   const [chemistryOpen, setChemistryOpen]     = useState(false)
+  const [activePaper, setActivePaper] = useState(null)
   const [paperChooserOpen, setPaperChooserOpen] = useState(false)
   const [examTechniqueOpen, setExamTechniqueOpen] = useState(false)
   const [activeCoachType, setActiveCoachType] = useState(null)
@@ -2512,6 +2515,16 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
     { logo: '/headers/physics-main.webp',    label: 'Physics',   color: '#3B82F6', completed: 0,  total: 15, action: isExamMode ? () => startExamRound('Physics')  : () => {} },
   ]
 
+  // ── Full exam paper runner ────────────────────────────────────────────────
+  if (activePaper) {
+    return (
+      <ExamPaperRunner
+        paper={activePaper}
+        onExit={() => setActivePaper(null)}
+      />
+    )
+  }
+
   // ── Exams landing (cinematic redesign) ──────────────────────────────────
   if (isExamMode && examPhase === 'landing') {
 
@@ -2651,6 +2664,26 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
                 </div>
                 <NavArrow color="#C89B6D" />
               </button>
+
+              {/* AQA Sociology papers from registry */}
+              {ALL_EXAM_PAPERS.map(paper => (
+                <button key={paper.id} onClick={() => { setPaperChooserOpen(false); setActivePaper(paper) }} style={{
+                  display: 'flex', alignItems: 'center', gap: 14, width: '100%', textAlign: 'left',
+                  padding: '14px 16px', cursor: 'pointer', borderRadius: RADII.large,
+                  background: GENERAL.neutral[1], border: '1px solid rgba(255,255,255,0.06)',
+                  borderLeft: `2px solid ${paper.color}`,
+                }}>
+                  <div style={{ width: 46, height: 46, borderRadius: '50%', flexShrink: 0, border: `1.5px solid ${paper.color}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={paper.color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="12" y2="15"/></svg>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: paper.color, marginBottom: 4 }}>{paper.board} · {paper.year}</div>
+                    <div style={{ ...TYPE.cinematic, fontSize: 17, color: GENERAL.softWhite, marginBottom: 4 }}>{paper.subtitle || paper.title}</div>
+                    <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 12.5, lineHeight: 1.45, color: GENERAL.slate }}>{paper.ref} · {paper.totalMarks} marks · {paper.timeMins} min</div>
+                  </div>
+                  <NavArrow color={paper.color} />
+                </button>
+              ))}
 
               {/* Generic timed practice */}
               <button onClick={() => { setPaperChooserOpen(false); startExamRound('Random', { isTimedPaper: true }) }} style={{
