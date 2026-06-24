@@ -13,31 +13,31 @@
 ## 2. Stage mapping (7-stage rhythm)
 
 ### Stage 1 — Hook & prior recall
-- **Proposed:** "Is your family 'typical'?" Retrieve Episode 1 family types. Set up: families look different for cultural, historical, demographic reasons.
+- **Proposed:** "Is your family 'typical'?" Retrieve Episode 1 family types and Episode 2's conventional family idea. Set up: families look different for cultural, historical, demographic and personal reasons.
 - **Components:** `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ### Stage 2 — Core concept decode
-- **Proposed:** Family diversity as a concept. Five types (Rapoport and Rapoport) one at a time. Make diversity concrete, not abstract — show how families differ because of culture, class, life stage, generation and organisation.
+- **Proposed:** Family diversity as a concept. Five types from Rapoport and Rapoport one at a time. Make diversity concrete, not abstract — show how families differ because of organisation, culture, class, life stage and generation.
 - **Components:** `ConceptReveal`, `VisualLearning`
 
 ### Stage 3 — Sociologist evidence
-- **Proposed:** Rapoport and Rapoport profile card — diversity researchers, five types. Census data on ethnic household size variation.
+- **Proposed:** Rapoport and Rapoport profile card — diversity researchers, five types, use of secondary sources, argument that family life has moved away from one single family norm. Include census data on ethnic household variation.
 - **Components:** `KeyFigureReveal`
 
 ### Stage 4 — Challenge & perspectives
-- **Proposed:** Is the idea of one "normal" family still powerful despite diversity? Link back to Oakley (Episode 2). Demographic trends as an additional driver of diversity.
+- **Proposed:** Challenge the idea that family diversity means the conventional family has disappeared. Link back to Oakley: the conventional family may no longer be the only family form, but it can still be a powerful social ideal. Also challenge overgeneralisation: cultural diversity does not mean all families within an ethnic or religious group are the same.
 - **Components:** `MisconceptionCheck`, `TheoryCompareBlock`
 
 ### Stage 5 — Apply & scenario
-- **Proposed:** Five doors of diversity — each reveals one type with a concrete example. Spot the diversity: identify which type is shown in a scenario.
+- **Proposed:** Five doors of diversity — each reveals one type with a concrete example. Spot the diversity: identify which type is shown in a scenario. Census detective: interpret the 2001 Census comparison between Bangladeshi/Pakistani households and White British households.
 - **Components:** `InteractiveCollectionExplorer` or `ColSortBlock`
 
 ### Stage 6 — Exam build
-- **Proposed:** 3-mark describe (describe one type of family diversity). 12-mark preparation: JUN24 Q10.
+- **Proposed:** 3-mark describe (describe one type of family diversity). 4-mark identify-and-explain (explain one reason why family diversity has increased in Britain). 12-mark preparation: build a balanced answer on whether family diversity exists in Britain today.
 - **Components:** `GuidedExamResponse`, `FaceTheExaminer`
 
 ### Stage 7 — Quick fire retrieval
-- **Proposed:** Five questions: Rapoport and Rapoport's five types (all five), one example per type, definition of beanpole family, one demographic driver of diversity, one way diversity challenges the conventional family.
+- **Proposed:** Five questions: Rapoport and Rapoport's five types (all five), one example per type, definition of beanpole family, one UK cultural diversity example, one way diversity challenges the conventional family.
 - **Components:** `QuickRecallScreen`
 
 ---
@@ -46,8 +46,12 @@
 
 - Five doors of diversity: each reveals one of Rapoport and Rapoport's types with a concrete example
 - Spot the diversity: identify which type of diversity is illustrated in a scenario
-- `KeyFigureReveal`: Rapoport and Rapoport profile card
+- `KeyFigureReveal`: Rapoport and Rapoport profile card, including secondary-source method note
+- Census detective: interpret the 2001 Census comparison between Bangladeshi/Pakistani households and White British households
+- Global family cards: commune / kibbutz / one-child policy — what does each example prove about family diversity?
+- Overgeneralisation check: why is it risky to say "Asian families are traditional"?
 - Exam skill: describe one type of family diversity (3-mark format)
+- Exam skill: explain one reason why family diversity has increased in Britain (4-mark format)
 
 ---
 
@@ -55,8 +59,11 @@
 
 - Rapoport and Rapoport's five types — all five by name
 - One concrete example for each type
+- Rapoport and Rapoport's use of secondary sources
 - Definition of beanpole family
 - Why cultural diversity exists in family structure (migration + cultural values)
+- One census-data example of cultural diversity in family structure
+- One global family form example
 - How diversity challenges the conventional family idea (links to Episode 2)
 
 ---
@@ -64,13 +71,21 @@
 ## 5. Exam skill focus
 
 - 3-mark describe: describe one type of family diversity
+- 4-mark identify-and-explain: explain one reason why family diversity has increased in Britain
+- Sentence starter: "One reason family diversity has increased is..."
 - 12-mark preparation: "Discuss how far sociologists would agree that family diversity exists in Britain today" (JUN24, Q10)
 
 ---
 
 ## 6. Build notes
 
-Make diversity concrete, not abstract. Show how families differ because of culture, class, life stage, generation and organisation. Demographic trends (birth rate, death rate, ageing population, migration) should be woven in as explanations for why family forms have changed — not treated as a separate topic.
+Make diversity concrete, not abstract. Show how families differ because of organisation, culture, class, life stage and generation.
+
+Do not let the episode become a dry demography chapter. Demographic trends such as birth rate, death rate, ageing population and migration should be woven in as explanations for changing family forms, not treated as the main teaching.
+
+Use the recurring family case file motif: each card should help answer whether the family is natural, changing, unequal, or socially controlled.
+
+The strongest emotional hook is that teenagers already know families do not all look the same. The sociological move is to show that this diversity has patterns, causes and consequences.
 
 ---
 
