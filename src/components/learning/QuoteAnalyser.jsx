@@ -79,6 +79,39 @@ function IconFlame() {
 
 const ICON_MAP = { search: IconSearch, feather: IconFeather, mask: IconMask, bulb: IconBulb, flame: IconFlame }
 
+const WORD_INSIGHTS = {
+  fires: {
+    label: 'fires',
+    connotations: 'burning ambition, danger and desire.',
+    why: 'Macbeth knows his ambition is powerful enough to consume him if it is seen.',
+    sentence: 'Shakespeare uses “fires” to present Macbeth’s ambition as intense, dangerous and difficult to control.',
+  },
+  black: {
+    label: 'black',
+    connotations: 'evil, secrecy and moral darkness.',
+    why: 'Macbeth already understands that his desire is corrupt and must be hidden.',
+    sentence: 'The adjective “black” suggests Macbeth recognises the evil nature of his own ambition.',
+  },
+  deep: {
+    label: 'deep',
+    connotations: 'hidden thoughts, buried motives and something difficult to escape.',
+    why: 'His ambition is not a quick passing thought; it has settled inside him.',
+    sentence: 'Shakespeare uses “deep” to imply that Macbeth’s ambition is rooted within him and becoming harder to resist.',
+  },
+  desires: {
+    label: 'desires',
+    connotations: 'private longing, temptation and selfish ambition.',
+    why: 'The word shows Macbeth is not simply reacting to events; he actively wants power.',
+    sentence: 'The noun “desires” reveals that Macbeth is driven by a private longing for power.',
+  },
+  stage: {
+    label: 'stage',
+    connotations: 'performance, role-playing and public identity.',
+    why: 'This can link to Shakespeare’s interest in appearance versus reality.',
+    sentence: 'The image of the “stage” can suggest that identity is performed rather than fixed.',
+  },
+}
+
 function RippedSeam({ accentColor }) {
   return (
     <div style={{ position: 'relative', height: 30, margin: '0 0 4px', flexShrink: 0 }}>
@@ -226,12 +259,83 @@ function ItemExpanded({ item, accent, accentRgb, parchment, palette, onClose }) 
   )
 }
 
-function QuoteWord({ word, index, visibleWords, accent }) {
-  const stripped = word.replace(/[“”";,\.]/g, '').toLowerCase()
-  const shouldHighlight = ['fires', 'black', 'deep', 'desires', 'stage'].includes(stripped)
+function WordInsightSheet({ wordKey, accent, accentRgb, parchment, onClose }) {
+  const insight = WORD_INSIGHTS[wordKey]
+  if (!insight) return null
 
   return (
-    <span style={{ display: 'inline', opacity: index < visibleWords ? 1 : 0, color: shouldHighlight ? accent : 'inherit', textShadow: shouldHighlight ? `0 0 18px ${accent}55` : '0 1px 18px rgba(0,0,0,0.65)', transition: 'opacity 0.28s ease' }}>
+    <div role="dialog" aria-modal="true" aria-label={`Word focus: ${insight.label}`} style={{ position: 'fixed', inset: 0, zIndex: 180, pointerEvents: 'none' }}>
+      <button onClick={onClose} aria-label="Close word focus" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0, background: 'linear-gradient(to top, rgba(13,15,16,0.92), rgba(13,15,16,0.12) 58%, transparent)', pointerEvents: 'auto' }} />
+      <div style={{ position: 'absolute', left: 12, right: 12, bottom: 12, maxWidth: 420, margin: '0 auto', padding: '18px 18px 16px', borderRadius: 26, background: 'linear-gradient(180deg, rgba(59,38,38,0.96), rgba(31,28,27,0.98))', border: `1px solid rgba(${accentRgb}, 0.28)`, boxShadow: '0 -22px 70px rgba(0,0,0,0.46)', pointerEvents: 'auto', animation: 'qa-slide-up 0.24s cubic-bezier(0.16,1,0.3,1) both' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginBottom: 12 }}>
+          <div>
+            <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>Word focus</div>
+            <div style={{ ...TYPE.sectionHeading, color: parchment }}>“{insight.label}”</div>
+          </div>
+          <button onClick={onClose} aria-label="Close" style={{ width: 36, height: 36, borderRadius: RADII.pill, border: '1px solid rgba(233,225,211,0.16)', background: 'rgba(233,225,211,0.06)', color: 'rgba(233,225,211,0.76)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', ...TYPE.buttonText }}>✕</button>
+        </div>
+
+        <div style={{ display: 'grid', gap: 12 }}>
+          <div>
+            <div style={{ ...TYPE.metadataText, color: 'rgba(233,225,211,0.54)', textTransform: 'uppercase', marginBottom: 5 }}>Connotations</div>
+            <p style={{ ...TYPE.bodyText, color: parchment, margin: 0 }}>{insight.connotations}</p>
+          </div>
+          <div>
+            <div style={{ ...TYPE.metadataText, color: 'rgba(233,225,211,0.54)', textTransform: 'uppercase', marginBottom: 5 }}>Why it matters</div>
+            <p style={{ ...TYPE.bodyText, color: 'rgba(233,225,211,0.84)', margin: 0 }}>{insight.why}</p>
+          </div>
+          <div style={{ padding: '11px 12px', borderRadius: 16, background: `rgba(${accentRgb}, 0.10)`, border: `1px solid rgba(${accentRgb}, 0.18)` }}>
+            <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>Use it</div>
+            <p style={{ ...TYPE.bodyText, color: parchment, margin: 0 }}>{insight.sentence}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function QuoteWord({ word, index, visibleWords, accent, accentRgb, activeWord, onSelect }) {
+  const stripped = word.replace(/[“”";,\.]/g, '').toLowerCase()
+  const shouldHighlight = Object.prototype.hasOwnProperty.call(WORD_INSIGHTS, stripped)
+  const isVisible = index < visibleWords
+  const isActive = activeWord === stripped
+
+  if (shouldHighlight) {
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => onSelect(stripped)}
+          aria-label={`Analyse the word ${stripped}`}
+          style={{
+            display: 'inline-block',
+            opacity: isVisible ? 1 : 0,
+            color: accent,
+            background: isActive ? `rgba(${accentRgb}, 0.28)` : `rgba(${accentRgb}, 0.12)`,
+            border: `1px solid rgba(${accentRgb}, ${isActive ? 0.54 : 0.34})`,
+            borderBottom: `3px solid rgba(${accentRgb}, ${isActive ? 0.95 : 0.72})`,
+            borderRadius: 10,
+            boxShadow: isActive ? `0 0 24px rgba(${accentRgb}, 0.32)` : `0 0 16px rgba(${accentRgb}, 0.18)`,
+            padding: '0 0.12em 0.03em',
+            margin: '0 0.06em 0.12em 0',
+            font: 'inherit',
+            lineHeight: 'inherit',
+            letterSpacing: 'inherit',
+            textShadow: `0 0 18px ${accent}55`,
+            cursor: 'pointer',
+            transition: 'opacity 0.28s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease',
+            transform: isActive ? 'translateY(-1px)' : 'none',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          {word}
+        </button>{' '}
+      </>
+    )
+  }
+
+  return (
+    <span style={{ display: 'inline', opacity: isVisible ? 1 : 0, color: 'inherit', textShadow: '0 1px 18px rgba(0,0,0,0.65)', transition: 'opacity 0.28s ease' }}>
       {word}{' '}
     </span>
   )
@@ -247,6 +351,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
 
   const [seen, setSeen] = useState(new Set())
   const [activeItem, setActiveItem] = useState(null)
+  const [activeWord, setActiveWord] = useState(null)
   const allSeen = seen.size >= (block.items?.length || 0)
 
   const quoteWords = (block.quote || '').split(' ')
@@ -279,9 +384,13 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
           <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to bottom, rgba(6,4,8,0.18) 0%, rgba(8,6,10,0.28) 38%, rgba(8,8,10,0.94) 100%), radial-gradient(circle at 78% 44%, rgba(${accentRgb}, 0.18), transparent 32%)`, pointerEvents: 'none' }} />
 
           <div style={{ position: 'relative', zIndex: 1, minHeight: 342, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '34px 26px 30px' }}>
+            <div style={{ ...TYPE.captionText, color: 'rgba(233,225,211,0.72)', marginBottom: 12, opacity: visibleWords >= quoteWords.length ? 1 : 0, transition: 'opacity 0.5s ease 0.2s' }}>Tap the highlighted words</div>
+
             <blockquote style={{ margin: 0 }}>
               <p style={{ margin: 0, ...TYPE.featureText, color: parchment }}>
-                {quoteWords.map((word, i) => <QuoteWord key={i} word={word} index={i} visibleWords={visibleWords} accent={accent} />)}
+                {quoteWords.map((word, i) => (
+                  <QuoteWord key={i} word={word} index={i} visibleWords={visibleWords} accent={accent} accentRgb={accentRgb} activeWord={activeWord} onSelect={setActiveWord} />
+                ))}
               </p>
             </blockquote>
 
@@ -312,6 +421,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
         </div>
       )}
 
+      {activeWord && <WordInsightSheet wordKey={activeWord} accent={accent} accentRgb={accentRgb} parchment={parchment} onClose={() => setActiveWord(null)} />}
       {activeItem && <ItemExpanded item={activeItem} accent={accent} accentRgb={accentRgb} parchment={parchment} palette={palette} onClose={handleClose} />}
     </div>
   )
