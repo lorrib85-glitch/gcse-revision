@@ -196,7 +196,7 @@ function ItemExpanded({ item, accent, accentRgb, parchment, palette, onClose }) 
             <div style={{ ...TYPE.sectionHeading, color: parchment }}>{item.heading}</div>
             <div style={{ ...TYPE.captionText, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>{item.explainer}</div>
           </div>
-          <button onClick={onClose} aria-label="Close" style={{ width: 36, height: 36, flexShrink: 0, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: RADII.pill, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', fontFamily: "'Sora', sans-serif" }}>✕</button>
+          <button onClick={onClose} aria-label="Close" style={{ width: 36, height: 36, flexShrink: 0, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: RADII.pill, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.55)', ...TYPE.buttonText }}>✕</button>
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '22px 20px 28px', WebkitOverflowScrolling: 'touch' }}>
@@ -280,7 +280,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
 
           <div style={{ position: 'relative', zIndex: 1, minHeight: 342, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '34px 26px 30px' }}>
             <blockquote style={{ margin: 0 }}>
-              <p style={{ margin: 0, fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 'clamp(2rem, 9vw, 3rem)', fontWeight: 500, lineHeight: 1.16, letterSpacing: '-0.035em', color: parchment }}>
+              <p style={{ margin: 0, ...TYPE.featureText, color: parchment }}>
                 {quoteWords.map((word, i) => <QuoteWord key={i} word={word} index={i} visibleWords={visibleWords} accent={accent} />)}
               </p>
             </blockquote>
