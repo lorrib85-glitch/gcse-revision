@@ -18,6 +18,7 @@ How do you turn family knowledge into marks?
 - How to decode a 12-mark question before writing
 - How to build a high-mark 12-mark answer using two developed sides and a judgement
 - How to select the best sociologists for common families and households questions
+- How to separate core exam names from useful supporting names and optional enrichment names
 - How to use the item/question wording without drifting into a generic essay
 - How to avoid common errors: name-dropping, description without evaluation, one-sided answers, weak conclusions and irrelevant knowledge dumps
 - Final retrieval of core researchers from the whole families module
@@ -34,6 +35,9 @@ How do you turn family knowledge into marks?
 - **Line of argument:** the overall answer direction that links every paragraph back to the question.
 - **Claim:** the main point of a paragraph.
 - **Evidence:** named sociologist, concept, study, trend or example used to support the claim.
+- **Core exam name:** a researcher students should be able to use confidently in a GCSE answer.
+- **Supporting name:** useful evidence if confirmed by teacher/course material, but not essential.
+- **Optional enrichment:** helpful for depth, but not required and should not replace core evidence.
 - **Challenge:** a counterpoint, limitation or alternative perspective.
 - **Judgement:** a clear decision about how far the evidence supports the question.
 - **Specialist terminology:** precise sociology vocabulary, such as patriarchy, secularisation, socialisation, cohabitation or stratified diffusion.
@@ -63,7 +67,7 @@ Before writing, students should do a 30-second decode:
 2. **Underline the command:** usually "Discuss how far sociologists would agree..."
 3. **Spot the argument hidden in the wording:** is it saying law is the main reason, families are symmetrical, marriage is still important, or family serves capitalism?
 4. **Choose two sides:** one side that supports the statement and one side that challenges it.
-5. **Choose named evidence:** two or three sociologists used deeply are better than six names listed briefly.
+5. **Choose named evidence:** two or three secure sociologists used deeply are better than six names listed briefly.
 
 Example:
 
@@ -127,7 +131,7 @@ Example:
 Use this for each main paragraph:
 
 1. **Point:** one clear answer to the question.
-2. **Sociologist / concept:** named evidence.
+2. **Sociologist / concept:** named evidence or secure concept.
 3. **Explain:** how the evidence proves the point.
 4. **Challenge / link:** limitation, opposing view or explicit link back to the question.
 
@@ -135,45 +139,60 @@ Fast memory trick: **P-S-E-C** — Point, Sociologist, Explain, Challenge.
 
 ---
 
-## Named evidence bank — families and households
+## Evidence bank — families and households
 
 Use this as a revision bank. Students do not need every name in every answer. They need the best names for the question.
 
-### Family functions and Functionalism
+### Core exam names
+
+These are the safest names to build around.
+
+#### Family functions and Functionalism
 
 - **Murdock:** the nuclear family performs four functions: sexual, reproductive, economic and educational/socialisation.
 - **Parsons:** the family performs primary socialisation and stabilisation of adult personalities; instrumental and expressive roles.
 
-### Family diversity
+#### Family diversity
 
 - **Rapoport and Rapoport:** five types of family diversity — organisational, cultural, social class, life-course and cohort.
 - **Oakley:** the conventional family is an ideology that presents one family form as normal.
 
-### Conjugal roles and equality
+#### Conjugal roles and equality
 
 - **Bott:** segregated and joint conjugal roles.
-- **Willmott and Young:** symmetrical family; family life becoming more home-centred and less segregated.
+- **Willmott and Young:** symmetrical family; family life becoming more home-centred and less segregated; principle of stratified diffusion.
 - **Oakley:** criticises symmetry because women still do most domestic labour.
 - **Jan Pahl:** money management can reveal power and financial control.
-- **Scott and Clery:** attitudes to gender roles have changed faster than behaviour.
-- **Gatrell:** fathers are more involved than before, but not necessarily equal.
 
-### Marxist and Feminist criticism
+#### Marxist and Feminist criticism
 
 - **Zaretsky:** family supports capitalism through unpaid domestic labour, reproduction of workers, consumption and cushioning alienation.
 - **Delphy and Leonard:** family is a patriarchal economic system where men benefit from women’s unpaid labour.
 
-### Parent-child and wider family relationships
+#### Parent-child and wider family relationships
 
 - **Young and Willmott:** parent-child relationships became less authoritarian; Bethnal Green showed strong extended-family ties.
-- **Prior and Trinder:** children, especially in middle-class families, may be involved in decision-making.
-- **Scott:** children are not simply dependent; some children contribute work or support.
-- **Charles et al.:** wider kinship networks still matter, especially mothers, daughters and grandparents.
 
-### Marriage, cohabitation and divorce
+#### Marriage, cohabitation and divorce
 
 - **Giddens:** pure relationship — relationships continue only while both partners find them rewarding.
 - **Murray / New Right:** divorce, lone-parent families and welfare dependency weaken the nuclear family.
+
+### Useful supporting names
+
+Use these only where they are confirmed by teacher/course material or where the app labels them as support rather than core.
+
+- **Scott and Clery:** attitudes to gender roles may have changed faster than actual behaviour.
+- **Prior and Trinder:** children, especially in some middle-class families, may be involved in decision-making.
+- **Scott:** children are not simply dependent; some children contribute work or support.
+- **Charles et al.:** wider kinship networks can still matter, especially mothers, daughters and grandparents.
+
+### Optional enrichment
+
+Use these sparingly. They can add nuance, but students should not feel they must memorise them.
+
+- **Gatrell:** fathers may be more involved than previous generations, but this does not prove full equality in housework, childcare or emotional labour.
+- **Aries:** childhood can be understood as a social construct that changes over time.
 
 ---
 
@@ -201,7 +220,8 @@ Best evidence:
 
 - Willmott and Young agree: roles are more similar and home-centred.
 - Oakley disagrees: equality is overstated.
-- Scott and Clery / Gatrell / Pahl add evidence that inequality remains.
+- Pahl adds secure evidence that money management can still reveal male power.
+- Optional supporting evidence: Scott and Clery / Gatrell only if confirmed or clearly labelled as extension.
 
 ### Marriage and divorce
 
@@ -237,8 +257,9 @@ Best evidence:
 
 - March of Progress: children have more rights, protection and education.
 - Young and Willmott: less authoritarian parent-child relationships.
-- Scott: childhood remains unequal and some children still contribute work/support.
+- Conceptual challenge: childhood remains unequal and some children still contribute work/support.
 - Conflict view: class, ethnicity, gender and poverty shape childhood.
+- Optional supporting names: Prior and Trinder / Scott / Charles et al. only if confirmed.
 
 ---
 
@@ -277,6 +298,7 @@ Why this is stronger:
 - **Everyday language:** saying "families are good" instead of using specialist terms such as socialisation, patriarchy, capitalism, secularisation or family diversity.
 - **Fake evaluation:** saying "this is good evidence" without explaining why it strengthens or weakens the argument.
 - **Missing comparison:** not showing how perspectives differ.
+- **Uncertain name overload:** using optional names as if they are core evidence, which makes the answer harder to remember and less secure.
 
 ---
 
@@ -285,12 +307,13 @@ Why this is stronger:
 Before finishing, check:
 
 - Have I answered the exact wording of the question?
-- Have I used at least two sociologists or perspectives accurately?
+- Have I used at least two secure sociologists or perspectives accurately?
 - Have I explained the evidence rather than just naming it?
 - Have I included a challenge or counter-perspective?
 - Have I used specialist sociology terms?
 - Have I made a clear "how far" judgement?
 - Have I avoided irrelevant knowledge dumping?
+- Have I avoided using optional enrichment names as if they are compulsory?
 
 ---
 
@@ -301,6 +324,7 @@ Before finishing, check:
 - MISCONCEPTION: "AO3 just means saying a criticism." Correction: AO3 means evaluating how strong an argument is, comparing perspectives and reaching a supported judgement.
 - MISCONCEPTION: "The conclusion can just repeat your introduction." Correction: the conclusion must use "how far" language and make a judgement based on the evidence in the answer.
 - MISCONCEPTION: "A 12-marker needs a big introduction." Correction: the introduction should be short. Most marks come from developed paragraphs and judgement.
+- MISCONCEPTION: "More named researchers always means a higher mark." Correction: accurate explanation and evaluation of secure evidence is better than a crowded answer full of barely explained names.
 
 ---
 
