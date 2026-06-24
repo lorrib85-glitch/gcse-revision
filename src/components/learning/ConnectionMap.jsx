@@ -39,12 +39,12 @@ const POSITIONS = {
     { x: 17, y: 31 },
   ],
   6: [
-    { x: 52, y: 8  },  // top — shifted slightly right to clear off-centre centre
+    { x: 50, y: 7  },  // top — raised to maintain clearance from raised centre
     { x: 84, y: 30 },  // upper right
     { x: 82, y: 62 },  // lower right
     { x: 50, y: 78 },  // bottom
-    { x: 10, y: 62 },  // lower left — pushed to edge
-    { x: 8,  y: 30 },  // upper left — pushed to edge
+    { x: 18, y: 62 },  // lower left
+    { x: 16, y: 30 },  // upper left
   ],
   7: [
     { x: 50, y: 8  },
@@ -70,7 +70,7 @@ function resolvePositions(count) {
 // W/H = design reference dimensions; startPx/endPx = circle radii in pixels.
 function linePath(pos) {
   const W = 320, H = 390   // design reference: maxWidth × fixed height
-  const cx = 41, cy = 33   // centre node position in %
+  const cx = 50, cy = 33   // centre node position in %
   const startPx = 56        // centre radius (112px / 2)
   const endPx   = 41        // outer node radius (82px / 2)
 
@@ -302,7 +302,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               aria-label={centreLabel}
               style={{
                 position: 'absolute',
-                left: '41%',
+                left: '50%',
                 top: '33%',
                 transform: 'translate(-50%, -50%)',
                 width: 112,
