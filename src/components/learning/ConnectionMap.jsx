@@ -33,27 +33,27 @@ ensureFloatStyles()
 const POSITIONS = {
   5: [
     { x: 50, y: 11 },
-    { x: 76, y: 33 },
-    { x: 66, y: 71 },
-    { x: 34, y: 71 },
-    { x: 24, y: 33 },
+    { x: 80, y: 32 },
+    { x: 70, y: 71 },
+    { x: 30, y: 71 },
+    { x: 20, y: 32 },
   ],
   6: [
-    { x: 50, y: 13 },  // God's will / top
-    { x: 76, y: 31 },  // Astrology / upper right
-    { x: 72, y: 61 },  // Humours / lower right
-    { x: 50, y: 78 },  // Bad air / bottom
-    { x: 28, y: 61 },  // Galen / lower left
-    { x: 24, y: 31 },  // Folk cures / upper left
+    { x: 50, y: 13 },  // top
+    { x: 82, y: 30 },  // upper right — spread toward page edge
+    { x: 78, y: 62 },  // lower right
+    { x: 50, y: 78 },  // bottom
+    { x: 22, y: 62 },  // lower left
+    { x: 18, y: 30 },  // upper left — spread toward page edge
   ],
   7: [
     { x: 50, y: 9  },
-    { x: 74, y: 24 },
-    { x: 78, y: 54 },
-    { x: 62, y: 78 },
-    { x: 38, y: 78 },
-    { x: 22, y: 54 },
-    { x: 26, y: 24 },
+    { x: 78, y: 23 },
+    { x: 82, y: 54 },
+    { x: 64, y: 79 },
+    { x: 36, y: 79 },
+    { x: 18, y: 54 },
+    { x: 22, y: 23 },
   ],
 }
 
@@ -70,8 +70,8 @@ function resolvePositions(count) {
 // W/H = design reference dimensions; startPx/endPx = circle radii in pixels.
 function linePath(pos) {
   const W = 320, H = 390   // design reference: maxWidth × fixed height
-  const cx = 50, cy = 48   // centre node position in %
-  const startPx = 52        // centre radius (104px / 2)
+  const cx = 50, cy = 44   // centre node position in %
+  const startPx = 56        // centre radius (112px / 2)
   const endPx   = 41        // outer node radius (82px / 2)
 
   const dx_px = (pos.x - cx) / 100 * W
@@ -303,10 +303,10 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: '48%',
+                top: '44%',
                 transform: 'translate(-50%, -50%)',
-                width: 104,
-                height: 104,
+                width: 112,
+                height: 112,
                 borderRadius: '50%',
                 background: `radial-gradient(circle, rgba(${rgb},0.22) 0%, rgba(${rgb},0.08) 60%, transparent 100%)`,
                 border: `1.5px solid rgba(${rgb}, 0.38)`,
