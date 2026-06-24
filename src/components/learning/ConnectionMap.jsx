@@ -226,9 +226,9 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
           {(title || subtitle) && (
             <div style={{ marginBottom: 12 }}>
               {title && (
-                <h2 style={{ ...TYPE.sectionHeading, margin: '0 0 2px', color: '#F5F7FF' }}>
+                <h1 style={{ ...TYPE.screenHeading, margin: '0 0 8px', color: '#F5F7FF' }}>
                   {title}
-                </h2>
+                </h1>
               )}
               {subtitle && (
                 <p style={{
