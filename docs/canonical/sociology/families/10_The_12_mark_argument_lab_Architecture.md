@@ -13,72 +13,101 @@
 ## 2. Stage mapping (7-stage rhythm)
 
 ### Stage 1 — Hook & prior recall
-- **Proposed:** "Can you close the family case file?" Retrieve named sociologists from all episodes. Frame: this episode is about turning knowledge into marks.
+- **Proposed:** "Can you close the family case file?" Retrieve named sociologists from all episodes. Frame: this episode is about turning knowledge into marks, not learning new theory.
 - **Components:** `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ### Stage 2 — Core concept decode
-- **Proposed:** AO1 / AO2 / AO3 explained precisely. The four-stage paragraph structure (claim, evidence, challenge, judgement). What "how far" actually requires.
+- **Proposed:** AO1 / AO2 / AO3 explained precisely. The 30-second question decode: topic, command, hidden argument, two sides, best evidence. Teach "how far" as a judgement, not a yes/no answer.
 - **Components:** `ConceptReveal`, `VisualLearning`
 
 ### Stage 3 — Sociologist evidence
-- **Proposed:** Researcher card matching: match sociologist to perspective, key claim, best 12-mark use. All named researchers from Episodes 1–9.
+- **Proposed:** Researcher card matching: match sociologist to perspective, key claim and best 12-mark use. Include updated module bank: Murdock, Parsons, Rapoport and Rapoport, Oakley, Bott, Willmott and Young, Pahl, Scott and Clery, Gatrell, Zaretsky, Delphy and Leonard, Prior and Trinder, Scott, Charles et al., Giddens and Murray.
 - **Components:** `MatchingTask`, `KeyFigureReveal`
 
 ### Stage 4 — Challenge & perspectives
-- **Proposed:** Face the examiner: weak answer vs upgraded answer — two versions of the same paragraph. What does Level 4 actually look like?
+- **Proposed:** Face the examiner: weak answer vs upgraded answer. Show exactly how name-dropping becomes explanation, how explanation becomes evaluation, and how evaluation becomes judgement.
 - **Components:** `FaceTheExaminer`, `ExaminerExplainsScreen`
 
 ### Stage 5 — Apply & scenario
-- **Proposed:** Claim, evidence, challenge, judgement builder — interactive paragraph scaffold. Student builds one paragraph from a question stem, then evaluates it.
+- **Proposed:** Claim, sociologist, explain, challenge builder. Student builds one paragraph from a question stem, then upgrades it using specialist terminology and a clearer link back to the question.
 - **Components:** `GuidedAnswerCoach`, interactive builder
 
 ### Stage 6 — Exam build
-- **Proposed:** Full 12-mark timed practice: "Discuss how far sociologists would agree that…" (student selects from bank of 12 questions). Plan + write + check against level descriptors.
+- **Proposed:** Full 12-mark timed practice. Student selects from a bank: family functions/capitalism, symmetrical family, marriage importance, family diversity, childhood/parent-child relationships. Plan + write + check against AO1/AO2/AO3 success checklist.
 - **Components:** `FaceTheExaminer`, `GuidedAnswerCoach`
 
 ### Stage 7 — Quick fire retrieval
-- **Proposed:** All named sociologists + perspective + key claim (from all 10 episodes). This is the module's final comprehensive retrieval.
+- **Proposed:** Comprehensive retrieval: named sociologist → perspective → key claim → best question use. Finish with a 12-mark success checklist and one final "how far" judgement choice.
 - **Components:** `QuickRecallScreen`, `RecoveryQuizPlayer`
 
 ---
 
 ## 3. Active learning interactions
 
-- Claim, evidence, challenge, judgement builder — interactive paragraph scaffold
-- Researcher card matching: match sociologist to perspective, key claim, best 12-mark use
+- 30-second question decode: topic / command / hidden argument / two sides / best evidence
+- AO sorter: sort example sentences into AO1, AO2 and AO3
+- Claim, sociologist, explain, challenge builder — interactive paragraph scaffold
+- Researcher card matching: match sociologist to perspective, key claim and best 12-mark use
+- Evidence selector: pick the two best sociologists for a question and reject weaker distractors
 - `FaceTheExaminer`: weak answer vs upgraded answer — two versions of the same paragraph
-- 12-mark timed practice: "Discuss how far sociologists would agree that…" (student selects from bank)
+- Specialist terminology upgrade: replace everyday phrasing with sociology vocabulary
+- Judgement slider: not agree/disagree, but "how far" and why
+- 12-mark timed practice: student selects from question bank
 - Final family case file: student builds their own argument using evidence from all episodes
 
 ---
 
 ## 4. Retrieval points
 
-All named sociologists + perspective + key claim from all 10 episodes — this is the comprehensive final retrieval for the whole module.
+- AO1, AO2 and AO3 — what each means in plain English
+- 30-second question decode sequence
+- P-S-E-C paragraph structure: point, sociologist, explain, challenge
+- K-U-J memory trick: know it, use it, judge it
+- All core named sociologists + perspective + key claim from the full module
+- Best evidence choices for common question types
+- Difference between conclusion and judgement
+- Common errors: name-dropping, one-sided answer, generic family essay, no judgement, fake evaluation
 
 ---
 
 ## 5. Exam skill focus
 
-Full 12-mark construction — plan, write, check against level descriptors. Use the 12-question bank (JUN19–JUN24) from the series map.
+Full 12-mark construction — decode, plan, write, check.
+
+Students must practise:
+
+- one 12-mark question on family functions / capitalism
+- one 12-mark question on symmetrical family / gender equality
+- one 12-mark question on marriage / divorce / cohabitation
+- one optional 12-mark question on family diversity or parent-child relationships
+
+The build should repeatedly connect answers to AO1/AO2/AO3 rather than treating essay writing as vague advice.
 
 ---
 
 ## 6. Build notes
 
-This episode is the module's culmination. The "family case file" motif from the recurring design thread should pay off here — students close the case by making their own argument. The researcher card bank should be a genuinely useful revision tool, not just a game. The weak vs upgraded answer comparison is the single highest-value build in this episode.
+This episode is the module's culmination. The "family case file" motif from the recurring design thread should pay off here — students close the case by making their own argument.
+
+The researcher card bank should be a genuinely useful revision tool, not just a game. Each card needs: name, perspective, key claim, best question use, and common misuse.
+
+The weak vs upgraded answer comparison is the single highest-value build in this episode. It should show students exactly how to move from Level 2 style name-dropping to Level 4 explanation/evaluation.
+
+Keep cognitive load controlled. Do not ask students to write a full 12-marker immediately. Sequence it: decode → evidence choice → paragraph build → upgrade → timed practice.
+
+Design note: this should feel like a serious exam command room / case file close, not a childish quiz finale. Use the Sociology brand system: soft oat, stone, olive and beige with cinematic paper texture, subtle shadows and restrained highlights.
 
 ---
 
 ## 7. Module completion test
 
-- [ ] Students can define every key concept from this episode accurately and in their own words
-- [ ] Where named research is included, students can name the relevant sociologist(s), state their perspective, and write one accurate "X argues that…" sentence
-- [ ] Where an episode is concept-only, students can accurately apply definitions to examples without forcing named research
-- [ ] Where theory is taught, students can state the main evaluation point / limitation
-- [ ] Students have applied at least one concept to a scenario or item-style question
-- [ ] Students have practised at least one AQA exam question format (3-mark, 4-mark, or 12-mark)
-- [ ] Students have retrieved content from at least one earlier episode
-- [ ] The episode's core takeaway is explicitly connected to the series throughline (who benefits from the "normal" family?)
-- [ ] Where the episode is perspective-led, at least two contrasting perspectives are represented; where it is concept-led, the episode clearly builds foundation knowledge for later perspectives
-- [ ] A methods link is present where the episode includes named research
+- [ ] Students can define AO1, AO2 and AO3 in their own words
+- [ ] Students can decode a 12-mark question into topic, command, argument, two sides and evidence
+- [ ] Students can select the best sociologists for at least three common families questions
+- [ ] Students can build one paragraph using point, sociologist, explain and challenge
+- [ ] Students can upgrade a weak paragraph by adding application and evaluation
+- [ ] Students can write a conclusion that makes a clear "how far" judgement
+- [ ] Students have practised at least one full 12-mark timed answer
+- [ ] Students have retrieved named evidence from across Episodes 1–9
+- [ ] Students can identify and fix common errors: name-dropping, one-sided answer, no judgement and irrelevant knowledge dumping
+- [ ] The episode's core takeaway is explicit: high marks come from accurate knowledge, precise application and supported judgement
