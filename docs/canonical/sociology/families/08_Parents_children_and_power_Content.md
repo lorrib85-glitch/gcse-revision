@@ -16,12 +16,12 @@ Has childhood become better, more controlled — or just different?
 - Changing parent-child relationships: from more authoritarian to more child-centred
 - Children’s rights, children’s voices and involvement in family decision-making
 - Young and Willmott: parent-child relationships have become less authoritarian and young people have more freedom
-- Prior and Trinder: middle-class families are more likely to involve children in decisions, especially around separation and divorce
-- Scott: challenges the idea that all children are simply dependent; some children still contribute to family work or support parents
+- Research evidence suggests some middle-class families are more likely to involve children in decisions, especially around separation and divorce
+- Some sociologists challenge the idea that all children are simply dependent; some children still contribute to family work or support parents
 - Financial dependence of young people: longer education, restricted working hours, youth unemployment, housing costs and boomerang children
 - Relationships with the wider family: grandparents, modified extended families, care of elderly relatives and support across generations
 - Young and Willmott’s Bethnal Green study: strong extended-family ties in the 1950s, followed by later movement towards more separated nuclear families
-- Charles et al.: wider kinship networks still matter, especially mothers, daughters and grandparents
+- Evidence that wider kinship networks still matter, especially through visits, phone calls, childcare, financial help and care work
 - Ageing population, beanpole families and the sandwich generation
 - Childhood as a social construct where useful, but not as the main focus of this episode
 
@@ -77,9 +77,11 @@ However, this change is uneven. Class, ethnicity, gender, work patterns, migrati
 
 **Young and Willmott** argue that parent-child relationships have become less authoritarian. They suggest young people have more freedom than previous generations and that contemporary families are warmer and more child-centred.
 
-**Prior and Trinder** argue that middle-class families are more likely to involve children in decision-making. This is especially important when parents separate or divorce, because children may be consulted about arrangements that affect their lives.
+Research suggests that some middle-class families are more likely to involve children in decision-making. This is especially important when parents separate or divorce, because children may be consulted about arrangements that affect their lives.
 
-**Scott** challenges the simple idea that children are only dependent. Some children still help with housework, contribute to family businesses, care for relatives or translate for immigrant parents. This shows that childhood is not the same for all children.
+Some sociologists challenge the simple idea that children are only dependent. Some children still help with housework, contribute to family businesses, care for relatives or translate for immigrant parents. This shows that childhood is not the same for all children.
+
+Teacher note: Prior and Trinder / Scott can be used as optional named support only if they are confirmed in the school or course booklet. The core GCSE-safe point is the concept, not the name.
 
 ---
 
@@ -108,19 +110,20 @@ Young and Willmott studied family life in Bethnal Green, East London, during the
 
 In later research, Young and Willmott argued that the nuclear family had become more separated from the extended family. Possible reasons include geographical mobility and more women being in full-time work, meaning relatives may see each other less often.
 
-### Charles et al. — wider kin still matters
+### Wider kin still matters
 
-Charles et al. found that wider kinship networks could still be important. In Swansea, mothers and daughters were central to family ties.
+The wider family has not simply disappeared. Support can continue even when relatives live apart.
 
 Examples:
 
-- grandparents regularly helped care for grandchildren, enabling younger women to return to work after maternity
-- fathers helped adult children with home improvements
-- adult children, especially women, helped care for parents
-- geographical distance affected the type of support relatives could give, but it did not remove support altogether
-- in 2002, over two-thirds of married children lived close enough to see their parents at least once a week
+- grandparents may help care for grandchildren
+- relatives may provide financial help or emotional support
+- fathers or grandparents may help adult children with home improvements or childcare
+- adult children, especially women, may help care for parents
+- geographical distance affects the type of support relatives can give, but it does not remove support altogether
+- contact may continue through visits, phone calls, messages and practical help
 
-This challenges the idea that the wider family has simply disappeared.
+Teacher note: Charles et al. can be used as optional enrichment if confirmed by the course booklet, but the core GCSE-safe point is that wider kinship networks can still provide support through modified extended family relationships.
 
 ---
 
@@ -170,7 +173,7 @@ Useful sentence starters:
 
 - "One way parent-child relationships have changed is..."
 - "Young and Willmott would argue that..."
-- "However, Scott challenges this because..."
+- "However, some sociologists challenge this because..."
 - "Wider kinship networks still matter because..."
 
 ---
@@ -179,10 +182,11 @@ Useful sentence starters:
 
 - MISCONCEPTION: "Modern children are completely independent." Correction: young people may have more voice and freedom, but many remain financially dependent for longer.
 - MISCONCEPTION: "Child-centred families mean children have all the power." Correction: child-centred means children’s needs are prioritised more, not that parents have no authority.
-- MISCONCEPTION: "The wider family has disappeared." Correction: Charles et al. show that wider kinship networks can still provide childcare, financial help and care for elderly relatives.
+- MISCONCEPTION: "The wider family has disappeared." Correction: wider kinship networks can still provide childcare, financial help, emotional support and care for elderly relatives.
 - MISCONCEPTION: "Boomerang children are just lazy." Correction: boomerang children often return home because of housing costs, unemployment, insecure work or education.
 - MISCONCEPTION: "The ageing population only affects elderly people." Correction: it also affects adult children, grandparents and the sandwich generation.
 - MISCONCEPTION: "Childhood is exactly the same in every society." Correction: childhood is shaped by history, culture, law, class, ethnicity and family structure.
+- MISCONCEPTION: "Every useful idea needs a named researcher." Correction: for GCSE answers, it is better to use secure named researchers and clear concepts than force uncertain names into an answer.
 
 ---
 
