@@ -21,9 +21,8 @@ Are families actually more equal now, or do they just look more equal?
 - Double shift and triple shift as criticisms of the idea that families are equal
 - Decision-making and money management as evidence for or against equality
 - Routine work vs occasional help as a key test of whether roles are genuinely equal
-- Changing role of fathers — evidence for and against
-- Scott and Clery (2013): gender inequalities persist despite attitude change
-- Caroline Gatrell: "new father" image vs reality
+- Changing role of fathers and the idea of the "new man" as supporting context, not as a core named-research requirement
+- Scott and Clery as useful supporting evidence where teacher/course material confirms it
 
 ---
 
@@ -38,8 +37,7 @@ Are families actually more equal now, or do they just look more equal?
 - **Occasional help:** irregular or one-off participation in domestic tasks; this may look like equality but does not necessarily show an equal division of labour.
 - **Double shift:** paid work plus unpaid housework and childcare.
 - **Triple shift:** paid work, unpaid domestic labour and emotional labour.
-- **New father:** the idea that modern fathers are more emotionally involved and active in childcare than fathers in the past.
-- **Maternal gatekeeping:** when mothers control or limit fathers' involvement in childcare, sometimes because they feel judged by how well the maternal role is performed.
+- **New man / new father:** the idea that modern men may be more involved in childcare and domestic life than men in the past.
 
 ---
 
@@ -69,6 +67,7 @@ Sociologists explain the move towards symmetry through:
 - more effective contraception
 - women's increased participation in paid work
 - women's increased financial independence
+- legal changes such as equal pay and sex discrimination legislation
 - more home-based leisure, such as television, gaming and home entertainment
 - technological change and labour-saving devices making home life more comfortable
 - higher living standards, which may make the home a more important centre of leisure and consumption
@@ -89,13 +88,23 @@ Do not over-teach the full Stage 1–4 family history model here. The key GCSE p
 
 ---
 
-## Named evidence
+## Core named evidence
+
+These are the safest names to teach as core GCSE evidence for this episode.
 
 - **Willmott and Young** (1973): surveyed nearly 2,000 people in Greater London and coined the term "symmetrical family". They argued that conjugal roles were becoming less segregated and that family life was becoming more home-centred. Source: *The Symmetrical Family*, 1973.
 - **Ann Oakley** (feminist): challenged the claim that families had become symmetrical. She argued that women still did the majority of housework and that Willmott and Young exaggerated equality. Oakley criticised the quality of their evidence, arguing that they counted a husband as "helpful" if he washed up at least once a week.
 - **Jan Pahl** (1989): found that men were still more likely to dominate financial decision-making in many married couples. This challenges the idea that decision-making and money management had become fully shared.
-- **Scott and Clery** (2013): used British Social Attitudes data to show that people's attitudes to gender roles have changed, but behaviour has not fully followed. Women still do more domestic labour.
-- **Caroline Gatrell:** found that fathers were doing more than their own fathers had done. However, mothers sometimes resisted giving up the maternal role, and some women said fathers still avoided routine or boring tasks such as ironing.
+
+---
+
+## Useful supporting evidence
+
+Use these ideas to strengthen analysis, but do not make them compulsory named evidence unless they are confirmed by the teacher or course booklet.
+
+- **Scott and Clery** can be used as supporting evidence that attitudes to gender roles may change faster than actual domestic behaviour.
+- The **new man / new father** idea can support the argument that fathers may be more involved than in the past.
+- **Caroline Gatrell** should be treated as optional enrichment rather than core GCSE evidence. The useful idea is that fathers may do more than previous generations, but this does not automatically mean parenting, housework and emotional labour are equal.
 
 ---
 
@@ -128,7 +137,7 @@ Willmott and Young argue that family life has become more symmetrical because pa
 
 ### Counter-argument: equality is overstated
 
-Feminists such as Oakley argue that women still do most routine housework and childcare. Scott and Clery support this by showing that attitudes have changed faster than behaviour. Gatrell adds that fathers may be more involved than in the past, but this does not mean parenting and housework are equal.
+Feminists such as Oakley argue that women still do most routine housework and childcare. Pahl challenges the idea that money management and decision-making are fully shared. Supporting evidence on the new man / new father can show some change, but this does not prove full equality because women may still carry more routine and emotional work.
 
 ### Judgement
 
@@ -153,6 +162,7 @@ A strong answer should recognise change but question how far it has gone. Famili
 - MISCONCEPTION: "Oakley says nothing has changed." Correction: Oakley acknowledges some change but argues it is overstated and insufficient to call families equal.
 - MISCONCEPTION: "More fathers doing childcare proves families are equal." Correction: fathers may be more involved than in the past, but women may still do more routine childcare, housework and emotional labour.
 - MISCONCEPTION: "Shared leisure proves equality." Correction: couples may spend more time together while women still do more planning, cleaning, childcare and emotional work.
+- MISCONCEPTION: "A supporting researcher has to be named in every answer." Correction: named evidence is useful, but it is better to use a few secure core names well than overload the answer with uncertain or optional names.
 - MISCONCEPTION: "Labour-saving technology automatically creates equality." Correction: technology may reduce some household tasks, but it does not automatically change gender expectations about who is responsible for the home.
 
 ---
