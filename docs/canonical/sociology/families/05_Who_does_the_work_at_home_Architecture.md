@@ -13,64 +13,77 @@
 ## 2. Stage mapping (7-stage rhythm)
 
 ### Stage 1 — Hook & prior recall
-- **Proposed:** "Who does the washing up in your house?" Retrieve Parsons' instrumental/expressive roles from Episode 3. Set up: chores, childcare and money are about power, not just preference.
+- **Proposed:** "Who does the washing up in your house?" Retrieve Parsons' instrumental/expressive roles from Episode 3 and family diversity from Episode 4. Set up: chores, childcare, money and free time are about power and expectations, not just preference.
 - **Components:** `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ### Stage 2 — Core concept decode
-- **Proposed:** Segregated vs joint conjugal roles. Precise definitions. Domestic division of labour explained as including decision-making and money management, not just chores.
+- **Proposed:** Define conjugal roles and conjugal relationships. Teach segregated vs joint/integrated conjugal roles using concrete household examples. Make clear that domestic division of labour includes chores, childcare, DIY, decision-making, money management and leisure.
 - **Components:** `ConceptReveal`, `FillInTheBlanksBlock`
 
 ### Stage 3 — Sociologist evidence
-- **Proposed:** Bott (segregated roles), Oakley (triple shift), Jan Pahl (money = power), Scott and Clery (attitudes vs reality). Four researchers — use profile cards and a comparison display.
+- **Proposed:** Bott (segregated vs joint roles), Parsons (instrumental/expressive role link), Oakley (women still do most domestic labour), Jan Pahl (money = power), Scott and Clery (attitudes vs reality), Caroline Gatrell (changing fathers but uneven work). Use profile cards and a comparison display.
 - **Components:** `KeyFigureReveal`, `TheoryCompareBlock`
 
 ### Stage 4 — Challenge & perspectives
-- **Proposed:** Is the domestic division of labour changing? Willmott and Young say yes — but Oakley/Scott and Clery say it is overstated. Set up Episode 6 debate.
+- **Proposed:** Are roles really changing? Willmott and Young say roles are becoming more joint, but Oakley, Scott and Clery, Pahl and Gatrell show change is uneven. Set up Episode 6's full symmetrical family debate without duplicating it.
 - **Components:** `TheoryCompareBlock`, `MisconceptionCheck`
 
 ### Stage 5 — Apply & scenario
-- **Proposed:** Household task allocator: student assigns chores, then compares with sociological evidence. Money power scenario: who controls spending?
+- **Proposed:** Household task allocator: student assigns chores, childcare, DIY and emotional work, then compares with sociological evidence. Money power scenario: who controls spending? Childrearing/leisure scenario: who changes plans when a child is ill, and who gets free time?
 - **Components:** `ColSortBlock`, scenario cards
 
 ### Stage 6 — Exam build
-- **Proposed:** 4-mark identify-and-explain (identify and explain one way conjugal role relationships may be segregated — JUN24, Q4). Methods link: design a questionnaire on household labour.
+- **Proposed:** 4-mark identify-and-explain (identify and explain one way conjugal role relationships may be segregated — JUN24, Q4). 4-mark identify-and-explain: explain one way money management can show power within families. Methods link: design a questionnaire on household labour.
 - **Components:** `GuidedExamResponse`, `FaceTheExaminer`
 
 ### Stage 7 — Quick fire retrieval
-- **Proposed:** Define segregated roles, define joint roles, name Bott's finding, state Oakley's triple shift (all three elements), name Jan Pahl's finding on money.
+- **Proposed:** Define segregated roles, define joint/integrated roles, name Bott's distinction, state one Oakley criticism, name Jan Pahl's finding on money, define double shift and triple shift.
 - **Components:** `QuickRecallScreen`
 
 ---
 
 ## 3. Active learning interactions
 
-- Household task allocator: student assigns chores, then compares with sociological evidence
+- Household task allocator: student assigns cooking, cleaning, laundry, childcare, DIY, emotional work and money decisions, then compares with sociological evidence
+- Then/now role split: early twentieth-century segregated roles vs contemporary joint/integrated roles
+- Class scenario cards: working-class women doing paid work or laundry work from home; middle-class women supervising domestic employees; both still within male-dominated expectations
 - Money power scenario: who controls spending — power or practicality?
-- Mini research design: design a short questionnaire on household labour (methods link)
-- `TheoryCompareBlock`: functionalist (natural roles) vs feminist (unequal power) on domestic division
+- Childrearing/leisure scenario: who changes plans when a child is ill, and who gets uninterrupted free time?
+- Mini research design: design a short questionnaire on household labour; include task wording, target population, sampling, ethics and a pilot question
+- `TheoryCompareBlock`: functionalist complementary roles vs feminist unequal power on domestic division
 
 ---
 
 ## 4. Retrieval points
 
-- Precise definitions of segregated and joint conjugal roles
-- Bott's key finding on segregated roles
-- Oakley's triple shift concept — all three elements
+- Precise definitions of conjugal roles and conjugal relationships
+- Precise definitions of segregated and joint/integrated conjugal roles
+- Bott's key distinction between segregated and joint roles
+- Parsons' instrumental and expressive roles from Episode 3
+- Oakley's criticism that women still do most domestic labour
 - Jan Pahl's finding on money management
-- One sociologist who challenges the view that roles are becoming equal
+- One way decision-making or leisure can reveal power in families
+- Difference between double shift and triple shift
 
 ---
 
 ## 5. Exam skill focus
 
 - 4-mark identify-and-explain: identify and explain one way conjugal role relationships may be segregated (JUN24, Q4)
+- 4-mark identify-and-explain: explain one way money management can show power within families
 - 12-mark preparation: "Discuss how far sociologists would agree that gender roles are equal in families in Britain today" (JUN23, Q11)
 
 ---
 
 ## 6. Build notes
 
-Chores, childcare and money are easy to understand. The sociological move is to show that household tasks are about power, gender and social expectations — not just habit or preference. The mini research task doubles as a research methods link.
+Chores, childcare and money are easy to understand. The sociological move is to show that household tasks are about power, gender and social expectations — not just habit or preference.
+
+Keep this episode focused on conjugal roles and domestic division of labour. It can introduce the equality debate, but Episode 6 should still carry the full symmetrical family argument.
+
+Make examples concrete: washing, ironing, childcare, school contact, illness care, DIY, money decisions, leisure time and emotional work. Avoid making it only about "who does the dishes".
+
+The mini research task doubles as a research methods link. Students should learn that vague questions like "Do you help at home?" are weak because they do not operationalise domestic labour clearly.
 
 ---
 
