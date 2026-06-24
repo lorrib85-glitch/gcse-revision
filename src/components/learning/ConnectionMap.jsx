@@ -32,28 +32,28 @@ ensureFloatStyles()
 // 6-node layout: exact spec values. Centre sits at (50%, 48%) in a 320×390 container.
 const POSITIONS = {
   5: [
-    { x: 50, y: 11 },
-    { x: 80, y: 32 },
-    { x: 70, y: 71 },
-    { x: 30, y: 71 },
-    { x: 20, y: 32 },
+    { x: 50, y: 10 },
+    { x: 83, y: 31 },
+    { x: 72, y: 72 },
+    { x: 28, y: 72 },
+    { x: 17, y: 31 },
   ],
   6: [
-    { x: 50, y: 13 },  // top
-    { x: 82, y: 30 },  // upper right — spread toward page edge
-    { x: 78, y: 62 },  // lower right
+    { x: 50, y: 11 },  // top — moved up to maintain gap with raised centre
+    { x: 84, y: 30 },  // upper right
+    { x: 82, y: 62 },  // lower right
     { x: 50, y: 78 },  // bottom
-    { x: 22, y: 62 },  // lower left
-    { x: 18, y: 30 },  // upper left — spread toward page edge
+    { x: 18, y: 62 },  // lower left
+    { x: 16, y: 30 },  // upper left
   ],
   7: [
-    { x: 50, y: 9  },
-    { x: 78, y: 23 },
-    { x: 82, y: 54 },
+    { x: 50, y: 8  },
+    { x: 80, y: 22 },
+    { x: 84, y: 54 },
     { x: 64, y: 79 },
     { x: 36, y: 79 },
-    { x: 18, y: 54 },
-    { x: 22, y: 23 },
+    { x: 16, y: 54 },
+    { x: 20, y: 22 },
   ],
 }
 
@@ -70,7 +70,7 @@ function resolvePositions(count) {
 // W/H = design reference dimensions; startPx/endPx = circle radii in pixels.
 function linePath(pos) {
   const W = 320, H = 390   // design reference: maxWidth × fixed height
-  const cx = 50, cy = 44   // centre node position in %
+  const cx = 50, cy = 39   // centre node position in %
   const startPx = 56        // centre radius (112px / 2)
   const endPx   = 41        // outer node radius (82px / 2)
 
@@ -303,7 +303,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: '44%',
+                top: '39%',
                 transform: 'translate(-50%, -50%)',
                 width: 112,
                 height: 112,
