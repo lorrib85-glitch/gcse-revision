@@ -24,6 +24,14 @@ export const TYPE = {
     letterSpacing: "-0.02em"
   },
 
+  featureText: {
+    fontFamily: "'Manrope', sans-serif",
+    fontSize: "clamp(32px, 9vw, 48px)",
+    lineHeight: 1.12,
+    fontWeight: 650,
+    letterSpacing: "-0.045em"
+  },
+
   // Learning & UI (Sora)
   bodyText: {
     fontFamily: "'Sora', sans-serif",
