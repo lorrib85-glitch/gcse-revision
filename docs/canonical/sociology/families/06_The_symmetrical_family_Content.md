@@ -20,6 +20,7 @@ Are families actually more equal now, or do they just look more equal?
 - Feminist criticisms of symmetry: Oakley's challenge — women still carry most domestic labour and Willmott and Young overstated equality
 - Double shift and triple shift as criticisms of the idea that families are equal
 - Decision-making and money management as evidence for or against equality
+- Routine work vs occasional help as a key test of whether roles are genuinely equal
 - Changing role of fathers — evidence for and against
 - Scott and Clery (2013): gender inequalities persist despite attitude change
 - Caroline Gatrell: "new father" image vs reality
@@ -33,9 +34,12 @@ Are families actually more equal now, or do they just look more equal?
 - **Work-centred family:** a family where work and career take priority, often with one partner managing the home around the other partner's job.
 - **Principle of stratified diffusion:** the idea that some social changes begin higher up the social class system and then spread downwards. Memory trick: stratified = social layers; diffusion = spreading.
 - **Shared decision-making:** partners both having influence over choices such as spending, childcare, housework and leisure.
+- **Routine domestic labour:** regular, repeated household work such as washing, cooking, cleaning, laundry, school contact and childcare routines.
+- **Occasional help:** irregular or one-off participation in domestic tasks; this may look like equality but does not necessarily show an equal division of labour.
 - **Double shift:** paid work plus unpaid housework and childcare.
 - **Triple shift:** paid work, unpaid domestic labour and emotional labour.
 - **New father:** the idea that modern fathers are more emotionally involved and active in childcare than fathers in the past.
+- **Maternal gatekeeping:** when mothers control or limit fathers' involvement in childcare, sometimes because they feel judged by how well the maternal role is performed.
 
 ---
 
@@ -53,6 +57,8 @@ Willmott and Young argue that family life has become more symmetrical. In a symm
 
 Important distinction: symmetrical does not mean identical. Partners may still do different tasks, but Willmott and Young argue their contributions are more similar and more equally valued than in traditional segregated roles.
 
+Another important distinction is routine work vs occasional help. A father washing up once a week, or helping with childcare sometimes, does not necessarily mean the couple has an equal division of labour. Sociologists ask who carries the routine, repeated and less visible work.
+
 ---
 
 ## Reasons for the move towards symmetry
@@ -64,7 +70,8 @@ Sociologists explain the move towards symmetry through:
 - women's increased participation in paid work
 - women's increased financial independence
 - more home-based leisure, such as television, gaming and home entertainment
-- technological change making home life more comfortable
+- technological change and labour-saving devices making home life more comfortable
+- higher living standards, which may make the home a more important centre of leisure and consumption
 
 These changes may make it more likely that couples share decisions, spend time together at home and divide roles less rigidly than in the past.
 
@@ -102,6 +109,17 @@ This links back to Episode 5: conjugal roles are not only about who does chores.
 
 ---
 
+## Evidence quality and evaluation
+
+A strong answer should not just list researchers. It should judge how convincing their evidence is.
+
+- Willmott and Young's survey was large-scale, but it focused on Greater London, so students should be careful about assuming it represents all families in Britain.
+- Self-report evidence can be unreliable because people may describe their family as more equal than it really is.
+- Oakley's criticism is useful because it questions how Willmott and Young measured equality. Occasional help is not the same as equal responsibility.
+- Time-use evidence and detailed interviews can reveal routine work, emotional labour and hidden planning more clearly than broad survey questions.
+
+---
+
 ## Debate structure
 
 ### Argument: families have become more equal
@@ -121,6 +139,7 @@ A strong answer should recognise change but question how far it has gone. Famili
 ## Exam skill focus
 
 - **4-mark explain:** explain one criticism of the symmetrical family theory.
+- **4-mark explain:** explain one reason why families may have become more symmetrical.
 - **Sentence starter:** "One criticism of the symmetrical family theory is..."
 - **12-mark preparation:** discuss how far sociologists would agree that families in Britain today are symmetrical.
 - **12-mark preparation:** discuss how far sociologists would agree that gender inequalities continue to exist within the family in Britain today.
@@ -134,6 +153,7 @@ A strong answer should recognise change but question how far it has gone. Famili
 - MISCONCEPTION: "Oakley says nothing has changed." Correction: Oakley acknowledges some change but argues it is overstated and insufficient to call families equal.
 - MISCONCEPTION: "More fathers doing childcare proves families are equal." Correction: fathers may be more involved than in the past, but women may still do more routine childcare, housework and emotional labour.
 - MISCONCEPTION: "Shared leisure proves equality." Correction: couples may spend more time together while women still do more planning, cleaning, childcare and emotional work.
+- MISCONCEPTION: "Labour-saving technology automatically creates equality." Correction: technology may reduce some household tasks, but it does not automatically change gender expectations about who is responsible for the home.
 
 ---
 
@@ -144,3 +164,5 @@ Survey research: Willmott and Young surveyed nearly 2,000 people in Greater Lond
 Oakley's criticism raises a validity problem: if a study counts very small amounts of male help as evidence of equality, it may exaggerate how symmetrical families really are.
 
 Time-use diaries can strengthen research on domestic labour because they record what people actually do across a day or week. However, they can still be inaccurate if people forget tasks or under-record invisible work such as planning, worrying and emotional support.
+
+A good research design should separate routine responsibility from occasional help. For example, "Who usually arranges childcare when a child is ill?" is stronger than "Do both parents help with childcare?"
