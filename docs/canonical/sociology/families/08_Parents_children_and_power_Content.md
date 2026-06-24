@@ -12,49 +12,187 @@ Has childhood become better, more controlled — or just different?
 
 ## Syllabus coverage
 
-- Changing parent-child relationships: from authoritarian to child-centred
-- March of Progress view (functionalist): childhood has improved — child labour laws, medical improvements, compulsory education, children's rights
-- Conflict view: not all children have the same experience — class, gender and ethnicity create very different childhoods; 4.2 million children in the UK in poverty
-- Childhood as a social construct (Aries): historical and cultural evidence — medieval children treated as small adults; child soldiers in some societies
-- Neil Postman: disappearance of childhood — children acquiring adult rights, clothing, crimes (James Bulger case); TV/media blurs adult/child boundary
-- Jenks: childhood not disappearing but changing — postmodern children are intensively monitored, career-focused, checked up on by parents
-- Sue Palmer: "toxic childhood" — technology, consumerism and lack of play damaging children's development
-- Financial dependence of young people: boomerang children, sandwich generation
-- Wider kinship networks: grandparents, extended family roles, care of elderly relatives
-- Demographic context: increased life expectancy means more grandparents are alive and active in family life; ageing population creates beanpole families (long, thin across generations) and increases the care burden on the sandwich generation; declining birth rates mean fewer children per family; boomerang children reflect financial pressures and rising housing costs
+- Changing relationships within families over time: pre-industrial, industrial and contemporary/modern families
+- Changing parent-child relationships: from more authoritarian to more child-centred
+- Children’s rights, children’s voices and involvement in family decision-making
+- Young and Willmott: parent-child relationships have become less authoritarian and young people have more freedom
+- Prior and Trinder: middle-class families are more likely to involve children in decisions, especially around separation and divorce
+- Scott: challenges the idea that all children are simply dependent; some children still contribute to family work or support parents
+- Financial dependence of young people: longer education, restricted working hours, youth unemployment, housing costs and boomerang children
+- Relationships with the wider family: grandparents, modified extended families, care of elderly relatives and support across generations
+- Young and Willmott’s Bethnal Green study: strong extended-family ties in the 1950s, followed by later movement towards more separated nuclear families
+- Charles et al.: wider kinship networks still matter, especially mothers, daughters and grandparents
+- Ageing population, beanpole families and the sandwich generation
+- Childhood as a social construct where useful, but not as the main focus of this episode
 
 ---
 
 ## Key concepts / vocabulary
 
-- **Child-centred family:** family organisation in which children's needs take priority
-- **Social construct:** an idea created by society rather than fixed by nature or biology
-- **March of Progress:** the view that childhood has continuously improved over centuries
-- **Boomerang children:** adult children who return to live with parents, typically due to financial pressures
-- **Sandwich generation:** parents caring for both children and elderly parents simultaneously
-- **Life expectancy:** average length of life — rising in UK (males 76.9 years by 2003 vs 50 in 1900)
+- **Parent-child relationship:** the relationship between parents or carers and children, including authority, emotional closeness, decision-making and dependence.
+- **Authoritarian relationship:** a strict relationship where adults expect obedience and children have little say.
+- **Child-centred family:** family organisation in which children’s needs, feelings and development are given high priority.
+- **Children’s rights:** the idea that children should be protected, listened to and treated as people with their own interests.
+- **Financial dependence:** relying on parents or carers for money, housing or practical support.
+- **Boomerang children:** young adults who leave home and later return to live with parents, often because of university, unemployment, insecure work or housing costs.
+- **Sandwich generation:** adults, often women, who care for both children or young adults and elderly parents.
+- **Kinship relationships:** relationships based on blood, marriage, civil partnership, adoption or long-term family ties.
+- **Wider kinship network:** relatives beyond the nuclear family, such as grandparents, aunts, uncles and cousins.
+- **Modified extended family:** extended family members who live apart but keep regular contact and provide support.
+- **Geographical mobility:** moving house from one area to another, which can weaken regular contact with wider family.
+- **Beanpole family:** a long, thin family structure with several generations alive but few people in each generation.
+- **Social construct:** an idea created by society rather than fixed by nature or biology.
 
 ---
 
-## Named evidence
+## Relationships in the past and present
 
-- **Philippe Aries** (1960s): historical evidence — medieval paintings show children as small adults, suggesting childhood is a modern social invention. Source: *Centuries of Childhood*, 1962.
-- **Neil Postman** (1994): children gaining adult rights/clothes/criminal responsibility; TV removes the "information gap" between children and adults → childhood disappearing. Source: *The Disappearance of Childhood*, 1994.
-- **Jenks** (postmodern): childhood not disappearing but changing — parents are protective, career-focused for children, maintain contact after leaving home. Source: *Childhood*, 1996.
-- **Sue Palmer:** technology, lack of play, consumerism and junk food creating "toxic childhood." Source: *Toxic Childhood*, 2006.
-- **Scott** (2004): questions March of Progress view — children are still dependent (doing housework, translating for immigrant parents).
-- **Willmott and Young:** parent-child relationships less authoritarian; young people have more freedom than previous generations.
-- Prior and Trinder, Charles et al. — evidence on changing father-child relationships (UNCERTAIN: specific claims not confirmed from available sources — verify from spec or textbook).
+### Pre-industrial families
+
+In pre-industrial society, families often worked together as units of production. Children were more likely to contribute to household work, farming or family trades from a young age.
+
+Parent-child relationships were usually more authoritarian. Children were expected to obey adults and contribute to the survival of the household.
+
+### Industrial families
+
+During industrialisation, work moved away from the home into factories, mines and offices. Children in working-class families often went out to work as soon as possible because their income was needed.
+
+The Education Act of 1918 made school attendance compulsory until age 14. Young and Willmott argue that only then did childhood become officially recognised as a separate stage in human life.
+
+### Contemporary families
+
+Today, many sociologists argue that parent-child relationships are less authoritarian and more child-centred.
+
+- There is less emphasis on discipline and obedience.
+- There is more emphasis on individual freedom and emotional closeness.
+- Children are more likely to be listened to and taken seriously.
+- Children have rights and may be involved in decisions about parents’ separation or divorce.
+- Smaller average family size can mean children receive more attention from parents.
+
+However, this change is uneven. Class, ethnicity, gender, work patterns, migration, poverty and family structure can all affect how much power and independence children actually have.
+
+---
+
+## Parent-child relationships today
+
+**Young and Willmott** argue that parent-child relationships have become less authoritarian. They suggest young people have more freedom than previous generations and that contemporary families are warmer and more child-centred.
+
+**Prior and Trinder** argue that middle-class families are more likely to involve children in decision-making. This is especially important when parents separate or divorce, because children may be consulted about arrangements that affect their lives.
+
+**Scott** challenges the simple idea that children are only dependent. Some children still help with housework, contribute to family businesses, care for relatives or translate for immigrant parents. This shows that childhood is not the same for all children.
+
+---
+
+## Financial dependence and delayed adulthood
+
+Young people may be treated as more independent emotionally, but they can remain financially dependent for longer.
+
+Reasons include:
+
+- the school-leaving age has increased
+- young people’s working hours are restricted by law
+- many young people stay in education or training for longer
+- youth unemployment and insecure work make independence harder
+- housing costs make it difficult to leave home permanently
+- some young adults leave home for university or work and then return later
+
+This can create conflict and stress within families. Teenagers and young adults may want independence, while still needing money, housing or practical support from parents.
+
+---
+
+## Relationships with the wider family
+
+### Young and Willmott — Bethnal Green
+
+Young and Willmott studied family life in Bethnal Green, East London, during the 1950s. They found strong extended-family ties. Many young couples lived with or near one set of parents, and 43% of daughters said they had seen their mother within the last 24 hours.
+
+In later research, Young and Willmott argued that the nuclear family had become more separated from the extended family. Possible reasons include geographical mobility and more women being in full-time work, meaning relatives may see each other less often.
+
+### Charles et al. — wider kin still matters
+
+Charles et al. found that wider kinship networks could still be important. In Swansea, mothers and daughters were central to family ties.
+
+Examples:
+
+- grandparents regularly helped care for grandchildren, enabling younger women to return to work after maternity
+- fathers helped adult children with home improvements
+- adult children, especially women, helped care for parents
+- geographical distance affected the type of support relatives could give, but it did not remove support altogether
+- in 2002, over two-thirds of married children lived close enough to see their parents at least once a week
+
+This challenges the idea that the wider family has simply disappeared.
+
+---
+
+## Ageing population, beanpole families and the sandwich generation
+
+Life expectancy has increased because of improvements such as the NHS, medicine, nutrition and living standards. This means more grandparents and great-grandparents are alive for longer.
+
+This affects family relationships:
+
+- more grandparents may provide childcare
+- adult children may care for elderly parents
+- some people care for both children and elderly relatives at the same time
+- beanpole families can create long chains of responsibility across generations
+- women often carry more of this caring work
+
+The sandwich generation is important because it shows that family power and responsibility are not only about parents and young children. They also involve adult children, grandparents and elderly care.
+
+---
+
+## Childhood as a social construct — optional support
+
+This episode can use the idea of childhood as a social construct, but it should not become the whole chapter.
+
+**Aries** argued that childhood is a modern social invention. He used historical evidence, such as medieval paintings showing children dressed like small adults, to argue that children were not always seen as a separate group with special needs.
+
+This supports the idea that parent-child relationships change over time. However, Chapter 8 should stay focused on changing family relationships, not turn into a full childhood-theory episode.
+
+---
+
+## Perspective comparison
+
+- **March of Progress view:** childhood and parent-child relationships have improved because children have more rights, protection, education and emotional attention.
+- **Conflict view:** improvements are uneven because class, gender, ethnicity, migration, disability and poverty shape children’s experiences.
+- **Functionalist influence:** changing family roles can be seen as part of wider social change and adaptation.
+- **Feminist view:** caring responsibilities for children, young adults and elderly relatives often fall more heavily on women.
+
+---
+
+## Exam skill focus
+
+- **4-mark explain:** explain one way parent-child relationships have changed.
+- **4-mark explain:** explain one reason young people may remain financially dependent on parents for longer.
+- **4-mark explain:** explain one way wider kinship networks may still support families.
+- **12-mark preparation:** discuss how far sociologists would agree that childhood and parent-child relationships have improved over time.
+
+Useful sentence starters:
+
+- "One way parent-child relationships have changed is..."
+- "Young and Willmott would argue that..."
+- "However, Scott challenges this because..."
+- "Wider kinship networks still matter because..."
 
 ---
 
 ## Likely misconceptions
 
-- MISCONCEPTION: "The March of Progress view means everything has got better for all children." Correction: the conflict view shows that improvements are uneven — class, gender and ethnicity still create very different childhoods.
-- MISCONCEPTION: "Postman and Jenks agree that childhood is disappearing." Correction: Postman says childhood is disappearing; Jenks says it is changing but not disappearing.
+- MISCONCEPTION: "Modern children are completely independent." Correction: young people may have more voice and freedom, but many remain financially dependent for longer.
+- MISCONCEPTION: "Child-centred families mean children have all the power." Correction: child-centred means children’s needs are prioritised more, not that parents have no authority.
+- MISCONCEPTION: "The wider family has disappeared." Correction: Charles et al. show that wider kinship networks can still provide childcare, financial help and care for elderly relatives.
+- MISCONCEPTION: "Boomerang children are just lazy." Correction: boomerang children often return home because of housing costs, unemployment, insecure work or education.
+- MISCONCEPTION: "The ageing population only affects elderly people." Correction: it also affects adult children, grandparents and the sandwich generation.
+- MISCONCEPTION: "Childhood is exactly the same in every society." Correction: childhood is shaped by history, culture, law, class, ethnicity and family structure.
 
 ---
 
 ## Methods link
 
-Official statistics on child poverty (4.2 million children in UK poverty); secondary data strengths (large scale) and weaknesses (political definitions may change).
+Researchers can study changing family relationships using interviews, surveys, official statistics and family case studies.
+
+- **Interviews** can reveal how parents, children and grandparents experience power, care and dependence.
+- **Surveys** can show broad patterns, such as how often adults see parents or grandparents.
+- **Official statistics** can show trends in life expectancy, housing, education, youth unemployment and ageing population.
+- **Case studies** can show how support works inside one family network, but may not represent all families.
+
+A good research design should avoid assuming that children are only dependent or that older relatives are only cared for. Family support can flow in several directions.
