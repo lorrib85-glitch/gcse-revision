@@ -21,7 +21,7 @@
 - **Components:** `ConceptReveal`, `VisualLearning`
 
 ### Stage 3 — Sociologist evidence
-- **Proposed:** Young and Willmott profile card: less authoritarian relationships and Bethnal Green wider-family evidence. Prior and Trinder: children involved in decision-making, especially in middle-class families. Scott: children are not simply dependent. Charles et al.: wider kinship networks still provide support.
+- **Proposed:** Young and Willmott profile card: less authoritarian relationships and Bethnal Green wider-family evidence. Then use concept cards rather than forced named cards for: children involved in decision-making, children not simply dependent, and wider kinship networks still providing support. Prior and Trinder / Scott / Charles et al. can appear only as optional extension labels if confirmed by school/course material.
 - **Components:** `KeyFigureReveal`, `TheoryCompareBlock`
 
 ### Stage 4 — Challenge & perspectives
@@ -37,7 +37,7 @@
 - **Components:** `GuidedExamResponse`, `FaceTheExaminer`
 
 ### Stage 7 — Quick fire retrieval
-- **Proposed:** Define child-centred family, one way relationships have become less authoritarian, Prior and Trinder's key point, Scott's challenge, definition of boomerang children, definition of sandwich generation, one Charles et al. example of wider-family support, one reason the ageing population affects family relationships.
+- **Proposed:** Define child-centred family, one way relationships have become less authoritarian, one way children may be involved in decision-making, one way children may contribute to family life, definition of boomerang children, definition of sandwich generation, one example of wider-family support, one reason the ageing population affects family relationships.
 - **Components:** `QuickRecallScreen`
 
 ---
@@ -49,7 +49,8 @@
 - Dependency slider: when does adulthood actually start? Financial, legal, social and emotional dimensions
 - Decision scenario: should a teenager have a say in arrangements after parental separation?
 - Kinship network map: draw who supports whom across children, parents, grandparents and adult children
-- Wider-family evidence cards: Young and Willmott Bethnal Green vs Charles et al. Swansea
+- Wider-family evidence cards: Young and Willmott Bethnal Green vs modified extended family support today
+- Optional extension labels: Prior and Trinder / Scott / Charles et al. only if confirmed by school/course material
 - Boomerang children scenario: independence or delayed adulthood?
 - Sandwich generation pressure map: who is caring for whom?
 - `TheoryCompareBlock`: March of Progress vs Conflict view
@@ -64,10 +65,11 @@
 - Pre-industrial, industrial and contemporary family relationships — one feature of each
 - Definition of child-centred family
 - One way parent-child relationships have become less authoritarian
-- Prior and Trinder's point about involving children in decision-making
-- Scott's challenge to the idea that children are only dependent
+- Young and Willmott's point about changing parent-child relationships
+- One example of children being involved in family decision-making
+- One example of children contributing to family work or support
 - Young and Willmott's Bethnal Green finding about strong extended-family ties
-- Charles et al.'s evidence that wider kinship networks still matter
+- One example of wider kinship networks still providing support today
 - Definition of boomerang children and sandwich generation
 - Link between increased life expectancy, ageing population and beanpole family structure
 - One reason young people may remain financially dependent for longer
@@ -89,6 +91,8 @@ This connects directly to teenage life: independence, parents, rules, money, sch
 
 Keep the chapter focused on changing relationships within families, especially parent-child relationships and wider kinship networks. Childhood as a social construct can be used briefly to show relationships change over time, but do not let Aries, Postman, Jenks or Palmer take over the episode.
 
+Keep named researcher confidence tight. Young and Willmott are core. Prior and Trinder, Scott, and Charles et al. should be optional extension labels unless confirmed in the school/course booklet. The GCSE-safe content is the concept: children may be listened to more, children are not always simply dependent, and wider kinship support still exists.
+
 The demographic context — life expectancy, beanpole families, sandwich generation and boomerang children — should be woven in naturally. It explains why family relationships across generations have become more complex, not just why childhood has changed.
 
 The strongest exam line is balanced: relationships may be warmer, less authoritarian and more child-centred, but young people can remain financially dependent and wider-family support/care responsibilities are unevenly distributed.
@@ -98,12 +102,12 @@ The strongest exam line is balanced: relationships may be warmer, less authorita
 ## 7. Module completion test
 
 - [ ] Students can define every key concept from this episode accurately and in their own words
-- [ ] Where named research is included, students can name the relevant sociologist(s), state their perspective, and write one accurate "X argues that…" sentence
-- [ ] Where an episode is concept-only, students can accurately apply definitions to examples without forcing named research
-- [ ] Where theory is taught, students can state the main evaluation point / limitation
+- [ ] Students can name Young and Willmott and write one accurate "X argues that…" sentence
+- [ ] Students understand that Prior and Trinder / Scott / Charles et al. are optional extension names unless confirmed in school/course material
+- [ ] Students can accurately apply definitions to examples without forcing named research
+- [ ] Students can state the main evaluation point / limitation of the March of Progress view
 - [ ] Students have applied at least one concept to a scenario or item-style question
 - [ ] Students have practised at least one AQA exam question format (3-mark, 4-mark, or 12-mark)
 - [ ] Students have retrieved content from at least one earlier episode
 - [ ] The episode's core takeaway is explicitly connected to the series throughline (who benefits from the "normal" family?)
-- [ ] Where the episode is perspective-led, at least two contrasting perspectives are represented; where it is concept-led, the episode clearly builds foundation knowledge for later perspectives
-- [ ] A methods link is present where the episode includes named research
+- [ ] A methods link is present where the episode includes named research or evidence patterns
