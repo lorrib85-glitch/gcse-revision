@@ -21,23 +21,23 @@
 - **Components:** `ConceptReveal`, `VisualLearning`
 
 ### Stage 3 — Sociologist evidence
-- **Proposed:** Murdock profile card (four functions), then Parsons profile card (two functions + role distinction). Distinguish between the two clearly.
+- **Proposed:** Murdock profile card (four functions + universal/inevitable claim), then Parsons profile card (loss of functions, two essential functions + role distinction). Distinguish between the two clearly.
 - **Components:** `KeyFigureReveal`, `TheoryCompareBlock`
 
 ### Stage 4 — Challenge & perspectives
-- **Proposed:** Marxist challenge (Engels) and New Right (Murray). What does the functionalist view ignore? (conflict, diversity, change)
+- **Proposed:** Attack the Functionalist view. What does it ignore? Conflict, inequality, domestic violence, unpaid work, diversity and alternatives to the nuclear family. Include only a light preview that Marxists and Feminists disagree, with deeper criticism saved for Episode 7.
 - **Components:** `TheoryCompareBlock`, `MisconceptionCheck`
 
 ### Stage 5 — Apply & scenario
-- **Proposed:** Function match (Murdock's four functions to everyday examples). Perspective snap: functionalist / Marxist / New Right — which perspective does this statement belong to?
+- **Proposed:** Function match (Murdock's four functions to everyday examples). Perspective snap: Functionalist or critic? Students decide whether a statement supports Functionalism or challenges it.
 - **Components:** `MatchingTask`, `SwipeSort`
 
 ### Stage 6 — Exam build
-- **Proposed:** 4-mark explain (explain one function of the family according to functionalists). 12-mark preparation: plan paragraph structure for JUN24 Q11.
+- **Proposed:** 4-mark explain (explain one function of the family according to functionalists). 4-mark practice: explain one criticism of the Functionalist view of the family. 12-mark preparation: plan paragraph structure for using Functionalism in a wider family-functions question.
 - **Components:** `GuidedExamResponse`, `FaceTheExaminer`
 
 ### Stage 7 — Quick fire retrieval
-- **Proposed:** Murdock's four functions (all four), Parsons' two functions, one evaluation of functionalism, Engels' key claim, Murray's New Right claim.
+- **Proposed:** Murdock's four functions, Parsons' two essential functions, instrumental vs expressive roles, one criticism of Functionalism, Oakley's definition of the conventional family from Episode 2.
 - **Components:** `QuickRecallScreen`
 
 ---
@@ -46,33 +46,40 @@
 
 - Function match: match each of Murdock's four functions to an everyday example
 - `ConceptReveal`: Parsons' "warm bath" — the family as emotional safe haven
-- `TheoryCompareBlock`: functionalism vs Marxism vs New Right on what the family is "for"
-- Attack the theory: what does the functionalist view ignore? (conflict, diversity, change)
-- `SwipeSort` or perspective snap: functionalist / Marxist / New Right — which perspective does this statement belong to?
+- Loss-of-functions reveal: school, workplace and shops take over some family functions
+- Attack the theory: what does the Functionalist view ignore?
+- `SwipeSort`: Functionalist view / Criticism of Functionalism
 
 ---
 
 ## 4. Retrieval points
 
 - Murdock's four functions — all four, correct names
+- Murdock's claim that the nuclear family is universal and inevitable
 - Parsons' two functions — both, precise names
+- Parsons' loss-of-functions argument
 - Distinction between instrumental and expressive roles
-- One evaluation of functionalism
-- Engels' key claim about the family and capitalism
-- Murray's New Right argument in one sentence
+- One evaluation of Functionalism
+- Oakley's definition of the conventional family from Episode 2
 
 ---
 
 ## 5. Exam skill focus
 
 - 4-mark explain: explain one function of the family according to functionalists
-- 12-mark preparation: "Discuss how far sociologists would agree that the nuclear family performs important functions for society" (JUN24, Q11)
+- 4-mark practice: explain one criticism of the Functionalist view of the family
+- Sentence starter: "One criticism of the Functionalist view is that..."
+- 12-mark preparation: "Discuss how far sociologists would agree that the nuclear family performs important functions for society"
 
 ---
 
 ## 6. Build notes
 
-Use the idea of society as a machine. Functionalists ask which parts keep the machine running. The family is treated as one of the main parts. Make the contrast between functionalist (positive) and Marxist/New Right (critical) perspectives clear and memorable.
+Use the idea of society as a machine. Functionalists ask which parts keep the machine running. The family is treated as one of the main parts.
+
+Keep Episode 3 tightly focused on Functionalism. The core named thinkers are George Murdock and Talcott Parsons. Do not build this as a full Marxist, Feminist or New Right episode. Marxist and Feminist criticism should appear only as a light preview and should point forward to Episode 7.
+
+Make the learning journey: Murdock's four functions → Parsons' two essential functions → warm bath / role distinction → criticisms of Functionalism.
 
 ---
 
