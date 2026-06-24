@@ -338,6 +338,7 @@ New components require:
 - A genuinely new learning mechanic
 - Reusability across at least 3 modules
 - Educational justification
+- A `.stories.jsx` file alongside the component (same directory, same name stem)
 
 Prefer extending existing systems.
 

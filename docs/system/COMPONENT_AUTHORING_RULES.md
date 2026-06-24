@@ -217,6 +217,7 @@ Before creating a new component:
 - [ ] Does it have one clear focal purpose?
 - [ ] Does it avoid dashboard density?
 - [ ] Does it feel emotionally coherent with the product?
+- [ ] Has a `.stories.jsx` file been written alongside it (same directory, same name stem)?
 
 ---
 
