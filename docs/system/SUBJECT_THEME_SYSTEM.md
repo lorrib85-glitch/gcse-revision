@@ -185,9 +185,9 @@ accent:           #A79B8C
 accentSecondary:  #B8B3AA
 accentTertiary:   #7B7366
 background:       #0D0F10
-backgroundSecondary: #1B2124
-glow:             rgba(167,155,140,0.24)
-glowStrong:       rgba(184,179,170,0.16)
+backgroundSecondary: #1F1E1C
+glow:             rgba(167,155,140,0.22)
+glowStrong:       rgba(184,179,170,0.14)
 progressFill:     #A79B8C
 accentRgb:        167,155,140
 ```
@@ -205,7 +205,7 @@ Extended Sociology palette:
 | `charcoal` | `#1F1E1C` | Strong text, icons and depth when used sparingly |
 | `tealAccent` | `#2A9D8F` | Cross-subject consistency and active navigation only |
 
-Sociology should feel natural, grounded and human. Use neutrals with intention so they represent connection, understanding and perspective.
+Sociology should feel neutral, grounded and human — linen, concrete, paper, muted photography and documentary stillness. No green. Do not make it golden like History; keep it quieter, more natural and more observational.
 
 ### Drama
 ```
@@ -259,6 +259,6 @@ Each subject palette was designed with a specific emotional character:
 | Biology | Natural, organic, leaf green, sage and living systems |
 | Chemistry | Considered, intelligent, smoked violet glass and molecular precision |
 | History | Archival, earthy, warm bronze |
-| Sociology | Natural, grounded, taupe, stone and human connection |
+| Sociology | Neutral, grounded, taupe, stone, clay and human observation |
 | Drama | Theatrical, crimson intensity |
 | Music | Vibrant, multi-tonal, electric |
