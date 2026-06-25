@@ -161,17 +161,17 @@ export const SUBJECTS = {
   },
 
   Sociology: {
-    // Sociology palette: natural, grounded, curious and human.
-    // Neutrals should represent connection, understanding and perspective.
+    // Sociology palette: neutral, grounded, curious and human.
+    // No green. Use taupe, stone, clay and parchment to represent connection, understanding and perspective.
     accent: '#A79B8C',
     accentSecondary: '#B8B3AA',
     accentTertiary: '#7B7366',
 
     background: '#0D0F10',
-    backgroundSecondary: '#1B2124',
+    backgroundSecondary: '#1F1E1C',
 
-    glow: 'rgba(167,155,140,0.24)',
-    glowStrong: 'rgba(184,179,170,0.16)',
+    glow: 'rgba(167,155,140,0.22)',
+    glowStrong: 'rgba(184,179,170,0.14)',
 
     overlay: 'rgba(0,0,0,0.58)',
     progressFill: '#A79B8C',
