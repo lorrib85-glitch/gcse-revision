@@ -28,30 +28,35 @@ function ensureFloatStyles() {
 }
 ensureFloatStyles()
 
+const MAP_WIDTH = 320
+const MAP_HEIGHT = 360
+const CENTRE_NODE_SIZE = 104
+const OUTER_NODE_SIZE = 90
+
 const POSITIONS = {
   5: [
-    { x: 50, y: 16 },
-    { x: 78, y: 35 },
-    { x: 67, y: 78 },
-    { x: 33, y: 78 },
-    { x: 22, y: 35 },
+    { x: 50, y: 15 },
+    { x: 80, y: 34 },
+    { x: 68, y: 80 },
+    { x: 32, y: 80 },
+    { x: 20, y: 34 },
   ],
   6: [
-    { x: 50, y: 16 },
-    { x: 79, y: 31 },
-    { x: 79, y: 69 },
-    { x: 50, y: 84 },
-    { x: 21, y: 69 },
-    { x: 21, y: 31 },
+    { x: 50, y: 15 },
+    { x: 82, y: 31 },
+    { x: 82, y: 69 },
+    { x: 50, y: 85 },
+    { x: 18, y: 69 },
+    { x: 18, y: 31 },
   ],
   7: [
     { x: 50, y: 14 },
-    { x: 75, y: 27 },
-    { x: 80, y: 54 },
-    { x: 64, y: 78 },
-    { x: 36, y: 78 },
-    { x: 20, y: 54 },
-    { x: 25, y: 27 },
+    { x: 77, y: 27 },
+    { x: 82, y: 54 },
+    { x: 65, y: 80 },
+    { x: 35, y: 80 },
+    { x: 18, y: 54 },
+    { x: 23, y: 27 },
   ],
 }
 
@@ -80,24 +85,23 @@ function resolvePositions(count) {
   if (POSITIONS[count]) return POSITIONS[count]
   return Array.from({ length: count }, (_, i) => {
     const a = (i * 360 / count - 90) * Math.PI / 180
-    return { x: Math.round(50 + 29 * Math.cos(a)), y: Math.round(50 + 34 * Math.sin(a)) }
+    return { x: Math.round(50 + 31 * Math.cos(a)), y: Math.round(50 + 35 * Math.sin(a)) }
   })
 }
 
 function lineGeometry(pos) {
-  const W = 320, H = 360
   const cx = 50, cy = 50
-  const startPx = 48
-  const endPx = 39
-  const dxPx = (pos.x - cx) / 100 * W
-  const dyPx = (pos.y - cy) / 100 * H
+  const startPx = CENTRE_NODE_SIZE / 2
+  const endPx = OUTER_NODE_SIZE / 2
+  const dxPx = (pos.x - cx) / 100 * MAP_WIDTH
+  const dyPx = (pos.y - cy) / 100 * MAP_HEIGHT
   const len = Math.sqrt(dxPx * dxPx + dyPx * dyPx) || 1
   const ux = dxPx / len
   const uy = dyPx / len
-  const sx = cx + ux * startPx / W * 100
-  const sy = cy + uy * startPx / H * 100
-  const ex = pos.x - ux * endPx / W * 100
-  const ey = pos.y - uy * endPx / H * 100
+  const sx = cx + ux * startPx / MAP_WIDTH * 100
+  const sy = cy + uy * startPx / MAP_HEIGHT * 100
+  const ex = pos.x - ux * endPx / MAP_WIDTH * 100
+  const ey = pos.y - uy * endPx / MAP_HEIGHT * 100
   return { sx, sy, ex, ey }
 }
 
@@ -110,45 +114,18 @@ function RetrievalQ({ node, accent, rgb }) {
   const [revealed, setRevealed] = useState(false)
   return (
     <div style={{ marginTop: 2 }}>
-      <p style={{
-        fontFamily: TYPE.bodyText.fontFamily,
-        fontSize: 10,
-        fontWeight: 700,
-        letterSpacing: '0.04em',
-        color: `rgba(${rgb}, 0.72)`,
-        margin: '0 0 6px',
-      }}>
+      <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em', color: `rgba(${rgb}, 0.72)`, margin: '0 0 6px' }}>
         Quick check
       </p>
       <p style={{ ...TYPE.bodySmall, color: 'rgba(237,224,200,0.72)', margin: '0 0 8px', lineHeight: 1.55 }}>
         {node.retrievalQuestion}
       </p>
       {revealed ? (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.25 }}
-          style={{ ...TYPE.bodySmall, color: accent, margin: 0, fontWeight: 600, lineHeight: 1.55 }}
-        >
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }} style={{ ...TYPE.bodySmall, color: accent, margin: 0, fontWeight: 600, lineHeight: 1.55 }}>
           {node.retrievalAnswer}
         </motion.p>
       ) : (
-        <button
-          onClick={() => setRevealed(true)}
-          style={{
-            background: `rgba(${rgb}, 0.10)`,
-            border: `1px solid rgba(${rgb}, 0.28)`,
-            borderRadius: RADII.small,
-            padding: '6px 14px',
-            color: `rgba(${rgb}, 0.9)`,
-            cursor: 'pointer',
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontSize: '0.72rem',
-            fontWeight: 600,
-            letterSpacing: '0.03em',
-            WebkitTapHighlightColor: 'transparent',
-          }}
-        >
+        <button onClick={() => setRevealed(true)} style={{ background: `rgba(${rgb}, 0.10)`, border: `1px solid rgba(${rgb}, 0.28)`, borderRadius: RADII.small, padding: '6px 14px', color: `rgba(${rgb}, 0.9)`, cursor: 'pointer', fontFamily: TYPE.bodyText.fontFamily, fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.03em', WebkitTapHighlightColor: 'transparent' }}>
           Reveal answer
         </button>
       )}
@@ -182,11 +159,11 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
   const reveal = prefersReduced ? instant : { duration: 0.32, ease: 'easeOut' }
   const centreT = () => prefersReduced ? instant : { delay: 0.15, duration: 0.45, ease: 'easeOut' }
   const lineT = (i) => prefersReduced ? instant : {
-    pathLength: { delay: 0.3 + i * 0.09, duration: 0.5, ease: 'easeOut' },
+    pathLength: { delay: 0.36 + i * 0.13, duration: 0.48, ease: 'easeOut' },
     strokeOpacity: { duration: 0.25 },
     strokeWidth: { duration: 0.18 },
   }
-  const nodeT = (i) => prefersReduced ? instant : { delay: 0.52 + i * 0.09, duration: 0.34, ease: 'easeOut' }
+  const nodeT = (i) => prefersReduced ? instant : { delay: 0.58 + i * 0.15, duration: 0.42, ease: [0.16, 1, 0.3, 1] }
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: bg, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
@@ -199,8 +176,8 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
             </div>
           )}
 
-          <div style={{ position: 'relative', width: '100%', maxWidth: 320, height: 360, margin: '0 auto', flexShrink: 0 }}>
-            <div aria-hidden="true" style={{ position: 'absolute', left: '50%', top: '50%', width: 250, height: 250, transform: 'translate(-50%, -50%)', borderRadius: '50%', background: `radial-gradient(circle, rgba(${rgb},0.22) 0%, rgba(${rgb},0.11) 36%, rgba(${rgb},0.035) 58%, transparent 74%)`, filter: 'blur(2px)', opacity: 0.9, zIndex: 0 }} />
+          <div style={{ position: 'relative', width: '100%', maxWidth: MAP_WIDTH, height: MAP_HEIGHT, margin: '0 auto', flexShrink: 0 }}>
+            <div aria-hidden="true" style={{ position: 'absolute', left: '50%', top: '50%', width: 270, height: 270, transform: 'translate(-50%, -50%)', borderRadius: '50%', background: `radial-gradient(circle, rgba(${rgb},0.22) 0%, rgba(${rgb},0.11) 36%, rgba(${rgb},0.035) 58%, transparent 74%)`, filter: 'blur(2px)', opacity: 0.9, zIndex: 0 }} />
 
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible', zIndex: 1 }} aria-hidden="true">
               {nodes.map((node, i) => {
@@ -210,17 +187,17 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                 const { sx, sy } = lineGeometry(pos)
                 return (
                   <g key={node.id}>
-                    <motion.path d={linePath(pos)} stroke={accent} fill="none" strokeLinecap="round" initial={{ pathLength: prefersReduced ? 1 : 0, strokeWidth: 1.2, strokeOpacity: isViewed ? 0.34 : 0.24 }} animate={{ pathLength: 1, strokeWidth: isActive ? 1.7 : 1.2, strokeOpacity: isActive ? 0.78 : isViewed ? 0.36 : 0.24 }} transition={lineT(i)} style={{ filter: isActive ? `drop-shadow(0 0 2px rgba(${rgb}, 0.38))` : 'none' }} />
+                    <motion.path d={linePath(pos)} stroke={accent} fill="none" strokeLinecap="round" initial={{ pathLength: prefersReduced ? 1 : 0, strokeWidth: 1.2, strokeOpacity: 0 }} animate={{ pathLength: 1, strokeWidth: isActive ? 1.7 : 1.2, strokeOpacity: isActive ? 0.78 : isViewed ? 0.36 : 0.24 }} transition={lineT(i)} style={{ filter: isActive ? `drop-shadow(0 0 2px rgba(${rgb}, 0.38))` : 'none' }} />
                     <motion.circle cx={sx} cy={sy} r={isActive ? 1.25 : 0.95} fill={accent} initial={{ opacity: prefersReduced ? 0.55 : 0 }} animate={{ opacity: isActive ? 0.9 : isViewed ? 0.55 : 0.34 }} transition={lineT(i)} style={{ filter: isActive ? `drop-shadow(0 0 2px rgba(${rgb},0.55))` : 'none' }} />
                   </g>
                 )
               })}
             </svg>
 
-            <div style={{ position: 'absolute', left: '50%', top: '50%', width: 100, height: 100, transform: 'translate(-50%, -50%)', zIndex: 2 }}>
+            <div style={{ position: 'absolute', left: '50%', top: '50%', width: CENTRE_NODE_SIZE, height: CENTRE_NODE_SIZE, transform: 'translate(-50%, -50%)', zIndex: 2 }}>
               <motion.div role="img" aria-label={centreLabel} style={{ width: '100%', height: '100%', borderRadius: '50%', background: `radial-gradient(circle, rgba(${rgb},0.28) 0%, rgba(${rgb},0.11) 58%, rgba(20,13,5,0.95) 100%)`, border: `2px solid rgba(${rgb}, 0.58)`, boxShadow: `inset 0 0 22px rgba(${rgb},0.16), 0 0 18px rgba(${rgb},0.18)`, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10, textAlign: 'center', overflow: 'hidden', position: 'relative' }} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.82 }} animate={{ opacity: 1, scale: 1 }} transition={centreT()}>
                 {resolvedCentreImage && <img src={resolvedCentreImage} alt="" aria-hidden="true" style={{ position: 'absolute', inset: 11, width: 'calc(100% - 22px)', height: 'calc(100% - 22px)', objectFit: 'cover', opacity: 0.28, filter: 'grayscale(0.25) sepia(0.3)' }} />}
-                <span style={{ fontFamily: TYPE.bodyText.fontFamily, color: accent, fontSize: 12, lineHeight: 1.15, fontWeight: 800, letterSpacing: '0.02em', maxWidth: 70, textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden', position: 'relative', zIndex: 1, textShadow: '0 1px 8px rgba(0,0,0,0.55)' }}>{centreLabel}</span>
+                <span style={{ fontFamily: TYPE.bodyText.fontFamily, color: accent, fontSize: 12, lineHeight: 1.15, fontWeight: 800, letterSpacing: '0.02em', maxWidth: 72, textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden', position: 'relative', zIndex: 1, textShadow: '0 1px 8px rgba(0,0,0,0.55)' }}>{centreLabel}</span>
               </motion.div>
             </div>
 
@@ -234,12 +211,12 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
 
               return (
                 <div key={node.id} style={{ position: 'absolute', left: `${pos.x}%`, top: `${pos.y}%`, transform: 'translate(-50%, -50%)', zIndex: isActive ? 4 : 3 }}>
-                  <div className={!isActive ? 'cm-node-float' : undefined} style={{ animationDelay: `${0.9 + i * 0.38}s` }}>
-                    <motion.button onClick={() => handleNodeTap(node)} aria-label={node.label} aria-pressed={isActive} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.65 }} animate={{ opacity: 1, scale: isActive ? 1.03 : 1 }} transition={nodeT(i)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '6px 7px', width: 82, height: 82, minWidth: 44, minHeight: 44, borderRadius: '50%', border: isActive ? `2px solid rgba(${rgb}, 0.88)` : isViewed ? `1.5px solid rgba(${rgb}, 0.50)` : `1.5px solid rgba(${rgb}, 0.34)`, background: isActive ? `radial-gradient(circle, rgba(${rgb},0.17) 0%, rgba(42,28,10,0.96) 58%)` : `radial-gradient(circle, rgba(${rgb},0.055) 0%, rgba(30,20,8,0.91) 62%)`, boxShadow: isActive ? `0 0 14px rgba(${rgb},0.22), inset 0 0 14px rgba(${rgb},0.07)` : 'inset 0 0 10px rgba(255,220,160,0.025)', opacity: isActive ? 1 : isViewed ? 0.9 : 0.76, cursor: 'pointer', outline: 'none', WebkitTapHighlightColor: 'transparent', transition: [`border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`, `background ${MOTION.duration.fast} ${MOTION.easing.standard}`, `box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`, `opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`].join(', '), position: 'relative' }} onFocus={e => { e.currentTarget.style.outline = `2px solid ${accent}`; e.currentTarget.style.outlineOffset = '3px' }} onBlur={e => { e.currentTarget.style.outline = 'none'; e.currentTarget.style.outlineOffset = '0' }}>
-                      {nodeImage && <img src={nodeImage} alt="" aria-hidden="true" style={{ width: 22, height: 22, objectFit: 'contain', opacity: isActive ? 0.85 : 0.58, filter: 'sepia(0.3) saturate(0.85)', marginBottom: 1, borderRadius: node.id === 'galen' || node.id === 'experience' ? '50%' : 0 }} />}
-                      <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, lineHeight: 1.15, fontWeight: 800, color: isActive ? accent : 'rgba(237,224,200,0.90)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 62, letterSpacing: '0.01em', transition: `color ${MOTION.duration.fast}`, userSelect: 'none' }}>{label}</span>
-                      {caption && <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 9, lineHeight: 1.16, fontWeight: 500, color: isActive ? 'rgba(237,224,200,0.72)' : 'rgba(237,224,200,0.50)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 66 }}>{caption}</span>}
-                      {isViewed && <span aria-hidden="true" style={{ position: 'absolute', top: 3, right: 3, width: 15, height: 15, borderRadius: '50%', background: `rgba(${rgb}, 0.88)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, color: bg, fontWeight: 900, lineHeight: 1, zIndex: 5 }}>✓</span>}
+                  <div className={!isActive ? 'cm-node-float' : undefined} style={{ animationDelay: `${1.25 + i * 0.38}s` }}>
+                    <motion.button onClick={() => handleNodeTap(node)} aria-label={node.label} aria-pressed={isActive} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.45, y: prefersReduced ? 0 : 8 }} animate={{ opacity: 1, scale: isActive ? 1.035 : 1, y: 0 }} transition={nodeT(i)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '7px 8px', width: OUTER_NODE_SIZE, height: OUTER_NODE_SIZE, minWidth: 44, minHeight: 44, borderRadius: '50%', border: isActive ? `2px solid rgba(${rgb}, 0.88)` : isViewed ? `1.5px solid rgba(${rgb}, 0.50)` : `1.5px solid rgba(${rgb}, 0.34)`, background: isActive ? `radial-gradient(circle, rgba(${rgb},0.17) 0%, rgba(42,28,10,0.96) 58%)` : `radial-gradient(circle, rgba(${rgb},0.055) 0%, rgba(30,20,8,0.91) 62%)`, boxShadow: isActive ? `0 0 14px rgba(${rgb},0.22), inset 0 0 14px rgba(${rgb},0.07)` : 'inset 0 0 10px rgba(255,220,160,0.025)', opacity: isActive ? 1 : isViewed ? 0.9 : 0.76, cursor: 'pointer', outline: 'none', WebkitTapHighlightColor: 'transparent', transition: [`border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`, `background ${MOTION.duration.fast} ${MOTION.easing.standard}`, `box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`, `opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`].join(', '), position: 'relative' }} onFocus={e => { e.currentTarget.style.outline = `2px solid ${accent}`; e.currentTarget.style.outlineOffset = '3px' }} onBlur={e => { e.currentTarget.style.outline = 'none'; e.currentTarget.style.outlineOffset = '0' }}>
+                      {nodeImage && <img src={nodeImage} alt="" aria-hidden="true" style={{ width: 25, height: 25, objectFit: 'contain', opacity: isActive ? 0.88 : 0.62, filter: 'sepia(0.3) saturate(0.85)', marginBottom: 1, borderRadius: node.id === 'galen' || node.id === 'experience' ? '50%' : 0 }} />}
+                      <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11.5, lineHeight: 1.12, fontWeight: 800, color: isActive ? accent : 'rgba(237,224,200,0.90)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 68, letterSpacing: '0.01em', transition: `color ${MOTION.duration.fast}`, userSelect: 'none' }}>{label}</span>
+                      {caption && <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 9.5, lineHeight: 1.14, fontWeight: 500, color: isActive ? 'rgba(237,224,200,0.72)' : 'rgba(237,224,200,0.50)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 72 }}>{caption}</span>}
+                      {isViewed && <span aria-hidden="true" style={{ position: 'absolute', top: 4, right: 4, width: 15, height: 15, borderRadius: '50%', background: `rgba(${rgb}, 0.88)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, color: bg, fontWeight: 900, lineHeight: 1, zIndex: 5 }}>✓</span>}
                     </motion.button>
                   </div>
                 </div>
