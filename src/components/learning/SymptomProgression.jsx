@@ -5,6 +5,7 @@ import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 let _spStyled = false
 function ensureStyles() {
@@ -60,7 +61,7 @@ export default function SymptomProgression({
     else onContinue?.()
   }
 
-  const F = { fontFamily: "'Sora', sans-serif" }
+  const F = { fontFamily: TYPE.bodyText.fontFamily }
 
   return (
     <div style={{ minHeight: '100vh', background: '#0B0805', ...F }}>

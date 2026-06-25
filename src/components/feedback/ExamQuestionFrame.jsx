@@ -5,6 +5,7 @@ import { RADII } from '../../constants/radii.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 // ─── Keyframe styles injected once ───────────────────────────────────────────
 let _stylesInjected = false
@@ -153,7 +154,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
   return (
     <div style={{
       background: '#0D0F14',
-      fontFamily: "'Sora', sans-serif",
+      fontFamily: TYPE.bodyText.fontFamily,
       padding: '28px 24px 32px',
       borderRadius: 24,
     }}>
@@ -411,7 +412,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                 background: 'transparent',
                 outline: 'none',
                 resize: 'none',
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: 18,
                 lineHeight: 1.7,
                 color: 'rgba(245,245,245,0.92)',
@@ -454,7 +455,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
               boxShadow: canSubmit ? `0 8px 22px rgba(${accentRgb},0.22)` : 'none',
               border: 'none',
               fontSize: 16,
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 600,
               cursor: canSubmit ? 'pointer' : 'default',
               marginTop: SPACING.standard,
@@ -478,7 +479,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                 color: 'rgba(245,245,245,0.48)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 fontSize: 15,
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 500,
                 cursor: grading ? 'default' : 'pointer',
                 marginTop: 12,
@@ -621,7 +622,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                     borderRight: 'none',
                     cursor: 'pointer',
                     textAlign: 'left',
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                   }}
                 >
                   <div style={{
@@ -693,7 +694,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                 border: '1px solid rgba(255,255,255,0.08)',
                 color: 'rgba(245,245,245,0.68)',
                 fontSize: 15,
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 600,
                 cursor: 'pointer',
               }}

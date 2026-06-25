@@ -225,7 +225,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                 <HistoryIcon icon={section.icon} size={26} />
               </div>
               <div style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: 14,
                 fontWeight: 700,
                 color: titleColor,
@@ -242,7 +242,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             {/* Body: evidence tile with text wrapped around it, or plain lines */}
             {section.image ? (
               <div style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: 13,
                 lineHeight: 1.5,
                 color: bodyColor,
@@ -276,7 +276,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                   const isLead = i === 0
                   return (
                     <p key={i} style={{
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontSize: 13,
                       fontWeight: isAutoTakeaway ? 600 : isLead ? 500 : 400,
                       lineHeight: isLead ? 1.55 : 1.5,
@@ -298,7 +298,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                   const isLead = i === 0
                   return (
                     <p key={i} style={{
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontSize: isLead ? 15 : 14,
                       fontWeight: isAutoTakeaway ? 600 : isLead ? 500 : 400,
                       lineHeight: 1.55,
@@ -333,7 +333,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
               <>
                 <div style={{ height: 1, background: dividerColor, margin: '10px 0' }} />
                 <p style={{
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontSize: 13,
                   fontWeight: 600,
                   lineHeight: 1.5,
@@ -369,7 +369,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                 alignItems: 'center',
                 gap: 10,
                 color: 'rgba(255,255,255,0.32)',
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: 10,
                 fontWeight: 600,
                 textTransform: 'uppercase',

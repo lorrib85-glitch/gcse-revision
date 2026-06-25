@@ -5,6 +5,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import BackButton from '../core/BackButton.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 function ChoiceQuestion({ q, onSelect, subject }) {
   const block = {
@@ -20,7 +21,7 @@ function ChoiceQuestion({ q, onSelect, subject }) {
   return (
     <div style={{ width: '100%' }}>
       <div style={{
-        fontFamily: "'Sora', sans-serif",
+        fontFamily: TYPE.bodyText.fontFamily,
         fontWeight: 800, fontSize: 34,
         lineHeight: '42px', letterSpacing: '-0.03em',
         color: '#FFFFFF',
@@ -79,7 +80,7 @@ export default function RecoveryQuizPlayer({
         background: '#080C1A',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         color: '#E0E6F0',
-        fontFamily: "'Sora', sans-serif",
+        fontFamily: TYPE.bodyText.fontFamily,
       }}>
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: 18, margin: 0 }}>Quiz not found.</p>
@@ -188,7 +189,7 @@ export default function RecoveryQuizPlayer({
               </div>
 
               <h2 style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: 28, fontWeight: 700, color: '#F5F7FB',
                 margin: '0 0 8px',
                 letterSpacing: '-0.02em',
@@ -197,7 +198,7 @@ export default function RecoveryQuizPlayer({
               </h2>
 
               <p style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: 15, color: 'rgba(255,255,255,0.6)',
                 margin: '0 0 28px',
                 lineHeight: 1.5,
@@ -211,7 +212,7 @@ export default function RecoveryQuizPlayer({
                   background: accent,
                   border: 'none', borderRadius: 12,
                   padding: '12px 24px',
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontSize: 16, fontWeight: 600,
                   color: '#000', cursor: 'pointer',
                   boxShadow: `0 4px 12px rgba(${rgb},0.20)`,

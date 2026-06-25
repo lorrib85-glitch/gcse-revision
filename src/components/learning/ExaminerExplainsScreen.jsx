@@ -6,6 +6,7 @@ import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 // gradients, overlays) that must reach all four viewport edges; ContentShell's 16px padding
 // and safe-area inner div would confine them to the content column.
 import CinematicShell from '../layout/CinematicShell.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 const IMAGES = {
   History:   '/historybacker.webp',
@@ -153,7 +154,7 @@ export default function ExaminerExplainsScreen({
           {phase === 'opening' && (
             <div style={{ position: 'absolute', top: '34%', left: 28, right: 28 }}>
               <div style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 800,
                 fontSize: 'clamp(26px, 8.5vw, 38px)',
                 lineHeight: 'clamp(32px, 10.5vw, 46px)',
@@ -198,13 +199,13 @@ export default function ExaminerExplainsScreen({
                       marginBottom: 7,
                     }}>
                       <span style={{
-                        fontFamily: "'Sora', sans-serif",
+                        fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: 10,
                         color: accent, opacity: 0.75,
                         paddingTop: 4, flexShrink: 0,
                       }}>✦</span>
                       <div style={{
-                        fontFamily: "'Sora', sans-serif",
+                        fontFamily: TYPE.bodyText.fontFamily,
                         fontWeight: 700, fontSize: 18,
                         letterSpacing: '-0.01em', lineHeight: 1.25,
                         color: 'rgba(255,255,255,0.95)',
@@ -213,7 +214,7 @@ export default function ExaminerExplainsScreen({
                       </div>
                     </div>
                     <div style={{
-                      fontFamily: "'Outfit', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontWeight: 500, fontSize: 15, lineHeight: 1.65,
                       color: 'rgba(255,255,255,0.50)',
                       paddingLeft: 20,
@@ -226,7 +227,7 @@ export default function ExaminerExplainsScreen({
                 {/* Closing line */}
                 {showClosing && (
                   <div style={{
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     fontWeight: 800,
                     fontSize: 'clamp(22px, 7vw, 30px)',
                     letterSpacing: '-0.03em',
@@ -248,7 +249,7 @@ export default function ExaminerExplainsScreen({
                     animation: 'expl-hint 3.2s ease 600ms infinite',
                   }}>
                     <span style={{
-                      fontFamily: "'Outfit', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontWeight: 600, fontSize: 11,
                       letterSpacing: '0.18em', textTransform: 'uppercase',
                       color: 'rgba(255,255,255,0.28)',
@@ -271,7 +272,7 @@ export default function ExaminerExplainsScreen({
               animation: 'expl-hint 3.2s ease infinite',
             }}>
               <span style={{
-                fontFamily: "'Outfit', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 600, fontSize: 11,
                 letterSpacing: '0.18em', textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.28)',

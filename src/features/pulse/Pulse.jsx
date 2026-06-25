@@ -86,7 +86,7 @@ export default function PulseTab({ onStartQuickFire, best }) {
         { text: 'A new set every time.' },
       ],
       icon: (
-        <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 700, color: GENERAL.coral, letterSpacing: '-0.02em' }}>90</span>
+        <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 14, fontWeight: 700, color: GENERAL.coral, letterSpacing: '-0.02em' }}>90</span>
       ),
     },
     {
@@ -142,7 +142,7 @@ export default function PulseTab({ onStartQuickFire, best }) {
           </div>
           <div style={{
             marginTop: 10,
-            fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 600,
+            fontFamily: TYPE.bodyText.fontFamily, fontSize: 12, fontWeight: 600,
             letterSpacing: '0.22em', textTransform: 'uppercase', color: GENERAL.teal,
           }}>
             90 second sprint
@@ -155,7 +155,7 @@ export default function PulseTab({ onStartQuickFire, best }) {
         {/* ── Your progress ── */}
         <div style={{ marginTop: SPACING.compact + 4 }}>
           <div style={{
-            fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 600,
+            fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 600,
             letterSpacing: '0.18em', textTransform: 'uppercase', color: GENERAL.slate,
             marginBottom: 10,
           }}>
@@ -166,11 +166,11 @@ export default function PulseTab({ onStartQuickFire, best }) {
               {trendHeadline && (
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
                   <span style={{ ...TYPE.cinematic, fontSize: 34, color: trendColor }}>{trendHeadline}</span>
-                  <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 500, color: GENERAL.slate }}>this week</span>
+                  <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 12, fontWeight: 500, color: GENERAL.slate }}>this week</span>
                 </div>
               )}
               <div style={{
-                fontFamily: "'Sora', sans-serif", fontSize: 13, color: GENERAL.slate,
+                fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, color: GENERAL.slate,
                 lineHeight: 1.5, marginTop: 6, maxWidth: 210,
               }}>
                 {trendNote}
@@ -208,7 +208,7 @@ export default function PulseTab({ onStartQuickFire, best }) {
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
-                  fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700,
+                  fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 700,
                   letterSpacing: '0.2em', textTransform: 'uppercase', color: m.accent, marginBottom: 4,
                 }}>
                   {m.kicker}
@@ -218,7 +218,7 @@ export default function PulseTab({ onStartQuickFire, best }) {
                 </div>
                 {m.lines.map((line, i) => (
                   <div key={i} style={{
-                    fontFamily: "'Sora', sans-serif", fontSize: 12.5, lineHeight: 1.45,
+                    fontFamily: TYPE.bodyText.fontFamily, fontSize: 12.5, lineHeight: 1.45,
                     color: line.bright ? 'rgba(241,250,238,0.82)' : GENERAL.slate,
                   }}>
                     {line.text}

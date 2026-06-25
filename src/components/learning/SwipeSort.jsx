@@ -4,6 +4,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 // zone must reach all four viewport edges; InteractionShell's padding would clip the
 // image split and break gesture hit areas near the screen edges.
 import CinematicShell from '../layout/CinematicShell.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 const SWIPE_THRESHOLD = 72
 
@@ -270,7 +271,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
             }}>
               {leftCol.label.split('\n').map((line, i) => (
                 <div key={i} style={{
-                  fontFamily: 'Sora, sans-serif',
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontWeight: i === 0 ? 700 : 500,
                   fontSize: i === 0 ? 14 : 11,
                   color: i === 0 ? (leftCol.color ?? '#A89070') : 'rgba(245,245,245,0.50)',
@@ -292,7 +293,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
             }}>
               {rightCol.label.split('\n').map((line, i) => (
                 <div key={i} style={{
-                  fontFamily: 'Sora, sans-serif',
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontWeight: i === 0 ? 700 : 500,
                   fontSize: i === 0 ? 14 : 11,
                   color: i === 0 ? (rightCol.color ?? accent) : 'rgba(245,245,245,0.50)',
@@ -305,7 +306,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
           </div>
 
           <div style={{
-            fontFamily: 'Sora, sans-serif',
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 500,
             fontSize: 15,
             color: 'rgba(245,245,245,0.60)',
@@ -320,7 +321,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
           <button
             onClick={() => setPhase('game')}
             style={{
-              fontFamily: 'Sora, sans-serif',
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 700,
               fontSize: 16,
               color: '#08090D',
@@ -383,7 +384,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
           {lastExpl && (
             <div style={{
-              fontFamily: 'Sora, sans-serif',
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 500,
               fontSize: 15,
               color: 'rgba(245,245,245,0.60)',
@@ -401,7 +402,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
           {explanation && (
             <div style={{
-              fontFamily: 'Sora, sans-serif',
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 500,
               fontSize: 16,
               color: 'rgba(245,245,245,0.80)',
@@ -416,7 +417,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
           <div
             onClick={onComplete}
             style={{
-              fontFamily: 'Sora, sans-serif',
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 700,
               fontSize: 16,
               color: accent,
@@ -524,7 +525,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
               }}
             >
               <div style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 700,
                 fontSize: 'clamp(16px, 4.5vw, 20px)',
                 color: 'rgba(245,238,225,0.95)',
@@ -575,7 +576,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
             borderTop: '1px solid rgba(255,255,255,0.08)',
             borderRight: '1px solid rgba(255,255,255,0.06)',
             color: leftCol.color ?? '#A89070',
-            fontFamily: 'Sora, sans-serif',
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 700,
             fontSize: 13,
             cursor: 'pointer',
@@ -594,7 +595,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
             border: 'none',
             borderTop: '1px solid rgba(255,255,255,0.08)',
             color: rightCol.color ?? accent,
-            fontFamily: 'Sora, sans-serif',
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 700,
             fontSize: 13,
             cursor: 'pointer',
@@ -611,7 +612,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
         bottom: 80,
         left: '50%', transform: 'translateX(-50%)',
         zIndex: 5,
-        fontFamily: 'Sora, sans-serif',
+        fontFamily: TYPE.bodyText.fontFamily,
         fontWeight: 500,
         fontSize: 11,
         color: 'rgba(245,245,245,0.28)',

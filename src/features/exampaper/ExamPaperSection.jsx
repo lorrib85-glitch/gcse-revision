@@ -16,7 +16,7 @@ export function ExamPaperSection({ section, answers, results, onAnswerChange, ac
         </div>
         {section.instruction && (
           <div style={{
-            fontFamily: "'Sora', sans-serif", fontSize: 13, color: GENERAL.slate,
+            fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, color: GENERAL.slate,
             lineHeight: 1.5,
           }}>
             {section.instruction}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { TYPE } from '../../constants/typography.js'
 
 let stylesInjected = false
 function ensureStyles() {
@@ -30,7 +31,7 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
       {/* Optional block title */}
       {block.title && (
         <div style={{
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontWeight: 600, fontSize: 11,
           textTransform: 'uppercase', letterSpacing: '0.16em',
           color: `rgba(${rgb},0.72)`,
@@ -43,7 +44,7 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
       {/* Old section */}
       <div style={{ marginBottom: newVisible ? 0 : 28 }}>
         <div style={{
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontWeight: 600, fontSize: 11,
           textTransform: 'uppercase', letterSpacing: '0.16em',
           color: 'rgba(255,255,255,0.38)',
@@ -52,7 +53,7 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
           {block.oldLabel}
         </div>
         <div style={{
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontWeight: 800, fontSize: 26,
           lineHeight: 1.22, letterSpacing: '-0.02em',
           color: 'rgba(245,245,245,0.58)',
@@ -63,7 +64,7 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
         <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
           {(block.oldPoints || []).map((pt, i) => (
             <li key={i} style={{
-              fontFamily: "'Outfit', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 500, fontSize: 16, lineHeight: 1.55,
               color: 'rgba(245,245,245,0.52)',
               paddingLeft: 0,
@@ -81,7 +82,7 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
           style={{
             background: 'none', border: 'none', padding: 0,
             cursor: 'pointer',
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 600, fontSize: 14,
             textTransform: 'uppercase', letterSpacing: '0.12em',
             color: 'rgba(255,255,255,0.42)',
@@ -106,7 +107,7 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
             onAnimationEnd={() => setTakeawayVisible(true)}
           >
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 600, fontSize: 11,
               textTransform: 'uppercase', letterSpacing: '0.16em',
               color: `rgba(${rgb},0.82)`,
@@ -115,7 +116,7 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
               {block.newLabel}
             </div>
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 800, fontSize: 26,
               lineHeight: 1.22, letterSpacing: '-0.02em',
               color: accent,
@@ -126,7 +127,7 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
             <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
               {(block.newPoints || []).map((pt, i) => (
                 <li key={i} style={{
-                  fontFamily: "'Outfit', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontWeight: 500, fontSize: 16, lineHeight: 1.55,
                   color: 'rgba(245,245,245,0.75)',
                 }}>
@@ -142,7 +143,7 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
       {takeawayVisible && block.takeaway && (
         <div style={{
           marginTop: 28,
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontWeight: 700, fontSize: 17, lineHeight: 1.55,
           color: accent,
           animation: 'tcb-fade-up 400ms ease both',

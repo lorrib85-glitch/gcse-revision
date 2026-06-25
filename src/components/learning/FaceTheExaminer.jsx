@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { SPACING } from '../../constants/spacing.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import BackButton from '../core/BackButton.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 const IMAGES = {
   History:   '/historybacker.webp',
@@ -222,7 +223,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
     border: `1.5px solid ${enabled ? accent : 'rgba(255,255,255,0.12)'}`,
     background: enabled ? accent + '18' : 'rgba(255,255,255,0.04)',
     color: enabled ? accent : 'rgba(255,255,255,0.3)',
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: TYPE.bodyText.fontFamily,
     fontWeight: 800, fontSize: 13,
     letterSpacing: '0.15em', textTransform: 'uppercase',
     cursor: enabled ? 'pointer' : 'not-allowed',
@@ -277,7 +278,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
           }}>
             {titleVisible && (
               <div style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 900, fontSize: 48,
                 letterSpacing: '-0.03em', lineHeight: 0.95,
                 color: accent,
@@ -289,7 +290,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
             )}
             {sub1Visible && (
               <p style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 400, fontSize: 17,
                 color: 'rgba(245,238,225,0.88)',
                 margin: '0 0 4px',
@@ -300,7 +301,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
             )}
             {sub2Visible && (
               <p style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 400, fontSize: 17,
                 color: 'rgba(245,238,225,0.88)',
                 margin: 0,
@@ -346,7 +347,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
           }}
         >
           <div style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 400, fontSize: 15,
             color: 'rgba(255,255,255,0.45)',
             letterSpacing: '0.12em', textTransform: 'uppercase',
@@ -357,7 +358,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
 
           {improved ? (
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 900, fontSize: 52,
               color: accent,
               letterSpacing: '-0.03em',
@@ -368,7 +369,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
             </div>
           ) : (
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 900, fontSize: 60,
               color: accent,
               letterSpacing: '-0.03em',
@@ -379,7 +380,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
 
           {remarkResult?.delta === 0 && (
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontSize: 14, color: 'rgba(255,255,255,0.4)',
               marginTop: SPACING.compact, textAlign: 'center',
             }}>
@@ -390,7 +391,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
           <div style={{
             position: 'absolute',
             bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))',
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 700, fontSize: 13,
             letterSpacing: '0.34em', textTransform: 'uppercase',
             color: accent,
@@ -493,7 +494,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
           <BackButton onClick={onExit} />
 
           <div style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 700, fontSize: 11,
             letterSpacing: '0.14em', textTransform: 'uppercase',
             color: 'rgba(255,255,255,0.55)',
@@ -505,7 +506,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
           </div>
 
           <div style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 700, fontSize: 11,
             letterSpacing: '0.1em',
             color: accent,
@@ -522,7 +523,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
           flexShrink: 0,
         }}>
           <div style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 400, fontSize: 13.5,
             color: 'rgba(245,238,225,0.85)',
             lineHeight: 1.5,
@@ -547,7 +548,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
                   style={{
                     flex: 1, height: 42,
                     background: 'none', border: 'none', cursor: 'pointer',
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     fontWeight: active ? 700 : 500,
                     fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase',
                     color: active ? accent : 'rgba(255,255,255,0.35)',
@@ -580,7 +581,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
               {/* Phase label in reveal/improving */}
               {(isReveal || isImproving) && (
                 <div style={{
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontWeight: 700, fontSize: 9,
                   letterSpacing: '0.16em', textTransform: 'uppercase',
                   color: 'rgba(255,255,255,0.3)',
@@ -645,7 +646,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
               {(isReveal || isImproving) && (
                 <div style={{ marginTop: 20, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 14 }}>
                   <div style={{
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     fontWeight: 700, fontSize: 9,
                     letterSpacing: '0.16em', textTransform: 'uppercase',
                     color: 'rgba(255,255,255,0.3)',
@@ -663,7 +664,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
                         background: ANN_DOT[ann.type] || 'rgba(255,255,255,0.3)',
                       }} />
                       <div style={{
-                        fontFamily: "'Sora', sans-serif",
+                        fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: 12.5, lineHeight: 1.5,
                         color: 'rgba(255,255,255,0.5)',
                       }}>
@@ -678,7 +679,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
               {isImproving && (
                 <div style={{
                   marginTop: 20,
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontWeight: 800, fontSize: 11,
                   letterSpacing: '0.16em', textTransform: 'uppercase',
                   color: accent,
@@ -693,7 +694,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
           {showMarking && (
             <div>
               <div style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 500, fontSize: 13,
                 color: 'rgba(255,255,255,0.45)',
                 marginBottom: 14,
@@ -714,7 +715,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
                       border: `1.5px solid ${guessedMark === i ? accent : 'rgba(255,255,255,0.14)'}`,
                       background: guessedMark === i ? accent + '20' : 'rgba(255,255,255,0.04)',
                       color: guessedMark === i ? accent : 'rgba(255,255,255,0.55)',
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontWeight: guessedMark === i ? 800 : 500,
                       fontSize: 15,
                       cursor: 'pointer',
@@ -731,7 +732,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
               }} />
 
               <div style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 500, fontSize: 13,
                 color: 'rgba(255,255,255,0.45)',
                 marginBottom: 12,
@@ -765,7 +766,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
               padding: '10px 14px', borderRadius: 8,
               background: 'rgba(192,80,85,0.12)',
               border: '1px solid rgba(192,80,85,0.3)',
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontSize: 12.5, color: '#E8746A',
             }}>
               {remarkError}
@@ -817,7 +818,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
                   style={{
                     display: 'block', width: '100%',
                     background: 'none', border: 'none', cursor: 'pointer',
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     fontWeight: 500, fontSize: 12,
                     color: 'rgba(255,255,255,0.25)',
                     padding: '10px 0 0',
@@ -834,7 +835,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
             {isRemarking && (
               <div style={{
                 height: 54, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: 13, color: 'rgba(255,255,255,0.35)',
                 letterSpacing: '0.08em',
               }}>
@@ -856,7 +857,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
           }}>
             {/* Mark */}
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 900, fontSize: 38,
               color: accent, letterSpacing: '-0.03em',
               marginBottom: 4,
@@ -874,7 +875,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
 
             {/* Summary */}
             <p style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 400, fontSize: 13,
               color: 'rgba(255,255,255,0.5)',
               margin: '0 0 6px', lineHeight: 1.5,
@@ -885,7 +886,7 @@ export default function FaceTheExaminer({ module, examiner, onExit, onContinue }
             {/* Comparison */}
             {guessedMark !== null && (
               <p style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 600, fontSize: 12.5,
                 color: 'rgba(255,255,255,0.35)',
                 margin: '0 0 16px',

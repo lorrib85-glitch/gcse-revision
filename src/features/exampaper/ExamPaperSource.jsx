@@ -93,7 +93,7 @@ function TableSource({ source, accent }) {
       }}>
         <table style={{
           width: '100%', borderCollapse: 'collapse',
-          fontFamily: "'Sora', sans-serif", fontSize: 13,
+          fontFamily: TYPE.bodyText.fontFamily, fontSize: 13,
         }}>
           <thead>
             <tr style={{ background: GENERAL.neutral[3] }}>

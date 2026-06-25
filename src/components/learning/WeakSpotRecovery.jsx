@@ -4,6 +4,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import BackButton from '../core/BackButton.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 let _wsrStyled = false
 function ensureStyles() {
@@ -69,7 +70,7 @@ export default function WeakSpotRecovery({
   const rgb       = theme.accentRgb
   const [isPressed, setIsPressed] = useState(false)
 
-  const F = { fontFamily: "'Sora', sans-serif" }
+  const F = { fontFamily: TYPE.bodyText.fontFamily }
   const Serif = { fontFamily: "'IBM Plex Serif', serif" }
 
   return (

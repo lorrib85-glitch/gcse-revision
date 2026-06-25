@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { TYPE } from '../../constants/typography.js'
 
 export default function ColSortBlock({ block, subject = 'Biology' }) {
   const subj   = SUBJECTS[subject] || SUBJECTS.Biology
@@ -63,7 +64,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
       {/* Question label */}
       {block.question && (
         <div style={{
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontWeight: 600, fontSize: 11,
           textTransform: 'uppercase', letterSpacing: '0.22em',
           color: `rgba(${rgb},0.72)`,
@@ -77,7 +78,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
         <>
           {/* Progress */}
           <div style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 500, fontSize: 12,
             color: 'rgba(255,255,255,0.30)',
             marginBottom: 14,
@@ -96,7 +97,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
             background: feedback === 'correct'
               ? `rgba(${rgb},0.08)`
               : 'rgba(255,255,255,0.03)',
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 600, fontSize: 17, lineHeight: 1.45,
             color: feedback === 'correct' ? accent : 'rgba(245,245,245,0.90)',
             transition: 'border-color 200ms ease, color 200ms ease, background 200ms ease',
@@ -109,7 +110,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
           {/* Correct feedback explanation */}
           {feedback === 'correct' && lastExpl && (
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 500, fontSize: 13, lineHeight: 1.55,
               color: `rgba(${rgb},0.82)`,
               marginBottom: 20,
@@ -142,7 +143,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
                   <div
                     key={li}
                     style={{
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontWeight: li === 0 ? 700 : 500,
                       fontSize: li === 0 ? 14 : 12,
                       letterSpacing: li === 0 ? '0.08em' : '0.02em',
@@ -162,7 +163,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
         /* Completion state */
         <div style={{ animation: 'csb-fade-up 400ms ease both' }}>
           <div style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 700, fontSize: 17,
             color: accent, lineHeight: 1.5,
             marginBottom: 20,
@@ -171,7 +172,7 @@ export default function ColSortBlock({ block, subject = 'Biology' }) {
           </div>
           {block.explanation && (
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 500, fontSize: 15, lineHeight: 1.65,
               color: 'rgba(245,245,245,0.72)',
             }}>

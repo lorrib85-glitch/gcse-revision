@@ -3,6 +3,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import BackButton from '../core/BackButton.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 // ─── Ring ─────────────────────────────────────────────────────────────────────
 const R_SIZE   = 96
@@ -65,7 +66,7 @@ function BottomNav({ tab, setTab }) {
             border: 'none', background: active ? 'rgba(139,92,246,0.15)' : 'transparent',
             cursor: 'pointer', borderRadius: RADII.large,
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-            fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: active ? 600 : 500,
+            fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: active ? 600 : 500,
             color: active ? '#C4B5FD' : '#374151',
             padding: '6px 4px 5px',
             transition: 'background 220ms ease, color 220ms ease',
@@ -278,7 +279,7 @@ export default function ChapterCompleteScreen({
           <h1
             className="ccs-in"
             style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 800,
               fontSize: 32,
               lineHeight: '36px',
@@ -298,7 +299,7 @@ export default function ChapterCompleteScreen({
           <p
             className="ccs-in"
             style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 500,
               fontSize: 16,
               lineHeight: '22px',
@@ -351,7 +352,7 @@ export default function ChapterCompleteScreen({
             {/* Text — no truncation */}
             <div style={{ marginLeft: 14, flex: 1, minWidth: 0 }}>
               <div style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 800,
                 fontSize: 22,
                 lineHeight: '26px',
@@ -365,7 +366,7 @@ export default function ChapterCompleteScreen({
               </div>
               {!isFinalChapter && nextChapterTitle && (
                 <div style={{
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontWeight: 500,
                   fontSize: 16,
                   lineHeight: '20px',
@@ -431,14 +432,14 @@ export default function ChapterCompleteScreen({
             {/* Text */}
             <div style={{ marginLeft: 14, flex: 1 }}>
               <div style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 700,
                 fontSize: 20,
                 lineHeight: '24px',
                 color: '#F5F7FF',
               }}>Quick Quiz</div>
               <div style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 500,
                 fontSize: 15,
                 lineHeight: '18px',
@@ -502,11 +503,11 @@ export default function ChapterCompleteScreen({
                 </div>
                 <div style={{ marginLeft: 14, flex: 1 }}>
                   <div style={{
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     fontWeight: 700, fontSize: 18, lineHeight: '22px', color: '#F5F7FF',
                   }}>{pastPaperLabel || 'Past paper questions'}</div>
                   <div style={{
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     fontWeight: 500, fontSize: 14, lineHeight: '18px',
                     color: 'rgba(200,155,109,0.72)', marginTop: 2,
                   }}>Real exam questions tagged to this module</div>
@@ -543,7 +544,7 @@ export default function ChapterCompleteScreen({
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
             <span style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 500,
               fontSize: 18,
               color: '#F5F7FF',

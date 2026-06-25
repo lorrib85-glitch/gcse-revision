@@ -39,7 +39,7 @@ export function ExamPaperMarking({ paper, progress }) {
 
       {/* Status */}
       <div style={{
-        fontFamily: "'Sora', sans-serif", fontSize: 14, color: GENERAL.slate,
+        fontFamily: TYPE.bodyText.fontFamily, fontSize: 14, color: GENERAL.slate,
         textAlign: 'center', marginBottom: SPACING.standard,
       }}>
         {current > 0
@@ -64,7 +64,7 @@ export function ExamPaperMarking({ paper, progress }) {
       </div>
 
       <div style={{
-        fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700,
+        fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 700,
         letterSpacing: '0.12em', color: GENERAL.slate,
         textAlign: 'center', marginTop: 10,
       }}>

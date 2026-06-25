@@ -150,7 +150,7 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
               transition={centreT()}
             >
               <span style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 color: `rgba(${rgb}, 0.9)`,
                 fontSize: 8.5, lineHeight: 1.35, fontWeight: 700,
                 letterSpacing: '0.03em', textTransform: 'uppercase',
@@ -220,7 +220,7 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
                 >
                   <span style={{ fontSize: 18, lineHeight: 1 }} aria-hidden="true">{f.icon}</span>
                   <span style={{
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     fontSize: 8, lineHeight: 1.25, fontWeight: 700,
                     color: isActive ? accent : isExplored ? `rgba(${rgb}, 0.95)` : 'rgba(255,255,255,0.7)',
                     textAlign: 'center',
@@ -252,7 +252,7 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
 
           {/* Progress counter */}
           <p style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontSize: 12, letterSpacing: '0.04em',
             color: 'rgba(255,255,255,0.28)',
             textAlign: 'center', margin: `-${SPACING.micro}px 0 0`,
@@ -263,7 +263,7 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
           {/* First-tap hint */}
           {explored.size === 0 && (
             <p style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontSize: 13, color: `rgba(${rgb}, 0.5)`,
               textAlign: 'center', margin: 0,
             }}>
@@ -416,7 +416,7 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
                             : 'rgba(255,255,255,0.03)',
                           color: selected === f.id ? accent : 'rgba(255,255,255,0.75)',
                           cursor: 'pointer',
-                          fontFamily: "'Sora', sans-serif",
+                          fontFamily: TYPE.bodyText.fontFamily,
                           fontSize: 13,
                           fontWeight: selected === f.id ? 700 : 500,
                           display: 'flex', alignItems: 'center', gap: 8,

@@ -8,6 +8,7 @@ import ContinueCTA from '../core/ContinueCTA.jsx'
 // viewport width with no horizontal padding; InteractionShell's 16px inset would clip the
 // connector rail and break scroll-snap alignment at the screen edges.
 import CinematicShell from '../layout/CinematicShell.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 // ─── TimelineCanvas v1 ──────────────────────────────────────────────────────
 //
@@ -166,7 +167,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   }
 
   const allOpened = steps.length > 0 && opened.size === steps.length
-  const F = { fontFamily: "'Sora', sans-serif" }
+  const F = { fontFamily: TYPE.bodyText.fontFamily }
 
   return (
     <CinematicShell style={{

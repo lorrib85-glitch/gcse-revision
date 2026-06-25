@@ -902,7 +902,7 @@ function PrescriptionScroll({ theory, inputs, onChange, inputRefs, phase, result
                   border: 'none',
                   borderBottom: '1.5px solid rgba(58,32,8,0.25)',
                   padding: '6px 4px 8px',
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontSize: 16,
                   fontWeight: 400,
                   color: '#2A1404',
@@ -932,7 +932,7 @@ function PrescriptionScroll({ theory, inputs, onChange, inputRefs, phase, result
                 </span>
                 <span style={{
                   flex: 1,
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontSize: 16,
                   fontWeight: isMatched ? 500 : 400,
                   color: isMatched ? '#2A1404' : isRevealed ? '#4A2800' : 'transparent',
@@ -1072,7 +1072,7 @@ function FinalPhase({ theories, results, finalPhase, screen, onComplete, prefers
                   <div
                     key={ans}
                     style={{
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontSize: 12,
                       fontWeight: 400,
                       color: `rgba(245,238,217,0.75)`,
@@ -1142,7 +1142,7 @@ function CTA({ label, onClick, disabled = false, pressed, setPressed, delay = 0,
         cursor: disabled ? 'default' : 'pointer',
         opacity: disabled ? 0.45 : 1,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: "'Sora', sans-serif",
+        fontFamily: TYPE.bodyText.fontFamily,
         fontSize: BUTTONS.continue.fontSize,
         fontWeight: BUTTONS.continue.fontWeight,
         color: disabled ? GOLD : '#0D0F14',

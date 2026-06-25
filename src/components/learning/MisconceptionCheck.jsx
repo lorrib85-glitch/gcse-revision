@@ -114,7 +114,7 @@ export default function MisconceptionCheck({ block, subject = 'Biology', onConti
                   background: `rgba(${rgb},0.08)`,
                   border: `1.5px solid rgba(${rgb},0.30)`,
                   cursor: 'pointer',
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontSize: BUTTONS.secondary.fontSize,
                   fontWeight: 700,
                   color: '#F4FFF8',

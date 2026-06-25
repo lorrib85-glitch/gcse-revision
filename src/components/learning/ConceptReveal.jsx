@@ -156,7 +156,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
                     marginTop: '0.6em', flexShrink: 0,
                   }} />
                   <span style={{
-                    fontFamily: "'Outfit', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     fontSize: 14,
                     color: 'rgba(245,238,225,.48)',
                     lineHeight: 1.45,

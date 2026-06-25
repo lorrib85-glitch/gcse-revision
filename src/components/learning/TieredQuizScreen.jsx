@@ -3,6 +3,7 @@ import UnifiedQuestionScreen from './UnifiedQuestionScreen.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 const IMAGES = {
   History:   '/headers/history-quiz-bg.png',
@@ -173,7 +174,7 @@ export default function TieredQuizScreen({
         {phase === 'select' && (
           <div style={{ position: 'relative', zIndex: 5, width: '100%', height: '100%', ...contentAnim, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 800,
               fontSize: 'clamp(28px, 9vw, 40px)',
               lineHeight: 1.15,
@@ -219,7 +220,7 @@ export default function TieredQuizScreen({
                   </div>
                   <div style={{ flex: 1, textAlign: 'left' }}>
                     <div style={{
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontWeight: 700,
                       fontSize: 16,
                       color: accent,
@@ -227,7 +228,7 @@ export default function TieredQuizScreen({
                       {tier.label || 'Tier'}
                     </div>
                     <div style={{
-                      fontFamily: "'Outfit', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontSize: 12,
                       color: 'rgba(255,255,255,0.56)',
                       marginTop: 4,
@@ -269,7 +270,7 @@ export default function TieredQuizScreen({
         {phase === 'summary' && curTier && (
           <div style={{ position: 'relative', zIndex: 5, width: '100%', height: '100%', ...contentAnim, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 700,
               fontSize: 14,
               textTransform: 'uppercase',
@@ -281,7 +282,7 @@ export default function TieredQuizScreen({
             </div>
 
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 800,
               fontSize: 'clamp(48px, 15vw, 80px)',
               color: accent,
@@ -292,7 +293,7 @@ export default function TieredQuizScreen({
             </div>
 
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontSize: 16,
               color: 'rgba(255,255,255,0.72)',
               marginBottom: 32,
@@ -312,7 +313,7 @@ export default function TieredQuizScreen({
                   borderRadius: 12,
                   padding: '14px 20px',
                   cursor: 'pointer',
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontWeight: 700,
                   fontSize: 14,
                   color: accent,

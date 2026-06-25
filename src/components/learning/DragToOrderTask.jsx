@@ -5,6 +5,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 export default function DragToOrderTask({
   items = [],           // [{ id, label, description? }, ...]
@@ -138,7 +139,7 @@ export default function DragToOrderTask({
 
         {/* Instruction */}
         <div style={{
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontWeight: 700, fontSize: 26,
           lineHeight: 1.15, color: '#FFFFFF',
           marginBottom: SPACING.standard,
@@ -148,7 +149,7 @@ export default function DragToOrderTask({
         </div>
 
         <div style={{
-          fontFamily: "'Outfit', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontSize: 13, color: 'rgba(255,255,255,0.64)',
           marginBottom: SPACING.large,
           animation: 'dto-fade-in 360ms cubic-bezier(0.22,1,0.36,1) 60ms both',
@@ -198,7 +199,7 @@ export default function DragToOrderTask({
                   {/* Item content */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontWeight: 600, fontSize: 15,
                       color: '#FFFFFF', marginBottom: 4,
                     }}>
@@ -206,7 +207,7 @@ export default function DragToOrderTask({
                     </div>
                     {item.description && (
                       <div style={{
-                        fontFamily: "'Outfit', sans-serif",
+                        fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: 12, color: 'rgba(255,255,255,0.52)',
                       }}>
                         {item.description}
@@ -240,7 +241,7 @@ export default function DragToOrderTask({
             animation: 'dto-fade-in 300ms ease both',
           }}>
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 700, fontSize: 14,
               color: isCorrect ? '#48B250' : '#E84C45',
               marginBottom: 4,
@@ -248,7 +249,7 @@ export default function DragToOrderTask({
               {isCorrect ? '✓ Perfect!' : '✗ Not quite'}
             </div>
             <div style={{
-              fontFamily: "'Outfit', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontSize: 13, color: 'rgba(255,255,255,0.64)',
             }}>
               {isCorrect
@@ -268,7 +269,7 @@ export default function DragToOrderTask({
               style={{
                 flex: 1, height: 48,
                 background: accent, border: 'none', borderRadius: 12,
-                fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15,
+                fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 15,
                 color: '#08090D', cursor: 'pointer',
                 transition: `all ${MOTION.duration.instant} ease`,
               }}
@@ -284,7 +285,7 @@ export default function DragToOrderTask({
                 style={{
                   flex: 1, height: BUTTONS.continue.height,
                   background: 'rgba(255,255,255,0.08)', border: `1px solid rgba(255,255,255,0.12)`, borderRadius: BUTTONS.continue.borderRadius,
-                  fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15,
+                  fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 15,
                   color: 'rgba(255,255,255,0.72)', cursor: 'pointer',
                   transition: `all ${MOTION.duration.instant} ease`,
                 }}
