@@ -131,14 +131,15 @@ Extended Biology palette:
 | Token | Hex | Usage |
 |-------|-----|-------|
 | `leafGreen` | `#6BAA5B` | Key actions, selection states, progress highlights and important emphasis |
-| `mossGreen` | `#4C6B3E` | Secondary actions, interactive elements and subtle highlights |
+| `mossGreen` | `#4C6B3E` | Secondary actions, interactive elements and subtle botanical highlights |
 | `forest` | `#2E4A35` | Surfaces, cards and overlays to create depth and focus |
 | `sage` | `#A8C5A2` | Supporting elements, gentle highlights and positive states |
+| `cellMint` | `#A8C5A2` | Cellular accents, microscopy details and soft biological glow |
 | `naturalClay` | `#E6E0CF` | Text on dark backgrounds and soft contrasting areas |
 | `stone` | `#2B2B28` | Muted text, icons and disabled states |
 | `tealAccent` | `#2A9D8F` | Cross-subject consistency and active navigation only |
 
-Biology should feel calm, fresh and organic. Use greens with intention so they represent life, growth and clarity.
+Biology should feel organic, cellular and calm — moss, sage, microscopy glass, soft living systems and botanical texture. Use greens with intention so they represent life, growth and clarity. Avoid bright app green, slime green or childish science-lab styling.
 
 ### Chemistry
 ```
@@ -256,7 +257,7 @@ Each subject palette was designed with a specific emotional character:
 | Maths | Precise, logical, blueprint blue, graphite and formula-paper clarity |
 | English | Rich, literary, oxblood, parchment and ink |
 | Physics | Precise, expansive, electric blue |
-| Biology | Natural, organic, leaf green, sage and living systems |
+| Biology | Organic, cellular, moss, sage, microscopy glass and living systems |
 | Chemistry | Considered, intelligent, smoked violet glass and molecular precision |
 | History | Archival, earthy, warm bronze |
 | Sociology | Neutral, grounded, taupe, stone, clay and human observation |
