@@ -114,20 +114,33 @@ export const SUBJECTS = {
   },
 
   Chemistry: {
-    accent: '#8B4DFF',
-    accentSecondary: '#B07CFF',
-    accentTertiary: '#44208A',
+    // Chemistry palette: considered, intelligent and quietly scientific.
+    // Purples should feel like smoked violet glass, not neon or gaming purple.
+    accent: '#6D5AA6',
+    accentSecondary: '#7E6D9D',
+    accentTertiary: '#54447A',
 
-    background: '#0B0717',
-    backgroundSecondary: '#120D22',
+    background: '#0D0F12',
+    backgroundSecondary: '#14181A',
 
-    glow: 'rgba(139,77,255,0.34)',
-    glowStrong: 'rgba(176,124,255,0.22)',
+    glow: 'rgba(109,90,166,0.28)',
+    glowStrong: 'rgba(126,109,157,0.18)',
 
     overlay: 'rgba(0,0,0,0.58)',
-    progressFill: '#8B4DFF',
+    progressFill: '#6D5AA6',
 
-    accentRgb: '139,77,255',
+    accentRgb: '109,90,166',
+
+    palette: {
+      amethyst: '#6D5AA6',
+      duskPurple: '#54447A',
+      mutedLilac: '#7E6D9D',
+      slate: '#3B3A47',
+      parchment: '#E8E3D6',
+      softGrey: '#B8B3BC',
+      charcoal: '#0D0F12',
+      tealAccent: '#2A9D8F',
+    },
   },
 
   History: {
