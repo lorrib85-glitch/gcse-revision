@@ -224,13 +224,20 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
             })}
           </div>
 
-          <div style={{ margin: '12px auto 0', width: '100%', maxWidth: 320, borderRadius: RADII.large, background: 'rgba(20,13,5,0.82)', border: `1px solid rgba(${rgb}, 0.20)`, boxShadow: `inset 0 1px 0 rgba(${rgb},0.08)`, padding: '13px 15px 14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 7 }}>
-              <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 800, letterSpacing: '0.04em', color: `rgba(${rgb}, 0.72)`, margin: 0 }}>Your task</p>
-              <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, letterSpacing: '0.04em', color: 'rgba(237,224,200,0.52)', margin: 0 }}>{explored.size} / {nodes.length} explored</p>
+          <div style={{ margin: '10px auto 0', width: '100%', maxWidth: 320, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <p style={{ ...TYPE.bodySmall, color: `rgba(${rgb}, 0.76)`, margin: 0, lineHeight: 1.45, textAlign: 'center' }}>
+              {instruction || 'Tap each concept to explore it.'}
+            </p>
+            <div aria-label={`${explored.size} of ${nodes.length} concepts explored`} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 7 }}>
+              {nodes.map(node => {
+                const isViewed = explored.has(node.id)
+                const isActive = activeId === node.id
+                return (
+                  <span key={node.id} aria-hidden="true" style={{ width: isActive ? 18 : 8, height: 8, borderRadius: 999, background: isViewed ? `rgba(${rgb}, 0.78)` : 'rgba(237,224,200,0.18)', boxShadow: isActive ? `0 0 8px rgba(${rgb}, 0.35)` : 'none', transition: `all ${MOTION.duration.fast} ${MOTION.easing.standard}` }} />
+                )
+              })}
             </div>
-            <p style={{ ...TYPE.bodySmall, color: `rgba(${rgb}, 0.78)`, margin: 0, lineHeight: 1.45, textAlign: 'left' }}>{instruction || 'Tap each concept to explore it.'}</p>
-            {!allExplored && nodes.length > 0 && <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, letterSpacing: '0.035em', color: 'rgba(237,224,200,0.34)', margin: '9px 0 0' }}>Explore all {nodes.length} concepts to continue</p>}
+            {!allExplored && nodes.length > 0 && <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, letterSpacing: '0.025em', color: 'rgba(237,224,200,0.34)', margin: 0 }}>Explore each belief to continue</p>}
           </div>
 
           <AnimatePresence mode="wait">
