@@ -49,14 +49,31 @@ Each subject entry contains:
 
 ### Maths
 ```
-accent:           #2CBFA3
-accentSecondary:  #72E6CF
-accentTertiary:   #1E8F7A
-background:       #071917
-backgroundSecondary: #0B2220
-glow:             rgba(44,191,163,0.35)
-accentRgb:        44,191,163
+accent:           #4EA3FF
+accentSecondary:  #A7D2FF
+accentTertiary:   #1E5F9E
+background:       #080B10
+backgroundSecondary: #101722
+glow:             rgba(78,163,255,0.30)
+glowStrong:       rgba(167,210,255,0.18)
+progressFill:     #4EA3FF
+accentRgb:        78,163,255
 ```
+
+Extended Maths palette:
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `blueprintBlue` | `#4EA3FF` | Key actions, selection states, progress highlights and important emphasis |
+| `gridBlue` | `#A7D2FF` | Supporting lines, soft highlights and calm mathematical clarity |
+| `theoremBlue` | `#1E5F9E` | Deep accent for pressed states, diagrams and structured emphasis |
+| `graphite` | `#252A31` | Surfaces, cards and overlays to create precision and focus |
+| `slate` | `#101722` | Secondary surfaces and dark mathematical space |
+| `formulaPaper` | `#EAF2F8` | High-contrast text on dark backgrounds and occasional formula surfaces |
+| `ink` | `#080B10` | Deep background and strong contrast anchor |
+| `tealAccent` | `#2A9D8F` | Cross-subject consistency and active navigation only |
+
+Maths should feel precise, logical and blueprint-like. Use blue to signal clarity and structure, not sci-fi glow. Avoid making Maths and Physics visually identical by keeping Maths cleaner, flatter and more diagrammatic.
 
 ### English
 ```
@@ -219,7 +236,7 @@ Each subject palette was designed with a specific emotional character:
 
 | Subject | Emotional Identity |
 |---------|--------------------|
-| Maths | Clean, logical, precise |
+| Maths | Precise, logical, blueprint blue, graphite and formula-paper clarity |
 | English | Rich, literary, oxblood, parchment and ink |
 | Physics | Precise, expansive, electric blue |
 | Biology | Natural, organic, leaf green, sage and living systems |
