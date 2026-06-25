@@ -14,7 +14,7 @@ export const ENGLISH_MODULES = [
     icon: '🗡️',
     color: '#6A343D',
     colorLight: 'rgba(106,52,61,0.12)',
-    headerImage: '/English/Macbeth/heroes/07-violent-warrior-macbeth.webp',
+    headerImage: '/English/Macbeth/heroes/macbeth-generic-banner.svg',
 
     screens: [
       {
