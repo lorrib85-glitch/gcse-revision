@@ -75,6 +75,7 @@ Anti-pattern examples:
 - Physics screens that become generic blue tech dashboards.
 - History screens that become yellow/orange everywhere instead of candlelit bronze and parchment.
 - Sociology screens that become green or golden rather than neutral, observational and grounded.
+- Music screens that become Spotify, EDM, synthwave, TikTok audio or gaming RGB.
 
 ---
 
@@ -271,14 +272,31 @@ accentRgb:        193,69,109
 
 ### Music
 ```
-accent:           #A34DFF
-accentSecondary:  #FF4DA6
-accentTertiary:   #3D7CFF
-background:       #090814
-backgroundSecondary: #121022
-glow:             rgba(163,77,255,0.32)
-accentRgb:        163,77,255
+accent:           #6E4253
+accentSecondary:  #8A5E3B
+accentTertiary:   #4B4745
+background:       #161516
+backgroundSecondary: #241F1D
+glow:             rgba(110,66,83,0.26)
+glowStrong:       rgba(138,94,59,0.18)
+progressFill:     #6E4253
+accentRgb:        110,66,83
 ```
+
+Extended Music palette:
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `pianoBlack` | `#161516` | Primary background, deep musical atmosphere and contrast anchor |
+| `smokedWalnut` | `#4B4745` | Muted surfaces, studio materials, card depth and secondary UI structure |
+| `dustyPlum` | `#6E4253` | Key actions, active states, progress highlights and important emphasis |
+| `burnishedBrass` | `#8A5E3B` | Rare warm accent for instruments, stage light, achievement and special focus |
+| `mutedRose` | `#A06A7B` | Supporting highlights, soft musical accents and expressive details |
+| `warmIvory` | `#D8C8B8` | High-contrast text, notation paper, sheet music and clean readable detail |
+| `velvetShadow` | `#241F1D` | Secondary background, velvet depth and theatrical-studio atmosphere |
+| `tealAccent` | `#2A9D8F` | Cross-subject consistency and active navigation only |
+
+Music should feel sophisticated, analogue and atmospheric — piano black, walnut, brass instruments, vinyl sleeves, sheet music, velvet curtains and a warm studio glow. Avoid Spotify Wrapped, TikTok audio, EDM neon, synthwave, cyan waveforms and gaming RGB. Neon/glow may only appear as restrained reflected stage light or selected-state emphasis.
 
 ---
 
@@ -312,4 +330,4 @@ Each subject palette was designed with a specific emotional character:
 | History | Archival, earthy, warm bronze |
 | Sociology | Neutral, grounded, taupe, stone, clay and human observation |
 | Drama | Theatrical, crimson intensity |
-| Music | Vibrant, multi-tonal, electric |
+| Music | Sophisticated, analogue, piano black, walnut, brass and dusty plum |
