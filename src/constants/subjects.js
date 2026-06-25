@@ -9,20 +9,33 @@
 
 export const SUBJECTS = {
   Maths: {
-    accent: '#2CBFA3',
-    accentSecondary: '#72E6CF',
-    accentTertiary: '#1E8F7A',
+    // Maths palette: precise, logical, blueprint-like and calm.
+    // Blues should represent structure, clarity and confidence, not neon tech.
+    accent: '#4EA3FF',
+    accentSecondary: '#A7D2FF',
+    accentTertiary: '#1E5F9E',
 
-    background: '#071917',
-    backgroundSecondary: '#0B2220',
+    background: '#080B10',
+    backgroundSecondary: '#101722',
 
-    glow: 'rgba(44,191,163,0.35)',
-    glowStrong: 'rgba(114,230,207,0.22)',
+    glow: 'rgba(78,163,255,0.30)',
+    glowStrong: 'rgba(167,210,255,0.18)',
 
     overlay: 'rgba(0,0,0,0.58)',
-    progressFill: '#2CBFA3',
+    progressFill: '#4EA3FF',
 
-    accentRgb: '44,191,163',
+    accentRgb: '78,163,255',
+
+    palette: {
+      blueprintBlue: '#4EA3FF',
+      gridBlue: '#A7D2FF',
+      theoremBlue: '#1E5F9E',
+      graphite: '#252A31',
+      slate: '#101722',
+      formulaPaper: '#EAF2F8',
+      ink: '#080B10',
+      tealAccent: '#2A9D8F',
+    },
   },
 
   English: {
