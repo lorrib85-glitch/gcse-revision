@@ -110,10 +110,9 @@ function RetrievalQ({ node, accent, rgb }) {
         fontFamily: TYPE.bodyText.fontFamily,
         fontSize: 10,
         fontWeight: 700,
-        letterSpacing: '0.10em',
+        letterSpacing: '0.04em',
         color: `rgba(${rgb}, 0.72)`,
         margin: '0 0 6px',
-        textTransform: 'uppercase',
       }}>
         Quick check
       </p>
@@ -153,7 +152,7 @@ function RetrievalQ({ node, accent, rgb }) {
             fontFamily: TYPE.bodyText.fontFamily,
             fontSize: '0.72rem',
             fontWeight: 600,
-            letterSpacing: '0.07em',
+            letterSpacing: '0.03em',
             WebkitTapHighlightColor: 'transparent',
           }}
         >
@@ -376,8 +375,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                   fontSize: 12,
                   lineHeight: 1.15,
                   fontWeight: 800,
-                  letterSpacing: '0.055em',
-                  textTransform: 'uppercase',
+                  letterSpacing: '0.02em',
                   maxWidth: 70,
                   textAlign: 'center',
                   display: '-webkit-box',
@@ -561,8 +559,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                 fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: 10,
                 fontWeight: 800,
-                letterSpacing: '0.10em',
-                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
                 color: `rgba(${rgb}, 0.72)`,
                 margin: 0,
               }}>
@@ -591,9 +588,8 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               <p style={{
                 fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: 10,
-                letterSpacing: '0.065em',
+                letterSpacing: '0.035em',
                 color: 'rgba(237,224,200,0.34)',
-                textTransform: 'uppercase',
                 margin: '9px 0 0',
               }}>
                 Explore all {nodes.length} concepts to continue
@@ -666,8 +662,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                         fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: 10,
                         fontWeight: 700,
-                        letterSpacing: '0.10em',
-                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
                         margin: '0 0 4px',
                         color: `rgba(${rgb}, 0.68)`,
                       }}>
