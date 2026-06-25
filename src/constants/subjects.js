@@ -68,20 +68,33 @@ export const SUBJECTS = {
   },
 
   Physics: {
-    accent: '#3DA5FF',
-    accentSecondary: '#74C7FF',
-    accentTertiary: '#1C5D91',
+    // Physics palette: cosmic, fundamental, energetic and distinct from Maths.
+    // Use deep space, prism light, particle gold and electric teal — not blueprint blue.
+    accent: '#22D3EE',
+    accentSecondary: '#F2C14E',
+    accentTertiary: '#3A506B',
 
-    background: '#06111C',
-    backgroundSecondary: '#0A1726',
+    background: '#0D1321',
+    backgroundSecondary: '#1A2332',
 
-    glow: 'rgba(61,165,255,0.34)',
-    glowStrong: 'rgba(116,199,255,0.22)',
+    glow: 'rgba(34,211,238,0.26)',
+    glowStrong: 'rgba(242,193,78,0.18)',
 
     overlay: 'rgba(0,0,0,0.58)',
-    progressFill: '#3DA5FF',
+    progressFill: '#22D3EE',
 
-    accentRgb: '61,165,255',
+    accentRgb: '34,211,238',
+
+    palette: {
+      cosmicNavy: '#0D1321',
+      deepSpace: '#1A2332',
+      steelBlue: '#3A506B',
+      electricTeal: '#22D3EE',
+      particleGold: '#F2C14E',
+      warmGrey: '#B7B3A8',
+      lightAsh: '#E6E2D9',
+      energyPurple: '#8A5CF6',
+    },
   },
 
   Biology: {
