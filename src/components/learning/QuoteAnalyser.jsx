@@ -286,12 +286,12 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
   }
 
   return (
-    <div style={{ minHeight: '100dvh', background: `radial-gradient(circle at 50% 0%, rgba(${accentRgb}, 0.16), transparent 34%), ${palette.background}`, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '12px 12px 0' }}>
-      <div style={{ width: '100%', maxWidth: 420, flex: 1, display: 'flex', flexDirection: 'column', borderRadius: 34, background: `linear-gradient(180deg, rgba(${accentRgb}, 0.10), rgba(7,7,9,0.92) 34%, rgba(8,8,10,0.98))`, border: `1px solid rgba(${accentRgb}, 0.18)`, boxShadow: '0 28px 70px rgba(0,0,0,0.48)', overflow: 'hidden' }}>
-        <div style={{ position: 'relative', minHeight: 308, overflow: 'hidden', flexShrink: 0, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 }}>
+    <div style={{ minHeight: '100dvh', background: `radial-gradient(circle at 50% 0%, rgba(${accentRgb}, 0.16), transparent 34%), ${palette.background}`, display: 'flex', flexDirection: 'column', alignItems: 'stretch', padding: 0 }}>
+      <div style={{ width: '100%', flex: 1, minHeight: '100dvh', display: 'flex', flexDirection: 'column', background: `linear-gradient(180deg, rgba(${accentRgb}, 0.10), rgba(7,7,9,0.92) 34%, rgba(8,8,10,0.98))`, overflow: 'hidden' }}>
+        <div style={{ position: 'relative', minHeight: 318, overflow: 'hidden', flexShrink: 0 }}>
           {block.backgroundImage && <img src={block.backgroundImage} alt="" aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.40) saturate(0.82) contrast(1.04)' }} />}
           <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to bottom, rgba(6,4,8,0.12) 0%, rgba(8,6,10,0.25) 36%, rgba(8,8,10,0.94) 100%), radial-gradient(circle at 78% 44%, rgba(${accentRgb}, 0.15), transparent 32%)`, pointerEvents: 'none' }} />
-          <div style={{ position: 'relative', zIndex: 1, minHeight: 308, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '30px 26px 26px' }}>
+          <div style={{ position: 'relative', zIndex: 1, minHeight: 318, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '30px 26px 26px' }}>
             <blockquote style={{ margin: 0 }}>
               <p style={{ margin: 0, ...TYPE.featureText, color: parchment, fontSize: 'clamp(2.18rem, 8.6vw, 3.25rem)', lineHeight: 1.08, letterSpacing: '-0.055em' }}>
                 {quoteWords.map((word, i) => <QuoteWord key={i} word={word} index={i} visibleWords={visibleWords} accent={accent} accentRgb={accentRgb} activeWord={activeWord} onSelect={setActiveWord} />)}
