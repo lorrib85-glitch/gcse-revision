@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { TYPE } from '../../constants/typography.js'
 
 // ── LearningProgressHeader v4 ─────────────────────────────────────────────────
 // Stage rail — six dots representing the module's 6 navigation stages.
@@ -174,14 +175,14 @@ export default function LearningProgressHeader({
           }}
         >
           <div style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontSize: 11, fontWeight: 700,
             color: accent,
             marginBottom: 2,
           }}>{stages[openTooltip].title}</div>
           {stages[openTooltip].description ? (
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontSize: 10,
               color: 'rgba(255,255,255,0.48)',
             }}>{stages[openTooltip].description}</div>

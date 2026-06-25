@@ -1,3 +1,4 @@
+import { TYPE } from '../../constants/typography.js'
 // ── CinematicContinueCTA v1 — LOCKED COMPONENT ────────────────────────────
 // The only Cinematic Reveal CTA implementation allowed anywhere in the app —
 // see docs/system/BUTTON_RADII_SYSTEM.md "Progression CTA System".
@@ -39,7 +40,7 @@ export default function CinematicContinueCTA({
           ...style,
         }}>
         <span style={{
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontWeight: 700, fontSize: 13,
           letterSpacing: '0.34em', textTransform: 'uppercase',
           color: accent,

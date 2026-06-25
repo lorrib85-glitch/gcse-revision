@@ -1,5 +1,6 @@
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import { SPACING } from '../../constants/spacing.js'
+import { TYPE } from '../../constants/typography.js'
 
 // ── RetrievalFrame v1 — LOCKED COMPONENT ──────────────────────────────────────
 // Cinematic wrapper for retrieval moments woven into learning flow.
@@ -82,7 +83,7 @@ export default function RetrievalFrame({
       }}>
         {/* Label */}
         <div style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontSize: '0.68rem',
           fontWeight: 700,
           letterSpacing: '0.1em',
@@ -97,7 +98,7 @@ export default function RetrievalFrame({
         {/* Optional context text */}
         {contextText && (
           <p style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontSize: '0.9rem',
             color: 'rgba(255,255,255,0.6)',
             margin: '0 0 16px',
@@ -109,7 +110,7 @@ export default function RetrievalFrame({
 
         {/* Question */}
         <div style={{
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: TYPE.screenHeading.fontFamily,
           fontSize: 'clamp(1.1rem, 3vw, 1.4rem)',
           fontWeight: 700,
           color: '#F5F7FB',
@@ -144,7 +145,7 @@ export default function RetrievalFrame({
       }}>
         {/* Label */}
         <div style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontSize: '0.68rem',
           fontWeight: 700,
           letterSpacing: '0.1em',
@@ -159,7 +160,7 @@ export default function RetrievalFrame({
         {/* Optional context text */}
         {contextText && (
           <p style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontSize: '0.9rem',
             color: 'rgba(255,255,255,0.65)',
             margin: '0 0 20px',
@@ -171,7 +172,7 @@ export default function RetrievalFrame({
 
         {/* Question */}
         <div style={{
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: TYPE.screenHeading.fontFamily,
           fontSize: 'clamp(1.2rem, 4vw, 1.6rem)',
           fontWeight: 700,
           color: '#FFFFFF',
@@ -204,7 +205,7 @@ export default function RetrievalFrame({
       }}>
         {/* Compact label */}
         <div style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontSize: '0.6rem',
           fontWeight: 700,
           letterSpacing: '0.08em',
@@ -218,7 +219,7 @@ export default function RetrievalFrame({
 
         {/* Compact question */}
         <div style={{
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: TYPE.screenHeading.fontFamily,
           fontSize: 'clamp(0.95rem, 2vw, 1.1rem)',
           fontWeight: 600,
           color: '#F0ECFF',

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { BUTTONS } from '../../constants/buttons.js'
+import { TYPE } from '../../constants/typography.js'
 
 // ── ContinueCTA v1 — LOCKED COMPONENT ─────────────────────────────────────
 // The only Primary Progression CTA implementation allowed anywhere in the
@@ -37,7 +38,7 @@ export default function ContinueCTA({
         border: 'none',
         background: disabled ? disabledBackground : accent,
         color: disabled ? disabledColor : textColor,
-        fontFamily: "'Sora', sans-serif",
+        fontFamily: TYPE.bodyText.fontFamily,
         fontSize: BUTTONS.continue.fontSize,
         fontWeight: BUTTONS.continue.fontWeight,
         cursor: disabled ? 'default' : 'pointer',
