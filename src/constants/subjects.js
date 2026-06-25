@@ -222,20 +222,33 @@ export const SUBJECTS = {
   },
 
   Music: {
-    accent: '#A34DFF',
-    accentSecondary: '#FF4DA6',
-    accentTertiary: '#3D7CFF',
+    // Music palette: sophisticated, analogue, warm and atmospheric.
+    // No neon pink, cyan waveforms or EDM/gaming RGB. Use piano black, walnut, brass and dusty plum.
+    accent: '#6E4253',
+    accentSecondary: '#8A5E3B',
+    accentTertiary: '#4B4745',
 
-    background: '#090814',
-    backgroundSecondary: '#121022',
+    background: '#161516',
+    backgroundSecondary: '#241F1D',
 
-    glow: 'rgba(163,77,255,0.32)',
-    glowStrong: 'rgba(255,77,166,0.18)',
+    glow: 'rgba(110,66,83,0.26)',
+    glowStrong: 'rgba(138,94,59,0.18)',
 
     overlay: 'rgba(0,0,0,0.58)',
-    progressFill: '#A34DFF',
+    progressFill: '#6E4253',
 
-    accentRgb: '163,77,255',
+    accentRgb: '110,66,83',
+
+    palette: {
+      pianoBlack: '#161516',
+      smokedWalnut: '#4B4745',
+      dustyPlum: '#6E4253',
+      burnishedBrass: '#8A5E3B',
+      mutedRose: '#A06A7B',
+      warmIvory: '#D8C8B8',
+      velvetShadow: '#241F1D',
+      tealAccent: '#2A9D8F',
+    },
   },
 }
 
