@@ -45,6 +45,39 @@ Each subject entry contains:
 
 ---
 
+## Colour Budget Rules
+
+Subject colour must create identity without taking over the screen. Every subject screen should feel mostly dark, cinematic and readable, with colour used as a controlled signal.
+
+Default colour budget:
+
+| Colour role | Approx. share | Use |
+|-------------|---------------|-----|
+| Dark neutrals / background | 75% | Page background, cards, overlays, image dimming, atmosphere |
+| Primary subject accent | 15% | Primary CTA, active state, progress, key selected/tappable elements |
+| Secondary subject accent | 8% | Soft highlights, support states, illustration details, subtle borders |
+| Rare highlight / special accent | 2% | High-value moments only: streaks, mastery, important discovery, dramatic reveal |
+
+Rules:
+
+- Never flood a screen with the subject colour.
+- Do not tint all headings, labels, cards, icons and buttons at once.
+- Body copy should usually remain `text-primary`, parchment, ivory or soft grey rather than subject-coloured.
+- Subject colour should indicate meaning: progress, selection, active state, feedback, or a specific subject motif.
+- Large background areas should use the subject `background` and `backgroundSecondary`, not the bright accent.
+- Glow should be restrained and tied to active progress, selected states, cinematic reveals or subject-specific visual motifs.
+- Rare highlight colours must stay rare. If they appear everywhere, they stop feeling premium.
+
+Anti-pattern examples:
+
+- Purple Chemistry screens where every card, label and button glows purple.
+- Green Biology screens that look like a generic health app or childish slime science kit.
+- Physics screens that become generic blue tech dashboards.
+- History screens that become yellow/orange everywhere instead of candlelit bronze and parchment.
+- Sociology screens that become green or golden rather than neutral, observational and grounded.
+
+---
+
 ## Subject Palettes
 
 ### Maths
