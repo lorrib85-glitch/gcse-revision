@@ -57,6 +57,15 @@ const POSITIONS = {
   ],
 }
 
+const DEFAULT_CAPTIONS = {
+  supernatural: 'Sin or test',
+  astrology: 'Stars affect health',
+  humours: 'Disease = imbalance',
+  miasma: 'Smell spreads sickness',
+  galen: 'Ancient authority',
+  experience: 'Practical remedies',
+}
+
 function resolvePositions(count) {
   if (POSITIONS[count]) return POSITIONS[count]
   return Array.from({ length: count }, (_, i) => {
@@ -65,26 +74,30 @@ function resolvePositions(count) {
   })
 }
 
-// ─── Line path — pixel-aware offset for non-square 320×360 container ─────────
+// ─── Line geometry — pixel-aware offset for non-square 320×360 container ─────
 // Lines start at the centre node edge and end at the outer node edge.
-// W/H = design reference dimensions; startPx/endPx = circle radii in pixels.
-function linePath(pos) {
-  const W = 320, H = 360   // design reference: maxWidth × fixed height
-  const cx = 50, cy = 50   // centre node position in %
-  const startPx = 48        // centre radius (96px / 2)
-  const endPx   = 39        // outer node radius (78px / 2)
+function lineGeometry(pos) {
+  const W = 320, H = 360
+  const cx = 50, cy = 50
+  const startPx = 48
+  const endPx = 39
 
-  const dx_px = (pos.x - cx) / 100 * W
-  const dy_px = (pos.y - cy) / 100 * H
-  const len   = Math.sqrt(dx_px * dx_px + dy_px * dy_px) || 1
-  const ux = dx_px / len
-  const uy = dy_px / len
+  const dxPx = (pos.x - cx) / 100 * W
+  const dyPx = (pos.y - cy) / 100 * H
+  const len = Math.sqrt(dxPx * dxPx + dyPx * dyPx) || 1
+  const ux = dxPx / len
+  const uy = dyPx / len
 
   const sx = cx + ux * startPx / W * 100
   const sy = cy + uy * startPx / H * 100
   const ex = pos.x - ux * endPx / W * 100
   const ey = pos.y - uy * endPx / H * 100
 
+  return { sx, sy, ex, ey }
+}
+
+function linePath(pos) {
+  const { sx, sy, ex, ey } = lineGeometry(pos)
   return `M ${sx.toFixed(2)} ${sy.toFixed(2)} L ${ex.toFixed(2)} ${ey.toFixed(2)}`
 }
 
@@ -152,43 +165,29 @@ function RetrievalQ({ node, accent, rgb }) {
 }
 
 // ─── ConnectionMap ────────────────────────────────────────────────────────────
-//
-// Reusable radial concept map: a centre label connected to 5–7 learner-tappable
-// nodes. Each node reveals a History-branded explanation panel with optional
-// retrieval question and exam question link. Continue unlocks when all nodes
-// have been visited.
-//
-// Block shape:
-//   { centreLabel, title?, subtitle?, instruction?,
-//     nodes: [{ id, label, shortLabel?, position?, explanation,
-//               retrievalQuestion?, retrievalAnswer?, examLink? }] }
-//
-// Uses motion/react for SVG path-length reveal, node entry, and panel transitions.
-// Idle float is a pure CSS animation composing independently of Framer Motion.
 export default function ConnectionMap({ block, subject = 'History', onComplete }) {
-  const { centreLabel, title, subtitle, instruction, nodes = [] } = block
-  const theme  = SUBJECTS[subject] || SUBJECTS.History
+  const { centreLabel, centreImage, title, subtitle, instruction, nodes = [] } = block
+  const theme = SUBJECTS[subject] || SUBJECTS.History
   const accent = theme.accent
-  const rgb    = theme.accentRgb
-  const bg     = theme.background
+  const rgb = theme.accentRgb
+  const bg = theme.background
   const prefersReduced = useReducedMotion()
 
   const [activeId, setActiveId] = useState(null)
   const [explored, setExplored] = useState(new Set())
 
-  const positions   = resolvePositions(nodes.length)
+  const positions = resolvePositions(nodes.length)
   const allExplored = nodes.length > 0 && explored.size >= nodes.length
-  const activeNode  = nodes.find(n => n.id === activeId)
+  const activeNode = nodes.find(n => n.id === activeId)
 
   function handleNodeTap(node) {
     setActiveId(node.id)
     setExplored(prev => new Set([...prev, node.id]))
   }
 
-  // ── Transition helpers ──────────────────────────────────────────────────────
   const instant = { duration: 0 }
-  const fade    = prefersReduced ? instant : { duration: 0.26, ease: 'easeOut' }
-  const reveal  = prefersReduced ? instant : { duration: 0.32, ease: 'easeOut' }
+  const fade = prefersReduced ? instant : { duration: 0.26, ease: 'easeOut' }
+  const reveal = prefersReduced ? instant : { duration: 0.32, ease: 'easeOut' }
 
   function centreT() {
     return prefersReduced ? instant : { delay: 0.15, duration: 0.45, ease: 'easeOut' }
@@ -196,9 +195,9 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
   function lineT(i) {
     if (prefersReduced) return instant
     return {
-      pathLength:    { delay: 0.3 + i * 0.09, duration: 0.5, ease: 'easeOut' },
+      pathLength: { delay: 0.3 + i * 0.09, duration: 0.5, ease: 'easeOut' },
       strokeOpacity: { duration: 0.25 },
-      strokeWidth:   { duration: 0.18 },
+      strokeWidth: { duration: 0.18 },
     }
   }
   function nodeT(i) {
@@ -214,15 +213,12 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
         padding: `calc(80px + env(safe-area-inset-top, 0px)) 0 calc(${SPACING.standard}px + env(safe-area-inset-bottom, 0px))`,
         maxWidth: 440, margin: '0 auto',
       }}>
-        {/* Flex column — gap:0; each child controls its own spacing */}
         <div style={{
           padding: `0 ${SPACING.standard}px`,
           display: 'flex',
           flexDirection: 'column',
           gap: 0,
         }}>
-
-          {/* ── Header ─────────────────────────────────────────────────────── */}
           {(title || subtitle) && (
             <div style={{ marginBottom: 12 }}>
               {title && (
@@ -243,7 +239,6 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
             </div>
           )}
 
-          {/* ── Radial map — 360px fixed height, maxWidth 320px ─────────────── */}
           <div style={{
             position: 'relative',
             width: '100%',
@@ -252,7 +247,23 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
             margin: '0 auto',
             flexShrink: 0,
           }}>
-            {/* SVG connection lines — z-index 1, behind all nodes */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                width: 250,
+                height: 250,
+                transform: 'translate(-50%, -50%)',
+                borderRadius: '50%',
+                background: `radial-gradient(circle, rgba(${rgb},0.22) 0%, rgba(${rgb},0.11) 36%, rgba(${rgb},0.035) 58%, transparent 74%)`,
+                filter: 'blur(2px)',
+                opacity: 0.9,
+                zIndex: 0,
+              }}
+            />
+
             <svg
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
@@ -265,45 +276,58 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               aria-hidden="true"
             >
               {nodes.map((node, i) => {
-                const pos      = node.position || positions[i] || { x: 50, y: 50 }
+                const pos = node.position || positions[i] || { x: 50, y: 50 }
                 const isActive = activeId === node.id
                 const isViewed = explored.has(node.id)
+                const { sx, sy } = lineGeometry(pos)
                 return (
-                  <motion.path
-                    key={node.id}
-                    d={linePath(pos)}
-                    stroke={accent}
-                    fill="none"
-                    strokeLinecap="round"
-                    initial={{
-                      pathLength:    prefersReduced ? 1 : 0,
-                      strokeWidth:   1.5,
-                      strokeOpacity: isViewed ? 0.38 : 0.28,
-                    }}
-                    animate={{
-                      pathLength:    1,
-                      strokeWidth:   isActive ? 2 : 1.5,
-                      strokeOpacity: isActive ? 0.85 : isViewed ? 0.40 : 0.28,
-                    }}
-                    transition={lineT(i)}
-                    style={{
-                      filter: isActive
-                        ? `drop-shadow(0 0 2px rgba(${rgb}, 0.40))`
-                        : 'none',
-                    }}
-                  />
+                  <g key={node.id}>
+                    <motion.path
+                      d={linePath(pos)}
+                      stroke={accent}
+                      fill="none"
+                      strokeLinecap="round"
+                      initial={{
+                        pathLength: prefersReduced ? 1 : 0,
+                        strokeWidth: 1.2,
+                        strokeOpacity: isViewed ? 0.34 : 0.24,
+                      }}
+                      animate={{
+                        pathLength: 1,
+                        strokeWidth: isActive ? 1.7 : 1.2,
+                        strokeOpacity: isActive ? 0.78 : isViewed ? 0.36 : 0.24,
+                      }}
+                      transition={lineT(i)}
+                      style={{
+                        filter: isActive
+                          ? `drop-shadow(0 0 2px rgba(${rgb}, 0.38))`
+                          : 'none',
+                      }}
+                    />
+                    <motion.circle
+                      cx={sx}
+                      cy={sy}
+                      r={isActive ? 1.25 : 0.95}
+                      fill={accent}
+                      initial={{ opacity: prefersReduced ? 0.55 : 0 }}
+                      animate={{ opacity: isActive ? 0.9 : isViewed ? 0.55 : 0.34 }}
+                      transition={lineT(i)}
+                      style={{
+                        filter: isActive ? `drop-shadow(0 0 2px rgba(${rgb},0.55))` : 'none',
+                      }}
+                    />
+                  </g>
                 )
               })}
             </svg>
 
-            {/* Centre node — fixed wrapper centres it; Motion only animates inner scale */}
             <div
               style={{
                 position: 'absolute',
                 left: '50%',
                 top: '50%',
-                width: 96,
-                height: 96,
+                width: 100,
+                height: 100,
                 transform: 'translate(-50%, -50%)',
                 zIndex: 2,
               }}
@@ -315,45 +339,66 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                   width: '100%',
                   height: '100%',
                   borderRadius: '50%',
-                  background: `radial-gradient(circle, rgba(${rgb},0.22) 0%, rgba(${rgb},0.08) 60%, transparent 100%)`,
-                  border: `1.5px solid rgba(${rgb}, 0.38)`,
-                  boxShadow: `inset 0 0 20px rgba(${rgb},0.12), 0 0 10px rgba(${rgb},0.08)`,
+                  background: `radial-gradient(circle, rgba(${rgb},0.28) 0%, rgba(${rgb},0.11) 58%, rgba(20,13,5,0.95) 100%)`,
+                  border: `2px solid rgba(${rgb}, 0.58)`,
+                  boxShadow: `inset 0 0 22px rgba(${rgb},0.16), 0 0 18px rgba(${rgb},0.18)`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: 10,
                   textAlign: 'center',
+                  overflow: 'hidden',
+                  position: 'relative',
                 }}
                 initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.82 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={centreT()}
               >
+                {centreImage && (
+                  <img
+                    src={centreImage}
+                    alt=""
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      inset: 11,
+                      width: 'calc(100% - 22px)',
+                      height: 'calc(100% - 22px)',
+                      objectFit: 'cover',
+                      opacity: 0.28,
+                      filter: 'grayscale(0.25) sepia(0.3)',
+                    }}
+                  />
+                )}
                 <span style={{
                   fontFamily: TYPE.bodyText.fontFamily,
                   color: accent,
                   fontSize: 12,
                   lineHeight: 1.15,
-                  fontWeight: 700,
-                  letterSpacing: '0.04em',
+                  fontWeight: 800,
+                  letterSpacing: '0.055em',
                   textTransform: 'uppercase',
-                  maxWidth: 68,
+                  maxWidth: 70,
                   textAlign: 'center',
                   display: '-webkit-box',
                   WebkitLineClamp: 5,
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
+                  position: 'relative',
+                  zIndex: 1,
+                  textShadow: '0 1px 8px rgba(0,0,0,0.55)',
                 }}>
                   {centreLabel}
                 </span>
               </motion.div>
             </div>
 
-            {/* Outer nodes — z-index 3 inactive, 4 active */}
             {nodes.map((node, i) => {
-              const pos      = node.position || positions[i] || { x: 50, y: 50 }
+              const pos = node.position || positions[i] || { x: 50, y: 50 }
               const isActive = activeId === node.id
               const isViewed = explored.has(node.id)
-              const label    = node.shortLabel || node.label
+              const label = node.shortLabel || node.label
+              const caption = node.caption || DEFAULT_CAPTIONS[node.id]
 
               return (
                 <div
@@ -366,7 +411,6 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                     zIndex: isActive ? 4 : 3,
                   }}
                 >
-                  {/* Idle float — CSS translate, independent of Framer Motion transform */}
                   <div
                     className={!isActive ? 'cm-node-float' : undefined}
                     style={{ animationDelay: `${0.9 + i * 0.38}s` }}
@@ -376,35 +420,32 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                       aria-label={node.label}
                       aria-pressed={isActive}
                       initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.65 }}
-                      animate={{
-                        opacity: 1,
-                        scale: isActive ? 1.03 : 1,
-                      }}
+                      animate={{ opacity: 1, scale: isActive ? 1.03 : 1 }}
                       transition={nodeT(i)}
                       style={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        padding: 6,
-                        width: 78,
-                        height: 78,
+                        gap: 3,
+                        padding: '6px 7px',
+                        width: 82,
+                        height: 82,
                         minWidth: 44,
                         minHeight: 44,
                         borderRadius: '50%',
                         border: isActive
-                          ? `2px solid rgba(${rgb}, 0.9)`
+                          ? `2px solid rgba(${rgb}, 0.88)`
                           : isViewed
                             ? `1.5px solid rgba(${rgb}, 0.50)`
-                            : `1.5px solid rgba(${rgb}, 0.35)`,
+                            : `1.5px solid rgba(${rgb}, 0.34)`,
                         background: isActive
-                          ? `rgba(42,28,10,0.96)`
-                          : `rgba(30,20,8,0.88)`,
-                        // Single contained glow on active — no double ring
+                          ? `radial-gradient(circle, rgba(${rgb},0.17) 0%, rgba(42,28,10,0.96) 58%)`
+                          : `radial-gradient(circle, rgba(${rgb},0.055) 0%, rgba(30,20,8,0.91) 62%)`,
                         boxShadow: isActive
-                          ? `0 0 12px rgba(${rgb},0.22)`
-                          : 'none',
-                        opacity: isActive ? 1 : isViewed ? 0.88 : 0.72,
+                          ? `0 0 14px rgba(${rgb},0.22), inset 0 0 14px rgba(${rgb},0.07)`
+                          : 'inset 0 0 10px rgba(255,220,160,0.025)',
+                        opacity: isActive ? 1 : isViewed ? 0.9 : 0.76,
                         cursor: 'pointer',
                         outline: 'none',
                         WebkitTapHighlightColor: 'transparent',
@@ -425,27 +466,56 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                         e.currentTarget.style.outlineOffset = '0'
                       }}
                     >
+                      {node.image && (
+                        <img
+                          src={node.image}
+                          alt=""
+                          aria-hidden="true"
+                          style={{
+                            width: 22,
+                            height: 22,
+                            objectFit: 'contain',
+                            opacity: isActive ? 0.85 : 0.58,
+                            filter: 'sepia(0.3) saturate(0.85)',
+                            marginBottom: 1,
+                          }}
+                        />
+                      )}
                       <span style={{
                         fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: 11,
-                        lineHeight: 1.25,
-                        fontWeight: 700,
-                        color: isActive
-                          ? accent
-                          : 'rgba(237,224,200,0.88)',
+                        lineHeight: 1.15,
+                        fontWeight: 800,
+                        color: isActive ? accent : 'rgba(237,224,200,0.90)',
                         textAlign: 'center',
                         display: '-webkit-box',
-                        WebkitLineClamp: 3,
+                        WebkitLineClamp: 2,
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden',
-                        maxWidth: 58,
-                        letterSpacing: '0.02em',
+                        maxWidth: 62,
+                        letterSpacing: '0.01em',
                         transition: `color ${MOTION.duration.fast}`,
                         userSelect: 'none',
                       }}>
                         {label}
                       </span>
-                      {/* Viewed tick — small bronze badge, z-index 5 */}
+                      {caption && (
+                        <span style={{
+                          fontFamily: TYPE.bodyText.fontFamily,
+                          fontSize: 9,
+                          lineHeight: 1.16,
+                          fontWeight: 500,
+                          color: isActive ? 'rgba(237,224,200,0.72)' : 'rgba(237,224,200,0.50)',
+                          textAlign: 'center',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          maxWidth: 66,
+                        }}>
+                          {caption}
+                        </span>
+                      )}
                       {isViewed && (
                         <span
                           aria-hidden="true"
@@ -470,32 +540,67 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
             })}
           </div>
 
-          {/* ── Progress counter — 12px below map ──────────────────────────── */}
-          <p style={{
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontSize: 12,
-            letterSpacing: '0.04em',
-            color: 'rgba(237,224,200,0.55)',
-            textAlign: 'center',
-            margin: '12px 0 0',
+          <div style={{
+            margin: '12px auto 0',
+            width: '100%',
+            maxWidth: 320,
+            borderRadius: RADII.large,
+            background: 'rgba(20,13,5,0.82)',
+            border: `1px solid rgba(${rgb}, 0.20)`,
+            boxShadow: `inset 0 1px 0 rgba(${rgb},0.08)`,
+            padding: '13px 15px 14px',
           }}>
-            {explored.size} / {nodes.length} explored
-          </p>
-
-          {/* ── First-tap hint — 12px below counter ────────────────────────── */}
-          {explored.size === 0 && (
-            <p style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontSize: 15,
-              color: `rgba(${rgb}, 0.75)`,
-              textAlign: 'center',
-              margin: '12px 0 0',
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              marginBottom: 7,
             }}>
-              {instruction || 'Tap a concept to explore it'}
+              <p style={{
+                fontFamily: TYPE.bodyText.fontFamily,
+                fontSize: 10,
+                fontWeight: 800,
+                letterSpacing: '0.10em',
+                textTransform: 'uppercase',
+                color: `rgba(${rgb}, 0.72)`,
+                margin: 0,
+              }}>
+                Your task
+              </p>
+              <p style={{
+                fontFamily: TYPE.bodyText.fontFamily,
+                fontSize: 11,
+                letterSpacing: '0.04em',
+                color: 'rgba(237,224,200,0.52)',
+                margin: 0,
+              }}>
+                {explored.size} / {nodes.length} explored
+              </p>
+            </div>
+            <p style={{
+              ...TYPE.bodySmall,
+              color: `rgba(${rgb}, 0.78)`,
+              margin: 0,
+              lineHeight: 1.45,
+              textAlign: 'left',
+            }}>
+              {instruction || 'Tap each concept to explore it.'}
             </p>
-          )}
+            {!allExplored && nodes.length > 0 && (
+              <p style={{
+                fontFamily: TYPE.bodyText.fontFamily,
+                fontSize: 10,
+                letterSpacing: '0.065em',
+                color: 'rgba(237,224,200,0.34)',
+                textTransform: 'uppercase',
+                margin: '9px 0 0',
+              }}>
+                Explore all {nodes.length} concepts to continue
+              </p>
+            )}
+          </div>
 
-          {/* ── Info panel — History-branded ─────────────────────────────────── */}
           <AnimatePresence mode="wait">
             {activeNode && (
               <motion.div
@@ -516,7 +621,6 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                   gap: SPACING.compact,
                 }}
               >
-                {/* Node title */}
                 <p style={{
                   ...TYPE.cardTitle,
                   margin: 0,
@@ -531,7 +635,6 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                   flexDirection: 'column',
                   gap: SPACING.compact,
                 }}>
-                  {/* Explanation */}
                   <p style={{
                     fontFamily: TYPE.bodyText.fontFamily,
                     fontSize: 15,
@@ -543,7 +646,6 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                     {activeNode.explanation}
                   </p>
 
-                  {/* Retrieval question */}
                   {activeNode.retrievalQuestion && (
                     <div style={{
                       background: `rgba(${rgb}, 0.07)`,
@@ -555,7 +657,6 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                     </div>
                   )}
 
-                  {/* Exam link */}
                   {activeNode.examLink && (
                     <div style={{
                       borderLeft: `2px solid rgba(${rgb}, 0.45)`,
@@ -590,7 +691,6 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
             )}
           </AnimatePresence>
 
-          {/* ── Continue CTA — unlocks when all nodes visited ───────────────── */}
           <AnimatePresence>
             {allExplored && (
               <motion.div
@@ -604,20 +704,6 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               </motion.div>
             )}
           </AnimatePresence>
-
-          {/* Progress nudge — subtle, 18px below last element */}
-          {!allExplored && nodes.length > 0 && (
-            <p style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontSize: 11,
-              letterSpacing: '0.05em',
-              color: 'rgba(237,224,200,0.35)',
-              textAlign: 'center',
-              margin: '18px 0 8px',
-            }}>
-              EXPLORE ALL {nodes.length} CONCEPTS TO CONTINUE
-            </p>
-          )}
 
         </div>
       </div>
