@@ -242,7 +242,6 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               compact
               ariaLabel="Connection map progress"
             />
-            {!allExplored && nodes.length > 0 && <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, letterSpacing: '0.025em', color: 'rgba(237,224,200,0.34)', margin: 0 }}>Explore each belief to continue</p>}
           </div>
 
           <AnimatePresence mode="wait">
