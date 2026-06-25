@@ -85,8 +85,8 @@ export const SUBJECTS = {
   },
 
   Biology: {
-    // Biology palette: natural, organic, calm and focused.
-    // Greens should represent life, growth and clarity.
+    // Biology palette: organic, botanical, glassy and cellular.
+    // Greens should feel moss/sage/cellular and premium, not bright app green.
     accent: '#6BAA5B',
     accentSecondary: '#A8C5A2',
     accentTertiary: '#4C6B3E',
@@ -107,6 +107,7 @@ export const SUBJECTS = {
       mossGreen: '#4C6B3E',
       forest: '#2E4A35',
       sage: '#A8C5A2',
+      cellMint: '#A8C5A2',
       naturalClay: '#E6E0CF',
       stone: '#2B2B28',
       tealAccent: '#2A9D8F',
