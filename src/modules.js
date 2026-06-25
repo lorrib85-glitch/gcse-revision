@@ -904,7 +904,7 @@ export const MODULES = [
     icon: '🗡️',
     color: '#6A343D',
     colorLight: 'rgba(106,52,61,0.12)',
-    headerImage: null,
+    headerImage: '/English/Macbeth/heroes/07-violent-warrior-macbeth.webp',
     screenCount: 1,
     screenTags: [null],
   },
