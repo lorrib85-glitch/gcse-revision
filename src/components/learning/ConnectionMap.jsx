@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
@@ -8,28 +8,11 @@ import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 
-function ensureFloatStyles() {
-  if (document.getElementById('cm-float-css')) return
-  const el = document.createElement('style')
-  el.id = 'cm-float-css'
-  el.textContent = `
-    @keyframes cm-float {
-      0%, 100% { translate: 0 0px; }
-      50%       { translate: 0 -2px; }
-    }
-    .cm-node-float { animation: cm-float 4s ease-in-out infinite; }
-    @media (prefers-reduced-motion: reduce) {
-      .cm-node-float { animation: none !important; }
-    }
-  `
-  document.head.appendChild(el)
-}
-ensureFloatStyles()
-
 const MAP_WIDTH = 320
 const MAP_HEIGHT = 360
 const CENTRE_NODE_SIZE = 104
 const OUTER_NODE_SIZE = 90
+const PANEL_DELAY_MS = 240
 
 const POSITIONS = {
   5: [{ x: 50, y: 15 }, { x: 80, y: 34 }, { x: 68, y: 80 }, { x: 32, y: 80 }, { x: 20, y: 34 }],
@@ -118,19 +101,34 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
   const bg = theme.background
   const prefersReduced = useReducedMotion()
   const resolvedCentreImage = centreImage || DEFAULT_CENTRE_IMAGES[subject]
+  const panelTimerRef = useRef(null)
 
   const [activeId, setActiveId] = useState(null)
+  const [panelId, setPanelId] = useState(null)
   const [explored, setExplored] = useState(new Set())
 
   const positions = resolvePositions(nodes.length)
   const allExplored = nodes.length > 0 && explored.size >= nodes.length
   const activeNode = nodes.find(n => n.id === activeId)
+  const panelNode = nodes.find(n => n.id === panelId)
+  const panelNodeImage = panelNode?.image || DEFAULT_NODE_IMAGES[panelNode?.id]
   const currentIndex = activeNode ? Math.max(0, nodes.findIndex(n => n.id === activeId)) : 0
   const viewedIndexes = nodes.map((node, index) => explored.has(node.id) ? index : null).filter(index => index !== null)
 
   function handleNodeTap(node) {
+    if (panelTimerRef.current) window.clearTimeout(panelTimerRef.current)
     setActiveId(node.id)
+    setPanelId(null)
     setExplored(prev => new Set([...prev, node.id]))
+
+    if (prefersReduced) {
+      setPanelId(node.id)
+      return
+    }
+
+    panelTimerRef.current = window.setTimeout(() => {
+      setPanelId(node.id)
+    }, PANEL_DELAY_MS)
   }
 
   const instant = { duration: 0 }
@@ -142,7 +140,8 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
     strokeOpacity: { duration: 0.25 },
     strokeWidth: { duration: 0.18 },
   }
-  const nodeT = (i) => prefersReduced ? instant : { delay: 0.58 + i * 0.15, duration: 0.42, ease: [0.16, 1, 0.3, 1] }
+  const nodeIntroT = (i) => prefersReduced ? instant : { delay: 0.58 + i * 0.15, duration: 0.42, ease: [0.16, 1, 0.3, 1] }
+  const tapT = prefersReduced ? instant : { duration: 0.24, ease: [0.16, 1, 0.3, 1] }
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: bg, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
@@ -196,34 +195,33 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
 
               return (
                 <div key={node.id} style={{ position: 'absolute', left: `${pos.x}%`, top: `${pos.y}%`, transform: 'translate(-50%, -50%)', zIndex: isActive ? 4 : 3 }}>
-                  <div className={!isActive ? 'cm-node-float' : undefined} style={{ animationDelay: `${1.25 + i * 0.38}s` }}>
-                    <motion.button onClick={() => handleNodeTap(node)} aria-label={node.label} aria-pressed={isActive} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.45, y: prefersReduced ? 0 : 8 }} animate={{ opacity: 1, scale: isActive ? 1.045 : 1, y: 0 }} transition={nodeT(i)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '7px 8px', width: OUTER_NODE_SIZE, height: OUTER_NODE_SIZE, minWidth: 44, minHeight: 44, borderRadius: '50%', border: isActive ? `2px solid rgba(${rgb}, 0.9)` : isViewed ? `1.5px solid rgba(${rgb}, 0.46)` : `1.5px solid rgba(${rgb}, 0.30)`, background: isActive ? `radial-gradient(circle, rgba(${rgb},0.20) 0%, rgba(42,28,10,0.98) 58%)` : `radial-gradient(circle, rgba(${rgb},0.055) 0%, rgba(30,20,8,0.91) 62%)`, boxShadow: isActive ? `0 0 18px rgba(${rgb},0.28), inset 0 0 15px rgba(${rgb},0.08)` : 'inset 0 0 10px rgba(255,220,160,0.025)', opacity: isActive ? 1 : inactiveOpacity, cursor: 'pointer', outline: 'none', WebkitTapHighlightColor: 'transparent', transition: [`border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`, `background ${MOTION.duration.fast} ${MOTION.easing.standard}`, `box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`, `opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`].join(', '), position: 'relative' }} onFocus={e => { e.currentTarget.style.outline = `2px solid ${accent}`; e.currentTarget.style.outlineOffset = '3px' }} onBlur={e => { e.currentTarget.style.outline = 'none'; e.currentTarget.style.outlineOffset = '0' }}>
-                      {nodeImage && <img src={nodeImage} alt="" aria-hidden="true" style={{ width: 25, height: 25, objectFit: 'contain', opacity: isActive ? 0.9 : hasFocus ? 0.48 : 0.62, filter: 'sepia(0.3) saturate(0.85)', marginBottom: 1, borderRadius: node.id === 'galen' || node.id === 'experience' ? '50%' : 0 }} />}
-                      <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11.5, lineHeight: 1.12, fontWeight: 800, color: isActive ? accent : 'rgba(237,224,200,0.90)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 68, letterSpacing: '0.01em', transition: `color ${MOTION.duration.fast}`, userSelect: 'none' }}>{label}</span>
-                      {caption && <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 9.5, lineHeight: 1.14, fontWeight: 500, color: isActive ? 'rgba(237,224,200,0.74)' : 'rgba(237,224,200,0.50)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 72 }}>{caption}</span>}
-                      {isViewed && <span aria-hidden="true" style={{ position: 'absolute', top: 4, right: 4, width: 15, height: 15, borderRadius: '50%', background: `rgba(${rgb}, 0.88)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, color: bg, fontWeight: 900, lineHeight: 1, zIndex: 5 }}>✓</span>}
-                    </motion.button>
-                  </div>
+                  <motion.button onClick={() => handleNodeTap(node)} aria-label={node.label} aria-pressed={isActive} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.45, y: prefersReduced ? 0 : 8 }} animate={{ opacity: 1, scale: isActive && !panelNode ? [1, 1.055, 1] : isActive ? 1.035 : 1, y: isActive && !panelNode ? [0, -3, 0] : 0 }} transition={isActive && !panelNode ? tapT : nodeIntroT(i)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '7px 8px', width: OUTER_NODE_SIZE, height: OUTER_NODE_SIZE, minWidth: 44, minHeight: 44, borderRadius: '50%', border: isActive ? `2px solid rgba(${rgb}, 0.9)` : isViewed ? `1.5px solid rgba(${rgb}, 0.46)` : `1.5px solid rgba(${rgb}, 0.30)`, background: isActive ? `radial-gradient(circle, rgba(${rgb},0.20) 0%, rgba(42,28,10,0.98) 58%)` : `radial-gradient(circle, rgba(${rgb},0.055) 0%, rgba(30,20,8,0.91) 62%)`, boxShadow: isActive ? `0 0 18px rgba(${rgb},0.28), inset 0 0 15px rgba(${rgb},0.08)` : 'inset 0 0 10px rgba(255,220,160,0.025)', opacity: isActive ? 1 : inactiveOpacity, cursor: 'pointer', outline: 'none', WebkitTapHighlightColor: 'transparent', transition: [`border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`, `background ${MOTION.duration.fast} ${MOTION.easing.standard}`, `box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`, `opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`].join(', '), position: 'relative' }} onFocus={e => { e.currentTarget.style.outline = `2px solid ${accent}`; e.currentTarget.style.outlineOffset = '3px' }} onBlur={e => { e.currentTarget.style.outline = 'none'; e.currentTarget.style.outlineOffset = '0' }}>
+                    {nodeImage && <img src={nodeImage} alt="" aria-hidden="true" style={{ width: 25, height: 25, objectFit: 'contain', opacity: isActive ? 0.9 : hasFocus ? 0.48 : 0.62, filter: 'sepia(0.3) saturate(0.85)', marginBottom: 1, borderRadius: node.id === 'galen' || node.id === 'experience' ? '50%' : 0 }} />}
+                    <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11.5, lineHeight: 1.12, fontWeight: 800, color: isActive ? accent : 'rgba(237,224,200,0.90)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 68, letterSpacing: '0.01em', transition: `color ${MOTION.duration.fast}`, userSelect: 'none' }}>{label}</span>
+                    {caption && <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 9.5, lineHeight: 1.14, fontWeight: 500, color: isActive ? 'rgba(237,224,200,0.74)' : 'rgba(237,224,200,0.50)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 72 }}>{caption}</span>}
+                    {isViewed && <span aria-hidden="true" style={{ position: 'absolute', top: 4, right: 4, width: 15, height: 15, borderRadius: '50%', background: `rgba(${rgb}, 0.88)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, color: bg, fontWeight: 900, lineHeight: 1, zIndex: 5 }}>✓</span>}
+                  </motion.button>
                 </div>
               )
             })}
           </div>
 
           <div style={{ margin: '10px auto 0', width: '100%', maxWidth: 320, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-            <p style={{ ...TYPE.bodySmall, color: `rgba(${rgb}, 0.76)`, margin: 0, lineHeight: 1.45, textAlign: 'center' }}>
-              {instruction || 'Tap each concept to explore it.'}
-            </p>
+            <p style={{ ...TYPE.bodySmall, color: `rgba(${rgb}, 0.76)`, margin: 0, lineHeight: 1.45, textAlign: 'center' }}>{instruction || 'Tap each concept to explore it.'}</p>
             <SequenceProgress total={nodes.length} current={currentIndex} viewed={viewedIndexes} accent={accent} accentRgb={rgb} compact ariaLabel="Connection map progress" />
           </div>
 
           <AnimatePresence mode="wait">
-            {activeNode && (
-              <motion.div key={activeId} initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: prefersReduced ? 0 : 6 }} transition={fade} style={{ marginTop: 16, background: 'rgba(20,13,5,0.97)', border: `1px solid rgba(${rgb}, 0.22)`, borderTop: `2px solid rgba(${rgb}, 0.45)`, borderRadius: RADII.large, padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
-                <p style={{ ...TYPE.cardTitle, margin: 0, color: '#EDE0C8', lineHeight: 1.22 }}>{activeNode.label}</p>
+            {panelNode && (
+              <motion.div key={panelId} initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: prefersReduced ? 0 : 6 }} transition={fade} style={{ marginTop: 16, background: `linear-gradient(180deg, rgba(${rgb},0.08) 0%, rgba(20,13,5,0.97) 35%)`, border: `1px solid rgba(${rgb}, 0.22)`, borderTop: `2px solid rgba(${rgb}, 0.48)`, borderRadius: RADII.large, padding: '16px 18px 18px', display: 'flex', flexDirection: 'column', gap: SPACING.compact, boxShadow: `0 14px 34px rgba(0,0,0,0.22), inset 0 1px 0 rgba(${rgb},0.08)` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  {panelNodeImage && <img src={panelNodeImage} alt="" aria-hidden="true" style={{ width: 34, height: 34, objectFit: 'cover', borderRadius: panelNode.id === 'galen' || panelNode.id === 'experience' ? '50%' : 9, opacity: 0.78, border: `1px solid rgba(${rgb},0.28)`, filter: 'sepia(0.24) saturate(0.9)' }} />}
+                  <p style={{ ...TYPE.cardTitle, margin: 0, color: '#EDE0C8', lineHeight: 1.22 }}>{panelNode.label}</p>
+                </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
-                  <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 15, lineHeight: 1.65, fontWeight: 400, color: 'rgba(237,224,200,0.75)', margin: 0 }}>{activeNode.explanation}</p>
-                  {activeNode.retrievalQuestion && <div style={{ background: `rgba(${rgb}, 0.07)`, border: `1px solid rgba(${rgb}, 0.18)`, borderRadius: RADII.small, padding: `${SPACING.micro}px ${SPACING.compact}px` }}><RetrievalQ node={activeNode} accent={accent} rgb={rgb} /></div>}
-                  {activeNode.examLink && <div style={{ borderLeft: `2px solid rgba(${rgb}, 0.45)`, paddingLeft: SPACING.compact }}><p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em', margin: '0 0 4px', color: `rgba(${rgb}, 0.68)` }}>Exam link</p><p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, lineHeight: 1.55, fontWeight: 500, color: 'rgba(237,224,200,0.68)', margin: 0, fontStyle: 'italic' }}>{activeNode.examLink}</p></div>}
+                  <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 15, lineHeight: 1.65, fontWeight: 400, color: 'rgba(237,224,200,0.76)', margin: 0 }}>{panelNode.explanation}</p>
+                  {panelNode.retrievalQuestion && <div style={{ background: `rgba(${rgb}, 0.07)`, border: `1px solid rgba(${rgb}, 0.18)`, borderRadius: RADII.small, padding: `${SPACING.micro}px ${SPACING.compact}px` }}><RetrievalQ node={panelNode} accent={accent} rgb={rgb} /></div>}
+                  {panelNode.examLink && <div style={{ borderLeft: `2px solid rgba(${rgb}, 0.45)`, paddingLeft: SPACING.compact }}><p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em', margin: '0 0 4px', color: `rgba(${rgb}, 0.68)` }}>Exam link</p><p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, lineHeight: 1.55, fontWeight: 500, color: 'rgba(237,224,200,0.68)', margin: 0, fontStyle: 'italic' }}>{panelNode.examLink}</p></div>}
                 </div>
               </motion.div>
             )}
