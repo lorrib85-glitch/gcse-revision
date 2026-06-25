@@ -296,47 +296,57 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               })}
             </svg>
 
-            {/* Centre node — true visual and mathematical centre */}
-            <motion.div
-              role="img"
-              aria-label={centreLabel}
+            {/* Centre node — fixed wrapper centres it; Motion only animates inner scale */}
+            <div
               style={{
                 position: 'absolute',
                 left: '50%',
                 top: '50%',
-                transform: 'translate(-50%, -50%)',
                 width: 96,
                 height: 96,
-                borderRadius: '50%',
-                background: `radial-gradient(circle, rgba(${rgb},0.22) 0%, rgba(${rgb},0.08) 60%, transparent 100%)`,
-                border: `1.5px solid rgba(${rgb}, 0.38)`,
-                boxShadow: `inset 0 0 20px rgba(${rgb},0.12), 0 0 10px rgba(${rgb},0.08)`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                padding: 10, textAlign: 'center',
+                transform: 'translate(-50%, -50%)',
                 zIndex: 2,
               }}
-              initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.82 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={centreT()}
             >
-              <span style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                color: accent,
-                fontSize: 12,
-                lineHeight: 1.15,
-                fontWeight: 700,
-                letterSpacing: '0.04em',
-                textTransform: 'uppercase',
-                maxWidth: 68,
-                textAlign: 'center',
-                display: '-webkit-box',
-                WebkitLineClamp: 5,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }}>
-                {centreLabel}
-              </span>
-            </motion.div>
+              <motion.div
+                role="img"
+                aria-label={centreLabel}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  background: `radial-gradient(circle, rgba(${rgb},0.22) 0%, rgba(${rgb},0.08) 60%, transparent 100%)`,
+                  border: `1.5px solid rgba(${rgb}, 0.38)`,
+                  boxShadow: `inset 0 0 20px rgba(${rgb},0.12), 0 0 10px rgba(${rgb},0.08)`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 10,
+                  textAlign: 'center',
+                }}
+                initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.82 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={centreT()}
+              >
+                <span style={{
+                  fontFamily: TYPE.bodyText.fontFamily,
+                  color: accent,
+                  fontSize: 12,
+                  lineHeight: 1.15,
+                  fontWeight: 700,
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase',
+                  maxWidth: 68,
+                  textAlign: 'center',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 5,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}>
+                  {centreLabel}
+                </span>
+              </motion.div>
+            </div>
 
             {/* Outer nodes — z-index 3 inactive, 4 active */}
             {nodes.map((node, i) => {
