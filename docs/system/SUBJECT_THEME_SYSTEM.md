@@ -104,14 +104,31 @@ English should feel rich, intelligent and literary — dark academic rather than
 
 ### Physics
 ```
-accent:           #3DA5FF
-accentSecondary:  #74C7FF
-accentTertiary:   #1C5D91
-background:       #06111C
-backgroundSecondary: #0A1726
-glow:             rgba(61,165,255,0.34)
-accentRgb:        61,165,255
+accent:           #22D3EE
+accentSecondary:  #F2C14E
+accentTertiary:   #3A506B
+background:       #0D1321
+backgroundSecondary: #1A2332
+glow:             rgba(34,211,238,0.26)
+glowStrong:       rgba(242,193,78,0.18)
+progressFill:     #22D3EE
+accentRgb:        34,211,238
 ```
+
+Extended Physics palette:
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `cosmicNavy` | `#0D1321` | Primary background, deep space, serious atmosphere and subject depth |
+| `deepSpace` | `#1A2332` | Secondary background, sections and elevated surfaces |
+| `steelBlue` | `#3A506B` | UI elements, charts, navigation support and quiet emphasis |
+| `electricTeal` | `#22D3EE` | Key actions, active states, progress highlights and important emphasis |
+| `particleGold` | `#F2C14E` | Rare accent for particles, discoveries, positive states and high-value highlights |
+| `warmGrey` | `#B7B3A8` | Body text, muted content and supporting elements |
+| `lightAsh` | `#E6E2D9` | High-contrast text, clean surfaces and light details |
+| `energyPurple` | `#8A5CF6` | Sparing special-state highlight for advanced concepts, waves and energy effects |
+
+Physics should feel cosmic, fundamental and energetic — prism light, particle glow, orbital diagrams, gravity, waves and the laws that shape everything. It must be visibly different from Maths: Maths is blueprint blue and diagrammatic; Physics is deep-space navy with electric teal, particle gold and occasional energy purple. Avoid generic blue tech styling and avoid making Physics look like Maths.
 
 ### Biology
 ```
@@ -256,7 +273,7 @@ Each subject palette was designed with a specific emotional character:
 |---------|--------------------|
 | Maths | Precise, logical, blueprint blue, graphite and formula-paper clarity |
 | English | Rich, literary, oxblood, parchment and ink |
-| Physics | Precise, expansive, electric blue |
+| Physics | Cosmic, fundamental, electric teal, particle gold and deep space |
 | Biology | Organic, cellular, moss, sage, microscopy glass and living systems |
 | Chemistry | Considered, intelligent, smoked violet glass and molecular precision |
 | History | Archival, earthy, warm bronze |
