@@ -142,14 +142,31 @@ Biology should feel calm, fresh and organic. Use greens with intention so they r
 
 ### Chemistry
 ```
-accent:           #8B4DFF
-accentSecondary:  #B07CFF
-accentTertiary:   #44208A
-background:       #0B0717
-backgroundSecondary: #120D22
-glow:             rgba(139,77,255,0.34)
-accentRgb:        139,77,255
+accent:           #6D5AA6
+accentSecondary:  #7E6D9D
+accentTertiary:   #54447A
+background:       #0D0F12
+backgroundSecondary: #14181A
+glow:             rgba(109,90,166,0.28)
+glowStrong:       rgba(126,109,157,0.18)
+progressFill:     #6D5AA6
+accentRgb:        109,90,166
 ```
+
+Extended Chemistry palette:
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `amethyst` | `#6D5AA6` | Key actions, active states, progress highlights and important emphasis |
+| `duskPurple` | `#54447A` | Secondary actions, molecule lines, interactive elements and subtle highlights |
+| `mutedLilac` | `#7E6D9D` | Supporting elements, soft highlights and scientific accents |
+| `slate` | `#3B3A47` | Surfaces, cards and overlays to add structure without neon intensity |
+| `parchment` | `#E8E3D6` | Readable content and paper-based elements on dark backgrounds |
+| `softGrey` | `#B8B3BC` | Muted text, icons, disabled states and subtle backgrounds |
+| `charcoal` | `#0D0F12` | Deep background and strong contrast anchor |
+| `tealAccent` | `#2A9D8F` | Cross-subject consistency and active navigation only |
+
+Chemistry should feel considered, intelligent and quietly scientific — smoked violet glass, laboratory reflections and precise molecular structure. Avoid neon purple, gaming purple and excessive glow.
 
 ### History
 ```
@@ -240,7 +257,7 @@ Each subject palette was designed with a specific emotional character:
 | English | Rich, literary, oxblood, parchment and ink |
 | Physics | Precise, expansive, electric blue |
 | Biology | Natural, organic, leaf green, sage and living systems |
-| Chemistry | Scientific depth, violet mystery |
+| Chemistry | Considered, intelligent, smoked violet glass and molecular precision |
 | History | Archival, earthy, warm bronze |
 | Sociology | Natural, grounded, taupe, stone and human connection |
 | Drama | Theatrical, crimson intensity |
