@@ -4,6 +4,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import { TYPE } from '../../constants/typography.js'
 
 // ─── CinematicCarousel ──────────────────────────────────────────────────────
 //
@@ -79,7 +80,7 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
   const item = items[index]
   const allViewed = items.length > 0 && viewed.size === items.length
   const slideAnim = `${direction > 0 ? 'ccv-slide-in-right' : 'ccv-slide-in-left'} ${MOTION.duration.slow} ${MOTION.easing.standard} both`
-  const F = { fontFamily: "'Sora', sans-serif" }
+  const F = { fontFamily: TYPE.bodyText.fontFamily }
 
   return (
     <div style={{

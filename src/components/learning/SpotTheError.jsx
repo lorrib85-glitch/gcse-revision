@@ -167,7 +167,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
     resize: 'vertical',
     boxSizing: 'border-box',
     outline: 'none',
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: TYPE.bodyText.fontFamily,
   }
 
   return (
@@ -303,7 +303,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               border: canCheck ? 'none' : `1px solid rgba(${rgb},0.18)`,
               cursor: canCheck ? 'pointer' : 'default',
               opacity: canCheck ? 1 : 0.45,
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontSize: BUTTONS.primary.fontSize,
               fontWeight: BUTTONS.primary.fontWeight,
               color: canCheck ? '#0A0804' : accent,

@@ -6,6 +6,7 @@ import BackButton from '../core/BackButton.jsx'
 // containing block) and the screen must cover the full viewport; ContentShell's padding
 // would not reach these fixed children and would create an unwanted gap.
 import CinematicShell from './CinematicShell.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 const IMAGES = {
   History:   '/historybacker.webp',
@@ -148,7 +149,7 @@ export default function ChapterOutcomeScreen({
 
             {/* Chapter title */}
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 800, fontSize: 40,
               lineHeight: '44px', letterSpacing: '-0.04em',
               color: '#FFFFFF',
@@ -160,7 +161,7 @@ export default function ChapterOutcomeScreen({
 
             {/* Discovery label */}
             <div style={{
-              fontFamily: "'Outfit', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 600, fontSize: 11,
               textTransform: 'uppercase', letterSpacing: '0.30em',
               color: 'rgba(255,255,255,0.28)',
@@ -191,7 +192,7 @@ export default function ChapterOutcomeScreen({
                       <ItemIcon icon={icon} accent={accent} />
                     </div>
                     <div style={{
-                      fontFamily: "'Outfit', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontWeight: 500, fontSize: 18,
                       lineHeight: '26px',
                       color: 'rgba(255,255,255,0.86)',
@@ -217,7 +218,7 @@ export default function ChapterOutcomeScreen({
               left: 28,
               background: 'none', border: 'none', cursor: 'pointer', padding: 0,
               zIndex: 10,
-              fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 22,
+              fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 22,
               color: accent,
               animation: 'cos-cta 400ms ease 100ms both',
               transition: 'opacity 140ms ease',

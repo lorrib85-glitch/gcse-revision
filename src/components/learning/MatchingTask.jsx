@@ -7,6 +7,7 @@ import ContinueCTA from '../core/ContinueCTA.jsx'
 // (position:absolute, inset:0) must fill the entire viewport; InteractionShell's 16px
 // horizontal padding would constrain them to the content column width.
 import CinematicShell from '../layout/CinematicShell.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 // Fisher-Yates shuffle
 function shuffle(arr) {
@@ -167,7 +168,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
     <CinematicShell style={{
       zIndex: 1000,
       display: 'flex', flexDirection: 'column',
-      fontFamily: "'Sora', sans-serif",
+      fontFamily: TYPE.bodyText.fontFamily,
     }}>
       <style>{CSS}</style>
 
@@ -326,7 +327,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                       transform: isSelected && !isLocked ? 'translateY(-1px)' : 'none',
                       cursor: isLocked ? 'default' : 'pointer',
                       textAlign: 'left',
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontWeight: 600,
                       fontSize: 13.5,
                       lineHeight: 1.3,
@@ -366,7 +367,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                       border: `1px solid ${isLocked ? CARD_BORDER_LOCKED : CARD_BORDER}`,
                       cursor: isLocked ? 'default' : 'pointer',
                       textAlign: 'left',
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontWeight: 400,
                       fontSize: answerFontSize,
                       lineHeight: 1.25,

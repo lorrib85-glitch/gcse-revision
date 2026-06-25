@@ -95,7 +95,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
         marginBottom: SPACING.compact,
       }}>
         <span style={{
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontSize: '12px', fontWeight: 600,
           color: accent,
           letterSpacing: '0.04em',
@@ -239,7 +239,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
           border: allCorrect ? 'none' : `1px solid rgba(${rgb},0.18)`,
           cursor: anyFilled ? 'pointer' : 'default',
           opacity: anyFilled ? 1 : 0.45,
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontSize: BUTTONS.primary.fontSize,
           fontWeight: BUTTONS.primary.fontWeight,
           color: allCorrect ? '#0A0804' : accent,

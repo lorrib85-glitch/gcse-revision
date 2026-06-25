@@ -9,6 +9,7 @@ import ModulesTab from '../features/subjects/Subjects.jsx'
 import ExamPractice from '../features/exams/ExamPractice.jsx'
 import BottomNav from './BottomNav.jsx'
 import ChapterCompleteScreen from '../components/layout/ChapterCompleteScreen.jsx'
+import { TYPE } from '../constants/typography.js'
 
 // ModulePlayer (and the ~40 learning/feedback components it imports) is only
 // needed once a user opens a module — lazy-load it as its own chunk so
@@ -128,7 +129,7 @@ function LoginScreen() {
 
       {/* Tagline */}
       <div style={{
-        fontFamily: "'Sora', sans-serif",
+        fontFamily: TYPE.bodyText.fontFamily,
         fontSize: 42, fontWeight: 700, color: '#F4EFE6',
         textAlign: 'center', lineHeight: 1.05, marginTop: 28, letterSpacing: '-0.02em',
       }}>
@@ -147,7 +148,7 @@ function LoginScreen() {
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
           background: '#FFFFFF', border: 'none', borderRadius: 18, cursor: loading ? 'default' : 'pointer',
           height: 56, width: '100%', maxWidth: 340,
-          fontFamily: "'Outfit', sans-serif", fontSize: 16, fontWeight: 600, color: '#1A1A1A',
+          fontFamily: TYPE.bodyText.fontFamily, fontSize: 16, fontWeight: 600, color: '#1A1A1A',
           boxShadow: '0 4px 24px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.12) inset',
           opacity: loading ? 0.7 : 1,
           transition: 'opacity 150ms ease, transform 120ms ease',
@@ -166,7 +167,7 @@ function LoginScreen() {
       </button>
 
       <div style={{
-        fontFamily: "'Outfit', sans-serif",
+        fontFamily: TYPE.bodyText.fontFamily,
         fontSize: 11, color: '#3A3835', marginTop: 18, marginBottom: 'max(32px, env(safe-area-inset-bottom))',
         textAlign: 'center', lineHeight: 1.5,
       }}>
@@ -209,14 +210,14 @@ function OnboardingScreen() {
 
       <div style={{ flex: '0 0 auto', marginTop: 'max(88px, 22vh)', width: '100%', maxWidth: 340 }}>
         <div style={{
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontSize: 32, fontWeight: 700, color: '#F4EFE6',
           lineHeight: 1.15, marginBottom: 12, letterSpacing: '-0.01em',
         }}>
           What should<br />we call you?
         </div>
         <div style={{
-          fontFamily: "'Outfit', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontSize: 15, color: '#7A7670', lineHeight: 1.55, marginBottom: 36,
         }}>
           This helps personalise your revision journey.
@@ -237,7 +238,7 @@ function OnboardingScreen() {
             backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
             border: '1.5px solid rgba(255,255,255,0.1)',
             borderRadius: 16, padding: '0 22px',
-            fontFamily: "'Outfit', sans-serif", fontSize: 18, fontWeight: 500, color: '#F4EFE6',
+            fontFamily: TYPE.bodyText.fontFamily, fontSize: 18, fontWeight: 500, color: '#F4EFE6',
             outline: 'none', caretColor: '#65E6C6',
             transition: 'border-color 180ms ease, box-shadow 180ms ease',
           }}
@@ -262,7 +263,7 @@ function OnboardingScreen() {
           width: '100%', maxWidth: 340, height: 54,
           background: valid ? 'linear-gradient(135deg, #3D7A5E 0%, #65E6C6 100%)' : 'rgba(255,255,255,0.07)',
           border: 'none', borderRadius: 16, cursor: valid ? 'pointer' : 'default',
-          fontFamily: "'Outfit', sans-serif", fontSize: 16, fontWeight: 700,
+          fontFamily: TYPE.bodyText.fontFamily, fontSize: 16, fontWeight: 700,
           color: valid ? '#08090D' : '#3D3A35',
           transition: 'background 220ms ease, color 220ms ease, transform 120ms ease',
           letterSpacing: '0.02em', flexShrink: 0,

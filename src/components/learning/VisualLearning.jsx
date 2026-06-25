@@ -4,6 +4,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 // CinematicShell used here because full-bleed background imagery and the global
 // click-to-advance handler need full viewport coverage without content padding.
 import CinematicShell from '../layout/CinematicShell.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 const SLIDE_MS = 420
 
@@ -131,7 +132,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
           }}
         >
           <div style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 700,
             fontSize: 'clamp(28px, 7.5vw, 40px)',
             lineHeight: 1.2,
@@ -144,7 +145,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
           </div>
 
           <div style={{
-            fontFamily: "'Outfit', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 500,
             fontSize: 'clamp(17px, 4.5vw, 21px)',
             lineHeight: 1.55,
@@ -165,7 +166,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
               animation: 'vl-hint 2.8s ease infinite',
             }}>
               <span style={{
-                fontFamily: "'Outfit', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 600, fontSize: 11,
                 letterSpacing: '0.18em', textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.3)',
@@ -189,7 +190,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
           }}
         >
           <div style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 700,
             fontSize: 'clamp(26px, 7vw, 36px)',
             lineHeight: 1.15,
@@ -202,7 +203,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
           </div>
 
           <div style={{
-            fontFamily: "'Outfit', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 500,
             fontSize: 'clamp(15px, 4vw, 17px)',
             lineHeight: 1.65,
@@ -236,7 +237,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
               animation: 'vl-hint 2.8s ease infinite',
             }}>
               <span style={{
-                fontFamily: "'Outfit', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontWeight: 600, fontSize: 11,
                 letterSpacing: '0.18em', textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.3)',

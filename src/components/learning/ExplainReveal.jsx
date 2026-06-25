@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
+import { TYPE } from '../../constants/typography.js'
 
 let _erStyled = false
 function ensureStyles() {
@@ -57,7 +58,7 @@ export default function ExplainReveal({ block, subject, onComplete }) {
     else if (onComplete) onComplete()
   }
 
-  const F = { fontFamily: "'Sora', sans-serif" }
+  const F = { fontFamily: TYPE.bodyText.fontFamily }
 
   return (
     <div style={{ position: 'relative', ...F }}>

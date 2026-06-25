@@ -103,7 +103,7 @@ function PromptChip({ label }) {
       borderRadius: RADII.small,
       background: 'rgba(255,255,255,0.03)',
       border: '1px solid rgba(255,255,255,0.07)',
-      fontFamily: "'Sora', sans-serif",
+      fontFamily: TYPE.bodyText.fontFamily,
       fontSize: 12, fontWeight: 500, letterSpacing: '0.04em',
       textTransform: 'uppercase',
       color: 'rgba(245,247,255,0.32)',
@@ -287,7 +287,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
           <BackButton onClick={onBack} />
 
           <div style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             ...TYPE.metadata,
             textTransform: 'uppercase',
             color: accent, opacity: 0.8,
@@ -306,7 +306,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
           }}>
             <div style={{ flex: 1 }}>
               <h1 style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 ...TYPE.sectionTitle,
                 color: '#F5F7FF',
                 margin: 0, marginBottom: SPACING.micro,
@@ -315,7 +315,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               </h1>
 
               <p style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 ...TYPE.bodySmall,
                 color: 'rgba(245,247,255,0.55)',
                 margin: 0, marginBottom: SPACING.compact,
@@ -343,7 +343,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                   />
                 </svg>
                 <span style={{
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontSize: 14, fontWeight: 700,
                   color: `rgb(${ringRgb})`,
                   fontVariantNumeric: 'tabular-nums',
@@ -356,7 +356,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
 
               {block.chapterTitle && (
                 <p style={{
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   ...TYPE.bodySmall,
                   color: 'rgba(168,159,194,0.65)',
                   margin: 0, marginBottom: SPACING.compact,
@@ -382,7 +382,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
               }}>
                 <div style={{
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
                   textTransform: 'uppercase',
                   color: 'rgba(255,255,255,0.28)',
@@ -394,7 +394,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                   {answer.length === 0 && (
                     <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
                       <div style={{
-                        fontFamily: "'Sora', sans-serif",
+                        fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: TYPE.bodySmall.fontSize, fontWeight: TYPE.bodySmall.fontWeight,
                         lineHeight: 1.7, letterSpacing: '0.01em',
                         color: 'rgba(245,247,255,0.30)',
@@ -402,7 +402,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                         Write anything you remember.
                       </div>
                       <div style={{
-                        fontFamily: "'Sora', sans-serif",
+                        fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: 13, fontWeight: 400, lineHeight: 1.5,
                         color: 'rgba(245,247,255,0.16)',
                         marginTop: 2,
@@ -422,7 +422,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                       width: '100%', padding: 0,
                       background: 'transparent', border: 'none', outline: 'none',
                       resize: 'none',
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       ...TYPE.bodySmall,
                       color: '#F5F7FF',
                       lineHeight: 1.7, letterSpacing: '0.01em',
@@ -434,7 +434,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
 
               <div style={{
                 display: 'flex', justifyContent: 'flex-end',
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: 12, fontWeight: 500, letterSpacing: '0.02em',
                 color: 'rgba(245,247,255,0.25)',
                 marginBottom: error ? SPACING.compact : SPACING.standard,
@@ -444,7 +444,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
 
               {error && (
                 <p style={{
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   ...TYPE.bodySmall,
                   color: '#E05A52',
                   margin: `0 0 ${SPACING.standard}px`,
@@ -456,7 +456,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
 
             <button onClick={submit} {...pressProps} style={inputBtnStyle}>
               <span style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: BUTTONS.secondary.fontSize, fontWeight: BUTTONS.secondary.fontWeight,
                 color: accent,
               }}>
@@ -483,7 +483,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               marginBottom: SPACING.standard,
             }} />
             <p style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               ...TYPE.body,
               color: 'rgba(255,255,255,0.55)',
               textAlign: 'center', margin: 0,
@@ -504,7 +504,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               justifyContent: 'center',
             }}>
               <h1 style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 ...TYPE.sectionTitle,
                 color: '#F5F7FF',
                 margin: 0, marginBottom: SPACING.compact,
@@ -518,7 +518,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               }}>
                 <div style={{ display: 'inline-block' }}>
                   <span style={{
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     ...TYPE.hero,
                     color: accent,
                   }}>
@@ -531,7 +531,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                   }} />
                 </div>
                 <span style={{
-                  fontFamily: "'Sora', sans-serif",
+                  fontFamily: TYPE.bodyText.fontFamily,
                   ...TYPE.bodySmall,
                   color: 'rgba(245,247,255,0.55)',
                 }}>
@@ -540,7 +540,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               </div>
 
               <h2 style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 ...TYPE.cardTitle,
                 color: '#F5F7FF',
                 textAlign: 'center',
@@ -550,7 +550,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               </h2>
 
               <p style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 ...TYPE.bodySmall,
                 color: 'rgba(168,159,194,0.7)',
                 textAlign: 'center', lineHeight: 1.6,

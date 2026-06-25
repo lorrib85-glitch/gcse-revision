@@ -3,6 +3,7 @@ import { MOTION } from '../../constants/motion.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import CinematicShell from '../layout/CinematicShell.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 const BRONZE = '#D69B45'
 const BRONZE_RGB = '214,155,69'
@@ -247,7 +248,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
   }
 
   return (
-    <CinematicShell style={{ zIndex: 1000, display: 'flex', flexDirection: 'column', fontFamily: "'Sora', sans-serif" }}>
+    <CinematicShell style={{ zIndex: 1000, display: 'flex', flexDirection: 'column', fontFamily: TYPE.bodyText.fontFamily }}>
       <style>{CSS}</style>
 
       <div
@@ -583,7 +584,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                       : '0 2px 8px rgba(0,0,0,0.42), 0 1px 3px rgba(0,0,0,0.32)',
                     cursor: checked ? 'default' : 'pointer',
                     textAlign: 'left',
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     fontSize: 13.5,
                     lineHeight: 1.28,
                     color: TEXT_PRIMARY,

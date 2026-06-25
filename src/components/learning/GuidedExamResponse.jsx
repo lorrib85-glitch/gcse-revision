@@ -54,7 +54,7 @@ function SourcesCard({ sources, accent, open, onToggle }) {
       <button onClick={onToggle} style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         width: '100%', padding: '10px 14px', background: 'none', border: 'none', cursor: 'pointer',
-        fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 11,
+        fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 11,
         letterSpacing: '0.14em', textTransform: 'uppercase', color: accent,
       }}>
         <span>{sources.length > 1 ? `Sources (${sources.length})` : 'Source'}</span>
@@ -64,11 +64,11 @@ function SourcesCard({ sources, accent, open, onToggle }) {
         <div style={{ padding: '0 14px 14px', display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
           {sources.map(src => (
             <div key={src.label}>
-              <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: accent, marginBottom: 4 }}>
+              <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: accent, marginBottom: 4 }}>
                 {src.label}
               </div>
               {src.attribution && (
-                <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 11.5, fontStyle: 'italic', color: 'rgba(245,238,225,0.5)', marginBottom: 6 }}>
+                <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11.5, fontStyle: 'italic', color: 'rgba(245,238,225,0.5)', marginBottom: 6 }}>
                   {src.attribution}
                 </div>
               )}
@@ -178,18 +178,18 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
     height: 52, flexShrink: 0,
   }
   const labelStyle = {
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: TYPE.bodyText.fontFamily,
     fontWeight: 700, fontSize: 11,
     letterSpacing: '0.14em', textTransform: 'uppercase',
     color: 'rgba(255,255,255,0.55)',
   }
   const marksBadgeStyle = {
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: TYPE.bodyText.fontFamily,
     fontWeight: 700, fontSize: 11,
     letterSpacing: '0.1em',
   }
   const sectionHeadingStyle = {
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: TYPE.bodyText.fontFamily,
     fontWeight: 700, fontSize: 9,
     letterSpacing: '0.16em', textTransform: 'uppercase',
     color: 'rgba(255,255,255,0.3)',
@@ -201,7 +201,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
     border: 'none',
     background: enabled ? accent : 'rgba(255,255,255,0.08)',
     color: enabled ? '#0D0F14' : 'rgba(255,255,255,0.3)',
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: TYPE.bodyText.fontFamily,
     fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
     cursor: enabled ? 'pointer' : 'default',
     transition: `transform ${BUTTONS.continue.transition}`,
@@ -215,7 +215,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
       ? `linear-gradient(135deg, ${accent}, ${accent}B8)`
       : 'rgba(58,32,8,0.07)',
     color: enabled ? '#2A1404' : 'rgba(58,32,8,0.4)',
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: TYPE.bodyText.fontFamily,
     fontWeight: 700, fontSize: 14,
     letterSpacing: '0.02em',
     cursor: enabled ? 'pointer' : 'default',
@@ -226,7 +226,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
     padding: '10px 14px', borderRadius: RADII.small,
     background: 'rgba(192,80,85,0.12)',
     border: '1px solid rgba(192,80,85,0.3)',
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: TYPE.bodyText.fontFamily,
     fontSize: 12.5, color: '#E8746A',
   }
 
@@ -291,7 +291,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
             padding: `0 ${SPACING.standard}px`,
           }}>
             <div style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 700, fontSize: 11,
               letterSpacing: '0.16em', textTransform: 'uppercase',
               color: accent,
@@ -314,7 +314,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
             </div>
 
             <p style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 400, fontSize: 15,
               color: 'rgba(255,255,255,0.5)',
               lineHeight: 1.6,
@@ -403,7 +403,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
               {exam.sections.map((section, i) => (
                 <div key={section.label}>
                   <div style={{
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     fontWeight: 700, fontSize: 11,
                     letterSpacing: '0.1em', textTransform: 'uppercase',
                     color: isGeneral ? GENERAL.slate : 'rgba(58,32,8,0.55)',
@@ -422,7 +422,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
                       width: '100%', boxSizing: 'border-box',
                       border: 'none', borderBottom: '1.5px solid rgba(255,255,255,0.15)',
                       padding: '4px 4px 8px',
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: TYPE.bodyText.fontFamily,
                       fontSize: 15, fontWeight: 400, lineHeight: 1.6,
                       color: GENERAL.softWhite,
                       caretColor: GENERAL.teal,
@@ -467,7 +467,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         <div style={{
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.bodyText.fontFamily,
           fontWeight: 500, fontSize: 13,
           letterSpacing: '0.1em',
           color: 'rgba(255,255,255,0.4)',
@@ -501,7 +501,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
 
         <div style={{ flex: 1, overflowY: 'auto', padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.separation}px` }}>
           <div style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 900, fontSize: 38,
             color: accent, letterSpacing: '-0.03em',
             marginBottom: 6,
@@ -518,7 +518,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
           </div>
 
           <p style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontWeight: 400, fontSize: 14,
             color: 'rgba(255,255,255,0.6)',
             lineHeight: 1.6,
@@ -532,10 +532,10 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
               <div style={sectionHeadingStyle}>Section by section</div>
               {result.sectionFeedback.map((sf, i) => (
                 <div key={i} style={{ marginBottom: SPACING.compact }}>
-                  <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 12.5, color: accent, marginBottom: 3 }}>
+                  <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 12.5, color: accent, marginBottom: 3 }}>
                     {sf.label}
                   </div>
-                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, lineHeight: 1.55, color: 'rgba(255,255,255,0.55)' }}>
+                  <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, lineHeight: 1.55, color: 'rgba(255,255,255,0.55)' }}>
                     {sf.comment}
                   </div>
                 </div>
@@ -549,7 +549,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
               {result.improvementSuggestions.map((s, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: SPACING.micro, marginBottom: SPACING.micro }}>
                   <div style={{ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: `${accent}CC` }} />
-                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, lineHeight: 1.55, color: 'rgba(255,255,255,0.7)' }}>
+                  <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, lineHeight: 1.55, color: 'rgba(255,255,255,0.7)' }}>
                     {s}
                   </div>
                 </div>
@@ -569,7 +569,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
                   {result.rewrittenSentence.improvedSentence}
                 </div>
               </div>
-              <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, lineHeight: 1.55, color: 'rgba(255,255,255,0.6)' }}>
+              <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, lineHeight: 1.55, color: 'rgba(255,255,255,0.6)' }}>
                 {result.rewrittenSentence.whyItScoresBetter}
               </div>
             </div>
@@ -583,7 +583,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
               border: '1px solid rgba(255,255,255,0.08)',
             }}>
               <div style={sectionHeadingStyle}>Noticed</div>
-              <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, lineHeight: 1.6, color: 'rgba(255,255,255,0.6)' }}>
+              <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, lineHeight: 1.6, color: 'rgba(255,255,255,0.6)' }}>
                 We've noticed you tend towards {TECHNIQUE_LABELS[recurringPattern.type] || 'the same kind of slip'} — we'll bring this back up.
               </div>
             </div>

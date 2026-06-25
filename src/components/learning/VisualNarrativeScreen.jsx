@@ -258,7 +258,7 @@ export default function VisualNarrativeScreen({
                     {beat.source && (
                       <div style={{
                         marginTop: 20,
-                        fontFamily: "'Outfit', sans-serif",
+                        fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: 10, lineHeight: 1.5,
                         color: 'rgba(255,255,255,0.22)',
                         animation: 'vnFadeIn 600ms ease 200ms both',

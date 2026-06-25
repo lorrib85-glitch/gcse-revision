@@ -8,6 +8,7 @@ import ContinueCTA from '../core/ContinueCTA.jsx'
 // reach the full viewport width; InteractionShell's 16px inset would clip the rail and break
 // the scroll-snap alignment.
 import CinematicShell from '../layout/CinematicShell.jsx'
+import { TYPE } from '../../constants/typography.js'
 
 // ─── TimelineChain v1 ───────────────────────────────────────────────────────
 //
@@ -69,7 +70,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
     })
   }
 
-  const F = { fontFamily: "'Sora', sans-serif" }
+  const F = { fontFamily: TYPE.bodyText.fontFamily }
 
   return (
     <CinematicShell style={{
@@ -173,7 +174,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
 }
 
 function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = CARD_W, cardH = CARD_H, railH = 20, scrollAlign = 'center' }) {
-  const F = { fontFamily: "'Sora', sans-serif" }
+  const F = { fontFamily: TYPE.bodyText.fontFamily }
   const isFirst = index === 0
   const isLast = index === total - 1
 
@@ -324,7 +325,7 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
     })
   }
 
-  const F = { fontFamily: "'Sora', sans-serif" }
+  const F = { fontFamily: TYPE.bodyText.fontFamily }
 
   return (
     <div style={F}>

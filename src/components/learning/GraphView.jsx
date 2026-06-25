@@ -204,7 +204,7 @@ function PieChart({ data, accent, accentSecondary, accentTertiary }) {
         {slices.map((s, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <div style={{ width: 10, height: 10, borderRadius: 3, background: s.color, flexShrink: 0 }} />
-            <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
+            <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
               {s.label} ({Math.round((s.value / total) * 100)}%)
             </span>
           </div>

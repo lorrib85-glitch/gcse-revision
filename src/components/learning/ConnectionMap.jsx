@@ -94,7 +94,7 @@ function RetrievalQ({ node, accent, rgb }) {
   return (
     <div style={{ marginTop: 2 }}>
       <p style={{
-        fontFamily: "'Sora', sans-serif",
+        fontFamily: TYPE.bodyText.fontFamily,
         fontSize: 10,
         fontWeight: 700,
         letterSpacing: '0.10em',
@@ -137,7 +137,7 @@ function RetrievalQ({ node, accent, rgb }) {
             padding: '6px 14px',
             color: `rgba(${rgb}, 0.9)`,
             cursor: 'pointer',
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontSize: '0.72rem',
             fontWeight: 600,
             letterSpacing: '0.07em',
@@ -320,7 +320,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               transition={centreT()}
             >
               <span style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: TYPE.bodyText.fontFamily,
                 color: accent,
                 fontSize: 12,
                 lineHeight: 1.15,
@@ -416,7 +416,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                       }}
                     >
                       <span style={{
-                        fontFamily: "'Sora', sans-serif",
+                        fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: 11,
                         lineHeight: 1.25,
                         fontWeight: 700,
@@ -462,7 +462,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
 
           {/* ── Progress counter — 12px below map ──────────────────────────── */}
           <p style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: TYPE.bodyText.fontFamily,
             fontSize: 12,
             letterSpacing: '0.04em',
             color: 'rgba(237,224,200,0.55)',
@@ -475,7 +475,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
           {/* ── First-tap hint — 12px below counter ────────────────────────── */}
           {explored.size === 0 && (
             <p style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontSize: 15,
               color: `rgba(${rgb}, 0.75)`,
               textAlign: 'center',
@@ -523,7 +523,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                 }}>
                   {/* Explanation */}
                   <p style={{
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: TYPE.bodyText.fontFamily,
                     fontSize: 15,
                     lineHeight: 1.65,
                     fontWeight: 400,
@@ -552,7 +552,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                       paddingLeft: SPACING.compact,
                     }}>
                       <p style={{
-                        fontFamily: "'Sora', sans-serif",
+                        fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: 10,
                         fontWeight: 700,
                         letterSpacing: '0.10em',
@@ -563,7 +563,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                         Exam link
                       </p>
                       <p style={{
-                        fontFamily: "'Sora', sans-serif",
+                        fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: 13,
                         lineHeight: 1.55,
                         fontWeight: 500,
@@ -598,7 +598,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
           {/* Progress nudge — subtle, 18px below last element */}
           {!allExplored && nodes.length > 0 && (
             <p style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: TYPE.bodyText.fontFamily,
               fontSize: 11,
               letterSpacing: '0.05em',
               color: 'rgba(237,224,200,0.35)',
