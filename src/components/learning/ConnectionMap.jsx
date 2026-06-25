@@ -6,6 +6,7 @@ import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 
 // ─── Idle float styles — 2px max, no rotation ────────────────────────────────
 function ensureFloatStyles() {
@@ -148,6 +149,10 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
   const positions = resolvePositions(nodes.length)
   const allExplored = nodes.length > 0 && explored.size >= nodes.length
   const activeNode = nodes.find(n => n.id === activeId)
+  const currentIndex = activeNode ? Math.max(0, nodes.findIndex(n => n.id === activeId)) : 0
+  const viewedIndexes = nodes
+    .map((node, index) => explored.has(node.id) ? index : null)
+    .filter(index => index !== null)
 
   function handleNodeTap(node) {
     setActiveId(node.id)
@@ -228,15 +233,15 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
             <p style={{ ...TYPE.bodySmall, color: `rgba(${rgb}, 0.76)`, margin: 0, lineHeight: 1.45, textAlign: 'center' }}>
               {instruction || 'Tap each concept to explore it.'}
             </p>
-            <div aria-label={`${explored.size} of ${nodes.length} concepts explored`} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 7 }}>
-              {nodes.map(node => {
-                const isViewed = explored.has(node.id)
-                const isActive = activeId === node.id
-                return (
-                  <span key={node.id} aria-hidden="true" style={{ width: isActive ? 18 : 8, height: 8, borderRadius: 999, background: isViewed ? `rgba(${rgb}, 0.78)` : 'rgba(237,224,200,0.18)', boxShadow: isActive ? `0 0 8px rgba(${rgb}, 0.35)` : 'none', transition: `all ${MOTION.duration.fast} ${MOTION.easing.standard}` }} />
-                )
-              })}
-            </div>
+            <SequenceProgress
+              total={nodes.length}
+              current={currentIndex}
+              viewed={viewedIndexes}
+              accent={accent}
+              accentRgb={rgb}
+              compact
+              ariaLabel="Connection map progress"
+            />
             {!allExplored && nodes.length > 0 && <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, letterSpacing: '0.025em', color: 'rgba(237,224,200,0.34)', margin: 0 }}>Explore each belief to continue</p>}
           </div>
 
