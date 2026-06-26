@@ -13,18 +13,12 @@ const SCORE_PARTIAL = 0.3
 const RECALL_DURATION = 3 * 60
 const SUCCESS_RGB = '117,220,208'
 const LOW_TIME_RGB = '201,123,99'
-const DEFAULT_RECALL_PROMPTS = ['People', 'Causes', 'Changes', 'Evidence']
+const DEFAULT_RECALL_PROMPTS = ['people', 'causes', 'changes', 'evidence']
 
 function formatTime(totalSeconds) {
   const m = Math.floor(totalSeconds / 60)
   const s = totalSeconds % 60
   return `${m}:${String(s).padStart(2, '0')}`
-}
-
-function countIdeas(text) {
-  const trimmed = text.trim()
-  if (!trimmed) return 0
-  return trimmed.split(/[\n.,;]+/).map(s => s.trim()).filter(Boolean).length
 }
 
 function lerpColor(rgbA, rgbB, t) {
@@ -50,6 +44,29 @@ function ensureStyles() {
     @keyframes prk-spin {
       from { transform: rotate(0deg); }
       to   { transform: rotate(360deg); }
+    }
+    @keyframes prk-complete-glow {
+      0% {
+        box-shadow: 0 0 28px rgba(213,160,73,0.09), inset 0 1px 0 rgba(255,255,255,0.04);
+        border-color: rgba(213,160,73,0.28);
+      }
+      42% {
+        box-shadow: 0 0 0 1px rgba(${SUCCESS_RGB},0.18), 0 0 44px rgba(${SUCCESS_RGB},0.22), inset 0 1px 0 rgba(255,255,255,0.07);
+        border-color: rgba(${SUCCESS_RGB},0.62);
+      }
+      100% {
+        box-shadow: 0 0 30px rgba(${SUCCESS_RGB},0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+        border-color: rgba(${SUCCESS_RGB},0.44);
+      }
+    }
+    .prk-scroll {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .prk-scroll::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
     }
   `
   document.head.appendChild(el)
@@ -96,34 +113,7 @@ function FeatherIcon({ color }) {
   )
 }
 
-function PromptIcon({ label, color }) {
-  const key = label.toLowerCase()
-  if (key.includes('people') || key.includes('person')) {
-    return (
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-        <circle cx="12" cy="7" r="4" />
-      </svg>
-    )
-  }
-  if (key.includes('cause') || key.includes('change')) {
-    return (
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 12a9 9 0 1 1-2.64-6.36" />
-        <polyline points="21 3 21 9 15 9" />
-      </svg>
-    )
-  }
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <polyline points="14 2 14 8 20 8" />
-      <line x1="8" y1="13" x2="16" y2="13" />
-    </svg>
-  )
-}
-
-function ProgressRail({ rgb }) {
+function ProgressRail({ rgb, complete }) {
   return (
     <div aria-hidden="true" style={{
       width: 'min(68vw, 330px)',
@@ -134,46 +124,66 @@ function ProgressRail({ rgb }) {
       gap: 0,
       margin: '0 auto',
     }}>
-      {[0, 1, 2, 3, 4, 5].map((dot, index) => (
-        <div key={dot} style={{ display: 'flex', alignItems: 'center' }}>
-          <span style={{
-            width: index === 0 ? 11 : 9,
-            height: index === 0 ? 11 : 9,
-            borderRadius: '50%',
-            background: index === 0 ? `rgb(${rgb})` : 'rgba(245,247,255,0.22)',
-            boxShadow: index === 0 ? `0 0 12px rgba(${rgb},0.32)` : 'none',
-          }} />
-          {index < 5 && (
+      {[0, 1, 2, 3, 4, 5].map((dot, index) => {
+        const lit = index === 0 || complete
+        return (
+          <div key={dot} style={{ display: 'flex', alignItems: 'center' }}>
             <span style={{
-              width: 'min(9vw, 38px)',
-              height: 1,
-              background: index === 0 ? `linear-gradient(90deg, rgba(${rgb},0.65), rgba(245,247,255,0.16))` : 'rgba(245,247,255,0.11)',
+              width: lit ? 10 : 8,
+              height: lit ? 10 : 8,
+              borderRadius: '50%',
+              background: lit ? `rgb(${rgb})` : 'rgba(245,247,255,0.20)',
+              boxShadow: lit ? `0 0 14px rgba(${rgb},0.34)` : 'none',
+              transition: `background ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
             }} />
-          )}
-        </div>
-      ))}
+            {index < 5 && (
+              <span style={{
+                width: 'min(9vw, 38px)',
+                height: 1,
+                background: complete
+                  ? `linear-gradient(90deg, rgba(${rgb},0.58), rgba(${rgb},0.28))`
+                  : index === 0
+                    ? `linear-gradient(90deg, rgba(${rgb},0.55), rgba(245,247,255,0.12))`
+                    : 'rgba(245,247,255,0.10)',
+                transition: `background ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
+              }} />
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
 
-function PromptChip({ label, rgb }) {
-  const chipColor = `rgba(${rgb},0.72)`
+function MemoryNudges({ prompts, rgb }) {
+  const nudges = prompts.map(p => String(p).toLowerCase())
   return (
     <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: 7,
-      padding: '7px 10px',
-      borderRadius: 12,
-      background: 'linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018))',
-      border: '1px solid rgba(255,255,255,0.075)',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.035)',
+      display: 'flex',
+      alignItems: 'baseline',
+      gap: 7,
+      flexWrap: 'wrap',
+      padding: '0 2px',
+      marginBottom: SPACING.standard,
       fontFamily: TYPE.bodyText.fontFamily,
-      fontSize: 11,
-      fontWeight: 650,
-      letterSpacing: '0.01em',
-      color: 'rgba(245,247,255,0.50)',
     }}>
-      <PromptIcon label={label} color={chipColor} />
-      {label}
+      <span style={{
+        fontSize: 11,
+        fontWeight: 750,
+        letterSpacing: '0.11em',
+        textTransform: 'uppercase',
+        color: `rgba(${rgb},0.58)`,
+      }}>
+        Memory nudges
+      </span>
+      <span style={{
+        fontSize: 12,
+        fontWeight: 500,
+        color: 'rgba(245,247,255,0.38)',
+        letterSpacing: '0.01em',
+      }}>
+        {nudges.join(' · ')}
+      </span>
     </div>
   )
 }
@@ -183,7 +193,7 @@ function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
   const missingList = (missing.length ? missing : (results.concepts || []).filter(c => c.score < SCORE_RECALLED)).slice(0, 3)
 
   return (
-    <div style={{
+    <div className="prk-scroll" style={{
       position: 'fixed',
       left: SPACING.standard,
       right: SPACING.standard,
@@ -327,7 +337,6 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
   const [secondsLeft, setSecondsLeft] = useState(RECALL_DURATION)
 
   const recallPrompts = block.recallPrompts || DEFAULT_RECALL_PROMPTS
-  const ideaCount = countIdeas(answer)
   const timeFrac = secondsLeft / RECALL_DURATION
   const shiftAmount = timeFrac >= 0.4 ? 0 : 1 - (timeFrac / 0.4)
   const ringRgb = lerpColor(rgb, LOW_TIME_RGB, shiftAmount)
@@ -424,7 +433,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
         zIndex: 0,
       }} />
 
-      <div style={{
+      <div className="prk-scroll" style={{
         position: 'relative',
         zIndex: 1,
         display: 'flex',
@@ -439,7 +448,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
           <div style={{ position: 'absolute', left: 0, top: 0 }}>
             <BackButton onClick={onBack} />
           </div>
-          <ProgressRail rgb={rgb} />
+          <ProgressRail rgb={rgb} complete={hasResults} />
         </div>
 
         {(phase === 'input' || phase === 'results') && (
@@ -470,7 +479,6 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               <div style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 8,
                 padding: '7px 11px',
                 borderRadius: RADII.pill,
                 background: `rgba(${ringRgb},0.10)`,
@@ -479,13 +487,6 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 marginBottom: SPACING.standard,
               }}>
                 <span style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  background: `rgb(${ringRgb})`,
-                  boxShadow: `0 0 8px rgba(${ringRgb},0.40)`,
-                }} />
-                <span style={{
                   fontFamily: TYPE.bodyText.fontFamily,
                   fontSize: 12,
                   fontWeight: 750,
@@ -493,20 +494,27 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                   fontVariantNumeric: 'tabular-nums',
                   letterSpacing: '0.02em',
                 }}>
-                  {formatTime(secondsLeft)}
+                  {formatTime(secondsLeft)} left
                 </span>
               </div>
 
               <div style={{
                 position: 'relative',
                 background: 'linear-gradient(180deg, rgba(20,23,29,0.93), rgba(11,13,18,0.96))',
-                border: isFocused ? `1.5px solid rgba(${SUCCESS_RGB},0.58)` : `1.5px solid rgba(${rgb},0.28)`,
+                border: hasResults
+                  ? `1.5px solid rgba(${SUCCESS_RGB},0.44)`
+                  : isFocused
+                    ? `1.5px solid rgba(${SUCCESS_RGB},0.58)`
+                    : `1.5px solid rgba(${rgb},0.28)`,
                 borderRadius: 24,
                 padding: `${SPACING.compact}px ${SPACING.standard}px`,
                 marginBottom: SPACING.compact,
-                boxShadow: isFocused
-                  ? `0 0 0 1px rgba(${SUCCESS_RGB},0.13), 0 0 36px rgba(${SUCCESS_RGB},0.14), inset 0 1px 0 rgba(255,255,255,0.05)`
-                  : `0 0 28px rgba(${rgb},0.09), inset 0 1px 0 rgba(255,255,255,0.04)`,
+                boxShadow: hasResults
+                  ? `0 0 30px rgba(${SUCCESS_RGB},0.12), inset 0 1px 0 rgba(255,255,255,0.05)`
+                  : isFocused
+                    ? `0 0 0 1px rgba(${SUCCESS_RGB},0.13), 0 0 36px rgba(${SUCCESS_RGB},0.14), inset 0 1px 0 rgba(255,255,255,0.05)`
+                    : `0 0 28px rgba(${rgb},0.09), inset 0 1px 0 rgba(255,255,255,0.04)`,
+                animation: hasResults ? 'prk-complete-glow 900ms ease-out both' : 'none',
                 transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
               }}>
                 <div style={{
@@ -578,28 +586,16 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                   position: 'absolute',
                   right: 18,
                   bottom: 16,
-                  color: `rgba(${SUCCESS_RGB},0.33)`,
+                  color: hasResults ? `rgba(${SUCCESS_RGB},0.70)` : `rgba(${SUCCESS_RGB},0.33)`,
                   opacity: 0.9,
+                  filter: hasResults ? `drop-shadow(0 0 10px rgba(${SUCCESS_RGB},0.30))` : 'none',
+                  transition: `color ${MOTION.duration.standard} ${MOTION.easing.gentle}, filter ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
                 }}>
                   <FeatherIcon color="currentColor" />
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: SPACING.micro }}>
-                <span style={{
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  fontSize: 12,
-                  fontWeight: 500,
-                  letterSpacing: '0.02em',
-                  color: 'rgba(245,247,255,0.32)',
-                }}>
-                  Ideas captured: {ideaCount}
-                </span>
-              </div>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: error ? SPACING.compact : SPACING.standard }}>
-                {recallPrompts.slice(0, 4).map(p => <PromptChip key={p} label={p} rgb={rgb} />)}
-              </div>
+              <MemoryNudges prompts={recallPrompts.slice(0, 4)} rgb={rgb} />
 
               {error && (
                 <p style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.bodySmall, color: '#E05A52', margin: `0 0 ${SPACING.standard}px` }}>
