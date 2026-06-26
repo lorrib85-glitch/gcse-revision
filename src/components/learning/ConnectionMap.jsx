@@ -170,12 +170,11 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               <motion.div key="learn-state" initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: prefersReduced ? 0 : 8 }} transition={fade} style={{ position: 'relative', width: '100%', maxWidth: 360, margin: '0 auto', minHeight: 456, borderRadius: 34, padding: 8, background: `radial-gradient(circle at 50% 100%, rgba(${mapRgb},0.12) 0%, transparent 32%), rgba(2,2,1,0.38)`, boxShadow: '0 26px 60px rgba(0,0,0,0.48)' }}>
                 <div aria-hidden="true" style={{ position: 'absolute', inset: 0, borderRadius: 34, background: `radial-gradient(circle at 50% 44%, rgba(${mapRgb},0.10) 0%, transparent 46%)`, opacity: 0.9 }} />
                 <div style={{ position: 'relative', minHeight: 440, borderRadius: 28, background: `linear-gradient(180deg, rgba(23,16,8,0.985) 0%, rgba(12,9,5,0.978) 100%)`, border: `1px solid rgba(${mapRgb}, 0.34)`, borderTop: `1.5px solid rgba(${mapRgb}, 0.62)`, padding: '16px 16px 14px', display: 'flex', flexDirection: 'column', gap: 12, boxShadow: `0 18px 42px rgba(0,0,0,0.34), 0 0 24px rgba(${mapRgb},0.08), inset 0 1px 0 rgba(${mapRgb},0.10)` }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, flexShrink: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', gap: 12, flexShrink: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
                       {panelNodeImage && <img src={panelNodeImage} alt="" aria-hidden="true" style={{ width: 34, height: 34, objectFit: 'cover', borderRadius: panelNode.id === 'galen' || panelNode.id === 'experience' ? '50%' : 9, opacity: 0.72, border: `1px solid rgba(${mapRgb},0.26)`, filter: 'sepia(0.24) saturate(0.8)', flexShrink: 0 }} />}
                       <p style={{ ...TYPE.cardTitle, margin: 0, color: '#EDE0C8', lineHeight: 1.18 }}>{panelNode.label}</p>
                     </div>
-                    <button onClick={handleClosePanel} aria-label="Close explanation" style={{ width: 44, height: 44, borderRadius: RADII.pill, border: `1px solid rgba(${mapRgb},0.24)`, background: 'rgba(0,0,0,0.22)', color: 'rgba(237,224,200,0.70)', fontFamily: TYPE.bodyText.fontFamily, fontSize: 18, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}>×</button>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
