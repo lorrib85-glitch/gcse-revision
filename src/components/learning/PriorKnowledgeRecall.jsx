@@ -3,23 +3,18 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
-// CinematicShell used here because the atmospheric background uses position:fixed with a
-// custom brightness+grayscale filter that must reach the full viewport; this screen is also
-// rendered without a LearningHeader so ContentShell's 80px top clearance would waste space.
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { BUTTONS } from '../../constants/buttons.js'
 import { TYPE } from '../../constants/typography.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 import BackButton from '../core/BackButton.jsx'
 
-// Concept score thresholds
-const SCORE_RECALLED = 0.7   // >= recalled (teal)
-const SCORE_PARTIAL  = 0.3   // >= partial (amber), < recalled
-                              // < 0.3 = missing — logged to weakness tracker
-
-// Recall timer — gives the learner a focused window to write before checking.
-// Pauses whenever the tab/screen is not visible and resumes from where it left off.
+const SCORE_RECALLED = 0.7
+const SCORE_PARTIAL = 0.3
 const RECALL_DURATION = 3 * 60
+const SUCCESS_RGB = '117,220,208'
+const LOW_TIME_RGB = '201,123,99'
+const DEFAULT_RECALL_PROMPTS = ['People', 'Theories', 'Causes', 'Treatments', 'Church']
 
 function formatTime(totalSeconds) {
   const m = Math.floor(totalSeconds / 60)
@@ -27,27 +22,11 @@ function formatTime(totalSeconds) {
   return `${m}:${String(s).padStart(2, '0')}`
 }
 
-// Muted memory-nudge chips shown above the recall box. Chapters can override
-// with `block.recallPrompts` (array of strings) for topic-specific nudges.
-const DEFAULT_RECALL_PROMPTS = ['People', 'Theories', 'Causes', 'Treatments', 'Church']
-
-// Rough "ideas captured" count — splits free text on sentence/line/list breaks.
 function countIdeas(text) {
   const trimmed = text.trim()
   if (!trimmed) return 0
   return trimmed.split(/[\n.,;]+/).map(s => s.trim()).filter(Boolean).length
 }
-
-// Recall timer ring
-const RING_SIZE   = 28
-const RING_STROKE = 3
-const RING_RADIUS = RING_SIZE / 2 - RING_STROKE / 2
-const RING_CIRC   = 2 * Math.PI * RING_RADIUS
-
-// Warm, muted tone the timer ring gently shifts toward LOW_TIME_RGB in the final
-// 40% of the countdown — no flashing, just a slow warm drift.
-const LOW_TIME_RGB = '201,123,99'
-const SUCCESS_RGB = '117,220,208'
 
 function lerpColor(rgbA, rgbB, t) {
   const a = rgbA.split(',').map(Number)
@@ -66,7 +45,7 @@ function ensureStyles() {
       to   { opacity: 1; transform: translateY(0); }
     }
     @keyframes prk-sheet-in {
-      from { opacity: 0; transform: translateY(26px) scale(0.98); }
+      from { opacity: 0; transform: translateY(24px) scale(0.98); }
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
     @keyframes prk-spin {
@@ -83,6 +62,7 @@ async function analyseRecall(answer, concepts, sourceContent) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ answer, concepts, sourceContent: sourceContent || '' }),
   })
+
   if (!response.ok) {
     let detail = ''
     try {
@@ -93,6 +73,7 @@ async function analyseRecall(answer, concepts, sourceContent) {
     }
     throw new Error(`Server error ${response.status}${detail ? `: ${detail}` : ''}`)
   }
+
   const data = await response.json()
   if (data.error) throw new Error(data.error)
   return data
@@ -100,7 +81,7 @@ async function analyseRecall(answer, concepts, sourceContent) {
 
 function CheckIcon({ color = `rgb(${SUCCESS_RGB})` }) {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12" />
     </svg>
   )
@@ -143,21 +124,54 @@ function PromptIcon({ label, color }) {
   )
 }
 
-// ─── PromptChip ───────────────────────────────────────────────────────────────
-// Muted, non-interactive memory nudge — visual only.
+function ProgressRail({ rgb }) {
+  return (
+    <div aria-hidden="true" style={{
+      width: 'min(68vw, 330px)',
+      height: 22,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 0,
+      margin: '0 auto',
+    }}>
+      {[0, 1, 2, 3, 4, 5].map((dot, index) => (
+        <div key={dot} style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{
+            width: index === 0 ? 11 : 9,
+            height: index === 0 ? 11 : 9,
+            borderRadius: '50%',
+            background: index === 0 ? `rgb(${rgb})` : 'rgba(245,247,255,0.22)',
+            boxShadow: index === 0 ? `0 0 12px rgba(${rgb},0.32)` : 'none',
+          }} />
+          {index < 5 && (
+            <span style={{
+              width: 'min(9vw, 38px)',
+              height: 1,
+              background: index === 0 ? `linear-gradient(90deg, rgba(${rgb},0.65), rgba(245,247,255,0.16))` : 'rgba(245,247,255,0.11)',
+            }} />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function PromptChip({ label, rgb }) {
-  const chipColor = `rgba(${rgb},0.72)`
+  const chipColor = `rgba(${rgb},0.76)`
   return (
     <div style={{
       display: 'inline-flex', alignItems: 'center', gap: 7,
       padding: '9px 12px',
-      borderRadius: RADII.small,
-      background: 'linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025))',
-      border: '1px solid rgba(255,255,255,0.085)',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+      borderRadius: 13,
+      background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025))',
+      border: '1px solid rgba(255,255,255,0.095)',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.045)',
       fontFamily: TYPE.bodyText.fontFamily,
-      fontSize: 12, fontWeight: 650, letterSpacing: '0.02em',
-      color: 'rgba(245,247,255,0.54)',
+      fontSize: 12,
+      fontWeight: 700,
+      letterSpacing: '0.01em',
+      color: 'rgba(245,247,255,0.58)',
     }}>
       <PromptIcon label={label} color={chipColor} />
       {label}
@@ -166,6 +180,9 @@ function PromptChip({ label, rgb }) {
 }
 
 function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
+  const rememberedList = (recalled.length ? recalled : (results.concepts || []).slice(0, 3)).slice(0, 3)
+  const missingList = (missing.length ? missing : (results.concepts || []).filter(c => c.score < SCORE_RECALLED)).slice(0, 3)
+
   return (
     <div style={{
       position: 'fixed',
@@ -173,13 +190,13 @@ function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
       right: SPACING.standard,
       bottom: `calc(${SPACING.standard}px + env(safe-area-inset-bottom))`,
       zIndex: 6,
-      maxHeight: '56vh',
+      maxHeight: '58vh',
       overflow: 'auto',
       padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.compact}px`,
-      borderRadius: 28,
-      background: 'linear-gradient(180deg, rgba(17,19,24,0.98), rgba(9,11,16,0.985))',
-      border: '1px solid rgba(255,255,255,0.105)',
-      boxShadow: `0 24px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(${rgb},0.06), inset 0 1px 0 rgba(255,255,255,0.05)`,
+      borderRadius: 30,
+      background: 'linear-gradient(180deg, rgba(17,19,24,0.985), rgba(8,10,15,0.99))',
+      border: '1px solid rgba(255,255,255,0.11)',
+      boxShadow: `0 26px 70px rgba(0,0,0,0.58), 0 0 0 1px rgba(${rgb},0.06), inset 0 1px 0 rgba(255,255,255,0.055)`,
       animation: 'prk-sheet-in 360ms cubic-bezier(0.2,0.8,0.2,1) both',
     }}>
       <button
@@ -191,7 +208,7 @@ function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
           width: 38, height: 38, borderRadius: '50%',
           border: '1px solid rgba(255,255,255,0.12)',
           background: 'rgba(255,255,255,0.035)',
-          color: 'rgba(245,247,255,0.62)',
+          color: 'rgba(245,247,255,0.64)',
           fontSize: 24, lineHeight: '34px',
           cursor: 'pointer',
         }}
@@ -209,34 +226,23 @@ function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
         }}>
           <CheckIcon />
         </div>
-        <h2 style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          ...TYPE.cardTitle,
-          color: '#F5F7FF',
-          margin: 0,
-        }}>
+        <h2 style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.cardTitle, color: '#F5F7FF', margin: 0 }}>
           You remembered
         </h2>
       </div>
 
       <div style={{ display: 'grid', gap: 10, marginBottom: SPACING.standard }}>
-        {(recalled.length ? recalled : (results.concepts || []).slice(0, 3)).slice(0, 3).map(concept => (
+        {rememberedList.map(concept => (
           <div key={concept.tag || concept.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{
               width: 24, height: 24, borderRadius: '50%',
-              display: 'grid', placeItems: 'center',
-              flexShrink: 0,
+              display: 'grid', placeItems: 'center', flexShrink: 0,
               border: `1px solid rgba(${SUCCESS_RGB},0.36)`,
               background: `rgba(${SUCCESS_RGB},0.08)`,
             }}>
               <CheckIcon />
             </span>
-            <span style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              ...TYPE.bodySmall,
-              color: 'rgba(245,247,255,0.72)',
-              lineHeight: 1.45,
-            }}>
+            <span style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.bodySmall, color: 'rgba(245,247,255,0.74)', lineHeight: 1.45 }}>
               {concept.label}
             </span>
           </div>
@@ -245,7 +251,7 @@ function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: `${SPACING.compact}px 0` }} aria-hidden="true">
         <div style={{ height: 1, flex: 1, background: `linear-gradient(90deg, transparent, rgba(${rgb},0.24))` }} />
-        <div style={{ color: `rgba(${rgb},0.55)`, fontSize: 18 }}>✦</div>
+        <div style={{ color: `rgba(${rgb},0.56)`, fontSize: 18 }}>✦</div>
         <div style={{ height: 1, flex: 1, background: `linear-gradient(90deg, rgba(${rgb},0.24), transparent)` }} />
       </div>
 
@@ -260,18 +266,13 @@ function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
         }}>
           ✚
         </div>
-        <h2 style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          ...TYPE.cardTitle,
-          color: accent,
-          margin: 0,
-        }}>
+        <h2 style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.cardTitle, color: accent, margin: 0 }}>
           Missing pieces to revisit
         </h2>
       </div>
 
       <div style={{ display: 'grid', gap: 10 }}>
-        {(missing.length ? missing : (results.concepts || []).filter(c => c.score < SCORE_RECALLED)).slice(0, 3).map(concept => (
+        {missingList.map(concept => (
           <button
             type="button"
             key={concept.tag || concept.label}
@@ -281,19 +282,14 @@ function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
               width: '100%',
               padding: '11px 10px 11px 13px',
               borderRadius: 13,
-              border: `1px solid rgba(${rgb},0.28)`,
-              background: `linear-gradient(180deg, rgba(${rgb},0.09), rgba(255,255,255,0.025))`,
+              border: `1px solid rgba(${rgb},0.30)`,
+              background: `linear-gradient(180deg, rgba(${rgb},0.10), rgba(255,255,255,0.025))`,
               color: accent,
               textAlign: 'left',
               cursor: 'pointer',
             }}
           >
-            <span style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontSize: 13,
-              fontWeight: 600,
-              lineHeight: 1.35,
-            }}>
+            <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 650, lineHeight: 1.35 }}>
               {concept.label}
             </span>
             <span style={{
@@ -316,52 +312,27 @@ function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
   )
 }
 
-// ─── PriorKnowledgeRecall ─────────────────────────────────────────────────────
-//
-// Full-screen chapter-opening component. Student writes free-text recall of the
-// previous chapter. Claude scores each concept 0.0–1.0. Missing concepts
-// (score < 0.3) are logged to the weakness tracker and feed WeakSpotRecovery.
-//
-// Block data shape:
-// {
-//   type: 'priorKnowledgeRecall',
-//   chapterTitle: 'Medieval medicine',
-//   backgroundImage: '/headers/history-medicine-medieval-scripture.png',  // optional
-//   concepts: [
-//     { tag: 'miasma-theory', label: 'Miasma theory', keywords: ['miasma', 'bad air', 'smell'] },
-//     { tag: 'four-humours',  label: 'Four humours',  keywords: ['humours', 'blood', 'phlegm'] },
-//   ]
-// }
-//
-// Props: block, subject, onContinue, onBack
-
 export default function PriorKnowledgeRecall({ block, subject, onContinue, onBack }) {
   ensureStyles()
 
-  const theme  = SUBJECTS[subject] || SUBJECTS.History
+  const theme = SUBJECTS[subject] || SUBJECTS.History
   const accent = theme.accent
-  const rgb    = theme.accentRgb
+  const rgb = theme.accentRgb
 
-  const [phase,       setPhase]       = useState('input')   // 'input' | 'analyzing' | 'results'
-  const [answer,      setAnswer]      = useState('')
-  const [results,     setResults]     = useState(null)
-  const [error,       setError]       = useState(null)
-  const [isPressed,   setIsPressed]   = useState(false)
-  const [isFocused,   setIsFocused]   = useState(false)
+  const [phase, setPhase] = useState('input')
+  const [answer, setAnswer] = useState('')
+  const [results, setResults] = useState(null)
+  const [error, setError] = useState(null)
+  const [isPressed, setIsPressed] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
   const [secondsLeft, setSecondsLeft] = useState(RECALL_DURATION)
 
   const recallPrompts = block.recallPrompts || DEFAULT_RECALL_PROMPTS
   const ideaCount = countIdeas(answer)
-
-  // Timer ring progress + gentle colour shift toward LOW_TIME_RGB in the final
-  // 40% of the countdown — no flashing, just a slow warm drift.
   const timeFrac = secondsLeft / RECALL_DURATION
-  const SHIFT_START = 0.4
-  const shiftAmount = timeFrac >= SHIFT_START ? 0 : 1 - (timeFrac / SHIFT_START)
+  const shiftAmount = timeFrac >= 0.4 ? 0 : 1 - (timeFrac / 0.4)
   const ringRgb = lerpColor(rgb, LOW_TIME_RGB, shiftAmount)
 
-  // Tick once a second, but only while the learner is actually looking at the screen —
-  // tabbing away pauses the countdown and it resumes from where it left off.
   useEffect(() => {
     if (phase !== 'input') return undefined
     const id = setInterval(() => {
@@ -391,9 +362,8 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
 
     try {
       const data = await analyseRecall(answer, block.concepts, block.sourceContent)
-
-      // Log concepts scoring below SCORE_PARTIAL as weak spots
       const missingConcepts = (data.concepts || []).filter(c => c.score < SCORE_PARTIAL)
+
       missingConcepts.forEach(c => {
         logWrongAnswer({
           subject,
@@ -409,121 +379,86 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
       setResults(data)
       setPhase('results')
     } catch (err) {
-      if (import.meta.env.DEV) {
-        console.error('[PriorKnowledgeRecall] analyseRecall failed:', err)
-      }
+      if (import.meta.env.DEV) console.error('[PriorKnowledgeRecall] analyseRecall failed:', err)
       setError('Could not analyse your answer. Check your connection and try again.')
       setPhase('input')
     }
   }
 
-  // Securely recalled concepts — gaps below SCORE_PARTIAL are already logged
-  // to the weakness tracker in submit().
   const recalled = results?.concepts.filter(c => c.score >= SCORE_RECALLED) || []
   const missing = results?.concepts.filter(c => c.score < SCORE_RECALLED) || []
+  const hasResults = phase === 'results' && results
 
   const pressProps = {
-    onMouseDown:  () => setIsPressed(true),
-    onMouseUp:    () => setIsPressed(false),
+    onMouseDown: () => setIsPressed(true),
+    onMouseUp: () => setIsPressed(false),
     onMouseLeave: () => setIsPressed(false),
     onTouchStart: () => setIsPressed(true),
-    onTouchEnd:   () => setIsPressed(false),
+    onTouchEnd: () => setIsPressed(false),
   }
 
-  // Input-phase CTA — now closer to the concept mock: a warmer, filled action
-  // while staying inside the subject accent palette.
-  const inputBtnStyle = {
-    width: '100%', height: BUTTONS.secondary.height,
-    borderRadius: BUTTONS.secondary.borderRadius,
-    border: `1.5px solid rgba(${rgb},0.48)`,
-    background: `linear-gradient(180deg, rgba(${rgb},0.28), rgba(${rgb},0.12))`,
-    boxShadow: `0 0 26px rgba(${rgb},0.11), inset 0 1px 0 rgba(255,255,255,0.08)`,
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    gap: 10, cursor: 'pointer',
-    transform: isPressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
-    transition: `transform ${MOTION.duration.fast} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
-    flexShrink: 0,
-  }
-
-  const ArrowIcon = ({ color = '#0D0F14' }) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-      stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12"/>
-      <polyline points="12 5 19 12 12 19"/>
+  const ArrowIcon = ({ color = accent }) => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
     </svg>
   )
-
-  const hasResults = phase === 'results' && results
 
   return (
     <CinematicShell style={{
       background: '#08090D',
       zIndex: 1000,
-      display: 'flex', flexDirection: 'column',
+      display: 'flex',
+      flexDirection: 'column',
       animation: 'prk-fade-in 360ms ease both',
     }}>
-
-      {/* Atmospheric background */}
       {block.backgroundImage && (
         <div aria-hidden="true" style={{
           position: 'fixed', inset: 0,
-          backgroundImage: `linear-gradient(180deg, rgba(8,9,13,0.50), rgba(8,9,13,0.88)), url(${block.backgroundImage})`,
-          backgroundSize: 'cover', backgroundPosition: 'center',
-          opacity: 0.20,
-          filter: 'brightness(0.9) grayscale(8%)',
+          backgroundImage: `linear-gradient(180deg, rgba(8,9,13,0.40), rgba(8,9,13,0.90)), url(${block.backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.24,
+          filter: 'brightness(0.95) grayscale(8%)',
           pointerEvents: 'none',
           zIndex: 0,
         }} />
       )}
+
       <div aria-hidden="true" style={{
         position: 'fixed', inset: 0,
-        background: `radial-gradient(circle at 50% 34%, rgba(${rgb},0.09), transparent 34%), linear-gradient(180deg, rgba(8,9,13,0.10), rgba(8,9,13,0.96) 84%)`,
+        background: `radial-gradient(circle at 50% 18%, rgba(${rgb},0.10), transparent 30%), linear-gradient(180deg, rgba(8,9,13,0.18), rgba(8,9,13,0.96) 82%)`,
         pointerEvents: 'none',
         zIndex: 0,
       }} />
 
-      {/* Scroll container */}
       <div style={{
-        position: 'relative', zIndex: 1,
-        display: 'flex', flexDirection: 'column',
+        position: 'relative',
+        zIndex: 1,
+        display: 'flex',
+        flexDirection: 'column',
         height: '100%',
-        padding: `calc(18px + env(safe-area-inset-top)) ${SPACING.standard}px calc(${SPACING.separation}px + env(safe-area-inset-bottom))`,
+        padding: `calc(14px + env(safe-area-inset-top)) ${SPACING.standard}px calc(${SPACING.separation}px + env(safe-area-inset-bottom))`,
         overflow: 'auto',
-        filter: hasResults ? 'brightness(0.72)' : 'none',
+        filter: hasResults ? 'brightness(0.70)' : 'none',
         transition: `filter ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
       }}>
-
-        {/* Header row */}
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          height: 44, marginBottom: SPACING.compact, flexShrink: 0,
-        }}>
-          <BackButton onClick={onBack} />
-
-          <div style={{
-            fontFamily: TYPE.bodyText.fontFamily,
-            ...TYPE.metadata,
-            textTransform: 'uppercase',
-            color: accent, opacity: 0.88,
-            letterSpacing: '0.18em',
-          }}>
-            Prior knowledge
+        <div style={{ position: 'relative', minHeight: 48, marginBottom: SPACING.standard, flexShrink: 0 }}>
+          <div style={{ position: 'absolute', left: 0, top: 0 }}>
+            <BackButton onClick={onBack} />
           </div>
-
-          <div style={{ width: 22 }} />
+          <ProgressRail rgb={rgb} />
         </div>
 
         {(phase === 'input' || phase === 'results') && (
-          <div style={{
-            flex: 1, display: 'flex', flexDirection: 'column',
-            animation: 'prk-fade-in 280ms ease both',
-          }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', animation: 'prk-fade-in 280ms ease both' }}>
             <div style={{ flex: 1 }}>
               <h1 style={{
                 fontFamily: TYPE.bodyText.fontFamily,
                 ...TYPE.sectionTitle,
                 color: '#F5F7FF',
-                margin: 0, marginBottom: SPACING.micro,
+                margin: 0,
+                marginBottom: SPACING.micro,
                 textWrap: 'balance',
               }}>
                 What can you remember?
@@ -533,95 +468,107 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 fontFamily: TYPE.bodyText.fontFamily,
                 ...TYPE.bodySmall,
                 color: 'rgba(245,247,255,0.58)',
-                margin: 0, marginBottom: SPACING.compact,
+                margin: 0,
+                marginBottom: SPACING.compact,
                 lineHeight: 1.45,
               }}>
                 Write anything you know before we reveal the gaps.
               </p>
 
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                marginBottom: SPACING.compact,
-              }}>
-                <svg width={RING_SIZE} height={RING_SIZE} viewBox={`0 0 ${RING_SIZE} ${RING_SIZE}`}
-                  style={{ transform: 'rotate(-90deg)', flexShrink: 0 }}>
-                  <circle
-                    cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RING_RADIUS}
-                    fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={RING_STROKE}
-                  />
-                  <circle
-                    cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RING_RADIUS}
-                    fill="none" stroke={`rgb(${ringRgb})`} strokeWidth={RING_STROKE}
-                    strokeLinecap="round"
-                    strokeDasharray={RING_CIRC}
-                    strokeDashoffset={RING_CIRC * (1 - timeFrac)}
-                    style={{ transition: `stroke-dashoffset ${MOTION.duration.slow} ${MOTION.easing.linear}, stroke ${MOTION.duration.slow} ${MOTION.easing.linear}` }}
-                  />
-                </svg>
-                <span style={{
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  fontSize: 14, fontWeight: 700,
-                  color: `rgb(${ringRgb})`,
-                  fontVariantNumeric: 'tabular-nums',
-                  letterSpacing: '0.02em',
-                  transition: `color ${MOTION.duration.slow} ${MOTION.easing.linear}`,
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: SPACING.compact }}>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 7,
+                  padding: '7px 10px',
+                  borderRadius: RADII.pill,
+                  background: `rgba(${ringRgb},0.10)`,
+                  border: `1px solid rgba(${ringRgb},0.28)`,
+                  boxShadow: `0 0 16px rgba(${ringRgb},0.08)`,
                 }}>
-                  {formatTime(secondsLeft)}
-                </span>
+                  <span style={{
+                    width: 9,
+                    height: 9,
+                    borderRadius: '50%',
+                    background: `rgb(${ringRgb})`,
+                    boxShadow: `0 0 8px rgba(${ringRgb},0.40)`,
+                  }} />
+                  <span style={{
+                    fontFamily: TYPE.bodyText.fontFamily,
+                    fontSize: 12,
+                    fontWeight: 750,
+                    color: `rgb(${ringRgb})`,
+                    fontVariantNumeric: 'tabular-nums',
+                    letterSpacing: '0.02em',
+                  }}>
+                    {formatTime(secondsLeft)}
+                  </span>
+                </div>
+
+                {block.chapterTitle && (
+                  <p style={{
+                    flex: 1,
+                    minWidth: 0,
+                    fontFamily: TYPE.bodyText.fontFamily,
+                    fontSize: 13,
+                    fontWeight: 500,
+                    color: 'rgba(168,159,194,0.70)',
+                    margin: 0,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}>
+                    {block.chapterTitle}
+                  </p>
+                )}
               </div>
 
-              {block.chapterTitle && (
-                <p style={{
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  ...TYPE.bodySmall,
-                  color: 'rgba(168,159,194,0.68)',
-                  margin: 0, marginBottom: SPACING.compact,
-                }}>
-                  {block.chapterTitle}
-                </p>
-              )}
-
-              <div style={{
-                display: 'flex', flexWrap: 'wrap', gap: SPACING.micro,
-                marginBottom: SPACING.compact,
-              }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 9, marginBottom: SPACING.standard }}>
                 {recallPrompts.slice(0, 5).map(p => <PromptChip key={p} label={p} rgb={rgb} />)}
               </div>
 
               <div style={{
-                background: 'linear-gradient(180deg, rgba(20,23,29,0.92), rgba(12,14,19,0.94))',
-                border: isFocused ? `1.5px solid rgba(${rgb},0.55)` : `1.5px solid rgba(${rgb},0.24)`,
-                borderRadius: 22,
+                position: 'relative',
+                background: 'linear-gradient(180deg, rgba(20,23,29,0.93), rgba(11,13,18,0.96))',
+                border: isFocused ? `1.5px solid rgba(${rgb},0.62)` : `1.5px solid rgba(${rgb},0.28)`,
+                borderRadius: 24,
                 padding: `${SPACING.compact}px ${SPACING.standard}px`,
                 marginBottom: SPACING.micro,
                 boxShadow: isFocused
-                  ? `0 0 0 1px rgba(${rgb},0.12), 0 0 34px rgba(${rgb},0.16), inset 0 1px 0 rgba(255,255,255,0.045)`
-                  : `0 0 22px rgba(${rgb},0.08), inset 0 1px 0 rgba(255,255,255,0.035)`,
+                  ? `0 0 0 1px rgba(${rgb},0.14), 0 0 38px rgba(${rgb},0.18), inset 0 1px 0 rgba(255,255,255,0.05)`
+                  : `0 0 28px rgba(${rgb},0.09), inset 0 1px 0 rgba(255,255,255,0.04)`,
                 transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
               }}>
                 <div style={{
                   fontFamily: TYPE.bodyText.fontFamily,
-                  fontSize: 11, fontWeight: 700, letterSpacing: '0.13em',
+                  fontSize: 11,
+                  fontWeight: 750,
+                  letterSpacing: '0.13em',
                   textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.34)',
+                  color: 'rgba(255,255,255,0.36)',
                   marginBottom: SPACING.micro,
                 }}>
                   Your recall
                 </div>
+
                 <div style={{ position: 'relative' }}>
                   {answer.length === 0 && (
                     <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
                       <div style={{
                         fontFamily: TYPE.bodyText.fontFamily,
-                        fontSize: TYPE.bodySmall.fontSize, fontWeight: TYPE.bodySmall.fontWeight,
-                        lineHeight: 1.7, letterSpacing: '0.01em',
-                        color: 'rgba(245,247,255,0.38)',
+                        fontSize: TYPE.bodySmall.fontSize,
+                        fontWeight: TYPE.bodySmall.fontWeight,
+                        lineHeight: 1.7,
+                        letterSpacing: '0.01em',
+                        color: 'rgba(245,247,255,0.40)',
                       }}>
                         Type your answer here…
                       </div>
                       <div style={{
                         fontFamily: TYPE.bodyText.fontFamily,
-                        fontSize: 13, fontWeight: 400, lineHeight: 1.5,
+                        fontSize: 13,
+                        fontWeight: 400,
+                        lineHeight: 1.5,
                         color: 'rgba(245,247,255,0.18)',
                         marginTop: 2,
                       }}>
@@ -629,6 +576,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                       </div>
                     </div>
                   )}
+
                   <textarea
                     value={answer}
                     onChange={e => { setAnswer(e.target.value); setError(null) }}
@@ -638,14 +586,18 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                     disabled={phase === 'results'}
                     aria-label="Write anything you remember"
                     style={{
-                      width: '100%', padding: 0,
-                      minHeight: 196,
-                      background: 'transparent', border: 'none', outline: 'none',
+                      width: '100%',
+                      padding: 0,
+                      minHeight: 'clamp(230px, 34vh, 310px)',
+                      background: 'transparent',
+                      border: 'none',
+                      outline: 'none',
                       resize: 'none',
                       fontFamily: TYPE.bodyText.fontFamily,
                       ...TYPE.bodySmall,
                       color: '#F5F7FF',
-                      lineHeight: 1.7, letterSpacing: '0.01em',
+                      lineHeight: 1.7,
+                      letterSpacing: '0.01em',
                       caretColor: accent,
                       opacity: phase === 'results' ? 0.72 : 1,
                     }}
@@ -654,9 +606,12 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               </div>
 
               <div style={{
-                display: 'flex', justifyContent: 'flex-end',
+                display: 'flex',
+                justifyContent: 'flex-end',
                 fontFamily: TYPE.bodyText.fontFamily,
-                fontSize: 12, fontWeight: 500, letterSpacing: '0.02em',
+                fontSize: 12,
+                fontWeight: 500,
+                letterSpacing: '0.02em',
                 color: 'rgba(245,247,255,0.32)',
                 marginBottom: error ? SPACING.compact : SPACING.standard,
               }}>
@@ -664,24 +619,38 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               </div>
 
               {error && (
-                <p style={{
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  ...TYPE.bodySmall,
-                  color: '#E05A52',
-                  margin: `0 0 ${SPACING.standard}px`,
-                }}>
+                <p style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.bodySmall, color: '#E05A52', margin: `0 0 ${SPACING.standard}px` }}>
                   {error}
                 </p>
               )}
             </div>
 
-            <button onClick={submit} disabled={phase === 'results'} {...pressProps} style={{
-              ...inputBtnStyle,
-              opacity: phase === 'results' ? 0.58 : 1,
-            }}>
+            <button
+              onClick={submit}
+              disabled={phase === 'results'}
+              {...pressProps}
+              style={{
+                width: '100%',
+                height: BUTTONS.secondary.height,
+                borderRadius: BUTTONS.secondary.borderRadius,
+                border: `1.5px solid rgba(${rgb},0.52)`,
+                background: `linear-gradient(180deg, rgba(${rgb},0.30), rgba(${rgb},0.13))`,
+                boxShadow: `0 0 30px rgba(${rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.08)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 10,
+                cursor: 'pointer',
+                transform: isPressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
+                transition: `transform ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                flexShrink: 0,
+                opacity: phase === 'results' ? 0.58 : 1,
+              }}
+            >
               <span style={{
                 fontFamily: TYPE.bodyText.fontFamily,
-                fontSize: BUTTONS.secondary.fontSize, fontWeight: BUTTONS.secondary.fontWeight,
+                fontSize: BUTTONS.secondary.fontSize,
+                fontWeight: BUTTONS.secondary.fontWeight,
                 color: accent,
               }}>
                 Check my recall
@@ -691,32 +660,22 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
           </div>
         )}
 
-        {/* ── ANALYZING PHASE ── */}
         {phase === 'analyzing' && (
-          <div style={{
-            flex: 1, display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center',
-            animation: 'prk-fade-in 280ms ease both',
-          }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', animation: 'prk-fade-in 280ms ease both' }}>
             <div style={{
-              width: 44, height: 44,
+              width: 44,
+              height: 44,
               border: '2px solid rgba(255,255,255,0.06)',
               borderTop: `2px solid ${accent}`,
               borderRadius: '50%',
               animation: 'prk-spin 0.85s linear infinite',
               marginBottom: SPACING.standard,
             }} />
-            <p style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              ...TYPE.body,
-              color: 'rgba(255,255,255,0.55)',
-              textAlign: 'center', margin: 0,
-            }}>
+            <p style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.body, color: 'rgba(255,255,255,0.55)', textAlign: 'center', margin: 0 }}>
               Checking what you remember…
             </p>
           </div>
         )}
-
       </div>
 
       {hasResults && (
