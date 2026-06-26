@@ -3,10 +3,11 @@
 ## 1. Identity
 
 - **Chapter:** 13
+- **Module chapter:** Module 2, Chapter 3
 - **Title:** CSI: Food samples
 - **Subject:** AQA GCSE Combined Science Trilogy — Biology Paper 1
 - **Module:** Module 2 — Body systems under pressure
-- **Build status:** Not yet built
+- **Build status:** Canonical reviewed; not yet built
 - **Content file:** `13_CSI_Food_samples_Content.md`
 
 ---
@@ -15,49 +16,69 @@
 
 ### Part 1 — Situation + prediction
 
-- Hook: "A food company claims its protein bar contains no sugar. A nutritionist claims it does. How would you prove who is right?" Crime-scene framing — food analysis as forensic work.
-- Prediction: "What do you think you would need to add to the food to find out what's in it?"
-- You will learn: four food tests and how to design a valid food-testing investigation.
+- Hook: "A food company claims its protein bar contains no sugar. A nutritionist claims it does. How would you prove who is right?" Use forensic food analysis, but keep it serious rather than gimmicky.
+- Prediction: "Can colour changes prove what is inside a food sample?"
+- You will learn: food sample preparation, four food tests, positive/negative results, controls and reliability.
 
-**Components:** `CinematicRevealMoment`, `ChapterHookScreen`
+**Components:** `CinematicRevealMoment`, `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ---
 
 ### Part 2 — Investigate the evidence
 
-- Visual walkthrough of each food test: show the starting colour, what to do, and what positive/negative looks like
-- Use VisualLearning or CinematicCarousel: one slide per test (Benedict's / iodine / Biuret / Sudan III or emulsion test)
-- Emphasis on colour changes as evidence
+- Visual walkthrough of sample preparation:
+  - crush food
+  - add distilled water
+  - mix
+  - filter if needed
+  - test the liquid sample
+- One visual screen per food test:
+  - Benedict's for reducing sugars
+  - iodine for starch
+  - Biuret for protein
+  - lipid test: Sudan III or emulsion test
+- Each screen should show:
+  - molecule tested
+  - reagent/test
+  - method
+  - positive result
+  - negative result
+  - exam trap
 
-**Components:** `VisualLearning` or `CinematicCarousel`
+**Components:** `VisualLearning`, `CinematicCarousel`, `StepSequence`
 
 ---
 
 ### Part 3 — Discover the science
 
-- Teach each test in systematic order: reagent → molecule tested → positive result colour → negative result colour → any special conditions (heat for Benedict's)
-- ConceptReveal: why a control is needed — distinguishes reagent background colour from a true positive
-- Brief link back to Ch 12: these molecules (starch, sugars, proteins, lipids) are exactly what digestive enzymes break down
+- Teach food tests in systematic order:
+  - reagent → molecule tested → method → positive result → negative result → special condition
+- `ConceptReveal`: Benedict's requires heating; iodine and Biuret do not.
+- `ConceptReveal`: controls make the result trustworthy.
+- Brief link back to Chapter 12: these molecules are the same food molecules enzymes digest.
 
-**Components:** `ConceptReveal`, `VisualNarrativeScreen` or read blocks
+**Components:** `ConceptReveal`, `VisualNarrative`, `TheoryCompareBlock`
 
 ---
 
 ### Part 4 — Check precision
 
-- MisconceptionCheck: "Benedict's test works on all sugars." → false (only reducing sugars; sucrose is not detected)
-- MisconceptionCheck: "A negative result means the food contains nothing." → false
-- SpotTheError: "I tested the sample with Benedict's reagent and it turned blue-black, which means it contains reducing sugar." (Error: blue-black is the iodine result for starch; Benedict's goes brick red/orange)
+- `MisconceptionCheck`: "Benedict's test works on all sugars." → false; GCSE-safe wording: reducing sugars such as glucose.
+- `MisconceptionCheck`: "A negative iodine result means the food contains no food molecules." → false; it only means starch was not detected.
+- `MisconceptionCheck`: "Biuret needs heating." → false.
+- `SpotTheError`: "I added iodine and heated it. It turned brick red, so starch was present." Errors: iodine is not heated; brick red is Benedict's positive result for reducing sugar.
 
-**Components:** `MisconceptionCheck` × 2, `SpotTheError`
+**Components:** `MisconceptionCheck`, `SpotTheError`
 
 ---
 
 ### Part 5 — Apply to a real GCSE-style task
 
-- MatchingTask: food test → molecule → positive result colour
-- GuidedExamResponse: "A student is testing four food samples for the presence of starch and protein. Describe the tests they should carry out and the expected results." (4 marks)
-- FillInTheBlanksBlock: colour-change recall — "If Benedict's reagent is added to a glucose solution and heated, the solution turns ___."
+- `MatchingTask`: food test → molecule → positive result colour.
+- `MatchingTask`: test → special condition.
+- `GuidedExamResponse`: "Describe how to test a food sample for reducing sugar. (3 marks)"
+- `GuidedExamResponse`: "Explain why a negative control is useful. (2 marks)"
+- `FillInTheBlanksBlock`: colour-change recall.
 
 **Components:** `MatchingTask`, `GuidedExamResponse`, `FillInTheBlanksBlock`
 
@@ -65,8 +86,9 @@
 
 ### Part 6 — Face the examiner + debrief
 
-- FaceTheExaminer: student confuses iodine result with Benedict's result in a written answer; mark commentary
-- QuickRecallScreen: 5 questions — name the reagent for starch; what colour does Benedict's turn for a positive result; does Benedict's require heating; what does Biuret test for; what is the purpose of a negative control?
+- `FaceTheExaminer`: student confuses iodine result with Benedict's result; mark commentary separates starch vs reducing sugar.
+- `FaceTheExaminer`: student concludes "no food molecules" from a negative iodine test; mark commentary explains limits of evidence.
+- Quick recall: reagent for starch; Benedict's positive result; which test needs heating; Biuret result; purpose of negative control; lipid positive result.
 
 **Components:** `FaceTheExaminer`, `QuickRecallScreen`
 
@@ -74,47 +96,62 @@
 
 ## 3. Active learning interactions
 
-- `VisualLearning` / `CinematicCarousel`: four food tests
-- `ConceptReveal`: purpose of a control
-- `MisconceptionCheck` × 2: reducing sugars; negative results
-- `SpotTheError`: blue-black / brick red colour confusion
+- `StepSequence`: preparing a food sample
+- `VisualLearning` / `CinematicCarousel`: four food tests, one per screen
+- `ConceptReveal`: why Benedict's needs heat
+- `ConceptReveal`: positive and negative controls
+- `MisconceptionCheck` × 3: reducing sugars; negative result overclaim; Biuret heating
+- `SpotTheError`: iodine/Benedict's colour confusion
 - `MatchingTask`: test → molecule → colour
-- `GuidedExamResponse`: 4-mark method question
+- `MatchingTask`: test → special condition
+- `GuidedExamResponse`: reducing sugar method
+- `GuidedExamResponse`: negative control explanation
 - `FillInTheBlanksBlock`: colour recall
 - `FaceTheExaminer`: colour confusion answer
-- `QuickRecallScreen`: 5 retrieval questions
+- `FaceTheExaminer`: invalid conclusion answer
+- `QuickRecallScreen`: 6 retrieval questions
 
 ---
 
 ## 4. Retrieval points
 
-- Four food tests: Benedict's (reducing sugars, brick red), iodine (starch, blue-black), Biuret (protein, purple), Sudan III / emulsion (lipid)
-- Benedict's requires heating; Biuret does not
-- Purpose of a negative control
-- Reducing vs non-reducing sugars (sucrose not detected by Benedict's)
+- Benedict's: reducing sugar, heat, positive green/yellow/orange/brick red
+- Iodine: starch, positive blue-black, no heat
+- Biuret: protein, positive lilac/purple, no heat
+- Lipid: Sudan III red oil layer or emulsion test cloudy white
+- Purpose of positive and negative controls
+- Negative result only applies to the molecule being tested
+- Clean equipment and repeats improve reliability
 
 ---
 
 ## 5. Exam skill focus
 
-- 4-mark method: describe how to test for starch and protein in a food sample
-- 2-mark explain: explain why a negative control is needed
-- 1-mark recall: state the positive result colour for a named food test
+- 3-mark method: test for reducing sugar
+- 2-mark method/result: test for protein
+- 2-mark explain: why use a negative control
+- 2-mark evaluation: why a conclusion is invalid from one negative test
+- Table interpretation: conclude which molecule is present from colour changes
 
 ---
 
 ## 6. Build notes
 
-The "CSI" framing gives this required practical chapter a strong identity. Every food test screen should show before (reagent colour) and after (positive result colour) clearly. The single most common exam error is confusing Benedict's (brick red) with iodine (blue-black). This confusion needs its own SpotTheError screen. Do not teach all four tests on a single screen — one test per screen in Part 2.
+The "CSI" framing gives this required practical chapter a strong identity, but avoid making it childish. Think forensic lab, not cartoon detective.
+
+Every food test screen should show before and after clearly. The biggest exam risk is colour confusion: Benedict's goes towards brick red after heating; iodine goes blue-black without heating.
+
+Use consistent visual grammar: reagent bottle, sample tube, condition, result colour, conclusion.
 
 ---
 
 ## 7. Chapter completion test
 
-- [ ] Student can name the correct reagent for each food molecule (sugars, starch, protein, lipid)
-- [ ] Student can state the positive result colour for each test
-- [ ] Student knows Benedict's requires heating; Biuret does not
-- [ ] Student knows Benedict's only detects reducing sugars (not sucrose)
+- [ ] Student can prepare a food sample for testing
+- [ ] Student can name the correct reagent/test for reducing sugar, starch, protein and lipid
+- [ ] Student can state the positive result for each test
+- [ ] Student knows Benedict's requires heating
+- [ ] Student knows iodine and Biuret do not require heating
 - [ ] Student can explain why a negative control is needed
-- [ ] Student can describe how to carry out two food tests in a written method
-- [ ] Student has practised a 4-mark describe/method question
+- [ ] Student can avoid overclaiming from a negative result
+- [ ] Student can describe a food test method in exam wording
