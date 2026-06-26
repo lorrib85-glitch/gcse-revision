@@ -24,7 +24,7 @@ export const BIOLOGY_MODULES = [
         { text: 'Describe the structures inside animal and plant cells', icon: 'drop' },
         { text: 'Explain what each organelle actually does in precise GCSE language', icon: 'star' },
         { text: 'Spot the most common exam trap about plant cells before it costs you marks', icon: 'question' },
-        { text: 'Compare animal and plant cells with the precision a top answer needs', icon: 'prayer' },
+        { text: 'Compare animal, plant and bacterial cells with the precision a top answer needs', icon: 'prayer' },
       ],
     },
 
@@ -110,7 +110,7 @@ export const BIOLOGY_MODULES = [
         blocks: [
           {
             type: 'read',
-            text: '• Describe what every plant and animal cell has in common — and name the structures that set them apart.<br><br>• Explain what each part of a cell actually does, in the precise language an examiner is looking for.<br><br>• Spot one of the most common GCSE traps about plant cells, before it costs you a mark.<br><br>• Compare animal and plant cells with the precision a top answer needs.',
+            text: '• Describe what every plant, animal and bacterial cell has in common — and name the structures that set them apart.<br><br>• Explain what each part of a cell actually does, in the precise language an examiner is looking for.<br><br>• Spot one of the most common GCSE traps about plant cells, before it costs you a mark.<br><br>• Compare animal, plant and bacterial cells with the precision a top answer needs.<br><br>Plant and animal cells are eukaryotic — their genetic material is enclosed in a nucleus. Bacterial cells are prokaryotic — they have no nucleus, just a single DNA loop in the cytoplasm, and may contain plasmids.',
           },
         ],
       },
@@ -148,13 +148,13 @@ export const BIOLOGY_MODULES = [
           {
             id: 'nucleus', x: 68, y: 28,
             shortLabel: 'Nucleus', title: 'Nucleus', icon: '🧬',
-            description: 'The control centre of the cell. Contains DNA — the instructions for everything the cell does, including making proteins and dividing.',
+            description: 'The control centre of the cell. Contains DNA — the instructions for everything the cell does, including making proteins and dividing. Plant cells are eukaryotic because their genetic material is enclosed in a nucleus.',
             extraFact: 'The nucleus directs the production of enzymes needed for photosynthesis. Without it, the chloroplasts could not function properly.',
           },
           {
             id: 'chloroplast', x: 20, y: 68,
             shortLabel: 'Chloroplast', title: 'Chloroplast', icon: '☀️',
-            description: 'Contains chlorophyll, a green pigment that absorbs light energy. Plant cells use this energy to carry out photosynthesis and produce glucose. Only found in cells exposed to light.',
+            description: 'Many plant cells exposed to light contain chloroplasts, which contain chlorophyll — a green pigment that absorbs light energy to carry out photosynthesis and produce glucose. Not all plant cells have them: root hair cells and other cells that never see light do not.',
             extraFact: 'Photosynthesis allows plants to make their own food using sunlight, water and CO₂ — releasing oxygen as a by-product.',
           },
           {
@@ -166,13 +166,13 @@ export const BIOLOGY_MODULES = [
           {
             id: 'mitochondria', x: 22, y: 20,
             shortLabel: 'Mitochondria', title: 'Mitochondria', icon: '⚡',
-            description: 'The site of aerobic respiration. Mitochondria release energy from glucose so the cell can do work — growing, moving, dividing, making proteins.',
+            description: 'The site of aerobic respiration, where energy is transferred for the cell to use.',
             extraFact: 'Even though plant cells make glucose in chloroplasts, they still need mitochondria to convert that glucose into usable energy (ATP).',
           },
           {
             id: 'ribosomes', x: 55, y: 46,
             shortLabel: 'Ribosomes', title: 'Ribosomes', icon: '🔬',
-            description: 'The site of protein synthesis. Ribosomes read instructions from DNA and assemble amino acids into proteins. Only visible under an electron microscope.',
+            description: 'The site of protein synthesis. Ribosomes build proteins needed for growth, repair and chemical reactions. Only visible under an electron microscope.',
             extraFact: 'All enzymes are proteins built by ribosomes. Every chemical reaction in the cell ultimately depends on them.',
           },
         ],
@@ -193,7 +193,7 @@ export const BIOLOGY_MODULES = [
           {
             id: 'nucleus', x: 44, y: 33,
             shortLabel: 'Nucleus', title: 'Nucleus', icon: '🧬',
-            description: 'The control centre of the cell. Contains DNA — the instructions for everything the cell does, including making proteins and dividing. Exactly the same role as in a plant cell.',
+            description: 'The control centre of the cell. Contains DNA — the instructions for everything the cell does, including making proteins and dividing. Animal cells are eukaryotic because their genetic material is enclosed in a nucleus.',
             extraFact: 'The nucleus is one of five structures every animal and plant cell shares — a fact GCSE examiners expect you to know cold.',
           },
           {
@@ -211,13 +211,13 @@ export const BIOLOGY_MODULES = [
           {
             id: 'mitochondria', x: 74, y: 66,
             shortLabel: 'Mitochondria', title: 'Mitochondria', icon: '⚡',
-            description: 'The site of aerobic respiration. Mitochondria release energy from glucose so the cell can do work — contracting muscle, sending nerve signals, repairing damaged tissue.',
+            description: 'The site of aerobic respiration, where energy is transferred for the cell to use.',
             extraFact: 'Cells that work hardest — muscle cells, liver cells, sperm cells — pack in unusually large numbers of mitochondria, because they need the most energy.',
           },
           {
             id: 'ribosomes', x: 52, y: 64,
             shortLabel: 'Ribosomes', title: 'Ribosomes', icon: '🔬',
-            description: 'The site of protein synthesis. Ribosomes read instructions copied from DNA and assemble amino acids into proteins — far too small to see without an electron microscope.',
+            description: 'The site of protein synthesis. Ribosomes build proteins needed for growth, repair and chemical reactions. Far too small to see without an electron microscope.',
             extraFact: 'Every enzyme in your body is a protein built by a ribosome. Without them, not one chemical reaction inside a cell could happen.',
           },
         ],
@@ -251,18 +251,49 @@ export const BIOLOGY_MODULES = [
               'PLUS chloroplasts — absorb light energy to carry out photosynthesis',
               'PLUS a permanent vacuole — stores cell sap and keeps the cell firm',
             ],
-            takeaway: 'Every plant cell is built on the same five-structure blueprint as an animal cell — with three extra tools bolted on for jobs only plants do: staying rigid, capturing light, and storing water.',
+            takeaway: 'Typical plant cells share the main structures found in animal cells, but many plant cells also have extra structures such as a cell wall, permanent vacuole and chloroplasts. The exact structures depend on the cell\'s job.',
           },
         ],
       },
 
       // ═══ PART 4 — CHECK PRECISION ════════════════════════════════════════════
 
-      // ── SCREEN 7: Misconception check ───────────────────────────────────────
+      // ── SCREEN 7: Eukaryotic vs prokaryotic ─────────────────────────────────
+      {
+        label: 'Discover',
+        kicker: 'Eukaryotes and prokaryotes',
+        heading: 'Not every cell has a nucleus',
+        sub: 'Animal and plant cells are not the only kind of cell. Bacterial cells are built differently.',
+        blocks: [
+          {
+            type: 'theoryCompare',
+            title: 'Two fundamentally different cell types',
+            oldLabel: 'EUKARYOTIC',
+            oldTitle: 'Plant and animal cells',
+            oldPoints: [
+              'Genetic material enclosed in a nucleus',
+              'Have cytoplasm and a cell membrane',
+              'Animal and plant cells are both examples',
+              'Plant cells may also have a cell wall, chloroplasts and a permanent vacuole',
+            ],
+            newLabel: 'PROKARYOTIC',
+            newTitle: 'Bacterial cells',
+            newPoints: [
+              'No nucleus — genetic material is a single DNA loop in the cytoplasm',
+              'May contain plasmids — small rings of DNA',
+              'Have cytoplasm, a cell membrane and a cell wall',
+              'Much smaller than eukaryotic cells',
+            ],
+            takeaway: 'EU-karyotes keep DNA in a nUcleus. PRO-karyotes are bacteria: no nucleus, just a DNA loop and sometimes plasmids.',
+          },
+        ],
+      },
+
+      // ── SCREEN 8: Misconception check ───────────────────────────────────────
       {
         label: 'Check precision',
         kicker: 'Common traps',
-        heading: 'Three statements. Look closely.',
+        heading: 'Four statements. Look closely.',
         sub: 'Each one sounds true. Decide before you read on.',
         blocks: [
           {
@@ -285,6 +316,12 @@ export const BIOLOGY_MODULES = [
                 answer: false,
                 reveal: 'Cells vary enormously. A human egg cell is around 0.1 mm — just visible to the naked eye — while a single nerve cell can stretch over a metre, from your spine to your toes. Size depends entirely on the job a cell does.',
                 examTrap: 'If a question gives you a measurement in micrometres (µm), don\'t assume it must describe a "typical" cell. Specialised cells are often unusually large or small for a reason — and the examiner wants you to explain why.',
+              },
+              {
+                statement: 'Bacterial cells have DNA inside a nucleus.',
+                answer: false,
+                reveal: 'Bacterial cells are prokaryotic. Their genetic material is not enclosed in a nucleus — it is usually a single DNA loop in the cytoplasm. They may also contain plasmids, which are small rings of DNA.',
+                examTrap: 'Students often assume all cells have a nucleus because animal and plant cells do. GCSE Biology requires you to distinguish eukaryotic cells (nucleus present) from prokaryotic cells (bacteria — no nucleus).',
               },
             ],
           },
@@ -310,10 +347,12 @@ export const BIOLOGY_MODULES = [
           { id: 'cell_wall',    term: 'Cell wall',           answer: 'Made of cellulose — supports the cell and keeps its shape rigid',  weakGroup: 'Cell structures' },
           { id: 'chloroplast',  term: 'Chloroplast',         answer: 'Absorbs light energy to carry out photosynthesis',                 weakGroup: 'Cell structures' },
           { id: 'vacuole',      term: 'Permanent vacuole',   answer: 'Contains cell sap — keeps the cell firm and full of water',        weakGroup: 'Cell structures' },
+          { id: 'dna_loop',     term: 'Single DNA loop',     answer: 'Bacterial genetic material found in the cytoplasm, not enclosed in a nucleus', weakGroup: 'Cell structures' },
+          { id: 'plasmids',     term: 'Plasmids',            answer: 'Small rings of DNA found in some bacterial cells',                  weakGroup: 'Cell structures' },
         ],
       },
 
-      // ── SCREEN 9: Fill in the blanks ────────────────────────────────────────
+      // ── SCREEN 11: Fill in the blanks ────────────────────────────────────────
       {
         label: 'Apply it',
         kicker: 'Precise vocabulary',
@@ -353,12 +392,18 @@ export const BIOLOGY_MODULES = [
                 feedback: 'Correct — a full vacuole pushes outward against the cell wall, creating turgor pressure that keeps the whole plant upright.',
                 hints: ['A watery solution stored inside the vacuole...', 'Two words — the first is "cell"...'],
               },
+              {
+                before: 'Bacterial cells are', after: 'cells because their genetic material is not enclosed in a nucleus.',
+                answer: 'prokaryotic', acceptedAnswers: ['prokaryotic', 'prokaryotes'],
+                feedback: 'Correct — bacterial cells are prokaryotic. Unlike eukaryotic cells, they have no nucleus. Their genetic material is a single DNA loop free in the cytoplasm.',
+                hints: ['Think about the cell type that has no nucleus...', 'The opposite of eukaryotic...'],
+              },
             ],
           },
         ],
       },
 
-      // ── SCREEN 10: Spot the error ───────────────────────────────────────────
+      // ── SCREEN 12: Spot the error ────────────────────────────────────────── ───────────────────────────────────────────
       {
         label: 'Apply it',
         kicker: 'Detective work',
@@ -368,13 +413,13 @@ export const BIOLOGY_MODULES = [
           {
             type: 'spotTheError',
             prompt: 'A student wrote this in an exam answer. Something in it is wrong.',
-            statement: 'All plant cells contain chloroplasts so they can photosynthesise all the time.',
-            errorTarget: 'All plant cells contain chloroplasts',
-            whatWasWrong: 'The student claimed that every plant cell contains chloroplasts. That\'s only true for cells exposed to light, such as those in a leaf. Root hair cells, for example, live underground in total darkness — they have no chloroplasts, because they have no use for them.',
-            examinerNote: 'This is one of the most common traps in GCSE Biology. Examiners deliberately use unfamiliar examples — root hair cells, potato tuber cells, cells from a stem — to check whether a student has actually understood the idea, or just memorised "plant cells have chloroplasts."',
-            correctVersion: 'Plant cells that are exposed to light, such as those in a leaf, contain chloroplasts so they can photosynthesise.',
-            commonTrap: 'Whenever a question describes a plant cell that doesn\'t see light — underground, inside a stem, inside a seed — resist the urge to write "it has chloroplasts because it\'s a plant cell." A cell only contains the organelles its specific job requires.',
-            keyTerms: ['chloroplast', 'photosynthesis', 'light'],
+            statement: 'Bacterial cells have a nucleus that contains their DNA.',
+            errorTarget: 'have a nucleus that contains their DNA',
+            whatWasWrong: 'Bacterial cells are prokaryotic. Their genetic material is not enclosed in a nucleus — it is a single DNA loop free in the cytoplasm. They may also contain plasmids, which are small rings of DNA.',
+            examinerNote: 'Students often assume all cells have a nucleus because they have only studied animal and plant cells. GCSE Biology requires you to distinguish eukaryotic cells (which have a nucleus) from prokaryotic cells (bacteria, which do not).',
+            correctVersion: 'Bacterial cells do not have a nucleus. Their genetic material is a single DNA loop in the cytoplasm, and they may contain plasmids.',
+            commonTrap: 'When comparing cell types, be precise: "eukaryotic" for plant and animal cells, "prokaryotic" for bacteria. The absence of a nucleus is the defining feature of a bacterial cell.',
+            keyTerms: ['prokaryotic', 'nucleus', 'DNA loop', 'plasmids'],
           },
         ],
       },
@@ -505,6 +550,18 @@ Level 1 (1-2 marks): Structures named but not explained, or only one full differ
             options: ['Ribosomes', 'Chloroplasts', 'Mitochondria', 'Vacuoles'],
             correct: 2,
             explanation: 'Cells with high energy demands — like muscle, liver and sperm cells — pack in extra mitochondria to keep up with the demand for respiration.',
+          },
+          {
+            type: 'choice',
+            question: 'Which statement correctly describes bacterial cells?',
+            options: [
+              'They are eukaryotic and have a nucleus',
+              'They are prokaryotic and have no nucleus',
+              'They are animal cells with a cell wall',
+              'They always contain chloroplasts',
+            ],
+            correct: 1,
+            explanation: 'Bacterial cells are prokaryotic — their genetic material is a single DNA loop in the cytoplasm, not enclosed in a nucleus. They are not animal cells, and they never contain chloroplasts.',
           },
         ],
       },

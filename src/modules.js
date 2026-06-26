@@ -621,9 +621,9 @@ export const MODULES = [
     color: "#4FA36C",
     colorLight: "rgba(79,163,108,.15)",
     headerImage: "/headers/bio-main.webp",
-    screenCount: 13,
+    screenCount: 14,
     screenTags: [
-      null, null, null, null, null, null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null, null, null, null, null, null, null,
     ],
   },
   {
