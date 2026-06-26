@@ -27,6 +27,7 @@ By the end, students should be able to:
 - explain transpiration and translocation
 - explain how temperature, humidity, air movement and light intensity affect transpiration
 - use simple rate calculations for transpiration
+- compare xylem and phloem clearly in exam answers
 
 ## Hook
 
@@ -54,7 +55,24 @@ Carbon dioxide + water → glucose + oxygen.
 
 ## Core content
 
-### 1. Plant tissues
+### 1. Plant organs and organ systems
+
+Plants have organs too.
+
+Key plant organs:
+
+- roots
+- stems
+- leaves
+
+These organs work together in plant organ systems:
+
+- **root system**: anchors the plant and absorbs water and mineral ions
+- **shoot system**: stems, leaves and flowers; supports the plant, transports substances and carries out photosynthesis
+
+A leaf is a plant organ because it is made of different tissues working together.
+
+### 2. Plant tissues
 
 Students should know these plant tissues:
 
@@ -65,9 +83,7 @@ Students should know these plant tissues:
 - phloem
 - meristem tissue
 
-The leaf is a plant organ because it is made of different tissues working together.
-
-### 2. Leaf adaptations
+### 3. Leaf adaptations
 
 #### Epidermal tissue
 
@@ -102,7 +118,7 @@ The leaf is a plant organ because it is made of different tissues working togeth
 - found at growing tips of roots and shoots
 - contains cells that can differentiate into different plant cell types
 
-### 3. Stomata and guard cells
+### 4. Stomata and guard cells
 
 Stomata are tiny pores mostly found on the underside of leaves.
 
@@ -118,7 +134,11 @@ Why this matters:
 
 A plant needs stomata open for gas exchange, but open stomata also mean water loss.
 
-### 4. Root hair cells
+Exam trap:
+
+Students often write that stomata are “holes for water”. Better wording: stomata are pores that allow gas exchange and water vapour loss.
+
+### 5. Root hair cells
 
 Root hair cells are adapted for absorption.
 
@@ -133,7 +153,7 @@ Exam wording:
 
 > Root hair cells absorb water by osmosis and mineral ions by active transport.
 
-### 5. Xylem
+### 6. Xylem
 
 Xylem transports water and mineral ions from the roots to the leaves.
 
@@ -143,8 +163,9 @@ Key details:
 - xylem vessels are hollow tubes
 - walls are strengthened with lignin
 - water moves in the transpiration stream
+- xylem cells are dead when mature, forming hollow vessels
 
-### 6. Transpiration
+### 7. Transpiration
 
 Transpiration is the loss of water vapour from the leaves, mainly through stomata.
 
@@ -158,7 +179,7 @@ Simple sequence:
 4. Water vapour diffuses out through stomata.
 5. More water is pulled up through the xylem.
 
-### 7. Factors affecting transpiration rate
+### 8. Factors affecting transpiration rate
 
 Transpiration increases when:
 
@@ -190,7 +211,7 @@ Common exam trap:
 
 High humidity reduces transpiration because the concentration gradient is smaller.
 
-### 8. Measuring transpiration
+### 9. Measuring transpiration
 
 Students may be asked about measuring water uptake as an estimate of transpiration rate.
 
@@ -200,17 +221,23 @@ A potometer estimates transpiration by measuring water uptake by a shoot.
 
 Rate calculation:
 
-> rate = distance moved by air bubble ÷ time
+> rate = distance moved by air bubble / time
 
 or
 
-> rate = volume of water taken up ÷ time
+> rate = volume of water taken up / time
+
+Worked example:
+
+An air bubble moves 24 mm in 6 minutes.
+
+24 / 6 = 4 mm/min
 
 Caution:
 
 Water uptake is only an estimate of transpiration because some water is used in photosynthesis or to support cells.
 
-### 9. Phloem and translocation
+### 10. Phloem and translocation
 
 Phloem transports dissolved sugars from leaves to the rest of the plant.
 
@@ -229,6 +256,15 @@ Direction:
 Translocation can move both up and down the plant, depending on where sugars are needed.
 
 Do not overteach detailed phloem mechanism for Trilogy.
+
+### 11. Xylem vs phloem exam comparison
+
+| Feature | Xylem | Phloem |
+|---|---|---|
+| Transports | water and mineral ions | dissolved sugars |
+| Direction | roots to leaves | both directions |
+| Process | transpiration stream | translocation |
+| Cell type | dead hollow vessels when mature | living tissue |
 
 ## Interactive tasks to build
 
@@ -276,7 +312,7 @@ An air bubble moves 24 mm in 6 minutes. Calculate the rate.
 
 Working:
 
-24 ÷ 6 = 4 mm/min
+24 / 6 = 4 mm/min
 
 Answer:
 
@@ -291,6 +327,16 @@ Student answer:
 Correction:
 
 Xylem carries water and mineral ions from roots to leaves. Phloem carries dissolved sugars around the plant by translocation.
+
+### Task 6: Guard cell judgement
+
+Prompt:
+
+A plant closes its stomata during very dry conditions. Explain the advantage and disadvantage.
+
+Good answer:
+
+Closing stomata reduces water loss by transpiration, but less carbon dioxide enters the leaf, so photosynthesis may decrease.
 
 ## Exam practice
 
@@ -355,8 +401,21 @@ Calculate the rate of movement.
 
 Mark points:
 
-- rate = distance ÷ time
-- 18 ÷ 3 = 6 mm/min
+- rate = distance / time
+- 18 / 3 = 6 mm/min
+
+### Question 6 — stomata evaluation
+
+Explain why closing stomata can help a plant survive dry conditions but may reduce growth.  
+4 marks
+
+Mark points:
+
+- closing stomata reduces water loss
+- reduces transpiration
+- less carbon dioxide enters
+- less photosynthesis
+- less glucose produced for growth
 
 ## Final retrieval
 
@@ -383,3 +442,6 @@ The water vapour concentration gradient is smaller.
 
 8. Where is meristem tissue found?  
 Growing tips of roots and shoots.
+
+9. Why can closing stomata reduce photosynthesis?  
+Less carbon dioxide enters the leaf.
