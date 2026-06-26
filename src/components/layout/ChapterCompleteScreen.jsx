@@ -4,6 +4,7 @@ import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import BackButton from '../core/BackButton.jsx'
 import { TYPE } from '../../constants/typography.js'
+import BottomNav from '../../app/BottomNav.jsx'
 
 const R_SIZE = 96
 const R_STROKE = 7
@@ -22,59 +23,6 @@ function darken(h, a = 0.24) {
 function isLight(h) {
   const [r, g, b] = hexToRgb(h)
   return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55
-}
-
-function NavIcon({ id, active, accent, accentRgb }) {
-  const c = active ? accent : '#4B5563'
-  const s = { stroke: c, fill: 'none', strokeWidth: 1.75, strokeLinecap: 'round', strokeLinejoin: 'round' }
-  const glow = active ? `drop-shadow(0 0 6px rgba(${accentRgb},0.42))` : 'none'
-  const p = { width: 22, height: 22, viewBox: '0 0 22 22', style: { display: 'block', filter: glow, transition: 'filter 220ms ease' } }
-  if (id === 'home') return <svg {...p}><path d="M3 9.5L11 3l8 6.5V19a1.5 1.5 0 01-1.5 1.5h-4V14h-5v6.5H4.5A1.5 1.5 0 013 19V9.5z" {...s}/></svg>
-  if (id === 'subjects') return <svg {...p}><rect x="3" y="3" width="7" height="7" rx="1.5" {...s}/><rect x="12" y="3" width="7" height="7" rx="1.5" {...s}/><rect x="3" y="12" width="7" height="7" rx="1.5" {...s}/><rect x="12" y="12" width="7" height="7" rx="1.5" {...s}/></svg>
-  if (id === 'pulse') return <svg {...p}><polyline points="2,13 6,13 8,6 11,18 14,10 16,13 20,13" {...s}/></svg>
-  if (id === 'exams') return <svg {...p}><rect x="4" y="2" width="14" height="18" rx="2" {...s}/><line x1="8" y1="7" x2="14" y2="7" {...s}/><line x1="8" y1="11" x2="14" y2="11" {...s}/><line x1="8" y1="15" x2="11" y2="15" {...s}/></svg>
-  return null
-}
-
-function BottomNav({ tab, setTab, accent, accentRgb }) {
-  const tabs = [
-    { id: 'home', label: 'Home' },
-    { id: 'subjects', label: 'Subjects' },
-    { id: 'pulse', label: 'Pulse' },
-    { id: 'exams', label: 'Exams' },
-  ]
-  return (
-    <div style={{
-      position: 'fixed', left: '50%', bottom: 14, transform: 'translateX(-50%)',
-      width: 'calc(100% - 32px)', maxWidth: 400, zIndex: 1000,
-      background: 'rgba(11,16,32,0.82)',
-      backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-      border: `1px solid rgba(${accentRgb},0.10)`,
-      borderRadius: 32,
-      boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
-      display: 'grid', gridTemplateColumns: 'repeat(4,1fr)',
-      padding: '10px 6px calc(10px + env(safe-area-inset-bottom))',
-      gap: 4,
-    }}>
-      {tabs.map(t => {
-        const active = tab === t.id || (t.id === 'pulse' && tab === 'quickfire')
-        return (
-          <button key={t.id} onClick={() => setTab?.(t.id)} style={{
-            border: 'none', background: active ? `rgba(${accentRgb},0.14)` : 'transparent',
-            cursor: 'pointer', borderRadius: RADII.large,
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: active ? 600 : 500,
-            color: active ? accent : '#374151',
-            padding: '6px 4px 5px',
-            transition: 'background 220ms ease, color 220ms ease',
-          }}>
-            <NavIcon id={t.id} active={active} accent={accent} accentRgb={accentRgb} />
-            <span style={{ letterSpacing: '0.01em' }}>{t.label}</span>
-          </button>
-        )
-      })}
-    </div>
-  )
 }
 
 function Particles({ accent }) {
@@ -308,7 +256,7 @@ export default function ChapterCompleteScreen({
           </button>
         </div>
 
-        <BottomNav tab={tab} setTab={setTab} accent={accent} accentRgb={ac}/>
+        <BottomNav tab={tab} setTab={setTab}/>
       </div>
     </>
   )
