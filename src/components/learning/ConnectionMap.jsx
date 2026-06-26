@@ -5,6 +5,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
+import { BUTTONS } from '../../constants/buttons.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 
@@ -87,7 +88,7 @@ function RetrievalQ({ node, accent, rgb }) {
       {revealed ? (
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }} style={{ ...TYPE.bodySmall, color: accent, margin: 0, fontWeight: 600, lineHeight: 1.55 }}>{node.retrievalAnswer}</motion.p>
       ) : (
-        <button onClick={() => setRevealed(true)} style={{ background: `rgba(${rgb}, 0.10)`, border: `1px solid rgba(${rgb}, 0.28)`, borderRadius: RADII.small, padding: '6px 14px', color: `rgba(${rgb}, 0.9)`, cursor: 'pointer', fontFamily: TYPE.bodyText.fontFamily, fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.03em', WebkitTapHighlightColor: 'transparent' }}>Reveal answer</button>
+        <button onClick={() => setRevealed(true)} style={{ height: BUTTONS.compact.height, background: `rgba(${rgb}, 0.10)`, border: `1px solid rgba(${rgb}, 0.28)`, borderRadius: BUTTONS.compact.borderRadius, padding: `0 ${BUTTONS.compact.paddingX}px`, color: `rgba(${rgb}, 0.9)`, cursor: 'pointer', fontFamily: TYPE.bodyText.fontFamily, fontSize: BUTTONS.compact.fontSize, fontWeight: BUTTONS.compact.fontWeight, letterSpacing: '0.03em', transition: BUTTONS.compact.transition, WebkitTapHighlightColor: 'transparent' }}>Reveal answer</button>
       )}
     </div>
   )
@@ -135,14 +136,9 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
     }, PANEL_DELAY_MS)
   }
 
-  function handleNextNode() {
-    if (!panelNode || nodes.length < 2) return
+  function handleClosePanel() {
     if (panelTimerRef.current) window.clearTimeout(panelTimerRef.current)
-    const currentPanelIndex = nodes.findIndex(node => node.id === panelNode.id)
-    const nextNode = nodes[(currentPanelIndex + 1) % nodes.length]
-    setActiveId(nextNode.id)
-    setPanelId(nextNode.id)
-    setExplored(prev => new Set([...prev, nextNode.id]))
+    setPanelId(null)
   }
 
   const instant = { duration: 0 }
@@ -179,7 +175,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                       {panelNodeImage && <img src={panelNodeImage} alt="" aria-hidden="true" style={{ width: 34, height: 34, objectFit: 'cover', borderRadius: panelNode.id === 'galen' || panelNode.id === 'experience' ? '50%' : 9, opacity: 0.72, border: `1px solid rgba(${mapRgb},0.26)`, filter: 'sepia(0.24) saturate(0.8)', flexShrink: 0 }} />}
                       <p style={{ ...TYPE.cardTitle, margin: 0, color: '#EDE0C8', lineHeight: 1.18 }}>{panelNode.label}</p>
                     </div>
-                    <button onClick={() => setPanelId(null)} aria-label="Close explanation" style={{ width: 30, height: 30, borderRadius: '50%', border: `1px solid rgba(${mapRgb},0.24)`, background: 'rgba(0,0,0,0.22)', color: 'rgba(237,224,200,0.70)', fontFamily: TYPE.bodyText.fontFamily, fontSize: 17, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}>×</button>
+                    <button onClick={handleClosePanel} aria-label="Close explanation" style={{ width: 44, height: 44, borderRadius: RADII.pill, border: `1px solid rgba(${mapRgb},0.24)`, background: 'rgba(0,0,0,0.22)', color: 'rgba(237,224,200,0.70)', fontFamily: TYPE.bodyText.fontFamily, fontSize: 18, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}>×</button>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -190,7 +186,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
 
                   <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, paddingTop: 4 }}>
                     <SequenceProgress total={nodes.length} current={currentIndex} viewed={viewedIndexes} accent={mapAccent} accentRgb={mapRgb} compact ariaLabel="Connection map progress" />
-                    {nodes.length > 1 && <button onClick={handleNextNode} style={{ alignSelf: 'stretch', border: `1px solid rgba(${mapRgb},0.32)`, borderRadius: 999, background: `linear-gradient(180deg, rgba(${mapRgb},0.17), rgba(${mapRgb},0.09))`, color: '#EDE0C8', fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 700, letterSpacing: '-0.01em', padding: '11px 14px', cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}>Next belief</button>}
+                    <button onClick={handleClosePanel} style={{ alignSelf: 'stretch', height: BUTTONS.secondary.height, border: `1px solid rgba(${mapRgb},0.32)`, borderRadius: BUTTONS.secondary.borderRadius, background: `linear-gradient(180deg, rgba(${mapRgb},0.15), rgba(${mapRgb},0.075))`, color: '#EDE0C8', fontFamily: TYPE.bodyText.fontFamily, fontSize: BUTTONS.secondary.fontSize, fontWeight: BUTTONS.secondary.fontWeight, letterSpacing: '-0.01em', padding: `0 ${BUTTONS.secondary.paddingX}px`, cursor: 'pointer', transition: BUTTONS.secondary.transition, WebkitTapHighlightColor: 'transparent' }}>Close</button>
                   </div>
                 </div>
               </motion.div>
