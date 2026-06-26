@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
-import { SUBJECTS } from '../../constants/subjects.js'
+import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
@@ -97,15 +97,14 @@ function RetrievalQ({ node, accent, rgb }) {
 export default function ConnectionMap({ block, subject = 'History', onComplete }) {
   const { centreLabel, centreImage, title, subtitle, instruction, nodes = [] } = block
   const theme = SUBJECTS[subject] || SUBJECTS.History
-  const accent = theme.accent
-  const rgb = theme.accentRgb
   const bg = theme.background
   const prefersReduced = useReducedMotion()
   const resolvedCentreImage = centreImage || DEFAULT_CENTRE_IMAGES[subject]
   const panelTimerRef = useRef(null)
-  const isHistory = subject === 'History'
-  const mapAccent = isHistory ? '#D6AB5D' : accent
-  const mapRgb = isHistory ? '214,171,93' : rgb
+  const mapAccent = theme.accent
+  const mapSecondary = theme.accentSecondary || theme.palette?.tealAccent || theme.accent
+  const mapRgb = theme.accentRgb || hexToRgb(mapAccent)
+  const readRgb = hexToRgb(mapSecondary)
   const warmInk = 'rgba(237,224,200,0.90)'
 
   const [activeId, setActiveId] = useState(null)
@@ -202,11 +201,11 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                       const isViewed = explored.has(node.id)
                       const hasFocus = Boolean(activeId)
                       const { sx, sy } = lineGeometry(pos)
-                      const jointOpacity = isActive ? 0.96 : isViewed ? 0.48 : hasFocus ? 0.18 : 0.30
+                      const jointOpacity = isActive ? 0.96 : isViewed ? 0.54 : hasFocus ? 0.18 : 0.30
                       return (
                         <g key={node.id}>
-                          <motion.path d={linePath(pos, i)} stroke={mapAccent} fill="none" strokeLinecap="round" initial={{ pathLength: prefersReduced ? 1 : 0, strokeWidth: 0.8, strokeOpacity: 0 }} animate={{ pathLength: 1, strokeWidth: isActive ? 1.25 : 0.82, strokeOpacity: isActive ? 0.68 : isViewed ? 0.28 : hasFocus ? 0.10 : 0.18 }} transition={lineT(i)} style={{ filter: isActive ? `drop-shadow(0 0 2px rgba(${mapRgb}, 0.46))` : 'none' }} />
-                          <motion.circle cx={sx} cy={sy} r={isActive ? 1.28 : 0.76} fill={mapAccent} initial={{ opacity: prefersReduced ? 0.55 : 0 }} animate={{ opacity: jointOpacity }} transition={lineT(i)} style={{ filter: isActive ? `drop-shadow(0 0 4px rgba(${mapRgb},0.68))` : `drop-shadow(0 0 1.5px rgba(${mapRgb},0.22))` }} />
+                          <motion.path d={linePath(pos, i)} stroke={isViewed && !isActive ? mapSecondary : mapAccent} fill="none" strokeLinecap="round" initial={{ pathLength: prefersReduced ? 1 : 0, strokeWidth: 0.8, strokeOpacity: 0 }} animate={{ pathLength: 1, strokeWidth: isActive ? 1.25 : 0.82, strokeOpacity: isActive ? 0.68 : isViewed ? 0.34 : hasFocus ? 0.10 : 0.18 }} transition={lineT(i)} style={{ filter: isActive ? `drop-shadow(0 0 2px rgba(${mapRgb}, 0.46))` : 'none' }} />
+                          <motion.circle cx={sx} cy={sy} r={isActive ? 1.28 : isViewed ? 0.92 : 0.76} fill={isViewed && !isActive ? mapSecondary : mapAccent} initial={{ opacity: prefersReduced ? 0.55 : 0 }} animate={{ opacity: jointOpacity }} transition={lineT(i)} style={{ filter: isActive ? `drop-shadow(0 0 4px rgba(${mapRgb},0.68))` : isViewed ? `drop-shadow(0 0 3px rgba(${readRgb},0.32))` : `drop-shadow(0 0 1.5px rgba(${mapRgb},0.22))` }} />
                         </g>
                       )
                     })}
@@ -229,16 +228,18 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                     const caption = node.caption || DEFAULT_CAPTIONS[node.id]
                     const nodeImage = node.image || DEFAULT_NODE_IMAGES[node.id]
                     const hasFocus = Boolean(activeId)
-                    const inactiveOpacity = hasFocus && !isActive ? (isViewed ? 0.60 : 0.42) : (isViewed ? 0.86 : 0.72)
+                    const inactiveOpacity = hasFocus && !isActive ? (isViewed ? 0.72 : 0.42) : (isViewed ? 0.92 : 0.72)
+                    const nodeRgb = isViewed && !isActive ? readRgb : mapRgb
+                    const nodeAccent = isViewed && !isActive ? mapSecondary : mapAccent
 
                     return (
                       <div key={node.id} style={{ position: 'absolute', left: `${pos.x}%`, top: `${pos.y}%`, transform: 'translate(-50%, -50%)', zIndex: isActive ? 4 : 3 }}>
-                        <motion.button onClick={() => handleNodeTap(node)} aria-label={node.label} aria-pressed={isActive} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.45, y: prefersReduced ? 0 : 8 }} animate={{ opacity: 1, scale: isActive && !panelNode ? [1, 1.045, 1] : isActive ? 1.025 : 1, y: isActive && !panelNode ? [0, -2, 0] : 0 }} transition={isActive && !panelNode ? tapT : nodeIntroT(i)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, padding: '7px 8px', width: OUTER_NODE_SIZE, height: OUTER_NODE_SIZE, minWidth: 44, minHeight: 44, borderRadius: '50%', border: isActive ? `1.75px solid rgba(${mapRgb}, 0.90)` : isViewed ? `1.25px solid rgba(${mapRgb}, 0.42)` : `1.25px solid rgba(${mapRgb}, 0.28)`, background: isActive ? `radial-gradient(circle, rgba(${mapRgb},0.12) 0%, rgba(35,25,12,0.96) 58%, rgba(12,9,5,0.98) 100%)` : `radial-gradient(circle, rgba(${mapRgb},0.040) 0%, rgba(24,18,9,0.90) 64%, rgba(10,8,5,0.96) 100%)`, boxShadow: isActive ? `0 0 11px rgba(${mapRgb},0.22), 0 0 2px rgba(${mapRgb},0.78), inset 0 0 12px rgba(${mapRgb},0.055)` : isViewed ? `0 0 5px rgba(${mapRgb},0.09), inset 0 0 8px rgba(255,220,160,0.018)` : 'inset 0 0 8px rgba(255,220,160,0.015)', opacity: isActive ? 1 : inactiveOpacity, cursor: 'pointer', outline: 'none', WebkitTapHighlightColor: 'transparent', transition: [`border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`, `background ${MOTION.duration.fast} ${MOTION.easing.standard}`, `box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`, `opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`].join(', '), position: 'relative' }} onFocus={e => { e.currentTarget.style.outline = `2px solid ${mapAccent}`; e.currentTarget.style.outlineOffset = '3px' }} onBlur={e => { e.currentTarget.style.outline = 'none'; e.currentTarget.style.outlineOffset = '0' }}>
-                          <span aria-hidden="true" style={{ position: 'absolute', inset: 5, borderRadius: '50%', border: `1px solid rgba(${mapRgb},${isActive ? 0.18 : 0.10})`, opacity: isActive ? 1 : 0.7 }} />
-                          {nodeImage && <img src={nodeImage} alt="" aria-hidden="true" style={{ width: 21, height: 21, objectFit: 'contain', opacity: isActive ? 0.70 : hasFocus ? 0.32 : 0.44, filter: 'grayscale(0.12) sepia(0.38) saturate(0.72) contrast(0.92)', marginBottom: 1, borderRadius: node.id === 'galen' || node.id === 'experience' ? '50%' : 0 }} />}
-                          <span style={{ fontFamily: TYPE.cardTitle.fontFamily, fontSize: 11.2, lineHeight: 1.1, fontWeight: 750, color: isActive ? mapAccent : warmInk, textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 66, letterSpacing: '-0.015em', transition: `color ${MOTION.duration.fast}`, userSelect: 'none', position: 'relative', zIndex: 1 }}>{label}</span>
-                          {caption && <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 9.1, lineHeight: 1.14, fontWeight: 500, color: isActive ? 'rgba(237,224,200,0.68)' : 'rgba(237,224,200,0.46)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 70, position: 'relative', zIndex: 1 }}>{caption}</span>}
-                          {isViewed && <span aria-hidden="true" style={{ position: 'absolute', top: 5, right: 5, width: 7, height: 7, borderRadius: '50%', background: mapAccent, boxShadow: `0 0 5px rgba(${mapRgb},0.55)`, opacity: isActive ? 0.96 : 0.62, zIndex: 5 }} />}
+                        <motion.button onClick={() => handleNodeTap(node)} aria-label={node.label} aria-pressed={isActive} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.45, y: prefersReduced ? 0 : 8 }} animate={{ opacity: 1, scale: isActive && !panelNode ? [1, 1.045, 1] : isActive ? 1.025 : 1, y: isActive && !panelNode ? [0, -2, 0] : 0 }} transition={isActive && !panelNode ? tapT : nodeIntroT(i)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, padding: '7px 8px', width: OUTER_NODE_SIZE, height: OUTER_NODE_SIZE, minWidth: 44, minHeight: 44, borderRadius: '50%', border: isActive ? `1.75px solid rgba(${mapRgb}, 0.90)` : isViewed ? `1.35px solid rgba(${readRgb}, 0.62)` : `1.25px solid rgba(${mapRgb}, 0.28)`, background: isActive ? `radial-gradient(circle, rgba(${mapRgb},0.12) 0%, rgba(35,25,12,0.96) 58%, rgba(12,9,5,0.98) 100%)` : isViewed ? `radial-gradient(circle, rgba(${readRgb},0.080) 0%, rgba(24,18,9,0.92) 64%, rgba(10,8,5,0.96) 100%)` : `radial-gradient(circle, rgba(${mapRgb},0.040) 0%, rgba(24,18,9,0.90) 64%, rgba(10,8,5,0.96) 100%)`, boxShadow: isActive ? `0 0 11px rgba(${mapRgb},0.22), 0 0 2px rgba(${mapRgb},0.78), inset 0 0 12px rgba(${mapRgb},0.055)` : isViewed ? `0 0 6px rgba(${readRgb},0.12), inset 0 0 9px rgba(${readRgb},0.032)` : 'inset 0 0 8px rgba(255,220,160,0.015)', opacity: isActive ? 1 : inactiveOpacity, cursor: 'pointer', outline: 'none', WebkitTapHighlightColor: 'transparent', transition: [`border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`, `background ${MOTION.duration.fast} ${MOTION.easing.standard}`, `box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`, `opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`].join(', '), position: 'relative' }} onFocus={e => { e.currentTarget.style.outline = `2px solid ${mapAccent}`; e.currentTarget.style.outlineOffset = '3px' }} onBlur={e => { e.currentTarget.style.outline = 'none'; e.currentTarget.style.outlineOffset = '0' }}>
+                          <span aria-hidden="true" style={{ position: 'absolute', inset: 5, borderRadius: '50%', border: `1px solid rgba(${nodeRgb},${isActive ? 0.18 : isViewed ? 0.15 : 0.10})`, opacity: isActive ? 1 : 0.78 }} />
+                          {nodeImage && <img src={nodeImage} alt="" aria-hidden="true" style={{ width: 21, height: 21, objectFit: 'contain', opacity: isActive ? 0.70 : hasFocus ? (isViewed ? 0.46 : 0.32) : (isViewed ? 0.56 : 0.44), filter: 'grayscale(0.12) sepia(0.38) saturate(0.72) contrast(0.92)', marginBottom: 1, borderRadius: node.id === 'galen' || node.id === 'experience' ? '50%' : 0 }} />}
+                          <span style={{ fontFamily: TYPE.cardTitle.fontFamily, fontSize: 11.2, lineHeight: 1.1, fontWeight: 750, color: isActive ? mapAccent : isViewed ? nodeAccent : warmInk, textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 66, letterSpacing: '-0.015em', transition: `color ${MOTION.duration.fast}`, userSelect: 'none', position: 'relative', zIndex: 1 }}>{label}</span>
+                          {caption && <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 9.1, lineHeight: 1.14, fontWeight: 500, color: isActive ? 'rgba(237,224,200,0.68)' : isViewed ? 'rgba(237,224,200,0.58)' : 'rgba(237,224,200,0.46)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 70, position: 'relative', zIndex: 1 }}>{caption}</span>}
+                          {isViewed && <span aria-hidden="true" style={{ position: 'absolute', top: 5, right: 5, width: 7, height: 7, borderRadius: '50%', background: nodeAccent, boxShadow: `0 0 5px rgba(${nodeRgb},0.55)`, opacity: isActive ? 0.96 : 0.72, zIndex: 5 }} />}
                         </motion.button>
                       </div>
                     )
