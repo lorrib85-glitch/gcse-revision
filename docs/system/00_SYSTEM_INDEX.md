@@ -79,6 +79,16 @@ Per-component documentation. Added as components are created or significantly up
 
 ---
 
+## Archive
+
+`docs/archive/` is searchable history. It contains retired workflow docs,
+superseded architecture specs, and one-off fix summaries. The archive is
+**not authoritative** — it must never override `docs/system/`, `CLAUDE.md`,
+or `docs/components/`. When an archived file conflicts with an active system
+doc, the active doc wins. Do not treat archive content as current guidance.
+
+---
+
 ## Pre-Change Checklist
 
 Before making any UI change, confirm:

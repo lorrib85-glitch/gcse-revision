@@ -14,7 +14,7 @@ Do not create or use feature branches. All work goes to `main` and is pushed imm
 - **Standard Change Pipeline** (Workflows B / C) — changing an existing component, screen, style, copy pattern, module content, or behaviour. See `docs/system/DEVELOPMENT_WORKFLOW.md`.
 - **Big Build Pipeline** (Workflows D / E / F / G) — bug fix, new flow, new component family, new architecture, or workflow governance. See `docs/system/DEVELOPMENT_WORKFLOW.md`.
 
-Full lane detail (phases, allowed/forbidden skills, verification per lane) lives in `docs/system/RISE_WORKFLOW_MAP.md`.
+Full lane detail (phases, allowed/forbidden skills, verification per lane) lives in `docs/system/workflows/README.md`.
 
 Context compaction and "resume directly" do **NOT** skip this requirement. If a half-formed plan carried over from before compaction still involves substantial work, route it through the normal pipeline rather than executing directly.
 

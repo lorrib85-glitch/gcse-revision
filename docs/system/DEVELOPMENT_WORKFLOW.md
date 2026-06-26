@@ -4,12 +4,18 @@
 **Scope:** How all development work in this codebase is approached — from a one-line copy tweak to a brand-new product surface.
 
 This document is the operational counterpart to
-`docs/superpowers/specs/2026-06-12-development-workflow-design.md`, which
-records the rationale and decisions behind it. `CLAUDE.md`, `docs/system/`,
-and `docs/components/` remain the source of truth for the product itself.
-This file, `.planning/`, and `docs/superpowers/specs/` are process
-artefacts — they describe how work happens, not what the product is, and
-must never become competing documentation.
+`docs/archive/superpowers/specs/2026-06-12-development-workflow-design.md`,
+which records the rationale and decisions behind it. `CLAUDE.md`,
+`docs/system/`, and `docs/components/` remain the source of truth for the
+product itself. This file, `.planning/`, and `docs/superpowers/specs/` are
+process artefacts — they describe how work happens, not what the product is,
+and must never become competing documentation.
+
+`docs/archive/` is searchable history only. Archived files are not
+authoritative. When any archived file conflicts with `docs/system/` or
+`CLAUDE.md`, the active system docs win. One-off specs and plans in
+`docs/archive/superpowers/` must not be promoted into canonical rules unless
+explicitly reviewed and merged into a system doc by the user.
 
 ## Guiding principle
 
@@ -231,5 +237,5 @@ No task is complete at implementation alone.
 
 ## Rationale
 
-See `docs/superpowers/specs/2026-06-12-development-workflow-design.md` for
-the full rationale and decisions behind this workflow.
+See `docs/archive/superpowers/specs/2026-06-12-development-workflow-design.md`
+for the full rationale and decisions behind this workflow.
