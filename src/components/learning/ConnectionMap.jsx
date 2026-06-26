@@ -8,16 +8,16 @@ import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 
-const MAP_WIDTH = 320
-const MAP_HEIGHT = 360
-const CENTRE_NODE_SIZE = 104
-const OUTER_NODE_SIZE = 90
+const MAP_WIDTH = 326
+const MAP_HEIGHT = 378
+const CENTRE_NODE_SIZE = 106
+const OUTER_NODE_SIZE = 86
 const PANEL_DELAY_MS = 240
 
 const POSITIONS = {
-  5: [{ x: 50, y: 15 }, { x: 80, y: 34 }, { x: 68, y: 80 }, { x: 32, y: 80 }, { x: 20, y: 34 }],
-  6: [{ x: 50, y: 15 }, { x: 82, y: 31 }, { x: 82, y: 69 }, { x: 50, y: 85 }, { x: 18, y: 69 }, { x: 18, y: 31 }],
-  7: [{ x: 50, y: 14 }, { x: 77, y: 27 }, { x: 82, y: 54 }, { x: 65, y: 80 }, { x: 35, y: 80 }, { x: 18, y: 54 }, { x: 23, y: 27 }],
+  5: [{ x: 50, y: 12 }, { x: 83, y: 33 }, { x: 70, y: 84 }, { x: 30, y: 84 }, { x: 17, y: 33 }],
+  6: [{ x: 50, y: 12 }, { x: 84, y: 30 }, { x: 84, y: 70 }, { x: 50, y: 88 }, { x: 16, y: 70 }, { x: 16, y: 30 }],
+  7: [{ x: 50, y: 11 }, { x: 78, y: 25 }, { x: 86, y: 53 }, { x: 66, y: 84 }, { x: 34, y: 84 }, { x: 14, y: 53 }, { x: 22, y: 25 }],
 }
 
 const DEFAULT_CAPTIONS = {
@@ -45,7 +45,7 @@ function resolvePositions(count) {
   if (POSITIONS[count]) return POSITIONS[count]
   return Array.from({ length: count }, (_, i) => {
     const a = (i * 360 / count - 90) * Math.PI / 180
-    return { x: Math.round(50 + 31 * Math.cos(a)), y: Math.round(50 + 35 * Math.sin(a)) }
+    return { x: Math.round(50 + 34 * Math.cos(a)), y: Math.round(50 + 38 * Math.sin(a)) }
   })
 }
 
@@ -72,7 +72,7 @@ function linePath(pos, index = 0) {
   const dx = ex - sx
   const dy = ey - sy
   const len = Math.sqrt(dx * dx + dy * dy) || 1
-  const bend = index % 2 === 0 ? 2.5 : -2.5
+  const bend = index % 2 === 0 ? 1.6 : -1.6
   const cx = mx + (-dy / len) * bend
   const cy = my + (dx / len) * bend
   return `M ${sx.toFixed(2)} ${sy.toFixed(2)} Q ${cx.toFixed(2)} ${cy.toFixed(2)} ${ex.toFixed(2)} ${ey.toFixed(2)}`
@@ -102,6 +102,10 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
   const prefersReduced = useReducedMotion()
   const resolvedCentreImage = centreImage || DEFAULT_CENTRE_IMAGES[subject]
   const panelTimerRef = useRef(null)
+  const isHistory = subject === 'History'
+  const mapAccent = isHistory ? '#D6AB5D' : accent
+  const mapRgb = isHistory ? '214,171,93' : rgb
+  const warmInk = 'rgba(237,224,200,0.90)'
 
   const [activeId, setActiveId] = useState(null)
   const [panelId, setPanelId] = useState(null)
@@ -145,18 +149,19 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: bg, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <div aria-hidden="true" style={{ position: 'fixed', inset: 0, background: `radial-gradient(circle at 50% 36%, rgba(${mapRgb},0.10) 0%, rgba(${mapRgb},0.035) 27%, transparent 56%), radial-gradient(circle at 50% 78%, rgba(0,0,0,0.26) 0%, transparent 42%)`, pointerEvents: 'none' }} />
       <div style={{ position: 'relative', zIndex: 1, padding: `calc(80px + env(safe-area-inset-top, 0px)) 0 calc(${SPACING.standard}px + env(safe-area-inset-bottom, 0px))`, maxWidth: 440, margin: '0 auto' }}>
         <div style={{ padding: `0 ${SPACING.standard}px`, display: 'flex', flexDirection: 'column', gap: 0 }}>
           {(title || subtitle) && (
-            <div style={{ marginBottom: 12 }}>
-              {title && <h1 style={{ ...TYPE.screenHeading, margin: '0 0 8px', color: '#F5F7FF' }}>{title}</h1>}
-              {subtitle && <p style={{ ...TYPE.bodySmall, margin: 0, color: 'rgba(237,224,200,0.48)', lineHeight: 1.45 }}>{subtitle}</p>}
+            <div style={{ marginBottom: 14 }}>
+              {title && <h1 style={{ ...TYPE.screenHeading, margin: '0 0 8px', color: '#F5F2EA' }}>{title}</h1>}
+              {subtitle && <p style={{ ...TYPE.bodySmall, margin: 0, color: 'rgba(237,224,200,0.52)', lineHeight: 1.45 }}>{subtitle}</p>}
             </div>
           )}
 
           <div style={{ position: 'relative', width: '100%', maxWidth: MAP_WIDTH, height: MAP_HEIGHT, margin: '0 auto', flexShrink: 0 }}>
-            <div aria-hidden="true" style={{ position: 'absolute', inset: -10, borderRadius: 32, background: `radial-gradient(circle at 50% 48%, rgba(${rgb},0.20) 0%, rgba(${rgb},0.075) 34%, transparent 68%)`, filter: 'blur(1px)', opacity: 0.95, zIndex: 0 }} />
-            <div aria-hidden="true" style={{ position: 'absolute', inset: 4, borderRadius: 28, background: `linear-gradient(135deg, rgba(${rgb},0.055) 0 1px, transparent 1px 22px)`, opacity: 0.22, zIndex: 0 }} />
+            <div aria-hidden="true" style={{ position: 'absolute', inset: -4, borderRadius: 36, background: `radial-gradient(circle at 50% 50%, rgba(${mapRgb},0.13) 0%, rgba(${mapRgb},0.045) 32%, transparent 64%)`, filter: 'blur(0.5px)', opacity: 0.82, zIndex: 0 }} />
+            <div aria-hidden="true" style={{ position: 'absolute', inset: 8, borderRadius: 30, background: `linear-gradient(135deg, rgba(${mapRgb},0.04) 0 1px, transparent 1px 24px)`, opacity: 0.18, zIndex: 0 }} />
 
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible', zIndex: 1 }} aria-hidden="true">
               {nodes.map((node, i) => {
@@ -165,21 +170,22 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                 const isViewed = explored.has(node.id)
                 const hasFocus = Boolean(activeId)
                 const { sx, sy } = lineGeometry(pos)
+                const jointOpacity = isActive ? 0.96 : isViewed ? 0.48 : hasFocus ? 0.18 : 0.30
                 return (
                   <g key={node.id}>
-                    <motion.path d={linePath(pos, i)} stroke={accent} fill="none" strokeLinecap="round" initial={{ pathLength: prefersReduced ? 1 : 0, strokeWidth: 1.05, strokeOpacity: 0 }} animate={{ pathLength: 1, strokeWidth: isActive ? 1.75 : 1.05, strokeOpacity: isActive ? 0.84 : isViewed ? 0.34 : hasFocus ? 0.15 : 0.24 }} transition={lineT(i)} style={{ filter: isActive ? `drop-shadow(0 0 3px rgba(${rgb}, 0.46))` : 'none' }} />
-                    <motion.circle cx={sx} cy={sy} r={isActive ? 1.35 : 0.92} fill={accent} initial={{ opacity: prefersReduced ? 0.55 : 0 }} animate={{ opacity: isActive ? 0.95 : isViewed ? 0.52 : hasFocus ? 0.22 : 0.34 }} transition={lineT(i)} style={{ filter: isActive ? `drop-shadow(0 0 3px rgba(${rgb},0.62))` : 'none' }} />
+                    <motion.path d={linePath(pos, i)} stroke={mapAccent} fill="none" strokeLinecap="round" initial={{ pathLength: prefersReduced ? 1 : 0, strokeWidth: 0.8, strokeOpacity: 0 }} animate={{ pathLength: 1, strokeWidth: isActive ? 1.25 : 0.82, strokeOpacity: isActive ? 0.68 : isViewed ? 0.28 : hasFocus ? 0.10 : 0.18 }} transition={lineT(i)} style={{ filter: isActive ? `drop-shadow(0 0 2px rgba(${mapRgb}, 0.46))` : 'none' }} />
+                    <motion.circle cx={sx} cy={sy} r={isActive ? 1.28 : 0.76} fill={mapAccent} initial={{ opacity: prefersReduced ? 0.55 : 0 }} animate={{ opacity: jointOpacity }} transition={lineT(i)} style={{ filter: isActive ? `drop-shadow(0 0 4px rgba(${mapRgb},0.68))` : `drop-shadow(0 0 1.5px rgba(${mapRgb},0.22))` }} />
                   </g>
                 )
               })}
             </svg>
 
             <div style={{ position: 'absolute', left: '50%', top: '50%', width: CENTRE_NODE_SIZE, height: CENTRE_NODE_SIZE, transform: 'translate(-50%, -50%)', zIndex: 2 }}>
-              <motion.div role="img" aria-label={centreLabel} style={{ width: '100%', height: '100%', borderRadius: '50%', background: `radial-gradient(circle, rgba(${rgb},0.30) 0%, rgba(${rgb},0.12) 56%, rgba(20,13,5,0.96) 100%)`, border: `2px solid rgba(${rgb}, 0.62)`, boxShadow: `inset 0 0 24px rgba(${rgb},0.18), 0 0 22px rgba(${rgb},0.22)`, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10, textAlign: 'center', overflow: 'hidden', position: 'relative' }} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.82 }} animate={{ opacity: 1, scale: 1 }} transition={centreT()}>
-                <span aria-hidden="true" style={{ position: 'absolute', inset: 5, borderRadius: '50%', border: `1px solid rgba(${rgb},0.28)`, boxShadow: `inset 0 0 10px rgba(${rgb},0.12)` }} />
-                <span aria-hidden="true" style={{ position: 'absolute', inset: -6, borderRadius: '50%', border: `1px solid rgba(${rgb},0.16)`, opacity: 0.85 }} />
-                {resolvedCentreImage && <img src={resolvedCentreImage} alt="" aria-hidden="true" style={{ position: 'absolute', inset: 10, width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', objectFit: 'cover', opacity: 0.30, filter: 'grayscale(0.18) sepia(0.34) contrast(1.06)' }} />}
-                <span style={{ fontFamily: TYPE.bodyText.fontFamily, color: accent, fontSize: 12, lineHeight: 1.15, fontWeight: 800, letterSpacing: '0.02em', maxWidth: 72, textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden', position: 'relative', zIndex: 1, textShadow: '0 1px 8px rgba(0,0,0,0.62)' }}>{centreLabel}</span>
+              <motion.div role="img" aria-label={centreLabel} style={{ width: '100%', height: '100%', borderRadius: '50%', background: `radial-gradient(circle, rgba(${mapRgb},0.16) 0%, rgba(38,27,13,0.90) 52%, rgba(12,9,5,0.98) 100%)`, border: `1.5px solid rgba(${mapRgb}, 0.72)`, boxShadow: `inset 0 0 18px rgba(${mapRgb},0.12), 0 0 13px rgba(${mapRgb},0.22), 0 0 2px rgba(${mapRgb},0.80)`, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10, textAlign: 'center', overflow: 'hidden', position: 'relative' }} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.82 }} animate={{ opacity: 1, scale: 1 }} transition={centreT()}>
+                <span aria-hidden="true" style={{ position: 'absolute', inset: 5, borderRadius: '50%', border: `1px solid rgba(${mapRgb},0.24)`, boxShadow: `inset 0 0 9px rgba(${mapRgb},0.10)` }} />
+                <span aria-hidden="true" style={{ position: 'absolute', inset: -7, borderRadius: '50%', border: `1px solid rgba(${mapRgb},0.10)`, opacity: 0.7 }} />
+                {resolvedCentreImage && <img src={resolvedCentreImage} alt="" aria-hidden="true" style={{ position: 'absolute', inset: 10, width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', objectFit: 'cover', opacity: 0.22, filter: 'grayscale(0.28) sepia(0.30) contrast(0.96)' }} />}
+                <span style={{ fontFamily: TYPE.cardTitle.fontFamily, color: warmInk, fontSize: 12, lineHeight: 1.13, fontWeight: 750, letterSpacing: '-0.02em', maxWidth: 72, textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden', position: 'relative', zIndex: 1, textShadow: '0 1px 8px rgba(0,0,0,0.72)' }}>{centreLabel}</span>
               </motion.div>
             </div>
 
@@ -191,44 +197,45 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
               const caption = node.caption || DEFAULT_CAPTIONS[node.id]
               const nodeImage = node.image || DEFAULT_NODE_IMAGES[node.id]
               const hasFocus = Boolean(activeId)
-              const inactiveOpacity = hasFocus && !isActive ? (isViewed ? 0.68 : 0.52) : (isViewed ? 0.9 : 0.76)
+              const inactiveOpacity = hasFocus && !isActive ? (isViewed ? 0.66 : 0.48) : (isViewed ? 0.86 : 0.72)
 
               return (
                 <div key={node.id} style={{ position: 'absolute', left: `${pos.x}%`, top: `${pos.y}%`, transform: 'translate(-50%, -50%)', zIndex: isActive ? 4 : 3 }}>
-                  <motion.button onClick={() => handleNodeTap(node)} aria-label={node.label} aria-pressed={isActive} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.45, y: prefersReduced ? 0 : 8 }} animate={{ opacity: 1, scale: isActive && !panelNode ? [1, 1.055, 1] : isActive ? 1.035 : 1, y: isActive && !panelNode ? [0, -3, 0] : 0 }} transition={isActive && !panelNode ? tapT : nodeIntroT(i)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '7px 8px', width: OUTER_NODE_SIZE, height: OUTER_NODE_SIZE, minWidth: 44, minHeight: 44, borderRadius: '50%', border: isActive ? `2px solid rgba(${rgb}, 0.9)` : isViewed ? `1.5px solid rgba(${rgb}, 0.46)` : `1.5px solid rgba(${rgb}, 0.30)`, background: isActive ? `radial-gradient(circle, rgba(${rgb},0.20) 0%, rgba(42,28,10,0.98) 58%)` : `radial-gradient(circle, rgba(${rgb},0.055) 0%, rgba(30,20,8,0.91) 62%)`, boxShadow: isActive ? `0 0 18px rgba(${rgb},0.28), inset 0 0 15px rgba(${rgb},0.08)` : 'inset 0 0 10px rgba(255,220,160,0.025)', opacity: isActive ? 1 : inactiveOpacity, cursor: 'pointer', outline: 'none', WebkitTapHighlightColor: 'transparent', transition: [`border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`, `background ${MOTION.duration.fast} ${MOTION.easing.standard}`, `box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`, `opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`].join(', '), position: 'relative' }} onFocus={e => { e.currentTarget.style.outline = `2px solid ${accent}`; e.currentTarget.style.outlineOffset = '3px' }} onBlur={e => { e.currentTarget.style.outline = 'none'; e.currentTarget.style.outlineOffset = '0' }}>
-                    {nodeImage && <img src={nodeImage} alt="" aria-hidden="true" style={{ width: 25, height: 25, objectFit: 'contain', opacity: isActive ? 0.9 : hasFocus ? 0.48 : 0.62, filter: 'sepia(0.3) saturate(0.85)', marginBottom: 1, borderRadius: node.id === 'galen' || node.id === 'experience' ? '50%' : 0 }} />}
-                    <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11.5, lineHeight: 1.12, fontWeight: 800, color: isActive ? accent : 'rgba(237,224,200,0.90)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 68, letterSpacing: '0.01em', transition: `color ${MOTION.duration.fast}`, userSelect: 'none' }}>{label}</span>
-                    {caption && <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 9.5, lineHeight: 1.14, fontWeight: 500, color: isActive ? 'rgba(237,224,200,0.74)' : 'rgba(237,224,200,0.50)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 72 }}>{caption}</span>}
-                    {isViewed && <span aria-hidden="true" style={{ position: 'absolute', top: 4, right: 4, width: 15, height: 15, borderRadius: '50%', background: `rgba(${rgb}, 0.88)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, color: bg, fontWeight: 900, lineHeight: 1, zIndex: 5 }}>✓</span>}
+                  <motion.button onClick={() => handleNodeTap(node)} aria-label={node.label} aria-pressed={isActive} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.45, y: prefersReduced ? 0 : 8 }} animate={{ opacity: 1, scale: isActive && !panelNode ? [1, 1.045, 1] : isActive ? 1.025 : 1, y: isActive && !panelNode ? [0, -2, 0] : 0 }} transition={isActive && !panelNode ? tapT : nodeIntroT(i)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, padding: '7px 8px', width: OUTER_NODE_SIZE, height: OUTER_NODE_SIZE, minWidth: 44, minHeight: 44, borderRadius: '50%', border: isActive ? `1.75px solid rgba(${mapRgb}, 0.90)` : isViewed ? `1.25px solid rgba(${mapRgb}, 0.42)` : `1.25px solid rgba(${mapRgb}, 0.28)`, background: isActive ? `radial-gradient(circle, rgba(${mapRgb},0.12) 0%, rgba(35,25,12,0.96) 58%, rgba(12,9,5,0.98) 100%)` : `radial-gradient(circle, rgba(${mapRgb},0.040) 0%, rgba(24,18,9,0.90) 64%, rgba(10,8,5,0.96) 100%)`, boxShadow: isActive ? `0 0 11px rgba(${mapRgb},0.22), 0 0 2px rgba(${mapRgb},0.78), inset 0 0 12px rgba(${mapRgb},0.055)` : isViewed ? `0 0 5px rgba(${mapRgb},0.09), inset 0 0 8px rgba(255,220,160,0.018)` : 'inset 0 0 8px rgba(255,220,160,0.015)', opacity: isActive ? 1 : inactiveOpacity, cursor: 'pointer', outline: 'none', WebkitTapHighlightColor: 'transparent', transition: [`border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`, `background ${MOTION.duration.fast} ${MOTION.easing.standard}`, `box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`, `opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`].join(', '), position: 'relative' }} onFocus={e => { e.currentTarget.style.outline = `2px solid ${mapAccent}`; e.currentTarget.style.outlineOffset = '3px' }} onBlur={e => { e.currentTarget.style.outline = 'none'; e.currentTarget.style.outlineOffset = '0' }}>
+                    <span aria-hidden="true" style={{ position: 'absolute', inset: 5, borderRadius: '50%', border: `1px solid rgba(${mapRgb},${isActive ? 0.18 : 0.10})`, opacity: isActive ? 1 : 0.7 }} />
+                    {nodeImage && <img src={nodeImage} alt="" aria-hidden="true" style={{ width: 21, height: 21, objectFit: 'contain', opacity: isActive ? 0.70 : hasFocus ? 0.32 : 0.44, filter: 'grayscale(0.12) sepia(0.38) saturate(0.72) contrast(0.92)', marginBottom: 1, borderRadius: node.id === 'galen' || node.id === 'experience' ? '50%' : 0 }} />}
+                    <span style={{ fontFamily: TYPE.cardTitle.fontFamily, fontSize: 11.2, lineHeight: 1.1, fontWeight: 750, color: isActive ? mapAccent : warmInk, textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 66, letterSpacing: '-0.015em', transition: `color ${MOTION.duration.fast}`, userSelect: 'none', position: 'relative', zIndex: 1 }}>{label}</span>
+                    {caption && <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 9.1, lineHeight: 1.14, fontWeight: 500, color: isActive ? 'rgba(237,224,200,0.68)' : 'rgba(237,224,200,0.46)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 70, position: 'relative', zIndex: 1 }}>{caption}</span>}
+                    {isViewed && <span aria-hidden="true" style={{ position: 'absolute', top: 5, right: 5, width: 7, height: 7, borderRadius: '50%', background: mapAccent, boxShadow: `0 0 5px rgba(${mapRgb},0.55)`, opacity: isActive ? 0.96 : 0.62, zIndex: 5 }} />}
                   </motion.button>
                 </div>
               )
             })}
           </div>
 
-          <div style={{ margin: '10px auto 0', width: '100%', maxWidth: 320, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-            <p style={{ ...TYPE.bodySmall, color: `rgba(${rgb}, 0.76)`, margin: 0, lineHeight: 1.45, textAlign: 'center' }}>{instruction || 'Tap each concept to explore it.'}</p>
-            <SequenceProgress total={nodes.length} current={currentIndex} viewed={viewedIndexes} accent={accent} accentRgb={rgb} compact ariaLabel="Connection map progress" />
+          <div style={{ margin: '8px auto 0', width: '100%', maxWidth: 306, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <p style={{ ...TYPE.bodySmall, color: `rgba(${mapRgb}, 0.70)`, margin: 0, lineHeight: 1.45, textAlign: 'center' }}>{instruction || 'Tap each concept to explore it.'}</p>
+            <SequenceProgress total={nodes.length} current={currentIndex} viewed={viewedIndexes} accent={mapAccent} accentRgb={mapRgb} compact ariaLabel="Connection map progress" />
           </div>
 
           <AnimatePresence mode="wait">
             {panelNode && (
-              <motion.div key={panelId} initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: prefersReduced ? 0 : 6 }} transition={fade} style={{ marginTop: 16, background: `linear-gradient(180deg, rgba(${rgb},0.08) 0%, rgba(20,13,5,0.97) 35%)`, border: `1px solid rgba(${rgb}, 0.22)`, borderTop: `2px solid rgba(${rgb}, 0.48)`, borderRadius: RADII.large, padding: '16px 18px 18px', display: 'flex', flexDirection: 'column', gap: SPACING.compact, boxShadow: `0 14px 34px rgba(0,0,0,0.22), inset 0 1px 0 rgba(${rgb},0.08)` }}>
+              <motion.div key={panelId} initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: prefersReduced ? 0 : 6 }} transition={fade} style={{ marginTop: 18, background: `linear-gradient(180deg, rgba(${mapRgb},0.06) 0%, rgba(20,13,5,0.96) 36%)`, border: `1px solid rgba(${mapRgb}, 0.20)`, borderTop: `1.5px solid rgba(${mapRgb}, 0.44)`, borderRadius: RADII.large, padding: '16px 18px 18px', display: 'flex', flexDirection: 'column', gap: SPACING.compact, boxShadow: `0 14px 34px rgba(0,0,0,0.22), inset 0 1px 0 rgba(${mapRgb},0.07)` }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  {panelNodeImage && <img src={panelNodeImage} alt="" aria-hidden="true" style={{ width: 34, height: 34, objectFit: 'cover', borderRadius: panelNode.id === 'galen' || panelNode.id === 'experience' ? '50%' : 9, opacity: 0.78, border: `1px solid rgba(${rgb},0.28)`, filter: 'sepia(0.24) saturate(0.9)' }} />}
+                  {panelNodeImage && <img src={panelNodeImage} alt="" aria-hidden="true" style={{ width: 34, height: 34, objectFit: 'cover', borderRadius: panelNode.id === 'galen' || panelNode.id === 'experience' ? '50%' : 9, opacity: 0.70, border: `1px solid rgba(${mapRgb},0.24)`, filter: 'sepia(0.24) saturate(0.8)' }} />}
                   <p style={{ ...TYPE.cardTitle, margin: 0, color: '#EDE0C8', lineHeight: 1.22 }}>{panelNode.label}</p>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
                   <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 15, lineHeight: 1.65, fontWeight: 400, color: 'rgba(237,224,200,0.76)', margin: 0 }}>{panelNode.explanation}</p>
-                  {panelNode.retrievalQuestion && <div style={{ background: `rgba(${rgb}, 0.07)`, border: `1px solid rgba(${rgb}, 0.18)`, borderRadius: RADII.small, padding: `${SPACING.micro}px ${SPACING.compact}px` }}><RetrievalQ node={panelNode} accent={accent} rgb={rgb} /></div>}
-                  {panelNode.examLink && <div style={{ borderLeft: `2px solid rgba(${rgb}, 0.45)`, paddingLeft: SPACING.compact }}><p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em', margin: '0 0 4px', color: `rgba(${rgb}, 0.68)` }}>Exam link</p><p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, lineHeight: 1.55, fontWeight: 500, color: 'rgba(237,224,200,0.68)', margin: 0, fontStyle: 'italic' }}>{panelNode.examLink}</p></div>}
+                  {panelNode.retrievalQuestion && <div style={{ background: `rgba(${mapRgb}, 0.06)`, border: `1px solid rgba(${mapRgb}, 0.16)`, borderRadius: RADII.small, padding: `${SPACING.micro}px ${SPACING.compact}px` }}><RetrievalQ node={panelNode} accent={mapAccent} rgb={mapRgb} /></div>}
+                  {panelNode.examLink && <div style={{ borderLeft: `2px solid rgba(${mapRgb}, 0.40)`, paddingLeft: SPACING.compact }}><p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em', margin: '0 0 4px', color: `rgba(${mapRgb}, 0.64)` }}>Exam link</p><p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, lineHeight: 1.55, fontWeight: 500, color: 'rgba(237,224,200,0.68)', margin: 0, fontStyle: 'italic' }}>{panelNode.examLink}</p></div>}
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
 
           <AnimatePresence>
-            {allExplored && <motion.div initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={reveal} style={{ marginTop: 16 }}><ContinueCTA onClick={onComplete} label="Continue" accent={accent} /></motion.div>}
+            {allExplored && <motion.div initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={reveal} style={{ marginTop: 16 }}><ContinueCTA onClick={onComplete} label="Continue" accent={mapAccent} /></motion.div>}
           </AnimatePresence>
         </div>
       </div>
