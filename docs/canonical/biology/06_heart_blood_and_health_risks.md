@@ -21,7 +21,9 @@ By the end, students should be able to:
 - describe the double circulatory system
 - identify the main heart chambers and associated blood vessels
 - explain how the heart pumps blood to the lungs and body
+- describe the basic lung structures involved in gas exchange
 - describe the function of arteries, veins and capillaries
+- calculate blood flow rate
 - describe the components of blood and their functions
 - explain coronary heart disease
 - evaluate treatments for cardiovascular disease
@@ -100,13 +102,35 @@ AQA note:
 
 Students do not need to know the names of the heart valves, but they should understand that valves prevent backflow.
 
-### 3. Natural and artificial pacemakers
+### 3. Lungs and gas exchange link
+
+Students should know the basic lung structures:
+
+- trachea
+- bronchi
+- alveoli
+- capillary network around alveoli
+
+Gas exchange happens in the alveoli.
+
+Adaptations of alveoli:
+
+- large surface area
+- thin walls for short diffusion distance
+- good blood supply to maintain concentration gradients
+- ventilation moves air in and out, maintaining oxygen and carbon dioxide gradients
+
+Link to circulation:
+
+The pulmonary artery brings deoxygenated blood to the lungs. Oxygen diffuses from alveoli into the blood. Carbon dioxide diffuses from the blood into the alveoli. The pulmonary vein carries oxygenated blood back to the heart.
+
+### 4. Natural and artificial pacemakers
 
 The natural resting heart rate is controlled by a group of cells in the right atrium that act as a pacemaker.
 
 Artificial pacemakers are electrical devices used to correct irregularities in heart rhythm.
 
-### 4. Blood vessels
+### 5. Blood vessels
 
 | Vessel | Structure | Function |
 |---|---|---|
@@ -120,7 +144,23 @@ Exam traps:
 - veins carry blood towards the heart, not always deoxygenated blood
 - pulmonary artery and pulmonary vein are the exceptions students often mix up
 
-### 5. Blood components
+### 6. Blood flow calculations
+
+Students may be asked to calculate blood flow rate.
+
+Formula:
+
+> rate of blood flow = volume of blood / time
+
+Worked example:
+
+A heart pumps 4900 cm3 of blood in 70 seconds.
+
+4900 / 70 = 70 cm3/s
+
+Answer: **70 cm3 per second**
+
+### 7. Blood components
 
 Blood is a tissue made of plasma with cells and fragments suspended in it.
 
@@ -137,7 +177,7 @@ Red blood cell adaptations:
 - contains haemoglobin to bind oxygen
 - no nucleus, giving more space for haemoglobin
 
-### 6. Coronary heart disease
+### 8. Coronary heart disease
 
 Coronary heart disease happens when fatty material builds up inside the coronary arteries.
 
@@ -147,7 +187,7 @@ The heart muscle receives less oxygen, so it cannot respire properly.
 
 This can lead to chest pain or a heart attack.
 
-### 7. Treatments for cardiovascular disease
+### 9. Treatments for cardiovascular disease
 
 Students should be able to evaluate advantages and disadvantages.
 
@@ -170,18 +210,39 @@ Students should be able to evaluate advantages and disadvantages.
 
 Faulty valves may not open properly or may leak.
 
-They can be replaced with:
+They can be replaced with biological or mechanical valves.
 
-- biological valves
-- mechanical valves
+Biological valves:
+
+- taken from humans or other mammals
+- usually do not require lifelong blood-thinning medication
+- may wear out and need replacing
+
+Mechanical valves:
+
+- long lasting
+- patient usually needs medication to prevent blood clots
+- can increase risk of clotting problems
 
 #### Heart transplant / artificial heart
 
-- donor heart or heart-lung transplant may be used in heart failure
-- artificial hearts may keep a patient alive while waiting for transplant or allow the heart to rest
+A donor heart or heart-lung transplant may be used in heart failure.
+
+Artificial hearts may keep a patient alive while waiting for a transplant or allow the heart to rest.
+
+Advantages:
+
+- can keep patient alive
+- can restore circulation when heart failure is severe
+
+Disadvantages:
+
+- risk of blood clots
+- risk of infection
+- mechanical parts may fail
 - transplants risk rejection and require immunosuppressant drugs
 
-### 8. Health and disease
+### 10. Health and disease
 
 Health is a state of physical and mental well-being.
 
@@ -203,7 +264,7 @@ Different diseases can interact:
 - immune reactions can trigger allergies
 - severe physical illness can lead to mental illness such as depression
 
-### 9. Lifestyle risk factors
+### 11. Lifestyle risk factors
 
 A risk factor is something linked to an increased chance of disease.
 
@@ -221,7 +282,24 @@ Important exam distinction:
 - correlation means two factors are linked
 - causal mechanism means one factor has been proven to contribute to the disease
 
-### 10. Cancer
+Risk factors are not guarantees. They increase probability.
+
+### 12. Interpreting health data
+
+Students should be able to read graphs and tables about disease risk.
+
+Good exam language:
+
+- “The data show a correlation between...”
+- “This does not prove causation on its own because other factors may be involved.”
+- “A causal mechanism would strengthen the conclusion.”
+- “The sample size and method affect how reliable the conclusion is.”
+
+Common trap:
+
+Do not write “this proves X causes Y” just because a graph shows two things increase together.
+
+### 13. Cancer
 
 Cancer is caused by changes in cells that lead to uncontrolled growth and division.
 
@@ -296,6 +374,42 @@ Good answer:
 
 The graph shows a correlation. To claim causation, scientists need evidence of a mechanism and to consider other factors.
 
+### Task 5: Treatment evaluation
+
+Sort each statement as a benefit or drawback.
+
+Stents:
+
+- restore blood flow quickly
+- require surgery
+- risk of blood clots
+
+Statins:
+
+- lower cholesterol
+- taken long-term
+- may have side effects
+
+Mechanical valves:
+
+- last a long time
+- may require blood-thinning medication
+
+Biological valves:
+
+- less need for blood-thinning drugs
+- may wear out
+
+### Task 6: Blood flow calculation
+
+Question:
+
+The heart pumps 5600 cm3 of blood in 80 seconds. Calculate the rate of blood flow.
+
+Answer:
+
+5600 / 80 = 70 cm3/s
+
 ## Exam practice
 
 ### Question 1 — double circulation
@@ -350,6 +464,31 @@ Mark points:
 - white blood cells defend against pathogens
 - platelets help blood clot
 
+### Question 5 — blood flow calculation
+
+A heart pumps 4200 cm3 of blood in 60 seconds.
+
+Calculate the rate of blood flow.  
+2 marks
+
+Mark points:
+
+- 4200 / 60
+- 70 cm3/s
+
+### Question 6 — risk factors
+
+A graph shows that people who drink more alcohol have a higher risk of liver disease.
+
+Explain why this graph alone does not prove that alcohol causes liver disease.  
+3 marks
+
+Mark points:
+
+- graph shows correlation
+- other factors may be involved
+- more evidence / causal mechanism / controlled studies would be needed
+
 ## Final retrieval
 
 1. Which ventricle pumps blood to the lungs?  
@@ -375,3 +514,9 @@ Something linked to an increased chance of disease.
 
 8. What is the difference between benign and malignant tumours?  
 Benign tumours stay contained; malignant tumours invade and can spread.
+
+9. What is the rate formula for blood flow?  
+Rate = volume / time.
+
+10. Why does correlation not always prove causation?  
+Other factors may be involved, and a mechanism or stronger evidence is needed.
