@@ -11,7 +11,6 @@ import { BUTTONS } from '../../constants/buttons.js'
 import { TYPE } from '../../constants/typography.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 import BackButton from '../core/BackButton.jsx'
-import ContinueCTA from '../core/ContinueCTA.jsx'
 
 // Concept score thresholds
 const SCORE_RECALLED = 0.7   // >= recalled (teal)
@@ -30,7 +29,7 @@ function formatTime(totalSeconds) {
 
 // Muted memory-nudge chips shown above the recall box. Chapters can override
 // with `block.recallPrompts` (array of strings) for topic-specific nudges.
-const DEFAULT_RECALL_PROMPTS = ['People', 'Events', 'Causes', 'Effects', 'Key terms', 'Dates']
+const DEFAULT_RECALL_PROMPTS = ['People', 'Theories', 'Causes', 'Treatments', 'Church']
 
 // Rough "ideas captured" count — splits free text on sentence/line/list breaks.
 function countIdeas(text) {
@@ -45,9 +44,10 @@ const RING_STROKE = 3
 const RING_RADIUS = RING_SIZE / 2 - RING_STROKE / 2
 const RING_CIRC   = 2 * Math.PI * RING_RADIUS
 
-// Warm, muted tone the timer ring gently shifts toward as time runs low —
-// no red alert, stays inside the History warm-tone palette.
+// Warm, muted tone the timer ring gently shifts toward LOW_TIME_RGB in the final
+// 40% of the countdown — no flashing, just a slow warm drift.
 const LOW_TIME_RGB = '201,123,99'
+const SUCCESS_RGB = '117,220,208'
 
 function lerpColor(rgbA, rgbB, t) {
   const a = rgbA.split(',').map(Number)
@@ -64,6 +64,10 @@ function ensureStyles() {
     @keyframes prk-fade-in {
       from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes prk-sheet-in {
+      from { opacity: 0; transform: translateY(26px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
     }
     @keyframes prk-spin {
       from { transform: rotate(0deg); }
@@ -94,21 +98,220 @@ async function analyseRecall(answer, concepts, sourceContent) {
   return data
 }
 
+function CheckIcon({ color = `rgb(${SUCCESS_RGB})` }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  )
+}
+
+function PromptIcon({ label, color }) {
+  const key = label.toLowerCase()
+  if (key.includes('people') || key.includes('person')) {
+    return (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    )
+  }
+  if (key.includes('cause') || key.includes('change')) {
+    return (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+        <polyline points="21 3 21 9 15 9" />
+      </svg>
+    )
+  }
+  if (key.includes('church') || key.includes('theor')) {
+    return (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 21h18" />
+        <path d="M6 21V9l6-4 6 4v12" />
+        <path d="M12 5V2" />
+        <path d="M10 3h4" />
+      </svg>
+    )
+  }
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="8" y1="13" x2="16" y2="13" />
+    </svg>
+  )
+}
+
 // ─── PromptChip ───────────────────────────────────────────────────────────────
 // Muted, non-interactive memory nudge — visual only.
-function PromptChip({ label }) {
+function PromptChip({ label, rgb }) {
+  const chipColor = `rgba(${rgb},0.72)`
   return (
     <div style={{
-      padding: '6px 12px',
+      display: 'inline-flex', alignItems: 'center', gap: 7,
+      padding: '9px 12px',
       borderRadius: RADII.small,
-      background: 'rgba(255,255,255,0.03)',
-      border: '1px solid rgba(255,255,255,0.07)',
+      background: 'linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025))',
+      border: '1px solid rgba(255,255,255,0.085)',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
       fontFamily: TYPE.bodyText.fontFamily,
-      fontSize: 12, fontWeight: 500, letterSpacing: '0.04em',
-      textTransform: 'uppercase',
-      color: 'rgba(245,247,255,0.32)',
+      fontSize: 12, fontWeight: 650, letterSpacing: '0.02em',
+      color: 'rgba(245,247,255,0.54)',
     }}>
+      <PromptIcon label={label} color={chipColor} />
       {label}
+    </div>
+  )
+}
+
+function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
+  return (
+    <div style={{
+      position: 'fixed',
+      left: SPACING.standard,
+      right: SPACING.standard,
+      bottom: `calc(${SPACING.standard}px + env(safe-area-inset-bottom))`,
+      zIndex: 6,
+      maxHeight: '56vh',
+      overflow: 'auto',
+      padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.compact}px`,
+      borderRadius: 28,
+      background: 'linear-gradient(180deg, rgba(17,19,24,0.98), rgba(9,11,16,0.985))',
+      border: '1px solid rgba(255,255,255,0.105)',
+      boxShadow: `0 24px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(${rgb},0.06), inset 0 1px 0 rgba(255,255,255,0.05)`,
+      animation: 'prk-sheet-in 360ms cubic-bezier(0.2,0.8,0.2,1) both',
+    }}>
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close recall results"
+        style={{
+          position: 'absolute', top: 14, right: 14,
+          width: 38, height: 38, borderRadius: '50%',
+          border: '1px solid rgba(255,255,255,0.12)',
+          background: 'rgba(255,255,255,0.035)',
+          color: 'rgba(245,247,255,0.62)',
+          fontSize: 24, lineHeight: '34px',
+          cursor: 'pointer',
+        }}
+      >
+        ×
+      </button>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: SPACING.compact, paddingRight: 42 }}>
+        <div style={{
+          width: 42, height: 42, borderRadius: '50%',
+          display: 'grid', placeItems: 'center',
+          background: `rgba(${SUCCESS_RGB},0.14)`,
+          border: `1px solid rgba(${SUCCESS_RGB},0.34)`,
+          boxShadow: `0 0 18px rgba(${SUCCESS_RGB},0.10)`,
+        }}>
+          <CheckIcon />
+        </div>
+        <h2 style={{
+          fontFamily: TYPE.bodyText.fontFamily,
+          ...TYPE.cardTitle,
+          color: '#F5F7FF',
+          margin: 0,
+        }}>
+          You remembered
+        </h2>
+      </div>
+
+      <div style={{ display: 'grid', gap: 10, marginBottom: SPACING.standard }}>
+        {(recalled.length ? recalled : (results.concepts || []).slice(0, 3)).slice(0, 3).map(concept => (
+          <div key={concept.tag || concept.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{
+              width: 24, height: 24, borderRadius: '50%',
+              display: 'grid', placeItems: 'center',
+              flexShrink: 0,
+              border: `1px solid rgba(${SUCCESS_RGB},0.36)`,
+              background: `rgba(${SUCCESS_RGB},0.08)`,
+            }}>
+              <CheckIcon />
+            </span>
+            <span style={{
+              fontFamily: TYPE.bodyText.fontFamily,
+              ...TYPE.bodySmall,
+              color: 'rgba(245,247,255,0.72)',
+              lineHeight: 1.45,
+            }}>
+              {concept.label}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: `${SPACING.compact}px 0` }} aria-hidden="true">
+        <div style={{ height: 1, flex: 1, background: `linear-gradient(90deg, transparent, rgba(${rgb},0.24))` }} />
+        <div style={{ color: `rgba(${rgb},0.55)`, fontSize: 18 }}>✦</div>
+        <div style={{ height: 1, flex: 1, background: `linear-gradient(90deg, rgba(${rgb},0.24), transparent)` }} />
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: SPACING.compact }}>
+        <div style={{
+          width: 38, height: 38, borderRadius: '50%',
+          display: 'grid', placeItems: 'center',
+          background: `rgba(${rgb},0.13)`,
+          border: `1px solid rgba(${rgb},0.40)`,
+          color: accent,
+          fontSize: 18,
+        }}>
+          ✚
+        </div>
+        <h2 style={{
+          fontFamily: TYPE.bodyText.fontFamily,
+          ...TYPE.cardTitle,
+          color: accent,
+          margin: 0,
+        }}>
+          Missing pieces to revisit
+        </h2>
+      </div>
+
+      <div style={{ display: 'grid', gap: 10 }}>
+        {(missing.length ? missing : (results.concepts || []).filter(c => c.score < SCORE_RECALLED)).slice(0, 3).map(concept => (
+          <button
+            type="button"
+            key={concept.tag || concept.label}
+            onClick={onClose}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
+              width: '100%',
+              padding: '11px 10px 11px 13px',
+              borderRadius: 13,
+              border: `1px solid rgba(${rgb},0.28)`,
+              background: `linear-gradient(180deg, rgba(${rgb},0.09), rgba(255,255,255,0.025))`,
+              color: accent,
+              textAlign: 'left',
+              cursor: 'pointer',
+            }}
+          >
+            <span style={{
+              fontFamily: TYPE.bodyText.fontFamily,
+              fontSize: 13,
+              fontWeight: 600,
+              lineHeight: 1.35,
+            }}>
+              {concept.label}
+            </span>
+            <span style={{
+              flexShrink: 0,
+              padding: '6px 9px',
+              borderRadius: 10,
+              border: `1px solid rgba(${rgb},0.62)`,
+              background: 'rgba(0,0,0,0.15)',
+              fontFamily: TYPE.bodyText.fontFamily,
+              fontSize: 12,
+              fontWeight: 700,
+              color: accent,
+            }}>
+              Revise this
+            </span>
+          </button>
+        ))}
+      </div>
     </div>
   )
 }
@@ -217,6 +420,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
   // Securely recalled concepts — gaps below SCORE_PARTIAL are already logged
   // to the weakness tracker in submit().
   const recalled = results?.concepts.filter(c => c.score >= SCORE_RECALLED) || []
+  const missing = results?.concepts.filter(c => c.score < SCORE_RECALLED) || []
 
   const pressProps = {
     onMouseDown:  () => setIsPressed(true),
@@ -226,18 +430,18 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
     onTouchEnd:   () => setIsPressed(false),
   }
 
-  // Input-phase CTA — premium but lighter than the primary button above:
-  // outlined accent fill rather than a solid block, so it stays secondary
-  // to the writing task.
+  // Input-phase CTA — now closer to the concept mock: a warmer, filled action
+  // while staying inside the subject accent palette.
   const inputBtnStyle = {
     width: '100%', height: BUTTONS.secondary.height,
     borderRadius: BUTTONS.secondary.borderRadius,
-    border: `1.5px solid rgba(${rgb},0.32)`,
-    background: `rgba(${rgb},0.10)`,
+    border: `1.5px solid rgba(${rgb},0.48)`,
+    background: `linear-gradient(180deg, rgba(${rgb},0.28), rgba(${rgb},0.12))`,
+    boxShadow: `0 0 26px rgba(${rgb},0.11), inset 0 1px 0 rgba(255,255,255,0.08)`,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     gap: 10, cursor: 'pointer',
     transform: isPressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
-    transition: `transform ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+    transition: `transform ${MOTION.duration.fast} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
     flexShrink: 0,
   }
 
@@ -248,6 +452,8 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
       <polyline points="12 5 19 12 12 19"/>
     </svg>
   )
+
+  const hasResults = phase === 'results' && results
 
   return (
     <CinematicShell style={{
@@ -261,14 +467,20 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
       {block.backgroundImage && (
         <div aria-hidden="true" style={{
           position: 'fixed', inset: 0,
-          backgroundImage: `url(${block.backgroundImage})`,
+          backgroundImage: `linear-gradient(180deg, rgba(8,9,13,0.50), rgba(8,9,13,0.88)), url(${block.backgroundImage})`,
           backgroundSize: 'cover', backgroundPosition: 'center',
-          opacity: 0.07,
-          filter: 'brightness(0.6) grayscale(10%)',
+          opacity: 0.20,
+          filter: 'brightness(0.9) grayscale(8%)',
           pointerEvents: 'none',
           zIndex: 0,
         }} />
       )}
+      <div aria-hidden="true" style={{
+        position: 'fixed', inset: 0,
+        background: `radial-gradient(circle at 50% 34%, rgba(${rgb},0.09), transparent 34%), linear-gradient(180deg, rgba(8,9,13,0.10), rgba(8,9,13,0.96) 84%)`,
+        pointerEvents: 'none',
+        zIndex: 0,
+      }} />
 
       {/* Scroll container */}
       <div style={{
@@ -277,6 +489,8 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
         height: '100%',
         padding: `calc(18px + env(safe-area-inset-top)) ${SPACING.standard}px calc(${SPACING.separation}px + env(safe-area-inset-bottom))`,
         overflow: 'auto',
+        filter: hasResults ? 'brightness(0.72)' : 'none',
+        transition: `filter ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
       }}>
 
         {/* Header row */}
@@ -290,7 +504,8 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
             fontFamily: TYPE.bodyText.fontFamily,
             ...TYPE.metadata,
             textTransform: 'uppercase',
-            color: accent, opacity: 0.8,
+            color: accent, opacity: 0.88,
+            letterSpacing: '0.18em',
           }}>
             Prior knowledge
           </div>
@@ -298,8 +513,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
           <div style={{ width: 22 }} />
         </div>
 
-        {/* ── INPUT PHASE ── */}
-        {phase === 'input' && (
+        {(phase === 'input' || phase === 'results') && (
           <div style={{
             flex: 1, display: 'flex', flexDirection: 'column',
             animation: 'prk-fade-in 280ms ease both',
@@ -310,17 +524,19 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 ...TYPE.sectionTitle,
                 color: '#F5F7FF',
                 margin: 0, marginBottom: SPACING.micro,
+                textWrap: 'balance',
               }}>
-                Empty your brain.
+                What can you remember?
               </h1>
 
               <p style={{
                 fontFamily: TYPE.bodyText.fontFamily,
                 ...TYPE.bodySmall,
-                color: 'rgba(245,247,255,0.55)',
+                color: 'rgba(245,247,255,0.58)',
                 margin: 0, marginBottom: SPACING.compact,
+                lineHeight: 1.45,
               }}>
-                Names. Theories. Ideas. Rough notes are fine.
+                Write anything you know before we reveal the gaps.
               </p>
 
               <div style={{
@@ -358,7 +574,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 <p style={{
                   fontFamily: TYPE.bodyText.fontFamily,
                   ...TYPE.bodySmall,
-                  color: 'rgba(168,159,194,0.65)',
+                  color: 'rgba(168,159,194,0.68)',
                   margin: 0, marginBottom: SPACING.compact,
                 }}>
                   {block.chapterTitle}
@@ -369,23 +585,25 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 display: 'flex', flexWrap: 'wrap', gap: SPACING.micro,
                 marginBottom: SPACING.compact,
               }}>
-                {recallPrompts.map(p => <PromptChip key={p} label={p} />)}
+                {recallPrompts.slice(0, 5).map(p => <PromptChip key={p} label={p} rgb={rgb} />)}
               </div>
 
               <div style={{
-                background: '#101218',
-                border: isFocused ? `1.5px solid rgba(${rgb},0.32)` : '1.5px solid rgba(255,255,255,0.08)',
-                borderRadius: RADII.large,
+                background: 'linear-gradient(180deg, rgba(20,23,29,0.92), rgba(12,14,19,0.94))',
+                border: isFocused ? `1.5px solid rgba(${rgb},0.55)` : `1.5px solid rgba(${rgb},0.24)`,
+                borderRadius: 22,
                 padding: `${SPACING.compact}px ${SPACING.standard}px`,
                 marginBottom: SPACING.micro,
-                boxShadow: isFocused ? `0 0 0 1px rgba(${rgb},0.12), 0 0 28px rgba(${rgb},0.10)` : 'none',
+                boxShadow: isFocused
+                  ? `0 0 0 1px rgba(${rgb},0.12), 0 0 34px rgba(${rgb},0.16), inset 0 1px 0 rgba(255,255,255,0.045)`
+                  : `0 0 22px rgba(${rgb},0.08), inset 0 1px 0 rgba(255,255,255,0.035)`,
                 transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
               }}>
                 <div style={{
                   fontFamily: TYPE.bodyText.fontFamily,
-                  fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
+                  fontSize: 11, fontWeight: 700, letterSpacing: '0.13em',
                   textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.28)',
+                  color: 'rgba(255,255,255,0.34)',
                   marginBottom: SPACING.micro,
                 }}>
                   Your recall
@@ -397,14 +615,14 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                         fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: TYPE.bodySmall.fontSize, fontWeight: TYPE.bodySmall.fontWeight,
                         lineHeight: 1.7, letterSpacing: '0.01em',
-                        color: 'rgba(245,247,255,0.30)',
+                        color: 'rgba(245,247,255,0.38)',
                       }}>
-                        Write anything you remember.
+                        Type your answer here…
                       </div>
                       <div style={{
                         fontFamily: TYPE.bodyText.fontFamily,
                         fontSize: 13, fontWeight: 400, lineHeight: 1.5,
-                        color: 'rgba(245,247,255,0.16)',
+                        color: 'rgba(245,247,255,0.18)',
                         marginTop: 2,
                       }}>
                         Messy notes are fine.
@@ -416,10 +634,12 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                     onChange={e => { setAnswer(e.target.value); setError(null) }}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    rows={7}
+                    rows={8}
+                    disabled={phase === 'results'}
                     aria-label="Write anything you remember"
                     style={{
                       width: '100%', padding: 0,
+                      minHeight: 196,
                       background: 'transparent', border: 'none', outline: 'none',
                       resize: 'none',
                       fontFamily: TYPE.bodyText.fontFamily,
@@ -427,6 +647,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                       color: '#F5F7FF',
                       lineHeight: 1.7, letterSpacing: '0.01em',
                       caretColor: accent,
+                      opacity: phase === 'results' ? 0.72 : 1,
                     }}
                   />
                 </div>
@@ -436,7 +657,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 display: 'flex', justifyContent: 'flex-end',
                 fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: 12, fontWeight: 500, letterSpacing: '0.02em',
-                color: 'rgba(245,247,255,0.25)',
+                color: 'rgba(245,247,255,0.32)',
                 marginBottom: error ? SPACING.compact : SPACING.standard,
               }}>
                 Ideas captured: {ideaCount}
@@ -454,7 +675,10 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               )}
             </div>
 
-            <button onClick={submit} {...pressProps} style={inputBtnStyle}>
+            <button onClick={submit} disabled={phase === 'results'} {...pressProps} style={{
+              ...inputBtnStyle,
+              opacity: phase === 'results' ? 0.58 : 1,
+            }}>
               <span style={{
                 fontFamily: TYPE.bodyText.fontFamily,
                 fontSize: BUTTONS.secondary.fontSize, fontWeight: BUTTONS.secondary.fontWeight,
@@ -493,78 +717,18 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
           </div>
         )}
 
-        {/* ── RESULTS PHASE ── */}
-        {phase === 'results' && results && (
-          <div style={{
-            flex: 1, display: 'flex', flexDirection: 'column',
-            animation: 'prk-fade-in 420ms ease both',
-          }}>
-            <div style={{
-              flex: 1, display: 'flex', flexDirection: 'column',
-              justifyContent: 'center',
-            }}>
-              <h1 style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                ...TYPE.sectionTitle,
-                color: '#F5F7FF',
-                margin: 0, marginBottom: SPACING.compact,
-              }}>
-                You remembered
-              </h1>
-
-              <div style={{
-                display: 'flex', alignItems: 'baseline', gap: SPACING.micro,
-                marginBottom: SPACING.section,
-              }}>
-                <div style={{ display: 'inline-block' }}>
-                  <span style={{
-                    fontFamily: TYPE.bodyText.fontFamily,
-                    ...TYPE.hero,
-                    color: accent,
-                  }}>
-                    {recalled.length}
-                  </span>
-                  <div style={{
-                    height: 3, width: '100%',
-                    background: accent, borderRadius: RADII.pill,
-                    marginTop: SPACING.micro,
-                  }} />
-                </div>
-                <span style={{
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  ...TYPE.bodySmall,
-                  color: 'rgba(245,247,255,0.55)',
-                }}>
-                  {recalled.length === 1 ? 'idea recognised' : 'ideas recognised'}
-                </span>
-              </div>
-
-              <h2 style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                ...TYPE.cardTitle,
-                color: '#F5F7FF',
-                textAlign: 'center',
-                margin: 0, marginBottom: SPACING.compact,
-              }}>
-                Now we know what to strengthen.
-              </h2>
-
-              <p style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                ...TYPE.bodySmall,
-                color: 'rgba(168,159,194,0.7)',
-                textAlign: 'center', lineHeight: 1.6,
-                margin: 0,
-              }}>
-                Retrieval is a skill — it gets easier with practice. We'll revisit these until they stick.
-              </p>
-            </div>
-
-            <ContinueCTA onClick={onContinue} accent={accent} style={{ marginTop: SPACING.standard }} />
-          </div>
-        )}
-
       </div>
+
+      {hasResults && (
+        <ResultsOverlay
+          results={results}
+          recalled={recalled}
+          missing={missing}
+          accent={accent}
+          rgb={rgb}
+          onClose={onContinue}
+        />
+      )}
     </CinematicShell>
   )
 }
