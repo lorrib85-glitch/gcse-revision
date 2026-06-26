@@ -3,10 +3,11 @@
 ## 1. Identity
 
 - **Chapter:** 11
+- **Module chapter:** Module 2, Chapter 1
 - **Title:** From tiny cells to full-body systems
 - **Subject:** AQA GCSE Combined Science Trilogy — Biology Paper 1
 - **Module:** Module 2 — Body systems under pressure
-- **Build status:** Not yet built
+- **Build status:** Canonical reviewed; not yet built
 - **Content file:** `11_From_tiny_cells_to_full_body_systems_Content.md`
 
 ---
@@ -15,47 +16,63 @@
 
 ### Part 1 — Situation + prediction
 
-- Opening hook: "You are roughly 37 trillion cells. How do they become a working body?" Show a zoom-out: single cell → tissue → organ → body.
-- Prediction: show an image of a cross-section of the stomach wall and ask "How many different types of tissue can you see in this one organ?"
-- You will learn: the hierarchy from cell to organism; the stomach and leaf as example organs.
+- Opening hook: "You are trillions of cells. So why don't you look like a pile of jelly?" Show a zoom-out: cell → tissue → organ → organ system → organism.
+- Prediction: show a stomach cross-section and ask: "Is this one tissue, one organ, or one organ system?"
+- You will learn: the hierarchy from cell to organism; why organs contain different tissues; the stomach and leaf as example organs.
 
-**Components:** `CinematicRevealMoment`, `ChapterHookScreen`
+**Components:** `CinematicRevealMoment`, `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ---
 
 ### Part 2 — Investigate the evidence
 
-- Hotspot image of a stomach cross-section: identify muscular tissue (churning), glandular tissue (producing enzymes/acid), epithelial tissue (covering)
-- Hotspot image or visual narrative of a leaf cross-section: mesophyll (photosynthesis), xylem/phloem (transport), epidermis (protection)
+- Hotspot image of a stomach cross-section:
+  - muscular tissue → contracts/churns food
+  - glandular tissue → secretes enzymes and acid
+  - epithelial tissue → covers/protects the stomach surface
+- Visual mini-map of digestive system as an organ system:
+  - mouth, oesophagus, stomach, small intestine, large intestine, liver, gall bladder, pancreas
+- Hotspot image or visual narrative of a leaf cross-section:
+  - epidermis → protection
+  - palisade mesophyll → photosynthesis
+  - spongy mesophyll → gas diffusion
+  - xylem/phloem → transport
+  - guard cells/stomata → gas exchange and water loss control
 
-**Components:** `InteractiveHotspotImage` × 2
+**Components:** `InteractiveHotspotImage` × 2, `VisualNarrative`
 
 ---
 
 ### Part 3 — Discover the science
 
-- Teach the hierarchy explicitly: cell → tissue → organ → organ system → organism
-- Use an ExplainReveal to walk through the chain with animal and plant examples side by side
-- Emphasise: organs contain multiple tissue types; no single tissue type makes an organ
+- Teach the hierarchy explicitly: cell → tissue → organ → organ system → organism.
+- Use an `ExplainReveal` to walk through the chain with animal and plant examples side by side.
+- Emphasise:
+  - tissues = similar cells with similar function
+  - organs = different tissues working together
+  - organ systems = different organs working together
+- Add a plant/animal comparison to avoid the misconception that only animals have organs.
 
-**Components:** `ExplainReveal`, `TheoryCompareBlock` (animal organ vs plant organ)
+**Components:** `ExplainReveal`, `TheoryCompareBlock`
 
 ---
 
 ### Part 4 — Check precision
 
-- MisconceptionCheck: "All cells in an organ are identical." → false
-- MisconceptionCheck: "Only animals have organs." → false (plants have roots, stems, leaves, flowers)
-- ColSortBlock or MatchingTask: sort structures into their correct level (cell / tissue / organ / organ system)
+- `MisconceptionCheck`: "All cells in an organ are identical." → false.
+- `MisconceptionCheck`: "Only animals have organs." → false.
+- `MisconceptionCheck`: "The digestive system is one organ." → false; it is an organ system.
+- `ColSortBlock` or `MatchingTask`: sort examples into cell / tissue / organ / organ system / organism.
 
-**Components:** `MisconceptionCheck`, `MatchingTask`
+**Components:** `MisconceptionCheck`, `ColSortBlock`, `MatchingTask`
 
 ---
 
 ### Part 5 — Apply to a real GCSE-style task
 
-- GuidedExamResponse: "Name the three types of tissue in the stomach and state the function of each." (3 marks)
-- FillInTheBlanksBlock: hierarchy fill — "A group of similar cells working together is called a ___. A group of different ___ working together forms an ___."
+- `GuidedExamResponse`: "Name the three types of tissue in the stomach and state the function of each. (3 marks)"
+- `FillInTheBlanksBlock`: hierarchy fill — "A group of similar cells working together is called a ___. A group of different ___ working together forms an ___."
+- `GuidedExamResponse`: "Explain why a leaf is an organ. (3 marks)"
 
 **Components:** `GuidedExamResponse`, `FillInTheBlanksBlock`
 
@@ -63,8 +80,8 @@
 
 ### Part 6 — Face the examiner + debrief
 
-- FaceTheExaminer: weak answer names only one tissue type; mark commentary explains why all three are needed and why functions matter
-- QuickRecallScreen: 5 questions — define tissue; name one organ system; what three tissues are in the stomach; give one example of a plant organ; what level comes between tissue and organ system?
+- `FaceTheExaminer`: weak answer says "The stomach is an organ because it is made of cells." Mark commentary explains that this is too vague: an organ is made of different tissues working together.
+- Quick recall: define tissue; define organ; give the hierarchy; name three stomach tissues; give one plant organ.
 
 **Components:** `FaceTheExaminer`, `QuickRecallScreen`
 
@@ -72,12 +89,15 @@
 
 ## 3. Active learning interactions
 
-- `InteractiveHotspotImage` × 2: stomach and leaf cross-sections
-- `ExplainReveal`: cell → tissue → organ chain
-- `TheoryCompareBlock`: animal vs plant organ examples
-- `MisconceptionCheck` × 2: identical cells; only animals have organs
-- `MatchingTask`: level sorting
+- `InteractiveHotspotImage`: stomach tissue cross-section
+- `VisualNarrative`: digestive system as organ system
+- `InteractiveHotspotImage`: leaf tissue cross-section
+- `ExplainReveal`: cell → tissue → organ → organ system → organism
+- `TheoryCompareBlock`: animal organ vs plant organ examples
+- `MisconceptionCheck` × 3: identical cells; only animals have organs; digestive system as one organ
+- `ColSortBlock` or `MatchingTask`: level sorting
 - `GuidedExamResponse`: 3-mark stomach tissue question
+- `GuidedExamResponse`: 3-mark leaf organ question
 - `FillInTheBlanksBlock`: hierarchy vocabulary
 - `FaceTheExaminer`: annotated weak answer
 - `QuickRecallScreen`: 5 retrieval questions
@@ -87,31 +107,45 @@
 ## 4. Retrieval points
 
 - The five-level hierarchy: cell → tissue → organ → organ system → organism
+- Tissue = similar cells with similar function
+- Organ = different tissues working together
+- Organ system = different organs working together
 - Three tissue types in the stomach: muscular, glandular, epithelial — with functions
-- Three tissue types in the leaf: mesophyll, xylem/phloem, epidermal — with functions
-- Tissue = similar cells; organ = different tissues; organ system = different organs
+- Leaf tissues: epidermis, palisade mesophyll, spongy mesophyll, xylem, phloem, guard cells/stomata
+- Plants have organs and organ systems too
 
 ---
 
 ## 5. Exam skill focus
 
+- 2-mark definition: tissue
+- 2-mark definition: organ
 - 3-mark describe: name three tissues in the stomach and give each one's function
-- 2-mark explain: explain what an organ is and give one example
+- 3-mark explain: explain why a leaf is an organ
 - Classification question: sort structures into correct level of organisation
 
 ---
 
 ## 6. Build notes
 
-This chapter is transitional — it bridges Module 1 (cell structure) and the rest of Module 2 (specific organ systems). Keep it short and focused on the hierarchy and the two example organs. Avoid expanding into any specific organ system — that comes in subsequent chapters. The stomach cross-section hotspot is the pedagogical anchor; make it visually clear.
+This chapter is transitional — it bridges Module 1 (cell structure) and the rest of Module 2 (specific organ systems). Keep it short and focused on hierarchy and examples.
+
+The stomach cross-section should be the human anchor. The leaf cross-section is the plant anchor. Do not turn this into a full digestion or plant transport chapter; those are handled later.
+
+Use precise AQA wording throughout:
+
+- tissue = group of similar cells with similar structure and function
+- organ = different tissues working together
+- organ system = organs working together
 
 ---
 
 ## 7. Chapter completion test
 
 - [ ] Student can list all five levels of organisation in the correct order
+- [ ] Student can define tissue, organ and organ system using precise language
 - [ ] Student can name and give the function of all three tissue types in the stomach
-- [ ] Student can name at least two tissue types in a plant organ (leaf)
-- [ ] Student can state the difference between a tissue and an organ using precise language
+- [ ] Student can explain why a leaf is an organ
+- [ ] Student can name at least three tissues in a leaf
 - [ ] Student can apply the hierarchy to an unfamiliar example
 - [ ] Student has practised a 3-mark describe question with mark scheme feedback
