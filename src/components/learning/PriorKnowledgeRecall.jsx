@@ -4,7 +4,6 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import CinematicShell from '../layout/CinematicShell.jsx'
-import { BUTTONS } from '../../constants/buttons.js'
 import { TYPE } from '../../constants/typography.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 import BackButton from '../core/BackButton.jsx'
@@ -14,7 +13,7 @@ const SCORE_PARTIAL = 0.3
 const RECALL_DURATION = 3 * 60
 const SUCCESS_RGB = '117,220,208'
 const LOW_TIME_RGB = '201,123,99'
-const DEFAULT_RECALL_PROMPTS = ['People', 'Theories', 'Causes', 'Treatments', 'Church']
+const DEFAULT_RECALL_PROMPTS = ['People', 'Causes', 'Changes', 'Evidence']
 
 function formatTime(totalSeconds) {
   const m = Math.floor(totalSeconds / 60)
@@ -87,11 +86,21 @@ function CheckIcon({ color = `rgb(${SUCCESS_RGB})` }) {
   )
 }
 
+function FeatherIcon({ color }) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.24 12.24a6 6 0 0 0-8.48-8.48L5 10.52V19h8.48z" />
+      <line x1="16" y1="8" x2="2" y2="22" />
+      <line x1="17.5" y1="15" x2="9" y2="15" />
+    </svg>
+  )
+}
+
 function PromptIcon({ label, color }) {
   const key = label.toLowerCase()
   if (key.includes('people') || key.includes('person')) {
     return (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
         <circle cx="12" cy="7" r="4" />
       </svg>
@@ -99,24 +108,14 @@ function PromptIcon({ label, color }) {
   }
   if (key.includes('cause') || key.includes('change')) {
     return (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 12a9 9 0 1 1-2.64-6.36" />
         <polyline points="21 3 21 9 15 9" />
       </svg>
     )
   }
-  if (key.includes('church') || key.includes('theor')) {
-    return (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 21h18" />
-        <path d="M6 21V9l6-4 6 4v12" />
-        <path d="M12 5V2" />
-        <path d="M10 3h4" />
-      </svg>
-    )
-  }
   return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
       <polyline points="14 2 14 8 20 8" />
       <line x1="8" y1="13" x2="16" y2="13" />
@@ -158,20 +157,20 @@ function ProgressRail({ rgb }) {
 }
 
 function PromptChip({ label, rgb }) {
-  const chipColor = `rgba(${rgb},0.76)`
+  const chipColor = `rgba(${rgb},0.72)`
   return (
     <div style={{
       display: 'inline-flex', alignItems: 'center', gap: 7,
-      padding: '9px 12px',
-      borderRadius: 13,
-      background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025))',
-      border: '1px solid rgba(255,255,255,0.095)',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.045)',
+      padding: '7px 10px',
+      borderRadius: 12,
+      background: 'linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018))',
+      border: '1px solid rgba(255,255,255,0.075)',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.035)',
       fontFamily: TYPE.bodyText.fontFamily,
-      fontSize: 12,
-      fontWeight: 700,
+      fontSize: 11,
+      fontWeight: 650,
       letterSpacing: '0.01em',
-      color: 'rgba(245,247,255,0.58)',
+      color: 'rgba(245,247,255,0.50)',
     }}>
       <PromptIcon label={label} color={chipColor} />
       {label}
@@ -397,13 +396,6 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
     onTouchEnd: () => setIsPressed(false),
   }
 
-  const ArrowIcon = ({ color = accent }) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
-    </svg>
-  )
-
   return (
     <CinematicShell style={{
       background: '#08090D',
@@ -415,7 +407,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
       {block.backgroundImage && (
         <div aria-hidden="true" style={{
           position: 'fixed', inset: 0,
-          backgroundImage: `linear-gradient(180deg, rgba(8,9,13,0.40), rgba(8,9,13,0.90)), url(${block.backgroundImage})`,
+          backgroundImage: `linear-gradient(180deg, rgba(8,9,13,0.36), rgba(8,9,13,0.90)), url(${block.backgroundImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           opacity: 0.24,
@@ -427,7 +419,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
 
       <div aria-hidden="true" style={{
         position: 'fixed', inset: 0,
-        background: `radial-gradient(circle at 50% 18%, rgba(${rgb},0.10), transparent 30%), linear-gradient(180deg, rgba(8,9,13,0.18), rgba(8,9,13,0.96) 82%)`,
+        background: `radial-gradient(circle at 50% 18%, rgba(${rgb},0.09), transparent 31%), linear-gradient(180deg, rgba(8,9,13,0.16), rgba(8,9,13,0.96) 82%)`,
         pointerEvents: 'none',
         zIndex: 0,
       }} />
@@ -443,7 +435,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
         filter: hasResults ? 'brightness(0.70)' : 'none',
         transition: `filter ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
       }}>
-        <div style={{ position: 'relative', minHeight: 48, marginBottom: SPACING.standard, flexShrink: 0 }}>
+        <div style={{ position: 'relative', minHeight: 48, marginBottom: SPACING.section, flexShrink: 0 }}>
           <div style={{ position: 'absolute', left: 0, top: 0 }}>
             <BackButton onClick={onBack} />
           </div>
@@ -475,67 +467,45 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                 Write anything you know before we reveal the gaps.
               </p>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: SPACING.compact }}>
-                <div style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 7,
-                  padding: '7px 10px',
-                  borderRadius: RADII.pill,
-                  background: `rgba(${ringRgb},0.10)`,
-                  border: `1px solid rgba(${ringRgb},0.28)`,
-                  boxShadow: `0 0 16px rgba(${ringRgb},0.08)`,
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '7px 11px',
+                borderRadius: RADII.pill,
+                background: `rgba(${ringRgb},0.10)`,
+                border: `1px solid rgba(${ringRgb},0.28)`,
+                boxShadow: `0 0 16px rgba(${ringRgb},0.08)`,
+                marginBottom: SPACING.standard,
+              }}>
+                <span style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  background: `rgb(${ringRgb})`,
+                  boxShadow: `0 0 8px rgba(${ringRgb},0.40)`,
+                }} />
+                <span style={{
+                  fontFamily: TYPE.bodyText.fontFamily,
+                  fontSize: 12,
+                  fontWeight: 750,
+                  color: `rgb(${ringRgb})`,
+                  fontVariantNumeric: 'tabular-nums',
+                  letterSpacing: '0.02em',
                 }}>
-                  <span style={{
-                    width: 9,
-                    height: 9,
-                    borderRadius: '50%',
-                    background: `rgb(${ringRgb})`,
-                    boxShadow: `0 0 8px rgba(${ringRgb},0.40)`,
-                  }} />
-                  <span style={{
-                    fontFamily: TYPE.bodyText.fontFamily,
-                    fontSize: 12,
-                    fontWeight: 750,
-                    color: `rgb(${ringRgb})`,
-                    fontVariantNumeric: 'tabular-nums',
-                    letterSpacing: '0.02em',
-                  }}>
-                    {formatTime(secondsLeft)}
-                  </span>
-                </div>
-
-                {block.chapterTitle && (
-                  <p style={{
-                    flex: 1,
-                    minWidth: 0,
-                    fontFamily: TYPE.bodyText.fontFamily,
-                    fontSize: 13,
-                    fontWeight: 500,
-                    color: 'rgba(168,159,194,0.70)',
-                    margin: 0,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}>
-                    {block.chapterTitle}
-                  </p>
-                )}
-              </div>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 9, marginBottom: SPACING.standard }}>
-                {recallPrompts.slice(0, 5).map(p => <PromptChip key={p} label={p} rgb={rgb} />)}
+                  {formatTime(secondsLeft)}
+                </span>
               </div>
 
               <div style={{
                 position: 'relative',
                 background: 'linear-gradient(180deg, rgba(20,23,29,0.93), rgba(11,13,18,0.96))',
-                border: isFocused ? `1.5px solid rgba(${rgb},0.62)` : `1.5px solid rgba(${rgb},0.28)`,
+                border: isFocused ? `1.5px solid rgba(${SUCCESS_RGB},0.58)` : `1.5px solid rgba(${rgb},0.28)`,
                 borderRadius: 24,
                 padding: `${SPACING.compact}px ${SPACING.standard}px`,
-                marginBottom: SPACING.micro,
+                marginBottom: SPACING.compact,
                 boxShadow: isFocused
-                  ? `0 0 0 1px rgba(${rgb},0.14), 0 0 38px rgba(${rgb},0.18), inset 0 1px 0 rgba(255,255,255,0.05)`
+                  ? `0 0 0 1px rgba(${SUCCESS_RGB},0.13), 0 0 36px rgba(${SUCCESS_RGB},0.14), inset 0 1px 0 rgba(255,255,255,0.05)`
                   : `0 0 28px rgba(${rgb},0.09), inset 0 1px 0 rgba(255,255,255,0.04)`,
                 transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
               }}>
@@ -556,11 +526,11 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                     <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
                       <div style={{
                         fontFamily: TYPE.bodyText.fontFamily,
-                        fontSize: TYPE.bodySmall.fontSize,
-                        fontWeight: TYPE.bodySmall.fontWeight,
+                        fontSize: 16,
+                        fontWeight: 500,
                         lineHeight: 1.7,
                         letterSpacing: '0.01em',
-                        color: 'rgba(245,247,255,0.40)',
+                        color: 'rgba(245,247,255,0.42)',
                       }}>
                         Type your answer here…
                       </div>
@@ -588,7 +558,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                     style={{
                       width: '100%',
                       padding: 0,
-                      minHeight: 'clamp(230px, 34vh, 310px)',
+                      minHeight: 'clamp(250px, 39vh, 340px)',
                       background: 'transparent',
                       border: 'none',
                       outline: 'none',
@@ -598,24 +568,37 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
                       color: '#F5F7FF',
                       lineHeight: 1.7,
                       letterSpacing: '0.01em',
-                      caretColor: accent,
+                      caretColor: `rgb(${SUCCESS_RGB})`,
                       opacity: phase === 'results' ? 0.72 : 1,
                     }}
                   />
                 </div>
+
+                <div aria-hidden="true" style={{
+                  position: 'absolute',
+                  right: 18,
+                  bottom: 16,
+                  color: `rgba(${SUCCESS_RGB},0.33)`,
+                  opacity: 0.9,
+                }}>
+                  <FeatherIcon color="currentColor" />
+                </div>
               </div>
 
-              <div style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontSize: 12,
-                fontWeight: 500,
-                letterSpacing: '0.02em',
-                color: 'rgba(245,247,255,0.32)',
-                marginBottom: error ? SPACING.compact : SPACING.standard,
-              }}>
-                Ideas captured: {ideaCount}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: SPACING.micro }}>
+                <span style={{
+                  fontFamily: TYPE.bodyText.fontFamily,
+                  fontSize: 12,
+                  fontWeight: 500,
+                  letterSpacing: '0.02em',
+                  color: 'rgba(245,247,255,0.32)',
+                }}>
+                  Ideas captured: {ideaCount}
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: error ? SPACING.compact : SPACING.standard }}>
+                {recallPrompts.slice(0, 4).map(p => <PromptChip key={p} label={p} rgb={rgb} />)}
               </div>
 
               {error && (
@@ -631,15 +614,14 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
               {...pressProps}
               style={{
                 width: '100%',
-                height: BUTTONS.secondary.height,
-                borderRadius: BUTTONS.secondary.borderRadius,
-                border: `1.5px solid rgba(${rgb},0.52)`,
-                background: `linear-gradient(180deg, rgba(${rgb},0.30), rgba(${rgb},0.13))`,
-                boxShadow: `0 0 30px rgba(${rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.08)`,
+                minHeight: 60,
+                borderRadius: 18,
+                border: `1.5px solid rgba(${rgb},0.62)`,
+                background: `linear-gradient(180deg, rgba(${rgb},0.42), rgba(${rgb},0.18))`,
+                boxShadow: `0 0 34px rgba(${rgb},0.14), inset 0 1px 0 rgba(255,255,255,0.11)`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 10,
                 cursor: 'pointer',
                 transform: isPressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
                 transition: `transform ${MOTION.duration.fast} ${MOTION.easing.standard}`,
@@ -649,13 +631,12 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
             >
               <span style={{
                 fontFamily: TYPE.bodyText.fontFamily,
-                fontSize: BUTTONS.secondary.fontSize,
-                fontWeight: BUTTONS.secondary.fontWeight,
+                fontSize: 17,
+                fontWeight: 800,
                 color: accent,
               }}>
                 Check my recall
               </span>
-              <ArrowIcon color={accent} />
             </button>
           </div>
         )}
