@@ -23,6 +23,8 @@ By the end, students should be able to:
 - explain the role of bile
 - describe the food tests required practical
 - describe the amylase and pH required practical
+- calculate reaction rate from practical data
+- explain how to improve reliability and control variables in enzyme practicals
 
 ## Hook
 
@@ -83,6 +85,10 @@ Exam-safe explanation:
 
 > The substrate fits into the enzyme active site because the shapes are complementary. The enzyme catalyses the reaction and products are released. The enzyme is unchanged and can be used again.
 
+Common trap:
+
+Do not say the enzyme is used up. Enzymes can be reused.
+
 ### 3. Temperature and enzymes
 
 At low temperatures:
@@ -122,7 +128,7 @@ If pH is too high or too low:
 
 Examples:
 
-- stomach enzymes work best in acidic conditions
+- stomach protease works best in acidic conditions
 - enzymes from the pancreas and small intestine work best in alkaline conditions
 
 ### 5. Digestive enzymes
@@ -180,6 +186,10 @@ Method:
 2. Heat in a water bath.
 3. Positive result: blue turns green/yellow/orange/brick red.
 
+Exam trap:
+
+Benedict's solution must be heated. A colour change towards brick red shows more reducing sugar.
+
 ### Iodine test for starch
 
 Method:
@@ -194,15 +204,24 @@ Method:
 1. Add Biuret reagent to the food sample.
 2. Positive result: blue turns lilac/purple.
 
-### Emulsion test for lipids
+### Lipid test
 
-Method:
+Include the lipid test used by the school. Both are common in GCSE teaching.
+
+#### Sudan III test
+
+1. Add Sudan III stain to the sample.
+2. Positive result: a red-stained oil layer separates on top.
+
+#### Emulsion test
 
 1. Add ethanol to the sample and shake.
 2. Add water.
 3. Positive result: cloudy white emulsion.
 
-Note: AQA Trilogy required practical names Benedict's, iodine and Biuret in the specification. Lipid testing is still commonly taught and useful for digestion content.
+Exam trap:
+
+Do not confuse iodine and Biuret. Iodine tests for starch. Biuret tests for protein.
 
 ## Required practical 4: effect of pH on amylase
 
@@ -230,9 +249,30 @@ Variables:
 - dependent variable: time taken for starch to be digested
 - control variables: temperature, concentration and volume of amylase, concentration and volume of starch, total volume, sampling interval
 
-Interpretation:
+Interpreting results:
 
-Shorter time means faster enzyme activity.
+- shorter time = faster enzyme activity
+- longer time = slower enzyme activity
+- optimum pH = pH where starch disappears fastest
+
+Rate calculation:
+
+> rate = 1000 / time taken
+
+This gives a simple comparable rate when time is measured in seconds.
+
+Worked example:
+
+If starch is digested in 50 seconds:
+
+1000 / 50 = 20 arbitrary units
+
+Improving quality:
+
+- repeat each pH and calculate a mean
+- identify anomalous results
+- keep temperature constant with a water bath
+- use the same volumes and concentrations each time
 
 Common exam traps:
 
@@ -279,10 +319,11 @@ Mark points:
 
 Sort test to result:
 
-- Benedict's + heat → brick red for sugar
+- Benedict's + heat → brick red for reducing sugar
 - iodine → blue-black for starch
 - Biuret → lilac/purple for protein
-- ethanol + water → cloudy white for lipid
+- Sudan III → red oil layer for lipid
+- ethanol + water → cloudy white emulsion for lipid
 
 ### Task 5: Amylase practical order
 
@@ -295,6 +336,16 @@ Put in order:
 - sample onto iodine every 30 seconds
 - record time when iodine stays orange-brown
 - repeat with different pH values
+
+### Task 6: Rate builder
+
+Question:
+
+Starch disappears after 40 seconds. Calculate the rate using rate = 1000 / time.
+
+Answer:
+
+1000 / 40 = 25 arbitrary units.
 
 ## Exam practice
 
@@ -348,6 +399,18 @@ Mark points:
 - iodine turns blue-black if starch is present
 - when starch is digested, iodine stays orange-brown
 
+### Question 5 — rate calculation
+
+A student finds that starch disappears after 80 seconds.
+
+Calculate the rate using rate = 1000 / time.  
+2 marks
+
+Mark points:
+
+- 1000 / 80
+- 12.5 arbitrary units
+
 ## Final retrieval
 
 1. What is an enzyme?  
@@ -373,3 +436,6 @@ Neutralises stomach acid and emulsifies fats.
 
 8. What colour does iodine turn if starch is present?  
 Blue-black.
+
+9. What is the rate formula for the amylase practical?  
+Rate = 1000 / time.
