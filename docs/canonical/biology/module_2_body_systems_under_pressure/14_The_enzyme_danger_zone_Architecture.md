@@ -3,10 +3,11 @@
 ## 1. Identity
 
 - **Chapter:** 14
+- **Module chapter:** Module 2, Chapter 4
 - **Title:** The enzyme danger zone
 - **Subject:** AQA GCSE Combined Science Trilogy — Biology Paper 1
 - **Module:** Module 2 — Body systems under pressure
-- **Build status:** Not yet built
+- **Build status:** Canonical reviewed; not yet built
 - **Content file:** `14_The_enzyme_danger_zone_Content.md`
 
 ---
@@ -15,57 +16,79 @@
 
 ### Part 1 — Situation + prediction
 
-- Hook: "Body temperature is 37°C. Fever pushes it to 40°C. Enzymes start failing. Why does a 3-degree rise matter so much?" Cinematic — thermometer rising, cell activity slowing.
-- Prediction: "If you doubled the temperature, would an enzyme work twice as fast?"
-- You will learn: how temperature and pH affect enzyme activity; denaturation; the required practical using amylase and iodine.
+- Hook: "A tiny change in pH can make an enzyme lose its grip." Show an enzyme active site gradually changing shape so the substrate no longer fits.
+- Prediction: "If an enzyme is slower, does that always mean it has been denatured?"
+- You will learn: temperature, pH, optimum conditions, denaturation, and the amylase pH required practical.
 
-**Components:** `CinematicRevealMoment`, `ChapterHookScreen`
+**Components:** `CinematicRevealMoment`, `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ---
 
 ### Part 2 — Investigate the evidence
 
-- Visual walkthrough of the practical: water baths at different pH values, amylase + starch mixture, iodine spotting tile, timing until colour change
-- Show a results table and a rate-of-reaction graph (time vs rate across pH values) for students to notice the peak and the fall-off on each side
+- Visual walkthrough of the required practical:
+  - iodine spotting tile
+  - amylase + buffer
+  - starch added and timer started
+  - samples tested every 30 seconds
+  - endpoint when iodine stays orange-brown
+- Show a results table with pH, time taken and calculated rate.
+- Show both graph interpretations:
+  - time taken vs pH: lowest point = fastest rate
+  - rate vs pH: highest point = fastest rate
 
-**Components:** `VisualLearning`, `GraphView`
+**Components:** `VisualLearning`, `StepSequence`, `GraphView`
 
 ---
 
 ### Part 3 — Discover the science
 
-- ExplainReveal: temperature — increases rate up to optimum → above optimum, active site shape changes irreversibly → denaturation → no substrate binding
-- ExplainReveal: pH — each enzyme has an optimum pH; strong acid or alkali breaks hydrogen bonds in the enzyme's structure → active site distorted → denatured
-- TheoryCompareBlock: slow vs denatured — emphasise "slow = still working, just less collision; denatured = permanently broken"
+- `ExplainReveal`: temperature effect:
+  - low temperature = less kinetic energy and fewer collisions
+  - rising temperature = more collisions up to optimum
+  - above optimum = active site changes shape and enzyme denatures
+- `ExplainReveal`: pH effect:
+  - each enzyme has an optimum pH
+  - too acidic/alkaline can alter active site shape
+  - substrate fits less well or cannot bind
+- `TheoryCompareBlock`: slow vs denatured:
+  - slow = still working, fewer successful collisions
+  - denatured = active site changed shape, substrate cannot bind
+- `ConceptReveal`: iodine tests for starch; amylase digests starch.
 
-**Components:** `ExplainReveal` × 2, `TheoryCompareBlock`
+**Components:** `ExplainReveal`, `TheoryCompareBlock`, `ConceptReveal`
 
 ---
 
 ### Part 4 — Check precision
 
-- MisconceptionCheck: "An enzyme that slows down has been denatured." → false (below optimum = slower, not broken)
-- MisconceptionCheck: "All enzymes have an optimum temperature of 37°C." → false (varies by organism)
-- SpotTheError: "At 60°C, the enzyme works faster than at 37°C because there is more energy." (Error: above the optimum, the enzyme denatures — activity drops sharply, it does not keep increasing)
+- `MisconceptionCheck`: "An enzyme that slows down has been denatured." → false.
+- `MisconceptionCheck`: "Iodine digests starch." → false.
+- `MisconceptionCheck`: "A longer time means a faster reaction." → false in this practical.
+- `SpotTheError`: "At 20°C the enzyme was denatured, so the reaction was slower." Correction: low temperature usually slows collision frequency; denaturation is active-site shape change.
+- `SpotTheError`: "The reaction ended when iodine turned blue-black." Correction: blue-black means starch is still present; endpoint is orange-brown.
 
-**Components:** `MisconceptionCheck` × 2, `SpotTheError`
+**Components:** `MisconceptionCheck`, `SpotTheError`
 
 ---
 
 ### Part 5 — Apply to a real GCSE-style task
 
-- GuidedExamResponse: "Explain why the rate of amylase activity decreases when the pH falls below 4. (3 marks)"
-- FillInTheBlanksBlock: "The temperature at which an enzyme works fastest is called the ___ temperature. Above this temperature, the enzyme's ___ changes shape and the substrate can no longer ___."
-- Graph interpretation: identify optimum pH from a rate-pH curve; identify the denaturation point
+- `GuidedExamResponse`: "Explain why enzyme activity decreases above the optimum temperature. (3 marks)"
+- `GuidedExamResponse`: "Describe how to investigate the effect of pH on amylase activity. (6 marks)"
+- `FillInTheBlanksBlock`: optimum / active site / substrate vocabulary.
+- `GraphView`: identify optimum pH from a time graph and from a rate graph.
+- `CalculationBuilder`: rate = 1000 / time.
 
-**Components:** `GuidedExamResponse`, `FillInTheBlanksBlock`, `GraphView`
+**Components:** `GuidedExamResponse`, `FillInTheBlanksBlock`, `GraphView`, `CalculationBuilder`
 
 ---
 
 ### Part 6 — Face the examiner + debrief
 
-- FaceTheExaminer: student says "the enzyme was destroyed by heat" without saying why (active site shape change); mark commentary stresses the mechanism
-- QuickRecallScreen: what is denaturation; at what pH does amylase work best; what is the independent variable in this practical; why is temperature controlled; what does a shorter time on a spotting tile mean?
+- `FaceTheExaminer`: student says "the enzyme was destroyed by heat" without mechanism. Mark commentary requires active site shape change and substrate no longer fitting.
+- `FaceTheExaminer`: student says iodine digested starch. Mark commentary separates test reagent from enzyme action.
+- Quick recall: denaturation, optimum pH, independent variable, dependent variable, why temperature is controlled, what shorter time means, rate formula.
 
 **Components:** `FaceTheExaminer`, `QuickRecallScreen`
 
@@ -74,47 +97,64 @@
 ## 3. Active learning interactions
 
 - `VisualLearning`: practical walkthrough
-- `GraphView`: rate-pH curve
-- `ExplainReveal` × 2: temperature and pH effects
+- `StepSequence`: amylase pH practical order
+- `GraphView`: rate-pH and time-pH interpretation
+- `ExplainReveal`: temperature effect
+- `ExplainReveal`: pH effect
 - `TheoryCompareBlock`: slow vs denatured
-- `MisconceptionCheck` × 2
-- `SpotTheError`: 60°C / faster error
-- `GuidedExamResponse`: 3-mark pH/enzyme question
-- `FillInTheBlanksBlock`: optimum / active site vocabulary
+- `ConceptReveal`: iodine tests starch; amylase digests starch
+- `MisconceptionCheck` × 3
+- `SpotTheError` × 2
+- `GuidedExamResponse`: 3-mark enzyme denaturation question
+- `GuidedExamResponse`: 6-mark required practical method
+- `CalculationBuilder`: rate = 1000 / time
 - `FaceTheExaminer`: mechanism answer critique
-- `QuickRecallScreen`: 5 retrieval questions
+- `QuickRecallScreen`: 7 retrieval questions
 
 ---
 
 ## 4. Retrieval points
 
-- Optimum temperature and optimum pH as the peak of enzyme activity
-- Denaturation: irreversible change to active site shape; substrate cannot bind
-- Slow ≠ denatured — this distinction is the most examined misconception
-- The amylase practical: iodine spotting tile, time to colour change, pH as independent variable, temperature as control variable
-- Reading a rate graph: shorter time to complete reaction = faster rate
+- Optimum temperature and optimum pH as the fastest enzyme activity
+- Denaturation: active site changes shape and substrate cannot bind
+- Slow ≠ denatured
+- Iodine tests for starch; amylase digests starch
+- Endpoint: iodine stays orange-brown
+- Independent variable: pH
+- Dependent variable: time taken for starch to be digested
+- Control variables: temperature, volumes, concentrations, sampling interval
+- Rate calculation: rate = 1000 / time
 
 ---
 
 ## 5. Exam skill focus
 
-- 3-mark explain: explain why enzyme activity decreases above the optimum temperature
-- 2-mark distinguish: explain the difference between a slow enzyme and a denatured enzyme
-- Practical method: identify variables, suggest improvements, interpret a results graph
+- 3-mark explain: why enzyme activity decreases above optimum temperature
+- 2-mark distinguish: slow enzyme vs denatured enzyme
+- 6-mark practical method: effect of pH on amylase
+- 3-mark variables question
+- 2-mark calculation: rate = 1000 / time
+- Graph interpretation: optimum pH from time or rate graph
 
 ---
 
 ## 6. Build notes
 
-"Slow vs denatured" is the chapter's core pedagogical challenge and must have its own explicit comparison screen. The denaturation mechanism (active site shape change → substrate cannot bind) must be taught as a two-step chain, not just as "the enzyme is destroyed." The graph from the practical (rate vs pH) is the most common exam data question for this topic — include it as a data interpretation screen.
+"Slow vs denatured" is the chapter's core pedagogical challenge and must have its own explicit comparison screen.
+
+The required practical should be taught as a sequence, not just a description. The student needs to know exactly what iodine shows: blue-black means starch is still present; orange-brown means starch has been digested.
+
+Be careful with graph direction. If the graph shows **time**, the fastest reaction is the lowest point. If the graph shows **rate**, the fastest reaction is the highest point.
 
 ---
 
 ## 7. Chapter completion test
 
 - [ ] Student can explain what denaturation means at the level of the active site
-- [ ] Student can distinguish between "enzyme slowed by temperature" and "enzyme denatured"
-- [ ] Student can identify the optimum pH from a rate-pH graph
-- [ ] Student can name the independent and dependent variables in the amylase practical
-- [ ] Student can explain why temperature must be controlled in the practical
-- [ ] Student has practised a 3-mark explain question using the correct mechanism language
+- [ ] Student can distinguish between "enzyme slowed by low temperature" and "enzyme denatured"
+- [ ] Student can identify the optimum pH from a rate graph and a time graph
+- [ ] Student can describe the amylase pH required practical in order
+- [ ] Student can name the independent, dependent and control variables
+- [ ] Student can explain why temperature must be controlled
+- [ ] Student can calculate rate using 1000 / time
+- [ ] Student can explain what iodine colour shows at each stage
