@@ -76,24 +76,13 @@ function ModuleLoadingScreen() {
 }
 
 // ─── Module content loading ────────────────────────────────────────────────────
-// MODULE_CONTENT_LOADERS imported above from src/content/moduleContentRegistry.js.
-// Subject-level loaders for subjects not yet split per-module.
-// History is absent — its episodes use MODULE_CONTENT_LOADERS above.
-const SUBJECT_MODULE_LOADERS = {
-  Biology:   () => import('../modules/biology.js').then(m => m.BIOLOGY_MODULES),
-  Maths:     () => import('../modules/maths.js').then(m => m.MATHS_MODULES),
-  Sociology: () => import('../modules/sociology.js').then(m => m.SOCIOLOGY_MODULES),
-  Chemistry: () => import('../modules/chemistry.js').then(m => m.CHEMISTRY_MODULES),
-  English:   () => import('../modules/english.js').then(m => m.ENGLISH_MODULES),
-}
+// All subjects now use per-module files via MODULE_CONTENT_LOADERS.
+// New modules: run /module-creation <id> to add a content file + registry entry.
 
 async function loadModuleContent(mod) {
-  const perModuleLoader = MODULE_CONTENT_LOADERS[mod.id]
-  if (perModuleLoader) return perModuleLoader()
-  const loader = SUBJECT_MODULE_LOADERS[mod.subject]
+  const loader = MODULE_CONTENT_LOADERS[mod.id]
   if (!loader) return null
-  const subjectModules = await loader()
-  return subjectModules.find(m => m.id === mod.id) || null
+  return loader()
 }
 
 

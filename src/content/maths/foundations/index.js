@@ -1,0 +1,10 @@
+// GCSE Maths Foundations — episode registry
+// Dynamic imports only — importing this file does not load any episode content.
+// App loading is handled by src/content/moduleContentRegistry.js.
+
+export const EPISODE_LOADERS = {
+  'math1': () => import('./episodes/math1.js').then(m => m.default),
+  'math2': () => import('./episodes/math2.js').then(m => m.default),
+}
+
+export const EPISODE_IDS = Object.keys(EPISODE_LOADERS)
