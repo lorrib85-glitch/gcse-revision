@@ -2,578 +2,639 @@ export default {
   "id": "math1",
   "subject": "Maths",
   "number": 1,
-  "title": "Maths Survival Basics",
-  "subtitle": "Number sense, negatives, BIDMAS",
-  "era": "Foundation",
+  "title": "Place value and number sense",
+  "subtitle": "Ordering numbers, decimals and the number line",
+  "era": "Number survival kit",
   "icon": "🔢",
-  "color": "#4B90FF",
-  "colorLight": "rgba(75,144,255,.12)",
+  "color": "#2DD4BF",
+  "colorLight": "rgba(45,212,191,.12)",
+  "headerImage": "/headers/maths-numbers.webp",
+
+  "module": "number-survival-kit",
+  "moduleNumber": 1,
+  "chapterNumber": 1,
+  "aqaLinks": ["N1", "N2"],
+  "mapsToMathsGroups": [],
+  "weaknessTags": ["maths:place-value", "maths:ordering-numbers"],
+  "prerequisiteChapters": [],
+
   "hook": {
     "scenario": {
-      "location": "Any exam hall",
-      "hint": "A student stares at −8 and −3 on a number line. Which is bigger?"
+      "location": "AQA Foundation Paper 1, Question 1",
+      "hint": "A student writes: 0.35 > 0.9 because 35 is bigger than 9."
     },
-    "statement": "Negative numbers are always smaller than positive numbers.",
+    "statement": "0.35 is greater than 0.9",
     "isTrue": false,
-    "accentWords": [
-      "always smaller"
-    ],
-    "explanation": "−3 is larger than −8. Negative numbers get smaller as they move further from zero. Direction matters, not just the minus sign.",
-    "wrongFeedback": "Not quite. With negatives, think left and right — not just bigger digit.",
-    "correctFeedback": "Right. −3 is bigger than −8 because it's further right on the number line.",
-    "loadingText": "Let's see why on a number line…",
-    "bigQuestion": "So how do we actually compare negative numbers?",
-    "revealHeader": "Think left and right — not just bigger digit.",
+    "accentWords": ["0.35", "0.9"],
+    "explanation": "0.9 = 0.90. The tenths digit is what matters first — 9 tenths is bigger than 3 tenths. Comparing the digits 35 and 9 as whole numbers ignores place value entirely.",
+    "wrongFeedback": "Check the tenths column first. 0.9 has 9 tenths; 0.35 has only 3 tenths.",
+    "correctFeedback": "Right. 0.9 = 0.90. Tenths come before hundredths in size — 9 tenths beats 3 tenths.",
+    "loadingText": "Let's look at why decimal place value catches people out…",
+    "bigQuestion": "How do we compare any two numbers without being tricked by digit size?",
+    "revealHeader": "Compare column by column — not digit by digit.",
     "revealItems": [
       {
-        "emoji": "📍",
-        "label": "Use a number line",
-        "detail": "−3 sits to the RIGHT of −8. Further right = bigger. Always."
+        "emoji": "📊",
+        "label": "Tenths come first",
+        "detail": "0.9 has 9 in the tenths place. 0.35 has 3 in the tenths place. 9 tenths > 3 tenths — done. The 5 hundredths in 0.35 is irrelevant once the tenths column is decided."
       },
       {
         "emoji": "🌡️",
-        "label": "Real examples",
-        "detail": "−3°C is warmer than −8°C. £−3 means less debt than £−8. Position on the line tells you size."
+        "label": "Negatives flip the rule",
+        "detail": "−8 is less than −3 because it is further left on the number line. The digit 8 > 3, but the minus sign means further from zero = smaller."
       },
       {
         "emoji": "⚠️",
-        "label": "The common trap",
-        "detail": "Students see −8 and think \"8 is bigger than 3, so −8 is bigger.\" That's the trap. The minus flips it."
+        "label": "The exam trap",
+        "detail": "Treating decimal digits as a whole number (15 > 2 so 0.15 > 0.2) is the most common ordering error in AQA Foundation mark schemes. It costs 2 marks."
       }
     ],
-    "punchline": "Number line thinking beats digit thinking every time. That's the whole key."
+    "punchline": "Place value columns — not raw digit size — decide which number is bigger."
   },
+
   "intro": {
     "learningGoals": [
-      "Move confidently on a number line — adding right, subtracting left",
-      "Handle negative numbers without sign panic",
-      "Use BIDMAS so calculations happen in the right order",
-      "Estimate first, then check if calculator answers are sensible"
+      "Read place value in integers and decimals precisely",
+      "Order any mix of positive and negative integers, decimals and simple fractions",
+      "Use the symbols =, ≠, <, >, ≤, ≥ correctly in exam answers",
+      "Locate and compare values on a number line"
     ]
   },
+
   "outcomes": {
-    "intro": "Before anything else in maths makes sense, these fundamentals need to click. This chapter makes them click.",
+    "intro": "Place value is the foundation of all AQA maths. Ordering questions appear in Paper 1 every year — usually in the first few questions.",
     "bullets": [
-      "Work confidently with negative numbers without second-guessing yourself",
-      "Apply BIDMAS correctly so you stop losing easy marks",
-      "Handle rounding, estimation and significant figures under exam pressure",
-      "See why these basics show up in almost every GCSE maths question"
+      "Read and write any integer or decimal using correct place value language",
+      "Order a mixed set of positives, negatives, decimals and fractions from smallest to largest",
+      "Use comparison symbols correctly in written exam answers",
+      "Avoid the most common trap: comparing digits as whole numbers without using columns"
     ]
   },
+
   "recall": {
     "questions": [
       {
         "type": "truefalse",
-        "question": "−3 is a greater value than −8.",
+        "question": "0.9 is greater than 0.35.",
         "isTrue": true
       },
       {
         "type": "choice",
-        "question": "In BIDMAS, what do you always calculate first?",
+        "question": "Which symbol correctly compares −3 and −8?",
         "options": [
-          "Any addition you can see",
-          "Whatever is inside brackets",
-          "Division before multiplication"
+          "−3 < −8",
+          "−3 > −8",
+          "−3 = −8"
         ],
         "correct": 1
       },
       {
         "type": "connection",
-        "question": "Estimation matters in exams because...",
+        "question": "The most reliable way to order negative numbers is to...",
         "options": [
           {
-            "text": "It's always accurate enough to use as a final answer",
-            "icon": "arrow"
+            "text": "Compare their digits, ignoring the minus sign",
+            "icon": "warning"
           },
           {
-            "text": "It helps you catch calculator errors before you write them down",
+            "text": "Use a number line — further right means bigger",
             "icon": "lightbulb"
           },
           {
-            "text": "It replaces the need to do actual calculation",
-            "icon": "warning"
+            "text": "The bigger digit always means bigger value",
+            "icon": "arrow"
           }
         ],
         "correct": 1
       }
     ]
   },
+
   "screens": [
     {
-      "label": "Number Line",
-      "kicker": "Core Skill 1",
-      "heading": "Adding moves right.",
-      "sub": "On a number line, right means bigger. Left means smaller.",
+      "tag": "maths:place-value",
+      "label": "Place value trap",
+      "kicker": "Section 1 — Why it matters",
+      "heading": "Which is bigger: 0.35 or 0.9?",
+      "sub": "This type of question appears in AQA Foundation Paper 1 every year.",
       "blocks": [
         {
           "type": "read",
-          "label": "Why this matters",
-          "text": "Used for <strong>temperatures</strong>, <strong>bank balances</strong>, <strong>scores</strong> and exam checking."
+          "label": "The exam stake",
+          "text": "Ordering numbers is worth <strong>2 marks in every AQA Foundation paper</strong>. The trap is always decimal place value or negative numbers — and it always catches the same mistake."
         },
         {
           "type": "quiz",
-          "question": "Where would −2 + 6 land on the number line?",
+          "question": "Which is bigger: 0.35 or 0.9?",
           "options": [
-            {"text": "−8", "correct": false},
-            {"text": "4", "correct": true},
-            {"text": "8", "correct": false}
+            { "text": "0.35, because 35 is bigger than 9", "correct": false },
+            { "text": "0.9, because it has more in the tenths place", "correct": true },
+            { "text": "They are equal", "correct": false }
           ],
-          "explanation": "Start at −2. Adding 6 moves right. You land on 4."
+          "explanation": "0.9 = 9 tenths. 0.35 = 3 tenths and 5 hundredths. Tenths come before hundredths — compare column by column, not digit by digit."
         },
         {
-          "type": "quiz",
-          "question": "Starting at −3, add 8 then subtract 5. Where do you land?",
-          "options": [
-            {"text": "0", "correct": true},
-            {"text": "6", "correct": false},
-            {"text": "−10", "correct": false}
-          ],
-          "explanation": "−3 + 8 = 5. Then 5 − 5 = 0. Adding moves right, subtracting moves left."
+          "type": "examtip",
+          "tip": "<strong>Series pillar: Number sense.</strong> Every ordering question in GCSE Maths is solved by going column by column — integer part first, then tenths, then hundredths. Never compare decimal digits as if they were whole numbers."
         }
       ]
     },
+
     {
-      "label": "Movement Rules",
-      "kicker": "Active Recall",
-      "heading": "Complete the movement rules.",
-      "sub": "Lock in the rules that matter all year.",
+      "tag": null,
+      "label": "Prior knowledge",
+      "kicker": "Section 2 — Check your foundations",
+      "heading": "What do you already know?",
+      "sub": "These questions check the building blocks for this chapter.",
       "blocks": [
         {
           "type": "read",
-          "label": "Why this matters",
-          "text": "This is the rule that stops <strong>negative-number mistakes</strong> in every topic — fractions, algebra, percentages."
+          "label": "Prerequisite skills",
+          "text": "This chapter requires: <strong>reading whole numbers</strong>, <strong>knowing that the decimal point separates whole parts from parts of one</strong>, and <strong>basic number line reading</strong>."
+        },
+        {
+          "type": "quiz",
+          "question": "In the number 4,372 — what digit is in the hundreds place?",
+          "options": [
+            { "text": "4", "correct": false },
+            { "text": "3", "correct": true },
+            { "text": "7", "correct": false }
+          ],
+          "explanation": "4,372: thousands = 4, hundreds = 3, tens = 7, ones = 2. Hundreds is the third column from the right."
+        },
+        {
+          "type": "quiz",
+          "question": "Which number is furthest right on a number line?",
+          "options": [
+            { "text": "−10", "correct": false },
+            { "text": "0", "correct": false },
+            { "text": "5", "correct": true }
+          ],
+          "explanation": "Right means bigger. 5 > 0 > −10. Positive numbers are always to the right of zero; negative numbers are always to the left."
+        }
+      ]
+    },
+
+    {
+      "tag": "maths:place-value",
+      "label": "Integer place value",
+      "kicker": "Section 3 — Core idea",
+      "heading": "Integers: every column has a name.",
+      "sub": "Place value tells you what each digit is worth — not just what it looks like.",
+      "blocks": [
+        {
+          "type": "read",
+          "label": "The integer columns",
+          "text": "In <strong>6,835</strong>: the 6 means 6 <em>thousands</em>, the 8 means 8 <em>hundreds</em>, the 3 means 3 <em>tens</em>, the 5 means 5 <em>ones</em>.<br/>So 6,835 = 6000 + 800 + 30 + 5."
+        },
+        {
+          "type": "quiz",
+          "question": "What is the value of the digit 7 in 47,391?",
+          "options": [
+            { "text": "7", "correct": false },
+            { "text": "700", "correct": false },
+            { "text": "7,000", "correct": true }
+          ],
+          "explanation": "In 47,391: the 7 is in the thousands column. Its value is 7 × 1,000 = 7,000."
+        },
+        {
+          "type": "quiz",
+          "question": "Write 50,000 + 400 + 6 as a single number.",
+          "options": [
+            { "text": "5,406", "correct": false },
+            { "text": "50,406", "correct": true },
+            { "text": "504,006", "correct": false }
+          ],
+          "explanation": "50,000 + 400 + 6 = 50,406. There are no thousands or tens, so zeros hold those columns: 5-0-4-0-6."
+        }
+      ]
+    },
+
+    {
+      "tag": "maths:place-value",
+      "label": "Decimal place value",
+      "kicker": "Section 3 — Core idea",
+      "heading": "Decimals: the columns keep going after the point.",
+      "sub": "After the decimal point: tenths, hundredths, thousandths.",
+      "blocks": [
+        {
+          "type": "read",
+          "label": "The decimal columns",
+          "text": "In <strong>3.47</strong>: the 4 is in the <em>tenths</em> column (= 4/10 = 0.4), the 7 is in the <em>hundredths</em> column (= 7/100 = 0.07).<br/>So 3.47 = 3 + 0.4 + 0.07."
+        },
+        {
+          "type": "quiz",
+          "question": "What does the 5 represent in 0.058?",
+          "options": [
+            { "text": "5 tenths", "correct": false },
+            { "text": "5 hundredths", "correct": true },
+            { "text": "5 thousandths", "correct": false }
+          ],
+          "explanation": "0.058: tenths = 0, hundredths = 5, thousandths = 8. The 5 is in the hundredths column (second place after the decimal)."
         },
         {
           "type": "fillblanks",
           "sentences": [
             {
-              "before": "Adding moves",
-              "after": ".",
-              "answer": "right",
+              "before": "In 2.364, the digit 3 is in the",
+              "after": "column.",
+              "answer": "tenths",
               "hints": [
-                "Think number line direction.",
-                "Positive movement goes this way →"
+                "Count one place after the decimal point.",
+                "The first column after the decimal is tenths."
               ]
             },
             {
-              "before": "Subtracting moves",
+              "before": "0.07 means 7",
               "after": ".",
-              "answer": "left",
+              "answer": "hundredths",
               "hints": [
-                "Opposite of adding.",
-                "Think ← direction."
-              ]
-            },
-            {
-              "before": "Numbers further right are",
-              "after": ".",
-              "answer": "bigger",
-              "hints": [
-                "Look at a number line.",
-                "5 is to the right of 2. Which is bigger?"
-              ]
-            },
-            {
-              "before": "−3 is bigger than −8 because it is closer to",
-              "after": ".",
-              "answer": "zero",
-              "hints": [
-                "Think about position on the number line.",
-                "Which is further right?"
+                "The second column after the decimal point.",
+                "0.07 = 7/100"
               ]
             }
           ],
-          "correctMsg": "Nice. That rule matters all year.",
-          "wrongMsg": "Check the number line: adding moves right, subtracting moves left."
+          "correctMsg": "Good — the column name matters more than the digit size.",
+          "wrongMsg": "Count the columns after the decimal point: tenths (1st), hundredths (2nd), thousandths (3rd)."
         }
       ]
     },
+
     {
-      "label": "BIDMAS",
-      "kicker": "Core Skill 2",
-      "heading": "Calculations happen in layers.",
-      "sub": "Some parts of a calculation must happen before others.",
+      "tag": null,
+      "label": "Comparison symbols",
+      "kicker": "Section 3 — Core idea",
+      "heading": "Using =, ≠, <, >, ≤, ≥",
+      "sub": "These six symbols are tested directly on AQA Foundation papers.",
       "blocks": [
         {
           "type": "read",
-          "label": "Why this matters",
-          "text": "Used whenever <strong>calculators</strong>, <strong>formulas</strong> or <strong>multi-step sums</strong> appear. BIDMAS prevents wrong answers."
+          "label": "The six symbols",
+          "text": "<strong>=</strong> equals &nbsp;·&nbsp; <strong>≠</strong> not equal to &nbsp;·&nbsp; <strong>&lt;</strong> less than &nbsp;·&nbsp; <strong>&gt;</strong> greater than &nbsp;·&nbsp; <strong>≤</strong> less than or equal to &nbsp;·&nbsp; <strong>≥</strong> greater than or equal to.<br/><br/>Memory trick: the <em>small end</em> of &lt; and &gt; always points to the <em>smaller</em> number."
         },
         {
           "type": "quiz",
-          "question": "In the expression 3 + 4 × 2, which part should happen first?",
+          "question": "Which symbol correctly fills the gap?  0.6 __ 0.59",
           "options": [
-            {"text": "3 + 4", "correct": false},
-            {"text": "4 × 2", "correct": true},
-            {"text": "3 × 2", "correct": false}
+            { "text": "<", "correct": false },
+            { "text": ">", "correct": true },
+            { "text": "=", "correct": false }
           ],
-          "explanation": "Multiplication before addition (BIDMAS). 4 × 2 = 8, then 3 + 8 = 11. Not 7 × 2 = 14."
+          "explanation": "0.6 = 0.60. Compare tenths: 6 > 5. So 0.6 > 0.59. The small end of > points right — toward 0.59, the smaller value."
         },
         {
-          "type": "examtip",
-          "tip": "Brackets change everything. Always: <strong>B</strong>rackets → <strong>I</strong>ndices → <strong>D</strong>ivision → <strong>M</strong>ultiplication → <strong>A</strong>ddition → <strong>S</strong>ubtraction. Calculators follow this exactly — but only if you enter the brackets correctly."
+          "type": "quiz",
+          "question": "Which statement is true?",
+          "options": [
+            { "text": "−5 > −2", "correct": false },
+            { "text": "−5 < −2", "correct": true },
+            { "text": "−5 ≥ −2", "correct": false }
+          ],
+          "explanation": "On a number line, −5 is to the left of −2. Left means smaller. So −5 < −2. The small end of < points left — toward −5."
         }
       ]
     },
+
     {
-      "label": "Quiz",
-      "kicker": "Practice",
-      "heading": "Test yourself.",
-      "sub": "Three levels. Work through them in order.",
+      "tag": "maths:ordering-numbers",
+      "label": "Number line ordering",
+      "kicker": "Section 3 — Core idea",
+      "heading": "The number line is your ordering tool.",
+      "sub": "Left = smaller. Right = bigger. Every number has exactly one position.",
       "blocks": [
         {
           "type": "read",
-          "label": "Why this matters",
-          "text": "Quick practice helps your brain <strong>recognise patterns faster</strong>."
+          "label": "How to use the number line to order",
+          "text": "To order a set of numbers: <strong>plot each value on a number line</strong>, then <strong>read left to right</strong> for ascending order (smallest first). Negatives are always left of zero. Decimals sit between integers."
         },
         {
-          "type": "tieredquiz",
-          "tiers": [
+          "type": "quiz",
+          "question": "Order from smallest to largest: 3, −1, 0, −4, 2",
+          "options": [
+            { "text": "−4, −1, 0, 2, 3", "correct": true },
+            { "text": "−1, −4, 0, 2, 3", "correct": false },
+            { "text": "0, −1, −4, 2, 3", "correct": false }
+          ],
+          "explanation": "On the number line: −4 is furthest left, then −1, then 0, then 2, then 3. Reading left to right gives ascending order."
+        },
+        {
+          "type": "quiz",
+          "question": "Which list is in descending order (largest first)?",
+          "options": [
+            { "text": "−2, 0, 1.5, 3", "correct": false },
+            { "text": "3, 1.5, 0, −2", "correct": true },
+            { "text": "1.5, 3, −2, 0", "correct": false }
+          ],
+          "explanation": "Descending = largest first. Reading the number line right to left: 3, 1.5, 0, −2."
+        }
+      ]
+    },
+
+    {
+      "tag": "maths:ordering-numbers",
+      "label": "Worked example",
+      "kicker": "Section 4 — Examiner method",
+      "heading": "Full worked example.",
+      "sub": "Show every step — method marks are always available even if the final answer is wrong.",
+      "blocks": [
+        {
+          "type": "read",
+          "label": "The question",
+          "text": "<strong>Write these numbers in order, starting with the smallest:</strong><br/>−4.5, 3.2, −0.8, 0, 2.7<br/><em>(2 marks)</em>"
+        },
+        {
+          "type": "read",
+          "label": "Step 1 — Sort the negatives",
+          "text": "Negatives first: −4.5 and −0.8. Among negatives, <em>further from zero = smaller</em>. −4.5 is further from zero than −0.8, so −4.5 &lt; −0.8."
+        },
+        {
+          "type": "read",
+          "label": "Step 2 — Order the non-negatives",
+          "text": "Non-negatives: 0, 2.7, 3.2. Reading the number line left to right: 0 &lt; 2.7 &lt; 3.2."
+        },
+        {
+          "type": "read",
+          "label": "Step 3 — Combine and write",
+          "text": "Negatives before zero before positives: <strong>−4.5, −0.8, 0, 2.7, 3.2</strong><br/><br/><em>Mark scheme: 1M for negatives correctly ordered relative to each other; 1A for all five values in correct order.</em>"
+        },
+        {
+          "type": "quiz",
+          "question": "Apply the same method: order from smallest — 1.5, −3, −0.5, 0, 4",
+          "options": [
+            { "text": "−3, −0.5, 0, 1.5, 4", "correct": true },
+            { "text": "−0.5, −3, 0, 1.5, 4", "correct": false },
+            { "text": "0, −0.5, −3, 1.5, 4", "correct": false }
+          ],
+          "explanation": "−3 is further from zero than −0.5, so −3 < −0.5. Then 0, 1.5, 4. Full order: −3, −0.5, 0, 1.5, 4."
+        }
+      ]
+    },
+
+    {
+      "tag": null,
+      "label": "Guided practice",
+      "kicker": "Section 5 — Practice with support",
+      "heading": "Complete the comparisons.",
+      "sub": "Fill each gap with the correct symbol from: =, ≠, <, >, ≤, ≥",
+      "blocks": [
+        {
+          "type": "read",
+          "label": "Method reminder",
+          "text": "Compare <strong>column by column</strong>: integer part first, then tenths, then hundredths. Stop at the first column where they differ."
+        },
+        {
+          "type": "fillblanks",
+          "sentences": [
             {
-              "label": "Warm Up",
-              "emoji": "🟢",
-              "questions": [
-                {
-                  "q": "Which is bigger?",
-                  "options": [
-                    "−7",
-                    "−2",
-                    "They are equal"
-                  ],
-                  "correct": 1,
-                  "feedback": "−2 is further right on the number line.",
-                  "hint": "Imagine a number line."
-                },
-                {
-                  "q": "Calculate: −4 + 9",
-                  "options": [
-                    "−13",
-                    "5",
-                    "13"
-                  ],
-                  "correct": 1,
-                  "feedback": "Start at −4 and move right 9.",
-                  "hint": "Start at −4, adding means move right."
-                },
-                {
-                  "q": "What happens first in: 6 + 3 × 4",
-                  "options": [
-                    "6 + 3",
-                    "3 × 4",
-                    "6 × 4"
-                  ],
-                  "correct": 1,
-                  "feedback": "Multiplication happens before addition (BIDMAS).",
-                  "hint": "Which operation has higher priority?"
-                }
+              "before": "−3",
+              "after": "−8",
+              "answer": ">",
+              "hints": [
+                "On the number line, which is further right?",
+                "−3 is closer to zero than −8, so it is bigger."
               ]
             },
             {
-              "label": "Challenge",
-              "emoji": "🟡",
-              "questions": [
-                {
-                  "q": "Calculate: 12 − 19",
-                  "options": [
-                    "7",
-                    "−7",
-                    "−31"
-                  ],
-                  "correct": 1,
-                  "feedback": "12 − 12 = 0. Then 7 more left gives −7.",
-                  "hint": "You will cross zero going left."
-                },
-                {
-                  "q": "Calculate: 5 + 6²",
-                  "options": [
-                    "121",
-                    "41",
-                    "66"
-                  ],
-                  "correct": 1,
-                  "feedback": "6² = 36. Then 5 + 36 = 41. Powers before addition.",
-                  "hint": "Indices (powers) come before addition in BIDMAS."
-                },
-                {
-                  "q": "Estimate: 302 × 19 is closest to...",
-                  "options": [
-                    "600",
-                    "6000",
-                    "60 000"
-                  ],
-                  "correct": 1,
-                  "feedback": "302 ≈ 300, 19 ≈ 20. 300 × 20 = 6000.",
-                  "hint": "Round both numbers to 1 significant figure first."
-                }
+              "before": "0.4",
+              "after": "0.40",
+              "answer": "=",
+              "hints": [
+                "0.4 = 0.40 — trailing zeros after a decimal don't change the value.",
+                "Both have 4 tenths and 0 hundredths."
               ]
             },
             {
-              "label": "Boss Mode",
-              "emoji": "🔴",
-              "questions": [
-                {
-                  "q": "A calculator says: 12 × 4 = 0.48. What should you think?",
-                  "options": [
-                    "Accept it",
-                    "Impossible — should be about 50",
-                    "Round it to 0.5"
-                  ],
-                  "correct": 1,
-                  "feedback": "12 × 4 = 48. 0.48 is a decimal/place-value error.",
-                  "hint": "Estimate first: 12 × 4 is roughly 10 × 4 = 40."
-                },
-                {
-                  "q": "Which calculator input matches: 4(3 + 5)",
-                  "options": [
-                    "4 × 3 + 5",
-                    "4 × (3 + 5)",
-                    "4 + 3 × 5"
-                  ],
-                  "correct": 1,
-                  "feedback": "Brackets force 3 + 5 to happen first.",
-                  "hint": "The brackets must be entered into the calculator too."
-                },
-                {
-                  "q": "Calculate: 2 × (7 + 3) − 4",
-                  "options": [
-                    "10",
-                    "16",
-                    "24"
-                  ],
-                  "correct": 1,
-                  "feedback": "Brackets first: 7+3=10. Multiply: 2×10=20. Subtract: 20−4=16.",
-                  "hint": "Brackets first, then multiplication, then subtraction."
-                }
+              "before": "2.08",
+              "after": "2.8",
+              "answer": "<",
+              "hints": [
+                "Integer parts are equal. Look at the tenths column.",
+                "2.08 has 0 in the tenths place; 2.8 has 8."
               ]
             }
-          ]
+          ],
+          "correctMsg": "Good — column-by-column comparison works every time.",
+          "wrongMsg": "Go to the first column where they differ. That column decides the comparison."
         }
       ]
     },
+
     {
-      "label": "Checkpoint",
-      "kicker": "True or False",
-      "heading": "Is this calculator answer possible?",
-      "sub": "Impossible answers are warning lights.",
+      "tag": "maths:place-value",
+      "label": "Spot the error",
+      "kicker": "Section 6 — Common mistake",
+      "heading": "Find and fix the error.",
+      "sub": "This specific mistake appears in AQA mark scheme notes as the most common wrong answer.",
       "blocks": [
         {
           "type": "read",
-          "label": "Why this matters",
-          "text": "Used to catch answers that <strong>cannot possibly be right</strong> — the most common reason for lost marks."
+          "label": "The student's working",
+          "text": "A student orders 0.2, 0.15, 0.08 and writes:<br/><strong>0.15 &gt; 0.2</strong> (because 15 &gt; 2)<br/>Order: 0.2, 0.08, 0.15"
         },
         {
           "type": "misconceptionCheck",
           "statements": [
             {
-              "statement": "12 × 4 = 0.48 could be correct.",
+              "statement": "The student is correct: 0.15 > 0.2 because 15 is bigger than 2.",
               "answer": false,
-              "reveal": "FALSE. 12 × 4 should be around 50. 12 × 4 = 48. 0.48 is less than 1. 12 lots of 4 cannot be less than 1. So the calculator entry went wrong.",
-              "examTrap": null
+              "reveal": "FALSE. 0.15 has 1 in the tenths column. 0.2 has 2 in the tenths column. The tenths column decides: 2 > 1, so 0.2 > 0.15. Comparing 15 and 2 as whole numbers ignores place value — the most common error on ordering questions.",
+              "examTrap": "AQA mark schemes flag this as the expected wrong answer. Markers see it in every paper."
             }
           ]
+        },
+        {
+          "type": "quiz",
+          "question": "Correct order of 0.2, 0.15, 0.08 from smallest to largest:",
+          "options": [
+            { "text": "0.08, 0.15, 0.2", "correct": true },
+            { "text": "0.2, 0.15, 0.08", "correct": false },
+            { "text": "0.08, 0.2, 0.15", "correct": false }
+          ],
+          "explanation": "Tenths column: 0.08 has 0 tenths, 0.15 has 1 tenth, 0.2 has 2 tenths. Order: 0.08 < 0.15 < 0.2."
         }
       ]
     },
+
     {
-      "label": "Simulator",
-      "kicker": "Apply It",
-      "heading": "The calculator is not your boss.",
-      "sub": "Estimate first. Then decide if the answer is sensible.",
+      "tag": null,
+      "label": "Maths in the wild",
+      "kicker": "Section 7 — Real-world application",
+      "heading": "Ordering in real life.",
+      "sub": "AQA context questions use temperatures, bank balances and measurements — all solved with the same method.",
       "blocks": [
         {
           "type": "read",
-          "label": "Why this matters",
-          "text": "Used when <strong>shopping</strong>, <strong>budgeting</strong> and checking exam answers."
+          "label": "Why this matters outside the exam",
+          "text": "Weather forecasts compare temperatures (including negatives). Bank statements compare balances. Running race results order times. All of these use place value and number line ordering."
         },
         {
           "type": "scenario",
-          "situation": "9 cinema tickets cost £7 each. The calculator shows: £6.30",
-          "question": "Is this calculator answer sensible?",
+          "situation": "A weather app shows temperatures: Oslo −8°C, Edinburgh −1°C, Paris 3°C, Cairo 18°C, Reykjavik −11°C.",
+          "question": "Which city is coldest?",
           "options": [
-            {"text": "Impossible — 9 × 7 = 63, not 6.30", "correct": true},
-            {"text": "Possible — it's close enough", "correct": false},
-            {"text": "Possible — decimals can appear in prices", "correct": false}
+            { "text": "Oslo (−8°C)", "correct": false },
+            { "text": "Reykjavik (−11°C)", "correct": true },
+            { "text": "Edinburgh (−1°C)", "correct": false }
           ],
-          "correctMsg": "9 × 7 = 63. Total should be £63. £6.30 is 10 times too small — likely a decimal point error.",
-          "wrongMsg": "Estimate first: one ticket costs £7. Nine tickets must cost more than £7. 9 × 7 = 63."
+          "correctMsg": "−11 is the most negative — furthest left on the number line. Reykjavik is coldest.",
+          "wrongMsg": "Among negatives, the one furthest from zero is the smallest (coldest). −11 is further from zero than −8 or −1."
         },
         {
           "type": "scenario",
-          "situation": "A notebook costs £2.75. Jay buys 6. The calculator shows: £16.50",
-          "question": "Is this calculator answer sensible?",
+          "situation": "Bank balances: Alex £−45, Bilal £120, Carla £−3, Dana £0.",
+          "question": "Who is worst off financially?",
           "options": [
-            {"text": "Possible — estimate is 6 × £3 = £18, which is close", "correct": true},
-            {"text": "Impossible — it should be exactly £18", "correct": false},
-            {"text": "Impossible — the answer is too small", "correct": false}
+            { "text": "Alex (£−45)", "correct": true },
+            { "text": "Carla (£−3)", "correct": false },
+            { "text": "Dana (£0)", "correct": false }
           ],
-          "correctMsg": "6 × £2.75 = £16.50. Estimate: 6 × £3 = £18. £16.50 is close — sensible answer.",
-          "wrongMsg": "Round first: 6 × £3 ≈ £18. Is £16.50 close to £18?"
-        },
-        {
-          "type": "scenario",
-          "situation": "A rectangle is 12 cm by 5 cm. The calculator shows the area as 0.6 cm².",
-          "question": "Is this calculator answer sensible?",
-          "options": [
-            {"text": "Impossible — area = 12 × 5 = 60 cm²", "correct": true},
-            {"text": "Possible — area is usually less than 1 cm² for small shapes", "correct": false},
-            {"text": "Possible — it depends on the units", "correct": false}
-          ],
-          "correctMsg": "Area = 12 × 5 = 60 cm². 0.6 is far too small — likely a decimal point error.",
-          "wrongMsg": "Area = length × width. What is 12 × 5?"
+          "correctMsg": "−45 < −3 < 0 < 120. Alex has the most negative balance — furthest in debt.",
+          "wrongMsg": "Both Alex and Carla are in debt (negative balance). −45 is more negative than −3."
         }
       ]
     },
+
     {
-      "label": "Exam Practice",
-      "kicker": "Exam Style",
-      "heading": "Exam practice.",
-      "sub": "Answer the questions. Get feedback on method, not just the final answer.",
+      "tag": null,
+      "label": "Retrieval",
+      "kicker": "Section 8 — Retrieval practice",
+      "heading": "Retrieval practice.",
+      "sub": "Quick questions to lock in today's learning.",
       "blocks": [
         {
           "type": "read",
-          "label": "Why this matters",
-          "text": "Used to turn practice into <strong>marks</strong>. Method matters as much as the answer."
+          "label": "Why retrieval matters",
+          "text": "Retrieving knowledge immediately after learning <strong>doubles long-term retention</strong> compared to re-reading. Answer these without looking back."
+        },
+        {
+          "type": "quiz",
+          "question": "What is the value of the 4 in 3.406?",
+          "options": [
+            { "text": "4 ones", "correct": false },
+            { "text": "4 tenths", "correct": true },
+            { "text": "4 hundredths", "correct": false }
+          ],
+          "explanation": "3.406: integer = 3, tenths = 4, hundredths = 0, thousandths = 6. The 4 is in the tenths column."
+        },
+        {
+          "type": "quiz",
+          "question": "Order from smallest to largest: −0.5, 0.25, −1, 0",
+          "options": [
+            { "text": "−1, −0.5, 0, 0.25", "correct": true },
+            { "text": "−0.5, −1, 0, 0.25", "correct": false },
+            { "text": "0, −0.5, −1, 0.25", "correct": false }
+          ],
+          "explanation": "−1 is furthest left (furthest from zero), then −0.5, then 0, then 0.25. Ascending order: −1, −0.5, 0, 0.25."
+        },
+        {
+          "type": "quiz",
+          "question": "Which symbol makes this true?  2.08 __ 2.8",
+          "options": [
+            { "text": ">", "correct": false },
+            { "text": "=", "correct": false },
+            { "text": "<", "correct": true }
+          ],
+          "explanation": "2.08 vs 2.8: integer parts equal. Tenths column: 0 < 8. So 2.08 < 2.8."
+        }
+      ]
+    },
+
+    {
+      "tag": "maths:ordering-numbers",
+      "label": "Exam practice",
+      "kicker": "Section 9 — AQA exam style",
+      "heading": "Exam-style questions.",
+      "sub": "AQA wording, method marks shown. Answer before reading the mark scheme.",
+      "blocks": [
+        {
+          "type": "read",
+          "label": "AQA exam pattern",
+          "text": "Ordering questions on AQA Foundation Paper 1 (non-calculator) award: <strong>1 method mark</strong> for showing a correct partial order, <strong>1 accuracy mark</strong> for a fully correct answer. Always show your working."
         },
         {
           "type": "boss",
           "tier": "🟢",
-          "label": "Q1 — Number Line",
-          "question": "Calculate: −6 + 14",
+          "label": "Q1 — Ordering integers (1 mark)",
+          "question": "Write these integers in order, starting with the smallest:\n−3, 7, −10, 0, 4",
           "markPoints": [
-            "Answer: 8",
-            "Method: start at −6, move right 14",
-            "Award 1 mark for correct answer"
+            "Answer: −10, −3, 0, 4, 7",
+            "Award 1 mark for all five values in correct ascending order",
+            "Common error: reversing the negatives — writing −3, −10, 0, 4, 7"
           ]
         },
         {
           "type": "boss",
           "tier": "🟡",
-          "label": "Q2 — BIDMAS",
-          "question": "Calculate: 10 + 2 × 5",
+          "label": "Q2 — Ordering decimals (2 marks)",
+          "question": "Write these numbers in order, starting with the smallest:\n0.6, 0.06, 0.66, 0.606",
           "markPoints": [
-            "Answer: 20",
-            "Method: multiplication first — 2 × 5 = 10, then 10 + 10 = 20",
-            "Common error: adding first gives 12 × 5 = 60 (wrong)",
-            "Award 1 mark for correct answer with correct order shown"
+            "Answer: 0.06, 0.6, 0.606, 0.66",
+            "1 method mark: correct partial order showing place-value comparison (at least 3 in correct relative position)",
+            "1 accuracy mark: all four in correct order",
+            "Common error: treating 0.606 as bigger than 0.66 because 606 > 66"
           ]
         },
         {
           "type": "boss",
           "tier": "🔴",
-          "label": "Q3 — Estimation (2 marks)",
-          "question": "A student calculates: 302 × 19 = 5738. Use estimation to decide whether this is sensible. Show your working.",
+          "label": "Q3 — Reasoning about negatives (2 marks, AO2)",
+          "question": "Is this statement true or false? Show your reasoning.\n−4.5 > −4.05",
           "markPoints": [
-            "1 mark: estimate shown — 300 × 20 = 6000 (or equivalent)",
-            "1 mark: conclusion — 5738 is close to 6000 so the answer is sensible",
-            "Must show the estimate, not just say yes"
+            "Answer: FALSE — −4.5 < −4.05",
+            "1 method mark: correct comparison using place value (tenths column: 5 > 0, so −4.5 is more negative / further from zero)",
+            "1 accuracy mark: correct conclusion (FALSE) with valid reasoning stated",
+            "Reasoning must name the column that differs and explain the direction of the comparison"
           ]
         }
       ]
     },
+
     {
-      "label": "Final Rewind",
-      "kicker": "Retrieval",
-      "heading": "Final rewind",
-      "sub": "Strong maths comes from retrieval, not rereading.",
+      "tag": null,
+      "label": "Chapter complete",
+      "kicker": "Section 10 — Confidence check",
+      "heading": "Chapter 1 done.",
+      "sub": "Key rules. Top traps. What comes next.",
       "blocks": [
         {
           "type": "read",
-          "label": "Why this matters",
-          "text": "Retrieval practice <strong>builds long-term memory</strong> faster than re-reading notes."
+          "label": "Key rules for place value and ordering",
+          "text": "1. Compare column by column — integer part first, then tenths, then hundredths.<br/>2. Negatives: further from zero = smaller. −8 &lt; −3.<br/>3. 0.4 = 0.40 — trailing zeros after a decimal don't change the value.<br/>4. Ascending order = left to right on the number line. Descending = right to left."
         },
         {
-          "type": "quiz",
-          "question": "Adding on a number line moves:",
-          "options": [
-            {
-              "text": "left",
-              "correct": false
-            },
-            {
-              "text": "right",
-              "correct": true
-            },
-            {
-              "text": "nowhere",
-              "correct": false
-            }
-          ],
-          "explanation": "Adding always moves right on the number line."
+          "type": "read",
+          "label": "Top 3 errors from AQA mark schemes",
+          "text": "1. <strong>Digit trap:</strong> treating 0.15 &gt; 0.2 because 15 &gt; 2 — ignores place value.<br/>2. <strong>Negative reversal:</strong> thinking −8 &gt; −3 because the digit 8 &gt; 3 — the minus flips it.<br/>3. <strong>Direction error:</strong> answering in descending order when the question asks ascending — re-read every ordering question."
         },
         {
-          "type": "quiz",
-          "question": "Subtracting moves:",
-          "options": [
-            {
-              "text": "left",
-              "correct": true
-            },
-            {
-              "text": "right",
-              "correct": false
-            },
-            {
-              "text": "up",
-              "correct": false
-            }
-          ],
-          "explanation": "Subtracting always moves left on the number line."
-        },
-        {
-          "type": "quiz",
-          "question": "What happens first in: 3 + 5 × 2?",
-          "options": [
-            {
-              "text": "3 + 5",
-              "correct": false
-            },
-            {
-              "text": "5 × 2",
-              "correct": true
-            },
-            {
-              "text": "3 × 2",
-              "correct": false
-            }
-          ],
-          "explanation": "Multiplication before addition — BIDMAS."
-        },
-        {
-          "type": "quiz",
-          "question": "Why should you estimate before using a calculator?",
-          "options": [
-            {
-              "text": "To make the answer exactly right",
-              "correct": false
-            },
-            {
-              "text": "To check if the answer is sensible",
-              "correct": true
-            },
-            {
-              "text": "Calculators don't need checking",
-              "correct": false
-            }
-          ],
-          "explanation": "Estimation catches impossible answers — decimal errors, wrong operations, misread displays."
+          "type": "examtip",
+          "tip": "<strong>Exam habit:</strong> Always re-read 'starting with the smallest' vs 'starting with the largest'. Giving the right values in the wrong direction scores zero — even though your ordering is correct."
         },
         {
           "type": "keypoint",
-          "text": "<strong>Module complete.</strong> You now have the survival tools: move on a number line · follow BIDMAS · estimate before trusting answers."
+          "text": "<strong>Chapter 1 complete.</strong> You can now: read place value in integers and decimals · order any mix of positive, negative and decimal values · use comparison symbols correctly · avoid the most common ordering trap.<br/><br/>Next: Chapter 2 — The four operations. Use place value to add, subtract, multiply and divide with precision."
         }
       ]
     }
   ],
+
   "series": "foundations",
-  "recallTags": [],
-  "examTags": [],
+  "recallTags": ["maths:place-value", "maths:ordering-numbers"],
+  "examTags": ["N1", "N2"],
   "assetKeys": [],
   "stageNavigation": [
-    { "id": "part-1", "title": "Number lines", "description": "How the number line works", "screenIndex": 0 },
-    { "id": "part-2", "title": "Movement rules", "description": "Adding right, subtracting left", "screenIndex": 1 },
-    { "id": "part-3", "title": "BIDMAS", "description": "Order of calculations", "screenIndex": 2 },
-    { "id": "part-4", "title": "Practice quiz", "description": "Retrieval across all skills", "screenIndex": 3 },
-    { "id": "part-5", "title": "Calculator sense", "description": "Spotting impossible answers", "screenIndex": 4 },
-    { "id": "part-6", "title": "Exam practice", "description": "Mark-scheme style questions", "screenIndex": 6 }
+    { "id": "s1", "title": "Place value trap", "description": "Why ordering catches people out", "screenIndex": 0 },
+    { "id": "s2", "title": "Prior knowledge", "description": "Columns and the number line", "screenIndex": 1 },
+    { "id": "s3", "title": "Integer place value", "description": "Thousands, hundreds, tens, ones", "screenIndex": 2 },
+    { "id": "s4", "title": "Decimal place value", "description": "Tenths, hundredths, thousandths", "screenIndex": 3 },
+    { "id": "s5", "title": "Comparison symbols", "description": "=, ≠, <, >, ≤, ≥", "screenIndex": 4 },
+    { "id": "s6", "title": "Number line ordering", "description": "Left = smaller, right = bigger", "screenIndex": 5 },
+    { "id": "s7", "title": "Worked example", "description": "Full ordering method shown step by step", "screenIndex": 6 },
+    { "id": "s8", "title": "Guided practice", "description": "Comparison symbol practice", "screenIndex": 7 },
+    { "id": "s9", "title": "Spot the error", "description": "Fix the decimal ordering mistake", "screenIndex": 8 },
+    { "id": "s10", "title": "Real world", "description": "Temperatures and bank balances", "screenIndex": 9 },
+    { "id": "s11", "title": "Retrieval", "description": "Lock it in with quick questions", "screenIndex": 10 },
+    { "id": "s12", "title": "Exam practice", "description": "AQA-style ordering questions", "screenIndex": 11 },
+    { "id": "s13", "title": "Chapter complete", "description": "Key rules and what comes next", "screenIndex": 12 }
   ]
 }
