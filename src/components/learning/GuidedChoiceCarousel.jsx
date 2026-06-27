@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import CinematicShell from '../layout/CinematicShell.jsx'
+import InteractionShell from '../layout/InteractionShell.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
@@ -27,7 +27,15 @@ function displayText(value) {
   return text.toLowerCase().replace(/(^|[.!?]\s+|[—–-]\s+)([a-z])/g, (_, lead, ch) => `${lead}${ch.toUpperCase()}`)
 }
 
-// Carousel geometry constants (viewport units)
+function confidenceOutOfFive(value) {
+  const text = String(value || '')
+  const filled = (text.match(/⭐/g) || []).length
+  const empty = (text.match(/☆/g) || []).length
+  if (filled + empty === 10) return Math.round(filled / 2)
+  if (filled + empty === 5) return filled
+  return null
+}
+
 const CARD_VW = 78
 const SIDE_OFFSET = 7
 const CARD_GAP = 16
@@ -38,7 +46,6 @@ export default function GuidedChoiceCarousel({
   headline,
   question,
   helperText,
-  promptVisual,
   options = [],
   onContinue,
   onBack: _onBack,
@@ -72,6 +79,7 @@ export default function GuidedChoiceCarousel({
   const subjectData = SUBJECTS[subject] || {}
   const accent = subjectData.accent || '#D9A441'
   const accentRgb = subjectData.accentRgb || '217,164,65'
+  const backgroundImage = options[currentIndex]?.image || null
 
   const currentOption = options[currentIndex] || {}
   const isChosen = selectedIndex !== null
@@ -164,38 +172,17 @@ export default function GuidedChoiceCarousel({
   const currentLabel = displayText(currentOption.title || 'this option')
 
   return (
-    <CinematicShell style={{
-      background: '#08090D',
-      display: 'flex',
-      flexDirection: 'column',
-      userSelect: 'none',
-      WebkitUserSelect: 'none',
-    }}>
+    <InteractionShell
+      subject={subject}
+      backgroundImage={backgroundImage}
+      backgroundOpacity={0.08}
+      backgroundPosition="center top"
+    >
       <div style={{
         flexShrink: 0,
-        padding: `calc(env(safe-area-inset-top, 0px) + 78px) ${SPACING.standard}px ${SPACING.compact}px`,
         textAlign: 'center',
+        padding: `0 0 ${SPACING.compact}px`,
       }}>
-        {promptVisual?.src && (
-          <div style={{
-            width: 50,
-            height: 50,
-            borderRadius: RADII.pill,
-            overflow: 'hidden',
-            margin: '0 auto',
-            marginBottom: SPACING.compact,
-            border: `1px solid rgba(${accentRgb},0.18)`,
-            boxShadow: `0 0 22px rgba(${accentRgb},0.08)`,
-          }}>
-            <img
-              src={promptVisual.src}
-              alt={promptVisual.alt || ''}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              draggable={false}
-            />
-          </div>
-        )}
-
         {headline && (
           <div style={{
             ...TYPE.bodySmall,
@@ -222,7 +209,7 @@ export default function GuidedChoiceCarousel({
             fontSize: 14,
             color: 'rgba(245,238,225,0.46)',
           }}>
-            {displayText(helperText)}
+            {displayText(helperText).replace('Swipe to explore your options.', 'Swipe through the healers, then choose one.')}
           </div>
         )}
       </div>
@@ -236,6 +223,8 @@ export default function GuidedChoiceCarousel({
           flexDirection: 'column',
           justifyContent: 'center',
           cursor: 'grab',
+          marginLeft: -SPACING.compact,
+          marginRight: -SPACING.compact,
         }}
       >
         <div style={{
@@ -426,31 +415,46 @@ export default function GuidedChoiceCarousel({
                             {displayText(section.heading)}
                           </div>
                         )}
-                        {(section.items || []).slice(0, 5).map((item, iIdx) => (
-                          <div key={iIdx} style={{
-                            display: 'flex',
-                            gap: SPACING.micro,
-                            marginBottom: 7,
-                            alignItems: 'flex-start',
-                          }}>
-                            <div style={{
-                              width: 4,
-                              height: 4,
-                              borderRadius: '50%',
-                              background: `rgba(${accentRgb}, 0.55)`,
-                              flexShrink: 0,
-                              marginTop: 8,
-                            }} />
-                            <div style={{
-                              ...TYPE.bodySmall,
-                              fontSize: 14,
-                              color: 'rgba(245,238,225,0.66)',
-                              lineHeight: 1.5,
+                        {(section.items || []).slice(0, 5).map((item, iIdx) => {
+                          const confidence = confidenceOutOfFive(item)
+                          return (
+                            <div key={iIdx} style={{
+                              display: 'flex',
+                              gap: SPACING.micro,
+                              marginBottom: 7,
+                              alignItems: 'flex-start',
                             }}>
-                              {displayText(item)}
+                              <div style={{
+                                width: 4,
+                                height: 4,
+                                borderRadius: '50%',
+                                background: `rgba(${accentRgb}, 0.55)`,
+                                flexShrink: 0,
+                                marginTop: 8,
+                              }} />
+                              {confidence !== null ? (
+                                <div style={{
+                                  ...TYPE.bodySmall,
+                                  fontSize: 14,
+                                  color: 'rgba(245,238,225,0.72)',
+                                  lineHeight: 1.5,
+                                  fontWeight: 700,
+                                }}>
+                                  {confidence}/5
+                                </div>
+                              ) : (
+                                <div style={{
+                                  ...TYPE.bodySmall,
+                                  fontSize: 14,
+                                  color: 'rgba(245,238,225,0.66)',
+                                  lineHeight: 1.5,
+                                }}>
+                                  {displayText(item)}
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        ))}
+                          )
+                        })}
                       </div>
                     ))}
 
@@ -503,7 +507,7 @@ export default function GuidedChoiceCarousel({
 
       <div style={{
         flexShrink: 0,
-        padding: `${SPACING.compact}px ${SPACING.standard}px calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
+        padding: `${SPACING.compact}px 0 calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
       }}>
         <ContinueCTA
           onClick={handleChoose}
@@ -640,6 +644,6 @@ export default function GuidedChoiceCarousel({
           </>
         )
       })()}
-    </CinematicShell>
+    </InteractionShell>
   )
 }
