@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
@@ -27,47 +27,22 @@ function lerpColor(rgbA, rgbB, t) {
   return a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',')
 }
 
-let _prkStyled = false
+let stylesReady = false
 function ensureStyles() {
-  if (_prkStyled) return
-  _prkStyled = true
+  if (stylesReady) return
+  stylesReady = true
   const el = document.createElement('style')
   el.textContent = `
-    @keyframes prk-fade-in {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes prk-sheet-in {
-      from { opacity: 0; transform: translateY(24px) scale(0.98); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes prk-spin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
+    @keyframes prk-fade-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes prk-sheet-in { from { opacity: 0; transform: translateY(24px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes prk-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes prk-complete-glow {
-      0% {
-        box-shadow: 0 0 28px rgba(213,160,73,0.09), inset 0 1px 0 rgba(255,255,255,0.04);
-        border-color: rgba(213,160,73,0.28);
-      }
-      42% {
-        box-shadow: 0 0 0 1px rgba(${SUCCESS_RGB},0.18), 0 0 44px rgba(${SUCCESS_RGB},0.22), inset 0 1px 0 rgba(255,255,255,0.07);
-        border-color: rgba(${SUCCESS_RGB},0.62);
-      }
-      100% {
-        box-shadow: 0 0 30px rgba(${SUCCESS_RGB},0.12), inset 0 1px 0 rgba(255,255,255,0.05);
-        border-color: rgba(${SUCCESS_RGB},0.44);
-      }
+      0% { box-shadow: 0 0 28px rgba(213,160,73,0.09), inset 0 1px 0 rgba(255,255,255,0.04); border-color: rgba(213,160,73,0.28); }
+      42% { box-shadow: 0 0 0 1px rgba(117,220,208,0.18), 0 0 44px rgba(117,220,208,0.22), inset 0 1px 0 rgba(255,255,255,0.07); border-color: rgba(117,220,208,0.62); }
+      100% { box-shadow: 0 0 30px rgba(117,220,208,0.12), inset 0 1px 0 rgba(255,255,255,0.05); border-color: rgba(117,220,208,0.44); }
     }
-    .prk-scroll {
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-    .prk-scroll::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-      display: none;
-    }
+    .prk-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+    .prk-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
   `
   document.head.appendChild(el)
 }
@@ -115,39 +90,13 @@ function FeatherIcon({ color }) {
 
 function ProgressRail({ rgb, complete }) {
   return (
-    <div aria-hidden="true" style={{
-      width: 'min(68vw, 330px)',
-      height: 22,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 0,
-      margin: '0 auto',
-    }}>
+    <div aria-hidden="true" style={{ width: 'min(68vw, 330px)', height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
       {[0, 1, 2, 3, 4, 5].map((dot, index) => {
         const lit = index === 0 || complete
         return (
           <div key={dot} style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{
-              width: lit ? 10 : 8,
-              height: lit ? 10 : 8,
-              borderRadius: '50%',
-              background: lit ? `rgb(${rgb})` : 'rgba(245,247,255,0.20)',
-              boxShadow: lit ? `0 0 14px rgba(${rgb},0.34)` : 'none',
-              transition: `background ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
-            }} />
-            {index < 5 && (
-              <span style={{
-                width: 'min(9vw, 38px)',
-                height: 1,
-                background: complete
-                  ? `linear-gradient(90deg, rgba(${rgb},0.58), rgba(${rgb},0.28))`
-                  : index === 0
-                    ? `linear-gradient(90deg, rgba(${rgb},0.55), rgba(245,247,255,0.12))`
-                    : 'rgba(245,247,255,0.10)',
-                transition: `background ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
-              }} />
-            )}
+            <span style={{ width: lit ? 10 : 8, height: lit ? 10 : 8, borderRadius: '50%', background: lit ? `rgb(${rgb})` : 'rgba(245,247,255,0.20)', boxShadow: lit ? `0 0 14px rgba(${rgb},0.34)` : 'none', transition: `all ${MOTION.duration.standard} ${MOTION.easing.gentle}` }} />
+            {index < 5 && <span style={{ width: 'min(9vw, 38px)', height: 1, background: complete ? `linear-gradient(90deg, rgba(${rgb},0.58), rgba(${rgb},0.28))` : index === 0 ? `linear-gradient(90deg, rgba(${rgb},0.55), rgba(245,247,255,0.12))` : 'rgba(245,247,255,0.10)', transition: `background ${MOTION.duration.standard} ${MOTION.easing.gentle}` }} />}
           </div>
         )
       })}
@@ -155,35 +104,27 @@ function ProgressRail({ rgb, complete }) {
   )
 }
 
+function RecallTimer({ secondsLeft, duration, ringRgb, rgb }) {
+  const progress = Math.max(0, Math.min(1, secondsLeft / duration))
+  return (
+    <div style={{ padding: '10px 12px 11px', borderRadius: 16, background: 'linear-gradient(180deg, rgba(255,255,255,0.048), rgba(255,255,255,0.018))', border: `1px solid rgba(${ringRgb},0.24)`, boxShadow: `0 0 18px rgba(${ringRgb},0.07), inset 0 1px 0 rgba(255,255,255,0.04)`, marginBottom: SPACING.compact }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
+        <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 780, letterSpacing: '0.12em', textTransform: 'uppercase', color: `rgba(${rgb},0.62)` }}>Recall window</span>
+        <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 800, color: `rgb(${ringRgb})`, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.01em' }}>{formatTime(secondsLeft)} left</span>
+      </div>
+      <div aria-hidden="true" style={{ height: 4, borderRadius: RADII.pill, overflow: 'hidden', background: 'rgba(245,247,255,0.075)' }}>
+        <div style={{ width: `${progress * 100}%`, height: '100%', borderRadius: RADII.pill, background: `linear-gradient(90deg, rgba(${ringRgb},0.35), rgb(${ringRgb}))`, boxShadow: `0 0 12px rgba(${ringRgb},0.22)`, transition: `width ${MOTION.duration.slow} ${MOTION.easing.linear}, background ${MOTION.duration.slow} ${MOTION.easing.linear}` }} />
+      </div>
+    </div>
+  )
+}
+
 function MemoryNudges({ prompts, rgb }) {
   const nudges = prompts.map(p => String(p).toLowerCase())
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'baseline',
-      gap: 7,
-      flexWrap: 'wrap',
-      padding: '0 2px',
-      marginBottom: SPACING.standard,
-      fontFamily: TYPE.bodyText.fontFamily,
-    }}>
-      <span style={{
-        fontSize: 11,
-        fontWeight: 750,
-        letterSpacing: '0.11em',
-        textTransform: 'uppercase',
-        color: `rgba(${rgb},0.58)`,
-      }}>
-        Memory nudges
-      </span>
-      <span style={{
-        fontSize: 12,
-        fontWeight: 500,
-        color: 'rgba(245,247,255,0.38)',
-        letterSpacing: '0.01em',
-      }}>
-        {nudges.join(' · ')}
-      </span>
+    <div style={{ display: 'flex', alignItems: 'baseline', gap: 7, flexWrap: 'wrap', padding: '0 2px', marginBottom: SPACING.compact, fontFamily: TYPE.bodyText.fontFamily }}>
+      <span style={{ fontSize: 11, fontWeight: 750, letterSpacing: '0.11em', textTransform: 'uppercase', color: `rgba(${rgb},0.62)` }}>Memory nudges</span>
+      <span style={{ fontSize: 12, fontWeight: 500, color: 'rgba(245,247,255,0.43)', letterSpacing: '0.01em' }}>{nudges.join(' · ')}</span>
     </div>
   )
 }
@@ -193,67 +134,19 @@ function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
   const missingList = (missing.length ? missing : (results.concepts || []).filter(c => c.score < SCORE_RECALLED)).slice(0, 3)
 
   return (
-    <div className="prk-scroll" style={{
-      position: 'fixed',
-      left: SPACING.standard,
-      right: SPACING.standard,
-      bottom: `calc(${SPACING.standard}px + env(safe-area-inset-bottom))`,
-      zIndex: 6,
-      maxHeight: '58vh',
-      overflow: 'auto',
-      padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.compact}px`,
-      borderRadius: 30,
-      background: 'linear-gradient(180deg, rgba(17,19,24,0.985), rgba(8,10,15,0.99))',
-      border: '1px solid rgba(255,255,255,0.11)',
-      boxShadow: `0 26px 70px rgba(0,0,0,0.58), 0 0 0 1px rgba(${rgb},0.06), inset 0 1px 0 rgba(255,255,255,0.055)`,
-      animation: 'prk-sheet-in 360ms cubic-bezier(0.2,0.8,0.2,1) both',
-    }}>
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="Close recall results"
-        style={{
-          position: 'absolute', top: 14, right: 14,
-          width: 38, height: 38, borderRadius: '50%',
-          border: '1px solid rgba(255,255,255,0.12)',
-          background: 'rgba(255,255,255,0.035)',
-          color: 'rgba(245,247,255,0.64)',
-          fontSize: 24, lineHeight: '34px',
-          cursor: 'pointer',
-        }}
-      >
-        ×
-      </button>
+    <div className="prk-scroll" style={{ position: 'fixed', left: SPACING.standard, right: SPACING.standard, bottom: `calc(${SPACING.standard}px + env(safe-area-inset-bottom))`, zIndex: 6, maxHeight: '58vh', overflow: 'auto', padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.compact}px`, borderRadius: 30, background: 'linear-gradient(180deg, rgba(17,19,24,0.985), rgba(8,10,15,0.99))', border: '1px solid rgba(255,255,255,0.11)', boxShadow: `0 26px 70px rgba(0,0,0,0.58), 0 0 0 1px rgba(${rgb},0.06), inset 0 1px 0 rgba(255,255,255,0.055)`, animation: 'prk-sheet-in 360ms cubic-bezier(0.2,0.8,0.2,1) both' }}>
+      <button type="button" onClick={onClose} aria-label="Close recall results" style={{ position: 'absolute', top: 14, right: 14, width: 38, height: 38, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.035)', color: 'rgba(245,247,255,0.64)', fontSize: 24, lineHeight: '34px', cursor: 'pointer' }}>×</button>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: SPACING.compact, paddingRight: 42 }}>
-        <div style={{
-          width: 42, height: 42, borderRadius: '50%',
-          display: 'grid', placeItems: 'center',
-          background: `rgba(${SUCCESS_RGB},0.14)`,
-          border: `1px solid rgba(${SUCCESS_RGB},0.34)`,
-          boxShadow: `0 0 18px rgba(${SUCCESS_RGB},0.10)`,
-        }}>
-          <CheckIcon />
-        </div>
-        <h2 style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.cardTitle, color: '#F5F7FF', margin: 0 }}>
-          You remembered
-        </h2>
+        <div style={{ width: 42, height: 42, borderRadius: '50%', display: 'grid', placeItems: 'center', background: `rgba(${SUCCESS_RGB},0.14)`, border: `1px solid rgba(${SUCCESS_RGB},0.34)`, boxShadow: `0 0 18px rgba(${SUCCESS_RGB},0.10)` }}><CheckIcon /></div>
+        <h2 style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.cardTitle, color: '#F5F7FF', margin: 0 }}>You remembered</h2>
       </div>
 
       <div style={{ display: 'grid', gap: 10, marginBottom: SPACING.standard }}>
         {rememberedList.map(concept => (
           <div key={concept.tag || concept.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{
-              width: 24, height: 24, borderRadius: '50%',
-              display: 'grid', placeItems: 'center', flexShrink: 0,
-              border: `1px solid rgba(${SUCCESS_RGB},0.36)`,
-              background: `rgba(${SUCCESS_RGB},0.08)`,
-            }}>
-              <CheckIcon />
-            </span>
-            <span style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.bodySmall, color: 'rgba(245,247,255,0.74)', lineHeight: 1.45 }}>
-              {concept.label}
-            </span>
+            <span style={{ width: 24, height: 24, borderRadius: '50%', display: 'grid', placeItems: 'center', flexShrink: 0, border: `1px solid rgba(${SUCCESS_RGB},0.36)`, background: `rgba(${SUCCESS_RGB},0.08)` }}><CheckIcon /></span>
+            <span style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.bodySmall, color: 'rgba(245,247,255,0.74)', lineHeight: 1.45 }}>{concept.label}</span>
           </div>
         ))}
       </div>
@@ -265,55 +158,15 @@ function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: SPACING.compact }}>
-        <div style={{
-          width: 38, height: 38, borderRadius: '50%',
-          display: 'grid', placeItems: 'center',
-          background: `rgba(${rgb},0.13)`,
-          border: `1px solid rgba(${rgb},0.40)`,
-          color: accent,
-          fontSize: 18,
-        }}>
-          ✚
-        </div>
-        <h2 style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.cardTitle, color: accent, margin: 0 }}>
-          Missing pieces to revisit
-        </h2>
+        <div style={{ width: 38, height: 38, borderRadius: '50%', display: 'grid', placeItems: 'center', background: `rgba(${rgb},0.13)`, border: `1px solid rgba(${rgb},0.40)`, color: accent, fontSize: 18 }}>✚</div>
+        <h2 style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.cardTitle, color: accent, margin: 0 }}>Missing pieces to revisit</h2>
       </div>
 
       <div style={{ display: 'grid', gap: 10 }}>
         {missingList.map(concept => (
-          <button
-            type="button"
-            key={concept.tag || concept.label}
-            onClick={onClose}
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
-              width: '100%',
-              padding: '11px 10px 11px 13px',
-              borderRadius: 13,
-              border: `1px solid rgba(${rgb},0.30)`,
-              background: `linear-gradient(180deg, rgba(${rgb},0.10), rgba(255,255,255,0.025))`,
-              color: accent,
-              textAlign: 'left',
-              cursor: 'pointer',
-            }}
-          >
-            <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 650, lineHeight: 1.35 }}>
-              {concept.label}
-            </span>
-            <span style={{
-              flexShrink: 0,
-              padding: '6px 9px',
-              borderRadius: 10,
-              border: `1px solid rgba(${rgb},0.62)`,
-              background: 'rgba(0,0,0,0.15)',
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontSize: 12,
-              fontWeight: 700,
-              color: accent,
-            }}>
-              Revise this
-            </span>
+          <button type="button" key={concept.tag || concept.label} onClick={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, width: '100%', padding: '11px 10px 11px 13px', borderRadius: 13, border: `1px solid rgba(${rgb},0.30)`, background: `linear-gradient(180deg, rgba(${rgb},0.10), rgba(255,255,255,0.025))`, color: accent, textAlign: 'left', cursor: 'pointer' }}>
+            <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 650, lineHeight: 1.35 }}>{concept.label}</span>
+            <span style={{ flexShrink: 0, padding: '6px 9px', borderRadius: 10, border: `1px solid rgba(${rgb},0.62)`, background: 'rgba(0,0,0,0.15)', fontFamily: TYPE.bodyText.fontFamily, fontSize: 12, fontWeight: 700, color: accent }}>Revise this</span>
           </button>
         ))}
       </div>
@@ -344,9 +197,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
   useEffect(() => {
     if (phase !== 'input') return undefined
     const id = setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        setSecondsLeft(s => Math.max(0, s - 1))
-      }
+      if (document.visibilityState === 'visible') setSecondsLeft(s => Math.max(0, s - 1))
     }, 1000)
     return () => clearInterval(id)
   }, [phase])
@@ -358,9 +209,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
     }
 
     if (!block.concepts?.length) {
-      if (import.meta.env.DEV) {
-        console.warn('[PriorKnowledgeRecall] block.concepts missing or empty for block:', block.title ?? block.type)
-      }
+      if (import.meta.env.DEV) console.warn('[PriorKnowledgeRecall] block.concepts missing or empty for block:', block.title ?? block.type)
       setError('Could not analyse your answer. Check your connection and try again.')
       return
     }
@@ -371,19 +220,9 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
     try {
       const data = await analyseRecall(answer, block.concepts, block.sourceContent)
       const missingConcepts = (data.concepts || []).filter(c => c.score < SCORE_PARTIAL)
-
       missingConcepts.forEach(c => {
-        logWrongAnswer({
-          subject,
-          topic: c.tag,
-          questionId: `prior-recall-${c.tag}`,
-          questionText: c.label,
-          marks: 1,
-          source: 'module',
-          questionType: 'prior-recall',
-        })
+        logWrongAnswer({ subject, topic: c.tag, questionId: `prior-recall-${c.tag}`, questionText: c.label, marks: 1, source: 'module', questionType: 'prior-recall' })
       })
-
       setResults(data)
       setPhase('results')
     } catch (err) {
@@ -406,265 +245,60 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
   }
 
   return (
-    <CinematicShell style={{
-      background: '#08090D',
-      zIndex: 1000,
-      display: 'flex',
-      flexDirection: 'column',
-      animation: 'prk-fade-in 360ms ease both',
-    }}>
+    <CinematicShell style={{ background: '#08090D', zIndex: 1000, display: 'flex', flexDirection: 'column', animation: 'prk-fade-in 360ms ease both' }}>
       {block.backgroundImage && (
-        <div aria-hidden="true" style={{
-          position: 'fixed', inset: 0,
-          backgroundImage: `linear-gradient(180deg, rgba(8,9,13,0.36), rgba(8,9,13,0.90)), url(${block.backgroundImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0.24,
-          filter: 'brightness(0.95) grayscale(8%)',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }} />
+        <div aria-hidden="true" style={{ position: 'fixed', inset: 0, backgroundImage: `linear-gradient(180deg, rgba(8,9,13,0.36), rgba(8,9,13,0.90)), url(${block.backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.24, filter: 'brightness(0.95) grayscale(8%)', pointerEvents: 'none', zIndex: 0 }} />
       )}
 
-      <div aria-hidden="true" style={{
-        position: 'fixed', inset: 0,
-        background: `radial-gradient(circle at 50% 18%, rgba(${rgb},0.09), transparent 31%), linear-gradient(180deg, rgba(8,9,13,0.16), rgba(8,9,13,0.96) 82%)`,
-        pointerEvents: 'none',
-        zIndex: 0,
-      }} />
+      <div aria-hidden="true" style={{ position: 'fixed', inset: 0, background: `radial-gradient(circle at 50% 18%, rgba(${rgb},0.09), transparent 31%), linear-gradient(180deg, rgba(8,9,13,0.16), rgba(8,9,13,0.96) 82%)`, pointerEvents: 'none', zIndex: 0 }} />
 
-      <div className="prk-scroll" style={{
-        position: 'relative',
-        zIndex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        padding: `calc(14px + env(safe-area-inset-top)) ${SPACING.standard}px calc(${SPACING.separation}px + env(safe-area-inset-bottom))`,
-        overflow: 'auto',
-        filter: hasResults ? 'brightness(0.70)' : 'none',
-        transition: `filter ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
-      }}>
+      <div className="prk-scroll" style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%', padding: `calc(14px + env(safe-area-inset-top)) ${SPACING.standard}px calc(${SPACING.separation}px + env(safe-area-inset-bottom))`, overflow: 'auto', filter: hasResults ? 'brightness(0.70)' : 'none', transition: `filter ${MOTION.duration.standard} ${MOTION.easing.gentle}` }}>
         <div style={{ position: 'relative', minHeight: 48, marginBottom: SPACING.section, flexShrink: 0 }}>
-          <div style={{ position: 'absolute', left: 0, top: 0 }}>
-            <BackButton onClick={onBack} />
-          </div>
+          <div style={{ position: 'absolute', left: 0, top: 0 }}><BackButton onClick={onBack} /></div>
           <ProgressRail rgb={rgb} complete={hasResults} />
         </div>
 
         {(phase === 'input' || phase === 'results') && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', animation: 'prk-fade-in 280ms ease both' }}>
             <div style={{ flex: 1 }}>
-              <h1 style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                ...TYPE.sectionTitle,
-                color: '#F5F7FF',
-                margin: 0,
-                marginBottom: SPACING.micro,
-                textWrap: 'balance',
-              }}>
-                What can you remember?
-              </h1>
+              <h1 style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.sectionTitle, color: '#F5F7FF', margin: 0, marginBottom: SPACING.micro, textWrap: 'balance' }}>What can you remember?</h1>
+              <p style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.bodySmall, color: 'rgba(245,247,255,0.58)', margin: 0, marginBottom: SPACING.compact, lineHeight: 1.45 }}>Write anything you know before we reveal the gaps.</p>
 
-              <p style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                ...TYPE.bodySmall,
-                color: 'rgba(245,247,255,0.58)',
-                margin: 0,
-                marginBottom: SPACING.compact,
-                lineHeight: 1.45,
-              }}>
-                Write anything you know before we reveal the gaps.
-              </p>
+              <RecallTimer secondsLeft={secondsLeft} duration={RECALL_DURATION} ringRgb={ringRgb} rgb={rgb} />
+              <MemoryNudges prompts={recallPrompts.slice(0, 4)} rgb={rgb} />
 
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                padding: '7px 11px',
-                borderRadius: RADII.pill,
-                background: `rgba(${ringRgb},0.10)`,
-                border: `1px solid rgba(${ringRgb},0.28)`,
-                boxShadow: `0 0 16px rgba(${ringRgb},0.08)`,
-                marginBottom: SPACING.standard,
-              }}>
-                <span style={{
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  fontSize: 12,
-                  fontWeight: 750,
-                  color: `rgb(${ringRgb})`,
-                  fontVariantNumeric: 'tabular-nums',
-                  letterSpacing: '0.02em',
-                }}>
-                  {formatTime(secondsLeft)} left
-                </span>
-              </div>
-
-              <div style={{
-                position: 'relative',
-                background: 'linear-gradient(180deg, rgba(20,23,29,0.93), rgba(11,13,18,0.96))',
-                border: hasResults
-                  ? `1.5px solid rgba(${SUCCESS_RGB},0.44)`
-                  : isFocused
-                    ? `1.5px solid rgba(${SUCCESS_RGB},0.58)`
-                    : `1.5px solid rgba(${rgb},0.28)`,
-                borderRadius: 24,
-                padding: `${SPACING.compact}px ${SPACING.standard}px`,
-                marginBottom: SPACING.compact,
-                boxShadow: hasResults
-                  ? `0 0 30px rgba(${SUCCESS_RGB},0.12), inset 0 1px 0 rgba(255,255,255,0.05)`
-                  : isFocused
-                    ? `0 0 0 1px rgba(${SUCCESS_RGB},0.13), 0 0 36px rgba(${SUCCESS_RGB},0.14), inset 0 1px 0 rgba(255,255,255,0.05)`
-                    : `0 0 28px rgba(${rgb},0.09), inset 0 1px 0 rgba(255,255,255,0.04)`,
-                animation: hasResults ? 'prk-complete-glow 900ms ease-out both' : 'none',
-                transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
-              }}>
-                <div style={{
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  fontSize: 11,
-                  fontWeight: 750,
-                  letterSpacing: '0.13em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.36)',
-                  marginBottom: SPACING.micro,
-                }}>
-                  Your recall
-                </div>
-
+              <div style={{ position: 'relative', background: 'linear-gradient(180deg, rgba(20,23,29,0.93), rgba(11,13,18,0.96))', border: hasResults ? `1.5px solid rgba(${SUCCESS_RGB},0.44)` : isFocused ? `1.5px solid rgba(${SUCCESS_RGB},0.58)` : `1.5px solid rgba(${rgb},0.28)`, borderRadius: 24, padding: `${SPACING.compact}px ${SPACING.standard}px`, marginBottom: SPACING.standard, boxShadow: hasResults ? `0 0 30px rgba(${SUCCESS_RGB},0.12), inset 0 1px 0 rgba(255,255,255,0.05)` : isFocused ? `0 0 0 1px rgba(${SUCCESS_RGB},0.13), 0 0 36px rgba(${SUCCESS_RGB},0.14), inset 0 1px 0 rgba(255,255,255,0.05)` : `0 0 28px rgba(${rgb},0.09), inset 0 1px 0 rgba(255,255,255,0.04)`, animation: hasResults ? 'prk-complete-glow 900ms ease-out both' : 'none', transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}` }}>
+                <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 750, letterSpacing: '0.13em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.36)', marginBottom: SPACING.micro }}>Your recall</div>
                 <div style={{ position: 'relative' }}>
                   {answer.length === 0 && (
                     <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-                      <div style={{
-                        fontFamily: TYPE.bodyText.fontFamily,
-                        fontSize: 16,
-                        fontWeight: 500,
-                        lineHeight: 1.7,
-                        letterSpacing: '0.01em',
-                        color: 'rgba(245,247,255,0.42)',
-                      }}>
-                        Type your answer here…
-                      </div>
-                      <div style={{
-                        fontFamily: TYPE.bodyText.fontFamily,
-                        fontSize: 13,
-                        fontWeight: 400,
-                        lineHeight: 1.5,
-                        color: 'rgba(245,247,255,0.18)',
-                        marginTop: 2,
-                      }}>
-                        Messy notes are fine.
-                      </div>
+                      <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 16, fontWeight: 500, lineHeight: 1.7, letterSpacing: '0.01em', color: 'rgba(245,247,255,0.42)' }}>Type your answer here…</div>
+                      <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 400, lineHeight: 1.5, color: 'rgba(245,247,255,0.18)', marginTop: 2 }}>Messy notes are fine.</div>
                     </div>
                   )}
-
-                  <textarea
-                    value={answer}
-                    onChange={e => { setAnswer(e.target.value); setError(null) }}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    rows={8}
-                    disabled={phase === 'results'}
-                    aria-label="Write anything you remember"
-                    style={{
-                      width: '100%',
-                      padding: 0,
-                      minHeight: 'clamp(250px, 39vh, 340px)',
-                      background: 'transparent',
-                      border: 'none',
-                      outline: 'none',
-                      resize: 'none',
-                      fontFamily: TYPE.bodyText.fontFamily,
-                      ...TYPE.bodySmall,
-                      color: '#F5F7FF',
-                      lineHeight: 1.7,
-                      letterSpacing: '0.01em',
-                      caretColor: `rgb(${SUCCESS_RGB})`,
-                      opacity: phase === 'results' ? 0.72 : 1,
-                    }}
-                  />
+                  <textarea value={answer} onChange={e => { setAnswer(e.target.value); setError(null) }} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} rows={8} disabled={phase === 'results'} aria-label="Write anything you remember" style={{ width: '100%', padding: 0, minHeight: 'clamp(225px, 35vh, 315px)', background: 'transparent', border: 'none', outline: 'none', resize: 'none', fontFamily: TYPE.bodyText.fontFamily, ...TYPE.bodySmall, color: '#F5F7FF', lineHeight: 1.7, letterSpacing: '0.01em', caretColor: `rgb(${SUCCESS_RGB})`, opacity: phase === 'results' ? 0.72 : 1 }} />
                 </div>
-
-                <div aria-hidden="true" style={{
-                  position: 'absolute',
-                  right: 18,
-                  bottom: 16,
-                  color: hasResults ? `rgba(${SUCCESS_RGB},0.70)` : `rgba(${SUCCESS_RGB},0.33)`,
-                  opacity: 0.9,
-                  filter: hasResults ? `drop-shadow(0 0 10px rgba(${SUCCESS_RGB},0.30))` : 'none',
-                  transition: `color ${MOTION.duration.standard} ${MOTION.easing.gentle}, filter ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
-                }}>
-                  <FeatherIcon color="currentColor" />
-                </div>
+                <div aria-hidden="true" style={{ position: 'absolute', right: 18, bottom: 16, color: hasResults ? `rgba(${SUCCESS_RGB},0.70)` : `rgba(${SUCCESS_RGB},0.33)`, opacity: 0.9, filter: hasResults ? `drop-shadow(0 0 10px rgba(${SUCCESS_RGB},0.30))` : 'none', transition: `color ${MOTION.duration.standard} ${MOTION.easing.gentle}, filter ${MOTION.duration.standard} ${MOTION.easing.gentle}` }}><FeatherIcon color="currentColor" /></div>
               </div>
 
-              <MemoryNudges prompts={recallPrompts.slice(0, 4)} rgb={rgb} />
-
-              {error && (
-                <p style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.bodySmall, color: '#E05A52', margin: `0 0 ${SPACING.standard}px` }}>
-                  {error}
-                </p>
-              )}
+              {error && <p style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.bodySmall, color: '#E05A52', margin: `0 0 ${SPACING.standard}px` }}>{error}</p>}
             </div>
 
-            <button
-              onClick={submit}
-              disabled={phase === 'results'}
-              {...pressProps}
-              style={{
-                width: '100%',
-                minHeight: 60,
-                borderRadius: 18,
-                border: `1.5px solid rgba(${rgb},0.62)`,
-                background: `linear-gradient(180deg, rgba(${rgb},0.42), rgba(${rgb},0.18))`,
-                boxShadow: `0 0 34px rgba(${rgb},0.14), inset 0 1px 0 rgba(255,255,255,0.11)`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                transform: isPressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
-                transition: `transform ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-                flexShrink: 0,
-                opacity: phase === 'results' ? 0.58 : 1,
-              }}
-            >
-              <span style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontSize: 17,
-                fontWeight: 800,
-                color: accent,
-              }}>
-                Check my recall
-              </span>
+            <button onClick={submit} disabled={phase === 'results'} {...pressProps} style={{ width: '100%', minHeight: 60, borderRadius: 18, border: `1.5px solid rgba(${rgb},0.62)`, background: `linear-gradient(180deg, rgba(${rgb},0.42), rgba(${rgb},0.18))`, boxShadow: `0 0 34px rgba(${rgb},0.14), inset 0 1px 0 rgba(255,255,255,0.11)`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transform: isPressed ? `scale(${MOTION.scale.press})` : 'scale(1)', transition: `transform ${MOTION.duration.fast} ${MOTION.easing.standard}`, flexShrink: 0, opacity: phase === 'results' ? 0.58 : 1 }}>
+              <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 17, fontWeight: 800, color: accent }}>Check my recall</span>
             </button>
           </div>
         )}
 
         {phase === 'analyzing' && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', animation: 'prk-fade-in 280ms ease both' }}>
-            <div style={{
-              width: 44,
-              height: 44,
-              border: '2px solid rgba(255,255,255,0.06)',
-              borderTop: `2px solid ${accent}`,
-              borderRadius: '50%',
-              animation: 'prk-spin 0.85s linear infinite',
-              marginBottom: SPACING.standard,
-            }} />
-            <p style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.body, color: 'rgba(255,255,255,0.55)', textAlign: 'center', margin: 0 }}>
-              Checking what you remember…
-            </p>
+            <div style={{ width: 44, height: 44, border: '2px solid rgba(255,255,255,0.06)', borderTop: `2px solid ${accent}`, borderRadius: '50%', animation: 'prk-spin 0.85s linear infinite', marginBottom: SPACING.standard }} />
+            <p style={{ fontFamily: TYPE.bodyText.fontFamily, ...TYPE.body, color: 'rgba(255,255,255,0.55)', textAlign: 'center', margin: 0 }}>Checking what you remember…</p>
           </div>
         )}
       </div>
 
-      {hasResults && (
-        <ResultsOverlay
-          results={results}
-          recalled={recalled}
-          missing={missing}
-          accent={accent}
-          rgb={rgb}
-          onClose={onContinue}
-        />
-      )}
+      {hasResults && <ResultsOverlay results={results} recalled={recalled} missing={missing} accent={accent} rgb={rgb} onClose={onContinue} />}
     </CinematicShell>
   )
 }
