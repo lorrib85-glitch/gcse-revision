@@ -205,6 +205,18 @@ export default function GuidedChoiceCarousel({
       backgroundOpacity={0.08}
       backgroundPosition="center top"
     >
+      <style>{`
+        .gcc-card-back-scroll {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .gcc-card-back-scroll::-webkit-scrollbar {
+          display: none;
+          width: 0;
+          height: 0;
+        }
+      `}</style>
+
       <div style={{
         flexShrink: 0,
         textAlign: 'center',
@@ -286,7 +298,7 @@ export default function GuidedChoiceCarousel({
                   flexDirection: 'column',
                   borderRadius: RADII.large,
                   overflow: 'hidden',
-                  background: '#101218',
+                  background: 'rgba(10,11,15,0.96)',
                   border: isSelected ? `1.5px solid rgba(${accentRgb}, 0.55)` : '1px solid rgba(255,255,255,0.07)',
                   boxShadow: isSelected ? `0 0 40px rgba(${accentRgb}, 0.18), 0 12px 48px rgba(0,0,0,0.55)` : '0 12px 48px rgba(0,0,0,0.55)',
                 }}
@@ -375,90 +387,78 @@ export default function GuidedChoiceCarousel({
                       )}
                     </div>
 
-                    <div style={{
-                      position: 'absolute',
-                      inset: 0,
-                      backfaceVisibility: 'hidden',
-                      WebkitBackfaceVisibility: 'hidden',
-                      transform: 'rotateY(180deg)',
-                      overflow: 'hidden',
-                      overflowY: 'auto',
-                      background: '#0D1018',
-                      padding: SPACING.standard,
-                      WebkitOverflowScrolling: 'touch',
-                    }}>
-                      {(opt.sections || []).slice(0, 4).map((section, sIdx) => (
-                        <div key={sIdx} style={{ marginBottom: SPACING.compact }}>
-                          {section.heading && (
-                            <div style={{
-                              ...TYPE.bodySmall,
-                              fontSize: 12,
-                              fontWeight: 700,
-                              color: 'rgba(245,238,225,0.50)',
-                              marginBottom: 6,
-                            }}>
-                              {displayHeading(section.heading)}
-                            </div>
-                          )}
-                          {(section.items || []).slice(0, 5).map((item, iIdx) => {
-                            const formatted = formatItem(item)
-                            return (
-                              <div key={iIdx} style={{
-                                display: 'flex',
-                                gap: SPACING.micro,
-                                marginBottom: 7,
-                                alignItems: 'flex-start',
-                              }}>
-                                <div style={{
-                                  width: 4,
-                                  height: 4,
-                                  borderRadius: '50%',
-                                  background: `rgba(${accentRgb}, 0.55)`,
-                                  flexShrink: 0,
-                                  marginTop: 8,
-                                }} />
+                    <div
+                      className="gcc-card-back-scroll"
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        transform: 'rotateY(180deg)',
+                        overflow: 'hidden',
+                        overflowY: 'auto',
+                        background: `radial-gradient(circle at top left, rgba(${accentRgb},0.10), transparent 42%), linear-gradient(180deg, rgba(15,17,24,0.98), rgba(8,9,13,0.98))`,
+                        padding: 16,
+                        WebkitOverflowScrolling: 'touch',
+                      }}
+                    >
+                      <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 10,
+                      }}>
+                        {(opt.sections || []).slice(0, 4).map((section, sIdx) => {
+                          const values = (section.items || []).slice(0, 5).map(formatItem)
+                          return (
+                            <div
+                              key={sIdx}
+                              style={{
+                                padding: '12px 13px',
+                                borderRadius: RADII.medium,
+                                background: 'rgba(255,255,255,0.035)',
+                                border: '1px solid rgba(255,255,255,0.065)',
+                              }}
+                            >
+                              {section.heading && (
                                 <div style={{
                                   ...TYPE.bodySmall,
-                                  fontSize: 14,
-                                  color: formatted.strong ? 'rgba(245,238,225,0.74)' : 'rgba(245,238,225,0.66)',
-                                  lineHeight: 1.5,
-                                  fontWeight: formatted.strong ? 700 : 500,
+                                  fontSize: 12,
+                                  fontWeight: 800,
+                                  color: `rgba(${accentRgb},0.82)`,
+                                  marginBottom: 6,
                                 }}>
-                                  {formatted.text}
+                                  {displayHeading(section.heading)}
                                 </div>
+                              )}
+                              <div style={{
+                                ...TYPE.bodySmall,
+                                fontSize: 14,
+                                color: 'rgba(245,238,225,0.72)',
+                                lineHeight: 1.45,
+                                fontWeight: values.some(value => value.strong) ? 700 : 500,
+                              }}>
+                                {values.map(value => value.text).join(' · ')}
                               </div>
-                            )
-                          })}
-                        </div>
-                      ))}
+                            </div>
+                          )
+                        })}
 
-                      {opt.reaction && (
-                        <div style={{
-                          marginTop: SPACING.compact,
-                          padding: SPACING.compact,
-                          background: `rgba(${accentRgb}, 0.05)`,
-                          borderRadius: RADII.medium,
-                          border: `1px solid rgba(${accentRgb}, 0.14)`,
-                          ...TYPE.bodySmall,
-                          fontSize: 13,
-                          color: 'rgba(245,238,225,0.62)',
-                          fontStyle: 'italic',
-                          lineHeight: 1.5,
-                        }}>
-                          {displayText(opt.reaction).slice(0, 80)}
-                        </div>
-                      )}
-
-                      <div style={{
-                        textAlign: 'center',
-                        marginTop: SPACING.compact,
-                        paddingTop: SPACING.compact,
-                        borderTop: '1px solid rgba(255,255,255,0.05)',
-                        ...TYPE.bodySmall,
-                        fontSize: 11,
-                        color: 'rgba(245,238,225,0.28)',
-                      }}>
-                        Tap to flip back
+                        {opt.reaction && (
+                          <div style={{
+                            marginTop: 2,
+                            padding: '12px 13px',
+                            background: `rgba(${accentRgb}, 0.055)`,
+                            borderRadius: RADII.medium,
+                            border: `1px solid rgba(${accentRgb}, 0.13)`,
+                            ...TYPE.bodySmall,
+                            fontSize: 13,
+                            color: 'rgba(245,238,225,0.62)',
+                            fontStyle: 'italic',
+                            lineHeight: 1.45,
+                          }}>
+                            {displayText(opt.reaction).slice(0, 80)}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
