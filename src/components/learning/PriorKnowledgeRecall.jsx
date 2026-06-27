@@ -7,7 +7,7 @@ import CinematicShell from '../layout/CinematicShell.jsx'
 import ScreenTextBlock from '../layout/ScreenTextBlock.jsx'
 import { TYPE, SCREEN_TEXT_LAYOUT } from '../../constants/typography.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
-import BackButton from '../core/BackButton.jsx'
+import ModuleToolbar from '../core/ModuleToolbar.jsx'
 
 const SCORE_RECALLED = 0.7
 const SCORE_PARTIAL = 0.3
@@ -135,7 +135,7 @@ function ResultsOverlay({ results, recalled, missing, accent, rgb, onClose }) {
   )
 }
 
-export default function PriorKnowledgeRecall({ block, subject, onContinue, onBack }) {
+export default function PriorKnowledgeRecall({ block, subject, onContinue, onBack, onExit }) {
   ensureStyles()
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const accent = theme.accent
@@ -179,7 +179,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
       {block.backgroundImage && <div aria-hidden="true" style={{ position: 'fixed', inset: 0, backgroundImage: `linear-gradient(180deg, rgba(8,9,13,0.36), rgba(8,9,13,0.90)), url(${block.backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.24, filter: 'brightness(0.95) grayscale(8%)', pointerEvents: 'none', zIndex: 0 }} />}
       <div aria-hidden="true" style={{ position: 'fixed', inset: 0, background: `radial-gradient(circle at 50% 18%, rgba(${rgb},0.09), transparent 31%), linear-gradient(180deg, rgba(8,9,13,0.16), rgba(8,9,13,0.96) 82%)`, pointerEvents: 'none', zIndex: 0 }} />
       <div className="prk-scroll" style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%', padding: `calc(14px + env(safe-area-inset-top)) ${SPACING.standard}px calc(${SPACING.separation}px + env(safe-area-inset-bottom))`, overflow: 'auto', filter: hasResults ? 'brightness(0.70)' : 'none', transition: `filter ${MOTION.duration.standard} ${MOTION.easing.gentle}` }}>
-        <div style={{ position: 'relative', minHeight: 48, marginBottom: SCREEN_TEXT_LAYOUT.titleOffsetTop, flexShrink: 0 }}><div style={{ position: 'absolute', left: 0, top: 0 }}><BackButton onClick={onBack} /></div></div>
+        <div style={{ minHeight: 48, marginBottom: SCREEN_TEXT_LAYOUT.titleOffsetTop, flexShrink: 0 }}><ModuleToolbar onBack={onBack} onExit={onExit || onBack} /></div>
         {(phase === 'input' || phase === 'results') && <div style={{ flex: 1, display: 'flex', flexDirection: 'column', animation: 'prk-fade-in 280ms ease both' }}><div style={{ flex: 1 }}>
           <ScreenTextBlock title="What can you remember?" tone="quiet" inset={false} style={{ paddingTop: 0, paddingBottom: SCREEN_TEXT_LAYOUT.blockGap }} titleStyle={{ ...TYPE.screenHeading, color: '#F5F7FF', marginBottom: SPACING.micro, textWrap: 'balance' }} bodyStyle={{ ...TYPE.bodySmall, color: 'rgba(245,247,255,0.58)', lineHeight: 1.45 }}>Write anything you know before we reveal the gaps.</ScreenTextBlock>
           <RecallTimer secondsLeft={secondsLeft} duration={RECALL_DURATION} ringRgb={ringRgb} rgb={rgb} />
