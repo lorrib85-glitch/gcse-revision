@@ -84,7 +84,7 @@ export default function FaceTheExaminerMain(props) {
         .fte-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
       `}</style>
 
-      <div style={{ position: 'fixed', inset: 0, zIndex: 10000, isolation: 'isolate', background: bg, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 900, isolation: 'isolate', background: bg, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {backerImage && <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', backgroundImage: `url(${backerImage})`, backgroundSize: 'cover', backgroundPosition: 'center right', opacity: 0.42, filter: 'grayscale(4%) brightness(0.7)' }} />}
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(8,9,13,0.92) 0%, rgba(8,9,13,0.62) 34%, rgba(8,9,13,0.88) 100%)' }} />
 
