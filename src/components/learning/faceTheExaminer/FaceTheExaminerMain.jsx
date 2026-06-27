@@ -39,6 +39,7 @@ export default function FaceTheExaminerMain(props) {
   } = props
 
   const backerImage = IMAGES[module.subject] || IMAGES.History
+  const screenTitle = examiner.screenTitle || examiner.title || 'Mark the answer'
   const showTabs = phase === 'reading' || phase === 'judging'
   const showAnswer = activeTab === 'answer' || !showTabs
   const showMarking = activeTab === 'marking' && showTabs
@@ -80,13 +81,15 @@ export default function FaceTheExaminerMain(props) {
         </div>
 
         <ScreenTextBlock
-          title={examiner.question}
-          accent="rgba(245,238,225,0.92)"
+          title={screenTitle}
+          accent={accent}
           inset
           style={{ background: 'rgba(255,255,255,0.025)', borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}
-          titleStyle={{ marginBottom: 0 }}
-          bodyStyle={{ display: 'none' }}
-        />
+          titleStyle={{ ...TYPE.sectionHeading, color: 'rgba(245,238,225,0.94)', marginBottom: 10 }}
+          bodyStyle={{ ...TYPE.examQuestionText, color: 'rgba(245,238,225,0.78)' }}
+        >
+          {examiner.question}
+        </ScreenTextBlock>
 
         {showTabs && <div style={{ padding: '10px 16px 8px', borderBottom: '1px solid rgba(255,255,255,0.07)', flexShrink: 0 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, padding: 4, borderRadius: 16, background: 'rgba(0,0,0,0.22)', border: '1px solid rgba(255,255,255,0.08)' }}>
