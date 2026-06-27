@@ -2,27 +2,22 @@ import { useState, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
-// CinematicShell used here because the background is either a full-bleed cover image or a
-// gradient that must fill the entire screen with no padding; ContentShell's padding and
-// safe-area offsets would create gaps around the atmospheric background.
 import CinematicShell from '../layout/CinematicShell.jsx'
 
 const STEP_MS = 380
 
 export default function ConceptReveal({ subject: subjectProp, steps = [], onContinue, onRevealStart }) {
-  const theme  = SUBJECTS[subjectProp] || SUBJECTS.History
+  const theme = SUBJECTS[subjectProp] || SUBJECTS.History
   const accent = theme.accent
-  const palBg  = theme.background
+  const palBg = theme.background
 
-  const [stepIdx,       setStepIdx]       = useState(0)
-  const [animKey,       setAnimKey]       = useState(0)
+  const [stepIdx, setStepIdx] = useState(0)
+  const [animKey, setAnimKey] = useState(0)
   const [revealStarted, setRevealStarted] = useState(false)
-
   const touchRef = useRef({ x: null, y: null })
 
-  const step   = steps[stepIdx] || {}
+  const step = steps[stepIdx] || {}
   const isLast = stepIdx === steps.length - 1
-
   const bg = step.backgroundImage
     ? `url(${step.backgroundImage})`
     : `linear-gradient(160deg, ${palBg} 0%, #080C1A 100%)`
@@ -72,6 +67,10 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
     ;(e.clientX - rect.left) / rect.width < 0.2 ? retreat() : advanceStep()
   }
 
+  function keepOnCta(e) {
+    e.stopPropagation()
+  }
+
   return (
     <>
       <style>{`
@@ -82,95 +81,107 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
       `}</style>
 
       <CinematicShell style={{ background: bg, backgroundSize: 'cover', backgroundPosition: 'center', zIndex: 100 }}>
-      <div
-        style={{
-          position: 'absolute', inset: 0,
-          cursor: 'pointer',
-          WebkitTapHighlightColor: 'transparent',
-          userSelect: 'none',
-          WebkitUserSelect: 'none',
-        }}
-        onClick={onClick}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-      >
-        {/* Atmosphere breathes at top, grounds the text at base */}
-        <div style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'linear-gradient(to bottom, rgba(0,0,0,.08) 0%, rgba(0,0,0,.18) 35%, rgba(0,0,0,.68) 65%, rgba(0,0,0,.94) 100%)',
-        }} />
-
-        {/* Content — bottom-weighted so atmosphere fills the top */}
         <div
-          key={animKey}
           style={{
-            position: 'relative', zIndex: 1,
-            padding: '0 32px calc(128px + env(safe-area-inset-bottom, 0px))',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
-            animation: `crSlideIn ${STEP_MS}ms cubic-bezier(.16,1,.3,1) both`,
+            position: 'absolute', inset: 0,
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
           }}
+          onClick={onClick}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
         >
-          {step.showEyebrow === true && step.eyebrow && (
-            <div style={{
-              ...TYPE.overlayEyebrow,
-              color: accent + '88',
-              marginBottom: 12,
-            }}>
-              {step.eyebrow}
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: 'linear-gradient(to bottom, rgba(0,0,0,.08) 0%, rgba(0,0,0,.18) 35%, rgba(0,0,0,.68) 65%, rgba(0,0,0,.94) 100%)',
+          }} />
+
+          <div
+            key={animKey}
+            style={{
+              position: 'relative', zIndex: 1,
+              padding: '0 32px calc(128px + env(safe-area-inset-bottom, 0px))',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
+              animation: `crSlideIn ${STEP_MS}ms cubic-bezier(.16,1,.3,1) both`,
+            }}
+          >
+            {step.showEyebrow === true && step.eyebrow && (
+              <div style={{
+                ...TYPE.overlayEyebrow,
+                color: accent + '88',
+                marginBottom: 12,
+              }}>
+                {step.eyebrow}
+              </div>
+            )}
+
+            <MainReveal text={step.mainText} emphasis={step.emphasis} accent={accent} />
+
+            {step.supportText && (
+              <p style={{
+                ...TYPE.overlayBody,
+                color: 'rgba(245,238,225,.64)',
+                margin: '14px 0 0',
+                maxWidth: '34ch',
+              }}>
+                {step.supportText}
+              </p>
+            )}
+
+            {step.microPoints?.length > 0 && (
+              <ul style={{
+                listStyle: 'none', padding: 0,
+                margin: '12px 0 0',
+                display: 'flex', flexDirection: 'column', gap: 6,
+              }}>
+                {step.microPoints.map((pt, i) => (
+                  <li key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                    <span style={{
+                      display: 'block',
+                      width: 3, height: 3, borderRadius: '50%',
+                      background: accent + '66',
+                      marginTop: '0.6em', flexShrink: 0,
+                    }} />
+                    <span style={{
+                      fontFamily: TYPE.bodyText.fontFamily,
+                      fontSize: 14,
+                      color: 'rgba(245,238,225,.48)',
+                      lineHeight: 1.45,
+                    }}>{pt}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {isLast && (
+            <div
+              onClick={keepOnCta}
+              onTouchStart={keepOnCta}
+              onTouchEnd={keepOnCta}
+              style={{
+                position: 'fixed',
+                left: 32,
+                right: 32,
+                bottom: 'calc(40px + env(safe-area-inset-bottom, 0px))',
+                zIndex: 20,
+                pointerEvents: 'auto',
+              }}
+            >
+              <CinematicContinueCTA
+                onClick={finishReveal}
+                accent={accent}
+                animation="crm-fade 520ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite"
+                style={{ position: 'static', left: 'auto', right: 'auto', bottom: 'auto' }}
+              />
             </div>
           )}
-
-          <MainReveal text={step.mainText} emphasis={step.emphasis} accent={accent} />
-
-          {step.supportText && (
-            <p style={{
-              ...TYPE.overlayBody,
-              color: 'rgba(245,238,225,.64)',
-              margin: '14px 0 0',
-              maxWidth: '34ch',
-            }}>
-              {step.supportText}
-            </p>
-          )}
-
-          {step.microPoints?.length > 0 && (
-            <ul style={{
-              listStyle: 'none', padding: 0,
-              margin: '12px 0 0',
-              display: 'flex', flexDirection: 'column', gap: 6,
-            }}>
-              {step.microPoints.map((pt, i) => (
-                <li key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                  <span style={{
-                    display: 'block',
-                    width: 3, height: 3, borderRadius: '50%',
-                    background: accent + '66',
-                    marginTop: '0.6em', flexShrink: 0,
-                  }} />
-                  <span style={{
-                    fontFamily: TYPE.bodyText.fontFamily,
-                    fontSize: 14,
-                    color: 'rgba(245,238,225,.48)',
-                    lineHeight: 1.45,
-                  }}>{pt}</span>
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
-
-        {/* Final progression CTA — only appears to leave ConceptReveal */}
-        {isLast && (
-          <CinematicContinueCTA
-            onClick={finishReveal}
-            accent={accent}
-            animation="crm-fade 520ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite"
-          />
-        )}
-      </div>
       </CinematicShell>
     </>
   )
