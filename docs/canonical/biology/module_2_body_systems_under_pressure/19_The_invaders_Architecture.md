@@ -3,10 +3,11 @@
 ## 1. Identity
 
 - **Chapter:** 19
+- **Module chapter:** Module 2, Chapter 9
 - **Title:** The invaders
 - **Subject:** AQA GCSE Combined Science Trilogy — Biology Paper 1
 - **Module:** Module 2 — Body systems under pressure
-- **Build status:** Not yet built
+- **Build status:** Canonical reviewed; not yet built
 - **Content file:** `19_The_invaders_Content.md`
 
 ---
@@ -15,57 +16,82 @@
 
 ### Part 1 — Situation + prediction
 
-- Hook: "Every hour, thousands of microorganisms enter your body — in the air you breathe, the food you eat, the surfaces you touch. Most never make you ill. What separates a harmless microbe from a pathogen?" Cinematic — microbes surrounding a human figure.
-- Prediction: "Bacteria, viruses, fungi and protists can all cause disease. Which do you think causes the most common infectious diseases in humans?"
-- You will learn: the four pathogen types and how each causes disease; transmission routes; six named diseases.
+- Hook: "Not every microbe is an enemy. A pathogen is the one that causes disease." Show harmless microbes fading while named pathogens remain.
+- Prediction: "Which pathogen type causes malaria — bacterium, virus, fungus or protist?"
+- You will learn: pathogen types, how they cause disease, transmission routes and AQA named diseases.
 
-**Components:** `CinematicRevealMoment`, `ChapterHookScreen`
+**Components:** `CinematicRevealMoment`, `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ---
 
 ### Part 2 — Investigate the evidence
 
-- CinematicCarousel or VisualLearning: one slide per named disease — name, type, transmission route, effect, prevention/treatment
-- Cover: measles (virus, droplets, MMR), HIV (virus, body fluids, antiretrovirals), TMV (virus, contact, no cure), salmonella (bacteria, food, toxins), gonorrhoea (bacteria, sexual contact, antibiotics), rose black spot (fungus, wind/water, fungicide), malaria (protist, mosquito vector, antimalarials)
+- `TheoryCompareBlock`: four pathogen types:
+  - bacteria
+  - viruses
+  - fungi
+  - protists
+- `CinematicCarousel`: one card per named disease:
+  - measles
+  - HIV/AIDS
+  - tobacco mosaic virus
+  - salmonella
+  - gonorrhoea
+  - rose black spot
+  - malaria
+- Each disease card should show:
+  - pathogen type
+  - transmission
+  - symptoms/effects
+  - prevention/treatment/control
 
-**Components:** `CinematicCarousel`, `VisualLearning`
+**Components:** `TheoryCompareBlock`, `CinematicCarousel`, `VisualLearning`
 
 ---
 
 ### Part 3 — Discover the science
 
-- ExplainReveal: how each pathogen type causes disease — bacteria → toxins; viruses → cell damage/destruction; fungi → invasion of tissue; protists → parasitic damage
-- TheoryCompareBlock: the four pathogen types — type, cellular/non-cellular, example disease, how it causes harm
-- ConceptReveal: vectors — malaria as the key example; female Anopheles mosquito as vector; Plasmodium as the protist; why preventing the vector prevents disease
+- `ExplainReveal`: bacteria vs viruses:
+  - bacteria reproduce rapidly and produce toxins
+  - viruses reproduce inside cells and damage/destroy cells
+- `ConceptReveal`: transmission routes: air, water/food, direct contact, body fluids, vectors.
+- `ConceptReveal`: vector precision using malaria: protist causes disease; mosquito transmits it.
+- `MatchingTask`: disease → pathogen type → spread route.
+- `ConceptReveal`: antibiotics only work on bacteria; resistance means bacteria become resistant, not people.
 
-**Components:** `ExplainReveal`, `TheoryCompareBlock`, `ConceptReveal`
+**Components:** `ExplainReveal`, `ConceptReveal`, `MatchingTask`
 
 ---
 
 ### Part 4 — Check precision
 
-- MisconceptionCheck: "All bacteria cause disease." → false (most bacteria are harmless or beneficial)
-- MisconceptionCheck: "Viruses are living organisms." → false (not cellular, no independent metabolism — why antibiotics don't work against them)
-- SpotTheError: "Rose black spot is a viral disease that is treated with antibiotics." (Two errors: rose black spot is fungal, not viral; antibiotics treat bacterial infections, not fungal ones — fungicides are used)
+- `MisconceptionCheck`: "All bacteria cause disease." → false.
+- `MisconceptionCheck`: "Antibiotics treat viral infections." → false.
+- `MisconceptionCheck`: "Malaria is caused by mosquitoes." → false; mosquitoes are vectors.
+- `SpotTheError`: "Rose black spot is a viral disease treated with antibiotics." Correction: it is fungal; control with fungicides/removing infected leaves.
+- `SpotTheError`: "TMV is a disease caused by smoking." Correction: TMV is a plant virus affecting leaves.
 
-**Components:** `MisconceptionCheck` × 2, `SpotTheError`
+**Components:** `MisconceptionCheck`, `SpotTheError`
 
 ---
 
 ### Part 5 — Apply to a real GCSE-style task
 
-- GuidedExamResponse: "Describe how malaria is transmitted and explain how this transmission can be prevented. (4 marks)"
-- FillInTheBlanksBlock: "Bacteria cause disease by releasing ___. Viruses cause disease by replicating inside ___ and damaging them. The ___ mosquito is the vector for malaria."
-- MatchingTask: disease → pathogen type → transmission route (all six named diseases)
+- `GuidedExamResponse`: "Explain how malaria is transmitted and how its spread can be reduced. (4 marks)"
+- `GuidedExamResponse`: "Compare how bacteria and viruses cause disease. (4 marks)"
+- `MatchingTask`: named disease → pathogen type.
+- `MatchingTask`: named disease → transmission route.
+- `FillInTheBlanksBlock`: malaria/vector and bacterial toxin vocabulary.
 
-**Components:** `GuidedExamResponse`, `FillInTheBlanksBlock`, `MatchingTask`
+**Components:** `GuidedExamResponse`, `MatchingTask`, `FillInTheBlanksBlock`
 
 ---
 
 ### Part 6 — Face the examiner + debrief
 
-- FaceTheExaminer: student describes how malaria spreads without naming the vector or the protist; mark commentary insists on Anopheles mosquito + Plasmodium
-- QuickRecallScreen: name one viral disease in plants; how does salmonella cause food poisoning; what is a vector; why do antibiotics not treat viral infections; name the organism that causes malaria?
+- `FaceTheExaminer`: student answer says malaria is caused by mosquitoes and misses protist/vector language. Mark commentary repairs the chain.
+- `FaceTheExaminer`: student says antibiotics treat measles. Mark commentary explains viral disease and antibiotics.
+- Quick recall: pathogen definition; four types; named disease types; transmission routes; one prevention/control for each.
 
 **Components:** `FaceTheExaminer`, `QuickRecallScreen`
 
@@ -73,54 +99,66 @@
 
 ## 3. Active learning interactions
 
-- `CinematicCarousel`: named diseases — one per slide
-- `VisualLearning`: transmission routes overview
-- `ExplainReveal`: how each pathogen type causes disease
 - `TheoryCompareBlock`: four pathogen types
-- `ConceptReveal`: vectors and malaria transmission chain
-- `MisconceptionCheck` × 2: all bacteria cause disease; viruses are living
-- `SpotTheError`: rose black spot classified as viral/treated with antibiotics
-- `GuidedExamResponse`: 4-mark malaria transmission question
-- `FillInTheBlanksBlock`: pathogen mechanisms vocabulary
-- `MatchingTask`: disease → type → transmission
-- `FaceTheExaminer`: malaria answer missing vector name
-- `QuickRecallScreen`: 5 retrieval questions
+- `CinematicCarousel`: named diseases
+- `VisualLearning`: transmission routes
+- `ExplainReveal`: bacteria vs viruses causing disease
+- `ConceptReveal`: vector precision
+- `ConceptReveal`: antibiotics and resistance
+- `MisconceptionCheck` × 3
+- `SpotTheError` × 2
+- `GuidedExamResponse`: malaria transmission question
+- `GuidedExamResponse`: bacteria vs virus comparison
+- `MatchingTask`: disease → type
+- `MatchingTask`: disease → transmission
+- `FaceTheExaminer`: malaria vector misconception
+- `QuickRecallScreen`: 7 retrieval questions
 
 ---
 
 ## 4. Retrieval points
 
-- Four pathogen types: bacteria (toxins), viruses (cell damage), fungi (tissue invasion), protists (parasitic)
-- Measles: virus; droplet; MMR vaccine
-- HIV: virus; body fluids; antiretroviral drugs; leads to AIDS
-- TMV: plant virus; contact; mottling; disrupts photosynthesis; no cure
-- Salmonella: bacteria; contaminated food; toxins; vomiting and diarrhoea
-- Gonorrhoea: bacteria; sexual contact; antibiotics; increasing resistance
-- Rose black spot: fungus; wind and water; fungicide or remove affected leaves
-- Malaria: protist Plasmodium; female Anopheles mosquito (vector); antimalarials; bed nets; drain standing water
+- Pathogen = microorganism that causes disease
+- Bacteria can reproduce rapidly and produce toxins
+- Viruses reproduce inside cells and damage/destroy cells
+- Measles: virus, droplets, rash/fever, vaccination
+- HIV: virus, body fluids/sexual contact, immune system damage, antiretrovirals
+- TMV: virus, plant disease, mosaic leaves, reduced photosynthesis
+- Salmonella: bacterium, contaminated food, toxins, vomiting/diarrhoea
+- Gonorrhoea: bacterium, sexual contact, antibiotics/resistance
+- Rose black spot: fungus, wind/water, fungicide/remove leaves
+- Malaria: protist, mosquito vector, nets/insecticides/remove standing water
 
 ---
 
 ## 5. Exam skill focus
 
-- 4-mark describe + explain: describe malaria transmission and how to prevent it
-- 2-mark describe: describe how bacteria cause disease
-- 1-mark recall: name the vector for malaria / name the pathogen type for a named disease
-- Classification question: identify pathogen type from a description
+- 5-mark recall/definition: pathogen and four types
+- 4-mark compare: bacteria vs viruses causing disease
+- 4-mark explain: malaria transmission and prevention
+- 3-mark explain: why TMV reduces plant growth
+- 3-mark explain: antibiotic resistance in gonorrhoea
+- Matching/classification: disease → pathogen type → transmission
 
 ---
 
 ## 6. Build notes
 
-The six named diseases must each be taught with all five details (name, pathogen type, transmission, effect, prevention/treatment) — AQA exam questions ask for these specifically. Malaria is the most complex named disease and the most frequently examined, requiring the full chain: Plasmodium → female Anopheles mosquito (vector) → bite. The rose black spot / viral confusion is a high-frequency error and needs its own SpotTheError. The distinction between viruses (not living, no cells) and bacteria (living, prokaryotic) explains why antibiotics only work on bacteria.
+This chapter can easily become a memory dump. Use repeated sorting and matching so the student actively retrieves pathogen type, transmission and control.
+
+Malaria needs special handling because students often write "mosquitoes cause malaria". The precise chain is: protist causes malaria; mosquito is the vector; reducing mosquito contact or breeding reduces transmission.
+
+Do not overcomplicate viruses being alive/not alive. The GCSE exam payoff is: viruses reproduce inside host cells, damage cells, and antibiotics do not work on them.
 
 ---
 
 ## 7. Chapter completion test
 
-- [ ] Student can define pathogen and name the four types
-- [ ] Student can name all six required diseases and state the pathogen type and transmission route for each
-- [ ] Student can explain what a vector is and give malaria as an example (naming the mosquito species and the protist)
-- [ ] Student can explain why antibiotics do not treat viral or fungal diseases
-- [ ] Student knows the treatment/prevention for each named disease
+- [ ] Student can define pathogen and name bacteria, viruses, fungi and protists
+- [ ] Student can explain how bacteria and viruses cause disease
+- [ ] Student can identify pathogen type for all named diseases
+- [ ] Student can identify transmission route for all named diseases
+- [ ] Student can explain malaria using protist + mosquito vector language
+- [ ] Student can explain why antibiotics do not treat viral diseases
+- [ ] Student can explain why TMV reduces plant growth
 - [ ] Student has practised a 4-mark malaria question with mark commentary
