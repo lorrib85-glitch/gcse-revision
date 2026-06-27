@@ -152,22 +152,18 @@ export default {
           "type": "flashcards",
           "cards": [
             {
-              "icon": "🍜",
               "front": "Food customs",
               "back": "In Japan, slurping noodles shows appreciation. In the UK, it's considered rude. Same action — different cultural meaning."
             },
             {
-              "icon": "🙏",
               "front": "Religious rituals",
               "back": "Prayer, worship, fasting, celebrations — all vary between cultures. Each reflects a society's shared beliefs."
             },
             {
-              "icon": "👗",
               "front": "Clothing and dress",
               "back": "From school uniforms to traditional dress — what you wear signals your culture, group and identity."
             },
             {
-              "icon": "💬",
               "front": "Language and communication",
               "back": "Even within English: slang, dialect, formality levels all vary. Language carries cultural identity."
             }
