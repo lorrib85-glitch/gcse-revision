@@ -27,6 +27,12 @@ function displayText(value) {
   return text.toLowerCase().replace(/(^|[.!?]\s+|[—–-]\s+)([a-z])/g, (_, lead, ch) => `${lead}${ch.toUpperCase()}`)
 }
 
+function displayHeading(value) {
+  const text = displayText(value)
+  if (/^thomas confidence$/i.test(text)) return 'Thomas trusts them'
+  return text
+}
+
 function confidenceOutOfFive(value) {
   const text = String(value || '')
   const filled = (text.match(/⭐/g) || []).length
@@ -34,6 +40,27 @@ function confidenceOutOfFive(value) {
   if (filled + empty === 10) return Math.round(filled / 2)
   if (filled + empty === 5) return filled
   return null
+}
+
+function costLabel(value) {
+  const text = String(value || '')
+  const coins = (text.match(/💰/g) || []).length
+  if (!coins) return null
+  if (coins === 1) return 'Low cost'
+  if (coins === 2) return 'Affordable'
+  if (coins === 3) return 'Mid-range'
+  if (coins === 4) return 'Expensive'
+  return 'Very expensive'
+}
+
+function formatItem(value) {
+  const confidence = confidenceOutOfFive(value)
+  if (confidence !== null) return { text: `${confidence}/5`, strong: true }
+
+  const cost = costLabel(value)
+  if (cost) return { text: cost, strong: true }
+
+  return { text: displayText(value), strong: false }
 }
 
 const CARD_VW = 78
@@ -251,36 +278,41 @@ export default function GuidedChoiceCarousel({
                   flexShrink: 0,
                   width: `${CARD_VW}vw`,
                   height: `min(60vh, calc(${CARD_VW}vw * 1.34))`,
-                  perspective: 1200,
                   cursor: 'pointer',
                   transform: `scale(${isSelected ? 1.02 : isFaded ? 0.96 : 1})`,
                   opacity: isFaded ? 0.22 : 1,
                   transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}, opacity ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  borderRadius: RADII.large,
+                  overflow: 'hidden',
+                  background: '#101218',
+                  border: isSelected ? `1.5px solid rgba(${accentRgb}, 0.55)` : '1px solid rgba(255,255,255,0.07)',
+                  boxShadow: isSelected ? `0 0 40px rgba(${accentRgb}, 0.18), 0 12px 48px rgba(0,0,0,0.55)` : '0 12px 48px rgba(0,0,0,0.55)',
                 }}
               >
                 <div style={{
-                  width: '100%',
-                  height: '100%',
-                  transformStyle: 'preserve-3d',
-                  transform: isCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                  transition: `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`,
+                  flex: '1 1 0',
+                  minHeight: 0,
+                  perspective: 1200,
                   position: 'relative',
                 }}>
                   <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    backfaceVisibility: 'hidden',
-                    WebkitBackfaceVisibility: 'hidden',
-                    borderRadius: RADII.large,
-                    overflow: 'hidden',
-                    background: '#101218',
-                    border: isSelected ? `1.5px solid rgba(${accentRgb}, 0.55)` : '1px solid rgba(255,255,255,0.07)',
-                    boxShadow: isSelected ? `0 0 40px rgba(${accentRgb}, 0.18), 0 12px 48px rgba(0,0,0,0.55)` : '0 12px 48px rgba(0,0,0,0.55)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+                    width: '100%',
+                    height: '100%',
+                    transformStyle: 'preserve-3d',
+                    transform: isCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                    transition: `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`,
+                    position: 'relative',
                   }}>
-                    <div style={{ flex: '0 0 82%', position: 'relative', overflow: 'hidden', background: '#080C18' }}>
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                      overflow: 'hidden',
+                      background: '#101218',
+                    }}>
                       {opt.image ? (
                         <img
                           src={opt.image}
@@ -344,149 +376,127 @@ export default function GuidedChoiceCarousel({
                     </div>
 
                     <div style={{
-                      flex: '0 0 18%',
-                      padding: `${SPACING.compact}px`,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
+                      position: 'absolute',
+                      inset: 0,
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                      transform: 'rotateY(180deg)',
+                      overflow: 'hidden',
+                      overflowY: 'auto',
+                      background: '#0D1018',
+                      padding: SPACING.standard,
+                      WebkitOverflowScrolling: 'touch',
                     }}>
-                      <div style={{
-                        ...TYPE.bodySmall,
-                        color: '#F5F1E8',
-                        fontWeight: 700,
-                        fontSize: 15,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}>
-                        {displayText(opt.title)}
-                      </div>
-                      {opt.subtitle && (
+                      {(opt.sections || []).slice(0, 4).map((section, sIdx) => (
+                        <div key={sIdx} style={{ marginBottom: SPACING.compact }}>
+                          {section.heading && (
+                            <div style={{
+                              ...TYPE.bodySmall,
+                              fontSize: 12,
+                              fontWeight: 700,
+                              color: 'rgba(245,238,225,0.50)',
+                              marginBottom: 6,
+                            }}>
+                              {displayHeading(section.heading)}
+                            </div>
+                          )}
+                          {(section.items || []).slice(0, 5).map((item, iIdx) => {
+                            const formatted = formatItem(item)
+                            return (
+                              <div key={iIdx} style={{
+                                display: 'flex',
+                                gap: SPACING.micro,
+                                marginBottom: 7,
+                                alignItems: 'flex-start',
+                              }}>
+                                <div style={{
+                                  width: 4,
+                                  height: 4,
+                                  borderRadius: '50%',
+                                  background: `rgba(${accentRgb}, 0.55)`,
+                                  flexShrink: 0,
+                                  marginTop: 8,
+                                }} />
+                                <div style={{
+                                  ...TYPE.bodySmall,
+                                  fontSize: 14,
+                                  color: formatted.strong ? 'rgba(245,238,225,0.74)' : 'rgba(245,238,225,0.66)',
+                                  lineHeight: 1.5,
+                                  fontWeight: formatted.strong ? 700 : 500,
+                                }}>
+                                  {formatted.text}
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      ))}
+
+                      {opt.reaction && (
                         <div style={{
+                          marginTop: SPACING.compact,
+                          padding: SPACING.compact,
+                          background: `rgba(${accentRgb}, 0.05)`,
+                          borderRadius: RADII.medium,
+                          border: `1px solid rgba(${accentRgb}, 0.14)`,
                           ...TYPE.bodySmall,
-                          fontSize: 12,
-                          color: 'rgba(245,238,225,0.42)',
-                          marginTop: 3,
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
+                          fontSize: 13,
+                          color: 'rgba(245,238,225,0.62)',
+                          fontStyle: 'italic',
+                          lineHeight: 1.5,
                         }}>
-                          {displayText(opt.subtitle)}
+                          {displayText(opt.reaction).slice(0, 80)}
                         </div>
                       )}
-                    </div>
-                  </div>
 
-                  <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    backfaceVisibility: 'hidden',
-                    WebkitBackfaceVisibility: 'hidden',
-                    transform: 'rotateY(180deg)',
-                    borderRadius: RADII.large,
-                    overflow: 'hidden',
-                    overflowY: 'auto',
-                    background: '#0D1018',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    boxShadow: '0 12px 48px rgba(0,0,0,0.55)',
-                    padding: SPACING.standard,
-                    WebkitOverflowScrolling: 'touch',
-                  }}>
-                    <div style={{
-                      ...TYPE.bodySmall,
-                      color: `rgba(${accentRgb},0.92)`,
-                      fontWeight: 700,
-                      fontSize: 15,
-                      marginBottom: SPACING.compact,
-                    }}>
-                      {displayText(opt.title)}
-                    </div>
-
-                    {(opt.sections || []).slice(0, 4).map((section, sIdx) => (
-                      <div key={sIdx} style={{ marginBottom: SPACING.compact }}>
-                        {section.heading && (
-                          <div style={{
-                            ...TYPE.bodySmall,
-                            fontSize: 12,
-                            fontWeight: 700,
-                            color: 'rgba(245,238,225,0.50)',
-                            marginBottom: 6,
-                          }}>
-                            {displayText(section.heading)}
-                          </div>
-                        )}
-                        {(section.items || []).slice(0, 5).map((item, iIdx) => {
-                          const confidence = confidenceOutOfFive(item)
-                          return (
-                            <div key={iIdx} style={{
-                              display: 'flex',
-                              gap: SPACING.micro,
-                              marginBottom: 7,
-                              alignItems: 'flex-start',
-                            }}>
-                              <div style={{
-                                width: 4,
-                                height: 4,
-                                borderRadius: '50%',
-                                background: `rgba(${accentRgb}, 0.55)`,
-                                flexShrink: 0,
-                                marginTop: 8,
-                              }} />
-                              {confidence !== null ? (
-                                <div style={{
-                                  ...TYPE.bodySmall,
-                                  fontSize: 14,
-                                  color: 'rgba(245,238,225,0.72)',
-                                  lineHeight: 1.5,
-                                  fontWeight: 700,
-                                }}>
-                                  {confidence}/5
-                                </div>
-                              ) : (
-                                <div style={{
-                                  ...TYPE.bodySmall,
-                                  fontSize: 14,
-                                  color: 'rgba(245,238,225,0.66)',
-                                  lineHeight: 1.5,
-                                }}>
-                                  {displayText(item)}
-                                </div>
-                              )}
-                            </div>
-                          )
-                        })}
-                      </div>
-                    ))}
-
-                    {opt.reaction && (
                       <div style={{
+                        textAlign: 'center',
                         marginTop: SPACING.compact,
-                        padding: SPACING.compact,
-                        background: `rgba(${accentRgb}, 0.05)`,
-                        borderRadius: RADII.medium,
-                        border: `1px solid rgba(${accentRgb}, 0.14)`,
+                        paddingTop: SPACING.compact,
+                        borderTop: '1px solid rgba(255,255,255,0.05)',
                         ...TYPE.bodySmall,
-                        fontSize: 13,
-                        color: 'rgba(245,238,225,0.62)',
-                        fontStyle: 'italic',
-                        lineHeight: 1.5,
+                        fontSize: 11,
+                        color: 'rgba(245,238,225,0.28)',
                       }}>
-                        {displayText(opt.reaction).slice(0, 80)}
+                        Tap to flip back
                       </div>
-                    )}
-
-                    <div style={{
-                      textAlign: 'center',
-                      marginTop: SPACING.compact,
-                      paddingTop: SPACING.compact,
-                      borderTop: '1px solid rgba(255,255,255,0.05)',
-                      ...TYPE.bodySmall,
-                      fontSize: 11,
-                      color: 'rgba(245,238,225,0.28)',
-                    }}>
-                      Tap to flip back
                     </div>
                   </div>
+                </div>
+
+                <div style={{
+                  flex: '0 0 68px',
+                  padding: `${SPACING.compact}px`,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  borderTop: '1px solid rgba(255,255,255,0.07)',
+                  background: 'rgba(8,9,13,0.88)',
+                }}>
+                  <div style={{
+                    ...TYPE.bodySmall,
+                    color: '#F5F1E8',
+                    fontWeight: 800,
+                    fontSize: 15,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}>
+                    {displayText(opt.title)}
+                  </div>
+                  {opt.subtitle && (
+                    <div style={{
+                      ...TYPE.bodySmall,
+                      fontSize: 12,
+                      color: 'rgba(245,238,225,0.42)',
+                      marginTop: 3,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}>
+                      {displayText(opt.subtitle)}
+                    </div>
+                  )}
                 </div>
               </div>
             )
