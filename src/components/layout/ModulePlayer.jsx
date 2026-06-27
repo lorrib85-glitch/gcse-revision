@@ -1640,6 +1640,22 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const cur = module.screens[screen]
   const subjectColor = module.color || '#9D5CFF'
 
+  if (total === 0) {
+    return (
+      <div style={{ minHeight: '100dvh', background: '#08090D', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 }}>
+        <p style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'Sora, sans-serif', fontSize: 15, textAlign: 'center', margin: 0 }}>
+          {module.title} — coming soon.
+        </p>
+        <button
+          onClick={onBack}
+          style={{ background: 'none', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 12, color: 'rgba(255,255,255,0.6)', fontFamily: 'Sora, sans-serif', fontSize: 14, padding: '10px 24px', cursor: 'pointer' }}
+        >
+          Go back
+        </button>
+      </div>
+    )
+  }
+
   // ── Stage-based learning header ───────────────────────────────────────────
   const stageNavigation = getStageNavigation(module, total)
   const currentStage = (() => {
