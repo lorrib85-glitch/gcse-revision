@@ -15,6 +15,7 @@ const RECALL_DURATION = 3 * 60
 const SUCCESS_RGB = '117,220,208'
 const LOW_TIME_RGB = '201,123,99'
 const DEFAULT_RECALL_PROMPTS = ['people', 'causes', 'changes', 'evidence']
+const SECTION_LABEL_LETTER_SPACING = '0.035em'
 
 function formatTime(totalSeconds) {
   const m = Math.floor(totalSeconds / 60)
@@ -94,7 +95,7 @@ function RecallTimer({ secondsLeft, duration, ringRgb, rgb }) {
   return (
     <div style={{ padding: '10px 12px 11px', borderRadius: 16, background: 'linear-gradient(180deg, rgba(255,255,255,0.048), rgba(255,255,255,0.018))', border: `1px solid rgba(${ringRgb},0.24)`, boxShadow: `0 0 18px rgba(${ringRgb},0.07), inset 0 1px 0 rgba(255,255,255,0.04)`, marginBottom: SPACING.compact }}>
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
-        <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 780, letterSpacing: '0.12em', textTransform: 'uppercase', color: `rgba(${rgb},0.62)` }}>Recall window</span>
+        <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 780, letterSpacing: SECTION_LABEL_LETTER_SPACING, color: `rgba(${rgb},0.62)` }}>Recall window</span>
         <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 800, color: `rgb(${ringRgb})`, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.01em' }}>{formatTime(secondsLeft)} left</span>
       </div>
       <div aria-hidden="true" style={{ height: 4, borderRadius: RADII.pill, overflow: 'hidden', background: 'rgba(245,247,255,0.075)' }}>
@@ -108,7 +109,7 @@ function MemoryNudges({ prompts, rgb }) {
   const nudges = prompts.map(p => String(p).toLowerCase())
   return (
     <div style={{ display: 'flex', alignItems: 'baseline', gap: 7, flexWrap: 'wrap', padding: '0 2px', marginBottom: SPACING.compact, fontFamily: TYPE.bodyText.fontFamily }}>
-      <span style={{ fontSize: 11, fontWeight: 750, letterSpacing: '0.11em', textTransform: 'uppercase', color: `rgba(${rgb},0.62)` }}>Memory nudges</span>
+      <span style={{ fontSize: 11, fontWeight: 750, letterSpacing: SECTION_LABEL_LETTER_SPACING, color: `rgba(${rgb},0.62)` }}>Memory nudges</span>
       <span style={{ fontSize: 12, fontWeight: 500, color: 'rgba(245,247,255,0.43)', letterSpacing: '0.01em' }}>{nudges.join(' · ')}</span>
     </div>
   )
@@ -185,7 +186,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
           <RecallTimer secondsLeft={secondsLeft} duration={RECALL_DURATION} ringRgb={ringRgb} rgb={rgb} />
           <MemoryNudges prompts={recallPrompts.slice(0, 4)} rgb={rgb} />
           <div style={{ position: 'relative', background: 'linear-gradient(180deg, rgba(20,23,29,0.93), rgba(11,13,18,0.96))', border: hasResults ? `1.5px solid rgba(${SUCCESS_RGB},0.44)` : isFocused ? `1.5px solid rgba(${SUCCESS_RGB},0.58)` : `1.5px solid rgba(${rgb},0.28)`, borderRadius: 24, padding: `${SPACING.compact}px ${SPACING.standard}px`, marginBottom: SPACING.standard, boxShadow: hasResults ? `0 0 30px rgba(${SUCCESS_RGB},0.12), inset 0 1px 0 rgba(255,255,255,0.05)` : isFocused ? `0 0 0 1px rgba(${SUCCESS_RGB},0.13), 0 0 36px rgba(${SUCCESS_RGB},0.14), inset 0 1px 0 rgba(255,255,255,0.05)` : `0 0 28px rgba(${rgb},0.09), inset 0 1px 0 rgba(255,255,255,0.04)`, animation: hasResults ? 'prk-complete-glow 900ms ease-out both' : 'none', transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}` }}>
-            <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 750, letterSpacing: '0.13em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.36)', marginBottom: SPACING.micro }}>Your recall</div>
+            <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 750, letterSpacing: SECTION_LABEL_LETTER_SPACING, color: 'rgba(255,255,255,0.36)', marginBottom: SPACING.micro }}>Your recall</div>
             <div style={{ position: 'relative' }}>{answer.length === 0 && <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}><div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 16, fontWeight: 500, lineHeight: 1.7, letterSpacing: '0.01em', color: 'rgba(245,247,255,0.42)' }}>Type your answer here…</div><div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 400, lineHeight: 1.5, color: 'rgba(245,247,255,0.18)', marginTop: 2 }}>Messy notes are fine.</div></div>}<textarea value={answer} onChange={e => { setAnswer(e.target.value); setError(null) }} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} rows={8} disabled={phase === 'results'} aria-label="Write anything you remember" style={{ width: '100%', padding: 0, minHeight: 'clamp(225px, 35vh, 315px)', background: 'transparent', border: 'none', outline: 'none', resize: 'none', fontFamily: TYPE.bodyText.fontFamily, ...TYPE.bodySmall, color: '#F5F7FF', lineHeight: 1.7, letterSpacing: '0.01em', caretColor: `rgb(${SUCCESS_RGB})`, opacity: phase === 'results' ? 0.72 : 1 }} /></div>
             <div aria-hidden="true" style={{ position: 'absolute', right: 18, bottom: 16, color: hasResults ? `rgba(${SUCCESS_RGB},0.70)` : `rgba(${SUCCESS_RGB},0.33)`, opacity: 0.9, filter: hasResults ? `drop-shadow(0 0 10px rgba(${SUCCESS_RGB},0.30))` : 'none', transition: `color ${MOTION.duration.standard} ${MOTION.easing.gentle}, filter ${MOTION.duration.standard} ${MOTION.easing.gentle}` }}><FeatherIcon color="currentColor" /></div>
           </div>
