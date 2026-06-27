@@ -4,6 +4,7 @@ import App from './App.jsx'
 import { AuthProvider } from './auth/AuthContext.jsx'
 import './globals.css'
 import './styles.css'
+import './scrollbars.css'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
