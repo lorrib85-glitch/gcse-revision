@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
+import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 // CinematicShell used here because the background is either a full-bleed cover image or a
 // gradient that must fill the entire screen with no padding; ContentShell's padding and
 // safe-area offsets would create gaps around the atmospheric background.
@@ -15,7 +16,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
 
   const [stepIdx,       setStepIdx]       = useState(0)
   const [animKey,       setAnimKey]       = useState(0)
-  const [hintOn,        setHintOn]        = useState(false)
+  const [ctaVisible,    setCtaVisible]    = useState(false)
   const [revealStarted, setRevealStarted] = useState(false)
 
   const touchRef = useRef({ x: null, y: null })
@@ -28,8 +29,8 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
     : `linear-gradient(160deg, ${palBg} 0%, #080C1A 100%)`
 
   useEffect(() => {
-    setHintOn(false)
-    const t = setTimeout(() => setHintOn(true), 1500)
+    setCtaVisible(false)
+    const t = setTimeout(() => setCtaVisible(true), 420)
     return () => clearTimeout(t)
   }, [stepIdx])
 
@@ -38,7 +39,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
       setRevealStarted(true)
       onRevealStart?.()
     }
-    setHintOn(false)
+    setCtaVisible(false)
     if (isLast) {
       onContinue?.()
     } else {
@@ -80,10 +81,6 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
           from { opacity:0; transform:translateY(22px) }
           to   { opacity:1; transform:translateY(0) }
         }
-        @keyframes crHintPulse {
-          0%,100% { opacity:0; transform:translateY(0) }
-          35%,65% { opacity:.5; transform:translateY(-3px) }
-        }
       `}</style>
 
       <CinematicShell style={{ background: bg, backgroundSize: 'cover', backgroundPosition: 'center', zIndex: 100 }}>
@@ -110,7 +107,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
           key={animKey}
           style={{
             position: 'relative', zIndex: 1,
-            padding: '0 32px 108px',
+            padding: '0 32px calc(128px + env(safe-area-inset-bottom, 0px))',
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
@@ -118,7 +115,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
             animation: `crSlideIn ${STEP_MS}ms cubic-bezier(.16,1,.3,1) both`,
           }}
         >
-          {step.eyebrow && (
+          {step.showEyebrow === true && step.eyebrow && (
             <div style={{
               ...TYPE.overlayEyebrow,
               color: accent + '88',
@@ -167,40 +164,13 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
           )}
         </div>
 
-        {/* Step dots — quiet orientation only */}
-        {steps.length > 1 && (
-          <div style={{
-            position: 'absolute', bottom: 28, left: 0, right: 0,
-            display: 'flex', justifyContent: 'center', gap: 7,
-            zIndex: 2, pointerEvents: 'none',
-          }}>
-            {steps.map((_, i) => (
-              <span key={i} style={{
-                display: 'block',
-                width: 5, height: 5,
-                borderRadius: '50%',
-                background: i <= stepIdx ? accent : 'rgba(255,255,255,.2)',
-                opacity: i === stepIdx ? 1 : i < stepIdx ? 0.45 : 0.22,
-                transition: 'background .3s, opacity .3s',
-              }} />
-            ))}
-          </div>
-        )}
-
-        {/* Gesture hint */}
-        {hintOn && (
-          <div style={{
-            position: 'absolute', bottom: 46, left: 0, right: 0,
-            zIndex: 2, textAlign: 'center', pointerEvents: 'none',
-            animation: 'crHintPulse 3.2s ease infinite',
-          }}>
-            <span style={{
-              ...TYPE.overlayPrompt,
-              color: 'rgba(255,255,255,.38)',
-            }}>
-              {isLast ? 'tap to finish' : 'tap to continue'}
-            </span>
-          </div>
+        {/* Cinematic progression CTA — no local dots or custom tap hints */}
+        {ctaVisible && (
+          <CinematicContinueCTA
+            onClick={advance}
+            accent={accent}
+            animation="crm-fade 520ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite"
+          />
         )}
       </div>
       </CinematicShell>
