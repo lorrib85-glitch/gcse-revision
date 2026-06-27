@@ -1,28 +1,37 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-// CinematicShell used here because the full-screen cinematic reveal overlay (zIndex:1100) and
-// edge-to-edge carousel track require the outer container to have no padding or inset constraint.
 import CinematicShell from '../layout/CinematicShell.jsx'
-
-function tokenize(text) {
-  const parts = text.split(/(\s+)/)
-  let wi = 0
-  return parts.map((part, i) => {
-    if (/^\s+$/.test(part)) return { key: i, space: true, text: part }
-    return { key: i, space: false, text: part, wordIdx: wi++ }
-  })
-}
 import SequenceProgress from '../core/SequenceProgress.jsx'
+import ContinueCTA from '../core/ContinueCTA.jsx'
+import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { SPACING } from '../../constants/spacing.js'
 import { TYPE } from '../../constants/typography.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 
+function tokenize(text) {
+  const parts = String(text || '').split(/(\s+)/)
+  let wi = 0
+  return parts.map((part, i) => {
+    if (/^\s+$/.test(part)) return { key: i, space: true, text: part }
+    return { key: i, space: false, text: part, wordIdx: wi++ }
+  })
+}
+
+function displayText(value) {
+  const text = String(value || '').trim()
+  if (!text) return ''
+  const letters = text.replace(/[^A-Za-z]/g, '')
+  const isShout = letters.length > 5 && letters === letters.toUpperCase()
+  if (!isShout) return text
+  return text.toLowerCase().replace(/(^|[.!?]\s+|[—–-]\s+)([a-z])/g, (_, lead, ch) => `${lead}${ch.toUpperCase()}`)
+}
+
 // Carousel geometry constants (viewport units)
-const CARD_VW       = 78   // card width as % of viewport width
-const SIDE_OFFSET   = 7    // left gap before first card → next card peeks ~15vw
-const CARD_GAP      = 16   // px gap between cards
-const SWIPE_THRESHOLD_RATIO = 0.22  // fraction of vw needed to trigger snap
+const CARD_VW = 78
+const SIDE_OFFSET = 7
+const CARD_GAP = 16
+const SWIPE_THRESHOLD_RATIO = 0.22
 
 export default function GuidedChoiceCarousel({
   subject,
@@ -32,19 +41,15 @@ export default function GuidedChoiceCarousel({
   promptVisual,
   options = [],
   onContinue,
-  onBack,
+  onBack: _onBack,
 }) {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [flippedIndex, setFlippedIndex]  = useState(null)
+  const [flippedIndex, setFlippedIndex] = useState(null)
   const [selectedIndex, setSelectedIndex] = useState(null)
-  const [dragOffset, setDragOffset]      = useState(0)
-  const [isDragging, setIsDragging]      = useState(false)
+  const [dragOffset, setDragOffset] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const [showReveal, setShowReveal] = useState(false)
 
-  // Cinematic reveal phase
-  const [showReveal,    setShowReveal]    = useState(false)
-  const [revealLineCnt, setRevealLineCnt] = useState(0)
-
-  // Preload all card images immediately on mount
   useEffect(() => {
     options.forEach(opt => {
       if (opt.image) {
@@ -54,25 +59,26 @@ export default function GuidedChoiceCarousel({
     })
   }, [options])
 
-  // Imperative refs so carousel event handlers are always stable
-  const touchRef   = useRef({ startX: 0, startY: 0, isDrag: false, moved: false })
-  const stateRef   = useRef({ currentIndex: 0, length: options.length })
+  const touchRef = useRef({ startX: 0, startY: 0, isDrag: false, moved: false })
+  const stateRef = useRef({ currentIndex: 0, length: options.length })
   const carouselEl = useRef(null)
-  const choosing   = useRef(false)
+  const choosing = useRef(false)
 
   useEffect(() => {
     stateRef.current.currentIndex = currentIndex
-    stateRef.current.length       = options.length
+    stateRef.current.length = options.length
   }, [currentIndex, options.length])
 
   const subjectData = SUBJECTS[subject] || {}
-  const accent      = subjectData.accent    || '#9D5CFF'
-  const accentRgb   = subjectData.accentRgb || '157,92,255'
+  const accent = subjectData.accent || '#D9A441'
+  const accentRgb = subjectData.accentRgb || '217,164,65'
 
   const currentOption = options[currentIndex] || {}
-  const isChosen      = selectedIndex !== null
-
-  // ── Touch handlers (attached imperatively for { passive: false }) ────────────
+  const isChosen = selectedIndex !== null
+  const selectedOption = selectedIndex !== null ? options[selectedIndex] : null
+  const revealLines = selectedOption?.revealLines || []
+  const titleLine = displayText(revealLines[0] || '')
+  const bodyLines = revealLines.slice(1).map(displayText)
 
   const onTouchStart = useCallback((e) => {
     const t = e.touches[0]
@@ -82,16 +88,16 @@ export default function GuidedChoiceCarousel({
   }, [])
 
   const onTouchMove = useCallback((e) => {
-    const t   = e.touches[0]
-    const dx  = t.clientX - touchRef.current.startX
-    const dy  = t.clientY - touchRef.current.startY
+    const t = e.touches[0]
+    const dx = t.clientX - touchRef.current.startX
+    const dy = t.clientY - touchRef.current.startY
 
     if (!touchRef.current.moved) {
       if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 5) {
-        touchRef.current.moved  = true
+        touchRef.current.moved = true
         touchRef.current.isDrag = true
       } else if (Math.abs(dy) > 5) {
-        touchRef.current.moved  = true
+        touchRef.current.moved = true
         touchRef.current.isDrag = false
       }
     }
@@ -104,17 +110,13 @@ export default function GuidedChoiceCarousel({
 
   const onTouchEnd = useCallback((e) => {
     const endX = e.changedTouches[0]?.clientX ?? touchRef.current.startX
-    const dx   = endX - touchRef.current.startX
+    const dx = endX - touchRef.current.startX
 
     setIsDragging(false)
     setDragOffset(0)
 
-    if (!touchRef.current.isDrag) {
-      // Tap — let the click handler fire naturally (no duplicate logic here)
-      return
-    }
+    if (!touchRef.current.isDrag) return
 
-    // Swipe: snap to neighbour if delta clears threshold
     const threshold = window.innerWidth * SWIPE_THRESHOLD_RATIO
     const { currentIndex: ci, length } = stateRef.current
 
@@ -131,21 +133,17 @@ export default function GuidedChoiceCarousel({
     const el = carouselEl.current
     if (!el) return
     el.addEventListener('touchstart', onTouchStart, { passive: true })
-    el.addEventListener('touchmove',  onTouchMove,  { passive: false })
-    el.addEventListener('touchend',   onTouchEnd,   { passive: true })
+    el.addEventListener('touchmove', onTouchMove, { passive: false })
+    el.addEventListener('touchend', onTouchEnd, { passive: true })
     return () => {
       el.removeEventListener('touchstart', onTouchStart)
-      el.removeEventListener('touchmove',  onTouchMove)
-      el.removeEventListener('touchend',   onTouchEnd)
+      el.removeEventListener('touchmove', onTouchMove)
+      el.removeEventListener('touchend', onTouchEnd)
     }
   }, [onTouchStart, onTouchMove, onTouchEnd])
 
-  // ── Card tap (via click — fires on tap after touchend, and on desktop clicks) ─
-
   function handleCardClick(idx) {
-    // Suppress click that follows a swipe (touchmove called preventDefault)
     if (touchRef.current.isDrag) return
-
     if (idx !== currentIndex) {
       setCurrentIndex(idx)
       setFlippedIndex(null)
@@ -154,8 +152,6 @@ export default function GuidedChoiceCarousel({
     setFlippedIndex(f => (f === idx ? null : idx))
   }
 
-  // ── Selection ──────────────────────────────────────────────────────────────
-
   function handleChoose() {
     if (isChosen || choosing.current) return
     choosing.current = true
@@ -163,52 +159,33 @@ export default function GuidedChoiceCarousel({
     setTimeout(() => setShowReveal(true), 450)
   }
 
-  // ── Reveal phase helpers ───────────────────────────────────────────────────
-  const selectedOption = selectedIndex !== null ? options[selectedIndex] : null
-  const revealLines    = selectedOption?.revealLines || []
-  const titleLine      = revealLines[0] || ''
-  const bodyLines      = revealLines.slice(1)
-  const allRevealed    = revealLineCnt >= bodyLines.length
-
-  // Auto-reveal all lines when the overlay opens — no tapping required
-  useEffect(() => {
-    if (!showReveal) return
-    setRevealLineCnt(bodyLines.length)
-  }, [showReveal, bodyLines.length])
-
-  function handleRevealTap() {}
-
-  // ── Track translation ──────────────────────────────────────────────────────
-
-  const liveOffset  = isDragging ? dragOffset : 0
+  const liveOffset = isDragging ? dragOffset : 0
   const trackTransX = `calc(${SIDE_OFFSET}vw - (${currentIndex} * (${CARD_VW}vw + ${CARD_GAP}px)) + ${liveOffset}px)`
-
-  // ── Render ─────────────────────────────────────────────────────────────────
+  const currentLabel = displayText(currentOption.title || 'this option')
 
   return (
     <CinematicShell style={{
-      background:      '#08090D',
-      display:         'flex',
-      flexDirection:   'column',
-      userSelect:      'none',
+      background: '#08090D',
+      display: 'flex',
+      flexDirection: 'column',
+      userSelect: 'none',
       WebkitUserSelect: 'none',
     }}>
-
-      {/* ── Prompt area ─────────────────────────────────────────────────────── */}
       <div style={{
         flexShrink: 0,
-        padding: `calc(env(safe-area-inset-top, 0px) + 80px) ${SPACING.standard}px ${SPACING.compact}px`,
+        padding: `calc(env(safe-area-inset-top, 0px) + 78px) ${SPACING.standard}px ${SPACING.compact}px`,
         textAlign: 'center',
       }}>
         {promptVisual?.src && (
           <div style={{
-            width:         52,
-            height:        52,
-            borderRadius:  RADII.pill,
-            overflow:      'hidden',
-            margin:        '0 auto',
-            marginBottom:  SPACING.compact,
-            border:        '1px solid rgba(255,255,255,0.08)',
+            width: 50,
+            height: 50,
+            borderRadius: RADII.pill,
+            overflow: 'hidden',
+            margin: '0 auto',
+            marginBottom: SPACING.compact,
+            border: `1px solid rgba(${accentRgb},0.18)`,
+            boxShadow: `0 0 22px rgba(${accentRgb},0.08)`,
           }}>
             <img
               src={promptVisual.src}
@@ -221,65 +198,61 @@ export default function GuidedChoiceCarousel({
 
         {headline && (
           <div style={{
-            ...TYPE.metadata,
-            color:          accent,
-            textTransform:  'uppercase',
-            letterSpacing:  '0.12em',
-            marginBottom:   SPACING.micro,
+            ...TYPE.bodySmall,
+            color: `rgba(${accentRgb},0.86)`,
+            fontWeight: 700,
+            letterSpacing: '0.035em',
+            marginBottom: SPACING.micro,
           }}>
-            {headline}
+            {displayText(headline)}
           </div>
         )}
 
         <div style={{
           ...TYPE.cardTitle,
-          color:        '#F5F7FF',
+          color: '#F5F1E8',
           marginBottom: helperText ? SPACING.micro : 0,
         }}>
-          {question}
+          {displayText(question)}
         </div>
 
         {helperText && (
           <div style={{
             ...TYPE.bodySmall,
             fontSize: 14,
-            color:    '#5E5874',
+            color: 'rgba(245,238,225,0.46)',
           }}>
-            {helperText}
+            {displayText(helperText)}
           </div>
         )}
       </div>
 
-      {/* ── Carousel ────────────────────────────────────────────────────────── */}
       <div
         ref={carouselEl}
         style={{
-          flex:            '1 1 0',
-          overflow:        'hidden',
-          display:         'flex',
-          flexDirection:   'column',
-          justifyContent:  'center',
-          cursor:          'grab',
+          flex: '1 1 0',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          cursor: 'grab',
         }}
       >
-        {/* Sliding track */}
         <div style={{
-          display:    'flex',
-          gap:        CARD_GAP,
-          transform:  `translateX(${trackTransX})`,
-          transition: isDragging
-            ? 'none'
-            : `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+          display: 'flex',
+          gap: CARD_GAP,
+          transform: `translateX(${trackTransX})`,
+          transition: isDragging ? 'none' : `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
           willChange: 'transform',
           alignItems: 'stretch',
         }}>
           {options.map((opt, idx) => {
             const isCurrentCard = idx === currentIndex
             const isCardFlipped = flippedIndex === idx
-            const isSelected    = selectedIndex === idx
-            const isFaded       = isChosen && !isSelected
+            const isSelected = selectedIndex === idx
+            const isFaded = isChosen && !isSelected
 
-            if (isChosen && !isSelected) return null   // hide non-selected cards immediately
+            if (isChosen && !isSelected) return null
 
             return (
               <div
@@ -287,48 +260,37 @@ export default function GuidedChoiceCarousel({
                 onClick={() => handleCardClick(idx)}
                 style={{
                   flexShrink: 0,
-                  width:      `${CARD_VW}vw`,
-                  height:     `min(60vh, calc(${CARD_VW}vw * 1.34))`,
+                  width: `${CARD_VW}vw`,
+                  height: `min(60vh, calc(${CARD_VW}vw * 1.34))`,
                   perspective: 1200,
-                  cursor:     'pointer',
-                  transform:  `scale(${isSelected ? 1.02 : isFaded ? 0.96 : 1})`,
-                  opacity:    isFaded ? 0.22 : 1,
-                  transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard},
-                               opacity   ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+                  cursor: 'pointer',
+                  transform: `scale(${isSelected ? 1.02 : isFaded ? 0.96 : 1})`,
+                  opacity: isFaded ? 0.22 : 1,
+                  transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}, opacity ${MOTION.duration.standard} ${MOTION.easing.standard}`,
                 }}
               >
-                {/* Inner flipper */}
                 <div style={{
-                  width:           '100%',
-                  height:          '100%',
-                  transformStyle:  'preserve-3d',
-                  transform:       isCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                  transition:      `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`,
-                  position:        'relative',
+                  width: '100%',
+                  height: '100%',
+                  transformStyle: 'preserve-3d',
+                  transform: isCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                  transition: `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`,
+                  position: 'relative',
                 }}>
-
-                  {/* ─ Front ─ */}
                   <div style={{
-                    position:              'absolute',
-                    inset:                 0,
-                    backfaceVisibility:    'hidden',
+                    position: 'absolute',
+                    inset: 0,
+                    backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
-                    borderRadius:          RADII.large,
-                    overflow:              'hidden',
-                    background:            '#101218',
-                    border:                isSelected
-                      ? `1.5px solid rgba(${accentRgb}, 0.55)`
-                      : '1px solid rgba(255,255,255,0.06)',
-                    boxShadow:             isSelected
-                      ? `0 0 40px rgba(${accentRgb}, 0.18), 0 12px 48px rgba(0,0,0,0.55)`
-                      : '0 12px 48px rgba(0,0,0,0.55)',
-                    display:               'flex',
-                    flexDirection:         'column',
-                    transition:            `border-color ${MOTION.duration.standard} ${MOTION.easing.standard},
-                                           box-shadow    ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+                    borderRadius: RADII.large,
+                    overflow: 'hidden',
+                    background: '#101218',
+                    border: isSelected ? `1.5px solid rgba(${accentRgb}, 0.55)` : '1px solid rgba(255,255,255,0.07)',
+                    boxShadow: isSelected ? `0 0 40px rgba(${accentRgb}, 0.18), 0 12px 48px rgba(0,0,0,0.55)` : '0 12px 48px rgba(0,0,0,0.55)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`,
                   }}>
-
-                    {/* Image — 82% of card height */}
                     <div style={{ flex: '0 0 82%', position: 'relative', overflow: 'hidden', background: '#080C18' }}>
                       {opt.image ? (
                         <img
@@ -336,198 +298,187 @@ export default function GuidedChoiceCarousel({
                           alt={opt.title}
                           loading="eager"
                           style={{
-                            width:           '100%',
-                            height:          '100%',
-                            objectFit:       'cover',
-                            objectPosition:  'center top',
-                            display:         'block',
-                            filter:          'brightness(0.72) grayscale(8%) contrast(1.02)',
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            objectPosition: 'center top',
+                            display: 'block',
+                            filter: 'brightness(0.74) grayscale(6%) contrast(1.03)',
                           }}
                           draggable={false}
                         />
                       ) : (
                         <div style={{
-                          width:       '100%',
-                          height:      '100%',
-                          background:  `rgba(${accentRgb}, 0.06)`,
-                          display:     'flex',
-                          alignItems:  'center',
+                          width: '100%',
+                          height: '100%',
+                          background: `rgba(${accentRgb}, 0.06)`,
+                          display: 'flex',
+                          alignItems: 'center',
                           justifyContent: 'center',
                         }}>
                           <div style={{
-                            width:        40,
-                            height:       40,
+                            width: 40,
+                            height: 40,
                             borderRadius: RADII.pill,
-                            border:       `1px solid rgba(${accentRgb}, 0.2)`,
+                            border: `1px solid rgba(${accentRgb}, 0.2)`,
                           }} />
                         </div>
                       )}
 
-                      {/* Bottom image gradient */}
                       <div style={{
-                        position:   'absolute',
-                        bottom:     0, left: 0, right: 0,
-                        height:     '45%',
+                        position: 'absolute',
+                        bottom: 0, left: 0, right: 0,
+                        height: '46%',
                         background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.72))',
                         pointerEvents: 'none',
                       }} />
 
-                      {/* "Tap to explore" hint on active card */}
                       {isCurrentCard && !isCardFlipped && !isChosen && (
                         <div style={{
-                          position:        'absolute',
-                          top:             SPACING.compact,
-                          right:           SPACING.compact,
-                          background:      'rgba(0,0,0,0.5)',
-                          backdropFilter:  'blur(10px)',
+                          position: 'absolute',
+                          top: SPACING.compact,
+                          right: SPACING.compact,
+                          background: 'rgba(0,0,0,0.42)',
+                          backdropFilter: 'blur(10px)',
                           WebkitBackdropFilter: 'blur(10px)',
-                          borderRadius:    RADII.pill,
-                          padding:         '4px 10px',
-                          ...TYPE.metadata,
-                          fontSize:        11,
-                          color:           'rgba(255,255,255,0.55)',
-                          letterSpacing:   '0.04em',
-                          pointerEvents:   'none',
+                          borderRadius: RADII.pill,
+                          border: '1px solid rgba(255,255,255,0.07)',
+                          padding: '4px 10px',
+                          ...TYPE.bodySmall,
+                          fontSize: 11,
+                          color: 'rgba(245,238,225,0.58)',
+                          pointerEvents: 'none',
                         }}>
-                          Tap to explore
+                          Explore
                         </div>
                       )}
                     </div>
 
-                    {/* Title strip — 18% of card height */}
                     <div style={{
-                      flex:           '0 0 18%',
-                      padding:        `${SPACING.compact}px`,
-                      display:        'flex',
-                      flexDirection:  'column',
+                      flex: '0 0 18%',
+                      padding: `${SPACING.compact}px`,
+                      display: 'flex',
+                      flexDirection: 'column',
                       justifyContent: 'center',
                     }}>
                       <div style={{
-                        ...TYPE.metadata,
-                        color:          '#F5F7FF',
-                        fontWeight:     700,
-                        letterSpacing:  '0.07em',
-                        textTransform:  'uppercase',
-                        whiteSpace:     'nowrap',
-                        overflow:       'hidden',
-                        textOverflow:   'ellipsis',
+                        ...TYPE.bodySmall,
+                        color: '#F5F1E8',
+                        fontWeight: 700,
+                        fontSize: 15,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
                       }}>
-                        {opt.title}
+                        {displayText(opt.title)}
                       </div>
                       {opt.subtitle && (
                         <div style={{
-                          ...TYPE.metadata,
-                          fontSize:       12,
-                          color:          '#5E5874',
-                          marginTop:      3,
-                          whiteSpace:     'nowrap',
-                          overflow:       'hidden',
-                          textOverflow:   'ellipsis',
+                          ...TYPE.bodySmall,
+                          fontSize: 12,
+                          color: 'rgba(245,238,225,0.42)',
+                          marginTop: 3,
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
                         }}>
-                          {opt.subtitle}
+                          {displayText(opt.subtitle)}
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* ─ Back ─ */}
                   <div style={{
-                    position:              'absolute',
-                    inset:                 0,
-                    backfaceVisibility:    'hidden',
+                    position: 'absolute',
+                    inset: 0,
+                    backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
-                    transform:             'rotateY(180deg)',
-                    borderRadius:          RADII.large,
-                    overflow:              'hidden',
-                    overflowY:             'auto',
-                    background:            '#0D1018',
-                    border:                '1px solid rgba(255,255,255,0.07)',
-                    boxShadow:             '0 12px 48px rgba(0,0,0,0.55)',
-                    padding:               SPACING.standard,
+                    transform: 'rotateY(180deg)',
+                    borderRadius: RADII.large,
+                    overflow: 'hidden',
+                    overflowY: 'auto',
+                    background: '#0D1018',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    boxShadow: '0 12px 48px rgba(0,0,0,0.55)',
+                    padding: SPACING.standard,
                     WebkitOverflowScrolling: 'touch',
                   }}>
-                    {/* Option label */}
                     <div style={{
-                      ...TYPE.metadata,
-                      color:          accent,
-                      fontWeight:     700,
-                      textTransform:  'uppercase',
-                      letterSpacing:  '0.1em',
-                      marginBottom:   SPACING.compact,
+                      ...TYPE.bodySmall,
+                      color: `rgba(${accentRgb},0.92)`,
+                      fontWeight: 700,
+                      fontSize: 15,
+                      marginBottom: SPACING.compact,
                     }}>
-                      {opt.title}
+                      {displayText(opt.title)}
                     </div>
 
-                    {/* Content sections — max 4 */}
                     {(opt.sections || []).slice(0, 4).map((section, sIdx) => (
                       <div key={sIdx} style={{ marginBottom: SPACING.compact }}>
                         {section.heading && (
                           <div style={{
-                            ...TYPE.metadata,
-                            fontSize:       11,
-                            color:          '#5E5874',
-                            textTransform:  'uppercase',
-                            letterSpacing:  '0.12em',
-                            marginBottom:   6,
+                            ...TYPE.bodySmall,
+                            fontSize: 12,
+                            fontWeight: 700,
+                            color: 'rgba(245,238,225,0.50)',
+                            marginBottom: 6,
                           }}>
-                            {section.heading}
+                            {displayText(section.heading)}
                           </div>
                         )}
                         {(section.items || []).slice(0, 5).map((item, iIdx) => (
                           <div key={iIdx} style={{
-                            display:     'flex',
-                            gap:         SPACING.micro,
+                            display: 'flex',
+                            gap: SPACING.micro,
                             marginBottom: 7,
-                            alignItems:  'flex-start',
+                            alignItems: 'flex-start',
                           }}>
                             <div style={{
-                              width:        4,
-                              height:       4,
+                              width: 4,
+                              height: 4,
                               borderRadius: '50%',
-                              background:   `rgba(${accentRgb}, 0.55)`,
-                              flexShrink:   0,
-                              marginTop:    8,
+                              background: `rgba(${accentRgb}, 0.55)`,
+                              flexShrink: 0,
+                              marginTop: 8,
                             }} />
                             <div style={{
                               ...TYPE.bodySmall,
-                              fontSize:    14,
-                              color:       '#A89FC2',
-                              lineHeight:  1.5,
+                              fontSize: 14,
+                              color: 'rgba(245,238,225,0.66)',
+                              lineHeight: 1.5,
                             }}>
-                              {item}
+                              {displayText(item)}
                             </div>
                           </div>
                         ))}
                       </div>
                     ))}
 
-                    {/* Reaction block — max 80 chars */}
                     {opt.reaction && (
                       <div style={{
-                        marginTop:    SPACING.compact,
-                        padding:      SPACING.compact,
-                        background:   `rgba(${accentRgb}, 0.05)`,
+                        marginTop: SPACING.compact,
+                        padding: SPACING.compact,
+                        background: `rgba(${accentRgb}, 0.05)`,
                         borderRadius: RADII.medium,
-                        border:       `1px solid rgba(${accentRgb}, 0.14)`,
+                        border: `1px solid rgba(${accentRgb}, 0.14)`,
                         ...TYPE.bodySmall,
-                        fontSize:     13,
-                        color:        '#A89FC2',
-                        fontStyle:    'italic',
-                        lineHeight:   1.5,
+                        fontSize: 13,
+                        color: 'rgba(245,238,225,0.62)',
+                        fontStyle: 'italic',
+                        lineHeight: 1.5,
                       }}>
-                        {opt.reaction.slice(0, 80)}
+                        {displayText(opt.reaction).slice(0, 80)}
                       </div>
                     )}
 
-                    {/* Flip-back cue */}
                     <div style={{
-                      textAlign:     'center',
-                      marginTop:     SPACING.compact,
-                      paddingTop:    SPACING.compact,
-                      borderTop:     '1px solid rgba(255,255,255,0.05)',
-                      ...TYPE.metadata,
-                      fontSize:      11,
-                      color:         '#3A3A4A',
+                      textAlign: 'center',
+                      marginTop: SPACING.compact,
+                      paddingTop: SPACING.compact,
+                      borderTop: '1px solid rgba(255,255,255,0.05)',
+                      ...TYPE.bodySmall,
+                      fontSize: 11,
+                      color: 'rgba(245,238,225,0.28)',
                     }}>
                       Tap to flip back
                     </div>
@@ -538,7 +489,6 @@ export default function GuidedChoiceCarousel({
           })}
         </div>
 
-        {/* Dot indicators */}
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.compact, paddingBottom: SPACING.micro }}>
           <SequenceProgress
             total={options.length}
@@ -551,38 +501,22 @@ export default function GuidedChoiceCarousel({
         </div>
       </div>
 
-      {/* ── CTA area ────────────────────────────────────────────────────────── */}
       <div style={{
         flexShrink: 0,
         padding: `${SPACING.compact}px ${SPACING.standard}px calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
       }}>
-        <button
+        <ContinueCTA
           onClick={handleChoose}
+          label={isChosen ? 'Selected' : `Choose ${currentLabel}`}
+          accent={accent}
+          disabled={isChosen}
           style={{
-            width:          '100%',
-            height:         58,
-            borderRadius:   RADII.large,
-            border:         'none',
-            cursor:         isChosen ? 'default' : 'pointer',
-            background:     isChosen
-              ? `rgba(${accentRgb}, 0.12)`
-              : `linear-gradient(135deg, rgba(${accentRgb}, 0.85) 0%, rgba(${accentRgb}, 1) 100%)`,
-            boxShadow:      isChosen
-              ? 'none'
-              : `0 4px 28px rgba(${accentRgb}, 0.28)`,
-            color:          isChosen ? accent : '#fff',
-            ...TYPE.bodySmall,
-            fontWeight:     700,
-            letterSpacing:  '0.02em',
-            transition:     `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-            transform:      'translateZ(0)',
+            width: '100%',
+            boxShadow: isChosen ? 'none' : `0 4px 28px rgba(${accentRgb}, 0.22)`,
           }}
-        >
-          {isChosen ? '✓ Selected' : (currentOption.buttonText || 'Choose this')}
-        </button>
+        />
       </div>
 
-      {/* ── Cinematic choice reveal overlay ─────────────────────────────────── */}
       {showReveal && selectedOption && (() => {
         const titleToks = tokenize(titleLine)
         return (
@@ -596,26 +530,18 @@ export default function GuidedChoiceCarousel({
                 from { opacity: 0; transform: translateY(14px); }
                 to   { opacity: 1; transform: translateY(0); }
               }
-              @keyframes gcc-hint {
-                0%, 100% { opacity: 0; transform: translateY(0); }
-                35%, 65%  { opacity: 0.5; transform: translateY(-3px); }
-              }
-              @keyframes gcc-cont {
-                from { opacity: 0; transform: translateY(14px); }
-                to   { opacity: 1; transform: translateY(0); }
-              }
             `}</style>
 
-            <div
-              onClick={!allRevealed ? handleRevealTap : undefined}
-              style={{
-                position: 'fixed', inset: 0, zIndex: 1100,
-                background: '#08090D', overflow: 'hidden',
-                cursor: 'default',
-                userSelect: 'none', WebkitUserSelect: 'none',
-              }}
-            >
-              {/* Healer figure — rendered as img so PNG transparency works correctly */}
+            <div style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 1100,
+              background: '#08090D',
+              overflow: 'hidden',
+              cursor: 'default',
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+            }}>
               {selectedOption.image && (
                 <img
                   src={selectedOption.image}
@@ -633,29 +559,32 @@ export default function GuidedChoiceCarousel({
                 />
               )}
 
-              {/* Left gradient — covers most of screen, keeps text readable */}
               <div style={{
-                position: 'absolute', inset: 0,
+                position: 'absolute',
+                inset: 0,
                 background: 'linear-gradient(90deg, rgba(8,9,13,1) 0%, rgba(8,9,13,0.92) 38%, rgba(8,9,13,0.55) 65%, rgba(8,9,13,0.10) 100%)',
                 pointerEvents: 'none',
               }} />
 
-              {/* Bottom fade */}
               <div style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0, height: 260,
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 260,
                 background: 'linear-gradient(0deg, rgba(8,9,13,0.99) 0%, transparent 100%)',
                 pointerEvents: 'none',
               }} />
 
-              {/* Content shell */}
               <div style={{ position: 'relative', zIndex: 5, minHeight: '100dvh' }}>
-
-                {/* Title with word stagger */}
                 <div style={{
-                  position: 'absolute', top: '26%', left: 28, right: 28,
+                  position: 'absolute',
+                  top: '26%',
+                  left: 28,
+                  right: 28,
                   maxHeight: 'calc(100dvh - 180px)',
                   overflowY: 'auto',
-                  paddingBottom: 100,
+                  paddingBottom: 112,
                   WebkitOverflowScrolling: 'touch',
                 }}>
                   <div style={{
@@ -680,9 +609,8 @@ export default function GuidedChoiceCarousel({
                     )}
                   </div>
 
-                  {/* Body lines revealed on tap */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-                    {bodyLines.slice(0, revealLineCnt).map((line, i) => {
+                    {bodyLines.map((line, i) => {
                       const isPunchline = i === bodyLines.length - 1
                       return (
                         <div key={i} style={{
@@ -692,7 +620,7 @@ export default function GuidedChoiceCarousel({
                           lineHeight: isPunchline ? 1.3 : 1.65,
                           letterSpacing: isPunchline ? '-0.02em' : 0,
                           color: isPunchline ? accent : 'rgba(255,255,255,0.62)',
-                          animation: 'gcc-line 380ms cubic-bezier(0.16,1,0.3,1) both',
+                          animation: `gcc-line 380ms cubic-bezier(0.16,1,0.3,1) ${520 + i * 120}ms both`,
                           marginTop: isPunchline ? 8 : 0,
                         }}>
                           {line}
@@ -703,24 +631,11 @@ export default function GuidedChoiceCarousel({
                 </div>
               </div>
 
-              {/* Continue button — appears when all lines are revealed */}
-              {allRevealed && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); onContinue(selectedOption.nextScreenId, selectedOption) }}
-                  style={{
-                    position: 'absolute',
-                    bottom: 'calc(72px + env(safe-area-inset-bottom, 0px))',
-                    left: 28,
-                    zIndex: 10,
-                    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                    fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 22,
-                    color: accent,
-                    animation: 'gcc-cont 500ms cubic-bezier(0.16,1,0.3,1) 120ms both',
-                  }}
-                >
-                  Continue →
-                </button>
-              )}
+              <CinematicContinueCTA
+                onClick={() => onContinue(selectedOption.nextScreenId, selectedOption)}
+                accent={accent}
+                animation="crm-fade 700ms ease 900ms both, crm-pulse 2.8s ease-in-out 1600ms infinite"
+              />
             </div>
           </>
         )
