@@ -35,8 +35,8 @@ function levenshtein(a, b) {
 }
 
 function checkAnswers(userLines, acceptedAnswers) {
-  const matched = []   // { canonical, userLine }
-  const missing = []   // canonical strings
+  const matched = []
+  const missing = []
 
   for (const ans of acceptedAnswers) {
     const foundLine = userLines.find(line =>
@@ -52,18 +52,50 @@ function checkAnswers(userLines, acceptedAnswers) {
   return { matched, missing }
 }
 
-// ── Colours ───────────────────────────────────────────────────────────────────
+// ── Design tokens ─────────────────────────────────────────────────────────────
 
-const GOLD   = '#D69B45'
-const GOLD_RGB = '214,155,69'
-const BRONZE = '#8B6B14'
-const PARCHMENT = '#F0E0B0'
-const DARK   = '#0C0905'
+const THEME = {
+  surface: '#0C0905',
+  surfaceRaised: '#15100A',
+  text: '#F5EED9',
+  textMuted: 'rgba(245,238,217,0.62)',
+  textFaint: 'rgba(245,238,217,0.44)',
+  ink: '#2A1404',
+  inkMuted: 'rgba(42,20,4,0.70)',
+  accent: '#D69B45',
+  accentRgb: '214,155,69',
+  bronze: '#8B6B14',
+  parchment: '#F0E0B0',
+  parchmentRgb: '240,224,176',
+}
 
 const THEORY_TINTS = {
-  'god-sin':       { from: 'rgba(80,40,8,0.92)',  to: 'rgba(12,9,5,0.98)' },
-  'four-humours':  { from: 'rgba(70,20,10,0.92)', to: 'rgba(12,9,5,0.98)' },
-  'astrology':     { from: 'rgba(20,20,55,0.92)', to: 'rgba(12,9,5,0.98)' },
+  'god-sin': { from: 'rgba(80,40,8,0.88)', to: 'rgba(12,9,5,0.98)' },
+  'four-humours': { from: 'rgba(70,20,10,0.88)', to: 'rgba(12,9,5,0.98)' },
+  astrology: { from: 'rgba(20,20,55,0.88)', to: 'rgba(12,9,5,0.98)' },
+}
+
+const CSS = `
+  @keyframes mtp-fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes mtp-ink {
+    from { opacity: 0; transform: translateY(6px); filter: blur(2px); }
+    to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  .mtp-input { outline: none; background: transparent; }
+  .mtp-input::placeholder { color: rgba(60,35,8,0.38); font-family: inherit; }
+`
+
+function sentenceCase(value = '') {
+  const cleaned = String(value).replace(/\s+/g, ' ').trim().toLowerCase()
+  return cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1) : cleaned
+}
+
+function firstSentence(value = '') {
+  const [first] = String(value).split('.')
+  return first ? `${first}.` : value
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -71,29 +103,27 @@ const THEORY_TINTS = {
 export default function MedicalTheoryPrescription({ screen, selectedHealer, onComplete }) {
   const theories = screen.theories || []
 
-  const [phase, setPhase]           = useState('select')
-  const [activeId, setActiveId]     = useState(null)
+  const [phase, setPhase] = useState('select')
+  const [activeId, setActiveId] = useState(null)
   const [completedIds, setCompletedIds] = useState([])
-  const [inputs, setInputs]         = useState({})
-  const [results, setResults]       = useState({}) // { id: { matched, missing } }
+  const [inputs, setInputs] = useState({})
+  const [results, setResults] = useState({})
   const [revealCount, setRevealCount] = useState(0)
-  const [finalPhase, setFinalPhase] = useState(0) // 0-3 branch animations
-  const [pressed, setPressed]       = useState(false)
+  const [finalPhase, setFinalPhase] = useState(0)
+  const [pressed, setPressed] = useState(false)
 
   const activeTheory = theories.find(t => t.id === activeId)
-  const allComplete  = completedIds.length === theories.length
-  const tint         = activeId ? (THEORY_TINTS[activeId] || THEORY_TINTS['god-sin']) : THEORY_TINTS['god-sin']
+  const tint = activeId ? (THEORY_TINTS[activeId] || THEORY_TINTS['god-sin']) : THEORY_TINTS['god-sin']
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  // Init inputs for each theory
   useEffect(() => {
     const init = {}
     for (const t of theories) {
       init[t.id] = Array(t.acceptedAnswers.length).fill('')
     }
     setInputs(init)
-  }, [])
+  }, [theories])
 
-  // Drive the ink-reveal animation one item at a time
   useEffect(() => {
     if (phase !== 'reveal') return
     const missing = results[activeId]?.missing || []
@@ -102,7 +132,6 @@ export default function MedicalTheoryPrescription({ screen, selectedHealer, onCo
     return () => clearTimeout(timer)
   }, [phase, revealCount, activeId, results])
 
-  // Drive branch glow on final screen
   useEffect(() => {
     if (phase !== 'final') return
     if (finalPhase >= theories.length) return
@@ -115,10 +144,6 @@ export default function MedicalTheoryPrescription({ screen, selectedHealer, onCo
     setPhase('explain')
   }
 
-  function startPrescription() {
-    setPhase('input')
-  }
-
   function checkPrescription() {
     const lines = inputs[activeId] || []
     const res = checkAnswers(lines, activeTheory.acceptedAnswers)
@@ -128,8 +153,7 @@ export default function MedicalTheoryPrescription({ screen, selectedHealer, onCo
   }
 
   function finishReveal() {
-    const next = [...completedIds]
-    if (!next.includes(activeId)) next.push(activeId)
+    const next = completedIds.includes(activeId) ? completedIds : [...completedIds, activeId]
     setCompletedIds(next)
     if (next.length === theories.length) {
       setPhase('final')
@@ -147,12 +171,6 @@ export default function MedicalTheoryPrescription({ screen, selectedHealer, onCo
     }))
   }
 
-  const prefersReducedMotion =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-  // ── Render phases ─────────────────────────────────────────────────────────
-
   if (phase === 'select') return (
     <SelectPhase
       theories={theories}
@@ -168,7 +186,7 @@ export default function MedicalTheoryPrescription({ screen, selectedHealer, onCo
     <ExplainPhase
       theory={activeTheory}
       tint={tint}
-      onStart={startPrescription}
+      onStart={() => setPhase('input')}
       pressed={pressed}
       setPressed={setPressed}
       prefersReducedMotion={prefersReducedMotion}
@@ -178,7 +196,6 @@ export default function MedicalTheoryPrescription({ screen, selectedHealer, onCo
   if (phase === 'input') return (
     <InputPhase
       theory={activeTheory}
-      tint={tint}
       inputs={inputs[activeId] || []}
       onChange={(idx, val) => updateInput(activeId, idx, val)}
       onCheck={checkPrescription}
@@ -191,12 +208,9 @@ export default function MedicalTheoryPrescription({ screen, selectedHealer, onCo
   if (phase === 'reveal') return (
     <RevealPhase
       theory={activeTheory}
-      tint={tint}
-      inputs={inputs[activeId] || []}
       result={results[activeId] || { matched: [], missing: [] }}
       revealCount={revealCount}
-      allComplete={completedIds.length + 1 === theories.length &&
-        !completedIds.includes(activeId)}
+      allComplete={completedIds.length + 1 === theories.length && !completedIds.includes(activeId)}
       onContinue={finishReveal}
       pressed={pressed}
       setPressed={setPressed}
@@ -211,37 +225,12 @@ export default function MedicalTheoryPrescription({ screen, selectedHealer, onCo
       finalPhase={finalPhase}
       screen={screen}
       onComplete={onComplete}
-      pressed={pressed}
-      setPressed={setPressed}
       prefersReducedMotion={prefersReducedMotion}
     />
   )
 
   return null
 }
-
-// ── Shared styles ─────────────────────────────────────────────────────────────
-
-const CSS = `
-  @keyframes mtp-fade-up {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes mtp-ink {
-    from { opacity: 0; transform: translateY(6px); filter: blur(2px); }
-    to   { opacity: 1; transform: translateY(0); filter: blur(0); }
-  }
-  @keyframes mtp-branch {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes mtp-scroll-in {
-    from { opacity: 0; transform: translateY(20px) scale(0.98); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  .mtp-input { outline: none; background: transparent; }
-  .mtp-input::placeholder { color: rgba(60,35,8,0.35); font-style: italic; font-family: 'Caveat', cursive; font-size: 20px; }
-`
 
 // ── Phase: Select ─────────────────────────────────────────────────────────────
 
@@ -254,26 +243,23 @@ function SelectPhase({ theories, completedIds, onSelect, screen, selectedHealer,
   return (
     <div style={{
       minHeight: '100dvh',
-      background: DARK,
+      background: THEME.surface,
       display: 'flex',
       flexDirection: 'column',
       overflowY: 'auto',
     }}>
       <style>{CSS}</style>
 
-      {/* Hero */}
-      <div style={{
+      <section style={{
         position: 'relative',
-        paddingTop: SPACING.section,
-        paddingBottom: SPACING.separation,
-        paddingLeft: SPACING.standard,
-        paddingRight: SPACING.standard,
-        background: `linear-gradient(160deg, rgba(${GOLD_RGB},0.08) 0%, rgba(0,0,0,0) 60%)`,
-        borderBottom: `1px solid rgba(${GOLD_RGB},0.10)`,
+        minHeight: 470,
+        padding: `${SPACING.section}px ${SPACING.standard}px ${SPACING.separation}px`,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        borderBottom: `1px solid rgba(${THEME.accentRgb},0.10)`,
         overflow: 'hidden',
       }}>
-
-        {/* Selected healer — atmospheric figure on the right */}
         {selectedHealer?.image && (
           <>
             <img
@@ -282,17 +268,23 @@ function SelectPhase({ theories, completedIds, onSelect, screen, selectedHealer,
               aria-hidden="true"
               style={{
                 position: 'absolute',
-                right: 0, top: 0,
-                height: '100%', width: '55%',
-                objectFit: 'cover', objectPosition: 'center top',
-                opacity: 0.38,
-                filter: 'grayscale(20%) brightness(0.65)',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center top',
+                opacity: 0.54,
+                filter: 'brightness(0.72) saturate(0.84)',
                 pointerEvents: 'none',
               }}
             />
             <div style={{
-              position: 'absolute', inset: 0,
-              background: 'linear-gradient(90deg, rgba(12,9,5,1) 0%, rgba(12,9,5,0.92) 40%, rgba(12,9,5,0.50) 70%, rgba(12,9,5,0.10) 100%)',
+              position: 'absolute',
+              inset: 0,
+              background: [
+                'linear-gradient(90deg, rgba(12,9,5,0.98) 0%, rgba(12,9,5,0.78) 44%, rgba(12,9,5,0.30) 100%)',
+                'linear-gradient(180deg, rgba(12,9,5,0.22) 0%, rgba(12,9,5,0.50) 48%, rgba(12,9,5,1) 100%)',
+              ].join(','),
               pointerEvents: 'none',
             }} />
           </>
@@ -300,44 +292,31 @@ function SelectPhase({ theories, completedIds, onSelect, screen, selectedHealer,
 
         <div style={{
           position: 'relative',
-          ...TYPE.metadata,
-          textTransform: 'uppercase',
-          color: `rgba(${GOLD_RGB},0.55)`,
-          marginBottom: SPACING.micro,
+          maxWidth: 330,
           animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
         }}>
-          {completedIds.length === 0 ? 'Choose a cause' : 'Explore another belief'}
+          <h1 style={{
+            ...TYPE.screenHeading,
+            color: THEME.text,
+            margin: 0,
+          }}>
+            {heading}
+          </h1>
+          <p style={{
+            ...TYPE.bodyLarge,
+            color: THEME.textMuted,
+            margin: `${SPACING.compact}px 0 0`,
+          }}>
+            {screen.theories?.[0]?.introText || 'Different people had different explanations.'}
+          </p>
         </div>
+      </section>
 
-        <div style={{
-          position: 'relative',
-          ...TYPE.sectionTitle,
-          color: '#F5EED9',
-          marginBottom: SPACING.compact,
-          maxWidth: 260,
-          animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} 60ms both`,
-        }}>
-          {heading}
-        </div>
-
-        <div style={{
-          position: 'relative',
-          ...TYPE.bodySmall,
-          color: `rgba(245,238,217,0.55)`,
-          animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} 120ms both`,
-        }}>
-          {screen.theories?.[0]?.introText || 'Different people had different explanations.'}
-        </div>
-      </div>
-
-      {/* Theory cards */}
-      <div style={{
-        flex: 1,
-        padding: `${SPACING.compact}px ${SPACING.standard}px`,
+      <section style={{
+        padding: `${SPACING.compact}px ${SPACING.standard}px ${SPACING.separation}px`,
         display: 'flex',
         flexDirection: 'column',
         gap: SPACING.compact,
-        paddingBottom: SPACING.separation,
       }}>
         {theories.map((theory, i) => {
           const done = completedIds.includes(theory.id)
@@ -352,26 +331,7 @@ function SelectPhase({ theories, completedIds, onSelect, screen, selectedHealer,
             />
           )
         })}
-      </div>
-
-      {/* Bottom hint */}
-      <div style={{
-        textAlign: 'center',
-        paddingBottom: SPACING.separation,
-        paddingLeft: SPACING.standard,
-        paddingRight: SPACING.standard,
-      }}>
-        <div style={{
-          ...TYPE.metadata,
-          color: `rgba(${GOLD_RGB},0.35)`,
-          fontStyle: 'italic',
-        }}>
-          {completedIds.length === 0
-            ? 'There was no single correct answer — people believed many different things.'
-            : `${completedIds.length} of ${theories.length} complete — different causes led to different treatments.`
-          }
-        </div>
-      </div>
+      </section>
     </div>
   )
 }
@@ -387,85 +347,81 @@ function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
       onPointerLeave={() => setPressed(false)}
       style={{
         position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: 8,
-        background: done
-          ? `rgba(${GOLD_RGB},0.04)`
-          : `rgba(${GOLD_RGB},0.06)`,
-        border: `1px solid rgba(${GOLD_RGB},${done ? '0.28' : '0.16'})`,
-        borderRadius: RADII.medium,
-        padding: `${SPACING.compact}px`,
-        cursor: done ? 'default' : 'pointer',
-        textAlign: 'left',
+        display: 'grid',
+        gridTemplateColumns: '88px 1fr 34px',
+        alignItems: 'center',
+        gap: SPACING.compact,
         width: '100%',
-        transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-        animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} ${delay}ms both`,
-        boxShadow: done ? `inset 0 1px 0 rgba(${GOLD_RGB},0.12)` : 'none',
+        minHeight: 142,
+        padding: SPACING.compact,
+        textAlign: 'left',
+        cursor: done ? 'default' : 'pointer',
+        border: `1px solid rgba(${THEME.accentRgb},${done ? '0.24' : '0.15'})`,
+        borderRadius: RADII.large || RADII.medium,
+        background: `linear-gradient(145deg, rgba(${THEME.parchmentRgb},0.055), rgba(${THEME.accentRgb},0.025))`,
+        boxShadow: done ? `inset 0 1px 0 rgba(${THEME.accentRgb},0.10)` : '0 18px 36px rgba(0,0,0,0.24)',
         opacity: done ? 0.72 : 1,
-        transform: pressed ? 'scale(0.985)' : 'scale(1)',
         overflow: 'hidden',
+        transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+        transform: pressed ? 'scale(0.985)' : 'scale(1)',
+        animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} ${delay}ms both`,
       }}
     >
-      {/* State indicator — top-right */}
-      <div style={{
-        position: 'absolute',
-        top: SPACING.compact,
-        right: SPACING.compact,
-        width: 26,
-        height: 26,
+      <span style={{
+        width: 70,
+        height: 70,
         borderRadius: '50%',
-        border: `1.5px solid rgba(${GOLD_RGB},${done ? '0.55' : '0.22'})`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: done ? `rgba(${GOLD_RGB},0.12)` : 'transparent',
-        transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+        background: `rgba(${THEME.parchmentRgb},0.90)`,
+        border: `1px solid rgba(${THEME.accentRgb},0.18)`,
+        boxShadow: `0 0 0 1px rgba(${THEME.accentRgb},0.08), inset 0 1px 0 rgba(255,255,255,0.22)`,
       }}>
-        {done ? (
-          <span style={{ color: GOLD, fontSize: 13, lineHeight: 1 }}>✓</span>
-        ) : (
-          <span style={{ color: `rgba(${GOLD_RGB},0.35)`, fontSize: 11 }}>›</span>
-        )}
-      </div>
+        <img
+          src={theory.icon}
+          alt=""
+          aria-hidden="true"
+          style={{
+            width: 46,
+            height: 46,
+            objectFit: 'contain',
+            opacity: done ? 0.55 : 0.95,
+            filter: done ? 'grayscale(30%)' : 'grayscale(100%) contrast(1.2) brightness(0.12)',
+          }}
+          onError={e => { e.target.style.display = 'none' }}
+        />
+      </span>
 
-      {/* Icon — PNG floating directly on card background, no box */}
-      <img
-        src={theory.icon}
-        alt=""
-        style={{
-          width: 68,
-          height: 68,
-          objectFit: 'contain',
-          objectPosition: 'left center',
-          display: 'block',
-          opacity: done ? 0.55 : 1,
-          filter: done ? 'grayscale(30%)' : 'none',
-        }}
-        onError={e => { e.target.style.display = 'none' }}
-      />
+      <span style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <span style={{
+          ...TYPE.cardTitle,
+          color: done ? THEME.textFaint : THEME.text,
+        }}>
+          {sentenceCase(theory.shortLabel || theory.label)}
+        </span>
+        <span style={{
+          ...TYPE.bodySmall,
+          color: done ? THEME.textFaint : THEME.textMuted,
+          paddingRight: SPACING.micro,
+        }}>
+          {firstSentence(theory.explanation)}
+        </span>
+      </span>
 
-      {/* Label */}
-      <div style={{
-        ...TYPE.metadata,
-        textTransform: 'uppercase',
-        color: done ? `rgba(${GOLD_RGB},0.55)` : GOLD,
-        letterSpacing: '0.06em',
+      <span style={{
+        width: 30,
+        height: 30,
+        borderRadius: '50%',
+        border: `1px solid rgba(${THEME.accentRgb},${done ? '0.48' : '0.24'})`,
+        color: done ? THEME.accent : THEME.textMuted,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...TYPE.buttonText,
       }}>
-        {theory.shortLabel || theory.label}
-      </div>
-
-      {/* Short explanation */}
-      <div style={{
-        ...TYPE.bodySmall,
-        color: `rgba(245,238,217,${done ? '0.45' : '0.70'})`,
-        lineHeight: 1.4,
-        fontSize: 14,
-        paddingRight: 32,
-      }}>
-        {theory.explanation.split('.')[0] + '.'}
-      </div>
+        {done ? '✓' : '›'}
+      </span>
     </button>
   )
 }
@@ -481,9 +437,9 @@ function ExplainPhase({ theory, tint, onStart, pressed, setPressed, prefersReduc
       flexDirection: 'column',
       justifyContent: 'flex-end',
       overflow: 'hidden',
-      background: DARK,
+      background: THEME.surface,
     }}>
-      {/* Background icon image */}
+      <style>{CSS}</style>
       <div style={{
         position: 'absolute',
         inset: 0,
@@ -492,15 +448,12 @@ function ExplainPhase({ theory, tint, onStart, pressed, setPressed, prefersReduc
         backgroundPosition: 'center',
         filter: 'brightness(0.35) saturate(0.7)',
       }} />
-
-      {/* Gradient overlay */}
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: `linear-gradient(to bottom, rgba(12,9,5,0.4) 0%, rgba(12,9,5,0.6) 40%, rgba(12,9,5,0.92) 70%, rgba(12,9,5,0.99) 100%)`,
+        background: `linear-gradient(to bottom, ${tint.from} 0%, rgba(12,9,5,0.72) 44%, ${tint.to} 100%)`,
       }} />
 
-      {/* Content */}
       <div style={{
         position: 'relative',
         padding: `${SPACING.standard}px`,
@@ -509,53 +462,28 @@ function ExplainPhase({ theory, tint, onStart, pressed, setPressed, prefersReduc
         flexDirection: 'column',
         gap: SPACING.compact,
       }}>
-
-        {/* Icon + label */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: SPACING.compact,
-          marginBottom: SPACING.compact,
-          animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-        }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.compact }}>
           <div style={{
             width: 56,
             height: 56,
-            borderRadius: RADII.small,
+            borderRadius: '50%',
             overflow: 'hidden',
-            border: `1px solid rgba(${GOLD_RGB},0.35)`,
+            border: `1px solid rgba(${THEME.accentRgb},0.35)`,
             flexShrink: 0,
-            boxShadow: `0 0 24px rgba(${GOLD_RGB},0.18)`,
+            background: `rgba(${THEME.parchmentRgb},0.88)`,
           }}>
-            <img src={theory.icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={theory.icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 10, boxSizing: 'border-box' }} />
           </div>
-          <div style={{
-            ...TYPE.metadata,
-            textTransform: 'uppercase',
-            color: GOLD,
-            letterSpacing: '0.08em',
-          }}>
-            {theory.label}
+          <div style={{ ...TYPE.cardTitle, color: THEME.text }}>
+            {sentenceCase(theory.label)}
           </div>
         </div>
 
-        {/* Context */}
-        <div style={{
-          ...TYPE.metadata,
-          textTransform: 'uppercase',
-          color: `rgba(${GOLD_RGB},0.50)`,
-          animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} 60ms both`,
-        }}>
+        <div style={{ ...TYPE.bodySmall, color: THEME.textFaint }}>
           {theory.scenePrompt}
         </div>
 
-        {/* Explanation */}
-        <div style={{
-          ...TYPE.body,
-          color: '#F0E8D4',
-          lineHeight: 1.6,
-          animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} 120ms both`,
-        }}>
+        <div style={{ ...TYPE.bodyLarge, color: THEME.text, lineHeight: 1.6 }}>
           {theory.explanation}
         </div>
 
@@ -564,7 +492,6 @@ function ExplainPhase({ theory, tint, onStart, pressed, setPressed, prefersReduc
           onClick={onStart}
           pressed={pressed}
           setPressed={setPressed}
-          delay={180}
           prefersReducedMotion={prefersReducedMotion}
         />
       </div>
@@ -574,7 +501,7 @@ function ExplainPhase({ theory, tint, onStart, pressed, setPressed, prefersReduc
 
 // ── Phase: Input ──────────────────────────────────────────────────────────────
 
-function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPressed, prefersReducedMotion }) {
+function InputPhase({ theory, inputs, onChange, onCheck, pressed, setPressed, prefersReducedMotion }) {
   const inputRefs = useRef([])
   const anyFilled = inputs.some(v => v.trim().length > 0)
 
@@ -583,11 +510,10 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
       minHeight: '100dvh',
       display: 'flex',
       flexDirection: 'column',
-      background: DARK,
+      background: THEME.surface,
       overflow: 'hidden',
     }}>
-
-      {/* ── Dark top section — prompt above the parchment ── */}
+      <style>{CSS}</style>
       <div style={{
         flexShrink: 0,
         paddingTop: `calc(env(safe-area-inset-top, 0px) + ${SPACING.section}px)`,
@@ -596,35 +522,13 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
         paddingBottom: SPACING.compact,
         animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
       }}>
-        <div style={{
-          ...TYPE.cardTitle,
-          color: '#F5EED9',
-        }}>
+        <div style={{ ...TYPE.sectionHeading, color: THEME.text }}>
           {theory.prescriptionPrompt}
         </div>
       </div>
 
-      {/* ── Parchment — fills the rest ── */}
-      <div style={{
-        flex: 1,
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}>
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: 'url(/figures/history/medicine/medieval/parchment-scroll.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }} />
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'rgba(240,215,150,0.30)',
-        }} />
-
+      <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <ParchmentBackground />
         <div style={{
           position: 'relative',
           flex: 1,
@@ -634,8 +538,6 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
           padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.separation}px`,
           gap: SPACING.compact,
         }}>
-
-          {/* Inputs directly on parchment */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {theory.acceptedAnswers.map((ans, i) => (
               <div key={ans.canonical} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
@@ -643,7 +545,9 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
                   ...TYPE.metadata,
                   color: 'rgba(58,32,8,0.45)',
                   fontWeight: 600,
-                  width: 20, flexShrink: 0, textAlign: 'right',
+                  width: 20,
+                  flexShrink: 0,
+                  textAlign: 'right',
                 }}>{i + 1}.</span>
                 <input
                   ref={el => { if (inputRefs?.current) inputRefs.current[i] = el }}
@@ -661,15 +565,15 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
                     flex: 1,
                     border: 'none',
                     borderBottom: '1.5px solid rgba(58,32,8,0.30)',
-                    padding: '4px 4px 8px',
-                    fontFamily: "'Caveat', cursive",
-                    fontSize: 22,
-                    fontWeight: 500,
-                    color: '#2A1404',
+                    padding: '6px 4px 8px',
+                    fontFamily: TYPE.bodyText.fontFamily,
+                    fontSize: TYPE.bodyText.fontSize,
+                    fontWeight: TYPE.bodyText.fontWeight,
+                    color: THEME.ink,
                     background: 'transparent',
                     width: '100%',
                     boxSizing: 'border-box',
-                    caretColor: '#8B4A10',
+                    caretColor: THEME.bronze,
                   }}
                 />
               </div>
@@ -692,42 +596,20 @@ function InputPhase({ theory, tint, inputs, onChange, onCheck, pressed, setPress
 
 // ── Phase: Reveal ─────────────────────────────────────────────────────────────
 
-function RevealPhase({ theory, tint, inputs, result, revealCount, allComplete, onContinue, pressed, setPressed, prefersReducedMotion }) {
+function RevealPhase({ theory, result, revealCount, allComplete, onContinue, pressed, setPressed, prefersReducedMotion }) {
   const allRevealed = revealCount >= (result.missing?.length || 0)
   const matched = result?.matched || []
-  const missing  = result?.missing  || []
-
-  function buildRevealLines() {
-    return theory.acceptedAnswers.map(ans => {
-      const matchEntry = matched.find(m => m.canonical === ans.canonical)
-      const missingIdx = missing.indexOf(ans.canonical)
-      return { canonical: ans.canonical, matchEntry, missingIdx }
-    })
-  }
-  const lines = buildRevealLines()
+  const missing = result?.missing || []
+  const lines = theory.acceptedAnswers.map(ans => {
+    const matchEntry = matched.find(m => m.canonical === ans.canonical)
+    const missingIdx = missing.indexOf(ans.canonical)
+    return { canonical: ans.canonical, matchEntry, missingIdx }
+  })
 
   return (
-    <div style={{
-      minHeight: '100dvh',
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden',
-    }}>
-      {/* Full-page parchment */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        backgroundImage: 'url(/figures/history/medicine/medieval/parchment-scroll.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }} />
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'rgba(240,215,150,0.30)',
-      }} />
-
+    <div style={{ minHeight: '100dvh', position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <style>{CSS}</style>
+      <ParchmentBackground />
       <div style={{
         position: 'relative',
         flex: 1,
@@ -737,29 +619,30 @@ function RevealPhase({ theory, tint, inputs, result, revealCount, allComplete, o
         padding: `${SPACING.section}px ${SPACING.standard}px ${SPACING.separation}px`,
         gap: SPACING.compact,
       }}>
-
-        {/* Theory label */}
         <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro, marginBottom: SPACING.micro }}>
           <div style={{
-            width: 32, height: 32,
-            borderRadius: RADII.small, overflow: 'hidden',
-            border: `1px solid rgba(58,32,8,0.28)`, flexShrink: 0,
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: '1px solid rgba(58,32,8,0.28)',
+            background: `rgba(${THEME.parchmentRgb},0.50)`,
+            flexShrink: 0,
           }}>
-            <img src={theory.icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={theory.icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 7, boxSizing: 'border-box' }} />
           </div>
-          <div style={{ ...TYPE.metadata, textTransform: 'uppercase', color: BRONZE, letterSpacing: '0.06em' }}>
-            {theory.label}
+          <div style={{ ...TYPE.cardTitle, color: THEME.ink }}>
+            {sentenceCase(theory.label)}
           </div>
         </div>
 
-        <div style={{ ...TYPE.cardTitle, color: '#2A1404', marginBottom: SPACING.micro }}>
+        <div style={{ ...TYPE.sectionHeading, color: THEME.ink, marginBottom: SPACING.micro }}>
           Here are the common treatments linked to this belief.
         </div>
 
-        {/* Revealed lines on parchment */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {lines.map((line, i) => {
-            const isMatched  = !!line.matchEntry
+            const isMatched = !!line.matchEntry
             const isRevealed = !isMatched && line.missingIdx >= 0 && line.missingIdx < revealCount
             const text = isMatched ? line.matchEntry.userLine : isRevealed ? line.canonical : ''
 
@@ -767,17 +650,20 @@ function RevealPhase({ theory, tint, inputs, result, revealCount, allComplete, o
               <div key={line.canonical} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
                 <span style={{
                   ...TYPE.metadata,
-                  color: 'rgba(58,32,8,0.45)', fontWeight: 600,
-                  width: 20, flexShrink: 0, textAlign: 'right',
+                  color: 'rgba(58,32,8,0.45)',
+                  fontWeight: 600,
+                  width: 20,
+                  flexShrink: 0,
+                  textAlign: 'right',
                 }}>{i + 1}.</span>
                 <span style={{
                   flex: 1,
-                  fontFamily: "'Caveat', cursive",
-                  fontSize: 22,
-                  fontWeight: isMatched ? 600 : 500,
-                  color: isMatched ? '#2A1404' : isRevealed ? '#4A2800' : 'transparent',
+                  fontFamily: TYPE.bodyText.fontFamily,
+                  fontSize: TYPE.bodyText.fontSize,
+                  fontWeight: isMatched ? 600 : TYPE.bodyText.fontWeight,
+                  color: isMatched ? THEME.ink : isRevealed ? '#4A2800' : 'transparent',
                   borderBottom: '1.5px solid rgba(58,32,8,0.20)',
-                  padding: '4px 4px 8px',
+                  padding: '6px 4px 8px',
                   minHeight: 38,
                   animation: isRevealed && !prefersReducedMotion
                     ? `mtp-ink ${MOTION.duration.slow} ${MOTION.easing.standard} both`
@@ -787,8 +673,9 @@ function RevealPhase({ theory, tint, inputs, result, revealCount, allComplete, o
                   {text}
                 </span>
                 <span style={{
-                  flexShrink: 0, fontSize: 14,
-                  color: isMatched ? '#5C8A3A' : isRevealed ? '#8B6914' : 'transparent',
+                  flexShrink: 0,
+                  fontSize: 14,
+                  color: isMatched ? '#5C8A3A' : isRevealed ? THEME.bronze : 'transparent',
                 }}>
                   {isMatched ? '✓' : isRevealed ? '✦' : ''}
                 </span>
@@ -797,13 +684,12 @@ function RevealPhase({ theory, tint, inputs, result, revealCount, allComplete, o
           })}
         </div>
 
-        {/* Explanation */}
         {allRevealed && (
           <div style={{
             ...TYPE.bodySmall,
-            color: 'rgba(42,20,4,0.70)',
+            color: THEME.inkMuted,
             lineHeight: 1.6,
-            borderLeft: `2px solid rgba(58,32,8,0.28)`,
+            borderLeft: '2px solid rgba(58,32,8,0.28)',
             paddingLeft: SPACING.compact,
             animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
           }}>
@@ -825,153 +711,13 @@ function RevealPhase({ theory, tint, inputs, result, revealCount, allComplete, o
   )
 }
 
-// ── Prescription scroll ───────────────────────────────────────────────────────
-
-function PrescriptionScroll({ theory, inputs, onChange, inputRefs, phase, result, revealCount, prefersReducedMotion }) {
-  const answers = theory.acceptedAnswers
-  const matched = result?.matched || []
-  const missing  = result?.missing  || []
-
-  // Build display lines from matched + missing
-  function buildRevealLines() {
-    return answers.map((ans, i) => {
-      const matchEntry = matched.find(m => m.canonical === ans.canonical)
-      const missingIdx = missing.indexOf(ans.canonical)
-      return { canonical: ans.canonical, matchEntry, missingIdx }
-    })
-  }
-
-  const lines = phase === 'reveal' ? buildRevealLines() : null
-
-  return (
-    <div style={{
-      position: 'relative',
-      borderRadius: RADII.medium,
-      overflow: 'hidden',
-      animation: prefersReducedMotion ? 'none' : `mtp-scroll-in ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-      boxShadow: '0 8px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,220,120,0.18)',
-    }}>
-      {/* Parchment background */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        backgroundImage: 'url(/figures/history/medicine/medieval/parchment-scroll.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }} />
-      {/* Warm overlay to ensure legibility */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'rgba(240,220,160,0.35)',
-      }} />
-
-      {/* Content on scroll */}
-      <div style={{
-        position: 'relative',
-        padding: `${SPACING.standard}px`,
-      }}>
-        {/* Lines */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {phase === 'input' && answers.map((ans, i) => (
-            <div key={ans.canonical} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
-              <span style={{
-                ...TYPE.metadata,
-                color: 'rgba(58,32,8,0.45)',
-                fontWeight: 600,
-                width: 20,
-                flexShrink: 0,
-                textAlign: 'right',
-              }}>
-                {i + 1}.
-              </span>
-              <input
-                ref={el => { if (inputRefs?.current) inputRefs.current[i] = el }}
-                className="mtp-input"
-                value={inputs[i] || ''}
-                onChange={e => onChange?.(i, e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && inputRefs?.current?.[i + 1]) {
-                    inputRefs.current[i + 1].focus()
-                  }
-                }}
-                aria-label={`Treatment ${i + 1}`}
-                placeholder="Write a treatment…"
-                style={{
-                  flex: 1,
-                  border: 'none',
-                  borderBottom: '1.5px solid rgba(58,32,8,0.25)',
-                  padding: '6px 4px 8px',
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  fontSize: 16,
-                  fontWeight: 400,
-                  color: '#2A1404',
-                  width: '100%',
-                  boxSizing: 'border-box',
-                  caretColor: '#8B4A10',
-                }}
-              />
-            </div>
-          ))}
-
-          {phase === 'reveal' && lines?.map((line, i) => {
-            const isMatched = !!line.matchEntry
-            const isRevealed = !isMatched && line.missingIdx >= 0 && line.missingIdx < revealCount
-
-            return (
-              <div key={line.canonical} style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
-                <span style={{
-                  ...TYPE.metadata,
-                  color: 'rgba(58,32,8,0.45)',
-                  fontWeight: 600,
-                  width: 20,
-                  flexShrink: 0,
-                  textAlign: 'right',
-                }}>
-                  {i + 1}.
-                </span>
-                <span style={{
-                  flex: 1,
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  fontSize: 16,
-                  fontWeight: isMatched ? 500 : 400,
-                  color: isMatched ? '#2A1404' : isRevealed ? '#4A2800' : 'transparent',
-                  borderBottom: '1.5px solid rgba(58,32,8,0.20)',
-                  padding: '6px 4px 8px',
-                  minHeight: 38,
-                  animation: isRevealed && !prefersReducedMotion
-                    ? `mtp-ink ${MOTION.duration.slow} ${MOTION.easing.standard} both`
-                    : 'none',
-                  display: 'block',
-                }}>
-                  {isMatched ? line.matchEntry.userLine : isRevealed ? line.canonical : ''}
-                </span>
-                <span style={{
-                  flexShrink: 0,
-                  fontSize: 14,
-                  color: isMatched ? '#5C8A3A' : isRevealed ? '#8B6914' : 'transparent',
-                  animation: (isMatched || isRevealed) && !prefersReducedMotion
-                    ? `mtp-fade-up ${MOTION.duration.standard} ${MOTION.easing.standard} both`
-                    : 'none',
-                }}>
-                  {isMatched ? '✓' : isRevealed ? '✦' : ''}
-                </span>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ── Phase: Final ──────────────────────────────────────────────────────────────
 
 function FinalPhase({ theories, results, finalPhase, screen, onComplete, prefersReducedMotion }) {
   return (
     <div style={{
       minHeight: '100dvh',
-      background: `linear-gradient(160deg, rgba(${GOLD_RGB},0.06) 0%, ${DARK} 50%)`,
+      background: `linear-gradient(160deg, rgba(${THEME.accentRgb},0.06) 0%, ${THEME.surface} 50%)`,
       display: 'flex',
       flexDirection: 'column',
       overflowY: 'auto',
@@ -979,38 +725,22 @@ function FinalPhase({ theories, results, finalPhase, screen, onComplete, prefers
     }}>
       <style>{CSS}</style>
 
-      {/* Header */}
-      <div style={{
+      <header style={{
         textAlign: 'center',
         marginBottom: SPACING.separation,
         animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
       }}>
-        <div style={{
-          ...TYPE.metadata,
-          textTransform: 'uppercase',
-          color: `rgba(${GOLD_RGB},0.55)`,
-          marginBottom: SPACING.micro,
-          letterSpacing: '0.1em',
-        }}>
-          The big picture
-        </div>
-        <div style={{
-          ...TYPE.sectionTitle,
-          color: '#F0E8D4',
-        }}>
+        <div style={{ ...TYPE.sectionHeading, color: THEME.text }}>
           Medieval medicine
         </div>
-      </div>
+        <p style={{ ...TYPE.bodySmall, color: THEME.textMuted, margin: `${SPACING.micro}px auto 0`, maxWidth: 320 }}>
+          Different causes created different treatments.
+        </p>
+      </header>
 
-      {/* Branches */}
-      <div style={{
-        display: 'flex',
-        gap: SPACING.compact,
-        marginBottom: SPACING.separation,
-      }}>
+      <div style={{ display: 'flex', gap: SPACING.compact, marginBottom: SPACING.separation }}>
         {theories.map((theory, i) => {
           const visible = i < finalPhase
-          const theoryResult = results[theory.id] || { matched: [], missing: [] }
           const allAnswers = theory.acceptedAnswers.map(a => a.canonical)
 
           return (
@@ -1023,45 +753,34 @@ function FinalPhase({ theories, results, finalPhase, screen, onComplete, prefers
                 transition: prefersReducedMotion ? 'none' : `opacity ${MOTION.duration.slow} ${MOTION.easing.standard}, transform ${MOTION.duration.slow} ${MOTION.easing.standard}`,
               }}
             >
-              {/* Icon */}
               <div style={{
                 width: 52,
                 height: 52,
-                borderRadius: RADII.small,
+                borderRadius: '50%',
                 overflow: 'hidden',
-                border: `1px solid rgba(${GOLD_RGB},0.35)`,
+                border: `1px solid rgba(${THEME.accentRgb},0.35)`,
                 margin: '0 auto 10px',
-                boxShadow: visible ? `0 0 24px rgba(${GOLD_RGB},0.15)` : 'none',
-                transition: `box-shadow ${MOTION.duration.slow} ${MOTION.easing.standard}`,
+                background: `rgba(${THEME.parchmentRgb},0.88)`,
+                boxShadow: visible ? `0 0 24px rgba(${THEME.accentRgb},0.15)` : 'none',
               }}>
-                <img src={theory.icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={theory.icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 8, boxSizing: 'border-box' }} />
               </div>
 
-              {/* Theory name */}
               <div style={{
                 ...TYPE.metadata,
-                textTransform: 'uppercase',
-                color: GOLD,
+                color: THEME.accent,
                 textAlign: 'center',
                 marginBottom: SPACING.micro,
-                fontSize: 11,
-                letterSpacing: '0.05em',
+                letterSpacing: '0.04em',
               }}>
-                {theory.shortLabel}
+                {sentenceCase(theory.shortLabel)}
               </div>
 
-              {/* Connector */}
-              <div style={{
-                width: 1,
-                height: 16,
-                background: `rgba(${GOLD_RGB},0.30)`,
-                margin: '0 auto 6px',
-              }} />
+              <div style={{ width: 1, height: 16, background: `rgba(${THEME.accentRgb},0.30)`, margin: '0 auto 6px' }} />
 
-              {/* Treatments */}
               <div style={{
-                background: `rgba(${GOLD_RGB},0.05)`,
-                border: `1px solid rgba(${GOLD_RGB},0.14)`,
+                background: `rgba(${THEME.accentRgb},0.05)`,
+                border: `1px solid rgba(${THEME.accentRgb},0.14)`,
                 borderRadius: RADII.small,
                 padding: '10px 10px',
                 display: 'flex',
@@ -1069,16 +788,7 @@ function FinalPhase({ theories, results, finalPhase, screen, onComplete, prefers
                 gap: 6,
               }}>
                 {allAnswers.map(ans => (
-                  <div
-                    key={ans}
-                    style={{
-                      fontFamily: TYPE.bodyText.fontFamily,
-                      fontSize: 12,
-                      fontWeight: 400,
-                      color: `rgba(245,238,217,0.75)`,
-                      lineHeight: 1.3,
-                    }}
-                  >
+                  <div key={ans} style={{ ...TYPE.captionText, color: 'rgba(245,238,217,0.75)' }}>
                     {ans}
                   </div>
                 ))}
@@ -1088,16 +798,15 @@ function FinalPhase({ theories, results, finalPhase, screen, onComplete, prefers
         })}
       </div>
 
-      {/* Final message */}
       {finalPhase >= theories.length && (
         <div style={{
           ...TYPE.bodySmall,
-          color: `rgba(245,238,217,0.60)`,
+          color: THEME.textMuted,
           lineHeight: 1.65,
           textAlign: 'center',
           marginBottom: SPACING.separation,
           padding: `${SPACING.compact}px ${SPACING.compact}px`,
-          borderTop: `1px solid rgba(${GOLD_RGB},0.12)`,
+          borderTop: `1px solid rgba(${THEME.accentRgb},0.12)`,
           paddingTop: SPACING.compact,
           animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
         }}>
@@ -1108,7 +817,7 @@ function FinalPhase({ theories, results, finalPhase, screen, onComplete, prefers
       {finalPhase >= theories.length && (
         <ContinueCTA
           onClick={onComplete}
-          accent={GOLD}
+          accent={THEME.accent}
           style={{
             marginTop: SPACING.micro,
             animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
@@ -1119,7 +828,26 @@ function FinalPhase({ theories, results, finalPhase, screen, onComplete, prefers
   )
 }
 
-// ── Shared CTA button ─────────────────────────────────────────────────────────
+// ── Shared parts ──────────────────────────────────────────────────────────────
+
+function ParchmentBackground() {
+  return (
+    <>
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        backgroundImage: 'url(/figures/history/medicine/medieval/parchment-scroll.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }} />
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: `rgba(${THEME.parchmentRgb},0.30)`,
+      }} />
+    </>
+  )
+}
 
 function CTA({ label, onClick, disabled = false, pressed, setPressed, delay = 0, prefersReducedMotion }) {
   return (
@@ -1135,17 +863,15 @@ function CTA({ label, onClick, disabled = false, pressed, setPressed, delay = 0,
         width: '100%',
         height: BUTTONS.continue.height,
         borderRadius: BUTTONS.continue.borderRadius,
-        background: disabled
-          ? `rgba(${GOLD_RGB},0.08)`
-          : GOLD,
-        border: disabled ? `1px solid rgba(${GOLD_RGB},0.18)` : 'none',
+        background: disabled ? `rgba(${THEME.accentRgb},0.08)` : THEME.accent,
+        border: disabled ? `1px solid rgba(${THEME.accentRgb},0.18)` : 'none',
         cursor: disabled ? 'default' : 'pointer',
         opacity: disabled ? 0.45 : 1,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: TYPE.bodyText.fontFamily,
-        fontSize: BUTTONS.continue.fontSize,
-        fontWeight: BUTTONS.continue.fontWeight,
-        color: disabled ? GOLD : '#0D0F14',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...TYPE.buttonText,
+        color: disabled ? THEME.accent : THEME.surface,
         transition: `transform ${BUTTONS.continue.transition}`,
         transform: pressed && !disabled ? `scale(${MOTION.scale.press})` : 'scale(1)',
         animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} ${delay}ms both`,
