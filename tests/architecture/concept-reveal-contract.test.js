@@ -14,7 +14,7 @@ describe('ConceptReveal contract', () => {
     expect(exists(contractPath)).toBe(true)
     const contract = read(contractPath)
     expect(contract).toContain('Eyebrow hidden by default')
-    expect(contract).toContain('Cinematic continue only')
+    expect(contract).toContain('Final cinematic continue only')
     expect(contract).toContain('No local progress dots')
   })
 
@@ -22,6 +22,21 @@ describe('ConceptReveal contract', () => {
     const src = read(componentPath)
     expect(src).toMatch(/import\s+CinematicContinueCTA\s+from\s+['"]\.\.\/core\/CinematicContinueCTA\.jsx['"]/) 
     expect(src).toContain('<CinematicContinueCTA')
+  })
+
+  it('shows the cinematic continue CTA only on the final step', () => {
+    const src = read(componentPath)
+    expect(src).toContain('{isLast && (')
+    expect(src).toContain('<CinematicContinueCTA')
+    expect(src).not.toContain('ctaVisible')
+  })
+
+  it('keeps background taps from leaving ConceptReveal for the next feature', () => {
+    const src = read(componentPath)
+    expect(src).toContain('function advanceStep()')
+    expect(src).toContain('if (isLast) return')
+    expect(src).toContain('function finishReveal()')
+    expect(src).toContain('onContinue?.()')
   })
 
   it('keeps eyebrows hidden unless explicitly requested', () => {
