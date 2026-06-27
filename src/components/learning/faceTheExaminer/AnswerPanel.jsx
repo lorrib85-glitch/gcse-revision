@@ -18,11 +18,11 @@ export default function AnswerPanel({
 
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.035)',
-      border: '1px solid rgba(255,255,255,0.055)',
-      borderRadius: 18,
-      padding: '15px 15px',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+      background: 'linear-gradient(180deg, rgba(245,238,225,0.055), rgba(8,9,13,0.22))',
+      border: '1px solid rgba(245,238,225,0.09)',
+      borderRadius: 22,
+      padding: '18px 18px',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05), 0 18px 50px rgba(0,0,0,0.28)',
     }}>
       {(isReveal || isImproving) && (
         <div style={{ ...TYPE.overlayEyebrow, color: 'rgba(255,255,255,0.36)', marginBottom: 12 }}>
@@ -31,26 +31,31 @@ export default function AnswerPanel({
       )}
 
       {segments.length === 0 ? (
-        <div style={{ display: 'grid', gap: 12 }}>
+        <div style={{ display: 'grid', gap: 18 }}>
           {answerSections.map((section, index) => (
-            <div
+            <section
               key={`${section.label}-${index}`}
               style={{
-                borderRadius: answerSections.length > 1 ? 14 : 0,
-                padding: answerSections.length > 1 ? '12px 12px' : 0,
-                background: answerSections.length > 1 ? 'rgba(0,0,0,0.16)' : 'transparent',
-                border: answerSections.length > 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                paddingLeft: answerSections.length > 1 ? 14 : 0,
+                borderLeft: answerSections.length > 1 ? `2px solid ${index === 0 ? `${accent}66` : 'rgba(245,238,225,0.12)'}` : 'none',
               }}
             >
               {answerSections.length > 1 && (
-                <div style={{ ...TYPE.overlayEyebrow, color: accent, marginBottom: 7 }}>
+                <div style={{
+                  ...TYPE.bodySmall,
+                  color: index === 0 ? `rgba(245,238,225,0.62)` : accent,
+                  fontWeight: 800,
+                  fontSize: 12,
+                  letterSpacing: '0.05em',
+                  marginBottom: 7,
+                }}>
                   {section.label}
                 </div>
               )}
-              <div style={{ ...TYPE.examAnswerText, color: 'rgba(245,238,225,0.88)' }}>
+              <div style={{ ...TYPE.examAnswerText, color: 'rgba(245,238,225,0.86)' }}>
                 {section.text}
               </div>
-            </div>
+            </section>
           ))}
         </div>
       ) : (
