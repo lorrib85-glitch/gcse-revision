@@ -9,6 +9,7 @@ export default function FaceTheExaminerMain(props) {
   const {
     module,
     examiner,
+    screenTitle,
     bg,
     accent,
     activeTab,
@@ -39,7 +40,7 @@ export default function FaceTheExaminerMain(props) {
   } = props
 
   const backerImage = IMAGES[module.subject] || IMAGES.History
-  const screenTitle = examiner.screenTitle || examiner.title || 'Mark the answer'
+  const title = screenTitle || 'Mark the answer'
   const showTabs = phase === 'reading' || phase === 'judging'
   const showAnswer = activeTab === 'answer' || !showTabs
   const showMarking = activeTab === 'marking' && showTabs
@@ -81,7 +82,7 @@ export default function FaceTheExaminerMain(props) {
         </div>
 
         <ScreenTextBlock
-          title={screenTitle}
+          title={title}
           accent={accent}
           inset
           style={{ background: 'rgba(255,255,255,0.025)', borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}
