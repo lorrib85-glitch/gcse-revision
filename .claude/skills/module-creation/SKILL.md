@@ -53,6 +53,21 @@ Canonical docs: <content-doc-path>  → ✓ found  /  ✗ missing
 If `src/modules.js` row is missing: halt here. Do not create any files.
 If content file already exists AND screenCount > 0: halt. Warn the user before overwriting built content — only proceed on explicit confirmation.
 
+**Legacy bundle check:** grep `src/modules/biology.js`, `src/modules/maths.js`,
+`src/modules/sociology.js`, `src/modules/chemistry.js`, and `src/modules/english.js`
+for the module ID. If found in any of these files, halt immediately and output:
+
+```
+HALT — module exists in legacy subject bundle
+──────────────────────────────────────────────
+<id> is currently defined inline in src/modules/<subject>.js.
+This skill scaffolds new isolated files only and does not handle
+migration out of legacy bundles. Run the separate migration workflow
+to extract this module before using /module-creation.
+```
+
+Do not create any files if the ID is found in a legacy bundle.
+
 ## Step 1 — Resolve paths
 
 ### Subject routing
@@ -60,7 +75,9 @@ If content file already exists AND screenCount > 0: halt. Warn the user before o
 | Subject | Content file location | Series index |
 |---------|----------------------|--------------|
 | History | `src/content/history/<series>/episodes/episode-NN-<slug>.js` | `src/content/history/<series>/index.js` |
-| All others | `src/content/<subject-lower>/<series-or-id>/<id>.js` | none (create if series index exists) |
+| All others | `src/content/<subject-lower>/<series>/episodes/<moduleId>.js` | `src/content/<subject-lower>/<series>/index.js` (created if missing) |
+
+All content files live under `src/content/` — never under `src/modules/`.
 
 **History series detection:** read `src/content/history/` to find the series
 directory. For Medicine Through Time: `medicine/`. If multiple series exist,
@@ -128,29 +145,56 @@ for medicine series). Fill all other fields verbatim from `src/modules.js`.
 Append to `src/content/moduleContentRegistry.js` inside `MODULE_CONTENT_LOADERS`,
 maintaining subject grouping comments. Insert in `number` order within the group.
 
-Entry format:
+Entry format — **dynamic import only, never static**:
 ```js
 '<id>': () => import('<relative-path-to-file>').then(m => m.default),
 ```
 
+The `() => import(...)` wrapper is mandatory. Do not add a top-level `import`
+statement for episode content anywhere — doing so would statically bundle the
+episode and defeat the per-module loading architecture.
+
 Use column alignment consistent with existing entries. If the entry already
 exists, skip silently — do not duplicate.
 
-## Step 4 — Update series index (History only)
+## Step 4 — Update or create series index
 
-For History episodes, update `src/content/history/<series>/index.js`:
+Applies to all subjects. The series index records which episodes exist in the
+series and in what order. It is separate from `moduleContentRegistry.js` (which
+serves the app loader) — the index serves tooling and future series-level features.
 
-**If episode is built** (screenCount > 0 or content file has screens): add
-an `import` at the top and push the imported name into the `MEDICINE_EPISODES`
-array in number order.
+### If the index does not exist — create it
 
-**If episode is unbuilt** (screenCount 0): add a placeholder comment in
-number order:
+Create `src/content/<subject-lower>/<series>/index.js` with dynamic imports only:
+
 ```js
-// episode-NN: <id> — unbuilt (screenCount 0), add import when built
+// <Series name> — episode registry
+// Dynamic imports only — importing this file does not load any episode content.
+// App loading is handled by src/content/moduleContentRegistry.js.
+
+export const EPISODE_LOADERS = {
+  '<id>': () => import('./episodes/<filename>.js').then(m => m.default),
+}
+
+export const EPISODE_IDS = Object.keys(EPISODE_LOADERS)
 ```
 
-Do not add an import for an episode whose screens array is empty.
+### If the index already exists with static imports (e.g. History medicine/index.js)
+
+Do **not** convert existing static entries — that is a separate migration task.
+Add the new episode using a dynamic loader appended after existing entries:
+
+```js
+// <id> — dynamic (new pattern)
+export const <CONST_NAME>_LOADER = () => import('./episodes/<filename>.js').then(m => m.default)
+```
+
+Or, if the episode is **unbuilt** (screenCount 0), add only a placeholder comment:
+```js
+// episode-NN: <id> — unbuilt (screenCount 0), add loader when built
+```
+
+Never add a static `import` statement for episode content in any index file.
 
 ## Step 5 — Output next-steps checklist
 
