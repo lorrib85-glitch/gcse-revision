@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
@@ -16,7 +16,6 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
 
   const [stepIdx,       setStepIdx]       = useState(0)
   const [animKey,       setAnimKey]       = useState(0)
-  const [ctaVisible,    setCtaVisible]    = useState(false)
   const [revealStarted, setRevealStarted] = useState(false)
 
   const touchRef = useRef({ x: null, y: null })
@@ -28,24 +27,23 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
     ? `url(${step.backgroundImage})`
     : `linear-gradient(160deg, ${palBg} 0%, #080C1A 100%)`
 
-  useEffect(() => {
-    setCtaVisible(false)
-    const t = setTimeout(() => setCtaVisible(true), 420)
-    return () => clearTimeout(t)
-  }, [stepIdx])
-
-  function advance() {
+  function markRevealStarted() {
     if (!revealStarted) {
       setRevealStarted(true)
       onRevealStart?.()
     }
-    setCtaVisible(false)
-    if (isLast) {
-      onContinue?.()
-    } else {
-      setStepIdx(i => i + 1)
-      setAnimKey(k => k + 1)
-    }
+  }
+
+  function advanceStep() {
+    markRevealStarted()
+    if (isLast) return
+    setStepIdx(i => i + 1)
+    setAnimKey(k => k + 1)
+  }
+
+  function finishReveal() {
+    markRevealStarted()
+    onContinue?.()
   }
 
   function retreat() {
@@ -66,12 +64,12 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
     const dy = e.changedTouches[0].clientY - y
     touchRef.current = { x: null, y: null }
     if (Math.abs(dx) < Math.abs(dy) * 1.4 || Math.abs(dx) < 44) return
-    dx < 0 ? advance() : retreat()
+    dx < 0 ? advanceStep() : retreat()
   }
 
   function onClick(e) {
     const rect = e.currentTarget.getBoundingClientRect()
-    ;(e.clientX - rect.left) / rect.width < 0.2 ? retreat() : advance()
+    ;(e.clientX - rect.left) / rect.width < 0.2 ? retreat() : advanceStep()
   }
 
   return (
@@ -164,10 +162,10 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
           )}
         </div>
 
-        {/* Cinematic progression CTA — no local dots or custom tap hints */}
-        {ctaVisible && (
+        {/* Final progression CTA — only appears to leave ConceptReveal */}
+        {isLast && (
           <CinematicContinueCTA
-            onClick={advance}
+            onClick={finishReveal}
             accent={accent}
             animation="crm-fade 520ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite"
           />
