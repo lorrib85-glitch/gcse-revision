@@ -3,10 +3,11 @@
 ## 1. Identity
 
 - **Chapter:** 18
+- **Module chapter:** Module 2, Chapter 8
 - **Title:** Risk, damage and runaway cells
 - **Subject:** AQA GCSE Combined Science Trilogy — Biology Paper 1
 - **Module:** Module 2 — Body systems under pressure
-- **Build status:** Not yet built
+- **Build status:** Canonical reviewed; not yet built
 - **Content file:** `18_Risk_damage_and_runaway_cells_Content.md`
 
 ---
@@ -15,28 +16,35 @@
 
 ### Part 1 — Situation + prediction
 
-- Hook: "Millions of people smoke and never get lung cancer. Millions of people who never smoked do get lung cancer. So does smoking cause cancer?" Cinematic — data appearing, correlation arrow, then a question mark.
-- Prediction: "Is a risk factor the same as a cause? True or false?"
-- You will learn: the definition of health; communicable vs non-communicable disease; lifestyle risk factors; what cancer is and how it spreads.
+- Hook: "A risk factor is not a crystal ball." Show two people exposed to the same risk factor with different outcomes, then a data graph appearing.
+- Prediction: "Does a correlation prove causation?"
+- You will learn: health, communicable vs non-communicable disease, risk factors, disease interactions, cancer and benign vs malignant tumours.
 
-**Components:** `CinematicRevealMoment`, `ChapterHookScreen`
+**Components:** `CinematicRevealMoment`, `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ---
 
 ### Part 2 — Investigate the evidence
 
-- GraphView: data showing correlation between lifestyle factors (smoking, obesity, inactivity) and non-communicable disease rates — students interpret the graph and identify what can/cannot be concluded
-- VisualNarrativeScreen: the story of a benign vs malignant tumour — side-by-side growth pattern with spread illustrated
+- `GraphView`: lifestyle factor vs disease rate. Students identify:
+  - what the graph shows
+  - what it does not prove
+  - what extra evidence would strengthen the conclusion
+- `VisualNarrative`: benign vs malignant tumour progression.
+- `TheoryCompareBlock`: communicable vs non-communicable disease examples.
 
-**Components:** `GraphView`, `VisualNarrativeScreen`
+**Components:** `GraphView`, `VisualNarrative`, `TheoryCompareBlock`
 
 ---
 
 ### Part 3 — Discover the science
 
-- ExplainReveal: health definition (WHO-style: physical + mental + social wellbeing — not just absence of disease); communicable vs non-communicable disease; risk factors
-- ConceptReveal: correlation vs causation — a risk factor increases probability but does not guarantee disease; need controlled studies to establish causation
-- TheoryCompareBlock: benign vs malignant tumours — growth rate, containment, spread (metastasis), treatability
+- `ExplainReveal`: health = physical and mental wellbeing, not just absence of disease.
+- `ExplainReveal`: disease classification and examples.
+- `ConceptReveal`: risk factor = increased probability, not certainty.
+- `ConceptReveal`: correlation vs causation and causal mechanism.
+- `TheoryCompareBlock`: benign vs malignant tumours.
+- `ConceptReveal`: disease interactions: immune defects, viruses and cancer, allergies, physical illness and mental health.
 
 **Components:** `ExplainReveal`, `ConceptReveal`, `TheoryCompareBlock`
 
@@ -44,28 +52,33 @@
 
 ### Part 4 — Check precision
 
-- MisconceptionCheck: "A risk factor causes the disease." → false (a risk factor increases probability; does not guarantee disease)
-- MisconceptionCheck: "Malignant means fatal." → false (malignant means invasive/able to spread; treatment can be successful, especially if caught early)
-- SpotTheError: "Correlation between obesity and type 2 diabetes proves that obesity causes type 2 diabetes." (Error: correlation does not prove causation; other factors could be involved; a causal link requires additional controlled evidence)
+- `MisconceptionCheck`: "A risk factor means you will definitely get the disease." → false.
+- `MisconceptionCheck`: "Correlation proves causation." → false.
+- `MisconceptionCheck`: "Benign tumours are always harmless." → false.
+- `SpotTheError`: "The graph proves alcohol causes liver disease." Correction: graph shows correlation; causation needs stronger evidence and consideration of other factors.
+- `SpotTheError`: "Malignant means the patient will definitely die." Correction: malignant means invasive/cancerous and able to spread.
 
-**Components:** `MisconceptionCheck` × 2, `SpotTheError`
+**Components:** `MisconceptionCheck`, `SpotTheError`
 
 ---
 
 ### Part 5 — Apply to a real GCSE-style task
 
-- GuidedExamResponse: "Explain the difference between a benign tumour and a malignant tumour. (3 marks)"
-- FillInTheBlanksBlock: "Cancer is caused by ___ cell division. A ___ tumour stays in one place, whereas a ___ tumour can spread to other parts of the body via the ___ or lymph."
-- GraphView: rate-of-disease graph — identify a risk factor from data; state what the graph does and does not prove
+- `GuidedExamResponse`: "Compare benign and malignant tumours. (4 marks)"
+- `GuidedExamResponse`: "Explain why a correlation does not always prove causation. (3 marks)"
+- `GraphView`: interpret a risk-factor graph.
+- `MatchingTask`: risk factor → linked disease.
+- `FillInTheBlanksBlock`: tumour vocabulary.
 
-**Components:** `GuidedExamResponse`, `FillInTheBlanksBlock`, `GraphView`
+**Components:** `GuidedExamResponse`, `GraphView`, `MatchingTask`, `FillInTheBlanksBlock`
 
 ---
 
 ### Part 6 — Face the examiner + debrief
 
-- FaceTheExaminer: student states "smoking causes lung cancer" without qualification; mark commentary explains why "increases the risk of" is more precise and scientifically accurate
-- QuickRecallScreen: define health; give one example of a non-communicable disease; what is a risk factor; state one difference between benign and malignant tumours; name one risk factor for cancer other than smoking?
+- `FaceTheExaminer`: student writes "smoking causes lung cancer" without qualifying risk-factor language. Mark commentary improves to "smoking increases the risk" unless the question asks for causal mechanism.
+- `FaceTheExaminer`: student compares tumours but misses spreading/secondary tumours. Mark commentary adds the missing high-value point.
+- Quick recall: health definition; risk factor; correlation vs causation; benign vs malignant; disease interaction example.
 
 **Components:** `FaceTheExaminer`, `QuickRecallScreen`
 
@@ -73,54 +86,65 @@
 
 ## 3. Active learning interactions
 
-- `GraphView` × 2: lifestyle factors vs disease rates; risk factor data interpretation
-- `VisualNarrativeScreen`: benign vs malignant tumour progression
-- `ExplainReveal`: health definition and disease classification
+- `GraphView`: lifestyle factors vs disease rates
+- `GraphView`: what can/cannot be concluded from data
+- `VisualNarrative`: benign vs malignant tumour progression
+- `TheoryCompareBlock`: communicable vs non-communicable disease
+- `ExplainReveal`: health definition
+- `ConceptReveal`: risk factor = probability
 - `ConceptReveal`: correlation vs causation
-- `TheoryCompareBlock`: benign vs malignant
-- `MisconceptionCheck` × 2: risk factor = cause; malignant = fatal
-- `SpotTheError`: correlation/causation error
-- `GuidedExamResponse`: 3-mark benign vs malignant question
-- `FillInTheBlanksBlock`: tumour vocabulary
-- `FaceTheExaminer`: causation language in written answer
-- `QuickRecallScreen`: 5 retrieval questions
+- `ConceptReveal`: disease interactions
+- `MisconceptionCheck` × 3
+- `SpotTheError` × 2
+- `GuidedExamResponse`: benign vs malignant question
+- `GuidedExamResponse`: correlation/causation question
+- `MatchingTask`: risk factor → disease
+- `FaceTheExaminer`: overclaiming causation
+- `QuickRecallScreen`: 6 retrieval questions
 
 ---
 
 ## 4. Retrieval points
 
-- Health: physical, mental and social wellbeing — not just absence of disease
-- Communicable disease: caused by pathogens; can be transmitted between organisms
-- Non-communicable disease: cannot be passed on (e.g. cancer, CHD, type 2 diabetes)
-- Risk factor: increases probability of disease; does not guarantee it; correlation ≠ causation
-- Cancer: uncontrolled cell division → tumour
-- Benign: slow growing, localised, does not spread
-- Malignant: fast growing, invasive, can spread (metastasize) via blood or lymph
-- Risk factors for cancer: ionising radiation, smoking (carcinogens), viral infection, genetic mutation
+- Health = physical and mental wellbeing, not just absence of disease
+- Communicable diseases can spread; non-communicable diseases cannot spread between organisms
+- Risk factor = increased probability, not certainty
+- Correlation does not automatically prove causation
+- Causal claims need stronger evidence and/or biological mechanism
+- Cancer = uncontrolled cell growth and division
+- Benign = contained, does not invade/spread
+- Malignant = invades, spreads via blood/lymph, can form secondary tumours
+- Diseases can interact with mental health, immune responses and cancer risk
 
 ---
 
 ## 5. Exam skill focus
 
-- 3-mark explain: explain the difference between benign and malignant tumours
-- 2-mark explain: explain what is meant by a risk factor (and why it is not the same as a cause)
-- Data interpretation: identify correlations from a graph; state what can and cannot be concluded
-- 1-mark define: state the AQA definition of health
+- 1-mark definition: health
+- 2-mark explain: risk factor
+- 3-mark data interpretation: correlation vs causation
+- 4-mark compare: benign vs malignant tumours
+- 2-mark examples: disease interactions
 
 ---
 
 ## 6. Build notes
 
-Correlation vs causation is the central analytical challenge of this chapter and must have a dedicated screen. Students frequently write "X causes Y" when the data only shows correlation — this must be flagged as an exam error. The benign/malignant comparison is a routine 3-mark question and needs clear visual separation. The definition of health (including mental and social wellbeing) is often missed entirely — teach it as a quotable definition. Do not allow the cancer content to overwhelm the risk factor content — both are equally examined.
+This chapter must not become a vague lifestyle lecture. It is an exam-precision chapter.
+
+The core skill is **careful claim language**: "increases risk", "shows correlation", "does not prove causation alone". Make students practise replacing overconfident claims with mark-scheme-safe wording.
+
+The tumour comparison needs a clear visual split: benign = contained; malignant = invasive and spreading.
 
 ---
 
 ## 7. Chapter completion test
 
-- [ ] Student can state the AQA definition of health (physical, mental and social wellbeing)
-- [ ] Student can distinguish between communicable and non-communicable disease with examples
-- [ ] Student can explain what a risk factor is and why it is not the same as a cause
-- [ ] Student can explain the difference between benign and malignant tumours
-- [ ] Student can name at least three risk factors for cancer
-- [ ] Student can interpret a graph showing a correlation without overstating causation
-- [ ] Student has practised a 3-mark explain question on tumour types
+- [ ] Student can state the AQA definition of health
+- [ ] Student can distinguish communicable and non-communicable disease with examples
+- [ ] Student can define risk factor accurately
+- [ ] Student can interpret a correlation graph without overclaiming causation
+- [ ] Student can compare benign and malignant tumours
+- [ ] Student can name at least three cancer risk factors
+- [ ] Student can give an example of disease interaction
+- [ ] Student has practised a graph interpretation question with mark commentary
