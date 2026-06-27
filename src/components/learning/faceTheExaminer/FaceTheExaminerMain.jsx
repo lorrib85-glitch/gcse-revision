@@ -1,4 +1,5 @@
 import BackButton from '../../core/BackButton.jsx'
+import ScreenTextBlock from '../../layout/ScreenTextBlock.jsx'
 import { TYPE, SCREEN_TEXT_LAYOUT } from '../../../constants/typography.js'
 import { TAB_LABELS, IMAGES, markComparisonText } from './utils.js'
 import AnswerPanel from './AnswerPanel.jsx'
@@ -78,10 +79,14 @@ export default function FaceTheExaminerMain(props) {
           <div style={{ ...TYPE.metadataText, color: accent }}>{examiner.marks} marks</div>
         </div>
 
-        <div style={{ padding: `${SCREEN_TEXT_LAYOUT.blockGap}px ${SCREEN_TEXT_LAYOUT.mobileInset}px`, background: 'rgba(255,255,255,0.025)', borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}>
-          <div style={{ ...TYPE.overlayEyebrow, color: accent, marginBottom: 8 }}>Question</div>
-          <div style={{ ...TYPE.examQuestionText, color: 'rgba(245,238,225,0.9)' }}>{examiner.question}</div>
-        </div>
+        <ScreenTextBlock
+          title={examiner.question}
+          accent="rgba(245,238,225,0.92)"
+          inset
+          style={{ background: 'rgba(255,255,255,0.025)', borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}
+          titleStyle={{ marginBottom: 0 }}
+          bodyStyle={{ display: 'none' }}
+        />
 
         {showTabs && <div style={{ padding: '10px 16px 8px', borderBottom: '1px solid rgba(255,255,255,0.07)', flexShrink: 0 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, padding: 4, borderRadius: 16, background: 'rgba(0,0,0,0.22)', border: '1px solid rgba(255,255,255,0.08)' }}>
