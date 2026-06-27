@@ -306,6 +306,17 @@ export default function App() {
     setProgress(safeGetProgress())
   }, [])
 
+  // Prefetch ModulePlayer chunk on idle so it's ready before the user opens a module
+  useEffect(() => {
+    if (typeof requestIdleCallback !== 'undefined') {
+      const id = requestIdleCallback(() => import('../components/layout/ModulePlayer.jsx'))
+      return () => cancelIdleCallback(id)
+    } else {
+      const id = setTimeout(() => import('../components/layout/ModulePlayer.jsx'), 2000)
+      return () => clearTimeout(id)
+    }
+  }, [])
+
   function openModule(mod, screenIndex) {
     openModulePlayer(mod, screenIndex)
   }
@@ -339,6 +350,8 @@ export default function App() {
         ))
       } catch {}
     }
+    // Fire ModulePlayer chunk download in parallel with content file — both resolve concurrently
+    import('../components/layout/ModulePlayer.jsx')
     setActiveModule(null)
     setView('module')
     loadModuleContent(mod).then(fullMod => setActiveModule(fullMod || mod))
