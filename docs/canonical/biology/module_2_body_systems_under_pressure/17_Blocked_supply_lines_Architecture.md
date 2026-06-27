@@ -3,10 +3,11 @@
 ## 1. Identity
 
 - **Chapter:** 17
+- **Module chapter:** Module 2, Chapter 7
 - **Title:** Blocked supply lines
 - **Subject:** AQA GCSE Combined Science Trilogy — Biology Paper 1
 - **Module:** Module 2 — Body systems under pressure
-- **Build status:** Not yet built
+- **Build status:** Canonical reviewed; not yet built
 - **Content file:** `17_Blocked_supply_lines_Content.md`
 
 ---
@@ -15,28 +16,45 @@
 
 ### Part 1 — Situation + prediction
 
-- Hook: "The heart pumps blood around the body — but the heart itself also needs a blood supply. What happens when that supply gets blocked?" Cinematic — coronary arteries narrowing, heart muscle fading.
-- Prediction: "If a doctor needed to fix a blocked coronary artery without surgery, what do you think they might use?"
-- You will learn: coronary heart disease; stents, statins and bypass surgery; faulty valves; transplants and artificial hearts.
+- Hook: "The heart pumps blood around the body — but the heart muscle needs its own blood supply too." Show coronary arteries narrowing while heart muscle oxygen fades.
+- Prediction: "If a coronary artery narrows, would you use a drug, a mesh tube, or a replacement heart?"
+- You will learn: coronary heart disease, stents, statins, replacement valves, transplants, artificial hearts and evaluation skills.
 
-**Components:** `CinematicRevealMoment`, `ChapterHookScreen`
+**Components:** `CinematicRevealMoment`, `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ---
 
 ### Part 2 — Investigate the evidence
 
-- Visual walkthrough of CHD progression: healthy coronary artery → fatty plaque building up → narrowed lumen → reduced blood flow → heart muscle oxygen-deprived
-- Show the three treatment approaches (stent, bypass, statins) in a CinematicCarousel or VisualLearning — one approach per slide with before/after
+- Visual walkthrough of CHD progression:
+  - healthy coronary artery
+  - fatty material builds up
+  - lumen narrows
+  - blood flow reduces
+  - less oxygen reaches heart muscle
+  - less aerobic respiration
+  - heart muscle damage/heart attack risk
+- Treatment carousel:
+  - stent
+  - statin
+  - biological valve
+  - mechanical valve
+  - transplant
+  - artificial heart
 
-**Components:** `VisualLearning`, `CinematicCarousel`
+**Components:** `VisualLearning`, `CinematicCarousel`, `StepSequence`
 
 ---
 
 ### Part 3 — Discover the science
 
-- ExplainReveal: coronary heart disease — fatty deposits narrow coronary arteries → reduced oxygen to heart muscle → pain (angina) or heart attack
-- TheoryCompareBlock: three treatments side by side — stent (physical, mechanical, keeps artery open), bypass (surgical, routes around blockage), statins (drug, reduces cholesterol, slows plaque build-up)
-- ConceptReveal: heart valve problems — stiff or leaky valves reduce efficiency; biological vs mechanical replacement options and trade-offs
+- `ExplainReveal`: CHD chain — fatty material → narrowed coronary artery → reduced oxygen → less aerobic respiration → heart muscle damage.
+- `TheoryCompareBlock`: stents vs statins:
+  - stent = physical mesh tube, quick restoration of blood flow, procedure risks
+  - statin = drug lowering cholesterol, long-term risk reduction, side effects
+- `TheoryCompareBlock`: biological vs mechanical valves.
+- `ConceptReveal`: transplant vs artificial heart.
+- `ConceptReveal`: risk factor means increased probability, not certainty.
 
 **Components:** `ExplainReveal`, `TheoryCompareBlock`, `ConceptReveal`
 
@@ -44,28 +62,33 @@
 
 ### Part 4 — Check precision
 
-- MisconceptionCheck: "Statins cure coronary heart disease." → false (statins reduce risk / slow progression; they do not remove existing plaques or cure CHD)
-- MisconceptionCheck: "Artificial hearts are permanent replacements." → false (used as a bridge while waiting for a donor heart)
-- SpotTheError: "A stent is a drug that dissolves fatty deposits in the coronary arteries." (Error: a stent is a mesh tube inserted mechanically to keep the artery open; it does not dissolve deposits — statins are the drug option)
+- `MisconceptionCheck`: "Statins cure coronary heart disease." → false.
+- `MisconceptionCheck`: "A stent is a drug that dissolves fatty deposits." → false.
+- `MisconceptionCheck`: "Artificial hearts are usually permanent cures." → false.
+- `SpotTheError`: "Mechanical valves are always better because they last longer." Correction: they may require blood-thinning medication and increase clot risk.
+- `SpotTheError`: "Only smokers get coronary heart disease." Correction: there are multiple risk factors.
 
-**Components:** `MisconceptionCheck` × 2, `SpotTheError`
+**Components:** `MisconceptionCheck`, `SpotTheError`
 
 ---
 
 ### Part 5 — Apply to a real GCSE-style task
 
-- GuidedExamResponse: "Evaluate the use of a stent compared with bypass surgery to treat coronary heart disease. (4 marks)"
-- FillInTheBlanksBlock: "Coronary heart disease is caused by fatty ___ narrowing the ___ arteries. This reduces the supply of ___ to the heart muscle."
-- MatchingTask: treatment → how it works (stent / bypass / statins → keeps artery open / routes around blockage / lowers cholesterol)
+- `GuidedExamResponse`: "Explain how coronary heart disease can lead to a heart attack. (4 marks)"
+- `GuidedExamResponse`: "Evaluate the use of statins and stents for treating cardiovascular disease. (6 marks)"
+- `MatchingTask`: treatment → mechanism.
+- `MatchingTask`: treatment → advantage/disadvantage.
+- `FillInTheBlanksBlock`: CHD mechanism vocabulary.
 
-**Components:** `GuidedExamResponse`, `FillInTheBlanksBlock`, `MatchingTask`
+**Components:** `GuidedExamResponse`, `MatchingTask`, `FillInTheBlanksBlock`
 
 ---
 
 ### Part 6 — Face the examiner + debrief
 
-- FaceTheExaminer: student evaluates stent vs bypass without mentioning risks or limitations of either; mark commentary stresses evaluation = benefits AND drawbacks
-- QuickRecallScreen: what are coronary arteries; what causes coronary heart disease; how does a stent work; why do heart transplant patients need immunosuppressant drugs; name one risk factor for CHD?
+- `FaceTheExaminer`: student explains CHD but misses oxygen/aerobic respiration link. Mark commentary adds the chain needed for full marks.
+- `FaceTheExaminer`: student evaluates stents/statins but only gives advantages. Mark commentary explains that evaluation needs benefits, drawbacks and judgement.
+- Quick recall: coronary artery function; what narrows in CHD; how stents work; how statins work; valve replacement comparison; transplant rejection; artificial heart risks.
 
 **Components:** `FaceTheExaminer`, `QuickRecallScreen`
 
@@ -73,55 +96,69 @@
 
 ## 3. Active learning interactions
 
-- `VisualLearning`: CHD progression (healthy → blocked artery)
-- `CinematicCarousel`: three treatment approaches
-- `ExplainReveal`: how CHD develops and why it is dangerous
-- `TheoryCompareBlock`: stent vs bypass vs statins
-- `ConceptReveal`: valve problems and replacement options
-- `MisconceptionCheck` × 2: statins cure; artificial hearts are permanent
-- `SpotTheError`: stent described as a drug
-- `GuidedExamResponse`: 4-mark stent vs bypass evaluation
-- `FillInTheBlanksBlock`: CHD mechanism vocabulary
+- `VisualLearning`: CHD progression
+- `StepSequence`: fatty material → heart attack risk chain
+- `CinematicCarousel`: treatment approaches
+- `ExplainReveal`: CHD mechanism
+- `TheoryCompareBlock`: stents vs statins
+- `TheoryCompareBlock`: biological vs mechanical valves
+- `ConceptReveal`: transplant vs artificial heart
+- `ConceptReveal`: risk factor = increased probability
+- `MisconceptionCheck` × 3
+- `SpotTheError` × 2
+- `GuidedExamResponse`: 4-mark CHD mechanism question
+- `GuidedExamResponse`: 6-mark stents/statins evaluation
 - `MatchingTask`: treatment → mechanism
-- `FaceTheExaminer`: evaluation without risks
-- `QuickRecallScreen`: 5 retrieval questions
+- `MatchingTask`: treatment → advantage/disadvantage
+- `FaceTheExaminer`: missing oxygen/aerobic respiration link
+- `QuickRecallScreen`: 7 retrieval questions
 
 ---
 
 ## 4. Retrieval points
 
-- CHD: fatty plaques narrow coronary arteries → less oxygen to heart muscle
-- Stent: mesh tube inserted into artery to keep it open; mechanical; can re-block
-- Bypass surgery: healthy blood vessel grafted to route blood around the blockage
-- Statins: drug lowering blood cholesterol; slows plaque build-up; long-term management, not a cure
-- Biological valves: from animal/human tissue; more natural but may deteriorate
-- Mechanical valves: metal/plastic; durable but require blood-thinning medication
-- Heart transplants: limited donors; immune rejection risk; immunosuppressants needed
-- Artificial hearts: mechanical bridge; avoids rejection but has mechanical failure risk
+- Coronary arteries supply heart muscle with oxygenated blood
+- CHD: fatty material narrows coronary arteries → less blood → less oxygen → less aerobic respiration → heart muscle damage
+- Stent: metal mesh tube keeps artery open
+- Statin: drug lowers cholesterol and reduces future risk
+- Biological valves may wear out; mechanical valves last longer but may need blood-thinning drugs
+- Heart transplant: donor shortage, rejection risk, immunosuppressant drugs
+- Artificial heart: temporary support, clot/infection/mechanical failure risks
+- Evaluation requires advantages, disadvantages and judgement
 
 ---
 
 ## 5. Exam skill focus
 
-- 4-mark evaluate: compare two treatments for CHD (advantages + disadvantages of each)
-- 2-mark explain: explain how a stent treats coronary heart disease
-- 1-mark recall: state one risk associated with a heart transplant
-- 3-mark describe: describe what coronary heart disease is and how it develops
+- 4-mark explain: how CHD can lead to heart attack
+- 3-mark explain: how a stent treats CHD
+- 6-mark evaluate: statins vs stents
+- 4-mark compare: biological and mechanical valves
+- 2-mark explain: why transplant patients need immunosuppressants
+- 2-mark recall: artificial heart disadvantages
 
 ---
 
 ## 6. Build notes
 
-The evaluate question (stent vs bypass vs statins) is a frequently examined higher-mark question and requires students to give advantages AND disadvantages of at least two options. The distinction between statins (drug; prevention/slowing) and stents/bypass (physical/surgical; treatment) must be taught explicitly. Artificial heart as "bridge not cure" is a commonly examined misconception. Do not bury valve replacement details — it appears as a standalone exam question.
+This chapter needs to feel like a medical decision pathway rather than a list of treatments. The learner should understand what problem each treatment solves:
+
+- narrowed artery now → stent
+- cholesterol/risk over time → statin
+- faulty valve → replacement valve
+- failing whole heart → transplant or artificial support
+
+The highest-value exam skill is evaluation. Build at least one screen that forces advantages **and** disadvantages before the student can give a judgement.
 
 ---
 
 ## 7. Chapter completion test
 
-- [ ] Student can explain what causes coronary heart disease (fatty deposits → narrowed coronary arteries → reduced oxygen to heart)
+- [ ] Student can explain what coronary arteries do
+- [ ] Student can explain CHD using the full oxygen/aerobic respiration chain
 - [ ] Student can describe how a stent works and name one limitation
-- [ ] Student can describe how bypass surgery differs from stenting
-- [ ] Student can explain what statins do and why they are not a cure
-- [ ] Student can state one difference between biological and mechanical replacement valves
-- [ ] Student can state why heart transplant patients need immunosuppressant drugs
-- [ ] Student has practised a 4-mark evaluation question with mark commentary
+- [ ] Student can describe what statins do and why they are not a cure
+- [ ] Student can compare biological and mechanical replacement valves
+- [ ] Student can explain why transplant patients need immunosuppressant drugs
+- [ ] Student can name two artificial heart risks
+- [ ] Student has practised a 6-mark treatment evaluation question
