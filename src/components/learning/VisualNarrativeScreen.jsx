@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 // CinematicShell used here because this screen renders full-bleed absolute-positioned portrait
 // and timeline image layers that must reach all four edges; ContentShell's 16px horizontal
 // padding and opaque background would clip the atmospheric imagery and break the layout.
@@ -81,7 +82,7 @@ export default function VisualNarrativeScreen({
   }
 
   const showHint = hintVisible && !showConclusion
-  const showFloatingNext = showHint && !isFacts
+  const showCinematicContinue = showHint && !isFacts
 
   return (
     <>
@@ -94,16 +95,11 @@ export default function VisualNarrativeScreen({
           from { opacity: 0; }
           to   { opacity: 1; }
         }
-        @keyframes vnNextBreathe {
-          0%, 100% { opacity: 0.84; transform: translateY(0) scale(1); }
-          50%      { opacity: 1; transform: translateY(-2px) scale(1.03); }
-        }
         @keyframes vnEnglandPulse {
           0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
           50%      { opacity: 0.90; transform: translate(-50%, -50%) scale(1.35); }
         }
         .vn-cta:active { opacity: 0.55 !important; }
-        .vn-floating-next:active { transform: translateY(1px) scale(0.97) !important; opacity: 0.72 !important; }
       `}</style>
 
       <CinematicShell style={{ background: '#08090D', zIndex: 100 }}>
@@ -284,35 +280,12 @@ export default function VisualNarrativeScreen({
         )}
 
         {/* ── Next action ───────────────────────────────────────────── */}
-        {showFloatingNext && (
-          <button
-            type="button"
-            className="vn-floating-next"
-            aria-label="Continue"
-            onClick={(e) => { e.stopPropagation(); handleTap() }}
-            style={{
-              position: 'absolute',
-              right: 28,
-              bottom: 'calc(36px + env(safe-area-inset-bottom, 0px))',
-              width: 58,
-              height: 58,
-              borderRadius: '50%',
-              border: '1px solid rgba(255,255,255,0.20)',
-              background: `linear-gradient(135deg, rgba(255,255,255,0.17), rgba(${rgb},0.18))`,
-              boxShadow: `0 16px 36px rgba(0,0,0,0.45), 0 0 28px rgba(${rgb},0.18), inset 0 1px 0 rgba(255,255,255,0.20)`,
-              color: 'rgba(255,255,255,0.92)',
-              fontFamily: TYPE.buttonText.fontFamily,
-              fontSize: 30,
-              lineHeight: 1,
-              display: 'grid',
-              placeItems: 'center',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-              animation: 'vnNextBreathe 3.2s ease-in-out infinite',
-            }}
-          >
-            →
-          </button>
+        {showCinematicContinue && (
+          <CinematicContinueCTA
+            onClick={handleTap}
+            accent={accent}
+            animation="crm-fade 700ms ease both, crm-pulse 2.8s ease-in-out 900ms infinite"
+          />
         )}
 
       </div>
