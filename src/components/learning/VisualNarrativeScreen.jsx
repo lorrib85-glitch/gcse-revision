@@ -81,6 +81,7 @@ export default function VisualNarrativeScreen({
   }
 
   const showHint = hintVisible && !showConclusion
+  const showFloatingNext = showHint && !isFacts
 
   return (
     <>
@@ -93,15 +94,16 @@ export default function VisualNarrativeScreen({
           from { opacity: 0; }
           to   { opacity: 1; }
         }
-        @keyframes vnHintPulse {
-          0%, 100% { opacity: 0; transform: translateY(0); }
-          35%, 65%  { opacity: 0.6; transform: translateY(-3px); }
+        @keyframes vnNextBreathe {
+          0%, 100% { opacity: 0.84; transform: translateY(0) scale(1); }
+          50%      { opacity: 1; transform: translateY(-2px) scale(1.03); }
         }
         @keyframes vnEnglandPulse {
           0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
-          50%       { opacity: 0.90; transform: translate(-50%, -50%) scale(1.35); }
+          50%      { opacity: 0.90; transform: translate(-50%, -50%) scale(1.35); }
         }
         .vn-cta:active { opacity: 0.55 !important; }
+        .vn-floating-next:active { transform: translateY(1px) scale(0.97) !important; opacity: 0.72 !important; }
       `}</style>
 
       <CinematicShell style={{ background: '#08090D', zIndex: 100 }}>
@@ -156,22 +158,22 @@ export default function VisualNarrativeScreen({
         {/* Dark gradient — keeps text readable without crushing the image into black */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.02) 32%, rgba(0,0,0,0.56) 54%, rgba(0,0,0,0.86) 72%, rgba(0,0,0,0.94) 100%)',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.04) 30%, rgba(0,0,0,0.46) 57%, rgba(0,0,0,0.82) 78%, rgba(0,0,0,0.94) 100%)',
           pointerEvents: 'none',
         }} />
 
-        {/* ── Beat 1 & 2: label + headline + body at bottom ─────────── */}
+        {/* ── Beat 1 & 2: cinematic headline + body at bottom ─────────── */}
         {!isFacts && (
           <div
             key={beatIdx}
             style={{
               position: 'absolute', bottom: 0, left: 0, right: 0,
-              padding: '0 28px 96px',
+              padding: '0 28px calc(126px + env(safe-area-inset-bottom, 0px))',
               animation: 'vnFadeUp 500ms cubic-bezier(0.16,1,0.3,1) both',
               pointerEvents: 'none',
             }}
           >
-            {beat.label && (
+            {beat.showLabel === true && beat.label && (
               <div style={{
                 ...TYPE.overlayEyebrow,
                 color: 'rgba(255,255,255,0.50)',
@@ -183,9 +185,13 @@ export default function VisualNarrativeScreen({
 
             <div style={{
               ...TYPE.overlayTitle,
-              color: 'rgba(255,255,255,0.97)',
-              marginBottom: 14,
-              maxWidth: 320,
+              fontSize: 'clamp(36px, 10.8vw, 52px)',
+              lineHeight: 0.98,
+              fontWeight: 850,
+              letterSpacing: '-0.055em',
+              color: 'rgba(255,255,255,0.98)',
+              marginBottom: 16,
+              maxWidth: 352,
             }}>
               {beat.headline}
             </div>
@@ -193,8 +199,8 @@ export default function VisualNarrativeScreen({
             {beat.body && (
               <div style={{
                 ...TYPE.overlayBody,
-                color: 'rgba(255,255,255,0.68)',
-                maxWidth: '34ch',
+                color: 'rgba(255,255,255,0.74)',
+                maxWidth: '31ch',
                 whiteSpace: 'pre-line',
               }}>
                 {beat.body}
@@ -277,23 +283,36 @@ export default function VisualNarrativeScreen({
           </div>
         )}
 
-        {/* ── Tap hint ─────────────────────────────────────────────── */}
-        {showHint && (
-          <div style={{
-            position: 'absolute',
-            bottom: 'calc(38px + env(safe-area-inset-bottom, 0px))',
-            left: 0, right: 0,
-            textAlign: 'center',
-            pointerEvents: 'none',
-            animation: 'vnHintPulse 3.2s ease infinite',
-          }}>
-            <span style={{
-              ...TYPE.overlayPrompt,
-              color: 'rgba(255,255,255,0.30)',
-            }}>
-              tap to continue
-            </span>
-          </div>
+        {/* ── Next action ───────────────────────────────────────────── */}
+        {showFloatingNext && (
+          <button
+            type="button"
+            className="vn-floating-next"
+            aria-label="Continue"
+            onClick={(e) => { e.stopPropagation(); handleTap() }}
+            style={{
+              position: 'absolute',
+              right: 28,
+              bottom: 'calc(36px + env(safe-area-inset-bottom, 0px))',
+              width: 58,
+              height: 58,
+              borderRadius: '50%',
+              border: '1px solid rgba(255,255,255,0.20)',
+              background: `linear-gradient(135deg, rgba(255,255,255,0.17), rgba(${rgb},0.18))`,
+              boxShadow: `0 16px 36px rgba(0,0,0,0.45), 0 0 28px rgba(${rgb},0.18), inset 0 1px 0 rgba(255,255,255,0.20)`,
+              color: 'rgba(255,255,255,0.92)',
+              fontFamily: TYPE.buttonText.fontFamily,
+              fontSize: 30,
+              lineHeight: 1,
+              display: 'grid',
+              placeItems: 'center',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              animation: 'vnNextBreathe 3.2s ease-in-out infinite',
+            }}
+          >
+            →
+          </button>
         )}
 
       </div>
