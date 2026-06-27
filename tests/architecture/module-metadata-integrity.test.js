@@ -1,64 +1,43 @@
 import { describe, it, expect } from 'vitest'
 import { MODULES } from '../../src/modules.js'
-import { HISTORY_MODULES } from '../../src/modules/history.js'
-import { BIOLOGY_MODULES } from '../../src/modules/biology.js'
-import { MATHS_MODULES } from '../../src/modules/maths.js'
-import { SOCIOLOGY_MODULES } from '../../src/modules/sociology.js'
-import { CHEMISTRY_MODULES } from '../../src/modules/chemistry.js'
-import { ENGLISH_MODULES } from '../../src/modules/english.js'
+import { MODULE_CONTENT_LOADERS } from '../../src/content/moduleContentRegistry.js'
 
-const subjectLookup = {
-  History:   new Map(HISTORY_MODULES.map((m)   => [m.id, m])),
-  Biology:   new Map(BIOLOGY_MODULES.map((m)   => [m.id, m])),
-  Maths:     new Map(MATHS_MODULES.map((m)     => [m.id, m])),
-  Sociology: new Map(SOCIOLOGY_MODULES.map((m) => [m.id, m])),
-  Chemistry: new Map(CHEMISTRY_MODULES.map((m) => [m.id, m])),
-  English:   new Map(ENGLISH_MODULES.map((m)   => [m.id, m])),
-}
+const registryIds = new Set(Object.keys(MODULE_CONTENT_LOADERS))
+const stubs = MODULES.filter(m => m.screenCount === 0)
+const built = MODULES.filter(m => m.screenCount > 0)
 
-const placeholders = MODULES.filter((m) => m.screenCount === 0)
-const available = MODULES.filter((m) => m.screenCount > 0)
-
-describe('Module metadata integrity — placeholders (screenCount === 0)', () => {
-  it('every placeholder has screenTags: []', () => {
-    for (const meta of placeholders) {
+describe('Module metadata integrity — stubs (screenCount === 0)', () => {
+  it('every stub has screenTags: []', () => {
+    for (const meta of stubs) {
       expect(
         meta.screenTags,
-        `[${meta.id}] placeholder module must have screenTags: []`
+        `[${meta.id}] stub must have screenTags: []`
       ).toEqual([])
+    }
+  })
+
+  it('every stub has a registry entry in MODULE_CONTENT_LOADERS', () => {
+    for (const meta of stubs) {
+      expect(
+        registryIds.has(meta.id),
+        `[${meta.id}] stub missing from MODULE_CONTENT_LOADERS in moduleContentRegistry.js`
+      ).toBe(true)
     }
   })
 })
 
-describe('Module metadata integrity — available modules (screenCount > 0)', () => {
-  it('every available module has a matching full module in its subject file', () => {
-    for (const meta of available) {
-      const lookup = subjectLookup[meta.subject]
+describe('Module metadata integrity — built modules (screenCount > 0)', () => {
+  it('every built module has a registry entry', () => {
+    for (const meta of built) {
       expect(
-        lookup,
-        `[${meta.id}] subject="${meta.subject}" has no subject module file registered`
-      ).toBeDefined()
-      const full = lookup.get(meta.id)
-      expect(
-        full,
-        `[${meta.id}] subject="${meta.subject}" — id not found in src/modules/${meta.subject.toLowerCase()}.js`
-      ).toBeDefined()
-    }
-  })
-
-  it('metadata.screenCount matches full module screens.length', () => {
-    for (const meta of available) {
-      const full = subjectLookup[meta.subject]?.get(meta.id)
-      if (!full) continue // missing full module already caught above
-      expect(
-        meta.screenCount,
-        `[${meta.id}] metadata.screenCount=${meta.screenCount} ≠ full module screens.length=${full.screens.length}`
-      ).toBe(full.screens.length)
+        registryIds.has(meta.id),
+        `[${meta.id}] missing from MODULE_CONTENT_LOADERS in moduleContentRegistry.js`
+      ).toBe(true)
     }
   })
 
   it('metadata.screenTags.length matches metadata.screenCount', () => {
-    for (const meta of available) {
+    for (const meta of built) {
       expect(
         meta.screenTags.length,
         `[${meta.id}] screenTags.length=${meta.screenTags.length} ≠ screenCount=${meta.screenCount}`
@@ -66,15 +45,40 @@ describe('Module metadata integrity — available modules (screenCount > 0)', ()
     }
   })
 
-  it('metadata.screenTags match actual screen tags from the full module', () => {
-    for (const meta of available) {
-      const full = subjectLookup[meta.subject]?.get(meta.id)
-      if (!full) continue // missing full module already caught above
-      const actualTags = full.screens.map((s) => s.tag ?? null)
+  it('metadata.screenCount matches loaded content screens.length', async () => {
+    for (const meta of built) {
+      const loader = MODULE_CONTENT_LOADERS[meta.id]
+      if (!loader) continue // missing registry entry already caught above
+      const content = await loader()
+      expect(
+        meta.screenCount,
+        `[${meta.id}] metadata.screenCount=${meta.screenCount} ≠ content.screens.length=${content.screens.length}`
+      ).toBe(content.screens.length)
+    }
+  })
+
+  it('metadata.screenTags match actual screen tags from loaded content', async () => {
+    for (const meta of built) {
+      const loader = MODULE_CONTENT_LOADERS[meta.id]
+      if (!loader) continue // missing registry entry already caught above
+      const content = await loader()
+      const actualTags = content.screens.map(s => s.tag ?? null)
       expect(
         meta.screenTags,
-        `[${meta.id}] screenTags in src/modules.js do not match actual screen tags in src/modules/${meta.subject.toLowerCase()}.js`
+        `[${meta.id}] screenTags in src/modules.js do not match content screen tags`
       ).toEqual(actualTags)
+    }
+  })
+})
+
+describe('Module metadata integrity — registry completeness', () => {
+  it('every registry entry has a matching module in src/modules.js', () => {
+    const moduleIds = new Set(MODULES.map(m => m.id))
+    for (const id of registryIds) {
+      expect(
+        moduleIds.has(id),
+        `[${id}] in MODULE_CONTENT_LOADERS has no metadata entry in src/modules.js`
+      ).toBe(true)
     }
   })
 })

@@ -157,6 +157,16 @@ episode and defeat the per-module loading architecture.
 Use column alignment consistent with existing entries. If the entry already
 exists, skip silently — do not duplicate.
 
+Seven architecture rules enforce this boundary automatically via
+`tests/architecture/content-loading-boundary.test.js`:
+1. `LegacyApp.jsx` must not define `MODULE_CONTENT_LOADERS`
+2. `SUBJECT_MODULE_LOADERS` must not exist anywhere in `src/`
+3. `moduleContentRegistry.js` must be the sole registry file
+4. Registry values must be loader functions (not static imports)
+5. App shell files must not statically import episode content
+6. Stub content files must export `screens: []`
+7. Every module ID in `src/modules.js` must have a registry entry
+
 ## Step 4 — Update or create series index
 
 Applies to all subjects. The series index records which episodes exist in the
@@ -210,7 +220,7 @@ Next steps:
     (skip if docs already exist — see Canonical docs check above)
   □ Fill in hook, outcomes, stageNavigation and screens
   □ Update screenCount + screenTags in src/modules.js after screens are written
-  □ vitest run tests/architecture
+  □ vitest run tests/architecture   (includes content-loading-boundary.test.js — 7 loader rules)
   □ /gcse-content-registry <id> — final alignment check before commit
 ```
 
