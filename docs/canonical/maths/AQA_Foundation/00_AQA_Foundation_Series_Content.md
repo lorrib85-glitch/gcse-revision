@@ -11,9 +11,12 @@
 - **Subject:** Maths
 - **Qualification:** AQA GCSE Mathematics (8300), Foundation tier, grades 1–5
 - **Series:** AQA GCSE Maths Foundation
+- **Course structure:** 4 modules × 10 chapters = **40 chapters** (canonical student-facing structure)
+- **Modules:** Module 1 — Number survival kit / Module 2 — Algebra and proportion engine / Module 3 — Graphs, shape and movement / Module 4 — Data, chance and next-level tools
 - **Series directory:** `docs/canonical/maths/AQA_Foundation/`
-- **Architecture reference:** `00_AQA_Foundation_Architecture.md`
-- **Series spine:** `00_AQA_Foundation_Series_Map.md`
+- **Architecture reference:** `00_AQA_Foundation_Architecture.md` (10-section chapter structure, MATHS_GROUPS gap analysis, build checklist)
+- **Series spine:** `00_AQA_Foundation_Series_Map.md` (40-chapter table, two-layer architecture, MATHS_GROUPS internal mapping)
+- **Note on MATHS_GROUPS:** The 23 IDs in `src/data/mathsGroups.js` are internal app identifiers for weakness tracking and question bank tagging. They are Layer 2 — not the canonical course structure. Do not build modules that map 1:1 to MATHS_GROUPS IDs. Build from the 40-chapter spine.
 
 ---
 
