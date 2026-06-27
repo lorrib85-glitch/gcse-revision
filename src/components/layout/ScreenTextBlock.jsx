@@ -32,6 +32,7 @@ export default function ScreenTextBlock({
   const toneStyle = toneStyles[tone] || toneStyles.default
   const padX = inset ? SCREEN_TEXT_LAYOUT.mobileInset : 0
   const padY = SCREEN_TEXT_LAYOUT.blockGap
+  const hasBody = children !== undefined && children !== null
 
   return (
     <section
@@ -48,22 +49,24 @@ export default function ScreenTextBlock({
           style={{
             ...TYPE.cardTitle,
             color: accent || toneStyle.color,
-            margin: '0 0 10px',
+            margin: hasBody ? '0 0 10px' : 0,
             ...titleStyle,
           }}
         >
           {title}
         </h2>
       )}
-      <div
-        style={{
-          ...TYPE.examQuestionText,
-          color: toneStyle.color,
-          ...bodyStyle,
-        }}
-      >
-        {children}
-      </div>
+      {hasBody && (
+        <div
+          style={{
+            ...TYPE.examQuestionText,
+            color: toneStyle.color,
+            ...bodyStyle,
+          }}
+        >
+          {children}
+        </div>
+      )}
     </section>
   )
 }
