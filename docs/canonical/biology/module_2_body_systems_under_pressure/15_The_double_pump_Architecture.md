@@ -3,10 +3,11 @@
 ## 1. Identity
 
 - **Chapter:** 15
+- **Module chapter:** Module 2, Chapter 5
 - **Title:** The double pump
 - **Subject:** AQA GCSE Combined Science Trilogy — Biology Paper 1
 - **Module:** Module 2 — Body systems under pressure
-- **Build status:** Not yet built
+- **Build status:** Canonical reviewed; not yet built
 - **Content file:** `15_The_double_pump_Content.md`
 
 ---
@@ -15,58 +16,78 @@
 
 ### Part 1 — Situation + prediction
 
-- Hook: "Your heart beats roughly 100,000 times a day. Every beat pumps blood in two separate loops — not one. Why does it need two?" Cinematic — beating heart, two loop paths lighting up.
-- Prediction: "Which side of the heart sends blood to the lungs — the left or the right?"
-- You will learn: the four-chamber heart structure; the two circulatory loops; the three blood vessel types.
+- Hook: "Your heart beats roughly 100,000 times a day. Every beat sends blood through two loops, not one." Show a cinematic heart with two routes lighting up: lungs and body.
+- Prediction: "Which side sends blood to the lungs — left or right?"
+- You will learn: heart chambers, major vessels, valves, double circulation, pacemakers, blood vessels and blood flow calculations.
 
-**Components:** `CinematicRevealMoment`, `ChapterHookScreen`
+**Components:** `CinematicRevealMoment`, `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ---
 
 ### Part 2 — Investigate the evidence
 
-- Interactive hotspot image of the heart: label right atrium, right ventricle, left atrium, left ventricle, septum, valves, aorta, vena cava, pulmonary artery, pulmonary vein
-- Each hotspot: structure name → what it does → why it matters
-- Separate visual walkthrough of the two circulatory loops (pulmonary and systemic) showing the route blood takes
+- Interactive hotspot image of the heart:
+  - right atrium
+  - right ventricle
+  - left atrium
+  - left ventricle
+  - valves
+  - aorta
+  - vena cava
+  - pulmonary artery
+  - pulmonary vein
+  - coronary arteries
+- Each hotspot should use: structure → direction of blood → oxygenation → why it matters.
+- Separate two-loop route walkthrough:
+  - body → vena cava → right side → pulmonary artery → lungs
+  - lungs → pulmonary vein → left side → aorta → body
 
-**Components:** `InteractiveHotspotImage`, `VisualLearning`
+**Components:** `InteractiveHotspotImage`, `VisualLearning`, `StepSequence`
 
 ---
 
 ### Part 3 — Discover the science
 
-- ExplainReveal: the double circulatory system — right side receives deoxygenated blood from body → pumps it to lungs (pulmonary loop) → returns oxygenated to left side → pumps to body (systemic loop)
-- TheoryCompareBlock: arteries vs veins vs capillaries — structure, pressure, direction, wall thickness, special features
-- ConceptReveal: why a double circulatory system is more efficient than a single loop — blood reaching the body is fully re-oxygenated, not diluted
+- `ExplainReveal`: double circulatory system — blood passes through the heart twice per complete circuit.
+- `ExplainReveal`: why the left ventricle has a thicker muscular wall than the right.
+- `TheoryCompareBlock`: arteries vs veins vs capillaries — direction, pressure, wall thickness, lumen, valves, exchange.
+- `ConceptReveal`: arteries/veins are named by direction, not oxygen content.
+- `CalculationBuilder`: rate of blood flow = volume / time.
 
-**Components:** `ExplainReveal`, `TheoryCompareBlock`, `ConceptReveal`
+**Components:** `ExplainReveal`, `TheoryCompareBlock`, `ConceptReveal`, `CalculationBuilder`
 
 ---
 
 ### Part 4 — Check precision
 
-- MisconceptionCheck: "The left side of the heart pumps blood to the lungs." → false (right side pumps to lungs; left pumps to body)
-- MisconceptionCheck: "Arteries always carry oxygenated blood." → false (pulmonary artery carries deoxygenated blood)
-- SpotTheError: "The aorta carries blood from the right ventricle to the body." (Error: the aorta leaves the left ventricle; the pulmonary artery leaves the right ventricle)
+- `MisconceptionCheck`: "The left side of the heart pumps blood to the lungs." → false.
+- `MisconceptionCheck`: "Arteries always carry oxygenated blood." → false.
+- `MisconceptionCheck`: "Veins always carry deoxygenated blood." → false.
+- `SpotTheError`: "The pulmonary artery carries oxygenated blood from the lungs to the heart." Correction: pulmonary artery carries deoxygenated blood from heart to lungs.
+- `SpotTheError`: "Valves push blood forwards." Correction: valves prevent backflow; muscle contraction pushes blood.
 
-**Components:** `MisconceptionCheck` × 2, `SpotTheError`
+**Components:** `MisconceptionCheck`, `SpotTheError`
 
 ---
 
 ### Part 5 — Apply to a real GCSE-style task
 
-- GuidedExamResponse: "Explain why the left ventricle has a thicker wall than the right ventricle. (2 marks)"
-- FillInTheBlanksBlock: "The right ventricle pumps blood to the ___ via the ___. The left ventricle pumps oxygenated blood to the ___ via the ___."
-- MatchingTask: blood vessel → key feature (artery/vein/capillary → thick elastic wall / valves to prevent backflow / one cell thick)
+- `GuidedExamResponse`: "Explain why the left ventricle has a thicker wall than the right ventricle. (2 marks)"
+- `GuidedExamResponse`: "Describe the route of blood from the vena cava to the aorta. (5 marks)"
+- `MatchingTask`: vessel → route/function.
+- `MatchingTask`: blood vessel → key feature.
+- `CalculationBuilder`: blood flow rate from volume and time.
+- `FillInTheBlanksBlock`: right ventricle/pulmonary artery/lungs and left ventricle/aorta/body.
 
-**Components:** `GuidedExamResponse`, `FillInTheBlanksBlock`, `MatchingTask`
+**Components:** `GuidedExamResponse`, `MatchingTask`, `CalculationBuilder`, `FillInTheBlanksBlock`
 
 ---
 
 ### Part 6 — Face the examiner + debrief
 
-- FaceTheExaminer: student confuses pulmonary artery and pulmonary vein in a written answer; mark commentary stresses direction + oxygen content distinction
-- QuickRecallScreen: what are the four chambers of the heart; which side pumps to the lungs; name the vessel that returns blood from the body to the heart; what prevents backflow in veins; what is the function of capillaries?
+- `FaceTheExaminer`: student confuses pulmonary artery and pulmonary vein. Mark commentary stresses direction first, oxygen content second.
+- `FaceTheExaminer`: student says capillaries have thick walls. Mark commentary explains one-cell-thick walls and short diffusion distance.
+- Quick recall: four chambers; which side pumps to lungs; vessel returning blood from body; vessel taking blood to body; what valves do; capillary adaptation; blood flow formula.
 
 **Components:** `FaceTheExaminer`, `QuickRecallScreen`
 
@@ -74,53 +95,69 @@
 
 ## 3. Active learning interactions
 
-- `InteractiveHotspotImage`: heart diagram with all major structures
-- `VisualLearning`: two-loop circulatory route walkthrough
+- `InteractiveHotspotImage`: heart diagram with major chambers and vessels
+- `StepSequence`: route of blood through double circulation
 - `ExplainReveal`: double circulatory system logic
+- `ExplainReveal`: left ventricle wall thickness
 - `TheoryCompareBlock`: arteries vs veins vs capillaries
-- `ConceptReveal`: efficiency of double circulation
-- `MisconceptionCheck` × 2: left/right confusion; artery oxygen content
-- `SpotTheError`: aorta/right ventricle confusion
+- `ConceptReveal`: vessel direction vs oxygen content
+- `MisconceptionCheck` × 3
+- `SpotTheError` × 2
 - `GuidedExamResponse`: 2-mark ventricle wall thickness question
-- `FillInTheBlanksBlock`: loop vocabulary recall
+- `GuidedExamResponse`: 5-mark blood route question
+- `MatchingTask`: vessel → function
 - `MatchingTask`: vessel → feature
+- `CalculationBuilder`: blood flow rate = volume / time
 - `FaceTheExaminer`: pulmonary vessel confusion
-- `QuickRecallScreen`: 5 retrieval questions
+- `QuickRecallScreen`: 7 retrieval questions
 
 ---
 
 ## 4. Retrieval points
 
 - Four chambers: right atrium, right ventricle, left atrium, left ventricle
-- Right side: receives deoxygenated blood → pumps to lungs (pulmonary artery); left side: receives oxygenated blood → pumps to body (aorta)
-- Pulmonary artery (deoxygenated, right ventricle → lungs); pulmonary vein (oxygenated, lungs → left atrium)
-- Three vessel types: arteries (away from heart, thick elastic walls, high pressure), veins (to heart, thinner walls, valves, low pressure), capillaries (one cell thick, exchange)
-- Left ventricle wall thicker than right — pumps blood further (to whole body vs lungs)
-- Valves: prevent backflow; found between chambers and at vessel exits; also in veins
+- Right side: receives deoxygenated blood and pumps it to lungs
+- Left side: receives oxygenated blood and pumps it to body
+- Vena cava → right atrium → right ventricle → pulmonary artery → lungs → pulmonary vein → left atrium → left ventricle → aorta
+- Pulmonary artery carries deoxygenated blood; pulmonary vein carries oxygenated blood
+- Arteries carry blood away; veins carry blood towards the heart
+- Capillaries are one cell thick for exchange
+- Valves prevent backflow
+- Rate of blood flow = volume / time
 
 ---
 
 ## 5. Exam skill focus
 
-- 2-mark explain: explain why the left ventricle has a thicker wall than the right ventricle
-- 3-mark describe: describe the route taken by a red blood cell from the vena cava to the aorta
-- 1-mark recall: state one structural difference between an artery and a vein
-- Identification question: label a heart diagram — common exam format
+- 2-mark explain: left ventricle thicker wall
+- 5-mark describe: route of blood through heart and lungs
+- 4-mark compare: arteries and veins
+- 3-mark explain: capillary adaptation
+- 2-mark calculation: blood flow rate
+- 2-mark correction: why arteries do not always carry oxygenated blood
+- Diagram labelling: heart chambers and vessels
 
 ---
 
 ## 6. Build notes
 
-Left/right heart confusion is the most frequently lost mark in this topic. The pulmonary artery/vein oxygen content reversal (artery = deoxygenated, vein = oxygenated) is the second-most common error. Both need their own dedicated misconception checks. The hotspot heart diagram is the visual anchor — all structural knowledge should be built from it. The vessel comparison (arteries/veins/capillaries) must show wall structure visually, not just describe it in text.
+Left/right heart confusion is the most frequently lost mark in this topic. Do not rely on one labelled diagram. Use repeated route practice.
+
+The pulmonary artery/vein reversal is the second most common error. The core rule should be: artery/vein names are about direction from the heart, not oxygen content.
+
+Avoid over-teaching valve names. AQA needs the function of valves more than named valve detail here.
+
+Include a calculation screen. Blood flow rate is an easy mark if the formula is practised.
 
 ---
 
 ## 7. Chapter completion test
 
-- [ ] Student can name all four heart chambers and state what each does
-- [ ] Student can trace the route of blood from the body to the heart, through the lungs, and back (naming all four vessels and chambers)
-- [ ] Student knows the pulmonary artery carries deoxygenated blood and the pulmonary vein carries oxygenated blood
-- [ ] Student can state three structural differences between an artery and a vein
-- [ ] Student can explain why capillary walls are one cell thick
-- [ ] Student can explain why the left ventricle wall is thicker than the right
-- [ ] Student has practised a 2-mark explain question with mark scheme feedback
+- [ ] Student can name all four heart chambers
+- [ ] Student can trace blood from vena cava to aorta
+- [ ] Student knows pulmonary artery vs pulmonary vein
+- [ ] Student can explain why the left ventricle wall is thicker
+- [ ] Student can compare arteries, veins and capillaries
+- [ ] Student can explain why capillaries have one-cell-thick walls
+- [ ] Student can state what valves do
+- [ ] Student can calculate blood flow rate from volume and time
