@@ -10,9 +10,9 @@ export default {
   "colorLight": "rgba(217,96,48,.12)",
   "hook": {
     "atmosphericOpener": {
-      "heading": "WHAT MAKES A FAMILY?",
+      "heading": "What makes a family?",
       "sub": "Families shape almost everything about us.",
-      "cta": "START INVESTIGATING"
+      "cta": "Start investigating"
     },
     "statement": "\"Most families today are a mum, dad and two children living under one roof.\"",
     "isTrue": false,
@@ -29,23 +29,17 @@ export default {
       {
         "emoji": "🌍",
         "label": "Family diversity",
-        "detail": "Lone-parent families, reconstituted families, same-sex families and extended families are all recognised by sociologists as valid family structures.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "Lone-parent families, reconstituted families, same-sex families and extended families are all recognised by sociologists as valid family structures."
       },
       {
         "emoji": "📉",
         "label": "Changing families",
-        "detail": "Marriage rates are falling. Divorce rates rose sharply through the 20th century. Cohabitation and single-person households are increasingly common.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "Marriage rates are falling. Divorce rates rose sharply through the 20th century. Cohabitation and single-person households are increasingly common."
       },
       {
         "emoji": "⚖️",
         "label": "Feminist perspectives",
-        "detail": "Feminists argue traditional family structures can reinforce gender inequality — with women bearing a disproportionate share of domestic labour and emotional work.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "Feminists argue traditional family structures can reinforce gender inequality — with women bearing a disproportionate share of domestic labour and emotional work."
       }
     ],
     "punchline": "Sociology asks not just what a family is — but who benefits from it."
@@ -116,80 +110,44 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🏠 Defining the Family",
+          "label": "Defining the family",
           "text": "Sociologists define the family as a <strong>social group</strong> sharing ties of kinship, marriage or adoption — often living together and providing emotional and economic support. But definitions vary across cultures, time periods and political perspectives."
         },
         {
-          "type": "appliedscenario",
-          "scenario": "A married couple live with their two school-age children. Both parents work full-time.",
+          "type": "scenario",
+          "situation": "A married couple live with their two school-age children. Both parents work full-time.",
           "question": "Which family type does this describe?",
           "options": [
-            {
-              "text": "Nuclear family",
-              "correct": true
-            },
-            {
-              "text": "Extended family",
-              "correct": false
-            },
-            {
-              "text": "Beanpole family",
-              "correct": false
-            }
+            {"text": "Nuclear family", "correct": true},
+            {"text": "Extended family", "correct": false},
+            {"text": "Beanpole family", "correct": false}
           ],
-          "feedback": "The nuclear family consists of two parents and their dependent children — once considered the \"norm\" in Western society.",
-          "followUp": {
-            "q": "Why did Functionalists consider the nuclear family ideal?",
-            "answer": "Functionalists like Parsons argued the nuclear family provided clear roles — a breadwinner and homemaker — offering stability, primary socialisation and emotional support for children and adults."
-          }
+          "correctMsg": "The nuclear family consists of two parents and their dependent children — once considered the 'norm' in Western society.",
+          "wrongMsg": "Nuclear family = two parents + dependent children only. Extended families include wider relatives. Beanpole families span many generations with few siblings at each level."
         },
         {
-          "type": "appliedscenario",
-          "scenario": "A mother lives alone with her 10-year-old daughter after separating from her partner. The daughter's father visits at weekends.",
+          "type": "scenario",
+          "situation": "A mother lives alone with her 10-year-old daughter after separating from her partner. The daughter's father visits at weekends.",
           "question": "Which family type does this describe?",
           "options": [
-            {
-              "text": "Extended family",
-              "correct": false
-            },
-            {
-              "text": "Lone-parent family",
-              "correct": true
-            },
-            {
-              "text": "Reconstituted family",
-              "correct": false
-            }
+            {"text": "Extended family", "correct": false},
+            {"text": "Lone-parent family", "correct": true},
+            {"text": "Reconstituted family", "correct": false}
           ],
-          "feedback": "Lone-parent families are now a major family type in the UK. Most are headed by women. They are not defined by what they lack — they are a distinct family structure with their own dynamics.",
-          "followUp": {
-            "q": "What might a feminist sociologist highlight about lone-parent families?",
-            "answer": "Feminists argue lone-parent families — predominantly headed by mothers — face structural disadvantages: lower incomes, reduced state support and the dual burden of combining paid work with full-time childcare."
-          }
+          "correctMsg": "Lone-parent families are now a major family type in the UK. Most are headed by women. They are not defined by what they lack — they are a distinct family structure with their own dynamics.",
+          "wrongMsg": "A lone-parent family = one parent raising children. Extended families include wider relatives. Reconstituted families are formed from previous relationships joining together."
         },
         {
-          "type": "appliedscenario",
-          "scenario": "Two fathers live with their adopted son and the son's biological grandmother, who provides regular childcare.",
-          "question": "Which family type BEST describes this household?",
+          "type": "scenario",
+          "situation": "Two fathers live with their adopted son and the son's biological grandmother, who provides regular childcare.",
+          "question": "Which family type best describes this household?",
           "options": [
-            {
-              "text": "Extended family — multiple generations sharing support",
-              "correct": true
-            },
-            {
-              "text": "Nuclear family — two parents and one child",
-              "correct": false
-            },
-            {
-              "text": "Lone-parent family — only one main carer",
-              "correct": false
-            }
+            {"text": "Extended family — multiple generations sharing support", "correct": true},
+            {"text": "Nuclear family — two parents and one child", "correct": false},
+            {"text": "Lone-parent family — only one main carer", "correct": false}
           ],
-          "feedback": "When wider relatives live with or actively support a household, it moves toward an extended family — regardless of how the couple is composed. Family types can overlap.",
-          "followUp": {
-            "q": "How does this example challenge traditional definitions of the family?",
-            "answer": "It challenges definitions based on biological ties, gender roles and heterosexual norms — showing that family is a socially constructed concept that changes over time and across cultures."
-          }
+          "correctMsg": "When wider relatives live with or actively support a household, it moves toward an extended family — regardless of how the couple is composed. Family types can overlap.",
+          "wrongMsg": "The grandmother's active, regular involvement in childcare makes this an extended family — wider relatives are part of the household's functioning."
         },
         {
           "type": "colsort",
@@ -250,12 +208,12 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🧠 Primary Socialisation",
+          "label": "Primary socialisation",
           "text": "<strong>Primary socialisation</strong> is the process through which children learn the basic norms, values, language and behaviour of their society — mainly through the family. It is called \"primary\" because it is the <strong>first</strong> and most fundamental form of socialisation."
         },
         {
           "type": "keypoint",
-          "heading": "What Families Teach",
+          "heading": "What families teach",
           "points": [
             {
               "emoji": "🗣️",
@@ -281,7 +239,7 @@ export default {
         },
         {
           "type": "funfact",
-          "heading": "Primary Socialisation in Action",
+          "heading": "Primary socialisation in action",
           "text": "Parent: \"Say thank you.\"\nChild: \"Why?\"\nParent: \"Because civilisation would collapse.\"\n\nSociologists call this the transmission of norms and values. Parents just call it Tuesday."
         },
         {
@@ -322,12 +280,12 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "⚙️ The Functionalist View",
+          "label": "The Functionalist view",
           "text": "<strong>Functionalists</strong> see the family as a fundamental institution that benefits both individuals and society. Talcott Parsons identified two core functions of the nuclear family: <strong>primary socialisation</strong> of children, and <strong>the stabilisation of adult personalities</strong> — providing emotional support for adults recovering from the demands of work and public life."
         },
         {
           "type": "keypoint",
-          "heading": "Functions of the Family",
+          "heading": "Functions of the family",
           "points": [
             {
               "emoji": "💬",
@@ -397,7 +355,7 @@ export default {
         },
         {
           "type": "funfact",
-          "heading": "The Warm Bath Theory",
+          "heading": "The warm bath theory",
           "text": "Talcott Parsons described the family as a \"warm bath\" — a place where stressed adults could emotionally recover.\n\nParent, still in work clothes at 8pm, making their third packed lunch while replying to school emails: \"Absolutely. Very warm.\""
         },
         {
@@ -414,12 +372,12 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "⚖️ The Feminist Critique",
+          "label": "The Feminist critique",
           "text": "<strong>Feminist sociologists</strong> argue that traditional family structure can reinforce gender inequality. Women have historically been expected to perform the majority of <strong>domestic labour</strong> (housework, childcare) and <strong>emotional labour</strong> (managing relationships and feelings in the household) — often unpaid and unrecognised."
         },
         {
           "type": "keypoint",
-          "heading": "Key Feminist Concepts",
+          "heading": "Key feminist concepts",
           "points": [
             {
               "emoji": "🧹",
@@ -489,7 +447,7 @@ export default {
         },
         {
           "type": "funfact",
-          "heading": "Invisible Labour",
+          "heading": "Invisible labour",
           "text": "Dad: \"Just tell me what needs doing.\"\n\nMum, mentally holding the shopping list, three school letters, the dentist appointment, who's upset with whom and why, and the emotional stability of the entire household:\n\n\"Sure.\""
         },
         {
@@ -503,16 +461,16 @@ export default {
       "kicker": "Sociological Perspectives",
       "heading": "The New Right: family breakdown and the welfare state.",
       "sub": "Charles Murray argued welfare dependency was creating a damaging underclass. A controversial but exam-essential perspective.",
-      "headerImage": "/images/charles-murray.png",
+      "headerImage": "/figures/charles-murray.png",
       "blocks": [
         {
           "type": "read",
-          "label": "🏛️ The New Right Perspective",
+          "label": "The New Right perspective",
           "text": "The <strong>New Right</strong> is a conservative sociological perspective that emerged in the 1970s–80s. Thinkers like <strong>Charles Murray</strong> and <strong>David Marsland</strong> argue that the traditional nuclear family — with a married male breadwinner and female carer — is the ideal structure for a stable society. They believe state welfare has undermined this ideal by removing the need for two-parent families."
         },
         {
           "type": "keypoint",
-          "heading": "Key New Right Ideas",
+          "heading": "Key New Right ideas",
           "points": [
             {
               "emoji": "👤",
@@ -609,12 +567,12 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "📈 Key Changes in Family Life",
+          "label": "Key changes in family life",
           "text": "Over the last century, British family life has changed significantly. <strong>Marriage rates</strong> have declined, <strong>divorce rates</strong> rose sharply after the 1969 Divorce Reform Act, <strong>cohabitation</strong> has increased, and family structures have diversified considerably. The nuclear family is no longer the majority household form."
         },
         {
           "type": "keypoint",
-          "heading": "New Family Types to Know",
+          "heading": "New family types to know",
           "points": [
             {
               "emoji": "🌳",
@@ -635,12 +593,12 @@ export default {
         },
         {
           "type": "funfact",
-          "heading": "The Boomerang Family",
+          "heading": "The boomerang family",
           "text": "Adult child: \"I'm just staying temporarily.\"\n\nParents, three years later, eating around a 27-year-old's vinyl collection and discontinued gym equipment:\n\n\"Of course you are.\""
         },
         {
           "type": "keypoint",
-          "heading": "Why Families Have Changed",
+          "heading": "Why families have changed",
           "points": [
             {
               "emoji": "⚖️",
@@ -749,76 +707,40 @@ export default {
       "sub": "Three perspectives. One statement. Think before you choose.",
       "blocks": [
         {
-          "type": "appliedscenario",
-          "scenario": "\"The family performs essential functions for society — providing socialisation, emotional support and stability for both individuals and the wider social order.\"",
+          "type": "scenario",
+          "situation": "\"The family performs essential functions for society — providing socialisation, emotional support and stability for both individuals and the wider social order.\"",
           "question": "Which sociological perspective would most agree with this?",
           "options": [
-            {
-              "text": "Functionalism",
-              "correct": true
-            },
-            {
-              "text": "Feminism",
-              "correct": false
-            },
-            {
-              "text": "Marxism",
-              "correct": false
-            }
+            {"text": "Functionalism", "correct": true},
+            {"text": "Feminism", "correct": false},
+            {"text": "Marxism", "correct": false}
           ],
-          "feedback": "Functionalists view the family as a positive institution that benefits both individuals and society. This view is closely associated with Talcott Parsons.",
-          "followUp": {
-            "q": "How would a feminist challenge this statement?",
-            "answer": "A feminist would argue the family serves society at the expense of women — the emotional support and socialisation described are largely performed by women, often unpaid and unrecognised. The family benefits men more than it benefits everyone equally."
-          }
+          "correctMsg": "Functionalists view the family as a positive institution that benefits both individuals and society. This view is closely associated with Talcott Parsons.",
+          "wrongMsg": "Which perspective sees the family as performing essential, beneficial functions for society as a whole — rather than as a site of inequality or exploitation?"
         },
         {
-          "type": "appliedscenario",
-          "scenario": "\"Domestic labour and emotional work in families falls disproportionately on women — even when both partners work full-time.\"",
+          "type": "scenario",
+          "situation": "\"Domestic labour and emotional work in families falls disproportionately on women — even when both partners work full-time.\"",
           "question": "Which perspective is this most associated with?",
           "options": [
-            {
-              "text": "Functionalism",
-              "correct": false
-            },
-            {
-              "text": "Feminism",
-              "correct": true
-            },
-            {
-              "text": "New Right",
-              "correct": false
-            }
+            {"text": "Functionalism", "correct": false},
+            {"text": "Feminism", "correct": true},
+            {"text": "New Right", "correct": false}
           ],
-          "feedback": "This is a core feminist argument, supported by Ann Oakley's research. Feminists argue the family reproduces gender inequality through the unequal division of domestic and emotional labour.",
-          "followUp": {
-            "q": "Name one piece of evidence that supports this argument.",
-            "answer": "Ann Oakley (1974) found that even when women worked full-time, they still performed the majority of housework and childcare — demonstrating that paid employment had not led to equality in the home."
-          }
+          "correctMsg": "This is a core feminist argument, supported by Ann Oakley's research. Feminists argue the family reproduces gender inequality through the unequal division of domestic and emotional labour.",
+          "wrongMsg": "Which perspective focuses specifically on gender inequality within the family — arguing the family can disadvantage women through unequal domestic and emotional labour?"
         },
         {
-          "type": "appliedscenario",
-          "scenario": "\"Families support capitalism by reproducing a compliant workforce and absorbing the costs of care that the state does not cover.\"",
+          "type": "scenario",
+          "situation": "\"Families support capitalism by reproducing a compliant workforce and absorbing the costs of care that the state does not cover.\"",
           "question": "Which perspective does this statement reflect?",
           "options": [
-            {
-              "text": "Functionalism",
-              "correct": false
-            },
-            {
-              "text": "Feminism",
-              "correct": false
-            },
-            {
-              "text": "Marxism",
-              "correct": true
-            }
+            {"text": "Functionalism", "correct": false},
+            {"text": "Feminism", "correct": false},
+            {"text": "Marxism", "correct": true}
           ],
-          "feedback": "Marxists argue the family serves the interests of capitalism — reproducing labour power, socialising workers to accept inequality and providing unpaid care that would otherwise cost the state.",
-          "followUp": {
-            "q": "How does the Marxist view differ from the Functionalist view of the family?",
-            "answer": "Functionalists argue the family benefits everyone in society equally. Marxists argue it primarily benefits the ruling class and capitalism — maintaining inequality and providing free labour and care."
-          }
+          "correctMsg": "Marxists argue the family serves the interests of capitalism — reproducing labour power, socialising workers to accept inequality and providing unpaid care that would otherwise cost the state.",
+          "wrongMsg": "Which perspective argues the family primarily serves the interests of capitalism and the ruling class — rather than society as a whole or gender equality?"
         },
         {
           "type": "examtip",
@@ -834,7 +756,7 @@ export default {
       "blocks": [
         {
           "type": "tieredquiz",
-          "rounds": [
+          "tiers": [
             {
               "label": "🟢 Round 1 — Definitions",
               "questions": [
@@ -948,7 +870,7 @@ export default {
       "blocks": [
         {
           "type": "keypoint",
-          "heading": "Command Words",
+          "heading": "Command words",
           "points": [
             {
               "emoji": "1️⃣",
@@ -989,171 +911,88 @@ export default {
       "sub": "Real question styles. Real mark schemes. No revision notes.",
       "blocks": [
         {
-          "type": "examscored",
-          "questions": [
-            {
-              "marks": 1,
-              "question": "Identify one type of family.",
-              "placeholder": "Name one family type...",
-              "modelAnswer": "Nuclear family / lone-parent family / extended family / reconstituted family / beanpole family",
-              "keywords": [
-                "nuclear",
-                "lone",
-                "extended",
-                "reconstituted",
-                "beanpole",
-                "single",
-                "blended"
-              ],
-              "tip": "1-mark questions need one accurate term. No explanation required."
-            },
-            {
-              "marks": 2,
-              "question": "Describe two functions of the family.",
-              "placeholder": "Write your two functions here...",
-              "modelAnswer": "Primary socialisation — teaching children norms and values. Emotional support — providing a safe environment where adults and children feel supported and emotionally stable.",
-              "keywords": [
-                "socialisation",
-                "emotional",
-                "support",
-                "economic",
-                "stability",
-                "norms",
-                "values",
-                "function",
-                "parsons"
-              ],
-              "tip": "Two separate points, each with a brief description — not just a label."
-            },
-            {
-              "marks": 4,
-              "question": "Explain one way families socialise children.",
-              "placeholder": "State a way → explain how → give an example...",
-              "modelAnswer": "Families socialise children through the teaching of norms and values — this is called primary socialisation. Parents model expected behaviour such as politeness and sharing, and use positive and negative sanctions to reinforce it. For example, praising a child for saying thank you (positive sanction) or withdrawing a privilege for bad behaviour (negative sanction). This process ensures children learn to participate in society before they enter institutions like school.",
-              "keywords": [
-                "norms",
-                "values",
-                "socialisation",
-                "primary",
-                "sanctions",
-                "positive",
-                "negative",
-                "behaviour",
-                "family",
-                "children"
-              ],
-              "tip": "Four marks = point + development + example + link back. Use sociological terms throughout."
-            },
-            {
-              "marks": 6,
-              "question": "Describe one difference between Functionalist and Feminist views of the family.",
-              "placeholder": "Functionalists argue... Feminists argue... The key difference is...",
-              "modelAnswer": "Functionalists, such as Talcott Parsons, argue that the family benefits all members of society equally — providing primary socialisation, emotional support and stability. The family is seen as a positive institution performing essential functions. By contrast, Feminists, such as Ann Oakley, argue the family can be a site of gender inequality. Oakley's research showed women perform the majority of domestic and emotional labour — unpaid and unrecognised — even when working full-time. The key difference is that Functionalists focus on what the family does for society, while Feminists focus on what the family does to women. Feminists argue the family maintains patriarchy by reinforcing traditional gender roles.",
-              "keywords": [
-                "functionalist",
-                "feminist",
-                "parsons",
-                "oakley",
-                "domestic",
-                "labour",
-                "inequality",
-                "socialisation",
-                "gender",
-                "patriarchy",
-                "difference"
-              ],
-              "tip": "Six marks = named sociologists from both sides, evidence, clear statement of the difference, and a final evaluative comment."
-            }
-          ]
+          "type": "quiz",
+          "question": "Identify one type of family. [1 mark]",
+          "options": [
+            {"text": "Nuclear family", "correct": true},
+            {"text": "Peer group", "correct": false},
+            {"text": "Trade union", "correct": false},
+            {"text": "Secondary school", "correct": false}
+          ],
+          "correctMsg": "Nuclear family — a valid family type. Also accepted: lone-parent family, extended family, reconstituted family, beanpole family, boomerang family. One accurate term is all that is needed for 1 mark.",
+          "wrongMsg": "A family type is a recognised household structure — nuclear, lone-parent, extended, reconstituted, beanpole. Peer groups, unions and schools are not family types."
+        },
+        {
+          "type": "quiz",
+          "question": "Describe two functions of the family. [2 marks]",
+          "options": [
+            {"text": "Primary socialisation — teaching children norms and values. Emotional support — providing a safe environment where adults and children feel supported and emotionally stable.", "correct": true},
+            {"text": "Setting national education standards. Enforcing laws and punishing crime in local communities.", "correct": false},
+            {"text": "Running the economy. Providing welfare payments to unemployed citizens.", "correct": false},
+            {"text": "Primary socialisation — but only for boys. Economic control — managing household budgets exclusively.", "correct": false}
+          ],
+          "correctMsg": "Two clear functions: primary socialisation (teaching norms and values — Parsons) and emotional support (the 'warm bath' — also Parsons). Both are core Functionalist concepts.",
+          "wrongMsg": "Family functions are what the family does for its members and society — socialisation, emotional support, economic support, social stability. National education and law enforcement are state functions."
+        },
+        {
+          "type": "quiz",
+          "question": "Explain one way families socialise children. [4 marks]",
+          "options": [
+            {"text": "Families socialise children through the teaching of norms and values — called primary socialisation. Parents model expected behaviour such as politeness, using positive sanctions (praise) and negative sanctions (withdrawal of privileges). This ensures children learn to participate in society before entering institutions like school.", "correct": true},
+            {"text": "Families socialise children by taking them to school, where teachers explain the rules of society.", "correct": false},
+            {"text": "Children mainly socialise themselves by watching television and using social media independently.", "correct": false},
+            {"text": "Families socialise children by encouraging exam revision and academic achievement.", "correct": false}
+          ],
+          "correctMsg": "Full marks structure: state the process (primary socialisation), name the mechanism (norms and values, positive/negative sanctions), give a specific example, and link back to wider society. School = secondary socialisation, which comes after family.",
+          "wrongMsg": "For a 4-mark explain question: name the sociological concept (primary socialisation), develop with reasoning (sanctions, norms and values), give a specific example, and link back to wider society."
+        },
+        {
+          "type": "quiz",
+          "question": "Describe one difference between Functionalist and Feminist views of the family. [6 marks]",
+          "options": [
+            {"text": "Functionalists (e.g. Parsons) argue the family benefits all members equally — providing socialisation, emotional support and stability. Feminists (e.g. Oakley) argue the family can be a site of gender inequality, with women performing the majority of domestic and emotional labour unpaid and unrecognised. The key difference: Functionalists focus on what the family does for society; Feminists focus on what the family does to women.", "correct": true},
+            {"text": "Functionalists argue families create conflict and social division. Feminists argue families create stability and social harmony for everyone equally.", "correct": false},
+            {"text": "Both perspectives agree the family reinforces gender inequality, but disagree about whether this is improving over time.", "correct": false},
+            {"text": "Functionalists focus on economic class and capitalist exploitation. Feminists focus on social stability and shared norms and values.", "correct": false}
+          ],
+          "correctMsg": "Strong 6-mark answer: names sociologists on both sides (Parsons + Oakley), states what each argues, gives evidence, identifies the key difference clearly, and adds an evaluative comment.",
+          "wrongMsg": "For a 6-mark difference question: name a sociologist on each side (Parsons, Oakley), state what each argues, and clearly identify the key difference. Functionalists say the family benefits everyone; Feminists say it benefits men at women's expense."
         }
       ]
     },
     {
       "label": "Final Boss",
       "kicker": "Boss Fight",
-      "heading": "Final Boss: What really makes a family?",
+      "heading": "Final boss: what really makes a family?",
       "sub": "Four rounds. Everything from this module. No notes.",
       "blocks": [
         {
           "type": "boss",
-          "rounds": [
-            {
-              "label": "Round 1 — Rapid Fire",
-              "emoji": "⚡",
-              "color": "#D96030",
-              "questions": [
-                {
-                  "q": "What is a beanpole family?",
-                  "answer": "Many generations alive simultaneously but few siblings at each level — a long, thin family structure caused by longer lifespans and declining birth rates."
-                },
-                {
-                  "q": "What is primary socialisation?",
-                  "answer": "The process through which children learn society's norms, values and behaviour — mainly through the family, in early childhood."
-                },
-                {
-                  "q": "Name one function of the family according to Parsons.",
-                  "answer": "Primary socialisation of children / stabilisation of adult personalities (\"warm bath\")."
-                },
-                {
-                  "q": "What did Ann Oakley research?",
-                  "answer": "Domestic labour — showing women perform the majority of housework and childcare even when working full-time."
-                },
-                {
-                  "q": "What is a reconstituted family?",
-                  "answer": "A blended or step-family — formed when adults with children from previous relationships form a new family unit."
-                },
-                {
-                  "q": "What is emotional labour?",
-                  "answer": "The invisible work of managing family members' emotions, relationships and wellbeing — largely performed by women and rarely recognised."
-                }
-              ]
-            },
-            {
-              "label": "Round 2 — Fix the Error",
-              "emoji": "🔧",
-              "color": "#8B6914",
-              "questions": [
-                {
-                  "q": "\"A nuclear family includes grandparents living under the same roof.\"",
-                  "answer": "Wrong. A nuclear family consists of two parents and their dependent children only. A household including grandparents would be an extended family."
-                },
-                {
-                  "q": "\"Functionalists argue the family mainly benefits women by reducing their domestic burden.\"",
-                  "answer": "Wrong. Functionalists argue the family benefits ALL members of society equally. It is Feminists — not Functionalists — who argue women bear a disproportionate burden of domestic labour."
-                },
-                {
-                  "q": "\"A boomerang family has many generations alive at the same time but few siblings.\"",
-                  "answer": "Wrong. This describes a beanpole family. A boomerang family describes adult children who leave home and then return — usually due to housing costs or financial pressures."
-                }
-              ]
-            },
-            {
-              "label": "Round 3 — Scenario Analysis",
-              "emoji": "🔍",
-              "color": "#6B4E3D",
-              "questions": [
-                {
-                  "q": "Two parents both work full-time. One still does most of the cooking, childcare, school admin and emotional support at home. Which sociological perspective would analyse this — and why?",
-                  "answer": "A Feminist perspective. Feminists argue the family can be a site of gender inequality — with women performing a disproportionate share of domestic and emotional labour even when in full-time employment. Ann Oakley's research supports this. The scenario illustrates the \"dual burden\" — paid work plus unpaid domestic work."
-                },
-                {
-                  "q": "A sociologist observes that families teach children to accept authority, follow rules and work hard. A Functionalist and a Marxist are both interested in this finding — but reach opposite conclusions. What would each say?",
-                  "answer": "Functionalist: teaching children to accept authority is a positive function — it prepares them for life in an ordered society and ensures social stability. Marxist: teaching children to accept authority primarily benefits capitalism — it creates a compliant workforce that accepts hierarchy and inequality without question."
-                }
-              ]
-            },
-            {
-              "label": "Round 4 — Final Showdown",
-              "emoji": "👑",
-              "color": "#D96030",
-              "questions": [
-                {
-                  "q": "What is the most important role of the family — emotional support, primary socialisation, social stability, or economic support? Choose one and defend your answer using evidence and sociological terminology.",
-                  "answer": "No single correct answer. Strong responses: name a sociological perspective that supports the chosen function, reference a specific sociologist, explain HOW the function operates and acknowledge that other functions also have a claim."
-                }
-              ]
-            }
-          ]
+          "tier": "🟢",
+          "label": "Round 1 — Rapid fire",
+          "question": "Answer each question in one precise sentence:\n(a) What is a beanpole family?\n(b) What is primary socialisation?\n(c) Name one function of the family according to Parsons.\n(d) What did Ann Oakley research?\n(e) What is a reconstituted family?\n(f) What is emotional labour?",
+          "markPoints": "- (a) Beanpole family: many generations alive simultaneously but few siblings at each level — caused by longer lifespans and declining birth rates\n- (b) Primary socialisation: the process through which children learn society's norms, values and behaviour — mainly through the family, in early childhood\n- (c) Parsons function: primary socialisation of children / stabilisation of adult personalities ('warm bath')\n- (d) Oakley: domestic labour — showing women perform the majority of housework and childcare even when working full-time\n- (e) Reconstituted family: a blended or step-family formed when adults with children from previous relationships form a new family unit\n- (f) Emotional labour: the invisible work of managing family members' emotions, relationships and wellbeing — largely performed by women and rarely recognised\n- Award 1 mark per accurate definition (up to 6 marks)"
+        },
+        {
+          "type": "boss",
+          "tier": "🟡",
+          "label": "Round 2 — Fix the error",
+          "question": "Each statement contains an error. Identify and correct it:\n(a) \"A nuclear family includes grandparents living under the same roof.\"\n(b) \"Functionalists argue the family mainly benefits women by reducing their domestic burden.\"\n(c) \"A boomerang family has many generations alive at the same time but few siblings.\"",
+          "markPoints": "- (a) Error: nuclear families do NOT include grandparents. Nuclear = two parents + dependent children only. Grandparents = extended family.\n- (b) Error: Functionalists argue the family benefits ALL members equally — not specifically women. It is Feminists who argue women bear a disproportionate domestic burden.\n- (c) Error: this describes a beanpole family, not a boomerang family. Boomerang = adult children who leave home and return, usually due to housing costs.\n- Award 2 marks per error correctly identified AND corrected (up to 6 marks)"
+        },
+        {
+          "type": "boss",
+          "tier": "🟡",
+          "label": "Round 3 — Scenario analysis",
+          "question": "Apply the correct sociological perspective and explain why.\n\n(a) Two parents both work full-time. One still does most of the cooking, childcare, school admin and emotional support at home. Which perspective analyses this — and why?\n\n(b) A sociologist observes that families teach children to accept authority, follow rules and work hard. A Functionalist and a Marxist are both interested but reach opposite conclusions. What would each say?",
+          "markPoints": "- (a) Feminist perspective. Feminists argue the family can be a site of gender inequality — women performing a disproportionate share of domestic and emotional labour even in full-time employment. Ann Oakley's research supports this. The dual burden.\n- (b) Functionalist: teaching children to accept authority is a positive function — prepares them for an ordered society and ensures social stability. Marxist: teaching children to accept authority primarily benefits capitalism — creates a compliant workforce that accepts hierarchy without question.\n- Award marks for: named perspective, specific argument, named sociologist where relevant"
+        },
+        {
+          "type": "boss",
+          "tier": "🔴",
+          "label": "Round 4 — Final showdown",
+          "question": "What is the most important role of the family — emotional support, primary socialisation, social stability, or economic support? Choose one and defend your answer using evidence and sociological terminology.",
+          "markPoints": "- No single correct answer. Strong responses: name a sociological perspective that supports the chosen function, reference a specific sociologist, explain HOW the function operates and acknowledge that other functions also have a claim.\n- Emotional support — Parsons' 'warm bath' theory, stabilises adult personalities; challenged by Feminists who argue the care burden is unequal\n- Primary socialisation — first and most fundamental; shapes children's norms and values for life; Functionalist emphasis\n- Social stability — families transmit shared values across generations, maintaining social order; Marxist critique: stability benefits ruling class\n- Economic support — families pool resources; Marxists note families also reproduce labour power for capitalism\n- Award marks for: clear choice, named theory, named sociologist, explanation of mechanism, acknowledgement of counter-argument"
         }
       ]
     }
@@ -1162,5 +1001,12 @@ export default {
   "recallTags": [],
   "examTags": [],
   "assetKeys": [],
-  "stageNavigation": []
+  "stageNavigation": [
+    { "id": "part-1", "title": "Family types", "description": "Defining family structures and primary socialisation.", "screenIndex": 0 },
+    { "id": "part-2", "title": "Functionalist view", "description": "What Functionalists say the family does for society.", "screenIndex": 2 },
+    { "id": "part-3", "title": "Critical perspectives", "description": "Feminist and New Right critiques of family life.", "screenIndex": 3 },
+    { "id": "part-4", "title": "Changing families", "description": "Beanpole, boomerang and child-centred families.", "screenIndex": 5 },
+    { "id": "part-5", "title": "Applying perspectives", "description": "Which perspective explains each scenario?", "screenIndex": 7 },
+    { "id": "part-6", "title": "Exam technique", "description": "Command words, exam practice and final boss.", "screenIndex": 9 }
+  ]
 }

@@ -10,9 +10,9 @@ export default {
   "colorLight": "rgba(217,96,48,.12)",
   "hook": {
     "atmosphericOpener": {
-      "heading": "EVERY SOCIOLOGIST THINKS YOUR FAMILY IS DIFFERENT.",
+      "heading": "Every sociologist thinks your family is different.",
       "sub": "…And they all think they're right.",
-      "cta": "ENTER THE ARGUMENT"
+      "cta": "Enter the argument"
     },
     "statement": "\"Family life today is now completely equal.\"",
     "isTrue": false,
@@ -29,23 +29,17 @@ export default {
       {
         "emoji": "🏛️",
         "label": "Parsons",
-        "detail": "Believed families create social stability through clearly defined roles. Men provided financially; women provided emotional care.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "Believed families create social stability through clearly defined roles. Men provided financially; women provided emotional care."
       },
       {
         "emoji": "🤝",
         "label": "Young & Willmott",
-        "detail": "Argued family life became more equal — couples sharing tasks, decisions and domestic work in the symmetrical family.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "Argued family life became more equal — couples sharing tasks, decisions and domestic work in the symmetrical family."
       },
       {
         "emoji": "👁️",
         "label": "Oakley",
-        "detail": "Challenged this. Her research showed women still carried out the majority of domestic labour and emotional work, even in full-time employment.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "Challenged this. Her research showed women still carried out the majority of domestic labour and emotional work, even in full-time employment."
       }
     ],
     "punchline": "Sociology is basically one long argument about who does the dishes."
@@ -111,7 +105,7 @@ export default {
     {
       "label": "The Three Sociologists",
       "kicker": "Meet the Researchers",
-      "heading": "Three Sociologists. Three Very Different Opinions.",
+      "heading": "Three sociologists. Three very different opinions.",
       "sub": "They all studied family life. They did not agree.",
       "blocks": [
         {
@@ -119,25 +113,19 @@ export default {
           "text": "These three researchers spent careers studying family life — and reached very different conclusions. Understanding how they disagree is the whole point of this module."
         },
         {
-          "type": "flipcards",
+          "type": "flashcards",
           "cards": [
             {
-              "icon": "🏛️",
-              "front": "PARSONS",
-              "back": "\"Families keep society stable. Everyone has a role — and it works.\"",
-              "color": "#D96030"
+              "front": "Parsons",
+              "back": "\"Families keep society stable. Everyone has a role — and it works.\""
             },
             {
-              "icon": "🤝",
-              "front": "YOUNG & WILLMOTT",
-              "back": "\"Family life changed. Couples became more equal. We called it the symmetrical family.\"",
-              "color": "#C47828"
+              "front": "Young & Willmott",
+              "back": "\"Family life changed. Couples became more equal. We called it the symmetrical family.\""
             },
             {
-              "icon": "👁️",
-              "front": "OAKLEY",
-              "back": "\"Equal? Really? Someone's still doing all the housework. And I think we both know who.\"",
-              "color": "#8B3A2A"
+              "front": "Oakley",
+              "back": "\"Equal? Really? Someone's still doing all the housework. And I think we both know who.\""
             }
           ]
         },
@@ -152,44 +140,35 @@ export default {
       "kicker": "Talcott Parsons · Functionalism",
       "heading": "\"Families stop society falling apart.\"",
       "sub": "Parsons believed the family was doing essential work — quietly, constantly, invisibly.",
-      "headerImage": "/images/talcott-parsons.png",
       "blocks": [
         {
           "type": "read",
-          "label": "🏛️ Talcott Parsons",
+          "label": "Talcott Parsons",
           "text": "Parsons looked at family life and concluded: without families, society would probably collapse. He believed families teach children how society works — what is acceptable, what is expected, how to behave. He called this <strong>primary socialisation</strong>."
         },
         {
           "type": "keypoint",
-          "heading": "Primary Socialisation",
+          "heading": "Primary socialisation",
           "text": "The process through which children first learn society's norms, values and expected behaviour — mostly from the family, before school or peers get involved."
         },
         {
-          "type": "flipcards",
+          "type": "flashcards",
           "cards": [
             {
-              "icon": "🍽️",
               "front": "Manners",
-              "back": "Please, thank you, queuing, not screaming at strangers. The basics. Parsons thought this was society-level stuff.",
-              "color": "#D96030"
+              "back": "Please, thank you, queuing, not screaming at strangers. The basics. Parsons thought this was society-level stuff."
             },
             {
-              "icon": "📏",
               "front": "Rules",
-              "back": "Learning what is and isn't acceptable behaviour — so society can function without constant conflict.",
-              "color": "#C47828"
+              "back": "Learning what is and isn't acceptable behaviour — so society can function without constant conflict."
             },
             {
-              "icon": "🧠",
               "front": "Behaviour",
-              "back": "Acting in ways that match social expectations. Parsons believed this started in the family, long before school.",
-              "color": "#D96030"
+              "back": "Acting in ways that match social expectations. Parsons believed this started in the family, long before school."
             },
             {
-              "icon": "🎖️",
               "front": "Respect",
-              "back": "Recognising authority, hierarchy and other people's roles. The family is where this is first learned.",
-              "color": "#C47828"
+              "back": "Recognising authority, hierarchy and other people's roles. The family is where this is first learned."
             }
           ]
         },
@@ -207,17 +186,17 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "⚖️ The Division",
+          "label": "The division",
           "text": "Parsons argued traditional families were stable because adults had different — but complementary — responsibilities. He identified two key roles."
         },
         {
           "type": "keypoint",
-          "heading": "Instrumental Role",
+          "heading": "Instrumental role",
           "text": "The breadwinner role — focused on financial provision. Parsons associated this with men. Goal: keep the family economically stable."
         },
         {
           "type": "keypoint",
-          "heading": "Expressive Role",
+          "heading": "Expressive role",
           "text": "The emotional care role — providing warmth, support and stability. Parsons associated this with women. Goal: keep the family emotionally stable."
         },
         {
@@ -280,21 +259,20 @@ export default {
       "kicker": "Young & Willmott · 1973",
       "heading": "\"Families are changing. Finally.\"",
       "sub": "Young & Willmott thought Parsons' world was already becoming history.",
-      "headerImage": "/images/young-willmott.png",
       "blocks": [
         {
           "type": "read",
-          "label": "🤝 The Symmetrical Argument",
+          "label": "The symmetrical argument",
           "text": "Young and Willmott studied family life in the 1970s and argued something significant had shifted. Modern couples, they found, were <strong>sharing tasks more equally</strong> — spending more time together, making joint decisions, dividing housework and childcare more fairly."
         },
         {
           "type": "keypoint",
-          "heading": "Symmetrical Family",
+          "heading": "Symmetrical family",
           "text": "A family where domestic roles are shared more equally between partners — both may work, both contribute to housework and childcare. Young & Willmott argued this was the direction modern families were heading."
         },
         {
-          "type": "appliedscenario",
-          "scenario": "Both adults in a household work full-time. They take turns cooking. Both attend parents' evenings. They decide major purchases together.",
+          "type": "scenario",
+          "situation": "Both adults in a household work full-time. They take turns cooking. Both attend parents' evenings. They decide major purchases together.",
           "question": "Which sociologist would use this as evidence for their theory?",
           "options": [
             {
@@ -310,7 +288,8 @@ export default {
               "correct": false
             }
           ],
-          "explanation": "Young & Willmott would point to shared decision-making and joint task division as evidence of the symmetrical family emerging."
+          "correctMsg": "Young & Willmott would point to shared decision-making and joint task division as evidence of the symmetrical family emerging.",
+          "wrongMsg": "Think about which sociologist argued that shared tasks and joint decisions are evidence of the symmetrical family."
         },
         {
           "type": "examtip",
@@ -321,12 +300,12 @@ export default {
     {
       "label": "Quick Retrieval",
       "kicker": "Who Said It?",
-      "heading": "Rapid Fire — Match the Researcher",
+      "heading": "Rapid fire — match the researcher",
       "sub": "Three sociologists. Which one said what?",
       "blocks": [
         {
           "type": "tieredquiz",
-          "rounds": [
+          "tiers": [
             {
               "label": "Round 1 — Identify the Researcher",
               "questions": [
@@ -391,16 +370,16 @@ export default {
       "kicker": "Ann Oakley · Feminism",
       "heading": "\"Equal? Not exactly.\"",
       "sub": "Oakley looked at the same evidence and drew very different conclusions.",
-      "headerImage": "/images/ann-oakley.png",
+      "headerImage": "/figures/ann-oakley.png",
       "blocks": [
         {
           "type": "read",
-          "label": "👁️ Ann Oakley",
+          "label": "Ann Oakley",
           "text": "Oakley looked at the evidence for the symmetrical family — and was unconvinced. Her research showed that even in modern households, women still carried out the majority of <strong>housework, childcare and emotional labour</strong>, often on top of full-time paid work."
         },
         {
           "type": "keypoint",
-          "heading": "Domestic Division of Labour",
+          "heading": "Domestic division of labour",
           "text": "How household tasks are divided between people. Oakley's research showed this division remained unequal — women doing significantly more unpaid domestic work than men."
         },
         {
@@ -410,7 +389,7 @@ export default {
         },
         {
           "type": "read",
-          "label": "🔍 Oakley's Challenge",
+          "label": "Oakley's challenge",
           "text": "Oakley basically asked one devastating question: <em>\"If family life is equal now… why is one person still mentally tracking every birthday, every dentist appointment, every PE kit, every school email, every emotional need in the household?\"</em><br><br>This invisible work — <strong>emotional labour</strong> — rarely gets counted in surveys about chores. Oakley argued it should."
         },
         {
@@ -422,22 +401,22 @@ export default {
     {
       "label": "The Argument",
       "kicker": "Sociology Meets Real Life",
-      "heading": "This Is What The Research Actually Looks Like.",
+      "heading": "This is what the research actually looks like.",
       "sub": "Somewhere between the studies and the stats, actual humans are having this conversation.",
       "blocks": [
         {
           "type": "read",
-          "label": "📢 Panel 1",
+          "label": "Panel 1",
           "text": "\"We totally split the chores equally,\" said the man, proudly."
         },
         {
           "type": "read",
-          "label": "📢 Panel 2",
+          "label": "Panel 2",
           "text": "The woman was simultaneously: holding a toddler, answering a school email, mentally tracking that there was no milk, remembering it was PE tomorrow and planning three people's meals for the week."
         },
         {
           "type": "read",
-          "label": "📢 Panel 3",
+          "label": "Panel 3",
           "text": "\"I loaded one plate into the dishwasher,\" he added."
         },
         {
@@ -476,8 +455,8 @@ export default {
       "sub": "Three sociologists. Three different verdicts.",
       "blocks": [
         {
-          "type": "appliedscenario",
-          "scenario": "\"Modern family life is now fully equal — both partners share all responsibilities.\"",
+          "type": "scenario",
+          "situation": "\"Modern family life is now fully equal — both partners share all responsibilities.\"",
           "question": "Young & Willmott would…",
           "options": [
             {
@@ -493,11 +472,12 @@ export default {
               "correct": false
             }
           ],
-          "explanation": "Young & Willmott's research directly supports this view. They argued the symmetrical family represented a major shift toward equality."
+          "correctMsg": "Young & Willmott's research directly supports this view. They argued the symmetrical family represented a major shift toward equality.",
+          "wrongMsg": "Young & Willmott coined the term 'symmetrical family' — they argued modern families had become more equal."
         },
         {
-          "type": "appliedscenario",
-          "scenario": "\"Modern family life is now fully equal — both partners share all responsibilities.\"",
+          "type": "scenario",
+          "situation": "\"Modern family life is now fully equal — both partners share all responsibilities.\"",
           "question": "Oakley would…",
           "options": [
             {
@@ -513,11 +493,12 @@ export default {
               "correct": false
             }
           ],
-          "explanation": "Oakley's entire research challenge was that equality was overstated. Women still did more housework, childcare and emotional labour — even in dual-income households."
+          "correctMsg": "Oakley's entire research challenge was that equality was overstated. Women still did more housework, childcare and emotional labour — even in dual-income households.",
+          "wrongMsg": "Oakley challenged the idea that equality had been achieved — she showed women still carried most domestic and emotional labour."
         },
         {
-          "type": "appliedscenario",
-          "scenario": "\"Modern family life is now fully equal — both partners share all responsibilities.\"",
+          "type": "scenario",
+          "situation": "\"Modern family life is now fully equal — both partners share all responsibilities.\"",
           "question": "Parsons would…",
           "options": [
             {
@@ -533,7 +514,8 @@ export default {
               "correct": false
             }
           ],
-          "explanation": "Parsons thought role specialisation was functional — not necessarily about equality. He might acknowledge change, but argue distinct roles still serve a purpose."
+          "correctMsg": "Parsons thought role specialisation was functional — not necessarily about equality. He might acknowledge change, but argue distinct roles still serve a purpose.",
+          "wrongMsg": "Parsons believed in complementary roles, not strict equality — he might acknowledge some change but still see function in role specialisation."
         },
         {
           "type": "funfact",
@@ -615,22 +597,22 @@ export default {
     {
       "label": "Exam Skills",
       "kicker": "Level Up",
-      "heading": "How to Sound Like a Sociologist in Exams",
+      "heading": "How to sound like a sociologist in exams",
       "sub": "Same knowledge. Very different marks.",
       "blocks": [
         {
           "type": "read",
-          "label": "📉 The Weak Version",
+          "label": "The weak version",
           "text": "\"Some sociologists think families are equal and some don't.\""
         },
         {
           "type": "read",
-          "label": "📈 Better — Named Sociologist",
+          "label": "Better — named sociologist",
           "text": "Young and Willmott argued modern families became more <strong>symmetrical</strong> — with roles shared more equally between partners."
         },
         {
           "type": "read",
-          "label": "🏆 Strongest — Named + Evaluated",
+          "label": "Strongest — named + evaluated",
           "text": "Young and Willmott argued modern families became more symmetrical. However, Oakley challenged this, arguing women still perform a disproportionate share of the <strong>domestic division of labour</strong> — particularly <strong>emotional labour</strong> — even when in full-time employment."
         },
         {
@@ -700,85 +682,36 @@ export default {
     {
       "label": "Final Boss",
       "kicker": "Boss Fight",
-      "heading": "Final Boss: Are families really equal now?",
+      "heading": "Final boss: are families really equal now?",
       "sub": "Four rounds. Everything from this module. Split-screen showdown — Parsons vs Oakley.",
       "blocks": [
         {
           "type": "boss",
-          "rounds": [
-            {
-              "label": "Round 1 — Rapid Fire",
-              "emoji": "⚡",
-              "color": "#D96030",
-              "questions": [
-                {
-                  "q": "What is the expressive role?",
-                  "answer": "The emotional care role in the family — providing warmth, support and stability. Parsons associated this with women."
-                },
-                {
-                  "q": "What is the symmetrical family?",
-                  "answer": "Young & Willmott's concept — a family where domestic roles are shared more equally between partners, both working and contributing to housework/childcare."
-                },
-                {
-                  "q": "What does patriarchy mean?",
-                  "answer": "A social system where men hold more power and authority. Oakley argued the family can reproduce patriarchy by reinforcing traditional gender roles."
-                },
-                {
-                  "q": "What did Oakley mean by domestic division of labour?",
-                  "answer": "How household tasks are divided. Oakley's research showed women still performed the majority of domestic work and emotional labour, even in full-time employment."
-                },
-                {
-                  "q": "What is primary socialisation?",
-                  "answer": "The process through which children first learn society's norms, values and expected behaviour — from the family, before school or peers."
-                }
-              ]
-            },
-            {
-              "label": "Round 2 — Fix the Error",
-              "emoji": "🔧",
-              "color": "#8B6914",
-              "questions": [
-                {
-                  "q": "\"Oakley believed family roles had become fully equal and women were no longer disadvantaged.\"",
-                  "answer": "Wrong. Oakley's entire argument was the opposite — she challenged the claim that equality had been achieved. Her research showed women still performed the majority of domestic labour and emotional work."
-                },
-                {
-                  "q": "\"Young & Willmott's symmetrical family means both partners do exactly 50% of all tasks.\"",
-                  "answer": "Not quite. The symmetrical family describes a more equal sharing of roles and tasks — a shift from rigid traditional divisions. It doesn't mean perfectly identical contributions, but a greater balance than before."
-                },
-                {
-                  "q": "\"Parsons' instrumental role means providing emotional support to the family.\"",
-                  "answer": "Wrong. The instrumental role is about financial provision — earning money and ensuring economic stability. The expressive role is about emotional care."
-                }
-              ]
-            },
-            {
-              "label": "Round 3 — Build the Argument",
-              "emoji": "🔍",
-              "color": "#6B4E3D",
-              "questions": [
-                {
-                  "q": "A sociologist interviews 200 couples and finds women still do 70% of childcare and housework, even when both work full-time. Which sociologist predicted this — and which sociologist would be most challenged by it?",
-                  "answer": "Oakley predicted this — her research showed persistent domestic inequality despite women entering the workforce. Young & Willmott would be most challenged, as it undermines their symmetrical family claim."
-                },
-                {
-                  "q": "A student writes: \"Families are important.\" A sociology examiner marks this as insufficient. What should they write instead?",
-                  "answer": "Should include: a named sociologist (e.g. Parsons), their specific argument (e.g. families provide primary socialisation and social stability), and a key concept (e.g. instrumental/expressive roles, domestic division of labour, symmetrical family)."
-                }
-              ]
-            },
-            {
-              "label": "Round 4 — Final Showdown",
-              "emoji": "👑",
-              "color": "#D96030",
-              "questions": [
-                {
-                  "q": "Parsons or Oakley — whose view of family life is more convincing today? Argue your case using named evidence, sociological concepts, and at least one direct comparison between the two.",
-                  "answer": "No single correct answer. Strong responses: clearly state which sociologist and why; use at least two key concepts accurately; reference specific research (Oakley's domestic labour findings / Parsons' role theory); acknowledge the counterargument before rejecting or qualifying it; connect to contemporary evidence if possible."
-                }
-              ]
-            }
-          ]
+          "tier": "🟢",
+          "label": "Round 1 — Rapid fire",
+          "question": "1. What is the expressive role?\n2. What is the symmetrical family?\n3. What does patriarchy mean?\n4. What did Oakley mean by domestic division of labour?\n5. What is primary socialisation?",
+          "markPoints": "- Expressive role: emotional care role — providing warmth, support and stability; Parsons associated this with women\n- Symmetrical family: Young & Willmott's concept — domestic roles shared more equally between partners, both working and contributing to housework/childcare\n- Patriarchy: social system where men hold more power and authority; Oakley argued the family can reproduce patriarchy through traditional gender roles\n- Domestic division of labour: Oakley showed women still performed majority of domestic work and emotional labour, even in full-time employment\n- Primary socialisation: children first learn society's norms, values and expected behaviour from the family, before school or peers"
+        },
+        {
+          "type": "boss",
+          "tier": "🟡",
+          "label": "Round 2 — Fix the error",
+          "question": "1. \"Oakley believed family roles had become fully equal and women were no longer disadvantaged.\"\n2. \"Young & Willmott's symmetrical family means both partners do exactly 50% of all tasks.\"\n3. \"Parsons' instrumental role means providing emotional support to the family.\"",
+          "markPoints": "- Statement 1 is wrong: Oakley's entire argument was the opposite — she challenged the claim that equality had been achieved; women still performed the majority of domestic labour and emotional work\n- Statement 2 is not quite right: symmetrical family describes a more equal sharing — a shift from rigid traditional divisions, not perfectly identical contributions\n- Statement 3 is wrong: instrumental role = financial provision; the expressive role is about emotional care"
+        },
+        {
+          "type": "boss",
+          "tier": "🟡",
+          "label": "Round 3 — Build the argument",
+          "question": "1. A sociologist interviews 200 couples and finds women still do 70% of childcare and housework, even when both work full-time. Which sociologist predicted this — and which sociologist would be most challenged by it?\n2. A student writes: \"Families are important.\" A sociology examiner marks this as insufficient. What should they write instead?",
+          "markPoints": "- Q1: Oakley predicted this — her research showed persistent domestic inequality; Young & Willmott would be most challenged, as it undermines their symmetrical family claim\n- Q2: Should include a named sociologist (e.g. Parsons), their specific argument (e.g. primary socialisation, social stability), and a key concept (e.g. instrumental/expressive roles, domestic division of labour, symmetrical family)"
+        },
+        {
+          "type": "boss",
+          "tier": "🔴",
+          "label": "Round 4 — Final showdown",
+          "question": "Parsons or Oakley — whose view of family life is more convincing today? Argue your case using named evidence, sociological concepts, and at least one direct comparison between the two.",
+          "markPoints": "- Clearly state which sociologist and why\n- Use at least two key concepts accurately\n- Reference specific research (Oakley's domestic labour findings / Parsons' role theory)\n- Acknowledge the counterargument before rejecting or qualifying it\n- Connect to contemporary evidence if possible"
         }
       ]
     }
@@ -787,5 +720,12 @@ export default {
   "recallTags": [],
   "examTags": [],
   "assetKeys": [],
-  "stageNavigation": []
+  "stageNavigation": [
+    { "id": "part-1", "title": "The three sociologists", "description": "Meet Parsons, Young & Willmott and Oakley", "screenIndex": 0 },
+    { "id": "part-2", "title": "Parsons and his roles", "description": "Primary socialisation and role theory", "screenIndex": 1 },
+    { "id": "part-3", "title": "Young & Willmott", "description": "The symmetrical family argument", "screenIndex": 3 },
+    { "id": "part-4", "title": "Oakley's challenge", "description": "Domestic inequality and emotional labour", "screenIndex": 5 },
+    { "id": "part-5", "title": "Theory battle", "description": "Applying perspectives to family equality", "screenIndex": 7 },
+    { "id": "part-6", "title": "Exam technique", "description": "How to use named sociologists in answers", "screenIndex": 9 }
+  ]
 }

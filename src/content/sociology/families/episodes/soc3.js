@@ -7,12 +7,12 @@ export default {
   "era": "AQA GCSE",
   "icon": "⚖️",
   "color": "#D96030",
-  "colorLight": "rgba(123,63,140,.12)",
+  "colorLight": "rgba(217,96,48,.12)",
   "hook": {
     "atmosphericOpener": {
-      "heading": "WHO HAS POWER?",
+      "heading": "Who has power?",
       "sub": "…and who gets left behind?",
-      "cta": "INVESTIGATE SOCIETY"
+      "cta": "Investigate society"
     },
     "scenario": {
       "location": "Any workplace, school, or social media feed",
@@ -33,23 +33,17 @@ export default {
       {
         "emoji": "⚡",
         "label": "Feminism: gender inequality shapes society",
-        "detail": "Feminists argue that society often advantages men over women — in pay, leadership, media representation and domestic expectations. This is not accidental: it is built into social structures.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "Feminists argue that society often advantages men over women — in pay, leadership, media representation and domestic expectations. This is not accidental: it is built into social structures."
       },
       {
         "emoji": "🏛️",
         "label": "Patriarchy: men hold more structural power",
-        "detail": "Patriarchy describes a system in which men hold more power than women across social institutions — work, family, politics, media. Feminists study how patriarchy is maintained and challenged.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "Patriarchy describes a system in which men hold more power than women across social institutions — work, family, politics, media. Feminists study how patriarchy is maintained and challenged."
       },
       {
         "emoji": "📊",
         "label": "Weber: power is more than just money",
-        "detail": "Max Weber argued that inequality involves status and authority, not just economic class. This helps explain why gender, ethnicity and prestige can shape life chances independently of wealth.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "Max Weber argued that inequality involves status and authority, not just economic class. This helps explain why gender, ethnicity and prestige can shape life chances independently of wealth."
       }
     ],
     "punchline": "Different groups experience society differently. Gender, class and status all shape who has power — and who doesn't."
@@ -116,12 +110,11 @@ export default {
       "label": "What Is Feminism?",
       "kicker": "Perspective",
       "heading": "Feminism: studying gender inequality.",
-      "headerImage": "/images/feminism-header.png",
       "sub": "A sociological perspective — not a political opinion. Feminism asks why gender still shapes power.",
       "blocks": [
         {
           "type": "read",
-          "label": "🔍 The Feminist Perspective",
+          "label": "The Feminist perspective",
           "text": "<strong>Feminism</strong> is a sociological perspective that focuses on gender inequality. Feminists argue that society often advantages men over women — in workplaces, families, media and social expectations.<br/><br/>Feminism does not claim all women have identical experiences, or that all men are advantaged in every situation. It identifies <em>patterns</em> in how gender shapes power and opportunity across society."
         },
         {
@@ -161,7 +154,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "👥 What Are Gender Roles?",
+          "label": "What are gender roles?",
           "text": "Gender roles are the expected behaviours, attitudes and characteristics that society associates with being male or female. They are not fixed — they vary between cultures and change over time. But within any given society, they shape what is considered \"normal\" or \"appropriate\" for men and women."
         },
         {
@@ -219,16 +212,14 @@ export default {
           "explanation": "Sociologists call these patterns gender roles. They are learned through socialisation — not biologically determined. The fact that they vary between cultures and change over time proves they are socially constructed."
         },
         {
-          "type": "tfcheckpoint",
-          "statement": "Gender roles are biological — men and women are naturally suited to different roles in society.",
-          "isTrue": false,
-          "revealHeader": "Gender roles are socially constructed, not biologically fixed.",
-          "revealSub": "They vary across cultures and change over time — proving they are created by society, not determined by biology.",
-          "breakdown": [
-            "Feminists argue gender roles are taught through socialisation — family, school, media and peer groups.",
-            "The same behaviour (e.g. assertiveness) is praised in men and criticised in women — showing the standard is socially, not biologically, set.",
-            "Different cultures have different gender norms — if they were biological, they would be universal.",
-            "Gender roles have changed significantly within living memory — biology doesn't change that quickly."
+          "type": "misconceptionCheck",
+          "statements": [
+            {
+              "statement": "Gender roles are biological — men and women are naturally suited to different roles in society.",
+              "answer": false,
+              "reveal": "Gender roles are socially constructed, not biologically fixed. They vary across cultures and change over time — proving they are created by society, not determined by biology. Feminists argue gender roles are taught through socialisation — family, school, media and peer groups. The same behaviour (e.g. assertiveness) is praised in men and criticised in women — showing the standard is socially, not biologically, set. Different cultures have different gender norms — if they were biological, they would be universal. Gender roles have changed significantly within living memory — biology doesn't change that quickly.",
+              "examTrap": null
+            }
           ]
         }
       ]
@@ -241,61 +232,47 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🏛️ How Patriarchy Shows Up",
+          "label": "How patriarchy shows up",
           "text": "Patriarchy doesn't require deliberate sexism. Feminists argue it operates through social structures, norms and expectations that systematically advantage men over women — often in ways that feel normal or even natural."
         },
         {
-          "type": "appliedscenario",
-          "scenarios": [
-            {
-              "scenario": "A large company has 200 employees. 60% are women. But of the 20 senior leadership positions, 17 are held by men. The company says it promotes purely on merit.",
-              "question": "What would a feminist sociologist say about this situation?",
-              "options": [
-                "This reflects natural differences in men's and women's abilities and ambitions",
-                "The pattern suggests patriarchal structures — not individual choices — are limiting women's progression",
-                "This is a Marxist issue about class inequality, not a feminist issue about gender",
-                "This is purely a coincidence and requires no sociological explanation"
-              ],
-              "correct": 1,
-              "feedback": "Feminists argue that systematic patterns — like women consistently underrepresented in leadership across multiple organisations — reflect patriarchal structures, not individual choices or merit alone. The \"glass ceiling\" describes the invisible barrier limiting women's career progression.",
-              "followUp": {
-                "q": "What term do sociologists use for the invisible barrier limiting women's career progression?",
-                "answer": "The \"glass ceiling\" — the metaphor describes how women can see the top positions but are prevented from reaching them by invisible structural and cultural barriers, not formal rules."
-              }
-            },
-            {
-              "scenario": "In a household where both parents work full-time, the woman spends an average of 3 hours more per day on domestic tasks (cooking, cleaning, childcare) than the man.",
-              "question": "Which feminist concept best explains this pattern?",
-              "options": [
-                "The dual burden — women face the \"double shift\" of paid work AND unpaid domestic labour",
-                "False consciousness — women have been persuaded to enjoy housework by capitalist ideology",
-                "Social cohesion — families function better when roles are clearly divided",
-                "Meritocracy — women choose domestic roles because they prefer them"
-              ],
-              "correct": 0,
-              "feedback": "The dual burden (or \"double shift\"): feminist sociologists use this term to describe how many women face two jobs — paid employment and unpaid domestic labour. This is a pattern, not a personal choice — it reflects the persistence of traditional gender roles even when women participate equally in paid work.",
-              "followUp": {
-                "q": "How does the \"dual burden\" challenge the idea that gender equality has been achieved?",
-                "answer": "Even when women achieve formal equality in the workplace, the unequal distribution of domestic labour means women often work significantly more hours in total than men. Formal equality in law does not automatically produce equality in practice."
-              }
-            },
-            {
-              "scenario": "A study finds that a job application CV with a male name receives significantly more interview offers than an identical CV with a female name submitted to the same companies.",
-              "question": "What does this evidence suggest about the job market?",
-              "options": [
-                "It suggests structural gender bias — identical qualifications are evaluated differently based on perceived gender",
-                "It proves that women are less qualified for most professional roles",
-                "It shows that employers deliberately discriminate, suggesting individual bad actors rather than structural issues",
-                "It is statistically insignificant and not evidence of any wider pattern"
-              ],
-              "correct": 0,
-              "feedback": "This type of study (a field experiment using paired CVs) provides strong evidence of structural gender bias. The identical qualifications receive different outcomes based only on the perceived gender of the applicant — suggesting the bias is embedded in evaluation processes, not just individual attitudes.",
-              "followUp": {
-                "q": "Why do feminists argue this is evidence of patriarchy rather than just individual prejudice?",
-                "answer": "Patriarchy describes systemic advantage — built into institutions and norms. The CV study shows bias operating at scale across many organisations, not just in a few prejudiced individuals. This systemic pattern is what feminists mean by patriarchal structures."
-              }
-            }
-          ]
+          "type": "scenario",
+          "situation": "A large company has 200 employees. 60% are women. But of the 20 senior leadership positions, 17 are held by men. The company says it promotes purely on merit.",
+          "question": "What would a feminist sociologist say about this situation?",
+          "options": [
+            {"text": "This reflects natural differences in men's and women's abilities and ambitions", "correct": false},
+            {"text": "The pattern suggests patriarchal structures — not individual choices — are limiting women's progression", "correct": true},
+            {"text": "This is a Marxist issue about class inequality, not a feminist issue about gender", "correct": false},
+            {"text": "This is purely a coincidence and requires no sociological explanation", "correct": false}
+          ],
+          "correctMsg": "Feminists argue that systematic patterns — like women consistently underrepresented in leadership across multiple organisations — reflect patriarchal structures, not individual choices or merit alone. The \"glass ceiling\" describes the invisible barrier limiting women's career progression.",
+          "wrongMsg": "Think about what feminist sociology focuses on: patriarchal structures that create systematic patterns across organisations, not individual choices or coincidence."
+        },
+        {
+          "type": "scenario",
+          "situation": "In a household where both parents work full-time, the woman spends an average of 3 hours more per day on domestic tasks (cooking, cleaning, childcare) than the man.",
+          "question": "Which feminist concept best explains this pattern?",
+          "options": [
+            {"text": "The dual burden — women face the \"double shift\" of paid work AND unpaid domestic labour", "correct": true},
+            {"text": "False consciousness — women have been persuaded to enjoy housework by capitalist ideology", "correct": false},
+            {"text": "Social cohesion — families function better when roles are clearly divided", "correct": false},
+            {"text": "Meritocracy — women choose domestic roles because they prefer them", "correct": false}
+          ],
+          "correctMsg": "The dual burden (or \"double shift\"): feminist sociologists use this term to describe how many women face two jobs — paid employment and unpaid domestic labour. This is a pattern, not a personal choice — it reflects the persistence of traditional gender roles even when women participate equally in paid work.",
+          "wrongMsg": "Look for the feminist concept that names the situation where women have two jobs: paid employment AND most of the domestic work."
+        },
+        {
+          "type": "scenario",
+          "situation": "A study finds that a job application CV with a male name receives significantly more interview offers than an identical CV with a female name submitted to the same companies.",
+          "question": "What does this evidence suggest about the job market?",
+          "options": [
+            {"text": "It suggests structural gender bias — identical qualifications are evaluated differently based on perceived gender", "correct": true},
+            {"text": "It proves that women are less qualified for most professional roles", "correct": false},
+            {"text": "It shows that employers deliberately discriminate, suggesting individual bad actors rather than structural issues", "correct": false},
+            {"text": "It is statistically insignificant and not evidence of any wider pattern", "correct": false}
+          ],
+          "correctMsg": "This type of study (a field experiment using paired CVs) provides strong evidence of structural gender bias. The identical qualifications receive different outcomes based only on the perceived gender of the applicant — suggesting the bias is embedded in evaluation processes, not just individual attitudes.",
+          "wrongMsg": "Consider what it means that identical qualifications produce different outcomes — is this about individual attitudes or something more structural?"
         }
       ]
     },
@@ -307,7 +284,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🎯 Why This Matters",
+          "label": "Why this matters",
           "text": "AQA markers reward <strong>precise terminology</strong>. \"Unfairness\" is not the same as \"patriarchy.\" \"Expectations\" is not the same as \"gender roles.\" Using the right term proves you understand the concept — and earns marks."
         },
         {
@@ -372,7 +349,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "📊 What Are Life Chances?",
+          "label": "What are life chances?",
           "text": "<strong>Life chances</strong> are the opportunities people have to access the good things in life — education, income, health, housing, career progression. The concept was developed by Max Weber.<br/><br/>Sociologists argue that life chances are shaped by:<br/>• <strong>Social class</strong> — income, wealth, occupation<br/>• <strong>Gender</strong> — feminist sociologists show women face structural barriers<br/>• <strong>Ethnicity</strong> — racial inequality affects educational and economic outcomes<br/>• <strong>Status</strong> — the social respect attached to your role or identity"
         },
         {
@@ -458,12 +435,12 @@ export default {
       "label": "Max Weber",
       "kicker": "Theorist",
       "heading": "Max Weber (1864–1920)",
-      "headerImage": "/images/max-weber.png",
+      "headerImage": "/figures/max-weber.png",
       "sub": "Power is more than money. Status and authority matter too.",
       "blocks": [
         {
           "type": "read",
-          "label": "📖 Who Was Weber?",
+          "label": "Who was Weber?",
           "text": "Max Weber was a German sociologist writing at the same time as Durkheim. He agreed with Marx that class inequality mattered — but argued Marx was too focused on economics. Weber identified <strong>three distinct dimensions of inequality</strong> that could each affect life chances independently."
         },
         {
@@ -495,7 +472,7 @@ export default {
         },
         {
           "type": "funfact",
-          "label": "💡 Weber vs Marx",
+          "label": "Weber vs Marx",
           "text": "Marx said: \"Everything comes back to who owns the factories.\" Weber said: \"It's more complicated than that.\" A poor but respected religious leader can have enormous power. A fabulously wealthy celebrity can have status but no political authority. Weber's multi-dimensional view allows sociologists to explain patterns of inequality that class alone cannot — including gender inequality."
         }
       ]
@@ -508,7 +485,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "⭐ Status Is Socially Constructed",
+          "label": "Status is socially constructed",
           "text": "Status is the respect or social prestige society gives to a person or group. But status isn't objective — it depends on what a society values. A doctor has high status in most societies. But in some contexts, a footballing celebrity has more cultural influence than a doctor. Status is <em>given</em> by society — and society can also take it away."
         },
         {
@@ -559,7 +536,7 @@ export default {
         },
         {
           "type": "examtip",
-          "label": "⚔️ Exam Assassin",
+          "label": "Exam assassin",
           "tip": "\"Weber believed power is more than just money.\" If an AQA question asks you to explain Weber's contribution — always use all three: class (economic), status (social respect) and authority (legitimate power). Then show how these dimensions can operate independently — and how gender, not just class, affects all three."
         }
       ]
@@ -572,61 +549,47 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🔬 Applying Perspectives",
+          "label": "Applying perspectives",
           "text": "AQA regularly asks you to identify which sociological perspective would explain a situation. You now know four: <strong>Feminism</strong>, <strong>Marxism</strong>, <strong>Functionalism</strong> and <strong>Weber</strong>. The skill is knowing not just the label — but WHY each perspective agrees."
         },
         {
-          "type": "appliedscenario",
-          "scenarios": [
-            {
-              "scenario": "A study finds that women in the UK earn on average 14.9% less than men for equivalent work. Feminists call this the gender pay gap and argue it reflects patriarchal structures in hiring, promotion and pay-setting.",
-              "question": "Which perspective provides the MOST direct explanation for this pattern?",
-              "options": [
-                "Functionalism — the pay gap reflects different roles with different levels of social importance",
-                "Feminism — the pay gap is evidence of patriarchal structures that systematically disadvantage women",
-                "Marxism — the pay gap is purely about capitalist exploitation of the working class",
-                "Weber — the pay gap is explained entirely by differences in individual status"
-              ],
-              "correct": 1,
-              "feedback": "Feminism most directly addresses the gender pay gap — it identifies the patriarchal structures that maintain male advantage in pay, hiring and promotion. Marxism and Weber offer partial explanations, but feminism focuses specifically on gender as a dimension of inequality.",
-              "followUp": {
-                "q": "How would a Marxist DIFFER from a feminist in explaining the gender pay gap?",
-                "answer": "A Marxist would argue the pay gap is ultimately rooted in capitalist exploitation — employers benefit from paying women less, which also creates divisions in the working class that prevent class unity. A feminist would argue the pay gap exists because of patriarchy — male advantage built into social structures — which operates independently of capitalism and existed in non-capitalist societies too."
-              }
-            },
-            {
-              "scenario": "A television presenter has no formal political power and a modest salary. But millions of people trust their opinions on politics, science and society — and their views visibly influence public debate.",
-              "question": "Which sociologist's concept BEST explains this person's power?",
-              "options": [
-                "Marx — their power comes from their position in the economic system",
-                "Weber — their power comes from status and cultural influence, not income or formal authority",
-                "Durkheim — their power reflects the collective conscience of society",
-                "A feminist — their power reflects gender advantage in the media"
-              ],
-              "correct": 1,
-              "feedback": "Weber's concept of status explains influence that doesn't derive from formal authority or economic class. The presenter's power is cultural and reputational — a form of status-based influence that Marx's economic analysis misses entirely.",
-              "followUp": {
-                "q": "Why does Weber's concept of status matter for understanding gender inequality?",
-                "answer": "Status helps explain why women can face disadvantage even when formal barriers have been removed. Even if a woman earns as much as a male colleague, she may command less respect, receive less credit for achievements and be seen as less \"naturally\" authoritative — status-based inequality that income data alone doesn't capture."
-              }
-            },
-            {
-              "scenario": "A researcher finds that children's toys are still heavily gendered: pink science sets marketed to girls emphasise \"being pretty,\" while boys' science kits emphasise \"building and discovery.\" Both contain identical equipment.",
-              "question": "Which concepts best explain what this research reveals?",
-              "options": [
-                "Life chances and class — the toys reflect economic inequality in the toy market",
-                "Gender roles and socialisation — toys teach children different expectations based on gender from an early age",
-                "The organic analogy — toys play a functional role in society's stability",
-                "False consciousness — children are unaware that they are being socialised by toy marketing"
-              ],
-              "correct": 1,
-              "feedback": "Gender roles and socialisation: toys are a key agency through which children learn what is expected of their gender. Identical equipment packaged differently communicates that boys should build and explore while girls should focus on appearance — a classic example of gender role socialisation in action.",
-              "followUp": {
-                "q": "How would a feminist sociologist link this to patriarchy?",
-                "answer": "Feminists would argue this toy marketing is an example of how patriarchy reproduces itself through socialisation — teaching girls to value appearance and boys to value achievement from an early age. This shapes life chances: girls who are directed toward appearance and away from STEM subjects from childhood face structural disadvantages in future careers."
-              }
-            }
-          ]
+          "type": "scenario",
+          "situation": "A study finds that women in the UK earn on average 14.9% less than men for equivalent work. Feminists call this the gender pay gap and argue it reflects patriarchal structures in hiring, promotion and pay-setting.",
+          "question": "Which perspective provides the most direct explanation for this pattern?",
+          "options": [
+            {"text": "Functionalism — the pay gap reflects different roles with different levels of social importance", "correct": false},
+            {"text": "Feminism — the pay gap is evidence of patriarchal structures that systematically disadvantage women", "correct": true},
+            {"text": "Marxism — the pay gap is purely about capitalist exploitation of the working class", "correct": false},
+            {"text": "Weber — the pay gap is explained entirely by differences in individual status", "correct": false}
+          ],
+          "correctMsg": "Feminism most directly addresses the gender pay gap — it identifies the patriarchal structures that maintain male advantage in pay, hiring and promotion. Marxism and Weber offer partial explanations, but feminism focuses specifically on gender as a dimension of inequality.",
+          "wrongMsg": "Which perspective focuses specifically on gender inequality and the patriarchal structures that maintain male advantage — rather than class or economic position?"
+        },
+        {
+          "type": "scenario",
+          "situation": "A television presenter has no formal political power and a modest salary. But millions of people trust their opinions on politics, science and society — and their views visibly influence public debate.",
+          "question": "Which sociologist's concept best explains this person's power?",
+          "options": [
+            {"text": "Marx — their power comes from their position in the economic system", "correct": false},
+            {"text": "Weber — their power comes from status and cultural influence, not income or formal authority", "correct": true},
+            {"text": "Durkheim — their power reflects the collective conscience of society", "correct": false},
+            {"text": "A feminist — their power reflects gender advantage in the media", "correct": false}
+          ],
+          "correctMsg": "Weber's concept of status explains influence that doesn't derive from formal authority or economic class. The presenter's power is cultural and reputational — a form of status-based influence that Marx's economic analysis misses entirely.",
+          "wrongMsg": "Think about which theorist argued that power is more than money — that social respect and cultural influence matter independently of income."
+        },
+        {
+          "type": "scenario",
+          "situation": "A researcher finds that children's toys are still heavily gendered: pink science sets marketed to girls emphasise \"being pretty,\" while boys' science kits emphasise \"building and discovery.\" Both contain identical equipment.",
+          "question": "Which concepts best explain what this research reveals?",
+          "options": [
+            {"text": "Life chances and class — the toys reflect economic inequality in the toy market", "correct": false},
+            {"text": "Gender roles and socialisation — toys teach children different expectations based on gender from an early age", "correct": true},
+            {"text": "The organic analogy — toys play a functional role in society's stability", "correct": false},
+            {"text": "False consciousness — children are unaware that they are being socialised by toy marketing", "correct": false}
+          ],
+          "correctMsg": "Gender roles and socialisation: toys are a key agency through which children learn what is expected of their gender. Identical equipment packaged differently communicates that boys should build and explore while girls should focus on appearance — a classic example of gender role socialisation in action.",
+          "wrongMsg": "Think about how children learn gender expectations — what concept describes the process by which society teaches us what is 'normal' for our gender?"
         }
       ]
     },
@@ -638,7 +601,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🔁 Why Retrieval Works",
+          "label": "Why retrieval works",
           "text": "Testing yourself without notes builds long-term memory faster than re-reading. Mix topics — that's how AQA structures its papers and how strong exam answers are built."
         },
         {
@@ -770,7 +733,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "📋 Command Words in AQA Sociology",
+          "label": "Command words in AQA Sociology",
           "text": "Every AQA question contains a command word that tells you exactly what to do. Sociology students often describe when they should be explaining, or explain when they should be evaluating. The command word controls the structure of your answer."
         },
         {
@@ -794,85 +757,65 @@ export default {
     {
       "label": "Exam Practice",
       "kicker": "Exam Practice",
-      "heading": "GCSE Exam Practice.",
+      "heading": "GCSE exam practice.",
       "sub": "Real AQA-style questions. Mark yourself honestly.",
       "blocks": [
         {
           "type": "read",
-          "label": "📝 AQA Sociology Paper — Inequality",
+          "label": "AQA Sociology paper — inequality",
           "text": "These questions follow AQA mark schemes. For each question: choose the best answer, then read the model answer and mark scheme to see exactly what gains marks."
         },
         {
-          "type": "examscored",
-          "questions": [
-            {
-              "q": "Identify one example of a gender role. [1 mark]",
-              "marks": 1,
-              "options": [
-                "The expectation that women will take primary responsibility for childcare",
-                "The legal right to vote in democratic elections",
-                "The sociological concept of class consciousness",
-                "The idea that society needs shared values to function"
-              ],
-              "correct": 0,
-              "feedback": {
-                "0": "✓ A gender role — a specific, socially constructed expectation linked to gender. (1 mark)",
-                "1": "Voting rights are a legal/political concept, not a gender role. Gender roles are behavioural expectations.",
-                "2": "Class consciousness is a Marxist concept unrelated to gender roles.",
-                "3": "Shared values relate to Functionalism (Durkheim) — not gender roles."
-              },
-              "modelAnswer": "The expectation that women will take primary responsibility for childcare (or: that men should not show emotion; that women should prioritise appearance)."
-            },
-            {
-              "q": "Describe two features of a patriarchal society. [4 marks]",
-              "marks": 4,
-              "options": [
-                "First: men hold more power than women in social institutions such as work and politics. Second: gender roles are shaped by patriarchal norms — women are expected to take on domestic roles while men are expected to be breadwinners.",
-                "First: patriarchy means everyone is treated equally. Second: it was invented by Karl Marx to explain class inequality.",
-                "First: patriarchy is when women earn more than men. Second: it is a term for religious inequality.",
-                "First: patriarchal societies are always violent. Second: patriarchy only exists in traditional cultures."
-              ],
-              "correct": 0,
-              "feedback": {
-                "0": "✓ Two clear, accurate features: structural male advantage in institutions + gendered role expectations reinforced by patriarchal norms. Uses terminology correctly. (4 marks)",
-                "1": "Factually incorrect. Patriarchy does not mean equality, and was not invented by Marx.",
-                "2": "Factually incorrect. Patriarchy is not about women earning more, and it is not about religion.",
-                "3": "Oversimplified and partially incorrect. Patriarchy is systemic, not always violent, and exists in modern societies."
-              },
-              "modelAnswer": "First feature: men hold more power than women in key social institutions — in the UK, men hold the majority of senior leadership positions in business, politics and media. Second feature: gender roles in a patriarchal society direct women towards domestic and caring responsibilities — feminists argue the \"dual burden\" of paid work and unpaid domestic labour shows patriarchal norms persisting even as women enter the workforce."
-            },
-            {
-              "q": "Using sociological concepts, explain how gender can affect life chances. [6 marks]",
-              "marks": 6,
-              "options": [
-                "Gender affects life chances through structural disadvantages including the gender pay gap, the glass ceiling in career progression, and the dual burden of domestic labour. Feminist sociologists argue patriarchal structures systematically reduce women's access to high-earning careers and economic security. Weber's concept of status also explains why women may have less authority even in equivalent roles.",
-                "Gender affects life chances because women are naturally suited to different careers. Men are better at leadership so they earn more.",
-                "Gender used to affect life chances but laws have made everything equal now so it doesn't matter anymore.",
-                "Gender affects life chances through socialisation. Children learn different things from their parents."
-              ],
-              "correct": 0,
-              "feedback": {
-                "0": "✓ Names feminist perspective, identifies multiple mechanisms (pay gap, glass ceiling, dual burden), links to patriarchy, adds Weber's status concept, explains HOW each mechanism affects life chances. Strong answer — uses multiple sociological concepts precisely. (6 marks)",
-                "1": "Based on biological determinism, not sociology. No sociological concepts, no evidence, no theoretical framework. 0 marks.",
-                "2": "Oversimplifies — legal equality does not automatically produce equality in practice. No examples or concepts. 1 mark at best.",
-                "3": "Identifies socialisation (correct) but does not explain how it affects life chances, doesn't use specific concepts or give evidence. 2 marks."
-              },
-              "modelAnswer": "Gender can affect life chances in several ways. First, the gender pay gap means women earn less on average than men — feminist sociologists argue this reflects patriarchal structures in hiring, promotion and pay-setting. Second, the glass ceiling limits women's career progression — women are systematically underrepresented in senior leadership despite equal qualifications. Third, the dual burden means many women face both paid employment and disproportionate domestic responsibilities, limiting their time and energy for career development. Using Weber's concept of status, women may also command less social respect and authority in equivalent professional roles, further limiting their life chances. Together, these demonstrate that gender remains a significant structural factor shaping opportunities, not just individual preferences."
-            }
+          "type": "quiz",
+          "question": "Identify one example of a gender role. [1 mark]",
+          "options": [
+            {"text": "The expectation that women will take primary responsibility for childcare", "correct": true},
+            {"text": "The legal right to vote in democratic elections", "correct": false},
+            {"text": "The sociological concept of class consciousness", "correct": false},
+            {"text": "The idea that society needs shared values to function", "correct": false}
           ],
-          "examTip": "For 6-mark sociology answers: name your perspective (feminist/Weberian), identify a specific mechanism (glass ceiling, dual burden, status gap), give a real-world example, and explain HOW it affects life chances. That structure — perspective + mechanism + example + explanation — covers every mark."
+          "correctMsg": "A gender role — a specific, socially constructed expectation linked to gender. The expectation that women will take primary responsibility for childcare (or: that men should not show emotion; that women should prioritise appearance).",
+          "wrongMsg": "A gender role is a socially constructed behavioural expectation linked to gender — not a legal right or a sociological theory about class or values."
+        },
+        {
+          "type": "quiz",
+          "question": "Describe two features of a patriarchal society. [4 marks]",
+          "options": [
+            {"text": "First: men hold more power than women in social institutions such as work and politics. Second: gender roles are shaped by patriarchal norms — women are expected to take on domestic roles while men are expected to be breadwinners.", "correct": true},
+            {"text": "First: patriarchy means everyone is treated equally. Second: it was invented by Karl Marx to explain class inequality.", "correct": false},
+            {"text": "First: patriarchy is when women earn more than men. Second: it is a term for religious inequality.", "correct": false},
+            {"text": "First: patriarchal societies are always violent. Second: patriarchy only exists in traditional cultures.", "correct": false}
+          ],
+          "correctMsg": "Two clear, accurate features: structural male advantage in institutions + gendered role expectations reinforced by patriarchal norms. First feature: men hold more power in key social institutions. Second feature: the dual burden shows patriarchal norms persisting even as women enter the workforce.",
+          "wrongMsg": "For a 4-mark question on features: give two distinct features, each accurate. Patriarchy means male structural advantage — not equality, not religious inequality, not something invented by Marx."
+        },
+        {
+          "type": "quiz",
+          "question": "Using sociological concepts, explain how gender can affect life chances. [6 marks]",
+          "options": [
+            {"text": "Gender affects life chances through structural disadvantages including the gender pay gap, the glass ceiling in career progression, and the dual burden of domestic labour. Feminist sociologists argue patriarchal structures systematically reduce women's access to high-earning careers and economic security. Weber's concept of status also explains why women may have less authority even in equivalent roles.", "correct": true},
+            {"text": "Gender affects life chances because women are naturally suited to different careers. Men are better at leadership so they earn more.", "correct": false},
+            {"text": "Gender used to affect life chances but laws have made everything equal now so it doesn't matter anymore.", "correct": false},
+            {"text": "Gender affects life chances through socialisation. Children learn different things from their parents.", "correct": false}
+          ],
+          "correctMsg": "Gender can affect life chances in several ways. The gender pay gap means women earn less on average — reflecting patriarchal structures. The glass ceiling limits career progression. The dual burden means women face both paid employment and disproportionate domestic responsibilities. Weber's concept of status explains why women may command less authority even in equivalent roles.",
+          "wrongMsg": "For a 6-mark answer: name your perspective (feminist/Weberian), identify specific mechanisms (glass ceiling, dual burden, status gap), and explain HOW each mechanism affects life chances."
+        },
+        {
+          "type": "examtip",
+          "tip": "For 6-mark sociology answers: name your perspective (feminist/Weberian), identify a specific mechanism (glass ceiling, dual burden, status gap), give a real-world example, and explain HOW it affects life chances. That structure — perspective + mechanism + example + explanation — covers every mark."
         }
       ]
     },
     {
       "label": "Final Boss",
       "kicker": "Challenge",
-      "heading": "⚔️ Final Boss: Who Really Has Power?",
+      "heading": "Final boss: who really has power?",
       "sub": "Four rounds. Apply everything. No single correct answer in Round 4 — the quality of your reasoning is what counts.",
       "blocks": [
         {
           "type": "read",
-          "label": "🔥 The Final Challenge",
+          "label": "The final challenge",
           "text": "Four rounds. Written answers. AI examiner marks against AQA criteria. You cannot see model answers until you try."
         },
         {
@@ -910,5 +853,12 @@ export default {
   "recallTags": [],
   "examTags": [],
   "assetKeys": [],
-  "stageNavigation": []
+  "stageNavigation": [
+    { "id": "part-1", "title": "Feminist perspective", "description": "What feminism is and how patriarchy shapes society.", "screenIndex": 0 },
+    { "id": "part-2", "title": "Patriarchy in action", "description": "How patriarchy shows up in work, home and everyday life.", "screenIndex": 2 },
+    { "id": "part-3", "title": "Life chances", "description": "How gender, class and status shape opportunities.", "screenIndex": 4 },
+    { "id": "part-4", "title": "Weber and status", "description": "Three dimensions of inequality: class, status and authority.", "screenIndex": 6 },
+    { "id": "part-5", "title": "Applying perspectives", "description": "Which sociological perspective explains each scenario?", "screenIndex": 7 },
+    { "id": "part-6", "title": "Exam technique", "description": "Command words, exam practice and final boss challenge.", "screenIndex": 9 }
+  ]
 }

@@ -7,6 +7,9 @@ export default {
   "icon": "🧬",
   "color": "#4FA36C",
   "colorLight": "rgba(79,163,108,.15)",
+  "hook": null,
+  "intro": null,
+  "recall": null,
   "outcomes": {
     "intro": "All living things are made of cells. This chapter reveals the hidden world inside them.",
     "bullets": [
@@ -115,7 +118,7 @@ export default {
     {
       "label": "Mission",
       "kicker": "Chapter 1",
-      "heading": "BUILDING LIFE",
+      "heading": "Building life",
       "sub": "The hidden structures inside every living thing.",
       "blocks": [
         {
@@ -126,7 +129,7 @@ export default {
     },
     {
       "type": "interactiveImage",
-      "label": "🔬 Plant Cell Explorer",
+      "label": "Plant cell explorer",
       "title": "Inside a\nPlant Cell",
       "introText": "Plant cells contain specialised structures called organelles. Each one has a specific job that keeps the cell alive.",
       "image": "/figures/plant-cell.webp",
@@ -217,7 +220,7 @@ export default {
     },
     {
       "type": "interactiveImage",
-      "label": "🔬 Animal Cell Explorer",
+      "label": "Animal cell explorer",
       "title": "Inside an\nAnimal Cell",
       "introText": "Animal cells share most of their structures with plant cells. Explore this one closely — and notice what's familiar, and what's missing.",
       "image": "/figures/biology/building-blocks/animal-cell-clean.png",
@@ -541,8 +544,8 @@ export default {
     {
       "label": "Apply it",
       "kicker": "Detective work",
-      "heading": "",
-      "sub": "",
+      "heading": "Spot the error.",
+      "sub": "Something in this exam answer is wrong.",
       "blocks": [
         {
           "type": "spotTheError",
@@ -727,5 +730,12 @@ export default {
   "recallTags": [],
   "examTags": [],
   "assetKeys": [],
-  "stageNavigation": []
+  "stageNavigation": [
+    { "id": "part-1", "title": "Mystery opening", "description": "Cinematic hook and prediction activity.", "screenIndex": 0 },
+    { "id": "part-2", "title": "Inside cells", "description": "Explore plant and animal cell structures.", "screenIndex": 2 },
+    { "id": "part-3", "title": "Comparing cells", "description": "Animal vs plant, eukaryote vs prokaryote.", "screenIndex": 5 },
+    { "id": "part-4", "title": "Common traps", "description": "Misconception check on plant cell myths.", "screenIndex": 7 },
+    { "id": "part-5", "title": "Apply it", "description": "Matching, fill the gaps and spot the error.", "screenIndex": 8 },
+    { "id": "part-6", "title": "Exam practice", "description": "Guided exam response, examiner feedback, quick recall.", "screenIndex": 11 }
+  ]
 }

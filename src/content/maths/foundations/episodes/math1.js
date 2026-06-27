@@ -28,23 +28,17 @@ export default {
       {
         "emoji": "📍",
         "label": "Use a number line",
-        "detail": "−3 sits to the RIGHT of −8. Further right = bigger. Always.",
-        "color": "#4B90FF",
-        "bg": "rgba(75,144,255,.08)"
+        "detail": "−3 sits to the RIGHT of −8. Further right = bigger. Always."
       },
       {
         "emoji": "🌡️",
         "label": "Real examples",
-        "detail": "−3°C is warmer than −8°C. £−3 means less debt than £−8. Position on the line tells you size.",
-        "color": "#4B90FF",
-        "bg": "rgba(75,144,255,.08)"
+        "detail": "−3°C is warmer than −8°C. £−3 means less debt than £−8. Position on the line tells you size."
       },
       {
         "emoji": "⚠️",
         "label": "The common trap",
-        "detail": "Students see −8 and think \"8 is bigger than 3, so −8 is bigger.\" That's the trap. The minus flips it.",
-        "color": "#FF6B6B",
-        "bg": "rgba(255,107,107,.08)"
+        "detail": "Students see −8 and think \"8 is bigger than 3, so −8 is bigger.\" That's the trap. The minus flips it."
       }
     ],
     "punchline": "Number line thinking beats digit thinking every time. That's the whole key."
@@ -113,38 +107,28 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "💸 Why This Matters",
+          "label": "Why this matters",
           "text": "Used for <strong>temperatures</strong>, <strong>bank balances</strong>, <strong>scores</strong> and exam checking."
         },
         {
-          "type": "numberline",
-          "startAt": -3,
-          "operations": [
-            {
-              "label": "Add 8",
-              "delta": 8
-            },
-            {
-              "label": "Subtract 5",
-              "delta": -5
-            }
+          "type": "quiz",
+          "question": "Where would −2 + 6 land on the number line?",
+          "options": [
+            {"text": "−8", "correct": false},
+            {"text": "4", "correct": true},
+            {"text": "8", "correct": false}
           ],
-          "quiz": {
-            "q": "Where would −2 + 6 land?",
-            "options": [
-              "−8",
-              "4",
-              "8"
-            ],
-            "correct": 1,
-            "explanation": "Start at −2. Adding 6 moves right. You land on 4."
-          },
-          "hints": [
-            "Start at −3.",
-            "Adding means move right.",
-            "Move 8 spaces to the right.",
-            "You land on 5."
-          ]
+          "explanation": "Start at −2. Adding 6 moves right. You land on 4."
+        },
+        {
+          "type": "quiz",
+          "question": "Starting at −3, add 8 then subtract 5. Where do you land?",
+          "options": [
+            {"text": "0", "correct": true},
+            {"text": "6", "correct": false},
+            {"text": "−10", "correct": false}
+          ],
+          "explanation": "−3 + 8 = 5. Then 5 − 5 = 0. Adding moves right, subtracting moves left."
         }
       ]
     },
@@ -156,7 +140,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🎯 Why This Matters",
+          "label": "Why this matters",
           "text": "This is the rule that stops <strong>negative-number mistakes</strong> in every topic — fractions, algebra, percentages."
         },
         {
@@ -212,40 +196,22 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🧮 Why This Matters",
+          "label": "Why this matters",
           "text": "Used whenever <strong>calculators</strong>, <strong>formulas</strong> or <strong>multi-step sums</strong> appear. BIDMAS prevents wrong answers."
         },
         {
-          "type": "bidmas",
-          "expression": "3 + 4 × 2",
-          "question": "Which part should happen first?",
+          "type": "quiz",
+          "question": "In the expression 3 + 4 × 2, which part should happen first?",
           "options": [
-            "3 + 4",
-            "4 × 2",
-            "3 × 2"
+            {"text": "3 + 4", "correct": false},
+            {"text": "4 × 2", "correct": true},
+            {"text": "3 × 2", "correct": false}
           ],
-          "correct": 1,
-          "steps": [
-            {
-              "highlight": "4 × 2",
-              "becomes": "8",
-              "newExpr": "3 + 8"
-            },
-            {
-              "highlight": "3 + 8",
-              "becomes": "11",
-              "newExpr": "11"
-            }
-          ],
-          "wrongPath": [
-            "❌ 3 + 4 = 7",
-            "7 × 2 = 14 ✗"
-          ],
-          "correctPath": [
-            "✅ 4 × 2 = 8",
-            "3 + 8 = 11 ✓"
-          ],
-          "examTip": "Brackets change everything. Calculators follow order rules exactly."
+          "explanation": "Multiplication before addition (BIDMAS). 4 × 2 = 8, then 3 + 8 = 11. Not 7 × 2 = 14."
+        },
+        {
+          "type": "examtip",
+          "tip": "Brackets change everything. Always: <strong>B</strong>rackets → <strong>I</strong>ndices → <strong>D</strong>ivision → <strong>M</strong>ultiplication → <strong>A</strong>ddition → <strong>S</strong>ubtraction. Calculators follow this exactly — but only if you enter the brackets correctly."
         }
       ]
     },
@@ -257,7 +223,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "⚡ Why This Matters",
+          "label": "Why this matters",
           "text": "Quick practice helps your brain <strong>recognise patterns faster</strong>."
         },
         {
@@ -392,23 +358,19 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🚨 Why This Matters",
+          "label": "Why this matters",
           "text": "Used to catch answers that <strong>cannot possibly be right</strong> — the most common reason for lost marks."
         },
         {
-          "type": "tfcheckpoint",
-          "statement": "12 × 4 = 0.48 could be correct.",
-          "isTrue": false,
-          "revealHeader": "FALSE.",
-          "revealSub": "12 × 4 should be around 50.",
-          "breakdown": [
-            "12 × 4 = 48",
-            "0.48 is less than 1",
-            "12 lots of 4 cannot be less than 1",
-            "So the calculator entry went wrong"
-          ],
-          "wrongDisplay": "0.48",
-          "rightDisplay": "48"
+          "type": "misconceptionCheck",
+          "statements": [
+            {
+              "statement": "12 × 4 = 0.48 could be correct.",
+              "answer": false,
+              "reveal": "FALSE. 12 × 4 should be around 50. 12 × 4 = 48. 0.48 is less than 1. 12 lots of 4 cannot be less than 1. So the calculator entry went wrong.",
+              "examTrap": null
+            }
+          ]
         }
       ]
     },
@@ -420,69 +382,56 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🧾 Why This Matters",
+          "label": "Why this matters",
           "text": "Used when <strong>shopping</strong>, <strong>budgeting</strong> and checking exam answers."
         },
         {
-          "type": "simulator",
-          "scenarios": [
-            {
-              "scenario": "9 cinema tickets cost £7 each.",
-              "display": "£6.30",
-              "answer": "impossible",
-              "hints": [
-                "One ticket costs £7.",
-                "Nine tickets must cost more than £7.",
-                "9 × 7 = 63."
-              ],
-              "breakdown": [
-                "9 × 7 = 63",
-                "Total should be £63",
-                "£6.30 is 10 times too small",
-                "Likely mistake: decimal point error"
-              ]
-            },
-            {
-              "scenario": "A notebook costs £2.75. Jay buys 6. Estimate: 6 × £3 ≈ £18.",
-              "display": "£16.50",
-              "answer": "possible",
-              "hints": [
-                "Estimate: 6 × £3 = £18.",
-                "£16.50 is close to £18."
-              ],
-              "breakdown": [
-                "6 × £2.75 = £16.50",
-                "£16.50 is close to the £18 estimate",
-                "Sensible answer ✓"
-              ]
-            },
-            {
-              "scenario": "A rectangle is 12 cm by 5 cm. The calculator shows the area.",
-              "display": "0.6 cm²",
-              "answer": "impossible",
-              "hints": [
-                "Area = length × width.",
-                "12 × 5 = ?"
-              ],
-              "breakdown": [
-                "12 × 5 = 60",
-                "0.6 is far too small",
-                "Likely decimal point error"
-              ]
-            }
-          ]
+          "type": "scenario",
+          "situation": "9 cinema tickets cost £7 each. The calculator shows: £6.30",
+          "question": "Is this calculator answer sensible?",
+          "options": [
+            {"text": "Impossible — 9 × 7 = 63, not 6.30", "correct": true},
+            {"text": "Possible — it's close enough", "correct": false},
+            {"text": "Possible — decimals can appear in prices", "correct": false}
+          ],
+          "correctMsg": "9 × 7 = 63. Total should be £63. £6.30 is 10 times too small — likely a decimal point error.",
+          "wrongMsg": "Estimate first: one ticket costs £7. Nine tickets must cost more than £7. 9 × 7 = 63."
+        },
+        {
+          "type": "scenario",
+          "situation": "A notebook costs £2.75. Jay buys 6. The calculator shows: £16.50",
+          "question": "Is this calculator answer sensible?",
+          "options": [
+            {"text": "Possible — estimate is 6 × £3 = £18, which is close", "correct": true},
+            {"text": "Impossible — it should be exactly £18", "correct": false},
+            {"text": "Impossible — the answer is too small", "correct": false}
+          ],
+          "correctMsg": "6 × £2.75 = £16.50. Estimate: 6 × £3 = £18. £16.50 is close — sensible answer.",
+          "wrongMsg": "Round first: 6 × £3 ≈ £18. Is £16.50 close to £18?"
+        },
+        {
+          "type": "scenario",
+          "situation": "A rectangle is 12 cm by 5 cm. The calculator shows the area as 0.6 cm².",
+          "question": "Is this calculator answer sensible?",
+          "options": [
+            {"text": "Impossible — area = 12 × 5 = 60 cm²", "correct": true},
+            {"text": "Possible — area is usually less than 1 cm² for small shapes", "correct": false},
+            {"text": "Possible — it depends on the units", "correct": false}
+          ],
+          "correctMsg": "Area = 12 × 5 = 60 cm². 0.6 is far too small — likely a decimal point error.",
+          "wrongMsg": "Area = length × width. What is 12 × 5?"
         }
       ]
     },
     {
       "label": "Exam Practice",
       "kicker": "Exam Style",
-      "heading": "Exam Practice",
+      "heading": "Exam practice.",
       "sub": "Answer the questions. Get feedback on method, not just the final answer.",
       "blocks": [
         {
           "type": "read",
-          "label": "📝 Why This Matters",
+          "label": "Why this matters",
           "text": "Used to turn practice into <strong>marks</strong>. Method matters as much as the answer."
         },
         {
@@ -524,12 +473,12 @@ export default {
     {
       "label": "Final Rewind",
       "kicker": "Retrieval",
-      "heading": "Final Rewind",
+      "heading": "Final rewind",
       "sub": "Strong maths comes from retrieval, not rereading.",
       "blocks": [
         {
           "type": "read",
-          "label": "🔁 Why This Matters",
+          "label": "Why this matters",
           "text": "Retrieval practice <strong>builds long-term memory</strong> faster than re-reading notes."
         },
         {
@@ -619,5 +568,12 @@ export default {
   "recallTags": [],
   "examTags": [],
   "assetKeys": [],
-  "stageNavigation": []
+  "stageNavigation": [
+    { "id": "part-1", "title": "Number lines", "description": "How the number line works", "screenIndex": 0 },
+    { "id": "part-2", "title": "Movement rules", "description": "Adding right, subtracting left", "screenIndex": 1 },
+    { "id": "part-3", "title": "BIDMAS", "description": "Order of calculations", "screenIndex": 2 },
+    { "id": "part-4", "title": "Practice quiz", "description": "Retrieval across all skills", "screenIndex": 3 },
+    { "id": "part-5", "title": "Calculator sense", "description": "Spotting impossible answers", "screenIndex": 4 },
+    { "id": "part-6", "title": "Exam practice", "description": "Mark-scheme style questions", "screenIndex": 6 }
+  ]
 }

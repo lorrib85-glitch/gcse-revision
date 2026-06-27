@@ -27,23 +27,17 @@ export default {
       {
         "emoji": "💨",
         "label": "Carbon dioxide",
-        "detail": "Absorbed from the air through tiny pores in leaves. This is the main building block.",
-        "color": "#38D27A",
-        "bg": "rgba(56,210,122,.08)"
+        "detail": "Absorbed from the air through tiny pores in leaves. This is the main building block."
       },
       {
         "emoji": "💧",
         "label": "Water",
-        "detail": "Pulled up from the soil through the roots. Used in the chemical reaction.",
-        "color": "#34D5FF",
-        "bg": "rgba(52,213,255,.08)"
+        "detail": "Pulled up from the soil through the roots. Used in the chemical reaction."
       },
       {
         "emoji": "☀️",
         "label": "Light energy",
-        "detail": "Absorbed by chlorophyll in the leaves. Powers the whole reaction. Without it — nothing.",
-        "color": "#FFC857",
-        "bg": "rgba(255,200,87,.08)"
+        "detail": "Absorbed by chlorophyll in the leaves. Powers the whole reaction. Without it — nothing."
       }
     ],
     "punchline": "Plants build themselves from thin air. Literally. This week you find out exactly how."
@@ -118,7 +112,7 @@ export default {
   "screens": [
     {
       "type": "interactiveImage",
-      "label": "🔬 Plant Cell Explorer",
+      "label": "Plant cell explorer",
       "title": "Inside a\nPlant Cell",
       "introText": "Plant cells contain specialised structures called organelles. Each one has a specific job that keeps the cell alive.",
       "image": "/figures/plant-cell.webp",
@@ -208,9 +202,9 @@ export default {
       ]
     },
     {
-      "label": "Quick Check",
+      "label": "Quick check",
       "kicker": "Retrieval",
-      "heading": "What Did You Just Learn?",
+      "heading": "What did you just learn?",
       "sub": "No notes. No hints. Just you and what stuck.",
       "blocks": [
         {
@@ -308,9 +302,9 @@ export default {
       ]
     },
     {
-      "label": "Mistake Lab",
-      "kicker": "Common Mistakes",
-      "heading": "Sounds Right. Loses Marks.",
+      "label": "Mistake lab",
+      "kicker": "Common mistakes",
+      "heading": "Sounds right. Loses marks.",
       "sub": "These are the phrases examiners see every year — and penalise every year.",
       "blocks": [
         {
@@ -344,12 +338,12 @@ export default {
     {
       "label": "The Equation",
       "kicker": "Photosynthesis",
-      "heading": "Build The Recipe",
+      "heading": "Build the recipe",
       "sub": "Photosynthesis is just cooking — light is the heat, glucose is the meal.",
       "blocks": [
         {
           "type": "read",
-          "label": "📖 The Big Idea",
+          "label": "The big idea",
           "text": "Photosynthesis converts <strong>light energy</strong> into <strong>chemical energy</strong> stored in glucose. The plant takes two raw materials (carbon dioxide and water) and uses light to combine them into glucose and oxygen."
         },
         {
@@ -389,7 +383,7 @@ export default {
         },
         {
           "type": "examtip",
-          "label": "🗡️ Exam Trap",
+          "label": "Exam trap",
           "tip": "Students often say water is produced in photosynthesis. It is NOT. Water is a <strong>reactant</strong> (goes in). Oxygen is the gas that comes out.",
           "phrases": [
             "carbon dioxide + water → glucose + oxygen",
@@ -401,13 +395,13 @@ export default {
     },
     {
       "label": "Glucose Uses",
-      "kicker": "What Plants Do With Glucose",
-      "heading": "SCARF: Five Things Plants Do With Glucose",
+      "kicker": "What plants do with glucose",
+      "heading": "SCARF: five things plants do with glucose",
       "sub": "Students think glucose just gives energy. It does five different things.",
       "blocks": [
         {
           "type": "funfact",
-          "label": "🤯 Actually Interesting",
+          "label": "Actually interesting",
           "text": "Wood is made from glucose. The tree trunk, every branch, every leaf — almost all of it built from sugar that the tree made from thin air using sunlight. You're basically looking at crystallised light."
         },
         {
@@ -443,7 +437,7 @@ export default {
         },
         {
           "type": "reveal",
-          "label": "⚡ Exam Recall Check",
+          "label": "Exam recall check",
           "prompt": "Without looking up — what does SCARF stand for in terms of glucose uses?",
           "answer": "S = Starch (storage). C = Cellulose (cell walls). A = Amino acids (proteins). R = Respiration (energy). F = Fats and oils (seed storage)."
         }
@@ -452,7 +446,7 @@ export default {
     {
       "label": "Decision Game",
       "kicker": "Apply Your Knowledge",
-      "heading": "Where Should The Glucose Go?",
+      "heading": "Where should the glucose go?",
       "sub": "Six scenarios. One right answer each time. No hints.",
       "blocks": [
         {
@@ -521,13 +515,13 @@ export default {
     },
     {
       "label": "Exam Assassin",
-      "kicker": "Exam Technique",
-      "heading": "How To Actually Score Marks",
+      "kicker": "Exam technique",
+      "heading": "How to actually score marks",
       "sub": "These aren't tips. These are the specific phrases that win and lose marks.",
       "blocks": [
         {
           "type": "examtip",
-          "label": "🗡️ Tip 1 — Absorb, Not Collect",
+          "label": "Tip 1 — absorb, not collect",
           "tip": "Say <strong>\"absorbs light energy\"</strong> — not \"collects sunlight\" or \"uses light\". Examiners want the word ABSORB.",
           "phrases": [
             "absorbs light energy",
@@ -537,7 +531,7 @@ export default {
         },
         {
           "type": "examtip",
-          "label": "🗡️ Tip 2 — Glucose, Not Food",
+          "label": "Tip 2 — glucose, not food",
           "tip": "Photosynthesis produces <strong>glucose</strong>. Never \"food\" or \"sugar\" — use the specific term.",
           "phrases": [
             "glucose",
@@ -547,7 +541,7 @@ export default {
         },
         {
           "type": "examtip",
-          "label": "🗡️ Tip 3 — Transfer, Not Create",
+          "label": "Tip 3 — transfer, not create",
           "tip": "Light energy is <strong>transferred</strong> into chemical energy. Never say plants \"make\", \"create\" or \"produce\" energy. Energy is conserved, not created.",
           "phrases": [
             "energy is transferred",
@@ -581,14 +575,14 @@ export default {
       ]
     },
     {
-      "label": "Boss Battle",
+      "label": "Boss battle",
       "kicker": "Challenge",
-      "heading": "⚔️ Boss Battle: Apply Everything",
+      "heading": "Boss battle: apply everything",
       "sub": "Three questions. Free text. Marked by AI. No skipping.",
       "blocks": [
         {
           "type": "read",
-          "label": "🔥 Real answers only.",
+          "label": "Real answers only.",
           "text": "Write your answer in the box — then submit it. The AI examiner will mark it against the actual mark scheme, tell you what you got right, what you missed, and show you a model answer. <strong>You have to try before you can see the model answer.</strong>"
         },
         {
@@ -615,9 +609,9 @@ export default {
       ]
     },
     {
-      "label": "Fast Recap",
-      "kicker": "Final Retrieval",
-      "heading": "Lock It In",
+      "label": "Fast recap",
+      "kicker": "Final retrieval",
+      "heading": "Lock it in",
       "sub": "Tap every card. This is the stuff that will come up in Paper 1.",
       "blocks": [
         {
@@ -676,5 +670,12 @@ export default {
   "recallTags": [],
   "examTags": [],
   "assetKeys": [],
-  "stageNavigation": []
+  "stageNavigation": [
+    { "id": "part-1", "title": "Plant cell explorer", "description": "Explore plant cell organelles interactively.", "screenIndex": 0 },
+    { "id": "part-2", "title": "Retrieval and misconceptions", "description": "Quick check and common exam mistakes.", "screenIndex": 1 },
+    { "id": "part-3", "title": "The photosynthesis equation", "description": "Build and master the photosynthesis equation.", "screenIndex": 3 },
+    { "id": "part-4", "title": "What glucose does", "description": "SCARF: five uses of glucose plus decision game.", "screenIndex": 4 },
+    { "id": "part-5", "title": "Exam technique", "description": "Exact phrases that score marks, plus boss challenge.", "screenIndex": 6 },
+    { "id": "part-6", "title": "Lock it in", "description": "Final flashcard review of all key ideas.", "screenIndex": 8 }
+  ]
 }

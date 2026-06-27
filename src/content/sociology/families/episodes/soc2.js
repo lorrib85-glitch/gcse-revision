@@ -10,9 +10,9 @@ export default {
   "colorLight": "rgba(217,96,48,.12)",
   "hook": {
     "atmosphericOpener": {
-      "heading": "TWO SOCIOLOGISTS. ONE FACTORY. COMPLETELY DIFFERENT CONCLUSIONS.",
+      "heading": "Two sociologists. One factory. Completely different conclusions.",
       "sub": "One sees a system built on exploitation. The other sees a system holding society together.",
-      "cta": "FIND OUT WHO'S RIGHT"
+      "cta": "Find out who's right"
     },
     "scenario": {
       "location": "A Victorian textile factory, 1848",
@@ -34,23 +34,17 @@ export default {
       {
         "emoji": "⚡",
         "label": "Karl Marx: society is based on conflict",
-        "detail": "The rich exploit the poor. Capitalism benefits the powerful at the expense of the working class. This is not an accident — it is how the system was designed.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "The rich exploit the poor. Capitalism benefits the powerful at the expense of the working class. This is not an accident — it is how the system was designed."
       },
       {
         "emoji": "🏛️",
         "label": "Émile Durkheim: society is based on cooperation",
-        "detail": "Different parts of society work together — like organs in a body. Institutions like school and family keep us united and stable.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "Different parts of society work together — like organs in a body. Institutions like school and family keep us united and stable."
       },
       {
         "emoji": "❓",
         "label": "Both are answering the same question",
-        "detail": "Why does society stay together? Your answer changes how you see school, family, poverty, crime and power. That is why this debate matters.",
-        "color": "#D96030",
-        "bg": "rgba(217,96,48,.08)"
+        "detail": "Why does society stay together? Your answer changes how you see school, family, poverty, crime and power. That is why this debate matters."
       }
     ],
     "punchline": "Marxism sees conflict. Functionalism sees cooperation. Both are trying to explain the same society."
@@ -119,12 +113,12 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🏭 The Factory Owner",
+          "label": "The factory owner",
           "text": "It is 1848. Thomas owns a textile mill in Manchester. He employs 200 workers, pays them £1 a week, and sells the cloth they make for enormous profit. He lives in a large house and sends his children to private school. He believes he deserves this. He took the risk. He built the business. He earned it."
         },
         {
           "type": "read",
-          "label": "⚒️ The Worker",
+          "label": "The worker",
           "text": "Sarah works 14 hours a day in Thomas's mill. She is paid just enough to survive — not enough to save. Her children work alongside her. She cannot afford schooling. She has no choice: there is no other employer. She believes if she works hard enough, one day things will be better."
         },
         {
@@ -140,16 +134,14 @@ export default {
       "sub": "Tap your answer — then see what sociologists actually say.",
       "blocks": [
         {
-          "type": "tfcheckpoint",
-          "statement": "Society is fair because hard work always leads to success.",
-          "isTrue": false,
-          "revealHeader": "Sociologists strongly disagree.",
-          "revealSub": "This is one of the biggest disputes in sociology. There is no simple answer — and that is exactly the point.",
-          "breakdown": [
-            "Functionalists argue: society IS broadly fair. Meritocracy means talent and effort are rewarded.",
-            "Marxists argue: society is NOT fair. Capitalism is designed to benefit the rich at the expense of workers.",
-            "Both agree that inequality exists. They disagree about whether it is necessary or unjust.",
-            "AQA expects you to explain BOTH views — not just give your personal opinion."
+          "type": "misconceptionCheck",
+          "statements": [
+            {
+              "statement": "Society is fair because hard work always leads to success.",
+              "answer": false,
+              "reveal": "Sociologists strongly disagree. Functionalists argue society is broadly fair — meritocracy means talent and effort are rewarded. Marxists argue society is not fair — capitalism is designed to benefit the rich at the expense of workers. Both agree inequality exists; they disagree about whether it is necessary or unjust. AQA expects you to explain both views.",
+              "examTrap": null
+            }
           ]
         }
       ]
@@ -162,7 +154,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🗺️ Your Learning Journey",
+          "label": "Your learning journey",
           "text": "This module teaches you to <strong>think like a sociologist</strong> — holding two opposing views in your head at the same time and using evidence to evaluate them. That skill alone is worth marks."
         },
         {
@@ -179,7 +171,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "⚔️ The Fundamental Split",
+          "label": "The fundamental split",
           "text": "<strong>Marxism</strong> sees society as divided by class conflict — the rich exploit the poor, and social institutions (school, law, media) serve the interests of the powerful.<br/><br/><strong>Functionalism</strong> sees society as a system in which every part has a purpose — institutions create stability, shared values and social order that benefit everyone."
         },
         {
@@ -247,12 +239,12 @@ export default {
       "label": "Karl Marx",
       "kicker": "Theorist",
       "heading": "Karl Marx (1818–1883)",
-      "headerImage": "/images/karl-marx.png",
+      "headerImage": "/figures/karl-marx.png",
       "sub": "The most influential and controversial thinker in sociology. You need to know his ideas precisely.",
       "blocks": [
         {
           "type": "read",
-          "label": "📖 Who Was Marx?",
+          "label": "Who was Marx?",
           "text": "Karl Marx was a German philosopher and economist writing in the 19th century. He watched the Industrial Revolution create enormous wealth — and enormous poverty — at the same time. He wanted to explain why. His answer: <strong>capitalism</strong> is a system designed to benefit the ruling class at the expense of workers. His ideas sparked revolutions. They still divide opinion today."
         },
         {
@@ -284,7 +276,7 @@ export default {
         },
         {
           "type": "funfact",
-          "label": "💡 What Is \"Exploitation\"?",
+          "label": "What is 'exploitation'?",
           "text": "Marx argued that workers produce more value than they are paid for. If a worker earns £50 a day but produces goods worth £200, the extra £150 is <strong>surplus value</strong> — profit taken by the capitalist. Marx called this <strong>exploitation</strong>. It is not an accident or unfairness — it is how capitalism is designed to work."
         }
       ]
@@ -297,7 +289,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "💰 The Logic of Profit",
+          "label": "The logic of profit",
           "text": "Under capitalism, the goal of business is <strong>profit</strong> — not worker welfare. Marx argued this creates a structural conflict: <strong>the interests of the bourgeoisie and the proletariat are always opposed.</strong> Higher wages = less profit. More profit = lower wages. One class always gains at the other's expense."
         },
         {
@@ -360,7 +352,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🎯 Why This Matters",
+          "label": "Why this matters",
           "text": "AQA markers look for <strong>precise sociology terminology</strong>. \"Rich people\" is not the same as \"bourgeoisie.\" Using the right word shows you understand the theory — and gains marks."
         },
         {
@@ -425,7 +417,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "⚔️ The Class Struggle",
+          "label": "The class struggle",
           "text": "Marx said society is defined by the <strong>class struggle</strong> — a permanent conflict between the bourgeoisie (who want maximum profit) and the proletariat (who want fair pay and conditions). He argued that laws, schools, and media all serve the interests of the ruling class — whether people realise it or not."
         },
         {
@@ -488,12 +480,12 @@ export default {
       "label": "Émile Durkheim",
       "kicker": "Theorist",
       "heading": "Émile Durkheim (1858–1917)",
-      "headerImage": "/images/emile-durkheim.png",
+      "headerImage": "/figures/emile-durkheim.png",
       "sub": "The founder of Functionalism. He saw society as a system — and studied it scientifically.",
       "blocks": [
         {
           "type": "read",
-          "label": "📖 Who Was Durkheim?",
+          "label": "Who was Durkheim?",
           "text": "Émile Durkheim was a French sociologist who wanted to make sociology a proper scientific discipline. He argued that society is more than just a collection of individuals — it has its own structure, its own rules, and its own way of holding itself together. He called the shared beliefs and values that unite a society the <strong>collective conscience</strong>."
         },
         {
@@ -525,7 +517,7 @@ export default {
         },
         {
           "type": "funfact",
-          "label": "💡 Durkheim and Anomie",
+          "label": "Durkheim and anomie",
           "text": "Durkheim coined the term <strong>anomie</strong> — a feeling of normlessness or disconnection when social norms break down. He used it to explain rising suicide rates in modern industrial societies. When social cohesion weakens, people lose their sense of purpose. This shows why, for Durkheim, <strong>shared values and norms are not optional — they are essential to human wellbeing.</strong>"
         }
       ]
@@ -538,7 +530,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🏛️ Institutions in Conflict",
+          "label": "Institutions in conflict",
           "text": "Both theories agree that social institutions (school, family, law, media, religion) shape society. But they disagree completely about <em>whose interests</em> these institutions serve. Functionalists say they serve everyone. Marxists say they serve the ruling class."
         },
         {
@@ -600,7 +592,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "⚔️ The Two Models",
+          "label": "The two models",
           "text": "<strong>Consensus theory</strong> (Functionalism): society is held together by shared values, cooperation and agreement. Most people broadly accept the rules and norms of their society — and benefit from doing so.<br/><br/><strong>Conflict theory</strong> (Marxism): society is held together by power and coercion. The ruling class maintains control through economic domination, ideology and force — not genuine agreement."
         },
         {
@@ -685,60 +677,40 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🔬 Why This Matters",
+          "label": "Why this matters",
           "text": "AQA regularly gives you a real-world situation and asks you to apply sociological theory. You need to know which theory fits and <strong>why</strong> — not just which one to name."
         },
         {
-          "type": "appliedscenario",
-          "scenarios": [
-            {
-              "scenario": "A GCSE student from a working-class background attends a state school. Despite working hard, he gets lower grades than students from private schools who had tutors, better resources and more stable home lives. He does not get the university place he wanted.",
-              "question": "Which theory best explains this outcome?",
-              "options": [
-                "Functionalism — his role in society has been allocated based on his abilities",
-                "Marxism — structural inequality in capitalism limits working-class achievement regardless of effort",
-                "Functionalism — the education system has given everyone an equal chance",
-                "Marxism — schools have deliberately failed him to keep him in his class position"
-              ],
-              "correct": 1,
-              "feedback": "Marxism explains this better: structural factors (class, resources, home environment) shaped the outcome — not just ability or effort. The education system reproduces class inequality rather than eliminating it.",
-              "followUp": {
-                "q": "How would a Functionalist respond to this scenario?",
-                "answer": "A Functionalist would argue the education system provided equal opportunity — his outcome reflects his level of ability and effort. They might acknowledge structural barriers exist but argue the system is broadly meritocratic and necessary for role allocation."
-              }
-            },
-            {
-              "scenario": "A company introduces a compulsory team meeting every Monday where workers share goals and celebrate achievements. Workers report feeling more connected to each other and to the company. Productivity increases.",
-              "question": "Which sociological concept best explains why this works?",
-              "options": [
-                "Class conflict — workers are being forced to cooperate against their interests",
-                "Social cohesion — shared rituals build solidarity and a sense of belonging",
-                "Exploitation — the company is extracting more surplus value by making workers feel loyal",
-                "False consciousness — workers don't realise they are being manipulated"
-              ],
-              "correct": 1,
-              "feedback": "Social cohesion: Durkheim argued that shared rituals and a sense of belonging are what hold groups together. The Monday meeting functions like a collective ritual — building solidarity and shared identity. A Functionalist would see this as a good thing.",
-              "followUp": {
-                "q": "How would Marx interpret the same scenario?",
-                "answer": "Marx would say this is ideological manipulation — the company is creating false consciousness, making workers feel loyal to a system that exploits them. Increased productivity means more surplus value extracted for the owner, not workers."
-              }
-            },
-            {
-              "scenario": "The government cuts the top rate of income tax from 50% to 40% and raises VAT (a tax on all spending) from 17.5% to 20%. Wealthy people pay less. Everyone who buys goods pays more.",
-              "question": "Which theory best explains this policy decision?",
-              "options": [
-                "Functionalism — lower tax on the wealthy encourages investment that benefits everyone",
-                "Marxism — the state acts in the interests of the ruling class, not the whole population",
-                "Functionalism — VAT ensures everyone contributes equally to public services",
-                "Marxism — the government is deliberately trying to trigger a class revolution"
-              ],
-              "correct": 1,
-              "feedback": "Marxism: Marx argued the state is not neutral — it represents the interests of the bourgeoisie. This tax change reduces the burden on the wealthy while increasing it on ordinary consumers. A Marxist would point to this as evidence that the state serves capital, not the people.",
-              "followUp": {
-                "q": "What would a Functionalist argue about this policy?",
-                "answer": "A Functionalist might argue that reducing tax on the wealthy encourages investment, job creation and economic growth — benefiting society as a whole. They would see the state as acting for the collective good, even if the immediate effects seem unequal."
-              }
-            }
+          "type": "scenario",
+          "situation": "A GCSE student from a working-class background attends a state school. Despite working hard, he gets lower grades than students from private schools who had tutors, better resources and more stable home lives. He does not get the university place he wanted.",
+          "question": "Which theory best explains this outcome?",
+          "options": [
+            { "text": "Functionalism — his role in society has been allocated based on his abilities", "correct": false },
+            { "text": "Marxism — structural inequality in capitalism limits working-class achievement regardless of effort", "correct": true },
+            { "text": "Functionalism — the education system has given everyone an equal chance", "correct": false },
+            { "text": "Marxism — schools have deliberately failed him to keep him in his class position", "correct": false }
+          ]
+        },
+        {
+          "type": "scenario",
+          "situation": "A company introduces a compulsory team meeting every Monday where workers share goals and celebrate achievements. Workers report feeling more connected to each other and to the company. Productivity increases.",
+          "question": "Which sociological concept best explains why this works?",
+          "options": [
+            { "text": "Class conflict — workers are being forced to cooperate against their interests", "correct": false },
+            { "text": "Social cohesion — shared rituals build solidarity and a sense of belonging", "correct": true },
+            { "text": "Exploitation — the company is extracting more surplus value by making workers feel loyal", "correct": false },
+            { "text": "False consciousness — workers don't realise they are being manipulated", "correct": false }
+          ]
+        },
+        {
+          "type": "scenario",
+          "situation": "The government cuts the top rate of income tax from 50% to 40% and raises VAT from 17.5% to 20%. Wealthy people pay less. Everyone who buys goods pays more.",
+          "question": "Which theory best explains this policy decision?",
+          "options": [
+            { "text": "Functionalism — lower tax on the wealthy encourages investment that benefits everyone", "correct": false },
+            { "text": "Marxism — the state acts in the interests of the ruling class, not the whole population", "correct": true },
+            { "text": "Functionalism — VAT ensures everyone contributes equally to public services", "correct": false },
+            { "text": "Marxism — the government is deliberately trying to trigger a class revolution", "correct": false }
           ]
         }
       ]
@@ -746,12 +718,12 @@ export default {
     {
       "label": "Apply the Theory",
       "kicker": "Challenge",
-      "heading": "⚔️ Theory Challenge: Write Like a Sociologist",
+      "heading": "Theory challenge: write like a sociologist",
       "sub": "Three questions. Written answers. AI examiner marks against AQA criteria.",
       "blocks": [
         {
           "type": "read",
-          "label": "📝 The Challenge",
+          "label": "The challenge",
           "text": "These questions test <strong>application and analysis</strong> — the skills that separate B and C grades from A grades. Write your answer, then submit it. The AI examiner will mark it and show you a model answer."
         },
         {
@@ -785,7 +757,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "🔁 Why Retrieval Works",
+          "label": "Why retrieval works",
           "text": "Testing yourself without notes <strong>builds stronger memory</strong> than rereading. Don't look back — just try. Getting it wrong now means you remember it in the exam."
         },
         {
@@ -917,7 +889,7 @@ export default {
       "blocks": [
         {
           "type": "read",
-          "label": "📋 Command Words: What AQA Is Actually Asking",
+          "label": "Command words: what AQA is actually asking",
           "text": "Every AQA Sociology question contains a <strong>command word</strong> that tells you exactly what to do. Using the wrong approach — describing when you should be evaluating, or listing when you should be explaining — loses marks regardless of your knowledge."
         },
         {
@@ -945,85 +917,61 @@ export default {
     {
       "label": "Exam Practice",
       "kicker": "Exam Practice",
-      "heading": "GCSE Exam Practice.",
+      "heading": "GCSE exam practice.",
       "sub": "Real AQA-style questions. Mark yourself honestly.",
       "blocks": [
         {
           "type": "read",
-          "label": "📝 AQA Sociology Paper",
+          "label": "AQA Sociology paper",
           "text": "These questions follow AQA mark schemes. For each question: choose the best answer, then read the model answer and mark scheme to see exactly what gains marks."
         },
         {
-          "type": "examscored",
-          "questions": [
-            {
-              "q": "Identify one Marxist concept used to describe the working class. [1 mark]",
-              "marks": 1,
-              "options": [
-                "Proletariat",
-                "Collective conscience",
-                "Social cohesion",
-                "Anomie"
-              ],
-              "correct": 0,
-              "feedback": {
-                "0": "✓ Proletariat is Marx's term for the working class. (1 mark)",
-                "1": "Collective conscience is Durkheim's concept — the shared values and beliefs that unite society.",
-                "2": "Social cohesion is a Functionalist concept — the bonds that hold society together.",
-                "3": "Anomie is Durkheim's concept — the sense of normlessness when social norms break down."
-              },
-              "modelAnswer": "Proletariat. (Or: working class, exploited class.)"
-            },
-            {
-              "q": "Describe one way Marxists argue capitalism creates inequality. [2 marks]",
-              "marks": 2,
-              "options": [
-                "Marxists argue capitalism creates inequality through exploitation: the bourgeoisie pay workers less than the value they produce, keeping the surplus as profit.",
-                "Marxists say rich people exist because they work harder than poor people.",
-                "Inequality exists because some people are born with more intelligence than others.",
-                "Capitalism creates inequality by giving everyone different talents and abilities."
-              ],
-              "correct": 0,
-              "feedback": {
-                "0": "✓ Identifies mechanism (exploitation), names both classes correctly, explains how surplus value creates inequality. (2 marks)",
-                "1": "This reflects a Functionalist or meritocratic view — not Marxism. Marxists argue the system, not effort, determines outcomes.",
-                "2": "This is a biological explanation — sociology focuses on social, not natural, causes of inequality.",
-                "3": "Capitalism doesn't distribute talents — this is not a sociological argument."
-              },
-              "modelAnswer": "Marxists argue capitalism creates inequality through exploitation. The bourgeoisie (ruling class) own the means of production and pay the proletariat (working class) less than the value they produce. The surplus value becomes profit — wealth that flows upward, not downward."
-            },
-            {
-              "q": "Using sociological concepts, explain how Functionalists and Marxists disagree about the role of education. [6 marks]",
-              "marks": 6,
-              "options": [
-                "Functionalists argue education transmits shared values, develops skills and allocates people to roles based on ability (meritocracy) — serving society as a whole. Marxists (Bowles and Gintis) argue education reproduces class inequality through the hidden curriculum, teaching obedience and acceptance of hierarchy — serving the ruling class.",
-                "Functionalists think education is good. Marxists think it is bad. They disagree because they have different political views.",
-                "Both theories agree education socialises children, but they disagree about whether this is fair.",
-                "Functionalists say education is run by the government. Marxists say it is run by capitalists."
-              ],
-              "correct": 0,
-              "feedback": {
-                "0": "✓ Names both theories, gives specific functions (value transmission, skills, role allocation), names Marxist theorists (Bowles and Gintis), identifies hidden curriculum, explains whose interests each theory says education serves. Strong answer. (6 marks)",
-                "1": "No sociology terminology, no theory explained, no evidence. This would receive 0 marks.",
-                "2": "Partially correct but too vague — which concepts? Which theorists? How exactly do they disagree?",
-                "3": "Factually incorrect and uses no sociological concepts. 0 marks."
-              },
-              "modelAnswer": "Functionalists argue education serves three key functions: value transmission (teaching shared norms), skills provision (developing economic skills), and role allocation (placing people in appropriate jobs via meritocracy). Parsons argued school bridges family and wider society. Marxists, by contrast, argue education reproduces class inequality. Bowles and Gintis identified the \"hidden curriculum\" — obedience and acceptance of authority taught in school prepare working-class children to be docile workers. This serves the ruling class by producing a compliant workforce. The key disagreement: Functionalists see education as benefiting all of society; Marxists see it as serving the interests of the bourgeoisie."
-            }
+          "type": "quiz",
+          "question": "Identify one Marxist concept used to describe the working class.",
+          "options": [
+            { "text": "Proletariat", "correct": true },
+            { "text": "Collective conscience", "correct": false },
+            { "text": "Social cohesion", "correct": false },
+            { "text": "Anomie", "correct": false }
           ],
-          "examTip": "For 6-mark answers: name both theories, name specific theorists where possible, use sociological concepts precisely, and always explain HOW the institution serves (or doesn't serve) society."
+          "correctMsg": "Proletariat is Marx's term for the working class — those who must sell their labour to survive.",
+          "wrongMsg": "Collective conscience, social cohesion and anomie are all Durkheim's (Functionalist) concepts, not Marx's."
+        },
+        {
+          "type": "quiz",
+          "question": "Describe one way Marxists argue capitalism creates inequality.",
+          "options": [
+            { "text": "Through exploitation: the bourgeoisie pay workers less than the value they produce, keeping the surplus as profit.", "correct": true },
+            { "text": "Rich people exist because they work harder than poor people.", "correct": false },
+            { "text": "Inequality exists because some people are born with more intelligence than others.", "correct": false },
+            { "text": "Capitalism gives everyone different talents and abilities.", "correct": false }
+          ],
+          "correctMsg": "Correct. Marxists argue the bourgeoisie extract surplus value — workers are paid less than the value they create. The surplus becomes profit.",
+          "wrongMsg": "Marxism focuses on structural causes — the capitalist system itself, not individual effort or biology."
+        },
+        {
+          "type": "quiz",
+          "question": "How do Functionalists and Marxists disagree about the role of education?",
+          "options": [
+            { "text": "Functionalists argue education transmits shared values, develops skills and allocates roles based on ability. Marxists argue education reproduces class inequality through the hidden curriculum, serving the ruling class.", "correct": true },
+            { "text": "Functionalists think education is good. Marxists think it is bad. They disagree because they have different political views.", "correct": false },
+            { "text": "Both theories agree education socialises children, but disagree about whether this is fair.", "correct": false },
+            { "text": "Functionalists say education is run by the government. Marxists say it is run by capitalists.", "correct": false }
+          ],
+          "correctMsg": "Functionalism: education serves the whole society (value transmission, skills, role allocation). Marxism: education serves the ruling class — Bowles and Gintis identified the hidden curriculum that prepares workers for obedience.",
+          "wrongMsg": "Use specific sociological concepts: hidden curriculum, meritocracy, role allocation, value transmission — and name theorists."
         }
       ]
     },
     {
       "label": "Final Boss",
       "kicker": "Challenge",
-      "heading": "⚔️ Final Boss Fight: Marx vs Durkheim",
+      "heading": "Final boss fight: Marx vs Durkheim",
       "sub": "Four rounds. No notes. Prove you can think like a sociologist.",
       "blocks": [
         {
           "type": "read",
-          "label": "🔥 The Final Challenge",
+          "label": "The final challenge",
           "text": "You have studied both theories. Now you must use them under pressure. Write your answers in the box — then submit for AI marking. You cannot see the model answer until you try."
         },
         {
@@ -1061,5 +1009,12 @@ export default {
   "recallTags": [],
   "examTags": [],
   "assetKeys": [],
-  "stageNavigation": []
+  "stageNavigation": [
+    { "id": "part-1", "title": "Two perspectives", "description": "Setting the scene — two views of the same factory.", "screenIndex": 0 },
+    { "id": "part-2", "title": "Fairness and learning goals", "description": "Misconception check and module roadmap.", "screenIndex": 2 },
+    { "id": "part-3", "title": "Karl Marx and capitalism", "description": "Marx's theory, key terms and class conflict.", "screenIndex": 4 },
+    { "id": "part-4", "title": "Durkheim and society", "description": "Functionalism, social cohesion and institutions.", "screenIndex": 7 },
+    { "id": "part-5", "title": "Apply the theories", "description": "Scenarios, boss challenge and quick-fire retrieval.", "screenIndex": 10 },
+    { "id": "part-6", "title": "Exam practice", "description": "Exam Master, AQA practice questions and final boss.", "screenIndex": 13 }
+  ]
 }
