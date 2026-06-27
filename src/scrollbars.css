@@ -1,0 +1,15 @@
+/* Hide browser-native scrollbars inside the app shell.
+   Mobile screens still scroll normally; this only removes the visual blue/native rail
+   that breaks the cinematic treatment. */
+#root,
+#root * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#root::-webkit-scrollbar,
+#root *::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
