@@ -8,6 +8,11 @@ import ContinueCTA from '../core/ContinueCTA.jsx'
 import { TYPE } from '../../constants/typography.js'
 
 const SWIPE_THRESHOLD = 72
+const BACKGROUND_BRIGHTNESS = {
+  intro: 0.94,
+  gameLeft: 0.96,
+  gameRight: 0.98,
+}
 
 const CSS = `
 @keyframes ss-glow-correct {
@@ -71,7 +76,9 @@ function splitLabel(column) {
 function backgroundLayer(leftCol, rightCol, { focusSide = null, intro = false } = {}) {
   const leftActive = focusSide === 0
   const rightActive = focusSide === 1
-  const baseOpacity = intro ? 0.66 : 0.76
+  const baseOpacity = intro ? 0.78 : 0.88
+  const leftBrightness = intro ? BACKGROUND_BRIGHTNESS.intro : BACKGROUND_BRIGHTNESS.gameLeft
+  const rightBrightness = intro ? BACKGROUND_BRIGHTNESS.intro : BACKGROUND_BRIGHTNESS.gameRight
 
   return (
     <>
@@ -81,8 +88,8 @@ function backgroundLayer(leftCol, rightCol, { focusSide = null, intro = false } 
           backgroundImage: `url(${leftCol.image ?? '/swipe-supernatural.webp'})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
-          opacity: leftActive ? 0.9 : baseOpacity,
-          filter: 'saturate(0.92) brightness(0.78)',
+          opacity: leftActive ? 0.94 : baseOpacity,
+          filter: `saturate(0.96) brightness(${leftBrightness})`,
           transition: 'opacity 0.26s ease, filter 0.26s ease',
         }} />
         <div style={{
@@ -90,17 +97,17 @@ function backgroundLayer(leftCol, rightCol, { focusSide = null, intro = false } 
           backgroundImage: `url(${rightCol.image ?? '/swipe-natural.webp'})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
-          opacity: rightActive ? 0.9 : baseOpacity,
-          filter: 'saturate(0.92) brightness(0.80)',
+          opacity: rightActive ? 0.94 : baseOpacity,
+          filter: `saturate(0.96) brightness(${rightBrightness})`,
           transition: 'opacity 0.26s ease, filter 0.26s ease',
         }} />
       </div>
-      <div style={{ position: 'absolute', inset: 0, background: intro ? 'rgba(5,6,10,0.54)' : 'rgba(5,6,10,0.36)', zIndex: 1 }} />
+      <div style={{ position: 'absolute', inset: 0, background: intro ? 'rgba(5,6,10,0.38)' : 'rgba(5,6,10,0.20)', zIndex: 1 }} />
       <div style={{
         position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
         background: intro
-          ? 'radial-gradient(ellipse 86% 70% at 50% 48%, transparent 28%, rgba(5,6,10,0.74) 100%)'
-          : 'linear-gradient(180deg, rgba(5,6,10,0.66) 0%, rgba(5,6,10,0.18) 35%, rgba(5,6,10,0.28) 66%, rgba(5,6,10,0.78) 100%)',
+          ? 'radial-gradient(ellipse 86% 70% at 50% 48%, transparent 32%, rgba(5,6,10,0.58) 100%)'
+          : 'linear-gradient(180deg, rgba(5,6,10,0.46) 0%, rgba(5,6,10,0.08) 35%, rgba(5,6,10,0.14) 66%, rgba(5,6,10,0.52) 100%)',
       }} />
       <div style={{
         position: 'absolute', top: 0, bottom: 0, left: '50%',
@@ -516,25 +523,6 @@ export default function SwipeSort({ block, subject, onComplete }) {
                   {cur.label}
                 </div>
               </div>
-
-              <div style={{
-                position: 'absolute', left: -16, top: '50%', transform: 'translate(-100%, -50%)',
-                zIndex: -1,
-                ...TYPE.captionText,
-                color: dragSide === 0 ? (leftCol.color ?? '#A89070') : 'rgba(245,245,245,0.34)',
-                fontWeight: 700,
-                whiteSpace: 'nowrap',
-                transition: 'color 0.18s',
-              }}>← {leftText.title}</div>
-              <div style={{
-                position: 'absolute', right: -16, top: '50%', transform: 'translate(100%, -50%)',
-                zIndex: -1,
-                ...TYPE.captionText,
-                color: dragSide === 1 ? (rightCol.color ?? accent) : 'rgba(245,245,245,0.34)',
-                fontWeight: 700,
-                whiteSpace: 'nowrap',
-                transition: 'color 0.18s',
-              }}>{rightText.title} →</div>
             </div>
           )}
         </div>
