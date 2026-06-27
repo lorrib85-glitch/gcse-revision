@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { hexToRgb, SUBJECTS } from '../../constants/subjects.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { SPACING } from '../../constants/spacing.js'
-import { recordActivity } from '../../progress.js'
+import { recordActivity, MODULE_GROUPS } from '../../progress.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
@@ -1509,6 +1509,8 @@ function JumpSheet({ screens, currentScreen, accent, accentRgb, onJumpTo, onClos
 
 export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const saved   = getModuleState(module.id)
+  const _chapterGroup = MODULE_GROUPS.find(g => g.chapterIds.includes(module.id))
+  const chapterNum    = _chapterGroup ? _chapterGroup.chapterIds.indexOf(module.id) + 1 : module.number
 
   // hookDone / wylDone / introDone track whether the universal openers have been seen
   // We persist these inside the module state so resuming skips them correctly
@@ -1694,7 +1696,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     return (
       <ChapterHookScreen
         subject={module.subject}
-        chapterNum={module.number}
+        chapterNum={chapterNum}
         chapterTitle={module.title}
         statement={module.hook.statement}
         isTrue={module.hook.isTrue}
@@ -1713,7 +1715,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     return (
       <ChapterOutcomeScreen
         subject={module.subject}
-        chapterNum={module.number}
+        chapterNum={chapterNum}
         chapterTitle={module.title}
         outcomes={module.outcomes.bullets || module.outcomes}
         onBack={() => setHookDone(false)}
@@ -1728,7 +1730,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <>
         <QuickRecallScreen
           subject={module.subject}
-          chapterNum={module.number}
+          chapterNum={chapterNum}
           chapterTitle={module.title}
           questions={module.recall.questions}
           onBack={() => {
@@ -1879,7 +1881,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <>
         <QuickRecallScreen
           subject={module.subject}
-          chapterNum={module.number}
+          chapterNum={chapterNum}
           chapterTitle={module.title}
           questions={cur.questions || []}
           onBack={headerOnBack}
