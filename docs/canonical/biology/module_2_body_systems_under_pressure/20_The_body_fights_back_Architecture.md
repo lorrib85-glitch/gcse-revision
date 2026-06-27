@@ -3,10 +3,11 @@
 ## 1. Identity
 
 - **Chapter:** 20
+- **Module chapter:** Module 2, Chapter 10
 - **Title:** The body fights back
 - **Subject:** AQA GCSE Combined Science Trilogy — Biology Paper 1
 - **Module:** Module 2 — Body systems under pressure
-- **Build status:** Not yet built
+- **Build status:** Canonical reviewed; not yet built
 - **Content file:** `20_The_body_fights_back_Content.md`
 
 ---
@@ -15,57 +16,75 @@
 
 ### Part 1 — Situation + prediction
 
-- Hook: "A bacterium enters your body. Within hours your immune system has detected it, identified it, manufactured custom weapons against it, and begun destroying it. How does it know what to attack?" Cinematic — pathogen entering, immune response activating.
-- Prediction: "Which white blood cell produces antibodies — a phagocyte or a lymphocyte?"
-- You will learn: non-specific barriers; phagocytes and lymphocytes; vaccination; antibiotics and drug development.
+- Hook: "A pathogen gets past your first defences. Now the body has to recognise, attack and remember it." Show barrier defences failing, then immune response activating.
+- Prediction: "Which one makes antibodies: phagocytes or lymphocytes?"
+- You will learn: barriers, white blood cells, vaccination, antibiotics, resistance and drug testing.
 
-**Components:** `CinematicRevealMoment`, `ChapterHookScreen`
+**Components:** `CinematicRevealMoment`, `ChapterHookScreen`, `PriorKnowledgeRecall`
 
 ---
 
 ### Part 2 — Investigate the evidence
 
-- Visual walkthrough of the non-specific barriers: skin (physical), mucus + cilia (trap and sweep), stomach acid (kills), tears (lysozyme)
-- VisualLearning or CinematicCarousel: phagocytosis sequence (pathogen detected → engulfed → enclosed → digested); lymphocyte response sequence (antigen detected → antibody produced → antigen-antibody complex → pathogen destroyed → memory cells remain)
+- `VisualLearning`: non-specific barriers:
+  - skin/scabs
+  - nose hairs and mucus
+  - trachea/bronchi mucus and cilia
+  - stomach acid
+- `StepSequence`: phagocytosis.
+- `StepSequence`: antibody/memory cell response.
+- `StepSequence`: vaccination response.
 
-**Components:** `VisualLearning`, `CinematicCarousel`
+**Components:** `VisualLearning`, `StepSequence`, `CinematicCarousel`
 
 ---
 
 ### Part 3 — Discover the science
 
-- ExplainReveal: phagocytes (non-specific; engulf and digest any pathogen; phagocytosis) vs lymphocytes (specific; produce antibodies complementary to specific antigens; antitoxins; memory cells)
-- ConceptReveal: vaccination — how introducing antigens (dead/weakened/fragment) trains the immune system without causing disease; memory cells formed; rapid response on re-exposure; herd immunity
-- TheoryCompareBlock: antibiotics vs antivirals — antibiotics kill/inhibit bacteria (cell wall disruption, etc.); cannot work against viruses; antibiotic resistance via natural selection; antivirals do not kill the virus but inhibit replication
+- `TheoryCompareBlock`: phagocytosis vs antibody production vs antitoxin production.
+- `ConceptReveal`: antibody specificity — antibody shape matches antigen shape.
+- `ConceptReveal`: vaccination chain — safe antigen → antibodies → memory cells → faster future response.
+- `ConceptReveal`: herd immunity as reduced pathogen spread.
+- `TheoryCompareBlock`: antibiotics vs painkillers.
+- `ExplainReveal`: antibiotic resistance sequence.
+- `VisualLearning`: drug testing stages: discovery → preclinical → clinical → placebo/double-blind → peer review.
 
-**Components:** `ExplainReveal`, `ConceptReveal`, `TheoryCompareBlock`
+**Components:** `TheoryCompareBlock`, `ConceptReveal`, `ExplainReveal`, `VisualLearning`
 
 ---
 
 ### Part 4 — Check precision
 
-- MisconceptionCheck: "Antibiotics kill all pathogens." → false (only bacteria; no effect on viruses)
-- MisconceptionCheck: "Phagocytes produce antibodies." → false (lymphocytes produce antibodies; phagocytes engulf pathogens)
-- SpotTheError: "Vaccination injects the active disease into the body so the immune system can fight it." (Error: vaccines contain dead, weakened or fragmented pathogens — or just their antigens — not the active disease-causing form; they cannot cause the disease they protect against)
+- `MisconceptionCheck`: "Antibiotics kill all pathogens." → false.
+- `MisconceptionCheck`: "Phagocytes produce antibodies." → false.
+- `MisconceptionCheck`: "Painkillers kill pathogens." → false.
+- `MisconceptionCheck`: "The person becomes antibiotic resistant." → false; bacteria become resistant.
+- `SpotTheError`: "Vaccination injects active disease." Correction: vaccines contain dead/inactive pathogen or antigens.
+- `SpotTheError`: "Double-blind means the drug is tested twice." Correction: doctor and patient do not know who receives drug/placebo.
 
-**Components:** `MisconceptionCheck` × 2, `SpotTheError`
+**Components:** `MisconceptionCheck`, `SpotTheError`
 
 ---
 
 ### Part 5 — Apply to a real GCSE-style task
 
-- GuidedExamResponse: "Explain how vaccination protects an individual from future infection. (4 marks)"
-- FillInTheBlanksBlock: "Phagocytes protect against disease by ___ pathogens. Lymphocytes protect against disease by producing ___, which are complementary to specific ___ on the pathogen's surface."
-- MatchingTask: immune response term → definition (phagocyte / lymphocyte / antibody / antigen / antitoxin / memory cell / vaccination)
+- `GuidedExamResponse`: "Explain how vaccination protects against future infection. (5 marks)"
+- `GuidedExamResponse`: "Explain how antibiotic-resistant bacteria become more common. (5 marks)"
+- `GuidedExamResponse`: "Explain why placebos and double-blind trials are used. (4 marks)"
+- `MatchingTask`: immune term → definition.
+- `MatchingTask`: drug testing term → meaning.
+- `FillInTheBlanksBlock`: vaccination mechanism vocabulary.
 
-**Components:** `GuidedExamResponse`, `FillInTheBlanksBlock`, `MatchingTask`
+**Components:** `GuidedExamResponse`, `MatchingTask`, `FillInTheBlanksBlock`
 
 ---
 
 ### Part 6 — Face the examiner + debrief
 
-- FaceTheExaminer: student explains vaccination by saying "the body learns to fight the disease" without mentioning antigens, antibodies or memory cells; mark commentary stresses the mechanism chain
-- QuickRecallScreen: what is phagocytosis; which white blood cell produces antibodies; what is a memory cell; why can't antibiotics treat viral infections; what is a double-blind trial?
+- `FaceTheExaminer`: student vaccination answer says "the body learns" but misses antigens, antibodies and memory cells. Mark commentary rebuilds full chain.
+- `FaceTheExaminer`: student resistance answer says people become resistant. Mark commentary fixes natural selection wording.
+- `FaceTheExaminer`: student drug trial answer says placebo is fake medicine but misses control/bias. Mark commentary adds comparison and double-blind bias reduction.
+- Quick recall: barriers, phagocytosis, antibodies, antitoxins, vaccination, antibiotics, resistance, double-blind trials.
 
 **Components:** `FaceTheExaminer`, `QuickRecallScreen`
 
@@ -73,57 +92,78 @@
 
 ## 3. Active learning interactions
 
-- `VisualLearning`: non-specific barriers; phagocytosis and lymphocyte sequences
-- `CinematicCarousel`: immune response stages
-- `ExplainReveal`: phagocytes vs lymphocytes — roles and mechanisms
-- `ConceptReveal`: vaccination, memory cells and herd immunity
-- `TheoryCompareBlock`: antibiotics vs antivirals
-- `MisconceptionCheck` × 2: antibiotics kill all pathogens; phagocytes produce antibodies
-- `SpotTheError`: vaccination described as injecting active disease
-- `GuidedExamResponse`: 4-mark vaccination mechanism question
-- `FillInTheBlanksBlock`: white blood cell roles vocabulary
-- `MatchingTask`: immune response terms → definitions
-- `FaceTheExaminer`: vaccination answer missing mechanism
-- `QuickRecallScreen`: 5 retrieval questions
+- `VisualLearning`: non-specific barriers
+- `StepSequence`: phagocytosis
+- `StepSequence`: antibody and memory cell response
+- `StepSequence`: vaccination sequence
+- `TheoryCompareBlock`: white blood cell roles
+- `ConceptReveal`: antibody-antigen specificity
+- `ConceptReveal`: herd immunity
+- `TheoryCompareBlock`: antibiotics vs painkillers
+- `ExplainReveal`: antibiotic resistance by natural selection
+- `VisualLearning`: drug testing stages
+- `MisconceptionCheck` × 4
+- `SpotTheError` × 2
+- `GuidedExamResponse`: vaccination mechanism
+- `GuidedExamResponse`: antibiotic resistance
+- `GuidedExamResponse`: placebo/double-blind trial
+- `MatchingTask`: immune terms
+- `MatchingTask`: drug testing terms
+- `FaceTheExaminer`: vague vaccination answer
+- `QuickRecallScreen`: 8 retrieval questions
 
 ---
 
 ## 4. Retrieval points
 
-- Non-specific barriers: skin (physical), mucus (traps), cilia (sweeps mucus), stomach acid (kills), tears (lysozyme)
-- Phagocytes: non-specific; engulf and digest any pathogen (phagocytosis)
-- Lymphocytes: specific; produce antibodies complementary to specific antigens; produce antitoxins; form memory cells
-- Antibodies: proteins; complementary to specific antigens; cause agglutination; trigger pathogen destruction
-- Memory cells: long-lived; allow rapid antibody production on re-exposure; basis of immunity
-- Vaccination: antigens introduced → antibodies produced → memory cells formed → rapid response to future infection; cannot cause the disease
-- Herd immunity: high vaccination rate prevents pathogen spread, protecting unvaccinated individuals
-- Antibiotics: kill/inhibit bacteria; no effect on viruses; antibiotic resistance via natural selection
-- Drug development: discovery → preclinical (cells/tissues/animals) → clinical trials (volunteers, double-blind, placebo) → peer review → prescribing
+- Non-specific defences: skin, scabs, mucus, cilia, stomach acid
+- Phagocytosis = white blood cell engulfs and digests pathogen
+- Antibodies bind to specific antigens
+- Antitoxins neutralise toxins
+- Memory cells enable faster future response
+- Vaccination: safe antigens → antibodies → memory cells → faster response later
+- Antibiotics kill bacteria or stop bacterial growth, not viruses
+- Painkillers relieve symptoms but do not kill pathogens
+- Antibiotic resistance: resistant bacteria survive, reproduce and spread
+- Drug testing checks toxicity, efficacy and dose
+- Placebo = inactive treatment used for comparison
+- Double-blind = neither doctor nor patient knows treatment group; reduces bias
 
 ---
 
 ## 5. Exam skill focus
 
-- 4-mark explain: explain how vaccination protects an individual from future infection
-- 3-mark explain: explain what happens when a phagocyte encounters a pathogen
-- 2-mark distinguish: explain the difference between a phagocyte and a lymphocyte
-- 1-mark recall: state why antibiotics cannot treat influenza
-- Evaluation question: evaluate the use of double-blind trials in drug testing
+- 3-mark describe: body barriers
+- 5-mark explain: vaccination mechanism
+- 3-mark explain: antibiotics treat bacteria not viruses
+- 5-mark explain: antibiotic resistance sequence
+- 4-mark explain/evaluate: placebo and double-blind trials
+- Matching/classification: immune terms and drug testing terms
 
 ---
 
 ## 6. Build notes
 
-The vaccination mechanism chain (antigen → antibody production → memory cells → rapid future response) must be taught as a complete sequence — the most common exam error is describing vaccination vaguely without naming antigens or memory cells. The phagocyte/lymphocyte distinction (who engulfs vs who produces antibodies) is frequently swapped and needs a dedicated misconception check. Antibiotics vs antivirals (bacteria only, natural selection resistance) ties directly to Ch 19 named diseases and should cross-reference explicitly. Drug development (double-blind, placebo, preclinical) is a standalone exam topic that often appears as a higher-mark evaluation question.
+This is the final Module 2 chapter, so it should feel like a consolidation of infection and response, not a loose list.
+
+The highest-value chains are:
+
+1. vaccine antigen → antibody production → memory cells → faster future response
+2. mutation → resistant bacteria survive → reproduce → resistant strain spreads
+3. placebo comparison + double-blind = reduced bias
+
+Make students practise the complete chains. Vague answers like "the body learns" will not score well enough.
 
 ---
 
 ## 7. Chapter completion test
 
-- [ ] Student can name three non-specific physical/chemical barriers and state how each prevents infection
-- [ ] Student can describe phagocytosis (engulf, enclose, digest)
-- [ ] Student can explain the role of lymphocytes (antibody production, antitoxins, memory cells)
-- [ ] Student can explain the vaccination mechanism in full (antigens → antibody production → memory cells → rapid future response)
-- [ ] Student can explain why antibiotics are ineffective against viral infections
-- [ ] Student can describe the stages of drug development including what a double-blind trial and placebo are
-- [ ] Student has practised a 4-mark vaccination question with mark commentary
+- [ ] Student can name at least three non-specific defences and their roles
+- [ ] Student can describe phagocytosis
+- [ ] Student can distinguish antibodies, antitoxins and antibiotics
+- [ ] Student can explain vaccination using antigens, antibodies and memory cells
+- [ ] Student can explain why antibiotics do not work on viruses
+- [ ] Student can explain antibiotic resistance as bacterial natural selection
+- [ ] Student can describe preclinical and clinical testing
+- [ ] Student can explain placebo and double-blind trials
+- [ ] Student has practised a 5-mark vaccination answer with mark commentary
