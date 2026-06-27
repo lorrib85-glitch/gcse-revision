@@ -43,8 +43,10 @@ ConceptReveal owns the single-concept teaching reveal: one idea at a time, expla
    - `microPoints` are for small clarifying details.
    - Do not turn ConceptReveal into a bullet-list screen.
 
-6. **Cinematic continue only**
-   - Progression uses `CinematicContinueCTA`.
+6. **Final cinematic continue only**
+   - Intermediate steps advance by tapping/swiping the screen.
+   - `CinematicContinueCTA` appears only on the final step.
+   - The final CTA is the only way ConceptReveal continues to the next feature/screen.
    - Do not add custom circular next buttons, text-only tap hints, or inline continue prompts.
 
 7. **No local progress dots**
@@ -83,6 +85,8 @@ Optional eyebrow:
 - Do not reintroduce default eyebrows.
 - Do not use custom local progress dots.
 - Do not use text hints like `tap to continue` or `tap to finish`.
+- Do not show the continue CTA before the final step.
+- Do not let background taps leave ConceptReveal for the next feature.
 - Do not create custom continue buttons.
 - Do not overfill with long paragraphs.
 - Do not use random glow/neon.
