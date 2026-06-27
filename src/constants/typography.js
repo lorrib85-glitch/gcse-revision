@@ -81,6 +81,22 @@ export const TYPE = {
     letterSpacing: "-0.005em"
   },
 
+  examAnswerText: {
+    fontFamily: "'Sora', sans-serif",
+    fontSize: "clamp(15px, 4vw, 16px)",
+    lineHeight: 1.72,
+    fontWeight: 420,
+    letterSpacing: "-0.006em"
+  },
+
+  examQuestionText: {
+    fontFamily: "'Sora', sans-serif",
+    fontSize: "clamp(14px, 3.8vw, 15.5px)",
+    lineHeight: 1.55,
+    fontWeight: 520,
+    letterSpacing: "-0.006em"
+  },
+
   // Compatibility Aliases (pointing to new values)
   hero: {
     fontFamily: "'Manrope', sans-serif",
@@ -170,4 +186,10 @@ export const TYPE = {
     fontWeight: 750,
     letterSpacing: '-0.035em',
   },
+}
+
+export const SCREEN_TEXT_LAYOUT = {
+  mobileInset: 16,
+  blockGap: 16,
+  titleOffsetTop: 20,
 }
