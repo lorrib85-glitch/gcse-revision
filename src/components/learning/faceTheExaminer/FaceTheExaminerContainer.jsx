@@ -9,6 +9,7 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
   const theme = SUBJECTS[module.subject] || SUBJECTS.History
   const accent = theme.accent
   const bg = theme.background
+  const screenTitle = 'Mark the answer'
 
   const [phase, setPhase] = useState('intro')
   const [overlayDark, setOverlayDark] = useState(false)
@@ -143,5 +144,5 @@ export default function FaceTheExaminerContainer({ module, examiner, onExit, onC
     return <FaceTheExaminerDone bg={bg} accent={accent} examiner={examiner} remarkResult={remarkResult} onAdvance={advance} />
   }
 
-  return <FaceTheExaminerMain module={module} examiner={examiner} bg={bg} accent={accent} activeTab={activeTab} setActiveTab={setActiveTab} phase={phase} setPhase={setPhase} guessedMark={guessedMark} setGuessedMark={setGuessedMark} selectedCriteria={selectedCriteria} setSelectedCriteria={setSelectedCriteria} revealPanelVisible={revealPanelVisible} setRevealPanelVisible={setRevealPanelVisible} isReveal={isReveal} isImproving={isImproving} isRemarking={isRemarking} segments={segments} expandedEdit={expandedEdit} setExpandedEdit={setExpandedEdit} studentEdits={studentEdits} setStudentEdits={setStudentEdits} expandedTextareaRef={expandedTextareaRef} hasAnyEdit={hasAnyEdit} remarkLoading={remarkLoading} remarkError={remarkError} handleRemark={handleRemark} onExit={onExit} canImprove={canImprove} />
+  return <FaceTheExaminerMain module={module} examiner={examiner} screenTitle={screenTitle} bg={bg} accent={accent} activeTab={activeTab} setActiveTab={setActiveTab} phase={phase} setPhase={setPhase} guessedMark={guessedMark} setGuessedMark={setGuessedMark} selectedCriteria={selectedCriteria} setSelectedCriteria={setSelectedCriteria} revealPanelVisible={revealPanelVisible} setRevealPanelVisible={setRevealPanelVisible} isReveal={isReveal} isImproving={isImproving} isRemarking={isRemarking} segments={segments} expandedEdit={expandedEdit} setExpandedEdit={setExpandedEdit} studentEdits={studentEdits} setStudentEdits={setStudentEdits} expandedTextareaRef={expandedTextareaRef} hasAnyEdit={hasAnyEdit} remarkLoading={remarkLoading} remarkError={remarkError} handleRemark={handleRemark} onExit={onExit} canImprove={canImprove} />
 }
