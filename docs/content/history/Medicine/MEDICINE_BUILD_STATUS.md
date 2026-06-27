@@ -5,9 +5,9 @@ Update this file whenever an episode is built, extracted, or expanded.
 
 **Authorities:**
 - `src/modules.js` — episode sequence, id, number, screenCount
-- `src/content/history/medicine/episodes/` — extracted episode files
+- `src/content/history/medicine/episodes/` — episode content files
 - `src/content/history/medicine/index.js` — MEDICINE_EPISODES series array
-- `src/modules/history.js` — HISTORY_MODULES compatibility export only (all content extracted)
+- `src/app/LegacyApp.jsx` — MODULE_CONTENT_LOADERS (one entry per built episode)
 
 **Build status definitions:**
 - `built` — screenCount > 1, full content exists
@@ -15,9 +15,8 @@ Update this file whenever an episode is built, extracted, or expanded.
 - `unbuilt` — screenCount 0, no content exists anywhere
 
 **Registry status definitions:**
-- `extracted` — episode file exists in `episodes/`, imported in `index.js`
-- `inline` — full content lives in `src/modules/history.js`; not yet extracted
-- `not built` — no content in history.js or episodes/
+- `extracted` — episode file exists in `episodes/`, imported in `index.js`, loader entry in `MODULE_CONTENT_LOADERS`
+- `not built` — no content in episodes/
 
 ---
 

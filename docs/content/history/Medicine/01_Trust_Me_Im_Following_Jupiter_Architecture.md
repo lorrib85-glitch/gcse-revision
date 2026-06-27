@@ -118,7 +118,7 @@ Built as `history-medicine-medieval-beliefs-causes` — 32 screens.
 
 Known screen tags from `src/modules.js`: `four-humours` (s4), `galen` (s9), `medieval-practitioners` (s12), `miasma` (s13), `core-takeaway` (s31).
 
-**Inventory (tags only — full screen content lives in `src/modules/history.js`):**
+**Inventory (tags only — full screen content lives in `src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.js`):**
 - s4 `four-humours` → Section 2 ✓
 - s9 `galen` → Section 3 ✓
 - s12 `medieval-practitioners` → Section 4 (physicians/barber surgeons/apothecaries) ✓

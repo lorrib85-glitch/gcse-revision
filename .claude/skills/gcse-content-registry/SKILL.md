@@ -23,7 +23,7 @@ Episode:          <id>
 src/modules.js:   id ✓/✗  number ✓/✗  screenCount ✓/✗
 Episode file:     screens non-empty ✓/✗  stageNavigation bounds ✓/✗
 Series index:     included ✓/✗  order ascending ✓/✗
-Compat export:    HISTORY_MODULES includes episode ✓/✗
+Loader entry:     MODULE_CONTENT_LOADERS[id] exists in LegacyApp.jsx ✓/✗
 Action required:  <none / list>
 ```
 
@@ -43,7 +43,7 @@ Action required:  <none / list>
 | `src/modules.js` | `id`, `number`, `screenCount`, `screenTags`, `headerImage`, all browsing metadata |
 | `src/content/<subject>/<series>/episodes/episode-NN-<slug>.js` | `hook`, `outcomes`, `screens`, `recall`, `stageNavigation` |
 | `src/content/<subject>/<series>/index.js` | ordered series array (`MEDICINE_EPISODES` etc.) |
-| `src/modules/<subject>.js` | compatibility export (`HISTORY_MODULES` etc.) consumed by the app loader |
+| `src/app/LegacyApp.jsx` | `MODULE_CONTENT_LOADERS` — one entry per built episode, consumed by the app loader |
 
 `src/modules.js` is the **single source of truth** for metadata. When content and
 metadata disagree, fix the content file — do not edit `src/modules.js` unless
@@ -68,10 +68,10 @@ the user explicitly asks.
 - Every extracted episode must be present in the series index
 - Placeholder comments for unextracted episodes remain numbered in sequence
 
-### Compatibility export
+### Loader entry
 
-- `HISTORY_MODULES` (or subject equivalent) must include all extracted episodes
-- Do not change the runtime shape of any existing entry
+- Every built episode must have an entry in `MODULE_CONTENT_LOADERS` in `src/app/LegacyApp.jsx`
+- Entry format: `'<episode-id>': () => import('<path-to-episode-file>').then(m => m.default)`
 - Do not remove or restructure fields that `ModulePlayer` reads
 
 ### Episode file requirements
@@ -93,19 +93,18 @@ the user explicitly asks.
 ## Extraction steps
 
 1. Read `src/modules.js` — find the target episode's metadata block (id, number)
-2. Read the inline episode from `src/modules/<subject>.js`
-3. Create `src/content/<subject>/<series>/episodes/episode-NN-<slug>.js`
-   - Copy all content verbatim
-   - Set `number` to match `src/modules.js` (correct inline value if it differs)
-   - Add future fields (`series`, `recallTags`, `examTags`, `assetKeys`) as empty
-     arrays following the pattern of existing episode files in the same series
-4. Update the series index — import and append in number order
-5. Replace the inline object in `src/modules/<subject>.js` with an import + reference
-6. Update `tests/architecture/content-registry.test.js` — add per-episode tests
+2. Create `src/content/<subject>/<series>/episodes/episode-NN-<slug>.js`
+   - `export default { id, subject, number, ... }` — follow existing episode files in the same series
+   - Set `number` to match `src/modules.js` (correct if it differs)
+   - Add future fields (`series`, `recallTags`, `examTags`, `assetKeys`) as empty arrays
+3. Update the series index — import and append in number order in `index.js`
+4. Add a `MODULE_CONTENT_LOADERS` entry in `src/app/LegacyApp.jsx`:
+   `'<episode-id>': () => import('<relative-path-to-episode>').then(m => m.default)`
+5. Update `tests/architecture/content-registry.test.js` — add per-episode tests
    (see Test pattern below)
-7. Run `vitest run tests/architecture` — all tests must pass
-8. Run `vite build` — must be clean
-9. Commit to `main`
+6. Run `vitest run tests/architecture` — all tests must pass
+7. Run `vite build` — must be clean
+8. Commit to `main`
 
 ## Test pattern
 
