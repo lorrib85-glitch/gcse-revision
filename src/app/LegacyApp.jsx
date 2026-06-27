@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { MODULE_CONTENT_LOADERS } from '../content/moduleContentRegistry.js'
 import { useAuth } from '../auth/AuthContext.jsx'
-import { getProgress, recordActivity, getModuleState as safeGetModuleState } from '../progress.js'
+import { getProgress, recordActivity, getModuleState as safeGetModuleState, getContinueModule } from '../progress.js'
 import { buildChapterCompletePayload, prepareModuleScreenState, resolveTaskDestination } from './moduleNavigation.js'
 import TestTab, { readQfBest } from '../features/quickfire/QuickFire.jsx'
 import Home from '../features/home/Home.jsx'
@@ -79,10 +79,15 @@ function ModuleLoadingScreen() {
 // All subjects now use per-module files via MODULE_CONTENT_LOADERS.
 // New modules: run /module-creation <id> to add a content file + registry entry.
 
+const _contentCache = {}
+
 async function loadModuleContent(mod) {
+  if (_contentCache[mod.id]) return _contentCache[mod.id]
   const loader = MODULE_CONTENT_LOADERS[mod.id]
   if (!loader) return null
-  return loader()
+  const content = await loader()
+  if (content) _contentCache[mod.id] = content
+  return content
 }
 
 
@@ -306,6 +311,21 @@ export default function App() {
     }
   }, [])
 
+  // Prefetch episode content for the most likely next module (in-progress or first unstarted)
+  // so opening it feels instant instead of waiting for a network download.
+  useEffect(() => {
+    const mod = getContinueModule()
+    if (!mod) return
+    const prefetch = () => loadModuleContent(mod)
+    if (typeof requestIdleCallback !== 'undefined') {
+      const id = requestIdleCallback(prefetch)
+      return () => cancelIdleCallback(id)
+    } else {
+      const id = setTimeout(prefetch, 3000)
+      return () => clearTimeout(id)
+    }
+  }, [])
+
   function openModule(mod, screenIndex) {
     openModulePlayer(mod, screenIndex)
   }
@@ -339,8 +359,13 @@ export default function App() {
         ))
       } catch {}
     }
-    // Fire ModulePlayer chunk download in parallel with content file — both resolve concurrently
     import('../components/layout/ModulePlayer.jsx')
+    const cached = _contentCache[mod.id]
+    if (cached) {
+      setActiveModule(cached)
+      setView('module')
+      return
+    }
     setActiveModule(null)
     setView('module')
     loadModuleContent(mod).then(fullMod => setActiveModule(fullMod || mod))
