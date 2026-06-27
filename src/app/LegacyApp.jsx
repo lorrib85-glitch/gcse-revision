@@ -80,8 +80,26 @@ function ModuleLoadingScreen() {
 // when a module from that subject is opened. src/modules.js itself keeps only
 // the lightweight metadata used for browsing, cards and progress.
 
+// Per-module loaders — each ID maps directly to its own file so opening one episode
+// never downloads the others. Add new modules here as subjects are split.
+const MODULE_CONTENT_LOADERS = {
+  'history-medicine-medieval-beliefs-causes': () => import('../content/history/medicine/episodes/episode-01-medieval-beliefs-causes.js').then(m => m.default),
+  'history-medicine-black-death':             () => import('../content/history/medicine/episodes/episode-02-black-death.js').then(m => m.default),
+  'history-medicine-renaissance-medicine':    () => import('../content/history/medicine/episodes/episode-03-renaissance-medicine.js').then(m => m.default),
+  'history-medicine-surgery-anaesthetics':    () => import('../content/history/medicine/episodes/episode-04-surgery-anaesthetics.js').then(m => m.default),
+  'history-medicine-jenner-vaccination':      () => import('../content/history/medicine/episodes/episode-06-jenner-vaccination.js').then(m => m.default),
+  'history-medicine-germ-theory':             () => import('../content/history/medicine/episodes/episode-07-germ-theory.js').then(m => m.default),
+  'history-medicine-great-stink':             () => import('../content/history/medicine/episodes/episode-08-great-stink.js').then(m => m.default),
+  'history-medicine-surgery-revolution':      () => import('../content/history/medicine/episodes/episode-09-surgery-revolution.js').then(m => m.default),
+  'history-medicine-accidental-miracle':      () => import('../content/history/medicine/episodes/episode-11-accidental-miracle.js').then(m => m.default),
+  'history-medicine-modern-medicine':         () => import('../content/history/medicine/episodes/episode-12-when-medicine-became-magic.js').then(m => m.default),
+  'history-medicine-cancer':                  () => import('../content/history/medicine/episodes/episode-13-can-we-beat-cancer.js').then(m => m.default),
+  'history-medicine-western-front':           () => import('../content/history/medicine/episodes/episode-14-western-front.js').then(m => m.default),
+}
+
+// Subject-level loaders for subjects not yet split per-module.
+// History is absent — its episodes use MODULE_CONTENT_LOADERS above.
 const SUBJECT_MODULE_LOADERS = {
-  History:   () => import('../modules/history.js').then(m => m.HISTORY_MODULES),
   Biology:   () => import('../modules/biology.js').then(m => m.BIOLOGY_MODULES),
   Maths:     () => import('../modules/maths.js').then(m => m.MATHS_MODULES),
   Sociology: () => import('../modules/sociology.js').then(m => m.SOCIOLOGY_MODULES),
@@ -90,6 +108,8 @@ const SUBJECT_MODULE_LOADERS = {
 }
 
 async function loadModuleContent(mod) {
+  const perModuleLoader = MODULE_CONTENT_LOADERS[mod.id]
+  if (perModuleLoader) return perModuleLoader()
   const loader = SUBJECT_MODULE_LOADERS[mod.subject]
   if (!loader) return null
   const subjectModules = await loader()
