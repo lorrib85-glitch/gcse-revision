@@ -2295,6 +2295,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           afterLabel={cur.afterLabel}
           heading={cur.heading}
           subheading={cur.subheading}
+          revealText={cur.revealText}
           accent={subjectColor}
           initial={cur.initial ?? 50}
           onComplete={isLast ? handleFinish : () => go(1)}

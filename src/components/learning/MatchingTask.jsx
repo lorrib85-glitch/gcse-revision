@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 import { MOTION } from '../../constants/motion.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 // CinematicShell used here because the full-bleed background image and vignette overlays
@@ -19,16 +20,9 @@ function shuffle(arr) {
   return a
 }
 
-const BRONZE     = '#D69B45'
-const BRONZE_RGB = '214,155,69'
-const CARD_BG    = 'rgba(74,45,22,0.82)'
-const CARD_BG_LOCKED = 'rgba(88,61,29,0.90)'
-const CARD_BORDER = 'rgba(219,166,91,0.22)'
-const CARD_BORDER_LOCKED = 'rgba(218,170,94,0.55)'
-const CARD_BORDER_SELECTED = 'rgba(230,175,88,0.68)'
 const CARD_BORDER_WRONG = 'rgba(168,76,53,0.75)'
-const TEXT_PRIMARY = 'rgba(255,244,222,0.92)'
-const TEXT_DIM     = 'rgba(245,230,200,0.78)'
+const TEXT_PRIMARY = 'rgba(245,238,225,0.92)'
+const TEXT_DIM     = 'rgba(245,238,225,0.72)'
 
 const CSS = `
   @keyframes mt-fade-in {
@@ -50,6 +44,16 @@ export default function MatchingTask({ screen, subject, onComplete }) {
   const allPairs    = screen.pairs || []
   const subjectKey  = subject || screen.subject || 'History'
   const bgImage     = screen.backgroundImage || ''
+
+  const theme    = SUBJECTS[subjectKey] || SUBJECTS.History
+  const accent   = theme.accent
+  const accentRgb = theme.accentRgb
+
+  const CARD_BG          = `rgba(${accentRgb},0.08)`
+  const CARD_BG_LOCKED   = `rgba(${accentRgb},0.15)`
+  const CARD_BORDER      = `rgba(${accentRgb},0.22)`
+  const CARD_BORDER_LOCKED   = `rgba(${accentRgb},0.50)`
+  const CARD_BORDER_SELECTED = `rgba(${accentRgb},0.65)`
 
   // Split pairs into rounds: max 6 per round, balanced halves
   const ROUND_MAX  = 6
@@ -183,7 +187,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
       )}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'rgba(15,9,4,0.68)',
+        background: 'rgba(12,14,18,0.68)',
         zIndex: 0,
       }} />
       {/* Vignette: darker top/bottom */}
@@ -203,11 +207,9 @@ export default function MatchingTask({ screen, subject, onComplete }) {
         boxSizing: 'border-box',
       }}>
 
-        {/* Header — 8px top margin from safe area */}
+        {/* Header */}
         <div style={{
-          fontWeight: 700,
-          fontSize: 26,
-          lineHeight: 1.05,
+          ...TYPE.sectionHeading,
           color: TEXT_PRIMARY,
           marginBottom: 8,
           maxWidth: '90%',
@@ -218,8 +220,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
 
         {/* Instruction */}
         <div style={{
-          fontSize: 13,
-          lineHeight: 1.35,
+          ...TYPE.bodySmallText,
           color: TEXT_DIM,
           maxWidth: 340,
           marginBottom: 18,
@@ -235,8 +236,8 @@ export default function MatchingTask({ screen, subject, onComplete }) {
               total={rounds.length}
               current={roundIdx}
               completed={roundIdx}
-              accent={BRONZE}
-              accentRgb={BRONZE_RGB}
+              accent={accent}
+              accentRgb={accentRgb}
               ariaLabel="Round progress"
             />
           </div>
@@ -250,8 +251,8 @@ export default function MatchingTask({ screen, subject, onComplete }) {
             width: '100%',
             borderRadius: 24,
             padding: '16px 12px 18px',
-            background: 'rgba(36,22,11,0.72)',
-            border: '1px solid rgba(196,142,73,0.22)',
+            background: 'rgba(12,14,22,0.72)',
+            border: `1px solid rgba(${accentRgb},0.18)`,
             boxShadow: '0 18px 48px rgba(0,0,0,0.38)',
             backdropFilter: 'blur(6px)',
             WebkitBackdropFilter: 'blur(6px)',
@@ -273,7 +274,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                 key={l.id}
                 x1={l.x1} y1={l.y1}
                 x2={l.x2} y2={l.y2}
-                stroke="rgba(218,170,94,0.72)"
+                stroke={`rgba(${accentRgb},0.72)`}
                 strokeWidth={2}
                 strokeLinecap="round"
               />
@@ -287,9 +288,9 @@ export default function MatchingTask({ screen, subject, onComplete }) {
           }}>
             {['Term', 'Meaning'].map(label => (
               <div key={label} style={{
-                fontSize: 11, textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                color: 'rgba(230,198,150,0.55)',
+                ...TYPE.metadataText,
+                textTransform: 'uppercase',
+                color: `rgba(${accentRgb},0.50)`,
               }}>{label}</div>
             ))}
           </div>
@@ -322,7 +323,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                         CARD_BORDER
                       }`,
                       boxShadow: isSelected && !isLocked
-                        ? '0 0 0 1px rgba(230,175,88,0.18), 0 0 18px rgba(230,175,88,0.18)'
+                        ? `0 0 0 1px rgba(${accentRgb},0.18), 0 0 18px rgba(${accentRgb},0.18)`
                         : 'none',
                       transform: isSelected && !isLocked ? 'translateY(-1px)' : 'none',
                       cursor: isLocked ? 'default' : 'pointer',
@@ -342,7 +343,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                     {isLocked && (
                       <span style={{
                         position: 'absolute', top: 6, right: 8,
-                        fontSize: 10, color: BRONZE, lineHeight: 1,
+                        fontSize: 10, color: accent, lineHeight: 1,
                       }}>✓</span>
                     )}
                   </button>
@@ -381,7 +382,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                     {isLocked && (
                       <span style={{
                         position: 'absolute', top: 6, right: 8,
-                        fontSize: 10, color: BRONZE, lineHeight: 1,
+                        fontSize: 10, color: accent, lineHeight: 1,
                       }}>✓</span>
                     )}
                   </button>
@@ -406,7 +407,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
         {roundComplete && !isLastRound && (
           <ContinueCTA
             onClick={() => setRoundIdx(r => r + 1)}
-            accent={BRONZE}
+            accent={accent}
             style={{ marginTop: 14, animation: 'mt-fade-in 360ms ease both' }}
           />
         )}

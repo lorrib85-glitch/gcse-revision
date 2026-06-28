@@ -300,6 +300,7 @@ const episode = {
       afterSrc: '/figures/history/medicine/modern/lungs-cancer.png',
       beforeLabel: 'Healthy lungs',
       afterLabel: 'Damaged lungs',
+      revealText: 'Smoking is the biggest cause of lung cancer in the UK.',
       initial: 50,
     },
 

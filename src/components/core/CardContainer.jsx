@@ -1,3 +1,5 @@
+import { SUBJECTS } from '../../constants/subjects.js'
+
 // ── CardContainer v1 — LOCKED COMPONENT ────────────────────────────────────
 // Reusable cinematic content surface for learning modules.
 // Subtle atmospheric container that supports readability and pacing.
@@ -18,21 +20,15 @@ export default function CardContainer({
   contextImage,
   showAtmosphere = true,
 }) {
-  // Subject atmosphere palette (matches LearningHeader)
-  const PALETTES = {
-    history: { base: '#C89B6D', rgb: '200,155,109', tint: 'rgba(200,155,109' },
-    biology: { base: '#8FD6A3', rgb: '143,214,163', tint: 'rgba(143,214,163' },
-    chemistry: { base: '#8B5CF6', rgb: '139,92,246', tint: 'rgba(139,92,246' },
-    physics: { base: '#5DA9E9', rgb: '93,169,233', tint: 'rgba(93,169,233' },
-    maths: { base: '#2BBE9A', rgb: '43,190,154', tint: 'rgba(43,190,154' },
-    english: { base: '#9E3D52', rgb: '158,61,82', tint: 'rgba(158,61,82' },
-    sociology: { base: '#C9B07C', rgb: '201,176,124', tint: 'rgba(201,176,124' },
-  }
+  // Resolve subject atmosphere from canonical SUBJECTS source
+  const capitalised = subject ? subject.charAt(0).toUpperCase() + subject.slice(1).toLowerCase() : null
+  const theme = (capitalised && SUBJECTS[capitalised]) || SUBJECTS.Physics
+  const rgb = theme.accentRgb
+  const tint = `rgba(${rgb}`
 
-  const palette = PALETTES[subject?.toLowerCase()] || PALETTES.physics
-  const atmosphereTint = showAtmosphere ? `${palette.tint},0.09)` : 'transparent'
-  const atmosphereGlow = showAtmosphere ? `${palette.tint},0.06)` : 'transparent'
-  const shadowTint = showAtmosphere ? `${palette.tint},0.08)` : 'rgba(0,0,0,0.2)'
+  const atmosphereTint = showAtmosphere ? `${tint},0.09)` : 'transparent'
+  const atmosphereGlow = showAtmosphere ? `${tint},0.06)` : 'transparent'
+  const shadowTint = showAtmosphere ? `${tint},0.08)` : 'rgba(0,0,0,0.2)'
 
   // ── Contained variant (default) ──
   if (variant === 'contained') {

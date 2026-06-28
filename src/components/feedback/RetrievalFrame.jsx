@@ -1,6 +1,7 @@
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import { SPACING } from '../../constants/spacing.js'
 import { TYPE } from '../../constants/typography.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 
 // ── RetrievalFrame v1 — LOCKED COMPONENT ──────────────────────────────────────
 // Cinematic wrapper for retrieval moments woven into learning flow.
@@ -48,17 +49,9 @@ export default function RetrievalFrame({
     hint: retrieval.hint,
   }
 
-  // Determine accent colour from subject
-  const ACCENTS = {
-    history: '#C89B6D',
-    biology: '#8FD6A3',
-    chemistry: '#8B5CF6',
-    physics: '#5DA9E9',
-    maths: '#2BBE9A',
-    english: '#9E3D52',
-    sociology: '#C9B07C',
-  }
-  const accent = ACCENTS[subject?.toLowerCase()] || '#9D5CFF'
+  // Resolve accent from canonical SUBJECTS source
+  const subjectKey = Object.keys(SUBJECTS).find(k => k.toLowerCase() === subject?.toLowerCase()) || 'History'
+  const accent = SUBJECTS[subjectKey].accent
 
   function handleComplete(result) {
     if (onInteractionComplete) {

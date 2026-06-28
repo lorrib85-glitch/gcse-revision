@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { MOTION } from '../../constants/motion.js'
+import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 
@@ -11,7 +12,8 @@ export default function BeforeAfterImageSlider({
   beforeLabel = 'Before',
   afterLabel  = 'After',
   heading,
-  accent      = '#D69B45',
+  accent      = null,
+  revealText  = null,
   initial     = 50,
   onComplete,
 }) {
@@ -134,7 +136,7 @@ export default function BeforeAfterImageSlider({
             position: 'relative',
             width: '100%',
             aspectRatio: '4 / 5',
-            borderRadius: 16,
+            borderRadius: RADII.medium,
             overflow: 'hidden',
             touchAction: 'none',
             userSelect: 'none',
@@ -194,7 +196,7 @@ export default function BeforeAfterImageSlider({
             width: 48,
             height: 48,
             borderRadius: '50%',
-            background: accent,
+            background: accent ?? 'rgba(245,238,225,0.60)',
             boxShadow: `0 0 0 3px rgba(255,255,255,0.25), 0 4px 16px rgba(0,0,0,0.55)`,
             display: 'flex',
             alignItems: 'center',
@@ -256,24 +258,26 @@ export default function BeforeAfterImageSlider({
             </div>
           )}
 
-          {/* Micro-copy — revealed when the damaged side dominates */}
-          <div style={{
-            position: 'absolute',
-            bottom: 14,
-            left: 12,
-            right: 12,
-            textAlign: 'center',
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontSize: 12,
-            lineHeight: 1.55,
-            color: 'rgba(245,238,225,0.82)',
-            textShadow: '0 1px 6px rgba(0,0,0,0.72)',
-            opacity: pct > 75 ? 1 : 0,
-            transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
-            pointerEvents: 'none',
-          }}>
-            Smoking is the biggest cause of lung cancer in the UK.
-          </div>
+          {/* Micro-copy — revealed when the after side dominates */}
+          {revealText && (
+            <div style={{
+              position: 'absolute',
+              bottom: 14,
+              left: 12,
+              right: 12,
+              textAlign: 'center',
+              fontFamily: TYPE.bodyText.fontFamily,
+              fontSize: 12,
+              lineHeight: 1.55,
+              color: 'rgba(245,238,225,0.82)',
+              textShadow: '0 1px 6px rgba(0,0,0,0.72)',
+              opacity: pct > 75 ? 1 : 0,
+              transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
+              pointerEvents: 'none',
+            }}>
+              {revealText}
+            </div>
+          )}
         </div>
       </div>
 

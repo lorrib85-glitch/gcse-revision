@@ -124,7 +124,16 @@ export default function SwipeSort({ block, subject, onComplete }) {
   const accent    = SUBJECTS[subject]?.accent    ?? '#D69B45'
   const accentRgb = SUBJECTS[subject]?.accentRgb ?? '214,155,69'
 
-  const { columns = [], items: rawItems = [], explanation = '' } = block
+  const {
+    columns = [],
+    items: rawItems = [],
+    explanation = '',
+    introTitle = 'Two worlds. One cause.',
+    introText  = 'Decide whether each explanation is based on belief or observation.',
+    gameTitle  = 'Sort the cause',
+    gamePrompt = 'Is this belief-based or observation-based?',
+    startLabel = "Let's go →",
+  } = block
 
   const [items] = useState(() => {
     const arr = [...rawItems]
@@ -286,7 +295,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
             textAlign: 'center',
             marginBottom: 10,
             animation: 'ss-intro-in 560ms cubic-bezier(.22,1,.36,1) both',
-          }}>Two worlds. One cause.</div>
+          }}>{introTitle}</div>
 
           <div style={{
             ...TYPE.bodyText,
@@ -298,7 +307,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
             marginBottom: 28,
             animation: 'ss-intro-in 500ms cubic-bezier(.22,1,.36,1) 90ms both',
           }}>
-            Decide whether each explanation is based on belief or observation.
+            {introText}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, width: '100%', marginBottom: 34 }}>
@@ -329,7 +338,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
           </div>
 
           <ContinueCTA
-            label="Let's go →"
+            label={startLabel}
             accent={accent}
             onClick={() => setPhase('game')}
             style={{
@@ -427,12 +436,12 @@ export default function SwipeSort({ block, subject, onComplete }) {
               color: 'rgba(245,238,225,0.94)',
               textShadow: '0 2px 24px rgba(0,0,0,0.70)',
               marginBottom: 6,
-            }}>Sort the cause</div>
+            }}>{gameTitle}</div>
             <div style={{
               ...TYPE.bodySmallText,
               color: 'rgba(245,245,245,0.62)',
               fontWeight: 520,
-            }}>Is this belief-based or observation-based?</div>
+            }}>{gamePrompt}</div>
           </div>
         </div>
 
