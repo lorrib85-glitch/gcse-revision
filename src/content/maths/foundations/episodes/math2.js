@@ -41,15 +41,15 @@ export default {
       {
         "emoji": "🔁",
         "label": "Inverse check saves marks",
-        "detail": "If 0.3 × 0.3 = 0.09, then 0.09 ÷ 0.3 should give 0.3. Inverse operations are a free checking tool on every paper."
+        "detail": "If 0.3 × 0.3 = 0.09, then 0.09 ÷ 0.3 should give 0.3. Inverse operations are a fast way to check whether an answer is sensible."
       },
       {
         "emoji": "⚠️",
-        "label": "The exam trap",
-        "detail": "Students who don't count decimal places write 0.9 — ten times too large. This exact error costs 2 marks on AQA non-calculator papers every year."
+        "label": "The common trap",
+        "detail": "Students who don't count decimal places can write 0.9 — ten times too large. The method protects you from that slip."
       }
     ],
-    "punchline": "Written methods with clear steps — not mental arithmetic shortcuts — is what earns marks on Paper 1."
+    "punchline": "Written methods with clear steps — not rushed mental shortcuts — help you keep marks when calculations get messy."
   },
 
   "intro": {
@@ -57,16 +57,18 @@ export default {
       "Use column methods for addition, subtraction, multiplication and division",
       "Keep decimal points aligned when adding and subtracting decimals",
       "Count decimal places when multiplying decimals",
+      "Choose between mental, written and calculator methods",
       "Use inverse operations to check any calculation"
     ]
   },
 
   "outcomes": {
-    "intro": "The four operations appear in every AQA paper. Written methods let you earn method marks even when arithmetic goes wrong.",
+    "intro": "The four operations appear regularly across AQA Foundation papers. Written methods let you earn method marks even when arithmetic goes wrong.",
     "bullets": [
       "Apply column addition and subtraction to integers and decimals without errors",
-      "Use short multiplication and bus-stop division with confidence",
+      "Use short multiplication, 2-digit multiplication and bus-stop division with confidence",
       "Count decimal places in multiplication to place the point correctly",
+      "Choose a sensible method: mental, written or calculator",
       "Use inverse operations as a checking strategy under exam conditions"
     ]
   },
@@ -112,7 +114,7 @@ export default {
         {
           "type": "read",
           "label": "The exam stake",
-          "text": "Four-operation questions appear in <strong>every AQA Foundation paper</strong>. Paper 1 is non-calculator — written methods are not optional."
+          "text": "Four-operation skills appear regularly across AQA Foundation papers. Paper 1 is non-calculator, so clear written methods matter."
         },
         {
           "type": "quiz",
@@ -126,7 +128,7 @@ export default {
         },
         {
           "type": "examtip",
-          "tip": "<strong>Series pillar: Number sense.</strong> The four operations on Paper 1 test written methods — not mental shortcuts. Show every step and earn method marks even if the answer is wrong."
+          "tip": "<strong>Series pillar: Number sense.</strong> Paper 1 tests written methods, not just mental shortcuts. Show clear steps so your method can still earn credit if one arithmetic digit slips."
         }
       ]
     },
@@ -201,7 +203,7 @@ export default {
             { "text": "365", "correct": false },
             { "text": "345", "correct": false }
           ],
-          "explanation": "Borrow to get 12−7=5. Borrow again: 9−4=5 (after reducing hundreds). 4−1=3. Wait — check: 355+147=502 ✓. Answer: 355."
+          "explanation": "Borrow to get 12−7=5. Borrow again: 9−4=5 (after reducing hundreds). 4−1=3. Check: 355+147=502 ✓. Answer: 355."
         }
       ]
     },
@@ -210,8 +212,8 @@ export default {
       "tag": "maths:written-methods",
       "label": "Multiplication and division",
       "kicker": "Section 3 — Core idea",
-      "heading": "Short multiplication and bus-stop division.",
-      "sub": "Two written methods every AQA student must be able to use without a calculator.",
+      "heading": "Multiplication and division methods.",
+      "sub": "Short methods first, then a proper 2-digit by 2-digit method.",
       "blocks": [
         {
           "type": "read",
@@ -230,6 +232,21 @@ export default {
         },
         {
           "type": "read",
+          "label": "Two-digit by two-digit multiplication",
+          "text": "For 47 × 38, split the second number into 30 and 8.<br/><br/>47 × 8 = 376<br/>47 × 30 = 1410<br/>Add the partial products: 376 + 1410 = <strong>1786</strong>.<br/><br/>The key idea is the <strong>tens row</strong>: multiplying by 30 is ten times bigger than multiplying by 3, so the place value shifts left."
+        },
+        {
+          "type": "quiz",
+          "question": "Use partial products: 26 × 34 = ?",
+          "options": [
+            { "text": "884", "correct": true },
+            { "text": "780", "correct": false },
+            { "text": "624", "correct": false }
+          ],
+          "explanation": "26 × 4 = 104. 26 × 30 = 780. Add: 104 + 780 = 884."
+        },
+        {
+          "type": "read",
           "label": "Bus-stop division (short division)",
           "text": "Write the divisor outside, dividend inside the 'bus stop'. Divide into each digit <strong>left to right</strong>. Carry remainders into the next digit.<br/><br/>Example: 952 ÷ 4<br/>4 ) 9 5 2<br/>&nbsp;&nbsp;&nbsp; 2 3 8<br/>(9÷4=2 rem 1; 15÷4=3 rem 3; 32÷4=8)"
         },
@@ -242,6 +259,16 @@ export default {
             { "text": "262", "correct": false }
           ],
           "explanation": "7÷3=2 rem 1. 15÷3=5 rem 0. 6÷3=2. Answer: 252. Check: 252×3=756 ✓."
+        },
+        {
+          "type": "quiz",
+          "question": "Calculate: 86 ÷ 4",
+          "options": [
+            { "text": "21 remainder 2", "correct": false },
+            { "text": "21.5", "correct": true },
+            { "text": "22.5", "correct": false }
+          ],
+          "explanation": "4 goes into 8 twice. 4 goes into 6 once remainder 2. In a measurement or money-style context, continue the division: 20 tenths ÷ 4 = 5 tenths, so 86 ÷ 4 = 21.5."
         }
       ]
     },
@@ -251,7 +278,7 @@ export default {
       "label": "Decimal operations",
       "kicker": "Section 3 — Core idea",
       "heading": "The decimal point rules.",
-      "sub": "Alignment for adding and subtracting. Place-counting for multiplying.",
+      "sub": "Alignment for adding and subtracting. Place-counting for multiplying. Integer conversion for some divisions.",
       "blocks": [
         {
           "type": "read",
@@ -269,6 +296,16 @@ export default {
           "explanation": "Write 5.70 to align: 5.70 + 2.84. Hundredths: 0+4=4. Tenths: 7+8=15 (write 5 carry 1). Ones: 5+2+1=8. Answer: 8.54."
         },
         {
+          "type": "quiz",
+          "question": "Calculate: 7.2 − 3.85",
+          "options": [
+            { "text": "4.65", "correct": false },
+            { "text": "3.35", "correct": true },
+            { "text": "3.45", "correct": false }
+          ],
+          "explanation": "Write 7.2 as 7.20, then subtract 3.85. 7.20 − 3.85 = 3.35. The zero placeholder matters."
+        },
+        {
           "type": "read",
           "label": "Multiplying decimals",
           "text": "Multiply as integers, then count total decimal places.<br/><br/>Example: 2.3 × 1.4<br/>Step 1: 23 × 14 = 322<br/>Step 2: 2.3 has 1 d.p., 1.4 has 1 d.p. Total: 2 d.p.<br/>Step 3: Place point 2 from right: <strong>3.22</strong>"
@@ -282,6 +319,61 @@ export default {
             { "text": "0.09", "correct": false }
           ],
           "explanation": "15 × 6 = 90. 1.5 has 1 d.p., 0.6 has 1 d.p. Total: 2 d.p. Place 2 from right in 90: 0.90 = 0.9."
+        },
+        {
+          "type": "quiz",
+          "question": "Calculate: 8.4 ÷ 0.4",
+          "options": [
+            { "text": "2.1", "correct": false },
+            { "text": "21", "correct": true },
+            { "text": "210", "correct": false }
+          ],
+          "explanation": "Multiply both numbers by 10 to make the divisor an integer: 8.4 ÷ 0.4 = 84 ÷ 4 = 21."
+        }
+      ]
+    },
+
+    {
+      "tag": "maths:four-operations",
+      "label": "Choosing a method",
+      "kicker": "Section 3 — Core idea",
+      "heading": "Mental, written or calculator?",
+      "sub": "Good mathematicians choose the fastest reliable method, not always the longest one.",
+      "blocks": [
+        {
+          "type": "read",
+          "label": "Pick the method before calculating",
+          "text": "Use <strong>mental methods</strong> for simple facts and friendly numbers. Use <strong>written methods</strong> for multi-step or non-calculator work. Use a <strong>calculator</strong> on calculator papers, but estimate first so you can spot nonsense answers."
+        },
+        {
+          "type": "quiz",
+          "question": "Which method is most sensible for 12 × 5?",
+          "options": [
+            { "text": "Mental — 10×5 plus 2×5", "correct": true },
+            { "text": "Long column multiplication", "correct": false },
+            { "text": "Calculator only", "correct": false }
+          ],
+          "explanation": "12 × 5 is friendly: 10×5 = 50 and 2×5 = 10, total 60. Mental is fastest and reliable."
+        },
+        {
+          "type": "quiz",
+          "question": "Which method is most sensible for 347 × 8 on Paper 1?",
+          "options": [
+            { "text": "Written short multiplication", "correct": true },
+            { "text": "Calculator", "correct": false },
+            { "text": "Guess from the size of the numbers", "correct": false }
+          ],
+          "explanation": "Paper 1 is non-calculator. 347 × 8 needs a written method so you can carry accurately and show working."
+        },
+        {
+          "type": "quiz",
+          "question": "On a calculator paper, what should you do before typing £12.47 × 18?",
+          "options": [
+            { "text": "Estimate roughly, then calculate", "correct": true },
+            { "text": "Type it and trust any answer", "correct": false },
+            { "text": "Avoid the calculator", "correct": false }
+          ],
+          "explanation": "Estimate: £12.47 is about £12.50, and 12.5 × 18 is about £225. So a calculator answer near £224.46 is sensible."
         }
       ]
     },
@@ -291,12 +383,12 @@ export default {
       "label": "Inverse operations",
       "kicker": "Section 3 — Core idea",
       "heading": "Use the inverse to check.",
-      "sub": "Addition undoes subtraction. Division undoes multiplication. Free marks on every paper.",
+      "sub": "Addition undoes subtraction. Division undoes multiplication. A quick check catches slips.",
       "blocks": [
         {
           "type": "read",
           "label": "The four inverse pairs",
-          "text": "<strong>Addition ↔ Subtraction:</strong> if 347 + 285 = 632, then 632 − 285 = 347.<br/><strong>Multiplication ↔ Division:</strong> if 238 × 4 = 952, then 952 ÷ 4 = 238.<br/><br/>Inverses let you check <em>any</em> calculation in about 10 seconds."
+          "text": "<strong>Addition ↔ Subtraction:</strong> if 347 + 285 = 632, then 632 − 285 = 347.<br/><strong>Multiplication ↔ Division:</strong> if 238 × 4 = 952, then 952 ÷ 4 = 238.<br/><br/>Inverses let you check calculations quickly."
         },
         {
           "type": "quiz",
@@ -360,13 +452,13 @@ export default {
       "tag": null,
       "label": "Guided practice",
       "kicker": "Section 5 — Practice with support",
-      "heading": "Complete the column method steps.",
-      "sub": "Fill in the missing numbers in these written calculations.",
+      "heading": "Complete the written method steps.",
+      "sub": "Fill in the missing numbers in these calculations.",
       "blocks": [
         {
           "type": "read",
           "label": "Method reminder",
-          "text": "Column addition: right to left, carry when ≥10.<br/>Decimal addition: align the decimal points first — pad shorter decimals with zeros if needed."
+          "text": "Column addition: right to left, carry when ≥10.<br/>Decimal addition and subtraction: align the decimal points first — pad shorter decimals with zeros if needed.<br/>2-digit multiplication: calculate each partial product, then add them."
         },
         {
           "type": "fillblanks",
@@ -381,12 +473,21 @@ export default {
               ]
             },
             {
-              "before": "In 5.70 + 2.84: the tenths column is 7 + 8 =",
-              "after": ", write 5 carry 1.",
-              "answer": "15",
+              "before": "In 47 × 38, one partial product is 47 × 30 =",
+              "after": ".",
+              "answer": "1410",
               "hints": [
-                "Add the tenths digits: 7 + 8 = ?",
-                "You need to carry into the ones column."
+                "47 × 3 = 141, then multiply by 10 because it is 30.",
+                "The tens row must shift left."
+              ]
+            },
+            {
+              "before": "In 7.20 − 3.85, the zero after 7.2 is a",
+              "after": "placeholder.",
+              "answer": "hundredths",
+              "hints": [
+                "7.2 becomes 7.20 so the decimal places line up.",
+                "The second digit after the decimal is the hundredths column."
               ]
             },
             {
@@ -400,7 +501,7 @@ export default {
             }
           ],
           "correctMsg": "Good — working through the method step by step earns marks even if later arithmetic slips.",
-          "wrongMsg": "Go through the column method one step at a time: right to left, carry when needed."
+          "wrongMsg": "Go through the method one step at a time: align columns, carry or borrow, then check with the inverse."
         }
       ]
     },
@@ -410,7 +511,7 @@ export default {
       "label": "Spot the error",
       "kicker": "Section 6 — Common mistake",
       "heading": "Find the decimal column error.",
-      "sub": "This misalignment loses 2 marks on AQA Paper 1 every year.",
+      "sub": "Decimal misalignment is a common mark-losing error.",
       "blocks": [
         {
           "type": "read",
@@ -424,7 +525,7 @@ export default {
               "statement": "3.87 is the correct answer to 3.72 + 1.5.",
               "answer": false,
               "reveal": "FALSE. The student put 1.5 in the wrong column — they aligned the last digits (2 and 5) instead of the decimal points. Correct method: write 1.5 as 1.50, then align: 3.72 + 1.50 = 5.22.",
-              "examTrap": "AQA mark schemes list decimal point misalignment as the most common error in decimal addition. Always write trailing zeros to make d.p. counts equal."
+              "examTrap": "Always write trailing zeros to make decimal place counts equal before adding or subtracting."
             }
           ]
         },
@@ -451,7 +552,7 @@ export default {
         {
           "type": "read",
           "label": "Finance vocabulary you need to know",
-          "text": "<strong>Profit</strong> = selling price − cost price &nbsp;·&nbsp; <strong>Loss</strong> = cost price − selling price (when cost &gt; selling price) &nbsp;·&nbsp; <strong>Balance</strong> = total in − total out &nbsp;·&nbsp; <strong>VAT</strong> = a percentage added to the price (20% standard rate)"
+          "text": "<strong>Cost price</strong> = what the shop pays &nbsp;·&nbsp; <strong>Selling price</strong> = what the customer pays &nbsp;·&nbsp; <strong>Profit</strong> = selling price − cost price &nbsp;·&nbsp; <strong>Loss</strong> = cost price − selling price when cost is higher &nbsp;·&nbsp; <strong>Balance</strong> = total in − total out."
         },
         {
           "type": "scenario",
@@ -463,7 +564,7 @@ export default {
             { "text": "£11.40", "correct": false }
           ],
           "correctMsg": "Cost: 24 × £1.35 = £32.40. Revenue: 24 × £2.50 = £60.00. Profit: £60.00 − £32.40 = £27.60.",
-          "wrongMsg": "Profit = (selling price − cost price) × number sold. Work out each total first, then subtract."
+          "wrongMsg": "Profit = total selling price − total cost price. Work out each total first, then subtract."
         },
         {
           "type": "scenario",
@@ -490,7 +591,7 @@ export default {
         {
           "type": "read",
           "label": "Why mixed retrieval works",
-          "text": "Mixing questions from different topics <strong>strengthens long-term memory</strong> more than blocked practice. Expect one question from Chapter 1."
+          "text": "Mixing questions from different topics strengthens long-term memory more than blocked practice. Expect one question from Chapter 1."
         },
         {
           "type": "quiz",
@@ -521,6 +622,16 @@ export default {
             { "text": "384 — the inverse confirms it", "correct": false }
           ],
           "explanation": "54 × 6: 4×6=24 (write 4, carry 2). 5×6=30+2=32. Answer: 324 ≠ 384. The original division was wrong. Correct: 384 ÷ 6 = 64."
+        },
+        {
+          "type": "quiz",
+          "question": "Which method is most sensible for 24 × 25?",
+          "options": [
+            { "text": "Mental: 25 × 4 = 100, so 25 × 24 = 600", "correct": true },
+            { "text": "Always use a calculator, even on Paper 1", "correct": false },
+            { "text": "Guess because it is close to 500", "correct": false }
+          ],
+          "explanation": "A mental shortcut works well here: 24 lots of 25 = 6 lots of 100 = 600."
         }
       ]
     },
@@ -530,12 +641,12 @@ export default {
       "label": "Exam practice",
       "kicker": "Section 9 — AQA exam style",
       "heading": "Exam-style questions.",
-      "sub": "AQA wording, method marks shown. Write your method before reading the mark scheme.",
+      "sub": "AQA-style wording, method marks shown. Write your method before reading the mark scheme.",
       "blocks": [
         {
           "type": "read",
           "label": "AQA exam pattern",
-          "text": "Four-operation questions on Paper 1 (non-calculator) award separate marks for <strong>method</strong> and <strong>accuracy</strong>. A wrong final answer with correct method still earns the method mark."
+          "text": "Four-operation questions on non-calculator papers often reward separate marks for <strong>method</strong> and <strong>accuracy</strong>. A wrong final answer can still earn credit if the method is clear."
         },
         {
           "type": "boss",
@@ -544,21 +655,19 @@ export default {
           "question": "Calculate: 4.38 + 2.7\nShow your working.",
           "markPoints": [
             "Answer: 7.08",
-            "1 method mark: decimal points aligned (4.38 + 2.70 seen or implied)",
-            "1 accuracy mark: 7.08",
+            "Method: decimal points aligned (4.38 + 2.70 seen or implied)",
             "Common error: 4.38 + 2.7 = 4.65 (misaligned — placed 7 in the hundredths column)"
           ]
         },
         {
           "type": "boss",
           "tier": "🟡",
-          "label": "Q2 — Short multiplication (2 marks)",
-          "question": "Calculate: 347 × 8\nShow your working.",
+          "label": "Q2 — Two-digit multiplication (2 marks)",
+          "question": "Calculate: 47 × 38\nShow your working.",
           "markPoints": [
-            "Answer: 2776",
-            "1 method mark: correct column multiplication method seen (carrying shown)",
-            "1 accuracy mark: 2776",
-            "Working: 8×7=56 (write 6, carry 5); 8×4=32+5=37 (write 7, carry 3); 8×3=24+3=27"
+            "Answer: 1786",
+            "Method: 47 × 8 = 376 and 47 × 30 = 1410, then add partial products",
+            "Common error: forgetting the tens-row shift and using 47 × 3 instead of 47 × 30"
           ]
         },
         {
@@ -587,20 +696,20 @@ export default {
         {
           "type": "read",
           "label": "Key rules for the four operations",
-          "text": "1. Column methods: work right to left; carry or borrow as needed.<br/>2. Decimal addition/subtraction: align the decimal points — pad with zeros if needed.<br/>3. Decimal multiplication: multiply as integers, then count total d.p. and place the point.<br/>4. Inverse check: after any calculation, undo it with the opposite operation."
+          "text": "1. Column methods: work right to left; carry or borrow as needed.<br/>2. Decimal addition/subtraction: align the decimal points — pad with zeros if needed.<br/>3. Decimal multiplication: multiply as integers, then count total d.p. and place the point.<br/>4. Two-digit multiplication: build partial products, then add them.<br/>5. Division: carry remainders, and continue into decimals when the context needs an exact decimal answer.<br/>6. Method choice: mental for friendly numbers, written for non-calculator complexity, calculator with estimation on calculator papers.<br/>7. Inverse check: after any calculation, undo it with the opposite operation."
         },
         {
           "type": "read",
           "label": "Top 3 errors from AQA mark schemes",
-          "text": "1. <strong>Decimal misalignment:</strong> lining up last digits instead of decimal points in column addition/subtraction.<br/>2. <strong>Decimal place count:</strong> counting only one set of d.p. in multiplication (forgetting to add both).<br/>3. <strong>No inverse check:</strong> writing an answer without checking — a wrong carry error goes unnoticed and the method mark is lost."
+          "text": "1. <strong>Decimal misalignment:</strong> lining up last digits instead of decimal points in column addition/subtraction.<br/>2. <strong>Decimal place count:</strong> counting only one set of d.p. in multiplication (forgetting to add both).<br/>3. <strong>Missing place-value shift:</strong> treating ×30 like ×3 in a 2-digit multiplication."
         },
         {
           "type": "examtip",
-          "tip": "<strong>Exam habit:</strong> On Paper 1, always write the full column method — never just an answer. Even if the final digit is wrong, a clear method earns 1 mark."
+          "tip": "<strong>Exam habit:</strong> On Paper 1, write the method clearly. On calculator papers, estimate first so you can spot a nonsense answer."
         },
         {
           "type": "keypoint",
-          "text": "<strong>Chapter 2 complete.</strong> You can now: use column methods for all four operations · work with decimals without misplacing the point · use inverse operations to catch errors · apply these to finance contexts.<br/><br/>Next: Chapter 3 — Negative numbers without panic. Extend the number line below zero and handle operations with negatives."
+          "text": "<strong>Chapter 2 complete.</strong> You can now: use column methods for all four operations · work with decimals without misplacing the point · choose a sensible method · use inverse operations to catch errors · apply these to finance contexts.<br/><br/>Next: Chapter 3 — Negative numbers without panic. Extend the number line below zero and handle operations with negatives."
         }
       ]
     }
@@ -614,15 +723,16 @@ export default {
     { "id": "s1", "title": "Decimal trap", "description": "Why decimal operations need a rule", "screenIndex": 0 },
     { "id": "s2", "title": "Prior knowledge", "description": "Place value from Chapter 1", "screenIndex": 1 },
     { "id": "s3", "title": "Add and subtract", "description": "Column methods, carrying and borrowing", "screenIndex": 2 },
-    { "id": "s4", "title": "Multiply and divide", "description": "Short multiplication and bus-stop division", "screenIndex": 3 },
-    { "id": "s5", "title": "Decimal operations", "description": "Align the point; count the places", "screenIndex": 4 },
-    { "id": "s6", "title": "Inverse operations", "description": "Check any calculation with the opposite", "screenIndex": 5 },
-    { "id": "s7", "title": "Worked example", "description": "Multi-step wages and tax problem", "screenIndex": 6 },
-    { "id": "s8", "title": "Guided practice", "description": "Column method fill-in-the-blanks", "screenIndex": 7 },
-    { "id": "s9", "title": "Spot the error", "description": "Fix the decimal misalignment", "screenIndex": 8 },
-    { "id": "s10", "title": "Real world", "description": "Shopping, profit and wages", "screenIndex": 9 },
-    { "id": "s11", "title": "Retrieval", "description": "Mixed questions from Ch1 and Ch2", "screenIndex": 10 },
-    { "id": "s12", "title": "Exam practice", "description": "AQA-style written method questions", "screenIndex": 11 },
-    { "id": "s13", "title": "Chapter complete", "description": "Key rules and what comes next", "screenIndex": 12 }
+    { "id": "s4", "title": "Multiply and divide", "description": "Short methods, partial products and division", "screenIndex": 3 },
+    { "id": "s5", "title": "Decimal operations", "description": "Align, count and convert", "screenIndex": 4 },
+    { "id": "s6", "title": "Choosing a method", "description": "Mental, written or calculator", "screenIndex": 5 },
+    { "id": "s7", "title": "Inverse operations", "description": "Check any calculation with the opposite", "screenIndex": 6 },
+    { "id": "s8", "title": "Worked example", "description": "Multi-step wages and tax problem", "screenIndex": 7 },
+    { "id": "s9", "title": "Guided practice", "description": "Written method fill-in-the-blanks", "screenIndex": 8 },
+    { "id": "s10", "title": "Spot the error", "description": "Fix the decimal misalignment", "screenIndex": 9 },
+    { "id": "s11", "title": "Real world", "description": "Shopping, profit and wages", "screenIndex": 10 },
+    { "id": "s12", "title": "Retrieval", "description": "Mixed questions from Ch1 and Ch2", "screenIndex": 11 },
+    { "id": "s13", "title": "Exam practice", "description": "AQA-style written method questions", "screenIndex": 12 },
+    { "id": "s14", "title": "Chapter complete", "description": "Key rules and what comes next", "screenIndex": 13 }
   ]
 }
