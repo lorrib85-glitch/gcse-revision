@@ -827,6 +827,20 @@ export const MODULES = [
     screenCount: 14,
     screenTags: ["maths:standard-form", null, "maths:powers-roots", "maths:indices", "maths:standard-form", "maths:standard-form", "maths:standard-form", "maths:standard-form", null, "maths:standard-form", null, null, "maths:indices", null],
   },
+  {
+    id: "math8",
+    subject: "Maths",
+    number: 8,
+    title: "Fractions that actually make sense",
+    subtitle: "Equivalent fractions, simplifying, ordering and fractions of amounts",
+    era: "Number survival kit",
+    icon: "½",
+    color: "#2DD4BF",
+    colorLight: "rgba(45,212,191,.12)",
+    headerImage: "/headers/maths-numbers.webp",
+    screenCount: 14,
+    screenTags: ["maths:equivalent-fractions", null, "maths:equivalent-fractions", "maths:simplifying-fractions", "maths:mixed-numbers", "maths:fractions-of-amounts", "maths:simplifying-fractions", "maths:fractions-of-amounts", null, "maths:simplifying-fractions", null, null, "maths:fractions-of-amounts", null],
+  },
 
   // ── Sociology ────────────────────────────────────────────────────────────
 

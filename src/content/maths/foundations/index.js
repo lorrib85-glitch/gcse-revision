@@ -10,6 +10,7 @@ export const EPISODE_LOADERS = {
   'math5': () => import('./episodes/math5.js').then(m => m.default),
   'math6': () => import('./episodes/math6.js').then(m => m.default),
   'math7': () => import('./episodes/math7.js').then(m => m.default),
+  'math8': () => import('./episodes/math8.js').then(m => m.default),
 }
 
 export const EPISODE_IDS = Object.keys(EPISODE_LOADERS)

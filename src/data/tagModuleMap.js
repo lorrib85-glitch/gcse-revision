@@ -64,4 +64,9 @@ export const TAG_MODULE_MAP = {
   'maths:indices':              'maths-powers-standard-form',
   'maths:standard-form':        'maths-powers-standard-form',
   'maths:powers-roots':         'maths-powers-standard-form',
+  // Maths — Module 1, Ch8
+  'maths:equivalent-fractions': 'maths-fractions-basics',
+  'maths:simplifying-fractions':'maths-fractions-basics',
+  'maths:fractions-of-amounts': 'maths-fractions-basics',
+  'maths:mixed-numbers':        'maths-fractions-basics',
 }
