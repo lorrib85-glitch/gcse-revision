@@ -53,8 +53,11 @@ export const TAG_MODULE_MAP = {
   // Crosses all modules — no single best link
   'factors-in-change':      null,
   // Maths — Module 1
-  'maths:place-value':        'maths-place-value',
-  'maths:ordering-numbers':   'maths-place-value',
-  'maths:negative-numbers':   'maths-negative-numbers',
-  'maths:ordering-negatives': 'maths-negative-numbers',
+  'maths:place-value':          'maths-place-value',
+  'maths:ordering-numbers':     'maths-place-value',
+  'maths:negative-numbers':     'maths-negative-numbers',
+  'maths:ordering-negatives':   'maths-negative-numbers',
+  'maths:prime-numbers':        'maths-primes',
+  'maths:hcf-lcm':              'maths-primes',
+  'maths:prime-factorisation':  'maths-primes',
 }
