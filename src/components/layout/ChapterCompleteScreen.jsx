@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
@@ -52,7 +53,7 @@ function Particles({ accent }) {
 }
 
 export default function ChapterCompleteScreen({
-  accent = '#8A3F4F',
+  accent = SUBJECTS.History.accent,
   completedChapter = 'Chapter',
   nextChapterNum,
   nextChapterTitle,

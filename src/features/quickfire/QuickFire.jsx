@@ -2364,10 +2364,10 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
 
     if (examPhase === 'countdown') {
       return (
-        <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 20%, rgba(157,92,255,.2), transparent 38%), #050817', display:'flex', alignItems:'center', justifyContent:'center', color:'#F5F7FB', padding:24 }}>
+        <div style={{ minHeight:'100vh', background:`radial-gradient(circle at 50% 20%, rgba(${GENERAL.tealRgb},.2), transparent 38%), ${GENERAL.neutral[0]}`, display:'flex', alignItems:'center', justifyContent:'center', color:'#F5F7FB', padding:24 }}>
           <div style={{ textAlign:'center' }}>
             <div style={{ fontFamily: TYPE.bodyText.fontFamily, color:'#AAB4D4', fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', fontSize:'.72rem', marginBottom:20 }}>{examConfig?.title || 'Exam Mode'}</div>
-            <div key={examCountdown} style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: examCountdown === 'GO' ? '5rem' : '7rem', fontWeight:950, color: examCountdown === 'GO' ? '#38F27B' : '#C18CFF', textShadow:'0 0 42px rgba(157,92,255,.72)', animation:'examPop .85s ease both' }}>{examCountdown}</div>
+            <div key={examCountdown} style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: examCountdown === 'GO' ? '5rem' : '7rem', fontWeight:950, color: examCountdown === 'GO' ? '#38F27B' : GENERAL.teal, textShadow:`0 0 42px rgba(${GENERAL.tealRgb},.72)`, animation:'examPop .85s ease both' }}>{examCountdown}</div>
             <div style={{ color:'#7C8DB0', marginTop:18, fontFamily: TYPE.bodyText.fontFamily }}>Breathe. Read the command word first.</div>
             <style>{'@keyframes examPop { 0%{opacity:0;transform:scale(.72)} 45%{opacity:1;transform:scale(1.08)} 100%{opacity:1;transform:scale(1)} }'}</style>
           </div>
@@ -2386,7 +2386,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
               <div style={{ color:'#4B5563', fontSize:'.72rem' }}>{examQuestions.length} questions · scroll to answer all</div>
             </div>
             {examConfig?.isTimedPaper && (
-              <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.18)' : 'rgba(139,92,246,.18)', border:'1px solid '+(examTimeLeft<60?'rgba(255,93,115,.5)':'rgba(139,92,246,.4)'), borderRadius:999, color:examTimeLeft<60?'#FF5D73':'#C4B5FD', fontFamily: TYPE.bodyText.fontFamily, fontWeight:900, padding:'7px 14px', fontSize:'1rem', flexShrink:0 }}>{examTime}</div>
+              <div style={{ background:examTimeLeft < 60 ? 'rgba(255,93,115,.18)' : `rgba(${GENERAL.tealRgb},.18)`, border:'1px solid '+(examTimeLeft<60?'rgba(255,93,115,.5)':`rgba(${GENERAL.tealRgb},.4)`), borderRadius:999, color:examTimeLeft<60?'#FF5D73':GENERAL.teal, fontFamily: TYPE.bodyText.fontFamily, fontWeight:900, padding:'7px 14px', fontSize:'1rem', flexShrink:0 }}>{examTime}</div>
             )}
           </div>
 
@@ -2408,7 +2408,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
                   {q.sectionHeader && (
                     <div style={{ marginBottom: 20, paddingBottom: 14, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                       <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: '1rem', color: '#F4EFE6', marginBottom: 4 }}>{q.sectionHeader}</div>
-                      {q.sectionNote && <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.78rem', color: '#6B7A9A' }}>{q.sectionNote}</div>}
+                      {q.sectionNote && <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.78rem', color: GENERAL.slate }}>{q.sectionNote}</div>}
                     </div>
                   )}
                   {/* Sources booklet — shown inline before the first question that carries them */}
@@ -2422,12 +2422,12 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
                   ))}
                   {/* Choice / SPaG note */}
                   {q.choiceHeader && (
-                    <div style={{ background: 'rgba(157,92,255,0.08)', border: '1px solid rgba(157,92,255,0.2)', borderRadius: 12, padding: '12px 16px', marginBottom: 14 }}>
-                      <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: '.8rem', color: '#C4B5FD' }}>{q.choiceHeader}</div>
+                    <div style={{ background: `rgba(${GENERAL.tealRgb},0.08)`, border: `1px solid rgba(${GENERAL.tealRgb},0.2)`, borderRadius: 12, padding: '12px 16px', marginBottom: 14 }}>
+                      <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: '.8rem', color: GENERAL.teal }}>{q.choiceHeader}</div>
                     </div>
                   )}
                   {q.spagNote && (
-                    <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.76rem', color: '#6B7A9A', fontStyle: 'italic', marginBottom: 10, paddingLeft: 4 }}>{q.spagNote}</div>
+                    <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.76rem', color: GENERAL.slate, fontStyle: 'italic', marginBottom: 10, paddingLeft: 4 }}>{q.spagNote}</div>
                   )}
                   <ExamQuestionFrame
                     block={block}

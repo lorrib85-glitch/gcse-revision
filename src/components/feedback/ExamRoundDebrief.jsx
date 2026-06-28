@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
@@ -10,9 +11,9 @@ import { TYPE } from '../../constants/typography.js'
 // quote real moments from the student's own answers in the FaceTheExaminer
 // voice, and log that pattern as a weakness so it resurfaces in WeakSpotRecovery.
 export default function ExamRoundDebrief({ subject, results }) {
-  const palette = SUBJECTS[subject] || SUBJECTS.Physics || { accent: '#5DA9E9', accentRgb: '93,169,233' }
+  const palette = SUBJECTS[subject] || SUBJECTS.History
   const accent = palette.accent
-  const accentRgb = palette.accentRgb || '93,169,233'
+  const accentRgb = palette.accentRgb
 
   const [loading, setLoading] = useState(true)
   const [debrief, setDebrief] = useState(null)
@@ -79,7 +80,7 @@ export default function ExamRoundDebrief({ subject, results }) {
         marginTop: SPACING.compact,
         textAlign: 'left',
       }}>
-        <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.85rem', color: '#6B7A9A' }}>
+        <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.85rem', color: GENERAL.slate }}>
           Your examiner is looking back over the round…
         </div>
       </div>
@@ -96,7 +97,7 @@ export default function ExamRoundDebrief({ subject, results }) {
         marginTop: SPACING.compact,
         textAlign: 'left',
       }}>
-        <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.85rem', color: '#6B7A9A' }}>
+        <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.85rem', color: GENERAL.slate }}>
           {error || 'No debrief available for this round.'}
         </div>
       </div>

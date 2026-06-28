@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { recordScore } from '../../progress.js'
 import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 function CheckIcon({ color }) {
   return (
@@ -104,13 +105,13 @@ export default function AnswerInteraction({
       {/* Hint after first wrong attempt */}
       {showHint && !locked && wasWrong && (
         <div className="fade-up" style={{
-          background: 'rgba(72,178,255,.07)',
-          border: '1px solid rgba(72,178,255,.28)',
+          background: `rgba(${GENERAL.tealRgb},.07)`,
+          border: `1px solid rgba(${GENERAL.tealRgb},.28)`,
           borderRadius: 12, padding: '12px 14px', marginTop: 10,
         }}>
           <div style={{
             ...TYPE.metadataText,
-            color: '#5BB8FF',
+            color: GENERAL.teal,
             marginBottom: 6,
           }}>💡 Hint — think about this</div>
           <p style={{
@@ -119,10 +120,10 @@ export default function AnswerInteraction({
           }}>{block.hint || block.explanation}</p>
           <button onClick={retry} style={{
             ...TYPE.buttonText,
-            background: 'rgba(72,178,255,.12)',
-            border: '1px solid rgba(72,178,255,.30)',
+            background: `rgba(${GENERAL.tealRgb},.12)`,
+            border: `1px solid rgba(${GENERAL.tealRgb},.30)`,
             borderRadius: 9, padding: '8px 16px',
-            color: '#5BB8FF',
+            color: GENERAL.teal,
             cursor: 'pointer',
           }}>Try again →</button>
         </div>

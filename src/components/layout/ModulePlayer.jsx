@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { hexToRgb, SUBJECTS } from '../../constants/subjects.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { SPACING } from '../../constants/spacing.js'
 import { recordActivity, MODULE_GROUPS } from '../../progress.js'
@@ -305,25 +306,25 @@ function FlashcardsBlock({ block }) {
         <button key={i} onClick={() => toggle(i)}
           style={{
             background: flipped.has(i)
-              ? 'linear-gradient(145deg, #1A1038, #120C2C)'
+              ? `linear-gradient(145deg, ${GENERAL.neutral[1]}, ${GENERAL.neutral[0]})`
               : '#10182B',
-            border: `1.5px solid ${flipped.has(i) ? 'rgba(157,92,255,.4)' : '#2A3552'}`,
+            border: `1.5px solid ${flipped.has(i) ? `rgba(${GENERAL.tealRgb},.4)` : '#2A3552'}`,
             borderRadius: 14, padding: '16px 12px', cursor: 'pointer',
             textAlign: 'center', minHeight: 90, transition: 'all .22s',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: flipped.has(i) ? '0 0 16px rgba(157,92,255,.12)' : 'none',
+            boxShadow: flipped.has(i) ? `0 0 16px rgba(${GENERAL.tealRgb},.12)` : 'none',
           }}>
           <div>
             <div style={{
               fontFamily: TYPE.bodyText.fontFamily,
               fontWeight: 700, fontSize: '.88rem',
-              color: flipped.has(i) ? '#C18CFF' : '#E0E6F0',
+              color: flipped.has(i) ? GENERAL.teal : '#E0E6F0',
               marginBottom: flipped.has(i) ? 6 : 0,
             }}>{c.front}</div>
             {flipped.has(i) && (
               <div className="fade-up" style={{
                 fontFamily: TYPE.bodyText.fontFamily,
-                color: '#9CA8C7', fontSize: '.78rem', lineHeight: 1.5,
+                color: '#9CA8C7', fontSize: TYPE.captionText.fontSize, lineHeight: 1.5,
               }}>{c.back}</div>
             )}
           </div>
@@ -404,7 +405,7 @@ function HotspotBlock({ block }) {
               fill="rgba(52,213,255,.08)" stroke="rgba(52,213,255,.3)" strokeWidth=".8" />
             {/* Nucleus */}
             <circle cx="35" cy="36" r="10"
-              fill="rgba(157,92,255,.1)" stroke="rgba(157,92,255,.4)" strokeWidth=".8" />
+              fill={`rgba(${SUBJECTS.Biology.accentRgb},.1)`} stroke={`rgba(${SUBJECTS.Biology.accentRgb},.4)`} strokeWidth=".8" />
             {/* Chloroplasts */}
             <ellipse cx="66" cy="22" rx="7" ry="4"
               fill="rgba(56,210,122,.18)" stroke="rgba(56,210,122,.5)" strokeWidth=".8" />
@@ -1643,12 +1644,12 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   if (total === 0) {
     return (
       <div style={{ minHeight: '100dvh', background: '#08090D', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 }}>
-        <p style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'Sora, sans-serif', fontSize: 15, textAlign: 'center', margin: 0 }}>
+        <p style={{ color: 'rgba(255,255,255,0.45)', fontFamily: TYPE.bodyText.fontFamily, fontSize: 15, textAlign: 'center', margin: 0 }}>
           {module.title} — coming soon.
         </p>
         <button
           onClick={onBack}
-          style={{ background: 'none', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 12, color: 'rgba(255,255,255,0.6)', fontFamily: 'Sora, sans-serif', fontSize: 14, padding: '10px 24px', cursor: 'pointer' }}
+          style={{ background: 'none', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 12, color: 'rgba(255,255,255,0.6)', fontFamily: TYPE.bodyText.fontFamily, fontSize: 14, padding: '10px 24px', cursor: 'pointer' }}
         >
           Go back
         </button>
@@ -1681,7 +1682,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     onBack()
   }
 
-  const subjectRgb = hexToRgb(subjectColor) || '157,92,255'
+  const subjectRgb = hexToRgb(subjectColor) || SUBJECTS.History.accentRgb
   const H = {
     module,
     currentStage,

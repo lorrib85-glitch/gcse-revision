@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
+import { SUBJECTS } from '../../constants/subjects.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import BackButton from '../core/BackButton.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 // CinematicShell used here because full-bleed imagery and floating hotspot overlays need
 // the full viewport; InteractionShell's inset padding would clip hotspot positions.
 import CinematicShell from '../layout/CinematicShell.jsx'
+
+const _physicsRgb = SUBJECTS.Physics.accentRgb
 
 const THEMES = {
   Biology: {
@@ -62,22 +65,22 @@ const THEMES = {
     cardRule: 'rgba(92,200,255,0.18)',
   },
   Physics: {
-    glow: '#5DA9E9',
-    glowRgb: '93,169,233',
+    glow: SUBJECTS.Physics.accent,
+    glowRgb: _physicsRgb,
     text: '#E6F0FF',
     muted: 'rgba(230,240,255,0.82)',
     labelBg: 'rgba(4,8,18,0.88)',
     sheetBg: 'linear-gradient(180deg, rgba(6,10,22,0.97), rgba(3,6,14,0.99))',
-    sheetBorder: 'rgba(93,169,233,0.10)',
-    ctaBg: 'rgba(93,169,233,0.16)',
-    ctaBorder: 'rgba(93,169,233,0.18)',
+    sheetBorder: `rgba(${_physicsRgb},0.10)`,
+    ctaBg: `rgba(${_physicsRgb},0.16)`,
+    ctaBorder: `rgba(${_physicsRgb},0.18)`,
     pageBg: '#02050C',
     imageFilter: 'brightness(0.88) saturate(1.04)',
     selectedImageFilter: 'brightness(0.62) saturate(0.92)',
     cardBg: 'linear-gradient(180deg, rgba(6,10,22,0.97), rgba(3,6,14,0.99))',
     cardText: '#E6F0FF',
     cardMuted: 'rgba(230,240,255,0.78)',
-    cardRule: 'rgba(93,169,233,0.18)',
+    cardRule: `rgba(${_physicsRgb},0.18)`,
   },
   Maths: {
     glow: '#2BBE9A',
