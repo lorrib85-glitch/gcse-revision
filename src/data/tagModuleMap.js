@@ -60,4 +60,8 @@ export const TAG_MODULE_MAP = {
   'maths:prime-numbers':        'maths-primes',
   'maths:hcf-lcm':              'maths-primes',
   'maths:prime-factorisation':  'maths-primes',
+  // Maths — Module 1, Ch7
+  'maths:indices':              'maths-powers-standard-form',
+  'maths:standard-form':        'maths-powers-standard-form',
+  'maths:powers-roots':         'maths-powers-standard-form',
 }
