@@ -1173,7 +1173,7 @@ function EnglishBrowser({ onBack }) {
         {/* Filter pills */}
         <div style={{ display:'flex', gap:8, marginBottom:20 }}>
           {filters.map(f => (
-            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?'rgba(157,92,255,.15)':'#151720', border:`1px solid ${filter===f.id?'#9D5CFF':'rgba(255,255,255,0.08)'}`, borderRadius:10, padding:'9px 6px', fontFamily: TYPE.bodyText.fontFamily, fontSize:'.75rem', fontWeight:600, color:filter===f.id?'#C18CFF':'#5A6480', cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
+            <button key={f.id} onClick={() => setFilter(f.id)} style={{ flex:1, background:filter===f.id?`rgba(${GENERAL.tealRgb},0.15)`:'#151720', border:`1px solid ${filter===f.id?GENERAL.teal:'rgba(255,255,255,0.08)'}`, borderRadius:10, padding:'9px 6px', fontFamily: TYPE.bodyText.fontFamily, fontSize:'.75rem', fontWeight:600, color:filter===f.id?GENERAL.softWhite:GENERAL.slate, cursor:'pointer', transition:'all .15s' }}>{f.label}</button>
           ))}
         </div>
 
@@ -1640,7 +1640,7 @@ const QUICK_FIRE_SUBJECT_META = {
   Biology:    { icon: '🌿', logo: '/headers/bio-main.webp',         color: '#4F8A5B', moduleId: 'sci_bio_w1' },
   English:    { icon: '📘', logo: '/headers/english-main.webp',    color: '#B66DFF', moduleId: null },
   Physics:    { icon: '⚡', logo: '/headers/physics-main.webp',    color: '#3B82F6', moduleId: null },
-  'Quick Fire': { icon: '⚡', logo: null,                          color: '#9D5CFF', moduleId: null },
+  'Quick Fire': { icon: '⚡', logo: null,                          color: GENERAL.teal, moduleId: null },
 }
 
 function emptyQuickFireStats() {
@@ -2457,7 +2457,7 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
                 </div>
               )
             })}
-            <button onClick={()=>setExamPhase('summary')} style={{ width:'100%', background:'linear-gradient(135deg,#7C3AED,#9D5CFF)', border:'none', borderRadius:16, padding:16, color:'#fff', fontWeight:800, fontSize:'1rem', cursor:'pointer', marginTop:8 }}>Submit Paper</button>
+            <button onClick={()=>setExamPhase('summary')} style={{ width:'100%', background:GENERAL.teal, border:'none', borderRadius:16, padding:16, color:GENERAL.neutral[0], fontWeight:800, fontSize:'1rem', cursor:'pointer', marginTop:8 }}>Submit Paper</button>
           </div>
         </div>
       )
