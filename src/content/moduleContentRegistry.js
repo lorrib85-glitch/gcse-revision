@@ -32,6 +32,9 @@ export const MODULE_CONTENT_LOADERS = {
   // ── Maths — Foundations ──────────────────────────────────────────────────────
   'math1': () => import('./maths/foundations/episodes/math1.js').then(m => m.default),
   'math2': () => import('./maths/foundations/episodes/math2.js').then(m => m.default),
+  'math3': () => import('./maths/foundations/episodes/math3.js').then(m => m.default),
+  'math4': () => import('./maths/foundations/episodes/math4.js').then(m => m.default),
+  'math5': () => import('./maths/foundations/episodes/math5.js').then(m => m.default),
 
   // ── Biology — Cell Biology ───────────────────────────────────────────────────
   'bio_building_blocks': () => import('./biology/cell-biology/episodes/bio_building_blocks.js').then(m => m.default),
