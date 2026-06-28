@@ -15,8 +15,8 @@ export default {
   "chapterNumber": 5,
   "aqaLinks": ["N2", "N14", "N15"],
   "mapsToMathsGroups": ["maths_rounding"],
-  "weaknessTags": ["maths:rounding", "maths:significant-figures"],
-  "prerequisiteChapters": ["math1", "math2"],
+  "weaknessTags": ["maths:rounding", "maths:significant-figures", "maths:estimation"],
+  "prerequisiteChapters": ["math1", "math2", "math4"],
 
   "hook": {
     "scenario": {
@@ -26,48 +26,50 @@ export default {
     "statement": "0.0473 rounded to 2 significant figures is 0.04",
     "isTrue": false,
     "accentWords": ["0.0473", "0.04"],
-    "explanation": "Significant figures count from the first non-zero digit. In 0.0473, the first significant figure is 4 (in the hundredths place) and the second is 7 (thousandths). To 2 s.f.: 0.047 (the 3 in the ten-thousandths place rounds down). Writing 0.04 is rounding to 1 s.f., not 2 — it keeps only the 4.",
-    "wrongFeedback": "Count significant figures from the first non-zero digit. In 0.0473, sig figs are 4, 7, 3. To 2 s.f.: keep 4 and 7 → 0.047.",
-    "correctFeedback": "Right. 0.04 is 1 s.f. To 2 s.f. the answer is 0.047 (the 4 and the 7 are the two significant figures).",
-    "loadingText": "Let's see exactly what 'significant figures' means — and how it differs from decimal places…",
-    "bigQuestion": "How do you know whether the examiner wants decimal places or significant figures — and what's the difference?",
-    "revealHeader": "Decimal places count positions after the point. Significant figures count from the first non-zero digit.",
+    "explanation": "Significant figures count from the first non-zero digit. In 0.0473, the first significant figure is 4 and the second is 7. To 2 s.f., the answer is 0.047. Writing 0.04 keeps only one significant figure.",
+    "wrongFeedback": "Count significant figures from the first non-zero digit. In 0.0473, the significant figures are 4, 7, 3. To 2 s.f., keep 4 and 7 → 0.047.",
+    "correctFeedback": "Right. 0.04 is only 1 s.f. To 2 s.f. the answer is 0.047.",
+    "loadingText": "Let's separate decimal places, significant figures and estimates…",
+    "bigQuestion": "How can a rough estimate save marks when your exact answer goes wrong?",
+    "revealHeader": "Rounding is about precision — estimation is about checking.",
     "revealItems": [
       {
         "emoji": "📍",
-        "label": "Decimal places (d.p.)",
-        "detail": "Count positions after the decimal point. 3.456 to 2 d.p. = 3.46 (look at the 3rd decimal: 6 ≥ 5, so round up the 2nd decimal). Leading zeros after the decimal point count as decimal places."
+        "label": "Decimal places",
+        "detail": "Decimal places count positions after the decimal point. 3.456 to 2 d.p. = 3.46 because the third decimal digit is 6."
       },
       {
         "emoji": "⭐",
-        "label": "Significant figures (s.f.)",
-        "detail": "Count from the first non-zero digit. In 0.0473: first s.f. = 4, second = 7, third = 3. To 2 s.f.: 0.047. In 5,836: first s.f. = 5, second = 8, third = 3, fourth = 6. To 2 s.f.: 5,800."
+        "label": "Significant figures",
+        "detail": "Significant figures count from the first non-zero digit. In 0.0473, the 4 is the first significant figure and the 7 is the second."
       },
       {
-        "emoji": "📐",
-        "label": "Estimation uses 1 s.f.",
-        "detail": "For estimation: round every number to 1 significant figure, then calculate. 382 × 4.7 ≈ 400 × 5 = 2000. Always round ALL numbers — not just some — before estimating."
+        "emoji": "≈",
+        "label": "Estimation earns marks",
+        "detail": "For estimation, round every number to 1 significant figure first, then calculate. Showing the rounded values is often where the method marks live."
       }
     ],
-    "punchline": "Rounding to d.p. counts after the decimal. Rounding to s.f. counts from the first non-zero digit. Never confuse the two."
+    "punchline": "Decimal places count from the point. Significant figures count from the first non-zero digit. Estimates round everything first."
   },
 
   "intro": {
     "learningGoals": [
-      "Round any number to a given number of decimal places",
-      "Round any number to a given number of significant figures",
-      "Estimate answers by rounding all values to 1 significant figure",
-      "Find error intervals for rounded and truncated values"
+      "Round numbers to a given number of decimal places",
+      "Round numbers to a given number of significant figures",
+      "Estimate calculations by rounding all values to 1 significant figure",
+      "Use estimation to check whether an answer is sensible",
+      "Write error intervals for rounded and truncated values"
     ]
   },
 
   "outcomes": {
-    "intro": "Rounding and estimation questions appear on every AQA Foundation paper. Significant figures and error intervals are directly tested. Estimation is also embedded in multi-step problems as a checking skill.",
+    "intro": "Rounding, estimation and error intervals appear regularly across AQA Foundation papers. They are useful because they help you control accuracy and spot impossible answers.",
     "bullets": [
-      "Round accurately to any given number of decimal places or significant figures",
-      "Estimate any calculation by rounding all numbers to 1 s.f. first",
-      "Write error intervals for rounded values (lower ≤ x < upper)",
-      "Write error intervals for truncated values (lower ≤ x < lower + unit)"
+      "Round accurately to decimal places and significant figures",
+      "Estimate by rounding every number first, not just some numbers",
+      "Show rounded values clearly so method marks can be awarded",
+      "Write rounding error intervals using lower ≤ x < upper",
+      "Distinguish rounding from truncation"
     ]
   },
 
@@ -99,30 +101,40 @@ export default {
 
   "screens": [
     {
-      "tag": "maths:rounding",
+      "tag": "maths:significant-figures",
       "label": "The s.f. trap",
       "kicker": "Section 1 — Why it matters",
       "heading": "Decimal places vs significant figures.",
-      "sub": "Confusing these two is one of the most common errors on AQA Foundation papers.",
+      "sub": "These look similar, but the counting starts in different places.",
       "blocks": [
         {
           "type": "read",
           "label": "The exam stake",
-          "text": "Rounding and estimation appear in <strong>at least 2 questions on every AQA Foundation paper</strong>. The most common error is confusing decimal places (count positions after the decimal) with significant figures (count from the first non-zero digit). One mark is typically lost by students who apply the wrong rule."
+          "text": "Rounding and estimation questions appear regularly on AQA Foundation papers. The common mistake is confusing decimal places, which count after the decimal point, with significant figures, which count from the first non-zero digit."
         },
         {
           "type": "quiz",
           "question": "Round 3.456 to 2 decimal places.",
           "options": [
-            { "text": "3.45 (truncated — didn't look at the next digit)", "correct": false },
-            { "text": "3.46 (2 d.p.: look at 3rd decimal digit = 6 ≥ 5, round up)", "correct": true },
-            { "text": "3.5 (rounded to 1 d.p.)", "correct": false }
+            { "text": "3.45", "correct": false },
+            { "text": "3.46", "correct": true },
+            { "text": "3.5", "correct": false }
           ],
-          "explanation": "2 decimal places means keep 2 digits after the decimal point. The 3rd digit is 6 ≥ 5, so round up the 2nd digit: 5 → 6. Answer: 3.46."
+          "explanation": "2 decimal places means keep 2 digits after the decimal point. The 3rd digit is 6, so round the hundredths digit up: 3.46."
+        },
+        {
+          "type": "quiz",
+          "question": "Round 0.0473 to 2 significant figures.",
+          "options": [
+            { "text": "0.04", "correct": false },
+            { "text": "0.047", "correct": true },
+            { "text": "0.05", "correct": false }
+          ],
+          "explanation": "Leading zeros do not count. The first two significant figures are 4 and 7. The next digit is 3, so keep 7: 0.047."
         },
         {
           "type": "examtip",
-          "tip": "<strong>Series pillar: Number sense.</strong> The key question before rounding: 'Is the examiner asking for decimal places or significant figures?' The two rules start from different reference points — after the decimal vs the first non-zero digit."
+          "tip": "<strong>Exam habit:</strong> Underline whether the question says d.p. or s.f. before you start. Most wrong answers come from using the wrong counting rule."
         }
       ]
     },
@@ -132,32 +144,32 @@ export default {
       "label": "Prior knowledge",
       "kicker": "Section 2 — Check your foundations",
       "heading": "What do you already know?",
-      "sub": "These questions check the building blocks for this chapter.",
+      "sub": "This chapter uses place value, the four operations and BIDMAS control.",
       "blocks": [
         {
           "type": "read",
           "label": "Prerequisite skills",
-          "text": "This chapter requires: <strong>place value from Ch1</strong> (identifying the column to round to), <strong>number line awareness</strong> (which way to round up vs round down), and <strong>basic multiplication from Ch2</strong> (for estimation calculations)."
+          "text": "You need <strong>place value from Chapter 1</strong> to identify columns, <strong>calculation fluency from Chapter 2</strong> for estimates, and <strong>BIDMAS from Chapter 4</strong> so you know not to round midway through a calculation."
         },
         {
           "type": "quiz",
-          "question": "In 3.456, which digit is in the hundredths column?",
+          "question": "In 24,862, what is the value of the digit 4?",
           "options": [
-            { "text": "4 (tenths)", "correct": false },
-            { "text": "5 (hundredths)", "correct": true },
-            { "text": "6 (thousandths)", "correct": false }
+            { "text": "4", "correct": false },
+            { "text": "4000", "correct": true },
+            { "text": "40,000", "correct": false }
           ],
-          "explanation": "3.456: tenths = 4, hundredths = 5, thousandths = 6. The 5 is in the hundredths column (second place after the decimal)."
+          "explanation": "24,862 has 2 ten-thousands and 4 thousands. The value of the 4 is 4000."
         },
         {
           "type": "quiz",
-          "question": "Which is closer to 30: 27 or 34?",
+          "question": "Round 247 to the nearest 10.",
           "options": [
-            { "text": "27 (3 away from 30)", "correct": true },
-            { "text": "34 (4 away from 30)", "correct": false },
-            { "text": "They are equally close", "correct": false }
+            { "text": "240", "correct": false },
+            { "text": "250", "correct": true },
+            { "text": "300", "correct": false }
           ],
-          "explanation": "27 is 3 away from 30. 34 is 4 away from 30. 27 is closer. This logic underpins rounding: choose the nearer value."
+          "explanation": "Nearest 10: look at the ones digit. 7 is 5 or more, so 247 rounds up to 250."
         }
       ]
     },
@@ -167,32 +179,32 @@ export default {
       "label": "Rounding to d.p.",
       "kicker": "Section 3 — Core idea",
       "heading": "Rounding to decimal places.",
-      "sub": "Three steps: identify the target column, look at the next digit, round up or keep.",
+      "sub": "Count after the decimal point, then look one digit further.",
       "blocks": [
         {
           "type": "read",
           "label": "The method",
-          "text": "<strong>Step 1:</strong> Identify the target column (e.g. '2 decimal places' = 2nd column after the decimal).<br/><strong>Step 2:</strong> Look at the digit in the next column (one to the right).<br/><strong>Step 3:</strong> If that digit is 5 or more, round up the target digit by 1. If it is 4 or less, keep the target digit the same (round down).<br/><br/>Example: 7.348 to 2 d.p. → look at 3rd decimal: 8 ≥ 5 → round up → 7.35"
+          "text": "<strong>Step 1:</strong> Count the required number of digits after the decimal point.<br/><strong>Step 2:</strong> Look at the next digit.<br/><strong>Step 3:</strong> If the next digit is 5 or more, round up. If it is 4 or less, keep the target digit the same.<br/><br/>Example: 7.348 to 2 d.p. → look at the third decimal digit, 8 → 7.35."
         },
         {
           "type": "quiz",
           "question": "Round 12.765 to 1 decimal place.",
           "options": [
-            { "text": "12.7 (looked at wrong digit)", "correct": false },
-            { "text": "12.8 (2nd decimal = 6 ≥ 5, round up)", "correct": true },
-            { "text": "13.0 (over-rounded)", "correct": false }
+            { "text": "12.7", "correct": false },
+            { "text": "12.8", "correct": true },
+            { "text": "13.0", "correct": false }
           ],
-          "explanation": "1 d.p. means 1 digit after the decimal. Look at the 2nd decimal: 6 ≥ 5 → round up the 1st decimal from 7 to 8. Answer: 12.8."
+          "explanation": "1 d.p. means keep the tenths digit. Look at the hundredths digit: 6, so 12.765 rounds to 12.8."
         },
         {
           "type": "quiz",
           "question": "Round 4.302 to 2 decimal places.",
           "options": [
-            { "text": "4.31 (rounded up incorrectly)", "correct": false },
-            { "text": "4.30 (2nd decimal = 0; look at 3rd = 2 < 5 → keep 0)", "correct": true },
-            { "text": "4.3 (dropped the trailing zero)", "correct": false }
+            { "text": "4.31", "correct": false },
+            { "text": "4.30", "correct": true },
+            { "text": "4.3", "correct": false }
           ],
-          "explanation": "2 d.p.: keep 2 digits after decimal. Look at 3rd decimal: 2 < 5 → round down → keep 0. Answer: 4.30. Note: AQA requires you to write 4.30 (not 4.3) when 2 d.p. is specified — the trailing zero shows precision."
+          "explanation": "2 d.p. means show two digits after the decimal. The third decimal digit is 2, so keep the 0. Answer: 4.30."
         }
       ]
     },
@@ -202,67 +214,96 @@ export default {
       "label": "Significant figures",
       "kicker": "Section 3 — Core idea",
       "heading": "Rounding to significant figures.",
-      "sub": "Significant figures count from the first non-zero digit — leading zeros do not count.",
+      "sub": "Start from the first non-zero digit — not from the decimal point.",
       "blocks": [
         {
           "type": "read",
-          "label": "What makes a figure 'significant'",
-          "text": "<strong>Start counting from the first non-zero digit.</strong><br/><br/>In <strong>5,836</strong>: 1st s.f. = 5; 2nd = 8; 3rd = 3; 4th = 6.<br/>In <strong>0.0473</strong>: leading zeros are NOT significant — 1st s.f. = 4; 2nd = 7; 3rd = 3.<br/>In <strong>0.400</strong>: 1st s.f. = 4; trailing zeros after decimal are significant — 2nd = 0; 3rd = 0.<br/><br/>Rounding uses the same 'look at the next digit' rule as for d.p."
+          "label": "What counts as significant",
+          "text": "Start counting from the first non-zero digit.<br/><br/>In <strong>5,836</strong>: 5 is 1st s.f., 8 is 2nd, 3 is 3rd.<br/>In <strong>0.00372</strong>: the leading zeros do not count. 3 is 1st s.f., 7 is 2nd, 2 is 3rd.<br/>In <strong>0.400</strong>: trailing zeros after the decimal can be significant because they show precision."
         },
         {
           "type": "quiz",
-          "question": "Round 5,836 to 2 significant figures.",
+          "question": "Round 24,862 to 3 significant figures.",
           "options": [
-            { "text": "5,800 (1st s.f.=5, 2nd s.f.=8; look at 3rd=3 < 5 → round down)", "correct": true },
-            { "text": "5,840 (kept 3 s.f. by mistake)", "correct": false },
-            { "text": "5,900 (rounded up 3rd digit by mistake)", "correct": false }
+            { "text": "24,800", "correct": false },
+            { "text": "24,900", "correct": true },
+            { "text": "25,000", "correct": false }
           ],
-          "explanation": "2 s.f. in 5,836: keep 5 and 8. Next digit = 3 < 5 → round down. Result: 5,800 (zeros fill the other columns but are not significant)."
+          "explanation": "The first three significant figures are 2, 4 and 8. The next digit is 6, so the 8 rounds up to 9. Answer: 24,900."
         },
         {
           "type": "quiz",
-          "question": "Round 0.0473 to 2 significant figures.",
+          "question": "Round 0.005846 to 3 significant figures.",
           "options": [
-            { "text": "0.04 (only 1 s.f. — stopped at 4)", "correct": false },
-            { "text": "0.047 (2 s.f.: 4 and 7; next digit = 3 < 5 → round down)", "correct": true },
-            { "text": "0.05 (rounded 4 up to 5)", "correct": false }
+            { "text": "0.00584", "correct": false },
+            { "text": "0.00585", "correct": true },
+            { "text": "0.006", "correct": false }
           ],
-          "explanation": "Leading zeros are not significant. 1st s.f. = 4 (hundredths), 2nd s.f. = 7 (thousandths). Next digit = 3 < 5 → keep 7. Answer: 0.047."
+          "explanation": "Ignore leading zeros. The first three significant figures are 5, 8 and 4. The next digit is 6, so 4 rounds up to 5: 0.00585."
         }
       ]
     },
 
     {
-      "tag": "maths:rounding",
+      "tag": "maths:estimation",
       "label": "Estimation",
       "kicker": "Section 3 — Core idea",
-      "heading": "Estimation: round everything to 1 significant figure.",
-      "sub": "AQA estimation questions always ask you to show your rounded values — not just the answer.",
+      "heading": "Estimation: round everything first.",
+      "sub": "A proper estimate shows the rounded values before calculating.",
       "blocks": [
         {
           "type": "read",
           "label": "The estimation method",
-          "text": "<strong>Step 1:</strong> Round every number in the calculation to 1 significant figure.<br/><strong>Step 2:</strong> Carry out the calculation using the rounded values.<br/><strong>Step 3:</strong> Show your working — AQA awards a method mark for the rounded values even if the final answer is wrong.<br/><br/>Example: estimate 382 × 4.7<br/>382 ≈ 400 &nbsp;·&nbsp; 4.7 ≈ 5 &nbsp;·&nbsp; 400 × 5 = 2,000"
+          "text": "<strong>Step 1:</strong> Round every number to 1 significant figure.<br/><strong>Step 2:</strong> Calculate using the rounded values.<br/><strong>Step 3:</strong> Compare with the exact answer if you have one.<br/><br/>Example: 382 × 4.7 ≈ 400 × 5 = 2000."
         },
         {
           "type": "quiz",
           "question": "Estimate 487 ÷ 23 by rounding each number to 1 significant figure.",
           "options": [
-            { "text": "24 (used exact values)", "correct": false },
-            { "text": "25 (500 ÷ 20 = 25)", "correct": true },
-            { "text": "10 (rounded to wrong s.f.)", "correct": false }
+            { "text": "24", "correct": false },
+            { "text": "25", "correct": true },
+            { "text": "10", "correct": false }
           ],
-          "explanation": "487 ≈ 500 (1 s.f.). 23 ≈ 20 (1 s.f.). 500 ÷ 20 = 25. Show: 500 ÷ 20 for the method mark."
+          "explanation": "487 ≈ 500 and 23 ≈ 20. So 487 ÷ 23 ≈ 500 ÷ 20 = 25."
         },
         {
           "type": "quiz",
-          "question": "Estimate (62 × 38) ÷ 19",
+          "question": "Estimate (31.4 × 18.6) ÷ (5.1 × 1.9).",
           "options": [
-            { "text": "120 (60 × 40 = 2400; 2400 ÷ 20 = 120)", "correct": true },
-            { "text": "124 (used exact values)", "correct": false },
-            { "text": "600 (forgot to divide)", "correct": false }
+            { "text": "60", "correct": true },
+            { "text": "6", "correct": false },
+            { "text": "600", "correct": false }
           ],
-          "explanation": "62 ≈ 60. 38 ≈ 40. 19 ≈ 20. Calculation: 60 × 40 = 2,400. 2,400 ÷ 20 = 120."
+          "explanation": "31.4 ≈ 30, 18.6 ≈ 20, 5.1 ≈ 5 and 1.9 ≈ 2. So (30 × 20) ÷ (5 × 2) = 600 ÷ 10 = 60."
+        }
+      ]
+    },
+
+    {
+      "tag": "maths:estimation",
+      "label": "Checking answers",
+      "kicker": "Section 3 — Core idea",
+      "heading": "Use estimates to catch nonsense answers.",
+      "sub": "Estimation is not just a separate topic — it is your calculator-error alarm.",
+      "blocks": [
+        {
+          "type": "read",
+          "label": "Do not round too early",
+          "text": "Use estimation before or after a calculation to check whether the answer is sensible. But in an exact calculation, do <strong>not</strong> round intermediate values early — that can change the final answer and lose accuracy marks."
+        },
+        {
+          "type": "quiz",
+          "question": "A student calculates 4.79 × 20.3 ÷ 9.76 and gets about 100. Is this reasonable?",
+          "options": [
+            { "text": "Yes — 100 is close enough", "correct": false },
+            { "text": "No — estimate gives about 10", "correct": true },
+            { "text": "No — estimate gives about 1000", "correct": false }
+          ],
+          "explanation": "Estimate: 4.79 ≈ 5, 20.3 ≈ 20, 9.76 ≈ 10. So 5 × 20 ÷ 10 = 10. An answer near 100 is not reasonable."
+        },
+        {
+          "type": "examtip",
+          "tip": "<strong>Exam habit:</strong> Write the rounded values in estimation questions. In exact questions, keep full accuracy until the final answer unless the question tells you to round."
         }
       ]
     },
@@ -271,63 +312,103 @@ export default {
       "tag": "maths:rounding",
       "label": "Error intervals",
       "kicker": "Section 3 — Core idea",
-      "heading": "Error intervals for rounded and truncated values.",
-      "sub": "An error interval states the range of values a rounded or truncated number could have been.",
+      "heading": "Error intervals for rounded values.",
+      "sub": "A rounded value is really a range of possible original values.",
       "blocks": [
         {
           "type": "read",
           "label": "Rounding: lower bound and upper bound",
-          "text": "<strong>Rounding to the nearest 10:</strong><br/>If a number rounds to 40, it could have been anywhere from 35 up to (but not including) 45.<br/>Error interval: <strong>35 ≤ x &lt; 45</strong> (the lower bound is included; the upper bound is excluded because 45 itself rounds to 50).<br/><br/><strong>Rounding to 1 d.p.:</strong><br/>If a number rounds to 2.3, error interval: <strong>2.25 ≤ x &lt; 2.35</strong>.<br/>Half a unit below, half a unit above — lower included, upper excluded."
+          "text": "If a number rounds to 40 to the nearest 10, it could have been from 35 up to but not including 45.<br/>Error interval: <strong>35 ≤ x &lt; 45</strong>.<br/><br/>The lower bound is included. The upper bound is excluded because 45 would round up to 50."
         },
         {
           "type": "quiz",
           "question": "A length, L, is measured as 6.4 cm to 1 decimal place. Write the error interval for L.",
           "options": [
-            { "text": "6.35 < L < 6.45 (both bounds excluded)", "correct": false },
-            { "text": "6.35 ≤ L < 6.45 (lower included, upper excluded)", "correct": true },
-            { "text": "6.3 ≤ L < 6.5 (wrong unit)", "correct": false }
+            { "text": "6.35 < L < 6.45", "correct": false },
+            { "text": "6.35 ≤ L < 6.45", "correct": true },
+            { "text": "6.3 ≤ L < 6.5", "correct": false }
           ],
-          "explanation": "Rounded to 1 d.p. (nearest 0.1). Half a unit = 0.05. Lower: 6.4 − 0.05 = 6.35 (included). Upper: 6.4 + 0.05 = 6.45 (excluded — 6.45 would round to 6.5). Error interval: 6.35 ≤ L < 6.45."
+          "explanation": "Nearest 0.1 means half a unit is 0.05. Lower = 6.35 included. Upper = 6.45 excluded."
         },
         {
-          "type": "read",
-          "label": "Truncation: a different kind of error interval",
-          "text": "<strong>Truncation</strong> means cutting off digits without rounding — always rounds toward zero.<br/><br/>If a number is <em>truncated</em> to give 4.7, the actual value is at least 4.7 but less than 4.8:<br/>Error interval: <strong>4.7 ≤ x &lt; 4.8</strong><br/><br/>Key difference from rounding: the lower bound is the truncated value itself (not half a unit below it)."
+          "type": "quiz",
+          "question": "A rod is measured as 12 mm to the nearest mm. What is the error interval?",
+          "options": [
+            { "text": "11.5 ≤ l < 12.5", "correct": true },
+            { "text": "11 ≤ l < 13", "correct": false },
+            { "text": "11.5 < l ≤ 12.5", "correct": false }
+          ],
+          "explanation": "Nearest 1 mm means half a unit is 0.5 mm. The interval is 11.5 ≤ l < 12.5."
         }
       ]
     },
 
     {
       "tag": "maths:rounding",
+      "label": "Rounding vs truncation",
+      "kicker": "Section 3 — Core idea",
+      "heading": "Truncation is not rounding.",
+      "sub": "Truncation cuts digits off. It does not look at the next digit.",
+      "blocks": [
+        {
+          "type": "read",
+          "label": "Truncation method",
+          "text": "<strong>Rounding</strong> looks at the next digit and may round up.<br/><strong>Truncation</strong> simply cuts off extra digits.<br/><br/>Example: 4.79 truncated to 1 d.p. = 4.7, not 4.8. If a number is truncated to 1 d.p. and gives 3.4, the interval is <strong>3.4 ≤ x &lt; 3.5</strong>."
+        },
+        {
+          "type": "quiz",
+          "question": "A number n is truncated to 1 decimal place to give 3.4. Write the error interval.",
+          "options": [
+            { "text": "3.35 ≤ n < 3.45", "correct": false },
+            { "text": "3.4 ≤ n < 3.5", "correct": true },
+            { "text": "3.4 < n < 3.5", "correct": false }
+          ],
+          "explanation": "Truncation starts at the truncated value. All values from 3.4 up to but not including 3.5 truncate to 3.4."
+        },
+        {
+          "type": "quiz",
+          "question": "Truncate 4.79 to 1 decimal place.",
+          "options": [
+            { "text": "4.7", "correct": true },
+            { "text": "4.8", "correct": false },
+            { "text": "5.0", "correct": false }
+          ],
+          "explanation": "Truncation cuts off after 1 decimal place. It does not round up, so 4.79 becomes 4.7."
+        }
+      ]
+    },
+
+    {
+      "tag": "maths:estimation",
       "label": "Worked example",
       "kicker": "Section 4 — Examiner method",
-      "heading": "Full worked example.",
-      "sub": "Show your rounded values — AQA awards marks for the method even if arithmetic goes wrong.",
+      "heading": "Full estimation worked example.",
+      "sub": "Show rounded values first — that is where marks are often earned.",
       "blocks": [
         {
           "type": "read",
           "label": "The question",
-          "text": "<strong>Use approximation to estimate the value of:</strong><br/><br/>√(97.4) × 51.3<br/>          ————————<br/>             4.8<br/><br/><em>(2 marks)</em>"
+          "text": "<strong>Estimate the value of:</strong><br/><br/>(31.4 × 18.6) ÷ (5.1 × 1.9)<br/><em>Show your working.</em>"
         },
         {
           "type": "read",
-          "label": "Step 1 — Round each number to 1 significant figure",
-          "text": "97.4 ≈ 100 &nbsp;&nbsp; 51.3 ≈ 50 &nbsp;&nbsp; 4.8 ≈ 5"
+          "label": "Step 1 — Round every value to 1 s.f.",
+          "text": "31.4 ≈ 30<br/>18.6 ≈ 20<br/>5.1 ≈ 5<br/>1.9 ≈ 2"
         },
         {
           "type": "read",
-          "label": "Step 2 — Work out the simplified expression",
-          "text": "√100 × 50 ÷ 5 = 10 × 50 ÷ 5 = 100<br/><br/><em>Mark scheme: 1M for correct rounding to 1 s.f. and correct structure; 1A for 100<br/>(Answer of 102.8... from exact calculation scores 0 — 'approximate' is required)</em>"
+          "label": "Step 2 — Calculate the estimate",
+          "text": "(30 × 20) ÷ (5 × 2) = 600 ÷ 10 = <strong>60</strong>.<br/><br/><em>Mark scheme pattern: credit for rounded values, credit for correct use of those values, then accuracy for the estimate.</em>"
         },
         {
           "type": "quiz",
-          "question": "Estimate (√81.6 × 29.7) ÷ 9.8 using 1 significant figure rounding.",
+          "question": "Estimate (8.9 × 3.1) ÷ 1.95 using 1 significant figure rounding.",
           "options": [
-            { "text": "30 (√100=10; 10×30=300; 300÷10=30)", "correct": true },
-            { "text": "3 (forgot to account for all terms)", "correct": false },
-            { "text": "90 (arithmetic error)", "correct": false }
+            { "text": "14", "correct": true },
+            { "text": "1.4", "correct": false },
+            { "text": "28", "correct": false }
           ],
-          "explanation": "81.6 ≈ 100 → √100 = 10. 29.7 ≈ 30. 9.8 ≈ 10. Calculation: 10 × 30 ÷ 10 = 30."
+          "explanation": "8.9 ≈ 9, 3.1 ≈ 3 and 1.95 ≈ 2. So 9 × 3 ÷ 2 = 27 ÷ 2 = 13.5, which is about 14."
         }
       ]
     },
@@ -337,12 +418,12 @@ export default {
       "label": "Guided practice",
       "kicker": "Section 5 — Practice with support",
       "heading": "Fill in the rounded values.",
-      "sub": "Apply the rounding rules for d.p. and s.f.",
+      "sub": "Mix decimal places, significant figures and estimation.",
       "blocks": [
         {
           "type": "read",
           "label": "Method reminder",
-          "text": "<strong>D.p.:</strong> count after the decimal point; look at the next digit.<br/><strong>S.f.:</strong> count from the first non-zero digit; look at the next digit.<br/><strong>Both:</strong> ≥ 5 round up; < 5 round down (keep same)."
+          "text": "<strong>D.p.:</strong> count after the decimal point.<br/><strong>S.f.:</strong> count from the first non-zero digit.<br/><strong>Estimation:</strong> round every number first."
         },
         {
           "type": "fillblanks",
@@ -351,32 +432,29 @@ export default {
               "before": "7.562 rounded to 1 decimal place =",
               "after": "",
               "answer": "7.6",
-              "hints": [
-                "1 d.p. means 1 digit after the decimal. Look at the 2nd decimal digit.",
-                "2nd decimal = 6 ≥ 5 → round up. 7.5 → 7.6."
-              ]
+              "hints": ["1 d.p. means keep the tenths digit.", "The next digit is 6, so round up."]
             },
             {
-              "before": "4,720 rounded to 2 significant figures =",
+              "before": "24,862 rounded to 3 significant figures =",
               "after": "",
-              "answer": "4700",
-              "hints": [
-                "1st s.f. = 4, 2nd s.f. = 7. Look at the 3rd digit.",
-                "3rd digit = 2 < 5 → round down. Keep 4 and 7: 4,700."
-              ]
+              "answer": "24900",
+              "hints": ["The first three significant figures are 2, 4 and 8.", "The next digit is 6, so 8 rounds up to 9."]
             },
             {
-              "before": "0.00852 rounded to 2 significant figures =",
+              "before": "0.005846 rounded to 3 significant figures =",
               "after": "",
-              "answer": "0.0085",
-              "hints": [
-                "Leading zeros are not significant. 1st s.f. = 8, 2nd s.f. = 5.",
-                "3rd digit = 2 < 5 → round down. 0.0085."
-              ]
+              "answer": "0.00585",
+              "hints": ["Leading zeros do not count.", "5, 8 and 4 are the first three significant figures; the next digit is 6."]
+            },
+            {
+              "before": "Estimate 612 × 0.48 using 1 s.f.: 600 ×",
+              "after": "= 300.",
+              "answer": "0.5",
+              "hints": ["612 rounds to 600.", "0.48 rounds to 0.5."]
             }
           ],
-          "correctMsg": "Good — d.p. and s.f. applied correctly.",
-          "wrongMsg": "Check: are you counting from the decimal point (d.p.) or from the first non-zero digit (s.f.)?"
+          "correctMsg": "Good — you chose the correct rounding rule for each question.",
+          "wrongMsg": "Check what the question asks for first: d.p., s.f., estimate, or error interval."
         }
       ]
     },
@@ -385,34 +463,34 @@ export default {
       "tag": "maths:rounding",
       "label": "Spot the error",
       "kicker": "Section 6 — Common mistake",
-      "heading": "Find and fix the error.",
-      "sub": "This error pattern appears directly in AQA mark scheme notes.",
+      "heading": "Fix the error interval.",
+      "sub": "The upper bound is the classic trap.",
       "blocks": [
         {
           "type": "read",
-          "label": "The student's working",
-          "text": "A student estimates 382 ÷ 19 and writes:<br/><strong>382 ÷ 19 ≈ 382 ÷ 20 = 19.1</strong>"
+          "label": "The student's answer",
+          "text": "A student writes the error interval for a length measured as 8 cm to the nearest cm as:<br/><strong>7.5 ≤ l ≤ 8.5</strong>"
         },
         {
           "type": "misconceptionCheck",
           "statements": [
             {
-              "statement": "The student's estimate of 19.1 is a valid approximation.",
+              "statement": "7.5 ≤ l ≤ 8.5 is correct for 8 cm to the nearest cm.",
               "answer": false,
-              "reveal": "FALSE. The student rounded 19 to 20 (to 1 s.f.) but left 382 as the exact value. Estimation requires rounding ALL numbers to 1 significant figure first. 382 ≈ 400. Then 400 ÷ 20 = 20. The answer 19.1 is essentially an exact calculation, not an estimate. AQA marks require the rounded values to be shown.",
-              "examTrap": "AQA mark schemes penalise estimates where only some numbers are rounded. The instruction 'use approximation' always means round every number to 1 s.f."
+              "reveal": "FALSE. The lower bound 7.5 is included, because 7.5 rounds to 8. But 8.5 rounds up to 9, so it is not included. The correct interval is 7.5 ≤ l < 8.5.",
+              "examTrap": "For rounded values, the lower bound uses ≤ and the upper bound uses <."
             }
           ]
         },
         {
           "type": "quiz",
-          "question": "Using 1 significant figure throughout, the correct estimate for 382 ÷ 19 is:",
+          "question": "Correct error interval for l = 8 cm to the nearest cm:",
           "options": [
-            { "text": "19.1 (exact calculation)", "correct": false },
-            { "text": "20 (400 ÷ 20 = 20)", "correct": true },
-            { "text": "15 (wrong rounding)", "correct": false }
+            { "text": "7.5 ≤ l < 8.5", "correct": true },
+            { "text": "7.5 < l < 8.5", "correct": false },
+            { "text": "7 ≤ l < 9", "correct": false }
           ],
-          "explanation": "382 ≈ 400 (1 s.f.). 19 ≈ 20 (1 s.f.). 400 ÷ 20 = 20."
+          "explanation": "Half a centimetre either side: 7.5 is included, 8.5 is excluded."
         }
       ]
     },
@@ -421,25 +499,25 @@ export default {
       "tag": null,
       "label": "Maths in the wild",
       "kicker": "Section 7 — Real-world application",
-      "heading": "Rounding in measurement and estimation.",
-      "sub": "Rounding and error intervals model the uncertainty in all real-world measurements.",
+      "heading": "Rounding in measurement and estimates.",
+      "sub": "Measurements are not exact unless the question says they are.",
       "blocks": [
         {
           "type": "read",
           "label": "Why error intervals matter",
-          "text": "Every measurement in science, engineering, and everyday life has an implied precision. If a doctor says a patient is 1.8 m tall 'to the nearest 0.1 m', the actual height could be anywhere from 1.75 m to just under 1.85 m. The error interval captures that range."
+          "text": "If a measurement is rounded, the real value could be a little smaller or a little larger. Error intervals show the full possible range. This matters in science experiments, manufacturing, construction and medical measurements."
         },
         {
           "type": "scenario",
-          "situation": "A plank of wood is measured as 2.4 m to the nearest 0.1 m. A second plank is 1.8 m to the nearest 0.1 m.",
-          "question": "What is the minimum possible total length of both planks combined?",
+          "situation": "A manufacturer makes bolts measuring 12 mm to the nearest mm.",
+          "question": "Which interval shows the possible actual lengths, l?",
           "options": [
-            { "text": "4.2 m (added the rounded values)", "correct": false },
-            { "text": "4.1 m (used lower bounds: 2.35 + 1.75 = 4.10)", "correct": true },
-            { "text": "4.3 m (used upper bounds)", "correct": false }
+            { "text": "11.5 ≤ l < 12.5", "correct": true },
+            { "text": "11 ≤ l < 13", "correct": false },
+            { "text": "12 ≤ l < 13", "correct": false }
           ],
-          "correctMsg": "Lower bounds: 2.35 + 1.75 = 4.10 m. This is the minimum because both planks could be at their smallest possible values.",
-          "wrongMsg": "For minimum total, use lower bounds: 2.4 − 0.05 = 2.35 and 1.8 − 0.05 = 1.75. Total: 2.35 + 1.75 = 4.10 m."
+          "correctMsg": "Nearest mm means half a millimetre either side. The interval is 11.5 ≤ l < 12.5.",
+          "wrongMsg": "Use half the rounding unit: 0.5 mm below and 0.5 mm above. The upper bound is excluded."
         },
         {
           "type": "scenario",
@@ -450,8 +528,8 @@ export default {
             { "text": "475 ≤ V < 485", "correct": true },
             { "text": "475 < V < 485", "correct": false }
           ],
-          "correctMsg": "Nearest 10 ml: half a unit = 5. Lower: 480 − 5 = 475 (included). Upper: 480 + 5 = 485 (excluded). Error interval: 475 ≤ V < 485.",
-          "wrongMsg": "Half a unit below: 480 − 5 = 475 (≤ because 475 rounds to 480). Half a unit above: 480 + 5 = 485 (< because 485 rounds to 490)."
+          "correctMsg": "Nearest 10 ml means half a unit is 5 ml. Error interval: 475 ≤ V < 485.",
+          "wrongMsg": "Half of 10 is 5. Lower bound included; upper bound excluded."
         }
       ]
     },
@@ -461,42 +539,42 @@ export default {
       "label": "Retrieval",
       "kicker": "Section 8 — Retrieval practice",
       "heading": "Retrieval practice.",
-      "sub": "Quick questions to lock in today's learning.",
+      "sub": "Quick questions from Chapters 1–5.",
       "blocks": [
         {
           "type": "read",
-          "label": "Why retrieval matters",
-          "text": "Retrieving knowledge immediately after learning doubles long-term retention. Answer without looking back."
+          "label": "Why mixed retrieval works",
+          "text": "Mixing old and new skills helps you remember which method to use. These questions revisit place value, negatives, BIDMAS and estimation."
         },
         {
           "type": "quiz",
           "question": "Round 0.0846 to 2 significant figures.",
           "options": [
-            { "text": "0.08 (only 1 s.f.)", "correct": false },
-            { "text": "0.085 (2 s.f.: first non-zero = 8, second = 4; next = 6 ≥ 5 → round up)", "correct": true },
-            { "text": "0.0846 (no rounding applied)", "correct": false }
+            { "text": "0.08", "correct": false },
+            { "text": "0.085", "correct": true },
+            { "text": "0.0846", "correct": false }
           ],
-          "explanation": "Leading zeros not significant. 1st s.f. = 8, 2nd s.f. = 4. Look at 3rd s.f. = 6 ≥ 5 → round up 4 to 5. Answer: 0.085."
+          "explanation": "Leading zeros do not count. The first two significant figures are 8 and 4. The next digit is 6, so round up to 0.085."
         },
         {
           "type": "quiz",
-          "question": "A value is rounded to the nearest whole number and gives 7. Write the error interval.",
+          "question": "Work out (−4) × 3.",
           "options": [
-            { "text": "6.5 ≤ x < 7.5", "correct": true },
-            { "text": "6 ≤ x < 8", "correct": false },
-            { "text": "6.5 < x < 7.5", "correct": false }
+            { "text": "−12", "correct": true },
+            { "text": "12", "correct": false },
+            { "text": "−7", "correct": false }
           ],
-          "explanation": "Nearest whole number: half a unit = 0.5. Lower: 7 − 0.5 = 6.5 (included). Upper: 7 + 0.5 = 7.5 (excluded). Interval: 6.5 ≤ x < 7.5."
+          "explanation": "Different signs give a negative answer. 4 × 3 = 12, so (−4) × 3 = −12."
         },
         {
           "type": "quiz",
-          "question": "Estimate 612 × 0.48 using 1 significant figure rounding.",
+          "question": "Work out 3² + 4 × 2 − (6 ÷ 2).",
           "options": [
-            { "text": "300 (600 × 0.5 = 300)", "correct": true },
-            { "text": "294 (exact value)", "correct": false },
-            { "text": "3,000 (wrong rounding of 0.48)", "correct": false }
+            { "text": "14", "correct": true },
+            { "text": "20", "correct": false },
+            { "text": "5", "correct": false }
           ],
-          "explanation": "612 ≈ 600. 0.48 ≈ 0.5. 600 × 0.5 = 300."
+          "explanation": "BIDMAS: 3² = 9, 4 × 2 = 8, 6 ÷ 2 = 3. Then 9 + 8 − 3 = 14."
         }
       ]
     },
@@ -506,47 +584,44 @@ export default {
       "label": "Exam practice",
       "kicker": "Section 9 — AQA exam style",
       "heading": "Exam-style questions.",
-      "sub": "AQA wording, method marks shown. Answer before reading the mark scheme.",
+      "sub": "AQA-style wording, method marks shown. Answer before reading the mark scheme.",
       "blocks": [
         {
           "type": "read",
           "label": "AQA exam pattern",
-          "text": "Rounding/estimation questions on AQA Foundation award marks as follows: (1) d.p. and s.f. rounding — B1 for correct answer; (2) estimation — M1 for rounding all values to 1 s.f., A1 for correct estimate (must show rounded values); (3) error intervals — B1 for lower bound, B1 for upper bound (two separate marks)."
+          "text": "Rounding questions usually give one mark for the correct rounded answer. Estimation questions reward showing rounded values. Error interval questions often award separate credit for the lower and upper bounds."
         },
         {
           "type": "boss",
           "tier": "🟢",
           "label": "Q1 — Rounding to s.f. (1 mark)",
-          "question": "Round 0.005 83 to 2 significant figures.",
+          "question": "Round 0.00583 to 2 significant figures.",
           "markPoints": [
             "Answer: 0.0058",
-            "1 mark for 0.0058",
-            "Common error: 0.006 (rounded to 1 s.f.) or 0.00583 (rounded to 3 s.f.)"
+            "Leading zeros do not count as significant figures",
+            "Common error: 0.006, which is 1 significant figure"
           ]
         },
         {
           "type": "boss",
           "tier": "🟡",
-          "label": "Q2 — Estimation (2 marks)",
-          "question": "Use approximation to estimate:\n√(49.2) × 31.8\n——————————\n      9.7",
+          "label": "Q2 — Error interval (2 marks)",
+          "question": "A length, l cm, is measured as 3.7 cm to 1 decimal place. Write the error interval for l.",
           "markPoints": [
-            "49.2 ≈ 49 → √49 = 7 (or 49.2 ≈ 50 → √50 ≈ 7 is acceptable)",
-            "31.8 ≈ 30; 9.7 ≈ 10",
-            "Estimate: 7 × 30 ÷ 10 = 21",
-            "1M for rounding all numbers to 1 s.f. (or recognising √49=7); 1A for 21",
-            "Common error: using exact values → scores 0"
+            "Answer: 3.65 ≤ l < 3.75",
+            "Lower bound: 3.7 − 0.05 = 3.65, included",
+            "Upper bound: 3.7 + 0.05 = 3.75, excluded"
           ]
         },
         {
           "type": "boss",
           "tier": "🔴",
-          "label": "Q3 — Error interval (2 marks)",
-          "question": "A time, T seconds, is measured as 14 seconds to the nearest second.\nWrite the error interval for T.",
+          "label": "Q3 — Explain the error (2 marks, AO2)",
+          "question": "A student rounds 0.00562 to 3 significant figures and gets 0.006. Explain the error.",
           "markPoints": [
-            "Error interval: 13.5 ≤ T < 14.5",
-            "1 mark for lower bound 13.5 (or 13.5 ≤ T); 1 mark for upper bound 14.5 (or T < 14.5)",
-            "Must use correct inequality symbols: lower bound ≤ (included), upper bound < (excluded)",
-            "Common error: 13.5 < T < 14.5 (both open — incorrect for rounding)"
+            "Leading zeros do not count",
+            "The first three significant figures are 5, 6 and 2",
+            "There is no next digit to make 2 round up, so the answer should be 0.00562"
           ]
         }
       ]
@@ -562,42 +637,44 @@ export default {
         {
           "type": "read",
           "label": "Key rules for rounding and estimation",
-          "text": "1. <strong>D.p.:</strong> count after the decimal; look at the next digit; ≥ 5 round up.<br/>2. <strong>S.f.:</strong> count from first non-zero digit; same rounding rule.<br/>3. <strong>Estimation:</strong> round ALL numbers to 1 s.f. — show rounded values for the method mark.<br/>4. <strong>Error interval (rounding):</strong> lower ≤ x &lt; upper; half a unit either side.<br/>5. <strong>Error interval (truncation):</strong> lower ≤ x &lt; lower + 1 unit (no subtraction from lower)."
+          "text": "1. <strong>D.p.:</strong> count after the decimal point.<br/>2. <strong>S.f.:</strong> count from the first non-zero digit.<br/>3. <strong>Estimation:</strong> round every number to 1 s.f. first, then calculate.<br/>4. <strong>Checking:</strong> use estimates to spot impossible exact answers.<br/>5. <strong>Error interval for rounding:</strong> lower ≤ x &lt; upper.<br/>6. <strong>Truncation:</strong> cut off digits; do not round up."
         },
         {
           "type": "read",
-          "label": "Top 3 errors from AQA mark schemes",
-          "text": "1. <strong>D.p. vs s.f. confusion:</strong> 0.0473 to 2 s.f. = 0.04 instead of 0.047.<br/>2. <strong>Partial estimation:</strong> rounding only one number — must round ALL values to 1 s.f.<br/>3. <strong>Wrong inequality for error interval:</strong> 13.5 &lt; T &lt; 14.5 (both open) — lower is ≤, upper is &lt;."
+          "label": "Top 3 errors",
+          "text": "1. <strong>D.p. vs s.f. confusion:</strong> 0.0473 to 2 s.f. is 0.047, not 0.04.<br/>2. <strong>Partial estimation:</strong> rounding only one number instead of all values.<br/>3. <strong>Error interval upper bound:</strong> writing ≤ for the upper bound instead of &lt;."
         },
         {
           "type": "examtip",
-          "tip": "<strong>Exam habit:</strong> When asked to estimate, always write down the rounded values before calculating — AQA awards a method mark for them separately. If your arithmetic then goes wrong you still get M1."
+          "tip": "<strong>Exam habit:</strong> In estimation questions, show the rounded values. In error intervals, remember the upper bound is excluded."
         },
         {
           "type": "keypoint",
-          "text": "<strong>Chapter 5 complete.</strong> You can now: round to d.p. and s.f. correctly · estimate any calculation using 1 s.f. rounding · write error intervals for rounded and truncated values · avoid the most common s.f. trap (leading zeros).<br/><br/>Next: Chapter 6 — Factors, multiples and primes. The rounding skills from this chapter combine with number work in Module 2 ratio and proportion."
+          "text": "<strong>Chapter 5 complete.</strong> You can now: round to d.p. and s.f. · estimate by rounding all values · check answers using estimates · write error intervals · distinguish rounding from truncation.<br/><br/>Next: Chapter 6 — Factors, multiples and primes."
         }
       ]
     }
   ],
 
   "series": "foundations",
-  "recallTags": ["maths:rounding", "maths:significant-figures"],
+  "recallTags": ["maths:rounding", "maths:significant-figures", "maths:estimation"],
   "examTags": ["N2", "N14", "N15"],
   "assetKeys": [],
   "stageNavigation": [
-    { "id": "s1",  "title": "The s.f. trap",       "description": "D.p. vs significant figures",                 "screenIndex": 0 },
-    { "id": "s2",  "title": "Prior knowledge",      "description": "Place value and number line",                 "screenIndex": 1 },
-    { "id": "s3",  "title": "Decimal places",       "description": "Rounding to d.p. — three-step method",        "screenIndex": 2 },
-    { "id": "s4",  "title": "Significant figures",  "description": "Count from first non-zero digit",             "screenIndex": 3 },
-    { "id": "s5",  "title": "Estimation",           "description": "Round all values to 1 s.f.",                  "screenIndex": 4 },
-    { "id": "s6",  "title": "Error intervals",      "description": "Bounds for rounded and truncated values",     "screenIndex": 5 },
-    { "id": "s7",  "title": "Worked example",       "description": "Estimation with a square root",               "screenIndex": 6 },
-    { "id": "s8",  "title": "Guided practice",      "description": "Fill in the rounded values",                  "screenIndex": 7 },
-    { "id": "s9",  "title": "Spot the error",       "description": "Fix the partial estimation mistake",          "screenIndex": 8 },
-    { "id": "s10", "title": "Real world",           "description": "Measurement and error intervals",             "screenIndex": 9 },
-    { "id": "s11", "title": "Retrieval",            "description": "Lock it in with quick questions",             "screenIndex": 10 },
-    { "id": "s12", "title": "Exam practice",        "description": "AQA-style rounding questions",                "screenIndex": 11 },
-    { "id": "s13", "title": "Chapter complete",     "description": "Key rules and what comes next",               "screenIndex": 12 }
+    { "id": "s1", "title": "The s.f. trap", "description": "Decimal places vs significant figures", "screenIndex": 0 },
+    { "id": "s2", "title": "Prior knowledge", "description": "Place value and rounding basics", "screenIndex": 1 },
+    { "id": "s3", "title": "Rounding to d.p.", "description": "Count after the decimal point", "screenIndex": 2 },
+    { "id": "s4", "title": "Significant figures", "description": "Count from first non-zero digit", "screenIndex": 3 },
+    { "id": "s5", "title": "Estimation", "description": "Round everything first", "screenIndex": 4 },
+    { "id": "s6", "title": "Checking answers", "description": "Use estimates as an alarm", "screenIndex": 5 },
+    { "id": "s7", "title": "Error intervals", "description": "Lower included, upper excluded", "screenIndex": 6 },
+    { "id": "s8", "title": "Rounding vs truncation", "description": "Cutting off is not rounding", "screenIndex": 7 },
+    { "id": "s9", "title": "Worked example", "description": "Estimation marks step by step", "screenIndex": 8 },
+    { "id": "s10", "title": "Guided practice", "description": "Rounding and estimation blanks", "screenIndex": 9 },
+    { "id": "s11", "title": "Spot the error", "description": "Fix the upper-bound trap", "screenIndex": 10 },
+    { "id": "s12", "title": "Real world", "description": "Measurement and uncertainty", "screenIndex": 11 },
+    { "id": "s13", "title": "Retrieval", "description": "Mixed questions from Ch1–Ch5", "screenIndex": 12 },
+    { "id": "s14", "title": "Exam practice", "description": "AQA-style rounding questions", "screenIndex": 13 },
+    { "id": "s15", "title": "Chapter complete", "description": "Key rules and what comes next", "screenIndex": 14 }
   ]
 }
