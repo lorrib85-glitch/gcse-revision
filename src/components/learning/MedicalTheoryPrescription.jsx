@@ -40,6 +40,12 @@ const THEORY_SYMBOLS = {
   'astrology':    '✦',
 }
 
+const TREATMENT_LOGIC = {
+  'god-sin':      'So treatment focused on the soul: prayer, confession, or pilgrimage.',
+  'four-humours': 'So treatment tried to rebalance the body through bleeding, purging, or diet.',
+  'astrology':    'So treatment meant checking the stars and choosing the right time.',
+}
+
 const CSS = `
   @keyframes mtp-fade-up {
     from { opacity: 0; transform: translateY(10px); }
@@ -438,14 +444,33 @@ function ChipsPhase({
             borderTop: `1px solid rgba(${THEME.accentRgb},0.14)`,
             paddingTop: SPACING.compact,
           }}>
+            {TREATMENT_LOGIC[theory.id] && (
+              <div style={{
+                ...TYPE.bodySmall,
+                color: THEME.textMuted,
+                fontStyle: 'italic',
+                lineHeight: 1.55,
+                marginBottom: SPACING.compact,
+              }}>
+                {TREATMENT_LOGIC[theory.id]}
+              </div>
+            )}
+            <div style={{
+              ...TYPE.metadata,
+              color: THEME.textFaint,
+              marginBottom: 4,
+              textTransform: 'uppercase',
+              letterSpacing: '0.07em',
+            }}>
+              Which treatments match this belief?
+            </div>
             <div style={{
               ...TYPE.metadata,
               color: THEME.textFaint,
               marginBottom: 12,
-              textTransform: 'uppercase',
-              letterSpacing: '0.07em',
+              letterSpacing: '0.04em',
             }}>
-              Choose the treatments — pick {correctCount}
+              Choose {correctCount}.
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {chipPool.map((canonical, i) => (
@@ -464,7 +489,7 @@ function ChipsPhase({
       </div>
 
       <CTA
-        label="Check prescription"
+        label="Check choices"
         onClick={onCheck}
         disabled={selectedChips.length === 0}
         pressed={pressed}
