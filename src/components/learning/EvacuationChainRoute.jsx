@@ -4,9 +4,10 @@ import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.j
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { TYPE } from '../../constants/typography.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 
-const BRONZE = '#D69B45'
-const BRONZE_RGB = '214,155,69'
+const BRONZE = SUBJECTS.History.accent
+const BRONZE_RGB = SUBJECTS.History.accentRgb
 const DEFAULT_BG = '/headers/history-medicine-evacuation-chain-bg.svg'
 
 const TEXT_PRIMARY = 'rgba(255,244,222,0.96)'

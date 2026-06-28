@@ -133,7 +133,7 @@ function KeypointBlock({ block }) {
       <div style={{
         fontFamily: TYPE.bodyText.fontFamily,
         fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-        textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 12,
+        textTransform: 'uppercase', color: SUBJECTS.History.accent, marginBottom: 12,
       }}>⭐ Key Point</div>
       <p style={{
         fontFamily: TYPE.bodyText.fontFamily,
@@ -247,7 +247,7 @@ function RevealBlock({ block }) {
         <div style={{
           fontFamily: TYPE.bodyText.fontFamily,
           fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
-          textTransform: 'uppercase', color: '#9D5CFF', marginBottom: 8,
+          textTransform: 'uppercase', color: SUBJECTS.History.accent, marginBottom: 8,
           display: 'flex', alignItems: 'center', gap: 6,
         }}>
           ⚡ {block.label || 'Rapid Fire Sort'}
@@ -1638,7 +1638,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const isFinishBtn  = !(!hookDone && module.hook) && wylDone && recallDone && navTo === null && (!module.intro || introDone) && isLast
 
   const cur = module.screens[screen]
-  const subjectColor = module.color || '#9D5CFF'
+  const subjectColor = module.color || (SUBJECTS[module?.subject] || SUBJECTS.History).accent
 
   if (total === 0) {
     return (

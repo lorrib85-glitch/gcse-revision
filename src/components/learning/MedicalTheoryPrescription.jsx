@@ -4,6 +4,7 @@ import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import { BUTTONS } from '../../constants/buttons.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 
 // ── Fuzzy matching ────────────────────────────────────────────────────────────
@@ -62,8 +63,8 @@ const THEME = {
   textFaint: 'rgba(245,238,217,0.44)',
   ink: '#2A1404',
   inkMuted: 'rgba(42,20,4,0.70)',
-  accent: '#D69B45',
-  accentRgb: '214,155,69',
+  accent: SUBJECTS.History.accent,
+  accentRgb: SUBJECTS.History.accentRgb,
   bronze: '#8B6B14',
   parchment: '#F0E0B0',
   parchmentRgb: '240,224,176',

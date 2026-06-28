@@ -6,21 +6,13 @@ import { TYPE } from '../../constants/typography.js'
 import { RADII } from '../../constants/radii.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { logExamTechnique, getExamTechniquePatterns } from '../../unifiedWeaknessTracker.js'
 import BackButton from '../core/BackButton.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 
 const RECURRING_PATTERN_THRESHOLD = 3
 
-const PALETTES = {
-  history:   { accent: '#C89B6D', bg: '#15110C' },
-  biology:   { accent: '#8FD6A3', bg: '#0A1510' },
-  chemistry: { accent: '#8B5CF6', bg: '#0D0A1A' },
-  physics:   { accent: '#5DA9E9', bg: '#08111E' },
-  maths:     { accent: '#2BBE9A', bg: '#081512' },
-  english:   { accent: '#9E3D52', bg: '#150810' },
-  sociology: { accent: '#C9B07C', bg: '#181410' },
-}
 
 const TECHNIQUE_LABELS = {
   missingExample: 'making a claim without backing it up with a specific example',
@@ -119,11 +111,12 @@ function StrategyLane({ section, value, onChange, accent, index }) {
 }
 
 export default function GuidedExamResponse({ module, exam, onExit, onContinue, theme }) {
-  const key = (exam.subject || module.subject || 'history').toLowerCase()
-  const pal = PALETTES[key] || PALETTES.history
+  const rawSubject = exam.subject || module.subject || 'history'
+  const capitalised = rawSubject.charAt(0).toUpperCase() + rawSubject.slice(1).toLowerCase()
+  const subjectTheme = SUBJECTS[capitalised] || SUBJECTS.History
   const isGeneral = theme === 'general'
-  const accent = isGeneral ? GENERAL.teal : pal.accent
-  const bg = isGeneral ? GENERAL.neutral[0] : pal.bg
+  const accent = isGeneral ? GENERAL.teal : subjectTheme.accent
+  const bg = isGeneral ? GENERAL.neutral[0] : subjectTheme.background
 
   const [phase, setPhase] = useState('darkBeat')
   const [beatVisible, setBeatVisible] = useState(false)
