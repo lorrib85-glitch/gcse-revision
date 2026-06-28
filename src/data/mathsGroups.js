@@ -16,6 +16,7 @@ export const MATHS_GROUPS = [
       { id: 'maths_indices',    title: 'Indices & Surds',       subtitle: 'Powers, roots & laws',       locked: true  },
       { id: 'maths_primes',     title: 'Primes & Factors',      subtitle: 'HCF, LCM & prime factors',   locked: true  },
       { id: 'maths_percentages',title: 'Percentages',           subtitle: 'Change, reverse & interest', locked: true  },
+      { id: 'maths_rounding',   title: 'Rounding & Estimation', subtitle: 'Sig. figs, d.p. & checking', locked: true  },
     ],
   },
   {

@@ -52,4 +52,9 @@ export const TAG_MODULE_MAP = {
   'genetics':               'history-medicine-modern-medicine',
   // Crosses all modules — no single best link
   'factors-in-change':      null,
+  // Maths — Module 1
+  'maths:place-value':        'maths-place-value',
+  'maths:ordering-numbers':   'maths-place-value',
+  'maths:negative-numbers':   'maths-negative-numbers',
+  'maths:ordering-negatives': 'maths-negative-numbers',
 }
