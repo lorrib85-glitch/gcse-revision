@@ -6,6 +6,7 @@ import { TYPE } from '../../constants/typography.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import ContentShell from '../layout/ContentShell.jsx'
 
 // ── Fuzzy matching ────────────────────────────────────────────────────────────
 
@@ -242,79 +243,30 @@ function SelectPhase({ theories, completedIds, onSelect, screen, selectedHealer,
     : 'What caused illness in medieval times?'
 
   return (
-    <div style={{
-      minHeight: '100dvh',
-      background: THEME.surface,
-      display: 'flex',
-      flexDirection: 'column',
-      overflowY: 'auto',
-    }}>
+    <ContentShell subject="History">
       <style>{CSS}</style>
 
-      <section style={{
-        position: 'relative',
-        minHeight: 470,
-        padding: `${SPACING.section}px ${SPACING.standard}px ${SPACING.separation}px`,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        borderBottom: `1px solid rgba(${THEME.accentRgb},0.10)`,
-        overflow: 'hidden',
+      <div style={{
+        animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+        marginBottom: SPACING.compact,
       }}>
-        {selectedHealer?.image && (
-          <>
-            <img
-              src={selectedHealer.image}
-              alt=""
-              aria-hidden="true"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                objectPosition: 'center top',
-                opacity: 0.54,
-                filter: 'brightness(0.72) saturate(0.84)',
-                pointerEvents: 'none',
-              }}
-            />
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              background: [
-                'linear-gradient(90deg, rgba(12,9,5,0.98) 0%, rgba(12,9,5,0.78) 44%, rgba(12,9,5,0.30) 100%)',
-                'linear-gradient(180deg, rgba(12,9,5,0.22) 0%, rgba(12,9,5,0.50) 48%, rgba(12,9,5,1) 100%)',
-              ].join(','),
-              pointerEvents: 'none',
-            }} />
-          </>
-        )}
-
-        <div style={{
-          position: 'relative',
-          maxWidth: 330,
-          animation: prefersReducedMotion ? 'none' : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+        <h1 style={{
+          ...TYPE.screenHeading,
+          color: THEME.text,
+          margin: 0,
         }}>
-          <h1 style={{
-            ...TYPE.screenHeading,
-            color: THEME.text,
-            margin: 0,
-          }}>
-            {heading}
-          </h1>
-          <p style={{
-            ...TYPE.bodyLarge,
-            color: THEME.textMuted,
-            margin: `${SPACING.compact}px 0 0`,
-          }}>
-            {screen.theories?.[0]?.introText || 'Different people had different explanations.'}
-          </p>
-        </div>
-      </section>
+          {heading}
+        </h1>
+        <p style={{
+          ...TYPE.bodyLarge,
+          color: THEME.textMuted,
+          margin: `${SPACING.compact}px 0 0`,
+        }}>
+          {screen.theories?.[0]?.introText || 'Different people had different explanations.'}
+        </p>
+      </div>
 
-      <section style={{
-        padding: `${SPACING.compact}px ${SPACING.standard}px ${SPACING.separation}px`,
+      <div style={{
         display: 'flex',
         flexDirection: 'column',
         gap: SPACING.compact,
@@ -332,8 +284,8 @@ function SelectPhase({ theories, completedIds, onSelect, screen, selectedHealer,
             />
           )
         })}
-      </section>
-    </div>
+      </div>
+    </ContentShell>
   )
 }
 
