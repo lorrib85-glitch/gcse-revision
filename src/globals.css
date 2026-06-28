@@ -14,7 +14,7 @@
   --color-card-foreground:        #F5F7FB;
   --color-popover:                #0D1424;
   --color-popover-foreground:     #F5F7FB;
-  --color-primary:                #9D5CFF;
+  --color-primary:                #2A9D8F;
   --color-primary-foreground:     #ffffff;
   --color-secondary:              #1A2338;
   --color-secondary-foreground:   #C8D0E8;
@@ -26,7 +26,7 @@
   --color-destructive-foreground: #ffffff;
   --color-border:                 #2A3552;
   --color-input:                  #2A3552;
-  --color-ring:                   #9D5CFF;
+  --color-ring:                   #2A9D8F;
 
   /* Constitution background scale */
   --color-bg-primary:             #08090D;
@@ -43,7 +43,7 @@
   --color-history:   #F5B700;
   --color-science:   #38D27A;
   --color-maths-c:   #3B82FF;
-  --color-english-c: #9D5CFF;
+  --color-english-c: #6A343D;
   --color-sociology: #FF5C7A;
   --color-success:   #4DFF88;
   --color-warning:   #FFC857;
@@ -204,7 +204,7 @@
     font-weight: 700;
     letter-spacing: 0.01em;
     color: #ffffff;
-    background-color: var(--cinematic-accent, #9D5CFF); /* override per subject */
+    background-color: var(--cinematic-accent, #2A9D8F); /* override per subject */
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: opacity 180ms ease-out, transform 120ms ease-out;

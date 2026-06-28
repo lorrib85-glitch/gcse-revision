@@ -20,8 +20,8 @@
   --science-bg:  rgba(56,210,122,.10);
   --maths:       #3B82FF;
   --maths2:      #70B8FF;
-  --english:     #9D5CFF;
-  --english2:    #C18CFF;
+  --english:     #6A343D;
+  --english2:    #8A6A6E;
   --sociology:   #FF5C7A;
   --drama:       #FF4FC3;
   --music:       #34D5FF;
@@ -68,11 +68,11 @@ p  { color: var(--text-mid); }
 }
 .btn:active { transform: scale(.97); }
 .btn-primary {
-  background: linear-gradient(135deg, #7C3AED, #9D5CFF);
+  background: #2A9D8F;
   color: #fff;
-  box-shadow: 0 4px 20px rgba(124,58,237,.4);
+  box-shadow: 0 4px 20px rgba(42,157,143,.4);
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 28px rgba(124,58,237,.55); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 28px rgba(42,157,143,.55); }
 .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
 .btn-ghost:hover { border-color: var(--border-glow); color: var(--text); background: var(--bg3); }
 .btn-success { background: linear-gradient(135deg, var(--success), #38c070); color: #00140a; box-shadow: 0 0 20px rgba(77,255,136,.18); }
@@ -96,9 +96,9 @@ p  { color: var(--text-mid); }
 .prog-wrap { background: var(--bg3); border-radius: 99px; height: 6px; overflow: hidden; }
 .prog-fill {
   height: 100%; border-radius: 99px;
-  background: linear-gradient(90deg, #7C3AED, #9D5CFF);
+  background: #2A9D8F;
   transition: width .5s cubic-bezier(.4,0,.2,1);
-  box-shadow: 0 0 8px rgba(157,92,255,.55);
+  box-shadow: 0 0 8px rgba(42,157,143,.55);
 }
 
 .phase-badge {
@@ -240,7 +240,7 @@ textarea { background: transparent; border: none; resize: none; font-family: inh
 /* ── Focus-visible outline (keyboard nav & accessibility) ── */
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid rgba(157,92,255,.75);
+  outline: 2px solid rgba(42,157,143,.75);
   outline-offset: 2px;
 }
 

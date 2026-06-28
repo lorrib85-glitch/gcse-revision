@@ -13,7 +13,7 @@ const CHAPTER_COPY = [
 
 // Pure: compute the data object needed by ChapterCompleteScreen.
 export function buildChapterCompletePayload(completedModule) {
-  const accent = SUBJECTS[completedModule.subject]?.accent || completedModule.color || '#9D5CFF'
+  const accent = SUBJECTS[completedModule.subject]?.accent || completedModule.color || SUBJECTS.History.accent
 
   const group         = MODULE_GROUPS.find(g => g.chapterIds.includes(completedModule.id))
   const chapterIdx    = group ? group.chapterIds.indexOf(completedModule.id) : -1

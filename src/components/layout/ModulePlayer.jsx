@@ -335,7 +335,7 @@ function FlashcardsBlock({ block }) {
 
 // ─── HotspotBlock — interactive labelled diagram ──────────────────────────────
 const ORGANELLE_INFO = {
-  nucleus:      { icon: '🧬', color: '#9D5CFF', title: 'Nucleus',        job: 'Controls all cell activities. Contains DNA — the instructions for everything the cell does.', analogy: 'The manager\'s office.' },
+  nucleus:      { icon: '🧬', color: SUBJECTS.Biology.accent, title: 'Nucleus',        job: 'Controls all cell activities. Contains DNA — the instructions for everything the cell does.', analogy: 'The manager\'s office.' },
   chloroplast:  { icon: '☀️', color: '#38D27A', title: 'Chloroplast',    job: 'Contains chlorophyll. Absorbs light energy for photosynthesis. This is where glucose is made.', analogy: 'Solar panels on a factory roof.' },
   cell_wall:    { icon: '🧱', color: '#F5B700', title: 'Cell Wall',      job: 'Made of cellulose. Gives the plant cell strength and a fixed shape. Animal cells don\'t have one.', analogy: 'The factory\'s outer brick walls.' },
   cell_membrane:{ icon: '🚪', color: '#3B82FF', title: 'Cell Membrane',  job: 'Controls what enters and leaves the cell. Every cell has one — plant and animal.', analogy: 'Security at the factory entrance.' },
