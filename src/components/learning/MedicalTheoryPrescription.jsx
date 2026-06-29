@@ -40,9 +40,18 @@ const BELIEF_HINTS = {
 }
 
 const BELIEF_HEADLINES = {
-  'god-sin':      'Sin causes illness, so treatment involves asking for forgiveness.',
-  'four-humours': 'Imbalance causes illness, so treatment restores the body\'s balance.',
-  'astrology':    'The stars influence illness, so treatment depends on timing.',
+  'god-sin': {
+    title: 'Illness was punishment for sin',
+    subtitle: 'Treatment focused on forgiveness.',
+  },
+  'four-humours': {
+    title: 'The body was out of balance',
+    subtitle: 'Treatment restored balance.',
+  },
+  'astrology': {
+    title: 'The stars shaped the body',
+    subtitle: 'Treatment depended on timing.',
+  },
 }
 
 const THEORY_IMAGES = {
@@ -90,10 +99,6 @@ const CSS = `
   @keyframes mtp-panel-in {
     from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes mtp-symbol-pulse {
-    0%, 100% { opacity: 0.12; }
-    50%       { opacity: 0.20; }
   }
   .mtp-tabs::-webkit-scrollbar { display: none; }
 `
@@ -307,8 +312,7 @@ function ViewPhase({
   theory, tint, activeTreatmentIdx, onSelectTreatment,
   onContinue, prefersReducedMotion,
 }) {
-  const symbol      = THEORY_SYMBOLS[theory.id] || '✦'
-  const headline    = BELIEF_HEADLINES[theory.id] || sentenceCase(theory.label)
+  const headline    = BELIEF_HEADLINES[theory.id] || { title: sentenceCase(theory.label), subtitle: '' }
   const image       = THEORY_IMAGES[theory.id] || theory.icon
   const treatments  = theory.acceptedAnswers.map(a => a.canonical)
   const details     = TREATMENT_DETAILS[theory.id] || {}
@@ -333,17 +337,17 @@ function ViewPhase({
         borderRadius: RADII.large,
         overflow: 'hidden',
         background: THEME.surfaceRaised,
-        border: `1px solid rgba(${THEME.accentRgb},0.18)`,
-        boxShadow: `0 18px 54px rgba(0,0,0,0.34), 0 0 26px rgba(${THEME.accentRgb},0.08)`,
+        border: `1px solid rgba(${THEME.accentRgb},0.16)`,
+        boxShadow: `0 20px 60px rgba(0,0,0,0.38), 0 0 30px rgba(${THEME.accentRgb},0.07)`,
         animation: prefersReducedMotion
           ? 'none'
           : `mtp-slide-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
       }}>
 
-        {/* Atmospheric top */}
+        {/* Cinematic image header */}
         <div style={{
           position: 'relative',
-          height: 190,
+          height: 260,
           overflow: 'hidden',
           background: `linear-gradient(160deg, ${tint.from} 0%, rgba(12,9,5,0.97) 100%)`,
         }}>
@@ -354,40 +358,18 @@ function ViewPhase({
               backgroundImage: `url(${image})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'brightness(0.36) saturate(0.72)',
-              opacity: 0.86,
+              filter: 'brightness(0.48) saturate(0.82)',
+              opacity: 0.92,
             }} />
           )}
           <div style={{
             position: 'absolute',
             inset: 0,
             background: [
-              `linear-gradient(180deg, rgba(21,16,10,0.10) 0%, rgba(21,16,10,0.58) 54%, rgba(21,16,10,0.98) 100%)`,
-              `radial-gradient(circle at 50% 8%, rgba(${THEME.accentRgb},0.16), transparent 48%)`,
+              'linear-gradient(180deg, rgba(12,9,5,0.10) 0%, rgba(12,9,5,0.30) 40%, rgba(21,16,10,0.97) 100%)',
+              'radial-gradient(circle at 50% 10%, rgba(245,238,217,0.08), transparent 48%)',
             ].join(', '),
           }} />
-
-          {/* Atmospheric glyph */}
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            pointerEvents: 'none',
-            userSelect: 'none',
-          }}>
-            <span style={{
-              fontSize: 76,
-              color: THEME.parchment,
-              lineHeight: 1,
-              animation: prefersReducedMotion
-                ? 'none'
-                : 'mtp-symbol-pulse 4s ease-in-out infinite',
-            }}>
-              {symbol}
-            </span>
-          </div>
 
           {/* Belief headline at bottom of image */}
           <div style={{
@@ -395,23 +377,32 @@ function ViewPhase({
             bottom: 0,
             left: 0,
             right: 0,
-            padding: `0 ${SPACING.standard}px ${SPACING.compact}px`,
+            padding: `0 ${SPACING.standard}px ${SPACING.standard}px`,
           }}>
             <div style={{
               ...TYPE.cardTitle,
               color: THEME.text,
               maxWidth: 520,
-              lineHeight: 1.18,
+              lineHeight: 1.12,
             }}>
-              {headline}
+              {headline.title}
             </div>
+            {headline.subtitle && (
+              <div style={{
+                ...TYPE.bodySmall,
+                color: THEME.textMuted,
+                marginTop: SPACING.micro,
+                lineHeight: 1.45,
+              }}>
+                {headline.subtitle}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Brief belief explanation */}
         <div style={{
-          padding: `${SPACING.compact}px ${SPACING.standard}px`,
-          borderBottom: `1px solid rgba(${THEME.accentRgb},0.12)`,
+          padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.compact}px`,
         }}>
           <p style={{
             ...TYPE.bodySmall,
@@ -423,15 +414,15 @@ function ViewPhase({
           </p>
         </div>
 
-        {/* ── Tab row — one tab per treatment ───────────────────────────── */}
+        {/* ── Treatment tabs ──────────────────────────────────────────────── */}
         <div
           className="mtp-tabs"
           style={{
             display: 'flex',
             overflowX: 'auto',
             scrollbarWidth: 'none',
-            borderBottom: `1px solid rgba(${THEME.accentRgb},0.12)`,
-            background: `rgba(${THEME.parchmentRgb},0.025)`,
+            padding: `0 ${SPACING.standard}px`,
+            gap: SPACING.micro,
           }}
         >
           {treatments.map((treatment, i) => (
@@ -448,8 +439,8 @@ function ViewPhase({
         <div
           key={activeTreatmentIdx}
           style={{
-            padding: `${SPACING.compact}px ${SPACING.standard}px`,
-            minHeight: 100,
+            padding: `${SPACING.compact}px ${SPACING.standard}px ${SPACING.standard}px`,
+            minHeight: 108,
             animation: prefersReducedMotion
               ? 'none'
               : `mtp-panel-in ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
@@ -465,7 +456,7 @@ function ViewPhase({
         </div>
 
         {/* CTA */}
-        <div style={{ padding: `0 ${SPACING.standard}px ${SPACING.standard}px` }}>
+        <div style={{ padding: `${SPACING.micro}px ${SPACING.standard}px ${SPACING.standard}px` }}>
           <ContinueCTA
             onClick={onContinue}
             accent={THEME.accent}
@@ -487,8 +478,8 @@ function TreatmentTab({ label, active, onClick }) {
       onClick={onClick}
       style={{
         flex: '1 0 auto',
-        padding: '13px 14px 11px',
-        background: 'none',
+        padding: '10px 12px 9px',
+        background: 'transparent',
         border: 'none',
         borderBottom: `2px solid ${active ? THEME.accent : 'transparent'}`,
         color: active ? THEME.accent : THEME.textFaint,
