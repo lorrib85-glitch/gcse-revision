@@ -40,6 +40,33 @@ const THEORY_SYMBOLS = {
   'astrology':    '✦',
 }
 
+const BELIEF_HINTS = {
+  'god-sin':      'Illness as punishment',
+  'four-humours': 'Illness as imbalance',
+  'astrology':    'Illness linked to the stars',
+}
+
+const BELIEF_META = {
+  'god-sin':      'Punishment and forgiveness',
+  'four-humours': 'Balance and opposites',
+  'astrology':    'Timing and body maps',
+}
+
+const BRIDGE_DETAILS = {
+  'god-sin': {
+    cause: 'Sin angered God',
+    aim: 'Cleanse the soul and ask forgiveness',
+  },
+  'four-humours': {
+    cause: 'The body was out of balance',
+    aim: 'Restore balance using opposites',
+  },
+  'astrology': {
+    cause: 'Stars and planets influenced the body',
+    aim: 'Choose the right time or body area',
+  },
+}
+
 // Per-treatment descriptions — this component is Medicine-specific so local defaults are acceptable
 const TREATMENT_DETAILS = {
   'god-sin': {
@@ -72,16 +99,16 @@ const CSS = `
     to   { opacity: 1; transform: translateY(0); }
   }
   @keyframes mtp-slide-up {
-    from { transform: translateY(100%); opacity: 0.6; }
-    to   { transform: translateY(0);    opacity: 1; }
+    from { transform: translateY(40px); opacity: 0.6; }
+    to   { transform: translateY(0);  opacity: 1; }
   }
   @keyframes mtp-panel-in {
     from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0); }
   }
   @keyframes mtp-symbol-pulse {
-    0%, 100% { opacity: 0.15; }
-    50%       { opacity: 0.26; }
+    0%, 100% { opacity: 0.12; }
+    50%       { opacity: 0.20; }
   }
   .mtp-tabs::-webkit-scrollbar { display: none; }
 `
@@ -222,6 +249,8 @@ function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
   const [pressed, setPressed] = useState(false)
   const roleLabel = ROLE_LABELS[theory.id]
   const symbol    = THEORY_SYMBOLS[theory.id] || '◆'
+  const hint      = BELIEF_HINTS[theory.id]
+  const meta      = BELIEF_META[theory.id]
 
   return (
     <button
@@ -237,12 +266,13 @@ function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
         padding: `${SPACING.compact}px`,
         textAlign: 'left',
         cursor: 'pointer',
-        border: `1px solid rgba(${THEME.accentRgb},${done ? '0.30' : '0.16'})`,
+        border: `1px solid rgba(${THEME.accentRgb},${done ? '0.34' : '0.16'})`,
         borderRadius: RADII.large,
         background: done
-          ? `rgba(${THEME.accentRgb},0.06)`
+          ? `linear-gradient(145deg, rgba(${THEME.accentRgb},0.10), rgba(${THEME.parchmentRgb},0.04))`
           : `rgba(${THEME.parchmentRgb},0.04)`,
-        transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+        boxShadow: done ? `0 0 22px rgba(${THEME.accentRgb},0.10)` : 'none',
+        transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}`,
         transform: pressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
         animation: prefersReducedMotion
           ? 'none'
@@ -258,27 +288,36 @@ function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
         alignItems: 'center',
         justifyContent: 'center',
         background: done
-          ? `rgba(${THEME.accentRgb},0.16)`
+          ? `rgba(${THEME.accentRgb},0.18)`
           : `rgba(${THEME.accentRgb},0.10)`,
-        border: `1px solid rgba(${THEME.accentRgb},0.28)`,
+        border: `1px solid rgba(${THEME.accentRgb},0.30)`,
+        boxShadow: done ? `0 0 18px rgba(${THEME.accentRgb},0.16)` : 'none',
         fontSize: 20,
         color: THEME.accent,
       }}>
         {done ? '✓' : symbol}
       </span>
 
-      <span style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 0 }}>
+      <span style={{ display: 'flex', flexDirection: 'column', gap: 5, flex: 1, minWidth: 0 }}>
         <span style={{ ...TYPE.cardTitle, color: THEME.text }}>
           {sentenceCase(theory.shortLabel || theory.label)}
         </span>
+        {hint && (
+          <span style={{
+            ...TYPE.bodySmall,
+            color: THEME.textMuted,
+            lineHeight: 1.25,
+          }}>
+            {hint}
+          </span>
+        )}
         {roleLabel && (
           <span style={{
-            ...TYPE.metadata,
-            color: done ? THEME.accent : THEME.textMuted,
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
+            ...TYPE.captionText,
+            color: done ? THEME.accent : THEME.textFaint,
+            letterSpacing: '0.02em',
           }}>
-            {done ? `${roleLabel} · explored` : roleLabel}
+            {done ? `${roleLabel} · explored` : `${roleLabel} · ${meta}`}
           </span>
         )}
       </span>
@@ -296,6 +335,7 @@ function ViewPhase({
 }) {
   const roleLabel   = ROLE_LABELS[theory.id] || 'Healer'
   const symbol      = THEORY_SYMBOLS[theory.id] || '✦'
+  const bridge      = BRIDGE_DETAILS[theory.id]
   const treatments  = theory.acceptedAnswers.map(a => a.canonical)
   const details     = TREATMENT_DETAILS[theory.id] || {}
   const activeLabel = treatments[activeTreatmentIdx]
@@ -306,23 +346,24 @@ function ViewPhase({
       minHeight: '100dvh',
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'flex-end',
+      justifyContent: 'flex-start',
       background: 'rgba(0,0,0,0.72)',
-      padding: `0 ${SPACING.standard}px ${SPACING.compact}px`,
+      padding: `calc(88px + ${SPACING.section}px) ${SPACING.standard}px calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
       boxSizing: 'border-box',
+      overflowY: 'auto',
     }}>
       <style>{CSS}</style>
 
-      {/* ── Slide-up card ───────────────────────────────────────────────── */}
+      {/* ── Focused belief card ───────────────────────────────────────────── */}
       <div style={{
         borderRadius: RADII.large,
         overflow: 'hidden',
         background: THEME.surfaceRaised,
         border: `1px solid rgba(${THEME.accentRgb},0.18)`,
+        boxShadow: `0 18px 54px rgba(0,0,0,0.34), 0 0 26px rgba(${THEME.accentRgb},0.08)`,
         animation: prefersReducedMotion
           ? 'none'
           : `mtp-slide-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}>
 
         {/* Atmospheric top */}
@@ -339,14 +380,17 @@ function ViewPhase({
               backgroundImage: `url(${theory.icon})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'brightness(0.20) saturate(0.50)',
-              opacity: 0.70,
+              filter: 'brightness(0.36) saturate(0.72)',
+              opacity: 0.86,
             }} />
           )}
           <div style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to bottom, transparent 20%, rgba(21,16,10,0.97) 100%)',
+            background: [
+              `linear-gradient(180deg, rgba(21,16,10,0.10) 0%, rgba(21,16,10,0.58) 54%, rgba(21,16,10,0.98) 100%)`,
+              `radial-gradient(circle at 50% 8%, rgba(${THEME.accentRgb},0.16), transparent 48%)`,
+            ].join(', '),
           }} />
 
           {/* Atmospheric glyph */}
@@ -360,7 +404,7 @@ function ViewPhase({
             userSelect: 'none',
           }}>
             <span style={{
-              fontSize: 80,
+              fontSize: 76,
               color: THEME.parchment,
               lineHeight: 1,
               animation: prefersReducedMotion
@@ -399,7 +443,7 @@ function ViewPhase({
           </div>
         </div>
 
-        {/* Brief belief explanation */}
+        {/* Brief belief explanation + learning bridge */}
         <div style={{
           padding: `${SPACING.compact}px ${SPACING.standard}px`,
           borderBottom: `1px solid rgba(${THEME.accentRgb},0.12)`,
@@ -412,6 +456,18 @@ function ViewPhase({
           }}>
             {theory.explanation}
           </p>
+
+          {bridge && (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: SPACING.micro,
+              marginTop: SPACING.compact,
+            }}>
+              <LogicTile label="Cause believed" value={bridge.cause} />
+              <LogicTile label="Treatment aimed to" value={bridge.aim} />
+            </div>
+          )}
         </div>
 
         {/* ── Tab row — one tab per treatment ───────────────────────────── */}
@@ -422,7 +478,7 @@ function ViewPhase({
             overflowX: 'auto',
             scrollbarWidth: 'none',
             borderBottom: `1px solid rgba(${THEME.accentRgb},0.12)`,
-            background: THEME.surfaceRaised,
+            background: `rgba(${THEME.parchmentRgb},0.025)`,
           }}
         >
           {treatments.map((treatment, i) => (
@@ -457,12 +513,46 @@ function ViewPhase({
 
         {/* CTA */}
         <div style={{ padding: `0 ${SPACING.standard}px ${SPACING.standard}px` }}>
-          <CTAButton
-            label={isLast ? 'Reveal the big picture' : 'Explore another belief'}
-            onClick={onContinue}
-            prefersReducedMotion={prefersReducedMotion}
-          />
+          {isLast ? (
+            <CTAButton
+              label="Reveal the big picture"
+              onClick={onContinue}
+              prefersReducedMotion={prefersReducedMotion}
+            />
+          ) : (
+            <SecondaryActionButton
+              label="← Choose another belief"
+              onClick={onContinue}
+              prefersReducedMotion={prefersReducedMotion}
+            />
+          )}
         </div>
+      </div>
+    </div>
+  )
+}
+
+function LogicTile({ label, value }) {
+  return (
+    <div style={{
+      padding: '10px 11px',
+      borderRadius: RADII.small,
+      background: `rgba(${THEME.accentRgb},0.07)`,
+      border: `1px solid rgba(${THEME.accentRgb},0.14)`,
+    }}>
+      <div style={{
+        ...TYPE.captionText,
+        color: THEME.textFaint,
+        marginBottom: 4,
+      }}>
+        {label}
+      </div>
+      <div style={{
+        ...TYPE.captionText,
+        color: THEME.text,
+        lineHeight: 1.35,
+      }}>
+        {value}
       </div>
     </div>
   )
@@ -481,7 +571,7 @@ function TreatmentTab({ label, active, onClick }) {
         color: active ? THEME.accent : THEME.textFaint,
         ...TYPE.metadata,
         fontWeight: active ? 700 : undefined,
-        letterSpacing: '0.03em',
+        letterSpacing: '0.02em',
         cursor: 'pointer',
         whiteSpace: 'nowrap',
         transition: [
@@ -637,7 +727,7 @@ function FinalPhase({ theories, finalPhase, screen, onComplete, prefersReducedMo
   )
 }
 
-// ── Shared: primary action button ─────────────────────────────────────────────
+// ── Shared: action buttons ────────────────────────────────────────────────────
 
 function CTAButton({ label, onClick, prefersReducedMotion }) {
   const [pressed, setPressed] = useState(false)
@@ -662,6 +752,42 @@ function CTAButton({ label, onClick, prefersReducedMotion }) {
         color: THEME.surface,
         transition: `transform ${BUTTONS.continue.transition}`,
         transform: pressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
+        animation: prefersReducedMotion
+          ? 'none'
+          : `mtp-fade-up ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
+      }}
+    >
+      {label}
+    </button>
+  )
+}
+
+function SecondaryActionButton({ label, onClick, prefersReducedMotion }) {
+  const [pressed, setPressed] = useState(false)
+
+  return (
+    <button
+      onClick={onClick}
+      onPointerDown={() => setPressed(true)}
+      onPointerUp={() => setPressed(false)}
+      onPointerLeave={() => setPressed(false)}
+      style={{
+        width: '100%',
+        minHeight: BUTTONS.secondary.minHeight,
+        borderRadius: BUTTONS.secondary.borderRadius,
+        background: 'transparent',
+        border: `1px solid rgba(${THEME.accentRgb},0.18)`,
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...TYPE.buttonText,
+        color: THEME.accent,
+        transition: `transform ${BUTTONS.secondary.transition}`,
+        transform: pressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
+        animation: prefersReducedMotion
+          ? 'none'
+          : `mtp-fade-up ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
       }}
     >
       {label}
