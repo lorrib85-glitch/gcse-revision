@@ -3,7 +3,6 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
-import { BUTTONS } from '../../constants/buttons.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import ContentShell from '../layout/ContentShell.jsx'
@@ -299,7 +298,7 @@ function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
 
 function ViewPhase({
   theory, tint, activeTreatmentIdx, onSelectTreatment,
-  onContinue, isLast, prefersReducedMotion,
+  onContinue, prefersReducedMotion,
 }) {
   const symbol      = THEORY_SYMBOLS[theory.id] || '✦'
   const headline    = BELIEF_HEADLINES[theory.id] || sentenceCase(theory.label)
@@ -459,19 +458,15 @@ function ViewPhase({
 
         {/* CTA */}
         <div style={{ padding: `0 ${SPACING.standard}px ${SPACING.standard}px` }}>
-          {isLast ? (
-            <CTAButton
-              label="Reveal the big picture"
-              onClick={onContinue}
-              prefersReducedMotion={prefersReducedMotion}
-            />
-          ) : (
-            <SecondaryActionButton
-              label="← Choose another belief"
-              onClick={onContinue}
-              prefersReducedMotion={prefersReducedMotion}
-            />
-          )}
+          <ContinueCTA
+            onClick={onContinue}
+            accent={THEME.accent}
+            style={{
+              animation: prefersReducedMotion
+                ? 'none'
+                : `mtp-fade-up ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
+            }}
+          />
         </div>
       </div>
     </div>
@@ -644,73 +639,5 @@ function FinalPhase({ theories, finalPhase, screen, onComplete, prefersReducedMo
         />
       )}
     </div>
-  )
-}
-
-// ── Shared: action buttons ────────────────────────────────────────────────────
-
-function CTAButton({ label, onClick, prefersReducedMotion }) {
-  const [pressed, setPressed] = useState(false)
-
-  return (
-    <button
-      onClick={onClick}
-      onPointerDown={() => setPressed(true)}
-      onPointerUp={() => setPressed(false)}
-      onPointerLeave={() => setPressed(false)}
-      style={{
-        width: '100%',
-        height: BUTTONS.continue.height,
-        borderRadius: BUTTONS.continue.borderRadius,
-        background: THEME.accent,
-        border: 'none',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        ...TYPE.buttonText,
-        color: THEME.surface,
-        transition: `transform ${BUTTONS.continue.transition}`,
-        transform: pressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
-        animation: prefersReducedMotion
-          ? 'none'
-          : `mtp-fade-up ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
-      }}
-    >
-      {label}
-    </button>
-  )
-}
-
-function SecondaryActionButton({ label, onClick, prefersReducedMotion }) {
-  const [pressed, setPressed] = useState(false)
-
-  return (
-    <button
-      onClick={onClick}
-      onPointerDown={() => setPressed(true)}
-      onPointerUp={() => setPressed(false)}
-      onPointerLeave={() => setPressed(false)}
-      style={{
-        width: '100%',
-        height: BUTTONS.secondary.height,
-        borderRadius: BUTTONS.secondary.borderRadius,
-        background: 'transparent',
-        border: `1px solid rgba(${THEME.accentRgb},0.18)`,
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        ...TYPE.buttonText,
-        color: THEME.accent,
-        transition: `transform ${BUTTONS.secondary.transition}`,
-        transform: pressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
-        animation: prefersReducedMotion
-          ? 'none'
-          : `mtp-fade-up ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
-      }}
-    >
-      {label}
-    </button>
   )
 }
