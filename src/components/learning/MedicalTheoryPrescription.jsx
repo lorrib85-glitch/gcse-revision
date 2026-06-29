@@ -45,6 +45,13 @@ const BELIEF_HEADLINES = {
   'astrology':    'The stars influence illness, so treatment depends on timing.',
 }
 
+const THEORY_IMAGES = {
+  'god-sin':      '/History/Medicine/god_sin-1024.webp',
+  'four-humours': '/History/Medicine/four_humours_treatment-1024.webp',
+  'astrology':    '/History/Medicine/astrology-1024.webp',
+  'miasma':       '/History/Medicine/miasma-1024.webp',
+}
+
 // Per-treatment descriptions — this component is Medicine-specific so local defaults are acceptable
 const TREATMENT_DETAILS = {
   'god-sin': {
@@ -302,6 +309,7 @@ function ViewPhase({
 }) {
   const symbol      = THEORY_SYMBOLS[theory.id] || '✦'
   const headline    = BELIEF_HEADLINES[theory.id] || sentenceCase(theory.label)
+  const image       = THEORY_IMAGES[theory.id] || theory.icon
   const treatments  = theory.acceptedAnswers.map(a => a.canonical)
   const details     = TREATMENT_DETAILS[theory.id] || {}
   const activeLabel = treatments[activeTreatmentIdx]
@@ -339,11 +347,11 @@ function ViewPhase({
           overflow: 'hidden',
           background: `linear-gradient(160deg, ${tint.from} 0%, rgba(12,9,5,0.97) 100%)`,
         }}>
-          {theory.icon && (
+          {image && (
             <div style={{
               position: 'absolute',
               inset: 0,
-              backgroundImage: `url(${theory.icon})`,
+              backgroundImage: `url(${image})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               filter: 'brightness(0.36) saturate(0.72)',
