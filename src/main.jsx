@@ -14,6 +14,18 @@ class ErrorBoundary extends React.Component {
   static getDerivedStateFromError(error) {
     return { error: error.message || String(error) }
   }
+  componentDidCatch(error) {
+    // Chunk load failures happen when Vercel redeploys and the browser has cached
+    // an old bundle that references chunk hashes that no longer exist. Reloading
+    // fetches fresh HTML with the new chunk names — but guard against a reload loop.
+    const isChunkError = /dynamically imported module|Loading chunk|failed to fetch/i.test(
+      error.message || ''
+    )
+    if (isChunkError && !sessionStorage.getItem('chunk-reload')) {
+      sessionStorage.setItem('chunk-reload', '1')
+      window.location.reload()
+    }
+  }
   render() {
     if (this.state.error) {
       return (
