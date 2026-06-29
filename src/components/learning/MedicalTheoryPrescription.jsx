@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
@@ -23,9 +23,9 @@ const THEME = {
 }
 
 const THEORY_TINTS = {
-  'god-sin':      { from: 'rgba(80,40,8,0.90)',  to: 'rgba(12,9,5,0.98)' },
-  'four-humours': { from: 'rgba(70,20,10,0.90)', to: 'rgba(12,9,5,0.98)' },
-  'astrology':    { from: 'rgba(20,20,55,0.90)', to: 'rgba(12,9,5,0.98)' },
+  'god-sin':      { from: 'rgba(80,40,8,0.92)',  to: 'rgba(12,9,5,0.98)' },
+  'four-humours': { from: 'rgba(70,20,10,0.92)', to: 'rgba(12,9,5,0.98)' },
+  'astrology':    { from: 'rgba(20,20,55,0.92)', to: 'rgba(12,9,5,0.98)' },
 }
 
 const ROLE_LABELS = {
@@ -40,10 +40,30 @@ const THEORY_SYMBOLS = {
   'astrology':    '✦',
 }
 
-const TREATMENT_LOGIC = {
-  'god-sin':      'So treatment focused on the soul: prayer, confession, or pilgrimage.',
-  'four-humours': 'So treatment tried to rebalance the body through bleeding, purging, or diet.',
-  'astrology':    'So treatment meant checking the stars and choosing the right time.',
+// Per-treatment descriptions — this component is Medicine-specific so local defaults are acceptable
+const TREATMENT_DETAILS = {
+  'god-sin': {
+    'Prayer':
+      'Asking God directly for forgiveness and healing. Prayer required no physician and no money — anyone could do it anywhere.',
+    'Pilgrimage':
+      'Travelling to a holy site, such as Canterbury Cathedral, to seek God\'s favour. The journey itself demonstrated faith and devotion.',
+    'Confession':
+      'Admitting sins to a priest and receiving absolution. The Church taught that illness was often God\'s punishment for sin, so cleansing the soul could restore health.',
+  },
+  'four-humours': {
+    'Bloodletting':
+      'Removing blood using a knife, leeches, or cupping to reduce excess blood humour. Physicians used zodiac charts to choose which vein to open and when.',
+    'Purging':
+      'Expelling excess phlegm or bile with laxatives or emetics. Purging forced the imbalanced humour out of the body.',
+    'Herbal remedies':
+      'Plants were chosen for their qualities — hot, cold, wet or dry — to counteract the dominant humour. Diet changes and rest were also commonly prescribed.',
+  },
+  'astrology': {
+    'Astrology charts':
+      'Medieval physicians consulted zodiac charts to identify which organ was affected. Each star sign was linked to a specific part of the body.',
+    'Treatment at the right time':
+      'Surgery, bloodletting, or medicine was delayed until the planets were in a favourable position. Timing was considered as important as the treatment itself.',
+  },
 }
 
 const CSS = `
@@ -51,14 +71,19 @@ const CSS = `
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  @keyframes mtp-chip-in {
-    from { opacity: 0; transform: scale(0.88); }
-    to   { opacity: 1; transform: scale(1); }
+  @keyframes mtp-slide-up {
+    from { transform: translateY(100%); opacity: 0.6; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  @keyframes mtp-panel-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
   @keyframes mtp-symbol-pulse {
-    0%, 100% { opacity: 0.17; }
-    50%       { opacity: 0.28; }
+    0%, 100% { opacity: 0.15; }
+    50%       { opacity: 0.26; }
   }
+  .mtp-tabs::-webkit-scrollbar { display: none; }
 `
 
 function sentenceCase(value = '') {
@@ -66,43 +91,16 @@ function sentenceCase(value = '') {
   return cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1) : cleaned
 }
 
-// Pool of all canonical treatment names across every theory, sorted alphabetically
-function buildChipPool(theories) {
-  const seen = new Set()
-  const chips = []
-  for (const t of theories) {
-    for (const ans of t.acceptedAnswers) {
-      if (!seen.has(ans.canonical)) {
-        seen.add(ans.canonical)
-        chips.push(ans.canonical)
-      }
-    }
-  }
-  return chips.sort((a, b) => a.localeCompare(b))
-}
-
-function checkChips(selected, theory) {
-  const correctSet = new Set(theory.acceptedAnswers.map(a => a.canonical))
-  return {
-    correct:   selected.filter(c =>  correctSet.has(c)),
-    incorrect: selected.filter(c => !correctSet.has(c)),
-    missed:    [...correctSet].filter(c => !selected.includes(c)),
-  }
-}
-
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function MedicalTheoryPrescription({ screen, onComplete }) {
   const theories = screen.theories || []
 
-  const [phase,         setPhase]         = useState('select')
-  const [activeId,      setActiveId]      = useState(null)
-  const [completedIds,  setCompletedIds]  = useState([])
-  const [selectedChips, setSelectedChips] = useState([])
-  const [chipResult,    setChipResult]    = useState(null)
-  const [revealCount,   setRevealCount]   = useState(0)
-  const [finalPhase,    setFinalPhase]    = useState(0)
-  const [pressed,       setPressed]       = useState(false)
+  const [phase,              setPhase]             = useState('select')
+  const [activeId,           setActiveId]           = useState(null)
+  const [completedIds,       setCompletedIds]       = useState([])
+  const [activeTreatmentIdx, setActiveTreatmentIdx] = useState(0)
+  const [finalPhase,         setFinalPhase]         = useState(0)
 
   const activeTheory = theories.find(t => t.id === activeId)
   const tint = THEORY_TINTS[activeId] || THEORY_TINTS['god-sin']
@@ -111,18 +109,6 @@ export default function MedicalTheoryPrescription({ screen, onComplete }) {
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  // Chip pool is the same for every theory — all treatments pooled and sorted
-  const chipPool = useMemo(() => buildChipPool(theories), [theories])
-
-  // Animate missed chips in one by one
-  useEffect(() => {
-    if (phase !== 'reveal' || !chipResult) return
-    if (revealCount >= chipResult.missed.length) return
-    const t = setTimeout(() => setRevealCount(c => c + 1), 700)
-    return () => clearTimeout(t)
-  }, [phase, revealCount, chipResult])
-
-  // Stagger the final summary columns
   useEffect(() => {
     if (phase !== 'final') return
     if (finalPhase >= theories.length) return
@@ -130,28 +116,13 @@ export default function MedicalTheoryPrescription({ screen, onComplete }) {
     return () => clearTimeout(t)
   }, [phase, finalPhase, theories.length])
 
-  function selectTheory(id) {
+  function openBelief(id) {
     setActiveId(id)
-    setSelectedChips([])
-    setChipResult(null)
-    setPhase('chips')
+    setActiveTreatmentIdx(0)
+    setPhase('view')
   }
 
-  function toggleChip(canonical) {
-    setSelectedChips(prev =>
-      prev.includes(canonical)
-        ? prev.filter(c => c !== canonical)
-        : [...prev, canonical]
-    )
-  }
-
-  function checkPrescription() {
-    setChipResult(checkChips(selectedChips, activeTheory))
-    setRevealCount(0)
-    setPhase('reveal')
-  }
-
-  function finishReveal() {
+  function closeView() {
     const next = completedIds.includes(activeId)
       ? completedIds
       : [...completedIds, activeId]
@@ -165,43 +136,27 @@ export default function MedicalTheoryPrescription({ screen, onComplete }) {
     }
   }
 
+  const isLastBelief =
+    !completedIds.includes(activeId) &&
+    completedIds.length + 1 === theories.length
+
   if (phase === 'select') return (
     <SelectPhase
       theories={theories}
       completedIds={completedIds}
-      onSelect={selectTheory}
+      onSelect={openBelief}
       prefersReducedMotion={prefersReducedMotion}
     />
   )
 
-  if (phase === 'chips') return (
-    <ChipsPhase
+  if (phase === 'view' && activeTheory) return (
+    <ViewPhase
       theory={activeTheory}
       tint={tint}
-      chipPool={chipPool}
-      selectedChips={selectedChips}
-      onToggleChip={toggleChip}
-      onCheck={checkPrescription}
-      pressed={pressed}
-      setPressed={setPressed}
-      prefersReducedMotion={prefersReducedMotion}
-    />
-  )
-
-  if (phase === 'reveal') return (
-    <RevealPhase
-      theory={activeTheory}
-      chipPool={chipPool}
-      chipResult={chipResult}
-      selectedChips={selectedChips}
-      revealCount={revealCount}
-      allComplete={
-        !completedIds.includes(activeId) &&
-        completedIds.length + 1 === theories.length
-      }
-      onContinue={finishReveal}
-      pressed={pressed}
-      setPressed={setPressed}
+      activeTreatmentIdx={activeTreatmentIdx}
+      onSelectTreatment={setActiveTreatmentIdx}
+      onContinue={closeView}
+      isLast={isLastBelief}
       prefersReducedMotion={prefersReducedMotion}
     />
   )
@@ -240,7 +195,7 @@ function SelectPhase({ theories, completedIds, onSelect, prefersReducedMotion })
           color: THEME.textMuted,
           margin: `${SPACING.compact}px 0 0`,
         }}>
-          Pick a belief, then choose the treatments that would make sense.
+          Pick a belief to explore the treatments it led to.
         </p>
       </div>
 
@@ -252,7 +207,7 @@ function SelectPhase({ theories, completedIds, onSelect, prefersReducedMotion })
               key={theory.id}
               theory={theory}
               done={done}
-              onClick={() => !done && onSelect(theory.id)}
+              onClick={() => onSelect(theory.id)}
               delay={i * 80}
               prefersReducedMotion={prefersReducedMotion}
             />
@@ -271,7 +226,7 @@ function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
   return (
     <button
       onClick={onClick}
-      onPointerDown={() => !done && setPressed(true)}
+      onPointerDown={() => setPressed(true)}
       onPointerUp={() => setPressed(false)}
       onPointerLeave={() => setPressed(false)}
       style={{
@@ -281,11 +236,12 @@ function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
         width: '100%',
         padding: `${SPACING.compact}px`,
         textAlign: 'left',
-        cursor: done ? 'default' : 'pointer',
-        border: `1px solid rgba(${THEME.accentRgb},${done ? '0.24' : '0.16'})`,
+        cursor: 'pointer',
+        border: `1px solid rgba(${THEME.accentRgb},${done ? '0.30' : '0.16'})`,
         borderRadius: RADII.large,
-        background: `rgba(${THEME.parchmentRgb},0.04)`,
-        opacity: done ? 0.66 : 1,
+        background: done
+          ? `rgba(${THEME.accentRgb},0.06)`
+          : `rgba(${THEME.parchmentRgb},0.04)`,
         transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
         transform: pressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
         animation: prefersReducedMotion
@@ -301,66 +257,78 @@ function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: `rgba(${THEME.accentRgb},0.10)`,
-        border: `1px solid rgba(${THEME.accentRgb},0.24)`,
+        background: done
+          ? `rgba(${THEME.accentRgb},0.16)`
+          : `rgba(${THEME.accentRgb},0.10)`,
+        border: `1px solid rgba(${THEME.accentRgb},0.28)`,
         fontSize: 20,
-        color: done ? THEME.textFaint : THEME.accent,
+        color: THEME.accent,
       }}>
         {done ? '✓' : symbol}
       </span>
 
       <span style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 0 }}>
-        <span style={{ ...TYPE.cardTitle, color: done ? THEME.textFaint : THEME.text }}>
+        <span style={{ ...TYPE.cardTitle, color: THEME.text }}>
           {sentenceCase(theory.shortLabel || theory.label)}
         </span>
         {roleLabel && (
           <span style={{
             ...TYPE.metadata,
-            color: done ? THEME.textFaint : THEME.textMuted,
+            color: done ? THEME.accent : THEME.textMuted,
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
           }}>
-            {roleLabel}
+            {done ? `${roleLabel} · explored` : roleLabel}
           </span>
         )}
       </span>
 
-      <span style={{ color: THEME.textFaint, fontSize: 18, flexShrink: 0 }}>
-        {done ? '' : '›'}
-      </span>
+      <span style={{ color: THEME.textFaint, fontSize: 18, flexShrink: 0 }}>›</span>
     </button>
   )
 }
 
-// ── Phase: Chips ──────────────────────────────────────────────────────────────
+// ── Phase: View (overlay card with treatment tabs) ────────────────────────────
 
-function ChipsPhase({
-  theory, tint, chipPool, selectedChips,
-  onToggleChip, onCheck, pressed, setPressed, prefersReducedMotion,
+function ViewPhase({
+  theory, tint, activeTreatmentIdx, onSelectTreatment,
+  onContinue, isLast, prefersReducedMotion,
 }) {
-  const roleLabel    = ROLE_LABELS[theory.id] || 'Healer'
-  const symbol       = THEORY_SYMBOLS[theory.id] || '✦'
-  const correctCount = theory.acceptedAnswers.length
+  const roleLabel   = ROLE_LABELS[theory.id] || 'Healer'
+  const symbol      = THEORY_SYMBOLS[theory.id] || '✦'
+  const treatments  = theory.acceptedAnswers.map(a => a.canonical)
+  const details     = TREATMENT_DETAILS[theory.id] || {}
+  const activeLabel = treatments[activeTreatmentIdx]
+  const detail      = details[activeLabel] || ''
 
   return (
-    <ContentShell subject="History">
+    <div style={{
+      minHeight: '100dvh',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-end',
+      background: 'rgba(0,0,0,0.72)',
+      padding: `0 ${SPACING.standard}px ${SPACING.compact}px`,
+      boxSizing: 'border-box',
+    }}>
       <style>{CSS}</style>
 
-      {/* ── Belief card ───────────────────────────────────────────────────── */}
+      {/* ── Slide-up card ───────────────────────────────────────────────── */}
       <div style={{
         borderRadius: RADII.large,
         overflow: 'hidden',
-        border: `1px solid rgba(${THEME.accentRgb},0.18)`,
         background: THEME.surfaceRaised,
-        marginBottom: SPACING.compact,
+        border: `1px solid rgba(${THEME.accentRgb},0.18)`,
         animation: prefersReducedMotion
           ? 'none'
-          : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+          : `mtp-slide-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}>
-        {/* Atmospheric top — 38% of a typical card */}
+
+        {/* Atmospheric top */}
         <div style={{
           position: 'relative',
-          height: 185,
+          height: 190,
           overflow: 'hidden',
           background: `linear-gradient(160deg, ${tint.from} 0%, rgba(12,9,5,0.97) 100%)`,
         }}>
@@ -371,17 +339,17 @@ function ChipsPhase({
               backgroundImage: `url(${theory.icon})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'brightness(0.22) saturate(0.55)',
-              opacity: 0.65,
+              filter: 'brightness(0.20) saturate(0.50)',
+              opacity: 0.70,
             }} />
           )}
-          {/* Bottom fade into card body */}
           <div style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to bottom, transparent 25%, rgba(21,16,10,0.96) 100%)',
+            background: 'linear-gradient(to bottom, transparent 20%, rgba(21,16,10,0.97) 100%)',
           }} />
-          {/* Large atmospheric glyph */}
+
+          {/* Atmospheric glyph */}
           <div style={{
             position: 'absolute',
             inset: 0,
@@ -392,7 +360,7 @@ function ChipsPhase({
             userSelect: 'none',
           }}>
             <span style={{
-              fontSize: 76,
+              fontSize: 80,
               color: THEME.parchment,
               lineHeight: 1,
               animation: prefersReducedMotion
@@ -402,11 +370,14 @@ function ChipsPhase({
               {symbol}
             </span>
           </div>
-          {/* Role badge — bottom-left */}
+
+          {/* Role badge + title at bottom of image */}
           <div style={{
             position: 'absolute',
-            bottom: SPACING.compact,
-            left: SPACING.compact,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: `0 ${SPACING.standard}px ${SPACING.compact}px`,
           }}>
             <span style={{
               ...TYPE.metadata,
@@ -414,270 +385,113 @@ function ChipsPhase({
               background: `rgba(${THEME.accentRgb},0.14)`,
               border: `1px solid rgba(${THEME.accentRgb},0.32)`,
               borderRadius: RADII.small,
-              padding: '4px 12px',
+              padding: '3px 10px',
               letterSpacing: '0.07em',
               textTransform: 'uppercase',
+              display: 'inline-block',
+              marginBottom: 8,
             }}>
               {roleLabel}
             </span>
+            <div style={{ ...TYPE.cardTitle, color: THEME.text }}>
+              {sentenceCase(theory.label)}
+            </div>
           </div>
         </div>
 
-        {/* Card body */}
+        {/* Brief belief explanation */}
         <div style={{
-          padding: `${SPACING.compact}px ${SPACING.standard}px ${SPACING.standard}px`,
+          padding: `${SPACING.compact}px ${SPACING.standard}px`,
+          borderBottom: `1px solid rgba(${THEME.accentRgb},0.12)`,
         }}>
-          <div style={{ ...TYPE.cardTitle, color: THEME.text, marginBottom: 8 }}>
-            {sentenceCase(theory.label)}
-          </div>
+          <p style={{
+            ...TYPE.bodySmall,
+            color: THEME.textMuted,
+            margin: 0,
+            lineHeight: 1.6,
+          }}>
+            {theory.explanation}
+          </p>
+        </div>
+
+        {/* ── Tab row — one tab per treatment ───────────────────────────── */}
+        <div
+          className="mtp-tabs"
+          style={{
+            display: 'flex',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            borderBottom: `1px solid rgba(${THEME.accentRgb},0.12)`,
+            background: THEME.surfaceRaised,
+          }}
+        >
+          {treatments.map((treatment, i) => (
+            <TreatmentTab
+              key={treatment}
+              label={treatment}
+              active={i === activeTreatmentIdx}
+              onClick={() => onSelectTreatment(i)}
+            />
+          ))}
+        </div>
+
+        {/* ── Treatment content panel ────────────────────────────────────── */}
+        <div
+          key={activeTreatmentIdx}
+          style={{
+            padding: `${SPACING.compact}px ${SPACING.standard}px`,
+            minHeight: 100,
+            animation: prefersReducedMotion
+              ? 'none'
+              : `mtp-panel-in ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
+          }}
+        >
           <div style={{
             ...TYPE.bodySmall,
             color: THEME.textMuted,
-            lineHeight: 1.65,
-            marginBottom: SPACING.compact,
+            lineHeight: 1.7,
           }}>
-            {theory.explanation}
-          </div>
-
-          {/* ── Treatment chips ───────────────────────────────────────────── */}
-          <div style={{
-            borderTop: `1px solid rgba(${THEME.accentRgb},0.14)`,
-            paddingTop: SPACING.compact,
-          }}>
-            {TREATMENT_LOGIC[theory.id] && (
-              <div style={{
-                ...TYPE.bodySmall,
-                color: THEME.textMuted,
-                fontStyle: 'italic',
-                lineHeight: 1.55,
-                marginBottom: SPACING.compact,
-              }}>
-                {TREATMENT_LOGIC[theory.id]}
-              </div>
-            )}
-            <div style={{
-              ...TYPE.metadata,
-              color: THEME.textFaint,
-              marginBottom: 4,
-              textTransform: 'uppercase',
-              letterSpacing: '0.07em',
-            }}>
-              Which treatments match this belief?
-            </div>
-            <div style={{
-              ...TYPE.metadata,
-              color: THEME.textFaint,
-              marginBottom: 12,
-              letterSpacing: '0.04em',
-            }}>
-              Choose {correctCount}.
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {chipPool.map((canonical, i) => (
-                <TreatmentChip
-                  key={canonical}
-                  label={canonical}
-                  selected={selectedChips.includes(canonical)}
-                  onToggle={() => onToggleChip(canonical)}
-                  delay={i * 35}
-                  prefersReducedMotion={prefersReducedMotion}
-                />
-              ))}
-            </div>
+            {detail}
           </div>
         </div>
-      </div>
 
-      <CTA
-        label="Check choices"
-        onClick={onCheck}
-        disabled={selectedChips.length === 0}
-        pressed={pressed}
-        setPressed={setPressed}
-        prefersReducedMotion={prefersReducedMotion}
-      />
-    </ContentShell>
+        {/* CTA */}
+        <div style={{ padding: `0 ${SPACING.standard}px ${SPACING.standard}px` }}>
+          <CTAButton
+            label={isLast ? 'Reveal the big picture' : 'Explore another belief'}
+            onClick={onContinue}
+            prefersReducedMotion={prefersReducedMotion}
+          />
+        </div>
+      </div>
+    </div>
   )
 }
 
-function TreatmentChip({ label, selected, onToggle, delay, prefersReducedMotion }) {
-  const [pressed, setPressed] = useState(false)
-
+function TreatmentTab({ label, active, onClick }) {
   return (
     <button
-      onClick={onToggle}
-      onPointerDown={() => setPressed(true)}
-      onPointerUp={() => setPressed(false)}
-      onPointerLeave={() => setPressed(false)}
+      onClick={onClick}
       style={{
-        padding: '8px 14px',
-        borderRadius: RADII.medium,
-        border: selected
-          ? `1.5px solid ${THEME.accent}`
-          : `1px solid rgba(${THEME.accentRgb},0.22)`,
-        background: selected
-          ? `rgba(${THEME.accentRgb},0.16)`
-          : `rgba(${THEME.parchmentRgb},0.035)`,
-        color: selected ? THEME.text : THEME.textMuted,
-        ...TYPE.bodySmall,
-        fontWeight: selected ? 600 : TYPE.bodySmall?.fontWeight,
+        flex: '1 0 auto',
+        padding: '13px 14px 11px',
+        background: 'none',
+        border: 'none',
+        borderBottom: `2px solid ${active ? THEME.accent : 'transparent'}`,
+        color: active ? THEME.accent : THEME.textFaint,
+        ...TYPE.metadata,
+        fontWeight: active ? 700 : undefined,
+        letterSpacing: '0.03em',
         cursor: 'pointer',
+        whiteSpace: 'nowrap',
         transition: [
-          `border-color ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-          `background ${MOTION.duration.standard} ${MOTION.easing.standard}`,
           `color ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+          `border-color ${MOTION.duration.standard} ${MOTION.easing.standard}`,
         ].join(', '),
-        transform: pressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
-        animation: prefersReducedMotion
-          ? 'none'
-          : `mtp-chip-in ${MOTION.duration.slow} ${MOTION.easing.standard} ${delay}ms both`,
       }}
     >
       {label}
     </button>
-  )
-}
-
-// ── Phase: Reveal ─────────────────────────────────────────────────────────────
-
-function RevealPhase({
-  theory, chipPool, chipResult, selectedChips, revealCount,
-  allComplete, onContinue, pressed, setPressed, prefersReducedMotion,
-}) {
-  const { correct = [], incorrect = [], missed = [] } = chipResult || {}
-  const allRevealed = revealCount >= missed.length
-  const correctSet  = new Set(theory.acceptedAnswers.map(a => a.canonical))
-
-  return (
-    <ContentShell subject="History">
-      <style>{CSS}</style>
-
-      <div style={{
-        marginBottom: SPACING.compact,
-        animation: prefersReducedMotion
-          ? 'none'
-          : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-      }}>
-        <div style={{ ...TYPE.cardTitle, color: THEME.text, marginBottom: 6 }}>
-          {sentenceCase(theory.label)}
-        </div>
-        <div style={{ ...TYPE.bodySmall, color: THEME.textMuted }}>
-          Here are the treatments linked to this belief.
-        </div>
-      </div>
-
-      {/* Results chip grid */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: SPACING.compact }}>
-        {chipPool.map((canonical) => {
-          const wasSelected  = selectedChips.includes(canonical)
-          const isCorrect    = correctSet.has(canonical)
-          const missedIdx    = missed.indexOf(canonical)
-          const isMissedNow  = missedIdx >= 0 && missedIdx < revealCount
-
-          let state
-          if      (wasSelected && isCorrect)  state = 'correct'
-          else if (wasSelected && !isCorrect) state = 'incorrect'
-          else if (isMissedNow)               state = 'missed'
-          else                                state = 'neutral'
-
-          if (state === 'neutral') return null
-
-          return (
-            <RevealChip
-              key={canonical}
-              label={canonical}
-              state={state}
-              prefersReducedMotion={prefersReducedMotion}
-            />
-          )
-        })}
-      </div>
-
-      {/* Score line */}
-      <div style={{
-        ...TYPE.metadata,
-        color: correct.length === theory.acceptedAnswers.length
-          ? '#A8D68A'
-          : THEME.textFaint,
-        marginBottom: SPACING.compact,
-      }}>
-        {correct.length} of {theory.acceptedAnswers.length} correct
-        {incorrect.length > 0 && ` · ${incorrect.length} wrong`}
-      </div>
-
-      {/* Explanation — appears after all missed items are revealed */}
-      {allRevealed && theory.revealExplanation && (
-        <div style={{
-          ...TYPE.bodySmall,
-          color: THEME.textMuted,
-          lineHeight: 1.65,
-          borderLeft: `2px solid rgba(${THEME.accentRgb},0.32)`,
-          paddingLeft: SPACING.compact,
-          marginBottom: SPACING.compact,
-          animation: prefersReducedMotion
-            ? 'none'
-            : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-        }}>
-          {theory.revealExplanation}
-        </div>
-      )}
-
-      {allRevealed && (
-        <CTA
-          label={allComplete ? 'Reveal the big picture' : 'Explore another belief'}
-          onClick={onContinue}
-          pressed={pressed}
-          setPressed={setPressed}
-          prefersReducedMotion={prefersReducedMotion}
-        />
-      )}
-    </ContentShell>
-  )
-}
-
-function RevealChip({ label, state, prefersReducedMotion }) {
-  const S = {
-    correct: {
-      border: '1.5px solid #5C8A3A',
-      background: 'rgba(92,138,58,0.14)',
-      color: '#A8D68A',
-      prefix: '✓ ',
-      weight: 600,
-    },
-    incorrect: {
-      border: '1px solid rgba(180,60,40,0.36)',
-      background: 'rgba(180,60,40,0.07)',
-      color: 'rgba(245,238,217,0.28)',
-      textDecoration: 'line-through',
-      prefix: '',
-      weight: undefined,
-    },
-    missed: {
-      border: `1.5px solid ${THEME.accent}`,
-      background: `rgba(${THEME.accentRgb},0.13)`,
-      color: THEME.accent,
-      prefix: '✦ ',
-      weight: 600,
-    },
-  }
-  const s = S[state]
-
-  return (
-    <div style={{
-      padding: '8px 14px',
-      borderRadius: RADII.medium,
-      ...TYPE.bodySmall,
-      fontWeight: s.weight,
-      border: s.border,
-      background: s.background,
-      color: s.color,
-      textDecoration: s.textDecoration,
-      animation: state === 'missed' && !prefersReducedMotion
-        ? `mtp-chip-in ${MOTION.duration.slow} ${MOTION.easing.standard} both`
-        : 'none',
-    }}>
-      {s.prefix}{label}
-    </div>
   )
 }
 
@@ -823,37 +637,31 @@ function FinalPhase({ theories, finalPhase, screen, onComplete, prefersReducedMo
   )
 }
 
-// ── Shared: CTA button ────────────────────────────────────────────────────────
+// ── Shared: primary action button ─────────────────────────────────────────────
 
-function CTA({ label, onClick, disabled = false, pressed, setPressed, prefersReducedMotion }) {
+function CTAButton({ label, onClick, prefersReducedMotion }) {
+  const [pressed, setPressed] = useState(false)
+
   return (
     <button
       onClick={onClick}
-      disabled={disabled}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
-      onMouseLeave={() => setPressed(false)}
-      onTouchStart={() => setPressed(true)}
-      onTouchEnd={() => setPressed(false)}
+      onPointerDown={() => setPressed(true)}
+      onPointerUp={() => setPressed(false)}
+      onPointerLeave={() => setPressed(false)}
       style={{
         width: '100%',
         height: BUTTONS.continue.height,
         borderRadius: BUTTONS.continue.borderRadius,
-        background: disabled ? `rgba(${THEME.accentRgb},0.08)` : THEME.accent,
-        border: disabled ? `1px solid rgba(${THEME.accentRgb},0.18)` : 'none',
-        cursor: disabled ? 'default' : 'pointer',
-        opacity: disabled ? 0.45 : 1,
+        background: THEME.accent,
+        border: 'none',
+        cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         ...TYPE.buttonText,
-        color: disabled ? THEME.accent : THEME.surface,
+        color: THEME.surface,
         transition: `transform ${BUTTONS.continue.transition}`,
-        transform: pressed && !disabled ? `scale(${MOTION.scale.press})` : 'scale(1)',
-        animation: prefersReducedMotion
-          ? 'none'
-          : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-        marginTop: SPACING.micro,
+        transform: pressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
       }}
     >
       {label}
