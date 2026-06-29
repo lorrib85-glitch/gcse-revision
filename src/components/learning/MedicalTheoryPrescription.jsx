@@ -28,12 +28,6 @@ const THEORY_TINTS = {
   'astrology':    { from: 'rgba(20,20,55,0.92)', to: 'rgba(12,9,5,0.98)' },
 }
 
-const ROLE_LABELS = {
-  'god-sin':      'Priest',
-  'four-humours': 'Physician',
-  'astrology':    'Astrologer',
-}
-
 const THEORY_SYMBOLS = {
   'god-sin':      '✝',
   'four-humours': '⚖',
@@ -46,25 +40,10 @@ const BELIEF_HINTS = {
   'astrology':    'Illness linked to the stars',
 }
 
-const BELIEF_META = {
-  'god-sin':      'Punishment and forgiveness',
-  'four-humours': 'Balance and opposites',
-  'astrology':    'Timing and body maps',
-}
-
-const BRIDGE_DETAILS = {
-  'god-sin': {
-    cause: 'Sin angered God',
-    aim: 'Cleanse the soul and ask forgiveness',
-  },
-  'four-humours': {
-    cause: 'The body was out of balance',
-    aim: 'Restore balance using opposites',
-  },
-  'astrology': {
-    cause: 'Stars and planets influenced the body',
-    aim: 'Choose the right time or body area',
-  },
+const BELIEF_HEADLINES = {
+  'god-sin':      'Sin causes illness, so treatment involves asking for forgiveness.',
+  'four-humours': 'Imbalance causes illness, so treatment restores the body\'s balance.',
+  'astrology':    'The stars influence illness, so treatment depends on timing.',
 }
 
 // Per-treatment descriptions — this component is Medicine-specific so local defaults are acceptable
@@ -247,10 +226,8 @@ function SelectPhase({ theories, completedIds, onSelect, prefersReducedMotion })
 
 function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
   const [pressed, setPressed] = useState(false)
-  const roleLabel = ROLE_LABELS[theory.id]
   const symbol    = THEORY_SYMBOLS[theory.id] || '◆'
   const hint      = BELIEF_HINTS[theory.id]
-  const meta      = BELIEF_META[theory.id]
 
   return (
     <button
@@ -305,19 +282,10 @@ function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
         {hint && (
           <span style={{
             ...TYPE.bodySmall,
-            color: THEME.textMuted,
+            color: done ? THEME.accent : THEME.textMuted,
             lineHeight: 1.25,
           }}>
-            {hint}
-          </span>
-        )}
-        {roleLabel && (
-          <span style={{
-            ...TYPE.captionText,
-            color: done ? THEME.accent : THEME.textFaint,
-            letterSpacing: '0.02em',
-          }}>
-            {done ? `${roleLabel} · explored` : `${roleLabel} · ${meta}`}
+            {done ? 'Explored' : hint}
           </span>
         )}
       </span>
@@ -333,9 +301,8 @@ function ViewPhase({
   theory, tint, activeTreatmentIdx, onSelectTreatment,
   onContinue, isLast, prefersReducedMotion,
 }) {
-  const roleLabel   = ROLE_LABELS[theory.id] || 'Healer'
   const symbol      = THEORY_SYMBOLS[theory.id] || '✦'
-  const bridge      = BRIDGE_DETAILS[theory.id]
+  const headline    = BELIEF_HEADLINES[theory.id] || sentenceCase(theory.label)
   const treatments  = theory.acceptedAnswers.map(a => a.canonical)
   const details     = TREATMENT_DETAILS[theory.id] || {}
   const activeLabel = treatments[activeTreatmentIdx]
@@ -415,7 +382,7 @@ function ViewPhase({
             </span>
           </div>
 
-          {/* Role badge + title at bottom of image */}
+          {/* Belief headline at bottom of image */}
           <div style={{
             position: 'absolute',
             bottom: 0,
@@ -423,27 +390,18 @@ function ViewPhase({
             right: 0,
             padding: `0 ${SPACING.standard}px ${SPACING.compact}px`,
           }}>
-            <span style={{
-              ...TYPE.metadata,
-              color: THEME.accent,
-              background: `rgba(${THEME.accentRgb},0.14)`,
-              border: `1px solid rgba(${THEME.accentRgb},0.32)`,
-              borderRadius: RADII.small,
-              padding: '3px 10px',
-              letterSpacing: '0.07em',
-              textTransform: 'uppercase',
-              display: 'inline-block',
-              marginBottom: 8,
+            <div style={{
+              ...TYPE.cardTitle,
+              color: THEME.text,
+              maxWidth: 520,
+              lineHeight: 1.18,
             }}>
-              {roleLabel}
-            </span>
-            <div style={{ ...TYPE.cardTitle, color: THEME.text }}>
-              {sentenceCase(theory.label)}
+              {headline}
             </div>
           </div>
         </div>
 
-        {/* Brief belief explanation + learning bridge */}
+        {/* Brief belief explanation */}
         <div style={{
           padding: `${SPACING.compact}px ${SPACING.standard}px`,
           borderBottom: `1px solid rgba(${THEME.accentRgb},0.12)`,
@@ -456,18 +414,6 @@ function ViewPhase({
           }}>
             {theory.explanation}
           </p>
-
-          {bridge && (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: SPACING.micro,
-              marginTop: SPACING.compact,
-            }}>
-              <LogicTile label="Cause believed" value={bridge.cause} />
-              <LogicTile label="Treatment aimed to" value={bridge.aim} />
-            </div>
-          )}
         </div>
 
         {/* ── Tab row — one tab per treatment ───────────────────────────── */}
@@ -527,32 +473,6 @@ function ViewPhase({
             />
           )}
         </div>
-      </div>
-    </div>
-  )
-}
-
-function LogicTile({ label, value }) {
-  return (
-    <div style={{
-      padding: '10px 11px',
-      borderRadius: RADII.small,
-      background: `rgba(${THEME.accentRgb},0.07)`,
-      border: `1px solid rgba(${THEME.accentRgb},0.14)`,
-    }}>
-      <div style={{
-        ...TYPE.captionText,
-        color: THEME.textFaint,
-        marginBottom: 4,
-      }}>
-        {label}
-      </div>
-      <div style={{
-        ...TYPE.captionText,
-        color: THEME.text,
-        lineHeight: 1.35,
-      }}>
-        {value}
       </div>
     </div>
   )
@@ -773,7 +693,7 @@ function SecondaryActionButton({ label, onClick, prefersReducedMotion }) {
       onPointerLeave={() => setPressed(false)}
       style={{
         width: '100%',
-        minHeight: BUTTONS.secondary.minHeight,
+        height: BUTTONS.secondary.height,
         borderRadius: BUTTONS.secondary.borderRadius,
         background: 'transparent',
         border: `1px solid rgba(${THEME.accentRgb},0.18)`,
