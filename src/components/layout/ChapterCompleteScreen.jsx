@@ -4,7 +4,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import BackButton from '../core/BackButton.jsx'
-import { TYPE } from '../../constants/typography.js'
+import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
 import BottomNav from '../../app/BottomNav.jsx'
 
 const R_SIZE = 96
@@ -176,12 +176,12 @@ export default function ChapterCompleteScreen({
             </div>
           </div>
 
-          <h1 className="ccs-in" style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 32, lineHeight: '36px', letterSpacing: '-0.02em', color: '#F5F7FF', textAlign: 'center', maxWidth: 300, margin: '0 0 10px', animationDelay: '40ms' }}>
+          <h1 className="ccs-in" style={{ ...TYPE.displayHero, ...HEADING_LAYOUT.screenTitle, fontSize: 32, color: '#F5F7FF', textAlign: 'center', margin: '0 0 10px', animationDelay: '40ms' }}>
             {completedChapter}{' '}
             <span style={{ color: accent }}>Complete</span>
           </h1>
 
-          <p className="ccs-in" style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 500, fontSize: 16, lineHeight: '22px', color: 'rgba(245,247,255,0.68)', textAlign: 'center', margin: '0 0 26px', maxWidth: 280, animationDelay: '70ms' }}>
+          <p className="ccs-in" style={{ ...TYPE.bodyStrong, color: 'rgba(245,247,255,0.68)', textAlign: 'center', margin: '0 0 26px', maxWidth: 280, animationDelay: '70ms' }}>
             {supportingCopy}
           </p>
 
@@ -192,11 +192,11 @@ export default function ChapterCompleteScreen({
               </svg>
             </div>
             <div style={{ marginLeft: 14, flex: 1, minWidth: 0 }}>
-              <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 22, lineHeight: '26px', color: textOnAccent }}>
+              <div style={{ ...TYPE.displaySection, fontSize: 22, color: textOnAccent }}>
                 {isFinalChapter ? 'Start Exam Practice' : nextChapterNum != null ? `Continue to ${nextChapterLabel} ${nextChapterNum}` : `Continue to ${nextChapterLabel}`}
               </div>
               {!isFinalChapter && nextChapterTitle && (
-                <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 500, fontSize: 16, lineHeight: '20px', color: textOnAccent, opacity: 0.84, marginTop: 3 }}>{nextChapterTitle}</div>
+                <div style={{ ...TYPE.bodyStrong, color: textOnAccent, opacity: 0.84, marginTop: 3 }}>{nextChapterTitle}</div>
               )}
             </div>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={textOnAccent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: 10, opacity: 0.85 }}>
@@ -215,8 +215,8 @@ export default function ChapterCompleteScreen({
               </svg>
             </div>
             <div style={{ marginLeft: 14, flex: 1 }}>
-              <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 20, lineHeight: '24px', color: '#F5F7FF' }}>Quick Quiz</div>
-              <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 500, fontSize: 15, lineHeight: '18px', color: 'rgba(245,247,255,0.60)', marginTop: 2 }}>
+              <div style={{ ...TYPE.displaySection, fontSize: 20, color: '#F5F7FF' }}>Quick Quiz</div>
+              <div style={{ ...TYPE.bodyStrong, color: 'rgba(245,247,255,0.60)', marginTop: 2 }}>
                 {isFinalChapter ? 'Review this module with 10 questions' : 'Lock it in with 10 quick questions'}
               </div>
             </div>
@@ -238,8 +238,8 @@ export default function ChapterCompleteScreen({
                   </svg>
                 </div>
                 <div style={{ marginLeft: 14, flex: 1 }}>
-                  <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 18, lineHeight: '22px', color: '#F5F7FF' }}>{pastPaperLabel || 'Past paper questions'}</div>
-                  <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 500, fontSize: 14, lineHeight: '18px', color: `rgba(${ac},0.72)`, marginTop: 2 }}>Real exam questions tagged to this module</div>
+                  <div style={{ ...TYPE.displaySection, fontSize: 18, color: '#F5F7FF' }}>{pastPaperLabel || 'Past paper questions'}</div>
+                  <div style={{ ...TYPE.bodySmall, color: `rgba(${ac},0.72)`, marginTop: 2 }}>Real exam questions tagged to this module</div>
                 </div>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: SPACING.micro }}>
                   <path d="M9 18l6-6-6-6"/>
@@ -253,7 +253,7 @@ export default function ChapterCompleteScreen({
               <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
-            <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 500, fontSize: 18, color: '#F5F7FF' }}>Return Home</span>
+            <span style={{ ...TYPE.bodyStrong, fontSize: 18, color: '#F5F7FF' }}>Return Home</span>
           </button>
         </div>
 

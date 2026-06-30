@@ -52,7 +52,7 @@ import ConnectionMap from '../learning/ConnectionMap.jsx'
 import QuoteAnalyser from '../learning/QuoteAnalyser.jsx'
 import ContentShell from './ContentShell.jsx'
 import { ScreenTitle, ScreenBody } from '../core/ScreenText.jsx'
-import { TYPE } from '../../constants/typography.js'
+import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
 
 // ── Stage navigation helpers ──────────────────────────────────────────────────
 
@@ -115,13 +115,12 @@ function ReadBlock({ block }) {
     <div>
       {block.label && (
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
+          ...TYPE.eyebrow,
           textTransform: 'uppercase', color: '#70B8FF', marginBottom: 12,
         }}>{block.label}</div>
       )}
       <p style={{
-        fontFamily: TYPE.bodyText.fontFamily,
+        ...TYPE.body,
         fontSize: '.95rem', lineHeight: 1.7, margin: 0, color: '#C8D0E8',
       }} dangerouslySetInnerHTML={{ __html: block.text }} />
     </div>
@@ -132,12 +131,11 @@ function KeypointBlock({ block }) {
   return (
     <div>
       <div style={{
-        fontFamily: TYPE.bodyText.fontFamily,
-        fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
+        ...TYPE.eyebrow,
         textTransform: 'uppercase', color: SUBJECTS.History.accent, marginBottom: 12,
       }}>⭐ Key Point</div>
       <p style={{
-        fontFamily: TYPE.bodyText.fontFamily,
+        ...TYPE.body,
         fontSize: '.95rem', lineHeight: 1.65, margin: 0, color: '#E0E6F0',
       }} dangerouslySetInnerHTML={{ __html: block.text }} />
     </div>
@@ -148,12 +146,11 @@ function FunFactBlock({ block }) {
   return (
     <div>
       <div style={{
-        fontFamily: TYPE.bodyText.fontFamily,
-        fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
+        ...TYPE.eyebrow,
         textTransform: 'uppercase', color: '#FFC857', marginBottom: 10,
       }}>{block.label || '🤯 Fun Fact'}</div>
       <p style={{
-        fontFamily: TYPE.bodyText.fontFamily,
+        ...TYPE.body,
         fontSize: '.92rem', margin: 0, color: '#C8D0E8', lineHeight: 1.65,
       }}>{block.text}</p>
     </div>
@@ -164,19 +161,18 @@ function ExamTipBlock({ block }) {
   return (
     <div>
       <div style={{
-        fontFamily: TYPE.bodyText.fontFamily,
-        fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
+        ...TYPE.eyebrow,
         textTransform: 'uppercase', color: '#F5B700', marginBottom: 12,
       }}>{block.label || '🗡️ Exam Assassin'}</div>
       {block.text && (
         <p style={{
-          fontFamily: TYPE.bodyText.fontFamily,
+          ...TYPE.body,
           fontSize: '.9rem', margin: '0 0 12px 0', color: '#C8D0E8', lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.text }} />
       )}
       {block.tip && (
         <p style={{
-          fontFamily: TYPE.bodyText.fontFamily,
+          ...TYPE.body,
           fontSize: '.9rem', marginBottom: block.phrases ? 12 : 0, color: '#C8D0E8', lineHeight: 1.65,
         }} dangerouslySetInnerHTML={{ __html: block.tip }} />
       )}
@@ -186,8 +182,7 @@ function ExamTipBlock({ block }) {
             <span key={p} style={{
               background: 'rgba(245,183,0,.12)', border: '1px solid rgba(245,183,0,.3)',
               color: '#F5B700', borderRadius: 8, padding: '5px 11px',
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontSize: '.78rem', fontWeight: 600,
+              ...TYPE.label,
             }}>{p}</span>
           ))}
         </div>
@@ -213,7 +208,7 @@ function TimelineBlock({ block }) {
               color: open === i ? '#070500' : '#F5B700',
               border: `1px solid ${open === i ? '#F5B700' : '#2A3552'}`,
               borderRadius: 12, display: 'grid', placeItems: 'center',
-              fontWeight: 800, fontFamily: TYPE.bodyText.fontFamily,
+              ...TYPE.label, fontWeight: 800,
               fontSize: '.8rem', padding: '10px 6px', minHeight: 56, transition: 'all .2s',
             }}>{e.year}</div>
             <div style={{
@@ -223,7 +218,7 @@ function TimelineBlock({ block }) {
               display: 'flex', alignItems: 'center',
             }}>
               <span style={{
-                fontFamily: TYPE.bodyText.fontFamily,
+                ...TYPE.body,
                 fontSize: '.9rem', fontWeight: 500, color: '#C8D0E8',
               }} dangerouslySetInnerHTML={{ __html: e.text }} />
             </div>
@@ -246,17 +241,16 @@ function RevealBlock({ block }) {
         borderRadius: 14, padding: '16px 18px', marginBottom: 10,
       }}>
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontSize: '.68rem', fontWeight: 700, letterSpacing: '.12em',
+          ...TYPE.eyebrow,
           textTransform: 'uppercase', color: SUBJECTS.History.accent, marginBottom: 8,
           display: 'flex', alignItems: 'center', gap: 6,
         }}>
           ⚡ {block.label || 'Rapid Fire Sort'}
         </div>
         <p style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontWeight: 500, margin: 0,
-          color: '#7C8DB0', fontSize: '.95rem', lineHeight: 1.5,
+          ...TYPE.bodyStrong,
+          margin: 0,
+          color: '#7C8DB0', fontSize: '.95rem',
         }}>{block.prompt}</p>
       </div>
 
@@ -266,8 +260,7 @@ function RevealBlock({ block }) {
           background: 'transparent',
           border: '1px solid #2A3552',
           borderRadius: 14, padding: '14px',
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontWeight: 600, fontSize: '.92rem',
+          ...TYPE.button,
           color: '#9CA8C7', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           transition: 'border-color .2s, color .2s',
@@ -281,12 +274,11 @@ function RevealBlock({ block }) {
           borderRadius: 14, padding: '16px 18px',
         }}>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontSize: '.68rem', fontWeight: 700, letterSpacing: '.1em',
+            ...TYPE.eyebrow,
             textTransform: 'uppercase', color: '#4DFF88', marginBottom: 8,
           }}>✓ Answer</div>
           <p style={{
-            fontFamily: TYPE.bodyText.fontFamily,
+            ...TYPE.body,
             margin: 0, fontSize: '.92rem', color: '#C8D0E8', lineHeight: 1.6,
           }}>{block.answer}</p>
         </div>
@@ -316,15 +308,15 @@ function FlashcardsBlock({ block }) {
           }}>
           <div>
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily,
+              ...TYPE.label,
               fontWeight: 700, fontSize: '.88rem',
               color: flipped.has(i) ? GENERAL.teal : '#E0E6F0',
               marginBottom: flipped.has(i) ? 6 : 0,
             }}>{c.front}</div>
             {flipped.has(i) && (
               <div className="fade-up" style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                color: '#9CA8C7', fontSize: TYPE.captionText.fontSize, lineHeight: 1.5,
+                ...TYPE.caption,
+                color: '#9CA8C7',
               }}>{c.back}</div>
             )}
           </div>
@@ -380,8 +372,7 @@ function HotspotBlock({ block }) {
         boxShadow: '0 0 32px rgba(56,210,122,.06)',
       }}>
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+          ...TYPE.eyebrow,
           textTransform: 'uppercase', color: '#38D27A', marginBottom: 10,
           display: 'flex', alignItems: 'center', gap: 6,
         }}>
@@ -460,27 +451,27 @@ function HotspotBlock({ block }) {
             borderRadius: 14, padding: '14px 16px', marginTop: 10,
           }}>
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontWeight: 700, fontSize: '1rem',
+              ...TYPE.titleLarge,
+              fontSize: '1rem',
               color: info.color, marginBottom: 6,
               display: 'flex', alignItems: 'center', gap: 6,
             }}>
               {info.icon} {info.title}
             </div>
             <p style={{
-              fontFamily: TYPE.bodyText.fontFamily,
+              ...TYPE.body,
               fontSize: '.88rem', color: '#C8D0E8',
               margin: '0 0 6px', lineHeight: 1.55,
             }}>{info.job}</p>
             <p style={{
-              fontFamily: TYPE.bodyText.fontFamily,
+              ...TYPE.caption,
               fontSize: '.75rem', color: info.color,
               margin: 0, opacity: .8,
             }}>🏭 {info.analogy}</p>
           </div>
         ) : (
           <p style={{
-            fontFamily: TYPE.bodyText.fontFamily,
+            ...TYPE.bodySmall,
             fontSize: '.78rem', color: '#4A5578',
             textAlign: 'center', margin: '10px 0 0',
           }}>
@@ -499,8 +490,7 @@ function MisconceptionBlock({ block }) {
   return (
     <div style={{ margin: '14px 0' }}>
       <div style={{
-        fontFamily: TYPE.bodyText.fontFamily,
-        fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+        ...TYPE.eyebrow,
         textTransform: 'uppercase', color: '#FF5D73', marginBottom: 10,
       }}>⚠️ {block.label || 'Common Mistakes — tap to reveal why'}</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -514,7 +504,7 @@ function MisconceptionBlock({ block }) {
             <div style={{ display: 'flex', gap: 10, marginBottom: revealed.has(i) ? 10 : 0 }}>
               <span style={{ color: '#FF5D73', fontSize: '1rem', flexShrink: 0 }}>✗</span>
               <div style={{
-                fontFamily: TYPE.bodyText.fontFamily,
+                ...TYPE.body,
                 fontSize: '.88rem', color: '#C8D0E8',
                 textDecoration: revealed.has(i) ? 'line-through' : 'none',
                 opacity: revealed.has(i) ? .5 : 1,
@@ -525,8 +515,8 @@ function MisconceptionBlock({ block }) {
                 marginLeft: 22,
                 background: 'rgba(255,93,115,.1)', border: '1px solid rgba(255,93,115,.25)',
                 borderRadius: 8, padding: '5px 12px',
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontSize: '.75rem', fontWeight: 600, color: '#FF5D73',
+                ...TYPE.label,
+                fontSize: '.75rem', color: '#FF5D73',
                 cursor: 'pointer',
               }}>Why does this lose marks?</button>
             ) : (
@@ -534,13 +524,13 @@ function MisconceptionBlock({ block }) {
                 <div style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
                   <span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span>
                   <div style={{
-                    fontFamily: TYPE.bodyText.fontFamily,
+                    ...TYPE.body,
                     fontSize: '.88rem', color: '#4DFF88', fontWeight: 600,
                   }}>{m.right}</div>
                 </div>
                 <div style={{
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  fontSize: '.78rem', color: '#9CA8C7', lineHeight: 1.5,
+                  ...TYPE.bodySmall,
+                  fontSize: '.78rem', color: '#9CA8C7',
                 }}>{m.reason}</div>
               </div>
             )}
@@ -564,8 +554,7 @@ function ScarfBlock({ block }) {
         boxShadow: '0 0 24px rgba(56,210,122,.05)',
       }}>
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
+          ...TYPE.eyebrow,
           textTransform: 'uppercase', color: '#38D27A', marginBottom: 12,
         }}>🧣 {block.label || 'SCARF — uses of glucose'}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -584,19 +573,19 @@ function ScarfBlock({ block }) {
                 background: 'rgba(56,210,122,.12)',
                 border: '1px solid rgba(56,210,122,.25)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: TYPE.bodyText.fontFamily,
+                ...TYPE.body,
                 fontWeight: 900, fontSize: '1.2rem', color: '#38D27A',
               }}>{item.letter}</div>
               <div style={{ flex: 1 }}>
                 <div style={{
-                  fontFamily: TYPE.bodyText.fontFamily,
+                  ...TYPE.label,
                   fontWeight: 700, fontSize: '.9rem', color: '#F5F7FB',
                 }}>{item.word}</div>
                 {open === i && (
                   <div className="fade-up" style={{
-                    fontFamily: TYPE.bodyText.fontFamily,
+                    ...TYPE.bodySmall,
                     fontSize: '.82rem', color: '#9CA8C7',
-                    marginTop: 4, lineHeight: 1.5,
+                    marginTop: 4,
                   }}>{item.detail}</div>
                 )}
               </div>
