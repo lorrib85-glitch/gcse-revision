@@ -167,7 +167,6 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   }
 
   const allOpened = steps.length > 0 && opened.size === steps.length
-  const F = { fontFamily: TYPE.bodyText.fontFamily }
 
   return (
     <CinematicShell style={{
@@ -182,15 +181,14 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
       <div style={{ padding: `0 ${SPACING.standard}px`, marginBottom: SPACING.compact, flexShrink: 0 }}>
         {block.title && (
           <h2 style={{
-            ...F, fontSize: 'clamp(24px, 7.5vw, 32px)', fontWeight: 700,
-            letterSpacing: '-0.02em', lineHeight: 1.15,
+            ...TYPE.displaySection, fontSize: 'clamp(24px, 7.5vw, 32px)',
             color: 'rgba(255,255,255,0.97)', margin: '0 0 8px',
           }}>
             {block.title}
           </h2>
         )}
         {block.intro && (
-          <p style={{ ...F, fontSize: 15, lineHeight: 1.5, color: 'rgba(255,255,255,0.52)', margin: 0 }}>
+          <p style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.52)', margin: 0 }}>
             {block.intro}
           </p>
         )}
@@ -264,7 +262,8 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                       {/* title */}
                       <div style={{
                         position: 'absolute', bottom: 12, left: 0, width: '100%', textAlign: 'center',
-                        ...F, color: 'rgba(255,255,255,0.96)', fontWeight: 700, fontSize: 16,
+                        ...TYPE.titleLarge, fontSize: 16,
+                        color: 'rgba(255,255,255,0.96)',
                         textShadow: '0 3px 10px rgba(0,0,0,0.6)', padding: '0 12px', boxSizing: 'border-box',
                       }}>
                         {step.label}
@@ -273,7 +272,8 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                     {/* stats footer */}
                     <div style={{
                       height: CARD_STATS_H, display: 'flex', justifyContent: 'space-evenly', alignItems: 'center',
-                      ...F, fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.46)',
+                      ...TYPE.metadata, fontSize: 12,
+                      color: 'rgba(255,255,255,0.46)',
                       background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.06)',
                     }}>
                       {(step.stats || [`Step ${i + 1} of ${steps.length}`, 'Tap + for detail']).map((s, si) => (
@@ -293,7 +293,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                       border: `2px solid rgba(${rgb},0.5)`,
                       background: isOpen ? accent : `rgba(${rgb},0.14)`,
                       color: isOpen ? '#08090D' : accent,
-                      fontSize: 22, fontWeight: 700, lineHeight: 1,
+                      ...TYPE.button, fontSize: 22,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
                       cursor: 'pointer', zIndex: 4, padding: 0,
@@ -313,7 +313,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
         {steps.length > 1 && openIndex === null && !hasPanned && (
           <div style={{
             position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
-            ...F, fontWeight: 700, fontSize: 13, color: accent,
+            ...TYPE.label, color: accent,
             textShadow: '0 2px 12px rgba(0,0,0,0.8)',
             pointerEvents: 'none', animation: 'tcv-bounce 2s infinite ease-in-out',
             zIndex: 5,
@@ -332,12 +332,12 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
           animation: `tcv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: SPACING.micro }}>
-            <div style={{ ...F, fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: accent }}>
+            <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: accent }}>
               Why it mattered
             </div>
             <button onClick={() => setOpenIndex(null)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 18, cursor: 'pointer', padding: 0, lineHeight: 1 }}>×</button>
           </div>
-          <div style={{ ...F, fontSize: 15, lineHeight: 1.55, color: 'rgba(255,255,255,0.82)' }}>
+          <div style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.82)' }}>
             {steps[openIndex]?.detail}
           </div>
         </div>
@@ -364,7 +364,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
             style={{ animation: `tcv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both` }}
           />
         ) : (
-          <div style={{ ...F, fontSize: 13, color: 'rgba(255,255,255,0.32)' }}>
+          <div style={{ ...TYPE.label, color: 'rgba(255,255,255,0.32)' }}>
             Tap + on each step to continue
           </div>
         )}
