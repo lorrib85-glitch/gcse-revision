@@ -7,7 +7,7 @@ import BackButton from '../core/BackButton.jsx'
 // containing block) and the screen must cover the full viewport including under system chrome;
 // ContentShell's padding would not reach these fixed children and would create an unwanted gap.
 import CinematicShell from './CinematicShell.jsx'
-import { TYPE } from '../../constants/typography.js'
+import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
 
 const IMAGES = {
   History:   '/history-truefalse.webp',
@@ -211,9 +211,7 @@ export default function ChapterHookScreen({
 
               <div style={{
                 position: 'absolute', top: 106, left: 28, right: 36,
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontWeight: 700, fontSize: 18,
-                lineHeight: '24px', letterSpacing: '-0.01em',
+                ...TYPE.displayCard, fontSize: 18,
                 color: 'rgba(255,255,255,0.55)',
                 animation: 'chs-header-in 320ms ease 40ms both',
               }}>
@@ -224,12 +222,8 @@ export default function ChapterHookScreen({
                 <Glow rgb={rgb} />
                 <div style={{
                   position: 'relative',
-                  maxWidth: 320,
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  fontWeight: 800,
-                  fontSize: 'clamp(28px, 9vw, 40px)',
-                  lineHeight: 'clamp(33px, 10.5vw, 46px)',
-                  letterSpacing: '-0.05em',
+                  ...HEADING_LAYOUT.screenTitle,
+                  ...TYPE.displayHero, fontSize: 'clamp(28px, 9vw, 40px)',
                   color: '#FFFFFF',
                 }}>
                   {tokens.map(tok =>
@@ -276,8 +270,7 @@ export default function ChapterHookScreen({
                   borderRadius: RADII.pill,
                   padding: '14px 36px',
                   cursor: 'pointer',
-                  fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 24,
-                  letterSpacing: '0.08em',
+                  ...TYPE.displaySection, fontSize: 24,
                   color: 'rgba(255,255,255,0.88)',
                   transform: tappedBtn === 'true' ? 'scale(1.10)' : 'scale(1)',
                   opacity: tappedBtn === 'false' ? 0 : 1,
@@ -304,8 +297,7 @@ export default function ChapterHookScreen({
                   borderRadius: RADII.pill,
                   padding: '14px 36px',
                   cursor: 'pointer',
-                  fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 24,
-                  letterSpacing: '0.08em',
+                  ...TYPE.displaySection, fontSize: 24,
                   color: 'rgba(255,255,255,0.88)',
                   transform: tappedBtn === 'false' ? 'scale(1.10)' : 'scale(1)',
                   opacity: tappedBtn === 'true' ? 0 : 1,
@@ -345,9 +337,7 @@ export default function ChapterHookScreen({
                 <div style={{ position: 'relative', maxWidth: 320 }}>
 
                   <div style={{
-                    fontFamily: TYPE.bodyText.fontFamily,
-                    fontWeight: 700, fontSize: 16,
-                    letterSpacing: '-0.01em',
+                    ...TYPE.displayCard, fontSize: 16,
                     color: accent, opacity: 0.92,
                     marginBottom: 16,
                   }}>
@@ -358,11 +348,7 @@ export default function ChapterHookScreen({
                     <div
                       key={beatIdx}
                       style={{
-                        fontFamily: TYPE.bodyText.fontFamily,
-                        fontWeight: 700,
-                        fontSize: 'clamp(24px, 7.5vw, 32px)',
-                        lineHeight: 'clamp(32px, 10vw, 42px)',
-                        letterSpacing: '-0.03em',
+                        ...TYPE.displayScreen, fontSize: 'clamp(24px, 7.5vw, 32px)',
                         color: 'rgba(255,255,255,0.92)',
                         whiteSpace: 'pre-line',
                         animation: 'chs-beat-in 380ms cubic-bezier(0.16,1,0.3,1) both',
@@ -372,11 +358,7 @@ export default function ChapterHookScreen({
                     </div>
                   ) : (
                     <div style={{
-                      fontFamily: TYPE.bodyText.fontFamily,
-                      fontWeight: 700,
-                      fontSize: 'clamp(22px, 6.5vw, 28px)',
-                      lineHeight: 'clamp(30px, 8.8vw, 38px)',
-                      letterSpacing: '-0.03em',
+                      ...TYPE.displaySection, fontSize: 'clamp(22px, 6.5vw, 28px)',
                       color: 'rgba(255,255,255,0.92)',
                       maxWidth: 300,
                     }}>
@@ -398,7 +380,7 @@ export default function ChapterHookScreen({
                   left: 28,
                   background: 'none', border: 'none', cursor: 'pointer', padding: 0,
                   zIndex: 10,
-                  fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 22,
+                  ...TYPE.displaySection, fontSize: 22,
                   color: accent,
                   animation: 'chs-reveal-up 480ms cubic-bezier(0.16,1,0.3,1) 180ms both',
                 }}
