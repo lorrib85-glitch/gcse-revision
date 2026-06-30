@@ -47,14 +47,14 @@ export default function BottomNav({ tab, setTab }) {
             border: 'none', background: 'transparent',
             cursor: 'pointer', borderRadius: 22,
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: active ? 600 : 500,
+            ...TYPE.label, fontSize: 13,
             color: active ? GENERAL.teal : `rgba(${hexToRgb(GENERAL.slate)},0.5)`,
             padding: '6px 4px 5px', minWidth: 0,
             transition: 'color 220ms ease',
             boxShadow: 'none',
           }}>
             <NavIcon id={t.id} active={active} />
-            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', letterSpacing: '0.01em' }}>{t.label}</span>
+            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{t.label}</span>
           </button>
         )
       })}
