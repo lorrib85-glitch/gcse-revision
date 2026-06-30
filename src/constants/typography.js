@@ -3,33 +3,33 @@ export const TYPE = {
   screenHeading: {
     fontFamily: "'Manrope', sans-serif",
     fontSize: "clamp(30px, 8vw, 42px)",
-    lineHeight: 1.06,
-    fontWeight: 650,
-    letterSpacing: "-0.025em"
+    lineHeight: 1.07,
+    fontWeight: 560,
+    letterSpacing: "-0.015em"
   },
 
   sectionHeading: {
     fontFamily: "'Manrope', sans-serif",
     fontSize: "clamp(22px, 6vw, 30px)",
-    lineHeight: 1.09,
-    fontWeight: 650,
-    letterSpacing: "-0.025em"
+    lineHeight: 1.1,
+    fontWeight: 560,
+    letterSpacing: "-0.015em"
   },
 
   cardTitle: {
     fontFamily: "'Manrope', sans-serif",
     fontSize: "1.12rem",
-    lineHeight: 1.18,
-    fontWeight: 650,
-    letterSpacing: "-0.018em"
+    lineHeight: 1.2,
+    fontWeight: 560,
+    letterSpacing: "-0.01em"
   },
 
   featureText: {
     fontFamily: "'Manrope', sans-serif",
     fontSize: "clamp(32px, 9vw, 48px)",
     lineHeight: 1.12,
-    fontWeight: 650,
-    letterSpacing: "-0.035em"
+    fontWeight: 580,
+    letterSpacing: "-0.025em"
   },
 
   // Learning & UI (Sora)
@@ -77,8 +77,8 @@ export const TYPE = {
     fontFamily: "'Sora', sans-serif",
     fontSize: "0.92rem",
     lineHeight: 1.2,
-    fontWeight: 600,
-    letterSpacing: "-0.005em"
+    fontWeight: 500,
+    letterSpacing: "-0.003em"
   },
 
   examAnswerText: {
@@ -101,17 +101,17 @@ export const TYPE = {
   hero: {
     fontFamily: "'Manrope', sans-serif",
     fontSize: "clamp(30px, 8vw, 42px)",
-    lineHeight: 1.06,
-    fontWeight: 650,
-    letterSpacing: "-0.025em"
+    lineHeight: 1.07,
+    fontWeight: 560,
+    letterSpacing: "-0.015em"
   },
 
   sectionTitle: {
     fontFamily: "'Manrope', sans-serif",
     fontSize: "clamp(22px, 6vw, 30px)",
-    lineHeight: 1.09,
-    fontWeight: 650,
-    letterSpacing: "-0.025em"
+    lineHeight: 1.1,
+    fontWeight: 560,
+    letterSpacing: "-0.015em"
   },
 
   body: {
@@ -150,9 +150,9 @@ export const TYPE = {
   overlayTitle: {
     fontFamily: "'Manrope', sans-serif",
     fontSize: 'clamp(24px, 6.4vw, 30px)',
-    lineHeight: 1.08,
-    fontWeight: 650,
-    letterSpacing: '-0.025em',
+    lineHeight: 1.1,
+    fontWeight: 560,
+    letterSpacing: '-0.015em',
   },
 
   overlayBody: {
@@ -174,17 +174,17 @@ export const TYPE = {
   impactTitle: {
     fontFamily: "'Manrope', sans-serif",
     fontSize: 'clamp(28px, 8vw, 36px)',
-    lineHeight: 1.05,
-    fontWeight: 720,
-    letterSpacing: '-0.035em',
+    lineHeight: 1.06,
+    fontWeight: 620,
+    letterSpacing: '-0.025em',
   },
 
   cinematic: {
     fontFamily: "'Manrope', sans-serif",
     fontSize: 'clamp(24px, 6.4vw, 30px)',
-    lineHeight: 1.08,
-    fontWeight: 650,
-    letterSpacing: '-0.025em',
+    lineHeight: 1.1,
+    fontWeight: 560,
+    letterSpacing: '-0.015em',
   },
 }
 
