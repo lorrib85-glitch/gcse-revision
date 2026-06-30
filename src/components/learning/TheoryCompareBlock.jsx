@@ -31,9 +31,8 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
       {/* Optional block title */}
       {block.title && (
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontWeight: 600, fontSize: 11,
-          textTransform: 'uppercase', letterSpacing: '0.16em',
+          ...TYPE.eyebrow,
+          textTransform: 'uppercase',
           color: `rgba(${rgb},0.72)`,
           marginBottom: 20,
         }}>
@@ -44,18 +43,16 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
       {/* Old section */}
       <div style={{ marginBottom: newVisible ? 0 : 28 }}>
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontWeight: 600, fontSize: 11,
-          textTransform: 'uppercase', letterSpacing: '0.16em',
+          ...TYPE.eyebrow,
+          textTransform: 'uppercase',
           color: 'rgba(255,255,255,0.38)',
           marginBottom: 10,
         }}>
           {block.oldLabel}
         </div>
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontWeight: 800, fontSize: 26,
-          lineHeight: 1.22, letterSpacing: '-0.02em',
+          ...TYPE.displayHero,
+          fontSize: 26,
           color: 'rgba(245,245,245,0.58)',
           marginBottom: 14,
         }}>
@@ -64,8 +61,7 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
         <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
           {(block.oldPoints || []).map((pt, i) => (
             <li key={i} style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontWeight: 500, fontSize: 16, lineHeight: 1.55,
+              ...TYPE.bodyStrong,
               color: 'rgba(245,245,245,0.52)',
               paddingLeft: 0,
             }}>
@@ -82,9 +78,8 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
           style={{
             background: 'none', border: 'none', padding: 0,
             cursor: 'pointer',
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontWeight: 600, fontSize: 14,
-            textTransform: 'uppercase', letterSpacing: '0.12em',
+            ...TYPE.eyebrow,
+            textTransform: 'uppercase',
             color: 'rgba(255,255,255,0.42)',
             marginTop: 4,
           }}
@@ -107,18 +102,16 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
             onAnimationEnd={() => setTakeawayVisible(true)}
           >
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontWeight: 600, fontSize: 11,
-              textTransform: 'uppercase', letterSpacing: '0.16em',
+              ...TYPE.eyebrow,
+              textTransform: 'uppercase',
               color: `rgba(${rgb},0.82)`,
               marginBottom: 10,
             }}>
               {block.newLabel}
             </div>
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontWeight: 800, fontSize: 26,
-              lineHeight: 1.22, letterSpacing: '-0.02em',
+              ...TYPE.displayHero,
+              fontSize: 26,
               color: accent,
               marginBottom: 14,
             }}>
@@ -127,8 +120,7 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
             <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
               {(block.newPoints || []).map((pt, i) => (
                 <li key={i} style={{
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  fontWeight: 500, fontSize: 16, lineHeight: 1.55,
+                  ...TYPE.bodyStrong,
                   color: 'rgba(245,245,245,0.75)',
                 }}>
                   <span style={{ color: `rgba(${rgb},0.55)`, marginRight: 8 }}>—</span>{pt}
@@ -143,8 +135,8 @@ export default function TheoryCompareBlock({ block, subject = 'Biology' }) {
       {takeawayVisible && block.takeaway && (
         <div style={{
           marginTop: 28,
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontWeight: 700, fontSize: 17, lineHeight: 1.55,
+          ...TYPE.displayCard,
+          fontSize: 17,
           color: accent,
           animation: 'tcb-fade-up 400ms ease both',
         }}>
