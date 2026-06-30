@@ -154,15 +154,13 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
   return (
     <div style={{
       background: '#0D0F14',
-      fontFamily: TYPE.bodyText.fontFamily,
+      ...TYPE.body,
       padding: '28px 24px 32px',
       borderRadius: 24,
     }}>
       {/* 1. Exam label */}
       <div style={{
-        fontSize: 11,
-        fontWeight: 600,
-        letterSpacing: '0.18em',
+        ...TYPE.eyebrow,
         textTransform: 'uppercase',
         color: accent,
         marginTop: 12,
@@ -180,14 +178,14 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
         marginBottom: 12,
       }}>
         <div style={{
+          ...TYPE.displayHero,
           fontSize: 32,
-          fontWeight: 600,
-          lineHeight: 1.1,
           color: 'rgba(245,245,245,0.96)',
         }}>
           {questionNum != null ? `Question ${questionNum}` : ''}
         </div>
         <div style={{
+          ...TYPE.eyebrow,
           height: 32,
           padding: '0 14px',
           borderRadius: RADII.pill,
@@ -195,8 +193,6 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
           border: `1px solid rgba(${accentRgb},0.22)`,
           color: accent,
           fontSize: 12,
-          fontWeight: 600,
-          letterSpacing: '0.08em',
           textTransform: 'uppercase',
           display: 'flex',
           alignItems: 'center',
@@ -216,7 +212,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
           marginBottom: 28,
         }}>
           {commandWord && (
-            <span style={{ color: accent, fontWeight: 600 }}>{commandWord}</span>
+            <span style={{ ...TYPE.titleMedium, color: accent }}>{commandWord}</span>
           )}
           {commandWord && topic && (
             <span style={{ color: 'rgba(245,245,245,0.28)' }}>·</span>
@@ -229,9 +225,8 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
 
       {/* 4. Question text */}
       <div style={{
+        ...TYPE.examQuestion,
         fontSize: 24,
-        fontWeight: 500,
-        lineHeight: 1.45,
         color: 'rgba(245,245,245,0.96)',
         maxWidth: '92%',
         margin: '0 0 32px',
@@ -287,9 +282,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
             {/* Source label */}
             {source.label && (
               <div style={{
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: '0.18em',
+                ...TYPE.eyebrow,
                 textTransform: 'uppercase',
                 color: accent,
                 marginBottom: SPACING.micro,
@@ -326,8 +319,8 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                   <div
                     className="eqf-source-scroll"
                     style={{
+                      ...TYPE.bodyLarge,
                       fontSize: 16,
-                      lineHeight: 1.7,
                       color: 'rgba(245,245,245,0.82)',
                       whiteSpace: 'pre-wrap',
                       maxHeight: 240,
@@ -342,9 +335,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                 </div>
                 {source.text.length > 320 && (
                   <div style={{
-                    fontSize: 11,
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
+                    ...TYPE.eyebrow,
                     textTransform: 'uppercase',
                     color: 'rgba(245,245,245,0.34)',
                     marginTop: 10,
@@ -375,9 +366,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
       {!feedback && (
         <>
           <div style={{
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: '0.18em',
+            ...TYPE.eyebrow,
             textTransform: 'uppercase',
             color: 'rgba(245,245,245,0.48)',
             marginBottom: 12,
@@ -406,15 +395,14 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
               onBlur={() => setFocused(false)}
               placeholder="Write your answer here…"
               style={{
+                ...TYPE.examAnswer,
+                fontSize: 18,
                 minHeight: 220,
                 width: '100%',
                 border: 'none',
                 background: 'transparent',
                 outline: 'none',
                 resize: 'none',
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontSize: 18,
-                lineHeight: 1.7,
                 color: 'rgba(245,245,245,0.92)',
                 boxSizing: 'border-box',
                 display: 'block',
@@ -454,9 +442,8 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
               color: canSubmit ? '#0D0F14' : 'rgba(245,245,245,0.28)',
               boxShadow: canSubmit ? `0 8px 22px rgba(${accentRgb},0.22)` : 'none',
               border: 'none',
+              ...TYPE.buttonLarge,
               fontSize: 16,
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontWeight: 600,
               cursor: canSubmit ? 'pointer' : 'default',
               marginTop: SPACING.standard,
               transition: '220ms ease',
@@ -478,9 +465,8 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                 background: 'rgba(255,255,255,0.04)',
                 color: 'rgba(245,245,245,0.48)',
                 border: '1px solid rgba(255,255,255,0.08)',
+                ...TYPE.button,
                 fontSize: 15,
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontWeight: 500,
                 cursor: grading ? 'default' : 'pointer',
                 marginTop: 12,
                 transition: '220ms ease',
@@ -515,8 +501,8 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
             animation: 'eqf-score 480ms ease both',
           }}>
             <span style={{
+              ...TYPE.displayHero,
               fontSize: 42,
-              fontWeight: 700,
               color: 'rgba(245,245,245,0.96)',
             }}>
               {feedback.marksAwarded}
@@ -532,8 +518,8 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
           {/* 2. Examiner commentary */}
           {feedback.summary && (
             <div style={{
+              ...TYPE.bodyStrong,
               fontSize: 17,
-              lineHeight: 1.65,
               color: 'rgba(245,245,245,0.74)',
               maxWidth: '94%',
               margin: '0 0 28px',
@@ -547,9 +533,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
           {feedback.missed && feedback.missed.length > 0 && (
             <div style={{ animation: 'eqf-fade 480ms ease 240ms both', marginBottom: 28 }}>
               <div style={{
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: '0.14em',
+                ...TYPE.eyebrow,
                 textTransform: 'uppercase',
                 color: 'rgba(245,245,245,0.42)',
                 marginBottom: 12,
@@ -583,7 +567,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                   }}>
                     +
                   </div>
-                  <span style={{ fontSize: 15, color: 'rgba(245,245,245,0.68)', lineHeight: 1.5 }}>
+                  <span style={{ ...TYPE.bodyStrong, fontSize: 15, color: 'rgba(245,245,245,0.68)' }}>
                     {point}
                   </span>
                 </div>
@@ -595,9 +579,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
           {markPoints.length > 0 && (
             <div style={{ animation: 'eqf-fade 480ms ease 360ms both', marginBottom: 28 }}>
               <div style={{
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: '0.14em',
+                ...TYPE.eyebrow,
                 textTransform: 'uppercase',
                 color: 'rgba(245,245,245,0.42)',
                 marginBottom: 12,
@@ -622,7 +604,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                     borderRight: 'none',
                     cursor: 'pointer',
                     textAlign: 'left',
-                    fontFamily: TYPE.bodyText.fontFamily,
+                    ...TYPE.body,
                   }}
                 >
                   <div style={{
@@ -642,7 +624,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                   }}>
                     {i + 1}
                   </div>
-                  <span style={{ fontSize: 14, color: 'rgba(245,245,245,0.68)', lineHeight: 1.55 }}>
+                  <span style={{ ...TYPE.bodySmall, fontSize: 14, color: 'rgba(245,245,245,0.68)' }}>
                     {point}
                   </span>
                 </button>
@@ -659,9 +641,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
               marginBottom: 28,
             }}>
               <div style={{
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: '0.14em',
+                ...TYPE.eyebrow,
                 textTransform: 'uppercase',
                 color: 'rgba(245,245,245,0.42)',
                 marginBottom: SPACING.micro,
@@ -669,9 +649,9 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                 EXAMINER'S NOTE
               </div>
               <div style={{
+                ...TYPE.bodyStrong,
                 fontSize: 15,
                 color: 'rgba(245,245,245,0.58)',
-                lineHeight: 1.6,
               }}>
                 {feedback.examinerTip}
               </div>
@@ -693,9 +673,8 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 color: 'rgba(245,245,245,0.68)',
+                ...TYPE.button,
                 fontSize: 15,
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontWeight: 600,
                 cursor: 'pointer',
               }}
             >
