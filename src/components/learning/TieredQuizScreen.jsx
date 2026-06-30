@@ -174,10 +174,8 @@ export default function TieredQuizScreen({
         {phase === 'select' && (
           <div style={{ position: 'relative', zIndex: 5, width: '100%', height: '100%', ...contentAnim, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontWeight: 800,
+              ...TYPE.displayHero,
               fontSize: 'clamp(28px, 9vw, 40px)',
-              lineHeight: 1.15,
               color: '#FFFFFF',
               marginBottom: 32,
               textAlign: 'center',
@@ -220,16 +218,14 @@ export default function TieredQuizScreen({
                   </div>
                   <div style={{ flex: 1, textAlign: 'left' }}>
                     <div style={{
-                      fontFamily: TYPE.bodyText.fontFamily,
-                      fontWeight: 700,
+                      ...TYPE.displayCard,
                       fontSize: 16,
                       color: accent,
                     }}>
                       {tier.label || 'Tier'}
                     </div>
                     <div style={{
-                      fontFamily: TYPE.bodyText.fontFamily,
-                      fontSize: 12,
+                      ...TYPE.bodySmall,
                       color: 'rgba(255,255,255,0.56)',
                       marginTop: 4,
                     }}>
@@ -270,11 +266,8 @@ export default function TieredQuizScreen({
         {phase === 'summary' && curTier && (
           <div style={{ position: 'relative', zIndex: 5, width: '100%', height: '100%', ...contentAnim, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontWeight: 700,
-              fontSize: 14,
+              ...TYPE.eyebrow,
               textTransform: 'uppercase',
-              letterSpacing: '0.1em',
               color: accent,
               marginBottom: 16,
             }}>
@@ -282,18 +275,16 @@ export default function TieredQuizScreen({
             </div>
 
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontWeight: 800,
+              ...TYPE.displayHero,
               fontSize: 'clamp(48px, 15vw, 80px)',
               color: accent,
-              lineHeight: 1,
               marginBottom: 8,
             }}>
               {correctCount}/{tierTotal}
             </div>
 
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily,
+              ...TYPE.body,
               fontSize: 16,
               color: 'rgba(255,255,255,0.72)',
               marginBottom: 32,
@@ -313,9 +304,7 @@ export default function TieredQuizScreen({
                   borderRadius: 12,
                   padding: '14px 20px',
                   cursor: 'pointer',
-                  fontFamily: TYPE.bodyText.fontFamily,
-                  fontWeight: 700,
-                  fontSize: 14,
+                  ...TYPE.button,
                   color: accent,
                   transition: 'all 120ms ease',
                 }}
