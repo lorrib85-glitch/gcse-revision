@@ -326,7 +326,7 @@ function ViewPhase({
       flexDirection: 'column',
       justifyContent: 'flex-start',
       background: 'rgba(0,0,0,0.72)',
-      padding: `calc(88px + ${SPACING.section}px) ${SPACING.standard}px calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
+      padding: `calc(72px + ${SPACING.micro}px) ${SPACING.standard}px calc(${SPACING.compact}px + env(safe-area-inset-bottom, 0px))`,
       boxSizing: 'border-box',
       overflowY: 'auto',
     }}>
@@ -337,7 +337,7 @@ function ViewPhase({
         borderRadius: RADII.large,
         overflow: 'hidden',
         background: THEME.surfaceRaised,
-        border: `1px solid rgba(${THEME.accentRgb},0.16)`,
+        border: `1px solid rgba(${THEME.accentRgb},0.18)`,
         boxShadow: `0 20px 60px rgba(0,0,0,0.38), 0 0 30px rgba(${THEME.accentRgb},0.07)`,
         animation: prefersReducedMotion
           ? 'none'
@@ -358,16 +358,16 @@ function ViewPhase({
               backgroundImage: `url(${image})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'brightness(0.48) saturate(0.82)',
-              opacity: 0.92,
+              filter: 'brightness(0.68) saturate(0.92)',
+              opacity: 0.98,
             }} />
           )}
           <div style={{
             position: 'absolute',
             inset: 0,
             background: [
-              'linear-gradient(180deg, rgba(12,9,5,0.10) 0%, rgba(12,9,5,0.30) 40%, rgba(21,16,10,0.97) 100%)',
-              'radial-gradient(circle at 50% 10%, rgba(245,238,217,0.08), transparent 48%)',
+              'linear-gradient(180deg, rgba(12,9,5,0.04) 0%, rgba(12,9,5,0.16) 42%, rgba(21,16,10,0.88) 100%)',
+              'radial-gradient(circle at 50% 10%, rgba(245,238,217,0.10), transparent 48%)',
             ].join(', '),
           }} />
 
@@ -399,6 +399,11 @@ function ViewPhase({
             )}
           </div>
         </div>
+
+        <div style={{
+          height: 1,
+          background: `linear-gradient(90deg, transparent, rgba(${THEME.accentRgb},0.34), transparent)`,
+        }} />
 
         {/* Brief belief explanation */}
         <div style={{
