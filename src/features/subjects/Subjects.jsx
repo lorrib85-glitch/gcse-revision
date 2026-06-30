@@ -135,12 +135,12 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
         {/* Text block — bottom-left */}
         <div style={{ position: 'absolute', bottom: 22, left: 24, right: '44%', zIndex: 5 }}>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontWeight: 600, fontSize: 13, lineHeight: '18px',
-            letterSpacing: '0.14em', color: sand, textTransform: 'uppercase', marginBottom: 10,
+            ...TYPE.eyebrow,
+            fontSize: 13, color: sand, textTransform: 'uppercase', marginBottom: 10,
           }}>{mod.subject || ''}</div>
           <div className="mp-title" style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 42, lineHeight: '44px',
-            letterSpacing: '-0.02em', color: '#F5F7FF', maxWidth: 260,
+            ...TYPE.displayHero,
+            fontSize: 42, color: '#F5F7FF', maxWidth: 260,
           }}>{mod.title}</div>
         </div>
       </div>
@@ -161,12 +161,13 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
           {/* Left */}
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily, fontWeight: 500, fontSize: 15, lineHeight: '20px',
+              ...TYPE.bodyStrong,
+              fontSize: 15,
               color: 'rgba(255,255,255,0.66)',
             }}>Your progress</div>
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 28, lineHeight: '32px',
-              color: '#F5F7FF', marginTop: 6,
+              ...TYPE.displaySection,
+              fontSize: 28, color: '#F5F7FF', marginTop: 6,
             }}>{completed} of {total} completed</div>
             <div style={{ marginTop: 14, height: 6, borderRadius: 999, background: 'rgba(255,255,255,0.12)', overflow: 'hidden' }}>
               <div style={{
@@ -192,7 +193,8 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
               position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <span style={{
-                fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 20, color: cream, lineHeight: 1,
+                ...TYPE.displayCard,
+                fontSize: 20, color: cream,
               }}>{pct}%</span>
             </div>
           </div>
@@ -200,8 +202,8 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
 
         {/* ── TOPIC SECTION LABEL ── */}
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily, fontWeight: 600, fontSize: 13, lineHeight: '18px',
-          letterSpacing: '0.14em', color: 'rgba(255,255,255,0.45)',
+          ...TYPE.eyebrow,
+          fontSize: 13, color: 'rgba(255,255,255,0.45)',
           textTransform: 'uppercase', marginBottom: 18,
         }}>Your Topics</div>
 
@@ -263,7 +265,8 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
                       animation: 'mpNodePulse 2.8s ease-in-out infinite',
                     }}>
                       <span style={{
-                        fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 20, color: cream, lineHeight: 1,
+                        ...TYPE.displayCard,
+                        fontSize: 20, color: cream,
                       }}>{topic.number}</span>
                     </div>
                   )}
@@ -275,8 +278,9 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
                       <span style={{
-                        fontFamily: TYPE.bodyText.fontFamily, fontWeight: 600, fontSize: 17,
-                        color: 'rgba(255,255,255,0.45)', lineHeight: 1,
+                        ...TYPE.titleLarge,
+                        fontSize: 17,
+                        color: 'rgba(255,255,255,0.45)',
                       }}>{topic.number}</span>
                     </div>
                   )}
@@ -326,16 +330,16 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
                   {/* Text */}
                   <div style={{ minWidth: 0, flex: 1 }}>
                     <div className="mp-topic-title" style={{
-                      fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 21, lineHeight: '25px',
-                      color: '#F5F7FF', letterSpacing: '-0.01em',
+                      ...TYPE.displaySection,
+                      fontSize: 21, color: '#F5F7FF',
                       ...(isCurrent
                         ? { wordBreak: 'break-word' }
                         : { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }),
                     }}>{topic.title}</div>
                     {topic.hook && (
                       <div style={{
-                        fontFamily: TYPE.bodyText.fontFamily, fontWeight: 500, fontSize: 15.5, lineHeight: '21px',
-                        color: 'rgba(255,255,255,0.68)', marginTop: 5,
+                        ...TYPE.bodyStrong,
+                        fontSize: 15.5, color: 'rgba(255,255,255,0.68)', marginTop: 5,
                         overflow: 'hidden', display: '-webkit-box',
                         WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
                       }}>{topic.hook}</div>
@@ -359,7 +363,7 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
                           <path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="#9FE8B6" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </div>
-                      <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 600, fontSize: 13.5, color: '#9FE8B6', whiteSpace: 'nowrap' }}>Completed</span>
+                      <span style={{ ...TYPE.label, fontSize: 13.5, color: '#9FE8B6', whiteSpace: 'nowrap' }}>Completed</span>
                     </div>
                   )}
                   {isCurrent && (
@@ -372,8 +376,8 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
                         borderRadius: 14,
                         background: `linear-gradient(135deg, ${bronze}, ${sand})`,
                         border: 'none', cursor: 'pointer',
-                        fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 15,
-                        color: ink, whiteSpace: 'nowrap',
+                        ...TYPE.button,
+                        fontSize: 15, color: ink, whiteSpace: 'nowrap',
                         boxShadow: `0 0 24px rgba(${sandRgb},0.30), inset 0 1px 0 rgba(255,255,255,0.22)`,
                         transition: 'transform 120ms ease',
                       }}
@@ -385,8 +389,8 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
                         height: 32, padding: '0 12px', borderRadius: 999,
                         background: 'rgba(255,255,255,0.075)',
                         display: 'flex', alignItems: 'center',
-                        fontFamily: TYPE.bodyText.fontFamily, fontWeight: 500, fontSize: 13.5,
-                        color: 'rgba(255,255,255,0.62)', whiteSpace: 'nowrap',
+                        ...TYPE.label,
+                        fontSize: 13.5, color: 'rgba(255,255,255,0.62)', whiteSpace: 'nowrap',
                       }}>Not started</div>
                       <span style={{ color: 'rgba(255,255,255,0.42)', fontSize: 20, marginLeft: 8 }}>›</span>
                     </div>
@@ -443,12 +447,12 @@ function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, heade
       {/* bottom text */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 12px 12px', zIndex: 2 }}>
         <div style={{
-          fontWeight: 700, fontSize: 18, color: '#F5F7FF',
-          lineHeight: '22px', marginBottom: 8, fontFamily: TYPE.bodyText.fontFamily,
-          letterSpacing: '-0.01em',
+          ...TYPE.displayCard,
+          fontSize: 18, color: '#F5F7FF',
+          marginBottom: 8,
         }}>{title}</div>
         <div style={{ marginBottom: 4 }}>
-          <span style={{ fontSize: '.6rem', fontWeight: 800, color: accentColour, fontFamily: TYPE.bodyText.fontFamily }}>
+          <span style={{ ...TYPE.metadata, fontSize: '.6rem', color: accentColour }}>
             {progress}%
           </span>
         </div>
@@ -473,16 +477,14 @@ function SubjectSection({ heading, accent, modules, onModuleClick }) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{
-            fontSize: 13, fontWeight: 600, letterSpacing: '0.14em',
-            textTransform: 'uppercase', color: '#F5F2EA',
-            fontFamily: TYPE.bodyText.fontFamily,
+            ...TYPE.eyebrow,
+            fontSize: 13, textTransform: 'uppercase', color: '#F5F2EA',
           }}>{heading}</span>
           <span style={{ color: accent, fontSize: '.82rem', lineHeight: 1 }}>›</span>
         </div>
         <button style={{
           background: 'none', border: 'none', cursor: 'pointer',
-          fontSize: '.72rem', fontWeight: 600, color: accent, padding: 0,
-          fontFamily: TYPE.bodyText.fontFamily,
+          ...TYPE.metadata, color: accent, padding: 0,
         }}>View all</button>
       </div>
       <div style={{
@@ -739,31 +741,31 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
             background: 'rgba(5,5,5,0.5)', backdropFilter: 'blur(2px)',
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           }}>
-            <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 17, color: '#F5F7FF', lineHeight: 1 }}>{overallPct}%</span>
-            <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 600, fontSize: 7, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginTop: 3 }}>Complete</span>
+            <span style={{ ...TYPE.titleLarge, fontSize: 17, color: '#F5F7FF' }}>{overallPct}%</span>
+            <span style={{ ...TYPE.eyebrow, fontSize: 7, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginTop: 3 }}>Complete</span>
           </div>
         </div>
 
         <div style={{ position: 'absolute', bottom: 18, left: 24, right: 108, zIndex: 5 }}>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontWeight: 600, fontSize: 11,
-            letterSpacing: '0.16em', color: accent, textTransform: 'uppercase', marginBottom: 7,
+            ...TYPE.eyebrow,
+            fontSize: 11, color: accent, textTransform: 'uppercase', marginBottom: 7,
           }}>{subjectName}</div>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 24, lineHeight: '28px',
-            letterSpacing: '-0.01em', color: '#F5F7FF',
+            ...TYPE.displaySection,
+            fontSize: 24, color: '#F5F7FF',
           }}>{heroTitle}</div>
           {hasSeries ? (
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily, fontWeight: 500, fontSize: 13, lineHeight: 1.35,
-              color: 'rgba(255,255,255,0.52)', marginTop: 6,
+              ...TYPE.bodySmall,
+              fontSize: 13, color: 'rgba(255,255,255,0.52)', marginTop: 6,
             }}>{activeSeries?.comingSoon ? 'Coming soon'
               : isHistory ? `${items.length} episodes · AQA History`
               : `${items.length} chapters · AQA English Lit`}</div>
           ) : displayDesc ? (
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily, fontWeight: 500, fontSize: 13, lineHeight: 1.35,
-              color: 'rgba(255,255,255,0.52)', marginTop: 6, maxWidth: 240,
+              ...TYPE.bodySmall,
+              fontSize: 13, color: 'rgba(255,255,255,0.52)', marginTop: 6, maxWidth: 240,
               overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
             }}>{displayDesc}</div>
           ) : null}
@@ -804,14 +806,14 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                 }} />
                 <div style={{ position: 'absolute', bottom: 8, left: 10, right: 10 }}>
                   <div style={{
-                    fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 11, lineHeight: 1.25,
-                    color: '#fff', textAlign: 'left',
+                    ...TYPE.eyebrow,
+                    fontSize: 11, color: '#fff', textAlign: 'left',
                     overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
                   }}>{s.title}</div>
                   {s.comingSoon ? (
                     <div style={{
-                      marginTop: 3, fontFamily: TYPE.bodyText.fontFamily, fontSize: 9,
-                      fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                      ...TYPE.eyebrow,
+                      marginTop: 3, fontSize: 9, textTransform: 'uppercase',
                       color: 'rgba(255,255,255,0.45)',
                     }}>Coming soon</div>
                   ) : null}
@@ -826,10 +828,12 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
       {hasSeries && activeSeries?.comingSoon ? (
         <div style={{ padding: '64px 24px', textAlign: 'center' }}>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 20, color: '#F5F7FF', marginBottom: 10,
+            ...TYPE.displayCard,
+            fontSize: 20, color: '#F5F7FF', marginBottom: 10,
           }}>{activeSeries.title}</div>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 14, color: 'rgba(255,255,255,0.38)', maxWidth: 250, margin: '0 auto',
+            ...TYPE.bodySmall,
+            fontSize: 14, color: 'rgba(255,255,255,0.38)', maxWidth: 250, margin: '0 auto',
           }}>This series is being built — episodes will appear here when ready.</div>
         </div>
       ) : (
@@ -883,7 +887,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     animation: 'sbCurrentGlow 2.8s ease-in-out infinite',
                   }}>
-                    <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 24, color: cream, lineHeight: 1 }}>{item.number}</span>
+                    <span style={{ ...TYPE.displaySection, fontSize: 24, color: cream }}>{item.number}</span>
                   </div>
                 )}
                 {isFuture && (
@@ -892,7 +896,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                     background: `rgba(${accentRgb},0.08)`, border: `1px solid rgba(${accentRgb},0.25)`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 16, color: `rgba(${accentRgb},0.55)`, lineHeight: 1 }}>{item.number}</span>
+                    <span style={{ ...TYPE.titleLarge, fontSize: 16, color: `rgba(${accentRgb},0.55)` }}>{item.number}</span>
                   </div>
                 )}
 
@@ -929,7 +933,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                       </svg>
                       <span style={{
                         position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 11, color: '#FFFFFF',
+                        ...TYPE.eyebrow, fontSize: 11, color: '#FFFFFF',
                       }}>{item.pct}%</span>
                     </div>
                   </div>
@@ -938,14 +942,14 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                   <div style={{ flex: 1, minHeight: 0, padding: '10px 16px 12px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{
-                        fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 16, lineHeight: 1.2, color: '#FFFFFF',
+                        ...TYPE.titleLarge, fontSize: 16, color: '#FFFFFF',
                         overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
                       }}>
                         {item.title}
                       </div>
                       {desc ? (
                         <div style={{
-                          fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 600, color: accent, marginTop: 1,
+                          ...TYPE.eyebrow, fontSize: 11, color: accent, marginTop: 1,
                           overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
                         }}>
                           {stripEra(desc)}
@@ -967,7 +971,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                         height: 40, borderRadius: 12, padding: '0 18px', flexShrink: 0,
                         background: `linear-gradient(180deg, ${sand}, ${bronze})`,
                         display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap',
-                        fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 14, color: '#111',
+                        ...TYPE.button, fontSize: 14, color: '#111',
                       }}
                     >{item.pct > 0 ? 'Continue' : 'Start'}</div>
                   </div>
@@ -986,12 +990,12 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                   }} />
                   <div style={{ marginLeft: 12, flex: 1, minWidth: 0 }}>
                     <div style={{
-                      fontFamily: TYPE.bodyText.fontFamily, fontWeight: 600, fontSize: 14, lineHeight: 1.25, color: 'rgba(255,255,255,0.5)',
+                      ...TYPE.label, fontSize: 14, color: 'rgba(255,255,255,0.5)',
                       overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
                     }}>{item.title}</div>
                     {desc ? (
                       <div style={{
-                        fontFamily: TYPE.bodyText.fontFamily, fontWeight: 500, fontSize: 11.5, lineHeight: 1.2, color: 'rgba(255,255,255,0.3)', marginTop: 2,
+                        ...TYPE.bodySmall, fontSize: 11.5, color: 'rgba(255,255,255,0.3)', marginTop: 2,
                         overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
                       }}>{stripEra(desc)}</div>
                     ) : null}
@@ -1022,14 +1026,14 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                   }} />
                   <div style={{ marginLeft: 12, flex: 1, minWidth: 0 }}>
                     <div style={{
-                      fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 15, lineHeight: 1.2, color: 'rgba(255,255,255,0.56)',
+                      ...TYPE.displayCard, fontSize: 15, color: 'rgba(255,255,255,0.56)',
                       overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
                     }}>
                       {item.title}
                     </div>
                     {desc ? (
                       <div style={{
-                        fontFamily: TYPE.bodyText.fontFamily, fontSize: 12, lineHeight: 1.2, color: 'rgba(255,255,255,0.32)', marginTop: 3,
+                        ...TYPE.bodySmall, fontSize: 12, color: 'rgba(255,255,255,0.32)', marginTop: 3,
                         overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
                       }}>
                         {desc}
@@ -1039,8 +1043,8 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                   {item.status === 'coming_soon' ? (
                     <span style={{
                       flexShrink: 0, marginLeft: 8,
-                      fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 600,
-                      color: `rgba(${accentRgb},0.45)`, letterSpacing: '0.04em',
+                      ...TYPE.eyebrow, fontSize: 11,
+                      color: `rgba(${accentRgb},0.45)`,
                     }}>Coming soon</span>
                   ) : (
                     <div style={{ display: 'flex', gap: 5, flexShrink: 0, marginLeft: 8 }}>
@@ -1097,14 +1101,14 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
         {/* Title block */}
         <div style={{ position: 'absolute', bottom: 20, left: 24, zIndex: 5 }}>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontWeight: 600, fontSize: 12, letterSpacing: '0.14em',
+            ...TYPE.eyebrow,
             textTransform: 'uppercase', color: sand, marginBottom: 6,
           }}>HISTORY</div>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontWeight: 800, fontSize: 28, lineHeight: '32px',
-            letterSpacing: '-0.01em', color: '#F5F7FF',
+            ...TYPE.displayScreen,
+            fontSize: 28, color: '#F5F7FF',
           }}>Medicine Through Time</div>
-          <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, color: 'rgba(255,255,255,0.42)', marginTop: 4 }}>
+          <div style={{ ...TYPE.bodySmall, fontSize: 13, color: 'rgba(255,255,255,0.42)', marginTop: 4 }}>
             {histMods.length} modules · AQA History
           </div>
         </div>
@@ -1136,7 +1140,7 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <span style={{
-                  fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 14,
+                  ...TYPE.label, fontSize: 14,
                   color: isStarted ? '#14110E' : 'rgba(255,255,255,0.38)',
                 }}>{i + 1}</span>
               </div>
@@ -1144,12 +1148,12 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
               {/* Text + progress */}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
-                  fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 16, lineHeight: '20px',
+                  ...TYPE.titleLarge, fontSize: 16,
                   color: '#F5F7FF', marginBottom: 3,
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                 }}>{mod.title}</div>
                 {mod.era && (
-                  <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, color: 'rgba(255,255,255,0.38)', marginBottom: 8 }}>
+                  <div style={{ ...TYPE.bodySmall, fontSize: 13, color: 'rgba(255,255,255,0.38)', marginBottom: 8 }}>
                     {mod.era}
                   </div>
                 )}
@@ -1166,7 +1170,7 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
               {/* % + chevron */}
               <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span style={{
-                  fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 13,
+                  ...TYPE.label, fontSize: 13,
                   color: isStarted ? sand : 'rgba(255,255,255,0.22)',
                 }}>{pct}%</span>
                 <span style={{ color: 'rgba(255,255,255,0.28)', fontSize: 18 }}>›</span>
@@ -1253,7 +1257,7 @@ export default function ModulesTab({ onOpenModule }) {
 
         {/* Headline */}
         <div style={{ position: 'absolute', left: SPACING.compact, right: SPACING.compact, bottom: SPACING.standard, zIndex: 2 }}>
-          <div style={{ ...TYPE.cinematic, fontSize: 46, color: GENERAL.softWhite }}>
+          <div style={{ ...TYPE.displayHero, fontSize: 46, color: GENERAL.softWhite }}>
             Keep going<span style={{ color: GENERAL.teal }}>.</span>
           </div>
           <div style={{ ...TYPE.body, color: 'rgba(241,250,238,0.7)', marginTop: SPACING.micro }}>
@@ -1283,8 +1287,8 @@ export default function ModulesTab({ onOpenModule }) {
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 600,
-            letterSpacing: '0.18em', textTransform: 'uppercase', color: GENERAL.slate,
+            ...TYPE.eyebrow,
+            textTransform: 'uppercase', color: GENERAL.slate,
             marginBottom: SPACING.micro,
           }}>Continue</div>
           <div style={{ height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: RADII.pill, overflow: 'hidden' }}>
@@ -1292,7 +1296,7 @@ export default function ModulesTab({ onOpenModule }) {
           </div>
         </div>
 
-        <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 600, color: GENERAL.slate, flexShrink: 0 }}>
+        <div style={{ ...TYPE.label, fontSize: 13, color: GENERAL.slate, flexShrink: 0 }}>
           {continuePct}%
         </div>
       </button>
@@ -1317,12 +1321,12 @@ export default function ModulesTab({ onOpenModule }) {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                   <path d="M13 2L4.5 13H11L10 22L19.5 10H13L13 2Z" fill={GENERAL.teal} />
                 </svg>
-                <span style={{ ...TYPE.cardTitle, fontSize: 17, color: GENERAL.softWhite }}>{biggestWin.label}</span>
+                <span style={{ ...TYPE.displayCard, fontSize: 17, color: GENERAL.softWhite }}>{biggestWin.label}</span>
               </div>
               <div style={{ ...TYPE.bodySmall, color: GENERAL.slate, marginBottom: SPACING.micro }}>
                 {biggestWin.reasonText}
               </div>
-              <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 600, color: GENERAL.teal }}>
+              <div style={{ ...TYPE.label, fontSize: 13, color: GENERAL.teal }}>
                 Revisit →
               </div>
             </div>
@@ -1375,13 +1379,13 @@ export default function ModulesTab({ onOpenModule }) {
                 backgroundImage: `url(${s.image})`, backgroundSize: 'cover', backgroundPosition: 'center',
                 marginBottom: SPACING.micro,
               }} />
-              <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 600, color: GENERAL.softWhite, marginBottom: 4 }}>
+              <div style={{ ...TYPE.label, fontSize: 13, color: GENERAL.softWhite, marginBottom: 4 }}>
                 {s.name}
               </div>
               <div style={{ height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: RADII.pill, overflow: 'hidden', marginBottom: 4 }}>
                 <div style={{ width: `${s.pct}%`, height: '100%', background: s.isWeakest ? GENERAL.coral : GENERAL.teal, borderRadius: RADII.pill }} />
               </div>
-              <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 500, color: GENERAL.slate }}>
+              <div style={{ ...TYPE.metadata, color: GENERAL.slate }}>
                 {s.pct}%
               </div>
             </button>
