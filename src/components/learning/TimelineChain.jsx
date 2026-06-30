@@ -70,8 +70,6 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
     })
   }
 
-  const F = { fontFamily: TYPE.bodyText.fontFamily }
-
   return (
     <CinematicShell style={{
       background: '#08090D',
@@ -85,15 +83,14 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
       <div style={{ padding: `0 ${SPACING.standard}px`, marginBottom: SPACING.standard, flexShrink: 0 }}>
         {block.title && (
           <h2 style={{
-            ...F, fontSize: 'clamp(24px, 7.5vw, 32px)', fontWeight: 700,
-            letterSpacing: '-0.02em', lineHeight: 1.15,
+            ...TYPE.displaySection, fontSize: 'clamp(24px, 7.5vw, 32px)',
             color: 'rgba(255,255,255,0.97)', margin: '0 0 8px',
           }}>
             {block.title}
           </h2>
         )}
         {block.intro && (
-          <p style={{ ...F, fontSize: 15, lineHeight: 1.5, color: 'rgba(255,255,255,0.52)', margin: 0 }}>
+          <p style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.52)', margin: 0 }}>
             {block.intro}
           </p>
         )}
@@ -135,7 +132,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
       {!scrolled && steps.length > 1 && (
         <div style={{
           textAlign: 'center', marginTop: SPACING.compact, flexShrink: 0,
-          ...F, fontSize: 11, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase',
+          ...TYPE.eyebrow, textTransform: 'uppercase',
           color: 'rgba(255,255,255,0.30)',
           animation: 'tc-hint-pulse 2.4s ease-in-out infinite',
         }}>
@@ -164,7 +161,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
             style={{ animation: `tc-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both` }}
           />
         ) : (
-          <div style={{ ...F, fontSize: 13, color: 'rgba(255,255,255,0.32)' }}>
+          <div style={{ ...TYPE.label, color: 'rgba(255,255,255,0.32)' }}>
             Flip every step to continue
           </div>
         )}
@@ -174,7 +171,6 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
 }
 
 function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = CARD_W, cardH = CARD_H, railH = 20, scrollAlign = 'center' }) {
-  const F = { fontFamily: TYPE.bodyText.fontFamily }
   const isFirst = index === 0
   const isLast = index === total - 1
 
@@ -236,7 +232,7 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = C
                   width: 30, height: 30, borderRadius: '50%',
                   border: `1px solid rgba(${rgb},0.32)`,
                   background: 'rgba(8,9,13,0.55)', backdropFilter: 'blur(6px)',
-                  color: accent, fontSize: 13, fontWeight: 700, ...F,
+                  ...TYPE.label, fontSize: 13, color: accent,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
                   {index + 1}
@@ -248,7 +244,7 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = C
                 width: 36, height: 36, borderRadius: '50%',
                 border: `1px solid rgba(${rgb},0.32)`,
                 background: `rgba(${rgb},0.10)`,
-                color: accent, fontSize: 15, fontWeight: 700, ...F,
+                ...TYPE.label, fontSize: 15, color: accent,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 marginBottom: SPACING.standard, flexShrink: 0,
               }}>
@@ -258,10 +254,10 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = C
             {step.icon && !step.image && (
               <div style={{ fontSize: 40, marginBottom: SPACING.compact }}>{step.icon}</div>
             )}
-            <div style={{ ...F, fontSize: 19, fontWeight: 600, lineHeight: 1.35, color: 'rgba(255,255,255,0.94)', flex: 1 }}>
+            <div style={{ ...TYPE.displayCard, fontSize: 19, color: 'rgba(255,255,255,0.94)', flex: 1 }}>
               {step.label}
             </div>
-            <div style={{ ...F, fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: `rgba(${rgb},0.55)` }}>
+            <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: `rgba(${rgb},0.55)` }}>
               Tap to reveal ↻
             </div>
           </div>
@@ -278,10 +274,10 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = C
             padding: SPACING.standard,
             display: 'flex', flexDirection: 'column',
           }}>
-            <div style={{ ...F, fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: accent, marginBottom: SPACING.micro }}>
+            <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: accent, marginBottom: SPACING.micro }}>
               Why it mattered
             </div>
-            <div style={{ ...F, fontSize: 15, lineHeight: 1.55, color: 'rgba(255,255,255,0.82)', overflowY: 'auto' }}>
+            <div style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.82)', overflowY: 'auto' }}>
               {step.detail}
             </div>
           </div>
@@ -325,12 +321,10 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
     })
   }
 
-  const F = { fontFamily: TYPE.bodyText.fontFamily }
-
   return (
-    <div style={F}>
+    <div>
       {block.intro && (
-        <p style={{ ...F, fontSize: 15, lineHeight: 1.5, color: 'rgba(255,255,255,0.52)', margin: '0 0 16px' }}>
+        <p style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.52)', margin: '0 0 16px' }}>
           {block.intro}
         </p>
       )}
@@ -373,7 +367,7 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
       </div>
 
       {block.outro && (
-        <p style={{ ...F, fontSize: 14, lineHeight: 1.55, color: 'rgba(255,255,255,0.56)', margin: `${SPACING.compact}px 0 0` }}>
+        <p style={{ ...TYPE.bodySmall, fontSize: 14, color: 'rgba(255,255,255,0.56)', margin: `${SPACING.compact}px 0 0` }}>
           {block.outro}
         </p>
       )}
