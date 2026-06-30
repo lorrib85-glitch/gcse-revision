@@ -80,7 +80,6 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
   const item = items[index]
   const allViewed = items.length > 0 && viewed.size === items.length
   const slideAnim = `${direction > 0 ? 'ccv-slide-in-right' : 'ccv-slide-in-left'} ${MOTION.duration.slow} ${MOTION.easing.standard} both`
-  const F = { fontFamily: TYPE.bodyText.fontFamily }
 
   return (
     <div style={{
@@ -95,15 +94,14 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
       <div style={{ padding: `0 ${SPACING.standard}px`, marginBottom: SPACING.compact, flexShrink: 0 }}>
         {block.title && (
           <h2 style={{
-            ...F, fontSize: 'clamp(24px, 7.5vw, 32px)', fontWeight: 700,
-            letterSpacing: '-0.02em', lineHeight: 1.15,
+            ...TYPE.displaySection, fontSize: 'clamp(24px, 7.5vw, 32px)',
             color: 'rgba(255,255,255,0.97)', margin: '0 0 8px',
           }}>
             {block.title}
           </h2>
         )}
         {block.intro && (
-          <p style={{ ...F, fontSize: 15, lineHeight: 1.5, color: 'rgba(255,255,255,0.52)', margin: 0 }}>
+          <p style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.52)', margin: 0 }}>
             {block.intro}
           </p>
         )}
@@ -159,12 +157,12 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
         flexShrink: 0, padding: `${SPACING.compact}px ${SPACING.standard}px 0`,
         animation: slideAnim,
       }}>
-        <h3 style={{ ...F, fontSize: 22, fontWeight: 700, color: accent, margin: '0 0 10px' }}>
+        <h3 style={{ ...TYPE.displaySection, fontSize: 22, color: accent, margin: '0 0 10px' }}>
           {item?.label}
         </h3>
-        <ul style={{ ...F, margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
           {(item?.facts || []).map((fact, i) => (
-            <li key={i} style={{ display: 'flex', gap: 10, fontSize: 15, lineHeight: 1.5, color: 'rgba(255,255,255,0.82)' }}>
+            <li key={i} style={{ ...TYPE.bodyStrong, display: 'flex', gap: 10, color: 'rgba(255,255,255,0.82)' }}>
               <span style={{ flexShrink: 0, width: 6, height: 6, borderRadius: '50%', background: accent, marginTop: 8 }} />
               <span>{fact}</span>
             </li>
@@ -191,14 +189,14 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
             onClick={onContinue}
             style={{
               background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-              ...F, fontWeight: 700, fontSize: 18, color: accent,
+              ...TYPE.buttonLarge, fontSize: 18, color: accent,
               animation: `ccv-slide-in-right ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
             }}
           >
             Continue →
           </button>
         ) : (
-          <div style={{ ...F, fontSize: 13, color: 'rgba(255,255,255,0.32)' }}>
+          <div style={{ ...TYPE.label, color: 'rgba(255,255,255,0.32)' }}>
             Explore each part to continue
           </div>
         )}
