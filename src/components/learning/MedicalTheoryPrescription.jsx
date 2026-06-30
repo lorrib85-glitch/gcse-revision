@@ -22,20 +22,23 @@ const THEME = {
 }
 
 const THEORY_TINTS = {
-  'god-sin':      { from: 'rgba(80,40,8,0.92)',  to: 'rgba(12,9,5,0.98)' },
-  'four-humours': { from: 'rgba(70,20,10,0.92)', to: 'rgba(12,9,5,0.98)' },
-  'astrology':    { from: 'rgba(20,20,55,0.92)', to: 'rgba(12,9,5,0.98)' },
+  'god-sin':      { from: 'rgba(80,40,8,0.92)',   to: 'rgba(12,9,5,0.98)' },
+  'four-humours': { from: 'rgba(70,20,10,0.92)',  to: 'rgba(12,9,5,0.98)' },
+  'miasma':       { from: 'rgba(46,54,30,0.92)',  to: 'rgba(12,9,5,0.98)' },
+  'astrology':    { from: 'rgba(20,20,55,0.92)',  to: 'rgba(12,9,5,0.98)' },
 }
 
 const THEORY_SYMBOLS = {
   'god-sin':      '✝',
   'four-humours': '⚖',
+  'miasma':       '≋',
   'astrology':    '✦',
 }
 
 const BELIEF_HINTS = {
   'god-sin':      'Illness as punishment',
   'four-humours': 'Illness as imbalance',
+  'miasma':       'Illness carried by bad air',
   'astrology':    'Illness linked to the stars',
 }
 
@@ -48,6 +51,10 @@ const BELIEF_HEADLINES = {
     title: 'The body was out of balance',
     subtitle: 'Treatment restored balance.',
   },
+  'miasma': {
+    title: 'Bad air carried disease',
+    subtitle: 'Treatment purified the air.',
+  },
   'astrology': {
     title: 'The stars shaped the body',
     subtitle: 'Treatment depended on timing.',
@@ -57,8 +64,20 @@ const BELIEF_HEADLINES = {
 const THEORY_IMAGES = {
   'god-sin':      '/History/Medicine/god_sin-1024.webp',
   'four-humours': '/History/Medicine/four_humours_treatment-1024.webp',
-  'astrology':    '/History/Medicine/astrology-1024.webp',
   'miasma':       '/History/Medicine/miasma-1024.webp',
+  'astrology':    '/History/Medicine/astrology-1024.webp',
+}
+
+const DEFAULT_MIASMA_THEORY = {
+  id: 'miasma',
+  label: 'Miasma',
+  shortLabel: 'Miasma',
+  explanation: 'Some people believed disease spread through foul-smelling air from rotting waste, marshes, sewers and rubbish.',
+  acceptedAnswers: [
+    { canonical: 'Sweet-smelling herbs', accepted: ['sweet-smelling herbs', 'herbs', 'posy', 'flowers', 'pleasant smells', 'perfume'] },
+    { canonical: 'Cleaning streets',     accepted: ['cleaning streets', 'clean streets', 'remove rubbish', 'remove waste', 'clear filth', 'cleaning'] },
+    { canonical: 'Avoiding bad air',     accepted: ['avoid bad air', 'avoid miasma', 'move away', 'fresh air', 'ventilation', 'keep air moving'] },
+  ],
 }
 
 // Per-treatment descriptions — this component is Medicine-specific so local defaults are acceptable
@@ -78,6 +97,14 @@ const TREATMENT_DETAILS = {
       'Expelling excess phlegm or bile with laxatives or emetics. Purging forced the imbalanced humour out of the body.',
     'Herbal remedies':
       'Plants were chosen for their qualities — hot, cold, wet or dry — to counteract the dominant humour. Diet changes and rest were also commonly prescribed.',
+  },
+  'miasma': {
+    'Sweet-smelling herbs':
+      'Carrying flowers, herbs or a posy was thought to protect people by replacing foul air with cleaner, sweeter smells.',
+    'Cleaning streets':
+      'Removing rotting waste and filth made sense under miasma theory because bad smells were believed to carry disease.',
+    'Avoiding bad air':
+      'People tried to avoid marshes, sewers and rubbish heaps, or keep air moving, because still foul air was seen as dangerous.',
   },
   'astrology': {
     'Astrology charts':
@@ -108,10 +135,23 @@ function sentenceCase(value = '') {
   return cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1) : cleaned
 }
 
+function withMiasmaTheory(theories = []) {
+  if (theories.some(theory => theory.id === 'miasma')) return theories
+
+  const astrologyIndex = theories.findIndex(theory => theory.id === 'astrology')
+  if (astrologyIndex === -1) return [...theories, DEFAULT_MIASMA_THEORY]
+
+  return [
+    ...theories.slice(0, astrologyIndex),
+    DEFAULT_MIASMA_THEORY,
+    ...theories.slice(astrologyIndex),
+  ]
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function MedicalTheoryPrescription({ screen, onComplete }) {
-  const theories = screen.theories || []
+  const theories = withMiasmaTheory(screen.theories || [])
 
   const [phase,              setPhase]             = useState('select')
   const [activeId,           setActiveId]           = useState(null)
@@ -507,6 +547,10 @@ function TreatmentTab({ label, active, onClick }) {
 // ── Phase: Final ──────────────────────────────────────────────────────────────
 
 function FinalPhase({ theories, finalPhase, screen, onComplete, prefersReducedMotion }) {
+  const finalMessage = screen.finalMessage?.includes('miasma')
+    ? screen.finalMessage
+    : 'Medieval medicine mixed religion, ancient Greek ideas, miasma and astrology. Most people believed several explanations at the same time.'
+
   return (
     <div style={{
       minHeight: '100dvh',
@@ -520,7 +564,7 @@ function FinalPhase({ theories, finalPhase, screen, onComplete, prefersReducedMo
 
       <header style={{
         textAlign: 'center',
-        marginBottom: SPACING.separation,
+        marginBottom: SPACING.compact,
         animation: prefersReducedMotion
           ? 'none'
           : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
@@ -534,20 +578,33 @@ function FinalPhase({ theories, finalPhase, screen, onComplete, prefersReducedMo
           margin: `${SPACING.micro}px auto 0`,
           maxWidth: 320,
         }}>
-          Different causes created different treatments.
+          Beliefs shaped treatments.
         </p>
       </header>
 
-      <div style={{ display: 'flex', gap: SPACING.compact, marginBottom: SPACING.separation }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: SPACING.micro,
+        marginBottom: SPACING.compact,
+      }}>
         {theories.map((theory, i) => {
           const visible = i < finalPhase
           const symbol  = THEORY_SYMBOLS[theory.id] || '◆'
+          const hint    = BELIEF_HINTS[theory.id]
+          const treatments = theory.acceptedAnswers.map(ans => ans.canonical).join(' · ')
 
           return (
             <div
               key={theory.id}
               style={{
-                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                gap: SPACING.compact,
+                padding: `${SPACING.compact}px`,
+                borderRadius: RADII.large,
+                background: `rgba(${THEME.parchmentRgb},0.035)`,
+                border: `1px solid rgba(${THEME.accentRgb},0.14)`,
                 opacity: visible ? 1 : 0,
                 transform: visible ? 'translateY(0)' : 'translateY(14px)',
                 transition: prefersReducedMotion
@@ -556,57 +613,42 @@ function FinalPhase({ theories, finalPhase, screen, onComplete, prefersReducedMo
               }}
             >
               <div style={{
-                width: 48,
-                height: 48,
+                width: 44,
+                height: 44,
                 borderRadius: '50%',
+                flexShrink: 0,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                margin: '0 auto 10px',
                 background: `rgba(${THEME.accentRgb},0.12)`,
-                border: `1px solid rgba(${THEME.accentRgb},0.32)`,
-                fontSize: 20,
+                border: `1px solid rgba(${THEME.accentRgb},0.30)`,
+                fontSize: 18,
                 color: THEME.accent,
-                boxShadow: visible ? `0 0 20px rgba(${THEME.accentRgb},0.14)` : 'none',
+                boxShadow: visible ? `0 0 18px rgba(${THEME.accentRgb},0.12)` : 'none',
               }}>
                 {symbol}
               </div>
 
-              <div style={{
-                ...TYPE.metadata,
-                color: THEME.accent,
-                textAlign: 'center',
-                marginBottom: SPACING.micro,
-                letterSpacing: '0.04em',
-                textTransform: 'uppercase',
-              }}>
-                {sentenceCase(theory.shortLabel)}
-              </div>
-
-              <div style={{
-                width: 1,
-                height: 14,
-                background: `rgba(${THEME.accentRgb},0.28)`,
-                margin: '0 auto 6px',
-              }} />
-
-              <div style={{
-                background: `rgba(${THEME.accentRgb},0.05)`,
-                border: `1px solid rgba(${THEME.accentRgb},0.14)`,
-                borderRadius: RADII.small,
-                padding: '10px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 5,
-              }}>
-                {theory.acceptedAnswers.map(ans => (
-                  <div key={ans.canonical} style={{
-                    ...TYPE.captionText,
-                    color: 'rgba(245,238,217,0.72)',
-                  }}>
-                    {ans.canonical}
-                  </div>
-                ))}
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ ...TYPE.cardTitle, color: THEME.text, lineHeight: 1.18 }}>
+                  {sentenceCase(theory.shortLabel)}
+                </div>
+                <div style={{
+                  ...TYPE.captionText,
+                  color: THEME.accent,
+                  marginTop: 5,
+                  lineHeight: 1.35,
+                }}>
+                  {hint}
+                </div>
+                <div style={{
+                  ...TYPE.captionText,
+                  color: THEME.textMuted,
+                  marginTop: 6,
+                  lineHeight: 1.35,
+                }}>
+                  {treatments}
+                </div>
               </div>
             </div>
           )
@@ -626,7 +668,7 @@ function FinalPhase({ theories, finalPhase, screen, onComplete, prefersReducedMo
             ? 'none'
             : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
         }}>
-          {screen.finalMessage}
+          {finalMessage}
         </div>
       )}
 
