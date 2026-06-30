@@ -43,8 +43,8 @@ export default function CinematicContinueCTA({
           ...style,
         }}>
         <span style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontWeight: 700, fontSize: 13,
+          ...TYPE.eyebrow,
+          fontSize: 13,
           letterSpacing: '0.34em', textTransform: 'uppercase',
           color: accent,
           textShadow: '0 1px 16px rgba(0,0,0,0.6)',
