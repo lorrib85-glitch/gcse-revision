@@ -123,9 +123,9 @@ function LoginScreen() {
 
       {/* Tagline */}
       <div style={{
-        fontFamily: TYPE.bodyText.fontFamily,
-        fontSize: 42, fontWeight: 700, color: '#F4EFE6',
-        textAlign: 'center', lineHeight: 1.05, marginTop: 28, letterSpacing: '-0.02em',
+        ...TYPE.displayHero,
+        fontSize: 42, color: '#F4EFE6',
+        textAlign: 'center', marginTop: 28,
       }}>
         Who will<br />you be?
       </div>
@@ -142,7 +142,7 @@ function LoginScreen() {
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
           background: '#FFFFFF', border: 'none', borderRadius: 18, cursor: loading ? 'default' : 'pointer',
           height: 56, width: '100%', maxWidth: 340,
-          fontFamily: TYPE.bodyText.fontFamily, fontSize: 16, fontWeight: 600, color: '#1A1A1A',
+          ...TYPE.buttonLarge, fontSize: 16, color: '#1A1A1A',
           boxShadow: '0 4px 24px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.12) inset',
           opacity: loading ? 0.7 : 1,
           transition: 'opacity 150ms ease, transform 120ms ease',
@@ -161,9 +161,9 @@ function LoginScreen() {
       </button>
 
       <div style={{
-        fontFamily: TYPE.bodyText.fontFamily,
+        ...TYPE.eyebrow,
         fontSize: 11, color: '#3A3835', marginTop: 18, marginBottom: 'max(32px, env(safe-area-inset-bottom))',
-        textAlign: 'center', lineHeight: 1.5,
+        textAlign: 'center',
       }}>
         By continuing you agree to our Terms &amp; Privacy Policy
       </div>
@@ -204,15 +204,15 @@ function OnboardingScreen() {
 
       <div style={{ flex: '0 0 auto', marginTop: 'max(88px, 22vh)', width: '100%', maxWidth: 340 }}>
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontSize: 32, fontWeight: 700, color: '#F4EFE6',
-          lineHeight: 1.15, marginBottom: 12, letterSpacing: '-0.01em',
+          ...TYPE.displayHero,
+          fontSize: 32, color: '#F4EFE6',
+          marginBottom: 12,
         }}>
           What should<br />we call you?
         </div>
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontSize: 15, color: '#7A7670', lineHeight: 1.55, marginBottom: 36,
+          ...TYPE.bodyStrong,
+          fontSize: 15, color: '#7A7670', marginBottom: 36,
         }}>
           This helps personalise your revision journey.
         </div>
@@ -232,7 +232,7 @@ function OnboardingScreen() {
             backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
             border: '1.5px solid rgba(255,255,255,0.1)',
             borderRadius: 16, padding: '0 22px',
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 18, fontWeight: 500, color: '#F4EFE6',
+            ...TYPE.bodyStrong, fontSize: 18, color: '#F4EFE6',
             outline: 'none', caretColor: '#65E6C6',
             transition: 'border-color 180ms ease, box-shadow 180ms ease',
           }}
@@ -257,10 +257,10 @@ function OnboardingScreen() {
           width: '100%', maxWidth: 340, height: 54,
           background: valid ? 'linear-gradient(135deg, #3D7A5E 0%, #65E6C6 100%)' : 'rgba(255,255,255,0.07)',
           border: 'none', borderRadius: 16, cursor: valid ? 'pointer' : 'default',
-          fontFamily: TYPE.bodyText.fontFamily, fontSize: 16, fontWeight: 700,
+          ...TYPE.buttonLarge, fontSize: 16,
           color: valid ? '#08090D' : '#3D3A35',
           transition: 'background 220ms ease, color 220ms ease, transform 120ms ease',
-          letterSpacing: '0.02em', flexShrink: 0,
+          flexShrink: 0,
           marginBottom: 'max(36px, env(safe-area-inset-bottom))',
         }}
         onMouseEnter={e => { if (valid) e.currentTarget.style.transform = 'scale(1.015)' }}
