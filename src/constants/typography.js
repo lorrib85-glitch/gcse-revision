@@ -1,195 +1,221 @@
-export const TYPE = {
-  // Cinematic Hierarchy (Manrope)
-  screenHeading: {
-    fontFamily: "'Manrope', sans-serif",
-    fontSize: "clamp(30px, 8vw, 42px)",
-    lineHeight: 1.07,
-    fontWeight: 560,
-    letterSpacing: "-0.015em"
-  },
+// ── Private canonical token definitions ───────────────────────────────────
+// Each token object is defined once. Deprecated aliases at the bottom of TYPE
+// reference these same objects — they will be removed after Phase 6.
 
-  sectionHeading: {
-    fontFamily: "'Manrope', sans-serif",
-    fontSize: "clamp(22px, 6vw, 30px)",
-    lineHeight: 1.1,
-    fontWeight: 560,
-    letterSpacing: "-0.015em"
-  },
-
-  cardTitle: {
-    fontFamily: "'Manrope', sans-serif",
-    fontSize: "1.12rem",
-    lineHeight: 1.2,
-    fontWeight: 560,
-    letterSpacing: "-0.01em"
-  },
-
-  featureText: {
-    fontFamily: "'Manrope', sans-serif",
-    fontSize: "clamp(32px, 9vw, 48px)",
-    lineHeight: 1.12,
-    fontWeight: 580,
-    letterSpacing: "-0.025em"
-  },
-
-  // Learning & UI (Sora)
-  bodyText: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: "0.95rem",
-    lineHeight: 1.5,
-    fontWeight: 400,
-    letterSpacing: "-0.005em"
-  },
-
-  bodyLarge: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: "1.02rem",
-    lineHeight: 1.48,
-    fontWeight: 400,
-    letterSpacing: "-0.006em"
-  },
-
-  bodySmallText: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: "0.84rem",
-    lineHeight: 1.45,
-    fontWeight: 400,
-    letterSpacing: "-0.005em"
-  },
-
-  metadataText: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: "0.72rem",
-    lineHeight: 1.2,
-    fontWeight: 600,
-    letterSpacing: "0.10em"
-  },
-
-  captionText: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: "0.78rem",
-    lineHeight: 1.35,
-    fontWeight: 400,
-    letterSpacing: "-0.003em"
-  },
-
-  buttonText: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: "0.92rem",
-    lineHeight: 1.2,
-    fontWeight: 500,
-    letterSpacing: "-0.003em"
-  },
-
-  examAnswerText: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: "clamp(15px, 4vw, 16px)",
-    lineHeight: 1.72,
-    fontWeight: 420,
-    letterSpacing: "-0.006em"
-  },
-
-  examQuestionText: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: "clamp(14px, 3.8vw, 15.5px)",
-    lineHeight: 1.55,
-    fontWeight: 520,
-    letterSpacing: "-0.006em"
-  },
-
-  // Compatibility Aliases (pointing to new values)
-  hero: {
-    fontFamily: "'Manrope', sans-serif",
-    fontSize: "clamp(30px, 8vw, 42px)",
-    lineHeight: 1.07,
-    fontWeight: 560,
-    letterSpacing: "-0.015em"
-  },
-
-  sectionTitle: {
-    fontFamily: "'Manrope', sans-serif",
-    fontSize: "clamp(22px, 6vw, 30px)",
-    lineHeight: 1.1,
-    fontWeight: 560,
-    letterSpacing: "-0.015em"
-  },
-
-  body: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: "0.95rem",
-    lineHeight: 1.5,
-    fontWeight: 400,
-    letterSpacing: "-0.005em"
-  },
-
-  bodySmall: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: "0.84rem",
-    lineHeight: 1.45,
-    fontWeight: 400,
-    letterSpacing: "-0.005em"
-  },
-
-  metadata: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: "0.72rem",
-    lineHeight: 1.2,
-    fontWeight: 600,
-    letterSpacing: "0.10em"
-  },
-
-  // Overlay & Cinematic Overrides
-  overlayEyebrow: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: 11,
-    lineHeight: 1.2,
-    fontWeight: 650,
-    letterSpacing: '0.16em',
-  },
-
-  overlayTitle: {
-    fontFamily: "'Manrope', sans-serif",
-    fontSize: 'clamp(24px, 6.4vw, 30px)',
-    lineHeight: 1.1,
-    fontWeight: 560,
-    letterSpacing: '-0.015em',
-  },
-
-  overlayBody: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: 'clamp(15px, 4vw, 17px)',
-    lineHeight: 1.45,
-    fontWeight: 500,
-    letterSpacing: '-0.005em',
-  },
-
-  overlayPrompt: {
-    fontFamily: "'Sora', sans-serif",
-    fontSize: 11,
-    lineHeight: 1.2,
-    fontWeight: 650,
-    letterSpacing: '0.18em',
-  },
-
-  impactTitle: {
-    fontFamily: "'Manrope', sans-serif",
-    fontSize: 'clamp(28px, 8vw, 36px)',
-    lineHeight: 1.06,
-    fontWeight: 620,
-    letterSpacing: '-0.025em',
-  },
-
-  cinematic: {
-    fontFamily: "'Manrope', sans-serif",
-    fontSize: 'clamp(24px, 6.4vw, 30px)',
-    lineHeight: 1.1,
-    fontWeight: 560,
-    letterSpacing: '-0.015em',
-  },
+const _displayHero = {
+  fontFamily: "'Manrope', sans-serif",
+  fontSize: 'clamp(32px, 9vw, 48px)',
+  lineHeight: 1.05,
+  fontWeight: 600,
+  letterSpacing: '-0.028em',
+  textWrap: 'balance',
 }
 
+const _displayScreen = {
+  fontFamily: "'Manrope', sans-serif",
+  fontSize: 'clamp(28px, 8vw, 38px)',
+  lineHeight: 1.07,
+  fontWeight: 560,
+  letterSpacing: '-0.022em',
+  textWrap: 'balance',
+}
+
+const _displaySection = {
+  fontFamily: "'Manrope', sans-serif",
+  fontSize: 'clamp(22px, 6vw, 30px)',
+  lineHeight: 1.10,
+  fontWeight: 560,
+  letterSpacing: '-0.015em',
+  textWrap: 'balance',
+}
+
+const _displayCard = {
+  fontFamily: "'Manrope', sans-serif",
+  fontSize: '1.15rem',
+  lineHeight: 1.20,
+  fontWeight: 560,
+  letterSpacing: '-0.012em',
+  textWrap: 'balance',
+}
+
+const _titleLarge = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: '1.1rem',
+  lineHeight: 1.35,
+  fontWeight: 600,
+  letterSpacing: '-0.01em',
+}
+
+const _titleMedium = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: '0.95rem',
+  lineHeight: 1.30,
+  fontWeight: 600,
+  letterSpacing: '-0.008em',
+}
+
+const _bodyLarge = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: '1.02rem',
+  lineHeight: 1.48,
+  fontWeight: 400,
+  letterSpacing: '-0.006em',
+}
+
+const _body = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: '0.95rem',
+  lineHeight: 1.5,
+  fontWeight: 400,
+  letterSpacing: '-0.005em',
+}
+
+const _bodyStrong = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: 'clamp(15px, 4vw, 17px)',
+  lineHeight: 1.45,
+  fontWeight: 500,
+  letterSpacing: '-0.005em',
+}
+
+const _bodySmall = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: '0.84rem',
+  lineHeight: 1.45,
+  fontWeight: 400,
+  letterSpacing: '-0.005em',
+}
+
+const _eyebrow = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: 11,
+  lineHeight: 1.2,
+  fontWeight: 700,
+  letterSpacing: '0.16em',
+}
+
+const _label = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: '0.82rem',
+  lineHeight: 1.20,
+  fontWeight: 500,
+  letterSpacing: '0.01em',
+}
+
+const _metadata = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: '0.72rem',
+  lineHeight: 1.2,
+  fontWeight: 500,
+  letterSpacing: '0.10em',
+}
+
+const _caption = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: '0.78rem',
+  lineHeight: 1.35,
+  fontWeight: 400,
+  letterSpacing: '-0.003em',
+}
+
+const _button = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: '0.92rem',
+  lineHeight: 1.2,
+  fontWeight: 500,
+  letterSpacing: '-0.003em',
+}
+
+const _buttonLarge = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: '1.0rem',
+  lineHeight: 1.2,
+  fontWeight: 600,
+  letterSpacing: '-0.005em',
+}
+
+const _examQuestion = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: 'clamp(14px, 3.8vw, 15.5px)',
+  lineHeight: 1.55,
+  fontWeight: 520,
+  letterSpacing: '-0.006em',
+}
+
+const _examAnswer = {
+  fontFamily: "'Sora', sans-serif",
+  fontSize: 'clamp(15px, 4vw, 16px)',
+  lineHeight: 1.72,
+  fontWeight: 420,
+  letterSpacing: '-0.006em',
+}
+
+// ── Token map ─────────────────────────────────────────────────────────────
+
+export const TYPE = {
+  // Display — Manrope. fontSize override allowed; all other overrides forbidden.
+  displayHero:    _displayHero,
+  displayScreen:  _displayScreen,
+  displaySection: _displaySection,
+  displayCard:    _displayCard,
+
+  // Title — Sora semi-bold UI labels
+  titleLarge:  _titleLarge,
+  titleMedium: _titleMedium,
+
+  // Body — Sora
+  bodyLarge:  _bodyLarge,
+  body:       _body,
+  bodyStrong: _bodyStrong,
+  bodySmall:  _bodySmall,
+
+  // Utility — Sora
+  eyebrow:  _eyebrow,
+  label:    _label,
+  metadata: _metadata,
+  caption:  _caption,
+
+  // Interactive — Sora
+  button:      _button,
+  buttonLarge: _buttonLarge,
+
+  // Exam — Sora
+  examQuestion: _examQuestion,
+  examAnswer:   _examAnswer,
+
+  // ── Deprecated aliases — remove after Phase 6 ──────────────────────────
+  featureText:     _displayHero,
+  impactTitle:     _displayHero,
+  cinematic:       _displaySection,
+  screenHeading:   _displayScreen,
+  hero:            _displayScreen,
+  sectionHeading:  _displaySection,
+  sectionTitle:    _displaySection,
+  cardTitle:       _displayCard,
+  overlayTitle:    _displaySection,
+  overlayBody:     _bodyStrong,
+  overlayEyebrow:  _eyebrow,
+  overlayPrompt:   _eyebrow,
+  bodyText:        _body,
+  bodySmallText:   _bodySmall,
+  metadataText:    _metadata,
+  captionText:     _caption,
+  buttonText:      _button,
+  examAnswerText:  _examAnswer,
+  examQuestionText: _examQuestion,
+}
+
+// ── Heading layout — apply alongside TYPE.displayScreen / displaySection ──
+// Provides consistent max-width and wrapping behaviour for screen and section
+// headings. displayHero and displayCard omit maxWidth intentionally.
+export const HEADING_LAYOUT = {
+  screenTitle:  { maxWidth: 'min(360px, 92%)' },
+  sectionTitle: { maxWidth: 'min(320px, 92%)' },
+}
+
+// ── Screen layout ─────────────────────────────────────────────────────────
 export const SCREEN_TEXT_LAYOUT = {
-  mobileInset: 16,
-  blockGap: 16,
+  mobileInset:    16,
+  blockGap:       16,
   titleOffsetTop: 20,
 }
