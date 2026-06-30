@@ -189,7 +189,7 @@ export default function UnifiedQuestionScreen({
         }}
       >
         <p style={{
-          ...TYPE.screenHeading,
+          ...TYPE.displayScreen,
           fontSize: isTrueFalse ? 'clamp(28px, 7vw, 36px)' : 'clamp(30px, 7.4vw, 40px)',
           marginTop: 0,
           marginBottom: isTrueFalse ? 18 : 22,
@@ -291,7 +291,7 @@ export default function UnifiedQuestionScreen({
                   borderRadius: isTrueFalse ? 18 : 14,
                   padding: isTrueFalse ? '15px 18px' : '14px 48px 14px 18px',
                   cursor: disabled ? 'default' : 'pointer',
-                  ...TYPE.buttonText,
+                  ...TYPE.button,
                   fontSize: isTrueFalse ? '1.05rem' : '1.0625rem',
                   lineHeight: 1.35,
                   color,
