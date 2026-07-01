@@ -5,7 +5,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { SPACING } from '../../constants/spacing.js'
 import { recordActivity, MODULE_GROUPS } from '../../progress.js'
-import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialModuleState } from '../../app/moduleNavigation.js'
+import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialModuleState, clampScreenIndex } from '../../app/moduleNavigation.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
@@ -1509,7 +1509,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   useEffect(() => { setCinematicHeaderVisible(false) }, [screen])
 
   function go(delta) {
-    const next = Math.max(0, Math.min(total - 1, screen + delta))
+    const next = clampScreenIndex(screen + delta, total)
     setScreen(next)
     setAnimKey(k => k + 1)
     scrollToTop()
@@ -1518,7 +1518,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   }
 
   function goTo(idx) {
-    const next = Math.max(0, Math.min(total - 1, idx))
+    const next = clampScreenIndex(idx, total)
     setScreen(next)
     setAnimKey(k => k + 1)
     scrollToTop()

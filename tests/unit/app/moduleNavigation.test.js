@@ -4,6 +4,7 @@ import {
   getCurrentStageFromNavigation,
   isFullScreenVideoScreen,
   computeInitialModuleState,
+  clampScreenIndex,
 } from '../../../src/app/moduleNavigation.js'
 
 function makeModule(overrides = {}) {
@@ -287,5 +288,37 @@ describe('computeInitialModuleState', () => {
       examinerAttempts: [],
       completed: false,
     })
+  })
+})
+
+// Contract-level coverage only — go/goTo-specific delta and idx call-site
+// framing is covered in tests/unit/modulePlayer/lifecycle.test.js instead
+// of being repeated here.
+describe('clampScreenIndex', () => {
+  it('passes an in-range index through unchanged', () => {
+    expect(clampScreenIndex(3, 10)).toBe(3)
+  })
+
+  it('clamps a negative index up to 0', () => {
+    expect(clampScreenIndex(-5, 10)).toBe(0)
+  })
+
+  it('clamps an index at or beyond total up to total - 1', () => {
+    expect(clampScreenIndex(10, 10)).toBe(9)
+    expect(clampScreenIndex(99, 10)).toBe(9)
+  })
+
+  it('keeps the lower boundary (0) unchanged', () => {
+    expect(clampScreenIndex(0, 10)).toBe(0)
+  })
+
+  it('keeps the upper boundary (total - 1) unchanged', () => {
+    expect(clampScreenIndex(9, 10)).toBe(9)
+  })
+
+  it('always clamps to 0 for a single-screen module (total = 1)', () => {
+    expect(clampScreenIndex(-1, 1)).toBe(0)
+    expect(clampScreenIndex(0, 1)).toBe(0)
+    expect(clampScreenIndex(5, 1)).toBe(0)
   })
 })

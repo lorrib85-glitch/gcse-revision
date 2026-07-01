@@ -35,6 +35,13 @@ export function getCurrentStageFromNavigation(stageNavigation, screen) {
   return active?.title || stageNavigation[0]?.title || 'Intro'
 }
 
+// Pure: clamp a requested screen index into the valid [0, total-1] range.
+// Used by ModulePlayer's go(delta) and goTo(idx) — both compute a candidate
+// index and pass it through this same clamp before setScreen().
+export function clampScreenIndex(index, total) {
+  return Math.max(0, Math.min(total - 1, index))
+}
+
 // Pure: derive ModulePlayer's initial in-memory lifecycle state from a module's
 // definition and its persisted state object (see getModuleState/saveModuleState
 // in ModulePlayer.jsx — `saved` is always an object, `{}` on first-ever open or

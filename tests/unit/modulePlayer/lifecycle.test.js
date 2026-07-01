@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeInitialModuleState } from '../../../src/app/moduleNavigation.js'
+import { computeInitialModuleState, clampScreenIndex } from '../../../src/app/moduleNavigation.js'
 
 // ─────────────────────────────────────────────────────────────────────────
 // ModulePlayer Phase 2 — pinned behaviour spec
@@ -11,12 +11,14 @@ import { computeInitialModuleState } from '../../../src/app/moduleNavigation.js'
 //   - "fresh module start", "resume saved module state", "stale saved
 //     screen index reset", and one "completed module reopening" item are
 //     now real assertions against computeInitialModuleState (moduleNavigation.js).
-//   - Everything else (go/goTo, hook/outcomes/recall render gating,
-//     completeModule's own persistence side effect, last-screen finish
-//     decision) still lives entirely inside `ModulePlayer`'s component
-//     closure (`go`/`goTo`/`handleFinish`/`nextLabel`, inline JSX `if`
-//     gating). None of it is exported or callable in isolation, so none of
-//     it can be asserted against from `tests/unit` yet:
+//   - "go/goTo screen clamping" is now real assertions against
+//     clampScreenIndex (moduleNavigation.js).
+//   - Everything else (hook/outcomes/recall render gating, completeModule's
+//     own persistence side effect, last-screen finish decision) still lives
+//     entirely inside `ModulePlayer`'s component closure (`handleFinish`/
+//     `nextLabel`, inline JSX `if` gating). None of it is exported or
+//     callable in isolation, so none of it can be asserted against from
+//     `tests/unit` yet:
 //
 //   - `tests/unit` runs under vitest environment: 'node' (vitest.config.js)
 //     — there is no `document`/`window`, so ModulePlayer cannot be rendered.
@@ -148,14 +150,45 @@ describe('ModulePlayer — stale saved screen index reset (src/components/layout
   })
 })
 
-describe('ModulePlayer — go/goTo screen clamping (src/components/layout/ModulePlayer.jsx:1517-1533)', () => {
-  it.todo('go(1) from the last screen index does not overflow past total - 1')
-  it.todo('go(-1) from screen 0 does not underflow below 0')
-  it.todo('go(1) from a middle screen increments screen by exactly 1')
-  it.todo('go(-1) from a middle screen decrements screen by exactly 1')
-  it.todo('goTo(idx) with idx < 0 clamps to 0')
-  it.todo('goTo(idx) with idx >= total clamps to total - 1')
-  it.todo('goTo(idx) with idx within range navigates to idx exactly')
+describe('ModulePlayer — go/goTo screen clamping (src/components/layout/ModulePlayer.jsx:1511-1524, clampScreenIndex)', () => {
+  // total = 5 throughout (matches makeModule()'s default screens length).
+  // go(delta) calls clampScreenIndex(screen + delta, total); goTo(idx) calls
+  // clampScreenIndex(idx, total) directly. See moduleNavigation.test.js for
+  // clampScreenIndex's own contract-level boundary coverage — these assert
+  // the delta/idx call-site framing specific to go/goTo instead of repeating it.
+  const total = 5
+
+  it('go(1) from the last screen index does not overflow past total - 1', () => {
+    const screen = total - 1 // 4
+    expect(clampScreenIndex(screen + 1, total)).toBe(total - 1)
+  })
+
+  it('go(-1) from screen 0 does not underflow below 0', () => {
+    const screen = 0
+    expect(clampScreenIndex(screen - 1, total)).toBe(0)
+  })
+
+  it('go(1) from a middle screen increments screen by exactly 1', () => {
+    const screen = 2
+    expect(clampScreenIndex(screen + 1, total)).toBe(3)
+  })
+
+  it('go(-1) from a middle screen decrements screen by exactly 1', () => {
+    const screen = 2
+    expect(clampScreenIndex(screen - 1, total)).toBe(1)
+  })
+
+  it('goTo(idx) with idx < 0 clamps to 0', () => {
+    expect(clampScreenIndex(-3, total)).toBe(0)
+  })
+
+  it('goTo(idx) with idx >= total clamps to total - 1', () => {
+    expect(clampScreenIndex(8, total)).toBe(total - 1)
+  })
+
+  it('goTo(idx) with idx within range navigates to idx exactly', () => {
+    expect(clampScreenIndex(3, total)).toBe(3)
+  })
 })
 
 describe('ModulePlayer — hook/outcomes/recall gating decisions (src/components/layout/ModulePlayer.jsx:1672,1691,1705)', () => {
