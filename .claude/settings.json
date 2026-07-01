@@ -1,9 +1,4 @@
 {
-  "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
-    "ponytail@ponytail": true
-  },
   "hooks": {
     "SessionStart": [
       {
@@ -37,8 +32,8 @@
         "hooks": [
           {
             "type": "command",
-            "if": "Bash(git commit*)",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"COMMIT GATE — confirm each item before proceeding:\\n1. /gcse-triage was run and the workflow lane (A–G) was declared\\n2. /ponytail-review run on the diff\\n3. Story written or updated (if props/behaviour changed, or new reusable component)\\n4. Docs updated (if reusable pattern, token, route, or workflow rule changed)\\n5. Build passes: ./node_modules/.bin/vite build\\n6. Tests pass per docs/system/workflows/README.md testing table:\\n   - Module metadata changed → vitest run tests/architecture\\n   - Logic files changed → vitest run tests/unit\\n   - Stories in play → vitest (full, Playwright)\\n7. /verify completed in the running app (Standard/Big Build only)\\nIf any item is outstanding, stop and complete it first.\"}}'"
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"COMMIT GATE — confirm each item before proceeding:\\n1. /gcse-triage was run and the workflow lane (A–G) was declared\\n2. /ponytail-review run on the diff\\n3. Story written or updated (if props/behaviour changed, or new reusable component)\\n4. Docs updated (if reusable pattern, token, route, or workflow rule changed)\\n5. Build passes: ./node_modules/.bin/vite build\\n6. Tests pass per docs/system/workflows/README.md testing table:\\n   - Module metadata changed → vitest run tests/architecture\\n   - Logic files changed → vitest run tests/unit\\n   - Stories in play → vitest (full, Playwright)\\n7. /verify completed in the running app (Standard/Big Build only)\\nIf any item is outstanding, stop and complete it first.\"}}'",
+            "if": "Bash(git commit*)"
           }
         ]
       }
@@ -54,5 +49,19 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "ponytail@ponytail": true,
+    "superpowers@superpowers-dev": true
+  },
+  "extraKnownMarketplaces": {
+    "superpowers-dev": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers"
+      }
+    }
   }
 }
