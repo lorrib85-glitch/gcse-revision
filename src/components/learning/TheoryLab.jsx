@@ -156,7 +156,7 @@ function ActionBtn({ label, onClick, accent, rgb, disabled = false }) {
         border: 'none',
         borderRadius: BUTTONS.continue.borderRadius,
         color: disabled ? 'rgba(255,255,255,0.3)' : '#0D0F14',
-        fontFamily: TYPE.bodyText.fontFamily,
+        fontFamily: "'Sora', sans-serif",
         fontSize: BUTTONS.continue.fontSize,
         fontWeight: BUTTONS.continue.fontWeight,
         cursor: disabled ? 'default' : 'pointer',
@@ -191,12 +191,9 @@ function TheoryStage({ block, accent, rgb, onNext }) {
   })
 
   const wordStyle = {
-    fontFamily: TYPE.bodyText.fontFamily,
+    ...TYPE.displayHero,
     fontSize: 52,
-    fontWeight: 700,
     color: '#F0E6C8',
-    letterSpacing: '-0.02em',
-    lineHeight: 1,
   }
 
   return (
@@ -206,12 +203,9 @@ function TheoryStage({ block, accent, rgb, onNext }) {
         <div style={{ animation: anim('tl-in', 340, 0) }}>
           <Kicker accent={accent}>{block.title || 'Think Like Galen'}</Kicker>
           <h1 style={{
-            fontFamily: TYPE.bodyText.fontFamily,
+            ...TYPE.displaySection,
             fontSize: 30,
-            fontWeight: 700,
             color: '#F0E6C8',
-            letterSpacing: '-0.02em',
-            lineHeight: 1.1,
             margin: `0 0 ${SPACING.separation}px`,
           }}>
             {theory.heading}
@@ -232,7 +226,6 @@ function TheoryStage({ block, accent, rgb, onNext }) {
           <span style={{
             ...TYPE.body,
             color: `rgba(${rgb}, 0.55)`,
-            fontWeight: 700,
             fontSize: 24,
             width: 32,
             textAlign: 'center',
@@ -320,12 +313,9 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
         <div style={{ animation: anim('tl-in', 320, 0) }}>
           <Kicker accent={accent}>The Patient</Kicker>
           <h2 style={{
-            fontFamily: TYPE.bodyText.fontFamily,
+            ...TYPE.displaySection,
             fontSize: 26,
-            fontWeight: 700,
             color: '#F0E6C8',
-            letterSpacing: '-0.01em',
-            lineHeight: 1.15,
             margin: `0 0 ${SPACING.separation}px`,
           }}>
             {scenario.title || 'A Patient Arrives'}
@@ -353,11 +343,9 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
                 opacity: 0.7,
               }} />
               <span style={{
-                fontFamily: TYPE.bodyText.fontFamily,
+                ...TYPE.displaySection,
                 fontSize: 22,
-                fontWeight: 600,
                 color: '#F0E6C8',
-                letterSpacing: '0.03em',
               }}>
                 {symptom}
               </span>
@@ -409,7 +397,7 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
                         : isSelected
                           ? accent
                           : 'rgba(240,230,200,0.65)',
-                      fontFamily: TYPE.bodyText.fontFamily,
+                      fontFamily: "'Sora', sans-serif",
                       fontSize: 15,
                       fontWeight: 600,
                       letterSpacing: '0.04em',
@@ -485,12 +473,9 @@ function OutcomeStage({ block, accent, rgb, onNext }) {
           animation: anim('tl-in', 400, 240),
         }}>
           <p style={{
-            fontFamily: TYPE.bodyText.fontFamily,
+            ...TYPE.displaySection,
             fontSize: 38,
-            fontWeight: 700,
             color: accent,
-            letterSpacing: '-0.01em',
-            lineHeight: 1.0,
             margin: 0,
           }}>
             {outcome.diagnosis}
@@ -553,12 +538,9 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
         <div style={{ animation: anim('tl-in', 320, 0) }}>
           <Kicker accent={accent}>Prescribe Treatment</Kicker>
           <h2 style={{
-            fontFamily: TYPE.bodyText.fontFamily,
+            ...TYPE.displayCard,
             fontSize: 20,
-            fontWeight: 700,
             color: '#F0E6C8',
-            letterSpacing: '-0.01em',
-            lineHeight: 1.25,
             margin: `0 0 ${SPACING.standard}px`,
           }}>
             {rx.question}
@@ -684,7 +666,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                     width: '100%',
                   }}>
                     <span style={{
-                      fontFamily: TYPE.bodyText.fontFamily,
+                      fontFamily: "'Sora', sans-serif",
                       fontSize: 10,
                       fontWeight: 600,
                       letterSpacing: '0.04em',
@@ -730,7 +712,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                     border: `1px solid ${highlight ? `rgba(${rgb}, 0.55)` : isSelected && !confirmed ? `rgba(${rgb}, 0.35)` : struck ? 'rgba(200,60,40,0.3)' : 'rgba(255,255,255,0.1)'}`,
                     borderRadius: RADII.small,
                     color: highlight ? accent : isSelected && !confirmed ? 'rgba(240,230,200,0.9)' : struck ? 'rgba(200,90,70,0.6)' : 'rgba(240,230,200,0.6)',
-                    fontFamily: TYPE.bodyText.fontFamily,
+                    fontFamily: "'Sora', sans-serif",
                     fontSize: 14,
                     fontWeight: 600,
                     letterSpacing: '0.04em',
@@ -793,12 +775,10 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
               marginBottom: SPACING.separation,
             }}>
               <p style={{
-                fontFamily: TYPE.bodyText.fontFamily,
+                ...TYPE.displayCard,
                 fontSize: 20,
-                fontWeight: 700,
                 color: accent,
                 margin: 0,
-                letterSpacing: '-0.01em',
               }}>
                 {ev.from}
               </p>
@@ -811,12 +791,10 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                 ↓
               </p>
               <p style={{
-                fontFamily: TYPE.bodyText.fontFamily,
+                ...TYPE.displayCard,
                 fontSize: 20,
-                fontWeight: 700,
                 color: '#F0E6C8',
                 margin: 0,
-                letterSpacing: '-0.01em',
               }}>
                 {ev.to}
               </p>
@@ -866,12 +844,10 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
           marginBottom: SPACING.separation,
         }}>
           <p style={{
-            fontFamily: TYPE.bodyText.fontFamily,
+            ...TYPE.displaySection,
             fontSize: 26,
-            fontWeight: 700,
             color: accent,
             margin: 0,
-            letterSpacing: '-0.01em',
             animation: anim('tl-in', 380, 60),
           }}>
             {transform.from}
@@ -885,12 +861,10 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
             ↓
           </p>
           <p style={{
-            fontFamily: TYPE.bodyText.fontFamily,
+            ...TYPE.displaySection,
             fontSize: 26,
-            fontWeight: 700,
             color: '#F0E6C8',
             margin: 0,
-            letterSpacing: '-0.01em',
             animation: anim('tl-in', 380, 140),
           }}>
             {transform.to}
@@ -907,12 +881,10 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
                 ↓
               </p>
               <p style={{
-                fontFamily: TYPE.bodyText.fontFamily,
+                ...TYPE.displaySection,
                 fontSize: 30,
-                fontWeight: 700,
                 color: accent,
                 margin: 0,
-                letterSpacing: '-0.01em',
                 animation: anim('tl-balance', 500, 0),
               }}>
                 {transform.result}
@@ -1048,12 +1020,10 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
                 right: SPACING.compact,
               }}>
                 <p style={{
-                  fontFamily: TYPE.bodyText.fontFamily,
+                  ...TYPE.eyebrow,
                   fontSize: 16,
-                  fontWeight: 700,
-                  color: '#F0E6C8',
-                  letterSpacing: '0.06em',
                   textTransform: 'uppercase',
+                  color: '#F0E6C8',
                   margin: 0,
                 }}>
                   {church.heading}
@@ -1087,8 +1057,6 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
                 ...TYPE.body,
                 color: accent,
                 margin: 0,
-                lineHeight: 1.5,
-                fontWeight: 500,
               }}>
                 {ev.significance}
               </p>
