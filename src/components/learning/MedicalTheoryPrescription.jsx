@@ -6,6 +6,7 @@ import { TYPE } from '../../constants/typography.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import ContentShell from '../layout/ContentShell.jsx'
+import MedievalDiagnosisScene from './MedievalDiagnosisScene.jsx'
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 
@@ -237,6 +238,16 @@ function SelectPhase({ theories, completedIds, onSelect, prefersReducedMotion })
   return (
     <ContentShell subject="History">
       <style>{CSS}</style>
+
+      {/* Medieval diagnosis chamber — intro plays once, before any belief is explored */}
+      <MedievalDiagnosisScene
+        theories={theories}
+        completedIds={completedIds}
+        onSelectZone={onSelect}
+        playIntro={completedIds.length === 0}
+        prefersReducedMotion={prefersReducedMotion}
+        style={{ marginBottom: SPACING.compact }}
+      />
 
       <div style={{
         marginBottom: SPACING.compact,

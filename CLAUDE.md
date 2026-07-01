@@ -131,6 +131,7 @@ Screen-level learning interaction components.
 - `MatchingTask.jsx` — Term-to-description card-pair matching activity with SVG connector lines and round splitting for large sets.
 - `MisconceptionCheck.jsx` — Full-screen, cinematic true/false misconception trap, one statement at a time, with calm reveal and exam-trap framing.
 - `MedicalTheoryPrescription.jsx` — Cause → prescription → reveal flow with a parchment-textured input surface and fuzzy-match validation.
+- `MedievalDiagnosisScene.jsx` — Cinematic 9:16 SVG hero ("Medieval diagnosis chamber"): Thomas at a candlelit table with the four medieval explanations of illness appearing as tappable zones around him. Opens the `medicalTheoryPrescription` select phase; reduced motion renders the static end state.
 - `PriorKnowledgeRecall.jsx` — Full-screen chapter-opening recall screen. Free-text recall scored via `/api/recall`; missing concepts logged to the weakness tracker. Standard Section 1 component for History chapters (see History Module Architecture below).
 - `QuickRecallScreen.jsx` — Rapid-fire retrieval screen (choice + connection questions).
 - `RecoveryQuizPlayer.jsx` — Lightweight recovery quiz player (3–4 focused questions).

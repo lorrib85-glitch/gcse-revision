@@ -372,9 +372,19 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### MedicalTheoryPrescription
 
 **File:** `src/components/learning/MedicalTheoryPrescription.jsx`  
-**Purpose:** Three-phase cause → prescription → reveal flow. Learner selects a theory, fills inputs on a parchment surface (fuzzy-match validated), then sees correct treatments revealed. Personalises heading if a `selectedHealer` prop is passed from GuidedChoiceCarousel.  
+**Purpose:** Three-phase cause → prescription → reveal flow. Learner selects a theory, fills inputs on a parchment surface (fuzzy-match validated), then sees correct treatments revealed. Personalises heading if a `selectedHealer` prop is passed from GuidedChoiceCarousel. Its select phase opens with the `MedievalDiagnosisScene` hero.  
 **Props:** `screen`, `selectedHealer`, `onComplete`  
-**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `TYPE`
+**Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `TYPE`, `MedievalDiagnosisScene`
+
+---
+
+### MedievalDiagnosisScene
+
+**File:** `src/components/learning/MedievalDiagnosisScene.jsx`  
+**Purpose:** Cinematic 9:16 SVG hero scene — "Medieval diagnosis chamber". Thomas sits at a candlelit table while the four medieval explanations of illness (God & sin, four humours, miasma, astrology) fade in around him one at a time, each with its treatment symbol, then settle into tappable zones and a calm idle loop (candle flicker, rotating star chart, drifting miasma). Sits above the belief selection in `MedicalTheoryPrescription`; zones drive the same selection as the cards. Reduced motion renders the static end state.  
+**Props:** `theories`, `completedIds`, `onSelectZone`, `playIntro`, `prefersReducedMotion`, `style`  
+**Dependencies:** `SUBJECTS`, `MOTION`, `RADII`, `TYPE`  
+**Do not use when:** The screen is not the medieval Medicine cause → treatment context — the scene content is Chapter 1 specific.
 
 ---
 
