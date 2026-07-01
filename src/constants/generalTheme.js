@@ -38,4 +38,19 @@ export const GENERAL = {
     tealFade: 'linear-gradient(180deg, rgba(42,157,143,0.18), rgba(13,15,16,0))',
     warm:     'linear-gradient(135deg, #E76F51, #7A2E24)',
   },
+
+  // General app chrome / semantic feedback tokens — not subject tokens.
+  // These name values that were already repeated across component/feature
+  // files as raw hex (see .planning/codebase/CONCERNS.md and the file-hygiene
+  // audit). Call sites are not migrated yet except where an exact match
+  // existed in the same file — this is a token-definition pass only.
+  backgroundApp:     '#08090D',
+  backgroundSurface: '#151720',
+  backgroundSunken:  '#0D0F14',
+  backgroundPanel:   '#0D1424',
+
+  success:     '#4DFF88',
+  successSoft: '#38D27A',
+  error:       '#FF5D73',
+  errorSoft:   '#FF5C7A',
 }
