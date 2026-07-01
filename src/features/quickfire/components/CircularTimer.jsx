@@ -20,8 +20,8 @@ export default function CircularTimer({ seconds, totalSeconds }) {
         />
       </svg>
       <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
-        <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight:700, fontSize:'1.05rem', color:GENERAL.softWhite, lineHeight:1 }}>{seconds}</span>
-        <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight:600, fontSize:'.5rem', letterSpacing:'.16em', color:GENERAL.slate, marginTop:3 }}>SEC</span>
+        <span style={{ fontFamily: "'Sora', sans-serif", fontWeight:700, fontSize:'1.05rem', color:GENERAL.softWhite, lineHeight:1 }}>{seconds}</span>
+        <span style={{ fontFamily: "'Sora', sans-serif", fontWeight:600, fontSize:'.5rem', letterSpacing:'.16em', color:GENERAL.slate, marginTop:3 }}>SEC</span>
       </div>
     </div>
   )

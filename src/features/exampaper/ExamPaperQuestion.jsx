@@ -55,7 +55,7 @@ export function ExamPaperQuestion({ question, answer, onAnswerChange, result, ac
           flexShrink: 0,
         }}>
           <span style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 700,
+            fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700,
             color: accent, letterSpacing: '0.02em',
           }}>
             {question.number}
@@ -66,7 +66,7 @@ export function ExamPaperQuestion({ question, answer, onAnswerChange, result, ac
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', flex: 1 }}>
           {question.commandWord && (
             <span style={{
-              fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 700,
+              fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700,
               letterSpacing: '0.12em', textTransform: 'uppercase',
               color: accent, background: `${accent}18`,
               padding: '3px 8px', borderRadius: RADII.pill,
@@ -76,7 +76,7 @@ export function ExamPaperQuestion({ question, answer, onAnswerChange, result, ac
           )}
           {(question.sourceRefs ?? []).map(ref => (
             <span key={ref} style={{
-              fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 600,
+              fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 600,
               letterSpacing: '0.10em', textTransform: 'uppercase',
               color: GENERAL.slate, background: 'rgba(255,255,255,0.06)',
               padding: '3px 8px', borderRadius: RADII.pill,
@@ -88,7 +88,7 @@ export function ExamPaperQuestion({ question, answer, onAnswerChange, result, ac
 
         {/* Marks */}
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 700,
+          fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700,
           color: hasResult ? marksColor(earned, available) : GENERAL.slate,
           whiteSpace: 'nowrap',
           marginLeft: 'auto', flexShrink: 0,
@@ -119,7 +119,7 @@ export function ExamPaperQuestion({ question, answer, onAnswerChange, result, ac
             border: `1px solid ${hasResult ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.10)'}`,
             borderRadius: RADII.small,
             color: GENERAL.softWhite,
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 14, lineHeight: 1.6,
+            fontFamily: "'Sora', sans-serif", fontSize: 14, lineHeight: 1.6,
             padding: '12px',
             resize: 'vertical',
             outline: 'none',
@@ -140,13 +140,13 @@ export function ExamPaperQuestion({ question, answer, onAnswerChange, result, ac
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
               <span style={{
-                fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 700,
+                fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700,
                 letterSpacing: '0.14em', textTransform: 'uppercase', color: gradeColor,
               }}>
                 {result.grade}
               </span>
               <span style={{
-                fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 700,
+                fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 700,
                 color: marksColor(earned, available),
               }}>
                 {earned} / {available} marks

@@ -115,8 +115,8 @@ function RippedSeam({ accentColor }) {
 function FocusBlock({ label, children, accent, parchment }) {
   return (
     <div>
-      <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>{label}</div>
-      <p style={{ ...TYPE.bodyText, color: parchment, margin: 0 }}>{children}</p>
+      <div style={{ ...TYPE.metadata, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>{label}</div>
+      <p style={{ ...TYPE.body, color: parchment, margin: 0 }}>{children}</p>
     </div>
   )
 }
@@ -147,18 +147,18 @@ function WordFocusSheet({ word, accent, accentRgb, parchment, onClose }) {
       <div style={{ position: 'absolute', left: 12, right: 12, bottom: 12, maxWidth: 420, margin: '0 auto', padding: '18px 18px 16px', borderRadius: 26, background: 'linear-gradient(180deg, rgba(59,38,38,0.96), rgba(31,28,27,0.98))', border: `1px solid rgba(${accentRgb}, 0.28)`, boxShadow: '0 -22px 70px rgba(0,0,0,0.46)', pointerEvents: 'auto', animation: 'qa-slide-up 0.24s cubic-bezier(0.16,1,0.3,1) both' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginBottom: 13 }}>
           <div>
-            <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>{focus.technique}</div>
-            <div style={{ ...TYPE.sectionHeading, color: parchment }}>"{focus.label}"</div>
+            <div style={{ ...TYPE.metadata, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>{focus.technique}</div>
+            <div style={{ ...TYPE.displaySection, color: parchment }}>"{focus.label}"</div>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" style={{ width: 36, height: 36, flexShrink: 0, borderRadius: RADII.pill, border: '1px solid rgba(233,225,211,0.16)', background: 'rgba(233,225,211,0.06)', color: 'rgba(233,225,211,0.76)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', ...TYPE.buttonText }}>×</button>
+          <button type="button" onClick={onClose} aria-label="Close" style={{ width: 36, height: 36, flexShrink: 0, borderRadius: RADII.pill, border: '1px solid rgba(233,225,211,0.16)', background: 'rgba(233,225,211,0.06)', color: 'rgba(233,225,211,0.76)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', ...TYPE.button }}>×</button>
         </div>
         <div style={{ display: 'grid', gap: 13 }}>
           <FocusBlock label="Meaning" accent={accent} parchment={parchment}>{focus.meaning}</FocusBlock>
           <FocusBlock label="AQA move" accent={accent} parchment={parchment}>{focus.examMove}</FocusBlock>
           <FocusBlock label="Context / link" accent={accent} parchment={parchment}>{focus.context}</FocusBlock>
           <div style={{ padding: '11px 12px', borderRadius: 16, background: `rgba(${accentRgb}, 0.10)`, border: `1px solid rgba(${accentRgb}, 0.18)` }}>
-            <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>Use it</div>
-            <p style={{ ...TYPE.bodyText, color: parchment, margin: 0 }}>{focus.sentence}</p>
+            <div style={{ ...TYPE.metadata, color: accent, textTransform: 'uppercase', marginBottom: 5 }}>Use it</div>
+            <p style={{ ...TYPE.body, color: parchment, margin: 0 }}>{focus.sentence}</p>
           </div>
         </div>
       </div>
@@ -302,14 +302,14 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
           <button
             type="button"
             onClick={goBack}
-            style={{ background: 'none', border: 'none', padding: '4px 0', cursor: 'pointer', color: `rgba(${accentRgb}, 0.76)`, ...TYPE.captionText, fontWeight: 600 }}
+            style={{ background: 'none', border: 'none', padding: '4px 0', cursor: 'pointer', color: `rgba(${accentRgb}, 0.76)`, ...TYPE.caption, fontWeight: 600 }}
           >
             ← Back
           </button>
         ) : (
           <div />
         )}
-        <div style={{ flex: 1, textAlign: 'right', ...TYPE.metadataText, color: `rgba(${accentRgb}, 0.52)`, textTransform: 'uppercase', letterSpacing: '0.18em' }}>
+        <div style={{ flex: 1, textAlign: 'right', ...TYPE.metadata, color: `rgba(${accentRgb}, 0.52)`, textTransform: 'uppercase', letterSpacing: '0.18em' }}>
           {STEP_LABELS[step]}
         </div>
       </div>
@@ -327,7 +327,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
         <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to bottom, rgba(6,4,8,0.12) 0%, rgba(8,6,10,0.25) 36%, rgba(8,8,10,0.94) 100%), radial-gradient(circle at 78% 44%, rgba(${accentRgb}, 0.15), transparent 32%)`, pointerEvents: 'none' }} />
         <div style={{ position: 'relative', zIndex: 1, minHeight: minH, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '30px 26px 22px' }}>
           <blockquote style={{ margin: 0 }}>
-            <p style={{ margin: 0, ...TYPE.featureText, color: parchment, fontSize: quoteSize, lineHeight: 1.08, letterSpacing: '-0.055em' }}>
+            <p style={{ margin: 0, ...TYPE.displayHero, color: parchment, fontSize: quoteSize, lineHeight: 1.08, letterSpacing: '-0.055em' }}>
               {quoteWords.map((word, i) => (
                 <QuoteWord
                   key={i}
@@ -344,7 +344,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
             </p>
           </blockquote>
           {block.location && (
-            <p style={{ margin: '16px 0 0', ...TYPE.captionText, color: 'rgba(233,225,211,0.72)', opacity: visibleWords >= quoteWords.length ? 1 : 0, transition: 'opacity 0.5s ease 0.3s', letterSpacing: '0.01em' }}>
+            <p style={{ margin: '16px 0 0', ...TYPE.caption, color: 'rgba(233,225,211,0.72)', opacity: visibleWords >= quoteWords.length ? 1 : 0, transition: 'opacity 0.5s ease 0.3s', letterSpacing: '0.01em' }}>
               {block.location}
             </p>
           )}
@@ -396,7 +396,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
               Tap the highlighted words.
             </p>
             {hasOpenedWord && (
-              <p style={{ ...TYPE.captionText, color: accent, margin: 0, animation: 'qa-reveal-up 0.3s ease both' }}>
+              <p style={{ ...TYPE.caption, color: accent, margin: 0, animation: 'qa-reveal-up 0.3s ease both' }}>
                 Good — you've unlocked a word-level idea.
               </p>
             )}
@@ -422,15 +422,15 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
                 </p>
               </blockquote>
               {block.location && (
-                <p style={{ margin: '6px 0 0', ...TYPE.captionText, color: 'rgba(233,225,211,0.54)' }}>{block.location}</p>
+                <p style={{ margin: '6px 0 0', ...TYPE.caption, color: 'rgba(233,225,211,0.54)' }}>{block.location}</p>
               )}
             </div>
           </div>
           <div style={{ flex: 1, padding: '14px 20px 120px', display: 'flex', flexDirection: 'column', gap: 10, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
             {MEANING_BLOCKS.map((mb, i) => (
               <div key={mb.id} style={{ padding: '14px 16px', borderRadius: 16, background: 'rgba(233,225,211,0.04)', border: '1px solid rgba(233,225,211,0.10)', animation: `qa-reveal-up 0.36s ease ${i * 0.14 + 0.08}s both` }}>
-                <div style={{ ...TYPE.metadataText, color: accent, textTransform: 'uppercase', marginBottom: 7 }}>{mb.label}</div>
-                <p style={{ ...TYPE.bodyText, color: 'rgba(233,225,211,0.82)', margin: 0 }}>{mb.text}</p>
+                <div style={{ ...TYPE.metadata, color: accent, textTransform: 'uppercase', marginBottom: 7 }}>{mb.label}</div>
+                <p style={{ ...TYPE.body, color: 'rgba(233,225,211,0.82)', margin: 0 }}>{mb.text}</p>
               </div>
             ))}
           </div>
@@ -448,7 +448,7 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
           {renderNav()}
           <div style={{ flex: 1, padding: '16px 20px 120px', display: 'flex', flexDirection: 'column', gap: 16, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
             <div style={{ animation: 'qa-reveal-up 0.36s ease 0.08s both' }}>
-              <div style={{ ...TYPE.metadataText, color: `rgba(${accentRgb}, 0.72)`, textTransform: 'uppercase', marginBottom: 10 }}>In an exam</div>
+              <div style={{ ...TYPE.metadata, color: `rgba(${accentRgb}, 0.72)`, textTransform: 'uppercase', marginBottom: 10 }}>In an exam</div>
               <div style={{ padding: '16px', borderRadius: 16, background: `rgba(${accentRgb}, 0.09)`, border: `1px solid rgba(${accentRgb}, 0.26)` }}>
                 <p style={{ ...TYPE.bodyLarge, color: parchment, margin: 0, lineHeight: 1.5 }}>
                   {EXAM_SENTENCE}
@@ -456,10 +456,10 @@ export default function QuoteAnalyser({ block, subject = 'English', onContinue }
               </div>
             </div>
             <div style={{ animation: 'qa-reveal-up 0.36s ease 0.22s both' }}>
-              <div style={{ ...TYPE.metadataText, color: 'rgba(233,225,211,0.54)', textTransform: 'uppercase', marginBottom: 10 }}>Your scaffold</div>
+              <div style={{ ...TYPE.metadata, color: 'rgba(233,225,211,0.54)', textTransform: 'uppercase', marginBottom: 10 }}>Your scaffold</div>
               <div style={{ padding: '14px 16px', borderRadius: 16, background: 'rgba(233,225,211,0.04)', border: '1px solid rgba(233,225,211,0.10)', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {SCAFFOLD.map((line, i) => (
-                  <p key={i} style={{ ...TYPE.bodyText, color: 'rgba(233,225,211,0.72)', margin: 0 }}>{line}</p>
+                  <p key={i} style={{ ...TYPE.body, color: 'rgba(233,225,211,0.72)', margin: 0 }}>{line}</p>
                 ))}
               </div>
             </div>

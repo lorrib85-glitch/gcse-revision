@@ -51,26 +51,26 @@ function QuestionResult({ question, result, accent }) {
           background: `${mc}18`, border: `1px solid ${mc}40`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 700, color: mc }}>
+          <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700, color: mc }}>
             {question.number}
           </span>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, color: GENERAL.softWhite,
+            fontFamily: "'Sora', sans-serif", fontSize: 13, color: GENERAL.softWhite,
             lineHeight: 1.5, marginBottom: 4,
           }}>
             {question.q.length > 120 ? question.q.slice(0, 120) + '…' : question.q}
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
             <span style={{
-              fontFamily: TYPE.bodyText.fontFamily, fontSize: 12, fontWeight: 700, color: mc,
+              fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 700, color: mc,
             }}>
               {earned} / {available} marks
             </span>
             {result?.grade && (
               <span style={{
-                fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 700,
+                fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700,
                 letterSpacing: '0.12em', textTransform: 'uppercase',
                 color: mc, background: `${mc}14`,
                 padding: '2px 7px', borderRadius: RADII.pill,
@@ -85,7 +85,7 @@ function QuestionResult({ question, result, accent }) {
       {/* Feedback */}
       {result?.summary && (
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, color: GENERAL.softWhite,
+          fontFamily: "'Sora', sans-serif", fontSize: 13, color: GENERAL.softWhite,
           lineHeight: 1.55, marginBottom: result.examinerTip ? 8 : 0,
         }}>
           {result.summary}
@@ -93,7 +93,7 @@ function QuestionResult({ question, result, accent }) {
       )}
       {result?.examinerTip && (
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily, fontSize: 12.5, color: GENERAL.slate,
+          fontFamily: "'Sora', sans-serif", fontSize: 12.5, color: GENERAL.slate,
           lineHeight: 1.5, fontStyle: 'italic',
         }}>
           {result.examinerTip}
@@ -136,7 +136,7 @@ export function ExamPaperDebrief({ paper, results, elapsed, onExit, onRetry }) {
 
         {/* Score */}
         <div style={{
-          fontFamily: TYPE.screenHeading.fontFamily,
+          fontFamily: "'Manrope', sans-serif",
           fontSize: 'clamp(48px, 14vw, 64px)',
           fontWeight: 850, lineHeight: 1,
           color: col, marginBottom: 6,
@@ -146,7 +146,7 @@ export function ExamPaperDebrief({ paper, results, elapsed, onExit, onRetry }) {
 
         {/* Verdict */}
         <div style={{
-          ...TYPE.cinematic, fontSize: 20, color: GENERAL.softWhite, marginBottom: 4,
+          ...TYPE.displaySection, fontSize: 20, color: GENERAL.softWhite, marginBottom: 4,
         }}>
           {verdict}
         </div>
@@ -154,7 +154,7 @@ export function ExamPaperDebrief({ paper, results, elapsed, onExit, onRetry }) {
         {/* Time taken */}
         {elapsed > 0 && (
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, color: GENERAL.slate,
+            ...TYPE.body, fontSize: 13, color: GENERAL.slate,
           }}>
             Completed in {formatTime(elapsed)}
             {paper.timeMins && ` · Paper allows ${paper.timeMins} min`}
@@ -194,7 +194,7 @@ export function ExamPaperDebrief({ paper, results, elapsed, onExit, onRetry }) {
               width: '100%', padding: '16px',
               background: accent, color: '#08090D',
               border: 'none', borderRadius: RADII.large,
-              fontFamily: TYPE.bodyText.fontFamily, fontSize: 16, fontWeight: 700,
+              fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 700,
               cursor: 'pointer',
             }}
           >
@@ -207,7 +207,7 @@ export function ExamPaperDebrief({ paper, results, elapsed, onExit, onRetry }) {
               background: 'transparent', color: GENERAL.slate,
               border: '1px solid rgba(255,255,255,0.10)',
               borderRadius: RADII.large,
-              fontFamily: TYPE.bodyText.fontFamily, fontSize: 15, fontWeight: 600,
+              fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: 600,
               cursor: 'pointer',
             }}
           >

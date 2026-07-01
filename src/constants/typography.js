@@ -1,6 +1,4 @@
 // ── Private canonical token definitions ───────────────────────────────────
-// Each token object is defined once. Deprecated aliases at the bottom of TYPE
-// reference these same objects — they will be removed after Phase 6.
 
 const _displayHero = {
   fontFamily: "'Manrope', sans-serif",
@@ -183,26 +181,6 @@ export const TYPE = {
   examQuestion: _examQuestion,
   examAnswer:   _examAnswer,
 
-  // ── Deprecated aliases — remove after Phase 6 ──────────────────────────
-  featureText:     _displayHero,
-  impactTitle:     _displayHero,
-  cinematic:       _displaySection,
-  screenHeading:   _displayScreen,
-  hero:            _displayScreen,
-  sectionHeading:  _displaySection,
-  sectionTitle:    _displaySection,
-  cardTitle:       _displayCard,
-  overlayTitle:    _displaySection,
-  overlayBody:     _bodyStrong,
-  overlayEyebrow:  _eyebrow,
-  overlayPrompt:   _eyebrow,
-  bodyText:        _body,
-  bodySmallText:   _bodySmall,
-  metadataText:    _metadata,
-  captionText:     _caption,
-  buttonText:      _button,
-  examAnswerText:  _examAnswer,
-  examQuestionText: _examQuestion,
 }
 
 // ── Heading layout — apply alongside TYPE.displayScreen / displaySection ──

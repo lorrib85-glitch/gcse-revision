@@ -10,14 +10,13 @@ export function ExamPaperSection({ section, answers, results, onAnswerChange, ac
       {/* Section header */}
       <div style={{ marginBottom: SPACING.compact }}>
         <div style={{
-          ...TYPE.cinematic, fontSize: 20, color: GENERAL.softWhite, marginBottom: 4,
+          ...TYPE.displaySection, fontSize: 20, color: GENERAL.softWhite, marginBottom: 4,
         }}>
           {section.title}
         </div>
         {section.instruction && (
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, color: GENERAL.slate,
-            lineHeight: 1.5,
+            ...TYPE.body, fontSize: 13, color: GENERAL.slate,
           }}>
             {section.instruction}
           </div>

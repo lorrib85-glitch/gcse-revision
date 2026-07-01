@@ -31,7 +31,7 @@ export function ExamPaperMarking({ paper, progress }) {
 
       {/* Heading */}
       <div style={{
-        ...TYPE.cinematic, fontSize: 22, color: GENERAL.softWhite,
+        ...TYPE.displaySection, fontSize: 22, color: GENERAL.softWhite,
         textAlign: 'center', marginBottom: 8,
       }}>
         Marking your paper
@@ -39,7 +39,7 @@ export function ExamPaperMarking({ paper, progress }) {
 
       {/* Status */}
       <div style={{
-        fontFamily: TYPE.bodyText.fontFamily, fontSize: 14, color: GENERAL.slate,
+        ...TYPE.body, fontSize: 14, color: GENERAL.slate,
         textAlign: 'center', marginBottom: SPACING.standard,
       }}>
         {current > 0
@@ -64,7 +64,7 @@ export function ExamPaperMarking({ paper, progress }) {
       </div>
 
       <div style={{
-        fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 700,
+        fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700,
         letterSpacing: '0.12em', color: GENERAL.slate,
         textAlign: 'center', marginTop: 10,
       }}>

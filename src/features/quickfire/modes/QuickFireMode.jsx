@@ -353,9 +353,9 @@ export function QuickFireMode({ onExit }) {
     return (
       <div style={{ minHeight: '100vh', background: `radial-gradient(circle at 50% 25%, rgba(${GENERAL.tealRgb},0.10), transparent 45%), ${GENERAL.neutral[0]}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: GENERAL.softWhite }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: TYPE.bodyText.fontFamily, color: GENERAL.slate, fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', fontSize: '.72rem', marginBottom: 24 }}>90 Second Quick Fire</div>
-          <div key={quickFireCountdown} style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: quickFireCountdown === 'GO' ? '5rem' : '7.5rem', fontWeight: 900, color: quickFireCountdown === 'GO' ? GENERAL.teal : GENERAL.softWhite, textShadow: quickFireCountdown === 'GO' ? `0 0 32px rgba(${GENERAL.tealRgb},0.4)` : '0 0 32px rgba(255,255,255,0.2)', animation: 'examPop .8s ease both' }}>{quickFireCountdown}</div>
-          <div style={{ color: GENERAL.slate, marginTop: 20, fontFamily: TYPE.bodyText.fontFamily, fontSize: '.88rem' }}>Answer as many as you can.</div>
+          <div style={{ fontFamily: "'Sora', sans-serif", color: GENERAL.slate, fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', fontSize: '.72rem', marginBottom: 24 }}>90 Second Quick Fire</div>
+          <div key={quickFireCountdown} style={{ fontFamily: "'Sora', sans-serif", fontSize: quickFireCountdown === 'GO' ? '5rem' : '7.5rem', fontWeight: 900, color: quickFireCountdown === 'GO' ? GENERAL.teal : GENERAL.softWhite, textShadow: quickFireCountdown === 'GO' ? `0 0 32px rgba(${GENERAL.tealRgb},0.4)` : '0 0 32px rgba(255,255,255,0.2)', animation: 'examPop .8s ease both' }}>{quickFireCountdown}</div>
+          <div style={{ color: GENERAL.slate, marginTop: 20, fontFamily: "'Sora', sans-serif", fontSize: '.88rem' }}>Answer as many as you can.</div>
           <style>{'@keyframes examPop { 0%{opacity:0;transform:scale(.7)} 50%{opacity:1;transform:scale(1.1)} 100%{opacity:1;transform:scale(1)} }'}</style>
         </div>
       </div>
@@ -388,26 +388,26 @@ export function QuickFireMode({ onExit }) {
           alignItems: 'center', justifyContent: 'center', textAlign: 'center',
         }}>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 700,
+            fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700,
             letterSpacing: '0.2em', textTransform: 'uppercase', color: GENERAL.slate,
             marginBottom: 14,
           }}>
             Accuracy
           </div>
 
-          <div style={{ ...TYPE.cinematic, fontSize: 88, lineHeight: 0.92, color: GENERAL.teal, marginBottom: 20 }}>
+          <div style={{ ...TYPE.displaySection, fontSize: 88, lineHeight: 0.92, color: GENERAL.teal, marginBottom: 20 }}>
             <AnimatedNumber value={accuracy} />%
           </div>
 
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 19, fontWeight: 600,
+            fontFamily: "'Sora', sans-serif", fontSize: 19, fontWeight: 600,
             color: GENERAL.softWhite, marginBottom: 12,
           }}>
             {feedbackLine}
           </div>
 
           {weakCount > 0 && (
-            <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 14, fontWeight: 400, color: GENERAL.slate }}>
+            <div style={{ ...TYPE.body, fontSize: 14, color: GENERAL.slate }}>
               {weakCount} weak spot{weakCount !== 1 ? 's' : ''} to practise
             </div>
           )}
@@ -420,7 +420,7 @@ export function QuickFireMode({ onExit }) {
               width: '100%', background: GENERAL.teal, color: GENERAL.neutral[0],
               border: 'none', borderRadius: RADII.large,
               padding: '18px 0',
-              fontFamily: TYPE.bodyText.fontFamily, fontSize: 16, fontWeight: 700,
+              fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 700,
               cursor: 'pointer',
             }}
           >

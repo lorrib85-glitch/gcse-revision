@@ -52,7 +52,7 @@ export function ExamPaperRunner({ paper, onExit }) {
         <BackButton onClick={onExit} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 700,
+            fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 700,
             color: GENERAL.softWhite,
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           }}>
@@ -66,7 +66,7 @@ export function ExamPaperRunner({ paper, onExit }) {
           </div>
         </div>
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 700,
+          fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 700,
           color: GENERAL.slate, flexShrink: 0,
         }}>
           {formatTime(state.elapsed)}
@@ -88,10 +88,10 @@ export function ExamPaperRunner({ paper, onExit }) {
           display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
         }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ ...TYPE.cinematic, fontSize: 17, color: GENERAL.softWhite, marginBottom: 2 }}>
+            <div style={{ ...TYPE.displaySection, fontSize: 17, color: GENERAL.softWhite, marginBottom: 2 }}>
               {paper.title}
             </div>
-            <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 12.5, color: GENERAL.slate, lineHeight: 1.4 }}>
+            <div style={{ ...TYPE.body, fontSize: 12.5, color: GENERAL.slate }}>
               {paper.date && `${paper.date} · `}{paper.timeMins} minutes · {paper.totalMarks} marks
             </div>
           </div>
@@ -123,7 +123,7 @@ export function ExamPaperRunner({ paper, onExit }) {
           borderTop: '1px solid rgba(255,255,255,0.06)',
         }}>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, color: GENERAL.slate,
+            fontFamily: "'Sora', sans-serif", fontSize: 13, color: GENERAL.slate,
             textAlign: 'center', marginBottom: SPACING.compact,
           }}>
             {answeredCount} of {allQs.length} questions answered
@@ -134,7 +134,7 @@ export function ExamPaperRunner({ paper, onExit }) {
               width: '100%', padding: '16px 24px',
               background: accent, color: '#08090D',
               border: 'none', borderRadius: RADII.large,
-              fontFamily: TYPE.bodyText.fontFamily, fontSize: 16, fontWeight: 700,
+              fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 700,
               cursor: 'pointer',
               opacity: answeredCount === 0 ? 0.5 : 1,
             }}
@@ -142,7 +142,7 @@ export function ExamPaperRunner({ paper, onExit }) {
             Submit paper
           </button>
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily, fontSize: 12, color: GENERAL.slate,
+            fontFamily: "'Sora', sans-serif", fontSize: 12, color: GENERAL.slate,
             textAlign: 'center', marginTop: 10, lineHeight: 1.5,
           }}>
             Unanswered questions will receive 0 marks. You can still submit.
