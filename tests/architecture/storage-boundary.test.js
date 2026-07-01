@@ -11,7 +11,8 @@ const root = resolve(process.cwd())
 const APPROVED_LOCALSTORAGE_FILES = new Set([
   'src/lib/storage.js',             // canonical storage abstraction
   'src/app/LegacyApp.jsx',          // grandfathered — module state writes
-  'src/features/quickfire/QuickFire.jsx', // grandfathered — QF best/history keys
+  'src/features/quickfire/modes/ExamMode.jsx',      // grandfathered — QF exam score history (extracted from QuickFire.jsx)
+  'src/features/quickfire/modes/QuickFireMode.jsx', // grandfathered — QF best/history keys (extracted from QuickFire.jsx)
   'src/app/moduleNavigation.js',    // grandfathered — module screen state
   'src/auth/authService.js',        // grandfathered — auth persistence
   'src/components/layout/ModulePlayer.jsx', // grandfathered — module resume state

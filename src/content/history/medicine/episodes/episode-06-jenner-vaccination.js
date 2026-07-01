@@ -2,7 +2,7 @@
 //
 // Future episode files follow this shape:
 //   id          — matches src/modules.js metadata id
-//   subject     — must match SUBJECT_MODULE_LOADERS key in LegacyApp.jsx
+//   subject     — must match the module's subject in src/modules.js
 //   number      — ordering within the series (displayed in module cards)
 //   series      — series identifier (future: 'medicine-through-time')
 //   recallTags  — (future) weakness tags this episode generates

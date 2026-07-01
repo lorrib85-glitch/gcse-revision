@@ -653,8 +653,8 @@ export const MODULES = [
     color: "#65E6C6",
     colorLight: "rgba(101,230,198,.15)",
     headerImage: "/headers/bio-buildinglife.webp",
-    screenCount: 1,
-    screenTags: [null],
+    screenCount: 0,
+    screenTags: [],
   },
   {
     id: "bio_human_machine",
@@ -667,8 +667,8 @@ export const MODULES = [
     color: "#E87B5F",
     colorLight: "rgba(232,123,95,.15)",
     headerImage: "/headers/bio-humanmachine.webp",
-    screenCount: 1,
-    screenTags: [null],
+    screenCount: 0,
+    screenTags: [],
   },
   {
     id: "bio_disease_wars",
@@ -681,8 +681,8 @@ export const MODULES = [
     color: "#E84F6B",
     colorLight: "rgba(232,79,107,.15)",
     headerImage: "/headers/bio-diseasewars.webp",
-    screenCount: 1,
-    screenTags: [null],
+    screenCount: 0,
+    screenTags: [],
   },
   {
     id: "bio_control_systems",
@@ -695,8 +695,8 @@ export const MODULES = [
     color: "#9B8BE8",
     colorLight: "rgba(155,139,232,.15)",
     headerImage: "/headers/bio-controlsystems.webp",
-    screenCount: 1,
-    screenTags: [null],
+    screenCount: 0,
+    screenTags: [],
   },
   {
     id: "bio_genetics_evolution",
@@ -709,8 +709,8 @@ export const MODULES = [
     color: "#7EC8E3",
     colorLight: "rgba(126,200,227,.15)",
     headerImage: "/headers/bio-genetics.webp",
-    screenCount: 1,
-    screenTags: [null],
+    screenCount: 0,
+    screenTags: [],
   },
   {
     id: "bio_ecosystems_group",
@@ -723,8 +723,8 @@ export const MODULES = [
     color: "#68C18A",
     colorLight: "rgba(104,193,138,.15)",
     headerImage: "/headers/bio-ecosystems.webp",
-    screenCount: 1,
-    screenTags: [null],
+    screenCount: 0,
+    screenTags: [],
   },
 
   // ── Maths ────────────────────────────────────────────────────────────────
@@ -754,8 +754,8 @@ export const MODULES = [
     color: "#2DD4BF",
     colorLight: "rgba(45,212,191,.12)",
     headerImage: "/headers/maths-numbers.webp",
-    screenCount: 13,
-    screenTags: ["maths:four-operations", null, "maths:written-methods", "maths:written-methods", "maths:four-operations", null, "maths:four-operations", null, "maths:four-operations", null, null, "maths:four-operations", null],
+    screenCount: 14,
+    screenTags: ["maths:four-operations", null, "maths:written-methods", "maths:written-methods", "maths:four-operations", "maths:four-operations", null, "maths:four-operations", null, "maths:four-operations", null, null, "maths:four-operations", null],
   },
   {
     id: "math3",
@@ -768,8 +768,8 @@ export const MODULES = [
     color: "#2DD4BF",
     colorLight: "rgba(45,212,191,.12)",
     headerImage: "/headers/maths-numbers.webp",
-    screenCount: 13,
-    screenTags: ["maths:negative-numbers", null, "maths:negative-numbers", "maths:ordering-negatives", "maths:negative-numbers", "maths:negative-numbers", "maths:negative-numbers", null, "maths:negative-numbers", null, null, "maths:ordering-negatives", null],
+    screenCount: 14,
+    screenTags: ["maths:negative-numbers", null, "maths:ordering-negatives", "maths:negative-numbers", "maths:negative-numbers", "maths:negative-numbers", "maths:negative-numbers", null, "maths:negative-numbers", null, "maths:negative-numbers", null, "maths:ordering-negatives", null],
   },
   {
     id: "math4",
@@ -796,8 +796,8 @@ export const MODULES = [
     color: "#2DD4BF",
     colorLight: "rgba(45,212,191,.12)",
     headerImage: "/headers/maths-numbers.webp",
-    screenCount: 13,
-    screenTags: ["maths:rounding", null, "maths:rounding", "maths:significant-figures", "maths:rounding", "maths:rounding", "maths:rounding", null, "maths:rounding", null, null, "maths:significant-figures", null],
+    screenCount: 15,
+    screenTags: ["maths:significant-figures", null, "maths:rounding", "maths:significant-figures", "maths:estimation", "maths:estimation", "maths:rounding", "maths:rounding", "maths:estimation", null, "maths:rounding", null, null, "maths:significant-figures", null],
   },
   {
     id: "math6",
@@ -931,8 +931,8 @@ export const MODULES = [
     color: "#9B59E8",
     colorLight: "rgba(155,89,232,.15)",
     headerImage: "/headers/chem-matteratoms.webp",
-    screenCount: 1,
-    screenTags: [null],
+    screenCount: 0,
+    screenTags: [],
   },
   {
     id: "chem_reactions",
@@ -945,8 +945,8 @@ export const MODULES = [
     color: "#C459E8",
     colorLight: "rgba(196,89,232,.15)",
     headerImage: "/headers/chem-reactions.webp",
-    screenCount: 1,
-    screenTags: [null],
+    screenCount: 0,
+    screenTags: [],
   },
   {
     id: "chem_rates_organic",
@@ -959,8 +959,8 @@ export const MODULES = [
     color: "#8B59E8",
     colorLight: "rgba(139,89,232,.15)",
     headerImage: "/headers/chem-rates.webp",
-    screenCount: 1,
-    screenTags: [null],
+    screenCount: 0,
+    screenTags: [],
   },
   {
     id: "chem_earth",
@@ -973,8 +973,8 @@ export const MODULES = [
     color: "#5980E8",
     colorLight: "rgba(89,128,232,.15)",
     headerImage: "/headers/chem-earth.webp",
-    screenCount: 1,
-    screenTags: [null],
+    screenCount: 0,
+    screenTags: [],
   },
 
   // ── English: Macbeth ────────────────────────────────────────────────────────
@@ -990,6 +990,6 @@ export const MODULES = [
     colorLight: 'rgba(106,52,61,0.12)',
     headerImage: '/English/Macbeth/heroes/07-violent-warrior-macbeth.webp',
     screenCount: 1,
-    screenTags: [null],
+    screenTags: ['english:quote-analysis'],
   },
 ]

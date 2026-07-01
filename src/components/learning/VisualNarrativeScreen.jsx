@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
@@ -142,7 +143,7 @@ export default function VisualNarrativeScreen({
             position: 'absolute',
             top: '21%', left: '73%',
             width: 52, height: 52,
-            borderRadius: '50%',
+            borderRadius: RADII.pill,
             background: `radial-gradient(circle, rgba(${rgb},0.55) 0%, transparent 70%)`,
             transform: 'translate(-50%, -50%)',
             pointerEvents: 'none',

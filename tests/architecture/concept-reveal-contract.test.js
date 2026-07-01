@@ -42,7 +42,10 @@ describe('ConceptReveal contract', () => {
   it('keeps eyebrows hidden unless explicitly requested', () => {
     const src = read(componentPath)
     expect(src).toContain('step.showEyebrow === true && step.eyebrow')
-    expect(src).not.toContain('step.eyebrow && (')
+    // Matches only the legacy *unguarded* conditional (brace directly before
+    // step.eyebrow). A plain 'step.eyebrow && (' substring check would also
+    // match the tail of the correct, gated expression above and could never pass.
+    expect(src).not.toContain('{step.eyebrow && (')
   })
 
   it('does not render custom local progress dots', () => {
