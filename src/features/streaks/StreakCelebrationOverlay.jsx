@@ -185,6 +185,26 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
         }
         .streak-cel-glow { animation: streak-cel-glow-in 900ms ${MOTION.easing.gentle} both; }
 
+        @keyframes streak-cel-flow-in {
+          0%   { opacity: 0; transform: scale(0.72) rotate(-16deg); }
+          42%  { opacity: 0.75; }
+          100% { opacity: 0.55; transform: scale(1) rotate(0deg); }
+        }
+        @keyframes streak-cel-flow-drift {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
+        }
+        .streak-cel-flow {
+          animation:
+            streak-cel-flow-in 1200ms ${MOTION.easing.gentle} both,
+            streak-cel-flow-drift 11000ms linear 1200ms infinite;
+        }
+        .streak-cel-flow-alt {
+          animation:
+            streak-cel-flow-in 1400ms ${MOTION.easing.gentle} both,
+            streak-cel-flow-drift 14500ms linear 1400ms infinite reverse;
+        }
+
         @keyframes streak-cel-heading-in {
           from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0); }
@@ -228,14 +248,34 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
         transform: 'translateY(-28px)',
       }}>
 
-        <div style={{ position: 'relative', width: 166, height: 166, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', width: 174, height: 174, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div
+            aria-hidden="true"
+            className={reduced ? undefined : 'streak-cel-flow'}
+            style={{
+              position: 'absolute', inset: -18, borderRadius: '50%',
+              background: `conic-gradient(from 35deg, transparent 0deg, rgba(${GENERAL.tealRgb},0.26) 42deg, transparent 92deg, rgba(${GENERAL.coralRgb},0.16) 145deg, transparent 214deg, rgba(${GENERAL.tealRgb},0.18) 276deg, transparent 360deg)`,
+              filter: 'blur(16px)',
+              opacity: reduced ? 0.42 : undefined,
+            }}
+          />
+          <div
+            aria-hidden="true"
+            className={reduced ? undefined : 'streak-cel-flow-alt'}
+            style={{
+              position: 'absolute', inset: 6, borderRadius: '50%',
+              background: `conic-gradient(from 205deg, transparent 0deg, rgba(${GENERAL.coralRgb},0.16) 58deg, transparent 122deg, rgba(${GENERAL.tealRgb},0.2) 218deg, transparent 300deg)`,
+              filter: 'blur(12px)',
+              opacity: reduced ? 0.3 : undefined,
+            }}
+          />
           <div
             aria-hidden="true"
             className={reduced ? undefined : 'streak-cel-glow'}
             style={{
               position: 'absolute', inset: -38, borderRadius: '50%',
-              background: `radial-gradient(circle, rgba(${GENERAL.tealRgb},0.22) 0%, rgba(${GENERAL.tealRgb},0.10) 34%, rgba(${GENERAL.coralRgb},0.06) 50%, transparent 68%)`,
-              opacity: reduced ? 0.72 : undefined,
+              background: `radial-gradient(circle, rgba(${GENERAL.tealRgb},0.20) 0%, rgba(${GENERAL.tealRgb},0.09) 34%, rgba(${GENERAL.coralRgb},0.06) 50%, transparent 68%)`,
+              opacity: reduced ? 0.66 : undefined,
               animationDelay: reduced ? undefined : `${START_MS.glow}ms`,
             }}
           />
