@@ -112,7 +112,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
           >
             {step.showEyebrow === true && step.eyebrow && (
               <div style={{
-                ...TYPE.overlayEyebrow,
+                ...TYPE.eyebrow,
                 color: accent + '88',
                 marginBottom: 12,
               }}>
@@ -124,7 +124,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
 
             {step.supportText && (
               <p style={{
-                ...TYPE.overlayBody,
+                ...TYPE.bodyStrong,
                 color: 'rgba(245,238,225,.64)',
                 margin: '14px 0 0',
                 maxWidth: '34ch',
@@ -148,10 +148,9 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
                       marginTop: '0.6em', flexShrink: 0,
                     }} />
                     <span style={{
-                      fontFamily: TYPE.bodyText.fontFamily,
+                      ...TYPE.bodySmall,
                       fontSize: 14,
                       color: 'rgba(245,238,225,.48)',
-                      lineHeight: 1.45,
                     }}>{pt}</span>
                   </li>
                 ))}
@@ -191,7 +190,7 @@ function MainReveal({ text, emphasis, accent }) {
   if (!text) return null
 
   const base = {
-    ...TYPE.overlayTitle,
+    ...TYPE.displaySection,
     color: 'rgba(245,238,225,0.97)',
     whiteSpace: 'pre-wrap',
     wordBreak: 'break-word',

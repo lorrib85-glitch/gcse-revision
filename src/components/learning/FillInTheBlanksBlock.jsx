@@ -95,10 +95,9 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
         marginBottom: SPACING.compact,
       }}>
         <span style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontSize: '12px', fontWeight: 600,
+          ...TYPE.eyebrow,
+          fontSize: '12px',
           color: accent,
-          letterSpacing: '0.04em',
           textTransform: 'uppercase',
         }}>Close answers count</span>
         <span style={{ fontSize: '10px', color: accent, opacity: 0.6 }}>✦</span>
@@ -239,7 +238,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
           border: allCorrect ? 'none' : `1px solid rgba(${rgb},0.18)`,
           cursor: anyFilled ? 'pointer' : 'default',
           opacity: anyFilled ? 1 : 0.45,
-          fontFamily: TYPE.bodyText.fontFamily,
+          fontFamily: "'Sora', sans-serif",
           fontSize: BUTTONS.primary.fontSize,
           fontWeight: BUTTONS.primary.fontWeight,
           color: allCorrect ? '#0A0804' : accent,

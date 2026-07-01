@@ -105,7 +105,7 @@ function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, sheetB
         </div>
 
         <h2 style={{
-          ...TYPE.sectionTitle,
+          ...TYPE.displaySection,
           color: text,
           margin: `0 0 ${SPACING.separation}px`,
           opacity: visible ? 1 : 0,
@@ -482,7 +482,7 @@ export default function InteractiveCollectionExplorer({
 
             {/* Item name */}
             <div style={{
-              ...TYPE.cardTitle,
+              ...TYPE.displayCard,
               color: text,
               marginBottom: SPACING.compact,
             }}>

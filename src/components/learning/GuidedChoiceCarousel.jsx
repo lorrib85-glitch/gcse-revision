@@ -235,7 +235,7 @@ export default function GuidedChoiceCarousel({
         )}
 
         <div style={{
-          ...TYPE.cardTitle,
+          ...TYPE.displayCard,
           color: '#F5F1E8',
           marginBottom: helperText ? SPACING.micro : 0,
         }}>
@@ -602,11 +602,8 @@ export default function GuidedChoiceCarousel({
                   WebkitOverflowScrolling: 'touch',
                 }}>
                   <div style={{
-                    fontFamily: TYPE.screenHeading.fontFamily,
-                    fontWeight: 850,
+                    ...TYPE.displayScreen,
                     fontSize: 'clamp(28px, 9vw, 40px)',
-                    lineHeight: 'clamp(33px, 10.5vw, 46px)',
-                    letterSpacing: '-0.045em',
                     color: '#FFFFFF',
                     maxWidth: 340,
                     marginBottom: 28,
@@ -628,7 +625,7 @@ export default function GuidedChoiceCarousel({
                       const isPunchline = i === bodyLines.length - 1
                       return (
                         <div key={i} style={{
-                          fontFamily: TYPE.bodyText.fontFamily,
+                          fontFamily: "'Sora', sans-serif",
                           fontWeight: isPunchline ? 700 : 500,
                           fontSize: isPunchline ? 'clamp(20px, 6vw, 26px)' : 17,
                           lineHeight: isPunchline ? 1.3 : 1.65,

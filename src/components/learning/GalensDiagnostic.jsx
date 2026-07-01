@@ -279,8 +279,8 @@ export default function GalensDiagnostic({ block, subject, onContinue }) {
   const treatmentData = diagnosis ? (treatments[diagnosis.key] ?? null) : null
   const prescription  = diagnosis ? diagnosis.dominant.map(q => OPPOSITE[q]) : []
 
-  const O    = { fontFamily: TYPE.bodyText.fontFamily }
-  const F    = { fontFamily: TYPE.bodyText.fontFamily }
+  const O    = { fontFamily: "'Sora', sans-serif" }
+  const F    = { fontFamily: "'Sora', sans-serif" }
   const CG   = { fontFamily: "'IBM Plex Serif', Georgia, serif" }
   const ease = 'cubic-bezier(0.22,1,0.36,1)'
 

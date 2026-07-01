@@ -228,7 +228,7 @@ export default function CinematicRevealMoment({
           {/* Label */}
           {yearVisible && label && (
             <div style={{
-              ...TYPE.overlayEyebrow,
+              ...TYPE.eyebrow,
               color: 'rgba(255,255,255,0.50)',
               marginBottom: 10,
               textShadow: '0 1px 16px rgba(0,0,0,0.5)',
@@ -241,7 +241,7 @@ export default function CinematicRevealMoment({
           {/* Headline */}
           {yearVisible && headline && (
             <div style={{
-              ...TYPE.overlayTitle,
+              ...TYPE.displaySection,
               color: 'rgba(255,255,255,0.97)',
               marginBottom: 14,
               maxWidth: 320,
@@ -255,7 +255,7 @@ export default function CinematicRevealMoment({
           {/* Body */}
           {yearVisible && body && (
             <div style={{
-              ...TYPE.overlayBody,
+              ...TYPE.bodyStrong,
               whiteSpace: 'pre-line',
               color: 'rgba(255,255,255,0.64)',
               maxWidth: '34ch',
@@ -269,7 +269,7 @@ export default function CinematicRevealMoment({
           {/* Year — displayed when no label/headline/body, or alongside */}
           {yearVisible && !label && (
             <div style={{
-              ...TYPE.impactTitle,
+              ...TYPE.displayHero,
               color: accent,
               marginBottom: 24,
               textShadow: '0 2px 28px rgba(0,0,0,0.55)',
@@ -282,7 +282,7 @@ export default function CinematicRevealMoment({
           {/* Paragraphs */}
           {paragraphs.map((para, i) => paraVisible[i] && (
             <p key={i} style={{
-              ...TYPE.overlayTitle,
+              ...TYPE.displaySection,
               color: 'rgba(245,238,225,0.95)',
               margin: 0,
               marginBottom: i < paragraphs.length - 1 ? 22 : 0,

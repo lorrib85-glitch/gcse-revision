@@ -58,7 +58,7 @@ export default function ExplainReveal({ block, subject, onComplete }) {
     else if (onComplete) onComplete()
   }
 
-  const F = { fontFamily: TYPE.bodyText.fontFamily }
+  const F = { fontFamily: "'Sora', sans-serif" }
 
   return (
     <div style={{ position: 'relative', ...F }}>

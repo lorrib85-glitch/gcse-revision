@@ -83,7 +83,7 @@ export default function MisconceptionCheck({ block, subject = 'Biology', onConti
         <p
           key={index}
           style={{
-            ...TYPE.hero,
+            ...TYPE.displayScreen,
             fontSize: 'clamp(26px, 7.5vw, 34px)',
             lineHeight: 1.22,
             color: '#F4FFF8',
@@ -114,7 +114,7 @@ export default function MisconceptionCheck({ block, subject = 'Biology', onConti
                   background: `rgba(${rgb},0.08)`,
                   border: `1.5px solid rgba(${rgb},0.30)`,
                   cursor: 'pointer',
-                  fontFamily: TYPE.bodyText.fontFamily,
+                  fontFamily: "'Sora', sans-serif",
                   fontSize: BUTTONS.secondary.fontSize,
                   fontWeight: 700,
                   color: '#F4FFF8',

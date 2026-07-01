@@ -249,7 +249,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
   }
 
   return (
-    <CinematicShell style={{ zIndex: 1000, display: 'flex', flexDirection: 'column', fontFamily: TYPE.bodyText.fontFamily }}>
+    <CinematicShell style={{ zIndex: 1000, display: 'flex', flexDirection: 'column', fontFamily: "'Sora', sans-serif" }}>
       <style>{CSS}</style>
 
       <div
@@ -585,7 +585,7 @@ export default function EvacuationChainRoute({ screen, subject, onComplete }) {
                       : '0 2px 8px rgba(0,0,0,0.42), 0 1px 3px rgba(0,0,0,0.32)',
                     cursor: checked ? 'default' : 'pointer',
                     textAlign: 'left',
-                    fontFamily: TYPE.bodyText.fontFamily,
+                    fontFamily: "'Sora', sans-serif",
                     fontSize: 13.5,
                     lineHeight: 1.28,
                     color: TEXT_PRIMARY,

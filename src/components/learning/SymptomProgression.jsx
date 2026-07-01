@@ -61,7 +61,7 @@ export default function SymptomProgression({
     else onContinue?.()
   }
 
-  const F = { fontFamily: TYPE.bodyText.fontFamily }
+  const F = { fontFamily: "'Sora', sans-serif" }
 
   return (
     <div style={{ minHeight: '100vh', background: '#0B0805', ...F }}>
