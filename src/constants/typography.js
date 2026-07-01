@@ -1,5 +1,3 @@
-// ── Private canonical token definitions ───────────────────────────────────
-
 const _displayHero = {
   fontFamily: "'Manrope', sans-serif",
   fontSize: 'clamp(32px, 9vw, 48px)',
@@ -132,6 +130,25 @@ const _buttonLarge = {
   letterSpacing: '-0.005em',
 }
 
+const _quizQuestion = {
+  ..._displayScreen,
+  fontSize: 'clamp(34px, 8.7vw, 46px)',
+  lineHeight: 1.05,
+  fontWeight: 600,
+}
+
+const _quizOption = {
+  ..._button,
+  fontSize: '0.95rem',
+  lineHeight: 1.28,
+}
+
+const _quizHint = {
+  ..._body,
+  fontSize: '0.92rem',
+  lineHeight: 1.45,
+}
+
 const _examQuestion = {
   fontFamily: "'Sora', sans-serif",
   fontSize: 'clamp(14px, 3.8vw, 15.5px)',
@@ -148,52 +165,37 @@ const _examAnswer = {
   letterSpacing: '-0.006em',
 }
 
-// ── Token map ─────────────────────────────────────────────────────────────
-
 export const TYPE = {
-  // Display — Manrope. fontSize override allowed; all other overrides forbidden.
-  displayHero:    _displayHero,
-  displayScreen:  _displayScreen,
+  displayHero: _displayHero,
+  displayScreen: _displayScreen,
   displaySection: _displaySection,
-  displayCard:    _displayCard,
-
-  // Title — Sora semi-bold UI labels
-  titleLarge:  _titleLarge,
+  displayCard: _displayCard,
+  titleLarge: _titleLarge,
   titleMedium: _titleMedium,
-
-  // Body — Sora
-  bodyLarge:  _bodyLarge,
-  body:       _body,
+  bodyLarge: _bodyLarge,
+  body: _body,
   bodyStrong: _bodyStrong,
-  bodySmall:  _bodySmall,
-
-  // Utility — Sora
-  eyebrow:  _eyebrow,
-  label:    _label,
+  bodySmall: _bodySmall,
+  eyebrow: _eyebrow,
+  label: _label,
   metadata: _metadata,
-  caption:  _caption,
-
-  // Interactive — Sora
-  button:      _button,
+  caption: _caption,
+  button: _button,
   buttonLarge: _buttonLarge,
-
-  // Exam — Sora
+  quizQuestion: _quizQuestion,
+  quizOption: _quizOption,
+  quizHint: _quizHint,
   examQuestion: _examQuestion,
-  examAnswer:   _examAnswer,
-
+  examAnswer: _examAnswer,
 }
 
-// ── Heading layout — apply alongside TYPE.displayScreen / displaySection ──
-// Provides consistent max-width and wrapping behaviour for screen and section
-// headings. displayHero and displayCard omit maxWidth intentionally.
 export const HEADING_LAYOUT = {
-  screenTitle:  { maxWidth: 'min(360px, 92%)' },
+  screenTitle: { maxWidth: 'min(360px, 92%)' },
   sectionTitle: { maxWidth: 'min(320px, 92%)' },
 }
 
-// ── Screen layout ─────────────────────────────────────────────────────────
 export const SCREEN_TEXT_LAYOUT = {
-  mobileInset:    16,
-  blockGap:       16,
+  mobileInset: 16,
+  blockGap: 16,
   titleOffsetTop: 20,
 }
