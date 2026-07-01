@@ -132,11 +132,8 @@ export default function VisualLearning({ block, subject, onComplete }) {
           }}
         >
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontWeight: 700,
+            ...TYPE.displaySection,
             fontSize: 'clamp(28px, 7.5vw, 40px)',
-            lineHeight: 1.2,
-            letterSpacing: '-0.025em',
             color: '#FFFFFF',
             textAlign: 'center',
             marginBottom: 20,
@@ -145,10 +142,8 @@ export default function VisualLearning({ block, subject, onComplete }) {
           </div>
 
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontWeight: 500,
+            ...TYPE.bodyStrong,
             fontSize: 'clamp(17px, 4.5vw, 21px)',
-            lineHeight: 1.55,
             color: accent,
             textAlign: 'center',
             maxWidth: 340,
@@ -166,9 +161,9 @@ export default function VisualLearning({ block, subject, onComplete }) {
               animation: 'vl-hint 2.8s ease infinite',
             }}>
               <span style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontWeight: 600, fontSize: 11,
-                letterSpacing: '0.18em', textTransform: 'uppercase',
+                ...TYPE.eyebrow,
+                fontSize: 11,
+                textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.3)',
               }}>
                 tap to continue
@@ -190,11 +185,8 @@ export default function VisualLearning({ block, subject, onComplete }) {
           }}
         >
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontWeight: 700,
+            ...TYPE.displaySection,
             fontSize: 'clamp(26px, 7vw, 36px)',
-            lineHeight: 1.15,
-            letterSpacing: '-0.02em',
             color: '#FFFFFF',
             marginBottom: 14,
             maxWidth: 380,
@@ -203,10 +195,8 @@ export default function VisualLearning({ block, subject, onComplete }) {
           </div>
 
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontWeight: 500,
+            ...TYPE.bodyStrong,
             fontSize: 'clamp(15px, 4vw, 17px)',
-            lineHeight: 1.65,
             color: 'rgba(245,238,225,0.62)',
             maxWidth: 360,
           }}>
@@ -237,9 +227,9 @@ export default function VisualLearning({ block, subject, onComplete }) {
               animation: 'vl-hint 2.8s ease infinite',
             }}>
               <span style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontWeight: 600, fontSize: 11,
-                letterSpacing: '0.18em', textTransform: 'uppercase',
+                ...TYPE.eyebrow,
+                fontSize: 11,
+                textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.3)',
               }}>
                 tap to continue

@@ -21,9 +21,8 @@ function ChoiceQuestion({ q, onSelect, subject }) {
   return (
     <div style={{ width: '100%' }}>
       <div style={{
-        fontFamily: TYPE.bodyText.fontFamily,
-        fontWeight: 800, fontSize: 34,
-        lineHeight: '42px', letterSpacing: '-0.03em',
+        ...TYPE.displaySection,
+        fontSize: 34,
         color: '#FFFFFF',
         marginBottom: 40,
       }}>
@@ -80,7 +79,7 @@ export default function RecoveryQuizPlayer({
         background: '#080C1A',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         color: '#E0E6F0',
-        fontFamily: TYPE.bodyText.fontFamily,
+        fontFamily: "'Sora', sans-serif",
       }}>
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: 18, margin: 0 }}>Quiz not found.</p>
@@ -189,19 +188,19 @@ export default function RecoveryQuizPlayer({
               </div>
 
               <h2 style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontSize: 28, fontWeight: 700, color: '#F5F7FB',
+                ...TYPE.displaySection,
+                fontSize: 28,
+                color: '#F5F7FB',
                 margin: '0 0 8px',
-                letterSpacing: '-0.02em',
               }}>
                 Weak spot fixed
               </h2>
 
               <p style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontSize: 15, color: 'rgba(255,255,255,0.6)',
+                ...TYPE.body,
+                fontSize: 15,
+                color: 'rgba(255,255,255,0.6)',
                 margin: '0 0 28px',
-                lineHeight: 1.5,
               }}>
                 You got {doneCnt}/{total} correct.
               </p>
@@ -212,7 +211,7 @@ export default function RecoveryQuizPlayer({
                   background: accent,
                   border: 'none', borderRadius: 12,
                   padding: '12px 24px',
-                  fontFamily: TYPE.bodyText.fontFamily,
+                  fontFamily: "'Sora', sans-serif",
                   fontSize: 16, fontWeight: 600,
                   color: '#000', cursor: 'pointer',
                   boxShadow: `0 4px 12px rgba(${rgb},0.20)`,

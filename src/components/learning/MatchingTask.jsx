@@ -172,7 +172,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
     <CinematicShell style={{
       zIndex: 1000,
       display: 'flex', flexDirection: 'column',
-      fontFamily: TYPE.bodyText.fontFamily,
+      fontFamily: "'Sora', sans-serif",
     }}>
       <style>{CSS}</style>
 
@@ -209,7 +209,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
 
         {/* Header */}
         <div style={{
-          ...TYPE.sectionHeading,
+          ...TYPE.displaySection,
           color: TEXT_PRIMARY,
           marginBottom: 8,
           maxWidth: '90%',
@@ -220,7 +220,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
 
         {/* Instruction */}
         <div style={{
-          ...TYPE.bodySmallText,
+          ...TYPE.bodySmall,
           color: TEXT_DIM,
           maxWidth: 340,
           marginBottom: 18,
@@ -288,7 +288,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
           }}>
             {['Term', 'Meaning'].map(label => (
               <div key={label} style={{
-                ...TYPE.metadataText,
+                ...TYPE.metadata,
                 textTransform: 'uppercase',
                 color: `rgba(${accentRgb},0.50)`,
               }}>{label}</div>
@@ -328,7 +328,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                       transform: isSelected && !isLocked ? 'translateY(-1px)' : 'none',
                       cursor: isLocked ? 'default' : 'pointer',
                       textAlign: 'left',
-                      fontFamily: TYPE.bodyText.fontFamily,
+                      fontFamily: "'Sora', sans-serif",
                       fontWeight: 600,
                       fontSize: 13.5,
                       lineHeight: 1.3,
@@ -368,7 +368,7 @@ export default function MatchingTask({ screen, subject, onComplete }) {
                       border: `1px solid ${isLocked ? CARD_BORDER_LOCKED : CARD_BORDER}`,
                       cursor: isLocked ? 'default' : 'pointer',
                       textAlign: 'left',
-                      fontFamily: TYPE.bodyText.fontFamily,
+                      fontFamily: "'Sora', sans-serif",
                       fontWeight: 400,
                       fontSize: answerFontSize,
                       lineHeight: 1.25,

@@ -167,7 +167,6 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
     resize: 'vertical',
     boxSizing: 'border-box',
     outline: 'none',
-    fontFamily: TYPE.bodyText.fontFamily,
   }
 
   return (
@@ -245,7 +244,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               marginBottom: SPACING.standard,
               animation: `ste-slide-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
             }}>
-              <p style={{ ...TYPE.cardTitle, fontSize: 17, color: '#EAF7F0', marginBottom: SPACING.micro }}>
+              <p style={{ ...TYPE.displayCard, fontSize: 17, color: '#EAF7F0', marginBottom: SPACING.micro }}>
                 Why is this incorrect?
               </p>
               <textarea
@@ -273,7 +272,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               marginBottom: SPACING.standard,
               animation: `ste-slide-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
             }}>
-              <p style={{ ...TYPE.cardTitle, fontSize: 17, color: '#EAF7F0', marginBottom: SPACING.micro }}>
+              <p style={{ ...TYPE.displayCard, fontSize: 17, color: '#EAF7F0', marginBottom: SPACING.micro }}>
                 Rewrite the statement correctly.
               </p>
               <textarea
@@ -303,7 +302,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
               border: canCheck ? 'none' : `1px solid rgba(${rgb},0.18)`,
               cursor: canCheck ? 'pointer' : 'default',
               opacity: canCheck ? 1 : 0.45,
-              fontFamily: TYPE.bodyText.fontFamily,
+              fontFamily: "'Sora', sans-serif",
               fontSize: BUTTONS.primary.fontSize,
               fontWeight: BUTTONS.primary.fontWeight,
               color: canCheck ? '#0A0804' : accent,
@@ -317,7 +316,7 @@ export default function SpotTheError({ block, subject = 'Biology', onContinue })
       ) : (
         // ── Feedback — premium tone, never a bare "wrong" stamp ──────────────
         <div style={{ animation: `ste-fade-in ${MOTION.duration.slow} ${MOTION.easing.standard} both` }}>
-          <p style={{ ...TYPE.sectionTitle, color: accent, margin: `0 0 ${SPACING.standard}px` }}>
+          <p style={{ ...TYPE.displaySection, color: accent, margin: `0 0 ${SPACING.standard}px` }}>
             {selectionCorrect ? 'Good catch.' : 'Almost.'}
           </p>
 
