@@ -20,17 +20,17 @@ Context compaction and "resume directly" do **NOT** skip this requirement. If a 
 
 ### Superpowers skill integration
 
-The `superpowers` plugin is installed. Wire these three skills into the standard pipelines:
+The superpowers skills are vendored into this repo at `.claude/skills/` (copied from the `obra/superpowers` plugin so they are available in remote/cloud sessions too). Invoke them by their plain names — no `superpowers:` prefix. Vendored skills: `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`, `requesting-code-review`, `systematic-debugging`, `verification-before-completion`, `test-driven-development`. Wire these three into the standard pipelines:
 
 | When | Skill | Why |
 |---|---|---|
-| Starting any **Big Build** | `superpowers:brainstorming` → `superpowers:writing-plans` → `superpowers:subagent-driven-development` | Spec first, plan second, parallel execution third — replaces ad-hoc planning |
-| Any **bug, test failure, or unexpected behaviour** | `superpowers:systematic-debugging` | Root-cause investigation before any fix attempt |
-| Before marking any task **done** | `superpowers:verification-before-completion` | Evidence before assertions — no claiming success without running the app |
+| Starting any **Big Build** | `brainstorming` → `writing-plans` → `subagent-driven-development` | Spec first, plan second, parallel execution third — replaces ad-hoc planning |
+| Any **bug, test failure, or unexpected behaviour** | `systematic-debugging` | Root-cause investigation before any fix attempt |
+| Before marking any task **done** | `verification-before-completion` | Evidence before assertions — no claiming success without running the app |
 
-**Do not use `superpowers:using-git-worktrees`** — it conflicts with the "commit directly to main" rule above.
+**`using-git-worktrees` and `finishing-a-development-branch` are deliberately not vendored** — they conflict with the "commit directly to main" rule above. If a vendored skill references either of them, skip that step.
 
-**`superpowers:test-driven-development`** applies selectively to pure logic units (`src/progress.js`, `src/unifiedWeaknessTracker.js`, `src/features/planner/dailyPlanner.js`) — not to visual React components where browser verification is the test.
+**`test-driven-development`** applies selectively to pure logic units (`src/progress.js`, `src/unifiedWeaknessTracker.js`, `src/features/planner/dailyPlanner.js`) — not to visual React components where browser verification is the test.
 
 ### GSD command scope
 
