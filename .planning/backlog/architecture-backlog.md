@@ -142,17 +142,29 @@ Phase 2 test scaffolding is documented:
   - final-screen finish decisions
 - These are intentionally `todo` specs rather than assertions because the behaviours currently live inside the `ModulePlayer` function closure and cannot be tested in the current node-only unit setup without either extraction or new render infrastructure.
 - The todo file is a map of behaviours to unlock as pure helpers are extracted, not a substitute for real coverage.
+
+Phase 2 first extraction is complete:
+
+- Commit `7c3c406` added `computeInitialModuleState(module, saved)` to `src/app/moduleNavigation.js`.
+- `ModulePlayer.jsx` now consumes the helper for initial state instead of deriving those values inline.
+- Added 17 tests for `computeInitialModuleState` in `tests/unit/app/moduleNavigation.test.js`.
+- Converted 20 of the 39 lifecycle todos into real assertions in `tests/unit/modulePlayer/lifecycle.test.js`.
+- Remaining lifecycle todos: 19.
+- `ModulePlayer.jsx` reduced from 2393 to 2387 lines.
+- `pnpm vitest run tests/unit/modulePlayer/lifecycle.test.js` passed 20 tests with 19 todo.
+- `pnpm vitest run tests/unit/app/moduleNavigation.test.js` passed 33 tests.
 - `pnpm vitest run tests/architecture` passed 412/412.
-- `pnpm vite build` succeeded and ModulePlayer chunk size remained unchanged.
-- `pnpm vitest run tests/unit` reported one pre-existing unrelated planner failure around a missing `getJson` export in a storage mock; this should be handled separately.
+- `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
+- `introDone` is currently preserved as hardcoded `true`; this is existing behaviour, not a deliberate fix.
+
+### Known test cleanup note
+Some lifecycle assertions intentionally duplicate `computeInitialModuleState` coverage from `moduleNavigation.test.js` because the lifecycle todo file is acting as a migration map. Do not add more duplicate coverage casually. Future extractions should prefer one canonical unit suite for the helper plus only enough lifecycle tests to prove the todo behaviour is now covered.
 
 ### Remaining phases
 Phase 2 — navigation/state-machine boundary:
-- First extraction should be `computeInitialModuleState(module, saved)`, replacing the initial `useState` derivation currently inside `ModulePlayer`.
-- This should unlock real tests for fresh start, resume, stale saved index reset, and completed-module reopening.
-- Recommended home: `src/app/moduleNavigation.js` or a small pure helper file if that module becomes too broad.
-- Keep actual `setState`, `recordActivity`, `scrollToTop`, and persistence side effects in `ModulePlayer.jsx` during the first Phase 2 extraction.
-- Later Phase 2 candidates: `clampScreenIndex(screen, delta, total)`, `resolveFinishAction(module, options)`, and eventually a `getModuleStage()` gating predicate.
+- Next extraction candidate: `clampScreenIndex(screen, delta, total)` or equivalent pure navigation helper to unlock go/goTo clamping todos.
+- Keep actual `setState`, `recordActivity`, `scrollToTop`, and persistence side effects in `ModulePlayer.jsx` during this extraction.
+- Later Phase 2 candidates: `resolveFinishAction(module, options)` and eventually a `getModuleStage()` gating predicate.
 
 Phase 3 — persistence side effects:
 - Move `getModuleState`, `saveModuleState`, and state-shape-building logic only after storage behaviour is pinned by tests.
