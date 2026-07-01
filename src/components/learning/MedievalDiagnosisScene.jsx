@@ -7,18 +7,20 @@ import { SUBJECTS } from '../../constants/subjects.js'
 // ── Medieval diagnosis chamber ────────────────────────────────────────────────
 //
 // Cinematic 9:16 hero scene for the Chapter 1 Medicine cause → treatment
-// interaction. Thomas sits in a dim candlelit room while the four medieval
-// explanations of illness materialise around him as selectable zones, each
-// paired with its treatment symbol:
+// interaction. A candlelit portrait of Thomas forms the grounded base layer,
+// while the four medieval explanations of illness materialise around him as
+// selectable zones, each paired with its treatment symbol:
 //
 //   God & sin      → church window + prayer candle
 //   Four humours   → four balanced fluid circles + bleeding bowl
 //   Miasma         → drifting bad air from a refuse heap + herb posy
 //   Astrology      → slowly rotating parchment star chart + timing window
 //
-// Intro choreography runs ~5s, then settles into a calm idle loop (candle
-// flicker, chart rotation, miasma drift, breathing). Reduced-motion users get
+// Intro choreography runs ~5s, then settles into a calm idle loop (chart
+// rotation, miasma drift, a slow photo breathe). Reduced-motion users get
 // the static end state — that render IS the fallback image.
+
+const PHOTO = '/History/Medicine/thomas-diagnosis-chamber-1024.webp'
 
 const ACCENT = SUBJECTS.History.accent
 const ACCENT_RGB = SUBJECTS.History.accentRgb
@@ -26,11 +28,6 @@ const ACCENT_RGB = SUBJECTS.History.accentRgb
 const SCENE = {
   parchment:      'rgba(245,238,217,0.78)',
   parchmentFaint: 'rgba(240,224,176,0.10)',
-  cloth:          '#33281A',
-  hood:           '#2B2114',
-  skin:           '#66513C',
-  wood:           '#2A1C0E',
-  woodFront:      '#1C1207',
   candleWax:      '#D9C79F',
   herb:           '#5F6B38',
   herbLight:      '#6B7841',
@@ -64,8 +61,8 @@ const CSS = `
     to   { transform: rotate(360deg); }
   }
   @keyframes mds-breathe {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(2px); }
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.018); }
   }
   @keyframes mds-drift {
     0%, 100% { transform: translateX(0);    opacity: 0.55; }
@@ -202,6 +199,7 @@ export default function MedievalDiagnosisScene({
   return (
     <div
       style={{
+        position: 'relative',
         width: '100%',
         aspectRatio: '9 / 16',
         borderRadius: RADII.large,
@@ -210,27 +208,62 @@ export default function MedievalDiagnosisScene({
         border: `1px solid rgba(${ACCENT_RGB},0.12)`,
         ...style,
       }}
+      role="img"
+      aria-label="Thomas, a sick medieval patient, sits at a candlelit table surrounded by the four medieval explanations of illness: God and sin, the four humours, miasma, and astrology."
     >
       <style>{CSS}</style>
+
+      {/* ── Thomas, candlelit — the grounded base layer ────────────────────── */}
+      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, overflow: 'hidden', animation: roomEntrance }}>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${PHOTO})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'brightness(0.74) saturate(0.94)',
+            animation: loop('mds-breathe 14s ease-in-out infinite'),
+          }}
+        />
+      </div>
+
+      {/* Candlelight glow, positioned over the candle in the photo */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          right: '2%',
+          bottom: '30%',
+          width: '46%',
+          height: '22%',
+          borderRadius: '50%',
+          background: `radial-gradient(circle, rgba(${ACCENT_RGB},0.22), rgba(${ACCENT_RGB},0.06) 55%, rgba(${ACCENT_RGB},0) 75%)`,
+          animation: loop('mds-halo 2.8s ease-in-out infinite'),
+        }}
+      />
+
+      {/* Vignette + top/bottom legibility gradients */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: [
+            'radial-gradient(ellipse at center, rgba(4,3,2,0) 55%, rgba(4,3,2,0.55) 100%)',
+            'linear-gradient(180deg, rgba(6,4,2,0.34) 0%, rgba(6,4,2,0) 20%, rgba(6,4,2,0) 78%, rgba(6,4,2,0.30) 100%)',
+          ].join(', '),
+        }}
+      />
+
       <svg
         viewBox="0 0 360 640"
         width="100%"
         height="100%"
         preserveAspectRatio="xMidYMid slice"
-        role="img"
-        aria-label="Thomas, a sick medieval patient, sits at a candlelit table surrounded by the four medieval explanations of illness: God and sin, the four humours, miasma, and astrology."
+        style={{ position: 'absolute', inset: 0 }}
       >
         <defs>
-          <linearGradient id="mds-bg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#0B0806" />
-            <stop offset="45%" stopColor="#0C0905" />
-            <stop offset="100%" stopColor="#060402" />
-          </linearGradient>
-          <radialGradient id="mds-candlelight">
-            <stop offset="0%" stopColor={`rgba(${ACCENT_RGB},0.20)`} />
-            <stop offset="45%" stopColor={`rgba(${ACCENT_RGB},0.07)`} />
-            <stop offset="75%" stopColor={`rgba(${ACCENT_RGB},0)`} />
-          </radialGradient>
           <linearGradient id="mds-flame" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#F7E3A6" />
             <stop offset="100%" stopColor="#D98E3B" />
@@ -239,73 +272,7 @@ export default function MedievalDiagnosisScene({
             <stop offset="0%" stopColor="rgba(226,181,109,0.22)" />
             <stop offset="100%" stopColor="rgba(226,181,109,0.04)" />
           </linearGradient>
-          <radialGradient id="mds-vignette">
-            <stop offset="55%" stopColor="rgba(4,3,2,0)" />
-            <stop offset="100%" stopColor="rgba(4,3,2,0.55)" />
-          </radialGradient>
         </defs>
-
-        {/* ── Room, Thomas and candle — the grounded base layer ─────────────── */}
-        <g style={{ animation: roomEntrance }}>
-          <rect x="0" y="0" width="360" height="640" fill="url(#mds-bg)" />
-
-          {/* Stone wall arches, barely there */}
-          <path d="M84,250 Q180,150 276,250" fill="none" stroke="rgba(240,224,176,0.045)" strokeWidth="1.5" />
-          <path d="M100,250 Q180,166 260,250" fill="none" stroke="rgba(240,224,176,0.03)" strokeWidth="1.5" />
-
-          {/* Candle halo — flickers gently with the flame */}
-          <circle
-            cx="234" cy="414" r="130"
-            fill="url(#mds-candlelight)"
-            style={{ animation: loop('mds-halo 2.8s ease-in-out infinite') }}
-          />
-
-          {/* Thomas — seated, hunched, wrapped in a blanket, breathing slowly */}
-          <g style={{ ...fillBox, animation: loop('mds-breathe 6s ease-in-out infinite') }}>
-            <path d="M158,336 Q158,296 180,296 Q202,296 202,336 L196,336 Q196,306 180,306 Q164,306 164,336 Z" fill={SCENE.hood} />
-            <circle cx="179" cy="329" r="13" fill={SCENE.skin} />
-            <path d="M166,329 A13 13 0 0 0 179,342 L179,316 A13 13 0 0 0 166,329 Z" fill="rgba(0,0,0,0.25)" />
-            <path d="M160,322 Q160,300 180,300 Q200,300 200,322 Q196,314 180,314 Q164,314 160,322 Z" fill={SCENE.hood} />
-            <path d="M138,462 C138,404 152,372 164,350 C168,342 172,338 180,338 C188,338 192,342 196,350 C208,372 222,404 222,462 Z" fill={SCENE.cloth} />
-            <path d="M196,350 C206,372 216,404 218,456 L206,456 C204,408 198,378 190,356 Z" fill={`rgba(${ACCENT_RGB},0.10)`} />
-          </g>
-
-          {/* Wooden table */}
-          <polygon points="112,462 248,462 256,478 104,478" fill={SCENE.wood} />
-          <rect x="104" y="478" width="152" height="30" fill={SCENE.woodFront} />
-          <line x1="104" y1="487" x2="256" y2="487" stroke="rgba(240,224,176,0.05)" strokeWidth="1" />
-          <line x1="104" y1="498" x2="256" y2="498" stroke="rgba(240,224,176,0.04)" strokeWidth="1" />
-
-          {/* Urine flask (jordan) */}
-          <g>
-            <circle cx="148" cy="449" r="9" fill="rgba(194,154,59,0.45)" />
-            <circle cx="148" cy="448" r="13" fill="rgba(216,201,168,0.08)" stroke="rgba(240,224,176,0.35)" strokeWidth="1.2" />
-            <rect x="144.5" y="424" width="7" height="13" fill="rgba(216,201,168,0.10)" stroke="rgba(240,224,176,0.35)" strokeWidth="1" />
-            <ellipse cx="148" cy="424" rx="5.5" ry="1.8" fill="none" stroke="rgba(240,224,176,0.4)" strokeWidth="1" />
-          </g>
-
-          {/* Open manuscript */}
-          <g>
-            <polygon points="162,464 204,464 208,476 158,476" fill="rgba(232,217,176,0.14)" stroke="rgba(232,217,176,0.2)" strokeWidth="0.8" />
-            <line x1="183" y1="464" x2="183" y2="476" stroke="rgba(20,14,6,0.5)" strokeWidth="1" />
-          </g>
-
-          {/* Dried herbs lying flat beside the flask */}
-          <g stroke={SCENE.herb} strokeWidth="1.3" strokeLinecap="round" opacity="0.45">
-            <line x1="124" y1="472" x2="136" y2="469" />
-            <line x1="125" y1="475" x2="138" y2="473" />
-          </g>
-
-          {/* Candle — gentle flicker only */}
-          <g>
-            <rect x="227" y="428" width="14" height="34" rx="2" fill={SCENE.candleWax} opacity="0.9" />
-            <path d="M227,428 q3,3 7,2 q5,-1 7,-2 l0,4 l-14,0 Z" fill="rgba(20,14,6,0.25)" />
-            <g style={{ ...fillBox, transformOrigin: '50% 100%', animation: loop('mds-flicker 2.8s ease-in-out infinite') }}>
-              <path d="M234,402 C239.5,410 240.5,418 234,424 C227.5,418 228.5,410 234,402 Z" fill="url(#mds-flame)" />
-              <ellipse cx="234" cy="418" rx="2.2" ry="4" fill="#FBEEC4" opacity="0.85" />
-            </g>
-          </g>
-        </g>
 
         {/* ── The four explanations, as selectable zones around Thomas ──────── */}
 
@@ -426,9 +393,6 @@ export default function MedievalDiagnosisScene({
             </g>
           </ZoneShell>
         )}
-
-        {/* Vignette to keep the edges quiet */}
-        <rect x="0" y="0" width="360" height="640" fill="url(#mds-vignette)" pointerEvents="none" />
       </svg>
     </div>
   )

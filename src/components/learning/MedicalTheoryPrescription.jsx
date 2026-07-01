@@ -263,97 +263,10 @@ function SelectPhase({ theories, completedIds, onSelect, prefersReducedMotion })
           color: THEME.textMuted,
           margin: `${SPACING.compact}px 0 0`,
         }}>
-          Pick a belief to explore the treatments it led to.
+          Tap a belief around Thomas to explore the treatments it led to.
         </p>
       </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
-        {theories.map((theory, i) => {
-          const done = completedIds.includes(theory.id)
-          return (
-            <TheoryCard
-              key={theory.id}
-              theory={theory}
-              done={done}
-              onClick={() => onSelect(theory.id)}
-              delay={i * 80}
-              prefersReducedMotion={prefersReducedMotion}
-            />
-          )
-        })}
-      </div>
     </ContentShell>
-  )
-}
-
-function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
-  const [pressed, setPressed] = useState(false)
-  const symbol    = THEORY_SYMBOLS[theory.id] || '◆'
-  const hint      = BELIEF_HINTS[theory.id]
-
-  return (
-    <button
-      onClick={onClick}
-      onPointerDown={() => setPressed(true)}
-      onPointerUp={() => setPressed(false)}
-      onPointerLeave={() => setPressed(false)}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: SPACING.compact,
-        width: '100%',
-        padding: `${SPACING.compact}px`,
-        textAlign: 'left',
-        cursor: 'pointer',
-        border: `1px solid rgba(${THEME.accentRgb},${done ? '0.34' : '0.16'})`,
-        borderRadius: RADII.large,
-        background: done
-          ? `linear-gradient(145deg, rgba(${THEME.accentRgb},0.10), rgba(${THEME.parchmentRgb},0.04))`
-          : `rgba(${THEME.parchmentRgb},0.04)`,
-        boxShadow: done ? `0 0 22px rgba(${THEME.accentRgb},0.10)` : 'none',
-        transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-        transform: pressed ? `scale(${MOTION.scale.press})` : 'scale(1)',
-        animation: prefersReducedMotion
-          ? 'none'
-          : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} ${delay}ms both`,
-      }}
-    >
-      <span style={{
-        width: 50,
-        height: 50,
-        borderRadius: '50%',
-        flexShrink: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: done
-          ? `rgba(${THEME.accentRgb},0.18)`
-          : `rgba(${THEME.accentRgb},0.10)`,
-        border: `1px solid rgba(${THEME.accentRgb},0.30)`,
-        boxShadow: done ? `0 0 18px rgba(${THEME.accentRgb},0.16)` : 'none',
-        fontSize: 20,
-        color: THEME.accent,
-      }}>
-        {done ? '✓' : symbol}
-      </span>
-
-      <span style={{ display: 'flex', flexDirection: 'column', gap: 5, flex: 1, minWidth: 0 }}>
-        <span style={{ ...TYPE.displayCard, color: THEME.text }}>
-          {sentenceCase(theory.shortLabel || theory.label)}
-        </span>
-        {hint && (
-          <span style={{
-            ...TYPE.bodySmall,
-            color: done ? THEME.accent : THEME.textMuted,
-            lineHeight: 1.25,
-          }}>
-            {done ? 'Explored' : hint}
-          </span>
-        )}
-      </span>
-
-      <span style={{ color: THEME.textFaint, fontSize: 18, flexShrink: 0 }}>›</span>
-    </button>
   )
 }
 
