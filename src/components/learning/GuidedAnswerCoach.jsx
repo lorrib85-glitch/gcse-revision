@@ -29,23 +29,22 @@ function renderQuestion(question, commandWord) {
 }
 
 const sectionHeadingStyle = {
-  fontFamily: TYPE.bodyText.fontFamily,
-  fontWeight: 700, fontSize: 9,
-  letterSpacing: '0.16em', textTransform: 'uppercase',
+  ...TYPE.eyebrow,
+  fontSize: 9,
+  textTransform: 'uppercase',
   color: 'rgba(255,255,255,0.3)',
   marginBottom: 12,
 }
 
 const kickerStyle = {
-  fontFamily: TYPE.bodyText.fontFamily,
-  fontWeight: 700, fontSize: 11,
-  letterSpacing: '0.18em', textTransform: 'uppercase',
+  ...TYPE.eyebrow,
+  textTransform: 'uppercase',
   color: GENERAL.teal,
   marginBottom: SPACING.compact,
 }
 
 const bulletRowStyle = { display: 'flex', alignItems: 'flex-start', gap: SPACING.micro, marginBottom: SPACING.micro }
-const bulletTextStyle = { fontFamily: TYPE.bodyText.fontFamily, fontSize: 13.5, lineHeight: 1.55, color: 'rgba(255,255,255,0.7)' }
+const bulletTextStyle = { ...TYPE.body, fontSize: 13.5, color: 'rgba(255,255,255,0.7)' }
 const bulletDotStyle = (color) => ({ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: color })
 
 // Primary Progression CTA — accent-filled, in GENERAL teal (or bronze, for the
@@ -58,7 +57,7 @@ const ctaStyle = (enabled, accent = GENERAL.teal) => ({
   border: 'none',
   background: enabled ? accent : 'rgba(255,255,255,0.08)',
   color: enabled ? '#0D0F14' : 'rgba(255,255,255,0.3)',
-  fontFamily: TYPE.bodyText.fontFamily,
+  fontFamily: "'Sora', sans-serif",
   fontWeight: BUTTONS.continue.fontWeight, fontSize: BUTTONS.continue.fontSize,
   cursor: enabled ? 'pointer' : 'default',
   transition: `transform ${BUTTONS.continue.transition}`,
@@ -67,7 +66,7 @@ const ctaStyle = (enabled, accent = GENERAL.teal) => ({
 const textBtnStyle = {
   display: 'block', width: '100%', textAlign: 'center',
   background: 'none', border: 'none', cursor: 'pointer',
-  fontFamily: TYPE.bodyText.fontFamily, fontWeight: 600, fontSize: 13,
+  fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 13,
   color: GENERAL.slate, padding: '10px 0',
 }
 
@@ -154,10 +153,10 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         <ContinueCTA onClick={() => setStage('focus')} accent={GENERAL.teal} />
       }>
         <div style={kickerStyle}>1 · The question</div>
-        <div style={{ ...TYPE.cinematic, fontSize: 30, color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
+        <div style={{ ...TYPE.displaySection, fontSize: 30, color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
           Read it. Don't rush<span style={{ color: GENERAL.teal }}>.</span>
         </div>
-        <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 14, color: GENERAL.slate, lineHeight: 1.6, marginBottom: SPACING.standard }}>
+        <p style={{ ...TYPE.body, fontSize: 14, color: GENERAL.slate, marginBottom: SPACING.standard }}>
           This is the exact question you'll be working with today. Read it carefully — every word changes what the examiner is looking for.
         </p>
         <div style={{
@@ -165,10 +164,10 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
           border: '1px solid rgba(255,255,255,0.06)', padding: SPACING.standard,
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: SPACING.compact, marginBottom: SPACING.compact }}>
-            <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: BRONZE }}>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: BRONZE }}>
               Edexcel · History
             </div>
-            <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 12, letterSpacing: '0.04em', color: BRONZE, whiteSpace: 'nowrap' }}>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: '0.04em', color: BRONZE, whiteSpace: 'nowrap' }}>
               {coachType.marksLabel}
             </div>
           </div>
@@ -193,10 +192,10 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         <ContinueCTA onClick={() => setStage('thinking')} accent={GENERAL.teal} />
       }>
         <div style={kickerStyle}>2 · What earns marks</div>
-        <div style={{ ...TYPE.cinematic, fontSize: 28, color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
+        <div style={{ ...TYPE.displaySection, fontSize: 28, color: GENERAL.softWhite, marginBottom: SPACING.compact, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
           What's the examiner looking for<span style={{ color: GENERAL.teal }}>?</span>
         </div>
-        <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 14.5, color: 'rgba(255,255,255,0.75)', lineHeight: 1.65, marginBottom: SPACING.standard }}>
+        <p style={{ ...TYPE.body, fontSize: 14.5, color: 'rgba(255,255,255,0.75)', marginBottom: SPACING.standard }}>
           {examFocus.whatItsAsking}
         </p>
 
@@ -224,10 +223,10 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
           padding: SPACING.compact, borderRadius: RADII.medium,
           background: `rgba(${GENERAL.coralRgb},0.08)`, border: `1px solid rgba(${GENERAL.coralRgb},0.3)`,
         }}>
-          <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: GENERAL.coral, marginBottom: 6 }}>
+          <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: GENERAL.coral, marginBottom: 6 }}>
             The biggest trap
           </div>
-          <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13.5, lineHeight: 1.6, color: 'rgba(255,255,255,0.8)' }}>
+          <div style={{ ...TYPE.body, fontSize: 13.5, color: 'rgba(255,255,255,0.8)' }}>
             {examFocus.biggestTrap}
           </div>
         </div>
@@ -257,12 +256,11 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         ) : null
       }>
         <div style={kickerStyle}>3 · Examiner thinking</div>
-        <div style={{ ...TYPE.cinematic, fontSize: 28, color: GENERAL.softWhite, marginBottom: 6, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
+        <div style={{ ...TYPE.displaySection, fontSize: 28, color: GENERAL.softWhite, marginBottom: 6, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
           Watch an examiner think<span style={{ color: GENERAL.teal }}>.</span>
         </div>
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily, fontSize: 11, fontWeight: 600,
-          letterSpacing: '0.16em', textTransform: 'uppercase', color: GENERAL.slate,
+          ...TYPE.eyebrow, textTransform: 'uppercase', color: GENERAL.slate,
           marginBottom: SPACING.standard,
         }}>
           Example {thinkingStep + 1} of {beats.length}
@@ -285,11 +283,11 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
             {beat.weakIdea}
           </div>
           {weakRevealed ? (
-            <div style={{ marginTop: SPACING.compact, fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, lineHeight: 1.6, color: 'rgba(255,255,255,0.6)' }}>
+            <div style={{ marginTop: SPACING.compact, ...TYPE.bodySmall, fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>
               {beat.whyNot}
             </div>
           ) : (
-            <div style={{ marginTop: SPACING.compact, fontFamily: TYPE.bodyText.fontFamily, fontSize: 11.5, fontWeight: 600, color: GENERAL.teal }}>
+            <div style={{ marginTop: SPACING.compact, fontFamily: "'Sora', sans-serif", fontSize: 11.5, fontWeight: 600, color: GENERAL.teal }}>
               Tap to see why this falls short →
             </div>
           )}
@@ -312,11 +310,11 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
               {beat.strongerIdea}
             </div>
             {strongRevealed ? (
-              <div style={{ marginTop: SPACING.compact, fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, lineHeight: 1.6, color: BRONZE }}>
+              <div style={{ marginTop: SPACING.compact, ...TYPE.bodySmall, fontSize: 13, color: BRONZE }}>
                 {beat.whyBetter}
               </div>
             ) : (
-              <div style={{ marginTop: SPACING.compact, fontFamily: TYPE.bodyText.fontFamily, fontSize: 11.5, fontWeight: 600, color: BRONZE }}>
+              <div style={{ marginTop: SPACING.compact, fontFamily: "'Sora', sans-serif", fontSize: 11.5, fontWeight: 600, color: BRONZE }}>
                 Tap to see what makes this better →
               </div>
             )}
@@ -335,10 +333,10 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         <ContinueCTA onClick={() => setStage('supported')} accent={BRONZE} />
       }>
         <div style={kickerStyle}>4 · Model answer</div>
-        <div style={{ ...TYPE.cinematic, fontSize: 28, color: GENERAL.softWhite, marginBottom: 6, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
+        <div style={{ ...TYPE.displaySection, fontSize: 28, color: GENERAL.softWhite, marginBottom: 6, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
           A model answer<span style={{ color: GENERAL.teal }}>.</span>
         </div>
-        <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13.5, color: GENERAL.slate, lineHeight: 1.6, marginBottom: SPACING.standard }}>
+        <p style={{ ...TYPE.body, fontSize: 13.5, color: GENERAL.slate, marginBottom: SPACING.standard }}>
           Tap any sentence to see exactly why it earns marks.
         </p>
 
@@ -354,10 +352,10 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
                   padding: SPACING.compact, borderRadius: RADII.medium,
                   background: 'rgba(0,0,0,0.18)', border: `1px solid ${BRONZE}30`,
                 }}>
-                  <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: BRONZE, marginBottom: 6 }}>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: BRONZE, marginBottom: 6 }}>
                     {src.label}
                   </div>
-                  <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 12, fontStyle: 'italic', color: 'rgba(245,238,225,0.55)', marginBottom: SPACING.micro }}>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontStyle: 'italic', color: 'rgba(245,238,225,0.55)', marginBottom: SPACING.micro }}>
                     {src.attribution}
                   </div>
                   <div style={{ fontFamily: "'IBM Plex Serif', Georgia, serif", fontSize: 14, lineHeight: 1.65, color: 'rgba(245,238,225,0.85)', whiteSpace: 'pre-wrap' }}>
@@ -368,7 +366,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
             </div>
           )}
 
-          <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: BRONZE, marginBottom: SPACING.compact }}>
+          <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: BRONZE, marginBottom: SPACING.compact }}>
             Model answer
           </div>
 
@@ -391,7 +389,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
                   <div style={{
                     marginTop: 6, padding: '8px 10px', borderRadius: RADII.small,
                     background: 'rgba(0,0,0,0.2)', borderLeft: `2px solid ${BRONZE}`,
-                    fontFamily: TYPE.bodyText.fontFamily, fontSize: 12.5, lineHeight: 1.55, color: BRONZE,
+                    ...TYPE.bodySmall, fontSize: 12.5, color: BRONZE,
                   }}>
                     {s.note}
                   </div>
@@ -465,7 +463,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         </div>
       }>
         <div style={kickerStyle}>8 · Your progress</div>
-        <div style={{ ...TYPE.cinematic, fontSize: 28, color: GENERAL.softWhite, marginBottom: SPACING.standard, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
+        <div style={{ ...TYPE.displaySection, fontSize: 28, color: GENERAL.softWhite, marginBottom: SPACING.standard, animation: 'gac-up 500ms cubic-bezier(0.22,1,0.36,1) both' }}>
           Your progress<span style={{ color: GENERAL.teal }}>.</span>
         </div>
 
@@ -476,8 +474,8 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
             return (
               <div key={row.key}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                  <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 600, color: GENERAL.softWhite }}>{row.label}</div>
-                  <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 13, fontWeight: 700, color: GENERAL.teal }}>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 600, color: GENERAL.softWhite }}>{row.label}</div>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 700, color: GENERAL.teal }}>
                     {r ? `${r.marksAwarded}/${r.marksAvailable}` : '—'}
                   </div>
                 </div>
@@ -496,7 +494,7 @@ export default function GuidedAnswerCoach({ coachType, onExit }) {
         <div style={{
           padding: SPACING.compact, borderRadius: RADII.medium,
           background: GENERAL.neutral[1], border: '1px solid rgba(255,255,255,0.06)',
-          fontFamily: TYPE.bodyText.fontFamily, fontSize: 13.5, lineHeight: 1.6, color: 'rgba(255,255,255,0.75)',
+          ...TYPE.body, fontSize: 13.5, color: 'rgba(255,255,255,0.75)',
         }}>
           {trendLine}
         </div>
