@@ -20,7 +20,7 @@ export default function UnifiedQuestionScreen({
   onAnswer,
   onComplete,
 }) {
-  const FEEDBACK_HOLD_MS = 1200
+  const FEEDBACK_HOLD_MS = 1600
   const subjectData = SUBJECTS[subject] || SUBJECTS.History
   const accent = subjectData.accent
   const rgb = subjectData.accentRgb
@@ -90,6 +90,7 @@ export default function UnifiedQuestionScreen({
       const isCorrect = opt === options[correctIdx]
       setRetryTapped(opt)
       setRetryStatus(isCorrect ? 'correct' : 'incorrect')
+      if (isCorrect) setHintVisible(false)
       vibrate(isCorrect ? 10 : 20)
       advanceAfterHold()
     }
@@ -144,8 +145,8 @@ export default function UnifiedQuestionScreen({
         @keyframes uqs-ring-out { 0% { transform: scale(0.6); opacity: 0.45; } 100% { transform: scale(1.9); opacity: 0; } }
         @keyframes uqs-check-draw { to { stroke-dashoffset: 0; } }
         @keyframes uqs-correct-glow {
-          0%   { background: rgba(${rgb}, 0.28); box-shadow: 0 0 0 1px rgba(${rgb}, 0.38), 0 0 36px rgba(${rgb}, 0.48); }
-          100% { background: rgba(${rgb}, 0.14); box-shadow: 0 0 0 1px rgba(${rgb}, 0.16), 0 0 22px rgba(${rgb}, 0.22); }
+          0%   { background: rgba(${rgb}, 0.2); box-shadow: 0 0 0 1px rgba(${rgb}, 0.26), 0 0 20px rgba(${rgb}, 0.22); }
+          100% { background: rgba(${rgb}, 0.12); box-shadow: 0 0 0 1px rgba(${rgb}, 0.18), 0 0 14px rgba(${rgb}, 0.16); }
         }
       `}</style>
 
@@ -214,6 +215,7 @@ export default function UnifiedQuestionScreen({
             const isFirstTapped = tapped === opt
             const isRetryTapped = retryTapped === opt
             const isCorrectOpt = i === correctIdx
+            const shouldGlow = (isFirstTapped && status === 'correct') || (isRetryTapped && retryStatus === 'correct')
             let opacity = 1
             let background = 'rgba(21,23,32,0.9)'
             let border = '1px solid rgba(255,255,255,0.12)'
@@ -260,12 +262,12 @@ export default function UnifiedQuestionScreen({
               color = 'rgba(255,255,255,0.9)'
             }
 
-            if (isCorrectOpt && (status === 'correct' || retryDone)) {
-              background = `rgba(${rgb}, 0.14)`
-              border = `1px solid rgba(${rgb}, 0.72)`
+            if (shouldGlow) {
+              background = `rgba(${rgb}, 0.12)`
+              border = `1px solid rgba(${rgb}, 0.62)`
               color = 'rgba(255,255,255,0.94)'
-              boxShadow = `0 0 0 1px rgba(${rgb}, 0.16), 0 0 22px rgba(${rgb}, 0.22)`
-              correctAnimation = `uqs-correct-glow 520ms cubic-bezier(0.22, 1, 0.36, 1) both`
+              boxShadow = `0 0 0 1px rgba(${rgb}, 0.18), 0 0 14px rgba(${rgb}, 0.16)`
+              correctAnimation = `uqs-correct-glow 620ms cubic-bezier(0.22, 1, 0.36, 1) both`
             }
 
             const disabled = status === 'correct'
