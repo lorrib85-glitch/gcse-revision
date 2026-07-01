@@ -289,7 +289,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
           padding: '30px 24px', maxWidth: 420, width: '100%',
         }}>
           <div style={{
-            ...TYPE.screenHeading,
+            ...TYPE.displayScreen,
             color: 'rgba(245,238,225,0.94)',
             textShadow: '0 2px 28px rgba(0,0,0,0.66)',
             textAlign: 'center',
@@ -298,10 +298,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
           }}>{introTitle}</div>
 
           <div style={{
-            ...TYPE.bodyText,
-            fontWeight: 520,
+            ...TYPE.body,
             color: 'rgba(245,245,245,0.66)',
-            lineHeight: 1.55,
             textAlign: 'center',
             maxWidth: 330,
             marginBottom: 28,
@@ -320,8 +318,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
               backdropFilter: 'blur(8px)',
               animation: 'ss-intro-left 480ms cubic-bezier(.22,1,.36,1) 90ms both',
             }}>
-              <div style={{ ...TYPE.metadataText, color: leftCol.color ?? '#A89070', marginBottom: 8 }}>{leftText.title}</div>
-              <div style={{ ...TYPE.captionText, color: 'rgba(245,245,245,0.60)', fontWeight: 520 }}>{leftText.detail}</div>
+              <div style={{ ...TYPE.metadata, color: leftCol.color ?? '#A89070', marginBottom: 8 }}>{leftText.title}</div>
+              <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.60)' }}>{leftText.detail}</div>
             </div>
             <div style={{
               background: 'rgba(10,12,18,0.54)',
@@ -332,8 +330,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
               backdropFilter: 'blur(8px)',
               animation: 'ss-intro-right 480ms cubic-bezier(.22,1,.36,1) 130ms both',
             }}>
-              <div style={{ ...TYPE.metadataText, color: rightCol.color ?? accent, marginBottom: 8 }}>{rightText.title}</div>
-              <div style={{ ...TYPE.captionText, color: 'rgba(245,245,245,0.60)', fontWeight: 520 }}>{rightText.detail}</div>
+              <div style={{ ...TYPE.metadata, color: rightCol.color ?? accent, marginBottom: 8 }}>{rightText.title}</div>
+              <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.60)' }}>{rightText.detail}</div>
             </div>
           </div>
 
@@ -365,7 +363,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
         <div style={{ position: 'relative', zIndex: 3, textAlign: 'center', maxWidth: 400, width: '100%' }}>
           <div style={{
-            ...TYPE.screenHeading,
+            ...TYPE.displayScreen,
             color: 'rgba(245,238,225,0.95)',
             textShadow: '0 2px 28px rgba(0,0,0,0.58)',
             marginBottom: 20,
@@ -374,7 +372,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
           {lastExpl && (
             <div style={{
-              ...TYPE.bodySmallText,
+              ...TYPE.bodySmall,
               color: 'rgba(245,245,245,0.68)',
               marginBottom: 14,
               padding: '14px 16px',
@@ -389,10 +387,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
           {explanation && (
             <div style={{
-              ...TYPE.bodyText,
-              fontWeight: 520,
+              ...TYPE.body,
               color: 'rgba(245,245,245,0.78)',
-              lineHeight: 1.6,
               marginBottom: 30,
               animation: 'ss-done-in 520ms cubic-bezier(.22,1,.36,1) 250ms both',
             }}>
@@ -432,15 +428,14 @@ export default function SwipeSort({ block, subject, onComplete }) {
             textAlign: 'center',
           }}>
             <div style={{
-              ...TYPE.sectionHeading,
+              ...TYPE.displaySection,
               color: 'rgba(245,238,225,0.94)',
               textShadow: '0 2px 24px rgba(0,0,0,0.70)',
               marginBottom: 6,
             }}>{gameTitle}</div>
             <div style={{
-              ...TYPE.bodySmallText,
+              ...TYPE.bodySmall,
               color: 'rgba(245,245,245,0.62)',
-              fontWeight: 520,
             }}>{gamePrompt}</div>
           </div>
         </div>
@@ -462,8 +457,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
             padding: '14px 10px',
           }}
         >
-          <div style={{ ...TYPE.buttonText, marginBottom: 5 }}>← {leftText.title}</div>
-          <div style={{ ...TYPE.captionText, color: 'rgba(245,245,245,0.46)', fontWeight: 520 }}>{leftText.detail}</div>
+          <div style={{ ...TYPE.button, marginBottom: 5 }}>← {leftText.title}</div>
+          <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.46)' }}>{leftText.detail}</div>
         </button>
 
         <button
@@ -483,8 +478,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
             padding: '14px 10px',
           }}
         >
-          <div style={{ ...TYPE.buttonText, marginBottom: 5 }}>{rightText.title} →</div>
-          <div style={{ ...TYPE.captionText, color: 'rgba(245,245,245,0.46)', fontWeight: 520 }}>{rightText.detail}</div>
+          <div style={{ ...TYPE.button, marginBottom: 5 }}>{rightText.title} →</div>
+          <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.46)' }}>{rightText.detail}</div>
         </button>
 
         <div style={{
@@ -522,10 +517,9 @@ export default function SwipeSort({ block, subject, onComplete }) {
                 }}
               >
                 <div style={{
-                  ...TYPE.featureText,
+                  ...TYPE.displayHero,
                   fontSize: 'clamp(24px, 6.8vw, 34px)',
                   color: 'rgba(245,238,225,0.96)',
-                  lineHeight: 1.15,
                   textAlign: 'center',
                   textShadow: '0 2px 20px rgba(0,0,0,0.35)',
                 }}>
@@ -546,9 +540,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
           pointerEvents: 'none',
         }}>
           <div style={{
-            ...TYPE.captionText,
+            ...TYPE.caption,
             color: 'rgba(245,245,245,0.42)',
-            fontWeight: 560,
             background: 'rgba(8,10,16,0.42)',
             border: '1px solid rgba(245,238,225,0.08)',
             borderRadius: 999,
