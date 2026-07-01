@@ -200,3 +200,56 @@ Prevent brand and typography drift as more modules are generated.
 ### Acceptance criteria
 - Visual debt is fixed after architecture is stable, not mixed into structural refactors.
 - Each visual pass has a narrow scope and screenshots before/after where useful.
+
+---
+
+## B9 — General dark surface token gap
+
+**Status:** Backlog  
+**Priority:** High  
+**Area:** `src/constants/generalTheme.js`, `src/styles.css`, shared chrome, cross-subject screens, tests
+
+### Context
+Repeated dark colours are being used as general app chrome rather than subject identity. Current audit examples include:
+
+- `#08090D` — 51 sites
+- `#151720` — 24 sites
+- `#0D0F14` — 12 sites
+- `#0D1424` — 4 sites
+
+Some are numerically close to subject palette tokens, but replacing them with Maths/Chemistry/Physics tokens would be semantically wrong. Example: `#0D1424` is numerically close to `Physics.background`, but its call sites are in `ModulePlayer.jsx`, `QuickFire.jsx`, and `MathsQuestion.jsx` — cross-subject and Maths-specific, not Physics. Distance-matching alone would create misleading token references and future palette coupling.
+
+### Direction
+Create deliberately named `GENERAL` tokens for shared dark surfaces, then migrate by meaning rather than by colour similarity.
+
+Suggested token shape:
+
+```js
+GENERAL.background.app
+GENERAL.background.surface
+GENERAL.background.sunken
+GENERAL.background.panel
+```
+
+Or, if the existing `GENERAL` object remains flatter:
+
+```js
+GENERAL.bgApp
+GENERAL.bgSurface
+GENERAL.bgSunken
+GENERAL.bgPanel
+```
+
+### Rules
+- Do not map general chrome colours to subject palettes just because the hex values are close.
+- Do not use Physics/Maths/Chemistry tokens on cross-subject surfaces unless the surface is genuinely subject-scoped.
+- Decide token names by semantic role: app background, raised surface, sunken surface, panel/chrome.
+- Preserve intentional subject-specific backgrounds where they exist.
+- Avoid a broad blind replace; inspect call sites and migrate in small batches.
+
+### Acceptance criteria
+- New `GENERAL` dark surface tokens exist with clear names.
+- Repeated hardcoded general dark colours are migrated to those tokens where appropriate.
+- Cross-subject surfaces no longer depend on subject-specific palette tokens.
+- Architecture/brand tests catch reintroduction of high-frequency hardcoded dark surface values.
+- Documented exceptions remain allowed only where a colour is intentionally bespoke or subject-specific.
