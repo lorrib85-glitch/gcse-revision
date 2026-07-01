@@ -9,31 +9,13 @@ import CinematicShell from '../layout/CinematicShell.jsx'
 import { MOTION }   from '../../constants/motion.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 
-const FIGURE_SECTION_IMAGE_PATHS = {
-  Hippocrates: {
-    'Who was he?': '/figures/history/medicine/medieval/hippocrates-card-who-was-he.webp',
-    'Four humours': '/figures/history/medicine/medieval/hippocrates-card-four-humours.webp',
-    Observation: '/figures/history/medicine/medieval/hippocrates-card-observation.webp',
-    Influence: '/figures/history/medicine/medieval/hippocrates-card-influence.webp',
-  },
-}
-
-const FIGURE_SECTION_IMAGE_POSITIONS = {
-  Hippocrates: {
-    'Who was he?': 'center center',
-    'Four humours': 'center center',
-    Observation: 'center center',
-    Influence: 'center center',
-  },
-}
-
 function HistoryIcon({ icon, size = 28 }) {
   if (!icon) return <div style={{ width: size, height: size }} />
   return (
     <img
       src={`/icons/history/${icon}.png`}
       alt=""
-      style={{ width: size, height: size, borderRadius: RADII.pill, flexShrink: 0, display: 'block' }}
+      style={{ width: size, height: size, borderRadius: '50%', flexShrink: 0, display: 'block' }}
     />
   )
 }
@@ -50,8 +32,6 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
   const section  = sections[sectionIdx] || {}
   const isLast   = sectionIdx === sections.length - 1
   const lines    = section.lines || []
-  const sectionImage = section.image || FIGURE_SECTION_IMAGE_PATHS[block.name]?.[section.title]
-  const sectionImagePosition = section.imagePosition || FIGURE_SECTION_IMAGE_POSITIONS[block.name]?.[section.title] || 'center center'
 
   // History figures always use parchment; other subjects use dark card unless block.cardBackground overrides
   const parchmentSrc = block.cardBackground
@@ -234,7 +214,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             }}>
               <div style={{
                 width: 48, height: 48,
-                borderRadius: RADII.pill,
+                borderRadius: '50%',
                 background: medalBg,
                 border: `1px solid ${medalBorder}`,
                 display: 'flex',
@@ -257,7 +237,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
             <div style={{ height: 1, background: dividerColor, marginBottom: 6 }} />
 
             {/* Body: evidence tile with text wrapped around it, or plain lines */}
-            {sectionImage ? (
+            {section.image ? (
               <div style={{
                 ...TYPE.bodySmall,
                 fontSize: 13,
@@ -274,13 +254,13 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                   animation: `kfr-img-in 440ms ${MOTION.easing.standard} both`,
                 }}>
                   <img
-                    src={sectionImage}
+                    src={section.image}
                     alt=""
                     style={{
                       width: '100%',
                       height: 180,
                       objectFit: section.imageFit || 'cover',
-                      objectPosition: sectionImagePosition,
+                      objectPosition: section.imagePosition || 'center center',
                       display: 'block',
                       filter: 'saturate(0.88) brightness(0.96)',
                     }}
@@ -405,7 +385,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
                     <div key={i} style={{
                       width: i === sectionIdx ? 18 : 6,
                       height: 6,
-                      borderRadius: RADII.pill,
+                      borderRadius: 99,
                       background: i === sectionIdx
                         ? accent
                         : i < sectionIdx
