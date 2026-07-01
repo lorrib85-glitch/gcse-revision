@@ -110,16 +110,16 @@ export default function AnswerInteraction({
           borderRadius: 12, padding: '12px 14px', marginTop: 10,
         }}>
           <div style={{
-            ...TYPE.metadataText,
+            ...TYPE.metadata,
             color: GENERAL.teal,
             marginBottom: 6,
           }}>💡 Hint — think about this</div>
           <p style={{
-            ...TYPE.bodySmallText,
+            ...TYPE.bodySmall,
             color: '#C8D0E8', margin: '0 0 10px', lineHeight: 1.55,
           }}>{block.hint || block.explanation}</p>
           <button onClick={retry} style={{
-            ...TYPE.buttonText,
+            ...TYPE.button,
             background: `rgba(${GENERAL.tealRgb},.12)`,
             border: `1px solid rgba(${GENERAL.tealRgb},.30)`,
             borderRadius: 9, padding: '8px 16px',
@@ -132,7 +132,7 @@ export default function AnswerInteraction({
       {/* Full feedback after correct or locked */}
       {showFull && (
         <div className={`feedback ${wasCorrect ? 'correct' : 'wrong'} fade-up`} style={{ marginTop: 10 }}>
-          <p style={{ ...TYPE.bodySmallText, margin: 0 }}>
+          <p style={{ ...TYPE.bodySmall, margin: 0 }}>
             <strong>{wasCorrect ? '✓ Correct! ' : '✗ Nope — the answer was: '}</strong>
             {wasCorrect ? block.explanation : (
               <>

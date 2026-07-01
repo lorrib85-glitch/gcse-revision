@@ -76,10 +76,7 @@ export default function RetrievalFrame({
       }}>
         {/* Label */}
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontSize: '0.68rem',
-          fontWeight: 700,
-          letterSpacing: '0.1em',
+          ...TYPE.eyebrow,
           textTransform: 'uppercase',
           color: accent,
           marginBottom: 12,
@@ -91,11 +88,9 @@ export default function RetrievalFrame({
         {/* Optional context text */}
         {contextText && (
           <p style={{
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontSize: '0.9rem',
+            ...TYPE.body,
             color: 'rgba(255,255,255,0.6)',
             margin: '0 0 16px',
-            lineHeight: 1.5,
           }}>
             {contextText}
           </p>
@@ -103,12 +98,10 @@ export default function RetrievalFrame({
 
         {/* Question */}
         <div style={{
-          fontFamily: TYPE.screenHeading.fontFamily,
+          ...TYPE.displayScreen,
           fontSize: 'clamp(1.1rem, 3vw, 1.4rem)',
-          fontWeight: 700,
           color: '#F5F7FB',
           marginBottom: 20,
-          lineHeight: 1.3,
         }}>
           {block.question}
         </div>
@@ -138,10 +131,7 @@ export default function RetrievalFrame({
       }}>
         {/* Label */}
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
-          fontSize: '0.68rem',
-          fontWeight: 700,
-          letterSpacing: '0.1em',
+          ...TYPE.eyebrow,
           textTransform: 'uppercase',
           color: accent,
           marginBottom: SPACING.compact,
@@ -153,11 +143,9 @@ export default function RetrievalFrame({
         {/* Optional context text */}
         {contextText && (
           <p style={{
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontSize: '0.9rem',
+            ...TYPE.body,
             color: 'rgba(255,255,255,0.65)',
             margin: '0 0 20px',
-            lineHeight: 1.5,
           }}>
             {contextText}
           </p>
@@ -165,12 +153,10 @@ export default function RetrievalFrame({
 
         {/* Question */}
         <div style={{
-          fontFamily: TYPE.screenHeading.fontFamily,
+          ...TYPE.displayScreen,
           fontSize: 'clamp(1.2rem, 4vw, 1.6rem)',
-          fontWeight: 700,
           color: '#FFFFFF',
           marginBottom: 28,
-          lineHeight: 1.3,
           maxWidth: '90%',
         }}>
           {block.question}
@@ -198,10 +184,8 @@ export default function RetrievalFrame({
       }}>
         {/* Compact label */}
         <div style={{
-          fontFamily: TYPE.bodyText.fontFamily,
+          ...TYPE.eyebrow,
           fontSize: '0.6rem',
-          fontWeight: 700,
-          letterSpacing: '0.08em',
           textTransform: 'uppercase',
           color: accent,
           marginBottom: SPACING.micro,
@@ -212,12 +196,10 @@ export default function RetrievalFrame({
 
         {/* Compact question */}
         <div style={{
-          fontFamily: TYPE.screenHeading.fontFamily,
+          ...TYPE.displayScreen,
           fontSize: 'clamp(0.95rem, 2vw, 1.1rem)',
-          fontWeight: 600,
           color: '#F0ECFF',
           marginBottom: 12,
-          lineHeight: 1.3,
         }}>
           {block.question}
         </div>

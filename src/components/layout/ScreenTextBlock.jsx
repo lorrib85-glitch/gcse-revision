@@ -47,7 +47,7 @@ export default function ScreenTextBlock({
       {title && (
         <h2
           style={{
-            ...TYPE.cardTitle,
+            ...TYPE.displayCard,
             color: accent || toneStyle.color,
             margin: hasBody ? '0 0 10px' : 0,
             ...titleStyle,
@@ -59,7 +59,7 @@ export default function ScreenTextBlock({
       {hasBody && (
         <div
           style={{
-            ...TYPE.examQuestionText,
+            ...TYPE.examQuestion,
             color: toneStyle.color,
             ...bodyStyle,
           }}

@@ -80,7 +80,7 @@ export default function ExamRoundDebrief({ subject, results }) {
         marginTop: SPACING.compact,
         textAlign: 'left',
       }}>
-        <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.85rem', color: GENERAL.slate }}>
+        <div style={{ ...TYPE.body, fontSize: '.85rem', color: GENERAL.slate }}>
           Your examiner is looking back over the round…
         </div>
       </div>
@@ -97,7 +97,7 @@ export default function ExamRoundDebrief({ subject, results }) {
         marginTop: SPACING.compact,
         textAlign: 'left',
       }}>
-        <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.85rem', color: GENERAL.slate }}>
+        <div style={{ ...TYPE.body, fontSize: '.85rem', color: GENERAL.slate }}>
           {error || 'No debrief available for this round.'}
         </div>
       </div>
@@ -114,10 +114,7 @@ export default function ExamRoundDebrief({ subject, results }) {
       textAlign: 'left',
     }}>
       <div style={{
-        fontFamily: TYPE.bodyText.fontFamily,
-        fontWeight: 700,
-        fontSize: '.7rem',
-        letterSpacing: '.14em',
+        ...TYPE.eyebrow,
         textTransform: 'uppercase',
         color: accent,
         marginBottom: 10,
@@ -125,7 +122,7 @@ export default function ExamRoundDebrief({ subject, results }) {
         From the examiner
       </div>
 
-      <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '1rem', lineHeight: 1.6, color: '#F5F7FB', margin: '0 0 16px' }}>
+      <p style={{ ...TYPE.body, color: '#F5F7FB', margin: '0 0 16px' }}>
         {debrief.headline}
       </p>
 
@@ -137,10 +134,10 @@ export default function ExamRoundDebrief({ subject, results }) {
           padding: SPACING.compact,
           marginBottom: 14,
         }}>
-          <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: '.7rem', letterSpacing: '.1em', textTransform: 'uppercase', color: '#9CA8C7', marginBottom: 6 }}>
+          <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: '#9CA8C7', marginBottom: 6 }}>
             What kept costing you marks
           </div>
-          <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.92rem', lineHeight: 1.6, color: 'rgba(245,247,251,0.88)' }}>
+          <div style={{ ...TYPE.body, color: 'rgba(245,247,251,0.88)' }}>
             {debrief.pattern}
           </div>
         </div>
@@ -148,10 +145,10 @@ export default function ExamRoundDebrief({ subject, results }) {
 
       {Array.isArray(debrief.moments) && debrief.moments.map((m, i) => (
         <div key={i} style={{ marginBottom: 12, paddingLeft: 14, borderLeft: `2px solid rgba(${accentRgb},0.4)` }}>
-          <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontStyle: 'italic', fontSize: '.88rem', lineHeight: 1.55, color: 'rgba(245,247,251,0.7)', marginBottom: 4 }}>
+          <div style={{ ...TYPE.body, fontSize: '.88rem', fontStyle: 'italic', color: 'rgba(245,247,251,0.7)', marginBottom: 4 }}>
             "{m.quote}"
           </div>
-          <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.85rem', lineHeight: 1.55, color: 'rgba(245,247,251,0.92)' }}>
+          <div style={{ ...TYPE.body, fontSize: '.85rem', color: 'rgba(245,247,251,0.92)' }}>
             {m.examinerNote}
           </div>
         </div>
@@ -159,10 +156,10 @@ export default function ExamRoundDebrief({ subject, results }) {
 
       {debrief.nextStep && (
         <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-          <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontWeight: 700, fontSize: '.7rem', letterSpacing: '.1em', textTransform: 'uppercase', color: accent, marginBottom: 6 }}>
+          <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: accent, marginBottom: 6 }}>
             Next, try this
           </div>
-          <div style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: '.9rem', lineHeight: 1.6, color: 'rgba(245,247,251,0.88)' }}>
+          <div style={{ ...TYPE.body, color: 'rgba(245,247,251,0.88)' }}>
             {debrief.nextStep}
           </div>
         </div>

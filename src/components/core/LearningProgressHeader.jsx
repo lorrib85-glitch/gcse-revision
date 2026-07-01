@@ -175,15 +175,13 @@ export default function LearningProgressHeader({
           }}
         >
           <div style={{
-            fontFamily: TYPE.bodyText.fontFamily,
-            fontSize: 11, fontWeight: 700,
+            ...TYPE.eyebrow,
             color: accent,
             marginBottom: 2,
           }}>{stages[openTooltip].title}</div>
           {stages[openTooltip].description ? (
             <div style={{
-              fontFamily: TYPE.bodyText.fontFamily,
-              fontSize: 10,
+              ...TYPE.metadata, fontSize: 10,
               color: 'rgba(255,255,255,0.48)',
             }}>{stages[openTooltip].description}</div>
           ) : null}

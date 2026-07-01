@@ -73,7 +73,7 @@ export default function LearningHeader({
             background: 'none', border: 'none',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: 'pointer', flexShrink: 0,
-            ...TYPE.metadataText,
+            ...TYPE.metadata,
             fontSize: 11,
             fontWeight: 600,
             color: `rgba(${accentRgb},0.52)`,

@@ -87,14 +87,14 @@ export default function ScoreNumberLine({
                   transition: 'all 160ms ease',
                 }}>
                   {isSelected && (
-                    <span style={{ ...TYPE.bodySmallText, fontWeight: 900, fontSize: 13, lineHeight: 1 }}>
+                    <span style={{ ...TYPE.bodySmall, fontWeight: 900, fontSize: 13, lineHeight: 1 }}>
                       {score}
                     </span>
                   )}
                 </span>
                 {!isSelected && (
                   <span style={{
-                    ...TYPE.bodySmallText,
+                    ...TYPE.bodySmall,
                     fontSize: 12,
                     fontWeight: 700,
                     color: isPast ? `rgba(245,238,225,0.56)` : 'rgba(245,238,225,0.34)',

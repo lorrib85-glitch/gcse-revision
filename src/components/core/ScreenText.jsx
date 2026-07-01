@@ -11,7 +11,7 @@ import { TYPE } from '../../constants/typography.js'
 export function ScreenTitle({ children, style }) {
   return (
     <h2 style={{
-      ...TYPE.sectionHeading,
+      ...TYPE.displaySection,
       color: 'rgba(255,255,255,0.96)',
       maxWidth: '18ch',
       margin: '0 0 10px',
@@ -26,7 +26,7 @@ export function ScreenTitle({ children, style }) {
 export function ScreenSubtitle({ children, style }) {
   return (
     <h3 style={{
-      ...TYPE.cardTitle,
+      ...TYPE.displayCard,
       color: 'rgba(255,255,255,0.80)',
       maxWidth: '24ch',
       margin: '0 0 10px',
@@ -41,7 +41,7 @@ export function ScreenSubtitle({ children, style }) {
 export function ScreenBody({ children, style }) {
   return (
     <p style={{
-      ...TYPE.bodyText,
+      ...TYPE.body,
       color: 'rgba(255,255,255,0.78)',
       maxWidth: '34ch',
       margin: '0 0 14px',
@@ -56,7 +56,7 @@ export function ScreenBody({ children, style }) {
 export function ScreenCaption({ children, style }) {
   return (
     <p style={{
-      ...TYPE.captionText,
+      ...TYPE.caption,
       color: 'rgba(255,255,255,0.42)',
       maxWidth: '40ch',
       margin: '0 0 10px',
@@ -72,7 +72,7 @@ export function ScreenCaption({ children, style }) {
 export function ScreenCallout({ children, accent, style }) {
   return (
     <div style={{
-      ...TYPE.bodyText,
+      ...TYPE.body,
       fontWeight: 500,
       color: 'rgba(255,255,255,0.88)',
       maxWidth: '34ch',
@@ -101,7 +101,7 @@ export function ScreenList({ items = [], style, itemStyle }) {
     }}>
       {items.map((item, i) => (
         <li key={i} style={{
-          ...TYPE.bodyText,
+          ...TYPE.body,
           color: 'rgba(255,255,255,0.78)',
           paddingLeft: 18,
           position: 'relative',
