@@ -128,7 +128,7 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
             background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.10)',
             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'rgba(255,255,255,0.82)', fontSize: 22, letterSpacing: 1,
+            color: 'rgba(255,255,255,0.82)', fontSize: 22,
           }}
         >···</button>
 
@@ -205,7 +205,7 @@ function ModulePage({ module: mod, onBack, onOpenTopic }) {
           ...TYPE.eyebrow,
           fontSize: 13, color: 'rgba(255,255,255,0.45)',
           textTransform: 'uppercase', marginBottom: 18,
-        }}>Your Topics</div>
+        }}>Your topics</div>
 
         {/* ── TOPIC RAIL + CARDS ── */}
         <div>
@@ -525,7 +525,7 @@ const SUBJECT_HEADER_IMGS = {
 }
 
 const SUBJECT_DISPLAY_TITLES = {
-  History:   'Medicine Through Time',
+  History:   'Medicine through time',
   Biology:   'AQA Biology',
   Chemistry: 'AQA Chemistry',
   Maths:     'AQA Mathematics',
@@ -547,14 +547,14 @@ const SUBJECT_DESCRIPTIONS = {
 const HISTORY_SERIES = [
   {
     id: 'medicine',
-    title: 'Medicine Through Time',
+    title: 'Medicine through time',
     short: 'Medicine',
     headerImage: '/headers/history-medicine-through-time.webp',
     comingSoon: false,
   },
   {
     id: 'spain-new-world',
-    title: 'Spain & the New World',
+    title: 'Spain and the new world',
     short: 'Spain',
     headerImage: '/headers/history-spain-new-world.webp',
     comingSoon: false,
@@ -568,7 +568,7 @@ const HISTORY_SERIES = [
   },
   {
     id: 'usa',
-    title: 'USA: Conflict at Home & Abroad',
+    title: 'USA: conflict at home and abroad',
     short: 'USA',
     headerImage: '/headers/history-usa-conflict.webp',
     comingSoon: false,
@@ -760,8 +760,8 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
               ...TYPE.bodySmall,
               fontSize: 13, color: 'rgba(255,255,255,0.52)', marginTop: 6,
             }}>{activeSeries?.comingSoon ? 'Coming soon'
-              : isHistory ? `${items.length} episodes · AQA History`
-              : `${items.length} chapters · AQA English Lit`}</div>
+              : isHistory ? `${items.length} episodes · Edexcel History`
+              : `${items.length} chapters · AQA English literature`}</div>
           ) : displayDesc ? (
             <div style={{
               ...TYPE.bodySmall,
@@ -1107,9 +1107,9 @@ function HistoryMedicineBrowser({ onBack, onOpenModule }) {
           <div style={{
             ...TYPE.displayScreen,
             fontSize: 28, color: '#F5F7FF',
-          }}>Medicine Through Time</div>
+          }}>Medicine through time</div>
           <div style={{ ...TYPE.bodySmall, fontSize: 13, color: 'rgba(255,255,255,0.42)', marginTop: 4 }}>
-            {histMods.length} modules · AQA History
+            {histMods.length} modules · Edexcel History
           </div>
         </div>
       </div>
