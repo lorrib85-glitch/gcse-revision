@@ -85,7 +85,7 @@ function RetrievalQ({ node, accent, rgb }) {
 
   return (
     <div style={{ marginTop: 2 }}>
-      <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em', color: `rgba(${rgb}, 0.72)`, margin: '0 0 6px' }}>Quick check</p>
+      <p style={{ ...TYPE.metadata, fontSize: 10, color: `rgba(${rgb}, 0.72)`, margin: '0 0 6px' }}>Quick check</p>
       <p style={{ ...TYPE.bodySmall, color: 'rgba(237,224,200,0.72)', margin: '0 0 8px', lineHeight: 1.55 }}>{node.retrievalQuestion}</p>
       {revealed ? (
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }} style={{ ...TYPE.bodySmall, color: accent, margin: 0, fontWeight: 600, lineHeight: 1.55 }}>{node.retrievalAnswer}</motion.p>
@@ -93,7 +93,7 @@ function RetrievalQ({ node, accent, rgb }) {
         <button
           type="button"
           onClick={() => setRevealed(true)}
-          style={{ height: BUTTONS.compact.height, background: `rgba(${rgb}, 0.10)`, border: `1px solid rgba(${rgb}, 0.28)`, borderRadius: BUTTONS.compact.borderRadius, padding: `0 ${BUTTONS.compact.paddingX}px`, color: `rgba(${rgb}, 0.9)`, cursor: 'pointer', fontFamily: TYPE.bodyText.fontFamily, fontSize: BUTTONS.compact.fontSize, fontWeight: BUTTONS.compact.fontWeight, letterSpacing: '0.03em', transition: BUTTONS.compact.transition, WebkitTapHighlightColor: 'transparent' }}
+          style={{ height: BUTTONS.compact.height, background: `rgba(${rgb}, 0.10)`, border: `1px solid rgba(${rgb}, 0.28)`, borderRadius: BUTTONS.compact.borderRadius, padding: `0 ${BUTTONS.compact.paddingX}px`, color: `rgba(${rgb}, 0.9)`, cursor: 'pointer', fontFamily: "'Sora', sans-serif", fontSize: BUTTONS.compact.fontSize, fontWeight: BUTTONS.compact.fontWeight, letterSpacing: '0.03em', transition: BUTTONS.compact.transition, WebkitTapHighlightColor: 'transparent' }}
         >Reveal answer</button>
       )}
     </div>
@@ -164,7 +164,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
         <div style={{ height: shouldScroll ? 'auto' : '100%', padding: `0 ${SPACING.standard}px`, display: 'flex', flexDirection: 'column', gap: 0 }}>
           {(title || subtitle) && (
             <div style={{ marginBottom: panelNode ? 18 : 14 }}>
-              {title && <h1 style={{ ...TYPE.screenHeading, margin: '0 0 8px', color: '#F5F2EA' }}>{title}</h1>}
+              {title && <h1 style={{ ...TYPE.displayScreen, margin: '0 0 8px', color: '#F5F2EA' }}>{title}</h1>}
               {subtitle && <p style={{ ...TYPE.bodySmall, margin: 0, color: 'rgba(237,224,200,0.52)', lineHeight: 1.45 }}>{subtitle}</p>}
             </div>
           )}
@@ -177,19 +177,19 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', gap: 12, flexShrink: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
                       {panelNodeImage && <img src={panelNodeImage} alt="" aria-hidden="true" style={{ width: 34, height: 34, objectFit: 'cover', borderRadius: panelNode.id === 'galen' || panelNode.id === 'experience' ? '50%' : 9, opacity: 0.72, border: `1px solid rgba(${mapRgb},0.26)`, filter: 'sepia(0.24) saturate(0.8)', flexShrink: 0 }} />}
-                      <p style={{ ...TYPE.cardTitle, margin: 0, color: '#EDE0C8', lineHeight: 1.18 }}>{panelNode.label}</p>
+                      <p style={{ ...TYPE.displayCard, margin: 0, color: '#EDE0C8', lineHeight: 1.18 }}>{panelNode.label}</p>
                     </div>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    <p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 14.5, lineHeight: 1.62, fontWeight: 400, color: 'rgba(237,224,200,0.78)', margin: 0 }}>{panelNode.explanation}</p>
+                    <p style={{ ...TYPE.body, fontSize: 14.5, color: 'rgba(237,224,200,0.78)', margin: 0 }}>{panelNode.explanation}</p>
                     {panelNode.retrievalQuestion && <div style={{ background: `rgba(${mapRgb}, 0.055)`, border: `1px solid rgba(${mapRgb}, 0.16)`, borderRadius: RADII.small, padding: `10px ${SPACING.compact}px` }}><RetrievalQ node={panelNode} accent={mapAccent} rgb={mapRgb} /></div>}
-                    {panelNode.examLink && <div style={{ borderLeft: `2px solid rgba(${mapRgb}, 0.40)`, paddingLeft: SPACING.compact }}><p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em', margin: '0 0 4px', color: `rgba(${mapRgb}, 0.64)` }}>Exam link</p><p style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 12.5, lineHeight: 1.5, fontWeight: 500, color: 'rgba(237,224,200,0.68)', margin: 0, fontStyle: 'italic' }}>{panelNode.examLink}</p></div>}
+                    {panelNode.examLink && <div style={{ borderLeft: `2px solid rgba(${mapRgb}, 0.40)`, paddingLeft: SPACING.compact }}><p style={{ ...TYPE.metadata, fontSize: 10, margin: '0 0 4px', color: `rgba(${mapRgb}, 0.64)` }}>Exam link</p><p style={{ ...TYPE.bodySmall, fontSize: 12.5, color: 'rgba(237,224,200,0.68)', margin: 0, fontStyle: 'italic' }}>{panelNode.examLink}</p></div>}
                   </div>
 
                   <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, paddingTop: 4 }}>
                     <SequenceProgress total={nodes.length} current={currentIndex} viewed={viewedIndexes} accent={mapAccent} accentRgb={mapRgb} compact ariaLabel="Connection map progress" />
-                    <button type="button" onClick={handleClosePanel} style={{ alignSelf: 'stretch', height: BUTTONS.secondary.height, border: `1px solid rgba(${mapRgb},0.32)`, borderRadius: BUTTONS.secondary.borderRadius, background: `linear-gradient(180deg, rgba(${mapRgb},0.15), rgba(${mapRgb},0.075))`, color: '#EDE0C8', fontFamily: TYPE.bodyText.fontFamily, fontSize: BUTTONS.secondary.fontSize, fontWeight: BUTTONS.secondary.fontWeight, letterSpacing: '-0.01em', padding: `0 ${BUTTONS.secondary.paddingX}px`, cursor: 'pointer', transition: BUTTONS.secondary.transition, WebkitTapHighlightColor: 'transparent' }}>Close</button>
+                    <button type="button" onClick={handleClosePanel} style={{ alignSelf: 'stretch', height: BUTTONS.secondary.height, border: `1px solid rgba(${mapRgb},0.32)`, borderRadius: BUTTONS.secondary.borderRadius, background: `linear-gradient(180deg, rgba(${mapRgb},0.15), rgba(${mapRgb},0.075))`, color: '#EDE0C8', fontFamily: "'Sora', sans-serif", fontSize: BUTTONS.secondary.fontSize, fontWeight: BUTTONS.secondary.fontWeight, letterSpacing: '-0.01em', padding: `0 ${BUTTONS.secondary.paddingX}px`, cursor: 'pointer', transition: BUTTONS.secondary.transition, WebkitTapHighlightColor: 'transparent' }}>Close</button>
                   </div>
                 </div>
               </motion.div>
@@ -223,7 +223,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                       <span aria-hidden="true" style={{ position: 'absolute', inset: 5, borderRadius: '50%', border: `1px solid rgba(${mapRgb},0.24)`, boxShadow: `inset 0 0 9px rgba(${mapRgb},0.10)` }} />
                       <span aria-hidden="true" style={{ position: 'absolute', inset: -7, borderRadius: '50%', border: `1px solid rgba(${allExplored ? readRgb : mapRgb},${allExplored ? 0.20 : 0.10})`, opacity: allExplored ? 1 : 0.7 }} />
                       {resolvedCentreImage && <img src={resolvedCentreImage} alt="" aria-hidden="true" style={{ position: 'absolute', inset: 10, width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', objectFit: 'cover', opacity: 0.20, filter: 'grayscale(0.28) sepia(0.30) contrast(0.92)' }} />}
-                      <span style={{ fontFamily: TYPE.cardTitle.fontFamily, color: warmInk, fontSize: 12, lineHeight: 1.13, fontWeight: 750, letterSpacing: '-0.02em', maxWidth: 72, textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden', position: 'relative', zIndex: 1, textShadow: '0 1px 8px rgba(0,0,0,0.72)' }}>{centreLabel}</span>
+                      <span style={{ fontFamily: "'Manrope', sans-serif", color: warmInk, fontSize: 12, lineHeight: 1.13, fontWeight: 750, letterSpacing: '-0.02em', maxWidth: 72, textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden', position: 'relative', zIndex: 1, textShadow: '0 1px 8px rgba(0,0,0,0.72)' }}>{centreLabel}</span>
                     </motion.div>
                   </div>
 
@@ -244,8 +244,8 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
                         <motion.button type="button" onClick={() => handleNodeTap(node)} aria-label={node.label} aria-pressed={isActive} initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.45, y: prefersReduced ? 0 : 8 }} animate={{ opacity: 1, scale: isActive && !panelNode ? [1, 1.045, 1] : isActive ? 1.025 : 1, y: isActive && !panelNode ? [0, -2, 0] : 0 }} transition={isActive && !panelNode ? tapT : nodeIntroT(i)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, padding: '7px 8px', width: OUTER_NODE_SIZE, height: OUTER_NODE_SIZE, minWidth: 44, minHeight: 44, borderRadius: '50%', border: isActive ? `1.75px solid rgba(${mapRgb}, 0.90)` : isViewed ? `1.45px solid rgba(${readRgb}, 0.72)` : `1.25px solid rgba(${mapRgb}, 0.28)`, background: isActive ? `radial-gradient(circle, rgba(${mapRgb},0.12) 0%, rgba(35,25,12,0.96) 58%, rgba(12,9,5,0.98) 100%)` : isViewed ? `radial-gradient(circle, rgba(${readRgb},0.105) 0%, rgba(24,18,9,0.92) 64%, rgba(10,8,5,0.96) 100%)` : `radial-gradient(circle, rgba(${mapRgb},0.040) 0%, rgba(24,18,9,0.90) 64%, rgba(10,8,5,0.96) 100%)`, boxShadow: isActive ? `0 0 11px rgba(${mapRgb},0.22), 0 0 2px rgba(${mapRgb},0.78), inset 0 0 12px rgba(${mapRgb},0.055)` : isViewed ? `0 0 9px rgba(${readRgb},0.18), 0 0 2px rgba(${readRgb},0.46), inset 0 0 10px rgba(${readRgb},0.045)` : 'inset 0 0 8px rgba(255,220,160,0.015)', opacity: isActive ? 1 : inactiveOpacity, cursor: 'pointer', outline: 'none', WebkitTapHighlightColor: 'transparent', transition: [`border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`, `background ${MOTION.duration.fast} ${MOTION.easing.standard}`, `box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`, `opacity ${MOTION.duration.fast} ${MOTION.easing.standard}`].join(', '), position: 'relative' }} onFocus={e => { e.currentTarget.style.outline = `2px solid ${mapAccent}`; e.currentTarget.style.outlineOffset = '3px' }} onBlur={e => { e.currentTarget.style.outline = 'none'; e.currentTarget.style.outlineOffset = '0' }}>
                           <span aria-hidden="true" style={{ position: 'absolute', inset: 5, borderRadius: '50%', border: `1px solid rgba(${nodeRgb},${isActive ? 0.18 : isViewed ? 0.22 : 0.10})`, opacity: isActive ? 1 : 0.84 }} />
                           {nodeImage && <img src={nodeImage} alt="" aria-hidden="true" style={{ width: 21, height: 21, objectFit: 'contain', opacity: isActive ? 0.70 : hasFocus ? (isViewed ? 0.50 : 0.32) : (isViewed ? 0.60 : 0.44), filter: 'grayscale(0.12) sepia(0.38) saturate(0.72) contrast(0.92)', marginBottom: 1, borderRadius: node.id === 'galen' || node.id === 'experience' ? '50%' : 0 }} />}
-                          <span style={{ fontFamily: TYPE.cardTitle.fontFamily, fontSize: 11.2, lineHeight: 1.1, fontWeight: 750, color: isActive ? mapAccent : isViewed ? nodeAccent : warmInk, textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 66, letterSpacing: '-0.015em', transition: `color ${MOTION.duration.fast}`, userSelect: 'none', position: 'relative', zIndex: 1 }}>{label}</span>
-                          {caption && <span style={{ fontFamily: TYPE.bodyText.fontFamily, fontSize: 9.1, lineHeight: 1.14, fontWeight: 500, color: isActive ? 'rgba(237,224,200,0.68)' : isViewed ? 'rgba(237,224,200,0.60)' : 'rgba(237,224,200,0.46)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 70, position: 'relative', zIndex: 1 }}>{caption}</span>}
+                          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11.2, lineHeight: 1.1, fontWeight: 750, color: isActive ? mapAccent : isViewed ? nodeAccent : warmInk, textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 66, letterSpacing: '-0.015em', transition: `color ${MOTION.duration.fast}`, userSelect: 'none', position: 'relative', zIndex: 1 }}>{label}</span>
+                          {caption && <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 9.1, lineHeight: 1.14, fontWeight: 500, color: isActive ? 'rgba(237,224,200,0.68)' : isViewed ? 'rgba(237,224,200,0.60)' : 'rgba(237,224,200,0.46)', textAlign: 'center', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: 70, position: 'relative', zIndex: 1 }}>{caption}</span>}
                         </motion.button>
                       </div>
                     )
