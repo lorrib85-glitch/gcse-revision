@@ -208,7 +208,7 @@ function TimelineBlock({ block }) {
               color: open === i ? '#070500' : '#F5B700',
               border: `1px solid ${open === i ? '#F5B700' : '#2A3552'}`,
               borderRadius: 12, display: 'grid', placeItems: 'center',
-              ...TYPE.label, fontWeight: 800,
+              ...TYPE.eyebrow,
               fontSize: '.8rem', padding: '10px 6px', minHeight: 56, transition: 'all .2s',
             }}>{e.year}</div>
             <div style={{
@@ -218,8 +218,8 @@ function TimelineBlock({ block }) {
               display: 'flex', alignItems: 'center',
             }}>
               <span style={{
-                ...TYPE.body,
-                fontSize: '.9rem', fontWeight: 500, color: '#C8D0E8',
+                ...TYPE.bodyStrong,
+                fontSize: '.9rem', color: '#C8D0E8',
               }} dangerouslySetInnerHTML={{ __html: e.text }} />
             </div>
           </button>
@@ -308,8 +308,8 @@ function FlashcardsBlock({ block }) {
           }}>
           <div>
             <div style={{
-              ...TYPE.label,
-              fontWeight: 700, fontSize: '.88rem',
+              ...TYPE.titleMedium,
+              fontSize: '.88rem',
               color: flipped.has(i) ? GENERAL.teal : '#E0E6F0',
               marginBottom: flipped.has(i) ? 6 : 0,
             }}>{c.front}</div>
@@ -377,7 +377,7 @@ function HotspotBlock({ block }) {
           display: 'flex', alignItems: 'center', gap: 6,
         }}>
           🔬 {block.label || 'Plant Cell — tap to explore'}
-          <span style={{ marginLeft: 'auto', color: '#4A5578', fontWeight: 500 }}>
+          <span style={{ ...TYPE.metadata, marginLeft: 'auto', color: '#4A5578' }}>
             {discovered.size}/{parts.length} found
           </span>
         </div>
@@ -524,8 +524,8 @@ function MisconceptionBlock({ block }) {
                 <div style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
                   <span style={{ color: '#4DFF88', flexShrink: 0 }}>✓</span>
                   <div style={{
-                    ...TYPE.body,
-                    fontSize: '.88rem', color: '#4DFF88', fontWeight: 600,
+                    ...TYPE.titleMedium,
+                    fontSize: '.88rem', color: '#4DFF88',
                   }}>{m.right}</div>
                 </div>
                 <div style={{
@@ -573,13 +573,13 @@ function ScarfBlock({ block }) {
                 background: 'rgba(56,210,122,.12)',
                 border: '1px solid rgba(56,210,122,.25)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                ...TYPE.body,
-                fontWeight: 900, fontSize: '1.2rem', color: '#38D27A',
+                ...TYPE.eyebrow,
+                fontSize: '1.2rem', color: '#38D27A',
               }}>{item.letter}</div>
               <div style={{ flex: 1 }}>
                 <div style={{
-                  ...TYPE.label,
-                  fontWeight: 700, fontSize: '.9rem', color: '#F5F7FB',
+                  ...TYPE.titleMedium,
+                  fontSize: '.9rem', color: '#F5F7FB',
                 }}>{item.word}</div>
                 {open === i && (
                   <div className="fade-up" style={{
@@ -659,15 +659,15 @@ function BuilderBlock({ block }) {
                   borderRadius: 10,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: s ? 'pointer' : 'default',
-                  ...TYPE.label,
-                  fontWeight: 700, fontSize: '.85rem',
+                  ...TYPE.titleMedium,
+                  fontSize: '.85rem',
                   color: s ? '#F5F7FB' : '#4A5578',
                   transition: 'all .2s', padding: '0 8px',
                 }}>
                 {s || '?'}
               </div>
               {i < slots.length - 1 && (
-                <span style={{ color: '#38D27A', fontWeight: 700, fontSize: '1rem' }}>
+                <span style={{ ...TYPE.eyebrow, color: '#38D27A', fontSize: '1rem' }}>
                   {block.operators?.[i] || '+'}
                 </span>
               )}
@@ -688,8 +688,8 @@ function BuilderBlock({ block }) {
                   background: 'rgba(56,210,122,.1)',
                   border: '1px solid rgba(56,210,122,.3)',
                   borderRadius: 10, padding: '8px 14px',
-                  ...TYPE.label,
-                  fontWeight: 600, fontSize: '.85rem', color: '#6BFFB0',
+                  ...TYPE.titleMedium,
+                  fontSize: '.85rem', color: '#6BFFB0',
                   cursor: 'pointer', transition: 'all .15s',
                 }}>
                 {piece}
@@ -716,7 +716,7 @@ function BuilderBlock({ block }) {
                 background: 'rgba(77,255,136,.08)', border: '1px solid rgba(77,255,136,.3)',
                 borderRadius: 12, padding: '14px', textAlign: 'center',
               }}>
-                <div style={{ ...TYPE.label, fontWeight: 700, color: '#4DFF88', marginBottom: 4 }}>✓ Correct!</div>
+                <div style={{ ...TYPE.titleMedium, fontSize: '.82rem', color: '#4DFF88', marginBottom: 4 }}>✓ Correct!</div>
                 <p style={{ ...TYPE.body, fontSize: '.85rem', color: '#C8D0E8', margin: 0 }}>{block.successText}</p>
               </div>
             ) : (
@@ -724,7 +724,7 @@ function BuilderBlock({ block }) {
                 background: 'rgba(255,93,115,.08)', border: '1px solid rgba(255,93,115,.3)',
                 borderRadius: 12, padding: '14px',
               }}>
-                <div style={{ ...TYPE.label, fontWeight: 700, color: '#FF5D73', marginBottom: 6 }}>Not quite — try again</div>
+                <div style={{ ...TYPE.titleMedium, fontSize: '.82rem', color: '#FF5D73', marginBottom: 6 }}>Not quite — try again</div>
                 <p style={{ ...TYPE.bodySmall, fontSize: '.83rem', color: '#C8D0E8', margin: '0 0 10px' }}>
                   Hint: {block.hint}
                 </p>
@@ -801,7 +801,7 @@ function ScenarioBlock({ block }) {
           background: '#10182B', border: '1px solid #2A3552',
           borderRadius: 12, padding: '14px', marginBottom: 12,
         }}>
-          <p style={{ ...TYPE.body, fontWeight: 600, fontSize: '.95rem', color: '#F5F7FB', margin: 0 }}>
+          <p style={{ ...TYPE.titleMedium, fontSize: '.95rem', color: '#F5F7FB', margin: 0 }}>
             {scenario.situation}
           </p>
         </div>
@@ -819,8 +819,8 @@ function ScenarioBlock({ block }) {
                   : '#2A3552'}`,
                 borderRadius: 12, padding: '12px 10px',
                 cursor: justAnswered ? 'default' : 'pointer',
-                ...TYPE.label,
-                fontWeight: 600, fontSize: '.82rem',
+                ...TYPE.titleMedium,
+                fontSize: '.82rem',
                 color: justAnswered
                   ? i === scenario.correctIndex ? '#4DFF88' : answered[answered.length-1]?.chosen === i ? '#FF5D73' : '#5A6480'
                   : '#C8D0E8',
@@ -959,10 +959,9 @@ function HookContent({ module: _module, hook, hookState, subjectColor: _subjectC
           <div style={{ marginBottom: 20 }}>
             {storyLines.map((line, i) => (
               <p key={i} style={{
-                ...TYPE.body,
+                ...(i === storyLines.length - 1 ? TYPE.bodyStrong : TYPE.body),
                 fontSize: '.88rem', color: i === storyLines.length - 1 ? '#C8D0E8' : '#5A6480',
                 margin: '0 0 5px', lineHeight: 1.65,
-                fontWeight: i === storyLines.length - 1 ? 500 : 400,
               }}>{line}</p>
             ))}
           </div>
@@ -1179,8 +1178,8 @@ function HookContent({ module: _module, hook, hookState, subjectColor: _subjectC
                   <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>{item.emoji}</span>
                   <div>
                     <div style={{
-                      ...TYPE.body,
-                      fontWeight: 700, fontSize: '.95rem',
+                      ...TYPE.titleMedium,
+                      fontSize: '.95rem',
                       color: visible ? (item.color || '#4DFF88') : '#2A3552',
                     }}>{item.label}</div>
                     {visible && item.detail && (
@@ -1217,8 +1216,8 @@ function HookContent({ module: _module, hook, hookState, subjectColor: _subjectC
               boxShadow: '0 0 32px rgba(56,210,122,.07)',
             }}>
               <p style={{
-                ...TYPE.body,
-                fontWeight: 700, fontSize: '.95rem',
+                ...TYPE.titleMedium,
+                fontSize: '.95rem',
                 color: '#4DFF88', margin: 0,
               }}>{hook.punchline}</p>
               <p style={{
@@ -1328,7 +1327,8 @@ function IntroScreen({ module, onDone }) {
                       background: subjectColor + '20',
                       border: '1px solid ' + subjectColor + '40',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '.7rem', color: subjectColor, fontWeight: 700,
+                      ...TYPE.eyebrow,
+                      fontSize: '.7rem', color: subjectColor,
                       marginTop: 1,
                     }}>{i + 1}</div>
                     <p style={{
@@ -1462,9 +1462,8 @@ function JumpSheet({ screens, currentScreen, accent, accentRgb, onJumpTo, onClos
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <span style={{
-                  ...TYPE.body,
+                  ...(isCurrent ? TYPE.titleMedium : TYPE.body),
                   fontSize: 14,
-                  fontWeight: isCurrent ? 600 : 400,
                   color: isCurrent ? '#EAF7F0' : 'rgba(255,255,255,0.56)',
                   flex: 1,
                 }}>
