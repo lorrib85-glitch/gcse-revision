@@ -11,12 +11,12 @@ import { WEEKDAY_LABELS } from './streakCelebrationStorage.js'
 // reusable motion token — this is choreography specific to this single
 // screen. Actual per-element durations/easings come from MOTION.
 const START_MS = {
-  flame: 60,
-  glow: 360,
-  heading: 500,
-  tracker: 820,
-  trackerStep: 65,
-  button: 1350,
+  flame: 80,
+  glow: 420,
+  heading: 760,
+  tracker: 1250,
+  trackerStep: 105,
+  button: 2200,
 }
 
 function prefersReducedMotion() {
@@ -63,7 +63,7 @@ function WeekTracker({ completedWeekDays, todayIndex, reduced }) {
           boxShadow: `0 0 16px rgba(${GENERAL.tealRgb},0.22)`,
           transform: reduced ? 'translateY(-50%) scaleX(1)' : 'translateY(-50%) scaleX(0)',
           transformOrigin: 'left center',
-          animationDelay: reduced ? undefined : `${START_MS.tracker - 130}ms`,
+          animationDelay: reduced ? undefined : `${START_MS.tracker - 180}ms`,
         }} />
         {completedWeekDays.map((done, i) => {
           const isToday = i === todayIndex
@@ -88,7 +88,7 @@ function WeekTracker({ completedWeekDays, todayIndex, reduced }) {
                   width="15" height="15" viewBox="0 0 24 24" fill="none"
                   stroke={GENERAL.neutral[0]} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
                   className={reduced ? undefined : 'streak-cel-check'}
-                  style={reduced ? undefined : { opacity: 0, animationDelay: `${delay + 80}ms` }}
+                  style={reduced ? undefined : { opacity: 0, animationDelay: `${delay + 140}ms` }}
                 >
                   <path d="M5 13l4 4L19 7" />
                 </svg>
@@ -124,8 +124,8 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
     }
 
     const startCount = 1
-    const totalDuration = 640
-    const tickMs = 32
+    const totalDuration = 1150
+    const tickMs = 48
     let elapsed = 0
     let intervalId
 
@@ -167,58 +167,58 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
     >
       <style>{`
         @keyframes streak-cel-scrim-in { from { opacity: 0 } to { opacity: 1 } }
-        .streak-cel-scrim { animation: streak-cel-scrim-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both; }
+        .streak-cel-scrim { animation: streak-cel-scrim-in 520ms ${MOTION.easing.gentle} both; }
         .streak-cel-reduced-fade { animation: streak-cel-scrim-in ${MOTION.duration.fast} ${MOTION.easing.gentle} both; }
 
         @keyframes streak-cel-flame-in {
           0%   { opacity: 0; transform: scale(0.58) rotate(-14deg); }
-          58%  { opacity: 1; transform: scale(1.08) rotate(360deg); }
-          82%  { transform: scale(0.97) rotate(360deg); }
+          56%  { opacity: 1; transform: scale(1.07) rotate(360deg); }
+          82%  { transform: scale(0.98) rotate(360deg); }
           100% { opacity: 1; transform: scale(1) rotate(360deg); }
         }
-        .streak-cel-flame { animation: streak-cel-flame-in 700ms ${MOTION.easing.standard} both; }
+        .streak-cel-flame { animation: streak-cel-flame-in 980ms ${MOTION.easing.standard} both; }
 
         @keyframes streak-cel-glow-in {
           0%   { opacity: 0; transform: scale(0.8); }
           45%  { opacity: 0.88; transform: scale(1.02); }
           100% { opacity: 0.72; transform: scale(1); }
         }
-        .streak-cel-glow { animation: streak-cel-glow-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both; }
+        .streak-cel-glow { animation: streak-cel-glow-in 900ms ${MOTION.easing.gentle} both; }
 
         @keyframes streak-cel-heading-in {
           from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .streak-cel-heading { animation: streak-cel-heading-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both; }
+        .streak-cel-heading { animation: streak-cel-heading-in 620ms ${MOTION.easing.gentle} both; }
 
         @keyframes streak-cel-line-in {
           from { transform: translateY(-50%) scaleX(0); opacity: 0; }
           to   { transform: translateY(-50%) scaleX(1); opacity: 1; }
         }
-        .streak-cel-line { animation: streak-cel-line-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both; }
+        .streak-cel-line { animation: streak-cel-line-in 720ms ${MOTION.easing.gentle} both; }
 
         @keyframes streak-cel-dot-in {
           0%   { border-color: rgba(255,255,255,0.14); background-color: rgba(13,15,16,0.72); transform: scale(1); }
-          55%  { transform: scale(1.18); }
+          55%  { transform: scale(1.14); }
           100% { border-color: ${GENERAL.teal}; background-color: ${GENERAL.teal}; transform: scale(1); }
         }
         @keyframes streak-cel-dot-today-in {
           0%   { border-color: rgba(255,255,255,0.14); background-color: rgba(13,15,16,0.72); transform: scale(1); }
-          50%  { border-color: ${GENERAL.coral}; background-color: ${GENERAL.coral}; transform: scale(1.22); }
+          50%  { border-color: ${GENERAL.coral}; background-color: ${GENERAL.coral}; transform: scale(1.18); }
           100% { border-color: ${GENERAL.teal}; background-color: ${GENERAL.teal}; transform: scale(1); }
         }
-        .streak-cel-dot { animation-duration: ${MOTION.duration.fast}; animation-timing-function: ${MOTION.easing.standard}; animation-fill-mode: both; }
+        .streak-cel-dot { animation-duration: 420ms; animation-timing-function: ${MOTION.easing.standard}; animation-fill-mode: both; }
         .streak-cel-dot-normal { animation-name: streak-cel-dot-in; }
         .streak-cel-dot-today { animation-name: streak-cel-dot-today-in; }
 
         @keyframes streak-cel-check-in { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
-        .streak-cel-check { animation: streak-cel-check-in ${MOTION.duration.instant} ${MOTION.easing.gentle} both; }
+        .streak-cel-check { animation: streak-cel-check-in 240ms ${MOTION.easing.gentle} both; }
 
         @keyframes streak-cel-button-in {
           from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .streak-cel-button { animation: streak-cel-button-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both; }
+        .streak-cel-button { animation: streak-cel-button-in 560ms ${MOTION.easing.gentle} both; }
       `}</style>
 
       <div style={{
