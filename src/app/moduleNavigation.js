@@ -3,6 +3,38 @@ import { MODULE_GROUPS } from '../progress.js'
 import { MEDICINE_2023_PAPER } from '../data/medicineExamPapers.js'
 import { SUBJECTS } from '../constants/subjects.js'
 
+// Header appears on all learning pages.
+// It is hidden only for full-screen cinematic/video moments where overlay UI would reduce immersion.
+export function isFullScreenVideoScreen(screen) {
+  return screen?.type === 'cinematic' || screen?.type === 'cinematicReveal' || screen?.type === 'video'
+}
+
+export function getStageNavigation(module, total) {
+  const fromModule = Array.isArray(module.stageNavigation) ? module.stageNavigation : []
+  if (fromModule.length === 6) {
+    return fromModule.map((stage, index) => ({
+      id: stage.id || `part-${index + 1}`,
+      title: stage.title || `Part ${index + 1}`,
+      description: stage.description || '',
+      screenIndex: Math.max(0, Math.min(total - 1, Number(stage.screenIndex) || 0)),
+    }))
+  }
+  const fallbackTitles = ['Intro', 'Learn 1', 'Learn 2', 'Learn 3', 'Review', 'Exam prep']
+  return fallbackTitles.map((title, index) => ({
+    id: `fallback-${index + 1}`,
+    title,
+    description: index === 5 ? 'Exam practice and final application.' : '',
+    screenIndex: Math.min(total - 1, Math.floor((index / 6) * total)),
+  }))
+}
+
+export function getCurrentStageFromNavigation(stageNavigation, screen) {
+  const active = [...stageNavigation]
+    .filter(stage => stage.screenIndex <= screen)
+    .sort((a, b) => b.screenIndex - a.screenIndex)[0]
+  return active?.title || stageNavigation[0]?.title || 'Intro'
+}
+
 const CHAPTER_COPY = [
   'Momentum matters.',
   "That's another one locked in.",
