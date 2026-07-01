@@ -13,7 +13,6 @@ import ExamQuestionFrame from '../../../components/feedback/ExamQuestionFrame.js
 import ExamRoundDebrief from '../../../components/feedback/ExamRoundDebrief.jsx'
 import GuidedAnswerCoach from '../../../components/learning/GuidedAnswerCoach.jsx'
 import { QUESTION_BANKS_BY_MODULE } from '../../../data/questionBanks/questionRegistry.js'
-import { gradeWithAI } from '../utils.js'
 import { useTestData } from '../testDataContext.jsx'
 import { StreakChip } from '../../home/StreakChip.jsx'
 
@@ -86,16 +85,9 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
   const [examCountdown,      setExamCountdown]      = useState(3)
   const [examConfig,         setExamConfig]         = useState(null)
   const [examQuestions,      setExamQuestions]      = useState([])
-  const [examIdx,            setExamIdx]            = useState(0)
   const [examTimeLeft,       setExamTimeLeft]       = useState(EXAM_SECONDS)
-  const [examAnswer,         setExamAnswer]         = useState('')
-  const [examFeedback,       setExamFeedback]       = useState(null)
-  const [examGrading,        setExamGrading]        = useState(false)
   const [examStats,          setExamStats]          = useState({ correct: 0, answered: 0, bySubject: {} })
-  const [examPaperAnswers,   setExamPaperAnswers]   = useState({})
   const [examPaperFeedbacks, setExamPaperFeedbacks] = useState({})
-  const [examPaperGrading,   setExamPaperGrading]   = useState({})
-  const [error,              setError]              = useState(null)
 
   useEffect(() => {
     if (examPhase !== 'countdown') return undefined
@@ -197,26 +189,15 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
     return shuffle([...mixed, ...fill]).slice(0, 10)
   }
 
-  function resetExamQuestion() {
-    setExamAnswer('')
-    setExamFeedback(null)
-    setExamGrading(false)
-    setError(null)
-  }
-
   function startExamRound(subject = 'Random', { isTimedPaper = false, durationSeconds = EXAM_SECONDS, paperQuestions = null, title = null } = {}) {
     const questions    = paperQuestions || adaptiveExamQuestions(subject)
     const derivedTitle = title || (subject === 'Random' ? 'Random Exam Challenge' : subject + ' Exam Sprint')
     setExamConfig({ subject, title: derivedTitle, isTimedPaper })
     setExamQuestions(questions)
-    setExamIdx(0)
     setExamTimeLeft(durationSeconds)
     setExamCountdown(3)
     setExamStats({ correct: 0, answered: 0, bySubject: {} })
-    resetExamQuestion()
-    setExamPaperAnswers({})
     setExamPaperFeedbacks({})
-    setExamPaperGrading({})
     setExamPhase('countdown')
   }
 
@@ -255,69 +236,6 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
     recordScore({ subject: question.subject, earned, possible, source: 'exam' })
   }
 
-  async function checkExamAnswer(question) {
-    if (!question) return
-    if (question.type === 'mc') {
-      if (examAnswer === '') { setError('Pick an answer first.'); return }
-      const picked    = Number(examAnswer)
-      const isCorrect = picked === question.correctIndex
-      addExamResult(question, isCorrect ? question.marks : 0, question.marks)
-      setExamFeedback({ grade: isCorrect ? 'Excellent' : 'Needs Work', summary: isCorrect ? 'Correct.' : 'Not this time.', examinerTip: question.ms })
-      return
-    }
-    if (examAnswer.trim().length < 3) { setError('Write a little before submitting.'); return }
-    setExamGrading(true)
-    setError(null)
-    try {
-      const result = await gradeWithAI(question.q, examAnswer, question.marks, question.ms)
-      const earned = result.marksAwarded ?? 0
-      addExamResult(question, earned, result.marksAvailable || question.marks)
-      setExamFeedback(result)
-    } catch {
-      setError('Could not mark right now. Try again in a moment.')
-    } finally {
-      setExamGrading(false)
-    }
-  }
-
-  async function checkPaperAnswer(question, idx) {
-    const ans = (examPaperAnswers[idx] ?? '').toString()
-    if (examPaperFeedbacks[idx]) return
-    if (question.type === 'mc') {
-      if (ans === '') return
-      const picked    = Number(ans)
-      const isCorrect = picked === question.correctIndex
-      addExamResult(question, isCorrect ? question.marks : 0, question.marks)
-      setExamPaperFeedbacks(prev => ({ ...prev, [idx]: {
-        grade: isCorrect ? 'Correct' : 'Needs Work',
-        summary: isCorrect ? 'Correct.' : `Correct answer: ${question.options[question.correctIndex]}`,
-        correct: isCorrect,
-      }}))
-      return
-    }
-    if (ans.trim().length < 3) return
-    setExamPaperGrading(prev => ({ ...prev, [idx]: true }))
-    try {
-      const result = await gradeWithAI(question.q, ans, question.marks, question.ms)
-      const earned = result.marksAwarded ?? 0
-      addExamResult(question, earned, result.marksAvailable || question.marks)
-      setExamPaperFeedbacks(prev => ({ ...prev, [idx]: { ...result, correct: earned >= (result.marksAvailable || question.marks) } }))
-    } catch {
-      setExamPaperFeedbacks(prev => ({ ...prev, [idx]: { grade: 'Error', summary: 'Could not mark. Try again.' } }))
-    } finally {
-      setExamPaperGrading(prev => ({ ...prev, [idx]: false }))
-    }
-  }
-
-  function nextExamQuestion() {
-    if (examIdx < examQuestions.length - 1) {
-      setExamIdx(i => i + 1)
-      resetExamQuestion()
-    } else {
-      setExamPhase('summary')
-    }
-  }
-
   const EXAM_SUBJECTS = [
     { logo: '/headers/sociology-main.webp', label: 'Sociology', color: '#FF5C7A', completed: 7,  total: 10, action: () => startExamRound('Sociology') },
     { logo: '/headers/history-main.webp',   label: 'History',   color: '#C89B6D', completed: 6,  total: 12, action: () => startExamRound('History') },
@@ -335,7 +253,6 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
 
   // ── Active exam phases (countdown / round / summary) ───────────────────────
   if (examPhase !== 'landing') {
-    const currentExamQuestion = examQuestions[examIdx]
     const examAccuracy = examStats.answered ? Math.round((examStats.correct / examStats.answered) * 100) : 0
 
     if (examPhase === 'countdown') {

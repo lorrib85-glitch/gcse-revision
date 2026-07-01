@@ -33,19 +33,20 @@ function definesTopLevel(src, name) {
 }
 
 // ─── Rule 1: File size ────────────────────────────────────────────────────────
-// Phase 1.8 (ExamMode extraction) brought QuickFire.jsx from ~1524 → ~638 lines.
-// Ceiling is set to 900 as a safe guard while subject browsers remain inline.
+// Stabilisation audit removed dead imports (SPACING, RADII) and the W constant
+// from QuickFire.jsx, bringing it from ~638 → ~621 lines.
+// Ceiling tightened 900 → 700 to catch future growth early.
 // TODO: reduce to 500 once EnglishBrowser, SociologyBrowser, ChemistryBrowser
 // and ChemistryTopicView are extracted to their own files.
 
 describe('QuickFire.jsx — file-size boundary', () => {
-  it('is below 900 lines (TODO: reduce to 500 after browser components are extracted)', () => {
+  it('is below 700 lines (TODO: reduce to 500 after browser components are extracted)', () => {
     const lineCount = qfSrc.split('\n').length
     expect(
       lineCount,
-      `QuickFire.jsx has ${lineCount} lines — must stay below 900. ` +
+      `QuickFire.jsx has ${lineCount} lines — must stay below 700. ` +
       'Extract remaining browser components to reduce to 500.',
-    ).toBeLessThan(900)
+    ).toBeLessThan(700)
   })
 })
 

@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import { SPACING }  from '../../constants/spacing.js'
-import { RADII }    from '../../constants/radii.js'
 import { TYPE }     from '../../constants/typography.js'
 import { GENERAL }  from '../../constants/generalTheme.js'
 import { SOCIOLOGY_GROUPS } from '../../data/sociologyGroups.js'
@@ -18,22 +16,6 @@ import { MathsQuestion } from './modes/MathsQuestion.jsx'
 import { ExamMode, TEST_TOPICS } from './modes/ExamMode.jsx'
 
 export { TestDataProvider } from './testDataContext.jsx'
-
-// ─── Shared palette ──────────────────────────────────────────────────────────
-
-const W = {
-  bg:         '#070B1A',
-  bgCard:     '#151720',
-  border:     'rgba(255,255,255,0.1)',
-  text:       '#F5F7FB',
-  textMid:    '#C8D0E8',
-  textMuted:  '#9CA8C7',
-  textLight:  '#5A6480',
-  gold:       '#F5B700',
-  goldLight:  'rgba(245,183,0,.12)',
-  green:      '#4DFF88',
-  btnPrimary: 'linear-gradient(135deg, #F5B700, #C98719)',
-}
 
 // NOTE: Past paper question banks have been extracted to
 // src/data/questionBanks/ and are now accessed via QUESTION_BANKS_BY_MODULE.
