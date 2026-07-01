@@ -119,138 +119,132 @@ p  { color: var(--text-mid); }
 
 .label { font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted); }
 
-.date-pill {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(245,183,0,.10); color: var(--history);
-  font-size: .78rem; font-weight: 700; padding: 4px 12px; border-radius: 8px;
-  border: 1px solid rgba(245,183,0,.22);
+/* ── Subject course journey tightening ──
+   Temporary CSS-only pass for the mobile course page. These overrides preserve
+   the large cinematic header while reducing the stacked/card-dashboard feel. */
+
+/* Keep the generous header, but make it feel intentionally poster-like. */
+div[style*="height: 198px"][style*="overflow: hidden"] {
+  height: 330px !important;
 }
 
-.fact-item { display: flex; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--border); }
-.fact-item:last-child { border-bottom: none; }
-.fact-dot  { width: 7px; height: 7px; border-radius: 50%; background: var(--history); margin-top: 9px; flex-shrink: 0; }
-
-.topic-card {
-  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm);
-  padding: 15px 18px; display: flex; align-items: center; gap: 13px;
-  cursor: pointer; transition: box-shadow .15s, transform .15s, border-color .15s; text-decoration: none; color: inherit;
-}
-.topic-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); border-color: var(--border-glow); }
-.topic-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
-
-.result-ring {
-  width: 128px; height: 128px; border-radius: 50%;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  margin: 0 auto; border: 5px solid var(--success);
-  background: rgba(77,255,136,.06); box-shadow: 0 0 28px rgba(77,255,136,.18);
-}
-.result-ring.mid { border-color: var(--warning); background: rgba(255,200,87,.06); box-shadow: 0 0 28px rgba(255,200,87,.18); }
-.result-ring.low { border-color: var(--error); background: rgba(255,93,115,.06); box-shadow: 0 0 28px rgba(255,93,115,.18); }
-
-.sticky-header {
-  background: rgba(7,11,26,.94); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border); padding: 13px 18px; position: sticky; top: 0; z-index: 10;
+div[style*="height: 198px"] > div[style*="background-image"] {
+  opacity: .86 !important;
 }
 
-.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
-
-.feedback { border-radius: var(--radius-sm); padding: 14px 18px; margin-bottom: 14px; }
-.feedback.correct { background: rgba(77,255,136,.08); border: 1px solid rgba(77,255,136,.3); }
-.feedback.correct p { color: var(--success); }
-.feedback.wrong   { background: rgba(255,93,115,.08); border: 1px solid rgba(255,93,115,.3); }
-.feedback.wrong p { color: var(--error); }
-
-.hero { background: linear-gradient(160deg, #0d1525 0%, var(--bg) 70%); padding: 52px 18px 40px; text-align: center; border-bottom: 1px solid var(--border); }
-.hero h1 { color: var(--text); margin-bottom: 14px; }
-.hero p   { color: var(--text-muted); font-size: 1rem; max-width: 460px; margin: 0 auto 28px; }
-
-.how-strip { background: var(--bg2); padding: 36px 18px; border-top: 1px solid var(--border); }
-.how-grid  { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
-.how-card  { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-
-.fact-card-hero { background: var(--bg2); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 26px 22px; }
-.fact-card-label { font-size: .85rem; font-weight: 800; margin-bottom: 12px; letter-spacing: .03em; text-transform: uppercase; }
-.fact-dots { display: flex; gap: 8px; justify-content: center; }
-.fact-dot-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border); transition: all .3s; }
-.fact-dot-pip.active { background: var(--history); transform: scale(1.5); box-shadow: 0 0 6px rgba(245,183,0,.5); }
-.fact-dot-pip.done { background: var(--success); }
-
-@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes pop    { 0% { transform: scale(.92); opacity: 0; } 60% { transform: scale(1.03); } 100% { transform: scale(1); opacity: 1; } }
-@keyframes shake  { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-
-.fade-up  { animation: fadeUp .38s ease both; }
-.anim-pop { animation: pop .32s ease both; }
-.shake    { animation: shake .28s ease; }
-
-.fade-up:nth-child(1){ animation-delay: 0s }
-.fade-up:nth-child(2){ animation-delay: .07s }
-.fade-up:nth-child(3){ animation-delay: .14s }
-.fade-up:nth-child(4){ animation-delay: .21s }
-.fade-up:nth-child(5){ animation-delay: .28s }
-
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.text-center { text-align: center; }
-.text-sm { font-size: .87rem; }
-.text-muted { color: var(--text-muted); }
-.font-bold { font-weight: 700; }
-.gap-8  { gap: 8px; }
-.gap-12 { gap: 12px; }
-.gap-16 { gap: 16px; }
-.mt-8  { margin-top: 8px; }
-.mt-12 { margin-top: 12px; }
-.mt-16 { margin-top: 16px; }
-.mt-24 { margin-top: 24px; }
-.mt-32 { margin-top: 32px; }
-.mb-8  { margin-bottom: 8px; }
-.mb-12 { margin-bottom: 12px; }
-.mb-16 { margin-bottom: 16px; }
-.mb-24 { margin-bottom: 24px; }
-.mb-32 { margin-bottom: 32px; }
-.w-full { width: 100%; }
-.grid-stack { display: flex; flex-direction: column; gap: 10px; }
-
-textarea { background: transparent; border: none; resize: none; font-family: inherit; font-size: .92rem; color: var(--text); line-height: 1.65; outline: none; }
-
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border-glow); }
-
-@media(max-width: 600px) {
-  .card { padding: 18px 14px; }
-  .btn-lg { padding: 15px 28px; }
-  .hero { padding: 36px 18px 28px; }
+div[style*="height: 198px"] > div[style*="bottom: 18px"] {
+  bottom: 34px !important;
+  right: 96px !important;
 }
 
-/* ── Missing button variant used in ChurchCard sort game ── */
-.btn-red {
-  background: linear-gradient(135deg, var(--error), #c0243e);
-  color: #fff;
-  box-shadow: 0 0 20px rgba(255,93,115,.2);
-}
-.btn-red:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(255,93,115,.35); }
-
-/* ── Tab content fade-in on switch ── */
-.tab-content { animation: fadeUp .22s ease both; }
-
-/* ── Focus-visible outline (keyboard nav & accessibility) ── */
-button:focus-visible,
-a:focus-visible {
-  outline: 2px solid rgba(42,157,143,.75);
-  outline-offset: 2px;
+div[style*="height: 198px"] > div[style*="bottom: 18px"] > div[style*="font-size: 24px"] {
+  font-size: 38px !important;
+  line-height: 1.04 !important;
+  max-width: 300px !important;
 }
 
-/* ── BackButton — identical hover/press opacity (MOTION.duration.fast / MOTION.easing.gentle) ── */
-.rise-back-button {
-  opacity: 1;
-  -webkit-tap-highlight-color: transparent;
-  transition: opacity 180ms ease-out;
+/* Pull the course switcher back so the header remains the visual event. */
+div[style*="padding: 20px 24px 8px"][style*="overflow-x: auto"] {
+  padding: 8px 24px 10px !important;
+  gap: 8px !important;
 }
-.rise-back-button:hover,
-.rise-back-button:active {
-  opacity: 0.6;
+
+div[style*="padding: 20px 24px 8px"] button[style*="width: 136px"] {
+  width: auto !important;
+  min-width: max-content !important;
+  height: 38px !important;
+  padding: 0 14px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.045) !important;
+  transform: none !important;
+  opacity: .72 !important;
+  box-shadow: none !important;
+}
+
+div[style*="padding: 20px 24px 8px"] button[style*="border: 2px solid rgb(200, 155, 109)"],
+div[style*="padding: 20px 24px 8px"] button[style*="border: 2px solid #C89B6D"] {
+  opacity: 1 !important;
+  background: rgba(200,155,109,.13) !important;
+}
+
+div[style*="padding: 20px 24px 8px"] button[style*="width: 136px"] > div[style*="background-image"],
+div[style*="padding: 20px 24px 8px"] button[style*="width: 136px"] > div[style*="linear-gradient"] {
+  display: none !important;
+}
+
+div[style*="padding: 20px 24px 8px"] button[style*="width: 136px"] > div[style*="bottom: 8px"] {
+  position: static !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  padding: 0 !important;
+}
+
+div[style*="padding: 20px 24px 8px"] button[style*="width: 136px"] div[style*="font-size: 11px"] {
+  color: rgba(255,255,255,.78) !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  letter-spacing: .02em !important;
+  text-transform: none !important;
+  white-space: nowrap !important;
+  display: block !important;
+}
+
+/* Make the active lesson a cleaner action card, not a second full hero. */
+button[style*="height: 206px"][style*="border-radius: 24px"] {
+  height: 176px !important;
+  border-radius: 22px !important;
+  animation: none !important;
+  box-shadow: 0 0 22px rgba(200,155,109,.18), inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+
+button[style*="height: 206px"] > div[style*="height: 112px"] {
+  height: 82px !important;
+}
+
+/* Remove the small progress percentage ring from the current card image. */
+button[style*="height: 206px"] > div[style*="height: 112px"] > div[style*="width: 44px"] {
+  display: none !important;
+}
+
+button[style*="height: 206px"] > div[style*="padding: 10px 16px 12px"] {
+  padding: 12px 16px 14px !important;
+  gap: 10px !important;
+}
+
+button[style*="height: 206px"] div[style*="font-size: 16px"] {
+  font-size: 17px !important;
+}
+
+button[style*="height: 206px"] div[style*="height: 40px"][style*="border-radius: 12px"] {
+  height: 38px !important;
+  padding: 0 16px !important;
+}
+
+/* Soften the timeline so it supports the list instead of competing with it. */
+div[style*="width: 64px"][style*="z-index: 2"] {
+  width: 54px !important;
+}
+
+div[style*="width: 56px"][style*="height: 56px"][style*="animation: sbCurrentGlow"] {
+  width: 48px !important;
+  height: 48px !important;
+  animation: none !important;
+  box-shadow: 0 0 14px rgba(200,155,109,.26) !important;
+}
+
+/* Make inactive episodes readable rather than buried. */
+button[style*="height: 80px"][style*="opacity: 0.55"] {
+  opacity: .78 !important;
+  background: rgba(255,255,255,.04) !important;
+  border-color: rgba(255,255,255,.075) !important;
+}
+
+button[style*="height: 80px"][style*="opacity: 0.55"] div[style*="font-size: 15px"] {
+  color: rgba(255,255,255,.72) !important;
+}
+
+button[style*="height: 80px"] div[style*="filter: grayscale"] {
+  filter: grayscale(.25) !important;
+  opacity: .82 !important;
 }
