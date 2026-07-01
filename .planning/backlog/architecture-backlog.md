@@ -50,21 +50,15 @@ Eventually enforce:
 
 ## A2 — Resolve or quarantine legacy architecture test failures
 
-**Status:** Backlog  
+**Status:** Resolved  
 **Priority:** Medium  
 **Area:** `tests/architecture/`
 
 ### Context
 During QuickFire stabilisation, new quickfire boundary tests passed, but 9 pre-existing architecture failures were reported as unchanged.
 
-### Why this matters
-If known failures remain mixed into normal test output, future regressions become harder to trust.
-
-### Work
-- Identify each pre-existing architecture failure.
-- Decide whether each should be fixed or explicitly marked as known legacy debt.
-- Prefer fixing where small and safe.
-- If not fixing immediately, document with a clear TODO and owner area.
+### Progress
+Architecture tests are now green: `pnpm vitest run tests/architecture` reports 412/412 passing after the recent token and ModulePlayer work.
 
 ### Acceptance criteria
 - Architecture test output becomes trustworthy again.
@@ -111,3 +105,56 @@ This directly contradicts the governance comment in `src/constants/subjects.js` 
 - General surface/chrome colours resolve through `GENERAL` tokens where appropriate.
 - Architecture tests catch future local subject palette maps.
 - Visual behaviour remains unchanged or changes only where an explicit design decision is made.
+
+---
+
+## A4 — ModulePlayer staged extraction
+
+**Status:** In progress  
+**Priority:** High  
+**Area:** `src/components/layout/ModulePlayer.jsx`, `src/app/moduleNavigation.js`, future tests/state-machine helpers
+
+### Context
+`ModulePlayer.jsx` remains the main bloat and fragile runtime area after the old `src/modules/history.js` bloat was resolved by the per-episode migration. It was around 2423 lines and contains lesson lifecycle state, navigation, gating, persistence, screen routing, and rendering concerns.
+
+### Progress
+Phase 1 is complete:
+
+- Commit `b743cb3` extracted pure navigation helpers into `src/app/moduleNavigation.js`:
+  - `isFullScreenVideoScreen`
+  - `getStageNavigation`
+  - `getCurrentStageFromNavigation`
+- Added `tests/unit/app/moduleNavigation.test.js` with 16 tests.
+- `ModulePlayer.jsx` reduced from 2423 to 2393 lines.
+- `scrollToTop`, storage helpers, rendering, and lifecycle logic were deliberately left in place.
+- `pnpm vitest run tests/architecture` passed 412/412.
+- `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
+
+### Remaining phases
+Phase 2 — navigation/state-machine boundary:
+- Add tests first for fresh start, resume, stale saved screen index reset, next/previous clamping, hook/outcomes/recall gating, completed-module reopening, and last-screen finish decisions.
+- Extract pure gating/navigation predicates only after tests are green.
+- Keep actual `setState`, `recordActivity`, `scrollToTop`, and persistence side effects in `ModulePlayer.jsx` during the first Phase 2 extraction.
+
+Phase 3 — persistence side effects:
+- Move `getModuleState`, `saveModuleState`, and state-shape-building logic only after storage behaviour is pinned by tests.
+- Preserve storage key format `gcse_module_${moduleId}` and saved object shape exactly.
+- Update `tests/architecture/storage-boundary.test.js` only when the storage functions are moved.
+
+Phase 4 — rendering split:
+- Split screen-type rendering and block sub-renderers only after logic/state is stable.
+- This is the highest-risk phase because it touches visual rendering.
+
+### Rules
+- Do not combine phases.
+- Do not redesign UI during architecture extraction.
+- Do not change content module shape.
+- Do not change storage keys or saved state shape.
+- Do not move weakness tracking into ModulePlayer; it is already delegated to child components.
+- Keep each extraction test-backed and boring.
+
+### Acceptance criteria
+- ModulePlayer gradually reduces in size while behaviour remains unchanged.
+- Navigation and stage-machine logic becomes testable outside React.
+- Architecture tests and build stay green after each phase.
+- ModulePlayer remains lazy-loaded as its own chunk.
