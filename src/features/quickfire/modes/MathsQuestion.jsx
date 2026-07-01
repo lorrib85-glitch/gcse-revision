@@ -213,7 +213,7 @@ export function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, 
               </div>
         )}
 
-        {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'12px 14px', marginBottom:14 }}><p style={{ ...TYPE.body, fontSize:'.86rem', margin:0, color:'#FF5D73' }}>{error}</p></div>}
+        {error && <div style={{ background:'rgba(255,93,115,.08)', border:'1px solid rgba(255,93,115,.3)', borderRadius:10, padding:'12px 14px', marginBottom:14 }}><p style={{ ...TYPE.body, fontSize:'.86rem', margin:0, color:GENERAL.error }}>{error}</p></div>}
 
         {feedback && gs && (
           <div className="fade-up">
@@ -229,10 +229,10 @@ export function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, 
 
             {feedback.achieved?.length > 0 && (
               <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
-                <div style={{ ...TYPE.eyebrow, textTransform:'uppercase', color:'#4DFF88', marginBottom:10 }}>✓ What you got right</div>
+                <div style={{ ...TYPE.eyebrow, textTransform:'uppercase', color:GENERAL.success, marginBottom:10 }}>✓ What you got right</div>
                 {feedback.achieved.map((a,i) => (
                   <div key={i} style={{ display:'flex', gap:8, marginBottom: i<feedback.achieved.length-1?8:0 }}>
-                    <span style={{ color:'#4DFF88', flexShrink:0, fontSize:'.9rem' }}>✓</span>
+                    <span style={{ color:GENERAL.success, flexShrink:0, fontSize:'.9rem' }}>✓</span>
                     <p style={{ margin:0, ...TYPE.body, fontSize:'.88rem', color:'#C8D0E8' }}>{a}</p>
                   </div>
                 ))}
@@ -241,10 +241,10 @@ export function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, 
 
             {feedback.missed?.length > 0 && feedback.missed[0] !== 'No answer provided' && (
               <div style={{ background:'#151720', border:'1px solid #1E2A40', borderRadius:13, padding:'14px', marginBottom:8 }}>
-                <div style={{ ...TYPE.eyebrow, textTransform:'uppercase', color:'#FF5D73', marginBottom:10 }}>→ Next time, also include</div>
+                <div style={{ ...TYPE.eyebrow, textTransform:'uppercase', color:GENERAL.error, marginBottom:10 }}>→ Next time, also include</div>
                 {feedback.missed.map((m,i) => (
                   <div key={i} style={{ display:'flex', gap:8, marginBottom: i<feedback.missed.length-1?8:0 }}>
-                    <span style={{ color:'#FF5D73', flexShrink:0, fontSize:'.9rem' }}>→</span>
+                    <span style={{ color:GENERAL.error, flexShrink:0, fontSize:'.9rem' }}>→</span>
                     <p style={{ margin:0, ...TYPE.body, fontSize:'.88rem', color:'#C8D0E8' }}>{m}</p>
                   </div>
                 ))}
