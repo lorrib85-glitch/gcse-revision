@@ -1,9 +1,9 @@
+import { useEffect, useState } from 'react'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
-import { hexToRgb } from '../../constants/subjects.js'
 import ContinueCTA from '../../components/core/ContinueCTA.jsx'
 import { WEEKDAY_LABELS } from './streakCelebrationStorage.js'
 
@@ -12,11 +12,11 @@ import { WEEKDAY_LABELS } from './streakCelebrationStorage.js'
 // screen. Actual per-element durations/easings come from MOTION.
 const START_MS = {
   flame: 60,
-  glow: 440,
+  glow: 360,
   heading: 500,
-  tracker: 760,
-  trackerStep: 55,
-  button: 1250,
+  tracker: 820,
+  trackerStep: 65,
+  button: 1350,
 }
 
 function prefersReducedMotion() {
@@ -25,8 +25,11 @@ function prefersReducedMotion() {
 }
 
 function WeekTracker({ completedWeekDays, todayIndex, reduced }) {
+  const lastCompletedIndex = completedWeekDays.reduce((last, done, i) => done ? i : last, -1)
+  const completedLineWidth = lastCompletedIndex <= 0 ? 0 : (lastCompletedIndex / (WEEKDAY_LABELS.length - 1)) * 100
+
   const circleBase = {
-    width: 30, height: 30, borderRadius: RADII.pill,
+    width: 34, height: 34, borderRadius: RADII.pill,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     borderWidth: 1.5, borderStyle: 'solid', boxSizing: 'border-box',
   }
@@ -34,22 +37,33 @@ function WeekTracker({ completedWeekDays, todayIndex, reduced }) {
   return (
     <div style={{
       width: '100%',
-      padding: SPACING.compact,
+      padding: `${SPACING.compact}px ${SPACING.compact}px ${SPACING.standard}px`,
       borderRadius: RADII.panel,
-      border: '1px solid rgba(255,255,255,0.08)',
-      background: 'rgba(255,255,255,0.02)',
+      border: '1px solid rgba(255,255,255,0.09)',
+      background: 'rgba(255,255,255,0.025)',
+      boxShadow: '0 18px 50px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.04)',
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: SPACING.micro }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: SPACING.compact }}>
         {WEEKDAY_LABELS.map((label, i) => (
-          <span key={i} style={{ ...TYPE.metadata, fontSize: 11, color: GENERAL.slate, width: 30, textAlign: 'center' }}>
+          <span key={i} style={{ ...TYPE.metadata, fontSize: 11, color: GENERAL.slate, width: 34, textAlign: 'center' }}>
             {label}
           </span>
         ))}
       </div>
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div aria-hidden="true" style={{
-          position: 'absolute', left: 15, right: 15, top: '50%',
-          height: 1, background: 'rgba(255,255,255,0.08)', transform: 'translateY(-50%)',
+          position: 'absolute', left: 17, right: 17, top: '50%',
+          height: 2, background: 'rgba(255,255,255,0.08)', transform: 'translateY(-50%)',
+        }} />
+        <div aria-hidden="true" className={reduced ? undefined : 'streak-cel-line'} style={{
+          position: 'absolute', left: 17, top: '50%',
+          width: `calc((100% - 34px) * ${completedLineWidth / 100})`,
+          height: 2,
+          background: `rgba(${GENERAL.tealRgb},0.78)`,
+          boxShadow: `0 0 16px rgba(${GENERAL.tealRgb},0.18)`,
+          transform: reduced ? 'translateY(-50%) scaleX(1)' : 'translateY(-50%) scaleX(0)',
+          transformOrigin: 'left center',
+          animationDelay: reduced ? undefined : `${START_MS.tracker - 130}ms`,
         }} />
         {completedWeekDays.map((done, i) => {
           const isToday = i === todayIndex
@@ -58,7 +72,12 @@ function WeekTracker({ completedWeekDays, todayIndex, reduced }) {
             ? (reduced
                 ? { ...circleBase, borderColor: GENERAL.teal, background: GENERAL.teal }
                 : { ...circleBase, animationDelay: `${delay}ms` })
-            : { ...circleBase, borderColor: 'rgba(255,255,255,0.14)', background: 'transparent' }
+            : {
+                ...circleBase,
+                borderColor: isToday ? `rgba(${GENERAL.tealRgb},0.7)` : 'rgba(255,255,255,0.14)',
+                background: 'rgba(13,15,16,0.72)',
+                boxShadow: isToday ? `0 0 0 1px rgba(${GENERAL.tealRgb},0.12)` : undefined,
+              }
           const className = done && !reduced
             ? (isToday ? 'streak-cel-dot streak-cel-dot-today' : 'streak-cel-dot streak-cel-dot-normal')
             : undefined
@@ -66,7 +85,7 @@ function WeekTracker({ completedWeekDays, todayIndex, reduced }) {
             <div key={i} style={{ position: 'relative', zIndex: 1, ...style }} className={className}>
               {done && (
                 <svg
-                  width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  width="15" height="15" viewBox="0 0 24 24" fill="none"
                   stroke={GENERAL.neutral[0]} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
                   className={reduced ? undefined : 'streak-cel-check'}
                   style={reduced ? undefined : { opacity: 0, animationDelay: `${delay + 80}ms` }}
@@ -91,7 +110,36 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
   if (!streakCount || streakCount <= 0) return null
 
   const reduced = prefersReducedMotion()
-  const scrimBg = `rgba(${hexToRgb(GENERAL.neutral[0])},0.97)`
+  const [displayCount, setDisplayCount] = useState(reduced ? streakCount : 1)
+
+  useEffect(() => {
+    if (reduced) {
+      setDisplayCount(streakCount)
+      return undefined
+    }
+
+    const startCount = Math.max(1, Math.min(streakCount, streakCount - 8))
+    const totalDuration = 640
+    const tickMs = 32
+    let elapsed = 0
+    let intervalId
+
+    const startId = window.setTimeout(() => {
+      setDisplayCount(startCount)
+      intervalId = window.setInterval(() => {
+        elapsed += tickMs
+        const progress = Math.min(1, elapsed / totalDuration)
+        const eased = 1 - Math.pow(1 - progress, 3)
+        setDisplayCount(Math.round(startCount + (streakCount - startCount) * eased))
+        if (progress >= 1) window.clearInterval(intervalId)
+      }, tickMs)
+    }, START_MS.heading)
+
+    return () => {
+      window.clearTimeout(startId)
+      if (intervalId) window.clearInterval(intervalId)
+    }
+  }, [reduced, streakCount])
 
   return (
     <div
@@ -101,8 +149,12 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
       style={{
         position: 'fixed', inset: 0, zIndex: 4000,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: scrimBg,
+        background: 'rgba(3,10,11,0.97)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
         padding: SPACING.standard,
+        paddingBottom: `calc(${SPACING.standard}px + env(safe-area-inset-bottom))`,
+        overflow: 'hidden',
       }}
       className={reduced ? 'streak-cel-reduced-fade' : 'streak-cel-scrim'}
     >
@@ -112,34 +164,39 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
         .streak-cel-reduced-fade { animation: streak-cel-scrim-in ${MOTION.duration.fast} ${MOTION.easing.gentle} both; }
 
         @keyframes streak-cel-flame-in {
-          0%   { opacity: 0; transform: scale(0.6) rotate(0deg); }
-          60%  { opacity: 1; transform: scale(1.08) rotate(360deg); }
-          80%  { transform: scale(0.96) rotate(360deg); }
+          0%   { opacity: 0; transform: scale(0.58) rotate(-14deg); }
+          58%  { opacity: 1; transform: scale(1.08) rotate(360deg); }
+          82%  { transform: scale(0.97) rotate(360deg); }
           100% { opacity: 1; transform: scale(1) rotate(360deg); }
         }
-        .streak-cel-flame { animation: streak-cel-flame-in ${MOTION.duration.slow} ${MOTION.easing.standard} both; }
+        .streak-cel-flame { animation: streak-cel-flame-in 700ms ${MOTION.easing.standard} both; }
 
         @keyframes streak-cel-glow-in {
-          0%   { opacity: 0; }
-          45%  { opacity: 1; }
-          70%  { opacity: 0.55; }
-          100% { opacity: 0.85; }
+          0%   { opacity: 0; transform: scale(0.8); }
+          45%  { opacity: 1; transform: scale(1.03); }
+          100% { opacity: 0.9; transform: scale(1); }
         }
         .streak-cel-glow { animation: streak-cel-glow-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both; }
 
         @keyframes streak-cel-heading-in {
-          from { opacity: 0; transform: translateY(10px); }
+          from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         .streak-cel-heading { animation: streak-cel-heading-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both; }
 
+        @keyframes streak-cel-line-in {
+          from { transform: translateY(-50%) scaleX(0); opacity: 0; }
+          to   { transform: translateY(-50%) scaleX(1); opacity: 1; }
+        }
+        .streak-cel-line { animation: streak-cel-line-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both; }
+
         @keyframes streak-cel-dot-in {
-          0%   { border-color: rgba(255,255,255,0.14); background-color: transparent; transform: scale(1); }
+          0%   { border-color: rgba(255,255,255,0.14); background-color: rgba(13,15,16,0.72); transform: scale(1); }
           55%  { transform: scale(1.18); }
           100% { border-color: ${GENERAL.teal}; background-color: ${GENERAL.teal}; transform: scale(1); }
         }
         @keyframes streak-cel-dot-today-in {
-          0%   { border-color: rgba(255,255,255,0.14); background-color: transparent; transform: scale(1); }
+          0%   { border-color: rgba(255,255,255,0.14); background-color: rgba(13,15,16,0.72); transform: scale(1); }
           50%  { border-color: ${GENERAL.coral}; background-color: ${GENERAL.coral}; transform: scale(1.22); }
           100% { border-color: ${GENERAL.teal}; background-color: ${GENERAL.teal}; transform: scale(1); }
         }
@@ -151,34 +208,40 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
         .streak-cel-check { animation: streak-cel-check-in ${MOTION.duration.instant} ${MOTION.easing.gentle} both; }
 
         @keyframes streak-cel-button-in {
-          from { opacity: 0; transform: translateY(14px); }
+          from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         .streak-cel-button { animation: streak-cel-button-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both; }
       `}</style>
 
-      <div style={{ width: '100%', maxWidth: 340, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: SPACING.standard }}>
+      <div style={{
+        width: '100%', maxWidth: 360,
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        gap: SPACING.standard,
+        transform: 'translateY(-28px)',
+      }}>
 
-        <div style={{ position: 'relative', width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', width: 178, height: 178, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div
             aria-hidden="true"
             className={reduced ? undefined : 'streak-cel-glow'}
             style={{
-              position: 'absolute', inset: -40, borderRadius: '50%',
-              background: `radial-gradient(circle, rgba(${GENERAL.coralRgb},0.35) 0%, rgba(${GENERAL.coralRgb},0.08) 45%, transparent 70%)`,
-              opacity: reduced ? 0.85 : undefined,
+              position: 'absolute', inset: -52, borderRadius: '50%',
+              background: `radial-gradient(circle, rgba(${GENERAL.tealRgb},0.28) 0%, rgba(${GENERAL.tealRgb},0.13) 36%, rgba(${GENERAL.coralRgb},0.08) 52%, transparent 72%)`,
+              opacity: reduced ? 0.9 : undefined,
               animationDelay: reduced ? undefined : `${START_MS.glow}ms`,
             }}
           />
           <img
             src="/streak-flame-512.webp"
             alt=""
-            width={116}
-            height={116}
+            width={154}
+            height={154}
             className={reduced ? undefined : 'streak-cel-flame'}
             style={{
               position: 'relative', zIndex: 1, objectFit: 'contain',
               opacity: reduced ? 1 : undefined,
+              filter: `drop-shadow(0 0 28px rgba(${GENERAL.coralRgb},0.24)) drop-shadow(0 0 52px rgba(${GENERAL.tealRgb},0.18))`,
               animationDelay: reduced ? undefined : `${START_MS.flame}ms`,
             }}
           />
@@ -188,15 +251,17 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
           className={reduced ? undefined : 'streak-cel-heading'}
           style={{
             textAlign: 'center',
+            marginTop: -SPACING.micro,
+            marginBottom: SPACING.compact,
             opacity: reduced ? 1 : undefined,
             animationDelay: reduced ? undefined : `${START_MS.heading}ms`,
           }}
         >
-          <div style={{ ...TYPE.displayHero, fontSize: 'clamp(28px, 8vw, 40px)', color: GENERAL.softWhite }}>
-            {streakCount} day <span style={{ color: GENERAL.teal }}>streak</span>
+          <div style={{ ...TYPE.displayHero, fontSize: 'clamp(36px, 11vw, 58px)', color: GENERAL.softWhite }}>
+            {displayCount} day <span style={{ color: GENERAL.teal }}>streak</span>
           </div>
-          <div style={{ ...TYPE.bodyLarge, color: GENERAL.slate, marginTop: SPACING.micro }}>
-            Keep showing up.
+          <div style={{ ...TYPE.bodyLarge, color: GENERAL.slate, marginTop: SPACING.compact }}>
+            That’s momentum.
           </div>
         </div>
 
@@ -206,11 +271,19 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
           className={reduced ? undefined : 'streak-cel-button'}
           style={{
             width: '100%',
+            marginTop: SPACING.compact,
             opacity: reduced ? 1 : undefined,
             animationDelay: reduced ? undefined : `${START_MS.button}ms`,
           }}
         >
-          <ContinueCTA accent={GENERAL.teal} label="Continue" onClick={onDismiss} />
+          <ContinueCTA
+            accent={GENERAL.teal}
+            label="Continue"
+            onClick={onDismiss}
+            style={{
+              boxShadow: `0 18px 42px rgba(${GENERAL.tealRgb},0.24), inset 0 1px 0 rgba(241,250,238,0.16)`,
+            }}
+          />
         </div>
 
       </div>
