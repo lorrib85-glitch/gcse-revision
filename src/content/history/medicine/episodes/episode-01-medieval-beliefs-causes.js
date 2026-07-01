@@ -128,22 +128,28 @@ export default {
         {
           title: 'Who was he?',
           icon: 'ancient-figure',
+          image: '/figures/history/medicine/medieval/hippocrates-card-who-was-he.webp',
+          imagePosition: 'center center',
           lines: [
-            'One of the first doctors to argue that illness had natural causes rather than punishment from the gods.',
+            'One of the first doctors to argue that illness had natural causes, not just supernatural ones.',
           ],
         },
         {
           title: 'Four humours',
           icon: 'medicine',
+          image: '/figures/history/medicine/medieval/hippocrates-card-four-humours.webp',
+          imagePosition: 'center center',
           lines: [
             'Hippocrates believed the body contained four humours:',
-            'Blood · Phlegm · Yellow Bile · Black Bile',
+            'Blood · Phlegm · Yellow bile · Black bile',
             'Illness happened when these became unbalanced.',
           ],
         },
         {
           title: 'Observation',
           icon: 'knowledge',
+          image: '/figures/history/medicine/medieval/hippocrates-card-observation.webp',
+          imagePosition: 'center center',
           lines: [
             'Hippocrates believed doctors should observe symptoms carefully, examine patients closely, and keep records.',
             'He encouraged reasoning rather than magic or superstition.',
@@ -152,8 +158,11 @@ export default {
         {
           title: 'Influence',
           icon: 'legacy',
+          image: '/figures/history/medicine/medieval/hippocrates-card-influence.webp',
+          imagePosition: 'center center',
           lines: [
-            "His Four Humours theory was developed by Galen and remained influential for over 1,500 years.",
+            "Galen developed Hippocrates' Four Humours theory.",
+            'Medieval physicians learned these ideas from books, so they stayed influential for over 1,500 years.',
           ],
         },
       ],
