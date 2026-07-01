@@ -1,6 +1,13 @@
 // Shared utilities used by quickfire and topic-practice modes.
 // Keep this file free of React — pure JS only.
 
+export const GRADE_COLOURS = {
+  'Excellent':  { bg:'rgba(77,255,136,.08)', border:'rgba(77,255,136,.35)', text:'#4DFF88', badge:'#38D27A' },
+  'Good':       { bg:'rgba(77,255,136,.05)', border:'rgba(77,255,136,.2)',  text:'#6BFFB0', badge:'#38D27A' },
+  'Developing': { bg:'rgba(255,200,87,.08)', border:'rgba(255,200,87,.3)',  text:'#FFC857', badge:'#F5B700' },
+  'Needs Work': { bg:'rgba(255,93,115,.08)', border:'rgba(255,93,115,.3)',  text:'#FF5D73', badge:'#FF5D73' },
+}
+
 export async function gradeWithAI(question, answer, marks, markScheme) {
   const res = await fetch('/api/grade', {
     method: 'POST',
