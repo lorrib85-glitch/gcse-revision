@@ -59,6 +59,32 @@ pattern, or interaction pattern, search existing canonical documentation
 for an existing solution. Extend before inventing. This applies to both
 pipelines.
 
+This is enforced mechanically, not just by intent: a `PostToolUse` hook
+(`.claude/hooks/new-component-check.sh`) nudges on every brand-new
+`src/components/**` file to confirm the Component Registry was checked.
+When extracting or splitting an existing file, don't carry forward an
+existing violation (e.g. direct `localStorage` access, a hardcoded value)
+into the new files unchanged — fix it during the extraction, or note
+explicitly why it's deferred.
+
+## File hygiene
+
+Component and feature-orchestration files (`src/components/**`,
+`src/features/**`) should stay under ~1200 lines. Past that, evaluate
+whether the file is doing too much and should be decomposed — this is
+what happened to `src/modules/history.js` (7318 lines, split into
+per-episode files) and has not yet happened to `ModulePlayer.jsx`
+(2400+ lines, flagged as a fragile area in `.planning/codebase/CONCERNS.md`).
+
+This threshold does not apply to content files (`src/content/**`,
+`src/modules/<subject>.js`, `src/data/*.js`) — their size tracks
+curriculum content volume, not code complexity.
+
+A `PostToolUse` hook (`.claude/hooks/component-size-check.sh`) nudges
+when an in-scope file is both over the threshold and just grew from its
+committed (`HEAD`) size — so it flags active bloat without nagging on
+every touch to an already-oversized file that isn't growing further.
+
 ## Debugging discipline
 
 Non-trivial bugs should use a structured debugging methodology before
