@@ -8,6 +8,18 @@ import { useAuth } from '../../auth/AuthContext.jsx'
 import { buildTodaysPlan } from '../../todaysPlan.js'
 import { StreakChip } from './StreakChip.jsx'
 import { hexToRgb } from '../../constants/subjects.js'
+import { getProgress } from '../../progress.js'
+import StreakCelebrationOverlay from '../streaks/StreakCelebrationOverlay.jsx'
+import {
+  shouldShowStreakCelebration,
+  markStreakCelebrationShown,
+  getCompletedWeekDays,
+  getTodayIndex,
+} from '../streaks/streakCelebrationStorage.js'
+
+function safeGetStreak() {
+  try { return getProgress().streak || 0 } catch { return 0 }
+}
 
 // ─── HomeAtmosphere — LOCKED COMPONENT ────────────────────────────────────────
 // Three drifting SVG wave bands + teal constellation network, rendered in the
@@ -224,6 +236,14 @@ export default function Home({ onSelectTask }) {
   const userName = user?.name || 'you'
 
   const todaysPlan = buildTodaysPlan()
+  const streak = safeGetStreak()
+
+  // Home renders first; the celebration (if any) mounts on top a moment
+  // later rather than blocking the initial paint.
+  const [showStreakCelebration, setShowStreakCelebration] = useState(false)
+  useEffect(() => {
+    if (shouldShowStreakCelebration(streak)) setShowStreakCelebration(true)
+  }, [])
 
   return (
     <div style={{ minHeight: '100vh', background: GENERAL.neutral[0], paddingBottom: 120, overflowX: 'hidden' }}>
@@ -251,6 +271,18 @@ export default function Home({ onSelectTask }) {
       <div style={{ maxWidth: 420, margin: '0 auto', width: '100%', marginTop: SPACING.compact + 4 }}>
         <TaskCarousel tasks={todaysPlan} onSelect={onSelectTask} />
       </div>
+
+      {showStreakCelebration && (
+        <StreakCelebrationOverlay
+          streakCount={streak}
+          completedWeekDays={getCompletedWeekDays(streak)}
+          todayIndex={getTodayIndex()}
+          onDismiss={() => {
+            markStreakCelebrationShown()
+            setShowStreakCelebration(false)
+          }}
+        />
+      )}
 
     </div>
   )
