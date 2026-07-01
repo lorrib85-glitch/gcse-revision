@@ -112,7 +112,7 @@ This directly contradicts the governance comment in `src/constants/subjects.js` 
 
 **Status:** In progress  
 **Priority:** High  
-**Area:** `src/components/layout/ModulePlayer.jsx`, `src/app/moduleNavigation.js`, future tests/state-machine helpers
+**Area:** `src/components/layout/ModulePlayer.jsx`, `src/app/moduleNavigation.js`, `tests/unit/modulePlayer/`, future state-machine helpers
 
 ### Context
 `ModulePlayer.jsx` remains the main bloat and fragile runtime area after the old `src/modules/history.js` bloat was resolved by the per-episode migration. It was around 2423 lines and contains lesson lifecycle state, navigation, gating, persistence, screen routing, and rendering concerns.
@@ -130,11 +130,29 @@ Phase 1 is complete:
 - `pnpm vitest run tests/architecture` passed 412/412.
 - `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
 
+Phase 2 test scaffolding is documented:
+
+- Commit `34b1e3c` added `tests/unit/modulePlayer/lifecycle.test.js` with 39 `it.todo()` specs across seven behaviour groups:
+  - fresh module start
+  - resume saved module state
+  - stale saved screen index reset
+  - go/goTo clamping
+  - hook/outcomes/recall gating
+  - completed-module reopening
+  - final-screen finish decisions
+- These are intentionally `todo` specs rather than assertions because the behaviours currently live inside the `ModulePlayer` function closure and cannot be tested in the current node-only unit setup without either extraction or new render infrastructure.
+- The todo file is a map of behaviours to unlock as pure helpers are extracted, not a substitute for real coverage.
+- `pnpm vitest run tests/architecture` passed 412/412.
+- `pnpm vite build` succeeded and ModulePlayer chunk size remained unchanged.
+- `pnpm vitest run tests/unit` reported one pre-existing unrelated planner failure around a missing `getJson` export in a storage mock; this should be handled separately.
+
 ### Remaining phases
 Phase 2 — navigation/state-machine boundary:
-- Add tests first for fresh start, resume, stale saved screen index reset, next/previous clamping, hook/outcomes/recall gating, completed-module reopening, and last-screen finish decisions.
-- Extract pure gating/navigation predicates only after tests are green.
+- First extraction should be `computeInitialModuleState(module, saved)`, replacing the initial `useState` derivation currently inside `ModulePlayer`.
+- This should unlock real tests for fresh start, resume, stale saved index reset, and completed-module reopening.
+- Recommended home: `src/app/moduleNavigation.js` or a small pure helper file if that module becomes too broad.
 - Keep actual `setState`, `recordActivity`, `scrollToTop`, and persistence side effects in `ModulePlayer.jsx` during the first Phase 2 extraction.
+- Later Phase 2 candidates: `clampScreenIndex(screen, delta, total)`, `resolveFinishAction(module, options)`, and eventually a `getModuleStage()` gating predicate.
 
 Phase 3 — persistence side effects:
 - Move `getModuleState`, `saveModuleState`, and state-shape-building logic only after storage behaviour is pinned by tests.
@@ -152,9 +170,11 @@ Phase 4 — rendering split:
 - Do not change storage keys or saved state shape.
 - Do not move weakness tracking into ModulePlayer; it is already delegated to child components.
 - Keep each extraction test-backed and boring.
+- Convert `it.todo()` specs to real assertions as each pure helper is extracted; do not leave todo specs as permanent coverage.
 
 ### Acceptance criteria
 - ModulePlayer gradually reduces in size while behaviour remains unchanged.
 - Navigation and stage-machine logic becomes testable outside React.
 - Architecture tests and build stay green after each phase.
 - ModulePlayer remains lazy-loaded as its own chunk.
+- Todo lifecycle specs are converted into real tests as the corresponding logic becomes testable.
