@@ -19,7 +19,8 @@ const DEPRECATED_ALIASES = [
 
 // Module overview/browser files are high-visibility screens and should not reintroduce
 // typography drift after the semantic TYPE refactor. fontSize remains intentionally
-// allowed because size variants are still chosen per context.
+// allowed because size variants are still chosen per context. lineHeight is not checked
+// here because these files use it for icon/chevron glyph alignment rather than text type.
 const MODULE_SCREEN_FILES = [
   'src/features/subjects/Subjects.jsx',
   'src/components/layout/ModulePlayer.jsx',
@@ -28,7 +29,6 @@ const MODULE_SCREEN_FILES = [
 const DISALLOWED_MODULE_TYPOGRAPHY_PROPS = [
   'fontWeight',
   'letterSpacing',
-  'lineHeight',
   'fontFamily',
 ]
 
