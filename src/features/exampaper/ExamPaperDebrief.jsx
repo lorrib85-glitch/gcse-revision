@@ -10,9 +10,9 @@ function formatTime(seconds) {
 }
 
 function scoreColor(pct) {
-  if (pct >= 80) return '#2A9D8F'
+  if (pct >= 80) return GENERAL.teal
   if (pct >= 60) return '#F4A261'
-  return '#E76F51'
+  return GENERAL.coral
 }
 
 function scoreVerdict(pct) {
@@ -26,8 +26,8 @@ function scoreVerdict(pct) {
 
 function marksColor(awarded, available) {
   if (!awarded && awarded !== 0) return GENERAL.slate
-  if (awarded === 0) return '#E76F51'
-  if (awarded >= available) return '#2A9D8F'
+  if (awarded === 0) return GENERAL.coral
+  if (awarded >= available) return GENERAL.teal
   return '#F4A261'
 }
 

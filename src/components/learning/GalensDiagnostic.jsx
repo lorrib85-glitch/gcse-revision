@@ -215,7 +215,7 @@ export default function GalensDiagnostic({ block, subject, onContinue }) {
   const theme     = SUBJECTS[subject] || SUBJECTS.History
   const accent    = theme.accent
   const accentRgb = theme.accentRgb
-  const bg        = theme.background || '#0F0B07'
+  const bg        = theme.background || SUBJECTS.History.background
 
   const {
     symptomsLabel   = "Choose the patient's symptoms",
@@ -336,7 +336,7 @@ export default function GalensDiagnostic({ block, subject, onContinue }) {
                 }}>
                   {on && (
                     <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                      <path d="M1 4L3.8 7L9 1" stroke="#0F0B07" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M1 4L3.8 7L9 1" stroke={SUBJECTS.History.background} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   )}
                 </div>

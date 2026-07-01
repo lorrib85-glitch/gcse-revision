@@ -875,14 +875,14 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     <svg width={18} height={18} viewBox="0 0 18 18" fill="none">
-                      <path d="M4 9.2L7.2 12.4L14 5.5" stroke="#0D0D0D" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M4 9.2L7.2 12.4L14 5.5" stroke={GENERAL.neutral[900]} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
                 )}
                 {isCurrent && (
                   <div style={{
                     width: 56, height: 56, borderRadius: RADII.pill, flexShrink: 0,
-                    background: '#0D0D0D', border: `2px solid ${accent}`,
+                    background: GENERAL.neutral[900], border: `2px solid ${accent}`,
                     boxShadow: `0 0 20px rgba(${accentRgb},0.35)`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     animation: 'sbCurrentGlow 2.8s ease-in-out infinite',
@@ -909,7 +909,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                 /* ── CURRENT — the hero. Full-width image up top fading to dark, compact title+button row below ── */
                 <button onClick={() => handleCardClick(item)} style={{
                   flex: 1, minWidth: 0, height: cardH, marginLeft: -OVERLAP, borderRadius: 24, overflow: 'hidden', boxSizing: 'border-box',
-                  background: '#0D0D0D',
+                  background: GENERAL.neutral[900],
                   border: `1.5px solid ${accent}`,
                   animation: 'sbCurrentGlow 2.8s ease-in-out infinite',
                   cursor: 'pointer', textAlign: 'left', display: 'flex', flexDirection: 'column', padding: 0,
@@ -920,7 +920,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                       position: 'absolute', inset: 0,
                       backgroundImage: `url(${thumb})`, backgroundSize: 'cover', backgroundPosition: 'center',
                     }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 18%, #0D0D0D 78%)' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to bottom, transparent 18%, ${GENERAL.neutral[900]} 78%)` }} />
 
                     {/* Progress ring — overlaid on the image; arc length matches % complete, image darkened behind it for contrast */}
                     <div style={{ position: 'absolute', left: 12, bottom: 12, width: CARD_RING_SIZE, height: CARD_RING_SIZE }}>
@@ -1006,7 +1006,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                       background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
                       <svg width={11} height={11} viewBox="0 0 18 18" fill="none">
-                        <path d="M4 9.2L7.2 12.4L14 5.5" stroke="#0D0D0D" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M4 9.2L7.2 12.4L14 5.5" stroke={GENERAL.neutral[900]} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </span>
                   </div>

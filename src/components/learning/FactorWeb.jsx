@@ -37,7 +37,7 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
   const theme       = SUBJECTS[subject] || SUBJECTS.History
   const accent      = theme.accent
   const rgb         = theme.accentRgb
-  const bg          = theme.background || '#0F0B07'
+  const bg          = theme.background || SUBJECTS.History.background
   const prefersReduced = useReducedMotion()
 
   const factors = block.factors || []

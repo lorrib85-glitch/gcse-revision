@@ -4,18 +4,18 @@ import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 
 const GRADE_COLORS = {
-  'Excellent':   '#2A9D8F',
-  'Good':        '#2A9D8F',
+  'Excellent':   GENERAL.teal,
+  'Good':        GENERAL.teal,
   'Satisfactory':'#F4A261',
-  'Needs Work':  '#E76F51',
+  'Needs Work':  GENERAL.coral,
   'No answer':   '#5A6367',
   'Error':       '#5A6367',
 }
 
 function marksColor(awarded, available) {
   if (awarded === null || awarded === undefined) return GENERAL.slate
-  if (awarded === 0) return '#E76F51'
-  if (awarded >= available) return '#2A9D8F'
+  if (awarded === 0) return GENERAL.coral
+  if (awarded >= available) return GENERAL.teal
   return '#F4A261'
 }
 
