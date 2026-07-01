@@ -171,7 +171,7 @@ export default function VisualNarrativeScreen({
           >
             {beat.showLabel === true && beat.label && (
               <div style={{
-                ...TYPE.overlayEyebrow,
+                ...TYPE.eyebrow,
                 color: 'rgba(255,255,255,0.50)',
                 marginBottom: 10,
               }}>
@@ -180,11 +180,8 @@ export default function VisualNarrativeScreen({
             )}
 
             <div style={{
-              ...TYPE.overlayTitle,
+              ...TYPE.displaySection,
               fontSize: 'clamp(36px, 10.8vw, 52px)',
-              lineHeight: 0.98,
-              fontWeight: 850,
-              letterSpacing: '-0.055em',
               color: 'rgba(255,255,255,0.98)',
               marginBottom: 16,
               maxWidth: 352,
@@ -194,7 +191,7 @@ export default function VisualNarrativeScreen({
 
             {beat.body && (
               <div style={{
-                ...TYPE.overlayBody,
+                ...TYPE.bodyStrong,
                 color: 'rgba(255,255,255,0.74)',
                 maxWidth: '31ch',
                 whiteSpace: 'pre-line',
@@ -218,7 +215,7 @@ export default function VisualNarrativeScreen({
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {factCount === 0 && (
                   <div style={{
-                    ...TYPE.overlayPrompt,
+                    ...TYPE.eyebrow,
                     color: 'rgba(255,255,255,0.30)',
                     marginBottom: 12,
                   }}>
@@ -229,7 +226,7 @@ export default function VisualNarrativeScreen({
                   <div
                     key={i}
                     style={{
-                      ...TYPE.overlayBody,
+                      ...TYPE.bodyStrong,
                       color: 'rgba(255,255,255,0.84)',
                       animation: 'vnFadeUp 420ms cubic-bezier(0.16,1,0.3,1) both',
                     }}
@@ -242,7 +239,7 @@ export default function VisualNarrativeScreen({
               // Conclusion phase — replaces the facts
               <>
                 <div style={{
-                  ...TYPE.overlayTitle,
+                  ...TYPE.displaySection,
                   color: accent,
                   whiteSpace: 'pre-line',
                   animation: 'vnFadeIn 700ms ease both',
@@ -260,7 +257,7 @@ export default function VisualNarrativeScreen({
                     {beat.source && (
                       <div style={{
                         marginTop: 20,
-                        fontFamily: TYPE.bodyText.fontFamily,
+                        fontFamily: "'Sora', sans-serif",
                         fontSize: 10, lineHeight: 1.5,
                         color: 'rgba(255,255,255,0.22)',
                         animation: 'vnFadeIn 600ms ease 200ms both',

@@ -244,7 +244,7 @@ function SelectPhase({ theories, completedIds, onSelect, prefersReducedMotion })
           ? 'none'
           : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
       }}>
-        <h1 style={{ ...TYPE.screenHeading, color: THEME.text, margin: 0 }}>
+        <h1 style={{ ...TYPE.displayScreen, color: THEME.text, margin: 0 }}>
           How did people explain illness?
         </h1>
         <p style={{
@@ -327,7 +327,7 @@ function TheoryCard({ theory, done, onClick, delay, prefersReducedMotion }) {
       </span>
 
       <span style={{ display: 'flex', flexDirection: 'column', gap: 5, flex: 1, minWidth: 0 }}>
-        <span style={{ ...TYPE.cardTitle, color: THEME.text }}>
+        <span style={{ ...TYPE.displayCard, color: THEME.text }}>
           {sentenceCase(theory.shortLabel || theory.label)}
         </span>
         {hint && (
@@ -420,7 +420,7 @@ function ViewPhase({
             padding: `0 ${SPACING.standard}px ${SPACING.standard}px`,
           }}>
             <div style={{
-              ...TYPE.cardTitle,
+              ...TYPE.displayCard,
               color: THEME.text,
               maxWidth: 520,
               lineHeight: 1.12,
@@ -569,7 +569,7 @@ function FinalPhase({ theories, finalPhase, screen, onComplete, prefersReducedMo
           ? 'none'
           : `mtp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
       }}>
-        <div style={{ ...TYPE.sectionHeading, color: THEME.text }}>
+        <div style={{ ...TYPE.displaySection, color: THEME.text }}>
           Medieval medicine
         </div>
         <p style={{
@@ -630,11 +630,11 @@ function FinalPhase({ theories, finalPhase, screen, onComplete, prefersReducedMo
               </div>
 
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ ...TYPE.cardTitle, color: THEME.text, lineHeight: 1.18 }}>
+                <div style={{ ...TYPE.displayCard, color: THEME.text, lineHeight: 1.18 }}>
                   {sentenceCase(theory.shortLabel)}
                 </div>
                 <div style={{
-                  ...TYPE.captionText,
+                  ...TYPE.caption,
                   color: THEME.accent,
                   marginTop: 5,
                   lineHeight: 1.35,
@@ -642,7 +642,7 @@ function FinalPhase({ theories, finalPhase, screen, onComplete, prefersReducedMo
                   {hint}
                 </div>
                 <div style={{
-                  ...TYPE.captionText,
+                  ...TYPE.caption,
                   color: THEME.textMuted,
                   marginTop: 6,
                   lineHeight: 1.35,

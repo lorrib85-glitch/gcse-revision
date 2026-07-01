@@ -25,7 +25,7 @@ export default function AnswerPanel({
       boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05), 0 18px 50px rgba(0,0,0,0.28)',
     }}>
       {(isReveal || isImproving) && (
-        <div style={{ ...TYPE.overlayEyebrow, color: 'rgba(255,255,255,0.36)', marginBottom: 12 }}>
+        <div style={{ ...TYPE.eyebrow, color: 'rgba(255,255,255,0.36)', marginBottom: 12 }}>
           Examiner annotations
         </div>
       )}
@@ -52,14 +52,14 @@ export default function AnswerPanel({
                   {section.label}
                 </div>
               )}
-              <div style={{ ...TYPE.examAnswerText, color: 'rgba(245,238,225,0.86)' }}>
+              <div style={{ ...TYPE.examAnswer, color: 'rgba(245,238,225,0.86)' }}>
                 {section.text}
               </div>
             </section>
           ))}
         </div>
       ) : (
-        <div style={{ ...TYPE.examAnswerText, color: 'rgba(245,238,225,0.9)' }}>
+        <div style={{ ...TYPE.examAnswer, color: 'rgba(245,238,225,0.9)' }}>
           {segments.map((seg, i) => {
             if (seg.type === 'plain') return <span key={i}>{seg.text}</span>
             const { ann } = seg
@@ -104,13 +104,13 @@ export default function AnswerPanel({
 
       {(isReveal || isImproving) && (
         <div style={{ marginTop: 20, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 14 }}>
-          <div style={{ ...TYPE.overlayEyebrow, color: 'rgba(255,255,255,0.36)', marginBottom: 10 }}>
+          <div style={{ ...TYPE.eyebrow, color: 'rgba(255,255,255,0.36)', marginBottom: 10 }}>
             Examiner notes
           </div>
           {(examiner.annotations || []).map(ann => (
             <div key={ann.id} style={{ display: 'flex', alignItems: 'flex-start', gap: SPACING.micro, marginBottom: SPACING.micro }}>
               <div style={{ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: ANN_DOT[ann.type] || 'rgba(255,255,255,0.3)' }} />
-              <div style={{ ...TYPE.bodySmallText, color: 'rgba(255,255,255,0.55)' }}>
+              <div style={{ ...TYPE.bodySmall, color: 'rgba(255,255,255,0.55)' }}>
                 {ann.comment}
               </div>
             </div>
@@ -119,7 +119,7 @@ export default function AnswerPanel({
       )}
 
       {isImproving && (
-        <div style={{ ...TYPE.overlayEyebrow, marginTop: 20, color: accent }}>
+        <div style={{ ...TYPE.eyebrow, marginTop: 20, color: accent }}>
           Push it up a grade
         </div>
       )}

@@ -154,11 +154,8 @@ export default function ExaminerExplainsScreen({
           {phase === 'opening' && (
             <div style={{ position: 'absolute', top: '34%', left: 28, right: 28 }}>
               <div style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontWeight: 800,
+                ...TYPE.displaySection,
                 fontSize: 'clamp(26px, 8.5vw, 38px)',
-                lineHeight: 'clamp(32px, 10.5vw, 46px)',
-                letterSpacing: '-0.04em',
                 color: '#FFFFFF',
                 maxWidth: 320,
               }}>
@@ -199,23 +196,22 @@ export default function ExaminerExplainsScreen({
                       marginBottom: 7,
                     }}>
                       <span style={{
-                        fontFamily: TYPE.bodyText.fontFamily,
+                        fontFamily: "'Sora', sans-serif",
                         fontSize: 10,
                         color: accent, opacity: 0.75,
                         paddingTop: 4, flexShrink: 0,
                       }}>✦</span>
                       <div style={{
-                        fontFamily: TYPE.bodyText.fontFamily,
-                        fontWeight: 700, fontSize: 18,
-                        letterSpacing: '-0.01em', lineHeight: 1.25,
+                        ...TYPE.displayCard,
+                        fontSize: 18,
                         color: 'rgba(255,255,255,0.95)',
                       }}>
                         {tip.heading}
                       </div>
                     </div>
                     <div style={{
-                      fontFamily: TYPE.bodyText.fontFamily,
-                      fontWeight: 500, fontSize: 15, lineHeight: 1.65,
+                      ...TYPE.bodyStrong,
+                      fontSize: 15,
                       color: 'rgba(255,255,255,0.50)',
                       paddingLeft: 20,
                     }}>
@@ -227,10 +223,8 @@ export default function ExaminerExplainsScreen({
                 {/* Closing line */}
                 {showClosing && (
                   <div style={{
-                    fontFamily: TYPE.bodyText.fontFamily,
-                    fontWeight: 800,
+                    ...TYPE.displaySection,
                     fontSize: 'clamp(22px, 7vw, 30px)',
-                    letterSpacing: '-0.03em',
                     color: accent,
                     marginTop: 4,
                     animation: 'expl-up 420ms cubic-bezier(0.16,1,0.3,1) both',
@@ -249,9 +243,9 @@ export default function ExaminerExplainsScreen({
                     animation: 'expl-hint 3.2s ease 600ms infinite',
                   }}>
                     <span style={{
-                      fontFamily: TYPE.bodyText.fontFamily,
-                      fontWeight: 600, fontSize: 11,
-                      letterSpacing: '0.18em', textTransform: 'uppercase',
+                      ...TYPE.eyebrow,
+                      fontSize: 11,
+                      textTransform: 'uppercase',
                       color: 'rgba(255,255,255,0.28)',
                     }}>
                       tap to continue
@@ -272,9 +266,9 @@ export default function ExaminerExplainsScreen({
               animation: 'expl-hint 3.2s ease infinite',
             }}>
               <span style={{
-                fontFamily: TYPE.bodyText.fontFamily,
-                fontWeight: 600, fontSize: 11,
-                letterSpacing: '0.18em', textTransform: 'uppercase',
+                ...TYPE.eyebrow,
+                fontSize: 11,
+                textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.28)',
               }}>
                 tap to continue
