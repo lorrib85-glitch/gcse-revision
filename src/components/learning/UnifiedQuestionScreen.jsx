@@ -17,13 +17,8 @@ export default function UnifiedQuestionScreen({
   explanation,
   backgroundImage,
   subject = 'History',
-  qIndex = 0,
-  qTotal = 1,
   onAnswer,
   onComplete,
-  showTimer = false,
-  timeLeft,
-  totalSeconds = 90,
 }) {
   const FEEDBACK_HOLD_MS = 1200
   const subjectData = SUBJECTS[subject] || SUBJECTS.History
@@ -56,6 +51,8 @@ export default function UnifiedQuestionScreen({
   const q = question || ''
   const correctIdx = typeof correct === 'number' ? correct : 0
   const isTrueFalse = type === 'truefalse'
+  const questionType = isTrueFalse ? TYPE.displayScreen : TYPE.quizQuestion
+  const optionType = isTrueFalse ? TYPE.buttonLarge : TYPE.quizOption
 
   function advanceAfterHold() {
     const holdMs = FEEDBACK_HOLD_MS
@@ -68,12 +65,16 @@ export default function UnifiedQuestionScreen({
     }, holdMs))
   }
 
+  function vibrate(ms) {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(ms)
+  }
+
   function selectOption(opt) {
     if (status === null) {
       const isCorrect = opt === options[correctIdx]
       setTapped(opt)
       setStatus(isCorrect ? 'correct' : 'incorrect')
-      if (navigator.vibrate) navigator.vibrate(isCorrect ? 10 : 20)
+      vibrate(isCorrect ? 10 : 20)
       onAnswer?.(isCorrect)
 
       if (isCorrect || isTrueFalse) {
@@ -89,7 +90,7 @@ export default function UnifiedQuestionScreen({
       const isCorrect = opt === options[correctIdx]
       setRetryTapped(opt)
       setRetryStatus(isCorrect ? 'correct' : 'incorrect')
-      if (navigator.vibrate) navigator.vibrate(isCorrect ? 10 : 20)
+      vibrate(isCorrect ? 10 : 20)
       advanceAfterHold()
     }
   }
@@ -142,8 +143,6 @@ export default function UnifiedQuestionScreen({
         @keyframes uqs-mark-pop { 0% { transform: scale(0.4); opacity: 0; } 65% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes uqs-ring-out { 0% { transform: scale(0.6); opacity: 0.45; } 100% { transform: scale(1.9); opacity: 0; } }
         @keyframes uqs-check-draw { to { stroke-dashoffset: 0; } }
-        @keyframes uqs-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes uqs-fade-out { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-8px); } }
         @keyframes uqs-correct-glow {
           0%   { background: rgba(${rgb}, 0.28); box-shadow: 0 0 0 1px rgba(${rgb}, 0.38), 0 0 36px rgba(${rgb}, 0.48); }
           100% { background: rgba(${rgb}, 0.14); box-shadow: 0 0 0 1px rgba(${rgb}, 0.16), 0 0 22px rgba(${rgb}, 0.22); }
@@ -189,8 +188,7 @@ export default function UnifiedQuestionScreen({
         }}
       >
         <p style={{
-          ...TYPE.displayScreen,
-          fontSize: isTrueFalse ? 'clamp(28px, 7vw, 36px)' : 'clamp(30px, 7.4vw, 40px)',
+          ...questionType,
           marginTop: 0,
           marginBottom: isTrueFalse ? 18 : 22,
           marginInline: 'auto',
@@ -291,9 +289,7 @@ export default function UnifiedQuestionScreen({
                   borderRadius: isTrueFalse ? 18 : 14,
                   padding: isTrueFalse ? '15px 18px' : '14px 48px 14px 18px',
                   cursor: disabled ? 'default' : 'pointer',
-                  ...TYPE.button,
-                  fontSize: isTrueFalse ? '1.05rem' : '1.0625rem',
-                  lineHeight: 1.35,
+                  ...optionType,
                   color,
                   opacity,
                   WebkitTapHighlightColor: 'transparent',
@@ -349,9 +345,7 @@ export default function UnifiedQuestionScreen({
               </div>
               <p
                 style={{
-                  ...TYPE.bodyLarge,
-                  fontSize: 18,
-                  lineHeight: 1.55,
+                  ...TYPE.quizHint,
                   margin: 0,
                   color: '#F5F7FF',
                 }}
