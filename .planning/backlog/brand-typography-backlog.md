@@ -306,3 +306,68 @@ GENERAL.errorSoft
 - Any alpha/soft background variants are derived from the semantic token or explicitly named.
 - Tests or architecture checks catch reintroduced high-frequency hardcoded success/error hex values.
 - Subject palettes do not govern cross-subject feedback states.
+
+---
+
+## B11 — Micro label and badge typography token gap
+
+**Status:** Backlog  
+**Priority:** Medium  
+**Area:** `src/constants/typography.js`, exam chrome, badges, metadata labels, compact UI
+
+### Context
+A strict exact-match typography audit across `FactorWeb.jsx`, `ExamPaperDebrief.jsx`, and `ExamPaperQuestion.jsx` found no safe mechanical migrations to existing `TYPE` tokens. The small UI combinations use hand-tuned mixes of `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `letterSpacing`.
+
+Examples include adjacent 11px/700 labels in `ExamPaperQuestion.jsx` with materially different letter-spacing values, both close to `TYPE.eyebrow` but not exact. Forcing these to existing tokens would silently alter compact UI rhythm and risk visual drift.
+
+### Direction
+Treat this as a design-system gap, not a cleanup task. Propose new micro typography tokens only if repeated semantic patterns are found and visually approved.
+
+Possible token names:
+
+```js
+TYPE.microLabel
+TYPE.badge
+TYPE.statusLabel
+TYPE.examMeta
+```
+
+### Rules
+- Do not migrate typography by near-match.
+- Do not change letter-spacing, line-height, or weight without visual review.
+- Token names should describe the UI job, not only the size.
+- Keep per-context sizing allowed where the existing governance test intentionally allows it.
+- `Subjects.jsx` remains out of scope because the current governance test documents it as an intentional exception.
+
+### Acceptance criteria
+- Any new token proposal is based on repeated semantic use cases, not numeric similarity alone.
+- Existing UI remains unchanged until token values are approved.
+- Governance tests continue to avoid unsafe size/spacing judgment calls.
+- If new tokens are added, migration is narrow, visual, and screenshot-reviewed.
+
+---
+
+## B12 — Local typography fragment object duplication
+
+**Status:** Backlog  
+**Priority:** Medium  
+**Area:** `GalensDiagnostic.jsx`, `src/constants/typography.js`, typography governance tests
+
+### Context
+`GalensDiagnostic.jsx` defines local typography fragment objects such as `O` and `F`, including `fontFamily: "'Sora', sans-serif"`, even though `TYPE` is already imported in the same file.
+
+This is real duplication, similar in shape to the `Subjects.jsx` local palette issue, but it should not be mechanically collapsed into existing `TYPE` tokens because the per-instance font sizes and weights do not exactly match current tokens.
+
+### Direction
+Separate the duplication problem from the token-fit problem.
+
+### Rules
+- Do not force the file's per-instance size/weight combinations onto near-matching existing tokens.
+- Remove or reduce local font-family fragments only where it preserves visual output exactly.
+- Consider B11 micro typography tokens before any broader migration.
+- Preserve the current visual design unless a deliberate token proposal is accepted.
+
+### Acceptance criteria
+- Local typography fragments are documented and either removed safely or marked as intentional exceptions.
+- Any migration preserves visual output or is approved as a deliberate design change.
+- Governance tests can distinguish unsafe local font duplication from allowed per-context sizing.
