@@ -215,7 +215,8 @@ export default function UnifiedQuestionScreen({
             const isFirstTapped = tapped === opt
             const isRetryTapped = retryTapped === opt
             const isCorrectOpt = i === correctIdx
-            const shouldGlow = (isFirstTapped && status === 'correct') || (isRetryTapped && retryStatus === 'correct')
+            const hasCorrectRetry = retryStatus === 'correct'
+            const shouldGlow = (isFirstTapped && status === 'correct') || (isRetryTapped && hasCorrectRetry)
             let opacity = 1
             let background = 'rgba(21,23,32,0.9)'
             let border = '1px solid rgba(255,255,255,0.12)'
@@ -226,7 +227,7 @@ export default function UnifiedQuestionScreen({
             const retryDone = retryStatus !== null
 
             if (answered) {
-              if (isFirstTapped && status === 'incorrect') {
+              if (isFirstTapped && status === 'incorrect' && !hasCorrectRetry) {
                 background = 'rgba(160,40,36,0.10)'
                 border = '1px solid rgba(224,90,82,0.52)'
                 color = 'rgba(255,255,255,0.92)'
@@ -301,7 +302,7 @@ export default function UnifiedQuestionScreen({
                 }}
               >
                 {getOptionLabel(opt)}
-                {status === 'incorrect' && isFirstTapped && mark('incorrect')}
+                {status === 'incorrect' && isFirstTapped && !hasCorrectRetry && mark('incorrect')}
                 {status === 'correct' && isFirstTapped && mark('correct')}
                 {isRetryTapped && retryStatus === 'correct' && mark('correct')}
                 {isRetryTapped && retryStatus === 'incorrect' && mark('incorrect')}
