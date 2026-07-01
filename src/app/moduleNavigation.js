@@ -35,6 +35,31 @@ export function getCurrentStageFromNavigation(stageNavigation, screen) {
   return active?.title || stageNavigation[0]?.title || 'Intro'
 }
 
+// Pure: derive ModulePlayer's initial in-memory lifecycle state from a module's
+// definition and its persisted state object (see getModuleState/saveModuleState
+// in ModulePlayer.jsx — `saved` is always an object, `{}` on first-ever open or
+// on JSON-parse failure, never null/undefined, so no extra guarding is needed
+// here to match current behaviour).
+//
+// introDone always starts `true` regardless of `saved.introDone` — this mirrors
+// existing ModulePlayer behaviour exactly (IntroScreen gating never actually
+// triggers on mount today; preserved as-is, not a bug fix).
+export function computeInitialModuleState(module, saved) {
+  const rawScreen = saved.screen || 0
+  return {
+    hookDone:         saved.hookDone || !module.hook,
+    wylDone:          saved.wylDone ?? !module.outcomes,
+    // If user already has hookDone+wylDone saved (i.e. they've been to content
+    // before), treat recallDone as true to avoid forcing recall on existing progress.
+    recallDone:       saved.recallDone || !module.recall || !!(saved.hookDone && saved.wylDone),
+    introDone:        true,
+    // Guard against a stale saved index (e.g. after a module restructure).
+    screen:           rawScreen < module.screens.length ? rawScreen : 0,
+    examinerAttempts: saved.examinerAttempts || [],
+    completed:        saved.completed || false,
+  }
+}
+
 const CHAPTER_COPY = [
   'Momentum matters.',
   "That's another one locked in.",

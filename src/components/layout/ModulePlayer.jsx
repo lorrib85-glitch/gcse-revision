@@ -5,7 +5,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { SPACING } from '../../constants/spacing.js'
 import { recordActivity, MODULE_GROUPS } from '../../progress.js'
-import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation } from '../../app/moduleNavigation.js'
+import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialModuleState } from '../../app/moduleNavigation.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
@@ -1473,32 +1473,26 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   const _chapterGroup = MODULE_GROUPS.find(g => g.chapterIds.includes(module.id))
   const chapterNum    = _chapterGroup ? _chapterGroup.chapterIds.indexOf(module.id) + 1 : module.number
 
-  // hookDone / wylDone / introDone track whether the universal openers have been seen
-  // We persist these inside the module state so resuming skips them correctly
-  const [hookDone,   setHookDone]   = useState(() => saved.hookDone   || !module.hook)
-  const [wylDone,    setWylDone]    = useState(() => saved.wylDone ?? !module.outcomes)
-  // If user already has hookDone+wylDone saved (i.e. they've been to content before),
-  // treat recallDone as true to avoid forcing recall on existing progress.
-  const [recallDone, setRecallDone] = useState(() =>
-    saved.recallDone || !module.recall || !!(saved.hookDone && saved.wylDone)
-  )
-  const [introDone,  setIntroDone]  = useState(true)
+  // hookDone / wylDone / introDone track whether the universal openers have been seen.
+  // We persist these inside the module state so resuming skips them correctly.
+  // Initial values are derived by computeInitialModuleState (moduleNavigation.js).
+  const initial = computeInitialModuleState(module, saved)
+  const [hookDone,   setHookDone]   = useState(initial.hookDone)
+  const [wylDone,    setWylDone]    = useState(initial.wylDone)
+  const [recallDone, setRecallDone] = useState(initial.recallDone)
+  const [introDone,  setIntroDone]  = useState(initial.introDone)
   // navTo — in-memory only, drives navigation back to hook/wyl/recall without changing "done" flags
   // null | 'hook' | 'wyl' | 'recall'
   const [navTo, setNavTo] = useState(null)
-  const [screen, setScreen] = useState(() => {
-    const s = saved.screen || 0
-    // Guard against stale saved index (e.g. after a module restructure)
-    return s < module.screens.length ? s : 0
-  })
+  const [screen, setScreen] = useState(initial.screen)
   const [showWeakSpotRecovery, setShowWeakSpotRecovery] = useState(false)
   const [detectedWeakSpot, _setDetectedWeakSpot] = useState(null)
   const [recoveryQuizId, setRecoveryQuizId] = useState(null)
   const [showExaminer,         setShowExaminer]         = useState(false)
   const [showExaminerExplains, setShowExaminerExplains] = useState(false)
-  const [examinerAttempts, setExaminerAttempts] = useState(() => saved.examinerAttempts || [])
+  const [examinerAttempts, setExaminerAttempts] = useState(initial.examinerAttempts)
   // Sticks once a module has been finished — re-entering to review never un-completes it
-  const [completed, setCompleted] = useState(() => saved.completed || false)
+  const [completed, setCompleted] = useState(initial.completed)
   const total   = module.screens.length
   const isLast  = screen === total - 1
   const [animKey, setAnimKey] = useState(0)

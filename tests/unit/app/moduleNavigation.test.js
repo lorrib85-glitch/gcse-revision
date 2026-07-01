@@ -3,7 +3,16 @@ import {
   getStageNavigation,
   getCurrentStageFromNavigation,
   isFullScreenVideoScreen,
+  computeInitialModuleState,
 } from '../../../src/app/moduleNavigation.js'
+
+function makeModule(overrides = {}) {
+  return {
+    id: 'test-module',
+    screens: [{}, {}, {}, {}, {}],
+    ...overrides,
+  }
+}
 
 describe('getStageNavigation', () => {
   it('returns the provided stage data when module.stageNavigation has exactly 6 entries', () => {
@@ -140,5 +149,143 @@ describe('isFullScreenVideoScreen', () => {
 
   it('returns false for an unrelated screen type', () => {
     expect(isFullScreenVideoScreen({ type: 'quiz' })).toBe(false)
+  })
+})
+
+describe('computeInitialModuleState', () => {
+  it('fresh module with a hook: hookDone false, everything else at its own fresh default', () => {
+    const module = makeModule({ hook: { statement: 'x' } })
+    const result = computeInitialModuleState(module, {})
+    expect(result).toEqual({
+      hookDone: false,
+      wylDone: true,
+      recallDone: true,
+      introDone: true,
+      screen: 0,
+      examinerAttempts: [],
+      completed: false,
+    })
+  })
+
+  it('fresh module without a hook: hookDone true (nothing to gate on)', () => {
+    const module = makeModule()
+    const result = computeInitialModuleState(module, {})
+    expect(result.hookDone).toBe(true)
+  })
+
+  it('fresh module with outcomes: wylDone false', () => {
+    const module = makeModule({ outcomes: { bullets: ['a'] } })
+    expect(computeInitialModuleState(module, {}).wylDone).toBe(false)
+  })
+
+  it('fresh module without outcomes: wylDone true', () => {
+    const module = makeModule()
+    expect(computeInitialModuleState(module, {}).wylDone).toBe(true)
+  })
+
+  it('fresh module with recall: recallDone false', () => {
+    const module = makeModule({ recall: { questions: [] } })
+    expect(computeInitialModuleState(module, {}).recallDone).toBe(false)
+  })
+
+  it('fresh module without recall: recallDone true', () => {
+    const module = makeModule()
+    expect(computeInitialModuleState(module, {}).recallDone).toBe(true)
+  })
+
+  it('saved screen is restored when within range', () => {
+    const module = makeModule({ screens: Array.from({ length: 10 }, () => ({})) })
+    expect(computeInitialModuleState(module, { screen: 5 }).screen).toBe(5)
+  })
+
+  it('saved hookDone/wylDone/introDone are restored (introDone always true regardless)', () => {
+    const module = makeModule({ hook: { statement: 'x' }, outcomes: { bullets: [] } })
+    const result = computeInitialModuleState(module, { hookDone: true, wylDone: true })
+    expect(result.hookDone).toBe(true)
+    expect(result.wylDone).toBe(true)
+    expect(result.introDone).toBe(true) // always true — mirrors current ModulePlayer behaviour exactly
+  })
+
+  it('saved recallDone is restored directly when true', () => {
+    const module = makeModule({ recall: { questions: [] } })
+    expect(computeInitialModuleState(module, { recallDone: true }).recallDone).toBe(true)
+  })
+
+  it('saved hookDone+wylDone both true implies recallDone true even if recallDone was never saved', () => {
+    const module = makeModule({ recall: { questions: [] } })
+    const result = computeInitialModuleState(module, { hookDone: true, wylDone: true })
+    expect(result.recallDone).toBe(true)
+  })
+
+  it('saved examinerAttempts array is restored', () => {
+    const module = makeModule()
+    const saved = { examinerAttempts: [{ moduleId: 'x', finalMark: 3 }] }
+    expect(computeInitialModuleState(module, saved).examinerAttempts).toEqual(saved.examinerAttempts)
+  })
+
+  it('stale saved screen index at exactly module.screens.length resets to 0', () => {
+    const module = makeModule({ screens: [{}, {}, {}, {}, {}] })
+    expect(computeInitialModuleState(module, { screen: 5 }).screen).toBe(0)
+  })
+
+  it('stale saved screen index beyond module.screens.length resets to 0', () => {
+    const module = makeModule({ screens: [{}, {}, {}, {}, {}] })
+    expect(computeInitialModuleState(module, { screen: 99 }).screen).toBe(0)
+  })
+
+  it('saved screen index at the last valid position (length - 1) is kept, not reset', () => {
+    const module = makeModule({ screens: [{}, {}, {}, {}, {}] })
+    expect(computeInitialModuleState(module, { screen: 4 }).screen).toBe(4)
+  })
+
+  it('missing saved.screen defaults to 0', () => {
+    const module = makeModule()
+    expect(computeInitialModuleState(module, {}).screen).toBe(0)
+  })
+
+  it('completed saved module reopens with all lifecycle flags respected and completed true', () => {
+    const module = makeModule({
+      hook: { statement: 'x' },
+      outcomes: { bullets: [] },
+      recall: { questions: [] },
+    })
+    // Matches the exact shape ModulePlayer's completeModule() persists (ModulePlayer.jsx:1563):
+    // screen: total, hookDone/wylDone/recallDone/introDone: true, completed: true.
+    const saved = {
+      screen: module.screens.length,
+      hookDone: true,
+      wylDone: true,
+      recallDone: true,
+      introDone: true,
+      completed: true,
+    }
+    const result = computeInitialModuleState(module, saved)
+    expect(result.completed).toBe(true)
+    expect(result.hookDone).toBe(true)
+    expect(result.wylDone).toBe(true)
+    expect(result.recallDone).toBe(true)
+    expect(result.introDone).toBe(true)
+    // screen: total is one past the end, so the stale-index guard resets it to 0 —
+    // this is existing behaviour (completeModule's sentinel screen value is not
+    // meant to be resumed at directly; content re-renders from screen 0).
+    expect(result.screen).toBe(0)
+  })
+
+  it('missing/corrupt saved object ({} — what getModuleState returns on parse failure) falls back to fresh-start defaults for every field', () => {
+    const module = makeModule({
+      hook: { statement: 'x' },
+      outcomes: { bullets: [] },
+      recall: { questions: [] },
+    })
+    const result = computeInitialModuleState(module, {})
+    expect(result).toEqual({
+      hookDone: false,
+      wylDone: false,
+      recallDone: false,
+      introDone: true,
+      screen: 0,
+      examinerAttempts: [],
+      completed: false,
+    })
   })
 })

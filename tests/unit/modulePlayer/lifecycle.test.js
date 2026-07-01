@@ -1,13 +1,22 @@
-import { describe, it } from 'vitest'
+import { describe, it, expect } from 'vitest'
+import { computeInitialModuleState } from '../../../src/app/moduleNavigation.js'
 
 // ─────────────────────────────────────────────────────────────────────────
-// ModulePlayer Phase 2 — pinned behaviour spec (todo-only, no assertions yet)
+// ModulePlayer Phase 2 — pinned behaviour spec
 //
-// Every behaviour below currently lives entirely inside the closure of the
-// `ModulePlayer` function component in src/components/layout/ModulePlayer.jsx
-// (useState initializers, `go`/`goTo`/`handleFinish`/`nextLabel`, and inline
-// JSX gating `if` conditions). None of it is exported or callable in
-// isolation, so none of it can be asserted against from `tests/unit` today:
+// Behaviours below are converted to real assertions once the underlying
+// logic is extracted out of ModulePlayer.jsx's component closure into a
+// pure, importable function. As of this file:
+//
+//   - "fresh module start", "resume saved module state", "stale saved
+//     screen index reset", and one "completed module reopening" item are
+//     now real assertions against computeInitialModuleState (moduleNavigation.js).
+//   - Everything else (go/goTo, hook/outcomes/recall render gating,
+//     completeModule's own persistence side effect, last-screen finish
+//     decision) still lives entirely inside `ModulePlayer`'s component
+//     closure (`go`/`goTo`/`handleFinish`/`nextLabel`, inline JSX `if`
+//     gating). None of it is exported or callable in isolation, so none of
+//     it can be asserted against from `tests/unit` yet:
 //
 //   - `tests/unit` runs under vitest environment: 'node' (vitest.config.js)
 //     — there is no `document`/`window`, so ModulePlayer cannot be rendered.
@@ -19,44 +28,124 @@ import { describe, it } from 'vitest'
 //     Storybook's browser-mode Vitest addon, which renders via real
 //     Chromium, not jsdom, and requires a `.stories.jsx` file per
 //     COMPONENT_AUTHORING_RULES.md).
-//   - Extracting the underlying logic into pure, importable functions is
-//     explicitly out of scope for this pass (Phase 2 tests-only).
+//   - Extracting the remaining logic into pure, importable functions is
+//     out of scope for this pass.
 //
-// Each `it.todo(...)` below names one pinned behaviour, in given/when/then
-// form, with the exact current source location. When Phase 2 extraction
-// lands (see the recommendation in the extraction-plan report), replace the
-// matching `it.todo` with a real `it` that imports and calls the extracted
-// pure function and asserts the same outcome described here — the intent is
-// that these names ARE the acceptance criteria for that extraction, not that
-// the extraction should look for new requirements.
+// Each remaining `it.todo(...)` names one pinned behaviour, in given/when/
+// then form, with the exact current source location. When its extraction
+// lands, replace the matching `it.todo` with a real `it` the same way the
+// items below were converted.
 // ─────────────────────────────────────────────────────────────────────────
 
-describe('ModulePlayer — fresh module start (src/components/layout/ModulePlayer.jsx:1478-1493)', () => {
-  it.todo('given no saved state and module.hook present, hookDone initialises to false')
-  it.todo('given no saved state and module.hook absent, hookDone initialises to true')
-  it.todo('given no saved state and module.outcomes present, wylDone initialises to false')
-  it.todo('given no saved state and module.outcomes absent, wylDone initialises to true')
-  it.todo('given no saved state and module.recall present, recallDone initialises to false')
-  it.todo('given no saved state, screen initialises to 0')
-  it.todo('given no saved state, examinerAttempts initialises to []')
-  it.todo('given no saved state, completed initialises to false')
+function makeModule(overrides = {}) {
+  return {
+    id: 'test-module',
+    screens: [{}, {}, {}, {}, {}],
+    ...overrides,
+  }
+}
+
+describe('ModulePlayer — fresh module start (src/components/layout/ModulePlayer.jsx:1478-1493, computeInitialModuleState)', () => {
+  it('given no saved state and module.hook present, hookDone initialises to false', () => {
+    const module = makeModule({ hook: { statement: 'x' } })
+    expect(computeInitialModuleState(module, {}).hookDone).toBe(false)
+  })
+
+  it('given no saved state and module.hook absent, hookDone initialises to true', () => {
+    const module = makeModule()
+    expect(computeInitialModuleState(module, {}).hookDone).toBe(true)
+  })
+
+  it('given no saved state and module.outcomes present, wylDone initialises to false', () => {
+    const module = makeModule({ outcomes: { bullets: [] } })
+    expect(computeInitialModuleState(module, {}).wylDone).toBe(false)
+  })
+
+  it('given no saved state and module.outcomes absent, wylDone initialises to true', () => {
+    const module = makeModule()
+    expect(computeInitialModuleState(module, {}).wylDone).toBe(true)
+  })
+
+  it('given no saved state and module.recall present, recallDone initialises to false', () => {
+    const module = makeModule({ recall: { questions: [] } })
+    expect(computeInitialModuleState(module, {}).recallDone).toBe(false)
+  })
+
+  it('given no saved state, screen initialises to 0', () => {
+    const module = makeModule()
+    expect(computeInitialModuleState(module, {}).screen).toBe(0)
+  })
+
+  it('given no saved state, examinerAttempts initialises to []', () => {
+    const module = makeModule()
+    expect(computeInitialModuleState(module, {}).examinerAttempts).toEqual([])
+  })
+
+  it('given no saved state, completed initialises to false', () => {
+    const module = makeModule()
+    expect(computeInitialModuleState(module, {}).completed).toBe(false)
+  })
 })
 
-describe('ModulePlayer — resume saved module state (src/components/layout/ModulePlayer.jsx:1478-1499)', () => {
-  it.todo('given saved.screen = 5, screen resumes at 5')
-  it.todo('given saved.hookDone = true, hookDone resumes as true even when module.hook is present')
-  it.todo('given saved.wylDone = true, wylDone resumes as true even when module.outcomes is present')
-  it.todo('given saved.hookDone and saved.wylDone are both true but recallDone was never saved, recallDone initialises to true (existing-progress users skip forced recall) — ModulePlayer.jsx:1480-1484')
-  it.todo('given saved.examinerAttempts is a populated array, examinerAttempts resumes from that array')
-  it.todo('given saved.completed = true, completed resumes as true')
+describe('ModulePlayer — resume saved module state (src/components/layout/ModulePlayer.jsx:1478-1499, computeInitialModuleState)', () => {
+  it('given saved.screen = 5, screen resumes at 5', () => {
+    const module = makeModule({ screens: Array.from({ length: 10 }, () => ({})) })
+    expect(computeInitialModuleState(module, { screen: 5 }).screen).toBe(5)
+  })
+
+  it('given saved.hookDone = true, hookDone resumes as true even when module.hook is present', () => {
+    const module = makeModule({ hook: { statement: 'x' } })
+    expect(computeInitialModuleState(module, { hookDone: true }).hookDone).toBe(true)
+  })
+
+  it('given saved.wylDone = true, wylDone resumes as true even when module.outcomes is present', () => {
+    const module = makeModule({ outcomes: { bullets: [] } })
+    expect(computeInitialModuleState(module, { wylDone: true }).wylDone).toBe(true)
+  })
+
+  it('given saved.hookDone and saved.wylDone are both true but recallDone was never saved, recallDone initialises to true (existing-progress users skip forced recall) — ModulePlayer.jsx:1480-1484', () => {
+    const module = makeModule({ recall: { questions: [] } })
+    const result = computeInitialModuleState(module, { hookDone: true, wylDone: true })
+    expect(result.recallDone).toBe(true)
+  })
+
+  it('given saved.examinerAttempts is a populated array, examinerAttempts resumes from that array', () => {
+    const module = makeModule()
+    const attempts = [{ moduleId: 'test-module', finalMark: 4 }]
+    expect(computeInitialModuleState(module, { examinerAttempts: attempts }).examinerAttempts).toEqual(attempts)
+  })
+
+  it('given saved.completed = true, completed resumes as true', () => {
+    const module = makeModule()
+    expect(computeInitialModuleState(module, { completed: true }).completed).toBe(true)
+  })
 })
 
-describe('ModulePlayer — stale saved screen index reset (src/components/layout/ModulePlayer.jsx:1489-1493)', () => {
-  it.todo('given saved.screen < module.screens.length, screen resumes at saved.screen exactly')
-  it.todo('given saved.screen === module.screens.length - 1 (last valid index), screen resumes at that index, not reset')
-  it.todo('given saved.screen === module.screens.length (one past the end, e.g. after module restructure), screen resets to 0')
-  it.todo('given saved.screen > module.screens.length, screen resets to 0')
-  it.todo('given saved.screen is undefined, screen defaults to 0')
+describe('ModulePlayer — stale saved screen index reset (src/components/layout/ModulePlayer.jsx:1489-1493, computeInitialModuleState)', () => {
+  it('given saved.screen < module.screens.length, screen resumes at saved.screen exactly', () => {
+    const module = makeModule({ screens: [{}, {}, {}, {}, {}] })
+    expect(computeInitialModuleState(module, { screen: 2 }).screen).toBe(2)
+  })
+
+  it('given saved.screen === module.screens.length - 1 (last valid index), screen resumes at that index, not reset', () => {
+    const module = makeModule({ screens: [{}, {}, {}, {}, {}] })
+    expect(computeInitialModuleState(module, { screen: 4 }).screen).toBe(4)
+  })
+
+  it('given saved.screen === module.screens.length (one past the end, e.g. after module restructure), screen resets to 0', () => {
+    const module = makeModule({ screens: [{}, {}, {}, {}, {}] })
+    expect(computeInitialModuleState(module, { screen: 5 }).screen).toBe(0)
+  })
+
+  it('given saved.screen > module.screens.length, screen resets to 0', () => {
+    const module = makeModule({ screens: [{}, {}, {}, {}, {}] })
+    expect(computeInitialModuleState(module, { screen: 99 }).screen).toBe(0)
+  })
+
+  it('given saved.screen is undefined, screen defaults to 0', () => {
+    const module = makeModule()
+    expect(computeInitialModuleState(module, {}).screen).toBe(0)
+  })
 })
 
 describe('ModulePlayer — go/goTo screen clamping (src/components/layout/ModulePlayer.jsx:1517-1533)', () => {
@@ -80,7 +169,34 @@ describe('ModulePlayer — hook/outcomes/recall gating decisions (src/components
 
 describe('ModulePlayer — completed module reopening (src/components/layout/ModulePlayer.jsx:1556-1568, 1482-1484)', () => {
   it.todo('completeModule() persists screen=total, hookDone/wylDone/recallDone/introDone all true, and completed=true, regardless of the screen the user finished on')
-  it.todo('reopening a module with saved.completed=true starts directly at content — hook/outcomes/recall gates are all bypassed')
+
+  it('reopening a module with saved.completed=true starts directly at content — hook/outcomes/recall gates are all bypassed (computeInitialModuleState)', () => {
+    const module = makeModule({
+      hook: { statement: 'x' },
+      outcomes: { bullets: [] },
+      recall: { questions: [] },
+    })
+    // Matches the exact shape completeModule() persists (ModulePlayer.jsx:1563).
+    const saved = {
+      screen: module.screens.length,
+      hookDone: true,
+      wylDone: true,
+      recallDone: true,
+      introDone: true,
+      completed: true,
+    }
+    const result = computeInitialModuleState(module, saved)
+    expect(result.completed).toBe(true)
+    expect(result.hookDone).toBe(true)
+    expect(result.wylDone).toBe(true)
+    expect(result.recallDone).toBe(true)
+    expect(result.introDone).toBe(true)
+    // completeModule's saved screen (= total) is one past the end, so the
+    // stale-index guard resets it to 0 — content still renders correctly
+    // because the hook/outcomes/recall gates are all already satisfied above.
+    expect(result.screen).toBe(0)
+  })
+
   it.todo('reviewing a completed module and navigating backward with go(-1) does not clear the persisted completed flag')
 })
 
