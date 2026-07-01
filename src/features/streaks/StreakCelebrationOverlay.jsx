@@ -29,7 +29,7 @@ function WeekTracker({ completedWeekDays, todayIndex, reduced }) {
   const completedLineWidth = lastCompletedIndex <= 0 ? 0 : (lastCompletedIndex / (WEEKDAY_LABELS.length - 1)) * 100
 
   const circleBase = {
-    width: 34, height: 34, borderRadius: RADII.pill,
+    width: 32, height: 32, borderRadius: RADII.pill,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     borderWidth: 1.5, borderStyle: 'solid', boxSizing: 'border-box',
   }
@@ -37,30 +37,30 @@ function WeekTracker({ completedWeekDays, todayIndex, reduced }) {
   return (
     <div style={{
       width: '100%',
-      padding: `${SPACING.compact}px ${SPACING.compact}px ${SPACING.standard}px`,
+      padding: `${SPACING.compact - 2}px ${SPACING.compact}px ${SPACING.compact + 2}px`,
       borderRadius: RADII.panel,
       border: '1px solid rgba(255,255,255,0.09)',
       background: 'rgba(255,255,255,0.025)',
       boxShadow: '0 18px 50px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.04)',
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: SPACING.compact }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: SPACING.compact - 4 }}>
         {WEEKDAY_LABELS.map((label, i) => (
-          <span key={i} style={{ ...TYPE.metadata, fontSize: 11, color: GENERAL.slate, width: 34, textAlign: 'center' }}>
+          <span key={i} style={{ ...TYPE.metadata, fontSize: 11, color: GENERAL.slate, width: 32, textAlign: 'center' }}>
             {label}
           </span>
         ))}
       </div>
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div aria-hidden="true" style={{
-          position: 'absolute', left: 17, right: 17, top: '50%',
-          height: 2, background: 'rgba(255,255,255,0.08)', transform: 'translateY(-50%)',
+          position: 'absolute', left: 16, right: 16, top: '50%',
+          height: 2, background: 'rgba(255,255,255,0.045)', transform: 'translateY(-50%)',
         }} />
         <div aria-hidden="true" className={reduced ? undefined : 'streak-cel-line'} style={{
-          position: 'absolute', left: 17, top: '50%',
-          width: `calc((100% - 34px) * ${completedLineWidth / 100})`,
+          position: 'absolute', left: 16, top: '50%',
+          width: `calc((100% - 32px) * ${completedLineWidth / 100})`,
           height: 2,
-          background: `rgba(${GENERAL.tealRgb},0.78)`,
-          boxShadow: `0 0 16px rgba(${GENERAL.tealRgb},0.18)`,
+          background: `rgba(${GENERAL.tealRgb},0.9)`,
+          boxShadow: `0 0 16px rgba(${GENERAL.tealRgb},0.22)`,
           transform: reduced ? 'translateY(-50%) scaleX(1)' : 'translateY(-50%) scaleX(0)',
           transformOrigin: 'left center',
           animationDelay: reduced ? undefined : `${START_MS.tracker - 130}ms`,
@@ -180,8 +180,8 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
 
         @keyframes streak-cel-glow-in {
           0%   { opacity: 0; transform: scale(0.8); }
-          45%  { opacity: 1; transform: scale(1.03); }
-          100% { opacity: 0.9; transform: scale(1); }
+          45%  { opacity: 0.88; transform: scale(1.02); }
+          100% { opacity: 0.72; transform: scale(1); }
         }
         .streak-cel-glow { animation: streak-cel-glow-in ${MOTION.duration.standard} ${MOTION.easing.gentle} both; }
 
@@ -222,33 +222,33 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
       `}</style>
 
       <div style={{
-        width: '100%', maxWidth: 360,
+        width: '100%', maxWidth: 352,
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         gap: SPACING.standard,
         transform: 'translateY(-28px)',
       }}>
 
-        <div style={{ position: 'relative', width: 178, height: 178, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', width: 166, height: 166, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div
             aria-hidden="true"
             className={reduced ? undefined : 'streak-cel-glow'}
             style={{
-              position: 'absolute', inset: -52, borderRadius: '50%',
-              background: `radial-gradient(circle, rgba(${GENERAL.tealRgb},0.28) 0%, rgba(${GENERAL.tealRgb},0.13) 36%, rgba(${GENERAL.coralRgb},0.08) 52%, transparent 72%)`,
-              opacity: reduced ? 0.9 : undefined,
+              position: 'absolute', inset: -38, borderRadius: '50%',
+              background: `radial-gradient(circle, rgba(${GENERAL.tealRgb},0.22) 0%, rgba(${GENERAL.tealRgb},0.10) 34%, rgba(${GENERAL.coralRgb},0.06) 50%, transparent 68%)`,
+              opacity: reduced ? 0.72 : undefined,
               animationDelay: reduced ? undefined : `${START_MS.glow}ms`,
             }}
           />
           <img
             src="/streak-flame-512.webp"
             alt=""
-            width={154}
-            height={154}
+            width={148}
+            height={148}
             className={reduced ? undefined : 'streak-cel-flame'}
             style={{
               position: 'relative', zIndex: 1, objectFit: 'contain',
               opacity: reduced ? 1 : undefined,
-              filter: `drop-shadow(0 0 28px rgba(${GENERAL.coralRgb},0.24)) drop-shadow(0 0 52px rgba(${GENERAL.tealRgb},0.18))`,
+              filter: `drop-shadow(0 0 24px rgba(${GENERAL.coralRgb},0.22)) drop-shadow(0 0 42px rgba(${GENERAL.tealRgb},0.14))`,
               animationDelay: reduced ? undefined : `${START_MS.flame}ms`,
             }}
           />
@@ -264,7 +264,7 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
             animationDelay: reduced ? undefined : `${START_MS.heading}ms`,
           }}
         >
-          <div style={{ ...TYPE.displayHero, fontSize: 'clamp(36px, 11vw, 58px)', color: GENERAL.softWhite }}>
+          <div style={{ ...TYPE.displayHero, fontSize: 'clamp(34px, 10vw, 50px)', color: GENERAL.softWhite }}>
             {displayCount} day <span style={{ color: GENERAL.teal }}>streak</span>
           </div>
           <div style={{ ...TYPE.bodyLarge, color: GENERAL.slate, marginTop: SPACING.compact }}>
