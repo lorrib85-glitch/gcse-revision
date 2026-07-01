@@ -1,12 +1,12 @@
 /**
- * Architecture guard tests for the quickfire feature refactor (Phases 1.5–1.7).
+ * Architecture guard tests for the quickfire feature refactor (Phases 1.5–1.8).
  *
  * These tests enforce the module boundaries established during the refactor
  * and prevent regression toward a monolithic QuickFire.jsx.
  *
- * TODO (Phase 1.8 — ExamMode extraction): after ExamMode state machine,
- * startExamRound, ExamRoundDebrief and countdown/timer/scoring flows are
- * extracted, tighten the QuickFire.jsx line limit from 1800 → 500.
+ * TODO (post Phase 1.8): tighten the QuickFire.jsx line limit to 500 once
+ * remaining subject-specific browser fragments (EnglishBrowser, SociologyBrowser,
+ * ChemistryBrowser, ChemistryTopicView) are extracted to their own files.
  */
 
 import { describe, it, expect } from 'vitest'
@@ -33,18 +33,19 @@ function definesTopLevel(src, name) {
 }
 
 // ─── Rule 1: File size ────────────────────────────────────────────────────────
-// QuickFire.jsx is being progressively reduced. The 1800-line limit is a
-// temporary ceiling for Phase 1.7 (post-Maths extraction). It should drop to
-// 500 once ExamMode is extracted in Phase 1.8.
+// Phase 1.8 (ExamMode extraction) brought QuickFire.jsx from ~1524 → ~638 lines.
+// Ceiling is set to 900 as a safe guard while subject browsers remain inline.
+// TODO: reduce to 500 once EnglishBrowser, SociologyBrowser, ChemistryBrowser
+// and ChemistryTopicView are extracted to their own files.
 
 describe('QuickFire.jsx — file-size boundary', () => {
-  it('is below 1800 lines (TODO: reduce to 500 after Phase 1.8 ExamMode extraction)', () => {
+  it('is below 900 lines (TODO: reduce to 500 after browser components are extracted)', () => {
     const lineCount = qfSrc.split('\n').length
     expect(
       lineCount,
-      `QuickFire.jsx has ${lineCount} lines — must stay below 1800. ` +
-      'After ExamMode is extracted (Phase 1.8) lower this limit to 500.',
-    ).toBeLessThan(1800)
+      `QuickFire.jsx has ${lineCount} lines — must stay below 900. ` +
+      'Extract remaining browser components to reduce to 500.',
+    ).toBeLessThan(900)
   })
 })
 
@@ -61,6 +62,7 @@ describe('QuickFire.jsx — banned inline definitions', () => {
     ['TopicPracticeMode',    'modes/TopicPracticeMode.jsx'],
     ['QuickFireQuestionScreen', 'components/QuickFireQuestionScreen.jsx'],
     ['QuickFireMode',        'modes/QuickFireMode.jsx'],
+    ['ExamMode',             'modes/ExamMode.jsx'],
   ]
 
   for (const [name, extractedPath] of BANNED_COMPONENTS) {
@@ -79,6 +81,13 @@ describe('QuickFire.jsx — banned inline definitions', () => {
       'QuickFire.jsx defines PAST_PAPER_QS — move question banks to src/data/questionBanks/ and access via QUESTION_BANKS_BY_MODULE',
     ).toBe(false)
   })
+
+  it('does not define startExamRound inline (exam round logic lives in modes/ExamMode.jsx)', () => {
+    expect(
+      definesTopLevel(qfSrc, 'startExamRound'),
+      'QuickFire.jsx defines startExamRound — it was extracted to modes/ExamMode.jsx in Phase 1.8',
+    ).toBe(false)
+  })
 })
 
 // ─── Rule 3: Extracted mode files ────────────────────────────────────────────
@@ -91,6 +100,7 @@ describe('Quickfire — extracted mode files', () => {
     'src/features/quickfire/modes/MathsBrowser.jsx',
     'src/features/quickfire/modes/MathsTopicView.jsx',
     'src/features/quickfire/modes/MathsQuestion.jsx',
+    'src/features/quickfire/modes/ExamMode.jsx',
   ]
 
   for (const path of MODES) {
