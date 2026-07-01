@@ -205,7 +205,7 @@ Prevent brand and typography drift as more modules are generated.
 
 ## B9 — General dark surface token gap
 
-**Status:** Backlog  
+**Status:** In progress  
 **Priority:** High  
 **Area:** `src/constants/generalTheme.js`, `src/styles.css`, shared chrome, cross-subject screens, tests
 
@@ -219,26 +219,16 @@ Repeated dark colours are being used as general app chrome rather than subject i
 
 Some are numerically close to subject palette tokens, but replacing them with Maths/Chemistry/Physics tokens would be semantically wrong. Example: `#0D1424` is numerically close to `Physics.background`, but its call sites are in `ModulePlayer.jsx`, `QuickFire.jsx`, and `MathsQuestion.jsx` — cross-subject and Maths-specific, not Physics. Distance-matching alone would create misleading token references and future palette coupling.
 
+### Progress
+- Added additive `GENERAL` tokens in `src/constants/generalTheme.js`:
+  - `backgroundApp: '#08090D'`
+  - `backgroundSurface: '#151720'`
+  - `backgroundSunken: '#0D0F14'`
+  - `backgroundPanel: '#0D1424'`
+- No call sites have been migrated yet, so visual output is unchanged.
+
 ### Direction
-Create deliberately named `GENERAL` tokens for shared dark surfaces, then migrate by meaning rather than by colour similarity.
-
-Suggested token shape:
-
-```js
-GENERAL.background.app
-GENERAL.background.surface
-GENERAL.background.sunken
-GENERAL.background.panel
-```
-
-Or, if the existing `GENERAL` object remains flatter:
-
-```js
-GENERAL.bgApp
-GENERAL.bgSurface
-GENERAL.bgSunken
-GENERAL.bgPanel
-```
+Migrate repeated raw values to the new deliberately named `GENERAL` tokens by meaning rather than by colour similarity.
 
 ### Rules
 - Do not map general chrome colours to subject palettes just because the hex values are close.
@@ -246,6 +236,11 @@ GENERAL.bgPanel
 - Decide token names by semantic role: app background, raised surface, sunken surface, panel/chrome.
 - Preserve intentional subject-specific backgrounds where they exist.
 - Avoid a broad blind replace; inspect call sites and migrate in small batches.
+
+### Remaining work
+- Migrate one area at a time, not all ~91 call sites in one pass.
+- Prioritise low-risk shared chrome after ModulePlayer architecture work settles.
+- Add tests or search checks once migration patterns are proven.
 
 ### Acceptance criteria
 - New `GENERAL` dark surface tokens exist with clear names.
@@ -258,12 +253,12 @@ GENERAL.bgPanel
 
 ## B10 — Semantic feedback colour token gap
 
-**Status:** Backlog  
+**Status:** In progress  
 **Priority:** High  
 **Area:** `src/constants/generalTheme.js`, feedback states, quizzes, Quick Fire, question components, tests
 
 ### Context
-Correct/incorrect feedback colours are repeated across the app, but there is no clearly approved semantic `GENERAL.success` / `GENERAL.error` token pair.
+Correct/incorrect feedback colours are repeated across the app, but there was no clearly approved semantic `GENERAL.success` / `GENERAL.error` token pair.
 
 Current audit examples include:
 
@@ -272,26 +267,20 @@ Current audit examples include:
 
 These should not be treated as subject colours. They represent semantic feedback states that can appear in any subject: correct answer, success state, wrong answer, error state, validation failure, or feedback glow.
 
+### Progress
+- Added additive `GENERAL` feedback tokens in `src/constants/generalTheme.js`:
+  - `success: '#4DFF88'`
+  - `successSoft: '#38D27A'`
+  - `error: '#FF5D73'`
+  - `errorSoft: '#FF5C7A'`
+- Migrated clear QuickFire answer-feedback uses in:
+  - `src/features/quickfire/QuickFire.jsx`
+  - `src/features/quickfire/modes/MathsQuestion.jsx`
+  - `src/features/quickfire/utils.js`
+- Left non-feedback uses untouched, including calculator badges, Sociology accent colour, Paper 1/Paper 2 filter-pill state, diagram labels, and exam countdown urgency colour.
+
 ### Direction
-Create semantic feedback tokens in `GENERAL`, then migrate call sites by meaning.
-
-Suggested token shape:
-
-```js
-GENERAL.feedback.success
-GENERAL.feedback.successSoft
-GENERAL.feedback.error
-GENERAL.feedback.errorSoft
-```
-
-Or, if the current `GENERAL` object remains flatter:
-
-```js
-GENERAL.success
-GENERAL.successSoft
-GENERAL.error
-GENERAL.errorSoft
-```
+Continue migrating semantic feedback uses in small scoped passes only where the meaning is clearly success/error feedback.
 
 ### Rules
 - Do not map correct/incorrect colours to subject palettes.
@@ -299,6 +288,12 @@ GENERAL.errorSoft
 - Keep semantic feedback separate from decorative brand accents.
 - Treat success/error colours as functional UI states, not subject identity.
 - Preserve accessibility and contrast when choosing final token values.
+- Do not migrate visually similar colours unless the semantic role is clear.
+
+### Remaining work
+- Audit other quiz/answer-feedback components outside QuickFire.
+- Add tests or search checks once more semantic feedback call sites have been migrated.
+- Keep documented exceptions for non-feedback uses.
 
 ### Acceptance criteria
 - Approved semantic success/error tokens exist in `GENERAL`.
