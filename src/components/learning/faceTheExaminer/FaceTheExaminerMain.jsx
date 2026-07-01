@@ -57,7 +57,7 @@ export default function FaceTheExaminerMain(props) {
   }
 
   const ctaBtnStyle = enabled => ({
-    ...TYPE.buttonText,
+    ...TYPE.button,
     display: 'block',
     width: '100%',
     minHeight: 54,
@@ -90,8 +90,8 @@ export default function FaceTheExaminerMain(props) {
 
         <div style={{ position: 'relative', zIndex: 20, background: 'rgba(8,9,13,0.78)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderBottom: '1px solid rgba(245,238,225,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: 52, flexShrink: 0 }}>
           <BackButton onClick={onExit} />
-          <div style={{ ...TYPE.metadataText, color: 'rgba(255,255,255,0.52)' }}>Face the examiner<span style={{ color: accent, marginLeft: 6 }}>· {module.subject || 'History'}</span></div>
-          <div style={{ ...TYPE.metadataText, color: accent }}>{examiner.marks} marks</div>
+          <div style={{ ...TYPE.metadata, color: 'rgba(255,255,255,0.52)' }}>Face the examiner<span style={{ color: accent, marginLeft: 6 }}>· {module.subject || 'History'}</span></div>
+          <div style={{ ...TYPE.metadata, color: accent }}>{examiner.marks} marks</div>
         </div>
 
         <ScreenTextBlock
@@ -99,8 +99,8 @@ export default function FaceTheExaminerMain(props) {
           accent={accent}
           inset
           style={{ background: 'transparent', borderBottom: 'none', flexShrink: 0, position: 'relative', zIndex: 1, paddingBottom: 8, opacity: introBlocksMainInteraction ? 0 : 1, transition: 'opacity 220ms ease 420ms' }}
-          titleStyle={{ ...TYPE.sectionHeading, color: 'rgba(245,238,225,0.96)', marginBottom: 10 }}
-          bodyStyle={{ ...TYPE.examQuestionText, color: 'rgba(245,238,225,0.76)' }}
+          titleStyle={{ ...TYPE.displaySection, color: 'rgba(245,238,225,0.96)', marginBottom: 10 }}
+          bodyStyle={{ ...TYPE.examQuestion, color: 'rgba(245,238,225,0.76)' }}
         >
           {examiner.question}
         </ScreenTextBlock>
@@ -109,7 +109,7 @@ export default function FaceTheExaminerMain(props) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, padding: 3, borderRadius: 999, background: 'rgba(0,0,0,0.18)', border: '1px solid rgba(245,238,225,0.07)' }}>
             {['answer', 'marking'].map(tab => {
               const active = activeTab === tab
-              return <button key={tab} onClick={() => setActiveTab(tab)} style={{ ...TYPE.buttonText, minHeight: 34, borderRadius: 999, border: 'none', background: active ? `${accent}1C` : 'transparent', color: active ? accent : 'rgba(255,255,255,0.48)', boxShadow: active ? `inset 0 0 0 1px ${accent}44` : 'none', cursor: 'pointer', transition: 'all 0.16s ease' }}>{TAB_LABELS[tab]}</button>
+              return <button key={tab} onClick={() => setActiveTab(tab)} style={{ ...TYPE.button, minHeight: 34, borderRadius: 999, border: 'none', background: active ? `${accent}1C` : 'transparent', color: active ? accent : 'rgba(255,255,255,0.48)', boxShadow: active ? `inset 0 0 0 1px ${accent}44` : 'none', cursor: 'pointer', transition: 'all 0.16s ease' }}>{TAB_LABELS[tab]}</button>
             })}
           </div>
         </div>}
@@ -117,14 +117,14 @@ export default function FaceTheExaminerMain(props) {
         <div className="fte-scroll" style={{ flex: 1, overflowY: 'auto', padding: `${SCREEN_TEXT_LAYOUT.blockGap}px ${SCREEN_TEXT_LAYOUT.mobileInset}px`, paddingBottom: bottomPanelHeight > 0 ? bottomPanelHeight + 16 : 80, WebkitOverflowScrolling: 'touch', position: 'relative', zIndex: 1, opacity: introBlocksMainInteraction ? 0 : 1, transform: introBlocksMainInteraction ? 'translateY(12px)' : 'translateY(0)', transition: 'opacity 260ms ease 560ms, transform 260ms ease 560ms' }}>
           {showAnswer && <AnswerPanel accent={accent} examiner={examiner} segments={segments} isReveal={isReveal} isImproving={isImproving} expandedEdit={expandedEdit} setExpandedEdit={setExpandedEdit} studentEdits={studentEdits} setStudentEdits={setStudentEdits} expandedTextareaRef={expandedTextareaRef} />}
           {showMarking && <MarkingPanel accent={accent} examiner={examiner} guessedMark={guessedMark} setGuessedMark={setGuessedMark} selectedCriteria={selectedCriteria} setSelectedCriteria={setSelectedCriteria} />}
-          {remarkError && <div style={{ marginTop: 12, padding: '10px 14px', borderRadius: 10, background: 'rgba(192,80,85,0.12)', border: '1px solid rgba(192,80,85,0.3)', ...TYPE.bodySmallText, color: '#E8746A' }}>{remarkError}</div>}
+          {remarkError && <div style={{ marginTop: 12, padding: '10px 14px', borderRadius: 10, background: 'rgba(192,80,85,0.12)', border: '1px solid rgba(192,80,85,0.3)', ...TYPE.bodySmall, color: '#E8746A' }}>{remarkError}</div>}
         </div>
 
         {!isReveal && <div style={{ flexShrink: 0, padding: '12px 16px calc(12px + env(safe-area-inset-bottom, 0px))', background: 'linear-gradient(180deg, rgba(8,9,13,0) 0%, rgba(8,9,13,0.92) 28%, rgba(8,9,13,1) 100%)', position: 'relative', zIndex: 2, opacity: introBlocksMainInteraction ? 0 : 1, transform: introBlocksMainInteraction ? 'translateY(18px)' : 'translateY(0)', transition: 'opacity 240ms ease 620ms, transform 240ms ease 620ms' }}>
           {phase === 'reading' && activeTab === 'answer' && <button style={ctaBtnStyle(true)} onClick={() => { setActiveTab('marking'); setPhase('judging') }}>Show examiner thinking →</button>}
           {(phase === 'judging' || (phase === 'reading' && activeTab === 'marking')) && <button style={ctaBtnStyle(guessedMark !== null)} disabled={guessedMark === null} onClick={() => { setActiveTab('answer'); setPhase('reveal') }}>Reveal examiner report →</button>}
-          {isImproving && <div><button style={ctaBtnStyle(hasAnyEdit && !remarkLoading)} disabled={!hasAnyEdit || remarkLoading} onClick={handleRemark}>{remarkLoading ? 'Re-marking…' : 'Re-mark my answer →'}</button><button onClick={() => setPhase('done')} style={{ ...TYPE.bodySmallText, display: 'block', width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.32)', padding: '10px 0 0', textAlign: 'center' }}>Continue without improving →</button></div>}
-          {isRemarking && <div style={{ height: 54, display: 'flex', alignItems: 'center', justifyContent: 'center', ...TYPE.bodySmallText, color: 'rgba(255,255,255,0.4)' }}>Reviewing your changes…</div>}
+          {isImproving && <div><button style={ctaBtnStyle(hasAnyEdit && !remarkLoading)} disabled={!hasAnyEdit || remarkLoading} onClick={handleRemark}>{remarkLoading ? 'Re-marking…' : 'Re-mark my answer →'}</button><button onClick={() => setPhase('done')} style={{ ...TYPE.bodySmall, display: 'block', width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.32)', padding: '10px 0 0', textAlign: 'center' }}>Continue without improving →</button></div>}
+          {isRemarking && <div style={{ height: 54, display: 'flex', alignItems: 'center', justifyContent: 'center', ...TYPE.bodySmall, color: 'rgba(255,255,255,0.4)' }}>Reviewing your changes…</div>}
         </div>}
 
         {questionIntroVisible && phase === 'reading' && (
@@ -149,21 +149,16 @@ export default function FaceTheExaminerMain(props) {
               transition: 'top 520ms cubic-bezier(0.22, 1, 0.36, 1), transform 520ms cubic-bezier(0.22, 1, 0.36, 1), opacity 380ms ease 140ms',
             }}>
               <div style={{
-                ...TYPE.bodySmall,
+                ...TYPE.eyebrow,
                 color: accent,
-                fontWeight: 800,
-                letterSpacing: '0.18em',
                 textTransform: 'uppercase',
                 marginBottom: 26,
               }}>
                 Read the question first
               </div>
               <div style={{
-                fontFamily: TYPE.screenHeading.fontFamily,
-                fontWeight: 700,
+                ...TYPE.displayScreen,
                 fontSize: 'clamp(31px, 8.8vw, 43px)',
-                lineHeight: 1.18,
-                letterSpacing: '-0.055em',
                 color: 'rgba(245,238,225,0.95)',
                 maxWidth: 620,
               }}>
@@ -185,9 +180,9 @@ export default function FaceTheExaminerMain(props) {
         )}
 
         {isReveal && revealPanelVisible && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: `linear-gradient(180deg, ${bg}00 0%, ${bg} 18%)`, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', padding: '28px 16px calc(20px + env(safe-area-inset-bottom, 0px))', animation: 'fte-panel-up 500ms cubic-bezier(0.22, 1, 0.36, 1) both', zIndex: 10 }}>
-          <div style={{ ...TYPE.impactTitle, color: accent, marginBottom: 4 }}>{examiner.mark}/{examiner.marks}<span style={{ ...TYPE.metadataText, color: 'rgba(255,255,255,0.36)', marginLeft: 10 }}>examiner's mark</span></div>
-          <p style={{ ...TYPE.bodySmallText, color: 'rgba(255,255,255,0.56)', margin: '0 0 6px' }}>{examiner.summary}</p>
-          {guessedMark !== null && <p style={{ ...TYPE.bodySmallText, fontWeight: 600, color: 'rgba(255,255,255,0.4)', margin: '0 0 16px' }}>You said {guessedMark}/{examiner.marks} · {markComparisonText(guessedMark, examiner.mark)}</p>}
+          <div style={{ ...TYPE.displayHero, color: accent, marginBottom: 4 }}>{examiner.mark}/{examiner.marks}<span style={{ ...TYPE.metadata, color: 'rgba(255,255,255,0.36)', marginLeft: 10 }}>examiner's mark</span></div>
+          <p style={{ ...TYPE.bodySmall, color: 'rgba(255,255,255,0.56)', margin: '0 0 6px' }}>{examiner.summary}</p>
+          {guessedMark !== null && <p style={{ ...TYPE.bodySmall, color: 'rgba(255,255,255,0.4)', margin: '0 0 16px' }}>You said {guessedMark}/{examiner.marks} · {markComparisonText(guessedMark, examiner.mark)}</p>}
           {canImprove ? <button style={ctaBtnStyle(true)} onClick={() => { setRevealPanelVisible(false); setPhase('improving') }}>Push it up a grade →</button> : <button style={ctaBtnStyle(true)} onClick={() => { setRevealPanelVisible(false); setPhase('done') }}>Continue →</button>}
         </div>}
       </div>
