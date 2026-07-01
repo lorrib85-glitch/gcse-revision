@@ -107,18 +107,23 @@ function WeekTracker({ completedWeekDays, todayIndex, reduced }) {
 // streakCelebrationStorage.js for the show/hide and weekly-completion logic,
 // which the caller (Home) is responsible for evaluating and passing down.
 export default function StreakCelebrationOverlay({ streakCount, completedWeekDays, todayIndex, onDismiss }) {
-  if (!streakCount || streakCount <= 0) return null
-
+  const active = Number(streakCount) > 0
+  const safeStreakCount = active ? Number(streakCount) : 0
+  const safeCompletedWeekDays = Array.isArray(completedWeekDays)
+    ? completedWeekDays
+    : WEEKDAY_LABELS.map(() => false)
   const reduced = prefersReducedMotion()
-  const [displayCount, setDisplayCount] = useState(reduced ? streakCount : 1)
+  const [displayCount, setDisplayCount] = useState(reduced ? safeStreakCount : 1)
 
   useEffect(() => {
+    if (!active) return undefined
+
     if (reduced) {
-      setDisplayCount(streakCount)
+      setDisplayCount(safeStreakCount)
       return undefined
     }
 
-    const startCount = Math.max(1, Math.min(streakCount, streakCount - 8))
+    const startCount = 1
     const totalDuration = 640
     const tickMs = 32
     let elapsed = 0
@@ -130,7 +135,7 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
         elapsed += tickMs
         const progress = Math.min(1, elapsed / totalDuration)
         const eased = 1 - Math.pow(1 - progress, 3)
-        setDisplayCount(Math.round(startCount + (streakCount - startCount) * eased))
+        setDisplayCount(Math.round(startCount + (safeStreakCount - startCount) * eased))
         if (progress >= 1) window.clearInterval(intervalId)
       }, tickMs)
     }, START_MS.heading)
@@ -139,13 +144,15 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
       window.clearTimeout(startId)
       if (intervalId) window.clearInterval(intervalId)
     }
-  }, [reduced, streakCount])
+  }, [active, reduced, safeStreakCount])
+
+  if (!active) return null
 
   return (
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={`${streakCount} day streak`}
+      aria-label={`${safeStreakCount} day streak`}
       style={{
         position: 'fixed', inset: 0, zIndex: 4000,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -265,7 +272,7 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
           </div>
         </div>
 
-        <WeekTracker completedWeekDays={completedWeekDays} todayIndex={todayIndex} reduced={reduced} />
+        <WeekTracker completedWeekDays={safeCompletedWeekDays} todayIndex={todayIndex} reduced={reduced} />
 
         <div
           className={reduced ? undefined : 'streak-cel-button'}
