@@ -210,6 +210,13 @@ Load only:
 - directly relevant canonical docs
 - files being modified
 
+**Big Build only** (Pipeline 2, architecture mapping step): also load
+`.planning/codebase/ARCHITECTURE.md`, `CONVENTIONS.md`, `STRUCTURE.md` and
+`.planning/intel/decisions.md`, `constraints.md` before grepping
+`docs/system/` — these already synthesise the architecture context most
+Big Builds would otherwise re-derive from scratch. See `E_BIG_BUILD.md`
+step 3 for the staleness rule governing this.
+
 Do not read large documentation trees or perform architecture-wide reviews
 unless required by the selected pipeline.
 

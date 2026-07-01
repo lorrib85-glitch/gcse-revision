@@ -38,10 +38,20 @@ component family, new app-level flow, new architecture pattern.
    ```
    Do not proceed to planning until all open decisions are resolved.
 5. **Source / canonical check:**
-   - Read existing canonical and architecture docs first — grep for the
-     relevant section; do not bulk-read. Run `/canonical-topic` only if
-     canonical or architecture docs are missing, stale, incomplete, or
-     explicitly requested. Do not run it by default.
+   - Read `.planning/codebase/ARCHITECTURE.md`, `CONVENTIONS.md`,
+     `STRUCTURE.md` and `.planning/intel/decisions.md`, `constraints.md`
+     first — these already synthesise architecture context. Then check
+     `CLAUDE.md`, `docs/system/`, `docs/components/` only for anything not
+     already covered, or to confirm a specific detail — grep for the
+     relevant section; do not bulk-read.
+   - **Staleness rule:** if the `.planning/codebase/` map contradicts the
+     current code (moved file, renamed component, changed pattern), don't
+     silently trust either source — flag the contradiction to the user and
+     re-run `/gsd-map-codebase` (sanctioned in Lane F) to refresh the map
+     before proceeding.
+   - Run `/canonical-topic` only if canonical or architecture docs are
+     missing, stale, incomplete, or explicitly requested. Do not run it by
+     default.
    - `/frontend-design` if a new visual surface is introduced.
 6. **Plan phase** — `superpowers:writing-plans` → `/gsd-plan-phase`.
    Only after discussion decisions are closed.
