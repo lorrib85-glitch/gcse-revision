@@ -268,7 +268,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
       <>
         <style>{`
           .ger-textarea { outline: none; resize: none; }
-          .ger-textarea::placeholder { color: rgba(245,238,225,0.28); font-family: ${TYPE.bodyText.fontFamily}; font-size: 14px; }
+          .ger-textarea::placeholder { color: rgba(245,238,225,0.28); font-family: ${TYPE.body.fontFamily}; font-size: 14px; }
           .ger-writing-scroll { scrollbar-width: none; -ms-overflow-style: none; }
           .ger-writing-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
         `}</style>
