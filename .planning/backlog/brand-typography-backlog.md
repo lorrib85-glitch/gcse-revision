@@ -253,3 +253,56 @@ GENERAL.bgPanel
 - Cross-subject surfaces no longer depend on subject-specific palette tokens.
 - Architecture/brand tests catch reintroduction of high-frequency hardcoded dark surface values.
 - Documented exceptions remain allowed only where a colour is intentionally bespoke or subject-specific.
+
+---
+
+## B10 — Semantic feedback colour token gap
+
+**Status:** Backlog  
+**Priority:** High  
+**Area:** `src/constants/generalTheme.js`, feedback states, quizzes, Quick Fire, question components, tests
+
+### Context
+Correct/incorrect feedback colours are repeated across the app, but there is no clearly approved semantic `GENERAL.success` / `GENERAL.error` token pair.
+
+Current audit examples include:
+
+- Correct/success greens: `#4DFF88`, `#38D27A`
+- Incorrect/error reds: `#FF5D73`, `#FF5C7A`
+
+These should not be treated as subject colours. They represent semantic feedback states that can appear in any subject: correct answer, success state, wrong answer, error state, validation failure, or feedback glow.
+
+### Direction
+Create semantic feedback tokens in `GENERAL`, then migrate call sites by meaning.
+
+Suggested token shape:
+
+```js
+GENERAL.feedback.success
+GENERAL.feedback.successSoft
+GENERAL.feedback.error
+GENERAL.feedback.errorSoft
+```
+
+Or, if the current `GENERAL` object remains flatter:
+
+```js
+GENERAL.success
+GENERAL.successSoft
+GENERAL.error
+GENERAL.errorSoft
+```
+
+### Rules
+- Do not map correct/incorrect colours to subject palettes.
+- Do not use green/red hex values directly in quiz or answer feedback components once tokens exist.
+- Keep semantic feedback separate from decorative brand accents.
+- Treat success/error colours as functional UI states, not subject identity.
+- Preserve accessibility and contrast when choosing final token values.
+
+### Acceptance criteria
+- Approved semantic success/error tokens exist in `GENERAL`.
+- Correct/incorrect answer feedback uses these tokens consistently.
+- Any alpha/soft background variants are derived from the semantic token or explicitly named.
+- Tests or architecture checks catch reintroduced high-frequency hardcoded success/error hex values.
+- Subject palettes do not govern cross-subject feedback states.
