@@ -8,6 +8,7 @@ import { RADII } from '../../constants/radii.js'
 import { SPACING } from '../../constants/spacing.js'
 import { TYPE } from '../../constants/typography.js'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 function tokenize(text) {
   const parts = String(text || '').split(/(\s+)/)
@@ -550,7 +551,7 @@ export default function GuidedChoiceCarousel({
               position: 'fixed',
               inset: 0,
               zIndex: 1100,
-              background: '#08090D',
+              background: GENERAL.backgroundApp,
               overflow: 'hidden',
               cursor: 'default',
               userSelect: 'none',
