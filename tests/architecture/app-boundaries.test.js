@@ -53,3 +53,24 @@ describe('Subjects.jsx dead code does not regrow', () => {
     expect(src).not.toMatch(/function\s+HistoryMedicineBrowser\s*\(/)
   })
 })
+
+// A3 ownership slice (architecture-backlog.md): sand/bronze moved to
+// SUBJECTS.*.subjectBrowserAccent / subjectBrowserAccentDark in
+// src/constants/subjects.js. Guards against Subjects.jsx regrowing a local
+// all-subject hex palette map (the second-source-of-truth problem A3 exists
+// to fix) for that ownership. cream is deliberately still local pending
+// human design review — this test does not touch it.
+describe('Subjects.jsx does not regrow a local subject accent palette map', () => {
+  it('has no local object literal keyed by all seven subject names holding sand/bronze-style hex pairs', () => {
+    const src = read('src/features/subjects/Subjects.jsx')
+    expect(src).not.toMatch(/sand:\s*['"]#[0-9A-Fa-f]{6}['"]/)
+    expect(src).not.toMatch(/bronze:\s*['"]#[0-9A-Fa-f]{6}['"]/)
+  })
+
+  it('reads its accent pair from SUBJECTS in constants/subjects.js', () => {
+    const src = read('src/features/subjects/Subjects.jsx')
+    expect(src).toMatch(/import\s*\{[^}]*SUBJECTS[^}]*\}\s*from\s*['"]\.\.\/\.\.\/constants\/subjects\.js['"]/)
+    expect(src).toMatch(/SUBJECTS\[subjectName\]\?\.subjectBrowserAccent\b/)
+    expect(src).toMatch(/SUBJECTS\[subjectName\]\?\.subjectBrowserAccentDark\b/)
+  })
+})

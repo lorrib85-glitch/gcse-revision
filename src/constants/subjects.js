@@ -26,6 +26,11 @@ export const SUBJECTS = {
 
     accentRgb: '78,163,255',
 
+    // Subject-browser-only accent pair (SubjectBrowser in Subjects.jsx). Distinct
+    // from `accent`/`accentTertiary` above by design — see A3 audit, do not converge.
+    subjectBrowserAccent: '#2DD4BF',
+    subjectBrowserAccentDark: '#0D9488',
+
     palette: {
       blueprintBlue: '#4EA3FF',
       gridBlue: '#A7D2FF',
@@ -56,6 +61,11 @@ export const SUBJECTS = {
 
     accentRgb: '106,52,61',
 
+    // Subject-browser-only accent pair (SubjectBrowser in Subjects.jsx). Distinct
+    // from `accent`/`accentTertiary` above by design — see A3 audit, do not converge.
+    subjectBrowserAccent: '#6A343D',
+    subjectBrowserAccentDark: '#4F2329',
+
     palette: {
       oxblood: '#6A343D',
       mahogany: '#4C242B',
@@ -84,6 +94,11 @@ export const SUBJECTS = {
     progressFill: '#22D3EE',
 
     accentRgb: '34,211,238',
+
+    // Subject-browser-only accent pair (SubjectBrowser in Subjects.jsx). Distinct
+    // from `accent`/`accentTertiary` above by design — see A3 audit, do not converge.
+    subjectBrowserAccent: '#3B82F6',
+    subjectBrowserAccentDark: '#2563EB',
 
     palette: {
       cosmicNavy: '#0D1321',
@@ -115,6 +130,11 @@ export const SUBJECTS = {
 
     accentRgb: '107,170,91',
 
+    // Subject-browser-only accent pair (SubjectBrowser in Subjects.jsx). Distinct
+    // from `accent`/`accentTertiary` above by design — see A3 audit, do not converge.
+    subjectBrowserAccent: '#4CAF7D',
+    subjectBrowserAccentDark: '#2E8B57',
+
     palette: {
       leafGreen: '#6BAA5B',
       mossGreen: '#4C6B3E',
@@ -145,6 +165,11 @@ export const SUBJECTS = {
 
     accentRgb: '109,90,166',
 
+    // Subject-browser-only accent pair (SubjectBrowser in Subjects.jsx). Distinct
+    // from `accent`/`accentTertiary` above by design — see A3 audit, do not converge.
+    subjectBrowserAccent: '#9B59E8',
+    subjectBrowserAccentDark: '#7B3BD0',
+
     palette: {
       amethyst: '#6D5AA6',
       duskPurple: '#54447A',
@@ -172,6 +197,11 @@ export const SUBJECTS = {
     progressFill: '#D69B45',
 
     accentRgb: '214,155,69',
+
+    // Subject-browser-only accent pair (SubjectBrowser in Subjects.jsx). Distinct
+    // from `accent` above by design — see A3 audit, do not converge.
+    subjectBrowserAccent: '#C89B6D',
+    subjectBrowserAccentDark: '#9A7B4F',
   },
 
   Sociology: {
@@ -191,6 +221,11 @@ export const SUBJECTS = {
     progressFill: '#A79B8C',
 
     accentRgb: '167,155,140',
+
+    // Subject-browser-only accent pair (SubjectBrowser in Subjects.jsx). Distinct
+    // from `accent`/`accentTertiary` above by design — see A3 audit, do not converge.
+    subjectBrowserAccent: '#C9B07C',
+    subjectBrowserAccentDark: '#9A7B4F',
 
     palette: {
       taupe: '#A79B8C',

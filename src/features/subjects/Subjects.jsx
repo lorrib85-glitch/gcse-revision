@@ -10,7 +10,7 @@ import { findTaggedScreen } from '../../data/tagModuleMap.js'
 import { StreakChip } from '../home/StreakChip.jsx'
 import BackButton from '../../components/core/BackButton.jsx'
 import BottomNav from '../../app/BottomNav.jsx'
-import { hexToRgb } from '../../constants/subjects.js'
+import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
 
 const MODULE_HEADER_IMAGES = {
   'history-medicine-medieval-beliefs-causes': '/headers/history-medicine-through-time.webp',
@@ -35,14 +35,16 @@ const MODULE_HEADER_IMAGES = {
   'soc6': '/headers/sociology-main.webp',
 }
 
-const SUBJECT_PALETTES = {
-  History:   { sand: '#C89B6D', bronze: '#9A7B4F', cream: '#E8D9B5', espresso: '#2B1A0E', ink: '#14110E' },
-  Sociology: { sand: '#C9B07C', bronze: '#9A7B4F', cream: '#E8D9B5', espresso: '#2B2118', ink: '#14110E' },
-  Biology:   { sand: '#4CAF7D', bronze: '#2E8B57', cream: '#B8F0D4', espresso: '#0A2E1A', ink: '#061408' },
-  Chemistry: { sand: '#9B59E8', bronze: '#7B3BD0', cream: '#DDD0F8', espresso: '#1A0E2B', ink: '#0D0816' },
-  Physics:   { sand: '#3B82F6', bronze: '#2563EB', cream: '#DBEAFE', espresso: '#0E1B2B', ink: '#060D18' },
-  English:   { sand: '#6A343D', bronze: '#4F2329', cream: '#E9E1D3', espresso: '#1A0E0F', ink: '#0D0709' },
-  Maths:     { sand: '#2DD4BF', bronze: '#0D9488', cream: '#CCFBF1', espresso: '#0A2A27', ink: '#041612' },
+// Pending human design-review decision: cream may become a subject-browser token
+// or collapse to a GENERAL light-neutral. Do not move without explicit sign-off.
+const SUBJECT_BROWSER_PENDING_CREAM = {
+  History:   '#E8D9B5',
+  Sociology: '#E8D9B5',
+  Biology:   '#B8F0D4',
+  Chemistry: '#DDD0F8',
+  Physics:   '#DBEAFE',
+  English:   '#E9E1D3',
+  Maths:     '#CCFBF1',
 }
 
 // ─── Modules tab ──────────────────────────────────────────────────────────────
@@ -262,8 +264,9 @@ function getSubjectModuleList(subjectName) {
 }
 
 function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
-  const palette      = SUBJECT_PALETTES[subjectName] || SUBJECT_PALETTES.History
-  const { sand, bronze, cream } = palette
+  const sand         = SUBJECTS[subjectName]?.subjectBrowserAccent || SUBJECTS.History.subjectBrowserAccent
+  const bronze       = SUBJECTS[subjectName]?.subjectBrowserAccentDark || SUBJECTS.History.subjectBrowserAccentDark
+  const cream        = SUBJECT_BROWSER_PENDING_CREAM[subjectName] || SUBJECT_BROWSER_PENDING_CREAM.History
   const accent       = sand
   const accentRgb    = hexToRgb(sand)
   const headerImg    = SUBJECT_HEADER_IMGS[subjectName]    || '/headers/history-medicine-through-time.webp'

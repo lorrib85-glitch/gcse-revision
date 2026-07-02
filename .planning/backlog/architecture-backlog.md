@@ -103,13 +103,20 @@ Dead-code precursor cleanup is complete:
 - `pnpm vite build` succeeded.
 - Manually verified in a running dev server: Subjects tab renders correctly; tapped into both History and Biology subject browsers — header, progress ring, series picker/active state, gradient CTA, and timeline current node all render identically to before, with correct per-subject accent colours (confirmed via computed glow colour matching each subject's `sand` value).
 
+**First ownership slice (`sand`/`bronze`) complete:**
+
+- Added `subjectBrowserAccent` / `subjectBrowserAccentDark` fields to `SUBJECTS.{History,Sociology,Biology,Chemistry,Physics,English,Maths}` in `src/constants/subjects.js`, carrying the exact former local `sand`/`bronze` hex values unchanged. Not added to Drama/Music (they never had `sand`/`bronze` entries). Explicit code comment on each pair states they are distinct from `accent`/`accentTertiary` by design and must not be converged.
+- `Subjects.jsx`'s `SubjectBrowser` now reads `sand`/`bronze` from `SUBJECTS[subjectName]?.subjectBrowserAccent` / `?.subjectBrowserAccentDark`, with the same History-fallback behaviour the old local-map lookup had.
+- Removed `sand`, `bronze`, and the already-dead `espresso`/`ink` keys from the local map entirely.
+- `cream` was **not** moved. The local map was renamed to `SUBJECT_BROWSER_PENDING_CREAM` (cream-only, one field per subject) with a comment marking it pending human design-review sign-off before it can be relocated or collapsed.
+- Extended `tests/architecture/app-boundaries.test.js` with a new describe block asserting `Subjects.jsx` has no local `sand:`/`bronze:` hex-keyed object literal and that it imports/reads its accent pair from `SUBJECTS` in `constants/subjects.js`.
+- Did **not** add the migrated hex values to `color-token-governance.test.js`'s `MIGRATED_VALUES` — several of them (`#C89B6D`, `#9B59E8`, `#2DD4BF`, `#3B82F6`, `#C9B07C`) already appear as raw literals in `QuickFire.jsx` and `InteractiveHotspotImage.jsx` for unrelated purposes; gating on them now would fail the test immediately and fixing those call sites means touching `QuickFire.jsx`, which is out of scope for this slice.
+- `pnpm vitest run tests/architecture` and `pnpm vitest run tests/unit` pass; `pnpm vite build` succeeds; manual smoke check in dev server confirmed no rendered colour change for History and Biology.
+
 ### Work (remaining)
-- Audit the local subject palette map in `Subjects.jsx`.
-- Decide which values are true subject identity tokens and which are general surface/chrome tokens.
-- Move or derive subject identity values from `src/constants/subjects.js` only.
-- Move shared dark/surface roles to the planned `GENERAL.background.*` tokens from brand backlog B9 where appropriate.
-- Replace feature-local palette reads with approved imports or helper functions.
-- Add an architecture test preventing local subject palette maps in feature files.
+- `cream` still needs a human design-review decision (subject-identity token vs. collapse to a `GENERAL` light-neutral) before it can be moved out of `SUBJECT_BROWSER_PENDING_CREAM` in `Subjects.jsx`.
+- Move shared dark/surface roles to the planned `GENERAL.background.*` tokens from brand backlog B9 where appropriate (separate from this slice).
+- Once `QuickFire.jsx`'s unrelated reuse of these same hex values is addressed (separately, out of scope here), revisit adding `subjectBrowserAccent`/`subjectBrowserAccentDark` to the colour-token governance migrated list.
 
 ### Rules
 - Do not create replacement local maps in another feature file.
