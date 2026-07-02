@@ -6,6 +6,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import CinematicShell from '../layout/CinematicShell.jsx'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 const SWIPE_THRESHOLD = 72
 const BACKGROUND_BRIGHTNESS = {
@@ -353,7 +354,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
   if (done) {
     return (
       <CinematicShell style={{
-        background: '#08090D',
+        background: GENERAL.backgroundApp,
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
         padding: '32px 24px',
@@ -412,7 +413,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
   return (
     <CinematicShell style={{
-      background: '#08090D',
+      background: GENERAL.backgroundApp,
       animation: 'ss-game-in 360ms ease both',
     }}>
       <div style={{ position: 'absolute', inset: 0, userSelect: 'none', WebkitUserSelect: 'none' }}
