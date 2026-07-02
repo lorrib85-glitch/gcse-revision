@@ -192,7 +192,7 @@ export function ExamPaperDebrief({ paper, results, elapsed, onExit, onRetry }) {
             onClick={onRetry}
             style={{
               width: '100%', padding: '16px',
-              background: accent, color: '#08090D',
+              background: accent, color: GENERAL.textOnAccent,
               border: 'none', borderRadius: RADII.large,
               fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 700,
               cursor: 'pointer',

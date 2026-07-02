@@ -274,7 +274,7 @@ export default function DragToOrderTask({
                 flex: 1, height: 48,
                 background: accent, border: 'none', borderRadius: 12,
                 fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15,
-                color: '#08090D', cursor: 'pointer',
+                color: GENERAL.textOnAccent, cursor: 'pointer',
                 transition: `all ${MOTION.duration.instant} ease`,
               }}
               onMouseEnter={(e) => e.target.style.opacity = '0.85'}

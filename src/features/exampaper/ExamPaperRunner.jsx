@@ -132,7 +132,7 @@ export function ExamPaperRunner({ paper, onExit }) {
             onClick={state.submit}
             style={{
               width: '100%', padding: '16px 24px',
-              background: accent, color: '#08090D',
+              background: accent, color: GENERAL.textOnAccent,
               border: 'none', borderRadius: RADII.large,
               fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 700,
               cursor: 'pointer',

@@ -259,7 +259,7 @@ function OnboardingScreen() {
           background: valid ? 'linear-gradient(135deg, #3D7A5E 0%, #65E6C6 100%)' : 'rgba(255,255,255,0.07)',
           border: 'none', borderRadius: 16, cursor: valid ? 'pointer' : 'default',
           ...TYPE.buttonLarge, fontSize: 16,
-          color: valid ? '#08090D' : '#3D3A35',
+          color: valid ? GENERAL.textOnAccent : '#3D3A35',
           transition: 'background 220ms ease, color 220ms ease, transform 120ms ease',
           flexShrink: 0,
           marginBottom: 'max(36px, env(safe-area-inset-bottom))',

@@ -293,7 +293,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                       width: 44, height: 44, borderRadius: '50%',
                       border: `2px solid rgba(${rgb},0.5)`,
                       background: isOpen ? accent : `rgba(${rgb},0.14)`,
-                      color: isOpen ? '#08090D' : accent,
+                      color: isOpen ? GENERAL.textOnAccent : accent,
                       ...TYPE.button, fontSize: 22,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       boxShadow: '0 8px 20px rgba(0,0,0,0.4)',

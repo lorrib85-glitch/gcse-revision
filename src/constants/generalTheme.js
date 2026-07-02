@@ -49,6 +49,10 @@ export const GENERAL = {
   backgroundSunken:  '#0D0F14',
   backgroundPanel:   '#0D1424',
 
+  // Dark text/icon colour for use on top of an accent-filled interactive
+  // surface (e.g. a CTA button whose background is a subject accent colour).
+  textOnAccent: '#08090D',
+
   success:     '#4DFF88',
   successSoft: '#38D27A',
   error:       '#FF5D73',
