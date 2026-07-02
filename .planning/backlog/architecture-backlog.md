@@ -69,7 +69,7 @@ Architecture tests are now green: `pnpm vitest run tests/architecture` reports 4
 
 ## A3 — Remove duplicated subject palette maps from feature files
 
-**Status:** Backlog  
+**Status:** In progress  
 **Priority:** High  
 **Area:** `src/features/subjects/Subjects.jsx`, `src/constants/subjects.js`, subject theme helpers, tests
 
@@ -85,7 +85,25 @@ This directly contradicts the governance comment in `src/constants/subjects.js` 
 - Duplicate maps make future brand audits noisy and unreliable.
 - Values such as `ink`/`espresso` may be meaningful surface roles, not subject colours, and need proper token ownership.
 
-### Work
+### Progress
+
+Dead-code precursor cleanup is complete:
+
+- Audited all three functions that read `SUBJECT_PALETTES`: `ModulePage`, `SubjectBrowser`, `HistoryMedicineBrowser`. Confirmed via full-`src/`-tree grep that `ModulePage` and `HistoryMedicineBrowser` had zero references anywhere outside their own definitions in `Subjects.jsx` — both were unreachable dead code, carrying the majority of the ~40+ duplicate palette call sites.
+- Removed `ModulePage` (was lines 48–409) and `HistoryMedicineBrowser` (was lines 1069–1186) in full — deletion only, no logic or colour values changed.
+- Removed the unused `espresso` destructure from `SubjectBrowser` (it was destructured but never read in that function's body).
+- `SUBJECT_PALETTES` values themselves were not touched — no colour changed.
+- **The live palette surface is now reduced to `SubjectBrowser` only**, which reads exactly three roles: `sand` (aliased `accent`, ~15 sites — eyebrow label, progress ring, active-series border/glow, node fills, CTA text/badges, timeline dots), `bronze` (1 site — dark stop of the CTA gradient), `cream` (1 site — text colour on the current timeline node).
+- Ownership for `sand`/`bronze`/`cream` remains **open** — deliberately not decided in this pass:
+  - `sand`/`bronze` must **not** be mechanically mapped onto `SUBJECTS[subject].accent`/`accentSecondary` in `constants/subjects.js` — the values differ (only English's `sand` `#6A343D` happens to match its canonical `accent` `#6A343D` exactly; all other 6 subjects diverge, e.g. History canonical `#D69B45` vs local `sand` `#C89B6D`). Doing so would be a real visible colour change, not a safe refactor.
+  - `cream` needs a human design-review decision: it's plausibly subject identity (each subject gets a distinct light tint) or plausibly collapsible to a fixed `GENERAL`-style light-neutral token with no visible loss. Neither call can be made mechanically or by colour-distance matching.
+- Added a narrow regression test, `Subjects.jsx dead code does not regrow` in `tests/architecture/app-boundaries.test.js`, asserting `ModulePage`/`HistoryMedicineBrowser` are not reintroduced as function names.
+- `pnpm vitest run tests/architecture` passed 413/413 (412 + 1 new).
+- `pnpm vitest run tests/unit` passed 214 tests with 2 todo (unchanged).
+- `pnpm vite build` succeeded.
+- Manually verified in a running dev server: Subjects tab renders correctly; tapped into both History and Biology subject browsers — header, progress ring, series picker/active state, gradient CTA, and timeline current node all render identically to before, with correct per-subject accent colours (confirmed via computed glow colour matching each subject's `sand` value).
+
+### Work (remaining)
 - Audit the local subject palette map in `Subjects.jsx`.
 - Decide which values are true subject identity tokens and which are general surface/chrome tokens.
 - Move or derive subject identity values from `src/constants/subjects.js` only.

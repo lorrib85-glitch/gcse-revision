@@ -40,3 +40,16 @@ describe('LegacyApp.jsx health', () => {
     expect(lines).toBeLessThan(600)
   })
 })
+
+// A3 cleanup (architecture-backlog.md): ModulePage and HistoryMedicineBrowser
+// were confirmed unreachable (no references anywhere outside their own
+// definitions) and removed, cutting the live SUBJECT_PALETTES surface down
+// to SubjectBrowser only. Guards against either being reintroduced as dead
+// weight carrying more duplicate palette call sites.
+describe('Subjects.jsx dead code does not regrow', () => {
+  it('does not reintroduce ModulePage or HistoryMedicineBrowser', () => {
+    const src = read('src/features/subjects/Subjects.jsx')
+    expect(src).not.toMatch(/function\s+ModulePage\s*\(/)
+    expect(src).not.toMatch(/function\s+HistoryMedicineBrowser\s*\(/)
+  })
+})
