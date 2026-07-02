@@ -7,6 +7,7 @@ import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 // and safe-area inner div would confine them to the content column.
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 const IMAGES = {
   History:   '/historybacker.webp',
@@ -106,7 +107,7 @@ export default function ExaminerExplainsScreen({
         }
       `}</style>
 
-      <CinematicShell style={{ background: '#08090D', zIndex: 1000 }}>
+      <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 1000 }}>
       <div
         onClick={!showContinue ? handleTap : undefined}
         style={{
