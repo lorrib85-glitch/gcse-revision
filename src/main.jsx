@@ -6,6 +6,9 @@ import './globals.css'
 import './styles.css'
 import './scrollbars.css'
 
+const CHUNK_LOAD_ERROR = /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i
+const RELOAD_FLAG = 'rise-chunk-reload'
+
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props)
@@ -13,6 +16,13 @@ class ErrorBoundary extends React.Component {
   }
   static getDerivedStateFromError(error) {
     return { error: error.message || String(error) }
+  }
+  componentDidCatch(error) {
+    const message = error.message || String(error)
+    if (CHUNK_LOAD_ERROR.test(message) && !sessionStorage.getItem(RELOAD_FLAG)) {
+      sessionStorage.setItem(RELOAD_FLAG, '1')
+      window.location.reload()
+    }
   }
   render() {
     if (this.state.error) {
