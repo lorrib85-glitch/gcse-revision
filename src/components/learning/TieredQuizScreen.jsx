@@ -133,7 +133,7 @@ export default function TieredQuizScreen({
         }
       `}</style>
 
-      <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: '#08090D', overflow: 'hidden' }}>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: GENERAL.backgroundApp, overflow: 'hidden' }}>
 
         {/* Background image */}
         <div style={{
