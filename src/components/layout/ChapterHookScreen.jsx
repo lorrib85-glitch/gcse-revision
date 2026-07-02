@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import BackButton from '../core/BackButton.jsx'
 // CinematicShell used here because all inner layers are position: fixed (they escape any
 // containing block) and the screen must cover the full viewport including under system chrome;
@@ -164,7 +165,7 @@ export default function ChapterHookScreen({
         .chs-cont:active  { opacity: 0.6 !important; }
       `}</style>
 
-      <CinematicShell style={{ background: '#08090D', zIndex: 1000 }}>
+      <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 1000 }}>
         {/* Subject image — question phase */}
         <div style={{
           position: 'fixed', inset: 0,
