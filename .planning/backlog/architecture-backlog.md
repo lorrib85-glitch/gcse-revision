@@ -170,13 +170,26 @@ Phase 2 clamp extraction is complete:
 - `pnpm vitest run tests/architecture` passed 412/412.
 - `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
 
+Phase 2 `resolveFinishAction` extraction is complete:
+
+- Added `resolveFinishAction(module, options)` to `src/app/moduleNavigation.js`: pure decision for the final-screen finish branch (`showExaminerExplains` / `showExaminer` / `completeModule`), mirroring `handleFinish`'s exact priority order (examinerExplains gate first while unshown, then examiner, then completion).
+- `handleFinish()` now calls `resolveFinishAction` and switches on `action.type`; all side effects (`setShowExaminerExplains`, `setShowExaminer`, `detectWeakSpot`/`completeModule`, `scrollToTop`) stay inside `ModulePlayer.jsx` exactly as before.
+- Added 7 contract-level tests for `resolveFinishAction` in `tests/unit/app/moduleNavigation.test.js`.
+- Converted all 4 final-screen finish decision lifecycle todos into real assertions.
+- Remaining lifecycle todos after this extraction: 8 (6 hook/outcomes/recall gating + 2 completed-module reopening/persistence side effects).
+- `ModulePlayer.jsx` went from 2387 to 2388 lines (net +1: the extraction traded an inline `if` for a call plus an `action.type` switch).
+- `pnpm vitest run tests/unit/modulePlayer/lifecycle.test.js` passed 31 tests with 8 todo.
+- `pnpm vitest run tests/unit/app/moduleNavigation.test.js` passed 46 tests.
+- `pnpm vitest run tests/architecture` passed 412/412.
+- `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
+
 ### Known test cleanup note
 Some lifecycle assertions intentionally duplicate `computeInitialModuleState` coverage from `moduleNavigation.test.js` because the lifecycle todo file is acting as a migration map. Do not add more duplicate coverage casually. Future extractions should prefer one canonical unit suite for the helper plus only enough lifecycle tests to prove the todo behaviour is now covered.
 
 ### Remaining phases
 Phase 2 — navigation/state-machine boundary:
-- Remaining lifecycle todos: hook/outcomes/recall render gating, completed-module side-effect/reopen edge cases, and final-screen finish decisions.
-- Next extraction candidate should probably be `resolveFinishAction(module, options)` if the finish branch can be represented without touching persistence, or a narrow `getModuleStage()` predicate if hook/outcomes/recall gating can be captured from existing state flags.
+- Remaining lifecycle todos: hook/outcomes/recall render gating (6), and completed-module side-effect/reopen edge cases (2, tied to `completeModule()`'s persistence call and `go(-1)` review-mode behaviour).
+- Next extraction candidate should probably be a narrow `getModuleStage()` / gating predicate if hook/outcomes/recall gating can be captured from existing state flags (`hookDone`, `wylDone`, `recallDone`, `navTo`, `module.intro`) without touching rendering. The remaining 2 completed-module todos are persistence-side-effect-adjacent and may belong in Phase 3 instead — decide when picked up.
 - Do not start Phase 3 storage extraction until Phase 2 finish/gating decisions are clearer.
 
 Phase 3 — persistence side effects:
