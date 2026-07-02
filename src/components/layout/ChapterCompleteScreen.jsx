@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import BackButton from '../core/BackButton.jsx'
 import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
 import BottomNav from '../../app/BottomNav.jsx'
@@ -114,7 +115,7 @@ export default function ChapterCompleteScreen({
 
       <div style={{
         minHeight: '100vh',
-        background: '#08090D',
+        background: GENERAL.backgroundApp,
         color: '#F5F7FF',
         position: 'relative',
         overflow: 'hidden',
