@@ -5,10 +5,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 const mockSetJson  = vi.fn()
 const mockGetArray = vi.fn(() => [])
 const mockGetObject = vi.fn(() => ({}))
+const mockGetJson  = vi.fn((key, fallback) => fallback)
 
 vi.mock('../../../src/lib/storage.js', () => ({
   getArray:  mockGetArray,
   getObject: mockGetObject,
+  getJson:   mockGetJson,
   setJson:   mockSetJson,
   removeKey: vi.fn(),
 }))
