@@ -98,6 +98,14 @@ Steps: triage → change → `/ponytail-review` → `vite build` if app source c
 Allowed: `/ponytail-review` only. Forbidden: GSD, `/canonical-topic`, `/frontend-design`, `/code-review`.  
 Stop: >1 file, new visual rule, or logic touched → re-triage.
 
+**Token migrations — lock the win:** if the change replaces a hardcoded
+colour literal with an existing named token, also close the regression gap
+in the same commit: extend `tests/architecture/color-token-governance.test.js`'s
+`MIGRATED_VALUES` list with the old hex + token pair, and check whether
+`background-token-governance.test.js` / `foreground-token-governance.test.js`
+need a matching guard added for that literal. This does not apply to
+spacing/radii/motion tokens — no equivalent guard test exists for those.
+
 ---
 
 ## Workflow F — inline
