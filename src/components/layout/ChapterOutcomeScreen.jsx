@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import BackButton from '../core/BackButton.jsx'
 // CinematicShell used here because all inner layers are position: fixed (they escape any
 // containing block) and the screen must cover the full viewport; ContentShell's padding
@@ -116,7 +117,7 @@ export default function ChapterOutcomeScreen({
         .cos-cta:active  { opacity: 0.6 !important; }
       `}</style>
 
-      <CinematicShell style={{ background: '#08090D', zIndex: 1000 }}>
+      <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 1000 }}>
 
         {/* Background image */}
         <div style={{
