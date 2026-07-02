@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE }     from '../../constants/typography.js'
 import { SPACING }  from '../../constants/spacing.js'
 import { RADII }    from '../../constants/radii.js'
+import { GENERAL }  from '../../constants/generalTheme.js'
 // CinematicShell used here because the portrait hero must be full-bleed with no
 // horizontal padding; ContentShell's 16px inset would create unwanted margins.
 import CinematicShell from '../layout/CinematicShell.jsx'
@@ -94,7 +95,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
 
   return (
     <CinematicShell style={{
-      background: '#08090D',
+      background: GENERAL.backgroundApp,
       display: 'flex',
       flexDirection: 'column',
     }}>
