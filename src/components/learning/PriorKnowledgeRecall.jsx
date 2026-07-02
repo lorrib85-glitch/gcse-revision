@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import CinematicShell from '../layout/CinematicShell.jsx'
 import ScreenTextBlock from '../layout/ScreenTextBlock.jsx'
 import { TYPE, SCREEN_TEXT_LAYOUT } from '../../constants/typography.js'
@@ -175,7 +176,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
   const pressProps = { onMouseDown: () => setIsPressed(true), onMouseUp: () => setIsPressed(false), onMouseLeave: () => setIsPressed(false), onTouchStart: () => setIsPressed(true), onTouchEnd: () => setIsPressed(false) }
 
   return (
-    <CinematicShell style={{ background: '#08090D', zIndex: 1000, display: 'flex', flexDirection: 'column', animation: 'prk-fade-in 360ms ease both' }}>
+    <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 1000, display: 'flex', flexDirection: 'column', animation: 'prk-fade-in 360ms ease both' }}>
       {block.backgroundImage && <div aria-hidden="true" style={{ position: 'fixed', inset: 0, backgroundImage: `linear-gradient(180deg, rgba(8,9,13,0.36), rgba(8,9,13,0.90)), url(${block.backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.24, filter: 'brightness(0.95) grayscale(8%)', pointerEvents: 'none', zIndex: 0 }} />}
       <div aria-hidden="true" style={{ position: 'fixed', inset: 0, background: `radial-gradient(circle at 50% 18%, rgba(${rgb},0.09), transparent 31%), linear-gradient(180deg, rgba(8,9,13,0.16), rgba(8,9,13,0.96) 82%)`, pointerEvents: 'none', zIndex: 0 }} />
       <div className="prk-scroll" style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%', padding: `calc(14px + env(safe-area-inset-top)) ${SPACING.standard}px calc(${SPACING.separation}px + env(safe-area-inset-bottom))`, overflow: 'auto', filter: hasResults ? 'brightness(0.70)' : 'none', transition: `filter ${MOTION.duration.standard} ${MOTION.easing.gentle}` }}>
