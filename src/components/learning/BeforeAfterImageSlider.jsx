@@ -3,6 +3,7 @@ import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 export default function BeforeAfterImageSlider({
   beforeSrc,
@@ -89,7 +90,7 @@ export default function BeforeAfterImageSlider({
       display: 'flex',
       flexDirection: 'column',
       minHeight: '100dvh',
-      background: '#08090D',
+      background: GENERAL.backgroundApp,
       opacity: entered ? 1 : 0,
       transform: entered ? 'translateY(0)' : 'translateY(8px)',
       transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,

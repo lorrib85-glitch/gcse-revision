@@ -229,7 +229,8 @@ Some are numerically close to subject palette tokens, but replacing them with Ma
 - `src/app/BottomNav.jsx` audited: zero raw B9 target hexes present (already uses `GENERAL.teal`/`GENERAL.slate`/`GENERAL.neutral[0]`). No changes needed.
 - `src/components/learning/SwipeSort.jsx` fully migrated: both raw `#08090D` sites (done-screen `CinematicShell` background, active game-screen `CinematicShell` background) now use `GENERAL.backgroundApp`. No other target hexes were present in this file, and no ambiguous cases needed skipping. `import { GENERAL } from '../../constants/generalTheme.js'` added.
 - `src/components/learning/DragToOrderTask.jsx` partially migrated: the 1 clean full-screen `background: '#08090D'` container site now uses `GENERAL.backgroundApp`. The other site (`color: '#08090D'` foreground button text) was left as raw hex — foreground role, not migrated. `import { GENERAL } from '../../constants/generalTheme.js'` added.
-- Visual output in `LegacyApp.jsx`, `SwipeSort.jsx`, and `DragToOrderTask.jsx` is unchanged (token values match the replaced hex exactly).
+- `src/components/learning/BeforeAfterImageSlider.jsx` partially migrated: the 1 clean full-screen `background: '#08090D'` container site now uses `GENERAL.backgroundApp`. The other 2 sites (`stroke="#08090D"` on two SVG chevron icon paths) were left as raw hex — SVG stroke/foreground role, not migrated. `import { GENERAL } from '../../constants/generalTheme.js'` added.
+- Visual output in `LegacyApp.jsx`, `SwipeSort.jsx`, `DragToOrderTask.jsx`, and `BeforeAfterImageSlider.jsx` is unchanged (token values match the replaced hex exactly).
 
 ### Direction
 Migrate repeated raw values to the new deliberately named `GENERAL` tokens by meaning rather than by colour similarity.
@@ -242,7 +243,7 @@ Migrate repeated raw values to the new deliberately named `GENERAL` tokens by me
 - Avoid a broad blind replace; inspect call sites and migrate in small batches.
 
 ### Remaining work
-- Migrate one area at a time, not all ~91 call sites in one pass. `LegacyApp.jsx`, `SwipeSort.jsx`, and `DragToOrderTask.jsx` are done (each bar their one ambiguous/foreground-colour site); `BottomNav.jsx` needed no changes. Remaining files (`ModulePlayer.jsx`, `QuickFire.jsx`, `Subjects.jsx`, `ExamQuestionFrame.jsx`, `TimelineCanvas.jsx`, `BeforeAfterImageSlider.jsx`, and others with raw `#08090D`/`#151720`/`#0D0F14`/`#0D1424`) are still unmigrated and each needs its own narrow, scoped pass — this is not a signal to broaden scope to a repo-wide migration.
+- Migrate one area at a time, not all ~91 call sites in one pass. `LegacyApp.jsx`, `SwipeSort.jsx`, `DragToOrderTask.jsx`, and `BeforeAfterImageSlider.jsx` are done (each bar their ambiguous/foreground-colour/SVG-stroke sites); `BottomNav.jsx` needed no changes. Remaining files (`ModulePlayer.jsx`, `QuickFire.jsx`, `Subjects.jsx`, `ExamQuestionFrame.jsx`, `TimelineCanvas.jsx`, and others with raw `#08090D`/`#151720`/`#0D0F14`/`#0D1424`) are still unmigrated and each needs its own narrow, scoped pass — this is not a signal to broaden scope to a repo-wide migration.
 - Prioritise low-risk shared chrome after ModulePlayer architecture work settles.
 - Add tests or search checks once migration patterns are proven.
 
