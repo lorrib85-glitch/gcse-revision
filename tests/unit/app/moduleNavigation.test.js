@@ -6,6 +6,7 @@ import {
   computeInitialModuleState,
   clampScreenIndex,
   resolveFinishAction,
+  getModuleGate,
 } from '../../../src/app/moduleNavigation.js'
 
 function makeModule(overrides = {}) {
@@ -360,5 +361,51 @@ describe('resolveFinishAction', () => {
 
   it('given an empty module object and no options, tolerates missing fields and returns completeModule (matches current handleFinish, which never receives an empty module in practice but this mirrors property-access-only logic)', () => {
     expect(resolveFinishAction({})).toEqual({ type: 'completeModule' })
+  })
+})
+
+// Contract-level coverage for the universal-opener gate decision — mirrors
+// ModulePlayer.jsx's three gate render blocks exactly: hook first (including
+// the navTo='hook' override), then outcomes, then recall (including the
+// navTo='recall' override).
+describe('getModuleGate', () => {
+  it('given hookDone=false and module.hook.statement present, returns the hook gate', () => {
+    const module = makeModule({ hook: { statement: 'x' } })
+    expect(getModuleGate(module, { hookDone: false, wylDone: false, recallDone: false, navTo: null })).toEqual({ type: 'hook' })
+  })
+
+  it('given hookDone=true, wylDone=false, module.outcomes present, returns the outcomes gate', () => {
+    const module = makeModule({ outcomes: { bullets: [] } })
+    expect(getModuleGate(module, { hookDone: true, wylDone: false, recallDone: false, navTo: null })).toEqual({ type: 'outcomes' })
+  })
+
+  it('given recallDone=false and module.recall present, after hook/outcomes are done, returns the recall gate', () => {
+    const module = makeModule({ recall: { questions: [] } })
+    expect(getModuleGate(module, { hookDone: true, wylDone: true, recallDone: false, navTo: null })).toEqual({ type: 'recall' })
+  })
+
+  it('given navTo="recall", forces the recall gate even when recallDone is already true', () => {
+    const module = makeModule({ recall: { questions: [] } })
+    expect(getModuleGate(module, { hookDone: true, wylDone: true, recallDone: true, navTo: 'recall' })).toEqual({ type: 'recall' })
+  })
+
+  it('given navTo="hook", forces the hook gate even when hookDone is already true', () => {
+    const module = makeModule({ hook: { statement: 'x' } })
+    expect(getModuleGate(module, { hookDone: true, wylDone: true, recallDone: true, navTo: 'hook' })).toEqual({ type: 'hook' })
+  })
+
+  it('given a module with no hook, outcomes, or recall, returns no gate', () => {
+    const module = makeModule()
+    expect(getModuleGate(module, { hookDone: true, wylDone: true, recallDone: true, navTo: null })).toEqual({ type: null })
+  })
+
+  it('given both hook and outcomes/recall conditions are satisfiable, hook takes priority', () => {
+    const module = makeModule({ hook: { statement: 'x' }, outcomes: { bullets: [] }, recall: { questions: [] } })
+    expect(getModuleGate(module, { hookDone: false, wylDone: false, recallDone: false, navTo: null })).toEqual({ type: 'hook' })
+  })
+
+  it('given hook is done but outcomes and recall conditions are both satisfiable, outcomes takes priority over recall', () => {
+    const module = makeModule({ outcomes: { bullets: [] }, recall: { questions: [] } })
+    expect(getModuleGate(module, { hookDone: true, wylDone: false, recallDone: false, navTo: null })).toEqual({ type: 'outcomes' })
   })
 })

@@ -83,6 +83,27 @@ export function resolveFinishAction(module, { showExaminerExplains } = {}) {
   return { type: 'completeModule' }
 }
 
+// Pure: decide which universal-opener gate (hook/outcomes/recall) ModulePlayer
+// should render before its main content, or none. Mirrors the priority order
+// of ModulePlayer.jsx's three gate render blocks exactly: hook first
+// (including the navTo='hook' override), then outcomes, then recall
+// (including the navTo='recall' override). All side effects (setHookDone,
+// setWylDone, setRecallDone, setNavTo, scrollToTop, onBack handlers) and the
+// gate screens' own JSX stay in ModulePlayer.jsx — this only returns the
+// decision.
+export function getModuleGate(module, { hookDone, wylDone, recallDone, navTo } = {}) {
+  if ((!hookDone && module.hook?.statement) || navTo === 'hook') {
+    return { type: 'hook' }
+  }
+  if (hookDone && !wylDone && module.outcomes) {
+    return { type: 'outcomes' }
+  }
+  if ((!recallDone || navTo === 'recall') && module.recall) {
+    return { type: 'recall' }
+  }
+  return { type: null }
+}
+
 const CHAPTER_COPY = [
   'Momentum matters.',
   "That's another one locked in.",

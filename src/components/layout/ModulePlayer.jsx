@@ -5,7 +5,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { SPACING } from '../../constants/spacing.js'
 import { recordActivity, MODULE_GROUPS } from '../../progress.js'
-import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialModuleState, clampScreenIndex, resolveFinishAction } from '../../app/moduleNavigation.js'
+import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialModuleState, clampScreenIndex, resolveFinishAction, getModuleGate } from '../../app/moduleNavigation.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
@@ -1663,8 +1663,12 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   // ──────────────────────────────────────────────────────────────────────────
 
   // ── Confidence overlay — neutral, no colour judgement ──────────────────
+  // Which universal-opener gate (if any) to render is decided by
+  // getModuleGate (moduleNavigation.js); the JSX and side effects below stay here.
+  const moduleGate = getModuleGate(module, { hookDone, wylDone, recallDone, navTo })
+
   // ── Full-screen hook screen — renders before the player shell ──────────────
-  if ((!hookDone && module.hook?.statement) || navTo === 'hook') {
+  if (moduleGate.type === 'hook') {
     return (
       <ChapterHookScreen
         subject={module.subject}
@@ -1683,7 +1687,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   }
 
   // ── Chapter outcomes screen — appears after hook, before recall ──────────────
-  if (hookDone && !wylDone && module.outcomes) {
+  if (moduleGate.type === 'outcomes') {
     return (
       <ChapterOutcomeScreen
         subject={module.subject}
@@ -1697,7 +1701,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   }
 
   // ── Full-screen recall screen — appears after outcomes, before content ────────
-  if ((!recallDone || navTo === 'recall') && module.recall) {
+  if (moduleGate.type === 'recall') {
     return (
       <>
         <QuickRecallScreen

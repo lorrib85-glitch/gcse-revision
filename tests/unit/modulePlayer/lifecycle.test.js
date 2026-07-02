@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeInitialModuleState, clampScreenIndex, resolveFinishAction } from '../../../src/app/moduleNavigation.js'
+import { computeInitialModuleState, clampScreenIndex, resolveFinishAction, getModuleGate } from '../../../src/app/moduleNavigation.js'
 
 // ─────────────────────────────────────────────────────────────────────────
 // ModulePlayer Phase 2 — pinned behaviour spec
@@ -18,11 +18,15 @@ import { computeInitialModuleState, clampScreenIndex, resolveFinishAction } from
 //     handleFinish's own side effects (setShowExaminerExplains,
 //     setShowExaminer, detectWeakSpot/completeModule, scrollToTop) still
 //     live inside ModulePlayer's component closure and are not covered here.
-//   - Everything else (hook/outcomes/recall render gating, completeModule's
-//     own persistence side effect) still lives entirely inside
-//     `ModulePlayer`'s component closure (`nextLabel`, inline JSX `if`
-//     gating). None of it is exported or callable in isolation, so none of
-//     it can be asserted against from `tests/unit` yet:
+//   - "hook/outcomes/recall gating decisions" is now real assertions against
+//     getModuleGate (moduleNavigation.js). The gate screens' own JSX and side
+//     effects (setHookDone, setWylDone, setRecallDone, setNavTo, scrollToTop,
+//     onBack handlers) still live inside ModulePlayer's component closure and
+//     are not covered here.
+//   - Everything else (completeModule's own persistence side effect) still
+//     lives entirely inside `ModulePlayer`'s component closure. None of it is
+//     exported or callable in isolation, so none of it can be asserted
+//     against from `tests/unit` yet:
 //
 //   - `tests/unit` runs under vitest environment: 'node' (vitest.config.js)
 //     — there is no `document`/`window`, so ModulePlayer cannot be rendered.
@@ -195,13 +199,42 @@ describe('ModulePlayer — go/goTo screen clamping (src/components/layout/Module
   })
 })
 
-describe('ModulePlayer — hook/outcomes/recall gating decisions (src/components/layout/ModulePlayer.jsx:1672,1691,1705)', () => {
-  it.todo('hookDone=false and module.hook.statement present renders the hook gate, before any other content')
-  it.todo('hookDone=true, wylDone=false, module.outcomes present renders the outcomes gate')
-  it.todo('recallDone=false and module.recall present renders the recall gate, after hook/outcomes are done')
-  it.todo('navTo="recall" forces the recall gate even when recallDone is already true')
-  it.todo('navTo="hook" forces the hook gate even when hookDone is already true')
-  it.todo('module has no hook, no outcomes, and no recall: all three gates are skipped and content renders on first mount')
+describe('ModulePlayer — hook/outcomes/recall gating decisions (src/components/layout/ModulePlayer.jsx:1665-1721, getModuleGate)', () => {
+  it('hookDone=false and module.hook.statement present renders the hook gate, before any other content', () => {
+    const module = makeModule({ hook: { statement: 'x' }, outcomes: { bullets: [] }, recall: { questions: [] } })
+    const gate = getModuleGate(module, { hookDone: false, wylDone: false, recallDone: false, navTo: null })
+    expect(gate.type).toBe('hook')
+  })
+
+  it('hookDone=true, wylDone=false, module.outcomes present renders the outcomes gate', () => {
+    const module = makeModule({ outcomes: { bullets: [] }, recall: { questions: [] } })
+    const gate = getModuleGate(module, { hookDone: true, wylDone: false, recallDone: false, navTo: null })
+    expect(gate.type).toBe('outcomes')
+  })
+
+  it('recallDone=false and module.recall present renders the recall gate, after hook/outcomes are done', () => {
+    const module = makeModule({ recall: { questions: [] } })
+    const gate = getModuleGate(module, { hookDone: true, wylDone: true, recallDone: false, navTo: null })
+    expect(gate.type).toBe('recall')
+  })
+
+  it('navTo="recall" forces the recall gate even when recallDone is already true', () => {
+    const module = makeModule({ recall: { questions: [] } })
+    const gate = getModuleGate(module, { hookDone: true, wylDone: true, recallDone: true, navTo: 'recall' })
+    expect(gate.type).toBe('recall')
+  })
+
+  it('navTo="hook" forces the hook gate even when hookDone is already true', () => {
+    const module = makeModule({ hook: { statement: 'x' } })
+    const gate = getModuleGate(module, { hookDone: true, wylDone: true, recallDone: true, navTo: 'hook' })
+    expect(gate.type).toBe('hook')
+  })
+
+  it('module has no hook, no outcomes, and no recall: all three gates are skipped and content renders on first mount', () => {
+    const module = makeModule()
+    const gate = getModuleGate(module, { hookDone: true, wylDone: true, recallDone: true, navTo: null })
+    expect(gate.type).toBe(null)
+  })
 })
 
 describe('ModulePlayer — completed module reopening (src/components/layout/ModulePlayer.jsx:1556-1568, 1482-1484)', () => {
