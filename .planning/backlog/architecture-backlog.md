@@ -149,7 +149,7 @@ Phase 2 first extraction is complete:
 - `ModulePlayer.jsx` now consumes the helper for initial state instead of deriving those values inline.
 - Added 17 tests for `computeInitialModuleState` in `tests/unit/app/moduleNavigation.test.js`.
 - Converted 20 of the 39 lifecycle todos into real assertions in `tests/unit/modulePlayer/lifecycle.test.js`.
-- Remaining lifecycle todos: 19.
+- Remaining lifecycle todos after this extraction: 19.
 - `ModulePlayer.jsx` reduced from 2393 to 2387 lines.
 - `pnpm vitest run tests/unit/modulePlayer/lifecycle.test.js` passed 20 tests with 19 todo.
 - `pnpm vitest run tests/unit/app/moduleNavigation.test.js` passed 33 tests.
@@ -157,14 +157,27 @@ Phase 2 first extraction is complete:
 - `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
 - `introDone` is currently preserved as hardcoded `true`; this is existing behaviour, not a deliberate fix.
 
+Phase 2 clamp extraction is complete:
+
+- Commit `c35d1af` added `clampScreenIndex(index, total)` to `src/app/moduleNavigation.js`.
+- `go()` and `goTo()` now call `clampScreenIndex` while keeping `setScreen`, `setAnimKey`, `scrollToTop`, `recordActivity`, and `setJumpOpen` inside `ModulePlayer.jsx`.
+- Added 6 contract-level tests for `clampScreenIndex` in `tests/unit/app/moduleNavigation.test.js`.
+- Converted all 7 go/goTo clamping lifecycle todos into real assertions.
+- Remaining lifecycle todos after this extraction: 12.
+- `ModulePlayer.jsx` stayed at 2387 lines; this extraction improved testability rather than size.
+- `pnpm vitest run tests/unit/modulePlayer/lifecycle.test.js` passed 27 tests with 12 todo.
+- `pnpm vitest run tests/unit/app/moduleNavigation.test.js` passed 39 tests.
+- `pnpm vitest run tests/architecture` passed 412/412.
+- `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
+
 ### Known test cleanup note
 Some lifecycle assertions intentionally duplicate `computeInitialModuleState` coverage from `moduleNavigation.test.js` because the lifecycle todo file is acting as a migration map. Do not add more duplicate coverage casually. Future extractions should prefer one canonical unit suite for the helper plus only enough lifecycle tests to prove the todo behaviour is now covered.
 
 ### Remaining phases
 Phase 2 — navigation/state-machine boundary:
-- Next extraction candidate: `clampScreenIndex(screen, delta, total)` or equivalent pure navigation helper to unlock go/goTo clamping todos.
-- Keep actual `setState`, `recordActivity`, `scrollToTop`, and persistence side effects in `ModulePlayer.jsx` during this extraction.
-- Later Phase 2 candidates: `resolveFinishAction(module, options)` and eventually a `getModuleStage()` gating predicate.
+- Remaining lifecycle todos: hook/outcomes/recall render gating, completed-module side-effect/reopen edge cases, and final-screen finish decisions.
+- Next extraction candidate should probably be `resolveFinishAction(module, options)` if the finish branch can be represented without touching persistence, or a narrow `getModuleStage()` predicate if hook/outcomes/recall gating can be captured from existing state flags.
+- Do not start Phase 3 storage extraction until Phase 2 finish/gating decisions are clearer.
 
 Phase 3 — persistence side effects:
 - Move `getModuleState`, `saveModuleState`, and state-shape-building logic only after storage behaviour is pinned by tests.
