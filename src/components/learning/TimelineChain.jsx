@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 // CinematicShell used here because the horizontal scroll-snap chain and connector rail must
 // reach the full viewport width; InteractionShell's 16px inset would clip the rail and break
@@ -72,7 +73,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
 
   return (
     <CinematicShell style={{
-      background: '#08090D',
+      background: GENERAL.backgroundApp,
       zIndex: 100,
       display: 'flex', flexDirection: 'column',
       paddingTop: 'calc(80px + env(safe-area-inset-top, 0px))',
