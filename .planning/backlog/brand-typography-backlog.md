@@ -225,7 +225,8 @@ Some are numerically close to subject palette tokens, but replacing them with Ma
   - `backgroundSurface: '#151720'`
   - `backgroundSunken: '#0D0F14'`
   - `backgroundPanel: '#0D1424'`
-- No call sites have been migrated yet, so visual output is unchanged.
+- `src/app/LegacyApp.jsx` partially migrated: 5 of 6 raw `#08090D` sites (splash screen, module loading screen, login screen, onboarding screen, tab shell background) now use `GENERAL.backgroundApp`. One site (`OnboardingScreen` continue-button text colour, which reuses `#08090D` as a foreground colour rather than a background/surface role) was left as raw hex — ambiguous semantic role, not migrated. `#151720`, `#0D0F14`, `#0D1424` do not occur in this file.
+- Visual output in `LegacyApp.jsx` is unchanged (token values match the replaced hex exactly).
 
 ### Direction
 Migrate repeated raw values to the new deliberately named `GENERAL` tokens by meaning rather than by colour similarity.
@@ -238,7 +239,7 @@ Migrate repeated raw values to the new deliberately named `GENERAL` tokens by me
 - Avoid a broad blind replace; inspect call sites and migrate in small batches.
 
 ### Remaining work
-- Migrate one area at a time, not all ~91 call sites in one pass.
+- Migrate one area at a time, not all ~91 call sites in one pass. `LegacyApp.jsx` is done (bar the one ambiguous foreground-colour site); remaining files (`ModulePlayer.jsx`, `QuickFire.jsx`, `Subjects.jsx`, and others with raw `#08090D`/`#151720`/`#0D0F14`/`#0D1424`) are still unmigrated and each needs its own narrow, scoped pass — this is not a signal to broaden scope to a repo-wide migration.
 - Prioritise low-risk shared chrome after ModulePlayer architecture work settles.
 - Add tests or search checks once migration patterns are proven.
 

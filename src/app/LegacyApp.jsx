@@ -11,6 +11,7 @@ import ExamPractice from '../features/exams/ExamPractice.jsx'
 import BottomNav from './BottomNav.jsx'
 import ChapterCompleteScreen from '../components/layout/ChapterCompleteScreen.jsx'
 import { TYPE } from '../constants/typography.js'
+import { GENERAL } from '../constants/generalTheme.js'
 
 // ModulePlayer (and the ~40 learning/feedback components it imports) is only
 // needed once a user opens a module — lazy-load it as its own chunk so
@@ -42,7 +43,7 @@ function SplashScreen() {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 10000,
-      background: '#08090D',
+      background: GENERAL.backgroundApp,
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       animation: 'riseIn 0.6s ease forwards',
     }}>
@@ -67,7 +68,7 @@ function ModuleLoadingScreen() {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 100,
-      background: '#08090D',
+      background: GENERAL.backgroundApp,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       <img src="/logo.png" alt="" style={{ width: 64, height: 64, objectFit: 'contain', opacity: 0.5 }} />
@@ -99,7 +100,7 @@ function LoginScreen() {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: '#08090D',
+      background: GENERAL.backgroundApp,
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       padding: '0 28px',
       overflow: 'hidden',
@@ -190,7 +191,7 @@ function OnboardingScreen() {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: '#08090D',
+      background: GENERAL.backgroundApp,
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       padding: '0 28px',
     }}>
@@ -435,7 +436,7 @@ export default function App() {
 
   // Tab shell
   return (
-    <div style={{ background: '#08090D', minHeight: '100vh' }}>
+    <div style={{ background: GENERAL.backgroundApp, minHeight: '100vh' }}>
       <div key={tab} className="tab-content">
         {tab === 'home'     && <Home onSelectTask={handleTodaysPlanSelect} />}
         {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
