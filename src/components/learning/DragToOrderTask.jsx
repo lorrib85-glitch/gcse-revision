@@ -6,6 +6,7 @@ import { BUTTONS } from '../../constants/buttons.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 export default function DragToOrderTask({
   items = [],           // [{ id, label, description? }, ...]
@@ -101,7 +102,7 @@ export default function DragToOrderTask({
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 1000,
-      background: '#08090D',
+      background: GENERAL.backgroundApp,
       overflow: 'auto',
       display: 'flex', flexDirection: 'column',
     }}>
