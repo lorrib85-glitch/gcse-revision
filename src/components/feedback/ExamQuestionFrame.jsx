@@ -6,6 +6,7 @@ import { BUTTONS } from '../../constants/buttons.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 // ─── Keyframe styles injected once ───────────────────────────────────────────
 let _stylesInjected = false
@@ -153,7 +154,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
 
   return (
     <div style={{
-      background: '#0D0F14',
+      background: GENERAL.backgroundSunken,
       ...TYPE.body,
       padding: '28px 24px 32px',
       borderRadius: 24,
