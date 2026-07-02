@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 // CinematicShell used here because this screen renders full-bleed absolute-positioned portrait
@@ -103,7 +104,7 @@ export default function VisualNarrativeScreen({
         .vn-cta:active { opacity: 0.55 !important; }
       `}</style>
 
-      <CinematicShell style={{ background: '#08090D', zIndex: 100 }}>
+      <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 100 }}>
       <div
         style={{
           position: 'absolute', inset: 0,
