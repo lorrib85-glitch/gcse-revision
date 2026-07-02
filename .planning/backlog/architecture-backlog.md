@@ -183,14 +183,28 @@ Phase 2 `resolveFinishAction` extraction is complete:
 - `pnpm vitest run tests/architecture` passed 412/412.
 - `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
 
+Phase 2 `getModuleGate` extraction is complete:
+
+- Commit `6729877` added `getModuleGate(module, { hookDone, wylDone, recallDone, navTo })` to `src/app/moduleNavigation.js`: pure decision for which universal-opener gate (hook/outcomes/recall) to render, mirroring the exact priority order of ModulePlayer's three gate render blocks (hook first including the `navTo='hook'` override, then outcomes, then recall including the `navTo='recall'` override).
+- `ModulePlayer.jsx` now computes `moduleGate = getModuleGate(...)` once and switches on `moduleGate.type` at the three former inline-condition sites; all JSX and side effects (`setHookDone`, `setWylDone`, `setRecallDone`, `setNavTo`, `scrollToTop`, `onBack` handlers) stay exactly as they were.
+- Added 8 contract-level tests for `getModuleGate` in `tests/unit/app/moduleNavigation.test.js`.
+- Converted all 6 hook/outcomes/recall gating lifecycle todos into real assertions.
+- Remaining lifecycle todos after this extraction: 2 (both completed-module reopening/persistence side effects — `completeModule()`'s persistence call and `go(-1)` review-mode behaviour).
+- `ModulePlayer.jsx` went from 2388 to 2392 lines (net +4: the extraction traded three inline conditions for a helper call plus a comment).
+- `pnpm vitest run tests/unit/modulePlayer/lifecycle.test.js` passed 37 tests with 2 todo.
+- `pnpm vitest run tests/unit/app/moduleNavigation.test.js` passed 54 tests.
+- `pnpm vitest run tests/unit` passed 214 tests with 2 todo.
+- `pnpm vitest run tests/architecture` passed 412/412.
+- `pnpm vite build` succeeded and ModulePlayer remained its own lazy chunk.
+
 ### Known test cleanup note
 Some lifecycle assertions intentionally duplicate `computeInitialModuleState` coverage from `moduleNavigation.test.js` because the lifecycle todo file is acting as a migration map. Do not add more duplicate coverage casually. Future extractions should prefer one canonical unit suite for the helper plus only enough lifecycle tests to prove the todo behaviour is now covered.
 
 ### Remaining phases
 Phase 2 — navigation/state-machine boundary:
-- Remaining lifecycle todos: hook/outcomes/recall render gating (6), and completed-module side-effect/reopen edge cases (2, tied to `completeModule()`'s persistence call and `go(-1)` review-mode behaviour).
-- Next extraction candidate should probably be a narrow `getModuleStage()` / gating predicate if hook/outcomes/recall gating can be captured from existing state flags (`hookDone`, `wylDone`, `recallDone`, `navTo`, `module.intro`) without touching rendering. The remaining 2 completed-module todos are persistence-side-effect-adjacent and may belong in Phase 3 instead — decide when picked up.
-- Do not start Phase 3 storage extraction until Phase 2 finish/gating decisions are clearer.
+- Remaining lifecycle todos: completed-module side-effect/reopen edge cases (2, tied to `completeModule()`'s persistence call and `go(-1)` review-mode behaviour).
+- These 2 remaining todos are persistence-side-effect-adjacent and may belong in Phase 3 instead — decide when picked up.
+- Do not start Phase 3 storage extraction until this decision is made.
 
 Phase 3 — persistence side effects:
 - Move `getModuleState`, `saveModuleState`, and state-shape-building logic only after storage behaviour is pinned by tests.
