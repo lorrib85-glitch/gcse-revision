@@ -35,18 +35,6 @@ const MODULE_HEADER_IMAGES = {
   'soc6': '/headers/sociology-main.webp',
 }
 
-// Pending human design-review decision: cream may become a subject-browser token
-// or collapse to a GENERAL light-neutral. Do not move without explicit sign-off.
-const SUBJECT_BROWSER_PENDING_CREAM = {
-  History:   '#E8D9B5',
-  Sociology: '#E8D9B5',
-  Biology:   '#B8F0D4',
-  Chemistry: '#DDD0F8',
-  Physics:   '#DBEAFE',
-  English:   '#E9E1D3',
-  Maths:     '#CCFBF1',
-}
-
 // ─── Modules tab ──────────────────────────────────────────────────────────────
 
 function ModuleCard({ title, subtitle, progress, accentColour, bgGradient, headerImage, icon, isSelected, onClick }) {
@@ -266,7 +254,6 @@ function getSubjectModuleList(subjectName) {
 function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const sand         = SUBJECTS[subjectName]?.subjectBrowserAccent || SUBJECTS.History.subjectBrowserAccent
   const bronze       = SUBJECTS[subjectName]?.subjectBrowserAccentDark || SUBJECTS.History.subjectBrowserAccentDark
-  const cream        = SUBJECT_BROWSER_PENDING_CREAM[subjectName] || SUBJECT_BROWSER_PENDING_CREAM.History
   const accent       = sand
   const accentRgb    = hexToRgb(sand)
   const headerImg    = SUBJECT_HEADER_IMGS[subjectName]    || '/headers/history-medicine-through-time.webp'
@@ -527,7 +514,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     animation: 'sbCurrentGlow 2.8s ease-in-out infinite',
                   }}>
-                    <span style={{ ...TYPE.displaySection, fontSize: 24, color: cream }}>{item.number}</span>
+                    <span style={{ ...TYPE.displaySection, fontSize: 24, color: GENERAL.softWhite }}>{item.number}</span>
                   </div>
                 )}
                 {isFuture && (

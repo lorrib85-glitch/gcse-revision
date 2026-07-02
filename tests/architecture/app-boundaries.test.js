@@ -58,8 +58,8 @@ describe('Subjects.jsx dead code does not regrow', () => {
 // SUBJECTS.*.subjectBrowserAccent / subjectBrowserAccentDark in
 // src/constants/subjects.js. Guards against Subjects.jsx regrowing a local
 // all-subject hex palette map (the second-source-of-truth problem A3 exists
-// to fix) for that ownership. cream is deliberately still local pending
-// human design review — this test does not touch it.
+// to fix) for that ownership. cream was a separate, later decision — see
+// the next describe block.
 describe('Subjects.jsx does not regrow a local subject accent palette map', () => {
   it('has no local object literal keyed by all seven subject names holding sand/bronze-style hex pairs', () => {
     const src = read('src/features/subjects/Subjects.jsx')
@@ -72,5 +72,23 @@ describe('Subjects.jsx does not regrow a local subject accent palette map', () =
     expect(src).toMatch(/import\s*\{[^}]*SUBJECTS[^}]*\}\s*from\s*['"]\.\.\/\.\.\/constants\/subjects\.js['"]/)
     expect(src).toMatch(/SUBJECTS\[subjectName\]\?\.subjectBrowserAccent\b/)
     expect(src).toMatch(/SUBJECTS\[subjectName\]\?\.subjectBrowserAccentDark\b/)
+  })
+})
+
+// A3 cream decision (architecture-backlog.md): the subject-tinted cream pending
+// map was collapsed to GENERAL.softWhite — a deliberate, human-approved
+// simplification, not a preserved-values migration. Guards against either the
+// old local pending map or a new per-subject SUBJECTS field being reintroduced
+// for this role without a fresh, explicit decision to reverse course.
+describe('Subjects.jsx does not regrow a cream/subject-tinted timeline-node token', () => {
+  it('has no SUBJECT_BROWSER_PENDING_CREAM map or "cream" identifier', () => {
+    const src = read('src/features/subjects/Subjects.jsx')
+    expect(src).not.toMatch(/SUBJECT_BROWSER_PENDING_CREAM/)
+    expect(src).not.toMatch(/\bcream\b/)
+  })
+
+  it('constants/subjects.js has no subjectBrowserCream field', () => {
+    const src = read('src/constants/subjects.js')
+    expect(src).not.toMatch(/subjectBrowserCream/)
   })
 })
