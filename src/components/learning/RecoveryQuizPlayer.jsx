@@ -6,6 +6,7 @@ import { SPACING } from '../../constants/spacing.js'
 import BackButton from '../core/BackButton.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 function ChoiceQuestion({ q, onSelect, subject }) {
   const block = {
@@ -131,7 +132,7 @@ export default function RecoveryQuizPlayer({
 
       <div style={{
         position: 'fixed', inset: 0, zIndex: 1000,
-        background: '#08090D',
+        background: GENERAL.backgroundApp,
         overflow: 'hidden',
         display: 'flex', flexDirection: 'column',
       }}>
