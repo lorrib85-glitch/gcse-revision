@@ -5,6 +5,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 // click-to-advance handler need full viewport coverage without content padding.
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 const SLIDE_MS = 420
 
@@ -85,7 +86,7 @@ export default function VisualLearning({ block, subject, onComplete }) {
   const isFinalReveal = !!scene.finalReveal
 
   return (
-    <CinematicShell style={{ background: '#08090D', zIndex: 100 }}>
+    <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 100 }}>
       <div
         onClick={advance}
         style={{
