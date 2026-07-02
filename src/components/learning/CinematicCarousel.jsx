@@ -5,6 +5,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 // ─── CinematicCarousel ──────────────────────────────────────────────────────
 //
@@ -84,7 +85,7 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 100,
-      background: '#08090D',
+      background: GENERAL.backgroundApp,
       display: 'flex', flexDirection: 'column',
       paddingTop: 'calc(96px + env(safe-area-inset-top, 0px))',
       paddingBottom: 'calc(28px + env(safe-area-inset-bottom, 0px))',
