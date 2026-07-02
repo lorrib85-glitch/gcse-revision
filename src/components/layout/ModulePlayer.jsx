@@ -5,7 +5,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { SPACING } from '../../constants/spacing.js'
 import { recordActivity, MODULE_GROUPS } from '../../progress.js'
-import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialModuleState, clampScreenIndex } from '../../app/moduleNavigation.js'
+import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialModuleState, clampScreenIndex, resolveFinishAction } from '../../app/moduleNavigation.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
@@ -1527,12 +1527,13 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   }
 
   function handleFinish() {
-    if (module.examinerExplains && !showExaminerExplains) {
+    const action = resolveFinishAction(module, { showExaminerExplains })
+    if (action.type === 'showExaminerExplains') {
       setShowExaminerExplains(true)
       scrollToTop()
       return
     }
-    if (module.examiner) {
+    if (action.type === 'showExaminer') {
       setShowExaminer(true)
     } else {
       detectWeakSpot()

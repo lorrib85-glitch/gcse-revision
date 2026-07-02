@@ -5,6 +5,7 @@ import {
   isFullScreenVideoScreen,
   computeInitialModuleState,
   clampScreenIndex,
+  resolveFinishAction,
 } from '../../../src/app/moduleNavigation.js'
 
 function makeModule(overrides = {}) {
@@ -320,5 +321,44 @@ describe('clampScreenIndex', () => {
     expect(clampScreenIndex(-1, 1)).toBe(0)
     expect(clampScreenIndex(0, 1)).toBe(0)
     expect(clampScreenIndex(5, 1)).toBe(0)
+  })
+})
+
+// Contract-level coverage for the final-screen finish decision — mirrors
+// ModulePlayer.jsx's handleFinish priority order: examinerExplains gate
+// (shown once) first, then examiner, then completion.
+describe('resolveFinishAction', () => {
+  it('given module.examinerExplains present and not yet shown, returns showExaminerExplains', () => {
+    const module = makeModule({ examinerExplains: { statement: 'x' } })
+    expect(resolveFinishAction(module, { showExaminerExplains: false })).toEqual({ type: 'showExaminerExplains' })
+  })
+
+  it('given module.examinerExplains present and already shown, does not loop back — falls through to the examiner/complete check', () => {
+    const module = makeModule({ examinerExplains: { statement: 'x' } })
+    expect(resolveFinishAction(module, { showExaminerExplains: true })).toEqual({ type: 'completeModule' })
+  })
+
+  it('given no examinerExplains and module.examiner present, returns showExaminer', () => {
+    const module = makeModule({ examiner: { questions: [] } })
+    expect(resolveFinishAction(module, { showExaminerExplains: false })).toEqual({ type: 'showExaminer' })
+  })
+
+  it('given neither examinerExplains nor examiner, returns completeModule', () => {
+    const module = makeModule()
+    expect(resolveFinishAction(module, { showExaminerExplains: false })).toEqual({ type: 'completeModule' })
+  })
+
+  it('given both examinerExplains and examiner, examinerExplains takes priority while unshown', () => {
+    const module = makeModule({ examinerExplains: { statement: 'x' }, examiner: { questions: [] } })
+    expect(resolveFinishAction(module, { showExaminerExplains: false })).toEqual({ type: 'showExaminerExplains' })
+  })
+
+  it('given both examinerExplains and examiner, once examinerExplains has been shown, examiner takes priority over completion', () => {
+    const module = makeModule({ examinerExplains: { statement: 'x' }, examiner: { questions: [] } })
+    expect(resolveFinishAction(module, { showExaminerExplains: true })).toEqual({ type: 'showExaminer' })
+  })
+
+  it('given an empty module object and no options, tolerates missing fields and returns completeModule (matches current handleFinish, which never receives an empty module in practice but this mirrors property-access-only logic)', () => {
+    expect(resolveFinishAction({})).toEqual({ type: 'completeModule' })
   })
 })

@@ -67,6 +67,22 @@ export function computeInitialModuleState(module, saved) {
   }
 }
 
+// Pure: decide what handleFinish should do when the user continues from the
+// final content screen. Mirrors the priority order in ModulePlayer.jsx's
+// handleFinish exactly: examinerExplains gate first (shown once), then the
+// examiner gate, then completion. All side effects (setShowExaminerExplains,
+// setShowExaminer, detectWeakSpot/completeModule, scrollToTop) stay in
+// ModulePlayer.jsx — this only returns the decision.
+export function resolveFinishAction(module, { showExaminerExplains } = {}) {
+  if (module.examinerExplains && !showExaminerExplains) {
+    return { type: 'showExaminerExplains' }
+  }
+  if (module.examiner) {
+    return { type: 'showExaminer' }
+  }
+  return { type: 'completeModule' }
+}
+
 const CHAPTER_COPY = [
   'Momentum matters.',
   "That's another one locked in.",

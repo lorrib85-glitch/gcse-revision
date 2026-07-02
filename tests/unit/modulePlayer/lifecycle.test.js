@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeInitialModuleState, clampScreenIndex } from '../../../src/app/moduleNavigation.js'
+import { computeInitialModuleState, clampScreenIndex, resolveFinishAction } from '../../../src/app/moduleNavigation.js'
 
 // ─────────────────────────────────────────────────────────────────────────
 // ModulePlayer Phase 2 — pinned behaviour spec
@@ -13,12 +13,16 @@ import { computeInitialModuleState, clampScreenIndex } from '../../../src/app/mo
 //     now real assertions against computeInitialModuleState (moduleNavigation.js).
 //   - "go/goTo screen clamping" is now real assertions against
 //     clampScreenIndex (moduleNavigation.js).
+//   - "last-screen finish decision with examiner/examinerExplains" is now
+//     real assertions against resolveFinishAction (moduleNavigation.js).
+//     handleFinish's own side effects (setShowExaminerExplains,
+//     setShowExaminer, detectWeakSpot/completeModule, scrollToTop) still
+//     live inside ModulePlayer's component closure and are not covered here.
 //   - Everything else (hook/outcomes/recall render gating, completeModule's
-//     own persistence side effect, last-screen finish decision) still lives
-//     entirely inside `ModulePlayer`'s component closure (`handleFinish`/
-//     `nextLabel`, inline JSX `if` gating). None of it is exported or
-//     callable in isolation, so none of it can be asserted against from
-//     `tests/unit` yet:
+//     own persistence side effect) still lives entirely inside
+//     `ModulePlayer`'s component closure (`nextLabel`, inline JSX `if`
+//     gating). None of it is exported or callable in isolation, so none of
+//     it can be asserted against from `tests/unit` yet:
 //
 //   - `tests/unit` runs under vitest environment: 'node' (vitest.config.js)
 //     — there is no `document`/`window`, so ModulePlayer cannot be rendered.
@@ -233,9 +237,24 @@ describe('ModulePlayer — completed module reopening (src/components/layout/Mod
   it.todo('reviewing a completed module and navigating backward with go(-1) does not clear the persisted completed flag')
 })
 
-describe('ModulePlayer — last-screen finish decision with examiner/examinerExplains (src/components/layout/ModulePlayer.jsx:1535-1547)', () => {
-  it.todo('isLast=true, module.examinerExplains present, showExaminerExplains=false: handleFinish shows ExaminerExplainsScreen and does not complete the module yet')
-  it.todo('isLast=true, module.examinerExplains present, showExaminerExplains=true (already shown once): handleFinish falls through to the examiner/complete check instead of looping back to ExaminerExplainsScreen')
-  it.todo('isLast=true, no examinerExplains, module.examiner present: handleFinish shows FaceTheExaminer')
-  it.todo('isLast=true, no examinerExplains, no examiner: handleFinish calls detectWeakSpot, which completes the module directly')
+describe('ModulePlayer — last-screen finish decision with examiner/examinerExplains (src/components/layout/ModulePlayer.jsx:1529-1541, resolveFinishAction)', () => {
+  it('isLast=true, module.examinerExplains present, showExaminerExplains=false: handleFinish shows ExaminerExplainsScreen and does not complete the module yet', () => {
+    const module = makeModule({ examinerExplains: { statement: 'x' } })
+    expect(resolveFinishAction(module, { showExaminerExplains: false })).toEqual({ type: 'showExaminerExplains' })
+  })
+
+  it('isLast=true, module.examinerExplains present, showExaminerExplains=true (already shown once): handleFinish falls through to the examiner/complete check instead of looping back to ExaminerExplainsScreen', () => {
+    const module = makeModule({ examinerExplains: { statement: 'x' } })
+    expect(resolveFinishAction(module, { showExaminerExplains: true })).toEqual({ type: 'completeModule' })
+  })
+
+  it('isLast=true, no examinerExplains, module.examiner present: handleFinish shows FaceTheExaminer', () => {
+    const module = makeModule({ examiner: { questions: [] } })
+    expect(resolveFinishAction(module, { showExaminerExplains: false })).toEqual({ type: 'showExaminer' })
+  })
+
+  it('isLast=true, no examinerExplains, no examiner: handleFinish calls detectWeakSpot, which completes the module directly', () => {
+    const module = makeModule()
+    expect(resolveFinishAction(module, { showExaminerExplains: false })).toEqual({ type: 'completeModule' })
+  })
 })
