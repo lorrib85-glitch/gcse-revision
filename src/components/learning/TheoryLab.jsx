@@ -156,7 +156,7 @@ function ActionBtn({ label, onClick, accent, rgb, disabled = false }) {
         border: 'none',
         borderRadius: BUTTONS.continue.borderRadius,
         color: disabled ? 'rgba(255,255,255,0.3)' : '#0D0F14',
-        fontFamily: "'Sora', sans-serif",
+        fontFamily: BUTTONS.continue.fontFamily,
         fontSize: BUTTONS.continue.fontSize,
         fontWeight: BUTTONS.continue.fontWeight,
         cursor: disabled ? 'default' : 'pointer',

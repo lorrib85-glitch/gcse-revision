@@ -93,7 +93,7 @@ function RetrievalQ({ node, accent, rgb }) {
         <button
           type="button"
           onClick={() => setRevealed(true)}
-          style={{ height: BUTTONS.compact.height, background: `rgba(${rgb}, 0.10)`, border: `1px solid rgba(${rgb}, 0.28)`, borderRadius: BUTTONS.compact.borderRadius, padding: `0 ${BUTTONS.compact.paddingX}px`, color: `rgba(${rgb}, 0.9)`, cursor: 'pointer', fontFamily: "'Sora', sans-serif", fontSize: BUTTONS.compact.fontSize, fontWeight: BUTTONS.compact.fontWeight, letterSpacing: '0.03em', transition: BUTTONS.compact.transition, WebkitTapHighlightColor: 'transparent' }}
+          style={{ height: BUTTONS.compact.height, background: `rgba(${rgb}, 0.10)`, border: `1px solid rgba(${rgb}, 0.28)`, borderRadius: BUTTONS.compact.borderRadius, padding: `0 ${BUTTONS.compact.paddingX}px`, color: `rgba(${rgb}, 0.9)`, cursor: 'pointer', fontFamily: BUTTONS.compact.fontFamily, fontSize: BUTTONS.compact.fontSize, fontWeight: BUTTONS.compact.fontWeight, letterSpacing: '0.03em', transition: BUTTONS.compact.transition, WebkitTapHighlightColor: 'transparent' }}
         >Reveal answer</button>
       )}
     </div>
@@ -189,7 +189,7 @@ export default function ConnectionMap({ block, subject = 'History', onComplete }
 
                   <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, paddingTop: 4 }}>
                     <SequenceProgress total={nodes.length} current={currentIndex} viewed={viewedIndexes} accent={mapAccent} accentRgb={mapRgb} compact ariaLabel="Connection map progress" />
-                    <button type="button" onClick={handleClosePanel} style={{ alignSelf: 'stretch', height: BUTTONS.secondary.height, border: `1px solid rgba(${mapRgb},0.32)`, borderRadius: BUTTONS.secondary.borderRadius, background: `linear-gradient(180deg, rgba(${mapRgb},0.15), rgba(${mapRgb},0.075))`, color: '#EDE0C8', fontFamily: "'Sora', sans-serif", fontSize: BUTTONS.secondary.fontSize, fontWeight: BUTTONS.secondary.fontWeight, letterSpacing: '-0.01em', padding: `0 ${BUTTONS.secondary.paddingX}px`, cursor: 'pointer', transition: BUTTONS.secondary.transition, WebkitTapHighlightColor: 'transparent' }}>Close</button>
+                    <button type="button" onClick={handleClosePanel} style={{ alignSelf: 'stretch', height: BUTTONS.secondary.height, border: `1px solid rgba(${mapRgb},0.32)`, borderRadius: BUTTONS.secondary.borderRadius, background: `linear-gradient(180deg, rgba(${mapRgb},0.15), rgba(${mapRgb},0.075))`, color: '#EDE0C8', fontFamily: BUTTONS.secondary.fontFamily, fontSize: BUTTONS.secondary.fontSize, fontWeight: BUTTONS.secondary.fontWeight, letterSpacing: '-0.01em', padding: `0 ${BUTTONS.secondary.paddingX}px`, cursor: 'pointer', transition: BUTTONS.secondary.transition, WebkitTapHighlightColor: 'transparent' }}>Close</button>
                   </div>
                 </div>
               </motion.div>

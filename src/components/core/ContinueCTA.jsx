@@ -38,7 +38,7 @@ export default function ContinueCTA({
         border: 'none',
         background: disabled ? disabledBackground : accent,
         color: disabled ? disabledColor : textColor,
-        fontFamily: "'Sora', sans-serif",
+        fontFamily: BUTTONS.continue.fontFamily,
         fontSize: BUTTONS.continue.fontSize,
         fontWeight: BUTTONS.continue.fontWeight,
         cursor: disabled ? 'default' : 'pointer',

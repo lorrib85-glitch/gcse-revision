@@ -214,7 +214,7 @@ export default function GuidedExamResponse({ module, exam, onExit, onContinue, t
     border: 'none',
     background: enabled ? accent : 'rgba(255,255,255,0.08)',
     color: enabled ? '#0D0F14' : 'rgba(255,255,255,0.3)',
-    fontFamily: "'Sora', sans-serif",
+    fontFamily: BUTTONS.continue.fontFamily,
     fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
     cursor: enabled ? 'pointer' : 'default',
     transition: `transform ${BUTTONS.continue.transition}`,

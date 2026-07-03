@@ -57,7 +57,7 @@ const ctaStyle = (enabled, accent = GENERAL.teal) => ({
   border: 'none',
   background: enabled ? accent : 'rgba(255,255,255,0.08)',
   color: enabled ? '#0D0F14' : 'rgba(255,255,255,0.3)',
-  fontFamily: "'Sora', sans-serif",
+  fontFamily: BUTTONS.continue.fontFamily,
   fontWeight: BUTTONS.continue.fontWeight, fontSize: BUTTONS.continue.fontSize,
   cursor: enabled ? 'pointer' : 'default',
   transition: `transform ${BUTTONS.continue.transition}`,
