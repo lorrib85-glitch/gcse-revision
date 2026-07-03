@@ -238,7 +238,7 @@ export default function FillInTheBlanksBlock({ block, subject = 'Biology', onCon
           border: allCorrect ? 'none' : `1px solid rgba(${rgb},0.18)`,
           cursor: anyFilled ? 'pointer' : 'default',
           opacity: anyFilled ? 1 : 0.45,
-          fontFamily: "'Sora', sans-serif",
+          fontFamily: TYPE.button.fontFamily,
           fontSize: BUTTONS.primary.fontSize,
           fontWeight: BUTTONS.primary.fontWeight,
           color: allCorrect ? '#0A0804' : accent,

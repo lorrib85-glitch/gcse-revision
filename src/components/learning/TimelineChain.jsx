@@ -233,7 +233,7 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = C
                   width: 30, height: 30, borderRadius: '50%',
                   border: `1px solid rgba(${rgb},0.32)`,
                   background: 'rgba(8,9,13,0.55)', backdropFilter: 'blur(6px)',
-                  ...TYPE.label, fontSize: 13, color: accent,
+                  ...TYPE.label, color: accent,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
                   {index + 1}
@@ -245,7 +245,7 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = C
                 width: 36, height: 36, borderRadius: '50%',
                 border: `1px solid rgba(${rgb},0.32)`,
                 background: `rgba(${rgb},0.10)`,
-                ...TYPE.label, fontSize: 15, color: accent,
+                ...TYPE.label, color: accent,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 marginBottom: SPACING.standard, flexShrink: 0,
               }}>
@@ -255,7 +255,7 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = C
             {step.icon && !step.image && (
               <div style={{ fontSize: 40, marginBottom: SPACING.compact }}>{step.icon}</div>
             )}
-            <div style={{ ...TYPE.displayCard, fontSize: 19, color: 'rgba(255,255,255,0.94)', flex: 1 }}>
+            <div style={{ ...TYPE.displayCard, color: 'rgba(255,255,255,0.94)', flex: 1 }}>
               {step.label}
             </div>
             <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: `rgba(${rgb},0.55)` }}>
@@ -368,7 +368,7 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
       </div>
 
       {block.outro && (
-        <p style={{ ...TYPE.bodySmall, fontSize: 14, color: 'rgba(255,255,255,0.56)', margin: `${SPACING.compact}px 0 0` }}>
+        <p style={{ ...TYPE.bodySmall, color: 'rgba(255,255,255,0.56)', margin: `${SPACING.compact}px 0 0` }}>
           {block.outro}
         </p>
       )}

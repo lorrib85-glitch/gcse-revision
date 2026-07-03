@@ -269,7 +269,6 @@ export default function GraphView({ block, subject = 'Maths' }) {
         {caption && (
           <div style={{
             ...TYPE.bodySmall,
-            fontSize: 13,
             color: 'rgba(255,255,255,0.56)',
             marginTop: SPACING.micro,
           }}>

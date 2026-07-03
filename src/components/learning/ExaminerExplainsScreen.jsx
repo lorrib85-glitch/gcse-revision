@@ -204,7 +204,6 @@ export default function ExaminerExplainsScreen({
                       }}>✦</span>
                       <div style={{
                         ...TYPE.displayCard,
-                        fontSize: 18,
                         color: 'rgba(255,255,255,0.95)',
                       }}>
                         {tip.heading}
@@ -245,7 +244,6 @@ export default function ExaminerExplainsScreen({
                   }}>
                     <span style={{
                       ...TYPE.eyebrow,
-                      fontSize: 11,
                       textTransform: 'uppercase',
                       color: 'rgba(255,255,255,0.28)',
                     }}>
@@ -268,7 +266,6 @@ export default function ExaminerExplainsScreen({
             }}>
               <span style={{
                 ...TYPE.eyebrow,
-                fontSize: 11,
                 textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.28)',
               }}>

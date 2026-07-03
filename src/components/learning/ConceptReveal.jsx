@@ -149,7 +149,6 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
                     }} />
                     <span style={{
                       ...TYPE.bodySmall,
-                      fontSize: 14,
                       color: 'rgba(245,238,225,.48)',
                     }}>{pt}</span>
                   </li>

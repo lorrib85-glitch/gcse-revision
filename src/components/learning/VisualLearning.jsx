@@ -163,7 +163,6 @@ export default function VisualLearning({ block, subject, onComplete }) {
             }}>
               <span style={{
                 ...TYPE.eyebrow,
-                fontSize: 11,
                 textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.3)',
               }}>
@@ -197,7 +196,6 @@ export default function VisualLearning({ block, subject, onComplete }) {
 
           <div style={{
             ...TYPE.bodyStrong,
-            fontSize: 'clamp(15px, 4vw, 17px)',
             color: 'rgba(245,238,225,0.62)',
             maxWidth: 360,
           }}>
@@ -229,7 +227,6 @@ export default function VisualLearning({ block, subject, onComplete }) {
             }}>
               <span style={{
                 ...TYPE.eyebrow,
-                fontSize: 11,
                 textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.3)',
               }}>

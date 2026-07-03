@@ -86,7 +86,7 @@ export default function SymptomProgression({
           position: 'absolute', left: SPACING.standard, right: SPACING.standard, bottom: SPACING.standard,
         }}>
           <div style={{
-            ...F, fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase',
+            ...TYPE.eyebrow, textTransform: 'uppercase',
             color: `rgba(${rgb},0.78)`, marginBottom: SPACING.micro,
           }}>
             Case file
@@ -99,7 +99,7 @@ export default function SymptomProgression({
           </h2>
           {description && (
             <p style={{
-              ...F, fontSize: 15, fontWeight: 400, lineHeight: 1.5,
+              ...TYPE.body,
               color: 'rgba(255,255,255,0.52)', margin: `${SPACING.micro}px 0 0`, maxWidth: 480,
             }}>
               {description}
@@ -159,7 +159,7 @@ export default function SymptomProgression({
                   {stage.label}
                 </div>
                 <div style={{
-                  ...F, fontSize: 15, fontWeight: 400, lineHeight: 1.55,
+                  ...TYPE.body,
                   color: 'rgba(255,255,255,0.52)', maxWidth: 440,
                 }}>
                   {stage.description}

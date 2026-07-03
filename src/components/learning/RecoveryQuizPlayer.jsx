@@ -199,7 +199,6 @@ export default function RecoveryQuizPlayer({
 
               <p style={{
                 ...TYPE.body,
-                fontSize: 15,
                 color: 'rgba(255,255,255,0.6)',
                 margin: '0 0 28px',
               }}>
@@ -209,11 +208,10 @@ export default function RecoveryQuizPlayer({
               <button
                 onClick={onComplete}
                 style={{
+                  ...TYPE.buttonLarge,
                   background: accent,
                   border: 'none', borderRadius: 12,
                   padding: '12px 24px',
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: 16, fontWeight: 600,
                   color: '#000', cursor: 'pointer',
                   boxShadow: `0 4px 12px rgba(${rgb},0.20)`,
                 }}
