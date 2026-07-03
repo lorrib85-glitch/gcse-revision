@@ -19,7 +19,7 @@ const MEDICINE_TH1 = [
     marks: 4,
     q: `Describe two features of medieval hospitals. [4 marks]`,
     ms: `Award up to 2 marks per feature (1 for identifying, 1 for supporting detail). Features include: run by the Church/monks/nuns; focused on care and prayer rather than curing disease; St Bartholomew's Hospital founded 1123; patients prayed and received basic care; hospitals were places of rest not medical treatment; staffed by religious orders.`,
-    tags: ['history:medicine', 'period:medieval', 'theme:public-health', 'format:written', 'exam-type:describe-two-features', 'skill:recall'],
+    tags: ['history:medicine', 'period:medieval', 'theme:public-health', 'format:written', 'exam-type:describe-two-features', 'skill:recall', 'history:medicine:medieval-hospitals'],
     source: 'handwritten',
   },
   {
@@ -38,7 +38,7 @@ const MEDICINE_TH1 = [
     marks: 12,
     q: `Explain why the Church both helped and hindered medicine in the Middle Ages. [12 marks]`,
     ms: `Helped: preserved Galen's texts in universities; ran hospitals like St Bartholomew's (1123); provided care for sick; trained physicians. Hindered: discouraged dissection (body needed to be whole for resurrection); treated Galen's work as unquestionable; linked illness to sin/God's punishment; discouraged new thinking. Strong answers explain the mechanism, not just list.`,
-    tags: ['history:medicine', 'period:medieval', 'theme:church', 'format:written', 'exam-type:explain-why', 'skill:analysis'],
+    tags: ['history:medicine', 'period:medieval', 'theme:church', 'format:written', 'exam-type:explain-why', 'skill:analysis', 'history:medicine:religion', 'history:medicine:galen', 'history:medicine:medieval-hospitals'],
     source: 'handwritten',
   },
   {
@@ -57,7 +57,7 @@ const MEDICINE_TH1 = [
     marks: 16,
     q: `How far was the Black Death a turning point in the history of medicine? Explain your answer. [16 marks]`,
     ms: `Was a turning point: exposed limits of medieval medicine; prompted some public health action. Counter: beliefs and treatments barely changed; humours still dominant after 1349; no new understanding of disease. Strong answers need specific evidence (1348 arrival, 1/3 died, miasma/God's punishment blamed), explain why change/continuity happened, reach clear supported judgement.`,
-    tags: ['history:medicine', 'period:medieval', 'theme:black-death', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing'],
+    tags: ['history:medicine', 'period:medieval', 'theme:black-death', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing', 'history:medicine:black-death', 'history:medicine:four-humours', 'history:medicine:miasma'],
     source: 'handwritten',
   },
   {
@@ -76,7 +76,7 @@ const MEDICINE_TH1 = [
     marks: 16,
     q: `"The main reason medieval medicine made little progress was the influence of the Church." How far do you agree? Explain your answer. [16 marks]`,
     ms: `Agree: Church backed Galen, discouraged dissection, linked illness to God, trained physicians in outdated ideas. Disagree: other factors — lack of technology, four humours theory itself, tradition and conservatism, limited scientific method, Galen's own authority. Strong answers argue both sides with specific evidence, reach a clear judgement about which factor was most important and why.`,
-    tags: ['history:medicine', 'period:medieval', 'theme:church', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing'],
+    tags: ['history:medicine', 'period:medieval', 'theme:church', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing', 'history:medicine:religion', 'history:medicine:galen', 'history:medicine:four-humours'],
     source: 'handwritten',
   },
   J23_Q3,
@@ -101,7 +101,7 @@ const MEDICINE_TH2 = [
     marks: 4,
     q: `Describe two features of Vesalius's contribution to medicine. [4 marks]`,
     ms: `Award up to 2 marks per feature. Features: corrected over 300 of Galen's errors; used human dissection himself; published De Fabrica (1543); proved jaw is one bone; showed septum of heart had no holes; encouraged observation over ancient authority.`,
-    tags: ['history:medicine', 'period:renaissance', 'theme:anatomy', 'format:written', 'exam-type:describe-two-features', 'skill:recall'],
+    tags: ['history:medicine', 'period:renaissance', 'theme:anatomy', 'format:written', 'exam-type:describe-two-features', 'skill:recall', 'history:medicine:vesalius', 'history:medicine:galen'],
     source: 'handwritten',
   },
   {
@@ -120,7 +120,7 @@ const MEDICINE_TH2 = [
     marks: 12,
     q: `Explain why Harvey's discovery of blood circulation did not immediately lead to better treatments. [12 marks]`,
     ms: `Key points: Harvey proved blood circulates but could not explain what blood does; doctors still used bloodletting because they did not know what else to do; understanding does not automatically change treatment; conservative medical profession; lack of technology. Strong answers explain the mechanism — why understanding and treatment are separate things.`,
-    tags: ['history:medicine', 'period:renaissance', 'theme:anatomy', 'format:written', 'exam-type:explain-why', 'skill:analysis'],
+    tags: ['history:medicine', 'period:renaissance', 'theme:anatomy', 'format:written', 'exam-type:explain-why', 'skill:analysis', 'history:medicine:harvey', 'history:medicine:bloodletting'],
     source: 'handwritten',
   },
   {
@@ -139,7 +139,7 @@ const MEDICINE_TH2 = [
     marks: 16,
     q: `How far did the Renaissance change medicine? Explain your answer. [16 marks]`,
     ms: `Changed: Vesalius corrected anatomy, Harvey proved circulation, Paré improved surgery, printing press spread ideas. Continuity: treatments barely changed, humours still used, bleeding/purging continued, Great Plague 1665 shows disease understanding remained poor. Strong answers: balanced argument with specific evidence, clear judgement on extent of change.`,
-    tags: ['history:medicine', 'period:renaissance', 'theme:change-continuity', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing'],
+    tags: ['history:medicine', 'period:renaissance', 'theme:change-continuity', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing', 'history:medicine:vesalius', 'history:medicine:harvey', 'history:medicine:printing-press', 'history:medicine:great-plague'],
     source: 'handwritten',
   },
   J23_Q5,
@@ -164,7 +164,7 @@ const MEDICINE_TH3 = [
     marks: 4,
     q: `Describe two problems with surgery before the 1840s. [4 marks]`,
     ms: `Award up to 2 marks per problem. Problems: no anaesthetic so patients conscious and in pain; no antiseptics so infection was common; no blood transfusions so blood loss often fatal; dirty instruments spread infection; surgeons judged on speed not care.`,
-    tags: ['history:medicine', 'period:18th-19th-century', 'theme:surgery', 'format:written', 'exam-type:describe-two-features', 'skill:recall'],
+    tags: ['history:medicine', 'period:18th-19th-century', 'theme:surgery', 'format:written', 'exam-type:describe-two-features', 'skill:recall', 'history:medicine:anaesthetics', 'history:medicine:antiseptics', 'history:medicine:blood-transfusion'],
     source: 'handwritten',
   },
   {
@@ -183,7 +183,7 @@ const MEDICINE_TH3 = [
     marks: 12,
     q: `Explain why anaesthetics both helped and created new problems for surgery. [12 marks]`,
     ms: `Helped: removed pain, patients could stay still, surgeons could work more carefully, longer operations possible. Problems: longer operations increased infection risk; overconfidence led to more ambitious surgery before antiseptics; chloroform could be fatal if overdosed (Hannah Greener, 1848). Strong answers explain both effects with specific evidence.`,
-    tags: ['history:medicine', 'period:18th-19th-century', 'theme:surgery', 'format:written', 'exam-type:explain-why', 'skill:analysis'],
+    tags: ['history:medicine', 'period:18th-19th-century', 'theme:surgery', 'format:written', 'exam-type:explain-why', 'skill:analysis', 'history:medicine:anaesthetics', 'history:medicine:chloroform'],
     source: 'handwritten',
   },
   {
@@ -202,7 +202,7 @@ const MEDICINE_TH3 = [
     marks: 16,
     q: `How important was Lister's use of antiseptics in improving surgery? [16 marks]`,
     ms: `Important: carbolic acid dramatically reduced infection deaths; applied Pasteur's germ theory practically; changed surgical practice; aseptic surgery followed. Limits: other factors also improved surgery — anaesthetics (Simpson 1847), blood groups, aseptic methods went further; initial resistance from surgeons. Strong answers: weigh against other factors, reach supported judgement.`,
-    tags: ['history:medicine', 'period:18th-19th-century', 'theme:surgery', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing'],
+    tags: ['history:medicine', 'period:18th-19th-century', 'theme:surgery', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing', 'history:medicine:lister', 'history:medicine:antiseptics', 'history:medicine:carbolic-acid', 'history:medicine:aseptic-surgery'],
     source: 'handwritten',
   },
   J23_Q6,
@@ -227,7 +227,7 @@ const MEDICINE_TH4 = [
     marks: 4,
     q: `Describe two features of Pasteur's germ theory. [4 marks]`,
     ms: `Award up to 2 marks per feature. Features: proved micro-organisms cause disease/decay; swan-neck flask experiment (1861); overturned spontaneous generation; showed microbes come from air; led to pasteurisation; opened door to vaccines and antiseptics.`,
-    tags: ['history:medicine', 'period:19th-century', 'theme:germ-theory', 'format:written', 'exam-type:describe-two-features', 'skill:recall'],
+    tags: ['history:medicine', 'period:19th-century', 'theme:germ-theory', 'format:written', 'exam-type:describe-two-features', 'skill:recall', 'history:medicine:pasteur', 'history:medicine:germ-theory', 'history:medicine:spontaneous-generation'],
     source: 'handwritten',
   },
   {
@@ -246,7 +246,7 @@ const MEDICINE_TH4 = [
     marks: 12,
     q: `Explain why Koch's work was important for the development of medicine. [12 marks]`,
     ms: `Key points: identified specific bacteria causing specific diseases (anthrax 1876, TB 1882, cholera 1883); developed staining techniques; made germ theory more convincing; enabled development of targeted treatments; built on Pasteur's general germ theory. Strong answers explain why specificity mattered.`,
-    tags: ['history:medicine', 'period:19th-century', 'theme:germ-theory', 'format:written', 'exam-type:explain-why', 'skill:analysis'],
+    tags: ['history:medicine', 'period:19th-century', 'theme:germ-theory', 'format:written', 'exam-type:explain-why', 'skill:analysis', 'history:medicine:koch', 'history:medicine:germ-theory'],
     source: 'handwritten',
   },
   {
@@ -265,7 +265,7 @@ const MEDICINE_TH4 = [
     marks: 16,
     q: `"Pasteur's germ theory was the most important development in medicine in the 19th century." How far do you agree? [16 marks]`,
     ms: `Agree: germ theory underpinned antiseptic surgery, vaccines, public health reform; changed direction of all medicine; Pasteur's swan-neck flask 1861 was pivotal. Disagree: other developments also important — anaesthetics (Simpson 1847), public health acts (1848, 1875), Koch's specific discoveries, Lister's antiseptics, Snow's waterborne cholera proof. Strong answers: weigh with specific evidence, clear supported judgement.`,
-    tags: ['history:medicine', 'period:19th-century', 'theme:germ-theory', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing'],
+    tags: ['history:medicine', 'period:19th-century', 'theme:germ-theory', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing', 'history:medicine:pasteur', 'history:medicine:germ-theory'],
     source: 'handwritten',
   },
 ]
@@ -289,7 +289,7 @@ const MEDICINE_TH5 = [
     marks: 4,
     q: `Describe two features of the 1875 Public Health Act. [4 marks]`,
     ms: `Award up to 2 marks per feature. Features: compulsory clean water supply; compulsory sewage systems; local authorities had to appoint medical officers of health; made sanitation improvements mandatory; shift away from laissez-faire; built on the weaker 1848 Act.`,
-    tags: ['history:medicine', 'period:19th-century', 'theme:public-health', 'format:written', 'exam-type:describe-two-features', 'skill:recall'],
+    tags: ['history:medicine', 'period:19th-century', 'theme:public-health', 'format:written', 'exam-type:describe-two-features', 'skill:recall', 'history:medicine:public-health-act-1875'],
     source: 'handwritten',
   },
   {
@@ -308,7 +308,7 @@ const MEDICINE_TH5 = [
     marks: 12,
     q: `Explain why the government was slow to improve public health in the early 19th century. [12 marks]`,
     ms: `Key reasons: laissez-faire attitude (government should not interfere); cost — ratepayers did not want to pay; miasma theory meant people did not fully understand disease; vested interests (landlords, water companies); local not national responsibility; 1848 Act was optional not compulsory. Strong answers explain mechanism with evidence.`,
-    tags: ['history:medicine', 'period:19th-century', 'theme:public-health', 'format:written', 'exam-type:explain-why', 'skill:analysis'],
+    tags: ['history:medicine', 'period:19th-century', 'theme:public-health', 'format:written', 'exam-type:explain-why', 'skill:analysis', 'history:medicine:miasma'],
     source: 'handwritten',
   },
   {
@@ -327,7 +327,7 @@ const MEDICINE_TH5 = [
     marks: 16,
     q: `How far was the Great Stink of 1858 a turning point in the history of public health? [16 marks]`,
     ms: `Was a turning point: Parliament directly affected so reform became urgent; led to Bazalgette's sewer system; reduced cholera outbreaks in London; showed engineering could solve public health. Not/other factors: Chadwick's 1842 report laid groundwork; Snow's 1854 pump handle removal proved waterborne spread; 1875 Act was arguably more significant nationally. Strong answers: balanced argument, specific evidence, clear judgement.`,
-    tags: ['history:medicine', 'period:19th-century', 'theme:public-health', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing'],
+    tags: ['history:medicine', 'period:19th-century', 'theme:public-health', 'format:written', 'exam-type:how-far-do-you-agree', 'skill:extended-writing', 'history:medicine:great-stink', 'history:medicine:bazalgette', 'history:medicine:john-snow'],
     source: 'handwritten',
   },
 ]
@@ -362,7 +362,7 @@ const MEDICINE_QUICKFIRE = [
     ms: 'Miasma was the belief that bad air or smells caused disease.',
     hint: 'Think about what people believed travelled through bad-smelling air.',
     moduleId: 'history-medicine-medieval-beliefs-causes',
-    tags: ['history:medicine', 'period:medieval', 'theme:causes', 'format:mc', 'skill:recall'],
+    tags: ['history:medicine', 'period:medieval', 'theme:causes', 'format:mc', 'skill:recall', 'history:medicine:miasma'],
     source: 'handwritten',
   },
   {
@@ -384,7 +384,7 @@ const MEDICINE_QUICKFIRE = [
     ms: 'William Harvey published his ideas about blood circulation in 1628.',
     hint: 'This 17th-century English doctor showed the heart pumps blood around the body in a continuous loop.',
     moduleId: 'history-medicine-renaissance-medicine',
-    tags: ['history:medicine', 'period:renaissance', 'theme:anatomy', 'format:mc', 'skill:recall'],
+    tags: ['history:medicine', 'period:renaissance', 'theme:anatomy', 'format:mc', 'skill:recall', 'history:medicine:harvey'],
     source: 'handwritten',
   },
   {
@@ -406,7 +406,7 @@ const MEDICINE_QUICKFIRE = [
     ms: 'Louis Pasteur showed that germs cause decay and disease.',
     hint: 'This French scientist showed that tiny living organisms — not bad air — cause disease.',
     moduleId: 'history-medicine-germ-theory',
-    tags: ['history:medicine', 'period:19th-century', 'theme:germ-theory', 'format:mc', 'skill:recall'],
+    tags: ['history:medicine', 'period:19th-century', 'theme:germ-theory', 'format:mc', 'skill:recall', 'history:medicine:germ-theory', 'history:medicine:pasteur'],
     source: 'handwritten',
   },
   {
@@ -428,7 +428,7 @@ const MEDICINE_QUICKFIRE = [
     ms: 'Edward Jenner developed vaccination against smallpox.',
     hint: 'He noticed milkmaids who caught a mild disease from cows seemed protected from a much deadlier one.',
     moduleId: 'history-medicine-jenner-vaccination',
-    tags: ['history:medicine', 'period:18th-19th-century', 'theme:vaccination', 'format:mc', 'skill:recall'],
+    tags: ['history:medicine', 'period:18th-19th-century', 'theme:vaccination', 'format:mc', 'skill:recall', 'history:medicine:jenner', 'history:medicine:vaccination', 'history:medicine:smallpox'],
     source: 'handwritten',
   },
   {
@@ -450,7 +450,7 @@ const MEDICINE_QUICKFIRE = [
     ms: 'Joseph Lister used carbolic acid to reduce infection in surgery.',
     hint: 'This chemical was already used to treat sewage before Lister sprayed it on wounds and instruments.',
     moduleId: 'history-medicine-surgery-anaesthetics',
-    tags: ['history:medicine', 'period:18th-19th-century', 'theme:surgery', 'format:mc', 'skill:recall'],
+    tags: ['history:medicine', 'period:18th-19th-century', 'theme:surgery', 'format:mc', 'skill:recall', 'history:medicine:lister', 'history:medicine:carbolic-acid'],
     source: 'handwritten',
   },
   {
@@ -472,7 +472,7 @@ const MEDICINE_QUICKFIRE = [
     ms: 'Alexander Fleming discovered penicillin in 1928.',
     hint: 'He noticed a mould had killed the bacteria growing around it on a petri dish he had left out.',
     moduleId: 'history-medicine-accidental-miracle',
-    tags: ['history:medicine', 'period:modern', 'theme:antibiotics', 'format:mc', 'skill:recall'],
+    tags: ['history:medicine', 'period:modern', 'theme:antibiotics', 'format:mc', 'skill:recall', 'history:medicine:penicillin', 'history:medicine:fleming'],
     source: 'handwritten',
   },
   {
@@ -494,7 +494,7 @@ const MEDICINE_QUICKFIRE = [
     ms: 'John Snow removed the Broad Street pump handle during a cholera outbreak.',
     hint: 'He mapped cholera deaths around Broad Street and traced them back to a contaminated water source.',
     moduleId: 'history-medicine-great-stink',
-    tags: ['history:medicine', 'period:19th-century', 'theme:public-health', 'format:mc', 'skill:recall'],
+    tags: ['history:medicine', 'period:19th-century', 'theme:public-health', 'format:mc', 'skill:recall', 'history:medicine:john-snow', 'history:medicine:broad-street-pump', 'history:medicine:cholera'],
     source: 'handwritten',
   },
   {
@@ -516,7 +516,7 @@ const MEDICINE_QUICKFIRE = [
     ms: 'The First World War created a need for reconstructive plastic surgery.',
     hint: 'Trench warfare caused huge numbers of severe facial injuries that needed reconstruction.',
     moduleId: 'history-medicine-surgery-anaesthetics',
-    tags: ['history:medicine', 'period:modern', 'theme:surgery', 'format:mc', 'skill:recall'],
+    tags: ['history:medicine', 'period:modern', 'theme:surgery', 'format:mc', 'skill:recall', 'history:medicine:plastic-surgery'],
     source: 'handwritten',
   },
 ]

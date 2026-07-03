@@ -9,9 +9,31 @@ Use this backlog for features that change what the learner can do, how practice 
 
 ## F1 — Phase 2A: Standardise question metadata and tags
 
-**Status:** Backlog  
+**Status:** In progress — superseded in part by the Canonical Learning Graph (architecture backlog A5)  
 **Priority:** High  
 **Area:** `src/data/questionBanks/`, `src/features/quickfire/logic/selectQuestions.js`, `tests/architecture/`
+
+### Progress (2026-07-03)
+The tagging half of this phase was broadened into the Canonical Learning
+Graph (`src/data/learningGraph/`, `docs/system/LEARNING_GRAPH.md`, tracked as
+A5 in the architecture backlog):
+
+- Concept ids are now canonical registry entries (`history:medicine:galen`),
+  not free-text tags; architecture tests reject unregistered spellings across
+  the whole of `ALL_QUESTIONS`.
+- Every medicine question (including the previously untagged June 2023 paper
+  questions) now carries course, facet and concept tags; the 2023 paper has
+  paper-level tags; the 14 Medicine modules have module-level tags.
+- Tag inheritance (module → topic → question) resolves via
+  `resolveEffectiveTags` — no duplication required.
+- `tests/architecture/learning-graph.test.js` covers tag validity, question-id
+  uniqueness and registry integrity.
+
+Still open from the original F1 scope: enforcing the full per-question
+metadata contract (required fields, difficulty 1–5, positive marks, format
+constants) as a dedicated `question-bank-schema.test.js`, and minimal-tag
+audits of the Biology/Maths/English banks (their concept atoms arrive with
+the A5 Biology graph).
 
 ### Product value
 This unlocks proper adaptive practice. Without reliable metadata, question selection can only be random or topic-level. With clean tags, the app can identify whether a learner is weak on question type, skill, period, theme, or difficulty.

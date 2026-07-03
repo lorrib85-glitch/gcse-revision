@@ -25,6 +25,13 @@ export const MODULES = [
     color: "#F5B700",
     colorLight: "#f5e6d3",
     headerImage: "/headers/history-medicine-medieval-beliefs-causes.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel", "period:medieval",
+      "history:medicine:four-humours", "history:medicine:galen", "history:medicine:hippocrates",
+      "history:medicine:astrology", "history:medicine:religion", "history:medicine:miasma",
+      "history:medicine:bloodletting", "history:medicine:barber-surgeons",
+      "history:medicine:apothecaries", "history:medicine:medieval-hospitals",
+    ],
     screenCount: 33,
     screenTags: [
       null, null, null, "four-humours", null, null, null, "galen", null, null, null,
@@ -45,6 +52,11 @@ export const MODULES = [
     color: "#8C3A2A",
     colorLight: "rgba(140,58,42,0.12)",
     headerImage: "/headers/history-medicine-black-death.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel", "period:medieval",
+      "history:medicine:black-death", "history:medicine:flagellants",
+      "history:medicine:miasma", "history:medicine:religion", "history:medicine:quarantine",
+    ],
     screenCount: 27,
     screenTags: [
       null, null, null, null, null, null, null, null, "plague-explanations",
@@ -64,6 +76,10 @@ export const MODULES = [
     color: "#D4950A",
     colorLight: "rgba(212,149,10,.12)",
     headerImage: "/headers/history-medicine-renaissance.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel", "period:renaissance",
+      "history:medicine:vesalius", "history:medicine:printing-press",
+    ],
     screenCount: 16,
     screenTags: [
       null, null, null, null, "vesalius", null, null, null,
@@ -82,6 +98,12 @@ export const MODULES = [
     color: "#C47828",
     colorLight: "rgba(196,120,40,.12)",
     headerImage: "/headers/history-medicine-man-proved-wrong.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel",
+      "period:18th-19th-century", "theme:surgery",
+      "history:medicine:anaesthetics", "history:medicine:chloroform",
+      "history:medicine:simpson", "history:medicine:antiseptics",
+    ],
     screenCount: 11,
     screenTags: [
       null, "anaesthetics", null, null, null, null, null, null, "antiseptic-surgery", null, null,
@@ -99,6 +121,11 @@ export const MODULES = [
     color: "#9A4820",
     colorLight: "rgba(154,72,32,.12)",
     headerImage: "/headers/history-medicine-london-terror.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel", "period:renaissance",
+      "history:medicine:great-plague", "history:medicine:plague-doctors",
+      "history:medicine:quarantine", "history:medicine:miasma",
+    ],
     screenCount: 0,
     screenTags: [],
   },
@@ -114,6 +141,11 @@ export const MODULES = [
     color: "#BD7224",
     colorLight: "rgba(189,114,36,.12)",
     headerImage: "/headers/history-medicine-jenner.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel", "period:18th-19th-century",
+      "history:medicine:jenner", "history:medicine:vaccination",
+      "history:medicine:inoculation", "history:medicine:smallpox",
+    ],
     screenCount: 1,
     screenTags: [
       "vaccination",
@@ -131,6 +163,12 @@ export const MODULES = [
     color: "#B06520",
     colorLight: "rgba(176,101,32,.12)",
     headerImage: "/headers/history-medicine-invisible-enemy.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel",
+      "period:19th-century", "theme:germ-theory",
+      "history:medicine:germ-theory", "history:medicine:pasteur",
+      "history:medicine:koch", "history:medicine:spontaneous-generation",
+    ],
     screenCount: 10,
     screenTags: [
       "germ-theory", "pasteur", "koch", null, null, null, null, null, null, null,
@@ -148,6 +186,13 @@ export const MODULES = [
     color: "#9A5A18",
     colorLight: "rgba(154,90,24,.12)",
     headerImage: "/headers/history-medicine-great-stink.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel",
+      "period:19th-century", "theme:public-health",
+      "history:medicine:john-snow", "history:medicine:cholera",
+      "history:medicine:broad-street-pump", "history:medicine:great-stink",
+      "history:medicine:bazalgette", "history:medicine:public-health-act-1875",
+    ],
     screenCount: 7,
     screenTags: [
       null, null, null, "john-snow", "public-health", null, null,
@@ -165,6 +210,14 @@ export const MODULES = [
     color: "#7A4515",
     colorLight: "rgba(122,69,21,.12)",
     headerImage: "/headers/history-medicine-surgery-revolution.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel",
+      "period:19th-century", "theme:surgery",
+      "history:medicine:anaesthetics", "history:medicine:chloroform",
+      "history:medicine:simpson", "history:medicine:antiseptics",
+      "history:medicine:lister", "history:medicine:carbolic-acid",
+      "history:medicine:aseptic-surgery",
+    ],
     screenCount: 10,
     screenTags: [
       null, null, null, null, null, null, null, null, null, null,
@@ -182,6 +235,10 @@ export const MODULES = [
     color: "#8B5014",
     colorLight: "rgba(139,80,20,.12)",
     headerImage: "/headers/history-medicine-lady-lamp.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel", "period:19th-century",
+      "history:medicine:nightingale",
+    ],
     screenCount: 0,
     screenTags: [],
   },
@@ -197,6 +254,12 @@ export const MODULES = [
     color: "#7A4515",
     colorLight: "rgba(122,69,21,.12)",
     headerImage: "/headers/history-medicine-accidental-miracle.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel", "period:modern",
+      "history:medicine:magic-bullets", "history:medicine:ehrlich",
+      "history:medicine:salvarsan-606", "history:medicine:penicillin",
+      "history:medicine:fleming", "history:medicine:florey-and-chain",
+    ],
     screenCount: 11,
     screenTags: [
       null, "magic-bullet", "penicillin", null, null, "wwi-medicine", null, null, null, null, null,
@@ -214,6 +277,11 @@ export const MODULES = [
     color: "#1A5276",
     colorLight: "rgba(26,82,118,.12)",
     headerImage: "/headers/history-medicine-modern.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel", "period:modern",
+      "history:medicine:nhs", "history:medicine:dna",
+      "history:medicine:watson-and-crick", "history:medicine:lifestyle-factors",
+    ],
     screenCount: 9,
     screenTags: [
       null, null, null, null, null, null, null, null, null,
@@ -231,6 +299,10 @@ export const MODULES = [
     color: "#C47828",
     colorLight: "rgba(196,120,40,.12)",
     headerImage: "/headers/history-medicine-nhs.png",
+    tags: [
+      "subject:history", "course:medicine", "period:modern",
+      "history:medicine:cancer-treatment", "history:medicine:lifestyle-factors",
+    ],
     screenCount: 11,
     screenTags: [
       null, null, null, null, null, null, null, null, null, null, null,
@@ -248,6 +320,16 @@ export const MODULES = [
     color: "#5A6A4A",
     colorLight: "rgba(90,106,74,.12)",
     headerImage: "/headers/history-medicine-western-front.png",
+    tags: [
+      "subject:history", "course:medicine", "examboard:edexcel",
+      "period:western-front", "theme:war",
+      "history:medicine:trench-system", "history:medicine:ramc",
+      "history:medicine:chain-of-evacuation", "history:medicine:casualty-clearing-stations",
+      "history:medicine:thomas-splint", "history:medicine:brodie-helmet",
+      "history:medicine:gas-attacks", "history:medicine:wound-infection",
+      "history:medicine:x-rays", "history:medicine:blood-transfusion",
+      "history:medicine:blood-banks",
+    ],
     screenCount: 19,
     screenTags: [
       "prior-knowledge-western-front",

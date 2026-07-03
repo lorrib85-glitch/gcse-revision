@@ -5,6 +5,54 @@ Track structural, maintainability, and boundary work that should not be mixed in
 
 ---
 
+## A5 — Canonical Learning Graph
+
+**Status:** In progress — core registry + Medicine proof of concept shipped
+**Priority:** High
+**Area:** `src/data/learningGraph/`, `src/modules.js`, `src/data/questionBanks/`, `src/data/medicineExamPapers.js`, `tests/architecture/learning-graph.test.js`
+
+### Context
+Every adaptive feature (weak-spot detection, planner, adaptive selection, AI
+marking, analytics) needs modules, topics, screens, questions and exam papers
+to reference the same knowledge vocabulary. `src/data/learningGraph/` is that
+vocabulary: a concept registry (`subject:course:concept` ids), a facet tag
+schema, and a pure tag-inheritance resolver
+(`resolveEffectiveTags(module.tags, topic.tags, question.tags)`).
+
+Canonical documentation: `docs/system/LEARNING_GRAPH.md`.
+
+### Shipped
+- Registry, tag schema, resolver — pure data layer, no React, no app imports
+  (enforced by tests).
+- ~70 Medicine Through Time concepts + course node; `MEDICINE_TOPICS`
+  (th1…th_modern) topic layer; `MEDICINE_SCREEN_TAG_CONCEPTS` bridge from
+  legacy `screenTags` to concept ids (no screenTags migration needed).
+- Module-level `tags` on all 14 Medicine entries in `src/modules.js`.
+- Concept tags appended to every medicine question; June 2023 paper questions
+  (`J23_Q*`) and `MEDICINE_2023_PAPER` gained `tags` (previously untagged).
+- Course-node stubs for existing Biology/Maths/English bank tags so the
+  whole of `ALL_QUESTIONS` validates against the registry.
+- `tests/architecture/learning-graph.test.js` — 24 tests: id uniqueness/format,
+  registry purity, no escaping imports, resolver behaviour, all tags across
+  ALL_QUESTIONS registered, question-id uniqueness, paper tags, screen-tag
+  bridge validity.
+
+### Remaining work
+- Build Biology concept atoms when the Biology graph is designed (replace
+  `topic:` facets in biology banks with concept tags).
+- Point consumers at the graph: `selectQuestions.js` (F2 adaptive selection),
+  planner, weak-spot repair, analytics.
+- Extend tagging to non-Medicine History series (USA, Elizabethan, Spain) as
+  their question banks are built.
+
+### Rules
+- A concept exists once, in the registry — content references ids, never
+  re-spellings. New spellings fail architecture tests.
+- `learningGraph/` stays a pure leaf: no React, storage, or app imports.
+- No speculative concepts for undesigned subjects.
+
+---
+
 ## A1 — Finish QuickFire architecture hardening
 
 **Status:** Backlog  

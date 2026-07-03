@@ -236,6 +236,7 @@ docs/system/TEACHING_VOICE_GUIDE.md
 | `src/progress.js` | Progress helpers: `getProgress`, `saveSessionResult`, `getSessionDraft`, etc. |
 | `src/unifiedWeaknessTracker.js` | **Canonical weakness tracker.** `logWrongAnswer`, `logCorrectAnswer`, `logExamTechnique`, etc. — single source of truth for weakness identification, feeding `WeakSpotRecovery` and recovery quizzes. (`src/weaknessTracker.js` is a legacy, unused file — do not extend it.) |
 | `src/data/tagModuleMap.js` | `TAG_MODULE_MAP` + `findTaggedScreen()` — maps weakness tags to a module/screen for "fix this gap" links |
+| `src/data/learningGraph/` | **Canonical learning graph** — concept registry (`subject:course:concept` ids, e.g. `history:medicine:galen`), facet tag schema, and `resolveEffectiveTags()` inheritance resolver. Single vocabulary for module/topic/question/exam-paper `tags`; never invent concept spellings outside the registry. See `docs/system/LEARNING_GRAPH.md`; enforced by `tests/architecture/learning-graph.test.js`. |
 | `src/data/mathsTopics.js` | Maths topic groups and questions |
 | `src/data/mathsGroups.js` | `MATHS_GROUPS` — Maths topic group definitions for ModulesTab |
 | `src/data/mathsQuestions.js` | `MATHS_FORMULA_SHEET` and AQA Maths past-paper questions |
