@@ -165,6 +165,7 @@ Dead-code precursor cleanup is complete:
 - `cream` still needs a human design-review decision (subject-identity token vs. collapse to a `GENERAL` light-neutral) before it can be moved out of `SUBJECT_BROWSER_PENDING_CREAM` in `Subjects.jsx`.
 - Move shared dark/surface roles to the planned `GENERAL.background.*` tokens from brand backlog B9 where appropriate (separate from this slice).
 - Once `QuickFire.jsx`'s unrelated reuse of these same hex values is addressed (separately, out of scope here), revisit adding `subjectBrowserAccent`/`subjectBrowserAccentDark` to the colour-token governance migrated list.
+- **`SubjectSection` (`Subjects.jsx:98`, `function SubjectSection({ heading, accent, modules, onModuleClick })`) is a third piece of dead code, found during a lint-warning audit.** Zero call sites anywhere in the repo — same unreachable-function shape as `ModulePage` and `HistoryMedicineBrowser`, just not caught by the original A3 pass. Not yet removed (docs-only pass — no app code changed here). Future cleanup should: delete `SubjectSection` in full; extend the existing `Subjects.jsx dead code does not regrow` guard in `tests/architecture/app-boundaries.test.js` to also assert `SubjectSection` is not reintroduced as a function name (same pattern as the current `ModulePage`/`HistoryMedicineBrowser` assertions); confirm `pnpm vitest run tests/architecture` and `pnpm vite build` stay green after removal.
 
 ### Rules
 - Do not create replacement local maps in another feature file.
