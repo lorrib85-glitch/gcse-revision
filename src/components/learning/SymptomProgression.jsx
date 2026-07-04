@@ -85,12 +85,6 @@ export default function SymptomProgression({
         <div style={{
           position: 'absolute', left: SPACING.standard, right: SPACING.standard, bottom: SPACING.standard,
         }}>
-          <div style={{
-            ...TYPE.eyebrow, textTransform: 'uppercase',
-            color: `rgba(${rgb},0.78)`, marginBottom: SPACING.micro,
-          }}>
-            Case file
-          </div>
           <h2 style={{
             ...F, fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.12,
             color: 'rgba(255,255,255,0.94)', margin: 0,
