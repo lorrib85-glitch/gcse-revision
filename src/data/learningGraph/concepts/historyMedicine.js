@@ -20,7 +20,15 @@ export const HISTORY_MEDICINE_CONCEPTS = [
   { id: 'history:medicine:hippocrates', label: 'Hippocrates' },
   { id: 'history:medicine:galen', label: 'Galen' },
   { id: 'history:medicine:astrology', label: 'Astrology as a cause of disease' },
+  // Religious medicine — `history:medicine:religion` is the broad legacy parent;
+  // prefer these granular atoms when a question tests one specific religious idea.
   { id: 'history:medicine:religion', label: 'Religious explanations of disease' },
+  { id: 'history:medicine:god-punishment', label: 'Disease as a punishment from God' },
+  { id: 'history:medicine:sin', label: 'Sin as a cause of disease' },
+  { id: 'history:medicine:prayer', label: 'Prayer and religious healing' },
+  { id: 'history:medicine:pilgrimage', label: 'Pilgrimage as a response to disease' },
+  { id: 'history:medicine:church-authority', label: 'Authority of the Church over medicine' },
+  { id: 'history:medicine:religious-hospitals', label: 'Church-run (religious) hospitals' },
   { id: 'history:medicine:miasma', label: 'Miasma' },
   { id: 'history:medicine:bloodletting', label: 'Bloodletting' },
   { id: 'history:medicine:purging', label: 'Purging' },

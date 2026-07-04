@@ -57,6 +57,10 @@ variants. Architecture tests fail the build if:
    (`english:macbeth:ambition`). A fourth segment is allowed where a course
    genuinely needs sub-scoping — use sparingly.
 3. Prefer the person/thing's common exam name: `jenner`, not `edward-jenner`.
+   Prefer a specific atom over a broad catch-all when a question tests one idea:
+   tag `history:medicine:god-punishment` or `history:medicine:prayer`, not the
+   broad parent `history:medicine:religion`. Keep the broad parent registered
+   for legacy tags and whole-theme references.
 4. A subject namespace must never collide with a facet namespace.
 5. New facet namespaces need a genuinely new axis — extend `FACET_NAMESPACES`
    deliberately, not per-feature. `exam-type:` values match the `EXAM_TYPE`
