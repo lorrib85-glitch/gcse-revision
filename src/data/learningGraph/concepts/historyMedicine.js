@@ -14,6 +14,19 @@ export const HISTORY_MEDICINE_CONCEPTS = [
   // Course node
   { id: 'history:medicine', label: 'Medicine in Britain, c1250–present' },
 
+  // Cross-cutting synthesis concept. The "factors / agents of change" model is
+  // taught explicitly in every episode's exam-prep section and is assessed by
+  // the 12-mark "explain why" and 16-mark "how far / main factor" questions. It
+  // represents the skill of weighing factors (individuals, government, science &
+  // technology, war, communication, religion/attitudes, chance) against one
+  // another — NOT any single factor, each of which is already captured by its
+  // own content atoms (e.g. printing-press, western-front cluster, named people,
+  // religion, public-health-act-1875/nhs). A learner weak here needs synthesis /
+  // essay-structure support, not more content recall — a distinct tutoring
+  // decision. Legacy short tag already used in-app: 'factors-in-change'
+  // (src/data/quickQuizData.js, src/data/tagModuleMap.js).
+  { id: 'history:medicine:factors-in-change', label: 'Factors (agents) of change in medicine' },
+
   // Medieval medicine, c1250–c1500
   { id: 'history:medicine:four-humours', label: 'The four humours' },
   { id: 'history:medicine:theory-of-opposites', label: 'The theory of opposites' },
