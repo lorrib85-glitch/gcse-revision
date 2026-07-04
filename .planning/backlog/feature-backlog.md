@@ -439,3 +439,80 @@ This should read from the evidence audit trail once available:
 - Works across subjects.
 - No UI change until the evidence query is reliable.
 - Does not change mastery scores or adaptive selection.
+
+---
+
+## F9 — Parent View (companion dashboard)
+
+**Status:** Future backlog — concept/spec stage, not scheduled  
+**Priority:** Medium  
+**Depends on:** real account/backend infrastructure (student–parent linking does not exist yet — current auth is a mocked Google sign-in, see `src/auth/authService.js`); `src/data/masteryEngine/`; `src/unifiedWeaknessTracker.js`; `src/features/planner/dailyPlanner.js`
+
+### Concept
+A calm window into effort, progress, and how to help.
+
+Parent View is a separate, low-frequency, opt-in-per-category read view for a parent/carer, linked to a student's account once real accounts exist. It is a companion, not a monitoring panel — its job is to give a parent enough to have a good conversation and offer the right support, not to let them audit their child.
+
+### Product principle (non-negotiable)
+Parent View must interpret learning data calmly rather than expose raw metrics without context. No number, percentage, streak count, or score should ever appear on its own — every data point is paired with a plain-language interpretation and, where relevant, a suggested constructive action. If a data point can't be framed calmly and usefully, it doesn't belong in Parent View.
+
+### What parents see
+- **Momentum** — weekly study time/sessions in plain language (e.g. "studied on 4 days this week"), not raw streak counts.
+- **Topics to revisit** — 2–3 current focus areas, described in plain subject language (e.g. "the four humours theory"), never as a score or percentage. Only surfaced once there's enough evidence to be fair (reuse the mastery engine's minimum-attempts gating, not a single wrong answer).
+- **Recent wins** — 1–2 real improvement moments pulled from the evidence model (e.g. a previously-wrong concept now answered correctly), same spirit as F8.
+- **Suggested support prompts** — see tips below.
+- **Upcoming exam practice** — what's coming up in the planner, so a parent can ask about it in advance rather than after the fact.
+
+### What parents should not see or do
+- No per-question logs or raw answer history.
+- No time-of-day/device/session activity tracking.
+- No comparison to other students, classes, or national averages.
+- No red/amber/green scorecards or single overall "score."
+- No streak-break alerts or punitive streak pressure.
+- No raw scores or percentages shown without an interpretation attached.
+- No in-app messaging or nudge/reminder tools aimed at the student.
+- Nothing that gives a surveillance vibe — if a feature would make a student feel watched rather than supported, cut it.
+
+### Daily/weekly parent tips
+A small rotating content bank (same pattern as `src/data/guidedAnswerCoach.js`), loosely tied to the student's current focus area but always in plain, non-clinical language:
+- "Ask these 3 questions at dinner" — conversation starters about what they're revising.
+- "Try this 10-minute support task" — a small, concrete thing a parent can do (quiz them on X, ask them to explain Y).
+- "What to praise" — a specific, earned thing to acknowledge this week (effort, a comeback, a completed session), never generic ("well done!") and never tied to a raw score.
+
+### Student consent / tone
+- **Per-category opt-in**: the student owns toggles for each category (momentum, focus areas, wins, tips, upcoming practice) — a parent only ever sees what's been switched on.
+- **Preview before sharing**: before enabling any category, the student can preview exactly what the parent will see, rendered as the parent will see it — no surprises after the fact.
+- **Visible attribution**: Parent View always shows it's student-shared (e.g. "Shared by [name]"), never framed as something installed on the student without their awareness.
+- **Tone**: warm, calm, non-judgemental, adult register — same underlying values as `docs/system/TEACHING_VOICE_GUIDE.md` (clarity over drama, respect over marketing-speak), adapted for a parent reader rather than a 11–13-year-old learner.
+
+### Data model assumptions
+- Purely additive read layer — no new source-of-truth data, only new read/interpretation logic over `src/data/masteryEngine/` (`insights.js`), `src/unifiedWeaknessTracker.js` (`getWeakAreasBySubject`, `getBiggestWin`), `src/progress.js` (`getWeeklyTrend`), and `src/features/planner/dailyPlanner.js` (upcoming practice).
+- Two new persisted concepts do not exist yet and are required: a `parentLink` (student ↔ parent account relationship) and per-category `sharingPreferences`. Both need a real account system — today's auth (`src/auth/authService.js`) is a mocked Google sign-in stub with no backend, and storage (`src/lib/storage.js`) is single-device localStorage only, so there is currently no way for a parent's device/session to read a student's data at all.
+- This feature cannot start before student↔parent account linking exists as real infrastructure, independent of Parent View itself.
+
+### MVP scope
+- Dashboard only — no push/email notifications.
+- Fixed five categories: momentum, topics to revisit, recent wins, tip of the day, upcoming exam practice.
+- Manual link/invite flow between one student and one parent account (assumes backend exists).
+- Preview-before-share is in scope for MVP, not deferred — it's the core trust mechanism, not a nice-to-have.
+
+### Later version scope
+- Weekly digest notifications (push/email).
+- Richer, more personalised tips (tied to actual current module/topic rather than a generic rotating bank).
+- Multi-child parent view (one parent, several linked students).
+- Teacher/tutor variant of the same view.
+- Deeper connection to the evidence audit trail (F7/EV7 — "this is based on 3 recent questions…") once that exists, so a focus area can be explained, not just asserted.
+
+### Risks and safeguards
+- **Surveillance creep** — scope quietly expanding toward more granular/frequent data over time. Safeguard: per-category opt-in stays the permanent model, not a launch-only concession; any new category proposed later goes through the same calm-interpretation principle check.
+- **Teen resentment / trust breakdown** — feature backfires if it feels imposed. Safeguard: preview-before-share, visible attribution, and a strictly non-punitive tone are non-negotiable, not stripped for MVP speed.
+- **Over-interpretation of noisy data as fact** — a single wrong answer or a slow week reads as a "problem" to an anxious parent. Safeguard: minimum-evidence gating before anything is surfaced as a focus area (reuse mastery engine attempt thresholds), and every data point ships with an interpretation, per the product principle above.
+- **Punitive use by parents despite framing** — the app cannot fully control what a parent does with information once shown it. Safeguard: never reduce a student to a single number or scorecard, always pair a focus area with a constructive suggested action rather than a bare fact, and keep the surfaced set small enough that it can't be used as an audit trail.
+
+### Suggested file/architecture touchpoints
+- New `src/features/parentView/` — mirrors the structure of `src/features/planner/` and `src/features/quickfire/`.
+- Reuses existing read APIs rather than duplicating logic: `src/data/masteryEngine/insights.js`, `src/unifiedWeaknessTracker.js`, `src/progress.js`, `src/features/planner/dailyPlanner.js`.
+- New rotating content bank, e.g. `src/features/parentView/data/parentTips.js`, following the `src/data/guidedAnswerCoach.js` content-bank pattern.
+- New consent/sharing-preference persistence extending the `src/lib/storage.js` boundary (e.g. a `riseParentSharingPrefs` key) rather than a new ad-hoc storage mechanism.
+- Depends on a not-yet-built account-linking capability in `src/auth/` (current `authService.js` is a placeholder pending real Firebase/backend integration).
+- If built, add `docs/system/PARENT_VIEW_ARCHITECTURE.md` as a locked architecture reference, following the pattern of `HISTORY_MODULE_ARCHITECTURE.md` / `SCIENCE_MODULE_BLUEPRINT.md`.
