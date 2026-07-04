@@ -20,12 +20,17 @@ import {
   HISTORY_MEDICINE_EPISODE_01_SUPPORT as EP01,
   HISTORY_MEDICINE_EPISODE_01_CONCEPT_SUPPORT as EP01_INDEX,
 } from './historyMedicineEpisode01.js'
+import {
+  HISTORY_MEDICINE_EPISODE_02_SUPPORT as EP02,
+  HISTORY_MEDICINE_EPISODE_02_CONCEPT_SUPPORT as EP02_INDEX,
+} from './historyMedicineEpisode02.js'
 import { isConceptId } from '../learningGraph/conceptRegistry.js'
 
 // Registered support maps. New episodes append their { support, index } here;
 // the lookup then covers them with no other change.
 const SUPPORT_MAPS = [
   { support: EP01, index: EP01_INDEX },
+  { support: EP02, index: EP02_INDEX },
 ]
 
 // Build, once, a concept → { screens, parts } aggregate across all support

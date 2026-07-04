@@ -31,29 +31,31 @@ describe('getSupportForConcept — supported Episode 1 concepts', () => {
     it(`${concept} returns Episode 1 teaching screens`, () => {
       const res = getSupportForConcept(concept)
       expect(res.concept).toBe(concept)
-      expect(res.screens.length).toBeGreaterThan(0)
-      for (const s of res.screens) {
-        expect(s.moduleId).toBe(EP01)
+      // these medieval concepts appear in Episode 1 (and, being interleaved,
+      // may also appear in later episodes) — assert Episode 1 support exists.
+      const ep1 = res.screens.filter(s => s.moduleId === EP01)
+      expect(ep1.length, `${concept} has no Episode 1 support`).toBeGreaterThan(0)
+      for (const s of ep1) {
         expect(typeof s.screenIndex).toBe('number')
         expect(typeof s.label).toBe('string')
         expect(typeof s.purpose).toBe('string')
         // the screen genuinely lists this concept (exact match, not a broad guess)
         expect(s.conceptTags).toContain(concept)
       }
-      // screens are ascending by index (deterministic, single module)
-      const idxs = res.screens.map(s => s.screenIndex)
+      // screens are ascending by index within a module (deterministic)
+      const idxs = ep1.map(s => s.screenIndex)
       expect(idxs).toEqual([...idxs].sort((a, b) => a - b))
     })
   }
 })
 
 describe('getBestSupportScreen — exact screen preferred', () => {
-  it('returns the lowest-index supporting screen', () => {
+  it('returns a supporting screen listing the concept, deterministically first', () => {
     const best = getBestSupportScreen('history:medicine:galen')
     expect(best).not.toBeNull()
-    expect(best.moduleId).toBe(EP01)
-    expect(best.screenIndex).toBe(getSupportForConcept('history:medicine:galen').screens[0].screenIndex)
     expect(best.conceptTags).toContain('history:medicine:galen')
+    // the single best screen is the first of the deterministically-ordered set
+    expect(best).toEqual(getSupportForConcept('history:medicine:galen').screens[0])
   })
 
   it('returns null for a registered concept with no screen support', () => {
