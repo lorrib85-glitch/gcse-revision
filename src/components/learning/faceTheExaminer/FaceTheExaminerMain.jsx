@@ -2,6 +2,8 @@ import { useState } from 'react'
 import BackButton from '../../core/BackButton.jsx'
 import ScreenTextBlock from '../../layout/ScreenTextBlock.jsx'
 import { TYPE, SCREEN_TEXT_LAYOUT } from '../../../constants/typography.js'
+import { SPACING } from '../../../constants/spacing.js'
+import { RADII } from '../../../constants/radii.js'
 import { TAB_LABELS, IMAGES, markComparisonText } from './utils.js'
 import AnswerPanel from './AnswerPanel.jsx'
 import MarkingPanel from './MarkingPanel.jsx'
@@ -121,11 +123,32 @@ export default function FaceTheExaminerMain(props) {
           {questionParts.marks && <span style={{ ...TYPE.displaySection, display: 'block', color: accent, marginTop: SCREEN_TEXT_LAYOUT.blockGap }}>{questionParts.marks}</span>}
         </ScreenTextBlock>
 
-        {showTabs && <div style={{ padding: '4px 16px 8px', flexShrink: 0, position: 'relative', zIndex: 1, opacity: introBlocksMainInteraction ? 0 : 1, transform: introBlocksMainInteraction ? 'translateY(10px)' : 'translateY(0)', transition: 'opacity 240ms ease 500ms, transform 240ms ease 500ms' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, padding: 3, borderRadius: 999, background: 'rgba(0,0,0,0.18)', border: '1px solid rgba(245,238,225,0.07)' }}>
+        {showTabs && <div style={{ padding: `0 ${SCREEN_TEXT_LAYOUT.mobileInset}px ${SPACING.compact}px`, flexShrink: 0, position: 'relative', zIndex: 1, opacity: introBlocksMainInteraction ? 0 : 1, transform: introBlocksMainInteraction ? 'translateY(10px)' : 'translateY(0)', transition: 'opacity 240ms ease 500ms, transform 240ms ease 500ms' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.compact, overflowX: 'auto', paddingBottom: SPACING.micro }}>
             {['answer', 'marking'].map(tab => {
               const active = activeTab === tab
-              return <button key={tab} onClick={() => setActiveTab(tab)} style={{ ...TYPE.button, minHeight: 34, borderRadius: 999, border: 'none', background: active ? `${accent}1C` : 'transparent', color: active ? accent : 'rgba(255,255,255,0.48)', boxShadow: active ? `inset 0 0 0 1px ${accent}44` : 'none', cursor: 'pointer', transition: 'all 0.16s ease' }}>{TAB_LABELS[tab]}</button>
+              const label = tab === 'answer' ? 'Student answer' : TAB_LABELS[tab]
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  style={{
+                    ...TYPE.label,
+                    minHeight: 52,
+                    borderRadius: RADII.medium,
+                    border: active ? `1px solid ${accent}55` : '1px solid transparent',
+                    background: active ? 'rgba(255,255,255,0.08)' : 'transparent',
+                    color: active ? accent : 'rgba(245,238,225,0.58)',
+                    boxShadow: active ? `inset 0 1px 0 rgba(255,255,255,0.06), 0 14px 30px ${accent}0F` : 'none',
+                    padding: `0 ${SPACING.standard}px`,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    transition: 'background 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease',
+                  }}
+                >
+                  {label}
+                </button>
+              )
             })}
           </div>
         </div>}
