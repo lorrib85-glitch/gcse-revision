@@ -192,8 +192,11 @@ as A6 in the architecture backlog) records per-concept evidence and derives
 mastery/confidence/strength with deterministic weak/strong/neglected
 rankings. Selection logic should read `getConceptMastery` /
 `identifyWeakConcepts` snapshots rather than inventing its own proficiency
-score. No recorder or selector is wired yet — that is this phase's work, not
-the engine's.
+score. Phase 3A wired the recorder side: QuickFire answers now write
+per-concept evidence (`src/features/quickfire/logic/masteryRecorder.js`,
+write-only). No selector reads mastery yet — that is this phase's work, and
+it needs its own authorisation plus an allowlist extension in
+`tests/architecture/mastery-engine.test.js`.
 
 ### Product value
 Makes practice feel personalised rather than random. Learners should gradually see harder questions as proficiency improves, while weak topics still reappear through spaced retrieval.

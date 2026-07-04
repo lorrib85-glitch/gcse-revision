@@ -130,15 +130,19 @@ describe('Mastery engine — public API surface', () => {
     }
   })
 
-  it('no app source consumes the engine yet (Phase 2 is architecture only)', () => {
-    // Guard against accidental behavioural coupling before adaptive features
-    // are deliberately built on the engine. Delete this test in the phase
-    // that wires the first consumer.
+  it('only authorised consumers touch the engine (Phase 3A: QuickFire recorder)', () => {
+    // Each consumer of the mastery engine is authorised phase by phase.
+    // Extend this allowlist only in a phase that explicitly wires a new
+    // consumer — accidental coupling stays blocked.
+    const AUTHORISED_CONSUMERS = new Set([
+      join('features', 'quickfire', 'logic', 'masteryRecorder.js'), // Phase 3A — write-only recorder
+    ])
     const srcRoot = join(__dirname, '../../src')
     const offenders = []
     for (const entry of readdirSync(srcRoot, { recursive: true })) {
       const rel = String(entry)
       if (!/\.(js|jsx)$/.test(rel) || rel.startsWith(join('data', 'masteryEngine'))) continue
+      if (AUTHORISED_CONSUMERS.has(rel)) continue
       const src = readFileSync(join(srcRoot, rel), 'utf8')
       if (/masteryEngine/.test(src)) offenders.push(rel)
     }

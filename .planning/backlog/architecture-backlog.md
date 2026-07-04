@@ -55,7 +55,7 @@ Canonical documentation: `docs/system/LEARNING_GRAPH.md`.
 
 ## A6 — Learner Mastery Engine
 
-**Status:** Phase 2 shipped — record layer complete; no consumer wired yet (by design)
+**Status:** Phase 2 record layer + Phase 3A first consumer (QuickFire, write-only) shipped
 **Priority:** High
 **Area:** `src/data/masteryEngine/`, `tests/architecture/mastery-engine.test.js`, `tests/unit/masteryEngine/`, `docs/system/MASTERY_ENGINE.md`
 
@@ -91,10 +91,29 @@ Canonical documentation: `docs/system/MASTERY_ENGINE.md`.
   (monotonic under success/failure, recency-weighted), strength bands,
   weak/strong/neglected ordering, merge semantics.
 
+### Shipped (Phase 3A — first consumer, QuickFire, write-only)
+- `src/features/quickfire/logic/masteryRecorder.js`: resolves effective tags
+  (topic layer → question layer), keeps only registry-claimed concept-namespace
+  ids (course nodes included — biology/maths/english banks only carry
+  course-node concepts today), records via the engine's public API, persists
+  load → record → save. Unregistered ids in a concept namespace pass through
+  so the engine's validation throws — never silently dropped; untagged
+  questions (chemistry placeholders, 90s-quiz conversions) no-op without
+  touching storage.
+- Wired at the two existing binary marking points only: `QuickFireMode.jsx`
+  `onAnswer` and `TopicPracticeMode.jsx` MC check (every checked attempt,
+  including a retried first wrong try). `ExamMode.jsx` and selection
+  (`selectQuestions.js`) untouched; write-only — nothing reads mastery back.
+- AI-graded written answers in TopicPractice are NOT recorded — no binary
+  verdict exists; needs the partial-credit evidence extension first.
+- Guard test converted to a per-phase consumer allowlist
+  (`AUTHORISED_CONSUMERS` in `tests/architecture/mastery-engine.test.js`);
+  `tests/unit/quickfire/masteryRecorder.test.js` covers resolution, evidence
+  accumulation, facet exclusion, unknown-id throw, and persistence.
+
 ### Remaining work (future phases — each needs explicit sign-off)
-- Wire the first recorder: resolve a question's concept tags via
-  `resolveEffectiveTags` at marking time and record per concept. Delete the
-  no-consumers-yet guard test in that phase.
+- Record evidence from AI-graded written answers once a partial-credit
+  evidence shape exists (see MASTERY_ENGINE.md extension seams).
 - Point insight consumers (planner, weak-spot repair, QuickFire, analytics)
   at `identifyWeakConcepts`/`identifyStrongConcepts`/`identifyNeglectedConcepts`.
 - Adaptive question selection (feature backlog F2) reads mastery snapshots —

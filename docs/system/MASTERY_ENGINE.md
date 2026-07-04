@@ -1,6 +1,8 @@
 # Learner Mastery Engine
 
-**Status:** Active — Phase 2 (record layer). No consumer is wired yet by design.
+**Status:** Active — Phase 2 record layer + Phase 3A first consumer (QuickFire,
+write-only via `src/features/quickfire/logic/masteryRecorder.js`). Nothing
+reads mastery back yet; question selection is untouched.
 **Code:** `src/data/masteryEngine/`
 **Tests:** `tests/architecture/mastery-engine.test.js`, `tests/unit/masteryEngine/masteryEngine.test.js`
 **Sibling doc:** `docs/system/LEARNING_GRAPH.md`
@@ -173,5 +175,8 @@ discards unrecognised payloads rather than guessing.
   engine files + `learningGraph/`.
 - Unknown concept ids are rejected, on read and write.
 - Update functions are immutable — recorders never mutate their input.
-- No app source consumes the engine yet — a guard test enforces this until
-  the first consumer is deliberately built (delete that test in that phase).
+- Consumers are authorised phase by phase — an allowlist guard test blocks
+  any file outside the authorised set from touching the engine. Current
+  allowlist: `src/features/quickfire/logic/masteryRecorder.js` (Phase 3A,
+  write-only). Extend the allowlist only in a phase that explicitly wires a
+  new consumer.

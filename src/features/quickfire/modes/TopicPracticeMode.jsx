@@ -8,6 +8,7 @@ import { QUESTION_BANKS_BY_MODULE } from '../../../data/questionBanks/questionRe
 import BackButton from '../../../components/core/BackButton.jsx'
 import ContinueCTA from '../../../components/core/ContinueCTA.jsx'
 import { gradeWithAI, cleanQuestionText } from '../utils.js'
+import { recordQuestionResult } from '../logic/masteryRecorder.js'
 
 const PULSE_GOLD = '#D2A24C'
 
@@ -68,6 +69,10 @@ export function TopicPracticeMode({ selected, onExit }) {
       const isCorrect = answer === q.options[q.correct]
       const newAttempts = tqMcAttempts + 1
       setTqMcAttempts(newAttempts)
+      // Mastery evidence: every checked MC attempt counts, including a first
+      // wrong try that the UI lets the learner retry. AI-graded written
+      // answers are not recorded yet — no binary verdict exists for them.
+      recordQuestionResult(q, isCorrect)
       if (isCorrect) {
         setTqMcLocked(true)
         setFeedback({ marksAwarded: q.marks, marksAvailable: q.marks, grade: 'Excellent',

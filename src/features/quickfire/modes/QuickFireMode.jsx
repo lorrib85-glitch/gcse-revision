@@ -8,6 +8,7 @@ import { logWrongAnswer, logCorrectAnswer, getWeakTopics } from '../../../unifie
 import { QUICK_QUIZ_QUESTIONS } from '../../../data/quickQuizData.js'
 import { TAG_MODULE_MAP } from '../../../data/tagModuleMap.js'
 import { ALL_MODULE_QUICKFIRE_QUESTIONS } from '../../../data/questionBanks/questionRegistry.js'
+import { recordQuestionResult } from '../logic/masteryRecorder.js'
 import AnimatedNumber from '../../../components/core/AnimatedNumber.jsx'
 import BackButton from '../../../components/core/BackButton.jsx'
 import QuickFireQuestionScreen from '../components/QuickFireQuestionScreen.jsx'
@@ -443,6 +444,7 @@ export function QuickFireMode({ onExit }) {
       onAnswer={(isCorrect) => {
         setQuickFireStats(stats => addQuickFireAnswer(stats, qfQ, isCorrect))
         updateQfQuestionHistory(qfQ, isCorrect)
+        recordQuestionResult(qfQ, isCorrect)
         if (qfQ.type === 'truefalse') {
           const log = isCorrect ? logCorrectAnswer : logWrongAnswer
           log({ subject: qfQ.subject, topic: qfQ.topic, questionText: qfQ.q, source: 'quiz', questionType: 'truefalse' })
