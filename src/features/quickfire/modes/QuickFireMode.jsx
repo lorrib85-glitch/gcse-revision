@@ -6,7 +6,7 @@ import { GENERAL } from '../../../constants/generalTheme.js'
 import { recordScore, getAllConfidenceRatings } from '../../../progress.js'
 import { logWrongAnswer, logCorrectAnswer, getWeakTopics } from '../../../unifiedWeaknessTracker.js'
 import { QUICK_QUIZ_QUESTIONS } from '../../../data/quickQuizData.js'
-import { TAG_MODULE_MAP } from '../../../data/tagModuleMap.js'
+import { quickFireFromBank } from '../logic/convertBankQuestion.js'
 import { ALL_MODULE_QUICKFIRE_QUESTIONS } from '../../../data/questionBanks/questionRegistry.js'
 import { recordQuestionResult } from '../logic/masteryRecorder.js'
 import AnimatedNumber from '../../../components/core/AnimatedNumber.jsx'
@@ -34,20 +34,7 @@ function shuffle(arr) {
   return a
 }
 
-function quickFireFromBank(q) {
-  const isTrueFalse = q.type === 'truefalse'
-  return {
-    q: q.question,
-    type: isTrueFalse ? 'truefalse' : 'mc',
-    options: isTrueFalse ? ['True', 'False'] : q.options,
-    correct: isTrueFalse ? (q.correct ? 0 : 1) : q.correctIndex,
-    subject: q.subject,
-    topic: q.topic,
-    moduleId: TAG_MODULE_MAP[q.tag] || null,
-    ms: q.explanation,
-    hint: q.reasoning,
-  }
-}
+// quickFireFromBank lives in ../logic/convertBankQuestion.js (pure, testable).
 
 // TODO phase 2: Chemistry quickfire questions have no module bank yet — migrate when Chemistry is designed
 const CHEMISTRY_QF_PENDING = [
