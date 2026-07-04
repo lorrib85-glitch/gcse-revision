@@ -339,3 +339,103 @@ Continue expanding built modules in priority order:
 - Content is spec-aligned.
 - Practice questions link back to module/question-bank tags where possible.
 - Do not add placeholder subject structures without real designed content.
+
+---
+
+## F7 — Evidence model enhancements
+
+**Status:** Future backlog  
+**Priority:** Medium  
+**Depends on:** EV1/O1 stage-aware evidence recording, `docs/system/EVIDENCE_MODEL.md`
+
+### Product value
+Make mastery feel fair, explainable and tutor-like by improving the quality of learning evidence over time without making the first evidence implementation too heavy.
+
+### Future phases
+
+#### EV2 — Evidence weighting by activity type
+Define how evidence strength may differ by source:
+
+- Multiple choice and true/false = weaker evidence.
+- Short free text = stronger evidence.
+- Exam answer = stronger evidence.
+- Teach-back = strongest evidence.
+
+Do not implement until the basic evidence event model is stable and stage/source preservation is working.
+
+#### EV3 — Response confidence and response time
+Future optional fields:
+
+- `learnerConfidence`
+- `responseTimeMs`
+
+Use cautiously. Speed must not unfairly penalise ADHD, anxious or slower-processing learners. Response time should be a context signal, not a blunt score multiplier.
+
+#### EV4 — Misconception-linked evidence
+Link wrong answers to misconception ids where known, especially from distractor choices. Misconception ids should support diagnosis and repair selection, not directly distort mastery scores.
+
+#### EV5 — Support/repair verification
+Do not treat viewing support as evidence. Record evidence only when the learner completes a verification question or task after support.
+
+#### EV6 — Cross-session spaced retrieval
+Use evidence age and last successful retrieval to schedule review later across sessions. This should feed planner and QuickFire resurfacing logic.
+
+#### EV7 — Evidence source audit trail
+Keep enough source metadata to explain why the app thinks a learner is weak or strong.
+
+Example learner/parent explanation:
+
+> This is based on 3 recent questions: 2 wrong at understand stage, 1 correct at recall stage.
+
+#### EV8 — Parent/teacher interpretation layer
+Translate evidence into human-readable progress summaries without exposing raw scores too bluntly. Avoid making learners feel labelled by a single weak score.
+
+### Constraints
+- Evidence must remain a demonstration, not activity.
+- AI confidence validates interpretation; it must not directly scale mastery.
+- Secondary concepts should not receive negative evidence from wrong answers.
+- Future weighting must be explainable and testable.
+- Response-time scoring must be handled cautiously.
+
+---
+
+## F8 — QuickFire personalised improvement feedback
+
+**Status:** Future backlog  
+**Priority:** Medium  
+**Depends on:** EV1/O1 stage-aware evidence recording, QuickFire mastery evidence, evidence audit trail
+
+### Product value
+Make QuickFire feel encouraging and personal without childish gamification by highlighting real improvement moments.
+
+### Example moment
+At the end of QuickFire or after a corrected repeat concept:
+
+> You got this one wrong last time — you’re improving.
+
+or
+
+> Last time, Four Humours tripped you up. This time you got it.
+
+### Behaviour rules
+- Only show when backed by evidence: a previously wrong concept/objective is now answered correctly.
+- Prefer concept/objective language over raw question ids.
+- Avoid overpraise or fake certainty.
+- Keep it short and mature.
+- Do not interrupt the answer flow; prefer end-of-round or lightweight debrief placement.
+- Do not show if the evidence is weak, ambiguous, AI-unclear, or based only on viewing support content.
+
+### Future logic
+This should read from the evidence audit trail once available:
+
+- previous wrong event for the same primary concept/objective
+- current correct event
+- enough recency to feel meaningful
+- no repeated spam for the same concept in the same session
+
+### Acceptance criteria
+- Message is earned by real improvement.
+- Learner-visible wording is concise and non-gimmicky.
+- Works across subjects.
+- No UI change until the evidence query is reliable.
+- Does not change mastery scores or adaptive selection.
