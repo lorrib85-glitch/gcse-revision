@@ -46,10 +46,10 @@ export default {
   stageNavigation: [
     { id: 'part-1', title: 'The Ship That Changed England', description: 'Intro hook, prior recall and roadmap.', screenIndex: 0 },
     { id: 'part-2', title: 'What Was the Black Death?', description: 'Arrival, spread and symptoms of the plague.', screenIndex: 1 },
-    { id: 'part-3', title: 'How Medieval Minds Explained It', description: 'God, miasma, astrology and humoural beliefs.', screenIndex: 7 },
+    { id: 'part-3', title: 'How Medieval Minds Explained It', description: 'God, miasma, astrology and humoural beliefs.', screenIndex: 8 },
     { id: 'part-4', title: 'Treatments in a World Without Germs', description: 'Plague responses, treatments and prevention attempts.', screenIndex: 11 },
     { id: 'part-5', title: 'Changed by Disaster?', description: 'Social, economic and medical aftermath of the plague.', screenIndex: 15 },
-    { id: 'part-6', title: 'Exam Prep: Crisis, Continuity and Change', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 19 },
+    { id: 'part-6', title: 'Exam Prep: Crisis, Continuity and Change', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 18 },
   ],
 
   screens: [
@@ -235,30 +235,28 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
     },
 
     {
-      type: 'theoryCompare',
       stage: 'The arrival',
       label: 'What was really happening?',
-      title: 'What they saw vs what was true',
-      image: '/figures/history/medicine/black-death/dead-rat.png',
-      prompt: 'Medieval people saw illness spreading fast. They tried to explain it using the ideas they already trusted.',
-      leftTitle: 'What people believed',
-      rightTitle: 'What was actually happening',
-      revealText: 'They blamed God, miasma and the planets. The real cause was a bacterium carried by fleas on black rats.',
-      comparisons: [
+      heading: 'What they saw vs what was true',
+      sub: 'Medieval people saw illness spreading fast. They tried to explain it using the ideas they already trusted.',
+      blocks: [
         {
-          label: 'Cause',
-          left: 'God’s punishment, bad air, or astrology',
-          right: 'Yersinia pestis bacteria',
-        },
-        {
-          label: 'Carrier',
-          left: 'Bad smells, sinful behaviour, unlucky planets',
-          right: 'Fleas living on black rats',
-        },
-        {
-          label: 'Spread',
-          left: 'Poisoned air or divine judgement spreading through communities',
-          right: 'Flea bites, infected rats, travel and trade routes',
+          type: 'theoryCompare',
+          oldLabel: 'What people believed',
+          oldTitle: 'Three explanations',
+          oldPoints: [
+            'Cause — God’s punishment, bad air, or astrology',
+            'Carrier — bad smells, sinful behaviour, unlucky planets',
+            'Spread — poisoned air or divine judgement spreading through communities',
+          ],
+          newLabel: 'What was actually happening',
+          newTitle: 'One real cause',
+          newPoints: [
+            'Cause — Yersinia pestis bacteria',
+            'Carrier — fleas living on black rats',
+            'Spread — flea bites, infected rats, travel and trade routes',
+          ],
+          takeaway: 'They blamed God, miasma and the planets. The real cause was a bacterium carried by fleas on black rats.',
         },
       ],
     },
@@ -295,150 +293,199 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
     },
 
     {
-      type: 'knowledgeCheck',
+      type: 'quickRecall',
       stage: 'The arrival',
       label: 'Quick check',
-      prompt: 'What was the actual cause of bubonic plague?',
-      correctAnswer: 'Yersinia pestis bacteria carried by fleas on black rats',
-      acceptedAnswers: [
-        'yersinia pestis',
-        'bacteria carried by fleas',
-        'fleas on black rats',
-        'plague bacteria',
+      questions: [
+        {
+          type: 'choice',
+          question: 'What was the actual cause of bubonic plague?',
+          options: ['Yersinia pestis bacteria carried by fleas on black rats', 'Miasma — poisonous air from rotting matter', 'God\'s punishment for sin', 'Planetary alignment'],
+          correct: 0,
+          explanation: 'Bubonic plague was caused by Yersinia pestis bacteria, carried by fleas living on black rats. Medieval people did not know this because they had no microscopes or germ theory.',
+        },
       ],
-      hint: 'It was not miasma, astrology or God’s punishment. Think of the tiny carrier living on rats.',
-      explanation: 'Bubonic plague was caused by Yersinia pestis bacteria, carried by fleas living on black rats. Medieval people did not know this because they had no microscopes or germ theory.',
     },
 
     {
-      type: 'accordion',
+      type: 'visualLearning',
       stage: 'Explanations',
       label: 'Why did medieval people get it wrong?',
-      title: 'Why did people blame the wrong things?',
-      intro: 'Medieval explanations were not random. They fitted the ideas people already trusted.',
-      panels: [
+      scenes: [
         {
-          title: 'Religion gave meaning to disaster',
+          image: '/figures/history/medicine/black-death/plague-background.png',
+          headline: 'Why did people blame the wrong things?',
+          body: 'Medieval explanations were not random. They fitted the ideas people already trusted.',
+        },
+        {
+          image: '/headers/history-medicine-medieval-scripture.png',
+          headline: 'Religion gave meaning to disaster.',
           body: 'The Church taught that God could punish sin. So when the plague killed thousands, many believed God was angry. Prayer, confession and repentance made sense if illness was divine punishment.',
         },
         {
-          title: 'Bad smells seemed dangerous',
+          image: '/figures/history/medicine/black-death/miasma.png',
+          headline: 'Bad smells seemed dangerous.',
           body: 'Plague towns smelled of rotting bodies, waste and smoke. Miasma theory said poisonous air caused illness. Burning herbs or carrying sweet-smelling pomanders seemed logical.',
         },
         {
-          title: 'Astrology looked scientific',
+          image: '/headers/history-medicine-germ-bridge.png',
+          headline: 'Astrology looked scientific.',
           body: 'Physicians believed the planets influenced the body. The Paris Medical Faculty blamed the plague on an unusual alignment of Saturn, Jupiter and Mars in 1345. To educated people, this sounded like serious medical explanation.',
         },
         {
-          title: 'They had no way to see bacteria',
+          finalReveal: true,
+          headline: 'They had no way to see bacteria.',
           body: 'No microscopes. No germ theory. No understanding of fleas carrying bacteria. So even careful observation led people to the wrong cause.',
         },
       ],
     },
 
     {
-      type: 'sorting',
+      type: 'naturalSupernaturalSwipe',
       stage: 'Explanations',
       label: 'Cause sort',
-      title: 'Sort the causes',
-      prompt: 'Which were medieval beliefs — and which was the actual cause?',
-      categories: ['Medieval belief', 'Actual cause'],
+      introTitle: 'Belief or fact?',
+      introText: 'Which were medieval beliefs — and which was the actual cause?',
+      gameTitle: 'Sort the causes',
+      gamePrompt: 'Was this a medieval belief, or the actual cause?',
+      columns: [
+        { label: 'MEDIEVAL\nBELIEF',  color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)', image: '/figures/history/medicine/black-death/miasma.png' },
+        { label: 'ACTUAL\nCAUSE',     color: '#8C3A2A', colorRgb: '140,58,42',   bg: 'rgba(140,58,42,.07)',   image: '/figures/history/medicine/black-death/symptom-case-file.png' },
+      ],
       items: [
-        { text: 'God punishing sin', category: 'Medieval belief' },
-        { text: 'Miasma or bad air', category: 'Medieval belief' },
-        { text: 'Planetary alignment', category: 'Medieval belief' },
-        { text: 'Yersinia pestis bacteria', category: 'Actual cause' },
-        { text: 'Fleas on black rats', category: 'Actual cause' },
+        { label: 'God punishing sin',           col: 0, explanation: 'A medieval belief — not based on evidence, but on religious conviction.' },
+        { label: 'Miasma or bad air',            col: 0, explanation: 'A medieval belief — physicians blamed the smell itself, not what it carried.' },
+        { label: 'Planetary alignment',          col: 0, explanation: 'A medieval belief — even the Paris Medical Faculty endorsed this as fact.' },
+        { label: 'Yersinia pestis bacteria',     col: 1, explanation: 'The actual cause — confirmed by Alexandre Yersin in 1894.' },
+        { label: 'Fleas on black rats',          col: 1, explanation: 'The actual cause — the carrier that passed the bacteria to humans.' },
       ],
+      explanation: 'Medieval people reasoned logically from the wrong premises. The real cause — bacteria carried by fleas on rats — would not be discovered for another 500 years.',
     },
 
     {
-      type: 'multiTheoryScenario',
+      type: 'guidedChoiceCarousel',
       stage: 'Explanations',
+      id: 'multi-theory-scenario',
+      tag: 'plague-explanations',
       label: 'Multiple beliefs at once',
-      title: 'One disaster. Several explanations.',
-      scenario: 'A family in 1349 has lost two children to the plague. They want to know why it happened — and what they should do next.',
-      theories: [
-        {
-          id: 'god',
-          title: 'God and sin',
-          cause: 'God is punishing the community for sin.',
-          response: 'Confess, pray, fast, go on pilgrimage.',
-        },
-        {
-          id: 'miasma',
-          title: 'Miasma',
-          cause: 'Poisonous air is spreading disease.',
-          response: 'Burn herbs, clean streets, carry sweet-smelling herbs.',
-        },
-        {
-          id: 'astrology',
-          title: 'Astrology',
-          cause: 'The planets are creating dangerous conditions in the body.',
-          response: 'Avoid treatment on unlucky days, consult astrology charts.',
-        },
-        {
-          id: 'humours',
-          title: 'Four humours',
-          cause: 'The body’s humours are badly out of balance.',
-          response: 'Bloodletting, purging, diet changes.',
-        },
-      ],
-    },
-
-    {
-      type: 'theoryPrescription',
-      stage: 'Responses',
-      label: 'Treatment logic',
-      title: 'Treatment followed belief',
-      prompt: 'Choose the belief. Then choose the response that would seem logical to a medieval person.',
+      headline: 'A family in 1349 has lost two children to the plague.',
+      question: 'They want to know why it happened — and what they should do next. Which explanation do you think they would reach for?',
+      helperText: 'Swipe to explore the explanations.',
+      promptVisual: { src: '/figures/history/medicine/black-death/medieval-town.png', alt: 'A grieving medieval family' },
       options: [
         {
-          id: 'god',
-          label: 'God sent the plague',
-          cause: 'The plague is punishment for sin.',
-          correctTreatment: 'Prayer and repentance',
-          wrongTreatments: ['Bloodletting', 'Burning herbs'],
+          title: 'God and sin',
+          image: '/headers/history-medicine-medieval-scripture.png',
+          sections: [
+            { heading: 'Cause',    items: ['God is punishing the community for sin.'] },
+            { heading: 'Response', items: ['Confess, pray, fast, go on pilgrimage.'] },
+          ],
+          reaction: '"God is punishing us for our sins."',
+          buttonText: 'Choose God and sin',
+          revealLines: [
+            'You chose God and sin.',
+            'If God controls everything and a family loses two children, God must have willed it.',
+            'The response was prayer, fasting, confession and pilgrimage — seeking forgiveness.',
+          ],
+        },
+        {
+          title: 'Miasma',
+          image: '/figures/history/medicine/black-death/miasma.png',
+          sections: [
+            { heading: 'Cause',    items: ['Poisonous air is spreading disease.'] },
+            { heading: 'Response', items: ['Burn herbs, clean streets, carry sweet-smelling herbs.'] },
+          ],
+          reaction: '"The air here reeks. It must be poisoned."',
+          buttonText: 'Choose miasma',
+          revealLines: [
+            'You chose miasma.',
+            'The family noticed the smell was worst near the plague pits and rubbish heaps.',
+            'They were right about the location. Wrong about the cause — it wasn\'t the smell, it was fleas and bacteria.',
+          ],
+        },
+        {
+          title: 'Astrology',
+          image: '/headers/history-medicine-germ-bridge.png',
+          sections: [
+            { heading: 'Cause',    items: ['The planets are creating dangerous conditions in the body.'] },
+            { heading: 'Response', items: ['Avoid treatment on unlucky days, consult astrology charts.'] },
+          ],
+          reaction: '"The stars are unfavourable. This is why illness has struck."',
+          buttonText: 'Choose astrology',
+          revealLines: [
+            'You chose astrology.',
+            'This was mainstream medicine — the official view of the Paris Medical Faculty.',
+            'If the stars caused it, only the stars changing could cure it.',
+          ],
+        },
+        {
+          title: 'Four humours',
+          image: '/figures/history/medicine/black-death/bloodletting.png',
+          sections: [
+            { heading: 'Cause',    items: ['The body\'s humours are badly out of balance.'] },
+            { heading: 'Response', items: ['Bloodletting, purging, diet changes.'] },
+          ],
+          reaction: '"Their humours must be dangerously imbalanced."',
+          buttonText: 'Choose four humours',
+          revealLines: [
+            'You chose the Four Humours.',
+            'This was the foundation of all medieval medical training, backed by Galen\'s authority.',
+            'The response — bloodletting and purging — often weakened patients further.',
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'quickRecall',
+      stage: 'Responses',
+      label: 'Treatment logic',
+      questions: [
+        {
+          type: 'choice',
+          question: 'A medieval person believes the plague is punishment for sin. Which treatment would seem logical to them?',
+          options: ['Prayer and repentance', 'Bloodletting', 'Burning herbs', 'Consulting astrological charts'],
+          correct: 0,
           explanation: 'If God sent the plague, prayer, confession, fasting and repentance made sense. People hoped God would forgive them and end the disease.',
         },
         {
-          id: 'miasma',
-          label: 'Bad air is poisoning people',
-          cause: 'Miasma — poisonous air from rotting matter — is causing disease.',
-          correctTreatment: 'Burn herbs and clean foul smells',
-          wrongTreatments: ['Pilgrimage', 'Purging'],
+          type: 'choice',
+          question: 'A medieval person believes miasma — poisonous air from rotting matter — is causing disease. Which treatment would seem logical to them?',
+          options: ['Burn herbs and clean foul smells', 'Pilgrimage', 'Purging', 'Bloodletting'],
+          correct: 0,
           explanation: 'If bad air caused disease, then removing or overpowering foul smells seemed logical. People burned herbs, cleaned streets and carried sweet-smelling pomanders.',
         },
         {
-          id: 'astrology',
-          label: 'The planets are dangerous',
-          cause: 'The alignment of planets is disturbing the body.',
-          correctTreatment: 'Consult astrological charts',
-          wrongTreatments: ['Quarantine rules', 'Antibiotics'],
+          type: 'choice',
+          question: 'A medieval person believes the alignment of planets is disturbing the body. Which treatment would seem logical to them?',
+          options: ['Consult astrological charts', 'Quarantine rules', 'Prayer and repentance', 'Bloodletting'],
+          correct: 0,
           explanation: 'If planets influenced the body, treatment needed to be timed carefully. Physicians used astrological charts and Zodiac Man diagrams to decide when treatment was safe.',
         },
         {
-          id: 'humours',
-          label: 'The humours are out of balance',
-          cause: 'Disease is caused by imbalance between blood, phlegm, yellow bile and black bile.',
-          correctTreatment: 'Bloodletting or purging',
-          wrongTreatments: ['Vaccination', 'Clean water'],
+          type: 'choice',
+          question: 'A medieval person believes disease is caused by imbalance between blood, phlegm, yellow bile and black bile. Which treatment would seem logical to them?',
+          options: ['Bloodletting or purging', 'Consult astrological charts', 'Prayer and repentance', 'Burning herbs'],
+          correct: 0,
           explanation: 'If disease came from too much of one humour, removing fluid through bloodletting, vomiting or diarrhoea seemed logical.',
         },
       ],
     },
 
     {
-      type: 'matching',
+      type: 'matchingTask',
       stage: 'Responses',
       label: 'Belief → response',
+      subject: 'History',
       title: 'Match belief to response',
-      prompt: 'Drag each treatment to the belief that made it seem logical.',
+      instruction: 'Match each belief to the response it made seem logical.',
+      weakAreaCategory: 'Black Death Treatments',
+      backgroundImage: '/figures/history/medicine/black-death/bloodletting.png',
       pairs: [
-        { left: 'God sent the plague', right: 'Prayer, confession and repentance' },
-        { left: 'Bad air caused disease', right: 'Burn herbs and clean streets' },
-        { left: 'Planets caused disease', right: 'Consult astrological charts' },
-        { left: 'Humours out of balance', right: 'Bloodletting and purging' },
+        { id: 'god-response',       term: 'God sent the plague',        answer: 'Prayer, confession and repentance.' },
+        { id: 'miasma-response',    term: 'Bad air caused disease',     answer: 'Burn herbs and clean streets.' },
+        { id: 'astrology-response', term: 'Planets caused disease',     answer: 'Consult astrological charts.' },
+        { id: 'humours-response',   term: 'Humours out of balance',     answer: 'Bloodletting and purging.' },
       ],
     },
 
@@ -471,26 +518,35 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
     },
 
     {
-      type: 'misconceptionCheck',
       stage: 'Responses',
       label: 'Trap check',
-      title: 'Trap: did the Black Death change medicine?',
-      misconception: 'The Black Death changed medicine because people finally discovered what caused disease.',
-      correctIdea: 'The Black Death changed society, but it did not transform medical understanding.',
-      explanation: 'Medieval people did not discover bacteria, fleas or germ theory. They mostly continued to use the same explanations: God, miasma, astrology and humours. Many treatments failed, but no better theory replaced them.',
+      blocks: [
+        {
+          type: 'misconceptionCheck',
+          id: 'trap-medicine-changed',
+          statements: [
+            {
+              statement: 'The Black Death changed medicine because people finally discovered what caused disease.',
+              answer: false,
+              reveal: 'The Black Death changed society, but it did not transform medical understanding. Medieval people did not discover bacteria, fleas or germ theory. They mostly continued to use the same explanations: God, miasma, astrology and humours. Many treatments failed, but no better theory replaced them.',
+            },
+          ],
+        },
+      ],
     },
 
     {
-      type: 'timelineReveal',
+      type: 'progressionTimeline',
       stage: 'Impact',
       label: 'Aftermath',
       title: 'What changed after so many died?',
-      intro: 'The plague killed so many people that England could not simply return to normal.',
-      events: [
-        { year: '1348–49', title: 'Black Death in England', body: 'Between one-third and one-half of the population died.' },
-        { year: '1349', title: 'Labour shortage', body: 'There were fewer workers. Peasants demanded higher wages.' },
-        { year: '1351', title: 'Statute of Labourers', body: 'The government tried to cap wages and force workers back to pre-plague conditions.' },
-        { year: '1381', title: 'Peasants’ Revolt', body: 'Resentment over wages, rights and taxes contributed to rebellion.' },
+      description: 'The plague killed so many people that England could not simply return to normal.',
+      image: '/figures/history/medicine/black-death/labour-shortage.png',
+      stages: [
+        { day: '1348–49', label: 'Black Death in England',  description: 'Between one-third and one-half of the population died.' },
+        { day: '1349',    label: 'Labour shortage',           description: 'There were fewer workers. Peasants demanded higher wages.' },
+        { day: '1351',    label: 'Statute of Labourers',       description: 'The government tried to cap wages and force workers back to pre-plague conditions.' },
+        { day: '1381',    label: 'Peasants\' Revolt',          description: 'Resentment over wages, rights and taxes contributed to rebellion.' },
       ],
     },
 
@@ -498,37 +554,56 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       type: 'conceptReveal',
       stage: 'Impact',
       label: 'Change and continuity',
-      concept: 'Change ≠ progress',
-      definition: 'The Black Death changed society — but it did not lead to a breakthrough in medical understanding.',
-      visual: '/figures/history/medicine/black-death/not-much-changed.png',
-      explanation: 'A huge event can change life, work and power without changing medical knowledge. Doctors still blamed God, miasma, astrology and humours.',
-    },
-
-    {
-      type: 'changeContinuityLens',
-      stage: 'Impact',
-      label: 'What changed? What stayed the same?',
-      title: 'Changed by disaster?',
-      prompt: 'Sort each consequence into change or continuity.',
-      categories: ['Changed', 'Stayed the same'],
-      items: [
-        { text: 'Labour shortages gave peasants more bargaining power', category: 'Changed' },
-        { text: 'Wages rose for many workers', category: 'Changed' },
-        { text: 'The Church’s authority was questioned more', category: 'Changed' },
-        { text: 'Doctors still blamed God, miasma and humours', category: 'Stayed the same' },
-        { text: 'Bloodletting and prayer were still used', category: 'Stayed the same' },
+      steps: [
+        {
+          eyebrow: 'Change and continuity',
+          showEyebrow: true,
+          mainText: 'Change ≠ progress',
+          supportText: 'The Black Death changed society — but it did not lead to a breakthrough in medical understanding. A huge event can change life, work and power without changing medical knowledge. Doctors still blamed God, miasma, astrology and humours.',
+          backgroundImage: '/figures/history/medicine/black-death/not-much-changed.png',
+        },
       ],
     },
 
     {
-      type: 'examinerTrap',
+      type: 'naturalSupernaturalSwipe',
+      stage: 'Impact',
+      label: 'What changed? What stayed the same?',
+      introTitle: 'Changed by disaster?',
+      introText: 'Sort each consequence into change or continuity.',
+      gameTitle: 'Changed or stayed the same?',
+      gamePrompt: 'Did this change by 1350, or stay the same?',
+      columns: [
+        { label: 'CHANGED\nBy 1350',         color: '#4CAF7D', colorRgb: '76,175,125', bg: 'rgba(76,175,125,.07)', image: '/figures/history/medicine/black-death/aftermath-changed.png' },
+        { label: 'STAYED THE SAME\nBy 1350', color: '#8C3A2A', colorRgb: '140,58,42',  bg: 'rgba(140,58,42,.07)',  image: '/figures/history/medicine/black-death/aftermath-unchanged.png' },
+      ],
+      items: [
+        { label: 'Labour shortages gave peasants more bargaining power', col: 0, explanation: 'Changed — the labour shortage gave survivors real bargaining power for the first time.' },
+        { label: 'Wages rose for many workers',                          col: 0, explanation: 'Changed — landlords had to compete for scarce workers.' },
+        { label: 'The Church\'s authority was questioned more',          col: 0, explanation: 'Changed — prayer had not stopped the plague, and people noticed.' },
+        { label: 'Doctors still blamed God, miasma and humours',         col: 1, explanation: 'Stayed the same — medieval doctors used exactly the same explanations after the plague as before.' },
+        { label: 'Bloodletting and prayer were still used',              col: 1, explanation: 'Stayed the same — without understanding the real cause, treatments could not improve.' },
+      ],
+      explanation: 'The Black Death changed society dramatically — but it changed medicine almost not at all. The same theories and treatments continued for another 300 years.',
+    },
+
+    {
       stage: 'Exam prep',
       label: 'Most common trap',
-      title: 'The trap: saying it changed medicine',
-      trap: 'The Black Death was so terrible that people must have discovered what caused disease afterwards.',
-      whyWrong: 'It sounds logical — but it is wrong. People did not discover bacteria, fleas or germ theory. Medical ideas mostly stayed the same.',
-      fix: 'Say: it changed society dramatically, but medical understanding changed very little.',
-      example: 'Although the Black Death changed wages, labour and confidence in the Church, doctors continued to explain disease through God, miasma, astrology and the Four Humours.',
+      blocks: [
+        {
+          type: 'misconceptionCheck',
+          id: 'trap-most-common',
+          statements: [
+            {
+              statement: 'The Black Death was so terrible that people must have discovered what caused disease afterwards.',
+              answer: false,
+              reveal: 'It sounds logical — but it is wrong. People did not discover bacteria, fleas or germ theory. Medical ideas mostly stayed the same.',
+              examTrap: 'Say: it changed society dramatically, but medical understanding changed very little. Although the Black Death changed wages, labour and confidence in the Church, doctors continued to explain disease through God, miasma, astrology and the Four Humours.',
+            },
+          ],
+        },
+      ],
     },
 
     {

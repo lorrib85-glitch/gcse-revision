@@ -59,8 +59,8 @@ export const MODULES = [
     ],
     screenCount: 24,
     screenTags: [
-      null, null, null, null, null, null, null, "plague-explanations",
       null, null, null, null, null, null, null, null,
+      null, null, "plague-explanations", null, null, null, null, null,
       null, null, null, null, null, null, null, null,
     ],
   },
