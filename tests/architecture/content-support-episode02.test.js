@@ -14,7 +14,7 @@ import { getSupportForConcept } from '../../src/data/contentSupport/conceptRepai
 import { isConceptId } from '../../src/data/learningGraph/conceptRegistry.js'
 
 const EP02 = 'history-medicine-black-death'
-const SCREEN_COUNT = 27
+const SCREEN_COUNT = 26
 
 const screenIndices = SUPPORT.screens.map(s => s.screenIndex)
 const maxScreen = Math.max(...screenIndices)
@@ -42,7 +42,7 @@ describe('Episode 2 support map — forward integrity', () => {
     }
   })
 
-  it('has a screen-level entry for all 27 screens (0–26), contiguous, no duplicates', () => {
+  it('has a screen-level entry for all 26 screens (0–25), contiguous, no duplicates', () => {
     const sorted = [...screenIndices].sort((a, b) => a - b)
     expect(sorted).toEqual(Array.from({ length: SCREEN_COUNT }, (_, i) => i))
     expect(new Set(screenIndices).size).toBe(screenIndices.length)
@@ -65,7 +65,7 @@ describe('Episode 2 support map — forward integrity', () => {
     }
   })
 
-  it('stageRanges collectively cover every screen (0–26)', () => {
+  it('stageRanges collectively cover every screen (0–25)', () => {
     const covered = new Set()
     for (const r of SUPPORT.stageRanges) {
       const [start, end] = r.screenRange

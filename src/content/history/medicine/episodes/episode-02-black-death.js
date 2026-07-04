@@ -46,10 +46,10 @@ export default {
   stageNavigation: [
     { id: 'part-1', title: 'The Ship That Changed England', description: 'Intro hook, prior recall and roadmap.', screenIndex: 0 },
     { id: 'part-2', title: 'What Was the Black Death?', description: 'Arrival, spread and symptoms of the plague.', screenIndex: 1 },
-    { id: 'part-3', title: 'How Medieval Minds Explained It', description: 'God, miasma, astrology and humoural beliefs.', screenIndex: 8 },
-    { id: 'part-4', title: 'Treatments in a World Without Germs', description: 'Plague responses, treatments and prevention attempts.', screenIndex: 13 },
-    { id: 'part-5', title: 'Changed by Disaster?', description: 'Social, economic and medical aftermath of the plague.', screenIndex: 17 },
-    { id: 'part-6', title: 'Exam Prep: Crisis, Continuity and Change', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 22 },
+    { id: 'part-3', title: 'How Medieval Minds Explained It', description: 'God, miasma, astrology and humoural beliefs.', screenIndex: 7 },
+    { id: 'part-4', title: 'Treatments in a World Without Germs', description: 'Plague responses, treatments and prevention attempts.', screenIndex: 12 },
+    { id: 'part-5', title: 'Changed by Disaster?', description: 'Social, economic and medical aftermath of the plague.', screenIndex: 16 },
+    { id: 'part-6', title: 'Exam Prep: Crisis, Continuity and Change', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 21 },
   ],
 
   screens: [
@@ -169,51 +169,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           icon: '🐀',
           description: 'Rats were common at every dock in England. No one thought twice about them. No one noticed the dead rats before the sick people appeared. No one made the connection.',
           extraFact: 'Medieval people had no idea rats were involved. They blamed the planets, bad air, and God\'s punishment. The true explanation would remain hidden for another 500 years.',
-        },
-      ],
-    },
-
-    {
-      stage: 'The arrival',
-      label: 'How the plague actually spread',
-      kicker: 'The hidden chain',
-      heading: 'How the plague actually spread',
-      sub: 'Put together what you just explored on the dock.',
-      blocks: [
-        {
-          type: 'timelineChain',
-          intro: 'You explored the ship, the crew, the cargo, and the rats. Here is the chain connecting them — the one nobody in 1348 could see. Tap each step to reveal why it mattered.',
-          steps: [
-            {
-              id: 'ship',
-              icon: '🚢',
-              image: '/figures/history/medicine/black-death/plague-dock.png', // placeholder — replace with a ship-specific image
-              label: 'Trading ships carried infected cargo',
-              detail: 'Hidden in the hold, alongside the cargo, travelled black rats — carried from infected Mediterranean ports.',
-            },
-            {
-              id: 'rats',
-              icon: '🐀',
-              image: '/figures/history/medicine/black-death/plague-dock.png', // placeholder — replace with a rat-specific image
-              label: 'The rats carried infected fleas',
-              detail: 'No one suspected the rats — they were everywhere on every dock, and ignored. The fleas they carried were infected with Yersinia pestis bacteria.',
-            },
-            {
-              id: 'fleas',
-              icon: '🦟',
-              image: '/figures/history/medicine/black-death/plague-dock.png', // placeholder — replace with a flea-specific image
-              label: 'The fleas bit people when rats died',
-              detail: 'A single bite passed the bacteria directly into a person\'s bloodstream.',
-            },
-            {
-              id: 'spread',
-              icon: '🏘️',
-              image: '/figures/history/medicine/black-death/plague-dock.png', // placeholder — replace with a town-spread image
-              label: 'The disease spread through towns and villages',
-              detail: 'Within weeks of the ship docking at Melcombe, the surrounding area was dying.',
-            },
-          ],
-          outro: 'This is the transmission chain: ship → rat → flea → person. Medieval people never made this connection — it would take another 500 years. Try explaining the chain in your own words.',
         },
       ],
     },
