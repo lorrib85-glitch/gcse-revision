@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useMemo } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
@@ -50,22 +50,32 @@ export default function CinematicRevealMoment({
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, background: bg } = theme
 
+  const bodyLines = useMemo(
+    () => String(body || '')
+      .split(/\n+/)
+      .map(line => line.trim())
+      .filter(Boolean),
+    [body]
+  )
+
   const videoRef = useRef(null)
   const timers   = useRef([])
 
-  const [videoEnded,  setVideoEnded]  = useState(false)
-  const [videoError,  setVideoError]  = useState(false)
-  const [yearVisible, setYearVisible] = useState(false)
-  const [paraVisible, setParaVisible] = useState(() => new Array(paragraphs.length).fill(false))
-  const [btnVisible,  setBtnVisible]  = useState(false)
+  const [videoEnded,      setVideoEnded]      = useState(false)
+  const [videoError,      setVideoError]      = useState(false)
+  const [yearVisible,     setYearVisible]     = useState(false)
+  const [bodyLineVisible, setBodyLineVisible] = useState(() => new Array(bodyLines.length).fill(false))
+  const [paraVisible,     setParaVisible]     = useState(() => new Array(paragraphs.length).fill(false))
+  const [btnVisible,      setBtnVisible]      = useState(false)
 
   // Keep paragraph visibility in sync if the module content changes while mounted.
   useEffect(() => {
+    setBodyLineVisible(new Array(bodyLines.length).fill(false))
     setParaVisible(new Array(paragraphs.length).fill(false))
     setYearVisible(false)
     setBtnVisible(false)
     setVideoEnded(false)
-  }, [paragraphs.length, videoSrc, fallbackImage])
+  }, [bodyLines.length, paragraphs.length, videoSrc, fallbackImage])
 
   // Clear all pending timers on unmount
   useEffect(() => () => clearTimers(), [])
@@ -92,6 +102,7 @@ export default function CinematicRevealMoment({
     clearTimers()
     setVideoEnded(true)
     setYearVisible(true)
+    setBodyLineVisible(new Array(bodyLines.length).fill(true))
     setParaVisible(new Array(paragraphs.length).fill(true))
     setBtnVisible(true)
     onTextRevealStart?.()
@@ -107,9 +118,9 @@ export default function CinematicRevealMoment({
       onTextRevealStart?.()
     }, REVEAL_START_MS)
 
-    paragraphs.forEach((_, i) => {
+    bodyLines.forEach((_, i) => {
       schedule(() => {
-        setParaVisible(prev => {
+        setBodyLineVisible(prev => {
           const next = [...prev]
           next[i] = true
           return next
@@ -117,8 +128,20 @@ export default function CinematicRevealMoment({
       }, REVEAL_START_MS + PARAGRAPH_STAGGER_MS * (i + 1))
     })
 
-    const lastTextDelay = paragraphs.length > 0
-      ? REVEAL_START_MS + PARAGRAPH_STAGGER_MS * paragraphs.length
+    paragraphs.forEach((_, i) => {
+      const revealIndex = bodyLines.length + i + 1
+      schedule(() => {
+        setParaVisible(prev => {
+          const next = [...prev]
+          next[i] = true
+          return next
+        })
+      }, REVEAL_START_MS + PARAGRAPH_STAGGER_MS * revealIndex)
+    })
+
+    const totalRevealItems = bodyLines.length + paragraphs.length
+    const lastTextDelay = totalRevealItems > 0
+      ? REVEAL_START_MS + PARAGRAPH_STAGGER_MS * totalRevealItems
       : REVEAL_START_MS
 
     schedule(() => setBtnVisible(true), lastTextDelay + CTA_DELAY_MS)
@@ -252,17 +275,23 @@ export default function CinematicRevealMoment({
             </div>
           )}
 
-          {/* Body */}
-          {yearVisible && body && (
+          {/* Body — revealed one line at a time */}
+          {yearVisible && bodyLines.length > 0 && (
             <div style={{
               ...TYPE.bodyStrong,
-              whiteSpace: 'pre-line',
               color: 'rgba(255,255,255,0.64)',
               maxWidth: '34ch',
               textShadow: '0 1px 16px rgba(0,0,0,0.5)',
-              animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
-              {body}
+              {bodyLines.map((line, i) => bodyLineVisible[i] && (
+                <p key={`${line}-${i}`} style={{
+                  margin: 0,
+                  marginBottom: i < bodyLines.length - 1 ? 20 : 0,
+                  animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
+                }}>
+                  {line}
+                </p>
+              ))}
             </div>
           )}
 
