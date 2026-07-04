@@ -6,6 +6,20 @@ import { TAB_LABELS, IMAGES, markComparisonText } from './utils.js'
 import AnswerPanel from './AnswerPanel.jsx'
 import MarkingPanel from './MarkingPanel.jsx'
 
+function splitQuestionAndMarks(question, fallbackMarks) {
+  const rawQuestion = String(question || '').trim()
+  const markMatch = rawQuestion.match(/\s*[[(]\s*(\d+\s*marks?)\s*[\])]\s*$/i)
+  const questionWithoutMarks = rawQuestion
+    .replace(/\s*[[(]\s*\d+\s*marks?\s*[\])]\s*$/i, '')
+    .replace(/^["“”']+|["“”']+$/g, '')
+    .trim()
+
+  return {
+    question: questionWithoutMarks || rawQuestion,
+    marks: markMatch?.[1] || (fallbackMarks ? `${fallbackMarks} marks` : ''),
+  }
+}
+
 export default function FaceTheExaminerMain(props) {
   const {
     module,
@@ -50,6 +64,7 @@ export default function FaceTheExaminerMain(props) {
   const showMarking = activeTab === 'marking' && showTabs
   const bottomPanelHeight = revealPanelVisible && isReveal ? 220 : 0
   const introBlocksMainInteraction = questionIntroVisible && phase === 'reading'
+  const questionParts = splitQuestionAndMarks(examiner.question, examiner.marks)
 
   function startQuestionIntroDock() {
     setQuestionIntroDocking(true)
@@ -102,7 +117,8 @@ export default function FaceTheExaminerMain(props) {
           titleStyle={{ ...TYPE.displaySection, color: 'rgba(245,238,225,0.96)', marginBottom: 10 }}
           bodyStyle={{ ...TYPE.examQuestion, color: 'rgba(245,238,225,0.76)' }}
         >
-          {examiner.question}
+          <span>{questionParts.question}</span>
+          {questionParts.marks && <span style={{ ...TYPE.displaySection, display: 'block', color: accent, marginTop: SCREEN_TEXT_LAYOUT.blockGap }}>{questionParts.marks}</span>}
         </ScreenTextBlock>
 
         {showTabs && <div style={{ padding: '4px 16px 8px', flexShrink: 0, position: 'relative', zIndex: 1, opacity: introBlocksMainInteraction ? 0 : 1, transform: introBlocksMainInteraction ? 'translateY(10px)' : 'translateY(0)', transition: 'opacity 240ms ease 500ms, transform 240ms ease 500ms' }}>
@@ -142,7 +158,7 @@ export default function FaceTheExaminerMain(props) {
               position: 'absolute',
               left: SCREEN_TEXT_LAYOUT.mobileInset,
               right: SCREEN_TEXT_LAYOUT.mobileInset,
-              top: questionIntroDocking ? 42 : '24%',
+              top: questionIntroDocking ? SCREEN_TEXT_LAYOUT.blockGap : '24%',
               transformOrigin: 'top left',
               transform: questionIntroDocking ? 'scale(0.56)' : 'scale(1)',
               opacity: questionIntroDocking ? 0.18 : 1,
@@ -151,19 +167,27 @@ export default function FaceTheExaminerMain(props) {
               <div style={{
                 ...TYPE.eyebrow,
                 color: accent,
-                textTransform: 'uppercase',
-                marginBottom: 26,
+                textTransform: 'none',
+                marginBottom: SCREEN_TEXT_LAYOUT.blockGap,
               }}>
                 Read the question first
               </div>
               <div style={{
                 ...TYPE.displayScreen,
-                fontSize: 'clamp(31px, 8.8vw, 43px)',
                 color: 'rgba(245,238,225,0.95)',
                 maxWidth: 620,
               }}>
-                “{examiner.question}”
+                {questionParts.question}
               </div>
+              {questionParts.marks && (
+                <div style={{
+                  ...TYPE.displaySection,
+                  color: accent,
+                  marginTop: SCREEN_TEXT_LAYOUT.blockGap,
+                }}>
+                  {questionParts.marks}
+                </div>
+              )}
             </div>
             <div style={{
               position: 'absolute',
