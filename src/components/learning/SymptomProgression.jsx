@@ -5,7 +5,10 @@ import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 import { TYPE } from '../../constants/typography.js'
+
+const DEFAULT_FINAL_INSIGHT = 'Medieval doctors could describe what happened, but without germ theory they could not explain the real cause or choose effective prevention.'
 
 let _spStyled = false
 function ensureStyles() {
@@ -17,35 +20,21 @@ function ensureStyles() {
       from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+    @keyframes sp-current-pulse {
+      0%, 100% { box-shadow: 0 0 0 rgba(var(--sp-rgb), 0), inset 0 1px 0 rgba(255,255,255,0.03); }
+      50% { box-shadow: 0 0 22px rgba(var(--sp-rgb), 0.18), inset 0 1px 0 rgba(255,255,255,0.08); }
+    }
     .sp-continue:active { transform: scale(${MOTION.scale.press}); }
   `
   document.head.appendChild(el)
 }
-
-// ─── SymptomProgression ───────────────────────────────────────────────────────
-//
-// A case-file framed walkthrough of how an illness develops in the body,
-// stage by stage. Reuses the explain-the-chain mechanic (tap to reveal the
-// next stage) so the learner actively builds the timeline rather than
-// reading a wall of text.
-//
-// Screen data shape:
-// {
-//   type: 'progressionTimeline',
-//   title: 'How the plague killed',
-//   description: 'Follow the progression of bubonic plague through the body.',
-//   image: '/figures/.../symptom-case-file.png',
-//   stages: [
-//     { day: '1–2', label: 'Flea bite', description: '...' },
-//     ...
-//   ],
-// }
 
 export default function SymptomProgression({
   subject = 'History',
   title,
   description,
   image,
+  finalInsight = DEFAULT_FINAL_INSIGHT,
   stages = [],
   onContinue,
 }) {
@@ -55,6 +44,8 @@ export default function SymptomProgression({
 
   const [revealed, setRevealed] = useState(Math.min(1, stages.length))
   const allRevealed = revealed >= stages.length
+  const viewedStages = Array.from({ length: revealed }, (_, i) => i)
+  const currentStage = Math.max(0, Math.min(revealed - 1, stages.length - 1))
 
   function handleAdvance() {
     if (!allRevealed) setRevealed(r => Math.min(stages.length, r + 1))
@@ -65,8 +56,6 @@ export default function SymptomProgression({
 
   return (
     <div style={{ minHeight: '100vh', background: '#0B0805', ...F }}>
-
-      {/* Case file image — atmospheric reveal at top of screen */}
       <div style={{ position: 'relative', height: '46vh', minHeight: 320, overflow: 'hidden' }}>
         {image && (
           <div
@@ -82,9 +71,7 @@ export default function SymptomProgression({
           position: 'absolute', inset: 0,
           background: 'linear-gradient(180deg, rgba(11,8,5,0.05) 0%, rgba(11,8,5,0.55) 62%, #0B0805 100%)',
         }} />
-        <div style={{
-          position: 'absolute', left: SPACING.standard, right: SPACING.standard, bottom: SPACING.standard,
-        }}>
+        <div style={{ position: 'absolute', left: SPACING.standard, right: SPACING.standard, bottom: SPACING.standard }}>
           <h2 style={{
             ...F, fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.12,
             color: 'rgba(255,255,255,0.94)', margin: 0,
@@ -92,44 +79,53 @@ export default function SymptomProgression({
             {title}
           </h2>
           {description && (
-            <p style={{
-              ...TYPE.body,
-              color: 'rgba(255,255,255,0.52)', margin: `${SPACING.micro}px 0 0`, maxWidth: 480,
-            }}>
+            <p style={{ ...TYPE.body, color: 'rgba(255,255,255,0.52)', margin: `${SPACING.micro}px 0 0`, maxWidth: 480 }}>
               {description}
             </p>
           )}
         </div>
       </div>
 
-      {/* Stage chain — tap to reveal each stage of the progression */}
       <div style={{ padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.cinematic}px` }}>
+        {stages.length > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: SPACING.standard }}>
+            <SequenceProgress
+              total={stages.length}
+              current={currentStage}
+              viewed={viewedStages}
+              accent={accent}
+              accentRgb={rgb}
+              compact
+              ariaLabel="Progression stages"
+            />
+          </div>
+        )}
+
         {stages.slice(0, revealed).map((stage, i) => {
           const isLast      = i === revealed - 1
           const isCurrent   = isLast && !allRevealed
           const isNew       = isLast && revealed > 1
           const hasFollower = i < stages.length - 1
+          const isCollapsed = revealed > 3 && i < revealed - 2
 
           return (
             <div
               key={stage.label || i}
               style={{
                 display: 'flex', gap: SPACING.compact, alignItems: 'flex-start',
-                opacity: isCurrent ? 1 : 0.90,
+                opacity: isCollapsed ? 0.66 : isCurrent ? 1 : 0.86,
                 transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}`,
                 animation: isNew ? `sp-fade-up ${MOTION.duration.standard} ${MOTION.easing.standard} both` : 'none',
               }}
             >
-              {/* Day marker + connector */}
-              <div style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center',
-                width: 64, flexShrink: 0,
-              }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 64, flexShrink: 0 }}>
                 <div style={{
-                  minWidth: 64, padding: '8px 6px', borderRadius: RADII.small,
-                  border: `1px solid rgba(${rgb},${isCurrent ? '0.42' : '0.24'})`,
-                  background: `rgba(${rgb},${isCurrent ? '0.16' : '0.08'})`,
+                  minWidth: 64, padding: isCollapsed ? '7px 6px' : '8px 6px', borderRadius: RADII.small,
+                  border: `1px solid rgba(${rgb},${isCurrent ? '0.46' : '0.24'})`,
+                  background: `rgba(${rgb},${isCurrent ? '0.17' : '0.08'})`,
                   textAlign: 'center',
+                  animation: isCurrent ? 'sp-current-pulse 2.3s ease-in-out infinite' : 'none',
+                  '--sp-rgb': rgb,
                 }}>
                   <div style={{ ...F, fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: `rgba(${rgb},0.62)` }}>Day</div>
                   <div style={{ ...F, fontSize: 16, fontWeight: 700, color: accent, marginTop: 2 }}>{stage.day}</div>
@@ -137,33 +133,49 @@ export default function SymptomProgression({
 
                 {hasFollower && (
                   <div style={{
-                    width: 1, flex: 1, minHeight: 32,
+                    width: 1, flex: 1, minHeight: isCollapsed ? 22 : 32,
                     background: `rgba(${rgb},0.18)`,
                     marginTop: SPACING.micro, marginBottom: SPACING.micro,
                   }} />
                 )}
               </div>
 
-              {/* Stage description */}
-              <div style={{ flex: 1, paddingTop: 4, paddingBottom: hasFollower ? SPACING.standard : 0 }}>
+              <div style={{ flex: 1, paddingTop: 4, paddingBottom: hasFollower ? (isCollapsed ? SPACING.compact : SPACING.standard) : 0 }}>
                 <div style={{
-                  ...F, fontSize: 19, fontWeight: 600, lineHeight: 1.3,
-                  color: 'rgba(255,255,255,0.94)', marginBottom: SPACING.micro,
+                  ...F, fontSize: isCollapsed ? 16 : 19, fontWeight: 600, lineHeight: 1.3,
+                  color: 'rgba(255,255,255,0.94)', marginBottom: isCollapsed ? 0 : SPACING.micro,
                 }}>
                   {stage.label}
                 </div>
-                <div style={{
-                  ...TYPE.body,
-                  color: 'rgba(255,255,255,0.52)', maxWidth: 440,
-                }}>
-                  {stage.description}
-                </div>
+                {!isCollapsed && (
+                  <div style={{ ...TYPE.body, color: 'rgba(255,255,255,0.52)', maxWidth: 440 }}>
+                    {stage.description}
+                  </div>
+                )}
               </div>
             </div>
           )
         })}
 
-        {/* Advance control */}
+        {allRevealed && finalInsight && (
+          <div style={{
+            marginTop: SPACING.standard,
+            padding: SPACING.standard,
+            borderRadius: RADII.large,
+            border: `1px solid rgba(${rgb},0.26)`,
+            background: `linear-gradient(180deg, rgba(${rgb},0.10), rgba(255,255,255,0.025))`,
+            boxShadow: `0 18px 44px rgba(0,0,0,0.24), 0 0 24px rgba(${rgb},0.06)`,
+            animation: `sp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+          }}>
+            <div style={{ ...TYPE.eyebrow, color: accent, marginBottom: SPACING.micro }}>
+              Why this mattered
+            </div>
+            <div style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.78)', lineHeight: 1.55 }}>
+              {finalInsight}
+            </div>
+          </div>
+        )}
+
         {allRevealed ? (
           <ContinueCTA onClick={handleAdvance} accent={accent} style={{ marginTop: SPACING.standard }} />
         ) : (
@@ -183,7 +195,7 @@ export default function SymptomProgression({
               transition: `transform ${BUTTONS.continue.transition}`,
             }}
           >
-            Reveal next stage ›
+            Show what happens next ›
           </button>
         )}
       </div>
