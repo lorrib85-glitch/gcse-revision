@@ -24,7 +24,8 @@ const TECHNIQUE_LABELS = {
 }
 
 function hasWritten(text, starter) {
-  return (text || '').trim().length > (starter || '').trim().length + 1
+  const trimmed = (text || '').trim()
+  return trimmed.length > 0 && trimmed !== (starter || '').trim()
 }
 
 function SourcesCard({ sources, accent, open, onToggle }) {
