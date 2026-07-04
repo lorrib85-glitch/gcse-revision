@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { TYPE } from '../../../constants/typography.js'
+import { GENERAL } from '../../../constants/generalTheme.js'
 import { recordScore } from '../../../progress.js'
 import BackButton from '../../../components/core/BackButton.jsx'
 import ContinueCTA from '../../../components/core/ContinueCTA.jsx'
