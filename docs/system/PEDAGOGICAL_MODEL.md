@@ -307,7 +307,11 @@ scheduler; no new storage is needed to adopt the policy.
 ## 7. Explain like a teacher — contract for future AI explanations
 
 No prompts here — only the interface and the non-negotiable principles any
-future generator must satisfy.
+future generator must satisfy. Where deterministic logic ends and AI
+interpretation begins — which answer types AI may mark, the response schema,
+the validation gate, and what AI must never decide — is defined in
+`docs/system/AI_INTERPRETATION_BOUNDARY.md`; this section governs only the
+*voice and shape* of explanations.
 
 **Input contract** (assembled entirely from existing structures): the
 question + learner's actual answer, the objective cell, the misconception
