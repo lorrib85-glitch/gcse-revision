@@ -183,7 +183,17 @@ Tests should verify:
 
 **Status:** Future backlog  
 **Priority:** High  
-**Depends on:** F1
+**Depends on:** F1, architecture backlog A6 (Learner Mastery Engine)
+
+### Progress (2026-07-04)
+The learner-knowledge half of this feature now exists: the Learner Mastery
+Engine (`src/data/masteryEngine/`, `docs/system/MASTERY_ENGINE.md`, tracked
+as A6 in the architecture backlog) records per-concept evidence and derives
+mastery/confidence/strength with deterministic weak/strong/neglected
+rankings. Selection logic should read `getConceptMastery` /
+`identifyWeakConcepts` snapshots rather than inventing its own proficiency
+score. No recorder or selector is wired yet — that is this phase's work, not
+the engine's.
 
 ### Product value
 Makes practice feel personalised rather than random. Learners should gradually see harder questions as proficiency improves, while weak topics still reappear through spaced retrieval.

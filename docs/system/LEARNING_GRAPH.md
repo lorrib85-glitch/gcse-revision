@@ -104,6 +104,10 @@ const effective = resolveEffectiveTags(
 - **Consumers:** adaptive selection (`selectQuestions.js`), the planner,
   weak-spot repair and analytics should query via tags/concepts
   (`getQuestionsByTags`, `resolveEffectiveTags`) rather than bespoke fields.
+- **Learner mastery:** what one learner knows of these concepts is tracked by
+  the mastery engine (`src/data/masteryEngine/`,
+  `docs/system/MASTERY_ENGINE.md`) — it validates every recorded concept id
+  against this registry.
 - **Do not** put React, storage access, or app imports in `learningGraph/` —
   it must stay a pure leaf usable from node, tests and future workers.
 - **Do not** add speculative concepts for subjects without designed content.

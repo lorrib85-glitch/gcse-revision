@@ -53,6 +53,67 @@ Canonical documentation: `docs/system/LEARNING_GRAPH.md`.
 
 ---
 
+## A6 — Learner Mastery Engine
+
+**Status:** Phase 2 shipped — record layer complete; no consumer wired yet (by design)
+**Priority:** High
+**Area:** `src/data/masteryEngine/`, `tests/architecture/mastery-engine.test.js`, `tests/unit/masteryEngine/`, `docs/system/MASTERY_ENGINE.md`
+
+### Context
+The learning graph (A5) describes the curriculum; the mastery engine describes
+one learner's understanding of it. It is the single source of truth for "what
+does the learner know?" that QuickFire, Weak Spot Recovery, the Daily Planner,
+Pulse, the AI Tutor, Exam Practice, the Parent Dashboard and Analytics will
+all consume — replacing per-feature bespoke scores.
+
+Canonical documentation: `docs/system/MASTERY_ENGINE.md`.
+
+### Shipped (Phase 2)
+- Pure logic layer at `src/data/masteryEngine/` mirroring the learningGraph
+  leaf pattern: `masteryModel.js` (versioned evidence state), `evidence.js`
+  (`recordAttempt`/`recordCorrect`/`recordIncorrect`/`mergeEvidence`, all
+  immutable), `masteryScore.js` (`calculateMastery`/`calculateConfidence`/
+  `calculateStrength`/`getConceptMastery` — derived at read time, never
+  stored), `insights.js` (`identifyWeakConcepts`/`identifyStrongConcepts`/
+  `identifyNeglectedConcepts`, deterministic ordering), `masteryStore.js`
+  (the only impure file; persists via `src/lib/storage.js`, key
+  `gcse_mastery_v1`).
+- Evidence-not-percentages model: lifetime counters, streak, timestamps, and
+  a bounded timestamped recent-results window per concept — decay-ready
+  without migration (`MASTERY_STATE_VERSION`).
+- Concept ids validated against the learning graph registry; unknown ids
+  throw on read and write.
+- `tests/architecture/mastery-engine.test.js` — purity (no React/app/feature
+  imports, no direct storage outside `masteryStore.js`), registry coupling,
+  immutability, public API surface, and a no-consumers-yet guard.
+- `tests/unit/masteryEngine/masteryEngine.test.js` — 34 tests: evidence
+  accumulation, streaks, window bounds, mastery/confidence behaviour
+  (monotonic under success/failure, recency-weighted), strength bands,
+  weak/strong/neglected ordering, merge semantics.
+
+### Remaining work (future phases — each needs explicit sign-off)
+- Wire the first recorder: resolve a question's concept tags via
+  `resolveEffectiveTags` at marking time and record per concept. Delete the
+  no-consumers-yet guard test in that phase.
+- Point insight consumers (planner, weak-spot repair, QuickFire, analytics)
+  at `identifyWeakConcepts`/`identifyStrongConcepts`/`identifyNeglectedConcepts`.
+- Adaptive question selection (feature backlog F2) reads mastery snapshots —
+  selection logic stays out of the engine.
+- Memory decay, response-time/confidence-button evidence, AI-marking sources,
+  spaced repetition — extension seams documented in `MASTERY_ENGINE.md`.
+- Decide the convergence story with `unifiedWeaknessTracker.js` (behavioural
+  misconception log) — deliberate phase, not a casual merge.
+
+### Rules
+- The engine stays a pure leaf: no React, no UI, no app imports;
+  `masteryStore.js` is the only file allowed to touch persistence, via
+  `src/lib/storage.js`.
+- Mastery/confidence/strength are derived, never persisted.
+- Concept vocabulary comes from the learning graph registry only.
+- No consumer wiring without an explicit user request in that session.
+
+---
+
 ## A1 — Finish QuickFire architecture hardening
 
 **Status:** Backlog  
