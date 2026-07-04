@@ -58,6 +58,29 @@ function WeekTracker({ completedWeekDays, reduced }) {
           position: 'absolute', left: 16, right: 16, top: '50%',
           height: 2, background: 'rgba(255,255,255,0.045)', transform: 'translateY(-50%)',
         }} />
+        {completedWeekDays.slice(0, -1).map((done, i) => {
+          if (!done || !completedWeekDays[i + 1]) return null
+          const delay = START_MS.tracker + i * START_MS.trackerStep
+          return (
+            <div
+              key={`line-${i}`}
+              aria-hidden="true"
+              className={reduced ? undefined : 'streak-cel-line-segment'}
+              style={{
+                position: 'absolute',
+                left: `calc(16px + ((100% - 32px) / ${WEEKDAY_LABELS.length - 1}) * ${i})`,
+                top: '50%',
+                width: `calc((100% - 32px) / ${WEEKDAY_LABELS.length - 1})`,
+                height: 2,
+                background: `rgba(${GENERAL.tealRgb},0.9)`,
+                boxShadow: `0 0 16px rgba(${GENERAL.tealRgb},0.18)`,
+                transform: reduced ? 'translateY(-50%) scaleX(1)' : 'translateY(-50%) scaleX(0)',
+                transformOrigin: 'left center',
+                animationDelay: reduced ? undefined : `${delay + 80}ms`,
+              }}
+            />
+          )
+        })}
         {completedWeekDays.map((done, i) => {
           const delay = START_MS.tracker + i * START_MS.trackerStep
           const style = done
@@ -195,6 +218,12 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
           to   { opacity: 1; transform: translateY(0); }
         }
         .streak-cel-heading { animation: streak-cel-heading-in 620ms ${MOTION.easing.gentle} both; }
+
+        @keyframes streak-cel-line-in {
+          from { transform: translateY(-50%) scaleX(0); opacity: 0; }
+          to   { transform: translateY(-50%) scaleX(1); opacity: 1; }
+        }
+        .streak-cel-line-segment { animation: streak-cel-line-in 440ms ${MOTION.easing.gentle} both; }
 
         @keyframes streak-cel-dot-in {
           0%   { border-color: rgba(255,255,255,0.14); background-color: rgba(13,15,16,0.72); transform: scale(1); }
