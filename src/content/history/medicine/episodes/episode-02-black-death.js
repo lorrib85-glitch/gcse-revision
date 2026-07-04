@@ -47,9 +47,9 @@ export default {
     { id: 'part-1', title: 'The Ship That Changed England', description: 'Intro hook, prior recall and roadmap.', screenIndex: 0 },
     { id: 'part-2', title: 'What Was the Black Death?', description: 'Arrival, spread and symptoms of the plague.', screenIndex: 1 },
     { id: 'part-3', title: 'How Medieval Minds Explained It', description: 'God, miasma, astrology and humoural beliefs.', screenIndex: 7 },
-    { id: 'part-4', title: 'Treatments in a World Without Germs', description: 'Plague responses, treatments and prevention attempts.', screenIndex: 12 },
-    { id: 'part-5', title: 'Changed by Disaster?', description: 'Social, economic and medical aftermath of the plague.', screenIndex: 16 },
-    { id: 'part-6', title: 'Exam Prep: Crisis, Continuity and Change', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 21 },
+    { id: 'part-4', title: 'Treatments in a World Without Germs', description: 'Plague responses, treatments and prevention attempts.', screenIndex: 11 },
+    { id: 'part-5', title: 'Changed by Disaster?', description: 'Social, economic and medical aftermath of the plague.', screenIndex: 15 },
+    { id: 'part-6', title: 'Exam Prep: Crisis, Continuity and Change', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 19 },
   ],
 
   screens: [
@@ -306,7 +306,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           ],
           reaction: '"The Lord is punishing us for our sins."',
           buttonText: 'Choose God\'s punishment',
-          nextScreenId: 'plague-beliefs-reveal',
           revealLines: [
             'You chose God\'s punishment.',
             'To a medieval person, this was not superstition — it was logical.',
@@ -326,7 +325,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           ],
           reaction: '"The air near the plague pits reeks. It must be poisoned."',
           buttonText: 'Choose miasma',
-          nextScreenId: 'plague-beliefs-reveal',
           revealLines: [
             'You chose miasma.',
             'This was the most scientific view available.',
@@ -346,7 +344,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           ],
           reaction: '"Saturn, Jupiter and Mars aligned in Aquarius. This poisoned the air."',
           buttonText: 'Choose planetary alignment',
-          nextScreenId: 'plague-beliefs-reveal',
           revealLines: [
             'You chose planetary alignment.',
             'In 1348, the Paris Medical Faculty officially blamed the plague on a triple conjunction of Saturn, Jupiter and Mars in Aquarius in 1345.',
@@ -354,40 +351,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
             'If the stars caused the plague, you couldn\'t cure it by treating the body.',
             'You had to wait for the stars to change.',
           ],
-        },
-      ],
-    },
-
-    {
-      type: 'visualLearning',
-      id: 'plague-beliefs-reveal',
-      stage: 'Medieval explanations',
-      label: 'What medieval people believed',
-      scenes: [
-        {
-          image: '/figures/history/medicine/black-death/plague-background.png',
-          headline: 'Medieval people had three main explanations for the Black Death.',
-          body: 'God\'s punishment, miasma — bad air — and planetary alignment. Each came with its own treatment.',
-        },
-        {
-          image: '/headers/history-medicine-medieval-scripture.png',
-          headline: 'God was punishing humanity for its sins.',
-          body: 'This led to prayer, fasting, pilgrimage, and confession. Flagellants publicly whipped themselves to demonstrate suffering and seek mercy.',
-        },
-        {
-          image: '/figures/history/medicine/black-death/miasma.png',
-          headline: 'Miasma — the smell of disease.',
-          body: 'Bad air from decaying matter was thought to carry the plague. People burned aromatic herbs and carried posies of flowers to counteract it.',
-        },
-        {
-          image: '/headers/history-medicine-germ-bridge.png',
-          headline: 'The stars were aligned in the wrong positions.',
-          body: 'In 1348, the Paris Medical Faculty officially blamed the Black Death on a triple conjunction of Saturn, Jupiter, and Mars in Aquarius in 1345.',
-        },
-        {
-          finalReveal: true,
-          headline: 'All three explanations were wrong.',
-          body: 'They were internally logical, given what was known. The actual cause would not be discovered for another 500 years.',
         },
       ],
     },
@@ -699,22 +662,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
         { label: 'Medical treatments — bloodletting, herbs and prayer continued', col: 1, explanation: 'Stayed the same — without understanding the real cause, treatments could not improve.' },
       ],
       explanation: 'The Black Death changed society dramatically — but it changed medicine almost not at all. The same theories and treatments continued for another 300 years.',
-    },
-
-    {
-      type: 'cinematic',
-      stage: 'The aftermath',
-      label: 'Medicine stayed the same',
-      fallbackImage: '/figures/history/medicine/black-death/not-much-changed.png',
-      year: 'c.1350',
-      paragraphs: [
-        'The Black Death killed up to half of England.',
-        'It weakened the Church. It empowered the poor. It destabilised the feudal system.',
-        'But it did not change medicine.',
-        'Doctors looked at the plague and saw exactly what they expected to see: God\'s punishment, miasma, bad planetary alignment.',
-        'They already had their explanations. The plague just confirmed them.',
-        'The real cause — bacteria spread by fleas on rats — would not be discovered for another 546 years.',
-      ],
     },
 
     {

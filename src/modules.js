@@ -57,11 +57,11 @@ export const MODULES = [
       "history:medicine:black-death", "history:medicine:flagellants",
       "history:medicine:miasma", "history:medicine:religion", "history:medicine:quarantine",
     ],
-    screenCount: 26,
+    screenCount: 24,
     screenTags: [
       null, null, null, null, null, null, null, "plague-explanations",
-      null, null, null, null, null, null, null, null, null,
-      null, null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null,
     ],
   },
   {

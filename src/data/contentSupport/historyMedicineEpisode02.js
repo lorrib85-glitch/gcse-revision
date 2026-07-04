@@ -54,7 +54,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
     {
       id: 'part-3',
       title: 'Medieval explanations',
-      screenRange: [7, 11],
+      screenRange: [7, 10],
       conceptTags: [
         'history:medicine:black-death',
         'history:medicine:god-punishment',
@@ -72,7 +72,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
     {
       id: 'part-4',
       title: 'Treatments and prevention',
-      screenRange: [12, 13],
+      screenRange: [11, 12],
       conceptTags: [
         'history:medicine:black-death',
         'history:medicine:flagellants',
@@ -86,7 +86,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
     {
       id: 'part-5',
       title: 'Life during the plague',
-      screenRange: [14, 15],
+      screenRange: [13, 14],
       conceptTags: [
         'history:medicine:black-death',
         'history:medicine:church-authority',
@@ -96,7 +96,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
     {
       id: 'part-6',
       title: 'The aftermath',
-      screenRange: [16, 20],
+      screenRange: [15, 18],
       conceptTags: [
         'history:medicine:black-death',
         'history:medicine:church-authority',
@@ -110,7 +110,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
     {
       id: 'part-7',
       title: 'Exam prep',
-      screenRange: [21, null],
+      screenRange: [19, null],
       conceptTags: [
         'history:medicine:black-death',
         'history:medicine:god-punishment',
@@ -212,21 +212,6 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
     },
     {
       screenIndex: 8,
-      label: 'What medieval people believed',
-      purpose: 'The three medieval explanations for the Black Death (God\'s punishment, miasma, astrology) and the responses each produced.',
-      conceptTags: [
-        'history:medicine:black-death',
-        'history:medicine:god-punishment',
-        'history:medicine:sin',
-        'history:medicine:prayer',
-        'history:medicine:pilgrimage',
-        'history:medicine:flagellants',
-        'history:medicine:miasma',
-        'history:medicine:astrology',
-      ],
-    },
-    {
-      screenIndex: 9,
       label: 'Beliefs and responses',
       purpose: 'Match each plague explanation (God, miasma, astrology, humours) to its treatment.',
       conceptTags: [
@@ -243,7 +228,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 10,
+      screenIndex: 9,
       label: 'The actual cause',
       purpose: 'Contrasts medieval beliefs with the actual cause — rats, fleas and Yersinia pestis (not identified until 1894).',
       conceptTags: [
@@ -251,7 +236,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 11,
+      screenIndex: 10,
       label: 'Causes and beliefs check',
       purpose: 'Retrieval check on plague causes and beliefs — the astrological explanation, the real cause, and miasma/posies.',
       conceptTags: [
@@ -261,7 +246,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 12,
+      screenIndex: 11,
       label: 'Plague treatments',
       purpose: 'Explore medieval plague treatments — flagellation, posies/herbs (miasma) and bloodletting (Four Humours), administered by physicians.',
       conceptTags: [
@@ -275,7 +260,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 13,
+      screenIndex: 12,
       label: 'Treatment to belief',
       purpose: 'Match each plague treatment to the belief that drove it (God\'s punishment, miasma, Four Humours).',
       conceptTags: [
@@ -288,7 +273,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 14,
+      screenIndex: 13,
       label: 'A village in 1349',
       purpose: 'Narrative of a village in 1349 — the human and social disruption of the epidemic.',
       conceptTags: [
@@ -297,7 +282,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 15,
+      screenIndex: 14,
       label: 'Rich and poor',
       purpose: 'Rich versus poor — unequal death, abandoned villages and heavy losses among the clergy.',
       conceptTags: [
@@ -307,7 +292,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 16,
+      screenIndex: 15,
       label: 'What changed after the plague',
       purpose: 'What changed after the plague — labour shortage, higher wages and weakened Church authority.',
       conceptTags: [
@@ -317,7 +302,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 17,
+      screenIndex: 16,
       label: 'Why the Black Death changed England',
       purpose: 'The causal chain of change: population fall → labour shortage → challenge to feudalism; failed prayer → weakened Church credibility.',
       conceptTags: [
@@ -327,7 +312,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 18,
+      screenIndex: 17,
       label: 'Changed or stayed the same?',
       purpose: 'Sort what changed versus what stayed the same after 1350 — society changed (wages, Church authority) while medicine (miasma, humours, treatments) did not.',
       conceptTags: [
@@ -342,20 +327,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 19,
-      label: 'Medicine stayed the same',
-      purpose: 'Continuity in medicine — the plague reshaped society but left medical explanations (God, miasma, astrology) unchanged.',
-      conceptTags: [
-        'history:medicine:black-death',
-        'history:medicine:factors-in-change',
-        'history:medicine:church-authority',
-        'history:medicine:god-punishment',
-        'history:medicine:miasma',
-        'history:medicine:astrology',
-      ],
-    },
-    {
-      screenIndex: 20,
+      screenIndex: 18,
       label: 'Aftermath check',
       purpose: 'Retrieval check on the aftermath — wages, Church authority and the continuity of medical theory.',
       conceptTags: [
@@ -365,7 +337,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 21,
+      screenIndex: 19,
       label: 'The story so far',
       purpose: 'Recap of the Black Death — arrival, the three beliefs and their treatments, and society changing while medicine did not.',
       conceptTags: [
@@ -381,7 +353,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 22,
+      screenIndex: 20,
       label: 'How examiners think',
       purpose: 'Exam technique — identify then explain, use precise evidence, contrast belief with the real cause, and separate social change from medical change.',
       conceptTags: [
@@ -390,7 +362,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 23,
+      screenIndex: 21,
       label: 'Face the Examiner',
       purpose: '4-mark practice on how religious belief (God\'s punishment for sin) shaped responses such as prayer during the Black Death.',
       conceptTags: [
@@ -401,7 +373,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 24,
+      screenIndex: 22,
       label: 'Write for the examiner',
       purpose: 'Guided 4-mark answer describing two ways the Black Death spread through England.',
       conceptTags: [
@@ -409,7 +381,7 @@ export const HISTORY_MEDICINE_EPISODE_02_SUPPORT = {
       ],
     },
     {
-      screenIndex: 25,
+      screenIndex: 23,
       label: 'Final chapter challenge',
       purpose: 'Final retrieval challenge across the chapter — dates, beliefs (miasma, God/sin, prayer), the real cause and social change.',
       conceptTags: [
