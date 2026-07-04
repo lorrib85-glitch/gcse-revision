@@ -41,6 +41,8 @@ export const HISTORY_MEDICINE_CONCEPTS = [
 
   // Renaissance medicine, c1500–c1700
   { id: 'history:medicine:vesalius', label: 'Andreas Vesalius' },
+  { id: 'history:medicine:anatomy', label: 'Anatomy (knowledge of the body)' },
+  { id: 'history:medicine:dissection', label: 'Human dissection' },
   { id: 'history:medicine:harvey', label: 'William Harvey' },
   { id: 'history:medicine:sydenham', label: 'Thomas Sydenham' },
   { id: 'history:medicine:printing-press', label: 'The printing press' },
