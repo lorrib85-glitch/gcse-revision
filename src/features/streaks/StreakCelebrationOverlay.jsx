@@ -24,14 +24,17 @@ function prefersReducedMotion() {
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function WeekTracker({ completedWeekDays, todayIndex, reduced }) {
-  const lastCompletedIndex = completedWeekDays.reduce((last, done, i) => done ? i : last, -1)
-  const completedLineWidth = lastCompletedIndex <= 0 ? 0 : (lastCompletedIndex / (WEEKDAY_LABELS.length - 1)) * 100
-
+function WeekTracker({ completedWeekDays, reduced }) {
   const circleBase = {
     width: 32, height: 32, borderRadius: RADII.pill,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     borderWidth: 1.5, borderStyle: 'solid', boxSizing: 'border-box',
+  }
+
+  const inactiveCircle = {
+    ...circleBase,
+    borderColor: 'rgba(255,255,255,0.14)',
+    background: 'rgba(13,15,16,0.72)',
   }
 
   return (
@@ -55,32 +58,14 @@ function WeekTracker({ completedWeekDays, todayIndex, reduced }) {
           position: 'absolute', left: 16, right: 16, top: '50%',
           height: 2, background: 'rgba(255,255,255,0.045)', transform: 'translateY(-50%)',
         }} />
-        <div aria-hidden="true" className={reduced ? undefined : 'streak-cel-line'} style={{
-          position: 'absolute', left: 16, top: '50%',
-          width: `calc((100% - 32px) * ${completedLineWidth / 100})`,
-          height: 2,
-          background: `rgba(${GENERAL.tealRgb},0.9)`,
-          boxShadow: `0 0 16px rgba(${GENERAL.tealRgb},0.22)`,
-          transform: reduced ? 'translateY(-50%) scaleX(1)' : 'translateY(-50%) scaleX(0)',
-          transformOrigin: 'left center',
-          animationDelay: reduced ? undefined : `${START_MS.tracker - 180}ms`,
-        }} />
         {completedWeekDays.map((done, i) => {
-          const isToday = i === todayIndex
           const delay = START_MS.tracker + i * START_MS.trackerStep
           const style = done
             ? (reduced
                 ? { ...circleBase, borderColor: GENERAL.teal, background: GENERAL.teal }
                 : { ...circleBase, animationDelay: `${delay}ms` })
-            : {
-                ...circleBase,
-                borderColor: isToday ? `rgba(${GENERAL.tealRgb},0.7)` : 'rgba(255,255,255,0.14)',
-                background: 'rgba(13,15,16,0.72)',
-                boxShadow: isToday ? `0 0 0 1px rgba(${GENERAL.tealRgb},0.12)` : undefined,
-              }
-          const className = done && !reduced
-            ? (isToday ? 'streak-cel-dot streak-cel-dot-today' : 'streak-cel-dot streak-cel-dot-normal')
-            : undefined
+            : inactiveCircle
+          const className = done && !reduced ? 'streak-cel-dot' : undefined
           return (
             <div key={i} style={{ position: 'relative', zIndex: 1, ...style }} className={className}>
               {done && (
@@ -211,25 +196,17 @@ export default function StreakCelebrationOverlay({ streakCount, completedWeekDay
         }
         .streak-cel-heading { animation: streak-cel-heading-in 620ms ${MOTION.easing.gentle} both; }
 
-        @keyframes streak-cel-line-in {
-          from { transform: translateY(-50%) scaleX(0); opacity: 0; }
-          to   { transform: translateY(-50%) scaleX(1); opacity: 1; }
-        }
-        .streak-cel-line { animation: streak-cel-line-in 720ms ${MOTION.easing.gentle} both; }
-
         @keyframes streak-cel-dot-in {
           0%   { border-color: rgba(255,255,255,0.14); background-color: rgba(13,15,16,0.72); transform: scale(1); }
           55%  { transform: scale(1.14); }
           100% { border-color: ${GENERAL.teal}; background-color: ${GENERAL.teal}; transform: scale(1); }
         }
-        @keyframes streak-cel-dot-today-in {
-          0%   { border-color: rgba(255,255,255,0.14); background-color: rgba(13,15,16,0.72); transform: scale(1); }
-          50%  { border-color: ${GENERAL.coral}; background-color: ${GENERAL.coral}; transform: scale(1.18); }
-          100% { border-color: ${GENERAL.teal}; background-color: ${GENERAL.teal}; transform: scale(1); }
+        .streak-cel-dot {
+          animation-name: streak-cel-dot-in;
+          animation-duration: 420ms;
+          animation-timing-function: ${MOTION.easing.standard};
+          animation-fill-mode: both;
         }
-        .streak-cel-dot { animation-duration: 420ms; animation-timing-function: ${MOTION.easing.standard}; animation-fill-mode: both; }
-        .streak-cel-dot-normal { animation-name: streak-cel-dot-in; }
-        .streak-cel-dot-today { animation-name: streak-cel-dot-today-in; }
 
         @keyframes streak-cel-check-in { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
         .streak-cel-check { animation: streak-cel-check-in 240ms ${MOTION.easing.gentle} both; }
