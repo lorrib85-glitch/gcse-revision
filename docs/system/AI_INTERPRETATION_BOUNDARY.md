@@ -233,7 +233,9 @@ scheduled; sentence case throughout.
 
 The sanitised interpretation becomes **input** to `decideAfterAnswer` — an
 optional `interpretation` field alongside `result`, present only for
-AI-marked formats. The engine stays pure and deterministic: same
+AI-marked formats. (The interpretation → evidence-event conversion rules are
+canonicalised in `docs/system/EVIDENCE_MODEL.md` §5; the table below is
+their tutor-side reading.) The engine stays pure and deterministic: same
 interpretation in, same decision out.
 
 | Sanitised verdict | Evidence recorded (mastery engine) | Tutor treatment |

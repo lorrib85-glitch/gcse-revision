@@ -7,7 +7,10 @@ questions → support screens → tutor decisions, for **every** subject.
 **Sibling docs:** `docs/system/LEARNING_GRAPH.md`,
 `docs/system/MASTERY_ENGINE.md`, `docs/system/ADAPTIVE_TUTOR_DECISION_LOGIC.md`,
 `docs/system/LEARNING_OBJECTIVE_LAYER.md`,
-`docs/system/LEARNING_EXPERIENCE_PRINCIPLES.md`, `docs/system/TEACHING_VOICE_GUIDE.md`
+`docs/system/LEARNING_EXPERIENCE_PRINCIPLES.md`, `docs/system/TEACHING_VOICE_GUIDE.md`,
+`docs/system/EVIDENCE_MODEL.md` (what counts as evidence — notably: support
+completion is activity, not evidence; repairs are verified by later
+demonstrated events, never by completion)
 
 ## Why this exists
 

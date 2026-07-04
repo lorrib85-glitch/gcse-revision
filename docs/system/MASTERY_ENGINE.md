@@ -5,7 +5,10 @@ write-only via `src/features/quickfire/logic/masteryRecorder.js`). Nothing
 reads mastery back yet; question selection is untouched.
 **Code:** `src/data/masteryEngine/`
 **Tests:** `tests/architecture/mastery-engine.test.js`, `tests/unit/masteryEngine/masteryEngine.test.js`
-**Sibling doc:** `docs/system/LEARNING_GRAPH.md`
+**Sibling docs:** `docs/system/LEARNING_GRAPH.md`;
+`docs/system/EVIDENCE_MODEL.md` (design) defines what counts as evidence,
+event validity and attribution — this engine stays the accumulator and never
+needs to know which activity produced an event.
 
 ## Why this exists
 
