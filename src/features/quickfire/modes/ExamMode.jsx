@@ -88,6 +88,10 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
   const [examTimeLeft,       setExamTimeLeft]       = useState(EXAM_SECONDS)
   const [examStats,          setExamStats]          = useState({ correct: 0, answered: 0, bySubject: {} })
   const [examPaperFeedbacks, setExamPaperFeedbacks] = useState({})
+  // ExamQuestionFrame's onComplete fires once automatically after grading and
+  // again if the user taps its own Continue CTA — dedupe so addExamResult
+  // (and recordScore) counts each question once per round, not twice.
+  const countedQuestionsRef = useRef(new Set())
 
   useEffect(() => {
     if (examPhase !== 'countdown') return undefined
@@ -198,6 +202,7 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
     setExamCountdown(3)
     setExamStats({ correct: 0, answered: 0, bySubject: {} })
     setExamPaperFeedbacks({})
+    countedQuestionsRef.current = new Set()
     setExamPhase('countdown')
   }
 
@@ -323,6 +328,10 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
                     mode="exam"
                     questionNum={idx + 1}
                     onComplete={(result) => {
+                      if (!countedQuestionsRef.current.has(idx)) {
+                        countedQuestionsRef.current.add(idx)
+                        addExamResult({ ...q, subject: q.subject || 'History' }, result.marksAwarded ?? 0, result.marks ?? q.marks ?? 4)
+                      }
                       setExamPaperFeedbacks(prev => ({
                         ...prev,
                         [idx]: {
