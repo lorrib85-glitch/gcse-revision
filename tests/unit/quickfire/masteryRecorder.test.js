@@ -11,6 +11,8 @@ import {
   MASTERY_STORAGE_KEY,
 } from '../../../src/data/masteryEngine/index.js'
 import { ALL_MODULE_QUICKFIRE_QUESTIONS } from '../../../src/data/questionBanks/questionRegistry.js'
+import { QUICK_QUIZ_QUESTIONS } from '../../../src/data/quickQuizData.js'
+import { quickFireFromBank } from '../../../src/features/quickfire/logic/convertBankQuestion.js'
 
 const T0 = 1_700_000_000_000
 
@@ -102,6 +104,70 @@ describe('masteryRecorder — evidence recording', () => {
   it('an unknown id in a concept namespace throws — never silently dropped', () => {
     expect(() => recordQuestionAttempt(createEmptyMasteryState(), unknownConceptQuestion, true, T0))
       .toThrow(/not a registered concept/)
+  })
+})
+
+describe('masteryRecorder — stage and source forwarding (EV1/O1)', () => {
+  // A real workbook-synced row, through the real QuickFire conversion — the
+  // exact shape QuickFireMode hands to recordQuestionResult.
+  const syncedRow = QUICK_QUIZ_QUESTIONS.find(q => q.primaryConcept)
+  const syncedQuestion = quickFireFromBank(syncedRow)
+
+  it('uses a genuinely synced row (canonical metadata survives conversion)', () => {
+    expect(syncedRow).toBeDefined()
+    expect(syncedQuestion.primaryConcept).toBe(syncedRow.primaryConcept)
+    expect(syncedQuestion.learningStage).toBe(syncedRow.learningStage)
+  })
+
+  it('stamps the primary concept event with the question learningStage and source quickfire', () => {
+    const state = recordQuestionAttempt(createEmptyMasteryState(), syncedQuestion, true, T0)
+    const [event] = state.concepts[syncedRow.primaryConcept].recent
+    expect(event).toEqual({
+      correct: true,
+      at: T0,
+      stage: syncedRow.learningStage,
+      source: 'quickfire',
+    })
+  })
+
+  it('secondary concepts get source but no stage claim — the stage describes the primary only', () => {
+    const state = recordQuestionAttempt(createEmptyMasteryState(), syncedQuestion, true, T0)
+    const concepts = conceptIdsForQuestion(syncedQuestion)
+    const stamped = concepts.filter(id => state.concepts[id].recent[0].stage !== undefined)
+    expect(stamped).toEqual([syncedRow.primaryConcept])
+    for (const conceptId of concepts) {
+      expect(state.concepts[conceptId].recent[0].source).toBe('quickfire')
+    }
+  })
+
+  it('questions without stage metadata record source but never a stage', () => {
+    const state = recordQuestionAttempt(createEmptyMasteryState(), medQf001, false, T0)
+    for (const conceptId of conceptIdsForQuestion(medQf001)) {
+      const [event] = state.concepts[conceptId].recent
+      expect(event).toEqual({ correct: false, at: T0, source: 'quickfire' })
+      expect('stage' in event).toBe(false)
+    }
+  })
+
+  it('legacy pre-EV1 persisted evidence loads unchanged and new stamped evidence stacks on top', () => {
+    const legacy = {
+      version: 1,
+      concepts: {
+        'history:medicine:miasma': {
+          attempts: 1, correct: 1, incorrect: 0, streak: 1,
+          firstSeen: T0, lastSeen: T0, lastCorrect: T0,
+          recent: [{ correct: true, at: T0 }],
+        },
+      },
+    }
+    fakeStore.set(MASTERY_STORAGE_KEY, JSON.stringify(legacy))
+    recordQuestionResult(medQf001, false)
+    const state = loadMasteryState()
+    const evidence = state.concepts['history:medicine:miasma']
+    expect(evidence.attempts).toBe(2)
+    expect(evidence.recent[0]).toEqual({ correct: true, at: T0 }) // untouched, no migration
+    expect(evidence.recent[1].source).toBe('quickfire')
+    expect('stage' in evidence.recent[1]).toBe(false)
   })
 })
 

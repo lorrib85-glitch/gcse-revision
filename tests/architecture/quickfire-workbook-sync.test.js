@@ -20,11 +20,12 @@
 import { describe, it, expect } from 'vitest'
 import { QUICK_QUIZ_QUESTIONS } from '../../src/data/quickQuizData.js'
 import { isConceptId } from '../../src/data/learningGraph/conceptRegistry.js'
+import { LEARNING_STAGES } from '../../src/data/learningGraph/learningStages.js'
 
 // Rows the audit judged unsafe to sync (retire candidates + unresolved
 // concept mismatch). Must never be synced or gain canonical metadata.
 const EXCLUDED_IDS = ['qq_h27', 'qq_h50', 'qq_h53', 'qq_h54']
-const VALID_STAGES = new Set(['recognise', 'recall', 'understand', 'apply', 'analyse', 'evaluate'])
+const VALID_STAGES = new Set(LEARNING_STAGES)
 
 const historyRows = QUICK_QUIZ_QUESTIONS.filter(q => typeof q.id === 'string' && q.id.startsWith('qq_h'))
 const nonHistoryRows = QUICK_QUIZ_QUESTIONS.filter(q => !(typeof q.id === 'string' && q.id.startsWith('qq_h')))

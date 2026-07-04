@@ -25,8 +25,10 @@ import {
   identifyWeakConcepts,
   identifyStrongConcepts,
   identifyNeglectedConcepts,
+  getObjectiveEvidence,
 } from '../../../src/data/masteryEngine/insights.js'
 import { ALL_CONCEPTS } from '../../../src/data/learningGraph/conceptRegistry.js'
+import { LEARNING_STAGES } from '../../../src/data/learningGraph/learningStages.js'
 
 // Real registered concept ids — the engine rejects anything else.
 const GALEN = 'history:medicine:galen'
@@ -292,6 +294,180 @@ describe('mastery engine — weak / strong / neglected ordering', () => {
     state = replay(BLACK_DEATH, [true], { state, startAt: now - 1000 }) // seen just now
     const neglected = identifyNeglectedConcepts(state, { now, staleDays: 7 })
     expect(neglected.map(s => s.conceptId)).toEqual([GALEN, HUMOURS])
+  })
+})
+
+describe('mastery engine — stage-aware evidence (EV1/O1)', () => {
+  it('preserves an optional stage on the stored recent entry', () => {
+    const state = recordAttempt(createEmptyMasteryState(), {
+      conceptId: HUMOURS, correct: true, at: T0, stage: 'understand',
+    })
+    expect(state.concepts[HUMOURS].recent).toEqual([
+      { correct: true, at: T0, stage: 'understand' },
+    ])
+  })
+
+  it('preserves an optional source on the stored recent entry', () => {
+    const state = recordAttempt(createEmptyMasteryState(), {
+      conceptId: HUMOURS, correct: false, at: T0, source: 'quickfire',
+    })
+    expect(state.concepts[HUMOURS].recent).toEqual([
+      { correct: false, at: T0, source: 'quickfire' },
+    ])
+  })
+
+  it('preserves stage and source together, through recordCorrect/recordIncorrect too', () => {
+    let state = recordCorrect(createEmptyMasteryState(), HUMOURS, {
+      at: T0, stage: 'apply', source: 'quickfire',
+    })
+    state = recordIncorrect(state, HUMOURS, { at: T0 + 1000, stage: 'recall', source: 'quickfire' })
+    expect(state.concepts[HUMOURS].recent).toEqual([
+      { correct: true, at: T0, stage: 'apply', source: 'quickfire' },
+      { correct: false, at: T0 + 1000, stage: 'recall', source: 'quickfire' },
+    ])
+  })
+
+  it('entries recorded without stage or source keep the exact legacy shape — no undefined keys', () => {
+    const state = recordAttempt(createEmptyMasteryState(), { conceptId: GALEN, correct: true, at: T0 })
+    const [entry] = state.concepts[GALEN].recent
+    expect(entry).toEqual({ correct: true, at: T0 })
+    expect(Object.keys(entry).sort()).toEqual(['at', 'correct'])
+  })
+
+  it('rejects a stage outside LEARNING_STAGES and a non-string source', () => {
+    const state = createEmptyMasteryState()
+    expect(() => recordAttempt(state, { conceptId: GALEN, correct: true, at: T0, stage: 'memorise' }))
+      .toThrow(/stage/)
+    expect(() => recordAttempt(state, { conceptId: GALEN, correct: true, at: T0, stage: 'application' }))
+      .toThrow(/stage/) // legacy skill: facet vocabulary is not the stage enum
+    expect(() => recordAttempt(state, { conceptId: GALEN, correct: true, at: T0, source: 7 }))
+      .toThrow(/source/)
+    expect(() => recordAttempt(state, { conceptId: GALEN, correct: true, at: T0, source: '' }))
+      .toThrow(/source/)
+  })
+
+  it('accepts every canonical learning stage', () => {
+    let state = createEmptyMasteryState()
+    LEARNING_STAGES.forEach((stage, i) => {
+      state = recordAttempt(state, { conceptId: GALEN, correct: true, at: T0 + i * 1000, stage })
+    })
+    expect(state.concepts[GALEN].recent.map(r => r.stage)).toEqual(LEARNING_STAGES)
+  })
+
+  it('stamped extras never change mastery, confidence or strength — calculations are identical', () => {
+    const results = [true, false, true, true, false, true]
+    let plain = createEmptyMasteryState()
+    let stamped = createEmptyMasteryState()
+    results.forEach((correct, i) => {
+      plain = recordAttempt(plain, { conceptId: GALEN, correct, at: T0 + i * 1000 })
+      stamped = recordAttempt(stamped, {
+        conceptId: GALEN, correct, at: T0 + i * 1000, stage: 'understand', source: 'quickfire',
+      })
+    })
+    expect(calculateMastery(stamped.concepts[GALEN])).toBe(calculateMastery(plain.concepts[GALEN]))
+    expect(calculateConfidence(stamped.concepts[GALEN])).toBe(calculateConfidence(plain.concepts[GALEN]))
+    expect(calculateStrength(stamped.concepts[GALEN])).toBe(calculateStrength(plain.concepts[GALEN]))
+    expect(getConceptMastery(stamped, GALEN)).toEqual(getConceptMastery(plain, GALEN))
+  })
+
+  it('a legacy persisted state (entries without stage/source) still loads and reads unchanged', () => {
+    // Hand-built pre-EV1 payload, exactly as masteryStore would have saved it.
+    const legacy = {
+      version: MASTERY_STATE_VERSION,
+      concepts: {
+        [GALEN]: {
+          attempts: 2, correct: 1, incorrect: 1, streak: 0,
+          firstSeen: T0, lastSeen: T0 + 1000, lastCorrect: T0,
+          recent: [{ correct: true, at: T0 }, { correct: false, at: T0 + 1000 }],
+        },
+      },
+    }
+    expect(isMasteryState(legacy)).toBe(true)
+    const snapshot = getConceptMastery(legacy, GALEN)
+    expect(snapshot.attempts).toBe(2)
+    expect(snapshot.mastery).toBeGreaterThan(0)
+    // Old evidence carries no stage claim — every objective cell reads empty.
+    for (const stage of LEARNING_STAGES) {
+      expect(getObjectiveEvidence(legacy, GALEN, stage)).toEqual({
+        conceptId: GALEN, stage, events: [], count: 0, lastSeen: null,
+      })
+    }
+    // New stamped evidence stacks on top without disturbing the old entries.
+    const next = recordAttempt(legacy, { conceptId: GALEN, correct: true, at: T0 + 2000, stage: 'recall', source: 'quickfire' })
+    expect(next.concepts[GALEN].recent.slice(0, 2)).toEqual(legacy.concepts[GALEN].recent)
+    expect(next.concepts[GALEN].recent[2]).toEqual({ correct: true, at: T0 + 2000, stage: 'recall', source: 'quickfire' })
+  })
+
+  it('mergeEvidence preserves stamped fields alongside unstamped entries', () => {
+    const a = recordAttempt(createEmptyMasteryState(), { conceptId: GALEN, correct: true, at: T0 })
+    const b = recordAttempt(createEmptyMasteryState(), {
+      conceptId: GALEN, correct: false, at: T0 + 1000, stage: 'apply', source: 'quickfire',
+    })
+    const merged = mergeEvidence(a, b).concepts[GALEN]
+    expect(merged.recent).toEqual([
+      { correct: true, at: T0 },
+      { correct: false, at: T0 + 1000, stage: 'apply', source: 'quickfire' },
+    ])
+  })
+})
+
+describe('mastery engine — getObjectiveEvidence', () => {
+  function stampedState() {
+    let state = createEmptyMasteryState()
+    state = recordAttempt(state, { conceptId: HUMOURS, correct: true, at: T0 })                      // unstamped
+    state = recordAttempt(state, { conceptId: HUMOURS, correct: true, at: T0 + 1000, stage: 'recall', source: 'quickfire' })
+    state = recordAttempt(state, { conceptId: HUMOURS, correct: false, at: T0 + 2000, stage: 'apply', source: 'quickfire' })
+    state = recordAttempt(state, { conceptId: HUMOURS, correct: true, at: T0 + 3000, stage: 'apply' })
+    state = recordAttempt(state, { conceptId: GALEN, correct: true, at: T0 + 4000, stage: 'apply' }) // other concept
+    return state
+  }
+
+  it('returns only the events stamped with the requested stage, with count and lastSeen', () => {
+    const result = getObjectiveEvidence(stampedState(), HUMOURS, 'apply')
+    expect(result).toEqual({
+      conceptId: HUMOURS,
+      stage: 'apply',
+      events: [
+        { correct: false, at: T0 + 2000, stage: 'apply', source: 'quickfire' },
+        { correct: true, at: T0 + 3000, stage: 'apply' },
+      ],
+      count: 2,
+      lastSeen: T0 + 3000,
+    })
+  })
+
+  it('unstamped (pre-stage) entries never match any stage', () => {
+    const state = recordAttempt(createEmptyMasteryState(), { conceptId: HUMOURS, correct: true, at: T0 })
+    for (const stage of LEARNING_STAGES) {
+      expect(getObjectiveEvidence(state, HUMOURS, stage).count).toBe(0)
+    }
+  })
+
+  it('a different stage on the same concept reads its own cell', () => {
+    const result = getObjectiveEvidence(stampedState(), HUMOURS, 'recall')
+    expect(result.events).toEqual([{ correct: true, at: T0 + 1000, stage: 'recall', source: 'quickfire' }])
+    expect(result.count).toBe(1)
+    expect(result.lastSeen).toBe(T0 + 1000)
+  })
+
+  it('an unpractised registered concept returns an empty result, never throws', () => {
+    expect(getObjectiveEvidence(createEmptyMasteryState(), BLACK_DEATH, 'recall')).toEqual({
+      conceptId: BLACK_DEATH, stage: 'recall', events: [], count: 0, lastSeen: null,
+    })
+  })
+
+  it('rejects unregistered concept ids and invalid stages', () => {
+    const state = stampedState()
+    expect(() => getObjectiveEvidence(state, 'history:medicine:not-a-thing', 'recall')).toThrow(/not a registered concept/)
+    expect(() => getObjectiveEvidence(state, HUMOURS, 'memorise')).toThrow(/learning stage/)
+    expect(() => getObjectiveEvidence(state, HUMOURS)).toThrow(/learning stage/)
+  })
+
+  it('is deterministic and does not mutate the state', () => {
+    const state = stampedState()
+    const frozen = JSON.parse(JSON.stringify(state))
+    expect(getObjectiveEvidence(state, HUMOURS, 'apply')).toEqual(getObjectiveEvidence(state, HUMOURS, 'apply'))
+    expect(state).toEqual(frozen)
   })
 })
 

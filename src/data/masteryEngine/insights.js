@@ -8,6 +8,8 @@
 // Ordering is fully deterministic: score, then evidence volume, then concept
 // id — so the same state always yields the same recommendation list.
 
+import { isConceptId } from '../learningGraph/conceptRegistry.js'
+import { isLearningStage, LEARNING_STAGES } from '../learningGraph/learningStages.js'
 import { getAllConceptMastery } from './masteryScore.js'
 
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -38,6 +40,31 @@ export function identifyStrongConcepts(state, { limit = 5, minAttempts = 3 } = {
         a.conceptId.localeCompare(b.conceptId),
     )
     .slice(0, limit)
+}
+
+// Evidence for one learning objective — the (concept, stage) pair
+// (docs/system/LEARNING_OBJECTIVE_LAYER.md). A pure filter over the stored
+// recent window: unstamped entries carry no stage claim and never match.
+// Deliberately NOT a mastery calculation — objective mastery is a future
+// phase (O2).
+export function getObjectiveEvidence(state, conceptId, learningStage) {
+  if (!isConceptId(conceptId)) {
+    throw new TypeError(`masteryEngine: "${conceptId}" is not a registered concept id`)
+  }
+  if (!isLearningStage(learningStage)) {
+    throw new TypeError(
+      `masteryEngine: "${learningStage}" is not a learning stage — must be one of ${LEARNING_STAGES.join(', ')}`,
+    )
+  }
+  const recent = state.concepts[conceptId]?.recent ?? []
+  const events = recent.filter(entry => entry.stage === learningStage)
+  return {
+    conceptId,
+    stage: learningStage,
+    events,
+    count: events.length,
+    lastSeen: events.length > 0 ? events[events.length - 1].at : null,
+  }
 }
 
 // Concepts the learner HAS practised but not recently — longest-unseen first.

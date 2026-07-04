@@ -10,6 +10,7 @@ import {
   tagNamespace,
 } from '../../src/data/learningGraph/tagSchema.js'
 import { resolveEffectiveTags } from '../../src/data/learningGraph/resolveTags.js'
+import { LEARNING_STAGES, isLearningStage } from '../../src/data/learningGraph/learningStages.js'
 import {
   ALL_CONCEPTS,
   CONCEPTS,
@@ -86,6 +87,23 @@ describe('Learning graph — concept registry integrity', () => {
     }
     expect(getConcept('history:medicine:not-a-thing')).toBeNull()
     expect(isConceptId('history:medicine:not-a-thing')).toBe(false)
+  })
+})
+
+// ─── Learning stages: one canonical ladder, referenced everywhere ────────────
+
+describe('Learning graph — canonical learning stages', () => {
+  it('LEARNING_STAGES is the six-stage ladder in ascending demand order', () => {
+    expect(LEARNING_STAGES).toEqual(['recognise', 'recall', 'understand', 'apply', 'analyse', 'evaluate'])
+  })
+
+  it('isLearningStage accepts only the canonical vocabulary', () => {
+    for (const stage of LEARNING_STAGES) expect(isLearningStage(stage)).toBe(true)
+    // The legacy skill: facet spellings are a different vocabulary (see
+    // LEARNING_OBJECTIVE_LAYER.md §2) and must never validate as stages.
+    for (const notAStage of ['application', 'analysis', 'memorise', '', null, undefined]) {
+      expect(isLearningStage(notAStage), `"${notAStage}" accepted as a stage`).toBe(false)
+    }
   })
 })
 

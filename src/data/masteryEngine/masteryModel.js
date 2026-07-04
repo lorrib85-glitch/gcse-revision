@@ -13,7 +13,8 @@
 //         attempts, correct, incorrect,   // lifetime counters
 //         streak,                         // current consecutive-correct run
 //         firstSeen, lastSeen, lastCorrect, // ms epoch timestamps (null until set)
-//         recent: [{ correct, at }],      // last EVIDENCE_WINDOW results, oldest → newest
+//         recent: [{ correct, at, stage?, source? }], // last EVIDENCE_WINDOW results,
+//                                         // oldest → newest; stage/source optional (EV1/O1)
 //       },
 //     },
 //   }

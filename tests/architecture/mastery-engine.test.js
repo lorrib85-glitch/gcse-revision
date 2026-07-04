@@ -121,6 +121,7 @@ describe('Mastery engine — public API surface', () => {
       'identifyWeakConcepts',
       'identifyStrongConcepts',
       'identifyNeglectedConcepts',
+      'getObjectiveEvidence',
       'MASTERY_STORAGE_KEY',
       'loadMasteryState',
       'saveMasteryState',

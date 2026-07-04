@@ -7,6 +7,7 @@
 // data rots (see docs/system/LEARNING_GRAPH.md).
 
 import { isConceptId } from '../learningGraph/conceptRegistry.js'
+import { isLearningStage, LEARNING_STAGES } from '../learningGraph/learningStages.js'
 import { EVIDENCE_WINDOW, createEmptyConceptEvidence } from './masteryModel.js'
 
 function assertConceptId(conceptId) {
@@ -18,16 +19,26 @@ function assertConceptId(conceptId) {
 }
 
 // Core recorder. `at` defaults to now; pass it explicitly for deterministic
-// results (tests, replaying imported evidence). Extra fields on the options
-// object beyond { conceptId, correct, at } are deliberately ignored today but
-// reserved for future evidence dimensions (responseTimeMs, selfConfidence).
-export function recordAttempt(state, { conceptId, correct, at = Date.now() } = {}) {
+// results (tests, replaying imported evidence). `stage` and `source` are
+// optional (docs/system/EVIDENCE_MODEL.md §1): preserved on the stored entry,
+// never read by any score — and entries recorded without them stay valid, no
+// migration. Other extra fields are still ignored but reserved
+// (responseTimeMs, selfConfidence).
+export function recordAttempt(state, { conceptId, correct, at = Date.now(), stage, source } = {}) {
   assertConceptId(conceptId)
   if (typeof correct !== 'boolean') {
     throw new TypeError(`masteryEngine: recordAttempt for "${conceptId}" needs correct: true/false`)
   }
   if (typeof at !== 'number' || !Number.isFinite(at)) {
     throw new TypeError(`masteryEngine: recordAttempt for "${conceptId}" needs a numeric timestamp`)
+  }
+  if (stage !== undefined && !isLearningStage(stage)) {
+    throw new TypeError(
+      `masteryEngine: recordAttempt for "${conceptId}" got stage "${stage}" — must be one of ${LEARNING_STAGES.join(', ')}`,
+    )
+  }
+  if (source !== undefined && (typeof source !== 'string' || source.length === 0)) {
+    throw new TypeError(`masteryEngine: recordAttempt for "${conceptId}" needs source to be a non-empty string`)
   }
 
   const prev = state.concepts[conceptId] ?? createEmptyConceptEvidence()
@@ -41,7 +52,10 @@ export function recordAttempt(state, { conceptId, correct, at = Date.now() } = {
     firstSeen: prev.firstSeen ?? at,
     lastSeen: Math.max(prev.lastSeen ?? at, at),
     lastCorrect: correct ? Math.max(prev.lastCorrect ?? at, at) : prev.lastCorrect,
-    recent: [...prev.recent, { correct, at }].slice(-EVIDENCE_WINDOW),
+    recent: [
+      ...prev.recent,
+      { correct, at, ...(stage !== undefined && { stage }), ...(source !== undefined && { source }) },
+    ].slice(-EVIDENCE_WINDOW),
   }
 
   return {

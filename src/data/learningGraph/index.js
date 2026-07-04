@@ -12,6 +12,8 @@ export {
   isFacetTag,
 } from './tagSchema.js'
 
+export { LEARNING_STAGES, isLearningStage } from './learningStages.js'
+
 export { resolveEffectiveTags } from './resolveTags.js'
 
 export {

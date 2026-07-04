@@ -37,6 +37,7 @@ export {
   identifyWeakConcepts,
   identifyStrongConcepts,
   identifyNeglectedConcepts,
+  getObjectiveEvidence,
 } from './insights.js'
 
 export {

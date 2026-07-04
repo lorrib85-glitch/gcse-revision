@@ -19,6 +19,10 @@
 //      data bug.
 //   4. Untagged questions (chemistry placeholders, 90s-quiz conversions)
 //      resolve to zero concept ids and are safely ignored.
+//   5. Every event carries source: 'quickfire'; the primary concept's event
+//      is stamped with the question's learningStage when present. Secondary
+//      concepts stay concept-level — the stage describes the demand on the
+//      primary only (docs/system/EVIDENCE_MODEL.md §6).
 
 import {
   resolveEffectiveTags,
@@ -40,10 +44,22 @@ export function conceptIdsForQuestion(question) {
   return effective.filter(tag => CONCEPT_SUBJECT_NAMESPACES.includes(tagNamespace(tag)))
 }
 
+const EVIDENCE_SOURCE = 'quickfire'
+
 // Pure core: fold one answered question into a mastery state.
 export function recordQuestionAttempt(state, question, correct, at = Date.now()) {
+  const stage = question?.learningStage
   return conceptIdsForQuestion(question).reduce(
-    (acc, conceptId) => recordAttempt(acc, { conceptId, correct, at }),
+    (acc, conceptId) =>
+      recordAttempt(acc, {
+        conceptId,
+        correct,
+        at,
+        source: EVIDENCE_SOURCE,
+        // An invalid stage passes through so the engine throws (data bug),
+        // same fail-loud policy as unregistered concept ids above.
+        ...(stage != null && conceptId === question.primaryConcept && { stage }),
+      }),
     state,
   )
 }

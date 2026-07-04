@@ -69,6 +69,13 @@ Stored state is **evidence, not percentages** (versioned, `MASTERY_STATE_VERSION
 }
 ```
 
+Each `recent` entry may optionally carry `stage` (one of the canonical
+`LEARNING_STAGES` from `src/data/learningGraph/learningStages.js`) and
+`source` (producer slug, e.g. `'quickfire'`) — EV1/O1 stage-aware evidence.
+Both are provenance for the objective layer and **never influence scoring**;
+entries recorded before stamping simply lack them and stay valid, no
+migration needed.
+
 Mastery, confidence and strength are **derived at read time, never stored**:
 
 - **mastery (0–1)** — Laplace-smoothed lifetime accuracy blended with the
@@ -98,12 +105,14 @@ Import from `src/data/masteryEngine/index.js`.
 ```js
 state = recordCorrect(state, 'history:medicine:galen', { at })
 state = recordIncorrect(state, 'history:medicine:galen', { at })
-state = recordAttempt(state, { conceptId, correct, at })   // core form
+state = recordAttempt(state, { conceptId, correct, at, stage?, source? })  // core form
 merged = mergeEvidence(stateA, stateB)                     // future device sync
 ```
 
 `at` defaults to `Date.now()`; pass it explicitly for deterministic replay.
 Unknown concept ids throw — register concepts in the learning graph first.
+`stage`/`source` are optional and preserved on the stored entry (invalid
+values throw); they never affect any derived score.
 
 **Reading (pure):**
 
@@ -119,6 +128,9 @@ calculateMastery(evidence) / calculateConfidence(evidence) / calculateStrength(e
 identifyWeakConcepts(state, { limit, minAttempts })       // weakest first
 identifyStrongConcepts(state, { limit, minAttempts: 3 })  // strongest first, needs real evidence
 identifyNeglectedConcepts(state, { now, staleDays: 7, limit }) // practised but stale, oldest first
+getObjectiveEvidence(state, conceptId, stage)  // pure filter over stage-stamped
+                                               // events: { conceptId, stage, events,
+                                               // count, lastSeen } — no mastery maths
 ```
 
 **Persistence (the only impure calls):**
