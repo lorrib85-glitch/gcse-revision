@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { SPACING } from '../../../constants/spacing.js'
 import { TYPE } from '../../../constants/typography.js'
 import { GENERAL } from '../../../constants/generalTheme.js'
 import { hexToRgb } from '../../../constants/subjects.js'
@@ -121,7 +122,7 @@ export function TopicPracticeMode({ selected, onExit }) {
               <img src={FIGURES[q.fig]} alt="AQA exam figure" style={{ maxWidth:'100%', height:'auto', borderRadius:8 }} />
             </div>
           )}
-          <div style={{ background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.06)', borderRadius:14, padding:'16px', marginBottom:14 }}>
+          <div style={{ background:GENERAL.neutral[1], border:'1px solid rgba(255,255,255,0.06)', borderRadius:14, padding:SPACING.compact, marginBottom:14 }}>
             <pre style={{ ...TYPE.body, margin:0, color:GENERAL.softWhite, whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{cleanQuestionText(q)}</pre>
           </div>
           {!showTip
