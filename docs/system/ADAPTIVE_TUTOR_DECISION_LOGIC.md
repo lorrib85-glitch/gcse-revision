@@ -4,7 +4,9 @@
 change, no mastery-engine change is authorised by this document.
 **Layer:** question result → tutor decision (the layer between the mastery
 engine and future adaptive consumers).
-**Sibling docs:** `docs/system/MASTERY_ENGINE.md`, `docs/system/LEARNING_GRAPH.md`
+**Sibling docs:** `docs/system/MASTERY_ENGINE.md`, `docs/system/LEARNING_GRAPH.md`,
+`docs/system/LEARNING_OBJECTIVE_LAYER.md` (adds the objective = concept × stage
+layer this engine's windows target, and the full `diagnose` design)
 
 ## Why this exists
 
@@ -146,6 +148,9 @@ keeps this layer mutation-free.
     fallbackConcept,                      // followUpConcept when the workbook provides one
     preferredLearningStage,               // a stage-ladder rung
     preferredDifficultyRange: [min, max], // 1–5
+    requireSingleConcept,                 // optional boolean — diagnose probes prefer a question
+                                          //   with no secondaryConcepts so the result attributes
+                                          //   cleanly (a preference, not a hard filter)
     avoidHigherStagesTemporarily,         // boolean — soft gate, see expiry semantics §3.4
     reviewLater,                          // null | { conceptId, minGapAttempts } — park one
                                           //   concept for spaced revisit; "not before N more
@@ -157,7 +162,12 @@ keeps this layer mutation-free.
 }
 ```
 
-`TUTOR_ACTIONS = ['continue', 'reinforce', 'repair', 'step-down', 'stretch', 'review-later']`
+`TUTOR_ACTIONS = ['continue', 'reinforce', 'diagnose', 'repair', 'step-down', 'stretch', 'review-later']`
+
+`diagnose` decisions additionally carry a `diagnosis` field (candidate gaps +
+the probe to ask) and may set the `nextQuestionPolicy.requireSingleConcept`
+preference — see §3.3a and `LEARNING_OBJECTIVE_LAYER.md` §8 for the full
+contract.
 
 Determinism guarantee: same input object → deep-equal output, always. No
 `Date.now()`, no `Math.random()`, no module-level mutable state, stable
@@ -188,6 +198,13 @@ different questions — *lifetime knowledge* vs *right now, this stage* — and
 both are needed because engine evidence does not (yet) carry `learningStage`
 (§5, gap 2).
 
+**Objective refinement** (`LEARNING_OBJECTIVE_LAYER.md` §7): once evidence is
+stage-stamped, windows compute over attempts matching
+`(primaryConcept, learningStage)` first, falling back to the concept-level
+window when the objective window has fewer than 2 entries. A wrong
+`four-humours@apply` answer then drives apply-cell signals rather than a
+verdict on the whole concept.
+
 ### 3.2 Stage ladder
 
 ```
@@ -205,11 +222,37 @@ secondary axis: policies emit a `preferredDifficultyRange` of
 | # | Condition | Action | Policy |
 |---|---|---|---|
 | I0 | `alreadyRepairedThisSession` | `review-later` (reason `incorrect-parked-after-repair`) | Park the concept (`reviewLater: { conceptId, minGapAttempts: 6 }`), `preferredConcept: null` — move on; grinding a broken concept in one sitting is the anti-pattern this row prevents |
+| ID | Failure is **ambiguous** — ≥ 2 plausible candidate gaps, primary not already clearly weak, probe budget remaining (§3.3a) | `diagnose` | Ask one cheap single-concept recognise/recall probe on the weakest candidate before repairing anything; `requireSingleConcept: true`, difficulty `[1, 2]`, `avoidHigherStagesTemporarily: true` |
 | I1 | `repairNeeded` OR `strength ∈ {unseen, weak}` — **and a support target resolves (§3.5)** | `repair` | Point at the support target; `preferredConcept` = primary, `preferredLearningStage` = `stepDown(stage)`, `avoidHigherStagesTemporarily: true` |
 | I2 | same trigger as I1 but **no support target** and `stage > recognise` | `step-down` | One rung down, same concept, difficulty `[max(1, d−1), d]`, `avoidHigherStagesTemporarily: true`; `fallbackConcept` = `followUpConcept` (§3.5); consumer may show the question's own `explanation` as the generic fallback copy |
 | I3 | same trigger as I1/I2 but already at the `recognise` floor | `reinforce` (reason `incorrect-floor-reinforce`) | Same stage, same concept, easiest difficulty; nothing below to step to |
 | I4 | `slip` (wrong once on a secure/strong concept) | `reinforce` | Same stage, same concept, re-queue soon; `avoidHigherStagesTemporarily: false` — one slip does not demote a secure learner |
 | I5 | anything else (first wrong on a developing concept) | wrong at `recognise`/`recall` → `reinforce`; wrong at `understand`+ → `step-down` | As I2/I3 policies; `avoidHigherStagesTemporarily: true` |
+
+### 3.3a `diagnose` — when a wrong answer is ambiguous
+
+A wrong answer on a multi-concept question (e.g. Galen + Four Humours +
+Theory of Opposites at `analyse`) does not identify *which* gap caused it.
+Repairing everything is noise; repairing the primary by default is a guess.
+`diagnose` interposes one targeted probe first.
+
+Fires only when **all** hold (full design: `LEARNING_OBJECTIVE_LAYER.md` §8):
+
+1. Answer incorrect.
+2. ≥ 2 candidate gaps: the primary objective; a lower-stage objective of the
+   primary when `stage ≥ apply` and the lower cell has no stage evidence;
+   each secondary concept whose strength is `unseen`/`weak`/`developing`.
+3. The primary is not already the clear culprit (not `weak`/`unseen`, and no
+   candidate's mastery separates from the rest beyond `DIAGNOSE_SEPARATION`).
+4. Probe budget remains (`MAX_DIAGNOSTIC_PROBES = 2` per candidate cluster
+   per session, derived from `sessionAttempts[].action` echoes).
+
+The decision carries `diagnosis: { candidates, probe }` (candidates ordered
+ascending mastery then id; probe = weakest candidate at recognise/recall,
+single-concept). Probe wrong → that candidate is confirmed and the normal
+repair rules take over next turn. Probe right → candidate exonerated; probe
+the next if budget allows, else **repair the weakest remaining candidate
+anyway** — diagnosis never filibusters. The I0 park guard outranks diagnose.
 
 ### 3.4 If correct — first match wins
 
@@ -443,6 +486,9 @@ lookups injected as stubs so no real content coverage is needed):
 - Missing metadata → `insufficient-metadata` continue; unregistered concept
   id → the lookup/engine throw propagates (never swallowed).
 - Misconception pass-through on every action, `null` when absent.
+- `diagnose` trigger conditions, candidate ordering, probe budget and
+  exoneration fall-through (fixture list in `LEARNING_OBJECTIVE_LAYER.md`
+  §11 — lands with its O5 phase).
 - Calculus helpers in isolation (exported from `decisionEngine.js`): ladder
   order, step up/down clamps, window maths.
 
@@ -485,9 +531,12 @@ authorises none of them.
   carries the "phase 2: proficiency-adaptive selection" TODO) consumes
   `nextQuestionPolicy`. This is the explicitly-deferred "change question
   selection" step.
-- **T5 — Evidence stage stamping (optional, unblocks cross-session gating).**
-  Recorder passes `stage` as an extra per-result field; engine windows can
-  then be stage-aware without a migration.
+- **T5 — Evidence stage stamping (unblocks cross-session gating and the
+  objective layer).** Recorder passes `stage` as an extra per-result field;
+  engine windows can then be stage-aware without a migration. This is phase
+  O1 of `LEARNING_OBJECTIVE_LAYER.md`, which sequences the follow-on
+  objective work (per-stage read view, objective registry, stage-aware
+  support, `diagnose`).
 
 ---
 
