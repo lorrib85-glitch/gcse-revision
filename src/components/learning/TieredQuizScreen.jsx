@@ -1,9 +1,12 @@
 import { useState, useEffect, useMemo } from 'react'
 import UnifiedQuestionScreen from './UnifiedQuestionScreen.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import { TYPE } from '../../constants/typography.js'
+import { SPACING } from '../../constants/spacing.js'
+import { RADII } from '../../constants/radii.js'
 
 const IMAGES = {
   History:   '/headers/history-quiz-bg.png',
@@ -18,34 +21,6 @@ const IMAGES = {
 
 const BG_STYLE = {
   History: { opacity: 1.0, filter: 'none', skipLeftGradient: true },
-}
-
-function ProgressDots({ total, current, done, accent, rgb }) {
-  return (
-    <div style={{
-      position: 'fixed', bottom: 28,
-      left: '50%', transform: 'translateX(-50%)',
-      zIndex: 10,
-      display: 'flex', gap: 6, alignItems: 'center',
-    }}>
-      {Array.from({ length: total }).map((_, i) => {
-        const isDone   = i < done
-        const isActive = i === current
-        return (
-          <div key={i} style={{
-            width: isActive ? 20 : 8,
-            height: 8,
-            borderRadius: 99,
-            background: isDone ? accent : isActive ? accent : 'rgba(255,255,255,0.22)',
-            boxShadow: isActive
-              ? `0 0 10px rgba(${rgb},0.6)`
-              : isDone ? `0 0 6px rgba(${rgb},0.35)` : 'none',
-            transition: 'all 300ms ease',
-          }} />
-        )
-      })}
-    </div>
-  )
 }
 
 export default function TieredQuizScreen({
@@ -192,7 +167,7 @@ export default function TieredQuizScreen({
                   style={{
                     background: 'rgba(36,22,11,0.72)',
                     border: `2px solid ${accent}`,
-                    borderRadius: 16,
+                    borderRadius: RADII.medium,
                     padding: '16px 20px',
                     cursor: 'pointer',
                     display: 'flex',
@@ -269,7 +244,7 @@ export default function TieredQuizScreen({
               ...TYPE.eyebrow,
               textTransform: 'uppercase',
               color: accent,
-              marginBottom: 16,
+              marginBottom: SPACING.compact,
             }}>
               Tier complete
             </div>
@@ -278,7 +253,7 @@ export default function TieredQuizScreen({
               ...TYPE.displayHero,
               fontSize: 'clamp(48px, 15vw, 80px)',
               color: accent,
-              marginBottom: 8,
+              marginBottom: SPACING.micro,
             }}>
               {correctCount}/{tierTotal}
             </div>
@@ -290,7 +265,7 @@ export default function TieredQuizScreen({
               marginBottom: 32,
               textAlign: 'center',
             }}>
-              {correctCount === tierTotal ? 'Perfect! 🎯' : `${Math.round((correctCount / tierTotal) * 100)}% correct`}
+              {correctCount === tierTotal ? 'Perfect score' : `${Math.round((correctCount / tierTotal) * 100)}% correct`}
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 240 }}>
@@ -322,7 +297,18 @@ export default function TieredQuizScreen({
         )}
 
         {/* Progress dots during questions phase */}
-        {phase === 'questions' && <ProgressDots total={tierTotal} current={qIdx} done={0} accent={accent} rgb={rgb} />}
+        {phase === 'questions' && (
+          <div style={{ position: 'fixed', bottom: 28, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
+            <SequenceProgress
+              total={tierTotal}
+              current={qIdx}
+              completed={0}
+              accent={accent}
+              accentRgb={rgb}
+              ariaLabel="Question progress"
+            />
+          </div>
+        )}
 
       </div>
     </>

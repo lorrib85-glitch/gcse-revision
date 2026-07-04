@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { recordScore } from '../../progress.js'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { SPACING } from '../../constants/spacing.js'
 
 function CheckIcon({ color }) {
   return (
@@ -122,7 +123,7 @@ export default function AnswerInteraction({
             ...TYPE.button,
             background: `rgba(${GENERAL.tealRgb},.12)`,
             border: `1px solid rgba(${GENERAL.tealRgb},.30)`,
-            borderRadius: 9, padding: '8px 16px',
+            borderRadius: 9, padding: `${SPACING.micro}px ${SPACING.compact}px`,
             color: GENERAL.teal,
             cursor: 'pointer',
           }}>Try again →</button>

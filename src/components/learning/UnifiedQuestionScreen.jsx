@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
+import { SPACING } from '../../constants/spacing.js'
 
 function getOptionLabel(option) {
   if (typeof option === 'string') return option
@@ -315,7 +316,7 @@ export default function UnifiedQuestionScreen({
         {hintVisible && status === 'incorrect' && (
           <div
             style={{
-              marginTop: 16,
+              marginTop: SPACING.compact,
               background: 'rgba(27,30,39,0.92)',
               borderRadius: 14,
               borderLeft: `3px solid ${accent}`,
