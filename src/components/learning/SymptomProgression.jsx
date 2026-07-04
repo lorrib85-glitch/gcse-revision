@@ -8,7 +8,7 @@ import ContinueCTA from '../core/ContinueCTA.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 import { TYPE } from '../../constants/typography.js'
 
-const DEFAULT_FINAL_INSIGHT = 'Medieval doctors could describe what happened, but without germ theory they could not explain the real cause or choose effective prevention.'
+const DEFAULT_FINAL_INSIGHT = 'Plague symptoms mattered because medieval doctors could observe the disease, but without germ theory they misunderstood its cause. This limited prevention and treatment.'
 
 let _spStyled = false
 function ensureStyles() {
@@ -113,39 +113,53 @@ export default function SymptomProgression({
               key={stage.label || i}
               style={{
                 display: 'flex', gap: SPACING.compact, alignItems: 'flex-start',
-                opacity: isCollapsed ? 0.66 : isCurrent ? 1 : 0.86,
+                opacity: isCollapsed ? 0.72 : isCurrent ? 1 : 0.88,
                 transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}`,
                 animation: isNew ? `sp-fade-up ${MOTION.duration.standard} ${MOTION.easing.standard} both` : 'none',
               }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 64, flexShrink: 0 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 70, flexShrink: 0 }}>
                 <div style={{
-                  minWidth: 64, padding: isCollapsed ? '7px 6px' : '8px 6px', borderRadius: RADII.small,
-                  border: `1px solid rgba(${rgb},${isCurrent ? '0.46' : '0.24'})`,
+                  minWidth: isCollapsed ? 42 : 70,
+                  minHeight: isCollapsed ? 42 : 54,
+                  padding: isCollapsed ? 0 : '8px 8px',
+                  borderRadius: isCollapsed ? RADII.pill : RADII.small,
+                  border: `1px solid rgba(${rgb},${isCurrent ? '0.48' : '0.24'})`,
                   background: `rgba(${rgb},${isCurrent ? '0.17' : '0.08'})`,
+                  display: 'grid',
+                  placeItems: 'center',
                   textAlign: 'center',
                   animation: isCurrent ? 'sp-current-pulse 2.3s ease-in-out infinite' : 'none',
                   '--sp-rgb': rgb,
                 }}>
-                  <div style={{ ...F, fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: `rgba(${rgb},0.62)` }}>Day</div>
-                  <div style={{ ...F, fontSize: 16, fontWeight: 700, color: accent, marginTop: 2 }}>{stage.day}</div>
+                  {isCollapsed ? (
+                    <span aria-label="Completed" style={{ ...F, fontSize: 18, fontWeight: 800, color: accent }}>✓</span>
+                  ) : (
+                    <div>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 750, letterSpacing: '0.12em', textTransform: 'uppercase', color: `rgba(${rgb},0.66)`, lineHeight: 1 }}>Day</div>
+                      <div style={{ ...F, fontSize: 16, fontWeight: 800, color: accent, marginTop: 4, lineHeight: 1.1 }}>{stage.day}</div>
+                    </div>
+                  )}
                 </div>
 
                 {hasFollower && (
                   <div style={{
                     width: 1, flex: 1, minHeight: isCollapsed ? 22 : 32,
-                    background: `rgba(${rgb},0.18)`,
+                    background: isCurrent
+                      ? `linear-gradient(180deg, rgba(${rgb},0.48), rgba(${rgb},0.14))`
+                      : `rgba(${rgb},0.18)`,
                     marginTop: SPACING.micro, marginBottom: SPACING.micro,
                   }} />
                 )}
               </div>
 
-              <div style={{ flex: 1, paddingTop: 4, paddingBottom: hasFollower ? (isCollapsed ? SPACING.compact : SPACING.standard) : 0 }}>
+              <div style={{ flex: 1, paddingTop: isCollapsed ? 8 : 4, paddingBottom: hasFollower ? (isCollapsed ? SPACING.compact : SPACING.standard) : 0 }}>
                 <div style={{
-                  ...F, fontSize: isCollapsed ? 16 : 19, fontWeight: 600, lineHeight: 1.3,
-                  color: 'rgba(255,255,255,0.94)', marginBottom: isCollapsed ? 0 : SPACING.micro,
+                  ...F, fontSize: isCollapsed ? 16 : 19, fontWeight: 650, lineHeight: 1.3,
+                  color: isCollapsed ? 'rgba(255,255,255,0.70)' : 'rgba(255,255,255,0.94)',
+                  marginBottom: isCollapsed ? 0 : SPACING.micro,
                 }}>
-                  {stage.label}
+                  {isCollapsed ? `✓ ${stage.label}` : stage.label}
                 </div>
                 {!isCollapsed && (
                   <div style={{ ...TYPE.body, color: 'rgba(255,255,255,0.52)', maxWidth: 440 }}>
@@ -168,7 +182,7 @@ export default function SymptomProgression({
             animation: `sp-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
           }}>
             <div style={{ ...TYPE.eyebrow, color: accent, marginBottom: SPACING.micro }}>
-              Why this mattered
+              Exam link
             </div>
             <div style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.78)', lineHeight: 1.55 }}>
               {finalInsight}
