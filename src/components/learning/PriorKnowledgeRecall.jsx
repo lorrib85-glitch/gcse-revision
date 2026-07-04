@@ -38,7 +38,7 @@ function ensureStyles() {
     @keyframes prk-fade-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes prk-sheet-in { from { opacity: 0; transform: translateY(24px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
     @keyframes prk-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes prk-timer-pulse { 0%, 100% { opacity: 0.32; transform: scale(1); } 50% { opacity: 0.62; transform: scale(1.06); } }
+    @keyframes prk-timer-pulse { 0%, 100% { opacity: 0.34; transform: scale(1); } 50% { opacity: 0.66; transform: scale(1.08); } }
     @keyframes prk-complete-glow {
       0% { box-shadow: 0 0 28px rgba(213,160,73,0.09), inset 0 1px 0 rgba(255,255,255,0.04); border-color: rgba(213,160,73,0.28); }
       42% { box-shadow: 0 0 0 1px rgba(117,220,208,0.18), 0 0 44px rgba(117,220,208,0.22), inset 0 1px 0 rgba(255,255,255,0.07); border-color: rgba(117,220,208,0.62); }
@@ -91,54 +91,67 @@ function FeatherIcon({ color }) {
   )
 }
 
-function RecallTimer({ secondsLeft, duration, ringRgb, rgb }) {
+function RecallTimer({ secondsLeft, duration, ringRgb }) {
   const progress = Math.max(0, Math.min(1, secondsLeft / duration))
-  const radius = 19
+  const radius = 25
   const circumference = 2 * Math.PI * radius
   const dashOffset = circumference * (1 - progress)
 
   return (
-    <div style={{
-      position: 'relative',
-      display: 'flex',
-      alignItems: 'center',
-      gap: 13,
-      padding: '12px 13px',
-      borderRadius: 18,
-      background: `linear-gradient(135deg, rgba(${ringRgb},0.12), rgba(255,255,255,0.026) 48%, rgba(0,0,0,0.18))`,
-      border: `1px solid rgba(${ringRgb},0.28)`,
-      boxShadow: `0 0 28px rgba(${ringRgb},0.10), inset 0 1px 0 rgba(255,255,255,0.055)`,
-      marginBottom: SPACING.compact,
-      overflow: 'hidden',
-    }}>
-      <div aria-hidden="true" style={{ position: 'absolute', inset: -28, background: `radial-gradient(circle at 18% 50%, rgba(${ringRgb},0.16), transparent 32%)`, animation: 'prk-timer-pulse 2.4s ease-in-out infinite', pointerEvents: 'none' }} />
-      <div style={{ position: 'relative', width: 48, height: 48, flexShrink: 0 }}>
-        <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true" style={{ transform: 'rotate(-90deg)' }}>
-          <circle cx="24" cy="24" r={radius} fill="none" stroke="rgba(245,247,255,0.08)" strokeWidth="4" />
-          <circle cx="24" cy="24" r={radius} fill="none" stroke={`rgb(${ringRgb})`} strokeWidth="4" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={dashOffset} style={{ transition: `stroke-dashoffset ${MOTION.duration.slow} ${MOTION.easing.linear}, stroke ${MOTION.duration.slow} ${MOTION.easing.linear}`, filter: `drop-shadow(0 0 7px rgba(${ringRgb},0.30))` }} />
-        </svg>
-        <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 900, color: `rgb(${ringRgb})`, fontVariantNumeric: 'tabular-nums' }}>
-          {Math.ceil(secondsLeft / 60)}m
-        </div>
-      </div>
-      <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10, marginBottom: 8 }}>
-          <span style={{ ...TYPE.metadata, fontSize: 11, color: `rgba(${rgb},0.62)` }}>Recall countdown</span>
-          <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 20, fontWeight: 850, color: `rgb(${ringRgb})`, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.03em' }}>{formatTime(secondsLeft)}</span>
-        </div>
-        <div aria-hidden="true" style={{ height: 5, borderRadius: RADII.pill, overflow: 'hidden', background: 'rgba(245,247,255,0.075)' }}>
-          <div style={{ width: `${progress * 100}%`, height: '100%', borderRadius: RADII.pill, background: `linear-gradient(90deg, rgba(${ringRgb},0.28), rgb(${ringRgb}))`, boxShadow: `0 0 14px rgba(${ringRgb},0.24)`, transition: `width ${MOTION.duration.slow} ${MOTION.easing.linear}, background ${MOTION.duration.slow} ${MOTION.easing.linear}` }} />
-        </div>
+    <div
+      aria-label={`${formatTime(secondsLeft)} left`}
+      style={{
+        position: 'relative',
+        width: 68,
+        height: 68,
+        flexShrink: 0,
+        borderRadius: RADII.pill,
+        display: 'grid',
+        placeItems: 'center',
+        background: `radial-gradient(circle, rgba(${ringRgb},0.16), rgba(255,255,255,0.028) 58%, rgba(0,0,0,0.20))`,
+        border: `1px solid rgba(${ringRgb},0.30)`,
+        boxShadow: `0 0 24px rgba(${ringRgb},0.12), inset 0 1px 0 rgba(255,255,255,0.06)`,
+        overflow: 'hidden',
+      }}
+    >
+      <div aria-hidden="true" style={{ position: 'absolute', inset: 2, borderRadius: RADII.pill, background: `radial-gradient(circle, rgba(${ringRgb},0.18), transparent 64%)`, animation: 'prk-timer-pulse 2.4s ease-in-out infinite' }} />
+      <svg width="68" height="68" viewBox="0 0 68 68" aria-hidden="true" style={{ position: 'absolute', inset: 0, transform: 'rotate(-90deg)' }}>
+        <circle cx="34" cy="34" r={radius} fill="none" stroke="rgba(245,247,255,0.08)" strokeWidth="5" />
+        <circle cx="34" cy="34" r={radius} fill="none" stroke={`rgb(${ringRgb})`} strokeWidth="5" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={dashOffset} style={{ transition: `stroke-dashoffset ${MOTION.duration.slow} ${MOTION.easing.linear}, stroke ${MOTION.duration.slow} ${MOTION.easing.linear}`, filter: `drop-shadow(0 0 8px rgba(${ringRgb},0.34))` }} />
+      </svg>
+      <div style={{ position: 'relative', display: 'grid', gap: 0, justifyItems: 'center' }}>
+        <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 17, fontWeight: 850, lineHeight: 1, color: `rgb(${ringRgb})`, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.04em' }}>{formatTime(secondsLeft)}</span>
+        <span style={{ ...TYPE.metadata, fontSize: 8, color: `rgba(${ringRgb},0.62)`, letterSpacing: '0.08em' }}>left</span>
       </div>
     </div>
   )
 }
 
-function MemoryNudges({ prompts }) {
+function RecallPromptStrip({ prompts, ringRgb, secondsLeft, duration }) {
   const nudges = prompts.map(p => String(p).toLowerCase())
   return (
-    <div style={{ padding: '0 2px', marginBottom: SPACING.compact, ...TYPE.bodySmall, fontSize: 12, color: 'rgba(245,247,255,0.43)' }}>
-      {nudges.join(' · ')}
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: SPACING.compact,
+      marginBottom: SPACING.compact,
+    }}>
+      <div style={{
+        flex: 1,
+        minHeight: 68,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: `${SPACING.compact}px ${SPACING.compact + 2}px`,
+        borderRadius: 18,
+        background: 'linear-gradient(180deg, rgba(255,255,255,0.042), rgba(255,255,255,0.018))',
+        border: `1px solid rgba(${ringRgb},0.20)`,
+        boxShadow: `0 0 22px rgba(${ringRgb},0.06), inset 0 1px 0 rgba(255,255,255,0.04)`,
+      }}>
+        <div style={{ ...TYPE.metadata, fontSize: 10, color: `rgba(${ringRgb},0.72)`, marginBottom: 5 }}>Write about</div>
+        <div style={{ ...TYPE.bodySmall, fontSize: 13, color: 'rgba(245,247,255,0.62)', lineHeight: 1.35 }}>{nudges.join(' · ')}</div>
+      </div>
+      <RecallTimer secondsLeft={secondsLeft} duration={duration} ringRgb={ringRgb} />
     </div>
   )
 }
@@ -210,11 +223,10 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
       <div className="prk-scroll" style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%', padding: `calc(14px + env(safe-area-inset-top)) ${SPACING.standard}px calc(${SPACING.separation}px + env(safe-area-inset-bottom))`, overflow: 'auto', filter: hasResults ? 'brightness(0.70)' : 'none', transition: `filter ${MOTION.duration.standard} ${MOTION.easing.gentle}` }}>
         <div style={{ minHeight: 48, marginBottom: SCREEN_TEXT_LAYOUT.titleOffsetTop, flexShrink: 0 }}><ModuleToolbar onBack={onBack} onExit={onExit || onBack} /></div>
         {(phase === 'input' || phase === 'results') && <div style={{ flex: 1, display: 'flex', flexDirection: 'column', animation: 'prk-fade-in 280ms ease both' }}><div style={{ flex: 1 }}>
-          <ScreenTextBlock title="What can you remember?" tone="quiet" inset={false} style={{ paddingTop: 0, paddingBottom: SCREEN_TEXT_LAYOUT.blockGap }} titleStyle={{ ...TYPE.displayScreen, color: '#F5F7FF', marginBottom: SPACING.micro, textWrap: 'balance' }} bodyStyle={{ ...TYPE.bodySmall, color: 'rgba(245,247,255,0.58)', lineHeight: 1.45 }}>Write anything you know before we reveal the gaps.</ScreenTextBlock>
-          <RecallTimer secondsLeft={secondsLeft} duration={RECALL_DURATION} ringRgb={ringRgb} rgb={rgb} />
-          <MemoryNudges prompts={recallPrompts.slice(0, 4)} />
+          <ScreenTextBlock title="What can you remember?" tone="quiet" inset={false} style={{ paddingTop: 0, paddingBottom: SCREEN_TEXT_LAYOUT.blockGap }} titleStyle={{ ...TYPE.displayScreen, color: '#F5F7FF', marginBottom: SPACING.micro, textWrap: 'balance' }} bodyStyle={{ ...TYPE.bodySmall, color: 'rgba(245,247,255,0.58)', lineHeight: 1.45 }}>Write anything you know about this topic before we reveal the gaps.</ScreenTextBlock>
+          <RecallPromptStrip prompts={recallPrompts.slice(0, 4)} ringRgb={ringRgb} secondsLeft={secondsLeft} duration={RECALL_DURATION} />
           <div style={{ position: 'relative', background: 'linear-gradient(180deg, rgba(20,23,29,0.93), rgba(11,13,18,0.96))', border: hasResults ? `1.5px solid rgba(${SUCCESS_RGB},0.44)` : isFocused ? `1.5px solid rgba(${SUCCESS_RGB},0.58)` : `1.5px solid rgba(${rgb},0.28)`, borderRadius: 24, padding: `${SPACING.compact}px ${SPACING.standard}px`, marginBottom: SPACING.standard, boxShadow: hasResults ? `0 0 30px rgba(${SUCCESS_RGB},0.12), inset 0 1px 0 rgba(255,255,255,0.05)` : isFocused ? `0 0 0 1px rgba(${SUCCESS_RGB},0.13), 0 0 36px rgba(${SUCCESS_RGB},0.14), inset 0 1px 0 rgba(255,255,255,0.05)` : `0 0 28px rgba(${rgb},0.09), inset 0 1px 0 rgba(255,255,255,0.04)`, animation: hasResults ? 'prk-complete-glow 900ms ease-out both' : 'none', transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}` }}>
-            <div style={{ position: 'relative' }}>{answer.length === 0 && <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}><div style={{ ...TYPE.bodyStrong, fontSize: 16, color: 'rgba(245,247,255,0.42)' }}>Type your answer here…</div></div>}<textarea value={answer} onChange={e => { setAnswer(e.target.value); setError(null) }} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} rows={8} disabled={phase === 'results'} aria-label="Write anything you remember" style={{ width: '100%', padding: 0, minHeight: 'clamp(225px, 35vh, 315px)', background: 'transparent', border: 'none', outline: 'none', resize: 'none', ...TYPE.bodySmall, color: '#F5F7FF', lineHeight: 1.7, letterSpacing: '0.01em', caretColor: `rgb(${SUCCESS_RGB})`, opacity: phase === 'results' ? 0.72 : 1 }} /></div>
+            <div style={{ position: 'relative' }}>{answer.length === 0 && <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}><div style={{ ...TYPE.bodyStrong, fontSize: 16, color: 'rgba(245,247,255,0.42)' }}>Type everything you remember…</div></div>}<textarea value={answer} onChange={e => { setAnswer(e.target.value); setError(null) }} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} rows={8} disabled={phase === 'results'} aria-label="Write anything you remember" style={{ width: '100%', padding: 0, minHeight: 'clamp(225px, 35vh, 315px)', background: 'transparent', border: 'none', outline: 'none', resize: 'none', ...TYPE.bodySmall, color: '#F5F7FF', lineHeight: 1.7, letterSpacing: '0.01em', caretColor: `rgb(${SUCCESS_RGB})`, opacity: phase === 'results' ? 0.72 : 1 }} /></div>
             <div aria-hidden="true" style={{ position: 'absolute', right: 18, bottom: 16, color: hasResults ? `rgba(${SUCCESS_RGB},0.70)` : `rgba(${SUCCESS_RGB},0.33)`, opacity: 0.9, filter: hasResults ? `drop-shadow(0 0 10px rgba(${SUCCESS_RGB},0.30))` : 'none', transition: `color ${MOTION.duration.standard} ${MOTION.easing.gentle}, filter ${MOTION.duration.standard} ${MOTION.easing.gentle}` }}><FeatherIcon color="currentColor" /></div>
           </div>
           {error && <p style={{ ...TYPE.bodySmall, color: '#E05A52', margin: `0 0 ${SPACING.standard}px` }}>{error}</p>}
