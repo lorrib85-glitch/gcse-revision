@@ -4,6 +4,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 // CinematicShell used here because the horizontal swipe-to-pan canvas must reach the full
 // viewport width with no horizontal padding; InteractionShell's 16px inset would clip the
 // connector rail and break scroll-snap alignment at the screen edges.
@@ -34,7 +35,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 //   intro?: 'Swipe to explore the chain. Tap + on each card to reveal why it mattered.',
 //   steps: [
 //     { id, image?: '/path.png', label: 'Ships carried rats',
-//       detail: 'Trade ships from Asia carried black rats...', stats?: ['Step 1 of 4', 'Tap + for detail'] },
+//       detail: 'Trade ships from Asia carried black rats...', stats?: ['Trade routes', 'Tap for detail'] },
 //     ...
 //   ],
 // }
@@ -168,6 +169,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
   }
 
   const allOpened = steps.length > 0 && opened.size === steps.length
+  const currentProgressIndex = openIndex ?? Math.min(opened.size, Math.max(steps.length - 1, 0))
 
   return (
     <CinematicShell style={{
@@ -239,6 +241,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
             {steps.map((step, i) => {
               const c = centers[i]
               const isOpen = openIndex === i
+              const stats = step.stats || ['Tap for detail']
               return (
                 <div key={step.id || i}>
                   {/* Card */}
@@ -277,7 +280,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
                       color: 'rgba(255,255,255,0.46)',
                       background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.06)',
                     }}>
-                      {(step.stats || [`Step ${i + 1} of ${steps.length}`, 'Tap + for detail']).map((s, si) => (
+                      {stats.map((s, si) => (
                         <span key={si}>{s}</span>
                       ))}
                     </div>
@@ -344,17 +347,20 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
         </div>
       )}
 
-      {/* Progress dots */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: SPACING.compact, flexShrink: 0 }}>
-        {steps.map((_, i) => (
-          <div key={i} style={{
-            width: opened.has(i) ? 20 : 8, height: 8, borderRadius: RADII.pill,
-            background: opened.has(i) ? accent : 'rgba(255,255,255,0.16)',
-            boxShadow: opened.has(i) ? `0 0 8px rgba(${rgb},0.45)` : 'none',
-            transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-          }} />
-        ))}
-      </div>
+      {/* Local sequence progress */}
+      {steps.length > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.compact, flexShrink: 0 }}>
+          <SequenceProgress
+            total={steps.length}
+            current={currentProgressIndex}
+            viewed={Array.from(opened)}
+            accent={accent}
+            accentRgb={rgb}
+            compact
+            ariaLabel="Timeline progress"
+          />
+        </div>
+      )}
 
       {/* Continue */}
       <div style={{ marginTop: SPACING.standard, padding: `0 ${SPACING.standard}px`, flexShrink: 0 }}>
@@ -366,7 +372,7 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
           />
         ) : (
           <div style={{ ...TYPE.label, color: 'rgba(255,255,255,0.32)' }}>
-            Tap + on each step to continue
+            Tap each + to continue
           </div>
         )}
       </div>
