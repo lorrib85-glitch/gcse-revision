@@ -1,0 +1,101 @@
+/**
+ * Guard tests for the Medicine Episode 1 concept-support map and its derived
+ * concept → revision-screen reverse index.
+ *
+ * The map (src/data/contentSupport/historyMedicineEpisode01.js) connects each
+ * teaching screen to the registered concepts it supports; the derived index
+ * powers "you got this concept wrong — revisit these screens" routing. These
+ * tests keep the tagging model honest: registered vocabulary only, screen
+ * indices in range, and the reverse index faithfully derived from the forward
+ * map with no drift.
+ */
+
+import { describe, it, expect } from 'vitest'
+import SUPPORT, {
+  deriveConceptSupport,
+  HISTORY_MEDICINE_EPISODE_01_CONCEPT_SUPPORT as INDEX,
+} from '../../src/data/contentSupport/historyMedicineEpisode01.js'
+import { isConceptId } from '../../src/data/learningGraph/conceptRegistry.js'
+
+const screenIndices = SUPPORT.screens.map(s => s.screenIndex)
+const maxScreen = Math.max(...screenIndices)
+const stageIds = new Set(SUPPORT.stageRanges.map(r => r.id))
+const forwardConcepts = new Set([
+  ...SUPPORT.screens.flatMap(s => s.conceptTags),
+  ...SUPPORT.stageRanges.flatMap(r => r.conceptTags),
+])
+
+describe('Episode 1 support map — forward integrity', () => {
+  it('every conceptTag (screen + stageRange) is a registered concept id', () => {
+    for (const tag of forwardConcepts) {
+      expect(isConceptId(tag), `unregistered concept tag "${tag}"`).toBe(true)
+    }
+  })
+
+  it('missingConceptCandidates are kept out of the live conceptTags (not invented)', () => {
+    const candidates = SUPPORT.screens.flatMap(s => s.missingConceptCandidates ?? [])
+    for (const candidate of candidates) {
+      expect(forwardConcepts.has(candidate), `candidate "${candidate}" leaked into conceptTags`).toBe(false)
+    }
+  })
+
+  it('screen entries are contiguous from 0 with no duplicates', () => {
+    const sorted = [...screenIndices].sort((a, b) => a - b)
+    expect(sorted).toEqual(Array.from({ length: sorted.length }, (_, i) => i))
+    expect(new Set(screenIndices).size).toBe(screenIndices.length)
+  })
+
+  it('every stageRange id is unique and its screenRange is in bounds', () => {
+    expect(stageIds.size).toBe(SUPPORT.stageRanges.length)
+    for (const r of SUPPORT.stageRanges) {
+      const [start, end] = r.screenRange
+      expect(start, `${r.id} start`).toBeGreaterThanOrEqual(0)
+      if (end !== null) expect(end, `${r.id} end`).toBeGreaterThanOrEqual(start)
+    }
+  })
+})
+
+describe('Episode 1 concept-support — derived reverse index', () => {
+  it('indexes exactly the concepts that appear in the forward map', () => {
+    expect(new Set(Object.keys(INDEX))).toEqual(forwardConcepts)
+  })
+
+  it('every indexed key is a registered concept and matches its .concept field', () => {
+    for (const [id, entry] of Object.entries(INDEX)) {
+      expect(isConceptId(id), `unregistered index key "${id}"`).toBe(true)
+      expect(entry.concept).toBe(id)
+    }
+  })
+
+  it('screens are ascending, in range, and reference a mapped screen entry', () => {
+    const mapped = new Set(screenIndices)
+    for (const [id, entry] of Object.entries(INDEX)) {
+      expect(Array.isArray(entry.screens)).toBe(true)
+      const ascending = [...entry.screens].sort((a, b) => a - b)
+      expect(entry.screens, `${id} screens not ascending`).toEqual(ascending)
+      for (const s of entry.screens) {
+        expect(s >= 0 && s <= maxScreen, `${id}: screen ${s} out of range`).toBe(true)
+        expect(mapped.has(s), `${id}: screen ${s} not a mapped screen`).toBe(true)
+      }
+    }
+  })
+
+  it('parts reference real stageRange ids', () => {
+    for (const [id, entry] of Object.entries(INDEX)) {
+      for (const part of entry.parts) {
+        expect(stageIds.has(part), `${id}: unknown part "${part}"`).toBe(true)
+      }
+    }
+  })
+
+  it('every concept resolves to at least one revisit target (screen or part)', () => {
+    for (const [id, entry] of Object.entries(INDEX)) {
+      expect(entry.screens.length + entry.parts.length, `${id} has no revisit target`).toBeGreaterThan(0)
+    }
+  })
+
+  it('derivation is pure and deterministic (same input → same output)', () => {
+    expect(deriveConceptSupport(SUPPORT)).toEqual(deriveConceptSupport(SUPPORT))
+    expect(deriveConceptSupport(SUPPORT)).toEqual(INDEX)
+  })
+})

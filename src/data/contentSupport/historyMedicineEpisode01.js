@@ -340,4 +340,46 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
   ],
 }
 
+// ─── Derived reverse index: concept → the revision material that teaches it ───
+//
+// Purpose: when a learner gets a concept wrong, look the concept id up here and
+// send them back to the exact screens (and part) of this module that teach it —
+// "you slipped on Galen, revisit these screens." This is the metadata the
+// weak-spot router needs to encourage revisiting revision material.
+//
+// Derived from the forward map above, so there is a single source of truth and
+// the two can never drift; no concept ids are invented here.
+//
+// Shape: { [conceptId]: { concept, screens: number[], parts: string[] } }
+//   screens — screen indices (from the per-screen map, 0–22 today) that teach
+//             the concept, ascending. The first entry is the natural revisit
+//             point (cf. findTaggedScreen in tagModuleMap.js, but concept-based
+//             and multi-screen).
+//   parts   — stageRange ids covering the concept (whole-module coverage,
+//             including exam-prep parts 5–6 whose screens 23–32 are not yet
+//             mapped at screen level).
+export function deriveConceptSupport(map) {
+  const out = {}
+  const bucket = (id) => (out[id] ??= { concept: id, screens: new Set(), parts: new Set() })
+  for (const screen of map.screens) {
+    for (const tag of screen.conceptTags) bucket(tag).screens.add(screen.screenIndex)
+  }
+  for (const range of map.stageRanges) {
+    for (const tag of range.conceptTags) bucket(tag).parts.add(range.id)
+  }
+  const sorted = {}
+  for (const id of Object.keys(out).sort()) {
+    sorted[id] = {
+      concept: id,
+      screens: [...out[id].screens].sort((a, b) => a - b),
+      parts: [...out[id].parts].sort(),
+    }
+  }
+  return sorted
+}
+
+export const HISTORY_MEDICINE_EPISODE_01_CONCEPT_SUPPORT = deriveConceptSupport(
+  HISTORY_MEDICINE_EPISODE_01_SUPPORT,
+)
+
 export default HISTORY_MEDICINE_EPISODE_01_SUPPORT
