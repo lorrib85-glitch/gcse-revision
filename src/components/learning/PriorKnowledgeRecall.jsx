@@ -9,6 +9,7 @@ import ScreenTextBlock from '../layout/ScreenTextBlock.jsx'
 import { TYPE, SCREEN_TEXT_LAYOUT } from '../../constants/typography.js'
 import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 import ModuleToolbar from '../core/ModuleToolbar.jsx'
+import CircularTimer from '../core/CircularTimer.jsx'
 
 const SCORE_RECALLED = 0.7
 const SCORE_PARTIAL = 0.3
@@ -16,12 +17,6 @@ const RECALL_DURATION = 3 * 60
 const SUCCESS_RGB = '117,220,208'
 const LOW_TIME_RGB = '201,123,99'
 const DEFAULT_RECALL_PROMPTS = ['people', 'causes', 'changes', 'evidence']
-
-function formatTime(totalSeconds) {
-  const m = Math.floor(totalSeconds / 60)
-  const s = totalSeconds % 60
-  return `${m}:${String(s).padStart(2, '0')}`
-}
 
 function lerpColor(rgbA, rgbB, t) {
   const a = rgbA.split(',').map(Number)
@@ -51,7 +46,6 @@ function ensureStyles() {
     @keyframes prk-fade-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes prk-sheet-in { from { opacity: 0; transform: translateY(24px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
     @keyframes prk-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes prk-timer-pulse { 0%, 100% { opacity: 0.34; transform: scale(1); } 50% { opacity: 0.66; transform: scale(1.08); } }
     @keyframes prk-complete-glow {
       0% { box-shadow: 0 0 28px rgba(213,160,73,0.09), inset 0 1px 0 rgba(255,255,255,0.04); border-color: rgba(213,160,73,0.28); }
       42% { box-shadow: 0 0 0 1px rgba(117,220,208,0.18), 0 0 44px rgba(117,220,208,0.22), inset 0 1px 0 rgba(255,255,255,0.07); border-color: rgba(117,220,208,0.62); }
@@ -105,38 +99,17 @@ function FeatherIcon({ color }) {
 }
 
 function RecallTimer({ secondsLeft, duration, ringRgb }) {
-  const progress = Math.max(0, Math.min(1, secondsLeft / duration))
-  const radius = 25
-  const circumference = 2 * Math.PI * radius
-  const dashOffset = circumference * (1 - progress)
-
   return (
-    <div
-      aria-label={`${formatTime(secondsLeft)} left`}
-      style={{
-        position: 'relative',
-        width: 68,
-        height: 68,
-        flexShrink: 0,
-        borderRadius: RADII.pill,
-        display: 'grid',
-        placeItems: 'center',
-        background: `radial-gradient(circle, rgba(${ringRgb},0.16), rgba(255,255,255,0.028) 58%, rgba(0,0,0,0.20))`,
-        border: `1px solid rgba(${ringRgb},0.30)`,
-        boxShadow: `0 0 24px rgba(${ringRgb},0.12), inset 0 1px 0 rgba(255,255,255,0.06)`,
-        overflow: 'hidden',
-      }}
-    >
-      <div aria-hidden="true" style={{ position: 'absolute', inset: 2, borderRadius: RADII.pill, background: `radial-gradient(circle, rgba(${ringRgb},0.18), transparent 64%)`, animation: 'prk-timer-pulse 2.4s ease-in-out infinite' }} />
-      <svg width="68" height="68" viewBox="0 0 68 68" aria-hidden="true" style={{ position: 'absolute', inset: 0, transform: 'rotate(-90deg)' }}>
-        <circle cx="34" cy="34" r={radius} fill="none" stroke="rgba(245,247,255,0.08)" strokeWidth="5" />
-        <circle cx="34" cy="34" r={radius} fill="none" stroke={`rgb(${ringRgb})`} strokeWidth="5" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={dashOffset} style={{ transition: `stroke-dashoffset ${MOTION.duration.slow} ${MOTION.easing.linear}, stroke ${MOTION.duration.slow} ${MOTION.easing.linear}`, filter: `drop-shadow(0 0 8px rgba(${ringRgb},0.34))` }} />
-      </svg>
-      <div style={{ position: 'relative', display: 'grid', gap: 0, justifyItems: 'center' }}>
-        <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 17, fontWeight: 850, lineHeight: 1, color: `rgb(${ringRgb})`, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.04em' }}>{formatTime(secondsLeft)}</span>
-        <span style={{ ...TYPE.metadata, fontSize: 8, color: `rgba(${ringRgb},0.62)`, letterSpacing: '0.08em' }}>left</span>
-      </div>
-    </div>
+    <CircularTimer
+      seconds={secondsLeft}
+      totalSeconds={duration}
+      size={84}
+      stroke={4}
+      color={`rgb(${ringRgb})`}
+      label="SEC"
+      ariaLabel={`${secondsLeft} seconds left`}
+      labelStyle={{ color: `rgba(${ringRgb},0.72)` }}
+    />
   )
 }
 
@@ -144,7 +117,7 @@ function RecallPromptStrip({ prompts, ringRgb, secondsLeft, duration }) {
   const nudges = prompts.map(p => String(p).toLowerCase())
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.compact, marginBottom: SPACING.compact }}>
-      <div style={{ flex: 1, minHeight: 68, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${SPACING.compact}px ${SPACING.compact + 2}px`, borderRadius: 18, background: 'linear-gradient(180deg, rgba(255,255,255,0.042), rgba(255,255,255,0.018))', border: `1px solid rgba(${ringRgb},0.20)`, boxShadow: `0 0 22px rgba(${ringRgb},0.06), inset 0 1px 0 rgba(255,255,255,0.04)` }}>
+      <div style={{ flex: 1, minHeight: 84, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: `${SPACING.compact}px ${SPACING.compact + 2}px`, borderRadius: 18, background: 'linear-gradient(180deg, rgba(255,255,255,0.042), rgba(255,255,255,0.018))', border: `1px solid rgba(${ringRgb},0.20)`, boxShadow: `0 0 22px rgba(${ringRgb},0.06), inset 0 1px 0 rgba(255,255,255,0.04)` }}>
         <div style={{ ...TYPE.metadata, fontSize: 10, color: `rgba(${ringRgb},0.72)`, marginBottom: 5 }}>Write about</div>
         <div style={{ ...TYPE.bodySmall, fontSize: 13, color: 'rgba(245,247,255,0.62)', lineHeight: 1.35 }}>{nudges.join(' · ')}</div>
       </div>
