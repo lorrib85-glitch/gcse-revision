@@ -9,6 +9,10 @@ const CTA_DELAY_MS = 760
 const TEXT_ANIMATION_MS = 620
 const OVERLAY_FADE_MS = 420
 const VIDEO_SAFETY_MS = 4000
+const CINEMATIC_LABEL_COLOR = 'rgba(245,238,225,0.50)'
+const CINEMATIC_HEADLINE_COLOR = 'rgba(245,238,225,0.97)'
+const CINEMATIC_BODY_COLOR = 'rgba(245,238,225,0.78)'
+const CINEMATIC_FINAL_LINE_COLOR = 'rgba(245,238,225,0.92)'
 
 const BLACK_DEATH_OPENING_BODY = 'In June 1348, ships docked at Melcombe in Dorset.\n\nWithin weeks, people began to die.\n\nThe disease moved fast — through towns, villages, and monasteries.\n\nNo one knew what it was. No one knew how to stop it.'
 const BLACK_DEATH_REFINED_BODY = 'Ships arrive at Melcombe, Dorset.\n\nIt looks like ordinary trade.\n\nThen people start dying.\n\nThe disease spreads fast — through ports, towns and villages.\n\nSoon, around a third of England is dead.\n\nThis is the Black Death.'
@@ -17,6 +21,10 @@ function resolveCinematicCopy({ label, headline, body }) {
   const isBlackDeathOpening = label === 'ENGLAND, 1348' && headline === 'Something is coming.' && body === BLACK_DEATH_OPENING_BODY
   if (!isBlackDeathOpening) return { headline, body }
   return { headline: 'June 1348.', body: BLACK_DEATH_REFINED_BODY }
+}
+
+function resolveCinematicLabel(label) {
+  return label === 'ENGLAND, 1348' ? 'ENGLAND · 1348' : label
 }
 
 // Splits paragraph text and wraps highlight phrases in accent-coloured spans
@@ -59,6 +67,7 @@ export default function CinematicRevealMoment({
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, background: bg } = theme
   const { headline: resolvedHeadline, body: resolvedBody } = resolveCinematicCopy({ label, headline, body })
+  const resolvedLabel = resolveCinematicLabel(label)
 
   const bodyLines = useMemo(
     () => String(resolvedBody || '')
@@ -259,15 +268,15 @@ export default function CinematicRevealMoment({
         }}>
 
           {/* Label */}
-          {yearVisible && label && (
+          {yearVisible && resolvedLabel && (
             <div style={{
               ...TYPE.eyebrow,
-              color: 'rgba(255,255,255,0.50)',
+              color: CINEMATIC_LABEL_COLOR,
               marginBottom: 10,
               textShadow: '0 1px 16px rgba(0,0,0,0.5)',
               animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
-              {label}
+              {resolvedLabel}
             </div>
           )}
 
@@ -275,7 +284,7 @@ export default function CinematicRevealMoment({
           {yearVisible && resolvedHeadline && (
             <div style={{
               ...TYPE.displaySection,
-              color: 'rgba(255,255,255,0.97)',
+              color: CINEMATIC_HEADLINE_COLOR,
               marginBottom: 14,
               maxWidth: 320,
               textShadow: '0 2px 24px rgba(0,0,0,0.55)',
@@ -289,24 +298,29 @@ export default function CinematicRevealMoment({
           {yearVisible && bodyLines.length > 0 && (
             <div style={{
               ...TYPE.bodyStrong,
-              color: 'rgba(255,255,255,0.64)',
+              color: CINEMATIC_BODY_COLOR,
               maxWidth: '34ch',
               textShadow: '0 1px 16px rgba(0,0,0,0.5)',
             }}>
-              {bodyLines.map((line, i) => bodyLineVisible[i] && (
-                <p key={`${line}-${i}`} style={{
-                  margin: 0,
-                  marginBottom: i < bodyLines.length - 1 ? 20 : 0,
-                  animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
-                }}>
-                  {line}
-                </p>
-              ))}
+              {bodyLines.map((line, i) => bodyLineVisible[i] && {
+                const isFinalLine = i === bodyLines.length - 1
+                return (
+                  <p key={`${line}-${i}`} style={{
+                    margin: 0,
+                    marginBottom: i < bodyLines.length - 1 ? 20 : 0,
+                    color: isFinalLine ? CINEMATIC_FINAL_LINE_COLOR : CINEMATIC_BODY_COLOR,
+                    fontWeight: isFinalLine ? 600 : undefined,
+                    animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
+                  }}>
+                    {line}
+                  </p>
+                )
+              })}
             </div>
           )}
 
           {/* Year — displayed when no label/headline/body, or alongside */}
-          {yearVisible && !label && (
+          {yearVisible && !resolvedLabel && (
             <div style={{
               ...TYPE.displayHero,
               color: accent,
