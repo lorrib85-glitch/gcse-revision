@@ -245,7 +245,7 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
 
   return (
     <div style={{
-      position: 'relative', minHeight: 252, borderRadius: RADII.panel, overflow: 'hidden',
+      position: 'relative', minHeight: 300, borderRadius: RADII.panel, overflow: 'hidden',
       border: '1px solid rgba(255,255,255,0.08)', background: GENERAL.neutral[800],
     }}>
       {image && (
@@ -264,7 +264,7 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
         </>
       )}
       <div style={{
-        position: 'relative', zIndex: 1, minHeight: 252, padding: SPACING.standard,
+        position: 'relative', zIndex: 1, minHeight: 300, padding: SPACING.standard,
         display: 'flex', flexDirection: 'column', alignItems: 'flex-start', boxSizing: 'border-box',
       }}>
         {!allDone && subject && (
@@ -277,7 +277,10 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
             {subject}
           </span>
         )}
-        <div style={{ ...TYPE.displayHero, color: GENERAL.softWhite, marginTop: 'auto', paddingTop: SPACING.compact }}>
+        <div style={{
+          ...TYPE.displayHero, color: GENERAL.softWhite, marginTop: 'auto', paddingTop: SPACING.compact,
+          display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden',
+        }}>
           {title}
         </div>
         {!allDone && (
@@ -289,7 +292,7 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
         <button
           onClick={allDone ? onReviewProgress : onStart}
           style={{
-            marginTop: SPACING.compact, minWidth: 180,
+            marginTop: SPACING.standard, minWidth: 180,
             height: BUTTONS.continue.height, borderRadius: RADII.medium,
             padding: `0 ${BUTTONS.continue.paddingX}px`,
             fontFamily: BUTTONS.continue.fontFamily, fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
@@ -310,7 +313,7 @@ function StatCard({ children, centred = false }) {
   return (
     <div style={{
       background: GENERAL.neutral[800], border: '1px solid rgba(255,255,255,0.06)',
-      borderRadius: RADII.large, padding: `${SPACING.micro}px ${SPACING.compact}px`, minHeight: 92,
+      borderRadius: RADII.large, padding: SPACING.compact, minHeight: 112,
       display: 'flex', flexDirection: 'column', gap: SPACING.micro, boxSizing: 'border-box',
       justifyContent: 'space-between', alignItems: centred ? 'center' : 'flex-start',
       textAlign: centred ? 'center' : 'left',
@@ -328,9 +331,9 @@ function StatusPill({ state, label }) {
   }
   return (
     <span style={{
-      ...TYPE.label, ...styles[state],
+      ...TYPE.button, ...styles[state],
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      height: 34, minWidth: 76, padding: `0 ${SPACING.compact}px`,
+      height: 34, minWidth: 84, padding: `0 ${SPACING.compact}px`,
       borderRadius: RADII.pill, flexShrink: 0, boxSizing: 'border-box',
     }}>
       {label}
@@ -390,9 +393,9 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
         minWidth: 0,
       }}>
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ ...TYPE.titleLarge, color: GENERAL.softWhite }}>{task.kicker}</div>
+          <div style={{ ...TYPE.titleLarge, color: GENERAL.softWhite, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.kicker}</div>
           {subtitle && (
-            <div style={{ ...TYPE.bodySmall, color: state === 'next' ? GENERAL.teal : GENERAL.slate }}>
+            <div style={{ ...TYPE.bodyStrong, color: state === 'next' ? GENERAL.teal : GENERAL.slate, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {subtitle}
             </div>
           )}
@@ -478,19 +481,19 @@ export default function Home({ onSelectTask, onReviewProgress }) {
         </div>
 
         {/* ── Stat cards ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: SPACING.micro, marginTop: SPACING.compact }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: SPACING.micro, marginTop: SPACING.standard }}>
           <StatCard>
             <ClockIcon size={22} color={GENERAL.teal} />
             <div>
               <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Planned</div>
-              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: 4 }}>{plannedMinutes} min</div>
+              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: 4, whiteSpace: 'nowrap' }}>{plannedMinutes} min</div>
             </div>
           </StatCard>
           <StatCard>
             <BookIcon size={22} color={GENERAL.teal} />
             <div>
               <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Subject</div>
-              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: 4 }}>{focusSubject}</div>
+              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: 4, whiteSpace: 'nowrap', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>{focusSubject}</div>
             </div>
           </StatCard>
           <StatCard centred>
@@ -501,9 +504,9 @@ export default function Home({ onSelectTask, onReviewProgress }) {
 
         {/* ── Today's plan ── */}
         <div style={{
-          marginTop: SPACING.compact, background: GENERAL.neutral[800],
+          marginTop: SPACING.standard, background: GENERAL.neutral[800],
           border: '1px solid rgba(255,255,255,0.06)', borderRadius: RADII.panel,
-          padding: `${SPACING.compact}px ${SPACING.compact + 4}px`,
+          padding: SPACING.standard,
         }}>
           <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite }}>Today’s plan</div>
           <div style={{ marginTop: SPACING.compact }}>
