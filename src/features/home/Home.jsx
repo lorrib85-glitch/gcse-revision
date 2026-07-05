@@ -99,6 +99,33 @@ function HomeAtmosphere() {
   )
 }
 
+// Local typographic treatment: renders a leading "90s" / "60s" pattern with
+// the "s" as a small raised seconds marker. Only matches a leading
+// number + "s" + space — normal words ending in "s" pass through untouched.
+// No global superscript/annotation token exists yet, so this stays local.
+function CompactSecondsLabel({ text }) {
+  const match = /^(\d+)(s)\s+(.*)$/.exec(text || '')
+  if (!match) return text
+  return (
+    <>
+      {match[1]}
+      <span
+        aria-label="seconds"
+        style={{
+          fontSize: '0.58em',
+          verticalAlign: 'super',
+          lineHeight: 1,
+          marginLeft: 1,
+        }}
+      >
+        s
+      </span>
+      {' '}
+      {match[3]}
+    </>
+  )
+}
+
 function NavArrow({ color }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
@@ -246,7 +273,7 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
   return (
     <div style={{
       position: 'relative', minHeight: 300, borderRadius: RADII.panel, overflow: 'hidden',
-      border: '1px solid rgba(255,255,255,0.08)', background: GENERAL.neutral[800],
+      border: '1px solid rgba(255,255,255,0.11)', background: GENERAL.neutral[800],
     }}>
       {image && (
         <>
@@ -281,12 +308,12 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
           ...TYPE.displayScreen, color: GENERAL.softWhite, marginTop: 'auto', paddingTop: SPACING.compact,
           display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden',
         }}>
-          {title}
+          <CompactSecondsLabel text={title} />
         </div>
         {!allDone && (
           <div style={{ marginTop: SPACING.micro, display: 'flex', alignItems: 'center', gap: 6 }}>
             <ClockIcon size={15} color={metaColor} />
-            <span style={{ ...TYPE.bodyStrong, color: metaColor }}>~{item.durationMinutes} min</span>
+            <span style={{ ...TYPE.bodyStrong, color: metaColor }}>{item.durationMinutes} min</span>
           </div>
         )}
         <button
@@ -312,7 +339,7 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
 function StatCard({ children, centred = false }) {
   return (
     <div style={{
-      background: GENERAL.neutral[800], border: '1px solid rgba(255,255,255,0.06)',
+      background: GENERAL.neutral[800], border: '1px solid rgba(255,255,255,0.10)',
       borderRadius: RADII.large, padding: SPACING.compact, minHeight: 112,
       display: 'flex', flexDirection: 'column', gap: SPACING.micro, boxSizing: 'border-box',
       justifyContent: 'space-between', alignItems: centred ? 'center' : 'flex-start',
@@ -393,10 +420,10 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
         minWidth: 0,
       }}>
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ ...TYPE.titleLarge, color: GENERAL.softWhite, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.kicker}</div>
+          <div style={{ ...TYPE.titleMedium, color: GENERAL.softWhite, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.kicker}</div>
           {subtitle && (
             <div style={{ ...TYPE.bodySmall, color: state === 'next' ? GENERAL.teal : GENERAL.slate, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {subtitle}
+              <CompactSecondsLabel text={subtitle} />
             </div>
           )}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -460,7 +487,7 @@ export default function Home({ onSelectTask, onReviewProgress }) {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <AccountIcon color="rgba(241,250,238,0.55)" />
+              <AccountIcon color={GENERAL.teal} />
             </button>
             <span style={{ ...TYPE.bodyStrong, color: 'rgba(241,250,238,0.7)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {firstName ? `Hi, ${firstName}.` : 'Hi.'}
@@ -505,10 +532,10 @@ export default function Home({ onSelectTask, onReviewProgress }) {
         {/* ── Today's plan ── */}
         <div style={{
           marginTop: SPACING.standard, background: GENERAL.neutral[800],
-          border: '1px solid rgba(255,255,255,0.06)', borderRadius: RADII.panel,
+          border: '1px solid rgba(255,255,255,0.10)', borderRadius: RADII.panel,
           padding: SPACING.standard,
         }}>
-          <div style={{ ...TYPE.displayCard, color: GENERAL.softWhite }}>Today’s plan</div>
+          <div style={{ ...TYPE.titleLarge, color: GENERAL.softWhite }}>Today’s plan</div>
           <div style={{ marginTop: SPACING.compact }}>
             {todaysPlan.map((task, i) => (
               <PlannerRow
