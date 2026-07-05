@@ -106,25 +106,25 @@ export default function AnswerInteraction({
       {/* Hint after first wrong attempt */}
       {showHint && !locked && wasWrong && (
         <div className="fade-up" style={{
-          background: `rgba(${GENERAL.tealRgb},.07)`,
-          border: `1px solid rgba(${GENERAL.tealRgb},.28)`,
+          background: `rgba(${GENERAL.feedbackHintRgb},.07)`,
+          border: `1px solid rgba(${GENERAL.feedbackHintRgb},.28)`,
           borderRadius: 12, padding: '12px 14px', marginTop: 10,
         }}>
           <div style={{
             ...TYPE.metadata,
-            color: GENERAL.teal,
+            color: GENERAL.feedbackHint,
             marginBottom: 6,
-          }}>💡 Hint — think about this</div>
+          }}>Hint — think about this</div>
           <p style={{
             ...TYPE.bodySmall,
-            color: '#C8D0E8', margin: '0 0 10px', lineHeight: 1.55,
+            color: GENERAL.feedbackText, margin: '0 0 10px', lineHeight: 1.55,
           }}>{block.hint || block.explanation}</p>
           <button onClick={retry} style={{
             ...TYPE.button,
-            background: `rgba(${GENERAL.tealRgb},.12)`,
-            border: `1px solid rgba(${GENERAL.tealRgb},.30)`,
+            background: `rgba(${GENERAL.feedbackHintRgb},.12)`,
+            border: `1px solid rgba(${GENERAL.feedbackHintRgb},.30)`,
             borderRadius: 9, padding: `${SPACING.micro}px ${SPACING.compact}px`,
-            color: GENERAL.teal,
+            color: GENERAL.feedbackHint,
             cursor: 'pointer',
           }}>Try again →</button>
         </div>
@@ -134,10 +134,10 @@ export default function AnswerInteraction({
       {showFull && (
         <div className={`feedback ${wasCorrect ? 'correct' : 'wrong'} fade-up`} style={{ marginTop: 10 }}>
           <p style={{ ...TYPE.bodySmall, margin: 0 }}>
-            <strong>{wasCorrect ? '✓ Correct! ' : '✗ Nope — the answer was: '}</strong>
+            <strong>{wasCorrect ? 'Correct — ' : 'Not quite — the answer was: '}</strong>
             {wasCorrect ? block.explanation : (
               <>
-                <strong style={{ color: '#4DFF88' }}>
+                <strong style={{ color: GENERAL.feedbackCorrect }}>
                   {block.options.find(o => o.correct)?.text}
                 </strong>
                 {block.explanation ? <><br />{block.explanation}</> : null}

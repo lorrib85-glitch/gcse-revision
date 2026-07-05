@@ -43,6 +43,17 @@ Every question type in the product delegates answer logic here. If AnswerInterac
 - Adding new answer types without explicit sign-off
 - Changing the component API
 
+**2026-07-05 change (explicit sign-off, scoped):** the hardcoded feedback
+colour literals (`#4DFF88` correct-answer highlight, `#C8D0E8` hint/feedback
+body text) and copy (`💡 Hint — think about this`, `✓ Correct! `, `✗ Nope —
+the answer was: `) were migrated to the canonical `GENERAL.feedbackCorrect` /
+`GENERAL.feedbackHint` / `GENERAL.feedbackText` tokens and calmer copy
+("Hint — think about this", "Correct — ", "Not quite — the answer was: "),
+as part of an app-wide answer-feedback consolidation shared with
+`UnifiedQuestionScreen`. Scoped strictly to colour/copy/token usage inside
+the existing hint and feedback blocks — no answer-logic, reveal-timing, or
+API change.
+
 ---
 
 ### BackButton

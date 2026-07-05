@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
 import { SPACING } from '../../constants/spacing.js'
+import { GENERAL } from '../../constants/generalTheme.js'
 
 function getOptionLabel(option) {
   if (typeof option === 'string') return option
@@ -102,7 +103,7 @@ export default function UnifiedQuestionScreen({
       return (
         <span aria-hidden="true" style={{
           position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
-          color: '#E05A52', fontSize: '1.3rem', fontWeight: 800, lineHeight: 1,
+          color: GENERAL.feedbackIncorrect, fontSize: '1.3rem', fontWeight: 800, lineHeight: 1,
           animation: `uqs-mark-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
         }}>
           ×
@@ -230,7 +231,7 @@ export default function UnifiedQuestionScreen({
             if (answered) {
               if (isFirstTapped && status === 'incorrect' && !hasCorrectRetry) {
                 background = 'rgba(160,40,36,0.10)'
-                border = '1px solid rgba(224,90,82,0.52)'
+                border = `1px solid rgba(${GENERAL.feedbackIncorrectRgb},0.52)`
                 color = 'rgba(255,255,255,0.92)'
                 opacity = 1
               } else if (isCorrectOpt && (status === 'correct' || retryDone)) {
@@ -247,7 +248,7 @@ export default function UnifiedQuestionScreen({
             if (retryDone) {
               if (isRetryTapped && retryStatus === 'incorrect') {
                 background = 'rgba(160,40,36,0.10)'
-                border = '1px solid rgba(224,90,82,0.52)'
+                border = `1px solid rgba(${GENERAL.feedbackIncorrectRgb},0.52)`
                 color = 'rgba(255,255,255,0.92)'
                 opacity = 1
               }
@@ -351,7 +352,7 @@ export default function UnifiedQuestionScreen({
                 style={{
                   ...TYPE.quizHint,
                   margin: 0,
-                  color: '#F5F7FF',
+                  color: GENERAL.feedbackText,
                 }}
               >
                 {hint || explanation || 'Try again — pick a different answer.'}

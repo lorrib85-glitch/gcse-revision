@@ -57,4 +57,21 @@ export const GENERAL = {
   successSoft: '#38D27A',
   error:       '#FF5D73',
   errorSoft:   '#FF5C7A',
+
+  // Canonical answer-feedback tokens — the single source of truth for
+  // correct/incorrect/hint/feedback-copy colour across AnswerInteraction and
+  // UnifiedQuestionScreen (and any future shared question UI). These match
+  // the documented `correct`/`incorrect` values in PRODUCT_UI_CONSTITUTION.md
+  // — deliberately calmer than `success` above, which stays as-is for any
+  // existing call site that isn't part of this feedback-token migration.
+  feedbackCorrect:      '#4CAF7D',
+  feedbackIncorrect:    '#E05A52',
+  feedbackIncorrectRgb: '224,90,82',
+  // Semantic alias for teal when used specifically as the hint/supportive
+  // accent in feedback UI — same value as `teal`, named for intent.
+  feedbackHint:         '#2A9D8F',
+  feedbackHintRgb:      '42,157,143',
+  // Canonical feedback/hint body text colour — matches the documented
+  // `text-primary` token in PRODUCT_UI_CONSTITUTION.md.
+  feedbackText:         '#F5F7FF',
 }

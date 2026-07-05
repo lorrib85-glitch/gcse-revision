@@ -76,6 +76,13 @@ No mascots. No confetti. No pastel buttons. No "Amazing! You're a superstar!" co
 | `incorrect` | `#E05A52` | Incorrect answer state |
 | `weak-zone` | `#E0A84F` | Weak topics, amber highlight |
 
+`correct`/`incorrect` are implemented in code as `GENERAL.feedbackCorrect` /
+`GENERAL.feedbackIncorrect` (`src/constants/generalTheme.js`), alongside
+`GENERAL.feedbackHint` (supportive/hint accent) and `GENERAL.feedbackText`
+(feedback/hint body copy, matching `text-primary` above) — the canonical
+answer-feedback token set shared by `AnswerInteraction` and
+`UnifiedQuestionScreen`.
+
 Subject accent colours are defined in `src/constants/subjects.js`. See `docs/system/SUBJECT_THEME_SYSTEM.md`.
 
 ---
