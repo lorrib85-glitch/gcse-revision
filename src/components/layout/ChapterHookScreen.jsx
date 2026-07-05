@@ -262,7 +262,7 @@ export default function ChapterHookScreen({
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 gap: SPACING.standard, zIndex: 10,
                 width: '100%',
-                marginTop: SPACING.separation,
+                marginTop: SPACING.section,
                 opacity: isExiting ? 0 : (btnsReady ? 1 : 0),
                 transition: `opacity ${isExiting ? 240 : 400}ms ease`,
                 pointerEvents: (phase !== 'question' || !btnsReady) ? 'none' : 'auto',
