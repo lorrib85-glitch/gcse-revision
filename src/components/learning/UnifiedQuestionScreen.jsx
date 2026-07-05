@@ -4,6 +4,7 @@ import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
 import { SPACING } from '../../constants/spacing.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { RADII } from '../../constants/radii.js'
 
 function getOptionLabel(option) {
   if (typeof option === 'string') return option
@@ -102,7 +103,7 @@ export default function UnifiedQuestionScreen({
     if (kind !== 'correct') {
       return (
         <span aria-hidden="true" style={{
-          position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
+          position: 'absolute', right: SPACING.compact, top: '50%', transform: 'translateY(-50%)',
           color: GENERAL.feedbackIncorrect, fontSize: '1.3rem', fontWeight: 800, lineHeight: 1,
           animation: `uqs-mark-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
         }}>
@@ -113,23 +114,23 @@ export default function UnifiedQuestionScreen({
 
     return (
       <span aria-hidden="true" style={{
-        position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
-        width: 30, height: 30,
+        position: 'absolute', right: SPACING.compact, top: '50%', transform: 'translateY(-50%)',
+        width: SPACING.standard + SPACING.micro, height: SPACING.standard + SPACING.micro,
       }}>
         <span style={{
-          position: 'absolute', inset: 0, borderRadius: '50%',
+          position: 'absolute', inset: 0, borderRadius: RADII.pill,
           background: `rgba(${rgb}, 0.4)`,
           animation: `uqs-ring-out ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
         }} />
         <span style={{
-          position: 'absolute', inset: 0, borderRadius: '50%',
+          position: 'absolute', inset: 0, borderRadius: RADII.pill,
           background: accent,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           animation: `uqs-mark-pop ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
         }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#08090D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={GENERAL.backgroundApp} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 13l4 4L19 7" style={{
-              strokeDasharray: 24, strokeDashoffset: 24,
+              strokeDasharray: SPACING.standard, strokeDashoffset: SPACING.standard,
               animation: `uqs-check-draw ${MOTION.duration.standard} ${MOTION.easing.standard} ${MOTION.duration.instant} forwards`,
             }} />
           </svg>
@@ -178,9 +179,9 @@ export default function UnifiedQuestionScreen({
       <div
         className="cinematic-shell"
         style={{
-          paddingTop: isTrueFalse ? 'calc(84px + env(safe-area-inset-top, 0px))' : 110,
-          paddingBottom: isTrueFalse ? 'calc(160px + env(safe-area-inset-bottom, 0px))' : undefined,
-          paddingInline: isTrueFalse ? 28 : 32,
+          paddingTop: isTrueFalse ? `calc(${SPACING.section}px + env(safe-area-inset-top, 0px))` : 110,
+          paddingBottom: isTrueFalse ? `calc(${SPACING.section}px + env(safe-area-inset-bottom, 0px))` : undefined,
+          paddingInline: isTrueFalse ? SPACING.standard : 32,
           position: 'relative',
           zIndex: 2,
           '--cinematic-accent': accent,
@@ -190,29 +191,34 @@ export default function UnifiedQuestionScreen({
           transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
         }}
       >
-        <p style={{
-          ...questionType,
-          marginTop: 0,
-          marginBottom: isTrueFalse ? 18 : 22,
-          marginInline: 'auto',
-          color: 'rgba(245,247,251,0.94)',
-          maxWidth: isTrueFalse ? '100%' : '94%',
-          overflowWrap: 'break-word',
-          textAlign: 'left',
-        }}>
-          {q}
-        </p>
-
         <div style={{
-          display: isTrueFalse ? 'grid' : 'flex',
-          gridTemplateColumns: isTrueFalse ? '1fr 1fr' : undefined,
-          flexDirection: isTrueFalse ? undefined : 'column',
-          gap: isTrueFalse ? 16 : 10,
-          maxWidth: isTrueFalse ? '100%' : 'calc(100% - 32px)',
-          marginTop: isTrueFalse ? 14 : 0,
-          marginInline: 'auto',
           width: '100%',
+          marginInline: 'auto',
+          transform: isTrueFalse ? `translateY(-${SPACING.standard}px)` : undefined,
         }}>
+          <p style={{
+            ...questionType,
+            marginTop: 0,
+            marginBottom: isTrueFalse ? SPACING.cinematic : 22,
+            marginInline: 'auto',
+            color: 'rgba(245,247,251,0.94)',
+            maxWidth: isTrueFalse ? '92%' : '94%',
+            overflowWrap: 'break-word',
+            textAlign: isTrueFalse ? 'center' : 'left',
+          }}>
+            {q}
+          </p>
+
+          <div style={{
+            display: isTrueFalse ? 'grid' : 'flex',
+            gridTemplateColumns: isTrueFalse ? '1fr 1fr' : undefined,
+            flexDirection: isTrueFalse ? undefined : 'column',
+            gap: isTrueFalse ? SPACING.standard : 10,
+            maxWidth: isTrueFalse ? '92%' : 'calc(100% - 32px)',
+            marginTop: 0,
+            marginInline: 'auto',
+            width: '100%',
+          }}>
           {options.map((opt, i) => {
             const isFirstTapped = tapped === opt
             const isRetryTapped = retryTapped === opt
@@ -287,12 +293,12 @@ export default function UnifiedQuestionScreen({
                 style={{
                   position: 'relative',
                   width: '100%',
-                  minHeight: isTrueFalse ? 58 : undefined,
+                  minHeight: isTrueFalse ? SPACING.separation + SPACING.compact : undefined,
                   textAlign: isTrueFalse ? 'center' : 'left',
                   background,
                   border,
-                  borderRadius: isTrueFalse ? 18 : 14,
-                  padding: isTrueFalse ? '15px 18px' : '14px 48px 14px 18px',
+                  borderRadius: isTrueFalse ? RADII.pill : RADII.medium,
+                  padding: isTrueFalse ? `${SPACING.compact}px ${SPACING.standard}px` : `${SPACING.compact}px ${SPACING.section - SPACING.standard}px ${SPACING.compact}px ${SPACING.standard}px`,
                   cursor: disabled ? 'default' : 'pointer',
                   ...optionType,
                   color,
@@ -312,18 +318,18 @@ export default function UnifiedQuestionScreen({
               </button>
             )
           })}
-        </div>
+          </div>
 
-        {hintVisible && status === 'incorrect' && (
+          {hintVisible && status === 'incorrect' && (
           <div
             style={{
               marginTop: SPACING.compact,
               background: 'rgba(27,30,39,0.92)',
-              borderRadius: 14,
+              borderRadius: RADII.medium,
               borderLeft: `3px solid ${accent}`,
-              padding: '14px 16px',
+              padding: `${SPACING.compact - 2}px ${SPACING.compact}px`,
               display: 'flex',
-              gap: 12,
+              gap: SPACING.compact - SPACING.micro / 2,
               alignItems: 'flex-start',
               animation: `uqs-hint-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
             }}
@@ -343,7 +349,7 @@ export default function UnifiedQuestionScreen({
                   ...TYPE.metadata,
                   textTransform: 'uppercase',
                   color: accent,
-                  marginBottom: 8,
+                  marginBottom: SPACING.micro,
                 }}
               >
                 Try again
@@ -359,7 +365,8 @@ export default function UnifiedQuestionScreen({
               </p>
             </div>
           </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
