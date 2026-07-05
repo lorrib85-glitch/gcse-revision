@@ -212,7 +212,7 @@ function heroImageFor(task, subject) {
 // Smallest local progress ring — no shared generic ring exists yet
 // (CircularTimer is a countdown timer, not reusable here without altering it).
 function TasksRing({ done, total }) {
-  const size = 64
+  const size = 56
   const stroke = 5
   const radius = (size - stroke) / 2
   const circumference = 2 * Math.PI * radius
@@ -245,7 +245,7 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
 
   return (
     <div style={{
-      position: 'relative', minHeight: 260, borderRadius: RADII.panel, overflow: 'hidden',
+      position: 'relative', minHeight: 252, borderRadius: RADII.panel, overflow: 'hidden',
       border: '1px solid rgba(255,255,255,0.08)', background: GENERAL.neutral[800],
     }}>
       {image && (
@@ -254,15 +254,17 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
             position: 'absolute', inset: 0,
             backgroundImage: `url(${image})`, backgroundSize: 'cover', backgroundPosition: 'right center',
           }} />
-          {/* Left-to-right scrim keeps text readable over the image */}
+          {/* Left-to-right scrim keeps pill/title/meta/CTA readable; never
+              fully transparent on the right so the image stays atmospheric
+              rather than dominant */}
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0,
-            background: `linear-gradient(90deg, rgba(${bgRgb},0.92) 0%, rgba(${bgRgb},0.6) 42%, rgba(${bgRgb},0.18) 72%, transparent 100%)`,
+            background: `linear-gradient(90deg, rgba(${bgRgb},0.96) 0%, rgba(${bgRgb},0.74) 45%, rgba(${bgRgb},0.3) 78%, rgba(${bgRgb},0.12) 100%)`,
           }} />
         </>
       )}
       <div style={{
-        position: 'relative', zIndex: 1, minHeight: 260, padding: SPACING.standard,
+        position: 'relative', zIndex: 1, minHeight: 252, padding: SPACING.standard,
         display: 'flex', flexDirection: 'column', alignItems: 'flex-start', boxSizing: 'border-box',
       }}>
         {!allDone && subject && (
@@ -287,8 +289,8 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
         <button
           onClick={allDone ? onReviewProgress : onStart}
           style={{
-            marginTop: SPACING.compact, minWidth: 170,
-            height: BUTTONS.continue.height, borderRadius: BUTTONS.continue.borderRadius,
+            marginTop: SPACING.compact, minWidth: 180,
+            height: BUTTONS.continue.height, borderRadius: RADII.medium,
             padding: `0 ${BUTTONS.continue.paddingX}px`,
             fontFamily: BUTTONS.continue.fontFamily, fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
             background: GENERAL.coral, color: GENERAL.softWhite, border: 'none', cursor: 'pointer',
@@ -308,8 +310,8 @@ function StatCard({ children, centred = false }) {
   return (
     <div style={{
       background: GENERAL.neutral[800], border: '1px solid rgba(255,255,255,0.06)',
-      borderRadius: RADII.large, padding: SPACING.compact, minHeight: 108,
-      display: 'flex', flexDirection: 'column', gap: SPACING.micro,
+      borderRadius: RADII.large, padding: `${SPACING.micro}px ${SPACING.compact}px`, minHeight: 92,
+      display: 'flex', flexDirection: 'column', gap: SPACING.micro, boxSizing: 'border-box',
       justifyContent: 'space-between', alignItems: centred ? 'center' : 'flex-start',
       textAlign: centred ? 'center' : 'left',
     }}>
@@ -360,7 +362,7 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
     >
       {/* Timeline marker column */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {index > 0 && <div style={{ width: 2, height: SPACING.compact, background: lineColor(prevDone) }} />}
+        {index > 0 && <div style={{ width: 2, height: SPACING.micro, background: lineColor(prevDone) }} />}
         <div style={{
           width: 36, height: 36, borderRadius: RADII.pill, flexShrink: 0, boxSizing: 'border-box',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -382,12 +384,12 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
       {/* Text + status pill */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: SPACING.micro,
-        paddingTop: index > 0 ? SPACING.compact : 0,
-        paddingBottom: isLast ? 0 : SPACING.compact,
+        paddingTop: index > 0 ? SPACING.micro : 0,
+        paddingBottom: isLast ? 0 : SPACING.micro,
         borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.06)',
         minWidth: 0,
       }}>
-        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: SPACING.micro }}>
+        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div style={{ ...TYPE.titleLarge, color: GENERAL.softWhite }}>{task.kicker}</div>
           {subtitle && (
             <div style={{ ...TYPE.bodySmall, color: state === 'next' ? GENERAL.teal : GENERAL.slate }}>
@@ -429,11 +431,12 @@ export default function Home({ onSelectTask, onReviewProgress }) {
   }, [])
 
   return (
-    <div style={{ minHeight: '100vh', background: GENERAL.neutral[900], paddingBottom: 120, overflowX: 'hidden', position: 'relative' }}>
+    <div style={{ minHeight: '100vh', background: GENERAL.neutral[900], paddingBottom: 'calc(120px + env(safe-area-inset-bottom, 0px))', overflowX: 'hidden', position: 'relative' }}>
 
       {/* LOCKED atmosphere — call site preserved; sits as the ambient band
-          behind the utility row and hero banner */}
-      <div aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 280, overflow: 'hidden' }}>
+          behind the utility row and hero banner. Wrapper opacity calms the
+          teal wash (~40% reduction) without touching the locked internals. */}
+      <div aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 280, overflow: 'hidden', opacity: 0.6 }}>
         <HomeAtmosphere />
       </div>
 
@@ -477,34 +480,30 @@ export default function Home({ onSelectTask, onReviewProgress }) {
         {/* ── Stat cards ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: SPACING.micro, marginTop: SPACING.compact }}>
           <StatCard>
-            <ClockIcon size={24} color={GENERAL.teal} />
+            <ClockIcon size={22} color={GENERAL.teal} />
             <div>
               <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Planned</div>
-              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: SPACING.micro }}>{plannedMinutes} min</div>
+              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: 4 }}>{plannedMinutes} min</div>
             </div>
           </StatCard>
           <StatCard>
-            <BookIcon color={GENERAL.teal} />
+            <BookIcon size={22} color={GENERAL.teal} />
             <div>
               <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Subject</div>
-              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: SPACING.micro }}>{focusSubject}</div>
+              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: 4 }}>{focusSubject}</div>
             </div>
           </StatCard>
           <StatCard centred>
             <TasksRing done={completedCount} total={todaysPlan.length} />
-            <div>
-              <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Tasks</div>
-              <div style={{ ...TYPE.bodySmall, color: GENERAL.softWhite, marginTop: 2 }}>
-                {completedCount} of {todaysPlan.length} done
-              </div>
-            </div>
+            <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Tasks</div>
           </StatCard>
         </div>
 
         {/* ── Today's plan ── */}
         <div style={{
           marginTop: SPACING.compact, background: GENERAL.neutral[800],
-          border: '1px solid rgba(255,255,255,0.06)', borderRadius: RADII.panel, padding: SPACING.standard,
+          border: '1px solid rgba(255,255,255,0.06)', borderRadius: RADII.panel,
+          padding: `${SPACING.compact}px ${SPACING.compact + 4}px`,
         }}>
           <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite }}>Today’s plan</div>
           <div style={{ marginTop: SPACING.compact }}>
