@@ -125,7 +125,7 @@ function RecallTimer({ secondsLeft, duration, ringRgb }) {
 function RecallHintLine({ prompts, ringRgb }) {
   const nudges = prompts.map(p => String(p).toLowerCase())
   return (
-    <div style={{ ...TYPE.metadata, color: 'rgba(245,247,255,0.62)', lineHeight: 1.35, marginBottom: SPACING.compact, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+    <div style={{ ...TYPE.metadata, color: 'rgba(245,247,255,0.62)', marginBottom: SPACING.compact, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
       <span style={{ color: `rgba(${ringRgb},0.72)`, marginRight: SPACING.micro }}>Write about</span>
       {nudges.join(' · ')}
     </div>
@@ -205,7 +205,7 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
           <BackButton onClick={onBack} />
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: SPACING.compact }}>
             {onExit && <ExitButton onClick={onExit} style={{ opacity: 0.5, width: 42, height: 42 }} />}
-            <div style={{ marginTop: SPACING.micro }}>
+            <div style={{ marginTop: SPACING.compact }}>
               <RecallTimer secondsLeft={secondsLeft} duration={RECALL_DURATION} ringRgb={ringRgb} />
             </div>
           </div>
