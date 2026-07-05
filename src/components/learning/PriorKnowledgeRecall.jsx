@@ -125,8 +125,8 @@ function RecallTimer({ secondsLeft, duration, ringRgb }) {
 function RecallHintLine({ prompts, ringRgb }) {
   const nudges = prompts.map(p => String(p).toLowerCase())
   return (
-    <div style={{ ...TYPE.bodySmall, color: 'rgba(245,247,255,0.62)', lineHeight: 1.35, marginBottom: SPACING.compact, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-      <span style={{ ...TYPE.metadata, fontSize: 10, color: `rgba(${ringRgb},0.72)`, marginRight: 8 }}>Write about</span>
+    <div style={{ ...TYPE.metadata, color: 'rgba(245,247,255,0.62)', lineHeight: 1.35, marginBottom: SPACING.compact, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <span style={{ color: `rgba(${ringRgb},0.72)`, marginRight: SPACING.micro }}>Write about</span>
       {nudges.join(' · ')}
     </div>
   )
@@ -205,11 +205,13 @@ export default function PriorKnowledgeRecall({ block, subject, onContinue, onBac
           <BackButton onClick={onBack} />
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: SPACING.compact }}>
             {onExit && <ExitButton onClick={onExit} style={{ opacity: 0.5, width: 42, height: 42 }} />}
-            <RecallTimer secondsLeft={secondsLeft} duration={RECALL_DURATION} ringRgb={ringRgb} />
+            <div style={{ marginTop: SPACING.micro }}>
+              <RecallTimer secondsLeft={secondsLeft} duration={RECALL_DURATION} ringRgb={ringRgb} />
+            </div>
           </div>
         </div>
         {(phase === 'input' || phase === 'results') && <div style={{ flex: 1, display: 'flex', flexDirection: 'column', animation: 'prk-fade-in 280ms ease both' }}><div style={{ flex: 1 }}>
-          <ScreenTextBlock title="What can you remember?" tone="quiet" inset={false} style={{ paddingTop: 0, paddingBottom: SCREEN_TEXT_LAYOUT.blockGap }} titleStyle={{ ...TYPE.displayScreen, color: '#F5F7FF', marginBottom: SPACING.micro, textWrap: 'balance' }} bodyStyle={{ ...TYPE.bodySmall, color: 'rgba(245,247,255,0.58)', lineHeight: 1.45 }}>{`Write anything you remember from the previous chapter: ${recallTopic}.`}</ScreenTextBlock>
+          <ScreenTextBlock title="What can you remember?" tone="quiet" inset={false} style={{ paddingTop: 0, paddingBottom: SCREEN_TEXT_LAYOUT.blockGap }} titleStyle={{ ...TYPE.displayScreen, color: '#F5F7FF', marginBottom: SCREEN_TEXT_LAYOUT.titleBodyGap, textWrap: 'balance' }} bodyStyle={{ ...TYPE.bodySmall, color: 'rgba(245,247,255,0.58)', lineHeight: 1.45 }}>{`Write anything you remember from the previous chapter: ${recallTopic}.`}</ScreenTextBlock>
           <RecallHintLine prompts={recallPrompts.slice(0, 4)} ringRgb={ringRgb} />
           <div style={{ position: 'relative', background: 'linear-gradient(180deg, rgba(20,23,29,0.93), rgba(11,13,18,0.96))', border: hasResults ? `1.5px solid rgba(${SUCCESS_RGB},0.44)` : isFocused ? `1.5px solid rgba(${SUCCESS_RGB},0.58)` : `1.5px solid rgba(${rgb},0.28)`, borderRadius: 24, padding: `${SPACING.compact}px ${SPACING.standard}px`, marginBottom: SPACING.standard, boxShadow: hasResults ? `0 0 30px rgba(${SUCCESS_RGB},0.12), inset 0 1px 0 rgba(255,255,255,0.05)` : isFocused ? `0 0 0 1px rgba(${SUCCESS_RGB},0.13), 0 0 36px rgba(${SUCCESS_RGB},0.14), inset 0 1px 0 rgba(255,255,255,0.05)` : `0 0 28px rgba(${rgb},0.09), inset 0 1px 0 rgba(255,255,255,0.04)`, animation: hasResults ? 'prk-complete-glow 900ms ease-out both' : 'none', transition: `border-color ${MOTION.duration.standard} ${MOTION.easing.gentle}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.gentle}` }}>
             <div style={{ position: 'relative' }}>{answer.length === 0 && <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}><div style={{ ...TYPE.bodyStrong, fontSize: 16, color: 'rgba(245,247,255,0.42)' }}>Type everything you remember…</div></div>}<textarea value={answer} onChange={e => { setAnswer(e.target.value); setError(null) }} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} rows={8} disabled={phase === 'results'} aria-label="Write anything you remember" style={{ width: '100%', padding: 0, minHeight: 'clamp(225px, 35vh, 315px)', background: 'transparent', border: 'none', outline: 'none', resize: 'none', ...TYPE.bodySmall, color: '#F5F7FF', lineHeight: 1.7, letterSpacing: '0.01em', caretColor: `rgb(${SUCCESS_RGB})`, opacity: phase === 'results' ? 0.72 : 1 }} /></div>
