@@ -2182,6 +2182,8 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         <ExaminerExplainsScreen
           subject={module.subject}
           examinerExplains={explainData}
+          label={cur.label}
+          showBack={false}
           onBack={headerOnBack}
           onContinue={isLast ? handleFinish : () => go(1)}
         />

@@ -1,24 +1,29 @@
-import { useState, useEffect } from 'react'
-import { SUBJECTS } from '../../constants/subjects.js'
+import { useState, useEffect, useRef } from 'react'
+import { SUBJECTS, hexToRgb } from '../../constants/subjects.js'
 import BackButton from '../core/BackButton.jsx'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 // CinematicShell used here because multiple inner layers use position:fixed (background image,
 // gradients, overlays) that must reach all four viewport edges; ContentShell's 16px padding
 // and safe-area inner div would confine them to the content column.
 import CinematicShell from '../layout/CinematicShell.jsx'
-import { TYPE } from '../../constants/typography.js'
+import { TYPE, HEADING_LAYOUT } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { SPACING } from '../../constants/spacing.js'
+import { MOTION } from '../../constants/motion.js'
+import { SUBJECT_BACKDROPS } from '../../constants/subjectBackdrops.js'
 
-const IMAGES = {
-  History:   '/historybacker.webp',
-  Biology:   '/biologybacker.webp',
-  Maths:     '/mathsbacker.webp',
-  Sociology: '/sociologybacker.webp',
-  Chemistry: '/chemsistrybacker.webp',
-  Physics:   '/physicsbacker.webp',
-  English:   '/Englishbacker.webp',
-  Music:     '/historybacker.webp',
-}
+// Word-by-word reveal cadence for the opening line. No MOTION token covers a
+// per-word stagger; these are the single source of truth for both the CSS
+// animation delays and the tap-hint timing derived from them.
+const WORD_REVEAL_BASE_MS = 260
+const WORD_REVEAL_STAGGER_MS = 65
+const HINT_SETTLE_MS = 420
+
+// Tips content must clear the fixed LearningHeader capsule above it
+// (same clearance convention as TimelineChain).
+const HEADER_CLEARANCE = SPACING.cinematic + SPACING.micro
+// And clear the fixed CinematicContinueCTA / tap hint below it.
+const CTA_CLEARANCE = SPACING.cinematic + SPACING.separation
 
 function tokenize(text) {
   const parts = text.split(/(\s+)/)
@@ -29,24 +34,18 @@ function tokenize(text) {
   })
 }
 
-function BackBtn({ onClick }) {
-  return (
-    <BackButton
-      onClick={(e) => { e.stopPropagation(); onClick() }}
-      style={{ position: 'absolute', top: 22, left: 18, zIndex: 10 }}
-    />
-  )
-}
-
 export default function ExaminerExplainsScreen({
   subject          = 'History',
   examinerExplains = {},
+  label            = 'How examiners think',
+  showBack         = true,
   onBack,
   onContinue,
 }) {
-  const img   = IMAGES[subject] || IMAGES.History
+  const img   = SUBJECT_BACKDROPS[subject] || SUBJECT_BACKDROPS.History
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
+  const bgRgb = hexToRgb(GENERAL.backgroundApp)
 
   const opening = examinerExplains.opening || "Before you face the examiner, here's what they actually look for."
   const tips    = examinerExplains.tips    || []
@@ -58,9 +57,11 @@ export default function ExaminerExplainsScreen({
   const [showContinue,   setShowContinue]   = useState(false)
   const [hintVisible,    setHintVisible]    = useState(false)
 
+  const scrollRef = useRef(null)
+
   const tokens    = tokenize(opening)
   const wordCount = tokens.filter(t => !t.space).length
-  const hintDelay = 260 + (wordCount - 1) * 65 + 420
+  const hintDelay = WORD_REVEAL_BASE_MS + (wordCount - 1) * WORD_REVEAL_STAGGER_MS + HINT_SETTLE_MS
 
   useEffect(() => {
     if (phase !== 'opening') return
@@ -70,9 +71,17 @@ export default function ExaminerExplainsScreen({
 
   useEffect(() => {
     if (!showClosing) return
-    const t = setTimeout(() => setShowContinue(true), 640)
+    const t = setTimeout(() => setShowContinue(true), parseInt(MOTION.duration.cinematic))
     return () => clearTimeout(t)
   }, [showClosing])
+
+  // Keep the newest card / closing line in view as it reveals.
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el || (revealedCount === 0 && !showClosing)) return
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    el.scrollTo({ top: el.scrollHeight, behavior: reduceMotion ? 'auto' : 'smooth' })
+  }, [revealedCount, showClosing])
 
   function handleTap() {
     if (phase === 'opening') {
@@ -129,36 +138,42 @@ export default function ExaminerExplainsScreen({
         {/* Left gradient */}
         <div style={{
           position: 'fixed', inset: 0,
-          background: 'linear-gradient(90deg, rgba(8,9,13,0.96) 0%, rgba(8,9,13,0.80) 40%, rgba(8,9,13,0.44) 70%, rgba(8,9,13,0.18) 100%)',
+          background: `linear-gradient(90deg, rgba(${bgRgb},0.96) 0%, rgba(${bgRgb},0.80) 40%, rgba(${bgRgb},0.44) 70%, rgba(${bgRgb},0.18) 100%)`,
           pointerEvents: 'none', zIndex: 2,
         }} />
 
         {/* Overall dark overlay */}
         <div style={{
           position: 'fixed', inset: 0,
-          background: 'rgba(8,9,13,0.24)',
+          background: `rgba(${bgRgb},0.24)`,
           pointerEvents: 'none', zIndex: 3,
         }} />
 
-        {/* Bottom fade */}
-        <div style={{
-          position: 'fixed', bottom: 0, left: 0, right: 0, height: 240,
-          background: 'linear-gradient(0deg, rgba(8,9,13,0.98) 0%, transparent 100%)',
-          pointerEvents: 'none', zIndex: 4,
-        }} />
-
-        {/* Content shell */}
-        <div style={{ position: 'relative', zIndex: 5, minHeight: '100dvh' }}>
-          <BackBtn onClick={onBack} />
+        {/* Content */}
+        <div style={{ position: 'relative', zIndex: 5, height: '100%' }}>
+          {showBack && (
+            <BackButton
+              onClick={(e) => { e.stopPropagation(); onBack() }}
+              style={{
+                position: 'absolute',
+                top: `calc(${SPACING.compact}px + env(safe-area-inset-top, 0px))`,
+                left: SPACING.compact,
+                zIndex: 10,
+              }}
+            />
+          )}
 
           {/* ── OPENING ─────────────────────────────────── */}
           {phase === 'opening' && (
-            <div style={{ position: 'absolute', top: '34%', left: 28, right: 28 }}>
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', alignItems: 'center',
+              padding: `0 ${SPACING.standard}px`,
+            }}>
               <div style={{
-                ...TYPE.displaySection,
-                fontSize: 'clamp(26px, 8.5vw, 38px)',
-                color: '#FFFFFF',
-                maxWidth: 320,
+                ...TYPE.displayScreen,
+                color: '#F5F7FF', // text-primary — PRODUCT_UI_CONSTITUTION
+                ...HEADING_LAYOUT.screenTitle,
               }}>
                 {tokens.map(tok =>
                   tok.space ? tok.text : (
@@ -166,7 +181,7 @@ export default function ExaminerExplainsScreen({
                       key={tok.key}
                       style={{
                         display: 'inline-block',
-                        animation: `expl-word 220ms ease ${260 + tok.wordIdx * 65}ms both`,
+                        animation: `expl-word ${MOTION.duration.standard} ${MOTION.easing.gentle} ${WORD_REVEAL_BASE_MS + tok.wordIdx * WORD_REVEAL_STAGGER_MS}ms both`,
                       }}
                     >
                       {tok.text}
@@ -179,42 +194,49 @@ export default function ExaminerExplainsScreen({
 
           {/* ── TIPS ────────────────────────────────────── */}
           {isTips && (
-            <div style={{
-              position: 'absolute', top: '24%', left: 28, right: 28,
-              maxHeight: 'calc(100dvh - 180px)',
-              overflowY: 'auto',
-              paddingBottom: showContinue ? 170 : 100,
-              WebkitOverflowScrolling: 'touch',
-            }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 30 }}>
+            <div
+              ref={scrollRef}
+              style={{
+                position: 'absolute', inset: 0,
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                padding: `calc(${HEADER_CLEARANCE}px + env(safe-area-inset-top, 0px)) ${SPACING.standard}px calc(${CTA_CLEARANCE}px + env(safe-area-inset-bottom, 0px))`,
+              }}
+            >
+              <div
+                className="cinematic-eyebrow"
+                style={{
+                  color: `rgba(${rgb},0.85)`,
+                  marginBottom: SPACING.compact,
+                  animation: `expl-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+                }}
+              >
+                {label}
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
                 {tips.slice(0, revealedCount).map((tip, i) => (
                   <div
                     key={i}
-                    style={{ animation: 'expl-up 400ms cubic-bezier(0.16,1,0.3,1) both' }}
+                    className="cinematic-card"
+                    style={{
+                      borderColor: `rgba(${rgb},0.12)`,
+                      animation: `expl-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+                    }}
                   >
                     <div style={{
-                      display: 'flex', alignItems: 'flex-start', gap: 10,
-                      marginBottom: 7,
+                      display: 'flex', alignItems: 'baseline', gap: SPACING.micro,
+                      marginBottom: SPACING.micro,
                     }}>
-                      <span style={{
-                        fontFamily: "'Sora', sans-serif",
-                        fontSize: 10,
-                        color: accent, opacity: 0.75,
-                        paddingTop: 4, flexShrink: 0,
-                      }}>✦</span>
+                      <span aria-hidden="true" style={{ ...TYPE.metadata, color: accent, flexShrink: 0 }}>✦</span>
                       <div style={{
                         ...TYPE.displayCard,
-                        color: 'rgba(255,255,255,0.95)',
+                        color: '#F5F7FF', // text-primary — PRODUCT_UI_CONSTITUTION
                       }}>
                         {tip.heading}
                       </div>
                     </div>
-                    <div style={{
-                      ...TYPE.bodyStrong,
-                      fontSize: 15,
-                      color: 'rgba(255,255,255,0.50)',
-                      paddingLeft: 20,
-                    }}>
+                    <div className="cinematic-body">
                       {tip.body}
                     </div>
                   </div>
@@ -224,63 +246,61 @@ export default function ExaminerExplainsScreen({
                 {showClosing && (
                   <div style={{
                     ...TYPE.displaySection,
-                    fontSize: 'clamp(22px, 7vw, 30px)',
                     color: accent,
-                    marginTop: 4,
-                    animation: 'expl-up 420ms cubic-bezier(0.16,1,0.3,1) both',
+                    marginTop: SPACING.micro,
+                    animation: `expl-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
                   }}>
                     {closing}
-                  </div>
-                )}
-
-                {/* Tap prompt — while tips remain */}
-                {revealedCount < tips.length && (
-                  <div style={{
-                    position: 'fixed',
-                    bottom: 'calc(38px + env(safe-area-inset-bottom, 0px))',
-                    left: 0, right: 0, textAlign: 'center',
-                    pointerEvents: 'none',
-                    animation: 'expl-hint 3.2s ease 600ms infinite',
-                  }}>
-                    <span style={{
-                      ...TYPE.eyebrow,
-                      textTransform: 'uppercase',
-                      color: 'rgba(255,255,255,0.28)',
-                    }}>
-                      tap to continue
-                    </span>
                   </div>
                 )}
               </div>
             </div>
           )}
-
-          {/* Tap hint — opening phase */}
-          {phase === 'opening' && hintVisible && (
-            <div style={{
-              position: 'fixed',
-              bottom: 'calc(38px + env(safe-area-inset-bottom, 0px))',
-              left: 0, right: 0, textAlign: 'center',
-              pointerEvents: 'none',
-              animation: 'expl-hint 3.2s ease infinite',
-            }}>
-              <span style={{
-                ...TYPE.eyebrow,
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.28)',
-              }}>
-                tap to continue
-              </span>
-            </div>
-          )}
         </div>
+
+        {/* Top fade — above content so scrolled copy fades out behind the capsule header */}
+        {isTips && (
+          <div style={{
+            position: 'fixed', top: 0, left: 0, right: 0,
+            height: `calc(${HEADER_CLEARANCE + SPACING.compact}px + env(safe-area-inset-top, 0px))`,
+            background: `linear-gradient(180deg, rgba(${bgRgb},0.99) 0%, rgba(${bgRgb},0.92) 60%, transparent 100%)`,
+            pointerEvents: 'none', zIndex: 6,
+          }} />
+        )}
+
+        {/* Bottom fade — above content so copy fades out beneath the CTA */}
+        <div style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0,
+          height: SPACING.section + SPACING.cinematic,
+          background: `linear-gradient(0deg, rgba(${bgRgb},0.98) 0%, rgba(${bgRgb},0.90) 45%, transparent 100%)`,
+          pointerEvents: 'none', zIndex: 6,
+        }} />
+
+        {/* Tap hint — opening phase, or while tips remain */}
+        {((phase === 'opening' && hintVisible) || (isTips && revealedCount < tips.length)) && (
+          <div style={{
+            position: 'fixed',
+            bottom: `calc(${SPACING.separation}px + env(safe-area-inset-bottom, 0px))`,
+            left: 0, right: 0, textAlign: 'center',
+            pointerEvents: 'none', zIndex: 7,
+            animation: 'expl-hint 3.2s ease 600ms infinite',
+          }}>
+            <span style={{
+              ...TYPE.eyebrow,
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.28)',
+            }}>
+              tap to continue
+            </span>
+          </div>
+        )}
 
         {/* Continue CTA */}
         {showContinue && (
           <CinematicContinueCTA
             onClick={onContinue}
             accent={accent}
-            animation="expl-cont 500ms cubic-bezier(0.16,1,0.3,1) 120ms both"
+            animation={`expl-cont ${MOTION.duration.cinematic} ${MOTION.easing.standard} ${MOTION.duration.instant} both`}
             style={{ zIndex: 10 }}
           />
         )}
