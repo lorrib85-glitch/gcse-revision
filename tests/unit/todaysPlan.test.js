@@ -12,7 +12,8 @@ vi.mock('../../src/lib/storage.js', () => ({
   listKeys: vi.fn((prefix = '') => Object.keys(store).filter(k => k.startsWith(prefix))),
 }))
 
-const { isTaskDoneToday } = await import('../../src/todaysPlan.js')
+const { isTaskDoneToday, getNextPlannerItem, getTaskSubject } = await import('../../src/todaysPlan.js')
+const { MODULES } = await import('../../src/modules.js')
 
 const TODAY = new Date().toISOString().slice(0, 10)
 const YESTERDAY = (() => {
@@ -86,5 +87,47 @@ describe('isTaskDoneToday', () => {
     store.gcse_scores = [{ date: TODAY, subject: 'History', source: 'module', pct: 100 }]
     expect(isTaskDoneToday({ type: 'continue' })).toBe(false)
     expect(isTaskDoneToday({ type: 'revisit' })).toBe(false)
+  })
+})
+
+describe('getNextPlannerItem', () => {
+  const warmup = { type: 'warmup', doneToday: true }
+  const lesson = { type: 'continue', doneToday: false }
+  const practice = { type: 'practice', doneToday: false }
+
+  it('returns the first incomplete item in plan order', () => {
+    expect(getNextPlannerItem([warmup, lesson, practice])).toBe(lesson)
+  })
+
+  it('advances to the next item once the current one completes', () => {
+    expect(getNextPlannerItem([warmup, { ...lesson, doneToday: true }, practice])).toBe(practice)
+  })
+
+  it('returns null when every item is complete', () => {
+    expect(getNextPlannerItem([warmup, { ...lesson, doneToday: true }, { ...practice, doneToday: true }])).toBe(null)
+  })
+
+  it('also respects the planner-engine completed/status fields', () => {
+    expect(getNextPlannerItem([{ completed: true }, { status: 'done' }, practice])).toBe(practice)
+  })
+})
+
+describe('getTaskSubject', () => {
+  it('reads the subject from practice/paper onSelect payloads', () => {
+    expect(getTaskSubject({ onSelect: { kind: 'practice', subject: 'Chemistry' } })).toBe('Chemistry')
+  })
+
+  it('renders Random mixed practice as Mixed', () => {
+    expect(getTaskSubject({ onSelect: { kind: 'practice', subject: 'Random' } })).toBe('Mixed')
+  })
+
+  it('resolves module-backed tasks via MODULES metadata', () => {
+    const mod = MODULES[0]
+    expect(getTaskSubject({ onSelect: { kind: 'module', moduleId: mod.id } })).toBe(mod.subject)
+  })
+
+  it('returns null for the mixed warm-up and for no task at all', () => {
+    expect(getTaskSubject({ type: 'warmup', onSelect: { kind: 'quickfire' } })).toBe(null)
+    expect(getTaskSubject(null)).toBe(null)
   })
 })

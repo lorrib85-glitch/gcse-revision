@@ -469,7 +469,7 @@ export default function App() {
   return (
     <div style={{ background: GENERAL.backgroundApp, minHeight: '100vh' }}>
       <div key={tab} className="tab-content">
-        {tab === 'home'     && <Home onSelectTask={handleTodaysPlanSelect} />}
+        {tab === 'home'     && <Home onSelectTask={handleTodaysPlanSelect} onReviewProgress={() => setTab('pulse')} />}
         {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
         {tab === 'pulse'    && <PulseTab onStartQuickFire={() => { setQuickfireOrigin('pulse'); setTab('quickfire') }} best={readQfBest()} />}
         {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab(quickfireOrigin)} />}

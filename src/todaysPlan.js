@@ -182,6 +182,24 @@ export function isTaskDoneToday(task) {
   return false
 }
 
+// The next incomplete plan item — drives the Home hero banner. Tolerates
+// both the live task shape (doneToday) and any future planner-engine shape
+// (completed / status), per the dynamic-planner Home spec.
+export function getNextPlannerItem(plan) {
+  return plan.find(t => !(t.doneToday || t.completed || t.status === 'done')) ?? null
+}
+
+// Subject for a plan task: practice/paper cards carry it on onSelect;
+// module-backed cards (revisit/continue) resolve it via MODULES metadata;
+// the mixed warm-up has none. 'Random' practice reads as 'Mixed' in the UI.
+export function getTaskSubject(task) {
+  const selectSubject = task?.onSelect?.subject
+  if (selectSubject) return selectSubject === 'Random' ? 'Mixed' : selectSubject
+  const moduleId = task?.onSelect?.moduleId
+  if (moduleId) return MODULES.find(m => m.id === moduleId)?.subject ?? null
+  return null
+}
+
 // Builds the ordered "Today's plan" task list: warm-up, two dynamic slots
 // sized toward ~60 minutes total, plus a weekend full-paper card on
 // Saturday/Sunday.

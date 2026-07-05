@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
-import { MOTION } from '../../constants/motion.js'
+import { BUTTONS } from '../../constants/buttons.js'
 import { useAuth } from '../../auth/AuthContext.jsx'
 import { getProgressStatusText } from '../../auth/progressStatus.js'
-import { buildTodaysPlan } from '../../todaysPlan.js'
+import { buildTodaysPlan, getNextPlannerItem, getTaskSubject } from '../../todaysPlan.js'
 import { StreakChip } from './StreakChip.jsx'
 import { hexToRgb } from '../../constants/subjects.js'
 import { getProgress } from '../../progress.js'
@@ -175,154 +175,249 @@ function AccountOverlay({ onDismiss }) {
   )
 }
 
-function TaskCard({ task, position, onClick }) {
-  const { magnitude, signed } = position
-  const isDone = !!task.doneToday
-  const scale = magnitude === 0 ? 1.06 : magnitude === 1 ? 0.86 : 0.74
-  const opacity = (magnitude === 0 ? 1 : magnitude === 1 ? 0.45 : 0.18) * (isDone ? 0.72 : 1)
-  const distance = magnitude === 1 ? 219 : magnitude === 2 ? 245 : 0
-  const translateX = signed === 0 ? 0 : signed > 0 ? distance : -distance
-  const rotation = magnitude === 1 ? 14 : magnitude === 2 ? 24 : 0
-  const rotateY = signed === 0 ? 0 : signed > 0 ? -rotation : rotation
-  const depth = magnitude === 0 ? 0 : magnitude === 1 ? -35 : -79
-  const accentColor = magnitude === 0 ? GENERAL.coral : GENERAL.teal
-
+function ClockIcon({ size = 13, color }) {
   return (
-    <button
-      onClick={onClick}
-      style={{
-        position: 'absolute', top: '50%', left: '50%',
-        width: 224, height: 315,
-        transform: `translate(-50%, -50%) translateX(${translateX}px) translateZ(${depth}px) rotateY(${rotateY}deg) scale(${scale})`,
-        opacity, zIndex: 10 - magnitude,
-        transition: `transform ${MOTION.duration.cinematic} ${MOTION.easing.standard}, opacity ${MOTION.duration.cinematic} ${MOTION.easing.standard}`,
-        overflow: 'hidden', display: 'flex', flexDirection: 'column',
-        textAlign: 'left', background: GENERAL.neutral[1],
-        border: '1px solid rgba(255,255,255,0.06)', borderRadius: RADII.large,
-        padding: SPACING.standard, cursor: 'pointer',
-      }}
-    >
-      {task.image && (
-        <>
-          <div aria-hidden="true" style={{
-            position: 'absolute', inset: 0, zIndex: 0,
-            backgroundImage: `url(${task.image})`,
-            backgroundSize: 'cover', backgroundPosition: 'center',
-          }} />
-          <div aria-hidden="true" style={{
-            position: 'absolute', inset: 0, zIndex: 0,
-            background: `linear-gradient(to bottom, transparent 35%, ${GENERAL.neutral[1]} 100%)`,
-          }} />
-        </>
-      )}
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'flex-end' }}>
-        <div style={{ ...TYPE.body, fontWeight: 600, color: accentColor }}>
-          {task.title}
-        </div>
-        <div style={{
-          marginTop: SPACING.micro,
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        }}>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            ...TYPE.metadata, fontSize: 12, fontWeight: 400, letterSpacing: '0.06em', color: GENERAL.slate,
-          }}>
-            {isDone ? (
-              <>
-                <svg width="13" height="13" viewBox="0 0 22 22" fill="none" style={{ flexShrink: 0 }}>
-                  <circle cx="11" cy="11" r="8.5" stroke={GENERAL.teal} strokeWidth="1.75" />
-                  <path d="M7.2 11.3l2.4 2.4L15 8.3" stroke={GENERAL.teal} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                <span style={{ color: GENERAL.teal }}>Done today</span>
-              </>
-            ) : (
-              <>
-                <svg width="13" height="13" viewBox="0 0 22 22" fill="none" style={{ flexShrink: 0 }}>
-                  <circle cx="11" cy="11" r="8.5" stroke={GENERAL.slate} strokeWidth="1.75" />
-                  <path d="M11 6.5V11l3 2" stroke={GENERAL.slate} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                {`~${task.durationMinutes} min`}
-              </>
-            )}
-          </div>
-          {magnitude === 0 && (
-            <NavArrow color={accentColor} />
-          )}
-        </div>
-      </div>
-    </button>
+    <svg width={size} height={size} viewBox="0 0 22 22" fill="none" style={{ flexShrink: 0 }}>
+      <circle cx="11" cy="11" r="8.5" stroke={color} strokeWidth="1.75" />
+      <path d="M11 6.5V11l3 2" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   )
 }
 
-// Centred 3D-style task carousel — swipe, click-to-focus, and arrow-key
-// navigation. The focused (centre) card is the only one that triggers
-// onSelect; tapping a side card brings it to focus instead.
-function TaskCarousel({ tasks, onSelect }) {
-  const [active, setActive] = useState(() => {
-    const nextUp = tasks.findIndex(t => !t.doneToday)
-    return nextUp === -1 ? 0 : nextUp
-  })
-  const count = tasks.length
-  const touchStartX = useRef(0)
-
-  const go = (i) => setActive(((i % count) + count) % count)
-
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.key === 'ArrowLeft') go(active - 1)
-      else if (e.key === 'ArrowRight') go(active + 1)
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [active, count])
-
+function BookIcon({ size = 24, color }) {
   return (
-    <div>
-      <div
-        onTouchStart={(e) => { touchStartX.current = e.changedTouches[0].screenX }}
-        onTouchEnd={(e) => {
-          const diff = touchStartX.current - e.changedTouches[0].screenX
-          if (Math.abs(diff) > 50) go(active + (diff > 0 ? 1 : -1))
-        }}
-        style={{ position: 'relative', height: 347, overflow: 'hidden', perspective: 1200 }}
-      >
-        {tasks.map((task, i) => {
-          const raw = (i - active + count) % count
-          const signed = raw <= count / 2 ? raw : raw - count
-          return (
-            <TaskCard
-              key={task.type + i}
-              task={task}
-              position={{ magnitude: Math.abs(signed), signed }}
-              onClick={() => (i === active ? onSelect(task) : go(i))}
-            />
-          )
-        })}
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: SPACING.micro, marginTop: SPACING.compact }}>
-        {tasks.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => go(i)}
-            aria-label={`Go to task ${i + 1}`}
-            style={{
-              width: 6, height: 6, padding: 0, border: 'none', borderRadius: RADII.pill, cursor: 'pointer',
-              background: i === active ? GENERAL.teal : `rgba(${GENERAL.tealRgb},0.2)`,
-              transition: `background ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
-            }}
-          />
-        ))}
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+      <path d="M12 6C10.2 4.4 7.2 4 4.5 4.4v14.2c2.7-.4 5.7 0 7.5 1.6 1.8-1.6 4.8-2 7.5-1.6V4.4C16.8 4 13.8 4.4 12 6z" />
+      <path d="M12 6v14.2" />
+    </svg>
+  )
+}
+
+// Cinematic fallback imagery for hero items that carry no image of their own
+// (practice cards). Existing /public/headers assets only — no new assets.
+const SUBJECT_HERO_FALLBACKS = {
+  History: '/headers/history-main.png',
+  Maths: '/headers/maths-main.png',
+  English: '/headers/english-main.png',
+  Sociology: '/headers/sociology-main.png',
+  Biology: '/headers/bio-main.png',
+}
+
+function heroImageFor(task, subject) {
+  if (task?.image) return task.image
+  if (task?.type === 'practice' || task?.type === 'paper') return '/headers/home-exam-paper.png'
+  return SUBJECT_HERO_FALLBACKS[subject] ?? null
+}
+
+// Smallest local progress ring — no shared generic ring exists yet
+// (CircularTimer is a countdown timer, not reusable here without altering it).
+function TasksRing({ done, total }) {
+  const size = 64
+  const stroke = 5
+  const radius = (size - stroke) / 2
+  const circumference = 2 * Math.PI * radius
+  const pct = total ? Math.max(0, Math.min(1, done / total)) : 0
+  return (
+    <div style={{ position: 'relative', width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ display: 'block', transform: 'rotate(-90deg)' }}>
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={stroke} />
+        <circle
+          cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={GENERAL.teal} strokeWidth={stroke} strokeLinecap="round"
+          strokeDasharray={circumference} strokeDashoffset={circumference * (1 - pct)}
+        />
+      </svg>
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ ...TYPE.titleMedium, color: GENERAL.softWhite }}>{done}/{total}</span>
       </div>
     </div>
   )
 }
 
-export default function Home({ onSelectTask }) {
+// Dynamic hero banner — always renders the next incomplete plan item, or the
+// completed-day state once every task is done. Never hardcoded to one lesson.
+function HeroBanner({ item, subject, onStart, onReviewProgress }) {
+  const allDone = !item
+  const image = allDone ? null : heroImageFor(item, subject)
+  const title = allDone ? 'Today’s plan complete' : item.title
+  const ctaLabel = allDone ? 'Review progress' : item.type === 'continue' ? 'Continue' : 'Start now'
+  const bgRgb = hexToRgb(GENERAL.neutral[900])
+  const metaColor = `rgba(${hexToRgb(GENERAL.softWhite)},0.85)`
+
+  return (
+    <div style={{
+      position: 'relative', minHeight: 260, borderRadius: RADII.panel, overflow: 'hidden',
+      border: '1px solid rgba(255,255,255,0.08)', background: GENERAL.neutral[800],
+    }}>
+      {image && (
+        <>
+          <div aria-hidden="true" style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: `url(${image})`, backgroundSize: 'cover', backgroundPosition: 'right center',
+          }} />
+          {/* Left-to-right scrim keeps text readable over the image */}
+          <div aria-hidden="true" style={{
+            position: 'absolute', inset: 0,
+            background: `linear-gradient(90deg, rgba(${bgRgb},0.92) 0%, rgba(${bgRgb},0.6) 42%, rgba(${bgRgb},0.18) 72%, transparent 100%)`,
+          }} />
+        </>
+      )}
+      <div style={{
+        position: 'relative', zIndex: 1, minHeight: 260, padding: SPACING.standard,
+        display: 'flex', flexDirection: 'column', alignItems: 'flex-start', boxSizing: 'border-box',
+      }}>
+        {!allDone && subject && (
+          <span style={{
+            ...TYPE.button, color: GENERAL.teal,
+            display: 'inline-flex', alignItems: 'center', height: 36, padding: `0 ${SPACING.compact}px`,
+            border: `1px solid rgba(${GENERAL.tealRgb},0.55)`, borderRadius: RADII.pill,
+            background: `rgba(${GENERAL.tealRgb},0.08)`,
+          }}>
+            {subject}
+          </span>
+        )}
+        <div style={{ ...TYPE.displayHero, color: GENERAL.softWhite, marginTop: 'auto', paddingTop: SPACING.compact }}>
+          {title}
+        </div>
+        {!allDone && (
+          <div style={{ marginTop: SPACING.micro, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <ClockIcon size={15} color={metaColor} />
+            <span style={{ ...TYPE.bodyStrong, color: metaColor }}>~{item.durationMinutes} min</span>
+          </div>
+        )}
+        <button
+          onClick={allDone ? onReviewProgress : onStart}
+          style={{
+            marginTop: SPACING.compact, minWidth: 170,
+            height: BUTTONS.continue.height, borderRadius: BUTTONS.continue.borderRadius,
+            padding: `0 ${BUTTONS.continue.paddingX}px`,
+            fontFamily: BUTTONS.continue.fontFamily, fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
+            background: GENERAL.coral, color: GENERAL.softWhite, border: 'none', cursor: 'pointer',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: SPACING.micro,
+            transition: BUTTONS.continue.transition,
+          }}
+        >
+          {ctaLabel}
+          <NavArrow color={GENERAL.softWhite} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function StatCard({ children, centred = false }) {
+  return (
+    <div style={{
+      background: GENERAL.neutral[800], border: '1px solid rgba(255,255,255,0.06)',
+      borderRadius: RADII.large, padding: SPACING.compact, minHeight: 108,
+      display: 'flex', flexDirection: 'column', gap: SPACING.micro,
+      justifyContent: 'space-between', alignItems: centred ? 'center' : 'flex-start',
+      textAlign: centred ? 'center' : 'left',
+    }}>
+      {children}
+    </div>
+  )
+}
+
+function StatusPill({ state, label }) {
+  const styles = {
+    done: { background: `rgba(${GENERAL.tealRgb},0.12)`, border: '1px solid transparent', color: GENERAL.teal },
+    next: { background: `rgba(${GENERAL.tealRgb},0.06)`, border: `1px solid rgba(${GENERAL.tealRgb},0.55)`, color: GENERAL.teal },
+    todo: { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: GENERAL.slate },
+  }
+  return (
+    <span style={{
+      ...TYPE.label, ...styles[state],
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      height: 34, minWidth: 76, padding: `0 ${SPACING.compact}px`,
+      borderRadius: RADII.pill, flexShrink: 0, boxSizing: 'border-box',
+    }}>
+      {label}
+    </span>
+  )
+}
+
+// One planner row: timeline marker column, text column, status pill.
+// Rows stay tappable so any task can still be launched out of order,
+// preserving the old carousel's behaviour.
+function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
+  const subtitle = task.title !== task.kicker ? task.title : null
+  const pillLabel = state === 'done' ? 'Done' : state === 'next' ? (task.type === 'continue' ? 'Continue' : 'Next') : 'To do'
+  const circleStyles = {
+    done: { background: GENERAL.teal, border: 'none' },
+    next: { background: 'transparent', border: `1.5px solid ${GENERAL.teal}` },
+    todo: { background: 'transparent', border: `1.5px solid rgba(${hexToRgb(GENERAL.slate)},0.45)` },
+  }
+  const lineColor = (done) => (done ? `rgba(${GENERAL.tealRgb},0.8)` : 'rgba(255,255,255,0.08)')
+
+  return (
+    <button
+      onClick={() => onSelect(task)}
+      style={{
+        display: 'grid', gridTemplateColumns: '40px 1fr', gap: SPACING.micro,
+        width: '100%', textAlign: 'left', background: 'none', border: 'none',
+        padding: 0, margin: 0, cursor: 'pointer',
+      }}
+    >
+      {/* Timeline marker column */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {index > 0 && <div style={{ width: 2, height: SPACING.compact, background: lineColor(prevDone) }} />}
+        <div style={{
+          width: 36, height: 36, borderRadius: RADII.pill, flexShrink: 0, boxSizing: 'border-box',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          ...circleStyles[state],
+        }}>
+          {state === 'done' ? (
+            <svg width="16" height="16" viewBox="0 0 22 22" fill="none">
+              <path d="M5.5 11.5l3.6 3.6L16.5 7.5" stroke={GENERAL.neutral[900]} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          ) : (
+            <span style={{ ...TYPE.titleMedium, color: state === 'next' ? GENERAL.teal : GENERAL.slate }}>
+              {index + 1}
+            </span>
+          )}
+        </div>
+        {!isLast && <div style={{ width: 2, flex: 1, background: lineColor(!!task.doneToday) }} />}
+      </div>
+
+      {/* Text + status pill */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: SPACING.micro,
+        paddingTop: index > 0 ? SPACING.compact : 0,
+        paddingBottom: isLast ? 0 : SPACING.compact,
+        borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.06)',
+        minWidth: 0,
+      }}>
+        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: SPACING.micro }}>
+          <div style={{ ...TYPE.titleLarge, color: GENERAL.softWhite }}>{task.kicker}</div>
+          {subtitle && (
+            <div style={{ ...TYPE.bodySmall, color: state === 'next' ? GENERAL.teal : GENERAL.slate }}>
+              {subtitle}
+            </div>
+          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <ClockIcon color={GENERAL.slate} />
+            <span style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>{task.durationMinutes} min</span>
+          </div>
+        </div>
+        <StatusPill state={state} label={pillLabel} />
+      </div>
+    </button>
+  )
+}
+
+export default function Home({ onSelectTask, onReviewProgress }) {
   const { user } = useAuth()
-  const userName = user?.name || 'you'
+  const firstName = user?.name?.trim().split(/\s+/)[0]
 
   const todaysPlan = buildTodaysPlan()
   const streak = safeGetStreak()
+
+  // Hero and planner rows share one source of truth: the plan itself.
+  const heroItem = getNextPlannerItem(todaysPlan)
+  const heroSubject = getTaskSubject(heroItem)
+  const focusSubject = heroSubject ?? todaysPlan.map(getTaskSubject).find(Boolean) ?? 'Mixed'
+  const plannedMinutes = todaysPlan.reduce((sum, t) => sum + (t.durationMinutes || 0), 0)
+  const completedCount = todaysPlan.filter(t => t.doneToday).length
 
   const [accountOpen, setAccountOpen] = useState(false)
 
@@ -334,43 +429,98 @@ export default function Home({ onSelectTask }) {
   }, [])
 
   return (
-    <div style={{ minHeight: '100vh', background: GENERAL.neutral[0], paddingBottom: 120, overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: GENERAL.neutral[900], paddingBottom: 120, overflowX: 'hidden', position: 'relative' }}>
 
-      {/* ── Hero ── */}
-      <div style={{ position: 'relative', width: '100%', height: '34vh', minHeight: 260, maxHeight: 340, overflow: 'hidden' }}>
+      {/* LOCKED atmosphere — call site preserved; sits as the ambient band
+          behind the utility row and hero banner */}
+      <div aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 280, overflow: 'hidden' }}>
         <HomeAtmosphere />
-
-        {/* Top row — account, streak */}
-        <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 14px)', left: SPACING.compact, zIndex: 2 }}>
-          <button
-            onClick={() => setAccountOpen(true)}
-            aria-label="Account details"
-            style={{
-              background: 'none', border: '1px solid rgba(255,255,255,0.14)', borderRadius: RADII.pill,
-              cursor: 'pointer', width: 30, height: 30,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
-          >
-            <AccountIcon color="rgba(241,250,238,0.55)" />
-          </button>
-        </div>
-        <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 14px)', right: SPACING.compact, zIndex: 2 }}>
-          <StreakChip backdrop={false} />
-        </div>
-
-        {/* Headline */}
-        <div style={{ position: 'absolute', left: SPACING.compact, right: SPACING.compact, bottom: SPACING.standard, zIndex: 2 }}>
-          <div className="homeGreetingFlyIn" style={{ ...TYPE.body, color: 'rgba(241,250,238,0.7)' }}>
-            Hi, {userName}<span style={{ color: GENERAL.teal }}>.</span>
-          </div>
-          <div className="homeTitleFlyIn" style={{ ...TYPE.displaySection, fontSize: 46, color: GENERAL.softWhite, marginTop: SPACING.micro }}>
-            What's today's plan?
-          </div>
-        </div>
       </div>
 
-      <div style={{ maxWidth: 420, margin: '0 auto', width: '100%', marginTop: SPACING.compact + 4 }}>
-        <TaskCarousel tasks={todaysPlan} onSelect={onSelectTask} />
+      <div style={{
+        position: 'relative', zIndex: 1, maxWidth: 420, margin: '0 auto', width: '100%', boxSizing: 'border-box',
+        padding: `calc(env(safe-area-inset-top, 0px) + ${SPACING.micro}px) ${SPACING.compact}px 0`,
+      }}>
+
+        {/* ── Top utility row ── */}
+        <div style={{ minHeight: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: SPACING.micro }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro, minWidth: 0 }}>
+            <button
+              onClick={() => setAccountOpen(true)}
+              aria-label="Account details"
+              style={{
+                background: 'none', border: '1px solid rgba(255,255,255,0.14)', borderRadius: RADII.pill,
+                cursor: 'pointer', width: 40, height: 40, flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <AccountIcon color="rgba(241,250,238,0.55)" />
+            </button>
+            <span style={{ ...TYPE.bodyStrong, color: 'rgba(241,250,238,0.7)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {firstName ? `Hi, ${firstName}.` : 'Hi.'}
+            </span>
+            <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: RADII.pill, background: GENERAL.teal, flexShrink: 0 }} />
+          </div>
+          <StreakChip backdrop={false} layout="inline" />
+        </div>
+
+        {/* ── Dynamic hero banner ── */}
+        <div style={{ marginTop: SPACING.compact }}>
+          <HeroBanner
+            item={heroItem}
+            subject={heroSubject}
+            onStart={() => onSelectTask(heroItem)}
+            onReviewProgress={onReviewProgress}
+          />
+        </div>
+
+        {/* ── Stat cards ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: SPACING.micro, marginTop: SPACING.compact }}>
+          <StatCard>
+            <ClockIcon size={24} color={GENERAL.teal} />
+            <div>
+              <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Planned</div>
+              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: SPACING.micro }}>{plannedMinutes} min</div>
+            </div>
+          </StatCard>
+          <StatCard>
+            <BookIcon color={GENERAL.teal} />
+            <div>
+              <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Subject</div>
+              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: SPACING.micro }}>{focusSubject}</div>
+            </div>
+          </StatCard>
+          <StatCard centred>
+            <TasksRing done={completedCount} total={todaysPlan.length} />
+            <div>
+              <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Tasks</div>
+              <div style={{ ...TYPE.bodySmall, color: GENERAL.softWhite, marginTop: 2 }}>
+                {completedCount} of {todaysPlan.length} done
+              </div>
+            </div>
+          </StatCard>
+        </div>
+
+        {/* ── Today's plan ── */}
+        <div style={{
+          marginTop: SPACING.compact, background: GENERAL.neutral[800],
+          border: '1px solid rgba(255,255,255,0.06)', borderRadius: RADII.panel, padding: SPACING.standard,
+        }}>
+          <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite }}>Today’s plan</div>
+          <div style={{ marginTop: SPACING.compact }}>
+            {todaysPlan.map((task, i) => (
+              <PlannerRow
+                key={task.type + i}
+                task={task}
+                index={i}
+                state={task.doneToday ? 'done' : task === heroItem ? 'next' : 'todo'}
+                prevDone={i > 0 ? !!todaysPlan[i - 1].doneToday : false}
+                isLast={i === todaysPlan.length - 1}
+                onSelect={onSelectTask}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       {showStreakCelebration && (
