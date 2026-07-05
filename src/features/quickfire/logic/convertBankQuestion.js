@@ -21,6 +21,7 @@ export const CANONICAL_METADATA_FIELDS = [
 export function quickFireFromBank(q) {
   const isTrueFalse = q.type === 'truefalse'
   const converted = {
+    id: q.id,
     q: q.question,
     type: isTrueFalse ? 'truefalse' : 'mc',
     options: isTrueFalse ? ['True', 'False'] : q.options,

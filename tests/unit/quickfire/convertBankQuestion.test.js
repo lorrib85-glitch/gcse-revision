@@ -29,6 +29,12 @@ describe('quickFireFromBank — canonical metadata survives conversion', () => {
     expect(syncedRows.length).toBeGreaterThan(0)
   })
 
+  it('retains the bank row id on every converted question', () => {
+    for (const row of QUICK_QUIZ_QUESTIONS) {
+      expect(quickFireFromBank(row).id, `${row.id}: id dropped`).toBe(row.id)
+    }
+  })
+
   it('forwards a tags array of registered concept ids for every synced History row', () => {
     for (const row of syncedRows) {
       const conv = quickFireFromBank(row)

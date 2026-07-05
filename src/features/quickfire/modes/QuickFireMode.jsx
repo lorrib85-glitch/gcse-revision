@@ -7,6 +7,7 @@ import { recordScore, getAllConfidenceRatings } from '../../../progress.js'
 import { logWrongAnswer, logCorrectAnswer, getWeakTopics } from '../../../unifiedWeaknessTracker.js'
 import { QUICK_QUIZ_QUESTIONS } from '../../../data/quickQuizData.js'
 import { quickFireFromBank } from '../logic/convertBankQuestion.js'
+import { qfQuestionId } from '../logic/questionId.js'
 import { ALL_MODULE_QUICKFIRE_QUESTIONS } from '../../../data/questionBanks/questionRegistry.js'
 import { recordQuestionResult } from '../logic/masteryRecorder.js'
 import AnimatedNumber from '../../../components/core/AnimatedNumber.jsx'
@@ -209,9 +210,7 @@ function pickQuickFireRecommendation(memory, roundStats) {
 
 // ─── Per-question history ─────────────────────────────────────────────────────
 
-function qfQuestionId(q) {
-  return (q.subject || '') + '::' + (q.q || '').slice(0, 40)
-}
+// qfQuestionId lives in ../logic/questionId.js (pure, testable).
 
 function readQfQuestionHistory() {
   try { return JSON.parse(localStorage.getItem(QF_QUESTION_HISTORY_KEY) || '{}') } catch { return {} }
