@@ -44,6 +44,17 @@ function getRecallTopic(block) {
   return topic ? topic.toLowerCase() : 'this topic'
 }
 
+function getRecallSummary(recalled) {
+  if (!recalled.length) return 'Nothing confident yet — that’s useful.'
+
+  const text = recalled.map(c => `${c.label || ''} ${c.tag || ''}`).join(' ').toLowerCase()
+  if (/(theor|humour|hippocrates|galen|miasma|germ)/.test(text)) return 'You recalled some of the key theories.'
+  if (/(treat|surgery|antiseptic|anaesthetic|vaccine|hospital|public health)/.test(text)) return 'You recalled some useful treatment knowledge.'
+  if (/(cause|disease|infection|prevention)/.test(text)) return 'You recalled some important ideas about causes.'
+  if (/(source|evidence|factor|change|continuity)/.test(text)) return 'You recalled some useful exam ideas.'
+  return 'You recalled some key ideas.'
+}
+
 let stylesReady = false
 function ensureStyles() {
   if (stylesReady) return
@@ -133,26 +144,44 @@ function RecallHintLine({ prompts, ringRgb }) {
 }
 
 function ResultsOverlay({ recalled, missing, accent, rgb, onClose }) {
+  const [showDetails, setShowDetails] = useState(false)
   const rememberedList = recalled.slice(0, 3)
-  const missingList = missing.slice(0, 3)
+  const missingList = missing.slice(0, 5)
+  const recallSummary = getRecallSummary(recalled)
+  const practiceCopy = recalled.length
+    ? 'We’ll practise the weaker bits until they’re exam-ready.'
+    : 'We’ll use this to target your next practice.'
 
   return (
     <div className="prk-scroll" style={{ position: 'fixed', left: SPACING.standard, right: SPACING.standard, bottom: `calc(${SPACING.standard}px + env(safe-area-inset-bottom))`, zIndex: 6, maxHeight: '58vh', overflow: 'auto', padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.compact}px`, borderRadius: 30, background: 'linear-gradient(180deg, rgba(17,19,24,0.985), rgba(8,10,15,0.99))', border: '1px solid rgba(255,255,255,0.11)', boxShadow: `0 26px 70px rgba(0,0,0,0.58), 0 0 0 1px rgba(${rgb},0.06), inset 0 1px 0 rgba(255,255,255,0.055)`, animation: 'prk-sheet-in 360ms cubic-bezier(0.2,0.8,0.2,1) both' }}>
       <button type="button" onClick={onClose} aria-label="Close recall results" style={{ position: 'absolute', top: 14, right: 14, width: 38, height: 38, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.035)', color: 'rgba(245,247,255,0.64)', fontSize: 24, lineHeight: '34px', cursor: 'pointer' }}>×</button>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: SPACING.compact, paddingRight: 42 }}>
         <div style={{ width: 42, height: 42, borderRadius: '50%', display: 'grid', placeItems: 'center', background: `rgba(${SUCCESS_RGB},0.14)`, border: `1px solid rgba(${SUCCESS_RGB},0.34)`, boxShadow: `0 0 18px rgba(${SUCCESS_RGB},0.10)` }}><CheckIcon /></div>
-        <h2 style={{ ...TYPE.displayCard, color: '#F5F7FF', margin: 0 }}>You remembered</h2>
+        <h2 style={{ ...TYPE.displayCard, color: '#F5F7FF', margin: 0 }}>Recall checked</h2>
       </div>
-      {rememberedList.length > 0 ? (
-        <div style={{ display: 'grid', gap: 10, marginBottom: SPACING.standard }}>
-          {rememberedList.map(concept => <div key={concept.tag || concept.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}><span style={{ width: 24, height: 24, borderRadius: '50%', display: 'grid', placeItems: 'center', flexShrink: 0, border: `1px solid rgba(${SUCCESS_RGB},0.36)`, background: `rgba(${SUCCESS_RGB},0.08)` }}><CheckIcon /></span><span style={{ ...TYPE.bodySmall, color: 'rgba(245,247,255,0.74)', lineHeight: 1.45 }}>{concept.label}</span></div>)}
-        </div>
-      ) : (
-        <p style={{ ...TYPE.bodySmall, color: 'rgba(245,247,255,0.48)', fontStyle: 'italic', margin: `0 0 ${SPACING.standard}px` }}>Nothing confidently recalled yet.</p>
-      )}
+      <p style={{ ...TYPE.bodyStrong, color: recalled.length ? '#F5F7FF' : 'rgba(245,247,255,0.70)', margin: `0 0 ${SPACING.micro}px`, lineHeight: 1.45 }}>{recallSummary}</p>
+      <p style={{ ...TYPE.bodySmall, color: 'rgba(245,247,255,0.58)', margin: `0 0 ${SPACING.standard}px`, lineHeight: 1.55 }}>{practiceCopy}</p>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: `${SPACING.compact}px 0` }} aria-hidden="true"><div style={{ height: 1, flex: 1, background: `linear-gradient(90deg, transparent, rgba(${rgb},0.24))` }} /><div style={{ color: `rgba(${rgb},0.56)`, fontSize: 18 }}>✦</div><div style={{ height: 1, flex: 1, background: `linear-gradient(90deg, rgba(${rgb},0.24), transparent)` }} /></div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: SPACING.compact }}><div style={{ width: 38, height: 38, borderRadius: '50%', display: 'grid', placeItems: 'center', background: `rgba(${rgb},0.13)`, border: `1px solid rgba(${rgb},0.40)`, color: accent, fontSize: 18 }}>✚</div><h2 style={{ ...TYPE.displayCard, color: accent, margin: 0 }}>Missing pieces to revisit</h2></div>
-      <div style={{ display: 'grid', gap: 10 }}>{missingList.map(concept => <button type="button" key={concept.tag || concept.label} onClick={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, width: '100%', padding: '11px 10px 11px 13px', borderRadius: 13, border: `1px solid rgba(${rgb},0.30)`, background: `linear-gradient(180deg, rgba(${rgb},0.10), rgba(255,255,255,0.025))`, color: accent, textAlign: 'left', cursor: 'pointer' }}><span style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 650, lineHeight: 1.35 }}>{concept.label}</span><span style={{ flexShrink: 0, padding: '6px 9px', borderRadius: 10, border: `1px solid rgba(${rgb},0.62)`, background: 'rgba(0,0,0,0.15)', fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 700, color: accent }}>Revise this</span></button>)}</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: SPACING.micro }}><div style={{ width: 38, height: 38, borderRadius: '50%', display: 'grid', placeItems: 'center', background: `rgba(${rgb},0.13)`, border: `1px solid rgba(${rgb},0.40)`, color: accent, fontSize: 18 }}>✚</div><h2 style={{ ...TYPE.displayCard, color: accent, margin: 0 }}>Added to your practice loop</h2></div>
+      <p style={{ ...TYPE.bodySmall, color: 'rgba(245,247,255,0.60)', margin: `0 0 ${SPACING.standard}px`, lineHeight: 1.55 }}>You’ll see these ideas again in quick recall, lesson checks and exam-style questions.</p>
+      <button type="button" onClick={onClose} style={{ width: '100%', minHeight: 54, borderRadius: 16, border: `1.5px solid rgba(${rgb},0.62)`, background: `linear-gradient(180deg, rgba(${rgb},0.42), rgba(${rgb},0.18))`, color: accent, ...TYPE.buttonLarge, cursor: 'pointer', marginBottom: SPACING.compact }}>Continue</button>
+      <button type="button" onClick={() => setShowDetails(v => !v)} style={{ background: 'none', border: 'none', color: 'rgba(245,247,255,0.52)', ...TYPE.button, cursor: 'pointer', padding: 0, textDecoration: 'underline', textUnderlineOffset: 3 }}>{showDetails ? 'Hide details' : 'View details'}</button>
+      {showDetails && (
+        <div style={{ display: 'grid', gap: SPACING.compact, marginTop: SPACING.compact }}>
+          {rememberedList.length > 0 && (
+            <div>
+              <div style={{ ...TYPE.metadata, color: `rgba(${SUCCESS_RGB},0.76)`, marginBottom: SPACING.micro }}>Recalled</div>
+              <div style={{ display: 'grid', gap: SPACING.micro }}>{rememberedList.map(concept => <div key={concept.tag || concept.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}><span style={{ width: 24, height: 24, borderRadius: '50%', display: 'grid', placeItems: 'center', flexShrink: 0, border: `1px solid rgba(${SUCCESS_RGB},0.36)`, background: `rgba(${SUCCESS_RGB},0.08)` }}><CheckIcon /></span><span style={{ ...TYPE.bodySmall, color: 'rgba(245,247,255,0.74)', lineHeight: 1.45 }}>{concept.label}</span></div>)}</div>
+            </div>
+          )}
+          {missingList.length > 0 && (
+            <div>
+              <div style={{ ...TYPE.metadata, color: `rgba(${rgb},0.72)`, marginBottom: SPACING.micro }}>To practise later</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: SPACING.micro }}>{missingList.map(concept => <span key={concept.tag || concept.label} style={{ ...TYPE.label, color: accent, padding: `${SPACING.micro}px ${SPACING.compact}px`, borderRadius: RADII.pill, border: `1px solid rgba(${rgb},0.30)`, background: `rgba(${rgb},0.08)` }}>{concept.label}</span>)}</div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
