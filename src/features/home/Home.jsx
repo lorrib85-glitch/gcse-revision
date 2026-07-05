@@ -278,7 +278,7 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
           </span>
         )}
         <div style={{
-          ...TYPE.displayHero, color: GENERAL.softWhite, marginTop: 'auto', paddingTop: SPACING.compact,
+          ...TYPE.displayScreen, color: GENERAL.softWhite, marginTop: 'auto', paddingTop: SPACING.compact,
           display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden',
         }}>
           {title}
@@ -395,7 +395,7 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div style={{ ...TYPE.titleLarge, color: GENERAL.softWhite, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.kicker}</div>
           {subtitle && (
-            <div style={{ ...TYPE.bodyStrong, color: state === 'next' ? GENERAL.teal : GENERAL.slate, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ ...TYPE.bodySmall, color: state === 'next' ? GENERAL.teal : GENERAL.slate, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {subtitle}
             </div>
           )}
@@ -486,14 +486,14 @@ export default function Home({ onSelectTask, onReviewProgress }) {
             <ClockIcon size={22} color={GENERAL.teal} />
             <div>
               <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Planned</div>
-              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: 4, whiteSpace: 'nowrap' }}>{plannedMinutes} min</div>
+              <div style={{ ...TYPE.displayCard, color: GENERAL.softWhite, marginTop: 4, whiteSpace: 'nowrap' }}>{plannedMinutes} min</div>
             </div>
           </StatCard>
           <StatCard>
             <BookIcon size={22} color={GENERAL.teal} />
             <div>
               <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Subject</div>
-              <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite, marginTop: 4, whiteSpace: 'nowrap', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>{focusSubject}</div>
+              <div style={{ ...TYPE.displayCard, color: GENERAL.softWhite, marginTop: 4, whiteSpace: 'nowrap', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>{focusSubject}</div>
             </div>
           </StatCard>
           <StatCard centred>
@@ -508,7 +508,7 @@ export default function Home({ onSelectTask, onReviewProgress }) {
           border: '1px solid rgba(255,255,255,0.06)', borderRadius: RADII.panel,
           padding: SPACING.standard,
         }}>
-          <div style={{ ...TYPE.displaySection, color: GENERAL.softWhite }}>Today’s plan</div>
+          <div style={{ ...TYPE.displayCard, color: GENERAL.softWhite }}>Today’s plan</div>
           <div style={{ marginTop: SPACING.compact }}>
             {todaysPlan.map((task, i) => (
               <PlannerRow
