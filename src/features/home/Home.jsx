@@ -11,6 +11,7 @@ import { StreakChip } from './StreakChip.jsx'
 import { hexToRgb } from '../../constants/subjects.js'
 import { getProgress } from '../../progress.js'
 import StreakCelebrationOverlay from '../streaks/StreakCelebrationOverlay.jsx'
+import ExitButton from '../../components/core/ExitButton.jsx'
 import {
   shouldShowStreakCelebration,
   markStreakCelebrationShown,
@@ -103,6 +104,74 @@ function NavArrow({ color }) {
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
       <path d="M5 12h14M13 6l6 6-6 6" />
     </svg>
+  )
+}
+
+function AccountIcon({ color }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+      <circle cx="12" cy="8" r="3.4" />
+      <path d="M5.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" />
+    </svg>
+  )
+}
+
+// Small centred dialog — account status + sign in/out. Follows the same
+// scrim + centred-card dialog convention as StreakCelebrationOverlay, kept
+// calm and text-only rather than a celebration moment.
+function AccountOverlay({ onDismiss }) {
+  const { user, linkGoogleAccount, signOut, loading, authError, syncStatus } = useAuth()
+  const userName = user?.name || 'you'
+  const statusText = getProgressStatusText(user, syncStatus)
+  const isGoogleUser = user?.provider === 'google'
+
+  return (
+    <div
+      role="dialog" aria-modal="true" aria-label="Account"
+      onClick={onDismiss}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 3000,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: 'rgba(3,10,11,0.86)',
+        backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
+        padding: SPACING.standard,
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: '100%', maxWidth: 340,
+          background: GENERAL.neutral[1], border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: RADII.large, padding: SPACING.standard,
+          display: 'flex', flexDirection: 'column', gap: SPACING.micro,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: SPACING.micro }}>
+          <span style={{ ...TYPE.eyebrow, color: GENERAL.slate }}>Account</span>
+          <ExitButton ariaLabel="Close account details" onClick={onDismiss} style={{ opacity: 0.5, width: 32, height: 32 }} />
+        </div>
+        <div style={{ ...TYPE.body, fontWeight: 600, color: GENERAL.softWhite }}>{userName}</div>
+        {isGoogleUser && user?.email && (
+          <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>{user.email}</div>
+        )}
+        <div style={{ ...TYPE.bodySmall, color: 'rgba(241,250,238,0.4)', marginTop: SPACING.micro }}>{statusText}</div>
+        {authError && !isGoogleUser && (
+          <div style={{ ...TYPE.eyebrow, fontSize: 11, color: '#E0836B' }}>{authError}</div>
+        )}
+        <button
+          onClick={isGoogleUser ? signOut : linkGoogleAccount}
+          disabled={loading}
+          style={{
+            marginTop: SPACING.compact, alignSelf: 'flex-start',
+            background: 'none', border: 'none', cursor: loading ? 'default' : 'pointer',
+            ...TYPE.eyebrow, fontSize: 12, color: isGoogleUser ? 'rgba(241,250,238,0.5)' : GENERAL.teal,
+            textDecoration: 'underline', textUnderlineOffset: 3, padding: 4,
+          }}
+        >
+          {loading ? 'Signing in…' : isGoogleUser ? 'Sign out' : 'Sign in with Google'}
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -233,13 +302,14 @@ function TaskCarousel({ tasks, onSelect }) {
 }
 
 export default function Home({ onSelectTask }) {
-  const { user, linkGoogleAccount, signOut, loading, authError, syncStatus } = useAuth()
+  const { user, syncStatus } = useAuth()
   const userName = user?.name || 'you'
   const statusText = getProgressStatusText(user, syncStatus)
-  const isGoogleUser = user?.provider === 'google'
 
   const todaysPlan = buildTodaysPlan()
   const streak = safeGetStreak()
+
+  const [accountOpen, setAccountOpen] = useState(false)
 
   // Home renders first; the celebration (if any) mounts on top a moment
   // later rather than blocking the initial paint.
@@ -278,26 +348,17 @@ export default function Home({ onSelectTask }) {
       }}>
         <span style={{ ...TYPE.eyebrow, fontSize: 11, color: 'rgba(241,250,238,0.4)' }}>{statusText}</span>
         <button
-          onClick={isGoogleUser ? signOut : linkGoogleAccount}
-          disabled={loading}
+          onClick={() => setAccountOpen(true)}
+          aria-label="Account details"
           style={{
-            background: 'none', border: 'none', cursor: loading ? 'default' : 'pointer',
-            ...TYPE.eyebrow, fontSize: 11, color: isGoogleUser ? 'rgba(241,250,238,0.4)' : GENERAL.teal,
-            textDecoration: 'underline', textUnderlineOffset: 3, padding: 4, flexShrink: 0,
+            background: 'none', border: '1px solid rgba(255,255,255,0.14)', borderRadius: RADII.pill,
+            cursor: 'pointer', width: 30, height: 30, flexShrink: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
-          {loading ? 'Signing in…' : isGoogleUser ? 'Sign out' : 'Sign in with Google'}
+          <AccountIcon color="rgba(241,250,238,0.55)" />
         </button>
       </div>
-
-      {authError && !isGoogleUser && (
-        <div style={{
-          maxWidth: 420, margin: '0 auto', width: '100%',
-          padding: `0 ${SPACING.compact}px`,
-        }}>
-          <div style={{ ...TYPE.eyebrow, fontSize: 11, color: '#E0836B', marginTop: 4 }}>{authError}</div>
-        </div>
-      )}
 
       <div style={{ maxWidth: 420, margin: '0 auto', width: '100%', marginTop: SPACING.compact + 4 }}>
         <TaskCarousel tasks={todaysPlan} onSelect={onSelectTask} />
@@ -313,6 +374,10 @@ export default function Home({ onSelectTask }) {
             setShowStreakCelebration(false)
           }}
         />
+      )}
+
+      {accountOpen && (
+        <AccountOverlay onDismiss={() => setAccountOpen(false)} />
       )}
 
     </div>
