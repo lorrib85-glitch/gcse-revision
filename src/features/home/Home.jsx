@@ -318,9 +318,8 @@ function TaskCarousel({ tasks, onSelect }) {
 }
 
 export default function Home({ onSelectTask }) {
-  const { user, syncStatus } = useAuth()
+  const { user } = useAuth()
   const userName = user?.name || 'you'
-  const statusText = getProgressStatusText(user, syncStatus)
 
   const todaysPlan = buildTodaysPlan()
   const streak = safeGetStreak()
@@ -341,7 +340,20 @@ export default function Home({ onSelectTask }) {
       <div style={{ position: 'relative', width: '100%', height: '34vh', minHeight: 260, maxHeight: 340, overflow: 'hidden' }}>
         <HomeAtmosphere />
 
-        {/* Top row — streak */}
+        {/* Top row — account, streak */}
+        <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 14px)', left: SPACING.compact, zIndex: 2 }}>
+          <button
+            onClick={() => setAccountOpen(true)}
+            aria-label="Account details"
+            style={{
+              background: 'none', border: '1px solid rgba(255,255,255,0.14)', borderRadius: RADII.pill,
+              cursor: 'pointer', width: 30, height: 30,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            <AccountIcon color="rgba(241,250,238,0.55)" />
+          </button>
+        </div>
         <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 14px)', right: SPACING.compact, zIndex: 2 }}>
           <StreakChip backdrop={false} />
         </div>
@@ -355,25 +367,6 @@ export default function Home({ onSelectTask }) {
             What's today's plan?
           </div>
         </div>
-      </div>
-
-      <div style={{
-        maxWidth: 420, margin: '0 auto', width: '100%',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: SPACING.micro,
-        padding: `${SPACING.micro}px ${SPACING.compact}px 0`,
-      }}>
-        <span style={{ ...TYPE.eyebrow, fontSize: 11, color: 'rgba(241,250,238,0.4)' }}>{statusText}</span>
-        <button
-          onClick={() => setAccountOpen(true)}
-          aria-label="Account details"
-          style={{
-            background: 'none', border: '1px solid rgba(255,255,255,0.14)', borderRadius: RADII.pill,
-            cursor: 'pointer', width: 30, height: 30, flexShrink: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-        >
-          <AccountIcon color="rgba(241,250,238,0.55)" />
-        </button>
       </div>
 
       <div style={{ maxWidth: 420, margin: '0 auto', width: '100%', marginTop: SPACING.compact + 4 }}>
