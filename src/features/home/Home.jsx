@@ -224,7 +224,6 @@ function heroImageFor(task, subject) {
 // warm-up is framed. "Picked for today" is honest — Quick Fire's queue is
 // seeded per day and weakness-weighted, but not purely weak-topic based.
 const WARMUP_COPY = {
-  eyebrow: 'Today’s warm-up',
   title: '90s memory sprint',
   support: 'Picked for today · 2 min',
   cta: 'Start warm-up',
@@ -296,11 +295,6 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
         position: 'relative', zIndex: 1, minHeight: 300, padding: SPACING.standard,
         display: 'flex', flexDirection: 'column', alignItems: 'flex-start', boxSizing: 'border-box',
       }}>
-        {!allDone && isWarmup && (
-          <span style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: metaColor }}>
-            {WARMUP_COPY.eyebrow}
-          </span>
-        )}
         {!allDone && !isWarmup && subject && (
           <span style={{
             ...TYPE.button, color: GENERAL.teal,
