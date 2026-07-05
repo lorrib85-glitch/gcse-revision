@@ -103,7 +103,7 @@ export default function UnifiedQuestionScreen({
     if (kind !== 'correct') {
       return (
         <span aria-hidden="true" style={{
-          position: 'absolute', right: SPACING.compact, top: '50%', transform: 'translateY(-50%)',
+          position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
           color: GENERAL.feedbackIncorrect, fontSize: '1.3rem', fontWeight: 800, lineHeight: 1,
           animation: `uqs-mark-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
         }}>
@@ -114,23 +114,23 @@ export default function UnifiedQuestionScreen({
 
     return (
       <span aria-hidden="true" style={{
-        position: 'absolute', right: SPACING.compact, top: '50%', transform: 'translateY(-50%)',
-        width: SPACING.standard + SPACING.micro, height: SPACING.standard + SPACING.micro,
+        position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+        width: 30, height: 30,
       }}>
         <span style={{
-          position: 'absolute', inset: 0, borderRadius: RADII.pill,
+          position: 'absolute', inset: 0, borderRadius: '50%',
           background: `rgba(${rgb}, 0.4)`,
           animation: `uqs-ring-out ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
         }} />
         <span style={{
-          position: 'absolute', inset: 0, borderRadius: RADII.pill,
+          position: 'absolute', inset: 0, borderRadius: '50%',
           background: accent,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           animation: `uqs-mark-pop ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
         }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={GENERAL.backgroundApp} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#08090D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 13l4 4L19 7" style={{
-              strokeDasharray: SPACING.standard, strokeDashoffset: SPACING.standard,
+              strokeDasharray: 24, strokeDashoffset: 24,
               animation: `uqs-check-draw ${MOTION.duration.standard} ${MOTION.easing.standard} ${MOTION.duration.instant} forwards`,
             }} />
           </svg>
@@ -297,8 +297,8 @@ export default function UnifiedQuestionScreen({
                   textAlign: isTrueFalse ? 'center' : 'left',
                   background,
                   border,
-                  borderRadius: isTrueFalse ? RADII.pill : RADII.medium,
-                  padding: isTrueFalse ? `${SPACING.compact}px ${SPACING.standard}px` : `${SPACING.compact}px ${SPACING.section - SPACING.standard}px ${SPACING.compact}px ${SPACING.standard}px`,
+                  borderRadius: isTrueFalse ? RADII.pill : 14,
+                  padding: isTrueFalse ? `${SPACING.compact}px ${SPACING.standard}px` : '14px 48px 14px 18px',
                   cursor: disabled ? 'default' : 'pointer',
                   ...optionType,
                   color,
@@ -325,11 +325,11 @@ export default function UnifiedQuestionScreen({
             style={{
               marginTop: SPACING.compact,
               background: 'rgba(27,30,39,0.92)',
-              borderRadius: RADII.medium,
+              borderRadius: 14,
               borderLeft: `3px solid ${accent}`,
-              padding: `${SPACING.compact - 2}px ${SPACING.compact}px`,
+              padding: '14px 16px',
               display: 'flex',
-              gap: SPACING.compact - SPACING.micro / 2,
+              gap: 12,
               alignItems: 'flex-start',
               animation: `uqs-hint-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
             }}
@@ -349,7 +349,7 @@ export default function UnifiedQuestionScreen({
                   ...TYPE.metadata,
                   textTransform: 'uppercase',
                   color: accent,
-                  marginBottom: SPACING.micro,
+                  marginBottom: 8,
                 }}
               >
                 Try again
