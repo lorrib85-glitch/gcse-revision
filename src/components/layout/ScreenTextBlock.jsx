@@ -49,7 +49,7 @@ export default function ScreenTextBlock({
           style={{
             ...TYPE.displayCard,
             color: accent || toneStyle.color,
-            margin: hasBody ? '0 0 10px' : 0,
+            margin: hasBody ? `0 0 ${SCREEN_TEXT_LAYOUT.titleBodyGap}px` : 0,
             ...titleStyle,
           }}
         >
