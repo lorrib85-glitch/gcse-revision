@@ -3,10 +3,10 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 
-const REVEAL_START_MS = 180
-const PARAGRAPH_STAGGER_MS = 360
-const CTA_DELAY_MS = 620
-const TEXT_ANIMATION_MS = 560
+const REVEAL_START_MS = 220
+const PARAGRAPH_STAGGER_MS = 720
+const CTA_DELAY_MS = 760
+const TEXT_ANIMATION_MS = 620
 const OVERLAY_FADE_MS = 420
 const VIDEO_SAFETY_MS = 4000
 
