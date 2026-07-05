@@ -17,6 +17,7 @@ const MIGRATED_VALUES = [
   { hex: '#2A9D8F', token: 'GENERAL.teal' },
   { hex: '#E76F51', token: 'GENERAL.coral' },
   { hex: '#0D0D0D', token: 'GENERAL.neutral[900]' },
+  { hex: '#E0836B', token: 'GENERAL.coral' },
 ]
 
 const srcFiles = globSync('src/{components,features}/**/*.{jsx,js}', {

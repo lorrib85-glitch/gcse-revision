@@ -74,4 +74,18 @@ export const GENERAL = {
   // Canonical feedback/hint body text colour — matches the documented
   // `text-primary` token in PRODUCT_UI_CONSTITUTION.md.
   feedbackText:         '#F5F7FF',
+
+  // Hairline separators, faint borders and tint fills on dark surfaces —
+  // the approved white-alpha ladder for general pages. Pick the nearest
+  // step; do not invent new alpha values.
+  line: {
+    faint:  'rgba(255,255,255,0.06)',
+    soft:   'rgba(255,255,255,0.08)',
+    medium: 'rgba(255,255,255,0.10)',
+    strong: 'rgba(255,255,255,0.14)',
+  },
+  surfaceTint: 'rgba(255,255,255,0.04)',
+
+  // Full-screen scrim behind centred dialog/overlay cards.
+  scrim: 'rgba(3,10,11,0.86)',
 }

@@ -157,6 +157,14 @@ const _examQuestion = {
   letterSpacing: '-0.006em',
 }
 
+// Small raised seconds marker — the "s" in "90s memory sprint". Applied to a
+// <span> nested inside a display/title token; sizes relative to its parent.
+const _secondsMarker = {
+  fontSize: '0.58em',
+  verticalAlign: 'super',
+  lineHeight: 1,
+}
+
 const _examAnswer = {
   fontFamily: "'Sora', sans-serif",
   fontSize: 'clamp(15px, 4vw, 16px)',
@@ -187,6 +195,7 @@ export const TYPE = {
   quizHint: _quizHint,
   examQuestion: _examQuestion,
   examAnswer: _examAnswer,
+  secondsMarker: _secondsMarker,
 }
 
 export const HEADING_LAYOUT = {

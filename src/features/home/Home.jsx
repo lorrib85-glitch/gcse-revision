@@ -100,24 +100,16 @@ function HomeAtmosphere() {
 }
 
 // Local typographic treatment: renders a leading "90s" / "60s" pattern with
-// the "s" as a small raised seconds marker. Only matches a leading
-// number + "s" + space — normal words ending in "s" pass through untouched.
-// No global superscript/annotation token exists yet, so this stays local.
+// the "s" as a small raised seconds marker (TYPE.secondsMarker). Only matches
+// a leading number + "s" + space — normal words ending in "s" pass through
+// untouched.
 function CompactSecondsLabel({ text }) {
   const match = /^(\d+)(s)\s+(.*)$/.exec(text || '')
   if (!match) return text
   return (
     <>
       {match[1]}
-      <span
-        aria-label="seconds"
-        style={{
-          fontSize: '0.58em',
-          verticalAlign: 'super',
-          lineHeight: 1,
-          marginLeft: 1,
-        }}
-      >
+      <span aria-label="seconds" style={{ ...TYPE.secondsMarker, marginLeft: 1 }}>
         s
       </span>
       {' '}
@@ -159,7 +151,7 @@ function AccountOverlay({ onDismiss }) {
       style={{
         position: 'fixed', inset: 0, zIndex: 3000,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: 'rgba(3,10,11,0.86)',
+        background: GENERAL.scrim,
         backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
         padding: SPACING.standard,
       }}
@@ -168,7 +160,7 @@ function AccountOverlay({ onDismiss }) {
         onClick={e => e.stopPropagation()}
         style={{
           width: '100%', maxWidth: 340,
-          background: GENERAL.neutral[1], border: '1px solid rgba(255,255,255,0.08)',
+          background: GENERAL.neutral[1], border: `1px solid ${GENERAL.line.soft}`,
           borderRadius: RADII.large, padding: SPACING.standard,
           display: 'flex', flexDirection: 'column', gap: SPACING.micro,
         }}
@@ -181,9 +173,9 @@ function AccountOverlay({ onDismiss }) {
         {isGoogleUser && user?.email && (
           <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>{user.email}</div>
         )}
-        <div style={{ ...TYPE.bodySmall, color: 'rgba(241,250,238,0.4)', marginTop: SPACING.micro }}>{statusText}</div>
+        <div style={{ ...TYPE.bodySmall, color: `rgba(${hexToRgb(GENERAL.softWhite)},0.4)`, marginTop: SPACING.micro }}>{statusText}</div>
         {authError && !isGoogleUser && (
-          <div style={{ ...TYPE.eyebrow, fontSize: 11, color: '#E0836B' }}>{authError}</div>
+          <div style={{ ...TYPE.eyebrow, fontSize: 11, color: GENERAL.coral }}>{authError}</div>
         )}
         <button
           onClick={isGoogleUser ? signOut : linkGoogleAccount}
@@ -191,7 +183,7 @@ function AccountOverlay({ onDismiss }) {
           style={{
             marginTop: SPACING.compact, alignSelf: 'flex-start',
             background: 'none', border: 'none', cursor: loading ? 'default' : 'pointer',
-            ...TYPE.eyebrow, fontSize: 12, color: isGoogleUser ? 'rgba(241,250,238,0.5)' : GENERAL.teal,
+            ...TYPE.eyebrow, fontSize: 12, color: isGoogleUser ? `rgba(${hexToRgb(GENERAL.softWhite)},0.5)` : GENERAL.teal,
             textDecoration: 'underline', textUnderlineOffset: 3, padding: 4,
           }}
         >
@@ -207,15 +199,6 @@ function ClockIcon({ size = 13, color }) {
     <svg width={size} height={size} viewBox="0 0 22 22" fill="none" style={{ flexShrink: 0 }}>
       <circle cx="11" cy="11" r="8.5" stroke={color} strokeWidth="1.75" />
       <path d="M11 6.5V11l3 2" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-function BookIcon({ size = 24, color }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-      <path d="M12 6C10.2 4.4 7.2 4 4.5 4.4v14.2c2.7-.4 5.7 0 7.5 1.6 1.8-1.6 4.8-2 7.5-1.6V4.4C16.8 4 13.8 4.4 12 6z" />
-      <path d="M12 6v14.2" />
     </svg>
   )
 }
@@ -236,44 +219,39 @@ function heroImageFor(task, subject) {
   return SUBJECT_HERO_FALLBACKS[subject] ?? null
 }
 
-// Smallest local progress ring — no shared generic ring exists yet
-// (CircularTimer is a countdown timer, not reusable here without altering it).
-function TasksRing({ done, total }) {
-  const size = 56
-  const stroke = 5
-  const radius = (size - stroke) / 2
-  const circumference = 2 * Math.PI * radius
-  const pct = total ? Math.max(0, Math.min(1, done / total)) : 0
-  return (
-    <div style={{ position: 'relative', width: size, height: size }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ display: 'block', transform: 'rotate(-90deg)' }}>
-        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={stroke} />
-        <circle
-          cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={GENERAL.teal} strokeWidth={stroke} strokeLinecap="round"
-          strokeDasharray={circumference} strokeDashoffset={circumference * (1 - pct)}
-        />
-      </svg>
-      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ ...TYPE.titleMedium, color: GENERAL.softWhite }}>{done}/{total}</span>
-      </div>
-    </div>
-  )
+// Presentational copy for the daily warm-up. The plan data (todaysPlan.js)
+// stays canonical for scheduling and done-detection; Home owns how the
+// warm-up is framed. "Picked for today" is honest — Quick Fire's queue is
+// seeded per day and weakness-weighted, but not purely weak-topic based.
+const WARMUP_COPY = {
+  eyebrow: 'Today’s warm-up',
+  title: '90s memory sprint',
+  support: 'Picked for today · 2 min',
+  cta: 'Start warm-up',
 }
 
 // Dynamic hero banner — always renders the next incomplete plan item, or the
 // completed-day state once every task is done. Never hardcoded to one lesson.
 function HeroBanner({ item, subject, onStart, onReviewProgress }) {
   const allDone = !item
+  const isWarmup = item?.type === 'warmup'
   const image = allDone ? null : heroImageFor(item, subject)
-  const title = allDone ? 'Today’s plan complete' : item.title
-  const ctaLabel = allDone ? 'Review progress' : item.type === 'continue' ? 'Continue' : 'Start now'
+  const title = allDone ? 'Today’s plan complete' : isWarmup ? WARMUP_COPY.title : item.title
+  const ctaLabel = allDone ? 'Review progress'
+    : isWarmup ? WARMUP_COPY.cta
+    : item.type === 'continue' ? 'Continue' : 'Start now'
+  const onAction = allDone ? onReviewProgress : onStart
   const bgRgb = hexToRgb(GENERAL.neutral[900])
   const metaColor = `rgba(${hexToRgb(GENERAL.softWhite)},0.85)`
 
   return (
-    <div style={{
+    // Whole card is tappable; the button stays the visible affordance and the
+    // only keyboard/screen-reader stop (no tabIndex here — a second focusable
+    // wrapper would double the tab stops for the same action).
+    <div onClick={onAction} style={{
       position: 'relative', minHeight: 300, borderRadius: RADII.panel, overflow: 'hidden',
-      border: '1px solid rgba(255,255,255,0.11)', background: GENERAL.neutral[800],
+      border: `1px solid ${GENERAL.line.medium}`, background: GENERAL.neutral[800],
+      cursor: 'pointer',
     }}>
       {image && (
         <>
@@ -294,7 +272,12 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
         position: 'relative', zIndex: 1, minHeight: 300, padding: SPACING.standard,
         display: 'flex', flexDirection: 'column', alignItems: 'flex-start', boxSizing: 'border-box',
       }}>
-        {!allDone && subject && (
+        {!allDone && isWarmup && (
+          <span style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: metaColor }}>
+            {WARMUP_COPY.eyebrow}
+          </span>
+        )}
+        {!allDone && !isWarmup && subject && (
           <span style={{
             ...TYPE.button, color: GENERAL.teal,
             display: 'inline-flex', alignItems: 'center', height: 36, padding: `0 ${SPACING.compact}px`,
@@ -312,12 +295,18 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
         </div>
         {!allDone && (
           <div style={{ marginTop: SPACING.micro, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <ClockIcon size={15} color={metaColor} />
-            <span style={{ ...TYPE.bodyStrong, color: metaColor }}>{item.durationMinutes} min</span>
+            {isWarmup ? (
+              <span style={{ ...TYPE.bodyStrong, color: metaColor }}>{WARMUP_COPY.support}</span>
+            ) : (
+              <>
+                <ClockIcon size={15} color={metaColor} />
+                <span style={{ ...TYPE.bodyStrong, color: metaColor }}>{item.durationMinutes} min</span>
+              </>
+            )}
           </div>
         )}
         <button
-          onClick={allDone ? onReviewProgress : onStart}
+          onClick={(e) => { e.stopPropagation(); onAction() }}
           style={{
             marginTop: SPACING.standard, minWidth: 180,
             height: BUTTONS.continue.height, borderRadius: RADII.medium,
@@ -336,31 +325,17 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
   )
 }
 
-function StatCard({ children, centred = false }) {
-  return (
-    <div style={{
-      background: GENERAL.neutral[800], border: '1px solid rgba(255,255,255,0.10)',
-      borderRadius: RADII.large, padding: SPACING.compact, minHeight: 112,
-      display: 'flex', flexDirection: 'column', gap: SPACING.micro, boxSizing: 'border-box',
-      justifyContent: 'space-between', alignItems: centred ? 'center' : 'flex-start',
-      textAlign: centred ? 'center' : 'left',
-    }}>
-      {children}
-    </div>
-  )
-}
-
 function StatusPill({ state, label }) {
   const styles = {
     done: { background: `rgba(${GENERAL.tealRgb},0.12)`, border: '1px solid transparent', color: GENERAL.teal },
     next: { background: `rgba(${GENERAL.tealRgb},0.06)`, border: `1px solid rgba(${GENERAL.tealRgb},0.55)`, color: GENERAL.teal },
-    todo: { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: GENERAL.slate },
+    todo: { background: GENERAL.surfaceTint, border: `1px solid ${GENERAL.line.soft}`, color: GENERAL.slate },
   }
   return (
     <span style={{
-      ...TYPE.button, ...styles[state],
+      ...TYPE.label, ...styles[state],
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      height: 34, minWidth: 84, padding: `0 ${SPACING.compact}px`,
+      height: 28, minWidth: 64, padding: `0 ${SPACING.compact}px`,
       borderRadius: RADII.pill, flexShrink: 0, boxSizing: 'border-box',
     }}>
       {label}
@@ -372,14 +347,15 @@ function StatusPill({ state, label }) {
 // Rows stay tappable so any task can still be launched out of order,
 // preserving the old carousel's behaviour.
 function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
-  const subtitle = task.title !== task.kicker ? task.title : null
+  const title = task.type === 'warmup' ? WARMUP_COPY.title : task.title
+  const label = task.kicker !== title ? task.kicker : null
   const pillLabel = state === 'done' ? 'Done' : state === 'next' ? (task.type === 'continue' ? 'Continue' : 'Next') : 'To do'
   const circleStyles = {
     done: { background: GENERAL.teal, border: 'none' },
     next: { background: 'transparent', border: `1.5px solid ${GENERAL.teal}` },
     todo: { background: 'transparent', border: `1.5px solid rgba(${hexToRgb(GENERAL.slate)},0.45)` },
   }
-  const lineColor = (done) => (done ? `rgba(${GENERAL.tealRgb},0.8)` : 'rgba(255,255,255,0.08)')
+  const lineColor = (done) => (done ? `rgba(${GENERAL.tealRgb},0.8)` : GENERAL.line.soft)
 
   return (
     <button
@@ -411,24 +387,27 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
         {!isLast && <div style={{ width: 2, flex: 1, background: lineColor(!!task.doneToday) }} />}
       </div>
 
-      {/* Text + status pill */}
+      {/* Text + status pill — small kicker label above the task title, so
+          the title carries the row and labels read as waypoints */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: SPACING.micro,
         paddingTop: index > 0 ? SPACING.micro : 0,
-        paddingBottom: isLast ? 0 : SPACING.micro,
-        borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.06)',
+        paddingBottom: isLast ? 0 : SPACING.compact,
+        borderBottom: isLast ? 'none' : `1px solid ${GENERAL.line.faint}`,
         minWidth: 0,
       }}>
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ ...TYPE.titleMedium, color: GENERAL.softWhite, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.kicker}</div>
-          {subtitle && (
-            <div style={{ ...TYPE.bodySmall, color: state === 'next' ? GENERAL.teal : GENERAL.slate, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              <CompactSecondsLabel text={subtitle} />
+          {label && (
+            <div style={{ ...TYPE.label, color: state === 'next' ? GENERAL.teal : GENERAL.slate, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {label}
             </div>
           )}
+          <div style={{ ...TYPE.titleMedium, color: GENERAL.softWhite, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <CompactSecondsLabel text={title} />
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <ClockIcon color={GENERAL.slate} />
-            <span style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>{task.durationMinutes} min</span>
+            <ClockIcon size={12} color={GENERAL.slate} />
+            <span style={{ ...TYPE.caption, color: GENERAL.slate }}>{task.durationMinutes} min</span>
           </div>
         </div>
         <StatusPill state={state} label={pillLabel} />
@@ -482,14 +461,14 @@ export default function Home({ onSelectTask, onReviewProgress }) {
               onClick={() => setAccountOpen(true)}
               aria-label="Account details"
               style={{
-                background: 'none', border: '1px solid rgba(255,255,255,0.14)', borderRadius: RADII.pill,
+                background: 'none', border: `1px solid ${GENERAL.line.strong}`, borderRadius: RADII.pill,
                 cursor: 'pointer', width: 40, height: 40, flexShrink: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
               <AccountIcon color={GENERAL.teal} />
             </button>
-            <span style={{ ...TYPE.bodyStrong, color: 'rgba(241,250,238,0.7)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <span style={{ ...TYPE.bodyStrong, color: `rgba(${hexToRgb(GENERAL.softWhite)},0.7)`, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {firstName ? `Hi, ${firstName}.` : 'Hi.'}
             </span>
             <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: RADII.pill, background: GENERAL.teal, flexShrink: 0 }} />
@@ -507,35 +486,17 @@ export default function Home({ onSelectTask, onReviewProgress }) {
           />
         </div>
 
-        {/* ── Stat cards ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: SPACING.micro, marginTop: SPACING.standard }}>
-          <StatCard>
-            <ClockIcon size={22} color={GENERAL.teal} />
-            <div>
-              <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Planned</div>
-              <div style={{ ...TYPE.displayCard, color: GENERAL.softWhite, marginTop: 4, whiteSpace: 'nowrap' }}>{plannedMinutes} min</div>
-            </div>
-          </StatCard>
-          <StatCard>
-            <BookIcon size={22} color={GENERAL.teal} />
-            <div>
-              <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Subject</div>
-              <div style={{ ...TYPE.displayCard, color: GENERAL.softWhite, marginTop: 4, whiteSpace: 'nowrap', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>{focusSubject}</div>
-            </div>
-          </StatCard>
-          <StatCard centred>
-            <TasksRing done={completedCount} total={todaysPlan.length} />
-            <div style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>Tasks</div>
-          </StatCard>
+        {/* ── Day summary strip — quiet, one line, supports the hero ── */}
+        <div style={{
+          ...TYPE.bodySmall, color: GENERAL.slate, marginTop: SPACING.compact,
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+        }}>
+          {plannedMinutes} min planned · {focusSubject} · {completedCount}/{todaysPlan.length} done
         </div>
 
-        {/* ── Today's plan ── */}
-        <div style={{
-          marginTop: SPACING.standard, background: GENERAL.neutral[800],
-          border: '1px solid rgba(255,255,255,0.10)', borderRadius: RADII.panel,
-          padding: SPACING.standard,
-        }}>
-          <div style={{ ...TYPE.titleLarge, color: GENERAL.softWhite }}>Today’s plan</div>
+        {/* ── Today's plan — light path, no panel chrome ── */}
+        <div style={{ marginTop: SPACING.standard }}>
+          <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: GENERAL.slate }}>Today’s plan</div>
           <div style={{ marginTop: SPACING.compact }}>
             {todaysPlan.map((task, i) => (
               <PlannerRow

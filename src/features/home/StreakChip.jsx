@@ -14,19 +14,21 @@ export function StreakChip({ style = {}, backdrop = true, layout = 'stacked' }) 
   const prog   = safeGetProgress()
   const streak = prog.streak || 0
 
-  // Single-row variant for the Home utility row — flame + count in coral,
-  // "day streak" muted. Same data, different arrangement; the stacked
-  // default stays untouched for Subjects/Pulse/QuickFire/ExamMode.
+  // Single-row variant for the Home utility row — small coral flame, quiet
+  // count and muted caption, so the streak never competes with the hero CTA
+  // (coral stays reserved for the primary action). Same data, different
+  // arrangement; the stacked default stays untouched for
+  // Subjects/Pulse/QuickFire/ExamMode.
   if (layout === 'inline') {
     return (
       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, ...style }}>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill={GENERAL.coral} style={{ flexShrink: 0 }}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill={GENERAL.coral} style={{ flexShrink: 0 }}>
           <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
         </svg>
-        <span style={{ ...TYPE.bodyStrong, fontWeight: 700, color: GENERAL.coral }}>
+        <span style={{ ...TYPE.bodySmall, fontWeight: 600, color: GENERAL.softWhite }}>
           {streak > 0 ? streak : 0}
         </span>
-        <span style={{ ...TYPE.bodySmall, color: GENERAL.slate }}>day streak</span>
+        <span style={{ ...TYPE.caption, color: GENERAL.slate }}>day streak</span>
       </div>
     )
   }
