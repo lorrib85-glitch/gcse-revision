@@ -88,11 +88,7 @@ export default function ChapterHookScreen({
   const isLastBeat = !hasBeats || beatIdx >= revealBeats.length - 1
 
   const questionInset = SPACING.standard + SPACING.micro
-  const questionButtonBottom = SPACING.cinematic - SPACING.compact
   const questionButtonHeight = SPACING.cinematic - SPACING.micro
-  const questionButtonReserve = questionButtonBottom + questionButtonHeight + SPACING.standard
-  const questionButtonBottomStyle = `calc(${questionButtonBottom}px + env(safe-area-inset-bottom, 0px))`
-  const questionCopyBottomStyle = `calc(${questionButtonReserve}px + env(safe-area-inset-bottom, 0px))`
 
   const tokens = (() => {
     const words     = statement.split(/\s+/)
@@ -209,126 +205,128 @@ export default function ChapterHookScreen({
             SCREEN 1 — QUESTION
         ══════════════════════════════════════════════════════════════ */}
         {isQuestion && (
-          <>
+          <div style={{
+            position: 'relative', zIndex: 4, minHeight: '100dvh',
+            opacity: isExiting ? 0 : 1,
+            transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
+            pointerEvents: isExiting ? 'none' : 'auto',
+          }}>
+            <BackBtn onClick={onBack} />
+
             <div style={{
-              position: 'relative', zIndex: 4, minHeight: '100dvh',
-              opacity: isExiting ? 0 : 1,
-              transition: `opacity ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
-              pointerEvents: isExiting ? 'none' : 'auto',
+              position: 'absolute', top: 106, left: questionInset, right: questionInset,
+              ...TYPE.displayCard, fontSize: 18,
+              color: 'rgba(255,255,255,0.55)',
+              animation: 'chs-header-in 320ms ease 40ms both',
             }}>
-              <BackBtn onClick={onBack} />
-
-              <div style={{
-                position: 'absolute', top: 106, left: questionInset, right: questionInset,
-                ...TYPE.displayCard, fontSize: 18,
-                color: 'rgba(255,255,255,0.55)',
-                animation: 'chs-header-in 320ms ease 40ms both',
-              }}>
-                {chapterTitle}
-              </div>
-
-              <div style={{
-                position: 'absolute',
-                top: SPACING.section + SPACING.cinematic,
-                left: questionInset,
-                right: questionInset,
-                bottom: questionCopyBottomStyle,
-                display: 'flex',
-                alignItems: 'flex-end',
-              }}>
-                <Glow rgb={rgb} />
-                <div style={{
-                  position: 'relative',
-                  ...HEADING_LAYOUT.screenTitle,
-                  ...TYPE.displayHero, fontSize: 'clamp(28px, 8.6vw, 40px)',
-                  color: '#FFFFFF',
-                }}>
-                  {tokens.map(tok =>
-                    tok.space ? tok.text : (
-                      <span
-                        key={tok.key}
-                        style={{
-                          display: 'inline-block',
-                          color: tok.accent ? accent : 'inherit',
-                          animation: `chs-word 220ms ease ${260 + tok.wordIdx * 65}ms both`,
-                        }}
-                      >
-                        {tok.text}
-                      </span>
-                    )
-                  )}
-                </div>
-              </div>
-
+              {chapterTitle}
             </div>
 
             <div style={{
-              position: 'fixed', bottom: questionButtonBottomStyle, left: questionInset, right: questionInset,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              gap: SPACING.standard, zIndex: 10,
-              opacity: isExiting ? 0 : (btnsReady ? 1 : 0),
-              transition: `opacity ${isExiting ? 240 : 400}ms ease`,
-              pointerEvents: (phase !== 'question' || !btnsReady) ? 'none' : 'auto',
+              position: 'absolute',
+              top: `calc(50% - ${SPACING.standard}px)`,
+              left: questionInset,
+              right: questionInset,
+              transform: 'translateY(-50%)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-              <button
-                className="chs-btn"
-                onClick={() => choose(true)}
-                style={{
-                  flex: 1,
-                  minHeight: questionButtonHeight,
-                  background: tappedBtn === 'true'
-                    ? `rgba(${rgb}, 0.22)`
-                    : 'rgba(255,255,255,0.07)',
-                  border: tappedBtn === 'true'
-                    ? `1.5px solid rgba(${rgb}, 0.60)`
-                    : '1.5px solid rgba(255,255,255,0.22)',
-                  boxShadow: tappedBtn === 'true'
-                    ? `0 0 0 1px rgba(${rgb},0.25), 0 0 32px rgba(${rgb},0.55), 0 0 64px rgba(${rgb},0.28)`
-                    : 'none',
-                  backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
-                  borderRadius: RADII.pill,
-                  padding: `${SPACING.compact}px ${SPACING.standard}px`,
-                  cursor: 'pointer',
-                  ...TYPE.displaySection, fontSize: 24,
-                  color: 'rgba(255,255,255,0.88)',
-                  transform: tappedBtn === 'true' ? 'scale(1.10)' : 'scale(1)',
-                  opacity: tappedBtn === 'false' ? 0 : 1,
-                  transition: 'transform 300ms cubic-bezier(0.34,1.56,0.64,1), opacity 220ms ease, background 200ms ease, border-color 200ms ease, box-shadow 240ms ease',
-                  animation: shakeTarget === 'true' ? 'chs-shake 220ms ease' : 'none',
-                }}>
-                True
-              </button>
+              <Glow rgb={rgb} />
+              <div style={{
+                position: 'relative',
+                width: '100%',
+                ...HEADING_LAYOUT.screenTitle,
+                ...TYPE.displayHero, fontSize: 'clamp(28px, 8.6vw, 40px)',
+                color: '#FFFFFF',
+                textAlign: 'center',
+              }}>
+                {tokens.map(tok =>
+                  tok.space ? tok.text : (
+                    <span
+                      key={tok.key}
+                      style={{
+                        display: 'inline-block',
+                        color: tok.accent ? accent : 'inherit',
+                        animation: `chs-word 220ms ease ${260 + tok.wordIdx * 65}ms both`,
+                      }}
+                    >
+                      {tok.text}
+                    </span>
+                  )
+                )}
+              </div>
 
-              <button
-                className="chs-btn"
-                onClick={() => choose(false)}
-                style={{
-                  flex: 1,
-                  minHeight: questionButtonHeight,
-                  background: tappedBtn === 'false'
-                    ? `rgba(${rgb}, 0.22)`
-                    : 'rgba(255,255,255,0.07)',
-                  border: tappedBtn === 'false'
-                    ? `1.5px solid rgba(${rgb}, 0.60)`
-                    : '1.5px solid rgba(255,255,255,0.22)',
-                  boxShadow: tappedBtn === 'false'
-                    ? `0 0 0 1px rgba(${rgb},0.25), 0 0 32px rgba(${rgb},0.55), 0 0 64px rgba(${rgb},0.28)`
-                    : 'none',
-                  backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
-                  borderRadius: RADII.pill,
-                  padding: `${SPACING.compact}px ${SPACING.standard}px`,
-                  cursor: 'pointer',
-                  ...TYPE.displaySection, fontSize: 24,
-                  color: 'rgba(255,255,255,0.88)',
-                  transform: tappedBtn === 'false' ? 'scale(1.10)' : 'scale(1)',
-                  opacity: tappedBtn === 'true' ? 0 : 1,
-                  transition: 'transform 300ms cubic-bezier(0.34,1.56,0.64,1), opacity 220ms ease, background 200ms ease, border-color 200ms ease, box-shadow 240ms ease',
-                  animation: shakeTarget === 'false' ? 'chs-shake 220ms ease' : 'none',
-                }}>
-                False
-              </button>
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                gap: SPACING.standard, zIndex: 10,
+                width: '100%',
+                marginTop: SPACING.separation,
+                opacity: isExiting ? 0 : (btnsReady ? 1 : 0),
+                transition: `opacity ${isExiting ? 240 : 400}ms ease`,
+                pointerEvents: (phase !== 'question' || !btnsReady) ? 'none' : 'auto',
+              }}>
+                <button
+                  className="chs-btn"
+                  onClick={() => choose(true)}
+                  style={{
+                    flex: 1,
+                    minHeight: questionButtonHeight,
+                    background: tappedBtn === 'true'
+                      ? `rgba(${rgb}, 0.22)`
+                      : 'rgba(255,255,255,0.07)',
+                    border: tappedBtn === 'true'
+                      ? `1.5px solid rgba(${rgb}, 0.60)`
+                      : '1.5px solid rgba(255,255,255,0.22)',
+                    boxShadow: tappedBtn === 'true'
+                      ? `0 0 0 1px rgba(${rgb},0.25), 0 0 32px rgba(${rgb},0.55), 0 0 64px rgba(${rgb},0.28)`
+                      : 'none',
+                    backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
+                    borderRadius: RADII.pill,
+                    padding: `${SPACING.compact}px ${SPACING.standard}px`,
+                    cursor: 'pointer',
+                    ...TYPE.displaySection, fontSize: 24,
+                    color: 'rgba(255,255,255,0.88)',
+                    transform: tappedBtn === 'true' ? 'scale(1.10)' : 'scale(1)',
+                    opacity: tappedBtn === 'false' ? 0 : 1,
+                    transition: 'transform 300ms cubic-bezier(0.34,1.56,0.64,1), opacity 220ms ease, background 200ms ease, border-color 200ms ease, box-shadow 240ms ease',
+                    animation: shakeTarget === 'true' ? 'chs-shake 220ms ease' : 'none',
+                  }}>
+                  True
+                </button>
+
+                <button
+                  className="chs-btn"
+                  onClick={() => choose(false)}
+                  style={{
+                    flex: 1,
+                    minHeight: questionButtonHeight,
+                    background: tappedBtn === 'false'
+                      ? `rgba(${rgb}, 0.22)`
+                      : 'rgba(255,255,255,0.07)',
+                    border: tappedBtn === 'false'
+                      ? `1.5px solid rgba(${rgb}, 0.60)`
+                      : '1.5px solid rgba(255,255,255,0.22)',
+                    boxShadow: tappedBtn === 'false'
+                      ? `0 0 0 1px rgba(${rgb},0.25), 0 0 32px rgba(${rgb},0.55), 0 0 64px rgba(${rgb},0.28)`
+                      : 'none',
+                    backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
+                    borderRadius: RADII.pill,
+                    padding: `${SPACING.compact}px ${SPACING.standard}px`,
+                    cursor: 'pointer',
+                    ...TYPE.displaySection, fontSize: 24,
+                    color: 'rgba(255,255,255,0.88)',
+                    transform: tappedBtn === 'false' ? 'scale(1.10)' : 'scale(1)',
+                    opacity: tappedBtn === 'true' ? 0 : 1,
+                    transition: 'transform 300ms cubic-bezier(0.34,1.56,0.64,1), opacity 220ms ease, background 200ms ease, border-color 200ms ease, box-shadow 240ms ease',
+                    animation: shakeTarget === 'false' ? 'chs-shake 220ms ease' : 'none',
+                  }}>
+                  False
+                </button>
+              </div>
             </div>
-          </>
+          </div>
         )}
 
         {/* ══════════════════════════════════════════════════════════════
