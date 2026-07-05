@@ -158,52 +158,49 @@ function buildWeekendPaperCard() {
 // Saturday/Sunday.
 export function buildTodaysPlan() {
   const plan = [buildWarmupCard()]
-  let runningTotal = 2
   let slot2, slot3
-  const practiceSlots = []
+
+  // adaptiveExamQuestions() always builds a fixed 10-question round — 15
+  // minutes is an honest estimate for any practice card, not a
+  // budget-derived guess the actual session ignores.
+  const PRACTICE_MINUTES = 15
 
   const revisitWin = pickRevisitCandidate()
 
   if (revisitWin) {
     slot2 = buildRevisitCard(revisitWin)
-    runningTotal += 5
 
     const continueMod = getInProgressModule()
     if (continueMod) {
       slot3 = buildContinueCard(continueMod)
-      runningTotal += slot3.durationMinutes
     } else {
       const weakest = getWeakestSubject()
-      practiceSlots.push({ which: 'slot3', subject: weakest?.subject || 'Random', weakInfo: weakest })
+      slot3 = buildPracticeCard(weakest?.subject || 'Random', PRACTICE_MINUTES, weakest)
     }
   } else {
     const continueMod = getInProgressModule()
     if (continueMod) {
       slot2 = buildContinueCard(continueMod)
-      runningTotal += slot2.durationMinutes
 
       const weakest = getWeakestSubject()
-      practiceSlots.push({ which: 'slot3', subject: weakest?.subject || 'Random', weakInfo: weakest })
+      slot3 = buildPracticeCard(weakest?.subject || 'Random', PRACTICE_MINUTES, weakest)
     } else {
       const weakest = getWeakestSubject()
-      const subject2 = weakest?.subject || 'Random'
-      practiceSlots.push({ which: 'slot2', subject: subject2, weakInfo: weakest })
+      if (!weakest) {
+        // Brand-new learner — no weak-topic data yet to pick a distinct
+        // slot 3 subject from. Land on a specific compulsory subject instead
+        // of a second identical "Mixed practice" card (the redesign spec
+        // requires slots 2 and 3 not to land on the same subject/type).
+        slot2 = buildPracticeCard('Random', PRACTICE_MINUTES, null)
+        slot3 = buildPracticeCard('Maths', PRACTICE_MINUTES, null)
+        slot3.reason = 'A first look at GCSE Maths questions.'
+      } else {
+        slot2 = buildPracticeCard(weakest.subject, PRACTICE_MINUTES, weakest)
 
-      const weakest2 = getWeakestSubject(subject2)
-      practiceSlots.push({ which: 'slot3', subject: weakest2?.subject || 'Random', weakInfo: weakest2 })
+        const weakest2 = getWeakestSubject(weakest.subject)
+        slot3 = buildPracticeCard(weakest2?.subject || 'Random', PRACTICE_MINUTES, weakest2)
+      }
     }
-  }
-
-  if (practiceSlots.length) {
-    const remainingBudget = Math.max(0, 60 - runningTotal)
-    const perCard = remainingBudget / practiceSlots.length
-    const questionCount = Math.min(15, Math.max(6, Math.round(perCard / 1.5)))
-    const durationMinutes = Math.round(questionCount * 1.5)
-    practiceSlots.forEach(({ which, subject, weakInfo }) => {
-      const card = buildPracticeCard(subject, durationMinutes, weakInfo)
-      if (which === 'slot2') slot2 = card
-      else slot3 = card
-    })
   }
 
   plan.push(slot2, slot3)

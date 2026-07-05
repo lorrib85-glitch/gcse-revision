@@ -312,6 +312,7 @@ export default function App() {
   const [activeModule,        setActiveModule]        = useState(null)
   const [chapterCompleteData, setChapterCompleteData] = useState(null)
   const [examAutoStart,       setExamAutoStart]       = useState(null)
+  const [quickfireOrigin,     setQuickfireOrigin]     = useState('pulse')
 
   function handleChapterComplete(completedModule) {
     setChapterCompleteData(buildChapterCompletePayload(completedModule))
@@ -363,6 +364,7 @@ export default function App() {
     const dest = resolveTaskDestination(task)
     if (!dest) return
     if (dest.kind === 'quickfire') {
+      setQuickfireOrigin('home')
       setTab('quickfire')
     } else if (dest.kind === 'module') {
       openModule(dest.mod, dest.screenIndex)
@@ -468,8 +470,8 @@ export default function App() {
       <div key={tab} className="tab-content">
         {tab === 'home'     && <Home onSelectTask={handleTodaysPlanSelect} />}
         {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
-        {tab === 'pulse'    && <PulseTab onStartQuickFire={() => setTab('quickfire')} best={readQfBest()} />}
-        {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab('pulse')} />}
+        {tab === 'pulse'    && <PulseTab onStartQuickFire={() => { setQuickfireOrigin('pulse'); setTab('quickfire') }} best={readQfBest()} />}
+        {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab(quickfireOrigin)} />}
         {tab === 'exams'    && <ExamPractice tab={tab} onOpenModule={openModule} onOpenPulse={() => setTab('pulse')} examAutoStart={examAutoStart} setExamAutoStart={setExamAutoStart} />}
       </div>
       <BottomNav tab={tab} setTab={setTab} />
