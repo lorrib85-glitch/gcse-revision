@@ -5,6 +5,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import { useAuth } from '../../auth/AuthContext.jsx'
+import { getProgressStatusText } from '../../auth/progressStatus.js'
 import { buildTodaysPlan } from '../../todaysPlan.js'
 import { StreakChip } from './StreakChip.jsx'
 import { hexToRgb } from '../../constants/subjects.js'
@@ -232,8 +233,10 @@ function TaskCarousel({ tasks, onSelect }) {
 }
 
 export default function Home({ onSelectTask }) {
-  const { user } = useAuth()
+  const { user, linkGoogleAccount, signOut, loading, authError } = useAuth()
   const userName = user?.name || 'you'
+  const statusText = getProgressStatusText(user)
+  const isGoogleUser = user?.provider === 'google'
 
   const todaysPlan = buildTodaysPlan()
   const streak = safeGetStreak()
@@ -267,6 +270,34 @@ export default function Home({ onSelectTask }) {
           </div>
         </div>
       </div>
+
+      <div style={{
+        maxWidth: 420, margin: '0 auto', width: '100%',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: SPACING.micro,
+        padding: `${SPACING.micro}px ${SPACING.compact}px 0`,
+      }}>
+        <span style={{ ...TYPE.eyebrow, fontSize: 11, color: 'rgba(241,250,238,0.4)' }}>{statusText}</span>
+        <button
+          onClick={isGoogleUser ? signOut : linkGoogleAccount}
+          disabled={loading}
+          style={{
+            background: 'none', border: 'none', cursor: loading ? 'default' : 'pointer',
+            ...TYPE.eyebrow, fontSize: 11, color: isGoogleUser ? 'rgba(241,250,238,0.4)' : GENERAL.teal,
+            textDecoration: 'underline', textUnderlineOffset: 3, padding: 4, flexShrink: 0,
+          }}
+        >
+          {loading ? 'Signing in…' : isGoogleUser ? 'Sign out' : 'Sign in with Google'}
+        </button>
+      </div>
+
+      {authError && !isGoogleUser && (
+        <div style={{
+          maxWidth: 420, margin: '0 auto', width: '100%',
+          padding: `0 ${SPACING.compact}px`,
+        }}>
+          <div style={{ ...TYPE.eyebrow, fontSize: 11, color: '#E0836B', marginTop: 4 }}>{authError}</div>
+        </div>
+      )}
 
       <div style={{ maxWidth: 420, margin: '0 auto', width: '100%', marginTop: SPACING.compact + 4 }}>
         <TaskCarousel tasks={todaysPlan} onSelect={onSelectTask} />

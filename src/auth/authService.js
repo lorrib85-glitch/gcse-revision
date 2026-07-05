@@ -1,17 +1,22 @@
 // Auth service layer — all real auth changes happen only in this file.
-// To switch to Firebase: replace signInWithGoogle() body only.
-//
-// Firebase drop-in (when ready):
-//   import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
-//   const auth = getAuth()
-//   export async function signInWithGoogle() {
-//     return signInWithPopup(auth, new GoogleAuthProvider())
-//   }
+// Real Google sign-in via Firebase Auth; falls back to a clear error
+// (never a silent no-op) when Firebase isn't configured for this environment.
+
+import { signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth'
+import { auth, googleProvider, firebaseEnabled } from './firebaseClient.js'
 
 export async function signInWithGoogle() {
-  // Placeholder — simulates a successful Google OAuth response (~700ms)
-  await new Promise(r => setTimeout(r, 700))
-  return { uid: 'mock_' + Date.now() }
+  if (!firebaseEnabled) {
+    throw new Error('Google sign-in is not configured for this environment.')
+  }
+  const result = await signInWithPopup(auth, googleProvider)
+  const { uid, email, displayName, photoURL } = result.user
+  return { uid, email, displayName, photoURL }
+}
+
+export async function signOutGoogle() {
+  if (!firebaseEnabled) return
+  try { await firebaseSignOut(auth) } catch { /* best-effort — local state clears regardless */ }
 }
 
 export function getStoredUser() {

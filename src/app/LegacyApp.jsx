@@ -95,7 +95,7 @@ async function loadModuleContent(mod) {
 // ─── Login screen ─────────────────────────────────────────────────────────────
 
 function LoginScreen() {
-  const { signInWithGoogle, loading } = useAuth()
+  const { signInWithGoogle, continueAsGuest, loading, authError } = useAuth()
 
   return (
     <div style={{
@@ -161,6 +161,34 @@ function LoginScreen() {
         {loading ? 'Signing in…' : 'Continue with Google'}
       </button>
 
+      {authError && (
+        <div style={{
+          ...TYPE.body, fontSize: 13, color: '#E0836B',
+          textAlign: 'center', marginTop: 14, maxWidth: 340,
+        }}>
+          {authError}
+        </div>
+      )}
+
+      <button
+        onClick={continueAsGuest}
+        disabled={loading}
+        style={{
+          background: 'none', border: 'none', cursor: loading ? 'default' : 'pointer',
+          ...TYPE.body, fontSize: 14, color: '#7A7670',
+          marginTop: 18, padding: 8, textDecoration: 'underline', textUnderlineOffset: 3,
+        }}
+      >
+        Continue without Google
+      </button>
+      <div style={{
+        ...TYPE.eyebrow,
+        fontSize: 11, color: '#3A3835', marginTop: 6,
+        textAlign: 'center', maxWidth: 300,
+      }}>
+        Without Google, progress only saves on this device
+      </div>
+
       <div style={{
         ...TYPE.eyebrow,
         fontSize: 11, color: '#3A3835', marginTop: 18, marginBottom: 'max(32px, env(safe-area-inset-bottom))',
@@ -176,8 +204,8 @@ function LoginScreen() {
 // ─── Onboarding — name entry ─────────────────────────────────────────────────
 
 function OnboardingScreen() {
-  const { completeOnboarding } = useAuth()
-  const [name, setName] = useState('')
+  const { completeOnboarding, googleProfile } = useAuth()
+  const [name, setName] = useState(() => googleProfile?.displayName || '')
   const valid = name.trim().length >= 2
   const inputRef = useRef(null)
 
@@ -276,7 +304,7 @@ function OnboardingScreen() {
 // ─── App ─────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const { user, pendingAuth, signOut } = useAuth()
+  const { user, pendingAuth } = useAuth()
   const [showSplash, setShowSplash]   = useState(true)
   const [tab, setTab]                 = useState('home')
   const [view, setView]               = useState(null)   // 'module' | 'chapter-complete' — overlays
