@@ -224,7 +224,7 @@ export default function ChapterHookScreen({
 
             <div style={{
               position: 'absolute',
-              top: `calc(50% - ${SPACING.standard}px)`,
+              top: `calc(50% + ${SPACING.compact}px)`,
               left: questionInset,
               right: questionInset,
               transform: 'translateY(-50%)',
