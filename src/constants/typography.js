@@ -207,4 +207,5 @@ export const SCREEN_TEXT_LAYOUT = {
   mobileInset: 16,
   blockGap: 16,
   titleOffsetTop: 20,
+  titleBodyGap: 16,
 }
