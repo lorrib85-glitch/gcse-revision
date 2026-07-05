@@ -3,6 +3,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { GENERAL } from '../../constants/generalTheme.js'
+import { SPACING } from '../../constants/spacing.js'
 import BackButton from '../core/BackButton.jsx'
 // CinematicShell used here because all inner layers are position: fixed (they escape any
 // containing block) and the screen must cover the full viewport including under system chrome;
@@ -85,6 +86,13 @@ export default function ChapterHookScreen({
   const hasBeats   = Array.isArray(revealBeats) && revealBeats.length > 0
   const [beatIdx,  setBeatIdx]  = useState(0)
   const isLastBeat = !hasBeats || beatIdx >= revealBeats.length - 1
+
+  const questionInset = SPACING.standard + SPACING.micro
+  const questionButtonBottom = SPACING.cinematic - SPACING.compact
+  const questionButtonHeight = SPACING.cinematic - SPACING.micro
+  const questionButtonReserve = questionButtonBottom + questionButtonHeight + SPACING.standard
+  const questionButtonBottomStyle = `calc(${questionButtonBottom}px + env(safe-area-inset-bottom, 0px))`
+  const questionCopyBottomStyle = `calc(${questionButtonReserve}px + env(safe-area-inset-bottom, 0px))`
 
   const tokens = (() => {
     const words     = statement.split(/\s+/)
@@ -211,7 +219,7 @@ export default function ChapterHookScreen({
               <BackBtn onClick={onBack} />
 
               <div style={{
-                position: 'absolute', top: 106, left: 28, right: 36,
+                position: 'absolute', top: 106, left: questionInset, right: questionInset,
                 ...TYPE.displayCard, fontSize: 18,
                 color: 'rgba(255,255,255,0.55)',
                 animation: 'chs-header-in 320ms ease 40ms both',
@@ -219,12 +227,20 @@ export default function ChapterHookScreen({
                 {chapterTitle}
               </div>
 
-              <div style={{ position: 'absolute', top: '34%', left: 28, right: 28 }}>
+              <div style={{
+                position: 'absolute',
+                top: SPACING.section + SPACING.cinematic,
+                left: questionInset,
+                right: questionInset,
+                bottom: questionCopyBottomStyle,
+                display: 'flex',
+                alignItems: 'flex-end',
+              }}>
                 <Glow rgb={rgb} />
                 <div style={{
                   position: 'relative',
                   ...HEADING_LAYOUT.screenTitle,
-                  ...TYPE.displayHero, fontSize: 'clamp(28px, 9vw, 40px)',
+                  ...TYPE.displayHero, fontSize: 'clamp(28px, 8.6vw, 40px)',
                   color: '#FFFFFF',
                 }}>
                   {tokens.map(tok =>
@@ -247,9 +263,9 @@ export default function ChapterHookScreen({
             </div>
 
             <div style={{
-              position: 'fixed', bottom: 56, left: 0, right: 0,
+              position: 'fixed', bottom: questionButtonBottomStyle, left: questionInset, right: questionInset,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              gap: 20, zIndex: 10,
+              gap: SPACING.standard, zIndex: 10,
               opacity: isExiting ? 0 : (btnsReady ? 1 : 0),
               transition: `opacity ${isExiting ? 240 : 400}ms ease`,
               pointerEvents: (phase !== 'question' || !btnsReady) ? 'none' : 'auto',
@@ -258,6 +274,8 @@ export default function ChapterHookScreen({
                 className="chs-btn"
                 onClick={() => choose(true)}
                 style={{
+                  flex: 1,
+                  minHeight: questionButtonHeight,
                   background: tappedBtn === 'true'
                     ? `rgba(${rgb}, 0.22)`
                     : 'rgba(255,255,255,0.07)',
@@ -269,7 +287,7 @@ export default function ChapterHookScreen({
                     : 'none',
                   backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
                   borderRadius: RADII.pill,
-                  padding: '14px 36px',
+                  padding: `${SPACING.compact}px ${SPACING.standard}px`,
                   cursor: 'pointer',
                   ...TYPE.displaySection, fontSize: 24,
                   color: 'rgba(255,255,255,0.88)',
@@ -285,6 +303,8 @@ export default function ChapterHookScreen({
                 className="chs-btn"
                 onClick={() => choose(false)}
                 style={{
+                  flex: 1,
+                  minHeight: questionButtonHeight,
                   background: tappedBtn === 'false'
                     ? `rgba(${rgb}, 0.22)`
                     : 'rgba(255,255,255,0.07)',
@@ -296,7 +316,7 @@ export default function ChapterHookScreen({
                     : 'none',
                   backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
                   borderRadius: RADII.pill,
-                  padding: '14px 36px',
+                  padding: `${SPACING.compact}px ${SPACING.standard}px`,
                   cursor: 'pointer',
                   ...TYPE.displaySection, fontSize: 24,
                   color: 'rgba(255,255,255,0.88)',
