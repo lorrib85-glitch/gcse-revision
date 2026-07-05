@@ -8,6 +8,7 @@ import { logWrongAnswer, logCorrectAnswer, getWeakTopics } from '../../../unifie
 import { QUICK_QUIZ_QUESTIONS } from '../../../data/quickQuizData.js'
 import { quickFireFromBank } from '../logic/convertBankQuestion.js'
 import { qfQuestionId } from '../logic/questionId.js'
+import { selectQuickFireQueue } from '../logic/quickFireSelector.js'
 import { ALL_MODULE_QUICKFIRE_QUESTIONS } from '../../../data/questionBanks/questionRegistry.js'
 import { recordQuestionResult } from '../logic/masteryRecorder.js'
 import AnimatedNumber from '../../../components/core/AnimatedNumber.jsx'
@@ -150,15 +151,6 @@ function rankedQuickFireSubjects(memory, roundStats) {
     .sort((a, b) => b.answered - a.answered)
 }
 
-function confidencePriorityForModule(moduleId) {
-  if (!moduleId) return 0
-  const rating = getAllConfidenceRatings().find(item => item.moduleId === moduleId)
-  if (!rating) return 0
-  if (rating.confidence === 'confused') return 4
-  if (rating.confidence === 'clicking') return 2
-  return 0
-}
-
 function withShuffledQfOptions(q) {
   const indexed = q.options.map((text, i) => ({ text, isCorrect: i === q.correct }))
   const shuffled = shuffle(indexed)
@@ -166,23 +158,12 @@ function withShuffledQfOptions(q) {
 }
 
 function prioritizedQuickFireQuestions() {
-  const memory = readQuickFireMemory()
-  const qHist = readQfQuestionHistory()
-  const shuffled = [...QUICK_FIRE_QUESTIONS].sort(() => Math.random() - 0.5)
-  return shuffled
-    .map(question => {
-      const prevResult = qHist[qfQuestionId(question)]?.lastResult
-      const subjectBucket = memory.subjects?.[question.subject]
-      const topicBucket = memory.topics?.[question.subject + '::' + question.topic]
-      const subjectWeakness = subjectBucket?.answered ? Math.max(0, 70 - bucketAccuracy(subjectBucket)) / 10 : 0
-      const topicWeakness = topicBucket?.answered ? Math.max(0, 75 - bucketAccuracy(topicBucket)) / 8 : 0
-      const confidenceBoost = confidencePriorityForModule(question.moduleId)
-      const wrongBoost = prevResult === 'incorrect' ? 3.5 : 0
-      const correctPenalty = prevResult === 'correct' ? -1.0 : 0
-      return { question, score: subjectWeakness + topicWeakness + confidenceBoost + wrongBoost + correctPenalty }
-    })
-    .sort((a, b) => b.score - a.score)
-    .map(item => withShuffledQfOptions(item.question))
+  return selectQuickFireQueue({
+    questions: QUICK_FIRE_QUESTIONS,
+    memory: readQuickFireMemory(),
+    questionHistory: readQfQuestionHistory(),
+    confidenceRatings: getAllConfidenceRatings(),
+  }).map(withShuffledQfOptions)
 }
 
 function pickQuickFireRecommendation(memory, roundStats) {
@@ -221,7 +202,7 @@ function updateQfQuestionHistory(q, isCorrect) {
   if (!id) return
   const hist = readQfQuestionHistory()
   const prev = hist[id] || { attempts: 0, correct: 0, lastResult: null }
-  hist[id] = { attempts: prev.attempts + 1, correct: prev.correct + (isCorrect ? 1 : 0), lastResult: isCorrect ? 'correct' : 'incorrect' }
+  hist[id] = { attempts: prev.attempts + 1, correct: prev.correct + (isCorrect ? 1 : 0), lastResult: isCorrect ? 'correct' : 'incorrect', lastAt: Date.now() }
   try { localStorage.setItem(QF_QUESTION_HISTORY_KEY, JSON.stringify(hist)) } catch {}
 }
 
@@ -443,14 +424,16 @@ export function QuickFireMode({ onExit }) {
           setQfConsecutiveWrong(newConsecutive)
           if (newConsecutive >= 3) {
             setQfConsecutiveWrong(0)
-            const revisitCandidate = quickFireQuestionSet.slice(qIdx + 2).find(qItem => wasQfPrevWrong(qItem))
-            if (revisitCandidate) {
-              setQuickFireQuestionSet(prev => {
-                const next = [...prev]
-                next.splice(qIdx + 1, 0, { ...revisitCandidate, _retryPrevWrong: true })
-                return next
-              })
-            }
+            // Move (not copy) an upcoming previously-wrong question to the
+            // front — the round queue never contains the same question twice.
+            setQuickFireQuestionSet(prev => {
+              const fromIdx = prev.findIndex((qItem, i) => i >= qIdx + 2 && wasQfPrevWrong(qItem))
+              if (fromIdx === -1) return prev
+              const next = [...prev]
+              const [revisit] = next.splice(fromIdx, 1)
+              next.splice(qIdx + 1, 0, { ...revisit, _retryPrevWrong: true })
+              return next
+            })
           }
         }
       }}
