@@ -514,5 +514,6 @@ A small rotating content bank (same pattern as `src/data/guidedAnswerCoach.js`),
 - Reuses existing read APIs rather than duplicating logic: `src/data/masteryEngine/insights.js`, `src/unifiedWeaknessTracker.js`, `src/progress.js`, `src/features/planner/dailyPlanner.js`.
 - New rotating content bank, e.g. `src/features/parentView/data/parentTips.js`, following the `src/data/guidedAnswerCoach.js` content-bank pattern.
 - New consent/sharing-preference persistence extending the `src/lib/storage.js` boundary (e.g. a `riseParentSharingPrefs` key) rather than a new ad-hoc storage mechanism.
+- Local storage may be used only for prototype/mock-mode preference simulation. Real parent sharing preferences must live with the account-linking backend so consent applies across devices and sessions.
 - Depends on a not-yet-built account-linking capability in `src/auth/` (current `authService.js` is a placeholder pending real Firebase/backend integration).
 - If built, add `docs/system/PARENT_VIEW_ARCHITECTURE.md` as a locked architecture reference, following the pattern of `HISTORY_MODULE_ARCHITECTURE.md` / `SCIENCE_MODULE_BLUEPRINT.md`.
