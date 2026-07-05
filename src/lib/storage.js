@@ -36,3 +36,19 @@ export function getArray(key) {
 export function getObject(key) {
   return getJson(key, {})
 }
+
+// All stored key names, optionally filtered by prefix — lets callers (e.g.
+// progress sync) discover dynamic keys like gcse_module_<id> without
+// touching localStorage directly.
+export function listKeys(prefix = '') {
+  try {
+    const keys = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key !== null && key.startsWith(prefix)) keys.push(key)
+    }
+    return keys
+  } catch {
+    return []
+  }
+}

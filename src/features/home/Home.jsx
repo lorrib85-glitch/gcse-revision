@@ -233,9 +233,9 @@ function TaskCarousel({ tasks, onSelect }) {
 }
 
 export default function Home({ onSelectTask }) {
-  const { user, linkGoogleAccount, signOut, loading, authError } = useAuth()
+  const { user, linkGoogleAccount, signOut, loading, authError, syncStatus } = useAuth()
   const userName = user?.name || 'you'
-  const statusText = getProgressStatusText(user)
+  const statusText = getProgressStatusText(user, syncStatus)
   const isGoogleUser = user?.provider === 'google'
 
   const todaysPlan = buildTodaysPlan()

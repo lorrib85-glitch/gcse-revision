@@ -17,5 +17,6 @@ export const firebaseEnabled = Boolean(
   firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId
 )
 
-export const auth = firebaseEnabled ? getAuth(initializeApp(firebaseConfig)) : null
+export const app = firebaseEnabled ? initializeApp(firebaseConfig) : null
+export const auth = firebaseEnabled ? getAuth(app) : null
 export const googleProvider = firebaseEnabled ? new GoogleAuthProvider() : null

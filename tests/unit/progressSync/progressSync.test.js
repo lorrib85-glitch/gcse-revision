@@ -1,0 +1,207 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+
+// In-memory store standing in for the storage.js persistence boundary.
+let store = {}
+
+vi.mock('../../../src/lib/storage.js', () => ({
+  getJson: vi.fn((key, fallback) => (key in store ? store[key] : fallback)),
+  setJson: vi.fn((key, value) => { store[key] = value }),
+  removeKey: vi.fn((key) => { delete store[key] }),
+  getArray: vi.fn((key) => (key in store ? store[key] : [])),
+  getObject: vi.fn((key) => (key in store ? store[key] : {})),
+  listKeys: vi.fn((prefix = '') => Object.keys(store).filter(k => k.startsWith(prefix))),
+}))
+
+vi.mock('../../../src/auth/firebaseClient.js', () => ({
+  firebaseEnabled: true,
+  app: {},
+}))
+
+// Mock Firestore SDK — captures the doc path segments and read/write payloads.
+const firestoreCalls = { docPaths: [], setDocs: [] }
+let cloudDoc = null
+
+vi.mock('firebase/firestore', () => ({
+  getFirestore: vi.fn(() => ({})),
+  doc: vi.fn((db, ...segments) => {
+    firestoreCalls.docPaths.push(segments)
+    return { segments }
+  }),
+  getDoc: vi.fn(async () => ({
+    exists: () => cloudDoc !== null,
+    data: () => cloudDoc,
+  })),
+  setDoc: vi.fn(async (ref, value) => {
+    firestoreCalls.setDocs.push({ ref, value })
+    cloudDoc = value
+  }),
+}))
+
+const {
+  collectLocalProgressSnapshot,
+  applyProgressSnapshot,
+  decideSyncAction,
+  syncProgressForUser,
+  backupProgressForUser,
+  STATIC_PROGRESS_KEYS,
+  SYNC_META_KEY,
+} = await import('../../../src/data/progressSync/progressSync.js')
+
+const GOOGLE_USER = { loggedIn: true, provider: 'google', uid: 'uid-1', name: 'Sam' }
+const GUEST_USER = { loggedIn: true, provider: 'guest', name: 'Sam' }
+
+function seedMeaningfulLocal() {
+  store['riseUser'] = { loggedIn: true, provider: 'google', uid: 'uid-1', name: 'Sam' }
+  store['gcse_scores'] = [{ date: '2026-07-01', subject: 'History', pct: 72 }]
+  store['gcse_module_history-1'] = { screen: 4 }
+}
+
+beforeEach(() => {
+  store = {}
+  cloudDoc = null
+  firestoreCalls.docPaths.length = 0
+  firestoreCalls.setDocs.length = 0
+})
+
+describe('collectLocalProgressSnapshot', () => {
+  it('includes expected static keys, dynamic module keys, and version/updatedAt', () => {
+    seedMeaningfulLocal()
+    store['gcse_mastery_v1'] = { concepts: { a: 1 } }
+    const snap = collectLocalProgressSnapshot()
+    expect(snap.version).toBe(1)
+    expect(snap.updatedAt).toBeTypeOf('number')
+    expect(Object.keys(snap.data)).toEqual(
+      expect.arrayContaining(['riseUser', 'gcse_scores', 'gcse_mastery_v1', 'gcse_module_history-1'])
+    )
+  })
+
+  it('excludes streak celebration flags and its own sync meta', () => {
+    seedMeaningfulLocal()
+    store['streakCelebrationShown:2026-07-05'] = true
+    store[SYNC_META_KEY] = { lastSyncedAt: 123 }
+    const snap = collectLocalProgressSnapshot()
+    expect(snap.data['streakCelebrationShown:2026-07-05']).toBeUndefined()
+    expect(snap.data[SYNC_META_KEY]).toBeUndefined()
+  })
+
+  it('covers every progress key named in the spec', () => {
+    for (const key of [
+      'riseUser', 'gcse_scores', 'gcse_wrong_answers', 'gcse_correct_answers',
+      'gcse_exam_techniques', 'gcse_coach_type_results', 'gcse_progress',
+      'gcse_planner_rotation', 'gcse_planner_prefs', 'gcse_planner_weakpoints',
+      'gcse_planner_paper_results', 'gcse_mastery_v1', 'gcse_quickfire_memory_v1',
+      'gcse_qf_q_history', 'gcse_qf_prev_session', 'gcse_qf_best', 'gcse_todays_plan_revisit',
+    ]) {
+      expect(STATIC_PROGRESS_KEYS).toContain(key)
+    }
+  })
+})
+
+describe('applyProgressSnapshot', () => {
+  it('writes snapshot keys without deleting unrelated existing keys', () => {
+    store['gcse_scores'] = [{ pct: 10 }]
+    store['some_unrelated_key'] = 'keep me'
+    const applied = applyProgressSnapshot({
+      version: 1, updatedAt: 1,
+      data: { gcse_scores: [{ pct: 99 }], gcse_progress: { streak: 3 } },
+    })
+    expect(applied).toBe(2)
+    expect(store['gcse_scores']).toEqual([{ pct: 99 }])
+    expect(store['gcse_progress']).toEqual({ streak: 3 })
+    expect(store['some_unrelated_key']).toBe('keep me')
+  })
+
+  it('refuses to overwrite riseUser with a different account uid', () => {
+    store['riseUser'] = { uid: 'uid-1', name: 'Sam' }
+    applyProgressSnapshot(
+      { version: 1, updatedAt: 1, data: { riseUser: { uid: 'other-uid', name: 'Mallory' } } },
+      { currentUid: 'uid-1' }
+    )
+    expect(store['riseUser']).toEqual({ uid: 'uid-1', name: 'Sam' })
+  })
+})
+
+describe('decideSyncAction', () => {
+  const meaningful = { version: 1, updatedAt: 100, data: { gcse_scores: [{ pct: 50 }] } }
+  const empty = { version: 1, updatedAt: 200, data: { riseUser: { name: 'Sam' } } }
+
+  it('uploads local when no cloud doc exists', () => {
+    expect(decideSyncAction({ cloud: null, local: meaningful })).toBe('upload')
+  })
+
+  it('restores cloud when local is empty and cloud has progress', () => {
+    expect(decideSyncAction({ cloud: meaningful, local: empty })).toBe('apply')
+  })
+
+  it('never overwrites meaningful cloud progress with an empty local snapshot', () => {
+    expect(decideSyncAction({ cloud: meaningful, local: empty, lastSyncedAt: 999 })).toBe('apply')
+  })
+
+  it('never wipes meaningful local progress with an empty cloud snapshot', () => {
+    expect(decideSyncAction({ cloud: empty, local: meaningful, lastSyncedAt: 0 })).toBe('upload')
+  })
+
+  it('prefers cloud when it changed since this device last synced', () => {
+    const local = { version: 1, updatedAt: 500, data: { gcse_scores: [{ pct: 1 }] } }
+    const cloud = { version: 1, updatedAt: 400, data: { gcse_scores: [{ pct: 2 }] } }
+    expect(decideSyncAction({ cloud, local, lastSyncedAt: 300 })).toBe('apply')
+    expect(decideSyncAction({ cloud, local, lastSyncedAt: 400 })).toBe('upload')
+  })
+})
+
+describe('syncProgressForUser', () => {
+  it('does nothing for guest users — Firestore is never touched', async () => {
+    seedMeaningfulLocal()
+    const result = await syncProgressForUser(GUEST_USER)
+    expect(result).toEqual({ action: 'none', reason: 'not-google-user' })
+    expect(firestoreCalls.docPaths).toHaveLength(0)
+  })
+
+  it('does nothing when logged out', async () => {
+    const result = await syncProgressForUser(null)
+    expect(result.action).toBe('none')
+    expect(firestoreCalls.docPaths).toHaveLength(0)
+  })
+
+  it('uploads to the user-owned path users/{uid}/progress/main', async () => {
+    seedMeaningfulLocal()
+    const result = await syncProgressForUser(GOOGLE_USER)
+    expect(result.action).toBe('upload')
+    expect(firestoreCalls.docPaths.at(-1)).toEqual(['users', 'uid-1', 'progress', 'main'])
+    expect(cloudDoc.version).toBe(1)
+    expect(cloudDoc.data.gcse_scores).toEqual(store['gcse_scores'])
+  })
+
+  it('restores cloud progress locally when local is fresh/empty', async () => {
+    cloudDoc = {
+      version: 1, updatedAt: Date.now(),
+      data: { gcse_scores: [{ pct: 88 }], 'gcse_module_history-1': { screen: 9 } },
+    }
+    const result = await syncProgressForUser(GOOGLE_USER)
+    expect(result.action).toBe('apply')
+    expect(store['gcse_scores']).toEqual([{ pct: 88 }])
+  })
+})
+
+describe('backupProgressForUser', () => {
+  it('refuses to overwrite a meaningful cloud backup with empty local state', async () => {
+    cloudDoc = { version: 1, updatedAt: 100, data: { gcse_scores: [{ pct: 70 }] } }
+    const result = await backupProgressForUser(GOOGLE_USER)
+    expect(result).toEqual({ action: 'none', reason: 'empty-local-guard' })
+    expect(cloudDoc.data.gcse_scores).toEqual([{ pct: 70 }])
+  })
+
+  it('uploads meaningful local state for Google users', async () => {
+    seedMeaningfulLocal()
+    const result = await backupProgressForUser(GOOGLE_USER)
+    expect(result.action).toBe('upload')
+    expect(cloudDoc.data['gcse_module_history-1']).toBeDefined()
+  })
+
+  it('does nothing for guests', async () => {
+    seedMeaningfulLocal()
+    const result = await backupProgressForUser(GUEST_USER)
+    expect(result.action).toBe('none')
+    expect(cloudDoc).toBeNull()
+  })
+})

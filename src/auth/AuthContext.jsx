@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import {
   signInWithGoogle as authSignIn,
   signOutGoogle,
@@ -6,6 +6,7 @@ import {
   storeUser,
   clearUser,
 } from './authService.js'
+import { syncProgressForUser, backupProgressForUser } from '../data/progressSync/progressSync.js'
 
 const AuthContext = createContext(null)
 
@@ -18,6 +19,40 @@ export function AuthProvider({ children }) {
   const [googleProfile, setGoogleProfile] = useState(null)
   const [loading, setLoading]       = useState(false)
   const [authError, setAuthError]   = useState(null)
+  // 'ok' | 'error' — backup health for the signed-in Google user.
+  const [syncStatus, setSyncStatus] = useState('ok')
+
+  // Reconcile local ↔ cloud once per app load for Google users. If the cloud
+  // snapshot was applied, re-read the stored user so a restored profile
+  // (e.g. custom name from another device) is reflected immediately.
+  useEffect(() => {
+    if (user?.provider !== 'google' || !user?.uid) return
+    let cancelled = false
+    syncProgressForUser(user)
+      .then(({ action }) => {
+        if (cancelled) return
+        setSyncStatus('ok')
+        if (action === 'apply') setUser(getStoredUser())
+      })
+      .catch(() => { if (!cancelled) setSyncStatus('error') })
+    return () => { cancelled = true }
+    // Run once per signed-in identity, not on every user object change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.uid])
+
+  // Best-effort backup whenever the app is backgrounded/closed on mobile.
+  useEffect(() => {
+    if (user?.provider !== 'google' || !user?.uid) return
+    const onHide = () => {
+      if (document.visibilityState === 'hidden') {
+        backupProgressForUser(user)
+          .then(() => setSyncStatus('ok'))
+          .catch(() => setSyncStatus('error'))
+      }
+    }
+    document.addEventListener('visibilitychange', onHide)
+    return () => document.removeEventListener('visibilitychange', onHide)
+  }, [user])
 
   async function signInWithGoogle() {
     setLoading(true)
@@ -56,7 +91,8 @@ export function AuthProvider({ children }) {
 
   // For a learner who already onboarded as a guest and later wants their
   // progress associated with a Google account — merges Google identity into
-  // the existing profile without re-running onboarding or touching progress data.
+  // the existing profile without re-running onboarding or touching progress
+  // data, then kicks off the first sync for that account.
   async function linkGoogleAccount() {
     setLoading(true)
     setAuthError(null)
@@ -79,7 +115,12 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    if (user?.provider === 'google') await signOutGoogle()
+    if (user?.provider === 'google') {
+      // Final best-effort backup, then end the Firebase session. Local
+      // progress keys are deliberately left untouched.
+      await backupProgressForUser(user).catch(() => {})
+      await signOutGoogle()
+    }
     clearUser()
     setUser(null)
     setPending(false)
@@ -88,7 +129,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{
-      user, pendingAuth, loading, authError, googleProfile,
+      user, pendingAuth, loading, authError, googleProfile, syncStatus,
       signInWithGoogle, continueAsGuest, completeOnboarding, linkGoogleAccount, signOut,
     }}>
       {children}

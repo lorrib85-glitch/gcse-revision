@@ -56,4 +56,12 @@ describe('authService', () => {
     expect(globalThis.localStorage.getItem('gcse_scores')).toBe('[1,2,3]')
     expect(globalThis.localStorage.getItem('gcse_mastery_v1')).toBe('{"foo":"bar"}')
   })
+
+  it('stores no Firebase ID token or Google access token anywhere', async () => {
+    const profile = await signInWithGoogle()
+    storeUser({ loggedIn: true, name: 'Sam', provider: 'google', uid: profile.uid })
+    const dump = JSON.stringify(globalThis.localStorage.getItem('riseUser'))
+    expect(dump).not.toMatch(/token|credential|bearer/i)
+    expect(Object.keys(profile)).toEqual(['uid', 'email', 'displayName', 'photoURL'])
+  })
 })

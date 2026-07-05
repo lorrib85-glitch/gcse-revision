@@ -2,25 +2,27 @@ import { describe, it, expect } from 'vitest'
 import { getProgressStatusText } from '../../../src/auth/progressStatus.js'
 
 describe('getProgressStatusText', () => {
-  it('reports local-only when logged out', () => {
-    expect(getProgressStatusText(null)).toBe('Progress saved on this device')
+  it('invites sign-in when logged out', () => {
+    expect(getProgressStatusText(null)).toBe(
+      'Using this device only. Sign in with Google to back up progress.'
+    )
   })
 
-  it('reports local-only for the guest name-only flow', () => {
+  it('invites sign-in for the guest name-only flow', () => {
     expect(getProgressStatusText({ loggedIn: true, provider: 'guest', name: 'Sam' })).toBe(
-      'Progress saved on this device'
+      'Using this device only. Sign in with Google to back up progress.'
     )
   })
 
-  it('reports signed-in-not-synced for a Google user with no sync flag', () => {
-    expect(getProgressStatusText({ loggedIn: true, provider: 'google', name: 'Sam' })).toBe(
-      'Signed in — progress still saved on this device'
+  it('reports active backup for a Google user with healthy sync', () => {
+    expect(getProgressStatusText({ loggedIn: true, provider: 'google', name: 'Sam' }, 'ok')).toBe(
+      'Signed in — progress backs up to your account.'
     )
   })
 
-  it('only claims synced when explicitly flagged by a future sync layer', () => {
-    expect(
-      getProgressStatusText({ loggedIn: true, provider: 'google', name: 'Sam', synced: true })
-    ).toBe('Progress saved to your account')
+  it('uses calm retry wording on sync error — no technical detail', () => {
+    const text = getProgressStatusText({ loggedIn: true, provider: 'google', name: 'Sam' }, 'error')
+    expect(text).toBe('Progress is saved on this device. Backup will retry when connection is available.')
+    expect(text).not.toMatch(/firebase|firestore|auth\//i)
   })
 })

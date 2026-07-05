@@ -1,13 +1,13 @@
 // Single source of truth for the progress-status wording shown across the app.
-// "Signed in" only ever means a real Google account (provider: 'google') —
+// "Backs up" only ever applies to a real Google account (provider: 'google');
 // the guest name-only flow is local-only and must never claim otherwise.
-// "Synced" is reserved for a future cloud-sync pass; until user.synced is
-// actually set by that layer, this never returns the synced string.
-export function getProgressStatusText(user) {
+// syncStatus: 'ok' | 'error' — backup health from AuthContext. Errors use calm
+// wording; technical Firebase detail never reaches students.
+export function getProgressStatusText(user, syncStatus = 'ok') {
   if (user?.provider === 'google') {
-    return user.synced
-      ? 'Progress saved to your account'
-      : 'Signed in — progress still saved on this device'
+    return syncStatus === 'error'
+      ? 'Progress is saved on this device. Backup will retry when connection is available.'
+      : 'Signed in — progress backs up to your account.'
   }
-  return 'Progress saved on this device'
+  return 'Using this device only. Sign in with Google to back up progress.'
 }

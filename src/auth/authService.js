@@ -7,7 +7,10 @@ import { auth, googleProvider, firebaseEnabled } from './firebaseClient.js'
 
 export async function signInWithGoogle() {
   if (!firebaseEnabled) {
-    throw new Error('Google sign-in is not configured for this environment.')
+    // Learner-friendly in production; the technical cause is dev-only.
+    throw new Error(import.meta.env.DEV
+      ? 'Google sign-in is not ready on this test version yet. (Missing Firebase configuration.)'
+      : 'Google sign-in is not ready on this test version yet.')
   }
   const result = await signInWithPopup(auth, googleProvider)
   const { uid, email, displayName, photoURL } = result.user
