@@ -302,7 +302,8 @@ export default function CinematicRevealMoment({
               maxWidth: '34ch',
               textShadow: '0 1px 16px rgba(0,0,0,0.5)',
             }}>
-              {bodyLines.map((line, i) => bodyLineVisible[i] && {
+              {bodyLines.map((line, i) => {
+                if (!bodyLineVisible[i]) return null
                 const isFinalLine = i === bodyLines.length - 1
                 return (
                   <p key={`${line}-${i}`} style={{
