@@ -133,6 +133,47 @@ Canonical documentation: `docs/system/MASTERY_ENGINE.md`.
 
 ---
 
+## A7 — Classify and (selectively) migrate `GENERAL.success`/`GENERAL.error` to canonical feedback tokens
+
+**Status:** Backlog
+**Priority:** Medium
+**Area:** `src/constants/generalTheme.js`, `src/features/quickfire/` (current call sites), any other `GENERAL.success`/`GENERAL.error` call site found at audit time
+
+### Context
+A prior session added canonical answer-feedback tokens to `GENERAL` in `src/constants/generalTheme.js` — `feedbackCorrect` (`#4CAF7D`), `feedbackIncorrect` (`#E05A52`), `feedbackHint`, `feedbackText` — and migrated `AnswerInteraction.jsx` and `UnifiedQuestionScreen.jsx` onto them. `GENERAL.success` (`#4DFF88`) and `GENERAL.error` (`#FF5D73`)/`successSoft`/`errorSoft` were deliberately left untouched at the time: they have call sites outside the answer-feedback surface, and a blind rename risks conflating "this answer was correct" with "this system operation failed."
+
+As of this entry, `GENERAL.success`/`GENERAL.error`/`successSoft`/`errorSoft` have 11 call sites, all inside `src/features/quickfire/` (`QuickFire.jsx`, `utils.js`, `modes/MathsQuestion.jsx`). Separately — and out of scope for this item — the raw hex literals these tokens encode (`#4DFF88`, `#FF5D73`, etc.) are hardcoded directly (not via `GENERAL`) in many more places (`ModulePlayer.jsx`, several `src/content/**` and `src/data/**` question-bank files). That's a distinct, larger cleanup; do not fold it into this item.
+
+First-pass read of the 11 known call sites (not a finished classification — confirm at pickup time):
+- `QuickFire.jsx:344` and `MathsQuestion.jsx:217` — inline `error &&` API/system error message → looks like **category 2** (system success/error state)
+- `QuickFire.jsx:356-357` and `MathsQuestion.jsx:233,236,245,248` — AI-marked feedback "✓ What you got right" / "→ Next time, also include" → looks like **category 1** (answer feedback/marking state)
+- `utils.js:6-9` — grade-band styling map (`Excellent`/`Good`/`Needs Work`) → looks like **category 1**, but confirm — this may be a distinct "performance band" concept rather than binary correct/incorrect, in which case it's **category 4**
+
+### Work (remaining)
+1. Re-run `grep -rn "GENERAL\.success\|GENERAL\.error\|GENERAL\.successSoft\|GENERAL\.errorSoft" src` at pickup time (call sites may have shifted) and classify every match into one of:
+   - **1. Answer feedback / marking state** — migrate to `feedbackCorrect`/`feedbackIncorrect`/`feedbackHint`/`feedbackText`.
+   - **2. System success/error state** (API failures, save/load errors, network state) — keep on `GENERAL.success`/`GENERAL.error`; rename only if the current names are actively misleading.
+   - **3. Decorative or subject-specific visual** — leave alone; do not touch under this backlog item.
+   - **4. Legacy/unclear usage requiring product judgement** — flag for a human decision, do not guess or infer from colour distance.
+2. Migrate only category 1 call sites to the feedback tokens.
+3. For categories 2-4, leave the token values as-is. Consider renaming `GENERAL.success`/`GENERAL.error` to something more explicit (e.g. `systemSuccess`/`systemError`) only if it measurably reduces future confusion — not required.
+4. Once the audit confirms `GENERAL.success`/`GENERAL.error` still serve a genuine non-learning-system role, update the comment above them in `src/constants/generalTheme.js` (and `docs/system/PRODUCT_UI_CONSTITUTION.md` if relevant) to say so explicitly, so future sessions don't mistake them for unmigrated feedback-token debt.
+5. Do not touch the larger set of raw hex literals (`#4DFF88`, `#FF5D73`, etc.) outside actual `GENERAL.success`/`GENERAL.error` call sites in this pass — that is separate, larger, content-adjacent work.
+
+### Rules
+- Do not bulk-replace `GENERAL.success`/`GENERAL.error` with feedback tokens without classifying each call site first.
+- Do not rename or remove `GENERAL.success`/`GENERAL.error` while any call site still depends on their current meaning.
+- Do not expand this item into the raw-hex-literal migration (`ModulePlayer.jsx`, content/question-bank files) — that's separate, larger work.
+- Preserve visual output for every call site not explicitly re-classified as answer feedback.
+
+### Acceptance criteria
+- Every current `GENERAL.success`/`GENERAL.error`/`successSoft`/`errorSoft` call site has an explicit recorded category (1-4), not a silent migration.
+- Category 1 call sites use `feedbackCorrect`/`feedbackIncorrect`/`feedbackHint`/`feedbackText`.
+- Categories 2-4 either keep their current token or get a deliberate, documented rename — never a silent value change.
+- Docs state plainly what `GENERAL.success`/`GENERAL.error` are for once this audit lands.
+
+---
+
 ## A1 — Finish QuickFire architecture hardening
 
 **Status:** Backlog  
