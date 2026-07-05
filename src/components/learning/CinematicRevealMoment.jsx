@@ -10,6 +10,15 @@ const TEXT_ANIMATION_MS = 620
 const OVERLAY_FADE_MS = 420
 const VIDEO_SAFETY_MS = 4000
 
+const BLACK_DEATH_OPENING_BODY = 'In June 1348, ships docked at Melcombe in Dorset.\n\nWithin weeks, people began to die.\n\nThe disease moved fast — through towns, villages, and monasteries.\n\nNo one knew what it was. No one knew how to stop it.'
+const BLACK_DEATH_REFINED_BODY = 'Ships arrive at Melcombe, Dorset.\n\nIt looks like ordinary trade.\n\nThen people start dying.\n\nThe disease spreads fast — through ports, towns and villages.\n\nSoon, around a third of England is dead.\n\nThis is the Black Death.'
+
+function resolveCinematicCopy({ label, headline, body }) {
+  const isBlackDeathOpening = label === 'ENGLAND, 1348' && headline === 'Something is coming.' && body === BLACK_DEATH_OPENING_BODY
+  if (!isBlackDeathOpening) return { headline, body }
+  return { headline: 'June 1348.', body: BLACK_DEATH_REFINED_BODY }
+}
+
 // Splits paragraph text and wraps highlight phrases in accent-coloured spans
 function renderHighlighted(text, highlights, accent) {
   if (!highlights?.length) return [text]
@@ -49,13 +58,14 @@ export default function CinematicRevealMoment({
 }) {
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, background: bg } = theme
+  const { headline: resolvedHeadline, body: resolvedBody } = resolveCinematicCopy({ label, headline, body })
 
   const bodyLines = useMemo(
-    () => String(body || '')
+    () => String(resolvedBody || '')
       .split(/\n+/)
       .map(line => line.trim())
       .filter(Boolean),
-    [body]
+    [resolvedBody]
   )
 
   const videoRef = useRef(null)
@@ -262,7 +272,7 @@ export default function CinematicRevealMoment({
           )}
 
           {/* Headline */}
-          {yearVisible && headline && (
+          {yearVisible && resolvedHeadline && (
             <div style={{
               ...TYPE.displaySection,
               color: 'rgba(255,255,255,0.97)',
@@ -271,7 +281,7 @@ export default function CinematicRevealMoment({
               textShadow: '0 2px 24px rgba(0,0,0,0.55)',
               animation: `crm-up ${TEXT_ANIMATION_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}>
-              {headline}
+              {resolvedHeadline}
             </div>
           )}
 
