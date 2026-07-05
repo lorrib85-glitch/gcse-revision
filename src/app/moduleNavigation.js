@@ -197,6 +197,7 @@ export function resolveTaskDestination(task) {
       durationSeconds: sel.durationSeconds,
       paperQuestions:  sel.paperQuestions,
       title:           sel.title,
+      origin:          sel.origin,
     }
   }
   return null

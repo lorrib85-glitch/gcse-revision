@@ -193,10 +193,10 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
     return shuffle([...mixed, ...fill]).slice(0, 10)
   }
 
-  function startExamRound(subject = 'Random', { isTimedPaper = false, durationSeconds = EXAM_SECONDS, paperQuestions = null, title = null } = {}) {
+  function startExamRound(subject = 'Random', { isTimedPaper = false, durationSeconds = EXAM_SECONDS, paperQuestions = null, title = null, origin = null } = {}) {
     const questions    = paperQuestions || adaptiveExamQuestions(subject)
     const derivedTitle = title || (subject === 'Random' ? 'Random Exam Challenge' : subject + ' Exam Sprint')
-    setExamConfig({ subject, title: derivedTitle, isTimedPaper })
+    setExamConfig({ subject, title: derivedTitle, isTimedPaper, origin })
     setExamQuestions(questions)
     setExamTimeLeft(durationSeconds)
     setExamCountdown(3)
@@ -238,7 +238,11 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
         },
       }
     })
-    recordScore({ subject: question.subject, earned, possible, source: 'exam' })
+    // Paper rounds are tagged distinctly from practice rounds so Home's
+    // "done today" check (todaysPlan.js) can't confuse a quick practice
+    // round for a completed full paper (or vice versa) just because they
+    // happen to share a subject on the same day.
+    recordScore({ subject: question.subject, earned, possible, source: examConfig?.isTimedPaper ? 'exam-paper' : 'exam' })
   }
 
   const EXAM_SUBJECTS = [
@@ -266,7 +270,7 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
           <div style={{ textAlign:'center' }}>
             <div style={{ ...TYPE.eyebrow, textTransform:'uppercase', color:'#AAB4D4', marginBottom:20 }}>{examConfig?.title || 'Exam Mode'}</div>
             <div key={examCountdown} style={{ ...TYPE.displayHero, fontSize: examCountdown === 'GO' ? '5rem' : '7rem', color: examCountdown === 'GO' ? '#38F27B' : GENERAL.teal, textShadow:`0 0 42px rgba(${GENERAL.tealRgb},.72)`, animation:'examPop .85s ease both' }}>{examCountdown}</div>
-            <div style={{ color:'#7C8DB0', marginTop:18, ...TYPE.body }}>Breathe. Read the command word first.</div>
+            <div style={{ color:'#7C8DB0', marginTop:18, ...TYPE.body }}>{examConfig?.origin === 'home' ? 'Just a few quick questions.' : 'Breathe. Read the command word first.'}</div>
             <style>{'@keyframes examPop { 0%{opacity:0;transform:scale(.72)} 45%{opacity:1;transform:scale(1.08)} 100%{opacity:1;transform:scale(1)} }'}</style>
           </div>
         </div>
@@ -354,7 +358,7 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
                 </div>
               )
             })}
-            <button onClick={() => setExamPhase('summary')} style={{ width:'100%', background:GENERAL.teal, border:'none', borderRadius:16, padding:16, color:GENERAL.neutral[0], fontWeight:800, fontSize:'1rem', cursor:'pointer', marginTop:8 }}>Submit Paper</button>
+            <button onClick={() => setExamPhase('summary')} style={{ width:'100%', background:GENERAL.teal, border:'none', borderRadius:16, padding:16, color:GENERAL.neutral[0], fontWeight:800, fontSize:'1rem', cursor:'pointer', marginTop:8 }}>{examConfig?.origin === 'home' ? 'Finish' : 'Submit Paper'}</button>
           </div>
         </div>
       )
@@ -365,7 +369,7 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
         <div style={{ minHeight:'100vh', background:'#08090D', color:'#F5F7FB', padding:'28px 20px 120px' }}>
           <div style={{ maxWidth:520, margin:'0 auto', textAlign:'center' }}>
             <div style={{ width:150, height:150, borderRadius:'50%', margin:'0 auto 22px', background:'conic-gradient(#38F27B ' + examAccuracy + '%, #172845 0)', display:'grid', placeItems:'center' }}><div style={{ width:122, height:122, borderRadius:'50%', background:'#071126', display:'grid', placeItems:'center' }}><div><div style={{ ...TYPE.displayHero, fontSize:'2.4rem' }}>{examAccuracy}%</div><div style={{ color:'#AAB4D4', fontWeight:800 }}>{examStats.correct}/{examStats.answered || 0}</div></div></div></div>
-            <h1 style={{ ...TYPE.displayHero, fontSize:'2rem', margin:'0 0 8px' }}>Exam round complete</h1>
+            <h1 style={{ ...TYPE.displayHero, fontSize:'2rem', margin:'0 0 8px' }}>{examConfig?.origin === 'home' ? 'Practice complete' : 'Exam round complete'}</h1>
             <p style={{ color:'#AAB4D4', margin:'0 0 22px' }}>Adaptive questions mixed stronger areas with weak zones.</p>
             <div style={{ background:'#151720', border:'1px solid #2A3552', borderRadius:18, padding:18, marginBottom:20, textAlign:'left' }}>
               {Object.entries(examStats.bySubject).map(([subject, stats]) => <div key={subject} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'9px 0', borderBottom:'1px solid rgba(255,255,255,.06)' }}><span>{subject}</span><strong>{stats.correct}/{stats.answered}</strong></div>)}
@@ -585,7 +589,7 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
       const scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]')
       const d = new Date(); d.setDate(d.getDate() - 7)
       const cutoff = d.toISOString().slice(0, 10)
-      const week = scores.filter(s => s.source === 'exam' && s.date > cutoff)
+      const week = scores.filter(s => (s.source === 'exam' || s.source === 'exam-paper') && s.date > cutoff)
       if (!week.length) return null
       return { count: week.length, avgPct: Math.round(week.reduce((sum, s) => sum + s.pct, 0) / week.length) }
     } catch { return null }

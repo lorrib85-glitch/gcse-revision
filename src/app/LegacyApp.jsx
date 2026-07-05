@@ -375,6 +375,7 @@ export default function App() {
         durationSeconds: dest.durationSeconds,
         paperQuestions:  dest.paperQuestions,
         title:           dest.title,
+        origin:          dest.origin,
       })
       setTab('exams')
     }

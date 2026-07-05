@@ -58,10 +58,22 @@ describe('isTaskDoneToday', () => {
     expect(isTaskDoneToday(task)).toBe(true)
   })
 
-  it('marks the weekend paper card done using the same subject-matched signal', () => {
-    store.gcse_scores = [{ date: TODAY, subject: 'History', source: 'exam', pct: 70 }]
+  it('marks the weekend paper card done from a matching paper-round score today', () => {
+    store.gcse_scores = [{ date: TODAY, subject: 'History', source: 'exam-paper', pct: 70 }]
     const task = { type: 'paper', onSelect: { kind: 'paper', subject: 'History' } }
     expect(isTaskDoneToday(task)).toBe(true)
+  })
+
+  it('does not mark the weekend paper card done from a same-subject practice-round score', () => {
+    store.gcse_scores = [{ date: TODAY, subject: 'History', source: 'exam', pct: 70 }]
+    const task = { type: 'paper', onSelect: { kind: 'paper', subject: 'History' } }
+    expect(isTaskDoneToday(task)).toBe(false)
+  })
+
+  it('does not mark a practice card done from a paper-round score, even same subject', () => {
+    store.gcse_scores = [{ date: TODAY, subject: 'History', source: 'exam-paper', pct: 70 }]
+    const task = { type: 'practice', onSelect: { kind: 'practice', subject: 'History' } }
+    expect(isTaskDoneToday(task)).toBe(false)
   })
 
   it('resets on a new day even with yesterday\'s completion still in the score log', () => {

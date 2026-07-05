@@ -96,7 +96,11 @@ function buildPracticeCard(subject, durationMinutes, weakInfo) {
     title,
     reason,
     durationMinutes,
-    onSelect: { kind: 'practice', subject },
+    // title/origin flow through to Exam Mode (see resolveTaskDestination,
+    // LegacyApp's examAutoStart, ExamMode's startExamRound) so a
+    // Home-launched practice round keeps this card's own light framing
+    // instead of Exam Mode's default "Exam Sprint" wording.
+    onSelect: { kind: 'practice', subject, title, origin: 'home' },
   }
 }
 
@@ -159,6 +163,10 @@ function buildWeekendPaperCard() {
 // practice/paper cards route through a scored round (Quick Fire / Exam
 // Mode), so those are the only types currently trackable; continue/revisit
 // cards have no date-stamped signal in module state and are left alone.
+// Practice and paper rounds are matched separately (ExamMode tags paper-round
+// scores with source 'exam-paper', practice rounds with 'exam') so a Random
+// practice round that happens to draw a question in today's weekend-paper
+// subject can't falsely mark that paper card done, and vice versa.
 export function isTaskDoneToday(task) {
   const today = todayStr()
   const scores = getScores()
@@ -168,7 +176,8 @@ export function isTaskDoneToday(task) {
   }
   if (task.type === 'practice' || task.type === 'paper') {
     const subject = task.onSelect?.subject
-    return scores.some(s => s.date === today && s.source === 'exam' && (subject === 'Random' || s.subject === subject))
+    const source = task.type === 'paper' ? 'exam-paper' : 'exam'
+    return scores.some(s => s.date === today && s.source === source && (subject === 'Random' || s.subject === subject))
   }
   return false
 }
