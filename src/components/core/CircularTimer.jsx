@@ -9,6 +9,7 @@ export default function CircularTimer({
   label = 'SEC',
   color = GENERAL.teal,
   trackColor = 'rgba(255,255,255,0.08)',
+  displayValue,
   valueStyle = {},
   labelStyle = {},
   ariaLabel,
@@ -32,7 +33,7 @@ export default function CircularTimer({
         />
       </svg>
       <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1.05rem', color: GENERAL.softWhite, lineHeight: 1, fontVariantNumeric: 'tabular-nums', ...valueStyle }}>{seconds}</span>
+        <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1.05rem', color: GENERAL.softWhite, lineHeight: 1, fontVariantNumeric: 'tabular-nums', ...valueStyle }}>{displayValue ?? seconds}</span>
         <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: '.5rem', letterSpacing: '.16em', color: GENERAL.slate, marginTop: 3, ...labelStyle }}>{label}</span>
       </div>
     </div>
