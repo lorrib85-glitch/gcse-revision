@@ -177,8 +177,9 @@ function AccountOverlay({ onDismiss }) {
 
 function TaskCard({ task, position, onClick }) {
   const { magnitude, signed } = position
+  const isDone = !!task.doneToday
   const scale = magnitude === 0 ? 1.06 : magnitude === 1 ? 0.86 : 0.74
-  const opacity = magnitude === 0 ? 1 : magnitude === 1 ? 0.45 : 0.18
+  const opacity = (magnitude === 0 ? 1 : magnitude === 1 ? 0.45 : 0.18) * (isDone ? 0.72 : 1)
   const distance = magnitude === 1 ? 219 : magnitude === 2 ? 245 : 0
   const translateX = signed === 0 ? 0 : signed > 0 ? distance : -distance
   const rotation = magnitude === 1 ? 14 : magnitude === 2 ? 24 : 0
@@ -226,11 +227,23 @@ function TaskCard({ task, position, onClick }) {
             display: 'flex', alignItems: 'center', gap: 6,
             ...TYPE.metadata, fontSize: 12, fontWeight: 400, letterSpacing: '0.06em', color: GENERAL.slate,
           }}>
-            <svg width="13" height="13" viewBox="0 0 22 22" fill="none" style={{ flexShrink: 0 }}>
-              <circle cx="11" cy="11" r="8.5" stroke={GENERAL.slate} strokeWidth="1.75" />
-              <path d="M11 6.5V11l3 2" stroke={GENERAL.slate} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            {`~${task.durationMinutes} min`}
+            {isDone ? (
+              <>
+                <svg width="13" height="13" viewBox="0 0 22 22" fill="none" style={{ flexShrink: 0 }}>
+                  <circle cx="11" cy="11" r="8.5" stroke={GENERAL.teal} strokeWidth="1.75" />
+                  <path d="M7.2 11.3l2.4 2.4L15 8.3" stroke={GENERAL.teal} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span style={{ color: GENERAL.teal }}>Done today</span>
+              </>
+            ) : (
+              <>
+                <svg width="13" height="13" viewBox="0 0 22 22" fill="none" style={{ flexShrink: 0 }}>
+                  <circle cx="11" cy="11" r="8.5" stroke={GENERAL.slate} strokeWidth="1.75" />
+                  <path d="M11 6.5V11l3 2" stroke={GENERAL.slate} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {`~${task.durationMinutes} min`}
+              </>
+            )}
           </div>
           {magnitude === 0 && (
             <NavArrow color={accentColor} />
@@ -245,7 +258,10 @@ function TaskCard({ task, position, onClick }) {
 // navigation. The focused (centre) card is the only one that triggers
 // onSelect; tapping a side card brings it to focus instead.
 function TaskCarousel({ tasks, onSelect }) {
-  const [active, setActive] = useState(0)
+  const [active, setActive] = useState(() => {
+    const nextUp = tasks.findIndex(t => !t.doneToday)
+    return nextUp === -1 ? 0 : nextUp
+  })
   const count = tasks.length
   const touchStartX = useRef(0)
 

@@ -1,0 +1,78 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+
+// In-memory store standing in for the storage.js persistence boundary.
+let store = {}
+
+vi.mock('../../src/lib/storage.js', () => ({
+  getJson: vi.fn((key, fallback) => (key in store ? store[key] : fallback)),
+  setJson: vi.fn((key, value) => { store[key] = value }),
+  removeKey: vi.fn((key) => { delete store[key] }),
+  getArray: vi.fn((key) => (key in store ? store[key] : [])),
+  getObject: vi.fn((key) => (key in store ? store[key] : {})),
+  listKeys: vi.fn((prefix = '') => Object.keys(store).filter(k => k.startsWith(prefix))),
+}))
+
+const { isTaskDoneToday } = await import('../../src/todaysPlan.js')
+
+const TODAY = new Date().toISOString().slice(0, 10)
+const YESTERDAY = (() => {
+  const d = new Date()
+  d.setDate(d.getDate() - 1)
+  return d.toISOString().slice(0, 10)
+})()
+
+beforeEach(() => { store = {} })
+
+describe('isTaskDoneToday', () => {
+  it('marks the warm-up card done when a Quick Fire score was logged today', () => {
+    store.gcse_scores = [{ date: TODAY, subject: 'Quick Fire', source: 'test', pct: 100 }]
+    expect(isTaskDoneToday({ type: 'warmup' })).toBe(true)
+  })
+
+  it('leaves the warm-up card not-done when no score is logged today', () => {
+    store.gcse_scores = [{ date: YESTERDAY, subject: 'Quick Fire', source: 'test', pct: 100 }]
+    expect(isTaskDoneToday({ type: 'warmup' })).toBe(false)
+  })
+
+  it('marks a subject practice card done from a matching exam-round score today', () => {
+    store.gcse_scores = [{ date: TODAY, subject: 'Chemistry', source: 'exam', pct: 80 }]
+    const task = { type: 'practice', onSelect: { kind: 'practice', subject: 'Chemistry' } }
+    expect(isTaskDoneToday(task)).toBe(true)
+  })
+
+  it('does not mark a practice card done from a different subject', () => {
+    store.gcse_scores = [{ date: TODAY, subject: 'Maths', source: 'exam', pct: 80 }]
+    const task = { type: 'practice', onSelect: { kind: 'practice', subject: 'Chemistry' } }
+    expect(isTaskDoneToday(task)).toBe(false)
+  })
+
+  it('does not mark a practice card done from a module (non-exam) score', () => {
+    store.gcse_scores = [{ date: TODAY, subject: 'Chemistry', source: 'module', pct: 80 }]
+    const task = { type: 'practice', onSelect: { kind: 'practice', subject: 'Chemistry' } }
+    expect(isTaskDoneToday(task)).toBe(false)
+  })
+
+  it('marks a "Random" mixed-practice card done from any exam-round score today', () => {
+    store.gcse_scores = [{ date: TODAY, subject: 'History', source: 'exam', pct: 60 }]
+    const task = { type: 'practice', onSelect: { kind: 'practice', subject: 'Random' } }
+    expect(isTaskDoneToday(task)).toBe(true)
+  })
+
+  it('marks the weekend paper card done using the same subject-matched signal', () => {
+    store.gcse_scores = [{ date: TODAY, subject: 'History', source: 'exam', pct: 70 }]
+    const task = { type: 'paper', onSelect: { kind: 'paper', subject: 'History' } }
+    expect(isTaskDoneToday(task)).toBe(true)
+  })
+
+  it('resets on a new day even with yesterday\'s completion still in the score log', () => {
+    store.gcse_scores = [{ date: YESTERDAY, subject: 'Chemistry', source: 'exam', pct: 80 }]
+    const task = { type: 'practice', onSelect: { kind: 'practice', subject: 'Chemistry' } }
+    expect(isTaskDoneToday(task)).toBe(false)
+  })
+
+  it('leaves continue/revisit cards untracked (no date-stamped module signal)', () => {
+    store.gcse_scores = [{ date: TODAY, subject: 'History', source: 'module', pct: 100 }]
+    expect(isTaskDoneToday({ type: 'continue' })).toBe(false)
+    expect(isTaskDoneToday({ type: 'revisit' })).toBe(false)
+  })
+})

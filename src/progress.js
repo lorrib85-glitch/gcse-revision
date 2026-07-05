@@ -132,6 +132,12 @@ export function getImprovements() {
     .slice(0, 3)
 }
 
+// Raw score log — exposed so same-day derived state (e.g. Home's "done
+// today" plan-card check) can read it without a new storage key.
+export function getScores() {
+  return readArr(SCORES_KEY)
+}
+
 // ─── Confidence ratings ───────────────────────────────────────────
 // Keyed by moduleId, stored in a shared array.
 // Shape: [{ moduleId, subject, title, confidence, timestamp }, ...]

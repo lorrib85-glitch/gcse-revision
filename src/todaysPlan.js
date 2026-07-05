@@ -2,7 +2,7 @@
 // See docs/superpowers/specs/2026-06-14-home-todays-plan-redesign.md
 
 import { MODULES } from './modules.js'
-import { getModuleState, getInProgressModule, todayStr } from './progress.js'
+import { getModuleState, getInProgressModule, todayStr, getScores } from './progress.js'
 import { getBiggestWin, getWeakestSubject } from './unifiedWeaknessTracker.js'
 import { findTaggedScreen } from './data/tagModuleMap.js'
 import { MEDICINE_2023_PAPER } from './data/medicineExamPapers.js'
@@ -153,6 +153,26 @@ function buildWeekendPaperCard() {
   }
 }
 
+// Same-day completion check for a Today's-plan card — derived entirely from
+// the existing score log (src/progress.js) so a completed task can show a
+// "done today" state without any new storage key. Only warm-up and
+// practice/paper cards route through a scored round (Quick Fire / Exam
+// Mode), so those are the only types currently trackable; continue/revisit
+// cards have no date-stamped signal in module state and are left alone.
+export function isTaskDoneToday(task) {
+  const today = todayStr()
+  const scores = getScores()
+
+  if (task.type === 'warmup') {
+    return scores.some(s => s.date === today && s.subject === 'Quick Fire')
+  }
+  if (task.type === 'practice' || task.type === 'paper') {
+    const subject = task.onSelect?.subject
+    return scores.some(s => s.date === today && s.source === 'exam' && (subject === 'Random' || s.subject === subject))
+  }
+  return false
+}
+
 // Builds the ordered "Today's plan" task list: warm-up, two dynamic slots
 // sized toward ~60 minutes total, plus a weekend full-paper card on
 // Saturday/Sunday.
@@ -208,6 +228,8 @@ export function buildTodaysPlan() {
   if ([0, 6].includes(new Date().getDay())) {
     plan.push(buildWeekendPaperCard())
   }
+
+  plan.forEach(task => { task.doneToday = isTaskDoneToday(task) })
 
   return plan
 }
