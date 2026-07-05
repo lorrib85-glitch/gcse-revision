@@ -24,9 +24,19 @@ Reproduction details are established in phase 2, not before classification.
 ## Phases
 
 1. **Triage** — `/gcse-triage` → Lane D.
-2. **Reproduce** — `superpowers:systematic-debugging`. Establish first:
-   which screen/module, expected behaviour, actual behaviour, reproduction
-   path. Ask or confirm these before forming a hypothesis.
+2. **Check main first** — before reproducing or forming a hypothesis, check
+   whether the reported issue is already fixed on current `main`: scan
+   `git log` for the affected file(s)/area, then read the current code path
+   directly.
+   - **Already fixed and verified** (fix is present, existing or addable
+     tests cover it, tests/build pass) — stop here. Do not create a branch,
+     do not reproduce, do not re-implement. Run phase 9's verification
+     commands to confirm, skip phase 10 (nothing to commit), and report:
+     the existing commit SHA + message, what test coverage exists, and
+     current test/build status.
+   - **Not fixed, or fixed but unverified** (no test coverage, tests fail,
+     or fix is partial) — continue to phase 2's reproduction step below for
+     the remaining gap.
    ```
    Symptom:
    Reproduction path:
@@ -66,6 +76,7 @@ before escalating to E).
 
 ## Stop points
 
+- Reproducing or hypothesising before checking if `main` already fixes it → stop; return to phase 2
 - Implementing a fix before root cause is confirmed → stop; return to phase 5
 - Fix requires a new component → check registry; re-triage to E if new
 - Bug is architecture-level → surface to user before escalating
