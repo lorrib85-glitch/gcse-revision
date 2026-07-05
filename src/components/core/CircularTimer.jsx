@@ -1,6 +1,5 @@
 import { GENERAL } from '../../constants/generalTheme.js'
 import { MOTION } from '../../constants/motion.js'
-import { TYPE } from '../../constants/typography.js'
 
 export default function CircularTimer({
   seconds,
@@ -33,8 +32,8 @@ export default function CircularTimer({
         />
       </svg>
       <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ ...TYPE.titleMedium, fontWeight: 700, color: GENERAL.softWhite, lineHeight: 1, fontVariantNumeric: 'tabular-nums', ...valueStyle }}>{seconds}</span>
-        <span style={{ ...TYPE.metadata, color: GENERAL.slate, marginTop: 3, ...labelStyle }}>{label}</span>
+        <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: '1.05rem', color: GENERAL.softWhite, lineHeight: 1, fontVariantNumeric: 'tabular-nums', ...valueStyle }}>{seconds}</span>
+        <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: '.5rem', letterSpacing: '.16em', color: GENERAL.slate, marginTop: 3, ...labelStyle }}>{label}</span>
       </div>
     </div>
   )
