@@ -230,6 +230,30 @@ const WARMUP_COPY = {
   cta: 'Start warm-up',
 }
 
+// Small quiet progress ring for the Tasks stat — no shared generic ring
+// exists yet (CircularTimer is a countdown timer, not reusable here).
+function TasksRing({ done, total }) {
+  const size = 40
+  const stroke = 4
+  const radius = (size - stroke) / 2
+  const circumference = 2 * Math.PI * radius
+  const pct = total ? Math.max(0, Math.min(1, done / total)) : 0
+  return (
+    <div style={{ position: 'relative', width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ display: 'block', transform: 'rotate(-90deg)' }}>
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={GENERAL.line.soft} strokeWidth={stroke} />
+        <circle
+          cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={GENERAL.teal} strokeWidth={stroke} strokeLinecap="round"
+          strokeDasharray={circumference} strokeDashoffset={circumference * (1 - pct)}
+        />
+      </svg>
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ ...TYPE.caption, color: GENERAL.softWhite }}>{done}/{total}</span>
+      </div>
+    </div>
+  )
+}
+
 // Dynamic hero banner — always renders the next incomplete plan item, or the
 // completed-day state once every task is done. Never hardcoded to one lesson.
 function HeroBanner({ item, subject, onStart, onReviewProgress }) {
@@ -321,6 +345,22 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
           <NavArrow color={GENERAL.softWhite} />
         </button>
       </div>
+    </div>
+  )
+}
+
+// Quiet summary card — deliberately recessive so the hero CTA stays the
+// strongest element: faint border, slate icon, title-sized value.
+function StatCard({ children, centred = false }) {
+  return (
+    <div style={{
+      background: GENERAL.neutral[800], border: `1px solid ${GENERAL.line.faint}`,
+      borderRadius: RADII.large, padding: `${SPACING.micro}px ${SPACING.compact}px`, minHeight: 72,
+      display: 'flex', flexDirection: 'column', gap: 4, boxSizing: 'border-box',
+      justifyContent: 'center', alignItems: centred ? 'center' : 'flex-start',
+      textAlign: centred ? 'center' : 'left',
+    }}>
+      {children}
     </div>
   )
 }
@@ -486,12 +526,23 @@ export default function Home({ onSelectTask, onReviewProgress }) {
           />
         </div>
 
-        {/* ── Day summary strip — quiet, one line, supports the hero ── */}
-        <div style={{
-          ...TYPE.bodySmall, color: GENERAL.slate, marginTop: SPACING.compact,
-          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-        }}>
-          {plannedMinutes} min planned · {focusSubject} · {completedCount}/{todaysPlan.length} done
+        {/* ── Stat cards — quiet summary row, supports the hero ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: SPACING.micro, marginTop: SPACING.compact }}>
+          <StatCard>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <ClockIcon size={12} color={GENERAL.slate} />
+              <span style={{ ...TYPE.caption, color: GENERAL.slate }}>Planned</span>
+            </div>
+            <div style={{ ...TYPE.titleMedium, color: GENERAL.softWhite, whiteSpace: 'nowrap' }}>{plannedMinutes} min</div>
+          </StatCard>
+          <StatCard>
+            <span style={{ ...TYPE.caption, color: GENERAL.slate }}>Subject</span>
+            <div style={{ ...TYPE.titleMedium, color: GENERAL.softWhite, whiteSpace: 'nowrap', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>{focusSubject}</div>
+          </StatCard>
+          <StatCard centred>
+            <TasksRing done={completedCount} total={todaysPlan.length} />
+            <span style={{ ...TYPE.caption, color: GENERAL.slate }}>Tasks</span>
+          </StatCard>
         </div>
 
         {/* ── Today's plan — light path, no panel chrome ── */}
