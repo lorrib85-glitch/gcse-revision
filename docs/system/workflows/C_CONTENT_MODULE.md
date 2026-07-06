@@ -34,7 +34,9 @@ Module not yet built → re-triage to E (Big Build).
      missing, stale, incomplete, or explicitly requested. Do not run it
      by default.
    - Allowed: canonical file, module architecture doc, exam spec/mark
-     scheme, neighbouring module, target `src/modules/<subject>.js` file
+     scheme, neighbouring module, target `src/modules/<subject>.js` file,
+     `docs/system/PATTERN_GOVERNANCE.md` + the relevant
+     `component-contracts/` and `CONTENT_BUILD_TEMPLATE.md`
    - **Forbidden by default:** brand docs, broad UI files, `/frontend-design`
      (only if layout changes are also involved)
 4. **Coverage check** — required before implementation:
@@ -49,7 +51,12 @@ Module not yet built → re-triage to E (Big Build).
 5. **Plan** — `superpowers:writing-plans`.
 6. **Build** — `superpowers:executing-plans` or direct edit.
 7. **Review** — `/ponytail-review`; `/code-review` if data shape or logic
-   changed.
+   changed. **Pattern-governance review** (`PATTERN_GOVERNANCE.md`) for any
+   screen touched: state its one primary intent in a sentence (fail and
+   split/cut if you can't); confirm the component advances the screen's
+   learning objective; check the intent→component map and the relevant
+   contracts; run the **render pass** (screenshot at 390px) for any visual
+   or UX change — source + tests alone do not pass.
 8. **Verify** — see below.
 9. **Commit** — directly to `main`.
 

@@ -75,6 +75,15 @@ Read only the file matching your lane. Never read the old `RISE_WORKFLOW_MAP.md`
 
 All lane files are under `docs/system/workflows/`.
 
+**Content work — placing or reviewing screen elements (Lanes C and E):**
+also read `docs/system/PATTERN_GOVERNANCE.md` first. It governs the
+taxonomy chain (learning objective → screen intent → approved component →
+execution contract → gold example), the one-primary-intent hard rule, the
+intent→component map, and the mandatory render pass. Building new content
+uses `/content-create`; auditing or improving built content uses
+`/content-review`; both enforce this doc. Name the applicable skill in
+"Allowed skills" for content work.
+
 ## Universal stop points
 
 Halt and surface to the user before continuing if any of these occur:
@@ -84,6 +93,9 @@ Halt and surface to the user before continuing if any of these occur:
 - A new component would be needed that is not on the Component Registry
 - More than 1 unexpected file would change
 - Workflow classification looks wrong mid-task
+- **Content work only:** a screen's single primary intent cannot be stated
+  in one sentence (`PATTERN_GOVERNANCE.md` hard rule) — the screen is
+  overloaded; stop, split or cut it before continuing
 
 When triggered: stop at the current file boundary, state the re-classification
 and what was found, and ask the user to confirm before continuing.

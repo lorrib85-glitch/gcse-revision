@@ -53,6 +53,12 @@ component family, new app-level flow, new architecture pattern.
      missing, stale, incomplete, or explicitly requested. Do not run it by
      default.
    - `/frontend-design` if a new visual surface is introduced.
+   - **Content builds:** read `docs/system/PATTERN_GOVERNANCE.md` and the
+     relevant `component-contracts/`. Every screen resolves through the
+     taxonomy chain (learning objective → intent → approved component →
+     contract) and has one primary intent statable in a sentence; reserve
+     images/diagrams with `MediaPlaceholder` + a visual-assets manifest
+     entry, never generate imagery.
 6. **Plan phase** — `superpowers:writing-plans` → `/gsd-plan-phase`.
    Only after discussion decisions are closed.
 7. **Scope lock** — required before any implementation:
@@ -70,7 +76,11 @@ component family, new app-level flow, new architecture pattern.
    Good subagent tasks: metadata, module content, question bank, tests, docs.
    Bad subagent tasks: same file, same component, visual polish decisions.
 9. **Review** — `/ponytail-review`; `/code-review`; `/frontend-design` if
-   UI changed.
+   UI changed. **Pattern-governance review** (`PATTERN_GOVERNANCE.md`) for
+   every screen: state its one primary intent in a sentence (fail and
+   split/cut if you can't); confirm the component advances the learning
+   objective; check the intent→component map and contracts; run the
+   **render pass** (screenshot at 390px) — source + tests alone do not pass.
 10. **Verify** — see below.
 11. **Pause / handoff** — `/gsd-pause-work` with state summary.
 12. **Commit** — directly to `main`.
