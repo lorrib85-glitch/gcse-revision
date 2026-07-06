@@ -1087,17 +1087,34 @@ contracted before the skills, because the skills exist to enforce it.**
 Every element a build session puts on a screen must resolve through one
 chain — no ad-hoc `<div>` boxes for a job a pattern owns:
 
-**screen intent → approved component → execution contract → gold example**
+**learning objective → screen intent → approved component → execution contract → gold example**
 
-- **Screen intent** — the communicative job (e.g. "land a takeaway",
-  "reserve a visual", "walk a worked example", "teach a concept",
-  "introduce a figure"). Named, finite.
+- **Learning objective** — the GCSE thing the learner should be able to do
+  after this screen (from the episode's canonical file / spec), e.g.
+  "explain why medieval treatments followed the Theory of Opposites". Every
+  screen serves an objective; a screen that serves none is cut. The review
+  must always ask, first: **does this component actually advance the
+  learning objective?** A beautiful component on the wrong objective still
+  fails.
+- **Screen intent** — the communicative job that serves the objective
+  (e.g. "land a takeaway", "reserve a visual", "walk a worked example",
+  "teach a concept", "introduce a figure"). Named, finite.
 - **Approved component** — the single sanctioned component for that intent.
   If an intent has an approved component, using anything else is a review
   failure.
 - **Execution contract** — the 9-field rules below governing correct use.
 - **Gold example** — the reference implementation (a Storybook story plus a
   real on-screen use) the contract points to.
+
+## Hard rule — one primary intent per screen
+
+Every screen has **exactly one primary intent.** If a reviewer cannot state
+that intent in a single sentence, the screen fails review and is split or
+cut. This is the top-level control against overloaded screens (the "teaching
+three things" failure): one screen, one job, one sentence. A screen may use
+supporting elements (a `MediaPlaceholder`, a single `KeyPoint`), but they
+serve the one primary intent — they are not second and third intents
+smuggled in.
 
 Intent → approved component map (seed; extended as intents are named):
 
@@ -1174,6 +1191,13 @@ These become explicit review checks in every relevant contract:
 
 ## The three pattern components (each specified to the 9 fields)
 
+**`KeyPoint` and `WorkedExample` are deliberately separate and must never be
+merged.** They serve different learning purposes: `KeyPoint` *summarises a
+rule* (the takeaway the learner must hold); `WorkedExample` *demonstrates
+its application* (the rule run through one concrete case). Collapsing them
+into one component with a mode would blur that distinction and is a
+governance failure, not a simplification.
+
 ### `TeachScreenShell`
 1. **Purpose** — compose a teaching screen with the approved vertical
    rhythm so spacing stops being per-session judgement.
@@ -1249,7 +1273,8 @@ These become explicit review checks in every relevant contract:
 
 - **Task P1 — Pattern governance doc.** Create
   `docs/system/component-contracts/README.md` upgrade + a new
-  `docs/system/PATTERN_GOVERNANCE.md` capturing the taxonomy chain, the
+  `docs/system/PATTERN_GOVERNANCE.md` capturing the taxonomy chain
+  (learning objective first), the one-primary-intent hard rule, the
   intent→component map, the 9-field contract format, the render-pass rule,
   the MediaPlaceholder+manifest convention, and the design-rule review
   checks. Migrate the six existing contracts' headers to reference the
@@ -1270,15 +1295,21 @@ These become explicit review checks in every relevant contract:
 
 - **Task 6 (`content-create`)** — add to required reading:
   `PATTERN_GOVERNANCE.md` and the pattern-component contracts. Add to the
-  pipeline: resolve every screen element through the taxonomy chain; use
-  the approved component for each intent; reserve visuals with
-  `MediaPlaceholder` + manifest entry; never generate imagery. Add the
-  render pass to self-critique.
-- **Task 7 (`content-review`)** — score against the 9-field contracts and
-  the intent→component map (flag any ad-hoc element that should be a
+  pipeline: name each screen's learning objective and its single primary
+  intent (in one sentence) before choosing a component; resolve every
+  screen element through the taxonomy chain; use the approved component for
+  each intent; reserve visuals with `MediaPlaceholder` + manifest entry;
+  never generate imagery. Add the render pass to self-critique.
+- **Task 7 (`content-review`)** — for every screen, first state its one
+  primary intent in a single sentence; if that is not possible, fail the
+  screen (overloaded — split or cut). Then check the component actually
+  advances the screen's learning objective (a well-built component on the
+  wrong objective still fails). Then score against the 9-field contracts
+  and the intent→component map (flag any ad-hoc element that should be a
   pattern component); run every 👁 check via the mandatory render pass;
   verify the visual-assets manifest matches the placeholders.
-- **Task 9 (critique gate)** — the gate includes the render pass and the
+- **Task 9 (critique gate)** — the gate includes the render pass, the
+  one-primary-intent test, the objective-match check, and the
   taxonomy-chain check.
 
 ---
