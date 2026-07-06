@@ -54,6 +54,9 @@ enforceable.
   would hide exactly that.
 - **Machine-check what can be machine-checked.** Mechanical guardrails live
   in `tests/architecture/` and run in `pnpm verify` forever.
+- **Every screen must justify its existence.** Removing a screen should
+  noticeably reduce understanding, retention or motivation. If it doesn't,
+  redesign or remove it.
 
 ## The review rubric — six dimensions + three technical passes
 
@@ -100,13 +103,14 @@ and the Workflow C/E critique gate. Every episode is scored per dimension
   applied, or retrieved), and anything in the episode absent from the
   canonical file is flagged as unsourced. Gaps are listed by canonical
   section so they can be closed surgically.
-- ⚙ **Readability** — all learner-facing screen text must be concise and
-  pass an automated readability check at a reading age of 12
-  (Flesch-Kincaid grade ≤ 7 or equivalent, measured per screen). Long
-  sentences, stacked clauses and unexplained jargon fail the pass.
-  Simplify the language, never the accuracy — subject-specific exam
-  vocabulary (e.g. "miasma", "osmosis") is exempt from the scoring but
-  must be explained on first use.
+- ⚙ **Readability** — all learner-facing screen text must be concise,
+  written in plain language around the compulsory subject vocabulary,
+  aiming for a reading age of 12 (Flesch-Kincaid grade ≤ 7 or equivalent,
+  measured per screen). GCSE deliberately introduces difficult vocabulary —
+  that vocabulary stays, is exempt from the scoring, and must be explained
+  on first use (e.g. "miasma", "osmosis"); it's the language *around* it
+  that must be plain. Long sentences, stacked clauses and unnecessary
+  jargon fail the pass. Simplify the language, never the accuracy.
 
 ## Deliverables
 
