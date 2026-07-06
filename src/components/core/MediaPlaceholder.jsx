@@ -66,7 +66,7 @@ export default function MediaPlaceholder({ kind = 'image', aspect = '16:9', capt
       }}
     >
       <Glyph kind={kind} accent={accent} />
-      <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: `rgba(${rgb}, 0.85)` }}>
+      <div style={{ ...TYPE.label, fontWeight: 600, color: `rgba(${rgb}, 0.9)` }}>
         {label}
       </div>
       {caption && (
