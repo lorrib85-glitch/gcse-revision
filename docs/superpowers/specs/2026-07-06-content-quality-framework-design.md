@@ -81,7 +81,7 @@ and the Workflow C/E critique gate. Every episode is scored per dimension
 6. **Emotional engagement** — stakes, tension, payoff, moments a
    15-year-old would remember. Would they willingly continue?
 
-**Three technical passes (checked alongside the six dimensions):**
+**Five technical passes (checked alongside the six dimensions):**
 
 - **Hardcoded values** — colours, spacing, radii, motion, and typography
   must come from the token files (`src/constants/`); no magic values.
@@ -94,6 +94,19 @@ and the Workflow C/E critique gate. Every episode is scored per dimension
   tokens), positive white space (per `SPACING_SYSTEM.md`), correct subject
   colour branding (per `SUBJECT_THEME_SYSTEM.md` / `subjects.js`), one job
   per screen.
+- **Canonical coverage** — diff the built episode against its canonical
+  content file: every exam-relevant fact, figure, cause-and-effect link and
+  spec point in the canonical file must appear in the episode (taught,
+  applied, or retrieved), and anything in the episode absent from the
+  canonical file is flagged as unsourced. Gaps are listed by canonical
+  section so they can be closed surgically.
+- ⚙ **Readability** — all learner-facing screen text must be concise and
+  pass an automated readability check at a reading age of 12
+  (Flesch-Kincaid grade ≤ 7 or equivalent, measured per screen). Long
+  sentences, stacked clauses and unexplained jargon fail the pass.
+  Simplify the language, never the accuracy — subject-specific exam
+  vocabulary (e.g. "miasma", "osmosis") is exempt from the scoring but
+  must be explained on first use.
 
 ## Deliverables
 
@@ -170,10 +183,12 @@ contract has three parts:
 - **`content-create`** (Lane E/C) — new content build pipeline:
   read canonical files → confirm/write story spine → decompose into story
   units → select components by function tag → build → self-critique against
-  component contracts → architecture tests pass → present to user.
+  component contracts, including a canonical-coverage diff (nothing in the
+  canonical file left untaught, nothing unsourced added) → architecture
+  tests pass (incl. readability) → present to user.
 - **`content-review`** (Lane C) — existing content audit + amend:
   score an episode per-screen across all six rubric dimensions plus the
-  three technical passes → produce findings ranked per dimension (never a
+  five technical passes → produce findings ranked per dimension (never a
   single blended score) → amend what's below bar → re-score.
   Same rubric as `content-create`; makes back-catalogue auditing mechanical.
 
@@ -197,9 +212,11 @@ the spine is added when an episode is next touched — no mass backfill.
 
 ### 6. `tests/architecture/content-quality.test.js`
 
-Encodes the ⚙ guardrails from Deliverable 1. Runs in
+Encodes the ⚙ guardrails from Deliverable 1 plus the ⚙ readability pass —
+a Flesch-Kincaid (or equivalent) scorer over each screen's learner-facing
+text with an exam-vocabulary exemption list. Runs in
 `pnpm test:architecture` / `pnpm verify`. New episodes physically cannot
-ship as bullet-list walls. Existing below-bar episodes are grandfathered
+ship as bullet-list walls or as text a 12-year-old can't read. Existing below-bar episodes are grandfathered
 via an explicit allowlist that shrinks as `content-review` fixes them —
 the test fails on new violations and on regressions.
 
@@ -208,9 +225,10 @@ the test fails on new violations and on regressions.
 Workflow C and E docs gain a mandatory final stage for content builds:
 a critique pass scoring every screen against the six rubric dimensions
 (story spine, teaching, retrieval, interactions, exam preparation,
-emotional engagement) and running the three technical passes (hardcoded
-values, image quality, UX design). Below-bar screens are flagged and fixed
-*before* the episode reaches user review.
+emotional engagement) and running the five technical passes (hardcoded
+values, image quality, UX design, canonical coverage, readability).
+Below-bar screens are flagged and fixed *before* the episode reaches user
+review.
 
 ## Proof case
 
