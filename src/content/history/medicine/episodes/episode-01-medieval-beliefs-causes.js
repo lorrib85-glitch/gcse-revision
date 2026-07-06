@@ -288,7 +288,7 @@ export default {
           image: '/figures/history/medicine/medieval/galen-teaching.png',
           imagePosition: 'center center',
           lines: [
-            "Galen promoted Hippocrates' Four Humours — Blood, Phlegm, Yellow Bile, Black Bile — and added his own contribution.",
+            "Galen promoted Hippocrates' Four Humours — Blood, Phlegm, Yellow bile, Black bile — and added his own contribution.",
             'He argued illness should be treated with its opposite: hot illness → cold remedy. Wet illness → dry remedy.',
           ],
           quote: 'Health exists when the four humours are in perfect balance.',
@@ -318,9 +318,9 @@ export default {
 
     {
       stage: 'Galen',
-      label: 'The theory of opposites',
+      label: 'The Theory of Opposites',
       kicker: "Galen's logic",
-      heading: 'The theory of opposites',
+      heading: 'The Theory of Opposites',
       sub: 'Before you can treat a patient, you need to know exactly what you\'re fighting.',
       blocks: [
         {
@@ -331,32 +331,20 @@ export default {
             {
               id: 'qualities',
               statement: 'Every humour carried two qualities:',
-              emphasis: 'hot or cold, and wet or dry.',
-              detail: 'Blood was hot and wet. Phlegm was cold and wet. Yellow bile was hot and dry. Black bile was cold and dry.',
-            },
-            {
-              id: 'imbalance',
-              statement: 'Too much of one humour',
-              emphasis: 'meant too much of its qualities.',
-              detail: 'A patient with too much blood wasn\'t just "too bloody." Their whole body was becoming too hot and too wet.',
+              emphasis: 'hot or cold, wet or dry.',
+              detail: 'Blood was hot and wet. Phlegm was cold and wet. Yellow bile was hot and dry. Black bile was cold and dry. Too much of a humour pushed its qualities to excess.',
             },
             {
               id: 'symptoms',
-              statement: 'Those qualities showed up as symptoms.',
-              emphasis: 'A physician read the body, then worked backwards to the humour behind it.',
-              detail: 'Fever and sweating pointed to heat and wetness. A dry cough pointed to dryness. Every symptom was evidence.',
+              statement: 'Symptoms revealed the excess.',
+              emphasis: 'A physician read the body, then reasoned back to the humour behind it.',
+              detail: 'Fever and sweating meant too much heat and wetness. A dry cough meant too much dryness.',
             },
             {
               id: 'opposites',
-              statement: 'Once you knew which qualities were in excess,',
-              emphasis: 'the cure had to carry the opposite ones.',
-              detail: 'Too hot and too wet needed a remedy that was cold and dry. That single rule was the Theory of Opposites.',
-            },
-            {
-              id: 'worked-example',
-              statement: 'Fever. Red face. Sweating.',
-              emphasis: 'Too much blood: hot and wet.',
-              detail: "Galen's answer: cool the body down and dry it out, so balance could return.",
+              statement: 'So the cure had to carry the opposite qualities.',
+              emphasis: 'Too hot and wet? Cool and dry the body.',
+              detail: "Fever, a red face and sweating meant too much blood, which was hot and wet. Galen's answer was to cool and dry the body, so balance could return. That single rule was the Theory of Opposites.",
             },
           ],
           reflectionPrompt: "A patient is waiting. Can you follow Galen's logic and treat them yourself?",

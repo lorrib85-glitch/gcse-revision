@@ -810,32 +810,30 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
 }
 
 // ── Stage 4: Evaluation ────────────────────────────────────────────────────────
+// Split into two single-job beats so no screen stacks more than one idea:
+//   Beat A — "Did the cure actually help?" (transformation + evidence columns)
+//   Beat B — "Why it lasted for centuries" (verdict → Church → significance)
 
 function EvaluationStage({ block, accent, rgb, onComplete }) {
+  const [beat, setBeat] = useState(0)
+  const shared = { block, accent, rgb }
+  return beat === 0
+    ? <EvalOutcomeBeat {...shared} onNext={() => setBeat(1)} />
+    : <EvalLegacyBeat {...shared} onComplete={onComplete} />
+}
+
+// Beat A — did the treatment logic actually help the patient?
+function EvalOutcomeBeat({ block, accent, rgb, onNext }) {
   const ev = block.evaluation || {}
   const transform = ev.transformation || {}
-  const church = ev.church || {}
   const worked = ev.worked || []
-
-  const [showBalance, setShowBalance] = useState(false)
-  const [showEval, setShowEval] = useState(false)
-  const [showChurch, setShowChurch] = useState(false)
-  const [showSignificance, setShowSignificance] = useState(false)
-
-  useEffect(() => {
-    const t1 = setTimeout(() => setShowBalance(true), 400)
-    const t2 = setTimeout(() => setShowEval(true), 1000)
-    const t3 = setTimeout(() => setShowChurch(true), 1600)
-    const t4 = setTimeout(() => setShowSignificance(true), 2200)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
-  }, [])
 
   return (
     <Screen bgImage="/headers/history-medicine-through-time.png" bgOpacity={0.07}>
       <Pad>
 
         <div style={{ animation: anim('tl-in', 320, 0) }}>
-          <Kicker accent={accent}>Galen's Verdict</Kicker>
+          <Kicker accent={accent}>Did the cure work?</Kicker>
         </div>
 
         {/* Transformation chain */}
@@ -870,7 +868,7 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
             {transform.to}
           </p>
 
-          {showBalance && (
+          {transform.result && (
             <>
               <p style={{
                 ...TYPE.body,
@@ -885,7 +883,7 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
                 fontSize: 30,
                 color: accent,
                 margin: 0,
-                animation: anim('tl-balance', 500, 0),
+                animation: anim('tl-balance', 500, 220),
               }}>
                 {transform.result}
               </p>
@@ -893,102 +891,125 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
           )}
         </div>
 
-        {/* Evaluation columns */}
-        {showEval && (
-          <div style={{ animation: anim('tl-in', 380, 0) }}>
-            <p style={{
-              ...TYPE.metadata,
-              color: `rgba(${rgb}, 0.7)`,
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              marginBottom: SPACING.compact,
-            }}>
-              Would this actually help?
-            </p>
+        {/* Evidence columns */}
+        <div style={{ animation: anim('tl-in', 380, 300) }}>
+          <p style={{
+            ...TYPE.metadata,
+            color: `rgba(${rgb}, 0.7)`,
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            marginBottom: SPACING.compact,
+          }}>
+            Would this actually help?
+          </p>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: SPACING.compact,
+            marginBottom: SPACING.separation,
+          }}>
+            {/* Sometimes worked */}
             <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: SPACING.compact,
-              marginBottom: SPACING.separation,
-            }}>
-              {/* Sometimes worked */}
-              <div style={{
-                padding: SPACING.compact,
-                background: `rgba(${rgb}, 0.06)`,
-                border: `1px solid rgba(${rgb}, 0.2)`,
-                borderRadius: RADII.small,
-              }}>
-                <p style={{
-                  ...TYPE.metadata,
-                  color: accent,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  margin: `0 0 ${SPACING.micro}px`,
-                }}>
-                  ✓ Sometimes helped
-                </p>
-                {worked.map((item, i) => (
-                  <p key={i} style={{
-                    ...TYPE.metadata,
-                    color: 'rgba(240,230,200,0.6)',
-                    margin: `${SPACING.micro}px 0 0`,
-                    fontWeight: 400,
-                  }}>
-                    {item}
-                  </p>
-                ))}
-              </div>
-
-              {/* Wrong explanation */}
-              <div style={{
-                padding: SPACING.compact,
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: RADII.small,
-              }}>
-                <p style={{
-                  ...TYPE.metadata,
-                  color: 'rgba(240,230,200,0.5)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  margin: `0 0 ${SPACING.micro}px`,
-                }}>
-                  ✕ Wrong explanation
-                </p>
-                <p style={{
-                  ...TYPE.metadata,
-                  color: 'rgba(240,230,200,0.45)',
-                  margin: 0,
-                  fontWeight: 400,
-                  lineHeight: 1.5,
-                }}>
-                  {ev.limitation}
-                </p>
-              </div>
-            </div>
-
-            {/* Historian's verdict */}
-            <div style={{
-              borderLeft: `2px solid rgba(${rgb}, 0.35)`,
-              paddingLeft: SPACING.compact,
-              marginBottom: SPACING.separation,
+              padding: SPACING.compact,
+              background: `rgba(${rgb}, 0.06)`,
+              border: `1px solid rgba(${rgb}, 0.2)`,
+              borderRadius: RADII.small,
             }}>
               <p style={{
-                ...TYPE.bodySmall,
-                color: 'rgba(240,230,200,0.7)',
-                margin: 0,
-                lineHeight: 1.6,
-                fontStyle: 'italic',
+                ...TYPE.metadata,
+                color: accent,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                margin: `0 0 ${SPACING.micro}px`,
               }}>
-                {ev.verdict}
+                ✓ Sometimes helped
+              </p>
+              {worked.map((item, i) => (
+                <p key={i} style={{
+                  ...TYPE.metadata,
+                  color: 'rgba(240,230,200,0.6)',
+                  margin: `${SPACING.micro}px 0 0`,
+                  fontWeight: 400,
+                }}>
+                  {item}
+                </p>
+              ))}
+            </div>
+
+            {/* Wrong explanation */}
+            <div style={{
+              padding: SPACING.compact,
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: RADII.small,
+            }}>
+              <p style={{
+                ...TYPE.metadata,
+                color: 'rgba(240,230,200,0.5)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                margin: `0 0 ${SPACING.micro}px`,
+              }}>
+                ✕ Wrong explanation
+              </p>
+              <p style={{
+                ...TYPE.metadata,
+                color: 'rgba(240,230,200,0.45)',
+                margin: 0,
+                fontWeight: 400,
+                lineHeight: 1.5,
+              }}>
+                {ev.limitation}
               </p>
             </div>
+          </div>
+        </div>
+
+        <div style={{ animation: anim('tl-in', 380, 420) }}>
+          <ContinueCTA onClick={onNext} accent={accent} />
+        </div>
+
+      </Pad>
+    </Screen>
+  )
+}
+
+// Beat B — why a wrong theory survived for centuries (the exam payoff)
+function EvalLegacyBeat({ block, accent, rgb, onComplete }) {
+  const ev = block.evaluation || {}
+  const church = ev.church || {}
+
+  return (
+    <Screen bgImage="/headers/history-medicine-through-time.png" bgOpacity={0.07}>
+      <Pad>
+
+        <div style={{ animation: anim('tl-in', 320, 0) }}>
+          <Kicker accent={accent}>Why it lasted</Kicker>
+        </div>
+
+        {/* Historian's verdict */}
+        {ev.verdict && (
+          <div style={{
+            borderLeft: `2px solid rgba(${rgb}, 0.35)`,
+            paddingLeft: SPACING.compact,
+            marginBottom: SPACING.separation,
+            animation: anim('tl-in', 380, 60),
+          }}>
+            <p style={{
+              ...TYPE.bodySmall,
+              color: 'rgba(240,230,200,0.8)',
+              margin: 0,
+              lineHeight: 1.6,
+              fontStyle: 'italic',
+            }}>
+              {ev.verdict}
+            </p>
           </div>
         )}
 
         {/* Church section */}
-        {showChurch && church.image && (
-          <div style={{ animation: anim('tl-in', 420, 0), marginBottom: SPACING.separation }}>
+        {church.image && (
+          <div style={{ animation: anim('tl-in', 420, 160), marginBottom: SPACING.separation }}>
             <div style={{
               position: 'relative',
               borderRadius: RADII.medium,
@@ -1043,15 +1064,14 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
         )}
 
         {/* Significance */}
-        {showSignificance && (
-          <div style={{ animation: anim('tl-in', 400, 0) }}>
+        {ev.significance && (
+          <div style={{ animation: anim('tl-in', 400, 260), marginBottom: SPACING.separation }}>
             <div style={{
               padding: `${SPACING.standard}px`,
               background: `rgba(${rgb}, 0.08)`,
               border: `1px solid rgba(${rgb}, 0.25)`,
               borderRadius: RADII.medium,
               textAlign: 'center',
-              marginBottom: SPACING.separation,
             }}>
               <p style={{
                 ...TYPE.body,
@@ -1061,10 +1081,12 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
                 {ev.significance}
               </p>
             </div>
-
-            <ActionBtn label="Complete" onClick={onComplete} accent={accent} rgb={rgb} />
           </div>
         )}
+
+        <div style={{ animation: anim('tl-in', 380, 360) }}>
+          <ActionBtn label="Complete" onClick={onComplete} accent={accent} rgb={rgb} />
+        </div>
 
       </Pad>
     </Screen>
