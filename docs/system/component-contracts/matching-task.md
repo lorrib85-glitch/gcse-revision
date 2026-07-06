@@ -35,6 +35,8 @@ stage "Medieval treatments") is the standard. It works because:
   must be written expecting the automatic round split, not fought against.
 - Every pair's term appears in a prior teach beat in the same episode —
   this is a retrieval check, not a first introduction to the term.
+- Plain language around the compulsory subject vocabulary, aiming for a
+  reading age of 12; vocabulary explained on first use.
 
 ## Known failure modes
 

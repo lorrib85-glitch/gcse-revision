@@ -37,8 +37,8 @@ screen `id: 'four-humours-hotspot'`) is the standard. It works because:
   "Believed effect" rows.
 - `extraFact` (or `treatmentLogic`) carries the exam-relevant detail — the
   "so what" of the hotspot, not a second trivia fact.
-- `shortLabel` stays to 1–2 words — it renders as a fixed-width overlay
-  label next to the tap target and does not wrap.
+- `shortLabel` stays to 1–2 words — it renders as a content-width,
+  non-wrapping overlay label next to the tap target.
 - Plain language around the compulsory subject vocabulary, aiming for a
   reading age of 12; vocabulary explained on first use.
 

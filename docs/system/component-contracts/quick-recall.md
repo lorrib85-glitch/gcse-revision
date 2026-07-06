@@ -28,14 +28,16 @@ stage "Hippocrates") sets the standard for retrieval alignment:
   exam needs — never a fact from a different episode or a level of detail
   beyond GCSE.
 - Every wrong answer logs through `unifiedWeaknessTracker.js`
-  (`logWrongAnswer`) and every correct answer through `logCorrectAnswer` —
-  see the pattern in `MatchingTask.jsx`'s `handleAnswerSelect`. Do not
+  (`logWrongAnswer`, see `QuickRecallScreen.jsx` line 111) and every
+  correct answer through `logCorrectAnswer` (same location). Do not
   build a retrieval interaction that bypasses the weakness tracker.
 - Distractors are plausible misconceptions a learner could genuinely
   hold, never jokes or nonsense options that make the correct answer
   obvious by elimination.
 - Hints and explanations point at the reasoning, not the answer — a hint
   that names the correct option is not a hint.
+- Plain language around the compulsory subject vocabulary, aiming for a
+  reading age of 12; vocabulary explained on first use.
 
 ## Known failure modes
 

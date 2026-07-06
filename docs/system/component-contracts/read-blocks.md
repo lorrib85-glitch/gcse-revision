@@ -25,8 +25,8 @@ its own.
 
 - Full sentences. A `read` block teaches at most one causal chain — cause
   → mechanism → consequence — never a second, unrelated fact bolted on.
-- Never more than 2 consecutive passive screens (⚙, enforced by
-  `tests/architecture/content-quality.test.js`) — if a `read`/`keypoint`/
+- Never more than 2 consecutive passive screens (⚙,
+  `docs/system/CONTENT_BUILD_TEMPLATE.md` hard floor) — if a `read`/`keypoint`/
   `examtip`/`funfact` block would make a third in a row, it needs an
   assessed or reveal screen in between instead.
 - No emoji-bullet fact walls. If the content is genuinely a list of more
