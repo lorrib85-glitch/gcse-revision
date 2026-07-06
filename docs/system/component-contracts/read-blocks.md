@@ -1,5 +1,7 @@
 # Contract — read blocks (`read`, `keypoint`, `examtip`, `funfact`)
 
+> **Governed by `docs/system/PATTERN_GOVERNANCE.md`.** This contract predates the 9-field format and uses the earlier 3-part subset (bar / copy standards / failure modes); it upgrades to all nine fields when next touched.
+
 **Component:** `src/components/layout/ModulePlayer.jsx` (`ReadBlock`,
 `KeypointBlock`, `ExamTipBlock`, `FunFactBlock`) · display types `read`,
 `keypoint`, `examtip`, `funfact` · functions: `teach-mechanism` (`read`,

@@ -1,5 +1,7 @@
 # Contract — quickRecall (and inline quiz / choice / truefalse / connection blocks)
 
+> **Governed by `docs/system/PATTERN_GOVERNANCE.md`.** This contract predates the 9-field format and uses the earlier 3-part subset (bar / copy standards / failure modes); it upgrades to all nine fields when next touched.
+
 **Component:** `src/components/learning/QuickRecallScreen.jsx` (display
 type `quickRecall`) plus the inline `quiz`/`choice`/`truefalse`/
 `connection` block types rendered through `AnswerInteraction.jsx` ·

@@ -1,5 +1,7 @@
 # Contract — keyFigureReveal
 
+> **Governed by `docs/system/PATTERN_GOVERNANCE.md`.** This contract predates the 9-field format and uses the earlier 3-part subset (bar / copy standards / failure modes); it upgrades to all nine fields when next touched.
+
 **Component:** `src/components/learning/KeyFigureReveal.jsx` · display type
 `keyFigureReveal` · functions: `introduce-figure` · interaction: `reveal`
 

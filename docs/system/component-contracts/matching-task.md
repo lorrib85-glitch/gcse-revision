@@ -1,5 +1,7 @@
 # Contract — matchingTask
 
+> **Governed by `docs/system/PATTERN_GOVERNANCE.md`.** This contract predates the 9-field format and uses the earlier 3-part subset (bar / copy standards / failure modes); it upgrades to all nine fields when next touched.
+
 **Component:** `src/components/learning/MatchingTask.jsx` · display type
 `matchingTask` · functions: `classify` · interaction: `assessed`
 

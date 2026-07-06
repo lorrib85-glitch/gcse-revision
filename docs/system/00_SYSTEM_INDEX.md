@@ -48,6 +48,14 @@ Story-unit rhythm and machine-checked quality floor for all module content. Laye
 
 ---
 
+### 1e. Pattern Governance
+
+`docs/system/PATTERN_GOVERNANCE.md`
+
+Governs how every element is placed on a learning screen: the taxonomy chain (learning objective → screen intent → approved component → execution contract → gold example), the one-primary-intent hard rule, the intent→component map, the 9-field contract format, and the mandatory render pass. Sits above `docs/system/component-contracts/`. Enforced by the content-create/content-review skills and the Workflow C/E critique gate.
+
+---
+
 ### 2. Component Authoring Rules
 
 `docs/system/COMPONENT_AUTHORING_RULES.md`
