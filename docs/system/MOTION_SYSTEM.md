@@ -58,6 +58,17 @@ import { MOTION } from '../../constants/motion.js'
 
 ---
 
+## Key-point reveal
+
+A screen's final key-point / payoff box (the callout that lands the takeaway) **always reveals gradually** — a deliberate fade-and-rise, timed to arrive slightly after the surrounding content, so the point registers as a moment rather than being present from first paint.
+
+- Never render the payoff box statically alongside the rest of the screen.
+- Use `MOTION.easing.gentle` and an entrance that moves the box **toward** the reader (translateY from below), consistent with the Cinematic Animation Principles below.
+- This is one deliberate reveal, not a cascade — do not stack several different ideas onto one timer (that reads as clutter). One payoff, one reveal.
+- Respect `prefers-reduced-motion`: reduced motion shows the final state immediately with no transform, but the box still comes last in reading order.
+
+---
+
 ## Usage Examples
 
 ```js

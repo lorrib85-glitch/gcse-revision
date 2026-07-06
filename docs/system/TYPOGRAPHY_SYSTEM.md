@@ -115,11 +115,26 @@ Avoid:
 
 ## Metadata Rules
 
-Metadata text (timing, labels, question counts):
+Metadata text (timing, question counts, past-paper years):
 - Use `TYPE.metadata`
-- Often paired with `textTransform: 'uppercase'`
+- Uppercase is permitted here — metadata is short scanning data, and caps aid legibility (see Eyebrows and label case below)
 - Lower opacity than body text
 - Should feel subtle — supporting hierarchy, not drawing focus
+
+---
+
+## Eyebrows and label case
+
+An "eyebrow" is a small label sitting above a heading. Eyebrows are decorative by default and must earn their place.
+
+**Rules:**
+- **No eyebrow that merely restates or categorises the heading below it.** "WORKED EXAMPLE" above a worked example, or "GALEN'S LOGIC" above a Galen screen, adds nothing the reader can't already see — remove it. If the eyebrow does not carry information the heading lacks, it should not exist.
+- Use an eyebrow **only when the label genuinely adds content** the reader needs and cannot infer — a live status, a position ("Question 3 of 5"), a source ("Past paper: 2019"), a category that disambiguates.
+- **No decorative uppercase.** `textTransform: 'uppercase'` and hand-typed ALL-CAPS are forbidden for headings and for key-point / callout labels. Uppercase is a data-scanning device, not an emphasis or drama device — reach for weight, size, colour or space to emphasise instead.
+- Uppercase remains permitted **only** for short scanning labels and data where caps genuinely aid legibility: nav/tab labels, single-word metadata chips, axis or diagram labels.
+- Everything else is sentence case (see CLAUDE.md — capitalise only the first word and proper nouns).
+
+Applies to all new work. Existing components migrate to these rules when next touched — not in a single mass change.
 
 ---
 
