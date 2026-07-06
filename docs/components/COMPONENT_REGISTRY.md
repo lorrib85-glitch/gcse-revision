@@ -9,6 +9,14 @@
 
 Before building anything new, check this registry. If a component already covers your use case — use it. If it doesn't quite fit, adapt it. Only build new components for genuinely distinct learning beats.
 
+**Function tags:** every learning component's display type is mapped to
+pedagogical function tags and an interaction class (`passive` / `reveal` /
+`assessed`) in `src/data/componentFunctions.js` — the machine-readable
+source of truth. Content builds select components by function, not by
+name: see `docs/system/CONTENT_BUILD_TEMPLATE.md`. When adding a component,
+register its display type there in the same change (the architecture test
+fails otherwise once content uses it).
+
 ---
 
 ## `src/components/core/`

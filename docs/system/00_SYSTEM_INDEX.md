@@ -40,6 +40,14 @@ Locked chapter/module structure rules for History and Science (Biology, Chemistr
 
 ---
 
+### 1d. Content Build Template
+
+`docs/system/CONTENT_BUILD_TEMPLATE.md`
+
+Story-unit rhythm and machine-checked quality floor for all module content. Layers inside the locked module architectures in 1c — those docs own section structure; this doc owns the rhythm and quality floor inside the sections.
+
+---
+
 ### 2. Component Authoring Rules
 
 `docs/system/COMPONENT_AUTHORING_RULES.md`
