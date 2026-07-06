@@ -49,8 +49,51 @@ enforceable.
   and selected by exam value — never invented ad hoc at build time.
 - **One rubric, two directions.** The same standard powers new builds and
   back-catalogue review.
+- **Dimensions are scored separately, never averaged into one number.** A
+  chapter can have a brilliant story and poor retrieval; a single score
+  would hide exactly that.
 - **Machine-check what can be machine-checked.** Mechanical guardrails live
   in `tests/architecture/` and run in `pnpm verify` forever.
+
+## The review rubric — six dimensions + three technical passes
+
+The shared rubric used by `content-create` self-critique, `content-review`,
+and the Workflow C/E critique gate. Every episode is scored per dimension
+(per screen where applicable), and each dimension reports separately.
+
+**Six content dimensions:**
+
+1. **Story** — does the episode follow its story spine? Does each story
+   unit's dramatic question get raised, escalated, and resolved? Any
+   narrative dead zones?
+2. **Teaching** — is every concept explained cause → mechanism →
+   consequence before it is tested? Depth sufficient to answer the exam
+   question, not just recognise the term?
+3. **Retrieval** — does every taught fact get retrieved or applied later?
+   Do retrieval moments feed `unifiedWeaknessTracker.js`? Is spacing/
+   interleaving present across the episode?
+4. **Interactions** — is each interactive component the right function tag
+   for the content shape? Does the execution meet its component contract,
+   not just its concept?
+5. **Exam preparation** — does the episode land on the exam payoff named
+   in the story spine? Are mark-scheme thinking, examiner traps, and
+   question-type practice present and specific?
+6. **Emotional engagement** — stakes, tension, payoff, moments a
+   15-year-old would remember. Would they willingly continue?
+
+**Three technical passes (checked alongside the six dimensions):**
+
+- **Hardcoded values** — colours, spacing, radii, motion, and typography
+  must come from the token files (`src/constants/`); no magic values.
+  Extends the existing `color-token-governance` architecture tests'
+  coverage into content review.
+- **Image quality** — images present where the screen design expects them,
+  correct paths, appropriate format (`.webp` preferred), no stretched,
+  low-resolution, or mismatched-subject imagery.
+- **UX design** — text in clear hierarchy (per `TYPOGRAPHY_SYSTEM.md`
+  tokens), positive white space (per `SPACING_SYSTEM.md`), correct subject
+  colour branding (per `SUBJECT_THEME_SYSTEM.md` / `subjects.js`), one job
+  per screen.
 
 ## Deliverables
 
@@ -129,8 +172,9 @@ contract has three parts:
   units → select components by function tag → build → self-critique against
   component contracts → architecture tests pass → present to user.
 - **`content-review`** (Lane C) — existing content audit + amend:
-  score an episode per-screen against the build template and component
-  contracts → produce ranked findings → amend what's below bar → re-score.
+  score an episode per-screen across all six rubric dimensions plus the
+  three technical passes → produce findings ranked per dimension (never a
+  single blended score) → amend what's below bar → re-score.
   Same rubric as `content-create`; makes back-catalogue auditing mechanical.
 
 Both skills declare their lane and slot into the existing triage system.
@@ -162,8 +206,10 @@ the test fails on new violations and on regressions.
 ### 7. Critique gate in the content workflow
 
 Workflow C and E docs gain a mandatory final stage for content builds:
-a critique pass scoring every screen against the story spine, story-unit
-rhythm, and component contracts. Below-bar screens are flagged and fixed
+a critique pass scoring every screen against the six rubric dimensions
+(story spine, teaching, retrieval, interactions, exam preparation,
+emotional engagement) and running the three technical passes (hardcoded
+values, image quality, UX design). Below-bar screens are flagged and fixed
 *before* the episode reaches user review.
 
 ## Proof case
@@ -200,8 +246,10 @@ framework.
 
 1. A build session given only the canonical files + this framework produces
    an episode whose screens pass the critique gate on first user review
-2. `content-review` run on Episode 12 produces a ranked findings list that
-   matches the user's own instincts about what's wrong
+2. `content-review` run on Episode 12 produces per-dimension findings that
+   match the user's own instincts about what's wrong — including surfacing
+   a case where one dimension scores well while another fails (e.g. strong
+   story, weak retrieval), proving the dimensions are truly independent
 3. The rebuilt Galen stretch is judged by the user to match the Episode 1
    gold stretch in quality
 4. `content-quality.test.js` fails when fed Episode 12 as-is (proving the
