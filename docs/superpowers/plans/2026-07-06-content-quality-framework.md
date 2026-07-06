@@ -1069,12 +1069,229 @@ git push -u origin main
 
 ---
 
+---
+
+# Addendum (2026-07-06) — Pattern component governance layer
+
+This addendum supersedes the ad-hoc "build reusable boxes" direction. It
+adds a governance layer whose job is to **prevent misuse**, not just offer
+nicer components. It also folds in everything learned during the Galen
+proof case: the render-pass gap, the MediaPlaceholder convention, and the
+eyebrow/uppercase/gradual-reveal design rules.
+
+It reprioritises the remaining work: **the pattern layer is built and
+contracted before the skills, because the skills exist to enforce it.**
+
+## The taxonomy chain
+
+Every element a build session puts on a screen must resolve through one
+chain — no ad-hoc `<div>` boxes for a job a pattern owns:
+
+**screen intent → approved component → execution contract → gold example**
+
+- **Screen intent** — the communicative job (e.g. "land a takeaway",
+  "reserve a visual", "walk a worked example", "teach a concept",
+  "introduce a figure"). Named, finite.
+- **Approved component** — the single sanctioned component for that intent.
+  If an intent has an approved component, using anything else is a review
+  failure.
+- **Execution contract** — the 9-field rules below governing correct use.
+- **Gold example** — the reference implementation (a Storybook story plus a
+  real on-screen use) the contract points to.
+
+Intent → approved component map (seed; extended as intents are named):
+
+| Screen intent | Approved component |
+|---|---|
+| Land the takeaway / payoff of a screen | `KeyPoint` |
+| Walk a concrete worked example | `WorkedExample` |
+| Compose a teaching screen (rhythm + spacing) | `TeachScreenShell` |
+| Reserve an image/diagram the author will supply | `MediaPlaceholder` |
+| Teach a concept, test-after-teach | `theoryLab` (per its contract) |
+| Introduce a key person | `keyFigureReveal` |
+| …(existing learning components) | per `component-contracts/` |
+
+## The contract format — 9 fields (supersedes the 3-part format)
+
+Every contract, new and existing, uses these fields. The 3-part format from
+Task 3 (bar / copy standards / failure modes) is a subset; the six existing
+contracts upgrade to this format opportunistically when next touched.
+
+1. **Purpose** — the one intent this component serves.
+2. **When to use** — the trigger conditions.
+3. **When NOT to use** — the misuse control. The cases where a build
+   session would reach for this but must not, each with the correct
+   alternative. This field is mandatory and is what the reviewer checks
+   hardest.
+4. **Required structure** — mandatory props/children, required order, and
+   what may never appear (e.g. "no eyebrow", "exactly one per screen").
+5. **Token rules** — the `SPACING`/`TYPE`/`RADII`/`MOTION` tokens it must
+   use; no raw pixel/hex/ms values. (⚙ machine-checkable via the existing
+   token-governance tests.)
+6. **Motion rules** — required entrance/reveal behaviour and reduced-motion
+   fallback, in `MOTION` tokens.
+7. **Gold example** — named story + named on-screen use, and why it is the
+   bar.
+8. **Below-bar counterexample** — a named real (or realistic) misuse and
+   why it fails.
+9. **Review checks** — the explicit checks `content-review` runs, each
+   marked ⚙ (machine-checkable, becomes an architecture test) or 👁
+   (requires the render pass).
+
+## The mandatory render pass (the Galen lesson)
+
+`content-review` and the critique gate do not pass on source + tests alone.
+Every 👁 review check requires **rendering the screen and looking at the
+pixels** (Storybook story or the isolated-mount harness, screenshot at
+390px). Source-and-tests review is what let capitalisation drift, screens
+teaching three things, and inverted hierarchy through the first time — it
+must not recur. This is a first-class review check, not optional polish.
+
+## MediaPlaceholder convention + visual-assets manifest
+
+Build sessions never generate bespoke imagery or diagrams. When a screen
+needs a visual, insert `MediaPlaceholder` with a `caption` briefing exactly
+what the asset should depict, and append an entry to a per-episode
+**visual-assets manifest** (`docs/content/<subject>/<series>/<NN>_visual-assets.md`)
+listing every reserved slot: kind, aspect, the brief, and the screen it
+sits on. The manifest is the author's shopping list. `content-review`
+checks that every placeholder has a manifest entry and vice versa.
+
+## Design-rule review checks (from this session's design rules)
+
+These become explicit review checks in every relevant contract:
+
+- **No decorative eyebrow** — an eyebrow that restates/categorises its
+  heading is a failure (`TYPOGRAPHY_SYSTEM.md` → Eyebrows and label case).
+- **No decorative uppercase** — `text-transform: uppercase` / ALL-CAPS on
+  headings or key-point labels is a failure; caps only for scanning
+  data. ⚙ candidate.
+- **Gradual key-point reveal** — payoff boxes reveal gradually, never
+  static all-at-once (`MOTION_SYSTEM.md` → Key-point reveal).
+- **Points land in a box, not as caption text** — a key takeaway rendered
+  as small muted footer text is a hierarchy inversion; it belongs in
+  `KeyPoint`.
+
+## The three pattern components (each specified to the 9 fields)
+
+### `TeachScreenShell`
+1. **Purpose** — compose a teaching screen with the approved vertical
+   rhythm so spacing stops being per-session judgement.
+2. **When to use** — any screen whose job is to teach/explain (not a
+   full-bleed cinematic moment, not an assessed interaction that owns its
+   own layout).
+3. **When NOT to use** — cinematic reveal moments (`VisualLearning`,
+   `CinematicRevealMoment`), or inside a component that already owns a
+   full-screen layout (`theoryLab` stages). Don't nest shells.
+4. **Required structure** — slots in fixed order: optional `eyebrow` (only
+   if it passes the eyebrow rule) → `heading` → optional `intro` →
+   `children` (the teaching body: at most one `MediaPlaceholder`/visual)
+   → optional single `KeyPoint`. Enforces one-job-per-screen.
+5. **Token rules** — all inter-slot spacing from `SPACING`; type from
+   `TYPE`; no raw px.
+6. **Motion rules** — content enters toward the reader per Cinematic
+   Animation Principles; the `KeyPoint` slot reveals gradually per the
+   motion rule.
+7. **Gold example** — the reworked Galen teach screen (the approved
+   preview: eyebrow-free heading → intro → visual slot → boxed key point).
+8. **Below-bar counterexample** — the pre-rework explainReveal wall: five
+   stacked text steps, raw-px spacing, no focal point.
+9. **Review checks** — ⚙ no raw px spacing; ⚙ ≤1 visual slot; 👁 rhythm
+   reads clean at 390px; 👁 eyebrow (if present) passes the eyebrow rule.
+
+### `KeyPoint`
+1. **Purpose** — land the single takeaway/payoff of a screen.
+2. **When to use** — the one sentence the learner must leave with; the
+   answer the screen was building toward.
+3. **When NOT to use** — for ordinary body copy, for more than one point
+   (if there are two "key" points, the screen is doing two jobs — split
+   it), or to decorate. Not a generic callout box for any text.
+4. **Required structure** — accent-tinted box, sentence-case content, **no
+   eyebrow**, at most one per screen, appears last in reading order.
+5. **Token rules** — `RADII`, `SPACING`, `TYPE`, accent via
+   `SUBJECTS`/`--cinematic-accent`; no raw values.
+6. **Motion rules** — gradual fade-and-rise, slightly delayed
+   (`MOTION.easing.gentle`); reduced-motion shows final state.
+7. **Gold example** — the approved Galen "worked example" box (reworked
+   from footer text into an accent callout).
+8. **Below-bar counterexample** — the same payoff rendered as 14px,
+   55%-opacity centred footer text (the hierarchy inversion the user
+   flagged); or an all-caps "WORKED EXAMPLE" eyebrow on top.
+9. **Review checks** — ⚙ ≤1 `KeyPoint` per screen; ⚙ no uppercase label;
+   ⚙ uses tokens not raw values; 👁 reveals gradually; 👁 is genuinely the
+   screen's takeaway, not decoration.
+
+### `WorkedExample`
+1. **Purpose** — walk one concrete case through the concept just taught, so
+   the abstract rule becomes applicable.
+2. **When to use** — immediately after a concept is taught, to show it
+   applied to a specific, named case (a patient, a calculation, a source).
+3. **When NOT to use** — before the concept is taught (that is testing
+   before teaching — the `theoryLab` failure mode), or as the only teaching
+   on the screen (it illustrates, it does not replace the teach beat).
+4. **Required structure** — a labelled case (the specific scenario) → the
+   step applying the rule → the result; sentence-case; may sit inside
+   `TeachScreenShell`. Distinct from `KeyPoint` (which states the takeaway;
+   `WorkedExample` demonstrates the process).
+5. **Token rules** — tokens only; no raw values.
+6. **Motion rules** — steps may reveal in sequence per the reveal
+   principle; reduced-motion shows final state.
+7. **Gold example** — the fever → too much blood → cool-and-dry worked
+   example in the Galen stretch.
+8. **Below-bar counterexample** — a worked example placed before the
+   theory is taught; or fragments carrying the teaching weight ("Too much
+   heat.") with no full-sentence reasoning.
+9. **Review checks** — ⚙ tokens not raw values; 👁 the concept is taught
+   earlier in the episode than this example (no test-before-teach); 👁 the
+   case is specific and named, not generic.
+
+## New tasks (run before the current Tasks 6–7)
+
+- **Task P1 — Pattern governance doc.** Create
+  `docs/system/component-contracts/README.md` upgrade + a new
+  `docs/system/PATTERN_GOVERNANCE.md` capturing the taxonomy chain, the
+  intent→component map, the 9-field contract format, the render-pass rule,
+  the MediaPlaceholder+manifest convention, and the design-rule review
+  checks. Migrate the six existing contracts' headers to reference the
+  9-field format (full rewrite of each is opportunistic).
+- **Task P2 — `TeachScreenShell`** component + `.stories.jsx` + its
+  9-field contract at `component-contracts/teach-screen-shell.md`. Verify
+  with a render pass at 390px.
+- **Task P3 — `KeyPoint`** component + story + contract
+  (`component-contracts/key-point.md`). Render pass.
+- **Task P4 — `WorkedExample`** component + story + contract
+  (`component-contracts/worked-example.md`). Render pass.
+- **Task P5 — MediaPlaceholder contract + manifest convention.** Write
+  `component-contracts/media-placeholder.md` (9 fields) and document the
+  visual-assets manifest format. (`MediaPlaceholder` component already
+  built and committed.)
+
+## Revisions to existing tasks
+
+- **Task 6 (`content-create`)** — add to required reading:
+  `PATTERN_GOVERNANCE.md` and the pattern-component contracts. Add to the
+  pipeline: resolve every screen element through the taxonomy chain; use
+  the approved component for each intent; reserve visuals with
+  `MediaPlaceholder` + manifest entry; never generate imagery. Add the
+  render pass to self-critique.
+- **Task 7 (`content-review`)** — score against the 9-field contracts and
+  the intent→component map (flag any ad-hoc element that should be a
+  pattern component); run every 👁 check via the mandatory render pass;
+  verify the visual-assets manifest matches the placeholders.
+- **Task 9 (critique gate)** — the gate includes the render pass and the
+  taxonomy-chain check.
+
+---
+
 ## Not in this plan
 
 - Back-catalogue review (spec rollout step 7) — that is *using* the framework: run `/content-review` per episode afterwards, worst first (Episode 12 is the known candidate).
-- Contracts beyond the first six components — written on demand per the contracts README.
+- Mass migration of the 38 files using decorative eyebrows/uppercase — opportunistic, per the design-rule commit.
+- Contracts beyond the pattern components and the first six learning components — written on demand per the contracts README.
 - Mass backfill of story spines — added per episode as touched (Task 8 Step 3 rule).
 
 ## Execution order note
 
-Tasks follow the spec's rollout order except that the quality-floor test (Task 5) lands before the skills (Tasks 6–7), because both skills reference the test and its allowlist by name — building it first keeps every reference in the plan pointing at something that exists.
+Done: Tasks 1–5 (taxonomy module, build template, six learning-component contracts, Galen proof case, quality-floor test).
+
+Revised order for remaining work: **pattern layer first, then the skills that enforce it.** Task P1 (governance doc) → P2–P5 (pattern components + contracts) → Task 8 (canonical story spine, independent) → **revised** Tasks 6–7 (skills, now enforcing the pattern layer) → Task 9 (wiring + critique gate). The skills come last among the build tasks because they are the enforcement surface for everything before them — building them first would point them at components and contracts that don't yet exist.
