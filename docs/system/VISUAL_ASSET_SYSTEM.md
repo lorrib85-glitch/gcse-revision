@@ -32,6 +32,8 @@ For each requirement, the manifest should answer:
 
 The manifest isn't a deliverable the learner ever sees. Its value is forcing the reuse-vs-new decision to happen once, deliberately, before production starts — instead of repeatedly and inconsistently during the build.
 
+**Concrete format:** the manifest lives at `docs/content/<subject>/<series>/<NN>_visual-assets.md`, one row per reserved slot (Screen · Kind · Aspect · Category · Brief). Each row corresponds to a `MediaPlaceholder` in the built episode — the AI reserves the slot, the author supplies the asset. See `docs/system/component-contracts/media-placeholder.md` for the format and the reconciliation rule.
+
 ---
 
 ## Asset categories
