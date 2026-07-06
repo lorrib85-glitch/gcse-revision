@@ -8,6 +8,9 @@ import { recordActivity, MODULE_GROUPS } from '../../progress.js'
 import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialModuleState, clampScreenIndex, resolveFinishAction, getModuleGate } from '../../app/moduleNavigation.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
+import KeyPoint from '../core/KeyPoint.jsx'
+import WorkedExample from '../core/WorkedExample.jsx'
+import MediaPlaceholder from '../core/MediaPlaceholder.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
 import QuickRecallScreen from '../learning/QuickRecallScreen.jsx'
 import TieredQuizScreen from '../learning/TieredQuizScreen.jsx'
@@ -851,6 +854,9 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
           {block.type === 'boss'          && <ExamQuestionFrame block={block} subject={subject} mode="practice" onSkip={onScreenComplete} />}
           {block.type === 'explainReveal' && <ExplainReveal block={block} subject={subject} onComplete={onScreenComplete} />}
+          {block.type === 'keyPoint'       && <div style={{ marginTop: i > 0 ? 28 : 0 }}><KeyPoint subject={subject} text={block.text} emphasis={block.emphasis} icon={block.icon} /></div>}
+          {block.type === 'workedExample'  && <div style={{ marginTop: i > 0 ? 28 : 0 }}><WorkedExample subject={subject} scenario={block.scenario} chips={block.chips} working={block.working} result={block.result} /></div>}
+          {block.type === 'mediaPlaceholder' && <div style={{ marginTop: i > 0 ? 28 : 0 }}><MediaPlaceholder subject={subject} kind={block.kind} aspect={block.aspect} caption={block.caption} /></div>}
           {block.type === 'fillblanks'    && <FillInTheBlanksBlock block={block} subject={subject} />}
           {block.type === 'theoryCompare' && <TheoryCompareBlock block={block} subject={subject} />}
           {block.type === 'graphView'     && <GraphView block={block} subject={subject} />}

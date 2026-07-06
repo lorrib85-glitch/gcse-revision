@@ -319,35 +319,20 @@ export default {
     {
       stage: 'Galen',
       label: 'The Theory of Opposites',
-      kicker: "Galen's logic",
       heading: 'The Theory of Opposites',
-      sub: 'Before you can treat a patient, you need to know exactly what you\'re fighting.',
+      sub: 'Each humour carried two qualities — hot or cold, wet or dry. A patient\'s symptoms revealed which were in excess.',
       blocks: [
         {
-          type: 'explainReveal',
-          intro: 'Galen didn\'t just believe in four humours. He believed each one carried its own signature, and that signature told a doctor exactly how to treat it.',
-          atmosphereImage: '/figures/history/medicine/medieval/galen-teaching.png',
-          steps: [
-            {
-              id: 'qualities',
-              statement: 'Every humour carried two qualities:',
-              emphasis: 'hot or cold, wet or dry.',
-              detail: 'Blood was hot and wet. Phlegm was cold and wet. Yellow bile was hot and dry. Black bile was cold and dry. Too much of a humour pushed its qualities to excess.',
-            },
-            {
-              id: 'symptoms',
-              statement: 'Symptoms revealed the excess.',
-              emphasis: 'A physician read the body, then reasoned back to the humour behind it.',
-              detail: 'Fever and sweating meant too much heat and wetness. A dry cough meant too much dryness.',
-            },
-            {
-              id: 'opposites',
-              statement: 'So the cure had to carry the opposite qualities.',
-              emphasis: 'Too hot and wet? Cool and dry the body.',
-              detail: "Fever, a red face and sweating meant too much blood, which was hot and wet. Galen's answer was to cool and dry the body, so balance could return. That single rule was the Theory of Opposites.",
-            },
-          ],
-          reflectionPrompt: "A patient is waiting. Can you follow Galen's logic and treat them yourself?",
+          type: 'workedExample',
+          chips: ['Fever', 'Red face', 'Sweating'],
+          scenario: 'A patient arrives with a fever, a red face and heavy sweating.',
+          working: 'Heat and wetness point to one humour in excess: too much blood, which is hot and wet.',
+          result: 'So the cure is to cool and dry the body — the opposite qualities.',
+        },
+        {
+          type: 'keyPoint',
+          text: 'The rule was simple: treat every illness with its opposite quality.',
+          emphasis: 'opposite',
         },
       ],
     },

@@ -14,11 +14,17 @@ import { TYPE } from '../../constants/typography.js'
 // docs/system/component-contracts/key-point.md.
 //
 // Rules baked in: no eyebrow, sentence case, at most one per screen, appears
-// last, gradual reveal. Emphasise a word by wrapping it in an accent-coloured
-// span inside `children`.
+// last, gradual reveal.
+//
+// Two ways to supply the takeaway:
+//   • JSX: pass `children`; emphasise a word with an accent-coloured span.
+//   • Data (from content JSON): pass `text` (string) and optional `emphasis`
+//     (a substring of `text` to accent-colour).
 //
 // Props:
-//   children — the takeaway (sentence case; one crisp rule statement)
+//   children — the takeaway as JSX (sentence case; one crisp rule statement)
+//   text     — the takeaway as a plain string (used when children is absent)
+//   emphasis — optional substring of `text` to render in the accent colour
 //   icon     — optional small leading glyph (node); omit for a clean rule box
 //   subject  — palette key for the accent (default 'History')
 
@@ -35,11 +41,22 @@ function ensureStyles() {
   document.head.appendChild(el)
 }
 
-export default function KeyPoint({ children, icon, subject = 'History' }) {
+// Render a plain-string takeaway, accent-colouring the `emphasis` substring.
+function renderText(text, emphasis, accent) {
+  if (!emphasis || !text.includes(emphasis)) return text
+  const [before, ...rest] = text.split(emphasis)
+  return (
+    <>{before}<span style={{ color: accent }}>{emphasis}</span>{rest.join(emphasis)}</>
+  )
+}
+
+export default function KeyPoint({ children, text, emphasis, icon, subject = 'History' }) {
   ensureStyles()
 
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const rgb = theme.accentRgb
+  const accent = theme.accent
+  const content = children != null ? children : renderText(text || '', emphasis, accent)
 
   return (
     <div className="kp-reveal" style={{
@@ -55,7 +72,7 @@ export default function KeyPoint({ children, icon, subject = 'History' }) {
         <div style={{ fontSize: 20, lineHeight: 1, marginTop: 1, flexShrink: 0 }}>{icon}</div>
       )}
       <div style={{ ...TYPE.body, fontWeight: 500, color: 'rgba(245,245,245,0.92)', margin: 0 }}>
-        {children}
+        {content}
       </div>
     </div>
   )

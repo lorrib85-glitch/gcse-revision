@@ -33,6 +33,11 @@ export const SCREEN_TYPE_FUNCTIONS = {
   examinerExplains: { functions: ['exam-technique'], interaction: 'passive' },
   visualNarrative: { functions: ['hook-tension', 'teach-mechanism'], interaction: 'passive' },
 
+  // Pattern components (docs/system/PATTERN_GOVERNANCE.md)
+  keyPoint: { functions: ['teach-mechanism'], interaction: 'passive' },
+  workedExample: { functions: ['teach-mechanism', 'apply'], interaction: 'passive' },
+  mediaPlaceholder: { functions: ['teach-mechanism'], interaction: 'passive' },
+
   // Reveal interactions — active but unassessed
   conceptReveal: { functions: ['teach-mechanism'], interaction: 'reveal' },
   visualLearning: { functions: ['hook-tension', 'teach-mechanism'], interaction: 'reveal' },
