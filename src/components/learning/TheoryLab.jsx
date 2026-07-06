@@ -133,8 +133,7 @@ function Kicker({ children, accent }) {
     <p style={{
       ...TYPE.metadata,
       color: accent,
-      textTransform: 'uppercase',
-      letterSpacing: '0.12em',
+      letterSpacing: '0.04em',
       margin: `0 0 ${SPACING.compact}px`,
       opacity: 0.85,
     }}>
@@ -142,6 +141,17 @@ function Kicker({ children, accent }) {
     </p>
   )
 }
+
+
+const displayQualityLabel = (label) => ({
+  HOT: 'Hot',
+  COLD: 'Cold',
+  WET: 'Wet',
+  DRY: 'Dry',
+  'HOT + WET': 'Hot + wet',
+  'COLD + DRY': 'Cold + dry',
+  BALANCE: 'Balance',
+})[label] || label
 
 function ActionBtn({ label, onClick, accent, rgb, disabled = false }) {
   return (
@@ -227,7 +237,7 @@ function TheoryStage({ block, accent, rgb, onNext }) {
           marginBottom: SPACING.separation,
           minHeight: 72,
         }}>
-          <span style={wordStyle}>{first.left}</span>
+          <span style={wordStyle}>{displayQualityLabel(first.left)}</span>
 
           <span style={{
             ...TYPE.body,
@@ -246,7 +256,7 @@ function TheoryStage({ block, accent, rgb, onNext }) {
             ...wordStyle,
             ...fadeIn(phase >= 2),
           }}>
-            {first.right}
+            {displayQualityLabel(first.right)}
           </span>
         </div>
 
@@ -424,7 +434,7 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
                       animation: isWrong ? `tl-shake 0.4s ease` : 'none',
                     }}
                   >
-                    {opt.label}
+                    {displayQualityLabel(opt.label)}
                   </button>
                 )
               })}
@@ -493,7 +503,7 @@ function OutcomeStage({ block, accent, rgb, onNext }) {
             lineHeight: 1.0,
             margin: 0,
           }}>
-            {outcome.diagnosis}
+            {displayQualityLabel(outcome.diagnosis)}
           </p>
         </div>
 
@@ -642,7 +652,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                   }}>
                     <img
                       src={opt.image}
-                      alt={opt.label}
+                      alt={displayQualityLabel(opt.label)}
                       style={{
                         width: '82%',
                         height: '82%',
@@ -699,7 +709,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                       textDecoration: struck ? 'line-through' : 'none',
                       transition: `color ${MOTION.fast}ms ease`,
                     }}>
-                      {opt.label}
+                      {displayQualityLabel(opt.label)}
                     </span>
                   </div>
                 </button>
@@ -748,7 +758,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                 >
                   {confirmed && isCorrect && <span>✓</span>}
                   {struck && <span>✕</span>}
-                  {opt.label}
+                  {displayQualityLabel(opt.label)}
                 </button>
               )
             })}
@@ -800,7 +810,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                 margin: 0,
                 letterSpacing: '-0.01em',
               }}>
-                {ev.from}
+                {displayQualityLabel(ev.from)}
               </p>
               <p style={{
                 ...TYPE.body,
@@ -818,7 +828,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
                 margin: 0,
                 letterSpacing: '-0.01em',
               }}>
-                {ev.to}
+                {displayQualityLabel(ev.to)}
               </p>
             </div>
 
@@ -874,7 +884,7 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
             letterSpacing: '-0.01em',
             animation: anim('tl-in', 380, 60),
           }}>
-            {transform.from}
+            {displayQualityLabel(transform.from)}
           </p>
           <p style={{
             ...TYPE.body,
@@ -893,7 +903,7 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
             letterSpacing: '-0.01em',
             animation: anim('tl-in', 380, 140),
           }}>
-            {transform.to}
+            {displayQualityLabel(transform.to)}
           </p>
 
           {showBalance && (
@@ -915,7 +925,7 @@ function EvaluationStage({ block, accent, rgb, onComplete }) {
                 letterSpacing: '-0.01em',
                 animation: anim('tl-balance', 500, 0),
               }}>
-                {transform.result}
+                {displayQualityLabel(transform.result)}
               </p>
             </>
           )}
