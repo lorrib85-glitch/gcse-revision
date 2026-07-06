@@ -29,9 +29,8 @@ function ensureStyles() {
   el.textContent = `
     @keyframes tss-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
     .tss-in { animation: tss-rise ${MOTION.duration.slow} ${MOTION.easing.standard} both; }
-    .tss-keypoint { animation: tss-rise ${MOTION.duration.slow} ${MOTION.easing.gentle} 320ms both; }
     @media (prefers-reduced-motion: reduce) {
-      .tss-in, .tss-keypoint { animation: none; }
+      .tss-in { animation: none; }
     }
   `
   document.head.appendChild(el)
@@ -91,8 +90,9 @@ export default function TeachScreenShell({ heading, eyebrow, intro, children, ke
         </div>
       )}
 
+      {/* keyPoint owns its own gradual reveal (see KeyPoint); the shell only positions it last */}
       {keyPoint != null && (
-        <div className="tss-keypoint" style={{ marginTop: SPACING.separation }}>
+        <div style={{ marginTop: SPACING.separation }}>
           {keyPoint}
         </div>
       )}
