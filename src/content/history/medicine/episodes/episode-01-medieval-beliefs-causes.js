@@ -47,9 +47,9 @@ export default {
     { id: 'part-1', title: 'Strange Ideas, Serious Medicine', description: 'Intro hook, prior recall and roadmap.', screenIndex: 0 },
     { id: 'part-2', title: 'What Made People Sick?', description: 'Religious, astrological, miasma and humoural explanations.', screenIndex: 1 },
     { id: 'part-3', title: 'Why Galen Ruled the Room', description: 'Hippocrates, Galen, Church authority and book learning.', screenIndex: 7 },
-    { id: 'part-4', title: 'The Medieval Treatment Toolkit', description: 'Physicians, barber surgeons, apothecaries, hospitals and prevention.', screenIndex: 10 },
-    { id: 'part-5', title: 'Why the System Survived', description: 'Continuity, agents of change/continuity and the coherent-but-wrong system.', screenIndex: 23 },
-    { id: 'part-6', title: 'Exam Prep: Explain the Grip of Galen', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 26 },
+    { id: 'part-4', title: 'The Medieval Treatment Toolkit', description: 'Physicians, barber surgeons, apothecaries, hospitals and prevention.', screenIndex: 11 },
+    { id: 'part-5', title: 'Why the System Survived', description: 'Continuity, agents of change/continuity and the coherent-but-wrong system.', screenIndex: 24 },
+    { id: 'part-6', title: 'Exam Prep: Explain the Grip of Galen', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 27 },
   ],
 
   screens: [
@@ -317,6 +317,54 @@ export default {
     },
 
     {
+      stage: 'Galen',
+      label: 'The theory of opposites',
+      kicker: "Galen's logic",
+      heading: 'The theory of opposites',
+      sub: 'Before you can treat a patient, you need to know exactly what you\'re fighting.',
+      blocks: [
+        {
+          type: 'explainReveal',
+          intro: 'Galen didn\'t just believe in four humours. He believed each one carried its own signature, and that signature told a doctor exactly how to treat it.',
+          atmosphereImage: '/figures/history/medicine/medieval/galen-teaching.png',
+          steps: [
+            {
+              id: 'qualities',
+              statement: 'Every humour carried two qualities:',
+              emphasis: 'hot or cold, and wet or dry.',
+              detail: 'Blood was hot and wet. Phlegm was cold and wet. Yellow bile was hot and dry. Black bile was cold and dry.',
+            },
+            {
+              id: 'imbalance',
+              statement: 'Too much of one humour',
+              emphasis: 'meant too much of its qualities.',
+              detail: 'A patient with too much blood wasn\'t just "too bloody." Their whole body was becoming too hot and too wet.',
+            },
+            {
+              id: 'symptoms',
+              statement: 'Those qualities showed up as symptoms.',
+              emphasis: 'A physician read the body, then worked backwards to the humour behind it.',
+              detail: 'Fever and sweating pointed to heat and wetness. A dry cough pointed to dryness. Every symptom was evidence.',
+            },
+            {
+              id: 'opposites',
+              statement: 'Once you knew which qualities were in excess,',
+              emphasis: 'the cure had to carry the opposite ones.',
+              detail: 'Too hot and too wet needed a remedy that was cold and dry. That single rule was the Theory of Opposites.',
+            },
+            {
+              id: 'worked-example',
+              statement: 'Fever. Red face. Sweating.',
+              emphasis: 'Too much blood: hot and wet.',
+              detail: "Galen's answer: cool the body down and dry it out, so balance could return.",
+            },
+          ],
+          reflectionPrompt: "A patient is waiting. Can you follow Galen's logic and treat them yourself?",
+        },
+      ],
+    },
+
+    {
       type: 'theoryLab',
       stage: 'Galen',
       label: 'Think Like Galen',
@@ -326,7 +374,7 @@ export default {
       theory: {
         heading: 'Theory of Opposites',
         tagline: 'If a patient seemed too hot, physicians tried to cool them down.',
-        explanation: "Galen believed illness happened when the body became unbalanced.\n\nTo restore balance, treat the illness using the opposite quality.",
+        explanation: "Galen believed every humour carried its own qualities, and that illness happened when one humour built up and pushed those qualities too far. A patient's symptoms revealed which qualities were in excess. So the cure had to carry the opposite qualities, pulling the body back into balance.",
         grid: [
           { left: 'HOT', right: 'COLD' },
           { left: 'WET', right: 'DRY' },
@@ -348,7 +396,10 @@ export default {
 
       outcome: {
         diagnosis: 'HOT + WET',
-        lines: ['Too much heat.', 'Too much moisture.'],
+        lines: [
+          'Fever and a red face point to too much heat.',
+          'Sweating points to too much wetness.',
+        ],
       },
 
       prescription: {
@@ -367,14 +418,14 @@ export default {
       evaluation: {
         transformation: { from: 'HOT + WET', to: 'COLD + DRY', result: 'BALANCE' },
         worked: ['Rest', 'Fluids', 'Cooling foods'],
-        limitation: 'Disease is not caused by Four Humours.',
-        verdict: "Some treatments accidentally helped patients recover, making Galen's theory seem trustworthy even though the explanation was wrong.",
+        limitation: 'Disease is not actually caused by an imbalance of the Four Humours.',
+        verdict: "Patients who rested, drank fluids and ate cooling foods often did recover. To Galen, and to the doctors who followed him, that recovery looked like proof the theory worked, even though the humours had nothing to do with it.",
         church: {
           image: '/figures/history/medicine/medieval/priest.png',
           heading: 'Supported by the Church',
-          body: "Christians believed God created a perfect and balanced body. This matched Galen's ideas — so the Church preserved and promoted his work for centuries.",
+          body: "Christians believed God created a perfect and balanced body. This matched Galen's ideas, so the Church preserved and promoted his work for centuries.",
         },
-        significance: "This helped Galen's ideas remain influential for over 1,000 years.",
+        significance: "That's why the Theory of Opposites survived for over 1,400 years. It wasn't blind faith. It was a theory that seemed to keep working, treatment after treatment, patient after patient.",
       },
     },
 
@@ -403,6 +454,13 @@ export default {
           options: ['The Church supported and promoted them', 'He had a laboratory', 'He used microscopes', 'He invented surgery'],
           correct: 0,
           explanation: "The Church preserved Galen's books and taught his ideas in universities, giving them institutional backing.",
+        },
+        {
+          type: 'choice',
+          question: 'Which humour did Galen link with hot and wet qualities?',
+          options: ['Blood', 'Phlegm', 'Yellow bile', 'Black bile'],
+          correct: 0,
+          explanation: 'Blood carried hot and wet qualities. A patient with too much blood showed heat and wetness, like the fever and sweating in the case you just diagnosed.',
         },
       ],
     },

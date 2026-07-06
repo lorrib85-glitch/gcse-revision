@@ -39,9 +39,9 @@ describe('Episode 1 support map — forward integrity', () => {
     }
   })
 
-  it('has a screen-level entry for all 33 Episode 1 screens (0–32), contiguous, no duplicates', () => {
+  it('has a screen-level entry for all 34 Episode 1 screens (0–33), contiguous, no duplicates', () => {
     const sorted = [...screenIndices].sort((a, b) => a - b)
-    expect(sorted).toEqual(Array.from({ length: 33 }, (_, i) => i))
+    expect(sorted).toEqual(Array.from({ length: 34 }, (_, i) => i))
     expect(new Set(screenIndices).size).toBe(screenIndices.length)
   })
 
@@ -54,7 +54,7 @@ describe('Episode 1 support map — forward integrity', () => {
     }
   })
 
-  it('stageRanges collectively cover every screen (0–32)', () => {
+  it('stageRanges collectively cover every screen (0–33)', () => {
     const covered = new Set()
     for (const r of SUPPORT.stageRanges) {
       const [start, end] = r.screenRange
@@ -79,14 +79,14 @@ describe('Episode 1 concept-support — derived reverse index', () => {
     }
   })
 
-  it('includes screens from parts 5–6 (now that screens 23–32 are mapped)', () => {
-    // The exam-prep / synthesis screens are 23+. At least one concept must now
+  it('includes screens from parts 5–6 (now that screens 24–33 are mapped)', () => {
+    // The exam-prep / synthesis screens are 24+. At least one concept must now
     // resolve to a revisit screen in that range, and the factors-in-change
     // synthesis concept in particular must reach the exam-prep screens.
-    const anyLateScreen = Object.values(INDEX).some(e => e.screens.some(s => s >= 23))
-    expect(anyLateScreen, 'no concept resolves to a screen 23+').toBe(true)
-    expect(INDEX['history:medicine:factors-in-change'].screens.some(s => s >= 23)).toBe(true)
-    expect(INDEX['history:medicine:church-authority'].screens.some(s => s >= 23)).toBe(true)
+    const anyLateScreen = Object.values(INDEX).some(e => e.screens.some(s => s >= 24))
+    expect(anyLateScreen, 'no concept resolves to a screen 24+').toBe(true)
+    expect(INDEX['history:medicine:factors-in-change'].screens.some(s => s >= 24)).toBe(true)
+    expect(INDEX['history:medicine:church-authority'].screens.some(s => s >= 24)).toBe(true)
   })
 
   it('screens are ascending, in range, and reference a mapped screen entry', () => {

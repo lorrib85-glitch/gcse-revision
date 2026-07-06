@@ -22,7 +22,16 @@ stage "Galen") is the standard. It works because:
 ## Copy standards
 
 - `explanation` must carry the full causal chain in complete sentences —
-  a two-sentence summary is below the bar.
+  a two-sentence summary is below the bar. **Known gap:** as of the
+  Episode 1 rebuild, `TheoryStage` in `TheoryLab.jsx` does not render
+  `theory.explanation` on screen — the stage currently shows only
+  `theory.heading`, the `grid` pair, and `theory.tagline`. Write
+  `explanation` to the full-chain standard anyway (it is the field a
+  future rendering pass will surface, and it is what any readability/
+  quality scan reads), but do not rely on it to carry the learner-facing
+  teaching load today — that load must sit entirely in the *preceding*
+  teach beat, per the "taught before tested" rule above. Fixing the
+  render gap is a component change, out of scope for content authoring.
 - `outcome.lines` and other short-line fields are for rhythm, not for
   carrying teaching: no load-bearing fact may exist *only* as a fragment.
 - Feedback lines explain *why* the answer is right or wrong in terms of
