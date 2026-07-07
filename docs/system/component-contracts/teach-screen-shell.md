@@ -78,6 +78,12 @@ buried as 14px muted footer text. Everything this shell exists to prevent.
 - ⚙ No raw px spacing/type — tokens only.
 - ⚙ At most one visual (`MediaPlaceholder`) in the body.
 - ⚙ Exactly one heading; at most one `keyPoint`.
-- 👁 Rhythm reads clean at 390px (render pass).
+- 👁 **The teach screen actually composes through this shell** (content sets
+  `shell: 'teach'`) — not the generic block shell. A teaching screen whose
+  heading renders through `ScreenTitle` with ad-hoc spacing is a failure.
+- 👁 The header uses this shell's `TYPE.displayScreen` — not `ScreenTitle`
+  or an ad-hoc size; two screens of the same kind share one header token.
+- 👁 Rhythm reads clean at 390px, composed with real content (render pass),
+  and breathes — not heavy stacked boxes.
 - 👁 If an `eyebrow` is present, it passes the eyebrow rule (adds
   information, sentence case, not decorative).

@@ -11,6 +11,7 @@ import ExplainReveal from '../learning/ExplainReveal.jsx'
 import KeyPoint from '../core/KeyPoint.jsx'
 import WorkedExample from '../core/WorkedExample.jsx'
 import MediaPlaceholder from '../core/MediaPlaceholder.jsx'
+import TeachScreenShell from '../core/TeachScreenShell.jsx'
 import ChapterHookScreen from './ChapterHookScreen.jsx'
 import QuickRecallScreen from '../learning/QuickRecallScreen.jsx'
 import TieredQuizScreen from '../learning/TieredQuizScreen.jsx'
@@ -828,16 +829,14 @@ function Screen({ screen, subject, onScreenComplete }) {
     setCompletedQuizzes(prev => new Set([...prev, blockIndex]))
   }
 
-  return (
-    <div>
-      {(screen.heading || screen.sub) && (
-        <div style={{ marginBottom: 20 }}>
-          {screen.heading && <ScreenTitle>{screen.heading}</ScreenTitle>}
-          {screen.sub && <ScreenBody style={{ color: 'rgba(255,255,255,0.65)' }}>{screen.sub}</ScreenBody>}
-        </div>
-      )}
+  const headingEl = (screen.heading || screen.sub) ? (
+    <div style={{ marginBottom: 20 }}>
+      {screen.heading && <ScreenTitle>{screen.heading}</ScreenTitle>}
+      {screen.sub && <ScreenBody style={{ color: 'rgba(255,255,255,0.65)' }}>{screen.sub}</ScreenBody>}
+    </div>
+  ) : null
 
-      {(screen.blocks || []).map((block, i) => (
+  const blocksMap = (screen.blocks || []).map((block, i) => (
         <div key={i}>
           {block.type === 'read'          && <CardContainer variant="contained" subject={subject} padding={24}><ReadBlock block={block} /></CardContainer>}
           {block.type === 'keypoint'      && <CardContainer variant="contained" subject={subject} padding={24}><KeypointBlock block={block} /></CardContainer>}
@@ -865,7 +864,22 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'spotTheError'  && <SpotTheError block={block} subject={subject} onContinue={onScreenComplete} />}
           {block.type === 'misconceptionCheck' && <MisconceptionCheck block={block} subject={subject} onContinue={onScreenComplete} />}
         </div>
-      ))}
+      ))
+
+  // Teach screens compose through TeachScreenShell so the header token and
+  // vertical rhythm come from the design system, not the generic block shell.
+  if (screen.shell === 'teach') {
+    return (
+      <TeachScreenShell heading={screen.heading} intro={screen.sub} subject={subject}>
+        {blocksMap}
+      </TeachScreenShell>
+    )
+  }
+
+  return (
+    <div>
+      {headingEl}
+      {blocksMap}
     </div>
   )
 }

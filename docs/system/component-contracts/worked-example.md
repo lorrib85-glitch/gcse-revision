@@ -29,7 +29,11 @@ named case (a patient, a calculation, a source). Pairs naturally with a
 - `scenario` — the specific, named case (sentence case).
 - `chips` (optional) — the case's short givens (symptoms, numbers).
 - `working` — the reasoning applying the rule to this case.
-- `result` — the outcome for THIS case (accent-emphasised).
+- `result` — the outcome for THIS case, an **emphasised accent line, not a
+  box**.
+- **Flat by design** — no outer card and no nested result box (the
+  box-in-a-box that made the composed screen heavy). Grouping comes from
+  spacing and the reasoning's hairline rail.
 - May sit inside `TeachScreenShell` (as body, not as the keyPoint slot).
 
 Distinct from `KeyPoint`: `KeyPoint` summarises the rule; `WorkedExample`
@@ -69,6 +73,10 @@ across subjects.
 ## 9. Review checks
 
 - ⚙ Uses tokens, not raw values.
+- 👁 Flat — no outer card, no nested accent result box; the result is a line
+  (composition control: no box-in-a-box).
+- 👁 It does not add a second accent box competing with the screen's
+  `KeyPoint` (one emphasis box per screen).
 - 👁 The concept is taught earlier in the episode than this example (no
   test-before-teach).
 - 👁 The case is specific and named, not generic.

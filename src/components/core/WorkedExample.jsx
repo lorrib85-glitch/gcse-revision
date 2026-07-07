@@ -39,24 +39,21 @@ export default function WorkedExample({ scenario, chips = [], working, result, s
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const rgb = theme.accentRgb
 
+  // Flat by design: no outer card and no nested result box (the box-in-a-box
+  // that made the composed screen heavy). Grouping comes from spacing and the
+  // reasoning's hairline rail; the result is an emphasised line, not a box.
   return (
-    <div style={{
-      padding: SPACING.standard,
-      borderRadius: RADII.medium,
-      background: '#151720',
-      border: '1px solid rgba(255,255,255,0.06)',
-    }}>
+    <div>
 
       {chips.length > 0 && (
         <div className="we-in" style={{ display: 'flex', gap: SPACING.micro, flexWrap: 'wrap', marginBottom: SPACING.compact }}>
           {chips.map((c, i) => (
             <span key={i} style={{
               ...TYPE.metadata,
-              color: 'rgba(245,245,245,0.75)',
+              color: 'rgba(245,245,245,0.72)',
               padding: '4px 10px',
               borderRadius: RADII.pill,
               border: `1px solid rgba(${rgb}, 0.28)`,
-              background: `rgba(${rgb}, 0.06)`,
             }}>
               {c}
             </span>
@@ -74,7 +71,7 @@ export default function WorkedExample({ scenario, chips = [], working, result, s
         <div className="we-in" style={{
           ...TYPE.bodySmall,
           fontWeight: 400,
-          color: 'rgba(245,245,245,0.6)',
+          color: 'rgba(245,245,245,0.58)',
           borderLeft: `2px solid rgba(${rgb}, 0.3)`,
           paddingLeft: SPACING.compact,
           margin: `${SPACING.compact}px 0`,
@@ -84,15 +81,13 @@ export default function WorkedExample({ scenario, chips = [], working, result, s
         </div>
       )}
 
-      {/* The result for this case */}
+      {/* The result — an emphasised line, not a box */}
       {result != null && (
         <div className="we-in" style={{
           ...TYPE.body,
-          color: 'rgba(245,245,245,0.92)',
-          padding: `${SPACING.compact}px`,
-          borderRadius: RADII.small,
-          background: `rgba(${rgb}, 0.08)`,
-          border: `1px solid rgba(${rgb}, 0.22)`,
+          fontWeight: 500,
+          color: theme.accent,
+          margin: 0,
           animationDelay: '180ms',
         }}>
           {result}

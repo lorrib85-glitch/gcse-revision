@@ -108,13 +108,49 @@ next touched.
 ## The mandatory render pass
 
 `content-review` and the critique gate do not pass on source + tests alone.
-Every **👁** review check requires **rendering the screen and looking at the
-pixels** — the component's Storybook story or an isolated mount, screenshot
-at 390px width.
+Every **👁** review check requires **rendering and looking at the pixels** at
+390px width. Two rules, both learned the hard way:
+
+1. **Render the COMPOSED screen, in the real render path** — the screen as
+   the learner actually sees it (drive the app, or mount the real screen
+   renderer with real content). A component passing *its own Storybook
+   story* is **not** evidence the screen is good: a component can look fine
+   in isolation and compose into a heavy, mis-spaced, box-in-a-box screen.
+   Green in isolation ≠ good in composition. The story checks the
+   component; the render pass checks the *screen*.
+2. **Compare critically, against a bar** — put the rendered screen beside
+   its gold example and, for a change, beside the version it replaces, and
+   answer in writing: *is this actually better, and where is it worse?*
+   "Looks clean" is not a verdict; name what works and what doesn't.
+   Declaring a screen good without this comparison is the failure that
+   shipped a boxier, worse screen once already.
 
 This is a first-class review step, not optional polish. Source-and-tests
-review is precisely what let capitalisation drift, screens teaching three
-things, and inverted hierarchy through the first time; it must not recur.
+review — and self-congratulatory render passes — are precisely what let
+capitalisation drift, screens teaching three things, inverted hierarchy,
+and a box-in-a-box teach screen through. It must not recur.
+
+## Composition controls
+
+Structural rules a composed screen must satisfy; checked in the render pass
+(👁) and by the reviewer:
+
+- **Teach screens compose through `TeachScreenShell`.** A teaching screen
+  rendered via the generic block shell (its heading through `ScreenTitle`,
+  its spacing ad-hoc) bypasses the design system's rhythm and header token —
+  that is a failure. Set `shell: 'teach'` so the shell owns the header
+  (`TYPE.displayScreen`) and the vertical rhythm.
+- **One header token.** A teach-screen heading uses the shell's
+  `TYPE.displayScreen`, never `ScreenTitle` or an ad-hoc size. Two screens
+  of the same kind must not have different header sizes.
+- **No box-in-a-box.** A content component must not nest an accent/callout
+  box inside another content card. One container level per content surface.
+  (This is why `WorkedExample` is flat — no outer card, result as a line.)
+- **One emphasis box per screen.** At most one accent-tinted payoff box
+  (the `KeyPoint`'s role). A component must not introduce a second accent
+  box that competes with it for "the point."
+- **Let it breathe.** Prefer negative space over stacked containers. If a
+  screen reads as two or more heavy boxes crammed together, it fails.
 
 ---
 

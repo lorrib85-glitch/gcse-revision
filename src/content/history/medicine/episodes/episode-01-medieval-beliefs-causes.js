@@ -319,20 +319,22 @@ export default {
     {
       stage: 'Galen',
       label: 'The Theory of Opposites',
-      heading: 'The Theory of Opposites',
-      sub: 'Each humour carried two qualities — hot or cold, wet or dry. A patient\'s symptoms revealed which were in excess.',
+      shell: 'teach',
+      heading: 'Every illness had an opposite',
+      sub: 'Each humour sat where two qualities met — hot or cold, wet or dry. A patient\'s symptoms revealed which were in excess.',
       blocks: [
+        {
+          type: 'mediaPlaceholder',
+          kind: 'diagram',
+          aspect: '4:3',
+          caption: 'The four humours placed on hot–cold and wet–dry axes, with an arrow crossing to the opposite quadrant.',
+        },
         {
           type: 'workedExample',
           chips: ['Fever', 'Red face', 'Sweating'],
           scenario: 'A patient arrives with a fever, a red face and heavy sweating.',
           working: 'Heat and wetness point to one humour in excess: too much blood, which is hot and wet.',
           result: 'So the cure is to cool and dry the body — the opposite qualities.',
-        },
-        {
-          type: 'keyPoint',
-          text: 'The rule was simple: treat every illness with its opposite quality.',
-          emphasis: 'opposite',
         },
       ],
     },
