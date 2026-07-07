@@ -255,7 +255,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Vesalius',
       portrait: '/images/vesalius-1543.png',
       name: 'Andreas Vesalius',
-      role: 'Flemish anatomist',
+      role: 'Anatomist',
       sections: [
         {
           title: 'Who was he?',

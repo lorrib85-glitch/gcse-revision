@@ -178,7 +178,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       stage: 'The arrival',
       label: 'The chain, scroll by scroll',
       title: 'How the plague travelled',
-      intro: 'Scroll to follow the plague across places.',
+      intro: 'Scroll to follow the plague\'s journey from central Asia to England.',
       steps: [
         {
           id: 'central-asia',
