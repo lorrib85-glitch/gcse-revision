@@ -15,8 +15,8 @@ export const episode = {
   color: '#D4950A',
   colorLight: 'rgba(212,149,10,.12)',
   series: 'medicine-through-time',
-  recallTags: [],
-  examTags: [],
+  recallTags: [],   // not consumed by any app logic — do not add decorative tags
+  examTags: [],     // not consumed by any app logic — do not add decorative tags
   assetKeys: [],
   hook: {
     scenario: {
@@ -78,10 +78,10 @@ export const episode = {
     ],
   },
   outcomes: {
-    intro: "You're about to see how Renaissance artists and scientists started dismantling a thousand years of medical dogma.",
+    intro: "You're about to see how Renaissance thinkers began to challenge old medical ideas that had lasted for centuries.",
     bullets: [
       "Explain what Vesalius discovered — and why the Church didn't like it",
-      "Describe how Harvey's blood circulation theory changed everything",
+      "Describe what Harvey discovered about blood circulation and why it mattered",
       'Understand why the Plague kept killing even as knowledge improved',
       'See the gap between knowing more and being able to treat better',
     ],
@@ -167,7 +167,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           image: '/figures/history/medicine/medieval/vl-monks-books.webp',
           imagePosition: 'center top',
           headline: 'Medieval medicine\ndidn\'t disappear.',
-          body: 'The Renaissance didn\'t erase a thousand years of thinking overnight.',
+          body: 'The Renaissance didn\'t end centuries of medical thinking overnight.',
         },
         {
           image: '/figures/history/medicine/medieval/vl-monks-books.webp',
@@ -255,7 +255,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Vesalius',
       portrait: '/images/vesalius-1543.png',
       name: 'Andreas Vesalius',
-      role: 'Anatomist & Medical Revolutionary',
+      role: 'Flemish anatomist',
       sections: [
         {
           title: 'Who was he?',
@@ -270,7 +270,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           icon: 'knowledge',
           lines: [
             'Published in the same year as Copernicus challenged the Earth-centred universe.',
-            'A groundbreaking illustrated anatomy textbook based on direct human dissection.',
+            'A detailed illustrated anatomy textbook based on direct human dissection.',
           ],
         },
         {

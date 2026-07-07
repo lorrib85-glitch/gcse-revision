@@ -15,8 +15,8 @@ export default {
   color: '#F5B700',
   colorLight: '#f5e6d3',
   series: 'medicine-through-time',
-  recallTags: [],
-  examTags: [],
+  recallTags: [],   // not consumed by any app logic — do not add decorative tags
+  examTags: [],     // not consumed by any app logic — do not add decorative tags
   assetKeys: [],
 
   hook: {
