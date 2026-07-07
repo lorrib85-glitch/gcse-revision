@@ -17,7 +17,7 @@ This structure applies to all GCSE History modules unless explicitly overridden 
 **Mandatory Order**
 
 1. Cinematic intro OR True/False opener
-2. PriorKnowledgeRecall
+2. PriorKnowledgeRecall*
 3. WhatYouWillLearn
 
 **Purpose**
@@ -41,6 +41,21 @@ This structure applies to all GCSE History modules unless explicitly overridden 
 - Missing concepts must be sent to the existing weakness tracker.
 - Do not introduce examiner content.
 - Do not turn Section 1 into a teaching section.
+
+**AMENDMENT: Series Openers and Chapter 1 Episodes**
+
+For the **first chapter of any series** (e.g., "Trust me, I'm Following Jupiter" — Episode 1 of Medicine Through Time):
+
+- `PriorKnowledgeRecall` is **omitted**.
+- There is no previous chapter to recall.
+- Section 1 may be shorter than subsequent chapters.
+- The opening hook should instead establish the series narrative and foundational context that all following chapters will build upon.
+- This is NOT an exception to the architecture — it is an application of the rule that adapts to context: you cannot recall what has not been taught.
+
+For all **subsequent chapters** within a series:
+
+- `PriorKnowledgeRecall` is **mandatory**.
+- Students must retrieve the preceding chapter(s) before new content begins.
 
 ---
 
@@ -188,7 +203,7 @@ Often used for:
 
 ### PriorKnowledgeRecall Component
 
-This is the standard retrieval component used at the beginning of every History chapter.
+This is the standard retrieval component used at the beginning of every History chapter (except series openers — see Section 1 amendment).
 
 **Purpose**
 
@@ -303,7 +318,7 @@ Every module must deliberately revisit weak spots.
 
 Weak spots identified through:
 
-- `PriorKnowledgeRecall`
+- `PriorKnowledgeRecall` (if applicable)
 - `QuickRecallScreen`
 - `MatchingTask`
 - `FaceTheExaminer`
@@ -464,7 +479,7 @@ History should feel premium, cinematic and immersive.
 
 Before a History module is considered complete, verify:
 
-- ✓ Section 1 includes retrieval (PriorKnowledgeRecall)
+- ✓ Section 1 includes retrieval (PriorKnowledgeRecall) *OR is a series opener*
 - ✓ Weak spots are generated
 - ✓ Every learning chunk includes interaction
 - ✓ Every learning chunk includes retrieval
