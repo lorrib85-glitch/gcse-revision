@@ -118,14 +118,6 @@ function CompactSecondsLabel({ text }) {
   )
 }
 
-function NavArrow({ color }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-      <path d="M5 12h14M13 6l6 6-6 6" />
-    </svg>
-  )
-}
-
 function AccountIcon({ color }) {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
@@ -337,13 +329,12 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
             padding: `0 ${BUTTONS.continue.paddingX}px`,
             fontFamily: BUTTONS.continue.fontFamily, fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
             background: GENERAL.coral, color: GENERAL.softWhite, border: 'none', cursor: 'pointer',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: SPACING.micro,
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
             transition: BUTTONS.continue.transition,
             boxShadow: `0 ${SPACING.micro}px ${SPACING.compact}px rgba(0,0,0,0.28)`,
           }}
         >
           {ctaLabel}
-          <NavArrow color={GENERAL.softWhite} />
         </button>
       </div>
     </div>
@@ -396,13 +387,15 @@ function StatusPill({ state, label }) {
 // Rows stay tappable so any task can still be launched out of order,
 // preserving the old carousel's behaviour.
 function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
+  const markerSize = 36
+  const lineWidth = 2
   const title = task.type === 'warmup' ? WARMUP_COPY.title : task.title
   const label = task.kicker !== title ? task.kicker : null
   const pillLabel = state === 'done' ? 'Done' : state === 'next' ? (task.type === 'continue' ? 'Continue' : 'Next') : 'To do'
   const circleStyles = {
     done: { background: GENERAL.teal, border: 'none' },
     next: { background: `rgba(${GENERAL.tealRgb},0.08)`, border: `1.5px solid ${GENERAL.teal}` },
-    todo: { background: 'transparent', border: `1.5px solid rgba(${hexToRgb(GENERAL.slate)},0.45)` },
+    todo: { background: GENERAL.neutral[900], border: `1.5px solid rgba(${hexToRgb(GENERAL.slate)},0.45)` },
   }
   const lineColor = (done) => (done ? `rgba(${GENERAL.tealRgb},0.8)` : GENERAL.line.soft)
 
@@ -412,15 +405,21 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
       style={{
         display: 'grid', gridTemplateColumns: '40px 1fr', gap: SPACING.micro,
         width: '100%', textAlign: 'left', background: 'none', border: 'none',
-        padding: 0, margin: 0, cursor: 'pointer',
+        padding: 0, margin: 0, cursor: 'pointer', alignItems: 'stretch',
       }}
     >
       {/* Timeline marker column */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {index > 0 && <div style={{ width: 2, height: SPACING.micro, background: lineColor(prevDone) }} />}
+      <div style={{ position: 'relative', alignSelf: 'stretch', minHeight: '100%' }}>
+        {index > 0 && (
+          <div style={{
+            position: 'absolute', top: 0, bottom: '50%', left: '50%', width: lineWidth,
+            transform: 'translateX(-50%)', background: lineColor(prevDone),
+          }} />
+        )}
         <div style={{
-          width: 36, height: 36, borderRadius: RADII.pill, flexShrink: 0, boxSizing: 'border-box',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+          width: markerSize, height: markerSize, borderRadius: RADII.pill, boxSizing: 'border-box',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1,
           ...circleStyles[state],
         }}>
           {state === 'done' ? (
@@ -433,15 +432,20 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
             </span>
           )}
         </div>
-        {!isLast && <div style={{ width: 2, flex: 1, background: lineColor(!!task.doneToday) }} />}
+        {!isLast && (
+          <div style={{
+            position: 'absolute', top: '50%', bottom: 0, left: '50%', width: lineWidth,
+            transform: 'translateX(-50%)', background: lineColor(!!task.doneToday),
+          }} />
+        )}
       </div>
 
       {/* Text + status pill — small kicker label above the task title, so
           the title carries the row and labels read as waypoints */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: SPACING.micro,
-        paddingTop: index > 0 ? SPACING.micro : 0,
-        paddingBottom: isLast ? 0 : SPACING.compact,
+        paddingTop: SPACING.micro,
+        paddingBottom: isLast ? SPACING.micro : SPACING.compact,
         borderBottom: isLast ? 'none' : `1px solid ${GENERAL.line.faint}`,
         minWidth: 0,
       }}>
@@ -518,7 +522,7 @@ export default function Home({ onSelectTask, onReviewProgress }) {
               <AccountIcon color={GENERAL.teal} />
             </button>
             <span style={{ ...TYPE.bodyStrong, color: `rgba(${hexToRgb(GENERAL.softWhite)},0.74)`, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {firstName ? `Hi, ${firstName}.` : 'Hi.'}
+              {firstName ? `Hi, ${firstName}` : 'Hi'}
             </span>
             <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: RADII.pill, background: GENERAL.teal, flexShrink: 0 }} />
           </div>
