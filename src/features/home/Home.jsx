@@ -272,27 +272,32 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
     // only keyboard/screen-reader stop (no tabIndex here — a second focusable
     // wrapper would double the tab stops for the same action).
     <div onClick={onAction} style={{
-      position: 'relative', minHeight: 300, borderRadius: RADII.panel, overflow: 'hidden',
+      position: 'relative', minHeight: 'clamp(260px, 38vh, 300px)', borderRadius: RADII.panel, overflow: 'hidden',
       border: `1px solid ${GENERAL.line.medium}`, background: GENERAL.neutral[800],
-      cursor: 'pointer',
+      cursor: 'pointer', boxShadow: `0 ${SPACING.compact}px ${SPACING.standard}px rgba(0,0,0,0.28)`,
     }}>
       {image && (
         <>
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0,
             backgroundImage: `url(${image})`, backgroundSize: 'cover', backgroundPosition: 'right center',
+            transform: 'scale(1.02)',
           }} />
           {/* Left-to-right scrim keeps pill/title/meta/CTA readable; never
               fully transparent on the right so the image stays atmospheric
               rather than dominant */}
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0,
-            background: `linear-gradient(90deg, rgba(${bgRgb},0.96) 0%, rgba(${bgRgb},0.74) 45%, rgba(${bgRgb},0.3) 78%, rgba(${bgRgb},0.12) 100%)`,
+            background: `linear-gradient(90deg, rgba(${bgRgb},0.96) 0%, rgba(${bgRgb},0.78) 46%, rgba(${bgRgb},0.36) 78%, rgba(${bgRgb},0.16) 100%)`,
+          }} />
+          <div aria-hidden="true" style={{
+            position: 'absolute', inset: 0,
+            background: `linear-gradient(0deg, rgba(${bgRgb},0.7) 0%, rgba(${bgRgb},0.08) 55%, rgba(${bgRgb},0.12) 100%)`,
           }} />
         </>
       )}
       <div style={{
-        position: 'relative', zIndex: 1, minHeight: 300, padding: SPACING.standard,
+        position: 'relative', zIndex: 1, minHeight: 'clamp(260px, 38vh, 300px)', padding: SPACING.standard,
         display: 'flex', flexDirection: 'column', alignItems: 'flex-start', boxSizing: 'border-box',
       }}>
         {!allDone && !isWarmup && subject && (
@@ -308,11 +313,12 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
         <div style={{
           ...TYPE.displayScreen, color: GENERAL.softWhite, marginTop: 'auto', paddingTop: SPACING.compact,
           display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden',
+          maxWidth: 'min(340px, 82%)',
         }}>
           <CompactSecondsLabel text={title} />
         </div>
         {!allDone && (
-          <div style={{ marginTop: SPACING.micro, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ marginTop: SPACING.micro, display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
             {isWarmup ? (
               <span style={{ ...TYPE.bodyStrong, color: metaColor }}>{WARMUP_COPY.support}</span>
             ) : (
@@ -326,13 +332,14 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
         <button
           onClick={(e) => { e.stopPropagation(); onAction() }}
           style={{
-            marginTop: SPACING.standard, minWidth: 180,
+            marginTop: SPACING.standard, minWidth: 200,
             height: BUTTONS.continue.height, borderRadius: RADII.medium,
             padding: `0 ${BUTTONS.continue.paddingX}px`,
             fontFamily: BUTTONS.continue.fontFamily, fontSize: BUTTONS.continue.fontSize, fontWeight: BUTTONS.continue.fontWeight,
             background: GENERAL.coral, color: GENERAL.softWhite, border: 'none', cursor: 'pointer',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: SPACING.micro,
             transition: BUTTONS.continue.transition,
+            boxShadow: `0 ${SPACING.micro}px ${SPACING.compact}px rgba(0,0,0,0.28)`,
           }}
         >
           {ctaLabel}
@@ -345,16 +352,24 @@ function HeroBanner({ item, subject, onStart, onReviewProgress }) {
 
 // Quiet summary card — deliberately recessive so the hero CTA stays the
 // strongest element: faint border, slate icon, title-sized value.
-function StatCard({ children, centred = false }) {
+function StatCard({ label, value, icon, children, centred = false }) {
   return (
     <div style={{
-      background: GENERAL.neutral[800], border: `1px solid ${GENERAL.line.faint}`,
+      background: `rgba(${hexToRgb(GENERAL.neutral[800])},0.82)`, border: `1px solid ${GENERAL.line.faint}`,
       borderRadius: RADII.large, padding: `${SPACING.micro}px ${SPACING.compact}px`, minHeight: 72,
       display: 'flex', flexDirection: 'column', gap: 4, boxSizing: 'border-box',
       justifyContent: 'center', alignItems: centred ? 'center' : 'flex-start',
       textAlign: centred ? 'center' : 'left',
     }}>
-      {children}
+      {children ?? (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro, color: GENERAL.slate, maxWidth: '100%' }}>
+            {icon}
+            <span style={{ ...TYPE.caption, color: GENERAL.slate, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span>
+          </div>
+          <div style={{ ...TYPE.titleMedium, color: GENERAL.softWhite, whiteSpace: 'nowrap', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>{value}</div>
+        </>
+      )}
     </div>
   )
 }
@@ -386,7 +401,7 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
   const pillLabel = state === 'done' ? 'Done' : state === 'next' ? (task.type === 'continue' ? 'Continue' : 'Next') : 'To do'
   const circleStyles = {
     done: { background: GENERAL.teal, border: 'none' },
-    next: { background: 'transparent', border: `1.5px solid ${GENERAL.teal}` },
+    next: { background: `rgba(${GENERAL.tealRgb},0.08)`, border: `1.5px solid ${GENERAL.teal}` },
     todo: { background: 'transparent', border: `1.5px solid rgba(${hexToRgb(GENERAL.slate)},0.45)` },
   }
   const lineColor = (done) => (done ? `rgba(${GENERAL.tealRgb},0.8)` : GENERAL.line.soft)
@@ -430,7 +445,7 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
         borderBottom: isLast ? 'none' : `1px solid ${GENERAL.line.faint}`,
         minWidth: 0,
       }}>
-        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: SPACING.micro }}>
           {label && (
             <div style={{ ...TYPE.label, color: state === 'next' ? GENERAL.teal : GENERAL.slate, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {label}
@@ -439,7 +454,7 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
           <div style={{ ...TYPE.titleMedium, color: GENERAL.softWhite, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             <CompactSecondsLabel text={title} />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro }}>
             <ClockIcon size={12} color={GENERAL.slate} />
             <span style={{ ...TYPE.caption, color: GENERAL.slate }}>{task.durationMinutes} min</span>
           </div>
@@ -495,14 +510,14 @@ export default function Home({ onSelectTask, onReviewProgress }) {
               onClick={() => setAccountOpen(true)}
               aria-label="Account details"
               style={{
-                background: 'none', border: `1px solid ${GENERAL.line.strong}`, borderRadius: RADII.pill,
+                background: `rgba(${hexToRgb(GENERAL.neutral[900])},0.28)`, border: `1px solid ${GENERAL.line.strong}`, borderRadius: RADII.pill,
                 cursor: 'pointer', width: 40, height: 40, flexShrink: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
               <AccountIcon color={GENERAL.teal} />
             </button>
-            <span style={{ ...TYPE.bodyStrong, color: `rgba(${hexToRgb(GENERAL.softWhite)},0.7)`, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <span style={{ ...TYPE.bodyStrong, color: `rgba(${hexToRgb(GENERAL.softWhite)},0.74)`, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {firstName ? `Hi, ${firstName}.` : 'Hi.'}
             </span>
             <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: RADII.pill, background: GENERAL.teal, flexShrink: 0 }} />
@@ -521,18 +536,9 @@ export default function Home({ onSelectTask, onReviewProgress }) {
         </div>
 
         {/* ── Stat cards — quiet summary row, supports the hero ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: SPACING.micro, marginTop: SPACING.compact }}>
-          <StatCard>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <ClockIcon size={12} color={GENERAL.slate} />
-              <span style={{ ...TYPE.caption, color: GENERAL.slate }}>Planned</span>
-            </div>
-            <div style={{ ...TYPE.titleMedium, color: GENERAL.softWhite, whiteSpace: 'nowrap' }}>{plannedMinutes} min</div>
-          </StatCard>
-          <StatCard>
-            <span style={{ ...TYPE.caption, color: GENERAL.slate }}>Subject</span>
-            <div style={{ ...TYPE.titleMedium, color: GENERAL.softWhite, whiteSpace: 'nowrap', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>{focusSubject}</div>
-          </StatCard>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: SPACING.micro, marginTop: SPACING.compact }}>
+          <StatCard label="Plan" value={`${plannedMinutes} min`} icon={<ClockIcon size={12} color={GENERAL.slate} />} />
+          <StatCard label="Subject" value={focusSubject} />
           <StatCard centred>
             <TasksRing done={completedCount} total={todaysPlan.length} />
             <span style={{ ...TYPE.caption, color: GENERAL.slate }}>Tasks</span>
