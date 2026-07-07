@@ -45,11 +45,15 @@ points, it is two screens.
 
 ## 5. Token rules
 
-- All inter-slot spacing from `SPACING` (heading↔intro `SPACING.compact`;
-  body and keyPoint separated by `SPACING.separation`; page padding
-  `SPACING.cinematic`/`SPACING.standard`). No raw px.
+- All inter-slot spacing from `SPACING`. Page padding is
+  `SPACING.standard` top / horizontal and `SPACING.cinematic` bottom, because
+  the parent `ContentShell` already clears the fixed learning header.
+- Heading ↔ intro spacing is `SPACING.standard`. This creates a clearer
+  heading/paragraph rhythm without pushing the teaching body too far down.
+- Body and keyPoint are separated by `SPACING.separation`.
 - Type from `TYPE` (`TYPE.displayScreen` heading, `TYPE.body` intro,
   `TYPE.label` eyebrow). Accent from `SUBJECTS[subject]`.
+- No raw px values for layout rhythm or type overrides.
 
 ## 6. Motion rules
 
@@ -65,7 +69,9 @@ points, it is two screens.
 `TeachScreenShell.stories.jsx` → **Gold — Galen teach screen**: heading
 "Every illness had an opposite" (no eyebrow — the heading carries the point)
 → intro → a `MediaPlaceholder` diagram slot → one key point. Reads clean at
-390px with token-driven rhythm.
+390px with token-driven rhythm: high enough under the learning header to avoid
+a dead top half, with enough heading/intro space to make the paragraph feel
+secondary.
 
 ## 8. Below-bar counterexample
 
@@ -83,7 +89,8 @@ buried as 14px muted footer text. Everything this shell exists to prevent.
   heading renders through `ScreenTitle` with ad-hoc spacing is a failure.
 - 👁 The header uses this shell's `TYPE.displayScreen` — not `ScreenTitle`
   or an ad-hoc size; two screens of the same kind share one header token.
-- 👁 Rhythm reads clean at 390px, composed with real content (render pass),
-  and breathes — not heavy stacked boxes.
+- 👁 Rhythm reads clean at 390px, composed with real content (render pass):
+  heading visible high in the content area, intro visibly secondary, body not
+  crammed against the paragraph.
 - 👁 If an `eyebrow` is present, it passes the eyebrow rule (adds
   information, sentence case, not decorative).
