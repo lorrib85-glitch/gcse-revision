@@ -68,12 +68,25 @@ const episode01SentenceCaseStageTitles = [
   'Exam prep: explain the grip of Galen',
 ]
 
+const hippocratesReveal = {
+  mainText: 'His name\nwas Hippocrates.',
+  supportText: 'One Greek doctor would shape medicine for the next 2,000 years.',
+  backgroundImage: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
+  backgroundPosition: 'center 18%',
+  overlay: 'linear-gradient(to bottom, rgba(0,0,0,.28) 0%, rgba(0,0,0,.38) 36%, rgba(0,0,0,.74) 68%, rgba(0,0,0,.96) 100%)',
+  slowReveal: true,
+  tapToContinue: true,
+}
+
 function sentenceCaseEpisode01Screen(screen) {
+  const isHippocratesIntro = screen.type === 'conceptReveal' && screen.label === 'The search for answers'
+
   return {
     ...screen,
     label: sentenceCaseEpisode01Labels.get(screen.label) || screen.label,
     title: sentenceCaseEpisode01Labels.get(screen.title) || screen.title,
     heading: sentenceCaseEpisode01Labels.get(screen.heading) || screen.heading,
+    steps: isHippocratesIntro ? [hippocratesReveal] : screen.steps,
     beats: Array.isArray(screen.beats)
       ? screen.beats.map(beat => ({
           ...beat,
