@@ -82,12 +82,12 @@ const _bodySmall = {
   letterSpacing: '-0.005em',
 }
 
+// DEPRECATED — do not use in new code. The eyebrow pattern (uppercase label
+// above a heading) is prohibited. See TYPOGRAPHY_SYSTEM.md — "Label case".
+// Use TYPE.label (sentence case) instead.
+// Token kept for backward compat only; migrate on next touch.
 const _eyebrow = {
-  fontFamily: "'Sora', sans-serif",
-  fontSize: 11,
-  lineHeight: 1.2,
-  fontWeight: 700,
-  letterSpacing: '0.16em',
+  ..._label,
 }
 
 const _label = {

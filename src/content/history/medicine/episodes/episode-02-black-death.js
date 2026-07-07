@@ -556,8 +556,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Change and continuity',
       steps: [
         {
-          eyebrow: 'Change and continuity',
-          showEyebrow: true,
           mainText: 'Change ≠ progress',
           supportText: 'The Black Death changed society — but it did not lead to a breakthrough in medical understanding. A huge event can change life, work and power without changing medical knowledge. Doctors still blamed God, miasma, astrology and humours.',
           backgroundImage: '/figures/history/medicine/black-death/not-much-changed.png',

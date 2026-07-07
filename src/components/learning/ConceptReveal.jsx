@@ -110,16 +110,6 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
               animation: `crSlideIn ${STEP_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}
           >
-            {step.showEyebrow === true && step.eyebrow && (
-              <div style={{
-                ...TYPE.eyebrow,
-                color: accent + '88',
-                marginBottom: 12,
-              }}>
-                {step.eyebrow}
-              </div>
-            )}
-
             <MainReveal text={step.mainText} emphasis={step.emphasis} accent={accent} />
 
             {step.supportText && (

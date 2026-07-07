@@ -85,7 +85,6 @@ export default {
       label: 'The Germ Problem',
       steps: [
         {
-          eyebrow: 'What we know now',
           mainText: 'Today, we know many diseases are caused by bacteria or viruses.',
           supportText: 'Medieval people did not. No microscopes. No germ theory. No idea that tiny organisms could spread disease.',
           backgroundImage: '/figures/history/medicine/medieval/medieval-street.webp',
@@ -104,7 +103,6 @@ export default {
       label: 'The search for answers',
       steps: [
         {
-          eyebrow: 'Enter Hippocrates',
           mainText: 'One Greek doctor thought he had found one.',
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
         },
@@ -174,7 +172,6 @@ export default {
       label: 'The Four Humours',
       steps: [
         {
-          eyebrow: 'The most important medieval idea',
           mainText: 'The Theory of the Four Humours.',
         },
         {
@@ -182,7 +179,6 @@ export default {
           microPoints: ['Blood', 'Phlegm', 'Yellow bile', 'Black bile'],
         },
         {
-          eyebrow: 'The logic',
           mainText: 'If these humours were balanced, you were healthy.',
         },
         {
@@ -601,7 +597,6 @@ export default {
       label: 'Miasma — The Poisoned Air Theory',
       steps: [
         {
-          eyebrow: 'Before germ theory',
           mainText: "If you couldn't see germs, you blamed what you could smell.",
           supportText: "Miasma — 'bad air' from rotting matter — was thought to carry disease. Medieval people noticed illness was worse near marshes, sewers, and rubbish heaps.",
         },
@@ -1157,7 +1152,6 @@ export default {
       label: 'So how much actually changed?',
       steps: [
         {
-          eyebrow: 'The big question',
           mainText: 'Between 1250 and 1500, medical knowledge barely moved.',
           supportText: 'Every idea in this chapter — the Four Humours, miasma, astrology — was a logical response to the evidence people could see. Sneezing looked like the body curing itself. Disease really was worse near swamps and rubbish. These ideas made sense.',
         },

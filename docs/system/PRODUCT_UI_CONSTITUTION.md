@@ -101,7 +101,8 @@ Typography tokens are defined in `src/constants/typography.js`. See `docs/system
 **Rules:**
 - Never introduce a third font family
 - No italic styling
-- Section labels must be UPPERCASE
+- Labels and kickers must be sentence case (capitalise only the first word and proper nouns)
+- The eyebrow pattern — small uppercase label placed above a heading — is prohibited. Remove any existing eyebrows when a component is next touched.
 - Manrope must not appear in body copy, UI labels, or navigation
 
 ---

@@ -195,7 +195,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'A world about to change',
       steps: [
         {
-          eyebrow: 'c.1400–1600',
           mainText: 'The Renaissance encouraged artists, thinkers, and scientists to question ancient authority.',
           supportText: 'For centuries, Galen\'s word had been law. Now people asked: what if he was wrong?',
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
@@ -206,7 +205,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
         },
         {
-          eyebrow: 'The key tension',
           mainText: 'Renaissance medicine changed knowledge far more than it changed treatment.',
           supportText: 'Doctors were discovering new truths about the body — but patients were still being bled and purged.',
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
@@ -431,7 +429,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Ambroise Paré',
       steps: [
         {
-          eyebrow: 'France, 1536',
           mainText: 'Ambroise Paré was a French military surgeon treating soldiers wounded in battle.',
           supportText: 'Gunshot wounds were treated by pouring boiling oil into them — believed to neutralise gunpowder poison.',
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
@@ -442,7 +439,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
         },
         {
-          eyebrow: 'The legacy',
           mainText: 'Paré also stopped cauterising blood vessels with hot irons — he tied them off instead.',
           supportText: 'He designed artificial limbs and wrote surgical guides. His work reduced the horror of military surgery significantly.',
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
@@ -501,7 +497,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'The Royal Society',
       steps: [
         {
-          eyebrow: '1660',
           mainText: 'The Royal Society was founded as a formal institution where experiments were shared, tested and debated.',
           supportText: 'Its motto: Nullius in Verba — "Take nobody\'s word for it." Evidence, not authority, was the new standard.',
           backgroundImage: '/headers/history-medicine-medieval-scripture.png',
@@ -512,7 +507,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           backgroundImage: '/headers/history-medicine-medieval-scripture.png',
         },
         {
-          eyebrow: 'Exam point',
           mainText: 'The Royal Society represents a shift in how knowledge itself was validated.',
           supportText: 'Not "Galen said it" but "we tested it, published it, and others repeated it." This is the foundation of modern medicine.',
           backgroundImage: '/headers/history-medicine-medieval-scripture.png',
