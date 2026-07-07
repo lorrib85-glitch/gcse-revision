@@ -480,7 +480,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       title: 'Match belief to response',
       instruction: 'Match each belief to the response it made seem logical.',
       weakAreaCategory: 'Black Death Treatments',
-      backgroundImage: '/figures/history/medicine/black-death/bloodletting.png',
+      backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
       pairs: [
         { id: 'god-response',       term: 'God sent the plague',        answer: 'Prayer, confession and repentance.' },
         { id: 'miasma-response',    term: 'Bad air caused disease',     answer: 'Burn herbs and clean streets.' },
@@ -495,17 +495,17 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Why treatments failed',
       scenes: [
         {
-          image: '/figures/history/medicine/black-death/flagellant-procession.png',
+          image: '/figures/history/medicine/black-death/flagellants.png',
           headline: 'Prayer and flagellation targeted sin.',
           body: 'If the plague was God’s punishment, the solution was repentance. Some flagellants whipped themselves publicly to show sorrow and earn God’s mercy.',
         },
         {
-          image: '/figures/history/medicine/black-death/burning-herbs.png',
+          image: '/figures/history/medicine/black-death/miasma.png',
           headline: 'Burning herbs targeted bad air.',
           body: 'If disease travelled through miasma, overpowering foul smells seemed sensible. People burned herbs, carried flowers, or cleaned streets.',
         },
         {
-          image: '/figures/history/medicine/black-death/bloodletting.png',
+          image: '/figures/history/medicine/black-death/plague-background.png',
           headline: 'Bloodletting targeted the humours.',
           body: 'If disease came from humour imbalance, removing blood seemed logical. But it weakened patients further.',
         },
@@ -640,6 +640,49 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           finalReveal: true,
           headline: 'Time to step into the examiner\'s seat.',
           body: 'You\'ll mark real answers, then build your own from 2 marks to full marks.',
+        },
+      ],
+    },
+
+    {
+      type: 'quickRecall',
+      stage: 'Exam prep',
+      label: 'Final chapter challenge',
+      questions: [
+        {
+          type: 'choice',
+          question: 'What year did the Black Death reach England?',
+          options: ['1348', '1350', '1345', '1381'],
+          correct: 0,
+          explanation: '1348 — ships arrived at Melcombe in Dorset in June 1348, bringing the plague to England.',
+        },
+        {
+          type: 'choice',
+          question: 'What was miasma?',
+          options: ['Poisonous air believed to cause disease', 'Bacteria carried by fleas', 'God\'s punishment for sin', 'An imbalance of the Four Humours'],
+          correct: 0,
+          explanation: 'Miasma meant poisonous air from rotting matter. Not germs — the smell itself was thought to carry disease.',
+        },
+        {
+          type: 'choice',
+          question: 'What was the actual cause of the Black Death?',
+          options: ['Yersinia pestis bacteria, carried by fleas on black rats', 'Bad air from swamps and rivers', 'God\'s punishment for human sin', 'An imbalance of the Four Humours'],
+          correct: 0,
+          explanation: 'Yersinia pestis bacteria, carried by fleas on black rats. This was not discovered until 1894 — 546 years after the Black Death.',
+        },
+        {
+          type: 'choice',
+          question: 'What changed significantly after the Black Death?',
+          options: ['Society — labour shortages led to higher wages', 'Medicine — doctors discovered the real cause', 'The Church — it became more powerful', 'Astrology — people stopped using it'],
+          correct: 0,
+          explanation: 'Society changed dramatically — labour shortages, higher wages, weakened Church authority. But medicine barely changed at all.',
+        },
+        {
+          type: 'choice',
+          question: 'What stayed the same after the Black Death?',
+          options: ['Medical beliefs — the same explanations continued', 'Peasant wages — they stayed low', 'The Church\'s authority — it remained strong', 'Village populations — they recovered quickly'],
+          correct: 0,
+          explanation: 'Medical beliefs stayed the same — doctors continued to blame God, miasma, and humoral imbalance. The actual cause was not discovered until 1894.',
         },
       ],
     },
@@ -797,55 +840,7 @@ Exemplar 4/4 answer: "Trading ships arriving from Europe brought infected rats i
       },
     },
 
-    {
-      type: 'quickRecall',
-      stage: 'Exam prep',
-      label: 'Final chapter challenge',
-      questions: [
-        {
-          type: 'choice',
-          question: 'What year did the Black Death reach England?',
-          options: ['1348', '1350', '1345', '1381'],
-          correct: 0,
-          explanation: '1348 — ships arrived at Melcombe in Dorset in June 1348, bringing the plague to England.',
-        },
-        {
-          type: 'choice',
-          question: 'What was miasma?',
-          options: ['Poisonous air believed to cause disease', 'Bacteria carried by fleas', 'God\'s punishment for sin', 'An imbalance of the Four Humours'],
-          correct: 0,
-          explanation: 'Miasma meant poisonous air from rotting matter. Not germs — the smell itself was thought to carry disease.',
-        },
-        {
-          type: 'choice',
-          question: 'Why did people pray during the Black Death?',
-          options: ['They believed God had sent the disease as punishment for sin', 'Prayer was proven to cure plague', 'The Church ordered everyone to pray', 'They had no other option'],
-          correct: 0,
-          explanation: 'If illness was God\'s punishment, prayer and repentance were the logical response — they hoped God would forgive humanity and end the plague.',
-        },
-        {
-          type: 'choice',
-          question: 'What actually caused the Black Death?',
-          options: ['Plague bacteria (Yersinia pestis) carried by fleas on rats', 'Poisonous air from plague pits', 'God\'s punishment for sin', 'Planetary alignment'],
-          correct: 0,
-          explanation: 'Yersinia pestis bacteria, carried by fleas on black rats. This was not discovered until 1894 — 546 years after the Black Death.',
-        },
-        {
-          type: 'choice',
-          question: 'What changed significantly after the Black Death?',
-          options: ['Society — labour shortages led to higher wages', 'Medicine — doctors discovered the real cause', 'The Church — it became more powerful', 'Astrology — people stopped using it'],
-          correct: 0,
-          explanation: 'Society changed dramatically — labour shortages, higher wages, weakened Church authority. But medicine barely changed at all.',
-        },
-        {
-          type: 'choice',
-          question: 'What stayed the same after the Black Death?',
-          options: ['Medical beliefs — the same explanations continued', 'Peasant wages — they stayed low', 'The Church\'s authority — it remained strong', 'Village populations — they recovered quickly'],
-          correct: 0,
-          explanation: 'Medical beliefs stayed the same — doctors continued to blame God, miasma, and humoral imbalance. The actual cause was not discovered until 1894.',
-        },
-      ],
-    },
 
   ],
 }
+

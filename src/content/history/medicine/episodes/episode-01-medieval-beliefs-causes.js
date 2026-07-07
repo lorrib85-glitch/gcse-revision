@@ -655,18 +655,6 @@ export default {
     },
 
     {
-      type: 'visualLearning',
-      stage: 'Medieval treatments',
-      label: 'Causes of illness',
-      scenes: [
-        {
-          image: '/headers/history-medicine-medieval-scripture.png',
-          headline: 'So what did medieval people believe caused illness, and how did they treat them?',
-        },
-      ],
-    },
-
-    {
       type: 'visualNarrative',
       stage: 'Medieval treatments',
       label: 'The colour of your illness',
@@ -827,8 +815,8 @@ export default {
             { text: "A wealthy merchant keeps a written chart pinned to his wall — instructions for exactly how to eat, sleep and bathe." },
             { text: "This is a Regimen Sanitatis: a physician's personal guide to diet, exercise, sleep and bathing, written to keep a patient's humours in balance." },
             { text: "Prevention followed the same logic as treatment. If the Four Humours explained illness, keeping them balanced through daily habits should stop illness before it started." },
-            { text: "It's tempting to think prevention was free for everyone. A personalised Regimen Sanitatis came from a physician — which meant it cost money. Only the wealthy could afford this kind of advice." },
-            { text: "Exam takeaway: link prevention back to the Four Humours whenever you can. It shows the theory shaped daily life, not just doctor's visits." },
+            { text: "A personalised Regimen Sanitatis came from a physician — which meant it cost money. Only the wealthy could afford this kind of tailored advice. Prevention, like treatment, depended on wealth." },
+            { text: "The Regimen Sanitatis shows the Four Humours shaped how people lived, not just how doctors treated illness. Diet, sleep and bathing were all part of the same theory." },
           ],
         },
         {
@@ -840,7 +828,7 @@ export default {
             { text: "These are stewes: medieval public baths. Unlike a Regimen Sanitatis, they were free to use." },
             { text: 'Bathing fitted both major theories of disease. It rebalanced "wet" and "dry" qualities under the Four Humours, and washed away the dirt thought to cause bad-smelling, disease-carrying air.' },
             { text: "Don't assume medieval people never washed. Public baths existed in towns and were used regularly — the idea of total medieval filth is exaggerated." },
-            { text: "Exam takeaway: stewes show prevention wasn't only for the rich — though, as with most things, the wealthy still had better options at home." },
+            { text: "Medieval prevention wasn't only for the wealthy. Stewes were open to most people — though, as with most aspects of medieval care, the rich still had better individual options." },
           ],
         },
         {
@@ -850,9 +838,9 @@ export default {
           reveals: [
             { text: "A woman walking through town presses a small bunch of dried flowers to her nose." },
             { text: 'This is "purifying the air" — carrying sweet-smelling herbs (a posy) and ringing bells to keep the air moving, both believed to protect against miasma.' },
-            { text: "If bad-smelling air carried disease, then good smells and moving air should push it away. This is a direct, logical use of miasma theory in everyday life." },
-            { text: 'This wasn\'t random superstition. Miasma theory came from Hippocrates and Galen — so "purifying the air" was following respected medical authority, not folk magic.' },
-            { text: "Exam takeaway: if a question asks how ideas about disease shaped prevention, this is your clearest example — belief in miasma led directly to carrying herbs and ringing bells." },
+            { text: "If bad-smelling air carried disease, then good smells and moving air should push it away. This is a direct application of miasma theory to daily life." },
+            { text: 'This wasn\'t random superstition. Miasma theory came from Hippocrates and Galen — so "purifying the air" meant following respected medical authority, not folk magic.' },
+            { text: "Miasma theory shaped everyday behaviour directly. Belief about the cause of illness determined how people tried to prevent it." },
           ],
         },
         {
@@ -862,9 +850,9 @@ export default {
           reveals: [
             { text: "In Gloucester, water runs through lead pipes straight into a wealthy household. Across the country in Hull, a cart waits outside to empty the cesspit." },
             { text: 'Some towns invested in clean water and waste removal. Gloucester used lead pipes and an aqueduct — though mainly for the rich. Hull used "night carts" to empty cesspits.' },
-            { text: "Removing waste and securing clean water were genuine attempts at prevention, separate from humours, miasma or astrology — based on the simple observation that dirty places bred illness." },
+            { text: "Removing waste and securing clean water were genuine attempts at prevention, separate from humours, miasma or astrology — based on the observation that dirty places bred illness." },
             { text: "Don't picture every medieval town as equally dirty or equally clean. Provision varied hugely, and depended heavily on wealth." },
-            { text: "Exam takeaway: clean water schemes are one of your strongest \"genuine progress in prevention\" examples — alongside London's rakers and Edward III's 1352 law." },
+            { text: "Practical public health measures — street cleaning, clean water, waste removal — reduced disease for real, even though the people providing them understood illness through miasma, not germ theory." },
           ],
         },
       ],
@@ -876,7 +864,7 @@ export default {
           'Stewes and clean water schemes show some genuine, practical progress — town by town, and unevenly.',
           "Wealth decided how much prevention you could afford, from a private Regimen Sanitatis to Gloucester's lead pipes.",
         ],
-        examTakeaway: 'Every prevention method here connects back to a cause theory you already know. When you explain medieval prevention, name the belief behind it — that link is where the marks are.',
+        examTakeaway: 'Every prevention method connects back to a belief about the cause of disease. Miasma drove street cleaning; the Four Humours drove dietary advice; religious belief drove confession and prayer. The belief determined the prevention.',
       },
     },
 
@@ -1129,10 +1117,164 @@ export default {
     },
 
     {
+      stage: 'How much did medicine change?',
+      label: 'Common traps',
+      kicker: 'Before the big essay',
+      heading: 'Three statements. Look closely.',
+      sub: 'Each one sounds true. Decide before you read on.',
+      blocks: [
+        {
+          type: 'misconceptionCheck',
+          statements: [
+            {
+              statement: 'Hippocrates invented the Theory of Opposites.',
+              answer: false,
+              reveal: 'Hippocrates created the Theory of the Four Humours — the idea that the body contains four substances that must stay balanced. It was Galen, writing centuries later, who built on this and added the Theory of Opposites.',
+              examTrap: 'Mixing up Hippocrates and Galen is one of the most common errors in this topic. If a question names a theory, check which physician it belongs to before you write.',
+            },
+            {
+              statement: 'Medieval hospitals existed to cure the sick.',
+              answer: false,
+              reveal: 'Most hospitals offered "care, not cure" — food, warmth, clean bedding and prayer. Patients with infectious or terminal illnesses were often turned away, because the hospital had nothing it could do for them.',
+              examTrap: 'If a question asks about the purpose of medieval hospitals, "curing illness" is the wrong answer. The correct framing is care, charity and religious duty.',
+            },
+            {
+              statement: 'Bloodletting and purging were known to be useless, even at the time.',
+              answer: false,
+              reveal: 'To medieval doctors, bloodletting and purging looked like they worked. A patient who vomited or sneezed appeared to be expelling an excess humour — visible "evidence" the treatment was succeeding.',
+              examTrap: "When a question asks why people used a treatment, don't answer as if they knew it was pointless. Explain why it seemed logical to them, based on what they could see.",
+            },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'conceptReveal',
+      id: 'core-takeaway',
+      stage: 'How much did medicine change?',
+      tag: 'core-takeaway',
+      label: 'So how much actually changed?',
+      steps: [
+        {
+          eyebrow: 'The big question',
+          mainText: 'Between 1250 and 1500, medical knowledge barely moved.',
+          supportText: 'Every idea in this chapter — the Four Humours, miasma, astrology — was a logical response to the evidence people could see. Sneezing looked like the body curing itself. Disease really was worse near swamps and rubbish. These ideas made sense.',
+        },
+        {
+          mainText: 'So why did these ideas survive for over a thousand years, unchanged?',
+          supportText: "The Church controlled education, books and training. Physicians studied only Galen, because Galen was the only writer the Church approved. Dissection was banned — bodies had to stay whole for the soul — so no one could find evidence against Galen, even by accident.",
+        },
+        {
+          mainText: "Even when evidence did contradict Galen, it didn't count.",
+          supportText: 'On the rare occasions a dissection showed something Galen hadn\'t described, doctors explained it away as "an imperfect body" — not as a mistake in Galen\'s work. Authority came first. Evidence came second.',
+        },
+        {
+          mainText: 'One area moved faster: surgery.',
+          supportText: "John Bradmore's tool for removing an arrowhead came from battlefield experience, not a Church-approved textbook. War sat outside the university system — so practical skill could develop where ancient authority didn't reach.",
+        },
+        {
+          mainText: "People weren't stupid. Their ideas were logical, given what they knew.",
+          supportText: "What stopped medicine changing wasn't a shortage of good thinking — it was a shortage of permission to test it.",
+        },
+      ],
+    },
+
+    {
+      type: 'quickRecall',
+      stage: 'How much did medicine change?',
+      label: 'Who said what?',
+      questions: [
+        {
+          type: 'choice',
+          question: 'Who developed the Four Humours theory?',
+          options: ['Hippocrates', 'Pasteur', 'Vesalius', 'Lister'],
+          correct: 0,
+          explanation: 'Hippocrates developed the Four Humours theory and encouraged observation of patients.',
+        },
+        {
+          type: 'choice',
+          question: 'Who developed the Theory of Opposites?',
+          options: ['Galen', 'Nightingale', 'Jenner', 'Koch'],
+          correct: 0,
+          explanation: 'Galen built on Hippocrates and developed the Theory of Opposites.',
+        },
+        {
+          type: 'choice',
+          question: 'What did both Hippocrates and Galen become in medieval medicine?',
+          options: ['Ancient authorities', 'Surgeons', 'Plague doctors', 'Monks'],
+          correct: 0,
+          explanation: 'Medieval doctors trusted ancient authorities heavily — their texts were treated almost like scripture.',
+        },
+      ],
+    },
+
+    {
+      type: 'connectionMap',
+      stage: 'How much did medicine change?',
+      label: 'The web of medieval belief',
+      title: 'The web of medieval belief',
+      subtitle: 'Everything you need to explain why illness happened in medieval England',
+      instruction: 'Tap each belief to consolidate your understanding',
+      centreLabel: 'Why people got ill',
+      nodes: [
+        {
+          id: 'supernatural',
+          label: "God's punishment",
+          shortLabel: "God's will",
+          explanation: "Illness as divine punishment was the dominant explanation for most people. Sinful behaviour angered God, who sent disease as retribution. This made prayer, confession and pilgrimage — not medicine — the logical response.",
+          retrievalQuestion: "Why did believing illness was God's punishment lead to prayer rather than treatment?",
+          retrievalAnswer: "If the cause of illness was sin, removing the sin through prayer and confession was the logical cure — addressing the spiritual root, not the physical symptom.",
+        },
+        {
+          id: 'astrology',
+          label: 'Stars and planets',
+          shortLabel: 'Astrology',
+          explanation: "Physicians believed the alignment of celestial bodies controlled bodily health. Doctors consulted zodiac charts before bloodletting or prescribing. The Black Death of 1348 was partly blamed on a conjunction of Saturn, Jupiter and Mars in 1345.",
+          retrievalQuestion: 'Why did medieval doctors use zodiac charts?',
+          retrievalAnswer: "They believed planetary positions controlled the humours and which body parts could be safely treated on different days — consulting the chart was part of diagnosis.",
+        },
+        {
+          id: 'humours',
+          label: 'Four humours',
+          shortLabel: 'Humours',
+          explanation: "Galen's theory of the four humours — blood, phlegm, yellow bile and black bile — was the dominant rational explanation for disease. Illness meant the humours were out of balance; treatment aimed to restore equilibrium through bloodletting, purging, vomiting or dietary change.",
+          retrievalQuestion: 'Name the four humours.',
+          retrievalAnswer: 'Blood, phlegm, yellow bile and black bile.',
+        },
+        {
+          id: 'miasma',
+          label: 'Bad air (miasma)',
+          shortLabel: 'Bad air',
+          explanation: "Miasma theory held that foul-smelling air caused disease. People carried posies of herbs, burned aromatics and avoided marshy areas. Miasma theory actually produced some public health benefits — clearing rubbish reduced disease even though the reasoning was wrong.",
+          retrievalQuestion: 'How did miasma theory accidentally improve public health?',
+          retrievalAnswer: "Removing foul-smelling rubbish and waste — done to remove 'bad air' — actually reduced real disease vectors (rats, contaminated water, flies) even though the reasoning was mistaken.",
+        },
+        {
+          id: 'galen',
+          label: "Galen's authority",
+          shortLabel: 'Galen',
+          explanation: "Galen's writings were endorsed by the Church as truth. Medical schools taught only his texts. Challenging Galen risked punishment. His authority meant medical ideas were frozen for over 1,000 years.",
+          retrievalQuestion: "Why was it dangerous for medieval doctors to challenge Galen?",
+          retrievalAnswer: "The Church endorsed Galen's ideas — questioning them was tantamount to questioning the Church, risking punishment and loss of livelihood.",
+        },
+        {
+          id: 'experience',
+          label: 'Practical experience',
+          shortLabel: 'Folk cures',
+          explanation: "Outside the physician-dominated world, wise women, apothecaries and housewives used centuries of accumulated herbal knowledge. Some genuinely worked: willow bark contains salicin, a compound related to modern aspirin. This practical layer of medicine coexisted with all the theories above.",
+          retrievalQuestion: 'Why did some herbal remedies work even though their users had no understanding of disease?',
+          retrievalAnswer: 'Some plants contain pharmacologically active compounds — willow bark contains salicin (related to aspirin), and garlic has mild antimicrobial properties — so the remedies worked through chemistry, not theory.',
+        },
+      ],
+    },
+
+    {
       type: 'examinerExplains',
       stage: 'Exam prep',
+      label: 'What the examiner rewards',
       examinerExplains: {
-        opening: "Before you face the examiner, here's what they actually reward.",
+        opening: "Here's what examiners actually reward.",
         tips: [
           {
             heading: 'Use the exact terms',
@@ -1144,7 +1286,7 @@ export default {
           },
           {
             heading: 'Link cause to treatment',
-            body: "Examiners want the full chain: Galen argued illness = imbalance of humours → treatment must restore balance → bloodletting follows logically. Show the reasoning.",
+            body: "Show the full chain: Galen argued illness = imbalance of humours → treatment must restore balance → bloodletting follows logically. That reasoning is what earns marks.",
           },
           {
             heading: 'Address change and continuity',
@@ -1246,101 +1388,8 @@ Do NOT award marks for identifying practices without explaining the religious re
     },
 
     {
-      type: 'quickRecall',
-      stage: 'Exam prep',
-      label: 'Who Said What?',
-      questions: [
-        {
-          type: 'choice',
-          question: 'Who is linked with developing the Four Humours?',
-          options: ['Hippocrates', 'Pasteur', 'Vesalius', 'Lister'],
-          correct: 0,
-          explanation: 'Hippocrates developed the Four Humours theory and encouraged observation of patients.',
-        },
-        {
-          type: 'choice',
-          question: 'Who developed the Theory of Opposites?',
-          options: ['Galen', 'Nightingale', 'Jenner', 'Koch'],
-          correct: 0,
-          explanation: 'Galen built on Hippocrates and developed the Theory of Opposites.',
-        },
-        {
-          type: 'choice',
-          question: 'What did both Hippocrates and Galen become in medieval medicine?',
-          options: ['Ancient authorities', 'Surgeons', 'Plague doctors', 'Monks'],
-          correct: 0,
-          explanation: 'Medieval doctors trusted ancient authorities heavily — their texts were treated almost like scripture.',
-        },
-      ],
-    },
-
-    {
-      stage: 'How much did medicine change?',
-      label: 'Common traps',
-      kicker: 'Before the big essay',
-      heading: 'Three statements. Look closely.',
-      sub: 'Each one sounds true. Decide before you read on.',
-      blocks: [
-        {
-          type: 'misconceptionCheck',
-          statements: [
-            {
-              statement: 'Hippocrates invented the Theory of Opposites.',
-              answer: false,
-              reveal: 'Hippocrates created the Theory of the Four Humours — the idea that the body contains four substances that must stay balanced. It was Galen, writing centuries later, who built on this and added the Theory of Opposites.',
-              examTrap: 'Mixing up Hippocrates and Galen is one of the most common errors in this topic. If a question names a theory, check which physician it belongs to before you write.',
-            },
-            {
-              statement: 'Medieval hospitals existed to cure the sick.',
-              answer: false,
-              reveal: 'Most hospitals offered "care, not cure" — food, warmth, clean bedding and prayer. Patients with infectious or terminal illnesses were often turned away, because the hospital had nothing it could do for them.',
-              examTrap: 'If a question asks about the purpose of medieval hospitals, "curing illness" is the wrong answer. The correct framing is care, charity and religious duty.',
-            },
-            {
-              statement: 'Bloodletting and purging were known to be useless, even at the time.',
-              answer: false,
-              reveal: 'To medieval doctors, bloodletting and purging looked like they worked. A patient who vomited or sneezed appeared to be expelling an excess humour — visible "evidence" the treatment was succeeding.',
-              examTrap: "When a question asks why people used a treatment, don't answer as if they knew it was pointless. Explain why it seemed logical to them, based on what they could see.",
-            },
-          ],
-        },
-      ],
-    },
-
-    {
-      type: 'conceptReveal',
-      id: 'core-takeaway',
-      stage: 'How much did medicine change?',
-      tag: 'core-takeaway',
-      label: 'So How Much Actually Changed?',
-      steps: [
-        {
-          eyebrow: 'The big question',
-          mainText: 'Between 1250 and 1500, medical knowledge barely moved.',
-          supportText: 'Every idea in this chapter — the Four Humours, miasma, astrology — was a logical response to the evidence people could see. Sneezing looked like the body curing itself. Disease really was worse near swamps and rubbish. These ideas made sense.',
-        },
-        {
-          mainText: 'So why did these ideas survive for over a thousand years, unchanged?',
-          supportText: "The Church controlled education, books and training. Physicians studied only Galen, because Galen was the only writer the Church approved. Dissection was banned — bodies had to stay whole for the soul — so no one could find evidence against Galen, even by accident.",
-        },
-        {
-          mainText: "Even when evidence did contradict Galen, it didn't count.",
-          supportText: 'On the rare occasions a dissection showed something Galen hadn\'t described, doctors explained it away as "an imperfect body" — not as a mistake in Galen\'s work. Authority came first. Evidence came second.',
-        },
-        {
-          mainText: 'One area moved faster: surgery.',
-          supportText: "John Bradmore's tool for removing an arrowhead came from battlefield experience, not a Church-approved textbook. War sat outside the university system — so practical skill could develop where ancient authority didn't reach.",
-        },
-        {
-          mainText: "People weren't stupid. Their ideas were logical, given what they knew.",
-          supportText: "What stopped medicine changing wasn't a shortage of good thinking — it was a shortage of permission to test it. Next time you meet an idea that lasted far longer than it should have, ask the same question: who controlled the knowledge, and what would it have cost them to be wrong?",
-        },
-      ],
-    },
-
-    {
       type: 'guidedExamResponse',
-      stage: 'How much did medicine change?',
+      stage: 'Exam prep',
       label: 'Write the big essay',
       exam: {
         board: 'edexcel',
@@ -1394,66 +1443,6 @@ Strong Level 4 conclusion: the Church was the dominant reason physician-led medi
       },
     },
 
-    {
-      type: 'connectionMap',
-      title: 'The web of medieval belief',
-      subtitle: 'Everything you need to explain why illness happened in medieval England',
-      instruction: 'Tap each belief to consolidate your understanding',
-      centreLabel: 'Why people got ill',
-      nodes: [
-        {
-          id: 'supernatural',
-          label: "God's punishment",
-          shortLabel: "God's will",
-          explanation: "Illness as divine punishment was the dominant explanation for most people. Sinful behaviour angered God, who sent disease as retribution. This made prayer, confession and pilgrimage — not medicine — the logical response. It also meant many people accepted illness fatalistically rather than seeking earthly cures.",
-          retrievalQuestion: "Why did believing illness was God's punishment lead to prayer rather than treatment?",
-          retrievalAnswer: "If the cause of illness was sin, removing the sin through prayer and confession was the logical cure — addressing the spiritual root, not the physical symptom.",
-          examLink: 'Explain one reason why supernatural beliefs meant little progress was made in medicine in medieval England.',
-        },
-        {
-          id: 'astrology',
-          label: 'Stars and planets',
-          shortLabel: 'Astrology',
-          explanation: "Astrologers believed the alignment of celestial bodies controlled bodily health. Doctors consulted zodiac charts before bloodletting or prescribing — a patient's star sign determined which body part could be treated safely on which date. The Black Death of 1348 was partly blamed on a conjunction of Saturn, Jupiter and Mars in 1345.",
-          retrievalQuestion: 'Why did medieval doctors use zodiac charts?',
-          retrievalAnswer: "They believed planetary positions controlled the humours and which body parts could be safely treated on different days — consulting the chart was part of diagnosis.",
-        },
-        {
-          id: 'humours',
-          label: 'Four humours',
-          shortLabel: 'Humours',
-          explanation: "Galen's theory of the four humours — blood, phlegm, yellow bile (choler) and black bile (melancholy) — was the dominant rational explanation for disease. Each humour corresponded to a season, element and character type. Illness meant the humours were out of balance; treatment aimed to restore equilibrium through bloodletting, purging, vomiting or dietary change.",
-          retrievalQuestion: 'Name the four humours.',
-          retrievalAnswer: 'Blood, phlegm, yellow bile (choler) and black bile (melancholy).',
-          examLink: 'Describe one treatment based on the theory of the four humours.',
-        },
-        {
-          id: 'miasma',
-          label: 'Bad air (miasma)',
-          shortLabel: 'Bad air',
-          explanation: "Miasma theory held that foul-smelling air caused disease by corrupting the body. This was a rational (if incorrect) natural explanation. People carried posies of herbs, burned aromatics and avoided marshy areas. Miasma theory actually produced some public health benefits — clearing rubbish and improving drainage reduced disease even though the reasoning was wrong.",
-          retrievalQuestion: 'How did miasma theory accidentally improve public health?',
-          retrievalAnswer: "Removing foul-smelling rubbish and waste — done to remove 'bad air' — actually reduced the real disease vectors (rats, contaminated water, flies) even though the reasoning was mistaken.",
-        },
-        {
-          id: 'galen',
-          label: "Galen's authority",
-          shortLabel: 'Galen',
-          explanation: "Galen was a 2nd-century Greek physician whose writings the Church endorsed as truth. Medical schools taught only his texts. Challenging Galen risked punishment — and because his ideas fitted Christian theology (Galen believed in a single creator), the Church actively blocked dissection and experiment. His authority meant medical ideas were frozen for over 1,000 years.",
-          retrievalQuestion: "Why was it dangerous for medieval doctors to challenge Galen?",
-          retrievalAnswer: "The Church endorsed Galen's ideas as God's truth — questioning them was tantamount to questioning the Church, risking punishment and loss of livelihood.",
-          examLink: "Explain how the Church's support for Galen held back medical progress in medieval England.",
-        },
-        {
-          id: 'experience',
-          label: 'Practical experience',
-          shortLabel: 'Folk cures',
-          explanation: "Outside the physician-dominated world, wise women, apothecaries and housewives used centuries of accumulated herbal knowledge. Plants such as willow bark, garlic and feverfew were used empirically — without understanding why they worked. Some genuinely did work: willow bark contains salicin, a compound related to modern aspirin. This practical layer of medicine coexisted with all the theories above.",
-          retrievalQuestion: 'Why did some herbal remedies work even though their users had no understanding of disease?',
-          retrievalAnswer: 'Some plants contain pharmacologically active compounds — willow bark contains salicin (related to aspirin), and garlic has mild antimicrobial properties — so the remedies worked through chemistry, not theory.',
-        },
-      ],
-    },
-
   ],
 }
+

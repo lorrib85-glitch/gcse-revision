@@ -383,26 +383,44 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
     // ── Section 4 — Learning Chunk 3: Harvey & Paré ─────────────────────────
 
     {
-      type: 'conceptReveal',
+      type: 'keyFigureReveal',
       stage: 'Harvey and Paré',
       label: 'William Harvey',
-      steps: [
+      portrait: '/headers/history-medicine-germ-bridge.png',
+      name: 'William Harvey',
+      role: 'Physician & Anatomist',
+      sections: [
         {
-          eyebrow: '1628',
-          mainText: 'Galen had claimed the liver constantly produced new blood — and the body used it up.',
-          supportText: 'This explained why bloodletting seemed logical: too much blood? Remove some.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          title: 'The problem with Galen',
+          icon: 'ancient-figure',
+          lines: [
+            'Galen claimed the liver constantly produced new blood, which the body used up.',
+            'This made bloodletting seem logical: too much blood in the system? Remove some.',
+          ],
         },
         {
-          mainText: 'Harvey proved that blood circulates continuously around the body, pumped by the heart.',
-          supportText: 'He calculated the volume of blood in the body was too large to be made fresh each day — so it must be reused.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          title: "Harvey's calculation (1628)",
+          icon: 'knowledge',
+          lines: [
+            'Harvey calculated the total volume of blood in the human body.',
+            'The amount was far too large to be freshly produced each day — so it must circulate and be reused.',
+          ],
         },
         {
-          eyebrow: 'The key limitation',
-          mainText: 'Harvey could not explain what blood actually does — so treatments didn\'t immediately change.',
-          supportText: 'Without knowing blood carries oxygen and removes waste, doctors had no reason to stop bloodletting.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          title: 'De Motu Cordis',
+          icon: 'medicine',
+          lines: [
+            'Harvey published his findings in De Motu Cordis — "On the Motion of the Heart".',
+            'He demonstrated that the heart acts as a pump, circulating blood continuously around the body.',
+          ],
+        },
+        {
+          title: 'The key limitation',
+          icon: 'legacy',
+          lines: [
+            'Harvey could not explain what blood actually does — so treatments did not immediately change.',
+            'Without knowing blood carries oxygen and removes waste, doctors had no reason to abandon bloodletting.',
+          ],
         },
       ],
     },
@@ -508,7 +526,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'The Great Plague, 1665',
       beats: [
         {
-          image: '/images/great-plague-1665.png',
+          image: '/headers/history-medicine-london-terror.png',
           imagePosition: 'center center',
           imageFilter: 'brightness(0.85) saturate(0.7)',
           label: 'LONDON, 1665',
@@ -516,7 +534,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           body: 'A hundred thousand dead. Anatomical breakthroughs meant nothing.\nPeople still blamed bad air, sin, and the stars.',
         },
         {
-          image: '/images/great-plague-1665.png',
+          image: '/headers/history-medicine-london-terror.png',
           imagePosition: 'center 30%',
           imageOpacity: 0.55,
           facts: [
@@ -598,6 +616,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
     {
       type: 'examinerExplains',
       stage: 'Exam prep',
+      label: 'Examiner tactics',
       examinerExplains: {
         opening: "Renaissance medicine is exam gold — but students often lose marks by confusing change and continuity.",
         tips: [

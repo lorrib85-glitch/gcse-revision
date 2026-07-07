@@ -32,12 +32,11 @@ export const MODULES = [
       "history:medicine:bloodletting", "history:medicine:barber-surgeons",
       "history:medicine:apothecaries", "history:medicine:medieval-hospitals",
     ],
-    screenCount: 34,
+    screenCount: 33,
     screenTags: [
       null, null, null, "four-humours", null, null, null, "galen", null, null, null, null,
       "medieval-practitioners", "miasma", null, null, null, null, null, null, null,
-      null, null, null, null, null, null, null, null, null, null, "core-takeaway", null,
-      null,
+      null, null, null, null, null, null, "core-takeaway", null, null, null, null, null,
     ],
   },
   {
