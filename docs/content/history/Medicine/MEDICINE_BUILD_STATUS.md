@@ -22,7 +22,7 @@ Update this file whenever an episode is built, extracted, or expanded.
 
 | # | Title | ID | Build status | Registry status | Notes / next action |
 |---|-------|----|--------------|-----------------|---------------------|
-| 1 | Trust me, I'm following Jupiter | `history-medicine-medieval-beliefs-causes` | built (32 screens) | extracted | ✓ Complete |
+| 1 | Trust me, I'm following Jupiter | `history-medicine-medieval-beliefs-causes` | built (32 screens) | extracted | ✓ Complete — duplicated Four Humours conceptReveal removed from runtime sequence; `episode-01-medieval-beliefs-causes.runtime.js` preserves canonical source and reindexes stage navigation |
 | 2 | The day everything changed | `history-medicine-black-death` | built (27 screens) | extracted | ✓ Complete |
 | 3 | The beginning of doubt | `history-medicine-renaissance-medicine` | built (16 screens) | extracted | ✓ Complete — formerly `mod2`; ID migrated June 2026 |
 | 4 | Surgery & anatomy | `history-medicine-surgery-anaesthetics` | built (11 screens) | extracted | ✓ Complete — formerly `mod3`; ID migrated June 2026; metadata corrected |
