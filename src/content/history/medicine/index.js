@@ -52,6 +52,13 @@ const sentenceCaseEpisode01Labels = new Map([
   ['Face the Examiner', 'Face the examiner'],
 ])
 
+const episode01QuestionHints = new Map([
+  [
+    'What did Hippocrates believe caused illness?',
+    'Hippocrates was unusual because he looked for natural causes of illness, not supernatural ones.',
+  ],
+])
+
 const episode01SentenceCaseStageTitles = [
   'Strange ideas, serious medicine',
   'What made people sick?',
@@ -73,6 +80,12 @@ function sentenceCaseEpisode01Screen(screen) {
           label: sentenceCaseEpisode01Labels.get(beat.label) || beat.label,
         }))
       : screen.beats,
+    questions: Array.isArray(screen.questions)
+      ? screen.questions.map(question => ({
+          ...question,
+          hint: episode01QuestionHints.get(question.question || question.q) || question.hint,
+        }))
+      : screen.questions,
     theory: screen.theory
       ? {
           ...screen.theory,
