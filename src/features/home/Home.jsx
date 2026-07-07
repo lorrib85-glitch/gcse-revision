@@ -218,7 +218,7 @@ function heroImageFor(task, subject) {
 const WARMUP_COPY = {
   title: '90s memory sprint',
   support: 'Picked for today · 2 min',
-  cta: 'Start warm-up',
+  cta: 'Start now',
 }
 
 // Small quiet progress ring for the Tasks stat — no shared generic ring
@@ -451,7 +451,7 @@ function PlannerRow({ task, index, state, prevDone, isLast, onSelect }) {
       }}>
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: SPACING.micro }}>
           {label && (
-            <div style={{ ...TYPE.label, color: state === 'next' ? GENERAL.teal : GENERAL.slate, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ ...TYPE.caption, color: state === 'next' ? GENERAL.teal : GENERAL.slate, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {label}
             </div>
           )}
@@ -522,7 +522,7 @@ export default function Home({ onSelectTask, onReviewProgress }) {
               <AccountIcon color={GENERAL.teal} />
             </button>
             <span style={{ ...TYPE.bodyStrong, color: `rgba(${hexToRgb(GENERAL.softWhite)},0.74)`, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {firstName ? `Hi, ${firstName}` : 'Hi'}
+              {firstName ? `Hi ${firstName}` : 'Hi'}
             </span>
             <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: RADII.pill, background: GENERAL.teal, flexShrink: 0 }} />
           </div>
