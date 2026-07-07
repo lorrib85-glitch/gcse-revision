@@ -5,19 +5,32 @@ import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 import CinematicShell from '../layout/CinematicShell.jsx'
 
 const STEP_MS = 380
+const HIPPOCRATES_PROFILE_REVEAL = 'His name was Hippocrates.'
 
 export default function ConceptReveal({ subject: subjectProp, steps = [], onContinue, onRevealStart }) {
   const theme = SUBJECTS[subjectProp] || SUBJECTS.History
   const accent = theme.accent
   const palBg = theme.background
+  const legacyHippocratesIntro = steps.length === 2 && steps[1]?.mainText === HIPPOCRATES_PROFILE_REVEAL
 
-  const [stepIdx, setStepIdx] = useState(0)
+  const [stepIdx, setStepIdx] = useState(legacyHippocratesIntro ? 1 : 0)
   const [animKey, setAnimKey] = useState(0)
   const [revealStarted, setRevealStarted] = useState(false)
   const [finishing, setFinishing] = useState(false)
   const touchRef = useRef({ x: null, y: null })
 
-  const step = steps[stepIdx] || {}
+  const rawStep = steps[stepIdx] || {}
+  const step = legacyHippocratesIntro && rawStep.mainText === HIPPOCRATES_PROFILE_REVEAL
+    ? {
+        ...rawStep,
+        mainText: 'His name\nwas Hippocrates.',
+        backgroundImage: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
+        backgroundPosition: 'center 18%',
+        overlay: 'linear-gradient(to bottom, rgba(0,0,0,.28) 0%, rgba(0,0,0,.38) 36%, rgba(0,0,0,.74) 68%, rgba(0,0,0,.96) 100%)',
+        slowReveal: true,
+        tapToContinue: true,
+      }
+    : rawStep
   const isLast = stepIdx === steps.length - 1
   const bg = step.backgroundImage
     ? `url(${step.backgroundImage})`
@@ -48,7 +61,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
   }
 
   function retreat() {
-    if (stepIdx > 0) {
+    if (stepIdx > 0 && !legacyHippocratesIntro) {
       setStepIdx(i => i - 1)
       setAnimKey(k => k + 1)
     }
