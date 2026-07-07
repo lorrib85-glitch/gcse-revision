@@ -314,18 +314,22 @@ Avoid long sequences of passive teaching screens.
 
 ### Weak Spot Recovery Rule
 
-Every module must deliberately revisit weak spots.
+Every module must deliberately revisit weak spots identified during that module.
 
-Weak spots identified through:
+**AMENDMENT: Series Openers and Chapter 1 Episodes**
 
-- `PriorKnowledgeRecall` (if applicable)
-- `QuickRecallScreen`
-- `MatchingTask`
-- `FaceTheExaminer`
+For the **first chapter of any series** (e.g., Episode 1 of Medicine Through Time):
 
-should reappear later in the module.
+- In-chapter weak spot recovery does **not apply**.
+- Weak spots cannot meaningfully exist within Chapter 1 because there is no pre-existing base knowledge to revisit.
+- Example: In Episode 1 "Trust me, I'm Following Jupiter", students encounter Four Humours, miasma, and astrology for the first time. A weak spot identified mid-Chapter 1 cannot be "recovered" — it can only be revisited in **subsequent chapters** when these concepts appear again in new contexts.
+- Weak spot tracking still occurs (through `QuickRecallScreen`, `MatchingTask`, etc.), but recovery happens in **Chapter 2 onwards** when previous chapter concepts are reintroduced.
 
-Weak spots should not remain hidden until a future chapter.
+For all **subsequent chapters** within a series:
+
+- Weak spots identified through `PriorKnowledgeRecall` (from the prior chapter) must be revisited in-module.
+- Weak spots identified through `QuickRecallScreen`, `MatchingTask`, `FaceTheExaminer` should reappear later in the module.
+- Weak spots should not remain hidden until a future chapter.
 
 ---
 
@@ -480,14 +484,18 @@ History should feel premium, cinematic and immersive.
 Before a History module is considered complete, verify:
 
 - ✓ Section 1 includes retrieval (PriorKnowledgeRecall) *OR is a series opener*
-- ✓ Weak spots are generated
+- ✓ Weak spots are generated (or tracked for later recovery if series opener)
 - ✓ Every learning chunk includes interaction
 - ✓ Every learning chunk includes retrieval
-- ✓ Interleaving exists throughout the module
-- ✓ Weak spots are revisited in-module
+- ✓ Interleaving exists throughout the module (or deferred to later chapters if series opener)
+- ✓ Weak spots are revisited in-module (or scheduled for recovery in subsequent chapters if series opener)
 - ✓ Core chapter message is reinforced
 - ✓ Examiner content appears only in Section 6
 - ✓ Module ends with a completion screen
 - ✓ No feature component is used more than twice in the module
 
 If any of the above are missing, the module is incomplete.
+
+**CLARIFICATION: Series Openers**
+
+For Chapter 1 episodes (series openers), the weak spot recovery rule is **deferred, not waived**. Weak spots identified in Episode 1 will be revisited when those topics reappear in Episode 2 and beyond. This is a cascade effect across the series, not a gap in the architecture.
