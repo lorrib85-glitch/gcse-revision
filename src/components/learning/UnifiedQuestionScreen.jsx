@@ -54,7 +54,7 @@ export default function UnifiedQuestionScreen({
   const q = question || ''
   const correctIdx = typeof correct === 'number' ? correct : 0
   const isTrueFalse = type === 'truefalse'
-  const questionType = isTrueFalse ? TYPE.displayScreen : TYPE.quizQuestion
+  const questionType = isTrueFalse ? TYPE.displayScreen : TYPE.displayScreen
   const optionType = isTrueFalse ? TYPE.buttonLarge : TYPE.quizOption
 
   function advanceAfterHold() {
@@ -228,7 +228,7 @@ export default function UnifiedQuestionScreen({
             let opacity = 1
             let background = 'rgba(21,23,32,0.9)'
             let border = '1px solid rgba(255,255,255,0.12)'
-            let color = 'rgba(255,255,255,0.78)'
+            let color = 'rgba(255,255,255,0.82)'
             let boxShadow = undefined
             let correctAnimation = undefined
             const answered = status !== null
@@ -245,9 +245,9 @@ export default function UnifiedQuestionScreen({
                 border = `1px solid rgba(${rgb}, 0.65)`
                 color = 'rgba(255,255,255,0.94)'
               } else if (!isFirstTapped && !isRetryTapped) {
-                color = 'rgba(255,255,255,0.58)'
-                opacity = 0.72
-                border = '1px solid rgba(255,255,255,0.07)'
+                color = 'rgba(255,255,255,0.68)'
+                opacity = 0.86
+                border = '1px solid rgba(255,255,255,0.09)'
               }
             }
 
@@ -324,32 +324,32 @@ export default function UnifiedQuestionScreen({
           <div
             style={{
               marginTop: SPACING.compact,
-              background: 'rgba(27,30,39,0.92)',
+              background: 'rgba(27,30,39,0.82)',
               borderRadius: 14,
-              borderLeft: `3px solid ${accent}`,
-              padding: '14px 16px',
+              border: `1px solid rgba(${rgb},0.18)`,
+              borderLeft: `2px solid rgba(${rgb},0.78)`,
+              padding: '12px 14px',
               display: 'flex',
-              gap: 12,
+              gap: 10,
               alignItems: 'flex-start',
               animation: `uqs-hint-in ${MOTION.duration.fast} ${MOTION.easing.standard} both`,
             }}
           >
             <svg
-              width="16" height="16" viewBox="0 0 24 24" fill="none"
+              width="15" height="15" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="1.5"
               strokeLinecap="round" strokeLinejoin="round"
               aria-hidden="true"
-              style={{ color: 'rgba(255,255,255,0.4)', flexShrink: 0, marginTop: 3 }}
+              style={{ color: 'rgba(255,255,255,0.34)', flexShrink: 0, marginTop: 3 }}
             >
               <path d="M9 18h6M10 21h4M12 2a6.5 6.5 0 0 0-4 11.6c.6.5 1 1.3 1 2.4h6c0-1.1.4-1.9 1-2.4A6.5 6.5 0 0 0 12 2z" />
             </svg>
             <div>
               <div
                 style={{
-                  ...TYPE.metadata,
-                  textTransform: 'uppercase',
+                  ...TYPE.label,
                   color: accent,
-                  marginBottom: 8,
+                  marginBottom: 6,
                 }}
               >
                 Try again
