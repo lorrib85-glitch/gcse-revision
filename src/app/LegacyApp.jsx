@@ -18,13 +18,13 @@ import { GENERAL } from '../constants/generalTheme.js'
 // Home/Subjects/Progress/Quiz don't pay for it on first load.
 const ModulePlayer = lazy(() => import('../components/layout/ModulePlayer.jsx'))
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────�[...] 
 
 function safeGetProgress() {
   try { return getProgress() } catch { return { streak: 0, lastSessionDate: null, topicProgress: {}, history: [] } }
 }
 
-// ─── Google logo SVG ─────────────────────────────────────────────────────────
+// ─── Google logo SVG ───────────────────────────────────────────────────────�[...] 
 
 function GoogleLogo({ size = 20 }) {
   return (
@@ -37,7 +37,7 @@ function GoogleLogo({ size = 20 }) {
   )
 }
 
-// ─── Splash screen ────────────────────────────────────────────────────────────
+// ─── Splash screen ────────────────────────────────────────────────────────�[...] 
 
 function SplashScreen() {
   return (
@@ -92,7 +92,7 @@ async function loadModuleContent(mod) {
 }
 
 
-// ─── Login screen ─────────────────────────────────────────────────────────────
+// ─── Login screen ───────────────────────────────────────────────────────�[...] 
 
 function LoginScreen() {
   const { signInWithGoogle, continueAsGuest, loading, authError } = useAuth()
@@ -301,7 +301,7 @@ function OnboardingScreen() {
   )
 }
 
-// ─── App ─────────────────────────────────────────────────────────────────────
+// ─── App ───────────────────────────────────────────────────────────�[...] 
 
 export default function App() {
   const { user, pendingAuth } = useAuth()
@@ -360,12 +360,18 @@ export default function App() {
     openModulePlayer(mod, screenIndex)
   }
 
+  // Centralised quickfire starter — prefer this over calling setTab('quickfire') directly
+  function startQuickfire(origin = 'pulse') {
+    setQuickfireOrigin(origin)
+    setTab('quickfire')
+  }
+
   function handleTodaysPlanSelect(task) {
     const dest = resolveTaskDestination(task)
     if (!dest) return
     if (dest.kind === 'quickfire') {
-      setQuickfireOrigin('home')
-      setTab('quickfire')
+      // explicit starter helper ensures we only start quickfire when the user tapped a START action
+      startQuickfire('home')
     } else if (dest.kind === 'module') {
       openModule(dest.mod, dest.screenIndex)
     } else if (dest.kind === 'exam') {
@@ -436,7 +442,8 @@ export default function App() {
         onQuiz={() => {
           setChapterCompleteData(null)
           setView(null)
-          setTab('quickfire')
+          // use helper so intent is explicit and accidental callers are less likely
+          startQuickfire('chapter-complete')
         }}
         onPastPaper={d.pastPaperHint ? () => {
           setChapterCompleteData(null)
@@ -471,7 +478,7 @@ export default function App() {
       <div key={tab} className="tab-content">
         {tab === 'home'     && <Home onSelectTask={handleTodaysPlanSelect} onReviewProgress={() => setTab('pulse')} />}
         {tab === 'subjects' && <ModulesTab onOpenModule={openModule} />}
-        {tab === 'pulse'    && <PulseTab onStartQuickFire={() => { setQuickfireOrigin('pulse'); setTab('quickfire') }} best={readQfBest()} />}
+        {tab === 'pulse'    && <PulseTab onStartQuickFire={() => startQuickfire('pulse')} best={readQfBest()} />}
         {tab === 'quickfire' && <TestTab mode="quickfire" autoStart={true} onOpenModule={openModule} onExit={() => setTab(quickfireOrigin)} />}
         {tab === 'exams'    && <ExamPractice tab={tab} onOpenModule={openModule} onOpenPulse={() => setTab('pulse')} examAutoStart={examAutoStart} setExamAutoStart={setExamAutoStart} />}
       </div>
@@ -479,4 +486,3 @@ export default function App() {
     </div>
   )
 }
-
