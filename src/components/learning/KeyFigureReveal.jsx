@@ -82,13 +82,21 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
        linear-gradient(160deg, rgba(${rgb},0.05) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.18) 100%),
        rgba(12,9,5,0.88)`
 
-  // Galen's portrait is vertically tight on mobile; lower the image crop so his full head clears the browser/progress overlay.
-  const portraitPosition = block.portrait?.includes('galen-portrait')
+  const isGalenPortrait = block.portrait?.includes('galen-portrait')
+  const isHippocratesPortrait = block.portrait?.includes('hippocrates-portrait')
+
+  // Some tall portrait assets crop badly inside the short profile hero on mobile.
+  // Hippocrates appears immediately after a full-screen portrait reveal, so keep the
+  // profile crop close to that composition instead of punching into his face.
+  const portraitHeight = isHippocratesPortrait ? '60vh' : '44vh'
+  const portraitPosition = isGalenPortrait
     ? 'center 8%'
-    : block.portraitPosition || 'center top'
+    : isHippocratesPortrait
+      ? 'center 18%'
+      : block.portraitPosition || 'center top'
 
   // Galen has important visual evidence on the right of the hero; keep the bottom readable without burying that detail.
-  const portraitScrim = block.portrait?.includes('galen-portrait')
+  const portraitScrim = isGalenPortrait
     ? `linear-gradient(to bottom, rgba(8,9,13,0.03) 0%, rgba(8,9,13,0.06) 35%, rgba(8,9,13,0.46) 65%, rgba(8,9,13,0.94) 100%),
        linear-gradient(to right, rgba(8,9,13,0.08) 0%, rgba(8,9,13,0.00) 42%, rgba(8,9,13,0.00) 100%)`
     : 'linear-gradient(to bottom, rgba(8,9,13,0.06) 0%, rgba(8,9,13,0.10) 35%, rgba(8,9,13,0.70) 65%, rgba(8,9,13,0.98) 100%)'
@@ -114,7 +122,7 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
       {/* ── Portrait hero ───────────────────────────────────────────────── */}
       <div style={{
         position: 'relative',
-        height: '44vh',
+        height: portraitHeight,
         overflow: 'hidden',
         flexShrink: 0,
       }}>
