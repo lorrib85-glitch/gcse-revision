@@ -46,7 +46,7 @@ export default function TeachScreenShell({ heading, eyebrow, intro, children, ke
     <div style={{
       maxWidth: 420,
       margin: '0 auto',
-      padding: `${SPACING.cinematic}px ${SPACING.standard}px ${SPACING.cinematic}px`,
+      padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.cinematic}px`,
       boxSizing: 'border-box',
     }}>
 
@@ -74,7 +74,7 @@ export default function TeachScreenShell({ heading, eyebrow, intro, children, ke
         <p className="tss-in" style={{
           ...TYPE.body,
           color: 'rgba(245,245,245,0.60)',
-          margin: `${SPACING.compact}px 0 0`,
+          margin: `${SPACING.standard}px 0 0`,
           animationDelay: '120ms',
         }}>
           {intro}
