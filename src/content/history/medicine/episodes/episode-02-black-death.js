@@ -15,8 +15,8 @@ export default {
   color: '#8C3A2A',
   colorLight: 'rgba(140,58,42,0.12)',
   series: 'medicine-through-time',
-  recallTags: [],
-  examTags: [],
+  recallTags: [],   // not consumed by any app logic — do not add decorative tags
+  examTags: [],     // not consumed by any app logic — do not add decorative tags
   assetKeys: [],
 
   hook: {
@@ -177,59 +177,56 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       type: 'timelineCanvas',
       stage: 'The arrival',
       label: 'The chain, scroll by scroll',
-      title: 'How it spread',
-      intro: 'Scroll to follow the infection.',
+      title: 'How the plague travelled',
+      intro: 'Scroll to follow the plague\'s journey from central Asia to England.',
       steps: [
         {
+          id: 'central-asia',
+          image: '/figures/history/medicine/black-death/trade-routes-map.png',
+          label: 'It began in central Asia',
+          detail: 'The Black Death originated in central Asia, probably in the late 1330s. From there it moved west along the same trade routes that carried spices, silk and grain across the continent.',
+          stats: ['c.1338', 'Central Asia'],
+        },
+        {
           id: 'ship',
-          image: '/figures/history/medicine/black-death/plague-dock.png', // placeholder — replace with a ship-specific image
-          label: 'Trade ships docked at English ports',
-          detail: 'Genoese and other Mediterranean trading ships carried grain, cloth and wine into English ports — and, hidden in the hold, black rats infested with fleas. The Black Death reached England via the port of Melcombe (modern Weymouth) in June 1348.',
+          image: '/figures/history/medicine/black-death/plague-dock.png',
+          label: 'Trade ships carried it to England',
+          detail: 'By 1347, the plague had devastated Mediterranean cities. Ships from infected ports sailed north, carrying infected animals in their holds. The Black Death reached England at the port of Melcombe in June 1348.',
           stats: ['June 1348', 'Melcombe, Dorset'],
         },
         {
-          id: 'rats',
-          image: '/figures/history/medicine/black-death/medieval-town.png', // placeholder — replace with a rat-specific image
-          label: 'Black rats lived alongside humans',
-          detail: 'Rats nested in grain stores, ships’ holds and crowded housing. Nobody connected the rats to illness — medieval explanations focused on miasma (bad air) and God’s punishment, not animals.',
-          stats: ['Rattus rattus', 'Vector species'],
+          id: 'spread-inland',
+          image: '/figures/history/medicine/black-death/medieval-town.png',
+          label: 'From the ports it followed the trade roads',
+          detail: 'The plague moved inland along the same roads used for trade. It reached Bristol and London within months. Market towns, monasteries and villages along major routes were hit hardest.',
+          stats: ['Late 1348', 'Bristol and London'],
         },
         {
-          id: 'fleas',
-          image: '/figures/history/medicine/black-death/plague-background.png', // placeholder — replace with a flea-specific image
-          label: 'Fleas carried Yersinia pestis',
-          detail: 'When an infected rat died, its fleas jumped to the nearest warm body — often human. A single bite transferred the bacterium Yersinia pestis into the bloodstream, causing bubonic plague.',
-          stats: ['Yersinia pestis', 'Bubonic plague'],
-        },
-        {
-          id: 'spread',
-          image: '/figures/history/medicine/black-death/trade-routes-map.png', // placeholder — replace with a town-spread image
-          label: 'The disease spread along trade and travel routes',
-          detail: 'From Melcombe, the plague spread along roads and waterways used for trade — reaching Bristol and London within months. By 1350, it had killed an estimated one-third to one-half of England’s population.',
+          id: 'england',
+          image: '/figures/history/medicine/black-death/trade-routes-map.png',
+          label: 'By 1350 it had reached Scotland',
+          detail: 'From Melcombe, the plague swept across England and into Scotland. By 1350, it had killed an estimated one-third to one-half of England\'s population — the worst demographic disaster in English history.',
           stats: ['By 1350', '~30–50% mortality'],
         },
       ],
     },
 
     {
-      type: 'visualLearning',
+      type: 'quickRecall',
       stage: 'The arrival',
-      label: 'Where did it come from?',
-      scenes: [
+      label: 'How did it reach England?',
+      questions: [
         {
-          image: '/figures/history/medicine/black-death/trade-routes-map.png',
-          headline: 'It began in central Asia.',
-          body: 'Possibly in the late 1330s. From there, it moved west along the trade routes that connected Asia to Europe.',
-        },
-        {
-          image: '/figures/history/medicine/black-death/trade-routes-map.png',
-          headline: 'Trade routes carried death.',
-          body: 'Ships moving across Asia and Europe carried infected fleas and rats. Merchants did not know they were carrying disease with them.',
-        },
-        {
-          image: '/figures/history/medicine/black-death/plague-dock.png',
-          headline: 'It reached England by sea.',
-          body: 'In June 1348, ships docked at Melcombe in Dorset. The disease moved from ports into towns, villages and monasteries.',
+          type: 'choice',
+          question: 'How did the Black Death reach England in June 1348?',
+          options: [
+            'Trade ships from infected Mediterranean ports docked at Melcombe, Dorset',
+            'An infected traveller walked from France to London',
+            'It spread north from a London outbreak that had started earlier that year',
+            'English soldiers brought it back from a campaign in France',
+          ],
+          correct: 0,
+          explanation: 'The Black Death arrived at the port of Melcombe in Dorset in June 1348, carried by trade ships from the infected Mediterranean. It then spread rapidly inland along trade routes.',
         },
       ],
     },
@@ -266,28 +263,28 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       stage: 'The arrival',
       label: 'How the disease killed',
       title: 'How the plague killed',
-      description: 'Follow the progression of bubonic plague through the body.',
+      description: 'Follow bubonic plague through the body, from first contact to death.',
       image: '/figures/history/medicine/black-death/symptom-case-file.png',
       stages: [
         {
           day: '1–2',
-          label: 'Flea bite',
-          description: 'A flea carrying Yersinia pestis bacteria bites the skin. The bacteria enter the lymphatic system.',
+          label: 'Infection',
+          description: 'A flea carrying Yersinia pestis bacteria bites the skin. The bacteria enter the lymphatic system. The infected person feels nothing yet.',
         },
         {
           day: '3–5',
           label: 'Buboes form',
-          description: 'Painful egg-sized swellings (buboes) appear in lymph nodes — groin, armpit, or neck.',
+          description: 'Painful egg-sized swellings (buboes) appear in the lymph nodes — groin, armpit, or neck.',
         },
         {
           day: '5–6',
-          label: 'Fever and weakness',
+          label: 'Fever and collapse',
           description: 'The immune system is overwhelmed. Fever, shivering, vomiting and exhaustion develop rapidly.',
         },
         {
           day: '6+',
           label: 'Blood poisoning',
-          description: 'The bacteria spread through the bloodstream. Skin can darken from internal bleeding, giving the "Black Death" its later name.',
+          description: 'The bacteria spread through the bloodstream. Skin can darken from internal bleeding — giving the disease its later name.',
         },
       ],
     },
@@ -480,7 +477,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       title: 'Match belief to response',
       instruction: 'Match each belief to the response it made seem logical.',
       weakAreaCategory: 'Black Death Treatments',
-      backgroundImage: '/figures/history/medicine/black-death/bloodletting.png',
+      backgroundImage: '/figures/history/medicine/black-death/plague-background.png',
       pairs: [
         { id: 'god-response',       term: 'God sent the plague',        answer: 'Prayer, confession and repentance.' },
         { id: 'miasma-response',    term: 'Bad air caused disease',     answer: 'Burn herbs and clean streets.' },
@@ -495,17 +492,17 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Why treatments failed',
       scenes: [
         {
-          image: '/figures/history/medicine/black-death/flagellant-procession.png',
+          image: '/figures/history/medicine/black-death/flagellants.png',
           headline: 'Prayer and flagellation targeted sin.',
           body: 'If the plague was God’s punishment, the solution was repentance. Some flagellants whipped themselves publicly to show sorrow and earn God’s mercy.',
         },
         {
-          image: '/figures/history/medicine/black-death/burning-herbs.png',
+          image: '/figures/history/medicine/black-death/miasma.png',
           headline: 'Burning herbs targeted bad air.',
           body: 'If disease travelled through miasma, overpowering foul smells seemed sensible. People burned herbs, carried flowers, or cleaned streets.',
         },
         {
-          image: '/figures/history/medicine/black-death/bloodletting.png',
+          image: '/figures/history/medicine/black-death/plague-background.png',
           headline: 'Bloodletting targeted the humours.',
           body: 'If disease came from humour imbalance, removing blood seemed logical. But it weakened patients further.',
         },
@@ -556,8 +553,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Change and continuity',
       steps: [
         {
-          eyebrow: 'Change and continuity',
-          showEyebrow: true,
           mainText: 'Change ≠ progress',
           supportText: 'The Black Death changed society — but it did not lead to a breakthrough in medical understanding. A huge event can change life, work and power without changing medical knowledge. Doctors still blamed God, miasma, astrology and humours.',
           backgroundImage: '/figures/history/medicine/black-death/not-much-changed.png',
@@ -640,6 +635,49 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           finalReveal: true,
           headline: 'Time to step into the examiner\'s seat.',
           body: 'You\'ll mark real answers, then build your own from 2 marks to full marks.',
+        },
+      ],
+    },
+
+    {
+      type: 'quickRecall',
+      stage: 'Exam prep',
+      label: 'Final chapter challenge',
+      questions: [
+        {
+          type: 'choice',
+          question: 'What year did the Black Death reach England?',
+          options: ['1348', '1350', '1345', '1381'],
+          correct: 0,
+          explanation: '1348 — ships arrived at Melcombe in Dorset in June 1348, bringing the plague to England.',
+        },
+        {
+          type: 'choice',
+          question: 'What was miasma?',
+          options: ['Poisonous air believed to cause disease', 'Bacteria carried by fleas', 'God\'s punishment for sin', 'An imbalance of the Four Humours'],
+          correct: 0,
+          explanation: 'Miasma meant poisonous air from rotting matter. Not germs — the smell itself was thought to carry disease.',
+        },
+        {
+          type: 'choice',
+          question: 'What was the actual cause of the Black Death?',
+          options: ['Yersinia pestis bacteria, carried by fleas on black rats', 'Bad air from swamps and rivers', 'God\'s punishment for human sin', 'An imbalance of the Four Humours'],
+          correct: 0,
+          explanation: 'Yersinia pestis bacteria, carried by fleas on black rats. This was not discovered until 1894 — 546 years after the Black Death.',
+        },
+        {
+          type: 'choice',
+          question: 'What changed significantly after the Black Death?',
+          options: ['Society — labour shortages led to higher wages', 'Medicine — doctors discovered the real cause', 'The Church — it became more powerful', 'Astrology — people stopped using it'],
+          correct: 0,
+          explanation: 'Society changed dramatically — labour shortages, higher wages, weakened Church authority. But medicine barely changed at all.',
+        },
+        {
+          type: 'choice',
+          question: 'What stayed the same after the Black Death?',
+          options: ['Medical beliefs — the same explanations continued', 'Peasant wages — they stayed low', 'The Church\'s authority — it remained strong', 'Village populations — they recovered quickly'],
+          correct: 0,
+          explanation: 'Medical beliefs stayed the same — doctors continued to blame God, miasma, and humoral imbalance. The actual cause was not discovered until 1894.',
         },
       ],
     },
@@ -797,55 +835,7 @@ Exemplar 4/4 answer: "Trading ships arriving from Europe brought infected rats i
       },
     },
 
-    {
-      type: 'quickRecall',
-      stage: 'Exam prep',
-      label: 'Final chapter challenge',
-      questions: [
-        {
-          type: 'choice',
-          question: 'What year did the Black Death reach England?',
-          options: ['1348', '1350', '1345', '1381'],
-          correct: 0,
-          explanation: '1348 — ships arrived at Melcombe in Dorset in June 1348, bringing the plague to England.',
-        },
-        {
-          type: 'choice',
-          question: 'What was miasma?',
-          options: ['Poisonous air believed to cause disease', 'Bacteria carried by fleas', 'God\'s punishment for sin', 'An imbalance of the Four Humours'],
-          correct: 0,
-          explanation: 'Miasma meant poisonous air from rotting matter. Not germs — the smell itself was thought to carry disease.',
-        },
-        {
-          type: 'choice',
-          question: 'Why did people pray during the Black Death?',
-          options: ['They believed God had sent the disease as punishment for sin', 'Prayer was proven to cure plague', 'The Church ordered everyone to pray', 'They had no other option'],
-          correct: 0,
-          explanation: 'If illness was God\'s punishment, prayer and repentance were the logical response — they hoped God would forgive humanity and end the plague.',
-        },
-        {
-          type: 'choice',
-          question: 'What actually caused the Black Death?',
-          options: ['Plague bacteria (Yersinia pestis) carried by fleas on rats', 'Poisonous air from plague pits', 'God\'s punishment for sin', 'Planetary alignment'],
-          correct: 0,
-          explanation: 'Yersinia pestis bacteria, carried by fleas on black rats. This was not discovered until 1894 — 546 years after the Black Death.',
-        },
-        {
-          type: 'choice',
-          question: 'What changed significantly after the Black Death?',
-          options: ['Society — labour shortages led to higher wages', 'Medicine — doctors discovered the real cause', 'The Church — it became more powerful', 'Astrology — people stopped using it'],
-          correct: 0,
-          explanation: 'Society changed dramatically — labour shortages, higher wages, weakened Church authority. But medicine barely changed at all.',
-        },
-        {
-          type: 'choice',
-          question: 'What stayed the same after the Black Death?',
-          options: ['Medical beliefs — the same explanations continued', 'Peasant wages — they stayed low', 'The Church\'s authority — it remained strong', 'Village populations — they recovered quickly'],
-          correct: 0,
-          explanation: 'Medical beliefs stayed the same — doctors continued to blame God, miasma, and humoral imbalance. The actual cause was not discovered until 1894.',
-        },
-      ],
-    },
 
   ],
 }
+

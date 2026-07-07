@@ -15,8 +15,8 @@ export const episode = {
   color: '#D4950A',
   colorLight: 'rgba(212,149,10,.12)',
   series: 'medicine-through-time',
-  recallTags: [],
-  examTags: [],
+  recallTags: [],   // not consumed by any app logic — do not add decorative tags
+  examTags: [],     // not consumed by any app logic — do not add decorative tags
   assetKeys: [],
   hook: {
     scenario: {
@@ -78,10 +78,10 @@ export const episode = {
     ],
   },
   outcomes: {
-    intro: "You're about to see how Renaissance artists and scientists started dismantling a thousand years of medical dogma.",
+    intro: "You're about to see how Renaissance thinkers began to challenge old medical ideas that had lasted for centuries.",
     bullets: [
       "Explain what Vesalius discovered — and why the Church didn't like it",
-      "Describe how Harvey's blood circulation theory changed everything",
+      "Describe what Harvey discovered about blood circulation and why it mattered",
       'Understand why the Plague kept killing even as knowledge improved',
       'See the gap between knowing more and being able to treat better',
     ],
@@ -167,7 +167,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           image: '/figures/history/medicine/medieval/vl-monks-books.webp',
           imagePosition: 'center top',
           headline: 'Medieval medicine\ndidn\'t disappear.',
-          body: 'The Renaissance didn\'t erase a thousand years of thinking overnight.',
+          body: 'The Renaissance didn\'t end centuries of medical thinking overnight.',
         },
         {
           image: '/figures/history/medicine/medieval/vl-monks-books.webp',
@@ -195,7 +195,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'A world about to change',
       steps: [
         {
-          eyebrow: 'c.1400–1600',
           mainText: 'The Renaissance encouraged artists, thinkers, and scientists to question ancient authority.',
           supportText: 'For centuries, Galen\'s word had been law. Now people asked: what if he was wrong?',
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
@@ -206,7 +205,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
         },
         {
-          eyebrow: 'The key tension',
           mainText: 'Renaissance medicine changed knowledge far more than it changed treatment.',
           supportText: 'Doctors were discovering new truths about the body — but patients were still being bled and purged.',
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
@@ -257,7 +255,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Vesalius',
       portrait: '/images/vesalius-1543.png',
       name: 'Andreas Vesalius',
-      role: 'Anatomist & Medical Revolutionary',
+      role: 'Anatomist',
       sections: [
         {
           title: 'Who was he?',
@@ -272,7 +270,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           icon: 'knowledge',
           lines: [
             'Published in the same year as Copernicus challenged the Earth-centred universe.',
-            'A groundbreaking illustrated anatomy textbook based on direct human dissection.',
+            'A detailed illustrated anatomy textbook based on direct human dissection.',
           ],
         },
         {
@@ -383,26 +381,44 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
     // ── Section 4 — Learning Chunk 3: Harvey & Paré ─────────────────────────
 
     {
-      type: 'conceptReveal',
+      type: 'keyFigureReveal',
       stage: 'Harvey and Paré',
       label: 'William Harvey',
-      steps: [
+      portrait: '/headers/history-medicine-germ-bridge.png',
+      name: 'William Harvey',
+      role: 'Physician & Anatomist',
+      sections: [
         {
-          eyebrow: '1628',
-          mainText: 'Galen had claimed the liver constantly produced new blood — and the body used it up.',
-          supportText: 'This explained why bloodletting seemed logical: too much blood? Remove some.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          title: 'The problem with Galen',
+          icon: 'ancient-figure',
+          lines: [
+            'Galen claimed the liver constantly produced new blood, which the body used up.',
+            'This made bloodletting seem logical: too much blood in the system? Remove some.',
+          ],
         },
         {
-          mainText: 'Harvey proved that blood circulates continuously around the body, pumped by the heart.',
-          supportText: 'He calculated the volume of blood in the body was too large to be made fresh each day — so it must be reused.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          title: "Harvey's calculation (1628)",
+          icon: 'knowledge',
+          lines: [
+            'Harvey calculated the total volume of blood in the human body.',
+            'The amount was far too large to be freshly produced each day — so it must circulate and be reused.',
+          ],
         },
         {
-          eyebrow: 'The key limitation',
-          mainText: 'Harvey could not explain what blood actually does — so treatments didn\'t immediately change.',
-          supportText: 'Without knowing blood carries oxygen and removes waste, doctors had no reason to stop bloodletting.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          title: 'De Motu Cordis',
+          icon: 'medicine',
+          lines: [
+            'Harvey published his findings in De Motu Cordis — "On the Motion of the Heart".',
+            'He demonstrated that the heart acts as a pump, circulating blood continuously around the body.',
+          ],
+        },
+        {
+          title: 'The key limitation',
+          icon: 'legacy',
+          lines: [
+            'Harvey could not explain what blood actually does — so treatments did not immediately change.',
+            'Without knowing blood carries oxygen and removes waste, doctors had no reason to abandon bloodletting.',
+          ],
         },
       ],
     },
@@ -413,7 +429,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'Ambroise Paré',
       steps: [
         {
-          eyebrow: 'France, 1536',
           mainText: 'Ambroise Paré was a French military surgeon treating soldiers wounded in battle.',
           supportText: 'Gunshot wounds were treated by pouring boiling oil into them — believed to neutralise gunpowder poison.',
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
@@ -424,7 +439,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
         },
         {
-          eyebrow: 'The legacy',
           mainText: 'Paré also stopped cauterising blood vessels with hot irons — he tied them off instead.',
           supportText: 'He designed artificial limbs and wrote surgical guides. His work reduced the horror of military surgery significantly.',
           backgroundImage: '/headers/history-medicine-germ-bridge.png',
@@ -483,7 +497,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'The Royal Society',
       steps: [
         {
-          eyebrow: '1660',
           mainText: 'The Royal Society was founded as a formal institution where experiments were shared, tested and debated.',
           supportText: 'Its motto: Nullius in Verba — "Take nobody\'s word for it." Evidence, not authority, was the new standard.',
           backgroundImage: '/headers/history-medicine-medieval-scripture.png',
@@ -494,7 +507,6 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           backgroundImage: '/headers/history-medicine-medieval-scripture.png',
         },
         {
-          eyebrow: 'Exam point',
           mainText: 'The Royal Society represents a shift in how knowledge itself was validated.',
           supportText: 'Not "Galen said it" but "we tested it, published it, and others repeated it." This is the foundation of modern medicine.',
           backgroundImage: '/headers/history-medicine-medieval-scripture.png',
@@ -508,7 +520,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
       label: 'The Great Plague, 1665',
       beats: [
         {
-          image: '/images/great-plague-1665.png',
+          image: '/headers/history-medicine-london-terror.png',
           imagePosition: 'center center',
           imageFilter: 'brightness(0.85) saturate(0.7)',
           label: 'LONDON, 1665',
@@ -516,7 +528,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           body: 'A hundred thousand dead. Anatomical breakthroughs meant nothing.\nPeople still blamed bad air, sin, and the stars.',
         },
         {
-          image: '/images/great-plague-1665.png',
+          image: '/headers/history-medicine-london-terror.png',
           imagePosition: 'center 30%',
           imageOpacity: 0.55,
           facts: [
@@ -598,6 +610,7 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
     {
       type: 'examinerExplains',
       stage: 'Exam prep',
+      label: 'Examiner tactics',
       examinerExplains: {
         opening: "Renaissance medicine is exam gold — but students often lose marks by confusing change and continuity.",
         tips: [

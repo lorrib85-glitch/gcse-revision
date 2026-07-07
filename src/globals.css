@@ -130,20 +130,11 @@
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
   }
 
-  /* ── cinematic-eyebrow ────────────────────────────────────────────────────
-     Small uppercase section label that sits above a heading.
-     Matches TYPE.metadata sizing with uppercase + letter-spacing.
-     Neutral muted colour by default; override with a subject accent class
-     only when the label signals active state or category. */
-  .cinematic-eyebrow {
-    font-family: 'Sora', sans-serif;
-    font-size: 0.875rem;    /* TYPE.metadata — 14px */
-    font-weight: 700;
-    letter-spacing: 0.08em; /* TYPE.metadata.letterSpacing */
-    text-transform: uppercase;
-    line-height: 1.3;
-    color: #5E5874;         /* text-muted from constitution */
-  }
+  /* ── cinematic-eyebrow ─ REMOVED ─────────────────────────────────────────
+     The eyebrow pattern (small uppercase label above a heading) is prohibited.
+     See TYPOGRAPHY_SYSTEM.md — "Label case". Use TYPE.label in sentence case
+     instead. Any remaining cinematic-eyebrow usage should migrate to a plain
+     label style on next touch. */
 
   /* ── cinematic-body ───────────────────────────────────────────────────────
      Body copy for learning content.

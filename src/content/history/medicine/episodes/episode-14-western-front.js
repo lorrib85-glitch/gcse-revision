@@ -626,32 +626,26 @@ War creates urgent demand for faster, better treatment. The First World War prod
       label: 'How to answer Q2(b)',
       steps: [
         {
-          eyebrow: 'Q2(b) — follow-up source question',
           mainText: 'Q2(b) asks how you would follow up a source to find out more.',
           supportText: 'This is a technique question worth 4 marks. It has four linked parts.',
         },
         {
-          eyebrow: 'Step 1',
           mainText: 'Select a specific detail from the source.',
           supportText: 'Pick one thing the source shows or says — not a vague summary of the whole thing.',
         },
         {
-          eyebrow: 'Step 2',
           mainText: 'Turn that detail into a focused enquiry question.',
           supportText: 'Ask a question that the detail raises but does not fully answer.',
         },
         {
-          eyebrow: 'Step 3',
           mainText: 'Name the source type you would use next.',
           supportText: 'Be specific: army medical records, surgical reports, RAMC records — not "the internet" or "another source".',
         },
         {
-          eyebrow: 'Step 4',
           mainText: 'Explain how that source would help answer your question.',
           supportText: 'Link it directly to your enquiry question — what could it tell you that the original source cannot?',
         },
         {
-          eyebrow: 'Worked example',
           mainText: 'Detail: "I could only transfuse an occasional patient."',
           supportText: 'Question: Why were blood transfusions difficult to carry out on the Western Front?\nSource type: Army medical records about blood transfusions in 1917.\nHow it helps: They could show how often transfusions were used, what equipment was available, and whether blood storage had improved by that stage of the war.',
         },
@@ -1005,12 +999,10 @@ Award credit for:
       label: 'How much did medicine improve?',
       steps: [
         {
-          eyebrow: 'The big picture',
           mainText: 'The Western Front caused huge suffering — but it also accelerated medical change.',
           supportText: 'War was the dominant agent of change. The scale of casualties forced faster innovation than peacetime medicine would ever have demanded.',
         },
         {
-          eyebrow: 'Progress',
           mainText: 'Thomas splints cut femur deaths from 80% to 20%.',
           microPoints: [
             'Blood transfusions improved — blood storage began with Cambrai, 1917',
@@ -1020,7 +1012,6 @@ Award credit for:
           ],
         },
         {
-          eyebrow: 'Limits',
           mainText: 'Not everything was solved.',
           microPoints: [
             'Mud and bacteria still caused infection',
@@ -1030,12 +1021,10 @@ Award credit for:
           ],
         },
         {
-          eyebrow: 'Best judgement',
           mainText: 'The Western Front did not make medicine safe.',
           supportText: 'It made medicine faster, more organised and more experimental — because war created urgent pressure that could not wait.',
         },
         {
-          eyebrow: 'Your challenge',
           mainText: 'Can you explain the Western Front in three sentences?',
           supportText: '1. Why treatment was difficult.\n2. One way medicine improved.\n3. One limitation that remained.',
         },
