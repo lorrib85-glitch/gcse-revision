@@ -14,6 +14,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
   const [stepIdx, setStepIdx] = useState(0)
   const [animKey, setAnimKey] = useState(0)
   const [revealStarted, setRevealStarted] = useState(false)
+  const [finishing, setFinishing] = useState(false)
   const touchRef = useRef({ x: null, y: null })
 
   const step = steps[stepIdx] || {}
@@ -31,14 +32,19 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
 
   function advanceStep() {
     markRevealStarted()
-    if (isLast) return
+    if (isLast) {
+      if (!step.tapToContinue) return
+      finishReveal()
+      return
+    }
     setStepIdx(i => i + 1)
     setAnimKey(k => k + 1)
   }
 
   function finishReveal() {
     markRevealStarted()
-    onContinue?.()
+    setFinishing(true)
+    window.setTimeout(() => onContinue?.(), 260)
   }
 
   function retreat() {
@@ -71,6 +77,8 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
     e.stopPropagation()
   }
 
+  const showCta = isLast && !step.tapToContinue
+
   return (
     <>
       <style>{`
@@ -78,9 +86,17 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
           from { opacity:0; transform:translateY(22px) }
           to   { opacity:1; transform:translateY(0) }
         }
+        @keyframes crLineIn {
+          from { opacity:0; transform:translateY(10px) }
+          to   { opacity:1; transform:translateY(0) }
+        }
+        @keyframes crTextOut {
+          from { opacity:1; transform:translateY(0) }
+          to   { opacity:0; transform:translateY(-10px) }
+        }
       `}</style>
 
-      <CinematicShell style={{ background: bg, backgroundSize: 'cover', backgroundPosition: 'center', zIndex: 100 }}>
+      <CinematicShell style={{ background: bg, backgroundSize: 'cover', backgroundPosition: step.backgroundPosition || 'center', zIndex: 100 }}>
         <div
           style={{
             position: 'absolute', inset: 0,
@@ -95,7 +111,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
         >
           <div style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'linear-gradient(to bottom, rgba(0,0,0,.08) 0%, rgba(0,0,0,.18) 35%, rgba(0,0,0,.68) 65%, rgba(0,0,0,.94) 100%)',
+            background: step.overlay || 'linear-gradient(to bottom, rgba(0,0,0,.08) 0%, rgba(0,0,0,.18) 35%, rgba(0,0,0,.68) 65%, rgba(0,0,0,.94) 100%)',
           }} />
 
           <div
@@ -107,10 +123,12 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-end',
-              animation: `crSlideIn ${STEP_MS}ms cubic-bezier(.16,1,.3,1) both`,
+              animation: finishing
+                ? 'crTextOut 240ms ease both'
+                : `crSlideIn ${STEP_MS}ms cubic-bezier(.16,1,.3,1) both`,
             }}
           >
-            <MainReveal text={step.mainText} emphasis={step.emphasis} accent={accent} />
+            <MainReveal text={step.mainText} emphasis={step.emphasis} accent={accent} slow={step.slowReveal} />
 
             {step.supportText && (
               <p style={{
@@ -118,6 +136,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
                 color: 'rgba(245,238,225,.64)',
                 margin: '14px 0 0',
                 maxWidth: '34ch',
+                animation: step.slowReveal ? 'crLineIn 520ms ease 520ms both' : undefined,
               }}>
                 {step.supportText}
               </p>
@@ -147,7 +166,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
             )}
           </div>
 
-          {isLast && (
+          {showCta && (
             <div
               onClick={keepOnCta}
               onTouchStart={keepOnCta}
@@ -175,7 +194,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
   )
 }
 
-function MainReveal({ text, emphasis, accent }) {
+function MainReveal({ text, emphasis, accent, slow = false }) {
   if (!text) return null
 
   const base = {
@@ -185,6 +204,7 @@ function MainReveal({ text, emphasis, accent }) {
     wordBreak: 'break-word',
     maxWidth: '18ch',
     textShadow: '0 2px 28px rgba(0,0,0,.62)',
+    animation: slow ? 'crLineIn 520ms ease 140ms both' : undefined,
   }
 
   if (!emphasis) return <div style={base}>{text}</div>
