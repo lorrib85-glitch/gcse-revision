@@ -1,7 +1,5 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import UnifiedQuestionScreen from './UnifiedQuestionScreen.jsx'
-import SequenceProgress from '../core/SequenceProgress.jsx'
-import { SUBJECTS } from '../../constants/subjects.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 
 const IMAGES = {
@@ -29,15 +27,12 @@ export default function QuickRecallScreen({
   onContinue,
   renderHeader,
 }) {
-  const img    = IMAGES[subject] || IMAGES.History
+  const img = IMAGES[subject] || IMAGES.History
   const bgStyle = BG_STYLE[subject] || { opacity: 0.26, filter: 'grayscale(10%) brightness(0.65)' }
-  const theme = SUBJECTS[subject] || SUBJECTS.History
-  const { accent, accentRgb: rgb } = theme
 
   const total = questions.length
 
   const [qIdx,    setQIdx]    = useState(0)
-  const [doneCnt, setDoneCnt] = useState(0)
   const [phase,   setPhase]   = useState('in')
   const [animKey, setAnimKey] = useState(0)
 
@@ -67,11 +62,6 @@ export default function QuickRecallScreen({
     }
   }
 
-  function handleSelect(wasCorrect) {
-    if (wasCorrect) setDoneCnt(d => d + 1)
-    advance()
-  }
-
   const cur = questions[qIdx]
 
   // Normalize true/false recall questions ({ type: 'truefalse', isTrue }) into
@@ -79,13 +69,6 @@ export default function QuickRecallScreen({
   const isTrueFalse = cur?.type === 'truefalse'
   const curOptions = isTrueFalse ? ['True', 'False'] : (cur?.options || [])
   const curCorrect = isTrueFalse ? (cur?.isTrue ? 0 : 1) : cur?.correct
-
-  const contentAnim = {
-    in:     { animation: 'qrs-up-in 360ms cubic-bezier(0.16,1,0.3,1) both' },
-    active: { opacity: 1 },
-    out:    { animation: 'qrs-up-out 280ms ease both' },
-    done:   { opacity: 0 },
-  }[phase] || {}
 
   return (
     <>
@@ -106,7 +89,6 @@ export default function QuickRecallScreen({
             qIndex={qIdx}
             qTotal={total}
             onAnswer={(isCorrect) => {
-              if (isCorrect) setDoneCnt(d => d + 1)
               if (isTrueFalse) {
                 const log = isCorrect ? logCorrectAnswer : logWrongAnswer
                 log({
@@ -120,20 +102,6 @@ export default function QuickRecallScreen({
             }}
             onComplete={advance}
           />
-        )}
-
-        {/* Progress dots overlay */}
-        {phase !== 'done' && (
-          <div style={{ position: 'fixed', bottom: 28, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
-            <SequenceProgress
-              total={total}
-              current={qIdx}
-              completed={doneCnt}
-              accent={accent}
-              accentRgb={rgb}
-              ariaLabel="Question progress"
-            />
-          </div>
         )}
 
         {/* Header overlay */}
