@@ -25,9 +25,92 @@ import episode12 from './episodes/episode-12-when-medicine-became-magic.js'
 import episode13 from './episodes/episode-13-can-we-beat-cancer.js'
 import episode14 from './episodes/episode-14-western-front.js'
 
+const sentenceCaseEpisode01Labels = new Map([
+  ['Ancient Authorities', 'Ancient authorities'],
+  ['ANCIENT AUTHORITIES', 'Ancient authorities'],
+  ['The Germ Problem', 'The germ problem'],
+  ['The Four Humours', 'The four humours'],
+  ['Explore the Humours', 'Explore the humours'],
+  ['Tap the Four Humours', 'Tap the four humours'],
+  ['The Theory of Opposites', 'The theory of opposites'],
+  ['Think Like Galen', 'Think like Galen'],
+  ['A Patient Arrives', 'A patient arrives'],
+  ['Supported by the Church', 'Supported by the Church'],
+  ['Choose Your Healer', 'Choose your healer'],
+  ['Miasma — The Poisoned Air Theory', 'Miasma — the poisoned air theory'],
+  ["Diagnose Like It's 1340", "Diagnose like it's 1340"],
+  ['The Zodiac Man', 'The Zodiac Man'],
+  ['God & Sin', 'God & sin'],
+  ['The Four Humours', 'The four humours'],
+  ['Four Humours', 'Four humours'],
+  ['Staying Well in 1400', 'Staying well in 1400'],
+  ['A Walk Through Medieval London', 'A walk through medieval London'],
+  ['Supernatural vs Natural Causes', 'Supernatural vs natural causes'],
+  ['Fill the Gap', 'Fill the gap'],
+  ['Four Humours', 'Four humours'],
+  ['Fill the Medieval Logic Gap', 'Fill the medieval logic gap'],
+  ['Face the Examiner', 'Face the examiner'],
+])
+
+const episode01SentenceCaseStageTitles = [
+  'Strange ideas, serious medicine',
+  'What made people sick?',
+  'Why Galen ruled the room',
+  'The medieval treatment toolkit',
+  'Why the system survived',
+  'Exam prep: explain the grip of Galen',
+]
+
+function sentenceCaseEpisode01Screen(screen) {
+  return {
+    ...screen,
+    label: sentenceCaseEpisode01Labels.get(screen.label) || screen.label,
+    title: sentenceCaseEpisode01Labels.get(screen.title) || screen.title,
+    heading: sentenceCaseEpisode01Labels.get(screen.heading) || screen.heading,
+    beats: Array.isArray(screen.beats)
+      ? screen.beats.map(beat => ({
+          ...beat,
+          label: sentenceCaseEpisode01Labels.get(beat.label) || beat.label,
+        }))
+      : screen.beats,
+    theory: screen.theory
+      ? {
+          ...screen.theory,
+          heading: sentenceCaseEpisode01Labels.get(screen.theory.heading) || screen.theory.heading,
+        }
+      : screen.theory,
+    scenario: screen.scenario
+      ? {
+          ...screen.scenario,
+          title: sentenceCaseEpisode01Labels.get(screen.scenario.title) || screen.scenario.title,
+        }
+      : screen.scenario,
+    evaluation: screen.evaluation?.church
+      ? {
+          ...screen.evaluation,
+          church: {
+            ...screen.evaluation.church,
+            heading: sentenceCaseEpisode01Labels.get(screen.evaluation.church.heading) || screen.evaluation.church.heading,
+          },
+        }
+      : screen.evaluation,
+  }
+}
+
+const sentenceCaseEpisode01 = {
+  ...episode01,
+  title: "Trust me, I'm following Jupiter",
+  subtitle: 'Medieval medicine: beliefs and causes of disease',
+  stageNavigation: episode01.stageNavigation.map((stage, index) => ({
+    ...stage,
+    title: episode01SentenceCaseStageTitles[index] || stage.title,
+  })),
+  screens: episode01.screens.map(sentenceCaseEpisode01Screen),
+}
+
 // Ordered registry — add future episodes here as they are extracted.
 export const MEDICINE_EPISODES = [
-  episode01,
+  sentenceCaseEpisode01,
   episode02,
   episode03,
   episode04,
