@@ -59,8 +59,9 @@ const THEMES = {
 
 const PHASE_LABELS = ['Hook', 'What is it?', 'Why does it matter?', 'Common mistake', 'Exam takeaway']
 
-function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, sheetBg, sheetBorder, onContinue }) {
+function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, onContinue }) {
   const [visible, setVisible] = useState(false)
+
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 80)
     return () => clearTimeout(t)
@@ -70,7 +71,8 @@ function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, sheetB
     <CinematicShell style={{
       background: pageBg,
       zIndex: 1000,
-      display: 'flex', flexDirection: 'column',
+      display: 'flex',
+      flexDirection: 'column',
       padding: `calc(env(safe-area-inset-top, 0px) + ${SPACING.standard}px) ${SPACING.standard}px`,
       paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${SPACING.standard}px)`,
       overflow: 'hidden',
@@ -118,13 +120,18 @@ function SynthesisScreen({ synthesis, glow, glowRgb, text, muted, pageBg, sheetB
         <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
           {(synthesis.points || []).map((point, i) => (
             <div key={i} style={{
-              display: 'flex', alignItems: 'flex-start', gap: SPACING.compact,
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: SPACING.compact,
               opacity: visible ? 1 : 0,
               transform: visible ? 'none' : 'translateY(14px)',
               transition: `opacity 400ms ${MOTION.easing.standard} ${160 + i * 80}ms, transform 400ms ${MOTION.easing.standard} ${160 + i * 80}ms`,
             }}>
               <div style={{
-                width: 6, height: 6, borderRadius: '50%', flexShrink: 0,
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                flexShrink: 0,
                 marginTop: 8,
                 background: glow,
                 boxShadow: `0 0 8px rgba(${glowRgb}, 0.6)`,
@@ -199,14 +206,16 @@ export default function InteractiveCollectionExplorer({
   const theme = THEMES[subject] || THEMES.History
   const { glow, glowRgb, text, muted, pageBg, sheetBg, sheetBorder } = theme
 
-  const [selectedId,   setSelectedId]   = useState(null)
-  const [revealStep,   setRevealStep]   = useState(0)
-  const [explored,     setExplored]     = useState(new Set())
+  const [selectedId, setSelectedId] = useState(null)
+  const [revealStep, setRevealStep] = useState(0)
+  const [explored, setExplored] = useState(new Set())
   const [showSynthesis, setShowSynthesis] = useState(false)
-  const [revealKey,    setRevealKey]    = useState(0)
+  const [revealKey, setRevealKey] = useState(0)
 
-  const selected    = items.find(i => i.id === selectedId) || null
+  const selected = items.find(i => i.id === selectedId) || null
   const allExplored = explored.size === items.length && items.length > 0
+  const isLastReveal = selected && revealStep === selected.reveals.length - 1
+  const currentReveal = selected?.reveals[revealStep]
 
   useEffect(() => {
     if (allExplored && !selectedId && !showSynthesis) {
@@ -226,11 +235,15 @@ export default function InteractiveCollectionExplorer({
     if (revealStep < selected.reveals.length - 1) {
       setRevealStep(s => s + 1)
       setRevealKey(k => k + 1)
-    } else {
-      setExplored(prev => { const n = new Set(prev); n.add(selectedId); return n })
-      setSelectedId(null)
-      setRevealStep(0)
+      return
     }
+    setExplored(prev => {
+      const n = new Set(prev)
+      n.add(selectedId)
+      return n
+    })
+    setSelectedId(null)
+    setRevealStep(0)
   }
 
   function handleDismiss() {
@@ -238,15 +251,15 @@ export default function InteractiveCollectionExplorer({
     setRevealStep(0)
   }
 
-  const isLastReveal   = selected && revealStep === selected.reveals.length - 1
-  const currentReveal  = selected?.reveals[revealStep]
-
   if (showSynthesis && synthesis) {
     return (
       <SynthesisScreen
         synthesis={synthesis}
-        glow={glow} glowRgb={glowRgb} text={text} muted={muted}
-        pageBg={pageBg} sheetBg={sheetBg} sheetBorder={sheetBorder}
+        glow={glow}
+        glowRgb={glowRgb}
+        text={text}
+        muted={muted}
+        pageBg={pageBg}
         onContinue={onContinue}
       />
     )
@@ -280,8 +293,10 @@ export default function InteractiveCollectionExplorer({
       {/* ── Background image ─────────────────────────────────────────────── */}
       <div style={{
         position: 'absolute',
-        top: 0, left: 0, right: 0,
-        height: '60%',
+        top: `calc(${SPACING.compact}px * -1)`,
+        left: 0,
+        right: 0,
+        height: `calc(60% + ${SPACING.compact}px)`,
         transition: `filter ${MOTION.duration.slow} ${MOTION.easing.gentle}`,
         filter: selected
           ? 'blur(4px) brightness(0.40) saturate(0.7)'
@@ -292,14 +307,19 @@ export default function InteractiveCollectionExplorer({
           alt=""
           draggable={false}
           style={{
-            width: '100%', height: '100%',
-            objectFit: 'cover', objectPosition: 'center top',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center top',
             userSelect: 'none',
           }}
         />
-        {/* Bottom fade */}
         <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '35%',
           background: `linear-gradient(180deg, transparent, ${pageBg})`,
           pointerEvents: 'none',
         }} />
@@ -308,12 +328,14 @@ export default function InteractiveCollectionExplorer({
       {/* ── Dot targets on image ─────────────────────────────────────────── */}
       <div style={{
         position: 'absolute',
-        top: 0, left: 0, right: 0,
-        height: '60%',
+        top: `calc(${SPACING.compact}px * -1)`,
+        left: 0,
+        right: 0,
+        height: `calc(60% + ${SPACING.compact}px)`,
         zIndex: 6,
       }}>
         {items.map(item => {
-          const isSel      = selectedId === item.id
+          const isSel = selectedId === item.id
           const isExplored = explored.has(item.id)
 
           return (
@@ -325,11 +347,14 @@ export default function InteractiveCollectionExplorer({
               onClick={() => handleTap(item.id)}
               style={{
                 position: 'absolute',
-                left: `${item.x}%`, top: `${item.y}%`,
+                left: `${item.x}%`,
+                top: `${item.y}%`,
                 transform: 'translate(-50%, -50%)',
-                width: 32, height: 32,
+                width: 32,
+                height: 32,
                 borderRadius: '50%',
-                border: 'none', padding: 0,
+                border: 'none',
+                padding: 0,
                 cursor: 'pointer',
                 background: isSel
                   ? `rgba(${glowRgb}, 0.22)`
@@ -343,18 +368,21 @@ export default function InteractiveCollectionExplorer({
                     : undefined,
                 animation: !isExplored && !isSel ? 'ice-pulse 2.8s ease-in-out infinite' : 'none',
                 transition: `box-shadow 280ms ${MOTION.easing.standard}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 zIndex: isSel ? 8 : 6,
               }}
             >
               {isExplored ? (
                 <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
-                  <path d="M2 7.5l3.5 3.5 6.5-7" stroke={glow} strokeWidth="2"
-                    strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 7.5l3.5 3.5 6.5-7" stroke={glow} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               ) : (
                 <div style={{
-                  width: 8, height: 8, borderRadius: '50%',
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
                   background: isSel ? glow : 'rgba(255,255,255,0.88)',
                   boxShadow: isSel ? `0 0 8px ${glow}` : 'none',
                   transition: `all 280ms ${MOTION.easing.standard}`,
@@ -368,9 +396,14 @@ export default function InteractiveCollectionExplorer({
       {/* ── Collection info — below image ─────────────────────────────── */}
       <div style={{
         position: 'absolute',
-        top: '57%', left: 0, right: 0, bottom: 0,
+        top: '57%',
+        left: 0,
+        right: 0,
+        bottom: 0,
         padding: `0 ${SPACING.standard}px`,
-        display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
         paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${SPACING.standard}px)`,
         opacity: selected ? 0 : 1,
         transition: `opacity 220ms ${MOTION.easing.gentle}`,
@@ -386,12 +419,12 @@ export default function InteractiveCollectionExplorer({
           {description}
         </p>
 
-        {/* Progress dots */}
         <div style={{ display: 'flex', alignItems: 'center', gap: SPACING.micro, marginBottom: SPACING.compact }}>
           {items.map(item => (
             <div key={item.id} style={{
               width: explored.has(item.id) ? 14 : 6,
-              height: 6, borderRadius: 3,
+              height: 6,
+              borderRadius: 3,
               background: explored.has(item.id) ? glow : `rgba(${glowRgb}, 0.22)`,
               transition: `all 380ms ${MOTION.easing.standard}`,
             }} />
@@ -408,7 +441,6 @@ export default function InteractiveCollectionExplorer({
         </div>
       </div>
 
-      {/* ── Tap-behind dismiss — closes sheet without advancing reveal ─── */}
       {selected && (
         <div
           onClick={handleDismiss}
@@ -419,7 +451,9 @@ export default function InteractiveCollectionExplorer({
       {/* ── Item reveal sheet ─────────────────────────────────────────── */}
       <div style={{
         position: 'absolute',
-        bottom: 0, left: 0, right: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
         background: sheetBg,
         backdropFilter: 'blur(28px)',
         WebkitBackdropFilter: 'blur(28px)',
@@ -434,16 +468,17 @@ export default function InteractiveCollectionExplorer({
       }}>
         {selected && (
           <>
-            {/* Pull handle */}
             <div style={{
-              width: 32, height: 3, borderRadius: 2,
+              width: 32,
+              height: 3,
+              borderRadius: 2,
               background: `rgba(${glowRgb}, 0.18)`,
               margin: `-4px auto ${SPACING.standard}px`,
             }} />
 
-            {/* Phase label + step progress */}
             <div style={{
-              display: 'flex', alignItems: 'center',
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: 'space-between',
               marginBottom: SPACING.micro,
             }}>
@@ -466,21 +501,22 @@ export default function InteractiveCollectionExplorer({
               </div>
             </div>
 
-            {/* Step track */}
             <div style={{
-              display: 'flex', gap: 4,
+              display: 'flex',
+              gap: 4,
               marginBottom: SPACING.standard,
             }}>
               {selected.reveals.map((_, i) => (
                 <div key={i} style={{
-                  flex: 1, height: 2, borderRadius: 2,
+                  flex: 1,
+                  height: 2,
+                  borderRadius: 2,
                   background: i <= revealStep ? glow : `rgba(${glowRgb}, 0.16)`,
                   transition: `background 300ms ${MOTION.easing.gentle}`,
                 }} />
               ))}
             </div>
 
-            {/* Item name */}
             <div style={{
               ...TYPE.displayCard,
               color: text,
@@ -489,7 +525,6 @@ export default function InteractiveCollectionExplorer({
               {selected.label}
             </div>
 
-            {/* Reveal text — re-keyed to re-animate on step change */}
             <p key={revealKey} style={{
               ...TYPE.bodySmall,
               color: muted,
@@ -500,12 +535,12 @@ export default function InteractiveCollectionExplorer({
               {currentReveal?.text}
             </p>
 
-            {/* Next / mark explored button */}
             <button
               className="ice-next"
               onClick={e => { e.stopPropagation(); handleNext() }}
               style={{
-                width: '100%', height: 52,
+                width: '100%',
+                height: 52,
                 borderRadius: RADII.medium,
                 background: isLastReveal
                   ? `rgba(${glowRgb}, 0.20)`
