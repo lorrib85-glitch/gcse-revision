@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useLayoutEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
@@ -12,12 +12,25 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
   const accent = theme.accent
   const palBg = theme.background
   const legacyHippocratesIntro = steps.length === 2 && steps[1]?.mainText === HIPPOCRATES_PROFILE_REVEAL
+  const initialStepIdx = legacyHippocratesIntro ? 1 : 0
 
-  const [stepIdx, setStepIdx] = useState(legacyHippocratesIntro ? 1 : 0)
+  const [stepIdx, setStepIdx] = useState(initialStepIdx)
   const [animKey, setAnimKey] = useState(0)
   const [revealStarted, setRevealStarted] = useState(false)
   const [finishing, setFinishing] = useState(false)
   const touchRef = useRef({ x: null, y: null })
+
+  // Consecutive conceptReveal screens reuse this component instance. Without a
+  // hard reset, the previous screen's `finishing` state can carry into the next
+  // one, leaving the Hippocrates reveal as a portrait-only flash before it
+  // advances. Reset synchronously before paint so each reveal starts clean.
+  useLayoutEffect(() => {
+    setStepIdx(initialStepIdx)
+    setAnimKey(k => k + 1)
+    setRevealStarted(false)
+    setFinishing(false)
+    touchRef.current = { x: null, y: null }
+  }, [steps, initialStepIdx])
 
   const rawStep = steps[stepIdx] || {}
   const step = legacyHippocratesIntro && rawStep.mainText === HIPPOCRATES_PROFILE_REVEAL
