@@ -38,8 +38,9 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
         ...rawStep,
         mainText: 'His name\nwas Hippocrates.',
         backgroundImage: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
-        backgroundPosition: 'center 18%',
-        overlay: 'linear-gradient(to bottom, rgba(0,0,0,.28) 0%, rgba(0,0,0,.38) 36%, rgba(0,0,0,.74) 68%, rgba(0,0,0,.96) 100%)',
+        backgroundFit: 'width',
+        backgroundPosition: 'center top',
+        overlay: 'linear-gradient(to bottom, rgba(0,0,0,.18) 0%, rgba(0,0,0,.30) 42%, rgba(0,0,0,.78) 74%, rgba(0,0,0,.98) 100%)',
         slowReveal: true,
         tapToContinue: true,
       }
@@ -48,6 +49,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
   const bg = step.backgroundImage
     ? `url(${step.backgroundImage})`
     : `linear-gradient(160deg, ${palBg} 0%, #080C1A 100%)`
+  const useWidthLockedBackground = step.backgroundFit === 'width'
 
   function markRevealStarted() {
     if (!revealStarted) {
@@ -122,7 +124,30 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
         }
       `}</style>
 
-      <CinematicShell style={{ background: bg, backgroundSize: 'cover', backgroundPosition: step.backgroundPosition || 'center', zIndex: 100 }}>
+      <CinematicShell style={{
+        background: useWidthLockedBackground ? palBg : bg,
+        backgroundSize: useWidthLockedBackground ? undefined : (step.backgroundSize || 'cover'),
+        backgroundPosition: useWidthLockedBackground ? undefined : (step.backgroundPosition || 'center'),
+        zIndex: 100,
+      }}>
+        {useWidthLockedBackground && (
+          <img
+            aria-hidden="true"
+            src={step.backgroundImage}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: 'auto',
+              minHeight: '100dvh',
+              objectFit: 'cover',
+              objectPosition: step.backgroundPosition || 'center top',
+              display: 'block',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
         <div
           style={{
             position: 'absolute', inset: 0,
