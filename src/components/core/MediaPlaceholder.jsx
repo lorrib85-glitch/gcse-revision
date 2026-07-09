@@ -8,14 +8,15 @@ import { MOTION } from '../../constants/motion.js'
 // ─── MediaPlaceholder / Image reveal ─────────────────────────────────────────
 // Standard reserved slot for an image or diagram the author has NOT yet supplied.
 // When `kind="imageReveal"`, the same governed media slot becomes a slow,
-// progressive image reveal rather than requiring a one-off screen component.
+// progressive reveal inside one fixed frame.
 //
-// Image reveal config is supplied through `caption` so existing ModulePlayer
-// wiring stays backwards compatible:
+// Image reveal config:
 // {
 //   intro?: string,
 //   interval?: number,
-//   images: [{ src, alt }]
+//   src: string,
+//   alt?: string,
+//   parts?: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']
 // }
 
 function Glyph({ kind, accent }) {
@@ -40,31 +41,41 @@ function Glyph({ kind, accent }) {
   )
 }
 
+const QUADRANT_CLIPS = {
+  topLeft: 'polygon(0 0, 50% 0, 50% 50%, 0 50%)',
+  topRight: 'polygon(50% 0, 100% 0, 100% 50%, 50% 50%)',
+  bottomLeft: 'polygon(0 50%, 50% 50%, 50% 100%, 0 100%)',
+  bottomRight: 'polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%)',
+}
+
 function ImageReveal({ config, aspect, accent, rgb }) {
-  const images = config?.images || []
-  const interval = config?.interval || 1800
-  const [index, setIndex] = useState(0)
-  const [finished, setFinished] = useState(images.length <= 1)
+  const parts = config?.parts || ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']
+  const interval = config?.interval || 1500
+  const [revealedCount, setRevealedCount] = useState(0)
   const [w, h] = String(aspect).split(':')
+  const finished = revealedCount >= parts.length
 
   useEffect(() => {
-    setIndex(0)
-    setFinished(images.length <= 1)
-  }, [images.length])
+    setRevealedCount(0)
+  }, [config?.src, parts.length])
 
   useEffect(() => {
-    if (images.length <= 1) return undefined
-
-    if (index >= images.length - 1) {
-      const finishTimer = window.setTimeout(() => setFinished(true), interval)
-      return () => window.clearTimeout(finishTimer)
-    }
-
-    const timer = window.setTimeout(() => setIndex(current => current + 1), interval)
+    if (!config?.src || finished) return undefined
+    const timer = window.setTimeout(
+      () => setRevealedCount(current => Math.min(current + 1, parts.length)),
+      interval
+    )
     return () => window.clearTimeout(timer)
-  }, [images.length, index, interval])
+  }, [config?.src, finished, interval, parts.length, revealedCount])
 
-  const image = images[index]
+  const imageStyle = {
+    position: 'absolute',
+    inset: 0,
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
+    display: 'block',
+  }
 
   return (
     <div style={{ width: '100%' }}>
@@ -79,30 +90,59 @@ function ImageReveal({ config, aspect, accent, rgb }) {
         </p>
       )}
 
-      <div style={{
-        width: '100%',
-        aspectRatio: `${w || 4} / ${h || 3}`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        borderRadius: RADII.medium,
-        border: `1px solid rgba(${rgb}, 0.28)`,
-        background: `radial-gradient(120% 120% at 50% 0%, rgba(${rgb},0.07), rgba(255,255,255,0.015))`,
-      }}>
-        {image?.src && (
-          <img
-            key={image.src}
-            src={image.src}
-            alt={image.alt || ''}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              display: 'block',
-              animation: `mediaImageReveal 900ms ${MOTION.easing.standard} both`,
-            }}
-          />
+      <div
+        role="img"
+        aria-label={config?.alt || 'Image revealed in four parts'}
+        style={{
+          width: '100%',
+          aspectRatio: `${w || 1} / ${h || 1}`,
+          position: 'relative',
+          overflow: 'hidden',
+          borderRadius: RADII.medium,
+          border: `1px solid rgba(${rgb}, 0.28)`,
+          background: `radial-gradient(120% 120% at 50% 0%, rgba(${rgb},0.07), rgba(255,255,255,0.015))`,
+        }}
+      >
+        {config?.src && (
+          <>
+            {/* The whole diagram is already present as a faint guide. */}
+            <img
+              src={config.src}
+              alt=""
+              aria-hidden="true"
+              style={{ ...imageStyle, opacity: 0.14, filter: 'saturate(.7)' }}
+            />
+
+            {/* The same generated image is clipped into four perfectly aligned quadrants. */}
+            {parts.map((part, index) => (
+              <img
+                key={part}
+                src={config.src}
+                alt=""
+                aria-hidden="true"
+                style={{
+                  ...imageStyle,
+                  clipPath: QUADRANT_CLIPS[part],
+                  opacity: index < revealedCount ? 1 : 0,
+                  transform: index < revealedCount ? 'scale(1)' : 'scale(.96)',
+                  filter: index < revealedCount ? 'blur(0)' : 'blur(3px)',
+                  transition: `opacity 900ms ${MOTION.easing.standard}, transform 900ms ${MOTION.easing.standard}, filter 900ms ${MOTION.easing.standard}`,
+                }}
+              />
+            ))}
+
+            {/* Final clean layer removes any visible joins once all four are revealed. */}
+            <img
+              src={config.src}
+              alt=""
+              aria-hidden="true"
+              style={{
+                ...imageStyle,
+                opacity: finished ? 1 : 0,
+                transition: `opacity 700ms ${MOTION.easing.standard}`,
+              }}
+            />
+          </>
         )}
       </div>
 
@@ -112,16 +152,16 @@ function ImageReveal({ config, aspect, accent, rgb }) {
         gap: SPACING.micro,
         marginTop: SPACING.compact,
       }}>
-        {images.map((item, itemIndex) => (
+        {parts.map((part, index) => (
           <span
-            key={item.src || itemIndex}
+            key={part}
             aria-hidden="true"
             style={{
-              width: itemIndex === index ? 18 : 6,
+              width: index === Math.min(revealedCount, parts.length - 1) && !finished ? 18 : 6,
               height: 6,
               borderRadius: 99,
-              background: itemIndex <= index ? accent : `rgba(${rgb},0.2)`,
-              boxShadow: itemIndex === index ? `0 0 12px rgba(${rgb},0.45)` : 'none',
+              background: index < revealedCount ? accent : `rgba(${rgb},0.2)`,
+              boxShadow: index === revealedCount - 1 && !finished ? `0 0 12px rgba(${rgb},0.45)` : 'none',
               transition: `all ${MOTION.duration.slow} ${MOTION.easing.standard}`,
             }}
           />
@@ -135,16 +175,12 @@ function ImageReveal({ config, aspect, accent, rgb }) {
         color: finished ? `rgba(${rgb},0.88)` : 'rgba(245,245,245,0.4)',
         marginTop: SPACING.micro,
       }}>
-        {finished ? 'The four humours formed one system.' : 'Building the theory…'}
+        {finished ? 'The complete four-humours system.' : 'Building the theory…'}
       </div>
 
       <style>{`
-        @keyframes mediaImageReveal {
-          from { opacity: 0; transform: scale(.94); filter: blur(3px); }
-          to { opacity: 1; transform: scale(1); filter: blur(0); }
-        }
         @media (prefers-reduced-motion: reduce) {
-          img { animation-duration: 1ms !important; }
+          img { transition-duration: 1ms !important; }
         }
       `}</style>
     </div>
