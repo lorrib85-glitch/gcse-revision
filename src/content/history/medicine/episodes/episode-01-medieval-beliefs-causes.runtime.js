@@ -19,22 +19,22 @@ const galenImageReveal = {
   items: [
     {
       id: 'blood',
-      image: '/figures/history/medicine/medieval/four-humours-blood.webp',
+      image: '/figures/history/medicine/medieval/four-humours-blood.svg',
       alt: 'Blood, believed to be hot and wet',
     },
     {
       id: 'yellow-bile',
-      image: '/figures/history/medicine/medieval/four-humours-yellow-bile.webp',
+      image: '/figures/history/medicine/medieval/four-humours-yellow-bile.svg',
       alt: 'Yellow bile, believed to be hot and dry',
     },
     {
       id: 'black-bile',
-      image: '/figures/history/medicine/medieval/four-humours-black-bile.webp',
+      image: '/figures/history/medicine/medieval/four-humours-black-bile.svg',
       alt: 'Black bile, believed to be cold and dry',
     },
     {
       id: 'phlegm',
-      image: '/figures/history/medicine/medieval/four-humours-phlegm.webp',
+      image: '/figures/history/medicine/medieval/four-humours-phlegm.svg',
       alt: 'Phlegm, believed to be cold and wet',
     },
   ],
