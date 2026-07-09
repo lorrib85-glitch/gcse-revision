@@ -1326,3 +1326,122 @@ governance failure, not a simplification.
 Done: Tasks 1–5 (taxonomy module, build template, six learning-component contracts, Galen proof case, quality-floor test).
 
 Revised order for remaining work: **pattern layer first, then the skills that enforce it.** Task P1 (governance doc) → P2–P5 (pattern components + contracts) → Task 8 (canonical story spine, independent) → **revised** Tasks 6–7 (skills, now enforcing the pattern layer) → Task 9 (wiring + critique gate). The skills come last among the build tasks because they are the enforcement surface for everything before them — building them first would point them at components and contracts that don't yet exist.
+
+**Superseded by Addendum 2's execution order below.**
+
+---
+
+# Addendum 2 (2026-07-09) — operational gaps closed before the skills are built
+
+A design review of Tasks 6–7 (plus what the Galen proof case actually
+demonstrated — one reworked teach screen, with the rest of the Galen stage
+untouched and still carrying title-case copy) found six gaps. All are
+operational: steps the skills mandate but give no mechanism or record for.
+The rubric, taxonomy chain and contracts stand unchanged.
+
+## Gap 1 — persisted review record (revises Task 7)
+
+The findings report and before/after re-score currently go to chat and die
+with the session, making "which episodes have been reviewed, to what
+result?" unanswerable from the repo — the exact failure that made the Galen
+proof case's real scope unverifiable after a history squash.
+
+`content-review` writes its findings to a per-episode review log:
+`docs/content/<subject>/<series>/<NN>_Review_Log.md` (matching the existing
+`NN_` canonical-file naming). Entries are appended newest-first, each with:
+
+- date, session scope (full episode / stage / screen range), and whether
+  canonical files were available
+- per-dimension ratings + findings (the existing report format)
+- the five technical-pass results
+- what was amended (with commit hashes) vs accepted-as-is vs deferred
+- after-amend re-score
+
+The skill reads the previous entry (if any) before auditing — findings
+marked deferred are first-class inputs to the next review. `content-create`
+writes the log's first entry from its independent critique (Gap 3), so
+every new module has a baseline from day one.
+
+## Gap 2 — render-pass mechanism (new Task P6; revises Tasks 6–7)
+
+The mandatory 👁 render pass requires the composed screen at 390px in the
+real render path, but the app has no deep-linking — reaching screen 14 of
+an episode means scripting through every screen before it, including
+assessed interactions that block until answered. When rendering is hard,
+sessions skip it (the documented render-pass gap). Two changes:
+
+- **Task P6 (app source, Lane A/B when built):** dev-only screen jump.
+  `LegacyApp.jsx` reads `?module=<id>&screen=<n>` behind
+  `import.meta.env.DEV`, opens that module via the existing
+  `openModulePlayer()` path and jumps to screen `n` — the same mechanism
+  the `LearningProgressHeader` jump sheet uses. Production builds ignore
+  the params. Verified with:
+  `node scripts/screenshot.mjs "?module=<id>&screen=<n>" out.png`
+  (390×844 viewport).
+- **Skills name the procedure.** Both skills' render-pass steps say
+  exactly: start vite, screenshot each changed screen via the jump URL,
+  look at the pixels. A review that could not run a 👁 check must say so
+  in the review log entry — silent skipping is a review failure.
+
+## Gap 3 — independent critique (revises Task 6)
+
+The spec's diagnosis is "quality depends on which session built the
+episode", yet `content-create` has the builder score its own work.
+The self-critique stage is replaced by an **independent critique**: a
+fresh subagent (per `subagent-driven-development` / `requesting-code-review`
+conventions) is given only the rubric, the contracts, the canonical files,
+the render-pass screenshots and the built screens — never the build
+session's reasoning. The builder fixes its findings; disagreements are
+surfaced to the user rather than argued away.
+
+## Gap 4 — degraded mode when canonical files are missing (revises Task 7)
+
+The back catalogue is where canonical files and story spines are most
+likely to be missing (every existing spine is missing by definition —
+Task 8's no-backfill rule). `content-review` defines the degraded path
+explicitly: run everything except the canonical-coverage pass and the
+story-spine check; record "canonical files unavailable — coverage and
+spine unassessed" prominently in the review log entry; recommend
+`/canonical-topic` as follow-up. A spine is never invented mid-review.
+
+## Gap 5 — sentence-case ⚙ guard (new Task P7)
+
+Sentence case is a CLAUDE.md hard rule, is trivially machine-checkable,
+and the gold-example episode violates it today ("Think Like Galen",
+"A Patient Arrives"). Task P7 extends
+`tests/architecture/content-quality.test.js` with a title-case detector
+over known copy fields (`label`, `title`, `heading`, `sub`): flag any
+string with ≥2 consecutive capitalised non-first words that are not in a
+`PROPER_NOUNS` allowlist (seeded from real content: "Black Death",
+"Theory of Opposites", names, places). Existing violations are grandfathered
+via the same shrink-only mechanism as the quality floor; fixing them is
+`content-review` work.
+
+## Gap 6 — review scope + amend checkpoint (revises Task 7)
+
+Whole-episode audit-then-fix-everything produces one giant unreviewable
+diff. Three changes:
+
+- **Scope argument:** `content-review <module id> [stage name | screen
+  range] [audit-only]` — a stage is the realistic unit of work ("review
+  the Galen stage").
+- **Checkpoint by default:** present the findings report and stop for
+  user confirmation before amending. `audit-only` still exists for
+  report-only runs; the user can pre-authorise amend in the invocation.
+- **Commit per story unit / stage,** never one mega-commit, so each
+  amendment is individually revertible.
+
+## UX review tooling note
+
+The UX-design technical pass may optionally escalate to `/gsd-ui-review`
+(installed; 6-pillar visual audit → scored UI-REVIEW.md) when visual
+quality is in doubt across multiple screens. The standard per-screen check
+remains the Gap 2 render pass; `/frontend-design` remains the build-time
+guidance skill.
+
+## Revised execution order (supersedes the note above)
+
+Task 8 (story spine) → **P6 (dev screen jump — render-pass tooling)** →
+P7 (sentence-case guard) → revised Tasks 6–7 (skills, folding in Gaps 1–6)
+→ Task 9 (wiring). P6 lands before the skills because the render pass is
+unenforceable without it.
