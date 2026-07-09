@@ -42,6 +42,9 @@ export const SCREEN_TYPE_FUNCTIONS = {
   conceptReveal: { functions: ['teach-mechanism'], interaction: 'reveal' },
   visualLearning: { functions: ['hook-tension', 'teach-mechanism'], interaction: 'reveal' },
   explainReveal: { functions: ['teach-mechanism'], interaction: 'reveal' },
+  // Major historical figures should enter through a short full-screen cinematic
+  // reveal before the detailed profile, so the learner meets the person before
+  // reading their evidence cards. Keep the intro to one name line + one impact line.
   keyFigureReveal: { functions: ['introduce-figure'], interaction: 'reveal' },
   theoryCompare: { functions: ['teach-comparison'], interaction: 'reveal' },
   timelineCanvas: { functions: ['sequence-process'], interaction: 'reveal' },
