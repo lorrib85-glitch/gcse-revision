@@ -1,31 +1,63 @@
 import episode from './episode-01-medieval-beliefs-causes.js'
 
 // Runtime sequence override for Episode 1.
-// The original canonical file is preserved for audit history, but the app should
-// not show the duplicated conceptReveal directly before the stronger interactive
-// Four Humours screen.
+// The original canonical file is preserved for audit history, while the runtime
+// sequence removes duplication and adds short cinematic introductions before
+// major figure profiles.
 const REMOVED_DUPLICATE_SCREEN_LABEL = 'The Four Humours'
 const removedScreenIndex = episode.screens.findIndex(
   screen => screen.label === REMOVED_DUPLICATE_SCREEN_LABEL && screen.type === 'conceptReveal'
 )
 
-function shiftScreenIndex(screenIndex) {
-  if (removedScreenIndex < 0 || typeof screenIndex !== 'number') return screenIndex
-  return screenIndex > removedScreenIndex ? screenIndex - 1 : screenIndex
+const galenCinematicIntro = {
+  type: 'conceptReveal',
+  stage: 'Galen',
+  label: 'Introducing Galen',
+  steps: [
+    {
+      mainText: 'His name\nwas Galen.',
+      supportText: "He turned Hippocrates' ideas into a system that would dominate medicine for over 1,000 years.",
+      backgroundImage: '/figures/history/medicine/medieval/galen-portrait.png',
+      backgroundPosition: 'center 8%',
+      overlay: 'linear-gradient(to bottom, rgba(0,0,0,.12) 0%, rgba(0,0,0,.24) 40%, rgba(0,0,0,.74) 72%, rgba(0,0,0,.97) 100%)',
+      slowReveal: true,
+      tapToContinue: true,
+    },
+  ],
 }
 
-const screens = removedScreenIndex < 0
+const withoutDuplicate = removedScreenIndex < 0
   ? episode.screens
   : episode.screens.filter((_, index) => index !== removedScreenIndex)
 
+const galenProfileIndex = withoutDuplicate.findIndex(
+  screen => screen.type === 'keyFigureReveal' && screen.label === 'Galen'
+)
+
+const screens = galenProfileIndex < 0
+  ? withoutDuplicate
+  : [
+      ...withoutDuplicate.slice(0, galenProfileIndex),
+      galenCinematicIntro,
+      ...withoutDuplicate.slice(galenProfileIndex),
+    ]
+
+function transformScreenIndex(screenIndex) {
+  if (typeof screenIndex !== 'number') return screenIndex
+
+  let nextIndex = screenIndex
+  if (removedScreenIndex >= 0 && nextIndex > removedScreenIndex) nextIndex -= 1
+  if (galenProfileIndex >= 0 && nextIndex >= galenProfileIndex) nextIndex += 1
+
+  return nextIndex
+}
+
 const stageNavigation = episode.stageNavigation.map(stage => ({
   ...stage,
-  screenIndex: shiftScreenIndex(stage.screenIndex),
+  screenIndex: transformScreenIndex(stage.screenIndex),
 }))
 
-const screenTags = episode.screens
-  .map(screen => screen.tag || null)
-  .filter((_, index) => index !== removedScreenIndex)
+const screenTags = screens.map(screen => screen.tag || null)
 
 export default {
   ...episode,
