@@ -293,10 +293,10 @@ export default function InteractiveCollectionExplorer({
       {/* ── Background image ─────────────────────────────────────────────── */}
       <div style={{
         position: 'absolute',
-        top: `calc(${SPACING.compact}px * -1)`,
+        top: `calc(${SPACING.standard}px * -1)`,
         left: 0,
         right: 0,
-        height: `calc(60% + ${SPACING.compact}px)`,
+        height: '60%',
         transition: `filter ${MOTION.duration.slow} ${MOTION.easing.gentle}`,
         filter: selected
           ? 'blur(4px) brightness(0.40) saturate(0.7)'
@@ -328,10 +328,10 @@ export default function InteractiveCollectionExplorer({
       {/* ── Dot targets on image ─────────────────────────────────────────── */}
       <div style={{
         position: 'absolute',
-        top: `calc(${SPACING.compact}px * -1)`,
+        top: `calc(${SPACING.standard}px * -1)`,
         left: 0,
         right: 0,
-        height: `calc(60% + ${SPACING.compact}px)`,
+        height: '60%',
         zIndex: 6,
       }}>
         {items.map(item => {
