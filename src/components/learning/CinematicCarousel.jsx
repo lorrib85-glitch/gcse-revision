@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
@@ -7,25 +7,23 @@ import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 
-// ─── CinematicCarousel ──────────────────────────────────────────────────────
+// ─── CinematicCarousel / ImageReveal ─────────────────────────────────────────
 //
-// Full-screen "deep dive" carousel: one large image at a time, with prev/next
-// glass arrow buttons either side and a name + key-facts panel below that
-// slides in to match the navigation direction. Designed for browsing a small
-// related set of things in turn (e.g. the organelles inside a cell), each
-// rendered in dark cinematic / SUBJECTS tokens. Continue unlocks once every
-// item has been viewed at least once.
+// Two closely related cinematic image patterns share this component:
 //
-// Block shape:
+// 1. Default carousel — learner-controlled browsing with arrows, labels and facts.
+// 2. `mode: 'imageReveal'` — an automatic, slow image sequence for a deliberate
+//    visual reveal. It has no carousel chrome, advances one image at a time, and
+//    only exposes Continue after the final image has had time to land.
+//
+// Image reveal block shape:
 // {
 //   type: 'cinematicCarousel',
-//   title?: 'Inside the cell',
-//   intro?: 'Explore each part and what it does.',
-//   items: [
-//     { id, image: '/path.png', label: 'Nucleus',
-//       facts: ['Contains DNA organised as chromosomes', 'Controls the cell\'s activities'] },
-//     ...
-//   ],
+//   mode: 'imageReveal',
+//   title?: 'The four humours',
+//   intro?: 'Four fluids. One theory of health.',
+//   revealInterval?: 1800,
+//   items: [{ id, image, alt }]
 // }
 
 let _ccvStyled = false
@@ -42,6 +40,14 @@ function ensureStyles() {
       from { opacity: 0; transform: translateX(-36px); }
       to   { opacity: 1; transform: translateX(0); }
     }
+    @keyframes image-reveal-in {
+      from { opacity: 0; transform: scale(.94); filter: blur(3px); }
+      to   { opacity: 1; transform: scale(1); filter: blur(0); }
+    }
+    @keyframes image-reveal-copy-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
     .ccv-nav-btn {
       transition: transform ${MOTION.duration.fast} ${MOTION.easing.standard},
                   background ${MOTION.duration.fast} ${MOTION.easing.standard};
@@ -54,8 +60,135 @@ function ensureStyles() {
 const ARROW_LEFT = 'm313-440 196 196q12 12 11.5 28T508-188q-12 11-28 11.5T452-188L188-452q-6-6-8.5-13t-2.5-15q0-8 2.5-15t8.5-13l264-264q11-11 27.5-11t28.5 11q12 12 12 28.5T508-715L313-520h447q17 0 28.5 11.5T800-480q0 17-11.5 28.5T760-440H313Z'
 const ARROW_RIGHT = 'M647-440H200q-17 0-28.5-11.5T160-480q0-17 11.5-28.5T200-520h447L451-716q-12-12-11.5-28t12.5-28q12-11 28-11.5t28 11.5l264 264q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13L508-188q-11 11-27.5 11T452-188q-12-12-12-28.5t12-28.5l195-195Z'
 
+function ImageReveal({ block, subject, onContinue }) {
+  const theme = SUBJECTS[subject] || SUBJECTS.History
+  const { accent, accentRgb: rgb } = theme
+  const items = block.items || []
+  const interval = block.revealInterval || 1800
+  const [index, setIndex] = useState(0)
+  const [complete, setComplete] = useState(items.length <= 1)
+
+  useEffect(() => {
+    setIndex(0)
+    setComplete(items.length <= 1)
+  }, [items.length])
+
+  useEffect(() => {
+    if (items.length <= 1 || index >= items.length - 1) {
+      if (items.length > 1 && index >= items.length - 1) {
+        const doneTimer = window.setTimeout(() => setComplete(true), interval)
+        return () => window.clearTimeout(doneTimer)
+      }
+      return undefined
+    }
+
+    const timer = window.setTimeout(() => setIndex(current => current + 1), interval)
+    return () => window.clearTimeout(timer)
+  }, [index, interval, items.length])
+
+  const item = items[index]
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 100,
+      background: GENERAL.backgroundApp,
+      display: 'flex', flexDirection: 'column',
+      paddingTop: 'calc(92px + env(safe-area-inset-top, 0px))',
+      paddingBottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
+    }}>
+      <div style={{
+        padding: `0 ${SPACING.standard}px`,
+        textAlign: 'center',
+        flexShrink: 0,
+      }}>
+        {block.title && (
+          <h2 style={{
+            ...TYPE.displaySection,
+            fontSize: 'clamp(24px, 7.5vw, 32px)',
+            color: 'rgba(255,255,255,0.97)',
+            margin: '0 0 8px',
+          }}>
+            {block.title}
+          </h2>
+        )}
+        {block.intro && (
+          <p style={{
+            ...TYPE.bodyStrong,
+            color: 'rgba(255,255,255,0.56)',
+            margin: 0,
+          }}>
+            {block.intro}
+          </p>
+        )}
+      </div>
+
+      <div style={{
+        flex: 1,
+        minHeight: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: `${SPACING.standard}px ${SPACING.compact}px`,
+      }}>
+        <div key={item?.id || index} style={{
+          width: 'min(88vw, 430px)',
+          aspectRatio: '1 / 1',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          animation: `image-reveal-in 900ms ${MOTION.easing.standard} both`,
+        }}>
+          {item?.image && (
+            <img
+              src={item.image}
+              alt={item.alt || ''}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                display: 'block',
+              }}
+            />
+          )}
+        </div>
+      </div>
+
+      <div style={{ flexShrink: 0, minHeight: 64, padding: `0 ${SPACING.standard}px` }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: SPACING.compact }}>
+          <SequenceProgress
+            total={items.length}
+            current={index}
+            viewed={Array.from({ length: index + 1 }, (_, itemIndex) => itemIndex)}
+            accent={accent}
+            accentRgb={rgb}
+            ariaLabel="Image reveal progress"
+          />
+        </div>
+
+        {complete && (
+          <div style={{ textAlign: 'center', animation: `image-reveal-copy-in ${MOTION.duration.slow} ${MOTION.easing.standard} both` }}>
+            <button
+              onClick={onContinue}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                ...TYPE.buttonLarge, fontSize: 18, color: accent,
+              }}
+            >
+              Continue
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function CinematicCarousel({ block, subject = 'Biology', onContinue }) {
   ensureStyles()
+
+  if (block.mode === 'imageReveal') {
+    return <ImageReveal block={block} subject={subject} onContinue={onContinue} />
+  }
 
   const theme = SUBJECTS[subject] || SUBJECTS.Biology
   const { accent, accentRgb: rgb } = theme
@@ -90,8 +223,6 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
       paddingTop: 'calc(96px + env(safe-area-inset-top, 0px))',
       paddingBottom: 'calc(28px + env(safe-area-inset-bottom, 0px))',
     }}>
-
-      {/* Title + intro */}
       <div style={{ padding: `0 ${SPACING.standard}px`, marginBottom: SPACING.compact, flexShrink: 0 }}>
         {block.title && (
           <h2 style={{
@@ -108,7 +239,6 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
         )}
       </div>
 
-      {/* Stage */}
       <div style={{ flex: 1, position: 'relative', minHeight: 0, padding: `0 ${SPACING.standard}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {items.length > 1 && (
           <button className="ccv-nav-btn" onClick={() => go(-1)} aria-label="Previous" style={{
@@ -153,7 +283,6 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
         )}
       </div>
 
-      {/* Info panel */}
       <div key={`info-${index}`} style={{
         flexShrink: 0, padding: `${SPACING.compact}px ${SPACING.standard}px 0`,
         animation: slideAnim,
@@ -171,7 +300,6 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
         </ul>
       </div>
 
-      {/* Progress dots */}
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.standard, flexShrink: 0 }}>
         <SequenceProgress
           total={items.length}
@@ -183,7 +311,6 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
         />
       </div>
 
-      {/* Continue */}
       <div style={{ textAlign: 'center', marginTop: SPACING.standard, padding: `0 ${SPACING.standard}px`, flexShrink: 0 }}>
         {allViewed ? (
           <button
