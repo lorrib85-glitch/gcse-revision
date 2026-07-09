@@ -2,47 +2,75 @@ import episode from './episode-01-medieval-beliefs-causes.js'
 
 // Runtime sequence override for Episode 1.
 // The original canonical file is preserved for audit history, while the runtime
-// sequence removes duplication and adds a slow visual reveal before Galen's profile.
+// sequence removes duplication, keeps the cinematic Galen introduction, and
+// upgrades the Theory of Opposites media slot into a slow image reveal.
 const REMOVED_DUPLICATE_SCREEN_LABEL = 'The Four Humours'
 const removedScreenIndex = episode.screens.findIndex(
   screen => screen.label === REMOVED_DUPLICATE_SCREEN_LABEL && screen.type === 'conceptReveal'
 )
 
-const galenImageReveal = {
-  type: 'cinematicCarousel',
-  mode: 'imageReveal',
+const galenCinematicIntro = {
+  type: 'conceptReveal',
   stage: 'Galen',
-  label: 'The four humours',
-  title: 'The four humours',
-  intro: 'Four fluids. One theory of health.',
-  revealInterval: 1900,
-  items: [
+  label: 'Introducing Galen',
+  steps: [
     {
-      id: 'blood',
-      image: '/figures/history/medicine/medieval/four-humours-blood.svg',
+      mainText: 'His name\nwas Galen.',
+      supportText: "He turned Hippocrates' ideas into a system that would dominate medicine for over 1,000 years.",
+      backgroundImage: '/figures/history/medicine/medieval/galen-portrait.png',
+      backgroundPosition: 'center 8%',
+      overlay: 'linear-gradient(to bottom, rgba(0,0,0,.12) 0%, rgba(0,0,0,.24) 40%, rgba(0,0,0,.74) 72%, rgba(0,0,0,.97) 100%)',
+      slowReveal: true,
+      tapToContinue: true,
+    },
+  ],
+}
+
+const fourHumoursRevealConfig = {
+  intro: 'Watch the four humours build into one system.',
+  interval: 1900,
+  images: [
+    {
+      src: '/figures/history/medicine/medieval/four-humours-blood.svg',
       alt: 'Blood, believed to be hot and wet',
     },
     {
-      id: 'yellow-bile',
-      image: '/figures/history/medicine/medieval/four-humours-yellow-bile.svg',
+      src: '/figures/history/medicine/medieval/four-humours-yellow-bile.svg',
       alt: 'Yellow bile, believed to be hot and dry',
     },
     {
-      id: 'black-bile',
-      image: '/figures/history/medicine/medieval/four-humours-black-bile.svg',
+      src: '/figures/history/medicine/medieval/four-humours-black-bile.svg',
       alt: 'Black bile, believed to be cold and dry',
     },
     {
-      id: 'phlegm',
-      image: '/figures/history/medicine/medieval/four-humours-phlegm.svg',
+      src: '/figures/history/medicine/medieval/four-humours-phlegm.svg',
       alt: 'Phlegm, believed to be cold and wet',
     },
   ],
 }
 
-const withoutDuplicate = removedScreenIndex < 0
+function upgradeTheoryOfOppositesScreen(screen) {
+  if (screen.heading !== 'Every illness had an opposite') return screen
+
+  return {
+    ...screen,
+    blocks: (screen.blocks || []).map(block => (
+      block.type === 'mediaPlaceholder'
+        ? {
+            ...block,
+            kind: 'imageReveal',
+            aspect: '1:1',
+            caption: fourHumoursRevealConfig,
+          }
+        : block
+    )),
+  }
+}
+
+const withoutDuplicate = (removedScreenIndex < 0
   ? episode.screens
   : episode.screens.filter((_, index) => index !== removedScreenIndex)
+).map(upgradeTheoryOfOppositesScreen)
 
 const galenProfileIndex = withoutDuplicate.findIndex(
   screen => screen.type === 'keyFigureReveal' && screen.label === 'Galen'
@@ -52,7 +80,7 @@ const screens = galenProfileIndex < 0
   ? withoutDuplicate
   : [
       ...withoutDuplicate.slice(0, galenProfileIndex),
-      galenImageReveal,
+      galenCinematicIntro,
       ...withoutDuplicate.slice(galenProfileIndex),
     ]
 
