@@ -29,9 +29,20 @@ const galenCinematicIntro = {
 const fourHumoursRevealConfig = {
   intro: 'Watch the four humours build into one system.',
   interval: 1500,
-  src: '/figures/history/medicine/medieval/four-humours-generated.svg',
-  alt: 'The complete four-humours diagram, revealed one quadrant at a time',
+  images: {
+    topLeft: '/figures/history/medicine/medieval/four-humours-blood.webp',
+    topRight: '/figures/history/medicine/medieval/four-humours-yellow-bile.webp',
+    bottomLeft: '/figures/history/medicine/medieval/four-humours-black-bile.webp',
+    bottomRight: '/figures/history/medicine/medieval/four-humours-phlegm.webp',
+  },
+  alt: 'The four humours revealed one quadrant at a time: blood (hot and wet), yellow bile (hot and dry), black bile (cold and dry) and phlegm (cold and wet), with arrows linking each humour to its opposite',
   parts: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'],
+  // Blood (hot + wet) ↔ black bile (cold + dry); yellow bile (hot + dry) ↔ phlegm (cold + wet)
+  opposites: [
+    ['topLeft', 'bottomLeft'],
+    ['topRight', 'bottomRight'],
+  ],
+  finished: 'Each humour has an opposite — hot cancels cold, wet cancels dry.',
 }
 
 function upgradeTheoryOfOppositesScreen(screen) {

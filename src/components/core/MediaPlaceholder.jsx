@@ -8,15 +8,18 @@ import { MOTION } from '../../constants/motion.js'
 // ─── MediaPlaceholder / Image reveal ─────────────────────────────────────────
 // Standard reserved slot for an image or diagram the author has NOT yet supplied.
 // When `kind="imageReveal"`, the same governed media slot becomes a slow,
-// progressive reveal inside one fixed frame.
+// progressive reveal inside one fixed frame: one image per quadrant, revealed
+// in turn, then optional animated arrows linking opposite quadrants.
 //
 // Image reveal config:
 // {
 //   intro?: string,
 //   interval?: number,
-//   src: string,
+//   images: { topLeft: src, topRight: src, bottomLeft: src, bottomRight: src },
 //   alt?: string,
-//   parts?: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']
+//   parts?: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'],  // reveal order
+//   opposites?: [['topLeft', 'bottomLeft'], ['topRight', 'bottomRight']],
+//   finished?: string,  // caption shown once every quadrant is revealed
 // }
 
 function Glyph({ kind, accent }) {
@@ -41,41 +44,76 @@ function Glyph({ kind, accent }) {
   )
 }
 
-const QUADRANT_CLIPS = {
-  topLeft: 'polygon(0 0, 50% 0, 50% 50%, 0 50%)',
-  topRight: 'polygon(50% 0, 100% 0, 100% 50%, 50% 50%)',
-  bottomLeft: 'polygon(0 50%, 50% 50%, 50% 100%, 0 100%)',
-  bottomRight: 'polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%)',
+// Each quadrant image is a separate asset anchored to its own corner of the frame.
+const QUADRANT_POSITIONS = {
+  topLeft: { top: 0, left: 0 },
+  topRight: { top: 0, right: 0 },
+  bottomLeft: { bottom: 0, left: 0 },
+  bottomRight: { bottom: 0, right: 0 },
+}
+
+// Quadrant centres in the 0–100 viewBox of the arrow overlay.
+const QUADRANT_CENTRES = {
+  topLeft: [25, 25],
+  topRight: [75, 25],
+  bottomLeft: [25, 75],
+  bottomRight: [75, 75],
+}
+
+// Trim an opposite-pair line so it bridges the seam instead of covering both
+// artworks. The far end is trimmed harder so the arrowhead stops short of the
+// destination quadrant's title text.
+function oppositeArrowLine(from, to, trimStart = 0.24, trimEnd = 0.42) {
+  const [ax, ay] = QUADRANT_CENTRES[from]
+  const [bx, by] = QUADRANT_CENTRES[to]
+  return {
+    x1: ax + (bx - ax) * trimStart,
+    y1: ay + (by - ay) * trimStart,
+    x2: bx - (bx - ax) * trimEnd,
+    y2: by - (by - ay) * trimEnd,
+    angle: (Math.atan2(by - ay, bx - ax) * 180) / Math.PI,
+  }
 }
 
 function ImageReveal({ config, aspect, accent, rgb }) {
-  const parts = config?.parts || ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']
+  const parts = (config?.parts || ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'])
+    .filter(part => config?.images?.[part])
   const interval = config?.interval || 1500
+  const opposites = config?.opposites || []
   const [revealedCount, setRevealedCount] = useState(0)
+  const [showOpposites, setShowOpposites] = useState(false)
   const [w, h] = String(aspect).split(':')
-  const finished = revealedCount >= parts.length
+  const finished = parts.length > 0 && revealedCount >= parts.length
 
   useEffect(() => {
     setRevealedCount(0)
-  }, [config?.src, parts.length])
+    setShowOpposites(false)
+  }, [config?.images, parts.length])
 
   useEffect(() => {
-    if (!config?.src || finished) return undefined
+    if (parts.length === 0 || finished) return undefined
     const timer = window.setTimeout(
       () => setRevealedCount(current => Math.min(current + 1, parts.length)),
       interval
     )
     return () => window.clearTimeout(timer)
-  }, [config?.src, finished, interval, parts.length, revealedCount])
+  }, [finished, interval, parts.length, revealedCount])
 
-  const imageStyle = {
+  // Let the last quadrant settle before the opposite arrows draw in.
+  useEffect(() => {
+    if (!finished || opposites.length === 0) return undefined
+    const timer = window.setTimeout(() => setShowOpposites(true), 900)
+    return () => window.clearTimeout(timer)
+  }, [finished, opposites.length])
+
+  const tileStyle = part => ({
     position: 'absolute',
-    inset: 0,
-    width: '100%',
-    height: '100%',
+    width: 'calc(50% - 2px)',
+    height: 'calc(50% - 2px)',
     objectFit: 'contain',
     display: 'block',
-  }
+    ...QUADRANT_POSITIONS[part],
+  })
 
   return (
     <div style={{ width: '100%' }}>
@@ -103,26 +141,28 @@ function ImageReveal({ config, aspect, accent, rgb }) {
           background: `radial-gradient(120% 120% at 50% 0%, rgba(${rgb},0.07), rgba(255,255,255,0.015))`,
         }}
       >
-        {config?.src && (
+        {parts.length > 0 && (
           <>
             {/* The whole diagram is already present as a faint guide. */}
-            <img
-              src={config.src}
-              alt=""
-              aria-hidden="true"
-              style={{ ...imageStyle, opacity: 0.14, filter: 'saturate(.7)' }}
-            />
+            {parts.map(part => (
+              <img
+                key={`guide-${part}`}
+                src={config.images[part]}
+                alt=""
+                aria-hidden="true"
+                style={{ ...tileStyle(part), opacity: 0.14, filter: 'saturate(.7)' }}
+              />
+            ))}
 
-            {/* The same generated image is clipped into four perfectly aligned quadrants. */}
+            {/* Each quadrant's own artwork fades in, one at a time. */}
             {parts.map((part, index) => (
               <img
                 key={part}
-                src={config.src}
+                src={config.images[part]}
                 alt=""
                 aria-hidden="true"
                 style={{
-                  ...imageStyle,
-                  clipPath: QUADRANT_CLIPS[part],
+                  ...tileStyle(part),
                   opacity: index < revealedCount ? 1 : 0,
                   transform: index < revealedCount ? 'scale(1)' : 'scale(.96)',
                   filter: index < revealedCount ? 'blur(0)' : 'blur(3px)',
@@ -131,17 +171,72 @@ function ImageReveal({ config, aspect, accent, rgb }) {
               />
             ))}
 
-            {/* Final clean layer removes any visible joins once all four are revealed. */}
-            <img
-              src={config.src}
-              alt=""
-              aria-hidden="true"
-              style={{
-                ...imageStyle,
-                opacity: finished ? 1 : 0,
-                transition: `opacity 700ms ${MOTION.easing.standard}`,
-              }}
-            />
+            {/* Once complete, arrows draw in between opposite quadrants. */}
+            {opposites.length > 0 && (
+              <svg
+                viewBox="0 0 100 100"
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  pointerEvents: 'none',
+                  filter: `drop-shadow(0 0 6px rgba(${rgb},0.45))`,
+                }}
+              >
+                {opposites.map(([from, to], pairIndex) => {
+                  const line = oppositeArrowLine(from, to)
+                  const drawDelay = pairIndex * 500
+                  const headStyle = {
+                    fill: 'none',
+                    stroke: accent,
+                    strokeWidth: 2,
+                    strokeLinecap: 'round',
+                    strokeLinejoin: 'round',
+                    opacity: showOpposites ? 1 : 0,
+                    transition: `opacity 400ms ${MOTION.easing.standard} ${drawDelay + 500}ms`,
+                  }
+                  return (
+                    <g key={`${from}-${to}`} data-reveal-anim="true">
+                      <line
+                        x1={line.x1} y1={line.y1} x2={line.x2} y2={line.y2}
+                        stroke="rgba(8,9,13,0.38)"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        style={{
+                          opacity: showOpposites ? 1 : 0,
+                          transition: `opacity 400ms ${MOTION.easing.standard} ${drawDelay}ms`,
+                        }}
+                      />
+                      <line
+                        x1={line.x1} y1={line.y1} x2={line.x2} y2={line.y2}
+                        stroke={accent}
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        pathLength="1"
+                        strokeDasharray="1"
+                        style={{
+                          strokeDashoffset: showOpposites ? 0 : 1,
+                          transition: `stroke-dashoffset 700ms ${MOTION.easing.standard} ${drawDelay}ms`,
+                        }}
+                      />
+                      {/* Chevron heads at both ends, pointing outward at each quadrant. */}
+                      <path
+                        d="M -3 4 L 0 0 L 3 4"
+                        transform={`translate(${line.x1} ${line.y1}) rotate(${line.angle - 90})`}
+                        style={headStyle}
+                      />
+                      <path
+                        d="M -3 4 L 0 0 L 3 4"
+                        transform={`translate(${line.x2} ${line.y2}) rotate(${line.angle + 90})`}
+                        style={headStyle}
+                      />
+                    </g>
+                  )
+                })}
+              </svg>
+            )}
           </>
         )}
       </div>
@@ -175,12 +270,15 @@ function ImageReveal({ config, aspect, accent, rgb }) {
         color: finished ? `rgba(${rgb},0.88)` : 'rgba(245,245,245,0.4)',
         marginTop: SPACING.micro,
       }}>
-        {finished ? 'The complete four-humours system.' : 'Building the theory…'}
+        {finished ? (config?.finished || 'The complete four-humours system.') : 'Building the theory…'}
       </div>
 
       <style>{`
         @media (prefers-reduced-motion: reduce) {
-          img { transition-duration: 1ms !important; }
+          img, [data-reveal-anim] line, [data-reveal-anim] path {
+            transition-duration: 1ms !important;
+            transition-delay: 0ms !important;
+          }
         }
       `}</style>
     </div>
