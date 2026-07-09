@@ -87,8 +87,10 @@ export default function KeyFigureReveal({ block, subject, onComplete }) {
 
   // Some tall portrait assets crop badly inside the short profile hero on mobile.
   // Hippocrates appears immediately after a full-screen portrait reveal, so keep the
-  // profile crop close to that composition instead of punching into his face.
-  const portraitHeight = isHippocratesPortrait ? '60vh' : '44vh'
+  // profile crop close to that composition while reserving enough room for the cards.
+  const portraitHeight = isHippocratesPortrait
+    ? `calc(60vh - ${SPACING.compact}px)`
+    : '44vh'
   const portraitPosition = isGalenPortrait
     ? 'center 8%'
     : isHippocratesPortrait
