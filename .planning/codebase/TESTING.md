@@ -1,368 +1,488 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-06-22
+**Analysis Date:** 2026-07-09
 
 ## Test Framework
 
 **Runner:**
-- Vitest `^4.1.7`
-- Config: `vitest.config.js` (merges with `vite.config.js`)
+- Vitest 4.1.7
+- Config: `vitest.config.js` (merged with `vite.config.js`)
+- Multiple test projects (separated by environment and purpose)
 
 **Assertion Library:**
-- Vitest built-in assertions (expect API)
+- Vitest's built-in `expect()` API (compatible with Jest)
 
 **Run Commands:**
 ```bash
-pnpm test                     # Run all test projects (unit, architecture, storybook)
-pnpm test:architecture        # Run architecture tests only (via vitest run tests/architecture)
-pnpm test -- tests/unit       # Run unit tests only
-pnpm vitest                   # Interactive watch mode
-pnpm vitest -- --ui           # Browser-based test UI
+npm run test                  # Run all tests (architecture + unit + storybook)
+npm run test:architecture    # Run architecture tests only
+npm run lint                 # Run ESLint
+npm run verify               # lint + test:architecture + build (pre-commit check)
 ```
 
-**Browser Testing:**
-- Playwright provider for Storybook test integration (`@vitest/browser-playwright`)
-- Headless Chromium execution
-- Special handling for cloud sandboxes with pre-installed Chromium (see `vitest.config.js` lines 17–20)
+## Test Projects
+
+Vitest is configured with three independent test projects in `vitest.config.js`:
+
+### 1. Architecture Tests
+- **Directory:** `tests/architecture/`
+- **Environment:** Node (no DOM)
+- **Purpose:** Verify codebase structure, learning graph integrity, module purity
+- **Examples:**
+  - `learning-graph.test.js` — concept registry, tag validation, circular import detection
+  - `placeholder-module-safety.test.js` — guard clauses for unimplemented modules
+  - `content-support-episode01.test.js` — content model validation
+
+### 2. Unit Tests
+- **Directory:** `tests/unit/`
+- **Environment:** Node (no DOM)
+- **Purpose:** Logic unit tests with mocked dependencies
+- **Examples:**
+  - `tests/unit/planner/dailyPlanner.test.js` — 1100+ lines, comprehensive test suite
+  - `tests/unit/auth/authService.test.js` — Firebase mocking, localStorage stubbing
+  - `tests/unit/quickfire/masteryRecorder.test.js` — learning state mutations
+
+### 3. Storybook Tests
+- **Directory:** Storybook story files (`.stories.jsx`)
+- **Environment:** Browser (Chromium via Playwright)
+- **Purpose:** Visual regression and interaction testing via Storybook addon
+- **Framework:** `@storybook/addon-vitest` with `@vitest/browser-playwright`
+- **Command:** Runs all `.stories.jsx` files as browser tests
 
 ## Test File Organization
 
 **Location:**
-- Architecture tests: `tests/architecture/`
-- Unit tests: `tests/unit/`
-- Storybook stories: co-located with components (`.stories.jsx` pattern referenced in `.storybook/main.js`)
+- Unit tests: `tests/unit/<feature>/<name>.test.js` mirrors `src/<feature>/<name>.js`
+- Architecture tests: `tests/architecture/<check>.test.js`
+- Component stories: `src/components/<path>/<ComponentName>.stories.jsx` (co-located with component)
 
 **Naming:**
-- Test files: `{name}.test.js` (e.g., `dailyPlanner.test.js`, `app-boundaries.test.js`)
-- Storybook stories: `{component}.stories.jsx`
+- Test files: `<functionality>.test.js` (e.g., `dailyPlanner.test.js`, `authService.test.js`)
+- Test suites: `describe('<feature description>', () => { ... })`
+- Test cases: `it('<assertion>', () => { ... })`
+- Story files: `<ComponentName>.stories.jsx` (same stem as component)
 
 **Structure:**
 ```
 tests/
 ├── architecture/
-│   ├── app-boundaries.test.js
-│   ├── module-metadata-integrity.test.js
+│   ├── learning-graph.test.js
 │   ├── placeholder-module-safety.test.js
-│   └── storage-boundary.test.js
+│   └── content-support-episode01.test.js
 └── unit/
-    └── planner/
-        └── dailyPlanner.test.js
+    ├── planner/
+    │   └── dailyPlanner.test.js
+    ├── auth/
+    │   ├── authService.test.js
+    │   ├── progressStatus.test.js
+    │   └── authServiceDisabled.test.js
+    ├── quickfire/
+    │   ├── masteryRecorder.test.js
+    │   ├── questionId.test.js
+    │   └── quickFireSelector.test.js
+    └── [other features]/
 ```
 
 ## Test Structure
 
 **Suite Organization:**
 ```javascript
+// 1. Imports (test utils + application code)
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { functionUnderTest } from '../../src/module.js'
 
-// Setup mocks and fixtures BEFORE any imports that depend on them
-const mockSetJson = vi.fn()
-const mockGetArray = vi.fn(() => [])
-
+// 2. Mock declarations (before dynamic imports)
 vi.mock('../../../src/lib/storage.js', () => ({
-  getArray: mockGetArray,
-  getObject: mockGetObject,
-  setJson: mockSetJson,
-  removeKey: vi.fn(),
+  getArray: vi.fn(() => []),
+  setJson: vi.fn(),
 }))
 
-// Import dependencies after mocks declared
-const { buildWeekdayBlocks, buildDailyPlan } = await import('../../../src/features/planner/dailyPlanner.js')
+// 3. Dynamic import of code that depends on mocks
+const { getProgress, recordScore } = await import('../../../src/progress.js')
 
-// Fixtures at module level
-const MONDAY = new Date('2026-06-22')
+// 4. Fixtures & helpers
+const emptyState = { scores: [], wrongAnswers: [], ... }
+function makeWeakPoint(overrides = {}) { ... }
 
-const emptyState = {
-  scores: [],
-  wrongAnswers: [],
-  correctAnswers: [],
-  moduleStates: {},
-  rotationHistory: {},
-  progress: {},
-  weakPoints: [],
-}
-
-function makeWeakPoint(overrides = {}) {
-  return {
-    weakPointId: 'test_wp_1',
-    subject: 'History',
-    topic: 'germ_theory',
-    // ... defaults
-    ...overrides,
-  }
-}
-
+// 5. beforeEach setup
 beforeEach(() => {
   vi.clearAllMocks()
 })
 
-// Test suites organized by feature/function
-describe('getPlanningMode', () => {
-  it('returns "weekday" on Monday', () => {
-    expect(getPlanningMode(MONDAY, {})).toBe('weekday')
+// 6. Test suites, organized by concern
+describe('getProgress', () => {
+  it('returns default state when no data exists', () => {
+    expect(getProgress()).toEqual(emptyState)
   })
 
-  it('returns "saturday" on Saturday', () => {
-    expect(getPlanningMode(SATURDAY, {})).toBe('saturday')
+  it('merges stored data with defaults', () => {
+    mockGetObject.mockReturnValue({ streak: 5 })
+    expect(getProgress().streak).toBe(5)
   })
 })
 ```
 
-**Key Patterns:**
-1. Mocks declared at top-level before imports (forces Vitest hoisting)
-2. Dynamic imports used after mock setup: `const { fn } = await import('...')`
-3. Fixtures as reusable factory functions (e.g., `makeWeakPoint()`)
-4. `beforeEach(() => vi.clearAllMocks())` ensures clean state between tests
-5. Descriptive test names using `it()` with complete statements (not abbreviations)
+**Patterns:**
+
+### Setup Pattern
+```javascript
+beforeEach(() => {
+  vi.clearAllMocks()  // Reset mock call counts
+})
+```
+
+### Teardown Pattern
+None explicitly used; `beforeEach` cleanup is sufficient. Mocks are automatically cleared between tests.
+
+### Assertion Pattern
+```javascript
+// Basic assertions
+expect(value).toBe(expectedValue)
+expect(array).toHaveLength(3)
+expect(object).toEqual({ key: 'value' })
+expect(array).toContain('item')
+
+// Grouped assertions
+expect(blocks.map(b => b.type)).toEqual(['pulse', 'mainProgress', 'weakRepair', 'examMove'])
+expect(blocks.map(b => b.duration)).toEqual([8, 27, 12, 13])
+
+// Negative assertions
+expect(value).not.toBe(other)
+expect(array).not.toContain('item')
+
+// Custom error messages
+expect(dupes, 'duplicate concept ids found').toEqual([])
+```
 
 ## Mocking
 
-**Framework:** Vitest's built-in `vi` mock utilities
+**Framework:** Vitest's `vi` API (Jest-compatible)
 
-**Patterns:**
-
-Storage mocking (most common):
+**Module Mocking:**
 ```javascript
-const mockSetJson = vi.fn()
-const mockGetArray = vi.fn(() => [])
-const mockGetObject = vi.fn(() => ({}))
-
+// Mock a module before import
 vi.mock('../../../src/lib/storage.js', () => ({
-  getArray: mockGetArray,
-  getObject: mockGetObject,
-  setJson: mockSetJson,
+  getArray: vi.fn(() => []),
+  getObject: vi.fn(() => ({})),
+  getJson: vi.fn((key, fallback) => fallback),
+  setJson: vi.fn(),
   removeKey: vi.fn(),
 }))
+
+// Then dynamically import the module using the mocks
+const { getProgress, recordScore } = await import('../../../src/progress.js')
 ```
 
-Function mocking within a module:
+**Environment Stubbing:**
 ```javascript
-const mock = vi.fn(() => expectedValue)
-// Use mock() in test, assert mock.toHaveBeenCalled(), mock.toHaveBeenCalledWith(args)
+// Stub environment variables for test
+vi.stubEnv('VITE_FIREBASE_API_KEY', 'test-key')
+vi.stubEnv('VITE_FIREBASE_AUTH_DOMAIN', 'test.firebaseapp.com')
+```
+
+**DOM Mocks:**
+```javascript
+// Stub localStorage (Node environment has no localStorage)
+function installLocalStorageStub() {
+  const store = {}
+  globalThis.localStorage = {
+    getItem: (k) => (k in store ? store[k] : null),
+    setItem: (k, v) => { store[k] = String(v) },
+    removeItem: (k) => { delete store[k] },
+    clear: () => { for (const k of Object.keys(store)) delete store[k] },
+  }
+  return store
+}
+
+// Use in test
+beforeEach(() => {
+  installLocalStorageStub()
+})
+```
+
+**Function Mocks:**
+```javascript
+// Create a mock function
+const mockFn = vi.fn()
+
+// Mock with return value
+const mockGetArray = vi.fn(() => [])
+
+// Mock with implementation
+const mockFn = vi.fn((x) => x * 2)
+
+// Assert mock was called
+expect(mockFn).toHaveBeenCalled()
+expect(mockFn).toHaveBeenCalledWith(expectedArg)
+expect(mockFn).toHaveBeenCalledTimes(3)
+
+// Clear mock state
+vi.clearAllMocks()
 ```
 
 **What to Mock:**
-- External I/O boundaries (`localStorage`, API calls, filesystem reads)
-- Date-dependent functions (mock `Date` if testing time-sensitive logic)
-- Complex dependencies if testing in isolation (e.g., mock a calculation function to test dependent logic)
+- Mutable module state (localStorage via `src/lib/storage.js`)
+- External dependencies (Firebase in `src/auth/firebaseClient.js`)
+- Dates/timers (where relevant)
+- Do NOT mock pure functions being tested
+- Do NOT mock test helpers/fixtures
 
 **What NOT to Mock:**
-- Pure functions (directly test with real inputs)
-- State transformations (use real data structures, test the transformation logic)
-- Core business logic (test integration, not mocks)
-- Design/presentation (Storybook tests handle visual verification)
-
-Example: `dailyPlanner.test.js` mocks `storage.js` but does NOT mock:
-- Date objects used as test fixtures (they're data, not behavior)
-- Weak point creation logic (core business logic tested directly)
-- Subject selection (interleaving logic tested with real state)
+- Pure logic functions being tested (e.g., `selectMainSubject`, `buildDailyPlan`)
+- Constants and registries (e.g., `MODULES`, `CONCEPTS`)
+- Helper functions that are simple wrappers
 
 ## Fixtures and Factories
 
 **Test Data:**
-
-Fixtures are immutable base structures with factory functions for variation:
-
 ```javascript
-const emptyState = {
-  scores: [],
-  wrongAnswers: [],
-  correctAnswers: [],
-  moduleStates: {},
-  rotationHistory: {},
-  progress: {},
-  weakPoints: [],
-}
+// Inline constant fixture (for small, single-use data)
+const MONDAY = new Date('2026-06-22')
 
-const defaultProfile = {
-  selectedSubjects: ['History', 'Biology', 'Sociology'],
-  weekdayMinutes: 60,
-  saturdayMinutes: 90,
-  sundayMinutes: 60,
-  name: 'Test User',
-}
-
+// Factory function (for reusable, customizable data)
 function makeWeakPoint(overrides = {}) {
   return {
     weakPointId: 'test_wp_1',
     subject: 'History',
     topic: 'germ_theory',
-    skillTag: null,
-    misconceptionTag: null,
-    errorType: null,
     severity: 'medium',
-    firstSeenAt: '2026-06-15',
-    lastSeenAt: '2026-06-20',
-    timesFailed: 3,
-    timesCorrectAfter: 0,
     status: 'new',
-    nextReviewAt: '2026-06-21',
-    ...overrides,
+    ...overrides,  // Allow caller to override any field
   }
 }
 
-// Usage in test:
-const state = { ...emptyState, weakPoints: [makeWeakPoint({ topic: 'algebra' })] }
+// Empty state fixture (baseline for mutations)
+const emptyState = {
+  scores: [],
+  wrongAnswers: [],
+  correctAnswers: [],
+  weakPoints: [],
+}
+
+// Usage in test
+const state = { ...emptyState, wrongAnswers: [{ ... }] }
+const wp = makeWeakPoint({ subject: 'Biology', timesFailed: 5 })
 ```
 
 **Location:**
-- Fixtures defined at top of test file alongside imports (module scope)
-- Reusable across multiple test suites within same file
-
-**Date Fixtures:**
-```javascript
-const MONDAY    = new Date('2026-06-22')  // day 1 of week
-const TUESDAY   = new Date('2026-06-23')  // day 2
-const SATURDAY  = new Date('2026-06-20')  // day 6
-const SUNDAY    = new Date('2026-06-21')  // day 0
-```
+- Fixtures defined at top of test file after imports
+- Factories defined before `describe()` blocks
+- No separate fixtures directory; keep fixtures with tests they support
 
 ## Coverage
 
-**Requirements:** Not enforced (no coverage threshold configured)
+**Requirements:** No explicit coverage thresholds enforced
 
 **View Coverage:**
 ```bash
-pnpm vitest -- --coverage
+npm run test -- --coverage
 ```
+
+**Coverage Tool:** `@vitest/coverage-v8`
+
+**Current Status:** 
+- Architecture tests: ~30 assertions covering critical codebase patterns
+- Unit tests: ~1000+ assertions covering pure logic functions
+- Browser tests: Storybook stories (interaction validation only, not coverage metrics)
+- No minimum coverage threshold; focus on testing critical logic (planner, weakness tracking, learning graph)
 
 ## Test Types
 
 **Unit Tests:**
-- Scope: Pure functions with no external dependencies
-- Approach: Test input → output transformations
-- Example: `tests/unit/planner/dailyPlanner.test.js` tests `buildWeekdayBlocks()`, `selectMainSubject()`, `calculatePaperMistakeSeverity()` with mocked storage
-- Pattern: Given state + inputs → assert outputs match expected structure/values
+- **Scope:** Pure functions with mocked dependencies
+- **Approach:** Test input → output transformations
+- **Examples:**
+  - `buildDailyPlan()`: Given profile + state + date, verify block structure and duration math
+  - `selectMainSubject()`: Given selected subjects + history, verify rotation logic
+  - `getImprovements()`: Given score array, verify week-over-week calculation
+- **Strategy:** Comprehensive happy path + edge cases (boundary conditions, empty state, missing data)
 
 **Architecture Tests:**
-- Scope: Codebase boundaries and structural invariants (not business logic)
-- Approach: File system inspection, static analysis, metadata verification
-- Examples:
-  - `app-boundaries.test.js`: Verifies `src/App.jsx` imports `./app/LegacyApp.jsx` and feature files exist
-  - `storage-boundary.test.js`: Enforces only approved files access `localStorage` directly
-  - `module-metadata-integrity.test.js`: Validates metadata in `src/modules.js` matches full content in `src/modules/<subject>.js`
-  - `placeholder-module-safety.test.js`: Placeholder modules (screenCount === 0) cannot have been accidentally promoted
+- **Scope:** Codebase structure, module constraints, cross-cutting invariants
+- **Approach:** Read source files and validate patterns
+- **Examples:**
+  - Learning graph purity: verify no React imports in `src/data/learningGraph/`
+  - Concept registry uniqueness: verify all concept IDs are unique
+  - Module safety: verify placeholder modules have guards before opening
+- **Strategy:** Static analysis (regex, file I/O), no runtime execution
 
-**Storybook Browser Tests:**
-- Scope: Visual component rendering and interaction
-- Approach: Playwright browser automation against Storybook stories
-- Framework: `@storybook/addon-vitest` integration (runs stories as vitest browser tests)
-- Pattern: Vitest browser project executes stories, assertion library in browser context
-- Coverage: Accessibility checks via `@storybook/addon-a11y`, visual regression via Chromatic
-
-**E2E Tests:**
-- Framework: None configured (full app integration tested manually via `pnpm dev`)
+**Browser Tests (Storybook):**
+- **Scope:** Component interaction and visual validation
+- **Approach:** Playwright + Storybook addon; stories run as tests
+- **Framework:** `@storybook/addon-vitest` with `@vitest/browser-playwright`
+- **Strategy:** Stories provide render trees; addon runs stories in browser and verifies they render without error
 
 ## Common Patterns
 
 **Async Testing:**
 ```javascript
-// Vitest supports async test functions directly
-it('async function returns expected value', async () => {
-  const result = await someAsyncFunction()
-  expect(result).toBe('expected')
+// For async functions
+it('returns a user profile from Firebase', async () => {
+  const profile = await signInWithGoogle()
+  expect(profile).toEqual(mockAuthUser)
 })
 
-// Dynamic imports (common in this codebase):
-const { buildDailyPlan } = await import('../../../src/features/planner/dailyPlanner.js')
-// Import after mocks are hoisted to ensure mock is used, not real module
+// Wait for state updates (rarely needed; test logic, not timing)
+it('shows error after 2 failed attempts', () => {
+  choose(0)  // wrong answer
+  expect(showHint).toBe(true)
+  choose(1)  // still wrong
+  expect(isComplete).toBe(true)
+})
 ```
 
 **Error Testing:**
 ```javascript
-// Testing that errors are caught and handled gracefully
-it('storage read failure returns fallback', () => {
-  const mockGetObject = vi.fn(() => { throw new Error('storage') })
-  vi.mock('...', () => ({ getObject: mockGetObject }))
-  
-  // In the tested module, try-catch returns fallback
-  const result = safeGetProgress()
-  expect(result).toEqual({ streak: 0, topicProgress: {} })
-})
-```
-
-**State Immutability Testing:**
-```javascript
-it('does not mutate input state', () => {
-  const original = { ...emptyState }
-  const newState = applyPulseResultToLearningState(original, result)
-  
-  // Original unchanged
-  expect(original).toEqual(emptyState)
-  // New state has the change
-  expect(newState.weakPoints.length).toBeGreaterThan(original.weakPoints.length)
-})
-```
-
-**Storage Side Effect Testing:**
-```javascript
-it('DOES call setJson when options.persistRotation is true', () => {
-  buildDailyPlan(defaultProfile, emptyState, MONDAY, { persistRotation: true })
-  expect(mockSetJson).toHaveBeenCalled()
+// For functions that return fallback on error
+it('returns default state when storage read fails', () => {
+  mockGetObject.mockImplementation(() => {
+    throw new Error('Storage quota exceeded')
+  })
+  expect(getProgress()).toEqual(emptyState)
 })
 
-it('does NOT call setJson when options.persistRotation is absent', () => {
-  buildDailyPlan(defaultProfile, emptyState, MONDAY)
+// For validation/guards
+it('does not record score with invalid subject', () => {
+  recordScore({ subject: null, earned: 1, possible: 1 })
   expect(mockSetJson).not.toHaveBeenCalled()
 })
 ```
 
-**Boundary/Constraint Testing:**
+**Parameterized Testing:**
 ```javascript
-it('durations sum to 60', () => {
+// Test multiple inputs with same assertion
+const days = [MONDAY, TUESDAY, WEDNESDAY, FRIDAY, SATURDAY, SUNDAY]
+days.forEach(d => {
+  expect(getPlanningMode(d, {})).not.toBe('weekend')
+})
+
+// Or using table-driven approach
+[
+  { input: MONDAY, expected: 'weekday' },
+  { input: TUESDAY, expected: 'weekday' },
+  { input: SATURDAY, expected: 'saturday' },
+].forEach(({ input, expected }) => {
+  it(`returns "${expected}" for ${input}`, () => {
+    expect(getPlanningMode(input, {})).toBe(expected)
+  })
+})
+```
+
+**Mutation Testing:**
+```javascript
+// Verify side effects when function modifies shared state
+const state = { ...emptyState, weakPoints: [] }
+const newState = applyPulseResultToLearningState(state, result)
+expect(newState.weakPoints).toHaveLength(1)
+expect(newState.weakPoints[0].topic).toBe('germ_theory')
+
+// Verify original state is not mutated (functional approach)
+it('does not mutate the input state', () => {
+  const original = { ...emptyState }
+  const newState = applyPulseResultToLearningState(emptyState, result)
+  expect(emptyState).toEqual(original)
+  expect(newState).not.toBe(emptyState)
+})
+```
+
+**Property Testing:**
+```javascript
+// Verify mathematical properties hold across ranges
+it('durations sum to 60 for weekday blocks', () => {
   const blocks = buildWeekdayBlocks('History', 'Biology', emptyState, defaultProfile)
   const total = blocks.reduce((sum, b) => sum + b.duration, 0)
   expect(total).toBe(60)
 })
 
-it('unselected subjects never appear in generated plans', () => {
-  const profile = { ...defaultProfile, selectedSubjects: ['History', 'Sociology'] }
+// Verify set membership
+it('weekday plan only uses subjects from selectedSubjects', () => {
+  const profile = { ...defaultProfile, selectedSubjects: ['History', 'Biology'] }
   const plan = buildDailyPlan(profile, emptyState, MONDAY)
-  const forbidden = ['Biology', 'Maths', 'Chemistry']
-  plan.blocks.forEach(b => {
-    expect(forbidden).not.toContain(b.subject)
+  const usedSubjects = new Set(plan.blocks.map(b => b.subject))
+  usedSubjects.forEach(s => {
+    expect(['History', 'Biology']).toContain(s)
   })
 })
 ```
 
-## Test Organization by Scale
+## Best Practices
 
-### Architecture Tests (Lightweight)
-- Files: `tests/architecture/*.test.js` — run via `pnpm test:architecture`
-- Run in Node environment (no browser)
-- Fast (~<100ms each)
-- Verify codebase structure, not behavior
+**Do:**
+- ✓ Test behavior, not implementation
+- ✓ Use descriptive test names that read as sentences
+- ✓ Keep tests small and focused (one assertion per test is ideal; 2–3 is OK)
+- ✓ Use factory functions for reusable test data
+- ✓ Mock external dependencies (storage, Firebase)
+- ✓ Test edge cases (empty state, boundary values, off-by-one)
+- ✓ Clean up mocks in `beforeEach()`
 
-### Unit Tests (Medium)
-- Files: `tests/unit/**/*.test.js`
-- Pure functions tested in Node environment
-- Mocks for I/O boundaries (storage, dates)
-- Slower than architecture (~100-500ms per suite)
-- Example: `dailyPlanner.test.js` has 1106 lines, 100+ individual tests
+**Don't:**
+- ✗ Test implementation details (how function works internally)
+- ✗ Use hardcoded magic numbers without context
+- ✗ Create snapshots of complex objects (no snapshot tests in use)
+- ✗ Test private/internal functions directly
+- ✗ Mock everything (mock only external dependencies, not pure functions)
+- ✗ Skip async/await; properly await async operations
+- ✗ Leave test data files across test runs; use `beforeEach` cleanup
 
-### Browser/Storybook Tests (Heavyweight)
-- Stories run in Playwright Chromium
-- Slowest (~5-20 seconds per story)
-- Integration with visual/accessibility checks
-- Run on demand (included in `pnpm test` but optional in workflow)
+## Storybook Stories
 
-## Key Files
+**File Pattern:**
+- Stories are `.stories.jsx` files placed alongside components
+- Example: `src/components/learning/QuoteAnalyser.jsx` → `src/components/learning/QuoteAnalyser.stories.jsx`
 
-**Test Configuration:**
-- `vitest.config.js`: Three test projects (architecture, unit, storybook)
-- `.storybook/main.js`: Storybook addon registration
-- `.storybook/preview.jsx`: Story runtime setup
+**Story Structure:**
+```javascript
+// Default export: component metadata
+export default {
+  component: QuoteAnalyser,
+  tags: ['ai-generated'],  // Optional: tag stories for filtering
+  parameters: {
+    layout: 'fullscreen',
+    viewport: { defaultViewport: 'mobile1' },
+  },
+}
 
-**Test Utilities:**
-- No shared test utilities/helpers file (each test file self-contained)
-- Fixtures and factories defined per test file
+// Named exports: story variants
+export const MacbethQuote = {
+  args: {
+    block: MACBETH_BLOCK,
+    subject: 'English',
+    onContinue: () => console.log('continue'),
+  },
+}
 
-**Coverage Gaps:**
-- No tests for React components (only Storybook stories)
-- No tests for UI interactions beyond Storybook
-- No API integration tests
-- No end-to-end browser automation tests beyond Storybook
+export const ShakespeareQuote = {
+  args: { ... },
+}
+```
+
+**Story Naming:**
+- Export name uses PascalCase (e.g., `MacbethQuote`, `DefaultBehavior`)
+- Multiple variants per component allowed
+
+## Running Tests During Development
+
+```bash
+# Run all tests once
+npm run test
+
+# Run architecture tests only
+npm run test:architecture
+
+# Run specific test file
+npm run test -- tests/unit/planner/dailyPlanner.test.js
+
+# Watch mode (re-run on file change)
+npm run test -- --watch
+
+# Debug a single test
+npm run test -- --inspect-brk tests/unit/auth/authService.test.js
+
+# Generate coverage report
+npm run test -- --coverage
+```
 
 ---
 
-*Testing analysis: 2026-06-22*
+*Testing analysis: 2026-07-09*

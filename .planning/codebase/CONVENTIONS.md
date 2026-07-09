@@ -1,226 +1,192 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-06-22
+**Analysis Date:** 2026-07-09
 
 ## Naming Patterns
 
 **Files:**
-- React components: PascalCase (e.g., `CinematicCarousel.jsx`, `AnswerInteraction.jsx`)
-- Utility/helper modules: camelCase (e.g., `dailyPlanner.js`, `moduleNavigation.js`, `storage.js`)
-- Constants modules: camelCase (e.g., `spacing.js`, `motion.js`, `buttons.js`)
-- Test files: `{filename}.test.js` (e.g., `dailyPlanner.test.js`)
+- React components: PascalCase (e.g., `AnswerInteraction.jsx`, `BackButton.jsx`, `CircularTimer.jsx`)
+- Stories: Same name as component with `.stories.jsx` suffix (e.g., `KeyPoint.stories.jsx`)
+- Utilities/helpers: camelCase (e.g., `progress.js`, `storage.js`)
+- Tests: Descriptive with `.test.js` suffix in matching hierarchy (e.g., `src/components/core/` → `tests/unit/*/`)
 
 **Functions:**
-- Regular functions: camelCase (e.g., `recordActivity()`, `buildWeekdayBlocks()`, `normalisePulseDuration()`)
-- React component functions: PascalCase (e.g., `function AnswerInteraction({ ... })`)
-- Event handlers: prefix with action verb in camelCase (e.g., `handleMissedDay()`, `selectMainSubject()`)
-- Helper functions prefixed by action: `get*()`, `set*()`, `calculate*()`, `select*()`, `build*()`, `apply*()`, `create*()`, `classify*()`
+- Regular functions: camelCase and descriptive (e.g., `recordScore`, `getProgress`, `buildDailyPlan`, `selectMainSubject`)
+- React components: PascalCase (e.g., `CheckIcon`, `AnswerInteraction`)
+- Callbacks: prefixed with `on` (e.g., `onComplete`, `onAnswered`, `onContinue`)
+- Helper/internal functions: camelCase with leading underscore for "private" helpers (rare, prefer static functions in modules)
+- Getter/finder functions: `get*` or `find*` (e.g., `getProgress`, `findTaggedScreen`)
 
 **Variables:**
-- Constants (module-level): SCREAMING_SNAKE_CASE (e.g., `KEY`, `SCORES_KEY`, `MASTERY_ERROR_RATE_MAX`)
-- Local constants inside functions: camelCase (e.g., `emptyState`, `defaultProfile`)
-- State variables: camelCase (e.g., `selected`, `shakeIdx`, `attempts`, `isComplete`)
-- Arrays/collections: plural camelCase (e.g., `blocks`, `items`, `weakPoints`, `selectedSubjects`)
-- Maps/lookups: camelCase or descriptive (e.g., `subjectLookup`, `subjectBoosts`)
-- Booleans: prefix with is/has (e.g., `isComplete`, `hasMetadata`, `allViewed`)
+- Local state: camelCase (e.g., `selected`, `showHint`, `isComplete`)
+- Boolean flags: `is*` or `has*` or `can*` prefix (e.g., `isComplete`, `hasError`, `canSubmit`)
+- Constants in module scope: SCREAMING_SNAKE_CASE (e.g., `KEY`, `SCORES_KEY`, `WEAK_THRESHOLD`)
+- Constants that are objects/data structures: SCREAMING_SNAKE_CASE (e.g., `MODULES`, `SUBJECTS`, `SPACING`)
+- Temporary loop variables: Single letter acceptable only in reduce/map (otherwise spell out)
 
 **Types & Objects:**
-- Object keys in data structures: camelCase (e.g., `timesFailed`, `firstSeenAt`, `questionId`)
-- Enum/const object keys: SCREAMING_SNAKE_CASE when representing states (e.g., `'WEAK_POINT_INJECTION'`, `'INTERLEAVE_CROSS_SUBJECT'`)
-- Subject names: PascalCase (e.g., 'History', 'Biology', 'Maths', 'Chemistry', 'Sociology')
-- Topic/skill identifiers: snake_case or simple identifiers (e.g., `'germ_theory'`, `'fractions'`, `'cell_division'`)
+- Concept IDs: kebab-case with colons as namespace separators (e.g., `history:medicine:galen`, `bio:cell_division`)
+- Subject names: PascalCase (e.g., `History`, `Biology`, `Maths`, `Chemistry`)
+- Tag namespaces: kebab-case (e.g., `skill:*`, `misconception:*`)
+- Data fixture objects: SCREAMING_SNAKE_CASE (e.g., `MACBETH_BLOCK`, `mockAuthUser`)
 
 ## Code Style
 
 **Formatting:**
-- No dedicated Prettier config file; linting via ESLint handles style
-- Import/export statements with clean grouping by category
-- Lines typically kept under 100 characters for readability
-- Consistent spacing with design tokens (via SPACING, MOTION, RADII constants)
+- No explicit Prettier configuration present; follows ESLint flat config recommendations
+- Indentation: 2 spaces (consistent across codebase)
+- Line length: No hard limit enforced, but keep under ~100 chars for readability
+- Semicolons: Explicit semicolons required (enforced by ESLint)
+- Quotes: Double quotes in JSX string attributes; single quotes in JS strings (standard Prettier defaults)
 
 **Linting:**
-- ESLint with React and React Hooks plugins (`eslint.config.js`)
-- Custom rule: `no-hardcoded-design-tokens` warns against hardcoded spacing/motion values
-- Empty `catch {}` blocks intentionally allowed (silent storage failures are an established pattern)
-- Unused variable warning with pattern `_` prefix ignored (e.g., `const _ = value`)
-- No PropTypes required — all props used without type checking
+- Tool: ESLint 9.39.4 (flat config format in `eslint.config.js`)
+- Key rules enforced:
+  - `react-hooks/rules-of-hooks`: error (React Hooks rules must be followed)
+  - `react-hooks/exhaustive-deps`: warn (dependency arrays should be complete)
+  - `no-unused-vars`: warn (unused variables flagged, `_`-prefixed ones ignored)
+  - `no-empty`: error (except intentional `catch {}` for silent storage failures)
+  - `react/prop-types`: off (PropTypes not used; TypeScript not in codebase)
+  - `react/no-unescaped-entities`: off (JSX content is educational text, not HTML entities)
+  - `jsx-a11y/click-events-have-key-events`: off (Cinematic full-screen `onClick` divs are intentional)
+  - `jsx-a11y/no-static-element-interactions`: off (Same as above)
+  - `custom-rules/no-hardcoded-design-tokens`: warn (Custom rule in `eslint-rules/no-hardcoded-design-tokens.js`)
 
-**Ignores/Exemptions:**
-- `react/no-unescaped-entities`: Off — natural-language educational text content doesn't need HTML entity escaping
-- `react/prop-types`: Off — component props not type-checked via PropTypes
-- `jsx-a11y/click-events-have-key-events`, `jsx-a11y/no-static-element-interactions`: Off — cinematic full-screen `onClick` divs are the primary interaction pattern, not buttons
+**Custom ESLint Rule:**
+- Rule: `no-hardcoded-design-tokens` (warns on hardcoded font sizes, spacing, button heights)
+- Hardcoded values forbidden (examples):
+  - Font sizes: `fontSize: '24px'` → use `sectionHeading()` or `TYPE.sectionTitle`
+  - Button heights: `height: '56px'` → use `BUTTONS.secondary.height`
+  - Spacing: `padding: '16px'` → use `SPACING.md`
+- All design tokens must come from `src/constants/` files
 
 ## Import Organization
 
 **Order:**
-1. React imports (React, hooks like `useState`, `useEffect`)
-2. Radix UI or third-party component imports
-3. Internal feature/app imports (features, pages, layouts)
-4. Internal component imports (from `src/components/`)
-5. Constants imports (from `src/constants/`)
-6. Utility/helper imports (from `src/lib/`, `src/data/`, etc.)
-7. Type/data structure imports (if any)
-
-**Example from `src/app/LegacyApp.jsx`:**
-```javascript
-import { useEffect, useRef, useState, lazy, Suspense } from 'react'
-import { useAuth } from '../auth/AuthContext.jsx'
-import { getProgress, recordActivity, getModuleState as safeGetModuleState } from '../progress.js'
-import { buildChapterCompletePayload, prepareModuleScreenState, resolveTaskDestination } from './moduleNavigation.js'
-import TestTab, { readQfBest } from '../features/quickfire/QuickFire.jsx'
-import Home from '../features/home/Home.jsx'
-// ... then lazy imports
-const ModulePlayer = lazy(() => import('../components/layout/ModulePlayer.jsx'))
-```
+1. React & library imports (e.g., `import { useState } from 'react'`)
+2. Sibling and parent imports from project (e.g., `from '../../progress.js'`)
+3. Constants imports (e.g., `from '../../constants/typography.js'`)
+4. Component imports (e.g., `from '../../components/...'`)
+5. No separate CSS imports (styles via constants and inline style objects)
 
 **Path Aliases:**
-- Relative imports use `./` and `../` throughout
-- No path aliases configured (no `@/`, `~`, etc.)
-
-**Constants Module Imports:**
-- Always import from canonical locations: `src/constants/{domain}.js`
-- Common pattern: `import { SPACING } from '../../constants/spacing.js'`
-- Never redefine locally; use spread syntax for multi-property objects (e.g., `...TYPE.hero`)
+- No path aliases configured; all imports use relative paths (`../../`)
+- Public assets accessed via `/public/` root path in `<img>` tags
 
 ## Error Handling
 
 **Patterns:**
-- Empty `catch {}` blocks intentionally used for silent storage read/write failures (`src/lib/storage.js`)
-  - Pattern: try `localStorage.getItem()` → catch silently and return fallback
-  - Logged softly if critical: `console.warn('storage: failed to ...')`
-- Try-catch in critical paths before external calls:
-  - Example: `src/app/LegacyApp.jsx` wraps `getProgress()` in `safeGetProgress()` function
-  - Prevents UI crashes from corrupted stored data
-- Fallback values always provided:
-  - Empty arrays: `return getArray(key)` defaults to `[]`
-  - Empty objects: `return getObject(key)` defaults to `{}`
-  - Defensive merges: `{ ...defaultStructure, ...read(KEY) }`
-
-**Storage Layer Protection:**
-- Central boundary file: `src/lib/storage.js`
-- Only approved files access localStorage directly (enforced by architecture test)
-- All reads/writes wrapped in try-catch
-- Warnings logged on failure but never throw to UI
-
-**User-Facing Errors:**
-- No errors surfaced to user in normal operation
-- Silent degradation: missing data → fallback structure used
-- Logging via `console.warn()` for debugging
+- Silent `catch {}` blocks: Intentional pattern for localStorage read/write failures (see `src/lib/storage.js`)
+  - Catch block is empty by design (ESLint `no-empty` allows this via `allowEmptyCatch: true`)
+  - Fallback values returned for read operations (e.g., `return fallback`)
+  - Warning logged to console only for write failures (e.g., `console.warn('storage: failed...')`)
+- Early returns: Validate inputs at function start, return early if invalid
+  - Example: `if (!subject || possible === undefined) return` in `recordScore()`
+- Null coalescing for defaults: `data.streak = (data.streak || 0) + 1`
+- No explicit error classes or custom Error subclasses used; native try/catch only
+- No error logging to external service (cold start assumption: logging only via console)
 
 ## Logging
 
-**Framework:** Console (no external logging service)
+**Framework:** `console` (no external logging framework)
 
 **Patterns:**
-- Informational logs via `console.warn()` for recoverable issues
-- Example: `console.warn('storage: failed to write "key"')`
-- No `console.log()` in production code (use only during debugging)
-- Debug statements removed before commit
-
-**When to Log:**
-- Storage failures (catchable but notable)
-- Feature flag boundaries (when testing different modes)
-- Development warnings from ESLint config
+- `console.warn()` for recoverable errors (storage write failures, missing data)
+- `console.log()` rare; used only in stories/storybook for demonstration (e.g., `onContinue: () => console.log('continue')`)
+- No `console.error()` calls observed; errors either silently fail or are fatal
+- No structured logging; simple message strings only
 
 ## Comments
 
 **When to Comment:**
-- Architectural decisions (why the codebase is structured this way)
-- Non-obvious algorithms or complex logic
-- Boundary explanations (e.g., "empty catch blocks are intentional")
-- Section headers using separator lines: `// ─── Section Name ────────────────`
+- Header comment above locked/critical components explaining rules and invariants
+  - Example: `// ── AnswerInteraction v1 — LOCKED COMPONENT ────────────────────────────────────`
+- Section separators using `─────` visual dividers for major code sections
+  - Example: `// ─── Core progress store ───────────────────────────────────────────`
+- Inline comments explaining *why*, not *what* the code does
+  - Example: `// Keep last 200 entries — enough for meaningful improvement calculations`
+- JSDoc-style comments above functions describing parameters and return values
+  - Use sparingly; codebase does not enforce JSDoc format
 
-**JSDoc/TSDoc:**
-- Minimal use; no enforced convention
-- Found in pure functions with complex signatures:
-  - Example in `src/unifiedWeaknessTracker.js`: documents `logWrongAnswer()` with param object shape
-- Format: `@param`, `@returns` tags where helpful
-
-**Example Header Comment:**
+**Pattern:**
 ```javascript
-// ─── AnswerInteraction v1 — LOCKED COMPONENT ────────────────────────────────
-// Reusable answer submission and feedback component for all non-timed learning activities.
-// Supports: MCQ, short/long free text, fill-in-the-blanks, connection questions.
-// Owns: input/options, submission, attempt count, checking state, hint display.
-// Does not own: question title, module toolbar, progress header, navigation.
+// ─── Section Name ─────────────────────────────────────────
+
+/**
+ * Descriptive function purpose
+ * @param {Type} paramName - what it does
+ * @returns {Type} what is returned
+ */
+export function functionName(paramName) {
+  // Implementation
+}
 ```
 
 ## Function Design
 
-**Size:**
-- Component functions: typically 50–150 lines (some reach 200+ for complex orchestration)
-- Pure helper functions: aim for <50 lines where possible
-- Exception: `dailyPlanner.js` contains complex multi-step functions up to 100+ lines justified by logical cohesion
+**Size:** 
+- Prefer short, single-responsibility functions (typical range: 10–50 lines)
+- Complex planner logic split into many small functions (100+ total lines for `dailyPlanner.js`, but each function 20–40 lines)
+- React components: typically 100–200 lines (logic + JSX)
 
 **Parameters:**
-- React components: destructure props (e.g., `{ block, onAnswered, onComplete, subject, mode = 'learning' }`)
-- Utility functions: accept objects when >3 params needed (e.g., `createOrUpdateWeakPoint(state, result)`)
-- Default parameters used for optional values (e.g., `subject = 'Biology'`)
+- Max 4–5 positional parameters; use object destructuring for optional or complex parameters
+  - Example: `buildDailyPlan(profile, state, date, { persistRotation } = {})`
+- Callbacks as props: use `on*` naming convention
+- Config/options objects: passed as final parameter, optional with default `{}`
 
 **Return Values:**
-- Components: always return JSX or null
-- Utilities: return new objects/arrays (immutable), never mutate inputs
-- Queries return data; state mutations return new state
-- Example: `const newState = applyPulseResultToLearningState(state, result)`
+- Functions return what they compute; side effects via callbacks or module-level writes
+- Array-returning functions: return empty array `[]` if no results (not `null`)
+- Object-returning functions: return empty object `{}` if no data (not `null`)
+- Boolean predicates: return `true`/`false`, never truthy/falsy
+- Null: returned only when absence of data is meaningful (e.g., `getConcept('unknown') returns null`)
 
 ## Module Design
 
 **Exports:**
-- Default export for single primary component:
-  ```javascript
-  export default function CinematicCarousel({ block, subject, onContinue }) { ... }
-  ```
-- Named exports for utilities:
-  ```javascript
-  export function buildWeekdayBlocks(...) { ... }
-  export function buildSaturdayBlocks(...) { ... }
-  export const PULSE_DURATIONS = [...]
-  ```
+- Named exports for utilities (`export function functionName()`)
+- Default export for React components (`export default function ComponentName()`)
+- No mixed default + named exports on same file
+- Constants exported as named exports (`export const KEY = 'key'`)
 
 **Barrel Files:**
-- Not used; each module explicitly imports what it needs
-- `src/modules.js` holds only metadata; full content in `src/modules/<subject>.js`
-- `src/App.jsx` minimal wrapper; main app in `src/app/LegacyApp.jsx`
+- No barrel index files (e.g., no `src/components/index.js`)
+- Each component imported directly: `from '../../components/core/BackButton.jsx'`
 
-**Module Organization:**
-- One component per file (rare exceptions for nested inline components)
-- Utilities grouped by domain in single files
-- Data files named by subject (`history.js`, `biology.js`, `maths.js`, etc.)
-- Constants files by domain (`spacing.js`, `motion.js`, `buttons.js`, `subjects.js`, `typography.js`, `radii.js`)
+**Module Scope Patterns:**
+- Storage is accessed via `src/lib/storage.js` — no direct `localStorage` calls in other modules
+  - Exception: tests that stub localStorage (e.g., `installLocalStorageStub()`)
+- Learning graph is pure: no React, no localStorage, no circular imports within `src/data/learningGraph/`
+  - Enforced by architecture tests in `tests/architecture/learning-graph.test.js`
+- Feature modules are isolated: all state passed as parameters, side effects explicit
 
-## Design Tokens & Constants
+## State Management
 
-**Never hardcode:**
-- Spacing values (use `SPACING` from `src/constants/spacing.js`)
-- Animation durations (use `MOTION` from `src/constants/motion.js`)
-- Button dimensions (use `BUTTONS` from `src/constants/buttons.js`)
-- Typography scales (use `TYPE` from `src/constants/typography.js`)
-- Corner radii (use `RADII` from `src/constants/radii.js`)
-- Subject colours (import `SUBJECTS` or `SUBJECT_ACCENTS` from `src/constants/subjects.js`)
+**React Components:**
+- `useState` only (no Redux, Context, Zustand, etc.)
+- State lifted to parent when sharing between siblings
+- Props drilled as needed (no prop drilling library used)
 
-**Custom rule enforcement:**
-- ESLint rule `custom-rules/no-hardcoded-design-tokens` warns when magic numbers appear in style contexts
-- Refactor violations into token usage
+**Module State:**
+- Pure functions preferred; state passed as parameters
+- Module-level data (constants, registries) are immutable and read-only
+- Mutable state goes through `src/lib/storage.js` only (localStorage wrapper)
 
-## Async & Promises
+## Naming Conventions Summary Table
 
-**Pattern:**
-- React state updates for async operations:
-  ```javascript
-  const [loading, setLoading] = useState(false)
-  useEffect(() => {
-    // dynamic import on mount
-  }, [])
-  ```
-- Dynamic imports wrapped in lazy + Suspense:
-  ```javascript
-  const ModulePlayer = lazy(() => import('../components/layout/ModulePlayer.jsx'))
-  <Suspense fallback={<ModuleLoadingScreen />}>
-    <ModulePlayer />
-  </Suspense>
-  ```
-- No explicit Promise chaining; hooks handle async lifecycle
+| Type | Pattern | Example |
+|------|---------|---------|
+| React component | PascalCase | `AnswerInteraction`, `BackButton` |
+| Function | camelCase | `recordScore`, `getProgress` |
+| Callback prop | `on` + PascalCase | `onComplete`, `onAnswered` |
+| Constant | SCREAMING_SNAKE_CASE | `KEY`, `SPACING`, `MODULES` |
+| File (component) | PascalCase | `AnswerInteraction.jsx` |
+| File (utility) | camelCase | `progress.js`, `storage.js` |
+| Boolean variable | `is`/`has`/`can` prefix | `isComplete`, `hasError` |
+| Subject name | PascalCase | `History`, `Biology`, `Maths` |
+| Concept tag | `subject:course:concept` | `history:medicine:galen` |
 
 ---
 
-*Convention analysis: 2026-06-22*
+*Convention analysis: 2026-07-09*

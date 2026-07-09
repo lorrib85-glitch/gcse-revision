@@ -1,103 +1,145 @@
 # External Integrations
 
-**Analysis Date:** 2026-06-22
+**Analysis Date:** 2026-07-09
 
 ## APIs & External Services
 
-**Anthropic Claude API:**
-- **Models Used:**
-  - `claude-sonnet-4-5-20250929` — Exam grading (high reasoning power for mark scheme interpretation)
-  - `claude-haiku-4-5-20251001` — Recall assessment (cost-optimized for concept scoring)
-- **Endpoints:**
-  - `/api/grade` — Posts exam question, answer, marks, mark scheme; receives structured marking feedback
-  - `/api/recall` — Posts student recall answer and concept list; receives per-concept scores (0.0–1.0)
-  - `/api/examRoundDebrief` — Posts all answers from an exam round; receives cross-cutting pattern analysis and debrief
-  - `/api/guidedExamResponse` — Posts guided answer coaching context; receives scaffolded exam technique walkthrough
-- **Auth:** `ANTHROPIC_API_KEY` environment variable (set via Vercel secrets)
-- **Request Format:** JSON with Content-Type header
-- **Response Format:** Structured JSON (models instructed to respond ONLY in specified JSON schemas)
-- **Fallback:** Local keyword-based scoring if API unavailable (see `src/lib/storage.js` and `/api/recall.js` fallback logic)
+**AI Grading & Feedback:**
+- Claude AI (Anthropic) — Exam answer grading and feedback
+  - SDK/Client: Direct HTTPS to `https://api.anthropic.com/v1/messages`
+  - Model: `claude-sonnet-4-5-20250929`
+  - Auth: `ANTHROPIC_API_KEY` environment variable (server-side, Vercel secrets)
+  - Used by: `api/grade.js`, `api/recall.js`, `api/examiner.js`, `api/guidedExamResponse.js`, `api/examRoundDebrief.js`
+
+**Font Delivery:**
+- Google Fonts API — CSS font libraries
+  - Fonts: Manrope, Sora, Outfit, Inter, Space Grotesk, Caveat, IBM Plex Serif
+  - Delivery: `<link>` tags in `index.html` (preconnect to fonts.googleapis.com, fonts.gstatic.com)
+  - No authentication required
 
 ## Data Storage
 
-**Databases:**
-- **None configured** — Application is data-light by design
+**Authentication & User Identity:**
+- Firebase Authentication
+  - Provider: Google OAuth 2.0 via `signInWithPopup`
+  - SDK: `firebase` v12.15.0
+  - Implementation: `src/auth/firebaseClient.js` (init), `src/auth/authService.js` (sign-in/sign-out)
+  - Environment config: `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_APP_ID`
+  - Local fallback: Missing Firebase config does not crash the app; Google sign-in becomes unavailable
 
-**Client-Side Persistence:**
-- `localStorage` only — all learner data stored in browser
-- Keys managed via `src/lib/storage.js`:
-  - User profile: `riseUser` (auth context)
-  - Progress tracking: various keys read/written by `src/progress.js`
-  - Weakness tracking: keys managed by `src/unifiedWeaknessTracker.js`
-  - Learning plans: keys managed by `src/features/planner/dailyPlanner.js`
-  - Session drafts, quiz state, exam results
+**Databases:**
+- Firestore (Firebase Cloud Database)
+  - Type: NoSQL document store
+  - Connection: `firebase/firestore` (dynamically imported on demand)
+  - Client: Firebase SDK native API (getFirestore, doc, getDoc, setDoc)
+  - Data model: Single user progress document at `users/{uid}/progress/main`
+  - Schema:
+    ```javascript
+    {
+      version: 1,
+      updatedAt: <milliseconds>,
+      data: {
+        riseUser: <user profile>,
+        gcse_scores: <object>,
+        gcse_wrong_answers: <object>,
+        gcse_correct_answers: <object>,
+        gcse_exam_techniques: <object>,
+        gcse_coach_type_results: <object>,
+        gcse_progress: <object>,
+        gcse_planner_rotation: <object>,
+        gcse_planner_prefs: <object>,
+        gcse_planner_weakpoints: <object>,
+        gcse_planner_paper_results: <object>,
+        gcse_mastery_v1: <object>,
+        gcse_quickfire_memory_v1: <object>,
+        gcse_qf_q_history: <object>,
+        gcse_qf_prev_session: <object>,
+        gcse_qf_best: <object>,
+        gcse_todays_plan_revisit: <object>,
+        gcse_module_*: <per-module state>
+      }
+    }
+    ```
+  - Backup strategy: Cloud Firestore acts as secondary backup; localStorage is runtime source of truth
+  - Sync trigger: App load + visibility change + account linking
+  - Sync scope: Google-authenticated users only; guest users never sync
 
 **File Storage:**
-- **Public assets only** — no user uploads
-- Static files served from `/public/` (images, SVG, logos, header images, figures)
-- Module content (lessons, questions) baked into JavaScript bundles
+- Local filesystem only
+  - Uses browser localStorage API for persistent client-side state
+  - Managed via `src/lib/storage.js` (abstraction layer)
+  - No remote file/blob storage (images/PDFs served as static assets from `/public/`)
 
 **Caching:**
-- Browser HTTP caching via standard headers (Vite dev server + Vercel CDN in production)
-- No explicit cache layer; no Redis, Memcached
+- None detected
+  - Lazy loading via dynamic `import()` for large modules and exam question banks
+  - Code splitting at bundle level via Vite
 
 ## Authentication & Identity
 
 **Auth Provider:**
-- **Custom** (mock in development; Firebase ready for production)
+- Google OAuth 2.0 (Firebase Auth)
+  - Implementation: `signInWithPopup(auth, googleProvider)` → returns `{ uid, email, displayName, photoURL }`
+  - Storage: User profile cached in `localStorage.riseUser` (JSON)
+  - Session persistence: `getStoredUser()`, `storeUser(data)`, `clearUser()`
+  - Sign-out: `signOutGoogle()` (Firebase + localStorage clear)
+  - Fallback: No auth required; app works for guest users (unsynced localStorage state)
 
-**Implementation:**
-- `src/auth/AuthContext.jsx` — Context-based user state management
-- `src/auth/authService.js` — Pluggable auth service layer
-- Current: Mock Google OAuth flow (700ms simulated delay; no real auth backend)
-- Stored in localStorage as `riseUser` object with fields: `loggedIn`, `name`, `onboardingComplete`, `createdAt`
-- Future: Firebase drop-in replacement supported (commented in `authService.js`)
-
-**No External Identity Providers in Use:**
-- Google OAuth flow is stubbed out
-- No Supabase, Auth0, or similar integration
-- No session/JWT backend
+**User Profile Data:**
+- Stored locally in localStorage under key `riseUser`
+- Synced to Firestore only for Google-authenticated users
+- Schema:
+  ```javascript
+  {
+    uid: <string>,
+    email: <string>,
+    displayName: <string>,
+    photoURL: <string>,
+    provider: 'google'
+  }
+  ```
 
 ## Monitoring & Observability
 
 **Error Tracking:**
-- **None configured** — No Sentry, LogRocket, or similar
-- Client-side error boundary in `src/main.jsx` displays error messages
+- None detected
+- App includes basic error boundary in `src/main.jsx` for React component errors + chunk load failures
+- No external error reporting (Sentry, Rollbar, etc.)
 
 **Logs:**
-- **Console logging only** — `console.log()` for API debugging
-- Vercel Edge Function logs available in deployment dashboard
-- No centralized logging service
-
-**User Analytics:**
-- **None detected** — No Google Analytics, Mixpanel, or equivalent
-- No event tracking beyond localStorage progress snapshots
+- Browser console only
+- No centralized log aggregation
+- localStorage JSON blobs for progress/state tracking (application state, not diagnostic logs)
 
 ## CI/CD & Deployment
 
 **Hosting:**
-- Vercel (inferred from `vercel.json` and Edge Function routing)
-
-**Deployment Flow:**
-- Git push to repository → Vercel auto-build triggered
-- Build: `vite build` → `/dist` output
-- Static file serving + Edge Function routing for `/api/*`
+- Vercel — Frontend + Edge Functions
+- Deployment: `vercel.json` config
+  - Build command: `vite build`
+  - Output directory: `dist/`
+  - Framework: Vite
+  - Rewrites: `/api/*` → serverless functions; `/*` → `index.html` (SPA routing)
 
 **CI Pipeline:**
-- **None detected** — No GitHub Actions, CircleCI, or Jenkins config
-- Vercel handles build/test/deploy automatically on push
+- GitHub Actions (inferred from `.github/` directory presence)
+- Build steps: npm/pnpm install → lint → test:architecture → build
+  - Command: `pnpm verify` (runs lint + test:architecture + build)
+- No explicit coverage threshold detected
 
-## Environment Configuration
+## API Endpoints
 
-**Required env vars at runtime:**
-- `ANTHROPIC_API_KEY` — Anthropic API key for grading, recall, debrief, coaching endpoints
+**Internal (Vercel Edge Functions):**
 
-**Optional env vars:**
-- None explicitly used in source code
+| Endpoint | Purpose | Auth | Model |
+|----------|---------|------|-------|
+| `POST /api/grade` | Exam question grading + feedback | Public | Claude Sonnet 4.5 |
+| `POST /api/recall` | Free-text recall scoring + concept tracking | Public | Claude Sonnet 4.5 |
+| `POST /api/examiner` | Exam technique scaffolding + feedback | Public | Claude Sonnet 4.5 |
+| `POST /api/guidedExamResponse` | Guided exam response coaching | Public | Claude Sonnet 4.5 |
+| `POST /api/examRoundDebrief` | End-of-round synthesis + pattern logging | Public | Claude Sonnet 4.5 |
 
-**Secrets location:**
-- Vercel project settings → Environment Variables (secrets not checked into git)
-- No `.env` file in repo
+All API endpoints expect JSON POST requests and return JSON responses. No API key validation on client side (client-side secrets are not used; `ANTHROPIC_API_KEY` is server-side only).
 
 ## Webhooks & Callbacks
 
@@ -106,55 +148,55 @@
 
 **Outgoing:**
 - None detected
+- Progress sync is pull-based (app loads from Firestore, reconciles with localStorage, then pushes back)
+- No event streaming or pub/sub integrations
 
-## External Fonts & Assets
+## Environment Configuration
 
-**Fonts Loaded from Google Fonts (via CDN):**
-- Manrope (wght 400–800) — Display headings and cinematic type
-- Sora (wght 400–800) — All UI body text, buttons, labels
-- Outfit (wght 400–800) — Available but not currently used
-- Inter (wght 400–800) — Available but not currently used
-- Space Grotesk (wght 600–800) — Available but not currently used
-- IBM Plex Serif (wght 400–500, italic) — Available but not currently used
-- Caveat (wght 400–700) — Available but not currently used
+**Required Client-Side env vars (Vite):**
+```
+VITE_FIREBASE_API_KEY=<public Firebase API key>
+VITE_FIREBASE_AUTH_DOMAIN=<Firebase auth domain>
+VITE_FIREBASE_PROJECT_ID=<Firebase project ID>
+VITE_FIREBASE_APP_ID=<Firebase app ID>
+```
 
-**Icon Library:**
-- lucide-react — SVG icons (no external image requests for icons)
+**Required Server-Side env vars (Vercel secrets):**
+```
+ANTHROPIC_API_KEY=<Claude API key>
+```
 
-**Images:**
-- Static images in `/public/` served via HTTP from Vercel CDN
-- Subject theme header images (e.g., `history-medicine-through-time.png`, `bio-main.png`)
-- Biology diagrams (e.g., `/public/figures/`)
-- Module-specific screens and content imagery
+**Secrets location:**
+- Client: Environment variables in `.env.local` (never committed; read by Vite at build time)
+- Server: Vercel environment settings (dashboard or CLI)
 
-## Third-Party Code & Frameworks
+**Optional/Feature Flags:**
+- `VITE_STORYBOOK_CONFIG_DIR` (internal, for Storybook integration)
+- No feature flags for API integrations detected
 
-**UI Component Libraries:**
-- Radix UI (dialog, dropdown, label, slot, toast) — Headless, unstyled primitives
-- Lucide React — Icon set
-- Tailwind CSS — Utility-first styling
+## Security & Data Handling
 
-**Animation & Motion:**
-- Motion library — Keyframe and gesture-based animations
+**Firebase Security:**
+- Firestore security rules (`firestore.rules`):
+  - Authenticated users can read/write only their own `users/{uid}/progress/{docId}` documents
+  - All other paths deny by default
+  - Enforced via `request.auth.uid == userId` check
 
-**Code Organization:**
-- class-variance-authority — Type-safe component variant definitions
-- clsx — Conditional class composition
-- tailwind-merge — Smart Tailwind class merging
+**Progress Sync Conflict Resolution:**
+- Cloud backup is secondary; local state is authoritative
+- Sync decision logic in `src/data/progressSync/progressSync.js`:
+  - No cloud doc → upload local
+  - Cloud meaningful + local empty → apply (restore)
+  - Local meaningful + cloud empty → upload (never wipe richer state with empty)
+  - Both meaningful → newer wins (cloud only if updated since last sync on this device)
+- Snapshot version: 1 (enables future migrations)
 
-## Absence of Common Integrations
-
-**Not in use:**
-- No database (Supabase, Firebase Firestore, MongoDB)
-- No email service (SendGrid, Mailgun, AWS SES)
-- No payment processing (Stripe, Paddle)
-- No SMS (Twilio)
-- No file upload service (AWS S3, Cloudinary)
-- No real-time collaboration (Replicache, WebSockets)
-- No feature flags (LaunchDarkly)
-- No form backend (Formspree, Basin)
-- No content management system (Contentful, Sanity, Strapi)
+**API Security:**
+- No client-side API key exposure
+- `ANTHROPIC_API_KEY` stored server-side in Vercel environment
+- Edge functions validate request method (POST only), return 405 otherwise
+- Input validation: Check for missing fields, empty answers before calling Claude
 
 ---
 
-*Integration audit: 2026-06-22*
+*Integration audit: 2026-07-09*

@@ -1,375 +1,510 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-06-22
+**Analysis Date:** 2026-07-09
 
 ## Directory Layout
 
 ```
 gcse-revision/
-├── src/                              # React source tree
-│   ├── main.jsx                      # Entry point: ErrorBoundary + AuthProvider + App
-│   ├── App.jsx                       # Tiny wrapper rendering LegacyApp
-│   ├── globals.css                   # Cinematic @layer classes (11KB)
-│   ├── styles.css                    # App-wide CSS and theme
+├── .planning/                  # Planning & documentation directory
+├── .claude/                    # Claude Code project config
+├── .github/                    # GitHub Actions workflows
+├── .storybook/                 # Storybook configuration
+├── .journey/                   # Project journey/milestones
+├── api/                        # API endpoints (Node.js functions)
+├── docs/                       # Product & system documentation
+├── eslint-rules/               # Custom ESLint rule plugins
+├── public/                     # Static assets (logos, headers, figures)
+│   ├── logo.png                # RISE teal logo
+│   ├── headers/                # Subject/module hero images
+│   ├── English/                # English-specific assets
+│   ├── figures/                # Chemistry/biology diagrams
+│   └── mystery-cube.png        # Locked module placeholder
+├── scripts/                    # Build and utility scripts
+├── src/                        # Source code (React + helpers)
+│   ├── App.jsx                 # Root component wrapper
+│   ├── modules.js              # Module metadata registry (all 30 lessons)
+│   ├── progress.js             # Progress tracking & streak logic
+│   ├── unifiedWeaknessTracker.js  # Weakness logging system
+│   ├── todaysPlan.js           # Daily revision planner
+│   ├── contentIndex.js         # Concept → module lookup
+│   ├── figures.js              # Figure/diagram asset paths
+│   ├── sociologyKeyTerms.js    # Sociology GCSE vocabulary
 │   │
-│   ├── app/                          # Shell layer — routing & state management
-│   │   ├── LegacyApp.jsx            # Main orchestrator: auth, tabs, overlays (420 lines)
-│   │   ├── BottomNav.jsx            # Fixed 5-tab bottom nav bar
-│   │   └── moduleNavigation.js       # Router helpers: buildChapterCompletePayload, resolveTaskDestination
+│   ├── app/                    # App shell & orchestration
+│   │   ├── LegacyApp.jsx       # MAIN: Auth gating, tab routing, overlays
+│   │   ├── BottomNav.jsx       # Fixed 5-tab navigation
+│   │   └── moduleNavigation.js # Screen routing helpers
 │   │
-│   ├── auth/                         # Authentication & user identity
-│   │   ├── AuthContext.jsx           # React Context: user, signInWithGoogle, completeOnboarding
-│   │   └── authService.js            # Auth service stub (Google OAuth placeholder)
+│   ├── auth/                   # Authentication
+│   │   ├── AuthContext.jsx     # Auth state provider
+│   │   ├── authService.js      # Login/logout, Google OAuth
+│   │   ├── firebaseClient.js   # Firebase initialization
+│   │   └── progressStatus.js   # Auth status helpers
 │   │
-│   ├── components/                   # Reusable UI & pedagogy — 62 .jsx files
-│   │   ├── core/                    # Foundation components
-│   │   │   ├── AnswerInteraction.jsx    # LOCKED. Universal answer logic (choice/connection/TF)
-│   │   │   ├── BackButton.jsx           # LOCKED. Only back button allowed
-│   │   │   ├── ExitButton.jsx           # LOCKED. Only exit button allowed
-│   │   │   ├── ContinueCTA.jsx          # LOCKED. Primary progression CTA
-│   │   │   ├── CinematicContinueCTA.jsx # LOCKED. Cinematic "Continue →" prompt
-│   │   │   ├── CardContainer.jsx        # LOCKED. Atmospheric content wrapper
-│   │   │   ├── LearningHeader.jsx       # Floating capsule header (Back + Exit + Progress)
-│   │   │   ├── LearningProgressHeader.jsx # LOCKED. Progress rail + jump sheet
-│   │   │   ├── ModuleToolbar.jsx        # LOCKED. Back/exit navigation only
-│   │   │   ├── SequenceProgress.jsx     # Progress dot rail (14 dots max)
-│   │   │   ├── ScreenText.jsx           # Reusable heading/body text components
-│   │   │   └── AnimatedNumber.jsx       # Animated numeric counter
+│   ├── components/             # All React components
+│   │   ├── core/               # Foundation components (nav, header, CTAs)
+│   │   │   ├── AnswerInteraction.jsx  # LOCKED: universal answer UI
+│   │   │   ├── BackButton.jsx         # LOCKED: only back navigation allowed
+│   │   │   ├── ContinueCTA.jsx        # LOCKED: primary progression CTA
+│   │   │   ├── ExitButton.jsx         # LOCKED: only exit navigation allowed
+│   │   │   ├── LearningHeader.jsx     # Floating capsule header + progress
+│   │   │   ├── LearningProgressHeader.jsx  # LOCKED: progress rail
+│   │   │   ├── KeyPoint.jsx           # Callout box for key concepts
+│   │   │   ├── WorkedExample.jsx      # Worked example wrapper
+│   │   │   ├── TeachScreenShell.jsx   # Teaching screen container
+│   │   │   ├── MediaPlaceholder.jsx   # Image/video placeholder
+│   │   │   ├── SequenceProgress.jsx   # Dot indicator for screen order
+│   │   │   ├── ScoreNumberLine.jsx    # Score visualization
+│   │   │   ├── CircularTimer.jsx      # Countdown timer
+│   │   │   ├── AnimatedNumber.jsx     # Number counter animation
+│   │   │   └── CardContainer.jsx      # Atmospheric content surface
 │   │   │
-│   │   ├── layout/                   # Module-level frame components
-│   │   │   ├── ModulePlayer.jsx      # Orchestrator: routes screen types, manages chapter flow (1200+ lines)
-│   │   │   ├── ChapterHookScreen.jsx # Chapter intro + true/false warm-up
-│   │   │   ├── ChapterOutcomeScreen.jsx # Chapter outcome reveal
-│   │   │   ├── ChapterCompleteScreen.jsx # End-of-chapter completion overlay
-│   │   │   ├── CinematicShell.jsx    # Layout wrapper for cinematic screens
-│   │   │   ├── ContentShell.jsx      # Layout wrapper for content blocks
-│   │   │   └── InteractionShell.jsx  # Layout wrapper for question interactions
+│   │   ├── layout/             # Module-level orchestration
+│   │   │   ├── ModulePlayer.jsx       # MAIN: In-module flow, screen routing
+│   │   │   ├── ChapterHookScreen.jsx  # Chapter intro with warm-up
+│   │   │   ├── ChapterCompleteScreen.jsx  # Chapter end screen
+│   │   │   ├── ChapterOutcomeScreen.jsx   # Learning outcomes reveal
+│   │   │   ├── ContentShell.jsx       # Content wrapper
+│   │   │   ├── InteractionShell.jsx   # Interaction wrapper
+│   │   │   ├── CinematicShell.jsx     # Cinematic rendering wrapper
+│   │   │   └── ScreenTextBlock.jsx    # Text content block
 │   │   │
-│   │   ├── feedback/                 # Question result handling
-│   │   │   ├── ExamQuestionFrame.jsx # Universal exam question + mark scheme reveal
-│   │   │   ├── ExamRoundDebrief.jsx  # End-of-round feedback; logs exam-technique patterns
-│   │   │   └── RetrievalFrame.jsx    # LOCKED. Cinematic wrapper for retrieval moments
+│   │   ├── learning/           # 40+ learning interaction components
+│   │   │   ├── QuickRecallScreen.jsx      # Rapid-fire retrieval
+│   │   │   ├── CinematicRevealMoment.jsx  # Video/image reveal
+│   │   │   ├── ConceptReveal.jsx          # Concept intro
+│   │   │   ├── ExplainReveal.jsx          # Step-by-step reasoning
+│   │   │   ├── TimelineChain.jsx          # Scroll-snap timeline
+│   │   │   ├── TimelineCanvas.jsx         # Pan-across timeline
+│   │   │   ├── MatchingTask.jsx           # Card-pair matching
+│   │   │   ├── EvacuationChainRoute.jsx   # Ordered chain activity
+│   │   │   ├── ColSortBlock.jsx           # Column categorization
+│   │   │   ├── SwipeSort.jsx              # Swipe gesture sorting
+│   │   │   ├── CircuitDiagram.jsx         # Physics circuit SVG
+│   │   │   ├── GraphView.jsx              # Embedded charts
+│   │   │   ├── MisconceptionCheck.jsx     # True/false trap
+│   │   │   ├── SpotTheError.jsx           # Error identification
+│   │   │   ├── FaceTheExaminer.jsx        # Written exam Q&A
+│   │   │   ├── GuidedExamResponse.jsx     # Guided answer scaffold
+│   │   │   ├── InteractiveHotspotImage.jsx # Tap-to-explore image
+│   │   │   ├── FillInTheBlanksBlock.jsx   # Inline blanks filling
+│   │   │   ├── KeyFigureReveal.jsx        # Portrait hero bio
+│   │   │   ├── GuidedChoiceCarousel.jsx   # Single-choice carousel
+│   │   │   ├── VisualNarrativeScreen.jsx  # Narrative beat screen
+│   │   │   ├── VisualLearning.jsx         # Scene sequence
+│   │   │   ├── TheoryCompareBlock.jsx     # Side-by-side compare
+│   │   │   ├── TheoryLab.jsx              # Diagnostic scenario
+│   │   │   ├── BeforeAfterImageSlider.jsx # Image slider
+│   │   │   ├── InteractiveCollectionExplorer.jsx  # Theme explorer
+│   │   │   ├── PriorKnowledgeRecall.jsx   # Free-text recall
+│   │   │   ├── SymptomProgression.jsx     # Case-file walkthrough
+│   │   │   ├── MedievalDiagnosisScene.jsx # SVG chamber + tappable zones
+│   │   │   ├── MedicalTheoryPrescription.jsx  # Prescription flow
+│   │   │   ├── GalensDiagnostic.jsx       # Humour-based diagnostic
+│   │   │   ├── CinematicCarousel.jsx      # Deep-dive carousel
+│   │   │   ├── ExaminerExplainsScreen.jsx # Animated reveal + narration
+│   │   │   ├── GuidedAnswerCoach.jsx      # Multi-stage exam technique
+│   │   │   ├── WeakSpotRecovery.jsx       # Intervention screen
+│   │   │   ├── RecoveryQuizPlayer.jsx     # 3–4 focused questions
+│   │   │   ├── FactorWeb.jsx              # Causal relationships
+│   │   │   ├── ConnectionMap.jsx          # Mind map / concept network
+│   │   │   ├── QuoteAnalyser.jsx          # Quote analysis task
+│   │   │   ├── TieredQuizScreen.jsx       # Difficulty-tiered Q&A
+│   │   │   ├── DragToOrderTask.jsx        # Drag-to-order activity
+│   │   │   ├── faceTheExaminer/          # Subcomponents for FaceTheExaminer
+│   │   │   │   ├── FaceTheExaminerContainer.jsx
+│   │   │   │   ├── FaceTheExaminerMain.jsx
+│   │   │   │   ├── FaceTheExaminerIntro.jsx
+│   │   │   │   ├── AnswerPanel.jsx
+│   │   │   │   ├── MarkingPanel.jsx
+│   │   │   │   ├── FaceTheExaminerDone.jsx
+│   │   │   │   └── utils.js
+│   │   │   └── *.stories.jsx            # Storybook files for components
 │   │   │
-│   │   └── learning/                 # 40+ pedagogy interaction components
-│   │       ├── AnswerInteraction.jsx     # [see core/]
-│   │       ├── MatchingTask.jsx          # Term-to-description pair matching with SVG lines
-│   │       ├── TimelineChain.jsx         # Horizontal scroll-snap chain + connectors
-│   │       ├── TimelineCanvas.jsx        # Swipe-to-pan timeline with reveal buttons
-│   │       ├── CinematicCarousel.jsx     # Full-screen image carousel with navigation
-│   │       ├── CinematicRevealMoment.jsx # Full-screen reveal (video/image)
-│   │       ├── InteractiveHotspotImage.jsx # Tappable hotspot image
-│   │       ├── CircuitDiagram.jsx        # GCSE Physics circuit (open/closed toggle)
-│   │       ├── ColSortBlock.jsx          # Column-sort categorisation task
-│   │       ├── ConceptReveal.jsx         # Atmospheric concept intro
-│   │       ├── FillInTheBlanksBlock.jsx  # Inline fill-in-the-blanks chapter
-│   │       ├── GalensDiagnostic.jsx      # Humour-based four-humours diagnostic
-│   │       ├── GraphView.jsx             # Embeddable SVG chart (bar/line/scatter/pie)
-│   │       ├── GuidedAnswerCoach.jsx     # Exam-technique coach scaffold (8 stages)
-│   │       ├── GuidedExamResponse.jsx    # Guided written-answer scaffold
-│   │       ├── GuidedChoiceCarousel.jsx  # Scrollable choice carousel with visual cards
-│   │       ├── KeyFigureReveal.jsx       # Portrait-hero screen (key person intro)
-│   │       ├── ExaminerExplainsScreen.jsx # Full-screen explanation with word-by-word reveal
-│   │       ├── ExplainReveal.jsx         # Progressive cause-and-effect chain
-│   │       ├── FaceTheExaminer.jsx       # Examiner-style written question + annotation
-│   │       ├── InteractiveCollectionExplorer.jsx # Theme explorer with colour-coded sheets
-│   │       ├── EvacuationChainRoute.jsx  # Ordered chain: tap job → tap stage
-│   │       ├── FactorWeb.jsx             # Relationship diagram (factors/concepts)
-│   │       ├── MedicalTheoryPrescription.jsx # Cause → prescription → reveal flow
-│   │       ├── MisconceptionCheck.jsx    # True/false misconception trap
-│   │       ├── PriorKnowledgeRecall.jsx  # Free-text recall screen; logs missing concepts
-│   │       ├── QuickRecallScreen.jsx     # Rapid-fire retrieval (choice + connection)
-│   │       ├── RecoveryQuizPlayer.jsx    # Lightweight recovery quiz (3–4 questions)
-│   │       ├── SpotTheError.jsx          # Student identifies + explains error
-│   │       ├── SwipeSort.jsx             # Swipe-gesture sorting activity
-│   │       ├── SymptomProgression.jsx    # Case-file walkthrough of illness stages
-│   │       ├── TheoryCompareBlock.jsx    # Side-by-side theory comparison (staggered reveal)
-│   │       ├── TheoryLab.jsx             # Multi-part diagnostic linking belief to outcome
-│   │       ├── TieredQuizScreen.jsx      # Adaptive quiz progression (3-tier)
-│   │       ├── VisualLearning.jsx        # Click-to-continue cinematic scene sequence
-│   │       ├── VisualNarrativeScreen.jsx # Beat-based narrative (portraits/timelines/facts)
-│   │       ├── WeakSpotRecovery.jsx      # Behavioural intervention when learner struggles
-│   │       ├── BeforeAfterImageSlider.jsx # Horizontal slider for comparison images
-│   │       ├── DragToOrderTask.jsx       # Drag-to-sort activity
-│   │       └── UnifiedQuestionScreen.jsx # Generic question layout
+│   │   └── feedback/            # Question feedback & debriefing
+│   │       ├── RetrievalFrame.jsx        # LOCKED: retrieval wrapper
+│   │       ├── ExamQuestionFrame.jsx     # Exam question + mark scheme
+│   │       └── ExamRoundDebrief.jsx      # End-of-round synthesis
 │   │
-│   ├── features/                     # Tab-level features (5 tabs)
-│   │   ├── home/
-│   │   │   ├── Home.jsx              # Tab: greeting, streak chip, today's task carousel
-│   │   │   └── StreakChip.jsx        # Streak counter display
+│   ├── constants/               # Design tokens & configuration
+│   │   ├── subjects.js          # Subject palettes & SUBJECT_ACCENTS
+│   │   ├── typography.js        # TYPE tokens (Manrope/Sora)
+│   │   ├── spacing.js           # SPACING tokens
+│   │   ├── motion.js            # MOTION tokens (durations, easings)
+│   │   ├── buttons.js           # BUTTONS tokens
+│   │   ├── radii.js             # RADII tokens
+│   │   ├── generalTheme.js      # Non-subject page theme (Home, Subjects, etc.)
+│   │   └── subjectBackdrops.js  # Subject-specific backdrop images
+│   │
+│   ├── content/                # Lesson content (per-module files)
+│   │   ├── history/
+│   │   │   ├── medicine/
+│   │   │   │   └── episodes/     # e.g., episode-01-trust-me.js (7 episodes)
+│   │   │   ├── usa/
+│   │   │   │   └── episodes/     # e.g., episode-01-a-nation-born.js
+│   │   │   └── spain-new-world/
+│   │   │       └── episodes/     # e.g., episode-01-conquistadors.js
+│   │   ├── biology/
+│   │   │   ├── cell-biology/episodes/
+│   │   │   ├── organisation/episodes/
+│   │   │   ├── infection-and-response/episodes/
+│   │   │   ├── homeostasis/episodes/
+│   │   │   ├── inheritance-variation-evolution/episodes/
+│   │   │   └── ecology/episodes/
+│   │   ├── chemistry/
+│   │   │   ├── atomic-structure/episodes/
+│   │   │   ├── chemical-changes/episodes/
+│   │   │   ├── rates-and-organic/episodes/
+│   │   │   └── chemistry-of-the-atmosphere/episodes/
+│   │   ├── maths/
+│   │   │   └── foundations/episodes/
+│   │   ├── english/
+│   │   │   └── macbeth/episodes/
+│   │   └── sociology/
+│   │       └── families/episodes/
+│   │
+│   ├── data/                   # Question banks & reference data
+│   │   ├── tagModuleMap.js         # Weakness tag → module lookup
+│   │   ├── guidedAnswerCoach.js    # Exam technique templates
+│   │   ├── recoveryQuizzes.js      # Recovery quiz definitions
+│   │   ├── quickQuizData.js        # 90s Quiz question bank
+│   │   ├── medicineExamPapers.js   # Edexcel History past papers
 │   │   │
-│   │   ├── subjects/
-│   │   │   └── Subjects.jsx          # Tab: module browser, subject sections, cards with progress
+│   │   ├── mathsTopics.js          # AQA Maths topic groups & questions
+│   │   ├── mathsQuestions.js       # Maths formula sheet & questions
+│   │   ├── mathsGroups.js          # Maths topic group UI definitions
 │   │   │
-│   │   ├── pulse/
-│   │   │   └── Pulse.jsx             # Tab: 90s quiz leaderboard & best score display
+│   │   ├── englishTopics.js        # AQA English topics & questions
 │   │   │
-│   │   ├── exams/
-│   │   │   └── ExamPractice.jsx      # Tab: topic selection, timed papers, coach selection
+│   │   ├── sociologyTopics.js      # AQA Sociology topics & questions
+│   │   ├── sociologyGroups.js      # Sociology topic group UI definitions
 │   │   │
+│   │   ├── chemistryTopics.js      # AQA Chemistry topics & questions
+│   │   ├── chemistryGroups.js      # Chemistry topic group UI definitions
+│   │   ├── chemImages.js           # Chemistry diagram asset paths
+│   │   │
+│   │   ├── physicsTopics.js        # AQA Physics topics & questions
+│   │   │
+│   │   ├── biologyGroups.js        # Biology topic group UI definitions
+│   │   │
+│   │   ├── componentFunctions.js   # Utility functions (deprecated pattern)
+│   │   │
+│   │   ├── contentSupport/        # Concept repair & gap support
+│   │   │   └── (concept files)
+│   │   │
+│   │   ├── examPapers/            # Exam paper structure data
+│   │   │   └── sociology/
+│   │   │
+│   │   ├── learningGraph/         # Concept registry & resolution
+│   │   │   ├── concepts/          # Concept id definitions
+│   │   │   └── (resolution logic)
+│   │   │
+│   │   ├── masteryEngine/         # Learner mastery tracking
+│   │   │   └── (mastery state)
+│   │   │
+│   │   ├── progressSync/          # Google user progress sync
+│   │   │   └── progressSync.js
+│   │   │
+│   │   └── questionBanks/         # Organized question data
+│   │       ├── english/
+│   │       ├── history/
+│   │       ├── maths/
+│   │       └── science/
+│   │           └── biology/
+│   │
+│   ├── features/                # Feature-specific screens & logic
+│   │   ├── home/                # Home tab
+│   │   │   ├── Home.jsx         # Home screen: greeting, streak, task carousel
+│   │   │   └── StreakChip.jsx   # Streak display component
+│   │   │
+│   │   ├── subjects/            # Subjects/modules browser
+│   │   │   └── Subjects.jsx     # ModulesTab screen
+│   │   │
+│   │   ├── pulse/               # Progress/stats tab
+│   │   │   └── Pulse.jsx        # PulseTab: improvements & weak spots
+│   │   │
+│   │   ├── quickfire/           # 90s Quiz & Exam Mode
+│   │   │   ├── QuickFire.jsx        # TestTab orchestrator
+│   │   │   ├── testDataContext.jsx  # Test data lazy-loading context
+│   │   │   ├── utils.js             # QuickFire utilities
+│   │   │   ├── components/
+│   │   │   │   ├── FormulaSheet.jsx         # Maths formula display
+│   │   │   │   ├── QuickFireQuestionScreen.jsx  # Question UI
+│   │   │   │   └── CircularTimer.jsx       # Round timer
+│   │   │   ├── logic/
+│   │   │   │   ├── selectQuestions.js      # Adaptive question selection
+│   │   │   │   ├── quickFireSelector.js    # Selector state management
+│   │   │   │   ├── convertBankQuestion.js  # Question format conversion
+│   │   │   │   ├── questionId.js           # Question id parsing
+│   │   │   │   ├── masteryRecorder.js      # Mastery recording (Phase 3A)
+│   │   │   │   └── questionId.js
+│   │   │   └── modes/
+│   │   │       ├── QuickFireMode.jsx       # 90s Quiz mode
+│   │   │       ├── ExamMode.jsx            # Timed exam mode
+│   │   │       ├── TopicPracticeMode.jsx   # Topic-specific practice
+│   │   │       ├── MathsBrowser.jsx        # Maths topic browser
+│   │   │       ├── MathsTopicView.jsx      # Maths topic questions
+│   │   │       └── MathsQuestion.jsx       # Maths question display
+│   │   │
+│   │   ├── exams/               # Exam practice (past papers)
+│   │   │   └── ExamPractice.jsx # Exam browser & auto-start
+│   │   │
+│   │   ├── exampaper/           # Exam paper runner
+│   │   │   ├── ExamPaperRunner.jsx
+│   │   │   ├── ExamPaperSection.jsx
+│   │   │   ├── ExamPaperQuestion.jsx
+│   │   │   ├── ExamPaperMarking.jsx
+│   │   │   ├── ExamPaperDebrief.jsx
+│   │   │   ├── ExamPaperSource.jsx
+│   │   │   └── useExamPaperState.js
+│   │   │
+│   │   ├── planner/             # Daily revision planner
+│   │   │   └── dailyPlanner.js  # Adaptive planner logic
+│   │   │
+│   │   ├── streaks/             # Streak celebration
+│   │   │   ├── StreakCelebrationOverlay.jsx
+│   │   │   └── streakCelebrationStorage.js
+│   │   │
+│   │   └── moduleContentRegistry.js  # MODULE_CONTENT_LOADERS mapping
+│   │
+│   ├── lib/                    # Utility library
+│   │   └── storage.js          # localStorage wrapper (getObject, setJson, etc.)
+│   │
+│   └── globals.css             # Cinematic CSS classes (@layer components)
+│
+├── tests/                      # Unit & architecture tests
+│   ├── unit/                   # Pure function tests
+│   │   ├── app/
+│   │   ├── auth/
+│   │   ├── modulePlayer/
+│   │   ├── planner/
 │   │   ├── quickfire/
-│   │   │   └── QuickFire.jsx         # Question player for 90s & exam modes (multimodal)
-│   │   │
-│   │   └── planner/
-│   │       └── dailyPlanner.js       # Pure functions: buildDailyPlan, processPaperResults, etc.
+│   │   ├── streaks/
+│   │   ├── contentSupport/
+│   │   ├── priorKnowledgeRecall/
+│   │   ├── masteryEngine/
+│   │   ├── progressSync/
+│   │   └── todaysPlan.test.js
 │   │
-│   ├── constants/                    # Design tokens & config
-│   │   ├── subjects.js               # SUBJECTS, SUBJECT_ACCENTS, SUBJECT_PALETTES, hexToRgb()
-│   │   ├── generalTheme.js           # GENERAL — non-subject page colours (Home, Exams, nav)
-│   │   ├── spacing.js                # SPACING token object (all margin/padding values)
-│   │   ├── motion.js                 # MOTION — durations, easings, scale values
-│   │   ├── radii.js                  # RADII — corner radius values
-│   │   ├── buttons.js                # BUTTONS — dimensions, states, corner radii
-│   │   ├── typography.js             # TYPE — font families, sizes, weights (spread-ready)
-│   │   └── componentStyles.js        # Component style constants (shadows, transitions)
-│   │
-│   ├── data/                         # Content & topic banks (lazy-loaded in Exams mode)
-│   │   ├── mathsTopics.js            # MATHS_TOPIC_GROUPS, ALL_MATHS_QUESTIONS
-│   │   ├── mathsGroups.js            # MATHS_GROUPS — topic definitions for Subjects browser
-│   │   ├── mathsQuestions.js         # AQA past-paper questions
-│   │   ├── englishTopics.js          # ENGLISH_TOPIC_GROUPS, ALL_ENGLISH_QUESTIONS
-│   │   ├── sociologyTopics.js        # SOCIOLOGY_TOPIC_GROUPS, questions
-│   │   ├── sociologyGroups.js        # SOCIOLOGY_GROUPS — definitions for browser
-│   │   ├── chemistryTopics.js        # CHEMISTRY_TOPIC_GROUPS, questions
-│   │   ├── chemistryGroups.js        # CHEMISTRY_GROUPS
-│   │   ├── chemImages.js             # CHEM_IMAGES — maps diagram IDs to /public/figures/ paths
-│   │   ├── physicsTopics.js          # PHYSICS_TOPIC_GROUPS — Foundation past-papers
-│   │   ├── biologyGroups.js          # BIOLOGY_GROUPS — 7 topic definitions
-│   │   ├── guidedAnswerCoach.js      # GUIDED_COACH_TYPES — exam-technique scaffold content
-│   │   ├── medicineExamPapers.js     # Edexcel GCSE History past-paper sources
-│   │   ├── quickQuizData.js          # QUICK_QUIZ_QUESTIONS — 90s quiz bank
-│   │   ├── recoveryQuizzes.js        # Recovery quiz definitions (3–4 focused questions)
-│   │   ├── tagModuleMap.js           # TAG_MODULE_MAP, findTaggedScreen() — weak-area routing
-│   │   └── [legacy files]            # Some files may be unused (see CONCERNS.md)
-│   │
-│   ├── modules/                      # Full module content (subject-specific, lazy-loaded)
-│   │   ├── history.js                # HISTORY_MODULES — all History episodes with full screens
-│   │   ├── biology.js                # BIOLOGY_MODULES
-│   │   ├── maths.js                  # MATHS_MODULES
-│   │   ├── sociology.js              # SOCIOLOGY_MODULES
-│   │   └── chemistry.js              # CHEMISTRY_MODULES
-│   │
-│   ├── modules.js                    # MODULES — lightweight metadata for all 30 modules
-│   ├── progress.js                   # Progress tracking: getProgress, recordScore, recordActivity
-│   ├── unifiedWeaknessTracker.js     # CANONICAL weakness tracker: logWrongAnswer, getWeakTopics
-│   ├── todaysPlan.js                 # Pure logic: buildTodaysPlan(), picks daily tasks
-│   ├── contentIndex.js               # CONTENT_INDEX — topic tag → section metadata mapping
-│   ├── sociologyKeyTerms.js          # AQA GCSE Sociology vocabulary list
-│   ├── figures.js                    # FIGURES — figure image paths
-│   │
-│   └── lib/                          # Utilities & persistence boundary
-│       ├── storage.js                # Persistence layer: getJson, setJson, removeKey (localStorage adapter)
-│       └── utils.js                  # Miscellaneous helpers
+│   └── architecture/           # Contract & constraint tests
+│       ├── learning-graph.test.js      # Concept registry validation
+│       ├── concept-reveal-contract.test.js
+│       ├── mastery-engine.test.js      # Mastery engine allowlist
+│       ├── content-support-episode01.test.js
+│       └── placeholder-module-safety.test.js
 │
-├── public/                           # Static assets
-│   ├── logo.png                      # RISE logo (teal glow)
-│   ├── mystery-cube.png              # Locked/mystery module card image
-│   ├── headers/                      # Hero images for module/subject cards
-│   │   ├── history-*.png             # History series & per-module cards
-│   │   ├── bio-*.png                 # Biology group & overview cards
-│   │   ├── pulse-*.png               # Feature cards
-│   │   └── [other subjects]
-│   └── figures/                      # Inline content diagrams (chemistry, biology)
-│       ├── *.png / *.webp
-│
-├── .planning/                        # GSD planning directory (added by this mapper)
-│   └── codebase/
-│       ├── ARCHITECTURE.md           # [this file]
-│       └── STRUCTURE.md              # [this file]
-│
-├── .claude/                          # Claude Code configuration
-│   ├── skills/                       # Project-specific skills (if any)
-│   └── settings.json                 # Claude Code settings
-│
-├── tests/                            # Vitest test files (optional; see TESTING.md)
-│   ├── architecture/                 # Architecture validation tests
-│   └── [feature tests]
-│
-├── .storybook/                       # Storybook config
-├── docs/                             # Project documentation (system/, components/, etc.)
-├── package.json                      # Dependencies (React, Vite, Radix, Tailwind, etc.)
-└── vite.config.js                    # Vite build config
+├── vite.config.js              # Vite build config
+├── vitest.config.js            # Vitest test config
+├── eslint.config.js            # ESLint rules
+├── index.html                  # HTML entry point
+├── jsconfig.json               # JS/JSX path config
+├── package.json                # Dependencies & scripts
+├── pnpm-lock.yaml              # Lockfile
+├── CLAUDE.md                   # Project instructions (THIS FILE)
+├── BRAND.md                    # Design & brand reference
+├── COMPONENTS.md               # Component registry
+├── firestore.rules             # Firestore security rules
+└── README.md                   # (if exists)
 ```
 
 ## Directory Purposes
 
-**`src/app/`**
-- Purpose: Application shell — top-level routing, auth state, tab navigation, overlay management
-- Contains: LegacyApp orchestrator, BottomNav component, module navigation helpers
-- Key files: `LegacyApp.jsx` (420 lines — main state machine)
+**`.planning/codebase/`:**
+- Purpose: Generated codebase analysis documents (ARCHITECTURE.md, STRUCTURE.md, CONVENTIONS.md, etc.)
+- Contains: Markdown reference files for the planner/executor
+- Key files: ARCHITECTURE.md, STRUCTURE.md, CONVENTIONS.md, TESTING.md, CONCERNS.md
 
-**`src/auth/`**
-- Purpose: User authentication and identity
-- Contains: AuthContext provider, auth service stub (Google OAuth placeholder, TODO: Firebase)
-- Key files: `AuthContext.jsx` (manages user state across app)
+**`api/`:**
+- Purpose: Serverless API endpoints (Node.js/Express)
+- Contains: Backend logic for auth, progress sync, AI endpoints
+- Generated/deployed: Via Vercel or similar
 
-**`src/components/`**
-- Purpose: Reusable UI and pedagogical interaction components (62 .jsx files)
-- Contains: 4 semantic layers (core foundation, layout frames, feedback handlers, learning interactions)
-- Key constraint: All standalone components live here; do NOT add .jsx files directly to `src/`
+**`docs/`:**
+- Purpose: Product design & system architecture documentation
+- Key files: `docs/system/PRODUCT_UI_CONSTITUTION.md` (design law), `docs/system/COMPONENT_AUTHORING_RULES.md`, `docs/system/HISTORY_MODULE_ARCHITECTURE.md`, `docs/system/SCIENCE_MODULE_BLUEPRINT.md`
 
-**`src/features/`**
-- Purpose: Tab-level entry points and feature-specific UI
-- Contains: One directory per tab (home, subjects, pulse, exams, quickfire); planner utilities
-- Key pattern: Each feature is relatively small; fat logic lives in lib/ and data/ layers
-- Key files: `Home.jsx`, `Subjects.jsx`, `ExamPractice.jsx`, `QuickFire.jsx`
+**`public/`:**
+- Purpose: Static assets served directly by the web server
+- Key files: `logo.png` (RISE teal logo), `headers/` (subject hero images), `figures/` (chemistry/biology diagrams)
 
-**`src/constants/`**
-- Purpose: Design tokens and configuration — single source of truth for spacing, colours, motion, typography
-- Contains: 8 .js files exporting object tokens (never hardcode magic numbers in components)
-- Key constraint: Always import from here; never redefine colours/spacing/radii locally
+**`src/app/`:**
+- Purpose: Application shell & orchestration
+- Key files: `LegacyApp.jsx` (MAIN), `BottomNav.jsx`, `moduleNavigation.js`
 
-**`src/data/`**
-- Purpose: Content, topic banks, past-paper data, exam configurations
-- Contains: 15+ .js files with exported constants (MATHS_TOPIC_GROUPS, ENGLISH_TOPIC_GROUPS, etc.)
-- Key pattern: Lazy-loaded via dynamic import in ExamPractice (TestDataProvider); only loaded when Exams tab is active
-- Key constraint: No mutation; pure data only
+**`src/components/`:**
+- Purpose: All React components organized by type
+- Subdirs:
+  - `core/` (7 LOCKED, 15+ reusable foundation components)
+  - `layout/` (module-level orchestration: ModulePlayer, ChapterHookScreen, etc.)
+  - `learning/` (40+ learning interaction types: TimelineChain, MatchingTask, etc.)
+  - `feedback/` (question feedback & debriefing)
 
-**`src/modules/`**
-- Purpose: Full lesson content for modules, split by subject for lazy-loading
-- Contains: 5 .js files (history.js, biology.js, maths.js, sociology.js, chemistry.js)
-- Key pattern: Each exports SUBJECT_MODULES array with full { id, screens[], hook, outcomes, recall }
-- Key constraint: Dynamically imported by `loadModuleContent()` when module opens; not imported at app startup
+**`src/constants/`:**
+- Purpose: Centralized design tokens (no hardcoded values in components)
+- Key files: `subjects.js` (colour palettes), `typography.js` (TYPE tokens), `spacing.js`, `motion.js`
 
-**`src/lib/`**
-- Purpose: Utility functions and persistence boundary
-- Contains: `storage.js` (localStorage adapter, ready for backend swap), `utils.js` (misc helpers)
-- Key constraint: All learner data reads/writes go through `storage.js`
+**`src/content/`:**
+- Purpose: Lesson content definitions (one file per module)
+- Structure: `src/content/${subject}/${topic}/episodes/${id}.js` exports `{ id, subject, screens, hook, recall, outcomes, intro }`
+- Pattern: All new modules use per-module files. Legacy subject bundles (biology.js, maths.js, etc.) are pending migration.
+
+**`src/data/`:**
+- Purpose: Question banks, exam papers, concept registry, mastery engine, reference data
+- Key files: `guidedAnswerCoach.js` (exam technique), `recoveryQuizzes.js`, `quickQuizData.js`, `*Topics.js` (subject questions)
+- Lazy-loaded: Test data (mathsTopics.js, englishTopics.js, etc.) loaded via TestDataContext only when exam tab is active
+
+**`src/features/`:**
+- Purpose: Feature-specific screens and orchestration
+- Subdirs: `home/` (Home tab), `subjects/` (ModulesTab), `pulse/` (PulseTab), `quickfire/` (90s Quiz + Exam Mode), `exams/` (Exam Practice), `planner/` (Daily planner), `streaks/` (Celebrations)
+
+**`src/lib/`:**
+- Purpose: Low-level utility functions
+- Key files: `storage.js` (localStorage wrapper with error handling)
+
+**`tests/`:**
+- Purpose: Unit tests (pure functions) and architecture tests (contracts, constraints)
+- Subdirs: `unit/` (feature tests), `architecture/` (learning-graph.test.js, mastery-engine.test.js)
 
 ## Key File Locations
 
 **Entry Points:**
-- `src/main.jsx`: React tree root; ErrorBoundary, AuthProvider, App mount
-- `src/App.jsx`: Tiny wrapper → LegacyApp
-- `src/app/LegacyApp.jsx`: Main orchestrator; auth, tabs, overlays, module lifecycle
+- `index.jsx` → `src/App.jsx` → `src/app/LegacyApp.jsx` (main app shell)
+- `src/features/home/Home.jsx` (Home tab entry)
+- `src/features/subjects/Subjects.jsx` (Subjects tab entry)
+- `src/features/quickfire/QuickFire.jsx` (90s Quiz / Exam Mode entry)
+- `src/components/layout/ModulePlayer.jsx` (in-module orchestration)
 
 **Configuration:**
-- `src/globals.css`: Cinematic @layer classes (11KB; foundation for all cinematic screens)
-- `src/styles.css`: App-wide CSS
-- `src/constants/`: All design tokens (colors, spacing, motion, typography)
-- `.storybook/`: Storybook dev environment config
+- `vite.config.js` (build, alias, external-dependency rules)
+- `vitest.config.js` (test runner config)
+- `eslint.config.js` (linting rules)
+- `jsconfig.json` (path aliases)
+- `.storybook/` (Storybook config for component previews)
 
 **Core Logic:**
-- `src/progress.js`: Progress tracking (streak, scores, activity)
-- `src/unifiedWeaknessTracker.js`: Weakness tracking (canonical; all wrong answers logged here)
-- `src/todaysPlan.js`: Daily planner (pure logic; builds Home task carousel)
-- `src/modules.js`: Lightweight module metadata
+- `src/progress.js` (progress tracking, streak, score recording)
+- `src/unifiedWeaknessTracker.js` (weakness logging & retrieval)
+- `src/todaysPlan.js` (daily revision planner)
+- `src/features/planner/dailyPlanner.js` (planner state & build logic)
+- `src/app/moduleNavigation.js` (screen routing helpers)
 
 **Testing:**
-- `src/features/planner/dailyPlanner.js`: Pure functions suitable for unit tests
-- `tests/architecture/`: Architecture validation tests
+- `tests/unit/` (unit tests for pure functions)
+- `tests/architecture/` (contract tests: learning-graph.test.js, mastery-engine.test.js)
+
+**Reference & Design:**
+- `CLAUDE.md` (project instructions — READ BEFORE ANY WORK)
+- `BRAND.md` (design reference)
+- `COMPONENTS.md` (component registry)
+- `docs/system/PRODUCT_UI_CONSTITUTION.md` (design law)
+- `docs/system/HISTORY_MODULE_ARCHITECTURE.md` (History-specific rules)
+- `docs/system/SCIENCE_MODULE_BLUEPRINT.md` (Science-specific rules)
 
 ## Naming Conventions
 
 **Files:**
-- `.jsx` — React components (one component per file, PascalCase)
-- `.js` — Logic/data modules (camelCase)
-- `.css` — Stylesheets
-- `.stories.jsx` — Storybook stories (paired with component)
+- `.jsx` for React components
+- `.js` for pure functions / data / utilities
+- `.stories.jsx` for Storybook files (one per component, same directory)
+- `.test.js` for unit tests
+- `kebab-case` for filenames (e.g., `daily-planner.js`, `quick-fire.jsx`)
+- Episode content: `episode-NN-slug.js` (e.g., `episode-01-trust-me.js`)
 
 **Directories:**
-- `src/components/[semantic-layer]/` — Components grouped by role (core, layout, feedback, learning)
-- `src/features/[tab-name]/` — Tab-specific features (home, subjects, pulse, exams, quickfire)
-- `src/modules/` — Full module content per subject
-- `src/data/` — Content/config constants
+- `kebab-case` for feature/topic directories (e.g., `src/features/quickfire`, `src/content/chemistry/atomic-structure`)
+- `PascalCase` avoided in directory names (use only for component names within JSX files)
 
-**Component Naming:**
-- PascalCase for all React components (e.g., `AnswerInteraction`, `TimelineChain`, `ModulePlayer`)
-- Suffixes for specific types:
-  - `*Screen.jsx` — Full-screen components (Chapter screens, splash screen)
-  - `*Block.jsx` — Content blocks within screens (FillInTheBlanksBlock)
-  - `*Task.jsx` — Interactive activities (MatchingTask, ColSortBlock)
-  - `*Frame.jsx` — Question frames (ExamQuestionFrame, RetrievalFrame)
-  - `*Carousel.jsx` — Horizontal scroll/swipe (CinematicCarousel, GuidedChoiceCarousel)
+**Components:**
+- `PascalCase` for component names (e.g., `ModulePlayer`, `QuickRecallScreen`)
+- LOCKED components marked in component registry (must not modify internals)
+- Reusable components live in `src/components/`; never add `.jsx` files directly to `src/`
 
-**Data/Constants Naming:**
-- UPPERCASE with underscores for exported constants (e.g., `MODULES`, `SUBJECTS_ACCENTS`, `SPACING`, `MATHS_TOPIC_GROUPS`)
-- camelCase for exported functions (e.g., `buildTodaysPlan`, `getProgress`, `logWrongAnswer`)
-- lowercase for internal helpers (e.g., `hexToRgb()`, `todayStr()`)
+**Functions:**
+- `camelCase` for all functions (e.g., `recordActivity()`, `getProgress()`)
+- Helper functions in same file or co-located utility file
+- Exported helpers documented with JSDoc
+
+**Constants:**
+- `UPPER_SNAKE_CASE` for exported constants (e.g., `MODULES`, `SUBJECT_ACCENTS`, `SPACING`, `TYPE`)
+- Subject accents: `SUBJECT_ACCENTS.Biology`, `SUBJECT_ACCENTS.History`, etc.
+
+**Module IDs:**
+- Format: `subject:course:concept` (e.g., `history:medicine:galen`, `biology:cell:mitochondria`)
+- Registered in `src/data/learningGraph/concepts/`; never invent new ids outside the registry
 
 ## Where to Add New Code
 
-**New Learning Component (pedagogy interaction):**
-- File location: `src/components/learning/<ComponentName>.jsx`
-- Add corresponding story if visual: `src/components/learning/<ComponentName>.stories.jsx`
-- If reusable across ≥3 modules/subjects, create here; else compose from existing
-- Import core components (AnswerInteraction, CardContainer, LearningHeader)
-- Add case in `ModulePlayer.jsx` switch statement to route screen type to component
-- Example: A new "matching with images" interaction → `src/components/learning/ImageMatchingTask.jsx`
-
-**New Data/Content File:**
-- File location: `src/data/<topicName>.js` (lowercase, dash-separated)
-- Export constants in UPPERCASE (e.g., `export const PHYSICS_TOPICS = [...]`)
-- For large topic banks used only in Exams tab, use dynamic import in TestDataProvider
-- For small/reused content, static import is fine
-- Example: Adding GCSE Physics past papers → `src/data/physicsTopics.js`
+**New Learning Component (30+ screen types):**
+- Primary code: `src/components/learning/${ComponentName}.jsx`
+- Storybook: `src/components/learning/${ComponentName}.stories.jsx` (required)
+- Register in ModulePlayer: Import at top, add to screen type router
+- Guidelines: Reusable across 3+ modules, pure learning mechanic, educational justification in module content
 
 **New Feature Tab:**
-- Scaffold directory: `src/features/<tabName>/`
-- Main component: `src/features/<tabName>/<TabName>.jsx` (matches tab id)
-- If complex (>400 lines), split into sub-components in same directory
-- Add tab object in BottomNav `tabs` array, update NavIcon switch statement
-- Update LegacyApp render to include new tab case
-- Example: Adding a Study Guides tab → `src/features/guides/Guides.jsx` + BottomNav entry
+- Primary code: `src/features/${featureName}/${ScreenName}.jsx`
+- Context (if needed): Define provider and hooks alongside
+- Register in LegacyApp: Add tab routing, BottomNav entry
+- Example: Home tab = `src/features/home/Home.jsx` + `src/features/home/StreakChip.jsx`
 
-**New Module Content:**
-- Location: `src/modules/<subject>.js` (e.g., `src/modules/physics.js` for new subject)
-- Structure: Export `SUBJECT_MODULES = [{ id, subject, title, icon, color, screenCount, screenTags, hook, outcomes, screens, intro, recall }, ...]`
-- Add metadata entry to `src/modules.js` (id, title, subject, color, screenCount, screenTags)
-- Add subject loader to SUBJECT_MODULE_LOADERS in LegacyApp
-- Each screen has { type, tag?, ...screenTypeData }; type routes to learning component
-- Example: Adding a Physics module → `src/modules/physics.js` + entry in MODULES + loader
+**New Data/Content Module:**
+- Per-module file: `src/content/${subject}/${topic}/episodes/${id}.js` exporting `{ id, subject, screens, hook, recall, outcomes, intro, examiner?, ... }`
+- Metadata entry: Add to `MODULES` array in `src/modules.js` with `id, subject, title, screenCount, screenTags`
+- Register loader: Add entry to `MODULE_CONTENT_LOADERS` in `src/content/moduleContentRegistry.js`
+- Use `/module-creation <id>` skill to automate this setup
 
-**New Weakness Tracking Category:**
-- Extend `src/unifiedWeaknessTracker.js`: Add new logging function (e.g., `logMisconception()`)
-- Update tag vocabulary in `src/data/tagModuleMap.js` to route new category to recovery module
-- Update `WeakSpotRecovery.jsx` or `ExamRoundDebrief.jsx` to synthesize new patterns
-- Example: Tracking "problem setup" errors → Add tag in tagModuleMap, log via new function, suggest recovery
+**New Question Bank or Exam Paper:**
+- New subject topics: `src/data/${subject}Topics.js` exporting `${SUBJECT}_TOPIC_GROUPS`, `ALL_${SUBJECT}_QUESTIONS`, etc.
+- Lazy-load in TestDataContext: Add dynamic import to `testDataContext.jsx`
+- Past papers: `src/data/examPapers/${subject}/` (e.g., `medicineExamPapers.js`)
 
-**New Utility/Helper:**
-- File location: `src/lib/<moduleName>.js` or extend existing `src/lib/utils.js`
-- Pure functions only; no side effects
-- Export in UPPERCASE if constant, camelCase if function
-- Example: Date helpers → `src/lib/dates.js`
+**New Weakness Category or Recovery Quiz:**
+- Weakness tag: Add to concept registry `src/data/learningGraph/concepts/`
+- Recovery quiz: `src/data/recoveryQuizzes.js` with `recoveryQuizId` entry
+- Log via unifiedWeaknessTracker: `logWrongAnswer(tag)`, `logCorrectAnswer(tag)`
+- Build recovery quiz selector: Update `buildTodaysPlan()` in `src/features/planner/dailyPlanner.js`
 
-**Storage/Persistence Extension:**
-- File location: Extend `src/lib/storage.js` if it's a storage operation
-- Do NOT use localStorage directly; go through storage.js helpers
-- If adding a new data type, define its key constant at top of the module that uses it
-- Example: Adding exam-attempt history → `const EXAM_ATTEMPTS_KEY = 'gcse_exam_attempts'` in progress.js
+**New Utility Function:**
+- Shared helpers: `src/lib/` (e.g., `storage.js`)
+- Feature-specific: Co-located with feature (e.g., `utils.js` in feature directory)
+- Pure functions: No side effects, fully tested, exported for reuse
+- Example: `src/features/quickfire/logic/selectQuestions.js`
+
+**New Test:**
+- Unit test: `tests/unit/${area}/${name}.test.js` (pure function tests)
+- Architecture test: `tests/architecture/${contract}.test.js` (constraint validation)
+- Example: `tests/unit/planner/dailyPlanner.test.js`
 
 ## Special Directories
 
-**`public/`:**
-- Purpose: Static assets served by Vite dev server and bundled in production build
-- Generated: No (all committed)
-- Committed: Yes
-- Structure: `/logo.png`, `/headers/` (hero images), `/figures/` (inline diagrams)
-- Note: Both `.png` and `.webp` acceptable; `.webp` preferred for new images
+**`.planning/codebase/`:**
+- Purpose: Generated documents (read by `/gsd-plan-phase` and `/gsd-execute-phase`)
+- Generated: ARCHITECTURE.md, STRUCTURE.md, CONVENTIONS.md, TESTING.md, CONCERNS.md
+- Committed: Yes, regenerated when codebase structure changes
 
-**`.storybook/`:**
-- Purpose: Storybook dev environment config
-- Generated: No (Storybook CLI creates initial setup)
+**`src/content/*/episodes/`:**
+- Purpose: Per-module lesson content files
+- Generated: No (authored manually, use `/module-creation` skill to scaffold)
 - Committed: Yes
-- Key files: `config.js` (story discovery), `preview.js` (global decorators, theme)
+- Pattern: Each `.js` file is one lesson module, named `episode-NN-slug.js`, exports default object
 
-**`tests/`:**
-- Purpose: Vitest test files
-- Generated: No (manually created)
+**`public/headers/` and `public/figures/`:**
+- Purpose: Static image assets referenced by content
+- Generated: No (uploaded manually or via CI)
+- Committed: No (stored in `/public`, served by build system)
+- Format: `.png` and `.webp` accepted; `.webp` preferred for new assets
+
+**`docs/system/`:**
+- Purpose: Product & system design documentation (READ BEFORE ANY UI CHANGE)
+- Files: PRODUCT_UI_CONSTITUTION.md (design law), COMPONENT_AUTHORING_RULES.md, HISTORY_MODULE_ARCHITECTURE.md, SCIENCE_MODULE_BLUEPRINT.md
 - Committed: Yes
-- Structure: Mirror src/ layout (e.g., `tests/features/` mirrors `src/features/`)
+- Authority: These documents override local conventions; consult before any design decision
 
-**`.planning/`:**
-- Purpose: GSD workspace — planning docs, graphs, phase tracking
-- Generated: Yes (by `/gsd-map-codebase`, `/gsd-plan-phase`, etc.)
-- Committed: Yes (part of project context)
-- Key files: `.planning/codebase/` (ARCHITECTURE.md, STRUCTURE.md, etc.)
-
-**`.claude/`:**
-- Purpose: Claude Code harness configuration and project skills
-- Generated: Partially (settings.json created by harness; skills by team)
-- Committed: Yes
-- Key files: `settings.json` (allowlist, hooks), `skills/` (project-specific skill definitions)
+**`tests/architecture/`:**
+- Purpose: Contract tests validating learning graph, mastery engine, and module safety
+- Pattern: Ensures concept ids are registered, mastery writes are guarded, module metadata is in sync
+- Committed: Yes (run on every commit via pre-commit hook)
 
 ---
 
-*Structure analysis: 2026-06-22*
+*Structure analysis: 2026-07-09*
