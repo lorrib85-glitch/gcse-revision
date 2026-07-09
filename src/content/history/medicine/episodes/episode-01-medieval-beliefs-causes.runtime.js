@@ -3,7 +3,7 @@ import episode from './episode-01-medieval-beliefs-causes.js'
 // Runtime sequence override for Episode 1.
 // The original canonical file is preserved for audit history, while the runtime
 // sequence removes duplication, keeps the cinematic Galen introduction, and
-// upgrades the Theory of Opposites media slot into a slow image reveal.
+// upgrades the Theory of Opposites media slot into a layered quadrant reveal.
 const REMOVED_DUPLICATE_SCREEN_LABEL = 'The Four Humours'
 const removedScreenIndex = episode.screens.findIndex(
   screen => screen.label === REMOVED_DUPLICATE_SCREEN_LABEL && screen.type === 'conceptReveal'
@@ -28,25 +28,10 @@ const galenCinematicIntro = {
 
 const fourHumoursRevealConfig = {
   intro: 'Watch the four humours build into one system.',
-  interval: 1900,
-  images: [
-    {
-      src: '/figures/history/medicine/medieval/four-humours-blood.svg',
-      alt: 'Blood, believed to be hot and wet',
-    },
-    {
-      src: '/figures/history/medicine/medieval/four-humours-yellow-bile.svg',
-      alt: 'Yellow bile, believed to be hot and dry',
-    },
-    {
-      src: '/figures/history/medicine/medieval/four-humours-black-bile.svg',
-      alt: 'Black bile, believed to be cold and dry',
-    },
-    {
-      src: '/figures/history/medicine/medieval/four-humours-phlegm.svg',
-      alt: 'Phlegm, believed to be cold and wet',
-    },
-  ],
+  interval: 1500,
+  src: '/figures/history/medicine/medieval/four-humours-generated.svg',
+  alt: 'The complete four-humours diagram, revealed one quadrant at a time',
+  parts: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'],
 }
 
 function upgradeTheoryOfOppositesScreen(screen) {
