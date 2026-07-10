@@ -164,6 +164,14 @@ export function functionName(paramName) {
   save-failure bus (`subscribeSaveFailure`), which the app-wide `SaveFailureHost` turns
   into one governed `SaveFailureNotice`. Never surface a bespoke save-error alert or
   `window.alert`; never show a global success toast for a normal save.
+- **Weakness→recovery routing identity.** Weakness log entries
+  (`unifiedWeaknessTracker`) carry a human-readable `topic` (for UI) *and* an
+  optional canonical `conceptTag` — a `TAG_MODULE_MAP` key. Recovery routing
+  (`getBiggestWin`) resolves modules via `conceptTag`, falling back to `topic`
+  only when the topic string is itself a registered routing key. Log the
+  canonical tag (e.g. a bank row's `tag`) when one exists; never route a
+  free-text label. `getBiggestWin` returns `conceptTag` so callers resolve the
+  exact tagged screen with `findTaggedScreen`.
 - Learning graph is pure: no React, no localStorage, no circular imports within `src/data/learningGraph/`
   - Enforced by architecture tests in `tests/architecture/learning-graph.test.js`
 - Feature modules are isolated: all state passed as parameters, side effects explicit

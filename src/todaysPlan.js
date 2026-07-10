@@ -55,7 +55,9 @@ function pickRevisitCandidate() {
 
 function buildRevisitCard(win) {
   const mod = MODULES.find(m => m.id === win.moduleId)
-  const screenIndex = mod ? findTaggedScreen(mod, win.topic) : undefined
+  // Use the canonical concept tag (not the human topic label) to find the exact
+  // teaching screen; falls back to opening at screen 0 when not a screen tag.
+  const screenIndex = mod ? findTaggedScreen(mod, win.conceptTag) : undefined
   writeRevisitMemory(win.topic)
   return {
     type: 'revisit',

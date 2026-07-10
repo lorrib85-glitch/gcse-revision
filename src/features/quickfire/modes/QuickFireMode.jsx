@@ -409,10 +409,20 @@ export function QuickFireMode({ onExit }) {
         setQuickFireStats(stats => addQuickFireAnswer(stats, qfQ, isCorrect))
         updateQfQuestionHistory(qfQ, isCorrect)
         recordQuestionResult(qfQ, isCorrect)
-        if (qfQ.type === 'truefalse') {
-          const log = isCorrect ? logCorrectAnswer : logWrongAnswer
-          log({ subject: qfQ.subject, topic: qfQ.topic, questionText: qfQ.q, source: 'quiz', questionType: 'truefalse' })
-        }
+        // Feed the weakness→recovery tracker for every answer type, carrying
+        // the canonical concept tag (qfQ.tag) so QuickFire weaknesses route to
+        // the right module/screen like other learning activities. The human
+        // `topic` stays for UI; untagged rows log with conceptTag undefined and
+        // stay fail-safe (never routed by their label text).
+        const logAnswer = isCorrect ? logCorrectAnswer : logWrongAnswer
+        logAnswer({
+          subject: qfQ.subject,
+          topic: qfQ.topic,
+          conceptTag: qfQ.tag,
+          questionText: qfQ.q,
+          source: 'quiz',
+          questionType: qfQ.type,
+        })
         recordScore({ subject: 'Quick Fire', earned: isCorrect ? qfQ.marks : 0, possible: qfQ.marks, source: 'test' })
         if (isCorrect) {
           setQfConsecutiveWrong(0)

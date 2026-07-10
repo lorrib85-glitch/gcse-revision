@@ -736,7 +736,7 @@ export default function ModulesTab({ onOpenModule }) {
     ...biggestWinRaw,
     mod: biggestWinModule,
     headerImage: biggestWinModule.headerImage || MODULE_HEADER_IMAGES[biggestWinModule.id],
-    startScreenIndex: findTaggedScreen(biggestWinModule, biggestWinRaw.topic),
+    startScreenIndex: findTaggedScreen(biggestWinModule, biggestWinRaw.conceptTag),
   } : null
 
   const weakestSubject = getWeakestSubject()?.subject || null

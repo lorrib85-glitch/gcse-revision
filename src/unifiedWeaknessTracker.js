@@ -47,6 +47,10 @@ export function logWrongAnswer(metadata = {}) {
     date: new Date().toISOString().slice(0, 10),
     subject,
     topic,
+    // Canonical recovery-routing identity (a TAG_MODULE_MAP key), stored
+    // separately from the human-readable `topic`. null for sources that don't
+    // supply one — those stay safe (routed only if `topic` is itself a key).
+    conceptTag: metadata.conceptTag || null,
     questionId: metadata.questionId || `${topic}-${Date.now()}`,
     questionText: metadata.questionText || '',
     marks: metadata.marks || 1,
@@ -73,6 +77,7 @@ export function logCorrectAnswer(metadata = {}) {
     date: new Date().toISOString().slice(0, 10),
     subject,
     topic,
+    conceptTag: metadata.conceptTag || null,
     questionId: metadata.questionId || `${topic}-${Date.now()}`,
     source: metadata.source || 'unknown',
   }
@@ -235,26 +240,46 @@ function buildBiggestWinReason(stats) {
  * with a reason line tailored to the evidence available for that topic.
  * Returns null if no topic currently qualifies (don't fabricate one).
  */
+// Resolve the canonical recovery-routing tag for a weak topic. Prefers an
+// explicit concept tag from a recent wrong-answer entry (QuickFire and other
+// tagged activities now supply one); otherwise falls back to the topic string
+// ONLY when it is itself a registered routing key — some sources (e.g.
+// prior-knowledge recall) log the canonical slug directly as `topic`. A
+// human-readable label that is not a routing key resolves to null and is
+// never mis-routed.
+function resolveRouteTag(subject, topic, wrongAnswers) {
+  const tagged = wrongAnswers.find(
+    a => a.subject === subject && a.topic === topic && a.conceptTag && TAG_MODULE_MAP[a.conceptTag],
+  )
+  if (tagged) return tagged.conceptTag
+  if (TAG_MODULE_MAP[topic]) return topic
+  return null
+}
+
 export function getBiggestWin(excludeTopic = null) {
   const wrongAnswers = loadWrongAnswers()
   if (!wrongAnswers.length) return null
 
-  // Primary: topics that have already crossed the standard weak-topic bar.
-  let pool = getWeakTopics().filter(t => TAG_MODULE_MAP[t.topic])
+  const withRoute = (t) => ({ ...t, routeTag: resolveRouteTag(t.subject, t.topic, wrongAnswers) })
+
+  // Primary: topics that have already crossed the standard weak-topic bar and
+  // resolve to a real recovery route.
+  let pool = getWeakTopics().map(withRoute).filter(t => t.routeTag)
 
   // Fallback: nothing has crossed that bar yet — point to the most recently
-  // missed topic with a real module mapping, so a learner who has only just
-  // started still gets an evidence-based pointer.
+  // missed routable topic, so a learner who has only just started still gets
+  // an evidence-based pointer.
   if (!pool.length) {
     const seen = new Set()
     pool = wrongAnswers
       .filter(a => {
         const key = `${a.subject}/${a.topic}`
-        if (!TAG_MODULE_MAP[a.topic] || seen.has(key)) return false
+        if (seen.has(key)) return false
         seen.add(key)
         return true
       })
-      .map(a => getTopicStatistics(a.subject, a.topic))
+      .map(a => withRoute(getTopicStatistics(a.subject, a.topic)))
+      .filter(t => t.routeTag)
   }
 
   const candidates = pool
@@ -275,7 +300,10 @@ export function getBiggestWin(excludeTopic = null) {
     topic: top.topic,
     label: humanizeTopic(top.topic),
     reasonText: buildBiggestWinReason(stats),
-    moduleId: TAG_MODULE_MAP[top.topic],
+    moduleId: TAG_MODULE_MAP[top.routeTag],
+    // Canonical tag for the caller to resolve the exact tagged screen via
+    // findTaggedScreen — the human `topic` is not a screen tag.
+    conceptTag: top.routeTag,
   }
 }
 

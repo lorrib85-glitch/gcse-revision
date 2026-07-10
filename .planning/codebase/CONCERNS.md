@@ -211,6 +211,27 @@ was fixed, what was inaccurate, and what was deliberately deferred. Where a
 finding here contradicts the original audit text above, this section is
 current.
 
+### Fixed (second pass)
+
+- **Save failures were only a console warning.** Added `saveCritical` +
+  a save-failure bus in `storage.js`, a pure controller, and one governed
+  `SaveFailureNotice` (mounted app-wide via `SaveFailureHost`). Critical
+  completion/score/streak/module/planner saves route through it, so a failed
+  save can no longer appear successful. No `window.alert`, no success toast.
+- **Two lockfiles / split package-manager contract.** Standardised on pnpm
+  (`packageManager` field, CI migrated to `pnpm install --frozen-lockfile`,
+  `package-lock.json` removed). See STACK.md.
+- **QuickFire weaknesses were unroutable.** QuickFire now records a canonical
+  `conceptTag` (the `TAG_MODULE_MAP` key, forwarded through
+  `quickFireFromBank`) alongside the human `topic`, for every answer type — not
+  just true/false. `getBiggestWin` routes by `conceptTag` (fail-safe fallback
+  to a slug-topic; human labels never mis-route) and returns it so callers land
+  on the exact tagged screen. Backward-compatible: legacy entries without a
+  `conceptTag` stay readable and safe.
+- **Stale ConceptReveal contract tests.** Repaired to validate governed
+  behaviour (final continue only, taps don't leave, eyebrow opt-in) via
+  function-body extraction rather than obsolete source strings.
+
 ### Fixed
 
 - **Direct localStorage access scattered (Tech Debt).** All learner-data
@@ -257,12 +278,6 @@ current.
 
 ### Deliberately deferred (out of scope / higher risk)
 
-- **QuickFire logs a human topic name, not a concept tag.** QuickFire's
-  weakness log uses `qfQ.topic` (e.g. "Medieval Medicine"), which never matches
-  a `TAG_MODULE_MAP` slug, so those weaknesses are safely *excluded* from
-  biggest-win routing rather than mis-routed. Making them routable means
-  logging the tag and reworking the weak-topic display labels — a data-shape
-  and UI change beyond safe scope here.
 - **IndexedDB / encryption / data-model redesign.** Explicitly out of scope.
 - **ModulePlayer decomposition.** The safe pure-logic extraction (persistence
   helpers) was completed; all other candidates were already extracted into
