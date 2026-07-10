@@ -23,10 +23,13 @@
 
 import { getJson, setJson } from '../../../lib/storage.js'
 import { qfQuestionId } from './questionId.js'
+import { compactAnswerLog, QF_ANSWER_LOG_CAP as MERGE_LOG_CAP, QF_ANSWER_LOG_RETAIN } from '../../../data/progressSync/progressMerge.js'
 
 export const QUICK_FIRE_MEMORY_KEY = 'gcse_quickfire_memory_v1'
 export const QF_ANSWER_LOG_KEY = 'gcse_qf_answer_log'
-export const QF_ANSWER_LOG_CAP = 4000
+export const QF_BASELINE_KEY = 'gcse_qf_baseline_v1'
+export const QF_DEVICE_KEY = 'gcse_qf_device_v1'
+export const QF_ANSWER_LOG_CAP = MERGE_LOG_CAP
 
 export function readQuickFireMemory() {
   return getJson(QUICK_FIRE_MEMORY_KEY, { subjects: {}, topics: {} })
@@ -34,6 +37,24 @@ export function readQuickFireMemory() {
 
 export function qfAnswerEventId(question) {
   return `${qfQuestionId(question)}:${Date.now()}:${Math.random().toString(36).slice(2, 9)}`
+}
+
+// A stable id + monotonic sequence number for THIS device (per account scope,
+// which is enough to keep two devices' event streams distinct). The id lets
+// the merge attribute each aged-out event to the device that created it — a
+// grow-only per-device counter that survives raw-log trimming without ever
+// double-counting across devices. Advanced (and persisted) once per committed
+// answer.
+function newDeviceId() {
+  return `d-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+function nextDeviceSeq() {
+  const rec = getJson(QF_DEVICE_KEY, null) || { id: newDeviceId(), seq: 0 }
+  if (!rec.id) rec.id = newDeviceId()
+  rec.seq = (rec.seq || 0) + 1
+  setJson(QF_DEVICE_KEY, rec)
+  return rec
 }
 
 function bumpSeededBucket(buckets, key, isCorrect, extra = {}) {
@@ -68,9 +89,24 @@ export function bumpQuickFireMemoryForAnswer(question, isCorrect) {
   }
   setJson(QUICK_FIRE_MEMORY_KEY, next)
 
+  const device = nextDeviceSeq()
   const log = getJson(QF_ANSWER_LOG_KEY, [])
-  log.unshift({ id: qfAnswerEventId(question), subject, topicKey, correct: isCorrect, at: Date.now() })
-  setJson(QF_ANSWER_LOG_KEY, log.slice(0, QF_ANSWER_LOG_CAP))
+  log.unshift({
+    id: qfAnswerEventId(question), dev: device.id, seq: device.seq,
+    subject, topicKey, correct: isCorrect, at: Date.now(),
+  })
+  // Once the raw log exceeds the cap, fold this device's own aged events into
+  // the merge-safe baseline instead of dropping them (the old lossy slice).
+  if (log.length > QF_ANSWER_LOG_CAP) {
+    const { log: compactedLog, baseline } = compactAnswerLog(
+      log, getJson(QF_BASELINE_KEY, null), device.id,
+      { cap: QF_ANSWER_LOG_CAP, retain: QF_ANSWER_LOG_RETAIN },
+    )
+    setJson(QF_ANSWER_LOG_KEY, compactedLog)
+    if (baseline) setJson(QF_BASELINE_KEY, baseline)
+  } else {
+    setJson(QF_ANSWER_LOG_KEY, log)
+  }
 
   return next
 }

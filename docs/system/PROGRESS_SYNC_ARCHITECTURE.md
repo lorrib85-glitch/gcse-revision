@@ -188,18 +188,37 @@ pointer for whichever account is now active.
   subjects/topics, and a round finishing normally can't double-count what
   was already persisted per-answer.
 - **Multi-device merge**: each bump also appends a stable-id event to
-  `gcse_qf_answer_log` (bounded, capped at 4000) and captures a one-time
-  `seedAnswered`/`seedCorrect` on a bucket's first write after upgrading —
-  the value both devices are expected to share from their last common sync.
-  `progressMerge.js` merges two devices' buckets as
-  `seed + |deduplicated events|` when log evidence exists, recovering
-  independent activity a naive per-field max would silently drop (two
-  devices diverging from a synced base of 10, answering 3 and 4 different
-  new questions respectively, correctly merge to 17 — not `max(13, 14) = 14`).
-  Buckets with no matching log evidence on either side (pre-log historical
-  data) fall back to the original max-merge unchanged, so old aggregate-only
-  records stay readable and nothing is fabricated for history that was never
-  logged.
+  `gcse_qf_answer_log` (bounded, capped at 4000) — now stamped with the
+  creating device's id (`dev`) and a per-device monotonic `seq` — and captures
+  a one-time `seedAnswered`/`seedCorrect` on a bucket's first write after
+  upgrading (the value both devices are expected to share from their last
+  common sync). `progressMerge.js` merges two devices' buckets as
+  `seed + folded + |deduplicated unfolded events|`, recovering independent
+  activity a naive per-field max would silently drop (two devices diverging
+  from a synced base of 10, answering 3 and 4 different new questions
+  respectively, correctly merge to 17 — not `max(13, 14) = 14`). Buckets with
+  no seed/event/baseline evidence on either side (pre-log historical data)
+  fall back to max-merge, and a legacy aggregate-only total is never regressed
+  below by a reconstruction, so old records stay readable and nothing is
+  fabricated.
+
+- **Merge-safe compaction (`gcse_qf_baseline_v1`)**: raw events don't live
+  forever, so once the log exceeds the cap a device folds its OWN aged events
+  into a grow-only **per-device accumulator baseline** (a G-Counter CRDT)
+  before they're trimmed — `{ folded: {[dev]: maxSeq}, subjects/topics:
+  {[key]: {[dev]: {answered, correct}}} }`. Because each event increments
+  exactly one device's cell and cells merge by `max` (a monotonic prefix
+  count keyed by `seq`), raw-event trimming can never reduce a historical
+  total, the same event is never counted twice across devices, repeated syncs
+  are idempotent, and a device holding a compacted baseline merges correctly
+  with one holding newer raw events. Folding is contiguous-prefix only, so
+  `seq <= folded[dev]` exactly means "already in the baseline" and the merge
+  prunes those events from the log. The pure compaction/merge core lives in
+  `progressMerge.js` (`compactAnswerLog`, `mergeQfBaseline`); `quickFireMemory.js`
+  supplies the device id/seq and calls it on write. `gcse_qf_device_v1` holds
+  the per-scope device id + seq counter. All new fields are additive and
+  backward-compatible: data without `dev`/`seq`/baseline keeps using the
+  seed/max path.
 
 ## Testing
 

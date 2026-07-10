@@ -47,6 +47,7 @@ export const STATIC_PROGRESS_KEYS = [
   'gcse_mastery_v1',
   'gcse_quickfire_memory_v1',
   'gcse_qf_answer_log',
+  'gcse_qf_baseline_v1',
   'gcse_qf_q_history',
   'gcse_qf_prev_session',
   'gcse_qf_best',

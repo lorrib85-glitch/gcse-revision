@@ -251,13 +251,14 @@ function mergeCountBucket(a, b) {
 
 // Dedupe two devices' answer-event logs by stable id (each event's id is
 // generated once, on-device, at the moment the answer is committed — see
-// qfAnswerEventId in QuickFireMode.jsx — so the same real-world answer
+// qfAnswerEventId in quickFireMemory.js — so the same real-world answer
 // always produces the same id, and a repeat sync of the same events is a
 // no-op). Bounded so the log can't grow without limit across a long-lived
-// account; losing the oldest events only means those buckets fall back to
-// max-merge for activity older than the cap, never a correctness regression
-// for anything within it.
-const QF_ANSWER_LOG_CAP = 4000
+// account. Events that age past the cap are NOT lost: local compaction folds a
+// device's own aged events into the per-device baseline below before they can
+// be trimmed, so historical totals survive raw-event trimming.
+export const QF_ANSWER_LOG_CAP = 4000
+export const QF_ANSWER_LOG_RETAIN = 3000
 
 function mergeQfAnswerLog(a, b) {
   const seen = new Set()
@@ -268,7 +269,129 @@ function mergeQfAnswerLog(a, b) {
     out.push(entry)
   }
   out.sort((x, y) => (Number(y.at) || 0) - (Number(x.at) || 0))
-  return out.slice(0, QF_ANSWER_LOG_CAP)
+  return out
+}
+
+// ─── gcse_qf_baseline_v1 — merge-safe compacted evidence ──────────────────────
+//
+// A grow-only per-device accumulator (a G-Counter CRDT) recording answer
+// events that have aged out of the raw log:
+//   { version, folded: {[dev]: maxSeqFolded},
+//     subjects: {[key]: {[dev]: {answered, correct}}}, topics: {...} }
+//
+// Every raw event carries its creating device id (`dev`) and a per-device
+// monotonic sequence number (`seq`). A device folds only its OWN aged events
+// into its own accumulator cell — its seqs are contiguous, so `folded[dev]`
+// always denotes a true prefix and "seq <= folded[dev]" means "already in the
+// baseline". Because each event increments exactly one device's cell, and
+// cells merge by max (a monotonic prefix count), independent activity from two
+// devices survives, the same event is never counted twice, repeated syncs are
+// idempotent, and trimming raw events never reduces a total. Old aggregate-only
+// records (no dev/seq) keep working via the seed/max fallback below; nothing is
+// ever fabricated.
+
+export function emptyQfBaseline() {
+  return { version: 1, folded: {}, subjects: {}, topics: {} }
+}
+
+function cloneQfBaseline(b) {
+  const src = (b && typeof b === 'object') ? b : null
+  const out = emptyQfBaseline()
+  if (!src) return out
+  out.folded = { ...(src.folded || {}) }
+  for (const mapName of ['subjects', 'topics']) {
+    const map = src[mapName] || {}
+    for (const key of Object.keys(map)) {
+      out[mapName][key] = {}
+      for (const dev of Object.keys(map[key] || {})) {
+        const cell = map[key][dev] || {}
+        out[mapName][key][dev] = { answered: cell.answered || 0, correct: cell.correct || 0 }
+      }
+    }
+  }
+  return out
+}
+
+function addFoldedCell(baseline, mapName, key, dev, correct) {
+  const bucket = baseline[mapName][key] || (baseline[mapName][key] = {})
+  const cell = bucket[dev] || (bucket[dev] = { answered: 0, correct: 0 })
+  cell.answered += 1
+  cell.correct += correct ? 1 : 0
+}
+
+// Fold events into a (cloned) baseline respecting per-device contiguity: per
+// device, fold only events that extend the folded prefix (folded[dev]+1, +2,
+// …) with no gap. Mutates the passed baseline; callers pass a clone.
+function foldEventsContiguous(baseline, events) {
+  const byDev = new Map()
+  for (const e of events) {
+    if (!e || e.dev == null || typeof e.seq !== 'number') continue // legacy events aren't foldable
+    if (!byDev.has(e.dev)) byDev.set(e.dev, [])
+    byDev.get(e.dev).push(e)
+  }
+  for (const [dev, devEvents] of byDev) {
+    devEvents.sort((x, y) => x.seq - y.seq)
+    let folded = baseline.folded[dev] || 0
+    for (const e of devEvents) {
+      if (e.seq <= folded) continue      // already folded
+      if (e.seq !== folded + 1) break    // gap — stop this device here
+      addFoldedCell(baseline, 'subjects', e.subject, dev, e.correct)
+      addFoldedCell(baseline, 'topics', e.topicKey, dev, e.correct)
+      folded = e.seq
+    }
+    baseline.folded[dev] = folded
+  }
+}
+
+// Pure compaction used by quickFireMemory.js when the raw log exceeds the cap:
+// fold this device's OWN overflow (oldest) events into the baseline, keep the
+// newest `retain`. Foreign/legacy overflow is dropped without folding — a
+// foreign event's owner folds it into the shared baseline when the owner trims,
+// and a still-live copy re-unions on the next merge. Deterministic and
+// idempotent: re-running on an already-compacted log (<= cap) changes nothing.
+export function compactAnswerLog(log, baseline, deviceId, { cap = QF_ANSWER_LOG_CAP, retain = QF_ANSWER_LOG_RETAIN } = {}) {
+  const arr = Array.isArray(log) ? log : []
+  const sorted = [...arr].sort((x, y) => (Number(y?.at) || 0) - (Number(x?.at) || 0))
+  if (sorted.length <= cap) {
+    return { log: sorted, baseline: baseline ? cloneQfBaseline(baseline) : null, compacted: false }
+  }
+  const keep = sorted.slice(0, retain)
+  const overflow = sorted.slice(retain).filter(e => e && e.dev === deviceId && typeof e.seq === 'number')
+  const next = cloneQfBaseline(baseline)
+  foldEventsContiguous(next, overflow)
+  return { log: keep, baseline: next, compacted: true }
+}
+
+// Merge two devices' baselines: folded watermark and each (bucket, device)
+// cell are monotonic prefix counts, so max per key is exact and idempotent.
+function mergeQfBaseline(a, b) {
+  if (!a && !b) return undefined
+  const out = cloneQfBaseline(a)
+  const bv = cloneQfBaseline(b)
+  for (const dev of Object.keys(bv.folded)) {
+    out.folded[dev] = Math.max(out.folded[dev] || 0, bv.folded[dev] || 0)
+  }
+  for (const mapName of ['subjects', 'topics']) {
+    for (const key of Object.keys(bv[mapName])) {
+      const outBucket = out[mapName][key] || (out[mapName][key] = {})
+      for (const dev of Object.keys(bv[mapName][key])) {
+        const c = bv[mapName][key][dev]
+        const cur = outBucket[dev] || { answered: 0, correct: 0 }
+        outBucket[dev] = { answered: Math.max(cur.answered, c.answered), correct: Math.max(cur.correct, c.correct) }
+      }
+    }
+  }
+  return out
+}
+
+// Drop events already represented in the baseline (seq <= folded[dev]); legacy
+// events with no dev/seq are always kept. Also caps the surviving log.
+function pruneFoldedEvents(log, folded = {}) {
+  const kept = log.filter(e => {
+    if (!e || e.dev == null || typeof e.seq !== 'number') return true
+    return e.seq > (folded[e.dev] || 0)
+  })
+  return kept.slice(0, QF_ANSWER_LOG_CAP)
 }
 
 function eventsForBucketKey(events, mapName, key) {
@@ -276,10 +399,25 @@ function eventsForBucketKey(events, mapName, key) {
   return events.filter(e => e[field] === key)
 }
 
+function foldedTotals(baseline, mapName, key) {
+  const bucket = baseline?.[mapName]?.[key]
+  let answered = 0, correct = 0
+  if (bucket) {
+    for (const dev of Object.keys(bucket)) {
+      answered += bucket[dev].answered || 0
+      correct += bucket[dev].correct || 0
+    }
+  }
+  return { answered, correct }
+}
+
 // Seed-aware bucket merge for one subjects/topics map, given the already-
-// deduplicated merged event log. Falls back to plain max-merge for any
-// bucket that has no matching log events on either side.
-function mergeBucketMapWithEvents(a, b, mapName, mergedLog) {
+// deduplicated + pruned event log and the merged baseline. Reconstructs the
+// true cross-device total as:
+//   seed (last common base) + folded (aged-out events) + |unfolded events|
+// Falls back to plain max-merge for any bucket with no seed and no folded/log
+// evidence on either side (pre-log aggregate-only history).
+function mergeBucketMapWithEvents(a, b, mapName, prunedLog, baseline) {
   const av = a || {}
   const bv = b || {}
   const keys = new Set([...Object.keys(av), ...Object.keys(bv)])
@@ -287,38 +425,47 @@ function mergeBucketMapWithEvents(a, b, mapName, mergedLog) {
   for (const key of keys) {
     const bucketA = av[key]
     const bucketB = bv[key]
-    const events = eventsForBucketKey(mergedLog, mapName, key)
-    const seedAnswered = [bucketA?.seedAnswered, bucketB?.seedAnswered]
-      .filter(v => v !== undefined)
-    const seedCorrect = [bucketA?.seedCorrect, bucketB?.seedCorrect]
-      .filter(v => v !== undefined)
-    if (events.length > 0 && seedAnswered.length > 0) {
-      const base = mergeCountBucket(bucketA, bucketB) || {}
-      out[key] = {
-        ...base,
-        seedAnswered: Math.min(...seedAnswered),
-        seedCorrect: seedCorrect.length > 0 ? Math.min(...seedCorrect) : 0,
-        answered: Math.min(...seedAnswered) + events.length,
-        correct: (seedCorrect.length > 0 ? Math.min(...seedCorrect) : 0) + events.filter(e => e.correct).length,
+    const events = eventsForBucketKey(prunedLog, mapName, key)
+    const fold = foldedTotals(baseline, mapName, key)
+    const seedAnswered = [bucketA?.seedAnswered, bucketB?.seedAnswered].filter(v => v !== undefined)
+    const seedCorrect = [bucketA?.seedCorrect, bucketB?.seedCorrect].filter(v => v !== undefined)
+    const maxMerged = mergeCountBucket(bucketA, bucketB)
+    if ((events.length > 0 || fold.answered > 0) && seedAnswered.length > 0) {
+      const seedA = Math.min(...seedAnswered)
+      const seedC = seedCorrect.length > 0 ? Math.min(...seedCorrect) : 0
+      const reconstructed = {
+        ...(maxMerged || {}),
+        seedAnswered: seedA,
+        seedCorrect: seedC,
+        answered: seedA + fold.answered + events.length,
+        correct: seedC + fold.correct + events.filter(e => e.correct).length,
       }
+      // Reconstruction is the true cross-device union when both sides carry
+      // event/baseline evidence. But if the other side is a legacy
+      // aggregate-only record whose raw total is higher (no seed, so it can't
+      // be reconstructed), never regress below it — take the safer, higher
+      // count via the plain max-merge, keeping that bucket's own paired
+      // answered/correct so the correct <= answered invariant holds.
+      out[key] = reconstructed.answered >= (maxMerged?.answered || 0) ? reconstructed : maxMerged
     } else {
-      out[key] = mergeCountBucket(bucketA, bucketB)
+      out[key] = maxMerged
     }
   }
   return out
 }
 
-// Merges gcse_quickfire_memory_v1 together with its companion
-// gcse_qf_answer_log (mergeProgressData special-cases both keys together —
-// see the dispatch loop below — because deriving a correct bucket merge
-// needs both sides' logs at once, not just both sides' bucket maps).
-function mergeQuickFireMemory(a, b, mergedLog) {
+// Merges gcse_quickfire_memory_v1 together with its companions
+// gcse_qf_answer_log and gcse_qf_baseline_v1 (mergeProgressData special-cases
+// the three together — see the dispatch loop below — because a correct bucket
+// merge needs both sides' logs and baselines at once, not just both sides'
+// bucket maps).
+function mergeQuickFireMemory(a, b, prunedLog, baseline) {
   if (!a && !b) return null
   const av = a || { subjects: {}, topics: {} }
   const bv = b || { subjects: {}, topics: {} }
   return {
-    subjects: mergeBucketMapWithEvents(av.subjects, bv.subjects, 'subjects', mergedLog),
-    topics: mergeBucketMapWithEvents(av.topics, bv.topics, 'topics', mergedLog),
+    subjects: mergeBucketMapWithEvents(av.subjects, bv.subjects, 'subjects', prunedLog, baseline),
+    topics: mergeBucketMapWithEvents(av.topics, bv.topics, 'topics', prunedLog, baseline),
     updatedAt: String(av.updatedAt ?? '') >= String(bv.updatedAt ?? '') ? av.updatedAt : bv.updatedAt,
   }
 }
@@ -383,10 +530,10 @@ function mergeProgressValue(key, local, cloud, { currentUid, preferLocalOnTie })
   if (key === 'gcse_planner_prefs') return mergeShallow(local, cloud, preferLocalOnTie)
   if (key === 'gcse_progress') return mergeProgressRecord(local, cloud)
   if (key === 'gcse_mastery_v1') return mergeMasteryState(local, cloud)
-  // gcse_quickfire_memory_v1 and gcse_qf_answer_log are handled together in
-  // mergeProgressData (below) — the bucket merge needs both sides' logs at
-  // once, which per-key dispatch can't see.
-  if (key === 'gcse_quickfire_memory_v1' || key === 'gcse_qf_answer_log') return undefined
+  // gcse_quickfire_memory_v1, gcse_qf_answer_log and gcse_qf_baseline_v1 are
+  // handled together in mergeProgressData (below) — the bucket merge needs both
+  // sides' logs AND baselines at once, which per-key dispatch can't see.
+  if (key === 'gcse_quickfire_memory_v1' || key === 'gcse_qf_answer_log' || key === 'gcse_qf_baseline_v1') return undefined
   if (key === 'gcse_qf_q_history') return mergeQfQuestionHistory(local, cloud)
   if (key === 'gcse_qf_prev_session') return mergeByEmbeddedField(local, cloud, 'date')
   if (key === 'gcse_qf_best') return mergeQfBest(local, cloud)
@@ -416,16 +563,23 @@ export function mergeProgressData(localData, cloudData, { currentUid, preferLoca
   for (const key of keys) {
     merged[key] = mergeProgressValue(key, local[key], cloud[key], { currentUid, preferLocalOnTie })
   }
-  // gcse_quickfire_memory_v1 + gcse_qf_answer_log are a linked pair — see
-  // the comment in mergeProgressValue. Only touch them if at least one side
-  // actually had one of the two, so accounts that never used QuickFire (or
-  // predate the answer log) don't gain empty keys they never had.
-  if (keys.has('gcse_quickfire_memory_v1') || keys.has('gcse_qf_answer_log')) {
-    const mergedLog = mergeQfAnswerLog(local.gcse_qf_answer_log, cloud.gcse_qf_answer_log)
-    if (keys.has('gcse_qf_answer_log')) merged.gcse_qf_answer_log = mergedLog
+  // gcse_quickfire_memory_v1 + gcse_qf_answer_log + gcse_qf_baseline_v1 are a
+  // linked trio — see the comment in mergeProgressValue. Only touch them if at
+  // least one side actually had one of the three, so accounts that never used
+  // QuickFire (or predate these keys) don't gain empty keys they never had.
+  if (keys.has('gcse_quickfire_memory_v1') || keys.has('gcse_qf_answer_log') || keys.has('gcse_qf_baseline_v1')) {
+    const mergedBaseline = mergeQfBaseline(local.gcse_qf_baseline_v1, cloud.gcse_qf_baseline_v1)
+    // Dedupe both logs, then drop events already folded into the merged
+    // baseline so nothing is counted twice (baseline + a lingering raw copy).
+    const prunedLog = pruneFoldedEvents(
+      mergeQfAnswerLog(local.gcse_qf_answer_log, cloud.gcse_qf_answer_log),
+      mergedBaseline?.folded,
+    )
+    if (keys.has('gcse_qf_baseline_v1') && mergedBaseline !== undefined) merged.gcse_qf_baseline_v1 = mergedBaseline
+    if (keys.has('gcse_qf_answer_log')) merged.gcse_qf_answer_log = prunedLog
     if (keys.has('gcse_quickfire_memory_v1')) {
       merged.gcse_quickfire_memory_v1 = mergeQuickFireMemory(
-        local.gcse_quickfire_memory_v1, cloud.gcse_quickfire_memory_v1, mergedLog,
+        local.gcse_quickfire_memory_v1, cloud.gcse_quickfire_memory_v1, prunedLog, mergedBaseline,
       )
     }
   }

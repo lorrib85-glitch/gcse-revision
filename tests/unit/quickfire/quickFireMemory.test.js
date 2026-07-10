@@ -72,6 +72,19 @@ describe('bumpQuickFireMemoryForAnswer — per-answer persistence', () => {
     expect(log.some(e => e.subject === 'History' && e.correct === false)).toBe(true)
   })
 
+  it('stamps each answer-log event with a device id and a monotonic per-device seq (merge-safe compaction)', () => {
+    bumpQuickFireMemoryForAnswer(bioQ, true)
+    bumpQuickFireMemoryForAnswer(bioQ, false)
+    bumpQuickFireMemoryForAnswer(historyQ, true)
+    const log = getJson(QF_ANSWER_LOG_KEY, [])
+    // One stable device id for this browser/scope.
+    const devs = new Set(log.map(e => e.dev))
+    expect(devs.size).toBe(1)
+    expect([...devs][0]).toMatch(/^d-/)
+    // seqs are 1..3, unique and monotonic (newest-first in the log).
+    expect(log.map(e => e.seq).sort((a, b) => a - b)).toEqual([1, 2, 3])
+  })
+
   it('a repeat answer to the same question (QuickFire\'s retry-prev-wrong queue mechanic) is a real second attempt, not a duplicate to suppress', () => {
     bumpQuickFireMemoryForAnswer(bioQ, false)
     bumpQuickFireMemoryForAnswer(bioQ, true) // answered again later in the same round
