@@ -199,3 +199,237 @@ describe('Journey 4 — cloud restore seam', () => {
     vi.resetModules()
   })
 })
+
+// ─── Journeys 5–10 — sync safety task ────────────────────────────────────────
+// Each journey resets modules and mocks the Firestore seam fresh, mirroring
+// Journey 4's pattern, so progressSync.js re-binds to this test's mock rather
+// than a copy cached by an earlier test.
+
+async function withMockedCloud(run) {
+  vi.resetModules()
+  vi.doMock('../../../src/auth/firebaseClient.js', () => ({ firebaseEnabled: true, app: {} }))
+  let cloudDoc = null
+  const setDocs = []
+  let failNextSetDoc = false
+  vi.doMock('firebase/firestore', () => ({
+    getFirestore: () => ({}),
+    doc: (db, ...segments) => ({ segments }),
+    getDoc: async () => ({ exists: () => cloudDoc !== null, data: () => cloudDoc }),
+    setDoc: async (ref, value) => {
+      if (failNextSetDoc) { failNextSetDoc = false; throw new Error('network unavailable') }
+      setDocs.push(value)
+      cloudDoc = value
+    },
+  }))
+  const progressSync = await import('../../../src/data/progressSync/progressSync.js')
+  try {
+    await run({
+      ...progressSync,
+      getCloudDoc: () => cloudDoc,
+      setCloudDoc: (v) => { cloudDoc = v },
+      setDocs,
+      failNextSetDoc: () => { failNextSetDoc = true },
+    })
+  } finally {
+    vi.doUnmock('firebase/firestore')
+    vi.doUnmock('../../../src/auth/firebaseClient.js')
+    vi.resetModules()
+  }
+}
+
+describe('Journey 5 — guest links a Google account that already has cloud progress', () => {
+  it('merges instead of letting either side silently replace the other, and survives a reload', async () => {
+    await withMockedCloud(async ({ syncProgressForUser, getCloudDoc, setCloudDoc }) => {
+      const { saveModuleState } = await import('../../../src/progress.js')
+      const { recordScore } = await import('../../../src/progress.js')
+
+      // Learner did real work as a guest before ever signing in.
+      saveModuleState('history-medicine-black-death', { screen: 6, hookDone: true })
+      recordScore({ subject: 'History', earned: 8, possible: 10, source: 'module' })
+
+      // This Google account already has cloud progress from a previous
+      // session (e.g. signed in on a browser that later got cleared).
+      const cloudSnapshot = {
+        version: 1,
+        updatedAt: Date.now() - 50000,
+        data: {
+          gcse_scores: [{ date: '2026-06-20', subject: 'Maths', earned: 4, possible: 10, pct: 40, source: 'quiz' }],
+          'gcse_module_history-medicine-renaissance-medicine': { screen: 3 },
+        },
+      }
+      setCloudDoc(cloudSnapshot)
+
+      const result = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-guest-link', name: 'Sam' })
+      expect(result.action).toBe('merge')
+
+      // "Reload": re-read from the real storage boundary, not from memory.
+      const { getModuleState, getScores } = await import('../../../src/progress.js')
+      expect(getModuleState('history-medicine-black-death').screen).toBe(6)
+      expect(getModuleState('history-medicine-renaissance-medicine').screen).toBe(3)
+      const subjects = getScores().map(s => s.subject).sort()
+      expect(subjects).toEqual(['History', 'Maths'])
+
+      // Neither side was silently dropped from the cloud copy either.
+      expect(getCloudDoc().data.gcse_scores).toHaveLength(2)
+      expect(getCloudDoc().data['gcse_module_history-medicine-black-death']).toEqual({ screen: 6, hookDone: true })
+    })
+  })
+})
+
+describe('Journey 6 — an existing account signs in on another, older device', () => {
+  it('does not undo completed learning from the newer cloud state', async () => {
+    await withMockedCloud(async ({ syncProgressForUser, setCloudDoc }) => {
+      const { saveModuleState, getModuleState } = await import('../../../src/progress.js')
+
+      // This device's local copy is stale — the module isn't finished here yet.
+      saveModuleState('history-medicine-germ-theory', { screen: 3, completed: false })
+
+      // The cloud already reflects the module being finished on another device.
+      setCloudDoc({
+        version: 1,
+        updatedAt: Date.now(),
+        data: { 'gcse_module_history-medicine-germ-theory': { screen: 20, completed: true, timestamp: Date.now() } },
+      })
+
+      const result = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-device-b', name: 'Sam' })
+      expect(result.action).toBe('apply')
+
+      const resumed = getModuleState('history-medicine-germ-theory')
+      expect(resumed.completed).toBe(true)
+      expect(resumed.screen).toBe(20)
+    })
+  })
+})
+
+describe('Journey 7 — local and cloud each hold unique progress', () => {
+  it('both valid sets survive, and repeating the sync does not duplicate anything', async () => {
+    await withMockedCloud(async ({ syncProgressForUser, getCloudDoc, setCloudDoc, setDocs }) => {
+      const { saveModuleState } = await import('../../../src/progress.js')
+      const { logWrongAnswer } = await import('../../../src/unifiedWeaknessTracker.js')
+
+      saveModuleState('bio_building_life', { screen: 5 })
+      logWrongAnswer({ subject: 'Biology', topic: 'osmosis', questionId: 'local-q1', marks: 1, source: 'module' })
+
+      setCloudDoc({
+        version: 1,
+        updatedAt: Date.now() - 10000,
+        data: {
+          'gcse_module_math1': { screen: 2 },
+          gcse_wrong_answers: [{ timestamp: 1, date: '2026-06-01', subject: 'Maths', topic: 'fractions', conceptTag: null, questionId: 'cloud-q1', questionText: '', marks: 1, source: 'quiz', questionType: 'mcq' }],
+        },
+      })
+
+      const first = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-both-unique', name: 'Sam' })
+      expect(first.action).toBe('merge')
+
+      const { getModuleState } = await import('../../../src/progress.js')
+      const { getWeakTopics } = await import('../../../src/unifiedWeaknessTracker.js')
+      expect(getModuleState('bio_building_life').screen).toBe(5)
+      expect(getModuleState('math1').screen).toBe(2)
+      // Both wrong-answer entries are present (evidence from both subjects).
+      const topicsSeen = new Set(getWeakTopics(1).map(t => t.topic))
+      expect(topicsSeen.has('osmosis')).toBe(true)
+      expect(topicsSeen.has('fractions')).toBe(true)
+
+      const setDocCountAfterFirst = setDocs.length
+      const cloudDataAfterFirst = getCloudDoc().data.gcse_wrong_answers.length
+
+      const second = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-both-unique', name: 'Sam' })
+      expect(second.action).toBe('none')
+      expect(setDocs.length).toBe(setDocCountAfterFirst)
+      expect(getCloudDoc().data.gcse_wrong_answers).toHaveLength(cloudDataAfterFirst)
+    })
+  })
+})
+
+describe('Journey 8 — offline learning', () => {
+  it('local saves succeed while the cloud write fails, the learner keeps working, and a later retry backs up without duplicating', async () => {
+    await withMockedCloud(async ({ backupProgressForUser, failNextSetDoc, getCloudDoc }) => {
+      const { saveModuleState, getModuleState } = await import('../../../src/progress.js')
+
+      // Learner works while offline — local persistence never depends on the network.
+      const savedOk = saveModuleState('sci_bio_w1', { screen: 4 })
+      expect(savedOk).toBe(true)
+      expect(getModuleState('sci_bio_w1').screen).toBe(4)
+
+      // The backup attempt fails (simulated network failure) — the caller
+      // (AuthContext) must see this rejection, not a false success.
+      failNextSetDoc()
+      await expect(backupProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-offline', name: 'Sam' }))
+        .rejects.toThrow()
+      expect(getCloudDoc()).toBeNull()
+
+      // Learner keeps working locally regardless.
+      saveModuleState('sci_bio_w1', { screen: 7 })
+
+      // Connectivity returns — retry succeeds and reaches the cloud exactly once.
+      const retry = await backupProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-offline', name: 'Sam' })
+      expect(retry.action).toBe('upload')
+      expect(getCloudDoc().data['gcse_module_sci_bio_w1']).toEqual({ screen: 7 })
+
+      // A second retry with nothing new to contribute performs no further write.
+      const repeat = await backupProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-offline', name: 'Sam' })
+      expect(repeat.action).toBe('none')
+    })
+  })
+})
+
+describe('Journey 9 — sign-out with pending progress', () => {
+  it('a failed final flush does not discard local work and does not falsely report success', async () => {
+    await withMockedCloud(async ({ backupProgressForUser, syncProgressForUser, failNextSetDoc, getCloudDoc }) => {
+      const { saveModuleState, getModuleState } = await import('../../../src/progress.js')
+      const { recordScore, getScores } = await import('../../../src/progress.js')
+
+      saveModuleState('history-medicine-cancer', { screen: 9, completed: true })
+      recordScore({ subject: 'History', earned: 9, possible: 10, source: 'module' })
+
+      // This mirrors AuthContext.signOut(): flush before clearing the
+      // session. The flush fails (cloud unreachable at the moment of sign-out).
+      failNextSetDoc()
+      await expect(backupProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-signout', name: 'Sam' }))
+        .rejects.toThrow()
+
+      // Sign-out itself never clears progress keys (only the session key) —
+      // work already done this session is exactly as it was, not discarded.
+      expect(getModuleState('history-medicine-cancer')).toEqual({ screen: 9, completed: true })
+      expect(getScores()[0]).toMatchObject({ subject: 'History', earned: 9 })
+
+      // Next sign-in (or an app-load reconcile) retries and succeeds, with
+      // no duplication of the work done before sign-out.
+      const retry = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-signout', name: 'Sam' })
+      expect(retry.action).toBe('upload')
+      expect(getCloudDoc().data.gcse_scores).toHaveLength(1)
+    })
+  })
+})
+
+describe('Journey 10 — auth restoration on reload', () => {
+  it('existing local progress is never reset to empty while the cloud merge resolves', async () => {
+    await withMockedCloud(async ({ syncProgressForUser, setCloudDoc }) => {
+      const { saveModuleState, getModuleState } = await import('../../../src/progress.js')
+
+      // A returning, already-authenticated learner reloads: their local
+      // progress is already sitting in storage before any sync runs.
+      saveModuleState('history-medicine-jenner-vaccination', { screen: 15, completed: true })
+      const beforeSync = getModuleState('history-medicine-jenner-vaccination')
+      expect(beforeSync.completed).toBe(true)
+
+      // Cloud restores the session with additional, different progress from
+      // another device.
+      setCloudDoc({
+        version: 1,
+        updatedAt: Date.now(),
+        data: { 'gcse_module_history-medicine-great-stink': { screen: 8, completed: true } },
+      })
+
+      const result = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-restore', name: 'Sam' })
+
+      // The already-completed local module was never transiently reset —
+      // it reads the same before and after the merge resolves.
+      expect(getModuleState('history-medicine-jenner-vaccination')).toEqual(beforeSync)
+      // The merged state (not a wholesale cloud overwrite) is what's live.
+      expect(getModuleState('history-medicine-great-stink').completed).toBe(true)
+      expect(result.action).toBe('merge')
+    })
+  })
+})
