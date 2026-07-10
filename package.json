@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "test": "vitest",
     "test:architecture": "vitest run tests/architecture",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-rise-rules \"vitest run --config vitest.rules.config.js\"",
     "verify": "pnpm lint && pnpm test:architecture && pnpm build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^5.2.1",
     "@eslint/js": "^9.39.4",
+    "@firebase/rules-unit-testing": "^5.0.1",
     "@storybook/addon-a11y": "^10.4.1",
     "@storybook/addon-docs": "^10.4.1",
     "@storybook/addon-mcp": "^0.6.0",
@@ -38,6 +40,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
+    "firebase-tools": "^15.23.0",
     "glob": "^13.0.6",
     "globals": "^17.6.0",
     "playwright": "^1.60.0",

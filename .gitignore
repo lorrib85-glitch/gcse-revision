@@ -8,6 +8,11 @@ dist
 *storybook.log
 storybook-static
 
+# Firebase emulator debug logs (from pnpm test:rules)
+firestore-debug.log
+firebase-debug.log
+ui-debug.log
+
 # Original PNG sources (converted to WebP for production)
 public/figures/history/medicine/medieval/vl-*.png
 

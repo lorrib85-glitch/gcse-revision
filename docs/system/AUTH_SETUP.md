@@ -54,11 +54,36 @@ Firebase Hosting (Vercel remains the host).
 1. Firebase Console → Build → **Firestore Database** → Create database →
    production mode (any region; pick once, it can't change).
 2. Open the **Rules** tab, paste the contents of `firestore.rules` from this
-   repo, and **Publish**. The rules allow each authenticated user to read and
-   write only `users/{their-own-uid}/progress/*`; everything else is denied.
-3. No CLI, no `firebase deploy` — this repo does not use Firebase Hosting.
-   `firestore.rules` is version-controlled documentation of what the console
-   should contain; re-paste it after any edit.
+   repo, and **Publish** — or deploy them with the CLI:
+   `firebase deploy --only firestore:rules` (config in `firebase.json`).
+   The rules derive ownership solely from `request.auth.uid` and the
+   `users/{uid}/progress/{docId}` path (never from the document payload), so
+   each authenticated learner can read/write only their own progress and
+   everything else is denied by default.
+3. `firestore.rules` is the version-controlled source of truth. **Never** ship
+   a permissive "test mode" rule set (`allow read, write: if true`) — the
+   security-rules suite below exists to catch exactly that.
+
+## Firestore security-rule tests
+
+`tests/rules/firestore.rules.test.js` proves the rules enforce account
+isolation independently of the client, using the Firebase emulator and
+deterministic test users (no live Firebase, no network to Google's services
+beyond the one-time emulator download):
+
+```
+pnpm test:rules
+```
+
+This wraps `vitest run --config vitest.rules.config.js` in
+`firebase emulators:exec --only firestore`, so the emulator is started, the
+rules loaded from `firestore.rules`, and the suite run against it. It covers
+unauthenticated denial, owner read/create/update/delete, cross-learner
+denial, payload-spoofing rejection (ownership from `request.auth.uid` + path
+only), and deny-by-default for unknown paths. Run it after any edit to
+`firestore.rules`. It is kept out of `pnpm verify` because it needs the
+emulator (Java + a one-time jar download); run it directly, or in CI where the
+emulator is available.
 
 ## Local dev setup
 
