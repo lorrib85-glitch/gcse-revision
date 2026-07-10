@@ -204,4 +204,70 @@
 
 ---
 
-*Concerns audit: 2026-07-09*
+## Remediation update — 2026-07-10
+
+Acting on the highest-value verified findings above. This section records what
+was fixed, what was inaccurate, and what was deliberately deferred. Where a
+finding here contradicts the original audit text above, this section is
+current.
+
+### Fixed
+
+- **Direct localStorage access scattered (Tech Debt).** All learner-data
+  reads/writes now route through `src/lib/storage.js`. The former grandfathered
+  call sites (`todaysPlan.js`, `auth/authService.js`, `LegacyApp.jsx`,
+  `ModulePlayer.jsx`, `QuickFireMode.jsx`, `ExamMode.jsx`, `StreakChip.jsx`,
+  `moduleNavigation.js`) were migrated to typed helpers. The
+  `storage-boundary.test.js` allowlist is now just `storage.js`.
+- **Silent write failures (Scaling Limits — QuotaExceededError).** `setJson`
+  now returns `true`/`false` and emits an explicit "progress is NOT being
+  saved" warning on quota errors instead of swallowing them. `progress.js`
+  gained `saveModuleState()` returning the same signal.
+- **Weak-spot routing may miss target screen (Fragile Areas).** Every maths
+  recovery tag pointed at a non-existent module id (`maths-place-value`, …);
+  repointed to the real `math1`–`math8`. Realigned drifting `screenTags`
+  (`math2/3/5/6/7/8`) to the actual loaded content. Guarded by the new
+  `recovery-routing-integrity.test.js`.
+- **Unbuilt module stubs blocking learner experience (Tech Debt).**
+  Introduced governed availability (`getModuleAvailability` /
+  `isModuleAvailable` in `src/modules.js`). The planner and `getContinueModule`
+  now skip non-available modules; weak-spot recovery only targets available
+  modules. Guarded by `module-availability.test.js`.
+- **Registry/metadata desync (Fragile Areas).** Removed four orphan Chemistry
+  loader entries (empty stubs) and the fully-dangling `chem_core` MODULE_GROUP;
+  added the missing `english-macbeth-power-ambition` metadata row (content +
+  loader + browser wiring already existed).
+- **No E2E for complete module journeys (Test Coverage Gaps).** Added
+  `tests/unit/journeys/learnerJourneys.test.js` covering progress-survives-
+  refresh, weakness-repair routing, chapter completion, and the cloud-restore
+  reconciliation seam (integration-level, deterministic — no live OAuth).
+
+### Inaccurate / outdated findings (left code alone)
+
+- **"No package-lock.json or pnpm-lock.yaml in git history" (Dependencies at
+  Risk).** Both `package-lock.json` and `pnpm-lock.yaml` are present and
+  committed. No action needed.
+- **"Module content loading uses proportional screen index estimates" (Known
+  Bugs).** The proportional `stageNavigation` indices in
+  `episode-07-germ-theory.js` feed only the in-module progress rail, **not**
+  weak-spot recovery. Recovery routing uses `screenTags` via
+  `findTaggedScreen`, which are exact for the tagged screens (verified by
+  `recovery-routing-integrity.test.js`). The stage-rail polish remains a
+  content task, not a routing-correctness bug.
+
+### Deliberately deferred (out of scope / higher risk)
+
+- **QuickFire logs a human topic name, not a concept tag.** QuickFire's
+  weakness log uses `qfQ.topic` (e.g. "Medieval Medicine"), which never matches
+  a `TAG_MODULE_MAP` slug, so those weaknesses are safely *excluded* from
+  biggest-win routing rather than mis-routed. Making them routable means
+  logging the tag and reworking the weak-topic display labels — a data-shape
+  and UI change beyond safe scope here.
+- **IndexedDB / encryption / data-model redesign.** Explicitly out of scope.
+- **ModulePlayer decomposition.** The safe pure-logic extraction (persistence
+  helpers) was completed; all other candidates were already extracted into
+  `src/app/moduleNavigation.js`. No further split is low-risk enough to justify.
+
+---
+
+*Concerns audit: 2026-07-09; remediation update: 2026-07-10*

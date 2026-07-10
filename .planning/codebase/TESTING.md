@@ -485,4 +485,28 @@ npm run test -- --coverage
 
 ---
 
-*Testing analysis: 2026-07-09*
+## Added 2026-07-10 — reliability & journey coverage
+
+New tests protecting learner-trust seams:
+
+- `tests/unit/storage/storage.test.js` — malformed-JSON fallback, quota-error
+  visibility, and failed-write results for the `src/lib/storage.js` boundary.
+- `tests/architecture/recovery-routing-integrity.test.js` — every
+  `TAG_MODULE_MAP` target is a real, available module; mapped screen indices are
+  in range and exact (the landed screen actually carries the tag); null targets
+  are intentional.
+- `tests/architecture/module-availability.test.js` — availability derivation +
+  override, available-modules-have-content, no dangling `MODULE_GROUP` ids, and
+  recovery never targeting a non-available module.
+- `tests/unit/journeys/learnerJourneys.test.js` — four end-to-end learner
+  journeys (progress survives refresh, weakness repair routing, chapter
+  completion, cloud-restore reconciliation) exercised through the real logic
+  modules and storage boundary.
+
+Note: `tests/architecture/concept-reveal-contract.test.js` (3 cases) fails on
+`main` independently of this work — a stale source-grep contract against a
+refactored `ConceptReveal.jsx`. Not addressed here (out of scope).
+
+---
+
+*Testing analysis: 2026-07-09; coverage update: 2026-07-10*
