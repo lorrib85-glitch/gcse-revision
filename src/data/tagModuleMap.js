@@ -50,23 +50,31 @@ export const TAG_MODULE_MAP = {
   'diagnosis':              'history-medicine-modern-medicine',
   'lifestyle-factors':      'history-medicine-modern-medicine',
   'genetics':               'history-medicine-modern-medicine',
-  // Crosses all modules — no single best link
+  // Crosses all modules — no single best link (explicitly not recoverable
+  // via a single module; null is the intentional "no route" marker)
   'factors-in-change':      null,
-  // Maths — Module 1
-  'maths:place-value':          'maths-place-value',
-  'maths:ordering-numbers':     'maths-place-value',
-  'maths:negative-numbers':     'maths-negative-numbers',
-  'maths:ordering-negatives':   'maths-negative-numbers',
-  'maths:prime-numbers':        'maths-primes',
-  'maths:hcf-lcm':              'maths-primes',
-  'maths:prime-factorisation':  'maths-primes',
-  // Maths — Module 1, Ch7
-  'maths:indices':              'maths-powers-standard-form',
-  'maths:standard-form':        'maths-powers-standard-form',
-  'maths:powers-roots':         'maths-powers-standard-form',
-  // Maths — Module 1, Ch8
-  'maths:equivalent-fractions': 'maths-fractions-basics',
-  'maths:simplifying-fractions':'maths-fractions-basics',
-  'maths:fractions-of-amounts': 'maths-fractions-basics',
-  'maths:mixed-numbers':        'maths-fractions-basics',
+  // Maths — Number survival kit (module ids are the real MODULES entries;
+  // each tag below appears in that module's screenTags, so findTaggedScreen
+  // lands on the exact teaching screen)
+  'maths:place-value':          'math1',
+  'maths:ordering-numbers':     'math1',
+  'maths:four-operations':      'math2',
+  'maths:written-methods':      'math2',
+  'maths:negative-numbers':     'math3',
+  'maths:ordering-negatives':   'math3',
+  'maths:bidmas':               'math4',
+  'maths:calculator-control':   'math4',
+  'maths:rounding':             'math5',
+  'maths:significant-figures':  'math5',
+  'maths:estimation':           'math5',
+  'maths:prime-numbers':        'math6',
+  'maths:hcf-lcm':              'math6',
+  'maths:prime-factorisation':  'math6',
+  'maths:indices':              'math7',
+  'maths:standard-form':        'math7',
+  'maths:powers-roots':         'math7',
+  'maths:equivalent-fractions': 'math8',
+  'maths:simplifying-fractions':'math8',
+  'maths:fractions-of-amounts': 'math8',
+  'maths:mixed-numbers':        'math8',
 }

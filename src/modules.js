@@ -836,7 +836,7 @@ export const MODULES = [
     colorLight: "rgba(45,212,191,.12)",
     headerImage: "/headers/maths-numbers.webp",
     screenCount: 14,
-    screenTags: ["maths:four-operations", null, "maths:written-methods", "maths:written-methods", "maths:four-operations", "maths:four-operations", null, "maths:four-operations", null, "maths:four-operations", null, null, null, null],
+    screenTags: ["maths:four-operations", null, "maths:written-methods", "maths:written-methods", "maths:four-operations", "maths:four-operations", null, "maths:four-operations", null, "maths:four-operations", null, null, "maths:four-operations", null],
   },
   {
     id: "math3",
@@ -850,7 +850,7 @@ export const MODULES = [
     colorLight: "rgba(45,212,191,.12)",
     headerImage: "/headers/maths-numbers.webp",
     screenCount: 14,
-    screenTags: ["maths:negative-numbers", null, "maths:ordering-negatives", "maths:negative-numbers", "maths:negative-numbers", "maths:negative-numbers", "maths:negative-numbers", null, "maths:negative-numbers", null, null, null, null, null],
+    screenTags: ["maths:negative-numbers", null, "maths:ordering-negatives", "maths:negative-numbers", "maths:negative-numbers", "maths:negative-numbers", "maths:negative-numbers", null, "maths:negative-numbers", null, "maths:negative-numbers", null, "maths:ordering-negatives", null],
   },
   {
     id: "math4",
@@ -878,7 +878,7 @@ export const MODULES = [
     colorLight: "rgba(45,212,191,.12)",
     headerImage: "/headers/maths-numbers.webp",
     screenCount: 15,
-    screenTags: ["maths:significant-figures", null, "maths:rounding", "maths:significant-figures", "maths:estimation", "maths:estimation", "maths:rounding", "maths:rounding", "maths:estimation", null, null, null, null, null, null],
+    screenTags: ["maths:significant-figures", null, "maths:rounding", "maths:significant-figures", "maths:estimation", "maths:estimation", "maths:rounding", "maths:rounding", "maths:estimation", null, "maths:rounding", null, null, "maths:significant-figures", null],
   },
   {
     id: "math6",
@@ -892,7 +892,7 @@ export const MODULES = [
     colorLight: "rgba(45,212,191,.12)",
     headerImage: "/headers/maths-numbers.webp",
     screenCount: 14,
-    screenTags: ["maths:prime-numbers", null, "maths:prime-numbers", "maths:prime-numbers", "maths:prime-factorisation", "maths:hcf-lcm", "maths:hcf-lcm", "maths:prime-factorisation", null, "maths:hcf-lcm", null, null, null, null],
+    screenTags: ["maths:prime-numbers", null, "maths:prime-numbers", "maths:prime-numbers", "maths:prime-factorisation", "maths:hcf-lcm", "maths:hcf-lcm", "maths:prime-factorisation", null, "maths:hcf-lcm", null, null, "maths:hcf-lcm", null],
   },
   {
     id: "math7",
@@ -906,7 +906,7 @@ export const MODULES = [
     colorLight: "rgba(45,212,191,.12)",
     headerImage: "/headers/maths-numbers.webp",
     screenCount: 14,
-    screenTags: ["maths:standard-form", null, "maths:powers-roots", "maths:indices", "maths:standard-form", "maths:standard-form", "maths:standard-form", "maths:standard-form", null, "maths:standard-form", null, null, null, null],
+    screenTags: ["maths:standard-form", null, "maths:powers-roots", "maths:indices", "maths:standard-form", "maths:standard-form", "maths:standard-form", "maths:standard-form", null, "maths:standard-form", null, null, "maths:indices", null],
   },
   {
     id: "math8",
@@ -920,7 +920,7 @@ export const MODULES = [
     colorLight: "rgba(45,212,191,.12)",
     headerImage: "/headers/maths-numbers.webp",
     screenCount: 14,
-    screenTags: ["maths:equivalent-fractions", null, "maths:equivalent-fractions", "maths:simplifying-fractions", "maths:mixed-numbers", "maths:fractions-of-amounts", "maths:simplifying-fractions", null, "maths:equivalent-fractions", null, null, null, null, null],
+    screenTags: ["maths:equivalent-fractions", null, "maths:equivalent-fractions", "maths:simplifying-fractions", "maths:mixed-numbers", "maths:fractions-of-amounts", "maths:simplifying-fractions", "maths:fractions-of-amounts", null, "maths:simplifying-fractions", null, null, "maths:fractions-of-amounts", null],
   },
 
   // ── Sociology ────────────────────────────────────────────────────────────
@@ -997,5 +997,24 @@ export const MODULES = [
     headerImage: "/headers/sociology-family.webp",
     screenCount: 12,
     screenTags: [null, null, null, null, null, null, null, null, null, null, null, null],
+  },
+  {
+    // English — Macbeth series, chapter 1. Content + loader
+    // (english-macbeth-power-ambition.js) and the English subject-browser wiring
+    // (Subjects.jsx) already exist; this metadata row was missing, leaving the
+    // module unreachable and orphaning its registry entry.
+    id: "english-macbeth-power-ambition",
+    subject: "English",
+    number: 1,
+    title: "Power and ambition",
+    subtitle: "Analyse a Macbeth quote like an examiner",
+    era: "AQA GCSE English Literature",
+    icon: "🗡️",
+    color: "#B84A3A",
+    colorLight: "rgba(184,74,58,.14)",
+    headerImage: "/headers/english-macbeth.webp",
+    series: "macbeth",
+    screenCount: 1,
+    screenTags: ["english:quote-analysis"],
   },
 ]

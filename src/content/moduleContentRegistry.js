@@ -87,17 +87,12 @@ export const MODULE_CONTENT_LOADERS = {
   // ── Biology — Ecology ────────────────────────────────────────────────────────
   'bio_ecosystems_group': () => import('./biology/ecology/episodes/bio_ecosystems_group.js').then(m => m.default),
 
-  // ── Chemistry — Atomic Structure ─────────────────────────────────────────────
-  'chem_matter_atoms': () => import('./chemistry/atomic-structure/episodes/chem_matter_atoms.js').then(m => m.default),
-
-  // ── Chemistry — Chemical Changes ─────────────────────────────────────────────
-  'chem_reactions': () => import('./chemistry/chemical-changes/episodes/chem_reactions.js').then(m => m.default),
-
-  // ── Chemistry — Rates and Organic Chemistry ──────────────────────────────────
-  'chem_rates_organic': () => import('./chemistry/rates-and-organic/episodes/chem_rates_organic.js').then(m => m.default),
-
-  // ── Chemistry — Chemistry of the Atmosphere ──────────────────────────────────
-  'chem_earth': () => import('./chemistry/chemistry-of-the-atmosphere/episodes/chem_earth.js').then(m => m.default),
+  // ── Chemistry ────────────────────────────────────────────────────────────────
+  // No Chemistry modules are registered yet. Stub content files exist under
+  // ./chemistry/*/episodes/ — when a module is actually built, add its loader
+  // entry here AND its metadata entry (with real screenCount/screenTags) to
+  // src/modules.js in the same commit. Registering a loader without metadata
+  // (or vice versa) fails tests/architecture/module-metadata-integrity.test.js.
 
   // ── English — Macbeth ────────────────────────────────────────────────────────
   'english-macbeth-power-ambition': () => import('./english/macbeth/episodes/english-macbeth-power-ambition.js').then(m => m.default),
