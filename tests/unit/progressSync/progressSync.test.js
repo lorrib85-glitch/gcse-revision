@@ -270,3 +270,40 @@ describe('backupProgressForUser', () => {
     expect(cloudDoc).toBeNull()
   })
 })
+
+describe('size budget — honest oversize handling', () => {
+  it('blocks the cloud write (never a false "backed up") when a snapshot stays over budget after compaction', async () => {
+    seedMeaningfulLocal()
+    // Core state (a module) that compaction must never trim — keeps the
+    // snapshot over the hard budget no matter what.
+    store['gcse_module_huge'] = { screen: 1, note: 'x'.repeat(1_000_000) }
+
+    const res = await syncProgressForUser(GOOGLE_USER)
+    expect(res.action).toBe('blocked')
+    expect(res.reason).toBe('over-budget')
+    expect(firestoreCalls.setDocs).toHaveLength(0) // nothing was uploaded
+    expect(cloudDoc).toBeNull()
+    // Local progress is untouched and still there.
+    expect(store['gcse_module_huge'].screen).toBe(1)
+  })
+
+  it('compacts an oversized-but-trimmable snapshot and uploads within budget', async () => {
+    seedMeaningfulLocal()
+    // ~9k QuickFire events push the snapshot over budget, but compaction folds
+    // them into the merge-safe baseline, so the upload proceeds.
+    store['gcse_qf_answer_log'] = Array.from({ length: 9000 }, (_, i) => ({
+      id: `A-${i + 1}`, dev: 'A', seq: i + 1, subject: 'Maths', topicKey: 'Maths::Algebra', correct: i % 2 === 0, at: 1000 + i,
+    }))
+    store['gcse_quickfire_memory_v1'] = {
+      subjects: { Maths: { subject: 'Maths', answered: 9000, correct: 4500, seedAnswered: 0, seedCorrect: 0 } },
+      topics: {},
+    }
+
+    const res = await syncProgressForUser(GOOGLE_USER)
+    expect(res.action).not.toBe('blocked')
+    expect(firestoreCalls.setDocs.length).toBeGreaterThan(0)
+    const uploaded = firestoreCalls.setDocs.at(-1).value
+    expect(uploaded.data.gcse_qf_answer_log.length).toBeLessThanOrEqual(1500)
+    expect(uploaded.data.gcse_qf_baseline_v1).toBeTruthy()
+  })
+})

@@ -28,6 +28,7 @@
 import { getJsonForScope, setJsonForScope, listKeysForScope, getRawJson, scopeForUser, GUEST_SCOPE } from '../../lib/storage.js'
 import { firebaseEnabled, app } from '../../auth/firebaseClient.js'
 import { mergeProgressData, progressDataEqual } from './progressMerge.js'
+import { compactSnapshotForBudget } from './snapshotBudget.js'
 
 export const SNAPSHOT_VERSION = 1
 export const SYNC_META_KEY = 'gcse_sync_meta'
@@ -208,20 +209,47 @@ async function reconcile(user) {
     return { action }
   }
   if (action === 'upload' && !cloud) {
-    await saveCloudProgress(user.uid, local)
-    setSyncMeta(scope, { lastSyncedAt: local.updatedAt })
-    return { action }
+    return uploadWithBudget(user, local, scope, action)
   }
 
   const mergedData = mergeProgressData(local.data, cloud.data, {
     currentUid: user.uid,
     preferLocalOnTie: (local.updatedAt || 0) >= (cloud.updatedAt || 0),
   })
-  const merged = { version: SNAPSHOT_VERSION, updatedAt: Date.now(), data: mergedData }
-  if (action === 'apply' || action === 'merge') applyProgressSnapshot(merged, { currentUid: user.uid, scope })
-  if (action === 'upload' || action === 'merge') await saveCloudProgress(user.uid, merged)
+  const mergedRaw = { version: SNAPSHOT_VERSION, updatedAt: Date.now(), data: mergedData }
+  // Compact governed history before touching the cloud so an oversized document
+  // is never sent (and never falsely reported as backed up). Compaction is
+  // lossless for core state; persist it locally too when it changes anything.
+  const budget = compactSnapshotForBudget(mergedRaw)
+  const merged = budget.snapshot
+  if (action === 'apply' || action === 'merge' || budget.compacted) {
+    applyProgressSnapshot(merged, { currentUid: user.uid, scope })
+  }
+  if (action === 'upload' || action === 'merge') {
+    if (!budget.withinBudget) {
+      setSyncMeta(scope, { lastBlockedAt: Date.now() })
+      return { action: 'blocked', reason: 'over-budget' }
+    }
+    await saveCloudProgress(user.uid, merged)
+  }
   setSyncMeta(scope, { lastSyncedAt: merged.updatedAt })
 
+  return { action }
+}
+
+// Fresh upload of a local snapshot (no cloud doc yet), gated by the size
+// budget. Compacts first; if still over the hard budget the upload is blocked
+// and the learner is told plainly — local progress is untouched. Any lossless
+// compaction is persisted back to local storage so it stays bounded too.
+async function uploadWithBudget(user, snapshot, scope, action) {
+  const budget = compactSnapshotForBudget(snapshot)
+  if (budget.compacted) applyProgressSnapshot(budget.snapshot, { currentUid: user.uid, scope })
+  if (!budget.withinBudget) {
+    setSyncMeta(scope, { lastBlockedAt: Date.now() })
+    return { action: 'blocked', reason: 'over-budget' }
+  }
+  await saveCloudProgress(user.uid, budget.snapshot)
+  setSyncMeta(scope, { lastSyncedAt: budget.snapshot.updatedAt })
   return { action }
 }
 

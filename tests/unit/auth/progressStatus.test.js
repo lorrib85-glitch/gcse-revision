@@ -33,14 +33,22 @@ describe('getProgressStatusText', () => {
     expect(text).not.toMatch(/backed up\b/i)
   })
 
-  it('the four states are all distinct wording', () => {
+  it('reports an honest "saved on device" state when a backup is blocked by the size budget — never claims success, no technical detail', () => {
+    const text = getProgressStatusText({ loggedIn: true, provider: 'google', name: 'Sam' }, 'blocked')
+    expect(text).toBe("Saved on this device — your progress is safe here, but we couldn't back up everything yet.")
+    expect(text).not.toMatch(/firebase|firestore|byte|size|quota|payload|document|limit/i)
+    expect(text).not.toMatch(/backed up\b/i)
+  })
+
+  it('the five states are all distinct wording', () => {
     const google = { loggedIn: true, provider: 'google', name: 'Sam' }
     const texts = new Set([
       getProgressStatusText(null),
       getProgressStatusText(google, 'syncing'),
       getProgressStatusText(google, 'ok'),
       getProgressStatusText(google, 'error'),
+      getProgressStatusText(google, 'blocked'),
     ])
-    expect(texts.size).toBe(4)
+    expect(texts.size).toBe(5)
   })
 })

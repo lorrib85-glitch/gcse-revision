@@ -47,6 +47,15 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // Map a reconcile/backup result to sync status. A 'blocked' result means the
+  // cloud write was intentionally skipped (snapshot over the size budget) —
+  // local progress is safe but must NOT be reported as backed up, and the guest
+  // claim must not be finalized (nothing reached the cloud). Treated like a
+  // failure for the claim, but with its own honest status wording.
+  function statusForResult(res) {
+    return res?.action === 'blocked' ? 'blocked' : 'ok'
+  }
+
   // Reconcile local ↔ cloud once per app load for Google users. If the merge
   // pulled in anything from the cloud side, re-read the stored user so a
   // restored profile (e.g. custom name from another device) is reflected
@@ -56,11 +65,12 @@ export function AuthProvider({ children }) {
     let cancelled = false
     setSyncStatus('syncing')
     syncProgressForUser(user)
-      .then(({ action }) => {
-        onReconcileSettled(user, 'ok')
+      .then((res) => {
+        const status = statusForResult(res)
+        onReconcileSettled(user, status === 'ok' ? 'ok' : 'error')
         if (cancelled) return
-        setSyncStatus('ok')
-        if (action === 'apply' || action === 'merge') setUser(getStoredUser())
+        setSyncStatus(status)
+        if (res?.action === 'apply' || res?.action === 'merge') setUser(getStoredUser())
       })
       .catch(() => {
         onReconcileSettled(user, 'error')
@@ -78,7 +88,7 @@ export function AuthProvider({ children }) {
       if (document.visibilityState === 'hidden') {
         setSyncStatus('syncing')
         backupProgressForUser(user)
-          .then(() => { onReconcileSettled(user, 'ok'); setSyncStatus('ok') })
+          .then((res) => { const s = statusForResult(res); onReconcileSettled(user, s === 'ok' ? 'ok' : 'error'); setSyncStatus(s) })
           .catch(() => { onReconcileSettled(user, 'error'); setSyncStatus('error') })
       }
     }
@@ -94,7 +104,7 @@ export function AuthProvider({ children }) {
     const onOnline = () => {
       setSyncStatus('syncing')
       backupProgressForUser(user)
-        .then(() => { onReconcileSettled(user, 'ok'); setSyncStatus('ok') })
+        .then((res) => { const s = statusForResult(res); onReconcileSettled(user, s === 'ok' ? 'ok' : 'error'); setSyncStatus(s) })
         .catch(() => { onReconcileSettled(user, 'error'); setSyncStatus('error') })
     }
     window.addEventListener('online', onOnline)
@@ -190,8 +200,8 @@ export function AuthProvider({ children }) {
         // reconciles it automatically, so this is non-blocking by design
         // rather than a silently-swallowed failure.
         try {
-          await backupProgressForUser(user)
-          onReconcileSettled(user, 'ok')
+          const res = await backupProgressForUser(user)
+          onReconcileSettled(user, statusForResult(res) === 'ok' ? 'ok' : 'error')
         } catch (err) {
           onReconcileSettled(user, 'error')
           console.warn('signOut: final progress backup failed — progress remains saved on this device and will retry on next sign-in', err)
