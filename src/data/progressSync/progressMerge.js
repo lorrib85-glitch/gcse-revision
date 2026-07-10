@@ -210,14 +210,29 @@ function mergeMasteryState(a, b) {
 }
 
 // ─── gcse_quickfire_memory_v1 — running accuracy buckets ──────────────────────
-// { subjects: {[key]: {answered, correct}}, topics: {...} }. Each bucket is
-// already a lifetime running total (accumulated round by round on-device via
-// mergeQuickFireBuckets), so a full-snapshot merge must not sum the two
-// sides' totals — that would double-count everything already reflected on
-// both. Per-field max is safe here because `correct <= answered` holds within
-// each side, which guarantees max(correct_A, correct_B) <= max(answered_A,
-// answered_B) — the merged bucket is always internally consistent, and it's
-// monotonic/idempotent.
+// { subjects: {[key]: {answered, correct, seedAnswered?, seedCorrect?}},
+//   topics: {...} }. Each bucket is a lifetime running total, incremented by
+// exactly 1 on-device per committed answer (QuickFireMode.jsx) — never
+// re-derived from a round accumulator — so a full-snapshot merge must not
+// sum the two sides' totals (that would double-count everything already
+// reflected on both).
+//
+// Per-field max (mergeCountBucket, still used as the fallback below) is safe
+// but lossy: if device A goes from a synced 10 to 13 and device B
+// independently goes from that same synced 10 to 14, max() reports 14 —
+// losing B's 3 answers and A's 4th. Where deduplicated evidence is
+// available — gcse_qf_answer_log, a bounded log of {id, subject, topicKey,
+// correct, at} appended alongside every bucket increment — that's used as
+// the source of truth instead: mergedAnswered = seed + |unique events|.
+// `seedAnswered`/`seedCorrect` freeze the bucket's value the first time an
+// event was recorded for it on a given device — i.e. the last value both
+// devices are expected to have agreed on before they started diverging — so
+// two devices seeded from the same synced base (10 in the example above)
+// reconstruct the true total (10 + |{3 unique} ∪ {4 unique}| = 17) without
+// fabricating any event that wasn't actually logged. Buckets with no events
+// on either side (pre-log legacy data, or a device that hasn't upgraded)
+// fall back to the old max-merge, so historical aggregate-only records stay
+// readable and nothing here invents history that was never stored.
 
 function mergeCountBucket(a, b) {
   if (!a) return b
@@ -234,22 +249,77 @@ function mergeCountBucket(a, b) {
   return merged
 }
 
-function mergeBucketMap(a, b) {
+// Dedupe two devices' answer-event logs by stable id (each event's id is
+// generated once, on-device, at the moment the answer is committed — see
+// qfAnswerEventId in QuickFireMode.jsx — so the same real-world answer
+// always produces the same id, and a repeat sync of the same events is a
+// no-op). Bounded so the log can't grow without limit across a long-lived
+// account; losing the oldest events only means those buckets fall back to
+// max-merge for activity older than the cap, never a correctness regression
+// for anything within it.
+const QF_ANSWER_LOG_CAP = 4000
+
+function mergeQfAnswerLog(a, b) {
+  const seen = new Set()
+  const out = []
+  for (const entry of [...(Array.isArray(a) ? a : []), ...(Array.isArray(b) ? b : [])]) {
+    if (!entry?.id || seen.has(entry.id)) continue
+    seen.add(entry.id)
+    out.push(entry)
+  }
+  out.sort((x, y) => (Number(y.at) || 0) - (Number(x.at) || 0))
+  return out.slice(0, QF_ANSWER_LOG_CAP)
+}
+
+function eventsForBucketKey(events, mapName, key) {
+  const field = mapName === 'subjects' ? 'subject' : 'topicKey'
+  return events.filter(e => e[field] === key)
+}
+
+// Seed-aware bucket merge for one subjects/topics map, given the already-
+// deduplicated merged event log. Falls back to plain max-merge for any
+// bucket that has no matching log events on either side.
+function mergeBucketMapWithEvents(a, b, mapName, mergedLog) {
   const av = a || {}
   const bv = b || {}
   const keys = new Set([...Object.keys(av), ...Object.keys(bv)])
   const out = {}
-  for (const key of keys) out[key] = mergeCountBucket(av[key], bv[key])
+  for (const key of keys) {
+    const bucketA = av[key]
+    const bucketB = bv[key]
+    const events = eventsForBucketKey(mergedLog, mapName, key)
+    const seedAnswered = [bucketA?.seedAnswered, bucketB?.seedAnswered]
+      .filter(v => v !== undefined)
+    const seedCorrect = [bucketA?.seedCorrect, bucketB?.seedCorrect]
+      .filter(v => v !== undefined)
+    if (events.length > 0 && seedAnswered.length > 0) {
+      const base = mergeCountBucket(bucketA, bucketB) || {}
+      out[key] = {
+        ...base,
+        seedAnswered: Math.min(...seedAnswered),
+        seedCorrect: seedCorrect.length > 0 ? Math.min(...seedCorrect) : 0,
+        answered: Math.min(...seedAnswered) + events.length,
+        correct: (seedCorrect.length > 0 ? Math.min(...seedCorrect) : 0) + events.filter(e => e.correct).length,
+      }
+    } else {
+      out[key] = mergeCountBucket(bucketA, bucketB)
+    }
+  }
   return out
 }
 
-function mergeQuickFireMemory(a, b) {
-  if (!a) return b ?? null
-  if (!b) return a
+// Merges gcse_quickfire_memory_v1 together with its companion
+// gcse_qf_answer_log (mergeProgressData special-cases both keys together —
+// see the dispatch loop below — because deriving a correct bucket merge
+// needs both sides' logs at once, not just both sides' bucket maps).
+function mergeQuickFireMemory(a, b, mergedLog) {
+  if (!a && !b) return null
+  const av = a || { subjects: {}, topics: {} }
+  const bv = b || { subjects: {}, topics: {} }
   return {
-    subjects: mergeBucketMap(a.subjects, b.subjects),
-    topics: mergeBucketMap(a.topics, b.topics),
-    updatedAt: String(a.updatedAt ?? '') >= String(b.updatedAt ?? '') ? a.updatedAt : b.updatedAt,
+    subjects: mergeBucketMapWithEvents(av.subjects, bv.subjects, 'subjects', mergedLog),
+    topics: mergeBucketMapWithEvents(av.topics, bv.topics, 'topics', mergedLog),
+    updatedAt: String(av.updatedAt ?? '') >= String(bv.updatedAt ?? '') ? av.updatedAt : bv.updatedAt,
   }
 }
 
@@ -313,7 +383,10 @@ function mergeProgressValue(key, local, cloud, { currentUid, preferLocalOnTie })
   if (key === 'gcse_planner_prefs') return mergeShallow(local, cloud, preferLocalOnTie)
   if (key === 'gcse_progress') return mergeProgressRecord(local, cloud)
   if (key === 'gcse_mastery_v1') return mergeMasteryState(local, cloud)
-  if (key === 'gcse_quickfire_memory_v1') return mergeQuickFireMemory(local, cloud)
+  // gcse_quickfire_memory_v1 and gcse_qf_answer_log are handled together in
+  // mergeProgressData (below) — the bucket merge needs both sides' logs at
+  // once, which per-key dispatch can't see.
+  if (key === 'gcse_quickfire_memory_v1' || key === 'gcse_qf_answer_log') return undefined
   if (key === 'gcse_qf_q_history') return mergeQfQuestionHistory(local, cloud)
   if (key === 'gcse_qf_prev_session') return mergeByEmbeddedField(local, cloud, 'date')
   if (key === 'gcse_qf_best') return mergeQfBest(local, cloud)
@@ -342,6 +415,19 @@ export function mergeProgressData(localData, cloudData, { currentUid, preferLoca
   const merged = {}
   for (const key of keys) {
     merged[key] = mergeProgressValue(key, local[key], cloud[key], { currentUid, preferLocalOnTie })
+  }
+  // gcse_quickfire_memory_v1 + gcse_qf_answer_log are a linked pair — see
+  // the comment in mergeProgressValue. Only touch them if at least one side
+  // actually had one of the two, so accounts that never used QuickFire (or
+  // predate the answer log) don't gain empty keys they never had.
+  if (keys.has('gcse_quickfire_memory_v1') || keys.has('gcse_qf_answer_log')) {
+    const mergedLog = mergeQfAnswerLog(local.gcse_qf_answer_log, cloud.gcse_qf_answer_log)
+    if (keys.has('gcse_qf_answer_log')) merged.gcse_qf_answer_log = mergedLog
+    if (keys.has('gcse_quickfire_memory_v1')) {
+      merged.gcse_quickfire_memory_v1 = mergeQuickFireMemory(
+        local.gcse_quickfire_memory_v1, cloud.gcse_quickfire_memory_v1, mergedLog,
+      )
+    }
   }
   return merged
 }

@@ -171,6 +171,97 @@ describe('mergeProgressData — quickfire running-total buckets (max-safe merge)
   })
 })
 
+describe('mergeProgressData — quickfire divergent-device merge (seed + deduplicated answer log)', () => {
+  // Both devices last synced at a shared base of 10 answered / 8 correct.
+  // Device A then answers 3 new questions offline (2 correct), device B
+  // answers 4 *different* new questions offline (3 correct), before either
+  // syncs again. A naive per-field max would report max(13, 14) = 14,
+  // silently losing 3 of A's answers and 1 of B's. The seed + deduplicated
+  // event log must recover the true total: 10 + |3 ∪ 4| = 17.
+  const seedAnswered = 10
+  const seedCorrect = 8
+
+  function bucket(answered, correct) {
+    return { subject: 'Biology', seedAnswered, seedCorrect, answered, correct }
+  }
+
+  const deviceALog = [
+    { id: 'a-1', subject: 'Biology', topicKey: 'Biology::Cells', correct: true, at: 1000 },
+    { id: 'a-2', subject: 'Biology', topicKey: 'Biology::Cells', correct: true, at: 1001 },
+    { id: 'a-3', subject: 'Biology', topicKey: 'Biology::Cells', correct: false, at: 1002 },
+  ]
+  const deviceBLog = [
+    { id: 'b-1', subject: 'Biology', topicKey: 'Biology::Cells', correct: true, at: 2000 },
+    { id: 'b-2', subject: 'Biology', topicKey: 'Biology::Cells', correct: true, at: 2001 },
+    { id: 'b-3', subject: 'Biology', topicKey: 'Biology::Cells', correct: true, at: 2002 },
+    { id: 'b-4', subject: 'Biology', topicKey: 'Biology::Cells', correct: false, at: 2003 },
+  ]
+
+  function makeSnapshot(answered, correct, log) {
+    return {
+      gcse_quickfire_memory_v1: { subjects: { Biology: bucket(answered, correct) }, topics: {} },
+      gcse_qf_answer_log: log,
+    }
+  }
+
+  it('recovers both devices\' independent activity instead of losing it to a max-merge', () => {
+    const local = makeSnapshot(13, 10, deviceALog)   // 10 base + A's 3 (2 correct) = 13/10
+    const cloud = makeSnapshot(14, 11, deviceBLog)   // 10 base + B's 4 (3 correct) = 14/11
+    const merged = mergeProgressData(local, cloud)
+
+    const mergedBucket = merged.gcse_quickfire_memory_v1.subjects.Biology
+    expect(mergedBucket.answered).toBe(17) // 10 + 7 unique events, not max(13, 14) = 14
+    expect(mergedBucket.correct).toBe(13)  // 8 + 5 correct events
+    expect(mergedBucket.correct).toBeLessThanOrEqual(mergedBucket.answered)
+
+    // The merged answer log carries every unique event from both devices.
+    expect(merged.gcse_qf_answer_log).toHaveLength(7)
+    const ids = new Set(merged.gcse_qf_answer_log.map(e => e.id))
+    expect(ids.size).toBe(7)
+  })
+
+  it('repeated sync is idempotent — merging the already-merged state again changes nothing', () => {
+    const local = makeSnapshot(13, 10, deviceALog)
+    const cloud = makeSnapshot(14, 11, deviceBLog)
+    const first = mergeProgressData(local, cloud)
+
+    const second = mergeProgressData(
+      { gcse_quickfire_memory_v1: first.gcse_quickfire_memory_v1, gcse_qf_answer_log: first.gcse_qf_answer_log },
+      { gcse_quickfire_memory_v1: first.gcse_quickfire_memory_v1, gcse_qf_answer_log: first.gcse_qf_answer_log },
+    )
+    expect(second.gcse_quickfire_memory_v1.subjects.Biology.answered).toBe(17)
+    expect(second.gcse_quickfire_memory_v1.subjects.Biology.correct).toBe(13)
+    expect(second.gcse_qf_answer_log).toHaveLength(7)
+  })
+
+  it('a device that syncs twice without the other device contributing anything new does not double-count its own events', () => {
+    const local = makeSnapshot(13, 10, deviceALog)
+    const cloud = makeSnapshot(13, 10, deviceALog) // cloud already reflects exactly A's own last sync
+    const merged = mergeProgressData(local, cloud)
+    expect(merged.gcse_quickfire_memory_v1.subjects.Biology.answered).toBe(13)
+    expect(merged.gcse_qf_answer_log).toHaveLength(3)
+  })
+
+  it('falls back to max-merge for legacy aggregate-only buckets with no matching log evidence (historical records stay readable)', () => {
+    const local = { gcse_quickfire_memory_v1: { subjects: { Chemistry: { answered: 5, correct: 4, subject: 'Chemistry' } }, topics: {} } }
+    const cloud = { gcse_quickfire_memory_v1: { subjects: { Chemistry: { answered: 8, correct: 3, subject: 'Chemistry' } }, topics: {} } }
+    const merged = mergeProgressData(local, cloud)
+    const chem = merged.gcse_quickfire_memory_v1.subjects.Chemistry
+    expect(chem.answered).toBe(8) // old max-merge behaviour, unchanged
+    expect(chem.correct).toBe(4)
+    expect(chem.correct).toBeLessThanOrEqual(chem.answered)
+  })
+
+  it('never fabricates events that were not actually recorded — one-sided data with no log stays exactly as-is', () => {
+    const local = { gcse_quickfire_memory_v1: { subjects: {}, topics: {} } }
+    const cloud = makeSnapshot(14, 11, deviceBLog)
+    const merged = mergeProgressData(local, cloud)
+    // Only B's real, logged evidence contributes — nothing invented for local.
+    expect(merged.gcse_quickfire_memory_v1.subjects.Biology.answered).toBe(14)
+    expect(merged.gcse_qf_answer_log).toHaveLength(4)
+  })
+})
+
 describe('mergeProgressData — gcse_qf_best (personal best, never regresses)', () => {
   it('keeps the higher score', () => {
     const local = { gcse_qf_best: { correct: 12, answered: 20, date: '2026-07-01T00:00:00.000Z' } }
