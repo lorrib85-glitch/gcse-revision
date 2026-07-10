@@ -3,7 +3,7 @@ import {
   getJson, setJson, removeKey, getArray, getObject, listKeys, saveCritical, subscribeSaveFailure,
   getJsonForScope, setJsonForScope, removeKeyForScope, listKeysForScope,
   getRawJson, setRawJson, removeRawKey,
-  setActiveScope, scopeForUser, GUEST_SCOPE,
+  setActiveScope, scopeForUser, GUEST_SCOPE, QUARANTINE_SCOPE, QUARANTINE_PROFILE_KEY,
   runLegacyFlatMigration,
 } from '../../../src/lib/storage.js'
 
@@ -191,24 +191,54 @@ describe('storage.js legacy flat-key migration', () => {
     expect(getJson('gcse_progress', null)).toEqual({ streak: 999 })
   })
 
-  it('sends ambiguous legacy data (no trustworthy riseUser) to the guest namespace, never to whoever signs in first', () => {
+  it('quarantines meaningful ambiguous legacy data — not visible to the next guest, but recoverable', () => {
     globalThis.localStorage.setItem('gcse_progress', JSON.stringify({ streak: 7 }))
 
     const { result } = runLegacyFlatMigration()
-    expect(result.target).toBe(GUEST_SCOPE)
+    expect(result.target).toBe(QUARANTINE_SCOPE)
+    expect(result.quarantined).toBe(true)
 
     setActiveScope('uid:whoever-signs-in-first')
     expect(getJson('gcse_progress', null)).toBe(null) // not assigned to this account
 
     setActiveScope(GUEST_SCOPE)
-    expect(getJson('gcse_progress', null)).toEqual({ streak: 7 }) // recoverable in guest scope
+    expect(getJson('gcse_progress', null)).toBe(null) // NOT auto-visible to a fresh guest
+
+    // Still preserved and recoverable in the quarantine namespace.
+    expect(getJsonForScope(QUARANTINE_SCOPE, 'gcse_progress', null)).toEqual({ streak: 7 })
   })
 
-  it('treats a guest-provider or malformed riseUser as ambiguous, not as proof', () => {
-    globalThis.localStorage.setItem('riseUser', JSON.stringify({ provider: 'guest', name: 'Sam' }))
+  it('sequesters the previous guest identity when quarantining, so the old name does not auto-appear', () => {
+    globalThis.localStorage.setItem('riseUser', JSON.stringify({ provider: 'guest', name: 'Sam', onboardingComplete: true }))
     globalThis.localStorage.setItem('gcse_progress', JSON.stringify({ streak: 2 }))
+
+    const { result } = runLegacyFlatMigration()
+    expect(result.target).toBe(QUARANTINE_SCOPE)
+    expect(result.sequesteredProfile).toBe(true)
+
+    // The raw identity pointer is cleared → app opens at onboarding, not "Sam".
+    expect(getRawJson('riseUser', null)).toBe(null)
+    // The name is preserved (sequestered) for deliberate recovery.
+    expect(getJsonForScope(QUARANTINE_SCOPE, QUARANTINE_PROFILE_KEY, null)).toMatchObject({ name: 'Sam' })
+  })
+
+  it('sends ambiguous-but-empty leftovers to the guest namespace (nothing private to hide)', () => {
+    globalThis.localStorage.setItem('gcse_wrong_answers', JSON.stringify([]))
+    globalThis.localStorage.setItem('gcse_scores', JSON.stringify([]))
+
     const { result } = runLegacyFlatMigration()
     expect(result.target).toBe(GUEST_SCOPE)
+    expect(result.quarantined).toBe(false)
+  })
+
+  it('reloading does not re-quarantine or duplicate already-quarantined data (idempotent)', () => {
+    globalThis.localStorage.setItem('gcse_progress', JSON.stringify({ streak: 7 }))
+    runLegacyFlatMigration()
+    // Simulate the quarantine snapshot being adopted (moved out) then a reload.
+    removeKeyForScope(QUARANTINE_SCOPE, 'gcse_progress')
+    const second = runLegacyFlatMigration()
+    expect(second.ran).toBe(false) // flag-gated, no second quarantine
+    expect(getJsonForScope(QUARANTINE_SCOPE, 'gcse_progress', null)).toBe(null)
   })
 
   it('never overwrites data a scope already has', () => {

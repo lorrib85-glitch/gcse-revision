@@ -251,31 +251,79 @@ describe('Journey — legacy unscoped data with proven ownership', () => {
   })
 })
 
-describe('Journey — ambiguous legacy data', () => {
-  it('is not silently uploaded into account B; legacy progress remains recoverable', async () => {
+describe('Journey — ambiguous legacy data on a shared device', () => {
+  it('is quarantined — not shown to the next guest, not auto-uploaded, still recoverable', async () => {
     const seed = () => {
       // Legacy data has no trustworthy owner — no riseUser at all.
       globalThis.localStorage.setItem('gcse_progress', JSON.stringify({ streak: 4, bestStreak: 4 }))
       globalThis.localStorage.setItem('gcse_scores', JSON.stringify([{ date: '2026-06-15', subject: 'Maths', pct: 65 }]))
     }
-    await withMockedCloud(async ({ runLegacyFlatMigration, setActiveScope, GUEST_SCOPE }) => {
+    await withMockedCloud(async ({ runLegacyFlatMigration, setActiveScope, GUEST_SCOPE, QUARANTINE_SCOPE, hasQuarantinedProgress }) => {
       // Migration already ran automatically at storage.js's module-load time.
       const first = runLegacyFlatMigration()
       expect(first.ran).toBe(false)
-      expect(first.already.target).toBe(GUEST_SCOPE)
+      expect(first.already.target).toBe(QUARANTINE_SCOPE)
 
-      // Account B signs in.
       const { getProgress, getScores } = await import('../../../src/progress.js')
-      setActiveScope('uid:uid-ambiguous-B')
 
-      // Data is not silently uploaded into B's account.
+      // A fresh GUEST opening the app sees none of it.
+      setActiveScope(GUEST_SCOPE)
       expect(getProgress().streak).toBe(0)
       expect(getScores()).toEqual([])
 
-      // Legacy progress remains recoverable (in the guest namespace).
+      // Account B signs in — still nothing.
+      setActiveScope('uid:uid-ambiguous-B')
+      expect(getProgress().streak).toBe(0)
+      expect(getScores()).toEqual([])
+
+      // But it is preserved and recoverable.
+      setActiveScope(GUEST_SCOPE)
+      expect(hasQuarantinedProgress()).toBe(true)
+    }, { seed })
+  })
+
+  it('deliberate recovery ("Use this progress") makes it guest progress exactly once', async () => {
+    const seed = () => {
+      globalThis.localStorage.setItem('riseUser', JSON.stringify({ provider: 'guest', name: 'Prior', onboardingComplete: true }))
+      globalThis.localStorage.setItem('gcse_progress', JSON.stringify({ streak: 4, bestStreak: 4 }))
+    }
+    await withMockedCloud(async ({ setActiveScope, GUEST_SCOPE, adoptQuarantinedProgress, hasQuarantinedProgress, getRawJson }) => {
+      const { getProgress } = await import('../../../src/progress.js')
+
+      // Old name did not auto-appear.
+      expect(getRawJson('riseUser', null)).toBe(null)
+
+      const { adopted } = adoptQuarantinedProgress()
+      expect(adopted).toBe(true)
+
       setActiveScope(GUEST_SCOPE)
       expect(getProgress().streak).toBe(4)
-      expect(getScores()).toHaveLength(1)
+      expect(getRawJson('riseUser', null)).toMatchObject({ name: 'Prior' })
+
+      // Reload/re-adopt adds nothing further.
+      expect(hasQuarantinedProgress()).toBe(false)
+      expect(adoptQuarantinedProgress().adopted).toBe(false)
+    }, { seed })
+  })
+
+  it('account sign-in does not claim quarantined data — B gets only B\'s own progress', async () => {
+    const seed = () => {
+      globalThis.localStorage.setItem('gcse_progress', JSON.stringify({ streak: 4, bestStreak: 4 }))
+    }
+    await withMockedCloud(async ({ authFlow, hasQuarantinedProgress, getCloudDocForUid }) => {
+      const userB = { loggedIn: true, provider: 'google', uid: 'uid-quarantine-B', name: 'Bob' }
+      const { getProgress } = await import('../../../src/progress.js')
+
+      authFlow.signInGoogle(userB)
+      await authFlow.reconcile(userB, null)
+
+      // B's account has no streak — the quarantined 4 was never folded in.
+      expect(getProgress().streak).toBe(0)
+      const cloud = getCloudDocForUid('uid-quarantine-B')
+      expect(cloud?.data?.gcse_progress?.streak ?? 0).toBe(0)
+
+      // Quarantined data is still set aside, outside B's world.
+      expect(hasQuarantinedProgress()).toBe(true)
     }, { seed })
   })
 })

@@ -102,12 +102,49 @@ genuinely proves ownership:
 
 - `riseUser.provider === 'google' && riseUser.uid` → legacy data moves into
   that uid's namespace. This is *proof*, not a guess — it is never "whoever
-  signs in first after deployment."
-- Anything else (no `riseUser`, a guest profile, a malformed one) is
-  ambiguous → legacy data moves into the **guest** namespace instead, where
-  it stays fully recoverable and — via the normal claim flow above — can
-  still be deliberately claimed by an account later, but is never silently
-  uploaded to one.
+  signs in first after deployment." `riseUser` stays as-is.
+- Ambiguous (no `riseUser`, a guest profile, a malformed one) **and the data
+  is meaningful** → legacy data moves into a dedicated **`QUARANTINE_SCOPE`**
+  (`'quarantine'`), *not* the guest namespace. The previous guest identity
+  (`riseUser` name) is sequestered under `quarantine::__quarantined_profile__`
+  and the raw `riseUser` cleared, so the app opens at onboarding rather than
+  greeting a stranger by the old name. Nothing is deleted.
+- Ambiguous but **not** meaningful (only empty arrays/objects left over) →
+  guest namespace as before; there is nothing private to hide.
+
+## Why quarantine, not guest, for ambiguous data
+
+The guest namespace *is* the active scope for a fresh visitor. Putting
+ambiguous legacy progress there would make the previous learner's name,
+streak, plan, scores, module progress, weaknesses, QuickFire history and
+completed learning silently appear as the new guest's own. `QUARANTINE_SCOPE`
+is **never** an active scope (`setActiveScope` only ever receives `'guest'` or
+`'uid:<uid>'`), so quarantined data is:
+
+- never read by plain `getJson`/etc.,
+- never collected into a guest snapshot (`collectLocalProgressSnapshot` reads
+  guest/uid scopes, not quarantine),
+- never reconciled to any cloud document,
+- never claimed by a sign-in (`claimGuestProgressForUser` reads the guest
+  namespace only).
+
+**Deliberate recovery** (`accountScope.js`) drives the "Progress found on this
+device" card (`ProgressRecoveryCard.jsx`), which reveals *nothing* about the
+previous learner (no name/scores/subjects):
+
+- `hasQuarantinedProgress()` / `shouldOfferQuarantineRecovery()` — is there
+  meaningful quarantined progress the learner hasn't resolved yet?
+- `adoptQuarantinedProgress()` — "Use this progress": merges the quarantined
+  snapshot into the **guest** scope once (never a Google account), restores
+  the sequestered name only if no live identity exists, then clears quarantine
+  so a reload can't re-offer or duplicate it. Idempotent.
+- `dismissQuarantineRecovery()` — "Start fresh": stops offering the card but
+  **retains** the snapshot; a mis-tap is never destructive.
+- `discardQuarantinedProgress()` — the separate, explicit permanent-delete
+  path (not wired to the two-button card).
+
+`gcse_quarantine_v1` (raw, never-scoped) records the resolution
+(`{ status: 'dismissed' | 'adopted' | 'discarded' }`).
 
 **Idempotency**: gated by a persisted flag (`gcse_legacy_migration_v1`) and,
 independently, migration never overwrites a scoped key that already has

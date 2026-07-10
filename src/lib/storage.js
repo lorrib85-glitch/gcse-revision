@@ -23,10 +23,25 @@
 
 export const GUEST_SCOPE = 'guest'
 
+// A holding namespace for legacy progress whose owner can't be proven. It is
+// NEVER the active scope (setActiveScope only ever receives 'guest' or a uid
+// scope), so quarantined data is never read by plain getJson/etc., never
+// collected into a guest snapshot, and never reconciled to the cloud — it just
+// sits there, recoverable, until the learner deliberately adopts or discards
+// it via the account-scope helpers. See PROGRESS_SYNC_ARCHITECTURE.md.
+export const QUARANTINE_SCOPE = 'quarantine'
+
+// Logical key (inside QUARANTINE_SCOPE) that holds the previous learner's
+// sequestered identity (their old riseUser) so the raw riseUser can be cleared
+// on quarantine — otherwise their name would still auto-appear even with the
+// progress hidden. Not a RAW key, so it scopes normally under 'quarantine::'.
+export const QUARANTINE_PROFILE_KEY = '__quarantined_profile__'
+
 const RAW_KEYS = new Set([
   'riseUser',
   'gcse_legacy_migration_v1',
   'gcse_guest_claim_v1',
+  'gcse_quarantine_v1',
 ])
 
 const SCOPE_DELIMITER = '::'
@@ -221,17 +236,39 @@ export function saveCritical(key, value) {
 // finishes evaluating before anything that imports it runs).
 //
 // Ownership rule: riseUser is the only trustworthy signal available at this
-// point. If it proves a Google account (provider + uid), the legacy data
-// demonstrably belongs to that uid and is moved into that uid's namespace —
-// not "whichever account happens to sign in first". Anything else (no
-// riseUser, a guest profile, or a malformed one) is ambiguous and goes into
-// the guest namespace instead, where it stays fully recoverable and — via
-// the normal guest-claim flow — can still be deliberately claimed by an
-// account later, but is never silently uploaded to one.
+// point.
+//
+//   - Proven Google account (provider + uid): the legacy data demonstrably
+//     belongs to that uid and is moved into that uid's namespace — not
+//     "whichever account happens to sign in first". riseUser stays as-is.
+//   - Ambiguous (no riseUser, a guest profile, or a malformed one) AND the
+//     legacy data is meaningful: it goes into the QUARANTINE namespace, not
+//     the guest one. A fresh guest never has 'quarantine' as their active
+//     scope, so the previous learner's progress can't silently surface as the
+//     new guest's own name/streak/scores/modules/weaknesses. The previous
+//     guest identity (riseUser name) is sequestered alongside it and the raw
+//     riseUser cleared, so the app opens at onboarding rather than greeting a
+//     stranger by the old name. Nothing is deleted — the learner can
+//     deliberately adopt or discard it later (accountScope.js).
+//   - Ambiguous but NOT meaningful (only empty arrays/objects left over): sent
+//     to the guest namespace as before — there is nothing private to hide, and
+//     this preserves the pre-quarantine behaviour for trivial leftovers.
 //
 // Idempotent: gated by a persisted flag, and never overwrites a scoped key
 // that already has data, so a repeat run (or a reload before the flag write
-// landed) can't duplicate anything.
+// landed) can't duplicate anything or re-quarantine already-moved data.
+function rawValueIsMeaningful(raw) {
+  if (raw === null || raw === undefined) return false
+  let parsed
+  try { parsed = JSON.parse(raw) } catch { return raw.length > 0 }
+  if (parsed === null || parsed === undefined) return false
+  if (Array.isArray(parsed)) return parsed.length > 0
+  if (typeof parsed === 'object') return Object.keys(parsed).length > 0
+  if (typeof parsed === 'string') return parsed.length > 0
+  if (typeof parsed === 'number') return parsed !== 0
+  return Boolean(parsed)
+}
+
 export function runLegacyFlatMigration() {
   if (typeof localStorage === 'undefined') return { ran: false }
 
@@ -250,16 +287,25 @@ export function runLegacyFlatMigration() {
     }
   } catch { legacyKeys = [] }
 
-  if (legacyKeys.length === 0) {
-    const result = { done: true, ranAt: Date.now(), target: 'none' }
+  const writeFlag = (result) => {
     try { localStorage.setItem(LEGACY_MIGRATION_FLAG_KEY, JSON.stringify(result)) } catch { /* ignore */ }
     return { ran: true, result }
+  }
+
+  if (legacyKeys.length === 0) {
+    return writeFlag({ done: true, ranAt: Date.now(), target: 'none' })
   }
 
   let riseUser = null
   try { riseUser = JSON.parse(localStorage.getItem('riseUser') || 'null') } catch { riseUser = null }
   const provenUid = (riseUser?.provider === 'google' && typeof riseUser?.uid === 'string' && riseUser.uid) ? riseUser.uid : null
-  const targetScope = provenUid ? `uid:${provenUid}` : GUEST_SCOPE
+
+  // Ambiguous + at least one legacy key holds real content → quarantine, so it
+  // can't auto-display to the next guest. Otherwise fall through to the plain
+  // relocation (proven uid, or ambiguous-but-empty → guest).
+  const ambiguous = !provenUid
+  const meaningful = legacyKeys.some(k => rawValueIsMeaningful(localStorage.getItem(k)))
+  const targetScope = provenUid ? `uid:${provenUid}` : (ambiguous && meaningful ? QUARANTINE_SCOPE : GUEST_SCOPE)
 
   const migrated = []
   for (const key of legacyKeys) {
@@ -274,9 +320,26 @@ export function runLegacyFlatMigration() {
     try { localStorage.removeItem(key) } catch { /* ignore */ }
   }
 
-  const result = { done: true, ranAt: Date.now(), target: targetScope, provenUid: provenUid || null, migratedKeys: migrated }
-  try { localStorage.setItem(LEGACY_MIGRATION_FLAG_KEY, JSON.stringify(result)) } catch { /* ignore */ }
-  return { ran: true, result }
+  // When quarantining, sequester the previous guest identity too and clear the
+  // raw riseUser, so the old name doesn't greet the next visitor.
+  let sequesteredProfile = false
+  if (targetScope === QUARANTINE_SCOPE) {
+    const rawRiseUser = localStorage.getItem('riseUser')
+    if (rawRiseUser !== null) {
+      const profilePhysicalKey = `${QUARANTINE_SCOPE}${SCOPE_DELIMITER}${QUARANTINE_PROFILE_KEY}`
+      try {
+        if (localStorage.getItem(profilePhysicalKey) === null) localStorage.setItem(profilePhysicalKey, rawRiseUser)
+        localStorage.removeItem('riseUser')
+        sequesteredProfile = true
+      } catch { /* leave riseUser in place if the copy failed */ }
+    }
+  }
+
+  return writeFlag({
+    done: true, ranAt: Date.now(), target: targetScope,
+    provenUid: provenUid || null, migratedKeys: migrated,
+    quarantined: targetScope === QUARANTINE_SCOPE, sequesteredProfile,
+  })
 }
 
 runLegacyFlatMigration()

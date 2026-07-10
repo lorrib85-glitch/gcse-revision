@@ -10,6 +10,8 @@ import ModulesTab from '../features/subjects/Subjects.jsx'
 import ExamPractice from '../features/exams/ExamPractice.jsx'
 import BottomNav from './BottomNav.jsx'
 import ChapterCompleteScreen from '../components/layout/ChapterCompleteScreen.jsx'
+import ProgressRecoveryCard from '../components/core/ProgressRecoveryCard.jsx'
+import { shouldOfferQuarantineRecovery, adoptQuarantinedProgress, dismissQuarantineRecovery } from '../data/progressSync/accountScope.js'
 import { TYPE } from '../constants/typography.js'
 import { GENERAL } from '../constants/generalTheme.js'
 
@@ -313,6 +315,26 @@ export default function App() {
   const [chapterCompleteData, setChapterCompleteData] = useState(null)
   const [examAutoStart,       setExamAutoStart]       = useState(null)
   const [quickfireOrigin,     setQuickfireOrigin]     = useState('pulse')
+  // Recovery card for ambiguous progress found on this device. Snapshot the
+  // "should offer" decision once at mount so adopting/dismissing (which change
+  // the underlying state) don't re-evaluate mid-render.
+  const [offerRecovery, setOfferRecovery]   = useState(() => !user && shouldOfferQuarantineRecovery())
+  const [recoveryBusy,  setRecoveryBusy]    = useState(false)
+
+  function handleUseFoundProgress() {
+    setRecoveryBusy(true)
+    adoptQuarantinedProgress()
+    // Adopting restores the sequestered profile and merges progress into the
+    // guest scope; a reload re-reads that state cleanly. Quarantine is already
+    // cleared, so the reload can't re-offer or duplicate it.
+    if (typeof window !== 'undefined' && window.location?.reload) window.location.reload()
+    else setOfferRecovery(false)
+  }
+
+  function handleStartFresh() {
+    dismissQuarantineRecovery()
+    setOfferRecovery(false)
+  }
 
   function handleChapterComplete(completedModule) {
     setChapterCompleteData(buildChapterCompletePayload(completedModule))
@@ -413,6 +435,17 @@ export default function App() {
   // Splash → auth screens → overlays → tab shell
   if (showSplash) return <SplashScreen />
   if (!user?.loggedIn || !user?.onboardingComplete) {
+    // Offer to recover ambiguous progress found on this device before the
+    // learner starts down the login/onboarding path.
+    if (offerRecovery && !pendingAuth) {
+      return (
+        <ProgressRecoveryCard
+          busy={recoveryBusy}
+          onUse={handleUseFoundProgress}
+          onStartFresh={handleStartFresh}
+        />
+      )
+    }
     if (pendingAuth) return <OnboardingScreen />
     return <LoginScreen />
   }
