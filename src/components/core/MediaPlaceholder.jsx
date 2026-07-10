@@ -18,7 +18,7 @@ import { MOTION } from '../../constants/motion.js'
 //   images: { topLeft: src, topRight: src, bottomLeft: src, bottomRight: src },
 //   alt?: string,
 //   parts?: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'],  // reveal order
-//   opposites?: [['topLeft', 'bottomLeft'], ['topRight', 'bottomRight']],
+//   opposites?: [['topLeft', 'bottomRight'], ['topRight', 'bottomLeft']],
 //   finished?: string,  // caption shown once every quadrant is revealed
 // }
 
@@ -60,10 +60,9 @@ const QUADRANT_CENTRES = {
   bottomRight: [75, 75],
 }
 
-// Trim an opposite-pair line so it bridges the seam instead of covering both
-// artworks. The far end is trimmed harder so the arrowhead stops short of the
-// destination quadrant's title text.
-function oppositeArrowLine(from, to, trimStart = 0.24, trimEnd = 0.42) {
+// Trim an opposite-pair line evenly at both ends so it bridges the centre —
+// each arrowhead reaches into its quadrant without covering that humour's title.
+function oppositeArrowLine(from, to, trimStart = 0.24, trimEnd = 0.24) {
   const [ax, ay] = QUADRANT_CENTRES[from]
   const [bx, by] = QUADRANT_CENTRES[to]
   return {

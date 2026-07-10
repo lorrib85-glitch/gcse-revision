@@ -32,15 +32,17 @@ const fourHumoursRevealConfig = {
   images: {
     topLeft: '/figures/history/medicine/medieval/four-humours-blood.webp',
     topRight: '/figures/history/medicine/medieval/four-humours-yellow-bile.webp',
-    bottomLeft: '/figures/history/medicine/medieval/four-humours-black-bile.webp',
-    bottomRight: '/figures/history/medicine/medieval/four-humours-phlegm.webp',
+    bottomLeft: '/figures/history/medicine/medieval/four-humours-phlegm.webp',
+    bottomRight: '/figures/history/medicine/medieval/four-humours-black-bile.webp',
   },
-  alt: 'The four humours revealed one quadrant at a time: blood (hot and wet), yellow bile (hot and dry), black bile (cold and dry) and phlegm (cold and wet), with arrows linking each humour to its opposite',
+  alt: 'The four humours revealed one quadrant at a time: blood (hot and wet), yellow bile (hot and dry), phlegm (cold and wet) and black bile (cold and dry), with arrows crossing the centre to link each humour to its opposite',
   parts: ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'],
-  // Blood (hot + wet) ↔ black bile (cold + dry); yellow bile (hot + dry) ↔ phlegm (cold + wet)
+  // True opposites sit diagonally across the wheel: blood (hot + wet) ↔ black bile
+  // (cold + dry); yellow bile (hot + dry) ↔ phlegm (cold + wet). The arrows cross
+  // through the centre, pointing to each humour's opposite.
   opposites: [
-    ['topLeft', 'bottomLeft'],
-    ['topRight', 'bottomRight'],
+    ['topLeft', 'bottomRight'],
+    ['topRight', 'bottomLeft'],
   ],
   finished: 'Each humour has an opposite — hot cancels cold, wet cancels dry.',
 }
