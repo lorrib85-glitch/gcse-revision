@@ -3,7 +3,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
-import { MODULES } from '../../modules.js'
+import { MODULES, getModuleAvailability, MODULE_AVAILABILITY } from '../../modules.js'
 import { getModuleState as safeGetModuleState, getModulePct as modPct, getContinueModule } from '../../progress.js'
 import { getWeakestSubject, getBiggestWin } from '../../unifiedWeaknessTracker.js'
 import { findTaggedScreen } from '../../data/tagModuleMap.js'
@@ -272,7 +272,11 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
   const rawMods = getSubjectModuleList(subjectName)
   const allItems = rawMods.map((mod, i) => {
     if (mod.comingSoon) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
-    if (!mod.screenCount) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
+    // Canonical availability: hidden stubs drop out entirely, coming-soon stubs
+    // show but never open (guarded in handleCardClick / openModulePlayer).
+    const availability = getModuleAvailability(mod)
+    if (availability === MODULE_AVAILABILITY.HIDDEN) return null
+    if (availability !== MODULE_AVAILABILITY.AVAILABLE) return { ...mod, number: i + 1, status: 'coming_soon', pct: 0 }
     const s = safeGetModuleState(mod.id)
     const screen = s.screen || 0
     const hasStarted = (s.hookDone && s.wylDone) || screen > 0
@@ -282,7 +286,7 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
     const pct = s.completed ? 100 : Math.min(100, Math.round((screen / total) * 100))
     const status = s.completed ? 'completed' : hasStarted ? 'in_progress' : 'not_started'
     return { ...mod, number: mod.number || i + 1, status, pct }
-  })
+  }).filter(Boolean) // drop hidden modules
 
   const defaultSeries = isHistory ? 'medicine' : 'macbeth'
   const items = (hasSeries && activeSeries)

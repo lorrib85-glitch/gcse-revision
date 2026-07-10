@@ -26,10 +26,12 @@ describe('Placeholder module safety', () => {
     expect(guardPos).toBeLessThan(setViewPos)
   })
 
-  it('Subjects.jsx maps screenCount 0 modules to coming_soon status', () => {
+  it('Subjects.jsx routes module availability through the canonical helper and maps non-available to coming_soon', () => {
     const src = read('src/features/subjects/Subjects.jsx')
-    // The allItems mapping should treat !mod.screenCount as coming_soon
-    expect(src).toMatch(/!\s*mod\.screenCount.*coming_soon/)
+    // The allItems mapping derives availability via getModuleAvailability
+    // (single source of truth) and maps anything not AVAILABLE to coming_soon.
+    expect(src).toMatch(/getModuleAvailability\(mod\)/)
+    expect(src).toMatch(/MODULE_AVAILABILITY\.AVAILABLE.*coming_soon|coming_soon[\s\S]*MODULE_AVAILABILITY\.AVAILABLE/)
   })
 
   it('modules with screenCount > 0 are not affected — the guard only fires for 0', () => {

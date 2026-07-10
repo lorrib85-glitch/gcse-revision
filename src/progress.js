@@ -1,4 +1,4 @@
-import { MODULES } from './modules.js'
+import { MODULES, isModuleAvailable } from './modules.js'
 import { getJson, getObject, getArray, setJson, removeKey } from './lib/storage.js'
 
 const KEY          = 'gcse_progress'
@@ -196,22 +196,21 @@ export const MODULE_GROUPS = [
     subject: 'Biology',
     chapterIds: ['sci_bio_w1','bio_building_life','bio_human_machine','bio_disease_wars','bio_control_systems','bio_genetics_evolution','bio_ecosystems_group'],
   },
-  {
-    id: 'chem_core',
-    title: 'GCSE Chemistry',
-    subject: 'Chemistry',
-    chapterIds: ['chem_matter_atoms','chem_reactions','chem_rates_organic','chem_earth'],
-  },
+  // No Chemistry group: no Chemistry module has metadata or content yet, so a
+  // chem_core group would only hold dangling ids. Add it back alongside the
+  // first real Chemistry module (metadata + loader).
 ]
 
 // The module the "Keep going" hero should resume — the highest-priority
 // in-progress module, or if nothing is in progress, the highest-priority
 // module the learner hasn't started yet.
 export function getContinueModule() {
+  // Only ever hand back a module a learner can actually open — an unbuilt
+  // stub in a MODULE_GROUP must never become the "Keep going" hero.
   const ordered = MODULE_GROUPS
     .flatMap(g => g.chapterIds)
     .map(id => MODULES.find(m => m.id === id))
-    .filter(Boolean)
+    .filter(m => m && isModuleAvailable(m))
 
   const inProgress = ordered.find(m => { const p = getModulePct(m); return p > 0 && p < 100 })
   if (inProgress) return inProgress
@@ -219,7 +218,7 @@ export function getContinueModule() {
   const unvisited = ordered.find(m => getModulePct(m) === 0)
   if (unvisited) return unvisited
 
-  return ordered[0] || MODULES[0]
+  return ordered[0] || MODULES.find(isModuleAvailable) || MODULES[0]
 }
 
 // Like getContinueModule, but returns null unless that module is actually

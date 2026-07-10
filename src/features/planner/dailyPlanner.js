@@ -66,7 +66,7 @@
 //   nextReviewAt:      string | null,
 // }
 
-import { MODULES } from '../../modules.js'
+import { MODULES, isModuleAvailable } from '../../modules.js'
 import { MODULE_GROUPS } from '../../progress.js'
 import { getArray, getObject, setJson } from '../../lib/storage.js'
 
@@ -318,21 +318,28 @@ function hasInProgressModule(subject, learningState) {
 function getInProgressModuleForSubject(subject, learningState) {
   const group = MODULE_GROUPS.find(g => g.subject === subject)
   if (!group) return null
-  const moduleId = group.chapterIds.find(id => {
+  for (const id of group.chapterIds) {
     const state = learningState.moduleStates[id] || {}
-    return state.screen > 0 && !state.completed
-  })
-  return moduleId ? MODULES.find(m => m.id === moduleId) || null : null
+    if (!(state.screen > 0 && !state.completed)) continue
+    const mod = MODULES.find(m => m.id === id)
+    // Never surface an unbuilt stub as a plan task, even if stale state exists.
+    if (mod && isModuleAvailable(mod)) return mod
+  }
+  return null
 }
 
 function getNextNewModuleForSubject(subject, learningState) {
   const group = MODULE_GROUPS.find(g => g.subject === subject)
   if (!group) return null
-  const moduleId = group.chapterIds.find(id => {
+  for (const id of group.chapterIds) {
     const state = learningState.moduleStates[id] || {}
-    return !state.screen && !state.completed
-  })
-  return moduleId ? MODULES.find(m => m.id === moduleId) || null : null
+    if (state.screen || state.completed) continue
+    const mod = MODULES.find(m => m.id === id)
+    // Skip coming-soon / hidden stubs so the planner never routes a learner
+    // into an empty module.
+    if (mod && isModuleAvailable(mod)) return mod
+  }
+  return null
 }
 
 // ─── calculateSubjectPriority ─────────────────────────────────────────────────

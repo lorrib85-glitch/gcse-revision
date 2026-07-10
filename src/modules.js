@@ -8,6 +8,9 @@
 // screenTags   — screen.tag per screen, in order, or null — used by
 //                findTaggedScreen() to jump to a specific weak-spot screen
 //                without loading the full module content.
+// availability — optional governance override: 'available' | 'comingSoon' |
+//                'hidden'. When absent it is derived from screenCount
+//                (>0 = available, 0 = comingSoon). See getModuleAvailability.
 
 export const MODULES = [
 
@@ -1018,3 +1021,31 @@ export const MODULES = [
     screenTags: ["english:quote-analysis"],
   },
 ]
+
+// ─── Module availability governance ─────────────────────────────────────────
+// Single source of truth for whether a module is real, usable content.
+//
+//   'available'  — has real content (screenCount > 0); safe to open, plan and
+//                  recommend.
+//   'comingSoon' — intentionally shown but not yet built; must be labelled and
+//                  must never be opened, planned or recommended.
+//   'hidden'     — must not appear in discovery or automated recommendations.
+//
+// Availability is normally derived from screenCount so existing metadata needs
+// no change. A module may set an explicit `availability` to override — e.g. to
+// hide a stub outright rather than surface it as coming soon.
+
+export const MODULE_AVAILABILITY = { AVAILABLE: 'available', COMING_SOON: 'comingSoon', HIDDEN: 'hidden' }
+
+export function getModuleAvailability(mod) {
+  if (!mod) return MODULE_AVAILABILITY.HIDDEN
+  if (mod.availability) return mod.availability
+  return mod.screenCount > 0 ? MODULE_AVAILABILITY.AVAILABLE : MODULE_AVAILABILITY.COMING_SOON
+}
+
+// True only for modules a learner can actually open and complete. The planner
+// and weak-spot recovery must gate module selection on this so an unbuilt stub
+// is never auto-surfaced as a task or a "fix this gap" destination.
+export function isModuleAvailable(mod) {
+  return getModuleAvailability(mod) === MODULE_AVAILABILITY.AVAILABLE
+}

@@ -200,6 +200,21 @@ describe('buildWeekdayBlocks', () => {
     expect(blocks[2].subject).toBe('History')
   })
 
+  it('never routes the main-progress block into an unbuilt stub module', () => {
+    // Biology's only built module (sci_bio_w1) is complete; the remaining
+    // Biology chapters in MODULE_GROUPS are screenCount-0 stubs. The planner
+    // must not hand back a stub as the next module — better no module than a
+    // dead card pointing at empty content.
+    const bioAllDone = {
+      ...emptyState,
+      moduleStates: { sci_bio_w1: { screen: 9, completed: true } },
+    }
+    const blocks = buildWeekdayBlocks('Biology', 'History', bioAllDone, defaultProfile)
+    const mainBlock = blocks.find(b => b.type === 'mainProgress')
+    const stubIds = ['bio_building_life', 'bio_human_machine', 'bio_disease_wars', 'bio_control_systems', 'bio_genetics_evolution', 'bio_ecosystems_group']
+    expect(stubIds).not.toContain(mainBlock.moduleId)
+  })
+
   it('uses mainSubject for pulse when secondarySubject is null', () => {
     const blocks = buildWeekdayBlocks('History', null, emptyState, defaultProfile)
     expect(blocks[0].subject).toBe('History')
