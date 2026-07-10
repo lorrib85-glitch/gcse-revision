@@ -152,6 +152,12 @@ export function getModuleState(moduleId) {
   return getObject('gcse_module_' + moduleId)
 }
 
+// Persist a module's resume state. Returns false when the write failed
+// (e.g. storage quota) so callers can avoid pretending progress was saved.
+export function saveModuleState(moduleId, state) {
+  return setJson('gcse_module_' + moduleId, state)
+}
+
 // Percent of a module's screens completed (100 if marked complete).
 export function getModulePct(mod) {
   if (!mod || !mod.screenCount) return 0

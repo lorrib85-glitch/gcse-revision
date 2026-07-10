@@ -4,7 +4,7 @@ import { hexToRgb, SUBJECTS } from '../../constants/subjects.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { BUTTONS } from '../../constants/buttons.js'
 import { SPACING } from '../../constants/spacing.js'
-import { recordActivity, MODULE_GROUPS } from '../../progress.js'
+import { recordActivity, MODULE_GROUPS, getModuleState, saveModuleState } from '../../progress.js'
 import { isFullScreenVideoScreen, getStageNavigation, getCurrentStageFromNavigation, computeInitialModuleState, clampScreenIndex, resolveFinishAction, getModuleGate } from '../../app/moduleNavigation.js'
 import ExamQuestionFrame from '../feedback/ExamQuestionFrame.jsx'
 import ExplainReveal from '../learning/ExplainReveal.jsx'
@@ -76,14 +76,8 @@ function scrollToTop() {
   } catch {}
 }
 
-// ─── localStorage helpers ─────────────────────────────────────────────────────
-function getModuleState(moduleId) {
-  try { return JSON.parse(localStorage.getItem(`gcse_module_${moduleId}`) || '{}') } catch { return {} }
-}
-function saveModuleState(moduleId, state) {
-  try { localStorage.setItem(`gcse_module_${moduleId}`, JSON.stringify(state)) } catch {}
-}
-
+// Module resume state persists via getModuleState / saveModuleState from
+// ../../progress.js (imported above) — same gcse_module_<id> key and shape.
 
 function ReadBlock({ block }) {
   return (

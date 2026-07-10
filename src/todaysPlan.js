@@ -6,16 +6,17 @@ import { getModuleState, getInProgressModule, todayStr, getScores } from './prog
 import { getBiggestWin, getWeakestSubject } from './unifiedWeaknessTracker.js'
 import { findTaggedScreen } from './data/tagModuleMap.js'
 import { MEDICINE_2023_PAPER } from './data/medicineExamPapers.js'
+import { getJson, setJson } from './lib/storage.js'
 
 const REVISIT_MEMORY_KEY = 'gcse_todays_plan_revisit'
 const PAPER_SUBJECTS = ['Maths', 'English', 'Sociology', 'Chemistry', 'History']
 
 function readRevisitMemory() {
-  try { return JSON.parse(localStorage.getItem(REVISIT_MEMORY_KEY) || 'null') } catch { return null }
+  return getJson(REVISIT_MEMORY_KEY, null)
 }
 
 function writeRevisitMemory(topic) {
-  try { localStorage.setItem(REVISIT_MEMORY_KEY, JSON.stringify({ date: todayStr(), topic })) } catch {}
+  setJson(REVISIT_MEMORY_KEY, { date: todayStr(), topic })
 }
 
 // ISO 8601 week number — used for the weekend full-paper subject rotation.

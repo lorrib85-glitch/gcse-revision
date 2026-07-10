@@ -6,7 +6,7 @@ import { GENERAL } from '../../../constants/generalTheme.js'
 import { MEDICINE_2023_PAPER } from '../../../data/medicineExamPapers.js'
 import { ALL_EXAM_PAPERS } from '../../../data/examPapers/index.js'
 import { ExamPaperRunner } from '../../exampaper/ExamPaperRunner.jsx'
-import { recordScore } from '../../../progress.js'
+import { recordScore, getScores } from '../../../progress.js'
 import { getSuggestedQuestionType } from '../../../unifiedWeaknessTracker.js'
 import BackButton from '../../../components/core/BackButton.jsx'
 import ExamQuestionFrame from '../../../components/feedback/ExamQuestionFrame.jsx'
@@ -129,8 +129,7 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
   const examTime = Math.floor(examTimeLeft / 60) + ':' + String(examTimeLeft % 60).padStart(2, '0')
 
   function getExamScoreMemory() {
-    let scores = []
-    try { scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]') } catch {}
+    const scores = getScores()
     const subjects = {}
     scores.forEach(score => {
       if (!subjects[score.subject]) subjects[score.subject] = []
@@ -586,7 +585,7 @@ export function ExamMode({ mode, onExit, onOpenModule, onOpenPulse, examAutoStar
   // ── Exam landing ───────────────────────────────────────────────────────────
   const examWeekStats = (() => {
     try {
-      const scores = JSON.parse(localStorage.getItem('gcse_scores') || '[]')
+      const scores = getScores()
       const d = new Date(); d.setDate(d.getDate() - 7)
       const cutoff = d.toISOString().slice(0, 10)
       const week = scores.filter(s => (s.source === 'exam' || s.source === 'exam-paper') && s.date > cutoff)

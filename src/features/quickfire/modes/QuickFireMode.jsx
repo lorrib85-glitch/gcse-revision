@@ -4,6 +4,7 @@ import { RADII } from '../../../constants/radii.js'
 import { TYPE } from '../../../constants/typography.js'
 import { GENERAL } from '../../../constants/generalTheme.js'
 import { recordScore, getAllConfidenceRatings } from '../../../progress.js'
+import { getJson, setJson } from '../../../lib/storage.js'
 import { logWrongAnswer, logCorrectAnswer, getWeakTopics } from '../../../unifiedWeaknessTracker.js'
 import { QUICK_QUIZ_QUESTIONS } from '../../../data/quickQuizData.js'
 import { quickFireFromBank } from '../logic/convertBankQuestion.js'
@@ -96,14 +97,10 @@ function addQuickFireAnswer(stats, question, isCorrect) {
   }
 }
 
-// ─── localStorage helpers ─────────────────────────────────────────────────────
+// ─── Storage helpers (all persistence via src/lib/storage.js) ─────────────────
 
 function readQuickFireMemory() {
-  try {
-    return JSON.parse(localStorage.getItem(QUICK_FIRE_MEMORY_KEY) || '{"subjects":{},"topics":{}}')
-  } catch {
-    return { subjects: {}, topics: {} }
-  }
+  return getJson(QUICK_FIRE_MEMORY_KEY, { subjects: {}, topics: {} })
 }
 
 function mergeQuickFireBuckets(memoryBuckets = {}, roundBuckets = {}) {
@@ -127,7 +124,7 @@ function saveQuickFireMemory(roundStats) {
     topics: mergeQuickFireBuckets(memory.topics, roundStats.topics),
     updatedAt: new Date().toISOString(),
   }
-  try { localStorage.setItem(QUICK_FIRE_MEMORY_KEY, JSON.stringify(next)) } catch {}
+  setJson(QUICK_FIRE_MEMORY_KEY, next)
   return next
 }
 
@@ -194,7 +191,7 @@ function pickQuickFireRecommendation(memory, roundStats) {
 // qfQuestionId lives in ../logic/questionId.js (pure, testable).
 
 function readQfQuestionHistory() {
-  try { return JSON.parse(localStorage.getItem(QF_QUESTION_HISTORY_KEY) || '{}') } catch { return {} }
+  return getJson(QF_QUESTION_HISTORY_KEY, {})
 }
 
 function updateQfQuestionHistory(q, isCorrect) {
@@ -203,7 +200,7 @@ function updateQfQuestionHistory(q, isCorrect) {
   const hist = readQfQuestionHistory()
   const prev = hist[id] || { attempts: 0, correct: 0, lastResult: null }
   hist[id] = { attempts: prev.attempts + 1, correct: prev.correct + (isCorrect ? 1 : 0), lastResult: isCorrect ? 'correct' : 'incorrect', lastAt: Date.now() }
-  try { localStorage.setItem(QF_QUESTION_HISTORY_KEY, JSON.stringify(hist)) } catch {}
+  setJson(QF_QUESTION_HISTORY_KEY, hist)
 }
 
 function wasQfPrevWrong(q) {
@@ -211,21 +208,21 @@ function wasQfPrevWrong(q) {
 }
 
 function readQfPrevSession() {
-  try { return JSON.parse(localStorage.getItem(QF_PREV_SESSION_KEY) || 'null') } catch { return null }
+  return getJson(QF_PREV_SESSION_KEY, null)
 }
 
 function saveQfPrevSession(accuracy, answered) {
-  try { localStorage.setItem(QF_PREV_SESSION_KEY, JSON.stringify({ accuracy, answered, date: new Date().toISOString() })) } catch {}
+  setJson(QF_PREV_SESSION_KEY, { accuracy, answered, date: new Date().toISOString() })
 }
 
 export function readQfBest() {
-  try { return JSON.parse(localStorage.getItem(QF_BEST_KEY) || 'null') } catch { return null }
+  return getJson(QF_BEST_KEY, null)
 }
 
 function saveQfBestIfBeaten(correct, answered) {
   const best = readQfBest()
   if (!best || correct > best.correct) {
-    try { localStorage.setItem(QF_BEST_KEY, JSON.stringify({ correct, answered, date: new Date().toISOString() })) } catch {}
+    setJson(QF_BEST_KEY, { correct, answered, date: new Date().toISOString() })
   }
 }
 

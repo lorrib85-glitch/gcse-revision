@@ -7,17 +7,11 @@ const root = resolve(process.cwd())
 // Snapshot of every file currently allowed to call localStorage directly.
 // If a file outside this set starts using localStorage, the test fails — add it
 // to this list only after a deliberate decision, with preference for routing
-// through src/lib/storage.js instead.
+// through src/lib/storage.js instead. The former grandfathered call sites
+// (LegacyApp, ModulePlayer, QuickFireMode, ExamMode, authService, todaysPlan)
+// were all migrated to storage.js helpers — do not re-grandfather them.
 const APPROVED_LOCALSTORAGE_FILES = new Set([
   'src/lib/storage.js',             // canonical storage abstraction
-  'src/app/LegacyApp.jsx',          // grandfathered — module state writes
-  'src/features/quickfire/modes/ExamMode.jsx',      // grandfathered — QF exam score history (extracted from QuickFire.jsx)
-  'src/features/quickfire/modes/QuickFireMode.jsx', // grandfathered — QF best/history keys (extracted from QuickFire.jsx)
-  'src/app/moduleNavigation.js',    // grandfathered — module screen state
-  'src/auth/authService.js',        // grandfathered — auth persistence
-  'src/components/layout/ModulePlayer.jsx', // grandfathered — module resume state
-  'src/features/home/StreakChip.jsx', // grandfathered — streak read
-  'src/todaysPlan.js',              // grandfathered — plan cache
 ])
 
 function walkSrc(dir, results = []) {

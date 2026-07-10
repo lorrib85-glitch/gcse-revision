@@ -13,19 +13,37 @@ export function getJson(key, fallback) {
   }
 }
 
+// Returns true when the write persisted, false when it failed — callers that
+// care (e.g. progress saves) can surface the failure instead of assuming
+// success. A quota failure means learner data is silently NOT saving, so it
+// gets its own explicit warning.
 export function setJson(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value))
-  } catch {
-    console.warn(`storage: failed to write "${key}"`)
+    return true
+  } catch (err) {
+    if (isQuotaError(err)) {
+      console.warn(`storage: quota exceeded writing "${key}" — progress is NOT being saved`)
+    } else {
+      console.warn(`storage: failed to write "${key}"`, err)
+    }
+    return false
   }
+}
+
+function isQuotaError(err) {
+  return err?.name === 'QuotaExceededError' ||
+    err?.code === 22 || // legacy DOMException code for quota
+    err?.code === 1014  // Firefox NS_ERROR_DOM_QUOTA_REACHED
 }
 
 export function removeKey(key) {
   try {
     localStorage.removeItem(key)
+    return true
   } catch {
     console.warn(`storage: failed to remove "${key}"`)
+    return false
   }
 }
 

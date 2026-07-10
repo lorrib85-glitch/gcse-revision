@@ -164,7 +164,7 @@ export function buildChapterCompletePayload(completedModule) {
 }
 
 // Pure: given a screen index and the module's current persisted state, compute
-// the new state object to write to localStorage before opening the player.
+// the new state object to persist (via progress.js) before opening the player.
 export function prepareModuleScreenState(screenIndex, existingState) {
   return {
     ...existingState,

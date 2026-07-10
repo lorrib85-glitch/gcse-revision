@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { MODULE_CONTENT_LOADERS } from '../content/moduleContentRegistry.js'
 import { useAuth } from '../auth/AuthContext.jsx'
-import { getProgress, recordActivity, getModuleState as safeGetModuleState, getContinueModule } from '../progress.js'
+import { getProgress, recordActivity, getModuleState as safeGetModuleState, saveModuleState, getContinueModule } from '../progress.js'
 import { buildChapterCompletePayload, prepareModuleScreenState, resolveTaskDestination } from './moduleNavigation.js'
 import TestTab, { readQfBest } from '../features/quickfire/QuickFire.jsx'
 import Home from '../features/home/Home.jsx'
@@ -390,12 +390,8 @@ export default function App() {
   function openModulePlayer(mod, screenIndex) {
     if (!mod?.screenCount) return
     if (screenIndex !== undefined && screenIndex !== null) {
-      try {
-        const existing = safeGetModuleState(mod.id)
-        localStorage.setItem(`gcse_module_${mod.id}`, JSON.stringify(
-          prepareModuleScreenState(screenIndex, existing)
-        ))
-      } catch {}
+      const existing = safeGetModuleState(mod.id)
+      saveModuleState(mod.id, prepareModuleScreenState(screenIndex, existing))
     }
     import('../components/layout/ModulePlayer.jsx')
     const cached = _contentCache[mod.id]

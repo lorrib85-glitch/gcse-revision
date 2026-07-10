@@ -8,7 +8,7 @@ function safeGetProgress() {
 }
 
 // ─── Shared streak chip ───────────────────────────────────────────────────────
-// Reads live from localStorage so it's always accurate wherever it's rendered.
+// Reads live from stored progress so it's always accurate wherever it's rendered.
 
 export function StreakChip({ style = {}, backdrop = true, layout = 'stacked' }) {
   const prog   = safeGetProgress()

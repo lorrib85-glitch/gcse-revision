@@ -4,6 +4,7 @@
 
 import { signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth'
 import { auth, googleProvider, firebaseEnabled } from './firebaseClient.js'
+import { getJson, setJson, removeKey } from '../lib/storage.js'
 
 export async function signInWithGoogle() {
   if (!firebaseEnabled) {
@@ -23,13 +24,13 @@ export async function signOutGoogle() {
 }
 
 export function getStoredUser() {
-  try { return JSON.parse(localStorage.getItem('riseUser') || 'null') } catch { return null }
+  return getJson('riseUser', null)
 }
 
 export function storeUser(data) {
-  localStorage.setItem('riseUser', JSON.stringify(data))
+  setJson('riseUser', data)
 }
 
 export function clearUser() {
-  localStorage.removeItem('riseUser')
+  removeKey('riseUser')
 }
