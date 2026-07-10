@@ -220,6 +220,45 @@ pointer for whichever account is now active.
   backward-compatible: data without `dev`/`seq`/baseline keeps using the
   seed/max path.
 
+## Snapshot size budget (`snapshotBudget.js`)
+
+Firestore rejects any document over 1 MiB, and the progress snapshot grows
+with QuickFire evidence and history logs. Rather than discover the limit at
+write time, `snapshotBudget.js` (pure) measures the serialised snapshot before
+every cloud write and, if it exceeds the hard budget, compacts **only** history
+structures with explicit retention rules:
+
+- **Thresholds**: `WARN_BYTES` 700 KiB, `HARD_BYTES` 900 KiB — ~127 KiB of
+  headroom under the 1 MiB Firestore limit for metadata, future fields and
+  merge expansion.
+- **Compacted (most-expendable first)**: fold `gcse_qf_answer_log` into
+  `gcse_qf_baseline_v1` (lossless — totals preserved), trim `gcse_qf_q_history`
+  (per-question ranking detail) to the newest by `lastAt`, trim `gcse_scores`
+  (historical score log, already capped at 200) to the newest.
+- **Never touched**: `gcse_progress` (streak), `gcse_module_*` (completion),
+  `gcse_mastery_v1`, `gcse_planner_*` (active planner),
+  `gcse_quickfire_memory_v1` (aggregate buckets), `gcse_qf_baseline_v1`,
+  `gcse_qf_best`, `riseUser`, and every unknown/future key.
+
+Deterministic and idempotent (retention caps are fixed). `reconcile()` compacts
+before any upload; if a snapshot is *still* over the hard budget after safe
+compaction, the cloud write is **blocked** — local progress stays intact and
+the learner is told plainly it couldn't be backed up (never falsely told it
+was), via the existing sync-status system. See "Honest oversize handling"
+below.
+
+## Honest oversize handling
+
+`reconcile()` runs `compactSnapshotForBudget` on the snapshot it is about to
+upload. If the result is within budget it uploads normally. If it is still over
+`HARD_BYTES` (core state alone is enormous — extremely rare), it returns
+`{ action: 'blocked', reason: 'over-budget' }` and does **not** call
+`saveCloudProgress`: the local copy is untouched and fully usable, and
+`AuthContext` maps `blocked` to a distinct `syncStatus` (`'blocked'`) whose
+`progressStatus.js` wording is "Saved on this device — your progress is safe
+here, but we couldn't back up everything yet." No document size, bytes or
+Firestore detail ever reaches the learner, and normal learners see no new UI.
+
 ## Testing
 
 - `tests/unit/storage/storage.test.js` — scoping primitives, raw keys,

@@ -362,6 +362,24 @@ export function compactAnswerLog(log, baseline, deviceId, { cap = QF_ANSWER_LOG_
   return { log: keep, baseline: next, compacted: true }
 }
 
+// Budget compaction of the raw answer log: fold the oldest events (ANY device,
+// contiguous per device) into the baseline to shrink a large snapshot without
+// losing totals. Pure and lossless — the folded counts move into the baseline,
+// so a subsequent merge reconstructs the same totals. Idempotent: a log already
+// at/under `retain` is returned unchanged.
+export function foldAnswerLogForBudget(log, baseline, retain = QF_ANSWER_LOG_RETAIN) {
+  const arr = Array.isArray(log) ? log : []
+  const sorted = [...arr].sort((x, y) => (Number(y?.at) || 0) - (Number(x?.at) || 0))
+  if (sorted.length <= retain) {
+    return { log: sorted, baseline: baseline ? cloneQfBaseline(baseline) : (baseline ?? null), folded: false }
+  }
+  const keep = sorted.slice(0, retain)
+  const overflow = sorted.slice(retain)
+  const next = cloneQfBaseline(baseline)
+  foldEventsContiguous(next, overflow)
+  return { log: keep, baseline: next, folded: true }
+}
+
 // Merge two devices' baselines: folded watermark and each (bucket, device)
 // cell are monotonic prefix counts, so max per key is exact and idempotent.
 function mergeQfBaseline(a, b) {
