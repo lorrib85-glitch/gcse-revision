@@ -7,6 +7,8 @@ import {
   clearUser,
 } from './authService.js'
 import { syncProgressForUser, backupProgressForUser } from '../data/progressSync/progressSync.js'
+import { claimGuestProgressForUser, finalizeGuestClaim, markGuestClaimFailed } from '../data/progressSync/accountScope.js'
+import { setActiveScope, scopeForUser, GUEST_SCOPE } from '../lib/storage.js'
 
 const AuthContext = createContext(null)
 
@@ -28,6 +30,22 @@ export function AuthProvider({ children }) {
   // Guards against a double sign-out (e.g. a fast double-tap) triggering two
   // concurrent flush-then-clear sequences.
   const signingOutRef = useRef(false)
+  // Set to a uid right when completeOnboarding/linkGoogleAccount locally
+  // merges a claimed guest snapshot into that uid's namespace; cleared once
+  // the *cloud* side of that same reconcile has actually succeeded. Until
+  // then the guest snapshot is left untouched, so a failed reconcile never
+  // loses it — see accountScope.js.
+  const pendingGuestClaimUidRef = useRef(null)
+
+  function onReconcileSettled(forUser, outcome) {
+    if (pendingGuestClaimUidRef.current !== forUser?.uid) return
+    if (outcome === 'ok') {
+      finalizeGuestClaim(forUser)
+      pendingGuestClaimUidRef.current = null
+    } else {
+      markGuestClaimFailed(forUser)
+    }
+  }
 
   // Reconcile local ↔ cloud once per app load for Google users. If the merge
   // pulled in anything from the cloud side, re-read the stored user so a
@@ -39,11 +57,15 @@ export function AuthProvider({ children }) {
     setSyncStatus('syncing')
     syncProgressForUser(user)
       .then(({ action }) => {
+        onReconcileSettled(user, 'ok')
         if (cancelled) return
         setSyncStatus('ok')
         if (action === 'apply' || action === 'merge') setUser(getStoredUser())
       })
-      .catch(() => { if (!cancelled) setSyncStatus('error') })
+      .catch(() => {
+        onReconcileSettled(user, 'error')
+        if (!cancelled) setSyncStatus('error')
+      })
     return () => { cancelled = true }
     // Run once per signed-in identity, not on every user object change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,8 +78,8 @@ export function AuthProvider({ children }) {
       if (document.visibilityState === 'hidden') {
         setSyncStatus('syncing')
         backupProgressForUser(user)
-          .then(() => setSyncStatus('ok'))
-          .catch(() => setSyncStatus('error'))
+          .then(() => { onReconcileSettled(user, 'ok'); setSyncStatus('ok') })
+          .catch(() => { onReconcileSettled(user, 'error'); setSyncStatus('error') })
       }
     }
     document.addEventListener('visibilitychange', onHide)
@@ -72,8 +94,8 @@ export function AuthProvider({ children }) {
     const onOnline = () => {
       setSyncStatus('syncing')
       backupProgressForUser(user)
-        .then(() => setSyncStatus('ok'))
-        .catch(() => setSyncStatus('error'))
+        .then(() => { onReconcileSettled(user, 'ok'); setSyncStatus('ok') })
+        .catch(() => { onReconcileSettled(user, 'error'); setSyncStatus('error') })
     }
     window.addEventListener('online', onOnline)
     return () => window.removeEventListener('online', onOnline)
@@ -108,7 +130,17 @@ export function AuthProvider({ children }) {
         ? { provider: 'google', uid: googleProfile.uid, email: googleProfile.email, photoURL: googleProfile.photoURL || null }
         : { provider: 'guest' }),
     }
+    // A brand-new Google sign-in is exactly the "guest → account" transition
+    // guest progress may be deliberately offered to — before switching the
+    // active namespace over to this uid, fold in whatever's sitting in the
+    // guest namespace (local-only; the sync effect below does the cloud side
+    // and finalizes/fails the claim once that's actually settled).
+    if (userData.provider === 'google') {
+      const { claimed } = claimGuestProgressForUser(userData)
+      if (claimed) pendingGuestClaimUidRef.current = userData.uid
+    }
     storeUser(userData)
+    setActiveScope(scopeForUser(userData))
     setUser(userData)
     setPending(false)
     setGoogleProfile(null)
@@ -116,8 +148,9 @@ export function AuthProvider({ children }) {
 
   // For a learner who already onboarded as a guest and later wants their
   // progress associated with a Google account — merges Google identity into
-  // the existing profile without re-running onboarding or touching progress
-  // data, then kicks off the first sync for that account.
+  // the existing profile without re-running onboarding, claims any guest
+  // progress into the new uid's namespace, then kicks off the first sync
+  // for that account.
   async function linkGoogleAccount() {
     setLoading(true)
     setAuthError(null)
@@ -130,7 +163,10 @@ export function AuthProvider({ children }) {
         email: profile.email,
         photoURL: profile.photoURL || null,
       }
+      const { claimed } = claimGuestProgressForUser(updated)
+      if (claimed) pendingGuestClaimUidRef.current = updated.uid
       storeUser(updated)
+      setActiveScope(scopeForUser(updated))
       setUser(updated)
     } catch (err) {
       setAuthError(err?.message || 'Google sign-in failed — please try again.')
@@ -155,12 +191,19 @@ export function AuthProvider({ children }) {
         // rather than a silently-swallowed failure.
         try {
           await backupProgressForUser(user)
+          onReconcileSettled(user, 'ok')
         } catch (err) {
+          onReconcileSettled(user, 'error')
           console.warn('signOut: final progress backup failed — progress remains saved on this device and will retry on next sign-in', err)
         }
         await signOutGoogle()
       }
       clearUser()
+      // Every subsequent read/write (including any reconcile still in
+      // flight from *this* user — it captured its own scope already, so it
+      // stays pinned to that namespace) targets the guest namespace again,
+      // not whichever account happens to sign in next.
+      setActiveScope(GUEST_SCOPE)
       setUser(null)
       setPending(false)
       setGoogleProfile(null)
