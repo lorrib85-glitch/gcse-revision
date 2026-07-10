@@ -157,6 +157,13 @@ export function functionName(paramName) {
 **Module Scope Patterns:**
 - Storage is accessed via `src/lib/storage.js` — no direct `localStorage` calls in other modules
   - Exception: tests that stub localStorage (e.g., `installLocalStorageStub()`)
+  - Enforced by `tests/architecture/storage-boundary.test.js` (allowlist = `storage.js` only)
+- **Critical saves** (progress, screen completion, quiz/exam scores, streaks, planner
+  completion — anything shown to the learner as *done*) persist via `saveCritical()`,
+  not `setJson()`. On failure `saveCritical` returns `false` **and** emits on the
+  save-failure bus (`subscribeSaveFailure`), which the app-wide `SaveFailureHost` turns
+  into one governed `SaveFailureNotice`. Never surface a bespoke save-error alert or
+  `window.alert`; never show a global success toast for a normal save.
 - Learning graph is pure: no React, no localStorage, no circular imports within `src/data/learningGraph/`
   - Enforced by architecture tests in `tests/architecture/learning-graph.test.js`
 - Feature modules are isolated: all state passed as parameters, side effects explicit

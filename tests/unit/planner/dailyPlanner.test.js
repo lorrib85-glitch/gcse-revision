@@ -12,6 +12,9 @@ vi.mock('../../../src/lib/storage.js', () => ({
   getObject: mockGetObject,
   getJson:   mockGetJson,
   setJson:   mockSetJson,
+  // Critical saves route through saveCritical; in this pure-logic test it
+  // behaves like a successful setJson.
+  saveCritical: mockSetJson,
   removeKey: vi.fn(),
 }))
 

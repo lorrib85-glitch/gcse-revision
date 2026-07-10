@@ -107,6 +107,19 @@ Foundation components used by many others. Handle atomic UI concerns.
 
 ---
 
+### SaveFailureNotice
+
+**File:** `src/components/core/SaveFailureNotice.jsx`  
+**Purpose:** The single governed learner-facing surface shown when a *critical* save fails (module progress, screen completion, quiz/exam scores, streaks, planner completion). Calm, subject-neutral, mobile-first; never claims progress was saved.  
+**Use for:** the app-wide save-failure notice only. Mounted once via `SaveFailureHost` at the app root — features do not render it themselves.  
+**Do NOT use for:** success confirmation, generic toasts, per-feature error banners.  
+**Props:** `open`, `retrying` (bool), `onRetry`, `onDismiss`  
+**Dependencies:** `GENERAL` theme, `TYPE`, `SPACING`, `RADII`, `BUTTONS` tokens; `createPortal`  
+**Architecture:** presentation only. Which saves are critical, dedupe and retry live in `src/lib/storage.js` (`saveCritical` + `subscribeSaveFailure`) and the pure `src/app/saveFailureController.js`; `src/app/SaveFailureHost.jsx` wires bus → controller → this component.  
+**Rule:** Do not add separate hardcoded save-error alerts or `window.alert` anywhere. Route critical persistence through `saveCritical` so this one notice handles it. No global success toast for normal saves.
+
+---
+
 ### SequenceProgress — **LOCKED CORE UTILITY**
 
 **File:** `src/components/core/SequenceProgress.jsx`  

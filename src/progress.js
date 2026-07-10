@@ -1,5 +1,5 @@
 import { MODULES, isModuleAvailable } from './modules.js'
-import { getJson, getObject, getArray, setJson, removeKey } from './lib/storage.js'
+import { getJson, getObject, getArray, setJson, saveCritical, removeKey } from './lib/storage.js'
 
 const KEY          = 'gcse_progress'
 const SCORES_KEY   = 'gcse_scores'
@@ -9,7 +9,10 @@ const CONFIDENCE_KEY = 'gcse_confidence'
 
 const read    = getObject
 const readArr = getArray
-const write   = setJson
+// Progress, streaks and scores are shown to the learner as done, so they
+// persist through saveCritical — a failed write surfaces the governed
+// save-failure notice instead of silently appearing saved.
+const write   = saveCritical
 
 // ─── Date helpers ─────────────────────────────────────────────────
 
@@ -152,10 +155,11 @@ export function getModuleState(moduleId) {
   return getObject('gcse_module_' + moduleId)
 }
 
-// Persist a module's resume state. Returns false when the write failed
-// (e.g. storage quota) so callers can avoid pretending progress was saved.
+// Persist a module's resume state. Critical — screen progress/completion is
+// shown to the learner as saved, so a failed write returns false AND surfaces
+// the governed save-failure notice via saveCritical.
 export function saveModuleState(moduleId, state) {
-  return setJson('gcse_module_' + moduleId, state)
+  return saveCritical('gcse_module_' + moduleId, state)
 }
 
 // Percent of a module's screens completed (100 if marked complete).

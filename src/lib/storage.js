@@ -70,3 +70,36 @@ export function listKeys(prefix = '') {
     return []
   }
 }
+
+// ─── Critical-save failure signalling ──────────────────────────────
+// A "critical" save is one the learner is shown as done — module progress,
+// screen completion, quiz/exam scores, streaks, planner completion. If one of
+// these fails, the learner must not be told it succeeded. `saveCritical`
+// writes through `setJson` and, on failure, notifies subscribers with a retry
+// closure so the app can surface one governed, recoverable notice
+// (see src/components/core/SaveFailureNotice.jsx). Non-critical caches keep
+// using `setJson` directly.
+
+const saveFailureListeners = new Set()
+
+// Subscribe to critical-save failures. Returns an unsubscribe function.
+export function subscribeSaveFailure(listener) {
+  saveFailureListeners.add(listener)
+  return () => saveFailureListeners.delete(listener)
+}
+
+function emitSaveFailure(detail) {
+  for (const listener of saveFailureListeners) {
+    // A broken subscriber must never block or corrupt persistence.
+    try { listener(detail) } catch { /* ignore */ }
+  }
+}
+
+// Persist a critical value. Returns true on success, false on failure — the
+// caller still gets the boolean so it can avoid rendering a "saved"/"complete"
+// state — and additionally emits a failure event carrying a retry closure.
+export function saveCritical(key, value) {
+  const ok = setJson(key, value)
+  if (!ok) emitSaveFailure({ key, retry: () => saveCritical(key, value) })
+  return ok
+}

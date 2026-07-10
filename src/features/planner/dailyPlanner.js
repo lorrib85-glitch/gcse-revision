@@ -68,7 +68,7 @@
 
 import { MODULES, isModuleAvailable } from '../../modules.js'
 import { MODULE_GROUPS } from '../../progress.js'
-import { getArray, getObject, setJson } from '../../lib/storage.js'
+import { getArray, getObject, setJson, saveCritical } from '../../lib/storage.js'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -221,7 +221,9 @@ export function saveWeakPoints(weakPoints) {
 
 export function savePaperResult(paperResult) {
   const existing = getArray(PAPER_RESULTS_KEY)
-  setJson(PAPER_RESULTS_KEY, [...existing, paperResult])
+  // Completing a paper is shown to the learner as done — persist critically so
+  // a failed save surfaces the governed notice rather than silently vanishing.
+  return saveCritical(PAPER_RESULTS_KEY, [...existing, paperResult])
 }
 
 // ─── loadLearningState ────────────────────────────────────────────────────────

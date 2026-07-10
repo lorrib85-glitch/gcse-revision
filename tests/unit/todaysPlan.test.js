@@ -6,6 +6,7 @@ let store = {}
 vi.mock('../../src/lib/storage.js', () => ({
   getJson: vi.fn((key, fallback) => (key in store ? store[key] : fallback)),
   setJson: vi.fn((key, value) => { store[key] = value }),
+  saveCritical: vi.fn((key, value) => { store[key] = value; return true }),
   removeKey: vi.fn((key) => { delete store[key] }),
   getArray: vi.fn((key) => (key in store ? store[key] : [])),
   getObject: vi.fn((key) => (key in store ? store[key] : {})),

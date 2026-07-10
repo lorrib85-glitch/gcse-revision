@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { getJson, setJson, removeKey, getArray, getObject, listKeys } from '../../../src/lib/storage.js'
+import { getJson, setJson, removeKey, getArray, getObject, listKeys, saveCritical, subscribeSaveFailure } from '../../../src/lib/storage.js'
 
 // In-memory localStorage stub (node environment has none).
 function installLocalStorageStub() {
@@ -80,5 +80,63 @@ describe('storage.js persistence boundary', () => {
     expect(listKeys('gcse_module_').sort()).toEqual(['gcse_module_a', 'gcse_module_b'])
     delete globalThis.localStorage
     expect(listKeys('gcse_')).toEqual([])
+  })
+})
+
+describe('storage.js saveCritical + failure bus', () => {
+  let store
+  let warnSpy
+
+  beforeEach(() => {
+    store = installLocalStorageStub()
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  })
+  afterEach(() => warnSpy.mockRestore())
+
+  it('a successful critical save persists and emits no failure', () => {
+    const listener = vi.fn()
+    const unsub = subscribeSaveFailure(listener)
+    expect(saveCritical('gcse_scores', [{ pct: 80 }])).toBe(true)
+    expect(getJson('gcse_scores', null)).toEqual([{ pct: 80 }])
+    expect(listener).not.toHaveBeenCalled()
+    unsub()
+  })
+
+  it('a failed critical save returns false and emits a failure with a retry closure', () => {
+    globalThis.localStorage.setItem = () => { const e = new Error('full'); e.name = 'QuotaExceededError'; throw e }
+    const listener = vi.fn()
+    const unsub = subscribeSaveFailure(listener)
+    expect(saveCritical('gcse_scores', [{ pct: 80 }])).toBe(false)
+    expect(listener).toHaveBeenCalledTimes(1)
+    const detail = listener.mock.calls[0][0]
+    expect(detail.key).toBe('gcse_scores')
+    expect(typeof detail.retry).toBe('function')
+    unsub()
+  })
+
+  it('the retry closure re-attempts the same save and succeeds once storage recovers', () => {
+    let full = true
+    const realSet = store // capture stub store
+    globalThis.localStorage.setItem = (k, v) => {
+      if (full) { const e = new Error('full'); e.name = 'QuotaExceededError'; throw e }
+      realSet[k] = String(v)
+    }
+    const listener = vi.fn()
+    const unsub = subscribeSaveFailure(listener)
+    expect(saveCritical('gcse_module_x', { screen: 4 })).toBe(false)
+    const { retry } = listener.mock.calls[0][0]
+    full = false // storage frees up
+    expect(retry()).toBe(true)
+    expect(getJson('gcse_module_x', null)).toEqual({ screen: 4 })
+    unsub()
+  })
+
+  it('unsubscribing stops further failure notifications', () => {
+    globalThis.localStorage.setItem = () => { throw new Error('boom') }
+    const listener = vi.fn()
+    const unsub = subscribeSaveFailure(listener)
+    unsub()
+    expect(saveCritical('k', 1)).toBe(false)
+    expect(listener).not.toHaveBeenCalled()
   })
 })
