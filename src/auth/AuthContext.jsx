@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import {
   signInWithGoogle as authSignIn,
   signOutGoogle,
@@ -19,20 +19,29 @@ export function AuthProvider({ children }) {
   const [googleProfile, setGoogleProfile] = useState(null)
   const [loading, setLoading]       = useState(false)
   const [authError, setAuthError]   = useState(null)
-  // 'ok' | 'error' — backup health for the signed-in Google user.
-  const [syncStatus, setSyncStatus] = useState('ok')
+  // 'ok' | 'syncing' | 'error' — backup health for the signed-in Google user.
+  // A returning Google user starts 'syncing' (not 'ok') so the status never
+  // flashes "backed up" before the first reconcile has actually run.
+  const [syncStatus, setSyncStatus] = useState(() => (
+    getStoredUser()?.provider === 'google' ? 'syncing' : 'ok'
+  ))
+  // Guards against a double sign-out (e.g. a fast double-tap) triggering two
+  // concurrent flush-then-clear sequences.
+  const signingOutRef = useRef(false)
 
-  // Reconcile local ↔ cloud once per app load for Google users. If the cloud
-  // snapshot was applied, re-read the stored user so a restored profile
-  // (e.g. custom name from another device) is reflected immediately.
+  // Reconcile local ↔ cloud once per app load for Google users. If the merge
+  // pulled in anything from the cloud side, re-read the stored user so a
+  // restored profile (e.g. custom name from another device) is reflected
+  // immediately.
   useEffect(() => {
     if (user?.provider !== 'google' || !user?.uid) return
     let cancelled = false
+    setSyncStatus('syncing')
     syncProgressForUser(user)
       .then(({ action }) => {
         if (cancelled) return
         setSyncStatus('ok')
-        if (action === 'apply') setUser(getStoredUser())
+        if (action === 'apply' || action === 'merge') setUser(getStoredUser())
       })
       .catch(() => { if (!cancelled) setSyncStatus('error') })
     return () => { cancelled = true }
@@ -45,6 +54,7 @@ export function AuthProvider({ children }) {
     if (user?.provider !== 'google' || !user?.uid) return
     const onHide = () => {
       if (document.visibilityState === 'hidden') {
+        setSyncStatus('syncing')
         backupProgressForUser(user)
           .then(() => setSyncStatus('ok'))
           .catch(() => setSyncStatus('error'))
@@ -53,6 +63,21 @@ export function AuthProvider({ children }) {
     document.addEventListener('visibilitychange', onHide)
     return () => document.removeEventListener('visibilitychange', onHide)
   }, [user])
+
+  // Bounded automatic retry: when connectivity returns after a failed
+  // backup, try once more. Event-driven (not a polling loop or timer chain),
+  // so it can never stack up repeated attempts.
+  useEffect(() => {
+    if (user?.provider !== 'google' || !user?.uid || syncStatus !== 'error') return
+    const onOnline = () => {
+      setSyncStatus('syncing')
+      backupProgressForUser(user)
+        .then(() => setSyncStatus('ok'))
+        .catch(() => setSyncStatus('error'))
+    }
+    window.addEventListener('online', onOnline)
+    return () => window.removeEventListener('online', onOnline)
+  }, [user, syncStatus])
 
   async function signInWithGoogle() {
     setLoading(true)
@@ -115,16 +140,34 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    if (user?.provider === 'google') {
-      // Final best-effort backup, then end the Firebase session. Local
-      // progress keys are deliberately left untouched.
-      await backupProgressForUser(user).catch(() => {})
-      await signOutGoogle()
+    // A double-tap or a second signOut() call while the first is still
+    // flushing must not run the flush-then-clear sequence twice.
+    if (signingOutRef.current) return
+    signingOutRef.current = true
+    try {
+      if (user?.provider === 'google') {
+        // Final flush before ending the session — the same safe merge as
+        // every other sync point, so it can never clobber another device's
+        // cloud-only progress. Local progress keys are deliberately left
+        // untouched by sign-out itself: if the flush fails, nothing is lost
+        // (it's still sitting in local storage) and the next sign-in
+        // reconciles it automatically, so this is non-blocking by design
+        // rather than a silently-swallowed failure.
+        try {
+          await backupProgressForUser(user)
+        } catch (err) {
+          console.warn('signOut: final progress backup failed — progress remains saved on this device and will retry on next sign-in', err)
+        }
+        await signOutGoogle()
+      }
+      clearUser()
+      setUser(null)
+      setPending(false)
+      setGoogleProfile(null)
+      setSyncStatus('ok')
+    } finally {
+      signingOutRef.current = false
     }
-    clearUser()
-    setUser(null)
-    setPending(false)
-    setGoogleProfile(null)
   }
 
   return (
