@@ -18,8 +18,14 @@
 //   - streakCelebrationShown:<date> — daily-expiring UI dedup flags, not
 //     progress; the streak itself is derived from gcse_scores, which IS backed up.
 //   - gcse_sync_meta — this service's own bookkeeping.
-
-import { getJson, setJson, listKeys, getObject } from '../../lib/storage.js'
+//
+// Every local read/write below goes through the *ForScope storage helpers
+// with a scope captured once at the top of reconcile() — never the ambient
+// "currently active" scope. This is what makes reconcile() safe to have
+// in flight across an account switch: a stale promise from a signed-out
+// user's reconcile call keeps reading/writing that user's own namespace,
+// never whatever scope becomes active while it was awaiting Firestore.
+import { getJsonForScope, setJsonForScope, listKeysForScope, getRawJson, scopeForUser, GUEST_SCOPE } from '../../lib/storage.js'
 import { firebaseEnabled, app } from '../../auth/firebaseClient.js'
 import { mergeProgressData, progressDataEqual } from './progressMerge.js'
 
@@ -40,6 +46,7 @@ export const STATIC_PROGRESS_KEYS = [
   'gcse_planner_paper_results',
   'gcse_mastery_v1',
   'gcse_quickfire_memory_v1',
+  'gcse_qf_answer_log',
   'gcse_qf_q_history',
   'gcse_qf_prev_session',
   'gcse_qf_best',
@@ -49,32 +56,44 @@ export const STATIC_PROGRESS_KEYS = [
 export const DYNAMIC_KEY_PREFIXES = ['gcse_module_']
 
 // ─── Snapshot collect / apply (pure local storage side) ──────────────────────
+// Both take an explicit `scope` — the account namespace to read/write —
+// rather than assuming "whichever scope is currently active". Callers
+// (reconcile() below, and the guest-claim flow in accountScope.js) always
+// pass a scope captured at the start of their operation.
 
-export function collectLocalProgressSnapshot() {
+export function collectLocalProgressSnapshot(scope = GUEST_SCOPE) {
   const data = {}
   const keys = [
     ...STATIC_PROGRESS_KEYS,
-    ...DYNAMIC_KEY_PREFIXES.flatMap(prefix => listKeys(prefix)),
+    ...DYNAMIC_KEY_PREFIXES.flatMap(prefix => listKeysForScope(scope, prefix)),
   ]
   for (const key of keys) {
-    const value = getJson(key, undefined)
+    const value = getJsonForScope(scope, key, undefined)
     if (value !== undefined) data[key] = value
   }
   return { version: SNAPSHOT_VERSION, updatedAt: Date.now(), data }
 }
 
 // Writes only the keys present in the snapshot — never deletes or renames
-// anything else in local storage.
-export function applyProgressSnapshot(snapshot, { currentUid } = {}) {
+// anything else in that scope's local storage.
+export function applyProgressSnapshot(snapshot, { currentUid, scope = GUEST_SCOPE } = {}) {
   const data = snapshot?.data
   if (!data || typeof data !== 'object') return 0
   let applied = 0
   for (const [key, value] of Object.entries(data)) {
     if (key === SYNC_META_KEY) continue
-    // Defensive: never let a cloud riseUser for a different account replace
-    // the current session's identity.
-    if (key === 'riseUser' && currentUid && value?.uid && value.uid !== currentUid) continue
-    setJson(key, value)
+    if (key === 'riseUser' && currentUid) {
+      // riseUser is the single global identity pointer (never scoped — see
+      // storage.js). Two guards, both required: never adopt a snapshot
+      // profile for a different account, and never overwrite whichever
+      // account is *actually* signed in right now on this device if it's
+      // no longer this reconcile's own uid (a stale reconcile from an
+      // account that has since signed out/switched must not touch it).
+      if (value?.uid && value.uid !== currentUid) continue
+      const activeRiseUser = getRawJson('riseUser', null)
+      if (activeRiseUser?.uid && activeRiseUser.uid !== currentUid) continue
+    }
+    setJsonForScope(scope, key, value)
     applied++
   }
   return applied
@@ -148,8 +167,8 @@ export async function saveCloudProgress(uid, snapshot) {
 
 // ─── Orchestration ───────────────────────────────────────────────────────────
 
-function getSyncMeta() { return getObject(SYNC_META_KEY) }
-function setSyncMeta(meta) { setJson(SYNC_META_KEY, { ...getSyncMeta(), ...meta }) }
+function getSyncMeta(scope) { return getJsonForScope(scope, SYNC_META_KEY, {}) }
+function setSyncMeta(scope, meta) { setJsonForScope(scope, SYNC_META_KEY, { ...getSyncMeta(scope), ...meta }) }
 
 // The single reconciliation path — used for both the once-per-load restore
 // (syncProgressForUser) and the lightweight backup fired on visibility
@@ -163,25 +182,33 @@ function setSyncMeta(meta) { setJson(SYNC_META_KEY, { ...getSyncMeta(), ...meta 
 // Only writes the side(s) that the merge actually changed, so a repeat call
 // with nothing new to contribute (e.g. two lifecycle events firing close
 // together) performs no writes at all.
+//
+// `scope` is captured once, right here, from the user object passed in —
+// not read from storage.js's ambient "currently active" scope. That's what
+// makes this safe to have in flight across an account switch: this call's
+// local reads/writes always target *this* user's namespace, even if a
+// different account becomes active on the device before the awaited
+// Firestore round-trip resolves.
 async function reconcile(user) {
   if (!firebaseEnabled) return { action: 'none', reason: 'firebase-disabled' }
   if (!user || user.provider !== 'google' || !user.uid) {
     return { action: 'none', reason: 'not-google-user' }
   }
+  const scope = scopeForUser(user)
 
   const cloud = await loadCloudProgress(user.uid)
-  const local = collectLocalProgressSnapshot()
+  const local = collectLocalProgressSnapshot(scope)
   // Reuse the same pure decision decideSyncAction exposes for tests, so the
   // rule that's independently unit-tested is exactly the rule that runs here.
   const action = decideSyncAction({ cloud, local })
 
   if (action === 'none') {
-    setSyncMeta({ lastSyncedAt: Math.max(local.updatedAt || 0, cloud?.updatedAt || 0) })
+    setSyncMeta(scope, { lastSyncedAt: Math.max(local.updatedAt || 0, cloud?.updatedAt || 0) })
     return { action }
   }
   if (action === 'upload' && !cloud) {
     await saveCloudProgress(user.uid, local)
-    setSyncMeta({ lastSyncedAt: local.updatedAt })
+    setSyncMeta(scope, { lastSyncedAt: local.updatedAt })
     return { action }
   }
 
@@ -190,9 +217,9 @@ async function reconcile(user) {
     preferLocalOnTie: (local.updatedAt || 0) >= (cloud.updatedAt || 0),
   })
   const merged = { version: SNAPSHOT_VERSION, updatedAt: Date.now(), data: mergedData }
-  if (action === 'apply' || action === 'merge') applyProgressSnapshot(merged, { currentUid: user.uid })
+  if (action === 'apply' || action === 'merge') applyProgressSnapshot(merged, { currentUid: user.uid, scope })
   if (action === 'upload' || action === 'merge') await saveCloudProgress(user.uid, merged)
-  setSyncMeta({ lastSyncedAt: merged.updatedAt })
+  setSyncMeta(scope, { lastSyncedAt: merged.updatedAt })
 
   return { action }
 }

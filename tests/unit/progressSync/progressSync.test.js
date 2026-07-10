@@ -3,6 +3,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 // In-memory store standing in for the storage.js persistence boundary.
 let store = {}
 
+// This suite exercises the merge/sync mechanics, not cross-account
+// isolation (that's covered by tests/unit/storage/storage.test.js and the
+// learner-journey tests against the real storage.js) — so the scoped
+// primitives here all share one flat store, ignoring the scope argument.
 vi.mock('../../../src/lib/storage.js', () => ({
   getJson: vi.fn((key, fallback) => (key in store ? store[key] : fallback)),
   setJson: vi.fn((key, value) => { store[key] = value }),
@@ -10,6 +14,15 @@ vi.mock('../../../src/lib/storage.js', () => ({
   getArray: vi.fn((key) => (key in store ? store[key] : [])),
   getObject: vi.fn((key) => (key in store ? store[key] : {})),
   listKeys: vi.fn((prefix = '') => Object.keys(store).filter(k => k.startsWith(prefix))),
+  getJsonForScope: vi.fn((_scope, key, fallback) => (key in store ? store[key] : fallback)),
+  setJsonForScope: vi.fn((_scope, key, value) => { store[key] = value }),
+  removeKeyForScope: vi.fn((_scope, key) => { delete store[key] }),
+  listKeysForScope: vi.fn((_scope, prefix = '') => Object.keys(store).filter(k => k.startsWith(prefix))),
+  getRawJson: vi.fn((key, fallback) => (key in store ? store[key] : fallback)),
+  setRawJson: vi.fn((key, value) => { store[key] = value }),
+  removeRawKey: vi.fn((key) => { delete store[key] }),
+  scopeForUser: vi.fn((user) => (user?.provider === 'google' && user?.uid) ? `uid:${user.uid}` : 'guest'),
+  GUEST_SCOPE: 'guest',
 }))
 
 vi.mock('../../../src/auth/firebaseClient.js', () => ({

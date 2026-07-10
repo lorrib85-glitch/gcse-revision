@@ -22,9 +22,15 @@ function installLocalStorage() {
   return store
 }
 
-let store
-beforeEach(() => { store = installLocalStorage() })
-afterEach(() => { vi.restoreAllMocks() })
+beforeEach(() => { installLocalStorage() })
+afterEach(async () => {
+  vi.restoreAllMocks()
+  // storage.js's active scope is module-singleton state — reset it between
+  // tests so a journey that switched to a uid namespace doesn't leak into
+  // the next one.
+  const { setActiveScope, GUEST_SCOPE } = await import('../../../src/lib/storage.js')
+  setActiveScope(GUEST_SCOPE)
+})
 
 // ─── Journey 1 — Progress survives refresh ───────────────────────────────────
 
@@ -180,20 +186,31 @@ describe('Journey 4 — cloud restore seam', () => {
       setDoc: async (ref, value) => { setDocs.push(value); cloudDoc = value },
     }))
 
-    // Guest built up local progress before signing in.
-    store['gcse_scores'] = JSON.stringify([{ date: '2026-07-01', subject: 'History', pct: 72 }])
-    store['gcse_module_history-medicine-black-death'] = JSON.stringify({ screen: 6 })
-
+    const { setActiveScope, scopeForUser, GUEST_SCOPE } = await import('../../../src/lib/storage.js')
+    const { claimGuestProgressForUser } = await import('../../../src/data/progressSync/accountScope.js')
     const { backupProgressForUser } = await import('../../../src/data/progressSync/progressSync.js')
+    const { saveModuleState, recordScore } = await import('../../../src/progress.js')
+
+    // Guest built up local progress before signing in (default active scope
+    // is the guest namespace — no one has signed in yet).
+    setActiveScope(GUEST_SCOPE)
+    recordScore({ subject: 'History', earned: 7, possible: 10, source: 'test' })
+    saveModuleState('history-medicine-black-death', { screen: 6 })
+
+    const user = { loggedIn: true, provider: 'google', uid: 'uid-9', name: 'Sam' }
+    // Linking deliberately offers the guest snapshot to this account — the
+    // local-only merge accountScope.js performs, before AuthContext switches
+    // the active scope over and runs the normal cloud reconcile.
+    const { claimed } = claimGuestProgressForUser(user)
+    expect(claimed).toBe(true)
+    setActiveScope(scopeForUser(user))
 
     // They link a Google account — the just-linked user backs up.
-    const result = await backupProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-9', name: 'Sam' })
+    const result = await backupProgressForUser(user)
     expect(result.action).toBe('upload')
-    // The guest's local progress was uploaded intact, not discarded.
-    expect(setDocs.at(-1).data['gcse_scores']).toEqual([{ date: '2026-07-01', subject: 'History', pct: 72 }])
+    // The guest's claimed progress was uploaded intact, not discarded.
+    expect(setDocs.at(-1).data.gcse_scores[0]).toMatchObject({ subject: 'History' })
     expect(setDocs.at(-1).data['gcse_module_history-medicine-black-death']).toEqual({ screen: 6 })
-    // Local store is untouched by the backup.
-    expect(JSON.parse(store['gcse_scores'])).toHaveLength(1)
     vi.doUnmock('firebase/firestore')
     vi.doUnmock('../../../src/auth/firebaseClient.js')
     vi.resetModules()
@@ -240,8 +257,14 @@ async function withMockedCloud(run) {
 describe('Journey 5 — guest links a Google account that already has cloud progress', () => {
   it('merges instead of letting either side silently replace the other, and survives a reload', async () => {
     await withMockedCloud(async ({ syncProgressForUser, getCloudDoc, setCloudDoc }) => {
+      const { setActiveScope, scopeForUser } = await import('../../../src/lib/storage.js')
       const { saveModuleState } = await import('../../../src/progress.js')
       const { recordScore } = await import('../../../src/progress.js')
+
+      const user = { loggedIn: true, provider: 'google', uid: 'uid-guest-link', name: 'Sam' }
+      // This account's own namespace is already active by the time it has
+      // local progress to sync (AuthContext switches scope on sign-in).
+      setActiveScope(scopeForUser(user))
 
       // Learner did real work as a guest before ever signing in.
       saveModuleState('history-medicine-black-death', { screen: 6, hookDone: true })
@@ -259,7 +282,7 @@ describe('Journey 5 — guest links a Google account that already has cloud prog
       }
       setCloudDoc(cloudSnapshot)
 
-      const result = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-guest-link', name: 'Sam' })
+      const result = await syncProgressForUser(user)
       expect(result.action).toBe('merge')
 
       // "Reload": re-read from the real storage boundary, not from memory.
@@ -279,7 +302,11 @@ describe('Journey 5 — guest links a Google account that already has cloud prog
 describe('Journey 6 — an existing account signs in on another, older device', () => {
   it('does not undo completed learning from the newer cloud state', async () => {
     await withMockedCloud(async ({ syncProgressForUser, setCloudDoc }) => {
+      const { setActiveScope, scopeForUser } = await import('../../../src/lib/storage.js')
       const { saveModuleState, getModuleState } = await import('../../../src/progress.js')
+
+      const user = { loggedIn: true, provider: 'google', uid: 'uid-device-b', name: 'Sam' }
+      setActiveScope(scopeForUser(user))
 
       // This device's local copy is stale — the module isn't finished here yet.
       saveModuleState('history-medicine-germ-theory', { screen: 3, completed: false })
@@ -291,7 +318,7 @@ describe('Journey 6 — an existing account signs in on another, older device', 
         data: { 'gcse_module_history-medicine-germ-theory': { screen: 20, completed: true, timestamp: Date.now() } },
       })
 
-      const result = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-device-b', name: 'Sam' })
+      const result = await syncProgressForUser(user)
       expect(result.action).toBe('apply')
 
       const resumed = getModuleState('history-medicine-germ-theory')
@@ -304,8 +331,12 @@ describe('Journey 6 — an existing account signs in on another, older device', 
 describe('Journey 7 — local and cloud each hold unique progress', () => {
   it('both valid sets survive, and repeating the sync does not duplicate anything', async () => {
     await withMockedCloud(async ({ syncProgressForUser, getCloudDoc, setCloudDoc, setDocs }) => {
+      const { setActiveScope, scopeForUser } = await import('../../../src/lib/storage.js')
       const { saveModuleState } = await import('../../../src/progress.js')
       const { logWrongAnswer } = await import('../../../src/unifiedWeaknessTracker.js')
+
+      const user = { loggedIn: true, provider: 'google', uid: 'uid-both-unique', name: 'Sam' }
+      setActiveScope(scopeForUser(user))
 
       saveModuleState('bio_building_life', { screen: 5 })
       logWrongAnswer({ subject: 'Biology', topic: 'osmosis', questionId: 'local-q1', marks: 1, source: 'module' })
@@ -319,7 +350,7 @@ describe('Journey 7 — local and cloud each hold unique progress', () => {
         },
       })
 
-      const first = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-both-unique', name: 'Sam' })
+      const first = await syncProgressForUser(user)
       expect(first.action).toBe('merge')
 
       const { getModuleState } = await import('../../../src/progress.js')
@@ -334,7 +365,7 @@ describe('Journey 7 — local and cloud each hold unique progress', () => {
       const setDocCountAfterFirst = setDocs.length
       const cloudDataAfterFirst = getCloudDoc().data.gcse_wrong_answers.length
 
-      const second = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-both-unique', name: 'Sam' })
+      const second = await syncProgressForUser(user)
       expect(second.action).toBe('none')
       expect(setDocs.length).toBe(setDocCountAfterFirst)
       expect(getCloudDoc().data.gcse_wrong_answers).toHaveLength(cloudDataAfterFirst)
@@ -345,7 +376,11 @@ describe('Journey 7 — local and cloud each hold unique progress', () => {
 describe('Journey 8 — offline learning', () => {
   it('local saves succeed while the cloud write fails, the learner keeps working, and a later retry backs up without duplicating', async () => {
     await withMockedCloud(async ({ backupProgressForUser, failNextSetDoc, getCloudDoc }) => {
+      const { setActiveScope, scopeForUser } = await import('../../../src/lib/storage.js')
       const { saveModuleState, getModuleState } = await import('../../../src/progress.js')
+
+      const user = { loggedIn: true, provider: 'google', uid: 'uid-offline', name: 'Sam' }
+      setActiveScope(scopeForUser(user))
 
       // Learner works while offline — local persistence never depends on the network.
       const savedOk = saveModuleState('sci_bio_w1', { screen: 4 })
@@ -355,20 +390,19 @@ describe('Journey 8 — offline learning', () => {
       // The backup attempt fails (simulated network failure) — the caller
       // (AuthContext) must see this rejection, not a false success.
       failNextSetDoc()
-      await expect(backupProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-offline', name: 'Sam' }))
-        .rejects.toThrow()
+      await expect(backupProgressForUser(user)).rejects.toThrow()
       expect(getCloudDoc()).toBeNull()
 
       // Learner keeps working locally regardless.
       saveModuleState('sci_bio_w1', { screen: 7 })
 
       // Connectivity returns — retry succeeds and reaches the cloud exactly once.
-      const retry = await backupProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-offline', name: 'Sam' })
+      const retry = await backupProgressForUser(user)
       expect(retry.action).toBe('upload')
       expect(getCloudDoc().data['gcse_module_sci_bio_w1']).toEqual({ screen: 7 })
 
       // A second retry with nothing new to contribute performs no further write.
-      const repeat = await backupProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-offline', name: 'Sam' })
+      const repeat = await backupProgressForUser(user)
       expect(repeat.action).toBe('none')
     })
   })
@@ -377,8 +411,12 @@ describe('Journey 8 — offline learning', () => {
 describe('Journey 9 — sign-out with pending progress', () => {
   it('a failed final flush does not discard local work and does not falsely report success', async () => {
     await withMockedCloud(async ({ backupProgressForUser, syncProgressForUser, failNextSetDoc, getCloudDoc }) => {
+      const { setActiveScope, scopeForUser } = await import('../../../src/lib/storage.js')
       const { saveModuleState, getModuleState } = await import('../../../src/progress.js')
       const { recordScore, getScores } = await import('../../../src/progress.js')
+
+      const user = { loggedIn: true, provider: 'google', uid: 'uid-signout', name: 'Sam' }
+      setActiveScope(scopeForUser(user))
 
       saveModuleState('history-medicine-cancer', { screen: 9, completed: true })
       recordScore({ subject: 'History', earned: 9, possible: 10, source: 'module' })
@@ -386,8 +424,7 @@ describe('Journey 9 — sign-out with pending progress', () => {
       // This mirrors AuthContext.signOut(): flush before clearing the
       // session. The flush fails (cloud unreachable at the moment of sign-out).
       failNextSetDoc()
-      await expect(backupProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-signout', name: 'Sam' }))
-        .rejects.toThrow()
+      await expect(backupProgressForUser(user)).rejects.toThrow()
 
       // Sign-out itself never clears progress keys (only the session key) —
       // work already done this session is exactly as it was, not discarded.
@@ -396,7 +433,7 @@ describe('Journey 9 — sign-out with pending progress', () => {
 
       // Next sign-in (or an app-load reconcile) retries and succeeds, with
       // no duplication of the work done before sign-out.
-      const retry = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-signout', name: 'Sam' })
+      const retry = await syncProgressForUser(user)
       expect(retry.action).toBe('upload')
       expect(getCloudDoc().data.gcse_scores).toHaveLength(1)
     })
@@ -406,7 +443,13 @@ describe('Journey 9 — sign-out with pending progress', () => {
 describe('Journey 10 — auth restoration on reload', () => {
   it('existing local progress is never reset to empty while the cloud merge resolves', async () => {
     await withMockedCloud(async ({ syncProgressForUser, setCloudDoc }) => {
+      const { setActiveScope, scopeForUser } = await import('../../../src/lib/storage.js')
       const { saveModuleState, getModuleState } = await import('../../../src/progress.js')
+
+      const user = { loggedIn: true, provider: 'google', uid: 'uid-restore', name: 'Sam' }
+      // Auth restoration on reload derives the scope synchronously from
+      // riseUser before anything else runs — this mirrors that.
+      setActiveScope(scopeForUser(user))
 
       // A returning, already-authenticated learner reloads: their local
       // progress is already sitting in storage before any sync runs.
@@ -422,7 +465,7 @@ describe('Journey 10 — auth restoration on reload', () => {
         data: { 'gcse_module_history-medicine-great-stink': { screen: 8, completed: true } },
       })
 
-      const result = await syncProgressForUser({ loggedIn: true, provider: 'google', uid: 'uid-restore', name: 'Sam' })
+      const result = await syncProgressForUser(user)
 
       // The already-completed local module was never transiently reset —
       // it reads the same before and after the merge resolves.
