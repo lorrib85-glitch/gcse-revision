@@ -141,11 +141,20 @@ describe('decideSyncAction', () => {
     expect(decideSyncAction({ cloud: empty, local: meaningful, lastSyncedAt: 0 })).toBe('upload')
   })
 
-  it('prefers cloud when it changed since this device last synced', () => {
-    const local = { version: 1, updatedAt: 500, data: { gcse_scores: [{ pct: 1 }] } }
-    const cloud = { version: 1, updatedAt: 400, data: { gcse_scores: [{ pct: 2 }] } }
-    expect(decideSyncAction({ cloud, local, lastSyncedAt: 300 })).toBe('apply')
-    expect(decideSyncAction({ cloud, local, lastSyncedAt: 400 })).toBe('upload')
+  it('merges — never a blanket "cloud wins" or "local wins" — when both sides hold genuinely different progress', () => {
+    // Two different score entries, not a conflict on the same record: the
+    // old timestamp-race logic would have picked one side and silently
+    // discarded the other's real progress. lastSyncedAt no longer decides
+    // this — the decision is content-based.
+    const local = { version: 1, updatedAt: 500, data: { gcse_scores: [{ date: '2026-07-05', subject: 'History', pct: 1 }] } }
+    const cloud = { version: 1, updatedAt: 400, data: { gcse_scores: [{ date: '2026-07-04', subject: 'Maths', pct: 2 }] } }
+    expect(decideSyncAction({ cloud, local, lastSyncedAt: 300 })).toBe('merge')
+    expect(decideSyncAction({ cloud, local, lastSyncedAt: 400 })).toBe('merge')
+  })
+
+  it('is a no-op once both sides already hold the identical merged content', () => {
+    const same = { version: 1, updatedAt: 500, data: { gcse_scores: [{ date: '2026-07-05', subject: 'History', pct: 1 }] } }
+    expect(decideSyncAction({ cloud: same, local: same })).toBe('none')
   })
 })
 
@@ -181,13 +190,41 @@ describe('syncProgressForUser', () => {
     expect(result.action).toBe('apply')
     expect(store['gcse_scores']).toEqual([{ pct: 88 }])
   })
+
+  it('merges divergent local and cloud progress — both sides survive, and the merge is idempotent on repeat', async () => {
+    store['gcse_scores'] = [{ date: '2026-07-05', subject: 'History', pct: 60 }]
+    store['gcse_module_local-only'] = { screen: 2 }
+    cloudDoc = {
+      version: 1, updatedAt: Date.now() - 1000,
+      data: {
+        gcse_scores: [{ date: '2026-07-01', subject: 'Maths', pct: 90 }],
+        'gcse_module_cloud-only': { screen: 5 },
+      },
+    }
+    const first = await syncProgressForUser(GOOGLE_USER)
+    expect(first.action).toBe('merge')
+    expect(store['gcse_scores']).toHaveLength(2)
+    expect(store['gcse_module_local-only']).toEqual({ screen: 2 })
+    expect(store['gcse_module_cloud-only']).toEqual({ screen: 5 })
+    expect(cloudDoc.data['gcse_module_local-only']).toEqual({ screen: 2 })
+    expect(cloudDoc.data.gcse_scores).toHaveLength(2)
+
+    // Repeating the sync with nothing new to contribute writes nothing else
+    // and does not duplicate the merged entries.
+    const setDocCountBefore = firestoreCalls.setDocs.length
+    const second = await syncProgressForUser(GOOGLE_USER)
+    expect(second.action).toBe('none')
+    expect(firestoreCalls.setDocs).toHaveLength(setDocCountBefore)
+    expect(store['gcse_scores']).toHaveLength(2)
+  })
 })
 
 describe('backupProgressForUser', () => {
-  it('refuses to overwrite a meaningful cloud backup with empty local state', async () => {
+  it('restores a meaningful cloud backup onto an empty local device instead of refusing (never claims backup succeeded while leaving the device with nothing)', async () => {
     cloudDoc = { version: 1, updatedAt: 100, data: { gcse_scores: [{ pct: 70 }] } }
     const result = await backupProgressForUser(GOOGLE_USER)
-    expect(result).toEqual({ action: 'none', reason: 'empty-local-guard' })
+    expect(result.action).toBe('apply')
+    expect(store['gcse_scores']).toEqual([{ pct: 70 }])
     expect(cloudDoc.data.gcse_scores).toEqual([{ pct: 70 }])
   })
 
@@ -196,6 +233,21 @@ describe('backupProgressForUser', () => {
     const result = await backupProgressForUser(GOOGLE_USER)
     expect(result.action).toBe('upload')
     expect(cloudDoc.data['gcse_module_history-1']).toBeDefined()
+  })
+
+  it('merges rather than clobbers when another device already pushed cloud-only progress since this device last synced', async () => {
+    seedMeaningfulLocal()
+    cloudDoc = {
+      version: 1, updatedAt: Date.now(),
+      data: { 'gcse_module_from-other-device': { screen: 7, completed: true } },
+    }
+    const result = await backupProgressForUser(GOOGLE_USER)
+    expect(result.action).toBe('merge')
+    // This device's own progress was uploaded...
+    expect(cloudDoc.data['gcse_module_history-1']).toBeDefined()
+    // ...and the other device's cloud-only progress was not clobbered.
+    expect(cloudDoc.data['gcse_module_from-other-device']).toEqual({ screen: 7, completed: true })
+    expect(store['gcse_module_from-other-device']).toEqual({ screen: 7, completed: true })
   })
 
   it('does nothing for guests', async () => {

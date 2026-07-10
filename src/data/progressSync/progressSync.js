@@ -5,8 +5,14 @@
 //
 // local storage stays the runtime source of truth; Firestore is a backup that
 // is reconciled once per app load (and topped up on visibility change / after
-// account linking). Guests never sync — the Firestore SDK isn't even
-// downloaded unless a Google-signed-in user reaches syncProgressForUser().
+// account linking / sign-out). Guests never sync — the Firestore SDK isn't
+// even downloaded unless a Google-signed-in user reaches syncProgressForUser().
+//
+// Reconciliation is a real per-key merge (progressMerge.js), not a
+// whole-snapshot "pick a side": local and cloud are combined key by key, and
+// only whichever side(s) actually changed as a result get written. This is
+// what makes linking a guest account, opening a second device, and repeated
+// syncs all safe — see progressMerge.js for the merge rules themselves.
 //
 // Deliberately excluded from the snapshot:
 //   - streakCelebrationShown:<date> — daily-expiring UI dedup flags, not
@@ -15,6 +21,7 @@
 
 import { getJson, setJson, listKeys, getObject } from '../../lib/storage.js'
 import { firebaseEnabled, app } from '../../auth/firebaseClient.js'
+import { mergeProgressData, progressDataEqual } from './progressMerge.js'
 
 export const SNAPSHOT_VERSION = 1
 export const SYNC_META_KEY = 'gcse_sync_meta'
@@ -89,21 +96,32 @@ export function isMeaningfulSnapshot(snapshot) {
 
 // ─── Conflict decision (pure — fully unit-testable) ─────────────────────────
 //
-// Returns 'upload' | 'apply' | 'none'.
+// Returns 'upload' | 'apply' | 'merge' | 'none'.
 //   - No cloud doc → upload local.
 //   - Cloud meaningful + local empty → apply (restore).
 //   - Local meaningful + cloud empty → upload (never wipe richer with empty).
-//   - Both meaningful → whichever is newer: cloud counts as newer only if it
-//     changed since this device last synced (updatedAt > lastSyncedAt),
-//     i.e. another device wrote in the meantime; otherwise local wins.
-export function decideSyncAction({ cloud, local, lastSyncedAt = 0 }) {
+//   - Both meaningful → merge key by key (progressMerge.js) and report which
+//     side(s) the merged result actually differs from: 'merge' if both sides
+//     contributed something the other lacked, 'apply'/'upload' if only one
+//     side needed updating, 'none' if the merge changed nothing. This is
+//     content-based, not a single top-level-timestamp race — two devices
+//     with real, different progress both keep their progress.
+export function decideSyncAction({ cloud, local, lastSyncedAt: _lastSyncedAt = 0 }) {
   if (!cloud) return 'upload'
   const cloudMeaningful = isMeaningfulSnapshot(cloud)
   const localMeaningful = isMeaningfulSnapshot(local)
   if (!cloudMeaningful && !localMeaningful) return 'none'
   if (cloudMeaningful && !localMeaningful) return 'apply'
   if (!cloudMeaningful && localMeaningful) return 'upload'
-  return (cloud.updatedAt || 0) > lastSyncedAt ? 'apply' : 'upload'
+
+  const mergedData = mergeProgressData(local.data, cloud.data, {
+    preferLocalOnTie: (local.updatedAt || 0) >= (cloud.updatedAt || 0),
+  })
+  const localChanged = !progressDataEqual(mergedData, local.data)
+  const cloudChanged = !progressDataEqual(mergedData, cloud.data)
+  if (!localChanged && !cloudChanged) return 'none'
+  if (localChanged && cloudChanged) return 'merge'
+  return cloudChanged ? 'upload' : 'apply'
 }
 
 // ─── Firestore access (SDK loaded on demand, Google users only) ─────────────
@@ -133,7 +151,19 @@ export async function saveCloudProgress(uid, snapshot) {
 function getSyncMeta() { return getObject(SYNC_META_KEY) }
 function setSyncMeta(meta) { setJson(SYNC_META_KEY, { ...getSyncMeta(), ...meta }) }
 
-export async function syncProgressForUser(user) {
+// The single reconciliation path — used for both the once-per-load restore
+// (syncProgressForUser) and the lightweight backup fired on visibility
+// change / after linking / before sign-out (backupProgressForUser). Both are
+// "make local and cloud agree" operations that must never discard either
+// side; the only difference between the two call sites is *when* they run,
+// not *what* they do, so unifying them closes the gap where the old
+// visibility-change backup pushed local up wholesale without first folding
+// in anything cloud-only another device had added since the last sync.
+//
+// Only writes the side(s) that the merge actually changed, so a repeat call
+// with nothing new to contribute (e.g. two lifecycle events firing close
+// together) performs no writes at all.
+async function reconcile(user) {
   if (!firebaseEnabled) return { action: 'none', reason: 'firebase-disabled' }
   if (!user || user.provider !== 'google' || !user.uid) {
     return { action: 'none', reason: 'not-google-user' }
@@ -141,33 +171,42 @@ export async function syncProgressForUser(user) {
 
   const cloud = await loadCloudProgress(user.uid)
   const local = collectLocalProgressSnapshot()
-  const { lastSyncedAt = 0 } = getSyncMeta()
-  const action = decideSyncAction({ cloud, local, lastSyncedAt })
+  // Reuse the same pure decision decideSyncAction exposes for tests, so the
+  // rule that's independently unit-tested is exactly the rule that runs here.
+  const action = decideSyncAction({ cloud, local })
 
-  if (action === 'upload') {
+  if (action === 'none') {
+    setSyncMeta({ lastSyncedAt: Math.max(local.updatedAt || 0, cloud?.updatedAt || 0) })
+    return { action }
+  }
+  if (action === 'upload' && !cloud) {
     await saveCloudProgress(user.uid, local)
     setSyncMeta({ lastSyncedAt: local.updatedAt })
-  } else if (action === 'apply') {
-    applyProgressSnapshot(cloud, { currentUid: user.uid })
-    setSyncMeta({ lastSyncedAt: cloud.updatedAt || Date.now() })
+    return { action }
   }
+
+  const mergedData = mergeProgressData(local.data, cloud.data, {
+    currentUid: user.uid,
+    preferLocalOnTie: (local.updatedAt || 0) >= (cloud.updatedAt || 0),
+  })
+  const merged = { version: SNAPSHOT_VERSION, updatedAt: Date.now(), data: mergedData }
+  if (action === 'apply' || action === 'merge') applyProgressSnapshot(merged, { currentUid: user.uid })
+  if (action === 'upload' || action === 'merge') await saveCloudProgress(user.uid, merged)
+  setSyncMeta({ lastSyncedAt: merged.updatedAt })
+
   return { action }
 }
 
-// Fire-and-forget backup of current local state (visibility change, post-link).
+// Once-per-app-load / post-link reconciliation. Pulls in anything cloud-only
+// as well as pushing up anything local-only — see reconcile().
+export async function syncProgressForUser(user) {
+  return reconcile(user)
+}
+
+// Lightweight backup for lifecycle events (visibility change, before
+// sign-out) — safe to call as often as needed; it's the same merge as
+// syncProgressForUser, so it can never clobber cloud-only progress another
+// device added since this device's last sync.
 export async function backupProgressForUser(user) {
-  if (!firebaseEnabled) return { action: 'none', reason: 'firebase-disabled' }
-  if (!user || user.provider !== 'google' || !user.uid) {
-    return { action: 'none', reason: 'not-google-user' }
-  }
-  const local = collectLocalProgressSnapshot()
-  // Guard: an empty local state must never overwrite an existing meaningful
-  // cloud backup (e.g. a fresh browser that hasn't restored yet).
-  if (!isMeaningfulSnapshot(local)) {
-    const cloud = await loadCloudProgress(user.uid)
-    if (cloud && isMeaningfulSnapshot(cloud)) return { action: 'none', reason: 'empty-local-guard' }
-  }
-  await saveCloudProgress(user.uid, local)
-  setSyncMeta({ lastSyncedAt: local.updatedAt })
-  return { action: 'upload' }
+  return reconcile(user)
 }
