@@ -13,10 +13,15 @@
 - Node.js (development and build)
 - Edge Runtime (Vercel) — For API functions in `api/` directory
 
-**Package Manager:**
-- npm (primary, package-lock.json 380KB)
-- pnpm (secondary, pnpm-lock.yaml 225KB, pnpm-workspace.yaml configured)
-- Lockfile: Both present; npm/pnpm interoperable in this workspace
+**Package Manager:** pnpm (canonical — do not add a second lockfile)
+- Declared via `package.json` `"packageManager": "pnpm@10.33.0"` (Corepack /
+  `pnpm/action-setup` read this field).
+- Single lockfile: `pnpm-lock.yaml`. `pnpm-workspace.yaml` is present
+  (single-package workspace). The old `package-lock.json` was removed
+  (2026-07-10) — CI and Vercel both use pnpm, so it was redundant and drifted.
+- CI installs with `pnpm install --frozen-lockfile`; Vercel auto-detects pnpm
+  from `pnpm-lock.yaml`. Use `pnpm <script>` locally, never `npm install`
+  (that would regenerate `package-lock.json`).
 
 ## Frameworks
 
@@ -113,7 +118,7 @@
 
 **Development:**
 - Node.js 18+ (implied by ES6 modules and Vite 6 requirements)
-- npm 9+ or pnpm 8+
+- pnpm 10+ (canonical package manager — pinned via `packageManager`)
 - Chromium-based browser (for Playwright tests)
 
 **Production:**

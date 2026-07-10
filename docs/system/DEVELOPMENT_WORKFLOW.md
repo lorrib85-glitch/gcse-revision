@@ -222,10 +222,12 @@ to keep this policy intact.
 ## Continuous Integration
 
 A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push
-and pull request to `main`: `npm ci`, then `npm run lint`, then
-`npm run build`. It deliberately does not run `npm test` (Storybook/Vitest)
-or any Playwright/browser-based checks. Running step 7's lint and build
-locally before pushing keeps `main` from failing this CI.
+and pull request to `main`: `pnpm install --frozen-lockfile`, then
+`pnpm lint`, then `pnpm build`. (pnpm is the repository's package manager —
+see `package.json` `"packageManager"`; there is a single `pnpm-lock.yaml`.)
+It deliberately does not run the Storybook/Vitest suite or any
+Playwright/browser-based checks. Running step 7's lint and build locally
+before pushing keeps `main` from failing this CI.
 
 ## Context Loading Policy
 

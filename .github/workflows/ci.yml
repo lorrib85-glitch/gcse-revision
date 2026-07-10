@@ -12,13 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # pnpm is the repository's package manager (see package.json
+      # "packageManager" + pnpm-lock.yaml). action-setup reads that field.
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+          cache: pnpm
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
-      - run: npm run lint --if-present
+      - run: pnpm lint --if-present
 
-      - run: npm run build
+      - run: pnpm build
