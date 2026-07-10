@@ -158,6 +158,12 @@ export function functionName(paramName) {
 - Storage is accessed via `src/lib/storage.js` — no direct `localStorage` calls in other modules
   - Exception: tests that stub localStorage (e.g., `installLocalStorageStub()`)
   - Enforced by `tests/architecture/storage-boundary.test.js` (allowlist = `storage.js` only)
+  - `src/data/progressSync/accountScope.js` and `progressSync.js` are not
+    exceptions to this — they only ever call `storage.js`'s exported
+    primitives (including the account-scoped `*ForScope`/raw variants),
+    never `localStorage` directly. They're the account-ownership
+    orchestration layer built *on* the boundary, not inside it — see
+    `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`
 - **Critical saves** (progress, screen completion, quiz/exam scores, streaks, planner
   completion — anything shown to the learner as *done*) persist via `saveCritical()`,
   not `setJson()`. On failure `saveCritical` returns `false` **and** emits on the

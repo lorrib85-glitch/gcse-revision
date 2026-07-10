@@ -204,7 +204,9 @@ gcse-revision/
 │   │   │   └── (mastery state)
 │   │   │
 │   │   ├── progressSync/          # Google user progress sync
-│   │   │   └── progressSync.js
+│   │   │   ├── progressSync.js    # Reconcile orchestration, Firestore access
+│   │   │   ├── progressMerge.js   # Pure per-key merge rules (no "pick a side")
+│   │   │   └── accountScope.js    # Guest-progress claim/migration flow
 │   │   │
 │   │   └── questionBanks/         # Organized question data
 │   │       ├── english/
@@ -238,7 +240,7 @@ gcse-revision/
 │   │   │   │   ├── convertBankQuestion.js  # Question format conversion
 │   │   │   │   ├── questionId.js           # Question id parsing
 │   │   │   │   ├── masteryRecorder.js      # Mastery recording (Phase 3A)
-│   │   │   │   └── questionId.js
+│   │   │   │   └── quickFireMemory.js      # Ranking memory: per-answer persistence + answer log
 │   │   │   └── modes/
 │   │   │       ├── QuickFireMode.jsx       # 90s Quiz mode
 │   │   │       ├── ExamMode.jsx            # Timed exam mode
@@ -269,7 +271,9 @@ gcse-revision/
 │   │   └── moduleContentRegistry.js  # MODULE_CONTENT_LOADERS mapping
 │   │
 │   ├── lib/                    # Utility library
-│   │   └── storage.js          # localStorage wrapper (getObject, setJson, etc.)
+│   │   └── storage.js          # localStorage wrapper + per-account scoping
+│   │                           # boundary (getObject, setJson, getActiveScope/
+│   │                           # setActiveScope, legacy flat-key migration)
 │   │
 │   └── globals.css             # Cinematic CSS classes (@layer components)
 │

@@ -61,8 +61,18 @@
     }
     ```
   - Backup strategy: Cloud Firestore acts as secondary backup; localStorage is runtime source of truth
-  - Sync trigger: App load + visibility change + account linking
-  - Sync scope: Google-authenticated users only; guest users never sync
+  - Sync trigger: App load + visibility change + account linking. Account
+    linking additionally runs a local-only guest-progress claim
+    (`src/data/progressSync/accountScope.js`) before the Firestore reconcile
+    — a guest's local snapshot is only ever offered to the specific account
+    it's deliberately linked/signed into, tracked via an explicit claim
+    state, never inferred from whichever unscoped data exists
+  - Sync scope: Google-authenticated users only; guest users never sync.
+    Each reconcile call captures its target account's storage scope once, up
+    front, and never touches the ambient "currently active" scope — so a
+    reconcile still in flight when the device switches accounts can't write
+    into the new account's namespace or cloud document
+  - See `docs/system/PROGRESS_SYNC_ARCHITECTURE.md` for the full model
 
 **File Storage:**
 - Local filesystem only
@@ -86,7 +96,12 @@
   - Fallback: No auth required; app works for guest users (unsynced localStorage state)
 
 **User Profile Data:**
-- Stored locally in localStorage under key `riseUser`
+- Stored locally in localStorage under key `riseUser` — one of a small set
+  of keys `src/lib/storage.js` deliberately never namespaces per account
+  (it's the signal every other key's namespace is derived from; namespacing
+  it would be circular). Every other progress key (`gcse_progress`,
+  `gcse_module_<id>`, `gcse_scores`, ...) *is* namespaced per account —
+  see `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`
 - Synced to Firestore only for Google-authenticated users
 - Schema:
   ```javascript
@@ -188,7 +203,12 @@ ANTHROPIC_API_KEY=<Claude API key>
   - No cloud doc → upload local
   - Cloud meaningful + local empty → apply (restore)
   - Local meaningful + cloud empty → upload (never wipe richer state with empty)
-  - Both meaningful → newer wins (cloud only if updated since last sync on this device)
+  - Both meaningful → **merge**, key by key (`src/data/progressSync/progressMerge.js`)
+    — not a single top-level-timestamp "newer wins". Each key has its own
+    merge rule (additive dedup for logs, monotonic for module/streak state,
+    identity-based union for weak points, seeded-event-log recovery for
+    QuickFire ranking memory, etc.); two devices with genuinely different
+    progress both keep it. See `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`
 - Snapshot version: 1 (enables future migrations)
 
 **API Security:**

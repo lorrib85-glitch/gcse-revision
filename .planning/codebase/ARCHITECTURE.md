@@ -51,6 +51,10 @@
          └─────────────────────────┘
 ```
 
+Namespaced per account by `src/lib/storage.js` (`'guest'` vs.
+`'uid:<firebase-uid>'`) — not a single shared store; see
+`docs/system/PROGRESS_SYNC_ARCHITECTURE.md`.
+
 ## Component Responsibilities
 
 | Component | Responsibility | File |
@@ -129,9 +133,15 @@
 - Used by: All components, features
 
 **Library (`src/lib/`):**
-- Purpose: Low-level utilities for storage and common operations
+- Purpose: Low-level utilities for storage and common operations; also the
+  account-ownership boundary — every logical key is transparently namespaced
+  under the currently active scope (`'guest'` or `'uid:<firebase-uid>'`), so
+  two accounts on one browser never share a physical localStorage entry
 - Location: `src/lib/`
-- Contains: `storage.js` (localStorage wrapper with JSON/array helpers)
+- Contains: `storage.js` (localStorage wrapper with JSON/array helpers,
+  `getActiveScope`/`setActiveScope`/`scopeForUser`, explicit-scope and raw
+  primitives, one-time legacy flat-key migration) — see
+  `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`
 - Depends on: Nothing
 - Used by: Progress, auth, all state management
 
@@ -145,7 +155,7 @@
 4. If module content not cached: `loadModuleContent(mod)` → imports from `MODULE_CONTENT_LOADERS[mod.id]` (or `SUBJECT_MODULE_LOADERS` for legacy) → waits for dynamic import
 5. Once content loaded: `setActiveModule(fullMod)`, `setView('module')`
 6. `ModulePlayer` renders with full module definition (`{ id, subject, screens, hook, recall, outcomes, intro, examiner?, ... }`)
-7. ModulePlayer reads module state from `localStorage[gcse_module_${mod.id}]` to resume or start fresh
+7. ModulePlayer reads module state via `progress.js`'s `getModuleState(mod.id)` (logical key `gcse_module_<id>`; storage.js transparently namespaces the physical key by the signed-in/guest account) to resume or start fresh
 8. Screen router in ModulePlayer handles 30+ screen types (read, examQuestion, cinematic, etc.) with corresponding components
 9. On chapter complete: `onChapterComplete()` → builds payload → `setChapterCompleteData()` → `setView('chapter-complete')`
 10. User continues or returns → `closeOverlay()` → `setView(null)`, progress refreshed
@@ -241,7 +251,7 @@
 - **Lazy loading of ModulePlayer**: All ~40 learning/feedback components are bundled with ModulePlayer and only downloaded when a user opens a module for the first time. Always use `React.lazy()` + `Suspense` in `App.jsx` if adding large feature-specific components.
 - **Exam data context isolation**: Test data (question banks) only lazy-loaded when `tab === 'exams'` via `TestDataContext` to avoid bloating QuickFire tab
 - **Content caching**: Once a module's full content is loaded, it's cached in `_contentCache` to avoid re-downloading on subsequent opens within the same session
-- **localStorage-only state**: All user data persists to localStorage; no other backend write (Google Firestore backup is best-effort, not required for offline play)
+- **localStorage-only state**: All user data persists to localStorage; no other backend write (Google Firestore backup is best-effort, not required for offline play). Every key is namespaced per account (guest vs. signed-in `uid`) by `src/lib/storage.js` — see `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`
 - **Module screen count immutable**: `mod.screenCount` (and `mod.screenTags` array) must stay in sync with `screens.length`; changing screen structure requires rebuilding metadata
 - **Subject accent injection**: All cinematic CSS classes expect `style={{ '--cinematic-accent': accent }}` to be injected at render time; never hardcode subject colours
 - **Circular imports risk**: `progress.js` imports `modules.js`; avoid adding reverse imports that would create cycles

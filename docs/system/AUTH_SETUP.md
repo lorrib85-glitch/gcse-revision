@@ -10,15 +10,34 @@ Signed-in Google users additionally get their progress backed up to Firestore.
 - `src/auth/firebaseClient.js` — Firebase app/auth init from `VITE_FIREBASE_*` env vars.
 - `src/auth/authService.js` — `signInWithGoogle()` / `signOutGoogle()` via `signInWithPopup`.
 - `src/auth/AuthContext.jsx` — two-step first-run flow (Google or guest → name confirm),
-  `linkGoogleAccount()` for an already-onboarded guest to add Google later, and
+  `linkGoogleAccount()` for an already-onboarded guest to add Google later,
   progress sync orchestration (reconcile on load, best-effort backup on
-  visibility change and before sign-out).
+  visibility change and before sign-out), and account-scope switching —
+  every sign-in/link/sign-out calls `setActiveScope()` (`src/lib/storage.js`)
+  so local reads/writes immediately target the right account's namespace,
+  with no full-page refresh.
+- `src/lib/storage.js` — besides the raw localStorage wrapper, this is the
+  account-ownership boundary: every logical key is transparently namespaced
+  under the currently active scope (`'guest'` or `'uid:<firebase-uid>'`),
+  derived synchronously from `riseUser` at module load and switched at
+  runtime by `setActiveScope()`. Feature code never sees this — it keeps
+  calling `getJson`/`setJson` with plain key names. `riseUser` and two small
+  governance keys stay deliberately unscoped (they're what scoping itself is
+  derived from). A one-time, idempotent migration moves any pre-scoping flat
+  keys into the right namespace on first load — see
+  `docs/system/PROGRESS_SYNC_ARCHITECTURE.md` for the full model.
 - `src/data/progressSync/progressSync.js` — Firestore progress backup for
   Google users only. One document per user at `users/{uid}/progress/main`,
   shape `{ version: 1, updatedAt: <ms>, data: { <storage key>: <value> } }`.
   The Firestore SDK is dynamically imported, so guests never download it.
-  Local storage remains the runtime source of truth; conflict resolution never
-  lets an empty snapshot overwrite a meaningful one in either direction.
+  Local storage remains the runtime source of truth; reconciliation is a real
+  per-key merge (`progressSync/progressMerge.js`), not a whole-snapshot
+  "pick a side" — see `docs/system/PROGRESS_SYNC_ARCHITECTURE.md`.
+- `src/data/progressSync/accountScope.js` — the guest-progress claim flow:
+  offers a guest's local snapshot to an account only at the moment of an
+  explicit sign-in/link, tracked via an explicit claim state
+  (`gcse_guest_claim_v1`) rather than inferred from whichever unscoped data
+  happens to exist.
 - `src/auth/progressStatus.js` — the status strings shown in the app:
   - Guest / logged out: "Using this device only. Sign in with Google to back up progress."
   - Signed in with Google, backup healthy: "Signed in — progress backs up to your account."
