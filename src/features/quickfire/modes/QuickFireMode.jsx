@@ -12,6 +12,7 @@ import { qfQuestionId } from '../logic/questionId.js'
 import { selectQuickFireQueue } from '../logic/quickFireSelector.js'
 import { ALL_MODULE_QUICKFIRE_QUESTIONS } from '../../../data/questionBanks/questionRegistry.js'
 import { recordQuestionResult } from '../logic/masteryRecorder.js'
+import { readQuickFireMemory, bumpQuickFireMemoryForAnswer, bucketAccuracy } from '../logic/quickFireMemory.js'
 import AnimatedNumber from '../../../components/core/AnimatedNumber.jsx'
 import BackButton from '../../../components/core/BackButton.jsx'
 import QuickFireQuestionScreen from '../components/QuickFireQuestionScreen.jsx'
@@ -21,7 +22,6 @@ import QuickFireQuestionScreen from '../components/QuickFireQuestionScreen.jsx'
 export const QUICK_FIRE_SECONDS = 90
 
 const QUICK_FIRE_BANK_TYPES = new Set(['mcq', 'truefalse', 'fillgap'])
-const QUICK_FIRE_MEMORY_KEY = 'gcse_quickfire_memory_v1'
 const QF_QUESTION_HISTORY_KEY = 'gcse_qf_q_history'
 const QF_PREV_SESSION_KEY = 'gcse_qf_prev_session'
 const QF_BEST_KEY = 'gcse_qf_best'
@@ -98,43 +98,14 @@ function addQuickFireAnswer(stats, question, isCorrect) {
 }
 
 // ─── Storage helpers (all persistence via src/lib/storage.js) ─────────────────
+//
+// Ranking memory (gcse_quickfire_memory_v1) persistence itself lives in
+// ../logic/quickFireMemory.js (pure, testable) — bumped immediately after
+// each committed answer, not batched to round end; see that file for why.
+// finishRound only *reads* it for the summary screen.
 
-function readQuickFireMemory() {
-  return getJson(QUICK_FIRE_MEMORY_KEY, { subjects: {}, topics: {} })
-}
-
-function mergeQuickFireBuckets(memoryBuckets = {}, roundBuckets = {}) {
-  const merged = { ...memoryBuckets }
-  Object.entries(roundBuckets).forEach(([key, value]) => {
-    const current = merged[key] || { ...value, answered: 0, correct: 0 }
-    merged[key] = {
-      ...current,
-      ...value,
-      answered: (current.answered || 0) + (value.answered || 0),
-      correct: (current.correct || 0) + (value.correct || 0),
-    }
-  })
-  return merged
-}
-
-function saveQuickFireMemory(roundStats) {
-  const memory = readQuickFireMemory()
-  const next = {
-    subjects: mergeQuickFireBuckets(memory.subjects, roundStats.subjects),
-    topics: mergeQuickFireBuckets(memory.topics, roundStats.topics),
-    updatedAt: new Date().toISOString(),
-  }
-  setJson(QUICK_FIRE_MEMORY_KEY, next)
-  return next
-}
-
-function bucketAccuracy(bucket) {
-  return bucket?.answered ? Math.round((bucket.correct / bucket.answered) * 100) : 0
-}
-
-function rankedQuickFireSubjects(memory, roundStats) {
-  const subjects = mergeQuickFireBuckets(memory.subjects, roundStats.subjects)
-  return Object.entries(subjects)
+function rankedQuickFireSubjects(memory) {
+  return Object.entries(memory.subjects || {})
     .map(([subject, bucket]) => ({
       subject,
       icon: QUICK_FIRE_SUBJECT_META[subject]?.icon || '📚',
@@ -163,8 +134,8 @@ function prioritizedQuickFireQuestions() {
   }).map(withShuffledQfOptions)
 }
 
-function pickQuickFireRecommendation(memory, roundStats) {
-  const topics = mergeQuickFireBuckets(memory.topics, roundStats.topics)
+function pickQuickFireRecommendation(memory) {
+  const topics = memory.topics || {}
   const weakTopic = Object.values(topics)
     .filter(topic => (topic.answered || 0) > 0)
     .sort((a, b) => {
@@ -286,7 +257,11 @@ export function QuickFireMode({ onExit }) {
   function finishRound(reason = 'exit') {
     setQuickFireActive(false)
     setQuickFireFinished(true)
-    const memory = saveQuickFireMemory(quickFireStats)
+    // Ranking memory was already updated per-answer as the round was played
+    // (bumpQuickFireMemoryForAnswer in onAnswer below) — read-only here, so
+    // finishRound firing more than once (or the summary re-rendering after
+    // refresh/back-nav) can never double-count an answer.
+    const memory = readQuickFireMemory()
     const accuracy = quickFireStats.answered ? Math.round((quickFireStats.correct / quickFireStats.answered) * 100) : 0
     const prevSession = readQfPrevSession()
     if (quickFireStats.answered > 0) {
@@ -299,8 +274,8 @@ export function QuickFireMode({ onExit }) {
       correct: quickFireStats.correct,
       timeUsed: QUICK_FIRE_SECONDS - quickFireTimeLeft,
       timeLeft: quickFireTimeLeft,
-      subjects: rankedQuickFireSubjects(memory, quickFireStats),
-      recommendation: pickQuickFireRecommendation(memory, quickFireStats),
+      subjects: rankedQuickFireSubjects(memory),
+      recommendation: pickQuickFireRecommendation(memory),
       prevAccuracy: (prevSession?.answered >= 3) ? prevSession.accuracy : null,
     })
   }
@@ -407,6 +382,7 @@ export function QuickFireMode({ onExit }) {
       onExit={() => finishRound('exit')}
       onAnswer={(isCorrect) => {
         setQuickFireStats(stats => addQuickFireAnswer(stats, qfQ, isCorrect))
+        bumpQuickFireMemoryForAnswer(qfQ, isCorrect)
         updateQfQuestionHistory(qfQ, isCorrect)
         recordQuestionResult(qfQ, isCorrect)
         // Feed the weakness→recovery tracker for every answer type, carrying
