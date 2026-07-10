@@ -2,10 +2,77 @@
 // All learner-data reads/writes (progress, scores, weakness tracking)
 // go through this file. Currently backed by localStorage; swapping to
 // a remote store later means changing only this file.
+//
+// ─── Account ownership / scoping ───────────────────────────────────
+// Every logical key (gcse_progress, gcse_module_<id>, ...) is namespaced
+// under the currently active scope — 'guest' or 'uid:<firebase-uid>' — so
+// two accounts on the same browser never share the same physical
+// localStorage entry. Feature code (progress.js, quickfire, planner, ...)
+// never sees this: getJson/setJson/etc. transparently read/write whatever
+// scope is currently active, so callers keep using plain logical key names.
+//
+// A small set of keys are deliberately NEVER scoped (RAW_KEYS below) —
+// they are the bootstrap/governance state needed to determine or change
+// the active scope itself, so scoping them would be circular. 'riseUser'
+// is the main one: it has to be readable before we know which scope its
+// own uid points to.
+//
+// Only src/auth/AuthContext.jsx (via src/data/progressSync/accountScope.js)
+// calls setActiveScope() — feature code and learning components never
+// construct or reason about scope/uid themselves.
 
-export function getJson(key, fallback) {
+export const GUEST_SCOPE = 'guest'
+
+const RAW_KEYS = new Set([
+  'riseUser',
+  'gcse_legacy_migration_v1',
+  'gcse_guest_claim_v1',
+])
+
+const SCOPE_DELIMITER = '::'
+const LEGACY_MIGRATION_FLAG_KEY = 'gcse_legacy_migration_v1'
+
+// The scope id for a given signed-in/guest user object (as stored in
+// riseUser). Google users get a stable per-uid namespace; everyone else
+// (guests, logged-out) shares the single guest namespace.
+export function scopeForUser(user) {
+  return (user && user.provider === 'google' && user.uid) ? `uid:${user.uid}` : GUEST_SCOPE
+}
+
+function physicalKey(scope, key) {
+  return RAW_KEYS.has(key) ? key : `${scope}${SCOPE_DELIMITER}${key}`
+}
+
+function deriveInitialScope() {
   try {
-    const raw = localStorage.getItem(key)
+    if (typeof localStorage === 'undefined') return GUEST_SCOPE
+    const raw = localStorage.getItem('riseUser')
+    if (!raw) return GUEST_SCOPE
+    const parsed = JSON.parse(raw)
+    if (parsed?.provider === 'google' && parsed?.uid) return `uid:${parsed.uid}`
+  } catch { /* malformed riseUser — fall back to guest */ }
+  return GUEST_SCOPE
+}
+
+let activeScope = deriveInitialScope()
+
+// The scope currently in effect for plain getJson/setJson/etc. calls.
+export function getActiveScope() {
+  return activeScope
+}
+
+// Switches which account's namespace plain getJson/setJson/etc. read and
+// write. Called only from the auth boundary on sign-in/sign-out/link, never
+// from feature code.
+export function setActiveScope(scope) {
+  activeScope = scope || GUEST_SCOPE
+}
+
+// ─── Scoped primitives ──────────────────────────────────────────────
+
+export function getJsonForScope(scope, key, fallback) {
+  try {
+    const raw = localStorage.getItem(physicalKey(scope, key))
     if (raw === null) return fallback
     return JSON.parse(raw)
   } catch {
@@ -17,9 +84,9 @@ export function getJson(key, fallback) {
 // care (e.g. progress saves) can surface the failure instead of assuming
 // success. A quota failure means learner data is silently NOT saving, so it
 // gets its own explicit warning.
-export function setJson(key, value) {
+export function setJsonForScope(scope, key, value) {
   try {
-    localStorage.setItem(key, JSON.stringify(value))
+    localStorage.setItem(physicalKey(scope, key), JSON.stringify(value))
     return true
   } catch (err) {
     if (isQuotaError(err)) {
@@ -37,14 +104,51 @@ function isQuotaError(err) {
     err?.code === 1014  // Firefox NS_ERROR_DOM_QUOTA_REACHED
 }
 
-export function removeKey(key) {
+export function removeKeyForScope(scope, key) {
   try {
-    localStorage.removeItem(key)
+    localStorage.removeItem(physicalKey(scope, key))
     return true
   } catch {
     console.warn(`storage: failed to remove "${key}"`)
     return false
   }
+}
+
+// All stored logical key names for one scope, optionally filtered by prefix —
+// lets callers (e.g. progress sync) discover dynamic keys like
+// gcse_module_<id> within a specific account's namespace without touching
+// localStorage directly.
+export function listKeysForScope(scope, prefix = '') {
+  try {
+    const physicalPrefix = `${scope}${SCOPE_DELIMITER}${prefix}`
+    const keys = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key !== null && key.startsWith(physicalPrefix)) {
+        keys.push(key.slice(scope.length + SCOPE_DELIMITER.length))
+      }
+    }
+    return keys
+  } catch {
+    return []
+  }
+}
+
+// ─── Ambient primitives (operate on the currently active scope) ────
+// The vast majority of the app just wants "read/write my progress" without
+// caring which account that is — these are what progress.js, quickfire,
+// the planner, etc. use.
+
+export function getJson(key, fallback) {
+  return getJsonForScope(activeScope, key, fallback)
+}
+
+export function setJson(key, value) {
+  return setJsonForScope(activeScope, key, value)
+}
+
+export function removeKey(key) {
+  return removeKeyForScope(activeScope, key)
 }
 
 export function getArray(key) {
@@ -55,20 +159,24 @@ export function getObject(key) {
   return getJson(key, {})
 }
 
-// All stored key names, optionally filtered by prefix — lets callers (e.g.
-// progress sync) discover dynamic keys like gcse_module_<id> without
-// touching localStorage directly.
 export function listKeys(prefix = '') {
-  try {
-    const keys = []
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i)
-      if (key !== null && key.startsWith(prefix)) keys.push(key)
-    }
-    return keys
-  } catch {
-    return []
-  }
+  return listKeysForScope(activeScope, prefix)
+}
+
+// ─── Raw (never-scoped) primitives ──────────────────────────────────
+// For the small RAW_KEYS set only — bootstrap/governance state that must be
+// readable/writable independent of whatever scope is currently active.
+
+export function getRawJson(key, fallback) {
+  return getJsonForScope(null, key, fallback)
+}
+
+export function setRawJson(key, value) {
+  return setJsonForScope(null, key, value)
+}
+
+export function removeRawKey(key) {
+  return removeKeyForScope(null, key)
 }
 
 // ─── Critical-save failure signalling ──────────────────────────────
@@ -103,3 +211,72 @@ export function saveCritical(key, value) {
   if (!ok) emitSaveFailure({ key, retry: () => saveCritical(key, value) })
   return ok
 }
+
+// ─── One-time legacy migration ──────────────────────────────────────
+// Installations that predate account scoping have real learner progress
+// sitting under flat, unscoped keys (e.g. plain "gcse_progress", not
+// "guest::gcse_progress"). Runs once, at first load after this feature
+// ships, before any other module's import-time code can read/write a scoped
+// key (storage.js is a leaf dependency, so its own module body always
+// finishes evaluating before anything that imports it runs).
+//
+// Ownership rule: riseUser is the only trustworthy signal available at this
+// point. If it proves a Google account (provider + uid), the legacy data
+// demonstrably belongs to that uid and is moved into that uid's namespace —
+// not "whichever account happens to sign in first". Anything else (no
+// riseUser, a guest profile, or a malformed one) is ambiguous and goes into
+// the guest namespace instead, where it stays fully recoverable and — via
+// the normal guest-claim flow — can still be deliberately claimed by an
+// account later, but is never silently uploaded to one.
+//
+// Idempotent: gated by a persisted flag, and never overwrites a scoped key
+// that already has data, so a repeat run (or a reload before the flag write
+// landed) can't duplicate anything.
+export function runLegacyFlatMigration() {
+  if (typeof localStorage === 'undefined') return { ran: false }
+
+  let flag
+  try { flag = JSON.parse(localStorage.getItem(LEGACY_MIGRATION_FLAG_KEY) || 'null') } catch { flag = null }
+  if (flag?.done) return { ran: false, already: flag }
+
+  let legacyKeys = []
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i)
+      if (k === null) continue
+      if (k.includes(SCOPE_DELIMITER)) continue // already a scoped key
+      if (RAW_KEYS.has(k)) continue
+      legacyKeys.push(k)
+    }
+  } catch { legacyKeys = [] }
+
+  if (legacyKeys.length === 0) {
+    const result = { done: true, ranAt: Date.now(), target: 'none' }
+    try { localStorage.setItem(LEGACY_MIGRATION_FLAG_KEY, JSON.stringify(result)) } catch { /* ignore */ }
+    return { ran: true, result }
+  }
+
+  let riseUser = null
+  try { riseUser = JSON.parse(localStorage.getItem('riseUser') || 'null') } catch { riseUser = null }
+  const provenUid = (riseUser?.provider === 'google' && typeof riseUser?.uid === 'string' && riseUser.uid) ? riseUser.uid : null
+  const targetScope = provenUid ? `uid:${provenUid}` : GUEST_SCOPE
+
+  const migrated = []
+  for (const key of legacyKeys) {
+    const scopedPhysicalKey = `${targetScope}${SCOPE_DELIMITER}${key}`
+    if (localStorage.getItem(scopedPhysicalKey) !== null) continue // never overwrite existing scoped data
+    try {
+      localStorage.setItem(scopedPhysicalKey, localStorage.getItem(key))
+      migrated.push(key)
+    } catch { /* leave the legacy key in place — safer to retry later than lose it */ }
+  }
+  for (const key of migrated) {
+    try { localStorage.removeItem(key) } catch { /* ignore */ }
+  }
+
+  const result = { done: true, ranAt: Date.now(), target: targetScope, provenUid: provenUid || null, migratedKeys: migrated }
+  try { localStorage.setItem(LEGACY_MIGRATION_FLAG_KEY, JSON.stringify(result)) } catch { /* ignore */ }
+  return { ran: true, result }
+}
+
+runLegacyFlatMigration()

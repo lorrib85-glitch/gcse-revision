@@ -69,7 +69,8 @@ describe('progress completion flows surface save failures', () => {
     controller.retry()
 
     expect(controller.snapshot().open).toBe(false)
-    expect(JSON.parse(store['gcse_module_history-medicine-germ-theory'])).toMatchObject({ completed: true })
+    // No user is signed in in this test, so the write lands under the guest scope.
+    expect(JSON.parse(store['guest::gcse_module_history-medicine-germ-theory'])).toMatchObject({ completed: true })
     unsub()
   })
 

@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { getJson, setJson, removeKey, getArray, getObject, listKeys, saveCritical, subscribeSaveFailure } from '../../../src/lib/storage.js'
+import {
+  getJson, setJson, removeKey, getArray, getObject, listKeys, saveCritical, subscribeSaveFailure,
+  getJsonForScope, setJsonForScope, removeKeyForScope, listKeysForScope,
+  getRawJson, setRawJson, removeRawKey,
+  setActiveScope, scopeForUser, GUEST_SCOPE,
+  runLegacyFlatMigration,
+} from '../../../src/lib/storage.js'
 
 // In-memory localStorage stub (node environment has none).
 function installLocalStorageStub() {
@@ -66,9 +72,9 @@ describe('storage.js persistence boundary', () => {
   })
 
   it('removeKey reports success and failure', () => {
-    store['k'] = '1'
+    setJson('k', '1')
     expect(removeKey('k')).toBe(true)
-    expect('k' in store).toBe(false)
+    expect(getJson('k', null)).toBe(null)
     globalThis.localStorage.removeItem = () => { throw new Error('boom') }
     expect(removeKey('other')).toBe(false)
   })
@@ -80,6 +86,140 @@ describe('storage.js persistence boundary', () => {
     expect(listKeys('gcse_module_').sort()).toEqual(['gcse_module_a', 'gcse_module_b'])
     delete globalThis.localStorage
     expect(listKeys('gcse_')).toEqual([])
+  })
+})
+
+describe('storage.js account scoping', () => {
+  beforeEach(() => {
+    installLocalStorageStub()
+  })
+
+  afterEach(() => {
+    setActiveScope(GUEST_SCOPE)
+  })
+
+  it('scopeForUser namespaces Google accounts by uid and everyone else as guest', () => {
+    expect(scopeForUser({ provider: 'google', uid: 'abc' })).toBe('uid:abc')
+    expect(scopeForUser({ provider: 'guest' })).toBe(GUEST_SCOPE)
+    expect(scopeForUser(null)).toBe(GUEST_SCOPE)
+    expect(scopeForUser({ provider: 'google' })).toBe(GUEST_SCOPE) // no uid — not trustworthy
+  })
+
+  it('the same logical key is a different physical entry per scope', () => {
+    setActiveScope('uid:alice')
+    setJson('gcse_progress', { streak: 3 })
+    setActiveScope('uid:bob')
+    expect(getJson('gcse_progress', null)).toBe(null) // bob sees nothing of alice's
+    setJson('gcse_progress', { streak: 9 })
+    setActiveScope('uid:alice')
+    expect(getJson('gcse_progress', null)).toEqual({ streak: 3 }) // alice's own value, untouched by bob's write
+  })
+
+  it('riseUser is never scoped — it is the bootstrap pointer used to derive the scope itself', () => {
+    setActiveScope('uid:alice')
+    setJsonForScope('uid:alice', 'riseUser', { uid: 'alice' }) // should be a no-op scope-wise
+    setActiveScope('uid:bob')
+    expect(getJson('riseUser', null)).toEqual({ uid: 'alice' }) // same global value regardless of active scope
+  })
+
+  it('listKeys only sees the active scope\'s own dynamic keys', () => {
+    setActiveScope('uid:alice')
+    setJson('gcse_module_x', { screen: 1 })
+    setActiveScope('uid:bob')
+    setJson('gcse_module_y', { screen: 2 })
+    expect(listKeys('gcse_module_')).toEqual(['gcse_module_y'])
+    setActiveScope('uid:alice')
+    expect(listKeys('gcse_module_')).toEqual(['gcse_module_x'])
+  })
+
+  it('getJsonForScope/setJsonForScope/listKeysForScope/removeKeyForScope target an explicit scope regardless of what is currently active', () => {
+    setActiveScope('uid:alice')
+    setJsonForScope('uid:bob', 'gcse_scores', [{ pct: 50 }])
+    expect(getJson('gcse_scores', null)).toBe(null) // alice (active) unaffected
+    expect(getJsonForScope('uid:bob', 'gcse_scores', null)).toEqual([{ pct: 50 }])
+    expect(listKeysForScope('uid:bob', 'gcse_s')).toEqual(['gcse_scores'])
+    expect(removeKeyForScope('uid:bob', 'gcse_scores')).toBe(true)
+    expect(getJsonForScope('uid:bob', 'gcse_scores', null)).toBe(null)
+  })
+
+  it('getRawJson/setRawJson/removeRawKey bypass scoping entirely', () => {
+    setActiveScope('uid:alice')
+    setRawJson('gcse_guest_claim_v1', { status: 'claimed' })
+    setActiveScope('uid:bob')
+    expect(getRawJson('gcse_guest_claim_v1', null)).toEqual({ status: 'claimed' })
+    expect(removeRawKey('gcse_guest_claim_v1')).toBe(true)
+    expect(getRawJson('gcse_guest_claim_v1', null)).toBe(null)
+  })
+})
+
+describe('storage.js legacy flat-key migration', () => {
+  beforeEach(() => {
+    installLocalStorageStub()
+    setActiveScope(GUEST_SCOPE)
+  })
+
+  afterEach(() => {
+    setActiveScope(GUEST_SCOPE)
+  })
+
+  it('is a no-op with nothing to migrate', () => {
+    const result = runLegacyFlatMigration()
+    expect(result.ran).toBe(true)
+    expect(result.result.target).toBe('none')
+    // Running again does nothing further (idempotent, flag-gated).
+    const second = runLegacyFlatMigration()
+    expect(second.ran).toBe(false)
+  })
+
+  it('moves flat legacy data into the proven uid namespace when riseUser proves ownership', () => {
+    globalThis.localStorage.setItem('riseUser', JSON.stringify({ provider: 'google', uid: 'proven-1', name: 'Sam' }))
+    globalThis.localStorage.setItem('gcse_progress', JSON.stringify({ streak: 5 }))
+    globalThis.localStorage.setItem('gcse_scores', JSON.stringify([{ pct: 80 }]))
+
+    const { result } = runLegacyFlatMigration()
+    expect(result.target).toBe('uid:proven-1')
+
+    setActiveScope('uid:proven-1')
+    expect(getJson('gcse_progress', null)).toEqual({ streak: 5 })
+    expect(getJson('gcse_scores', null)).toEqual([{ pct: 80 }])
+    // Flat keys are gone — nothing left dangling outside the scoped namespace.
+    expect(globalThis.localStorage.getItem('gcse_progress')).toBe(null)
+
+    // Idempotent: running again (e.g. a second app load) does not touch anything further.
+    setJson('gcse_progress', { streak: 999 }) // simulate the account continuing to learn
+    runLegacyFlatMigration()
+    expect(getJson('gcse_progress', null)).toEqual({ streak: 999 })
+  })
+
+  it('sends ambiguous legacy data (no trustworthy riseUser) to the guest namespace, never to whoever signs in first', () => {
+    globalThis.localStorage.setItem('gcse_progress', JSON.stringify({ streak: 7 }))
+
+    const { result } = runLegacyFlatMigration()
+    expect(result.target).toBe(GUEST_SCOPE)
+
+    setActiveScope('uid:whoever-signs-in-first')
+    expect(getJson('gcse_progress', null)).toBe(null) // not assigned to this account
+
+    setActiveScope(GUEST_SCOPE)
+    expect(getJson('gcse_progress', null)).toEqual({ streak: 7 }) // recoverable in guest scope
+  })
+
+  it('treats a guest-provider or malformed riseUser as ambiguous, not as proof', () => {
+    globalThis.localStorage.setItem('riseUser', JSON.stringify({ provider: 'guest', name: 'Sam' }))
+    globalThis.localStorage.setItem('gcse_progress', JSON.stringify({ streak: 2 }))
+    const { result } = runLegacyFlatMigration()
+    expect(result.target).toBe(GUEST_SCOPE)
+  })
+
+  it('never overwrites data a scope already has', () => {
+    globalThis.localStorage.setItem('riseUser', JSON.stringify({ provider: 'google', uid: 'proven-2' }))
+    globalThis.localStorage.setItem('gcse_progress', JSON.stringify({ streak: 1 }))
+    globalThis.localStorage.setItem('uid:proven-2::gcse_progress', JSON.stringify({ streak: 100 }))
+
+    runLegacyFlatMigration()
+
+    setActiveScope('uid:proven-2')
+    expect(getJson('gcse_progress', null)).toEqual({ streak: 100 }) // untouched
   })
 })
 

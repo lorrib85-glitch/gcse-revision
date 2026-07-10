@@ -16,6 +16,10 @@ import { quickFireFromBank } from '../../../src/features/quickfire/logic/convert
 
 const T0 = 1_700_000_000_000
 
+// storage.js namespaces every key by the active account scope; no user is
+// signed in in this test file, so everything lives under the guest scope.
+const scopedKey = key => `guest::${key}`
+
 // Real QuickFire bank question: tags mix facets with two concept ids
 // ('history:medicine' course node + 'history:medicine:miasma' atom).
 const medQf001 = ALL_MODULE_QUICKFIRE_QUESTIONS.find(q => q.id === 'med-qf-001')
@@ -160,7 +164,7 @@ describe('masteryRecorder — stage and source forwarding (EV1/O1)', () => {
         },
       },
     }
-    fakeStore.set(MASTERY_STORAGE_KEY, JSON.stringify(legacy))
+    fakeStore.set(scopedKey(MASTERY_STORAGE_KEY), JSON.stringify(legacy))
     recordQuestionResult(medQf001, false)
     const state = loadMasteryState()
     const evidence = state.concepts['history:medicine:miasma']
@@ -184,6 +188,6 @@ describe('masteryRecorder — persistence', () => {
 
   it('untagged questions never touch storage', () => {
     recordQuestionResult(untaggedQuestion, true)
-    expect(fakeStore.has(MASTERY_STORAGE_KEY)).toBe(false)
+    expect(fakeStore.has(scopedKey(MASTERY_STORAGE_KEY))).toBe(false)
   })
 })

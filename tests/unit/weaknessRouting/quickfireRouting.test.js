@@ -26,6 +26,10 @@ function installLocalStorage() {
 let store
 beforeEach(() => { store = installLocalStorage(); clearWeaknessLog() })
 
+// storage.js namespaces every key by the active account scope; no user is
+// signed in in this test file, so everything lives under the guest scope.
+const scopedKey = key => `guest::${key}`
+
 // A canonical QuickFire bank row: human topic label + canonical routing tag.
 const MEDIEVAL_ROW = {
   id: 'qq_h1', subject: 'History', topic: 'Medieval Medicine', tag: 'four-humours',
@@ -42,7 +46,7 @@ describe('QuickFire → canonical concept identity', () => {
 
   it('an incorrect QuickFire answer records both a display label and a canonical concept tag', () => {
     logWrongAnswer({ subject: 'History', topic: 'Medieval Medicine', conceptTag: 'four-humours', source: 'quiz', questionType: 'mcq' })
-    const raw = JSON.parse(store['gcse_wrong_answers'])
+    const raw = JSON.parse(store[scopedKey('gcse_wrong_answers')])
     expect(raw[0].topic).toBe('Medieval Medicine')
     expect(raw[0].conceptTag).toBe('four-humours')
   })
@@ -105,7 +109,7 @@ describe('QuickFire routing — legacy / backward compatibility', () => {
 
   it('existing history written before conceptTag existed remains readable and safe', () => {
     // Simulate a pre-migration stored log with no conceptTag field at all.
-    store['gcse_wrong_answers'] = JSON.stringify([
+    store[scopedKey('gcse_wrong_answers')] = JSON.stringify([
       { timestamp: Date.now(), date: '2026-06-01', subject: 'History', topic: 'Renaissance Medicine', questionId: 'old-1', marks: 1, source: 'quiz', questionType: 'mcq' },
       { timestamp: Date.now(), date: '2026-06-01', subject: 'History', topic: 'Renaissance Medicine', questionId: 'old-2', marks: 1, source: 'quiz', questionType: 'mcq' },
     ])
