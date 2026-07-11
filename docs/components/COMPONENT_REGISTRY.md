@@ -459,6 +459,15 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
+### SymptomQualityDiagnostic
+
+**File:** `src/components/learning/SymptomQualityDiagnostic.jsx`  
+**Purpose:** Ten-beat diagnostic set — teaches a quality-based theory (e.g. hot/cold/wet/dry) through example symptoms, then applies it to one named patient case: quadrant diagnosis, treatment multiple-choice question, opposite-quality recall, and a closing legacy beat. No images.  
+**Props:** `block`, `subject`, `onContinue`  
+**Dependencies:** `SUBJECTS`, `SPACING`, `RADII`, `MOTION`, `TYPE`, `BUTTONS`
+
+---
+
 ### TimelineCanvas
 
 **File:** `src/components/learning/TimelineCanvas.jsx`  
