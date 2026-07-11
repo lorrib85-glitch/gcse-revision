@@ -5,6 +5,7 @@ import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
 import { BUTTONS } from '../../constants/buttons.js'
+import { CINEMATIC_LAB } from '../../constants/cinematicLabTheme.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 
 // ── SymptomQualityDiagnostic ────────────────────────────────────────────────
@@ -53,7 +54,7 @@ function anim(name, duration = MOTION.duration.slow, delay = 0) {
 
 function Screen({ children }) {
   return (
-    <div style={{ minHeight: '100dvh', background: '#09070A', position: 'relative', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100dvh', background: CINEMATIC_LAB.background, position: 'relative', overflowX: 'hidden' }}>
       <div style={{ position: 'relative', zIndex: 1 }}>{children}</div>
     </div>
   )
@@ -62,7 +63,7 @@ function Screen({ children }) {
 function Pad({ children }) {
   return (
     <div style={{
-      maxWidth: 420,
+      maxWidth: CINEMATIC_LAB.screenMaxWidth,
       margin: '0 auto',
       padding: `${SPACING.cinematic}px ${SPACING.standard}px ${SPACING.section}px`,
     }}>
@@ -91,7 +92,7 @@ function ActionBtn({ label, onClick, accent, disabled = false }) {
         background: disabled ? 'rgba(255,255,255,0.08)' : accent,
         border: 'none',
         borderRadius: BUTTONS.continue.borderRadius,
-        color: disabled ? 'rgba(255,255,255,0.3)' : '#0D0F14',
+        color: disabled ? 'rgba(255,255,255,0.3)' : CINEMATIC_LAB.buttonTextOnAccent,
         fontFamily: BUTTONS.continue.fontFamily,
         fontSize: BUTTONS.continue.fontSize,
         fontWeight: BUTTONS.continue.fontWeight,
@@ -139,7 +140,7 @@ function QualityBeat({ quality, symptoms, accent, rgb, onNext }) {
               marginBottom: SPACING.compact,
               animation: anim('sqd-in-left'),
             }}>
-              <div style={{ width: 5, height: 5, borderRadius: '50%', background: accent, flexShrink: 0, opacity: 0.7 }} />
+              <div style={{ width: CINEMATIC_LAB.dotSize, height: CINEMATIC_LAB.dotSize, borderRadius: '50%', background: accent, flexShrink: 0, opacity: 0.7 }} />
               <span style={{ ...TYPE.bodyLarge, color: 'rgba(240,230,200,0.85)' }}>{symptom}</span>
             </div>
           ))}
@@ -176,7 +177,7 @@ function PatientBeat({ patient, accent, onNext }) {
         <Label accent={accent}>The patient</Label>
         <p className="sqd-motion" style={{
           ...TYPE.displaySection,
-          color: '#F0E6C8',
+          color: CINEMATIC_LAB.creamText,
           margin: `0 0 ${SPACING.separation}px`,
           animation: anim('sqd-in'),
         }}>
@@ -190,8 +191,8 @@ function PatientBeat({ patient, accent, onNext }) {
               marginBottom: SPACING.compact,
               animation: anim('sqd-in-left'),
             }}>
-              <div style={{ width: 5, height: 5, borderRadius: '50%', background: accent, flexShrink: 0, opacity: 0.7 }} />
-              <span style={{ ...TYPE.displayCard, color: '#F0E6C8' }}>{symptom}</span>
+              <div style={{ width: CINEMATIC_LAB.dotSize, height: CINEMATIC_LAB.dotSize, borderRadius: '50%', background: accent, flexShrink: 0, opacity: 0.7 }} />
+              <span style={{ ...TYPE.displayCard, color: CINEMATIC_LAB.creamText }}>{symptom}</span>
             </div>
           ))}
         </div>
@@ -246,17 +247,17 @@ function QuadrantBeat({ question, options, accent, rgb, onNext }) {
                 className={isWrong ? 'sqd-motion' : undefined}
                 style={{
                   padding: `${SPACING.compact}px`,
-                  background: isWrong ? 'rgba(180,50,30,0.1)' : isSelected ? `rgba(${rgb}, 0.15)` : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${isWrong ? 'rgba(200,60,40,0.45)' : isSelected ? `rgba(${rgb}, 0.5)` : 'rgba(255,255,255,0.1)'}`,
+                  background: isWrong ? CINEMATIC_LAB.wrongBg : isSelected ? `rgba(${rgb}, 0.15)` : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${isWrong ? CINEMATIC_LAB.wrongBorder : isSelected ? `rgba(${rgb}, 0.5)` : 'rgba(255,255,255,0.1)'}`,
                   borderRadius: RADII.small,
-                  color: isWrong ? 'rgba(220,90,70,0.9)' : isSelected ? accent : 'rgba(240,230,200,0.7)',
+                  color: isWrong ? CINEMATIC_LAB.wrongText : isSelected ? accent : 'rgba(240,230,200,0.7)',
                   ...TYPE.buttonLarge,
                   cursor: 'pointer',
                   textAlign: 'center',
-                  minHeight: 52,
+                  minHeight: CINEMATIC_LAB.optionMinHeight,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   transition: `background ${MOTION.duration.fast} ease, border-color ${MOTION.duration.fast} ease`,
-                  animation: isWrong ? 'sqd-shake 0.4s ease' : 'none',
+                  animation: isWrong ? `sqd-shake ${MOTION.duration.slow} ${ease}` : 'none',
                 }}
               >
                 {opt.label}
@@ -308,7 +309,7 @@ function TreatmentBeat({ question, options, accent, rgb, onNext }) {
     <Screen>
       <Pad>
         <p className="sqd-motion" style={{
-          ...TYPE.displayCard, color: '#F0E6C8',
+          ...TYPE.displayCard, color: CINEMATIC_LAB.creamText,
           margin: `0 0 ${SPACING.standard}px`,
           animation: anim('sqd-in'),
         }}>
@@ -329,10 +330,10 @@ function TreatmentBeat({ question, options, accent, rgb, onNext }) {
                 style={{
                   padding: `${SPACING.compact}px`,
                   textAlign: 'left',
-                  background: revealState ? `rgba(${rgb}, 0.14)` : revealWrong ? 'rgba(180,50,30,0.1)' : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${revealState ? `rgba(${rgb}, 0.55)` : revealWrong ? 'rgba(200,60,40,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                  background: revealState ? `rgba(${rgb}, 0.14)` : revealWrong ? CINEMATIC_LAB.wrongBg : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${revealState ? `rgba(${rgb}, 0.55)` : revealWrong ? CINEMATIC_LAB.wrongBorder : 'rgba(255,255,255,0.1)'}`,
                   borderRadius: RADII.small,
-                  color: revealState ? accent : revealWrong ? 'rgba(220,90,70,0.9)' : 'rgba(240,230,200,0.75)',
+                  color: revealState ? accent : revealWrong ? CINEMATIC_LAB.wrongText : 'rgba(240,230,200,0.75)',
                   ...TYPE.bodyStrong,
                   cursor: answered ? 'default' : 'pointer',
                 }}
@@ -381,7 +382,7 @@ function OppositeRecallBeat({ recall, accent, rgb, onNext }) {
         }}>
           <p style={{ ...TYPE.displayCard, color: 'rgba(240,230,200,0.7)', margin: 0 }}>{recall.from}</p>
           <p style={{ ...TYPE.body, color: `rgba(${rgb}, 0.5)`, margin: `${SPACING.micro}px 0` }}>↓</p>
-          <p style={{ ...TYPE.displayCard, color: '#F0E6C8', margin: 0 }}>{recall.to}</p>
+          <p style={{ ...TYPE.displayCard, color: CINEMATIC_LAB.creamText, margin: 0 }}>{recall.to}</p>
           <p style={{ ...TYPE.body, color: `rgba(${rgb}, 0.5)`, margin: `${SPACING.micro}px 0` }}>↓</p>
           <p style={{ ...TYPE.displaySection, color: accent, margin: 0 }}>{recall.result}</p>
         </div>
@@ -425,7 +426,7 @@ function ClosingBeat({ closing, accent, rgb, onComplete }) {
 
         {closing.church && (
           <div className="sqd-motion" style={{ marginBottom: SPACING.standard, animation: anim('sqd-in', MOTION.duration.slow, 180) }}>
-            <p style={{ ...TYPE.bodyStrong, color: '#F0E6C8', margin: `0 0 ${SPACING.micro}px` }}>
+            <p style={{ ...TYPE.bodyStrong, color: CINEMATIC_LAB.creamText, margin: `0 0 ${SPACING.micro}px` }}>
               {closing.church.heading}
             </p>
             <p style={{ ...TYPE.bodySmall, color: 'rgba(240,230,200,0.6)', lineHeight: 1.6, margin: 0 }}>

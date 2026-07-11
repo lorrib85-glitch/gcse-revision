@@ -5,6 +5,7 @@ import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
 import { BUTTONS } from '../../constants/buttons.js'
+import { CINEMATIC_LAB } from '../../constants/cinematicLabTheme.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 
 // ── Block data shape ──────────────────────────────────────────────────────────
@@ -95,7 +96,7 @@ function Screen({ children, bgImage, bgOpacity = 0.1, style: extra }) {
   return (
     <div style={{
       minHeight: '100dvh',
-      background: '#09070A',
+      background: CINEMATIC_LAB.background,
       position: 'relative',
       overflowX: 'hidden',
       ...extra,
@@ -119,7 +120,7 @@ function Screen({ children, bgImage, bgOpacity = 0.1, style: extra }) {
 function Pad({ children, top = 80 }) {
   return (
     <div style={{
-      maxWidth: 420,
+      maxWidth: CINEMATIC_LAB.screenMaxWidth,
       margin: '0 auto',
       padding: `${top}px ${SPACING.standard}px ${SPACING.section}px`,
     }}>
@@ -155,7 +156,7 @@ function ActionBtn({ label, onClick, accent, rgb, disabled = false }) {
         background: disabled ? 'rgba(255,255,255,0.08)' : accent,
         border: 'none',
         borderRadius: BUTTONS.continue.borderRadius,
-        color: disabled ? 'rgba(255,255,255,0.3)' : '#0D0F14',
+        color: disabled ? 'rgba(255,255,255,0.3)' : CINEMATIC_LAB.buttonTextOnAccent,
         fontFamily: BUTTONS.continue.fontFamily,
         fontSize: BUTTONS.continue.fontSize,
         fontWeight: BUTTONS.continue.fontWeight,
@@ -193,7 +194,7 @@ function TheoryStage({ block, accent, rgb, onNext }) {
   const wordStyle = {
     ...TYPE.displayHero,
     fontSize: 52,
-    color: '#F0E6C8',
+    color: CINEMATIC_LAB.creamText,
   }
 
   return (
@@ -205,7 +206,7 @@ function TheoryStage({ block, accent, rgb, onNext }) {
           <h1 style={{
             ...TYPE.displaySection,
             fontSize: 30,
-            color: '#F0E6C8',
+            color: CINEMATIC_LAB.creamText,
             margin: `0 0 ${SPACING.separation}px`,
           }}>
             {theory.heading}
@@ -315,7 +316,7 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
           <h2 style={{
             ...TYPE.displaySection,
             fontSize: 26,
-            color: '#F0E6C8',
+            color: CINEMATIC_LAB.creamText,
             margin: `0 0 ${SPACING.separation}px`,
           }}>
             {scenario.title || 'A Patient Arrives'}
@@ -345,7 +346,7 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
               <span style={{
                 ...TYPE.displaySection,
                 fontSize: 22,
-                color: '#F0E6C8',
+                color: CINEMATIC_LAB.creamText,
               }}>
                 {symptom}
               </span>
@@ -380,20 +381,20 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
                     style={{
                       padding: `${SPACING.compact}px`,
                       background: isWrong
-                        ? 'rgba(180,50,30,0.1)'
+                        ? CINEMATIC_LAB.wrongBg
                         : isSelected
                           ? `rgba(${rgb}, 0.15)`
                           : 'rgba(255,255,255,0.04)',
                       border: `1px solid ${
                         isWrong
-                          ? 'rgba(200,60,40,0.45)'
+                          ? CINEMATIC_LAB.wrongBorder
                           : isSelected
                             ? `rgba(${rgb}, 0.5)`
                             : 'rgba(255,255,255,0.1)'
                       }`,
                       borderRadius: RADII.small,
                       color: isWrong
-                        ? 'rgba(220,90,70,0.9)'
+                        ? CINEMATIC_LAB.wrongText
                         : isSelected
                           ? accent
                           : 'rgba(240,230,200,0.65)',
@@ -409,7 +410,7 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
                       alignItems: 'center',
                       justifyContent: 'center',
                       transition: `background ${MOTION.fast}ms ease, border-color ${MOTION.fast}ms ease`,
-                      animation: isWrong ? `tl-shake 0.4s ease` : 'none',
+                      animation: isWrong ? `tl-shake ${MOTION.duration.slow} ${MOTION.easing.standard}` : 'none',
                     }}
                   >
                     {opt.label}
@@ -540,7 +541,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
           <h2 style={{
             ...TYPE.displayCard,
             fontSize: 20,
-            color: '#F0E6C8',
+            color: CINEMATIC_LAB.creamText,
             margin: `0 0 ${SPACING.standard}px`,
           }}>
             {rx.question}
@@ -793,7 +794,7 @@ function PrescriptionStage({ block, accent, rgb, onNext }) {
               <p style={{
                 ...TYPE.displayCard,
                 fontSize: 20,
-                color: '#F0E6C8',
+                color: CINEMATIC_LAB.creamText,
                 margin: 0,
               }}>
                 {ev.to}
@@ -861,7 +862,7 @@ function EvalOutcomeBeat({ block, accent, rgb, onNext }) {
           <p style={{
             ...TYPE.displaySection,
             fontSize: 26,
-            color: '#F0E6C8',
+            color: CINEMATIC_LAB.creamText,
             margin: 0,
             animation: anim('tl-in', 380, 140),
           }}>
@@ -1044,7 +1045,7 @@ function EvalLegacyBeat({ block, accent, rgb, onComplete }) {
                   ...TYPE.eyebrow,
                   fontSize: 16,
                   textTransform: 'uppercase',
-                  color: '#F0E6C8',
+                  color: CINEMATIC_LAB.creamText,
                   margin: 0,
                 }}>
                   {church.heading}
