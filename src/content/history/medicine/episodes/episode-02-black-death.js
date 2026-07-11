@@ -286,6 +286,11 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           label: 'Blood poisoning',
           description: 'The bacteria spread through the bloodstream. Skin can darken from internal bleeding — giving the disease its later name.',
         },
+        {
+          day: '3 forms',
+          label: 'One disease, three forms',
+          description: 'This chain describes bubonic plague — buboes, the most common form. Pneumonic plague infected the lungs and spread through coughing, person to person. Septicaemic plague infected the blood and could kill within hours. Medieval people never realised these were the same disease.',
+        },
       ],
     },
 
@@ -507,9 +512,14 @@ The Church preserved ancient texts and backed Galen's authority. Without microsc
           body: 'If disease came from humour imbalance, removing blood seemed logical. But it weakened patients further.',
         },
         {
+          image: '/figures/history/medicine/black-death/rich-vs-poor.png',
+          headline: 'Quarantine had the right idea — and no way to enforce it.',
+          body: 'Local officials ordered the sick to be isolated. But medieval government was small and local, with no police force. Rich people ignored the orders and left infected towns. The Church carried on running as normal. Without enforcement, quarantine could not work.',
+        },
+        {
           image: '/figures/history/medicine/black-death/not-much-changed.png',
-          headline: 'None targeted the real cause.',
-          body: 'The real cause was bacteria carried by fleas on rats. Medieval treatments did not kill bacteria, stop fleas, or break the transmission chain.',
+          headline: 'None stopped the real cause.',
+          body: 'The real cause was bacteria carried by fleas on rats. Prayer, herbs and bloodletting missed it completely — and even quarantine, the one idea aimed at the right target, collapsed for lack of enforcement.',
         },
       ],
     },
