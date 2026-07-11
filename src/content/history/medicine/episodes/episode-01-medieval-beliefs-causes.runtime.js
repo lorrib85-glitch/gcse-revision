@@ -3,10 +3,16 @@ import episode from './episode-01-medieval-beliefs-causes.js'
 // Runtime sequence override for Episode 1.
 // The original canonical file is preserved for audit history, while the runtime
 // sequence removes duplication, keeps the cinematic Galen introduction, and
-// upgrades the Theory of Opposites media slot into a layered quadrant reveal.
+// splits the Theory of Opposites diagram and worked example into focused screens.
 const REMOVED_DUPLICATE_SCREEN_LABEL = 'The Four Humours'
+const THEORY_OF_OPPOSITES_HEADING = 'Every illness had an opposite'
+
 const removedScreenIndex = episode.screens.findIndex(
   screen => screen.label === REMOVED_DUPLICATE_SCREEN_LABEL && screen.type === 'conceptReveal'
+)
+
+const theoryScreenIndex = episode.screens.findIndex(
+  screen => screen.heading === THEORY_OF_OPPOSITES_HEADING
 )
 
 const galenCinematicIntro = {
@@ -46,30 +52,48 @@ const fourHumoursRevealConfig = {
   finished: 'Hot was treated with cold. Wet was treated with dry. The aim was to restore balance.',
 }
 
-function upgradeTheoryOfOppositesScreen(screen) {
-  if (screen.heading !== 'Every illness had an opposite') return screen
+function splitTheoryOfOppositesScreen(screen) {
+  if (screen.heading !== THEORY_OF_OPPOSITES_HEADING) return [screen]
 
-  return {
+  const blocks = screen.blocks || []
+  const mediaIndex = blocks.findIndex(block => block.type === 'mediaPlaceholder')
+  const diagramBlocks = blocks.slice(0, mediaIndex + 1).map(block => (
+    block.type === 'mediaPlaceholder'
+      ? {
+          ...block,
+          kind: 'imageReveal',
+          aspect: '1:1',
+          caption: fourHumoursRevealConfig,
+        }
+      : block
+  ))
+  const workedExampleBlocks = blocks.slice(mediaIndex + 1)
+
+  const diagramScreen = {
     ...screen,
     heading: 'Galen treated with opposites',
     sub: "Galen took Hippocrates' theory of the Four Humours one step further. He believed illness happened when one humour became too dominant — so treatment should use the opposite qualities to restore balance.",
-    blocks: (screen.blocks || []).map(block => (
-      block.type === 'mediaPlaceholder'
-        ? {
-            ...block,
-            kind: 'imageReveal',
-            aspect: '1:1',
-            caption: fourHumoursRevealConfig,
-          }
-        : block
-    )),
+    blocks: diagramBlocks,
   }
+
+  if (workedExampleBlocks.length === 0) return [diagramScreen]
+
+  return [
+    diagramScreen,
+    {
+      ...screen,
+      label: 'Theory of Opposites — worked example',
+      heading: 'From symptoms to treatment',
+      sub: null,
+      blocks: workedExampleBlocks,
+    },
+  ]
 }
 
 const withoutDuplicate = (removedScreenIndex < 0
   ? episode.screens
   : episode.screens.filter((_, index) => index !== removedScreenIndex)
-).map(upgradeTheoryOfOppositesScreen)
+).flatMap(splitTheoryOfOppositesScreen)
 
 const galenProfileIndex = withoutDuplicate.findIndex(
   screen => screen.type === 'keyFigureReveal' && screen.label === 'Galen'
@@ -89,6 +113,7 @@ function transformScreenIndex(screenIndex) {
   let nextIndex = screenIndex
   if (removedScreenIndex >= 0 && nextIndex > removedScreenIndex) nextIndex -= 1
   if (galenProfileIndex >= 0 && nextIndex >= galenProfileIndex) nextIndex += 1
+  if (theoryScreenIndex >= 0 && screenIndex > theoryScreenIndex) nextIndex += 1
 
   return nextIndex
 }
