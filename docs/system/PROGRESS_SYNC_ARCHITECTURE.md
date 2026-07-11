@@ -263,18 +263,35 @@ Firestore detail ever reaches the learner, and normal learners see no new UI.
 
 - `tests/unit/storage/storage.test.js` — scoping primitives, raw keys,
   explicit-scope primitives, legacy migration (proven ownership, ambiguous
-  ownership, idempotency, never-overwrite).
+  ownership → quarantine, identity sequestration, idempotency, never-overwrite).
+- `tests/unit/progressSync/accountScope.test.js` — quarantine recovery
+  (adopt into guest once, restore name, "start fresh" retains, explicit
+  discard, never attach to an account).
 - `tests/unit/progressSync/progressSync.test.js` /
   `tests/unit/progressSync/progressMerge.test.js` — snapshot collect/apply,
   merge decision matrix, per-key merge rules including the divergent-device
-  QuickFire scenario.
+  QuickFire scenario, and the size-budget block vs. compact-and-upload paths.
+- `tests/unit/progressSync/snapshotBudget.test.js` — measurement, lossless
+  fold of an oversized snapshot, core-state preservation, idempotency,
+  governed trimming.
 - `tests/unit/quickfire/quickFireMemory.test.js` — per-answer persistence,
-  seed capture, answer-log events, round-abandonment survival.
+  seed capture, answer-log events (incl. device id / seq), round-abandonment
+  survival.
+- `tests/unit/quickfire/quickFireCompaction.test.js` — near-cap folding,
+  divergent devices after a shared baseline, mixed legacy+compacted merge.
+- `tests/rules/firestore.rules.test.js` — emulator-backed proof of account
+  isolation (run via `pnpm test:rules`; see AUTH_SETUP.md).
 - `tests/unit/journeys/accountIsolationJourneys.test.js` — end-to-end
   proofs for the account-isolation scenarios: two accounts on one browser,
   guest claims progress, a failed claim recovers, legacy data with proven
-  vs. ambiguous ownership, a pending write surviving an account switch, and
-  an abandoned QuickFire round.
+  ownership vs. ambiguous → quarantine (shared device, deliberate recovery,
+  sign-in leaves quarantine untouched), a pending write surviving an account
+  switch, and an abandoned QuickFire round.
+- `tests/unit/journeys/persistenceGrowthJourneys.test.js` — long-lived
+  QuickFire account crossing the raw-event budget (compaction preserves
+  totals, new answers accumulate, merge stays correct) and a snapshot near
+  the safety threshold (governed history compacted, core progress unchanged,
+  snapshot becomes safe to sync).
 - `tests/unit/journeys/learnerJourneys.test.js` — the pre-existing sync
   safety journeys (guest linking, stale-device sign-in, divergent devices,
   offline learning, sign-out with pending work, auth restoration).
