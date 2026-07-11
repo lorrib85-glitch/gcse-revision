@@ -329,63 +329,56 @@ export default {
     },
 
     {
-      type: 'theoryLab',
+      type: 'symptomQualityDiagnostic',
       stage: 'Galen',
-      label: 'Think Like Galen',
-
-      title: 'Think Like Galen',
-
-      theory: {
-        heading: 'Theory of Opposites',
-        tagline: 'If a patient seemed too hot, physicians tried to cool them down.',
-        explanation: "Galen believed every humour carried its own qualities, and that illness happened when one humour built up and pushed those qualities too far. A patient's symptoms revealed which qualities were in excess. So the cure had to carry the opposite qualities, pulling the body back into balance.",
-        grid: [
-          { left: 'HOT', right: 'COLD' },
-          { left: 'WET', right: 'DRY' },
-        ],
+      label: 'Symptom to treatment',
+      qualities: [
+        { quality: 'hot', symptoms: ['Fever', 'Red face', 'Flushed skin'] },
+        { quality: 'cold', symptoms: ['Pale skin', 'Chills', 'Shivering'] },
+        { quality: 'wet', symptoms: ['Sweating', 'Runny nose', 'Watery eyes'] },
+        { quality: 'dry', symptoms: ['Cracked lips', 'Dry cough', 'Thirst'] },
+      ],
+      patient: {
+        title: 'A patient arrives',
+        symptoms: ['Fever', 'Phlegm cough'],
       },
-
-      scenario: {
-        title: 'A Patient Arrives',
-        image: '/figures/history/medicine/medieval/patient-arrives.png',
-        symptoms: ['FEVER', 'RED FACE', 'SWEATING'],
-        question: 'Which qualities dominate?',
-        options: [
-          { label: 'HOT + WET', correct: true },
-          { label: 'HOT + DRY', correct: false },
-          { label: 'COLD + WET', correct: false },
-          { label: 'COLD + DRY', correct: false },
-        ],
-      },
-
-      outcome: {
-        diagnosis: 'HOT + WET',
-        lines: [
-          'Fever and a red face point to too much heat.',
-          'Sweating points to too much wetness.',
-        ],
-      },
-
-      prescription: {
-        question: 'What would Galen prescribe?',
-        options: [
-          { label: 'Cucumber',   correct: true,  image: '/figures/history/medicine/medieval/treatments/cucumber.png' },
-          { label: 'Cold water', correct: true,  image: '/figures/history/medicine/medieval/treatments/cold-water.png' },
-          { label: 'Dry bread',  correct: true,  image: '/figures/history/medicine/medieval/treatments/dry-bread.png' },
-          { label: 'Salt',       correct: true,  image: '/figures/history/medicine/medieval/treatments/salt.png' },
-          { label: 'Hot soup',   correct: false, image: '/figures/history/medicine/medieval/treatments/hot-soup.png' },
-          { label: 'Warm wine',  correct: false, image: '/figures/history/medicine/medieval/treatments/warm-wine.png' },
-        ],
-        reveal: 'Galen treats illness with opposite qualities.',
-      },
-
-      evaluation: {
-        transformation: { from: 'HOT + WET', to: 'COLD + DRY', result: 'BALANCE' },
+      quadrantQuestion: 'Which qualities dominate?',
+      quadrantOptions: [
+        { label: 'Hot + wet', correct: true },
+        { label: 'Hot + dry', correct: false },
+        { label: 'Cold + wet', correct: false },
+        { label: 'Cold + dry', correct: false },
+      ],
+      diagnosis: { label: 'Hot + wet' },
+      treatmentQuestion: 'What would Galen prescribe to cool and dry this patient?',
+      treatmentOptions: [
+        {
+          label: 'Cucumber and dry bread',
+          correct: true,
+          explanation: 'Cold and dry qualities pull the body back towards balance against the hot, wet excess.',
+        },
+        {
+          label: 'Hot soup and warm wine',
+          correct: false,
+          explanation: 'Hot and wet — the same qualities causing the illness, not the opposite.',
+        },
+        {
+          label: 'Warm blankets and a thick stew',
+          correct: false,
+          explanation: 'Still adds heat, when the patient needs cooling.',
+        },
+        {
+          label: 'Cold milk and steamed vegetables',
+          correct: false,
+          explanation: "Cold is right, but this is still moist — it doesn't dry the body.",
+        },
+      ],
+      oppositeRecall: { from: 'Hot + wet', to: 'Cold + dry', result: 'Balance' },
+      closing: {
         worked: ['Rest', 'Fluids', 'Cooling foods'],
-        limitation: 'Disease is not actually caused by an imbalance of the Four Humours.',
-        verdict: "Patients who rested, drank fluids and ate cooling foods often did recover. To Galen, and to the doctors who followed him, that recovery looked like proof the theory worked, even though the humours had nothing to do with it.",
+        limitation: 'Disease is not actually caused by an imbalance of the four humours.',
+        verdict: 'Patients who rested, drank fluids and ate cooling foods often did recover. To Galen, and to the doctors who followed him, that recovery looked like proof the theory worked, even though the humours had nothing to do with it.',
         church: {
-          image: '/figures/history/medicine/medieval/priest.png',
           heading: 'Supported by the Church',
           body: "Christians believed God created a perfect and balanced body. This matched Galen's ideas, so the Church preserved and promoted his work for centuries.",
         },
