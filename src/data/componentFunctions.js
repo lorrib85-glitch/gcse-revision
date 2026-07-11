@@ -52,6 +52,14 @@ export const SCREEN_TYPE_FUNCTIONS = {
   beforeAfterSlider: { functions: ['teach-comparison'], interaction: 'reveal' },
   collectionExplorer: { functions: ['teach-mechanism'], interaction: 'reveal' },
   flashcards: { functions: ['retrieve'], interaction: 'reveal' },
+  // RevealBlock: tap a prompt card to reveal its answer — no scoring
+  reveal: { functions: ['teach-mechanism'], interaction: 'reveal' },
+  // MisconceptionBlock: tap a wrong statement to reveal why it's wrong — no scoring
+  misconception: { functions: ['exam-technique'], interaction: 'reveal' },
+  // ScarfBlock: expand/collapse mnemonic items (e.g. SCARF for uses of glucose)
+  scarf: { functions: ['teach-mechanism'], interaction: 'reveal' },
+  // QuoteAnalyser: tap through 5 analysis cards on a quote — no scoring
+  quoteAnalyser: { functions: ['teach-mechanism'], interaction: 'reveal' },
 
   // Assessed interactions
   quiz: { functions: ['retrieve'], interaction: 'assessed' },
@@ -80,6 +88,10 @@ export const SCREEN_TYPE_FUNCTIONS = {
   guidedExamResponse: { functions: ['exam-technique'], interaction: 'assessed' },
   examscored: { functions: ['exam-technique'], interaction: 'assessed' },
   spotTheError: { functions: ['exam-technique', 'apply'], interaction: 'assessed' },
+  // BuilderBlock: assemble pieces into slots, checked against an answer
+  builder: { functions: ['apply'], interaction: 'assessed' },
+  // ScenarioBlock: multiple-choice decision game, scored per scenario
+  scenario: { functions: ['apply'], interaction: 'assessed' },
 }
 
 export function getTypeInfo(type) {

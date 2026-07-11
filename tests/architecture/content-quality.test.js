@@ -7,11 +7,43 @@ import {
   isAssessed,
 } from '../../src/data/componentFunctions.js'
 import { MEDICINE_EPISODES } from '../../src/content/history/medicine/index.js'
+import * as mathsFoundations from '../../src/content/maths/foundations/index.js'
+import * as chemChemicalChanges from '../../src/content/chemistry/chemical-changes/index.js'
+import * as chemRatesAndOrganic from '../../src/content/chemistry/rates-and-organic/index.js'
+import * as chemAtmosphere from '../../src/content/chemistry/chemistry-of-the-atmosphere/index.js'
+import * as chemAtomicStructure from '../../src/content/chemistry/atomic-structure/index.js'
+import * as sociologyFamilies from '../../src/content/sociology/families/index.js'
+import * as bioInheritanceEvolution from '../../src/content/biology/inheritance-variation-evolution/index.js'
+import * as bioOrganisation from '../../src/content/biology/organisation/index.js'
+import * as bioHomeostasis from '../../src/content/biology/homeostasis/index.js'
+import * as bioEcology from '../../src/content/biology/ecology/index.js'
+import * as bioCellBiology from '../../src/content/biology/cell-biology/index.js'
+import * as bioInfectionResponse from '../../src/content/biology/infection-and-response/index.js'
+import * as englishMacbeth from '../../src/content/english/macbeth/index.js'
 import {
   fleschKincaidGrade,
   stripExamVocabulary,
   collectLearnerText,
 } from './helpers/readability.js'
+
+// Every other built series lazy-loads via EPISODE_LOADERS/EPISODE_IDS (unlike
+// Medicine's eager MEDICINE_EPISODES array). Resolve them all once here so
+// every describe block below covers every subject, not just History.
+const LAZY_REGISTRIES = [
+  mathsFoundations, chemChemicalChanges, chemRatesAndOrganic, chemAtmosphere,
+  chemAtomicStructure, sociologyFamilies, bioInheritanceEvolution,
+  bioOrganisation, bioHomeostasis, bioEcology, bioCellBiology,
+  bioInfectionResponse, englishMacbeth,
+]
+
+async function loadLazyEpisodes() {
+  const lists = await Promise.all(
+    LAZY_REGISTRIES.map(reg => Promise.all(reg.EPISODE_IDS.map(id => reg.EPISODE_LOADERS[id]()))),
+  )
+  return lists.flat()
+}
+
+const ALL_EPISODES = [...MEDICINE_EPISODES, ...(await loadLazyEpisodes())]
 
 // Every display type used by real content, gathered from screens and their
 // nested blocks. Types inside answer options (e.g. 'weak'/'strong' evidence
@@ -19,7 +51,7 @@ import {
 // screen.type and screen.blocks[].type.
 function collectUsedTypes() {
   const types = new Set()
-  for (const ep of MEDICINE_EPISODES) {
+  for (const ep of ALL_EPISODES) {
     for (const screen of ep.screens ?? []) {
       if (screen.type) types.add(screen.type)
       for (const block of screen.blocks ?? []) {
@@ -114,6 +146,15 @@ describe('Readability helper', () => {
 // for this Lane G test-infrastructure change. It is the natural first case
 // for /content-review once that skill exists — remove it from this set
 // when fixed.
+//
+// This list originally covered History Medicine only, because the test
+// itself only loaded MEDICINE_EPISODES. Once generalised to load every
+// built series (Maths, Sociology, Biology, English), those episodes'
+// existing readability/stageNavigation violations surfaced for the first
+// time here too — grandfathered on the same terms, not fixed as a
+// drive-by. english-macbeth-power-ambition's non-increasing
+// stageNavigation reflects a 1-screen stub carrying a 6-stage skeleton for
+// screens not yet built, not a readability issue.
 const GRANDFATHERED_EPISODES = new Set([
   'history-medicine-medieval-beliefs-causes',
   'history-medicine-black-death',
@@ -127,6 +168,10 @@ const GRANDFATHERED_EPISODES = new Set([
   'history-medicine-modern-medicine',
   'history-medicine-cancer',
   'history-medicine-western-front',
+  'math1', 'math2', 'math3', 'math4', 'math5', 'math6', 'math7', 'math8',
+  'soc1', 'soc2', 'soc3', 'soc4', 'soc6',
+  'bio_building_blocks', 'sci_bio_w1',
+  'english-macbeth-power-ambition',
 ])
 
 const READABILITY_GRADE_CEILING = 7
@@ -186,7 +231,7 @@ function guardrailViolations(ep) {
 }
 
 describe('Content quality floor', () => {
-  for (const ep of MEDICINE_EPISODES) {
+  for (const ep of ALL_EPISODES) {
     if ((ep.screens ?? []).length === 0) continue // stubs are covered by placeholder-module-safety
     it(`${ep.id} meets the quality floor (or is grandfathered)`, () => {
       const violations = guardrailViolations(ep)
@@ -196,7 +241,7 @@ describe('Content quality floor', () => {
   }
 
   it('the floor is real: episode 12 as-built violates it (spec success criterion 4)', () => {
-    const ep12 = MEDICINE_EPISODES.find(e => e.id === 'history-medicine-modern-medicine')
+    const ep12 = ALL_EPISODES.find(e => e.id === 'history-medicine-modern-medicine')
     expect(guardrailViolations(ep12).length).toBeGreaterThan(0)
   })
 })
@@ -285,10 +330,11 @@ const SENTENCE_CASE_GRANDFATHERED_EPISODES = new Set([
   'history-medicine-modern-medicine',
   'history-medicine-cancer',
   'history-medicine-western-front',
+  'math8', 'soc2', 'soc3', 'soc4', 'soc6', 'bio_building_blocks', 'sci_bio_w1',
 ])
 
 describe('Sentence-case guard', () => {
-  for (const ep of MEDICINE_EPISODES) {
+  for (const ep of ALL_EPISODES) {
     if ((ep.screens ?? []).length === 0) continue
     it(`${ep.id} uses sentence case in label/title/heading/sub (or is grandfathered)`, () => {
       const violations = sentenceCaseViolations(ep)
