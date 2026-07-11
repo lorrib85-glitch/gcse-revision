@@ -291,15 +291,20 @@ const wp = makeWeakPoint({ subject: 'Biology', timesFailed: 5 })
 
 **View Coverage:**
 ```bash
-npm run test -- --coverage
+pnpm test -- run --coverage
 ```
 
 **Coverage Tool:** `@vitest/coverage-v8`
 
-**Current Status:** 
-- Architecture tests: ~30 assertions covering critical codebase patterns
-- Unit tests: ~1000+ assertions covering pure logic functions
-- Browser tests: Storybook stories (interaction validation only, not coverage metrics)
+**Current Status:**
+- Architecture tests: cover critical codebase patterns (module metadata
+  integrity, learning-graph purity, locked-component registry sync,
+  verification-gate presence, storage boundary, and more) — run
+  `pnpm test:architecture` for the current count, it grows with the codebase
+- Unit tests: cover pure logic functions (planner, weakness tracking,
+  progress sync, quickfire) — run `pnpm test:unit` for the current count
+- Browser tests: Storybook stories (interaction validation only, not
+  coverage metrics) — run `pnpm test:storybook` for the current count
 - No minimum coverage threshold; focus on testing critical logic (planner, weakness tracking, learning graph)
 
 ## Test Types

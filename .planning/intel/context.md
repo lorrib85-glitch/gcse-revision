@@ -118,7 +118,7 @@ Decision capture rule: whenever implementation introduces a new reusable compone
 
 Branching policy: all work commits directly to main, pushed immediately. No feature branches or PRs unless explicitly requested. GSD git.branching_strategy: "none".
 
-CI pipeline (.github/workflows/ci.yml): runs npm ci, npm run lint, npm run build on every push/PR to main. Does not run npm test or Playwright. Run lint and build locally before pushing.
+CI pipeline (.github/workflows/ci.yml): two jobs on every push/PR to main. `verify` runs `pnpm install --frozen-lockfile`, then `pnpm lint`, `pnpm test:architecture`, `pnpm test:unit`, `pnpm test:storybook` (Playwright/Chromium), and `pnpm build` — mirrors the local `pnpm verify` command. `firestore-rules` runs `pnpm test:rules` against the Firestore emulator (no live Firebase, no production credentials). Run `pnpm verify` locally before pushing.
 
 Context Loading Policy: load CLAUDE.md, DEVELOPMENT_WORKFLOW.md, directly relevant canonical docs, and files being modified. Do not read large documentation trees unless required by the pipeline.
 
