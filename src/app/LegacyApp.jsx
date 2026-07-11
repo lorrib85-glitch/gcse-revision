@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { MODULE_CONTENT_LOADERS } from '../content/moduleContentRegistry.js'
+import { MODULES } from '../modules.js'
 import { useAuth } from '../auth/useAuth.js'
 import { getProgress, recordActivity, getModuleState as safeGetModuleState, saveModuleState, getContinueModule } from '../progress.js'
 import { buildChapterCompletePayload, prepareModuleScreenState, resolveTaskDestination } from './moduleNavigation.js'
@@ -382,6 +383,23 @@ export default function App() {
   function openModule(mod, screenIndex) {
     openModulePlayer(mod, screenIndex)
   }
+
+  // Dev-only render-pass tooling (docs/superpowers/plans/2026-07-06-content-quality-framework.md,
+  // Task P6): ?module=<id>&screen=<n> opens a module straight to a given screen so content-review
+  // can screenshot any screen without scripting through everything before it. Production ignores it.
+  useEffect(() => {
+    if (!import.meta.env.DEV) return
+    if (!user?.loggedIn || !user?.onboardingComplete) return
+    const params = new URLSearchParams(window.location.search)
+    const moduleId = params.get('module')
+    const screenParam = params.get('screen')
+    if (!moduleId) return
+    const mod = MODULES.find(m => m.id === moduleId)
+    if (!mod) return
+    const screenIndex = screenParam !== null ? Number(screenParam) : undefined
+    openModulePlayer(mod, Number.isNaN(screenIndex) ? undefined : screenIndex)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.loggedIn, user?.onboardingComplete])
 
   // Centralised quickfire starter — prefer this over calling setTab('quickfire') directly
   function startQuickfire(origin = 'pulse') {
