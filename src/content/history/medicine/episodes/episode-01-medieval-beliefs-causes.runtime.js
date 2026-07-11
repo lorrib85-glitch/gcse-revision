@@ -27,7 +27,6 @@ const galenCinematicIntro = {
 }
 
 const fourHumoursRevealConfig = {
-  intro: 'Watch the four humours build into one system.',
   interval: 1500,
   images: {
     topLeft: '/figures/history/medicine/medieval/four-humours-blood.webp',
@@ -44,7 +43,7 @@ const fourHumoursRevealConfig = {
     ['topLeft', 'bottomRight'],
     ['topRight', 'bottomLeft'],
   ],
-  finished: 'Each humour has an opposite — hot cancels cold, wet cancels dry.',
+  finished: 'Hot was treated with cold. Wet was treated with dry. The aim was to restore balance.',
 }
 
 function upgradeTheoryOfOppositesScreen(screen) {
@@ -52,6 +51,8 @@ function upgradeTheoryOfOppositesScreen(screen) {
 
   return {
     ...screen,
+    heading: 'Galen treated with opposites',
+    sub: "Galen took Hippocrates' theory of the Four Humours one step further. He believed illness happened when one humour became too dominant — so treatment should use the opposite qualities to restore balance.",
     blocks: (screen.blocks || []).map(block => (
       block.type === 'mediaPlaceholder'
         ? {
