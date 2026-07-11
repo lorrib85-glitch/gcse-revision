@@ -124,6 +124,10 @@ export default function TimelineCanvas({ block, subject = 'History', onContinue 
 
   // Draw each connector line in (and light up its dot) as the pan position
   // moves across it, and hide the swipe hint for good once panning begins.
+  // `segments` isn't a dependency: it's a fresh array built every render
+  // from `centers`/`steps`, so it's never referentially stable — listing it
+  // would re-run this DOM-writing effect on every render instead of only
+  // when the step count or canvas width actually changes.
   useLayoutEffect(() => {
     const scroller = scrollerRef.current
     if (!scroller || segments.length === 0) return

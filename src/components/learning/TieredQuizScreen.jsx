@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState } from 'react'
 import UnifiedQuestionScreen from './UnifiedQuestionScreen.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'

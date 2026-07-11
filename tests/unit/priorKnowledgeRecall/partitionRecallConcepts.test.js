@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { partitionRecallConcepts } from '../../../src/components/learning/PriorKnowledgeRecall.jsx'
+import { partitionRecallConcepts } from '../../../src/components/learning/partitionRecallConcepts.js'
 
 describe('partitionRecallConcepts', () => {
   it('puts every concept in missing and none in recalled when all scores are below 0.7', () => {

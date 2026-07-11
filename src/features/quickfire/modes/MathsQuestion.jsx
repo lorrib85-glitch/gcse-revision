@@ -5,7 +5,7 @@ import { recordScore } from '../../../progress.js'
 import BackButton from '../../../components/core/BackButton.jsx'
 import ContinueCTA from '../../../components/core/ContinueCTA.jsx'
 import { gradeWithAI, cleanQuestionText, GRADE_COLOURS } from '../utils.js'
-import { useTestData } from '../testDataContext.jsx'
+import { useTestData } from '../useTestData.js'
 import { FormulaSheet } from '../components/FormulaSheet.jsx'
 
 function MathsDiagram({ diagramKey }) {
@@ -81,7 +81,7 @@ export function MathsQuestion({ q, qIdx, total, topicLabel, topicColor, isCalc, 
           source: 'test',
         })
       }
-    } catch (e) {
+    } catch {
       setError('Could not reach the grading server. Check your connection and try again.')
     } finally {
       setGrading(false)

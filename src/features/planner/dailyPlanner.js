@@ -979,7 +979,7 @@ export function buildDailyPlan(userProfile, learningState, date = new Date(), op
 // activity: { type, progressPercent, timeSpent, subject, incomplete, assessmentLinked }
 
 export function classifyIncompleteWork(activity) {
-  const { type, progressPercent = 0, timeSpent = 0, subject, incomplete, assessmentLinked } = activity
+  const { type, progressPercent = 0, subject, incomplete, assessmentLinked } = activity
 
   if (type === 'mainProgress' || type === 'moduleProgress') {
     if (progressPercent >= 35) return 'resume_next'

@@ -4,15 +4,6 @@ import { TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 
-function CheckIcon({ color }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-      stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>
-  )
-}
-
 // ── AnswerInteraction v1 — LOCKED COMPONENT ────────────────────────────────────
 // Reusable answer submission and feedback component for all non-timed learning activities.
 // EXEMPT: True/False questions (use existing ChapterHookScreen design).

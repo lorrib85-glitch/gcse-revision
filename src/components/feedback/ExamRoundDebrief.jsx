@@ -60,7 +60,7 @@ export default function ExamRoundDebrief({ subject, results }) {
             })
           }
         }
-      } catch (e) {
+      } catch {
         if (!cancelled) setError('Could not load the debrief — check your connection and try again.')
       } finally {
         if (!cancelled) setLoading(false)

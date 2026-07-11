@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 // CinematicShell used here because full-bleed background imagery and the global
@@ -37,7 +37,9 @@ function injectStyles() {
 export default function VisualLearning({ block, subject, onComplete }) {
   injectStyles()
 
-  const scenes  = block?.scenes  || []
+  // Memoized so the `|| []` fallback doesn't create a new array identity on
+  // every render, which would re-fire the preload effect below needlessly.
+  const scenes = useMemo(() => block?.scenes || [], [block?.scenes])
   const palette    = SUBJECTS[subject] || SUBJECTS.History
   const accent     = palette.accent    || '#C89B6D'
   const accentRgb  = palette.accentRgb || '200,155,60'

@@ -45,9 +45,10 @@ export default function UnifiedQuestionScreen({
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => setEntered(true))
+    const timers = timersRef.current
     return () => {
       cancelAnimationFrame(raf)
-      timersRef.current.forEach(clearTimeout)
+      timers.forEach(clearTimeout)
     }
   }, [])
 

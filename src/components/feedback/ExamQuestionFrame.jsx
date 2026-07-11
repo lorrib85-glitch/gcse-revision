@@ -136,7 +136,7 @@ export default function ExamQuestionFrame({ block, subject, mode = 'practice', q
           examinerTip: data.examinerTip || null,
         })
       }
-    } catch (e) {
+    } catch {
       setError('Could not reach the grading server. Check your connection and try again.')
     } finally {
       setGrading(false)

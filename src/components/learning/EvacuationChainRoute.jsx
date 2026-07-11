@@ -3,7 +3,6 @@ import { MOTION } from '../../constants/motion.js'
 import { logWrongAnswer, logCorrectAnswer } from '../../unifiedWeaknessTracker.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import CinematicShell from '../layout/CinematicShell.jsx'
-import { TYPE } from '../../constants/typography.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 
 const BRONZE = SUBJECTS.History.accent

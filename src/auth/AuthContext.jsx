@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   signInWithGoogle as authSignIn,
   signOutGoogle,
@@ -9,8 +9,7 @@ import {
 import { syncProgressForUser, backupProgressForUser } from '../data/progressSync/progressSync.js'
 import { claimGuestProgressForUser, finalizeGuestClaim, markGuestClaimFailed } from '../data/progressSync/accountScope.js'
 import { setActiveScope, scopeForUser, GUEST_SCOPE } from '../lib/storage.js'
-
-const AuthContext = createContext(null)
+import { AuthContext } from './authContextObject.js'
 
 export function AuthProvider({ children }) {
   const [user, setUser]             = useState(() => getStoredUser())
@@ -233,8 +232,3 @@ export function AuthProvider({ children }) {
   )
 }
 
-export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider')
-  return ctx
-}

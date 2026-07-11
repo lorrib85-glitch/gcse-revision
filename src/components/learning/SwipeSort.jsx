@@ -189,7 +189,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
     setDragging(false)
     if (dragSide !== null) commitChoice(dragSide)
     else setDragX(0)
-  }, [dragging, dragSide])
+  }, [dragging, dragSide, commitChoice])
 
   const onMouseDown = e => {
     if (locked.current) return

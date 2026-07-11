@@ -4,7 +4,6 @@ import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import BackButton from '../core/BackButton.jsx'
-import { TYPE } from '../../constants/typography.js'
 
 let _wsrStyled = false
 function ensureStyles() {

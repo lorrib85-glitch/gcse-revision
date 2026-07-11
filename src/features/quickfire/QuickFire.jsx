@@ -7,13 +7,14 @@ import { recordScore } from '../../progress.js'
 import { StreakChip } from '../home/StreakChip.jsx'
 import BackButton from '../../components/core/BackButton.jsx'
 import ContinueCTA from '../../components/core/ContinueCTA.jsx'
-import { QuickFireMode, readQfBest } from './modes/QuickFireMode.jsx'
+import { QuickFireMode } from './modes/QuickFireMode.jsx'
 import { TopicPracticeMode } from './modes/TopicPracticeMode.jsx'
 import { gradeWithAI, GRADE_COLOURS } from './utils.js'
-import { useTestData } from './testDataContext.jsx'
+import { useTestData } from './useTestData.js'
 import { MathsBrowser } from './modes/MathsBrowser.jsx'
 import { MathsQuestion } from './modes/MathsQuestion.jsx'
-import { ExamMode, TEST_TOPICS } from './modes/ExamMode.jsx'
+import { ExamMode } from './modes/ExamMode.jsx'
+import { TEST_TOPICS } from '../../data/examTestTopics.js'
 
 export { TestDataProvider } from './testDataContext.jsx'
 
@@ -614,6 +615,4 @@ function TestTab({ mode = 'test', onOpenModule, onExit, onOpenPulse, autoStart =
     </div>
   )
 }
-
-export { readQfBest }
 export default TestTab

@@ -11,8 +11,8 @@ import { logWrongAnswer } from '../../unifiedWeaknessTracker.js'
 import BackButton from '../core/BackButton.jsx'
 import ExitButton from '../core/ExitButton.jsx'
 import CircularTimer from '../core/CircularTimer.jsx'
+import { partitionRecallConcepts } from './partitionRecallConcepts.js'
 
-const SCORE_RECALLED = 0.7
 const SCORE_PARTIAL = 0.3
 const RECALL_DURATION = 3 * 60
 const SUCCESS_RGB = '117,220,208'
@@ -29,13 +29,6 @@ function lerpColor(rgbA, rgbB, t) {
   const a = rgbA.split(',').map(Number)
   const b = rgbB.split(',').map(Number)
   return a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',')
-}
-
-export function partitionRecallConcepts(concepts, threshold = SCORE_RECALLED) {
-  return {
-    recalled: concepts.filter(c => c.score >= threshold),
-    missing: concepts.filter(c => c.score < threshold),
-  }
 }
 
 function getRecallTopic(block) {

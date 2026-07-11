@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { BUTTONS } from '../../constants/buttons.js'
-import { TYPE } from '../../constants/typography.js'
 
 // ── ContinueCTA v1 — LOCKED COMPONENT ─────────────────────────────────────
 // The only Primary Progression CTA implementation allowed anywhere in the

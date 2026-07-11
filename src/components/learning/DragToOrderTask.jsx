@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { MOTION } from '../../constants/motion.js'
 import { SPACING } from '../../constants/spacing.js'
@@ -16,7 +16,6 @@ export default function DragToOrderTask({
 }) {
   const subjectData = SUBJECTS[subject] || SUBJECTS.History
   const accent = subjectData.accent
-  const rgb = subjectData.accentRgb
 
   const [currentOrder, setCurrentOrder] = useState(items.map(item => item.id))
   const [draggedItem, setDraggedItem] = useState(null)

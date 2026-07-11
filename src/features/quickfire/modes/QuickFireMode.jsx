@@ -13,6 +13,7 @@ import { selectQuickFireQueue } from '../logic/quickFireSelector.js'
 import { ALL_MODULE_QUICKFIRE_QUESTIONS } from '../../../data/questionBanks/questionRegistry.js'
 import { recordQuestionResult } from '../logic/masteryRecorder.js'
 import { readQuickFireMemory, bumpQuickFireMemoryForAnswer, bucketAccuracy } from '../logic/quickFireMemory.js'
+import { saveQfBestIfBeaten } from '../logic/quickFireBest.js'
 import AnimatedNumber from '../../../components/core/AnimatedNumber.jsx'
 import BackButton from '../../../components/core/BackButton.jsx'
 import QuickFireQuestionScreen from '../components/QuickFireQuestionScreen.jsx'
@@ -24,7 +25,6 @@ export const QUICK_FIRE_SECONDS = 90
 const QUICK_FIRE_BANK_TYPES = new Set(['mcq', 'truefalse', 'fillgap'])
 const QF_QUESTION_HISTORY_KEY = 'gcse_qf_q_history'
 const QF_PREV_SESSION_KEY = 'gcse_qf_prev_session'
-const QF_BEST_KEY = 'gcse_qf_best'
 
 // ─── Question bank ────────────────────────────────────────────────────────────
 
@@ -186,17 +186,6 @@ function saveQfPrevSession(accuracy, answered) {
   setJson(QF_PREV_SESSION_KEY, { accuracy, answered, date: new Date().toISOString() })
 }
 
-export function readQfBest() {
-  return getJson(QF_BEST_KEY, null)
-}
-
-function saveQfBestIfBeaten(correct, answered) {
-  const best = readQfBest()
-  if (!best || correct > best.correct) {
-    setJson(QF_BEST_KEY, { correct, answered, date: new Date().toISOString() })
-  }
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 // Owns the full 90-second Quick Fire session: countdown → questions → summary.
@@ -207,7 +196,6 @@ export function QuickFireMode({ onExit }) {
   const [qIdx, setQIdx] = useState(0)
   const [quickFireTimeLeft, setQuickFireTimeLeft] = useState(QUICK_FIRE_SECONDS)
   const [quickFireActive, setQuickFireActive] = useState(false)
-  const [quickFireFinished, setQuickFireFinished] = useState(false)
   const [quickFireStats, setQuickFireStats] = useState(() => emptyQuickFireStats())
   const [quickFireQuestionSet, setQuickFireQuestionSet] = useState(() => prioritizedQuickFireQuestions())
   const [quickFireSummary, setQuickFireSummary] = useState(null)
@@ -238,7 +226,6 @@ export function QuickFireMode({ onExit }) {
   useEffect(() => {
     if (!quickFireActive || quickFireTimeLeft > 0) return
     setQuickFireActive(false)
-    setQuickFireFinished(true)
     finishRound('time')
   }, [quickFireActive, quickFireTimeLeft]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -246,7 +233,6 @@ export function QuickFireMode({ onExit }) {
     setQIdx(0)
     setQuickFireTimeLeft(QUICK_FIRE_SECONDS)
     setQuickFireActive(false)
-    setQuickFireFinished(true)
     setQuickFireStats(emptyQuickFireStats())
     setQuickFireQuestionSet(prioritizedQuickFireQuestions())
     setQuickFireSummary(null)
@@ -256,7 +242,6 @@ export function QuickFireMode({ onExit }) {
 
   function finishRound(reason = 'exit') {
     setQuickFireActive(false)
-    setQuickFireFinished(true)
     // Ranking memory was already updated per-answer as the round was played
     // (bumpQuickFireMemoryForAnswer in onAnswer below) — read-only here, so
     // finishRound firing more than once (or the summary re-rendering after

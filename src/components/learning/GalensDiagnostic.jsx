@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
-import { TYPE } from '../../constants/typography.js'
 
 const SUBJECT_BACKING_IMAGES = {
   History:   '/headers/history-medicine-through-time.webp',
@@ -241,7 +240,7 @@ export default function GalensDiagnostic({ block, subject, onContinue }) {
     const delay = Math.max(selected.size * 180 + 480, 900)
     const tid = setTimeout(advance, delay)
     return () => clearTimeout(tid)
-  }, [beat])
+  }, [beat, selected.size])
 
   // Beat 2 → spin then auto-advance
   useEffect(() => {

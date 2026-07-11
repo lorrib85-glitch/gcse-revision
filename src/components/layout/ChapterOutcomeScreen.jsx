@@ -88,7 +88,7 @@ export default function ChapterOutcomeScreen({
     )
     const ctaTimer = setTimeout(() => setShowCTA(true), 480 + outcomes.length * 400 + 420)
     return () => { timers.forEach(clearTimeout); clearTimeout(ctaTimer) }
-  }, [outcomes.length])
+  }, [outcomes])
 
   // Pulse the icon of each item as it arrives, then settle
   useEffect(() => {

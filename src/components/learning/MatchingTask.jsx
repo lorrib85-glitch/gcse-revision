@@ -78,7 +78,11 @@ export default function MatchingTask({ screen, subject, onComplete }) {
   const isLastRound  = roundIdx === rounds.length - 1
   const roundComplete = currentRound.length > 0 && currentRound.every(p => lockedPairIds.includes(p.id))
 
-  // Reset on round change
+  // Reset on round change. `currentRound` isn't a dependency: it's a fresh
+  // slice of `rounds` recomputed every render from `roundIdx` + the stable
+  // `allPairs` prop, so it would never be referentially equal across
+  // renders — listing it here would re-run this effect (and reset state)
+  // on every render instead of only on an actual round change.
   useEffect(() => {
     setShuffledAnswers(shuffle(currentRound.map(p => ({ id: p.id, text: p.answer }))))
     setLockedPairIds([])

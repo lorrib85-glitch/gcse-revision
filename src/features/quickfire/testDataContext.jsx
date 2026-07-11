@@ -1,7 +1,5 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-
-export const TestDataContext = createContext(null)
-export function useTestData() { return useContext(TestDataContext) }
+import { useEffect, useState } from 'react'
+import { TestDataContext } from './testDataContextObject.js'
 
 export function TestDataProvider({ children }) {
   const [data, setData] = useState(null)

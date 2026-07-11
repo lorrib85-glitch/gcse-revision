@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
-import { TYPE } from '../../constants/typography.js'
 
 let _erStyled = false
 function ensureStyles() {

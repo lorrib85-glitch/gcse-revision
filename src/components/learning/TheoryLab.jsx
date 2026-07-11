@@ -323,7 +323,7 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
         </div>
 
         <div style={{ marginBottom: SPACING.separation }}>
-          {symptoms.slice(0, revealed).map((symptom, i) => (
+          {symptoms.slice(0, revealed).map((symptom) => (
             <div
               key={symptom}
               style={{

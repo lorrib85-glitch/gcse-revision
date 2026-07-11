@@ -4,7 +4,7 @@ import { GENERAL } from '../../constants/generalTheme.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { BUTTONS } from '../../constants/buttons.js'
-import { useAuth } from '../../auth/AuthContext.jsx'
+import { useAuth } from '../../auth/useAuth.js'
 import { getProgressStatusText } from '../../auth/progressStatus.js'
 import { buildTodaysPlan, getNextPlannerItem, getTaskSubject } from '../../todaysPlan.js'
 import { StreakChip } from './StreakChip.jsx'
@@ -492,10 +492,15 @@ export default function Home({ onSelectTask, onReviewProgress }) {
   const [accountOpen, setAccountOpen] = useState(false)
 
   // Home renders first; the celebration (if any) mounts on top a moment
-  // later rather than blocking the initial paint.
+  // later rather than blocking the initial paint. Deliberately mount-only
+  // ([] deps, not [streak]): shouldShowStreakCelebration is already gated
+  // to once per calendar day via storage, and this is meant to be an
+  // arrival check, not something that re-fires as streak changes within
+  // the session from other Home re-renders.
   const [showStreakCelebration, setShowStreakCelebration] = useState(false)
   useEffect(() => {
     if (shouldShowStreakCelebration(streak)) setShowStreakCelebration(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only check, see comment above
   }, [])
 
   return (
