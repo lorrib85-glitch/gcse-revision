@@ -38,7 +38,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
     {
       id: 'part-3',
       title: 'Why Galen Ruled the Room',
-      screenRange: [7, 10],
+      screenRange: [7, 9],
       conceptTags: [
         'history:medicine:galen',
         'history:medicine:four-humours',
@@ -49,7 +49,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
     {
       id: 'part-4',
       title: 'The Medieval Treatment Toolkit',
-      screenRange: [11, 23],
+      screenRange: [10, 22],
       conceptTags: [
         'history:medicine:physicians',
         'history:medicine:barber-surgeons',
@@ -68,7 +68,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
     {
       id: 'part-5',
       title: 'Why the System Survived',
-      screenRange: [24, 26],
+      screenRange: [23, 25],
       conceptTags: [
         'history:medicine:galen',
         'history:medicine:church-authority',
@@ -78,7 +78,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
     {
       id: 'part-6',
       title: 'Exam Prep: Explain the Grip of Galen',
-      screenRange: [27, null],
+      screenRange: [26, null],
       conceptTags: [
         'history:medicine:galen',
         'history:medicine:church-authority',
@@ -177,8 +177,8 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
     },
     {
       screenIndex: 9,
-      label: 'Think Like Galen',
-      purpose: 'Applies Galen\'s Theory of Opposites to diagnosis and treatment decisions.',
+      label: 'Symptom to treatment',
+      purpose: 'Applies the Theory of Opposites end to end: teaches hot, cold, wet and dry through example symptoms, walks one patient case, asks the learner to diagnose the dominant quadrant and choose a treatment, then closes with the opposite-quality recall and the Church\'s role in the theory\'s survival.',
       conceptTags: [
         'history:medicine:galen',
         'history:medicine:theory-of-opposites',
@@ -188,18 +188,6 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
     },
     {
       screenIndex: 10,
-      label: 'Retrieval',
-      purpose: 'Checks Theory of Opposites, the humour-quality mapping, religious explanations and why Galen stayed influential.',
-      conceptTags: [
-        'history:medicine:galen',
-        'history:medicine:theory-of-opposites',
-        'history:medicine:four-humours',
-        'history:medicine:god-punishment',
-        'history:medicine:church-authority',
-      ],
-    },
-    {
-      screenIndex: 11,
       label: 'England, 1250',
       purpose: 'Explains why old ideas survived: Church influence, book learning and limited dissection.',
       conceptTags: [
@@ -209,7 +197,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 12,
+      screenIndex: 11,
       label: 'Choose Your Healer',
       purpose: 'Compares physicians, barber surgeons, apothecaries, home care and priests.',
       conceptTags: [
@@ -222,7 +210,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 13,
+      screenIndex: 12,
       label: 'Miasma — The Poisoned Air Theory',
       purpose: 'Teaches miasma and contrasts bad-air explanations with later germ theory.',
       conceptTags: [
@@ -233,7 +221,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 14,
+      screenIndex: 13,
       label: 'Diagnose Like It\'s 1340',
       purpose: 'Teaches astrology and the Zodiac Man as mainstream learned medical diagnosis.',
       conceptTags: [
@@ -243,7 +231,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 15,
+      screenIndex: 14,
       label: 'Causes of illness',
       purpose: 'Bridge screen connecting medieval explanations to treatments.',
       conceptTags: [
@@ -254,7 +242,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 16,
+      screenIndex: 15,
       label: 'The colour of your illness',
       purpose: 'Teaches uroscopy as a humoural diagnostic method.',
       conceptTags: [
@@ -267,7 +255,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 17,
+      screenIndex: 16,
       label: 'What caused illness?',
       purpose: 'Contrasts God and sin, Four Humours and astrology, with associated treatments.',
       conceptTags: [
@@ -282,7 +270,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 18,
+      screenIndex: 17,
       label: 'Knowledge check',
       purpose: 'Retrieval check for key medieval medicine terms.',
       conceptTags: [
@@ -298,7 +286,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 19,
+      screenIndex: 18,
       label: 'Staying Well in 1400',
       purpose: 'Teaches prevention through humours, miasma, clean water and uneven town provision.',
       conceptTags: [
@@ -308,7 +296,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 20,
+      screenIndex: 19,
       label: 'Whose job was it to stay healthy?',
       purpose: 'Sorts medieval prevention between government/town action and individual responsibility.',
       conceptTags: [
@@ -318,7 +306,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 21,
+      screenIndex: 20,
       label: 'A Walk Through Medieval London',
       purpose: 'Teaches medieval hospitals, religious care, Lazar Houses and endowments.',
       conceptTags: [
@@ -328,7 +316,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 22,
+      screenIndex: 21,
       label: 'How John Bradmore saved a prince',
       purpose: 'Shows practical medieval surgery and wartime experience before germ theory.',
       conceptTags: [
@@ -338,7 +326,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 23,
+      screenIndex: 22,
       label: 'Words from a medieval medicine chest',
       purpose: 'Retrieval check for medieval practitioners, hospital terms and public health terms.',
       conceptTags: [
@@ -349,7 +337,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 24,
+      screenIndex: 23,
       label: 'Supernatural vs Natural Causes',
       purpose: 'Sorts medieval causes and treatments into rational (Hippocrates/Galen — humours, miasma, bloodletting) versus supernatural (Church — prayer, pilgrimage, astrology).',
       conceptTags: [
@@ -365,7 +353,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 25,
+      screenIndex: 24,
       label: 'Retrieval',
       purpose: 'Retrieval check on urine diagnosis, practitioners and herbal care, and religious treatment (shrines and pilgrimage).',
       conceptTags: [
@@ -381,7 +369,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 26,
+      screenIndex: 25,
       label: 'Fill the Medieval Logic Gap',
       purpose: 'Retrieval of the Four Humours: an imbalance of the humours was believed to cause illness; balance meant health.',
       conceptTags: [
@@ -389,7 +377,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 27,
+      screenIndex: 26,
       label: 'Exam prep: what the examiner rewards',
       purpose: 'Exam technique — use the exact terms, explain the medieval logic, link cause to treatment (Galen: imbalance → bloodletting) and address why the ideas persisted.',
       conceptTags: [
@@ -403,7 +391,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 28,
+      screenIndex: 27,
       label: 'Face the Examiner',
       purpose: '8-mark practice on how religion influenced medieval treatment — Church-run hospitals, illness as God\'s punishment for sin, prayer and pilgrimage.',
       conceptTags: [
@@ -417,7 +405,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 29,
+      screenIndex: 28,
       label: 'Who Said What?',
       purpose: 'Retrieval linking Hippocrates (Four Humours) and Galen (Theory of Opposites) as the trusted ancient authorities of medieval medicine.',
       conceptTags: [
@@ -429,7 +417,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 30,
+      screenIndex: 29,
       label: 'Three statements. Look closely.',
       purpose: 'Misconception check: Hippocrates vs Galen (who owns which theory), hospitals as care-not-cure, and why bloodletting and purging appeared to work.',
       conceptTags: [
@@ -444,7 +432,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 31,
+      screenIndex: 30,
       label: 'So How Much Actually Changed?',
       purpose: 'Synthesis of why medieval ideas survived ~1,000 years — Church authority over Galen and banned dissection — while surgery advanced outside the universities (John Bradmore).',
       conceptTags: [
@@ -460,7 +448,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 32,
+      screenIndex: 31,
       label: 'Write the big essay',
       purpose: '16-mark judgement on whether the Church was the main reason for little change, weighing Church control (Galen-only training, banned dissection) against other factors.',
       conceptTags: [
@@ -471,7 +459,7 @@ export const HISTORY_MEDICINE_EPISODE_01_SUPPORT = {
       ],
     },
     {
-      screenIndex: 33,
+      screenIndex: 32,
       label: 'The web of medieval belief',
       purpose: 'Consolidation map connecting all medieval explanations of illness — God and sin, astrology, the Four Humours, miasma and Galen\'s Church-backed authority.',
       conceptTags: [
