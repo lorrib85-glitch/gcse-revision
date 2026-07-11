@@ -22,7 +22,7 @@ export const Gold = {
       qualities: [
         { quality: 'hot', symptoms: ['Fever', 'Red face', 'Flushed skin'] },
         { quality: 'cold', symptoms: ['Pale skin', 'Chills', 'Shivering'] },
-        { quality: 'wet', symptoms: ['Sweating', 'Runny nose', 'Watery eyes'] },
+        { quality: 'wet', symptoms: ['Sweating', 'Runny nose', 'Watery eyes', 'Phlegm'] },
         { quality: 'dry', symptoms: ['Cracked lips', 'Dry cough', 'Thirst'] },
       ],
       patient: {

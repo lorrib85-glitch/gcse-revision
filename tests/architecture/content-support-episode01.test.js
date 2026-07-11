@@ -54,7 +54,7 @@ describe('Episode 1 support map — forward integrity', () => {
     }
   })
 
-  it('stageRanges collectively cover every screen (0–33)', () => {
+  it('stageRanges collectively cover every screen (0–32)', () => {
     const covered = new Set()
     for (const r of SUPPORT.stageRanges) {
       const [start, end] = r.screenRange
@@ -79,7 +79,7 @@ describe('Episode 1 concept-support — derived reverse index', () => {
     }
   })
 
-  it('includes screens from parts 5–6 (now that screens 24–33 are mapped)', () => {
+  it('includes screens from parts 5–6 (now that screens 24–32 are mapped)', () => {
     // The exam-prep / synthesis screens are 24+. At least one concept must now
     // resolve to a revisit screen in that range, and the factors-in-change
     // synthesis concept in particular must reach the exam-prep screens.

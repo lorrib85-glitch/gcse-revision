@@ -86,7 +86,9 @@ closing with the Church's role in the theory's 1,400-year survival.
 
 ## 9. Review checks
 
-- ⚙ Uses tokens, not raw values.
+- ⚙ Solid colours use tokens (`CINEMATIC_LAB`, `SUBJECTS`); the cream text's
+  opacity variants and neutral surface tints remain raw `rgba(...)`
+  literals, consistent with this genre's established convention.
 - 👁 No decorative uppercase / no `TYPE.eyebrow` anywhere.
 - 👁 Exactly one patient case; exactly 4 quality beats; exactly 4 quadrant
   options.

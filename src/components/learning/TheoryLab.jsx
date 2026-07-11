@@ -336,8 +336,8 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
               }}
             >
               <div style={{
-                width: 5,
-                height: 5,
+                width: CINEMATIC_LAB.dotSize,
+                height: CINEMATIC_LAB.dotSize,
                 borderRadius: '50%',
                 background: accent,
                 flexShrink: 0,
@@ -405,7 +405,7 @@ function ScenarioStage({ block, accent, rgb, onNext }) {
                       cursor: 'pointer',
                       textAlign: 'center',
                       lineHeight: 1.3,
-                      minHeight: 52,
+                      minHeight: CINEMATIC_LAB.optionMinHeight,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',

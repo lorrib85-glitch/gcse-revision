@@ -293,16 +293,27 @@ function DiagnosisBeat({ diagnosis, accent, onNext }) {
   )
 }
 
-// Treatment multiple-choice question — one correct answer, feedback
-// explains the reasoning. Bespoke choice UI, same rationale as QuadrantBeat.
+// Treatment multiple-choice question — one correct answer. A wrong pick
+// shows only that option's own explanation as a hint (never revealing
+// which option is correct) and resets on "Try again" — a genuine retry,
+// matching QuadrantBeat's hide-and-retry pattern. Bespoke choice UI, same
+// rationale as QuadrantBeat.
 function TreatmentBeat({ question, options, accent, rgb, onNext }) {
   const [selected, setSelected] = useState(null)
-  const answered = selected !== null
-  const chosen = answered ? options[selected] : null
+  const [shaking, setShaking] = useState(false)
+
+  const chosen = selected !== null ? options[selected] : null
 
   function handleSelect(idx) {
-    if (answered) return
+    if (selected !== null) return
+    const opt = options[idx]
     setSelected(idx)
+    if (!opt.correct) setShaking(true)
+  }
+
+  function retry() {
+    setSelected(null)
+    setShaking(false)
   }
 
   return (
@@ -319,23 +330,23 @@ function TreatmentBeat({ question, options, accent, rgb, onNext }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.compact, marginBottom: SPACING.standard }}>
           {options.map((opt, i) => {
             const isSelected = selected === i
-            const isCorrect = opt.correct
-            const revealState = answered && isCorrect
-            const revealWrong = answered && isSelected && !isCorrect
+            const isWrong = isSelected && !opt.correct
+            const isRevealedCorrect = isSelected && opt.correct
             return (
               <button
                 key={opt.label}
                 onClick={() => handleSelect(i)}
-                disabled={answered}
+                disabled={selected !== null}
                 style={{
                   padding: `${SPACING.compact}px`,
                   textAlign: 'left',
-                  background: revealState ? `rgba(${rgb}, 0.14)` : revealWrong ? CINEMATIC_LAB.wrongBg : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${revealState ? `rgba(${rgb}, 0.55)` : revealWrong ? CINEMATIC_LAB.wrongBorder : 'rgba(255,255,255,0.1)'}`,
+                  background: isRevealedCorrect ? `rgba(${rgb}, 0.14)` : isWrong ? CINEMATIC_LAB.wrongBg : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${isRevealedCorrect ? `rgba(${rgb}, 0.55)` : isWrong ? CINEMATIC_LAB.wrongBorder : 'rgba(255,255,255,0.1)'}`,
                   borderRadius: RADII.small,
-                  color: revealState ? accent : revealWrong ? CINEMATIC_LAB.wrongText : 'rgba(240,230,200,0.75)',
+                  color: isRevealedCorrect ? accent : isWrong ? CINEMATIC_LAB.wrongText : 'rgba(240,230,200,0.75)',
                   ...TYPE.bodyStrong,
-                  cursor: answered ? 'default' : 'pointer',
+                  cursor: selected !== null ? 'default' : 'pointer',
+                  animation: isWrong && shaking ? `sqd-shake ${MOTION.duration.slow} ${ease}` : 'none',
                 }}
               >
                 {opt.label}
@@ -344,7 +355,7 @@ function TreatmentBeat({ question, options, accent, rgb, onNext }) {
           })}
         </div>
 
-        {answered && (
+        {chosen && (
           <div className="sqd-motion" style={{ animation: anim('sqd-in'), marginBottom: SPACING.standard }}>
             <p style={{ ...TYPE.bodySmall, color: 'rgba(240,230,200,0.6)', lineHeight: 1.6 }}>
               {chosen.explanation}
@@ -352,13 +363,13 @@ function TreatmentBeat({ question, options, accent, rgb, onNext }) {
           </div>
         )}
 
-        {answered && chosen.correct && (
+        {chosen && chosen.correct && (
           <div className="sqd-motion" style={{ animation: anim('sqd-in') }}>
             <ContinueCTA onClick={onNext} accent={accent} />
           </div>
         )}
-        {answered && !chosen.correct && (
-          <ActionBtn label="Try again" onClick={() => setSelected(null)} accent={accent} />
+        {chosen && !chosen.correct && (
+          <ActionBtn label="Try again" onClick={retry} accent={accent} />
         )}
       </Pad>
     </Screen>
