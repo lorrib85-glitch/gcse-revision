@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { TYPE } from '../../constants/typography.js'
 
-// ── LearningProgressHeader v4 ─────────────────────────────────────────────────
+// ── LearningProgressHeader v4 — LOCKED COMPONENT ──────────────────────────────
 // Stage rail — six dots representing the module's 6 navigation stages.
 // Active dot: filled inner + outer ring + pulse glow. Completed: filled accent.
 // Future: small hollow dot. Labels hidden by default; tap a dot to see name + description.
