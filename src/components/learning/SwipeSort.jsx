@@ -71,7 +71,13 @@ function injectStyles() {
 
 function splitLabel(column) {
   const [title = '', detail = ''] = String(column?.label ?? '').split('\n')
-  return { title, detail }
+  const detailCopy = {
+    'Based on religion or belief': 'God, religion or magic',
+    'Religion or belief': 'God, religion or magic',
+    'Based on observation or logic': 'Observation, nature or logic',
+    'Observation or logic': 'Observation, nature or logic',
+  }
+  return { title, detail: detailCopy[detail] ?? detail }
 }
 
 function backgroundLayer(leftCol, rightCol, { focusSide = null, intro = false } = {}) {
@@ -129,11 +135,11 @@ export default function SwipeSort({ block, subject, onComplete }) {
     columns = [],
     items: rawItems = [],
     explanation = '',
-    introTitle = 'Two worlds. One cause.',
-    introText  = 'Decide whether each explanation is based on belief or observation.',
+    introTitle = 'One disease. Two explanations.',
+    introText  = 'Decide whether each explanation is supernatural or rational.',
     gameTitle  = 'Sort the cause',
     gamePrompt = 'Is this belief-based or observation-based?',
-    startLabel = "Let's go →",
+    startLabel = 'Start sorting',
   } = block
 
   const [items] = useState(() => {
@@ -164,8 +170,8 @@ export default function SwipeSort({ block, subject, onComplete }) {
   const remaining  = totalCards - cardIdx
   const cur        = items[cardIdx] ?? null
 
-  const leftCol  = columns[0] ?? { label: 'Supernatural\nReligion or belief', color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)' }
-  const rightCol = columns[1] ?? { label: 'Rational\nObservation or logic', color: accent, colorRgb: accentRgb, bg: `rgba(${accentRgb},.07)` }
+  const leftCol  = columns[0] ?? { label: 'Supernatural\nGod, religion or magic', color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)' }
+  const rightCol = columns[1] ?? { label: 'Rational\nObservation, nature or logic', color: accent, colorRgb: accentRgb, bg: `rgba(${accentRgb},.07)` }
 
   const leftText = splitLabel(leftCol)
   const rightText = splitLabel(rightCol)
@@ -300,7 +306,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
 
           <div style={{
             ...TYPE.body,
-            color: 'rgba(245,245,245,0.66)',
+            color: GENERAL.slate,
             textAlign: 'center',
             maxWidth: 330,
             marginBottom: 28,
@@ -320,7 +326,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
               animation: 'ss-intro-left 480ms cubic-bezier(.22,1,.36,1) 90ms both',
             }}>
               <div style={{ ...TYPE.metadata, color: leftCol.color ?? '#A89070', marginBottom: 8 }}>{leftText.title}</div>
-              <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.60)' }}>{leftText.detail}</div>
+              <div style={{ ...TYPE.caption, color: GENERAL.slate }}>{leftText.detail}</div>
             </div>
             <div style={{
               background: 'rgba(10,12,18,0.54)',
@@ -332,7 +338,7 @@ export default function SwipeSort({ block, subject, onComplete }) {
               animation: 'ss-intro-right 480ms cubic-bezier(.22,1,.36,1) 130ms both',
             }}>
               <div style={{ ...TYPE.metadata, color: rightCol.color ?? accent, marginBottom: 8 }}>{rightText.title}</div>
-              <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.60)' }}>{rightText.detail}</div>
+              <div style={{ ...TYPE.caption, color: GENERAL.slate }}>{rightText.detail}</div>
             </div>
           </div>
 
