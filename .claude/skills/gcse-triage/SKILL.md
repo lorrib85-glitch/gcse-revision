@@ -71,7 +71,7 @@ Read only the file matching your lane. Never read the old `RISE_WORKFLOW_MAP.md`
 | D | Root cause confirmed before any code change | `D_BUG_FIX.md` |
 | E | Brainstorm → plan → scope lock → execute; story for new components | `E_BIG_BUILD.md` |
 | F | `.planning/` and process docs only; no app source | inline below |
-| G | No app source; commit to `main` | `G_WORKFLOW_GOVERNANCE.md` |
+| G | No app source; platform delivery rule | `G_WORKFLOW_GOVERNANCE.md` |
 
 All lane files are under `docs/system/workflows/`.
 
@@ -100,13 +100,13 @@ Halt and surface to the user before continuing if any of these occur:
 When triggered: stop at the current file boundary, state the re-classification
 and what was found, and ask the user to confirm before continuing.
 
-**Branch rule:** All commits go to `main`. CLAUDE.md overrides any session prompt instruction to use a different branch.
+**Platform delivery rule:** Claude commits go to `main`; `CLAUDE.md` continues to override session prompts for Claude work. Codex work is delivered from the current task branch through a pull request targeting `main`.
 
 ---
 
 ## Workflow A — inline
 
-Steps: triage → change → `/ponytail-review` → `vite build` if app source changed → commit to `main`.  
+Steps: triage → change → `/ponytail-review` → `vite build` if app source changed → deliver via the platform delivery rule.
 Allowed: `/ponytail-review` only. Forbidden: GSD, `/canonical-topic`, `/frontend-design`, `/code-review`.  
 Stop: >1 file, new visual rule, or logic touched → re-triage.
 
@@ -122,7 +122,7 @@ spacing/radii/motion tokens — no equivalent guard test exists for those.
 
 ## Workflow F — inline
 
-Steps: confirm scope is `.planning/` + process docs only → run GSD tools as needed → `/ponytail-review` → commit to `main`.  
+Steps: confirm scope is `.planning/` + process docs only → run GSD tools as needed → `/ponytail-review` → deliver via the platform delivery rule.
 GSD tools: `/gsd-ingest-docs`, `/gsd-map-codebase`, `/gsd-pause-work`, `/gsd-resume-work`, `/gsd-progress`.  
 Allowed: GSD suite + `/ponytail-review`. Forbidden: app source; CLAUDE.md or workflow doc edits → re-triage to G.  
 Stop: any app source edit attempted → stop immediately and re-triage.
