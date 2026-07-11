@@ -113,7 +113,6 @@ function transformScreenIndex(screenIndex) {
   let nextIndex = screenIndex
   if (removedScreenIndex >= 0 && nextIndex > removedScreenIndex) nextIndex -= 1
   if (galenProfileIndex >= 0 && nextIndex >= galenProfileIndex) nextIndex += 1
-  if (theoryScreenIndex >= 0 && screenIndex > theoryScreenIndex) nextIndex += 1
 
   return nextIndex
 }

@@ -325,13 +325,6 @@ export default {
           aspect: '4:3',
           caption: 'The four humours placed on hot–cold and wet–dry axes, with an arrow crossing to the opposite quadrant.',
         },
-        {
-          type: 'workedExample',
-          chips: ['Fever', 'Red face', 'Sweating'],
-          scenario: 'A patient arrives with a fever, a red face and heavy sweating.',
-          working: 'Heat and wetness point to one humour in excess: too much blood, which is hot and wet.',
-          result: 'So the cure is to cool and dry the body — the opposite qualities.',
-        },
       ],
     },
 
