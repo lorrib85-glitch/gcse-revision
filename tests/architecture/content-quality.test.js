@@ -169,7 +169,6 @@ describe('Readability helper', () => {
 // screens not yet built, not a readability issue.
 const GRANDFATHERED_EPISODES = new Set([
   'history-medicine-medieval-beliefs-causes',
-  'history-medicine-black-death',
   'history-medicine-renaissance-medicine',
   'history-medicine-surgery-anaesthetics',
   'history-medicine-jenner-vaccination',
