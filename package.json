@@ -10,9 +10,11 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "vitest",
-    "test:architecture": "vitest run tests/architecture",
+    "test:architecture": "vitest run --project architecture",
+    "test:unit": "vitest run --project unit",
+    "test:storybook": "vitest run --project storybook",
     "test:rules": "firebase emulators:exec --only firestore --project demo-rise-rules \"vitest run --config vitest.rules.config.js\"",
-    "verify": "pnpm lint && pnpm test:architecture && pnpm build",
+    "verify": "pnpm lint && pnpm test:architecture && pnpm test:unit && pnpm test:storybook && pnpm build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

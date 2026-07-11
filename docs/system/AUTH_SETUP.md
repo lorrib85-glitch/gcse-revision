@@ -82,8 +82,11 @@ unauthenticated denial, owner read/create/update/delete, cross-learner
 denial, payload-spoofing rejection (ownership from `request.auth.uid` + path
 only), and deny-by-default for unknown paths. Run it after any edit to
 `firestore.rules`. It is kept out of `pnpm verify` because it needs the
-emulator (Java + a one-time jar download); run it directly, or in CI where the
-emulator is available.
+emulator (Java + a one-time jar download); run it directly locally, and it
+also runs as its own `firestore-rules` job on every push/PR in
+`.github/workflows/ci.yml` (Java pinned via `actions/setup-java`, emulator
+jar cached) — a `demo-`-prefixed project id, so it never touches live
+Firebase and needs no production credentials.
 
 ## Local dev setup
 

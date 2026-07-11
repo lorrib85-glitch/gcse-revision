@@ -137,9 +137,13 @@
   - Rewrites: `/api/*` → serverless functions; `/*` → `index.html` (SPA routing)
 
 **CI Pipeline:**
-- GitHub Actions (inferred from `.github/` directory presence)
-- Build steps: npm/pnpm install → lint → test:architecture → build
-  - Command: `pnpm verify` (runs lint + test:architecture + build)
+- GitHub Actions, `.github/workflows/ci.yml`, two jobs on every push/PR to `main`:
+  - `verify` — `pnpm install --frozen-lockfile` → `pnpm lint` →
+    `pnpm test:architecture` → `pnpm test:unit` → `pnpm test:storybook` →
+    `pnpm build`. Mirrors the local `pnpm verify` command.
+  - `firestore-rules` — `pnpm install --frozen-lockfile` → `pnpm test:rules`
+    against the Firestore emulator (Java pinned, emulator jar cached); no
+    live Firebase, no production credentials.
 - No explicit coverage threshold detected
 
 ## API Endpoints

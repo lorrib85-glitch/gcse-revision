@@ -7,7 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  verify:
+    name: Lint, tests, build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,6 +24,48 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm lint --if-present
-
+      # Mirrors `pnpm verify`, as separate steps so a failure's gate is
+      # visible directly in the Actions UI instead of buried mid-log.
+      - run: pnpm lint
+      - run: pnpm test:architecture
+      - run: pnpm test:unit
+      - run: pnpm test:storybook
       - run: pnpm build
+
+  firestore-rules:
+    name: Firestore security rules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # The Firestore emulator is a JVM process; pin a JDK so the emulator
+      # starts deterministically regardless of the runner image's default.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # Cache the emulator jar so this job doesn't re-download it every run.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: firebase-emulators-firestore
+
+      # firebase.json only configures the firestore emulator (no other
+      # Firebase products), and --only firestore below is redundant with
+      # that but kept explicit so this job can never accidentally spin up
+      # (or download) anything beyond what the rules suite needs. The
+      # `demo-rise-rules` project id is a Firebase-reserved "demo-" prefix:
+      # the emulator refuses to talk to any real GCP project under it, so
+      # this never contacts or mutates production Firebase and needs no
+      # production credentials.
+      - run: pnpm test:rules

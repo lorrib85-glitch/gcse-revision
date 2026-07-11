@@ -12,12 +12,16 @@
 **Assertion Library:**
 - Vitest's built-in `expect()` API (compatible with Jest)
 
-**Run Commands:**
+**Run Commands:** (pnpm is the package manager — see `package.json`
+`"packageManager"` + `pnpm-lock.yaml`)
 ```bash
-npm run test                  # Run all tests (architecture + unit + storybook)
-npm run test:architecture    # Run architecture tests only
-npm run lint                 # Run ESLint
-npm run verify               # lint + test:architecture + build (pre-commit check)
+pnpm test                  # Run all tests (architecture + unit + storybook), watch mode
+pnpm test:architecture     # Run architecture tests only
+pnpm test:unit             # Run unit tests only
+pnpm test:storybook        # Run Storybook/browser (Playwright) tests only
+pnpm test:rules            # Run Firestore security-rule tests (needs the emulator; separate from `verify`)
+pnpm lint                  # Run ESLint
+pnpm verify                # lint + test:architecture + test:unit + test:storybook + build — the authoritative local gate; see DEVELOPMENT_WORKFLOW.md
 ```
 
 ## Test Projects
@@ -47,7 +51,19 @@ Vitest is configured with three independent test projects in `vitest.config.js`:
 - **Environment:** Browser (Chromium via Playwright)
 - **Purpose:** Visual regression and interaction testing via Storybook addon
 - **Framework:** `@storybook/addon-vitest` with `@vitest/browser-playwright`
-- **Command:** Runs all `.stories.jsx` files as browser tests
+- **Command:** `pnpm test:storybook` — runs all `.stories.jsx` files as browser tests
+
+### 4. Firestore Security-Rule Tests
+- **Directory:** `tests/rules/`
+- **Environment:** Node, against the Firebase Firestore emulator
+- **Purpose:** Prove `firestore.rules` enforces account isolation
+  independently of the client (owner read/write, cross-learner denial,
+  payload-spoofing rejection, deny-by-default)
+- **Command:** `pnpm test:rules` — wraps `vitest run --config
+  vitest.rules.config.js` in `firebase emulators:exec`; a `demo-`-prefixed
+  project id, so it never touches live Firebase and needs no production
+  credentials. Kept out of `pnpm verify` (needs Java + the emulator), but
+  runs as its own CI job on every push/PR. See `docs/system/AUTH_SETUP.md`.
 
 ## Test File Organization
 
@@ -464,23 +480,25 @@ export const ShakespeareQuote = {
 ## Running Tests During Development
 
 ```bash
-# Run all tests once
-npm run test
+# Run all tests once (architecture + unit + storybook)
+pnpm test -- run
 
-# Run architecture tests only
-npm run test:architecture
+# Run architecture / unit / storybook tests only
+pnpm test:architecture
+pnpm test:unit
+pnpm test:storybook
 
 # Run specific test file
-npm run test -- tests/unit/planner/dailyPlanner.test.js
+pnpm test -- run tests/unit/planner/dailyPlanner.test.js
 
-# Watch mode (re-run on file change)
-npm run test -- --watch
+# Watch mode (re-run on file change) — the default for `pnpm test`
+pnpm test
 
 # Debug a single test
-npm run test -- --inspect-brk tests/unit/auth/authService.test.js
+pnpm test -- run --inspect-brk tests/unit/auth/authService.test.js
 
 # Generate coverage report
-npm run test -- --coverage
+pnpm test -- run --coverage
 ```
 
 ---
@@ -503,10 +521,9 @@ New tests protecting learner-trust seams:
   completion, cloud-restore reconciliation) exercised through the real logic
   modules and storage boundary.
 
-Note: `tests/architecture/concept-reveal-contract.test.js` (3 cases) fails on
-`main` independently of this work — a stale source-grep contract against a
-refactored `ConceptReveal.jsx`. Not addressed here (out of scope).
-
 ---
 
-*Testing analysis: 2026-07-09; coverage update: 2026-07-10*
+*Testing analysis: 2026-07-09; coverage update: 2026-07-10; verification
+debt cleanup: 2026-07-11 — `tests/architecture/concept-reveal-contract.test.js`
+(7 cases) passes; repo-wide lint is at 0 errors; `pnpm verify` is the
+authoritative local gate; Firestore rules run in CI.*

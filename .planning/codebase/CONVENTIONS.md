@@ -36,7 +36,8 @@
 - No explicit Prettier configuration present; follows ESLint flat config recommendations
 - Indentation: 2 spaces (consistent across codebase)
 - Line length: No hard limit enforced, but keep under ~100 chars for readability
-- Semicolons: Explicit semicolons required (enforced by ESLint)
+- Semicolons: Omitted by convention (no ASI-related bugs seen); not enforced
+  by ESLint — there is no `semi` rule in `eslint.config.js`
 - Quotes: Double quotes in JSX string attributes; single quotes in JS strings (standard Prettier defaults)
 
 **Linting:**

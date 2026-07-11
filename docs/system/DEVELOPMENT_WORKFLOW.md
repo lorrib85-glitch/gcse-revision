@@ -147,7 +147,7 @@ Use for existing-surface work.
    rules
 6. Review — perform code review and incorporate findings
 7. Verification — build (`./node_modules/.bin/vite build`) passes; if a
-   Storybook story exists for the changed component, run `npx vitest run`
+   Storybook story exists for the changed component, run `pnpm test:storybook`
    to confirm it mounts and renders without error; then exercise the change
    in the running app via `/verify`
 8. Confirm working tree status — commit + push to `main`
@@ -179,9 +179,9 @@ starts directly at step 1.
    parallel documentation tree
 7. Review — code review, and UI review where visual behaviour changed
 8. Verification — build (`./node_modules/.bin/vite build`) passes; run
-   `npx vitest run` to confirm all stories mount and render without error;
-   exercise the change in the running app via `/verify` to confirm real
-   behaviour — not static inspection alone
+   `pnpm test:storybook` to confirm all stories mount and render without
+   error; exercise the change in the running app via `/verify` to confirm
+   real behaviour — not static inspection alone
 9. Confirm working tree status — commit + push to `main`
 
 *Normally implemented via the corresponding GSD skills (e.g. spec-phase,
@@ -222,12 +222,24 @@ to keep this policy intact.
 ## Continuous Integration
 
 A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push
-and pull request to `main`: `pnpm install --frozen-lockfile`, then
-`pnpm lint`, then `pnpm build`. (pnpm is the repository's package manager —
-see `package.json` `"packageManager"`; there is a single `pnpm-lock.yaml`.)
-It deliberately does not run the Storybook/Vitest suite or any
-Playwright/browser-based checks. Running step 7's lint and build locally
-before pushing keeps `main` from failing this CI.
+and pull request to `main`, as two jobs. (pnpm is the repository's package
+manager — see `package.json` `"packageManager"`; there is a single
+`pnpm-lock.yaml`.)
+
+- **`verify`** — `pnpm install --frozen-lockfile`, then each gate in
+  `pnpm verify` as its own step: `pnpm lint`, `pnpm test:architecture`,
+  `pnpm test:unit`, `pnpm test:storybook`, `pnpm build`. This is the same
+  command set as the local `pnpm verify` — see `README`/`AUTH_SETUP.md` and
+  the authoritative command table below.
+- **`firestore-rules`** — `pnpm install --frozen-lockfile`, then
+  `pnpm test:rules` against the Firestore emulator (Java pinned via
+  `actions/setup-java`, emulator jar cached). Runs on every push/PR; never
+  touches live Firebase, needs no production credentials. See
+  `docs/system/AUTH_SETUP.md` "Firestore security-rule tests".
+
+Running `pnpm verify` locally before pushing keeps `main` from failing the
+`verify` job; running `pnpm test:rules` locally after any `firestore.rules`
+edit keeps it from failing the `firestore-rules` job.
 
 ## Context Loading Policy
 
@@ -262,7 +274,7 @@ Before marking any build complete, confirm:
 - Code review completed
 - UI review completed where visual behaviour changed
 - Build passed (`./node_modules/.bin/vite build`)
-- Vitest passed (`npx vitest run`) — Standard Change: if a story exists
+- Vitest passed (`pnpm test:storybook`) — Standard Change: if a story exists
   for the changed component; Big Build: always
 - Implementation verified in the running app via `/verify` — Standard
   Change and Big Build only; Minor Edit is build-only
