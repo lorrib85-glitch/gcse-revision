@@ -108,7 +108,7 @@ function ActionBtn({ label, onClick, accent, disabled = false }) {
 // A single quality-teaching beat: the word, then its example symptoms fade
 // in one at a time. Reused four times (hot, cold, wet, dry) — the one
 // deliberately reusable sub-piece in this component.
-function QualityBeat({ quality, symptoms, accent, rgb, onNext }) {
+function QualityBeat({ quality, symptoms, accent, onNext }) {
   const [revealed, setRevealed] = useState(0)
 
   useEffect(() => {
@@ -402,14 +402,42 @@ function ClosingBeat({ closing, accent, rgb, onComplete }) {
       <Pad>
         <Label accent={accent}>Did the cure work?</Label>
 
-        {closing.worked?.length > 0 && (
-          <div className="sqd-motion" style={{ marginBottom: SPACING.standard, animation: anim('sqd-in') }}>
-            <p style={{ ...TYPE.bodySmall, color: 'rgba(240,230,200,0.55)', margin: `0 0 ${SPACING.micro}px` }}>
-              Rest, fluids and cooling foods often helped patients recover:
-            </p>
-            <p style={{ ...TYPE.body, color: 'rgba(240,230,200,0.85)', margin: 0 }}>
-              {closing.worked.join(', ')}.
-            </p>
+        {(closing.worked?.length > 0 || closing.limitation) && (
+          <div className="sqd-motion" style={{
+            display: 'grid', gridTemplateColumns: '1fr 1fr', gap: SPACING.compact,
+            marginBottom: SPACING.standard,
+            animation: anim('sqd-in'),
+          }}>
+            {closing.worked?.length > 0 && (
+              <div style={{
+                padding: SPACING.compact,
+                background: `rgba(${rgb}, 0.06)`,
+                border: `1px solid rgba(${rgb}, 0.2)`,
+                borderRadius: RADII.small,
+              }}>
+                <p style={{ ...TYPE.label, color: accent, margin: `0 0 ${SPACING.micro}px` }}>
+                  Sometimes helped
+                </p>
+                <p style={{ ...TYPE.bodySmall, color: 'rgba(240,230,200,0.7)', margin: 0, lineHeight: 1.5 }}>
+                  {closing.worked.join(', ')}
+                </p>
+              </div>
+            )}
+            {closing.limitation && (
+              <div style={{
+                padding: SPACING.compact,
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: RADII.small,
+              }}>
+                <p style={{ ...TYPE.label, color: 'rgba(240,230,200,0.5)', margin: `0 0 ${SPACING.micro}px` }}>
+                  Wrong explanation
+                </p>
+                <p style={{ ...TYPE.bodySmall, color: 'rgba(240,230,200,0.55)', margin: 0, lineHeight: 1.5 }}>
+                  {closing.limitation}
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -478,7 +506,6 @@ export default function SymptomQualityDiagnostic({ block, subject, onContinue })
         quality={q.quality}
         symptoms={q.symptoms}
         accent={accent}
-        rgb={rgb}
         onNext={nextBeat}
       />
     )

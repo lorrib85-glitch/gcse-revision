@@ -67,27 +67,12 @@ function splitTheoryOfOppositesScreen(screen) {
         }
       : block
   ))
-  const workedExampleBlocks = blocks.slice(mediaIndex + 1)
-
-  const diagramScreen = {
+  return [{
     ...screen,
     heading: 'Galen treated with opposites',
     sub: "Galen took Hippocrates' theory of the Four Humours one step further. He believed illness happened when one humour became too dominant — so treatment should use the opposite qualities to restore balance.",
     blocks: diagramBlocks,
-  }
-
-  if (workedExampleBlocks.length === 0) return [diagramScreen]
-
-  return [
-    diagramScreen,
-    {
-      ...screen,
-      label: 'Theory of Opposites — worked example',
-      heading: 'From symptoms to treatment',
-      sub: null,
-      blocks: workedExampleBlocks,
-    },
-  ]
+  }]
 }
 
 const withoutDuplicate = (removedScreenIndex < 0
