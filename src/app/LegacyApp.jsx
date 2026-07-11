@@ -425,7 +425,9 @@ export default function App() {
     }
     setActiveModule(null)
     setView('module')
-    loadModuleContent(mod).then(fullMod => setActiveModule(fullMod || mod))
+    loadModuleContent(mod)
+      .then(fullMod => setActiveModule(fullMod || mod))
+      .catch(() => setView(null))
   }
 
   function closeOverlay() {
