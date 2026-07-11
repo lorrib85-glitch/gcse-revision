@@ -14,8 +14,10 @@
 
 import episode01 from './episodes/episode-01-medieval-beliefs-causes.js'
 import episode02 from './episodes/episode-02-black-death.js'
-import episode03 from './episodes/episode-03-renaissance-medicine.js'
+import episode03 from './episodes/episode-03-vesalius-beginning-doubt.js'
+import episode04Harvey from './episodes/episode-04-harvey-pare-renaissance-method.js'
 import episode04 from './episodes/episode-04-surgery-anaesthetics.js'
+import episode05 from './episodes/episode-05-great-plague-1665.js'
 import episode06 from './episodes/episode-06-jenner-vaccination.js'
 import episode07 from './episodes/episode-07-germ-theory.js'
 import episode08 from './episodes/episode-08-great-stink.js'
@@ -139,8 +141,9 @@ export const MEDICINE_EPISODES = [
   sentenceCaseEpisode01,
   episode02,
   episode03,
+  episode04Harvey,
   episode04,
-  // episode05: history-medicine-great-plague — unbuilt (screenCount 0), add when built
+  episode05,
   episode06,
   episode07,
   episode08,

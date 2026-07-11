@@ -57,6 +57,8 @@ export const HISTORY_MEDICINE_CONCEPTS = [
   { id: 'history:medicine:anatomy', label: 'Anatomy (knowledge of the body)' },
   { id: 'history:medicine:dissection', label: 'Human dissection' },
   { id: 'history:medicine:harvey', label: 'William Harvey' },
+  { id: 'history:medicine:circulation', label: 'Circulation of blood' },
+  { id: 'history:medicine:pare', label: 'Ambroise Paré' },
   { id: 'history:medicine:sydenham', label: 'Thomas Sydenham' },
   { id: 'history:medicine:printing-press', label: 'The printing press' },
   { id: 'history:medicine:royal-society', label: 'The Royal Society' },

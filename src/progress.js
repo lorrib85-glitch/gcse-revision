@@ -180,7 +180,7 @@ export const MODULE_GROUPS = [
     id: 'hist_medicine',
     title: 'Medicine Through Time',
     subject: 'History',
-    chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','history-medicine-renaissance-medicine','history-medicine-surgery-anaesthetics','history-medicine-jenner-vaccination','history-medicine-germ-theory','history-medicine-great-stink','history-medicine-surgery-revolution','history-medicine-accidental-miracle','history-medicine-modern-medicine','history-medicine-cancer'],
+    chapterIds: ['history-medicine-medieval-beliefs-causes','history-medicine-black-death','history-medicine-vesalius-beginning-doubt','history-medicine-harvey-pare-renaissance-method','history-medicine-great-plague-1665','history-medicine-surgery-anaesthetics','history-medicine-jenner-vaccination','history-medicine-germ-theory','history-medicine-great-stink','history-medicine-surgery-revolution','history-medicine-accidental-miracle','history-medicine-modern-medicine','history-medicine-cancer'],
   },
   {
     id: 'soc_family',
