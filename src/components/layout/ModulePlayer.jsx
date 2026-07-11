@@ -43,6 +43,7 @@ import ExaminerExplainsScreen from '../learning/ExaminerExplainsScreen.jsx'
 import SwipeSort from '../learning/SwipeSort.jsx'
 import GalensDiagnostic from '../learning/GalensDiagnostic.jsx'
 import TheoryLab from '../learning/TheoryLab.jsx'
+import SymptomQualityDiagnostic from '../learning/SymptomQualityDiagnostic.jsx'
 import VisualLearning from '../learning/VisualLearning.jsx'
 import KeyFigureReveal from '../learning/KeyFigureReveal.jsx'
 import InteractiveCollectionExplorer from '../learning/InteractiveCollectionExplorer.jsx'
@@ -2178,6 +2179,20 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
       <>
         <LearningHeader {...H} visible={true} />
         <TheoryLab
+          block={cur}
+          subject={module.subject}
+          onContinue={() => isLast ? handleFinish() : go(1)}
+        />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  if (cur?.type === 'symptomQualityDiagnostic') {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <SymptomQualityDiagnostic
           block={cur}
           subject={module.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
