@@ -152,6 +152,21 @@ Structural rules a composed screen must satisfy; checked in the render pass
 - **Let it breathe.** Prefer negative space over stacked containers. If a
   screen reads as two or more heavy boxes crammed together, it fails.
 
+Machine-checked structural and semantic floors live alongside this render
+pass. Architecture tests enumerate built modules from `MODULES` +
+`MODULE_CONTENT_LOADERS`, collect nested learner-facing text for readability,
+enforce exam-prep follow-through using registered `exam-technique`
+functions, verify recovery tags against loaded runtime screens, and reject
+new raw presentation fields (`color`, `colorRgb`, `bg`, `colorLight`) in
+screen/reveal/interaction data. Asset-specific image treatment may be
+documented as an exact exception, but never as a broad colour allowlist.
+
+Do not confuse those checks with visual or editorial judgement. The 390px
+render pass decides hierarchy, rhythm, density, and whether the component
+looks like its gold example. Human review decides story, teaching clarity,
+exam usefulness, and emotional engagement; these dimensions must stay
+explicit review findings, not fragile regex proxies.
+
 ---
 
 ## MediaPlaceholder + visual-assets manifest

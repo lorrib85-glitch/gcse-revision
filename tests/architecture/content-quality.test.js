@@ -12,22 +12,10 @@ import {
   collectLearnerText,
   guardrailViolations,
   sentenceCaseViolations,
+  violationFingerprints,
 } from '../../src/data/contentQualityChecks.js'
-import { MEDICINE_EPISODES } from '../../src/content/history/medicine/index.js'
-import * as mathsFoundations from '../../src/content/maths/foundations/index.js'
-import * as chemChemicalChanges from '../../src/content/chemistry/chemical-changes/index.js'
-import * as chemRatesAndOrganic from '../../src/content/chemistry/rates-and-organic/index.js'
-import * as chemAtmosphere from '../../src/content/chemistry/chemistry-of-the-atmosphere/index.js'
-import * as chemAtomicStructure from '../../src/content/chemistry/atomic-structure/index.js'
-import * as sociologyFamilies from '../../src/content/sociology/families/index.js'
-import * as bioInheritanceEvolution from '../../src/content/biology/inheritance-variation-evolution/index.js'
-import * as bioOrganisation from '../../src/content/biology/organisation/index.js'
-import * as bioHomeostasis from '../../src/content/biology/homeostasis/index.js'
-import * as bioEcology from '../../src/content/biology/ecology/index.js'
-import * as bioCellBiology from '../../src/content/biology/cell-biology/index.js'
-import * as bioInfectionResponse from '../../src/content/biology/infection-and-response/index.js'
-import * as englishMacbeth from '../../src/content/english/macbeth/index.js'
-
+import { MODULES } from '../../src/modules.js'
+import { MODULE_CONTENT_LOADERS } from '../../src/content/moduleContentRegistry.js'
 // This file is the CI regression floor: it enumerates every built episode
 // and keeps shrink-only grandfather allowlists so `pnpm verify` catches new
 // violations without re-litigating known ones. The actual check functions
@@ -38,24 +26,17 @@ import * as englishMacbeth from '../../src/content/english/macbeth/index.js'
 // content-review runs. This file's enumeration is a property of being a
 // regression gate, not a requirement of the checks themselves.
 
-// Every other built series lazy-loads via EPISODE_LOADERS/EPISODE_IDS (unlike
-// Medicine's eager MEDICINE_EPISODES array). Resolve them all once here so
-// every describe block below covers every subject, not just History.
-const LAZY_REGISTRIES = [
-  mathsFoundations, chemChemicalChanges, chemRatesAndOrganic, chemAtmosphere,
-  chemAtomicStructure, sociologyFamilies, bioInheritanceEvolution,
-  bioOrganisation, bioHomeostasis, bioEcology, bioCellBiology,
-  bioInfectionResponse, englishMacbeth,
-]
-
-async function loadLazyEpisodes() {
-  const lists = await Promise.all(
-    LAZY_REGISTRIES.map(reg => Promise.all(reg.EPISODE_IDS.map(id => reg.EPISODE_LOADERS[id]()))),
-  )
-  return lists.flat()
+async function loadBuiltEpisodes() {
+  const builtModules = MODULES.filter(mod => mod.screenCount > 0)
+  const episodes = await Promise.all(builtModules.map(async mod => {
+    const loader = MODULE_CONTENT_LOADERS[mod.id]
+    expect(loader, `${mod.id} has no content loader`).toBeTypeOf('function')
+    return loader()
+  }))
+  return episodes.filter(ep => (ep.screens ?? []).length > 0)
 }
 
-const ALL_EPISODES = [...MEDICINE_EPISODES, ...(await loadLazyEpisodes())]
+const ALL_EPISODES = await loadBuiltEpisodes()
 
 // Every display type used by real content, gathered from screens and their
 // nested blocks. Types inside answer options (e.g. 'weak'/'strong' evidence
@@ -143,56 +124,116 @@ describe('Readability helper', () => {
     expect(text).toContain('see inside the body')
     expect(text).toContain('X-rays changed diagnosis')
   })
+
+  it('collects nested learner-facing content and answer options', () => {
+    const screen = {
+      title: 'Nested lesson title.',
+      learningGoals: ['Explain the cause.', 'Apply it to an exam answer.'],
+      profile: { lines: ['A profile line learners read.'] },
+      narrative: { facts: [{ statement: 'Narrative fact for learners.' }] },
+      options: [{ label: 'Answer option A.' }, { answer: 'Answer option B.' }],
+    }
+    const text = collectLearnerText(screen)
+    expect(text).toContain('Nested lesson title')
+    expect(text).toContain('Explain the cause')
+    expect(text).toContain('A profile line learners read')
+    expect(text).toContain('Narrative fact for learners')
+    expect(text).toContain('Answer option A')
+    expect(text).toContain('Answer option B')
+  })
+
+  it('excludes implementation metadata from learner text', () => {
+    const text = collectLearnerText({
+      title: 'Learners read this.',
+      id: 'metadata-id',
+      tag: 'metadata-tag',
+      type: 'read',
+      image: '/asset/path.png',
+      color: '#ffffff',
+      colorRgb: '255,255,255',
+      bg: 'rgba(0,0,0,.1)',
+      colorLight: '#eeeeee',
+    })
+    expect(text).toContain('Learners read this')
+    expect(text).not.toContain('metadata-id')
+    expect(text).not.toContain('/asset/path.png')
+    expect(text).not.toContain('#ffffff')
+  })
+})
+
+describe('Exam-preparation completion contract', () => {
+  it('accepts examiner teaching followed by assessed exam-technique practice', () => {
+    const ep = {
+      screens: [
+        { type: 'examinerExplains', heading: 'Examiner teaches how to answer.' },
+        { type: 'guidedExamResponse', question: 'Now write the exam move.' },
+      ],
+    }
+    expect(violationFingerprints(guardrailViolations(ep))).toEqual([])
+  })
+
+  it('rejects passive examiner advice with no later assessed exam-technique component', () => {
+    const ep = {
+      screens: [
+        { type: 'examinerExplains', heading: 'Examiner teaches how to answer.' },
+        { type: 'read', text: 'The lesson ends with advice only.' },
+      ],
+    }
+    expect(violationFingerprints(guardrailViolations(ep))).toContain('EXAM_PREP_NO_ASSESSMENT:screen:0')
+  })
 })
 
 // ─── Quality floor (⚙ guardrails from CONTENT_BUILD_TEMPLATE.md) ─────────
 
-// Episodes built before the framework. This list only shrinks: fixing an
-// episode with content-review removes it. Never add a NEW episode here.
-//
-// history-medicine-medieval-beliefs-causes (Episode 1, the flagship gold
-// example) is included here too: the "part-1" teaching stage has no
-// assessed screen and 7 screens exceed the readability ceiling. The
-// original plan called for fixing these now rather than grandfathering the
-// flagship, but that is real content-editing work (Lane C), out of scope
-// for this Lane G test-infrastructure change. It is the natural first case
-// for /content-review once that skill exists — remove it from this set
-// when fixed.
-//
-// This list originally covered History Medicine only, because the test
-// itself only loaded MEDICINE_EPISODES. Once generalised to load every
-// built series (Maths, Sociology, Biology, English), those episodes'
-// existing readability/stageNavigation violations surfaced for the first
-// time here too — grandfathered on the same terms, not fixed as a
-// drive-by. english-macbeth-power-ambition's non-increasing
-// stageNavigation reflects a 1-screen stub carrying a 6-stage skeleton for
-// screens not yet built, not a readability issue.
-const GRANDFATHERED_EPISODES = new Set([
-  'history-medicine-medieval-beliefs-causes',
-  'history-medicine-black-death',
-  'history-medicine-renaissance-medicine',
-  'history-medicine-surgery-anaesthetics',
-  'history-medicine-jenner-vaccination',
-  'history-medicine-germ-theory',
-  'history-medicine-great-stink',
-  'history-medicine-surgery-revolution',
-  'history-medicine-accidental-miracle',
-  'history-medicine-modern-medicine',
-  'history-medicine-cancer',
-  'history-medicine-western-front',
-  'math1', 'math2', 'math3', 'math4', 'math5', 'math6', 'math7', 'math8',
-  'soc1', 'soc2', 'soc3', 'soc4', 'soc6',
-  'bio_building_blocks', 'sci_bio_w1',
-  'english-macbeth-power-ambition',
-])
+// Known content debt is tracked by exact shrink-only fingerprints. New
+// fingerprints fail even when a module already has existing debt; fixed
+// fingerprints can be removed without adding replacement exemptions.
+const KNOWN_GUARDRAIL_VIOLATIONS = {
+  "history-medicine-medieval-beliefs-causes": ["READABILITY:screen:0","READABILITY:screen:10","READABILITY:screen:11","READABILITY:screen:12","READABILITY:screen:17","READABILITY:screen:19","READABILITY:screen:20","READABILITY:screen:23","READABILITY:screen:24","READABILITY:screen:28","READABILITY:screen:29","READABILITY:screen:3","READABILITY:screen:31","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:8","STAGE_NO_ASSESSMENT:part-1"],
+  "history-medicine-black-death": ["READABILITY:screen:0","READABILITY:screen:11","READABILITY:screen:14","READABILITY:screen:15","READABILITY:screen:18","READABILITY:screen:22","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:9"],
+  "history-medicine-renaissance-medicine": ["READABILITY:screen:0","READABILITY:screen:1","READABILITY:screen:10","READABILITY:screen:12","READABILITY:screen:13","READABILITY:screen:14","READABILITY:screen:15","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:8","READABILITY:screen:9"],
+  "history-medicine-vesalius-beginning-doubt": ["EXAM_PREP_NO_ASSESSMENT:screen:10","READABILITY:screen:0","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:7","READABILITY:screen:8","READABILITY:screen:9"],
+  "history-medicine-harvey-pare-renaissance-method": ["EXAM_PREP_NO_ASSESSMENT:screen:10","READABILITY:screen:0","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:6","READABILITY:screen:8","READABILITY:screen:9"],
+  "history-medicine-surgery-anaesthetics": ["PASSIVE_RUN:screen:4","READABILITY:screen:0","READABILITY:screen:1","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:8","READABILITY:screen:9","STAGE_NAV_NOT_INCREASING:part-5","STAGE_NO_ASSESSMENT:part-1"],
+  "history-medicine-great-plague-1665": ["EXAM_PREP_NO_ASSESSMENT:screen:10","READABILITY:screen:0","READABILITY:screen:2","READABILITY:screen:5","READABILITY:screen:9"],
+  "history-medicine-jenner-vaccination": ["READABILITY:screen:0","STAGE_NAV_NOT_INCREASING:part-2","STAGE_NAV_NOT_INCREASING:part-3","STAGE_NAV_NOT_INCREASING:part-4","STAGE_NAV_NOT_INCREASING:part-5","STAGE_NAV_NOT_INCREASING:part-6"],
+  "history-medicine-germ-theory": ["PASSIVE_RUN:screen:5","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:8","STAGE_NAV_NOT_INCREASING:part-2"],
+  "history-medicine-great-stink": ["READABILITY:screen:0","READABILITY:screen:1","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5"],
+  "history-medicine-surgery-revolution": ["READABILITY:screen:1","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:9"],
+  "history-medicine-accidental-miracle": ["READABILITY:screen:0","READABILITY:screen:1","READABILITY:screen:10","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:8"],
+  "history-medicine-modern-medicine": ["READABILITY:screen:0","READABILITY:screen:1","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:8"],
+  "history-medicine-cancer": ["READABILITY:screen:0","READABILITY:screen:1","READABILITY:screen:10","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:7","STAGE_NO_ASSESSMENT:part-3"],
+  "history-medicine-western-front": ["READABILITY:screen:0","READABILITY:screen:1","READABILITY:screen:10","READABILITY:screen:12","READABILITY:screen:14","READABILITY:screen:16","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:8"],
+  "bio_building_blocks": ["READABILITY:screen:11","READABILITY:screen:12","READABILITY:screen:13","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:6","READABILITY:screen:8","READABILITY:screen:9","STAGE_NO_ASSESSMENT:part-3"],
+  "sci_bio_w1": ["READABILITY:screen:0","READABILITY:screen:5","READABILITY:screen:8"],
+  "math1": ["READABILITY:screen:11","READABILITY:screen:9"],
+  "math2": ["READABILITY:screen:0","READABILITY:screen:12","READABILITY:screen:13","READABILITY:screen:5","READABILITY:screen:8"],
+  "math3": ["READABILITY:screen:0","READABILITY:screen:12","READABILITY:screen:13","READABILITY:screen:7","READABILITY:screen:9"],
+  "math4": ["READABILITY:screen:0","READABILITY:screen:10","READABILITY:screen:11","READABILITY:screen:12","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:9"],
+  "math5": ["READABILITY:screen:11","READABILITY:screen:4","READABILITY:screen:5"],
+  "math6": ["READABILITY:screen:1"],
+  "math7": ["READABILITY:screen:1","READABILITY:screen:10"],
+  "math8": ["READABILITY:screen:13","READABILITY:screen:2","READABILITY:screen:4","READABILITY:screen:6","READABILITY:screen:8","READABILITY:screen:9"],
+  "soc1": ["READABILITY:screen:0","READABILITY:screen:1","READABILITY:screen:10","READABILITY:screen:11","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:8","READABILITY:screen:9"],
+  "soc2": ["READABILITY:screen:10","READABILITY:screen:11","READABILITY:screen:12","READABILITY:screen:13","READABILITY:screen:14","READABILITY:screen:15","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:8","READABILITY:screen:9"],
+  "soc3": ["READABILITY:screen:0","READABILITY:screen:1","READABILITY:screen:10","READABILITY:screen:11","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:8","READABILITY:screen:9"],
+  "soc4": ["READABILITY:screen:0","READABILITY:screen:1","READABILITY:screen:10","READABILITY:screen:11","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5","READABILITY:screen:7","READABILITY:screen:8","READABILITY:screen:9"],
+  "soc6": ["READABILITY:screen:0","READABILITY:screen:1","READABILITY:screen:10","READABILITY:screen:11","READABILITY:screen:2","READABILITY:screen:3","READABILITY:screen:4","READABILITY:screen:5","READABILITY:screen:6","READABILITY:screen:7","READABILITY:screen:8","READABILITY:screen:9","STAGE_NO_ASSESSMENT:part-1"],
+  "english-macbeth-power-ambition": ["STAGE_NAV_NOT_INCREASING:part-2","STAGE_NAV_NOT_INCREASING:part-3","STAGE_NAV_NOT_INCREASING:part-4","STAGE_NAV_NOT_INCREASING:part-5","STAGE_NAV_NOT_INCREASING:part-6"],
+}
 
 describe('Content quality floor', () => {
+  it('enumerates every built module from MODULES and MODULE_CONTENT_LOADERS', () => {
+    const expectedBuiltIds = MODULES.filter(mod => mod.screenCount > 0).map(mod => mod.id).sort()
+    const inspectedIds = ALL_EPISODES.map(ep => ep.id).sort()
+    expect(inspectedIds).toEqual(expectedBuiltIds)
+  })
+
   for (const ep of ALL_EPISODES) {
     if ((ep.screens ?? []).length === 0) continue // stubs are covered by placeholder-module-safety
     it(`${ep.id} meets the quality floor (or is grandfathered)`, () => {
-      const violations = guardrailViolations(ep)
-      if (GRANDFATHERED_EPISODES.has(ep.id)) return // shrink-only allowlist
-      expect(violations, violations.join('\n')).toEqual([])
+      const fingerprints = violationFingerprints(guardrailViolations(ep))
+      expect(fingerprints).toEqual(KNOWN_GUARDRAIL_VIOLATIONS[ep.id] ?? [])
     })
   }
 

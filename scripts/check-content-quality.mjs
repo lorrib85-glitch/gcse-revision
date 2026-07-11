@@ -38,7 +38,7 @@ const sentenceCase = sentenceCaseViolations(episode)
 console.log(`\n${moduleId} — content quality check (${episode.screens.length} screens)\n`)
 
 console.log('Guardrails + readability:')
-console.log(guardrails.length ? guardrails.map(v => `  - ${v}`).join('\n') : '  none')
+console.log(guardrails.length ? guardrails.map(v => `  - ${v.fingerprint}: ${v.message}`).join('\n') : '  none')
 
 console.log('\nSentence case:')
 console.log(sentenceCase.length ? sentenceCase.map(v => `  - ${v}`).join('\n') : '  none')
