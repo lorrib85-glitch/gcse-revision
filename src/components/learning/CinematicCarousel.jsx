@@ -183,13 +183,7 @@ function ImageReveal({ block, subject, onContinue }) {
   )
 }
 
-export default function CinematicCarousel({ block, subject = 'Biology', onContinue }) {
-  ensureStyles()
-
-  if (block.mode === 'imageReveal') {
-    return <ImageReveal block={block} subject={subject} onContinue={onContinue} />
-  }
-
+function DefaultCarousel({ block, subject, onContinue }) {
   const theme = SUBJECTS[subject] || SUBJECTS.Biology
   const { accent, accentRgb: rgb } = theme
   const items = block.items || []
@@ -331,4 +325,14 @@ export default function CinematicCarousel({ block, subject = 'Biology', onContin
       </div>
     </div>
   )
+}
+
+export default function CinematicCarousel({ block, subject = 'Biology', onContinue }) {
+  ensureStyles()
+
+  if (block.mode === 'imageReveal') {
+    return <ImageReveal block={block} subject={subject} onContinue={onContinue} />
+  }
+
+  return <DefaultCarousel block={block} subject={subject} onContinue={onContinue} />
 }

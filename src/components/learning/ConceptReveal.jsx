@@ -133,6 +133,7 @@ export default function ConceptReveal({ subject: subjectProp, steps = [], onCont
         {useWidthLockedBackground && (
           <img
             aria-hidden="true"
+            alt=""
             src={step.backgroundImage}
             style={{
               position: 'absolute',

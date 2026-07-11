@@ -136,10 +136,16 @@ function AccountOverlay({ onDismiss }) {
   const statusText = getProgressStatusText(user, syncStatus)
   const isGoogleUser = user?.provider === 'google'
 
+  // Dismiss only when the backdrop itself is clicked, not content inside it —
+  // keeps the click-to-dismiss handler off the role="dialog" element itself
+  // (jsx-a11y/no-noninteractive-element-interactions), with identical behaviour.
+  function onBackdropClick(e) {
+    if (e.target === e.currentTarget) onDismiss()
+  }
+
   return (
     <div
-      role="dialog" aria-modal="true" aria-label="Account"
-      onClick={onDismiss}
+      onClick={onBackdropClick}
       style={{
         position: 'fixed', inset: 0, zIndex: 3000,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -149,7 +155,7 @@ function AccountOverlay({ onDismiss }) {
       }}
     >
       <div
-        onClick={e => e.stopPropagation()}
+        role="dialog" aria-modal="true" aria-label="Account"
         style={{
           width: '100%', maxWidth: 340,
           background: GENERAL.neutral[1], border: `1px solid ${GENERAL.line.soft}`,
