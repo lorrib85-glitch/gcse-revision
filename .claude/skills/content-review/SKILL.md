@@ -114,11 +114,16 @@ space/subject branding per the token systems), **canonical coverage**
 (two-way diff against the canonical content file — gaps listed by
 canonical section, unsourced content flagged; skipped in degraded mode),
 and **readability + sentence case** (run
-`vitest run tests/architecture/content-quality.test.js` for the machine
-floor — the episode may be in `GRANDFATHERED_EPISODES` /
-`SENTENCE_CASE_GRANDFATHERED_EPISODES`; note which, and apply "plain
-language around the compulsory subject vocabulary, aiming for a reading
-age of 12" plus sentence case to copy those machine checks can't reach).
+`node scripts/check-content-quality.mjs <module-id>` — a live, per-screen
+check against this one module, with no pre-registration required; report
+every violation it prints, then apply "plain language around the
+compulsory subject vocabulary, aiming for a reading age of 12" plus
+sentence case to copy the script can't reach, e.g. body prose outside
+label/title/heading/sub). This script is independent of the CI regression
+floor (`tests/architecture/content-quality.test.js`) — it has no
+allowlist, so it reports every violation on this module even if that
+module is grandfathered there; don't skip a finding because the module
+happens to be on that separate list.
 
 ### The render pass (mandatory for every 👁 check)
 
@@ -149,8 +154,9 @@ findings as `screen <index> — <what's wrong> — <what fixing it looks
 like>`, ordered most-damaging first. Precede the six dimensions with the
 per-screen one-primary-intent / objective-match / contract results from
 Audit steps 1–3. End with the canonical coverage diff (or the degraded-mode
-note) and the technical-pass results, including the readability/sentence-case
-grandfather status. No single overall score, ever.
+note) and the technical-pass results, including every readability/
+sentence-case violation `check-content-quality.mjs` reported. No single
+overall score, ever.
 
 ## Review log
 

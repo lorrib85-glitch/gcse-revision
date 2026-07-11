@@ -6,6 +6,13 @@ import {
   isPassive,
   isAssessed,
 } from '../../src/data/componentFunctions.js'
+import {
+  fleschKincaidGrade,
+  stripExamVocabulary,
+  collectLearnerText,
+  guardrailViolations,
+  sentenceCaseViolations,
+} from '../../src/data/contentQualityChecks.js'
 import { MEDICINE_EPISODES } from '../../src/content/history/medicine/index.js'
 import * as mathsFoundations from '../../src/content/maths/foundations/index.js'
 import * as chemChemicalChanges from '../../src/content/chemistry/chemical-changes/index.js'
@@ -20,11 +27,16 @@ import * as bioEcology from '../../src/content/biology/ecology/index.js'
 import * as bioCellBiology from '../../src/content/biology/cell-biology/index.js'
 import * as bioInfectionResponse from '../../src/content/biology/infection-and-response/index.js'
 import * as englishMacbeth from '../../src/content/english/macbeth/index.js'
-import {
-  fleschKincaidGrade,
-  stripExamVocabulary,
-  collectLearnerText,
-} from './helpers/readability.js'
+
+// This file is the CI regression floor: it enumerates every built episode
+// and keeps shrink-only grandfather allowlists so `pnpm verify` catches new
+// violations without re-litigating known ones. The actual check functions
+// (guardrailViolations, sentenceCaseViolations, etc.) live in
+// src/data/contentQualityChecks.js and take a single episode with no
+// registry involved — that's what scripts/check-content-quality.mjs uses
+// for a live, on-demand check of any one module, which is what
+// content-review runs. This file's enumeration is a property of being a
+// regression gate, not a requirement of the checks themselves.
 
 // Every other built series lazy-loads via EPISODE_LOADERS/EPISODE_IDS (unlike
 // Medicine's eager MEDICINE_EPISODES array). Resolve them all once here so
@@ -174,62 +186,6 @@ const GRANDFATHERED_EPISODES = new Set([
   'english-macbeth-power-ambition',
 ])
 
-const READABILITY_GRADE_CEILING = 7
-
-function isPassiveScreen(screen) {
-  const types = [screen.type, ...(screen.blocks ?? []).map(b => b.type)].filter(Boolean)
-  if (types.length === 0) return true
-  return types.every(t => isPassive(t))
-}
-
-function hasAssessedScreen(screens) {
-  return screens.some(s =>
-    [s.type, ...(s.blocks ?? []).map(b => b.type)].filter(Boolean).some(t => isAssessed(t)),
-  )
-}
-
-function guardrailViolations(ep) {
-  const violations = []
-  const screens = ep.screens ?? []
-
-  // ⚙ never more than 2 consecutive passive screens
-  let run = 0
-  screens.forEach((s, i) => {
-    run = isPassiveScreen(s) ? run + 1 : 0
-    if (run === 3) violations.push(`3 consecutive passive screens ending at index ${i}`)
-  })
-
-  // ⚙ stageNavigation sane + every teaching stage has an assessed screen
-  const stages = ep.stageNavigation ?? []
-  stages.forEach((stage, i) => {
-    if (i > 0 && stage.screenIndex <= stages[i - 1].screenIndex) {
-      violations.push(`stageNavigation "${stage.id}" screenIndex not strictly increasing`)
-    }
-    if (stage.screenIndex < 0 || stage.screenIndex >= screens.length) {
-      violations.push(`stageNavigation "${stage.id}" screenIndex out of bounds`)
-    }
-  })
-  stages.slice(0, -1).forEach((stage, i) => {
-    const end = stages[i + 1]?.screenIndex ?? screens.length
-    const segment = screens.slice(stage.screenIndex, end)
-    if (segment.length > 0 && !hasAssessedScreen(segment)) {
-      violations.push(`teaching stage "${stage.id}" has no assessed screen`)
-    }
-  })
-
-  // ⚙ readability per screen
-  screens.forEach((s, i) => {
-    const text = stripExamVocabulary(collectLearnerText(s))
-    if (text.split(/\s+/).filter(Boolean).length < 10) return // too short to score
-    const grade = fleschKincaidGrade(text)
-    if (grade > READABILITY_GRADE_CEILING) {
-      violations.push(`screen ${i} readability grade ${grade.toFixed(1)} > ${READABILITY_GRADE_CEILING}`)
-    }
-  })
-
-  return violations
-}
-
 describe('Content quality floor', () => {
   for (const ep of ALL_EPISODES) {
     if ((ep.screens ?? []).length === 0) continue // stubs are covered by placeholder-module-safety
@@ -248,72 +204,8 @@ describe('Content quality floor', () => {
 
 // ─── Sentence-case guard (P7) ─────────────────────────────────────────────
 // CLAUDE.md requires sentence case for all titles/headings written into the
-// codebase. Flags runs of 2+ consecutive capitalised non-first words in
-// label/title/heading/sub fields that aren't a known proper noun/named term.
-// Existing violations are grandfathered per-episode (shrink-only); fixing
-// them is content-review work, not this test's job.
-
-const PROPER_NOUNS = [
-  'Black Death', 'Great Plague', 'Great Stink', 'Zodiac Man',
-  'Regimen Sanitatis', 'John Bradmore', 'Henry V', 'Alexandre Yersin',
-  'Robert Koch', 'John Snow', 'Joseph Bazalgette', 'Robert Liston',
-  'West End', 'William Morton', 'James Simpson', 'Queen Victoria',
-  'William Halsted', 'Karl Landsteiner', 'Howard Florey', 'Ernst Chain',
-  'Alexander Fleming', "St Mary's Hospital", 'Oxford University',
-  'National Health Service', 'Aneurin Bevan', 'Nobel Prize',
-  'Raymond Damadian', 'Rosalind Franklin', 'South Africa',
-  'Magnetic Resonance Imaging', 'Public Health Act', 'Edwin Chadwick',
-  'Royal Society', 'Royal College', 'Clement Attlee',
-  'National Insurance Act', 'Medical Association', 'First World War',
-  'Sir Robert Jones', 'Hugh Owen Thomas', 'Western Front',
-  'Regimental Aid Post', 'Main Dressing Station', 'Advanced Dressing Station',
-  'Casualty Clearing Station', "Queen Mary's Hospital", 'Swan-Neck Flask',
-  'Spontaneous Generation', 'National Insurance', 'Human Body',
-  'De Humani Corporis Fabrica', 'De Motu Cordis',
-]
-
-const TITLE_CASE_KEYS = new Set(['label', 'title', 'heading', 'sub'])
-
-function isCapitalisedWord(word) {
-  return /^[A-Z]/.test(word) && word.toLowerCase() !== word && word.toUpperCase() !== word
-}
-
-function isKnownProperNoun(w1, w2) {
-  return PROPER_NOUNS.some(pn => pn.includes(w1) && pn.includes(w2))
-}
-
-function findTitleCaseRuns(text) {
-  const words = text.split(/\s+/).filter(Boolean)
-  const runs = []
-  for (let i = 1; i < words.length - 1; i++) {
-    const w1 = words[i].replace(/[^\w'-]/g, '')
-    const w2 = words[i + 1].replace(/[^\w'-]/g, '')
-    if (!w1 || !w2) continue
-    if (isCapitalisedWord(w1) && isCapitalisedWord(w2) && !isKnownProperNoun(w1, w2)) {
-      runs.push(`${w1} ${w2}`)
-    }
-  }
-  return runs
-}
-
-function collectTitleCaseFields(node, out = []) {
-  if (typeof node !== 'object' || node === null) return out
-  for (const [key, value] of Object.entries(node)) {
-    if (typeof value === 'string' && TITLE_CASE_KEYS.has(key)) out.push(value)
-    else if (typeof value === 'object') collectTitleCaseFields(value, out)
-  }
-  return out
-}
-
-function sentenceCaseViolations(ep) {
-  const violations = []
-  for (const field of collectTitleCaseFields(ep)) {
-    for (const run of findTitleCaseRuns(field)) {
-      violations.push(`"${run}" in "${field}"`)
-    }
-  }
-  return violations
-}
+// codebase. Existing violations are grandfathered per-episode (shrink-only);
+// fixing them is content-review work, not this test's job.
 
 // Episodes with known sentence-case violations. Shrink-only — fixing an
 // episode's copy removes it here. Never add a NEW episode to this list.
