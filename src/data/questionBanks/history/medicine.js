@@ -383,7 +383,7 @@ const MEDICINE_QUICKFIRE = [
     correct: 0,
     ms: 'William Harvey published his ideas about blood circulation in 1628.',
     hint: 'This 17th-century English doctor showed the heart pumps blood around the body in a continuous loop.',
-    moduleId: 'history-medicine-renaissance-medicine',
+    moduleId: 'history-medicine-harvey-pare-renaissance-method',
     tags: ['history:medicine', 'period:renaissance', 'theme:anatomy', 'format:mc', 'skill:recall', 'history:medicine:harvey'],
     source: 'handwritten',
   },

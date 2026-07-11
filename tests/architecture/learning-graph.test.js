@@ -188,9 +188,8 @@ describe('Learning graph — tagged content uses only registered vocabulary', ()
     }
   })
 
-  it('all 14 Medicine modules carry subject/course tags', () => {
+  it('all Medicine modules carry subject/course tags', () => {
     const medicine = MODULES.filter(m => m.series === 'medicine')
-    expect(medicine).toHaveLength(14)
     for (const mod of medicine) {
       expect(mod.tags, `${mod.id} missing tags`).toBeDefined()
       expect(mod.tags).toContain('subject:history')

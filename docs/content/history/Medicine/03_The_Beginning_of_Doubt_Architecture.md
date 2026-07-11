@@ -4,11 +4,11 @@
 
 - **Episode number:** 3
 - **Title:** The Beginning of Doubt
-- **Build status:** Built (shared) as `history-medicine-renaissance-medicine` (formerly `mod2`) — also covers Episodes 4 (Harvey) and 5 (Great Plague)
+- **Build status:** Built as clean runtime `history-medicine-vesalius-beginning-doubt`; legacy bundled runtime `history-medicine-renaissance-medicine` remains hidden for compatibility.
 - Content, Storyline, Specification requirements and the full Content reference pack: see `03_The_Beginning_of_Doubt_Content.md` in this directory.
 
-### Bundling note
-`history-medicine-renaissance-medicine` currently covers Episodes 3, 4 and 5 in one module. The series map recommends splitting it. Until that split happens, this architecture file covers only Episode 3 content within this module. Episode 4 and 5 content is assessed in their own architecture files.
+### Runtime note
+Episode 3 now has its own clean runtime. The older `history-medicine-renaissance-medicine` bundle is retained only as a hidden legacy compatibility module; Episode 4 and Episode 5 content is assessed in their own runtime files and architecture docs.
 
 ---
 

@@ -11,9 +11,11 @@ export const MODULE_CONTENT_LOADERS = {
   // ── History — Medicine Through Time ─────────────────────────────────────────
   'history-medicine-medieval-beliefs-causes': () => import('./history/medicine/episodes/episode-01-medieval-beliefs-causes.runtime.js').then(m => m.default),
   'history-medicine-black-death':             () => import('./history/medicine/episodes/episode-02-black-death.js').then(m => m.default),
-  'history-medicine-renaissance-medicine':    () => import('./history/medicine/episodes/episode-03-renaissance-medicine.js').then(m => m.default),
+  'history-medicine-renaissance-medicine':    () => import('./history/medicine/episodes/episode-03-renaissance-medicine.js').then(m => m.default), // hidden legacy bundle
+  'history-medicine-vesalius-beginning-doubt': () => import('./history/medicine/episodes/episode-03-vesalius-beginning-doubt.js').then(m => m.default),
+  'history-medicine-harvey-pare-renaissance-method': () => import('./history/medicine/episodes/episode-04-harvey-pare-renaissance-method.js').then(m => m.default),
   'history-medicine-surgery-anaesthetics':    () => import('./history/medicine/episodes/episode-04-surgery-anaesthetics.js').then(m => m.default),
-  'history-medicine-great-plague':            () => import('./history/medicine/episodes/episode-05-great-plague.js').then(m => m.default), // unbuilt stub
+  'history-medicine-great-plague-1665':       () => import('./history/medicine/episodes/episode-05-great-plague-1665.js').then(m => m.default),
   'history-medicine-jenner-vaccination':      () => import('./history/medicine/episodes/episode-06-jenner-vaccination.js').then(m => m.default),
   'history-medicine-germ-theory':             () => import('./history/medicine/episodes/episode-07-germ-theory.js').then(m => m.default),
   'history-medicine-great-stink':             () => import('./history/medicine/episodes/episode-08-great-stink.js').then(m => m.default),

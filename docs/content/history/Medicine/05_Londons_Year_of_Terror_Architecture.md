@@ -4,11 +4,11 @@
 
 - **Episode number:** 5
 - **Title:** London's Year of Terror
-- **Build status:** Built (shared) as `history-medicine-renaissance-medicine` (formerly `history-medicine-renaissance-medicine`) — also covers Episodes 3 (Vesalius) and 4 (Harvey)
+- **Build status:** Built as clean runtime `history-medicine-great-plague-1665`; legacy bundled runtime remains hidden for compatibility.
 - Content, Storyline, Specification requirements and the full Content reference pack: see `05_Londons_Year_of_Terror_Content.md` in this directory.
 
-### Bundling note
-`history-medicine-renaissance-medicine` currently covers Episodes 3, 4 and 5 in one module. The series map recommends splitting the 1665 Great Plague into its own clear module so students can compare it properly with the Black Death.
+### Runtime note
+Episode 5 now has its own clean runtime for the 1665 Great Plague comparison. The older shared bundle is retained only as hidden legacy compatibility content.
 
 ---
 

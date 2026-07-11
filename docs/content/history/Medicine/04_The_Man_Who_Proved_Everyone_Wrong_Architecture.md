@@ -4,11 +4,11 @@
 
 - **Episode number:** 4
 - **Title:** The Man Who Proved Everyone Wrong
-- **Build status:** Built (shared) as `history-medicine-renaissance-medicine` (formerly `mod2`) — also covers Episodes 3 (Vesalius) and 5 (Great Plague)
+- **Build status:** Built as clean runtime `history-medicine-harvey-pare-renaissance-method`; Harvey is dominant and Paré has explicit supporting coverage.
 - Content, Storyline, Specification requirements and the full Content reference pack: see `04_The_Man_Who_Proved_Everyone_Wrong_Content.md` in this directory.
 
-### Bundling note
-`history-medicine-renaissance-medicine` currently covers Episodes 3, 4 and 5 in one 16-screen module. Harvey content within this module is estimated at ~5 screens. The series map recommends splitting into three separate modules.
+### Runtime note
+Episode 4 now has its own clean runtime. Harvey is the dominant narrative, with Paré included as explicit supporting evidence for Renaissance observation/trial in surgery. The older shared bundle is retained only as hidden legacy compatibility content.
 
 ---
 

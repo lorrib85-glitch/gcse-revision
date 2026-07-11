@@ -137,13 +137,13 @@ export const CONTENT_INDEX = {
     },
   },
 
-  // ── History: Renaissance (history-medicine-renaissance-medicine) ──────────
+  // ── History: Renaissance split modules ─────────────────────────────────────
   'renaissance-change': {
     sectionId: 'renaissance-change',
     title: 'Renaissance Medical Change',
     subject: 'History',
-    moduleId: 'history-medicine-renaissance-medicine',
-    screenLabel: 'Renaissance',
+    moduleId: 'history-medicine-vesalius-beginning-doubt',
+    screenLabel: 'Vesalius and printing',
     keywords: ['Renaissance', 'Vesalius', 'Harvey', 'printing press', 'dissection', 'observation', 'change'],
     summary: 'The Renaissance saw new challenges to Galen. Vesalius proved Galen wrong on anatomy. Harvey proved blood circulates.',
     keyReminders: [
@@ -168,7 +168,7 @@ export const CONTENT_INDEX = {
     sectionId: 'great-plague',
     title: 'The Great Plague 1665',
     subject: 'History',
-    moduleId: 'history-medicine-renaissance-medicine',
+    moduleId: 'history-medicine-great-plague-1665',
     screenLabel: 'Great Plague',
     keywords: ['Great Plague', '1665', 'London', 'miasma', 'government response', 'continuity'],
     summary: 'Despite Renaissance advances, people still blamed miasma and God for the 1665 plague. Government response improved but medicine had not.',

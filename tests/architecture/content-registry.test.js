@@ -488,8 +488,8 @@ describe('Content registry — series index (MEDICINE_EPISODES)', () => {
     expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-black-death')).toBeDefined()
   })
 
-  it('includes the renaissance medicine episode', () => {
-    expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-renaissance-medicine')).toBeDefined()
+  it('includes the clean Vesalius episode', () => {
+    expect(MEDICINE_EPISODES.find(m => m.id === 'history-medicine-vesalius-beginning-doubt')).toBeDefined()
   })
 
   it('includes the surgery & anaesthetics episode', () => {
