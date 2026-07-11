@@ -211,7 +211,6 @@ describe('Content quality floor', () => {
 // episode's copy removes it here. Never add a NEW episode to this list.
 const SENTENCE_CASE_GRANDFATHERED_EPISODES = new Set([
   'history-medicine-medieval-beliefs-causes',
-  'history-medicine-black-death',
   'history-medicine-renaissance-medicine',
   'history-medicine-surgery-anaesthetics',
   'history-medicine-jenner-vaccination',

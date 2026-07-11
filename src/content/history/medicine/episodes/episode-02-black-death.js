@@ -44,12 +44,12 @@ export default {
   },
 
   stageNavigation: [
-    { id: 'part-1', title: 'The Ship That Changed England', description: 'Intro hook, prior recall and roadmap.', screenIndex: 0 },
-    { id: 'part-2', title: 'What Was the Black Death?', description: 'Arrival, spread and symptoms of the plague.', screenIndex: 1 },
-    { id: 'part-3', title: 'How Medieval Minds Explained It', description: 'God, miasma, astrology and humoural beliefs.', screenIndex: 8 },
-    { id: 'part-4', title: 'Treatments in a World Without Germs', description: 'Plague responses, treatments and prevention attempts.', screenIndex: 11 },
-    { id: 'part-5', title: 'Changed by Disaster?', description: 'Social, economic and medical aftermath of the plague.', screenIndex: 15 },
-    { id: 'part-6', title: 'Exam Prep: Crisis, Continuity and Change', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 18 },
+    { id: 'part-1', title: 'The ship that changed England', description: 'Intro hook, prior recall and roadmap.', screenIndex: 0 },
+    { id: 'part-2', title: 'What was the Black Death?', description: 'Arrival, spread and symptoms of the plague.', screenIndex: 1 },
+    { id: 'part-3', title: 'How medieval minds explained it', description: 'God, miasma, astrology and humoural beliefs.', screenIndex: 8 },
+    { id: 'part-4', title: 'Treatments in a world without germs', description: 'Plague responses, treatments and prevention attempts.', screenIndex: 11 },
+    { id: 'part-5', title: 'Changed by disaster?', description: 'Social, economic and medical aftermath of the plague.', screenIndex: 15 },
+    { id: 'part-6', title: 'Exam prep: crisis, continuity and change', description: 'Examiner traps, mark-scheme thinking and exam practice.', screenIndex: 18 },
   ],
 
   screens: [

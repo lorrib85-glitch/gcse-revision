@@ -153,7 +153,7 @@ export const PROPER_NOUNS = [
   'Regimental Aid Post', 'Main Dressing Station', 'Advanced Dressing Station',
   'Casualty Clearing Station', "Queen Mary's Hospital", 'Swan-Neck Flask',
   'Spontaneous Generation', 'National Insurance', 'Human Body',
-  'De Humani Corporis Fabrica', 'De Motu Cordis',
+  'De Humani Corporis Fabrica', 'De Motu Cordis', 'Melcombe Regis',
 ]
 
 const TITLE_CASE_KEYS = new Set(['label', 'title', 'heading', 'sub'])
@@ -170,6 +170,7 @@ function findTitleCaseRuns(text) {
   const words = text.split(/\s+/).filter(Boolean)
   const runs = []
   for (let i = 1; i < words.length - 1; i++) {
+    if (/[,;:]$/.test(words[i])) continue // clause boundary — e.g. "Melcombe Regis, June 1348" is two clauses, not one run
     const w1 = words[i].replace(/[^\w'-]/g, '')
     const w2 = words[i + 1].replace(/[^\w'-]/g, '')
     if (!w1 || !w2) continue
