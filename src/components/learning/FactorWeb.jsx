@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
@@ -193,7 +193,10 @@ function FactorWebDiagram({
             position: 'absolute',
             left: '50%',
             top: '50%',
-            transform: 'translate(-50%, -50%)',
+            // Use the independent CSS translate property rather than transform.
+            // Framer Motion owns transform for scale, so transform: translate(...)
+            // was being overwritten and shifting the centre down/right.
+            translate: '-50% -50%',
             width: 94,
             height: 94,
             borderRadius: '50%',
@@ -236,7 +239,9 @@ function FactorWebDiagram({
                 position: 'absolute',
                 left: `${position.x}%`,
                 top: `${position.y}%`,
-                transform: 'translate(-50%, -50%)',
+                // Keep centring independent from Framer Motion's transform-based
+                // scale animation. This prevents right-side clipping.
+                translate: '-50% -50%',
                 width: 'clamp(86px, 24vw, 102px)',
                 minHeight: 58,
                 padding: `${SPACING.micro}px 8px`,
@@ -449,6 +454,7 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
   const rgb = theme.accentRgb
   const bg = theme.background || SUBJECTS.History.background
   const prefersReduced = useReducedMotion()
+  const scrollRef = useRef(null)
 
   const factors = block.factors || []
   const [activeId, setActiveId] = useState(null)
@@ -459,6 +465,19 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
   const allExplored = factors.length > 0 && explored.size >= factors.length
   const activeFactor = factors.find(factor => factor.id === activeId)
   const isJudgement = phase === 'judgement'
+
+  // Route-B interaction screens own their internal scroller. Always enter a
+  // FactorWeb phase at its heading rather than inheriting a stale scroll offset
+  // from the previous screen or the exploration phase.
+  useEffect(() => {
+    const node = scrollRef.current
+    if (!node) return
+    if (typeof node.scrollTo === 'function') node.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    else {
+      node.scrollTop = 0
+      node.scrollLeft = 0
+    }
+  }, [phase])
 
   function handleNodeTap(factor) {
     setActiveId(factor.id)
@@ -475,12 +494,17 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
 
   return (
     <InteractionShell subject={subject}>
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch',
-        padding: `${SPACING.compact}px 0 96px`,
-      }}>
+      <div
+        ref={scrollRef}
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          overscrollBehaviorX: 'none',
+          WebkitOverflowScrolling: 'touch',
+          padding: `${SPACING.compact}px 0 96px`,
+        }}
+      >
         <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.standard }}>
           <header>
             {(isJudgement || block.kicker) && (
