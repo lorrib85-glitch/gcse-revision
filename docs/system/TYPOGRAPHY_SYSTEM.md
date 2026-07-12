@@ -53,9 +53,29 @@ These are the **live** tokens exported by `src/constants/typography.js`. Names a
 | Token | Size | Weight | Line height | Letter spacing | Role |
 |-------|------|--------|-------------|----------------|------|
 | `TYPE.displayHero` | clamp(32px, 9vw, 48px) | 600 | 1.05 | -0.028em | Cinematic / hero title — the biggest emotional moment on a screen |
-| `TYPE.displayScreen` | clamp(28px, 8vw, 38px) | 560 | 1.07 | -0.022em | Standard learning-screen title (the `TeachScreenShell` heading) |
-| `TYPE.displaySection` | clamp(22px, 6vw, 30px) | 560 | 1.10 | -0.015em | Section-level title |
+| `TYPE.displayScreen` | clamp(24px, 7.5vw, 32px) | 560 | 1.10 | -0.015em | Canonical non-cinematic module-screen title |
+| `TYPE.displaySection` | clamp(21px, 5.5vw, 28px) | 560 | 1.12 | -0.012em | Section-level title, visibly subordinate to the screen title |
 | `TYPE.displayCard` | 1.15rem | 560 | 1.20 | -0.012em | Supporting / card title |
+
+### Canonical non-cinematic heading
+
+`TYPE.displayScreen` is the single approved primary-heading treatment for ordinary module screens. It is calibrated from the verified 390px TimelineCanvas composition used by **“How the plague travelled”**: large enough to lead the screen, but calm enough not to compete with cinematic moments.
+
+Use it for the one primary heading on normal teaching, explanation and interaction screens. Components may control the heading's placement and available width, but must not locally replace or override its:
+
+- font family
+- font size
+- font weight
+- line height
+- letter spacing
+
+The canonical title is intentionally distinct from:
+
+- `TYPE.displayHero` for full-bleed cinematic and emotional reveal moments
+- `TYPE.quizQuestion` for active quiz questions
+- `TYPE.examQuestion` for authentic exam wording and source work
+
+Do not flatten those specialist roles into `displayScreen`.
 
 ### Titles & body (Sora)
 
@@ -116,24 +136,23 @@ weight" rule:
 | Role | Token |
 |------|-------|
 | Cinematic / hero title | `TYPE.displayHero` |
-| Standard learning-screen title | `TYPE.displayScreen` |
+| Standard non-cinematic module-screen title | `TYPE.displayScreen` |
 | Section-level title | `TYPE.displaySection` |
 | Supporting / card title | `TYPE.displayCard` |
 | Body, label, metadata, caption | their corresponding tokens above |
 
-Standard teaching-screen titles use `TYPE.displayScreen` — this is the token
-`TeachScreenShell` owns for the heading. Supporting section and card headings
-use their subordinate tokens (`displaySection` / `displayCard`) so they read
-as clearly below the screen title.
+Standard non-cinematic module titles use `TYPE.displayScreen`. This includes the heading owned by `TeachScreenShell`, the shared `ScreenTitle` primitive and interaction-owned screens that are not cinematic. Supporting section and card headings use their subordinate tokens (`displaySection` / `displayCard`) so they read as clearly below the screen title.
+
+A component does not gain permission to invent a new primary-heading treatment because it owns its interaction layout. Route B controls composition, not typography semantics.
 
 ---
 
 ## Usage Examples
 
 ```js
-// Standard learning-screen title (TeachScreenShell owns this internally)
+// Standard non-cinematic module-screen title
 <h1 style={{ ...TYPE.displayScreen, color: 'rgba(245,245,245,0.96)', margin: 0 }}>
-  Every illness had an opposite
+  How the plague travelled
 </h1>
 
 // Cinematic / hero moment
