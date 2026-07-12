@@ -43,6 +43,18 @@ describe('FactorWeb governance', () => {
     expect(source).not.toMatch(/<span[^>]*>[\s\S]*?\{block\.question\}[\s\S]*?<\/span>/)
   })
 
+  it('keeps motion elements centred without letting Framer Motion overwrite their offset', () => {
+    const centredOffsets = source.match(/translate:\s*'-50% -50%'/g) ?? []
+    expect(
+      centredOffsets,
+      'The centre node and outer factor buttons must use the independent CSS translate property.',
+    ).toHaveLength(2)
+
+    expect(source).not.toContain("transform: 'translate(-50%, -50%)'")
+    expect(source).toContain("overflowX: 'hidden'")
+    expect(source).toContain("overscrollBehaviorX: 'none'")
+  })
+
   it('has a governed contract and 390px gold stories', () => {
     const story = read(storyPath)
     const contract = read(contractPath)
