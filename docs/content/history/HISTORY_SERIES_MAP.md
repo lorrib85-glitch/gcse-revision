@@ -50,24 +50,32 @@ it happened because of recurring agents of change.
 |---|---------|-----------|-----------------|-------|
 | 1 | Trust Me, I'm Following Jupiter | Medieval Medicine c1250–1500 | `history-medicine-medieval-beliefs-causes` — "Trust me, I'm Following Jupiter" | Built and aligned — title already matches. |
 | 2 | The Day Everything Changed | Black Death | `history-medicine-black-death` — "The day everything changed" | Built and aligned — title now matches the spine. |
-| 3 | The Beginning of Doubt | Medical Renaissance | `history-medicine-renaissance-medicine` (formerly `mod2`) — "The beginning of doubt" | Built, but this module currently bundles Episodes 3–5 into one module (see below). |
-| 4 | The Man Who Proved Everyone Wrong | William Harvey | `history-medicine-renaissance-medicine` (shared — see Episode 3) | Harvey's circulation theory is taught inside this module, not as its own module. |
-| 5 | London's Year of Terror | Great Plague | `history-medicine-renaissance-medicine` (shared — see Episode 3) | The 1665 Great Plague currently appears inside this module as a "continuity" case study. |
+| 3 | The Beginning of Doubt | Vesalius and the first Renaissance challenge to authority | `history-medicine-vesalius-beginning-doubt` | Built as a clean module. Owns Renaissance background, Vesalius, anatomy theatres, printing and the judgement that knowledge changed before treatment. |
+| 4 | The Man Who Proved Everyone Wrong | Harvey and the spread of Renaissance scientific method | `history-medicine-harvey-pare-renaissance-method` | Built as a clean module. Harvey is dominant; Paré, Fracastoro, Royal Society, Malpighi, Leeuwenhoek, Sydenham and wider treatment/medical-practice change provide the supporting Renaissance-method sequence. |
+| 5 | London's Year of Terror | Great Plague, prevention and public-health response | `history-medicine-great-plague-1665` | Built as a clean module. Owns Great Plague comparison, wider prevention continuity/change and the growth of organised government response. |
 | 6 | The Boy, the Cow and the Cure | Jenner | `history-medicine-jenner-vaccination` — "The boy, the cow and the cure" | Built and aligned — title now matches the spine. |
 | 7 | The Invisible Enemy | Pasteur & Koch | `history-medicine-germ-theory` — "The invisible enemy" | Built and aligned — title now matches the spine. |
 | 8 | The Great Stink | Public Health | `history-medicine-great-stink` (formerly `mod5`) — "The great stink" | Built and aligned — title now matches the spine. |
 | 9 | The Day Surgery Changed Forever | Anaesthetics & Antiseptics | `history-medicine-surgery-anaesthetics` + `history-medicine-surgery-revolution` (formerly `mod3` + `mod6`) — "Surgery & anatomy" / "The surgery revolution" | Built as a two-part story: the first module sets up the problem (pain, infection, blood loss before 1840), the second delivers the revolution (anaesthetics, antiseptics, Lister). |
-| 10 | The Lady with the Lamp? | Florence Nightingale | — | Not yet built. Nightingale currently appears only as a comparison point in `history-medicine-renaissance-medicine`'s learning objectives. |
+| 10 | The Lady with the Lamp? | Florence Nightingale | — | Not yet built. Nightingale currently appears only as a comparison point in legacy content. |
 | 11 | The Accidental Miracle | Penicillin | `history-medicine-accidental-miracle` (formerly `mod7`) — "The accidental miracle" | Built and aligned — title now matches the spine. |
 | 12 | When Medicine Became Magic | NHS & Modern Medicine | `history-medicine-modern-medicine` + `history-medicine-cancer` (formerly `mod8` + `mod9`) — "When medicine became magic" / "Can we beat cancer?" | Built, but split awkwardly: the first module covers the "magic" half (scans, transplants, DNA), the second opens with the 1948 NHS founding then drifts into Episode 13 content (see below). |
 | 13 | Can We Beat Cancer? | Lung Cancer | `history-medicine-cancer` (shared — see Episode 12) | Lifestyle-disease/lung-cancer content currently lives in the back half of this module, with no clear break from the NHS content. |
 | 14 | Hell in the Trenches | Western Front | — | Not yet built. This is Edexcel's Historic Environment topic (the British sector of the Western Front, 1914–18). |
 
+### Renaissance ownership — Episodes 3–5
+
+The Renaissance period is deliberately divided by story and learning purpose rather than repeated across all three modules:
+
+- **Episode 3 — challenge begins:** Renaissance conditions → Vesalius tests Galen → anatomical evidence spreads through printing → knowledge changes before treatment.
+- **Episode 4 — method spreads:** Harvey proves circulation → observation, experiment, technology and scientific communication become cumulative → some treatment and medical practice improve, but unevenly.
+- **Episode 5 — ordinary response is tested:** Great Plague beliefs, treatments and prevention → wider public-health action → medically similar to 1348, administratively more organised.
+
+The older `history-medicine-renaissance-medicine` bundle remains hidden for compatibility only. New content, review and learner-facing navigation must use the clean Episode 3, 4 and 5 runtimes and their explicit scope ownership.
+
 ### Restructuring notes
 
-- **`history-medicine-renaissance-medicine` → split into Episodes 3, 4 and 5.** Vesalius (Ep 3), Harvey
-  and Paré (Ep 4), and the 1665 Great Plague (Ep 5) are currently one
-  module and need separating to match the 14-episode spine.
+- **Episodes 3–5 split — done.** Vesalius now lives in `history-medicine-vesalius-beginning-doubt`; Harvey and the wider Renaissance-method/treatment strand live in `history-medicine-harvey-pare-renaissance-method`; the Great Plague and prevention/public-health strand live in `history-medicine-great-plague-1665`.
 - **`mod4` split into Episodes 6 and 7 — done.** Jenner's vaccine (Ep 6) now
   lives in `history-medicine-jenner-vaccination`, and Pasteur & Koch's germ
   theory (Ep 7) lives in `history-medicine-germ-theory`.
