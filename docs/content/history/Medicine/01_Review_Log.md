@@ -5,6 +5,35 @@ Following Jupiter"). Entries newest-first.
 
 ---
 
+## 2026-07-12 — Gold audit (third wave) — two golds seated from Ep1
+
+- **Session scope:** the rank-1 recurring-pattern gold audit (Step 2b of
+  the UX-quality-at-scale programme), not a full episode review. Two Ep1
+  screens were rendered at 390px in the composed render path (dev
+  screen-jump + a scratchpad tap-through helper) and seated as the
+  register golds for their patterns.
+- **Canonical files available:** not consulted — this audits execution
+  against the pattern render bar, not coverage.
+
+### Screen decisions (audited subset only)
+
+| Screen | Decision | Outcome |
+|---|---|---|
+| s12 `guidedChoiceCarousel` ("Choose your healer") | Keep | Seated as the composed `guidedChoiceCarousel` gold — verified rest + flipped-card info + full reveal. Image-rich options, emoji stat-runs normalised to chips, one dominant question + CTA, reveal builds to an amber punchline. |
+| s18 `collectionExplorer` ("Staying well in 1400") | Keep | Seated as the composed `collectionExplorer` gold — verified rest + open hotspot sheet + synthesis. 4 items × exactly 5 reveals match the component's hardcoded phase labels; scene-anchored hotspots; synthesis lands a connective exam takeaway. |
+
+- **Below-bar counterexamples (other modules):** `bio_building_blocks` s1
+  (imageless carousel cards) for `guidedChoiceCarousel`;
+  `history-medicine-western-front` s2 (3-reveal items mislabelled by the
+  5-beat phase labels + gridded hotspots) for `collectionExplorer`.
+- **Shared softness noted, not bar-affecting:** the low-contrast cinematic
+  "Continue →" on the carousel reveal; the "Collection complete" synthesis
+  eyebrow tucking under the module header capsule.
+- Full strengthened verdicts in `docs/system/GOLD_SCREEN_REGISTER.md` →
+  "Third wave — 2026-07-12 rank-1 recurring patterns".
+
+---
+
 ## 2026-07-12 — Stages B + C — s32 amendment brief implemented and approved
 
 - **Session scope:** the s32 Refine brief from the Stage-A entry below,

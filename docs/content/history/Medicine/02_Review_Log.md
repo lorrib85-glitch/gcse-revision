@@ -5,6 +5,51 @@ Newest entry first. See `docs/system/component-contracts/README.md` and
 
 ---
 
+## 2026-07-12 — Gold audit (third wave) — two golds seated; one content defect found
+
+- **Session scope:** the rank-1 recurring-pattern gold audit (Step 2b of
+  the UX-quality-at-scale programme), not a full episode review. Three Ep2
+  screens rendered at 390px in the composed render path (dev screen-jump +
+  a scratchpad tap-through helper). Audit + register only — no content
+  amended this session.
+- **Canonical files available:** not consulted — audits execution against
+  the pattern render bar, not coverage.
+
+### Screen decisions (audited subset only)
+
+| Screen | Decision | Outcome |
+|---|---|---|
+| s1 `cinematic` ("June 1348.") | Keep | Seated as the composed `cinematic` gold — verified fully-revealed end state. Content-true full-bleed image, refined copy building to a bold "This is the Black Death." payoff under an "ENGLAND · 1348" eyebrow, one headline, one Continue. |
+| s6 `progressionTimeline` ("How the plague killed") | Keep | Seated as the composed `progressionTimeline` gold — verified rest + full chain. Genuine day values (the "DAY n" pill reads truthfully), specific case-file hero, stage-collapse keeps one focal, and the default exam-link is correct *for a disease-progression chain*. |
+| s15 `progressionTimeline` ("What changed after so many died?") | **Refine (deferred)** | Recorded as the `progressionTimeline` below-bar counterexample **and** a genuine content defect — see below. Not amended. |
+
+### s15 content defect (flagged, not fixed — audit-only session)
+
+The aftermath timeline reuses the disease-progression component for a
+multi-decade social/economic chain (Black Death 1348–49 → labour shortage →
+Statute of Labourers 1351 → Peasants' Revolt 1381). Two defects follow from
+the domain mismatch, both confirmed in the 390px render:
+
+1. **Wrong exam-link.** s15 supplies no `finalInsight`, so
+   `SymptomProgression` falls back to its hardcoded plague-symptom/germ-theory
+   default ("Plague symptoms mattered because medieval doctors could observe
+   the disease…"). Rendered under a timeline about wages and rebellion, this
+   contradicts the screen's own content. This is a content-correctness bug,
+   not a styling softness.
+2. **"DAY" pill mislabels years.** The pill eyebrow is hardcoded to "DAY", so
+   the year stages render "DAY 1351" / "DAY 1381".
+
+**Fix direction (for a future confirmed brief):** author an aftermath-specific
+`finalInsight` for s15, and give `SymptomProgression` a non-"DAY" pill-label
+option (or move s15 to a component built for era/year chains). No amendment
+made — this session is audit + register only. Also logged in
+`docs/system/GOLD_SCREEN_REGISTER.md` (third-wave section + debt list).
+
+- Full strengthened verdicts in `GOLD_SCREEN_REGISTER.md` → "Third wave —
+  2026-07-12 rank-1 recurring patterns".
+
+---
+
 ## 2026-07-11 — Amend: coverage gaps, sentence case, readability
 
 **Scope:** the three real, non-deferred findings from the audit below,

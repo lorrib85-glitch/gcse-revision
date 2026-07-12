@@ -509,26 +509,222 @@ named findings; the rest are explicit debt, ranked below.
 
 ---
 
+## Third wave — 2026-07-12 rank-1 recurring patterns
+
+The four rank-1 recurring patterns with no reviewed composed render were
+audited at 390px in the composed render path (dev screen-jump + a
+tap-through helper for states behind taps: card flip/reveal, hotspot
+sheets, cinematic full reveal, timeline stage-advance, collection
+synthesis). All four seat a gold — each has a genuinely strong exemplar
+distinct from a genuinely weaker counterexample, so none is a
+promote-the-least-bad seating (hard rule 2). One content defect was found
+during the audit and is recorded as debt for a brief, not fixed here.
+
+| Pattern | Uses | Composed runtime gold | Below-bar counterexample |
+|---|---|---|---|
+| `guidedChoiceCarousel` | 3 | ✓ Ep1 s12 (rest + flip + reveal) | `bio_building_blocks` s1 (imageless cards) |
+| `cinematic` | 2 | ✓ Ep2 s1 (full reveal) | none render-reviewed — debt |
+| `progressionTimeline` | 2 | ✓ Ep2 s6 (rest + full chain) | Ep2 s15 (day-chain misused for a decade-scale social timeline) |
+| `collectionExplorer` | 2 | ✓ Ep1 s18 (rest + sheet + synthesis) | `history-medicine-western-front` s2 (phase-label mismatch + gridded hotspots) |
+
+### `guidedChoiceCarousel`
+
+- **Learning intent:** let the learner make one meaningful choice between
+  richly-drawn options, then reveal the consequence of that choice as a
+  cinematic payoff (teach-by-decision, exploratory → reveal).
+- **Strongest composed runtime use:** `history-medicine-medieval-beliefs-causes`
+  screen **12** ("Choose your healer"). Verified at 390px across rest, the
+  flipped-card info state, and the full-screen reveal.
+- **Why it is the current gold example:** each option carries a specific,
+  atmospheric portrait (physician, barber-surgeon, apothecary), so the card
+  *is* the teaching surface; the flipped info normalises the authored emoji
+  into clean chips ("Very expensive", "3/5") rather than showing raw
+  `💰`/`⭐` runs; hierarchy holds in every state — amber framing line, one
+  dominant question ("Who should he trust?"), one "Choose …" CTA; the reveal
+  is a strong display heading ("You chose the Physician.") with staggered
+  body building to an amber punchline ("Medieval medicine wasn't just about
+  knowledge. It was about money."), one cinematic Continue. Strengthened
+  verdict: objectively the richest of the three composed uses; the learning
+  objective (who treated whom, and why access followed wealth) lands inside
+  three seconds; one element is clearly dominant at every stage; nothing
+  competes with the choice. A tired learner knows the job (pick a healer)
+  and the next action immediately.
+- **Below-bar counterexample:** `bio_building_blocks` screen **1** ("What do
+  all living things have in common?"). Same component, but its options carry
+  **no `image`** — so the dominant visual area of every card renders empty
+  (a faint placeholder ring on black), and the card degrades to a title +
+  subtitle strip with a large void above it. The mechanic the component
+  exists for (choose between *visually* distinct options) is defeated; the
+  cards are indistinguishable dark rectangles.
+- **Why the counterexample fails:** the carousel's whole justification for a
+  full-screen decision is the image-rich option set. Used without per-option
+  imagery it is a heavy, near-empty card stack where a plain choice list
+  would teach the same thing with less. (Ep2 s10 "Multiple beliefs at once"
+  is a strong second use — imagery present — but its question runs to four
+  lines and pushes the cards down, so it is not the cleanest exemplar.)
+- **Softness (not bar-affecting):** the cinematic "Continue →" reveal
+  affordance is very low-contrast at 390px — the same shared
+  `CinematicContinueCTA` softness already noted on `examinerExplains`.
+- **390px review questions:** Does every option carry a specific image that
+  makes the card the teaching surface? Are authored emoji stat-runs
+  normalised to chips? Is there one dominant question and one CTA in the
+  rest state? Does the reveal land one payoff heading with a clear
+  punchline?
+
+### `cinematic`
+
+- **Learning intent:** open or pivot a chapter with a full-bleed
+  video/image moment whose copy reveals line by line to a single payoff
+  (hook, passive reveal). Routed through `CinematicRevealMoment`.
+- **Strongest composed runtime use:** `history-medicine-black-death`
+  screen **1** ("June 1348."). Verified at 390px in the fully-revealed end
+  state (video-safety fallback → staggered copy → CTA; no taps needed).
+- **Why it is the current gold example:** a specific, content-true image
+  (a storm-lit medieval village and church, then the plague-ship fallback)
+  fills the frame; the copy resolves to the tighter refined variant
+  ("June 1348." + a six-line build) and lands a bold payoff — "This is the
+  Black Death." — under an "ENGLAND · 1348" eyebrow; exactly one headline,
+  legible over the scrim, one Continue. Strengthened verdict: the image
+  specifically depicts *this* chapter's opening, not stock atmosphere; one
+  headline dominates; the staggered reveal builds to a named subject rather
+  than trailing off; a tired learner grasps "the plague has arrived in
+  England, 1348" in three seconds. `bio_building_blocks` s0 ("A leaf.
+  Blood. Skin. Bark. … the same thing.") is an equally strong second use in
+  a different subject — leaf-macro full-bleed, green accent highlight, a
+  hook question — held as a reference, not seated, so one gold stands per
+  pattern.
+- **Below-bar counterexample:** none render-reviewed yet — both composed
+  uses clear the bar. Recording a specific below-bar cinematic (stock/
+  non-specific imagery, or copy with no payoff line) is open debt.
+- **Softness (not bar-affecting):** the low-contrast cinematic "Continue →"
+  affordance (shared `CinematicContinueCTA`).
+- **390px review questions:** Does the image specifically depict *this*
+  chapter's moment? Is there exactly one headline? Does the staggered copy
+  build to a single named payoff? Is the copy legible over the scrim?
+
+### `progressionTimeline`
+
+- **Learning intent:** walk one process stage by stage, revealing each step
+  on tap, ending on an exam-link insight (explain-the-chain, teach). Routed
+  through `SymptomProgression`; designed for a **disease progressing through
+  the body over days**.
+- **Strongest composed runtime use:** `history-medicine-black-death`
+  screen **6** ("How the plague killed"). Verified at 390px across the rest
+  state (hero + first stage + advance button) and the fully-revealed chain
+  (earlier stages collapse to ✓ pills, latest stage expanded).
+- **Why it is the current gold example:** the `day` field carries genuine
+  days (1–2, 3–5, 5–6, 6+), so the amber "DAY n" pill reads truthfully; the
+  case-file hero is specific to the content; the stage-collapse keeps the
+  focal point on the newest step; and the default exam-link insight ("Plague
+  symptoms mattered because medieval doctors could observe the disease, but
+  without germ theory they misunderstood its cause") is *correct for this
+  screen* — it is a disease-progression chain. Strengthened verdict: one
+  clear focal at every step, one advance action, the chain builds to an
+  exam-relevant limitation. This is the component doing exactly the job it
+  was built for.
+- **Below-bar counterexample:** `history-medicine-black-death` screen **15**
+  ("What changed after so many died?"). The same component is reused for a
+  **multi-decade social/economic aftermath** (Black Death 1348–49 → labour
+  shortage → Statute of Labourers 1351 → Peasants' Revolt 1381). Two
+  failures follow from the domain mismatch: (1) the `day` pill hardcodes the
+  eyebrow "DAY", so it renders "DAY 1351" / "DAY 1381" — labelling *years*
+  as days; (2) the screen supplies no `finalInsight`, so it falls back to
+  the hardcoded plague-symptom/germ-theory default, which **contradicts the
+  screen's own content** (an exam-link about observing disease symptoms
+  under a timeline about wages and rebellion).
+- **Why the counterexample fails:** `SymptomProgression` encodes
+  day-by-day disease semantics (the pill label and the default insight); a
+  decade-scale social chain is a different intent that this component
+  cannot express truthfully without those two defects.
+- **Content defect flagged (not fixed — audit-only session):** s15's wrong
+  exam-link is a genuine content-correctness bug, not just a styling
+  softness. It needs a `finalInsight` written for the aftermath chain (and,
+  ideally, a non-"DAY" label option) — recorded as a brief in the debt
+  section and the Ep2 review log; no amendment made this session.
+- **390px review questions:** Are the `day` values genuinely days (not
+  years/eras)? Is the exam-link insight true to *this* chain (not the
+  plague-symptom default)? Does each stage reveal keep one focal point?
+
+### `collectionExplorer`
+
+- **Learning intent:** explore a themed set of items by tapping hotspots on
+  a scene, each opening a multi-step reveal, ending on a synthesis + exam
+  takeaway (teach, exploratory). Routed through
+  `InteractiveCollectionExplorer`; its sheet phase labels are hardcoded to a
+  **five-beat** structure (`Hook · What is it? · Why does it matter? ·
+  Common mistake · Exam takeaway`).
+- **Strongest composed runtime use:** `history-medicine-medieval-beliefs-causes`
+  screen **18** ("Staying well in 1400"). Verified at 390px across rest
+  (scene + pulsing hotspots + "0 of 4 explored"), an open hotspot sheet
+  ("HOOK 1/5"), and the synthesis screen ("Prevention followed belief" +
+  exam takeaway).
+- **Why it is the current gold example:** each of the 4 items carries
+  **exactly 5 reveals**, so the hardcoded phase labels are truthful — the
+  first reveal really is a hook, the last really is the exam takeaway; the
+  hotspots sit over distinct regions of an atmospheric medieval street; the
+  reveals teach then end on exam-relevant logic; the synthesis lands a real
+  connective takeaway ("The belief determined the prevention"). Strengthened
+  verdict: the phase scaffold matches the content, one hotspot-at-a-time
+  keeps a single focal, the synthesis exceeds a plain list.
+- **Below-bar counterexample:** `history-medicine-western-front` screen **2**
+  ("What made treatment so difficult?"). Two explore-phase failures: (1)
+  every item carries only **3 reveals**, but the phase labels are hardcoded
+  to the 5-beat set — so three flat factual sentences get mislabelled
+  "HOOK" / "What is it?" / "Why does it matter?", labels the content does
+  not support; (2) the 6 hotspots sit in a rigid 2-column × 3-row grid
+  (x 18/60, y 28/52/75) floating over a single blurred trench photo, not
+  anchored to six distinct tappable objects — so "tap each object" has no
+  objects to tap. Note the *synthesis* payload here is itself strong (three
+  types of problem + a shell-shock exam takeaway); the below-bar problems
+  are confined to the explore/sheet phase.
+- **Why the counterexample fails:** the component's phase taxonomy assumes a
+  5-beat reveal per item; feeding it 3-beat items produces mislabelled
+  headers, and gridded hotspots break the scene→object bond the explore
+  mechanic depends on.
+- **Softness (both uses, not bar-affecting):** the synthesis screen's
+  "Collection complete" eyebrow renders *under* the module `LearningHeader`
+  capsule and is partly obscured at 390px — a mild header-clearance issue,
+  milder than the `guidedExamResponse` double-header that was fixed.
+- **390px review questions:** Do the items carry exactly 5 reveals (matching
+  the phase labels)? Are hotspots anchored to distinct objects in the scene,
+  not a mechanical grid? Does the synthesis land a connective exam takeaway?
+
+---
+
 ## Gold-coverage debt — ranked (2026-07-12)
 
 Ranked by expected appearance rate in future chapters; each entry is
 "No verified composed gold example yet" until seated per the procedure
 below.
 
-1. **`guidedChoiceCarousel`** (3 uses), **`cinematic`** (2),
-   **`progressionTimeline`** (2), **`collectionExplorer`** (2) — recurring
-   patterns with no reviewed composed render.
-2. **Single-use specialists** — `symptomQualityDiagnostic`,
+1. **Single-use specialists** — `symptomQualityDiagnostic`,
    `medicalTheoryPrescription`, `connectionMap`, `timelineCanvas`,
    `beforeAfterSlider`, `evacuationChainRoute`, `quoteAnalyser`. Seat
    opportunistically when their episodes are next reviewed; do not block
    production on them.
-3. **Remaining-state captures** — `visualNarrative` beats 3+,
+2. **Remaining-state captures** — `visualNarrative` beats 3+,
    `naturalSupernaturalSwipe` sort state, `guidedExamResponse`
    marking/result states (noted in their entries).
+3. **Below-bar counterexamples not yet render-reviewed** — `cinematic`
+   (both composed uses clear the bar; a non-specific-imagery / no-payoff
+   below-bar example is still open).
+
+### Content defect found during the third-wave audit (needs a brief)
+
+- **`history-medicine-black-death` s15 `progressionTimeline`** — the
+  aftermath timeline ("What changed after so many died?") shows the wrong
+  exam-link: with no `finalInsight` supplied it falls back to the hardcoded
+  plague-symptom/germ-theory default, which contradicts a screen about
+  labour shortage and the Peasants' Revolt. It also renders "DAY 1351" /
+  "DAY 1381", labelling years as days. Fix needs an aftermath-specific
+  `finalInsight` (and ideally a non-"DAY" pill label); routed as a
+  `content-review` brief, **not fixed in this audit-only session**. Logged
+  in `docs/content/history/Medicine/02_Review_Log.md`.
 
 *(2026-07-12 PM: `guidedExamResponse`, formerly rank 1, was fixed and
-seated — see its entry above.)*
+seated. 2026-07-12 later: the four rank-1 recurring patterns —
+`guidedChoiceCarousel`, `cinematic`, `progressionTimeline`,
+`collectionExplorer` — were seated in the third-wave audit above.)*
 
 **The structural headline sits outside the register's normal scope but is
 the audit's biggest finding: 272 of 273 `content` screens do not use the
