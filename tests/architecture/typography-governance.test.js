@@ -32,6 +32,19 @@ const DISALLOWED_MODULE_TYPOGRAPHY_PROPS = [
   'fontFamily',
 ]
 
+const CANONICAL_SCREEN_HEADING_COMPONENTS = [
+  'src/components/core/ScreenText.jsx',
+  'src/components/core/TeachScreenShell.jsx',
+]
+
+const DISALLOWED_SCREEN_HEADING_OVERRIDES = [
+  'fontFamily',
+  'fontSize',
+  'fontWeight',
+  'lineHeight',
+  'letterSpacing',
+]
+
 // Build a single regex that matches any deprecated alias used as TYPE.<alias>
 // but NOT inside JS template strings (${TYPE.xxx} in CSS-in-JS <style> tags)
 const deprecatedPattern = new RegExp(
@@ -50,6 +63,10 @@ function stripTemplateLiteralLines(src) {
 
 function stripStyleTagTemplates(src) {
   return src.replace(/<style>\{`[\s\S]*?`\}<\/style>/g, '')
+}
+
+function firstHeadingElement(src) {
+  return src.match(/<h[12]\b[\s\S]*?<\/h[12]>/)?.[0] ?? ''
 }
 
 describe('Typography governance — no deprecated TYPE aliases in JS/JSX style objects', () => {
@@ -85,6 +102,23 @@ describe('Module screen typography governance — no local typography drift', ()
   }
 })
 
+describe('Canonical non-cinematic screen headings — one shared token, no local type overrides', () => {
+  for (const rel of CANONICAL_SCREEN_HEADING_COMPONENTS) {
+    it(`${rel} routes its primary heading through TYPE.displayScreen`, () => {
+      const heading = firstHeadingElement(read(rel))
+      expect(heading, `${rel} must render a primary h1/h2 heading`).not.toBe('')
+      expect(heading, `${rel} primary heading must spread TYPE.displayScreen`).toContain('...TYPE.displayScreen')
+
+      for (const prop of DISALLOWED_SCREEN_HEADING_OVERRIDES) {
+        expect(
+          heading,
+          `${rel} overrides ${prop} on its primary heading. TYPE.displayScreen owns the complete non-cinematic title treatment.`,
+        ).not.toMatch(new RegExp(`\\b${prop}\\s*:`))
+      }
+    })
+  }
+})
+
 describe('Typography token map — canonical names are exported', () => {
   const typographyPath = 'src/constants/typography.js'
 
@@ -101,6 +135,27 @@ describe('Typography token map — canonical names are exported', () => {
         new RegExp(`\\b${name}:\\s*_${name}\\b`),
       )
     }
+  })
+
+  it('locks the verified 390px reference treatment into TYPE.displayScreen', () => {
+    const src = read(typographyPath)
+    const match = src.match(/const _displayScreen\s*=\s*\{([\s\S]*?)\n\}/)
+    const token = match?.[1] ?? ''
+
+    expect(token).toContain("fontSize: 'clamp(24px, 7.5vw, 32px)'")
+    expect(token).toContain('lineHeight: 1.10')
+    expect(token).toContain('fontWeight: 560')
+    expect(token).toContain("letterSpacing: '-0.015em'")
+  })
+
+  it('keeps section headings visibly subordinate to the screen heading', () => {
+    const src = read(typographyPath)
+    const match = src.match(/const _displaySection\s*=\s*\{([\s\S]*?)\n\}/)
+    const token = match?.[1] ?? ''
+
+    expect(token).toContain("fontSize: 'clamp(21px, 5.5vw, 28px)'")
+    expect(token).toContain('lineHeight: 1.12')
+    expect(token).toContain('fontWeight: 560')
   })
 
   it('has no deprecated alias entries in the TYPE export', () => {
