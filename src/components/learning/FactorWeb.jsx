@@ -6,482 +6,572 @@ import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
+import { ScreenTitle } from '../core/ScreenText.jsx'
+import InteractionShell from '../layout/InteractionShell.jsx'
 
-const MODE_LABELS = {
-  causes:       'Causes — factor web',
-  consequences: 'Consequences — factor web',
-  change:       'Change — factor web',
-  themes:       'Themes — factor web',
-  process:      'Process — factor web',
+const DEFAULT_CENTRE_LABELS = {
+  causes: 'Key factors',
+  consequences: 'Key effects',
+  change: 'What changed?',
+  themes: 'Big picture',
+  process: 'How it worked',
 }
 
-// Compute (x, y) as % of container for node i in a set of total nodes.
-// Angle 0 = top, stepping clockwise.
-function getNodePos(i, total) {
-  const angle = (i * (360 / total) - 90) * (Math.PI / 180)
+// Compute an elliptical radial position for each outer node. The web keeps
+// six short labels comfortably readable at 390px while preserving a clear
+// centre-to-factor relationship.
+export function getFactorNodePosition(index, total) {
+  const angle = (index * (360 / Math.max(total, 1)) - 90) * (Math.PI / 180)
   return {
-    x: 50 + 37 * Math.cos(angle),
-    y: 50 + 37 * Math.sin(angle),
+    x: 50 + 39 * Math.cos(angle),
+    y: 50 + 40 * Math.sin(angle),
   }
 }
 
-// ── FactorWeb ──────────────────────────────────────────────────────────────────
-// Reusable causation-web screen. Students explore factor nodes around a central
-// question, then make and justify a judgement about which mattered most.
-//
-// Props
-//   block     — screen config from modules/<subject>.js
-//   subject   — 'History' | 'Biology' | … — drives the colour palette
-//   onContinue — called when the learner completes the judgement and taps Continue
-export default function FactorWeb({ block, subject = 'History', onContinue }) {
-  const theme       = SUBJECTS[subject] || SUBJECTS.History
-  const accent      = theme.accent
-  const rgb         = theme.accentRgb
-  const bg          = theme.background || SUBJECTS.History.background
-  const prefersReduced = useReducedMotion()
+function exploredIndexes(factors, explored) {
+  return factors
+    .map((factor, index) => explored.has(factor.id) ? index : null)
+    .filter(index => index !== null)
+}
 
-  const factors = block.factors || []
-
-  const [activeId,        setActiveId]        = useState(null)
-  const [explored,        setExplored]        = useState(new Set())
-  const [phase,           setPhase]           = useState('web')   // 'web' | 'judgement'
-  const [selected,        setSelected]        = useState(null)
-  const [showWritePrompt, setShowWritePrompt] = useState(false)
-
-  const allExplored  = explored.size >= factors.length
-  const activeFactor = factors.find(f => f.id === activeId)
-
-  function handleNodeTap(factor) {
-    setActiveId(factor.id)
-    setExplored(prev => new Set([...prev, factor.id]))
-  }
-
-  function handleChipSelect(id) {
-    setSelected(id)
-    setShowWritePrompt(true)
-  }
-
-  // Transition helpers — all become instant when reduced motion is preferred
+function FactorDetail({ factor, accent, rgb, prefersReduced }) {
   const instant = { duration: 0 }
-  const fade    = prefersReduced ? instant : { duration: 0.28, ease: 'easeOut' }
-  const reveal  = prefersReduced ? instant : { duration: 0.35, ease: 'easeOut' }
+  const transition = prefersReduced
+    ? instant
+    : { duration: 0.28, ease: 'easeOut' }
 
-  function nodeT(i) {
-    return prefersReduced ? instant : { delay: 0.6 + i * 0.18, duration: 0.4, ease: 'easeOut' }
-  }
-  function lineT(i) {
-    if (prefersReduced) return instant
-    return {
-      pathLength:    { delay: 0.4 + i * 0.12, duration: 0.55, ease: 'easeOut' },
-      strokeOpacity: { duration: 0.3 },
-    }
-  }
-  function centreT() {
-    return prefersReduced ? instant : { delay: 0.2, duration: 0.5, ease: 'easeOut' }
+  return (
+    <motion.section
+      key={factor.id}
+      aria-live="polite"
+      initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: prefersReduced ? 0 : 8 }}
+      transition={transition}
+      style={{
+        padding: SPACING.standard,
+        borderRadius: RADII.large,
+        background: 'rgba(255,255,255,0.035)',
+        border: `1px solid rgba(${rgb},0.20)`,
+      }}
+    >
+      <h2 style={{
+        ...TYPE.displayCard,
+        color: 'rgba(245,245,245,0.96)',
+        margin: 0,
+      }}>
+        {factor.title}
+      </h2>
+
+      {factor.subtitle && (
+        <p style={{
+          ...TYPE.label,
+          color: accent,
+          margin: `${SPACING.micro}px 0 0`,
+        }}>
+          {factor.subtitle}
+        </p>
+      )}
+
+      <div style={{
+        marginTop: SPACING.compact,
+        paddingTop: SPACING.compact,
+        borderTop: '1px solid rgba(255,255,255,0.07)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: SPACING.compact,
+      }}>
+        <div>
+          <p style={{ ...TYPE.label, color: accent, margin: '0 0 5px' }}>
+            What it means
+          </p>
+          <p style={{ ...TYPE.body, color: 'rgba(245,245,245,0.78)', margin: 0 }}>
+            {factor.whatItMeans}
+          </p>
+        </div>
+
+        <div>
+          <p style={{ ...TYPE.label, color: accent, margin: '0 0 5px' }}>
+            Why it mattered
+          </p>
+          <p style={{ ...TYPE.body, color: 'rgba(245,245,245,0.78)', margin: 0 }}>
+            {factor.whyItMattered}
+          </p>
+        </div>
+
+        {factor.linkedFactor && (
+          <div style={{
+            borderLeft: `2px solid rgba(${rgb},0.55)`,
+            paddingLeft: SPACING.compact,
+          }}>
+            <p style={{ ...TYPE.label, color: `rgba(${rgb},0.82)`, margin: '0 0 5px' }}>
+              Linked factor
+            </p>
+            <p style={{ ...TYPE.bodySmall, color: 'rgba(245,245,245,0.62)', margin: 0 }}>
+              {factor.linkedFactor}
+            </p>
+          </div>
+        )}
+      </div>
+    </motion.section>
+  )
+}
+
+function FactorWebDiagram({
+  block,
+  factors,
+  activeId,
+  explored,
+  onNodeTap,
+  accent,
+  rgb,
+  bg,
+  prefersReduced,
+}) {
+  const activeIndex = factors.findIndex(factor => factor.id === activeId)
+  const viewed = exploredIndexes(factors, explored)
+  const centreLabel = block.centreLabel || block.centerLabel || DEFAULT_CENTRE_LABELS[block.mode] || 'Key factors'
+
+  function nodeTransition(index) {
+    if (prefersReduced) return { duration: 0 }
+    return { delay: 0.3 + index * 0.08, duration: 0.32, ease: 'easeOut' }
   }
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: bg,
-      overflowY: 'auto', WebkitOverflowScrolling: 'touch',
-    }}>
-      <div style={{ padding: '88px 0 96px', maxWidth: 440, margin: '0 auto' }}>
-        <div style={{ padding: `0 ${SPACING.standard}px`, display: 'flex', flexDirection: 'column', gap: SPACING.standard }}>
-
-          {/* Eyebrow */}
-          <p className="cinematic-eyebrow" style={{ margin: 0 }}>
-            {block.kicker || MODE_LABELS[block.mode] || 'Factor web'}
-          </p>
-
-          {/* ── Radial web ───────────────────────────────────────────────── */}
-          <div style={{
-            position: 'relative',
+    <>
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: 360,
+        aspectRatio: '1 / 1.04',
+        margin: '0 auto',
+      }}>
+        <svg
+          viewBox="0 0 100 104"
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
             width: '100%',
-            maxWidth: 340,
-            aspectRatio: '1',
-            margin: '0 auto',
+            height: '100%',
+            overflow: 'visible',
+            pointerEvents: 'none',
+          }}
+        >
+          {factors.map((factor, index) => {
+            const position = getFactorNodePosition(index, factors.length)
+            const isExplored = explored.has(factor.id)
+            return (
+              <motion.path
+                key={factor.id}
+                d={`M 50 52 L ${position.x} ${position.y * 1.04}`}
+                stroke={accent}
+                strokeWidth="0.55"
+                fill="none"
+                strokeLinecap="round"
+                initial={{ pathLength: prefersReduced ? 1 : 0, strokeOpacity: 0.16 }}
+                animate={{ pathLength: 1, strokeOpacity: isExplored ? 0.52 : 0.16 }}
+                transition={prefersReduced
+                  ? { duration: 0 }
+                  : {
+                      pathLength: { delay: 0.18 + index * 0.06, duration: 0.42, ease: 'easeOut' },
+                      strokeOpacity: { duration: 0.2 },
+                    }}
+              />
+            )
+          })}
+        </svg>
+
+        <motion.div
+          role="img"
+          aria-label={`${centreLabel}. ${block.question}`}
+          initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={prefersReduced ? { duration: 0 } : { duration: 0.4, ease: 'easeOut' }}
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 94,
+            height: 94,
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center',
+            padding: SPACING.micro,
+            boxSizing: 'border-box',
+            background: `rgba(${rgb},0.08)`,
+            border: `1px solid rgba(${rgb},0.38)`,
+            zIndex: 2,
+          }}
+        >
+          <span style={{
+            ...TYPE.titleMedium,
+            color: `rgba(${rgb},0.92)`,
           }}>
+            {centreLabel}
+          </span>
+        </motion.div>
 
-            {/* SVG layer: connecting lines from centre to each factor node */}
-            <svg
-              viewBox="0 0 100 100"
-              style={{
-                position: 'absolute', inset: 0,
-                width: '100%', height: '100%',
-                pointerEvents: 'none', overflow: 'visible',
-              }}
-              aria-hidden="true"
-            >
-              {factors.map((f, i) => {
-                const pos = getNodePos(i, factors.length)
-                const isExplored = explored.has(f.id)
-                return (
-                  <motion.path
-                    key={f.id}
-                    d={`M 50 50 L ${pos.x} ${pos.y}`}
-                    stroke={accent}
-                    strokeWidth="0.7"
-                    fill="none"
-                    strokeLinecap="round"
-                    initial={{ pathLength: prefersReduced ? 1 : 0, strokeOpacity: 0.22 }}
-                    animate={{ pathLength: 1, strokeOpacity: isExplored ? 0.55 : 0.22 }}
-                    transition={lineT(i)}
-                  />
-                )
-              })}
-            </svg>
+        {factors.map((factor, index) => {
+          const position = getFactorNodePosition(index, factors.length)
+          const isActive = factor.id === activeId
+          const isExplored = explored.has(factor.id)
+          const nodeLabel = factor.shortTitle || factor.title
 
-            {/* Centre question node */}
-            <motion.div
-              role="img"
-              aria-label={block.question}
-              style={{
-                position: 'absolute', top: '50%', left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 86, height: 86,
-                borderRadius: '50%',
-                background: `rgba(${rgb}, 0.09)`,
-                border: `1.5px solid rgba(${rgb}, 0.45)`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                padding: 9, textAlign: 'center', zIndex: 2,
-              }}
-              initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.85 }}
+          return (
+            <motion.button
+              key={factor.id}
+              type="button"
+              onClick={() => onNodeTap(factor)}
+              aria-label={`Explore ${factor.title}`}
+              aria-pressed={isActive}
+              initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.88 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={centreT()}
+              transition={nodeTransition(index)}
+              style={{
+                position: 'absolute',
+                left: `${position.x}%`,
+                top: `${position.y}%`,
+                transform: 'translate(-50%, -50%)',
+                width: 'clamp(86px, 24vw, 102px)',
+                minHeight: 58,
+                padding: `${SPACING.micro}px 8px`,
+                borderRadius: RADII.medium,
+                border: isActive
+                  ? `1.5px solid ${accent}`
+                  : isExplored
+                    ? `1px solid rgba(${rgb},0.42)`
+                    : '1px solid rgba(255,255,255,0.12)',
+                background: isActive
+                  ? `rgba(${rgb},0.14)`
+                  : isExplored
+                    ? `rgba(${rgb},0.07)`
+                    : 'rgba(255,255,255,0.035)',
+                color: isActive
+                  ? accent
+                  : isExplored
+                    ? `rgba(${rgb},0.92)`
+                    : 'rgba(245,245,245,0.76)',
+                boxShadow: isActive ? `0 0 0 3px rgba(${rgb},0.12)` : 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                zIndex: 3,
+                WebkitTapHighlightColor: 'transparent',
+                transition: [
+                  `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                  `background ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                  `color ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                  `box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+                ].join(', '),
+              }}
             >
-              <span style={{
-                fontFamily: "'Sora', sans-serif",
-                color: `rgba(${rgb}, 0.9)`,
-                fontSize: 8.5, lineHeight: 1.35, fontWeight: 700,
-                letterSpacing: '0.03em', textTransform: 'uppercase',
-                display: '-webkit-box',
-                WebkitLineClamp: 6, WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }}>
-                {block.question}
+              <span style={{ ...TYPE.label, color: 'inherit' }}>
+                {nodeLabel}
               </span>
-            </motion.div>
 
-            {/* Factor nodes */}
-            {factors.map((f, i) => {
-              const pos       = getNodePos(i, factors.length)
-              const isActive  = activeId === f.id
-              const isExplored = explored.has(f.id)
-
-              return (
-                <motion.button
-                  key={f.id}
-                  onClick={() => handleNodeTap(f)}
-                  aria-label={f.title}
-                  aria-pressed={isActive}
-                  initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.6 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={nodeT(i)}
+              {isExplored && (
+                <span
+                  aria-hidden="true"
                   style={{
                     position: 'absolute',
-                    left: `${pos.x}%`, top: `${pos.y}%`,
-                    transform: 'translate(-50%, -50%)',
-                    width: 62, height: 62,
-                    minWidth: 44, minHeight: 44,
+                    right: 5,
+                    top: 5,
+                    width: 14,
+                    height: 14,
                     borderRadius: '50%',
-                    border: isActive
-                      ? `2px solid ${accent}`
-                      : isExplored
-                        ? `1.5px solid rgba(${rgb}, 0.45)`
-                        : '1.5px solid rgba(255,255,255,0.12)',
-                    background: isActive
-                      ? `rgba(${rgb}, 0.14)`
-                      : isExplored
-                        ? `rgba(${rgb}, 0.06)`
-                        : 'rgba(255,255,255,0.04)',
-                    boxShadow: isActive
-                      ? `0 0 0 3px rgba(${rgb},0.18), 0 0 22px rgba(${rgb},0.26)`
-                      : 'none',
-                    cursor: 'pointer',
-                    display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', justifyContent: 'center',
-                    gap: 2, padding: 5, zIndex: 3,
-                    outline: 'none',
-                    WebkitTapHighlightColor: 'transparent',
-                    transition: [
-                      `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-                      `background ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-                      `box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-                    ].join(', '),
-                  }}
-                  onFocus={e => {
-                    e.currentTarget.style.outline = `2px solid ${accent}`
-                    e.currentTarget.style.outlineOffset = '3px'
-                  }}
-                  onBlur={e => {
-                    e.currentTarget.style.outline = 'none'
-                    e.currentTarget.style.outlineOffset = '0'
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: accent,
+                    color: bg,
+                    ...TYPE.caption,
                   }}
                 >
-                  <span style={{ fontSize: 18, lineHeight: 1 }} aria-hidden="true">{f.icon}</span>
-                  <span style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontSize: 8, lineHeight: 1.25, fontWeight: 700,
-                    color: isActive ? accent : isExplored ? `rgba(${rgb}, 0.95)` : 'rgba(255,255,255,0.7)',
-                    textAlign: 'center',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                    maxWidth: 52, letterSpacing: '0.01em',
-                    transition: `color ${MOTION.duration.fast}`,
-                  }}>
-                    {f.title}
-                  </span>
-                  {/* Explored indicator */}
-                  {isExplored && (
-                    <span
-                      aria-hidden="true"
-                      style={{
-                        position: 'absolute', top: 2, right: 2,
-                        width: 14, height: 14, borderRadius: '50%',
-                        background: accent,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 8, color: bg, fontWeight: 900, lineHeight: 1,
-                      }}
-                    >✓</span>
-                  )}
-                </motion.button>
-              )
-            })}
-          </div>
+                  ✓
+                </span>
+              )}
+            </motion.button>
+          )
+        })}
+      </div>
 
-          {/* Progress counter */}
-          <p style={{
-            ...TYPE.bodySmall,
-            fontSize: 12,
-            color: 'rgba(255,255,255,0.28)',
-            textAlign: 'center', margin: `-${SPACING.micro}px 0 0`,
-          }}>
-            {explored.size} / {factors.length} factors explored
-          </p>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        marginTop: SPACING.micro,
+      }}>
+        <SequenceProgress
+          total={factors.length}
+          current={activeIndex}
+          viewed={viewed}
+          accent={accent}
+          accentRgb={rgb}
+          compact
+          ariaLabel="Factors explored"
+        />
+      </div>
 
-          {/* First-tap hint */}
-          {explored.size === 0 && (
+      {explored.size === 0 && (
+        <p style={{
+          ...TYPE.label,
+          color: `rgba(${rgb},0.68)`,
+          textAlign: 'center',
+          margin: `${SPACING.micro}px 0 0`,
+        }}>
+          Tap a factor to explore it
+        </p>
+      )}
+    </>
+  )
+}
+
+function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent, rgb, prefersReduced }) {
+  const transition = prefersReduced
+    ? { duration: 0 }
+    : { duration: 0.35, ease: 'easeOut' }
+
+  return (
+    <motion.div
+      initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={transition}
+      style={{ display: 'flex', flexDirection: 'column', gap: SPACING.standard }}
+    >
+      <div role="group" aria-label="Choose the most important factor" style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: SPACING.micro,
+      }}>
+        {factors.map(factor => {
+          const isSelected = selected === factor.id
+          return (
+            <button
+              key={factor.id}
+              type="button"
+              onClick={() => onSelect(factor.id)}
+              aria-pressed={isSelected}
+              style={{
+                minHeight: 52,
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: SPACING.micro,
+                textAlign: 'left',
+                padding: `${SPACING.micro}px ${SPACING.compact}px`,
+                borderRadius: RADII.medium,
+                border: isSelected
+                  ? `1.5px solid ${accent}`
+                  : '1px solid rgba(255,255,255,0.10)',
+                background: isSelected
+                  ? `rgba(${rgb},0.12)`
+                  : 'rgba(255,255,255,0.03)',
+                color: isSelected ? accent : 'rgba(245,245,245,0.78)',
+                cursor: 'pointer',
+                ...TYPE.button,
+              }}
+            >
+              <span style={{ flex: 1 }}>
+                {factor.title}
+              </span>
+              {isSelected && <span aria-hidden="true">✓</span>}
+            </button>
+          )
+        })}
+      </div>
+
+      <AnimatePresence>
+        {selected && (
+          <motion.section
+            initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={prefersReduced ? { duration: 0 } : { duration: 0.28, ease: 'easeOut' }}
+            style={{
+              padding: SPACING.standard,
+              borderRadius: RADII.large,
+              background: 'rgba(255,255,255,0.035)',
+              border: `1px solid rgba(${rgb},0.20)`,
+            }}
+          >
+            <h2 style={{ ...TYPE.displayCard, color: 'rgba(245,245,245,0.96)', margin: 0 }}>
+              Explain your judgement
+            </h2>
             <p style={{
               ...TYPE.body,
-              fontSize: 13,
-              color: `rgba(${rgb}, 0.5)`,
-              textAlign: 'center', margin: 0,
+              color: 'rgba(245,245,245,0.74)',
+              margin: `${SPACING.micro}px 0 0`,
             }}>
-              Tap a factor to explore it
+              {block.judgementPrompt || 'Use one piece of evidence. Explain why your factor mattered and how it linked to another factor.'}
             </p>
-          )}
 
-          {/* ── Info panel ───────────────────────────────────────────────── */}
+            {block.thinkingTip && (
+              <div style={{
+                marginTop: SPACING.compact,
+                paddingTop: SPACING.compact,
+                borderTop: '1px solid rgba(255,255,255,0.07)',
+              }}>
+                <p style={{ ...TYPE.label, color: accent, margin: '0 0 5px' }}>
+                  Thinking tip
+                </p>
+                <p style={{ ...TYPE.bodySmall, color: 'rgba(245,245,245,0.62)', margin: 0 }}>
+                  {block.thinkingTip}
+                </p>
+              </div>
+            )}
+          </motion.section>
+        )}
+      </AnimatePresence>
+
+      {selected && (
+        <ContinueCTA
+          onClick={onContinue}
+          accent={accent}
+        />
+      )}
+    </motion.div>
+  )
+}
+
+// ── FactorWeb ────────────────────────────────────────────────────────────────
+// A mobile-first causation and judgement screen. Learners explore short factor
+// nodes around a concise centre concept, read the fuller teaching beneath,
+// then choose and justify the factor they consider most important.
+export default function FactorWeb({ block, subject = 'History', onContinue }) {
+  const theme = SUBJECTS[subject] || SUBJECTS.History
+  const accent = theme.accent
+  const rgb = theme.accentRgb
+  const bg = theme.background || SUBJECTS.History.background
+  const prefersReduced = useReducedMotion()
+
+  const factors = block.factors || []
+  const [activeId, setActiveId] = useState(null)
+  const [explored, setExplored] = useState(new Set())
+  const [phase, setPhase] = useState('web')
+  const [selected, setSelected] = useState(null)
+
+  const allExplored = factors.length > 0 && explored.size >= factors.length
+  const activeFactor = factors.find(factor => factor.id === activeId)
+  const isJudgement = phase === 'judgement'
+
+  function handleNodeTap(factor) {
+    setActiveId(factor.id)
+    setExplored(previous => new Set([...previous, factor.id]))
+  }
+
+  const heading = isJudgement
+    ? (block.taskPrompt || 'Which factor mattered most?')
+    : block.question
+
+  const intro = isJudgement
+    ? (block.judgementInstruction || 'Choose one factor, then explain your judgement.')
+    : (block.instruction || 'Explore each factor. Then decide which mattered most.')
+
+  return (
+    <InteractionShell subject={subject}>
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        padding: `${SPACING.compact}px 0 96px`,
+      }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.standard }}>
+          <header>
+            {(isJudgement || block.kicker) && (
+              <p style={{
+                ...TYPE.label,
+                color: accent,
+                margin: `0 0 ${SPACING.micro}px`,
+              }}>
+                {isJudgement ? 'Make your judgement' : block.kicker}
+              </p>
+            )}
+
+            <ScreenTitle style={{ margin: 0 }}>
+              {heading}
+            </ScreenTitle>
+
+            {intro && (
+              <p style={{
+                ...TYPE.body,
+                color: 'rgba(245,245,245,0.60)',
+                margin: `${SPACING.compact}px 0 0`,
+                maxWidth: '36ch',
+              }}>
+                {intro}
+              </p>
+            )}
+          </header>
+
           <AnimatePresence mode="wait">
-            {activeFactor && (
+            {!isJudgement ? (
               <motion.div
-                key={activeId}
-                className="cinematic-card"
-                initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: prefersReduced ? 0 : 8 }}
-                transition={fade}
-                style={{ display: 'flex', flexDirection: 'column', gap: SPACING.micro }}
-              >
-                {/* Header row */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 26, lineHeight: 1, flexShrink: 0 }} aria-hidden="true">
-                    {activeFactor.icon}
-                  </span>
-                  <div>
-                    <p style={{
-                      ...TYPE.displayCard,
-                      margin: 0, fontSize: 16, lineHeight: 1.3, color: '#fff',
-                    }}>
-                      {activeFactor.title}
-                    </p>
-                    <p className="cinematic-eyebrow" style={{ margin: '3px 0 0' }}>
-                      {activeFactor.subtitle}
-                    </p>
-                  </div>
-                </div>
-
-                <div style={{
-                  borderTop: '1px solid rgba(255,255,255,0.07)',
-                  paddingTop: SPACING.micro,
-                  display: 'flex', flexDirection: 'column', gap: SPACING.micro,
-                }}>
-                  {/* What it means */}
-                  <div>
-                    <p style={{
-                      ...TYPE.metadata,
-                      margin: '0 0 4px', color: accent,
-                      fontSize: 11, letterSpacing: '0.1em',
-                    }}>
-                      WHAT IT MEANS
-                    </p>
-                    <p className="cinematic-body" style={{ margin: 0, fontSize: 14, lineHeight: 1.65 }}>
-                      {activeFactor.whatItMeans}
-                    </p>
-                  </div>
-
-                  {/* Why it mattered */}
-                  <div>
-                    <p style={{
-                      ...TYPE.metadata,
-                      margin: '0 0 4px', color: accent,
-                      fontSize: 11, letterSpacing: '0.1em',
-                    }}>
-                      WHY IT MATTERED
-                    </p>
-                    <p className="cinematic-body" style={{ margin: 0, fontSize: 14, lineHeight: 1.65 }}>
-                      {activeFactor.whyItMattered}
-                    </p>
-                  </div>
-
-                  {/* Linked factor */}
-                  <div style={{
-                    background: `rgba(${rgb}, 0.07)`,
-                    borderRadius: RADII.small,
-                    padding: `${SPACING.micro}px ${SPACING.compact}px`,
-                  }}>
-                    <p style={{
-                      ...TYPE.metadata,
-                      margin: '0 0 3px', color: `rgba(${rgb}, 0.75)`,
-                      fontSize: 10, letterSpacing: '0.1em',
-                    }}>
-                      LINKED FACTOR
-                    </p>
-                    <p className="cinematic-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.55 }}>
-                      {activeFactor.linkedFactor}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* ── Judgement CTA (once all factors explored) ─────────────── */}
-          <AnimatePresence>
-            {allExplored && phase === 'web' && (
-              <motion.div
-                initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 12 }}
-                animate={{ opacity: 1, y: 0 }}
+                key="web"
+                initial={{ opacity: prefersReduced ? 1 : 0 }}
+                animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={reveal}
-              >
-                <ContinueCTA
-                  onClick={() => setPhase('judgement')}
-                  label="Make your judgement →"
-                  accent={accent}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* ── Judgement card ───────────────────────────────────────────── */}
-          <AnimatePresence>
-            {phase === 'judgement' && (
-              <motion.div
-                initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={reveal}
+                transition={prefersReduced ? { duration: 0 } : { duration: 0.24 }}
                 style={{ display: 'flex', flexDirection: 'column', gap: SPACING.standard }}
               >
-                {/* Factor selection card */}
-                <div className="cinematic-card" style={{ display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
-                  <div>
-                    <p className="cinematic-eyebrow" style={{ margin: '0 0 8px', color: accent }}>
-                      Make your judgement
-                    </p>
-                    <p style={{
-                      ...TYPE.displayCard,
-                      margin: 0, fontSize: 17, lineHeight: 1.45, color: '#fff',
-                    }}>
-                      {block.taskPrompt}
-                    </p>
-                  </div>
+                <FactorWebDiagram
+                  block={block}
+                  factors={factors}
+                  activeId={activeId}
+                  explored={explored}
+                  onNodeTap={handleNodeTap}
+                  accent={accent}
+                  rgb={rgb}
+                  bg={bg}
+                  prefersReduced={prefersReduced}
+                />
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {factors.map(f => (
-                      <button
-                        key={f.id}
-                        onClick={() => handleChipSelect(f.id)}
-                        aria-pressed={selected === f.id}
-                        style={{
-                          textAlign: 'left',
-                          padding: `${SPACING.micro}px ${SPACING.compact}px`,
-                          borderRadius: RADII.medium,
-                          border: selected === f.id
-                            ? `1.5px solid ${accent}`
-                            : '1.5px solid rgba(255,255,255,0.1)',
-                          background: selected === f.id
-                            ? `rgba(${rgb}, 0.12)`
-                            : 'rgba(255,255,255,0.03)',
-                          color: selected === f.id ? accent : 'rgba(255,255,255,0.75)',
-                          cursor: 'pointer',
-                          fontFamily: "'Sora', sans-serif",
-                          fontSize: 13,
-                          fontWeight: selected === f.id ? 700 : 500,
-                          display: 'flex', alignItems: 'center', gap: 8,
-                          minHeight: 44, width: '100%',
-                          outline: 'none',
-                          transition: `all ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-                        }}
-                        onFocus={e => { e.currentTarget.style.outline = `2px solid ${accent}`; e.currentTarget.style.outlineOffset = '2px' }}
-                        onBlur={e => { e.currentTarget.style.outline = 'none' }}
-                      >
-                        <span aria-hidden="true">{f.icon}</span>
-                        <span style={{ flex: 1 }}>{f.title}</span>
-                        {selected === f.id && (
-                          <span aria-hidden="true" style={{ fontSize: 14, flexShrink: 0 }}>✓</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Written response prompt (revealed on selection) */}
-                <AnimatePresence>
-                  {showWritePrompt && (
-                    <motion.div
-                      className="cinematic-card"
-                      initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      transition={fade}
-                      style={{ display: 'flex', flexDirection: 'column', gap: SPACING.micro }}
-                    >
-                      <p className="cinematic-body" style={{ margin: 0, fontSize: 15, lineHeight: 1.6 }}>
-                        Explain why this factor mattered most. Use one piece of evidence and explain how it linked to another factor.
-                      </p>
-                      <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: SPACING.micro }}>
-                        <p style={{
-                          ...TYPE.metadata,
-                          margin: '0 0 4px', fontSize: 10,
-                          color: `rgba(${rgb}, 0.7)`, letterSpacing: '0.1em',
-                        }}>
-                          THINKING TIP
-                        </p>
-                        <p className="cinematic-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.6 }}>
-                          {block.thinkingTip}
-                        </p>
-                      </div>
-                    </motion.div>
+                <AnimatePresence mode="wait">
+                  {activeFactor && (
+                    <FactorDetail
+                      factor={activeFactor}
+                      accent={accent}
+                      rgb={rgb}
+                      prefersReduced={prefersReduced}
+                    />
                   )}
                 </AnimatePresence>
 
-                {/* Continue — only once a factor has been selected */}
-                {selected && (
-                  <ContinueCTA
-                    onClick={onContinue}
-                    label="Continue"
-                    accent={accent}
-                  />
+                {allExplored && (
+                  <motion.div
+                    initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={prefersReduced ? { duration: 0 } : { duration: 0.3, ease: 'easeOut' }}
+                  >
+                    <ContinueCTA
+                      onClick={() => setPhase('judgement')}
+                      label="Make your judgement"
+                      accent={accent}
+                    />
+                  </motion.div>
                 )}
               </motion.div>
+            ) : (
+              <JudgementPhase
+                key="judgement"
+                block={block}
+                factors={factors}
+                selected={selected}
+                onSelect={setSelected}
+                onContinue={onContinue}
+                accent={accent}
+                rgb={rgb}
+                prefersReduced={prefersReduced}
+              />
             )}
           </AnimatePresence>
-
         </div>
       </div>
-    </div>
+    </InteractionShell>
   )
 }
