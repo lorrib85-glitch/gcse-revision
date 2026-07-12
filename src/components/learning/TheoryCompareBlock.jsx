@@ -257,7 +257,8 @@ function PeopleCompareBlock({ block, subject }) {
         <h3 style={{
           ...TYPE.displaySection,
           color: 'rgba(245,245,245,0.96)',
-          margin: `0 0 ${SPACING.standard}px`,
+          textAlign: 'center',
+          margin: `0 auto ${SPACING.standard}px`,
         }}>
           {block.title}
         </h3>
@@ -430,6 +431,7 @@ function ComparisonRow({ comparison, state, left, right, rgb, accent, twoCol }) 
         <h4 style={{
           ...TYPE.titleLarge,
           color: 'rgba(245,245,245,0.9)',
+          textAlign: 'center',
           margin: `0 0 ${SPACING.compact}px`,
         }}>
           {comparison.prompt}
@@ -469,8 +471,8 @@ function ComparisonRow({ comparison, state, left, right, rgb, accent, twoCol }) 
         </div>
       ) : (
         <div style={twoCol}>
-          <Cell text={comparison.left}  person={left}  rgb={rgb} emphasised={false} />
-          <Cell text={comparison.right} person={right} rgb={rgb} emphasised={true} />
+          <Cell text={comparison.left}  person={left}  rgb={rgb} emphasised={false} showPersonName />
+          <Cell text={comparison.right} person={right} rgb={rgb} emphasised={true} showPersonName />
         </div>
       )}
 
@@ -488,20 +490,48 @@ function ComparisonRow({ comparison, state, left, right, rgb, accent, twoCol }) 
   )
 }
 
-// A single comparison cell. The person's name is exposed to screen readers via
-// a visually-hidden prefix so the Galen/Vesalius relationship survives even
-// though colour and column position are visual-only cues.
-function Cell({ text, person, rgb, emphasised }) {
+// A single comparison cell. Simple comparisons show the person's name as a
+// visible card heading; compact anatomy rows keep it screen-reader-only so the
+// repeated labels do not add visual clutter.
+function Cell({ text, person, rgb, emphasised, showPersonName = false }) {
   return (
     <div style={{
-      padding: `${SPACING.compact}px`,
-      borderRadius: RADII.medium,
-      background: emphasised ? `rgba(${rgb},0.09)` : 'rgba(255,255,255,0.035)',
-      border: `1px solid ${emphasised ? `rgba(${rgb},0.26)` : 'rgba(255,255,255,0.08)'}`,
-      ...TYPE.bodyStrong,
-      color: emphasised ? 'rgba(245,245,245,0.94)' : 'rgba(245,245,245,0.62)',
+      height: '100%',
+      padding: `${SPACING.standard}px ${SPACING.compact}px`,
+      borderRadius: RADII.large,
+      background: emphasised ? `rgba(${rgb},0.10)` : 'rgba(255,255,255,0.03)',
+      border: `1px solid ${emphasised ? `rgba(${rgb},0.34)` : 'rgba(255,255,255,0.09)'}`,
+      boxShadow: emphasised ? `0 0 18px rgba(${rgb},0.06)` : 'none',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      textAlign: 'center',
     }}>
-      <span className="tcp-sr-only">{person.name}: </span>{text}
+      {showPersonName ? (
+        <>
+          <div style={{
+            ...TYPE.titleMedium,
+            color: emphasised ? `rgba(${rgb},0.96)` : 'rgba(245,245,245,0.78)',
+          }}>
+            {person.name}
+          </div>
+          <div aria-hidden="true" style={{
+            width: SPACING.standard,
+            height: 1,
+            background: emphasised ? `rgba(${rgb},0.45)` : 'rgba(255,255,255,0.14)',
+            margin: `${SPACING.micro}px 0`,
+          }} />
+        </>
+      ) : (
+        <span className="tcp-sr-only">{person.name}: </span>
+      )}
+      <div style={{
+        ...TYPE.bodyStrong,
+        color: emphasised ? 'rgba(245,245,245,0.94)' : 'rgba(245,245,245,0.64)',
+      }}>
+        {text}
+      </div>
     </div>
   )
 }
