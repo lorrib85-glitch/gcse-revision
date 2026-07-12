@@ -321,7 +321,7 @@ function FactorConnector({ entry, slot, accent, rgb, isActive, isExplored, prefe
     : FACTOR_WEB_VISUAL.anchorIdleRadius
 
   const dotStyle = {
-    filter: `drop-shadow(0 0 ${FACTOR_WEB_VISUAL.anchorGlowRadius}px rgba(${rgb},0.58))`,
+    filter: `drop-shadow(0 0 ${FACTOR_WEB_VISUAL.anchorGlowRadius}px rgba(${rgb},0.48))`,
   }
 
   return (
@@ -332,7 +332,7 @@ function FactorConnector({ entry, slot, accent, rgb, isActive, isExplored, prefe
         strokeWidth={strokeWidth}
         fill="none"
         strokeLinecap="round"
-        initial={{ pathLength: prefersReduced ? 1 : 0, strokeOpacity: 0.12 }}
+        initial={{ pathLength: prefersReduced ? 1 : 0, strokeOpacity: 0.08 }}
         animate={{ pathLength: 1, strokeOpacity: opacity }}
         transition={prefersReduced
           ? { duration: 0 }
@@ -351,17 +351,6 @@ function FactorConnector({ entry, slot, accent, rgb, isActive, isExplored, prefe
         initial={{ opacity: prefersReduced ? opacity : 0 }}
         animate={{ opacity }}
         transition={prefersReduced ? { duration: 0 } : { delay: 0.30 + entry.originalIndex * 0.06, duration: 0.22 }}
-      />
-
-      <motion.circle
-        cx={slot.focalAnchorX}
-        cy={slot.focalAnchorY}
-        r={anchorRadius}
-        fill={accent}
-        style={dotStyle}
-        initial={{ opacity: prefersReduced ? opacity : 0 }}
-        animate={{ opacity }}
-        transition={prefersReduced ? { duration: 0 } : { delay: 0.36 + entry.originalIndex * 0.06, duration: 0.22 }}
       />
     </g>
   )
