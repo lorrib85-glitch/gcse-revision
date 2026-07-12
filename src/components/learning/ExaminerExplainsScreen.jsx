@@ -45,7 +45,9 @@ export default function ExaminerExplainsScreen({
   const img   = SUBJECT_BACKDROPS[subject] || SUBJECT_BACKDROPS.History
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
-  const bgRgb = hexToRgb(GENERAL.backgroundApp)
+  const screenBackground = theme.background || GENERAL.backgroundApp
+  const panelBackground = theme.backgroundSecondary || GENERAL.backgroundSurface
+  const bgRgb = hexToRgb(screenBackground)
 
   const opening = examinerExplains.opening || "Before you face the examiner, here's what they actually look for."
   const tips    = examinerExplains.tips    || []
@@ -75,7 +77,7 @@ export default function ExaminerExplainsScreen({
     return () => clearTimeout(t)
   }, [showClosing])
 
-  // Keep the newest card / closing line in view as it reveals.
+  // Keep the newest step / closing line in view as it reveals.
   useEffect(() => {
     const el = scrollRef.current
     if (!el || (revealedCount === 0 && !showClosing)) return
@@ -98,6 +100,7 @@ export default function ExaminerExplainsScreen({
   }
 
   const isTips = phase === 'tips'
+  const visibleTips = tips.slice(0, revealedCount)
 
   return (
     <>
@@ -116,7 +119,7 @@ export default function ExaminerExplainsScreen({
         }
       `}</style>
 
-      <CinematicShell style={{ background: GENERAL.backgroundApp, zIndex: 1000 }}>
+      <CinematicShell style={{ background: screenBackground, zIndex: 1000 }}>
       <div
         onClick={!showContinue ? handleTap : undefined}
         style={{
@@ -172,7 +175,7 @@ export default function ExaminerExplainsScreen({
             }}>
               <div style={{
                 ...TYPE.displayScreen,
-                color: '#F5F7FF', // text-primary — PRODUCT_UI_CONSTITUTION
+                color: GENERAL.feedbackText,
                 ...HEADING_LAYOUT.screenTitle,
               }}>
                 {tokens.map(tok =>
@@ -203,54 +206,110 @@ export default function ExaminerExplainsScreen({
                 padding: `calc(${HEADER_CLEARANCE}px + env(safe-area-inset-top, 0px)) ${SPACING.standard}px calc(${CTA_CLEARANCE}px + env(safe-area-inset-bottom, 0px))`,
               }}
             >
-              <div
-                className="cinematic-eyebrow"
-                style={{
-                  color: `rgba(${rgb},0.85)`,
-                  marginBottom: SPACING.compact,
-                  animation: `expl-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-                }}
-              >
-                {label}
-              </div>
+              <div style={{ paddingTop: SPACING.compact }}>
+                <div
+                  style={{
+                    ...TYPE.displayCard,
+                    color: accent,
+                    marginBottom: SPACING.standard,
+                    animation: `expl-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+                  }}
+                >
+                  {label}
+                </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.compact }}>
-                {tips.slice(0, revealedCount).map((tip, i) => (
+                {(visibleTips.length > 0 || showClosing) && (
                   <div
-                    key={i}
                     className="cinematic-card"
                     style={{
-                      borderColor: `rgba(${rgb},0.12)`,
+                      backgroundColor: panelBackground,
+                      borderColor: `rgba(${rgb},0.20)`,
+                      boxShadow: '0 10px 32px rgba(0,0,0,0.34)',
                       animation: `expl-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
                     }}
                   >
-                    <div style={{
-                      display: 'flex', alignItems: 'baseline', gap: SPACING.micro,
-                      marginBottom: SPACING.micro,
-                    }}>
-                      <span aria-hidden="true" style={{ ...TYPE.metadata, color: accent, flexShrink: 0 }}>✦</span>
-                      <div style={{
-                        ...TYPE.displayCard,
-                        color: '#F5F7FF', // text-primary — PRODUCT_UI_CONSTITUTION
-                      }}>
-                        {tip.heading}
-                      </div>
-                    </div>
-                    <div className="cinematic-body">
-                      {tip.body}
-                    </div>
-                  </div>
-                ))}
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      {visibleTips.map((tip, i) => {
+                        const hasNextVisibleStep = i < visibleTips.length - 1
+                        return (
+                          <div
+                            key={i}
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '18px minmax(0, 1fr)',
+                              gap: SPACING.compact,
+                              position: 'relative',
+                              paddingBottom: hasNextVisibleStep ? SPACING.standard : 0,
+                              animation: `expl-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+                            }}
+                          >
+                            <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+                              <span
+                                aria-hidden="true"
+                                style={{
+                                  width: 10,
+                                  height: 10,
+                                  marginTop: SPACING.micro,
+                                  borderRadius: '50%',
+                                  background: accent,
+                                  boxShadow: `0 0 0 4px rgba(${rgb},0.10)`,
+                                  flexShrink: 0,
+                                }}
+                              />
+                              {hasNextVisibleStep && (
+                                <span
+                                  aria-hidden="true"
+                                  style={{
+                                    position: 'absolute',
+                                    top: 22,
+                                    bottom: 0,
+                                    width: 1,
+                                    background: `rgba(${rgb},0.24)`,
+                                  }}
+                                />
+                              )}
+                            </div>
 
-                {/* Closing line */}
-                {showClosing && (
-                  <div style={{
-                    ...TYPE.displaySection,
-                    color: accent,
-                    marginTop: SPACING.micro,
-                    animation: `expl-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-                  }}>
-                    {closing}
+                            <div>
+                              <div style={{
+                                ...TYPE.titleMedium,
+                                color: accent,
+                                marginBottom: SPACING.micro,
+                              }}>
+                                {tip.heading}
+                              </div>
+                              <div style={{
+                                ...TYPE.body,
+                                color: GENERAL.softWhite,
+                              }}>
+                                {tip.body}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+
+                      {/* Closing takeaway */}
+                      {showClosing && (
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: '3px minmax(0, 1fr)',
+                          gap: SPACING.compact,
+                          marginTop: visibleTips.length > 0 ? SPACING.standard : 0,
+                          paddingTop: visibleTips.length > 0 ? SPACING.standard : 0,
+                          borderTop: visibleTips.length > 0 ? `1px solid rgba(${rgb},0.18)` : 'none',
+                          animation: `expl-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+                        }}>
+                          <span aria-hidden="true" style={{ background: accent, borderRadius: 999 }} />
+                          <div style={{
+                            ...TYPE.bodyStrong,
+                            color: GENERAL.softWhite,
+                          }}>
+                            {closing}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -286,11 +345,10 @@ export default function ExaminerExplainsScreen({
             animation: 'expl-hint 3.2s ease 600ms infinite',
           }}>
             <span style={{
-              ...TYPE.eyebrow,
-              textTransform: 'uppercase',
+              ...TYPE.label,
               color: 'rgba(255,255,255,0.28)',
             }}>
-              tap to continue
+              Tap to continue
             </span>
           </div>
         )}
