@@ -7,10 +7,25 @@
 
 import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 
+const SCREEN_TITLE_TYPE_PROPS = [
+  'fontFamily',
+  'fontSize',
+  'fontWeight',
+  'lineHeight',
+  'letterSpacing',
+]
+
+function withoutScreenTitleTypeOverrides(style = {}) {
+  const safeStyle = { ...style }
+  for (const prop of SCREEN_TITLE_TYPE_PROPS) delete safeStyle[prop]
+  return safeStyle
+}
+
 // Primary non-cinematic module heading. This is deliberately the same
 // TYPE.displayScreen treatment owned by TeachScreenShell and calibrated from
-// the TimelineCanvas 390px reference. Do not override its type properties
-// locally; use style only for non-typographic layout/colour adjustments.
+// the TimelineCanvas 390px reference. The style prop may adjust layout or
+// colour, but typography properties are ignored so callers cannot create a
+// second screen-title system locally.
 export function ScreenTitle({ children, style }) {
   return (
     <h2 style={{
@@ -18,7 +33,7 @@ export function ScreenTitle({ children, style }) {
       color: 'rgba(255,255,255,0.96)',
       maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
       margin: '0 0 10px',
-      ...style,
+      ...withoutScreenTitleTypeOverrides(style),
     }}>
       {children}
     </h2>
