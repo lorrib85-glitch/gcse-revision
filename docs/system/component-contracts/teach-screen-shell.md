@@ -77,6 +77,12 @@ points, it is two screens.
 - Body and keyPoint are separated by `SPACING.separation`.
 - Type from `TYPE` (`TYPE.displayScreen` heading, `TYPE.body` intro,
   `TYPE.label` eyebrow). Accent from `SUBJECTS[subject]`.
+- `TYPE.displayScreen` is the canonical non-cinematic module heading,
+  calibrated from the 390px TimelineCanvas reference "How the plague
+  travelled". The shell must consume it unchanged.
+- No local heading `fontSize`, `fontWeight`, `fontFamily`, `lineHeight` or
+  `letterSpacing` overrides. A screen may control available width and
+  placement, not invent a new title treatment.
 - No raw px values for layout rhythm or type overrides.
 
 ## 6. Motion rules
@@ -92,10 +98,11 @@ points, it is two screens.
 
 `TeachScreenShell.stories.jsx` → **Gold — Galen teach screen**: heading
 "Every illness had an opposite" (no eyebrow — the heading carries the point)
-→ intro → a `MediaPlaceholder` diagram slot → one key point. Reads clean at
-390px with token-driven rhythm: high enough under the learning header to avoid
-a dead top half, with enough heading/intro space to make the paragraph feel
-secondary.
+→ intro → a `MediaPlaceholder` diagram slot → one key point. The title uses the
+same canonical size and weight as the verified TimelineCanvas heading "How the
+plague travelled". It reads clean at 390px with token-driven rhythm: high
+enough under the learning header to avoid a dead top half, with enough
+heading/intro space to make the paragraph feel secondary.
 
 ## 8. Below-bar counterexample
 
@@ -108,6 +115,8 @@ buried as 14px muted footer text. Everything this shell exists to prevent.
 - ⚙ No raw px spacing/type — tokens only.
 - ⚙ At most one visual (`MediaPlaceholder`) in the body.
 - ⚙ Exactly one heading; at most one `keyPoint`.
+- ⚙ Heading consumes `TYPE.displayScreen` without local type-property
+  overrides.
 - 👁 **The teach screen actually composes through this shell** (content sets
   `shell: 'teach'`) — not the generic block shell. A teaching screen whose
   heading renders through `ScreenTitle` with ad-hoc spacing is a failure.
