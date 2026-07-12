@@ -81,6 +81,20 @@ export const GoldVesaliusCausation = {
   },
 }
 
+export const PlaceholderFocal = {
+  args: {
+    block: {
+      ...VESALIUS_FACTORS,
+      title: 'Which factors caused this change?',
+      centreLabel: 'Add focal image',
+      centreImage: undefined,
+      centreImageAlt: undefined,
+    },
+    subject: 'History',
+    onContinue: () => {},
+  },
+}
+
 export const LongFactorLabels = {
   args: {
     block: {
