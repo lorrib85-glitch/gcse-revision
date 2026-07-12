@@ -12,9 +12,11 @@ export default {
 const VESALIUS_FACTORS = {
   type: 'factorWeb',
   mode: 'causes',
-  question: 'Why could Vesalius challenge Galen?',
+  title: 'Why could Vesalius challenge Galen?',
   instruction: 'Explore each factor. Then decide which mattered most.',
-  centreLabel: 'Challenge Galen',
+  centreLabel: 'Vesalius',
+  centreImage: '/images/vesalius-1543.png',
+  centreImageAlt: 'Portrait of the Renaissance anatomist Andreas Vesalius',
   factors: [
     {
       id: 'vesalius',
@@ -65,7 +67,7 @@ const VESALIUS_FACTORS = {
       linkedFactor: 'Printing carried the challenge far beyond one anatomy theatre.',
     },
   ],
-  taskPrompt: 'Which factor mattered most?',
+  judgementTitle: 'Which factor mattered most?',
   judgementInstruction: 'Choose one factor, then explain why it helped Vesalius challenge Galen.',
   judgementPrompt: 'Use precise evidence. Explain why your factor mattered and how it linked to another factor.',
   thinkingTip: 'A strong judgement explains why one factor was more important than the others. It does not just list them.',
@@ -83,8 +85,10 @@ export const LongFactorLabels = {
   args: {
     block: {
       ...VESALIUS_FACTORS,
-      question: 'Why did ideas about the causes of disease change?',
-      centreLabel: 'Ideas change',
+      title: 'Why did ideas about disease change?',
+      centreLabel: 'Germ theory',
+      centreImage: '/images/pasteur-1861.png',
+      centreImageAlt: 'Portrait of the French scientist Louis Pasteur',
       factors: [
         { ...VESALIUS_FACTORS.factors[0], title: 'Pasteur’s germ theory', shortTitle: 'Pasteur' },
         { ...VESALIUS_FACTORS.factors[1], title: 'Koch’s scientific research', shortTitle: 'Koch' },
