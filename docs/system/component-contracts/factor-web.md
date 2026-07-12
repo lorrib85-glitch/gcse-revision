@@ -95,11 +95,26 @@ Limits are defined in `src/constants/contentLimits.js` and enforced as authoring
 
 These limits must fail governance. The runtime must not silently truncate, clamp, shrink or replace overlong learner copy.
 
+### Split composition
+
+The component owns a balanced two-column composition:
+
+- factors are split into left and right columns by their order in `factors`
+- six factors render as **three on the left and three on the right**
+- five factors render as three on the left and two on the right
+- four factors render as two on each side
+- the central column is reserved for the focal image or governed image placeholder
+- the focal label always sits beneath the image/placeholder, never inside it
+- connector lines curve from each node to a bronze anchor dot at the focal ring
+- each connector also terminates at a small node-side anchor dot
+
+The chapter controls semantic ordering by the order of the `factors` array. The component owns all geometry. Chapter content must not carry x/y positions, line coordinates, widths, glow values or other presentation data.
+
 Required interaction order:
 
 1. one concise question appears as the canonical screen heading
 2. an optional framing paragraph may appear when context genuinely helps
-3. the central historical focal point and factor nodes appear
+3. the central historical focal point and left/right factor columns appear
 4. learner explores every factor
 5. each factor reveals “What it means” and “Why it mattered”
 6. shared `SequenceProgress` shows viewed/current/remaining state without numbers
@@ -112,25 +127,27 @@ Required interaction order:
 
 - Primary heading: `ScreenTitle` → `TYPE.displayScreen`; no local font-size, weight, line-height or letter-spacing overrides.
 - Optional framing copy: `TYPE.body`; it is allowed when it adds context and must remain visibly secondary.
-- Factor-node labels: `TYPE.label`, sentence case.
+- Factor-node labels: `TYPE.bodySmall`, sentence case. This deliberately keeps node text lighter and less button-like than the main heading.
 - Centre label: `TYPE.titleMedium`, sentence case, 2–3 words.
 - Detail title: `TYPE.displayCard`.
 - Detail labels: `TYPE.label`, sentence case.
 - Detail copy: `TYPE.body` / `TYPE.bodySmall`.
-- Buttons: `TYPE.button` and governed `ContinueCTA`.
+- Buttons: governed `ContinueCTA`; factor nodes use the shared body token rather than inventing a button-title style.
 - Local sequence state: `SequenceProgress`; never `x / y`, percentages or a bespoke rail.
 - Colour comes from `SUBJECTS[subject]`; content data does not carry raw presentation colours.
+- Layout and visual geometry come from `src/constants/factorWeb.js`.
+- No chapter-specific image paths or figure names may appear inside `FactorWeb.jsx`.
 - No emojis or system glyphs as factor identity. Selection and explored states use restrained subject accent only.
 - No eyebrows. Do not render `kicker`, `TYPE.eyebrow`, `cinematic-eyebrow` or any small label above the main heading.
 - No decorative uppercase or local font families.
 - Active glow is restrained and permitted only on the selected node or central subject ring.
-- One subtle radial atmosphere treatment is permitted around the central focal point because it explains hierarchy; do not add unrelated glow or decorative gradients elsewhere.
+- One soft, blurred subject-colour halo is permitted behind the central focal point because it explains hierarchy; do not add unrelated glow or decorative gradients elsewhere.
 
 ## 6. Motion rules
 
 - Centre, lines and factor nodes enter with restrained fade/scale or path drawing.
 - Motion communicates the web relationship; it must not bounce, overshoot or feel arcade-like.
-- Connector lines stop at the focal ring and node anchors rather than running through content.
+- Connector lines curve from node anchors to focal-ring anchors and end in visible dots.
 - Detail panels fade and rise gently when the active factor changes.
 - The judgement phase uses a calm cross-fade.
 - `prefers-reduced-motion` renders all content immediately with no animated travel.
@@ -145,15 +162,18 @@ At 390px:
 - an optional one-sentence framing paragraph remains clearly secondary
 - no eyebrow or duplicate label appears above the heading
 - Vesalius is the central historical focal image, with his name beneath the medallion
-- factor cards feel connected to the central subject rather than floating independently
-- connector lines end at small bronze anchor points
+- three factor cards sit on the left and three on the right
+- a soft blurred bronze halo makes the centre the visual focal point without becoming neon
+- curved connector lines flow into bronze dots at both the node and focal ring
 - six factor labels remain readable without emoji or clipping
-- node cards are restrained and do not dominate the central subject
+- node copy is lighter than a button label and does not compete with the centre
 - detail teaching appears below the web at normal body size
 - progress uses the shared dot/pill system with no numbers
 - the final phase asks “Which factor mattered most?” and supports a causal judgement
 
-The `LongFactorLabels` story checks the `shortTitle` escape hatch and a second central historical focal image.
+`PlaceholderFocal` verifies the reusable component state when no image is supplied. The centre remains reserved for media and displays a governed image-placeholder glyph with the focal label beneath it.
+
+`LongFactorLabels` checks the `shortTitle` escape hatch and a second central historical focal image.
 
 ## 8. Below-bar counterexample
 
@@ -179,6 +199,7 @@ That implementation passed source-data checks while failing the rendered mobile 
 - ⚙ Primary heading routes through `ScreenTitle` / `TYPE.displayScreen`.
 - ⚙ Main and judgement titles stay within the governed 42-character limit.
 - ⚙ Centre and node labels stay within their governed limits.
+- ⚙ Four to six factors only; six must produce a 3/3 split.
 - ⚙ No runtime truncation, line clamp or automatic font shrinking is used to hide an authoring failure.
 - ⚙ No local heading type overrides.
 - ⚙ No rendered eyebrow, `textTransform: 'uppercase'`, `TYPE.eyebrow` or `cinematic-eyebrow`.
@@ -188,6 +209,8 @@ That implementation passed source-data checks while failing the rendered mobile 
 - ⚙ `ContinueCTA` owns both progression actions.
 - ⚙ Factors have stable IDs.
 - ⚙ A `centreImage` always has meaningful `centreImageAlt`.
+- ⚙ Without a `centreImage`, the governed centre placeholder remains visible.
+- ⚙ Component geometry is sourced from `FACTOR_WEB_LAYOUT` / `FACTOR_WEB_VISUAL`, not content data.
 - ⚙ Reduced motion is respected.
 
 ### Render at 390px
@@ -195,11 +218,12 @@ That implementation passed source-data checks while failing the rendered mobile 
 - 👁 One clear heading leads the screen and does not exceed three natural lines.
 - 👁 Optional framing copy may remain when it adds context, but it does not compete with the heading.
 - 👁 No duplicate label appears above the heading.
-- 👁 The central focal point is visually dominant without becoming oversized.
-- 👁 The centre label is short and fully readable.
+- 👁 The central image or placeholder is visually dominant without becoming oversized.
+- 👁 The centre label sits beneath the focal media and is fully readable.
+- 👁 Three nodes on each side align as balanced columns when six factors are present.
 - 👁 Every node label is readable without clipping; use `shortTitle` where needed.
 - 👁 Nodes do not collide with the centre or screen edge.
-- 👁 Connector lines visibly terminate at the centre ring and node anchors.
+- 👁 Connector lines visibly terminate at the focal ring and node anchor dots.
 - 👁 The web reads as one connected composition rather than six separate buttons.
 - 👁 The web remains understandable without colour.
 - 👁 Active and explored states are distinct but restrained.
