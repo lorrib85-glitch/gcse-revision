@@ -4,131 +4,273 @@
 
 - **Episode number:** 4
 - **Title (series map):** The Man Who Proved Everyone Wrong
-- **Subtitle / GCSE topic:** William Harvey and the circulation of blood
-- **Era:** c1628 (publication of key work)
-- **Build status:** Built (shared) as `history-medicine-renaissance-medicine` (formerly `history-medicine-renaissance-medicine`) — also covers Episodes 3 (Vesalius) and 5 (Great Plague)
+- **Subtitle / GCSE topic:** William Harvey and the spread of Renaissance scientific method
+- **Era:** c1537–c1685, with Harvey's 1628 discovery as the central narrative
+- **Build status:** Built as clean runtime `history-medicine-harvey-pare-renaissance-method`; the older bundled Renaissance runtime remains hidden for compatibility.
 - **Key Topic reference:** n/a (Series 1)
 
 ### Scope note
-This episode covers William Harvey's discovery of the circulation of blood and the factors that enabled it. It also includes Ambroise Paré in the context of surgical innovation — though Paré is sometimes grouped with Vesalius in the spec. Content from `history-medicine-renaissance-medicine` attributable to Harvey is noted here. Episodes 3 and 5 are covered in their own files.
+
+Harvey remains the main character and circulation remains the main discovery. This episode also owns the wider Renaissance story of observation, experiment, scientific communication and uneven practical improvement: Paré, Fracastoro, the Royal Society, Malpighi, Leeuwenhoek, Sydenham, and changes in treatment and medical practice.
+
+These supporting examples must strengthen the chapter's central argument — that a new method of finding knowledge was spreading — rather than become a sequence of disconnected biographies.
+
+### Scope ownership
+
+#### Must teach in depth
+
+- Galen's model of blood and the specific ideas Harvey challenged
+- Harvey's evidence: heart as pump, one-way valves, dissection, observation and calculation
+- *An Anatomical Account of the Motion of the Heart and Blood* (1628)
+- Why Harvey could make the discovery
+- Why his discovery was significant but had limited immediate impact
+- Malpighi's observation of capillaries as the missing technological proof
+
+#### Supporting Renaissance-method sequence
+
+Teach these in chronological order as evidence that observation, testing and communication were spreading beyond one individual:
+
+1. **Ambroise Paré, c1537–c1545** — observation improved gunshot treatment and ligatures improved amputation practice.
+2. **Girolamo Fracastoro, 1546** — proposed that disease could spread through tiny "seeds"; close to a later explanation but with little impact.
+3. **Royal Society, 1660 onwards** — scientists shared experiments, published findings and gained royal credibility.
+4. **Marcello Malpighi, 1661** — microscope revealed capillaries and completed the evidence Harvey could not see.
+5. **Antony van Leeuwenhoek, 1676** — observed "animalcules" but did not connect them with disease.
+6. **Thomas Sydenham, 1676** — observed patients rather than relying only on books and distinguished diseases by their symptoms.
+
+#### Wider treatment and medical-practice synthesis
+
+- Paré's wound treatment and ligatures as the strongest example of practical improvement
+- New World remedies and expanding herbal treatment
+- Chemical medicines such as mercury and antimony, including their dangers
+- Hospitals becoming more treatment-focused while monastery closures reduced provision
+- Licensed surgeons and apothecaries; wider use of anatomical teaching materials
+- Continuing transference, Four Humours, bloodletting and purging
+- Charles II's treatment in 1685 as evidence that old practice survived
+
+#### Taught elsewhere
+
+- **Episode 3:** Vesalius, Renaissance background, anatomy theatres, printing and the first challenge to Galen's anatomy.
+- **Episode 5:** Great Plague beliefs, treatments and prevention; wider prevention and public-health change; government action; Black Death comparison.
 
 ---
 
 ## 2. Storyline
 
 ### Core takeaway
-DRAFT (for user confirmation): Harvey proved that the heart was a pump and blood circulated in a one-way system — a discovery that directly disproved Galen's 1500-year-old model. Yet like Vesalius before him, Harvey had almost no immediate impact on how patients were actually treated. His discovery mattered not because it changed medicine overnight, but because it showed that ancient authority could be proved wrong through careful observation and experiment. The Renaissance's most important gift wasn't any single discovery — it was the *method* of discovery itself.
 
-*Derived from: source material consistently notes Harvey's correct theory + limited impact on treatment.*
+Harvey used observation, experiment and calculation to prove that the heart pumps blood around the body, directly overturning Galen's old model. His discovery did not transform treatment overnight, but alongside Paré, the Royal Society and other investigators it showed that Renaissance medicine was developing a repeatable method: observe, test, share and correct.
 
 ### Evidence for the takeaway
-- Harvey published *An Anatomical Account of the Motion of the Heart and Blood* (1628) — proved one-way blood circulation with heart as pump
-- Directly disproved Galen's theory (blood made in liver, burned up by body)
-- Harvey's method: used observation, measurement and experiment — not book-learning
-- Harvey's discovery was helped by: his own abilities, being employed by Charles I (credibility), mechanical water pump as technological inspiration, more commonplace dissections, societal interest in science/anatomy
-- Limited immediate impact: theory correct but offered no practical use in treatment → many ignored or criticised it
-- Ambroise Paré (if covered in `history-medicine-renaissance-medicine`): French surgeon who replaced scalding oil on wounds with ointment; tied off blood vessels instead of cauterising during amputations; showed trial and observation working in surgery
+
+- Harvey published *An Anatomical Account of the Motion of the Heart and Blood* in 1628.
+- He showed that the heart acts as a pump and blood moves continuously in a one-way circulation.
+- He used valves, dissection, observation and calculations of blood volume to make Galen's model impossible.
+- Harvey could not see capillaries; Malpighi used a microscope in 1661 to provide the missing evidence.
+- Paré used observation to improve gunshot treatment and introduced ligatures, showing the method could affect practice as well as knowledge.
+- The Royal Society made experiment, discussion and publication more organised.
+- Fracastoro, Leeuwenhoek and Sydenham produced important clues about disease, but without germ theory their immediate impact was limited.
+- Old treatments continued; Charles II still received bloodletting and purging in 1685.
 
 ### Series throughline
-- **Agent: Individuals (👤):** Harvey is the second great individual of the series — the first since Vesalius (Ep 3). His work shows that individuals, not institutions, now drive medical progress.
-- **Agent: Government (🏛️):** Harvey was employed by King Charles I → royal patronage gave him resources and credibility → government/patronage as an enabling factor (contrasts with medieval period where government was impotent).
-- **Agent: Science & technology (🔬):** Mechanical water pump inspired Harvey's model of the heart-as-pump — technology of the period directly shaped medical understanding.
-- **Forward connection:** Harvey's correct understanding of circulation eventually enables blood transfusions (Episode 12) and modern surgery — the long-term significance chain.
+
+- **Agent: Individuals (👤):** Harvey, Paré, Sydenham and other investigators show individuals driving change through observation and challenge.
+- **Agent: Science & technology (🔬):** pumps shaped Harvey's model; microscopes revealed capillaries and animalcules; printing and journals spread findings.
+- **Agent: Government (🏛️):** royal patronage gave Harvey and the Royal Society credibility and resources.
+- **Agent: Communication:** the Royal Society and *Philosophical Transactions* helped knowledge become cumulative rather than isolated.
+- **Backward connection to Episode 3:** Vesalius challenged anatomy; Harvey challenged physiology.
+- **Forward connection to Episode 5:** the Great Plague tests whether this new scientific world had changed what ordinary people believed and did.
 
 ### Exam framing
-- "'There was little progress in medicine in Britain during the Renaissance period.' How far do you agree?" — Harvey is a key counter-argument piece: demonstrates the value of the new empirical method even if immediate treatment impact was limited.
-- "Explain why Harvey was able to make his discovery" — agents of change question; answer should use the five-factor model (Individual, Government, Technology, Scientific breakthroughs, Attitudes in society).
+
+- **"Explain why Harvey was able to make his discovery" (12 marks):** connect individual ability, dissection, changing attitudes, technology and royal patronage to the discovery.
+- **"Explain why surgery improved during the Renaissance" (12 marks):** use Paré's wound treatment, ligatures, observation and publication.
+- **"There was little progress in medicine in Britain during the Renaissance period." How far do you agree? (16 marks + SPaG):** use Harvey, Paré, the Royal Society and new investigation as evidence of progress; use continuing humoural treatment and limited practical impact as evidence of continuity.
+- Precise judgement: **Renaissance method and knowledge advanced faster and more reliably than everyday treatment.**
 
 ---
 
 ## 3. Specification requirements
 
-- **William Harvey (1578–1657):**
-  - Discovered circulation of the blood
-  - Published *An Anatomical Account of the Motion of the Heart and Blood* (1628)
-  - Proved the heart acts as a pump, pumping blood around the body in a one-way system
-  - Directly disproved Galen's theory (blood constantly made in liver and burned up)
-  - Harvey's work was helped by five factors:
-    - **Individuals:** Harvey's own abilities as a doctor and anatomist
-    - **Government:** Harvey employed by King Charles I → gave him credibility and resources
-    - **Technology:** inspired by mechanical water pump; used it as a model for the heart
-    - **Scientific breakthroughs:** dissections were more commonplace by this period
-    - **Attitudes in society:** renewed interest in science and anatomy; willingness to look for rational explanations
-  - Limited immediate impact: theory correct but no practical use in treating disease → many ignored or criticised it
+### William Harvey (1578–1657)
 
-  **A limitation of Harvey's discovery:**
-  - Harvey proved blood circulated around the body but could not explain how arteries connected to veins
-  - The vessels responsible (capillaries) were too small to be seen with the technology available to him
-  - This meant Harvey's theory was not completely proven during his lifetime
+- Discovered that blood circulates continuously around the body.
+- Published *An Anatomical Account of the Motion of the Heart and Blood* in 1628.
+- Showed that the heart acts as a pump.
+- Used valves in veins as evidence that blood travels in one direction.
+- Calculated that the volume of blood passing through the heart was too great for the liver to keep making new blood that the body then used up.
+- Directly challenged Galen's belief that blood was produced in the liver and consumed by the body.
+- Used observation, dissection, experiment and mathematical reasoning rather than relying on authority.
 
-  **Marcello Malpighi completes the picture:**
-  - In 1661, Marcello Malpighi used a microscope to observe capillaries for the first time
-  - He saw the tiny blood vessels connecting arteries and veins
-  - This provided the missing evidence Harvey could not find
-  - Harvey's theory of circulation was finally confirmed by this discovery
-  - This demonstrates how improvements in technology (the microscope) helped complete medical progress begun by individuals
+### Why Harvey could make his discovery
 
-  **Why some doctors rejected Harvey:**
-  - Galen had been trusted for over 1,500 years — rejecting him felt dangerous to many physicians
-  - Harvey challenged established teaching that formed the basis of most medical training
-  - Harvey could not show the capillaries that would complete his theory
-  - His discovery did not immediately improve treatment for patients
-  - Acceptance of Harvey's ideas was therefore slow, and humoural treatments continued for decades
+- **Individual:** Harvey's skill as a doctor, anatomist and investigator.
+- **Government / patronage:** employment by King Charles I gave access, time, status and credibility.
+- **Technology:** mechanical pumps provided a model for understanding the heart.
+- **Scientific development:** dissection was more common and accepted than in the medieval period.
+- **Changing attitudes:** Renaissance interest in anatomy and rational explanation made challenge more possible.
 
-- **Ambroise Paré (c1510–1590) — if covered in `history-medicine-renaissance-medicine`:**
-  - French surgeon (not explicitly on Edexcel spec as a standalone figure but appears in some resources)
-  - UNCERTAIN: whether Paré is covered in `history-medicine-renaissance-medicine` given limited screen count
-  - If covered: replaced scalding oil on gunshot wounds with ointment (after running out of oil accidentally); tied off blood vessels during amputations rather than cauterising → reduced pain and improved survival; also made artificial limbs
+### Limitations and resistance
 
-- **Continued continuities in the Renaissance:**
-  - Despite Harvey's discovery, patients were still treated with humoural methods
-  - Medical training still dominated by Galen's ideas even after Harvey
-  - Charles II (1685) still received bloodletting — Harvey's discovery had not changed practical treatment
+- Harvey could not explain how arteries connected to veins because capillaries were too small for available technology to show.
+- Many doctors still trusted Galen and were slow to accept a challenge to established teaching.
+- Circulation did not immediately provide a new cure or treatment.
+- Bloodletting and other humoural treatments continued.
+
+### Marcello Malpighi completes the evidence
+
+- In 1661, Malpighi used a microscope to observe capillaries.
+- Capillaries connected arteries and veins, providing the missing link in Harvey's theory.
+- This shows that individual reasoning can be limited by technology and later completed by new tools.
+
+### Ambroise Paré (c1510–1590)
+
+- French barber-surgeon and army surgeon.
+- Traditional gunshot treatment used boiling oil because gunpowder was thought to be poisonous.
+- In c1537, Paré ran out of oil and used a soothing mixture of egg yolk, oil of roses and turpentine.
+- The next day, patients treated with the mixture had less pain, swelling and fever than those treated with boiling oil.
+- Paré abandoned the old treatment because observation showed it caused harm.
+- He introduced ligatures: tying blood vessels with thread instead of cauterising amputation wounds with a red-hot iron.
+- Ligatures reduced death from shock and blood loss, although infection remained a major problem.
+- He designed prosthetic limbs and artificial eyes.
+- He published in French rather than Latin, making his work more accessible to practising surgeons.
+- His work shows evidence-led improvement operating within a still-religious society: "I dressed him, God healed him."
+
+### Fracastoro and new ideas about disease
+
+- In 1546, Girolamo Fracastoro suggested that disease could spread through tiny "seeds" carried through the air or by contact.
+- The idea was closer to later germ theory than miasma or the Four Humours.
+- He had no technology to prove the theory and it had little immediate impact.
+- His example shows that a promising idea does not change medicine without convincing evidence and communication.
+
+### The Royal Society
+
+- Formed in 1660 to share experiments and promote scientific investigation.
+- Charles II granted a Royal Charter in 1662, increasing status and credibility.
+- Published *Philosophical Transactions* from 1665, allowing findings to be shared, discussed and built upon.
+- Reports were more accessible than traditional Latin medical texts.
+- The Society helped turn isolated investigation into an organised scientific community.
+
+### Antony van Leeuwenhoek and "animalcules"
+
+- In 1676, Leeuwenhoek used improved microscopes to observe tiny living organisms he called "animalcules."
+- These included microorganisms later understood to include bacteria.
+- He did not connect them with disease, so the observation did not create germ theory.
+- The discovery was an important clue whose significance became clear only later.
+
+### Thomas Sydenham — "the English Hippocrates"
+
+- Observed patients closely rather than relying only on medical books.
+- Argued that diseases could have external causes rather than being only internal humoural imbalances.
+- Distinguished measles from scarlet fever by comparing symptoms.
+- Published *Observationes Medicae* in 1676.
+- His method improved disease classification even though causes were still not understood.
+
+### Wider changes in treatment and medical practice
+
+#### Treatments
+
+- Paré produced genuine practical improvements in surgery.
+- Herbal remedies expanded after contact with the New World:
+  - ipecac from Brazil used for dysentery
+  - cinchona bark from Peru used for malaria
+  - tobacco used in attempts to protect against miasma
+- The doctrine of signatures linked a plant's colour or shape to the illness it might treat.
+- Medical chemistry developed from alchemy; mercury and antimony were used to purge but could be poisonous.
+- Transference continued: illness was believed to pass into an object, plant or animal.
+- Bloodletting and purging remained common because the Four Humours still influenced treatment.
+
+#### Hospitals and medical roles
+
+- Some hospitals increasingly aimed to cure as well as care and employed physicians.
+- Monastery closures reduced the number of hospitals and places of care.
+- St Bartholomew's Hospital was re-founded by Henry VIII.
+- Surgeons and apothecaries increasingly required licences.
+- Human dissection and printed anatomical sheets improved training, although bodies remained difficult to obtain.
+- Apothecaries had access to a wider range of ingredients from overseas.
+
+#### Limits of practical change
+
+- New remedies were mixed with old beliefs rather than based on a correct theory of disease.
+- Many innovations spread slowly and were not available to everyone.
+- Infection, pain and lack of understanding still limited surgery.
+- Charles II received extensive bloodletting and purging in 1685, showing the endurance of humoural treatment.
 
 ---
 
 ## 4. Content reference pack
 
 ### Dates & timeline
-- 1628 — Harvey publishes *An Anatomical Account of the Motion of the Heart and Blood*
-- 1661 — Marcello Malpighi uses microscope to observe capillaries; confirms Harvey's theory of circulation
-- 1685 — Charles II treated with bloodletting and purging (despite Harvey's discovery 57 years earlier — shows limited practical impact)
 
-### Key people
-- **William Harvey (1578–1657):** Discovered circulation of blood; published 1628; employed by King Charles I; used mechanical water pump as conceptual model; could not explain capillaries → limited immediate impact on treatment
-- **Marcello Malpighi (1628–1694):** Italian scientist; in 1661 used a microscope to observe capillaries; provided the missing evidence that completed Harvey's theory of circulation; demonstrates how new technology (microscope) enables scientific progress
-- **King Charles I:** Harvey's employer → government/royal patronage enabled Harvey's work
-- **Ambroise Paré (c1510–1590):** French surgeon; innovations in wound treatment and amputation technique (UNCERTAIN — see scope note)
+- c1537 — Paré replaces boiling oil on gunshot wounds with a soothing mixture after observing better outcomes
+- c1545 — Paré develops ligature use for amputations
+- 1546 — Fracastoro publishes his theory that disease may spread through tiny "seeds"
+- 1628 — Harvey publishes *An Anatomical Account of the Motion of the Heart and Blood*
+- 1660 — Royal Society formed
+- 1661 — Malpighi observes capillaries through a microscope
+- 1662 — Charles II grants the Royal Society a Royal Charter
+- 1665 — *Philosophical Transactions* begins publication
+- 1676 — Leeuwenhoek observes "animalcules"
+- 1676 — Sydenham publishes *Observationes Medicae*
+- 1685 — Charles II receives bloodletting and purging
+
+### Key people and institutions
+
+- **William Harvey (1578–1657):** proved circulation using observation, valves, calculation and experiment.
+- **Ambroise Paré (c1510–1590):** improved gunshot treatment and amputation practice through observation and trial.
+- **Girolamo Fracastoro (c1478–1553):** proposed disease-spreading "seeds" but lacked proof and impact.
+- **Marcello Malpighi (1628–1694):** observed capillaries in 1661 and completed the missing evidence for circulation.
+- **Antony van Leeuwenhoek (1632–1723):** observed microscopic "animalcules" in 1676 without linking them to disease.
+- **Thomas Sydenham (1624–1689):** observed patients and classified disease through symptom patterns.
+- **King Charles I:** Harvey's employer and source of royal patronage.
+- **Charles II:** supported the Royal Society but still received humoural treatment in 1685.
+- **Royal Society:** organised scientific exchange, experiment and publication from 1660.
 
 ### Key terms & definitions
-- **Circulation:** the continuous flow of blood around the body in a one-way system, driven by the heart
-- **Capillaries:** tiny blood vessels connecting arteries and veins; too small to be seen without a microscope; Harvey knew they must exist but could not observe them; confirmed by Malpighi in 1661
-- **Anatomist:** a scientist who studies the structure of the body
-- **Royal patronage:** support from a king or monarch; gave Harvey credibility (Charles I employed him as royal physician)
+
+- **Circulation:** continuous one-way movement of blood around the body, driven by the heart.
+- **Capillaries:** tiny vessels connecting arteries and veins.
+- **Royal patronage:** support from a monarch that provides status, resources or protection.
+- **Scientific method:** observation, testing, measurement, sharing and correction of ideas using evidence.
+- **Ligature:** thread used to tie blood vessels and reduce bleeding after amputation.
+- **Animalcules:** Leeuwenhoek's name for microscopic living organisms.
+- **Medical chemistry:** use of chemical substances as medicines, developing from alchemy.
+- **Transference:** belief that illness could pass from a patient into another object or living thing.
+- **Royal Society:** scientific organisation founded in 1660 to share and promote experimental knowledge.
 
 ### Case studies / named examples
-- **Harvey's heart-as-pump experiment:** Harvey used measurements and observation (not just dissection) to prove the heart's pumping action; calculated the volume of blood pumped per heartbeat and per hour — showed it was impossible for the liver to make that much blood continuously
-- **Malpighi's capillaries (1661):** Harvey knew arteries and veins must connect somewhere but could not see how; Malpighi used a microscope to observe capillaries in frog lungs in 1661 — completing Harvey's theory. This is the key example in the episode of technology (microscope) enabling a breakthrough that observation alone could not achieve.
-- **Harvey's limited impact — Charles II (1685):** Despite Harvey's discovery being 57 years old, Charles II was still bled using humoural methods → demonstrates that even correct discoveries take generations to change actual practice
+
+- **Harvey's blood-volume calculation:** the amount pumped by the heart made Galen's constant-production model impossible.
+- **Malpighi's capillaries:** new technology supplied evidence Harvey's own tools could not reveal.
+- **Paré's gunshot treatment:** comparison of patient outcomes led him to abandon a harmful tradition.
+- **Paré's ligatures:** reduced immediate death from shock and blood loss but did not solve infection.
+- **Royal Society publication:** made findings open to wider scrutiny and cumulative development.
+- **Charles II in 1685:** old humoural treatment survived despite decades of new knowledge.
 
 ### Causes & effects
-- Harvey employed by Charles I → access to resources and institutional credibility → able to publish without being dismissed
-- Mechanical water pump (new technology) → conceptual model for the heart's pumping action → Harvey frames his discovery in terms people could understand
-- More commonplace dissections → Harvey can directly observe the heart's action in live animals → empirical rather than theoretical proof
-- Harvey's correct theory → no immediate practical application for treatment → physicians ignore it → bloodletting continues for 57+ years after publication
-- Harvey cannot observe capillaries (technology insufficient) → theory incomplete → gave critics a reason to doubt it → Malpighi uses microscope (1661) → capillaries confirmed → Harvey's theory finally proven beyond doubt
 
-### Exam angles
-- **"Explain why Harvey was able to make his discovery" (12 marks):** Five-agent structure. Strong answers will connect each agent to *why it enabled discovery*: Charles I's employment gave Harvey time and credibility; the mechanical pump gave him a conceptual model; dissection being commonplace gave him empirical evidence. Weak answers just list the factors without explaining them.
-- **"How important was Harvey's discovery for the development of medicine?" (12 marks, if asked):** Key insight = correct discovery + limited immediate impact = long-term significance. Harvey matters *eventually* (blood transfusion, surgery) not *immediately*.
-- **Misconceptions for `MisconceptionCheck`:**
-  - "Harvey's discovery immediately changed how doctors treated patients" — FALSE: humoural treatments continued for many decades; Charles II was still bled in 1685
-  - "Harvey proved Galen completely wrong" — PARTLY FALSE: Harvey proved Galen wrong about blood circulation specifically; Galen's Four Humours theory continued to influence treatment
-  - "Harvey's theory of circulation was fully proven in his own lifetime" — FALSE: Harvey could not explain how arteries connected to veins; Malpighi observed capillaries in 1661 — four years after Harvey's death — to complete the proof
-  - "Doctors quickly accepted Harvey's discovery because it was correct" — FALSE: acceptance was slow; Galen had been trusted for 1,500 years; Harvey could not show capillaries; the discovery offered no immediate practical benefit
+- More accepted dissection + Harvey's observation and calculation → Galen's blood model became untenable → circulation theory.
+- Harvey's royal employment → resources and credibility → greater ability to investigate and publish.
+- Insufficient microscope technology → capillaries remained invisible → Harvey's proof appeared incomplete.
+- Improved microscope → Malpighi observed capillaries → missing link confirmed.
+- Paré observed different patient outcomes → rejected boiling oil → gunshot treatment improved.
+- Royal Society + scientific publication → experiments shared and criticised → knowledge became more cumulative.
+- New World exploration → wider range of remedies → some effective ingredients but no reliable theory explaining them.
+- New knowledge without practical application → old treatments continued → change in practice remained uneven.
+
+### Misconceptions for `MisconceptionCheck`
+
+- **"Harvey immediately changed treatment." — FALSE:** circulation improved knowledge; humoural treatment continued.
+- **"Harvey could see the whole circulation system." — FALSE:** he could not observe capillaries.
+- **"Doctors accepted Harvey immediately because he was correct." — FALSE:** Galen's authority, missing capillary evidence and lack of practical benefit slowed acceptance.
+- **"Paré solved surgery." — FALSE:** his methods reduced some harm, but infection and slow adoption remained major limits.
+- **"Leeuwenhoek discovered germ theory." — FALSE:** he saw microorganisms but did not connect them with disease.
+- **"The Royal Society opposed religion." — FALSE:** it promoted experiment and had royal support; scientific and religious belief could coexist.
+- **"All Renaissance treatments were new and effective." — FALSE:** old humoural, herbal and transference practices continued alongside limited innovation.
 
 ### Sourcing notes
-- **`content1.txt`** — Harvey pp. 19–20 equivalent; covers all five enabling factors, the discovery, and its limited immediate impact
-- **`EdexcelGCSEHistoryKnowledgeOrganiserforMedicineinBritain.txt`** — confirms Harvey's key facts
-- **`Paper_1_1HI011_Medicine_SAMs_Mark_scheme_2025.txt`** — Q5 ("'There was little progress in medicine in Britain during the Renaissance'") directly includes Harvey as a counter-argument factor
-- MISSING: Paré details — no reliable coverage in source material; if needed, treat as MISSING from this synthesis
+
+- **`content1.txt`** — Harvey, Royal Society, Sydenham, treatment and medical-practice change.
+- **`EdexcelGCSEHistoryKnowledgeOrganiserforMedicineinBritain.txt`** — cross-confirms Harvey and Renaissance developments.
+- **`Paper_1_1HI011_Medicine_SAMs_Mark_scheme_2025.txt`** — confirms Harvey, scientific communication and treatment continuity as evidence in Renaissance progress judgements.
+- Paré details derive from standard Edexcel GCSE Medicine knowledge and should retain a sourcing note where used in learner-facing material.
+- Wider Renaissance scientific and treatment content formerly stored in Episode 3 is now explicitly owned here to preserve a clear chronological and thematic division.
