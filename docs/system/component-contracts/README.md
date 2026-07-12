@@ -10,7 +10,13 @@ component's API or overrides a LOCKED component's internals.
 **Governed by `docs/system/PATTERN_GOVERNANCE.md`** — read it first. It
 defines the taxonomy chain (learning objective → intent → component →
 contract → example), the one-primary-intent hard rule, the intent→component
-map, and the render pass. This README only covers the contract format.
+map, the render pass, and the review-to-rebuild pathway. This README only
+covers the contract format.
+
+Field 7 of each contract (**Gold example**) must name the same composed
+runtime screen as that component's entry in
+`docs/system/GOLD_SCREEN_REGISTER.md` — the register is the single calibration
+source, verified at 390px, that reviews and rebuilds are measured against.
 
 ## Contract format — 9 fields
 
