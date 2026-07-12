@@ -12,6 +12,24 @@ import { MODULE_CONTENT_LOADERS } from '../../src/content/moduleContentRegistry.
 
 const moduleById = new Map(MODULES.map(m => [m.id, m]))
 const entries = Object.entries(TAG_MODULE_MAP)
+// Legacy mappings that still open at screen 0 because no explicit tagged
+// screen exists yet. Shrink only by individual tag; never add module-wide
+// exemptions and never use this for new mappings.
+const LEGACY_SCREEN_ZERO_RECOVERY_TAGS = new Set([
+  'black-death',
+  'communication',
+  'diagnosis',
+  'genetics',
+  'lifestyle-factors',
+  'medieval-causes',
+  'medieval-prevention',
+  'nhs',
+  'nightingale',
+  'royal-society',
+  'scientific-method',
+  'surgery',
+  'war-and-medicine',
+])
 
 describe('Recovery routing — TAG_MODULE_MAP integrity', () => {
   it('every mapping value is either a real module id or an explicit null', () => {
@@ -31,11 +49,15 @@ describe('Recovery routing — TAG_MODULE_MAP integrity', () => {
     expect(nonRecoverable).toEqual(['factors-in-change'])
   })
 
-  it('when a mapped tag is also a screen tag, findTaggedScreen returns a real screen index', () => {
+  it('new non-null mappings resolve to explicit tagged screens instead of implicit screen 0', () => {
     for (const [tag, target] of entries) {
       if (target === null) continue
       const mod = moduleById.get(target)
-      if (!(mod.screenTags || []).includes(tag)) continue // opens from screen 0 by design
+      if (LEGACY_SCREEN_ZERO_RECOVERY_TAGS.has(tag)) continue
+      expect(
+        mod.screenTags || [],
+        `tag "${tag}" routes to "${target}" but is not an explicit screenTag; add a tagged screen or a shrink-only legacy exception`
+      ).toContain(tag)
       const idx = findTaggedScreen(mod, tag)
       expect(idx, `tag "${tag}" not found in ${target}.screenTags`).toBeTypeOf('number')
       expect(idx, `tag "${tag}" → index ${idx} out of range for ${target} (screenCount ${mod.screenCount})`)
@@ -61,8 +83,8 @@ describe('Recovery routing — TAG_MODULE_MAP integrity', () => {
     // that the resolved screen's own tag matches.
     for (const [tag, target] of entries) {
       if (target === null) continue
+      if (LEGACY_SCREEN_ZERO_RECOVERY_TAGS.has(tag)) continue
       const mod = moduleById.get(target)
-      if (!(mod.screenTags || []).includes(tag)) continue
       const idx = findTaggedScreen(mod, tag)
       const loader = MODULE_CONTENT_LOADERS[target]
       expect(loader, `${target} has no content loader`).toBeTypeOf('function')
