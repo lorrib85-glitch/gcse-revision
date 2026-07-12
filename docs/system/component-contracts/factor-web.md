@@ -6,7 +6,7 @@
 **Display type:** `factorWeb`  
 **Function tags:** `teach-comparison`, `apply`  
 **Interaction class:** `reveal`  
-**Composition classification:** `interaction-owns-screen` — Route B. The component owns its full interaction layout inside `InteractionShell`, but it does **not** own a separate typography system. Its primary title uses the canonical non-cinematic `TYPE.displayScreen` route through `ScreenTitle`.
+**Composition classification:** `interaction-owned` — Route B. The component owns full-screen composition: its full interaction layout inside `InteractionShell`. It does **not** own a separate typography system. Its primary title uses the canonical non-cinematic `TYPE.displayScreen` route through `ScreenTitle`.
 
 ## 1. Purpose
 

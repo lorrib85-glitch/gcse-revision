@@ -74,7 +74,7 @@ describe('FactorWeb governance', () => {
     expect(story).toContain("centreLabel: 'Challenge Galen'")
 
     expect(contract).toContain('Composition classification:')
-    expect(contract).toContain('interaction-owns-screen')
+    expect(contract).toContain('interaction-owned')
     expect(contract).toContain('No eyebrows.')
     expect(contract).toContain('## 7. Gold example')
     expect(contract).toContain('## 9. Review checks')
