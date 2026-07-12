@@ -1,7 +1,7 @@
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
-import { TYPE } from '../../constants/typography.js'
+import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 
 // ─── TeachScreenShell ────────────────────────────────────────────────────────
 // Composes a teaching screen with the approved vertical rhythm so spacing
@@ -71,6 +71,7 @@ export default function TeachScreenShell({ heading, eyebrow, intro, children, ke
       <h1 className="tss-in" style={{
         ...TYPE.displayScreen,
         color: 'rgba(245,245,245,0.96)',
+        maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
         margin: 0,
         animationDelay: eyebrow ? '60ms' : '0ms',
       }}>
