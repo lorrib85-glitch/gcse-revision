@@ -1,5 +1,9 @@
 // Episode 3 — The beginning of doubt
-// Clean runtime split from the legacy bundled Renaissance module.
+// Vesalius and the Medical Renaissance. Clean runtime, rebuilt to the
+// confirmed Stage-B content-create brief (12 runtime learning screens).
+// Story spine: questioning authority → Vesalius tests Galen against real
+// human bodies → human evidence exposes errors → printing spreads the
+// evidence → knowledge and method change before treatment.
 
 export const episode = {
   id: 'history-medicine-vesalius-beginning-doubt',
@@ -18,161 +22,172 @@ export const episode = {
   hook: {
     scenario: {
       location: 'Padua, 1543',
-      hint: "A medical book says one thing. The body on the table says another.",
-      intro: 'For centuries, doctors trusted Galen. Vesalius asked a dangerous question: what if the book was wrong?',
+      hint: 'A famous medical book says one thing. The body on the table says another.',
+      intro: 'For centuries, doctors trusted Galen. In Padua, Vesalius asked a hard question: what should a doctor trust — the book, or the body?',
       quotes: [
-        { role: 'The old answer:', text: 'Trust Galen.' },
-        { role: 'The new challenge:', text: 'Look at the body.' },
+        { role: 'The old rule:', text: 'Trust Galen.' },
+        { role: 'The new question:', text: 'Look at the body.' },
       ],
-      bulletHeading: 'The problem:',
+      bulletHeading: 'The tension:',
       items: [
-        'Galen had mostly dissected animals',
-        'universities still treated his books as authority',
-        'human dissection made old mistakes visible',
-        'printing helped new evidence travel',
+        'Galen had mostly studied animal bodies',
+        'universities still treated his books as truth',
+        'human dissection let doctors check the old claims',
+        'the book and the body did not always agree',
       ],
     },
-    statement: 'Vesalius immediately transformed how patients were treated.',
-    isTrue: false,
-    accentWords: ['immediately transformed', 'treated'],
-    explanation: "Vesalius changed medical knowledge and method. Treatments such as bloodletting and purging still continued.",
-    wrongFeedback: 'That is the trap: better knowledge did not mean instant cures.',
-    correctFeedback: 'Exactly. Vesalius cracked authority, but treatment changed slowly.',
-    loadingText: 'Opening the anatomy theatre…',
-    bigQuestion: 'How did one anatomist begin to crack 1,300 years of certainty?',
+    statement: 'A doctor can change medicine without finding a new cure.',
+    isTrue: true,
+    accentWords: ['change medicine', 'without finding a new cure'],
+    explanation: 'Vesalius changed how doctors studied the body, even though treatment changed much more slowly.',
+    wrongFeedback: 'Think again. You can change what doctors know without curing anything new.',
+    correctFeedback: 'Exactly. Better knowledge came first. Better treatment came much later.',
+    loadingText: 'Entering the anatomy theatre…',
+    bigQuestion: 'When the book and the body disagree, which should a doctor trust?',
     revealHeader: 'The beginning of doubt',
     revealItems: [
       {
         emoji: '📖',
         label: 'Old authority still mattered',
-        detail: 'Galen remained the medical giant universities trusted.',
+        detail: 'Universities still trusted Galen above all.',
         color: '#D4950A',
         bg: 'rgba(212,149,10,.08)',
       },
       {
         emoji: '👁️',
-        label: 'Observation became powerful',
-        detail: 'Vesalius used human dissection to test claims against real bodies.',
+        label: 'Observation gained power',
+        detail: 'Vesalius tested old claims against real bodies.',
         color: '#C47828',
         bg: 'rgba(196,120,40,.08)',
       },
       {
         emoji: '🖨️',
-        label: 'Printing spread the challenge',
-        detail: 'Accurate drawings could travel far beyond one anatomy theatre.',
-        color: '#FF5D73',
-        bg: 'rgba(255,93,115,.08)',
+        label: 'Printing spread the doubt',
+        detail: 'Accurate drawings could travel far and wide.',
+        color: '#B8873A',
+        bg: 'rgba(184,135,58,.08)',
       },
     ],
-    punchline: 'Renaissance medicine began by changing how doctors knew things, not by curing patients overnight.',
+    punchline: 'Renaissance medicine began by changing how doctors knew things — not by curing patients overnight.',
   },
   intro: {
     learningGoals: [
-      'Explain why old medical authority began to weaken',
-      'Describe how Vesalius challenged Galen through human dissection',
-      'Explain why printing helped new anatomical knowledge spread',
+      'Explain why old medical authority became easier to question',
+      'Compare how Galen and Vesalius studied the body',
+      'Explain how printing spread Vesalius’s evidence',
       'Judge why knowledge changed faster than treatment',
     ],
   },
   outcomes: {
-    intro: 'You will see how Vesalius began the Renaissance challenge to old medical authority.',
+    intro: 'You will see how Vesalius began to challenge old medical authority.',
     bullets: [
-      'Recall the medieval ideas Vesalius challenged',
-      'Explain how human dissection exposed Galen’s errors',
-      'Show why printing made the challenge harder to ignore',
-      'Use the key judgement: knowledge changed before treatment',
+      'Explain why old authority became easier to question',
+      'Compare how Galen and Vesalius studied the body',
+      'Explain how printing spread the new evidence',
+      'Judge why knowledge changed faster than treatment',
     ],
   },
   stageNavigation: [
-    { id: 'part-1', title: 'Old certainties start to crack', description: 'Recall Galen and set up the challenge.', screenIndex: 0 },
-    { id: 'part-2', title: 'A new way to question', description: 'Humanism, authority and anatomy theatres.', screenIndex: 2 },
-    { id: 'part-3', title: 'Vesalius opens the body', description: 'Dissection, observation and Galen’s errors.', screenIndex: 4 },
-    { id: 'part-4', title: 'Printing spreads doubt', description: 'How diagrams and books moved evidence.', screenIndex: 7 },
-    { id: 'part-5', title: 'Knowledge before cures', description: 'Change, continuity and treatment limits.', screenIndex: 9 },
-    { id: 'part-6', title: 'Exam prep: why ideas changed', description: 'Exam traps and judgement practice.', screenIndex: 10 },
+    { id: 'part-1', title: 'Old certainties start to crack', description: 'Recall Galen and the old authority.', screenIndex: 0 },
+    { id: 'part-2', title: 'Why questioning became possible', description: 'Renaissance conditions for change.', screenIndex: 1 },
+    { id: 'part-3', title: 'Vesalius looks for himself', description: 'Human dissection and Galen’s errors.', screenIndex: 3 },
+    { id: 'part-4', title: 'The evidence travels', description: 'Illustration, the 1543 book and printing.', screenIndex: 6 },
+    { id: 'part-5', title: 'Knowledge changes before treatment', description: 'Change, continuity and misconceptions.', screenIndex: 8 },
+    { id: 'part-6', title: 'Exam prep: why could Vesalius challenge Galen?', description: 'Examiner teaching and assessed answer.', screenIndex: 10 },
   ],
   screens: [
+    // ── Screen 0 — Prior knowledge recall ───────────────────────────────
     {
       type: 'priorKnowledgeRecall',
-      chapterTitle: 'Medieval medicine: the authority Vesalius challenged',
-      recallPrompts: ['Galen', 'Four humours', 'Church', 'Miasma', 'Treatments'],
+      stage: 'Old certainties',
+      label: 'What came before',
+      chapterTitle: 'The old certainties Vesalius would test',
+      recallPrompts: ['Galen', 'Four humours', 'Church', 'Treatments'],
       backgroundImage: '/headers/history-medicine-through-time.png',
-      sourceContent: `Galen was treated as the great medical authority. Medieval universities taught his books, and the Church helped preserve his ideas. The Four Humours explained illness as imbalance in the body. Treatments such as bloodletting and purging aimed to restore balance. Miasma blamed bad air for disease. These ideas lasted because they fitted the knowledge, religion and technology of the time.`,
+      sourceContent: `For centuries, doctors trusted Galen. His books were taught in universities. The Church helped keep his ideas alive. The four humours explained illness as an imbalance in the body. Bloodletting and purging tried to bring the humours back into balance. These ideas lasted a very long time. But lasting a long time did not make them correct.`,
       concepts: [
         { tag: 'galen', label: 'Galen' },
         { tag: 'four-humours', label: 'Four humours' },
         { tag: 'church-role', label: 'Church authority' },
-        { tag: 'miasma', label: 'Miasma' },
         { tag: 'bloodletting', label: 'Bloodletting and purging' },
       ],
     },
-    {
-      type: 'visualLearning',
-      stage: 'Old authority',
-      label: 'The book or the body?',
-      scenes: [
-        {
-          image: '/headers/history-medicine-renaissance.png',
-          imagePosition: 'center center',
-          headline: 'For centuries,\nthe book won.',
-          body: 'Doctors learned Galen’s words before they saw inside a human body.',
-        },
-        {
-          image: '/images/vesalius-1543.png',
-          imagePosition: 'center top',
-          headline: 'Then Vesalius looked.',
-          body: 'Human dissection let him compare Galen’s claims with real anatomy.',
-        },
-        {
-          finalReveal: true,
-          headline: 'The doubt began here.',
-          body: 'If Galen could be wrong about anatomy, ancient authority could be tested.',
-        },
-      ],
-    },
+
+    // ── Screen 1 — Why questioning became possible (teach) ──────────────
     {
       type: 'conceptReveal',
       stage: 'Changing authority',
       label: 'Why questioning became possible',
       steps: [
         {
-          mainText: 'Humanism encouraged educated people to ask questions and study the world directly.',
-          supportText: 'This did not make everyone modern, but it made blind trust in old books less secure.',
-          backgroundImage: '/headers/history-medicine-germ-bridge.png',
+          mainText: 'The Renaissance was a “rebirth” of learning.',
+          supportText: 'Old books were still respected. But people now wanted to test them, not just trust them.',
+          backgroundImage: '/headers/history-medicine-renaissance.png',
         },
         {
-          mainText: 'The Reformation weakened the Church’s control over learning in parts of Europe.',
-          supportText: 'That mattered because the Church had helped protect Galen’s authority for centuries.',
+          mainText: 'Humanism told people to use reason and study the world for themselves.',
+          supportText: 'This made careful observation matter more. Blind trust in old books felt less safe.',
+          backgroundImage: '/headers/history-medicine-through-time.png',
+        },
+        {
+          mainText: 'The Reformation weakened the Church’s grip on learning.',
+          supportText: 'That left more room to question old ideas. Religion did not vanish. Its control simply loosened.',
           backgroundImage: '/headers/history-medicine-medieval-scripture.png',
         },
         {
-          mainText: 'Anatomy theatres made observation public.',
-          supportText: 'Students and doctors could watch dissection and see whether the old claims matched the body.',
+          mainText: 'Universities now held dissection in public anatomy theatres.',
+          supportText: 'Doctors and students could watch a real body. They could check old claims against what they saw.',
           backgroundImage: '/headers/history-medicine-renaissance.png',
         },
       ],
     },
+
+    // ── Screen 2 — Conditions for change retrieval (assessed) ───────────
     {
       type: 'quickRecall',
       stage: 'Changing authority',
-      label: 'Authority check',
+      label: 'Conditions check',
       questions: [
         {
           type: 'choice',
-          question: 'Which old doctor did Vesalius challenge?',
-          options: ['Galen', 'Jenner', 'Pasteur', 'Koch'],
+          question: 'Why did anatomy theatres matter?',
+          options: [
+            'Doctors could compare old claims with a real body',
+            'They proved that germs cause disease',
+            'They ended the four humours at once',
+            'They made surgery painless',
+          ],
           correct: 0,
-          explanation: 'Vesalius challenged Galen’s anatomy by comparing it with human bodies.',
+          explanation: 'People could now check Galen against what they saw in a real body.',
         },
         {
           type: 'choice',
-          question: 'Why did anatomy theatres matter?',
-          options: ['They made direct observation of bodies visible', 'They proved germ theory', 'They cured plague', 'They ended bloodletting immediately'],
+          question: 'How did humanism help new medical ideas?',
+          options: [
+            'It encouraged reason, questioning and direct study',
+            'It banned all religion',
+            'It proved Galen was right',
+            'It stopped dissection',
+          ],
           correct: 0,
-          explanation: 'Anatomy theatres helped doctors learn from observation, not only from old books.',
+          explanation: 'Humanism pushed people to study the world and test old claims.',
+        },
+        {
+          type: 'choice',
+          question: 'What is the most accurate effect of the Reformation?',
+          options: [
+            'It weakened Church control but did not end religion',
+            'It ended religion across Europe',
+            'It proved the four humours',
+            'It created the printing press',
+          ],
+          correct: 0,
+          explanation: 'Church power over learning weakened. Religion still stayed important.',
         },
       ],
     },
+
+    // ── Screen 3 — Meet Vesalius (introduce figure) ─────────────────────
     {
       type: 'keyFigureReveal',
       stage: 'Vesalius',
@@ -180,42 +195,44 @@ export const episode = {
       label: 'Vesalius',
       portrait: '/images/vesalius-1543.png',
       name: 'Andreas Vesalius',
-      role: 'Anatomist',
+      role: 'Renaissance anatomist',
       sections: [
         {
           title: 'Who was he?',
           icon: 'ancient-figure',
           lines: [
-            'A Flemish physician and anatomist working in Renaissance Italy.',
-            'Unlike Galen, Vesalius dissected human bodies himself rather than relying on ancient texts or animal dissection.',
+            'Vesalius was a doctor from Flanders.',
+            'He worked in Renaissance Italy, including at Padua.',
           ],
         },
         {
-          title: 'De Humani Corporis Fabrica (1543)',
+          title: 'What did he do?',
           icon: 'knowledge',
           lines: [
-            'A detailed illustrated anatomy textbook based on direct human dissection.',
-            'Its drawings helped doctors see the human body more accurately.',
+            'He carried out human dissection himself.',
+            'He compared old descriptions with real human bodies.',
           ],
         },
         {
-          title: 'What he found',
+          title: 'The book, 1543',
           icon: 'medicine',
           lines: [
-            'Vesalius corrected over 300 errors in Galen’s work.',
-            'Key corrections included the jaw, breastbone and heart septum.',
+            'In 1543 he published On the Fabric of the Human Body.',
+            'It used detailed drawings to show the human body.',
           ],
         },
         {
-          title: 'Why it mattered',
+          title: 'Why remember him?',
           icon: 'legacy',
           lines: [
-            'Vesalius proved direct observation was more reliable than trusting ancient authority.',
-            'This became a foundation of Renaissance medical science.',
+            'He proved that even trusted authority could be corrected by evidence.',
+            'His biggest early impact was on knowledge, not treatment.',
           ],
         },
       ],
     },
+
+    // ── Screen 4 — Galen and Vesalius comparison (KEEP: people variant) ──
     {
       stage: 'Vesalius',
       label: 'Galen and Vesalius',
@@ -275,111 +292,313 @@ export const episode = {
         },
       ],
     },
-    {
-      type: 'matchingTask',
-      stage: 'Vesalius',
-      label: 'Galen or Vesalius?',
-      subject: 'History',
-      title: 'Match the claim to the evidence',
-      instruction: 'Connect each idea to the reason it matters.',
-      weakAreaCategory: 'Vesalius and Galen',
-      backgroundImage: '/headers/history-medicine-germ-bridge.png',
-      pairs: [
-        { id: 'animal-dissection', term: 'Galen dissected animals', answer: 'This explains why some of his anatomy was wrong.', weakGroup: 'Galen' },
-        { id: 'human-dissection', term: 'Vesalius dissected humans', answer: 'This gave him better evidence about the body.', weakGroup: 'Vesalius' },
-        { id: 'printed-book', term: 'Illustrated anatomy book', answer: 'This helped accurate drawings spread to other doctors.', weakGroup: 'Printing' },
-        { id: 'treatment-limit', term: 'Bloodletting continued', answer: 'This shows knowledge changed faster than treatment.', weakGroup: 'Continuity' },
-      ],
-    },
-    {
-      type: 'conceptReveal',
-      stage: 'Printing',
-      tag: 'printing-press',
-      label: 'How doubt travelled',
-      steps: [
-        {
-          mainText: 'The printing press meant Vesalius’s diagrams could be copied accurately.',
-          supportText: 'A doctor did not have to stand in the same anatomy theatre to see the challenge to Galen.',
-          backgroundImage: '/headers/history-medicine-renaissance.png',
-        },
-        {
-          mainText: 'Printed books made medical arguments easier to compare.',
-          supportText: 'Students could place Galen’s claims next to Vesalius’s drawings and ask which matched the body.',
-          backgroundImage: '/headers/history-medicine-renaissance.png',
-        },
-        {
-          mainText: 'Printing changed the speed of doubt.',
-          supportText: 'The challenge to authority could travel across Europe faster than manuscript copying allowed.',
-          backgroundImage: '/headers/history-medicine-renaissance.png',
-        },
-      ],
-    },
-    {
-      type: 'naturalSupernaturalSwipe',
-      stage: 'Judgement',
-      label: 'Knowledge vs treatment',
-      columns: [
-        { label: 'Changed', color: '#D4950A', colorRgb: '212,149,10', bg: 'rgba(212,149,10,.07)' },
-        { label: 'Continued', color: '#A89070', colorRgb: '168,144,112', bg: 'rgba(168,144,112,.07)' },
-      ],
-      items: [
-        { label: 'Human anatomy improved', col: 0, explanation: 'Vesalius found Galen’s mistakes in human bodies.' },
-        { label: 'Doctors trusted observation more', col: 0, explanation: 'The body could challenge old books.' },
-        { label: 'Printed diagrams spread new ideas', col: 0, explanation: 'Printing made accurate anatomy easier to share.' },
-        { label: 'Bloodletting and purging continued', col: 1, explanation: 'Most treatments still followed humoral ideas.' },
-        { label: 'Galen still mattered', col: 1, explanation: 'Old authority faded slowly.' },
-      ],
-      explanation: 'Doctors learned more about the body before they found better cures.',
-    },
+
+    // ── Screen 5 — Vesalius retrieval (assessed) ────────────────────────
     {
       type: 'quickRecall',
-      stage: 'Judgement',
+      stage: 'Vesalius',
       label: 'Vesalius retrieval',
       questions: [
         {
           type: 'choice',
-          question: 'What was Vesalius’s greatest contribution?',
-          options: ['He used human dissection to correct anatomy', 'He discovered germs', 'He cured plague', 'He invented vaccination'],
+          question: 'Why did Galen make some mistakes about human anatomy?',
+          options: [
+            'He relied mainly on animal dissection',
+            'He never studied the body',
+            'He copied Vesalius',
+            'He used a microscope',
+          ],
           correct: 0,
-          explanation: 'Vesalius showed Galen was wrong about parts of the body.',
+          explanation: 'Galen mostly used animal bodies, so some human details were wrong.',
         },
         {
           type: 'choice',
-          question: 'Why did printing matter to Vesalius’s work?',
-          options: ['It spread accurate diagrams and arguments', 'It ended the Four Humours instantly', 'It made surgery painless', 'It discovered capillaries'],
+          question: 'Which statement matches one of Vesalius’s findings?',
+          options: [
+            'The human jaw is one bone',
+            'The human jaw has two bones',
+            'Men have fewer ribs than women',
+            'The breastbone has seven parts',
+          ],
           correct: 0,
-          explanation: 'Printing helped new diagrams reach more doctors.',
+          explanation: 'Vesalius showed the human jaw is a single bone, not two.',
+        },
+        {
+          type: 'choice',
+          question: 'What did Vesalius publish in 1543?',
+          options: [
+            'On the Fabric of the Human Body',
+            'A theory of germs',
+            'The four humours',
+            'A cure for the plague',
+          ],
+          correct: 0,
+          explanation: 'His 1543 book set out human anatomy with detailed drawings.',
         },
         {
           type: 'choice',
           question: 'What is the best judgement about Vesalius?',
-          options: ['He changed knowledge more than treatment', 'He ended medieval medicine completely', 'He proved germ theory', 'He stopped all bloodletting'],
+          options: [
+            'He changed knowledge and method more than treatment',
+            'He cured most diseases',
+            'He ended the four humours',
+            'He discovered germs',
+          ],
           correct: 0,
-          explanation: 'Vesalius changed anatomy, but old treatments carried on.',
+          explanation: 'Vesalius changed how doctors found knowledge. Treatment changed slowly.',
         },
       ],
     },
+
+    // ── Screen 6 — How the evidence travelled (teach) ───────────────────
+    {
+      type: 'visualNarrative',
+      stage: 'Printing',
+      tag: 'printing-press',
+      label: 'The evidence travels',
+      beats: [
+        {
+          image: '/headers/history-medicine-renaissance.png',
+          headline: 'The body',
+          body: 'Human dissection gave Vesalius direct evidence about the human body.',
+        },
+        {
+          image: '/headers/history-medicine-medieval-scripture.png',
+          headline: 'The drawing',
+          body: 'Detailed drawings recorded exactly what he had seen.',
+        },
+        {
+          headline: 'The book',
+          body: 'In 1543, one book brought the drawings and explanations together.',
+        },
+        {
+          headline: 'The printing press',
+          body: 'Printing made many exact copies of the book and its images.',
+        },
+        {
+          facts: [
+            'Doctors across Europe could now compare Galen with human evidence.',
+            'His challenge became far harder to ignore.',
+          ],
+          conclusion: 'Dissection made the evidence.\nPrinting gave it reach.',
+        },
+      ],
+    },
+
+    // ── Screen 7 — Why could Vesalius challenge Galen? (apply/judgement) ─
+    {
+      type: 'factorWeb',
+      stage: 'Printing',
+      label: 'Factor web',
+      kicker: 'Why could Vesalius challenge Galen?',
+      question: 'Why was Vesalius able to test the old ideas of Galen and show that some of them were wrong?',
+      mode: 'causes',
+      factors: [
+        {
+          id: 'vesalius',
+          title: 'Vesalius himself',
+          subtitle: 'Skill and nerve',
+          icon: '👤',
+          whatItMeans: 'Vesalius had the skill to dissect, compare and publish.',
+          whyItMattered: 'New chances only mattered because one person used them.',
+          linkedFactor: 'His skill and nerve turned those chances into a real challenge.',
+        },
+        {
+          id: 'human-dissection',
+          title: 'Human dissection',
+          subtitle: 'Better evidence',
+          icon: '🔬',
+          whatItMeans: 'Human bodies gave better evidence than animal bodies.',
+          whyItMattered: 'He could test Galen’s claims against a real human body.',
+          linkedFactor: 'Dissection gave Vesalius the proof he needed.',
+        },
+        {
+          id: 'anatomy-theatres',
+          title: 'Anatomy theatres',
+          subtitle: 'Watched in public',
+          icon: '🏛️',
+          whatItMeans: 'Public dissection made watching part of study.',
+          whyItMattered: 'More doctors could see the evidence for themselves.',
+          linkedFactor: 'They helped make real evidence normal to watch.',
+        },
+        {
+          id: 'humanism',
+          title: 'Humanism',
+          subtitle: 'Reason and study',
+          icon: '💭',
+          whatItMeans: 'Humanism valued reason, questions and direct study.',
+          whyItMattered: 'Learned people grew more willing to test old ideas.',
+          linkedFactor: 'This mood made it easier to accept new ideas.',
+        },
+        {
+          id: 'reformation',
+          title: 'Reformation',
+          subtitle: 'Weaker Church control',
+          icon: '⛪',
+          whatItMeans: 'The Reformation weakened Church control over learning.',
+          whyItMattered: 'Old power felt less certain. Yet faith stayed strong.',
+          linkedFactor: 'Looser control left more room to question Galen.',
+        },
+        {
+          id: 'printing',
+          title: 'Printing',
+          subtitle: 'Wider reach',
+          icon: '🖨️',
+          whatItMeans: 'Printing spread exact copies of the book and drawings.',
+          whyItMattered: 'More doctors could study and test the evidence.',
+          linkedFactor: 'Printing carried the challenge far beyond one city.',
+        },
+      ],
+      taskPrompt: 'Which factor mattered most? Choose one and say why.',
+      thinkingTip: 'Strong answers do not just list factors. They explain how each one helped. Then they judge which mattered most.',
+    },
+
+    // ── Screen 8 — What changed and what continued? (classify) ──────────
+    {
+      stage: 'Knowledge before cures',
+      label: 'What changed and what continued?',
+      kicker: 'Change and continuity',
+      heading: 'Did this change, or did it continue?',
+      sub: 'Sort each one into the right column.',
+      blocks: [
+        {
+          type: 'colsort',
+          question: 'Did this change, or did it continue?',
+          columns: [
+            { label: 'Changed', color: '#D4950A', bg: 'rgba(212,149,10,.07)' },
+            { label: 'Continued', color: '#A89070', bg: 'rgba(168,144,112,.07)' },
+          ],
+          items: [
+            { label: 'Human anatomy became more accurate', col: 0, explanation: 'Vesalius corrected Galen using real human bodies.' },
+            { label: 'Observation could challenge ancient books', col: 0, explanation: 'Doctors could now trust what they saw.' },
+            { label: 'Printed diagrams spread new evidence', col: 0, explanation: 'Printing carried accurate drawings across Europe.' },
+            { label: 'Galen’s authority began to weaken', col: 0, explanation: 'His word was no longer the final answer.' },
+            { label: 'The four humours still guided treatment', col: 1, explanation: 'Doctors still explained illness as imbalance.' },
+            { label: 'Bloodletting and purging continued', col: 1, explanation: 'Everyday treatment barely changed.' },
+            { label: 'Many doctors still taught Galen', col: 1, explanation: 'His ideas stayed in the classroom for years.' },
+            { label: 'Better anatomy had not made new cures', col: 1, explanation: 'Knowing the body did not yet cure it.' },
+          ],
+          explanation: 'Vesalius changed knowledge and method. Everyday treatment changed much more slowly.',
+        },
+      ],
+    },
+
+    // ── Screen 9 — Misconception repair (exam-technique) ────────────────
+    {
+      stage: 'Knowledge before cures',
+      label: 'Spot the trap',
+      kicker: 'Common traps',
+      heading: 'Four claims. Which are false?',
+      sub: 'Each one sounds right. Look closely before you decide.',
+      blocks: [
+        {
+          type: 'misconceptionCheck',
+          id: 'vesalius-misconceptions',
+          statements: [
+            {
+              statement: 'Vesalius immediately changed how patients were treated.',
+              answer: false,
+              reveal: 'He improved knowledge of the body. Bloodletting, purging and humoral treatments still continued.',
+            },
+            {
+              statement: 'Vesalius proved that everything Galen taught was wrong.',
+              answer: false,
+              reveal: 'He corrected many anatomy errors. He still accepted some of Galen’s ideas, including the four humours.',
+            },
+            {
+              statement: 'The Renaissance ended religious influence on medicine.',
+              answer: false,
+              reveal: 'Church control weakened. Religion stayed important in society and in medicine.',
+            },
+            {
+              statement: 'Printing created Vesalius’s evidence.',
+              answer: false,
+              reveal: 'Human dissection produced the evidence. Printing only helped it spread.',
+            },
+          ],
+        },
+      ],
+    },
+
+    // ── Screen 10 — Examiner explains (exam-technique, passive) ──────────
     {
       type: 'examinerExplains',
       stage: 'Exam prep',
-      label: 'Examiner tactics',
+      label: 'What the examiner wants',
       examinerExplains: {
-        opening: 'Vesalius helps you show what changed and what did not.',
+        opening: 'This 12-mark question asks you to explain why Vesalius could challenge Galen.',
         tips: [
           {
-            heading: 'Method',
-            body: 'Vesalius dissected real human bodies and tested Galen’s ideas.',
+            heading: 'Build a chain',
+            body: 'Name a factor. Add precise evidence. Then explain how it made the challenge possible.',
           },
           {
-            heading: 'Spread',
-            body: 'Printing helped accurate anatomical drawings reach doctors across Europe.',
+            heading: 'Reason one: human dissection',
+            body: 'Vesalius studied real human bodies, not just animals. He could compare Galen with the human body. He could show errors, such as the jaw being one bone.',
           },
           {
-            heading: 'Limit',
-            body: 'Knowledge changed before treatment. Doctors still used bloodletting and purging.',
+            heading: 'Reason two: printing',
+            body: 'His 1543 book and drawings could be copied and shared widely. More doctors could compare Galen with his evidence. The errors became harder to ignore.',
+          },
+          {
+            heading: 'Avoid the traps',
+            body: 'Do not just list factors. Do not stop at a fact. Do not say treatment improved straight away.',
           },
         ],
-        closing: 'For full marks, explain both the change and its limits.',
+        closing: 'Develop two reasons. Explain how each one helped.',
+      },
+    },
+
+    // ── Screen 11 — Guided exam response (assessed exam-technique) ───────
+    {
+      type: 'guidedExamResponse',
+      stage: 'Exam prep',
+      label: 'Write it yourself',
+      exam: {
+        board: 'edexcel',
+        subject: 'history',
+        topic: 'renaissance-medicine',
+        beatText: 'Now write it yourself. Two developed reasons.',
+        question: 'Explain why Vesalius was able to challenge Galen’s ideas during the Renaissance. (12 marks)',
+        marks: 12,
+        sections: [
+          {
+            label: 'Reason 1',
+            starter: 'One reason Vesalius could challenge Galen was...',
+            placeholder: '...human dissection let him study real bodies. He could compare Galen’s claims with human anatomy, and show errors such as the jaw being one bone...',
+          },
+          {
+            label: 'Reason 2',
+            starter: 'A second reason was...',
+            placeholder: '...printing. His 1543 book and drawings could be copied and shared widely. This meant more doctors could compare Galen with his evidence...',
+          },
+        ],
+        markScheme: `Total: 12 marks (Edexcel "Explain why" — AO1 knowledge and AO2 explanation). Reward developed reasons, not a list of factors.
+
+Valid reasons (any two developed fully):
+- Human dissection — Vesalius studied real human bodies and could test Galen’s claims directly.
+- Anatomy theatres — public dissection made observation a normal part of medical study.
+- Humanism — reason and direct study made people more willing to question old authority.
+- Reformation / weaker Church control — old authority felt less certain, creating space to challenge Galen.
+- Vesalius’s individual skill and confidence — he had the ability to dissect, compare and publish.
+- Printing — his 1543 book and drawings could be copied accurately and spread widely.
+
+To reach the top level, an answer must:
+- give a clear reason
+- add precise supporting evidence (for example, the jaw being one bone, or the 1543 book)
+- explain HOW that factor made the challenge possible
+- develop two reasons in this way
+
+Common problems to diagnose separately:
+- a factor named but not explained
+- evidence included but no causal link back to challenging Galen
+- vague Renaissance knowledge with no precise detail
+- confusing Vesalius with Harvey (circulation belongs to a later chapter)
+- overclaiming that treatment improved straight away
+
+Level 1 (1–4): simple statements, factors listed with little explanation.
+Level 2 (5–8): some explanation, but at least one reason is undeveloped.
+Level 3 (9–12): two developed reasons, each using precise evidence and explaining how it enabled the challenge.`,
       },
     },
   ],

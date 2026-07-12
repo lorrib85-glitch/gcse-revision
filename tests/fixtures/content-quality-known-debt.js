@@ -7,9 +7,6 @@ export const KNOWN_GUARDRAIL_VIOLATIONS = {
   "history-medicine-medieval-beliefs-causes": [
     "STAGE_NO_ASSESSMENT:part-1"
   ],
-  "history-medicine-vesalius-beginning-doubt": [
-    "EXAM_PREP_NO_ASSESSMENT:screen:10"
-  ],
   "history-medicine-harvey-pare-renaissance-method": [
     "EXAM_PREP_NO_ASSESSMENT:screen:10"
   ],
@@ -76,10 +73,6 @@ export const KNOWN_READABILITY_BASELINES = {
     "READABILITY:screen:4": 7.22,
     "READABILITY:screen:6": 8,
     "READABILITY:screen:9": 10.28
-  },
-  "history-medicine-vesalius-beginning-doubt": {
-    "READABILITY:screen:2": 7.59,
-    "READABILITY:screen:4": 8.57
   },
   "history-medicine-harvey-pare-renaissance-method": {
     "READABILITY:screen:0": 8.7

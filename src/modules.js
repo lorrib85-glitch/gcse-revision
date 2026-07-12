@@ -105,9 +105,9 @@ export const MODULES = [
       "subject:history", "course:medicine", "examboard:edexcel", "period:renaissance",
       "history:medicine:vesalius", "history:medicine:printing-press", "history:medicine:anatomy",
     ],
-    screenCount: 11,
+    screenCount: 12,
     screenTags: [
-      null, null, null, null, "vesalius", null, null, "printing-press", null, null, null,
+      null, null, null, "vesalius", null, null, "printing-press", null, null, null, null, null,
     ],
   },
   {
