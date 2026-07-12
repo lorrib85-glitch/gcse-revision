@@ -37,8 +37,14 @@ Module not yet built → re-triage to E (Big Build).
      scheme, neighbouring module, target `src/modules/<subject>.js` file,
      `docs/system/PATTERN_GOVERNANCE.md` + the relevant
      `component-contracts/` and `CONTENT_BUILD_TEMPLATE.md`
-   - **Forbidden by default:** brand docs, broad UI files, `/frontend-design`
-     (only if layout changes are also involved)
+   - During `/content-review`, brand, typography, subject-theme and product-UI
+     governance may be consulted to audit an existing learning screen. This
+     does not authorise creation of a new visual system, broad redesign,
+     `/frontend-design`, or visual changes outside approved component and
+     token systems.
+   - **Forbidden by default:** brand docs and broad UI files outside that
+     review-only exception; `/frontend-design` (only if layout changes are
+     also involved)
 4. **Coverage check** — required before implementation:
    ```
    Source checked:

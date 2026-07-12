@@ -1,5 +1,10 @@
 # GCSE Revision App — Brand & Component Guide
 
+This guide is supporting expression guidance. For in-module learning-screen
+reviews, defer to the canonical hierarchy in `docs/system/PATTERN_GOVERNANCE.md`:
+Pattern Governance, Product UI Constitution, Typography System, Subject Theme
+System, then this Brand guide.
+
 ---
 
 ## Header Images
@@ -40,7 +45,7 @@
 | `physics-space.png` | Physics: Space |
 | `physics-matter.png` | Physics: Matter & Particles |
 
-Images are already cinematic with dark left sides suitable for text overlay. Always use `.png` extension — never `.svg`.
+Images are already cinematic with dark left sides suitable for text overlay. Use the asset format required by the current asset pipeline and canonical image guidance; do not approve or reject an asset solely by file extension unless that canonical system requires it.
 
 ---
 
@@ -122,7 +127,7 @@ Load both via Google Fonts in `index.html`:
 | cardTitle | 1.12rem | 700 | Manrope | 1.18 | -0.02em | Card titles, module names, key figure names |
 | bodyText | 0.95rem | 400 | Sora | 1.5 | -0.005em | Main learning copy, explanations, feedback |
 | bodySmall | 0.84rem | 400 | Sora | 1.45 | -0.005em | Supporting copy, helper text, card descriptions |
-| metadataText | 0.72rem | 650 or 600 | Sora | 1.2 | 0.10em | Uppercase labels, kickers, topic markers |
+| metadataText | 0.72rem | 650 or 600 | Sora | 1.2 | 0.10em | Compact scanning metadata only |
 | captionText | 0.78rem | 400 | Sora | 1.35 | -0.003em | Captions, quiet helper text |
 | buttonText | 0.92rem | 700 | Sora | 1.2 | -0.005em | Buttons and tappable actions |
 
@@ -158,7 +163,7 @@ Load both via Google Fonts in `index.html`:
 - Remove any instruction saying “Sora and Outfit only”.
 - Remove/replace any instruction saying headings are Sora and body is Outfit.
 - No italic styling in the UI — all text is upright.
-- Section labels (`label` style) must be UPPERCASE.
+- Learning-screen titles, section headings, instructional copy, key points and decorative labels use sentence case. Uppercase is permitted only for genuine compact scanning or notation (approved metadata, navigation, short chips, diagram labels, axes or established abbreviations), not to make ordinary headings or labels feel more important.
 
 ---
 
@@ -277,7 +282,7 @@ background: transparent;
 border: 1px solid rgba(255, 255, 255, 0.12);
 color: #A89FC2;
 font-weight: 600;
-font-family: 'Outfit', sans-serif;
+font-family: 'Sora', sans-serif;
 ```
 
 ### Danger Button
@@ -373,7 +378,7 @@ background: rgba(255, 255, 255, 0.06);
 border: 1px solid rgba(255, 255, 255, 0.1);
 font-size: 12px;
 font-weight: 600;
-font-family: 'Outfit', sans-serif;
+font-family: 'Sora', sans-serif;
 color: #A89FC2;
 
 /* Active/selected chip */
@@ -394,7 +399,7 @@ border: 1px solid rgba(255, 255, 255, 0.08);
 color: #F5F7FF;
 font-size: 15px;
 padding: 0 16px;
-font-family: 'Outfit', sans-serif;
+font-family: 'Sora', sans-serif;
 
 /* Focus state */
 border-color: rgba(101, 230, 198, 0.4);
@@ -426,11 +431,11 @@ Tab item (active):
   color: #65E6C6
   icon: drop-shadow(0 0 6px rgba(101, 230, 198, 0.58))
   indicator: 22×3px pill, background #65E6C6, border-radius 99px
-  label: font-family 'Outfit', font-size 13px, font-weight 600
+  label: font-family 'Sora', font-size 13px, font-weight 600
 
 Tab item (inactive):
   color: #8A8795
-  label: font-family 'Outfit', font-size 13px, font-weight 500
+  label: font-family 'Sora', font-size 13px, font-weight 500
 ```
 
 Icons must be **SVG line icons only** — no emoji, no filled icons, no cartoon icons.
@@ -628,7 +633,7 @@ Each subject colour is used for:
 ## 24. Things Claude Must Not Improvise
 
 - **No new colour palettes** — use the tokens defined in Section 3 and Section 20 only
-- **No new fonts** — Sora and Outfit only; no other font families
+- **No new fonts** — Manrope and Sora only; no other font families
 - **No childish or playful styling** — no rounded bubbly buttons, no pastel fills, no emoji in UI
 - **No new layout patterns** — single-column scroll only, max-width 420px
 - **No decorative gradients** — gradient use is limited to: primary button fill, progress bar fill, subject header overlays

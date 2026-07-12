@@ -66,7 +66,7 @@ Aliases retained for backwards compatibility: `TYPE.hero` = `TYPE.screenHeading`
   Quick recovery?
 </h1>
 
-// Topic title (cinematic serif)
+// Topic title (cinematic display)
 <h2 style={{
   ...TYPE.cinematic,
   color: 'rgba(245,245,245,0.96)',

@@ -93,10 +93,10 @@ notifications.
 
 Typography should carry hierarchy instead of coloured boxes.
 
-- **Large headlines:** elegant serif, oversized, generous spacing, dramatic
+- **Large headlines:** Manrope display treatment, oversized, generous spacing, dramatic
   — e.g. "Keep going."
-- **Body:** clean modern sans-serif
-- **Tiny labels:** uppercase, high letter spacing, low contrast
+- **Body:** Sora, clean modern sans-serif
+- **Tiny labels:** sentence case by default; uppercase only for compact scanning metadata, navigation, short chips or established abbreviations
 
 Avoid excessive font weights.
 

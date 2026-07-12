@@ -9,6 +9,26 @@ doc conflict, this doc wins. Enforced by the `content-create` and
 This layer exists to **prevent misuse**, not to offer reusable boxes. Prose
 rules drift; a governed chain and a one-sentence test do not.
 
+## Visual-review authority hierarchy
+
+For visual-quality review of in-module learning screens, use this precedence
+when docs appear to conflict:
+
+1. **Pattern Governance** — learning intent, screen structure, component
+   selection, execution contracts, gold examples, and render-pass requirements.
+2. **Product UI Constitution** — product-wide visual laws and interaction
+   principles.
+3. **Typography System** — type roles, hierarchy, font usage, label case,
+   uppercase exceptions, and text presentation.
+4. **Subject Theme System** — subject identity, approved accent use, colour
+   budgets, and subject-specific presentation.
+5. **Brand guidance** — supporting expression guidance and legacy reference;
+   it must not override the canonical systems above.
+
+The hierarchy reconciles existing systems; it does not create a new design
+system or authorise new components, tokens, typography, colour palettes, or
+visual language.
+
 ---
 
 ## The taxonomy chain
@@ -195,9 +215,13 @@ These design-system rules are checked on every screen (sources in brackets):
 
 - **No decorative eyebrow** — an eyebrow that restates or categorises its
   heading is a failure. (`TYPOGRAPHY_SYSTEM.md` → Eyebrows and label case.)
+- **Sentence case by default** — learning-screen titles, section headings,
+  instructional copy, key points and decorative labels use sentence case.
 - **No decorative uppercase** — `text-transform: uppercase` / ALL-CAPS on
-  headings or key-point labels is a failure; caps are for scanning data
-  only (nav, metadata chips, axis/diagram labels).
+  headings or key-point labels is a failure; caps are for genuine compact
+  scanning or notation only (approved metadata, navigation, short chips,
+  diagram labels, axes, or established abbreviations). Uppercase must not be
+  introduced merely to make ordinary headings or labels feel more important.
 - **Points land in a box, not as caption text** — a key takeaway rendered as
   small muted footer text is a hierarchy inversion; it belongs in
   `KeyPoint`.
