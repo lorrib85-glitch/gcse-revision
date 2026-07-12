@@ -7,21 +7,25 @@ const _displayHero = {
   textWrap: 'balance',
 }
 
+// Canonical non-cinematic module heading. Calibrated from the 390px
+// TimelineCanvas reference: calm, prominent and readable without competing
+// with cinematic/hero moments. Primary module headings must consume this
+// token without local size, weight, line-height or letter-spacing overrides.
 const _displayScreen = {
   fontFamily: "'Manrope', sans-serif",
-  fontSize: 'clamp(28px, 8vw, 38px)',
-  lineHeight: 1.07,
+  fontSize: 'clamp(24px, 7.5vw, 32px)',
+  lineHeight: 1.10,
   fontWeight: 560,
-  letterSpacing: '-0.022em',
+  letterSpacing: '-0.015em',
   textWrap: 'balance',
 }
 
 const _displaySection = {
   fontFamily: "'Manrope', sans-serif",
-  fontSize: 'clamp(22px, 6vw, 30px)',
-  lineHeight: 1.10,
+  fontSize: 'clamp(21px, 5.5vw, 28px)',
+  lineHeight: 1.12,
   fontWeight: 560,
-  letterSpacing: '-0.015em',
+  letterSpacing: '-0.012em',
   textWrap: 'balance',
 }
 
@@ -199,7 +203,7 @@ export const TYPE = {
 }
 
 export const HEADING_LAYOUT = {
-  screenTitle: { maxWidth: 'min(360px, 92%)' },
+  screenTitle: { maxWidth: 'min(360px, 100%)' },
   sectionTitle: { maxWidth: 'min(320px, 92%)' },
 }
 
