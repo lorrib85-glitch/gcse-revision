@@ -9,6 +9,13 @@ import { TYPE } from '../../constants/typography.js'
 // eyebrow → heading → intro → body → keyPoint — with token-driven gaps and a
 // calm entrance; the keyPoint slot reveals gradually, slightly after the rest.
 //
+// This IS Route A — the default learning-composition route for new teaching
+// and explanation screens. It owns the screen heading (TYPE.displayScreen) and
+// the vertical rhythm; those must not be overridden locally. It is a
+// composition primitive, NOT a universal wrapper: do not use it to wrap
+// cinematic/full-screen (Route C) components, interaction engines that own
+// their own screen (Route B), another shell, or another TeachScreenShell.
+//
 // Governed by docs/system/PATTERN_GOVERNANCE.md and
 // docs/system/component-contracts/teach-screen-shell.md.
 //

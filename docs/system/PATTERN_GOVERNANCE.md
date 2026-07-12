@@ -36,7 +36,7 @@ visual language.
 Every element a build session puts on a screen must resolve through one
 chain — no ad-hoc `<div>` boxes for a job a pattern component owns:
 
-**learning objective → screen intent → approved component → execution contract → gold example**
+**learning objective → screen intent → approved component → approved composition route → execution contract → gold example**
 
 - **Learning objective** — the GCSE thing the learner should be able to do
   after this screen, taken from the episode's canonical file / spec (e.g.
@@ -51,6 +51,12 @@ chain — no ad-hoc `<div>` boxes for a job a pattern component owns:
 - **Approved component** — the one sanctioned component for that intent. If
   an intent has an approved component, using anything else is a review
   failure.
+- **Approved composition route** — the sanctioned way the screen is
+  *composed*: which shell owns structure and which route owns the learning
+  hierarchy (heading, rhythm, focal point). Every screen resolves to exactly
+  one of the three approved routes (see "Screen-composition routes" below)
+  before implementation. A component that is not itself a composition route
+  is rendered *inside* one.
 - **Execution contract** — the 9-field rules governing correct use (below).
 - **Gold example** — the reference implementation the contract points to,
   registered in `docs/system/GOLD_SCREEN_REGISTER.md`: the one composed
@@ -99,6 +105,142 @@ merged.** `KeyPoint` *summarises a rule* (the takeaway the learner must
 hold); `WorkedExample` *demonstrates its application* (the rule run through
 one concrete case). Collapsing them into one moded component blurs that
 distinction and is a governance failure, not a simplification.
+
+---
+
+## Screen-composition routes
+
+> **Primary rule.** Every new in-module screen must use an approved
+> screen-composition route. It may not invent its own shell, heading
+> treatment or vertical rhythm.
+>
+> `TeachScreenShell` is the default learning-composition route for teaching
+> and explanation screens.
+>
+> A different composition route is permitted only where an approved
+> component contract explicitly states that the component owns full-screen
+> composition.
+
+This rule governs **screens**, not every reusable component. Most components
+are *content* rendered inside a route (see the composition-ownership rule
+below). `TeachScreenShell` is a composition primitive, not a universal
+wrapper — it does not wrap interaction engines, cinematic experiences, or
+every nested learning component.
+
+### Two complementary layers
+
+Screen construction has two layers that are complementary, not competing:
+
+- **Structural shells** (`ContentShell`, `InteractionShell`, `CinematicShell`)
+  own *viewport behaviour* — safe areas, scrolling, max-width, subject
+  background, fixed-header clearance, fixed-CTA clearance. They do **not**
+  decide the learning hierarchy.
+- **Learning-composition routes** own *learning hierarchy* — heading
+  treatment, screen-title token, vertical rhythm, content order, interaction
+  layout, feedback placement, and the screen's one dominant focal point.
+
+The two defaults live at different layers and do not conflict:
+
+> **Default structural shell:** normally `ContentShell`, unless interaction
+> or cinematic requirements justify another structural shell.
+>
+> **Default teaching composition:** `TeachScreenShell`.
+
+Using `ContentShell` alone is **not** sufficient learning composition for a
+new teaching screen — a `ContentShell` with an ad-hoc `ScreenTitle` and
+hand-spaced `<div>`s bypasses the design system's rhythm and header token.
+Full detail of the shell/route split lives in
+`docs/system/SCREEN_SHELL_SYSTEM.md`.
+
+### The three approved routes
+
+**Route A — Teaching or explanation screen → `TeachScreenShell`.**
+The default. Use for explaining a concept, cause → mechanism → consequence,
+explaining evidence, preparing the learner before an interaction, teaching a
+process, or any screen that is a heading + short framing line + teaching body
++ optional single key point. The shell owns the heading (`TYPE.displayScreen`,
+never overridden locally), the vertical rhythm, and the slot order. Content
+sets `shell: 'teach'` where the renderer requires it. Not optional where the
+screen's purpose matches the shell's contract.
+
+**Route B — Interaction-owned screen.** An interaction owns full-screen
+composition *only* where its approved component contract explicitly grants
+that responsibility. Existing approved examples: quiz/question screens,
+`matchingTask`, interactive-image experiences, `theoryLab`, assessed
+diagnostic interactions. Being interactive does **not** by itself earn
+screen ownership — a small interaction embedded in a teaching screen stays a
+content component inside `TeachScreenShell`. A screen-owning interaction
+contract must define why normal teaching composition is unsuitable, plus its
+heading ownership, structural-shell choice, typography-token ownership,
+vertical rhythm, interaction-area layout, feedback placement, progression
+control, mobile render checks, and reduced-motion behaviour where relevant.
+
+**Route C — Cinematic / full-screen composition.** Use only an existing
+approved cinematic/full-screen component (or one whose contract explicitly
+owns complete screen composition): cinematic reveal moments, visual-learning
+moments, chapter hooks, chapter outcomes, key-figure reveals, genuinely
+full-bleed visual experiences. A cinematic route must have a real learning or
+interaction reason to control the whole viewport. "Cinematic" is not a
+loophole for bespoke heading typography, local spacing, decorative
+full-screen treatment, avoiding `TeachScreenShell`, or minting a one-off
+component because the content feels important. Where `CinematicShell` is the
+structural shell, the written-justification comment it already requires still
+applies.
+
+### Composition-ownership rule (hard)
+
+> A new component does not automatically earn the right to own screen layout.
+>
+> Full-screen composition ownership must be explicitly granted in an approved
+> component contract.
+>
+> Without that approval, the component is treated as content rendered within
+> an existing approved composition route — normally `TeachScreenShell` for
+> teaching and explanation screens.
+
+> Creating a new component solely to bypass an approved shell or obtain
+> bespoke heading typography, spacing or visual hierarchy is a governance
+> failure.
+
+> A component being visually distinctive, interactive or emotionally
+> important is not by itself sufficient reason for full-screen ownership.
+
+### Route resolution and failure conditions (hard)
+
+> Every screen must declare or resolve to one approved composition route
+> before implementation.
+
+> An in-module screen fails governance when it uses a generic shell, local
+> screen-heading treatment or ad-hoc vertical rhythm despite an approved
+> composition route already existing for its intent.
+
+### Hierarchy is a render check, not a token check (hard)
+
+> Valid typography-token use alone does not constitute a hierarchy pass. The
+> rendered mobile screen must contain one clear typographic focal point, with
+> supporting headings visibly subordinate.
+
+A screen can spread every token correctly and still fail: two competing
+headings, an intro heavier than the title, a card title the same size as the
+screen title. Hierarchy is decided in the 390px render pass (👁), never from
+source alone.
+
+### Legacy screens
+
+Many existing screens predate this governance and may use generic
+composition, a direct `ScreenTitle`, local heading styles, bespoke rhythm, or
+justified-or-unjustified full-screen ownership. They are **not** mass-migrated.
+
+> Existing screens remain supported until reviewed or materially edited. When
+> an existing screen is touched during content review, classify it against
+> the approved composition routes. Migrate it where the current route is
+> clearly wrong, but do not rewrite a successful specialist interaction or
+> cinematic experience solely for architectural uniformity.
+
+> Legacy implementation is not precedent for new implementation.
+
+A legacy screen that happens to use a generic shell is not a licence to copy
+that pattern into new work — new screens resolve to an approved route.
 
 ---
 
@@ -238,6 +380,9 @@ hierarchy", "add interactivity", "make it more cinematic") live in the
 Structural rules a composed screen must satisfy; checked in the render pass
 (👁) and by the reviewer:
 
+- **One resolved composition route.** The screen resolves to exactly one of
+  the three approved routes (above) before implementation. A generic shell
+  with an ad-hoc heading and hand-spaced `<div>`s is not a route.
 - **Teach screens compose through `TeachScreenShell`.** A teaching screen
   rendered via the generic block shell (its heading through `ScreenTitle`,
   its spacing ad-hoc) bypasses the design system's rhythm and header token —

@@ -151,6 +151,34 @@ For every screen in scope, in this order:
    per screen) actually live; don't re-derive them, run what the contract
    lists. Flag any ad-hoc element that should have been a pattern component
    (`TeachScreenShell` / `KeyPoint` / `WorkedExample` / `MediaPlaceholder`).
+4. **Composition route** — for the in-module screen, identify and record:
+   (a) its one primary intent, (b) the approved component serving it,
+   (c) the approved learning-composition route (A teaching → `TeachScreenShell`
+   / B interaction-owned / C cinematic — `PATTERN_GOVERNANCE.md`),
+   (d) the structural shell used where relevant, (e) whether the route
+   matches the learning intent, and (f) for any screen-owning component,
+   whether its contract explicitly grants full-screen composition ownership.
+   Check for and fail on:
+   - generic or ad-hoc screen composition (a bare shell with hand-spaced
+     `<div>`s instead of a route)
+   - local screen-heading styles; local title-weight overrides; local
+     title-size overrides
+   - bespoke screen-level vertical rhythm
+   - duplicate screen headings; a supporting heading competing with the
+     primary title
+   - use of a full-screen route without documented ownership
+   - "cinematic" used as an unsupported exception
+   - an interaction component claiming screen ownership without contract
+     approval
+
+   > **Fail** any in-module screen that uses a generic shell, local heading
+   > treatment or ad-hoc vertical spacing where `TeachScreenShell` or another
+   > approved composition route exists.
+
+   > A valid token spread does not automatically pass hierarchy review. The
+   > composed screen must still have one obvious typographic focal point at
+   > the required mobile render width (390px) — decided in the render pass,
+   > not from source.
 
 Then score the whole episode (or scoped slice) per the six rubric
 dimensions, each reported separately — **never averaged**:
@@ -462,4 +490,12 @@ approval stage, and it is deliberately not the same act as building:
   competing adjacent typography, or a second "key point" on one screen are
   governance failures, not style preferences — flag them as such, not as
   suggestions.
+- A generic shell, local screen-heading treatment, or ad-hoc vertical rhythm
+  on a screen an approved composition route already covers is a governance
+  failure — flag it, don't accept it as an existing pattern.
+- A full-screen / "cinematic" route without documented contract ownership,
+  or an interaction claiming screen ownership without contract approval, is a
+  governance failure.
+- Source inspection alone never passes composition or visual hierarchy — the
+  mandatory 390px render pass is required.
 - Findings are never averaged into one score, at any stage of this skill.

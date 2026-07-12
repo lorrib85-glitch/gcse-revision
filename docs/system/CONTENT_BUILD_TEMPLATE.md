@@ -53,6 +53,35 @@ For non-narrative subjects (e.g. Maths), story units are tension-shaped
 rather than narrative-shaped — "here is where this goes wrong for real
 students" — with the same four beats.
 
+## Composition selection — before implementation
+
+Before building any planned screen, record its composition selection. This
+is a required step: it forces every screen to resolve to one approved
+composition route (`PATTERN_GOVERNANCE.md` → "Screen-composition routes")
+rather than inventing its own shell, heading or rhythm.
+
+For **every** planned screen, record:
+
+- **Learning objective** — the GCSE thing the learner can do after it.
+- **Primary screen intent** — the single communicative job (one sentence).
+- **Approved component** — from the intent→component map.
+- **Approved composition route** — Route A (teaching → `TeachScreenShell`),
+  Route B (interaction-owned), or Route C (cinematic/full-screen).
+- **Structural shell** — where relevant (`ContentShell` /
+  `InteractionShell` / `CinematicShell`).
+- **Content-level or screen-owning** — is the component rendered inside a
+  route (content-level), or does its contract grant it full-screen ownership?
+
+**Teaching and explanation screens default to `TeachScreenShell`** (Route A).
+Choosing an interaction-owned (Route B) or cinematic/full-screen (Route C)
+route requires explicit justification recorded here, pointing at the approved
+contract that grants that component full-screen ownership.
+
+Do not create a new full-screen component merely because no existing
+component is an exact visual match. First determine whether the content
+belongs inside an existing approved composition route — normally
+`TeachScreenShell`.
+
 ## The hard floor — checklist
 
 Items marked ⚙ are enforced by

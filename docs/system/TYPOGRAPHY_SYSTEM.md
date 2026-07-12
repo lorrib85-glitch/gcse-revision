@@ -1,6 +1,6 @@
 # Typography System
 
-**Version:** v1 — Locked Foundation Layer  
+**Version:** v2 — reconciled with live `src/constants/typography.js`  
 **Source file:** `src/constants/typography.js`
 
 ---
@@ -13,21 +13,30 @@ Typography should feel: **cinematic, calm, intelligent, mature, immersive, premi
 
 Typography should NOT feel: corporate, productivity-app-like, overly decorative, playful, cluttered, generic educational software.
 
+> **Semantic rule.** Module typography is assigned by role, never chosen
+> locally. Pick the token whose role matches the element (see "Role
+> assignment" below); never hand-set `fontSize` / `fontWeight` /
+> `fontFamily` / `letterSpacing` to build a bespoke heading. Governed
+> composition components (e.g. `TeachScreenShell`) must not hardcode
+> `fontFamily` or `fontWeight` at all — enforced by
+> `tests/architecture/screen-composition-governance.test.js` and
+> `tests/architecture/typography-governance.test.js`.
+
 ---
 
 ## Font Families
 
 | Font | Usage |
 |------|-------|
-| **Manrope** | Cinematic display type — headings, titles, impact moments, `TYPE.cinematic` |
-| **Sora** | All other UI text — body copy, buttons, labels, navigation, metadata, captions |
+| **Manrope** | Cinematic display type — the four `display*` tokens (`displayHero`, `displayScreen`, `displaySection`, `displayCard`). Headings, titles, impact moments. |
+| **Sora** | All other UI text — body copy, buttons, labels, navigation, metadata, captions. |
 
 Both fonts are loaded via Google Fonts in `index.html`.
 
 **Rules:**
-- Never introduce a third font family
-- Manrope is for display hierarchy and emotional weight — not body copy or fine-print labels
-- Sora handles everything else; it is the dominant font by character count across the product
+- Never introduce a third font family.
+- Manrope is for display hierarchy and emotional weight — not body copy or fine-print labels.
+- Sora handles everything else; it is the dominant font by character count across the product.
 
 ---
 
@@ -37,61 +46,113 @@ Both fonts are loaded via Google Fonts in `index.html`.
 import { TYPE } from '../../constants/typography.js'
 ```
 
-| Token | Font | Size | Weight | Line Height | Letter Spacing | Usage |
-|-------|------|------|--------|-------------|----------------|-------|
-| `TYPE.screenHeading` | Manrope | clamp(30px,8vw,42px) | 800 | 1.02 | -0.045em | Chapter hooks, recovery titles, screen-level impact |
-| `TYPE.sectionHeading` | Manrope | clamp(22px,6vw,30px) | 700 | 1.08 | -0.035em | Section headings, module titles |
-| `TYPE.impactTitle` | Manrope | clamp(28px,8vw,36px) | 850 | 1.04 | -0.045em | Maximum-weight display moments |
-| `TYPE.cinematic` | Manrope | clamp(24px,6.4vw,30px) | 750 | 1.08 | -0.035em | Topic titles, overlay titles, cinematic reveals |
-| `TYPE.cardTitle` | Manrope | 1.12rem | 700 | 1.18 | -0.02em | Card titles, prominent labels |
-| `TYPE.bodyText` | Sora | 0.95rem | 400 | 1.5 | -0.005em | Explanation copy, reading content |
-| `TYPE.bodyLarge` | Sora | 1.02rem | 400 | 1.48 | -0.006em | Larger body passages |
-| `TYPE.buttonText` | Sora | 0.92rem | 700 | 1.2 | -0.005em | All button labels |
-| `TYPE.metadataText` | Sora | 0.72rem | 600 | 1.2 | 0.10em | Timing, question counts, progress labels |
-| `TYPE.captionText` | Sora | 0.78rem | 400 | 1.35 | -0.003em | Captions, timestamps, fine print |
+These are the **live** tokens exported by `src/constants/typography.js`. Names and weights match the code exactly.
 
-Aliases retained for backwards compatibility: `TYPE.hero` = `TYPE.screenHeading`, `TYPE.sectionTitle` = `TYPE.sectionHeading`, `TYPE.body` = `TYPE.bodyText`, `TYPE.bodySmall` = `TYPE.bodySmallText`, `TYPE.metadata` = `TYPE.metadataText`.
+### Display (Manrope)
+
+| Token | Size | Weight | Line height | Letter spacing | Role |
+|-------|------|--------|-------------|----------------|------|
+| `TYPE.displayHero` | clamp(32px, 9vw, 48px) | 600 | 1.05 | -0.028em | Cinematic / hero title — the biggest emotional moment on a screen |
+| `TYPE.displayScreen` | clamp(28px, 8vw, 38px) | 560 | 1.07 | -0.022em | Standard learning-screen title (the `TeachScreenShell` heading) |
+| `TYPE.displaySection` | clamp(22px, 6vw, 30px) | 560 | 1.10 | -0.015em | Section-level title |
+| `TYPE.displayCard` | 1.15rem | 560 | 1.20 | -0.012em | Supporting / card title |
+
+### Titles & body (Sora)
+
+| Token | Size | Weight | Line height | Role |
+|-------|------|--------|-------------|------|
+| `TYPE.titleLarge` | 1.1rem | 600 | 1.35 | Prominent Sora sub-title / strong label |
+| `TYPE.titleMedium` | 0.95rem | 600 | 1.30 | Sora sub-title / strong label |
+| `TYPE.bodyLarge` | 1.02rem | 400 | 1.48 | Larger body passages |
+| `TYPE.body` | 0.95rem | 400 | 1.50 | Explanation copy, reading content |
+| `TYPE.bodyStrong` | clamp(15px, 4vw, 17px) | 500 | 1.45 | Emphasised body line |
+| `TYPE.bodySmall` | 0.84rem | 400 | 1.45 | Small body copy |
+
+### Labels, metadata & captions (Sora)
+
+| Token | Size | Weight | Line height | Letter spacing | Role |
+|-------|------|--------|-------------|----------------|------|
+| `TYPE.label` | 0.82rem | 500 | 1.20 | 0.01em | Sentence-case labels and kickers |
+| `TYPE.metadata` | 0.72rem | 500 | 1.20 | 0.10em | Timing, counts, progress labels (uppercase permitted) |
+| `TYPE.caption` | 0.78rem | 400 | 1.35 | -0.003em | Captions, timestamps, fine print |
+
+### Buttons & specialised (Sora)
+
+| Token | Size | Weight | Line height | Role |
+|-------|------|--------|-------------|------|
+| `TYPE.button` | 0.92rem | 500 | 1.20 | All standard button labels |
+| `TYPE.buttonLarge` | 1.0rem | 600 | 1.20 | Large / primary button labels |
+| `TYPE.quizQuestion` | clamp(34px, 8.7vw, 46px) | 600 | 1.05 | Quiz question (extends `displayScreen`) |
+| `TYPE.quizOption` | 0.95rem | 500 | 1.28 | Quiz option label |
+| `TYPE.quizHint` | 0.92rem | 400 | 1.45 | Quiz hint |
+| `TYPE.examQuestion` | clamp(14px, 3.8vw, 15.5px) | 520 | 1.55 | Exam question text |
+| `TYPE.examAnswer` | clamp(15px, 4vw, 16px) | 420 | 1.72 | Exam answer text |
+| `TYPE.secondsMarker` | 0.58em | — | 1 | Raised "s" marker (e.g. the "s" in "90s") |
+
+### Deprecated
+
+`TYPE.eyebrow` is deprecated — it is kept only as an alias of `TYPE.label`
+for backward compatibility. Do not spread it in new code; use `TYPE.label`
+(sentence case). The eyebrow *pattern* (uppercase, letter-spaced label above
+a heading) is prohibited — see "Label case" below.
+
+**Removed aliases (do not reintroduce).** The pre-v2 display/weight aliases —
+`hero`, `screenHeading`, `sectionHeading`, `sectionTitle`, `impactTitle`,
+`cinematic`, `cardTitle`, `bodyText`, `bodySmallText`, `metadataText`,
+`captionText`, `buttonText`, `featureText`, `overlayTitle`, `overlayBody`,
+`overlayEyebrow`, `overlayPrompt`, `examAnswerText`, `examQuestionText` — no
+longer exist in the token system and their old 700–850 display weights are
+gone. Reaching for any of them fails
+`tests/architecture/typography-governance.test.js`. Use the live tokens above.
+
+---
+
+## Role assignment
+
+Titles are assigned by role using the **current live tokens** — never by
+choosing a weight locally, and never with a blanket "every title is the same
+weight" rule:
+
+| Role | Token |
+|------|-------|
+| Cinematic / hero title | `TYPE.displayHero` |
+| Standard learning-screen title | `TYPE.displayScreen` |
+| Section-level title | `TYPE.displaySection` |
+| Supporting / card title | `TYPE.displayCard` |
+| Body, label, metadata, caption | their corresponding tokens above |
+
+Standard teaching-screen titles use `TYPE.displayScreen` — this is the token
+`TeachScreenShell` owns for the heading. Supporting section and card headings
+use their subordinate tokens (`displaySection` / `displayCard`) so they read
+as clearly below the screen title.
 
 ---
 
 ## Usage Examples
 
 ```js
-// Hero heading
-<h1 style={{
-  ...TYPE.hero,
-  color: 'rgba(245,245,245,0.96)',
-  margin: 0,
-}}>
+// Standard learning-screen title (TeachScreenShell owns this internally)
+<h1 style={{ ...TYPE.displayScreen, color: 'rgba(245,245,245,0.96)', margin: 0 }}>
+  Every illness had an opposite
+</h1>
+
+// Cinematic / hero moment
+<h1 style={{ ...TYPE.displayHero, color: 'rgba(245,245,245,0.96)', margin: 0 }}>
   Quick recovery?
 </h1>
 
-// Topic title (cinematic display)
-<h2 style={{
-  ...TYPE.cinematic,
-  color: 'rgba(245,245,245,0.96)',
-  margin: 0, marginBottom: 28,
-}}>
-  {block.title}
+// Section title (subordinate to the screen title)
+<h2 style={{ ...TYPE.displaySection, color: 'rgba(245,245,245,0.92)', margin: 0 }}>
+  {section.title}
 </h2>
 
 // Explanation body copy
-<p style={{
-  ...TYPE.body,
-  color: 'rgba(245,245,245,0.68)',
-  maxWidth: 310,
-  margin: '0 auto',
-}}>
+<p style={{ ...TYPE.body, color: 'rgba(245,245,245,0.68)', maxWidth: 310, margin: '0 auto' }}>
   {block.explanation}
 </p>
 
-// Metadata label (uppercase treatment)
-<div style={{
-  ...TYPE.metadata,
-  textTransform: 'uppercase',
-  color: accent,
-  opacity: 0.90,
-}}>
+// Metadata label (uppercase treatment permitted for scanning data)
+<div style={{ ...TYPE.metadata, textTransform: 'uppercase', color: accent, opacity: 0.90 }}>
   3 QUESTIONS • UNDER 90 SECONDS
 </div>
 ```
@@ -101,13 +162,20 @@ Aliases retained for backwards compatibility: `TYPE.hero` = `TYPE.screenHeading`
 ## Hierarchy Rules
 
 Each screen should have:
-- **One dominant text element** — usually `TYPE.hero` or `TYPE.cinematic`
-- **One supporting hierarchy** — `TYPE.body` or `TYPE.cardTitle`
+- **One dominant text element** — the screen's focal title, usually
+  `TYPE.displayScreen` (or `TYPE.displayHero` on a cinematic screen)
+- **Supporting hierarchy visibly subordinate** — `TYPE.displaySection` /
+  `TYPE.displayCard` / `TYPE.body`
 - **Clear breathing room** between levels
+
+> Valid token use alone is not a hierarchy pass. The rendered mobile screen
+> (390px) must contain one clear typographic focal point, with supporting
+> headings visibly subordinate — checked in the render pass
+> (`PATTERN_GOVERNANCE.md` → "Hierarchy is a render check").
 
 Avoid:
 - Stacking multiple large headlines
-- Too many competing text sizes
+- Two headings competing for the focal point
 - Excessive bolding
 - Cramped text layouts
 
@@ -142,7 +210,7 @@ When next editing a component that uses `TYPE.eyebrow` or `cinematic-eyebrow`, r
 
 ## Manrope display rules
 
-Manrope (`TYPE.cinematic`, `TYPE.screenHeading`, `TYPE.impactTitle`) carries emotional and cinematic weight.
+Manrope (the four `display*` tokens) carries emotional and cinematic weight.
 
 Use for:
 - Screen-level headings and emotional reveals

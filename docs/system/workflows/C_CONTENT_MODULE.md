@@ -63,7 +63,13 @@ Module not yet built → re-triage to E (Big Build).
    may be a direct edit; anything reaching for a component change or rebuild
    goes through the pathway. The one pathway: canonical objective → review
    decision → amendment brief → `content-create` implementation → composed
-   render comparison → independent post-build approval.
+   render comparison → independent post-build approval. Before building any
+   screen, record its composition selection (learning objective → intent →
+   approved component → approved composition route → structural shell;
+   content-level or screen-owning) per `CONTENT_BUILD_TEMPLATE.md` →
+   "Composition selection": teaching/explanation screens default to
+   `TeachScreenShell` (Route A); a Route B/C route needs explicit
+   contract-granted full-screen ownership.
 7. **Review** — `/ponytail-review`; `/code-review` if data shape or logic
    changed. **Pattern-governance review** (`PATTERN_GOVERNANCE.md`) for any
    screen touched: state its one primary intent in a sentence (fail and

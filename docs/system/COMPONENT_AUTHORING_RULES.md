@@ -77,6 +77,45 @@ Component names must be explicit and describe the experience.
 
 ---
 
+## Component Classification (required)
+
+Every new learning component must declare exactly one classification. This
+decides whether it may own screen layout. See
+`docs/system/PATTERN_GOVERNANCE.md` → "Screen-composition routes".
+
+### Content component
+
+**Default classification.** Rendered inside an approved composition route
+(normally `TeachScreenShell`). A content component does **not** own:
+
+- the screen heading
+- viewport layout
+- screen-level spacing
+- progression chrome
+- full-screen typography
+
+### Interaction-owned screen
+
+Requires explicit contract approval (Route B). Must justify why an existing
+composition route is insufficient, and its contract must state it **owns
+full-screen composition**.
+
+### Cinematic / full-screen component
+
+Requires explicit contract approval (Route C). Must justify why standard
+structural and composition routes would prevent the intended learning
+experience, and its contract must state it **owns full-screen composition**.
+
+> **Default:** New components are content components rendered inside an
+> approved composition route unless explicit contract approval grants
+> full-screen ownership. A component being visually distinctive, interactive
+> or emotionally important is not by itself sufficient reason for full-screen
+> ownership. Creating a new component solely to bypass an approved shell or
+> obtain bespoke heading typography, spacing or hierarchy is a governance
+> failure.
+
+---
+
 ## Component Design Rules
 
 Every component must:
@@ -209,6 +248,13 @@ Before creating a new component:
 
 - [ ] Does a similar component already exist in `COMPONENT_REGISTRY.md`?
 - [ ] Is this a distinct, justified learning beat?
+- [ ] Is this a content component or a screen-owning component?
+- [ ] If screen-owning, does its approved contract explicitly grant composition ownership?
+- [ ] Which approved composition route does the screen use (A teaching / B interaction-owned / C cinematic)?
+- [ ] Why can this experience not use `TeachScreenShell` or an existing approved screen-owned route?
+- [ ] Does the component avoid inventing new screen-heading typography?
+- [ ] Does the component avoid inventing new screen-level vertical rhythm?
+- [ ] Is the proposed screen ownership genuinely required by the learning or interaction mechanic?
 - [ ] Does it use spacing tokens (no magic numbers)?
 - [ ] Does it use motion tokens (no hardcoded durations)?
 - [ ] Does it use typography tokens?
