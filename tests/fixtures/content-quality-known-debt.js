@@ -276,29 +276,14 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:screens[4].title:run:0",
     "SENTENCE_CASE:screens[8].sub:run:0",
     "SENTENCE_CASE:stageNavigation[0].title:run:0",
-    "SENTENCE_CASE:stageNavigation[0].title:run:1",
     "SENTENCE_CASE:stageNavigation[1].title:run:0",
     "SENTENCE_CASE:stageNavigation[1].title:run:1",
     "SENTENCE_CASE:stageNavigation[2].title:run:0",
     "SENTENCE_CASE:stageNavigation[3].title:run:0",
     "SENTENCE_CASE:stageNavigation[3].title:run:1",
     "SENTENCE_CASE:stageNavigation[4].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:0",
     "SENTENCE_CASE:title:run:0",
     "SENTENCE_CASE:title:run:1"
-  ],
-  "history-medicine-black-death": [
-    "SENTENCE_CASE:screens[2].hotspots[2].title:run:0",
-    "SENTENCE_CASE:stageNavigation[0].title:run:0",
-    "SENTENCE_CASE:stageNavigation[0].title:run:1",
-    "SENTENCE_CASE:stageNavigation[0].title:run:2",
-    "SENTENCE_CASE:stageNavigation[2].title:run:0",
-    "SENTENCE_CASE:stageNavigation[2].title:run:1",
-    "SENTENCE_CASE:stageNavigation[2].title:run:2",
-    "SENTENCE_CASE:stageNavigation[3].title:run:0",
-    "SENTENCE_CASE:stageNavigation[3].title:run:1",
-    "SENTENCE_CASE:stageNavigation[5].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:1"
   ],
   "history-medicine-renaissance-medicine": [
     "SENTENCE_CASE:stageNavigation[0].title:run:0",
@@ -307,8 +292,7 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:stageNavigation[4].title:run:0",
     "SENTENCE_CASE:stageNavigation[5].title:run:0",
     "SENTENCE_CASE:stageNavigation[5].title:run:1",
-    "SENTENCE_CASE:stageNavigation[5].title:run:2",
-    "SENTENCE_CASE:stageNavigation[5].title:run:3"
+    "SENTENCE_CASE:stageNavigation[5].title:run:2"
   ],
   "history-medicine-surgery-anaesthetics": [
     "SENTENCE_CASE:screens[0].blocks[2].label:run:0",
@@ -339,8 +323,7 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:stageNavigation[4].title:run:0",
     "SENTENCE_CASE:stageNavigation[4].title:run:1",
     "SENTENCE_CASE:stageNavigation[5].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:1",
-    "SENTENCE_CASE:stageNavigation[5].title:run:2"
+    "SENTENCE_CASE:stageNavigation[5].title:run:1"
   ],
   "history-medicine-jenner-vaccination": [
     "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
@@ -348,18 +331,15 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:stageNavigation[0].title:run:1",
     "SENTENCE_CASE:stageNavigation[0].title:run:2",
     "SENTENCE_CASE:stageNavigation[1].title:run:0",
-    "SENTENCE_CASE:stageNavigation[1].title:run:1",
     "SENTENCE_CASE:stageNavigation[2].title:run:0",
     "SENTENCE_CASE:stageNavigation[4].title:run:0",
     "SENTENCE_CASE:stageNavigation[5].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:1",
-    "SENTENCE_CASE:stageNavigation[5].title:run:2"
+    "SENTENCE_CASE:stageNavigation[5].title:run:1"
   ],
   "history-medicine-germ-theory": [
     "SENTENCE_CASE:screens[0].blocks[2].label:run:0",
     "SENTENCE_CASE:screens[1].blocks[0].label:run:0",
     "SENTENCE_CASE:screens[2].blocks[0].label:run:0",
-    "SENTENCE_CASE:screens[2].heading:run:0",
     "SENTENCE_CASE:screens[3].blocks[0].label:run:0",
     "SENTENCE_CASE:screens[4].blocks[0].label:run:0",
     "SENTENCE_CASE:screens[4].blocks[1].label:run:0",
@@ -372,12 +352,10 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:stageNavigation[1].title:run:1",
     "SENTENCE_CASE:stageNavigation[1].title:run:2",
     "SENTENCE_CASE:stageNavigation[1].title:run:3",
-    "SENTENCE_CASE:stageNavigation[1].title:run:4",
     "SENTENCE_CASE:stageNavigation[3].title:run:0",
     "SENTENCE_CASE:stageNavigation[3].title:run:1",
     "SENTENCE_CASE:stageNavigation[4].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:1"
+    "SENTENCE_CASE:stageNavigation[5].title:run:0"
   ],
   "history-medicine-great-stink": [
     "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
@@ -387,7 +365,6 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:screens[0].blocks[2].label:run:2",
     "SENTENCE_CASE:screens[0].blocks[2].label:run:3",
     "SENTENCE_CASE:screens[2].blocks[0].label:run:0",
-    "SENTENCE_CASE:screens[2].heading:run:0",
     "SENTENCE_CASE:screens[3].blocks[0].label:run:0",
     "SENTENCE_CASE:screens[3].blocks[1].label:run:0",
     "SENTENCE_CASE:screens[3].blocks[1].label:run:1",
@@ -402,13 +379,11 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:stageNavigation[3].title:run:1",
     "SENTENCE_CASE:stageNavigation[4].title:run:0",
     "SENTENCE_CASE:stageNavigation[5].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:1",
-    "SENTENCE_CASE:stageNavigation[5].title:run:2"
+    "SENTENCE_CASE:stageNavigation[5].title:run:1"
   ],
   "history-medicine-surgery-revolution": [
     "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
     "SENTENCE_CASE:screens[0].blocks[0].label:run:1",
-    "SENTENCE_CASE:screens[0].blocks[0].label:run:2",
     "SENTENCE_CASE:screens[0].blocks[1].label:run:0",
     "SENTENCE_CASE:screens[0].blocks[1].label:run:1",
     "SENTENCE_CASE:screens[0].blocks[1].label:run:2",
@@ -440,7 +415,6 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:screens[8].heading:run:1",
     "SENTENCE_CASE:screens[8].heading:run:2",
     "SENTENCE_CASE:screens[8].heading:run:3",
-    "SENTENCE_CASE:screens[8].heading:run:4",
     "SENTENCE_CASE:screens[9].blocks[0].label:run:0",
     "SENTENCE_CASE:screens[9].blocks[0].label:run:1",
     "SENTENCE_CASE:stageNavigation[0].title:run:0",
@@ -452,8 +426,7 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:stageNavigation[4].title:run:0",
     "SENTENCE_CASE:stageNavigation[4].title:run:1",
     "SENTENCE_CASE:stageNavigation[5].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:1",
-    "SENTENCE_CASE:stageNavigation[5].title:run:2"
+    "SENTENCE_CASE:stageNavigation[5].title:run:1"
   ],
   "history-medicine-accidental-miracle": [
     "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
@@ -501,16 +474,13 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:screens[9].heading:run:1",
     "SENTENCE_CASE:screens[9].heading:run:2",
     "SENTENCE_CASE:screens[9].heading:run:3",
-    "SENTENCE_CASE:screens[9].heading:run:4",
     "SENTENCE_CASE:stageNavigation[0].title:run:0",
     "SENTENCE_CASE:stageNavigation[0].title:run:1",
     "SENTENCE_CASE:stageNavigation[0].title:run:2",
     "SENTENCE_CASE:stageNavigation[1].title:run:0",
-    "SENTENCE_CASE:stageNavigation[1].title:run:1",
     "SENTENCE_CASE:stageNavigation[3].title:run:0",
     "SENTENCE_CASE:stageNavigation[4].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:1"
+    "SENTENCE_CASE:stageNavigation[5].title:run:0"
   ],
   "history-medicine-modern-medicine": [
     "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
@@ -524,7 +494,6 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:screens[3].blocks[0].label:run:1",
     "SENTENCE_CASE:screens[4].blocks[0].label:run:0",
     "SENTENCE_CASE:screens[4].blocks[0].label:run:1",
-    "SENTENCE_CASE:screens[4].blocks[0].label:run:2",
     "SENTENCE_CASE:screens[4].blocks[3].label:run:0",
     "SENTENCE_CASE:screens[5].blocks[0].label:run:0",
     "SENTENCE_CASE:screens[5].blocks[0].label:run:1",
@@ -541,7 +510,6 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:screens[7].heading:run:2",
     "SENTENCE_CASE:screens[7].heading:run:3",
     "SENTENCE_CASE:screens[7].heading:run:4",
-    "SENTENCE_CASE:screens[7].heading:run:5",
     "SENTENCE_CASE:screens[8].blocks[0].label:run:0",
     "SENTENCE_CASE:screens[8].blocks[0].label:run:1",
     "SENTENCE_CASE:stageNavigation[0].title:run:0",
@@ -553,8 +521,7 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:stageNavigation[4].title:run:1",
     "SENTENCE_CASE:stageNavigation[5].title:run:0",
     "SENTENCE_CASE:stageNavigation[5].title:run:1",
-    "SENTENCE_CASE:stageNavigation[5].title:run:2",
-    "SENTENCE_CASE:stageNavigation[5].title:run:3"
+    "SENTENCE_CASE:stageNavigation[5].title:run:2"
   ],
   "history-medicine-cancer": [
     "SENTENCE_CASE:screens[0].blocks[0].label:run:0",
@@ -584,8 +551,7 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:stageNavigation[2].title:run:0",
     "SENTENCE_CASE:stageNavigation[3].title:run:0",
     "SENTENCE_CASE:stageNavigation[5].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:1",
-    "SENTENCE_CASE:stageNavigation[5].title:run:2"
+    "SENTENCE_CASE:stageNavigation[5].title:run:1"
   ],
   "history-medicine-western-front": [
     "SENTENCE_CASE:stageNavigation[0].title:run:0",
@@ -593,12 +559,10 @@ export const KNOWN_SENTENCE_CASE_VIOLATIONS = {
     "SENTENCE_CASE:stageNavigation[1].title:run:1",
     "SENTENCE_CASE:stageNavigation[1].title:run:2",
     "SENTENCE_CASE:stageNavigation[3].title:run:0",
-    "SENTENCE_CASE:stageNavigation[3].title:run:1",
     "SENTENCE_CASE:stageNavigation[4].title:run:0",
     "SENTENCE_CASE:stageNavigation[4].title:run:1",
     "SENTENCE_CASE:stageNavigation[5].title:run:0",
-    "SENTENCE_CASE:stageNavigation[5].title:run:1",
-    "SENTENCE_CASE:stageNavigation[5].title:run:2"
+    "SENTENCE_CASE:stageNavigation[5].title:run:1"
   ],
   "bio_building_blocks": [
     "SENTENCE_CASE:screens[3].hotspots[5].title:run:0",

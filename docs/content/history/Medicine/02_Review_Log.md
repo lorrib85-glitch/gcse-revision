@@ -5,6 +5,58 @@ Newest entry first. See `docs/system/component-contracts/README.md` and
 
 ---
 
+## 2026-07-11 — Amend: coverage gaps, sentence case, readability
+
+**Scope:** the three real, non-deferred findings from the audit below,
+per explicit user instruction — the `visualLearning` repetition-limit
+violation was left as-is on purpose.
+
+**What was amended (3 commits, one per unit):**
+- `2365150` — taught both canonical-coverage gaps: added a closing stage
+  to the "How the plague killed" `progressionTimeline` naming the three
+  forms of plague (bubonic/pneumonic/septicaemic), and a new scene on the
+  "Why treatments failed" `visualLearning` screen covering quarantine's
+  enforcement failure (rich people ignoring orders, no police force, the
+  Church running normally). No new screens; no component repetition added.
+- `e8dd8ec` — sentence-cased all 6 `stageNavigation` titles. Also fixed a
+  detector false positive along the way: "Melcombe Regis, June 1348" was
+  flagging across a comma boundary (place name, then date) as if it were
+  one title-case run; added a clause-boundary check to
+  `contentQualityChecks.js` plus "Melcombe Regis" to `PROPER_NOUNS`. This
+  fix is general — it affects every episode's sentence-case check, not
+  just this one — and caused no regressions elsewhere (verified against
+  the full architecture suite).
+- `c3cca47` — simplified prose on the 4 screens over the readability
+  ceiling (3, 7, 8, 11): shorter sentences, a couple of easier word
+  swaps (e.g. "pomanders" → "flowers"), no facts cut. Grades moved from
+  7.2–8.0 down to 5.3–6.9.
+
+**What was NOT amended (deferred, per instruction):**
+- The `visualLearning` repetition-limit violation (used 3×, cap is 2) —
+  left in place. Still true, still logged below.
+- The `interactiveImage` cross-cutting taxonomy question — not this
+  episode's fix, unchanged.
+
+**Verification for all 3 commits:** `vitest run tests/architecture` green
+throughout (659 tests, no regressions), `vite build` clean, and each
+edited screen screenshotted via the dev-only jump and inspected at 390px
+before commit — including clicking through to the actual new stage/scene
+content (not just the screen's default first state).
+
+**After-amend re-score** (`node scripts/check-content-quality.mjs
+history-medicine-black-death`): **zero** guardrail/readability violations,
+**zero** sentence-case violations (down from 4 readability + 11
+sentence-case findings). Episode 2 removed from both
+`GRANDFATHERED_EPISODES` and `SENTENCE_CASE_GRANDFATHERED_EPISODES` in
+`tests/architecture/content-quality.test.js` — it now passes the CI floor
+on its own merits, not by exemption.
+
+Six-dimension rubric ratings from the audit below are unchanged by this
+amend (the amendments closed gaps and fixed prose; they didn't newly
+discover a story/teaching/retrieval/exam-prep/engagement problem).
+
+---
+
 ## 2026-07-11 — Full episode audit (audit-only)
 
 **Scope:** full episode (24 screens, all 6 stages).
