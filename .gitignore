@@ -18,3 +18,6 @@ public/figures/history/medicine/medieval/vl-*.png
 
 # Subagent-driven-development session ledger (scratch state)
 .superpowers/
+
+# Chapter contact sheets (scripts/contact-sheet.mjs output)
+contact-sheets/
