@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { COMPONENT_TEXT_LIMITS } from '../../constants/contentLimits.js'
-import { SUBJECTS } from '../../constants/subjects.js'
-import { SPACING } from '../../constants/spacing.js'
-import { RADII } from '../../constants/radii.js'
+import { FACTOR_WEB_LAYOUT, FACTOR_WEB_VISUAL } from '../../constants/factorWeb.js'
 import { MOTION } from '../../constants/motion.js'
+import { RADII } from '../../constants/radii.js'
+import { SPACING } from '../../constants/spacing.js'
+import { SUBJECTS } from '../../constants/subjects.js'
 import { TYPE } from '../../constants/typography.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
-import SequenceProgress from '../core/SequenceProgress.jsx'
 import { ScreenTitle } from '../core/ScreenText.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 import InteractionShell from '../layout/InteractionShell.jsx'
 
 const DEFAULT_CENTRE_LABELS = {
@@ -25,42 +26,86 @@ export function getFactorWebTitle(block = {}) {
   return block.title || block.kicker || block.question || ''
 }
 
-// Compute an elliptical radial position for each outer node. The web keeps
-// six short labels comfortably readable at 390px while preserving a clear
-// centre-to-factor relationship.
-export function getFactorNodePosition(index, total) {
-  const angle = (index * (360 / Math.max(total, 1)) - 90) * (Math.PI / 180)
+export function splitFactorColumns(factors = []) {
+  const midpoint = Math.ceil(factors.length / 2)
   return {
-    x: 50 + 39 * Math.cos(angle),
-    y: 50 + 39 * Math.sin(angle),
+    left: factors.slice(0, midpoint).map((factor, index) => ({
+      factor,
+      originalIndex: index,
+      side: 'left',
+    })),
+    right: factors.slice(midpoint).map((factor, index) => ({
+      factor,
+      originalIndex: midpoint + index,
+      side: 'right',
+    })),
   }
 }
 
-export function getFactorConnector(position) {
-  const centre = { x: 50, y: 52 }
-  const target = { x: position.x, y: position.y * 1.04 }
-  const dx = target.x - centre.x
-  const dy = target.y - centre.y
-  const distance = Math.max(Math.sqrt(dx * dx + dy * dy), 1)
-  const ux = dx / distance
-  const uy = dy / distance
+function rowsForCount(count) {
+  return FACTOR_WEB_LAYOUT.rowsByCount[count] || FACTOR_WEB_LAYOUT.rowsByCount[3]
+}
 
+function focalRowsForCount(count) {
+  return FACTOR_WEB_LAYOUT.focalRowsByCount[count] || FACTOR_WEB_LAYOUT.focalRowsByCount[3]
+}
+
+export function getFactorSlot(side, index, count) {
+  const rows = rowsForCount(count)
+  const focalRows = focalRowsForCount(count)
   return {
-    start: {
-      x: centre.x + ux * 15,
-      y: centre.y + uy * 15,
-    },
-    end: {
-      x: target.x - ux * 8,
-      y: target.y - uy * 8,
-    },
+    side,
+    x: FACTOR_WEB_LAYOUT.nodeX[side],
+    y: rows[index],
+    nodeAnchorX: FACTOR_WEB_LAYOUT.nodeAnchorX[side],
+    focalAnchorX: FACTOR_WEB_LAYOUT.focalAnchorX[side],
+    focalAnchorY: focalRows[index],
   }
+}
+
+export function getFactorConnectorPath(slot) {
+  const direction = slot.side === 'left' ? 1 : -1
+  const offset = FACTOR_WEB_LAYOUT.connectorControlOffset * direction
+  return [
+    `M ${slot.nodeAnchorX} ${slot.y}`,
+    `C ${slot.nodeAnchorX + offset} ${slot.y}`,
+    `${slot.focalAnchorX - offset} ${slot.focalAnchorY}`,
+    `${slot.focalAnchorX} ${slot.focalAnchorY}`,
+  ].join(' ')
 }
 
 function exploredIndexes(factors, explored) {
   return factors
     .map((factor, index) => explored.has(factor.id) ? index : null)
     .filter(index => index !== null)
+}
+
+function FocalPlaceholderGlyph({ accent }) {
+  return (
+    <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+      <rect
+        x="4.5"
+        y="6.5"
+        width="25"
+        height="21"
+        rx="3.5"
+        fill="none"
+        stroke={accent}
+        strokeWidth="1.4"
+        opacity="0.68"
+      />
+      <circle cx="12" cy="14" r="2.4" fill="none" stroke={accent} strokeWidth="1.4" opacity="0.68" />
+      <path
+        d="M7 25 L14 18 L19 23 L23 19 L28 24"
+        fill="none"
+        stroke={accent}
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.68"
+      />
+    </svg>
+  )
 }
 
 function FactorDetail({ factor, accent, rgb, prefersReduced }) {
@@ -110,7 +155,7 @@ function FactorDetail({ factor, accent, rgb, prefersReduced }) {
         gap: SPACING.compact,
       }}>
         <div>
-          <p style={{ ...TYPE.label, color: accent, margin: '0 0 5px' }}>
+          <p style={{ ...TYPE.label, color: accent, margin: `0 0 ${SPACING.micro}px` }}>
             What it means
           </p>
           <p style={{ ...TYPE.body, color: 'rgba(245,245,245,0.78)', margin: 0 }}>
@@ -119,7 +164,7 @@ function FactorDetail({ factor, accent, rgb, prefersReduced }) {
         </div>
 
         <div>
-          <p style={{ ...TYPE.label, color: accent, margin: '0 0 5px' }}>
+          <p style={{ ...TYPE.label, color: accent, margin: `0 0 ${SPACING.micro}px` }}>
             Why it mattered
           </p>
           <p style={{ ...TYPE.body, color: 'rgba(245,245,245,0.78)', margin: 0 }}>
@@ -132,7 +177,7 @@ function FactorDetail({ factor, accent, rgb, prefersReduced }) {
             borderLeft: `2px solid rgba(${rgb},0.55)`,
             paddingLeft: SPACING.compact,
           }}>
-            <p style={{ ...TYPE.label, color: `rgba(${rgb},0.82)`, margin: '0 0 5px' }}>
+            <p style={{ ...TYPE.label, color: `rgba(${rgb},0.82)`, margin: `0 0 ${SPACING.micro}px` }}>
               Linked factor
             </p>
             <p style={{ ...TYPE.bodySmall, color: 'rgba(245,245,245,0.62)', margin: 0 }}>
@@ -147,91 +192,258 @@ function FactorDetail({ factor, accent, rgb, prefersReduced }) {
 
 function CentreFocal({ block, centreLabel, accent, rgb, prefersReduced }) {
   const centreImage = block.centreImage || block.centerImage
-  const centreImageAlt = block.centreImageAlt || block.centerImageAlt || centreLabel
+  const centreImageAlt = block.centreImageAlt || block.centerImageAlt
 
   return (
     <motion.div
-      initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.92 }}
+      initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.94 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={prefersReduced ? { duration: 0 } : { duration: 0.42, ease: 'easeOut' }}
       style={{
         position: 'absolute',
         left: '50%',
-        top: '50%',
+        top: `${FACTOR_WEB_LAYOUT.focalCenterY}%`,
         translate: '-50% -50%',
-        width: 126,
+        width: FACTOR_WEB_LAYOUT.focalColumnWidth,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        zIndex: 2,
+        zIndex: 3,
       }}
     >
       <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          translate: '-50% -20%',
+          width: FACTOR_WEB_VISUAL.haloSize,
+          height: FACTOR_WEB_VISUAL.haloSize,
+          borderRadius: '50%',
+          background: `rgba(${rgb},${FACTOR_WEB_VISUAL.haloOpacity})`,
+          filter: `blur(${FACTOR_WEB_VISUAL.haloBlur}px)`,
+          opacity: 0.74,
+          pointerEvents: 'none',
+          zIndex: -2,
+        }}
+      />
+
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          translate: '-50% -4%',
+          width: FACTOR_WEB_LAYOUT.focalSize,
+          height: FACTOR_WEB_LAYOUT.focalSize,
+          borderRadius: '50%',
+          background: `radial-gradient(circle, rgba(${rgb},${FACTOR_WEB_VISUAL.haloCoreOpacity}), transparent 68%)`,
+          boxShadow: `0 0 30px rgba(${rgb},0.30)`,
+          pointerEvents: 'none',
+          zIndex: -1,
+        }}
+      />
+
+      <div
         role={centreImage ? undefined : 'img'}
-        aria-label={centreImage ? undefined : `${centreLabel}. Central idea in the factor web.`}
+        aria-label={centreImage ? undefined : `Image placeholder for ${centreLabel}`}
         style={{
           position: 'relative',
-          width: 106,
-          height: 106,
+          width: FACTOR_WEB_LAYOUT.focalSize,
+          height: FACTOR_WEB_LAYOUT.focalSize,
           flexShrink: 0,
           borderRadius: '50%',
           overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          textAlign: 'center',
-          padding: centreImage ? 0 : SPACING.micro,
-          boxSizing: 'border-box',
-          background: centreImage ? 'rgba(8,8,8,0.92)' : `rgba(${rgb},0.07)`,
-          border: `1.5px solid rgba(${rgb},0.72)`,
-          boxShadow: `0 0 0 6px rgba(${rgb},0.035), 0 14px 34px rgba(0,0,0,0.34)`,
+          background: centreImage ? 'rgba(8,8,8,0.94)' : `rgba(${rgb},0.055)`,
+          border: `1.5px ${centreImage ? 'solid' : 'dashed'} rgba(${rgb},0.76)`,
+          boxShadow: `0 0 0 5px rgba(${rgb},0.045), 0 0 26px rgba(${rgb},0.24), 0 16px 36px rgba(0,0,0,0.36)`,
         }}
       >
         {centreImage ? (
           <img
             src={centreImage}
-            alt={centreImageAlt}
+            alt={centreImageAlt || centreLabel}
             style={{
               width: '100%',
               height: '100%',
               objectFit: 'cover',
               objectPosition: block.centreImagePosition || block.centerImagePosition || 'center 22%',
-              filter: 'saturate(0.82) contrast(1.05) brightness(0.82)',
+              filter: 'saturate(0.82) contrast(1.05) brightness(0.84)',
             }}
           />
         ) : (
-          <span style={{
-            ...TYPE.titleMedium,
-            color: `rgba(${rgb},0.94)`,
-          }}>
-            {centreLabel}
-          </span>
+          <FocalPlaceholderGlyph accent={accent} />
         )}
 
         <div
           aria-hidden="true"
           style={{
             position: 'absolute',
-            inset: 4,
+            inset: FACTOR_WEB_LAYOUT.focalRingInset,
             borderRadius: '50%',
-            border: `1px solid rgba(${rgb},0.16)`,
+            border: `1px solid rgba(${rgb},0.20)`,
             pointerEvents: 'none',
           }}
         />
       </div>
 
-      {centreImage && (
-        <div style={{
-          ...TYPE.titleMedium,
-          color: accent,
-          textAlign: 'center',
-          marginTop: 7,
-          maxWidth: 126,
-        }}>
-          {centreLabel}
-        </div>
-      )}
+      <div style={{
+        ...TYPE.titleMedium,
+        color: accent,
+        textAlign: 'center',
+        marginTop: FACTOR_WEB_LAYOUT.focalLabelGap,
+        maxWidth: FACTOR_WEB_LAYOUT.focalColumnWidth,
+      }}>
+        {centreLabel}
+      </div>
     </motion.div>
+  )
+}
+
+function FactorConnector({ entry, slot, accent, rgb, isActive, isExplored, prefersReduced }) {
+  const opacity = isActive
+    ? FACTOR_WEB_VISUAL.connectorActiveOpacity
+    : isExplored
+      ? FACTOR_WEB_VISUAL.connectorExploredOpacity
+      : FACTOR_WEB_VISUAL.connectorIdleOpacity
+
+  const strokeWidth = isActive
+    ? FACTOR_WEB_VISUAL.connectorActiveWidth
+    : FACTOR_WEB_VISUAL.connectorIdleWidth
+
+  const anchorRadius = isActive
+    ? FACTOR_WEB_VISUAL.anchorActiveRadius
+    : FACTOR_WEB_VISUAL.anchorIdleRadius
+
+  const dotStyle = {
+    filter: `drop-shadow(0 0 ${FACTOR_WEB_VISUAL.anchorGlowRadius}px rgba(${rgb},0.58))`,
+  }
+
+  return (
+    <g key={`connector-${entry.factor.id}`}>
+      <motion.path
+        d={getFactorConnectorPath(slot)}
+        stroke={accent}
+        strokeWidth={strokeWidth}
+        fill="none"
+        strokeLinecap="round"
+        initial={{ pathLength: prefersReduced ? 1 : 0, strokeOpacity: 0.12 }}
+        animate={{ pathLength: 1, strokeOpacity: opacity }}
+        transition={prefersReduced
+          ? { duration: 0 }
+          : {
+              pathLength: { delay: 0.16 + entry.originalIndex * 0.06, duration: 0.44, ease: 'easeOut' },
+              strokeOpacity: { duration: 0.2 },
+            }}
+      />
+
+      <motion.circle
+        cx={slot.nodeAnchorX}
+        cy={slot.y}
+        r={anchorRadius}
+        fill={accent}
+        style={dotStyle}
+        initial={{ opacity: prefersReduced ? opacity : 0 }}
+        animate={{ opacity }}
+        transition={prefersReduced ? { duration: 0 } : { delay: 0.30 + entry.originalIndex * 0.06, duration: 0.22 }}
+      />
+
+      <motion.circle
+        cx={slot.focalAnchorX}
+        cy={slot.focalAnchorY}
+        r={anchorRadius}
+        fill={accent}
+        style={dotStyle}
+        initial={{ opacity: prefersReduced ? opacity : 0 }}
+        animate={{ opacity }}
+        transition={prefersReduced ? { duration: 0 } : { delay: 0.36 + entry.originalIndex * 0.06, duration: 0.22 }}
+      />
+    </g>
+  )
+}
+
+function FactorNode({ entry, slot, activeId, explored, onNodeTap, accent, rgb, prefersReduced }) {
+  const factor = entry.factor
+  const isActive = factor.id === activeId
+  const isExplored = explored.has(factor.id)
+  const nodeLabel = factor.shortTitle || factor.title
+
+  return (
+    <motion.button
+      type="button"
+      onClick={() => onNodeTap(factor)}
+      aria-label={`${isExplored ? 'Review' : 'Explore'} ${factor.title}`}
+      aria-pressed={isActive}
+      initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={prefersReduced
+        ? { duration: 0 }
+        : { delay: 0.26 + entry.originalIndex * 0.07, duration: 0.32, ease: 'easeOut' }}
+      style={{
+        position: 'absolute',
+        left: `${slot.x}%`,
+        top: `${slot.y}%`,
+        translate: '-50% -50%',
+        width: FACTOR_WEB_LAYOUT.nodeWidth,
+        minHeight: FACTOR_WEB_LAYOUT.nodeMinHeight,
+        padding: `${SPACING.micro}px ${SPACING.compact}px`,
+        borderRadius: RADII.medium,
+        border: isActive
+          ? `1.5px solid rgba(${rgb},0.82)`
+          : isExplored
+            ? `1px solid rgba(${rgb},0.36)`
+            : '1px solid rgba(255,255,255,0.11)',
+        background: isActive
+          ? `rgba(${rgb},0.11)`
+          : 'rgba(15,14,12,0.84)',
+        color: isActive
+          ? accent
+          : isExplored
+            ? `rgba(${rgb},0.88)`
+            : 'rgba(245,245,245,0.76)',
+        boxShadow: isActive
+          ? `0 0 0 3px rgba(${rgb},0.08), 0 10px 26px rgba(0,0,0,0.30)`
+          : '0 8px 20px rgba(0,0,0,0.18)',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        zIndex: 4,
+        WebkitTapHighlightColor: 'transparent',
+        transition: [
+          `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+          `background ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+          `color ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+          `box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}`,
+        ].join(', '),
+      }}
+    >
+      <span style={{ ...TYPE.bodySmall, color: 'inherit' }}>
+        {nodeLabel}
+      </span>
+
+      {isExplored && (
+        <span
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            right: SPACING.micro,
+            top: SPACING.micro,
+            width: 5,
+            height: 5,
+            borderRadius: '50%',
+            background: accent,
+            boxShadow: `0 0 8px rgba(${rgb},0.42)`,
+          }}
+        />
+      )}
+    </motion.button>
   )
 }
 
@@ -248,38 +460,28 @@ function FactorWebDiagram({
   const activeIndex = factors.findIndex(factor => factor.id === activeId)
   const viewed = exploredIndexes(factors, explored)
   const centreLabel = block.centreLabel || block.centerLabel || DEFAULT_CENTRE_LABELS[block.mode] || 'Key factors'
+  const columns = splitFactorColumns(factors)
+  const entries = [...columns.left, ...columns.right]
 
-  function nodeTransition(index) {
-    if (prefersReduced) return { duration: 0 }
-    return { delay: 0.3 + index * 0.08, duration: 0.32, ease: 'easeOut' }
-  }
+  const slots = new Map()
+  columns.left.forEach((entry, index) => {
+    slots.set(entry.factor.id, getFactorSlot('left', index, columns.left.length))
+  })
+  columns.right.forEach((entry, index) => {
+    slots.set(entry.factor.id, getFactorSlot('right', index, columns.right.length))
+  })
 
   return (
     <>
       <div style={{
         position: 'relative',
         width: '100%',
-        maxWidth: 360,
-        aspectRatio: '1 / 1.04',
+        maxWidth: FACTOR_WEB_LAYOUT.canvasMaxWidth,
+        aspectRatio: FACTOR_WEB_LAYOUT.canvasAspectRatio,
         margin: '0 auto',
       }}>
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            translate: '-50% -50%',
-            width: '72%',
-            aspectRatio: '1',
-            borderRadius: '50%',
-            background: `radial-gradient(circle, rgba(${rgb},0.07) 0%, rgba(${rgb},0.025) 38%, transparent 70%)`,
-            pointerEvents: 'none',
-          }}
-        />
-
         <svg
-          viewBox="0 0 100 104"
+          viewBox="0 0 100 100"
           aria-hidden="true"
           style={{
             position: 'absolute',
@@ -288,45 +490,23 @@ function FactorWebDiagram({
             height: '100%',
             overflow: 'visible',
             pointerEvents: 'none',
+            zIndex: 1,
           }}
         >
-          <circle cx="50" cy="52" r="23" fill="none" stroke={accent} strokeWidth="0.28" opacity="0.10" />
-          <circle cx="50" cy="52" r="34" fill="none" stroke={accent} strokeWidth="0.22" opacity="0.06" />
-
-          {factors.map((factor, index) => {
-            const position = getFactorNodePosition(index, factors.length)
-            const connector = getFactorConnector(position)
-            const isActive = factor.id === activeId
-            const isExplored = explored.has(factor.id)
-            const opacity = isActive ? 0.82 : isExplored ? 0.56 : 0.24
-
+          {entries.map(entry => {
+            const factor = entry.factor
+            const slot = slots.get(factor.id)
             return (
-              <g key={factor.id}>
-                <motion.path
-                  d={`M ${connector.start.x} ${connector.start.y} L ${connector.end.x} ${connector.end.y}`}
-                  stroke={accent}
-                  strokeWidth={isActive ? '0.72' : '0.48'}
-                  fill="none"
-                  strokeLinecap="round"
-                  initial={{ pathLength: prefersReduced ? 1 : 0, strokeOpacity: 0.12 }}
-                  animate={{ pathLength: 1, strokeOpacity: opacity }}
-                  transition={prefersReduced
-                    ? { duration: 0 }
-                    : {
-                        pathLength: { delay: 0.18 + index * 0.06, duration: 0.42, ease: 'easeOut' },
-                        strokeOpacity: { duration: 0.2 },
-                      }}
-                />
-                <motion.circle
-                  cx={connector.end.x}
-                  cy={connector.end.y}
-                  r={isActive ? 1.45 : 1.05}
-                  fill={accent}
-                  initial={{ opacity: prefersReduced ? opacity : 0, scale: prefersReduced ? 1 : 0.7 }}
-                  animate={{ opacity, scale: 1 }}
-                  transition={prefersReduced ? { duration: 0 } : { delay: 0.34 + index * 0.06, duration: 0.22 }}
-                />
-              </g>
+              <FactorConnector
+                key={factor.id}
+                entry={entry}
+                slot={slot}
+                accent={accent}
+                rgb={rgb}
+                isActive={factor.id === activeId}
+                isExplored={explored.has(factor.id)}
+                prefersReduced={prefersReduced}
+              />
             )
           })}
         </svg>
@@ -339,84 +519,19 @@ function FactorWebDiagram({
           prefersReduced={prefersReduced}
         />
 
-        {factors.map((factor, index) => {
-          const position = getFactorNodePosition(index, factors.length)
-          const isActive = factor.id === activeId
-          const isExplored = explored.has(factor.id)
-          const nodeLabel = factor.shortTitle || factor.title
-
-          return (
-            <motion.button
-              key={factor.id}
-              type="button"
-              onClick={() => onNodeTap(factor)}
-              aria-label={`${isExplored ? 'Review' : 'Explore'} ${factor.title}`}
-              aria-pressed={isActive}
-              initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={nodeTransition(index)}
-              style={{
-                position: 'absolute',
-                left: `${position.x}%`,
-                top: `${position.y}%`,
-                translate: '-50% -50%',
-                width: 'clamp(84px, 23vw, 98px)',
-                minHeight: 54,
-                padding: `${SPACING.micro}px 8px`,
-                borderRadius: RADII.medium,
-                border: isActive
-                  ? `1.5px solid rgba(${rgb},0.82)`
-                  : isExplored
-                    ? `1px solid rgba(${rgb},0.38)`
-                    : '1px solid rgba(255,255,255,0.11)',
-                background: isActive
-                  ? `rgba(${rgb},0.12)`
-                  : 'rgba(15,14,12,0.82)',
-                color: isActive
-                  ? accent
-                  : isExplored
-                    ? `rgba(${rgb},0.90)`
-                    : 'rgba(245,245,245,0.76)',
-                boxShadow: isActive
-                  ? `0 0 0 3px rgba(${rgb},0.09), 0 10px 28px rgba(0,0,0,0.30)`
-                  : '0 8px 22px rgba(0,0,0,0.20)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                zIndex: 3,
-                WebkitTapHighlightColor: 'transparent',
-                transition: [
-                  `border-color ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-                  `background ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-                  `color ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-                  `box-shadow ${MOTION.duration.fast} ${MOTION.easing.standard}`,
-                ].join(', '),
-              }}
-            >
-              <span style={{ ...TYPE.label, color: 'inherit' }}>
-                {nodeLabel}
-              </span>
-
-              {isExplored && (
-                <span
-                  aria-hidden="true"
-                  style={{
-                    position: 'absolute',
-                    right: 7,
-                    top: 7,
-                    width: 5,
-                    height: 5,
-                    borderRadius: '50%',
-                    background: accent,
-                    boxShadow: `0 0 8px rgba(${rgb},0.42)`,
-                  }}
-                />
-              )}
-            </motion.button>
-          )
-        })}
+        {entries.map(entry => (
+          <FactorNode
+            key={entry.factor.id}
+            entry={entry}
+            slot={slots.get(entry.factor.id)}
+            activeId={activeId}
+            explored={explored}
+            onNodeTap={onNodeTap}
+            accent={accent}
+            rgb={rgb}
+            prefersReduced={prefersReduced}
+          />
+        ))}
       </div>
 
       <div style={{
@@ -534,7 +649,7 @@ function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent
                 paddingTop: SPACING.compact,
                 borderTop: '1px solid rgba(255,255,255,0.07)',
               }}>
-                <p style={{ ...TYPE.label, color: accent, margin: '0 0 5px' }}>
+                <p style={{ ...TYPE.label, color: accent, margin: `0 0 ${SPACING.micro}px` }}>
                   Thinking tip
                 </p>
                 <p style={{ ...TYPE.bodySmall, color: 'rgba(245,245,245,0.62)', margin: 0 }}>
@@ -557,9 +672,9 @@ function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent
 }
 
 // ── FactorWeb ────────────────────────────────────────────────────────────────
-// A mobile-first causation and judgement screen. Learners explore short factor
-// nodes around a central historical focal point, read the fuller teaching
-// beneath, then choose and justify the factor they consider most important.
+// A mobile-first causation and judgement screen. Factors sit in two balanced
+// columns around one historical focal image (or a governed image placeholder),
+// then expand into teaching and a supported relative-importance judgement.
 export default function FactorWeb({ block, subject = 'History', onContinue }) {
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const accent = theme.accent
@@ -577,8 +692,6 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
   const activeFactor = factors.find(factor => factor.id === activeId)
   const isJudgement = phase === 'judgement'
 
-  // Route-B interaction screens own their internal scroller. Always enter a
-  // FactorWeb phase at its heading rather than inheriting a stale scroll offset.
   useEffect(() => {
     const node = scrollRef.current
     if (!node) return
@@ -594,15 +707,11 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
     setExplored(previous => new Set([...previous, factor.id]))
   }
 
-  // Legacy `kicker` values are promoted to the main heading rather than
-  // rendered as a separate eyebrow. New content should use `title`.
   const explorationHeading = getFactorWebTitle(block)
   const heading = isJudgement
     ? (block.judgementTitle || 'Which factor mattered most?')
     : explorationHeading
 
-  // A short paragraph is allowed when context is useful. Long legacy
-  // taskPrompt copy is treated as supporting text, never as a screen title.
   const intro = isJudgement
     ? (block.judgementInstruction || block.taskPrompt || 'Choose one factor, then explain your judgement.')
     : (block.instruction || 'Explore each factor. Then decide which mattered most.')
