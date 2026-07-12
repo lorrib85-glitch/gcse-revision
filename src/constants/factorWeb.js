@@ -28,6 +28,7 @@ export const FACTOR_WEB_LAYOUT = Object.freeze({
     2: Object.freeze([41, 51]),
     3: Object.freeze([38, 46, 54]),
   }),
+  connectorControlOffset: 4,
 })
 
 export const FACTOR_WEB_VISUAL = Object.freeze({
