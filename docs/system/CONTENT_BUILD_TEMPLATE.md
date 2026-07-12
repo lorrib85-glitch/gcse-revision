@@ -5,10 +5,20 @@
 docs own section structure; this doc owns the rhythm and quality floor
 *inside* the sections. Where they conflict, the locked architecture wins.
 
-**Companion docs:** `docs/system/component-contracts/` (per-component
-execution standards), `src/data/componentFunctions.js` (function-tag
-taxonomy), `tests/architecture/content-quality.test.js` (machine-checked
-floor).
+**Companion docs:** `docs/system/PATTERN_GOVERNANCE.md` (the taxonomy chain,
+the one-primary-intent rule, and the review-to-rebuild pathway),
+`docs/system/component-contracts/` (per-component execution standards),
+`docs/system/GOLD_SCREEN_REGISTER.md` (the named composed gold example per
+component), `src/data/componentFunctions.js` (function-tag taxonomy),
+`tests/architecture/content-quality.test.js` (machine-checked floor).
+
+**One pathway for all content work:** canonical objective → review decision
+(Keep / Refine / Rebuild / Split / Cut) → amendment brief →
+`content-create` implementation → composed render comparison → independent
+post-build approval. New builds run `/content-create`; auditing and improving
+built content runs `/content-review`, which writes the briefs `content-create`
+implements and then re-audits the result independently. Both skills exist and
+enforce this template and `PATTERN_GOVERNANCE.md`.
 
 ## Governing principle
 

@@ -52,7 +52,15 @@ Story-unit rhythm and machine-checked quality floor for all module content. Laye
 
 `docs/system/PATTERN_GOVERNANCE.md`
 
-Governs how every element is placed on a learning screen: the taxonomy chain (learning objective → screen intent → approved component → execution contract → gold example), the one-primary-intent hard rule, the intent→component map, the 9-field contract format, and the mandatory render pass. Sits above `docs/system/component-contracts/`. Enforced by the content-create/content-review skills and the Workflow C/E critique gate.
+Governs how every element is placed on a learning screen: the taxonomy chain (learning objective → screen intent → approved component → execution contract → gold example), the one-primary-intent hard rule, the intent→component map, the 9-field contract format, the mandatory render pass, and the review-to-rebuild pathway. Sits above `docs/system/component-contracts/`. Enforced by the content-create/content-review skills and the Workflow C/E critique gate.
+
+---
+
+### 1f. Gold Screen Register
+
+`docs/system/GOLD_SCREEN_REGISTER.md`
+
+The calibration layer under Pattern Governance and the component contracts. For each governed component it names the one composed runtime screen — verified at 390px in the real render path — that every content review and rebuild is measured against, plus a below-bar counterexample. A screen may only be named gold after its composed render has been reviewed; where none clears the bar the register says "No verified composed gold example yet" and treats creating one as explicit debt. Consumed by the content-create build chain and the content-review render pass.
 
 ---
 
