@@ -367,19 +367,19 @@ export const episode = {
         opening: 'Vesalius helps you show what changed and what did not.',
         tips: [
           {
-            heading: 'Name the method',
-            body: 'He cut open human bodies and checked Galen.',
+            heading: 'Method',
+            body: 'Vesalius dissected real human bodies and tested Galen’s ideas.',
           },
           {
-            heading: 'Name printing',
-            body: 'Printed pictures spread the new anatomy.',
+            heading: 'Spread',
+            body: 'Printing helped accurate anatomical drawings reach doctors across Europe.',
           },
           {
-            heading: 'Add the limit',
-            body: 'Doctors still bled patients after Vesalius.',
+            heading: 'Limit',
+            body: 'Knowledge changed before treatment. Doctors still used bloodletting and purging.',
           },
         ],
-        closing: 'Explain both change and limits.',
+        closing: 'For full marks, explain both the change and its limits.',
       },
     },
   ],
