@@ -19,8 +19,8 @@ argument-hint: "<module id or episode title> [stage name | screen range] [audit-
 Audits a built episode against the content quality framework, assigns each
 screen a decision, and writes the amendment briefs `content-create`
 implements — then approves the result independently. Runs in Lane C after
-`/gcse-triage`. Pass `audit-only` to stop after the findings report (no
-briefs acted on, no code changes).
+`/gcse-triage`. Pass `audit-only` to stop after the findings report with
+**zero repository writes** — no briefs acted on, no code changes.
 
 This is the **diagnose-and-approve** half of the governed review-to-rebuild
 pipeline specified in
@@ -65,10 +65,35 @@ never the same as "approved".
   (`12-18`): review only that slice. A stage is the realistic unit of work
   — prefer "review the Galen stage" over a whole-episode audit when the
   user names a specific area.
-- `audit-only`: report findings and stop. Without it, the skill still
-  **checkpoints by default** — see "Stop for confirmation" below — so
-  `audit-only` mainly matters for pre-authorising the amend step in the
-  invocation itself.
+- `audit-only`: report findings in the task response and stop with zero
+  repository writes — no review log, backlog entry, fixture update, generated
+  report, documentation edit, or code change. Persist findings only when
+  explicitly requested or when running an approved review-and-fix workflow.
+  Without it, the skill still **checkpoints by default** — see "Stop for
+  confirmation" below — so `audit-only` mainly matters for pre-authorising the
+  amend step in the invocation itself.
+
+## Visual-review authority hierarchy
+
+For visual-quality review of in-module learning screens, use this precedence
+when docs appear to conflict:
+
+1. `docs/system/PATTERN_GOVERNANCE.md` — learning intent, screen structure,
+   component selection, execution contracts, gold examples, and render-pass
+   requirements.
+2. `docs/system/PRODUCT_UI_CONSTITUTION.md` — product-wide visual laws,
+   interaction principles, layout, imagery, motion, and product identity.
+3. `docs/system/TYPOGRAPHY_SYSTEM.md` — type roles, hierarchy, font usage,
+   label case, uppercase exceptions, and text presentation.
+4. `docs/system/SUBJECT_THEME_SYSTEM.md` — subject identity, approved accent
+   use, colour budgets, and subject-specific presentation.
+5. `BRAND.md` — supporting expression and legacy reference guidance; it must
+   not override the canonical systems above.
+
+This hierarchy allows a reviewer to consult brand, typography, subject-theme
+and product-UI governance during content review. It does **not** authorise a
+new visual system, broad redesign, `/frontend-design`, new tokens, or visual
+changes outside approved component and token systems.
 
 ## Required reading
 
@@ -87,8 +112,12 @@ never the same as "approved".
 6. `docs/system/GOLD_SCREEN_REGISTER.md` — the named gold example (and
    below-bar counterexample) for every component reviewed; the render pass
    compares against these, not against taste.
-7. The episode's previous review log, if one exists (see Review log below)
-   — findings marked deferred there are first-class inputs to this review.
+7. For the visual-quality pass only, consult the authority hierarchy above as
+   needed to resolve interpretation, exceptions or disputed findings. Do not
+   bulk-read unrelated design docs when the compact checklist below is enough.
+8. The episode's previous review log, if one exists (see Review log below)
+   — findings marked deferred there are first-class inputs to this review. In
+   `audit-only` mode, read it if present but do not create or update it.
 
 ### Degraded mode
 
@@ -170,13 +199,16 @@ dimensions, each reported separately — **never averaged**:
    willingly continue? Apply the deletion test to every screen: would
    removing it noticeably reduce understanding, retention or motivation?
 
-Then five technical passes: **hardcoded values** (tokens from
-`src/constants/` only), **image quality** (paths resolve, `.webp`
-preferred, subject-appropriate), **UX design** (hierarchy/white
-space/subject branding per the token systems), **canonical coverage**
-(two-way diff against the canonical content file — gaps listed by
-canonical section, unsourced content flagged; skipped in degraded mode),
-and **readability + sentence case** (run
+Then five technical passes: **token and raw-value governance** (approved
+typography, colour, spacing, radius and motion tokens from `src/constants/`;
+no unexplained raw presentation values), **image quality** (asset resolves,
+the intended asset is used, it follows the approved asset pipeline, and
+cropping/sizing/mobile presentation render at suitable quality; do not flag or
+approve solely by file extension unless the canonical asset system requires
+that format), **mechanical visual quality** (run the checklist below),
+**canonical coverage** (two-way diff against the canonical content file — gaps
+listed by canonical section, unsourced content flagged; skipped in degraded
+mode), and **readability + sentence case** (run
 `node scripts/check-content-quality.mjs <module-id>` — a live, per-screen
 check against this one module, with no pre-registration required; report
 every violation it prints, then apply "plain language around the
@@ -187,6 +219,69 @@ floor (`tests/architecture/content-quality.test.js`) — it has no
 allowlist, so it reports every violation on this module even if that
 module is grandfathered there; don't skip a finding because the module
 happens to be on that separate list.
+
+
+### Mechanical visual-quality checklist
+
+Run these checks on each rendered screen in scope. Findings should name the
+observable failure, not a personal style preference.
+
+**Typography and hierarchy**
+
+- Each screen must have one unmistakable primary title. Supporting headings,
+  lead copy and labels must remain visually subordinate; adjacent elements
+  must not compete through similar size, weight or contrast.
+- Display typography is reserved for genuine hierarchy and approved cinematic
+  uses. Ordinary labels, instructions and supporting content do not use display
+  styling.
+- Body and supporting copy use approved typography roles or tokens. Existing
+  typography tokens must be used; new hardcoded type values are not acceptable
+  without an approved system change.
+- Identify competing font weights, sizes, contrast or spacing even where every
+  individual token is technically permitted.
+
+**Casing**
+
+- Learning-screen titles, section headings, instructional copy, key points and
+  decorative labels use sentence case.
+- Uppercase is permitted only where it serves a genuine compact scanning or
+  notation function, such as approved metadata, navigation, short chips,
+  diagram labels, axes or established abbreviations.
+- Uppercase must not be introduced merely to make ordinary headings or labels
+  feel more important. Product-specific exceptions must be documented rather
+  than inferred.
+
+**Screen composition**
+
+- Preserve Pattern Governance's one-primary-intent rule; do not create a
+  competing definition.
+- The 390px mobile viewport has a clear reading order, no avoidable clipping,
+  crowding, or poor vertical balance, and supporting content does not visually
+  overpower the learning interaction or main explanation.
+- No unnecessary decorative eyebrow, stacked card-inside-card presentation, or
+  excessive visual containers competing for attention.
+- Cinematic introductions are allowed when they use approved display typography
+  and restrained subject styling; do not force them into a standard content-card
+  layout unless they fail the objective, intent, contract or render checks.
+
+**Tokens and subject identity**
+
+- Subject identity follows `SUBJECT_THEME_SYSTEM.md`: colour supports identity,
+  hierarchy, meaning, selected state or progress rather than decorating every
+  element.
+- Dark backgrounds create atmosphere and legibility, not generic decoration.
+  Glow and accent effects remain restrained and purposeful.
+- Screens must not drift into generic black/neon AI-dashboard styling.
+
+**Interaction and component use**
+
+- Retain the objective-match, one-primary-intent, approved-component,
+  execution-contract, meaningful-interaction, feedback/progression, mobile
+  behaviour and asset-resolution checks above.
+- Do not merge components that Pattern Governance intentionally keeps separate
+  (for example, `KeyPoint` and `WorkedExample`). If a fix requires a new
+  component or visual language, report the issue and escalate instead of
+  inventing an ungoverned solution.
 
 ### The render pass (mandatory for every 👁 check)
 
@@ -307,9 +402,10 @@ reason it helps.
 
 ## Review log
 
-Write findings to a persisted per-episode log:
+Unless running `audit-only`, write findings to a persisted per-episode log:
 `docs/content/<subject>/<series>/<NN>_Review_Log.md` (matching the
-`NN_` canonical-file naming). Create it if it doesn't exist. Append
+`NN_` canonical-file naming). Create it if it doesn't exist outside
+`audit-only`. Append
 entries **newest-first**, each with:
 
 - date, session scope (full episode / stage / screen range), canonical
@@ -324,7 +420,7 @@ entries **newest-first**, each with:
 - the Stage-C independent re-audit result and any named trade-off —
   "implemented" and "approved" logged as separate facts
 
-Read the previous entry (if any) before auditing. A finding marked
+Read the previous entry (if any) before auditing; in `audit-only`, this is read-only context. A finding marked
 "deferred" in a prior entry is a first-class input this time — don't
 re-discover it from scratch, and don't let it silently drop.
 
@@ -333,10 +429,10 @@ re-discover it from scratch, and don't let it silently drop.
 Present the findings report **and the amendment briefs**, then **stop for
 user confirmation before any amendment begins** — this is the default, not
 just what `audit-only` produces. `audit-only` remains available for
-report-only runs, and the user can pre-authorise the amend step in the
-invocation ("review and fix the Galen stage"). **The briefs must exist and
-be confirmed before implementation** — a decision without a confirmed brief
-does not authorise editing.
+report-only runs and means zero repository writes, and the user can
+pre-authorise the amend step in the invocation ("review and fix the Galen
+stage"). **The briefs must exist and be confirmed before implementation** — a
+decision without a confirmed brief does not authorise editing.
 
 ## Implementation is `content-create` (Stage B — not this skill)
 
@@ -391,8 +487,9 @@ approval stage, and it is deliberately not the same act as building:
   gap instead.
 - A concept is never treated as taught if it was only tested.
 - Two competing accent boxes, two header styles for the same screen kind,
-  or a second "key point" on one screen are governance failures, not style
-  preferences — flag them as such, not as suggestions.
+  competing adjacent typography, or a second "key point" on one screen are
+  governance failures, not style preferences — flag them as such, not as
+  suggestions.
 - A generic shell, local screen-heading treatment, or ad-hoc vertical rhythm
   on a screen an approved composition route already covers is a governance
   failure — flag it, don't accept it as an existing pattern.

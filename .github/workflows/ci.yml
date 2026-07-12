@@ -24,6 +24,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # The storybook project runs under the Vitest Playwright browser
+      # provider; the runner image doesn't ship the Chromium build Playwright
+      # drives, so install it (with its OS deps) before test:storybook.
+      - run: pnpm exec playwright install --with-deps chromium
+
       # Mirrors `pnpm verify`, as separate steps so a failure's gate is
       # visible directly in the Actions UI instead of buried mid-log.
       - run: pnpm lint
