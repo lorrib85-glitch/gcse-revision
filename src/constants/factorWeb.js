@@ -37,13 +37,15 @@ export const FACTOR_WEB_VISUAL = Object.freeze({
   haloOpacity: 0.22,
   haloCoreOpacity: 0.11,
 
-  connectorIdleOpacity: 0.24,
-  connectorExploredOpacity: 0.54,
-  connectorActiveOpacity: 0.82,
-  connectorIdleWidth: 0.44,
-  connectorActiveWidth: 0.68,
+  // Connectors should support the composition, not compete with the focal image.
+  connectorIdleOpacity: 0.13,
+  connectorExploredOpacity: 0.28,
+  connectorActiveOpacity: 0.52,
+  connectorIdleWidth: 0.30,
+  connectorActiveWidth: 0.46,
 
-  anchorIdleRadius: 1.0,
-  anchorActiveRadius: 1.35,
-  anchorGlowRadius: 7,
+  // Only node-side anchor dots are shown. Lines meet the centre ring cleanly.
+  anchorIdleRadius: 0.85,
+  anchorActiveRadius: 1.15,
+  anchorGlowRadius: 5,
 })
