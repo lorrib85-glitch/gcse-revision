@@ -36,9 +36,8 @@ function exploredIndexes(factors, explored) {
 }
 
 function FactorDetail({ factor, accent, rgb, prefersReduced }) {
-  const instant = { duration: 0 }
   const transition = prefersReduced
-    ? instant
+    ? { duration: 0 }
     : { duration: 0.28, ease: 'easeOut' }
 
   return (
@@ -193,9 +192,8 @@ function FactorWebDiagram({
             position: 'absolute',
             left: '50%',
             top: '50%',
-            // Use the independent CSS translate property rather than transform.
-            // Framer Motion owns transform for scale, so transform: translate(...)
-            // was being overwritten and shifting the centre down/right.
+            // Framer Motion owns transform for scale, so centring uses the
+            // independent CSS translate property.
             translate: '-50% -50%',
             width: 94,
             height: 94,
@@ -239,8 +237,6 @@ function FactorWebDiagram({
                 position: 'absolute',
                 left: `${position.x}%`,
                 top: `${position.y}%`,
-                // Keep centring independent from Framer Motion's transform-based
-                // scale animation. This prevents right-side clipping.
                 translate: '-50% -50%',
                 width: 'clamp(86px, 24vw, 102px)',
                 minHeight: 58,
@@ -467,8 +463,7 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
   const isJudgement = phase === 'judgement'
 
   // Route-B interaction screens own their internal scroller. Always enter a
-  // FactorWeb phase at its heading rather than inheriting a stale scroll offset
-  // from the previous screen or the exploration phase.
+  // FactorWeb phase at its heading rather than inheriting a stale scroll offset.
   useEffect(() => {
     const node = scrollRef.current
     if (!node) return
@@ -484,9 +479,12 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
     setExplored(previous => new Set([...previous, factor.id]))
   }
 
+  // Legacy `kicker` values are promoted to the main heading rather than
+  // rendered as a separate eyebrow. New content should use `question` only.
+  const explorationHeading = block.title || block.kicker || block.question
   const heading = isJudgement
     ? (block.taskPrompt || 'Which factor mattered most?')
-    : block.question
+    : explorationHeading
 
   const intro = isJudgement
     ? (block.judgementInstruction || 'Choose one factor, then explain your judgement.')
@@ -507,16 +505,6 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.standard }}>
           <header>
-            {(isJudgement || block.kicker) && (
-              <p style={{
-                ...TYPE.label,
-                color: accent,
-                margin: `0 0 ${SPACING.micro}px`,
-              }}>
-                {isJudgement ? 'Make your judgement' : block.kicker}
-              </p>
-            )}
-
             <ScreenTitle style={{ margin: 0 }}>
               {heading}
             </ScreenTitle>
