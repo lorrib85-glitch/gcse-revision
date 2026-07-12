@@ -57,10 +57,10 @@ and verified; `◑` = partial (see notes); `✗` = absent (explicit debt).
 | `conceptReveal` | ✗ | ✗ | ✗ | ✓ Ep1 s27 | ✓ Ep3 s2 | ⚙ taxonomy + quality floor · 👁 register review questions |
 | `visualLearning` | ✗ | ✗ | ✗ | ✓ Ep1 s11 | ✓ Ep3 s1 | ⚙ taxonomy + repetition limit · 👁 register review questions |
 | `keyFigureReveal` | ✓ 3-part | ✗ | ✗ | ✓ Ep1 s7 | ✓ Ep3 s7 | contract failure modes · 👁 register review questions |
-| `quickRecall` | ✓ 3-part | ✗ | ✗ | ◑ cover state only | ✓ Ep3 s3/s6/s13 | ⚙ weakness-tracker logging · 👁 register review questions |
+| `quickRecall` | ✓ 3-part | ✗ | ✗ | ✓ Ep1 s5 (question + feedback states) | ✓ Ep3 s3/s6/s13 | ⚙ weakness-tracker logging · 👁 register review questions |
 | `matchingTask` | ✓ 3-part | ✗ | ✗ | ✓ Ep1 s17 | ✓ Ep3 s9 | contract failure modes · 👁 register review questions |
 | `naturalSupernaturalSwipe` | ✗ | ✗ | ✗ | ✓ Ep1 s23 | ✓ Ep3 s12 | ⚙ taxonomy (classify) · 👁 register review questions |
-| `examinerExplains` | ✗ | ✗ | ✗ | ◑ opening reveal only | ✓ Ep3 s14 | ⚙ exam-technique follow-through · 👁 register review questions |
+| `examinerExplains` | ✗ | ✗ | ✗ | ✓ Ep1 s30 (opening + full payload) | ✓ Ep3 s14 | ⚙ exam-technique follow-through · 👁 register review questions |
 | `faceExaminer` | ✗ | ✗ | ✗ | ✓ Ep1 s31 | ✓ Ep3 s15 | ⚙ exam-technique · 👁 register review questions |
 
 `Ep1` = `history-medicine-medieval-beliefs-causes`; `Ep3` =
@@ -81,16 +81,15 @@ runtime; its per-screen findings are in
   `WorkedExample`, `MediaPlaceholder` and for `SymptomQualityDiagnostic`,
   `EvacuationChainRoute`, `ConnectionMap`, `MedievalDiagnosisScene`,
   `QuoteAnalyser` — none of the eight priority learning components.)
-- **Verified composed gold: 6 of 8 fully verified** (`conceptReveal`,
-  `visualLearning`, `keyFigureReveal`, `matchingTask`,
-  `naturalSupernaturalSwipe`, `faceExaminer`). **2 partial**
-  (`quickRecall` — cover/transition state captured, not the question state;
-  `examinerExplains` — opening word-reveal captured, not the full teaching
-  payload). Capturing the missing states is **render-verification debt**.
+- **Verified composed gold: 8 of 8 fully verified.** The two former `◑`
+  entries were cleared by the 2026-07-12 gold audit: `quickRecall`'s
+  question and wrong-answer feedback states, and `examinerExplains`' full
+  progressively-revealed payload, were rendered at 390px in the composed
+  render path (seeded module state + reduced motion render straight to the
+  governed states) and both clear their contract bars.
 
 Each `✓` composed-gold entry below was seated from a 390px render taken in
-the composed render path via the dev screen-jump. The two `◑` entries record
-exactly which state was and was not seen.
+the composed render path via the dev screen-jump.
 
 ---
 
@@ -194,16 +193,17 @@ exactly which state was and was not seen.
   logging every answer to the weakness tracker (retrieve, assessed).
 - **Strongest Storybook story:** none — story debt.
 - **Strongest composed runtime use:** `history-medicine-medieval-beliefs-causes`
-  "Hippocrates — quick check" (the bar named in
-  `component-contracts/quick-recall.md`). **◑ Render note:** the 390px pass
-  in this session captured a `quickRecall` **cover/transition state** only
-  (screen 6, "His name was Galen") — the assessed **question state**, which
-  is what the contract's copy standards actually govern, was not captured.
-  **The question-state 390px render is render-verification debt** (it sits
-  behind a tap the screen-jump lands before). The gold is provisionally
-  seated on the contract's source-level bar; it is not fully composed-render
-  verified. Do not treat it as fully `✓` until the question state is seen.
-- **Why it is the current gold example (source-level):** every question
+  screen **5** ("What did Hippocrates believe caused illness?" — the
+  Hippocrates quick check named in `component-contracts/quick-recall.md`).
+  Verified at 390px (2026-07-12 gold audit): **question state** — one
+  dominant display-type question, four equally-weighted plausible options
+  (three period-plausible supernatural distractors against the taught
+  natural-causes fact, no joke option), generous negative space, nothing
+  competing; **wrong-answer feedback state** — the wrong option marks red
+  with a ✗ while the "Try again" hint re-teaches by pointing at the
+  reasoning ("Think about what made Hippocrates different from many people
+  of his time"), never giving the answer away.
+- **Why it is the current gold example:** every question
   retrieves exactly what the preceding beats taught; distractors are
   plausible period misconceptions, never joke options; hints point at the
   reasoning, not the answer.
@@ -222,7 +222,6 @@ exactly which state was and was not seen.
   path that bypasses `unifiedWeaknessTracker.js`.
 - **390px review questions:** Is the question legible and single? Are all
   options plausible (no joke option)? Does wrong-answer feedback re-teach?
-  *(Requires the question-state render — currently debt.)*
 
 ## `matchingTask`
 
@@ -291,16 +290,21 @@ exactly which state was and was not seen.
   (exam-technique, passive).
 - **Strongest Storybook story:** none — story debt.
 - **Strongest composed runtime use:** `history-medicine-medieval-beliefs-causes`
-  screen **30**. **◑ Render note:** the 390px pass captured the **opening
-  word-reveal state only** ("Here's what examiners actually reward") — the
-  full examiner-teaching payload reveals progressively and was not captured
-  (the Episode 2 review log hit the same word-reveal timing artefact on its
-  `examinerExplains` screen). **The full-content 390px render is
-  render-verification debt.** Do not treat this as fully `✓` until the
-  revealed teaching is seen.
-- **Why it is the current gold example (opening-state only):** the examiner
-  framing lands cleanly and sets up the exam-technique beat; full
-  verification pending.
+  screen **30**. Verified at 390px (2026-07-12 gold audit): the opening
+  word-reveal ("Here's what examiners actually reward") **and the full
+  tap-through payload** — "What the examiner rewards" with three
+  progressively revealed points ("Use the exact terms", "Explain the logic,
+  not just the fact", "Link cause to treatment").
+- **Why it is the current gold example:** the payload is mark-scheme
+  specific, not generic advice — it names the exact terms that earn marks
+  (four humours, miasma, Theory of Opposites, bloodletting) and models the
+  full causal chain (illness = imbalance → treatment restores balance →
+  bloodletting follows logically). Hierarchy stays clean across every
+  reveal stage: one amber section heading, bold point titles, body copy
+  visibly subordinate, one container with no box-in-a-box. It hands off
+  directly to the assessed `faceExaminer` at screen 31 (the ⚙
+  follow-through floor). One noted softness, not bar-affecting: the
+  "Tap to continue" affordance is very low-contrast at 390px.
 - **Below-bar counterexample:** `history-medicine-renaissance-medicine`
   screen **14** ("Examiner tactics"), per the Ep3 review log — readability
   7.5 over the ceiling, the stage title fails sentence case, and the
@@ -315,8 +319,8 @@ exactly which state was and was not seen.
   exam-technique component after it (⚙ floor violation); readability creep in
   mark-scheme prose; a word-reveal slow enough to frustrate.
 - **390px review questions:** Does the examiner framing land quickly? Is it
-  followed by an assessed exam-technique screen? *(The full revealed-content
-  render is debt.)*
+  followed by an assessed exam-technique screen? Is every revealed point
+  mark-scheme specific rather than generic advice?
 
 ## `faceExaminer`
 
@@ -347,6 +351,176 @@ exactly which state was and was not seen.
 - **390px review questions:** Is the question dominant and legible? Are the
   marks shown? Is the model-answer CTA visible without scrolling? Is the
   question in scope and in the board's question-type shape?
+
+---
+
+## Second wave — 2026-07-12 gold audit (contact-sheet sweep)
+
+A structural sweep of all 31 built modules (~370 screens) ranked every
+screen type by usage. Five further patterns were seated from composed 390px
+renders (contact-sheet tool + tap-through states); one was **refused** with
+named findings; the rest are explicit debt, ranked below.
+
+| Pattern | Uses | Composed runtime gold | Notes |
+|---|---|---|---|
+| composed teach screen (`TeachScreenShell`) | 1 of 273 `content` screens | ✓ Ep1 s8 | see adoption debt below |
+| `priorKnowledgeRecall` | 6 | ✓ Ep2 s0 | |
+| `interactiveImage` | 7 | ✓ Ep1 s4 | intro + explore + hotspot sheet verified |
+| `factorWeb` | 2 | ✓ `history-medicine-vesalius-beginning-doubt` s7 | initial + explored-detail verified |
+| `visualNarrative` | 6 | ✓ Ep1 s0 | beats 1–2 verified; later beats unseen |
+| `guidedExamResponse` | 4 | ✗ **refused** | named findings below — do not copy Ep1 s32 as a bar |
+
+### Composed teach screen — `TeachScreenShell` route
+
+- **Learning intent:** teach one concept through the governed Route A
+  composition — shell-owned heading, rhythm and slot order.
+- **Strongest composed runtime use:** `history-medicine-medieval-beliefs-causes`
+  screen **8** ("Galen treated with opposites"). Verified at 390px.
+- **Why it is the current gold example:** one dominant `TYPE.displayScreen`
+  heading; one supporting paragraph that carries the full causal chain
+  (dominant humour → illness → opposite qualities restore balance) and stays
+  visibly subordinate; one evidence image (the four-humours quadrant with a
+  staged "Building the theory…" reveal) directly under the teaching it
+  supports; one full-width Continue. No box-in-a-box, one container level,
+  generous breathing room.
+- **Below-bar counterexample:** none render-reviewed yet for this route —
+  the class failure it guards against is the generic-shell teach screen
+  (ad-hoc `ScreenTitle` + hand-spaced blocks), which is what the other 272
+  `content` screens use. Recording a specific reviewed counterexample is
+  open debt.
+- **390px review questions:** Is the heading the shell's token, unmodified?
+  Is exactly one concept taught? Does the image sit inside the teaching
+  flow rather than decorating it? Is the paragraph under ~5 lines?
+
+### `priorKnowledgeRecall`
+
+- **Learning intent:** open a chapter by free-recalling the previous
+  chapter's content, scored and logged to the weakness tracker
+  (retrieve, assessed).
+- **Strongest composed runtime use:** `history-medicine-black-death`
+  screen **0** ("What can you remember?"). Verified at 390px.
+- **Why it is the current gold example:** one dominant question heading; one
+  framing line naming the exact recall scope ("the previous chapter:
+  medieval medicine"); a light "Write about" scaffold (people · theories ·
+  causes · treatments) that prompts categories without giving content; one
+  large input surface; a visible timer as a quiet secondary element; one
+  primary CTA ("Check my recall"). Nothing competes with the recall act.
+- **Below-bar counterexample:** none render-reviewed yet — record one when
+  another episode's opener is next reviewed.
+- **390px review questions:** Is the recall scope named precisely? Do the
+  hints prompt categories, not answers? Is the input surface dominant below
+  the heading? Is the CTA visible without scrolling?
+
+### `interactiveImage`
+
+- **Learning intent:** explore a labelled visual through tappable hotspots,
+  two-phase intro → explore (teach, exploratory).
+- **Strongest composed runtime use:** `history-medicine-medieval-beliefs-causes`
+  screen **4** ("Tap the Four Humours"). Verified at 390px across all three
+  states: intro (headline + framing copy + "Explore the body" CTA over the
+  full-bleed anatomical chart), explore (four visible hotspot rings on the
+  four humour symbols), and hotspot sheet ("Blood" — a parchment sheet with
+  three labelled sections: Meaning / Believed effect / Treatment logic).
+- **Why it is the current gold example:** the image is specific to the
+  content (each humour symbol is where its hotspot sits, so tapping *is*
+  the learning act); the sheet teaches in three short labelled strokes and
+  ends on treatment logic — the exam-relevant chain; hierarchy stays clean
+  in every state.
+- **Below-bar counterexample:** none render-reviewed yet.
+- **390px review questions:** Are all hotspots visibly discoverable? Does
+  each sheet teach (meaning → effect → logic), not just label? Is the image
+  content-specific rather than decorative?
+
+### `factorWeb`
+
+- **Learning intent:** explore several factors around one causal question,
+  then make a supported judgement about relative importance
+  (teach-comparison, apply). Contract:
+  `component-contracts/factor-web.md`.
+- **Strongest composed runtime use:**
+  `history-medicine-vesalius-beginning-doubt` screen **7** ("Why could
+  Vesalius challenge Galen?"). Verified at 390px: initial web (question
+  dominant, one framing line, six readable factor nodes, short centre
+  label, `SequenceProgress` dots, "Tap a factor to explore it" affordance)
+  and explored state (tapped node marked with a restrained amber ✓, detail
+  panel below with What-it-means teaching at body size).
+- **Why it is the current gold example:** matches its contract's render
+  checks on the pixels — no emoji, no uppercase labels, no clipping, no
+  node collisions, the full question never inside the centre node, detail
+  teaching readable without tiny text.
+- **Below-bar counterexample:** the pre-rework implementation documented in
+  the contract's field 8 (question crammed into an 86px circle, 8px labels,
+  emoji identity, uppercase labels, x/y counter).
+- **390px review questions:** run the contract's field 9 render checks.
+
+### `visualNarrative`
+
+- **Learning intent:** open or pivot a chapter through beat-based narrative
+  (portraits, timelines, facts, conclusion beats), one idea per beat.
+- **Strongest composed runtime use:** `history-medicine-medieval-beliefs-causes`
+  screen **0**. Verified at 390px for beats 1–2: beat 1 — full-bleed dual
+  portrait with one dominant headline ("Two dead Greeks ran medieval
+  medicine.") and one supporting line; beat 2 — a timeline visualisation
+  (Hippocrates → Galen → medieval England, 400 BC → 1300 AD) whose
+  uppercase node labels are genuine diagram labelling (approved exception).
+  Later beats not yet captured — remaining-state debt, noted, not
+  bar-blocking for the seen beats.
+- **Why it is the current gold example:** each beat lands exactly one idea
+  with a strong visual carrier; the 1,000-year continuity claim is *shown*
+  (timeline) rather than asserted.
+- **Below-bar counterexample:** none render-reviewed yet.
+- **390px review questions:** One idea per beat? Is text legible over
+  imagery? Are uppercase labels genuinely diagram notation? Does the beat
+  sequence build to the chapter's dramatic question?
+
+### `guidedExamResponse` — refused (named findings)
+
+`history-medicine-medieval-beliefs-causes` screen **32** was rendered at
+390px (entry beat + question state) and **does not clear the bar**:
+
+1. The exam-frame metadata band ("EXAM PRACTICE · HISTORY · 16 MARKS")
+   **renders through / collides with** the module progress header capsule
+   at 390px — a straightforward composed-render defect the component's
+   isolated story would never show.
+2. "YOUR TURN — NO SAMPLE ANSWER THIS TIME" is sentence-length decorative
+   uppercase — outside the approved compact-scanning exceptions.
+
+Per hard rule 2 the register does not promote the least-bad screen: the
+entry stays **"No verified composed gold example yet"** and the two
+findings above are the concrete Refine targets for whichever session next
+touches this component (4 uses: Ep1 s32, Ep2 s23, Vesalius s11,
+`bio_building_blocks` s11).
+
+---
+
+## Gold-coverage debt — ranked (2026-07-12)
+
+Ranked by expected appearance rate in future chapters; each entry is
+"No verified composed gold example yet" until seated per the procedure
+below.
+
+1. **`guidedExamResponse`** — chapter-closing exam payoff, 4 uses and
+   growing; refused above with two named findings. Highest priority: fix
+   the two findings, then seat.
+2. **`guidedChoiceCarousel`** (3 uses), **`cinematic`** (2),
+   **`progressionTimeline`** (2), **`collectionExplorer`** (2) — recurring
+   patterns with no reviewed composed render.
+3. **Single-use specialists** — `symptomQualityDiagnostic`,
+   `medicalTheoryPrescription`, `connectionMap`, `timelineCanvas`,
+   `beforeAfterSlider`, `evacuationChainRoute`, `quoteAnalyser`. Seat
+   opportunistically when their episodes are next reviewed; do not block
+   production on them.
+4. **Remaining-state captures** — `visualNarrative` beats 3+,
+   `naturalSupernaturalSwipe` sort state (noted in its entry).
+
+**The structural headline sits outside the register's normal scope but is
+the audit's biggest finding: 272 of 273 `content` screens do not use the
+`TeachScreenShell` route.** The governed teach composition has exactly one
+live instance (the Ep1 s8 gold above). Every future chapter build and
+review should treat generic-shell teach screens as the class failure the
+route exists to prevent; migrating legacy teach screens follows the
+legacy-screens rule in `PATTERN_GOVERNANCE.md` (migrate when touched, no
+mass migration).
 
 ---
 
