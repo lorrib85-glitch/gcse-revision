@@ -9,6 +9,7 @@ const componentPath = 'src/components/learning/FactorWeb.jsx'
 const storyPath = 'src/components/learning/FactorWeb.stories.jsx'
 const contractPath = 'docs/system/component-contracts/factor-web.md'
 const limitsPath = 'src/constants/contentLimits.js'
+const tokensPath = 'src/constants/factorWeb.js'
 
 describe('FactorWeb governance', () => {
   const source = read(componentPath)
@@ -47,19 +48,32 @@ describe('FactorWeb governance', () => {
     expect(screenTitleCount).toHaveLength(1)
   })
 
-  it('supports a central historical focal asset without hardcoding topic imagery', () => {
+  it('uses a balanced two-column layout with three factors on each side when six are supplied', () => {
+    expect(source).toContain('export function splitFactorColumns')
+    expect(source).toContain('const midpoint = Math.ceil(factors.length / 2)')
+    expect(source).toContain("side: 'left'")
+    expect(source).toContain("side: 'right'")
+    expect(source).toContain("getFactorSlot('left'")
+    expect(source).toContain("getFactorSlot('right'")
+  })
+
+  it('supports a central historical image and a governed placeholder without hardcoding topic imagery', () => {
     expect(source).toContain('const centreImage = block.centreImage || block.centerImage')
     expect(source).toContain('centreImageAlt')
     expect(source).toContain('function CentreFocal')
     expect(source).toContain('<CentreFocal')
+    expect(source).toContain('function FocalPlaceholderGlyph')
+    expect(source).toContain('<FocalPlaceholderGlyph')
+    expect(source).toContain('Image placeholder for ${centreLabel}')
     expect(source).not.toContain('/images/vesalius-1543.png')
     expect(source).not.toContain('/images/pasteur-1861.png')
   })
 
-  it('keeps the full question outside the centre focal point', () => {
+  it('keeps the full question outside the centre focal point and the label beneath the media', () => {
     expect(source).toContain('const centreLabel =')
     expect(source).toContain('{centreLabel}')
     expect(source).toContain('{heading}')
+    expect(source).toContain('marginTop: FACTOR_WEB_LAYOUT.focalLabelGap')
     expect(source).not.toMatch(/<span[^>]*>[\s\S]*?\{block\.question\}[\s\S]*?<\/span>/)
   })
 
@@ -67,19 +81,43 @@ describe('FactorWeb governance', () => {
     const centredOffsets = source.match(/translate:\s*'-50% -50%'/g) ?? []
     expect(
       centredOffsets.length,
-      'The focal point, atmosphere and outer factor buttons must use the independent CSS translate property.',
-    ).toBeGreaterThanOrEqual(3)
+      'The focal point and outer factor buttons must use the independent CSS translate property.',
+    ).toBeGreaterThanOrEqual(2)
 
     expect(source).not.toContain("transform: 'translate(-50%, -50%)'")
     expect(source).toContain("overflowX: 'hidden'")
     expect(source).toContain("overscrollBehaviorX: 'none'")
   })
 
-  it('uses anchored connector geometry rather than lines running through the focal point', () => {
-    expect(source).toContain('export function getFactorConnector')
-    expect(source).toContain('connector.start.x')
-    expect(source).toContain('connector.end.x')
-    expect(source).toContain('<motion.circle')
+  it('uses curved connectors that terminate in visible dots at both ends', () => {
+    expect(source).toContain('export function getFactorConnectorPath')
+    expect(source).toContain('FACTOR_WEB_LAYOUT.connectorControlOffset')
+    expect(source).toContain('<motion.path')
+
+    const dotCount = source.match(/<motion\.circle/g) ?? []
+    expect(dotCount).toHaveLength(2)
+    expect(source).toContain('cx={slot.nodeAnchorX}')
+    expect(source).toContain('cx={slot.focalAnchorX}')
+  })
+
+  it('sources component geometry and glow from dedicated tokens', () => {
+    const tokens = read(tokensPath)
+
+    expect(source).toContain("import { FACTOR_WEB_LAYOUT, FACTOR_WEB_VISUAL } from '../../constants/factorWeb.js'")
+    expect(source).toContain('FACTOR_WEB_LAYOUT.nodeWidth')
+    expect(source).toContain('FACTOR_WEB_LAYOUT.focalSize')
+    expect(source).toContain('FACTOR_WEB_VISUAL.haloBlur')
+    expect(source).toContain('FACTOR_WEB_VISUAL.connectorActiveOpacity')
+
+    expect(tokens).toContain('rowsByCount')
+    expect(tokens).toContain('focalRowsByCount')
+    expect(tokens).toContain('haloSize')
+    expect(tokens).toContain('connectorActiveOpacity')
+  })
+
+  it('uses a lighter body token for node copy', () => {
+    expect(source).toContain("<span style={{ ...TYPE.bodySmall, color: 'inherit' }}>")
+    expect(source).not.toContain("<span style={{ ...TYPE.label, color: 'inherit' }}>")
   })
 
   it('defines explicit title and label limits as authoring constraints', () => {
@@ -101,12 +139,15 @@ describe('FactorWeb governance', () => {
     const contract = read(contractPath)
 
     expect(story).toContain('GoldVesaliusCausation')
+    expect(story).toContain('PlaceholderFocal')
     expect(story).toContain('LongFactorLabels')
     expect(story).toContain("centreLabel: 'Vesalius'")
     expect(story).toContain("centreImage: '/images/vesalius-1543.png'")
 
     expect(contract).toContain('Composition classification:')
     expect(contract).toContain('interaction-owned')
+    expect(contract).toContain('three on the left and three on the right')
+    expect(contract).toContain('governed image placeholder')
     expect(contract).toContain('No eyebrows.')
     expect(contract).toContain('optional one-sentence framing paragraph')
     expect(contract).toContain('## 7. Gold example')
