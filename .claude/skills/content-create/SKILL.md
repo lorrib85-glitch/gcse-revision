@@ -114,7 +114,12 @@ component" is the failure this chain exists to stop.
 8. **Render acceptance criteria** — the 👁 checks (from the contract's field 9
    and the register's 390px review questions) this screen must pass at 390px
    before it is presented. Write them down *before* building, so the render
-   pass has a checklist, not a vibe.
+   pass has a checklist, not a vibe. Build to the **same bar Stage C will
+   judge by**: `content-review`'s Mechanical visual-quality checklist
+   (typography/hierarchy, casing, screen composition, tokens/subject identity,
+   interaction) resolved through the Visual-review authority hierarchy in
+   `PATTERN_GOVERNANCE.md`. The builder and the reviewer measure against one
+   checklist, not two.
 
 Record the full chain per screen in the working plan (and, for a rebuild,
 against the brief it implements) before building. If a link cannot be filled,
@@ -190,9 +195,12 @@ Before handing back to Stage C:
    (`node scripts/screenshot.mjs "/?module=<id>&screen=<n>" <out>.png`).
    Rendering a component's own Storybook story is not sufficient — the
    composed screen is what ships.
-2. Check each screenshot against the render acceptance criteria (chain link 8)
-   and the named gold example. Where the environment blocks a render, say so
-   explicitly — silent skipping is a failure.
+2. Check each screenshot against the render acceptance criteria (chain link 8),
+   the named gold example, and `content-review`'s Mechanical visual-quality
+   checklist read through the Visual-review authority hierarchy in
+   `PATTERN_GOVERNANCE.md` — the same bar Stage C applies, so the build is
+   measured against what will approve it. Where the environment blocks a
+   render, say so explicitly — silent skipping is a failure.
 3. **Record any unavoidable deviation from the brief** — where and why the
    built screen differs from what the brief specified (a constraint the brief
    didn't foresee, a component limitation, a canonical gap). Deviations are
@@ -219,6 +227,9 @@ against before / after / gold.**
   it is not built.
 - Never treat "implemented" as "approved" — Stage C is a separate,
   independent pass.
+- Build to the same bar Stage C judges by — `content-review`'s Mechanical
+  visual-quality checklist through the Visual-review authority hierarchy in
+  `PATTERN_GOVERNANCE.md`, not a looser builder-only standard.
 - A concept is never tested before the screen that teaches it.
 - Never generate imagery; reserve it with `MediaPlaceholder` + manifest.
 - Never add a new module to `GRANDFATHERED_EPISODES` /
