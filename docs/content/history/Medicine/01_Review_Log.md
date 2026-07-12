@@ -5,6 +5,40 @@ Following Jupiter"). Entries newest-first.
 
 ---
 
+## 2026-07-12 — Stages B + C — s32 amendment brief implemented and approved
+
+- **Session scope:** the s32 Refine brief from the Stage-A entry below,
+  confirmed by the user this session.
+- **Stage B (build).** Root cause confirmed via systematic debugging before
+  any change: `GuidedExamResponse` portals a full-screen overlay with its
+  own header band because its `GuidedAnswerCoach` host (Exam Mode) has no
+  module chrome — but in-module, `ModulePlayer` keeps the floating
+  `LearningHeader` capsule (z-index 1001) mounted above the portal
+  (z-index 1000), so two headers occupied the same strip. Fix: an
+  `embedded` prop passed by ModulePlayer suppresses the band and pads
+  content below the capsule (ExaminerExplainsScreen's clearance idiom);
+  the coach context is unchanged by default. Uppercase: the entry label's
+  inline `textTransform` removed (authored string already sentence case),
+  and the same transform removed from the writing-scaffold lane labels —
+  in scope per the brief's acceptance criterion ("no uppercase outside
+  approved compact-scanning exceptions"); all four modules author
+  sentence-case lane labels. Approved chips kept: source labels, marks
+  badge, "examiner's mark", "Section by section".
+- **Stage C (approve, independent re-render).** All four uses re-rendered
+  at 390px post-fix: Ep1 s32 (entry + question + writing), Ep2 s23,
+  Vesalius s11, `bio_building_blocks` s11. One header everywhere; question
+  dominant; sentence-case labels; CTA visible; subject theming intact
+  (History amber / Biology green). Trade-off check: none found — the
+  removed band's information survives (marks inline in the question,
+  back/exit via the capsule). Marking/result states not re-rendered (need
+  a live marking response) — recorded as remaining capture debt in the
+  register, not silently skipped. **Approved**; gold seated in
+  `GOLD_SCREEN_REGISTER.md`.
+- **Verification:** vite build ✓; architecture tests 724/724 ✓; lint 0
+  errors.
+
+---
+
 ## 2026-07-12 — Stage A (diagnose) — gold-audit scope only
 
 - **Session scope:** cross-module gold audit (not a full episode review).

@@ -1926,6 +1926,7 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         <GuidedExamResponse
           module={module}
           exam={cur.exam}
+          embedded
           onExit={headerOnBack}
           onContinue={isLast ? handleFinish : () => go(1)}
         />

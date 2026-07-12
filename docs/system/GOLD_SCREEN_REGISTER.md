@@ -368,7 +368,7 @@ named findings; the rest are explicit debt, ranked below.
 | `interactiveImage` | 7 | ✓ Ep1 s4 | intro + explore + hotspot sheet verified |
 | `factorWeb` | 2 | ✓ `history-medicine-vesalius-beginning-doubt` s7 | initial + explored-detail verified |
 | `visualNarrative` | 6 | ✓ Ep1 s0 | beats 1–2 verified; later beats unseen |
-| `guidedExamResponse` | 4 | ✗ **refused** | named findings below — do not copy Ep1 s32 as a bar |
+| `guidedExamResponse` | 4 | ✓ Ep1 s32 | refused 2026-07-12 AM, fixed + seated same day — see entry |
 
 ### Composed teach screen — `TeachScreenShell` route
 
@@ -473,23 +473,39 @@ named findings; the rest are explicit debt, ranked below.
   imagery? Are uppercase labels genuinely diagram notation? Does the beat
   sequence build to the chapter's dramatic question?
 
-### `guidedExamResponse` — refused (named findings)
+### `guidedExamResponse`
 
-`history-medicine-medieval-beliefs-causes` screen **32** was rendered at
-390px (entry beat + question state) and **does not clear the bar**:
-
-1. The exam-frame metadata band ("EXAM PRACTICE · HISTORY · 16 MARKS")
-   **renders through / collides with** the module progress header capsule
-   at 390px — a straightforward composed-render defect the component's
-   isolated story would never show.
-2. "YOUR TURN — NO SAMPLE ANSWER THIS TIME" is sentence-length decorative
-   uppercase — outside the approved compact-scanning exceptions.
-
-Per hard rule 2 the register does not promote the least-bad screen: the
-entry stays **"No verified composed gold example yet"** and the two
-findings above are the concrete Refine targets for whichever session next
-touches this component (4 uses: Ep1 s32, Ep2 s23, Vesalius s11,
-`bio_building_blocks` s11).
+- **Learning intent:** the learner writes their own answer to the
+  chapter's exam question, scaffolded section by section, then receives a
+  marked verdict (exam-technique, assessed).
+- **Strongest composed runtime use:** `history-medicine-medieval-beliefs-causes`
+  screen **32**. Verified at 390px across entry beat, question state and
+  writing state, in all four host modules (Ep1 s32, Ep2 s23, Vesalius s11,
+  `bio_building_blocks` s11 — subject theming intact in each). The
+  marking/result states need a live marking response and are **not yet
+  composed-render verified** — remaining capture debt, noted.
+- **History:** first audit (2026-07-12 AM) **refused** this gold on two
+  findings: the component's own header band rendered through the module
+  progress capsule at 390px (two headers — the component must be
+  self-chromed for its `GuidedAnswerCoach` host, but in-module the
+  `LearningHeader` already owns the top strip), and the entry label was
+  sentence-length decorative uppercase. Fixed same day: ModulePlayer now
+  passes `embedded`, which suppresses the band and clears the capsule
+  (`ExaminerExplainsScreen`'s clearance idiom); the entry label and the
+  writing-scaffold lane labels render in their authored sentence case.
+- **Why it is the current gold example:** the exam question is the one
+  dominant element (serif display, marks inline); the sentence-case accent
+  line sets the stakes without competing; the writing scaffold gives each
+  answer section one lane with a sentence-case label and a sentence
+  starter; one CTA per state, visible without scrolling.
+- **Below-bar counterexample:** the pre-fix composed render (screenshotted
+  in the 2026-07-12 audit): two colliding headers and uppercase labels —
+  kept as the named example of why in-module screen-owning components must
+  not draw their own top chrome.
+- **390px review questions:** Is exactly one header present (the module
+  capsule)? Is the question dominant? Are all labels sentence case outside
+  the approved chips (source labels, marks badge)? Is the CTA visible
+  without scrolling in every state?
 
 ---
 
@@ -499,19 +515,20 @@ Ranked by expected appearance rate in future chapters; each entry is
 "No verified composed gold example yet" until seated per the procedure
 below.
 
-1. **`guidedExamResponse`** — chapter-closing exam payoff, 4 uses and
-   growing; refused above with two named findings. Highest priority: fix
-   the two findings, then seat.
-2. **`guidedChoiceCarousel`** (3 uses), **`cinematic`** (2),
+1. **`guidedChoiceCarousel`** (3 uses), **`cinematic`** (2),
    **`progressionTimeline`** (2), **`collectionExplorer`** (2) — recurring
    patterns with no reviewed composed render.
-3. **Single-use specialists** — `symptomQualityDiagnostic`,
+2. **Single-use specialists** — `symptomQualityDiagnostic`,
    `medicalTheoryPrescription`, `connectionMap`, `timelineCanvas`,
    `beforeAfterSlider`, `evacuationChainRoute`, `quoteAnalyser`. Seat
    opportunistically when their episodes are next reviewed; do not block
    production on them.
-4. **Remaining-state captures** — `visualNarrative` beats 3+,
-   `naturalSupernaturalSwipe` sort state (noted in its entry).
+3. **Remaining-state captures** — `visualNarrative` beats 3+,
+   `naturalSupernaturalSwipe` sort state, `guidedExamResponse`
+   marking/result states (noted in their entries).
+
+*(2026-07-12 PM: `guidedExamResponse`, formerly rank 1, was fixed and
+seated — see its entry above.)*
 
 **The structural headline sits outside the register's normal scope but is
 the audit's biggest finding: 272 of 273 `content` screens do not use the
