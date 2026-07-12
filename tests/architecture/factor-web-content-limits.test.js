@@ -27,7 +27,7 @@ function visibleTitle(block) {
 }
 
 describe('FactorWeb content limits', () => {
-  it('keeps every registered FactorWeb title and visible label within the mobile authoring limits', async () => {
+  it('keeps every registered FactorWeb within the governed mobile authoring limits', async () => {
     const violations = []
 
     for (const [moduleId, load] of Object.entries(MODULE_CONTENT_LOADERS)) {
@@ -38,6 +38,7 @@ describe('FactorWeb content limits', () => {
         const title = visibleTitle(block)
         const judgementTitle = block.judgementTitle || 'Which factor mattered most?'
         const centreLabel = block.centreLabel || block.centerLabel || 'Key factors'
+        const factors = block.factors || []
 
         if (!title) {
           violations.push(`${moduleId}:${path} has no visible title`)
@@ -59,8 +60,17 @@ describe('FactorWeb content limits', () => {
           )
         }
 
-        ;(block.factors || []).forEach((factor, index) => {
+        if (factors.length < 4 || factors.length > 6) {
+          violations.push(
+            `${moduleId}:${path} has ${factors.length} factors; FactorWeb supports 4–6 for the governed split layout`,
+          )
+        }
+
+        factors.forEach((factor, index) => {
           const nodeLabel = factor.shortTitle || factor.title || ''
+          if (!factor.id) {
+            violations.push(`${moduleId}:${path}.factors.${index} has no stable id`)
+          }
           if (!nodeLabel) {
             violations.push(`${moduleId}:${path}.factors.${index} has no visible node label`)
           } else if ([...nodeLabel].length > COMPONENT_TEXT_LIMITS.factorWeb.nodeLabel) {
