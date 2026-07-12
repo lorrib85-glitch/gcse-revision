@@ -4,11 +4,11 @@ import { episode } from '../../src/content/history/medicine/episodes/episode-03-
 describe('Episode 3 FactorWeb configuration', () => {
   const factorWeb = episode.screens.find(screen => screen.type === 'factorWeb')
 
-  it('keeps the Vesalius focal asset in chapter content rather than the shared component', () => {
+  it('keeps the approved Vesalius focal asset in chapter content rather than the shared component', () => {
     expect(factorWeb).toBeDefined()
     expect(factorWeb.title).toBe('Why could Vesalius challenge Galen?')
     expect(factorWeb.centreLabel).toBe('Vesalius')
-    expect(factorWeb.centreImage).toBe('/images/vesalius-1543.png')
+    expect(factorWeb.centreImage).toBe('/images/vesalius-factorweb-portrait.webp')
     expect(factorWeb.centreImageAlt).toBe('Portrait of the Renaissance anatomist Andreas Vesalius')
   })
 

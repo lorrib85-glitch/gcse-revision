@@ -394,7 +394,7 @@ export const episode = {
       instruction: 'Explore each factor. Then decide which mattered most.',
       mode: 'causes',
       centreLabel: 'Vesalius',
-      centreImage: '/images/vesalius-1543.png',
+      centreImage: '/images/vesalius-factorweb-portrait.webp',
       centreImageAlt: 'Portrait of the Renaissance anatomist Andreas Vesalius',
       factors: [
         {

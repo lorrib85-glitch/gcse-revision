@@ -105,8 +105,8 @@ The component owns a balanced two-column composition:
 - four factors render as two on each side
 - the central column is reserved for the focal image or governed image placeholder
 - the focal label always sits beneath the image/placeholder, never inside it
-- connector lines curve from each node to a bronze anchor dot at the focal ring
-- each connector also terminates at a small node-side anchor dot
+- connector lines curve from each node and visibly meet the outer edge of the centre image circle
+- each connector terminates at a small node-side anchor dot only; centre dots are not rendered
 
 The chapter controls semantic ordering by the order of the `factors` array. The component owns all geometry. Chapter content must not carry x/y positions, line coordinates, widths, glow values or other presentation data.
 
@@ -135,7 +135,7 @@ Required interaction order:
 - Buttons: governed `ContinueCTA`; factor nodes use the shared body token rather than inventing a button-title style.
 - Local sequence state: `SequenceProgress`; never `x / y`, percentages or a bespoke rail.
 - Colour comes from `SUBJECTS[subject]`; content data does not carry raw presentation colours.
-- Layout and visual geometry come from `src/constants/factorWeb.js`.
+- Layout and visual geometry come from `src/constants/factorWeb.js`; focal connector anchors are calculated from the centre circle radius so lines meet the outer edge of the image circle.
 - No chapter-specific image paths or figure names may appear inside `FactorWeb.jsx`.
 - No emojis or system glyphs as factor identity. Selection and explored states use restrained subject accent only.
 - No eyebrows. Do not render `kicker`, `TYPE.eyebrow`, `cinematic-eyebrow` or any small label above the main heading.
@@ -147,7 +147,7 @@ Required interaction order:
 
 - Centre, lines and factor nodes enter with restrained fade/scale or path drawing.
 - Motion communicates the web relationship; it must not bounce, overshoot or feel arcade-like.
-- Connector lines curve from node anchors to focal-ring anchors and end in visible dots.
+- Connector lines curve from node anchors to the outer edge of the centre image circle and keep visible dots only on the node side.
 - Detail panels fade and rise gently when the active factor changes.
 - The judgement phase uses a calm cross-fade.
 - `prefers-reduced-motion` renders all content immediately with no animated travel.
@@ -164,7 +164,7 @@ At 390px:
 - Vesalius is the central historical focal image, with his name beneath the medallion
 - three factor cards sit on the left and three on the right
 - a soft blurred bronze halo makes the centre the visual focal point without becoming neon
-- curved connector lines flow into bronze dots at both the node and focal ring
+- curved connector lines visibly meet the outer edge of the centre image circle while keeping dots only on the node side
 - six factor labels remain readable without emoji or clipping
 - node copy is lighter than a button label and does not compete with the centre
 - detail teaching appears below the web at normal body size
@@ -223,7 +223,7 @@ That implementation passed source-data checks while failing the rendered mobile 
 - 👁 Three nodes on each side align as balanced columns when six factors are present.
 - 👁 Every node label is readable without clipping; use `shortTitle` where needed.
 - 👁 Nodes do not collide with the centre or screen edge.
-- 👁 Connector lines visibly terminate at the focal ring and node anchor dots.
+- 👁 Connector lines visibly meet the outer edge of the centre image circle, keep low visual weight, and show node-side anchor dots only.
 - 👁 The web reads as one connected composition rather than six separate buttons.
 - 👁 The web remains understandable without colour.
 - 👁 Active and explored states are distinct but restrained.

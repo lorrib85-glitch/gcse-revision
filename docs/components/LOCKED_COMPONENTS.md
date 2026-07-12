@@ -166,6 +166,30 @@ Constitutional rule: **ExitButton is the only exit-navigation button implementat
 
 ---
 
+
+### FactorWeb
+
+**File:** `src/components/learning/FactorWeb.jsx`
+
+**What it owns:**
+- The mobile two-column factor web geometry for four to six factors
+- The central image/placeholder medallion, centre label, soft localised halo, and subtle connector-line treatment
+- The explore-every-factor flow, shared `SequenceProgress`, judgement phase, and governed `ContinueCTA` progression
+
+**Why locked:**
+This component is now the approved causation-and-judgement pattern for GCSE History factor screens. Its 390px composition has been verified against the FactorWeb contract and gold register. Changing its internals risks reintroducing the pre-rework failures: centre-question cramming, eyebrows, overlong/clamped node labels, heavy connector graphics, centre dots, local progress counters, or chapter-owned geometry.
+
+**Allowed changes:**
+- Import path corrections
+- Adding a new chapter content block that uses the existing `factorWeb` data contract
+- Asset/content updates in chapter files where wording and imagery remain chapter-owned
+
+**Not allowed:**
+- Redesigning the component geometry, heading route, connector style, centre focal treatment, progress affordance, or progression controls without explicit sign-off
+- Reintroducing centre dots, decorative eyebrows, numeric local progress, emoji factor identity, runtime truncation/clamping, or chapter-specific geometry
+- Hardcoding topic image paths or figure wording inside the shared component
+
+---
 ### LearningProgressHeader
 
 **File:** `src/components/core/LearningProgressHeader.jsx`
