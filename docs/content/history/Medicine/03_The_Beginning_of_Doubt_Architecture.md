@@ -70,13 +70,9 @@ Every Medicine module must be built as six clear navigation parts. These titles 
   - Galen was not wrong about everything; Vesalius did not reject all Galenic ideas.
 - **Recommended components:**
   - `KeyFigureReveal` — short cinematic introduction before detailed evidence.
-  - **New comparison pattern: `SeeTheDifference`** — teach each case through:
-    1. what Galen believed
-    2. what Vesalius observed
-    3. why Galen made the mistake
-    4. why the correction mattered
+  - **Comparison pattern (implemented): the `people` variant of `TheoryCompare`** (`{ type: 'theoryCompare', variant: 'people' }`). Placed straight after the `KeyFigureReveal`, it compares Galen and Vesalius across method, evidence-building, anatomical conclusions and impact, revealing one theme at a time. Each theme teaches through: what Galen believed → what Vesalius observed → a full-width explanation of *why* the difference arose and mattered. The jaw/ribs/breastbone examples reveal one at a time inside the conclusions theme, followed by the "around 300 errors" summary, and the screen closes on the takeaway that authority should be tested against evidence.
   - `QuickRecallScreen` — retrieve Vesalius's method, 1543, one precise correction and the source of stronger evidence.
-- **Component-gap note:** `TheoryCompare` can show two positions, but no current component fully supports claim → observation → source of error → historical significance. `SeeTheDifference` should be specified as a reusable teaching-first comparison pattern rather than a disguised true/false quiz.
+- **Decision (resolved):** the person-to-person comparison is the `people` variant of `TheoryCompare`, not a new standalone component. The variant teaches before it expects retrieval, keeps both sides historically fair (Galen limited by evidence and conditions, not foolish), and is teaching-first and unassessed — never a disguised true/false quiz. See `docs/components/COMPONENT_REGISTRY.md` → TheoryCompareBlock.
 
 ### Section 4 — The Evidence Travels
 
@@ -121,7 +117,7 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 - [ ] Weak spots are generated.
 - [ ] Every teaching stage includes an assessed interaction.
 - [ ] Every major taught idea is retrieved or applied later.
-- [ ] `SeeTheDifference` teaches before it asks the learner to judge or recall.
+- [ ] The `TheoryCompare` `people` variant teaches before it asks the learner to judge or recall.
 - [ ] Printing is taught as a mechanism of spread, not as the source of Vesalius's discovery.
 - [ ] Change and continuity are both explicit.
 - [ ] The chapter repeatedly reinforces **knowledge changed before treatment**.
@@ -149,9 +145,9 @@ Every Medicine module must be built as six clear navigation parts. These titles 
 
 - Great Plague beliefs, treatments and prevention; wider prevention continuity/change; pest houses; organised local-government response; Black Death comparison.
 
-### Current component gap
+### Comparison component (resolved — no gap)
 
-The chapter needs a teaching-first evidence comparison component. `SeeTheDifference` should support a short set of paired historical or scientific claims where the learner first understands both sides, then sees why the difference matters. It should not assume prior knowledge and should not reduce the interaction to repeated binary judgement.
+The chapter's teaching-first evidence comparison is delivered by the `people` variant of `TheoryCompare` (`{ type: 'theoryCompare', variant: 'people' }`), not a new standalone component. It shows a short set of paired claims where the learner first understands both people's approaches, then sees why the difference matters through a full-width explanation; it assumes no prior knowledge and is not reduced to repeated binary judgement. The earlier proposal for a separate `SeeTheDifference` component is superseded — extending the governed `TheoryCompare` kept one comparison component with one pedagogical purpose and preserved the existing simple comparison mode unchanged.
 
 ---
 

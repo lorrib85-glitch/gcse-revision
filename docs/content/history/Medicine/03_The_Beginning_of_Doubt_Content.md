@@ -71,6 +71,17 @@ For centuries, doctors trusted Galen's books, but Renaissance thinkers became mo
 - Humanism, anatomy theatres and a weaker hold of Church authority made direct investigation more acceptable.
 - Printing allowed accurate copies of Vesalius's illustrations and arguments to spread beyond one university or anatomy theatre.
 
+### Galen vs Vesalius comparison (learner sequence)
+
+The chapter teaches the Galen/Vesalius contrast through the `people` variant of `TheoryCompare`, revealing one theme at a time so the learner understands *why* Vesalius produced more accurate anatomy before any retrieval. The four themes and their historical meaning:
+
+1. **What did they study?** — Galen relied mainly on animal dissection; Vesalius dissected human bodies himself. *Meaning:* human dissection was restricted in Galen's time, so he assumed animal anatomy matched humans; Vesalius could check directly. Not "Galen looked at animals" — the conditions of his time shaped the evidence available.
+2. **How did they build knowledge?** — Galen used observation, existing theory and animal anatomy; Vesalius checked ancient claims against direct human evidence. *Meaning:* Vesalius did not reject old knowledge because it was old — he tested it, and trusted observation when it disagreed with Galen's books.
+3. **What did they conclude?** — jaw (two bones → one bone), ribs (fewer in men → same number), breastbone (seven parts → three main parts), then "around 300 errors". *Meaning:* revealed one example at a time so the errors are understood as a consequence of Galen's method, not shown as a dense list before the learner grasps how they arose.
+4. **What was their impact?** — Galen's books shaped teaching for over a thousand years; Vesalius showed respected authority could be corrected by evidence. *Meaning:* Vesalius improved anatomical knowledge but not treatment — doctors still used the Four Humours, bloodletting and purging.
+
+**Closing takeaway (the core historical meaning):** *"Vesalius did not prove that everything Galen believed was wrong. He proved that old ideas should be checked against evidence."* The comparison must remain historically fair to Galen throughout — important but limited by the evidence and conditions of his time, never foolish.
+
 ### Series throughline
 
 - **Agent: Science & technology (🔬):** Human dissection and printing made it possible to test and spread anatomical evidence.

@@ -443,10 +443,63 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ### TheoryCompareBlock
 
-**File:** `src/components/learning/TheoryCompareBlock.jsx`  
-**Purpose:** Side-by-side comparison of two historical theories or positions with staggered fade-in animation. Used inside standard content screens as a `theoryCompare` block type.  
-**Props:** `block`, `subject`  
-**Dependencies:** `SUBJECTS`, `MOTION`
+**File:** `src/components/learning/TheoryCompareBlock.jsx`
+**Reveal logic:** `src/components/learning/theoryComparePeople.js` (pure)
+**Story:** `src/components/learning/TheoryCompareBlock.stories.jsx`
+**Interaction class:** `reveal` (`teach-comparison`) — teaching-first and unassessed. Never a disguised quiz; no right/wrong judgement.
+**Pedagogical purpose:** teach a meaningful comparison through progressive reveal, so the learner understands *why* two things differ before any retrieval is expected.
+**Props:** `block`, `subject`
+
+`theoryCompare` has two governed modes selected by `block.variant`; both preserve the same pedagogical function.
+
+#### Simple mode (default — no `variant`)
+
+Old → new position comparison with staggered fade-in (learner taps once to reveal the "new" side, then a takeaway). Backwards-compatible; existing content depends on its exact data shape.
+
+- **Data shape:** `{ type: 'theoryCompare', title?, oldLabel, oldTitle, oldPoints[], newLabel, newTitle, newPoints[], takeaway? }`
+- **Use it when:**
+  - comparing an old explanation with a new explanation
+  - comparing belief with reality (e.g. Black Death "what people believed → what was actually happening")
+  - comparing two concise conceptual models
+
+#### People mode (`variant: 'people'`)
+
+Person-to-person comparison. Two named people with portraits kept as compact headers and a central division; one comparison theme revealed at a time; a full-width teaching explanation beneath the columns where needed; anatomical/example rows revealed one at a time within a theme; a single closing takeaway. Left side reads older and quieter; the right side carries restrained subject-accent (bronze for History) emphasis as evidence is revealed. All colour derives from the subject accent token — content data carries no raw colours.
+
+- **Data shape:**
+  ```
+  {
+    type: 'theoryCompare',
+    variant: 'people',
+    title,
+    heroImage?, heroImageAlt?,   // optional cinematic dual-portrait banner (~30vh) that darkens into the screen; when omitted, two compact circular portraits are used instead
+    leftPerson:  { name, subtitle, image, imageAlt },
+    rightPerson: { name, subtitle, image, imageAlt },
+    comparisons: [
+      // single-row theme
+      { id, prompt, left, right, explanation? },
+      // multi-example theme (rows reveal one at a time, optional summary note)
+      { id, prompt, rows: [{ label, left, right }], note?, explanation? },
+    ],
+    takeaway,
+  }
+  ```
+- **Use it when:**
+  - two named people used meaningfully different approaches
+  - the learner must compare method, evidence, conclusion or impact
+  - the comparison itself explains why knowledge changed
+- **Do NOT use it (either mode) when:**
+  - the learner needs to classify answers → use `colsort` / `matchingTask`
+  - the learner needs to make an assessed judgement → use `theoryLab` / an exam-technique component
+  - the content is a sequence rather than a comparison → use `timelineChain` / `evacuationChainRoute`
+  - one side is merely correct and the other a cartoonishly foolish distractor (people mode must keep both sides historically fair)
+  - the comparison requires long paragraphs in both columns (columns take short parallel phrases; longer teaching goes in the full-width `explanation`)
+
+**Accessibility expectations:** portraits carry meaningful `imageAlt`; each comparison cell exposes its person's name to screen readers via a visually-hidden prefix so the Galen/Vesalius relationship survives colour- and position-only cues; progression uses the governed `ContinueCTA` (keyboard-operable, visible focus); focus moves to the takeaway when it reveals; motion respects `prefers-reduced-motion`; DOM reading order is prompt → left → right → explanation.
+
+**Galen / Vesalius example (Episode 3, "The beginning of doubt"):** compares Galen (animal dissection) and Vesalius (human dissection) across method, evidence-building, anatomical conclusions (jaw, ribs, breastbone) and impact, closing on *"Vesalius did not prove that everything Galen believed was wrong. He proved that old ideas should be checked against evidence."*
+
+**Dependencies:** `SUBJECTS`, `TYPE`, `SPACING`, `RADII`, `MOTION`, `ContinueCTA`
 
 ---
 
