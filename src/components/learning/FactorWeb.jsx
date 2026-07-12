@@ -50,6 +50,15 @@ function focalRowsForCount(count) {
   return FACTOR_WEB_LAYOUT.focalRowsByCount[count] || FACTOR_WEB_LAYOUT.focalRowsByCount[3]
 }
 
+export function getFocalAnchorX(side, focalAnchorY) {
+  const verticalOffset = focalAnchorY - FACTOR_WEB_LAYOUT.focalCenterY
+  const horizontalOffset = Math.sqrt(
+    Math.max(FACTOR_WEB_LAYOUT.focalRadius ** 2 - verticalOffset ** 2, 0),
+  )
+
+  return FACTOR_WEB_LAYOUT.focalCenterX + (side === 'left' ? -horizontalOffset : horizontalOffset)
+}
+
 export function getFactorSlot(side, index, count) {
   const rows = rowsForCount(count)
   const focalRows = focalRowsForCount(count)
@@ -58,7 +67,7 @@ export function getFactorSlot(side, index, count) {
     x: FACTOR_WEB_LAYOUT.nodeX[side],
     y: rows[index],
     nodeAnchorX: FACTOR_WEB_LAYOUT.nodeAnchorX[side],
-    focalAnchorX: FACTOR_WEB_LAYOUT.focalAnchorX[side],
+    focalAnchorX: getFocalAnchorX(side, focalRows[index]),
     focalAnchorY: focalRows[index],
   }
 }
@@ -660,7 +669,7 @@ function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent
   )
 }
 
-// ── FactorWeb ────────────────────────────────────────────────────────────────
+// ── FactorWeb v1 — LOCKED COMPONENT ────────────────────────────────────────────────────────────────
 // A mobile-first causation and judgement screen. Factors sit in two balanced
 // columns around one historical focal image (or a governed image placeholder),
 // then expand into teaching and a supported relative-importance judgement.

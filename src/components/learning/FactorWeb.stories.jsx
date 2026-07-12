@@ -15,7 +15,7 @@ const VESALIUS_FACTORS = {
   title: 'Why could Vesalius challenge Galen?',
   instruction: 'Explore each factor. Then decide which mattered most.',
   centreLabel: 'Vesalius',
-  centreImage: '/images/vesalius-1543.png',
+  centreImage: '/images/vesalius-factorweb-portrait.webp',
   centreImageAlt: 'Portrait of the Renaissance anatomist Andreas Vesalius',
   factors: [
     {

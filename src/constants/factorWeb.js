@@ -12,16 +12,12 @@ export const FACTOR_WEB_LAYOUT = Object.freeze({
   nodeAnchorX: Object.freeze({ left: 28, right: 72 }),
 
   focalSize: 108,
+  focalRadius: 15,
   focalColumnWidth: 128,
+  focalCenterX: 50,
   focalCenterY: 46,
   focalLabelGap: 8,
   focalRingInset: 5,
-  // Top/bottom connectors meet a circular focal ring farther inward than the
-  // middle connector. The fixed endpoint deliberately sits on that outer
-  // intersection; the middle path then travels beneath the focal image and is
-  // hidden by its higher z-index, so every line visually meets the ring.
-  focalAnchorX: Object.freeze({ left: 37.3, right: 62.7 }),
-
   rowsByCount: Object.freeze({
     1: Object.freeze([50]),
     2: Object.freeze([31, 69]),

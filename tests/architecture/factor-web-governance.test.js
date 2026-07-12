@@ -9,6 +9,9 @@ const componentPath = 'src/components/learning/FactorWeb.jsx'
 const storyPath = 'src/components/learning/FactorWeb.stories.jsx'
 const contractPath = 'docs/system/component-contracts/factor-web.md'
 const limitsPath = 'src/constants/contentLimits.js'
+const lockedComponentsPath = 'docs/components/LOCKED_COMPONENTS.md'
+const componentRegistryPath = 'docs/components/COMPONENT_REGISTRY.md'
+const goldRegisterPath = 'docs/system/GOLD_SCREEN_REGISTER.md'
 const tokensPath = 'src/constants/factorWeb.js'
 
 describe('FactorWeb governance', () => {
@@ -92,6 +95,8 @@ describe('FactorWeb governance', () => {
   it('uses light curved connectors with one node-side anchor dot and no centre dots', () => {
     expect(source).toContain('export function getFactorConnectorPath')
     expect(source).toContain('FACTOR_WEB_LAYOUT.connectorControlOffset')
+    expect(source).toContain('getFocalAnchorX')
+    expect(source).toContain('FACTOR_WEB_LAYOUT.focalRadius')
     expect(source).toContain('<motion.path')
 
     const dotCount = source.match(/<motion\.circle/g) ?? []
@@ -111,6 +116,7 @@ describe('FactorWeb governance', () => {
 
     expect(tokens).toContain('rowsByCount')
     expect(tokens).toContain('focalRowsByCount')
+    expect(tokens).toContain('focalRadius')
     expect(tokens).toContain('haloSize')
     expect(tokens).toContain('connectorIdleOpacity: 0.13')
     expect(tokens).toContain('connectorExploredOpacity: 0.28')
@@ -146,7 +152,7 @@ describe('FactorWeb governance', () => {
     expect(story).toContain('PlaceholderFocal')
     expect(story).toContain('LongFactorLabels')
     expect(story).toContain("centreLabel: 'Vesalius'")
-    expect(story).toContain("centreImage: '/images/vesalius-1543.png'")
+    expect(story).toContain("centreImage: '/images/vesalius-factorweb-portrait.webp'")
 
     expect(contract).toContain('Composition classification:')
     expect(contract).toContain('interaction-owned')
@@ -157,4 +163,19 @@ describe('FactorWeb governance', () => {
     expect(contract).toContain('## 7. Gold example')
     expect(contract).toContain('## 9. Review checks')
   })
+
+  it('locks the verified FactorWeb contract in the existing component governance docs', () => {
+    const lockedComponents = read(lockedComponentsPath)
+    const componentRegistry = read(componentRegistryPath)
+    const goldRegister = read(goldRegisterPath)
+
+    expect(lockedComponents).toContain('### FactorWeb')
+    expect(lockedComponents).toContain('centre dots')
+    expect(lockedComponents).toContain('SequenceProgress')
+    expect(componentRegistry).toContain('### FactorWeb — **LOCKED**')
+    expect(componentRegistry).toContain('docs/system/component-contracts/factor-web.md')
+    expect(goldRegister).toContain('approved Vesalius portrait')
+    expect(goldRegister).toContain('centre dots removed')
+  })
+
 })

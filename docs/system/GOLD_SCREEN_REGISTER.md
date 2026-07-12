@@ -440,13 +440,13 @@ named findings; the rest are explicit debt, ranked below.
 - **Strongest composed runtime use:**
   `history-medicine-vesalius-beginning-doubt` screen **7** ("Why could
   Vesalius challenge Galen?"). Verified at 390px: initial web (question
-  dominant, one framing line, six readable factor nodes, short centre
-  label, `SequenceProgress` dots, "Tap a factor to explore it" affordance)
+  dominant, one framing line, six readable factor nodes, approved Vesalius portrait, short centre
+  label, subtle connector lines meeting the centre image circle, `SequenceProgress` dots, "Tap a factor to explore it" affordance)
   and explored state (tapped node marked with a restrained amber ✓, detail
   panel below with What-it-means teaching at body size).
 - **Why it is the current gold example:** matches its contract's render
   checks on the pixels — no emoji, no uppercase labels, no clipping, no
-  node collisions, the full question never inside the centre node, detail
+  node collisions, centre dots removed, the full question never inside the centre node, detail
   teaching readable without tiny text.
 - **Below-bar counterexample:** the pre-rework implementation documented in
   the contract's field 8 (question crammed into an 86px circle, 8px labels,
