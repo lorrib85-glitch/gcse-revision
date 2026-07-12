@@ -89,18 +89,18 @@ describe('FactorWeb governance', () => {
     expect(source).toContain("overscrollBehaviorX: 'none'")
   })
 
-  it('uses curved connectors that terminate in visible dots at both ends', () => {
+  it('uses light curved connectors with one node-side anchor dot and no centre dots', () => {
     expect(source).toContain('export function getFactorConnectorPath')
     expect(source).toContain('FACTOR_WEB_LAYOUT.connectorControlOffset')
     expect(source).toContain('<motion.path')
 
     const dotCount = source.match(/<motion\.circle/g) ?? []
-    expect(dotCount).toHaveLength(2)
+    expect(dotCount).toHaveLength(1)
     expect(source).toContain('cx={slot.nodeAnchorX}')
-    expect(source).toContain('cx={slot.focalAnchorX}')
+    expect(source).not.toContain('cx={slot.focalAnchorX}')
   })
 
-  it('sources component geometry and glow from dedicated tokens', () => {
+  it('sources component geometry and softened connector styling from dedicated tokens', () => {
     const tokens = read(tokensPath)
 
     expect(source).toContain("import { FACTOR_WEB_LAYOUT, FACTOR_WEB_VISUAL } from '../../constants/factorWeb.js'")
@@ -112,7 +112,11 @@ describe('FactorWeb governance', () => {
     expect(tokens).toContain('rowsByCount')
     expect(tokens).toContain('focalRowsByCount')
     expect(tokens).toContain('haloSize')
-    expect(tokens).toContain('connectorActiveOpacity')
+    expect(tokens).toContain('connectorIdleOpacity: 0.13')
+    expect(tokens).toContain('connectorExploredOpacity: 0.28')
+    expect(tokens).toContain('connectorActiveOpacity: 0.52')
+    expect(tokens).toContain('connectorIdleWidth: 0.30')
+    expect(tokens).toContain('connectorActiveWidth: 0.46')
   })
 
   it('uses a lighter body token for node copy', () => {
