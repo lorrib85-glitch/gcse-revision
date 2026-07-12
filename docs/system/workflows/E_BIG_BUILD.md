@@ -72,7 +72,12 @@ component family, new app-level flow, new architecture pattern.
    Verification plan:
    ```
 8. **Execute phase** — `superpowers:subagent-driven-development` →
-   `/gsd-execute-phase`.
+   `/gsd-execute-phase`. **New module content is built with `/content-create`**,
+   which resolves every screen through the build chain (learning objective →
+   primary intent → learner need → approved component → contract → named gold
+   example → content structure → render acceptance criteria) and runs the
+   composed render pass; the story spine must already exist in the episode's
+   canonical architecture file (run `/canonical-topic` if absent).
    Good subagent tasks: metadata, module content, question bank, tests, docs.
    Bad subagent tasks: same file, same component, visual polish decisions.
 9. **Review** — `/ponytail-review`; `/code-review`; `/frontend-design` if
@@ -80,7 +85,12 @@ component family, new app-level flow, new architecture pattern.
    every screen: state its one primary intent in a sentence (fail and
    split/cut if you can't); confirm the component advances the learning
    objective; check the intent→component map and contracts; run the
-   **render pass** (screenshot at 390px) — source + tests alone do not pass.
+   **render pass** (screenshot at 390px) against the named gold example
+   (`GOLD_SCREEN_REGISTER.md`) and answer the strengthened visual verdict in
+   writing — source + tests alone do not pass. An **independent
+   `content-review`** re-audits the built scope (against the gold example)
+   before the build is treated as approved; "implemented" is never
+   "approved".
 10. **Verify** — see below.
 11. **Pause / handoff** — `/gsd-pause-work` with state summary.
 12. **Commit** — directly to `main`.
@@ -90,6 +100,8 @@ component family, new app-level flow, new architecture pattern.
 `superpowers:brainstorming`, `superpowers:writing-plans`,
 `superpowers:subagent-driven-development`, `superpowers:executing-plans`,
 `superpowers:verification-before-completion`,
+`/content-create` (build new module content), `/content-review` (diagnose +
+independent post-build approval),
 `/gsd-discuss-phase`, `/gsd-plan-phase`, `/gsd-execute-phase`,
 `/gsd-resume-work`, `/gsd-pause-work`,
 `/canonical-topic` (only when docs are missing/stale/requested),

@@ -52,8 +52,13 @@ chain — no ad-hoc `<div>` boxes for a job a pattern component owns:
   an intent has an approved component, using anything else is a review
   failure.
 - **Execution contract** — the 9-field rules governing correct use (below).
-- **Gold example** — the reference implementation the contract points to (a
-  Storybook story plus a real on-screen use).
+- **Gold example** — the reference implementation the contract points to,
+  registered in `docs/system/GOLD_SCREEN_REGISTER.md`: the one composed
+  runtime screen (verified at 390px) every review and rebuild is measured
+  against, plus a named below-bar counterexample. A screen is named gold
+  **only after its composed 390px render has been reviewed** — never from
+  source alone; where none clears the bar the register says "No verified
+  composed gold example yet" and treats creating one as explicit debt.
 
 ---
 
@@ -150,6 +155,84 @@ review — and self-congratulatory render passes — are precisely what let
 capitalisation drift, screens teaching three things, inverted hierarchy,
 and a box-in-a-box teach screen through. It must not recur.
 
+### Strengthened visual verdict
+
+The render-pass comparison against the named gold example must answer **all**
+of these in writing — "looks clean", "looks polished" and "more engaging" are
+not verdicts:
+
+- What is objectively better? What became worse?
+- Does the learning objective land more quickly?
+- Can a tired learner understand the screen's job and next action within
+  three seconds?
+- Is one element clearly dominant? Is the learner doing something
+  cognitively meaningful?
+- Does any element compete with the primary intent? Would removing any
+  element improve clarity?
+- Does the result meet or exceed the named gold example?
+- Any clipping, density, hierarchy, spacing, image-relevance or
+  CTA-visibility problem?
+
+## Quality-preservation rule — no silent trade-offs
+
+An amendment must never improve one dimension by silently damaging another.
+The post-build review names any trade-off explicitly; an unnamed one is a
+review failure. Check for each of:
+
+- stronger visual design but weaker teaching
+- simpler copy but lost GCSE precision
+- more interaction but less meaningful thinking
+- more cinematic imagery but poorer readability
+- improved hierarchy but missing content
+- reduced density but fragmented learning
+- stronger story but weaker exam preparation
+
+---
+
+## The review-to-rebuild pathway
+
+Reviews must not stop at diagnosis and then rely on ad-hoc amendments. Every
+content change follows one pathway, end to end:
+
+> **canonical objective → review decision → amendment brief →
+> `content-create` implementation → composed render comparison →
+> independent post-build approval**
+
+### Three stages, never collapsed
+
+- **Diagnose — `content-review`.** Audits, records evidence, assigns each
+  screen one decision, writes an amendment brief for every Refine / Rebuild /
+  Split, and stops for confirmation.
+- **Implement — `content-create`.** Builds only the confirmed briefs, does not
+  expand scope, renders the composed screens, records any unavoidable
+  deviation. Output is *implemented*, not *approved*.
+- **Approve — `content-review`, independently.** Re-audits the amended scope
+  against before / after / gold; does not accept the builder's
+  self-assessment. **The same output never treats "implemented" as
+  "approved".**
+
+### The screen decision — one per screen
+
+Every reviewed screen gets exactly one: **Keep** (at bar), **Refine**
+(targeted execution fix), **Rebuild** (right objective, wrong approach),
+**Split** (more than one primary intent), or **Cut** (no objective / fails the
+deletion test).
+
+### The amendment brief
+
+A Refine / Rebuild / Split decision authorises nothing on its own — the review
+produces a structured amendment brief first, and that brief is what
+`content-create` implements. The brief names: module ID, screen index, current
+component, decision, canonical learning objective, one primary intent, exact
+learner misunderstanding/need, approved replacement component, why the
+component matches the content shape, named contract, named gold example,
+required content/evidence, required learner action, intended learning payoff,
+elements that must not appear, 390px acceptance criteria, retained elements,
+and known risks (content loss, repetition, density). The full field list and
+the ban on vague recommendations ("make this more engaging", "improve
+hierarchy", "add interactivity", "make it more cinematic") live in the
+`content-review` skill.
+
 ## Composition controls
 
 Structural rules a composed screen must satisfy; checked in the render pass
@@ -232,16 +315,22 @@ These design-system rules are checked on every screen (sources in brackets):
 
 ## How this is enforced
 
-- **`content-create`** names each screen's learning objective and its single
-  primary intent (one sentence) before choosing a component, resolves every
-  element through the taxonomy chain, uses the approved component per intent,
-  reserves visuals with `MediaPlaceholder` + manifest, and runs the render
-  pass in self-critique.
+- **`content-create`** implements confirmed amendment briefs (or a new-build
+  spec) only — it does not diagnose or approve. For every screen it resolves
+  the full build chain (learning objective → primary intent → learner need →
+  approved component → contract → named gold example → content structure →
+  render acceptance criteria) before choosing a component, reserves visuals
+  with `MediaPlaceholder` + manifest, runs the composed render pass, and
+  records any unavoidable deviation from the brief. Its output is
+  *implemented*, not *approved*.
 - **`content-review`** states each screen's one primary intent in a sentence
   (fails the screen if it can't), checks the component advances the learning
-  objective, then scores against the 9-field contracts and the
-  intent→component map, runs every 👁 check via the render pass, and
-  reconciles the visual-assets manifest.
+  objective, scores against the 9-field contracts and the intent→component
+  map, runs every 👁 check via the render pass against the gold register,
+  assigns each screen a Keep / Refine / Rebuild / Split / Cut decision, writes
+  an amendment brief for every Refine / Rebuild / Split, and — after
+  `content-create` builds — re-audits the amended scope independently, naming
+  any quality trade-off.
 - **Workflow C/E critique gate** runs the render pass, the
   one-primary-intent test, the objective-match check, and the taxonomy-chain
   check before any content work is presented.

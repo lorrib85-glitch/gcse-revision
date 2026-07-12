@@ -55,19 +55,34 @@ Module not yet built → re-triage to E (Big Build).
    ```
    No generic "coverage looks fine".
 5. **Plan** — `superpowers:writing-plans`.
-6. **Build** — `superpowers:executing-plans` or direct edit.
+6. **Build via the review-to-rebuild pathway.** Improving or rebuilding
+   built screens runs `/content-review` to diagnose (per-screen Keep /
+   Refine / Rebuild / Split / Cut + a structured amendment brief for each
+   Refine / Rebuild / Split), stops for confirmation, then `/content-create`
+   implements the **confirmed briefs only**. A small single-field copy fix
+   may be a direct edit; anything reaching for a component change or rebuild
+   goes through the pathway. The one pathway: canonical objective → review
+   decision → amendment brief → `content-create` implementation → composed
+   render comparison → independent post-build approval.
 7. **Review** — `/ponytail-review`; `/code-review` if data shape or logic
    changed. **Pattern-governance review** (`PATTERN_GOVERNANCE.md`) for any
    screen touched: state its one primary intent in a sentence (fail and
    split/cut if you can't); confirm the component advances the screen's
    learning objective; check the intent→component map and the relevant
-   contracts; run the **render pass** (screenshot at 390px) for any visual
-   or UX change — source + tests alone do not pass.
+   contracts; run the **render pass** (screenshot at 390px) against the
+   named gold example (`GOLD_SCREEN_REGISTER.md`) for any visual or UX
+   change — source + tests alone do not pass — and answer the strengthened
+   visual verdict in writing. After `content-create` builds, the
+   **independent post-build `content-review`** re-audits the amended scope
+   (before / after / gold) and names any quality trade-off; "implemented" is
+   never "approved".
 8. **Verify** — see below.
 9. **Commit** — directly to `main`.
 
 ## Allowed skills
 
+`/content-review` (diagnose + amendment briefs + independent post-build
+approval), `/content-create` (implement confirmed briefs),
 `/canonical-topic` (History, only when docs are missing/stale/requested),
 `/ponytail-review`, `/code-review`, `superpowers:writing-plans`,
 `superpowers:executing-plans`, `/verify`
