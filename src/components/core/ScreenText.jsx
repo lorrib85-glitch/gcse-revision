@@ -5,15 +5,18 @@
 // Usage:
 //   import { ScreenTitle, ScreenBody, ScreenCaption } from '../core/ScreenText.jsx'
 
-import { TYPE } from '../../constants/typography.js'
+import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 
-// Primary heading. Tight max-width for dramatic weight.
+// Primary non-cinematic module heading. This is deliberately the same
+// TYPE.displayScreen treatment owned by TeachScreenShell and calibrated from
+// the TimelineCanvas 390px reference. Do not override its type properties
+// locally; use style only for non-typographic layout/colour adjustments.
 export function ScreenTitle({ children, style }) {
   return (
     <h2 style={{
-      ...TYPE.displaySection,
+      ...TYPE.displayScreen,
       color: 'rgba(255,255,255,0.96)',
-      maxWidth: '18ch',
+      maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
       margin: '0 0 10px',
       ...style,
     }}>
