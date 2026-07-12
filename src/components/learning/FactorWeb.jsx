@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
+import { COMPONENT_TEXT_LIMITS } from '../../constants/contentLimits.js'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
@@ -18,6 +19,12 @@ const DEFAULT_CENTRE_LABELS = {
   process: 'How it worked',
 }
 
+export const FACTOR_WEB_TITLE_MAX_LENGTH = COMPONENT_TEXT_LIMITS.factorWeb.title
+
+export function getFactorWebTitle(block = {}) {
+  return block.title || block.kicker || block.question || ''
+}
+
 // Compute an elliptical radial position for each outer node. The web keeps
 // six short labels comfortably readable at 390px while preserving a clear
 // centre-to-factor relationship.
@@ -25,7 +32,28 @@ export function getFactorNodePosition(index, total) {
   const angle = (index * (360 / Math.max(total, 1)) - 90) * (Math.PI / 180)
   return {
     x: 50 + 39 * Math.cos(angle),
-    y: 50 + 40 * Math.sin(angle),
+    y: 50 + 39 * Math.sin(angle),
+  }
+}
+
+export function getFactorConnector(position) {
+  const centre = { x: 50, y: 52 }
+  const target = { x: position.x, y: position.y * 1.04 }
+  const dx = target.x - centre.x
+  const dy = target.y - centre.y
+  const distance = Math.max(Math.sqrt(dx * dx + dy * dy), 1)
+  const ux = dx / distance
+  const uy = dy / distance
+
+  return {
+    start: {
+      x: centre.x + ux * 15,
+      y: centre.y + uy * 15,
+    },
+    end: {
+      x: target.x - ux * 8,
+      y: target.y - uy * 8,
+    },
   }
 }
 
@@ -117,6 +145,96 @@ function FactorDetail({ factor, accent, rgb, prefersReduced }) {
   )
 }
 
+function CentreFocal({ block, centreLabel, accent, rgb, prefersReduced }) {
+  const centreImage = block.centreImage || block.centerImage
+  const centreImageAlt = block.centreImageAlt || block.centerImageAlt || centreLabel
+
+  return (
+    <motion.div
+      initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={prefersReduced ? { duration: 0 } : { duration: 0.42, ease: 'easeOut' }}
+      style={{
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        translate: '-50% -50%',
+        width: 126,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        zIndex: 2,
+      }}
+    >
+      <div
+        role={centreImage ? undefined : 'img'}
+        aria-label={centreImage ? undefined : `${centreLabel}. Central idea in the factor web.`}
+        style={{
+          position: 'relative',
+          width: 106,
+          height: 106,
+          flexShrink: 0,
+          borderRadius: '50%',
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
+          padding: centreImage ? 0 : SPACING.micro,
+          boxSizing: 'border-box',
+          background: centreImage ? 'rgba(8,8,8,0.92)' : `rgba(${rgb},0.07)`,
+          border: `1.5px solid rgba(${rgb},0.72)`,
+          boxShadow: `0 0 0 6px rgba(${rgb},0.035), 0 14px 34px rgba(0,0,0,0.34)`,
+        }}
+      >
+        {centreImage ? (
+          <img
+            src={centreImage}
+            alt={centreImageAlt}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: block.centreImagePosition || block.centerImagePosition || 'center 22%',
+              filter: 'saturate(0.82) contrast(1.05) brightness(0.82)',
+            }}
+          />
+        ) : (
+          <span style={{
+            ...TYPE.titleMedium,
+            color: `rgba(${rgb},0.94)`,
+          }}>
+            {centreLabel}
+          </span>
+        )}
+
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 4,
+            borderRadius: '50%',
+            border: `1px solid rgba(${rgb},0.16)`,
+            pointerEvents: 'none',
+          }}
+        />
+      </div>
+
+      {centreImage && (
+        <div style={{
+          ...TYPE.titleMedium,
+          color: accent,
+          textAlign: 'center',
+          marginTop: 7,
+          maxWidth: 126,
+        }}>
+          {centreLabel}
+        </div>
+      )}
+    </motion.div>
+  )
+}
+
 function FactorWebDiagram({
   block,
   factors,
@@ -125,7 +243,6 @@ function FactorWebDiagram({
   onNodeTap,
   accent,
   rgb,
-  bg,
   prefersReduced,
 }) {
   const activeIndex = factors.findIndex(factor => factor.id === activeId)
@@ -146,6 +263,21 @@ function FactorWebDiagram({
         aspectRatio: '1 / 1.04',
         margin: '0 auto',
       }}>
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            translate: '-50% -50%',
+            width: '72%',
+            aspectRatio: '1',
+            borderRadius: '50%',
+            background: `radial-gradient(circle, rgba(${rgb},0.07) 0%, rgba(${rgb},0.025) 38%, transparent 70%)`,
+            pointerEvents: 'none',
+          }}
+        />
+
         <svg
           viewBox="0 0 100 104"
           aria-hidden="true"
@@ -158,64 +290,54 @@ function FactorWebDiagram({
             pointerEvents: 'none',
           }}
         >
+          <circle cx="50" cy="52" r="23" fill="none" stroke={accent} strokeWidth="0.28" opacity="0.10" />
+          <circle cx="50" cy="52" r="34" fill="none" stroke={accent} strokeWidth="0.22" opacity="0.06" />
+
           {factors.map((factor, index) => {
             const position = getFactorNodePosition(index, factors.length)
+            const connector = getFactorConnector(position)
+            const isActive = factor.id === activeId
             const isExplored = explored.has(factor.id)
+            const opacity = isActive ? 0.82 : isExplored ? 0.56 : 0.24
+
             return (
-              <motion.path
-                key={factor.id}
-                d={`M 50 52 L ${position.x} ${position.y * 1.04}`}
-                stroke={accent}
-                strokeWidth="0.55"
-                fill="none"
-                strokeLinecap="round"
-                initial={{ pathLength: prefersReduced ? 1 : 0, strokeOpacity: 0.16 }}
-                animate={{ pathLength: 1, strokeOpacity: isExplored ? 0.52 : 0.16 }}
-                transition={prefersReduced
-                  ? { duration: 0 }
-                  : {
-                      pathLength: { delay: 0.18 + index * 0.06, duration: 0.42, ease: 'easeOut' },
-                      strokeOpacity: { duration: 0.2 },
-                    }}
-              />
+              <g key={factor.id}>
+                <motion.path
+                  d={`M ${connector.start.x} ${connector.start.y} L ${connector.end.x} ${connector.end.y}`}
+                  stroke={accent}
+                  strokeWidth={isActive ? '0.72' : '0.48'}
+                  fill="none"
+                  strokeLinecap="round"
+                  initial={{ pathLength: prefersReduced ? 1 : 0, strokeOpacity: 0.12 }}
+                  animate={{ pathLength: 1, strokeOpacity: opacity }}
+                  transition={prefersReduced
+                    ? { duration: 0 }
+                    : {
+                        pathLength: { delay: 0.18 + index * 0.06, duration: 0.42, ease: 'easeOut' },
+                        strokeOpacity: { duration: 0.2 },
+                      }}
+                />
+                <motion.circle
+                  cx={connector.end.x}
+                  cy={connector.end.y}
+                  r={isActive ? 1.45 : 1.05}
+                  fill={accent}
+                  initial={{ opacity: prefersReduced ? opacity : 0, scale: prefersReduced ? 1 : 0.7 }}
+                  animate={{ opacity, scale: 1 }}
+                  transition={prefersReduced ? { duration: 0 } : { delay: 0.34 + index * 0.06, duration: 0.22 }}
+                />
+              </g>
             )
           })}
         </svg>
 
-        <motion.div
-          role="img"
-          aria-label={`${centreLabel}. ${block.question}`}
-          initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={prefersReduced ? { duration: 0 } : { duration: 0.4, ease: 'easeOut' }}
-          style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            // Framer Motion owns transform for scale, so centring uses the
-            // independent CSS translate property.
-            translate: '-50% -50%',
-            width: 94,
-            height: 94,
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
-            padding: SPACING.micro,
-            boxSizing: 'border-box',
-            background: `rgba(${rgb},0.08)`,
-            border: `1px solid rgba(${rgb},0.38)`,
-            zIndex: 2,
-          }}
-        >
-          <span style={{
-            ...TYPE.titleMedium,
-            color: `rgba(${rgb},0.92)`,
-          }}>
-            {centreLabel}
-          </span>
-        </motion.div>
+        <CentreFocal
+          block={block}
+          centreLabel={centreLabel}
+          accent={accent}
+          rgb={rgb}
+          prefersReduced={prefersReduced}
+        />
 
         {factors.map((factor, index) => {
           const position = getFactorNodePosition(index, factors.length)
@@ -228,9 +350,9 @@ function FactorWebDiagram({
               key={factor.id}
               type="button"
               onClick={() => onNodeTap(factor)}
-              aria-label={`Explore ${factor.title}`}
+              aria-label={`${isExplored ? 'Review' : 'Explore'} ${factor.title}`}
               aria-pressed={isActive}
-              initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.88 }}
+              initial={{ opacity: prefersReduced ? 1 : 0, scale: prefersReduced ? 1 : 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={nodeTransition(index)}
               style={{
@@ -238,26 +360,26 @@ function FactorWebDiagram({
                 left: `${position.x}%`,
                 top: `${position.y}%`,
                 translate: '-50% -50%',
-                width: 'clamp(86px, 24vw, 102px)',
-                minHeight: 58,
+                width: 'clamp(84px, 23vw, 98px)',
+                minHeight: 54,
                 padding: `${SPACING.micro}px 8px`,
                 borderRadius: RADII.medium,
                 border: isActive
-                  ? `1.5px solid ${accent}`
+                  ? `1.5px solid rgba(${rgb},0.82)`
                   : isExplored
-                    ? `1px solid rgba(${rgb},0.42)`
-                    : '1px solid rgba(255,255,255,0.12)',
+                    ? `1px solid rgba(${rgb},0.38)`
+                    : '1px solid rgba(255,255,255,0.11)',
                 background: isActive
-                  ? `rgba(${rgb},0.14)`
-                  : isExplored
-                    ? `rgba(${rgb},0.07)`
-                    : 'rgba(255,255,255,0.035)',
+                  ? `rgba(${rgb},0.12)`
+                  : 'rgba(15,14,12,0.82)',
                 color: isActive
                   ? accent
                   : isExplored
-                    ? `rgba(${rgb},0.92)`
+                    ? `rgba(${rgb},0.90)`
                     : 'rgba(245,245,245,0.76)',
-                boxShadow: isActive ? `0 0 0 3px rgba(${rgb},0.12)` : 'none',
+                boxShadow: isActive
+                  ? `0 0 0 3px rgba(${rgb},0.09), 0 10px 28px rgba(0,0,0,0.30)`
+                  : '0 8px 22px rgba(0,0,0,0.20)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -282,21 +404,15 @@ function FactorWebDiagram({
                   aria-hidden="true"
                   style={{
                     position: 'absolute',
-                    right: 5,
-                    top: 5,
-                    width: 14,
-                    height: 14,
+                    right: 7,
+                    top: 7,
+                    width: 5,
+                    height: 5,
                     borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     background: accent,
-                    color: bg,
-                    ...TYPE.caption,
+                    boxShadow: `0 0 8px rgba(${rgb},0.42)`,
                   }}
-                >
-                  ✓
-                </span>
+                />
               )}
             </motion.button>
           )
@@ -442,13 +558,12 @@ function JudgementPhase({ block, factors, selected, onSelect, onContinue, accent
 
 // ── FactorWeb ────────────────────────────────────────────────────────────────
 // A mobile-first causation and judgement screen. Learners explore short factor
-// nodes around a concise centre concept, read the fuller teaching beneath,
-// then choose and justify the factor they consider most important.
+// nodes around a central historical focal point, read the fuller teaching
+// beneath, then choose and justify the factor they consider most important.
 export default function FactorWeb({ block, subject = 'History', onContinue }) {
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const accent = theme.accent
   const rgb = theme.accentRgb
-  const bg = theme.background || SUBJECTS.History.background
   const prefersReduced = useReducedMotion()
   const scrollRef = useRef(null)
 
@@ -480,14 +595,16 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
   }
 
   // Legacy `kicker` values are promoted to the main heading rather than
-  // rendered as a separate eyebrow. New content should use `question` only.
-  const explorationHeading = block.title || block.kicker || block.question
+  // rendered as a separate eyebrow. New content should use `title`.
+  const explorationHeading = getFactorWebTitle(block)
   const heading = isJudgement
-    ? (block.taskPrompt || 'Which factor mattered most?')
+    ? (block.judgementTitle || 'Which factor mattered most?')
     : explorationHeading
 
+  // A short paragraph is allowed when context is useful. Long legacy
+  // taskPrompt copy is treated as supporting text, never as a screen title.
   const intro = isJudgement
-    ? (block.judgementInstruction || 'Choose one factor, then explain your judgement.')
+    ? (block.judgementInstruction || block.taskPrompt || 'Choose one factor, then explain your judgement.')
     : (block.instruction || 'Explore each factor. Then decide which mattered most.')
 
   return (
@@ -539,7 +656,6 @@ export default function FactorWeb({ block, subject = 'History', onContinue }) {
                   onNodeTap={handleNodeTap}
                   accent={accent}
                   rgb={rgb}
-                  bg={bg}
                   prefersReduced={prefersReduced}
                 />
 
