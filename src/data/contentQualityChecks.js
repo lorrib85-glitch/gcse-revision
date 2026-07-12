@@ -12,7 +12,7 @@
 //     and keeps shrink-only grandfather allowlists. That enumeration is a
 //     property of the regression-floor test, not of these functions.
 
-import { isPassive, isAssessed } from './componentFunctions.js'
+import { getTypeInfo, isPassive, isAssessed } from './componentFunctions.js'
 
 // Compulsory GCSE subject vocabulary, exempt from readability scoring.
 // GCSE deliberately introduces difficult vocabulary — it stays, and must
@@ -62,19 +62,47 @@ export function stripExamVocabulary(text) {
 
 // Learner-facing strings on a screen: headings, subs, block text/labels,
 // questions, options, explanations, feedback — walked recursively.
-const TEXT_KEYS = new Set([
+export const LEARNER_TEXT_KEYS = new Set([
   'heading', 'sub', 'text', 'question', 'explanation', 'hint',
   'wrongFeedback', 'correctFeedback', 'detail', 'body', 'verdict',
-  'significance', 'punchline', 'tagline', 'intro',
+  'significance', 'punchline', 'tagline', 'intro', 'title', 'label',
+  'chapterTitle', 'headline', 'mainText', 'supportText', 'sourceContent',
+  'statement', 'emphasis', 'reflectionPrompt', 'opening', 'closing',
+  'instruction', 'learningGoals', 'outcome', 'outcomes', 'bullets',
+  'profile', 'line', 'lines', 'narrative', 'facts', 'options', 'answer',
+  'answers', 'prompt',
 ])
 
-export function collectLearnerText(node, out = []) {
-  if (typeof node !== 'object' || node === null) return out.join(' ')
-  for (const [key, value] of Object.entries(node)) {
-    if (typeof value === 'string' && TEXT_KEYS.has(key)) out.push(value)
-    else if (typeof value === 'object') collectLearnerText(value, out)
+const METADATA_KEYS = new Set([
+  'id', 'tag', 'tags', 'type', 'component', 'componentType', 'image',
+  'imagePath', 'backgroundImage', 'asset', 'assetKey', 'assetKeys',
+  'src', 'href', 'url', 'color',
+  'colorRgb', 'colorLight', 'bg', 'background', 'border', 'className',
+  'style', 'variant', 'tone', 'theme', 'icon', 'emoji',
+])
+
+export function collectLearnerTextSegments(node, out = []) {
+  if (Array.isArray(node)) {
+    for (const item of node) collectLearnerTextSegments(item, out)
+    return out
   }
-  return out.join(' ')
+  if (typeof node !== 'object' || node === null) return out
+  for (const [key, value] of Object.entries(node)) {
+    if (METADATA_KEYS.has(key)) continue
+    if (typeof value === 'string' && LEARNER_TEXT_KEYS.has(key)) out.push(value)
+    else if (Array.isArray(value) && LEARNER_TEXT_KEYS.has(key)) {
+      for (const item of value) {
+        if (typeof item === 'string') out.push(item)
+        else collectLearnerTextSegments(item, out)
+      }
+    }
+    else if (typeof value === 'object') collectLearnerTextSegments(value, out)
+  }
+  return out
+}
+
+export function collectLearnerText(node, out = []) {
+  return collectLearnerTextSegments(node, out).join('. ')
 }
 
 export const READABILITY_GRADE_CEILING = 7
@@ -91,6 +119,36 @@ function hasAssessedScreen(screens) {
   )
 }
 
+function screenTypes(screen) {
+  return [screen.type, ...(screen.blocks ?? []).map(b => b.type)].filter(Boolean)
+}
+
+function hasExamPrepContent(screen) {
+  return screen.stage === 'exam-prep' || screen.stageId === 'exam-prep' ||
+    screenTypes(screen).includes('examinerExplains')
+}
+
+function hasAssessedExamTechnique(screen) {
+  return screenTypes(screen).some(type => {
+    const info = getTypeInfo(type)
+    return info?.interaction === 'assessed' && info.functions.includes('exam-technique')
+  })
+}
+
+function pushViolation(violations, code, location, message) {
+  violations.push({ code, location, message, fingerprint: `${code}:${location}` })
+}
+
+function pushReadabilityViolation(violations, location, grade) {
+  violations.push({
+    code: 'READABILITY',
+    location,
+    grade,
+    message: `${location.replace(':', ' ')} readability grade ${grade.toFixed(1)} > ${READABILITY_GRADE_CEILING}`,
+    fingerprint: `READABILITY:${location}`,
+  })
+}
+
 // ⚙ guardrails from docs/system/CONTENT_BUILD_TEMPLATE.md: max 2 consecutive
 // passive screens, every teaching stage has an assessed screen, sane
 // stageNavigation, and per-screen readability against the grade ceiling.
@@ -101,36 +159,52 @@ export function guardrailViolations(ep) {
   let run = 0
   screens.forEach((s, i) => {
     run = isPassiveScreen(s) ? run + 1 : 0
-    if (run === 3) violations.push(`3 consecutive passive screens ending at index ${i}`)
+    if (run === 3) pushViolation(violations, 'PASSIVE_RUN', `screen:${i}`, `3 consecutive passive screens ending at index ${i}`)
   })
 
   const stages = ep.stageNavigation ?? []
   stages.forEach((stage, i) => {
     if (i > 0 && stage.screenIndex <= stages[i - 1].screenIndex) {
-      violations.push(`stageNavigation "${stage.id}" screenIndex not strictly increasing`)
+      pushViolation(violations, 'STAGE_NAV_NOT_INCREASING', stage.id, `stageNavigation "${stage.id}" screenIndex not strictly increasing`)
     }
     if (stage.screenIndex < 0 || stage.screenIndex >= screens.length) {
-      violations.push(`stageNavigation "${stage.id}" screenIndex out of bounds`)
+      pushViolation(violations, 'STAGE_NAV_OUT_OF_BOUNDS', stage.id, `stageNavigation "${stage.id}" screenIndex out of bounds`)
     }
   })
   stages.slice(0, -1).forEach((stage, i) => {
     const end = stages[i + 1]?.screenIndex ?? screens.length
     const segment = screens.slice(stage.screenIndex, end)
     if (segment.length > 0 && !hasAssessedScreen(segment)) {
-      violations.push(`teaching stage "${stage.id}" has no assessed screen`)
+      pushViolation(violations, 'STAGE_NO_ASSESSMENT', stage.id, `teaching stage "${stage.id}" has no assessed screen`)
     }
   })
+
+  const firstExamPrepIndex = screens.findIndex(hasExamPrepContent)
+  if (firstExamPrepIndex >= 0) {
+    const hasTeaching = screens.slice(firstExamPrepIndex).some(screen => screenTypes(screen).includes('examinerExplains'))
+    const assessedIndex = screens.findIndex((screen, i) => i > firstExamPrepIndex && hasAssessedExamTechnique(screen))
+    if (!hasTeaching) {
+      pushViolation(violations, 'EXAM_PREP_NO_TEACHING', `screen:${firstExamPrepIndex}`, 'exam-prep stage has no examiner teaching')
+    }
+    if (assessedIndex < 0) {
+      pushViolation(violations, 'EXAM_PREP_NO_ASSESSMENT', `screen:${firstExamPrepIndex}`, 'exam-prep teaching is not followed by assessed exam-technique practice')
+    }
+  }
 
   screens.forEach((s, i) => {
     const text = stripExamVocabulary(collectLearnerText(s))
     if (text.split(/\s+/).filter(Boolean).length < 10) return // too short to score
     const grade = fleschKincaidGrade(text)
     if (grade > READABILITY_GRADE_CEILING) {
-      violations.push(`screen ${i} readability grade ${grade.toFixed(1)} > ${READABILITY_GRADE_CEILING}`)
+      pushReadabilityViolation(violations, `screen:${i}`, grade)
     }
   })
 
   return violations
+}
+
+export function violationFingerprints(violations) {
+  return violations.map(v => typeof v === 'string' ? v : v.fingerprint).sort()
 }
 
 // P7 sentence-case guard: CLAUDE.md requires sentence case for all
@@ -156,7 +230,7 @@ export const PROPER_NOUNS = [
   'De Humani Corporis Fabrica', 'De Motu Cordis', 'Melcombe Regis',
 ]
 
-const TITLE_CASE_KEYS = new Set(['label', 'title', 'heading', 'sub'])
+export const TITLE_CASE_KEYS = new Set(['label', 'title', 'heading', 'sub'])
 
 function isCapitalisedWord(word) {
   return /^[A-Z]/.test(word) && word.toLowerCase() !== word && word.toUpperCase() !== word
@@ -181,21 +255,35 @@ function findTitleCaseRuns(text) {
   return runs
 }
 
-function collectTitleCaseFields(node, out = []) {
+function collectTitleCaseFields(node, path = [], out = []) {
   if (typeof node !== 'object' || node === null) return out
+  if (Array.isArray(node)) {
+    node.forEach((item, index) => collectTitleCaseFields(item, [...path, `[${index}]`], out))
+    return out
+  }
   for (const [key, value] of Object.entries(node)) {
-    if (typeof value === 'string' && TITLE_CASE_KEYS.has(key)) out.push(value)
-    else if (typeof value === 'object') collectTitleCaseFields(value, out)
+    const fieldPath = [...path, key]
+    if (typeof value === 'string' && TITLE_CASE_KEYS.has(key)) {
+      out.push({ location: fieldPath.join('.').replaceAll('.[', '['), field: key, value })
+    }
+    else if (typeof value === 'object') collectTitleCaseFields(value, fieldPath, out)
   }
   return out
 }
 
 export function sentenceCaseViolations(ep) {
   const violations = []
-  for (const field of collectTitleCaseFields(ep)) {
-    for (const run of findTitleCaseRuns(field)) {
-      violations.push(`"${run}" in "${field}"`)
-    }
+  for (const item of collectTitleCaseFields(ep)) {
+    findTitleCaseRuns(item.value).forEach((run, index) => {
+      violations.push({
+        code: 'SENTENCE_CASE',
+        location: item.location,
+        field: item.field,
+        run,
+        message: `"${run}" in "${item.value}"`,
+        fingerprint: `SENTENCE_CASE:${item.location}:run:${index}`,
+      })
+    })
   }
   return violations
 }

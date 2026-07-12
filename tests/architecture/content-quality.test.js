@@ -10,24 +10,19 @@ import {
   fleschKincaidGrade,
   stripExamVocabulary,
   collectLearnerText,
+  collectLearnerTextSegments,
   guardrailViolations,
   sentenceCaseViolations,
+  violationFingerprints,
 } from '../../src/data/contentQualityChecks.js'
-import { MEDICINE_EPISODES } from '../../src/content/history/medicine/index.js'
-import * as mathsFoundations from '../../src/content/maths/foundations/index.js'
-import * as chemChemicalChanges from '../../src/content/chemistry/chemical-changes/index.js'
-import * as chemRatesAndOrganic from '../../src/content/chemistry/rates-and-organic/index.js'
-import * as chemAtmosphere from '../../src/content/chemistry/chemistry-of-the-atmosphere/index.js'
-import * as chemAtomicStructure from '../../src/content/chemistry/atomic-structure/index.js'
-import * as sociologyFamilies from '../../src/content/sociology/families/index.js'
-import * as bioInheritanceEvolution from '../../src/content/biology/inheritance-variation-evolution/index.js'
-import * as bioOrganisation from '../../src/content/biology/organisation/index.js'
-import * as bioHomeostasis from '../../src/content/biology/homeostasis/index.js'
-import * as bioEcology from '../../src/content/biology/ecology/index.js'
-import * as bioCellBiology from '../../src/content/biology/cell-biology/index.js'
-import * as bioInfectionResponse from '../../src/content/biology/infection-and-response/index.js'
-import * as englishMacbeth from '../../src/content/english/macbeth/index.js'
-
+import { MODULES } from '../../src/modules.js'
+import { MODULE_CONTENT_LOADERS } from '../../src/content/moduleContentRegistry.js'
+import {
+  KNOWN_GUARDRAIL_VIOLATIONS,
+  KNOWN_READABILITY_BASELINES,
+  KNOWN_SENTENCE_CASE_VIOLATIONS,
+  READABILITY_GRADE_TOLERANCE,
+} from '../fixtures/content-quality-known-debt.js'
 // This file is the CI regression floor: it enumerates every built episode
 // and keeps shrink-only grandfather allowlists so `pnpm verify` catches new
 // violations without re-litigating known ones. The actual check functions
@@ -38,24 +33,19 @@ import * as englishMacbeth from '../../src/content/english/macbeth/index.js'
 // content-review runs. This file's enumeration is a property of being a
 // regression gate, not a requirement of the checks themselves.
 
-// Every other built series lazy-loads via EPISODE_LOADERS/EPISODE_IDS (unlike
-// Medicine's eager MEDICINE_EPISODES array). Resolve them all once here so
-// every describe block below covers every subject, not just History.
-const LAZY_REGISTRIES = [
-  mathsFoundations, chemChemicalChanges, chemRatesAndOrganic, chemAtmosphere,
-  chemAtomicStructure, sociologyFamilies, bioInheritanceEvolution,
-  bioOrganisation, bioHomeostasis, bioEcology, bioCellBiology,
-  bioInfectionResponse, englishMacbeth,
-]
-
-async function loadLazyEpisodes() {
-  const lists = await Promise.all(
-    LAZY_REGISTRIES.map(reg => Promise.all(reg.EPISODE_IDS.map(id => reg.EPISODE_LOADERS[id]()))),
-  )
-  return lists.flat()
+async function loadBuiltEpisodes() {
+  const builtModules = MODULES.filter(mod => mod.screenCount > 0)
+  const episodes = await Promise.all(builtModules.map(async mod => {
+    const loader = MODULE_CONTENT_LOADERS[mod.id]
+    if (typeof loader !== 'function') {
+      throw new Error(`${mod.id} has no content loader`)
+    }
+    return loader()
+  }))
+  return episodes.filter(ep => (ep.screens ?? []).length > 0)
 }
 
-const ALL_EPISODES = [...MEDICINE_EPISODES, ...(await loadLazyEpisodes())]
+const ALL_EPISODES = await loadBuiltEpisodes()
 
 // Every display type used by real content, gathered from screens and their
 // nested blocks. Types inside answer options (e.g. 'weak'/'strong' evidence
@@ -143,55 +133,207 @@ describe('Readability helper', () => {
     expect(text).toContain('see inside the body')
     expect(text).toContain('X-rays changed diagnosis')
   })
+
+  it('collects nested learner-facing content and answer options', () => {
+    const screen = {
+      title: 'Nested lesson title.',
+      learningGoals: ['Explain the cause.', 'Apply it to an exam answer.'],
+      profile: { lines: ['A profile line learners read.'] },
+      narrative: { facts: [{ statement: 'Narrative fact for learners.' }] },
+      options: [{ label: 'Answer option A.' }, { answer: 'Answer option B.' }],
+    }
+    const text = collectLearnerText(screen)
+    expect(text).toContain('Nested lesson title')
+    expect(text).toContain('Explain the cause')
+    expect(text).toContain('A profile line learners read')
+    expect(text).toContain('Narrative fact for learners')
+    expect(text).toContain('Answer option A')
+    expect(text).toContain('Answer option B')
+  })
+
+  it('collects string answer options as separate learner-facing segments', () => {
+    const segments = collectLearnerTextSegments({
+      options: ['First answer', 'Second answer', 'Third answer'],
+    })
+    expect(segments).toEqual(['First answer', 'Second answer', 'Third answer'])
+  })
+
+  it('collects object answer options as separate learner-facing segments', () => {
+    const segments = collectLearnerTextSegments({
+      options: [{ label: 'First answer' }, { answer: 'Second answer' }],
+    })
+    expect(segments).toEqual(['First answer', 'Second answer'])
+  })
+
+  it('joins separate options and bullets with sentence boundaries, not a run-on space', () => {
+    const text = collectLearnerText({
+      options: ['First answer', 'Second answer'],
+      bullets: ['First bullet', 'Second bullet'],
+    })
+    expect(text).toBe('First answer. Second answer. First bullet. Second bullet')
+  })
+
+  it('excludes implementation metadata from learner text', () => {
+    const text = collectLearnerText({
+      title: 'Learners read this.',
+      id: 'metadata-id',
+      tag: 'metadata-tag',
+      tags: ['learner sounding tag'],
+      type: 'read',
+      image: '/asset/path.png',
+      backgroundImage: '/images/learner-facing-words.png',
+      assetKeys: ['learnerWordsInsideAssetKey'],
+      color: '#ffffff',
+      colorRgb: '255,255,255',
+      bg: 'rgba(0,0,0,.1)',
+      colorLight: '#eeeeee',
+    })
+    expect(text).toContain('Learners read this')
+    expect(text).not.toContain('metadata-id')
+    expect(text).not.toContain('/asset/path.png')
+    expect(text).not.toContain('#ffffff')
+    expect(text).not.toContain('learner sounding tag')
+    expect(text).not.toContain('learnerWordsInsideAssetKey')
+  })
+})
+
+describe('Exam-preparation completion contract', () => {
+  it.each(['faceExaminer', 'guidedExamResponse', 'examscored', 'misconceptionCheck', 'spotTheError'])(
+    'accepts examiner teaching followed by assessed exam-technique practice: %s',
+    type => {
+      const ep = {
+        screens: [
+          { type: 'examinerExplains', heading: 'Examiner teaches how to answer.' },
+          { type, question: 'Now write the exam move.' },
+        ],
+      }
+      expect(violationFingerprints(guardrailViolations(ep))).toEqual([])
+    }
+  )
+
+  it('accepts examiner teaching followed later by assessed exam-technique practice', () => {
+    const ep = {
+      screens: [
+        { type: 'examinerExplains', heading: 'Examiner teaches how to answer.' },
+        { type: 'read', text: 'Keep this advice in mind.' },
+        { type: 'guidedExamResponse', question: 'Now write the exam move.' },
+      ],
+    }
+    expect(violationFingerprints(guardrailViolations(ep))).toEqual([])
+  })
+
+  it('rejects assessed retrieval as exam-prep follow-up', () => {
+    const ep = {
+      screens: [
+        { type: 'examinerExplains', heading: 'Examiner teaches how to answer.' },
+        { type: 'quickRecall', question: 'Recall a fact.' },
+      ],
+    }
+    expect(violationFingerprints(guardrailViolations(ep))).toContain('EXAM_PREP_NO_ASSESSMENT:screen:0')
+  })
+
+  it('rejects passive examiner advice with no later assessed exam-technique component', () => {
+    const ep = {
+      screens: [
+        { type: 'examinerExplains', heading: 'Examiner teaches how to answer.' },
+        { type: 'read', text: 'The lesson ends with advice only.' },
+      ],
+    }
+    expect(violationFingerprints(guardrailViolations(ep))).toContain('EXAM_PREP_NO_ASSESSMENT:screen:0')
+  })
+
+  it('rejects exam practice before examiner teaching because ordering matters', () => {
+    const ep = {
+      screens: [
+        { type: 'guidedExamResponse', question: 'Practice first.' },
+        { type: 'examinerExplains', heading: 'Examiner teaches afterwards.' },
+      ],
+    }
+    expect(violationFingerprints(guardrailViolations(ep))).toContain('EXAM_PREP_NO_ASSESSMENT:screen:1')
+  })
 })
 
 // ─── Quality floor (⚙ guardrails from CONTENT_BUILD_TEMPLATE.md) ─────────
 
-// Episodes built before the framework. This list only shrinks: fixing an
-// episode with content-review removes it. Never add a NEW episode here.
-//
-// history-medicine-medieval-beliefs-causes (Episode 1, the flagship gold
-// example) is included here too: the "part-1" teaching stage has no
-// assessed screen and 7 screens exceed the readability ceiling. The
-// original plan called for fixing these now rather than grandfathering the
-// flagship, but that is real content-editing work (Lane C), out of scope
-// for this Lane G test-infrastructure change. It is the natural first case
-// for /content-review once that skill exists — remove it from this set
-// when fixed.
-//
-// This list originally covered History Medicine only, because the test
-// itself only loaded MEDICINE_EPISODES. Once generalised to load every
-// built series (Maths, Sociology, Biology, English), those episodes'
-// existing readability/stageNavigation violations surfaced for the first
-// time here too — grandfathered on the same terms, not fixed as a
-// drive-by. english-macbeth-power-ambition's non-increasing
-// stageNavigation reflects a 1-screen stub carrying a 6-stage skeleton for
-// screens not yet built, not a readability issue.
-const GRANDFATHERED_EPISODES = new Set([
-  'history-medicine-medieval-beliefs-causes',
-  'history-medicine-renaissance-medicine',
-  'history-medicine-surgery-anaesthetics',
-  'history-medicine-jenner-vaccination',
-  'history-medicine-germ-theory',
-  'history-medicine-great-stink',
-  'history-medicine-surgery-revolution',
-  'history-medicine-accidental-miracle',
-  'history-medicine-modern-medicine',
-  'history-medicine-cancer',
-  'history-medicine-western-front',
-  'math1', 'math2', 'math3', 'math4', 'math5', 'math6', 'math7', 'math8',
-  'soc1', 'soc2', 'soc3', 'soc4', 'soc6',
-  'bio_building_blocks', 'sci_bio_w1',
-  'english-macbeth-power-ambition',
-])
+// Known content debt lives in tests/fixtures/content-quality-known-debt.js.
+// The fixture is explicit reviewable governance data; tests never regenerate it.
+function compareKnownGuardrailDebt(actualViolations, expectedFingerprints = []) {
+  const actual = actualViolations.filter(v => v.code !== 'READABILITY').map(v => v.fingerprint).sort()
+  expect(actual).toEqual(expectedFingerprints)
+}
+
+function compareKnownReadabilityDebt(actualViolations, expectedBaselines = {}) {
+  const actual = actualViolations.filter(v => v.code === 'READABILITY')
+  const actualFingerprints = actual.map(v => v.fingerprint).sort()
+  const expectedFingerprints = Object.keys(expectedBaselines).sort()
+  expect(actualFingerprints).toEqual(expectedFingerprints)
+  for (const violation of actual) {
+    const maxGrade = expectedBaselines[violation.fingerprint] + READABILITY_GRADE_TOLERANCE
+    expect(
+      violation.grade,
+      `${violation.fingerprint} grade ${violation.grade.toFixed(2)} exceeds baseline ${expectedBaselines[violation.fingerprint].toFixed(2)} + tolerance ${READABILITY_GRADE_TOLERANCE}`
+    ).toBeLessThanOrEqual(maxGrade)
+  }
+}
+
+function sentenceCaseFingerprints(ep) {
+  return sentenceCaseViolations(ep).map(v => v.fingerprint).sort()
+}
+
+describe('Known-debt ratchet helpers', () => {
+  it('passes unchanged known readability debt', () => {
+    const actual = [{ code: 'READABILITY', fingerprint: 'READABILITY:screen:4', grade: 7.2 }]
+    expect(() => compareKnownReadabilityDebt(actual, { 'READABILITY:screen:4': 7.2 })).not.toThrow()
+  })
+
+  it('passes improved readability that remains a known violation', () => {
+    const actual = [{ code: 'READABILITY', fingerprint: 'READABILITY:screen:4', grade: 7.1 }]
+    expect(() => compareKnownReadabilityDebt(actual, { 'READABILITY:screen:4': 7.2 })).not.toThrow()
+  })
+
+  it('ignores insignificant readability calculation noise within tolerance', () => {
+    const actual = [{ code: 'READABILITY', fingerprint: 'READABILITY:screen:4', grade: 7.2 + READABILITY_GRADE_TOLERANCE }]
+    expect(() => compareKnownReadabilityDebt(actual, { 'READABILITY:screen:4': 7.2 })).not.toThrow()
+  })
+
+  it('fails when known readability debt gets materially worse', () => {
+    const actual = [{ code: 'READABILITY', fingerprint: 'READABILITY:screen:4', grade: 12.8 }]
+    expect(() => compareKnownReadabilityDebt(actual, { 'READABILITY:screen:4': 7.2 })).toThrow()
+  })
+
+  it('fails when a new readability violation appears', () => {
+    const actual = [
+      { code: 'READABILITY', fingerprint: 'READABILITY:screen:4', grade: 7.2 },
+      { code: 'READABILITY', fingerprint: 'READABILITY:screen:5', grade: 7.3 },
+    ]
+    expect(() => compareKnownReadabilityDebt(actual, { 'READABILITY:screen:4': 7.2 })).toThrow()
+  })
+
+  it('sentence-case fingerprints are stable by location rather than only words', () => {
+    const ep = { screens: [{ blocks: [{ label: 'Bad Title Case' }] }] }
+    expect(sentenceCaseFingerprints(ep)).toEqual(['SENTENCE_CASE:screens[0].blocks[0].label:run:0'])
+  })
+
+  it('sentence-case comparison fails for a new location in a module with old debt', () => {
+    const actual = ['SENTENCE_CASE:screens[0].title:run:0', 'SENTENCE_CASE:screens[1].title:run:0']
+    const expected = ['SENTENCE_CASE:screens[0].title:run:0']
+    expect(actual).not.toEqual(expected)
+  })
+})
 
 describe('Content quality floor', () => {
+  it('enumerates every built module from MODULES and MODULE_CONTENT_LOADERS', () => {
+    const expectedBuiltIds = MODULES.filter(mod => mod.screenCount > 0).map(mod => mod.id).sort()
+    const inspectedIds = ALL_EPISODES.map(ep => ep.id).sort()
+    expect(inspectedIds).toEqual(expectedBuiltIds)
+  })
+
   for (const ep of ALL_EPISODES) {
     if ((ep.screens ?? []).length === 0) continue // stubs are covered by placeholder-module-safety
     it(`${ep.id} meets the quality floor (or is grandfathered)`, () => {
       const violations = guardrailViolations(ep)
-      if (GRANDFATHERED_EPISODES.has(ep.id)) return // shrink-only allowlist
-      expect(violations, violations.join('\n')).toEqual([])
+      compareKnownGuardrailDebt(violations, KNOWN_GUARDRAIL_VIOLATIONS[ep.id] ?? [])
+      compareKnownReadabilityDebt(violations, KNOWN_READABILITY_BASELINES[ep.id] ?? {})
     })
   }
 
@@ -206,30 +348,13 @@ describe('Content quality floor', () => {
 // codebase. Existing violations are grandfathered per-episode (shrink-only);
 // fixing them is content-review work, not this test's job.
 
-// Episodes with known sentence-case violations. Shrink-only — fixing an
-// episode's copy removes it here. Never add a NEW episode to this list.
-const SENTENCE_CASE_GRANDFATHERED_EPISODES = new Set([
-  'history-medicine-medieval-beliefs-causes',
-  'history-medicine-renaissance-medicine',
-  'history-medicine-surgery-anaesthetics',
-  'history-medicine-jenner-vaccination',
-  'history-medicine-germ-theory',
-  'history-medicine-great-stink',
-  'history-medicine-surgery-revolution',
-  'history-medicine-accidental-miracle',
-  'history-medicine-modern-medicine',
-  'history-medicine-cancer',
-  'history-medicine-western-front',
-  'math8', 'soc2', 'soc3', 'soc4', 'soc6', 'bio_building_blocks', 'sci_bio_w1',
-])
-
+// Known sentence-case debt is exact by content location + run index.
+// New title-case copy in an old module gets a new fingerprint and fails.
 describe('Sentence-case guard', () => {
   for (const ep of ALL_EPISODES) {
     if ((ep.screens ?? []).length === 0) continue
     it(`${ep.id} uses sentence case in label/title/heading/sub (or is grandfathered)`, () => {
-      const violations = sentenceCaseViolations(ep)
-      if (SENTENCE_CASE_GRANDFATHERED_EPISODES.has(ep.id)) return // shrink-only allowlist
-      expect(violations, violations.join('\n')).toEqual([])
+      expect(sentenceCaseFingerprints(ep)).toEqual(KNOWN_SENTENCE_CASE_VIOLATIONS[ep.id] ?? [])
     })
   }
 })

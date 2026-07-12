@@ -46,7 +46,13 @@ students" — with the same four beats.
 ## The hard floor — checklist
 
 Items marked ⚙ are enforced by
-`tests/architecture/content-quality.test.js` and cannot regress.
+`tests/architecture/content-quality.test.js`,
+`tests/architecture/recovery-routing-integrity.test.js`, and
+`tests/architecture/content-semantic-token-governance.test.js`; known
+legacy debt is tracked by exact shrink-only fingerprints, not whole-episode
+skips. Readability debt also carries a recorded maximum grade budget in
+`tests/fixtures/content-quality-known-debt.js`, so a known screen cannot
+quietly become harder to read while retaining the same location fingerprint.
 
 - ⚙ Never more than 2 consecutive passive screens (a screen is passive
   when its type and all its blocks' types have interaction class
@@ -57,7 +63,26 @@ Items marked ⚙ are enforced by
   and within bounds
 - ⚙ All learner-facing text passes the readability check: plain language
   around the compulsory subject vocabulary, aiming for a reading age of 12
-  (Flesch-Kincaid grade ≤ 7 per screen, exam vocabulary exempt)
+  (Flesch-Kincaid grade ≤ 7 per screen, exam vocabulary exempt). The
+  collector includes nested learner text such as titles, labels, prompts,
+  learning goals, bullets, narrative facts, profile lines, and answer
+  options; it excludes IDs, tags, component types, asset paths, colours, and
+  other implementation metadata. Separate answer options, bullets, profile
+  lines, and facts are collected as separate text segments and joined with
+  sentence boundaries for scoring; they must not be flattened into one
+  artificial run-on sentence.
+- ⚙ An exam-prep stage or `examinerExplains` screen must include examiner
+  teaching and be followed by an assessed component whose registered
+  function includes `exam-technique`.
+- ⚙ Runtime lesson screens/reveal items/interaction data must not own raw
+  presentation fields such as `color`, `colorRgb`, `bg`, or `colorLight`.
+  Use semantic inputs (`tone`, `variant`, governed theme key) instead.
+- ⚙ Recovery mappings must resolve to a real module and, for new non-null
+  mappings, to an explicit screen carrying the same tag in loaded runtime
+  content. Legacy screen-0 routes are individual-tag exceptions only.
+- ⚙ Sentence-case debt is tracked by exact content-location fingerprints
+  rather than whole-module exemptions. New title-case copy in a module with
+  old debt must fail until fixed or intentionally baselined.
 - A concept may not be tested before the screen that teaches it
 - No orphan facts: every fact taught is retrieved or applied later in the
   episode
@@ -68,9 +93,13 @@ Items marked ⚙ are enforced by
 
 Every episode is scored on six dimensions, each reported separately and
 never averaged: **Story, Teaching, Retrieval, Interactions, Exam
-preparation, Emotional engagement** — plus five technical passes:
-**hardcoded values, image quality, UX design, canonical coverage,
-readability**. Definitions live in the spec
+preparation, Emotional engagement** — plus technical passes such as
+**semantic tokens, image quality, UX design, canonical coverage, recovery
+routing, and readability**. The machine checks above are structural and
+semantic floors; visual quality still requires the 390px render pass, and
+human judgement dimensions (story, teaching clarity, emotional engagement,
+exam usefulness) must not be reduced to weak regex checks. Definitions live
+in the spec
 (`docs/superpowers/specs/2026-07-06-content-quality-framework-design.md`)
 and are operationalised by the `content-create` and `content-review`
 skills.
