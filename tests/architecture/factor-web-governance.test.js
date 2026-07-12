@@ -36,6 +36,16 @@ describe('FactorWeb governance', () => {
     expect(source).not.toContain('WebkitLineClamp')
   })
 
+  it('renders no eyebrow or duplicate label above either phase heading', () => {
+    expect(source).not.toContain("{isJudgement ? 'Make your judgement' : block.kicker}")
+    expect(source).not.toContain('(isJudgement || block.kicker)')
+    expect(source).not.toContain('className="eyebrow"')
+    expect(source).toContain('const explorationHeading = block.title || block.kicker || block.question')
+
+    const screenTitleCount = source.match(/<ScreenTitle/g) ?? []
+    expect(screenTitleCount).toHaveLength(1)
+  })
+
   it('keeps the full question outside the centre node', () => {
     expect(source).toContain('const centreLabel =')
     expect(source).toContain('{centreLabel}')
@@ -65,6 +75,7 @@ describe('FactorWeb governance', () => {
 
     expect(contract).toContain('Composition classification:')
     expect(contract).toContain('interaction-owns-screen')
+    expect(contract).toContain('No eyebrows.')
     expect(contract).toContain('## 7. Gold example')
     expect(contract).toContain('## 9. Review checks')
   })
