@@ -463,7 +463,6 @@ export const episode = {
       blocks: [
         {
           type: 'colsort',
-          question: 'Did this change, or did it continue?',
           columns: [
             { label: 'Changed', color: '#D4950A', bg: 'rgba(212,149,10,.07)' },
             { label: 'Continued', color: '#A89070', bg: 'rgba(168,144,112,.07)' },

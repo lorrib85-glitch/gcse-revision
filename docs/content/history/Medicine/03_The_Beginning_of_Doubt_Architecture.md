@@ -11,6 +11,8 @@
 
 Episode 3 owns the first break with unquestioned authority: the Renaissance conditions that made challenge possible, Vesalius's human evidence, printing and the judgement that knowledge changed before treatment. Harvey and the wider Renaissance scientific movement belong to Episode 4; the Great Plague and everyday prevention/public-health response belong to Episode 5.
 
+**Implemented runtime (Stage B, 2026-07-12):** the module is built as **12 learning screens** on the six-part spine below — `priorKnowledgeRecall` (0), `conceptReveal` (1), `quickRecall` (2), `keyFigureReveal` (3), the `theoryCompare` `people` variant (4), `quickRecall` (5), `visualNarrative` (6), `factorWeb` in causes mode (7), `colsort` (8), `misconceptionCheck` (9), `examinerExplains` (10) and `guidedExamResponse` (11) — plus the module-level hook, "You will learn" outcomes and the player-owned chapter completion. The person-to-person comparison is the `theoryCompare` `people` variant, so there is no separate `SeeTheDifference` gap. Per-screen build chains, the render pass and deviations are in `03_Review_Log.md` (Stage-B entry). Implemented, not approved — a Stage-C `content-review` is still required.
+
 ---
 
 ## Chapter narrative
