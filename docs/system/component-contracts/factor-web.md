@@ -48,9 +48,8 @@ Do not use when:
 {
   type: 'factorWeb',
   mode: 'causes' | 'consequences' | 'change' | 'themes' | 'process',
-  question: string,              // full screen heading; concise and sentence case
+  question: string,              // the one full screen heading; concise and sentence case
   instruction?: string,          // one short framing line
-  kicker?: string,               // optional informative label, never decorative
   centreLabel?: string,          // 2–3 words; never the full question
   factors: [{
     id: string,
@@ -67,6 +66,8 @@ Do not use when:
   thinkingTip?: string,
 }
 ```
+
+`kicker` is a legacy content field only. The component may temporarily treat an old `kicker` value as the main heading when needed for backward compatibility, but it must never render it as a separate eyebrow. New or updated content must use `question` for the screen heading and omit `kicker`.
 
 Required interaction order:
 
@@ -92,7 +93,8 @@ Required interaction order:
 - Local sequence state: `SequenceProgress`; never `x / y`, percentages or a bespoke rail.
 - Colour comes from `SUBJECTS[subject]`; content data does not carry raw presentation colours.
 - No emojis or system glyphs as factor identity. Selection and explored states use restrained subject accent only.
-- No decorative uppercase, `TYPE.eyebrow`, `cinematic-eyebrow` or local font families.
+- No eyebrows. Do not render `kicker`, `TYPE.eyebrow`, `cinematic-eyebrow` or any small label above the main heading.
+- No decorative uppercase or local font families.
 - Active glow is restrained and permitted only on the selected node.
 
 ## 6. Motion rules
@@ -110,6 +112,7 @@ Required interaction order:
 At 390px:
 
 - “Why could Vesalius challenge Galen?” is the one dominant heading
+- no eyebrow or duplicate label appears above the heading
 - the full question is never placed inside the centre node
 - “Challenge Galen” is the short centre concept
 - six factor labels remain readable without emoji or clipping
@@ -130,6 +133,7 @@ The pre-rework implementation:
 - displayed a local `x / y factors explored` counter
 - used uppercase “WHAT IT MEANS”, “WHY IT MATTERED” and “LINKED FACTOR” labels
 - encouraged content writers to pad or distort questions to satisfy an aggregate readability metric
+- rendered a small coloured eyebrow above a second, competing heading
 
 That implementation passed source-data checks while failing the rendered mobile experience. It must not be recreated.
 
@@ -140,7 +144,7 @@ That implementation passed source-data checks while failing the rendered mobile 
 - ⚙ Route B uses `InteractionShell`.
 - ⚙ Primary heading routes through `ScreenTitle` / `TYPE.displayScreen`.
 - ⚙ No local heading type overrides.
-- ⚙ No `textTransform: 'uppercase'`, `TYPE.eyebrow` or `cinematic-eyebrow`.
+- ⚙ No rendered eyebrow, `textTransform: 'uppercase'`, `TYPE.eyebrow` or `cinematic-eyebrow`.
 - ⚙ No `fontFamily` declarations in the component.
 - ⚙ No numeric progress copy; `SequenceProgress` is used.
 - ⚙ No factor emoji rendering.
@@ -151,6 +155,7 @@ That implementation passed source-data checks while failing the rendered mobile 
 ### Render at 390px
 
 - 👁 One clear heading leads the screen.
+- 👁 No duplicate label appears above the heading.
 - 👁 The centre label is short and fully readable.
 - 👁 Every node label is readable without clipping; use `shortTitle` where needed.
 - 👁 Nodes do not collide with the centre or screen edge.
