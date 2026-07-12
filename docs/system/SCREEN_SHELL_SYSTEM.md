@@ -7,20 +7,48 @@
 
 ## Purpose
 
-Defines the canonical screen structure for all learning module screens. Shells are structural primitives that provide consistent safe-area handling, max-width centering, background layering, and top/bottom clearance. They own no behaviour, no state, and no sequencing logic.
+Defines the canonical **structural** primitives for all learning module screens. Shells provide consistent safe-area handling, max-width centering, background layering, and top/bottom clearance. They own no behaviour, no state, and no sequencing logic.
+
+Shells are only one of the two layers a screen is built from. This doc owns the **structural** layer; `PATTERN_GOVERNANCE.md` owns the **learning-composition** layer. The two are complementary, not competing (see "Two complementary layers" below).
+
+---
+
+## Two complementary layers
+
+A screen is composed from two layers that must not be confused:
+
+| Layer | Owns | Primitives |
+|-------|------|------------|
+| **Structural shell** | viewport behaviour, safe-area handling, scrolling, max-width, subject/background treatment, fixed-header clearance, fixed-CTA clearance | `ContentShell`, `InteractionShell`, `CinematicShell` |
+| **Learning-composition route** | heading hierarchy, screen-title treatment, vertical rhythm, content sequence, interaction layout, feedback placement, the screen's dominant focal point | `TeachScreenShell` (Route A), approved interaction-owned components (Route B), approved cinematic/full-screen components (Route C) |
+
+The structural shell does **not** decide the learning hierarchy of the screen; the composition route does. A `ContentShell` is a background and a safe-area frame — it is not, by itself, a teaching-screen composition.
+
+**Do not merge these primitives, and do not create a new universal shell.** `ContentShell` and `TeachScreenShell` are deliberately separate: one is a structural frame, the other is a learning-composition route that renders *inside* such a frame.
+
+The three learning-composition routes (A teaching / B interaction-owned / C cinematic) and the rule that every new screen must resolve to exactly one of them are defined in `docs/system/PATTERN_GOVERNANCE.md` → "Screen-composition routes". This doc covers only which structural shell each route sits in.
 
 ---
 
 ## Decision rule
 
-**Default to `ContentShell`.** Reach for `InteractionShell` when the screen contains an answer mechanic that needs to control its own scroll and fill available space. Only use `CinematicShell` when you have a specific written justification for why neither of the others can be used.
+The two defaults operate at different layers and do not conflict:
+
+> **Default structural shell:** normally `ContentShell`, unless interaction or cinematic requirements justify another structural shell.
+>
+> **Default teaching composition:** `TeachScreenShell` (which itself sits inside `ContentShell`).
+
+- Reach for **`InteractionShell`** as the structural shell for approved interaction-owned experiences (Route B) that need to control their own scroll and fill available space.
+- Use **`CinematicShell`** only for approved cinematic/full-screen components (Route C), and only with a specific written justification for why `ContentShell` or `InteractionShell` cannot be used.
+
+**`ContentShell` alone is not sufficient learning composition for a new teaching screen.** A new teaching or explanation screen must compose through `TeachScreenShell` (Route A) — which owns the heading (`TYPE.displayScreen`) and the vertical rhythm — rendered inside `ContentShell`. Dropping a raw `ScreenTitle` and hand-spaced `<div>`s straight into `ContentShell` bypasses the design system's rhythm and header token and fails governance.
 
 ---
 
 ## ContentShell
 
 **File:** `src/components/layout/ContentShell.jsx`  
-**Use for:** Knowledge delivery screens — ConceptReveal, KeyFigureReveal, ExaminerExplainsScreen, VisualLearning, VisualNarrativeScreen, ExplainReveal, etc.
+**Use for:** The structural frame for knowledge-delivery screens. A teaching or explanation screen composes through `TeachScreenShell` (Route A) *inside* this shell — `ContentShell` supplies the safe-area frame and background; `TeachScreenShell` supplies the heading token and rhythm. Approved cinematic knowledge-delivery components that own their own layout (ConceptReveal, KeyFigureReveal, ExaminerExplainsScreen, VisualLearning, VisualNarrativeScreen, ExplainReveal) are Route C and may sit directly in this shell per their contracts.
 
 ### Alignment guarantees
 

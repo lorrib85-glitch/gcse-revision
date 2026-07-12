@@ -91,9 +91,16 @@ component" is the failure this chain exists to stop.
 3. **Learner misunderstanding or learning need** — the specific gap, error or
    misconception this screen addresses. A screen with no learner need is
    decoration; cut it.
-4. **Approved component** — the one sanctioned component for that intent, from
-   the intent→component map. If an intent has an approved component, anything
-   else is wrong.
+4. **Approved component + composition route** — the one sanctioned component
+   for that intent, from the intent→component map, **and** the approved
+   composition route it renders in (`PATTERN_GOVERNANCE.md` →
+   "Screen-composition routes"): Route A teaching → `TeachScreenShell` by
+   default; Route B interaction-owned or Route C cinematic **only** where the
+   component's contract explicitly grants full-screen ownership. If an intent
+   has an approved component, anything else is wrong. A new component is
+   content inside `TeachScreenShell` unless its contract grants it composition
+   ownership — do not mint a full-screen component just because the content
+   feels important.
 5. **Component execution contract** — the 9-field (or legacy 3-part) contract
    in `component-contracts/` governing correct use. No contract → see halt 4.
 6. **Named gold example** — the component's current gold screen from
@@ -133,6 +140,11 @@ Building must stop and the situation be surfaced when any of these is true:
 7. The proposed screen **adds decoration without improving understanding,
    retention, application or motivation** — it fails the deletion test; cut
    or redesign it.
+8. A component **is about to own full-screen composition without a contract
+   that explicitly grants it** (Route B/C). Treat it as content inside an
+   approved route (normally `TeachScreenShell`), or write/upgrade its contract
+   to declare the ownership as a Lane G change first. "Visually distinctive",
+   "interactive" or "emotionally important" is not a grant.
 
 A halt is not a failure of the skill — it is the skill working. Surface the
 halt, don't build around it.

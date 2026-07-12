@@ -5,10 +5,23 @@
 **Component:** `src/components/core/TeachScreenShell.jsx` · intent: *compose a
 teaching screen* · not a display block type — a composition primitive.
 
+**Composition classification:** `composition-route` — this component *is*
+Route A (the default teaching/explanation composition route), not a component
+rendered inside a route. It owns the screen heading and vertical rhythm for
+teaching screens. See `PATTERN_GOVERNANCE.md` → "Screen-composition routes".
+
 ## 1. Purpose
 
 Compose a teaching screen with the approved vertical rhythm so spacing stops
 being a per-session judgement call. One screen, one heading, one job.
+
+This is the **default learning-composition route for new teaching and
+explanation screens** (Route A). It is responsible for the standard
+teaching-screen heading (`TYPE.displayScreen`), the approved vertical rhythm,
+and the fixed order of heading → intro → teaching body → optional key point.
+It is **mandatory** where the screen's primary purpose matches this contract —
+not optional, and not substitutable with a generic shell plus a local
+`ScreenTitle`.
 
 ## 2. When to use
 
@@ -18,13 +31,24 @@ most one key point.
 
 ## 3. When NOT to use
 
+`TeachScreenShell` is a composition primitive, not a universal screen
+wrapper. Do not broaden it to wrap everything. It must not wrap:
+
 - **Cinematic reveal moments** (`VisualLearning`, `CinematicRevealMoment`,
-  `ExaminerExplainsScreen`) — those own a full-bleed layout; don't wrap them.
+  `ExaminerExplainsScreen`) and other approved cinematic/full-screen (Route C)
+  experiences — those own a full-bleed layout; don't wrap them.
 - **Assessed interactions that own their own layout** (`theoryLab`,
-  `matchingTask`, `interactiveImage`, quiz screens) — the shell composes a
+  `matchingTask`, `interactiveImage`, quiz screens) and any other Route B
+  interaction engine that explicitly owns its screen — the shell composes a
   teach screen, it does not host an interaction engine.
-- **Inside another shell or a full-screen stage** — never nest
-  `TeachScreenShell`.
+- **Another screen shell** (`ContentShell`/`InteractionShell`/`CinematicShell`)
+  or a full-screen stage — `TeachScreenShell` renders *inside* `ContentShell`;
+  it never wraps a shell.
+- **Another `TeachScreenShell`** — never nest it inside itself.
+
+A small interaction embedded within a teaching screen (an inline `choice` /
+`truefalse` block) stays a content component inside this shell; it does not
+turn the screen into a Route B interaction-owned screen.
 
 ## 4. Required structure
 

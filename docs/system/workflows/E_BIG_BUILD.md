@@ -56,9 +56,14 @@ component family, new app-level flow, new architecture pattern.
    - **Content builds:** read `docs/system/PATTERN_GOVERNANCE.md` and the
      relevant `component-contracts/`. Every screen resolves through the
      taxonomy chain (learning objective → intent → approved component →
-     contract) and has one primary intent statable in a sentence; reserve
-     images/diagrams with `MediaPlaceholder` + a visual-assets manifest
-     entry, never generate imagery.
+     approved composition route → contract) and has one primary intent
+     statable in a sentence; record each screen's composition selection per
+     `CONTENT_BUILD_TEMPLATE.md` → "Composition selection" (teaching screens
+     default to `TeachScreenShell`; Route B/C needs contract-granted
+     full-screen ownership). A new full-screen/screen-owning component
+     requires an approved contract declaring its composition ownership before
+     it may own layout. Reserve images/diagrams with `MediaPlaceholder` + a
+     visual-assets manifest entry, never generate imagery.
 6. **Plan phase** — `superpowers:writing-plans` → `/gsd-plan-phase`.
    Only after discussion decisions are closed.
 7. **Scope lock** — required before any implementation:
