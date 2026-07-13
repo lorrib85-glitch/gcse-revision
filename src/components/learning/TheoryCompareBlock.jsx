@@ -359,13 +359,13 @@ function HeroHeader({ block, left, right, accent, bg }) {
         position: 'absolute', inset: 0,
         background: `linear-gradient(180deg, rgba(0,0,0,0) 36%, ${bg} 100%)`,
       }} />
-      <div style={{ position: 'absolute', left: SPACING.compact, bottom: SPACING.compact, maxWidth: '46%' }}>
+      <div style={{ position: 'absolute', left: SPACING.compact, bottom: SPACING.micro, maxWidth: '46%' }}>
         <div style={{ ...TYPE.titleLarge, color: accent }}>{left.name}</div>
         {left.subtitle && (
           <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.72)' }}>{left.subtitle}</div>
         )}
       </div>
-      <div style={{ position: 'absolute', right: SPACING.compact, bottom: SPACING.compact, maxWidth: '46%', textAlign: 'right' }}>
+      <div style={{ position: 'absolute', right: SPACING.compact, bottom: SPACING.micro, maxWidth: '46%', textAlign: 'right' }}>
         <div style={{ ...TYPE.titleLarge, color: accent }}>{right.name}</div>
         {right.subtitle && (
           <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.72)' }}>{right.subtitle}</div>
