@@ -3,10 +3,11 @@
 // unit-tested in the node project without a DOM. The component owns the pixels;
 // this file owns the sequence.
 //
-// The comparison builds on one page. Each Continue press adds one complete
-// comparison theme beneath the content already revealed. A theme's paired rows,
+// Each Continue press replaces the current comparison theme with the next one.
+// The hero, people labels and shared progress marker remain stable, while one
+// complete idea occupies the learning area at a time. A theme's paired rows,
 // note and explanation arrive together so the learner keeps the whole idea in
-// working memory rather than stepping through fragments of it.
+// working memory without creating an endlessly long page.
 
 /** True when a theoryCompare block should render as the person-to-person variant. */
 export function isPeopleVariant(block) {
@@ -31,8 +32,9 @@ export function buildPeopleSteps(block) {
 }
 
 /**
- * Given the comparison steps and how many have been revealed, derive the state
- * rendered by the component.
+ * Given the comparison steps and how many have been reached, derive the state
+ * rendered by the component. Only the current theme is visible; previous themes
+ * are represented by the shared progress marker rather than remaining on page.
  *
  * @returns {{
  *   comparisons: { index:number, visible:boolean, visibleRows:number, noteVisible:boolean }[],
@@ -43,12 +45,12 @@ export function buildPeopleSteps(block) {
 export function deriveVisibleState(block, steps, revealedCount) {
   const comparisons = Array.isArray(block?.comparisons) ? block.comparisons : []
   const count = Math.max(0, Math.min(revealedCount, steps.length))
-  const shownComparisonIndexes = new Set(
-    steps.slice(0, count).map(step => step.comparisonIndex),
-  )
+  const activeComparisonIndex = count > 0
+    ? steps[count - 1]?.comparisonIndex ?? -1
+    : -1
 
   const perComparison = comparisons.map((comparison, index) => {
-    const visible = shownComparisonIndexes.has(index)
+    const visible = index === activeComparisonIndex
     return {
       index,
       visible,
@@ -66,8 +68,8 @@ export function deriveVisibleState(block, steps, revealedCount) {
   }
 }
 
-/** How many complete comparison themes are currently visible. */
+/** How many comparison themes the learner has reached — used by shared progress. */
 export function revealedComparisonCount(block, steps, revealedCount) {
-  const { comparisons } = deriveVisibleState(block, steps, revealedCount)
-  return comparisons.filter(comparison => comparison.visible).length
+  const comparisons = Array.isArray(block?.comparisons) ? block.comparisons : []
+  return Math.max(0, Math.min(revealedCount, steps.length, comparisons.length))
 }
