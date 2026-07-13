@@ -51,6 +51,8 @@ export default function TeachScreenShell({ heading, eyebrow, intro, children, ke
 
   return (
     <div style={{
+      position: 'relative',
+      isolation: 'isolate',
       maxWidth: 420,
       margin: '0 auto',
       padding: `${SPACING.standard}px ${SPACING.standard}px ${SPACING.cinematic}px`,
