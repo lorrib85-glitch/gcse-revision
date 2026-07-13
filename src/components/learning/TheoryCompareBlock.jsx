@@ -5,6 +5,7 @@ import { SPACING } from '../../constants/spacing.js'
 import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 import {
   isPeopleVariant,
   buildPeopleSteps,
@@ -230,6 +231,8 @@ function PeopleCompareBlock({ block, subject }) {
   }
 
   const filledSegments = revealedComparisonCount(block, steps, revealed)
+  const currentComparison = view.complete ? -1 : Math.max(filledSegments - 1, 0)
+  const completedComparisons = view.complete ? comparisons.length : currentComparison
 
   const twoCol = {
     display: 'grid',
@@ -245,7 +248,7 @@ function PeopleCompareBlock({ block, subject }) {
       style={{ '--tcp-accent': accent, margin: `${SPACING.compact}px 0` }}
     >
       {block.heroImage && (
-        <HeroHeader block={block} left={left} right={right} rgb={rgb} bg={subj.background} />
+        <HeroHeader block={block} left={left} right={right} accent={accent} bg={subj.background} />
       )}
 
       {/* When a cinematic hero already names both people, do not repeat them in
@@ -274,14 +277,16 @@ function PeopleCompareBlock({ block, subject }) {
       )}
 
       {comparisons.length > 1 && (
-        <div aria-hidden="true" style={{ display: 'flex', gap: 6, marginBottom: SPACING.standard }}>
-          {comparisons.map((_, i) => (
-            <div key={i} style={{
-              flex: 1, height: 3, borderRadius: RADII.pill,
-              background: i < filledSegments ? accent : `rgba(${rgb},0.16)`,
-              transition: `background ${MOTION.duration.standard} ${MOTION.easing.gentle}`,
-            }} />
-          ))}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: SPACING.standard }}>
+          <SequenceProgress
+            total={comparisons.length}
+            current={currentComparison}
+            completed={completedComparisons}
+            accent={accent}
+            accentRgb={rgb}
+            variant="sash"
+            ariaLabel={`${block.title || 'Comparison'} progress`}
+          />
         </div>
       )}
 
@@ -335,7 +340,7 @@ function PeopleCompareBlock({ block, subject }) {
   )
 }
 
-function HeroHeader({ block, left, right, rgb, bg }) {
+function HeroHeader({ block, left, right, accent, bg }) {
   return (
     <div style={{
       position: 'relative',
@@ -355,13 +360,13 @@ function HeroHeader({ block, left, right, rgb, bg }) {
         background: `linear-gradient(180deg, rgba(0,0,0,0) 36%, ${bg} 100%)`,
       }} />
       <div style={{ position: 'absolute', left: SPACING.compact, bottom: SPACING.compact, maxWidth: '46%' }}>
-        <div style={{ ...TYPE.titleMedium, color: 'rgba(245,245,245,0.96)' }}>{left.name}</div>
+        <div style={{ ...TYPE.titleLarge, color: accent }}>{left.name}</div>
         {left.subtitle && (
           <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.72)' }}>{left.subtitle}</div>
         )}
       </div>
       <div style={{ position: 'absolute', right: SPACING.compact, bottom: SPACING.compact, maxWidth: '46%', textAlign: 'right' }}>
-        <div style={{ ...TYPE.titleMedium, color: `rgba(${rgb},0.98)` }}>{right.name}</div>
+        <div style={{ ...TYPE.titleLarge, color: accent }}>{right.name}</div>
         {right.subtitle && (
           <div style={{ ...TYPE.caption, color: 'rgba(245,245,245,0.72)' }}>{right.subtitle}</div>
         )}
