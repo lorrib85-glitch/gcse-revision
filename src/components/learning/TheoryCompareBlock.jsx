@@ -216,13 +216,11 @@ function PeopleCompareBlock({ block, subject }) {
   const [revealed, setRevealed] = useState(steps.length > 0 ? 1 : 0)
 
   const view = deriveVisibleState(block, steps, revealed)
-  const nextStep = steps[revealed] // the step a Continue press would reveal
+  const nextStep = steps[revealed]
   const takeawayRef = useRef(null)
 
   useEffect(() => { ensurePeopleStyles() }, [])
 
-  // When the closing takeaway becomes visible, move focus to it so keyboard and
-  // screen-reader users land on the payoff after the Continue button unmounts.
   useEffect(() => {
     if (view.takeawayVisible && takeawayRef.current) takeawayRef.current.focus()
   }, [view.takeawayVisible])
@@ -246,14 +244,13 @@ function PeopleCompareBlock({ block, subject }) {
       aria-label={`Comparing ${left.name || 'the two people'} and ${right.name || ''}`.trim()}
       style={{ '--tcp-accent': accent, margin: `${SPACING.compact}px 0` }}
     >
-      {/* Cinematic dual-portrait hero (optional) — a single top image spanning
-          both people, darkening into the screen. When absent, the two compact
-          circular portrait headers are used instead. */}
       {block.heroImage && (
         <HeroHeader block={block} left={left} right={right} rgb={rgb} bg={subj.background} />
       )}
 
-      {block.title && (
+      {/* When a cinematic hero already names both people, do not repeat them in
+          a second title immediately below it. */}
+      {block.title && !block.heroImage && (
         <h3 style={{
           ...TYPE.displaySection,
           color: 'rgba(245,245,245,0.96)',
@@ -264,11 +261,9 @@ function PeopleCompareBlock({ block, subject }) {
         </h3>
       )}
 
-      {/* Portraits — compact, comparable headers with a central division */}
       {!block.heroImage && (
         <div style={{ position: 'relative', ...twoCol, marginBottom: SPACING.standard }}>
           <PersonHeader person={left}  align="left"  rgb={rgb} emphasised={false} />
-          {/* Central visual division between the two people */}
           <div aria-hidden="true" style={{
             position: 'absolute', top: 6, bottom: 6, left: '50%',
             width: 1, transform: 'translateX(-0.5px)',
@@ -278,7 +273,6 @@ function PeopleCompareBlock({ block, subject }) {
         </div>
       )}
 
-      {/* Reveal-progress rail (bronze) — supplementary to the revealed content */}
       {comparisons.length > 1 && (
         <div aria-hidden="true" style={{ display: 'flex', gap: 6, marginBottom: SPACING.standard }}>
           {comparisons.map((_, i) => (
@@ -291,7 +285,6 @@ function PeopleCompareBlock({ block, subject }) {
         </div>
       )}
 
-      {/* Comparisons — revealed one theme at a time */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.standard }}>
         {comparisons.map((cmp, ci) => {
           const state = view.comparisons[ci]
@@ -311,7 +304,6 @@ function PeopleCompareBlock({ block, subject }) {
         })}
       </div>
 
-      {/* Progression — governed Continue CTA */}
       {!view.complete && (
         <ContinueCTA
           accent={accent}
@@ -321,7 +313,6 @@ function PeopleCompareBlock({ block, subject }) {
         />
       )}
 
-      {/* Closing takeaway — the core historical meaning */}
       {view.takeawayVisible && block.takeaway && (
         <div
           ref={takeawayRef}
@@ -344,10 +335,6 @@ function PeopleCompareBlock({ block, subject }) {
   )
 }
 
-// Full-bleed cinematic hero: one image of both people at the top of the screen
-// (~30% of the viewport), darkening at the bottom into the subject background so
-// it flows into the rest of the screen. Names sit in the darkened base — left
-// person quiet, right person in restrained subject accent.
 function HeroHeader({ block, left, right, rgb, bg }) {
   return (
     <div style={{
@@ -363,7 +350,6 @@ function HeroHeader({ block, left, right, rgb, bg }) {
         alt={block.heroImageAlt || `${left.name} and ${right.name}`}
         style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 24%', display: 'block' }}
       />
-      {/* Darken the lower portion into the screen background */}
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0,
         background: `linear-gradient(180deg, rgba(0,0,0,0) 36%, ${bg} 100%)`,
@@ -452,10 +438,10 @@ function ComparisonRow({ comparison, state, left, right, rgb, accent, twoCol }) 
                   {row.label}
                 </div>
               )}
-              <div style={twoCol}>
+              <ComparisonPair twoCol={twoCol} rgb={rgb}>
                 <Cell text={row.left}  person={left}  rgb={rgb} emphasised={false} />
                 <Cell text={row.right} person={right} rgb={rgb} emphasised={true} />
-              </div>
+              </ComparisonPair>
             </div>
           ))}
           {state.noteVisible && comparison.note && (
@@ -470,13 +456,12 @@ function ComparisonRow({ comparison, state, left, right, rgb, accent, twoCol }) 
           )}
         </div>
       ) : (
-        <div style={twoCol}>
-          <Cell text={comparison.left}  person={left}  rgb={rgb} emphasised={false} showPersonName />
-          <Cell text={comparison.right} person={right} rgb={rgb} emphasised={true} showPersonName />
-        </div>
+        <ComparisonPair twoCol={twoCol} rgb={rgb}>
+          <Cell text={comparison.left}  person={left}  rgb={rgb} emphasised={false} />
+          <Cell text={comparison.right} person={right} rgb={rgb} emphasised={true} />
+        </ComparisonPair>
       )}
 
-      {/* Full-width teaching explanation beneath both columns */}
       {comparison.explanation && (
         <p style={{
           ...TYPE.body,
@@ -490,10 +475,44 @@ function ComparisonRow({ comparison, state, left, right, rgb, accent, twoCol }) 
   )
 }
 
-// A single comparison cell. Simple comparisons show the person's name as a
-// visible card heading; compact anatomy rows keep it screen-reader-only so the
-// repeated labels do not add visual clutter.
-function Cell({ text, person, rgb, emphasised, showPersonName = false }) {
+// Keeps the two evidence columns visually connected without repeatedly naming
+// the people. The slim bronze rule and central marker act as a quiet "versus"
+// motif, while the hero labels establish which side belongs to whom.
+function ComparisonPair({ children, twoCol, rgb }) {
+  return (
+    <div style={{ position: 'relative' }}>
+      <div aria-hidden="true" style={{
+        position: 'absolute',
+        top: SPACING.micro,
+        bottom: SPACING.micro,
+        left: '50%',
+        width: 1,
+        transform: 'translateX(-0.5px)',
+        background: `linear-gradient(180deg, transparent, rgba(${rgb},0.38) 24%, rgba(${rgb},0.38) 76%, transparent)`,
+        pointerEvents: 'none',
+        zIndex: 1,
+      }} />
+      <div aria-hidden="true" style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: 5,
+        height: 5,
+        borderRadius: RADII.pill,
+        background: `rgba(${rgb},0.78)`,
+        boxShadow: `0 0 8px rgba(${rgb},0.24)`,
+        transform: 'translate(-50%, -50%)',
+        pointerEvents: 'none',
+        zIndex: 2,
+      }} />
+      <div style={twoCol}>{children}</div>
+    </div>
+  )
+}
+
+// The person's name remains available to screen readers while the visual
+// design relies on the once-only hero labels and consistent left/right columns.
+function Cell({ text, person, rgb, emphasised }) {
   return (
     <div style={{
       height: '100%',
@@ -503,35 +522,13 @@ function Cell({ text, person, rgb, emphasised, showPersonName = false }) {
       border: `1px solid ${emphasised ? `rgba(${rgb},0.34)` : 'rgba(255,255,255,0.09)'}`,
       boxShadow: emphasised ? `0 0 18px rgba(${rgb},0.06)` : 'none',
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       textAlign: 'center',
+      ...TYPE.bodyStrong,
+      color: emphasised ? 'rgba(245,245,245,0.94)' : 'rgba(245,245,245,0.64)',
     }}>
-      {showPersonName ? (
-        <>
-          <div style={{
-            ...TYPE.titleMedium,
-            color: emphasised ? `rgba(${rgb},0.96)` : 'rgba(245,245,245,0.78)',
-          }}>
-            {person.name}
-          </div>
-          <div aria-hidden="true" style={{
-            width: SPACING.standard,
-            height: 1,
-            background: emphasised ? `rgba(${rgb},0.45)` : 'rgba(255,255,255,0.14)',
-            margin: `${SPACING.micro}px 0`,
-          }} />
-        </>
-      ) : (
-        <span className="tcp-sr-only">{person.name}: </span>
-      )}
-      <div style={{
-        ...TYPE.bodyStrong,
-        color: emphasised ? 'rgba(245,245,245,0.94)' : 'rgba(245,245,245,0.64)',
-      }}>
-        {text}
-      </div>
+      <span className="tcp-sr-only">{person.name}: </span>{text}
     </div>
   )
 }
