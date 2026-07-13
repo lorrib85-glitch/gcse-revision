@@ -75,10 +75,44 @@ function splitTheoryOfOppositesScreen(screen) {
   }]
 }
 
+// OppositeQualitiesReveal is body content, not a standalone screen shell. The
+// canonical source keeps the original authoring shape for audit history; runtime
+// composes it through TeachScreenShell so the title clears LearningHeader and the
+// normal governed navigation remains available after the reveal completes.
+function composeOppositeQualitiesScreen(screen) {
+  if (screen.type !== 'oppositeQualitiesReveal') return screen
+
+  const {
+    type,
+    title,
+    copy,
+    stage,
+    label,
+    ...visualProps
+  } = screen
+
+  return {
+    stage,
+    label,
+    shell: 'teach',
+    heading: title,
+    sub: copy,
+    blocks: [
+      {
+        type,
+        title,
+        copy,
+        ...visualProps,
+      },
+    ],
+  }
+}
+
 const withoutDuplicate = (removedScreenIndex < 0
   ? episode.screens
   : episode.screens.filter((_, index) => index !== removedScreenIndex)
 ).flatMap(splitTheoryOfOppositesScreen)
+  .map(composeOppositeQualitiesScreen)
 
 const galenProfileIndex = withoutDuplicate.findIndex(
   screen => screen.type === 'keyFigureReveal' && screen.label === 'Galen'
