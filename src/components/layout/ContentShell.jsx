@@ -1,5 +1,7 @@
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { SPACING } from '../../constants/spacing.js'
 import { SUBJECTS } from '../../constants/subjects.js'
+import { InlineNavigationContext } from '../core/InlineNavigationContext.jsx'
 
 const SCOPED_CSS = `
   .cs-scroll h1,
@@ -62,6 +64,13 @@ const SCOPED_CSS = `
     left: 0;
     color: rgba(255,255,255,0.30);
   }
+
+  /* The normal module CTA is the shell's immediate sibling. Hide it only while
+     a child has explicitly claimed inline navigation, so one Continue action is
+     visible and it stays at the end of the learning content. */
+  .cs-shell.cs-inline-navigation + div {
+    display: none !important;
+  }
 `
 
 export default function ContentShell({
@@ -74,52 +83,87 @@ export default function ContentShell({
   children,
 }) {
   const theme = SUBJECTS[subject] || SUBJECTS.History
+  const shellRef = useRef(null)
+  const [inlineNavigationOwners, setInlineNavigationOwners] = useState(0)
+
+  const claim = useCallback(() => {
+    let released = false
+    setInlineNavigationOwners(count => count + 1)
+
+    return () => {
+      if (released) return
+      released = true
+      setInlineNavigationOwners(count => Math.max(0, count - 1))
+    }
+  }, [])
+
+  // The module action remains owned by ModulePlayer. Inline components invoke
+  // the existing governed CTA rather than duplicating navigation logic.
+  const continueModule = useCallback(() => {
+    const moduleNavigation = shellRef.current?.nextElementSibling
+    const continueButton = moduleNavigation?.querySelector('button')
+    continueButton?.click()
+  }, [])
+
+  const inlineNavigation = useMemo(
+    () => ({ claim, continueModule }),
+    [claim, continueModule],
+  )
+
+  const ownsInlineNavigation = inlineNavigationOwners > 0
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      overflow: 'hidden',
-      background: theme.background,
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
-      <style>{SCOPED_CSS}</style>
-      {backgroundImage && (
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: 'none',
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition,
-          opacity: backgroundOpacity,
-        }} />
-      )}
+    <InlineNavigationContext.Provider value={inlineNavigation}>
       <div
-        className="cs-scroll"
+        ref={shellRef}
+        className={`cs-shell${ownsInlineNavigation ? ' cs-inline-navigation' : ''}`}
         style={{
-          position: 'relative',
-          zIndex: 1,
-          flex: 1,
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          maxWidth: 420,
-          width: '100%',
-          margin: '0 auto',
-          boxSizing: 'border-box',
-          paddingTop: header === 'none'
-            ? 'env(safe-area-inset-top, 0px)'
-            : 'calc(80px + env(safe-area-inset-top, 0px))',
-          paddingLeft: SPACING.compact,
-          paddingRight: SPACING.compact,
-          // 96px clears the fixed CTA bar (10px pad + 56px button + 10px pad + safe-area + buffer)
-          paddingBottom: 'calc(96px + env(safe-area-inset-bottom, 0px))',
+          position: 'fixed',
+          inset: 0,
+          overflow: 'hidden',
+          background: theme.background,
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        {children}
+        <style>{SCOPED_CSS}</style>
+        {backgroundImage && (
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: 'none',
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition,
+            opacity: backgroundOpacity,
+          }} />
+        )}
+        <div
+          className="cs-scroll"
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            flex: 1,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            maxWidth: 420,
+            width: '100%',
+            margin: '0 auto',
+            boxSizing: 'border-box',
+            paddingTop: header === 'none'
+              ? 'env(safe-area-inset-top, 0px)'
+              : 'calc(80px + env(safe-area-inset-top, 0px))',
+            paddingLeft: SPACING.compact,
+            paddingRight: SPACING.compact,
+            paddingBottom: ownsInlineNavigation
+              ? `calc(${SPACING.standard}px + env(safe-area-inset-bottom, 0px))`
+              : 'calc(96px + env(safe-area-inset-bottom, 0px))',
+          }}
+        >
+          {children}
+        </div>
       </div>
-    </div>
+    </InlineNavigationContext.Provider>
   )
 }
