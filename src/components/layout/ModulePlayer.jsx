@@ -44,6 +44,7 @@ import SwipeSort from '../learning/SwipeSort.jsx'
 import GalensDiagnostic from '../learning/GalensDiagnostic.jsx'
 import TheoryLab from '../learning/TheoryLab.jsx'
 import SymptomQualityDiagnostic from '../learning/SymptomQualityDiagnostic.jsx'
+import OppositeQualitiesReveal from '../learning/OppositeQualitiesReveal.jsx'
 import VisualLearning from '../learning/VisualLearning.jsx'
 import KeyFigureReveal from '../learning/KeyFigureReveal.jsx'
 import InteractiveCollectionExplorer from '../learning/InteractiveCollectionExplorer.jsx'
@@ -853,6 +854,7 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'mediaPlaceholder' && <div style={{ marginTop: i > 0 ? 28 : 0 }}><MediaPlaceholder subject={subject} kind={block.kind} aspect={block.aspect} caption={block.caption} /></div>}
           {block.type === 'fillblanks'    && <FillInTheBlanksBlock block={block} subject={subject} />}
           {block.type === 'theoryCompare' && <TheoryCompareBlock block={block} subject={subject} />}
+          {block.type === 'oppositeQualitiesReveal' && <OppositeQualitiesReveal block={block} subject={subject} />}
           {block.type === 'graphView'     && <GraphView block={block} subject={subject} />}
           {block.type === 'timelineChain' && <TimelineChainBlock block={block} subject={subject} />}
           {block.type === 'colsort'       && <ColSortBlock block={block} subject={subject} />}
@@ -2184,6 +2186,18 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           subject={module.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
         />
+        {jumpSheetPortal}
+      </>
+    )
+  }
+
+  if (cur?.type === 'oppositeQualitiesReveal') {
+    return (
+      <>
+        <LearningHeader {...H} visible={true} />
+        <TeachScreenShell heading={cur.title} intro={cur.copy} subject={module.subject}>
+          <OppositeQualitiesReveal block={cur} subject={module.subject} />
+        </TeachScreenShell>
         {jumpSheetPortal}
       </>
     )

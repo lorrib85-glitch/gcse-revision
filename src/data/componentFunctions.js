@@ -51,6 +51,7 @@ export const SCREEN_TYPE_FUNCTIONS = {
   // (see docs/components/COMPONENT_REGISTRY.md). Both teach a comparison through
   // progressive reveal — same function, same interaction class, one entry.
   theoryCompare: { functions: ['teach-comparison'], interaction: 'reveal' },
+  oppositeQualitiesReveal: { functions: ['teach-comparison'], interaction: 'reveal' },
   timelineCanvas: { functions: ['sequence-process'], interaction: 'reveal' },
   progressionTimeline: { functions: ['sequence-process'], interaction: 'reveal' },
   beforeAfterSlider: { functions: ['teach-comparison'], interaction: 'reveal' },
