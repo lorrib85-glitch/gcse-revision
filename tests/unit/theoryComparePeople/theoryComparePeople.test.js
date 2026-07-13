@@ -50,33 +50,26 @@ describe('isPeopleVariant', () => {
   })
 })
 
-describe('buildPeopleSteps — reveal ordering', () => {
-  it('flattens comparisons, rows, note and takeaway in the intended order', () => {
+describe('buildPeopleSteps — one complete theme per reveal', () => {
+  it('creates one comparison step per comparison theme', () => {
     const steps = buildPeopleSteps(PEOPLE_BLOCK)
-    expect(steps.map(s => s.type)).toEqual([
-      'comparison', // 0 evidence-source
-      'comparison', // 1 method
-      'comparison', // 2 conclusions (row 0)
-      'row',        // 2 conclusions (row 1)
-      'row',        // 2 conclusions (row 2)
-      'note',       // 2 conclusions note
-      'comparison', // 3 impact
-      'takeaway',
+    expect(steps).toEqual([
+      { type: 'comparison', comparisonIndex: 0 },
+      { type: 'comparison', comparisonIndex: 1 },
+      { type: 'comparison', comparisonIndex: 2 },
+      { type: 'comparison', comparisonIndex: 3 },
     ])
   })
 
-  it('reveals anatomical example rows one at a time within the comparison', () => {
+  it('does not split rows, notes or the takeaway into extra Continue presses', () => {
     const steps = buildPeopleSteps(PEOPLE_BLOCK)
-    const conclusionSteps = steps.filter(s => s.comparisonIndex === 2)
-    expect(conclusionSteps.map(s => s.rowIndex)).toEqual([0, 1, 2, undefined]) // rows then note
+    expect(steps).toHaveLength(PEOPLE_BLOCK.comparisons.length)
+    expect(steps.some(step => step.type === 'row')).toBe(false)
+    expect(steps.some(step => step.type === 'note')).toBe(false)
+    expect(steps.some(step => step.type === 'takeaway')).toBe(false)
   })
 
-  it('omits the takeaway step when no takeaway is present', () => {
-    const steps = buildPeopleSteps({ ...PEOPLE_BLOCK, takeaway: undefined })
-    expect(steps.some(s => s.type === 'takeaway')).toBe(false)
-  })
-
-  it('handles a single comparison with no rows, no note and no takeaway', () => {
+  it('handles a single comparison', () => {
     const steps = buildPeopleSteps({
       comparisons: [{ id: 'x', prompt: 'p', left: 'l', right: 'r' }],
     })
@@ -89,7 +82,7 @@ describe('buildPeopleSteps — reveal ordering', () => {
   })
 })
 
-describe('deriveVisibleState — progressive reveal', () => {
+describe('deriveVisibleState — cumulative page build', () => {
   const steps = buildPeopleSteps(PEOPLE_BLOCK)
 
   it('shows only the first comparison at the first step', () => {
@@ -100,24 +93,32 @@ describe('deriveVisibleState — progressive reveal', () => {
     expect(view.complete).toBe(false)
   })
 
-  it('reveals rows incrementally within the conclusions comparison', () => {
-    // Steps: [c0, c1, c2(row0), row1, row2, note, c3, takeaway]
-    const atRow0 = deriveVisibleState(PEOPLE_BLOCK, steps, 3) // c0,c1,c2
-    expect(atRow0.comparisons[2].visible).toBe(true)
-    expect(atRow0.comparisons[2].visibleRows).toBe(1)
-    expect(atRow0.comparisons[2].noteVisible).toBe(false)
-
-    const atRow2 = deriveVisibleState(PEOPLE_BLOCK, steps, 5) // through row2
-    expect(atRow2.comparisons[2].visibleRows).toBe(3)
-    expect(atRow2.comparisons[2].noteVisible).toBe(false)
-
-    const atNote = deriveVisibleState(PEOPLE_BLOCK, steps, 6) // through note
-    expect(atNote.comparisons[2].noteVisible).toBe(true)
+  it('keeps earlier comparison themes visible as later themes are added', () => {
+    const view = deriveVisibleState(PEOPLE_BLOCK, steps, 3)
+    expect(view.comparisons.map(comparison => comparison.visible)).toEqual([
+      true,
+      true,
+      true,
+      false,
+    ])
   })
 
-  it('reveals the takeaway only after the whole comparison sequence', () => {
+  it('reveals every row and the note together with their comparison theme', () => {
+    const beforeConclusions = deriveVisibleState(PEOPLE_BLOCK, steps, 2)
+    expect(beforeConclusions.comparisons[2].visible).toBe(false)
+    expect(beforeConclusions.comparisons[2].visibleRows).toBe(0)
+    expect(beforeConclusions.comparisons[2].noteVisible).toBe(false)
+
+    const atConclusions = deriveVisibleState(PEOPLE_BLOCK, steps, 3)
+    expect(atConclusions.comparisons[2].visible).toBe(true)
+    expect(atConclusions.comparisons[2].visibleRows).toBe(3)
+    expect(atConclusions.comparisons[2].noteVisible).toBe(true)
+  })
+
+  it('reveals the takeaway with the final comparison theme', () => {
     const beforeLast = deriveVisibleState(PEOPLE_BLOCK, steps, steps.length - 1)
     expect(beforeLast.takeawayVisible).toBe(false)
+    expect(beforeLast.complete).toBe(false)
 
     const atEnd = deriveVisibleState(PEOPLE_BLOCK, steps, steps.length)
     expect(atEnd.takeawayVisible).toBe(true)
@@ -137,10 +138,10 @@ describe('deriveVisibleState — progressive reveal', () => {
   })
 })
 
-describe('revealedComparisonCount — reveal-progress rail', () => {
+describe('revealedComparisonCount — shared progress marker', () => {
   const steps = buildPeopleSteps(PEOPLE_BLOCK)
 
-  it('counts comparison themes that are at least partially revealed', () => {
+  it('counts complete comparison themes that are visible', () => {
     expect(revealedComparisonCount(PEOPLE_BLOCK, steps, 1)).toBe(1)
     expect(revealedComparisonCount(PEOPLE_BLOCK, steps, 2)).toBe(2)
     expect(revealedComparisonCount(PEOPLE_BLOCK, steps, steps.length)).toBe(4)
