@@ -14,7 +14,9 @@ export default function SequenceProgress({
   accentRgb = '200,155,60',
   variant = 'dots',
   compact = false,
+  stretch = false,
   ariaLabel = 'Sequence progress',
+  style,
 }) {
   const viewedSet = new Set(viewed)
   const useViewed = viewed.length > 0
@@ -28,13 +30,25 @@ export default function SequenceProgress({
   const pillW = compact ? 16 : 20
   const dotD  = compact ? 6  : 8
   const segH  = compact ? 2  : 3
+  const progressA11y = {
+    role: 'progressbar',
+    'aria-label': ariaLabel,
+    'aria-valuemin': 1,
+    'aria-valuemax': Math.max(total, 1),
+    'aria-valuenow': Math.min(Math.max(current + 1, 1), Math.max(total, 1)),
+  }
 
   if (variant === 'sash') {
     return (
-      <div role="progressbar" aria-label={ariaLabel} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+      <div
+        {...progressA11y}
+        style={{ display: 'flex', gap: 6, alignItems: 'center', ...style }}
+      >
         {states.map((state, i) => (
           <div key={i} style={{
-            flex: 1, maxWidth: 28, height: segH,
+            flex: 1,
+            maxWidth: stretch ? 'none' : 28,
+            height: segH,
             borderRadius: RADII.pill,
             background: state === 'current'
               ? accent
@@ -49,7 +63,10 @@ export default function SequenceProgress({
   }
 
   return (
-    <div role="progressbar" aria-label={ariaLabel} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+    <div
+      {...progressA11y}
+      style={{ display: 'flex', gap: 6, alignItems: 'center', ...style }}
+    >
       {states.map((state, i) => (
         <div key={i} style={{
           width:  state === 'current' ? pillW : dotD,
