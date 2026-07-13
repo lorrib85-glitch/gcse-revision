@@ -522,6 +522,16 @@ Person-to-person comparison. Two named people with portraits kept as compact hea
 
 ---
 
+
+### OppositeQualitiesReveal
+
+**File:** `src/components/learning/OppositeQualitiesReveal.jsx`
+**Contract:** `docs/system/component-contracts/opposite-qualities-reveal.md`
+**Purpose:** Passive, guided reveal for two opposing concepts. Items appear centrally, travel toward the configured left or right concept, then remain grouped under the correct final heading.
+**Best used for:** Teaching contrast through visual grouping where the learner watches the relationship form, such as Hot/Cold and Wet/Dry quality symptoms in Medicine Episode 1.
+**Do not use for:** Assessed sorting, quiz choices, drag-and-drop, feedback states, or case diagnosis. Use the relevant interaction/diagnostic component instead.
+**Accessibility expectations:** Final DOM groups every item under its concept label; movement is decorative and not the only carrier of meaning; reduced motion renders the complete grouped state.
+
 ### SymptomQualityDiagnostic
 
 **File:** `src/components/learning/SymptomQualityDiagnostic.jsx`

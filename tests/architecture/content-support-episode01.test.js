@@ -39,9 +39,9 @@ describe('Episode 1 support map — forward integrity', () => {
     }
   })
 
-  it('has a screen-level entry for all 33 Episode 1 screens (0–32), contiguous, no duplicates', () => {
+  it('has a screen-level entry for every Episode 1 screen, contiguous, no duplicates', () => {
     const sorted = [...screenIndices].sort((a, b) => a - b)
-    expect(sorted).toEqual(Array.from({ length: 33 }, (_, i) => i))
+    expect(sorted).toEqual(Array.from({ length: maxScreen + 1 }, (_, i) => i))
     expect(new Set(screenIndices).size).toBe(screenIndices.length)
   })
 
