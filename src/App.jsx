@@ -2,25 +2,25 @@ import { lazy, Suspense } from 'react'
 import LegacyApp from './app/LegacyApp.jsx'
 import SaveFailureHost from './app/SaveFailureHost.jsx'
 
-// Development-only Component Review Lab (?componentReview=true). Referenced only
-// through this DEV-guarded lazy binding: in a production build import.meta.env.DEV
-// is statically false, so the ternary folds to null, the dynamic import() inside
-// the dead branch is never reached, and the lab chunk is not emitted — production
-// learners can never reach it. See docs/superpowers/specs/2026-07-13-component-review-lab-design.md.
-const ComponentReviewLab = import.meta.env.DEV
-  ? lazy(() => import('./dev/componentReview/ComponentReviewLab.jsx'))
-  : null
+// Component Review Lab (?componentReview=true) — a personal inspection tool for
+// the app owner, reachable in every build (including production) via the query
+// flag or the "Component review lab" card in the History browser. It is lazily
+// loaded as its own chunk, so learners who never hit the flag never download it,
+// and it still isolates itself to a throwaway storage scope so interacting with
+// previews cannot touch real learner data. See
+// docs/superpowers/specs/2026-07-13-component-review-lab-design.md.
+const ComponentReviewLab = lazy(() => import('./dev/componentReview/ComponentReviewLab.jsx'))
 
 function useComponentReviewFlag() {
-  if (!import.meta.env.DEV || typeof window === 'undefined') return false
+  if (typeof window === 'undefined') return false
   return new URLSearchParams(window.location.search).get('componentReview') === 'true'
 }
 
 export default function App() {
-  // When the dev flag is present, render the lab INSTEAD of the learner app so
-  // it bypasses auth, onboarding, tabs and bottom-nav entirely and is never a
+  // When the flag is present, render the lab INSTEAD of the learner app so it
+  // bypasses auth, onboarding, tabs and bottom-nav entirely and is never a
   // child of the learner tree.
-  if (useComponentReviewFlag() && ComponentReviewLab) {
+  if (useComponentReviewFlag()) {
     return (
       <Suspense fallback={null}>
         <ComponentReviewLab />

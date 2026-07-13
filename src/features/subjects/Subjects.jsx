@@ -365,6 +365,32 @@ function SubjectBrowser({ subjectName, onBack, onOpenModule }) {
         </div>
       ) : (
       <div style={{ padding: '20px 24px 0' }}>
+        {/* Owner-only entry to the Component Review Lab (personal inspection
+            tool). Deliberately NOT a MODULES entry — it opens the lab full-page
+            via the ?componentReview flag rather than routing through
+            ModulePlayer, so it needs no content loader and touches no learner
+            data. History-only. */}
+        {isHistory && (
+          <button
+            onClick={() => window.location.assign(window.location.pathname + '?componentReview=true')}
+            style={{
+              width: '100%', textAlign: 'left', cursor: 'pointer', marginBottom: 18,
+              background: 'rgba(255,255,255,0.02)', color: '#F5F7FF',
+              border: `1px dashed rgba(${accentRgb},0.5)`, borderRadius: RADII.medium,
+              padding: '16px 18px',
+            }}
+          >
+            <div style={{ ...TYPE.eyebrow, fontSize: 10, textTransform: 'uppercase', color: accent, marginBottom: 6 }}>
+              Dev · test tool
+            </div>
+            <div style={{ ...TYPE.displayCard, fontSize: 18, color: '#F5F7FF', marginBottom: 4 }}>
+              Component review lab
+            </div>
+            <div style={{ ...TYPE.bodySmall, fontSize: 13, color: 'rgba(255,255,255,0.52)' }}>
+              Inspect unused, orphaned and one-off components. Opens outside the learner flow.
+            </div>
+          </button>
+        )}
         {items.map((item, i) => {
           const isCompleted = item.status === 'completed'
           const isCurrent   = item.status !== 'coming_soon' && i === nextUpIndex

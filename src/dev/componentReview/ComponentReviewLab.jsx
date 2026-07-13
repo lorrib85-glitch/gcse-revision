@@ -42,6 +42,14 @@ function matchesFilter(entry, filterId) {
 
 const mono = { fontFamily: "'Sora', sans-serif" }
 
+// Leave the lab by dropping the ?componentReview flag and reloading into the
+// normal learner app. Used from the index header so production users (the app
+// owner) are never trapped in the lab.
+function exitToApp() {
+  if (typeof window === 'undefined') return
+  window.location.assign(window.location.pathname)
+}
+
 function StatusChip({ status }) {
   const tone = {
     'unused':        GENERAL.error,
@@ -138,8 +146,11 @@ function IndexView({ filtered, filter, onFilter, onOpen }) {
   return (
     <div style={{ maxWidth: 420, margin: '0 auto', padding: '20px 16px 64px' }}>
       <header style={{ marginBottom: 18 }}>
-        <div style={{ ...mono, fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: GENERAL.teal }}>
-          Development tool
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+          <div style={{ ...mono, fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: GENERAL.teal }}>
+            Development tool
+          </div>
+          <button onClick={exitToApp} style={{ ...ctrlBtn, flexShrink: 0 }}>Exit to app ✕</button>
         </div>
         <h1 style={{ ...mono, fontSize: 22, fontWeight: 700, margin: '4px 0 6px' }}>Component review lab</h1>
         <p style={{ ...mono, fontSize: 13, lineHeight: 1.5, color: GENERAL.slate, margin: 0 }}>
