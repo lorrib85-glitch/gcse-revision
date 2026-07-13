@@ -82,22 +82,26 @@ describe('buildPeopleSteps — one complete theme per reveal', () => {
   })
 })
 
-describe('deriveVisibleState — cumulative page build', () => {
+describe('deriveVisibleState — replacement reveal', () => {
   const steps = buildPeopleSteps(PEOPLE_BLOCK)
 
   it('shows only the first comparison at the first step', () => {
     const view = deriveVisibleState(PEOPLE_BLOCK, steps, 1)
-    expect(view.comparisons[0].visible).toBe(true)
-    expect(view.comparisons[1].visible).toBe(false)
+    expect(view.comparisons.map(comparison => comparison.visible)).toEqual([
+      true,
+      false,
+      false,
+      false,
+    ])
     expect(view.takeawayVisible).toBe(false)
     expect(view.complete).toBe(false)
   })
 
-  it('keeps earlier comparison themes visible as later themes are added', () => {
+  it('replaces the previous comparison when the next theme is reached', () => {
     const view = deriveVisibleState(PEOPLE_BLOCK, steps, 3)
     expect(view.comparisons.map(comparison => comparison.visible)).toEqual([
-      true,
-      true,
+      false,
+      false,
       true,
       false,
     ])
@@ -121,6 +125,12 @@ describe('deriveVisibleState — cumulative page build', () => {
     expect(beforeLast.complete).toBe(false)
 
     const atEnd = deriveVisibleState(PEOPLE_BLOCK, steps, steps.length)
+    expect(atEnd.comparisons.map(comparison => comparison.visible)).toEqual([
+      false,
+      false,
+      false,
+      true,
+    ])
     expect(atEnd.takeawayVisible).toBe(true)
     expect(atEnd.complete).toBe(true)
   })
@@ -129,11 +139,11 @@ describe('deriveVisibleState — cumulative page build', () => {
     const view = deriveVisibleState(PEOPLE_BLOCK, steps, 999)
     expect(view.complete).toBe(true)
     expect(view.takeawayVisible).toBe(true)
+    expect(view.comparisons[3].visible).toBe(true)
   })
 
   it('a comparison with no rows reports zero visible rows', () => {
     const view = deriveVisibleState(PEOPLE_BLOCK, steps, steps.length)
-    expect(view.comparisons[0].visibleRows).toBe(0)
     expect(view.comparisons[3].visibleRows).toBe(0)
   })
 })
@@ -141,7 +151,7 @@ describe('deriveVisibleState — cumulative page build', () => {
 describe('revealedComparisonCount — shared progress marker', () => {
   const steps = buildPeopleSteps(PEOPLE_BLOCK)
 
-  it('counts complete comparison themes that are visible', () => {
+  it('tracks how many themes have been reached even though only one is visible', () => {
     expect(revealedComparisonCount(PEOPLE_BLOCK, steps, 1)).toBe(1)
     expect(revealedComparisonCount(PEOPLE_BLOCK, steps, 2)).toBe(2)
     expect(revealedComparisonCount(PEOPLE_BLOCK, steps, steps.length)).toBe(4)
