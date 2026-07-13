@@ -6,6 +6,7 @@ import episode from './episode-01-medieval-beliefs-causes.js'
 // splits the Theory of Opposites diagram and worked example into focused screens.
 const REMOVED_DUPLICATE_SCREEN_LABEL = 'The Four Humours'
 const THEORY_OF_OPPOSITES_HEADING = 'Every illness had an opposite'
+const HOT_COLD_REVEAL_BACKGROUND = '/figures/history/medicine/medieval/opposite-qualities-background.svg'
 
 const removedScreenIndex = episode.screens.findIndex(
   screen => screen.label === REMOVED_DUPLICATE_SCREEN_LABEL && screen.type === 'conceptReveal'
@@ -91,6 +92,10 @@ function composeOppositeQualitiesScreen(screen) {
     ...visualProps
   } = screen
 
+  const backgroundImage = label === 'Hot and cold symptoms'
+    ? HOT_COLD_REVEAL_BACKGROUND
+    : visualProps.backgroundImage
+
   return {
     stage,
     label,
@@ -103,6 +108,10 @@ function composeOppositeQualitiesScreen(screen) {
         title,
         copy,
         ...visualProps,
+        backgroundImage,
+        backgroundOpacity: label === 'Hot and cold symptoms'
+          ? 1
+          : visualProps.backgroundOpacity,
       },
     ],
   }
