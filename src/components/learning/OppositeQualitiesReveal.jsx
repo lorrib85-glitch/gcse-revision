@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
-import { RADII } from '../../constants/radii.js'
 import { MOTION } from '../../constants/motion.js'
 import { TYPE } from '../../constants/typography.js'
 import { CINEMATIC_LAB } from '../../constants/cinematicLabTheme.js'
@@ -16,22 +15,22 @@ function ensureStyles() {
   const el = document.createElement('style')
   el.textContent = `
     @keyframes oqr-item-settle {
-      from { opacity: 0; transform: translateY(var(--oqr-lift)); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(var(--oqr-lift)); filter: blur(2px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
     }
     @keyframes oqr-active-left {
-      0% { opacity: 0; transform: translateX(0) scale(0.98); }
+      0% { opacity: 0; transform: translateX(0) scale(0.96); }
       18% { opacity: 1; transform: translateX(0) scale(1); }
-      40% { opacity: 1; transform: translateX(0) scale(1); }
-      84% { opacity: 1; transform: translateX(-46%) scale(1); }
-      100% { opacity: 0; transform: translateX(-49%) scale(0.98); }
+      46% { opacity: 1; transform: translateX(0) scale(1); }
+      88% { opacity: 1; transform: translateX(-34%) scale(1); }
+      100% { opacity: 0; transform: translateX(-36%) scale(0.98); }
     }
     @keyframes oqr-active-right {
-      0% { opacity: 0; transform: translateX(0) scale(0.98); }
+      0% { opacity: 0; transform: translateX(0) scale(0.96); }
       18% { opacity: 1; transform: translateX(0) scale(1); }
-      40% { opacity: 1; transform: translateX(0) scale(1); }
-      84% { opacity: 1; transform: translateX(46%) scale(1); }
-      100% { opacity: 0; transform: translateX(49%) scale(0.98); }
+      46% { opacity: 1; transform: translateX(0) scale(1); }
+      88% { opacity: 1; transform: translateX(34%) scale(1); }
+      100% { opacity: 0; transform: translateX(36%) scale(0.98); }
     }
     @keyframes oqr-caption-in {
       from { opacity: 0; transform: translateY(8px); }
@@ -51,13 +50,23 @@ function prefersReducedMotion() {
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function ConceptColumn({ concept = {}, items, side, accent, rgb, ariaLabel }) {
+function ConceptColumn({ concept = {}, items, side, accent, ariaLabel }) {
   const isRight = side === 'right'
 
   return (
-    <section aria-label={ariaLabel || concept.label} style={{ minWidth: 0 }}>
-      <div style={{ textAlign: isRight ? 'right' : 'left', marginBottom: SPACING.standard }}>
-        <div aria-hidden="true" style={{ ...TYPE.displayCard, color: accent }}>
+    <section
+      aria-label={ariaLabel || concept.label}
+      style={{ minWidth: 0, textAlign: isRight ? 'right' : 'left' }}
+    >
+      <div style={{ marginBottom: SPACING.standard }}>
+        <div
+          aria-hidden="true"
+          style={{
+            ...TYPE.displayCard,
+            color: accent,
+            textShadow: '0 2px 16px rgba(0,0,0,0.88)',
+          }}
+        >
           {concept.icon ? (
             <span style={{
               marginRight: isRight ? 0 : SPACING.micro,
@@ -75,7 +84,7 @@ function ConceptColumn({ concept = {}, items, side, accent, rgb, ariaLabel }) {
         padding: 0,
         margin: 0,
         display: 'grid',
-        gap: SPACING.micro,
+        gap: SPACING.compact,
       }}>
         {items.map(item => (
           <li
@@ -86,24 +95,14 @@ function ConceptColumn({ concept = {}, items, side, accent, rgb, ariaLabel }) {
               animation: `oqr-item-settle ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
             }}
           >
-            <div style={{
-              display: 'flex',
-              flexDirection: isRight ? 'row-reverse' : 'row',
-              alignItems: 'center',
-              justifyContent: isRight ? 'flex-start' : 'flex-start',
-              gap: SPACING.micro,
-              padding: `${SPACING.micro}px 0`,
-              borderBottom: `1px solid rgba(${rgb},0.20)`,
+            <span style={{
+              ...TYPE.bodyStrong,
+              display: 'block',
               color: CINEMATIC_LAB.creamText,
-              textAlign: isRight ? 'right' : 'left',
+              textShadow: '0 2px 14px rgba(0,0,0,0.95)',
             }}>
-              {concept.icon ? (
-                <span aria-hidden="true" style={{ opacity: 0.58, flexShrink: 0 }}>
-                  {concept.icon}
-                </span>
-              ) : null}
-              <span style={{ ...TYPE.bodyStrong }}>{item}</span>
-            </div>
+              {item}
+            </span>
           </li>
         ))}
       </ul>
@@ -163,140 +162,116 @@ export default function OppositeQualitiesReveal({
 
   return (
     <div>
-      <div
-        aria-label={block.accessibility?.label || block.title}
-        style={{
-          position: 'relative',
-          minHeight: 430,
-          overflow: 'hidden',
-          borderRadius: RADII.panel,
-          border: `1px solid rgba(${rgb},0.28)`,
-          background: CINEMATIC_LAB.background,
-          boxShadow: `0 ${SPACING.micro}px ${SPACING.separation}px rgba(0,0,0,0.28)`,
-        }}
-      >
-        {block.backgroundImage && (
+      {block.backgroundImage && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: -1,
+            overflow: 'hidden',
+            background: CINEMATIC_LAB.background,
+            pointerEvents: 'none',
+          }}
+        >
           <img
             src={block.backgroundImage}
             alt=""
-            aria-hidden="true"
             style={{
-              position: 'absolute',
-              inset: 0,
               width: '100%',
               height: '100%',
               objectFit: 'cover',
               objectPosition: block.backgroundPosition || 'center',
-              opacity: block.backgroundOpacity ?? 0.78,
-              filter: 'saturate(0.92) contrast(1.04)',
+              opacity: block.backgroundOpacity ?? 1,
             }}
           />
-        )}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: [
+              'linear-gradient(180deg, rgba(5,4,6,0.50) 0%, rgba(5,4,6,0.16) 34%, rgba(5,4,6,0.10) 66%, rgba(5,4,6,0.58) 100%)',
+              `radial-gradient(circle at 50% 44%, transparent 24%, rgba(${rgb},0.04) 58%, rgba(5,4,6,0.18) 100%)`,
+            ].join(', '),
+          }} />
+        </div>
+      )}
 
-        <div aria-hidden="true" style={{
-          position: 'absolute',
-          inset: 0,
-          background: [
-            'linear-gradient(180deg, rgba(7,6,8,0.18) 0%, rgba(7,6,8,0.34) 46%, rgba(7,6,8,0.78) 100%)',
-            `radial-gradient(circle at 50% 44%, rgba(${rgb},0.04), rgba(7,6,8,0.30) 72%)`,
-          ].join(', '),
-          pointerEvents: 'none',
-        }} />
-
-        <div style={{
+      <div
+        aria-label={block.accessibility?.label || block.title}
+        style={{
           position: 'relative',
-          zIndex: 1,
-          minHeight: 430,
+          minHeight: '48svh',
           display: 'flex',
           flexDirection: 'column',
-          padding: `${SPACING.separation}px ${SPACING.standard}px ${SPACING.standard}px`,
+        }}
+      >
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
+          gap: SPACING.separation,
+          paddingTop: SPACING.standard,
         }}>
-          <div style={{
-            position: 'relative',
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
-            gap: SPACING.separation,
-          }}>
-            <div aria-hidden="true" style={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              left: '50%',
-              width: 1,
-              background: `linear-gradient(transparent, rgba(${rgb},0.48), transparent)`,
-              transform: 'translateX(-50%)',
-            }} />
-
-            <ConceptColumn
-              concept={block.leftConcept}
-              items={view.leftItems}
-              side="left"
-              accent={accent}
-              rgb={rgb}
-              ariaLabel={block.accessibility?.leftLabel}
-            />
-            <ConceptColumn
-              concept={block.rightConcept}
-              items={view.rightItems}
-              side="right"
-              accent={accent}
-              rgb={rgb}
-              ariaLabel={block.accessibility?.rightLabel}
-            />
-          </div>
-
-          <div style={{ flex: 1, minHeight: SPACING.cinematic }} />
-
-          {view.active && (
-            <div
-              key={view.active.id}
-              className="oqr-active oqr-motion"
-              aria-hidden="true"
-              style={{
-                position: 'absolute',
-                left: '22%',
-                right: '22%',
-                top: '44%',
-                animation: activeAnimation,
-                pointerEvents: 'none',
-                zIndex: 3,
-              }}
-            >
-              <div style={{
-                textAlign: 'center',
-                padding: `${SPACING.compact}px ${SPACING.standard}px`,
-                borderRadius: RADII.medium,
-                border: `1px solid rgba(${rgb},0.68)`,
-                color: CINEMATIC_LAB.creamText,
-                background: `linear-gradient(135deg, rgba(${rgb},0.22), rgba(9,7,10,0.90))`,
-                boxShadow: `0 0 ${SPACING.separation}px rgba(${rgb},0.26)`,
-                ...TYPE.displayCard,
-              }}>
-                {view.active.item}
-              </div>
-            </div>
-          )}
-
-          {view.complete && block.closingCaption && (
-            <p
-              className="oqr-motion"
-              style={{
-                ...TYPE.bodyLarge,
-                color: CINEMATIC_LAB.creamText,
-                margin: 0,
-                padding: SPACING.compact,
-                borderRadius: RADII.large,
-                border: `1px solid rgba(${rgb},0.24)`,
-                background: 'rgba(0,0,0,0.48)',
-                backdropFilter: 'blur(8px)',
-                WebkitBackdropFilter: 'blur(8px)',
-                animation: `oqr-caption-in ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
-              }}
-            >
-              {block.closingCaption}
-            </p>
-          )}
+          <ConceptColumn
+            concept={block.leftConcept}
+            items={view.leftItems}
+            side="left"
+            accent={accent}
+            ariaLabel={block.accessibility?.leftLabel}
+          />
+          <ConceptColumn
+            concept={block.rightConcept}
+            items={view.rightItems}
+            side="right"
+            accent={accent}
+            ariaLabel={block.accessibility?.rightLabel}
+          />
         </div>
+
+        <div style={{ flex: 1, minHeight: SPACING.cinematic }} />
+
+        {view.active && (
+          <div
+            key={view.active.id}
+            className="oqr-active oqr-motion"
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              left: '14%',
+              right: '14%',
+              top: '46%',
+              animation: activeAnimation,
+              pointerEvents: 'none',
+              zIndex: 2,
+            }}
+          >
+            <div style={{
+              ...TYPE.displayCard,
+              color: CINEMATIC_LAB.creamText,
+              textAlign: 'center',
+              textShadow: `0 0 ${SPACING.separation}px rgba(${rgb},0.42), 0 3px ${SPACING.compact}px rgba(0,0,0,0.96)`,
+            }}>
+              {view.active.item}
+            </div>
+          </div>
+        )}
+
+        {view.complete && block.closingCaption && (
+          <p
+            className="oqr-motion"
+            style={{
+              ...TYPE.bodyLarge,
+              color: CINEMATIC_LAB.creamText,
+              textAlign: 'center',
+              textShadow: '0 2px 14px rgba(0,0,0,0.96)',
+              margin: 0,
+              padding: `${SPACING.compact}px 0 0`,
+              borderTop: `1px solid rgba(${rgb},0.24)`,
+              animation: `oqr-caption-in ${MOTION.duration.standard} ${MOTION.easing.standard} both`,
+            }}
+          >
+            {block.closingCaption}
+          </p>
+        )}
       </div>
 
       {view.complete && finishScreen && (
