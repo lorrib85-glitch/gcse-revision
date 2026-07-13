@@ -321,6 +321,7 @@ function PeopleCompareBlock({ block, subject, onComplete }) {
             border: `1px solid rgba(${rgb},0.28)`,
             ...TYPE.displayCard,
             color: accent,
+            textAlign: 'center',
           }}
         >
           {block.takeaway}
