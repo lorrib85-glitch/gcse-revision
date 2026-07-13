@@ -87,12 +87,20 @@ describe('opposite qualities reveal sequencing', () => {
 })
 
 describe('episode 1 opposite qualities integration', () => {
-  it('canonical and runtime Episode 1 both expose the two new reveal screens', () => {
-    for (const episode of [canonicalEpisode, runtimeEpisode]) {
-      const revealScreens = episode.screens.filter(screen => screen.type === 'oppositeQualitiesReveal')
-      expect(revealScreens.map(screen => screen.title)).toEqual(['Hot or cold?', 'Wet or dry?'])
-      expect(episode.screens.some(screen => screen.type === 'symptomQualityDiagnostic')).toBe(false)
-    }
+  it('keeps the canonical reveal data and composes runtime screens through the teach shell', () => {
+    const canonicalReveals = canonicalEpisode.screens.filter(
+      screen => screen.type === 'oppositeQualitiesReveal'
+    )
+    expect(canonicalReveals.map(screen => screen.title)).toEqual(['Hot or cold?', 'Wet or dry?'])
+
+    const runtimeReveals = runtimeEpisode.screens.filter(
+      screen => screen.blocks?.some(block => block.type === 'oppositeQualitiesReveal')
+    )
+    expect(runtimeReveals.map(screen => screen.heading)).toEqual(['Hot or cold?', 'Wet or dry?'])
+    expect(runtimeReveals.every(screen => screen.shell === 'teach')).toBe(true)
+    expect(runtimeReveals.map(screen => screen.blocks[0].title)).toEqual(['Hot or cold?', 'Wet or dry?'])
+    expect(runtimeEpisode.screens.some(screen => screen.type === 'oppositeQualitiesReveal')).toBe(false)
+    expect(runtimeEpisode.screens.some(screen => screen.type === 'symptomQualityDiagnostic')).toBe(false)
   })
 
   it('keeps module metadata aligned with runtime screen count and navigation', () => {
