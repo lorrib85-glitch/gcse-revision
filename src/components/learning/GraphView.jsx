@@ -7,8 +7,8 @@ import CardContainer from '../core/CardContainer.jsx'
 
 // ─── SVG plot geometry (shared by all graph types) ──────────────────────────
 const W = 320
-const H = 220
-const M = { top: 18, right: 14, bottom: 48, left: 50 }
+const H = 232
+const M = { top: 18, right: 14, bottom: 60, left: 50 }
 const PLOT_W = W - M.left - M.right
 const PLOT_H = H - M.top - M.bottom
 const TARGET_TICK_INTERVALS = 5
@@ -351,7 +351,7 @@ function AxisFrame({ xTicks, yTicks, toX, toY, xLabel, yLabel }) {
             {...SVG_TEXT.tick}
             key={`x-${i}`}
             x={x}
-            y={M.top + PLOT_H + 19}
+            y={M.top + PLOT_H + 22}
             textAnchor="middle"
           >
             {lines.map((line, lineIndex) => (
@@ -370,7 +370,7 @@ function AxisFrame({ xTicks, yTicks, toX, toY, xLabel, yLabel }) {
         <text
           {...SVG_TEXT.axisLabel}
           x={M.left + PLOT_W / 2}
-          y={H - 3}
+          y={H - 9}
           textAnchor="middle"
         >
           {xLabel}
@@ -556,7 +556,7 @@ function pieLegendSwatchStyle(color, type) {
 
 function PieChart({ data, accent, accentSecondary, accentTertiary, a11y }) {
   const total = data.reduce((sum, d) => sum + d.value, 0) || 1
-  const pieH = H - 34
+  const pieH = 186
   const cx = W / 2
   const cy = pieH / 2
   const r = Math.min(W, pieH) / 2 - 10
@@ -746,7 +746,7 @@ export default function GraphView({ block, subject = 'Maths' }) {
           <figcaption style={{
             ...TYPE.bodySmall,
             color: 'rgba(255,255,255,0.56)',
-            marginTop: SPACING.micro,
+            marginTop: SPACING.compact,
           }}>
             {caption}
           </figcaption>
