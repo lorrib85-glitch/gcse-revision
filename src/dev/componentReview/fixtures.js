@@ -38,7 +38,7 @@ export const graphViewScatter = {
 export const graphViewLine = {
   graphType: 'line',
   title: 'Enzyme activity vs temperature',
-  caption: 'Rate of reaction as temperature rises.',
+  caption: 'Each point is one temperature reading.',
   xLabel: 'Temperature (°C)',
   yLabel: 'Rate of reaction',
   points: [
