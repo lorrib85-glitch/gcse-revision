@@ -1,9 +1,11 @@
-import { useState, useRef } from 'react'
+import { useId, useRef, useState } from 'react'
+import { useReducedMotion } from 'motion/react'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
+import SequenceProgress from '../core/SequenceProgress.jsx'
 // CinematicShell used here because the horizontal scroll-snap chain and connector rail must
 // reach the full viewport width; InteractionShell's 16px inset would clip the rail and break
 // the scroll-snap alignment.
@@ -24,7 +26,7 @@ import TimelineChainIcon from './TimelineChainIcons.jsx'
 //   title: 'How the Black Death spread',
 //   intro?: 'Tap each step to see why it mattered.',
 //   steps: [
-//     { id, icon?: 'microscope', image?, label: 'Pasteur proves germ theory', detail: '...' },
+//     { id, icon?: 'microscope', image?, imageAlt?, label: 'Pasteur proves germ theory', detail: '...' },
 //     ...
 //   ],
 // }
@@ -36,8 +38,22 @@ function ensureStyles() {
   const el = document.createElement('style')
   el.textContent = `
     @keyframes tc-fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes tc-hint-pulse { 0%, 100% { opacity: 0.30; transform: translateX(0); } 50% { opacity: 0.65; transform: translateX(4px); } }
+    @keyframes tc-hint-pulse { 0%, 100% { opacity: 0.30; transform: translateX(0); } 50% { opacity: 0.58; transform: translateX(4px); } }
     .tc-row::-webkit-scrollbar { display: none; }
+    .tc-card-trigger:focus-visible {
+      outline: 2px solid var(--tc-accent) !important;
+      outline-offset: 4px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tc-motion,
+      .tc-sequence-progress * {
+        animation: none !important;
+        transition: none !important;
+      }
+      .tc-row {
+        scroll-behavior: auto !important;
+      }
+    }
   `
   document.head.appendChild(el)
 }
@@ -53,10 +69,78 @@ const EMBED_CARD_H = 270
 const EMBED_RAIL_H = 16
 const RAIL_OVERHANG = SPACING.compact / 2
 
-function DisclosureChevron({ open }) {
+const SR_ONLY = {
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: 'hidden',
+  clip: 'rect(0, 0, 0, 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+}
+
+function exploredIndexes(steps, explored) {
+  return steps
+    .map((_, index) => explored.has(index) ? index : null)
+    .filter(index => index !== null)
+}
+
+function nearestCardIndex(row, cards) {
+  if (!row || cards.length === 0) return 0
+
+  const viewportCentre = row.scrollLeft + row.clientWidth / 2
+  let nearestIndex = 0
+  let nearestDistance = Number.POSITIVE_INFINITY
+
+  cards.forEach((card, index) => {
+    if (!card) return
+    const cardCentre = card.offsetLeft + card.offsetWidth / 2
+    const distance = Math.abs(cardCentre - viewportCentre)
+    if (distance < nearestDistance) {
+      nearestDistance = distance
+      nearestIndex = index
+    }
+  })
+
+  return nearestIndex
+}
+
+function keyboardTarget(event, current, total) {
+  if (total <= 0) return null
+  if (event.key === 'ArrowRight') return Math.min(current + 1, total - 1)
+  if (event.key === 'ArrowLeft') return Math.max(current - 1, 0)
+  if (event.key === 'Home') return 0
+  if (event.key === 'End') return total - 1
+  return null
+}
+
+function moveToCard(row, card, prefersReduced, align = 'center') {
+  if (!row || !card) return
+
+  const trigger = card.querySelector('.tc-card-trigger')
+  trigger?.focus({ preventScroll: true })
+
+  const left = align === 'start'
+    ? card.offsetLeft
+    : card.offsetLeft - (row.clientWidth - card.offsetWidth) / 2
+
+  if (typeof row.scrollTo === 'function') {
+    row.scrollTo({
+      left: Math.max(0, left),
+      behavior: prefersReduced ? 'auto' : 'smooth',
+    })
+  } else {
+    row.scrollLeft = Math.max(0, left)
+  }
+}
+
+function DisclosureChevron({ open, prefersReduced }) {
   return (
     <svg
       aria-hidden="true"
+      className="tc-motion"
       width="16"
       height="16"
       viewBox="0 0 16 16"
@@ -64,7 +148,9 @@ function DisclosureChevron({ open }) {
       style={{
         display: 'block',
         transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-        transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+        transition: prefersReduced
+          ? 'none'
+          : `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
       }}
     >
       <path
@@ -84,20 +170,48 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
   const steps = block.steps || []
+  const prefersReduced = useReducedMotion()
+  const instructionsId = useId()
 
   const [revealed, setRevealed] = useState(() => new Set())
+  const [explored, setExplored] = useState(() => new Set())
+  const [activeIndex, setActiveIndex] = useState(0)
   const [scrolled, setScrolled] = useState(false)
   const rowRef = useRef(null)
+  const cardRefs = useRef([])
 
-  const allRevealed = steps.length > 0 && revealed.size === steps.length
+  const allExplored = steps.length > 0 && explored.size >= steps.length
+  const viewed = exploredIndexes(steps, explored)
 
   function toggleReveal(i) {
+    const willReveal = !revealed.has(i)
+
     setRevealed(prev => {
       const next = new Set(prev)
       if (next.has(i)) next.delete(i)
       else next.add(i)
       return next
     })
+
+    if (willReveal) {
+      setExplored(prev => prev.has(i) ? prev : new Set([...prev, i]))
+    }
+  }
+
+  function handleScroll() {
+    if (!scrolled) setScrolled(true)
+    const nextIndex = nearestCardIndex(rowRef.current, cardRefs.current)
+    setActiveIndex(current => current === nextIndex ? current : nextIndex)
+  }
+
+  function handleKeyDown(event) {
+    const nextIndex = keyboardTarget(event, activeIndex, steps.length)
+    if (nextIndex === null) return
+
+    event.preventDefault()
+    setScrolled(true)
+    setActiveIndex(nextIndex)
+    moveToCard(rowRef.current, cardRefs.current[nextIndex], prefersReduced, 'center')
   }
 
   return (
@@ -132,11 +246,20 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
         )}
       </div>
 
+      <p id={instructionsId} style={SR_ONLY}>
+        Swipe horizontally or use the left and right arrow keys to move between steps. Press Enter or Space to reveal why a step mattered.
+      </p>
+
       {/* Chain row */}
       <div
         ref={rowRef}
         className="tc-row"
-        onScroll={() => { if (!scrolled) setScrolled(true) }}
+        role="region"
+        aria-roledescription="timeline"
+        aria-label={block.title ? `${block.title} sequence` : 'Causal sequence'}
+        aria-describedby={instructionsId}
+        onScroll={handleScroll}
+        onKeyDown={handleKeyDown}
         style={{
           display: 'flex',
           overflowX: 'auto',
@@ -153,53 +276,62 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
         {steps.map((step, i) => (
           <ChainCard
             key={step.id || i}
+            cardRef={node => { cardRefs.current[i] = node }}
             step={step}
             index={i}
             total={steps.length}
             revealed={revealed.has(i)}
-            previousRevealed={i > 0 && revealed.has(i - 1)}
+            explored={explored.has(i)}
+            previousExplored={i > 0 && explored.has(i - 1)}
             onReveal={() => toggleReveal(i)}
             accent={accent}
             rgb={rgb}
+            prefersReduced={prefersReduced}
           />
         ))}
       </div>
 
       {/* Swipe hint */}
       {!scrolled && steps.length > 1 && (
-        <div style={{
+        <div className="tc-motion" style={{
           textAlign: 'center', marginTop: SPACING.compact, flexShrink: 0,
-          ...TYPE.eyebrow, textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.30)',
-          animation: 'tc-hint-pulse 2.4s ease-in-out infinite',
+          ...TYPE.label,
+          color: 'rgba(245,245,245,0.38)',
+          animation: prefersReduced ? 'none' : 'tc-hint-pulse 2.4s ease-in-out infinite',
         }}>
-          Swipe to explore →
+          Swipe to explore
         </div>
       )}
 
-      {/* Progress dots */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: SPACING.compact, flexShrink: 0 }}>
-        {steps.map((_, i) => (
-          <div key={i} style={{
-            width: revealed.has(i) ? 20 : 8, height: 8, borderRadius: RADII.pill,
-            background: revealed.has(i) ? accent : 'rgba(255,255,255,0.16)',
-            boxShadow: revealed.has(i) ? `0 0 8px rgba(${rgb},0.45)` : 'none',
-            transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-          }} />
-        ))}
+      {/* Governed local sequence progress */}
+      <div className="tc-sequence-progress" style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.compact, flexShrink: 0 }}>
+        <SequenceProgress
+          total={steps.length}
+          current={activeIndex}
+          viewed={viewed}
+          accent={accent}
+          accentRgb={rgb}
+          compact
+          ariaLabel="Timeline position and explored steps"
+        />
       </div>
 
       {/* Continue */}
       <div style={{ marginTop: SPACING.standard, padding: `0 ${SPACING.standard}px`, flexShrink: 0 }}>
-        {allRevealed ? (
+        {allExplored ? (
           <ContinueCTA
             onClick={onContinue}
             accent={accent}
-            style={{ animation: `tc-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both` }}
+            style={{
+              animation: prefersReduced
+                ? 'none'
+                : `tc-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+              ...(prefersReduced ? { transition: 'none' } : {}),
+            }}
           />
         ) : (
-          <div style={{ ...TYPE.label, color: 'rgba(255,255,255,0.32)' }}>
-            Reveal every step to continue
+          <div aria-live="polite" style={{ ...TYPE.label, color: 'rgba(245,245,245,0.38)' }}>
+            Explore every step to continue
           </div>
         )}
       </div>
@@ -212,10 +344,13 @@ function ChainCard({
   index,
   total,
   revealed,
-  previousRevealed = false,
+  explored,
+  previousExplored = false,
   onReveal,
   accent,
   rgb,
+  prefersReduced,
+  cardRef,
   cardW = CARD_W,
   cardH = CARD_H,
   railH = 20,
@@ -223,13 +358,25 @@ function ChainCard({
 }) {
   const isFirst = index === 0
   const isLast = index === total - 1
-  const isAvailable = isFirst || previousRevealed
-  const railTransition = `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`
+  const isAvailable = isFirst || previousExplored
+  const railTransition = prefersReduced
+    ? 'none'
+    : `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`
   const visualSize = revealed ? 44 : 56
   const iconSize = revealed ? 22 : 28
+  const detailId = useId()
+  const cardActionLabel = revealed
+    ? `Hide explanation for step ${index + 1} of ${total}: ${step.label}`
+    : `Reveal why this mattered — step ${index + 1} of ${total}: ${step.label}`
+
+  function handleCardKeyDown(event) {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    onReveal()
+  }
 
   return (
-    <div style={{
+    <div ref={cardRef} style={{
       display: 'flex',
       flexDirection: 'column',
       flexShrink: 0,
@@ -237,7 +384,7 @@ function ChainCard({
       scrollSnapStop: 'always',
     }}>
 
-      {/* Connector rail — muted route beneath an animated completed path. */}
+      {/* Connector rail — completed sections stay complete after a card is closed. */}
       <div style={{ position: 'relative', height: railH, width: cardW, flexShrink: 0 }}>
         {!isFirst && (
           <>
@@ -245,10 +392,10 @@ function ChainCard({
               position: 'absolute', left: -RAIL_OVERHANG, right: '50%', top: '50%',
               height: 1, background: `rgba(${rgb},0.16)`,
             }} />
-            <div style={{
+            <div className="tc-motion" style={{
               position: 'absolute', left: -RAIL_OVERHANG, right: '50%', top: '50%',
               height: 1, background: `rgba(${rgb},0.72)`,
-              transform: previousRevealed ? 'scaleX(1)' : 'scaleX(0)',
+              transform: previousExplored ? 'scaleX(1)' : 'scaleX(0)',
               transformOrigin: 'right center',
               transition: railTransition,
             }} />
@@ -260,36 +407,47 @@ function ChainCard({
               position: 'absolute', left: '50%', right: -RAIL_OVERHANG, top: '50%',
               height: 1, background: `rgba(${rgb},0.16)`,
             }} />
-            <div style={{
+            <div className="tc-motion" style={{
               position: 'absolute', left: '50%', right: -RAIL_OVERHANG, top: '50%',
               height: 1, background: `rgba(${rgb},0.72)`,
-              transform: revealed ? 'scaleX(1)' : 'scaleX(0)',
+              transform: explored ? 'scaleX(1)' : 'scaleX(0)',
               transformOrigin: 'left center',
               transition: railTransition,
             }} />
           </>
         )}
-        <div style={{
+        <div className="tc-motion" style={{
           position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%,-50%)',
           width: 10, height: 10, borderRadius: '50%',
-          background: revealed ? accent : isAvailable ? `rgba(${rgb},0.72)` : `rgba(${rgb},0.24)`,
-          border: `1px solid rgba(${rgb},${revealed ? 0.72 : 0.28})`,
-          boxShadow: revealed ? `0 0 10px rgba(${rgb},0.28)` : 'none',
-          transition: `background ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+          background: explored ? accent : isAvailable ? `rgba(${rgb},0.72)` : `rgba(${rgb},0.24)`,
+          border: `1px solid rgba(${rgb},${explored ? 0.72 : 0.28})`,
+          boxShadow: explored ? `0 0 10px rgba(${rgb},0.28)` : 'none',
+          transition: prefersReduced
+            ? 'none'
+            : `background ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`,
         }} />
       </div>
 
       {/* In-card reveal keeps the event visible while opening its reasoning. */}
       <div
+        className="tc-card-trigger"
+        role="button"
+        tabIndex={0}
+        aria-expanded={revealed}
+        aria-controls={detailId}
+        aria-label={cardActionLabel}
         onClick={onReveal}
+        onKeyDown={handleCardKeyDown}
         style={{
+          '--tc-accent': accent,
           width: cardW,
           minHeight: cardH,
           cursor: 'pointer',
           WebkitTapHighlightColor: 'transparent',
+          outline: 'none',
         }}
       >
-        <div style={{
+        <div className="tc-motion" style={{
           width: '100%',
           minHeight: cardH,
           boxSizing: 'border-box',
@@ -301,7 +459,9 @@ function ChainCard({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          transition: `background ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+          transition: prefersReduced
+            ? 'none'
+            : `background ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}`,
         }}>
           {step.image && (
             <div style={{
@@ -311,7 +471,11 @@ function ChainCard({
               borderRadius: `${RADII.large}px ${RADII.large}px 0 0`,
               overflow: 'hidden', flexShrink: 0,
             }}>
-              <img src={step.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <img
+                src={step.image}
+                alt={step.imageAlt || step.alt || ''}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
               <div style={{
                 position: 'absolute', top: SPACING.micro, left: SPACING.micro,
                 width: 30, height: 30, borderRadius: '50%',
@@ -344,7 +508,7 @@ function ChainCard({
                 {index + 1}
               </div>
 
-              <div style={{
+              <div className="tc-motion" style={{
                 width: visualSize,
                 height: visualSize,
                 borderRadius: RADII.medium,
@@ -356,33 +520,47 @@ function ChainCard({
                 justifyContent: 'center',
                 marginBottom: revealed ? SPACING.compact : SPACING.standard,
                 flexShrink: 0,
-                transition: `width ${MOTION.duration.standard} ${MOTION.easing.standard}, height ${MOTION.duration.standard} ${MOTION.easing.standard}, margin-bottom ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+                transition: prefersReduced
+                  ? 'none'
+                  : `width ${MOTION.duration.standard} ${MOTION.easing.standard}, height ${MOTION.duration.standard} ${MOTION.easing.standard}, margin-bottom ${MOTION.duration.standard} ${MOTION.easing.standard}`,
               }}>
                 <TimelineChainIcon icon={step.icon} size={iconSize} />
               </div>
             </>
           )}
 
-          <div style={{
+          <div className="tc-motion" style={{
             ...TYPE.displayCard,
             color: 'rgba(245,245,245,0.94)',
             flex: revealed ? '0 0 auto' : 1,
-            transition: `flex ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+            transition: prefersReduced
+              ? 'none'
+              : `flex ${MOTION.duration.standard} ${MOTION.easing.standard}`,
           }}>
             {step.label}
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateRows: revealed ? '1fr' : '0fr',
-            opacity: revealed ? 1 : 0,
-            marginTop: revealed ? SPACING.standard : 0,
-            transition: `grid-template-rows ${MOTION.duration.slow} ${MOTION.easing.standard}, opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, margin-top ${MOTION.duration.slow} ${MOTION.easing.standard}`,
-          }}>
+          <div
+            id={detailId}
+            aria-hidden={!revealed}
+            aria-live="polite"
+            className="tc-motion"
+            style={{
+              display: 'grid',
+              gridTemplateRows: revealed ? '1fr' : '0fr',
+              opacity: revealed ? 1 : 0,
+              marginTop: revealed ? SPACING.standard : 0,
+              transition: prefersReduced
+                ? 'none'
+                : `grid-template-rows ${MOTION.duration.slow} ${MOTION.easing.standard}, opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, margin-top ${MOTION.duration.slow} ${MOTION.easing.standard}`,
+            }}
+          >
             <div style={{ minHeight: 0, overflow: 'hidden' }}>
-              <div style={{
+              <div className="tc-motion" style={{
                 transform: revealed ? 'translateY(0)' : 'translateY(8px)',
-                transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+                transition: prefersReduced
+                  ? 'none'
+                  : `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
               }}>
                 <div style={{
                   ...TYPE.label,
@@ -407,7 +585,7 @@ function ChainCard({
             gap: SPACING.micro,
           }}>
             <span>{revealed ? 'Hide explanation' : 'Reveal why it mattered'}</span>
-            <DisclosureChevron open={revealed} />
+            <DisclosureChevron open={revealed} prefersReduced={prefersReduced} />
           </div>
         </div>
       </div>
@@ -426,7 +604,7 @@ function ChainCard({
 // {
 //   type: 'timelineChain',
 //   intro?: 'Tap each step to see why it mattered.',
-//   steps: [ { id, icon?, image?, label, detail }, ... ],
+//   steps: [ { id, icon?, image?, imageAlt?, label, detail }, ... ],
 //   outro?: 'This is the transmission chain: ship → rat → flea → person...',
 // }
 
@@ -436,16 +614,43 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
   const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
   const steps = block.steps || []
+  const prefersReduced = useReducedMotion()
+  const instructionsId = useId()
 
   const [revealed, setRevealed] = useState(() => new Set())
+  const [explored, setExplored] = useState(() => new Set())
+  const [activeIndex, setActiveIndex] = useState(0)
+  const rowRef = useRef(null)
+  const cardRefs = useRef([])
+  const viewed = exploredIndexes(steps, explored)
 
   function toggleReveal(i) {
+    const willReveal = !revealed.has(i)
+
     setRevealed(prev => {
       const next = new Set(prev)
       if (next.has(i)) next.delete(i)
       else next.add(i)
       return next
     })
+
+    if (willReveal) {
+      setExplored(prev => prev.has(i) ? prev : new Set([...prev, i]))
+    }
+  }
+
+  function handleScroll() {
+    const nextIndex = nearestCardIndex(rowRef.current, cardRefs.current)
+    setActiveIndex(current => current === nextIndex ? current : nextIndex)
+  }
+
+  function handleKeyDown(event) {
+    const nextIndex = keyboardTarget(event, activeIndex, steps.length)
+    if (nextIndex === null) return
+
+    event.preventDefault()
+    setActiveIndex(nextIndex)
+    moveToCard(rowRef.current, cardRefs.current[nextIndex], prefersReduced, 'start')
   }
 
   return (
@@ -456,24 +661,39 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
         </p>
       )}
 
+      <p id={instructionsId} style={SR_ONLY}>
+        Swipe horizontally or use the left and right arrow keys to move between steps. Press Enter or Space to reveal why a step mattered.
+      </p>
+
       <div
+        ref={rowRef}
         className="tc-row"
+        role="region"
+        aria-roledescription="timeline"
+        aria-label="Causal sequence"
+        aria-describedby={instructionsId}
+        onScroll={handleScroll}
+        onKeyDown={handleKeyDown}
         style={{
           display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory',
+          overscrollBehaviorX: 'contain',
           WebkitOverflowScrolling: 'touch', gap: SPACING.compact, paddingBottom: 4,
         }}
       >
         {steps.map((step, i) => (
           <ChainCard
             key={step.id || i}
+            cardRef={node => { cardRefs.current[i] = node }}
             step={step}
             index={i}
             total={steps.length}
             revealed={revealed.has(i)}
-            previousRevealed={i > 0 && revealed.has(i - 1)}
+            explored={explored.has(i)}
+            previousExplored={i > 0 && explored.has(i - 1)}
             onReveal={() => toggleReveal(i)}
             accent={accent}
             rgb={rgb}
+            prefersReduced={prefersReduced}
             cardW={EMBED_CARD_W}
             cardH={EMBED_CARD_H}
             railH={EMBED_RAIL_H}
@@ -483,15 +703,16 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
         <div style={{ flexShrink: 0, width: 1 }} />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: SPACING.compact }}>
-        {steps.map((_, i) => (
-          <div key={i} style={{
-            width: revealed.has(i) ? 20 : 8, height: 8, borderRadius: RADII.pill,
-            background: revealed.has(i) ? accent : 'rgba(255,255,255,0.16)',
-            boxShadow: revealed.has(i) ? `0 0 8px rgba(${rgb},0.45)` : 'none',
-            transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-          }} />
-        ))}
+      <div className="tc-sequence-progress" style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.compact }}>
+        <SequenceProgress
+          total={steps.length}
+          current={activeIndex}
+          viewed={viewed}
+          accent={accent}
+          accentRgb={rgb}
+          compact
+          ariaLabel="Timeline position and explored steps"
+        />
       </div>
 
       {block.outro && (
