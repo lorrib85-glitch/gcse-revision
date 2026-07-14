@@ -4,6 +4,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
+import { BUTTONS } from '../../constants/buttons.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
 // CinematicShell used here because the horizontal scroll-snap chain and connector rail must
@@ -100,12 +101,6 @@ const SR_ONLY = {
   border: 0,
 }
 
-function viewedIndexes(steps, viewed) {
-  return steps
-    .map((_, index) => viewed.has(index) ? index : null)
-    .filter(index => index !== null)
-}
-
 function nearestCardIndex(row, cards) {
   if (!row || cards.length === 0) return 0
 
@@ -200,7 +195,6 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
   const cardRefs = useRef([])
 
   const allViewed = steps.length > 0 && viewedIndices.size >= steps.length
-  const viewed = viewedIndexes(steps, viewedIndices)
 
   function toggleOpen(index) {
     const willOpen = openIndex !== index
@@ -309,6 +303,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
             viewed={viewedIndices.has(index)}
             previousViewed={index > 0 && viewedIndices.has(index - 1)}
             current={currentIndex === index}
+            complete={allViewed}
             onToggle={() => toggleOpen(index)}
             accent={accent}
             rgb={rgb}
@@ -331,27 +326,59 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
         </div>
       )}
 
-      {/* Governed local sequence progress */}
-      <div className="tc-sequence-progress" style={{
-        display: 'flex',
-        justifyContent: 'center',
-        marginTop: SPACING.compact,
-        flexShrink: 0,
-      }}>
-        <SequenceProgress
-          total={steps.length}
-          current={currentIndex}
-          viewed={viewed}
-          accent={accent}
-          accentRgb={rgb}
-          compact
-          ariaLabel="Timeline position and explored steps"
-        />
+      {/* Governed local sequence progress and quiet completion guidance. */}
+      <div style={{ marginTop: SPACING.compact, flexShrink: 0 }}>
+        <div className="tc-sequence-progress" style={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}>
+          <SequenceProgress
+            total={steps.length}
+            current={currentIndex}
+            viewed={[...viewedIndices]}
+            accent={accent}
+            accentRgb={rgb}
+            variant="dots"
+            ariaLabel="Timeline position and explored steps"
+          />
+        </div>
+
+        <div style={{
+          minHeight: '1.2em',
+          marginTop: SPACING.micro,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <div
+            aria-live="polite"
+            className="tc-motion"
+            style={{
+              ...TYPE.label,
+              color: 'rgba(245,245,245,0.38)',
+              textAlign: 'center',
+              opacity: allViewed ? 0 : 1,
+              visibility: allViewed ? 'hidden' : 'visible',
+              transition: prefersReduced
+                ? 'none'
+                : `opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, visibility 0s linear ${allViewed ? MOTION.duration.standard : '0ms'}`,
+            }}
+          >
+            Explore each connection to continue
+          </div>
+        </div>
       </div>
 
-      {/* Continue */}
-      <div style={{ marginTop: SPACING.standard, padding: `0 ${SPACING.standard}px`, flexShrink: 0 }}>
-        {allViewed ? (
+      {/* The governed CTA enters an already-reserved slot, so the chain never shifts. */}
+      <div style={{
+        minHeight: BUTTONS.continue.height,
+        marginTop: SPACING.compact,
+        padding: `0 ${SPACING.standard}px`,
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'flex-end',
+      }}>
+        {allViewed && (
           <ContinueCTA
             onClick={onContinue}
             accent={accent}
@@ -362,10 +389,6 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
               ...(prefersReduced ? { transition: 'none' } : {}),
             }}
           />
-        ) : (
-          <div aria-live="polite" style={{ ...TYPE.label, color: 'rgba(245,245,245,0.38)' }}>
-            Explore every step to continue
-          </div>
         )}
       </div>
     </CinematicShell>
@@ -380,6 +403,7 @@ function ChainCard({
   viewed,
   previousViewed = false,
   current,
+  complete = false,
   onToggle,
   accent,
   rgb,
@@ -393,6 +417,9 @@ function ChainCard({
   const isFirst = index === 0
   const isLast = index === total - 1
   const isAvailable = isFirst || previousViewed
+  const isCompletionNode = complete && isLast
+  const completedRailColor = `rgba(${rgb},${complete ? 0.82 : 0.72})`
+  const nodeSize = isCompletionNode ? 12 : 10
   const railTransition = prefersReduced
     ? 'none'
     : `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`
@@ -443,7 +470,7 @@ function ChainCard({
               right: '50%',
               top: '50%',
               height: 1,
-              background: `rgba(${rgb},0.72)`,
+              background: completedRailColor,
               transform: previousViewed ? 'scaleX(1)' : 'scaleX(0)',
               transformOrigin: 'right center',
               transition: railTransition,
@@ -466,7 +493,7 @@ function ChainCard({
               right: -RAIL_OVERHANG,
               top: '50%',
               height: 1,
-              background: `rgba(${rgb},0.72)`,
+              background: completedRailColor,
               transform: viewed ? 'scaleX(1)' : 'scaleX(0)',
               transformOrigin: 'left center',
               transition: railTransition,
@@ -481,22 +508,24 @@ function ChainCard({
             left: '50%',
             top: '50%',
             transform: 'translate(-50%,-50%)',
-            width: 10,
-            height: 10,
+            width: nodeSize,
+            height: nodeSize,
             borderRadius: '50%',
             background: viewed ? accent : isAvailable ? `rgba(${rgb},0.72)` : `rgba(${rgb},0.24)`,
-            border: `1px solid rgba(${rgb},${viewed ? 0.72 : 0.28})`,
-            boxShadow: viewed
-              ? `0 0 10px rgba(${rgb},0.20)`
-              : isAvailable
-                ? `0 0 0 4px rgba(${rgb},0.07)`
-                : 'none',
-            animation: viewed && !prefersReduced
+            border: `1px solid rgba(${rgb},${isCompletionNode ? 0.92 : viewed ? 0.72 : 0.28})`,
+            boxShadow: isCompletionNode
+              ? `0 0 0 4px rgba(${rgb},0.08), 0 0 12px rgba(${rgb},0.26)`
+              : viewed
+                ? `0 0 10px rgba(${rgb},0.20)`
+                : isAvailable
+                  ? `0 0 0 4px rgba(${rgb},0.07)`
+                  : 'none',
+            animation: viewed && !prefersReduced && !complete
               ? `tc-node-pulse ${MOTION.duration.slow} ${MOTION.easing.standard} 1`
               : 'none',
             transition: prefersReduced
               ? 'none'
-              : `background ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+              : `width ${MOTION.duration.standard} ${MOTION.easing.standard}, height ${MOTION.duration.standard} ${MOTION.easing.standard}, background ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`,
           }}
         />
       </div>
@@ -713,7 +742,7 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const rowRef = useRef(null)
   const cardRefs = useRef([])
-  const viewed = viewedIndexes(steps, viewedIndices)
+  const allViewed = steps.length > 0 && viewedIndices.size >= steps.length
 
   function toggleOpen(index) {
     const willOpen = openIndex !== index
@@ -782,6 +811,7 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
             viewed={viewedIndices.has(index)}
             previousViewed={index > 0 && viewedIndices.has(index - 1)}
             current={currentIndex === index}
+            complete={allViewed}
             onToggle={() => toggleOpen(index)}
             accent={accent}
             rgb={rgb}
@@ -803,10 +833,10 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
         <SequenceProgress
           total={steps.length}
           current={currentIndex}
-          viewed={viewed}
+          viewed={[...viewedIndices]}
           accent={accent}
           accentRgb={rgb}
-          compact
+          variant="dots"
           ariaLabel="Timeline position and explored steps"
         />
       </div>
