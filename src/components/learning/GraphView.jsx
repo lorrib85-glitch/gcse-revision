@@ -7,8 +7,8 @@ import CardContainer from '../core/CardContainer.jsx'
 
 // ─── SVG plot geometry (shared by all graph types) ──────────────────────────
 const W = 320
-const H = 232
-const M = { top: 18, right: 14, bottom: 60, left: 50 }
+const H = 240
+const M = { top: 18, right: 14, bottom: 68, left: 50 }
 const PLOT_W = W - M.left - M.right
 const PLOT_H = H - M.top - M.bottom
 const TARGET_TICK_INTERVALS = 5
@@ -746,7 +746,9 @@ export default function GraphView({ block, subject = 'Maths' }) {
           <figcaption style={{
             ...TYPE.bodySmall,
             color: 'rgba(255,255,255,0.56)',
-            marginTop: SPACING.compact,
+            marginTop: graphType === 'pie'
+              ? SPACING.compact
+              : SPACING.standard + SPACING.micro,
           }}>
             {caption}
           </figcaption>
