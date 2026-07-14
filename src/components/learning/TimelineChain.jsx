@@ -41,11 +41,12 @@ function ensureStyles() {
     @keyframes tc-hint-pulse { 0%, 100% { opacity: 0.30; transform: translateX(0); } 50% { opacity: 0.58; transform: translateX(4px); } }
     .tc-row::-webkit-scrollbar { display: none; }
     .tc-card-trigger:focus-visible {
-      outline: 2px solid var(--tc-accent);
+      outline: 2px solid var(--tc-accent) !important;
       outline-offset: 4px;
     }
     @media (prefers-reduced-motion: reduce) {
-      .tc-motion {
+      .tc-motion,
+      .tc-sequence-progress * {
         animation: none !important;
         transition: none !important;
       }
@@ -303,7 +304,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
       )}
 
       {/* Governed local sequence progress */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.compact, flexShrink: 0 }}>
+      <div className="tc-sequence-progress" style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.compact, flexShrink: 0 }}>
         <SequenceProgress
           total={steps.length}
           current={activeIndex}
@@ -325,6 +326,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
               animation: prefersReduced
                 ? 'none'
                 : `tc-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
+              ...(prefersReduced ? { transition: 'none' } : {}),
             }}
           />
         ) : (
@@ -701,7 +703,7 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
         <div style={{ flexShrink: 0, width: 1 }} />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.compact }}>
+      <div className="tc-sequence-progress" style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.compact }}>
         <SequenceProgress
           total={steps.length}
           current={activeIndex}
