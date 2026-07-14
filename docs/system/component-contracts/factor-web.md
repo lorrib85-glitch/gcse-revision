@@ -36,7 +36,7 @@ Typical examples:
 
 Do not use when:
 
-- the learner only needs to browse related ideas without judging importance → use `ConnectionMap`
+- the learner only needs to browse related ideas without judging importance → keep them in a teaching screen (FactorWeb's own explore phase already covers browsing before the judgement)
 - the content is chronological → use a timeline or process component
 - the learner needs to sort items into categories → use a classification component
 - there is one dominant explanation and no genuine factor comparison

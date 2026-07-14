@@ -53,7 +53,6 @@ export const KNOWN_READABILITY_BASELINES = {
     "READABILITY:screen:18": 8.62,
     "READABILITY:screen:25": 8.42,
     "READABILITY:screen:29": 8.95,
-    "READABILITY:screen:30": 8.3,
     "READABILITY:screen:3": 8.42,
     "READABILITY:screen:32": 7.6,
     "READABILITY:screen:6": 8.84,

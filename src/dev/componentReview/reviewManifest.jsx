@@ -15,9 +15,7 @@ import GraphView from '../../components/learning/GraphView.jsx'
 import TimelineChain from '../../components/learning/TimelineChain.jsx'
 import CircuitDiagram from '../../components/learning/CircuitDiagram.jsx'
 
-import ConnectionMap from '../../components/learning/ConnectionMap.jsx'
 import OppositeQualitiesReveal from '../../components/learning/OppositeQualitiesReveal.jsx'
-import SymptomProgression from '../../components/learning/SymptomProgression.jsx'
 import TimelineCanvas from '../../components/learning/TimelineCanvas.jsx'
 import BeforeAfterImageSlider from '../../components/learning/BeforeAfterImageSlider.jsx'
 import OrderedRouteTask from '../../components/learning/OrderedRouteTask.jsx'
@@ -120,15 +118,6 @@ export const REVIEW_ENTRIES = [
 
   // ── Group 2 — one-off ────────────────────────────────────────────────────
   {
-    id: 'connection-map', name: 'ConnectionMap', group: 'group2',
-    status: 'one-off', subject: 'History', renderMode: 'fullbleed',
-    function: 'Radial concept explorer: tap central-connected nodes to reveal explanation + retrieval prompt.',
-    usage: 'Used once — Episode 1 (medieval beliefs), type: connectionMap.',
-    alternative: 'FactorWeb; MatchingTask (for term↔response pairing).',
-    render: (fx, { onDone }) => <ConnectionMap block={fx} subject="History" onComplete={onDone} />,
-    fixture: FIX.connectionMap,
-  },
-  {
     id: 'opposite-qualities-reveal', name: 'OppositeQualitiesReveal', group: 'group2',
     status: 'one-off', subject: 'History', renderMode: 'inline',
     function: 'Animated reveal sorting symptoms to a left/right opposite-quality pair (hot vs cold).',
@@ -136,17 +125,6 @@ export const REVIEW_ENTRIES = [
     alternative: 'SwipeSort; ColSortBlock.',
     render: (fx) => <OppositeQualitiesReveal block={fx} subject="History" />,
     fixture: FIX.oppositeQualitiesReveal,
-  },
-  {
-    id: 'symptom-progression', name: 'SymptomProgression', group: 'group2',
-    status: 'one-off', subject: 'History', renderMode: 'fullbleed',
-    function: 'Case-file walkthrough of how an illness develops in the body, stage by stage.',
-    usage: 'Used in Episode 2 (Black Death), type: progressionTimeline.',
-    alternative: 'ExplainReveal (cause-and-effect chain); TimelineChain.',
-    render: (fx, { onDone }) => (
-      <SymptomProgression subject="History" title={fx.title} description={fx.description} stages={fx.stages} onContinue={onDone} />
-    ),
-    fixture: FIX.symptomProgression,
   },
   {
     id: 'timeline-canvas', name: 'TimelineCanvas', group: 'group2',
@@ -206,7 +184,7 @@ export const REVIEW_ENTRIES = [
     status: 'comparison', subject: 'History', renderMode: 'fullbleed',
     function: 'Term-to-description card-pair matching with SVG connectors — for unordered pairings.',
     usage: 'Widely used across History episodes (1–5), type: matchingTask.',
-    alternative: 'ConnectionMap; EvacuationChainRoute (ordered).',
+    alternative: 'MatchingTask (unordered).',
     render: (fx, { onDone }) => <MatchingTask screen={fx} subject="History" onComplete={onDone} />,
     fixture: FIX.matchingTask,
   },

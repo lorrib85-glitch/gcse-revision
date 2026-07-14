@@ -136,7 +136,6 @@ Screen-level learning interaction components.
 - `RecoveryQuizPlayer.jsx` — Lightweight recovery quiz player (3–4 focused questions).
 - `SpotTheError.jsx` — Diagnostic precision-check: student selects an error in a statement/calculation/explanation, explains why it's wrong, then rewrites it correctly. Logs "Error identification" and "Scientific precision" weaknesses.
 - `SwipeSort.jsx` — Swipe-gesture sorting activity; powers `naturalSupernaturalSwipe` screen type.
-- `SymptomProgression.jsx` — Case-file walkthrough of how an illness develops in the body, stage by stage (explain-the-chain mechanic).
 - `TheoryCompareBlock.jsx` — Side-by-side theory comparison block with staggered fade-in animation.
 - `TimelineCanvas.jsx` — Full-screen "swipe to pan" canvas: swipe horizontally to pan across a wide chain of cards with curved connectors that draw in as you pan; tap + to reveal why each step mattered. A deliberate one-off variation in rhythm from `TimelineChain`.
 - `TimelineChain.jsx` — Full-screen horizontal scroll-snap chain of flip cards connected by a connector rail, revealing a chapter's causal sequence step by step.

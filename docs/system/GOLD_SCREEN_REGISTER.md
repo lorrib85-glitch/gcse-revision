@@ -524,7 +524,6 @@ during the audit and is recorded as debt for a brief, not fixed here.
 |---|---|---|---|
 | `guidedChoiceCarousel` | 3 | ✓ Ep1 s12 (rest + flip + reveal) | `bio_building_blocks` s1 (imageless cards) |
 | `cinematic` | 2 | ✓ Ep2 s1 (full reveal) | none render-reviewed — debt |
-| `progressionTimeline` | 2 | ✓ Ep2 s6 (rest + full chain) | Ep2 s15 (day-chain misused for a decade-scale social timeline) |
 | `collectionExplorer` | 2 | ✓ Ep1 s18 (rest + sheet + synthesis) | `history-medicine-western-front` s2 (phase-label mismatch + gridded hotspots) |
 
 ### `guidedChoiceCarousel`
@@ -602,49 +601,6 @@ during the audit and is recorded as debt for a brief, not fixed here.
   chapter's moment? Is there exactly one headline? Does the staggered copy
   build to a single named payoff? Is the copy legible over the scrim?
 
-### `progressionTimeline`
-
-- **Learning intent:** walk one process stage by stage, revealing each step
-  on tap, ending on an exam-link insight (explain-the-chain, teach). Routed
-  through `SymptomProgression`; designed for a **disease progressing through
-  the body over days**.
-- **Strongest composed runtime use:** `history-medicine-black-death`
-  screen **6** ("How the plague killed"). Verified at 390px across the rest
-  state (hero + first stage + advance button) and the fully-revealed chain
-  (earlier stages collapse to ✓ pills, latest stage expanded).
-- **Why it is the current gold example:** the `day` field carries genuine
-  days (1–2, 3–5, 5–6, 6+), so the amber "DAY n" pill reads truthfully; the
-  case-file hero is specific to the content; the stage-collapse keeps the
-  focal point on the newest step; and the default exam-link insight ("Plague
-  symptoms mattered because medieval doctors could observe the disease, but
-  without germ theory they misunderstood its cause") is *correct for this
-  screen* — it is a disease-progression chain. Strengthened verdict: one
-  clear focal at every step, one advance action, the chain builds to an
-  exam-relevant limitation. This is the component doing exactly the job it
-  was built for.
-- **Below-bar counterexample:** `history-medicine-black-death` screen **15**
-  ("What changed after so many died?"). The same component is reused for a
-  **multi-decade social/economic aftermath** (Black Death 1348–49 → labour
-  shortage → Statute of Labourers 1351 → Peasants' Revolt 1381). Two
-  failures follow from the domain mismatch: (1) the `day` pill hardcodes the
-  eyebrow "DAY", so it renders "DAY 1351" / "DAY 1381" — labelling *years*
-  as days; (2) the screen supplies no `finalInsight`, so it falls back to
-  the hardcoded plague-symptom/germ-theory default, which **contradicts the
-  screen's own content** (an exam-link about observing disease symptoms
-  under a timeline about wages and rebellion).
-- **Why the counterexample fails:** `SymptomProgression` encodes
-  day-by-day disease semantics (the pill label and the default insight); a
-  decade-scale social chain is a different intent that this component
-  cannot express truthfully without those two defects.
-- **Content defect flagged (not fixed — audit-only session):** s15's wrong
-  exam-link is a genuine content-correctness bug, not just a styling
-  softness. It needs a `finalInsight` written for the aftermath chain (and,
-  ideally, a non-"DAY" label option) — recorded as a brief in the debt
-  section and the Ep2 review log; no amendment made this session.
-- **390px review questions:** Are the `day` values genuinely days (not
-  years/eras)? Is the exam-link insight true to *this* chain (not the
-  plague-symptom default)? Does each stage reveal keep one focal point?
-
 ### `collectionExplorer`
 
 - **Learning intent:** explore a themed set of items by tapping hotspots on
@@ -697,9 +653,8 @@ Ranked by expected appearance rate in future chapters; each entry is
 "No verified composed gold example yet" until seated per the procedure
 below.
 
-1. **Single-use specialists** — `centreImageReveal`, `connectionMap`,
-   `timelineCanvas`, `beforeAfterSlider`, `orderedRouteTask`,
-   `quoteAnalyser`. Seat
+1. **Single-use specialists** — `centreImageReveal`, `timelineCanvas`,
+   `beforeAfterSlider`, `orderedRouteTask`, `quoteAnalyser`. Seat
    opportunistically when their episodes are next reviewed; do not block
    production on them.
 2. **Remaining-state captures** — `visualNarrative` beats 3+,
@@ -709,22 +664,19 @@ below.
    (both composed uses clear the bar; a non-specific-imagery / no-payoff
    below-bar example is still open).
 
-### Content defect found during the third-wave audit (needs a brief)
+### Content defect found during the third-wave audit — RESOLVED
 
-- **`history-medicine-black-death` s15 `progressionTimeline`** — the
-  aftermath timeline ("What changed after so many died?") shows the wrong
-  exam-link: with no `finalInsight` supplied it falls back to the hardcoded
-  plague-symptom/germ-theory default, which contradicts a screen about
-  labour shortage and the Peasants' Revolt. It also renders "DAY 1351" /
-  "DAY 1381", labelling years as days. Fix needs an aftermath-specific
-  `finalInsight` (and ideally a non-"DAY" pill label); routed as a
-  `content-review` brief, **not fixed in this audit-only session**. Logged
-  in `docs/content/history/Medicine/02_Review_Log.md`.
+- **`history-medicine-black-death` s15 (formerly `progressionTimeline`)** —
+  the aftermath timeline ("What changed after so many died?") previously
+  showed the wrong exam-link and rendered "DAY 1351" / "DAY 1381". This was
+  resolved when both Ep2 progression screens were migrated to `timelineChain`
+  and the `SymptomProgression` component was retired — the day-pill/default-
+  insight defects no longer exist.
 
 *(2026-07-12 PM: `guidedExamResponse`, formerly rank 1, was fixed and
-seated. 2026-07-12 later: the four rank-1 recurring patterns —
-`guidedChoiceCarousel`, `cinematic`, `progressionTimeline`,
-`collectionExplorer` — were seated in the third-wave audit above.)*
+seated. 2026-07-12 later: the rank-1 recurring patterns
+`guidedChoiceCarousel`, `cinematic` and `collectionExplorer` were seated in
+the third-wave audit above.)*
 
 **The structural headline sits outside the register's normal scope but is
 the audit's biggest finding: 272 of 273 `content` screens do not use the

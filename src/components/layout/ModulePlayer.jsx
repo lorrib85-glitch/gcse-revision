@@ -49,10 +49,8 @@ import CentreImageReveal from '../learning/CentreImageReveal.jsx'
 import MatchingTask from '../learning/MatchingTask.jsx'
 import OrderedRouteTask from '../learning/OrderedRouteTask.jsx'
 import PriorKnowledgeRecall from '../learning/PriorKnowledgeRecall.jsx'
-import SymptomProgression from '../learning/SymptomProgression.jsx'
 import BeforeAfterImageSlider from '../learning/BeforeAfterImageSlider.jsx'
 import FactorWeb from '../learning/FactorWeb.jsx'
-import ConnectionMap from '../learning/ConnectionMap.jsx'
 import QuoteAnalyser from '../learning/QuoteAnalyser.jsx'
 import ContentShell from './ContentShell.jsx'
 import { ScreenTitle, ScreenBody } from '../core/ScreenText.jsx'
@@ -2222,24 +2220,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     )
   }
 
-  // ── Symptom progression — case-file walkthrough of disease stages ───────────
-  if (cur?.type === 'progressionTimeline') {
-    return (
-      <>
-        <LearningHeader {...H} visible={true} />
-        <SymptomProgression
-          subject={module.subject}
-          title={cur.title}
-          description={cur.description}
-          image={cur.image}
-          stages={cur.stages || []}
-          onContinue={isLast ? handleFinish : () => go(1)}
-        />
-        {jumpSheetPortal}
-      </>
-    )
-  }
-
   // ── Before/After image slider — full-screen interactive comparison ──
   if (cur?.type === 'beforeAfterSlider') {
     return (
@@ -2294,21 +2274,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
           block={cur}
           subject={module.subject}
           onContinue={() => isLast ? handleFinish() : go(1)}
-        />
-        {jumpSheetPortal}
-      </>
-    )
-  }
-
-  // ── Connection map — radial concept explorer with explanation panel ────────
-  if (cur?.type === 'connectionMap') {
-    return (
-      <>
-        <LearningHeader {...H} visible={true} />
-        <ConnectionMap
-          block={cur}
-          subject={module.subject}
-          onComplete={() => { isLast ? handleFinish() : go(1) }}
         />
         {jumpSheetPortal}
       </>

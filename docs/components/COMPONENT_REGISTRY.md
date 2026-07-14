@@ -151,38 +151,6 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
-### ConnectionMap
-
-**File:** `src/components/learning/ConnectionMap.jsx`
-**What it is:** Radial concept map — a labelled centre node connected by animated SVG lines to 5–7 learner-tappable outer nodes. Tapping a node reveals an explanation panel below the map with optional retrieval question (togglable answer reveal) and an exam question link. Continue unlocks when every node has been visited.
-**Best used for:** Synthesising or consolidating a web of related concepts — causes of a historical event, factors affecting a biological process, interconnected chemistry topics. Use when the relationships between ideas matter, not just the ideas themselves. Distinct from `FactorWeb` (which ends in a judgement phase) — ConnectionMap is pure exploration and retrieval.
-**Props:** `block`, `subject`, `onComplete`
-**Block shape:**
-```js
-{
-  type: 'connectionMap',
-  centreLabel: string,    // text inside the centre node (short — 3-5 words)
-  title?: string,
-  subtitle?: string,
-  instruction?: string,   // hint shown before any node is tapped
-  nodes: [{
-    id: string,
-    label: string,        // full label shown in the info panel header
-    shortLabel?: string,  // abbreviation shown inside the node button (≤2 words)
-    position?: { x: number, y: number },  // override position (0–100 viewBox %)
-    explanation: string,
-    retrievalQuestion?: string,
-    retrievalAnswer?: string,
-    examLink?: string,    // exam question the node links to
-  }]
-}
-```
-**Screen type:** `connectionMap` (full-screen, routed in `ModulePlayer.jsx`)
-**Animation:** SVG `pathLength` draw via Framer Motion (staggered from centre); node entry scale/fade; idle CSS `translate` float on unselected nodes; `AnimatePresence` panel swap
-**Accessibility:** nodes are `<button aria-pressed>`, centre is `role="img"`, `prefers-reduced-motion` collapses all animations to instant
-**Dependencies:** `SUBJECTS`, `SPACING`, `RADII`, `MOTION`, `TYPE`, `ContinueCTA`, `motion/react`
-
----
 
 ### CinematicCarousel
 
