@@ -312,16 +312,20 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
         ))}
       </div>
 
-      {/* Swipe hint */}
+      {/* The card preview is the primary cue; this hint nudges twice, then rests until dismissed. */}
       {!scrolled && steps.length > 1 && (
-        <div className="tc-motion" style={{
-          textAlign: 'center',
-          marginTop: SPACING.compact,
-          flexShrink: 0,
-          ...TYPE.label,
-          color: 'rgba(245,245,245,0.38)',
-          animation: prefersReduced ? 'none' : 'tc-hint-pulse 2.4s ease-in-out infinite',
-        }}>
+        <div
+          aria-hidden="true"
+          className="tc-motion"
+          style={{
+            textAlign: 'center',
+            marginTop: SPACING.compact,
+            flexShrink: 0,
+            ...TYPE.bodySmall,
+            color: 'rgba(245,245,245,0.38)',
+            animation: prefersReduced ? 'none' : 'tc-hint-pulse 1.4s ease-in-out 2 both',
+          }}
+        >
           Swipe to explore
         </div>
       )}
@@ -431,12 +435,6 @@ function ChainCard({
     : `Reveal why this mattered — step ${index + 1} of ${total}: ${step.label}`
   const entryDelay = `${Math.min(120 + index * 55, 320)}ms`
 
-  function handleCardKeyDown(event) {
-    if (event.key !== 'Enter' && event.key !== ' ') return
-    event.preventDefault()
-    onToggle()
-  }
-
   return (
     <div
       ref={cardRef}
@@ -530,21 +528,31 @@ function ChainCard({
         />
       </div>
 
-      {/* In-card reveal keeps the event visible while opening its reasoning. */}
-      <div
+      {/* Native button semantics preserve the reveal interaction without custom key handling. */}
+      <button
+        type="button"
         className="tc-card-trigger tc-motion"
-        role="button"
-        tabIndex={0}
         aria-current={current ? 'step' : undefined}
         aria-expanded={open}
         aria-controls={detailId}
         aria-label={cardActionLabel}
+        aria-keyshortcuts="Enter Space"
+        aria-posinset={index + 1}
+        aria-setsize={total}
         onClick={onToggle}
-        onKeyDown={handleCardKeyDown}
         style={{
           '--tc-accent': accent,
           width: cardW,
           minHeight: cardH,
+          display: 'block',
+          padding: 0,
+          border: 0,
+          background: 'none',
+          color: 'inherit',
+          font: 'inherit',
+          textAlign: 'left',
+          appearance: 'none',
+          WebkitAppearance: 'none',
           cursor: 'pointer',
           WebkitTapHighlightColor: 'transparent',
           outline: 'none',
@@ -708,7 +716,7 @@ function ChainCard({
             <DisclosureChevron open={open} prefersReduced={prefersReduced} />
           </div>
         </div>
-      </div>
+      </button>
     </div>
   )
 }
