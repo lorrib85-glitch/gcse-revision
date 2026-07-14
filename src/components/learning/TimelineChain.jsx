@@ -12,10 +12,10 @@ import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 
 // ─── TimelineChain v1 ───────────────────────────────────────────────────────
 //
-// Full-screen horizontal scroll-snap chain of flip cards — a chapter's "big
-// idea" causal sequence (e.g. how the Black Death spread, step by step).
-// Each card's front shows a short step label; tapping flips it to reveal why
-// that step matters / how it links to the next one in the chain.
+// Full-screen horizontal scroll-snap chain of causal reveal cards — a chapter's
+// "big idea" sequence (e.g. how germ theory led to safer surgery). Each card
+// keeps its event visible while expanding to reveal why it mattered and how it
+// unlocked the next step in the chain.
 //
 // Block shape:
 // {
@@ -50,6 +50,7 @@ const CARD_H = 290
 const EMBED_CARD_W = 200
 const EMBED_CARD_H = 270
 const EMBED_RAIL_H = 16
+const RAIL_OVERHANG = SPACING.compact / 2
 
 export default function TimelineChain({ block, subject = 'History', onContinue }) {
   ensureStyles()
@@ -58,14 +59,14 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
   const { accent, accentRgb: rgb } = theme
   const steps = block.steps || []
 
-  const [flipped, setFlipped] = useState(() => new Set())
+  const [revealed, setRevealed] = useState(() => new Set())
   const [scrolled, setScrolled] = useState(false)
   const rowRef = useRef(null)
 
-  const allFlipped = steps.length > 0 && flipped.size === steps.length
+  const allRevealed = steps.length > 0 && revealed.size === steps.length
 
-  function toggleFlip(i) {
-    setFlipped(prev => {
+  function toggleReveal(i) {
+    setRevealed(prev => {
       const next = new Set(prev)
       if (next.has(i)) next.delete(i)
       else next.add(i)
@@ -129,8 +130,9 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
             step={step}
             index={i}
             total={steps.length}
-            flipped={flipped.has(i)}
-            onFlip={() => toggleFlip(i)}
+            revealed={revealed.has(i)}
+            previousRevealed={i > 0 && revealed.has(i - 1)}
+            onReveal={() => toggleReveal(i)}
             accent={accent}
             rgb={rgb}
           />
@@ -153,9 +155,9 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
       <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: SPACING.compact, flexShrink: 0 }}>
         {steps.map((_, i) => (
           <div key={i} style={{
-            width: flipped.has(i) ? 20 : 8, height: 8, borderRadius: RADII.pill,
-            background: flipped.has(i) ? accent : 'rgba(255,255,255,0.16)',
-            boxShadow: flipped.has(i) ? `0 0 8px rgba(${rgb},0.45)` : 'none',
+            width: revealed.has(i) ? 20 : 8, height: 8, borderRadius: RADII.pill,
+            background: revealed.has(i) ? accent : 'rgba(255,255,255,0.16)',
+            boxShadow: revealed.has(i) ? `0 0 8px rgba(${rgb},0.45)` : 'none',
             transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
           }} />
         ))}
@@ -163,7 +165,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
 
       {/* Continue */}
       <div style={{ marginTop: SPACING.standard, padding: `0 ${SPACING.standard}px`, flexShrink: 0 }}>
-        {allFlipped ? (
+        {allRevealed ? (
           <ContinueCTA
             onClick={onContinue}
             accent={accent}
@@ -171,7 +173,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
           />
         ) : (
           <div style={{ ...TYPE.label, color: 'rgba(255,255,255,0.32)' }}>
-            Flip every step to continue
+            Reveal every step to continue
           </div>
         )}
       </div>
@@ -179,9 +181,24 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
   )
 }
 
-function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = CARD_W, cardH = CARD_H, railH = 20, scrollAlign = 'center' }) {
+function ChainCard({
+  step,
+  index,
+  total,
+  revealed,
+  previousRevealed = false,
+  onReveal,
+  accent,
+  rgb,
+  cardW = CARD_W,
+  cardH = CARD_H,
+  railH = 20,
+  scrollAlign = 'center',
+}) {
   const isFirst = index === 0
   const isLast = index === total - 1
+  const isAvailable = isFirst || previousRevealed
+  const railTransition = `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`
 
   return (
     <div style={{
@@ -192,111 +209,154 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = C
       scrollSnapStop: 'always',
     }}>
 
-      {/* Connector rail */}
+      {/* Connector rail — muted route beneath an animated completed path. */}
       <div style={{ position: 'relative', height: railH, width: cardW, flexShrink: 0 }}>
         {!isFirst && (
-          <div style={{ position: 'absolute', left: 0, right: '50%', top: '50%', height: 1, background: `rgba(${rgb},0.30)` }} />
+          <>
+            <div style={{
+              position: 'absolute', left: -RAIL_OVERHANG, right: '50%', top: '50%',
+              height: 1, background: `rgba(${rgb},0.16)`,
+            }} />
+            <div style={{
+              position: 'absolute', left: -RAIL_OVERHANG, right: '50%', top: '50%',
+              height: 1, background: `rgba(${rgb},0.72)`,
+              transform: previousRevealed ? 'scaleX(1)' : 'scaleX(0)',
+              transformOrigin: 'right center',
+              transition: railTransition,
+            }} />
+          </>
         )}
         {!isLast && (
-          <div style={{ position: 'absolute', left: '50%', right: 0, top: '50%', height: 1, background: `rgba(${rgb},0.30)` }} />
+          <>
+            <div style={{
+              position: 'absolute', left: '50%', right: -RAIL_OVERHANG, top: '50%',
+              height: 1, background: `rgba(${rgb},0.16)`,
+            }} />
+            <div style={{
+              position: 'absolute', left: '50%', right: -RAIL_OVERHANG, top: '50%',
+              height: 1, background: `rgba(${rgb},0.72)`,
+              transform: revealed ? 'scaleX(1)' : 'scaleX(0)',
+              transformOrigin: 'left center',
+              transition: railTransition,
+            }} />
+          </>
         )}
         <div style={{
           position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%,-50%)',
           width: 10, height: 10, borderRadius: '50%',
-          background: flipped ? accent : `rgba(${rgb},0.35)`,
-          boxShadow: flipped ? `0 0 10px rgba(${rgb},0.5)` : 'none',
-          transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+          background: revealed ? accent : isAvailable ? `rgba(${rgb},0.72)` : `rgba(${rgb},0.24)`,
+          border: `1px solid rgba(${rgb},${revealed ? 0.72 : 0.28})`,
+          boxShadow: revealed ? `0 0 10px rgba(${rgb},0.28)` : 'none',
+          transition: `background ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}, box-shadow ${MOTION.duration.standard} ${MOTION.easing.standard}`,
         }} />
       </div>
 
-      {/* Flip card */}
+      {/* In-card reveal keeps the event visible while opening its reasoning. */}
       <div
-        onClick={onFlip}
-        style={{ width: cardW, height: cardH, perspective: 1200, cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}
+        onClick={onReveal}
+        style={{
+          width: cardW,
+          minHeight: cardH,
+          cursor: 'pointer',
+          WebkitTapHighlightColor: 'transparent',
+        }}
       >
         <div style={{
-          position: 'relative', width: '100%', height: '100%',
-          transformStyle: 'preserve-3d', WebkitTransformStyle: 'preserve-3d',
-          transition: `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`,
-          transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+          width: '100%',
+          minHeight: cardH,
+          boxSizing: 'border-box',
+          borderRadius: RADII.large,
+          background: revealed ? `rgba(${rgb},0.055)` : 'rgba(255,255,255,0.03)',
+          border: revealed ? `1px solid rgba(${rgb},0.22)` : '1px solid rgba(255,255,255,0.06)',
+          boxShadow: '0 20px 48px rgba(0,0,0,0.45)',
+          padding: SPACING.standard,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          transition: `background ${MOTION.duration.standard} ${MOTION.easing.standard}, border-color ${MOTION.duration.standard} ${MOTION.easing.standard}`,
         }}>
-
-          {/* Front */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
-            borderRadius: RADII.large,
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.06)',
-            boxShadow: '0 20px 48px rgba(0,0,0,0.45)',
-            padding: SPACING.standard,
-            display: 'flex', flexDirection: 'column',
-            overflow: 'hidden',
-          }}>
-            {step.image && (
+          {step.image && (
+            <div style={{
+              position: 'relative',
+              margin: `-${SPACING.standard}px -${SPACING.standard}px ${SPACING.compact}px`,
+              height: Math.round(cardH * 0.42),
+              borderRadius: `${RADII.large}px ${RADII.large}px 0 0`,
+              overflow: 'hidden', flexShrink: 0,
+            }}>
+              <img src={step.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               <div style={{
-                position: 'relative',
-                margin: `-${SPACING.standard}px -${SPACING.standard}px ${SPACING.compact}px`,
-                height: Math.round(cardH * 0.42),
-                borderRadius: `${RADII.large}px ${RADII.large}px 0 0`,
-                overflow: 'hidden', flexShrink: 0,
-              }}>
-                <img src={step.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                <div style={{
-                  position: 'absolute', top: SPACING.micro, left: SPACING.micro,
-                  width: 30, height: 30, borderRadius: '50%',
-                  border: `1px solid rgba(${rgb},0.32)`,
-                  background: 'rgba(8,9,13,0.55)', backdropFilter: 'blur(6px)',
-                  ...TYPE.label, color: accent,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  {index + 1}
-                </div>
-              </div>
-            )}
-            {!step.image && (
-              <div style={{
-                width: 36, height: 36, borderRadius: '50%',
+                position: 'absolute', top: SPACING.micro, left: SPACING.micro,
+                width: 30, height: 30, borderRadius: '50%',
                 border: `1px solid rgba(${rgb},0.32)`,
-                background: `rgba(${rgb},0.10)`,
+                background: 'rgba(8,9,13,0.55)', backdropFilter: 'blur(6px)',
                 ...TYPE.label, color: accent,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginBottom: SPACING.standard, flexShrink: 0,
               }}>
                 {index + 1}
               </div>
-            )}
-            {step.icon && !step.image && (
-              <div style={{ fontSize: 40, marginBottom: SPACING.compact }}>{step.icon}</div>
-            )}
-            <div style={{ ...TYPE.displayCard, color: 'rgba(255,255,255,0.94)', flex: 1 }}>
-              {step.label}
             </div>
-            <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: `rgba(${rgb},0.55)` }}>
-              Tap to reveal ↻
+          )}
+          {!step.image && (
+            <div style={{
+              width: 36, height: 36, borderRadius: '50%',
+              border: `1px solid rgba(${rgb},0.32)`,
+              background: `rgba(${rgb},0.10)`,
+              ...TYPE.label, color: accent,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              marginBottom: SPACING.standard, flexShrink: 0,
+            }}>
+              {index + 1}
             </div>
-          </div>
-
-          {/* Back */}
+          )}
+          {step.icon && !step.image && (
+            <div style={{
+              fontSize: revealed ? 32 : 40,
+              lineHeight: 1,
+              marginBottom: revealed ? SPACING.micro : SPACING.compact,
+              transition: `font-size ${MOTION.duration.standard} ${MOTION.easing.standard}, margin-bottom ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+            }}>
+              {step.icon}
+            </div>
+          )}
           <div style={{
-            position: 'absolute', inset: 0,
-            backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-            borderRadius: RADII.large,
-            background: `rgba(${rgb},0.07)`,
-            border: `1px solid rgba(${rgb},0.22)`,
-            boxShadow: '0 20px 48px rgba(0,0,0,0.45)',
-            padding: SPACING.standard,
-            display: 'flex', flexDirection: 'column',
+            ...TYPE.displayCard,
+            color: 'rgba(255,255,255,0.94)',
+            flex: revealed ? '0 0 auto' : 1,
+            transition: `flex ${MOTION.duration.standard} ${MOTION.easing.standard}`,
           }}>
-            <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: accent, marginBottom: SPACING.micro }}>
-              Why it mattered
-            </div>
-            <div style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.82)', overflowY: 'auto' }}>
-              {step.detail}
+            {step.label}
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateRows: revealed ? '1fr' : '0fr',
+            opacity: revealed ? 1 : 0,
+            marginTop: revealed ? SPACING.standard : 0,
+            transition: `grid-template-rows ${MOTION.duration.slow} ${MOTION.easing.standard}, opacity ${MOTION.duration.standard} ${MOTION.easing.standard}, margin-top ${MOTION.duration.slow} ${MOTION.easing.standard}`,
+          }}>
+            <div style={{ minHeight: 0, overflow: 'hidden' }}>
+              <div style={{
+                transform: revealed ? 'translateY(0)' : 'translateY(8px)',
+                transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+              }}>
+                <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: accent, marginBottom: SPACING.micro }}>
+                  Why it mattered
+                </div>
+                <div style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.82)' }}>
+                  {step.detail}
+                </div>
+              </div>
             </div>
           </div>
 
+          <div style={{
+            ...TYPE.eyebrow,
+            textTransform: 'uppercase',
+            color: `rgba(${rgb},0.55)`,
+            marginTop: SPACING.standard,
+          }}>
+            {revealed ? 'Tap to close ↻' : 'Tap to reveal ↻'}
+          </div>
         </div>
       </div>
     </div>
@@ -305,7 +365,7 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = C
 
 // ─── TimelineChainBlock — embedded variant ─────────────────────────────────
 //
-// The same flip-card chain, scaled down for use inline within a content
+// The same causal reveal chain, scaled down for use inline within a content
 // screen's `blocks` array (block.type === 'timelineChain', rendered inside
 // `Screen` in ModulePlayer.jsx). No fixed positioning and no completion
 // gating — the screen's own Continue/Next controls progression.
@@ -325,10 +385,10 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
   const { accent, accentRgb: rgb } = theme
   const steps = block.steps || []
 
-  const [flipped, setFlipped] = useState(() => new Set())
+  const [revealed, setRevealed] = useState(() => new Set())
 
-  function toggleFlip(i) {
-    setFlipped(prev => {
+  function toggleReveal(i) {
+    setRevealed(prev => {
       const next = new Set(prev)
       if (next.has(i)) next.delete(i)
       else next.add(i)
@@ -357,8 +417,9 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
             step={step}
             index={i}
             total={steps.length}
-            flipped={flipped.has(i)}
-            onFlip={() => toggleFlip(i)}
+            revealed={revealed.has(i)}
+            previousRevealed={i > 0 && revealed.has(i - 1)}
+            onReveal={() => toggleReveal(i)}
             accent={accent}
             rgb={rgb}
             cardW={EMBED_CARD_W}
@@ -373,9 +434,9 @@ export function TimelineChainBlock({ block, subject = 'History' }) {
       <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: SPACING.compact }}>
         {steps.map((_, i) => (
           <div key={i} style={{
-            width: flipped.has(i) ? 20 : 8, height: 8, borderRadius: RADII.pill,
-            background: flipped.has(i) ? accent : 'rgba(255,255,255,0.16)',
-            boxShadow: flipped.has(i) ? `0 0 8px rgba(${rgb},0.45)` : 'none',
+            width: revealed.has(i) ? 20 : 8, height: 8, borderRadius: RADII.pill,
+            background: revealed.has(i) ? accent : 'rgba(255,255,255,0.16)',
+            boxShadow: revealed.has(i) ? `0 0 8px rgba(${rgb},0.45)` : 'none',
             transition: `all ${MOTION.duration.standard} ${MOTION.easing.standard}`,
           }} />
         ))}
