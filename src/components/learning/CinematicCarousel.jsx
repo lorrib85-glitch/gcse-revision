@@ -107,8 +107,7 @@ function ImageReveal({ block, subject, onContinue }) {
         }}>
           {block.title && (
             <h2 style={{
-              ...TYPE.displaySection,
-              fontSize: 'clamp(24px, 7.5vw, 32px)',
+              ...TYPE.displayScreen,
               color: 'rgba(255,255,255,0.97)',
               margin: '0 0 8px',
             }}>
@@ -220,7 +219,7 @@ function DefaultCarousel({ block, subject, onContinue }) {
         <div style={{ padding: `0 ${SPACING.micro}px`, marginBottom: SPACING.compact, flexShrink: 0 }}>
           {block.title && (
             <h2 style={{
-              ...TYPE.displaySection, fontSize: 'clamp(24px, 7.5vw, 32px)',
+              ...TYPE.displayScreen,
               color: 'rgba(255,255,255,0.97)', margin: '0 0 8px',
             }}>
               {block.title}
@@ -281,7 +280,7 @@ function DefaultCarousel({ block, subject, onContinue }) {
           flexShrink: 0, padding: `${SPACING.compact}px ${SPACING.micro}px 0`,
           animation: slideAnim,
         }}>
-          <h3 style={{ ...TYPE.displaySection, fontSize: 22, color: accent, margin: '0 0 10px' }}>
+          <h3 style={{ ...TYPE.displaySection, color: accent, margin: '0 0 10px' }}>
             {item?.label}
           </h3>
           <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
