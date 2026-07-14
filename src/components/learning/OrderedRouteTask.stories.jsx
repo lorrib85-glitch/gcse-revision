@@ -1,7 +1,7 @@
-import EvacuationChainRoute from './EvacuationChainRoute'
+import OrderedRouteTask from './OrderedRouteTask'
 
 export default {
-  component: EvacuationChainRoute,
+  component: OrderedRouteTask,
   tags: ['ai-generated'],
   parameters: {
     layout: 'fullscreen',
@@ -10,7 +10,7 @@ export default {
 }
 
 const SCREEN = {
-  type: 'evacuationChainRoute',
+  type: 'orderedRouteTask',
   title: 'Rebuild the evacuation chain',
   subtitle: 'Drag each job to the correct stage in the order a wounded soldier would be treated.',
   backgroundImage: '/headers/history-medicine-trenches.png',

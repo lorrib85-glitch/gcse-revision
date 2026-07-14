@@ -49,9 +49,9 @@ stage "Medieval treatments") is the standard. It works because:
 2. **Ordered process mismatch** — `matchingTask` used for a process that
    has a correct sequence. Matching pairs are unordered by design; a
    process with a correct order (e.g. the stages of an evacuation, or a
-   chain of cause → effect steps) belongs in `evacuationChainRoute`
+   chain of cause → effect steps) belongs in `orderedRouteTask`
    instead. This is the same fit rule documented in the project's
-   `CLAUDE.md` for `EvacuationChainRoute` vs `MatchingTask`: use
+   `CLAUDE.md` for `OrderedRouteTask` vs `MatchingTask`: use
    `matchingTask` only when the relationship between items is unordered.
 3. **Overlong pair text** — term or answer text long enough that the
    cards wrap to multiple lines, pushing the SVG connector line endpoints

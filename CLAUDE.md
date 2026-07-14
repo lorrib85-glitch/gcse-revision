@@ -127,11 +127,11 @@ Screen-level learning interaction components.
 - `InteractiveCollectionExplorer.jsx` — Theme-based explorer with colour-coded content sheets and fuzzy-match text validation.
 - `InteractiveHotspotImage.jsx` — Full-screen image with tappable hotspots (two-phase intro→explore).
 - `KeyFigureReveal.jsx` — Scrollable portrait-hero screen introducing a key person. Portrait hero image (~60vh), name/role overlaid at bottom, significance statement, up to 4 knowledge sections, Continue button.
-- `EvacuationChainRoute.jsx` — Ordered chain activity (screen type `evacuationChainRoute`): tap a job card then tap the stage it belongs to. Amber vertical route line + numbered nodes on the left, dark military field-tag cards on the right. Use for recalling steps of a process in sequence. Do not use when order is unordered — use `MatchingTask` instead.
+- `OrderedRouteTask.jsx` — Ordered chain activity (screen type `orderedRouteTask`): tap a job card then tap the stage it belongs to. Amber vertical route line + numbered nodes on the left, dark military field-tag cards on the right. Use for recalling steps of a process in sequence. Do not use when order is unordered — use `MatchingTask` instead. (Renamed from `EvacuationChainRoute`; visuals are still WWI-styled.)
 - `MatchingTask.jsx` — Term-to-description card-pair matching activity with SVG connector lines and round splitting for large sets.
 - `MisconceptionCheck.jsx` — Full-screen, cinematic true/false misconception trap, one statement at a time, with calm reveal and exam-trap framing.
-- `MedicalTheoryPrescription.jsx` — Cause → prescription → reveal flow with a parchment-textured input surface and fuzzy-match validation.
-- `MedievalDiagnosisScene.jsx` — Cinematic 9:16 SVG hero ("Medieval diagnosis chamber"): Thomas at a candlelit table with the four medieval explanations of illness appearing as tappable zones around him. Opens the `medicalTheoryPrescription` select phase; reduced motion renders the static end state.
+- `CentreImageReveal.jsx` — Cause → prescription → reveal flow with a parchment-textured input surface and fuzzy-match validation (screen type `centreImageReveal`; renamed from `MedicalTheoryPrescription`, internals unchanged).
+- `MedievalDiagnosisScene.jsx` — Cinematic 9:16 SVG hero ("Medieval diagnosis chamber"): Thomas at a candlelit table with the four medieval explanations of illness appearing as tappable zones around him. Opens the `centreImageReveal` select phase; reduced motion renders the static end state.
 - `PriorKnowledgeRecall.jsx` — Full-screen chapter-opening recall screen. Free-text recall scored via `/api/recall`; missing concepts logged to the weakness tracker. Standard Section 1 component for History chapters (see History Module Architecture below).
 - `QuickRecallScreen.jsx` — Rapid-fire retrieval screen (choice + connection questions).
 - `RecoveryQuizPlayer.jsx` — Lightweight recovery quiz player (3–4 focused questions).

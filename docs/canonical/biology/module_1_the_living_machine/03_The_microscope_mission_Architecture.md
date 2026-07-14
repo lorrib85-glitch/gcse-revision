@@ -73,12 +73,12 @@ Content, Core argument, Specification requirements and the full Content referenc
 - Misconception: "Use high-power objective first for more detail" → FALSE (low power first)
 - Misconception: "Shade the drawing to show 3D shape" → FALSE (outlines only; stippling if needed)
 - SpotTheError: A student's method description — "I placed the slide on the stage, selected the highest-power objective, and used the coarse focus knob to get a sharp image." (errors: should start at lowest power; coarse focus at high power risks crashing the lens)
-- EvacuationChainRoute style: order the steps of the method (place sample → add stain → coverslip at 45° → secure on stage → low power → coarse focus → fine focus → draw)
+- OrderedRouteTask style: order the steps of the method (place sample → add stain → coverslip at 45° → secure on stage → low power → coarse focus → fine focus → draw)
 
 **Suggested components:**
 - `MisconceptionCheck` × 2 — high power first; shading in drawings
 - `SpotTheError` — method description with two errors
-- `EvacuationChainRoute` — sequence the 7 steps of the microscope method in correct order
+- `OrderedRouteTask` — sequence the 7 steps of the microscope method in correct order
 
 ---
 
@@ -148,7 +148,7 @@ Not yet built — full build from spec.
 
 1. **Core argument integration:** "Every step has a reason" should be the thread running through Parts 2–4. Every component reveal (ExplainReveal, CardContainer, MisconceptionCheck) should frame the technique as solution-to-problem, not arbitrary step.
 
-2. **EvacuationChainRoute priority:** Sequencing the practical steps is one of the hardest exam tasks for students — they know the steps but not the order. The ordered chain mechanic is ideal here and should be a centrepiece of Part 4.
+2. **OrderedRouteTask priority:** Sequencing the practical steps is one of the hardest exam tasks for students — they know the steps but not the order. The ordered chain mechanic is ideal here and should be a centrepiece of Part 4.
 
 3. **GuidedExamResponse for the 4-mark method question:** This format (Describe how you would…) is one of the most common practical question types across all of GCSE Biology. The scaffold should model: name the reagent → state what it does → name the technique → state why. Four clear numbered steps.
 

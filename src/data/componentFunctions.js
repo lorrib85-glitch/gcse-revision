@@ -84,11 +84,11 @@ export const SCREEN_TYPE_FUNCTIONS = {
   // SymptomQualityDiagnostic: teaches Hot/Cold/Wet/Dry then asks the learner
   // to diagnose a case and choose a treatment — same genre as theoryLab
   symptomQualityDiagnostic: { functions: ['apply'], interaction: 'assessed' },
-  medicalTheoryPrescription: { functions: ['apply'], interaction: 'assessed' },
+  centreImageReveal: { functions: ['apply'], interaction: 'assessed' },
   appliedscenario: { functions: ['apply'], interaction: 'assessed' },
   guidedChoiceCarousel: { functions: ['apply'], interaction: 'assessed' },
   interactiveImage: { functions: ['teach-mechanism', 'apply'], interaction: 'assessed' },
-  evacuationChainRoute: { functions: ['sequence-process'], interaction: 'assessed' },
+  orderedRouteTask: { functions: ['sequence-process'], interaction: 'assessed' },
   timelinedrag: { functions: ['sequence-process'], interaction: 'assessed' },
   factorWeb: { functions: ['teach-comparison', 'apply'], interaction: 'assessed' },
   connectionMap: { functions: ['teach-comparison', 'apply'], interaction: 'assessed' },

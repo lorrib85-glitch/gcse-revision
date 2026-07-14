@@ -47,7 +47,7 @@ Beats name **component functions, never component names**. To pick the
 component: match the content's shape to a function tag in
 `src/data/componentFunctions.js`, then choose among the components
 carrying that tag using the fit rules in their contracts (e.g. ordered
-process → `evacuationChainRoute`; unordered pairs → `matchingTask`).
+process → `orderedRouteTask`; unordered pairs → `matchingTask`).
 
 For non-narrative subjects (e.g. Maths), story units are tension-shaped
 rather than narrative-shaped — "here is where this goes wrong for real

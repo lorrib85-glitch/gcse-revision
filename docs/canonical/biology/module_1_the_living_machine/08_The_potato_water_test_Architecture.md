@@ -60,7 +60,7 @@ Content, Core argument, Specification requirements and the full Content referenc
 **Suggested components:**
 - `ExplainReveal` — osmosis chain: more water molecules (dilute side) → higher water potential → net water movement through membrane → lower water potential (concentrated side) → equilibrium
 - `ConceptReveal` — turgid → flaccid → plasmolysed as a progression: "same cell, three different environments"
-- `EvacuationChainRoute` — order the practical steps: cut cylinders → weigh → add to solutions → wait → remove → dry → reweigh → calculate % change
+- `OrderedRouteTask` — order the practical steps: cut cylinders → weigh → add to solutions → wait → remove → dry → reweigh → calculate % change
 - `CardContainer` — variables: one card per variable (IV / DV / 4 control variables) with brief explanation of why each must be controlled
 
 ---
@@ -149,7 +149,7 @@ Not yet built — full build from spec.
 
 1. **Core argument integration:** "Water goes where solutes are concentrated" — this should be the thread. In Part 1 (cucumber/salad), Part 3 (water potential direction), Part 5 (calculate the effect), and Part 6 (explain the cucumber). The isotonic point should be explicitly named and placed on the graph in Part 3.
 
-2. **EvacuationChainRoute for practical method:** Ordering the practical steps is the most common error in method questions. The ordered chain mechanic trains this directly. Steps: cut → weigh → immerse → time → dry → reweigh → calculate. This should appear in Part 3 and be revisited in Part 5's GuidedExamResponse.
+2. **OrderedRouteTask for practical method:** Ordering the practical steps is the most common error in method questions. The ordered chain mechanic trains this directly. Steps: cut → weigh → immerse → time → dry → reweigh → calculate. This should appear in Part 3 and be revisited in Part 5's GuidedExamResponse.
 
 3. **SpotTheError × 2 priority:** Two calculation/conceptual errors are particularly common: (a) the flaccid/turgid direction reversal in concentrated solution, and (b) dividing by the final mass instead of the initial mass in the % change formula. Both are high-yield for SpotTheError in Part 4.
 

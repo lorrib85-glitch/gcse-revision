@@ -48,9 +48,9 @@ import OppositeQualitiesReveal from '../learning/OppositeQualitiesReveal.jsx'
 import VisualLearning from '../learning/VisualLearning.jsx'
 import KeyFigureReveal from '../learning/KeyFigureReveal.jsx'
 import InteractiveCollectionExplorer from '../learning/InteractiveCollectionExplorer.jsx'
-import MedicalTheoryPrescription from '../learning/MedicalTheoryPrescription.jsx'
+import CentreImageReveal from '../learning/CentreImageReveal.jsx'
 import MatchingTask from '../learning/MatchingTask.jsx'
-import EvacuationChainRoute from '../learning/EvacuationChainRoute.jsx'
+import OrderedRouteTask from '../learning/OrderedRouteTask.jsx'
 import PriorKnowledgeRecall from '../learning/PriorKnowledgeRecall.jsx'
 import SymptomProgression from '../learning/SymptomProgression.jsx'
 import BeforeAfterImageSlider from '../learning/BeforeAfterImageSlider.jsx'
@@ -1953,11 +1953,11 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   }
 
   // ── Evacuation chain route — order-and-match chain activity ─────────────
-  if (cur?.type === 'evacuationChainRoute') {
+  if (cur?.type === 'orderedRouteTask') {
     return (
       <>
         <LearningHeader {...H} visible={true} />
-        <EvacuationChainRoute
+        <OrderedRouteTask
           screen={cur}
           subject={module.subject}
           onComplete={isLast ? handleFinish : () => go(1)}
@@ -2091,11 +2091,11 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
   }
 
   // ── Medical theory prescription — cause → prescription → reveal ──────────────
-  if (cur?.type === 'medicalTheoryPrescription') {
+  if (cur?.type === 'centreImageReveal') {
     return (
       <>
         <LearningHeader {...H} visible={true} />
-        <MedicalTheoryPrescription
+        <CentreImageReveal
           screen={cur}
           selectedHealer={selectedHealer}
           onComplete={isLast ? handleFinish : () => go(1)}

@@ -151,7 +151,7 @@ function withMiasmaTheory(theories = []) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export default function MedicalTheoryPrescription({ screen, onComplete }) {
+export default function CentreImageReveal({ screen, onComplete }) {
   const theories = withMiasmaTheory(screen.theories || [])
 
   const [phase,              setPhase]             = useState('select')

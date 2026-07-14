@@ -24,9 +24,9 @@ import OppositeQualitiesReveal from '../../components/learning/OppositeQualities
 import SymptomProgression from '../../components/learning/SymptomProgression.jsx'
 import TimelineCanvas from '../../components/learning/TimelineCanvas.jsx'
 import BeforeAfterImageSlider from '../../components/learning/BeforeAfterImageSlider.jsx'
-import EvacuationChainRoute from '../../components/learning/EvacuationChainRoute.jsx'
+import OrderedRouteTask from '../../components/learning/OrderedRouteTask.jsx'
 import SpotTheError from '../../components/learning/SpotTheError.jsx'
-import MedicalTheoryPrescription from '../../components/learning/MedicalTheoryPrescription.jsx'
+import CentreImageReveal from '../../components/learning/CentreImageReveal.jsx'
 
 import MatchingTask from '../../components/learning/MatchingTask.jsx'
 import VisualLearning from '../../components/learning/VisualLearning.jsx'
@@ -213,12 +213,12 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.beforeAfterImageSlider,
   },
   {
-    id: 'evacuation-chain-route', name: 'EvacuationChainRoute', group: 'group2',
+    id: 'ordered-route-task', name: 'OrderedRouteTask', group: 'group2',
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Ordered chain: tap a job card then tap the stage it belongs to. Amber route line + numbered nodes.',
-    usage: 'Used in Episode 14 (Western Front), type: evacuationChainRoute.',
-    alternative: 'MatchingTask (unordered); DragToOrderTask (pure ordering).',
-    render: (fx, { onDone }) => <EvacuationChainRoute screen={fx} subject="History" onComplete={onDone} />,
+    usage: 'Used in Episode 14 (Western Front), type: orderedRouteTask (renamed from evacuationChainRoute).',
+    alternative: 'MatchingTask (unordered).',
+    render: (fx, { onDone }) => <OrderedRouteTask screen={fx} subject="History" onComplete={onDone} />,
     fixture: FIX.evacuationChainRoute,
   },
   {
@@ -231,12 +231,12 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.spotTheError,
   },
   {
-    id: 'medical-theory-prescription', name: 'MedicalTheoryPrescription', group: 'group2',
+    id: 'centre-image-reveal', name: 'CentreImageReveal', group: 'group2',
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Cause → prescription → reveal flow with a parchment input surface and fuzzy-match validation.',
-    usage: 'Used in Episode 1 (medieval beliefs), type: medicalTheoryPrescription.',
-    alternative: 'TheoryLab; GalensDiagnostic.',
-    render: (fx, { onDone }) => <MedicalTheoryPrescription screen={fx} onComplete={onDone} />,
+    usage: 'Used in Episode 1 (medieval beliefs), type: centreImageReveal (renamed from medicalTheoryPrescription).',
+    alternative: 'GuidedExamResponse (scaffolded written answer).',
+    render: (fx, { onDone }) => <CentreImageReveal screen={fx} onComplete={onDone} />,
     fixture: FIX.medicalTheoryPrescription,
   },
 

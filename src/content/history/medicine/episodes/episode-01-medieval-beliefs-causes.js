@@ -658,7 +658,7 @@ export default {
     },
 
     {
-      type: 'medicalTheoryPrescription',
+      type: 'centreImageReveal',
       stage: 'Medieval treatments',
       label: 'What caused illness?',
       contextName: 'Thomas',

@@ -378,17 +378,17 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
-### EvacuationChainRoute
+### OrderedRouteTask
 
-**File:** `src/components/learning/EvacuationChainRoute.jsx`
-**Screen type:** `evacuationChainRoute`
+**File:** `src/components/learning/OrderedRouteTask.jsx`
+**Screen type:** `orderedRouteTask`
 **What it is:** Ordered chain activity — learner taps a job card then taps the stage slot it belongs to. Amber vertical route line connects numbered nodes on the left; dark military field-tag cards sit to the right. Checks all slots at once; correct slots glow amber, wrong slots dim and can be retried.
 **Best used for:** Recalling the steps or stages of a process in order — evacuation chains, scientific processes, historical sequences.
 **Props:** `screen`, `subject`, `onComplete`
 **Screen data shape:**
 ```js
 {
-  type: 'evacuationChainRoute',
+  type: 'orderedRouteTask',
   title, subtitle, backgroundImage,
   stages: [{ id, icon, title, clue, answerId }],  // icon: 'helmet'|'cross'|'hut'|'train'
   answers: [{ id, text }],
@@ -400,9 +400,9 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
-### MedicalTheoryPrescription
+### CentreImageReveal
 
-**File:** `src/components/learning/MedicalTheoryPrescription.jsx`
+**File:** `src/components/learning/CentreImageReveal.jsx`
 **Purpose:** Three-phase cause → prescription → reveal flow. Learner selects a theory, fills inputs on a parchment surface (fuzzy-match validated), then sees correct treatments revealed. Personalises heading if a `selectedHealer` prop is passed from GuidedChoiceCarousel. Its select phase opens with the `MedievalDiagnosisScene` hero.
 **Props:** `screen`, `selectedHealer`, `onComplete`
 **Dependencies:** `SUBJECTS`, `SPACING`, `MOTION`, `TYPE`, `MedievalDiagnosisScene`
@@ -412,7 +412,7 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 ### MedievalDiagnosisScene
 
 **File:** `src/components/learning/MedievalDiagnosisScene.jsx`
-**Purpose:** Cinematic 9:16 SVG hero scene — "Medieval diagnosis chamber". Thomas sits at a candlelit table while the four medieval explanations of illness (God & sin, four humours, miasma, astrology) fade in around him one at a time, each with its treatment symbol, then settle into tappable zones and a calm idle loop (candle flicker, rotating star chart, drifting miasma). Sits above the belief selection in `MedicalTheoryPrescription`; zones drive the same selection as the cards. Reduced motion renders the static end state.
+**Purpose:** Cinematic 9:16 SVG hero scene — "Medieval diagnosis chamber". Thomas sits at a candlelit table while the four medieval explanations of illness (God & sin, four humours, miasma, astrology) fade in around him one at a time, each with its treatment symbol, then settle into tappable zones and a calm idle loop (candle flicker, rotating star chart, drifting miasma). Sits above the belief selection in `CentreImageReveal`; zones drive the same selection as the cards. Reduced motion renders the static end state.
 **Props:** `theories`, `completedIds`, `onSelectZone`, `playIntro`, `prefersReducedMotion`, `style`
 **Dependencies:** `SUBJECTS`, `MOTION`, `RADII`, `TYPE`
 **Do not use when:** The screen is not the medieval Medicine cause → treatment context — the scene content is Chapter 1 specific.
@@ -501,7 +501,7 @@ Person-to-person comparison. Two named people with portraits kept as compact hea
 - **Do NOT use it (either mode) when:**
   - the learner needs to classify answers → use `colsort` / `matchingTask`
   - the learner needs to make an assessed judgement → use `theoryLab` / an exam-technique component
-  - the content is a sequence rather than a comparison → use `timelineChain` / `evacuationChainRoute`
+  - the content is a sequence rather than a comparison → use `timelineChain` / `orderedRouteTask`
   - one side is merely correct and the other a cartoonishly foolish distractor (people mode must keep both sides historically fair)
   - the comparison requires long paragraphs in both columns (columns take short parallel phrases; longer teaching goes in the full-width `explanation`)
 

@@ -345,7 +345,7 @@ War creates urgent demand for faster, better treatment. The First World War prod
     },
 
     {
-      type: 'evacuationChainRoute',
+      type: 'orderedRouteTask',
       tag: 'chain-of-evacuation-recall',
       stage: 'Chain of evacuation',
       label: 'Rebuild the evacuation chain',

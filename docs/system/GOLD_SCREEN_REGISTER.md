@@ -79,7 +79,7 @@ runtime; its per-screen findings are in
 - **Verified Storybook stories: 0 of 8** — **story debt** for all eight.
   (Stories exist for the pattern primitives `TeachScreenShell`, `KeyPoint`,
   `WorkedExample`, `MediaPlaceholder` and for `SymptomQualityDiagnostic`,
-  `EvacuationChainRoute`, `ConnectionMap`, `MedievalDiagnosisScene`,
+  `OrderedRouteTask`, `ConnectionMap`, `MedievalDiagnosisScene`,
   `QuoteAnalyser` — none of the eight priority learning components.)
 - **Verified composed gold: 8 of 8 fully verified.** The two former `◑`
   entries were cleared by the 2026-07-12 gold audit: `quickRecall`'s
@@ -247,7 +247,7 @@ the composed render path via the dev screen-jump.
   at most six cards per round; round progress dots; connector legibility;
   cards that do not wrap to multiple lines.
 - **Common misuse patterns:** guessable word-overlap pairs; an *ordered*
-  process (use `evacuationChainRoute`); overlong wrapping card text; more
+  process (use `orderedRouteTask`); overlong wrapping card text; more
   than six pairs written as if the split won't happen.
 - **390px review questions:** Do the pairs require understanding, not
   word-matching? Are there six cards or fewer on screen? Do cards avoid
@@ -698,8 +698,8 @@ Ranked by expected appearance rate in future chapters; each entry is
 below.
 
 1. **Single-use specialists** — `symptomQualityDiagnostic`,
-   `medicalTheoryPrescription`, `connectionMap`, `timelineCanvas`,
-   `beforeAfterSlider`, `evacuationChainRoute`, `quoteAnalyser`. Seat
+   `centreImageReveal`, `connectionMap`, `timelineCanvas`,
+   `beforeAfterSlider`, `orderedRouteTask`, `quoteAnalyser`. Seat
    opportunistically when their episodes are next reviewed; do not block
    production on them.
 2. **Remaining-state captures** — `visualNarrative` beats 3+,

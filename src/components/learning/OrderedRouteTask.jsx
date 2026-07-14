@@ -123,7 +123,7 @@ function renderTitle(text) {
   )
 }
 
-export default function EvacuationChainRoute({ screen, subject, onComplete }) {
+export default function OrderedRouteTask({ screen, subject, onComplete }) {
   const stages = screen.stages || []
   const answers = screen.answers || []
   const bgImage = screen.backgroundImage || DEFAULT_BG
