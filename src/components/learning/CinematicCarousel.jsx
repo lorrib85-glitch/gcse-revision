@@ -21,7 +21,8 @@ import { GENERAL } from '../../constants/generalTheme.js'
 // Both modes use InteractionShell because they are bounded, subject-aware
 // interaction sequences that keep the standard learning header and safe areas.
 // Primary screen titles and intros consume the same governed tokens and text
-// treatment as TeachScreenShell; item labels consume TYPE.displaySection.
+// treatment as TeachScreenShell; item labels consume TYPE.displayCard so they
+// remain clearly subordinate to the screen title.
 // The default image stage keeps the source image uncropped while using a muted,
 // blurred copy behind it to avoid heavy empty bars around portrait assets.
 //
@@ -511,17 +512,30 @@ function DefaultCarousel({ block, subject, onContinue }) {
             animation: slideAnim,
           }}
         >
-          <h3 style={{ ...TYPE.displaySection, color: accent, margin: '0 0 10px' }}>
+          <h3 style={{
+            ...TYPE.displayCard,
+            color: accent,
+            margin: `0 0 ${SPACING.micro}px`,
+          }}>
             {item?.label}
           </h3>
-          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: SPACING.micro,
+          }}>
             {(item?.facts || []).map((fact, i) => (
-              <li key={i} style={{ ...TYPE.bodyStrong, display: 'flex', gap: 10, color: 'rgba(255,255,255,0.82)' }}>
-                <span style={{ flexShrink: 0, width: 6, height: 6, borderRadius: '50%', background: accent, marginTop: 8 }} />
-                <span>{fact}</span>
-              </li>
+              <p key={i} style={{
+                ...(i === 0 ? TYPE.bodyStrong : TYPE.bodySmall),
+                color: i === 0
+                  ? 'rgba(245,245,245,0.86)'
+                  : 'rgba(245,245,245,0.58)',
+                margin: 0,
+              }}>
+                {fact}
+              </p>
             ))}
-          </ul>
+          </div>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.standard, flexShrink: 0 }}>
