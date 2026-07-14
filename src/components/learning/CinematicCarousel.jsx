@@ -6,7 +6,7 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
-import { TYPE } from '../../constants/typography.js'
+import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 import { GENERAL } from '../../constants/generalTheme.js'
 
 // ─── CinematicCarousel / ImageReveal ─────────────────────────────────────────
@@ -20,8 +20,8 @@ import { GENERAL } from '../../constants/generalTheme.js'
 //
 // Both modes use InteractionShell because they are bounded, subject-aware
 // interaction sequences that keep the standard learning header and safe areas.
-// Primary screen titles consume TYPE.displayScreen without local size overrides;
-// item labels consume TYPE.displaySection so hierarchy stays governed globally.
+// Primary screen titles and intros consume the same governed tokens and text
+// treatment as TeachScreenShell; item labels consume TYPE.displaySection.
 // The default image stage keeps the source image uncropped while using a muted,
 // blurred copy behind it to avoid heavy empty bars around portrait assets.
 //
@@ -167,17 +167,18 @@ function ImageReveal({ block, subject, onContinue }) {
           {block.title && (
             <h2 style={{
               ...TYPE.displayScreen,
-              color: 'rgba(255,255,255,0.97)',
-              margin: '0 0 8px',
+              color: 'rgba(245,245,245,0.96)',
+              maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
+              margin: '0 auto',
             }}>
               {block.title}
             </h2>
           )}
           {block.intro && (
             <p style={{
-              ...TYPE.bodyStrong,
-              color: 'rgba(255,255,255,0.56)',
-              margin: 0,
+              ...TYPE.body,
+              color: 'rgba(245,245,245,0.60)',
+              margin: `${SPACING.standard}px 0 0`,
             }}>
               {block.intro}
             </p>
@@ -314,14 +315,19 @@ function DefaultCarousel({ block, subject, onContinue }) {
           {block.title && (
             <h2 style={{
               ...TYPE.displayScreen,
-              color: 'rgba(255,255,255,0.97)',
-              margin: '0 0 8px',
+              color: 'rgba(245,245,245,0.96)',
+              maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
+              margin: 0,
             }}>
               {block.title}
             </h2>
           )}
           {block.intro && (
-            <p style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.52)', margin: 0 }}>
+            <p style={{
+              ...TYPE.body,
+              color: 'rgba(245,245,245,0.60)',
+              margin: `${SPACING.standard}px 0 0`,
+            }}>
               {block.intro}
             </p>
           )}
