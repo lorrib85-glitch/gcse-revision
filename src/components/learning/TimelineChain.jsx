@@ -3,13 +3,12 @@ import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
-import { GENERAL } from '../../constants/generalTheme.js'
 import ContinueCTA from '../core/ContinueCTA.jsx'
 // CinematicShell used here because the horizontal scroll-snap chain and connector rail must
 // reach the full viewport width; InteractionShell's 16px inset would clip the rail and break
 // the scroll-snap alignment.
 import CinematicShell from '../layout/CinematicShell.jsx'
-import { TYPE } from '../../constants/typography.js'
+import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 
 // ─── TimelineChain v1 ───────────────────────────────────────────────────────
 //
@@ -42,7 +41,10 @@ function ensureStyles() {
   document.head.appendChild(el)
 }
 
-const CARD_W = 240
+// The full-screen card occupies 82% of the viewport so the active step is
+// dominant while a deliberate sliver of the next card remains visible.
+const CARD_W = 'clamp(260px, 82vw, 352px)'
+const CARD_EDGE_INSET = 'calc(50vw - clamp(130px, 41vw, 176px))'
 const CARD_H = 290
 
 const EMBED_CARD_W = 200
@@ -73,7 +75,7 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
 
   return (
     <CinematicShell style={{
-      background: GENERAL.backgroundApp,
+      background: theme.background,
       zIndex: 100,
       display: 'flex', flexDirection: 'column',
       paddingTop: 'calc(80px + env(safe-area-inset-top, 0px))',
@@ -84,14 +86,20 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
       <div style={{ padding: `0 ${SPACING.standard}px`, marginBottom: SPACING.standard, flexShrink: 0 }}>
         {block.title && (
           <h2 style={{
-            ...TYPE.displaySection, fontSize: 'clamp(24px, 7.5vw, 32px)',
-            color: 'rgba(255,255,255,0.97)', margin: '0 0 8px',
+            ...TYPE.displayScreen,
+            color: 'rgba(245,245,245,0.96)',
+            maxWidth: HEADING_LAYOUT.screenTitle.maxWidth,
+            margin: 0,
           }}>
             {block.title}
           </h2>
         )}
         {block.intro && (
-          <p style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.52)', margin: 0 }}>
+          <p style={{
+            ...TYPE.body,
+            color: 'rgba(245,245,245,0.60)',
+            margin: `${SPACING.standard}px 0 0`,
+          }}>
             {block.intro}
           </p>
         )}
@@ -105,10 +113,12 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
         style={{
           display: 'flex',
           overflowX: 'auto',
+          overscrollBehaviorX: 'contain',
           scrollSnapType: 'x mandatory',
+          scrollPaddingInline: CARD_EDGE_INSET,
           WebkitOverflowScrolling: 'touch',
           gap: SPACING.compact,
-          padding: `0 ${SPACING.standard}px`,
+          padding: `0 ${CARD_EDGE_INSET}`,
           flex: 1,
           alignItems: 'flex-start',
         }}
@@ -125,8 +135,6 @@ export default function TimelineChain({ block, subject = 'History', onContinue }
             rgb={rgb}
           />
         ))}
-        {/* trailing spacer so the last card can reach center */}
-        <div style={{ flexShrink: 0, width: 1 }} />
       </div>
 
       {/* Swipe hint */}
@@ -176,7 +184,13 @@ function ChainCard({ step, index, total, flipped, onFlip, accent, rgb, cardW = C
   const isLast = index === total - 1
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0, scrollSnapAlign: scrollAlign }}>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      flexShrink: 0,
+      scrollSnapAlign: scrollAlign,
+      scrollSnapStop: 'always',
+    }}>
 
       {/* Connector rail */}
       <div style={{ position: 'relative', height: railH, width: cardW, flexShrink: 0 }}>
