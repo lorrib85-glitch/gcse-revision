@@ -19,6 +19,8 @@ import { TYPE } from '../../constants/typography.js'
 //
 // Both modes use InteractionShell because they are bounded, subject-aware
 // interaction sequences that keep the standard learning header and safe areas.
+// Primary screen titles consume TYPE.displayScreen without local size overrides;
+// item labels consume TYPE.displaySection so hierarchy stays governed globally.
 //
 // Image reveal block shape:
 // {
