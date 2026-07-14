@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
+import CinematicContinueCTA from '../core/CinematicContinueCTA.jsx'
 import SequenceProgress from '../core/SequenceProgress.jsx'
+import InteractionShell from '../layout/InteractionShell.jsx'
 import { SUBJECTS } from '../../constants/subjects.js'
 import { SPACING } from '../../constants/spacing.js'
 import { MOTION } from '../../constants/motion.js'
 import { RADII } from '../../constants/radii.js'
 import { TYPE } from '../../constants/typography.js'
-import { GENERAL } from '../../constants/generalTheme.js'
 
 // ─── CinematicCarousel / ImageReveal ─────────────────────────────────────────
 //
@@ -15,6 +16,9 @@ import { GENERAL } from '../../constants/generalTheme.js'
 // 2. `mode: 'imageReveal'` — an automatic, slow image sequence for a deliberate
 //    visual reveal. It has no carousel chrome, advances one image at a time, and
 //    only exposes Continue after the final image has had time to land.
+//
+// Both modes use InteractionShell because they are bounded, subject-aware
+// interaction sequences that keep the standard learning header and safe areas.
 //
 // Image reveal block shape:
 // {
@@ -89,102 +93,98 @@ function ImageReveal({ block, subject, onContinue }) {
   const item = items[index]
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 100,
-      background: GENERAL.backgroundApp,
-      display: 'flex', flexDirection: 'column',
-      paddingTop: 'calc(92px + env(safe-area-inset-top, 0px))',
-      paddingBottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
-    }}>
-      <div style={{
-        padding: `0 ${SPACING.standard}px`,
-        textAlign: 'center',
-        flexShrink: 0,
-      }}>
-        {block.title && (
-          <h2 style={{
-            ...TYPE.displaySection,
-            fontSize: 'clamp(24px, 7.5vw, 32px)',
-            color: 'rgba(255,255,255,0.97)',
-            margin: '0 0 8px',
-          }}>
-            {block.title}
-          </h2>
-        )}
-        {block.intro && (
-          <p style={{
-            ...TYPE.bodyStrong,
-            color: 'rgba(255,255,255,0.56)',
-            margin: 0,
-          }}>
-            {block.intro}
-          </p>
-        )}
-      </div>
-
+    <InteractionShell subject={subject}>
       <div style={{
         flex: 1,
         minHeight: 0,
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: `${SPACING.standard}px ${SPACING.compact}px`,
+        flexDirection: 'column',
       }}>
-        <div key={item?.id || index} style={{
-          width: 'min(88vw, 430px)',
-          aspectRatio: '1 / 1',
+        <div style={{
+          padding: `0 ${SPACING.micro}px`,
+          textAlign: 'center',
+          flexShrink: 0,
+        }}>
+          {block.title && (
+            <h2 style={{
+              ...TYPE.displaySection,
+              fontSize: 'clamp(24px, 7.5vw, 32px)',
+              color: 'rgba(255,255,255,0.97)',
+              margin: '0 0 8px',
+            }}>
+              {block.title}
+            </h2>
+          )}
+          {block.intro && (
+            <p style={{
+              ...TYPE.bodyStrong,
+              color: 'rgba(255,255,255,0.56)',
+              margin: 0,
+            }}>
+              {block.intro}
+            </p>
+          )}
+        </div>
+
+        <div style={{
+          flex: 1,
+          minHeight: 0,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          animation: `image-reveal-in 900ms ${MOTION.easing.standard} both`,
+          padding: `${SPACING.standard}px 0`,
         }}>
-          {item?.image && (
-            <img
-              src={item.image}
-              alt={item.alt || ''}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                display: 'block',
-              }}
-            />
-          )}
+          <div key={item?.id || index} style={{
+            width: 'min(88vw, 430px)',
+            aspectRatio: '1 / 1',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            animation: `image-reveal-in 900ms ${MOTION.easing.standard} both`,
+          }}>
+            {item?.image && (
+              <img
+                src={item.image}
+                alt={item.alt || ''}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  display: 'block',
+                }}
+              />
+            )}
+          </div>
         </div>
-      </div>
 
-      <div style={{ flexShrink: 0, minHeight: 64, padding: `0 ${SPACING.standard}px` }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: SPACING.compact }}>
-          <SequenceProgress
-            total={items.length}
-            current={index}
-            viewed={Array.from({ length: index + 1 }, (_, itemIndex) => itemIndex)}
-            accent={accent}
-            accentRgb={rgb}
-            ariaLabel="Image reveal progress"
-          />
+        <div style={{ flexShrink: 0, padding: `0 ${SPACING.micro}px` }}>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <SequenceProgress
+              total={items.length}
+              current={index}
+              viewed={Array.from({ length: index + 1 }, (_, itemIndex) => itemIndex)}
+              accent={accent}
+              accentRgb={rgb}
+              ariaLabel="Image reveal progress"
+            />
+          </div>
+          <div style={{ minHeight: SPACING.section }} />
         </div>
 
         {complete && (
-          <div style={{ textAlign: 'center', animation: `image-reveal-copy-in ${MOTION.duration.slow} ${MOTION.easing.standard} both` }}>
-            <button
-              onClick={onContinue}
-              style={{
-                background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                ...TYPE.buttonLarge, fontSize: 18, color: accent,
-              }}
-            >
-              Continue
-            </button>
-          </div>
+          <CinematicContinueCTA
+            onClick={onContinue}
+            accent={accent}
+            animation={`image-reveal-copy-in ${MOTION.duration.slow} ${MOTION.easing.standard} both`}
+          />
         )}
       </div>
-    </div>
+    </InteractionShell>
   )
 }
 
 function DefaultCarousel({ block, subject, onContinue }) {
-  const theme = SUBJECTS[subject] || SUBJECTS.Biology
+  const theme = SUBJECTS[subject] || SUBJECTS.History
   const { accent, accentRgb: rgb } = theme
   const items = block.items || []
 
@@ -210,120 +210,125 @@ function DefaultCarousel({ block, subject, onContinue }) {
   const slideAnim = `${direction > 0 ? 'ccv-slide-in-right' : 'ccv-slide-in-left'} ${MOTION.duration.slow} ${MOTION.easing.standard} both`
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 100,
-      background: GENERAL.backgroundApp,
-      display: 'flex', flexDirection: 'column',
-      paddingTop: 'calc(96px + env(safe-area-inset-top, 0px))',
-      paddingBottom: 'calc(28px + env(safe-area-inset-bottom, 0px))',
-    }}>
-      <div style={{ padding: `0 ${SPACING.standard}px`, marginBottom: SPACING.compact, flexShrink: 0 }}>
-        {block.title && (
-          <h2 style={{
-            ...TYPE.displaySection, fontSize: 'clamp(24px, 7.5vw, 32px)',
-            color: 'rgba(255,255,255,0.97)', margin: '0 0 8px',
-          }}>
-            {block.title}
-          </h2>
-        )}
-        {block.intro && (
-          <p style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.52)', margin: 0 }}>
-            {block.intro}
-          </p>
-        )}
-      </div>
-
-      <div style={{ flex: 1, position: 'relative', minHeight: 0, padding: `0 ${SPACING.standard}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {items.length > 1 && (
-          <button className="ccv-nav-btn" onClick={() => go(-1)} aria-label="Previous" style={{
-            position: 'absolute', left: SPACING.micro, top: '50%', transform: 'translateY(-50%)',
-            width: 44, height: 44, borderRadius: '50%', zIndex: 2,
-            border: `1px solid rgba(${rgb},0.3)`, background: `rgba(${rgb},0.14)`,
-            backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', padding: 0, WebkitTapHighlightColor: 'transparent',
-          }}>
-            <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill={accent}>
-              <path d={ARROW_LEFT} />
-            </svg>
-          </button>
-        )}
-
-        <div key={index} style={{
-          width: '100%', height: '100%', maxWidth: 340,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          borderRadius: RADII.panel, overflow: 'hidden',
-          border: `1px solid rgba(${rgb},0.18)`,
-          background: 'rgba(255,255,255,0.03)',
-          boxShadow: `0 24px 60px rgba(0,0,0,0.5), 0 0 48px rgba(${rgb},0.12)`,
-          animation: slideAnim,
-        }}>
-          {item?.image && (
-            <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+    <InteractionShell subject={subject}>
+      <div style={{
+        flex: 1,
+        minHeight: 0,
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+        <div style={{ padding: `0 ${SPACING.micro}px`, marginBottom: SPACING.compact, flexShrink: 0 }}>
+          {block.title && (
+            <h2 style={{
+              ...TYPE.displaySection, fontSize: 'clamp(24px, 7.5vw, 32px)',
+              color: 'rgba(255,255,255,0.97)', margin: '0 0 8px',
+            }}>
+              {block.title}
+            </h2>
+          )}
+          {block.intro && (
+            <p style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.52)', margin: 0 }}>
+              {block.intro}
+            </p>
           )}
         </div>
 
-        {items.length > 1 && (
-          <button className="ccv-nav-btn" onClick={() => go(1)} aria-label="Next" style={{
-            position: 'absolute', right: SPACING.micro, top: '50%', transform: 'translateY(-50%)',
-            width: 44, height: 44, borderRadius: '50%', zIndex: 2,
-            border: `1px solid rgba(${rgb},0.3)`, background: `rgba(${rgb},0.14)`,
-            backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', padding: 0, WebkitTapHighlightColor: 'transparent',
+        <div style={{ flex: 1, position: 'relative', minHeight: 0, padding: `0 ${SPACING.micro}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {items.length > 1 && (
+            <button className="ccv-nav-btn" onClick={() => go(-1)} aria-label="Previous" style={{
+              position: 'absolute', left: SPACING.micro, top: '50%', transform: 'translateY(-50%)',
+              width: 44, height: 44, borderRadius: '50%', zIndex: 2,
+              border: `1px solid rgba(${rgb},0.3)`, background: `rgba(${rgb},0.14)`,
+              backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', padding: 0, WebkitTapHighlightColor: 'transparent',
+            }}>
+              <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill={accent}>
+                <path d={ARROW_LEFT} />
+              </svg>
+            </button>
+          )}
+
+          <div key={index} style={{
+            width: '100%', height: '100%', maxWidth: 340,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            borderRadius: RADII.panel, overflow: 'hidden',
+            border: `1px solid rgba(${rgb},0.18)`,
+            background: 'rgba(255,255,255,0.03)',
+            boxShadow: `0 24px 60px rgba(0,0,0,0.5), 0 0 48px rgba(${rgb},0.12)`,
+            animation: slideAnim,
           }}>
-            <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill={accent}>
-              <path d={ARROW_RIGHT} />
-            </svg>
-          </button>
-        )}
-      </div>
-
-      <div key={`info-${index}`} style={{
-        flexShrink: 0, padding: `${SPACING.compact}px ${SPACING.standard}px 0`,
-        animation: slideAnim,
-      }}>
-        <h3 style={{ ...TYPE.displaySection, fontSize: 22, color: accent, margin: '0 0 10px' }}>
-          {item?.label}
-        </h3>
-        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {(item?.facts || []).map((fact, i) => (
-            <li key={i} style={{ ...TYPE.bodyStrong, display: 'flex', gap: 10, color: 'rgba(255,255,255,0.82)' }}>
-              <span style={{ flexShrink: 0, width: 6, height: 6, borderRadius: '50%', background: accent, marginTop: 8 }} />
-              <span>{fact}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.standard, flexShrink: 0 }}>
-        <SequenceProgress
-          total={items.length}
-          current={index}
-          viewed={Array.from(viewed)}
-          accent={accent}
-          accentRgb={rgb}
-          ariaLabel="Carousel progress"
-        />
-      </div>
-
-      <div style={{ textAlign: 'center', marginTop: SPACING.standard, padding: `0 ${SPACING.standard}px`, flexShrink: 0 }}>
-        {allViewed ? (
-          <button
-            onClick={onContinue}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-              ...TYPE.buttonLarge, fontSize: 18, color: accent,
-              animation: `ccv-slide-in-right ${MOTION.duration.slow} ${MOTION.easing.standard} both`,
-            }}
-          >
-            Continue →
-          </button>
-        ) : (
-          <div style={{ ...TYPE.label, color: 'rgba(255,255,255,0.32)' }}>
-            Explore each part to continue
+            {item?.image && (
+              <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            )}
           </div>
+
+          {items.length > 1 && (
+            <button className="ccv-nav-btn" onClick={() => go(1)} aria-label="Next" style={{
+              position: 'absolute', right: SPACING.micro, top: '50%', transform: 'translateY(-50%)',
+              width: 44, height: 44, borderRadius: '50%', zIndex: 2,
+              border: `1px solid rgba(${rgb},0.3)`, background: `rgba(${rgb},0.14)`,
+              backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', padding: 0, WebkitTapHighlightColor: 'transparent',
+            }}>
+              <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill={accent}>
+                <path d={ARROW_RIGHT} />
+              </svg>
+            </button>
+          )}
+        </div>
+
+        <div key={`info-${index}`} style={{
+          flexShrink: 0, padding: `${SPACING.compact}px ${SPACING.micro}px 0`,
+          animation: slideAnim,
+        }}>
+          <h3 style={{ ...TYPE.displaySection, fontSize: 22, color: accent, margin: '0 0 10px' }}>
+            {item?.label}
+          </h3>
+          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {(item?.facts || []).map((fact, i) => (
+              <li key={i} style={{ ...TYPE.bodyStrong, display: 'flex', gap: 10, color: 'rgba(255,255,255,0.82)' }}>
+                <span style={{ flexShrink: 0, width: 6, height: 6, borderRadius: '50%', background: accent, marginTop: 8 }} />
+                <span>{fact}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: SPACING.standard, flexShrink: 0 }}>
+          <SequenceProgress
+            total={items.length}
+            current={index}
+            viewed={Array.from(viewed)}
+            accent={accent}
+            accentRgb={rgb}
+            ariaLabel="Carousel progress"
+          />
+        </div>
+
+        <div style={{
+          minHeight: SPACING.section,
+          padding: `0 ${SPACING.micro}px`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          {!allViewed && (
+            <div style={{ ...TYPE.label, color: 'rgba(255,255,255,0.32)' }}>
+              Explore each part to continue
+            </div>
+          )}
+        </div>
+
+        {allViewed && (
+          <CinematicContinueCTA
+            onClick={onContinue}
+            accent={accent}
+            animation={`ccv-slide-in-right ${MOTION.duration.slow} ${MOTION.easing.standard} both`}
+          />
         )}
       </div>
-    </div>
+    </InteractionShell>
   )
 }
 
