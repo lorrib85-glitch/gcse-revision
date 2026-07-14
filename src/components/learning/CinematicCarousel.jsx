@@ -222,7 +222,8 @@ function DefaultCarousel({ block, subject, onContinue }) {
           {block.title && (
             <h2 style={{
               ...TYPE.displayScreen,
-              color: 'rgba(255,255,255,0.97)', margin: '0 0 8px',
+              color: 'rgba(255,255,255,0.97)',
+              margin: '0 0 8px',
             }}>
               {block.title}
             </h2>
