@@ -11,6 +11,7 @@ const H = 220
 const M = { top: 18, right: 14, bottom: 44, left: 46 }
 const PLOT_W = W - M.left - M.right
 const PLOT_H = H - M.top - M.bottom
+const TARGET_TICK_INTERVALS = 5
 
 let stylesInjected = false
 function ensureStyles() {
@@ -28,22 +29,57 @@ function ensureStyles() {
 
 // ─── Axis helpers ────────────────────────────────────────────────────────────
 
-function niceMax(value) {
-  if (!isFinite(value) || value <= 0) return 1
-  const exponent = Math.floor(Math.log10(value))
-  const fraction = value / Math.pow(10, exponent)
-  let niceFraction
-  if (fraction <= 1) niceFraction = 1
-  else if (fraction <= 2) niceFraction = 2
-  else if (fraction <= 5) niceFraction = 5
-  else niceFraction = 10
-  return niceFraction * Math.pow(10, exponent)
+function normaliseNumber(value) {
+  const normalised = Number(value.toPrecision(12))
+  return Object.is(normalised, -0) ? 0 : normalised
 }
 
-function ticksBetween(min, max, count = 4) {
-  const ticks = []
-  for (let i = 0; i <= count; i++) ticks.push(min + (max - min) * (i / count))
-  return ticks
+function niceStep(range, targetIntervals = TARGET_TICK_INTERVALS) {
+  if (!Number.isFinite(range) || range <= 0) return 1
+
+  const roughStep = range / Math.max(targetIntervals, 1)
+  const exponent = Math.floor(Math.log10(roughStep))
+  const power = Math.pow(10, exponent)
+  const fraction = roughStep / power
+
+  let niceFraction
+  if (fraction < 1.5) niceFraction = 1
+  else if (fraction < 3.5) niceFraction = 2
+  else if (fraction < 7.5) niceFraction = 5
+  else niceFraction = 10
+
+  return niceFraction * power
+}
+
+export function createNiceScale(min, max, targetIntervals = TARGET_TICK_INTERVALS) {
+  let lower = Number.isFinite(min) ? min : 0
+  let upper = Number.isFinite(max) ? max : lower + 1
+
+  if (lower > upper) [lower, upper] = [upper, lower]
+
+  if (lower === upper) {
+    if (lower === 0) {
+      upper = 1
+    } else {
+      const padding = Math.abs(lower) * 0.1
+      lower -= padding
+      upper += padding
+    }
+  }
+
+  const step = niceStep(upper - lower, targetIntervals)
+  const niceMin = normaliseNumber(Math.floor(lower / step) * step)
+  let niceMax = normaliseNumber(Math.ceil(upper / step) * step)
+
+  if (niceMin === niceMax) niceMax = normaliseNumber(niceMin + step)
+
+  const intervalCount = Math.max(1, Math.round((niceMax - niceMin) / step))
+  const ticks = Array.from({ length: intervalCount + 1 }, (_, index) => {
+    const value = normaliseNumber(niceMin + step * index)
+    return { value, label: formatTick(value) }
+  })
+
+  return { min: niceMin, max: niceMax, step, ticks }
 }
 
 function formatTick(n) {
@@ -92,21 +128,21 @@ function AxisFrame({ xTicks, yTicks, toX, toY, xLabel, yLabel }) {
 
 function BarChart({ data, accent, xLabel, yLabel, yMax: yMaxProp }) {
   const n = Math.max(data.length, 1)
-  const yMax = yMaxProp ?? niceMax(Math.max(...data.map(d => d.value), 0))
+  const rawYMax = yMaxProp ?? Math.max(...data.map(d => d.value), 0)
+  const yScale = createNiceScale(0, Math.max(rawYMax, 1))
 
   const toX = i => M.left + (i + 0.5) * (PLOT_W / n)
-  const toY = v => M.top + PLOT_H - (v / yMax) * PLOT_H
+  const toY = v => M.top + PLOT_H - ((v - yScale.min) / (yScale.max - yScale.min || 1)) * PLOT_H
   const barW = (PLOT_W / n) * 0.55
 
-  const yTicks = ticksBetween(0, yMax, 4).map(v => ({ value: v, label: formatTick(v) }))
   const xTicks = data.map((d, i) => ({ value: i, label: d.label }))
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
-      <AxisFrame xTicks={xTicks} yTicks={yTicks} toX={toX} toY={toY} xLabel={xLabel} yLabel={yLabel} />
+      <AxisFrame xTicks={xTicks} yTicks={yScale.ticks} toX={toX} toY={toY} xLabel={xLabel} yLabel={yLabel} />
       {data.map((d, i) => {
         const y = toY(d.value)
-        return <rect key={i} x={toX(i) - barW / 2} y={y} width={barW} height={M.top + PLOT_H - y} fill={accent} rx={2} />
+        return <rect key={i} x={toX(i) - barW / 2} y={y} width={barW} height={toY(yScale.min) - y} fill={accent} rx={2} />
       })}
     </svg>
   )
@@ -115,22 +151,22 @@ function BarChart({ data, accent, xLabel, yLabel, yMax: yMaxProp }) {
 // ─── Line chart ───────────────────────────────────────────────────────────────
 
 function LineChart({ points, accent, xLabel, yLabel, xMin, xMax, yMin, yMax }) {
-  const xLo = xMin ?? Math.min(...points.map(p => p.x))
-  const xHi = xMax ?? Math.max(...points.map(p => p.x))
-  const yLo = yMin ?? 0
-  const yHi = yMax ?? niceMax(Math.max(...points.map(p => p.y), 0))
+  const rawXLo = xMin ?? Math.min(...points.map(p => p.x))
+  const rawXHi = xMax ?? Math.max(...points.map(p => p.x))
+  const rawYLo = yMin ?? 0
+  const rawYHi = yMax ?? Math.max(...points.map(p => p.y), 0)
 
-  const toX = x => M.left + ((x - xLo) / (xHi - xLo || 1)) * PLOT_W
-  const toY = y => M.top + PLOT_H - ((y - yLo) / (yHi - yLo || 1)) * PLOT_H
+  const xScale = createNiceScale(rawXLo, rawXHi)
+  const yScale = createNiceScale(rawYLo, rawYHi)
 
-  const xTicks = ticksBetween(xLo, xHi, 4).map(v => ({ value: v, label: formatTick(v) }))
-  const yTicks = ticksBetween(yLo, yHi, 4).map(v => ({ value: v, label: formatTick(v) }))
+  const toX = x => M.left + ((x - xScale.min) / (xScale.max - xScale.min || 1)) * PLOT_W
+  const toY = y => M.top + PLOT_H - ((y - yScale.min) / (yScale.max - yScale.min || 1)) * PLOT_H
 
   const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${toX(p.x)} ${toY(p.y)}`).join(' ')
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
-      <AxisFrame xTicks={xTicks} yTicks={yTicks} toX={toX} toY={toY} xLabel={xLabel} yLabel={yLabel} />
+      <AxisFrame xTicks={xScale.ticks} yTicks={yScale.ticks} toX={toX} toY={toY} xLabel={xLabel} yLabel={yLabel} />
       <path d={pathD} fill="none" stroke={accent} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
       {points.map((p, i) => <circle key={i} cx={toX(p.x)} cy={toY(p.y)} r={3} fill={accent} />)}
     </svg>
@@ -140,20 +176,20 @@ function LineChart({ points, accent, xLabel, yLabel, xMin, xMax, yMin, yMax }) {
 // ─── Scatter chart ──────────────────────────────────────────────────────────
 
 function ScatterChart({ points, accent, lineOfBestFit, xLabel, yLabel, xMin, xMax, yMin, yMax }) {
-  const xLo = xMin ?? 0
-  const xHi = xMax ?? niceMax(Math.max(...points.map(p => p.x), 0))
-  const yLo = yMin ?? 0
-  const yHi = yMax ?? niceMax(Math.max(...points.map(p => p.y), 0))
+  const rawXLo = xMin ?? 0
+  const rawXHi = xMax ?? Math.max(...points.map(p => p.x), 0)
+  const rawYLo = yMin ?? 0
+  const rawYHi = yMax ?? Math.max(...points.map(p => p.y), 0)
 
-  const toX = x => M.left + ((x - xLo) / (xHi - xLo || 1)) * PLOT_W
-  const toY = y => M.top + PLOT_H - ((y - yLo) / (yHi - yLo || 1)) * PLOT_H
+  const xScale = createNiceScale(rawXLo, rawXHi)
+  const yScale = createNiceScale(rawYLo, rawYHi)
 
-  const xTicks = ticksBetween(xLo, xHi, 4).map(v => ({ value: v, label: formatTick(v) }))
-  const yTicks = ticksBetween(yLo, yHi, 4).map(v => ({ value: v, label: formatTick(v) }))
+  const toX = x => M.left + ((x - xScale.min) / (xScale.max - xScale.min || 1)) * PLOT_W
+  const toY = y => M.top + PLOT_H - ((y - yScale.min) / (yScale.max - yScale.min || 1)) * PLOT_H
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
-      <AxisFrame xTicks={xTicks} yTicks={yTicks} toX={toX} toY={toY} xLabel={xLabel} yLabel={yLabel} />
+      <AxisFrame xTicks={xScale.ticks} yTicks={yScale.ticks} toX={toX} toY={toY} xLabel={xLabel} yLabel={yLabel} />
       {lineOfBestFit && (
         <line
           x1={toX(lineOfBestFit.from.x)} y1={toY(lineOfBestFit.from.y)}
@@ -227,11 +263,11 @@ function PieChart({ data, accent, accentSecondary, accentTertiary }) {
 //   data?: [{ label, value }],        // bar, pie
 //   points?: [{ x, y }],              // line, scatter
 //   lineOfBestFit?: { from: {x,y}, to: {x,y} },  // scatter
-//   xMin?, xMax?, yMin?, yMax?,       // axis range overrides (line, scatter); yMax also for bar
+//   xMin?, xMax?, yMin?, yMax?,       // requested axis bounds; rounded outward to clean 1/2/5 intervals
 // }
 export default function GraphView({ block, subject = 'Maths' }) {
   const theme = SUBJECTS[subject] || SUBJECTS.Maths
-  const { accent, accentSecondary, accentTertiary, accentRgb: rgb } = theme
+  const { accent, accentSecondary, accentTertiary } = theme
 
   useEffect(() => { ensureStyles() }, [])
 
@@ -251,14 +287,13 @@ export default function GraphView({ block, subject = 'Maths' }) {
     <CardContainer variant="contained" subject={subject} padding={20}>
       <div style={{ animation: `gv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both` }}>
         {title && (
-          <div style={{
-            ...TYPE.metadata,
-            textTransform: 'uppercase',
-            color: `rgba(${rgb},0.78)`,
-            marginBottom: SPACING.micro,
+          <h3 style={{
+            ...TYPE.titleMedium,
+            color: 'rgba(245,245,245,0.92)',
+            margin: `0 0 ${SPACING.compact}px`,
           }}>
             {title}
-          </div>
+          </h3>
         )}
 
         {graphType === 'bar' && <BarChart data={data} accent={accent} xLabel={xLabel} yLabel={yLabel} yMax={yMax} />}
