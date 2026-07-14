@@ -354,6 +354,51 @@ export const quoteAnalyser = {
   ],
 }
 
+// ScarfBlock (Biology) — tap-to-reveal SCARF mnemonic (five uses of glucose).
+// Shape: { label?, items:[{ letter, word, detail }] }. From Plant Cells &
+// Photosynthesis (sci_bio_w1), block type: scarf.
+export const scarfBlock = {
+  label: 'SCARF — tap each letter to reveal',
+  items: [
+    { letter: 'S', word: 'Starch',
+      detail: 'Glucose is converted to starch for storage. Starch is insoluble so it doesn’t affect osmosis. Stored in chloroplasts and other parts of the plant.' },
+    { letter: 'C', word: 'Cellulose',
+      detail: 'Used to make cellulose for cell walls. This gives the plant structural support. Wood is mostly cellulose.' },
+    { letter: 'A', word: 'Amino acids',
+      detail: 'Combined with nitrates from the soil to make amino acids, which are then used to build proteins. No nitrates = no proteins = stunted growth.' },
+    { letter: 'R', word: 'Respiration',
+      detail: 'Used in aerobic respiration to release energy for growth, reproduction, active transport and other cell processes.' },
+    { letter: 'F', word: 'Fats and oils',
+      detail: 'Some glucose is converted into lipids (fats and oils) for storage — especially in seeds. Seeds are often very high in fats.' },
+  ],
+}
+
+// BuilderBlock (Biology) — tap-to-fill equation builder with distractor pieces.
+// Shape: { label?, slots, operators?, pieces, answer, hint, successText }. From
+// Plant Cells & Photosynthesis (sci_bio_w1), block type: builder.
+export const builderBlock = {
+  label: 'Build the photosynthesis equation',
+  slots: [null, null, null, null],
+  operators: ['+', '→', '+'],
+  pieces: ['carbon dioxide', 'water', 'glucose', 'oxygen', 'nitrogen', 'starch'],
+  answer: ['carbon dioxide', 'water', 'glucose', 'oxygen'],
+  hint: 'Two things go IN (reactants), two things come OUT (products). Light energy drives the reaction.',
+  successText: 'Carbon dioxide + water → glucose + oxygen. Light energy drives the reaction. This is the foundation of almost all life on Earth.',
+}
+
+// ChapterOutcomeScreen (Biology) — full-screen chapter-opening outcomes reveal.
+// Shape: { chapterTitle, outcomes:[string] }. From Plant Cells & Photosynthesis
+// (sci_bio_w1) outcomes.bullets.
+export const chapterOutcome = {
+  chapterTitle: 'Plant Cells & Photosynthesis',
+  outcomes: [
+    'Describe the key parts of a plant cell and what each one does',
+    'Explain the photosynthesis equation and what it actually means',
+    'See why chlorophyll is the molecule that makes life possible',
+    'Connect photosynthesis to respiration and energy flow in ecosystems',
+  ],
+}
+
 // KeyFigureReveal (History) — scrollable portrait hero + knowledge sections.
 export const keyFigureReveal = {
   portrait: '/figures/history/medicine/medieval/hippocrates-portrait.webp',

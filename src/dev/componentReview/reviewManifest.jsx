@@ -27,6 +27,9 @@ import VisualLearning from '../../components/learning/VisualLearning.jsx'
 import GuidedChoiceCarousel from '../../components/learning/GuidedChoiceCarousel.jsx'
 import TheoryCompareBlock from '../../components/learning/TheoryCompareBlock.jsx'
 import MisconceptionCheck from '../../components/learning/MisconceptionCheck.jsx'
+import ScarfBlock from '../../components/learning/ScarfBlock.jsx'
+import BuilderBlock from '../../components/learning/BuilderBlock.jsx'
+import ChapterOutcomeScreen from '../../components/layout/ChapterOutcomeScreen.jsx'
 
 // Registered library — self-contained kept components, here to refine in one place.
 import FactorWeb from '../../components/learning/FactorWeb.jsx'
@@ -187,6 +190,24 @@ export const REVIEW_ENTRIES = [
     render: (fx, { onDone }) => <CentreImageReveal screen={fx} onComplete={onDone} />,
     fixture: FIX.medicalTheoryPrescription,
   },
+  {
+    id: 'scarf-block', name: 'ScarfBlock', group: 'group2',
+    status: 'one-off', subject: 'Biology', renderMode: 'inline',
+    function: 'Tap-to-reveal mnemonic block: each acronym letter expands to show what it stands for and why it matters (e.g. SCARF — five uses of glucose).',
+    usage: 'Used in Plant Cells & Photosynthesis (sci_bio_w1), block type: scarf. Extracted from an inline definition in ModulePlayer into a standalone component.',
+    alternative: 'FlashcardsBlock (recall); FillInTheBlanksBlock.',
+    render: (fx) => <ScarfBlock block={fx} />,
+    fixture: FIX.scarfBlock,
+  },
+  {
+    id: 'builder-block', name: 'BuilderBlock', group: 'group2',
+    status: 'one-off', subject: 'Biology', renderMode: 'inline',
+    function: 'Tap-to-fill equation builder: place word pieces into ordered slots to construct an equation, then check — with distractor pieces and a hint on a wrong answer.',
+    usage: 'Used in Plant Cells & Photosynthesis (sci_bio_w1), block type: builder. Extracted from an inline definition in ModulePlayer into a standalone component.',
+    alternative: 'FillInTheBlanksBlock (inline gaps); ColSortBlock.',
+    render: (fx) => <BuilderBlock block={fx} />,
+    fixture: FIX.builderBlock,
+  },
 
   // ── Active comparison components (not deletion candidates) ────────────────
   {
@@ -303,5 +324,19 @@ export const REVIEW_ENTRIES = [
     alternative: 'MedievalDiagnosisScene (scene intro); ConceptReveal.',
     render: (fx, { onDone }) => <KeyFigureReveal block={fx} subject="History" onComplete={onDone} />,
     fixture: FIX.keyFigureReveal,
+  },
+  {
+    id: 'chapter-outcome-screen', name: 'ChapterOutcomeScreen', group: 'library',
+    status: 'comparison', subject: 'Biology', renderMode: 'fullbleed',
+    function: 'Full-screen chapter-opening outcomes reveal: chapter title, "what you\'re about to uncover" label, and staggered learning-outcome items over a subject backdrop.',
+    usage: 'Routed in ModulePlayer as the chapter outcome screen; used across modules.',
+    alternative: 'ChapterHookScreen (true/false warm-up opener); ConceptReveal.',
+    render: (fx, { onDone }) => (
+      <ChapterOutcomeScreen
+        subject="Biology" chapterNum={2} chapterTitle={fx.chapterTitle}
+        outcomes={fx.outcomes} onBack={() => {}} onContinue={onDone}
+      />
+    ),
+    fixture: FIX.chapterOutcome,
   },
 ]
