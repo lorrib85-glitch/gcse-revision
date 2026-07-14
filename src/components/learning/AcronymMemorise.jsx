@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { SPACING } from '../../constants/spacing.js'
 import { TYPE } from '../../constants/typography.js'
 
-// ─── ScarfBlock — SCARF memory acronym ────────────────────────────────────────
-// Tap-to-reveal mnemonic block: each acronym letter expands to show its meaning.
+// ─── AcronymMemorise — mnemonic acronym reveal ────────────────────────────────
+// Tap-to-reveal mnemonic block: each acronym letter expands to show its meaning
+// (e.g. SCARF for the five uses of glucose).
 // Content block (renders inline within a content screen's blocks array).
 // Shape: { label?, items: [{ letter, word, detail }] }
-export default function ScarfBlock({ block }) {
+export default function AcronymMemorise({ block }) {
   const [open, setOpen] = useState(null)
   const items = block.items || []
   return (

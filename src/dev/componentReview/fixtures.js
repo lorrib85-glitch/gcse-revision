@@ -354,10 +354,10 @@ export const quoteAnalyser = {
   ],
 }
 
-// ScarfBlock (Biology) — tap-to-reveal SCARF mnemonic (five uses of glucose).
+// AcronymMemorise (Biology) — tap-to-reveal SCARF mnemonic (five uses of glucose).
 // Shape: { label?, items:[{ letter, word, detail }] }. From Plant Cells &
-// Photosynthesis (sci_bio_w1), block type: scarf.
-export const scarfBlock = {
+// Photosynthesis (sci_bio_w1), block type: acronymMemorise.
+export const acronymMemorise = {
   label: 'SCARF — tap each letter to reveal',
   items: [
     { letter: 'S', word: 'Starch',

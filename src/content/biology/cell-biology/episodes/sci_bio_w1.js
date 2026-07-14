@@ -405,7 +405,7 @@ export default {
           "text": "Wood is made from glucose. The tree trunk, every branch, every leaf — almost all of it built from sugar that the tree made from thin air using sunlight. You're basically looking at crystallised light."
         },
         {
-          "type": "scarf",
+          "type": "acronymMemorise",
           "label": "SCARF — tap each letter to reveal",
           "items": [
             {

@@ -50,7 +50,7 @@ const LEGACY_BLOCK_TYPES = new Set([
  */
 const SUPPORTED_BLOCK_TYPES = new Set([
   'read', 'keypoint', 'funfact', 'examtip', 'timeline', 'reveal',
-  'quiz', 'flashcards', 'hotspot', 'misconception', 'scarf', 'builder',
+  'quiz', 'flashcards', 'hotspot', 'misconception', 'acronymMemorise', 'builder',
   'scenario', 'boss', 'explainReveal', 'fillblanks', 'theoryCompare',
   'graphView', 'timelineChain', 'colsort', 'spotTheError', 'misconceptionCheck',
   'tieredquiz',

@@ -61,8 +61,8 @@ export const SCREEN_TYPE_FUNCTIONS = {
   reveal: { functions: ['teach-mechanism'], interaction: 'reveal' },
   // MisconceptionBlock: tap a wrong statement to reveal why it's wrong — no scoring
   misconception: { functions: ['exam-technique'], interaction: 'reveal' },
-  // ScarfBlock: expand/collapse mnemonic items (e.g. SCARF for uses of glucose)
-  scarf: { functions: ['teach-mechanism'], interaction: 'reveal' },
+  // AcronymMemorise: expand/collapse mnemonic items (e.g. SCARF for uses of glucose)
+  acronymMemorise: { functions: ['teach-mechanism'], interaction: 'reveal' },
   // QuoteAnalyser: tap through 5 analysis cards on a quote — no scoring
   quoteAnalyser: { functions: ['teach-mechanism'], interaction: 'reveal' },
 

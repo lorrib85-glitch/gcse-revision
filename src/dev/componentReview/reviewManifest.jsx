@@ -27,7 +27,7 @@ import VisualLearning from '../../components/learning/VisualLearning.jsx'
 import GuidedChoiceCarousel from '../../components/learning/GuidedChoiceCarousel.jsx'
 import TheoryCompareBlock from '../../components/learning/TheoryCompareBlock.jsx'
 import MisconceptionCheck from '../../components/learning/MisconceptionCheck.jsx'
-import ScarfBlock from '../../components/learning/ScarfBlock.jsx'
+import AcronymMemorise from '../../components/learning/AcronymMemorise.jsx'
 import BuilderBlock from '../../components/learning/BuilderBlock.jsx'
 import ChapterOutcomeScreen from '../../components/layout/ChapterOutcomeScreen.jsx'
 
@@ -191,13 +191,13 @@ export const REVIEW_ENTRIES = [
     fixture: FIX.medicalTheoryPrescription,
   },
   {
-    id: 'scarf-block', name: 'ScarfBlock', group: 'group2',
+    id: 'acronym-memorise', name: 'AcronymMemorise', group: 'group2',
     status: 'one-off', subject: 'Biology', renderMode: 'inline',
     function: 'Tap-to-reveal mnemonic block: each acronym letter expands to show what it stands for and why it matters (e.g. SCARF — five uses of glucose).',
-    usage: 'Used in Plant Cells & Photosynthesis (sci_bio_w1), block type: scarf. Extracted from an inline definition in ModulePlayer into a standalone component.',
+    usage: 'Used in Plant Cells & Photosynthesis (sci_bio_w1), block type: acronymMemorise. Extracted from an inline definition in ModulePlayer into a standalone component.',
     alternative: 'FlashcardsBlock (recall); FillInTheBlanksBlock.',
-    render: (fx) => <ScarfBlock block={fx} />,
-    fixture: FIX.scarfBlock,
+    render: (fx) => <AcronymMemorise block={fx} />,
+    fixture: FIX.acronymMemorise,
   },
   {
     id: 'builder-block', name: 'BuilderBlock', group: 'group2',

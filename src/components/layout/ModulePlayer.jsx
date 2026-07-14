@@ -23,7 +23,7 @@ import FaceTheExaminer from '../learning/FaceTheExaminer.jsx'
 import GuidedExamResponse from '../learning/GuidedExamResponse.jsx'
 import InteractiveHotspotImage from '../learning/InteractiveHotspotImage.jsx'
 import FillInTheBlanksBlock from '../learning/FillInTheBlanksBlock.jsx'
-import ScarfBlock from '../learning/ScarfBlock.jsx'
+import AcronymMemorise from '../learning/AcronymMemorise.jsx'
 import BuilderBlock from '../learning/BuilderBlock.jsx'
 import AnswerInteraction from '../core/AnswerInteraction.jsx'
 import RetrievalFrame from '../feedback/RetrievalFrame.jsx'
@@ -639,7 +639,7 @@ function Screen({ screen, subject, onScreenComplete }) {
           {block.type === 'flashcards'    && <FlashcardsBlock block={block} />}
           {block.type === 'hotspot'       && <HotspotBlock block={block} />}
           {block.type === 'misconception' && <MisconceptionBlock block={block} />}
-          {block.type === 'scarf'         && <ScarfBlock block={block} />}
+          {block.type === 'acronymMemorise' && <AcronymMemorise block={block} />}
           {block.type === 'builder'       && <BuilderBlock block={block} />}
           {block.type === 'scenario'      && <ScenarioBlock block={block} />}
           {block.type === 'boss'          && <ExamQuestionFrame block={block} subject={subject} mode="practice" onSkip={onScreenComplete} />}
