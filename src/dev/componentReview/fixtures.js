@@ -240,12 +240,131 @@ export const theoryCompareBlock = {
 export const misconceptionCheck = {
   id: 'trap-medicine-changed',
   statements: [
-    { id: 'a', text: 'Medicine changed quickly after the Black Death.', correct: false,
-      explanation: 'Most beliefs and treatments stayed the same. People still relied on religion, miasma and the Four Humours.' },
-    { id: 'b', text: 'The Black Death made people question the Church.', correct: true,
-      explanation: 'Some people began to question why the Church could not explain or stop the disease.' },
-    { id: 'c', text: 'Doctors discovered the real cause of the plague.', correct: false,
-      explanation: 'The real cause — bacteria carried by fleas — was not understood until centuries later.' },
+    { statement: 'The Black Death changed medicine because people finally discovered what caused disease.',
+      answer: false,
+      reveal: 'The Black Death changed society, but not medical understanding. People kept using the same explanations — God, miasma, astrology and humours. No better theory replaced them for centuries.' },
   ],
-  prompt: 'Which statement is accurate?',
+}
+
+// ─── Phase-5 additions: kept registered components (refine-in-one-place) ─────
+
+// FactorWeb (History) — the ConnectionMap survivor. Mirrors the migrated
+// Episode-1 "web of medieval belief" screen.
+export const factorWeb = {
+  type: 'factorWeb',
+  title: 'The web of medieval belief',
+  instruction: 'Explore each belief. Then decide which shaped medicine most.',
+  mode: 'causes',
+  centreLabel: 'Why people got ill',
+  judgementTitle: 'Which belief shaped medicine most?',
+  factors: [
+    { id: 'supernatural', title: "God's punishment", subtitle: 'Divine retribution',
+      whatItMeans: 'Most people believed sin angered God, who sent illness as punishment.',
+      whyItMattered: 'It made prayer and pilgrimage — not medicine — the logical response.',
+      linkedFactor: "The Church's authority made this the dominant explanation." },
+    { id: 'astrology', title: 'Stars and planets', subtitle: 'Astrology',
+      whatItMeans: 'Physicians believed the planets controlled bodily health.',
+      whyItMattered: 'Doctors consulted zodiac charts before bloodletting or prescribing.',
+      linkedFactor: 'Astrology decided when to rebalance the humours.' },
+    { id: 'humours', title: 'Four humours', subtitle: "Galen's theory",
+      whatItMeans: 'Illness meant the four humours were out of balance.',
+      whyItMattered: 'Treatment aimed to restore balance through bloodletting and diet.',
+      linkedFactor: "This was Galen's theory, protected by his authority." },
+    { id: 'miasma', title: 'Bad air (miasma)', subtitle: 'Foul smells',
+      whatItMeans: 'Foul-smelling air was thought to cause disease.',
+      whyItMattered: 'It accidentally helped: clearing rubbish reduced real disease.',
+      linkedFactor: 'Like the humours, it was a natural explanation.' },
+    { id: 'galen', title: "Galen's authority", subtitle: 'Frozen knowledge',
+      whatItMeans: 'The Church endorsed Galen as truth; schools taught only his texts.',
+      whyItMattered: 'Challenging Galen risked punishment, freezing ideas for 1,000 years.',
+      linkedFactor: 'His authority protected the four humours from question.' },
+    { id: 'experience', title: 'Practical experience', subtitle: 'Folk cures',
+      whatItMeans: 'Wise women used centuries of herbal knowledge alongside the theories.',
+      whyItMattered: 'Some remedies genuinely worked — willow bark contains salicin.',
+      linkedFactor: 'It worked through chemistry, not the physicians’ theories.' },
+  ],
+}
+
+// ConceptReveal (History) — tap-through atmospheric concept steps.
+export const conceptReveal = {
+  steps: [
+    { mainText: 'The Renaissance was a “rebirth” of learning.',
+      supportText: 'Old books were still respected. But people now wanted to test them, not just trust them.',
+      backgroundImage: '/headers/history-medicine-through-time.webp' },
+    { mainText: 'Humanism told people to use reason and study the world for themselves.',
+      supportText: 'This made careful observation matter more. Blind trust in old books felt less safe.',
+      backgroundImage: '/headers/history-medicine-through-time.webp' },
+    { mainText: 'Universities now held dissection in public anatomy theatres.',
+      supportText: 'Doctors and students could watch a real body and check old claims against what they saw.',
+      backgroundImage: '/headers/history-medicine-through-time.webp' },
+  ],
+}
+
+// ExplainReveal (History) — step-by-step reasoning chain.
+export const explainReveal = {
+  type: 'explainReveal',
+  title: 'Why medieval treatments failed',
+  intro: 'Build the chain of reasoning step by step.',
+  steps: [
+    { id: 'belief', statement: 'People believed disease spread through', emphasis: 'bad air.', detail: 'This was called miasma theory.', icon: '⚕' },
+    { id: 'action', statement: 'So they tried to', emphasis: 'sweeten the air,', detail: 'burning herbs and carrying posies.' },
+    { id: 'cause', statement: 'But the real cause was', emphasis: 'microbes,', detail: 'which no one could see or understand yet.' },
+    { id: 'result', statement: 'So the treatments', emphasis: 'could not work,', detail: 'because they never addressed the real cause.' },
+  ],
+  reflectionPrompt: 'Can you explain why these treatments failed?',
+}
+
+// ColSortBlock (History) — sort items into labelled columns.
+export const colSort = {
+  type: 'colsort',
+  columns: [
+    { label: 'Changed', color: '#D4950A', bg: 'rgba(212,149,10,.07)' },
+    { label: 'Continued', color: '#A89070', bg: 'rgba(168,144,112,.07)' },
+  ],
+  items: [
+    { label: 'Human anatomy became more accurate', col: 0, explanation: 'Vesalius corrected Galen using real human bodies.' },
+    { label: 'Observation could challenge ancient books', col: 0, explanation: 'Doctors could now trust what they saw.' },
+    { label: 'Printed diagrams spread new evidence', col: 0, explanation: 'Printing carried accurate drawings across Europe.' },
+    { label: 'The four humours still guided treatment', col: 1, explanation: 'Doctors still explained illness as imbalance.' },
+    { label: 'Bloodletting and purging continued', col: 1, explanation: 'Everyday treatment barely changed.' },
+  ],
+}
+
+// VisualNarrativeScreen (History) — beat-based narrative.
+export const visualNarrative = {
+  beats: [
+    { image: '/headers/history-medicine-through-time.webp', headline: 'The body', body: 'Human dissection gave Vesalius direct evidence about the human body.' },
+    { image: '/headers/history-medicine-through-time.webp', headline: 'The book', body: 'His printed drawings let doctors across Europe check the evidence for themselves.' },
+    { image: '/headers/history-medicine-through-time.webp', headline: 'The challenge', body: 'For the first time, careful observation could openly correct Galen.' },
+  ],
+}
+
+// QuoteAnalyser (English) — tap-through analysis of a literary quote.
+export const quoteAnalyser = {
+  type: 'quoteAnalyser',
+  quote: '"Stars, hide your fires; let not light see my black and deep desires."',
+  location: 'Act I, Scene IV — Macbeth',
+  items: [
+    { id: 'word-focus', icon: 'search', heading: 'Word focus', explainer: 'Dissect key words',
+      content: { title: 'Key words unpacked', body: 'The imperatives "hide" and "let not" show Macbeth commanding even the stars. "Black and deep desires" admits guilt before the act.', keyWords: ['hide', 'fires', 'black', 'desires'] } },
+    { id: 'connotations', icon: 'feather', heading: 'Connotations', explainer: 'Implied meanings',
+      content: { title: 'Connotations', body: '"Stars" and "fires" connote fate, light and divine order — ordering them to hide signals a violation of natural law.' } },
+    { id: 'methods', icon: 'mask', heading: 'Methods', explainer: 'Literary devices',
+      content: { title: 'Methods', body: 'Dark imagery and the apostrophe to the stars externalise Macbeth’s inner conflict.' } },
+  ],
+}
+
+// KeyFigureReveal (History) — scrollable portrait hero + knowledge sections.
+export const keyFigureReveal = {
+  portrait: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
+  name: 'Hippocrates',
+  role: 'Ancient Greek doctor',
+  sections: [
+    { title: 'Who was he?', icon: 'ancient-figure',
+      lines: ['One of the first doctors to argue that illness had natural causes, not just supernatural ones.'] },
+    { title: 'Four humours', icon: 'medicine',
+      lines: ['He suggested the body held four fluids — blood, phlegm, yellow bile and black bile.', 'Illness meant these were out of balance.'] },
+    { title: 'Why he mattered', icon: 'legacy',
+      lines: ['His idea of natural causes shaped Western medicine for the next 2,000 years.'] },
+  ],
 }
