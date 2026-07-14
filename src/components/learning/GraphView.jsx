@@ -8,10 +8,27 @@ import CardContainer from '../core/CardContainer.jsx'
 // ─── SVG plot geometry (shared by all graph types) ──────────────────────────
 const W = 320
 const H = 220
-const M = { top: 18, right: 14, bottom: 44, left: 46 }
+const M = { top: 18, right: 14, bottom: 48, left: 50 }
 const PLOT_W = W - M.left - M.right
 const PLOT_H = H - M.top - M.bottom
 const TARGET_TICK_INTERVALS = 5
+
+// SVG text needs chart-specific sizing because normal body tokens are too large
+// inside a responsive viewBox. Keep these roles centralised rather than tuning
+// individual labels independently.
+const SVG_TEXT = {
+  tick: {
+    fill: 'rgba(255,255,255,0.62)',
+    fontFamily: "'Sora', sans-serif",
+    fontSize: 12,
+  },
+  axisLabel: {
+    fill: 'rgba(255,255,255,0.78)',
+    fontFamily: "'Sora', sans-serif",
+    fontWeight: 600,
+    fontSize: 13,
+  },
+}
 
 let stylesInjected = false
 function ensureStyles() {
@@ -95,14 +112,26 @@ function AxisFrame({ xTicks, yTicks, toX, toY, xLabel, yLabel }) {
       {yTicks.map((t, i) => (
         <g key={`y-${i}`}>
           <line x1={M.left} x2={M.left + PLOT_W} y1={toY(t.value)} y2={toY(t.value)} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
-          <text x={M.left - 8} y={toY(t.value)} textAnchor="end" dominantBaseline="middle" fill="rgba(255,255,255,0.46)" fontFamily="'Sora', sans-serif" fontSize={10}>
+          <text
+            {...SVG_TEXT.tick}
+            x={M.left - 8}
+            y={toY(t.value)}
+            textAnchor="end"
+            dominantBaseline="middle"
+          >
             {t.label}
           </text>
         </g>
       ))}
 
       {xTicks.map((t, i) => (
-        <text key={`x-${i}`} x={toX(t.value)} y={M.top + PLOT_H + 18} textAnchor="middle" fill="rgba(255,255,255,0.46)" fontFamily="'Sora', sans-serif" fontSize={10}>
+        <text
+          {...SVG_TEXT.tick}
+          key={`x-${i}`}
+          x={toX(t.value)}
+          y={M.top + PLOT_H + 19}
+          textAnchor="middle"
+        >
           {t.label}
         </text>
       ))}
@@ -111,12 +140,23 @@ function AxisFrame({ xTicks, yTicks, toX, toY, xLabel, yLabel }) {
       <line x1={M.left} x2={M.left} y1={M.top} y2={M.top + PLOT_H} stroke="rgba(255,255,255,0.18)" strokeWidth={1} />
 
       {xLabel && (
-        <text x={M.left + PLOT_W / 2} y={H - 4} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontFamily="'Sora', sans-serif" fontWeight={600} fontSize={11}>
+        <text
+          {...SVG_TEXT.axisLabel}
+          x={M.left + PLOT_W / 2}
+          y={H - 3}
+          textAnchor="middle"
+        >
           {xLabel}
         </text>
       )}
       {yLabel && (
-        <text x={12} y={M.top + PLOT_H / 2} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontFamily="'Sora', sans-serif" fontWeight={600} fontSize={11} transform={`rotate(-90 12 ${M.top + PLOT_H / 2})`}>
+        <text
+          {...SVG_TEXT.axisLabel}
+          x={13}
+          y={M.top + PLOT_H / 2}
+          textAnchor="middle"
+          transform={`rotate(-90 13 ${M.top + PLOT_H / 2})`}
+        >
           {yLabel}
         </text>
       )}
@@ -168,7 +208,7 @@ function LineChart({ points, accent, xLabel, yLabel, xMin, xMax, yMin, yMax }) {
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
       <AxisFrame xTicks={xScale.ticks} yTicks={yScale.ticks} toX={toX} toY={toY} xLabel={xLabel} yLabel={yLabel} />
       <path d={pathD} fill="none" stroke={accent} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
-      {points.map((p, i) => <circle key={i} cx={toX(p.x)} cy={toY(p.y)} r={3} fill={accent} />)}
+      {points.map((p, i) => <circle key={i} cx={toX(p.x)} cy={toY(p.y)} r={3.5} fill={accent} />)}
     </svg>
   )
 }
@@ -197,7 +237,7 @@ function ScatterChart({ points, accent, lineOfBestFit, xLabel, yLabel, xMin, xMa
           stroke={accent} strokeWidth={1.5} strokeDasharray="5 4" opacity={0.7}
         />
       )}
-      {points.map((p, i) => <circle key={i} cx={toX(p.x)} cy={toY(p.y)} r={3.5} fill="none" stroke={accent} strokeWidth={2} />)}
+      {points.map((p, i) => <circle key={i} cx={toX(p.x)} cy={toY(p.y)} r={4} fill="none" stroke={accent} strokeWidth={2} />)}
     </svg>
   )
 }
@@ -284,7 +324,7 @@ export default function GraphView({ block, subject = 'Maths' }) {
   } = block
 
   return (
-    <CardContainer variant="contained" subject={subject} padding={20}>
+    <CardContainer variant="contained" subject={subject} padding={SPACING.standard}>
       <div style={{ animation: `gv-fade-up ${MOTION.duration.slow} ${MOTION.easing.standard} both` }}>
         {title && (
           <h3 style={{
