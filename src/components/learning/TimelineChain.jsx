@@ -9,6 +9,7 @@ import ContinueCTA from '../core/ContinueCTA.jsx'
 // the scroll-snap alignment.
 import CinematicShell from '../layout/CinematicShell.jsx'
 import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
+import TimelineChainIcon from './TimelineChainIcons.jsx'
 
 // ─── TimelineChain v1 ───────────────────────────────────────────────────────
 //
@@ -23,7 +24,7 @@ import { HEADING_LAYOUT, TYPE } from '../../constants/typography.js'
 //   title: 'How the Black Death spread',
 //   intro?: 'Tap each step to see why it mattered.',
 //   steps: [
-//     { id, icon?: '🚢', label: 'Ships carried rats', detail: 'Trade ships from Asia carried black rats in their cargo holds...' },
+//     { id, icon?: 'microscope', image?, label: 'Pasteur proves germ theory', detail: '...' },
 //     ...
 //   ],
 // }
@@ -51,6 +52,31 @@ const EMBED_CARD_W = 200
 const EMBED_CARD_H = 270
 const EMBED_RAIL_H = 16
 const RAIL_OVERHANG = SPACING.compact / 2
+
+function DisclosureChevron({ open }) {
+  return (
+    <svg
+      aria-hidden="true"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      style={{
+        display: 'block',
+        transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+        transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+      }}
+    >
+      <path
+        d="m4 6 4 4 4-4"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
 
 export default function TimelineChain({ block, subject = 'History', onContinue }) {
   ensureStyles()
@@ -199,6 +225,8 @@ function ChainCard({
   const isLast = index === total - 1
   const isAvailable = isFirst || previousRevealed
   const railTransition = `transform ${MOTION.duration.slow} ${MOTION.easing.standard}`
+  const visualSize = revealed ? 44 : 56
+  const iconSize = revealed ? 22 : 28
 
   return (
     <div style={{
@@ -287,40 +315,57 @@ function ChainCard({
               <div style={{
                 position: 'absolute', top: SPACING.micro, left: SPACING.micro,
                 width: 30, height: 30, borderRadius: '50%',
-                border: `1px solid rgba(${rgb},0.32)`,
-                background: 'rgba(8,9,13,0.55)', backdropFilter: 'blur(6px)',
-                ...TYPE.label, color: accent,
+                border: `1px solid rgba(${rgb},0.24)`,
+                background: 'rgba(8,9,13,0.58)', backdropFilter: 'blur(6px)',
+                ...TYPE.metadata, color: `rgba(${rgb},0.88)`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 {index + 1}
               </div>
             </div>
           )}
+
           {!step.image && (
-            <div style={{
-              width: 36, height: 36, borderRadius: '50%',
-              border: `1px solid rgba(${rgb},0.32)`,
-              background: `rgba(${rgb},0.10)`,
-              ...TYPE.label, color: accent,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              marginBottom: SPACING.standard, flexShrink: 0,
-            }}>
-              {index + 1}
-            </div>
+            <>
+              <div style={{
+                width: 30,
+                height: 30,
+                borderRadius: '50%',
+                border: `1px solid rgba(${rgb},0.24)`,
+                background: `rgba(${rgb},0.06)`,
+                ...TYPE.metadata,
+                color: `rgba(${rgb},0.88)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: SPACING.compact,
+                flexShrink: 0,
+              }}>
+                {index + 1}
+              </div>
+
+              <div style={{
+                width: visualSize,
+                height: visualSize,
+                borderRadius: RADII.medium,
+                border: `1px solid rgba(${rgb},0.16)`,
+                background: `rgba(${rgb},0.07)`,
+                color: `rgba(${rgb},0.92)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: revealed ? SPACING.compact : SPACING.standard,
+                flexShrink: 0,
+                transition: `width ${MOTION.duration.standard} ${MOTION.easing.standard}, height ${MOTION.duration.standard} ${MOTION.easing.standard}, margin-bottom ${MOTION.duration.standard} ${MOTION.easing.standard}`,
+              }}>
+                <TimelineChainIcon icon={step.icon} size={iconSize} />
+              </div>
+            </>
           )}
-          {step.icon && !step.image && (
-            <div style={{
-              fontSize: revealed ? 32 : 40,
-              lineHeight: 1,
-              marginBottom: revealed ? SPACING.micro : SPACING.compact,
-              transition: `font-size ${MOTION.duration.standard} ${MOTION.easing.standard}, margin-bottom ${MOTION.duration.standard} ${MOTION.easing.standard}`,
-            }}>
-              {step.icon}
-            </div>
-          )}
+
           <div style={{
             ...TYPE.displayCard,
-            color: 'rgba(255,255,255,0.94)',
+            color: 'rgba(245,245,245,0.94)',
             flex: revealed ? '0 0 auto' : 1,
             transition: `flex ${MOTION.duration.standard} ${MOTION.easing.standard}`,
           }}>
@@ -339,10 +384,14 @@ function ChainCard({
                 transform: revealed ? 'translateY(0)' : 'translateY(8px)',
                 transition: `transform ${MOTION.duration.standard} ${MOTION.easing.standard}`,
               }}>
-                <div style={{ ...TYPE.eyebrow, textTransform: 'uppercase', color: accent, marginBottom: SPACING.micro }}>
+                <div style={{
+                  ...TYPE.label,
+                  color: accent,
+                  marginBottom: SPACING.micro,
+                }}>
                   Why it mattered
                 </div>
-                <div style={{ ...TYPE.bodyStrong, color: 'rgba(255,255,255,0.82)' }}>
+                <div style={{ ...TYPE.body, color: 'rgba(245,245,245,0.78)' }}>
                   {step.detail}
                 </div>
               </div>
@@ -350,12 +399,15 @@ function ChainCard({
           </div>
 
           <div style={{
-            ...TYPE.eyebrow,
-            textTransform: 'uppercase',
-            color: `rgba(${rgb},0.55)`,
+            ...TYPE.label,
+            color: `rgba(${rgb},0.68)`,
             marginTop: SPACING.standard,
+            display: 'flex',
+            alignItems: 'center',
+            gap: SPACING.micro,
           }}>
-            {revealed ? 'Tap to close ↻' : 'Tap to reveal ↻'}
+            <span>{revealed ? 'Hide explanation' : 'Reveal why it mattered'}</span>
+            <DisclosureChevron open={revealed} />
           </div>
         </div>
       </div>
