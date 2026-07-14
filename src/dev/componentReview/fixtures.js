@@ -1,145 +1,4 @@
-// ─── Component Review Lab — fixtures ─────────────────────────────────────────
-//
-// DEVELOPMENT-ONLY. Realistic GCSE fixture data for the Component Review Lab
-// (src/dev/componentReview/ComponentReviewLab.jsx). Kept completely separate
-// from production learning components and content files — nothing here is
-// imported by the learner app, and this whole directory is tree-shaken out of
-// production builds (see src/App.jsx dev-only gate).
-//
-// Each fixture follows the documented block/screen shape of its component so
-// the component renders through its real API with no API changes.
-
-// ── Group 1: GalensDiagnostic ────────────────────────────────────────────────
-// Shape: { symptomsLabel, symptoms:[{id,label,qualities:{hot,cold,wet,dry}}],
-//          qualityMeta:{q:{label,icon}}, treatments:{'temp-moist':{items:[{title,detail}]}},
-//          theoryPrinciple, explanation, examTip }
-// Fixture: red face, fever, dry skin, intense thirst → hot + dry → cold + wet.
-export const galensDiagnostic = {
-  symptomsLabel: "Choose the patient's symptoms",
-  symptoms: [
-    { id: 'red-face',   label: 'Red face',       qualities: { hot: 2, cold: 0, wet: 0, dry: 0 } },
-    { id: 'fever',      label: 'Fever',          qualities: { hot: 2, cold: 0, wet: 0, dry: 0 } },
-    { id: 'dry-skin',   label: 'Dry skin',       qualities: { hot: 0, cold: 0, wet: 0, dry: 2 } },
-    { id: 'thirst',     label: 'Intense thirst', qualities: { hot: 1, cold: 0, wet: 0, dry: 2 } },
-    { id: 'sweating',   label: 'Sweating',       qualities: { hot: 1, cold: 0, wet: 2, dry: 0 } },
-    { id: 'chills',     label: 'Chills',         qualities: { hot: 0, cold: 2, wet: 0, dry: 0 } },
-  ],
-  qualityMeta: {
-    hot:  { label: 'Hot',  icon: '☀' },
-    cold: { label: 'Cold', icon: '❄' },
-    wet:  { label: 'Wet',  icon: '〜' },
-    dry:  { label: 'Dry',  icon: '✦' },
-  },
-  treatments: {
-    'hot-dry': {
-      items: [
-        { title: 'Cool, moist foods', detail: 'Cucumber, melon and lettuce were thought to add cold and wet qualities.' },
-        { title: 'Cold baths',        detail: 'Cooling the body was believed to draw out the excess heat.' },
-        { title: 'Rest and fluids',   detail: 'Water and light broths restored the moisture the fever had burned away.' },
-      ],
-    },
-    'hot-wet':  { items: [{ title: 'Cooling, drying foods', detail: 'Dry breads and bitter herbs to counter heat and moisture.' }] },
-    'cold-wet': { items: [{ title: 'Warming, drying foods', detail: 'Spiced wine and dry grains to add heat and dryness.' }] },
-    'cold-dry': { items: [{ title: 'Warming, moist foods',  detail: 'Warm broths and stewed fruit to add heat and moisture.' }] },
-  },
-  theoryPrinciple: 'Restore balance — treat with the opposite quality.',
-  explanation: 'A red, feverish, dry, thirsty patient is dominated by HOT and DRY. Galen would prescribe the opposites: COLD and WET, to pull the body back into balance.',
-  examTip: 'Examiners reward you for explaining the logic — that treatment aimed to restore the balance of the four humours, even though it did not treat the real cause.',
-}
-
-// ── Group 1: TheoryLab ───────────────────────────────────────────────────────
-// Shape: { title, theory:{heading,tagline,grid,explanation}, scenario:{title,image,
-//          symptoms,question,options:[{label,correct}]}, outcome:{diagnosis,lines},
-//          prescription:{question,options,reveal}, evaluation:{...} }
-// Fixture: 19th-century cholera town by a foul river → miasma theory applied.
-export const theoryLab = {
-  title: 'Think like a Victorian sanitarian',
-  theory: {
-    heading: 'Miasma theory',
-    tagline: 'Bad air causes disease.',
-    explanation: 'Before germ theory, most doctors believed disease spread through miasma — poisonous, foul-smelling air rising from rotting waste, sewage and stagnant water.',
-    grid: [
-      { left: 'FOUL SMELL', right: 'DISEASE' },
-      { left: 'CLEAN AIR',  right: 'HEALTH' },
-    ],
-  },
-  scenario: {
-    title: 'A town falls ill',
-    symptoms: ['CHOLERA CASES', 'FOUL-SMELLING RIVER', 'OVERCROWDED SLUMS'],
-    question: 'What would a miasma theorist blame?',
-    options: [
-      { label: 'The bad air rising from the river', correct: true },
-      { label: 'Contaminated drinking water',       correct: false },
-      { label: 'A bacterium in the gut',            correct: false },
-    ],
-  },
-  outcome: {
-    diagnosis: 'BAD AIR FROM THE RIVER',
-    lines: ['The stench proves the air is poisoned.', 'Breathing it spreads the disease.'],
-  },
-  prescription: {
-    question: 'What action follows from miasma theory?',
-    options: [
-      { label: 'Clear the waste and mask the smell', correct: true },
-      { label: 'Boil all drinking water',            correct: false },
-      { label: 'Isolate infected patients',          correct: false },
-    ],
-    reveal: 'Removing the smell was the logical action — clean the streets, remove refuse, improve drainage.',
-  },
-  evaluation: {
-    transformation: { from: 'FOUL AIR', to: 'CLEAN AIR', result: 'FEWER CASES?' },
-    worked: ['Cleaner streets', 'Better drainage', 'Less waste'],
-    limitation: 'The real cause was cholera bacteria in the water, not the air. Cleaning drains sometimes helped by accident — it removed the contaminated water too.',
-    verdict: 'Miasma theory led to real public-health improvements for the wrong reason. It took John Snow and, later, germ theory to explain what was really happening.',
-    significance: 'This is why sanitary reform began before anyone understood germs — the belief was wrong, but the action of cleaning the environment often reduced disease anyway.',
-  },
-}
-
-// ── Group 1: SymptomQualityDiagnostic ────────────────────────────────────────
-// Shape: { qualities:[{quality,symptoms}], patient:{title,symptoms}, quadrantQuestion,
-//          quadrantOptions, diagnosis, treatmentQuestion, treatmentOptions, oppositeRecall, closing }
-// Fixture: fever + dry skin → hot + dry → cold + wet treatment.
-export const symptomQualityDiagnostic = {
-  qualities: [
-    { quality: 'hot',  symptoms: ['Fever', 'Red face', 'Flushed skin'] },
-    { quality: 'cold', symptoms: ['Pale skin', 'Chills', 'Shivering'] },
-    { quality: 'wet',  symptoms: ['Sweating', 'Runny nose', 'Watery eyes'] },
-    { quality: 'dry',  symptoms: ['Dry skin', 'Cracked lips', 'Thirst'] },
-  ],
-  patient: { title: 'A patient arrives', symptoms: ['Fever', 'Dry skin'] },
-  quadrantQuestion: 'Which qualities dominate?',
-  quadrantOptions: [
-    { label: 'Hot + dry',  correct: true },
-    { label: 'Hot + wet',  correct: false },
-    { label: 'Cold + dry', correct: false },
-    { label: 'Cold + wet', correct: false },
-  ],
-  diagnosis: { label: 'Hot + dry' },
-  treatmentQuestion: 'What would Galen prescribe to cool and moisten this patient?',
-  treatmentOptions: [
-    { label: 'Cucumber and cool water', correct: true,
-      explanation: 'Cold and wet qualities pull the body back towards balance against the hot, dry excess.' },
-    { label: 'Hot soup and dry bread', correct: false,
-      explanation: 'Hot and dry — the same qualities causing the illness, not the opposite.' },
-    { label: 'Warm spiced wine', correct: false,
-      explanation: 'Adds heat, when the patient needs cooling.' },
-    { label: 'Dry toast and honey', correct: false,
-      explanation: 'Still dry, when the patient needs moisture.' },
-  ],
-  oppositeRecall: { from: 'Hot + dry', to: 'Cold + wet', result: 'Balance' },
-  closing: {
-    worked: ['Rest', 'Cool fluids', 'Cooling foods'],
-    limitation: 'Disease is not actually caused by an imbalance of the four humours.',
-    verdict: 'Patients who rested and drank cool fluids often recovered anyway, which looked like proof the theory worked.',
-    church: {
-      heading: 'Supported by the Church',
-      body: "Christians believed God created a perfectly balanced body, which matched Galen's ideas, so the Church preserved his work.",
-    },
-    significance: 'That is why the Theory of Opposites survived for over 1,400 years — it seemed to keep working, patient after patient.',
-  },
-}
-
-// ── Group 1: CinematicCarousel ───────────────────────────────────────────────
+/// ── Group 1: CinematicCarousel ───────────────────────────────────────────────
 // Shape: { title, intro, items:[{id,image,alt,name,facts?/fact?}] }
 // Fixture: four cell organelles (Biology). Images use existing figures where
 // available; MediaPlaceholder-style governed fallbacks handled inside component.
@@ -206,45 +65,6 @@ export const timelineChain = {
       detail: 'Rather than kill germs during surgery, surgeons now kept them out entirely: sterilised instruments, gowns and gloves. Prevention replaced treatment.' },
   ],
 }
-
-// ── Group 1: DragToOrderTask (Biology) ───────────────────────────────────────
-// Shape: props { items:[{id,label,description?}], subject, onComplete }
-// The correct order is the array order. Fixture: infectious-disease response.
-export const dragToOrderTask = [
-  { id: 'enter',    label: 'Pathogen enters the body',            description: 'A bacterium or virus gets past the skin or lining.' },
-  { id: 'recognise',label: 'White blood cells recognise it',      description: 'Lymphocytes detect the pathogen’s antigens as foreign.' },
-  { id: 'produce',  label: 'Antibodies are produced',             description: 'Lymphocytes make antibodies specific to that antigen.' },
-  { id: 'bind',     label: 'Antibodies bind to the pathogen',     description: 'They clump pathogens together and mark them for destruction.' },
-  { id: 'memory',   label: 'Memory cells remain',                 description: 'Some cells stay behind for a faster response next time.' },
-]
-
-// ── Group 2: ConnectionMap (History) — reuses shipped Episode-1 shape ─────────
-export const connectionMap = {
-  type: 'connectionMap',
-  title: 'The web of medieval belief',
-  subtitle: 'How did medieval people explain illness?',
-  instruction: 'Tap each belief to explore how it shaped medieval medicine',
-  centreLabel: 'Why people got ill',
-  nodes: [
-    { id: 'supernatural', label: "God's punishment", shortLabel: "God's will",
-      explanation: "Many medieval people believed illness was God's punishment for sin, so prayer, confession and pilgrimage were logical treatments.",
-      retrievalQuestion: 'Why did medieval people think prayer could cure illness?',
-      retrievalAnswer: "If illness was God's punishment for sin, prayer addressed the spiritual cause." },
-    { id: 'astrology', label: 'Stars and planets', shortLabel: 'Astrology',
-      explanation: 'Astrologers believed celestial movements controlled health. Doctors consulted zodiac charts to time treatments.',
-      retrievalQuestion: 'How did astrology influence treatment?',
-      retrievalAnswer: 'Doctors used star charts to decide when to perform bloodletting.' },
-    { id: 'humours', label: 'Four humours', shortLabel: 'Humours',
-      explanation: "Galen's four humours dominated medieval medicine. Illness meant an imbalance, treated by bloodletting, purging or diet.",
-      retrievalQuestion: 'Name the four humours.',
-      retrievalAnswer: 'Blood, phlegm, yellow bile and black bile.' },
-    { id: 'miasma', label: 'Bad air (miasma)', shortLabel: 'Bad air',
-      explanation: 'Miasma theory held that foul-smelling air caused disease, so people burned herbs and aromatics to purify the air.',
-      retrievalQuestion: 'What did people do to protect against miasma?',
-      retrievalAnswer: 'They carried posies and burned aromatics to sweeten the air.' },
-  ],
-}
-
 // ── Group 2: OppositeQualitiesReveal (History) — reuses story shape ──────────
 export const oppositeQualitiesReveal = {
   type: 'oppositeQualitiesReveal',
@@ -259,19 +79,6 @@ export const oppositeQualitiesReveal = {
   ],
   closingCaption: 'Doctors judged whether an illness seemed hot or cold, then treated with the opposite.',
 }
-
-// ── Group 2: SymptomProgression (History) — reuses shipped Episode-2 shape ────
-export const symptomProgression = {
-  title: 'How the plague killed',
-  description: 'Follow bubonic plague through the body, from first contact to death.',
-  stages: [
-    { day: '1–2', label: 'Infection',     description: 'A flea carrying Yersinia pestis bites the skin. The bacteria enter the lymphatic system. The person feels nothing yet.' },
-    { day: '3–5', label: 'Buboes form',   description: 'Painful swellings (buboes) appear in the groin, armpits and neck as lymph nodes fill with bacteria.' },
-    { day: '5–6', label: 'Fever and pain',description: 'High fever, vomiting and severe pain set in as the infection spreads through the body.' },
-    { day: '6–7', label: 'Death',         description: 'Without antibiotics, most victims died within a week as organs failed.' },
-  ],
-}
-
 // ── Group 2: TimelineCanvas (History) — reuses shipped Episode-2 shape ────────
 export const timelineCanvas = {
   title: 'How the Black Death spread',
@@ -436,5 +243,128 @@ export const misconceptionCheck = {
     { statement: 'The Black Death changed medicine because people finally discovered what caused disease.',
       answer: false,
       reveal: 'The Black Death changed society, but not medical understanding. People kept using the same explanations — God, miasma, astrology and humours. No better theory replaced them for centuries.' },
+  ],
+}
+
+// ─── Phase-5 additions: kept registered components (refine-in-one-place) ─────
+
+// FactorWeb (History) — the ConnectionMap survivor. Mirrors the migrated
+// Episode-1 "web of medieval belief" screen.
+export const factorWeb = {
+  type: 'factorWeb',
+  title: 'The web of medieval belief',
+  instruction: 'Explore each belief. Then decide which shaped medicine most.',
+  mode: 'causes',
+  centreLabel: 'Why people got ill',
+  judgementTitle: 'Which belief shaped medicine most?',
+  factors: [
+    { id: 'supernatural', title: "God's punishment", subtitle: 'Divine retribution',
+      whatItMeans: 'Most people believed sin angered God, who sent illness as punishment.',
+      whyItMattered: 'It made prayer and pilgrimage — not medicine — the logical response.',
+      linkedFactor: "The Church's authority made this the dominant explanation." },
+    { id: 'astrology', title: 'Stars and planets', subtitle: 'Astrology',
+      whatItMeans: 'Physicians believed the planets controlled bodily health.',
+      whyItMattered: 'Doctors consulted zodiac charts before bloodletting or prescribing.',
+      linkedFactor: 'Astrology decided when to rebalance the humours.' },
+    { id: 'humours', title: 'Four humours', subtitle: "Galen's theory",
+      whatItMeans: 'Illness meant the four humours were out of balance.',
+      whyItMattered: 'Treatment aimed to restore balance through bloodletting and diet.',
+      linkedFactor: "This was Galen's theory, protected by his authority." },
+    { id: 'miasma', title: 'Bad air (miasma)', subtitle: 'Foul smells',
+      whatItMeans: 'Foul-smelling air was thought to cause disease.',
+      whyItMattered: 'It accidentally helped: clearing rubbish reduced real disease.',
+      linkedFactor: 'Like the humours, it was a natural explanation.' },
+    { id: 'galen', title: "Galen's authority", subtitle: 'Frozen knowledge',
+      whatItMeans: 'The Church endorsed Galen as truth; schools taught only his texts.',
+      whyItMattered: 'Challenging Galen risked punishment, freezing ideas for 1,000 years.',
+      linkedFactor: 'His authority protected the four humours from question.' },
+    { id: 'experience', title: 'Practical experience', subtitle: 'Folk cures',
+      whatItMeans: 'Wise women used centuries of herbal knowledge alongside the theories.',
+      whyItMattered: 'Some remedies genuinely worked — willow bark contains salicin.',
+      linkedFactor: 'It worked through chemistry, not the physicians’ theories.' },
+  ],
+}
+
+// ConceptReveal (History) — tap-through atmospheric concept steps.
+export const conceptReveal = {
+  steps: [
+    { mainText: 'The Renaissance was a “rebirth” of learning.',
+      supportText: 'Old books were still respected. But people now wanted to test them, not just trust them.',
+      backgroundImage: '/headers/history-medicine-through-time.webp' },
+    { mainText: 'Humanism told people to use reason and study the world for themselves.',
+      supportText: 'This made careful observation matter more. Blind trust in old books felt less safe.',
+      backgroundImage: '/headers/history-medicine-through-time.webp' },
+    { mainText: 'Universities now held dissection in public anatomy theatres.',
+      supportText: 'Doctors and students could watch a real body and check old claims against what they saw.',
+      backgroundImage: '/headers/history-medicine-through-time.webp' },
+  ],
+}
+
+// ExplainReveal (History) — step-by-step reasoning chain.
+export const explainReveal = {
+  type: 'explainReveal',
+  title: 'Why medieval treatments failed',
+  intro: 'Build the chain of reasoning step by step.',
+  steps: [
+    { id: 'belief', statement: 'People believed disease spread through', emphasis: 'bad air.', detail: 'This was called miasma theory.', icon: '⚕' },
+    { id: 'action', statement: 'So they tried to', emphasis: 'sweeten the air,', detail: 'burning herbs and carrying posies.' },
+    { id: 'cause', statement: 'But the real cause was', emphasis: 'microbes,', detail: 'which no one could see or understand yet.' },
+    { id: 'result', statement: 'So the treatments', emphasis: 'could not work,', detail: 'because they never addressed the real cause.' },
+  ],
+  reflectionPrompt: 'Can you explain why these treatments failed?',
+}
+
+// ColSortBlock (History) — sort items into labelled columns.
+export const colSort = {
+  type: 'colsort',
+  columns: [
+    { label: 'Changed', color: '#D4950A', bg: 'rgba(212,149,10,.07)' },
+    { label: 'Continued', color: '#A89070', bg: 'rgba(168,144,112,.07)' },
+  ],
+  items: [
+    { label: 'Human anatomy became more accurate', col: 0, explanation: 'Vesalius corrected Galen using real human bodies.' },
+    { label: 'Observation could challenge ancient books', col: 0, explanation: 'Doctors could now trust what they saw.' },
+    { label: 'Printed diagrams spread new evidence', col: 0, explanation: 'Printing carried accurate drawings across Europe.' },
+    { label: 'The four humours still guided treatment', col: 1, explanation: 'Doctors still explained illness as imbalance.' },
+    { label: 'Bloodletting and purging continued', col: 1, explanation: 'Everyday treatment barely changed.' },
+  ],
+}
+
+// VisualNarrativeScreen (History) — beat-based narrative.
+export const visualNarrative = {
+  beats: [
+    { image: '/headers/history-medicine-through-time.webp', headline: 'The body', body: 'Human dissection gave Vesalius direct evidence about the human body.' },
+    { image: '/headers/history-medicine-through-time.webp', headline: 'The book', body: 'His printed drawings let doctors across Europe check the evidence for themselves.' },
+    { image: '/headers/history-medicine-through-time.webp', headline: 'The challenge', body: 'For the first time, careful observation could openly correct Galen.' },
+  ],
+}
+
+// QuoteAnalyser (English) — tap-through analysis of a literary quote.
+export const quoteAnalyser = {
+  type: 'quoteAnalyser',
+  quote: '"Stars, hide your fires; let not light see my black and deep desires."',
+  location: 'Act I, Scene IV — Macbeth',
+  items: [
+    { id: 'word-focus', icon: 'search', heading: 'Word focus', explainer: 'Dissect key words',
+      content: { title: 'Key words unpacked', body: 'The imperatives "hide" and "let not" show Macbeth commanding even the stars. "Black and deep desires" admits guilt before the act.', keyWords: ['hide', 'fires', 'black', 'desires'] } },
+    { id: 'connotations', icon: 'feather', heading: 'Connotations', explainer: 'Implied meanings',
+      content: { title: 'Connotations', body: '"Stars" and "fires" connote fate, light and divine order — ordering them to hide signals a violation of natural law.' } },
+    { id: 'methods', icon: 'mask', heading: 'Methods', explainer: 'Literary devices',
+      content: { title: 'Methods', body: 'Dark imagery and the apostrophe to the stars externalise Macbeth’s inner conflict.' } },
+  ],
+}
+
+// KeyFigureReveal (History) — scrollable portrait hero + knowledge sections.
+export const keyFigureReveal = {
+  portrait: '/figures/history/medicine/medieval/hippocrates-portrait.webp',
+  name: 'Hippocrates',
+  role: 'Ancient Greek doctor',
+  sections: [
+    { title: 'Who was he?', icon: 'ancient-figure',
+      lines: ['One of the first doctors to argue that illness had natural causes, not just supernatural ones.'] },
+    { title: 'Four humours', icon: 'medicine',
+      lines: ['He suggested the body held four fluids — blood, phlegm, yellow bile and black bile.', 'Illness meant these were out of balance.'] },
+    { title: 'Why he mattered', icon: 'legacy',
+      lines: ['His idea of natural causes shaped Western medicine for the next 2,000 years.'] },
   ],
 }

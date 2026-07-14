@@ -28,6 +28,15 @@ import GuidedChoiceCarousel from '../../components/learning/GuidedChoiceCarousel
 import TheoryCompareBlock from '../../components/learning/TheoryCompareBlock.jsx'
 import MisconceptionCheck from '../../components/learning/MisconceptionCheck.jsx'
 
+// Registered library — self-contained kept components, here to refine in one place.
+import FactorWeb from '../../components/learning/FactorWeb.jsx'
+import ConceptReveal from '../../components/learning/ConceptReveal.jsx'
+import ExplainReveal from '../../components/learning/ExplainReveal.jsx'
+import ColSortBlock from '../../components/learning/ColSortBlock.jsx'
+import VisualNarrativeScreen from '../../components/learning/VisualNarrativeScreen.jsx'
+import QuoteAnalyser from '../../components/learning/QuoteAnalyser.jsx'
+import KeyFigureReveal from '../../components/learning/KeyFigureReveal.jsx'
+
 // The seven review questions are identical for every component (per brief), so
 // they live once here rather than being duplicated per entry.
 export const REVIEW_QUESTIONS = [
@@ -51,6 +60,7 @@ export const GROUP_LABELS = {
   group1:     'Group 1 — unused / orphaned',
   group2:     'Group 2 — one-off',
   comparison: 'Active comparison components',
+  library:    'Registered library — refine here',
 }
 
 // Full-bleed components render fixed:inset-0 and manage their own scroll; the
@@ -88,10 +98,10 @@ export const REVIEW_ENTRIES = [
   },
   {
     id: 'timeline-chain', name: 'TimelineChain', group: 'group1',
-    status: 'routed-unused', subject: 'History', renderMode: 'fullbleed',
+    status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Horizontal scroll-snap chain of flip cards revealing a chapter’s causal sequence step by step.',
-    usage: 'Routed in ModulePlayer (type: timelineChain) but no content file uses it. (TimelineCanvas, its sibling, is used in Episode 2.)',
-    alternative: 'TimelineCanvas (swipe-to-pan sibling); EvacuationChainRoute (ordered route).',
+    usage: 'Now used in Episode 2 (both plague-progression + aftermath screens, migrated from progressionTimeline).',
+    alternative: 'TimelineCanvas (swipe-to-pan sibling); OrderedRouteTask (ordered route).',
     render: (fx, { onDone }) => <TimelineChain block={fx} subject="History" onContinue={onDone} />,
     fixture: FIX.timelineChain,
   },
@@ -228,5 +238,70 @@ export const REVIEW_ENTRIES = [
     alternative: 'SpotTheError; FaceTheExaminer.',
     render: (fx, { onDone }) => <MisconceptionCheck block={fx} subject="History" onContinue={onDone} />,
     fixture: FIX.misconceptionCheck,
+  },
+
+  // ── Registered library — self-contained kept components, refine here ──────
+  {
+    id: 'factor-web', name: 'FactorWeb', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Radial causes/factors web: explore each factor, then make a relative-importance judgement.',
+    usage: 'Used in Episode 3 (Vesalius) and now Episode 1 (migrated from ConnectionMap).',
+    alternative: 'MatchingTask (unordered pairing).',
+    render: (fx, { onDone }) => <FactorWeb block={fx} subject="History" onContinue={onDone} />,
+    fixture: FIX.factorWeb,
+  },
+  {
+    id: 'concept-reveal', name: 'ConceptReveal', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Tap-through atmospheric concept steps (main line + support line over background imagery).',
+    usage: 'Used across History episodes for chapter-opening concept framing.',
+    alternative: 'VisualLearning; CinematicRevealMoment.',
+    render: (fx, { onDone }) => <ConceptReveal subject="History" steps={fx.steps} onContinue={onDone} />,
+    fixture: FIX.conceptReveal,
+  },
+  {
+    id: 'explain-reveal', name: 'ExplainReveal', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Progressive cause-and-effect reasoning chain, revealed one step at a time.',
+    usage: 'Used for building an explanation step by step.',
+    alternative: 'TimelineChain (causal chain); VisualNarrativeScreen.',
+    render: (fx, { onDone }) => <ExplainReveal block={fx} subject="History" onComplete={onDone} />,
+    fixture: FIX.explainReveal,
+  },
+  {
+    id: 'col-sort-block', name: 'ColSortBlock', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'inline',
+    function: 'Sort items into labelled columns (change/continuity, classify) with per-item feedback.',
+    usage: 'Used in History episodes for change/continuity sorting.',
+    alternative: 'SwipeSort; MatchingTask.',
+    render: (fx) => <ColSortBlock block={fx} subject="History" />,
+    fixture: FIX.colSort,
+  },
+  {
+    id: 'visual-narrative', name: 'VisualNarrativeScreen', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Beat-based narrative screen (portrait/timeline/fact/conclusion beats).',
+    usage: 'Used in Episode 3 (Vesalius) and elsewhere, type: visualNarrative.',
+    alternative: 'VisualLearning; ConceptReveal.',
+    render: (fx, { onDone }) => <VisualNarrativeScreen subject="History" beats={fx.beats} onContinue={onDone} />,
+    fixture: FIX.visualNarrative,
+  },
+  {
+    id: 'quote-analyser', name: 'QuoteAnalyser', group: 'library',
+    status: 'comparison', subject: 'English', renderMode: 'fullbleed',
+    function: 'Full-screen quote dissection: tap through five analysis lenses on one literary quote.',
+    usage: 'English literature quote analysis, type: quoteAnalyser.',
+    alternative: 'None — English-specific close reading.',
+    render: (fx, { onDone }) => <QuoteAnalyser block={fx} subject="English" onContinue={onDone} />,
+    fixture: FIX.quoteAnalyser,
+  },
+  {
+    id: 'key-figure-reveal', name: 'KeyFigureReveal', group: 'library',
+    status: 'comparison', subject: 'History', renderMode: 'fullbleed',
+    function: 'Scrollable portrait-hero screen introducing a key person, with up to four knowledge sections.',
+    usage: 'Used across History episodes to introduce figures, type: keyFigureReveal.',
+    alternative: 'MedievalDiagnosisScene (scene intro); ConceptReveal.',
+    render: (fx, { onDone }) => <KeyFigureReveal block={fx} subject="History" onComplete={onDone} />,
+    fixture: FIX.keyFigureReveal,
   },
 ]

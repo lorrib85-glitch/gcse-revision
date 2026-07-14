@@ -142,7 +142,7 @@ export default function ComponentReviewLab() {
 
 // ─── Index view ──────────────────────────────────────────────────────────────
 function IndexView({ filtered, filter, onFilter, onOpen }) {
-  const groups = ['group1', 'group2', 'comparison']
+  const groups = ['group1', 'group2', 'comparison', 'library']
   return (
     <div style={{ maxWidth: 420, margin: '0 auto', padding: '20px 16px 64px' }}>
       <header style={{ marginBottom: 18 }}>
