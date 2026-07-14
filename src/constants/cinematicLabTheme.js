@@ -1,13 +1,13 @@
 // ─── Cinematic Diagnostic-Lab Theme ──────────────────────────────────────────
 //
 // Shared values for the "cinematic diagnostic lab" genre of learning screen —
-// currently TheoryLab.jsx and SymptomQualityDiagnostic.jsx. These are dark,
-// subject-accented, multi-beat scenario/diagnosis/treatment components that
-// share a warm-cream text colour and near-black background distinct from
-// GENERAL (non-subject pages) and from any single subject's own palette.
+// currently CinematicRevealMoment.jsx and OppositeQualitiesReveal.jsx. These are
+// dark, subject-accented, multi-beat scenario/reveal components that share a
+// warm-cream text colour and near-black background distinct from GENERAL
+// (non-subject pages) and from any single subject's own palette.
 //
-// Do NOT add values here that are specific to one component (e.g. GalensDiagnostic's
-// astrolabe SVG gradients are bespoke illustration art, not shared UI tokens).
+// Do NOT add values here that are specific to one component (e.g. a bespoke
+// illustration's SVG gradients are art, not shared UI tokens).
 
 export const CINEMATIC_LAB = {
   // Near-black background for full-screen beats in this genre.

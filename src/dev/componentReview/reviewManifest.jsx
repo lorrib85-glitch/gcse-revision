@@ -10,14 +10,10 @@
 
 import * as FIX from './fixtures.js'
 
-import GalensDiagnostic from '../../components/learning/GalensDiagnostic.jsx'
-import TheoryLab from '../../components/learning/TheoryLab.jsx'
-import SymptomQualityDiagnostic from '../../components/learning/SymptomQualityDiagnostic.jsx'
 import CinematicCarousel from '../../components/learning/CinematicCarousel.jsx'
 import GraphView from '../../components/learning/GraphView.jsx'
 import TimelineChain from '../../components/learning/TimelineChain.jsx'
 import CircuitDiagram from '../../components/learning/CircuitDiagram.jsx'
-import DragToOrderTask from '../../components/learning/DragToOrderTask.jsx'
 
 import ConnectionMap from '../../components/learning/ConnectionMap.jsx'
 import OppositeQualitiesReveal from '../../components/learning/OppositeQualitiesReveal.jsx'
@@ -65,33 +61,6 @@ export const GROUP_LABELS = {
 
 export const REVIEW_ENTRIES = [
   // ── Group 1 — unused / orphaned ──────────────────────────────────────────
-  {
-    id: 'galens-diagnostic', name: 'GalensDiagnostic', group: 'group1',
-    status: 'routed-unused', subject: 'History', renderMode: 'fullbleed',
-    function: 'Reason through Galen’s four-humour theory to reach a period-appropriate diagnosis and opposite-quality treatment.',
-    usage: 'Routed in ModulePlayer (type: galensDiagnostic) but no content file uses it.',
-    alternative: 'SymptomQualityDiagnostic (newer opposite-quality reveal); TheoryLab.',
-    render: (fx, { onDone }) => <GalensDiagnostic block={fx} subject="History" onContinue={onDone} />,
-    fixture: FIX.galensDiagnostic,
-  },
-  {
-    id: 'theory-lab', name: 'TheoryLab', group: 'group1',
-    status: 'routed-unused', subject: 'History', renderMode: 'fullbleed',
-    function: 'Multi-part diagnostic linking a historical belief to its treatment logic and outcome (belief → cause → action → limitation).',
-    usage: 'Routed in ModulePlayer (type: theoryLab) but no content file uses it.',
-    alternative: 'GalensDiagnostic; MedicalTheoryPrescription; ordinary scenario questions.',
-    render: (fx, { onDone }) => <TheoryLab block={fx} subject="History" onContinue={onDone} />,
-    fixture: FIX.theoryLab,
-  },
-  {
-    id: 'symptom-quality-diagnostic', name: 'SymptomQualityDiagnostic', group: 'group1',
-    status: 'routed-unused', subject: 'History', renderMode: 'fullbleed',
-    function: 'Teaches Hot/Cold/Wet/Dry, walks one patient case, then asks for the dominant quadrant and opposite-quality treatment.',
-    usage: 'Routed in ModulePlayer (type: symptomQualityDiagnostic); has a story/gold fixture but no shipped content uses it.',
-    alternative: 'GalensDiagnostic (older); OppositeQualitiesReveal (reveal only).',
-    render: (fx, { onDone }) => <SymptomQualityDiagnostic block={fx} subject="History" onContinue={onDone} />,
-    fixture: FIX.symptomQualityDiagnostic,
-  },
   {
     id: 'cinematic-carousel', name: 'CinematicCarousel', group: 'group1',
     status: 'routed-unused', subject: 'Biology', renderMode: 'fullbleed',
@@ -148,15 +117,6 @@ export const REVIEW_ENTRIES = [
     ),
     fixture: null,
   },
-  {
-    id: 'drag-to-order-task', name: 'DragToOrderTask', group: 'group1',
-    status: 'unused', subject: 'Biology', renderMode: 'fullbleed',
-    function: 'Sequencing mechanic: reorder items into the correct sequence, then submit for feedback.',
-    usage: 'Not routed in ModulePlayer and not referenced by any content — fully unused. Judged here as a sequencing mechanic only.',
-    alternative: 'EvacuationChainRoute (tap-to-place ordered route); TimelineChain (causal sequence).',
-    render: (fx, { onDone }) => <DragToOrderTask items={fx} subject="Biology" onComplete={onDone} />,
-    fixture: FIX.dragToOrderTask,
-  },
 
   // ── Group 2 — one-off ────────────────────────────────────────────────────
   {
@@ -173,7 +133,7 @@ export const REVIEW_ENTRIES = [
     status: 'one-off', subject: 'History', renderMode: 'inline',
     function: 'Animated reveal sorting symptoms to a left/right opposite-quality pair (hot vs cold).',
     usage: 'Used once — Episode 1 (medieval beliefs), type: oppositeQualitiesReveal.',
-    alternative: 'SymptomQualityDiagnostic; SwipeSort; ColSortBlock.',
+    alternative: 'SwipeSort; ColSortBlock.',
     render: (fx) => <OppositeQualitiesReveal block={fx} subject="History" />,
     fixture: FIX.oppositeQualitiesReveal,
   },

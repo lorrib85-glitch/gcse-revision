@@ -119,7 +119,6 @@ Screen-level learning interaction components.
 - `ExplainReveal.jsx` — Progressive cause-and-effect reasoning chain, revealed step by step.
 - `FaceTheExaminer.jsx` — Examiner-style written question interaction with mark, criteria selection, annotation, and optional re-mark.
 - `FillInTheBlanksBlock.jsx` — Inline fill-in-the-blanks chapter block.
-- `GalensDiagnostic.jsx` — Humour-based diagnostic scenario that walks learners through Galen's theory of the four humours.
 - `GraphView.jsx` — Embeddable SVG chart block (bar, line, scatter, pie) for displaying GCSE Maths/Science data inline within a content screen.
 - `GuidedAnswerCoach.jsx` — Multi-stage exam-technique coach for written answers (question → examiner expectations → modelled thinking → annotated model answer → guided write → independent write → debrief); supports subject or general app branding.
 - `GuidedChoiceCarousel.jsx` — Scrollable single-choice carousel with atmospheric visual option cards (e.g. healer selection).
@@ -139,7 +138,6 @@ Screen-level learning interaction components.
 - `SwipeSort.jsx` — Swipe-gesture sorting activity; powers `naturalSupernaturalSwipe` screen type.
 - `SymptomProgression.jsx` — Case-file walkthrough of how an illness develops in the body, stage by stage (explain-the-chain mechanic).
 - `TheoryCompareBlock.jsx` — Side-by-side theory comparison block with staggered fade-in animation.
-- `TheoryLab.jsx` — Multi-part diagnostic scenario linking a historical belief to its treatment logic and outcome.
 - `TimelineCanvas.jsx` — Full-screen "swipe to pan" canvas: swipe horizontally to pan across a wide chain of cards with curved connectors that draw in as you pan; tap + to reveal why each step mattered. A deliberate one-off variation in rhythm from `TimelineChain`.
 - `TimelineChain.jsx` — Full-screen horizontal scroll-snap chain of flip cards connected by a connector rail, revealing a chapter's causal sequence step by step.
 - `VisualLearning.jsx` — Click-to-continue cinematic scene sequence with background images, animated headlines, and optional final reveal.

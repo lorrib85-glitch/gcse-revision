@@ -80,8 +80,6 @@ const PRE_CLASSIFICATION_CONTRACTS = [
   'media-placeholder.md',
   'quick-recall.md',
   'read-blocks.md',
-  'symptom-quality-diagnostic.md',
-  'theory-lab.md',
   'worked-example.md',
 ]
 

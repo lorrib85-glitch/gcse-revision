@@ -78,9 +78,9 @@ runtime; its per-screen findings are in
   problem on that component (per `component-contracts/README.md`).
 - **Verified Storybook stories: 0 of 8** — **story debt** for all eight.
   (Stories exist for the pattern primitives `TeachScreenShell`, `KeyPoint`,
-  `WorkedExample`, `MediaPlaceholder` and for `SymptomQualityDiagnostic`,
-  `OrderedRouteTask`, `ConnectionMap`, `MedievalDiagnosisScene`,
-  `QuoteAnalyser` — none of the eight priority learning components.)
+  `WorkedExample`, `MediaPlaceholder` and for `OrderedRouteTask`,
+  `MedievalDiagnosisScene`, `QuoteAnalyser` — none of the eight priority
+  learning components.)
 - **Verified composed gold: 8 of 8 fully verified.** The two former `◑`
   entries were cleared by the 2026-07-12 gold audit: `quickRecall`'s
   question and wrong-answer feedback states, and `examinerExplains`' full
@@ -697,9 +697,9 @@ Ranked by expected appearance rate in future chapters; each entry is
 "No verified composed gold example yet" until seated per the procedure
 below.
 
-1. **Single-use specialists** — `symptomQualityDiagnostic`,
-   `centreImageReveal`, `connectionMap`, `timelineCanvas`,
-   `beforeAfterSlider`, `orderedRouteTask`, `quoteAnalyser`. Seat
+1. **Single-use specialists** — `centreImageReveal`, `connectionMap`,
+   `timelineCanvas`, `beforeAfterSlider`, `orderedRouteTask`,
+   `quoteAnalyser`. Seat
    opportunistically when their episodes are next reviewed; do not block
    production on them.
 2. **Remaining-state captures** — `visualNarrative` beats 3+,

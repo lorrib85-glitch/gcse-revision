@@ -41,9 +41,6 @@ import SpotTheError from '../learning/SpotTheError.jsx'
 import MisconceptionCheck from '../learning/MisconceptionCheck.jsx'
 import ExaminerExplainsScreen from '../learning/ExaminerExplainsScreen.jsx'
 import SwipeSort from '../learning/SwipeSort.jsx'
-import GalensDiagnostic from '../learning/GalensDiagnostic.jsx'
-import TheoryLab from '../learning/TheoryLab.jsx'
-import SymptomQualityDiagnostic from '../learning/SymptomQualityDiagnostic.jsx'
 import OppositeQualitiesReveal from '../learning/OppositeQualitiesReveal.jsx'
 import VisualLearning from '../learning/VisualLearning.jsx'
 import KeyFigureReveal from '../learning/KeyFigureReveal.jsx'
@@ -2163,34 +2160,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
     )
   }
 
-  if (cur?.type === 'galensDiagnostic') {
-    return (
-      <>
-        <LearningHeader {...H} visible={true} />
-        <GalensDiagnostic
-          block={cur}
-          subject={module.subject}
-          onContinue={() => isLast ? handleFinish() : go(1)}
-        />
-        {jumpSheetPortal}
-      </>
-    )
-  }
-
-  if (cur?.type === 'theoryLab') {
-    return (
-      <>
-        <LearningHeader {...H} visible={true} />
-        <TheoryLab
-          block={cur}
-          subject={module.subject}
-          onContinue={() => isLast ? handleFinish() : go(1)}
-        />
-        {jumpSheetPortal}
-      </>
-    )
-  }
-
   if (cur?.type === 'oppositeQualitiesReveal') {
     return (
       <>
@@ -2198,20 +2167,6 @@ export default function ModulePlayer({ module, onBack, onChapterComplete }) {
         <TeachScreenShell heading={cur.title} intro={cur.copy} subject={module.subject}>
           <OppositeQualitiesReveal block={cur} subject={module.subject} />
         </TeachScreenShell>
-        {jumpSheetPortal}
-      </>
-    )
-  }
-
-  if (cur?.type === 'symptomQualityDiagnostic') {
-    return (
-      <>
-        <LearningHeader {...H} visible={true} />
-        <SymptomQualityDiagnostic
-          block={cur}
-          subject={module.subject}
-          onContinue={() => isLast ? handleFinish() : go(1)}
-        />
         {jumpSheetPortal}
       </>
     )

@@ -308,32 +308,12 @@ Screen-level learning interaction components. Each is a distinct learning beat.
 
 ---
 
-### DragToOrderTask
-
-**File:** `src/components/learning/DragToOrderTask.jsx`
-**What it is:** Drag-to-reorder component for arranging items in sequence.
-**Best used for:** Chronological ordering tasks (e.g., timeline events, historical figures in order, process steps). Uses native HTML5 drag-and-drop. Logs answers to weakness tracker.
-**Props:** `items`, `subject`, `onComplete`, `backgroundImage`
-**Data shape:** `items: [{ id, label, description? }, ...]` (order in array = correct sequence)
-**Dependencies:** `SUBJECTS`, `MOTION`, `SPACING`, `unifiedWeaknessTracker`
-
----
-
 ### ExaminerExplainsScreen
 
 **File:** `src/components/learning/ExaminerExplainsScreen.jsx`
 **Purpose:** Full-screen explanatory screen with animated word-by-word text reveal and atmospheric background image. Used to deliver post-question insight in a cinematic way.
 **Props:** `screen`, `subject`, `onContinue`
 **Dependencies:** `SUBJECTS`, `MOTION`
-
----
-
-### GalensDiagnostic
-
-**File:** `src/components/learning/GalensDiagnostic.jsx`
-**Purpose:** Humour-based diagnostic scenario that walks learners through Galen's theory of the four humours with animated phases and decision points.
-**Props:** `block`, `subject`, `onContinue`
-**Dependencies:** `SUBJECTS`, `MOTION`, `SPACING`
 
 ---
 
@@ -500,7 +480,7 @@ Person-to-person comparison. Two named people with portraits kept as compact hea
   - the comparison itself explains why knowledge changed
 - **Do NOT use it (either mode) when:**
   - the learner needs to classify answers → use `colsort` / `matchingTask`
-  - the learner needs to make an assessed judgement → use `theoryLab` / an exam-technique component
+  - the learner needs to make an assessed judgement → use `factorWeb` / an exam-technique component
   - the content is a sequence rather than a comparison → use `timelineChain` / `orderedRouteTask`
   - one side is merely correct and the other a cartoonishly foolish distractor (people mode must keep both sides historically fair)
   - the comparison requires long paragraphs in both columns (columns take short parallel phrases; longer teaching goes in the full-width `explanation`)
@@ -513,16 +493,6 @@ Person-to-person comparison. Two named people with portraits kept as compact hea
 
 ---
 
-### TheoryLab
-
-**File:** `src/components/learning/TheoryLab.jsx`
-**Purpose:** Multi-part diagnostic scenario that links a historical belief to its treatment logic and real-world outcome. Guides learners through the internal reasoning of a theory.
-**Props:** `block`, `subject`, `onContinue`
-**Dependencies:** `SUBJECTS`, `MOTION`, `SPACING`
-
----
-
-
 ### OppositeQualitiesReveal
 
 **File:** `src/components/learning/OppositeQualitiesReveal.jsx`
@@ -531,15 +501,6 @@ Person-to-person comparison. Two named people with portraits kept as compact hea
 **Best used for:** Teaching contrast through visual grouping where the learner watches the relationship form, such as Hot/Cold and Wet/Dry quality symptoms in Medicine Episode 1.
 **Do not use for:** Assessed sorting, quiz choices, drag-and-drop, feedback states, or case diagnosis. Use the relevant interaction/diagnostic component instead.
 **Accessibility expectations:** Final DOM groups every item under its concept label; movement is decorative and not the only carrier of meaning; reduced motion renders the complete grouped state.
-
-### SymptomQualityDiagnostic
-
-**File:** `src/components/learning/SymptomQualityDiagnostic.jsx`
-**Purpose:** Ten-beat diagnostic set — teaches a quality-based theory (e.g. hot/cold/wet/dry) through example symptoms, then applies it to one named patient case: quadrant diagnosis, treatment multiple-choice question, opposite-quality recall, and a closing legacy beat. No images.
-**Props:** `block`, `subject`, `onContinue`
-**Dependencies:** `SUBJECTS`, `SPACING`, `RADII`, `MOTION`, `TYPE`, `BUTTONS`
-
----
 
 ### TimelineCanvas
 

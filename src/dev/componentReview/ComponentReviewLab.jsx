@@ -11,8 +11,8 @@
 //
 // Learner-state isolation: on mount it switches the storage active scope to an
 // isolated 'devreview' namespace, so any component that logs a weakness on
-// answer (DragToOrderTask, SpotTheError, MisconceptionCheck, EvacuationChainRoute,
-// MatchingTask) writes to devreview::… keys — never guest::/uid:… learner data,
+// answer (SpotTheError, MisconceptionCheck, OrderedRouteTask, MatchingTask)
+// writes to devreview::… keys — never guest::/uid:… learner data,
 // and never anything that syncs to the cloud. The previous scope is restored on
 // unmount.
 

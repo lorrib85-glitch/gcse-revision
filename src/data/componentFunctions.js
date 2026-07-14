@@ -80,10 +80,6 @@ export const SCREEN_TYPE_FUNCTIONS = {
   naturalSupernaturalSwipe: { functions: ['classify'], interaction: 'assessed' },
   matchingTask: { functions: ['classify'], interaction: 'assessed' },
   misconceptionCheck: { functions: ['retrieve', 'exam-technique'], interaction: 'assessed' },
-  theoryLab: { functions: ['apply'], interaction: 'assessed' },
-  // SymptomQualityDiagnostic: teaches Hot/Cold/Wet/Dry then asks the learner
-  // to diagnose a case and choose a treatment — same genre as theoryLab
-  symptomQualityDiagnostic: { functions: ['apply'], interaction: 'assessed' },
   centreImageReveal: { functions: ['apply'], interaction: 'assessed' },
   appliedscenario: { functions: ['apply'], interaction: 'assessed' },
   guidedChoiceCarousel: { functions: ['apply'], interaction: 'assessed' },

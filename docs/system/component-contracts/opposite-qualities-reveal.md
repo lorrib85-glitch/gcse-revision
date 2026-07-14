@@ -15,7 +15,7 @@ Use when the learner needs to understand a contrast through guided reveal, not a
 ## 3. When NOT to use
 
 - Do not use for assessed sorting, drag-and-drop, quiz choices or feedback states; use `ColSortBlock`, `MatchingTask` or another assessment component.
-- Do not use for a case diagnosis with treatment reasoning; use `SymptomQualityDiagnostic` or `TheoryLab` where their contracts fit.
+- Do not use for a case diagnosis with treatment reasoning; use an assessed diagnostic component (e.g. `factorWeb`) where its contract fits.
 - Do not use to introduce more than two opposing concepts on one screen.
 
 ## 4. Required structure

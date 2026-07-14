@@ -17,8 +17,8 @@ named case (a patient, a calculation, a source). Pairs naturally with a
 
 ## 3. When NOT to use
 
-- **Before the concept is taught** — that is testing before teaching (the
-  `theoryLab` failure mode). The learner must already hold the rule.
+- **Before the concept is taught** — that is testing before teaching. The
+  learner must already hold the rule.
 - **As the only teaching on the screen** — it illustrates a rule, it does
   not replace the teach beat that establishes it.
 - **To state the rule itself** — a general rule is a `KeyPoint`.

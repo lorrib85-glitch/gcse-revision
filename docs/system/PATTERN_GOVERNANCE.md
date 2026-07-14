@@ -96,7 +96,7 @@ fails.
 | Walk a concrete worked example | `WorkedExample` |
 | Compose a teaching screen (rhythm + spacing) | `TeachScreenShell` |
 | Reserve an image/diagram the author will supply | `MediaPlaceholder` |
-| Teach a concept, test-after-teach | `theoryLab` (per its contract) |
+| Teach a concept, test-after-teach | `factorWeb` / `centreImageReveal` (per their contracts) |
 | Introduce a key person | `keyFigureReveal` |
 | …(existing learning components) | per `component-contracts/` |
 
@@ -166,7 +166,7 @@ screen's purpose matches the shell's contract.
 **Route B — Interaction-owned screen.** An interaction owns full-screen
 composition *only* where its approved component contract explicitly grants
 that responsibility. Existing approved examples: quiz/question screens,
-`matchingTask`, interactive-image experiences, `theoryLab`, assessed
+`matchingTask`, interactive-image experiences, `factorWeb`, assessed
 diagnostic interactions. Being interactive does **not** by itself earn
 screen ownership — a small interaction embedded in a teaching screen stays a
 content component inside `TeachScreenShell`. A screen-owning interaction

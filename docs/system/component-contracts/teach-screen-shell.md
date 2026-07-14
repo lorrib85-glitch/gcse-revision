@@ -37,7 +37,7 @@ wrapper. Do not broaden it to wrap everything. It must not wrap:
 - **Cinematic reveal moments** (`VisualLearning`, `CinematicRevealMoment`,
   `ExaminerExplainsScreen`) and other approved cinematic/full-screen (Route C)
   experiences — those own a full-bleed layout; don't wrap them.
-- **Assessed interactions that own their own layout** (`theoryLab`,
+- **Assessed interactions that own their own layout** (`factorWeb`,
   `matchingTask`, `interactiveImage`, quiz screens) and any other Route B
   interaction engine that explicitly owns its screen — the shell composes a
   teach screen, it does not host an interaction engine.
