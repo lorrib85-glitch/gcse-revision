@@ -14,6 +14,7 @@ import CinematicCarousel from '../../components/learning/CinematicCarousel.jsx'
 import GraphView from '../../components/learning/GraphView.jsx'
 import TimelineChain from '../../components/learning/TimelineChain.jsx'
 import CircuitDiagram from '../../components/learning/CircuitDiagram.jsx'
+import CircuitSymbolReference from '../../components/learning/CircuitSymbolReference.jsx'
 
 import OppositeQualitiesReveal from '../../components/learning/OppositeQualitiesReveal.jsx'
 import TimelineCanvas from '../../components/learning/TimelineCanvas.jsx'
@@ -104,42 +105,54 @@ export const REVIEW_ENTRIES = [
     status: 'one-off', subject: 'History', renderMode: 'fullbleed',
     function: 'Horizontal scroll-snap chain of flip cards revealing a chapter’s causal sequence step by step.',
     usage: 'Now used in Episode 2 (both plague-progression + aftermath screens, migrated from progressionTimeline).',
-    alternative: 'TimelineCanvas (swipe-to-pan sibling); OrderedRouteTask (ordered route).',
+    alternative: 'TimelineCanvas (scroll-snap sibling); OrderedRouteTask (ordered route).',
     render: (fx, { onDone }) => <TimelineChain block={fx} subject="History" onContinue={onDone} />,
     fixture: FIX.timelineChain,
   },
   {
     id: 'circuit-diagram', name: 'CircuitDiagram', group: 'group1',
     status: 'unused', subject: 'Physics', renderMode: 'inline',
-    function: 'Configuration-driven GCSE Physics circuit interaction. Learners operate real switch symbols and observe how each gap changes the conducting path, bulb and explanation.',
-    usage: 'Not routed in ModulePlayer and not referenced by content yet. Review variants now prove both the original one-switch circuit and a distinct two-switch series circuit without renderer-specific SVG.',
-    alternative: 'None — no other circuit component exists.',
+    function: 'Configuration-driven GCSE circuit diagram. It renders exam-recognisable symbols, responsive layouts and optional physical switch interaction; page-level questions and predictions remain outside the component.',
+    usage: 'Not routed in ModulePlayer and not referenced by content yet. Review variants now cover series, parallel, measurement, read-only and shared symbol-reference jobs.',
+    alternative: 'CircuitSymbolReference is the read-only symbol-learning sibling; no alternative connected-circuit component exists.',
     render: () => <CircuitDiagram />,
     fixture: null,
     variants: [
       {
-        id: 'explore',
-        label: 'Explore',
-        description: 'Original one-switch series circuit: operate the physical switch and observe the response directly.',
-        render: () => <CircuitDiagram mode="explore" />,
+        id: 'simple-series',
+        label: 'Simple series',
+        description: 'Core one-switch circuit: open and close the physical switch to observe the complete-circuit relationship.',
+        render: () => <CircuitDiagram />,
       },
       {
         id: 'two-switch-series',
         label: 'Two switches',
-        description: 'Proof-of-flexibility preset: two independent switches share one series loop, and the bulb only lights when both gaps are closed.',
-        render: () => <CircuitDiagram preset="twoSwitchSeries" mode="explore" />,
+        description: 'Two independent switches share one series loop. One remaining gap keeps the whole circuit off.',
+        render: () => <CircuitDiagram preset="twoSwitchSeries" />,
       },
       {
-        id: 'predict-then-test',
-        label: 'Predict then test',
-        description: 'Uses the two-switch circuit so the prediction tests whether closing the final gap completes the circuit.',
-        render: () => <CircuitDiagram preset="twoSwitchSeries" mode="predictThenTest" />,
+        id: 'parallel-branches',
+        label: 'Parallel branches',
+        description: 'Two independently switched branches prove that one lamp can stay on while the other branch is open.',
+        render: () => <CircuitDiagram preset="parallelBranches" />,
       },
       {
-        id: 'starts-closed',
-        label: 'Starts closed',
-        description: 'Checks the illuminated outcome, conducting-path treatment and open-switch reversal from the opposite initial state.',
-        render: () => <CircuitDiagram mode="explore" defaultClosed />,
+        id: 'measurement-circuit',
+        label: 'Measurement circuit',
+        description: 'Read-only placement diagram: ammeter in the main series loop and voltmeter connected across the resistor.',
+        render: () => <CircuitDiagram preset="measurementCircuit" />,
+      },
+      {
+        id: 'read-only',
+        label: 'Read-only',
+        description: 'The same connected-circuit renderer with interaction disabled for teaching, worked examples and exam questions.',
+        render: () => <CircuitDiagram defaultClosed interactive={false} />,
+      },
+      {
+        id: 'symbol-reference',
+        label: 'Symbol reference',
+        description: 'Shared GCSE reference board built from the same governed primitives, including cell, battery, meters, sensors and semiconductor symbols.',
+        render: () => <CircuitSymbolReference />,
       },
     ],
   },
