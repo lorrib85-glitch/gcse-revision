@@ -4,6 +4,10 @@ import {
   deriveOppositeRevealState,
   getOppositeRevealDurations,
 } from '../../src/components/learning/oppositeQualitiesReveal.js'
+import {
+  OPPOSITE_REVEAL_PAIRS,
+  resolveOppositeRevealVisuals,
+} from '../../src/components/learning/oppositeQualitiesRevealTheme.js'
 import canonicalEpisode from '../../src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.js'
 import runtimeEpisode from '../../src/content/history/medicine/episodes/episode-01-medieval-beliefs-causes.runtime.js'
 import { MODULES } from '../../src/modules.js'
@@ -12,6 +16,7 @@ const hotCold = {
   type: 'oppositeQualitiesReveal',
   title: 'Hot or cold?',
   copy: 'Doctors used symptoms to decide which quality was strongest.',
+  visualPair: 'warmCool',
   leftConcept: { label: 'Hot', items: ['Fever', 'Red face', 'Flushed skin'] },
   rightConcept: { label: 'Cold', items: ['Pale skin', 'Chills', 'Shivering'] },
   sequence: [
@@ -28,6 +33,7 @@ const wetDry = {
   type: 'oppositeQualitiesReveal',
   title: 'Wet or dry?',
   copy: 'The same idea was used for symptoms linked to moisture.',
+  visualPair: 'wetDry',
   leftConcept: { label: 'Wet', items: ['Sweating', 'Runny nose', 'Watery eyes', 'Phlegm'] },
   rightConcept: { label: 'Dry', items: ['Cracked lips', 'Dry cough', 'Thirst'] },
   sequence: [
@@ -39,6 +45,11 @@ const wetDry = {
     { item: 'Thirst', side: 'right' },
     { item: 'Phlegm', side: 'left' },
   ],
+}
+
+const historyTheme = {
+  accent: '#D69B45',
+  accentRgb: '214,155,69',
 }
 
 describe('opposite qualities reveal sequencing', () => {
@@ -86,6 +97,37 @@ describe('opposite qualities reveal sequencing', () => {
   })
 })
 
+describe('opposite qualities reveal visual roles', () => {
+  it('gives warm and cool concepts distinct restrained identities', () => {
+    const visuals = resolveOppositeRevealVisuals(hotCold, historyTheme)
+
+    expect(visuals.pairId).toBe('warmCool')
+    expect(visuals.leftAccent).toBe(OPPOSITE_REVEAL_PAIRS.warmCool.leftAccent)
+    expect(visuals.rightAccent).toBe(OPPOSITE_REVEAL_PAIRS.warmCool.rightAccent)
+    expect(visuals.leftAccent).not.toBe(visuals.rightAccent)
+    expect(visuals.sharedAccent).toBe(historyTheme.accent)
+  })
+
+  it('uses a separate wet-dry pair without changing reveal mechanics', () => {
+    const visuals = resolveOppositeRevealVisuals(wetDry, historyTheme)
+
+    expect(visuals.pairId).toBe('wetDry')
+    expect(visuals.leftAccent).toBe(OPPOSITE_REVEAL_PAIRS.wetDry.leftAccent)
+    expect(visuals.rightAccent).toBe(OPPOSITE_REVEAL_PAIRS.wetDry.rightAccent)
+    expect(buildOppositeRevealSequence(wetDry).map(step => step.direction)).toEqual([
+      'left', 'right', 'left', 'right', 'left', 'right', 'left',
+    ])
+  })
+
+  it('falls back to the subject accent when no semantic pair is configured', () => {
+    const visuals = resolveOppositeRevealVisuals({}, historyTheme)
+
+    expect(visuals.pairId).toBe('subject')
+    expect(visuals.leftAccent).toBe(historyTheme.accent)
+    expect(visuals.rightAccent).toBe(historyTheme.accent)
+  })
+})
+
 describe('episode 1 opposite qualities integration', () => {
   it('keeps the canonical reveal data and composes runtime screens through the teach shell', () => {
     const canonicalReveals = canonicalEpisode.screens.filter(
@@ -99,6 +141,8 @@ describe('episode 1 opposite qualities integration', () => {
     expect(runtimeReveals.map(screen => screen.heading)).toEqual(['Hot or cold?', 'Wet or dry?'])
     expect(runtimeReveals.every(screen => screen.shell === 'teach')).toBe(true)
     expect(runtimeReveals.map(screen => screen.blocks[0].title)).toEqual(['Hot or cold?', 'Wet or dry?'])
+    expect(runtimeReveals.map(screen => screen.blocks[0].visualPair)).toEqual(['warmCool', 'wetDry'])
+    expect(runtimeReveals.every(screen => Boolean(screen.blocks[0].backgroundImage))).toBe(true)
     expect(runtimeEpisode.screens.some(screen => screen.type === 'oppositeQualitiesReveal')).toBe(false)
     expect(runtimeEpisode.screens.some(screen => screen.type === 'symptomQualityDiagnostic')).toBe(false)
   })
