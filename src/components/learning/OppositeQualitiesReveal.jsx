@@ -202,7 +202,7 @@ function ConceptColumn({
   items,
   side,
   accent,
-  accentRgb,
+  destinationGlow,
   textColor,
   labelShadow,
   itemShadow,
@@ -220,7 +220,7 @@ function ConceptColumn({
         minWidth: 0,
         textAlign: isRight ? 'right' : 'left',
         gridColumn: isRight ? 3 : 1,
-        '--oqr-destination-glow': `rgba(${accentRgb},0.52)`,
+        '--oqr-destination-glow': destinationGlow,
       }}
     >
       <div style={{ marginBottom: SPACING.standard }}>
@@ -480,7 +480,7 @@ export default function OppositeQualitiesReveal({
               items={view.leftItems}
               side="left"
               accent={visuals.leftAccent}
-              accentRgb={visuals.leftRgb}
+              destinationGlow={visuals.leftDestinationGlow}
               textColor={visuals.settledText}
               labelShadow={visuals.labelShadow}
               itemShadow={visuals.settledTextShadow}
@@ -492,7 +492,7 @@ export default function OppositeQualitiesReveal({
               items={view.rightItems}
               side="right"
               accent={visuals.rightAccent}
-              accentRgb={visuals.rightRgb}
+              destinationGlow={visuals.rightDestinationGlow}
               textColor={visuals.settledText}
               labelShadow={visuals.labelShadow}
               itemShadow={visuals.settledTextShadow}
