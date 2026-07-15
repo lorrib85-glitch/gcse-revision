@@ -105,6 +105,9 @@ describe('opposite qualities reveal visual roles', () => {
     expect(visuals.leftAccent).toBe(OPPOSITE_REVEAL_PAIRS.warmCool.leftAccent)
     expect(visuals.rightAccent).toBe(OPPOSITE_REVEAL_PAIRS.warmCool.rightAccent)
     expect(visuals.leftAccent).not.toBe(visuals.rightAccent)
+    expect(visuals.leftDestinationGlow).not.toBe(visuals.rightDestinationGlow)
+    expect(visuals.leftZoneActive).not.toBe(visuals.leftZoneIdle)
+    expect(visuals.rightZoneActive).not.toBe(visuals.rightZoneIdle)
     expect(visuals.sharedAccent).toBe(historyTheme.accent)
   })
 
@@ -114,6 +117,8 @@ describe('opposite qualities reveal visual roles', () => {
     expect(visuals.pairId).toBe('wetDry')
     expect(visuals.leftAccent).toBe(OPPOSITE_REVEAL_PAIRS.wetDry.leftAccent)
     expect(visuals.rightAccent).toBe(OPPOSITE_REVEAL_PAIRS.wetDry.rightAccent)
+    expect(visuals.fullScreenOverlay).toContain(visuals.leftRgb)
+    expect(visuals.fullScreenOverlay).toContain(visuals.rightRgb)
     expect(buildOppositeRevealSequence(wetDry).map(step => step.direction)).toEqual([
       'left', 'right', 'left', 'right', 'left', 'right', 'left',
     ])
@@ -143,6 +148,7 @@ describe('episode 1 opposite qualities integration', () => {
     expect(runtimeReveals.map(screen => screen.blocks[0].title)).toEqual(['Hot or cold?', 'Wet or dry?'])
     expect(runtimeReveals.map(screen => screen.blocks[0].visualPair)).toEqual(['warmCool', 'wetDry'])
     expect(runtimeReveals.every(screen => Boolean(screen.blocks[0].backgroundImage))).toBe(true)
+    expect(runtimeReveals.every(screen => screen.blocks[0].backgroundMode === 'screen')).toBe(true)
     expect(runtimeEpisode.screens.some(screen => screen.type === 'oppositeQualitiesReveal')).toBe(false)
     expect(runtimeEpisode.screens.some(screen => screen.type === 'symptomQualityDiagnostic')).toBe(false)
   })
